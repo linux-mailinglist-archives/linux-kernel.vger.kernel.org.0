@@ -2,149 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11ECBF1952
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6D4F1978
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731817AbfKFPDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 10:03:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49686 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727275AbfKFPDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 10:03:10 -0500
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1732154AbfKFPDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 10:03:52 -0500
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:43130 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731948AbfKFPDN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 10:03:13 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 395CFC04BD40
-        for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2019 15:03:10 +0000 (UTC)
-Received: by mail-qk1-f197.google.com with SMTP id 64so25063715qkm.5
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 07:03:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=F6ynqqIbM2TOAD7hLFicRunvQIveutT6wIB583FFBto=;
-        b=RasCenhX5fSHvYuLUpO2n6mEmnK/vKU+QhFdt7FdX/qBsRAvhw5c/cEvxesPYaT3SK
-         rF54MLN2njQzyVIHWwHZUeMrw6LVusRQHuptnjmbW/gwmNFdXFEubvJi3ScPCbLvGOB6
-         FQmVc78ix/UxhdTcD5cbKNG6JwJMbkLzm+IqbKAGGYG5FxMh9ZrLuBTPgROYL3PcGBbL
-         KK50ohWh7Fc0TiBoMV7euqjumPPGbbF8XCWNP+MKximGlkqdizyfdGjGLmrISNtUQbbO
-         0OWIihdXBVgof4fBAQJJMDKhu86vQt3tjm9qda2nTI6kMZEoqERB0SGnqDmEVeQZtirT
-         jxkg==
-X-Gm-Message-State: APjAAAXFs12i4vJ/5zQnjy5/i9ZZd6xHbzsPks6KqABlMZVF8kYg0N4q
-        tEJ+8sudHPx39OrZXKlhW5I+B0gHU/T+t64qqKuv1W6Fe5LReaVGZALlQ9KRYCALkTOkZTT6PLZ
-        z60yo+Md9VTlvbRNOcfgLH33q
-X-Received: by 2002:a05:6214:6f2:: with SMTP id bk18mr2645488qvb.10.1573052589483;
-        Wed, 06 Nov 2019 07:03:09 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzB6sR4iapHLMS9Rizs1m4GAhzYFfaFlAKVqoBEWSYBG3RuIIJ8NVNFKQELCmo/CWRJnkNJUQ==
-X-Received: by 2002:a05:6214:6f2:: with SMTP id bk18mr2645450qvb.10.1573052589102;
-        Wed, 06 Nov 2019 07:03:09 -0800 (PST)
-Received: from redhat.com (bzq-79-178-12-128.red.bezeqint.net. [79.178.12.128])
-        by smtp.gmail.com with ESMTPSA id o195sm12264065qke.35.2019.11.06.07.03.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 07:03:08 -0800 (PST)
-Date:   Wed, 6 Nov 2019 10:03:02 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Laurent Vivier <lvivier@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Amit Shah <amit@kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] virtio_console: allocate inbufs in add_port() only if it
- is needed
-Message-ID: <20191106095707-mutt-send-email-mst@kernel.org>
-References: <20191018164718.15999-1-lvivier@redhat.com>
- <20191106085548-mutt-send-email-mst@kernel.org>
- <83d88904-1626-8dd6-9e5c-7abcee27bcd0@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <83d88904-1626-8dd6-9e5c-7abcee27bcd0@redhat.com>
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 24C9EC0F50;
+        Wed,  6 Nov 2019 15:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1573052592; bh=ntn5h+EtiIr26cxuzm1ZrBPes0SSBYvLTZygjleUGzc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=klG2q3nFG65HPrpY5Kdxt47P3pYI7LWxN8yFGTQ9ytOchwkVULKnj/kfj2fmz6kTp
+         bo20ZV4qA+5zBEgV7eTtSmoeeeacKbJDbClj9VXmp8JJvXZaN9SkhmT3P8zofep/7X
+         PMZVqBY98iJsPwys1f4y7hFtQ5cDX3kexvDKl2lCE47/Qg201fXq6MEld9SVV6wRmE
+         zjKK19Yks6TWJQZvrG8ts6NovA5/rhw6Md7qHK/+vnkfg744b7YYg6MoceD6wUTgyn
+         Zt8uzjiz/4/aSmexQJo5bLNv+eY57D88JRDvkvkiQrJWNXXYjwTodHU8VJ2gA+4e52
+         cuseJ31+kCE0Q==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id DE67CA007D;
+        Wed,  6 Nov 2019 15:03:10 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net 08/11] net: stmmac: xgmac: Disable MMC interrupts by default
+Date:   Wed,  6 Nov 2019 16:03:02 +0100
+Message-Id: <d89d225566d012d499eec5c8ab30b5e441f5c509.1573052379.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1573052378.git.Jose.Abreu@synopsys.com>
+References: <cover.1573052378.git.Jose.Abreu@synopsys.com>
+In-Reply-To: <cover.1573052378.git.Jose.Abreu@synopsys.com>
+References: <cover.1573052378.git.Jose.Abreu@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 03:02:25PM +0100, Laurent Vivier wrote:
-> On 06/11/2019 14:56, Michael S. Tsirkin wrote:
-> > On Fri, Oct 18, 2019 at 06:47:18PM +0200, Laurent Vivier wrote:
-> >> When we hot unplug a virtserialport and then try to hot plug again,
-> >> it fails:
-> >>
-> >> (qemu) chardev-add socket,id=serial0,path=/tmp/serial0,server,nowait
-> >> (qemu) device_add virtserialport,bus=virtio-serial0.0,nr=2,\
-> >>                   chardev=serial0,id=serial0,name=serial0
-> >> (qemu) device_del serial0
-> >> (qemu) device_add virtserialport,bus=virtio-serial0.0,nr=2,\
-> >>                   chardev=serial0,id=serial0,name=serial0
-> >> kernel error:
-> >>   virtio-ports vport2p2: Error allocating inbufs
-> >> qemu error:
-> >>   virtio-serial-bus: Guest failure in adding port 2 for device \
-> >>                      virtio-serial0.0
-> >>
-> >> This happens because buffers for the in_vq are allocated when the port is
-> >> added but are not released when the port is unplugged.
-> >>
-> >> They are only released when virtconsole is removed (see a7a69ec0d8e4)
-> >>
-> >> To avoid the problem and to be symmetric, we could allocate all the buffers
-> >> in init_vqs() as they are released in remove_vqs(), but it sounds like
-> >> a waste of memory.
-> >>
-> >> Rather than that, this patch changes add_port() logic to only allocate the
-> >> buffers if the in_vq has available free slots.
-> >>
-> >> Fixes: a7a69ec0d8e4 ("virtio_console: free buffers after reset")
-> >> Cc: mst@redhat.com
-> >> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-> >> ---
-> >>  drivers/char/virtio_console.c | 17 +++++++++++------
-> >>  1 file changed, 11 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-> >> index 7270e7b69262..77105166fe01 100644
-> >> --- a/drivers/char/virtio_console.c
-> >> +++ b/drivers/char/virtio_console.c
-> >> @@ -1421,12 +1421,17 @@ static int add_port(struct ports_device *portdev, u32 id)
-> >>  	spin_lock_init(&port->outvq_lock);
-> >>  	init_waitqueue_head(&port->waitqueue);
-> >>  
-> >> -	/* Fill the in_vq with buffers so the host can send us data. */
-> >> -	nr_added_bufs = fill_queue(port->in_vq, &port->inbuf_lock);
-> >> -	if (!nr_added_bufs) {
-> >> -		dev_err(port->dev, "Error allocating inbufs\n");
-> >> -		err = -ENOMEM;
-> >> -		goto free_device;
-> >> +	/* if the in_vq has not already been filled (the port has already been
-> >> +	 * used and unplugged), fill the in_vq with buffers so the host can
-> >> +	 * send us data.
-> >> +	 */
-> >> +	if (port->in_vq->num_free != 0) {
-> >> +		nr_added_bufs = fill_queue(port->in_vq, &port->inbuf_lock);
-> >> +		if (!nr_added_bufs) {
-> >> +			dev_err(port->dev, "Error allocating inbufs\n");
-> >> +			err = -ENOMEM;
-> >> +			goto free_device;
-> >> +		}
-> >>  	}
-> >>  
-> >>  	if (is_rproc_serial(port->portdev->vdev))
-> > 
-> > Well fill_queue will just add slots as long as it can.
-> > So on a full queue it does nothing. How does this patch help?
-> 
-> Yes, but in this case it returns 0 and so add_port() fails and exits
-> with -ENOMEM and the device is freed. It's what this patch tries to avoid.
-> 
-> Thanks,
-> Laurent
+MMC interrupts were being enabled, which is not what we want because it
+will lead to a storm of interrupts that are not handled at all. Fix it
+by disabling all MMC interrupts for XGMAC.
 
-Oh I see. However it's a bit asymmetrical to special case ring full.
-How about making fill_queue return int and testing return code for
--ENOSPC instead? Will also help propagate errors correctly.
+Fixes: b6cdf09f51c2 ("net: stmmac: xgmac: Implement MMC counters")
+Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
 
-And I guess CC stable?
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/mmc_core.c b/drivers/net/ethernet/stmicro/stmmac/mmc_core.c
+index a223584f5f9a..252cf48c5816 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/mmc_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/mmc_core.c
+@@ -176,6 +176,7 @@
+ #define MMC_XGMAC_RX_PKT_SMD_ERR	0x22c
+ #define MMC_XGMAC_RX_PKT_ASSEMBLY_OK	0x230
+ #define MMC_XGMAC_RX_FPE_FRAG		0x234
++#define MMC_XGMAC_RX_IPC_INTR_MASK	0x25c
+ 
+ static void dwmac_mmc_ctrl(void __iomem *mmcaddr, unsigned int mode)
+ {
+@@ -333,8 +334,9 @@ static void dwxgmac_mmc_ctrl(void __iomem *mmcaddr, unsigned int mode)
+ 
+ static void dwxgmac_mmc_intr_all_mask(void __iomem *mmcaddr)
+ {
+-	writel(MMC_DEFAULT_MASK, mmcaddr + MMC_RX_INTR_MASK);
+-	writel(MMC_DEFAULT_MASK, mmcaddr + MMC_TX_INTR_MASK);
++	writel(0x0, mmcaddr + MMC_RX_INTR_MASK);
++	writel(0x0, mmcaddr + MMC_TX_INTR_MASK);
++	writel(MMC_DEFAULT_MASK, mmcaddr + MMC_XGMAC_RX_IPC_INTR_MASK);
+ }
+ 
+ static void dwxgmac_read_mmc_reg(void __iomem *addr, u32 reg, u32 *dest)
 -- 
-MST
+2.7.4
 
