@@ -2,95 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBA6F1D5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5973EF1D67
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:20:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732550AbfKFSQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 13:16:51 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34492 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfKFSQu (ORCPT
+        id S1732450AbfKFST7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 13:19:59 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46394 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728798AbfKFST6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 13:16:50 -0500
-Received: by mail-ot1-f68.google.com with SMTP id t4so10187912otr.1;
-        Wed, 06 Nov 2019 10:16:49 -0800 (PST)
+        Wed, 6 Nov 2019 13:19:58 -0500
+Received: by mail-io1-f68.google.com with SMTP id c6so27988809ioo.13
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 10:19:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eJKRqW4UvaqMAOnNpXsdjszI/drzmMv8UZ9GHtHpvWw=;
+        b=LFsGgP0B6fgRwfJ2GnQXlpWI9IU0ebBBFM4TMgwo9SQ3z3Nh+sofKkCT7or6p/qmnk
+         tQ9JfjRd1n0iUIRhjchZ+N0BgE7EExFsxdbElUM+TGgd2kAdNtPOQaVkuqkHWUTAlv+/
+         xERx/BC/2u8BlUzSnaySZnATW3+QNWWFfEw36TT9orP+xZ3S6gGSwnXXCJI4x0IkNWHn
+         kH4hC6wPgRrpLWYoykyTt/1K2EXZL/S4JXICIb/5+LP4Vy5ieqPNGksFi+TwtD0HzzWo
+         RZJweFxB2Gq6IMlEc81biuLbPYygNV3dH54jt60DlzTl0ZQFQPy2H2XBg9ufBEaOm+jy
+         rSGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=15BA2o2ULwBaZdW2cSXzi/G8aVSlqB+lkO94w9/s3/8=;
-        b=IhfUpr9wbh2dqqy3wfVbtjwf5TKoKKu14JKU99UdJ7IAymPGavaet6wix0tNmtZYyJ
-         3sRFXjWeQi3G/XggTfwxWgGbKQV81cf9eHXfJU3H4iiKzx53GbRsszo8W1+eBim1dDbW
-         L71kf1LbUhZEsgQYI3OizxdrLiIxB49wxK4FAe3cX8vxFQmc1hQtTaVH6vDZF/cgyefE
-         Um7e4qtZfCir/CgS3FzNF/+lJiZQu6RMfkc4l8AQnaShu6k/H+RqR2GFaoH99SjvCw8J
-         AUD4FyQI/gMdRakxPabcNGNbpvEqGGvbczVAWsUwp0+iSEjkOdVGshftMX/P/oREqaB7
-         deSQ==
-X-Gm-Message-State: APjAAAWMzcocIT7OXGjJlzNcwNsV3xsz+Z7ePx909db1rabhM+EeQ+8f
-        YiG8+TO094I8giBKNB50Shqv/ZTk6MxfeyToPkA=
-X-Google-Smtp-Source: APXvYqyJzH2QJnGyQxa9UcvqsSRwLOqnLR39MniE098RrjM8S3f0LW/gsjuzU8BhMp3pbPwutON3uAZxVc/hg56lCG0=
-X-Received: by 2002:a9d:191e:: with SMTP id j30mr2894554ota.297.1573064209066;
- Wed, 06 Nov 2019 10:16:49 -0800 (PST)
+        bh=eJKRqW4UvaqMAOnNpXsdjszI/drzmMv8UZ9GHtHpvWw=;
+        b=KHKeix2Q5CziyuRzSpzcrvFh5T/Al1yeqbU510mruu9bl09pwn6HzPP8ajsC7xNleK
+         YH3D/aInJyAJkj8dEDknGUqd9niI0pZj4RSlHyu6paVVj68YR+uD4isX4gdwpx/0ELJz
+         hFIW4m4pxvvhk+zqVEAn4FezVQsbm2NELeL8CS+sIXMeN7wVpDtlz/sFe/b8AHqlpieI
+         30XNIhg9VL+DJLBO9g/IAu+vtUZufJwnoB/8Wcss12SEnSIhGGM95JyNvIWfZzwqejCh
+         Uf9HR1kMJCpq5wYIqlR1MjIL2yFYqPQGi7IboSgAwVs0g/JQ97shG7jM7n9pLnAbEiCo
+         bykA==
+X-Gm-Message-State: APjAAAVn/UTdJ3f0ze7CnuP6NoF5qp8mKz8OahWoqYWLLFypKyS/ru+j
+        lqAN6Q8Xrdj6nP1y+Ff6wc47yxhze7fSDRxPKzKqfzS1
+X-Google-Smtp-Source: APXvYqzpqB2ggiuwN8InaSw7KuMU8cA/CXHsY95+WpEZ5VymHj85BN3zcNEpqgb9AZKDrsx1u0CAUOUK9YVoxiXC3/Q=
+X-Received: by 2002:a5d:8953:: with SMTP id b19mr278484iot.168.1573064396804;
+ Wed, 06 Nov 2019 10:19:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20191029064834.23438-12-hch@lst.de> <mhng-33ea9141-2440-4a2d-8133-62094486fc48@palmer-si-x1c4>
-In-Reply-To: <mhng-33ea9141-2440-4a2d-8133-62094486fc48@palmer-si-x1c4>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 6 Nov 2019 19:16:38 +0100
-Message-ID: <CAMuHMdVuDp_8UDeWv8tdPAH5JS84=-yfwZjOk-YQcoYKM9za+w@mail.gmail.com>
-Subject: Re: [PATCH 11/21] asm-generic: don't provide ioremap for CONFIG_MMU
-To:     Palmer Dabbelt <palmer@dabbelt.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guo Ren <guoren@kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Vincent Chen <deanbo422@gmail.com>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        linux-xtensa@linux-xtensa.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Openrisc <openrisc@lists.librecores.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-mips@vger.kernel.org, alpha <linux-alpha@vger.kernel.org>,
-        nios2-dev@lists.rocketboards.org
+References: <20191106174804.74723-1-edumazet@google.com> <alpine.DEB.2.21.1911061908070.1869@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1911061908070.1869@nanos.tec.linutronix.de>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Wed, 6 Nov 2019 10:19:44 -0800
+Message-ID: <CANn89iK12QGBagUiNr+j-ToawJ9J1behtySyL9vLattYPAD-7w@mail.gmail.com>
+Subject: Re: [PATCH] hrtimer: Annotate lockless access to timer->state
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzkaller@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Palmer,
-
-On Wed, Nov 6, 2019 at 7:11 PM Palmer Dabbelt <palmer@dabbelt.com> wrote:
-> It looks like the difference in prototype between the architectures is between
+On Wed, Nov 6, 2019 at 10:09 AM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
->     void __iomem *ioremap(resource_size_t, size_t)
->     void __iomem *ioremap(phys_addr_t, size_t)
->     void __iomem *ioremap(phys_addr_t, unsigned long)
->     void __iomem *ioremap(unsigned long, unsigned long)
+> On Wed, 6 Nov 2019, Eric Dumazet wrote:
+> > @@ -1013,8 +1013,9 @@ static void __remove_hrtimer(struct hrtimer *timer,
+> >  static inline int
+> >  remove_hrtimer(struct hrtimer *timer, struct hrtimer_clock_base *base, bool restart)
+> >  {
+> > -     if (hrtimer_is_queued(timer)) {
+> > -             u8 state = timer->state;
+> > +     u8 state = timer->state;
 >
-> shouldn't they all just be that first one?  In other words, wouldn't it be
-> better to always provide the generic ioremap prototype and unify the ports
-> instead?
+> Shouldn't that be a read once then at least for consistency sake?
 
-Agreed. But I'd go for the second one.
+We own the lock here, this is not really needed ?
 
-Gr{oetje,eeting}s,
+Note they are other timer->state reads I chose to leave unchanged.
 
-                        Geert
+But no big deal if you prefer I can add a READ_ONCE()
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks.
+>
+> > +
+> > +     if (state & HRTIMER_STATE_ENQUEUED) {
+> >               int reprogram;
+>
+> Thanks,
+>
+>         tglx
