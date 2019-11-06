@@ -2,121 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81725F1C93
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB2BF1CA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:40:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbfKFRiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:38:11 -0500
-Received: from mail-eopbgr30058.outbound.protection.outlook.com ([40.107.3.58]:54216
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727286AbfKFRiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:38:11 -0500
+        id S1728820AbfKFRko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:40:44 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36200 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727633AbfKFRkn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 12:40:43 -0500
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id xA6HdCjT012333;
+        Wed, 6 Nov 2019 09:40:32 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=YCjv91o9CIDPPScmVOkDhYVIlfc5/JDZ5on/sLiRirg=;
+ b=oeTL4d0ZiM+NJFJLO7ahIiG41vIOrEYz2BDa4d627aQECI/hiEioW/FUgTKQOgDjpVab
+ bB0ZoWSE1atrESRvDlG1NF02Ey4PxFWlQ2uTkK0sZ4UzbJaWWJdNIlB//kUp9//CPwj5
+ B3kh6ONCubC+HCfn6S1ijq3dX4GjIpnGAj0= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2w41w1gajf-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 06 Nov 2019 09:40:32 -0800
+Received: from prn-mbx04.TheFacebook.com (2620:10d:c081:6::18) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 6 Nov 2019 09:40:31 -0800
+Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
+ prn-mbx04.TheFacebook.com (2620:10d:c081:6::18) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 6 Nov 2019 09:40:31 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Wed, 6 Nov 2019 09:40:31 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ff+E+omuFr3MAmn+si75ZOw3Wd7n6rj2y5aLRizcCuNisME3DGKuZryeWPZHVoBjKRzjisyb5LVimbkp6gdQM4uC+D1UK8gncTJkAUxIKRejow6WBFsPXJsDWKG3C0Tt5NyB++p2YIz0t71+vdBp718ta8QhAf0zuA2+h6es7d3x2EnEcJiI2P1cij+s/wrAMuM3C8vVPv0q/bp/Yd4ok+CAOI3ajMTL/90GXMLbmHUopFC5ZGeUcW6TsfhDlcZJkQH3J9nfE24BsuhZHGUiQ5dI8KvjO9UvgRVkZi7RE/k4rt1j0rcbIajV28/if+GvNshxtrvukPI+Fr+hStSC3A==
+ b=FDoR/jNHD815YlTOIdPyx9+t2ttBdo80sRW4jhdJg9gJtTt8QhnsNYOQGXMrdvTURd3NTYp2HtLVmSDWLoIVUmz3rZOzhH5CuQIJo3HDYfg6Jes5Z0GwIzTNA6M2BooTTlHszDoXvnDtBSLvOvM4yo/yOLXyExXw2K/SgJ2z/LmbY1LWbvIqTG4U1O5RKfkiI7Rv9BBTPrS4qXxrpJAepoAYR0Fooq6Dy7Km+BlWwkoKTlILxjOFxXwR18FKA5oRXNqamV0t8kST5hKc/yHCteyPuDCXrzavJp2fQs6Mvm51Q4Z99AVZzqQOQ+45QQ56O1PzmDCUODqOI03fQ6RwkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NWKIk6sPuWOxm8O+Mz0Yd82ZQa8tb6pb00wCPzLBc8g=;
- b=UOmc9YSYu6Xw+hrbVCxLPj9wslp2rWVhPG+2UDWnSyBrI9GB65ka9rbQFxA5s4RrVkOkGtKlSvPqVNBibKkG5nPTa9I46iQJcFGSdAEzJESoWLdt+2JlLGXph42yMBilTlWY7j2TdAO0AHGFjXuwrsFROQ4EX09Ubz2icCSbqM+ckqi+YGLgajhQ2dfmoCv+yGwVB+d2Wl0GlLpjd9CXcxnNX1So3xRbwZCZGu+XYiQINuGde8jX9JiJuR2ceZ4U6UxAdoLFvKOhOndA6R22zc+B0OMxi4EpyTqBt6qCcfUeIUIZc2bq0VcbcOqpTwZKyC6lVouNFjkTU+H4c8bruA==
+ bh=YCjv91o9CIDPPScmVOkDhYVIlfc5/JDZ5on/sLiRirg=;
+ b=mLQS/u85G8BAmj1n+SrbdbgozV87HuANEr2MOV6qlmTYX8Sn3aw+vNkI/dLXeTuKL3cPjDjRkp5kA7QyHZdU2tH3x73bAOb4W9uW1R0Z7n85pxZ3Xe5uGziWZ2sFZj2Lbv0HbYjlrouVCu04bow8ZG6KtxwezN2EWS8ccb9Gietr9NvScLJn9MHI+bHp5SrLeIVZXlu2yP8ue7VZvnf+O1Pa5esTZLOAksYtts2P89bd9TjOL0sgcqgQlR6Ds/Qrk2gcYNCuv87lcWRKzVShzHWxKIvmu9hYuv5XzUQ1wDwpBawvpIq/wBZHnoASUXu6rBLAC3+jpUYF5rz/7xXgGg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NWKIk6sPuWOxm8O+Mz0Yd82ZQa8tb6pb00wCPzLBc8g=;
- b=PxlH8rerTWEfv5903PO8EDUsLPbmkdqcBY6JQiZbxjM+KwAIfZZfe3IjTBTNeptEHp6XQ6pOnI9tQ2ydHeiRm1tBv37agDryJVfYqkWSlPtoSk+I34znX42q4fb6QPc1soqa9C8cJXHqzaysTRzwBnsJ8vBnoTAY9FOBoOr1qek=
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
- VI1PR04MB4334.eurprd04.prod.outlook.com (52.134.31.23) with Microsoft SMTP
+ bh=YCjv91o9CIDPPScmVOkDhYVIlfc5/JDZ5on/sLiRirg=;
+ b=hMBTU+v/K0TExPtk0tOILTc8T1Yza04cvtzeskjclr/k2j2hSh62KW52zaTytbn020oKxGdApQi1TYJRXQTmeEgRmuByPZkRpviq92bSqCoaeiAcDnMZRWBZm/QntnrB9qN7p78vX30PupLtT1gxEsqLBtOW6cUf9Lkrn2aWjas=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1758.namprd15.prod.outlook.com (10.174.255.11) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.22; Wed, 6 Nov 2019 17:38:07 +0000
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::50c3:42e6:9aa4:8744]) by VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::50c3:42e6:9aa4:8744%7]) with mapi id 15.20.2387.034; Wed, 6 Nov 2019
- 17:38:06 +0000
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     Daniel Walker <danielwa@cisco.com>
-CC:     Sathish Jarugumalli <sjarugum@cisco.com>,
-        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
-        Daniel Walker <dwalker@fifo99.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] drivers: net: gianfar: Shortest frame drops at Ethernet
- port
-Thread-Topic: [PATCH] drivers: net: gianfar: Shortest frame drops at Ethernet
- port
-Thread-Index: AQHVlMQbSvI2s56BgEOMA4u7iC3YB6d+Y0Qg
-Date:   Wed, 6 Nov 2019 17:38:06 +0000
-Message-ID: <VI1PR04MB4880B060847C1CD175B998DF96790@VI1PR04MB4880.eurprd04.prod.outlook.com>
-References: <20191106170320.27662-1-danielwa@cisco.com>
-In-Reply-To: <20191106170320.27662-1-danielwa@cisco.com>
+ 15.20.2408.24; Wed, 6 Nov 2019 17:40:29 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::fdc8:5546:bace:15f5]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::fdc8:5546:bace:15f5%5]) with mapi id 15.20.2430.020; Wed, 6 Nov 2019
+ 17:40:29 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     open list <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, "Tejun Heo" <tj@kernel.org>
+Subject: Re: [PATCH v6] perf: Sharing PMU counters across compatible events
+Thread-Topic: [PATCH v6] perf: Sharing PMU counters across compatible events
+Thread-Index: AQHVbqpjjWjaDbp/ikSYoLFTNk8qM6d09EYAgAA/EQCAB+dbAIAAM8KAgAAvaoCAAKofAIAAjTwA
+Date:   Wed, 6 Nov 2019 17:40:29 +0000
+Message-ID: <168F3761-98CF-4E91-B911-ECB9FCD68F0C@fb.com>
+References: <20190919052314.2925604-1-songliubraving@fb.com>
+ <20191031124332.GQ4131@hirez.programming.kicks-ass.net>
+ <19AE6C78-C54C-4C37-BBD2-0396BB97A474@fb.com>
+ <98A6264C-B833-4930-95A0-2A3186519D87@fb.com>
+ <20191105201623.GG3079@worktop.programming.kicks-ass.net>
+ <23D48724-55B7-45A3-A77A-56BAD57937F9@fb.com>
+ <20191106091458.GS4131@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191106091458.GS4131@hirez.programming.kicks-ass.net>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=claudiu.manoil@nxp.com; 
-x-originating-ip: [212.146.100.6]
+x-mailer: Apple Mail (2.3601.0.10)
+x-originating-ip: [2620:10d:c090:180::fc23]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 28546c04-5b46-48f7-4091-08d762e0158d
-x-ms-traffictypediagnostic: VI1PR04MB4334:
-x-microsoft-antispam-prvs: <VI1PR04MB4334DBBBF4DB824981A5065196790@VI1PR04MB4334.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-ms-office365-filtering-correlation-id: 30b4b78a-9062-4d0f-6b95-08d762e06a98
+x-ms-traffictypediagnostic: MWHPR15MB1758:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MWHPR15MB17585AD1BA72C74422FFC5E1B3790@MWHPR15MB1758.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
 x-forefront-prvs: 02135EB356
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(366004)(376002)(346002)(136003)(13464003)(189003)(199004)(26005)(486006)(76176011)(6506007)(6916009)(256004)(476003)(14454004)(44832011)(7696005)(25786009)(305945005)(74316002)(7736002)(11346002)(186003)(66066001)(446003)(2906002)(229853002)(99286004)(6116002)(33656002)(76116006)(6436002)(66946007)(8936002)(9686003)(86362001)(102836004)(71200400001)(55016002)(316002)(71190400001)(5660300002)(52536014)(6246003)(8676002)(64756008)(66446008)(478600001)(66556008)(66476007)(81156014)(81166006)(54906003)(3846002)(14444005)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4334;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(346002)(366004)(39860400002)(189003)(199004)(76116006)(66446008)(229853002)(71200400001)(66556008)(446003)(66946007)(66476007)(4326008)(186003)(6246003)(33656002)(2906002)(64756008)(5660300002)(6486002)(6512007)(2616005)(54906003)(11346002)(476003)(486006)(25786009)(6916009)(81166006)(71190400001)(99286004)(478600001)(256004)(102836004)(14454004)(36756003)(6436002)(8936002)(50226002)(76176011)(6116002)(8676002)(6506007)(53546011)(86362001)(316002)(305945005)(7736002)(81156014)(46003)(14444005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1758;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: edgl5b63XmHn8Xqek3BAymWZlPlCP7aodwJ+lRzxRiVbKdM//dAq97YxwCtrRqZKxxwtzdqxB8UGpuVV2zOlIDNYZE3gTB9D3qPZ851tuzegW4uTdAXPH59DLjSSpdsFRCouu6ZSU9xlehCIu/8Z3rhaqRhdPfNuqsr0EoSSo3pQXr6syoPSvw+pYttKz4SOMPgFS8mKd3Xk6j1IlhVYYn5XBTq/Fmwu94Z1Ys5atPFeGt79aqCwmN46YqQWYmeHQcK1bcB3vzQUa+64j550Z3aWS5PK++v1auybQxaFyNWq35D8KBarrv+pN/4NMMtQJYKYMTeI7ZW+q/lTeCzZExcHOuQwZooDS2dilnlmixWDmMhkiipzRHu32PnL+FRVMetCP7bt64cqwKvsNwW20nRlQ38zBu++bn/f8sb4f/4TG7nce41zehJ+CZdYwvUJ
-x-ms-exchange-transport-forked: True
+x-microsoft-antispam-message-info: eksIXQFNWPF9MRGU7WmGFHOOwML8C8n0iddHh70kcbhXiZLltsI71MLBDCx9MuhPzUspHdmMLIKyWsamLUeDolhHurvLeqcKZj+mHOX/5EZUdU7hgUH7LUXlcS0a9cLf9fwxGR6IETpXuTaqggyQm60vmlj43Ny6dVAuaZ5Oci5Nwz46+tnIkGNcxdWTubwxLze7zFgWBloP+HC2+98vuPngInJeJdCC2dWqb1RrI5f8aY4Zt5PVfY+GnOCK8FsyuZANnCFEESKOv4Tok+EUqOSUwiyoAqG0ZB3jkhmYHBh4zsp3bhHfhFBkDWNHAUlNekiSj91bjYZCcPQyf3z9mcqQQYmy2uV1lSUr9p6U4rQ7b+gSXUWNpdTTFYGuAOjtj4AMVVId6fQXsSKwXTNKL72SO3OV/nRdObLdkqbHicnASZbyvY09ikl2DzBUDoQG
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3E18CA7A8C78DD468F93B420D00024AD@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28546c04-5b46-48f7-4091-08d762e0158d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 17:38:06.9160
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30b4b78a-9062-4d0f-6b95-08d762e06a98
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 17:40:29.5285
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VvvvEYQ6mXltIjrvINH1WqLJPubixdFk1YzYKstrKdgkTMlouzcWSu/aGOyKSHNhSbT2Ha+fWuustaqQ3U30lg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4334
+X-MS-Exchange-CrossTenant-userprincipalname: q9w6Wwr3wojyNuSl0dZTcHu9MYjR3Wmu0bcdr9niQ5Gks+XicBzrfdqJzTKqbTM7QTtGVFKDkRh/BP2/hwl/zQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1758
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-06_06:2019-11-06,2019-11-06 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 spamscore=0 phishscore=0
+ clxscore=1015 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-1911060171
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->-----Original Message-----
->From: Daniel Walker <danielwa@cisco.com>
->Sent: Wednesday, November 6, 2019 7:03 PM
->To: Claudiu Manoil <claudiu.manoil@nxp.com>
->Cc: Sathish Jarugumalli <sjarugum@cisco.com>; xe-linux-external@cisco.com;
->Daniel Walker <dwalker@fifo99.com>; David S. Miller
-><davem@davemloft.net>; netdev@vger.kernel.org; linux-
->kernel@vger.kernel.org
->Subject: [PATCH] drivers: net: gianfar: Shortest frame drops at Ethernet p=
-ort
->
->NXP has provided the patch for packet drops  at ethernet port
->Frames shorter than 60bytes are getting dropped at ethernetport
->need to add padding for the shorter range frames to be transmit
->the function "eth_skb_pad(skb" provides padding (and CRC) for
->packets under 60 bytes
->
->Signed-off-by: Sathish Jarugumalli <sjarugum@cisco.com>
->Cc: xe-linux-external@cisco.com
->Signed-off-by: Daniel Walker <dwalker@fifo99.com>
 
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 
-Normally padding is done by the hardware, and it works at least on my
-test cases and boards.
-But cisco seems to have hit a case where h/w padding gets
-unexpectedly disabled (concurrency issue writing the config register?).
-This patch should go as a workaround, until root cause found.
+> On Nov 6, 2019, at 1:14 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+> On Tue, Nov 05, 2019 at 11:06:06PM +0000, Song Liu wrote:
+>>=20
+>>=20
+>>> On Nov 5, 2019, at 12:16 PM, Peter Zijlstra <peterz@infradead.org> wrot=
+e:
+>>>=20
+>>> On Tue, Nov 05, 2019 at 05:11:08PM +0000, Song Liu wrote:
+>>>=20
+>>>>> I think we can use one of the event as master. We need to be careful =
+when
+>>>>> the master event is removed, but it should be doable. Let me try.=20
+>>>>=20
+>>>> Actually, there is a bigger issue when we use one event as the master:=
+ what
+>>>> shall we do if the master event is not running? Say it is an cgroup ev=
+ent,=20
+>>>> and the cgroup is not running on this cpu. An extra master (and all th=
+ese
+>>>> array hacks) help us get O(1) complexity in such scenario.=20
+>>>>=20
+>>>> Do you have suggestions on how to solve this problem? Maybe we can kee=
+p the=20
+>>>> extra master, and try get rid of the double alloc?=20
+>>>=20
+>>> Right, you have to consider scope when sharing. The master should be th=
+e
+>>> largest scope event and any slaves should be complete subsets.
+>>>=20
+>>> Without much thought this seems a fairly straight forward constraint;
+>>> that is, given cgroups I'm not immediately seeing how we can violate
+>>> that.
+>>>=20
+>>> Basically, pick the cgroup event nearest to the root as the master.
+>>> We have to have logic to re-elect the master anyway for deletion, so
+>>> changing it on add shouldn't be different.
+>>>=20
+>>> (obviously the root-cgroup is cpu-wide and always on, and if you have
+>>> two events from disjoint subtrees they have no overlap, so it doesn't
+>>> make sense to share anyway)
+>>=20
+>> Hmm... I didn't think about cgroup structure with this much detail. And=
+=20
+>> this is very interesting idea.=20
+>>=20
+>> OTOH, non-cgroup event could also be inactive. For example, when we have=
+=20
+>> to rotate events, we may schedule slave before master.=20
+>=20
+> Right, although I suppose in that case you can do what you did in your
+> patch here. If someone did IOC_DISABLE on the master, we'd have to
+> re-elect a master -- obviously (and IOC_ENABLE).
 
--Claudiu
+Re-elect master on IOC_DISABLE is good. But we still need work for ctx
+rotation. Otherwise, we need keep the master on at all time.=20
+
+>=20
+>> And if the master is in an event group, it will be more complicated...
+>=20
+> Hurmph, do you actually have that use-case? And yes, this one is tricky.
+>=20
+> Would it be sufficient if we disallow group events to be master (but
+> allow them to be slaves) ?
+
+Maybe we can solve this with an extra "first_active" pointer in perf_event.
+first_active points to the first event that being added by event_pmu_add().=
+=20
+Then we need something like:
+
+event_pmu_add(event)
+{
+	if (event->dup_master->first_active) {
+		/* sync with first_active */
+	} else {
+		/* this event will be the first_active */
+		event->dup_master->first_active =3D event;
+		pmu->add(event);
+	}
+}
+
+However, I just realized the event_pmu_del() path need some more thoughts,=
+=20
+because first_active is likely the first one get sched_out().=20
+
+Merging another email here:
+
+>> If we do GFP_ATOMIC in perf_event_alloc(), maybe with an extra option, w=
+e
+>> don't need the tmp_master hack. So we only allocate master when we will=
+=20
+>> use it.=20
+>=20
+> You can't, that's broken on -RT. ctx->lock is a raw_spinlock_t and
+> allocator locks are spinlock_t.
+
+How about we add another step in __perf_install_in_context(), like
+
+__perf_install_in_context()
+{
+	bool alloc_master;
+
+	perf_ctx_lock();
+	alloc_master =3D find_new_sharing(event, ctx);
+	perf_ctx_unlock();
+=09
+	if (alloc_master)
+		event->dup_master =3D perf_event_alloc();
+
+	/* existing logic of __perf_install_in_context() */
+
+}
+
+In this way, we only allocate the master event when necessary, and it
+is outside of the locks.=20
+
+Thanks,
+Song
+
 
