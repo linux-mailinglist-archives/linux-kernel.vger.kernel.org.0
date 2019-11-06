@@ -2,107 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49F6F1A91
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF81BF1A8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732104AbfKFP6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 10:58:39 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:50510 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfKFP6i (ORCPT
+        id S1732183AbfKFP5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 10:57:06 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43154 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbfKFP5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 10:58:38 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6FvcFk095971;
-        Wed, 6 Nov 2019 15:58:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=z2DPWMc3TKp1oFbPYOXdhDkuZDHNEjaRiG/t99Bj+Vs=;
- b=AuN18JnuOGoe/JpvfkXBWlPG1alUPMAZIK/8tDhZenMyV72fWeJ92TUOFLCE67sl5a45
- 16XSpKbn8YLleS5zPwsX0MNrtynoaTIw7PY8ga1r0+R5ab5LTcYeZQzRlFz9WGoQI+Uk
- Vl4dWI34rvOBbCS1VuQWxVjKL6e2mkYurfVtotKGI9bGj56VtvCshMe+FoWSD2ZYFChD
- CqMkIF+fMOo6PbsHuii78O1FX9PL9kF/qv/ykMWTjeiDTvs3gy8H4FHNw0DmBqQrkk2b
- ztcFuIE+MhVnS0p5optw76GYHFOzbS/DWsVm3M8nONXgj4TA6MzscXETw/FYDc1nl2id WA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2w117u7rpn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 15:58:35 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6FrASK157567;
-        Wed, 6 Nov 2019 15:56:34 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2w3163tmay-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 15:56:34 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA6FuXZI007616;
-        Wed, 6 Nov 2019 15:56:33 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Nov 2019 07:56:32 -0800
-Date:   Wed, 6 Nov 2019 07:56:31 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] xfs: remove redundant assignment to variable error
-Message-ID: <20191106155631.GJ4153244@magnolia>
-References: <20191106155248.266489-1-colin.king@canonical.com>
+        Wed, 6 Nov 2019 10:57:05 -0500
+Received: by mail-oi1-f195.google.com with SMTP id l20so9323783oie.10
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 07:57:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cVWhQ7pk8kVnjo6deuYig81i/tXV4OF/4yQUgh5RwQM=;
+        b=GTw+U7UqwU6wESYuDmDzklHmTueMwVcboSvhkrl6oVTwevzsH8xvPPZY6JDnlIBr6A
+         Xc9gZzri4CZ8IsqTISVOpHEuZpMIpWnCTXx6J2Oc9gQKI4QX/b930uAhHL+sA3/1/gSF
+         stnw1f0mrCPfD+81NeFb1hHy1LYb+HNDRrq78=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cVWhQ7pk8kVnjo6deuYig81i/tXV4OF/4yQUgh5RwQM=;
+        b=Mdl8OzavremAMPeSChuVCbNq1n95M34Vebz6VQCsXsb6CPArVdy3hWT5kxl+SCpFiY
+         MSMpRQRwF822i4XQadzitUk5hYi8k6L1mtceDpeQY2hU1bMwTNvyF1YbzEdoMcySJrcH
+         NEdL1/inyBuExVP9jeFJO2H4QX+cPK04OVX+bL0WIOf8lwKsDaJUvolHOY3fp7Aa1OXr
+         NKewIoYKSPxl8UeJrGkiFSJaUKfxu+ZKMzAlmyYEa9/oHgT+T3GY0Tl5gBKbaQCJTLS2
+         XxH0D37ED0HQS0CmLnDW5cPxPF1w2w0eRBtwo2pxocrGx0/F5bUSk+JNQXef7pffUX/Q
+         CMRg==
+X-Gm-Message-State: APjAAAUTY1RD0NQ7848URU0/1XrbUYFXjIZKYlM439VIWzJUPzDS/tBN
+        55+LIKeWve6tYpnxr6qd72IWhYMXovCEiZ/I2oozlg==
+X-Google-Smtp-Source: APXvYqxWZ3zXckrmFK4mvZ6HnP+S4jmeZzRQaFdfvEHEOwY3cd1HWh+A+DJnwvkN2zLL6UZ7CdZB8LR+SG3932ooGig=
+X-Received: by 2002:aca:ead7:: with SMTP id i206mr2917301oih.128.1573055823820;
+ Wed, 06 Nov 2019 07:57:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106155248.266489-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911060153
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911060153
+References: <000000000000b2de3a0594d8b4ca@google.com> <00000000000012ff570596af15cc@google.com>
+ <CAKMK7uFQt+=7XMo9jvz77QvDWLAAU_V7-_qZ=iKe-GXG7cqeJg@mail.gmail.com>
+ <CAKMK7uEeQnxMXeyMTvqJ-8H3wFeSexkbL1OJ0oJeUoep=YXcVg@mail.gmail.com> <CACT4Y+b1yx9cYAtedSv+D4utu+MF_3uJt5oKmcQs7qDBrPx2=w@mail.gmail.com>
+In-Reply-To: <CACT4Y+b1yx9cYAtedSv+D4utu+MF_3uJt5oKmcQs7qDBrPx2=w@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 6 Nov 2019 16:56:50 +0100
+Message-ID: <CAKMK7uEuJ3Huq9HxV+FTqmgito6273_8oytdjADZP2-HXYw+CA@mail.gmail.com>
+Subject: Re: WARNING in drm_mode_createblob_ioctl
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 03:52:48PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable error is being initialized with a value that is never read
-> and is being re-assigned a couple of statements later on. The
-> assignment is redundant and hence can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
+On Wed, Nov 6, 2019 at 4:33 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Wed, Nov 6, 2019 at 4:28 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Wed, Nov 6, 2019 at 4:23 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > >
+> > > On Wed, Nov 6, 2019 at 4:20 PM syzbot
+> > > <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com> wrote:
+> > > >
+> > > > syzbot has bisected this bug to:
+> > > >
+> > > > commit 9e5a64c71b2f70ba530f8156046dd7dfb8a7a0ba
+> > > > Author: Kees Cook <keescook@chromium.org>
+> > > > Date:   Mon Nov 4 22:57:23 2019 +0000
+> > > >
+> > > >      uaccess: disallow > INT_MAX copy sizes
+> > >
+> > > Ah cool, this explains it.
+> > >
+> > > fwiw I never managed to get the WARNING in the backtrace to lign up
+> > > with any code. No idea what's been going on.
+> >
+> > Ok I think I have an idea, the above commit isn't in the linux-next I
+> > have here. Where is this from?
+> > -Daniel
+>
+> You need to fetch tags to linux-next. syzbot started bisecting from
+> the commit where the crash happened, and it is now probably not the
+> current tag.
 
-Er... is there a coverity id that goes with this?
+Indeed it's an -mm patch so rebases every day. I tried looking for it,
+but found nothing, not sure what exactly I screwed up. Patch on the
+way.
+-Daniel
 
-Patch looks fine otherwise.
+>
+> linux$ git show 9e5a64c71b2f70ba530f8156046dd7dfb8a7a0ba
+> commit 9e5a64c71b2f70ba530f8156046dd7dfb8a7a0ba
+> Author: Kees Cook <keescook@chromium.org>
+> Date:   Tue Nov 5 09:57:23 2019 +1100
+>
+>     uaccess: disallow > INT_MAX copy sizes
+>
+>     As we've done with VFS, string operations, etc, reject usercopy sizes
+>     larger than INT_MAX, which would be nice to have for catching bugs related
+>     to size calculation overflows[1].
+>
+>     This adds 10 bytes to x86_64 defconfig text and 1980 bytes to the data
+>     section:
+>
+>        text    data     bss     dec     hex filename
+>     19691167        5134320 1646664 26472151        193eed7 vmlinux.before
+>     19691177        5136300 1646664 26474141        193f69d vmlinux.after
+>
+>     [1] https://marc.info/?l=linux-s390&m=156631939010493&w=2
+>
+>     Link: http://lkml.kernel.org/r/201908251612.F9902D7A@keescook
+>     Signed-off-by: Kees Cook <keescook@chromium.org>
+>     Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+>     Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>
+> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+> index 659a4400517b2..e93e249a4e9bf 100644
+> --- a/include/linux/thread_info.h
+> +++ b/include/linux/thread_info.h
+> @@ -147,6 +147,8 @@ check_copy_size(const void *addr, size_t bytes,
+> bool is_source)
+>                         __bad_copy_to();
+>                 return false;
+>         }
+> +       if (WARN_ON_ONCE(bytes > INT_MAX))
+> +               return false;
+>         check_object_size(addr, bytes, is_source);
+>         return true;
+>  }
+>
+>
+> > > I'll type a patch to paper over this.
+> > > -Daniel
+> > >
+> > > >
+> > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=125fe6dce00000
+> > > > start commit:   51309b9d Add linux-next specific files for 20191105
+> > > > git tree:       linux-next
+> > > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=115fe6dce00000
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=165fe6dce00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=a9b1a641c1f1fc52
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=fb77e97ebf0612ee6914
+> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1212dc3ae00000
+> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145f604ae00000
+> > > >
+> > > > Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
+> > > > Fixes: 9e5a64c71b2f ("uaccess: disallow > INT_MAX copy sizes")
+> > > >
+> > > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > >
+> > >
+> > >
+> > > --
+> > > Daniel Vetter
+> > > Software Engineer, Intel Corporation
+> > > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> >
+> >
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
 
---D
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/xfs/xfs_super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index b3188ea49413..2302f67d1a18 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1362,7 +1362,7 @@ xfs_fc_fill_super(
->  {
->  	struct xfs_mount	*mp = sb->s_fs_info;
->  	struct inode		*root;
-> -	int			flags = 0, error = -ENOMEM;
-> +	int			flags = 0, error;
->  
->  	mp->m_super = sb;
->  
-> -- 
-> 2.20.1
-> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
