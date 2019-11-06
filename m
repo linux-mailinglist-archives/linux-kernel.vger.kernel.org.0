@@ -2,154 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74A2DF22F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 00:59:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B8DF2301
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbfKFX7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 18:59:05 -0500
-Received: from mx1.cock.li ([185.10.68.5]:50751 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727393AbfKFX7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 18:59:05 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1573084743; bh=2AqzAp/MU61A3nJg8ovSV63D7yvFw5Q+aV3/5BDrcOE=;
-        h=Date:From:To:Subject:In-Reply-To:References:From;
-        b=Xh6mlYulmgw+onz9qqV/ngPJWi3OzSGfIpZw63jFe2w9QREXGfAk7giAn0+84QKLs
-         OMwCVkYei41YgMFJPG144aPhNvLapc6FVy5saHcVN3UxZAYPUsslTKe4ZOj1JaVCj7
-         mmNOah/Lp2TtiAcS0wVGJKfjUq/Yk18Ldz0u0lXRSshiGIbc6m+lKsS93LDk4ms7E2
-         ehUS33twNZK0aPEvKeI54sXdG6I5bSWreK9WePXxcZxkE0w5Cmsx8tLx78YD5P8PS2
-         sbUmX3GMb678+fm3gzf39/gG2sjAgY8u8REXxiwTJNPHODoPPNHxrkh4VSsCmTZt4N
-         Uy7bBuqQolzFw==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 06 Nov 2019 23:59:02 +0000
-From:   gameonlinux@redchan.it
-To:     linux-kernel@vger.kernel.org
-Subject: Re: Coreboot vs Libreboot - GNU: Please use Coreboot without the
- blobs (compile time option). - Why the [edits]?
-In-Reply-To: <30253120.XGK1vlv84B@pc-713>
-References: <b1b6ab4e31856450d82afccaba587b0f@redchan.it>
- <10419249.ilHZ0GCc2g@pc-713> <9352ba078b5f8fb0f464b6d65209b482@redchan.it>
- <30253120.XGK1vlv84B@pc-713>
-Message-ID: <c7857b5322ebd4dbd7d1ad83b388913f@redchan.it>
-X-Sender: gameonlinux@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+        id S1732452AbfKGADd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 6 Nov 2019 19:03:33 -0500
+Received: from ns.otock.info ([211.1.225.14]:50829 "EHLO ns.otock.info"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727498AbfKGADd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 19:03:33 -0500
+X-Greylist: delayed 638 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 19:03:33 EST
+Received: (qmail 17920 invoked from network); 7 Nov 2019 08:47:31 +0900
+Received: from unknown (HELO illumi-garden.com) (178.158.10.197)
+  by illumi-garden.com with ESMTPA; 7 Nov 2019 08:47:30 +0900
+From:   "Mark Underwood" <basicmark@illumi-garden.com>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0 (1.0)
+Subject: 
+Message-Id: <33EBC7F4-25D3-4BE3-923C-301C71EE222C@illumi-garden.com>
+Date:   Wed, 6 Nov 2019 18:52:08 -0500
+To:     "LKML" <linux-kernel@vger.kernel.org>
+Reply-To: "Mark Underwood" <basicmarkr@yahoo.com>
+X-Mailer: iPhone Mail (15F79)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The man is no[w] a eunich is what I ment to type. I did type it later in 
-the post. My definition is the anti-american definition.
+  LKML
 
-Men are men. Women are women. Women who cannot have children are broken 
-women. Men with their genitals sawn off (with proof posted to their own 
-website) are Euniches.
-
-(And you shouldn't marry ANY of them: only marry young virgin girls.)
-
-Remember: RMS was "cancled" for TEXT he posted to /his own/ website, and 
-people here felt it "on topic" to demand his removal.
+http://bit.do/ffUUw
 
 
 
-On 2019-11-06 22:32, Alexandre François Garreau wrote:
-> Le mercredi 6 novembre 2019 22:49:07 CET, vous avez écrit :
->> The man is no a
->> eunich, but he is not a woman (since he cannot have children).
-> 
-> So you go under M. Garisson definition of a women, according which 
-> sterile
-> cissexual (that is non-transsexual) “women” are actually “men”, and any 
-> man
-> dating whoever is not able to get pregnant is being gay?
-> 
-> Does that also apply to hormonal contraception?  Does it mean a woman 
-> taking
-> the pill is a man?  Damn, trans men must be happy of this consideration 
-> x)
-> 
-> At least it’s easy to become a man through surgery, according your 
-> definitions.
-> 
-> Sooooooo did you check all women you had sex with are fertile? there 
-> are
-> common affections that make women sterile.  Maybe you have been having 
-> gay sex
-> without knowing it.
-> 
->> A woman
->> without a womb
-> 
-> Actually if you looked well at the photos, she has one.  That’s the 
-> goal of
-> sex reassignment surgery.
-> 
->> is like a broken compiler: it's not a compiler: just the
->> pieces that could have been one. Same with a man without genitals.
-> 
-> If you believe the only purpose of a human is to give birth, “make love 
-> not
-> war” and stop bothering people on mailing lists.  But afaik, according 
-> your
-> definitions… you can’t (give birth).
-> 
-> But wait… you were defending pedophilia… but a prepubere girl can’t get
-> pregnant… so… what’s the point of it?
-> 
-> I mean, having sex with a prepubere girl and with a transsexual woman 
-> is
-> biologically just the same: it can’t give birth.
-> 
->> In america it is lauded when men have their genitals chopped off.
-> 
-> No, many americans are transphobic too.  And most of them are neither
-> supporters of transgender rights, nor transphobes, but don’t care.  
-> Like
-> everywhere actually.
-> 
->> But when a man might hint at the wish to marry adorable young girls:
->> america wants to kill and torture him.
-> 
-> Sadly, yet you’re doing nothing to help but more harm, because nobody 
-> allies
-> with your views and you’re not trying to understand a fuck.
-> 
->> The old religions
-> 
-> I’m pretty much sure the old religions, especially some popular 
-> branches of
-> Islam and Christianism condemn what you say about women.
-> 
->> And the libreboot maintainer is a Eunich, NOT a woman - a he or a
->> neuter.
-> 
-> An eunuch is a man without genitals.  But she has (female) genitals, 
-> female
-> levels of hormone, looks like a woman, and by the virtue of “if it’s 
-> all like
-> a duck, it’s a duck” she’s a woman. period. you just draw essentialism 
-> for the
-> rest.
-> 
->> I doubt [she]'ll ever contribute anything much more after having [her] 
->> balls
->> sliced off of his body. They usually lose the will.
-> 
-> Loss of testosterone imply indeed small depression and loss of will.  
-> That’s
-> why in sex reassignment we gives hormone including testosterone and 
-> female
-> sexual hormones, so the will come back ;) and without the depression 
-> coming
-> with gender dysphoria.
-> 
-> I think she works on other stuff.  LibreBoot is worked on by other 
-> people now.
+Mark
