@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05ABBF1BE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A97DF1BFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732348AbfKFRBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:01:06 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:23826 "EHLO
+        id S1732430AbfKFRB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:01:29 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:22474 "EHLO
         mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732141AbfKFRBG (ORCPT
+        with ESMTP id S1732176AbfKFRBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 6 Nov 2019 12:01:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573059664;
         s=strato-dkim-0002; d=gerhold.net;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=EeS87K2j7Au0Fo7/boVudqSloB+oM7kXBhKYEZ0FXrc=;
-        b=TbMptQRob4903bE/cVygbq2bBP6xB3yi7vshXOyqF3vCdNwyE5B1JGGKHkAiOA6Asa
-        dOP+aekSVvLj2C7DaIrWZNFMyiHTWiTj3iXHX8vVapG/3iHehr2NEInannRygRn0Ftxt
-        wuMOuCfZ0rFJMi55Fbvw0lO/cZjwR/FnbsgPOBDf4obCUc8M5Py2xImW0CIwRLc1570a
-        XTe0eEM1JhRzNFLC7ChKIGyCt9HOnVZL2JrRFZTHr/vuXn77cEZIHK7MgWImFO361nOg
-        guquEt3shAzPcwvDyl28/bgXpyDY4SRIRYapKSponmBxYerWXH5uXeUx3jI8UFAN77qO
-        BZkg==
+        bh=ZF9PBe9PbqZZmxK16qT8PcTXHq8abB445im8/YC08sA=;
+        b=aW0LfvilxfO0M2fa2Iwv2yHLMyhSj24/6rXYMQNwtFrBTcH0IW9hLfgojJIaxys2Xe
+        cK0MOFRLa/TeeYsOZb4v+CkeULoZJeyfMuK/uxUfbAAw9/dIU3e0qXf/IzYCuY4hGSJB
+        1bzmy0rrFHcbNVMyn0xVsP6k5AhmvZcmrWKC2MOXRDUdP4lzptMLRv/MxuhNbygEd3u1
+        zO6x81hT2HHX5sYLei+TaG/Mm9+ddarpzUdDyNQAan6JD22+GOiMr5TVpzQhyHFxWPT7
+        DJj8YnoDlcsfwSbEmS6HZfK5CHyCM66Rgv+Z6ics/+9ZXIDXAHfuCcFfsyd28FgHMsSF
+        qRNw==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXs8PvtBNfIQ=="
 X-RZG-CLASS-ID: mo00
 Received: from localhost.localdomain
         by smtp.strato.de (RZmta 44.29.0 AUTH)
-        with ESMTPSA id e07688vA6H13hLs
+        with ESMTPSA id e07688vA6H14hLt
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Wed, 6 Nov 2019 18:01:03 +0100 (CET)
+        Wed, 6 Nov 2019 18:01:04 +0100 (CET)
 From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 2/7] drm/mcde: Fix frame sync setup for video mode panels
-Date:   Wed,  6 Nov 2019 17:58:30 +0100
-Message-Id: <20191106165835.2863-3-stephan@gerhold.net>
+Subject: [PATCH 3/7] drm/mcde: dsi: Make video mode errors more verbose
+Date:   Wed,  6 Nov 2019 17:58:31 +0100
+Message-Id: <20191106165835.2863-4-stephan@gerhold.net>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191106165835.2863-1-stephan@gerhold.net>
 References: <20191106165835.2863-1-stephan@gerhold.net>
@@ -49,155 +49,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MCDE driver differentiates only between "te_sync"
-(for hardware TE0 sync) and software sync
-(i.e. manually triggered updates) at the moment.
+Triggering an error conditions in DSI video mode only results in
+a very generic "some video mode error status" error message
+at the moment.
 
-However, none of these options work correctly for video mode panels.
-Therefore, we need to make some changes to make them work correctly:
-
-  - Select hardware sync coming from the (DSI) formatter.
-  - Keep the FIFO permanently enabled (otherwise MCDE will stop
-    feeding data to the panel).
-  - Skip manual software sync (this is not necessary in video mode).
-
-Automatically detect if the connected panel is using video mode
-and enable the necessary changes in that case.
+Make this more clear by adding separate error messages for each bit.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- drivers/gpu/drm/mcde/mcde_display.c | 32 ++++++++++++++++-------------
- drivers/gpu/drm/mcde/mcde_drm.h     |  1 +
- drivers/gpu/drm/mcde/mcde_drv.c     |  2 --
- drivers/gpu/drm/mcde/mcde_dsi.c     | 13 ++++++++++--
- 4 files changed, 30 insertions(+), 18 deletions(-)
+ drivers/gpu/drm/mcde/mcde_dsi.c      | 22 +++++++++++++++++++++-
+ drivers/gpu/drm/mcde/mcde_dsi_regs.h | 10 ++++++++++
+ 2 files changed, 31 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mcde/mcde_display.c b/drivers/gpu/drm/mcde/mcde_display.c
-index 65522481b367..a3375a974caf 100644
---- a/drivers/gpu/drm/mcde/mcde_display.c
-+++ b/drivers/gpu/drm/mcde/mcde_display.c
-@@ -498,24 +498,20 @@ static void mcde_configure_channel(struct mcde *mcde, enum mcde_channel ch,
- 	}
- 
- 	/* Set up channel 0 sync (based on chnl_update_registers()) */
--	if (mcde->te_sync) {
--		/*
--		 * Turn on hardware TE0 synchronization
--		 */
-+	if (mcde->video_mode || mcde->te_sync)
- 		val = MCDE_CHNLXSYNCHMOD_SRC_SYNCH_HARDWARE
- 			<< MCDE_CHNLXSYNCHMOD_SRC_SYNCH_SHIFT;
--		val |= MCDE_CHNLXSYNCHMOD_OUT_SYNCH_SRC_TE0
--			<< MCDE_CHNLXSYNCHMOD_OUT_SYNCH_SRC_SHIFT;
--	} else {
--		/*
--		 * Set up sync source to software, out sync formatter
--		 * Code mostly from mcde_hw.c chnl_update_registers()
--		 */
-+	else
- 		val = MCDE_CHNLXSYNCHMOD_SRC_SYNCH_SOFTWARE
- 			<< MCDE_CHNLXSYNCHMOD_SRC_SYNCH_SHIFT;
-+
-+	if (mcde->te_sync)
-+		val |= MCDE_CHNLXSYNCHMOD_OUT_SYNCH_SRC_TE0
-+			<< MCDE_CHNLXSYNCHMOD_OUT_SYNCH_SRC_SHIFT;
-+	else
- 		val |= MCDE_CHNLXSYNCHMOD_OUT_SYNCH_SRC_FORMATTER
- 			<< MCDE_CHNLXSYNCHMOD_OUT_SYNCH_SRC_SHIFT;
--	}
-+
- 	writel(val, mcde->regs + sync);
- 
- 	/* Set up pixels per line and lines per frame */
-@@ -938,6 +934,13 @@ static void mcde_display_enable(struct drm_simple_display_pipe *pipe,
- 
- 	drm_crtc_vblank_on(crtc);
- 
-+	if (mcde->video_mode)
-+		/*
-+		 * Keep FIFO permanently enabled in video mode,
-+		 * otherwise MCDE will stop feeding data to the panel.
-+		 */
-+		mcde_enable_fifo(mcde, MCDE_FIFO_A);
-+
- 	dev_info(drm->dev, "MCDE display is enabled\n");
- }
- 
-@@ -1047,8 +1050,9 @@ static void mcde_display_update(struct drm_simple_display_pipe *pipe,
- 	 */
- 	if (fb) {
- 		mcde_set_extsrc(mcde, drm_fb_cma_get_gem_addr(fb, pstate, 0));
--		/* Send a single frame using software sync */
--		mcde_display_send_one_frame(mcde);
-+		if (!mcde->video_mode)
-+			/* Send a single frame using software sync */
-+			mcde_display_send_one_frame(mcde);
- 		dev_info_once(mcde->dev, "sent first display update\n");
- 	} else {
- 		/*
-diff --git a/drivers/gpu/drm/mcde/mcde_drm.h b/drivers/gpu/drm/mcde/mcde_drm.h
-index dab4db021231..80edd6628979 100644
---- a/drivers/gpu/drm/mcde/mcde_drm.h
-+++ b/drivers/gpu/drm/mcde/mcde_drm.h
-@@ -19,6 +19,7 @@ struct mcde {
- 	struct mipi_dsi_device *mdsi;
- 	s16 stride;
- 	bool te_sync;
-+	bool video_mode;
- 	bool oneshot_mode;
- 	unsigned int flow_active;
- 	spinlock_t flow_lock; /* Locks the channel flow control */
-diff --git a/drivers/gpu/drm/mcde/mcde_drv.c b/drivers/gpu/drm/mcde/mcde_drv.c
-index 0ccd3b0308c2..9008ddcfc528 100644
---- a/drivers/gpu/drm/mcde/mcde_drv.c
-+++ b/drivers/gpu/drm/mcde/mcde_drv.c
-@@ -331,8 +331,6 @@ static int mcde_probe(struct platform_device *pdev)
- 	drm->dev_private = mcde;
- 	platform_set_drvdata(pdev, drm);
- 
--	/* Enable use of the TE signal and interrupt */
--	mcde->te_sync = true;
- 	/* Enable continuous updates: this is what Linux' framebuffer expects */
- 	mcde->oneshot_mode = false;
- 	drm->dev_private = mcde;
 diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index d6214d3c8b33..ffd2e0b64628 100644
+index ffd2e0b64628..c7956c92b51b 100644
 --- a/drivers/gpu/drm/mcde/mcde_dsi.c
 +++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -130,6 +130,15 @@ bool mcde_dsi_irq(struct mipi_dsi_device *mdsi)
+@@ -124,7 +124,27 @@ bool mcde_dsi_irq(struct mipi_dsi_device *mdsi)
+ 
+ 	val = readl(d->regs + DSI_VID_MODE_STS_FLAG);
+ 	if (val)
+-		dev_err(d->dev, "some video mode error status\n");
++		dev_dbg(d->dev, "DSI_VID_MODE_STS_FLAG = %08x\n", val);
++	if (val & DSI_VID_MODE_STS_VSG_RUNNING)
++		dev_dbg(d->dev, "VID mode VSG running\n");
++	if (val & DSI_VID_MODE_STS_ERR_MISSING_DATA)
++		dev_err(d->dev, "VID mode missing data\n");
++	if (val & DSI_VID_MODE_STS_ERR_MISSING_HSYNC)
++		dev_err(d->dev, "VID mode missing HSYNC\n");
++	if (val & DSI_VID_MODE_STS_ERR_MISSING_VSYNC)
++		dev_err(d->dev, "VID mode missing VSYNC\n");
++	if (val & DSI_VID_MODE_STS_REG_ERR_SMALL_LENGTH)
++		dev_err(d->dev, "VID mode less bytes than expected between two HSYNC\n");
++	if (val & DSI_VID_MODE_STS_REG_ERR_SMALL_HEIGHT)
++		dev_err(d->dev, "VID mode less lines than expected between two VSYNC\n");
++	if (val & (DSI_VID_MODE_STS_ERR_BURSTWRITE |
++		   DSI_VID_MODE_STS_ERR_LINEWRITE |
++		   DSI_VID_MODE_STS_ERR_LONGREAD))
++		dev_err(d->dev, "VID mode read/write error\n");
++	if (val & DSI_VID_MODE_STS_ERR_VRS_WRONG_LENGTH)
++		dev_err(d->dev, "VID mode received packets differ from expected size\n");
++	if (val & DSI_VID_MODE_STS_VSG_RECOVERY)
++		dev_err(d->dev, "VID mode VSG in recovery mode\n");
+ 	writel(val, d->regs + DSI_VID_MODE_STS_CLR);
+ 
  	return te_received;
- }
+diff --git a/drivers/gpu/drm/mcde/mcde_dsi_regs.h b/drivers/gpu/drm/mcde/mcde_dsi_regs.h
+index c9253321a3be..b03a336c235f 100644
+--- a/drivers/gpu/drm/mcde/mcde_dsi_regs.h
++++ b/drivers/gpu/drm/mcde/mcde_dsi_regs.h
+@@ -248,6 +248,16 @@
  
-+static void mcde_dsi_attach_to_mcde(struct mcde_dsi *d)
-+{
-+	d->mcde->mdsi = d->mdsi;
-+
-+	d->mcde->video_mode = !!(d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO);
-+	/* Enable use of the TE signal for all command mode panels */
-+	d->mcde->te_sync = !d->mcde->video_mode;
-+}
-+
- static int mcde_dsi_host_attach(struct mipi_dsi_host *host,
- 				struct mipi_dsi_device *mdsi)
- {
-@@ -148,7 +157,7 @@ static int mcde_dsi_host_attach(struct mipi_dsi_host *host,
+ #define DSI_VID_MODE_STS 0x000000BC
+ #define DSI_VID_MODE_STS_VSG_RUNNING BIT(0)
++#define DSI_VID_MODE_STS_ERR_MISSING_DATA BIT(1)
++#define DSI_VID_MODE_STS_ERR_MISSING_HSYNC BIT(2)
++#define DSI_VID_MODE_STS_ERR_MISSING_VSYNC BIT(3)
++#define DSI_VID_MODE_STS_REG_ERR_SMALL_LENGTH BIT(4)
++#define DSI_VID_MODE_STS_REG_ERR_SMALL_HEIGHT BIT(5)
++#define DSI_VID_MODE_STS_ERR_BURSTWRITE BIT(6)
++#define DSI_VID_MODE_STS_ERR_LINEWRITE BIT(7)
++#define DSI_VID_MODE_STS_ERR_LONGREAD BIT(8)
++#define DSI_VID_MODE_STS_ERR_VRS_WRONG_LENGTH BIT(9)
++#define DSI_VID_MODE_STS_VSG_RECOVERY BIT(10)
  
- 	d->mdsi = mdsi;
- 	if (d->mcde)
--		d->mcde->mdsi = mdsi;
-+		mcde_dsi_attach_to_mcde(d);
- 
- 	return 0;
- }
-@@ -901,7 +910,7 @@ static int mcde_dsi_bind(struct device *dev, struct device *master,
- 	d->mcde = mcde;
- 	/* If the display attached before binding, set this up */
- 	if (d->mdsi)
--		d->mcde->mdsi = d->mdsi;
-+		mcde_dsi_attach_to_mcde(d);
- 
- 	/* Obtain the clocks */
- 	d->hs_clk = devm_clk_get(dev, "hs");
+ #define DSI_VID_VCA_SETTING1 0x000000C0
+ #define DSI_VID_VCA_SETTING1_MAX_BURST_LIMIT_SHIFT 0
 -- 
 2.23.0
 
