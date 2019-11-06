@@ -2,81 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F21CF1D6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE2F7F1D76
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732513AbfKFSXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 13:23:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52008 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfKFSXD (ORCPT
+        id S1732541AbfKFSXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 13:23:35 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:34160 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbfKFSXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 13:23:03 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C39B46039C; Wed,  6 Nov 2019 18:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573064582;
-        bh=f8LjsY8UAdJTWrsEXBbmOOJZMmDExAEs4UlfYAv6xAE=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=YQWssHj1hIp+G+mBMsNF/15B/cru208q0naT/vdBj3rtlvIu7fUahenofDI4Piq/y
-         qNiNd1pxe245ohucnRRUocr5eajxHZz+C/KU6HmfVXMYUSzJk4WAUIv2J1th6eZERc
-         sIcnVZfWrRrtW66MdifMuOenKtQG2c8Jv6OscM2U=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 832D860274;
-        Wed,  6 Nov 2019 18:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573064582;
-        bh=f8LjsY8UAdJTWrsEXBbmOOJZMmDExAEs4UlfYAv6xAE=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=YQWssHj1hIp+G+mBMsNF/15B/cru208q0naT/vdBj3rtlvIu7fUahenofDI4Piq/y
-         qNiNd1pxe245ohucnRRUocr5eajxHZz+C/KU6HmfVXMYUSzJk4WAUIv2J1th6eZERc
-         sIcnVZfWrRrtW66MdifMuOenKtQG2c8Jv6OscM2U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 832D860274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Ikjoon Jang <ikjn@chromium.org>
-Cc:     ath10k@lists.infradead.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] ath10k: disable cpuidle during downloading firmware.
-References: <20191101054035.42101-1-ikjn@chromium.org>
-Date:   Wed, 06 Nov 2019 20:22:58 +0200
-In-Reply-To: <20191101054035.42101-1-ikjn@chromium.org> (Ikjoon Jang's message
-        of "Fri, 1 Nov 2019 13:40:35 +0800")
-Message-ID: <87y2ws3lvh.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 6 Nov 2019 13:23:34 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA6INEYX092859;
+        Wed, 6 Nov 2019 12:23:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573064594;
+        bh=mGi893+tyE2Y1fpH/uLzwoHNjFKJNU3RWrSp6pP4v+Y=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=RHZibutIHrK2DOQb2uXuZW8tUkJEpwGQr2bK4I3vv1RgvmI7tz+ywC1MELqRZdunS
+         8Py1YrU4ks4gLagq+JCnDM5ZMnIT2Tt5H7nLIqP47q9AtMxJKZzRgLjL5/YGrSGgKl
+         ql6a9pRIRESUUatrYVoC67ACENvpM9o1NPayV3n0=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6IND9F110572;
+        Wed, 6 Nov 2019 12:23:13 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
+ 2019 12:23:13 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 6 Nov 2019 12:22:58 -0600
+Received: from [10.250.45.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6INCKu089618;
+        Wed, 6 Nov 2019 12:23:12 -0600
+Subject: Re: [PATCH v15 1/5] dma-buf: Add dma-buf heaps framework
+From:   "Andrew F. Davis" <afd@ti.com>
+To:     John Stultz <john.stultz@linaro.org>
+CC:     Hillf Danton <hdanton@sina.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Chenbo Feng <fengc@google.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alistair Strachan <astrachan@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Pratik Patel <pratikp@codeaurora.org>
+References: <20191106042252.72452-1-john.stultz@linaro.org>
+ <20191106042252.72452-2-john.stultz@linaro.org>
+ <7154851c-fc55-e157-5a01-21abdd4a23e6@ti.com>
+ <CALAqxLW1vgLCik5WfDN7qkRsO=K9U4otNBp72aOH5UNN1jUgMQ@mail.gmail.com>
+ <26700d4b-07c6-65b1-9fc6-bb3e239202e5@ti.com>
+Message-ID: <546505bd-7ea7-6ae4-5dfa-44a3154fd5ea@ti.com>
+Date:   Wed, 6 Nov 2019 13:23:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <26700d4b-07c6-65b1-9fc6-bb3e239202e5@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ikjoon Jang <ikjn@chromium.org> writes:
+On 11/6/19 12:18 PM, Andrew F. Davis wrote:
+> On 11/6/19 12:03 PM, John Stultz wrote:
+>> On Wed, Nov 6, 2019 at 5:52 AM Andrew F. Davis <afd@ti.com> wrote:
+>>>
+>>> On 11/5/19 11:22 PM, John Stultz wrote:
+>>>> +unsigned int dma_heap_ioctl_cmds[] = {
+>>>> +     DMA_HEAP_IOC_ALLOC,
+>>>> +};
+>>>> +
+>>>> +static long dma_heap_ioctl(struct file *file, unsigned int ucmd,
+>>>> +                        unsigned long arg)
+>>>> +{
+>>>> +     char stack_kdata[128];
+>>>> +     char *kdata = stack_kdata;
+>>>> +     unsigned int kcmd;
+>>>> +     unsigned int in_size, out_size, drv_size, ksize;
+>>>> +     int nr = _IOC_NR(ucmd);
+>>>> +     int ret = 0;
+>>>> +
+>>>> +     if (nr >= ARRAY_SIZE(dma_heap_ioctl_cmds))
+>>>> +             return -EINVAL;
+>>>> +
+>>>> +     /* Get the kernel ioctl cmd that matches */
+>>>> +     kcmd = dma_heap_ioctl_cmds[nr];
+>>>
+>>>
+>>> Why do we need this indirection here and all the complexity below? I
+>>> know DRM ioctl does something like this but it has a massive table,
+>>> legacy ioctls, driver defined ioctls, etc..
+>>>
+>>> I don't expect we will ever need complex handling like this, could we
+>>> switch back to the more simple handler from v13?
+>>
+>> I agree it does add complexity, but I'm not sure I see how to avoid
+>> some of this. The logic trying to handle that the user may pass a cmd
+>> that has the same _IOC_NR() as DMA_HEAP_IOC_ALLOC but not the same
+>> size. So the simple "switch(cmd) { case DMA_HEAP_IOC_ALLOC:" we had
+>> before won't work (as the cmd will be a different value).
+>>
+> 
+> 
+> DMA_HEAP_IOC_ALLOC encodes everything we need, if the size is different
+> then the switch case will not match. It handled everything we have.
+> 
+> 
+>> Thus why I thought the cleanest approach would be to use the
+>> dma_heap_ioctl_cmds array to convert from whatever the user cmd is to
+>> the matching kernel cmd value.
+>>
+> 
+> 
+> There are no kernel or user commands, just commands, they will match or
+> they are not valid. If someday we some need a variable sized ioctl then
+> we can deal with that then.
+> 
 
-> Downloading ath10k firmware needs a large number of IOs and
-> cpuidle's miss predictions make it worse. In the worst case,
-> resume time can be three times longer than the average on sdio.
->
-> This patch disables cpuidle during firmware downloading by
-> applying PM_QOS_CPU_DMA_LATENCY in ath10k_download_fw().
->
-> Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
 
-On what hardware and firmware versions did you test this? I'll add that
-to the commit log.
+Had a little discussion about this on IRC #dri-devel (check logs for
+today if you want to follow along). Conclusion being the way it is done
+here should be fine to help support forward compatibility. If optional
+extensions to the structure are made that grow the size of data passed
+in then we can ignore that and zero out the returned data without harm.
+It is up to the flags field to mark incompatible changes that should
+error out from kernel.
+Andrew
 
-https://wireless.wiki.kernel.org/en/users/drivers/ath10k/submittingpatches#guidelines
-
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> Andrew
+> 
+> 
+>> Do you have an alternative suggestion that I'm overlooking?
+>>
+>> thanks
+>> -john
+>>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
