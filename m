@@ -2,118 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A4FF1757
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 14:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3522AF1764
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 14:40:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731847AbfKFNis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 08:38:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44271 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728716AbfKFNir (ORCPT
+        id S1731713AbfKFNkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 08:40:17 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48988 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730456AbfKFNkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 08:38:47 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iSLWB-0005eJ-OQ; Wed, 06 Nov 2019 14:38:39 +0100
-Date:   Wed, 6 Nov 2019 14:38:38 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Oleg Nesterov <oleg@redhat.com>
-cc:     Florian Weimer <fweimer@redhat.com>, Shawn Landden <shawn@git.icu>,
-        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Keith Packard <keithp@keithp.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: handle_exit_race && PF_EXITING
-In-Reply-To: <20191106121111.GC12575@redhat.com>
-Message-ID: <alpine.DEB.2.21.1911061409480.1869@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1911051053470.17054@nanos.tec.linutronix.de> <20191105152728.GA5666@redhat.com> <alpine.DEB.2.21.1911051800070.1869@nanos.tec.linutronix.de> <alpine.DEB.2.21.1911051851380.1869@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1911051920420.1869@nanos.tec.linutronix.de> <alpine.DEB.2.21.1911051959260.1869@nanos.tec.linutronix.de> <20191106085529.GA12575@redhat.com> <alpine.DEB.2.21.1911061028020.1869@nanos.tec.linutronix.de> <20191106103509.GB12575@redhat.com>
- <alpine.DEB.2.21.1911061154520.1869@nanos.tec.linutronix.de> <20191106121111.GC12575@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 6 Nov 2019 08:40:16 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA6DdjRd104694;
+        Wed, 6 Nov 2019 07:39:45 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573047585;
+        bh=B4AqWpvbkF9WwJU+qXr/4lM8+KtnmSOFmTVCwEr68/c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=T6+hrNSEcYbMNGY8yQ8noGwJoc1vkj/nZLrAdWGY4qwTosk3QasLuy2seIDsn9tjG
+         NW1S0DM+36C9zcG8uKT1PJYysjyv7gt3g/Hfr8bZz4icnETFcs9f+ysa30CDAj9YlX
+         iBj+pEBwVXYN5BYoh3tnvYhOqTyM80B2C7xzBFJQ=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6DdjmR071492;
+        Wed, 6 Nov 2019 07:39:45 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
+ 2019 07:39:30 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 6 Nov 2019 07:39:30 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6Dddi6039199;
+        Wed, 6 Nov 2019 07:39:40 -0600
+Subject: Re: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the doorbell
+ way
+To:     Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+CC:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.co" <lorenzo.pieralisi@arm.co>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20190822112242.16309-1-xiaowei.bao@nxp.com>
+ <20190822112242.16309-7-xiaowei.bao@nxp.com>
+ <20190823135816.GH14582@e119886-lin.cambridge.arm.com>
+ <AM5PR04MB3299E50BA5D7579D41B8B4F9F5A70@AM5PR04MB3299.eurprd04.prod.outlook.com>
+ <20190827132504.GL14582@e119886-lin.cambridge.arm.com>
+ <e64a484c-7cf5-5f65-400c-47128ab45e52@ti.com>
+ <DM6PR12MB40107A9B97A8DAF32A4C651EDA790@DM6PR12MB4010.namprd12.prod.outlook.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <e34708a1-1116-89f9-c3f8-7f21b63c9d9c@ti.com>
+Date:   Wed, 6 Nov 2019 19:09:05 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <DM6PR12MB40107A9B97A8DAF32A4C651EDA790@DM6PR12MB4010.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Nov 2019, Oleg Nesterov wrote:
-> But why we can not rely on handle_exit_race() without PF_EXITING check?
+Gustavo,
+
+On 06/11/19 3:10 PM, Gustavo Pimentel wrote:
+> On Thu, Aug 29, 2019 at 6:13:18, Kishon Vijay Abraham I <kishon@ti.com> 
+> wrote:
 > 
-> Yes, exit_robust_list() is called before exit_pi_state_list() which (with
-> this patch) sets PF_EXITPIDONE. But this is fine? handle_futex_death()
-> doesn't wakeup pi futexes, exit_pi_state_list() does this.
+> Hi, this email slip away from my attention...
+> 
+>> Gustavo,
+>>
+>> On 27/08/19 6:55 PM, Andrew Murray wrote:
+>>> On Sat, Aug 24, 2019 at 12:08:40AM +0000, Xiaowei Bao wrote:
+>>>>
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: Andrew Murray <andrew.murray@arm.com>
+>>>>> Sent: 2019年8月23日 21:58
+>>>>> To: Xiaowei Bao <xiaowei.bao@nxp.com>
+>>>>> Cc: bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
+>>>>> shawnguo@kernel.org; Leo Li <leoyang.li@nxp.com>; kishon@ti.com;
+>>>>> lorenzo.pieralisi@arm.co; arnd@arndb.de; gregkh@linuxfoundation.org; M.h.
+>>>>> Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy
+>>>>> Zang <roy.zang@nxp.com>; jingoohan1@gmail.com;
+>>>>> gustavo.pimentel@synopsys.com; linux-pci@vger.kernel.org;
+>>>>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+>>>>> linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org
+>>>>> Subject: Re: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the
+>>>>> doorbell way
+>>>>>
+>>>>> On Thu, Aug 22, 2019 at 07:22:39PM +0800, Xiaowei Bao wrote:
+>>>>>> The layerscape platform use the doorbell way to trigger MSIX interrupt
+>>>>>> in EP mode.
+>>>>>>
+>>>>>
+>>>>> I have no problems with this patch, however...
+>>>>>
+>>>>> Are you able to add to this message a reason for why you are making this
+>>>>> change? Did dw_pcie_ep_raise_msix_irq not work when func_no != 0? Or did
+>>>>> it work yet dw_pcie_ep_raise_msix_irq_doorbell is more efficient?
+>>>>
+>>>> The fact is that, this driver is verified in ls1046a platform of NXP before, and ls1046a don't
+>>>> support MSIX feature, so I set the msix_capable of pci_epc_features struct is false,
+>>>> but in other platform, e.g. ls1088a, it support the MSIX feature, I verified the MSIX
+>>>> feature in ls1088a, it is not OK, so I changed to another way. Thanks.
+>>>
+>>> Right, so the existing pci-layerscape-ep.c driver never supported MSIX yet it
+>>> erroneously had a switch case statement to call dw_pcie_ep_raise_msix_irq which
+>>> would never get used.
+>>>
+>>> Now that we're adding a platform with MSIX support the existing
+>>> dw_pcie_ep_raise_msix_irq doesn't work (for this platform) so we are adding a
+>>> different method.
+>>
+>> Gustavo, can you confirm dw_pcie_ep_raise_msix_irq() works for designware as it
+>> didn't work for both me and Xiaowei?
+> 
+> When I implemented the dw_pcie_ep_raise_msix_irq(), the implementation 
+> was working quite fine on DesignWare solution. Otherwise, I wouldn't 
+> submit it to the kernel.
+> From what I have seen and if I recall well, Xiaowei implementation was 
+> done having PF's configurated on his solution, which is a configuration 
+> that I don't have in my solution, I believe this could be the missing 
+> piece that differs between our 2 implementations.
 
-I know. You still create inconsistent state because of this:
+I haven't debugged the issue yet but in my understanding the MSI-X table should
+be in the memory (DDR) of EP system. This table will be populated by RC while
+configuring MSI-X (with msg address and msg data). The EP will use the
+populated msg address and msg data for raising MSI-X interrupt.
 
->  	raw_spin_lock_irq(&p->pi_lock);
-> -	if (unlikely(p->flags & PF_EXITING)) {
-> +	if (unlikely(p->flags & PF_EXITPIDONE)) {
->  		/*
->  		 * The task is on the way out. When PF_EXITPIDONE is
->  		 * set, we know that the task has finished the
->  		 * cleanup:
->  		 */
-> -		int ret = handle_exit_race(uaddr, uval, p);
-> +		int ret = handle_exit_race(uaddr, uval);
->  
->  		raw_spin_unlock_irq(&p->pi_lock);
->  		put_task_struct(p);
+From the dw_pcie_ep_raise_msix_irq() (copied below), nowhere the MSI-X table is
+being read from the memory of EP system. I've given my comments below.
 
-Same explanation as before just not prosa this time:
+int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+			     u16 interrupt_num)
+{
+	.
+	.
+	reg = PCI_BASE_ADDRESS_0 + (4 * bir);
+	bar_addr_upper = 0;
+	bar_addr_lower = dw_pcie_readl_dbi(pci, reg);
 
-exit()					lock_pi(futex2)
-  exit_pi_state_list()
-   lock(tsk->pi_lock)
-   tsk->flags |= PF_EXITPIDONE;		 attach_to_pi_owner()
-					  ...
-  // Loop unrolled for clarity
-  while(!list_empty())			  lock(tsk->pi_lock);
-     cleanup(futex1)
-       unlock(tsk->pi_lock)
-     ...			          if (tsk->flags & PF_EXITPIDONE)
-					     ret = handle_exit_race()
-					       if (uval != orig_uval)
-					           return -EAGAIN;
-					       return -ESRCH;
+BAR register will hold the "PCI address" programmed by the host. So
+"bar_addr_lower" will have PCI address.
 
-    cleanup(futex2)			  return to userspace err = -ESRCH
-      update futex2->uval
-      with new owner TID and set
-      OWNER_DIED
+	reg_u64 = (bar_addr_lower & PCI_BASE_ADDRESS_MEM_TYPE_MASK);
+	if (reg_u64 == PCI_BASE_ADDRESS_MEM_TYPE_64)
+		bar_addr_upper = dw_pcie_readl_dbi(pci, reg + 4);
 
-    					 userspace handles -ESRCH
+	tbl_addr = ((u64) bar_addr_upper) << 32 | bar_addr_lower;
 
-					 but futex2->uval has a valid TID
-					 and OWNER_DIED set.
+The "tbl_addr" now has the PCI address programmed by the host.
 
-That's inconsistent state, the futex became a SNAFUtex and user space
-cannot recover from that. At least not existing user space and we cannot
-break that, right?
+	tbl_addr += (tbl_offset + ((interrupt_num - 1) * PCI_MSIX_ENTRY_SIZE));
+	tbl_addr &= PCI_BASE_ADDRESS_MEM_MASK;
 
-If the kernel returns -ESRCH then the futex value must be preserved (except
-for the waiters bit being set, but that's not part of the problem at hand).
+	msix_tbl = ioremap_nocache(ep->phys_base + tbl_addr,
+				   PCI_MSIX_ENTRY_SIZE);
 
-You cannot just look at the kernel state with futexes. We have to guarantee
-consistent state between kernel and user space no matter what. And of
-course we have to be careful about user space creating inconsistent state
-for stupid or malicious reasons. See the whole state table above
-attach_to_pi_state().
+"ep->phys_base" will have EPs outbound memory address and "tbl_addr" will have
+PCI address. So msix_tbl points to the EPs outbound memory region.
+	if (!msix_tbl)
+		return -EINVAL;
 
-The only way to fix this live lock issue is to gracefully wait for the
-cleanup to complete instead of busy looping.
+	msg_addr_lower = readl(msix_tbl + PCI_MSIX_ENTRY_LOWER_ADDR);
+	msg_addr_upper = readl(msix_tbl + PCI_MSIX_ENTRY_UPPER_ADDR);
 
-Yes, it sucks, but futexes suck by definition.
+Here an access to the EP outbound region is made (and the transaction will be
+based on ATU configuration).
+The message address should ideally be obtained from the MSI-X table present in
+the EP system. There need not be any access to the OB region for getting data
+from MSI-X table.
 
-Thanks,
+	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
+	msg_data = readl(msix_tbl + PCI_MSIX_ENTRY_DATA);
+	vec_ctrl = readl(msix_tbl + PCI_MSIX_ENTRY_VECTOR_CTRL);
 
-	tglx
+All this should be obtained from the memory of EP.
+	.
+	.
+}
+
+I'm not sure how this worked for you.
+
+Thanks
+Kishon
+
+> 
+> Since patch submission into the kernel related to msix feature on pcitest 
+> tool, I didn't touch or re-tested the msix feature by lack of time (other 
+> projects requires my full attention for now). However is on my roadmap to 
+> came back to add some other features on DesignWare eDMA driver and I can 
+> do at that time some tests to see if the 
+> dw_pcie_ep_raise_msix_irq_doorbell() is compatible or not with my 
+> solution. If so, I can do some patch to simplify and use the 
+> dw_pcie_ep_raise_msix_irq_doorbell() if it still works as expected like 
+> on dw_pcie_ep_raise_msix_irq(). Agree?
+> 
+> Gustavo
+> 
+>>
+>> Thanks
+>> Kishon
+> 
+> 
