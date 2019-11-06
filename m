@@ -2,98 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CE6F0F5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13661F0F68
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:01:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbfKFG6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 01:58:30 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:48522 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfKFG63 (ORCPT
+        id S1731241AbfKFHBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:01:52 -0500
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:22361 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfKFHBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 01:58:29 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-b7-5dc26f136c77
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 88.5A.08102.31F62CD5; Wed,  6 Nov 2019 07:58:27 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Wed, 6 Nov 2019 07:58:23 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "vilhelm.gray@gmail.com" <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH 02/62] gpio: gpio-104-dio-48e: Use new
- GPIO_LINE_DIRECTION
-Thread-Topic: [PATCH 02/62] gpio: gpio-104-dio-48e: Use new
- GPIO_LINE_DIRECTION
-Thread-Index: AQHVk8E0yWwGMoSA7E67RuXMsgXB/Kd8oc+AgAEFEYA=
-Date:   Wed, 6 Nov 2019 06:58:23 +0000
-Message-ID: <d1d33dee96a4dea71a14dfdb6d590beade529c2c.camel@fi.rohmeurope.com>
-References: <cover.1572945605.git.matti.vaittinen@fi.rohmeurope.com>
-         <d25edcc3a5d912be9d7c3a927bad6baf34a1331e.1572945605.git.matti.vaittinen@fi.rohmeurope.com>
-         <CACRpkdav+Sz04WE6N5KkKMQLOtx2BZrjWrEin06yPZQ31a47hg@mail.gmail.com>
-In-Reply-To: <CACRpkdav+Sz04WE6N5KkKMQLOtx2BZrjWrEin06yPZQ31a47hg@mail.gmail.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4BA1251DF78AFF4482333777D31C11BA@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        Wed, 6 Nov 2019 02:01:52 -0500
+IronPort-SDR: DxMWfcyGRMW20us5xxgYaDrOjKs0Y5FjSD+NzZUe7LLzZU0OFhcUVJkx5VCa9BywDpaY9X64PE
+ qNC1lSECFCH2LcmucHn22ShXjXDneOr76D6wI1+nE6TcZE/Q+8SXZ+27aYDDXOoRD72OFtXLGg
+ HFeSM3BhOBc+4BZBn6mlH5oGy9BrDgZDmaDd9BSsKWzad4BqnZwQL4Ua4/2j9mk57gxXN4alYf
+ FYeLBDmqO8UfKkUYZ8HV8yGdWCB+/q5GVxaGgYIMqIOFvOwy7oF2fZgOG1sI5gaM7uThWS2cQX
+ NUM=
+X-IronPort-AV: E=Sophos;i="5.68,272,1569312000"; 
+   d="scan'208";a="42848207"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa2.mentor.iphmx.com with ESMTP; 05 Nov 2019 23:01:51 -0800
+IronPort-SDR: 0ojCCtfzTUrhdd9b7vAATxZ6Iz0EwjtoK+U/8hS+c7tpAbMBoAk+EyhY62nv0xdXfdwMSpujjH
+ XTny5ZZXMj8kiq3Rc43lZsIdzE3YmQgJjClO8eKtttV8EwSLua6lDrzX0XZXcqdP01P40QxRKF
+ v8OCvHnCvSNibyNGebZqxBFoPsecfhCiLMxOpCxB7nDssNUO5iHqOXu9nnwWDsuhcdmP4yQ9qd
+ jllcyS9a9Nmg1WVfM9uye2lzWT8aKECEsPuM81/aSiGZET3rF3LT+Q5DLqmO13+kAzWk7pKjBA
+ XLo=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
+        <rydberg@bitmath.org>, <dmitry.torokhov@gmail.com>,
+        <nick@shmanahar.org>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <jiada_wang@mentor.com>, <erosca@de.adit-jv.com>,
+        <Andrew_Gabbasov@mentor.com>
+Subject: [PATCH v5 00/48] atmel_mxt_ts misc
+Date:   Wed, 6 Nov 2019 16:00:58 +0900
+Message-ID: <20191106070146.18759-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0gUURiGOTPj7PEyMa6aR03LRZIKbxCxloldfmxZYZQJ4aKjTu7iXmx2
-        De2GhcG6lqylQcuKJormjzRNUjGrNfGC0A/poha4GeKNjFIzr8043n6d95z3e773g/NBXLrg
-        5AvVOiPL6RiNjHQh3tYsvgjx0NuV4f2mQ/KZ0l5CXrxUjckby5aAvL/VRsptVd2E/MF0FRlD
-        Kqa/3JMoWqzfJIqvn9pIxZ+GgDjismtUCmO8dkGdrguLTnZVzQ3mZL70yC7ItZO5YEZqBs4Q
-        0QfR6KqDNAMXKKU/AjQ2YZKIly6AHtdancwAQpKOQuYBiQB40pGoo9tGCDU4XY2hyTtDmGB4
-        0HFoZdJEikXn0fLnZUzUh1HTdN6aJuggNP50aK0RRZ9Dd20OXAybBKhk7BkQDGceftTzkBA0
-        oP1Rfu7PNRinvVHD6F8ncWwaVbZ9wEXthcZHVtbfZej1PwchDI3T+1Bda5iIxqDVlS5S1IGo
-        uMCxPoM76nnyg7CAndZtCdYt2rqNtm6jrdvocuBUC5CWUWvSGSMbEcqxWaGcXqXlj1S9tgGI
-        fznTDFbtp+wAg8AOfCAm86JOq98ppTtS9Gk5KsagSuKyNKzBDhDEZZ5UYiHvUWlMznWW029Y
-        fpCQeVPBjiKllBayMlg2k+U23F0QyhDVqrErpe4cm85mX1FrjFs2Bp2F5i6+ngZWl8ZyTJZR
-        lSTsR5KBXxDBcuNzSS2PU4ZMRsu/imgvOAAt46UVOHxfWlWBSwmdXsf6elNzQhItlKqydJtB
-        E8AbApkHZRIaufELvdlngo/A+IgzI+1ChJHZsnxzAVfZVHKx6sZNx+038eGRr+4/sZQ3dw+f
-        SJj/PlWbNzvogytKiso7d5uPN87XH/OJtwUULrbsUfhFrsTGYOOxoUxfqnTBPrjXcasjIrTy
-        V0LppeHAo1PtJfmJygzL75DOAcnq2eezMzXRya3x/pYpOgpeNdUHtXT21dUHJ5V5HTkpIwwq
-        JmI/zhmY/ylzeX6NAwAA
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiBUdWUsIDIwMTktMTEtMDUgYXQgMTY6MjMgKzAxMDAsIExpbnVzIFdhbGxlaWogd3JvdGU6
-DQo+IE9uIFR1ZSwgTm92IDUsIDIwMTkgYXQgMTE6MTAgQU0gTWF0dGkgVmFpdHRpbmVuDQo+IDxt
-YXR0aS52YWl0dGluZW5AZmkucm9obWV1cm9wZS5jb20+IHdyb3RlOg0KPiANCj4gPiBJdCdzIGhh
-cmQgZm9yIG9jY2FzaW9uYWwgR1BJTyBjb2RlIHJlYWRlci93cml0ZXIgdG8ga25vdyBpZiB2YWx1
-ZXMNCj4gPiAwLzENCj4gPiBlcXVhbCB0byBJTiBvciBPVVQuIFVzZSBkZWZpbmVkIEdQSU9fTElO
-RV9ESVJFQ1RJT05fSU4gYW5kDQo+ID4gR1BJT19MSU5FX0RJUkVDVElPTl9PVVQgdG8gaGVscCB0
-aGVtIG91dC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRp
-LnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4NCj4gDQo+IFBsZWFzZSBtZXJnZSBhbGwgb2Yg
-dGhlc2UgcGF0Y2hlcyAyLW4gaW50byBvbmUgdG8gYXZvaWQgcGF0Y2ggYm9tYnMNCj4gYW5kIGp1
-c3QgbWFrZSBvbmUgdGVjaG5pY2FsIHN0ZXAuDQo+IA0KPiBPaCB0aGUgcGF0Y2ggYm9tYiBhbHJl
-YWR5IGRyb3BwZWQsIGhlaGUuIA0KDQpJIHdhcyBzbGlnaHRseSBpbXBhdGllbnQgXl9eOw0KDQpJ
-IGRpZCBzcGxpdCB0aGUgcGF0Y2ggc2V0IGludG8gdGhpcyBtYW55IHBhdGNoZXMgc28gdGhhdCBk
-cml2ZXINCm1haW50YWluZXJzIHdvdWxkIG9ubHkgbmVlZCB0byBjaGVjayB0aGVpciBvd24gZHJp
-dmVyIChqdXN0IGZldyBsaW5lcykuDQpJIGFsc28gdGhvdWdodCB0aGF0IGlmIHNvbWUgZHJpdmVy
-IG1haW50YWluZXJzIGhhdmUgb2JqZWN0aW9ucyB0aGVuIGl0DQppcyBlYXN5IHRvIGRyb3Agb3V0
-IHN1Y2ggcGF0Y2guIFRoZSAicGF0Y2ggYm9tYiIgDQoNCih3aGljaCB5b3UgcmVmZXJyZWQgaW4g
-dGhlIG90aGVyIG1haWwgDQpodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sL0NBQ1Jwa2RhditT
-ejA0V0U2TjVLa0tNUUxPdHgyQlpyaldyRWluMDZ5UFpRMzFhNDdoZ0BtYWlsLmdtYWlsLmNvbS8N
-CikNCg0Kd2FzIHJlYWxseSBvbmx5IHN1Y2ggYm9tYiBmb3IgeW91IGFuZCBCYXJ0b3N6ICgrR1BJ
-Ty9MS01MIG1haWwgbGlzdHMpIC0NCkkgZGlkIG5vdCBDQyBhbGwgcGF0Y2hlcyB0byBldmVyeW9u
-ZSAtIGRyaXZlciBtYWludGFpbmVycyBvbmx5IGdvdCB0aGUNCnBhdGNoIGFkZGluZyB0aGUgZGVm
-aW5lKHMpIGFuZCBhIHBhdGNoIGZvciB0aGVpciByZXNwZWN0aXZlIGRyaXZlcihzKQ0KOikgVW5m
-b3J0dW5hdGVseSBJIG1lc3NlZCB1cCB0aGUgbWVzc2FnZSBJRHMgZnJvbSBtYWlsIGhlYWRlcnMg
-c28gdGhlDQptYWlscyBmb3IgdGhlIHNlcmllcyB3ZXJlIG5vdCBwcm9wZXJseSB0aHJlYWRlZCA6
-Lw0KDQo+IEFueXdheXMgSSB3YW50IG9uZQ0KPiBiaWcgcGF0Y2ggdG8gYXBwbHkuIFBsZWFzZSBt
-YWtlIHN1cmUgaXQgYXBwbGllcyBvbiB0aGUgR1BJTyB0cmVlJ3MNCj4gImRldmVsIiBicmFuY2gu
-DQoNClJpZ2h0LiBJIGd1ZXNzIEkgY2FuIGRvIHRoYXQuDQoNCj4gQ29sbGVjdCBhbnkgQUNLcyBh
-bmQgZHJvcCBtb3N0IGZyb20gdGhlIENDIGVsc2UgdGhlIGRyaXZlcg0KPiBtYWludGFpbmVycyBt
-YXkgZ2V0IGFubm95ZWQuDQoNCk15IHByb2JsZW0gaXMgdGhhdCBJIGRvbid0IGtub3cgd2hvIGFy
-ZSB0aGUgZHJpdmVyIG1haW50YWluZXJzIEkgc2hvdWxkDQprZWVwIGFuZCB3aG8gSSBzaG91bGQg
-ZHJvcC4gSSBkb24ndCB1c3VhbGx5IGtub3cgd2hvIGFyZSBpbnRlcmVzdGVkIGluIA0Kd2hpY2gg
-Y2hhbmdlcy4NCg0KDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQo=
+This patch-set forward ports Nick Dyer's work in ndyer/linux github repository
+as long as some other features and fixes
+
+Balasubramani Vivekanandan (2):
+  Input: atmel_mxt_ts: Limit the max bytes transferred in an i2c
+    transaction
+  Input: atmel_mxt_ts: use gpiod_set_value_cansleep for reset pin
+
+Dean Jenkins (1):
+  Input: atmel_mxt_ts: return error from
+    mxt_process_messages_until_invalid()
+
+Deepak Das (6):
+  Input: Atmel: improve error handling in mxt_start()
+  Input: Atmel: improve error handling in mxt_initialize()
+  Input: Atmel: improve error handling in mxt_update_cfg()
+  Input: Atmel: Improve error handling in mxt_initialize_input_device()
+  Input: Atmel: handle ReportID "0x00" while processing T5 messages
+  Input: Atmel: use T44 object to process T5 messages
+
+George G. Davis (1):
+  input: atmel_mxt_ts: export GPIO reset line via sysfs
+
+Jiada Wang (3):
+  Input: introduce input_mt_report_slot_inactive
+  Input: atmel_mxt_ts - eliminate data->raw_info_block
+  Input: atmel_mxt_ts - Fix compilation warning
+
+Karl Tsou (1):
+  Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msgs
+
+Kautuk Consul (2):
+  Input: atmel_mxt_ts - Change call-points of mxt_free_* functions
+  Input: atmel_mxt_ts - rely on calculated_crc rather than file
+    config_crc
+
+Naveen Chakka (2):
+  input: touchscreen: atmel_mxt_ts: Added sysfs entry for touchscreen
+    status
+  input: atmel_mxt_ts: added sysfs interface to update atmel T38 data
+
+Nick Dyer (26):
+  Input: atmel_mxt_ts - rework sysfs init/remove
+  Input: atmel_mxt_ts - only read messages in mxt_acquire_irq() when
+    necessary
+  Input: atmel_mxt_ts - split large i2c transfers into blocks
+  Input: atmel_mxt_ts - output status from T48 Noise Supression
+  Input: atmel_mxt_ts - output status from T42 Touch Suppression
+  Input: atmel_mxt_ts - implement T9 vector/orientation support
+  Input: atmel_mxt_ts - implement T15 Key Array support
+  Input: atmel_mxt_ts - handle reports from T47 Stylus object
+  Input: atmel_mxt_ts - implement support for T107 active stylus
+  Input: atmel_mxt_ts - release touch state during suspend
+  Input: atmel_mxt_ts - add regulator control support
+  Input: atmel_mxt_ts - report failures in suspend/resume
+  Input: atmel_mxt_ts - allow specification of firmware file name
+  Input: atmel_mxt_ts - handle cfg filename via pdata/sysfs
+  Input: atmel_mxt_ts - allow input name to be specified in platform
+    data
+  Input: atmel_mxt_ts - refactor firmware flash to extract context into
+    struct
+  Input: atmel_mxt_ts - refactor code to enter bootloader into separate
+    func
+  Input: atmel_mxt_ts - combine bootloader version query with probe
+  Input: atmel_mxt_ts - improve bootloader state machine handling
+  Input: atmel_mxt_ts - rename bl_completion to chg_completion
+  Input: atmel_mxt_ts - make bootloader interrupt driven
+  Input: atmel_mxt_ts - delay enabling IRQ when not using regulators
+  Input: atmel_mxt_ts - implement I2C retries
+  Input: atmel_mxt_ts - orientation is not present in hover
+  Input: atmel_mxt_ts - implement debug output for messages
+  Input: atmel_mxt_ts - implement improved debug message interface
+
+Nikhil Ravindran (1):
+  Input: atmel_mxt_ts: Add support for run self-test routine.
+
+Sanjeev Chugh (1):
+  Input: atmel_mxt_ts: Implement synchronization during various
+    operation
+
+karl tsou (1):
+  Input: atmel_mxt_ts - add config checksum attribute to sysfs
+
+keerthikumarp (1):
+  input: atmel_mxt_ts: Add Missing Delay for reset handling of Atmel
+    touch panel controller in detachable displays.
+
+---
+v5:
+Following commits have been updated to address warnings & errors
+reported by kbuild test robot 
+Input: atmel_mxt_ts - make bootloader interrupt driven
+Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msgs
+
+Following commit has been updated
+Input: introduce input_mt_report_slot_inactive
+
+v4:
+Following commit in v3 patch-set has been removed
+Input: switch to use return value of input_mt_report_slot_state
+
+Following commit has been updated to address checkpatch warning
+Input: atmel_mxt_ts: Implement synchronization during various operation
+
+v3:
+Following commits have been updated compared to v2 patchset
+Input: atmel_mxt_ts - implement debug output for messages
+- added inline comment
+Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msg
+- changed dev_info() to dev_dbg()
+
+v2:
+Following commit in v1 patchset has been split into two commits
+Input: introduce input_mt_report_slot_inactive
+
+Following commits have been updated compared to v1 patchset
+Input: atmel_mxt_ts - split large i2c transfers into blocks
+Input: atmel_mxt_ts - output status from T42 Touch Suppression
+
+Following commits in v1 patchset have been squashed
+Input: touchscreen: Atmel: Add device tree support for T15 key array objects
+Input: atmel_mxt_ts - check data->input_dev is not null in mxt_input_sync()
+Input: atmel_mxt_ts - check firmware format before entering bootloader
+Input: atmel_mxt_ts: update stale use_retrigen_workaround flag
+input: atmel_mxt_ts: move bootloader probe from mxt_initialize()
+input: Atmel: limit the max bytes transferred while reading T5 messages
+Input: atmel_mxt_ts: Use msecs_to_jiffies() instead of HZ
+Input: atmel_mxt_ts: Use complete when in_bootloader true
+Input: atmel_mxt_ts: Prevent crash due to freeing of input device
+input: atmel_mxt_ts: Add NULL check for sysfs attribute debug_msg_attr
+
+Following commits in v1 patchset have been dropped:
+Input: atmel_mxt_ts - configure and use gpios as real gpios
+Input: touchscreen: Atmel: Enable IRQ_DISABLE_UNLAZY flag for interrupt
+Input: atmel_mxt_ts - add memory access interface via sysfs
+Input: atmel_mxt_ts: Remove sysfs attributes during driver detach
+Input: atmel_mxt_ts: Avoid race condition in freeing of input device
+
+
+v1: initial version
+---
+ .../bindings/input/atmel,maxtouch.txt         |   14 +
+ MAINTAINERS                                   |    1 +
+ drivers/hid/hid-alps.c                        |    3 +-
+ drivers/hid/hid-multitouch.c                  |    6 +-
+ drivers/input/input-mt.c                      |    2 +-
+ drivers/input/misc/xen-kbdfront.c             |    2 +-
+ drivers/input/mouse/elan_i2c_core.c           |    2 +-
+ drivers/input/touchscreen/atmel_mxt_ts.c      | 2266 ++++++++++++++---
+ drivers/input/touchscreen/cyttsp4_core.c      |    5 +-
+ drivers/input/touchscreen/cyttsp_core.c       |    2 +-
+ drivers/input/touchscreen/melfas_mip4.c       |    4 +-
+ drivers/input/touchscreen/mms114.c            |    2 +-
+ drivers/input/touchscreen/raspberrypi-ts.c    |    2 +-
+ drivers/input/touchscreen/stmfts.c            |    2 +-
+ include/dt-bindings/input/atmel_mxt_ts.h      |   22 +
+ include/linux/input/mt.h                      |    5 +
+ 16 files changed, 1984 insertions(+), 356 deletions(-)
+ create mode 100644 include/dt-bindings/input/atmel_mxt_ts.h
+
+-- 
+2.17.1
+
