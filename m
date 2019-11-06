@@ -2,94 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC79CF108E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:44:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8133F1094
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbfKFHoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:44:37 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39950 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731553AbfKFHoh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:44:37 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q2so18352987ljg.7
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 23:44:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GQiDbpJ2lWoQjxogiLC76wvVDvALWHHs4GpRXuiccOI=;
-        b=WAw9vU4JDVSEM4/tX3dXF8lllf4N+YzqBd5KUQ8snC5w5eDIIZ+umT4kLbyVnFM++0
-         ZB8hLVMoITJnSq1rOsxgeKtkROl/uFH9ESV8xVpi8yb698FGYQmgutU67Wm0q//x2Bsj
-         SZ/Bk5cn1mPajr330aCYxLLHJQpMBwRD7lKS4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GQiDbpJ2lWoQjxogiLC76wvVDvALWHHs4GpRXuiccOI=;
-        b=gGbgq83uBcvYw8mhVfOzd2HgI90WxYZDE5QU5Mg96JtVkgvexpA5gUu0jY16YX3GPJ
-         6obA8IGvV9SuvooGOrOUEUf5X73uCI/Qd0pzTrdU0bszwhmChMGAasiY9tPlzQarxq+C
-         ws7v8r+F3dLcRz37GkkbPexu2zRkI+qTW0LvRZx3AuFIg8Cp0kBssOWrcj8tFiOWug8E
-         vcFL8Mn7sKeo32aJyRLI3Ga/N7Ow1q7AOw/jGuNtxw/rMAsQ1IFxCX01Xa49IIQQQLtH
-         xuAI6g7+tyfpx3VnhFgHxyt2NESeNzPoidbTmrpxHpCWLWCbBzgIe/ihuKKdZUzw21Dv
-         rQQQ==
-X-Gm-Message-State: APjAAAXdhk0wrSuToSwuVxmdLYo85bv59MrVu1KJfGh5ZWw+RWckL+pX
-        wiQ8jaG3odmE7NOyuDq26bNsjA==
-X-Google-Smtp-Source: APXvYqw8lqO4bBk2ADhwLIclnOcuGlmrYsbeOu9P1od+oauKtzslw1xjfudWN5y+gXx9dri9uatmXA==
-X-Received: by 2002:a2e:6a19:: with SMTP id f25mr798316ljc.147.1573026274938;
-        Tue, 05 Nov 2019 23:44:34 -0800 (PST)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id t16sm8449870ljc.106.2019.11.05.23.44.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Nov 2019 23:44:34 -0800 (PST)
-Subject: Re: [PATCH] watchdog: make nowayout sysfs file writable
-To:     kbuild test robot <lkp@intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     kbuild-all@lists.01.org, Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20191105123125.25985-1-linux@rasmusvillemoes.dk>
- <201911060551.VIFgN8pe%lkp@intel.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <fdc909d7-bf73-740e-0da0-1aad41806734@rasmusvillemoes.dk>
-Date:   Wed, 6 Nov 2019 08:44:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <201911060551.VIFgN8pe%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252
+        id S1731583AbfKFHoz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 6 Nov 2019 02:44:55 -0500
+Received: from mga04.intel.com ([192.55.52.120]:30171 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731147AbfKFHoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 02:44:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 23:44:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,274,1569308400"; 
+   d="scan'208";a="227138250"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Nov 2019 23:44:54 -0800
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 5 Nov 2019 23:44:54 -0800
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 5 Nov 2019 23:44:54 -0800
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 5 Nov 2019 23:44:53 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.127]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.108]) with mapi id 14.03.0439.000;
+ Wed, 6 Nov 2019 15:44:52 +0800
+From:   "Kang, Luwei" <luwei.kang@intel.com>
+To:     'Peter Zijlstra' <peterz@infradead.org>
+CC:     "'kvm@vger.kernel.org'" <kvm@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'pbonzini@redhat.com'" <pbonzini@redhat.com>,
+        "'rkrcmar@redhat.com'" <rkrcmar@redhat.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "'vkuznets@redhat.com'" <vkuznets@redhat.com>,
+        "'wanpengli@tencent.com'" <wanpengli@tencent.com>,
+        "'jmattson@google.com'" <jmattson@google.com>,
+        "'joro@8bytes.org'" <joro@8bytes.org>,
+        "'tglx@linutronix.de'" <tglx@linutronix.de>,
+        "'mingo@redhat.com'" <mingo@redhat.com>,
+        "'bp@alien8.de'" <bp@alien8.de>, "'hpa@zytor.com'" <hpa@zytor.com>,
+        "'x86@kernel.org'" <x86@kernel.org>,
+        "'ak@linux.intel.com'" <ak@linux.intel.com>,
+        "'thomas.lendacky@amd.com'" <thomas.lendacky@amd.com>,
+        "'acme@kernel.org'" <acme@kernel.org>,
+        "'mark.rutland@arm.com'" <mark.rutland@arm.com>,
+        "'alexander.shishkin@linux.intel.com'" 
+        <alexander.shishkin@linux.intel.com>,
+        "'jolsa@redhat.com'" <jolsa@redhat.com>,
+        "'namhyung@kernel.org'" <namhyung@kernel.org>
+Subject: RE: [PATCH v1 3/8] KVM: x86: Allocate performance counter for PEBS
+ event
+Thread-Topic: [PATCH v1 3/8] KVM: x86: Allocate performance counter for PEBS
+ event
+Thread-Index: AQHVjLd13+lWyOpx00qD/bA0eE059qdxL6sAgAEppjCAABXXgIACK7fwgAk3MFA=
+Date:   Wed, 6 Nov 2019 07:44:51 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E1738387F8@SHSMSX104.ccr.corp.intel.com>
+References: <1572217877-26484-1-git-send-email-luwei.kang@intel.com>
+ <1572217877-26484-4-git-send-email-luwei.kang@intel.com>
+ <20191029144612.GK4097@hirez.programming.kicks-ass.net>
+ <82D7661F83C1A047AF7DC287873BF1E173835B1A@SHSMSX104.ccr.corp.intel.com>
+ <20191030094941.GQ4097@hirez.programming.kicks-ass.net>
+ <82D7661F83C1A047AF7DC287873BF1E17383642D@SHSMSX104.ccr.corp.intel.com>
+In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E17383642D@SHSMSX104.ccr.corp.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzE3NjQyYjEtYmE2OS00YjI4LTk2MjUtMmVlZTIwM2Y2M2UzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiR2xDRGN4bHZSakV6S01JcHJMaVJnZFFmcTl3NHRyN0U4UkNOTmoxR0RsXC8rVmJKV1g4WGx0NWVDQTlvT3hFXC9EIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2019 22.16, kbuild test robot wrote:
+> > > > >  static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
+> > > > >  				  unsigned config, bool exclude_user,
+> > > > >  				  bool exclude_kernel, bool intr,
+> > > > > -				  bool in_tx, bool in_tx_cp)
+> > > > > +				  bool in_tx, bool in_tx_cp, bool pebs)
+> > > > >  {
+> > > > >  	struct perf_event *event;
+> > > > >  	struct perf_event_attr attr = { @@ -111,9 +111,12 @@ static
+> > > > > void pmc_reprogram_counter(struct kvm_pmc *pmc,
+> > u32 type,
+> > > > >  		.exclude_user = exclude_user,
+> > > > >  		.exclude_kernel = exclude_kernel,
+> > > > >  		.config = config,
+> > > > > +		.precise_ip = pebs ? 1 : 0,
+> > > > > +		.aux_output = pebs ? 1 : 0,
+> > > >
+> > > > srsly?
+> > >
+> > > Hi Peter,
+> > >     Thanks for review. For aux_output, I think it should be set 1
+> > > when the guest wants to
+> > enabled PEBS by Intel PT.
+> > >      For precise_ip, it is the precise level in perf and set by perf
+> > > command line in KVM
+> > guest, this may not reflect the accurate value (can be 0~3) here. Here
+> > set to 1 is used to allocate a counter for PEBS event and set the
+> > MSR_IA32_PEBS_ENABLE register. For PMU virtualization, KVM will trap
+> > the guest's write operation to PMU registers and allocate/free event
+> > counter from host if a counter enable/disable in guest. We can't
+> > always deduce the exact parameter of perf command line from the value of the guest
+> writers to the register.
+> >
+> > Please, teach your MUA to wrap on 78 chars.
+> >
+> > The thing I really fell over is the gratuitous 'bool ? 1 : 0'. But
+> > yes, the aux_output without a group leader is dead wrong. We'll go fix
+> > perf_event_create_kernel_counter() to refuse that.
+> 
+> Yes, I also think it is a little gratuitous here. But it is a little hard to reconstruct the guest
+> perf parameters from the register value, especially the "precise_ip". Do you have any
+> advice?
+> 
+> About refuse the perf_event_create_kernel_counter() request w/o aux_ouput, I think I
+> need to allocate the PT event as group leader here,  is that right?
 
->    In file included from include/linux/mutex.h:14:0,
->                     from include/linux/kernfs.h:12,
->                     from include/linux/sysfs.h:16,
->                     from include/linux/kobject.h:20,
->                     from include/linux/cdev.h:5,
->                     from drivers/watchdog/watchdog_dev.c:31:
->    drivers/watchdog/watchdog_dev.c: In function 'nowayout_store':
->>> arch/ia64/include/asm/current.h:16:19: error: expected identifier or '(' before 'struct'
->     #define current ((struct task_struct *) ia64_getreg(_IA64_REG_TP))
->                       ^
->    drivers/watchdog/watchdog_dev.c:460:22: note: in expansion of macro 'current'
->      unsigned int value, current;
->                          ^~~~~~~
+Hi Peter,
+     What's your opinion?
 
-:facecpalm:
-
-And it happened to work just fine in my test because I was targeting
-ppc32 where unlike most other arches, current is not a macro but a
-(more-or-less) ordinary global declaration
-
-register struct task_struct *current asm ("r2");
-
-Oh well, already fixed in v2 which dropped current for other reasons.
-
-Rasmus
+Thanks,
+Luwei Kang
