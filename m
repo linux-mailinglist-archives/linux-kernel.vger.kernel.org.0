@@ -2,217 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98027F13DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E805F13F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731657AbfKFK05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 05:26:57 -0500
-Received: from mx.socionext.com ([202.248.49.38]:44272 "EHLO mx.socionext.com"
+        id S1729164AbfKFK3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 05:29:24 -0500
+Received: from mga05.intel.com ([192.55.52.43]:52551 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731471AbfKFK0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 05:26:54 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 06 Nov 2019 19:26:52 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id C0080605F8;
-        Wed,  6 Nov 2019 19:26:52 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 6 Nov 2019 19:26:59 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 318481A04FC;
-        Wed,  6 Nov 2019 19:26:52 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 6/6] phy: uniphier-pcie: Add legacy SoC support for Pro5
-Date:   Wed,  6 Nov 2019 19:26:19 +0900
-Message-Id: <1573035979-32200-7-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573035979-32200-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1573035979-32200-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S1725868AbfKFK3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 05:29:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 02:29:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,274,1569308400"; 
+   d="scan'208";a="200674745"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Nov 2019 02:29:23 -0800
+Received: from [10.226.38.65] (rtanwar-mobl.gar.corp.intel.com [10.226.38.65])
+        by linux.intel.com (Postfix) with ESMTP id 7B6EC5802B9;
+        Wed,  6 Nov 2019 02:29:20 -0800 (PST)
+Subject: Re: [PATCH v3 2/2] dt-bindings: pinctrl: intel: Add for new SoC
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linus.walleij@linaro.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andriy.shevchenko@intel.com,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com
+References: <cover.1572926608.git.rahul.tanwar@linux.intel.com>
+ <f91001d8c5f0cb2860fda720d0cb6298a4856dd3.1572926608.git.rahul.tanwar@linux.intel.com>
+ <20191105212941.GA8677@bogus>
+ <e7d1d72e-54d7-63ae-0eae-685a207d36ef@linux.intel.com>
+Message-ID: <f58ee4e0-1ffc-b5c4-f9eb-f14b01beb696@linux.intel.com>
+Date:   Wed, 6 Nov 2019 18:29:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <e7d1d72e-54d7-63ae-0eae-685a207d36ef@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add legacy SoC support that needs to manage gio clock and reset and to skip
-setting unimplemented phy parameters. This supports Pro5.
 
-This specifies only 1 port use because Pro5 doesn't set it in the power-on
-sequence.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/phy/socionext/phy-uniphier-pcie.c | 83 +++++++++++++++++++++++++++----
- 1 file changed, 72 insertions(+), 11 deletions(-)
+On 6/11/2019 6:24 PM, Tanwar, Rahul wrote:
+> Hi Rob,
+>
+> Thanks for the feedback.
+>
+> On 6/11/2019 5:29 AM, Rob Herring wrote:
+>>> +      bias-pull-up:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: Specifies pull-up configuration.
+>> Isn't this boolean?
+>>
+>>> +
+>>> +      bias-pull-down:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: Specifies pull-down configuration.
+>> And this?
+>>
+>> Though looks like sometimes it has a value? Pull strength I guess.
+>>
+>>> +
+>>> +      drive-strength:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: Enables driver-current.
+>>> +
+>>> +      slew-rate:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: Enables slew-rate.
+>>> +
+>>> +      drive-open-drain:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: Specifies open-drain configuration.
+>> boolean?
+>>
+>>> +
+>>> +      output-enable:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: Specifies if the pin is to be configured as output.
+>> boolean?
+>>
+>> But really, all of these should have a common schema defining the types 
+>> and only put any additional constraints here.
+> Yes, you are right. These are all boolean types.
+> All these are standard properties & we are using them with no
+> additional constraintsi.e conforming to how they are already
+> documented in pinctrl-bindings.txt. Shall ijust omit documenting
+> these properties here in driver bindings ?
+>
+>>> +
+>>> +examples:
+>>> +  # Pinmux controller node
+>>> +  - |
+>>> +    pinctrl: pinctrl@e2880000 {
+>>> +          compatible = "intel,lgm-pinctrl";
+>>> +          reg = <0xe2880000 0x100000>;
+>>> +
+>>> +          # Client device subnode
+>>> +          uart0:uart0 {
+>> space              ^
+> Just to be sure, you mean space misalignment at below
+> line <65>; /* UART_TX0 */ ?Or is it something else ?
 
-diff --git a/drivers/phy/socionext/phy-uniphier-pcie.c b/drivers/phy/socionext/phy-uniphier-pcie.c
-index 25d1d9d..cd17c70 100644
---- a/drivers/phy/socionext/phy-uniphier-pcie.c
-+++ b/drivers/phy/socionext/phy-uniphier-pcie.c
-@@ -19,6 +19,10 @@
- #include <linux/resource.h>
- 
- /* PHY */
-+#define PCL_PHY_CLKCTRL		0x0000
-+#define PORT_SEL_MASK		GENMASK(11, 9)
-+#define PORT_SEL_1		FIELD_PREP(PORT_SEL_MASK, 1)
-+
- #define PCL_PHY_TEST_I		0x2000
- #define PCL_PHY_TEST_O		0x2004
- #define TESTI_DAT_MASK		GENMASK(13, 6)
-@@ -45,13 +49,14 @@
- struct uniphier_pciephy_priv {
- 	void __iomem *base;
- 	struct device *dev;
--	struct clk *clk;
--	struct reset_control *rst;
-+	struct clk *clk, *clk_gio;
-+	struct reset_control *rst, *rst_gio;
- 	const struct uniphier_pciephy_soc_data *data;
- };
- 
- struct uniphier_pciephy_soc_data {
- 	bool has_syscon;
-+	bool is_legacy;
- };
- 
- static void uniphier_pciephy_testio_write(struct uniphier_pciephy_priv *priv,
-@@ -111,16 +116,35 @@ static void uniphier_pciephy_deassert(struct uniphier_pciephy_priv *priv)
- static int uniphier_pciephy_init(struct phy *phy)
- {
- 	struct uniphier_pciephy_priv *priv = phy_get_drvdata(phy);
-+	u32 val;
- 	int ret;
- 
- 	ret = clk_prepare_enable(priv->clk);
- 	if (ret)
- 		return ret;
- 
--	ret = reset_control_deassert(priv->rst);
-+	ret = clk_prepare_enable(priv->clk_gio);
- 	if (ret)
- 		goto out_clk_disable;
- 
-+	ret = reset_control_deassert(priv->rst);
-+	if (ret)
-+		goto out_clk_gio_disable;
-+
-+	ret = reset_control_deassert(priv->rst_gio);
-+	if (ret)
-+		goto out_rst_assert;
-+
-+	/* support only 1 port */
-+	val = readl(priv->base + PCL_PHY_CLKCTRL);
-+	val &= ~PORT_SEL_MASK;
-+	val |= PORT_SEL_1;
-+	writel(val, priv->base + PCL_PHY_CLKCTRL);
-+
-+	/* legacy controller doesn't have phy_reset and parameters */
-+	if (priv->data->is_legacy)
-+		return 0;
-+
- 	uniphier_pciephy_set_param(priv, PCL_PHY_R00,
- 				   RX_EQ_ADJ_EN, RX_EQ_ADJ_EN);
- 	uniphier_pciephy_set_param(priv, PCL_PHY_R06, RX_EQ_ADJ,
-@@ -134,6 +158,10 @@ static int uniphier_pciephy_init(struct phy *phy)
- 
- 	return 0;
- 
-+out_rst_assert:
-+	reset_control_assert(priv->rst);
-+out_clk_gio_disable:
-+	clk_disable_unprepare(priv->clk_gio);
- out_clk_disable:
- 	clk_disable_unprepare(priv->clk);
- 
-@@ -144,8 +172,11 @@ static int uniphier_pciephy_exit(struct phy *phy)
- {
- 	struct uniphier_pciephy_priv *priv = phy_get_drvdata(phy);
- 
--	uniphier_pciephy_assert(priv);
-+	if (!priv->data->is_legacy)
-+		uniphier_pciephy_assert(priv);
-+	reset_control_assert(priv->rst_gio);
- 	reset_control_assert(priv->rst);
-+	clk_disable_unprepare(priv->clk_gio);
- 	clk_disable_unprepare(priv->clk);
- 
- 	return 0;
-@@ -179,13 +210,32 @@ static int uniphier_pciephy_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
--	priv->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(priv->clk))
--		return PTR_ERR(priv->clk);
--
--	priv->rst = devm_reset_control_get_shared(dev, NULL);
--	if (IS_ERR(priv->rst))
--		return PTR_ERR(priv->rst);
-+	if (priv->data->is_legacy) {
-+		priv->clk_gio = devm_clk_get(dev, "gio");
-+		if (IS_ERR(priv->clk_gio))
-+			return PTR_ERR(priv->clk_gio);
-+
-+		priv->rst_gio =
-+			devm_reset_control_get_shared(dev, "gio");
-+		if (IS_ERR(priv->rst_gio))
-+			return PTR_ERR(priv->rst_gio);
-+
-+		priv->clk = devm_clk_get(dev, "link");
-+		if (IS_ERR(priv->clk))
-+			return PTR_ERR(priv->clk);
-+
-+		priv->rst = devm_reset_control_get_shared(dev, "link");
-+		if (IS_ERR(priv->rst))
-+			return PTR_ERR(priv->rst);
-+	} else {
-+		priv->clk = devm_clk_get(dev, NULL);
-+		if (IS_ERR(priv->clk))
-+			return PTR_ERR(priv->clk);
-+
-+		priv->rst = devm_reset_control_get_shared(dev, NULL);
-+		if (IS_ERR(priv->rst))
-+			return PTR_ERR(priv->rst);
-+	}
- 
- 	phy = devm_phy_create(dev, dev->of_node, &uniphier_pciephy_ops);
- 	if (IS_ERR(phy))
-@@ -203,16 +253,27 @@ static int uniphier_pciephy_probe(struct platform_device *pdev)
- 	return PTR_ERR_OR_ZERO(phy_provider);
- }
- 
-+static const struct uniphier_pciephy_soc_data uniphier_pro5_data = {
-+	.has_syscon = false,
-+	.is_legacy = true,
-+};
-+
- static const struct uniphier_pciephy_soc_data uniphier_ld20_data = {
- 	.has_syscon = true,
-+	.is_legacy = false,
- };
- 
- static const struct uniphier_pciephy_soc_data uniphier_pxs3_data = {
- 	.has_syscon = false,
-+	.is_legacy = false,
- };
- 
- static const struct of_device_id uniphier_pciephy_match[] = {
- 	{
-+		.compatible = "socionext,uniphier-pro5-pcie-phy",
-+		.data = &uniphier_pro5_data,
-+	},
-+	{
- 		.compatible = "socionext,uniphier-ld20-pcie-phy",
- 		.data = &uniphier_ld20_data,
- 	},
--- 
-2.7.4
+Please ignore this query of mine. I now realize  that you meant space
+between alias name & node name i.e. uart0: uart0 {. I will fix it in
+nextpatch version. Thanks.
+
+>>> +                pins = <64>, /* UART_RX0 */
+>>> +                             <65>; /* UART_TX0 */
+>>> +                function = "CONSOLE_UART0";
+>>> +                pinmux = <1>,
+>>> +                         <1>;
+>>> +                groups = "CONSOLE_UART0";
+>>> +          };
+>>> +    };
+>>> +
+>>> +...
+>>> -- 
+>>> 2.11.0
+>>>
+> Regards,
+> Rahul
 
