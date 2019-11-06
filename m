@@ -2,81 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9F0FF1C03
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B775F1C08
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732366AbfKFRCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:02:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44842 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbfKFRCr (ORCPT
+        id S1732463AbfKFRDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:03:25 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45129 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732411AbfKFRDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:02:47 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iSOhf-0000Cr-9F; Wed, 06 Nov 2019 18:02:43 +0100
-Date:   Wed, 6 Nov 2019 18:02:41 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Mohammad Nasirifar <far.nasiri.m@gmail.com>
-cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mohammad Nasirifar <farnasirim@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Subject: Re: [PATCH 1/1] syscalls: Fix references to filenames containing
- syscall defs
-In-Reply-To: <20191106164756.GA558585@gmail.com>
-Message-ID: <alpine.DEB.2.21.1911061755060.1869@nanos.tec.linutronix.de>
-References: <20191105022928.517526-1-farnasirim@gmail.com> <alpine.DEB.2.21.1911051033050.17054@nanos.tec.linutronix.de> <CAK8P3a0wyw=CwhiU34t1zBiSesf+HGBLeaV+=JVko_TjnvATHQ@mail.gmail.com> <20191106164756.GA558585@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 6 Nov 2019 12:03:23 -0500
+Received: by mail-ot1-f65.google.com with SMTP id r24so5150410otk.12
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:03:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=13XiEQK8Wfi1t0rOXtClrpgGr0M1MsxM4DjcUQln3M4=;
+        b=Fg82y5+/m4XYC7+TXTEObVZp0oO/gdUR8ls6Gztw9ARyKO/M421qhy1RRD2jEGLEUw
+         VKgI0VbcQ/Ao4avg6W+OSkcj5EtmXbztGbk75Dij721u4or6l8vc09DGum7kiIiKOfpC
+         UAQxiKf8lrx49pgXN7OlNB4Bnew3F4rvfOvjOzLetyXYj4ZmBnVREiBqnbD+cid5C8TO
+         1LvJzNXsM9/e2Ugvl4kkhlrp47+KgX1opNdqHpBu77Q9tnYbq443XxLelWgsTiNb+4dx
+         vJVtmPmBBFVJJzKQO7Nq9OUTswoiu0YrIVYj1iivcboY6E5qag9Z+ZlyqEsUg9db/vpt
+         4UWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=13XiEQK8Wfi1t0rOXtClrpgGr0M1MsxM4DjcUQln3M4=;
+        b=Du2J2ak9p97+IhFod/xV1w6ronyIPNthUoMn8fWqxuGl67+Wml099Zyl8+MrTw68vM
+         MmpB4kR9wzys1nBsljfxJc17EQF7o/Iep/3IeTt/wicWSn5C+y7Xas3nhmlKK1K0Va4/
+         4QE8tDBOYPUcLtfjv7ZT2Dm/S0TIUK/iP3JcPQIv4iiId5IH2hVUeX6nqtDH2pavI8NQ
+         r4BRSrpG1RbVK3JrhoDEn39267Gt7n8Z8InmwZCUXlDhmHVxhhADk0n/CjnPHONmEeRx
+         ck4EWYNZd/IUqloLSAfkh9KQLH8jLKuu/jPkyTXTaGZb7i2GFMM8Adonge0vIRg13n3e
+         hp3g==
+X-Gm-Message-State: APjAAAW8ZUXVg/2aPx2kSwJ2sFt6LYXPeqIIvjOgkBo7nrYH+3im+Kw9
+        C5+AAcG/CnkToBdxL+ohoQrM/OxvlqYcerdsDy/guQ==
+X-Google-Smtp-Source: APXvYqxA21M83YXgjSCtZkjN7heKaT/7/0PT0b0l2nJ5K0JzCI1YBIavSwGU0cxJ2gksIniKC8dgfk8zYAAoPRimlnQ=
+X-Received: by 2002:a9d:5a0b:: with SMTP id v11mr2687592oth.102.1573059801948;
+ Wed, 06 Nov 2019 09:03:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20191106042252.72452-1-john.stultz@linaro.org>
+ <20191106042252.72452-2-john.stultz@linaro.org> <7154851c-fc55-e157-5a01-21abdd4a23e6@ti.com>
+In-Reply-To: <7154851c-fc55-e157-5a01-21abdd4a23e6@ti.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Wed, 6 Nov 2019 09:03:10 -0800
+Message-ID: <CALAqxLW1vgLCik5WfDN7qkRsO=K9U4otNBp72aOH5UNN1jUgMQ@mail.gmail.com>
+Subject: Re: [PATCH v15 1/5] dma-buf: Add dma-buf heaps framework
+To:     "Andrew F. Davis" <afd@ti.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Dave Airlie <airlied@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Nov 2019, Mohammad Nasirifar wrote:
-
-> On Tue, Nov 05, 2019 at 10:49:12AM +0100, Arnd Bergmann wrote:
-> > On Tue, Nov 5, 2019 at 10:34 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > On Mon, 4 Nov 2019, Mohammad Nasirifar wrote:
-> > > > Fix stale references to files containing syscall definitions in
-> > > > 'include/linux/syscalls.h' and 'include/uapi/asm-generic/unistd.h',
-> > > > pointing to 'kernel/itimer.c', 'kernel/hrtimer.c', and 'kernel/time.c'.
-> > > > They are now under 'kernel/time'.
-> > > >
-> > > > Also definitions of 'getpid', 'getppid', 'getuid', 'geteuid', 'getgid',
-> > > > 'getegid', 'gettid', and 'sysinfo' are now in 'kernel/sys.c'.
-> > > 
-> > > Can we please remove these file references completely. They are going
-> > > to be stale sooner than later again and they really do not provide
-> > > any value.
+On Wed, Nov 6, 2019 at 5:52 AM Andrew F. Davis <afd@ti.com> wrote:
 >
-> I actually refer to them a lot when locating syscall implementations,
-> which is how I found out that they were stale in the first place.
+> On 11/5/19 11:22 PM, John Stultz wrote:
+> > +unsigned int dma_heap_ioctl_cmds[] = {
+> > +     DMA_HEAP_IOC_ALLOC,
+> > +};
+> > +
+> > +static long dma_heap_ioctl(struct file *file, unsigned int ucmd,
+> > +                        unsigned long arg)
+> > +{
+> > +     char stack_kdata[128];
+> > +     char *kdata = stack_kdata;
+> > +     unsigned int kcmd;
+> > +     unsigned int in_size, out_size, drv_size, ksize;
+> > +     int nr = _IOC_NR(ucmd);
+> > +     int ret = 0;
+> > +
+> > +     if (nr >= ARRAY_SIZE(dma_heap_ioctl_cmds))
+> > +             return -EINVAL;
+> > +
+> > +     /* Get the kernel ioctl cmd that matches */
+> > +     kcmd = dma_heap_ioctl_cmds[nr];
+>
+>
+> Why do we need this indirection here and all the complexity below? I
+> know DRM ioctl does something like this but it has a massive table,
+> legacy ioctls, driver defined ioctls, etc..
+>
+> I don't expect we will ever need complex handling like this, could we
+> switch back to the more simple handler from v13?
 
-# git grep -n 'SYSCALL.*(nanosleep'
+I agree it does add complexity, but I'm not sure I see how to avoid
+some of this. The logic trying to handle that the user may pass a cmd
+that has the same _IOC_NR() as DMA_HEAP_IOC_ALLOC but not the same
+size. So the simple "switch(cmd) { case DMA_HEAP_IOC_ALLOC:" we had
+before won't work (as the cmd will be a different value).
 
-kernel/time/hrtimer.c:1945:SYSCALL_DEFINE2(nanosleep, struct ...
-kernel/time/hrtimer.c:1965:SYSCALL_DEFINE2(nanosleep_time32, struct ...
+Thus why I thought the cleanest approach would be to use the
+dma_heap_ioctl_cmds array to convert from whatever the user cmd is to
+the matching kernel cmd value.
 
-Gives you the always correct answer including the line number.
+Do you have an alternative suggestion that I'm overlooking?
 
-So there is really no value in keeping those file references and have them
-outdated once a function or a file moves. It's just matter of fact that
-nobody ever fixes them up when a function or a file moves. Why? Because
-they have no connection. The compiler does not complain and there are no
-tools which could ever validate them. So removing them is the right thing
-to do.
-
-Thanks,
-
-	tglx
+thanks
+-john
