@@ -2,73 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BFD9F118D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:56:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75DC0F1191
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:58:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731574AbfKFI42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:56:28 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:47806 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbfKFI41 (ORCPT
+        id S1731385AbfKFI61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:58:27 -0500
+Received: from retiisi.org.uk ([95.216.213.190]:55968 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726903AbfKFI60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:56:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=44GvMM++gfwG+DDWQL/KQ5WsRQ+No/syq2kMB/W9GJ4=; b=HGfs3DRyCNhEWmsj1R5Jv6sk0
-        WaGfT1Y2+97W8sSYa2mDoMzk0MOa9GaQzsO8rMPDiZBJxLi+xVvJkJZIyn009ddCqLr/mac5IQkhP
-        dlgaRCadah8JjUjDN+GIvzWWNi3moA52/OtcCq3Kc2hDLtRgqiTIygViShjEPknWZoUUHYZplwd+M
-        Oppk/8w45DTSFi5CFbrodyPVDyScKt7Ujop0kt1bOtHaVh3RyIVG7Lp87TBjro/tT1v9AsLT7TYy/
-        +30yrNLvoMtSpB31RKp8l9rkWchjQkKp4+hRk616PXzIxrul1uvpyyadfLtdcPH9dYUJAB0+10ZiJ
-        gU5nrvNcQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSH6v-0004iG-9P; Wed, 06 Nov 2019 08:56:17 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0968D300692;
-        Wed,  6 Nov 2019 09:55:12 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 067A629A4C2C4; Wed,  6 Nov 2019 09:56:16 +0100 (CET)
-Date:   Wed, 6 Nov 2019 09:56:15 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v6] perf: Sharing PMU counters across compatible events
-Message-ID: <20191106085615.GW4114@hirez.programming.kicks-ass.net>
-References: <20190919052314.2925604-1-songliubraving@fb.com>
- <FAD07921-FB10-4FDD-9A81-48300EE24F20@fb.com>
+        Wed, 6 Nov 2019 03:58:26 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 25693634C87;
+        Wed,  6 Nov 2019 10:57:10 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1iSH7l-0002VU-5D; Wed, 06 Nov 2019 10:57:09 +0200
+Date:   Wed, 6 Nov 2019 10:57:09 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2 12/20] media: ti-vpe: cal: Add DRA76x support
+Message-ID: <20191106085709.GB6253@valkosipuli.retiisi.org.uk>
+References: <20191104193140.31145-1-bparrot@ti.com>
+ <20191104193140.31145-13-bparrot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <FAD07921-FB10-4FDD-9A81-48300EE24F20@fb.com>
+In-Reply-To: <20191104193140.31145-13-bparrot@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 11:51:42PM +0000, Song Liu wrote:
+Hi Benoit,
 
-> > We allocate a separate perf_event for perf_event_dup->master. This needs
-> > extra attention, because perf_event_alloc() may sleep. To allocate the
-> > master event properly, a new pointer, tmp_master, is added to perf_event.
-> > tmp_master carries a separate perf_event into list_[add|del]_event().
-> > The master event has valid ->ctx and holds ctx->refcount.
-> 
-> If we do GFP_ATOMIC in perf_event_alloc(), maybe with an extra option, we
-> don't need the tmp_master hack. So we only allocate master when we will 
-> use it. 
+On Mon, Nov 04, 2019 at 01:31:32PM -0600, Benoit Parrot wrote:
 
-You can't, that's broken on -RT. ctx->lock is a raw_spinlock_t and
-allocator locks are spinlock_t.
+...
+
+> +static struct cal_data dra76x_cal_data = {
+
+const?
+
+> +	.csi2_phy_core = dra76x_cal_csi_phy,
+> +	.num_csi2_phy = ARRAY_SIZE(dra76x_cal_csi_phy),
+> +
+
+This newline seems extra.
+
+> +	.flags = 0,
+
+And flags will be zero in any case, as one more struct members are assigned
+to.
+
+> +};
+
+-- 
+Regards,
+
+Sakari Ailus
