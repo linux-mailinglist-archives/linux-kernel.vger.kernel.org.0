@@ -2,139 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B4CFF1BE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B5BF1BEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbfKFRAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:00:05 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:38646 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfKFRAE (ORCPT
+        id S1732372AbfKFRBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:01:07 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.218]:23671 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728448AbfKFRBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:00:04 -0500
-Received: by mail-qv1-f68.google.com with SMTP id q19so1705966qvs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=f9JEJF8J30F6bEwR2z5GiLYIZMgrUBUBcnr060ZsYj8=;
-        b=v8OF4tYV+Z4Y+PD1DD+clPtnE9GHzDE9nhpNXvcpbiNpPZMH10DGKybwHWLgqkXZCZ
-         5WblIwwioX25bpjjteUjcH4GsBo9ajH7NRL4Esz/BYoZakUyZR1r80o4fC3ReIcftbYt
-         UPPhZdUfBl/7BMPLANAqkHlfxjsV1JoJFSO++cfCZlJrtgvBamyPkCSypqdgOU0FtYMW
-         pWlbNeVB+D2lUjvm3Vmzdc65yhk7/ilTkN3lYC/MuXGuhlqWSBKTjj604mDCrLrzH3K0
-         VRN3e9Zztjefjq6PIO8F7g5QMUvS1PxVQHyOWWtaH7+BA2+UVfabhhdt4+WAza8b06ar
-         dHsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=f9JEJF8J30F6bEwR2z5GiLYIZMgrUBUBcnr060ZsYj8=;
-        b=gIiebKX72N6KiI8YcyUmmLtClQgmGbDJc2OpG9jzUFXmjbMeVDpv/3ang5vOyKS1rJ
-         VC7AUpZH6u8sOe9NYb0j/+UpKUZ6DcgMjpySYRO8QzHo7RfPgJpx9yPU9VtBf8Oo7x6k
-         s6sC6CVH/gOgx0GGgY/Z2Z8CnX/CmrTAXjKJFkRNar4fOnqoGjORyx1Shz+t3CgfL1AE
-         oeDwgFc+TpUFzhnQRFGy8YOksxbBqeQxEkTKiArkBFwB+XSN3mPJmBnWqcFSx5MM9lg5
-         VxHrOlwWjJCx5jtGOhNpPB9xEAjRlaeEdJa6sAYQnhfKsslOccZwPdw/JIbwbHhhI2QW
-         ab/g==
-X-Gm-Message-State: APjAAAV84P6hMLfL41sTQ8BKx/Pr19KSzE8twb2TC49dhhQD86l0852N
-        cf/22Lqm7RlrQe18Xy1xq+cx/w==
-X-Google-Smtp-Source: APXvYqygEkw/DoATTogrRZaPkWvx6Q9wG1JYz71C5o7WaVkUpWquO6E1tXlM4nd1QlhFUgNq9BNaDA==
-X-Received: by 2002:a0c:fde8:: with SMTP id m8mr3273122qvu.4.1573059602637;
-        Wed, 06 Nov 2019 09:00:02 -0800 (PST)
-Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.gmail.com with ESMTPSA id u7sm12650106qkm.127.2019.11.06.09.00.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Nov 2019 09:00:01 -0800 (PST)
-Subject: Re: [Patch v5 1/6] sched/pelt.c: Add support to track thermal
- pressure
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>, mingo@redhat.com,
-        peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-2-git-send-email-thara.gopinath@linaro.org>
- <6e2b2a11-834d-a0ee-a386-1edc624a8050@arm.com>
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5DC2FC10.3080102@linaro.org>
-Date:   Wed, 6 Nov 2019 12:00:00 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Wed, 6 Nov 2019 12:01:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573059664;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=S1CYtW/UKvourRGitE9tLFPWLqns2bi9wjMLuuoA2Yo=;
+        b=mEcudq/MpkHqKMLM8f7VDd7qiXz+9BS6YucYeqGAIX/GmnwmfvbzGFIpTvw6k10UqJ
+        ijB+lJxavw4rJiUxmZyls2KMRbBFOVjoyB+81xewH7OXxD64yISPNub+qEGIPsRJmNTl
+        V5ckT2I3eSxEpPx3KBnU1dLo/R3HWz33Ebea/MXtZVJQzFTefYVS9rR+rWAUAZz0L38o
+        3OkpD2yQasfh+yzrLEp7br5RS9voqoPhSLsvoTn2kR6ZqfSKK8nI09JWclrq0Mq3qrB3
+        HModIx9o49fEXGPd0r251dLRkWlO4iZW1OZVCql/arviiI+XY9UTK05VRKrn51MgcFA9
+        LQtg==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXs8PvtBNfIQ=="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 44.29.0 AUTH)
+        with ESMTPSA id e07688vA6H12hLp
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 6 Nov 2019 18:01:02 +0100 (CET)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH 0/7] drm/mcde: DSI video mode fixes
+Date:   Wed,  6 Nov 2019 17:58:28 +0100
+Message-Id: <20191106165835.2863-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <6e2b2a11-834d-a0ee-a386-1edc624a8050@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
-Thanks for the review.
-On 11/06/2019 07:50 AM, Dietmar Eggemann wrote:
-> On 05/11/2019 19:49, Thara Gopinath wrote:
->> Extrapolating on the exisiting framework to track rt/dl utilization using
-> 
-> s/exisiting/existing
-> 
->> pelt signals, add a similar mechanism to track thermal pressure. The
->> difference here from rt/dl utilization tracking is that, instead of
->> tracking time spent by a cpu running a rt/dl task through util_avg,
->> the average thermal pressure is tracked through load_avg. This is
->> because thermal pressure signal is weighted "delta" capacity
->> and is not binary(util_avg is binary). "delta capacity" here
->> means delta between the actual capacity of a cpu and the decreased
->> capacity a cpu due to a thermal event.
->> In order to track average thermal pressure, a new sched_avg variable
->> avg_thermal is introduced. Function update_thermal_load_avg can be called
->> to do the periodic bookeeping (accumulate, decay and average)
-> 
-> s/bookeeping/bookkeeping
-> 
->> of the thermal pressure.
->>
->> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
->> ---
->>  kernel/sched/pelt.c  | 13 +++++++++++++
->>  kernel/sched/pelt.h  |  7 +++++++
->>  kernel/sched/sched.h |  1 +
->>  3 files changed, 21 insertions(+)
->>
->> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
->> index a96db50..3821069 100644
->> --- a/kernel/sched/pelt.c
->> +++ b/kernel/sched/pelt.c
->> @@ -353,6 +353,19 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
->>  	return 0;
->>  }
-> 
-> Minor thing: There are function headers for rt_rq, dl_rq and irq. rt_rq
-> even explains that 'load_avg and runnable_load_avg are not supported and
-> meaningless.' Could you do something similar for thermal here? It's not
-> self-explanatory why we track load_avg, runnable_load_avg and util_avg
-> for thermal but only use load_avg.
+This is a collection of fixes to make DSI video mode work better
+using the MCDE driver. With these changes, MCDE appears to work
+properly for the video mode panel I have been testing with.
 
-Will put a function header and update the nits above.
-> 
->> +int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
->> +{
->> +	if (___update_load_sum(now, &rq->avg_thermal,
->> +			       capacity,
->> +			       capacity,
->> +			       capacity)) {
->> +		___update_load_avg(&rq->avg_thermal, 1, 1);
->> +		return 1;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
-> 
-> [...]
-> 
+Note: The patch that fixes the DSI link register setup for
+video mode [1] is still necessary; but we still need to finish it
+and actually make it initialize a panel correctly.
 
+This series contains only patches for the other parts in MCDE.
+I have tested it by disabling most of the register setup in the
+DSI driver, which makes it re-use the properly working DSI register
+set by the bootloader.
+
+[1]: https://lists.freedesktop.org/archives/dri-devel/2019-October/238175.html
+
+Stephan Gerhold (7):
+  drm/mcde: Provide vblank handling unconditionally
+  drm/mcde: Fix frame sync setup for video mode panels
+  drm/mcde: dsi: Make video mode errors more verbose
+  drm/mcde: dsi: Delay start of video stream generator
+  drm/mcde: dsi: Fix duplicated DSI connector
+  drm/mcde: dsi: Enable clocks in pre_enable() instead of mode_set()
+  drm/mcde: Handle pending vblank while disabling display
+
+ drivers/gpu/drm/mcde/mcde_display.c  |  57 +++++----
+ drivers/gpu/drm/mcde/mcde_drm.h      |   1 +
+ drivers/gpu/drm/mcde/mcde_drv.c      |  18 +--
+ drivers/gpu/drm/mcde/mcde_dsi.c      | 167 +++++++++++++--------------
+ drivers/gpu/drm/mcde/mcde_dsi_regs.h |  10 ++
+ 5 files changed, 126 insertions(+), 127 deletions(-)
 
 -- 
-Warm Regards
-Thara
+2.23.0
+
