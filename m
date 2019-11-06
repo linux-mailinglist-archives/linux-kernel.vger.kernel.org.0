@@ -2,101 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73AFBF14F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED4FF1503
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:25:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731496AbfKFLYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 06:24:10 -0500
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:45109 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725890AbfKFLYK (ORCPT
+        id S1731338AbfKFLZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 06:25:51 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51945 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfKFLZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 06:24:10 -0500
-Received: from [IPv6:2001:420:44c1:2577:dd0c:75f0:7ccb:ac5a]
- ([IPv6:2001:420:44c1:2577:dd0c:75f0:7ccb:ac5a])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id SJPviPSTwTzKrSJPziyAi1; Wed, 06 Nov 2019 12:24:08 +0100
-Subject: Re: [RFC PATCH 12/12] media: v4l2-core: convert to
- i2c_new_scanned_device
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191106095033.25182-1-wsa+renesas@sang-engineering.com>
- <20191106095033.25182-13-wsa+renesas@sang-engineering.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <4799e282-2f49-a0ae-8396-ee8f0fa26064@xs4all.nl>
-Date:   Wed, 6 Nov 2019 12:24:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 6 Nov 2019 06:25:51 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1iSJRW-0001jd-TJ; Wed, 06 Nov 2019 12:25:42 +0100
+Message-ID: <aaada00902c84b9f375555ee98946631b7de3280.camel@pengutronix.de>
+Subject: Re: [PATCH v4 3/3] reset: npcm: add NPCM reset controller driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Patrick Venture <venture@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Date:   Wed, 06 Nov 2019 12:25:42 +0100
+In-Reply-To: <CAP6Zq1iYKKkcEKt-WW3sDRJ1ktWgQug9SQc2AF473fWnooUxeQ@mail.gmail.com>
+References: <20191106095832.236766-1-tmaimon77@gmail.com>
+         <20191106095832.236766-4-tmaimon77@gmail.com>
+         <89250d485d05d4d671203ae615ebcf514b4d6705.camel@pengutronix.de>
+         <CAP6Zq1iYKKkcEKt-WW3sDRJ1ktWgQug9SQc2AF473fWnooUxeQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <20191106095033.25182-13-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfJ0z9ugTAiIGMFQtuOXFD4BDdp1quJn20dF04acRBYYGdUg5s05sQzKopywruJFux6tz0HVf/rsMOGdrzTN/7PfQ18+cglKE9HM/3EjAJm/wM5V/FRMC
- Pku36bLhs24G5YCZd6scmWbxmNEEfrHDNQVRurOzFKRgQVtzeYFuTKAe4Ie+6xFT+wquLICDb9Uq9RsZzp+BbDc62WVjMLxUJiTHpnNp0SY4wpBcwvioee6g
- wMGb3pb2F26CKQkcu0qXaUfp/fknLMOQvUGKHHdH6a8NulvyG1mLSgZrpXoxNqmTRYWaC8rMV1FdWDTDJ4xAkt4klhrWTEeBKENCUEr2v2tYjIEYsmY4jec2
- woG3FwVqC+0rg4YDIbwixpsloKp+isaxjn5ZXG297xMCVRpoJq6PS1MZFaE4ANVj/epgAWZIoRCUX0odkioWNJciMD7TuA==
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/19 10:50 AM, Wolfram Sang wrote:
-> Move from the deprecated i2c_new_probed_device() to the new
-> i2c_new_scanned_device(). Make use of the new ERRPTR if suitable.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Tomer,
 
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+On Wed, 2019-11-06 at 13:14 +0200, Tomer Maimon wrote:
+[...]
+> On Wed, 6 Nov 2019 at 12:39, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+[...]
+> > Is this npcm750 specific? If so, you could call it npcm750_usb_reset and
+> > only call it if the compatible matches.
+> 
+> No, we will need it also in future BMC's
 
-Regards,
+Ok, thank you for clarifying.
 
-	Hans
+> > 
+> > +{
+> > > +     struct device_node *np = pdev->dev.of_node;
+> > > +     u32 mdlr, iprst1, iprst2, iprst3;
+> > > +     struct regmap *gcr_regmap = NULL;
+> > > +     u32 ipsrst1_bits = 0;
+> > > +     u32 ipsrst2_bits = NPCM_IPSRST2_USB_HOST;
+> > > +     u32 ipsrst3_bits = 0;
+> > > +
+> > > +     if (of_device_is_compatible(np, "nuvoton,npcm750-reset")) {
+> > 
+> > Better use of_match_device(). Also see above, I think this check could
+> > be done in probe() already?
+> > 
+> I will use  of_match_device. because the nuvoton,npcm750-reset used only at
+> npcm_usb_reset and in the next BMC version we will need to get other
+> reset device I prefer to leave it the  npcm_usb_reset function, is it O.K?
 
-> ---
-> 
-> Build tested only. RFC, please comment and/or ack, but don't apply yet.
-> 
->  drivers/media/v4l2-core/v4l2-i2c.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-i2c.c b/drivers/media/v4l2-core/v4l2-i2c.c
-> index 5bf99e7c0c09..25ddda3b7ce6 100644
-> --- a/drivers/media/v4l2-core/v4l2-i2c.c
-> +++ b/drivers/media/v4l2-core/v4l2-i2c.c
-> @@ -74,10 +74,10 @@ struct v4l2_subdev
->  
->  	/* Create the i2c client */
->  	if (info->addr == 0 && probe_addrs)
-> -		client = i2c_new_probed_device(adapter, info, probe_addrs,
-> -					       NULL);
-> +		client = i2c_new_scanned_device(adapter, info, probe_addrs,
-> +					        NULL);
->  	else
-> -		client = i2c_new_device(adapter, info);
-> +		client = i2c_new_client_device(adapter, info);
->  
->  	/*
->  	 * Note: by loading the module first we are certain that c->driver
-> @@ -88,7 +88,7 @@ struct v4l2_subdev
->  	 * want to use the i2c device, so explicitly loading the module
->  	 * is the best alternative.
->  	 */
-> -	if (!client || !client->dev.driver)
-> +	if (IS_ERR(client) || !client->dev.driver)
->  		goto error;
->  
->  	/* Lock the module so we can safely get the v4l2_subdev pointer */
-> @@ -110,7 +110,7 @@ struct v4l2_subdev
->  	 * If we have a client but no subdev, then something went wrong and
->  	 * we must unregister the client.
->  	 */
-> -	if (client && !sd)
-> +	if (!IS_ERR(client) && !sd)
->  		i2c_unregister_device(client);
->  	return sd;
->  }
-> 
+Yes, that is fine. I would store the GCR lookup compatible string in a
+per-device const struct that is accessible through of_device_id->data.
+
+> > > +             gcr_regmap =
+> > syscon_regmap_lookup_by_compatible("nuvoton,npcm750-gcr");
+> > > +             if (IS_ERR(gcr_regmap)) {
+> > > +                     dev_err(&pdev->dev, "Failed to find
+> > nuvoton,npcm750-gcr\n");
+> > > +                     return PTR_ERR(gcr_regmap);
+> > > +             }
+> > > +     }
+> > > +     if (!gcr_regmap)
+> > > +             return -ENXIO;
+
+^ This code could then be the same for all platforms.
+
+regards
+Philipp
 
