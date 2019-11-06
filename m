@@ -2,126 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 796C3F1DD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:55:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B80F1DDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:58:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731829AbfKFSzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 13:55:09 -0500
-Received: from mout.web.de ([212.227.17.12]:43155 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727208AbfKFSzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 13:55:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1573066502;
-        bh=yNR2i8yBHWbuPKdgETmn2ieMsq+ALmq+WPWZ9/wiV1c=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=eZkTw2MjsZdYC7Lx4hz6sW3DZNhn2qOzsIFyBhXj7i1ITIG0UAjapwK2Xo42kvNpb
-         KIXxJJIl0NEmfLAz7KJcAvqwCusQVBzeqNoCdusBxqsBNqRa9uRqO18UFympjTooPP
-         StCS6BBt4ZRV9Wfqi0FeEoO2EgeOaalUAsvN/ulI=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.49.91.235]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MdLo7-1iA4G522gV-00IQqp; Wed, 06
- Nov 2019 19:55:02 +0100
-Subject: Re: s390/pkey: Use memdup_user() rather than duplicating its
- implementation
-To:     Joe Perches <joe@perches.com>, linux-s390@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Cc:     =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Ingo Franzki <ifranzki@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
- <6137855bb4170c438c7436cbdb7dfd21639a8855.camel@perches.com>
- <0f90b278-7b3e-6509-1633-301d16513c5d@web.de>
- <47c55ab899aafe10898e6581582363aa446b2091.camel@perches.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <cba4068c-0d63-fc0a-44bb-2664b690f126@web.de>
-Date:   Wed, 6 Nov 2019 19:55:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1731959AbfKFS6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 13:58:21 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41679 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbfKFS6U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 13:58:20 -0500
+Received: by mail-qk1-f194.google.com with SMTP id m125so25566412qkd.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 10:58:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+GdGOoe6ZnJmfTS6lHkMGHRdKkX8MaWmhPSEAWY022I=;
+        b=G2HRAq475cJ++2IYh0NsQ0VSr0xf7vZl55ggnBFreaqOOw/sAYcYMvD5gVKG3Xc/ls
+         QfCB8iRRXnn1Yx8rTVZkWPPFSx2TsfjM+tCebp30g15nDlij6OLWg9H7bzh+3bP2J2ZU
+         bASZeKbe1BdMjBYcbu8IRJeu22xeN7k2lWNhaxMCqjgiVD1sqZCmZWCQCU7ZUchEN+c5
+         Q3JUMevEzatt8AREz/ZUyOxThSSimQMi/V5FC+U/tnNZBqli3UIZXbVRvWT9pq5gimKD
+         /YqHk6GCCIYdjFPR0d0LlCChoxuE7cbG247BdTuF+eydgJAGGEOima5skhBELmud+7R6
+         LwEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+GdGOoe6ZnJmfTS6lHkMGHRdKkX8MaWmhPSEAWY022I=;
+        b=LUXZxh9VTANDSUZrc59dK3FMOk7lqVsHs50K3f/nstP2t0GtAZND/5wiAU/1gjNVKy
+         kTPs5T2y4mMqPNspxV6YNRKG2XlDOdURqUCf8irnac2QihCUdVi+Tuqq/aAbsCAcTsQ7
+         HHUiTk94CX9hzIAB/uRlmhTUzVuFTwlybn8DpqiGgqMdCTfxs+ZpLJo0grtjgWe0YhRB
+         ZfMfKFL35gO7pFjCl/wOzReNl4mTaGtMeYxG7bcE9Dzs8vs5sIiPhExre9eGFpgNDZYR
+         QCojsXpAgFNDuHZyx2uyCpO44T9KzCnXwEwrq7mX2pr7Zuwl48gFm/mI66eEwQy1rGCf
+         7Cng==
+X-Gm-Message-State: APjAAAUDDyc44XHINRu3zCF1gsLIuQg37ZTQRGwyZHbqSiKFmGwalmM1
+        UmzJIimugVxlCEGOg0Ef1zI=
+X-Google-Smtp-Source: APXvYqwrIz2GujMkEIjd0G7idIrJTkY1RRgehwmNsbBDe9RzbDUedseYivpfddUe6karojZxWqaIPA==
+X-Received: by 2002:a37:8b03:: with SMTP id n3mr3472545qkd.493.1573066697228;
+        Wed, 06 Nov 2019 10:58:17 -0800 (PST)
+Received: from quaco.ghostprotocols.net (187-26-100-98.3g.claro.net.br. [187.26.100.98])
+        by smtp.gmail.com with ESMTPSA id o28sm14981710qtk.4.2019.11.06.10.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 10:58:16 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 4D11740B1D; Wed,  6 Nov 2019 15:58:07 -0300 (-03)
+Date:   Wed, 6 Nov 2019 15:58:07 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     jsun4 <jiwei.sun@windriver.com>, acme@redhat.com,
+        arnaldo.melo@gmail.com, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, mpetlan@redhat.com,
+        namhyung@kernel.org, a.p.zijlstra@chello.nl,
+        adrian.hunter@intel.com, Richard.Danter@windriver.com,
+        jiwei.sun.bj@qq.com
+Subject: Re: [PATCH v5] perf record: Add support for limit perf output file
+ size
+Message-ID: <20191106185807.GC3636@kernel.org>
+References: <20191022080901.3841-1-jiwei.sun@windriver.com>
+ <20191101081300.GA2172@krava>
 MIME-Version: 1.0
-In-Reply-To: <47c55ab899aafe10898e6581582363aa446b2091.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:BjFNn5fqIyoVjEG+NH7voclOi4kz6Pj6vKE+XVVg/TN9u2QCR+g
- QW0xuV6dTodkZvp2oKDpKYoU4YtRPLXuqQFDk3wyNjqETk63FFlfSofwbUjAy/CLDFqF50f
- UlLTSTyUnZ63ddwwc3CvJnzjNR+NMZuB7NROEB0riPvzVVKa9A6vnEYSXYAghnxVS5a34N7
- u5xIf2zBmvPEWkwA+4b6A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xFgSMHn3x/U=:SWKE0t1hVHozTAw7gKZF68
- jzQ0emQku1B4HJx+cFlap6C07b+1aG/OjmCdQ91k4VqLOtNsTMIq3TjOj6O1O2EEq7oXCSRXH
- 324Sw5KKMsSZAXLyzkXewlKJrmthofX7cSGAX5j9MgFnIQ36kPa/m9Jpl6khCsNv6N++KLPdU
- /WntRWYF3332N+LFDuGVZJ+0F3m3XjnGWnlMoQ8wpwqCeL0QM9ITenNb/pQ/CiXIS+HguLRTi
- igKZWdKCuRkCPo4BecWC3S5TLnuLnulaDkYlmAfu4XJ/lHBqU+2wHyXEKRz74kZHBO+tYfc6s
- VUjcDtX0R+e8T4doqRilD6cINJoLtZWFcRbexcBU7a6e8piUnGK/RrN4TZlw+n5a1ODAT/8/T
- SrYpjaIgg5uHHMIsfSbvbwDif2HZc9kWxiZYBnXM1POZD5cUSjHljkGB6hhxxcwn9wmyM7Y7V
- intRD/wP7q2HCDiHXS1lPrYwAfQZoae0lBRBod8vdp2XhLyQtGcbQw3TbJ1X+LFs0BQCQs740
- puNzo16dP8NEso9drbCYNAPnZRc0+5D/v1VgWUmnaxz/Rb+4qC02fCsJX3MOQq2ZogOuPq6IP
- /4UQBEbhO1PFOsdH8aNJejfjMFhpvYETTpFSoWZZ4VLCImiC3stKzKyO0Ae8FoYHj1jGaXgft
- j45t++ulZEM4Y6+118oolQaYneEH8kjGYfC1PwVW7Yehz1q8e9ibh65wN8ktsqptmThb2ioCU
- MZJKLIEn7hWj51WE+0xXN6x4GxnmGXOGMwWCjBvlnEsRIJECw6ZkWb7NvrgL4idm01EcXsmld
- aAVLMKxLx19Ng710O1LPI16/r9XqhqdfM7Y4B/pE07zBOJGLoCLjKgZ7vkLASr783v5hru1JR
- AoJ6JiXndbJICVAl5NlGHscd5/KChZWsiQSFm/j2Ei+fnNJel2el02kisKqql1JRiXgPTwop5
- hdAJuIxVmZVCkAOtTTrqChA1Hzlqvpl1EHdqElun6aUONMsgnWbi4lK4ghBWcO2vq8G80L4lI
- ePtqMqjrABPb38+a3c3TYwzXV7N3ocaOLrPlAgj8K3rGxsLYMZqg4PRe44kCLxZ8fmVGvd2pG
- l13crS4X6xI8HbnoqSXxnhwdPWEJcOb3gngwpSk30Supn+fg48qfrwbrhixwLkDa51WCKhY+c
- yjKKuN7qe8X044uXoxXnnxw6pojJ7dMBxWzcWXN45ye2T6Y4ZRnRaIXyxF/ssVAddtIFCTFg3
- cQfM4pUPB3gH2CIuw6pdWQxp/uvI8i0Vy8s+LJqH8Qz2Vf17aLyEknZWA0qQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191101081300.GA2172@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> There is no bug here.
+Em Fri, Nov 01, 2019 at 09:13:00AM +0100, Jiri Olsa escreveu:
+> On Tue, Oct 22, 2019 at 04:09:01PM +0800, jsun4 wrote:
+> > The patch adds a new option to limit the output file size, then based
+> > on it, we can create a wrapper of the perf command that uses the option
+> > to avoid exhausting the disk space by the unconscious user.
+> > 
+> > In order to make the perf.data parsable, we just limit the sample data
+> > size, since the perf.data consists of many headers and sample data and
+> > other data, the actual size of the recorded file will bigger than the
+> > setting value.
+> > 
+> > Testing it:
+> > 
+> >  # ./perf record -a -g --max-size=10M
+> >  Couldn't synthesize bpf events.
+> >  [ perf record: perf size limit reached (10249 KB), stopping session ]
+> >  [ perf record: Woken up 32 times to write data ]
+> >  [ perf record: Captured and wrote 10.133 MB perf.data (71964 samples) ]
+> > 
+> >  # ls -lh perf.data
+> >  -rw------- 1 root root 11M Oct 22 14:32 perf.data
+> > 
+> >  # ./perf record -a -g --max-size=10K
+> >  [ perf record: perf size limit reached (10 KB), stopping session ]
+> >  Couldn't synthesize bpf events.
+> >  [ perf record: Woken up 0 times to write data ]
+> >  [ perf record: Captured and wrote 1.546 MB perf.data (69 samples) ]
+> > 
+> >  # ls -l perf.data
+> >  -rw------- 1 root root 1626952 Oct 22 14:36 perf.data
+> > 
+> > Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
+> > ---
+> > v5 changes:
+> >   - Change the output format like [ perf record: perf size limit XX ]
+> >   - change the killing perf way from "raise(SIGTERM)" to set "done == 1"
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Do you find duplicated source code questionable?
+Thanks, applied.
 
-Is this also an error item?
-
-Regards,
-Markus
+- Arnaldo
