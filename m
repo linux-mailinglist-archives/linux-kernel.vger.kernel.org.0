@@ -2,234 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E1D9F1370
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4574AF1364
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:09:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731684AbfKFKKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 05:10:01 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:29218 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731379AbfKFKJ5 (ORCPT
+        id S1728976AbfKFKJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 05:09:45 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33737 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbfKFKJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 05:09:57 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA6A7GcI003655;
-        Wed, 6 Nov 2019 11:09:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=FIClY/e3QBNSiXrpeU79siTfTUG1jsOVOKrMfL3AkC4=;
- b=IpWAjo40QpMibeGzZ54Bj1H3AIG115RFdC7woJSdPzo/uNlUdJ9eLeodBedT8O4/opPK
- bK7QIvR3bGFmkl93ezFWnG5RxW/eI9UWpUXmCL9loOt2KHJ+fW63qRB5iVM+EeJMKx1/
- GzekkeVgaHihxUI6S6TFQ0q/HFqJ1MtV4qsBb/p1Sz/kwmrRUkNQuInuq0a6mv/a2uAB
- bX3qUbXHFpo5iWYVb7BJFVT+CBs5Uu9WZ9MEbiRMcKGZ6W98IMSzxNMGXYF6P73/BXkN
- MU434r8BvyQhs/pLAGbqbiP5nswZ4/NAdingYzK8u1u3Qf88Hbo1oO/mv42z+GXmEbsh xQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2w1054vs44-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Nov 2019 11:09:45 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 905B0100038;
-        Wed,  6 Nov 2019 11:09:44 +0100 (CET)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7EB812AD337;
-        Wed,  6 Nov 2019 11:09:44 +0100 (CET)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 6 Nov 2019
- 11:09:44 +0100
-Received: from localhost (10.48.1.131) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 6 Nov 2019 11:09:44 +0100
-From:   Yann Gautier <yann.gautier@st.com>
-To:     <alexandre.torgue@st.com>
-CC:     <mcoquelin.stm32@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yann Gautier <yann.gautier@st.com>,
-        "Ludovic Barre" <ludovic.barre@st.com>
-Subject: [PATCH 3/4] ARM: dts: stm32: enable sdmmc2 node for stm32mp157c-ed1 board
-Date:   Wed, 6 Nov 2019 11:09:37 +0100
-Message-ID: <20191106100938.11368-4-yann.gautier@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191106100938.11368-1-yann.gautier@st.com>
-References: <20191106100938.11368-1-yann.gautier@st.com>
+        Wed, 6 Nov 2019 05:09:44 -0500
+Received: by mail-ed1-f65.google.com with SMTP id c4so18870654edl.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 02:09:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zgoCk5GioxlHgORY0p+mSpP1ABgkg+76ItCxty7i0rU=;
+        b=lVCDDiFC7mB1HeXSorW1F0J1BJR+7gloIpo97XnohjxEkXdBWIevIFY48uSfzV39rH
+         BS+GlH1E4U5nFkaJZhlP8XjSbdD+JY4EVMShNzwdroPHn2xtlllexaKs+O9+AfiE3NgV
+         bqZh4C42KDLQE8hkmpPXZ6IwEuOnxmujCtWr1UKfZdgQm0l8AhMno+a71vwOaNIr35kS
+         pDz2xvRsTvH3u/RO/7+54YoUZNdbRqCcx0wtmt/NvLzHcNimZ3+pehs4Y1z67IZZMAYR
+         Vj/De4s/rKn0bUY6/t5BmOTAXirT0M3Bw59efk4w/DVcxcQtRkxPZWWOoo9wcPAx2Jw/
+         I/ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zgoCk5GioxlHgORY0p+mSpP1ABgkg+76ItCxty7i0rU=;
+        b=Gy+UsJ7sAamCL5Zki1bC/TGpy8vd4l/s7fQ2WCxdOiszXZQM/lscamljetVIEkTRCH
+         0KoAIC5Q8WfR7KRvVk3YtthRsEQ1u6TnlIFjgx49t5Njwvlurm96jvw31d5fMTOnpRSE
+         r4kEsXcpAqnraBbEQUO2rzp6y0ZCS7k1tK6rwWUZvcFMh3SGH3aTT3l9bDgD9wx0JIM2
+         VMSpq900sfVT5ldtktHbQjHd/w7wgK8OLTbwZkniZo3XKLZ8yI1LlGNjmgJXW5pq3Amb
+         62heL1rwYi/9+ZSUJsFxQojl1mWFRMMFib9oMWLCzb9VGjJ2412FIiz2GrhNtmE2ZwOJ
+         EXKg==
+X-Gm-Message-State: APjAAAXySAZDp+UjbCecZNo4guKRf1MYQrJNYz15ebsT9PRApF7E1WAt
+        ZbllY8VZB8jZtnK/pTVvlL7UMuq7A/XFvA==
+X-Google-Smtp-Source: APXvYqwzbGV1+GbZkbMKyaQhnDBzTxqEoRgZNpxwrhzpuynMbLgHk10WYVX44cgvvfB2ZRK1mtMC1A==
+X-Received: by 2002:a05:6402:2042:: with SMTP id bc2mr1642226edb.167.1573034980828;
+        Wed, 06 Nov 2019 02:09:40 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id s8sm1137900edj.6.2019.11.06.02.09.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Nov 2019 02:09:39 -0800 (PST)
+Subject: Re: [PATCH] media: venus: remove invalid compat_ioctl32 handler
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Andy Gross <agross@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191106090731.3152446-1-arnd@arndb.de>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <09d4d99f-55cf-54a1-b51e-ad883446b75b@linaro.org>
+Date:   Wed, 6 Nov 2019 12:09:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.1.131]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-06_02:2019-11-06,2019-11-06 signatures=0
+In-Reply-To: <20191106090731.3152446-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On STM32MP157C-ED1, the eMMC is connected on instance 2 of SDMMC
-peripheral. The sdmmc2 node is then added in the board DT file, as well as
-the pins nodes in the pinctrl file.
+Hi Arnd,
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Yann Gautier <yann.gautier@st.com>
----
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 118 ++++++++++++++++++++++
- arch/arm/boot/dts/stm32mp157c-ed1.dts     |  16 +++
- 2 files changed, 134 insertions(+)
+Thanks for the catch!
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index 2904bc8c6a41..a907d93f8916 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -808,6 +808,124 @@
- 				};
- 			};
- 
-+			sdmmc2_b4_pins_a: sdmmc2-b4-0 {
-+				pins1 {
-+					pinmux = <STM32_PINMUX('B', 14, AF9)>, /* SDMMC2_D0 */
-+						 <STM32_PINMUX('B', 15, AF9)>, /* SDMMC2_D1 */
-+						 <STM32_PINMUX('B', 3, AF9)>, /* SDMMC2_D2 */
-+						 <STM32_PINMUX('B', 4, AF9)>, /* SDMMC2_D3 */
-+						 <STM32_PINMUX('G', 6, AF10)>; /* SDMMC2_CMD */
-+					slew-rate = <1>;
-+					drive-push-pull;
-+					bias-pull-up;
-+				};
-+				pins2 {
-+					pinmux = <STM32_PINMUX('E', 3, AF9)>; /* SDMMC2_CK */
-+					slew-rate = <2>;
-+					drive-push-pull;
-+					bias-pull-up;
-+				};
-+			};
-+
-+			sdmmc2_b4_od_pins_a: sdmmc2-b4-od-0 {
-+				pins1 {
-+					pinmux = <STM32_PINMUX('B', 14, AF9)>, /* SDMMC2_D0 */
-+						 <STM32_PINMUX('B', 15, AF9)>, /* SDMMC2_D1 */
-+						 <STM32_PINMUX('B', 3, AF9)>, /* SDMMC2_D2 */
-+						 <STM32_PINMUX('B', 4, AF9)>; /* SDMMC2_D3 */
-+					slew-rate = <1>;
-+					drive-push-pull;
-+					bias-pull-up;
-+				};
-+				pins2 {
-+					pinmux = <STM32_PINMUX('E', 3, AF9)>; /* SDMMC2_CK */
-+					slew-rate = <2>;
-+					drive-push-pull;
-+					bias-pull-up;
-+				};
-+				pins3 {
-+					pinmux = <STM32_PINMUX('G', 6, AF10)>; /* SDMMC2_CMD */
-+					slew-rate = <1>;
-+					drive-open-drain;
-+					bias-pull-up;
-+				};
-+			};
-+
-+			sdmmc2_b4_sleep_pins_a: sdmmc2-b4-sleep-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('B', 14, ANALOG)>, /* SDMMC2_D0 */
-+						 <STM32_PINMUX('B', 15, ANALOG)>, /* SDMMC2_D1 */
-+						 <STM32_PINMUX('B', 3, ANALOG)>, /* SDMMC2_D2 */
-+						 <STM32_PINMUX('B', 4, ANALOG)>, /* SDMMC2_D3 */
-+						 <STM32_PINMUX('E', 3, ANALOG)>, /* SDMMC2_CK */
-+						 <STM32_PINMUX('G', 6, ANALOG)>; /* SDMMC2_CMD */
-+				};
-+			};
-+
-+			sdmmc2_b4_pins_b: sdmmc2-b4-1 {
-+				pins1 {
-+					pinmux = <STM32_PINMUX('B', 14, AF9)>, /* SDMMC2_D0 */
-+						 <STM32_PINMUX('B', 15, AF9)>, /* SDMMC2_D1 */
-+						 <STM32_PINMUX('B', 3, AF9)>, /* SDMMC2_D2 */
-+						 <STM32_PINMUX('B', 4, AF9)>, /* SDMMC2_D3 */
-+						 <STM32_PINMUX('G', 6, AF10)>; /* SDMMC2_CMD */
-+					slew-rate = <1>;
-+					drive-push-pull;
-+					bias-disable;
-+				};
-+				pins2 {
-+					pinmux = <STM32_PINMUX('E', 3, AF9)>; /* SDMMC2_CK */
-+					slew-rate = <2>;
-+					drive-push-pull;
-+					bias-disable;
-+				};
-+			};
-+
-+			sdmmc2_b4_od_pins_b: sdmmc2-b4-od-1 {
-+				pins1 {
-+					pinmux = <STM32_PINMUX('B', 14, AF9)>, /* SDMMC2_D0 */
-+						 <STM32_PINMUX('B', 15, AF9)>, /* SDMMC2_D1 */
-+						 <STM32_PINMUX('B', 3, AF9)>, /* SDMMC2_D2 */
-+						 <STM32_PINMUX('B', 4, AF9)>; /* SDMMC2_D3 */
-+					slew-rate = <1>;
-+					drive-push-pull;
-+					bias-disable;
-+				};
-+				pins2 {
-+					pinmux = <STM32_PINMUX('E', 3, AF9)>; /* SDMMC2_CK */
-+					slew-rate = <2>;
-+					drive-push-pull;
-+					bias-disable;
-+				};
-+				pins3 {
-+					pinmux = <STM32_PINMUX('G', 6, AF10)>; /* SDMMC2_CMD */
-+					slew-rate = <1>;
-+					drive-open-drain;
-+					bias-disable;
-+				};
-+			};
-+
-+			sdmmc2_d47_pins_a: sdmmc2-d47-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('A', 8, AF9)>, /* SDMMC2_D4 */
-+						 <STM32_PINMUX('A', 9, AF10)>, /* SDMMC2_D5 */
-+						 <STM32_PINMUX('E', 5, AF9)>, /* SDMMC2_D6 */
-+						 <STM32_PINMUX('D', 3, AF9)>; /* SDMMC2_D7 */
-+					slew-rate = <1>;
-+					drive-push-pull;
-+					bias-pull-up;
-+				};
-+			};
-+
-+			sdmmc2_d47_sleep_pins_a: sdmmc2-d47-sleep-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('A', 8, ANALOG)>, /* SDMMC2_D4 */
-+						 <STM32_PINMUX('A', 9, ANALOG)>, /* SDMMC2_D5 */
-+						 <STM32_PINMUX('E', 5, ANALOG)>, /* SDMMC2_D6 */
-+						 <STM32_PINMUX('D', 3, ANALOG)>; /* SDMMC2_D7 */
-+				};
-+			};
-+
- 			spdifrx_pins_a: spdifrx-0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('G', 12, AF8)>; /* SPDIF_IN1 */
-diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-index 1d426ea8bdaf..b40a6b9a7aa6 100644
---- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-@@ -302,6 +302,22 @@
- 	status = "okay";
- };
- 
-+&sdmmc2 {
-+	pinctrl-names = "default", "opendrain", "sleep";
-+	pinctrl-0 = <&sdmmc2_b4_pins_a &sdmmc2_d47_pins_a>;
-+	pinctrl-1 = <&sdmmc2_b4_od_pins_a &sdmmc2_d47_pins_a>;
-+	pinctrl-2 = <&sdmmc2_b4_sleep_pins_a &sdmmc2_d47_sleep_pins_a>;
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+	st,neg-edge;
-+	bus-width = <8>;
-+	vmmc-supply = <&v3v3>;
-+	vqmmc-supply = <&v3v3>;
-+	mmc-ddr-3_3v;
-+	status = "okay";
-+};
-+
- &timers6 {
- 	status = "okay";
- 	/* spare dmas for other usage */
+On 11/6/19 11:06 AM, Arnd Bergmann wrote:
+> v4l2_compat_ioctl32() is the function that calls into
+> v4l2_file_operations->compat_ioctl32(), so setting that back to the same
+> function leads to a trivial endless loop, followed by a kernel
+> stack overrun.
+> 
+> Remove the incorrect assignment.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 7472c1c69138 ("[media] media: venus: vdec: add video decoder files")
+> Fixes: aaaa93eda64b ("[media] media: venus: venc: add video encoder files")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+
+> ---
+>  drivers/media/platform/qcom/venus/vdec.c | 3 ---
+>  drivers/media/platform/qcom/venus/venc.c | 3 ---
+>  2 files changed, 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 7f4660555ddb..59ae7a1e63bc 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -1412,9 +1412,6 @@ static const struct v4l2_file_operations vdec_fops = {
+>  	.unlocked_ioctl = video_ioctl2,
+>  	.poll = v4l2_m2m_fop_poll,
+>  	.mmap = v4l2_m2m_fop_mmap,
+> -#ifdef CONFIG_COMPAT
+> -	.compat_ioctl32 = v4l2_compat_ioctl32,
+> -#endif
+>  };
+>  
+>  static int vdec_probe(struct platform_device *pdev)
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index 1b7fb2d5887c..30028ceb548b 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -1235,9 +1235,6 @@ static const struct v4l2_file_operations venc_fops = {
+>  	.unlocked_ioctl = video_ioctl2,
+>  	.poll = v4l2_m2m_fop_poll,
+>  	.mmap = v4l2_m2m_fop_mmap,
+> -#ifdef CONFIG_COMPAT
+> -	.compat_ioctl32 = v4l2_compat_ioctl32,
+> -#endif
+>  };
+>  
+>  static int venc_probe(struct platform_device *pdev)
+> 
+
 -- 
-2.17.1
-
+regards,
+Stan
