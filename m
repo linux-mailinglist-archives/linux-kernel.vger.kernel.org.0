@@ -2,103 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC27F2248
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 00:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 399B5F225D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 00:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbfKFXGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 18:06:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59250 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727813AbfKFXGG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 18:06:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573081565;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oz3HskjRqxhlPDCGk63+nwo4iuGFQJFiMO6YAWOvkkM=;
-        b=GYQve1t6NGiezcLfohkRAMCaoAaqwzmz9FU32gaR+FtnWxOibxDHk26S7x2BCq5hLjPEpe
-        ITyuB7j3QPdVsXPyVL9t9iv6mWb/Mghhg6R5pKkGyH0XLWW1+v6vo3g0Mc40zOzwbYI+n8
-        Lh/w+qyKaOi+ME4hEAkHSAyquYfHi5w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-139-EYyaIi7oOz6ejyNGGCbU1Q-1; Wed, 06 Nov 2019 18:06:02 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1732938AbfKFXKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 18:10:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727228AbfKFXKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 18:10:07 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 52FB4800C73;
-        Wed,  6 Nov 2019 23:06:01 +0000 (UTC)
-Received: from treble (ovpn-122-162.rdu2.redhat.com [10.10.122.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A3ACB60BE0;
-        Wed,  6 Nov 2019 23:05:57 +0000 (UTC)
-Date:   Wed, 6 Nov 2019 17:05:53 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH] x86/stacktrace: update kconfig help text for reliable
- unwinders
-Message-ID: <20191106230553.wnyltmkzwk5dph4l@treble>
-References: <20191106224344.8373-1-joe.lawrence@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id F2CD820869;
+        Wed,  6 Nov 2019 23:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573081806;
+        bh=phPqrB8jdcQhMXpI7PNcLtByNjzRwAfdzJcKYVWr13E=;
+        h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+        b=Ujuxe6X1kCsRkxtdQYgSWiR0mYrSc9nQP1ygJUr45CCctRkVEX2Jf9Wnp4kkOvTVm
+         GBOqu/HNFeA6cJMT7QS6PMnl2OKfLo3pUAUZ0MAZ1yEG1+KPhxkjhqPb0cTze2UIjW
+         qce2kBf6A/GX0fvsfQmdvN+ylBBREGi5gRasWjRE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191106224344.8373-1-joe.lawrence@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: EYyaIi7oOz6ejyNGGCbU1Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <1565984527-5272-8-git-send-email-skomatineni@nvidia.com>
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com> <1565984527-5272-8-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH v9 07/22] clk: Add API to get index of the clock parent
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
+        jonathanh@nvidia.com, linus.walleij@linaro.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
+        tglx@linutronix.de, thierry.reding@gmail.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        skomatineni@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Wed, 06 Nov 2019 15:10:05 -0800
+Message-Id: <20191106231005.F2CD820869@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 05:43:44PM -0500, Joe Lawrence wrote:
-> commit 6415b38bae26 ("x86/stacktrace: Enable HAVE_RELIABLE_STACKTRACE
-> for the ORC unwinder") marked the ORC unwinder as a "reliable" unwinder.
-> Update the help text to reflect that change: the frame pointer unwinder
-> is no longer the only one that provides HAVE_RELIABLE_STACKTRACE.
+Quoting Sowjanya Komatineni (2019-08-16 12:41:52)
+> This patch adds an API clk_hw_get_parent_index to get index of the
+> clock parent to use during the clock restore operations on system
+> resume.
+
+Is there a reason we can't save the clk hw index at suspend time by
+reading the hardware to understand the current parent? The parent index
+typically doesn't matter unless we're trying to communicate something
+from the framework to the provider driver. Put another way, I would
+think the provider driver can figure out the index itself without having
+to go through the framework to do so.
+
 >=20
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> ---
->  arch/x86/Kconfig.debug | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-> index bf9cd83de777..69cdf0558c13 100644
-> --- a/arch/x86/Kconfig.debug
-> +++ b/arch/x86/Kconfig.debug
-> @@ -316,10 +316,6 @@ config UNWINDER_FRAME_POINTER
->  =09  unwinder, but the kernel text size will grow by ~3% and the kernel'=
-s
->  =09  overall performance will degrade by roughly 5-10%.
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index cbcc333aec84..12ad0e9b8591 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1645,6 +1645,23 @@ static int clk_fetch_parent_index(struct clk_core =
+*core,
+>         return i;
+>  }
 > =20
-> -=09  This option is recommended if you want to use the livepatch
-> -=09  consistency model, as this is currently the only way to get a
-> -=09  reliable stack trace (CONFIG_HAVE_RELIABLE_STACKTRACE).
-> -
->  config UNWINDER_GUESS
->  =09bool "Guess unwinder"
->  =09depends on EXPERT
-> @@ -333,6 +329,10 @@ config UNWINDER_GUESS
->  =09  useful in many cases.  Unlike the other unwinders, it has no runtim=
-e
->  =09  overhead.
-> =20
-> +=09  This option is not recommended if you want to use the livepatch
-> +=09  consistency model, as this unwinder cannot guarantee reliable stack
-> +=09  traces.
+> +/**
+> + * clk_hw_get_parent_index - return the index of parent clock
+> + * @hw: clk_hw associated with the clk being consumed
+> + * @parent_hw: clk_hw associated with the parent of clk
+> + *
+> + * Fetches and returns the index of parent clock.
+> + * If hw or parent_hw is NULL, returns -EINVAL.
+> + */
+> +int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw)
+> +{
+> +       if (!hw || !parent_hw)
+> +               return -EINVAL;
+
+The caller should be ashamed if they call this with NULL arguments.
+I'd prefer we skip this check and we get an oops.
+
 > +
-
-I'm not sure whether this last hunk is helpful.  At the very least the
-wording of "not recommended" might be confusing because it's not even
-possible to combine UNWINDER_GUESS+HAVE_RELIABLE_STACKTRACE.
-
-arch/x86/Kconfig:       select HAVE_RELIABLE_STACKTRACE         if X86_64 &=
-& (UNWINDER_FRAME_POINTER || UNWINDER_ORC) && STACK_VALIDATION
-
---=20
-Josh
-
+> +       return clk_fetch_parent_index(hw->core, parent_hw->core);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
+> +
+>  /*
+>   * Update the orphan status of @core and all its children.
+>   */
