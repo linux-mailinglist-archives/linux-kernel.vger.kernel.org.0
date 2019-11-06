@@ -2,86 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07CEAF0D58
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19453F0D63
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:53:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731125AbfKFDvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:51:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727266AbfKFDvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:51:16 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731151AbfKFDxq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:53:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39303 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729784AbfKFDxp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 22:53:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573012424;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EaTbE+HmGj8bDfQK0HMuk+gfERcklzcbJD+zUHMoips=;
+        b=LhNflBN+PrTgQwEkL5Fd+8csaEcGKVVgVJyT/E2WhSNoe/4Xq9E9s0/bHJ6MQjkG+VMp97
+        xhmbxHnS59znS1kq0xxCIK+xeZeuSWAZ94liz7ydU08yqOlngCjacqI2zd66n+y6YwINos
+        GSALM/6JGyHZTvtK99s2/CmavTMxiF0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-41-s3GVRo2xO9Kh53Br-bjUiw-1; Tue, 05 Nov 2019 22:53:41 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09B1B2087E;
-        Wed,  6 Nov 2019 03:51:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573012275;
-        bh=Ch2qZ4hrZWMCG0BfzRa/bcgEyOD2CW9P0h6uzzt78BU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lkZ5AKd0if3lcumlQA2ZsO0HM8ctchvN67RfVm0fze0k1k06BCszdsXCClXwDJVr6
-         v/zCv+t/X+B7YQirkazLBgZYED9mQ6MFrjuFcGhJ+xMOA9U5ssrUJM2iKhrsY+p6hW
-         dVuGaKOkDg02iDxaFzOvE0IXkiSWGJzEG3VgB4qM=
-Date:   Tue, 5 Nov 2019 19:51:14 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Thomas =?ISO-8859-1?Q?Hellstr=F6m?= (VMware) 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        torvalds@linux-foundation.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>
-Subject: Re: [PATCH v6 4/8] mm: Add write-protect and clean utilities for
- address space ranges
-Message-Id: <20191105195114.f75be5e76763da5546121b41@linux-foundation.org>
-In-Reply-To: <20191014132204.7721-5-thomas_os@shipmail.org>
-References: <20191014132204.7721-1-thomas_os@shipmail.org>
-        <20191014132204.7721-5-thomas_os@shipmail.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE2061005500;
+        Wed,  6 Nov 2019 03:53:36 +0000 (UTC)
+Received: from [10.72.12.193] (ovpn-12-193.pek2.redhat.com [10.72.12.193])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 16874600C6;
+        Wed,  6 Nov 2019 03:51:35 +0000 (UTC)
+Subject: Re: [PATCH V8 4/6] mdev: introduce virtio device and its device ops
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+References: <20191105093240.5135-1-jasowang@redhat.com>
+ <20191105093240.5135-5-jasowang@redhat.com> <20191105104710.16d0f629@x1.home>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <0de9abaf-d740-f4c7-50ff-3bd68a50ab40@redhat.com>
+Date:   Wed, 6 Nov 2019 11:51:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191105104710.16d0f629@x1.home>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: s3GVRo2xO9Kh53Br-bjUiw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Oct 2019 15:22:00 +0200 Thomas Hellstr=F6m (VMware) <thomas_os@s=
-hipmail.org> wrote:
 
-> Add two utilities to 1) write-protect and 2) clean all ptes pointing into
-> a range of an address space.
-> The utilities are intended to aid in tracking dirty pages (either
-> driver-allocated system memory or pci device memory).
-> The write-protect utility should be used in conjunction with
-> page_mkwrite() and pfn_mkwrite() to trigger write page-faults on page
-> accesses. Typically one would want to use this on sparse accesses into
-> large memory regions. The clean utility should be used to utilize
-> hardware dirtying functionality and avoid the overhead of page-faults,
-> typically on large accesses into small memory regions.
+On 2019/11/6 =E4=B8=8A=E5=8D=881:47, Alex Williamson wrote:
+>> +#define VIRTIO_MDEV_DEVICE_API_STRING=09=09"virtio-mdev"
+>> +#define VIRTIO_MDEV_F_VERSION_1 0x1
+> This entire concept of VIRTIO_MDEV_F_VERSION_1 is gone now, right?
+> Let's remove it here and below.  Thanks,
+>
+> Alex
+>
 
-Not fully comfortable reviewing this one.
+Yes, will fix.
 
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -736,4 +736,7 @@ config ARCH_HAS_PTE_SPECIAL
->  config ARCH_HAS_HUGEPD
->  	bool
-> =20
-> +config MAPPING_DIRTY_HELPERS
-> +        bool
-> +
+Thanks
 
-But given this, it's your problem ;)  So
-
-Acked-by: Andrew Morton <akpm@linux-foundation.org>
-
-Yes, please proceed with merging [1-4] via a drm tree.
