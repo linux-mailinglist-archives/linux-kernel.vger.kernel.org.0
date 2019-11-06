@@ -2,190 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B08AF133E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:04:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B51CDF1351
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:07:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfKFKEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 05:04:25 -0500
-Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:50709
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728364AbfKFKEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 05:04:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lsCQsNsGBDI6GUTJI3f2dLO+Upqbl2Rqbr4GS5ujHvAAD3I+0Cb1VtOMSpFJyWu+78cLdwdOrGTXmT1Ej8cmEmhNMVZqCD/y935JqC0C4/VJD82JfDXuBi3z8zoJxB06vc+1Vnf+HfuU3HedLoXnc0Tw1csV2NBys1zHbvNn4C6eTOLTIgD9MYGcXtFoDfKzS5Iqp7UPDvZNLu57AQ2iagXFqLCMgcvkvNwQ3rQXwKIFZfEcyky7wnPt6E4VtYLQsFw3+E4ejTH8dWMqTL7V5yMrEHP2MNmABl6wk3QYnlbvnUx97PdgPXmpy7MRifkvaWWpwfZaBru649yJiKI8Bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nAoT+wxhSRm0Hgk3dwWx3cTQuy4Xk+IB7waESxySWm8=;
- b=hK/d4EnDU/M6+LM39OAKPwwl3IYGQjOE1l/jeX25c/5cEhoCispwZaF679JXt4/K11RLN1Cze+mKP8gS9uJO01D/9q+wtIqaB4fVUGfNI41BPx3IK39iFUh+Ae/7yqxPxUY68NAzdueUSwxrGZcc4KxRKQ25FkPy8dcPeB3VSg1xy6rzZ6/FMoNdAtsybdZvY9Ts8FHelGmhkTNvddOtMypjbUgMwyiVSMX1LbV+2ImdDRKugxyei88cBxzZ1NvDTsytqKTPK7sx+4AhIBDaCkQ3NzoyURghPSEt4IWpUHGVkD38tnSjZNwhCCkchZWO/Y/dSkBylU0Jb+DAmlmuQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nAoT+wxhSRm0Hgk3dwWx3cTQuy4Xk+IB7waESxySWm8=;
- b=rjANmQlBRavWR5AppaOxfd0vDQOO1gNOyd0AwHeIg3rU+lhPkWF8jx37x9eVP8+/NnVumAaZrvpA613XVYkrGnFGVLGr1ejAI266IwpcXfIAXLnnNDBGNcpeL5iPVck4NXv5AIKckXX3/y4/pxsNHw4y6z+wi+cLLz+TeR/J4i4=
-Received: from AM5PR04MB3299.eurprd04.prod.outlook.com (10.173.255.158) by
- AM5PR04MB3073.eurprd04.prod.outlook.com (10.167.171.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Wed, 6 Nov 2019 10:03:40 +0000
-Received: from AM5PR04MB3299.eurprd04.prod.outlook.com
- ([fe80::8ce8:9eaf:3916:4bc9]) by AM5PR04MB3299.eurprd04.prod.outlook.com
- ([fe80::8ce8:9eaf:3916:4bc9%6]) with mapi id 15.20.2408.025; Wed, 6 Nov 2019
- 10:03:40 +0000
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Andrew Murray <andrew.murray@arm.com>
-CC:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.co" <lorenzo.pieralisi@arm.co>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the doorbell
- way
-Thread-Topic: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the
- doorbell way
-Thread-Index: AQHVWN1daYnbY17h2k2o9Z3qkBZ1lKcIw+QAgACoZvCABZeogIACm0MAgGy7coCAAASG0A==
-Date:   Wed, 6 Nov 2019 10:03:40 +0000
-Message-ID: <AM5PR04MB32992FD517575C26685845ADF5790@AM5PR04MB3299.eurprd04.prod.outlook.com>
-References: <20190822112242.16309-1-xiaowei.bao@nxp.com>
- <20190822112242.16309-7-xiaowei.bao@nxp.com>
- <20190823135816.GH14582@e119886-lin.cambridge.arm.com>
- <AM5PR04MB3299E50BA5D7579D41B8B4F9F5A70@AM5PR04MB3299.eurprd04.prod.outlook.com>
- <20190827132504.GL14582@e119886-lin.cambridge.arm.com>
- <e64a484c-7cf5-5f65-400c-47128ab45e52@ti.com>
- <DM6PR12MB40107A9B97A8DAF32A4C651EDA790@DM6PR12MB4010.namprd12.prod.outlook.com>
-In-Reply-To: <DM6PR12MB40107A9B97A8DAF32A4C651EDA790@DM6PR12MB4010.namprd12.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xiaowei.bao@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: aee5ad05-330d-4eeb-41d1-08d762a0997b
-x-ms-traffictypediagnostic: AM5PR04MB3073:|AM5PR04MB3073:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM5PR04MB3073A7FF8D06159573C955D6F5790@AM5PR04MB3073.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 02135EB356
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(396003)(376002)(39860400002)(346002)(189003)(199004)(13464003)(6116002)(71200400001)(76176011)(71190400001)(7416002)(102836004)(33656002)(86362001)(486006)(446003)(11346002)(6436002)(74316002)(305945005)(53546011)(66066001)(14454004)(7736002)(8676002)(478600001)(229853002)(316002)(476003)(44832011)(3846002)(81156014)(81166006)(110136005)(99286004)(54906003)(25786009)(6506007)(9686003)(55016002)(6246003)(7696005)(186003)(26005)(66556008)(66946007)(52536014)(2906002)(66476007)(76116006)(5660300002)(64756008)(66446008)(8936002)(256004)(14444005)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3073;H:AM5PR04MB3299.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 4jqkvF67ynA/OOXjI8fdrmnVdmKscUlVcHmGNDFUMQntE3lUhHXpNTF/RM4QCrrw+3LFsO0HS11wtD9COL8K1TVaviua0YfdgvKQHmYDE8qeYj4f+fn02nYkV160MAYbx9D9px9HbgnNL3TJ6yLZKPdo8qYAjTOeyhpAW2Apj4uLDmKRVSNRJWKsHvR3xdN2XOYU+cWMPgaAom80LBpiQka6hjf+yDcM+dW0mjcubzCyCkz8cQZ7emsxrIfKZeXyE35SGF4LBiGgVIkEs8AWz+/9cxcl5oewHsZF/CHml2F4MA+NM8fhqEYyaparkcFt3X+9WI4VwFjRwLNjDuFR8euyG/RF2WDFphatgkhW7vgAZh1+J9KF7SPoGowv/X31eSruFE2ZN58uoA+SpFm85/DRpn9PPD5iWVU5j8sMlKu94WuKaOCAi1VaR4tERr40
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728787AbfKFKHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 05:07:21 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34164 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729280AbfKFKHS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 05:07:18 -0500
+Received: by mail-pg1-f195.google.com with SMTP id e4so16819878pgs.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 02:07:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=X05zBYkPaLX+0zINsXEFrTIGhG2lc88Xq9e+QvToQFs=;
+        b=OEt1lNHNq2Y25+Ru30BQlIgL1EGLF4SVCDHXPTBUUEH8XXrzP4rFCGQIIeA4HEfSu9
+         RWld6zC55fYxRNKD4idGhvwNxieHUE/RWLmQcF3jnD/Tx3jT04Q52E9fs2zOYKPzkA9g
+         abeKK24Z/udzmQEdJYQ6ClRdjgr/ngNM2VwBg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=X05zBYkPaLX+0zINsXEFrTIGhG2lc88Xq9e+QvToQFs=;
+        b=Rv78rFJQvEiBdjwPSiqU1tm/Kujhg+24JQo2He/+DF3WOm9P8xQsVEhzLjjkYkGEln
+         2H8/Cx6kBuxj9TZC83Bcqsl65+/7o8pxGQoSbo+ZAcxCP+wVDh7aa7iBQWjPhaYy3M9S
+         NkcoJ/3XA5MmNEzom3f8IXkJqBAQ3PSD4GYz4fuFLuX2ajIzbUbQ9slXHEJbnFlFSf7h
+         K2DvR9wA6Me3Hx0UvOYi15xD02OKMUVU7L1VdofO93df+lmA20Uk6XwbxzulCoye15Eu
+         3vo29x8FiPcxehbyRr8utoLC71VwIjtAvDTi0RN25F9zgtR1efNJ6pUVkVKp7cxFolUF
+         Cedg==
+X-Gm-Message-State: APjAAAWd/tUG7vt8moXer+NashBHezBprdkDcIW4grNVsLV6mFJGsB68
+        +qWsruRtzUImAZOCWkYArnh+cQ==
+X-Google-Smtp-Source: APXvYqwrv7trCkuRJxdZlf4pExinvZ0+o6T0QzG7Jw/AdQ0WLySdLfsGsUbtgGqNbwJwE2iJbMk2xQ==
+X-Received: by 2002:a63:5d04:: with SMTP id r4mr1924765pgb.22.1573034836267;
+        Wed, 06 Nov 2019 02:07:16 -0800 (PST)
+Received: from chromium.org ([122.173.128.252])
+        by smtp.gmail.com with ESMTPSA id k9sm22977594pfk.72.2019.11.06.02.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 02:07:15 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Wed, 6 Nov 2019 15:36:55 +0530
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        Florent Revest <revest@chromium.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v13 4/7] landlock: Add ptrace LSM hooks
+Message-ID: <20191106100655.GA18815@chromium.org>
+References: <20191104172146.30797-1-mic@digikod.net>
+ <20191104172146.30797-5-mic@digikod.net>
+ <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
+ <23acf523-dbc4-855b-ca49-2bbfa5e7117e@digikod.net>
+ <20191105193446.s4pswwwhrmgk6hcx@ast-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aee5ad05-330d-4eeb-41d1-08d762a0997b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 10:03:40.3267
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: e8PdAgcgpGHuAcNbw2s5vQYR6O54/UiNlzTw66AioMcpllYkVl/usp88sgfM6V8G8C6dW2QeyTY5CHFfqTN7PQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR04MB3073
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191105193446.s4pswwwhrmgk6hcx@ast-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR3VzdGF2byBQaW1lbnRl
-bCA8R3VzdGF2by5QaW1lbnRlbEBzeW5vcHN5cy5jb20+DQo+IFNlbnQ6IDIwMTnlubQxMeaciDbm
-l6UgMTc6NDANCj4gVG86IEtpc2hvbiBWaWpheSBBYnJhaGFtIEkgPGtpc2hvbkB0aS5jb20+OyBB
-bmRyZXcgTXVycmF5DQo+IDxhbmRyZXcubXVycmF5QGFybS5jb20+OyBYaWFvd2VpIEJhbyA8eGlh
-b3dlaS5iYW9AbnhwLmNvbT47DQo+IGd1c3Rhdm8ucGltZW50ZWxAc3lub3BzeXMuY29tDQo+IENj
-OiBiaGVsZ2Fhc0Bnb29nbGUuY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBh
-cm0uY29tOw0KPiBzaGF3bmd1b0BrZXJuZWwub3JnOyBMZW8gTGkgPGxlb3lhbmcubGlAbnhwLmNv
-bT47DQo+IGxvcmVuem8ucGllcmFsaXNpQGFybS5jbzsgYXJuZEBhcm5kYi5kZTsgZ3JlZ2toQGxp
-bnV4Zm91bmRhdGlvbi5vcmc7IE0uaC4NCj4gTGlhbiA8bWluZ2h1YW4ubGlhbkBueHAuY29tPjsg
-TWluZ2thaSBIdSA8bWluZ2thaS5odUBueHAuY29tPjsgUm95DQo+IFphbmcgPHJveS56YW5nQG54
-cC5jb20+OyBqaW5nb29oYW4xQGdtYWlsLmNvbTsNCj4gbGludXgtcGNpQHZnZXIua2VybmVsLm9y
-ZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXhwcGMt
-ZGV2QGxpc3RzLm96bGFicy5vcmcNCj4gU3ViamVjdDogUkU6IFtQQVRDSCB2MiAwNy8xMF0gUENJ
-OiBsYXllcnNjYXBlOiBNb2RpZnkgdGhlIE1TSVggdG8gdGhlDQo+IGRvb3JiZWxsIHdheQ0KPiAN
-Cj4gT24gVGh1LCBBdWcgMjksIDIwMTkgYXQgNjoxMzoxOCwgS2lzaG9uIFZpamF5IEFicmFoYW0g
-SSA8a2lzaG9uQHRpLmNvbT4NCj4gd3JvdGU6DQo+IA0KPiBIaSwgdGhpcyBlbWFpbCBzbGlwIGF3
-YXkgZnJvbSBteSBhdHRlbnRpb24uLi4NCj4gDQo+ID4gR3VzdGF2bywNCj4gPg0KPiA+IE9uIDI3
-LzA4LzE5IDY6NTUgUE0sIEFuZHJldyBNdXJyYXkgd3JvdGU6DQo+ID4gPiBPbiBTYXQsIEF1ZyAy
-NCwgMjAxOSBhdCAxMjowODo0MEFNICswMDAwLCBYaWFvd2VpIEJhbyB3cm90ZToNCj4gPiA+Pg0K
-PiA+ID4+DQo+ID4gPj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gPj4+IEZyb206
-IEFuZHJldyBNdXJyYXkgPGFuZHJldy5tdXJyYXlAYXJtLmNvbT4NCj4gPiA+Pj4gU2VudDogMjAx
-OeW5tDjmnIgyM+aXpSAyMTo1OA0KPiA+ID4+PiBUbzogWGlhb3dlaSBCYW8gPHhpYW93ZWkuYmFv
-QG54cC5jb20+DQo+ID4gPj4+IENjOiBiaGVsZ2Fhc0Bnb29nbGUuY29tOyByb2JoK2R0QGtlcm5l
-bC5vcmc7DQo+IG1hcmsucnV0bGFuZEBhcm0uY29tOw0KPiA+ID4+PiBzaGF3bmd1b0BrZXJuZWwu
-b3JnOyBMZW8gTGkgPGxlb3lhbmcubGlAbnhwLmNvbT47IGtpc2hvbkB0aS5jb207DQo+ID4gPj4+
-IGxvcmVuem8ucGllcmFsaXNpQGFybS5jbzsgYXJuZEBhcm5kYi5kZTsgZ3JlZ2toQGxpbnV4Zm91
-bmRhdGlvbi5vcmc7DQo+IE0uaC4NCj4gPiA+Pj4gTGlhbiA8bWluZ2h1YW4ubGlhbkBueHAuY29t
-PjsgTWluZ2thaSBIdSA8bWluZ2thaS5odUBueHAuY29tPjsNCj4gUm95DQo+ID4gPj4+IFphbmcg
-PHJveS56YW5nQG54cC5jb20+OyBqaW5nb29oYW4xQGdtYWlsLmNvbTsNCj4gPiA+Pj4gZ3VzdGF2
-by5waW1lbnRlbEBzeW5vcHN5cy5jb207IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4g
-Pj4+IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
-b3JnOw0KPiA+ID4+PiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4g
-Pj4+IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnDQo+ID4gPj4+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjIgMDcvMTBdIFBDSTogbGF5ZXJzY2FwZTogTW9kaWZ5IHRoZSBNU0lYIHRvDQo+ID4g
-Pj4+IHRoZSBkb29yYmVsbCB3YXkNCj4gPiA+Pj4NCj4gPiA+Pj4gT24gVGh1LCBBdWcgMjIsIDIw
-MTkgYXQgMDc6MjI6MzlQTSArMDgwMCwgWGlhb3dlaSBCYW8gd3JvdGU6DQo+ID4gPj4+PiBUaGUg
-bGF5ZXJzY2FwZSBwbGF0Zm9ybSB1c2UgdGhlIGRvb3JiZWxsIHdheSB0byB0cmlnZ2VyIE1TSVgN
-Cj4gPiA+Pj4+IGludGVycnVwdCBpbiBFUCBtb2RlLg0KPiA+ID4+Pj4NCj4gPiA+Pj4NCj4gPiA+
-Pj4gSSBoYXZlIG5vIHByb2JsZW1zIHdpdGggdGhpcyBwYXRjaCwgaG93ZXZlci4uLg0KPiA+ID4+
-Pg0KPiA+ID4+PiBBcmUgeW91IGFibGUgdG8gYWRkIHRvIHRoaXMgbWVzc2FnZSBhIHJlYXNvbiBm
-b3Igd2h5IHlvdSBhcmUNCj4gPiA+Pj4gbWFraW5nIHRoaXMgY2hhbmdlPyBEaWQgZHdfcGNpZV9l
-cF9yYWlzZV9tc2l4X2lycSBub3Qgd29yayB3aGVuDQo+ID4gPj4+IGZ1bmNfbm8gIT0gMD8gT3Ig
-ZGlkIGl0IHdvcmsgeWV0IGR3X3BjaWVfZXBfcmFpc2VfbXNpeF9pcnFfZG9vcmJlbGwgaXMNCj4g
-bW9yZSBlZmZpY2llbnQ/DQo+ID4gPj4NCj4gPiA+PiBUaGUgZmFjdCBpcyB0aGF0LCB0aGlzIGRy
-aXZlciBpcyB2ZXJpZmllZCBpbiBsczEwNDZhIHBsYXRmb3JtIG9mDQo+ID4gPj4gTlhQIGJlZm9y
-ZSwgYW5kIGxzMTA0NmEgZG9uJ3Qgc3VwcG9ydCBNU0lYIGZlYXR1cmUsIHNvIEkgc2V0IHRoZQ0K
-PiA+ID4+IG1zaXhfY2FwYWJsZSBvZiBwY2lfZXBjX2ZlYXR1cmVzIHN0cnVjdCBpcyBmYWxzZSwg
-YnV0IGluIG90aGVyDQo+ID4gPj4gcGxhdGZvcm0sIGUuZy4gbHMxMDg4YSwgaXQgc3VwcG9ydCB0
-aGUgTVNJWCBmZWF0dXJlLCBJIHZlcmlmaWVkIHRoZSBNU0lYDQo+IGZlYXR1cmUgaW4gbHMxMDg4
-YSwgaXQgaXMgbm90IE9LLCBzbyBJIGNoYW5nZWQgdG8gYW5vdGhlciB3YXkuIFRoYW5rcy4NCj4g
-PiA+DQo+ID4gPiBSaWdodCwgc28gdGhlIGV4aXN0aW5nIHBjaS1sYXllcnNjYXBlLWVwLmMgZHJp
-dmVyIG5ldmVyIHN1cHBvcnRlZA0KPiA+ID4gTVNJWCB5ZXQgaXQgZXJyb25lb3VzbHkgaGFkIGEg
-c3dpdGNoIGNhc2Ugc3RhdGVtZW50IHRvIGNhbGwNCj4gPiA+IGR3X3BjaWVfZXBfcmFpc2VfbXNp
-eF9pcnEgd2hpY2ggd291bGQgbmV2ZXIgZ2V0IHVzZWQuDQo+ID4gPg0KPiA+ID4gTm93IHRoYXQg
-d2UncmUgYWRkaW5nIGEgcGxhdGZvcm0gd2l0aCBNU0lYIHN1cHBvcnQgdGhlIGV4aXN0aW5nDQo+
-ID4gPiBkd19wY2llX2VwX3JhaXNlX21zaXhfaXJxIGRvZXNuJ3Qgd29yayAoZm9yIHRoaXMgcGxh
-dGZvcm0pIHNvIHdlIGFyZQ0KPiA+ID4gYWRkaW5nIGEgZGlmZmVyZW50IG1ldGhvZC4NCj4gPg0K
-PiA+IEd1c3Rhdm8sIGNhbiB5b3UgY29uZmlybSBkd19wY2llX2VwX3JhaXNlX21zaXhfaXJxKCkg
-d29ya3MgZm9yDQo+ID4gZGVzaWdud2FyZSBhcyBpdCBkaWRuJ3Qgd29yayBmb3IgYm90aCBtZSBh
-bmQgWGlhb3dlaT8NCj4gDQo+IFdoZW4gSSBpbXBsZW1lbnRlZCB0aGUgZHdfcGNpZV9lcF9yYWlz
-ZV9tc2l4X2lycSgpLCB0aGUgaW1wbGVtZW50YXRpb24NCj4gd2FzIHdvcmtpbmcgcXVpdGUgZmlu
-ZSBvbiBEZXNpZ25XYXJlIHNvbHV0aW9uLiBPdGhlcndpc2UsIEkgd291bGRuJ3Qgc3VibWl0DQo+
-IGl0IHRvIHRoZSBrZXJuZWwuDQo+IEZyb20gd2hhdCBJIGhhdmUgc2VlbiBhbmQgaWYgSSByZWNh
-bGwgd2VsbCwgWGlhb3dlaSBpbXBsZW1lbnRhdGlvbiB3YXMgZG9uZQ0KPiBoYXZpbmcgUEYncyBj
-b25maWd1cmF0ZWQgb24gaGlzIHNvbHV0aW9uLCB3aGljaCBpcyBhIGNvbmZpZ3VyYXRpb24gdGhh
-dCBJIGRvbid0DQo+IGhhdmUgaW4gbXkgc29sdXRpb24sIEkgYmVsaWV2ZSB0aGlzIGNvdWxkIGJl
-IHRoZSBtaXNzaW5nIHBpZWNlIHRoYXQgZGlmZmVycw0KPiBiZXR3ZWVuIG91ciAyIGltcGxlbWVu
-dGF0aW9ucy4NCj4gDQo+IFNpbmNlIHBhdGNoIHN1Ym1pc3Npb24gaW50byB0aGUga2VybmVsIHJl
-bGF0ZWQgdG8gbXNpeCBmZWF0dXJlIG9uIHBjaXRlc3QgdG9vbCwgSQ0KPiBkaWRuJ3QgdG91Y2gg
-b3IgcmUtdGVzdGVkIHRoZSBtc2l4IGZlYXR1cmUgYnkgbGFjayBvZiB0aW1lIChvdGhlciBwcm9q
-ZWN0cw0KPiByZXF1aXJlcyBteSBmdWxsIGF0dGVudGlvbiBmb3Igbm93KS4gSG93ZXZlciBpcyBv
-biBteSByb2FkbWFwIHRvIGNhbWUgYmFjaw0KPiB0byBhZGQgc29tZSBvdGhlciBmZWF0dXJlcyBv
-biBEZXNpZ25XYXJlIGVETUEgZHJpdmVyIGFuZCBJIGNhbiBkbyBhdCB0aGF0DQo+IHRpbWUgc29t
-ZSB0ZXN0cyB0byBzZWUgaWYgdGhlDQo+IGR3X3BjaWVfZXBfcmFpc2VfbXNpeF9pcnFfZG9vcmJl
-bGwoKSBpcyBjb21wYXRpYmxlIG9yIG5vdCB3aXRoIG15IHNvbHV0aW9uLg0KPiBJZiBzbywgSSBj
-YW4gZG8gc29tZSBwYXRjaCB0byBzaW1wbGlmeSBhbmQgdXNlIHRoZQ0KPiBkd19wY2llX2VwX3Jh
-aXNlX21zaXhfaXJxX2Rvb3JiZWxsKCkgaWYgaXQgc3RpbGwgd29ya3MgYXMgZXhwZWN0ZWQgbGlr
-ZSBvbg0KPiBkd19wY2llX2VwX3JhaXNlX21zaXhfaXJxKCkuIEFncmVlPw0KPiANCg0KVGhhbmtz
-IEd1c3Rhdm8sIGl0IGxvb2tzIHdlbGwgZm9yIG1lLg0KDQpUaGFua3MNClhpYW93ZWkNCg0KPiBH
-dXN0YXZvDQo+IA0KPiA+DQo+ID4gVGhhbmtzDQo+ID4gS2lzaG9uDQo+IA0KDQo=
+On 05-Nov 11:34, Alexei Starovoitov wrote:
+> On Tue, Nov 05, 2019 at 07:01:41PM +0100, Mickaël Salaün wrote:
+> > 
+> > On 05/11/2019 18:18, Alexei Starovoitov wrote:
+> > > On Mon, Nov 04, 2019 at 06:21:43PM +0100, Mickaël Salaün wrote:
+> > >> Add a first Landlock hook that can be used to enforce a security policy
+> > >> or to audit some process activities.  For a sandboxing use-case, it is
+> > >> needed to inform the kernel if a task can legitimately debug another.
+> > >> ptrace(2) can also be used by an attacker to impersonate another task
+> > >> and remain undetected while performing malicious activities.
+> > >>
+> > >> Using ptrace(2) and related features on a target process can lead to a
+> > >> privilege escalation.  A sandboxed task must then be able to tell the
+> > >> kernel if another task is more privileged, via ptrace_may_access().
+> > >>
+> > >> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > ...
+> > >> +static int check_ptrace(struct landlock_domain *domain,
+> > >> +		struct task_struct *tracer, struct task_struct *tracee)
+> > >> +{
+> > >> +	struct landlock_hook_ctx_ptrace ctx_ptrace = {
+> > >> +		.prog_ctx = {
+> > >> +			.tracer = (uintptr_t)tracer,
+> > >> +			.tracee = (uintptr_t)tracee,
+> > >> +		},
+> > >> +	};
+> > > 
+> > > So you're passing two kernel pointers obfuscated as u64 into bpf program
+> > > yet claiming that the end goal is to make landlock unprivileged?!
+> > > The most basic security hole in the tool that is aiming to provide security.
+> > 
+> > How could you used these pointers without dedicated BPF helpers? This
+> > context items are typed as PTR_TO_TASK and can't be used without a
+> > dedicated helper able to deal with ARG_PTR_TO_TASK. Moreover, pointer
+> > arithmetic is explicitly forbidden (and I added tests for that). Did I
+> > miss something?
+> 
+> It's a pointer leak.
+> 
+> > 
+> > > 
+> > > I think the only way bpf-based LSM can land is both landlock and KRSI
+> > > developers work together on a design that solves all use cases.
+> > 
+> > As I said in a previous cover letter [1], that would be great. I think
+> > that the current Landlock bases (almost everything from this series
+> > except the seccomp interface) should meet both needs, but I would like
+> > to have the point of view of the KRSI developers.
+> > 
+> > [1] https://lore.kernel.org/lkml/20191029171505.6650-1-mic@digikod.net/
+> > 
+> > > BPF is capable
+> > > to be a superset of all existing LSMs whereas landlock and KRSI propsals today
+> > > are custom solutions to specific security concerns. BPF subsystem was extended
+> > > with custom things in the past. In networking we have lwt, skb, tc, xdp, sk
+> > > program types with a lot of overlapping functionality. We couldn't figure out
+> > > how to generalize them into single 'networking' program. Now we can and we
+> > > should. Accepting two partially overlapping bpf-based LSMs would be repeating
+> > > the same mistake again.
+> > 
+> > I'll let the LSM maintainers comment on whether BPF could be a superset
+> > of all LSM, but given the complexity of an access-control system, I have
+> > some doubts though. Anyway, we need to start somewhere and then iterate.
+> > This patch series is a first step.
+> 
+> I would like KRSI folks to speak up. So far I don't see any sharing happening
+> between landlock and KRSI. You're claiming this set is a first step. They're
+> claiming the same about their patches. I'd like to set a patchset that was
+> jointly developed.
+
+We are willing to collaborate with the Landlock developers and come up
+with a common approach that would work for Landlock and KRSI. I want
+to mention that this collaboration and the current Landlock approach
+of using an eBPF based LSM for unprivileged sandboxing only makes sense
+if unprivileged usage of eBPF is going to be ever allowed.
+
+Purely from a technical standpoint, both the current designs for
+Landlock and KRSI target separate use cases and it would not be
+possible to build "one on top of the other". We've tried to identify
+the lowest denominator ("eBPF+LSM") requirements for both Landlock
+(unprivileged sandboxing / Discretionary Access Control) and KRSI
+(flexibility and unification of privileged MAC and Audit) and
+prototyped an implementation based on the newly added / upcoming
+features in BPF.
+
+We've been successfully able to prototype the use cases for KRSI
+(privileged MAC and Audit) using this "eBPF+LSM" and shared our
+approach at the Linux Security Summit [1]:
+
+* Use the new in-kernel BTF (CO-RE eBPF programs) [2] and the ability
+  of the BPF verifier to use the BTF information for access validation
+  to provide a more generic way to attach to the various LSM hooks.
+  This potentially saves a lot of redundant work:
+
+   - Creation of new program types.
+   - Multiple types of contexts (or a single context with Unions).
+   - Changes to the verifier and creation of new BPF argument types 
+     (eg. PTR_TO_TASK)
+
+* These new BPF features also alleviate the original concerns that we
+  raised when initially proposing KRSI and designing for precise BPF
+  helpers. We have some patches coming up which incorporate these new
+  changes and will be sharing something on the mailing list after some
+  cleanup.
+
+We can use the common "eBPF+LSM" for both privileged MAC and Audit and
+unprivileged sandboxing i.e. Discretionary Access Control.
+Here's what it could look like:
+
+* Common infrastructure allows attachment to all hooks which works well
+  for privileged MAC and Audit. This could be extended to provide
+  another attachment type for unprivileged DAC, which can restrict the
+  hooks that can be attached to, and also the information that is
+  exposed to the eBPF programs which is something that Landlock could
+  build.
+
+* This attachment could use the proposed landlock domains and attach to
+  the task_struct providing the discretionary access control semantics.
+
+[1] https://static.sched.com/hosted_files/lsseu2019/a2/Kernel%20Runtime%20Security%20Instrumentation.pdf
+[2] http://vger.kernel.org/bpfconf2019_talks/bpf-core.pdf
+
+- KP Singh
+
+> 
