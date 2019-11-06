@@ -2,70 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E1DDF0D28
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 183A6F0D12
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:35:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730804AbfKFDl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:41:26 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:42846 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbfKFDlZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:41:25 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5BE8E151226D2;
-        Tue,  5 Nov 2019 19:33:30 -0800 (PST)
-Date:   Tue, 05 Nov 2019 19:33:27 -0800 (PST)
-Message-Id: <20191105.193327.1393649190609263166.davem@davemloft.net>
-To:     dima@arista.com
-Cc:     linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-        akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-        mingo@kernel.org, jslaby@suse.com, pmladek@suse.com,
-        sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, sparclinux@vger.kernel.org
-Subject: Re: [PATCH 34/50] sparc: Add show_stack_loglvl()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191106030542.868541-35-dima@arista.com>
-References: <20191106030542.868541-1-dima@arista.com>
-        <20191106030542.868541-35-dima@arista.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 05 Nov 2019 19:33:30 -0800 (PST)
+        id S1730948AbfKFDfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:35:11 -0500
+Received: from ozlabs.org ([203.11.71.1]:35991 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726368AbfKFDfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 22:35:10 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 477BxS0Hdwz9sPK;
+        Wed,  6 Nov 2019 14:35:08 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1573011308;
+        bh=5tQVxw9udsjAubC6/XLuiktJFlolgo185dw0xi1l250=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=Zue3TGj5O8+EIJd/FUI5Bn99EHDcdX8d0UDWFnUe+Qk0QtdYIRbolyWO5lGrHK6Gl
+         jqoPnliFjLIkLFR90M7S5cYS2VTGJji0jxKPcJbPuDhOs0ZBRx2vw0bJb0fNSZVy7F
+         D3QDKNZWd2PdexNHreMufboo0EK1Kvh3cD0bRBylxI2XadZX9+fobrKqXoK/IRJ5An
+         nCwT/AR0/tg6Ok/QIKZK9GqEfohPMd7cEdQ255W1DHqmeiHEb1X7P02EEhBL7byMmT
+         I1YpNBex0hrDkn3mMyoe26xfel2bKfSdNxH2FfLkPoJSep8k3zY/Ercl7c3q7GmdTw
+         0xdIXVte0bX7w==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     John Hubbard <jhubbard@nvidia.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Cc:     linux-pm@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Preeti U Murthy <preeti@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] cpufreq: powernv: fix stack bloat and NR_CPUS limitation
+In-Reply-To: <405c2ac2-a61c-e7e6-3487-c55bcdf1e839@nvidia.com>
+References: <20191018045539.3765565-1-jhubbard@nvidia.com> <87pnidbptw.fsf@mpe.ellerman.id.au> <405c2ac2-a61c-e7e6-3487-c55bcdf1e839@nvidia.com>
+Date:   Wed, 06 Nov 2019 14:35:05 +1100
+Message-ID: <87d0e5wuc6.fsf@mpe.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Safonov <dima@arista.com>
-Date: Wed,  6 Nov 2019 03:05:25 +0000
+John Hubbard <jhubbard@nvidia.com> writes:
+> On 10/30/19 7:39 PM, Michael Ellerman wrote:
+>> Hi John,
+>> 
+>> Sorry I didn't reply to this sooner, too many patches :/
+>> 
+>> John Hubbard <jhubbard@nvidia.com> writes:
+>>> The following build warning occurred on powerpc 64-bit builds:
+>>>
+>>> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
+>>> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>> 
+>> Oddly I don't see that warning in my builds, eg with GCC9:
+>> 
+>>    https://travis-ci.org/linuxppc/linux/jobs/604870722
+>
+> This is with a cross-compiler based on gcc 8.1.0, which I got from:
+>    https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/8.1.0/
+>
+> I'll put that in the v3 commit description.
+>
+>> 
+>>> This is due to putting 1024 bytes on the stack:
+>>>
+>>>      unsigned int chip[256];
+>>>
+>>> ...and while looking at this, it also has a bug: it fails with a stack
+>>> overrun, if CONFIG_NR_CPUS > 256.
+>> 
+>> It _probably_ doesn't, because it only increments the index when the
+>> chip_id of the CPU changes, ie. it doesn't create a chip for every CPU.
+>> But I agree it's flaky the way it's written.
+>
+> I'll soften up the wording accordingly.
+>
+>> 
+>>> Fix both problems by dynamically allocating based on CONFIG_NR_CPUS.
+>> 
+>> Shouldn't it use num_possible_cpus() ?
+>> 
+>> Given the for loop is over possible CPUs that seems like the upper
+>> bound. In practice it should be lower because some CPUs will share a
+>> chip.
+>> 
+>
+> OK, I see, that's more consistent with the code, I'll change to that.
 
-> Currently, the log-level of show_stack() depends on a platform
-> realization. It creates situations where the headers are printed with
-> lower log level or higher than the stacktrace (depending on
-> a platform or user).
-> 
-> Furthermore, it forces the logic decision from user to an architecture
-> side. In result, some users as sysrq/kdb/etc are doing tricks with
-> temporary rising console_loglevel while printing their messages.
-> And in result it not only may print unwanted messages from other CPUs,
-> but also omit printing at all in the unlucky case where the printk()
-> was deferred.
-> 
-> Introducing log-level parameter and KERN_UNSUPPRESSED [1] seems
-> an easier approach than introducing more printk buffers.
-> Also, it will consolidate printings with headers.
-> 
-> Introduce show_stack_loglvl(), that eventually will substitute
-> show_stack().
-> 
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: sparclinux@vger.kernel.org
-> [1]: https://lore.kernel.org/lkml/20190528002412.1625-1-dima@arista.com/T/#u
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
+Thanks.
 
-Acked-by: David S. Miller <davem@davemloft.net>
+cheers
