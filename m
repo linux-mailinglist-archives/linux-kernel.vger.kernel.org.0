@@ -2,66 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A3B0F1C13
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F742F1C1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:07:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731959AbfKFRGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:06:18 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44096 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbfKFRGR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:06:17 -0500
-Received: by mail-pl1-f194.google.com with SMTP id q16so11727950pll.11
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
-        b=d9cuY1FP9HD7ILAybQhSFr0Z4YgmO46WW7Y1JC1EF9ZqI8QkEG7UAytsoF3RSA9OxL
-         R2tYxPEwPIttunD2NEjJDK4fth8egG2jRYUR+Yp8AqzuxaDU5am84eaEX4gLGUM23toV
-         VfSf2S6X+2gfEftz0WGxj0GKFMmbYZdj9WmKJBvw1ZrkEqtWm2w9PJDweTT2nW3rHZCV
-         L7HqqiJGuhxxswxTmC08yP0uxHeU6vyGThAJYjSGpkycR8Dv19svmhpaP7V1K7nNe/NU
-         1pvUwhqNQ/RM+Y0us5TNL4Isz7CN1X0EqOEdv/GkGFURdkBOsFNTtjv79yEzeFh3nUFK
-         hDQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
-        b=HpNNfW+2kFJh/YfZ/xQS7nOreWLJo8R4Pcs66pC0NM991Q+4xGV10hm9/Mjasyp4wc
-         Q0B3Q6rA7p1hS3QvLhQqYYhKP/jZg7hxAmnDTP3FDwJ6H/16+u+hTJ6FtAm2KvCaJkur
-         Gv2doNJf/SfmKpfnPx4KIamLVvyJWD9Co0Akf7Jj6Qj74S1bOz5+tfN19oU+9hhwJm+J
-         T0jTnzJsu8k4kMzcScrOzwWB2LUna49dnUCuNyq3Elf6OED63NM4Kzt07PYp8KgtplQ8
-         jdkAe4lixxRv9acq5HnJOSJtEdwcesXCwBCLFn51jjJ38BPbIF+UD4/C3AqPir+6yS+/
-         kNNA==
-X-Gm-Message-State: APjAAAUSesRzJhq37FRXYXWgS7Ve2dxZeJcWB2LUw0ej0dzuiAbtz+7V
-        oo0hqSmIk1GlMaNEa0wocQsPbUN4Ci3lGhEzZuacw8vPv8s=
-X-Google-Smtp-Source: APXvYqx3YdptKhgrR51eA4rJBL2k3N7ch1IkE30GUh2q5h7mNJ/5nTGIOXYkHFs4nXUIuSMq0ywT1thqR/6CJUiesDA=
-X-Received: by 2002:a17:902:b28b:: with SMTP id u11mr3615956plr.207.1573059975990;
- Wed, 06 Nov 2019 09:06:15 -0800 (PST)
+        id S1732346AbfKFRHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:07:35 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58093 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727894AbfKFRH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 12:07:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 09:07:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
+   d="scan'208";a="192527997"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2019 09:07:28 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 0/2] KVM: MMU: Fix a refcount bug with ZONE_DEVICE pages
+Date:   Wed,  6 Nov 2019 09:07:25 -0800
+Message-Id: <20191106170727.14457-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:7bc4:0:0:0:0 with HTTP; Wed, 6 Nov 2019 09:06:15
- -0800 (PST)
-Reply-To: priscalamberth@gmail.com
-From:   "DR. OMAR KALIFA" <baradfufana@gmail.com>
-Date:   Wed, 6 Nov 2019 18:06:15 +0100
-Message-ID: <CADZD1FqgqbeCyOe3d--naagfeGcaQG+dXMUGWbv2CyFOnGEO7A@mail.gmail.com>
-Subject: REQUEST FOR URGENT ASSISTANCE.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This mini-series fixes a suspected, but technically unconfirmed, bug in
+KVM related to ZONE_DEVICE pages.  The suspected issue is that KVM treats
+ZONE_DEVICE pages as reserved PFNs, and so doesn't put references to such
+pages when dropping references via KVM's generic kvm_release_pfn_clean().
+
+David Hildenbrand uncovered the bug during a discussion about removing
+PG_reserved from ZONE_DEVICE pages, after Dan Williams pointed out[1] that
+there was a bug report from Adam Borowski[2] that was likely related to
+KVM's interaction with PageReserved().
+
+Patch 1/2 contains the actual fix, patch 2/2 is a minor cleanup that is
+mostly unrelated, but dependent and prompted by the fix in patch 1/2.
+
+The fix itself is a bit more aggressive than what was proposed by David
+and Dan, but I'm fairly confident it's the right direction for the long
+term, and it also plays nice with the original PG_reserved removal series
+that exposed the bug.
+
+To be 100% clear, I haven't actually confirmed this fixes the bug reported
+by Adam.
+
+[1] http://lkml.kernel.org/r/20190919115547.GA17963@angband.pl
+[2] https://lkml.kernel.org/r/01adb4cb-6092-638c-0bab-e61322be7cf5@redhat.com
+
+Sean Christopherson (2):
+  KVM: MMU: Do not treat ZONE_DEVICE pages as being reserved
+  KVM: x86/mmu: Add helper to consolidate huge page promotion
+
+ arch/x86/kvm/mmu.c       | 15 +++++++++------
+ include/linux/kvm_host.h |  1 +
+ virt/kvm/kvm_main.c      | 19 +++++++++++++++----
+ 3 files changed, 25 insertions(+), 10 deletions(-)
+
 -- 
-Hello,
+2.24.0
 
-Compliment of the season. My name is Dr. Omar Kalifa. i work with one
-of the reputable banks here in West Africa.I have a lucrative and
-profitable business to discuse with you. Reply if you are intersted
-for more details.
-
-Regards,
-Dr. Omar Kalifa
