@@ -2,180 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC65F1113
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 772C9F1147
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:39:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfKFIbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:31:04 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17392 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730069AbfKFIbE (ORCPT
+        id S1731601AbfKFIjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:39:43 -0500
+Received: from mail.parknet.co.jp ([210.171.160.6]:34886 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731551AbfKFIjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:31:04 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA68NJbV051277
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Nov 2019 03:31:02 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w3r8hvqgb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 03:30:18 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Wed, 6 Nov 2019 08:29:16 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Nov 2019 08:29:11 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA68TAGF52428926
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Nov 2019 08:29:10 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 959C642042;
-        Wed,  6 Nov 2019 08:29:10 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44BAD42045;
-        Wed,  6 Nov 2019 08:29:10 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.123])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Nov 2019 08:29:10 +0000 (GMT)
-Subject: Re: [PATCH 1/2] KVM: Fix NULL-ptr defer after kvm_create_vm fails
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-References: <1572848879-21011-1-git-send-email-wanpengli@tencent.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Wed, 6 Nov 2019 09:29:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 6 Nov 2019 03:39:41 -0500
+X-Greylist: delayed 504 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 03:39:41 EST
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 401F015CBF5;
+        Wed,  6 Nov 2019 17:31:16 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-15) with ESMTPS id xA68VErR024850
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Wed, 6 Nov 2019 17:31:15 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-15) with ESMTPS id xA68VEqa006768
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Wed, 6 Nov 2019 17:31:14 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id xA68V8ZC006766;
+        Wed, 6 Nov 2019 17:31:08 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Marco Elver <elver@google.com>,
+        syzbot <syzbot+11010f0000e50c63c2cc@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: KCSAN: data-race in fat16_ent_put / fat_search_long
+References: <00000000000016a19d0596980568@google.com>
+        <20191105143923.GA87727@google.com>
+        <20191105152528.GD11823@bombadil.infradead.org>
+Date:   Wed, 06 Nov 2019 17:31:08 +0900
+In-Reply-To: <20191105152528.GD11823@bombadil.infradead.org> (Matthew Wilcox's
+        message of "Tue, 5 Nov 2019 07:25:28 -0800")
+Message-ID: <87k18d8kz7.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1572848879-21011-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110608-0028-0000-0000-000003B321E7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110608-0029-0000-0000-000024757CB0
-Message-Id: <98cdd241-e252-82c6-dc25-a7bc1988ad13@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-06_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=951 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1911060088
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Matthew Wilcox <willy@infradead.org> writes:
 
+> On Tue, Nov 05, 2019 at 03:39:23PM +0100, Marco Elver wrote:
+>> On Tue, 05 Nov 2019, syzbot wrote:
+>> > ==================================================================
+>> > BUG: KCSAN: data-race in fat16_ent_put / fat_search_long
+>> > 
+>> > write to 0xffff8880a209c96a of 2 bytes by task 11985 on cpu 0:
+>> >  fat16_ent_put+0x5b/0x90 fs/fat/fatent.c:181
+>> >  fat_ent_write+0x6d/0xf0 fs/fat/fatent.c:415
+>> >  fat_chain_add+0x34e/0x400 fs/fat/misc.c:130
+>> >  fat_add_cluster+0x92/0xd0 fs/fat/inode.c:112
+>> >  __fat_get_block fs/fat/inode.c:154 [inline]
+>> >  fat_get_block+0x3ae/0x4e0 fs/fat/inode.c:189
+>> >  __block_write_begin_int+0x2ea/0xf20 fs/buffer.c:1968
+>> >  __block_write_begin fs/buffer.c:2018 [inline]
+>> >  block_write_begin+0x77/0x160 fs/buffer.c:2077
+>> >  cont_write_begin+0x3d6/0x670 fs/buffer.c:2426
+>> >  fat_write_begin+0x72/0xc0 fs/fat/inode.c:235
+>> >  pagecache_write_begin+0x6b/0x90 mm/filemap.c:3148
+>> >  cont_expand_zero fs/buffer.c:2353 [inline]
+>> >  cont_write_begin+0x17a/0x670 fs/buffer.c:2416
+>> >  fat_write_begin+0x72/0xc0 fs/fat/inode.c:235
+>> >  pagecache_write_begin+0x6b/0x90 mm/filemap.c:3148
+>> >  generic_cont_expand_simple+0xb0/0x120 fs/buffer.c:2317
+>> > 
+>> > read to 0xffff8880a209c96b of 1 bytes by task 11990 on cpu 1:
+>> >  fat_search_long+0x20a/0xc60 fs/fat/dir.c:484
+>> >  vfat_find+0xc1/0xd0 fs/fat/namei_vfat.c:698
+>> >  vfat_lookup+0x75/0x350 fs/fat/namei_vfat.c:712
+>> >  lookup_open fs/namei.c:3203 [inline]
+>> >  do_last fs/namei.c:3314 [inline]
+>> >  path_openat+0x15b6/0x36e0 fs/namei.c:3525
+>> >  do_filp_open+0x11e/0x1b0 fs/namei.c:3555
+>> >  do_sys_open+0x3b3/0x4f0 fs/open.c:1097
+>> >  __do_sys_open fs/open.c:1115 [inline]
+>> >  __se_sys_open fs/open.c:1110 [inline]
+>> >  __x64_sys_open+0x55/0x70 fs/open.c:1110
+>> >  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+>> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> > 
+>> > Reported by Kernel Concurrency Sanitizer on:
+>> > CPU: 1 PID: 11990 Comm: syz-executor.2 Not tainted 5.4.0-rc3+ #0
+>> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> > Google 01/01/2011
+>> > ==================================================================
+>> 
+>> I was trying to understand what is happening here, but fail to see how
+>> this can happen. So it'd be good if somebody who knows this code can
+>> explain. We are quite positive this is not a false positive, given the
+>> addresses accessed match.
+>
+> Both of these accesses are into a buffer head; ie the data being accessed
+> is stored in the page cache.  Is it possible the page was reused for
+> different data between these two accesses?
 
-On 04.11.19 07:27, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Reported by syzkaller:
-> 
->     kasan: CONFIG_KASAN_INLINE enabled
->     kasan: GPF could be caused by NULL-ptr deref or user memory access
->     general protection fault: 0000 [#1] PREEMPT SMP KASAN
->     CPU: 0 PID: 14727 Comm: syz-executor.3 Not tainted 5.4.0-rc4+ #0
->     RIP: 0010:kvm_coalesced_mmio_init+0x5d/0x110 arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:121
->     Call Trace:
->      kvm_dev_ioctl_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:3446 [inline]
->      kvm_dev_ioctl+0x781/0x1490 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3494
->      vfs_ioctl fs/ioctl.c:46 [inline]
->      file_ioctl fs/ioctl.c:509 [inline]
->      do_vfs_ioctl+0x196/0x1150 fs/ioctl.c:696
->      ksys_ioctl+0x62/0x90 fs/ioctl.c:713
->      __do_sys_ioctl fs/ioctl.c:720 [inline]
->      __se_sys_ioctl fs/ioctl.c:718 [inline]
->      __x64_sys_ioctl+0x6e/0xb0 fs/ioctl.c:718
->      do_syscall_64+0xca/0x5d0 arch/x86/entry/common.c:290
->      entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Commit 9121923c457d ("kvm: Allocate memslots and buses before calling kvm_arch_init_vm") 
-> moves memslots and buses allocations around, however, if kvm->srcu/irq_srcu fails 
-> initialization, NULL will be returned instead of error code, NULL will not be intercepted 
-> in kvm_dev_ioctl_create_vm() and be deferenced by kvm_coalesced_mmio_init(), this patch 
-> fixes it.
-> 
-> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=13509b84e00000
-> 
-> Reported-by: syzbot+89a8060879fa0bd2db4f@syzkaller.appspotmail.com
-> Fixes: 9121923c457d ("kvm: Allocate memslots and buses before calling kvm_arch_init_vm") 
-> Cc: Jim Mattson <jmattson@google.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+No and yes. Reader side is directory buffer, writer side is FAT buffer.
+So FAT buffer never be reused as directory buffer.  But the page cache
+itself can be freed and reused as different index. So if KCSAN can't
+detect the page cache recycle, it would be possible.
 
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Is there anyway to know "why KCSAN thought this as data race"?
 
-> ---
->  virt/kvm/kvm_main.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index d6f0696..8c272eb 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -675,6 +675,7 @@ static struct kvm *kvm_create_vm(unsigned long type)
->  	INIT_HLIST_HEAD(&kvm->irq_ack_notifier_list);
->  #endif
-> 
-> +	r = -ENOMEM;
->  	if (init_srcu_struct(&kvm->srcu))
->  		goto out_err_no_srcu;
->  	if (init_srcu_struct(&kvm->irq_srcu))
-> 
+>> The two bits of code in question here are:
+>> 
+>> static void fat16_ent_put(struct fat_entry *fatent, int new)
+>> {
+>> 	if (new == FAT_ENT_EOF)
+>> 		new = EOF_FAT16;
+>> 
+>> 	*fatent->u.ent16_p = cpu_to_le16(new);   <<== data race here
+>> 	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
+>> }
 
+This is updating FAT entry (index for data cluster placement) on FAT buffer.
+
+>> int fat_search_long(struct inode *inode, const unsigned char *name,
+>> 		    int name_len, struct fat_slot_info *sinfo)
+>> {
+>> 	struct super_block *sb = inode->i_sb;
+>> 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+>> 	struct buffer_head *bh = NULL;
+>> 	struct msdos_dir_entry *de;
+>> 	unsigned char nr_slots;
+>> 	wchar_t *unicode = NULL;
+>> 	unsigned char bufname[FAT_MAX_SHORT_SIZE];
+>> 	loff_t cpos = 0;
+>> 	int err, len;
+>> 
+>> 	err = -ENOENT;
+>> 	while (1) {
+>> 		if (fat_get_entry(inode, &cpos, &bh, &de) == -1)
+>> 			goto end_of_dir;
+>> parse_record:
+>> 		nr_slots = 0;
+>> 		if (de->name[0] == DELETED_FLAG)
+>> 			continue;
+>> 		if (de->attr != ATTR_EXT && (de->attr & ATTR_VOLUME))  <<== data race here
+
+Checking attribute on directory buffer.
+
+>> 			continue;
+>> 		if (de->attr != ATTR_EXT && IS_FREE(de->name))
+>> 			continue;
+>> 		<snip>
+>> }
+>> 
+>> Thanks,
+>> -- Marco
+
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
