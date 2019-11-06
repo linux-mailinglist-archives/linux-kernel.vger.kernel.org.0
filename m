@@ -2,98 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC483F2220
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B4D0F222C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731937AbfKFWui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 17:50:38 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51038 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfKFWuh (ORCPT
+        id S1732809AbfKFWwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 17:52:49 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:15620 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726912AbfKFWvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:50:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=S+NDVwxnw7pUxx3P5o8f+I/8HtJJXwHD+rPflie4cnM=; b=pMQRdpKIQCx3SN9Vl5hh63a0q
-        NN9hM0Rdx0FKjbRc5iGGjxbdKBzcS60ZVcKZX3pcxvoMr4KualdndEDr47JlzlgcGEmw70yQfewI1
-        T7bj38nguBRwOjJHbfR5kz1aDqZ015cYLHqHBgeIMUOqld6zyuIA3N5V6zdW6x9UObSW4us0x+Qz4
-        kUgZP3BVbKCZ2SoXTdv7WaUdAelz4i/YSG84yCv78On6N1pDStA1x/uK/u+lwrYTKCzIhLfi3J9bi
-        +8mALHWxYMUbvB1tFVeq03G484MQcFQavQi2yCJuwxOzS9J58eV4AgmbpLY2iffnv5aR7Yu8gdBt7
-        g9cvCQqnA==;
-Received: from [2601:1c0:6280:3f0::4ba1]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSU8G-0006ML-Gr; Wed, 06 Nov 2019 22:50:32 +0000
-Subject: Re: [PATCH V9 6/6] docs: sample driver to demonstrate how to
- implement virtio-mdev framework
-To:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com
-References: <20191106070548.18980-1-jasowang@redhat.com>
- <20191106070548.18980-7-jasowang@redhat.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <88efad07-70aa-3879-31e7-ace4d2ad63a1@infradead.org>
-Date:   Wed, 6 Nov 2019 14:50:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Wed, 6 Nov 2019 17:51:47 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA6MmG0D020832
+        for <linux-kernel@vger.kernel.org>; Wed, 6 Nov 2019 14:51:46 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=dSwdKAQfYz7C+OHgnNdW7b0Q3n07QRmPPJ73bo3ipfs=;
+ b=ELCF7P/V93Fe7uNaUwabJuRU0dYxANy+gb5uNyqdO6mL9Ait2b2wnPb8enAkMhhCCktx
+ U7n9OpRSUMRVvfZug7YU210qR/xzwu+F+5q60JzYpTt0YP+fA8qilVga69X5hcKie+2l
+ Pq65mdPSehvuKfdr3jE0xTJmNTPeUC/mkqU= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2w41vxssww-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 14:51:46 -0800
+Received: from 2401:db00:30:6012:face:0:17:0 (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Wed, 6 Nov 2019 14:51:44 -0800
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id 5E6AD19E16A81; Wed,  6 Nov 2019 14:51:44 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Roman Gushchin <guro@fb.com>, <stable@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH 1/2] mm: memcg: switch to css_tryget() in get_mem_cgroup_from_mm()
+Date:   Wed, 6 Nov 2019 14:51:30 -0800
+Message-ID: <20191106225131.3543616-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <20191106070548.18980-7-jasowang@redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-06_08:2019-11-06,2019-11-06 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 adultscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911060219
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/19 11:05 PM, Jason Wang wrote:
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index c8dacb4dda80..13a2443e18e0 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -131,6 +131,16 @@ config SAMPLE_VFIO_MDEV_MDPY
->  	  mediated device.  It is a simple framebuffer and supports
->  	  the region display interface (VFIO_GFX_PLANE_TYPE_REGION).
->  
-> +config SAMPLE_VIRTIO_MDEV_NET
-> +	tristate "Build VIRTIO net example mediated device sample code -- loadable modules only"
-> +	depends on VIRTIO_MDEV && VHOST_RING && m
-> +	help
-> +	  Build a networking sample device for use as a virtio
-> +	  mediated device. The device coopreates with virtio-mdev bus
+We've encountered a rcu stall in get_mem_cgroup_from_mm():
 
-typo here:
-	                              cooperates
+ rcu: INFO: rcu_sched self-detected stall on CPU
+ rcu: 33-....: (21000 ticks this GP) idle=6c6/1/0x4000000000000002 softirq=35441/35441 fqs=5017
+ (t=21031 jiffies g=324821 q=95837) NMI backtrace for cpu 33
+ <...>
+ RIP: 0010:get_mem_cgroup_from_mm+0x2f/0x90
+ <...>
+ __memcg_kmem_charge+0x55/0x140
+ __alloc_pages_nodemask+0x267/0x320
+ pipe_write+0x1ad/0x400
+ new_sync_write+0x127/0x1c0
+ __kernel_write+0x4f/0xf0
+ dump_emit+0x91/0xc0
+ writenote+0xa0/0xc0
+ elf_core_dump+0x11af/0x1430
+ do_coredump+0xc65/0xee0
+ ? unix_stream_sendmsg+0x37d/0x3b0
+ get_signal+0x132/0x7c0
+ do_signal+0x36/0x640
+ ? recalc_sigpending+0x17/0x50
+ exit_to_usermode_loop+0x61/0xd0
+ do_syscall_64+0xd4/0x100
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-> +	  driver to present an virtio ethernet driver for
-> +	  kernel. It simply loopbacks all packets from its TX
-> +	  virtqueue to its RX virtqueue.
-> +
->  config SAMPLE_VFIO_MDEV_MDPY_FB
->  	tristate "Build VFIO mdpy example guest fbdev driver -- loadable module only"
->  	depends on FB && m
+The problem is caused by an exiting task which is associated with
+an offline memcg. We're iterating over and over in the
+do {} while (!css_tryget_online()) loop, but obviously the memcg won't
+become online and the exiting task won't be migrated to a live memcg.
 
-ciao.
+Let's fix it by switching from css_tryget_online() to css_tryget().
+
+As css_tryget_online() cannot guarantee that the memcg won't go
+offline, the check is usually useless, except some rare cases
+when for example it determines if something should be presented
+to a user.
+
+A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
+css_tryget() instead of css_tryget_online() in task_get_css()").
+
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: stable@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>
+---
+ mm/memcontrol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 50f5bc55fcec..c5b5f74cfd4d 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -939,7 +939,7 @@ struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+ 			if (unlikely(!memcg))
+ 				memcg = root_mem_cgroup;
+ 		}
+-	} while (!css_tryget_online(&memcg->css));
++	} while (!css_tryget(&memcg->css));
+ 	rcu_read_unlock();
+ 	return memcg;
+ }
 -- 
-~Randy
+2.17.1
 
