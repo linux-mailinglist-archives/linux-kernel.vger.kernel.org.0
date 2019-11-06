@@ -2,154 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7335BF0F92
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DEB4F0F66
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:01:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731625AbfKFHDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:03:33 -0500
-Received: from esa1.mentor.iphmx.com ([68.232.129.153]:18602 "EHLO
-        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731206AbfKFHDa (ORCPT
+        id S1731190AbfKFHBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:01:43 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42111 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfKFHBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:03:30 -0500
-IronPort-SDR: uv7AZKn9Gh2+uextZYXraGwL+8GaOlxkOWR8K0GROjZHILtAC6srVhyPbCzQY4qz2le7EyJhoB
- gSnwSqGs5V0els/gdZByWl7mLqgR3JchXKXRO+IAXmDGbX6AnEO//u2jECF7OjDaWqxsyYc63y
- 518FgQYGYmVZ1DgbEXYv5CckM58wOQUyc/0CkYahXAxVpTC6LnN4E/yqJbtafyJl0ZkQEZV5dk
- +RQixvnaD0uaE++6CyF1QI7bZqkSgoVU23lzh3wkSEwH7EFgiMJ4JDnBiJx5smasxShut7/hll
- gGE=
-X-IronPort-AV: E=Sophos;i="5.68,272,1569312000"; 
-   d="scan'208";a="44759269"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa1.mentor.iphmx.com with ESMTP; 05 Nov 2019 23:03:29 -0800
-IronPort-SDR: SIDv1yvCpl9BPTBB5njpxfGOPnx/2J2L2UBfLYPLJWldiu4pd4xgHeiOM5cKGIYLFt49Yl/4ou
- DBMBlSjdMivLfCGn4MApTqWtb/Uy8rEvMLi7y2MW15i7zn3D7uLmnIKxGlwFuu507rTEirl5TJ
- kKjKiniVfep6/8yOTYCvK66sJ2HBoS211TGDMm3u6D+DGTbHvA+Fp5EXzON0GMwQwfnDYs8Rme
- twz4qsRyji8wn+v2Oi9E5g72GU3nVsMguXq0LAhfYSGPsIScuCRYS21lXbckE/6cawBkYE1nzv
- P4s=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <rydberg@bitmath.org>, <dmitry.torokhov@gmail.com>,
-        <nick@shmanahar.org>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <jiada_wang@mentor.com>, <erosca@de.adit-jv.com>,
-        <Andrew_Gabbasov@mentor.com>
-Subject: [PATCH v5 25/48] Input: atmel_mxt_ts - delay enabling IRQ when not using regulators
-Date:   Wed, 6 Nov 2019 16:01:23 +0900
-Message-ID: <20191106070146.18759-26-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191106070146.18759-1-jiada_wang@mentor.com>
-References: <20191106070146.18759-1-jiada_wang@mentor.com>
+        Wed, 6 Nov 2019 02:01:38 -0500
+Received: by mail-pl1-f193.google.com with SMTP id j12so9024576plt.9;
+        Tue, 05 Nov 2019 23:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MxSa1n+gHrOp6PMKGpdNcDU3YHnlnlTnVOvtpXq96hQ=;
+        b=FLii/lUKFxSP7NlBkRW8TcsfS8d12PrwyIgYxduQTcjuvyO9CSyhsJnn2Qk0TNlYZL
+         lB34iRpSXhlGGdUXgX5MmRflnU7KXpwFcbmIbkCWCtnMpq6GtOvYzOjEesFtxoTL92Nv
+         sMALWipHX2DnW1kFC+Akjuc9TXl6Zh7EP3kWO85NfzZkDgE/uuUvOeigxT1LF9oUjSee
+         s43QZDIWgxX7Z/CWGUm53hnu6aL+EoYztEHHblxLBrYIgu9aZCxgiUe94EotG4FLe1SD
+         NtpM8j7GArccqwtORn/sMlN/fuI4za73VDm5Ebe3neYfj5/ddYthqtwdXiro5ZMVOWjW
+         Y/DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MxSa1n+gHrOp6PMKGpdNcDU3YHnlnlTnVOvtpXq96hQ=;
+        b=Zcr14IFdH/7TlCTXKzIo9ootrVfXcHvyz8Gav/mwf5UTRu75ozWonzlDoBusY+uEVW
+         0Z2esHW0A8OwalJgQSgBJ/CJ++mAhwsT/dnyiw32T+4oM6Lbo8bVWZ459x6YFvKRGYqp
+         Z4RsMSKx4Mj4vdra4dpT7VpthQbUSCmFof/er9gNr1p/fdVK5dNbfZwO2ASCljJs4Okh
+         kINDCnfLHSsKFLJLkKiVql9FDfmcCL+vezqtru/7rusegK38YISXa8KdBoHv3Ut16x6I
+         BPKrey+TWcFKwZx7Zd1hOxJ6youpBhJfPiSuu3ueXgwnQW9dF1XNL3PDlisesKs0dZo2
+         YpAg==
+X-Gm-Message-State: APjAAAWjGzzF4NptmVat0deV8BF9wAyqsKmuc3+qLJdTQwxhFV3V1AXO
+        8z1BCcKSOsMhiaFRQs6VwDk=
+X-Google-Smtp-Source: APXvYqzJbw0+dj2HtLWRRpzgQPo9WOyJIwJJXerw9Xlczh2u7AtxkcVMkYZ8LmD3j/nBrXCnbQzT+g==
+X-Received: by 2002:a17:902:7c8d:: with SMTP id y13mr1021481pll.155.1573023697546;
+        Tue, 05 Nov 2019 23:01:37 -0800 (PST)
+Received: from Gentoo ([103.231.91.67])
+        by smtp.gmail.com with ESMTPSA id 65sm13508394pff.2.2019.11.05.23.01.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Nov 2019 23:01:36 -0800 (PST)
+Date:   Wed, 6 Nov 2019 12:31:23 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scripts:patch-kernel:bash syntax replace,correct one
+Message-ID: <20191106070120.GB18076@Gentoo>
+References: <20191025080544.7209-1-unixbhaskar@gmail.com>
+ <CAK7LNAT1=e36tLgPcHUOxKUSCH7MW3egYuJMtY+OfZWvHRxfGA@mail.gmail.com>
+ <20191106042049.GC20442@Gentoo>
+ <CAK7LNARdxhr1Ab1bkUqRjz4LGuH6mUg9kmp_4U0sYcK8uWzRyw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARdxhr1Ab1bkUqRjz4LGuH6mUg9kmp_4U0sYcK8uWzRyw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Dyer <nick.dyer@itdev.co.uk>
 
-The path of enabling the IRQ in the probe function is not safe in level
-triggered operation, if it was already powered up and there is a message
-waiting on the device (eg finger down) because the object table has not yet
-been read. This forces the ISR into a hard loop.
+--rS8CxjVDS/+yyDmU
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Delay enabling the interrupt until it is first needed.
+On 15:25 Wed 06 Nov 2019, Masahiro Yamada wrote:
+>On Wed, Nov 6, 2019 at 1:21 PM Bhaskar Chowdhury <unixbhaskar@gmail.com> w=
+rote:
+>>
+>> On 13:15 Wed 06 Nov 2019, Masahiro Yamada wrote:
+>> >On Fri, Oct 25, 2019 at 5:06 PM Bhaskar Chowdhury <unixbhaskar@gmail.co=
+m> wrote:
+>> >>
+>> >> This patch will replace backquote to dollar parenthesis syntax
+>> >> for better readability.Corrected one.
+>> >
+>> >Talking about the commit subject,
+>> >which part is 'bash syntax' ?
+>> >
+>> >One more thing,
+>> >"correct one" is not the correct way to send
+>> >a new patch version.
+>> >See the patch submission from other people.
+>> >The version number is enclosed in the square brackets.
+>> >
+>> >[PATCH v2]
+>> >
+>> >
+>> >The commit subject should describe what it does
+>> >in imperative mood.
+>> >
+>> >https://patchwork.kernel.org/patch/11205593/
+>> You are right ..my mistake ..shouldn't have included the
+>> "correct one" ...and you are absolutely right..."bash syntax"
+>> is as vague and confusing .
+>>
+>> Again , Would you mind if I send you the correct one with
+>> proper subject line and explained what changed.
+>
+>
+>I will pick up the patch with the subject corrected
+>but you do not need to send similar patches any more.
+>
+>`...` is the correct syntax.
+>Even if $(...) is more readable,
+>the added value is quite small.
+>
+Okay , noted.
+>
+>
+>
+>--=20
+>Best Regards
+>Masahiro Yamada
 
-Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
-(cherry picked from ndyer/linux/for-upstream commit 64c9dadc4a3250a185baf06ab0f628be45d5d9a0)
-[gdavis: Resolve forward port conflicts due to v4.14-rc1 commit
-	 8cc8446b9b62 ("Input: atmel_mxt_ts - use more managed
-	 resources") and applying upstream commit 96a938aa214e ("Input:
-	 atmel_mxt_ts - remove platform data support").]
-Signed-off-by: George G. Davis <george_davis@mentor.com>
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 40 +++++++++++++++---------
- 1 file changed, 26 insertions(+), 14 deletions(-)
+--rS8CxjVDS/+yyDmU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 842d407efc86..f5d67e43a786 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -1451,9 +1451,24 @@ static int mxt_acquire_irq(struct mxt_data *data)
- {
- 	int error;
- 
--	enable_irq(data->irq);
-+	if (!data->irq) {
-+		error = devm_request_threaded_irq(&data->client->dev,
-+						  data->client->irq,
-+						  NULL, mxt_interrupt,
-+						  IRQF_ONESHOT,
-+						  data->client->name, data);
-+		if (error) {
-+			dev_err(&data->client->dev, "Error requesting irq\n");
-+			return error;
-+		}
-+
-+		/* Presence of data->irq means IRQ initialised */
-+		data->irq = data->client->irq;
-+	} else {
-+		enable_irq(data->irq);
-+	}
- 
--	if (data->use_retrigen_workaround) {
-+	if (data->object_table && data->use_retrigen_workaround) {
- 		error = mxt_process_messages_until_invalid(data);
- 		if (error)
- 			return error;
-@@ -3373,7 +3388,9 @@ static int mxt_load_fw(struct device *dev)
- 			goto release_firmware;
- 	}
- 
--	enable_irq(data->irq);
-+	ret = mxt_acquire_irq(data);
-+	if (ret)
-+		goto release_firmware;
- 
- 	/* Poll after 0.1s if no interrupt received */
- 	schedule_delayed_work(&data->flash->work, msecs_to_jiffies(100));
-@@ -3800,7 +3817,6 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		 client->adapter->nr, client->addr);
- 
- 	data->client = client;
--	data->irq = client->irq;
- 	i2c_set_clientdata(client, data);
- 
- 	init_completion(&data->chg_completion);
-@@ -3828,26 +3844,22 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		return error;
- 	}
- 
--	error = devm_request_threaded_irq(&client->dev, client->irq,
--					  NULL, mxt_interrupt, IRQF_ONESHOT,
--					  client->name, data);
--	if (error) {
--		dev_err(&client->dev, "Failed to register interrupt\n");
--		return error;
--	}
--
- 	if (data->suspend_mode == MXT_SUSPEND_REGULATOR) {
-+		error = mxt_acquire_irq(data);
-+		if (error)
-+			return error;
-+
- 		error = mxt_probe_regulators(data);
- 		if (error)
- 			return error;
-+
-+		disable_irq(data->irq);
- 	} else if (data->reset_gpio) {
- 		msleep(MXT_RESET_GPIO_TIME);
- 		gpiod_set_value(data->reset_gpio, 1);
- 		msleep(MXT_RESET_INVALID_CHG);
- 	}
- 
--	disable_irq(data->irq);
--
- 	error = mxt_initialize(data);
- 	if (error)
- 		return error;
--- 
-2.17.1
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl3Cb7wACgkQsjqdtxFL
+KRWlBwgAj6yVqeQEReDZGWZ7OHnr0GRoGU13xPVK27xr0ibe2N7SJq1fwDeno/Fw
+edI7d8aufFlP+vvpzZVdjdLvbMkWv/mOW3kxnURxXcq3X95nkGDoceE5Fyh7tZ+i
+hxLrYMYOYFwlJikJJnI4S5HTGQ7A4B884zGRMqcC8bpAWAe6BNPDUZbmNaCZ02sW
+C/3olrDvpffviu4APEtLN1lAeuKVegz4k8Mybf+5dR1wH/G9FCp1/Q/oOSCUcLpt
+g7JZXEsw0xfXWtBmbI3Uwq9gEGoQ/PXDi6MC7+lRiL3LW+JBmDtlik/zKwk6DRM+
+Uhm8I6PssRajlg8Pu41UBQT0VVXBMw==
+=9wMq
+-----END PGP SIGNATURE-----
+
+--rS8CxjVDS/+yyDmU--
