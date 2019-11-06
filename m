@@ -2,94 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2F0F1348
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D1EBF1359
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbfKFKG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 05:06:58 -0500
-Received: from gofer.mess.org ([88.97.38.141]:45907 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfKFKG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 05:06:57 -0500
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id 5EF88C635F; Wed,  6 Nov 2019 10:06:55 +0000 (GMT)
-Date:   Wed, 6 Nov 2019 10:06:55 +0000
-From:   Sean Young <sean@mess.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH 00/12] i2c: replace i2c_new_probed_device with an
- ERR_PTR variant
-Message-ID: <20191106100655.GA2743@gofer.mess.org>
-References: <20191106095033.25182-1-wsa+renesas@sang-engineering.com>
+        id S1731225AbfKFKIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 05:08:07 -0500
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:45369 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbfKFKIG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 05:08:06 -0500
+Received: by mail-wr1-f53.google.com with SMTP id q13so25008001wrs.12
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 02:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RfazqxK++NUeQGibGNsb/xwtl2AjqHTLxKqC49MTjR4=;
+        b=vO6giWxhl3D8Ew4bBQphqLy0x5vLotCBC10MctFCYaF30IL9VTV0hCx5csqFpfbOac
+         OZ+Fne3LnI3q7YyZNNK7WVZHqdOHesj+x30hKRu+5ukVHog2AS/HmQx7UX4immTCHhGU
+         HyUxdJTeevWpRa2LDfBK4du66HGutnLI35hwOza2cemUrgrV0paJ8JOBRoVL3G/iHWZw
+         juCb2ZkL8PUFtj23OtQoX9s5Bm+pawpiO3+qDAf7JwrV/UoSqRv6+/pzdRko3aLKx28K
+         EjmAbxeqoeGpQV9Ls40nkMIV8mcfuP7a2kuAIdaXoGPpajOc8YLylilehZiPOPu/1IVw
+         eINA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RfazqxK++NUeQGibGNsb/xwtl2AjqHTLxKqC49MTjR4=;
+        b=gfBmWC7ScvJEQ4YhK8OQ9FvI1qe68tXSvg7ZZE8E2AgRhxodnxL0NgFupSLhuTjeQJ
+         M/36doAxtMZwZbKYMvt1Jjwba7/82w0stYVEthkglnSbG00ANnkhhmcRslnjDW10nUUP
+         6gvOdYiLvhZTLnmiBCTwyixXtc7HrPGtxAEkGvagGDrCCwXEr2mUh5K+0YWxROpsUTVo
+         7olmBZyzOSDmsBnXsOtsQN6/HIPPBhCvnCzGmB0GFrJCQtfppn+1I13SVBImeFSs+yBJ
+         8K/Zhmh2EcCeaSien9pdY0BdaW1Ls4TME2WSQZDYMtpXL6YI3nSImurxXPJLnUP0LG2i
+         H0yg==
+X-Gm-Message-State: APjAAAWx+O2hfB5o1A4oeEX0YK7Es84BBJxIQwvTz26sNxKafEeHI0nP
+        bJ3MUJsiASOVTxDznMJhl+y4pw==
+X-Google-Smtp-Source: APXvYqxLATsv0dpIOklFV3PCz8dC70Zj2vsSWYi/3P2nLGCV6B+BbAH7mLeIYbgJgVf1KaSE2F/j2A==
+X-Received: by 2002:adf:b608:: with SMTP id f8mr1716914wre.99.1573034884360;
+        Wed, 06 Nov 2019 02:08:04 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id j3sm15897267wrs.70.2019.11.06.02.08.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Nov 2019 02:08:03 -0800 (PST)
+Subject: Re: [PATCH v3 01/11] ASoC: dt-bindings: add dt bindings for
+ WCD9340/WCD9341 audio codec
+To:     Rob Herring <robh@kernel.org>
+Cc:     broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org,
+        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        linux-gpio@vger.kernel.org
+References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
+ <20191029112700.14548-2-srinivas.kandagatla@linaro.org>
+ <20191105193100.GB4709@bogus>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <315fd1f8-b6b5-5df7-604d-4ca92b31772c@linaro.org>
+Date:   Wed, 6 Nov 2019 10:08:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106095033.25182-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191105193100.GB4709@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 10:50:18AM +0100, Wolfram Sang wrote:
-> From: Wolfram Sang <wsa@the-dreams.de>
-> 
-> In the on-going mission to let i2c_new_* calls return an ERR_PTR instead
-> of NULL, here is a series converting i2c_new_probed_device(). A new
-> function called i2c_new_scanned_device() is introduced with the new
-> retval, but for now, a compatibility helper is provided until all users
-> are converted. The rest of the patches convert all current in-tree
-> users.
-> 
-> Note that these patches are RFC because I want feedback on the approach
-> and hopefully collect acks on the driver conversions. If all goes well,
-> I'll apply the first two patches for the next merge window. Then, once
-> this dependency is upstream, I'll resend this series with all issues
-> fixed and acks collected.
 
-The patches to drivers/media/pci/* are all IR related which have touched
-on/read over the years. So, for those:
 
-Acked-by: Sean Young <sean@mess.org>
+On 05/11/2019 19:31, Rob Herring wrote:
+>> +  vdd-micbias-supply:
+>> +    description: A reference to the micbias supply
+>> +
+>> +  qcom,micbias1-microvolts:
+> The standard unit is 'microvolt', not 'microvolts'.
+> 
+I started with microvolt but dt_bindings_check reported errors.
 
-> 
-> Core changes tested on a Renesas Salvator-XS board (R-Car M3-N), driver
-> patches build tested by me and buildbot.
-> 
-> Wolfram Sang (12):
->   i2c: replace i2c_new_probed_device with an ERR_PTR variant
->   i2c: icy: convert to i2c_new_scanned_device
->   macintosh: convert to i2c_new_scanned_device
->   platform: chrome: convert to i2c_new_scanned_device
->   video: fbdev: matrox: convert to i2c_new_scanned_device
->   input: mouse: convert to i2c_new_scanned_device
->   media: pci: cx23885: convert to i2c_new_scanned_device
->   media: pci: cx88: convert to i2c_new_scanned_device
->   media: pci: bt8xx: convert to i2c_new_scanned_device
->   media: pci: cx18: convert to i2c_new_scanned_device
->   media: pci: ivtv: convert to i2c_new_scanned_device
->   media: v4l2-core: convert to i2c_new_scanned_device
-> 
->  Documentation/i2c/instantiating-devices.rst | 10 ++++-----
->  Documentation/i2c/writing-clients.rst       |  8 +++----
->  drivers/i2c/busses/i2c-icy.c                |  8 +++----
->  drivers/i2c/i2c-core-base.c                 | 25 ++++++++++++++++-----
->  drivers/input/mouse/psmouse-smbus.c         |  8 ++++---
->  drivers/macintosh/therm_windtunnel.c        |  4 ++--
->  drivers/media/pci/bt8xx/bttv-input.c        |  6 ++---
->  drivers/media/pci/cx18/cx18-i2c.c           |  2 +-
->  drivers/media/pci/cx23885/cx23885-i2c.c     |  4 ++--
->  drivers/media/pci/cx88/cx88-input.c         |  2 +-
->  drivers/media/pci/ivtv/ivtv-i2c.c           |  6 ++---
->  drivers/media/pci/ivtv/ivtv-i2c.h           |  2 +-
->  drivers/media/v4l2-core/v4l2-i2c.c          | 10 ++++-----
->  drivers/platform/chrome/chromeos_laptop.c   | 18 ++++++++-------
->  drivers/video/fbdev/matrox/i2c-matroxfb.c   |  4 ++--
->  include/linux/i2c.h                         | 12 +++++++---
->  16 files changed, 76 insertions(+), 53 deletions(-)
-> 
-> -- 
-> 2.20.1
+looking at 
+https://github.com/devicetree-org/dt-schema/blob/master/meta-schemas/vendor-props.yaml#L19 
+  suggested microvolts should be used on vendor properties.
+
+Is this a typo in dt-schema ?
+
+thanks,
+--srini
