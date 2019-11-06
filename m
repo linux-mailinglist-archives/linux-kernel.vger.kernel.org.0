@@ -2,164 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681E9F0EBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3952F0ECA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfKFGKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 01:10:07 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:36264 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725806AbfKFGKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 01:10:06 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA66A2Jt030235
-        for <linux-kernel@vger.kernel.org>; Tue, 5 Nov 2019 22:10:05 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=ZNEK/2HxCUlHQJ5GI8dDxUQNL+Ty25u3PZmn8QkENtk=;
- b=aWd2ZJxEnjwy9mWP0mLdjqoDoSC7tBju9kJkVFyv3qvQvMZjsR88H8yginXnZ7BXVcCV
- WMElqehGQJuHsd0eri/rkc0B5sV6c0rNvhUzLg27TdaQozq6uwNwsdLJiR/PxCiSgZ/8
- 0uwlkvTDYVlkPfr3i1jUxnWsVvWtjf34y4A= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2w3ddeugq7-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 22:10:05 -0800
-Received: from 2401:db00:30:6012:face:0:17:0 (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 5 Nov 2019 22:09:53 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id DAB0162E36EB; Tue,  5 Nov 2019 22:09:51 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <akpm@linux-foundation.org>
-CC:     <matthew.wilcox@oracle.com>, <kernel-team@fb.com>,
-        <william.kucharski@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v5 1/2] mm,thp: recheck each page before collapsing file THP
-Date:   Tue, 5 Nov 2019 22:09:29 -0800
-Message-ID: <20191106060930.2571389-2-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191106060930.2571389-1-songliubraving@fb.com>
-References: <20191106060930.2571389-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        id S1729750AbfKFGVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 01:21:23 -0500
+Received: from mail-eopbgr00079.outbound.protection.outlook.com ([40.107.0.79]:33856
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725812AbfKFGVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 01:21:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AEG+7XH2Qf5bPyqnbedNfBydnoKkxoYIpjsSxx+unBWw6lxf2f66ChvRf4fi86OLAfSb5z28FfPb2hR5Pb84TDnIpueQytKxVNxsvi73NQg9aLzdIoGSnqv8rrWUwLwn3ZkewUEz52Nls3vj9ya0Yx2wIEJg3FHtBKkkroZ5YH5wbfUBvs9z1W0lp39RzyEDuWziOiS2q/ON26pBH1XbEIRsu9f+eBjGr2RMhEe5nHooeMYCn+Sdmd1dO0wo7MMxybIdnNil34j+wTSwDHuxYDEZ25CsLM0nIi/sDlHMmuMY87lvzM2a/2LoNBJh9s3ZZaLAXCps9o0RsUAiPajnFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LSg3GjTphvjL6eURBW6TTGWT+Ne81caN9ncp2MRxQ50=;
+ b=DB9qXgEtrDvJtqTJClbaI3ndznEhZvpCOjhooDVXmZtYPzI8FkHRqaxVNTOtsOK3hBpHrIeVyIBtQ6kJbze/TKDIwVj4Ik8oo4mNj/44v8kDG6z73gz93vM86DTYVR4xlith+aVGVca+dAXk+NFcHzfPQDI/1RdjlUxgGZEMnOVnVyuoBAYnR56a5OpnmeM3e32NhUbqYVGYrUwzLTEiblDvx2mNitOFuyIEumY/U80IilJmRcuLaIA+5Wgq7xGt3TqarmZ8Xy4ituJDN4mphOYSQxr5y5RkiLmRtn5l21OROzf932hF5X3RC3Y8wxJh92t4rpstD6jL6oUU4PwQ4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LSg3GjTphvjL6eURBW6TTGWT+Ne81caN9ncp2MRxQ50=;
+ b=IsJcWKld09ENkbP3nL7vZXGFy+liQSTDwZDVQNrJ+Ao0dmgLXEjbJSTqyA3p15qHhyinaa4tEKVNt8c78MnR3376+eBfr6IvyMMmbZsG8bHaZPJ5RQ71eMDmYziEyIuTOOtRYjNS+7R1oOqeJ33t9tYyO2h9V79OnlP1dbrpVBY=
+Received: from VI1PR05MB5102.eurprd05.prod.outlook.com (20.177.51.151) by
+ VI1PR05MB6446.eurprd05.prod.outlook.com (20.179.28.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.20; Wed, 6 Nov 2019 06:21:18 +0000
+Received: from VI1PR05MB5102.eurprd05.prod.outlook.com
+ ([fe80::d41a:9a5d:5482:497e]) by VI1PR05MB5102.eurprd05.prod.outlook.com
+ ([fe80::d41a:9a5d:5482:497e%5]) with mapi id 15.20.2408.024; Wed, 6 Nov 2019
+ 06:21:18 +0000
+From:   Saeed Mahameed <saeedm@mellanox.com>
+To:     "davem@davemloft.net" <davem@davemloft.net>,
+        "colin.king@canonical.com" <colin.king@canonical.com>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] net/mlx5: fix spelling mistake "metdata" ->
+ "metadata"
+Thread-Topic: [PATCH][next] net/mlx5: fix spelling mistake "metdata" ->
+ "metadata"
+Thread-Index: AQHVk+jnPLY8v2TAj0OuyvOpB0dwZ6d9bdoAgAA/GwA=
+Date:   Wed, 6 Nov 2019 06:21:17 +0000
+Message-ID: <d3e21e89d017add523749494bb70854402d9cd63.camel@mellanox.com>
+References: <20191105145416.60451-1-colin.king@canonical.com>
+         <20191105.183522.2155800632990290770.davem@davemloft.net>
+In-Reply-To: <20191105.183522.2155800632990290770.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=saeedm@mellanox.com; 
+x-originating-ip: [73.15.39.150]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: c49af608-4e4b-4e74-6fdb-08d7628188c9
+x-ms-traffictypediagnostic: VI1PR05MB6446:
+x-microsoft-antispam-prvs: <VI1PR05MB644663B954F18C16B1FA266FBE790@VI1PR05MB6446.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 02135EB356
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(366004)(346002)(39860400002)(189003)(199004)(71190400001)(71200400001)(14444005)(256004)(8936002)(2501003)(8676002)(54906003)(6512007)(6246003)(446003)(229853002)(11346002)(4326008)(118296001)(2616005)(476003)(6436002)(25786009)(486006)(6486002)(26005)(66066001)(2906002)(102836004)(305945005)(66446008)(64756008)(66476007)(66556008)(66946007)(99286004)(316002)(91956017)(5660300002)(76116006)(86362001)(36756003)(186003)(4744005)(81166006)(81156014)(110136005)(478600001)(58126008)(14454004)(3846002)(76176011)(7736002)(6506007)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB6446;H:VI1PR05MB5102.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: R8Y8VjoybGNfULv8QgQKXClCkNRcffFlJ9u/6c6Ml/WpGA0Vp1se3Uwfc1M+nXAkBoVDV9NSKte8+VeOaeP/15oIHoH27gT0W299y4yedyoz9fLQ7WZQKQtPywt9an6kqi9kDEdA/zXnO88TdUhxdlrDwYmy+RfYYCSE7gD/WVgGMQd26t6x/B59+wxPwn27y/VZ4L6+6Hx/lUFXXz82zrIT8aoFUHk9+wEbqnO1JzSFi67X3OU2xq8zt98jrw0HJWVJ9QdvPQEoRh5FNLZvRQnRNcoLlK5eojINoWO6nj5SRKjOdTwIZ053hZGMhDIZiKbWSoJEkU84nQsX7aNuSj93LfYzS+vHtaNprb3DOD1ZJHdD+3ljPbvbuYTjWY72eGSdt6tWgpJI9kJakqkorjVI8K1p7D8Mlx2h5GCAh9Rj+5UlWLC4FjinNVU+9zPw
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <01F62C305A27E34A81425FCF14541C56@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-06_01:2019-11-05,2019-11-06 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1911060064
-X-FB-Internal: deliver
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c49af608-4e4b-4e74-6fdb-08d7628188c9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 06:21:17.9791
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /yNSCabBdsi0ofjTqvyDcgCEX/KfyMVWdAmoppk6xPte/+0DNSsgyvKXRP6Gxm5mvyeLAJQuZRkQYKTN1EPndw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6446
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In collapse_file(), for !is_shmem case, current check cannot guarantee
-the locked page is up-to-date.  Specifically, xas_unlock_irq() should
-not be called before lock_page() and get_page(); and it is necessary to
-recheck PageUptodate() after locking the page.
-
-With this bug and CONFIG_READ_ONLY_THP_FOR_FS=y, madvise(HUGE)'ed .text
-may contain corrupted data.  This is because khugepaged mistakenly
-collapses some not up-to-date sub pages into a huge page, and assumes
-the huge page is up-to-date.  This will NOT corrupt data in the disk,
-because the page is read-only and never written back.  Fix this by
-properly checking PageUptodate() after locking the page.  This check
-replaces "VM_BUG_ON_PAGE(!PageUptodate(page), page);".
-
-Also, move PageDirty() check after locking the page.  Current
-khugepaged should not try to collapse dirty file THP, because it is
-limited to read-only .text. The only case we hit a dirty page here is
-when the page hasn't been written since write. Bail out and retry when
-this happens.
-
-syzbot reported bug on previous version of this patch.
-
-Fixes: 99cb0dbd47a1 ("mm,thp: add read-only THP support for (non-shmem) FS")
-Reported-by: syzbot+efb9e48b9fbdc49bb34a@syzkaller.appspotmail.com
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-
----
-
-[songliubraving@fb.com: v4]
- Link: http://lkml.kernel.org/r/20191022191006.411277-1-songliubraving@fb.com
-[songliubraving@fb.com: fix deadlock in collapse_file()]
- Link: http://lkml.kernel.org/r/20191028221414.3685035-1-songliubraving@fb.com
-Link: http://lkml.kernel.org/r/20191018180345.4188310-1-songliubraving@fb.com
-[songliubraving@fb.com: flush file for !is_shmem PageDirty() case in collapse_file()]
-https://lkml.kernel.org/linux-mm/20191030200736.3455046-1-songliubraving@fb.com/
-
----
- mm/khugepaged.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 0a1b4b484ac5..40215795d641 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1601,17 +1601,6 @@ static void collapse_file(struct mm_struct *mm,
- 					result = SCAN_FAIL;
- 					goto xa_unlocked;
- 				}
--			} else if (!PageUptodate(page)) {
--				xas_unlock_irq(&xas);
--				wait_on_page_locked(page);
--				if (!trylock_page(page)) {
--					result = SCAN_PAGE_LOCK;
--					goto xa_unlocked;
--				}
--				get_page(page);
--			} else if (PageDirty(page)) {
--				result = SCAN_FAIL;
--				goto xa_locked;
- 			} else if (trylock_page(page)) {
- 				get_page(page);
- 				xas_unlock_irq(&xas);
-@@ -1626,7 +1615,12 @@ static void collapse_file(struct mm_struct *mm,
- 		 * without racing with truncate.
- 		 */
- 		VM_BUG_ON_PAGE(!PageLocked(page), page);
--		VM_BUG_ON_PAGE(!PageUptodate(page), page);
-+
-+		/* make sure the page is up to date */
-+		if (unlikely(!PageUptodate(page))) {
-+			result = SCAN_FAIL;
-+			goto out_unlock;
-+		}
-
- 		/*
- 		 * If file was truncated then extended, or hole-punched, before
-@@ -1642,6 +1636,16 @@ static void collapse_file(struct mm_struct *mm,
- 			goto out_unlock;
- 		}
-
-+		if (!is_shmem && PageDirty(page)) {
-+			/*
-+			 * khugepaged only works on read-only fd, so this
-+			 * page is dirty because it hasn't been flushed
-+			 * since first write.
-+			 */
-+			result = SCAN_FAIL;
-+			goto out_unlock;
-+		}
-+
- 		if (isolate_lru_page(page)) {
- 			result = SCAN_DEL_PAGE_LRU;
- 			goto out_unlock;
---
-2.17.1
+T24gVHVlLCAyMDE5LTExLTA1IGF0IDE4OjM1IC0wODAwLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+
+IEZyb206IENvbGluIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gRGF0ZTogVHVl
+LCAgNSBOb3YgMjAxOSAxNDo1NDoxNiArMDAwMA0KPiANCj4gPiBGcm9tOiBDb2xpbiBJYW4gS2lu
+ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiA+IA0KPiA+IFRoZXJlIGlzIGEgc3BlbGxp
+bmcgbWlzdGFrZSBpbiBhIGVzd193YXJuIHdhcm5pbmcgbWVzc2FnZS4gRml4IGl0Lg0KPiA+IA0K
+PiA+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5j
+b20+DQo+IA0KPiBTYWVlZCwgcGxlYXNlIHBpY2sgdGhpcyBvbmUgdXAuDQo+IA0KPiBUaGFuayB5
+b3UuDQoNCkFwcGxpZWQgdG8gbWx4NS1uZXh0Lg0KVGhhbmtzIQ0K
