@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C0DBF1EAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 611D8F1E93
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732690AbfKFTXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 14:23:44 -0500
+        id S1732185AbfKFTWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 14:22:40 -0500
 Received: from mga02.intel.com ([134.134.136.20]:50594 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732087AbfKFTWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:22:37 -0500
+        id S1732031AbfKFTWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 14:22:38 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 11:22:36 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 11:22:38 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
-   d="scan'208";a="403835096"
+   d="scan'208";a="403835103"
 Received: from vidhipat-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.254.33.70])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Nov 2019 11:22:35 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 06 Nov 2019 11:22:36 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v2 05/19] soundwire: intel: add helpers for link power down and shim wake
-Date:   Wed,  6 Nov 2019 13:22:09 -0600
-Message-Id: <20191106192223.6003-6-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v2 06/19] soundwire: intel: Add basic power management support
+Date:   Wed,  6 Nov 2019 13:22:10 -0600
+Message-Id: <20191106192223.6003-7-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191106192223.6003-1-pierre-louis.bossart@linux.intel.com>
 References: <20191106192223.6003-1-pierre-louis.bossart@linux.intel.com>
@@ -43,77 +43,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These routines are required for power management
+Implement suspend/resume capabilities (not runtime_pm for now)
+The resume part is essentially a full-blown re-enumeration.
+
+When S0ix is supported, we will select clock stop mode when the ACPI
+target state is S0, and tear down the link for S3.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel.c | 53 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ drivers/soundwire/intel.c | 75 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
 diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index c918a26d0772..fe3a8b3b2c04 100644
+index fe3a8b3b2c04..aeef0c0fc443 100644
 --- a/drivers/soundwire/intel.c
 +++ b/drivers/soundwire/intel.c
-@@ -362,6 +362,59 @@ static int intel_shim_init(struct sdw_intel *sdw)
- 	return ret;
+@@ -1253,10 +1253,85 @@ static int intel_master_remove(struct sdw_master_device *md)
+ 	return 0;
  }
  
-+static void intel_shim_wake(struct sdw_intel *sdw, bool wake_enable)
++/*
++ * PM calls
++ */
++
++#ifdef CONFIG_PM
++
++static int intel_suspend(struct device *dev)
 +{
-+	void __iomem *shim = sdw->link_res->shim;
-+	unsigned int link_id = sdw->instance;
-+	u16 wake_en, wake_sts;
++	struct sdw_cdns *cdns = dev_get_drvdata(dev);
++	struct sdw_intel *sdw = cdns_to_intel(cdns);
++	int ret;
 +
-+	if (wake_enable) {
-+		/* Enable the wakeup */
-+		intel_writew(shim, SDW_SHIM_WAKEEN,
-+			     (SDW_SHIM_WAKEEN_ENABLE << link_id));
-+	} else {
-+		/* Disable the wake up interrupt */
-+		wake_en = intel_readw(shim, SDW_SHIM_WAKEEN);
-+		wake_en &= ~(SDW_SHIM_WAKEEN_ENABLE << link_id);
-+		intel_writew(shim, SDW_SHIM_WAKEEN, wake_en);
-+
-+		/* Clear wake status */
-+		wake_sts = intel_readw(shim, SDW_SHIM_WAKESTS);
-+		wake_sts |= (SDW_SHIM_WAKEEN_ENABLE << link_id);
-+		intel_writew(shim, SDW_SHIM_WAKESTS_STATUS, wake_sts);
++	if (cdns->bus.prop.hw_disabled) {
++		dev_dbg(dev, "SoundWire master %d is disabled, ignoring\n",
++			cdns->bus.link_id);
++		return 0;
 +	}
-+}
 +
-+static int intel_link_power_down(struct sdw_intel *sdw)
-+{
-+	int link_control, spa_mask, cpa_mask, ret;
-+	unsigned int link_id = sdw->instance;
-+	void __iomem *shim = sdw->link_res->shim;
-+	u16 ioctl;
-+
-+	/* Glue logic */
-+	ioctl = intel_readw(shim, SDW_SHIM_IOCTL(link_id));
-+	ioctl |= SDW_SHIM_IOCTL_BKE;
-+	ioctl |= SDW_SHIM_IOCTL_COE;
-+	intel_writew(shim, SDW_SHIM_IOCTL(link_id), ioctl);
-+
-+	ioctl &= ~(SDW_SHIM_IOCTL_MIF);
-+	intel_writew(shim, SDW_SHIM_IOCTL(link_id), ioctl);
-+
-+	/* Link power down sequence */
-+	link_control = intel_readl(shim, SDW_SHIM_LCTL);
-+	spa_mask = ~(SDW_SHIM_LCTL_SPA << link_id);
-+	cpa_mask = (SDW_SHIM_LCTL_CPA << link_id);
-+	link_control &=  spa_mask;
-+
-+	ret = intel_clear_bit(shim, SDW_SHIM_LCTL, link_control, cpa_mask);
-+	if (ret < 0)
++	ret = sdw_cdns_enable_interrupt(cdns, false);
++	if (ret < 0) {
++		dev_err(dev, "cannot disable interrupts on suspend\n");
 +		return ret;
++	}
 +
-+	sdw->cdns.link_up = false;
++	ret = intel_link_power_down(sdw);
++	if (ret) {
++		dev_err(dev, "Link power down failed: %d", ret);
++		return ret;
++	}
++
++	intel_shim_wake(sdw, false);
++
 +	return 0;
 +}
 +
- /*
-  * PDI routines
-  */
++static int intel_resume(struct device *dev)
++{
++	struct sdw_cdns *cdns = dev_get_drvdata(dev);
++	struct sdw_intel *sdw = cdns_to_intel(cdns);
++	int ret;
++
++	if (cdns->bus.prop.hw_disabled) {
++		dev_dbg(dev, "SoundWire master %d is disabled, ignoring\n",
++			cdns->bus.link_id);
++		return 0;
++	}
++
++	ret = intel_init(sdw);
++	if (ret) {
++		dev_err(dev, "%s failed: %d", __func__, ret);
++		return ret;
++	}
++
++	ret = sdw_cdns_enable_interrupt(cdns, true);
++	if (ret < 0) {
++		dev_err(dev, "cannot enable interrupts during resume\n");
++		return ret;
++	}
++
++	ret = sdw_cdns_exit_reset(cdns);
++	if (ret < 0) {
++		dev_err(dev, "unable to exit bus reset sequence during resume\n");
++		return ret;
++	}
++
++	return ret;
++}
++
++#endif
++
++static const struct dev_pm_ops intel_pm = {
++	SET_SYSTEM_SLEEP_PM_OPS(intel_suspend, intel_resume)
++};
++
+ struct sdw_md_driver intel_sdw_driver = {
+ 	.driver = {
+ 		.name = "intel-sdw",
+ 		.owner = THIS_MODULE,
++		.pm = &intel_pm,
+ 	},
+ 	.probe = intel_master_probe,
+ 	.startup = intel_master_startup,
 -- 
 2.20.1
 
