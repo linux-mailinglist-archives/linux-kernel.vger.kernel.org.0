@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E61A2F0CA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D57FF0CA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:08:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731016AbfKFDIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:08:51 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40457 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388409AbfKFDIk (ORCPT
+        id S1731079AbfKFDIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:08:52 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33778 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388435AbfKFDIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:08:40 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 15so16120067pgt.7
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 19:08:40 -0800 (PST)
+        Tue, 5 Nov 2019 22:08:45 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c184so17751369pfb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 19:08:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=No8r/EO/m1FZDC1QSQ+DsBj1hQaAIffNpL2JoJ8sPnc=;
-        b=HpI4TPfr/Sma1QdALGXcyJ2WvjFNGwre6xU8Jf7L7W7e5Z4MO855Xkj/RaWhLAn6zv
-         9ahmMcFF+jdVr1xp4e/Q5kn8FkkENwKmvvR67wbUv1Tbp2+5TPvhajnRXPqGnffEA+Nx
-         mp+q9+AuSwlnJky/cl6OOThTmXTSEpRUh+AfX6e7t3jt7mfvxvw+kAt/qt6TIEuGBzDx
-         FEKQFW6M+kUlhkKVpTRVLvUPHHT5VFdn+L782OSjCAKQB8G64gEiwB+3Zbt4LwmKlHB6
-         4LtZ6GJMjWyANjwrJNLbbH7CL2MMRfaN7uoN9DuRogupsebZsqKT7UPVFoRc06QeKZWX
-         Uzng==
+        bh=oafRhfLZXVvkNwF2H2KONz+tM53VMEIpGfIk11cYT7o=;
+        b=Y4k61BKpVSdUq1hUuFtW/xmyewN1YgbHYyyMU7vuemwnvexsjloHlcznh907I40GBy
+         WGMHcJhiX9k4GkPZQ863Gpx0tA8vqTBD1viY0NbVVluIiLm+uTVPh/BhVpGKEkw3Ag5e
+         5OfScGkXC1ewP1+9tTPt6rsAfvEdnXTC9uTndO59fcth2N7JL64EGQtCwcSVnW/+k35k
+         NwNcYxFUsojkbWR7FGhI+itVIIjuWKwFzbjSSLfremPEwrpF9YbU5gXfaO8YvorheY0e
+         n09Y35AY4OKonEkfH7uqXhbgQZLQWrwVJNwIg86afm/jwA3kh9QZawwmLX4qUMh3jF04
+         ZPWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=No8r/EO/m1FZDC1QSQ+DsBj1hQaAIffNpL2JoJ8sPnc=;
-        b=Q58rElUs9zOwbD4JwWkCrQIS8ywd3bNqCutLafZmkEvI1IrNEo7AGUBA5jGrnrMn1j
-         l3nL+FnyBMo8eeTB6fIYeu9gq6lr0rohwMHsizckDcN/HbIR11jOuRtH73V5jk+cpWNg
-         dd3fSdX2vHmp32TVHuH1iOucSG+pPByjn8SpX6Re6LUTyFZ0P7nD9AcqmF9i+X6GxnaB
-         iFRlI7kny6PQPNPHwT4QHeKyy4X8YqCbZ/LxjFacMSLxwmD4/H2XNTt9h04mXN6IF1D+
-         itIOt2nXxcuAZHpr526iaP8zzsMXkCjyZR8RJ5ZoAQS/4eDYHYiWhLBrtlM32POVHCwO
-         JakQ==
-X-Gm-Message-State: APjAAAVDvf9E/+0NVthhLs28+RaLRRoUKPWoZ9Rg/pDzQTAXmLzW0tHs
-        AxltUPiIm1UnGtv+m3+7rxDY7x3dwG4=
-X-Google-Smtp-Source: APXvYqzf6PYT3ec2KW1/wWm2G/IgLrYY4CCMzqepEO/ueV+HESGhFrMlPb9bZep4lOr7rRiBLUOHng==
-X-Received: by 2002:aa7:8e8d:: with SMTP id a13mr389528pfr.241.1573009719265;
-        Tue, 05 Nov 2019 19:08:39 -0800 (PST)
+        bh=oafRhfLZXVvkNwF2H2KONz+tM53VMEIpGfIk11cYT7o=;
+        b=fjlS/hr3T5ual2cb1qADyxjb54pY/8jDNB/rG8MsHMWVo810Nbr97kC2Q+RNtmZZqP
+         phFGsZNqGOufgxMU5xT8zVngmWIJHK22s8tG73x5C/VgHlUlh8g7qm2Zd62f9/Uwtq+/
+         xvy8c8emsxucFcv5mf4Vn0sssKDMY+vP+vKUFyRHrd6sBYQzzzKvjcNfwu1rvvvgGuST
+         a/qULOY4OdKU9T8OycJC6IGswjH+NDeVHKkAxcw+37sMPvvJRJvg+lNr+Zx0NsV6rdVU
+         vGKwqkXfqpbDdPgHmR79ZJWTbJ8YW9QbmlER5oQ79QVR/eKeHhgdkdBrhDcttYMXIaJ9
+         zdZw==
+X-Gm-Message-State: APjAAAUBOvLOyShm4emPENsjeM5h7vtD/9+S5Ntw5yUyFuNG50hraLwU
+        I4r2DkUMU7/CW49EGqBGsAdiXbfE9/M=
+X-Google-Smtp-Source: APXvYqx0N6Ls9JxkM2/lsi+60+JBohGbdJbpJdnkQjTuFpcT+CUTDvWHod1g4DClHj4T3W+dDinUJg==
+X-Received: by 2002:a17:90a:bd10:: with SMTP id y16mr557120pjr.111.1573009723166;
+        Tue, 05 Nov 2019 19:08:43 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id k24sm19570487pgl.6.2019.11.05.19.08.35
+        by smtp.gmail.com with ESMTPSA id k24sm19570487pgl.6.2019.11.05.19.08.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 19:08:38 -0800 (PST)
+        Tue, 05 Nov 2019 19:08:42 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -59,14 +59,13 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: [PATCH 40/50] x86: Add missing const qualifiers for log_lvl
-Date:   Wed,  6 Nov 2019 03:05:31 +0000
-Message-Id: <20191106030542.868541-41-dima@arista.com>
+Subject: [PATCH 41/50] x86: Add show_stack_loglvl()
+Date:   Wed,  6 Nov 2019 03:05:32 +0000
+Message-Id: <20191106030542.868541-42-dima@arista.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191106030542.868541-1-dima@arista.com>
 References: <20191106030542.868541-1-dima@arista.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -89,18 +88,8 @@ Introducing log-level parameter and KERN_UNSUPPRESSED [1] seems
 an easier approach than introducing more printk buffers.
 Also, it will consolidate printings with headers.
 
-Keep log_lvl const show_trace_log_lvl() and printk_stack_address()
-as the new generic show_stack_loglvl() wants to have a proper const
-qualifier.
-
-And gcc rightfully produces warnings in case it's not keept:
-arch/x86/kernel/dumpstack.c: In function ‘show_stack’:
-arch/x86/kernel/dumpstack.c:294:37: warning: passing argument 4 of ‘show_trace_log_lv ’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
-  294 |  show_trace_log_lvl(task, NULL, sp, loglvl);
-      |                                     ^~~~~~
-arch/x86/kernel/dumpstack.c:163:32: note: expected ‘char *’ but argument is of type ‘const char *’
-  163 |    unsigned long *stack, char *log_lvl)
-      |                          ~~~~~~^~~~~~~
+Introduce show_stack_loglvl(), that eventually will substitute
+show_stack().
 
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
@@ -110,45 +99,37 @@ Cc: x86@kernel.org
 [1]: https://lore.kernel.org/lkml/20190528002412.1625-1-dima@arista.com/T/#u
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/x86/include/asm/stacktrace.h | 2 +-
- arch/x86/kernel/dumpstack.c       | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/dumpstack.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/stacktrace.h b/arch/x86/include/asm/stacktrace.h
-index 14db05086bbf..5ae5a68e469d 100644
---- a/arch/x86/include/asm/stacktrace.h
-+++ b/arch/x86/include/asm/stacktrace.h
-@@ -87,7 +87,7 @@ get_stack_pointer(struct task_struct *task, struct pt_regs *regs)
- }
- 
- void show_trace_log_lvl(struct task_struct *task, struct pt_regs *regs,
--			unsigned long *stack, char *log_lvl);
-+			unsigned long *stack, const char *log_lvl);
- 
- /* The form of the top of the frame on the stack */
- struct stack_frame {
 diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index e07424e19274..147a06ee4a48 100644
+index 147a06ee4a48..940cd4c27b17 100644
 --- a/arch/x86/kernel/dumpstack.c
 +++ b/arch/x86/kernel/dumpstack.c
-@@ -65,7 +65,7 @@ bool in_entry_stack(unsigned long *stack, struct stack_info *info)
+@@ -279,7 +279,8 @@ void show_trace_log_lvl(struct task_struct *task, struct pt_regs *regs,
+ 	}
  }
  
- static void printk_stack_address(unsigned long address, int reliable,
--				 char *log_lvl)
-+				 const char *log_lvl)
+-void show_stack(struct task_struct *task, unsigned long *sp)
++void show_stack_loglvl(struct task_struct *task, unsigned long *sp,
++		       const char *loglvl)
  {
- 	touch_nmi_watchdog();
- 	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
-@@ -160,7 +160,7 @@ static void show_regs_if_on_stack(struct stack_info *info, struct pt_regs *regs,
+ 	task = task ? : current;
+ 
+@@ -290,7 +291,12 @@ void show_stack(struct task_struct *task, unsigned long *sp)
+ 	if (!sp && task == current)
+ 		sp = get_stack_pointer(current, NULL);
+ 
+-	show_trace_log_lvl(task, NULL, sp, KERN_DEFAULT);
++	show_trace_log_lvl(task, NULL, sp, loglvl);
++}
++
++void show_stack(struct task_struct *task, unsigned long *sp)
++{
++	show_stack_loglvl(task, sp, KERN_DEFAULT);
  }
  
- void show_trace_log_lvl(struct task_struct *task, struct pt_regs *regs,
--			unsigned long *stack, char *log_lvl)
-+			unsigned long *stack, const char *log_lvl)
- {
- 	struct unwind_state state;
- 	struct stack_info stack_info = {0};
+ void show_stack_regs(struct pt_regs *regs)
 -- 
 2.23.0
 
