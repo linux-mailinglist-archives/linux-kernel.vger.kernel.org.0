@@ -2,106 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC523F22ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 00:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE47F22F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 00:59:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfKFX6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 18:58:13 -0500
-Received: from mx1.cock.li ([185.10.68.5]:32959 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727498AbfKFX6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 18:58:13 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S1732382AbfKFX7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 18:59:12 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43406 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727393AbfKFX7M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 18:59:12 -0500
+Received: by mail-lf1-f68.google.com with SMTP id j5so69385lfh.10;
+        Wed, 06 Nov 2019 15:59:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DYf8aAMmRvjXUQpfphEhKk+3TLfQLLQK5Utz/xmwQg4=;
+        b=eNEWXheYDRU8KdxiR6Eq6OKP9rbfiwIXWnSwfYK3lptAs0cRbbRl01t9JcVXalaIh5
+         y5sxUuHGokzteBEcjK8mBHHkoLq7JHMnn23V5W2mJhBUiIUgrvl3oF1pq+sr1z6cBJxv
+         w3eHDjFYfJezAaK/NsMEUKVVIZJ5TFDG0We2gyWI/AhQ9SkdJVHsJ0ZneMp9Jx+SgXap
+         z+nmvDEKuEG02F8kN6/mSP+9g9L/m4RB4Wh4NGMx1ahdpnOvw+Wkbk/+oPC0sNKgqNHa
+         y7BNrhoLlxgtUoxnGZN71FSRLbeSQtVJfsGUeU2dF8SNF0Z5rBiZap12A/JP43u9aKuf
+         FaEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DYf8aAMmRvjXUQpfphEhKk+3TLfQLLQK5Utz/xmwQg4=;
+        b=SqkNxOm9mNNmMAaYq8NtzL+t8ik8a+7v4+MP8MbZprxUKbwjkSX39EkSDwbvWmBVd3
+         4ItxkcdAjvC9Vytfni3NHfoXcu1p291bWS6R8acEqMha7X/60KvP9CGVScK1Ep3CkBJ7
+         6D28jrG+TOVK/6t54tcEs1KSwy8PuW5QJcHg1PQrzCQgAHakN5sSayq3CQqhO+cpMmnA
+         hHxRRRWyMi/5MmeEmzx9za2Vy5jPZD2SsZFtPYYXyGyLs/5DKpD8eqCigPla1MDN32hQ
+         M6UY5UisbQ7cu2YJUMNPzM1vDIcI1UwrkHP91nVJEYyR7PeLjYjy4jxOcNNAbfQyMUU3
+         VUIg==
+X-Gm-Message-State: APjAAAXCrBTX2BgJnHkFmcBMdwPhGoF0cJIV3WxPGDrVBivSrvA1L8Qu
+        TtUmQC0PnUgXQ/FK2B+Oub/25IL8wlYao8mC1/k=
+X-Google-Smtp-Source: APXvYqztjgeRQgd01HKyl8vySOmEV7cS+8kabNLlMrm2GoVNxgvas+z4ZglnjF6coc9mkDxpziUQPrtI7QW8056NeqM=
+X-Received: by 2002:a19:6454:: with SMTP id b20mr69757lfj.159.1573084748421;
+ Wed, 06 Nov 2019 15:59:08 -0800 (PST)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1573084690; bh=Cr3zBphchll6Ki3SEndQvh4+5WCBVAg9TGxvATyvOUE=;
-        h=Date:From:To:Subject:In-Reply-To:References:From;
-        b=WI5B42i1piwGAzPmGz2KPJIrVeC3gnli/5Yk4KLJ/8wSRMPTc7BVsKEUHJXeJiHQR
-         HqtIMpOtJh9lkfMSC8Qns4BM5f2D6Y11elLK9SRjqoFwZ7U9FwduP8QHtTmfR1CKvj
-         IiDmcvKqwJnpFXL9u8fs3NAAUG8bySc6HWxcmjFG3uYYIpgAnbGa7zRusK+noflHM7
-         FdHg+EM9ngLnFE3vEi+6LBByCHnk6l5l9bH4g9xr9ZSyOvAgUtx42fDGmroCQw6yBT
-         PobBtz2Rdv0tlgFKaZgb0mnMIrTjA/rropz+u5+HKSoyT1goG/Sz/y9zHQTGwLiKY/
-         o7r8ddLlYIxvg==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 06 Nov 2019 23:58:10 +0000
-From:   gameonlinux@redchan.it
-To:     linux-kernel@vger.kernel.org
-Subject: Re: Coreboot vs Libreboot - GNU: Please use Coreboot without the
- blobs (compile time option). - Why the [edits]?
-In-Reply-To: <4574490.MYgbJlzDTv@pc-713>
-References: <b1b6ab4e31856450d82afccaba587b0f@redchan.it>
- <10419249.ilHZ0GCc2g@pc-713> <9352ba078b5f8fb0f464b6d65209b482@redchan.it>
- <4574490.MYgbJlzDTv@pc-713>
-Message-ID: <2f9f478fd6ef998d3caf0c2210f192af@redchan.it>
-X-Sender: gameonlinux@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+References: <20191029223214.18889-1-linux@roeck-us.net> <20191030005327.GC15332@redsun51.ssa.fujisawa.hgst.com>
+ <20191106212921.GA7020@amd>
+In-Reply-To: <20191106212921.GA7020@amd>
+From:   Chris Healy <cphealy@gmail.com>
+Date:   Wed, 6 Nov 2019 15:58:56 -0800
+Message-ID: <CAFXsbZrGudirV7j9=h_BHG3HGAVs_zGRpgz7J4DRy2SxioVvLQ@mail.gmail.com>
+Subject: Re: [PATCH v2] nvme: Add hardware monitoring support
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Keith Busch <kbusch@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org,
+        Akinobu Mita <akinobu.mita@gmail.com>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am not exibiting "pure"-cissexism because I wholly support men who 
-wish to marry young girls. "Paedophillia" is not "pure-cissexism". It' 
-might be "misogyny", since women constantly use their white pitbulls to 
-attack however.
+> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> >
+> > This looks fine to me, but I'll wait a few more days to see if there ar=
+e
+> > any additional comments..
+>
+> User wants to know temperature of /dev/sda... and we already have an
+> userspace tools knowing about smart, etc...
 
-You editing my words was no authorized by me. Short quotes are fine and 
-fair-use, but editing the work for anything other than spelling is not. 
-I did not call the man a [she] I called him a he. A he that CHOPPED OFF 
-HIS GENITALS.
+At least for my use cases, being able to use the thermal subsystem of
+the kernel to cool things down when the SSD gets too hot is important.
+Is there a way to do this with userspace tools feeding back to the
+kernel's thermal subsystem?
 
-Any "difficulty" he is going through is of his own making. It is 
-perverse to tell me about it.
-
-That is who "represents" the Free Software movement now: you toss out 
-the guy who you _think_ __maybe__ likes young girls for his 3 text posts 
-on his own website, and you uphold the guy who pays people to cut off 
-his penis and slice away his testicals and take pictures of it.
-
-Which is fairly similar to what he does to core boot: so I think maybe 
-that sorta gave him the idea. Also the fact that he never put the 
-weights up probably exacerbated the problem (weight training excercize 
-increases testosterone: which is why I'm so productive in programming my 
-Free Software game)
-
-Libre boot is known as "tranny boot" and the FSF is known as "a buch of 
-do-nothing trannys and gays plus one straight old MIT hacker who they 
-just threw out because he didn't fit in with the society there"
-
-You drive the actual programmers away, in order to get some women and 
-queers. You let the bird in the hand go, thinking you will get those in 
-the bush.
-
-On 2019-11-06 21:59, Alexandre François Garreau wrote:
-> Pure cissexism is off-topic on gnu-system-discuss, which is about 
-> technical
-> aspects of the GNU system.  You shall not talk about social or politics 
-> (other
-> than software freedom) here.  For further questions please ask in 
-> private.
-> 
-> Le mercredi 6 novembre 2019 22:49:07 CET, vous avez écrit :
->> Why did you edit my words of [something] […] to [[something else]]?
-> 
-> Because I don’t want to relay your statements I disagree with myself.
-> Quotations are for convenience, not relaying.  If one want to correct 
-> or
-> summarize something, convention is to do so by putting such 
-> modification into
-> square brackets.
-> 
->> I did not authorize you do do
->> that.
-> 
-> I don’t need.
-> 
->> Verbatim quotes are fine, changing words is not.
-> 
-> Yes it is, as it is small quotation, and not plagiarism nor 
-> counterfeit.
+>
+> pavel@amd:/data/film$ sudo hddtemp /dev/sda
+> /dev/sda: ST1000LM014-1EJ164: 48=C2=B0C
+>
+> I see we also have sensors framework but it does _not_ handle
+> harddrive temperatures.
+>
+> Does it need some kind of unification? Should NVMe devices expose
+> "SMART" information in the same way other SSDs do?
+>
+> Best regards,
+>                                                                 Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/b=
+log.html
