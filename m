@@ -2,113 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 697DFF0CF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 593E9F0CED
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:21:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731115AbfKFDWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:22:20 -0500
-Received: from foss.arm.com ([217.140.110.172]:33116 "EHLO foss.arm.com"
+        id S1731033AbfKFDVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:21:06 -0500
+Received: from mx7.zte.com.cn ([202.103.147.169]:36831 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730839AbfKFDWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:22:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D732A30E;
-        Tue,  5 Nov 2019 19:22:18 -0800 (PST)
-Received: from [192.168.225.149] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A8D63F719;
-        Tue,  5 Nov 2019 19:21:57 -0800 (PST)
-Subject: Re: [PATCH V8] mm/debug: Add tests validating architecture page table
- helpers
-To:     linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1572240562-23630-1-git-send-email-anshuman.khandual@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <3229d68d-0b9d-0719-3370-c6e1df0ea032@arm.com>
-Date:   Wed, 6 Nov 2019 08:52:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1572240562-23630-1-git-send-email-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1730655AbfKFDVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 22:21:06 -0500
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id EF20E289D0F04C342B62;
+        Wed,  6 Nov 2019 11:21:02 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id xA63JtrJ068188;
+        Wed, 6 Nov 2019 11:19:55 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019110611201445-308508 ;
+          Wed, 6 Nov 2019 11:20:14 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, jiang.xuexin@zte.com.cn,
+        Yang Tao <yang.tao172@zte.com.cn>
+Subject: [PATCH] Robust-futex wakes up the waiters will be missed
+Date:   Wed, 6 Nov 2019 11:23:02 +0800
+Message-Id: <1573010582-35297-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-11-06 11:20:14,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-11-06 11:19:58,
+        Serialize complete at 2019-11-06 11:19:58
+X-MAIL: mse-fl1.zte.com.cn xA63JtrJ068188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Yang Tao <yang.tao172@zte.com.cn>
 
+We found two scenarios:
+(1)When the owner of a mutex lock with robust attribute and no_pi
+will release the lock and executes pthread_mutex_unlock(),it is
+killed after setting mutex->__data.__lock = 0 and before wake
+others. It will go through the robust process, but it will not wake
+up watiers because mutex->__data.__lock = 0.
 
-On 10/28/2019 10:59 AM, Anshuman Khandual wrote:
-> +    -----------------------
-> +    |         arch |status|
-> +    -----------------------
-> +    |       alpha: | TODO |
-> +    |         arc: | TODO |
-> +    |         arm: | TODO |
-> +    |       arm64: |  ok  |
-> +    |         c6x: | TODO |
-> +    |        csky: | TODO |
-> +    |       h8300: | TODO |
-> +    |     hexagon: | TODO |
-> +    |        ia64: | TODO |
-> +    |        m68k: | TODO |
-> +    |  microblaze: | TODO |
-> +    |        mips: | TODO |
-> +    |       nds32: | TODO |
-> +    |       nios2: | TODO |
-> +    |    openrisc: | TODO |
-> +    |      parisc: | TODO |
-> +    |     powerpc: | TODO |
-> +    |       ppc32: |  ok  |
-> +    |       riscv: | TODO |
-> +    |        s390: | TODO |
-> +    |          sh: | TODO |
-> +    |       sparc: | TODO |
-> +    |          um: | TODO |
-> +    |   unicore32: | TODO |
-> +    |         x86: |  ok  |
-> +    |      xtensa: | TODO |
-> +    -----------------------
+                OWNER
 
-While here, are there some volunteers to test this on any of the
-'yet to be tested and supported' platforms ?
+        pthread_mutex_unlock()
+                |
+                |
+                V
+        atomic_exchange_rel (&mutex->__data.__lock, 0)
+                        <------------------------killed
+            lll_futex_wake ()                   |
+                                                |
+                                                |(__lock = 0)
+                                                |(enter kernel)
+                                                |
+                                                V
+                                            do_exit()
+                                            exit_mm()
+                                          mm_release()
+                                        exit_robust_list()
+                                        handle_futex_death()
+                                                |
+                                                |(__lock = 0)
+                                                |(uval = 0)
+                                                |
+                                                V
+        if ((uval & FUTEX_TID_MASK) != task_pid_vnr(curr))
+                return 0;<------wakes up waiters will be missed
 
-- Anshuman
+(2) When a waiter wakes up and returns to the user space, it is
+killed before getting the lock (before modifying
+mutex->__data.__lock), and other waiters will not wake up.
+
+        OWNER                         WAITER
+
+   pthread_mutex_unlock()
+                |
+                |(__lock = 0)
+                |
+                V
+         futex_wake()
+                                fuet_wait()   //awaked
+                                        |
+                                        |
+                                        |(enter userspace)
+                                        |(__lock = 0)
+                                        |
+                                        V
+                        oldval = mutex->__data.__lock
+                                          <-----------------killed
+    atomic_compare_and_exchange_val_acq (&mutex->__data.__lock,  |
+                        id | assume_other_futex_waiters, 0)      |
+                                                                 |
+                                                                 |
+                                                   (enter kernel)|
+                                                                 |
+                                                                 V
+                                                         do_exit()
+                                                        |
+                                                        |
+                                                        V
+                                        handle_futex_death()
+                                        |
+                                        |(__lock = 0)
+                                        |(uval = 0)
+                                        |
+                                        V
+        if ((uval & FUTEX_TID_MASK) != task_pid_vnr(curr))
+                return 0;<------wakes up waiters will be missed
+So, in these scenarios, task will not wake up waiters
+
+We found that when the task was killed in two scenarios,
+task->robust_list->list_op_pending =&mutex->__data.__list.__next,
+so we can do something.
+
+We think that task should wake up once when the following conditions
+are met:
+        (1) task->robust_list->list_op_pending != NULL;
+        (2) mutex->__data.__lock = 0;
+        (3) no_pi
+In some cases, this may lead to some redundant wakeups, which will
+reduce the efficiency of the program, but it will not affectthe
+program operation, and it is very rare to meet these three
+conditions.
+
+At the same time, we only wake up and do not set the died bit,
+because mutex->__data.__lock = 0; mutex->__data.__owner = 0;
+At this time, it can be seen that there is no owner,and the wake-up
+process directly take the lock.
+
+If the died bit is set, it may cause some misoperation. Such as a
+waiter being killed when the owner is releasing the lock, it will
+mark the lock with the died bit, which is not good.
+
+We don't need to set "mutex->__data.__count"(in mutex structure),
+which will not affect repeated lock holding.
+
+Signed-off-by: Yang Tao <yang.tao172@zte.com.cn>
+---
+ kernel/futex.c | 41 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 36 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/futex.c b/kernel/futex.c
+index bd18f60..8511dad 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -3456,7 +3456,9 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
+  * Process a futex-list entry, check whether it's owned by the
+  * dying task, and do notification if so:
+  */
+-static int handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int pi)
++static int handle_futex_death(u32 __user *uaddr,
++			      struct task_struct *curr, int pi,
++			      bool pending)
+ {
+ 	u32 uval, uninitialized_var(nval), mval;
+ 	int err;
+@@ -3469,6 +3471,35 @@ static int handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int p
+ 	if (get_user(uval, uaddr))
+ 		return -1;
+ 
++	/*
++	 * When uval is 0, there may be waiters blocking on the lock:
++	 *
++	 * (1)When the owner of a mutex lock with robust attribute
++	 * and no_pi will release the lock and executes
++	 * pthread_mutex_unlock(),it is killed after setting
++	 * mutex->__data.__lock = 0 (uval = 0)and before wake others.
++	 * It will enter the robust process, but it will not wake up
++	 * watiers because uval = 0.
++	 *
++	 * (2) When a waiter wakes up and returns to the user space,
++	 * it is killed before getting the lock (before modifying
++	 * mutex->__data.__lock), and other waiters will not wake up
++	 * because uval = 0.
++	 *
++	 * We found that when the task was killed in two scenarios,
++	 * task->robust_list->list_op_pending != NULL. Therefore,
++	 * it can be judged that the task is killed when releasing
++	 * or acquiring the lock.
++	 *
++	 * We should wake up once when the following conditions are
++	 * met:
++	 *	1) task->robust_list->list_op_pending != NULL
++	 *	2) mutex->__data.__lock = 0 (uval = 0)
++	 *	3) no_pi
++	 */
++	if (pending && !pi && uval == 0)
++		futex_wake(uaddr, 1, 1, FUTEX_BITSET_MATCH_ANY);
++
+ 	if ((uval & FUTEX_TID_MASK) != task_pid_vnr(curr))
+ 		return 0;
+ 
+@@ -3590,7 +3621,7 @@ void exit_robust_list(struct task_struct *curr)
+ 		 */
+ 		if (entry != pending)
+ 			if (handle_futex_death((void __user *)entry + futex_offset,
+-						curr, pi))
++						curr, pi, 0))
+ 				return;
+ 		if (rc)
+ 			return;
+@@ -3607,7 +3638,7 @@ void exit_robust_list(struct task_struct *curr)
+ 
+ 	if (pending)
+ 		handle_futex_death((void __user *)pending + futex_offset,
+-				   curr, pip);
++				   curr, pip, 1);
+ }
+ 
+ long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+@@ -3784,7 +3815,7 @@ void compat_exit_robust_list(struct task_struct *curr)
+ 		if (entry != pending) {
+ 			void __user *uaddr = futex_uaddr(entry, futex_offset);
+ 
+-			if (handle_futex_death(uaddr, curr, pi))
++			if (handle_futex_death(uaddr, curr, pi, 0))
+ 				return;
+ 		}
+ 		if (rc)
+@@ -3803,7 +3834,7 @@ void compat_exit_robust_list(struct task_struct *curr)
+ 	if (pending) {
+ 		void __user *uaddr = futex_uaddr(pending, futex_offset);
+ 
+-		handle_futex_death(uaddr, curr, pip);
++		handle_futex_death(uaddr, curr, pip, 1);
+ 	}
+ }
+ 
+-- 
+2.15.2
+
