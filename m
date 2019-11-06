@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C59F1E63
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64ED4F1E6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:16:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732496AbfKFTOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 14:14:20 -0500
+        id S1732584AbfKFTOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 14:14:37 -0500
 Received: from mga12.intel.com ([192.55.52.136]:4046 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732005AbfKFTOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:14:18 -0500
+        id S1729435AbfKFTOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 14:14:20 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 11:14:18 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 11:14:20 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
-   d="scan'208";a="402465837"
+   d="scan'208";a="402465845"
 Received: from vidhipat-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.254.33.70])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Nov 2019 11:14:17 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 06 Nov 2019 11:14:18 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v2 09/14] soundwire: add device driver to sdw_md_driver
-Date:   Wed,  6 Nov 2019 13:13:53 -0600
-Message-Id: <20191106191358.5712-10-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v2 10/14] soundwire: intel: add prepare support in sdw dai driver
+Date:   Wed,  6 Nov 2019 13:13:54 -0600
+Message-Id: <20191106191358.5712-11-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191106191358.5712-1-pierre-louis.bossart@linux.intel.com>
 References: <20191106191358.5712-1-pierre-louis.bossart@linux.intel.com>
@@ -43,59 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
+From: Rander Wang <rander.wang@linux.intel.com>
 
-Setting an device driver is necessary for ASoC to register DAI
-components.
+It gets sdw runtime information from dai to prepare stream.
 
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel.c     | 4 ++++
- drivers/soundwire/master.c    | 2 ++
- include/linux/soundwire/sdw.h | 1 +
- 3 files changed, 7 insertions(+)
+ drivers/soundwire/intel.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index ba3bc410d816..492684ba08c3 100644
+index 492684ba08c3..c50aebda7f4d 100644
 --- a/drivers/soundwire/intel.c
 +++ b/drivers/soundwire/intel.c
-@@ -1059,6 +1059,10 @@ static int intel_master_remove(struct sdw_master_device *md)
+@@ -697,6 +697,21 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
  }
  
- struct sdw_md_driver intel_sdw_driver = {
-+	.driver = {
-+		.name = "intel-sdw",
-+		.owner = THIS_MODULE,
-+	},
- 	.probe = intel_master_probe,
- 	.startup = intel_master_startup,
- 	.remove = intel_master_remove,
-diff --git a/drivers/soundwire/master.c b/drivers/soundwire/master.c
-index 6210098c892b..d23111d43fd6 100644
---- a/drivers/soundwire/master.c
-+++ b/drivers/soundwire/master.c
-@@ -57,6 +57,8 @@ struct sdw_master_device *sdw_md_add(struct sdw_md_driver *driver,
- 		put_device(&md->dev);
- 	}
- 
-+	md->dev.driver = &driver->driver;
++static int intel_prepare(struct snd_pcm_substream *substream,
++			 struct snd_soc_dai *dai)
++{
++	struct sdw_cdns_dma_data *dma;
 +
- 	return md;
- }
- EXPORT_SYMBOL(sdw_md_add);
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 9efb71e9d2f6..17ec786d3a15 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -621,6 +621,7 @@ struct sdw_md_driver {
- 	 */
- 	int (*autonomous_clock_stop_enable)(struct sdw_master_device *md,
- 					    bool state);
-+	struct device_driver driver;
- };
++	dma = snd_soc_dai_get_dma_data(dai, substream);
++	if (!dma) {
++		dev_err(dai->dev, "failed to get dma data in %s",
++			__func__);
++		return -EIO;
++	}
++
++	return sdw_prepare_stream(dma->stream);
++}
++
+ static int
+ intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ {
+@@ -743,6 +758,7 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
  
- #define SDW_SLAVE_ENTRY(_mfg_id, _part_id, _drv_data) \
+ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ 	.hw_params = intel_hw_params,
++	.prepare = intel_prepare,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = intel_shutdown,
+ 	.set_sdw_stream = intel_pcm_set_sdw_stream,
+@@ -750,6 +766,7 @@ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ 
+ static const struct snd_soc_dai_ops intel_pdm_dai_ops = {
+ 	.hw_params = intel_hw_params,
++	.prepare = intel_prepare,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = intel_shutdown,
+ 	.set_sdw_stream = intel_pdm_set_sdw_stream,
 -- 
 2.20.1
 
