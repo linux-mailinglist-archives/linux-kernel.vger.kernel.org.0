@@ -2,55 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F04F2F77
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E9CF2F79
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:34:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388738AbfKGNdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:33:53 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50720 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730985AbfKGNdw (ORCPT
+        id S2388499AbfKGNea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:34:30 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40610 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730833AbfKGNea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:33:52 -0500
-Received: from 79.184.254.83.ipv4.supernova.orange.pl (79.184.254.83) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id aec6358fbcca9be9; Thu, 7 Nov 2019 14:33:50 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 0/5] PCI: PM: Cleanups related to power state changes
-Date:   Thu, 07 Nov 2019 14:33:44 +0100
-Message-ID: <1774412.xs4Eg1OkIx@kreacher>
-In-Reply-To: <20191106190250.GA238633@google.com>
-References: <20191106190250.GA238633@google.com>
+        Thu, 7 Nov 2019 08:34:30 -0500
+Received: by mail-ot1-f67.google.com with SMTP id m15so1996727otq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:34:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=x+syRc+agoo08pLNzrJjXzWzp/e66MwKC2W+ow4e7bw=;
+        b=GbfG07kSp5ixMQ4oonu7FLSf/87Uy4yl6Eiho1GtkM5AKVAv2sZ943At2fCDaBDJT2
+         MC31nwMYp8r3iNBjuIHdBKTQUuoO5koaiBvy4wRKxMw3HYaXD6iCcpc+tvDw6ZHQGrhE
+         U4UzGO6XTkWpl9D0+A2bVxNF//x9tHk1soaBDw2Yy5Ve6paG+Cirj21kY1zQf36xnnXN
+         k2wcFx1K9EY8XEVPZ9i3cGxNtz/8wXqnf4IRh/cmzzKFue7CgK4L28JNaD85kBuwJFaz
+         m7ECXnoWR9eHAhtMrQ+ykJLy+IW7yp2bs4DlFbFIsI5kITF14/Tfd3UjV9sWWYqiukwr
+         2mmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to
+         :user-agent;
+        bh=x+syRc+agoo08pLNzrJjXzWzp/e66MwKC2W+ow4e7bw=;
+        b=pVrs1eADWdp4n7G8zXGeZqXaqEgQH2HriUf2XJMMogh7aJnYLpXL9JL5KLD95LbHTR
+         5CZcuis82fu5XnkFqkhWyLWLYaxUor1+VLHT1KnCH0Pczmlmy9Hk2A+siJOI2oYpMN48
+         pVQ2OXjCGltrd4GiJsTEu5kabWqK73zKaKHO2XhZPfPPZ4Z22sKyME6VU2j0+Jh1Rcd1
+         nQ9W4UkmJgJiahFLfQEAnp76PR58ywdbKK2U6roMXENkC/yZbmiMbu4gr1GgVxlEolpo
+         Thadnkx8hNPRWDlC+gGnf6y0te7mMsNx++2iIGMCQ72mT72twZtObqjnOluge/rnOJQu
+         fhDQ==
+X-Gm-Message-State: APjAAAX1noTueZnmIv9ZG6YBel7Lbj7gg2z8RVkYz5qMjeS3Vu2Qnnoi
+        AAYgaPr+lhhk8w0EXhe9TQ==
+X-Google-Smtp-Source: APXvYqx78JdRY1/hVtPOwuo/shXRgmMvkCD+fJAlFhVerBdkFmI/xeERxi3QZg0O16tnBmjg70TbYA==
+X-Received: by 2002:a9d:365:: with SMTP id 92mr3243984otv.9.1573133667411;
+        Thu, 07 Nov 2019 05:34:27 -0800 (PST)
+Received: from serve.minyard.net ([47.184.136.59])
+        by smtp.gmail.com with ESMTPSA id 9sm620925ois.16.2019.11.07.05.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 05:34:26 -0800 (PST)
+Received: from minyard.net (unknown [192.168.27.180])
+        by serve.minyard.net (Postfix) with ESMTPSA id 32E62180046;
+        Thu,  7 Nov 2019 13:34:26 +0000 (UTC)
+Date:   Thu, 7 Nov 2019 07:34:25 -0600
+From:   Corey Minyard <minyard@acm.org>
+To:     Vijay Khemka <vijaykhemka@fb.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, cminyard@mvista.com,
+        asmaa@mellanox.com, joel@jms.id.au, linux-aspeed@lists.ozlabs.org,
+        sdasari@fb.com
+Subject: Re: [PATCH v2] drivers: ipmi: Support for both IPMB Req and Resp
+Message-ID: <20191107133425.GA10276@minyard.net>
+Reply-To: minyard@acm.org
+References: <20191106182921.1086795-1-vijaykhemka@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106182921.1086795-1-vijaykhemka@fb.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, November 6, 2019 8:02:50 PM CET Bjorn Helgaas wrote:
-> On Tue, Nov 05, 2019 at 11:11:57AM +0100, Rafael J. Wysocki wrote:
-> > Hi,
-> > 
-> > This series rearranges some PCI power management code to make it somewhat
-> > easier to follow and explicitly consolidate the power-up (transitions to
-> > D0) code path.
-> > 
-> > It is not intended to change the functionality of the code.
+On Wed, Nov 06, 2019 at 10:29:21AM -0800, Vijay Khemka wrote:
+> Removed check for request or response in IPMB packets coming from
+> device as well as from host. Now it supports both way communication
+> to device via IPMB. Both request and response will be passed to
+> application.
 > 
-> Applied with Mika's reviewed-by to pci/pm for v5.5, thanks!
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
 
-Thank you!
+Thanks, this is in my for-next tree now.  Asnaam, I took your previous
+comments as a "Reviewed-by", if that is ok.
 
-> Thanks for the git tips, too!
+-corey
 
-You're vwelcome. :-)
-
-
-
+> ---
+>  drivers/char/ipmi/ipmb_dev_int.c | 31 +++++++++----------------------
+>  1 file changed, 9 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
+> index 285e0b8f9a97..ae3bfba27526 100644
+> --- a/drivers/char/ipmi/ipmb_dev_int.c
+> +++ b/drivers/char/ipmi/ipmb_dev_int.c
+> @@ -133,9 +133,6 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
+>  	rq_sa = GET_7BIT_ADDR(msg[RQ_SA_8BIT_IDX]);
+>  	netf_rq_lun = msg[NETFN_LUN_IDX];
+>  
+> -	if (!(netf_rq_lun & NETFN_RSP_BIT_MASK))
+> -		return -EINVAL;
+> -
+>  	/*
+>  	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
+>  	 * i2c_smbus_xfer
+> @@ -203,25 +200,16 @@ static u8 ipmb_verify_checksum1(struct ipmb_dev *ipmb_dev, u8 rs_sa)
+>  		ipmb_dev->request.checksum1);
+>  }
+>  
+> -static bool is_ipmb_request(struct ipmb_dev *ipmb_dev, u8 rs_sa)
+> +/*
+> + * Verify if message has proper ipmb header with minimum length
+> + * and correct checksum byte.
+> + */
+> +static bool is_ipmb_msg(struct ipmb_dev *ipmb_dev, u8 rs_sa)
+>  {
+> -	if (ipmb_dev->msg_idx >= IPMB_REQUEST_LEN_MIN) {
+> -		if (ipmb_verify_checksum1(ipmb_dev, rs_sa))
+> -			return false;
+> +	if ((ipmb_dev->msg_idx >= IPMB_REQUEST_LEN_MIN) &&
+> +	   (!ipmb_verify_checksum1(ipmb_dev, rs_sa)))
+> +		return true;
+>  
+> -		/*
+> -		 * Check whether this is an IPMB request or
+> -		 * response.
+> -		 * The 6 MSB of netfn_rs_lun are dedicated to the netfn
+> -		 * while the remaining bits are dedicated to the lun.
+> -		 * If the LSB of the netfn is cleared, it is associated
+> -		 * with an IPMB request.
+> -		 * If the LSB of the netfn is set, it is associated with
+> -		 * an IPMB response.
+> -		 */
+> -		if (!(ipmb_dev->request.netfn_rs_lun & NETFN_RSP_BIT_MASK))
+> -			return true;
+> -	}
+>  	return false;
+>  }
+>  
+> @@ -273,8 +261,7 @@ static int ipmb_slave_cb(struct i2c_client *client,
+>  
+>  	case I2C_SLAVE_STOP:
+>  		ipmb_dev->request.len = ipmb_dev->msg_idx;
+> -
+> -		if (is_ipmb_request(ipmb_dev, GET_8BIT_ADDR(client->addr)))
+> +		if (is_ipmb_msg(ipmb_dev, GET_8BIT_ADDR(client->addr)))
+>  			ipmb_handle_request(ipmb_dev);
+>  		break;
+>  
+> -- 
+> 2.17.1
+> 
