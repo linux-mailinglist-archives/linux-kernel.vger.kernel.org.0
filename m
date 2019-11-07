@@ -2,98 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DAFF3136
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:19:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A21A1F3142
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:21:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389186AbfKGOTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:19:35 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:33890 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726033AbfKGOTe (ORCPT
+        id S2389237AbfKGOVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:21:47 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59011 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731026AbfKGOVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:19:34 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iSidE-0006pE-M7; Thu, 07 Nov 2019 15:19:28 +0100
-To:     Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH v5 3/8] arm64: hyperv: Add memory alloc/free functions  for Hyper-V size pages
-X-PHP-Originating-Script: 0:main.inc
+        Thu, 7 Nov 2019 09:21:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573136505;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DrmPAze8Ac5FFece7lozmX/b+JhD3npiUhbXA+xlp7o=;
+        b=F38MnjzJMtKn5UUaMAKqCJX7HmlRIV6jh4/ETG4k76uGASUAN5UMZBJHzeC4ZXcYb5t8T4
+        VUpOK6wLbteMugv+ZYidrmeCoBZz3+FB43BhJrnyr+GeogzM/tZCuudjfimrYxQDna3RFB
+        YF2MP+bBHc8nnx18FlouSISWZoAVIEs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-100-J1OMK1x0NCiU9HfU4rkiww-1; Thu, 07 Nov 2019 09:21:42 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7DEFA1005500;
+        Thu,  7 Nov 2019 14:21:38 +0000 (UTC)
+Received: from [10.72.12.21] (ovpn-12-21.pek2.redhat.com [10.72.12.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C818C608B6;
+        Thu,  7 Nov 2019 14:20:45 +0000 (UTC)
+Subject: Re: [PATCH V10 6/6] docs: sample driver to demonstrate how to
+ implement virtio-mdev framework
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+References: <20191106133531.693-1-jasowang@redhat.com>
+ <20191106133531.693-7-jasowang@redhat.com>
+ <20191107040700-mutt-send-email-mst@kernel.org>
+ <bd2f7796-8d88-0eb3-b55b-3ec062b186b7@redhat.com>
+ <20191107061942-mutt-send-email-mst@kernel.org>
+ <d09229bc-c3e4-8d4b-c28f-565fe150ced2@redhat.com>
+ <20191107080834-mutt-send-email-mst@kernel.org>
+ <b2265e3a-6f86-c21a-2ebd-d0e4eea2886f@redhat.com>
+ <20191107085013-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <3440c55b-bbb9-fd4d-7c06-f45860fb4bd3@redhat.com>
+Date:   Thu, 7 Nov 2019 22:20:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 07 Nov 2019 15:28:49 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <will@kernel.org>, <catalin.marinas@arm.com>,
-        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hyperv@vger.kernel.org>, <devel@linuxdriverproject.org>,
-        <olaf@aepfle.de>, <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>, <jasowang@redhat.com>,
-        <marcelo.cerri@canonical.com>, KY Srinivasan <kys@microsoft.com>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        "boqun.feng" <boqun.feng@gmail.com>
-In-Reply-To: <1570129355-16005-4-git-send-email-mikelley@microsoft.com>
-References: <1570129355-16005-1-git-send-email-mikelley@microsoft.com>
- <1570129355-16005-4-git-send-email-mikelley@microsoft.com>
-Message-ID: <43d53ebd2637bd9106137103028a4f0e@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: mikelley@microsoft.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com, vkuznets@redhat.com, jasowang@redhat.com, marcelo.cerri@canonical.com, kys@microsoft.com, sunilmut@microsoft.com, boqun.feng@gmail.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+In-Reply-To: <20191107085013-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: J1OMK1x0NCiU9HfU4rkiww-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-03 20:12, Michael Kelley wrote:
-> Add ARM64-specific code to allocate memory with HV_HYP_PAGE_SIZE
-> size and alignment. These are for use when pages need to be shared
-> with Hyper-V. Separate functions are needed as the page size used
-> by Hyper-V may not be the same as the guest page size.  Free
-> operations are rarely done, so no attempt is made to combine
-> freed pages into larger chunks.
->
-> This code is built only when CONFIG_HYPERV is enabled.
->
-> Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-> ---
->  arch/arm64/hyperv/hv_init.c    | 68
-> ++++++++++++++++++++++++++++++++++++++++++
->  include/asm-generic/mshyperv.h |  5 ++++
->  2 files changed, 73 insertions(+)
->
-> diff --git a/arch/arm64/hyperv/hv_init.c 
-> b/arch/arm64/hyperv/hv_init.c
-> index 6808bc8..9c294f6 100644
-> --- a/arch/arm64/hyperv/hv_init.c
-> +++ b/arch/arm64/hyperv/hv_init.c
-> @@ -15,10 +15,78 @@
->  #include <linux/export.h>
->  #include <linux/mm.h>
->  #include <linux/hyperv.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/list.h>
-> +#include <linux/string.h>
->  #include <asm-generic/bug.h>
->  #include <asm/hyperv-tlfs.h>
->  #include <asm/mshyperv.h>
->
-> +
-> +/*
-> + * Functions for allocating and freeing memory with size and
-> + * alignment HV_HYP_PAGE_SIZE. These functions are needed because
-> + * the guest page size may not be the same as the Hyper-V page
-> + * size. And while kalloc() could allocate the memory, it does not
-> + * guarantee the required alignment. So a separate small memory
-> + * allocator is needed.  The free function is rarely used, so it
-> + * does not try to combine freed pages into larger chunks.
 
-Is this still needed now that kmalloc has alignment guarantees
-(see 59bb47985c1d)?
+On 2019/11/7 =E4=B8=8B=E5=8D=889:50, Michael S. Tsirkin wrote:
+> On Thu, Nov 07, 2019 at 09:32:29PM +0800, Jason Wang wrote:
+>> On 2019/11/7 =E4=B8=8B=E5=8D=889:08, Michael S. Tsirkin wrote:
+>>> On Thu, Nov 07, 2019 at 08:43:29PM +0800, Jason Wang wrote:
+>>>> On 2019/11/7 =E4=B8=8B=E5=8D=887:21, Michael S. Tsirkin wrote:
+>>>>> On Thu, Nov 07, 2019 at 06:18:45PM +0800, Jason Wang wrote:
+>>>>>> On 2019/11/7 =E4=B8=8B=E5=8D=885:08, Michael S. Tsirkin wrote:
+>>>>>>> On Wed, Nov 06, 2019 at 09:35:31PM +0800, Jason Wang wrote:
+>>>>>>>> This sample driver creates mdev device that simulate virtio net de=
+vice
+>>>>>>>> over virtio mdev transport. The device is implemented through vrin=
+gh
+>>>>>>>> and workqueue. A device specific dma ops is to make sure HVA is us=
+ed
+>>>>>>>> directly as the IOVA. This should be sufficient for kernel virtio
+>>>>>>>> driver to work.
+>>>>>>>>
+>>>>>>>> Only 'virtio' type is supported right now. I plan to add 'vhost' t=
+ype
+>>>>>>>> on top which requires some virtual IOMMU implemented in this sampl=
+e
+>>>>>>>> driver.
+>>>>>>>>
+>>>>>>>> Acked-by: Cornelia Huck<cohuck@redhat.com>
+>>>>>>>> Signed-off-by: Jason Wang<jasowang@redhat.com>
+>>>>>>> I'd prefer it that we call this something else, e.g.
+>>>>>>> mvnet-loopback. Just so people don't expect a fully
+>>>>>>> functional device somehow. Can be renamed when applying?
+>>>>>> Actually, I plan to extend it as another standard network interface =
+for
+>>>>>> kernel. It could be either a standalone pseudo device or a stack dev=
+ice.
+>>>>>> Does this sounds good to you?
+>>>>>>
+>>>>>> Thanks
+>>>>> That's a big change in an interface so it's a good reason
+>>>>> to rename the driver at that point right?
+>>>>> Oherwise users of an old kernel would expect a stacked driver
+>>>>> and get a loopback instead.
+>>>>>
+>>>>> Or did I miss something?
+>>>> My understanding is that it was a sample driver in /doc. It should not=
+ be
+>>>> used in production environment. Otherwise we need to move it to
+>>>> driver/virtio.
+>>>>
+>>>> But if you insist, I can post a V11.
+>>>>
+>>>> Thanks
+>>> this can be a patch on top.
+>> Then maybe it's better just extend it to work as a normal networking dev=
+ice
+>> on top?
+>>
+>> Thanks
+> That would be a substantial change. Maybe drop 6/6 for now until
+> we have a better handle on this?
+>
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Ok, consider the change should be small, I will post V11 where I can fix=20
+the typos spotted.
+
+Thanks
+
