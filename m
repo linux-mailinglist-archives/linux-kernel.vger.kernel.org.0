@@ -2,74 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BA95F3017
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF89F3045
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389369AbfKGNmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:42:25 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:53920 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389182AbfKGNmK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:10 -0500
-Received: by mail-il1-f198.google.com with SMTP id y17so2621348ila.20
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=S2wRVclg8UQWRvym++3WP5HdS90cEd2sAd4gL9TrV+I=;
-        b=Uw91gdJGCQY5fB5Nh/h9LLFcAjXAJYGL4vBd0CvebNkXcCSCCIsrhWaDtPQRBAKNPR
-         3BqD3XM4Wl4gHkhPSOwkS7zi6HprzL/OC/zF3tWcf0wW1or3bqimll5hz1zqUWY0q31P
-         mxsvIzc0CIli7lxM5Rjx85dGKwhwncwjzeduVezy6peL3B5TsGQsy3Tf+3qFmevXYhux
-         R7VrHrrTmSis2mDjX9sCplpbeea87GRsmqF083783Os1ktrfmu09J7ZdLVo3IfvHH+KU
-         WVJK7Xc18zbI61RNmU5k1YZZg7DYeT33T+CBbf2Q63OHHbfKMmsLUbT2RP9dTVaqx0AZ
-         Idsg==
-X-Gm-Message-State: APjAAAUBJ8TAURSUapijFPzQQg8ZgEjDIKTVcxND2KnGiWt/75d+8Yyc
-        zkYkJ20pTXIeiOx10N3g0pP4M0M9KTlCVJ3cleo2RDxuLUJs
-X-Google-Smtp-Source: APXvYqz9Q2PgD7h70IK2LJz5tS3XrxOEo+uTlIzI6FagviYlipCps0BesCYv8Ev2NfBqsoEX1aftYzudEyLJMvtAP/9TWFBjR5Lx
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:394:: with SMTP id y20mr4277492jap.0.1573134129274;
- Thu, 07 Nov 2019 05:42:09 -0800 (PST)
-Date:   Thu, 07 Nov 2019 05:42:09 -0800
-In-Reply-To: <0000000000008c6be40570d8a9d8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f5a6620596c1d43e@google.com>
-Subject: Re: general protection fault in propagate_entity_cfs_rq
-From:   syzbot <syzbot+2e37f794f31be5667a88@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, andy.shevchenko@gmail.com,
-        davem@davemloft.net, douly.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, hpa@zytor.com, info@metux.net,
-        jbenc@redhat.com, jgross@suse.com, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, ville.syrjala@linux.intel.com,
-        willemb@google.com, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1727142AbfKGNn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:43:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389573AbfKGNnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 08:43:46 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 158642077C;
+        Thu,  7 Nov 2019 13:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573134225;
+        bh=Y+huid7a/CGWG0MlV6/Z2Mm6jQ9P1B8hzuvIQtr1m08=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FWW4nnh+3pOARrTeGX4VSL7E5R4wktwaAjhG4ZSynysmasNIwdKAZlYcKZrDF4WIR
+         lkOG2Zy7OdI1zB9kh3KwBaEUMUPAZ+7a4ULU+Px6ZozEvnAFvXn5OLIES6DxT1bZCb
+         CWgKOb9uSBu0dCIAbVYS5h092W02tILM09ZuvTjs=
+Date:   Thu, 7 Nov 2019 22:43:41 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 2/5] perf probe: Generate event name with line number
+Message-Id: <20191107224341.9b8d91e010913386f95b3cd3@kernel.org>
+In-Reply-To: <20191106195432.GB11935@kernel.org>
+References: <157291299825.19771.5190465639558208592.stgit@devnote2>
+        <157291301924.19771.11830065569894242974.stgit@devnote2>
+        <20191106195432.GB11935@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+Hi Arnaldo,
 
-commit bab2c80e5a6c855657482eac9e97f5f3eedb509a
-Author: Willem de Bruijn <willemb@google.com>
-Date:   Wed Jul 11 16:00:44 2018 +0000
+On Wed, 6 Nov 2019 16:54:32 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-     nsh: set mac len based on inner packet
+> Em Tue, Nov 05, 2019 at 09:16:59AM +0900, Masami Hiramatsu escreveu:
+> > Generate event name from function name with line number
+> > as <function>_L<line_number>. Note that this is only for
+> > the new event which is defined by function and lines.
+> > 
+> > If there is another event on same line, you have to use
+> > "-f" option. In that case, the new event has "_1" suffix.
+> 
+> So I don't like this, the existing practice of, if given a function
+> name, just create the probe:name looks more natural, if one states
+> kernel:1, then, sure, appending L1 to them is natural, better than the
+> previous naming convention,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=170cc89c600000
-start commit:   6fd06660 Merge branch 'bpf-arm-jit-improvements'
-git tree:       bpf-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a501a01deaf0fe9
-dashboard link: https://syzkaller.appspot.com/bug?extid=2e37f794f31be5667a88
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1014db94400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f81e78400000
+OK, then what about adding L* only when the user add it on a
+specific line (like kernel_read:1) ?
+IOW, _L0 will be skipped.
 
-If the result looks correct, please mark the bug fixed by replying with:
+Thank you,
 
-#syz fix: nsh: set mac len based on inner packet
+> 
+> Thanks,
+> 
+> - Arnaldo
+>  
+> >  e.g.
+> >   # perf probe -a kernel_read
+> >   Added new event:
+> >     probe:kernel_read_L0 (on kernel_read)
+> > 
+> >   You can now use it in all perf tools, such as:
+> > 
+> >   	perf record -e probe:kernel_read_L0 -aR sleep 1
+> > 
+> >   # perf probe -a kernel_read:1
+> >   Added new events:
+> >     probe:kernel_read_L1 (on kernel_read:1)
+> > 
+> >   You can now use it in all perf tools, such as:
+> > 
+> >   	perf record -e probe:kernel_read_L1_1 -aR sleep 1
+> > 
+> >   # perf probe -l
+> >     probe:kernel_read_L0 (on kernel_read@linux/linux/fs/read_write.c)
+> >     probe:kernel_read_L1 (on kernel_read@linux/linux/fs/read_write.c)
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  tools/perf/util/probe-event.c |    8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> > index 91cab5f669d2..d14b970a6461 100644
+> > --- a/tools/perf/util/probe-event.c
+> > +++ b/tools/perf/util/probe-event.c
+> > @@ -1679,6 +1679,14 @@ int parse_perf_probe_command(const char *cmd, struct perf_probe_event *pev)
+> >  	if (ret < 0)
+> >  		goto out;
+> >  
+> > +	/* Generate event name if needed */
+> > +	if (!pev->event && pev->point.function
+> > +			&& !pev->point.lazy_line && !pev->point.offset) {
+> > +		if (asprintf(&pev->event, "%s_L%d", pev->point.function,
+> > +			pev->point.line) < 0)
+> > +			return -ENOMEM;
+> > +	}
+> > +
+> >  	/* Copy arguments and ensure return probe has no C argument */
+> >  	pev->nargs = argc - 1;
+> >  	pev->args = zalloc(sizeof(struct perf_probe_arg) * pev->nargs);
+> 
+> -- 
+> 
+> - Arnaldo
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
