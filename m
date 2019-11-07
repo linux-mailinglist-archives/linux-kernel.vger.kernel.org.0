@@ -2,91 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE2FDF2AFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FB4AF2AF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387958AbfKGJm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:42:59 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39167 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387839AbfKGJm5 (ORCPT
+        id S2387831AbfKGJmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:42:37 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:44239 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726734AbfKGJmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:42:57 -0500
-Received: by mail-pf1-f194.google.com with SMTP id x28so2253370pfo.6;
-        Thu, 07 Nov 2019 01:42:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=itXp/vDqhHYMcsOhBE4Lb6epcLCaR4BGpG1zslxBhRk=;
-        b=Cc5v9DBGGv59y4S5c7w3BAKGlgux8FvfqN7hYf4ErrnQ/We+woYIxx5te3ucWu4ZoF
-         8q185rdwW1WrKPUnqYS5uY1Et35kDRkfXWNvHJ3KV1+PCM4Wnb09IuDnqiS7ejLJ4JoV
-         2vFvRKGcV8wbe2AIehLT/qKg8b+ezul2JWl+eJNAOI3x1U9MsZPaM/rBFysw3h7SoSMg
-         Sw+hLVcPw9jkCSN6F85LL/ZgZi4EeuNoHU3iOav8gK3XC66q7dHi1+On1UJe3jokRkuL
-         Oed+oKFyi/ftKSfooSXTn870ExZNskTVnaRveBNVX8TKF7uWVbP9+utF2oabuUGl5d8P
-         939w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=itXp/vDqhHYMcsOhBE4Lb6epcLCaR4BGpG1zslxBhRk=;
-        b=IhIQsgclnR8SE/SmuoXiILwKQfZRdJAtW/IIgiAOWYdyK/92A3ujJrPKRpo7U2N7gl
-         3uO1+aU5fCuZ5M4OhYJVcBwm36Z1Y8JU8Vpcw7VDOe101zM8DuSoA3YdPCdj+zkVbM+R
-         jWaodWiKu1oxGPBOYDIKmXx695kWA07WKhLvO03RizvPlpxqv1CGCRg5hZt1POjHlkcW
-         9VnKZV6+EAr7sPIah6IpyvSjzQZzYZK+ttXlD1ZqgmdSeeVblGBgjoUWu1/kZeLTLC4h
-         whwc0r6eY9amU251Tr20uYNhE4imv/BBOz8lyBw7Un2bEttIzQ+qJ15JV8qhVp5eAEUT
-         9Aqw==
-X-Gm-Message-State: APjAAAXmkM7xp+xMPCZ9T8rBeZjZAXErRAAaX6KQMlFlkgV8BMHQSPji
-        Eg24gP7Kk+66gAdHVAqKWrE=
-X-Google-Smtp-Source: APXvYqx6i+XNW3wKSy1uugKeO5GmapHvlicFFeX4CGHx0TkPuZzVaw0mPNKdNljETG8kv/65+vgNfA==
-X-Received: by 2002:a63:2506:: with SMTP id l6mr3355808pgl.131.1573119776554;
-        Thu, 07 Nov 2019 01:42:56 -0800 (PST)
-Received: from voyager.lan ([45.124.203.14])
-        by smtp.gmail.com with ESMTPSA id 12sm1958195pfp.79.2019.11.07.01.42.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 01:42:55 -0800 (PST)
-From:   Joel Stanley <joel@jms.id.au>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 4/4] dt-bindings: fttmr010: Add ast2600 compatible
-Date:   Thu,  7 Nov 2019 20:12:18 +1030
-Message-Id: <20191107094218.13210-5-joel@jms.id.au>
-X-Mailer: git-send-email 2.24.0.rc1
-In-Reply-To: <20191107094218.13210-1-joel@jms.id.au>
-References: <20191107094218.13210-1-joel@jms.id.au>
+        Thu, 7 Nov 2019 04:42:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573119755;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jKoCIjcW28Hko0qMcEIiY97Qrw+BX0MIbxPtgok3aZA=;
+        b=a+W5vLX9lz2qF0YHTaTlGSSatxGFntipjgzq5d2l4TxXhe7oUOTqkG/E1XimWyMms9aj1R
+        7uVZ9Nu8XFwICHA26fGGLda2MgusH9xk4FWlzNwcDlAZeBeHq+5q0IXk+a03Fmi0wV++Fb
+        8KimzDCyVkqFk1HnP9+aTu3n00w9qS0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-384--ng_66w-Ptuq0G0jHTRgeg-1; Thu, 07 Nov 2019 04:42:31 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7B4AC800C61;
+        Thu,  7 Nov 2019 09:42:30 +0000 (UTC)
+Received: from krava (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 9348D60BFB;
+        Thu,  7 Nov 2019 09:42:27 +0000 (UTC)
+Date:   Thu, 7 Nov 2019 10:42:26 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: Re: [PATCH v2] perf tests: Fix out of bounds memory access
+Message-ID: <20191107094226.GC14657@krava>
+References: <20191107020244.2427-1-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191107020244.2427-1-leo.yan@linaro.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: -ng_66w-Ptuq0G0jHTRgeg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ast2600 contains a fttmr010 derivative.
+On Thu, Nov 07, 2019 at 10:02:44AM +0800, Leo Yan wrote:
+> The test case 'Read backward ring buffer' failed on 32-bit architectures
+> which were found by LKFT perf testing.  The test failed on arm32 x15
+> device, qemu_arm32, qemu_i386, and found intermittent failure on i386;
+> the failure log is as below:
+>=20
+>   50: Read backward ring buffer                  :
+>   --- start ---
+>   test child forked, pid 510
+>   Using CPUID GenuineIntel-6-9E-9
+>   mmap size 1052672B
+>   mmap size 8192B
+>   Finished reading overwrite ring buffer: rewind
+>   free(): invalid next size (fast)
+>   test child interrupted
+>   ---- end ----
+>   Read backward ring buffer: FAILED!
+>=20
+> The log hints there have issue for memory usage, thus free() reports
+> error 'invalid next size' and directly exit for the case.  Finally, this
+> issue is root caused as out of bounds memory access for the data array
+> 'evsel->id'.
+>=20
+> The backward ring buffer test invokes do_test() twice.  'evsel->id' is
+> allocated at the first call with the flow:
+>=20
+>   test__backward_ring_buffer()
+>     `-> do_test()
+> =09  `-> evlist__mmap()
+> =09        `-> evlist__mmap_ex()
+> =09              `-> perf_evsel__alloc_id()
+>=20
+> So 'evsel->id' is allocated with one item, and it will be used in
+> function perf_evlist__id_add():
+>=20
+>    evsel->id[0] =3D id
+>    evsel->ids   =3D 1
+>=20
+> At the second call for do_test(), it skips to initialize 'evsel->id'
+> and reuses the array which is allocated in the first call.  But
+> 'evsel->ids' contains the stale value.  Thus:
+>=20
+>    evsel->id[1] =3D id    -> out of bound access
+>    evsel->ids   =3D 2
+>=20
+> To fix this issue, we will use evlist__open() and evlist__close() pair
+> functions to prepare and cleanup context for evlist; so 'evsel->id' and
+> 'evsel->ids' can be initialized properly when invoke do_test() and avoid
+> the out of bounds memory access.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- Documentation/devicetree/bindings/timer/faraday,fttmr010.txt | 1 +
- 1 file changed, 1 insertion(+)
+right, we need to solve this on libperf level, so it's possible
+to call mmap/munmap multiple time without close/open.. I'll try
+to send something, but meanwhile this is good workaround
 
-diff --git a/Documentation/devicetree/bindings/timer/faraday,fttmr010.txt b/Documentation/devicetree/bindings/timer/faraday,fttmr010.txt
-index 195792270414..3cb2f4c98d64 100644
---- a/Documentation/devicetree/bindings/timer/faraday,fttmr010.txt
-+++ b/Documentation/devicetree/bindings/timer/faraday,fttmr010.txt
-@@ -11,6 +11,7 @@ Required properties:
-   "moxa,moxart-timer", "faraday,fttmr010"
-   "aspeed,ast2400-timer"
-   "aspeed,ast2500-timer"
-+  "aspeed,ast2600-timer"
- 
- - reg : Should contain registers location and length
- - interrupts : Should contain the three timer interrupts usually with
--- 
-2.24.0.rc1
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
+
+>=20
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  tools/perf/tests/backward-ring-buffer.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/b=
+ackward-ring-buffer.c
+> index 338cd9faa835..5128f727c0ef 100644
+> --- a/tools/perf/tests/backward-ring-buffer.c
+> +++ b/tools/perf/tests/backward-ring-buffer.c
+> @@ -147,6 +147,15 @@ int test__backward_ring_buffer(struct test *test __m=
+aybe_unused, int subtest __m
+>  =09=09goto out_delete_evlist;
+>  =09}
+> =20
+> +=09evlist__close(evlist);
+> +
+> +=09err =3D evlist__open(evlist);
+> +=09if (err < 0) {
+> +=09=09pr_debug("perf_evlist__open: %s\n",
+> +=09=09=09 str_error_r(errno, sbuf, sizeof(sbuf)));
+> +=09=09goto out_delete_evlist;
+> +=09}
+> +
+>  =09err =3D do_test(evlist, 1, &sample_count, &comm_count);
+>  =09if (err !=3D TEST_OK)
+>  =09=09goto out_delete_evlist;
+> --=20
+> 2.17.1
+>=20
 
