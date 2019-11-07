@@ -2,204 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91DE4F2C6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:32:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C094F2C94
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:34:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388537AbfKGKck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:32:40 -0500
-Received: from foss.arm.com ([217.140.110.172]:53698 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387796AbfKGKci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:32:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 139551FB;
-        Thu,  7 Nov 2019 02:32:38 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D5D83F71A;
-        Thu,  7 Nov 2019 02:32:37 -0800 (PST)
-Date:   Thu, 7 Nov 2019 10:32:35 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        james.quinlan@broadcom.com, mbrugger@suse.com,
-        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: pci: add bindings for brcmstb's PCIe
- device
-Message-ID: <20191107103235.GW9723@e119886-lin.cambridge.arm.com>
-References: <20191106214527.18736-1-nsaenzjulienne@suse.de>
- <20191106214527.18736-2-nsaenzjulienne@suse.de>
+        id S2388036AbfKGKev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 05:34:51 -0500
+Received: from mail-eopbgr750078.outbound.protection.outlook.com ([40.107.75.78]:42374
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726866AbfKGKeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 05:34:50 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HeaBzJ3dW6AVV56aGHgOHTPLrleyhV+wP89snWIbiY2Tyh4OvKgytVbYjojc3fwXvcCxhn0IpWljnuwE9nkRDrfV5ZMFSreIEjYsXIOWhCcpKJmULT5jIYLnpSRUD9OzzNDrp5YXvPU6eYZJ2Lqfaa3dzKOldFxF5VV+uh1kAafMPMNVG6uIiv/7CUqSsKirFDpOrKUa6i8WsH1cqQc+72X3agoDZcCOF3fj4vYrPBuvnEt64GvsPawXFdjAp2Sd6AZNiVmbsVs5x9c/BdNE+q2WFUO2G8RnW+WtOaKte2kykJ+ik4pkGGzLOCnT9ijfbOlhHRUtM1TA90ZJ2Q/V/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3XjHzgK+Z9USwm6ksLZqXnQXExvmx0dsRel8jDrvjBQ=;
+ b=L3FQ5FTXIIKhUdl4YLPEL/LrumGQWE46M5OEEWvoLBbdONlzQ20c4z9YBp05cOWdzf0+t4Xb9jtcujwayuSdMs+YoORlmq36wFQsu3SHJi1o35vZ444Ql92mqdASNJvYlOqtyfLQTxsOJ3L1yN9TCNTJNCn9915AdbpeSDAokF4ygr5X1NYBLHQ3IR3lArGx17pLFh0hvRmpZleWnz/YamKjgf6oGUM9uUFY69q0NDFVf8I2lTf9Ca6O7+TSWopU6KV53iFiQ7pTcM5BkziSNw3quDlSwzucN6lzAyvNAH7z1dj/0+WbKC8wZYn2c5ikW1iPvwHmt89EmA+d7fQvBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3XjHzgK+Z9USwm6ksLZqXnQXExvmx0dsRel8jDrvjBQ=;
+ b=KXeyDoZhbPKvaCPMEa+rcDUEaJE8KDhsvC8Bj/f3TA3ITloj8nU2PTpOoyCfPVjwXvg4ypd9J1ybdS3Ij9HMXR449VM1Hd1xpBX9MLcRDtX6cD5q7IUwNZA1u2NK7QNBBCLvL+T37RQ5gthgXfOJOxq30hT50vnpYbVcR9kRa+M=
+Received: from BYAPR02MB4055.namprd02.prod.outlook.com (52.135.202.143) by
+ BYAPR02MB4119.namprd02.prod.outlook.com (20.176.252.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Thu, 7 Nov 2019 10:34:46 +0000
+Received: from BYAPR02MB4055.namprd02.prod.outlook.com
+ ([fe80::e157:9458:610b:4e8f]) by BYAPR02MB4055.namprd02.prod.outlook.com
+ ([fe80::e157:9458:610b:4e8f%6]) with mapi id 15.20.2408.024; Thu, 7 Nov 2019
+ 10:34:46 +0000
+From:   Rajan Vaja <RAJANV@xilinx.com>
+To:     Rajan Vaja <RAJANV@xilinx.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] drivers: clocksource: Use ttc driver as platform driver
+Thread-Topic: [PATCH] drivers: clocksource: Use ttc driver as platform driver
+Thread-Index: AQHVlVaOW+EHQwVffUWJv7WplPkHr6d/gr0Q
+Date:   Thu, 7 Nov 2019 10:34:46 +0000
+Message-ID: <BYAPR02MB4055F334DB27797D2CA6314DB7780@BYAPR02MB4055.namprd02.prod.outlook.com>
+References: <1573122659-13947-1-git-send-email-rajan.vaja@xilinx.com>
+In-Reply-To: <1573122659-13947-1-git-send-email-rajan.vaja@xilinx.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=RAJANV@xilinx.com; 
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 80eca67d-6765-453f-9650-08d7636e1c3b
+x-ms-traffictypediagnostic: BYAPR02MB4119:|BYAPR02MB4119:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR02MB41195F569EE5E5C037C78104B7780@BYAPR02MB4119.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 0214EB3F68
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(396003)(376002)(366004)(136003)(13464003)(189003)(199004)(8936002)(66066001)(8676002)(256004)(478600001)(99286004)(14454004)(2201001)(102836004)(81156014)(7696005)(26005)(7736002)(71190400001)(6506007)(81166006)(86362001)(316002)(305945005)(110136005)(53546011)(4326008)(66556008)(52536014)(186003)(2906002)(55016002)(54906003)(3846002)(5660300002)(6116002)(66946007)(2501003)(74316002)(76116006)(229853002)(71200400001)(446003)(66476007)(476003)(66446008)(25786009)(76176011)(6246003)(33656002)(6436002)(9686003)(64756008)(11346002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4119;H:BYAPR02MB4055.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: btUZNI/x7QY6BTZLrnFSYnX0Hq6tC4rEZ6+3CfwUI4HccnoDVzNYA07kX3561LnQw02y3ytVRJ2SAbFfuZLsN6Ncfx6CRNKOsczWk835olHRCPIKW/eO5UPzul/JJ9wi0rrLdfd5+bkdNBQxPqXlGlPQKrm+AOYQGDwAoBT5dP7zWweuAZ5UilGySRnAibMu8y5cPu74OcGixSk1zkbprmHG68A/LiMBXDO+lI4ndBBR0hh7nyWFa8eAcBeMEB9pA+yfUWcwcn9zqY4fd5upiO3wiDN8LAD3g2OXLu0iwmVCZv7EEXVPGnP7eG19jJo2rOKdtVSChtAeQ/VZZ3NCddRURIQGzQ2xwcQkZ4e0ss6wpIKF6t3UNmHIYnXbWfABG7FVK6vJwWThz6kTstO6+x8AlvUN/mhJa8Lt2+YKXUY+V8jX9yiTQm/h7uHBCZlz
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106214527.18736-2-nsaenzjulienne@suse.de>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80eca67d-6765-453f-9650-08d7636e1c3b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2019 10:34:46.5485
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3o4Xlj1R24p8ifv1Cid847jybp5WNvF74F86bqaC6BzInRnhqVIkGujxueli3QgpaEpzxcpqYkh4lpSBa+1NKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 10:45:23PM +0100, Nicolas Saenz Julienne wrote:
-> From: Jim Quinlan <james.quinlan@broadcom.com>
-
-Nit: Looking at past git history, ideally the patch subject would be
-'dt-bindings: *PCI*: *A*dd bindings for brcmstb's PCIe.
-
-> 
-> The DT bindings description of the brcmstb PCIe device is described.
-> This node can only be used for now on the Raspberry Pi 4.
-> 
-> This was based on Jim's original submission[1], converted to yaml and
-> adapted to the RPi4 case.
-
-Thanks for picking this up.
-
-> 
-> [1] https://patchwork.kernel.org/patch/10605937/
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> Co-developed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> ---
->  .../bindings/pci/brcm,stb-pcie.yaml           | 116 ++++++++++++++++++
->  1 file changed, 116 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> new file mode 100644
-> index 000000000000..0b81c26f8568
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> @@ -0,0 +1,116 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Brcmstb PCIe Host Controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> +
-> +properties:
-> +  compatible:
-> +    const: brcm,bcm2711-pcie # The Raspberry Pi 4
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - description: PCIe host controller
-> +      - description: builtin MSI controller
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - const: pcie
-> +      - const: msi
-> +
-> +  "#address-cells":
-> +    const: 3
-> +
-> +  "#size-cells":
-> +    const: 2
-> +
-> +  "#interrupt-cells":
-> +    const: 1
-> +
-> +  interrupt-map-mask: true
-> +
-> +  interrupt-map: true
-> +
-> +  ranges: true
-> +
-> +  dma-ranges: true
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: sw_pcie
-> +
-> +  msi-controller:
-> +    description: Identifies the node as an MSI controller.
-> +    type: boolean
-> +
-> +  msi-parent:
-> +    description: MSI controller the device is capable of using.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  linux,pci-domain:
-> +    description: PCI domain ID. Should be unique for each host controller.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  brcm,enable-ssc:
-> +    description: Indicates usage of spread-spectrum clocking.
-> +    type: boolean
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - "#interrupt-cells"
-> +  - interrupt-map-mask
-> +  - interrupt-map
-> +  - ranges
-> +  - dma-ranges
-> +  - linux,pci-domain
-
-I don't think pci-domain is *required* is it?
+Please discard this email as there is a typo in email address (michal.simek=
+@xilinx.com -> ichal.simek@xilinx.com). I am sending new email.
 
 Thanks,
+Rajan
 
-Andrew Murray
+> -----Original Message-----
+> From: Rajan Vaja <rajan.vaja@xilinx.com>
+> Sent: 07 November 2019 02:31
+> To: ichal.simek@xilinx.com; daniel.lezcano@linaro.org; tglx@linutronix.de
+> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; R=
+ajan
+> Vaja <RAJANV@xilinx.com>
+> Subject: [PATCH] drivers: clocksource: Use ttc driver as platform driver
+>=20
+> Currently TTC driver is TIMER_OF_DECLARE type driver. Because of
+> that, TTC driver may be initialized before other clock drivers. If
+> TTC driver is dependent on that clock driver then initialization of
+> TTC driver will failed.
+>=20
+> So use TTC driver as platform driver instead of using
+> TIMER_OF_DECLARE.
+>=20
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> ---
+>  drivers/clocksource/timer-cadence-ttc.c | 26 ++++++++++++++++++--------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/clocksource/timer-cadence-ttc.c b/drivers/clocksourc=
+e/timer-
+> cadence-ttc.c
+> index 88fe2e9..38858e1 100644
+> --- a/drivers/clocksource/timer-cadence-ttc.c
+> +++ b/drivers/clocksource/timer-cadence-ttc.c
+> @@ -15,6 +15,8 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/slab.h>
+>  #include <linux/sched_clock.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+>=20
+>  /*
+>   * This driver configures the 2 16/32-bit count-up timers as follows:
+> @@ -464,13 +466,7 @@ static int __init ttc_setup_clockevent(struct clk *c=
+lk,
+>  	return 0;
+>  }
+>=20
+> -/**
+> - * ttc_timer_init - Initialize the timer
+> - *
+> - * Initializes the timer hardware and register the clock source and cloc=
+k event
+> - * timers with Linux kernal timer framework
+> - */
+> -static int __init ttc_timer_init(struct device_node *timer)
+> +static int __init ttc_timer_probe(struct platform_device *pdev)
+>  {
+>  	unsigned int irq;
+>  	void __iomem *timer_baseaddr;
+> @@ -478,6 +474,7 @@ static int __init ttc_timer_init(struct device_node *=
+timer)
+>  	static int initialized;
+>  	int clksel, ret;
+>  	u32 timer_width =3D 16;
+> +	struct device_node *timer =3D pdev->dev.of_node;
+>=20
+>  	if (initialized)
+>  		return 0;
+> @@ -532,4 +529,17 @@ static int __init ttc_timer_init(struct device_node =
+*timer)
+>  	return 0;
+>  }
+>=20
+> -TIMER_OF_DECLARE(ttc, "cdns,ttc", ttc_timer_init);
+> +static const struct of_device_id ttc_timer_of_match[] =3D {
+> +	{.compatible =3D "cdns,ttc"},
+> +	{},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, ttc_timer_of_match);
+> +
+> +static struct platform_driver ttc_timer_driver =3D {
+> +	.driver =3D {
+> +		.name	=3D "cdns_ttc_timer",
+> +		.of_match_table =3D ttc_timer_of_match,
+> +	},
+> +};
+> +builtin_platform_driver_probe(ttc_timer_driver, ttc_timer_probe);
+> --
+> 2.7.4
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    scb {
-> +            #address-cells = <2>;
-> +            #size-cells = <1>;
-> +            pcie0: pcie@7d500000 {
-> +                    compatible = "brcm,bcm2711-pcie";
-> +                    reg = <0x0 0x7d500000 0x9310>;
-> +                    #address-cells = <3>;
-> +                    #size-cells = <2>;
-> +                    #interrupt-cells = <1>;
-> +                    interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-> +                                 <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-> +                    interrupt-names = "pcie", "msi";
-> +                    interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-> +                    interrupt-map = <0 0 0 1 &gicv2 GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH
-> +                                     0 0 0 2 &gicv2 GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH
-> +                                     0 0 0 3 &gicv2 GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH
-> +                                     0 0 0 4 &gicv2 GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-> +                    msi-parent = <&pcie0>;
-> +                    msi-controller;
-> +                    ranges = <0x02000000 0x0 0xf8000000 0x6 0x00000000 0x0 0x04000000>;
-> +                    dma-ranges = <0x02000000 0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>;
-> +                    linux,pci-domain = <0>;
-> +                    brcm,enable-ssc;
-> +            };
-> +    };
-> -- 
-> 2.23.0
-> 
