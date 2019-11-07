@@ -2,88 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA018F355B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24824F3566
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:07:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730441AbfKGRFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:05:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbfKGRFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:05:21 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A9CB2077C;
-        Thu,  7 Nov 2019 17:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573146320;
-        bh=suEeE7KwP1izl/rCD0Y/Vv5c6KOXHEIBOSklRCpzCec=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lU/ax5EmmTN1jc10dY9Tf8BnVtFnHEzEc5WXGMVkVSD3rfRvqqAORta9ZCUybEOM8
-         RdMd0YIVIpb1PKFeF8HpGQaXe9MvyC3wcxtIsVKzNxXswd8aMPFP5xrZrAamc2OpVU
-         KR9sTRKkfurg2rEfeUwtb4/0KdFynvhppsgZP1TM=
-Date:   Thu, 7 Nov 2019 09:05:19 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to update dir's i_pino during
- cross_rename
-Message-ID: <20191107170519.GA766@sol.localdomain>
-Mail-Followup-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20191107061205.120972-1-yuchao0@huawei.com>
+        id S1730486AbfKGRGy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:06:54 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37396 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbfKGRGx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 12:06:53 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p13so1915446pll.4;
+        Thu, 07 Nov 2019 09:06:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zFenQO1uO033OtRYRFVT+RuzXPzATz6f1SyjAS7X/Jc=;
+        b=VSsGkd2zRXqf4yGpuJWJoOLrDNdS0XCJmzix9IMI22/1qiHzi08puucdhcdYA7zMQX
+         xZLzWEopV1llt2xUiHBGbtkILyLWfAxWXi4DzZqUYzDwgpKU0ByQ99HlmFH1xI6ePRxF
+         L7ljyAyw+0q+9RB6muIeZAooXhdeBQ2PeyAfiFhoWS1aqegqRgqJB3OYN/5Aa5x71Xip
+         IZklkXPoBT09zMgqXSo5Mr5cmZjKqbMLWtuun5IE8deiVUDt0YDbgRna4G9fjMk6C9Rb
+         rZYMd+snfMOQEiBW16LuKgLbkq1i+3qutnjVevY3BdysTtpil3eZS7iiyrKaWl6eHcTh
+         AbHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zFenQO1uO033OtRYRFVT+RuzXPzATz6f1SyjAS7X/Jc=;
+        b=LisbYoj/LmUwJLNwfNAQRs1LGjOgcGPfqPsWkQA7nRufgdcRc5yYzkC1WmOhq1eHTM
+         R10t04uJlQKy2G+aE18kHv85ZOGUR4arW7oRYiXNyFHgJneSz8KRkdluW6lWZV6K0Y2G
+         WwoQUFDfGcHiW3cbrvq5S1JWRK7TiqQl4K6tTjz9xYKcyDs0hdDBAH0+pF4o8+CGaJNE
+         jiW7JbMfDCq2Upq70nZ7S4/Ft1o/Y0jh9gTbZcHCd01L+9SACdH3wu9zbc/ACQsQ448T
+         XHzpS3o06x24ji72EzPGtMfqKEJjhf4VycPydN0OS9btMAJHNlAHXVHlYJNkrSen0MQt
+         Uyng==
+X-Gm-Message-State: APjAAAU+2OT125X3tDFFNWvQJaXvRvHnsiiGtHRNcys6XFcHBE25L/4W
+        y+uY1g5yURuXo7ZvkbdLjMBB6PAdt9ZsbQZkWGg=
+X-Google-Smtp-Source: APXvYqw6fl5teTYOVb9yiqAIgldG8eE7YH++BStjhnp5fFwGzMFX/LjS71YQz/AY1msiDKKkujUjm+jLuoxBusynTfU=
+X-Received: by 2002:a17:90a:d102:: with SMTP id l2mr6690436pju.132.1573146412872;
+ Thu, 07 Nov 2019 09:06:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107061205.120972-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <c090302a-da38-5764-2a84-399ed6b333f5@siemens.com> <16119dad-9597-ecdc-a0e7-e386030659ce@siemens.com>
+In-Reply-To: <16119dad-9597-ecdc-a0e7-e386030659ce@siemens.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 7 Nov 2019 19:06:42 +0200
+Message-ID: <CAHp75VfBS9tjDSaoN2AoBshyQR+x781Zyw61bVSKheNVtNi8rg@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/x86: pmc_atom: Add Siemens SIMATIC IPC227E to
+ critclk_systems DMI table
+To:     Jan Kiszka <jan.kiszka@siemens.com>
+Cc:     Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Henning Schild <henning.schild@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 02:12:05PM +0800, Chao Yu wrote:
-> As Eric reported:
-> 
-> RENAME_EXCHANGE support was just added to fsstress in xfstests:
-> 
-> 	commit 65dfd40a97b6bbbd2a22538977bab355c5bc0f06
-> 	Author: kaixuxia <xiakaixu1987@gmail.com>
-> 	Date:   Thu Oct 31 14:41:48 2019 +0800
-> 
-> 	    fsstress: add EXCHANGE renameat2 support
-> 
-> This is causing xfstest generic/579 to fail due to fsck.f2fs reporting errors.
-> I'm not sure what the problem is, but it still happens even with all the
-> fs-verity stuff in the test commented out, so that the test just runs fsstress.
-> 
-> generic/579 23s ... 	[10:02:25]
-> [    7.745370] run fstests generic/579 at 2019-11-04 10:02:25
-> _check_generic_filesystem: filesystem on /dev/vdc is inconsistent
-> (see /results/f2fs/results-default/generic/579.full for details)
->  [10:02:47]
-> Ran: generic/579
-> Failures: generic/579
-> Failed 1 of 1 tests
-> Xunit report: /results/f2fs/results-default/result.xml
-> 
-> Here's the contents of 579.full:
-> 
-> _check_generic_filesystem: filesystem on /dev/vdc is inconsistent
-> *** fsck.f2fs output ***
-> [ASSERT] (__chk_dots_dentries:1378)  --> Bad inode number[0x24] for '..', parent parent ino is [0xd10]
-> 
-> The root cause is that we forgot to update directory's i_pino during
-> cross_rename, fix it.
-> 
-> Fixes: 32f9bc25cbda0 ("f2fs: support ->rename2()")
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+On Mon, Nov 4, 2019 at 6:21 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>
+> On 04.09.19 08:42, Jan Kiszka wrote:
+> > From: Jan Kiszka <jan.kiszka@siemens.com>
+> >
+> > The SIMATIC IPC227E uses the PMC clock for on-board components and gets
+> > stuck during boot if the clock is disabled. Therefore, add this device
+> > to the critical systems list.
+> >
+> > Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > ---
+> >
+> > Changes in v2:
+> >  - fixed cut-off subject line (local tooling bug...)
+> >
+> > Should go into stable as well, down to 4.19.
+>
+> This one is in 5.4-rc now (as ad0d315b4d4e). Is it also queued somewhere
+> for stable kernels? IIRC, it's generally the privilege of the subsystem
+> maintainer to propose formally to stable.
 
-Tested-by: Eric Biggers <ebiggers@kernel.org>
+Anybody can resend for stable putting maintainer to Cc as long as the
+original commit is in upstream.
 
-The i_pino field is only valid on directories, right?
+Nevertheless, I just resend it.
 
-- Eric
+> I've received reports from users down at 4.14 with the need for it (4.9
+> is unaffected). And the same applies to f110d252ae79 ("platform/x86:
+> pmc_atom: Add Siemens SIMATIC IPC277E to critclk_systems DMI table").
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
