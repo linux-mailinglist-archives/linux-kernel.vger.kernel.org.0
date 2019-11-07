@@ -2,150 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E5DBF299B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE436F29BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:51:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733181AbfKGIs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 03:48:28 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:41374 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727408AbfKGIs1 (ORCPT
+        id S1733232AbfKGIvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 03:51:19 -0500
+Received: from mail-pf1-f174.google.com ([209.85.210.174]:38994 "EHLO
+        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733142AbfKGIvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:48:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573116506;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5GkaaySWUIuikkrk8Qp2LFGG/L7X0kNfIu5fvLKbIgk=;
-        b=NzyNDpSKr7sNZciskMSmKQw5zFGKJALA7piHiImrI5gL0rUF56EjkfzZWC1YFpV/EY5mpM
-        v8iKdZqhrJHIfuj7SDsxufc4mvxOzBB7tWmP3mHOKKe0E4ZaKxc6fw0IUySgUzRiFU15kq
-        1cA7gZXS8BjbGg4O7a6DKjZfc9fSv6s=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-217-aF4NKaqTOa2FBXqgmi5b2Q-1; Thu, 07 Nov 2019 03:48:25 -0500
-Received: by mail-qt1-f197.google.com with SMTP id b26so1687004qtr.23
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 00:48:24 -0800 (PST)
+        Thu, 7 Nov 2019 03:51:17 -0500
+Received: by mail-pf1-f174.google.com with SMTP id x28so2122991pfo.6
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 00:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=wRSTyomOLDs6+V2ErS/oC2G/L0RCS7+9Zv3fKuKSwjg=;
+        b=AENY4Zn7wWImtkMCK8pNWAF3xkH4Ggiw1TeVZZxn9N/m3I9ECcqWZRo9NQ5hL0QkJg
+         shLGmQ5htRKCntK70+mrIQrYdjDkXtZRGb74kwMGdBnXwe0157esau6X+mvIx2H8zVci
+         OQPdZ2mMtn3hXqhVt0EpSx3KH8CtJe9hEWKNRY3RTcksLc5+XYyIXKYesCQjgrgLuM7p
+         uPKdrE/M3TlAqRQ7v9JiBAjML52fJx+wbJHSQ5Y5mLRvxkVaM6DJZgUmKpvGUjDYTV4F
+         V0GILPJtIgLLGMmfa4JwKqG7z2cvCCUn2dkpa+B1H/34P32Eu0x4unmgoEPAzUoIt8N4
+         e+6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5GkaaySWUIuikkrk8Qp2LFGG/L7X0kNfIu5fvLKbIgk=;
-        b=QYTyEBKAKoYJdHwOp2mQHCdlI+df3eK/TnUyvglZG6+ISkhM23wPe87uv0UunkIQ6g
-         Qvjq+DnJnT/kB4+OObzTRGxuM1/Bzr0N32EMrec/XGPVwYbDwjPS0vIj8XFAKyuzHwJO
-         Fi77b12rWwIBxz5dW4xZ+UybsM7dMaFsp95emgtGIc9a2+pRh9v7nAZoP3W/1V6b0lN/
-         mv6Sb46WMZtaRhydOpUg4LXSpVE0JBc6ZUNt6wE9PvMp13Eh6ub7C9nlpFzmhvJ0F8hR
-         pMc7wajxHA5f9HrmJFdYf2QBM/+CXb7GvuN5jUpNzsXlLbbpOAcBk7sC1ctCtXKqVG6u
-         FCCQ==
-X-Gm-Message-State: APjAAAUs+DustxpLcxNhx/OetMuL/rjXIr5yHRAuZOGQFrYN5XzroftM
-        33X2iXjuqaIxozdCuW+OhWd8Ll2I5uBGsD7Y+25ZcFmGUkwTRemyYLlb6yhKyvEzf6kjWP+sl1h
-        ePAD+G+QuQt61k85Q3r48jB4tGWhr7HNtrfrwYopl
-X-Received: by 2002:a37:4b97:: with SMTP id y145mr1636940qka.133.1573116503887;
-        Thu, 07 Nov 2019 00:48:23 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxtse75twJz4aKiv1RqxK/wmk+xVaMgjdKKBd8QMtQCzC/6EdhjtKwtV/rfIIFjcOSfTsg+b9SKEFmXuweXrIc=
-X-Received: by 2002:a37:98c6:: with SMTP id a189mr1714662qke.230.1573116500554;
- Thu, 07 Nov 2019 00:48:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20191106110246.70937-1-blaz@mxxn.io>
-In-Reply-To: <20191106110246.70937-1-blaz@mxxn.io>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Thu, 7 Nov 2019 09:48:09 +0100
-Message-ID: <CAO-hwJKJvkW2_Dif4+P7ebBXwb-tLk+PHqks7yqevVZ-CHyTCQ@mail.gmail.com>
-Subject: Re: [PATCH] HID: Improve Windows Precision Touchpad detection.
-To:     =?UTF-8?Q?Bla=C5=BE_Hrastnik?= <blaz@mxxn.io>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-X-MC-Unique: aF4NKaqTOa2FBXqgmi5b2Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wRSTyomOLDs6+V2ErS/oC2G/L0RCS7+9Zv3fKuKSwjg=;
+        b=NCKANoXMbf/WeWifBbSVKbqD6jFofJm0HMo+DVgooIUw7l5+Vpo7+ny93tbTc418dC
+         7XdKp+0uS21QRKc4TDm01SJQUHWSI3CnbudBczkzbqmz6+hRTSyy/1GA7fI+cf/h8y7t
+         7wFfIDTuX6pjawQGKCwWxfHh85Veg5J8+fDEt1dGFqf1Kl/btQpVcGv5w7Pnr5z2+bB3
+         FzLFnnjPEDxqMjPMuCSjjNLORo3vSewir31iciR4Z338Wb8S28xUtFk5Cph8QXpNPtWK
+         zQ2EnXZiF+zbIjvsI5JblnesVK+9tXTEV6oFK9cGFhsbLw1sQBsetdLuAU8/aYwJKEFT
+         1uGA==
+X-Gm-Message-State: APjAAAWj2e2uwPrFJyyqvy+fH9sZMA3PSayarYLkrsUIejLJjRX65ZgI
+        VwT5d76MGNCKnsS8NOg9wu2oNQ==
+X-Google-Smtp-Source: APXvYqzxRxALH7Vn3Ne9JafqSo4E0XcubLLZEaYFdKNvjVDn83JWCsE0Y+Sf1Krx0b4nDU5Fy1/CqQ==
+X-Received: by 2002:a63:2d43:: with SMTP id t64mr3037018pgt.428.1573116676572;
+        Thu, 07 Nov 2019 00:51:16 -0800 (PST)
+Received: from localhost.localdomain (36-228-119-18.dynamic-ip.hinet.net. [36.228.119.18])
+        by smtp.gmail.com with ESMTPSA id a33sm2402361pgb.57.2019.11.07.00.51.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 00:51:15 -0800 (PST)
+From:   Green Wan <green.wan@sifive.com>
+Cc:     Green Wan <green.wan@sifive.com>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Yash Shah <yash.shah@sifive.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/4] dmaengine: sf-pdma: Add platform dma driver
+Date:   Thu,  7 Nov 2019 16:49:18 +0800
+Message-Id: <20191107084955.7580-1-green.wan@sifive.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bla=C5=BE,
+Add PDMA driver support for SiFive HiFive Unleashed RevA00 board. Mainly follows
+DMAengine controller doc[1] to implement and take other DMA drivers as reference.
+Such as
 
-On Wed, Nov 6, 2019 at 12:03 PM Bla=C5=BE Hrastnik <blaz@mxxn.io> wrote:
->
-> Per Microsoft spec, usage 0xC5 (page 0xFF) returns a blob containing
-> data used to verify the touchpad as a Windows Precision Touchpad.
->
->    0x85, REPORTID_PTPHQA,    //    REPORT_ID (PTPHQA)
->     0x09, 0xC5,              //    USAGE (Vendor Usage 0xC5)
->     0x15, 0x00,              //    LOGICAL_MINIMUM (0)
->     0x26, 0xff, 0x00,        //    LOGICAL_MAXIMUM (0xff)
->     0x75, 0x08,              //    REPORT_SIZE (8)
->     0x96, 0x00, 0x01,        //    REPORT_COUNT (0x100 (256))
->     0xb1, 0x02,              //    FEATURE (Data,Var,Abs)
->
-> However, some devices, namely Microsoft's Surface line of products
-> instead implement a "segmented device certification report" (usage 0xC6)
-> which returns the same report, but in smaller chunks.
->
->     0x06, 0x00, 0xff,        //     USAGE_PAGE (Vendor Defined)
->     0x85, REPORTID_PTPHQA,   //     REPORT_ID (PTPHQA)
->     0x09, 0xC6,              //     USAGE (Vendor usage for segment #)
->     0x25, 0x08,              //     LOGICAL_MAXIMUM (8)
->     0x75, 0x08,              //     REPORT_SIZE (8)
->     0x95, 0x01,              //     REPORT_COUNT (1)
->     0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
->     0x09, 0xC7,              //     USAGE (Vendor Usage)
->     0x26, 0xff, 0x00,        //     LOGICAL_MAXIMUM (0xff)
->     0x95, 0x20,              //     REPORT_COUNT (32)
->     0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
->
-> By expanding Win8 touchpad detection to also look for the segmented
-> report, all Surface touchpads are now properly recognized by
-> hid-multitouch.
->
-> Signed-off-by: Bla=C5=BE Hrastnik <blaz@mxxn.io>
-> ---
+  - drivers/dma/fsl-edma.c
+  - drivers/dma/dw-edma/
+  - drivers/dma/pxa-dma.c
 
-This looks good to me.
-We *could* shorten the ifs and make only one conditional, but I find
-it this way more readable and future proof.
+Using DMA test client[2] to test. Detailed datasheet is doc[3]. Driver supports:
 
-There is just one last step required before we merge this: add a
-regression test so we ensure we do not break it in the future.
+ - 4 physical DMA channels, share same DONE and error interrupt handler. 
+ - Support MEM_TO_MEM
+ - Tested by DMA test client
+ - patches include DT Bindgins document and dts for fu450-c000 SoC. Separate dts
+   patch for easier review and apply to different branch or SoC platform.
+ - retry 1 time if DMA error occurs.
 
-It should be merely a matter of sending a MR to
-https://gitlab.freedesktop.org/libevdev/hid-tools.
-It should consist in adding the report descriptor in the same way we
-have https://gitlab.freedesktop.org/libevdev/hid-tools/blob/master/tests/te=
-st_multitouch.py#L1656-1658.
-Then, make sure an unpatched kernel breaks the multitouch test (sudo
-pytest-3 -k 'multitouch and TestPTP') and that a patched kernel is
-fixed.
+[Changelog]
+ - v6 patch
+   . Remove incorrect reviewer and fix commit number
+   . Revise sf_pdma_desc_residue() to report residue according to cookie. The tx
+     could be in completed, in-progress state or still in pending list.
+   . Refer to fsl-edma.c to free irq and kill tasklet before exit.
+   . Minor fixes include left-justisfied, empty line and unnecessary line.
 
-Cheers,
-Benjamin
+[Reference Doc]
+ [1] ./Documentation/driver-api/dmaengine/provider.rst
+ [2] ./Documentation/driver-api/dmaengine/dmatest.rst
+ [3] https://static.dev.sifive.com/FU540-C000-v1.0.pdf 
 
->  drivers/hid/hid-core.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 63fdbf09b044..2af597cd5d65 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -742,6 +742,10 @@ static void hid_scan_feature_usage(struct hid_parser=
- *parser, u32 usage)
->         if (usage =3D=3D 0xff0000c5 && parser->global.report_count =3D=3D=
- 256 &&
->             parser->global.report_size =3D=3D 8)
->                 parser->scan_flags |=3D HID_SCAN_FLAG_MT_WIN_8;
-> +
-> +       if (usage =3D=3D 0xff0000c6 && parser->global.report_count =3D=3D=
- 1 &&
-> +           parser->global.report_size =3D=3D 8)
-> +               parser->scan_flags |=3D HID_SCAN_FLAG_MT_WIN_8;
->  }
->
->  static void hid_scan_collection(struct hid_parser *parser, unsigned type=
-)
-> --
-> 2.23.0
->
+[Simple steps to test of DMA Test client]
+ $ echo 1 > /sys/module/dmatest/parameters/iterations
+ $ echo dma0chan0 > /sys/module/dmatest/parameters/channel
+ $ echo dma0chan1 > /sys/module/dmatest/parameters/channel
+ $ echo dma0chan2 > /sys/module/dmatest/parameters/channel
+ $ echo dma0chan3 > /sys/module/dmatest/parameters/channel
+ $ echo 1 > /sys/module/dmatest/parameters/run
+
+[Expected test result]
+[  267.563323] dmatest: dma0chan0-copy0: summary 45629 tests, 0 failures 38769.01 iops 309661 KB/s (0)
+[  267.572427] dmatest: dma0chan1-copy0: summary 45863 tests, 0 failures 40286.85 iops 321643 KB/s (0)
+[  267.581392] dmatest: dma0chan2-copy0: summary 45975 tests, 0 failures 41178.48 iops 328740 KB/s (0)
+[  267.590542] dmatest: dma0chan3-copy0: summary 44768 tests, 0 failures 38560.29 iops 307726 KB/s (0)
+
+Green Wan (4):
+  dt-bindings: dmaengine: sf-pdma: add bindins for SiFive PDMA
+  riscv: dts: add support for PDMA device of HiFive Unleashed Rev A00
+  dmaengine: sf-pdma: add platform DMA support for HiFive Unleashed A00
+  MAINTAINERS: Add Green as SiFive PDMA driver maintainer
+
+ .../bindings/dma/sifive,fu540-c000-pdma.yaml  |  55 ++
+ MAINTAINERS                                   |   6 +
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi    |   7 +
+ drivers/dma/Kconfig                           |   2 +
+ drivers/dma/Makefile                          |   1 +
+ drivers/dma/sf-pdma/Kconfig                   |   6 +
+ drivers/dma/sf-pdma/Makefile                  |   1 +
+ drivers/dma/sf-pdma/sf-pdma.c                 | 621 ++++++++++++++++++
+ drivers/dma/sf-pdma/sf-pdma.h                 | 122 ++++
+ 9 files changed, 821 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+ create mode 100644 drivers/dma/sf-pdma/Kconfig
+ create mode 100644 drivers/dma/sf-pdma/Makefile
+ create mode 100644 drivers/dma/sf-pdma/sf-pdma.c
+ create mode 100644 drivers/dma/sf-pdma/sf-pdma.h
+
+
+base-commit: 4dd58158254c8a027f2bf5060b72ef64cafa3b9d
+-- 
+2.17.1
 
