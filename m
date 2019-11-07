@@ -2,94 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E36BF389F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63672F38AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:32:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbfKGTcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:32:00 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:36356 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbfKGTcA (ORCPT
+        id S1727030AbfKGTci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:32:38 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:43170 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbfKGTch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:32:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mQxP0NlH0MuR5NgfBa7ZCQQ8PQRRveWOV37ydOHPvRw=; b=VXy6MZotTpf66qPz/dBlVidRi
-        9xFpSlqueLKA1mQXklQszdCmr3x+2uuDXpl9697ql4kmJhqWLBj4h+yeTGiec9tAHurB3gbAZ12TP
-        pyjm1XPs0m8QuvgVrKzvRfEBHmabBd5SFYtBJjVGppjmvdxKERSGn+ZT5O6lYBZl/x+t6ItOaOxq5
-        XzS/s4gMmj5ygv5KEsPGs25H6VYx7BfHZoMYcPzp9YCIIm6GQHb+5cNbbNRxF46sNTqORSiB3kFsP
-        NiWnM3T/VJ1ZCbuxsu199qFIBGB7LgP6uJp9Zbx0WyfDC3rCR3/X34YqcXw6RcPZBXJpICsTn1Cka
-        5eJLwEhbw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSnVJ-0007Lr-NN; Thu, 07 Nov 2019 19:31:38 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D198E980E2D; Thu,  7 Nov 2019 20:31:34 +0100 (CET)
-Date:   Thu, 7 Nov 2019 20:31:34 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <qperret@google.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, linux-kernel@vger.kernel.org,
-        aaron.lwe@gmail.com, valentin.schneider@arm.com, mingo@kernel.org,
-        pauld@redhat.com, jdesfossez@digitalocean.com,
-        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        kernel-team@android.com, john.stultz@linaro.org
-Subject: Re: NULL pointer dereference in pick_next_task_fair
-Message-ID: <20191107193134.GJ3079@worktop.programming.kicks-ass.net>
-References: <20191028174603.GA246917@google.com>
- <20191106120525.GX4131@hirez.programming.kicks-ass.net>
- <33643a5b-1b83-8605-2347-acd1aea04f93@virtuozzo.com>
- <20191106165437.GX4114@hirez.programming.kicks-ass.net>
- <20191106172737.GM5671@hirez.programming.kicks-ass.net>
- <831c2cd4-40a4-31b2-c0aa-b5f579e770d6@virtuozzo.com>
- <20191107132628.GZ4114@hirez.programming.kicks-ass.net>
- <20191107153848.GA31774@google.com>
- <20191107184356.GF4114@hirez.programming.kicks-ass.net>
- <20191107192753.GA55494@google.com>
+        Thu, 7 Nov 2019 14:32:37 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA7JP2w3119269;
+        Thu, 7 Nov 2019 19:32:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=tZ3pQcc3LeqFaEpO6hpLV/tKBa5ycbr9oiR/e6A4So4=;
+ b=El6ZUPgq90XLasjGS2Mko2oSA6VAktVVmCi42MKqifTGLvf6gVcHmh0g01XAi48rPyx+
+ gyB60cihjLlX1sG4OMeJaLomizt/0eEpGYB1R9l3GRwNb2QVjhtxDSR/OKY2nubFJUic
+ 3ewBLOMCHVTKRt+rQTkgHPTtkmmCIiC4iyRTVljwJ3QA5gwQ855teL+uqzpVQfBrrgna
+ nR6C7PwWGD6ZaK86f8KsQ4gwGVu9TaEQ8Wytr92sOop/ck3m48s6Bi8DOiKxY4BHS0Bc
+ dgHVohtV+oh7eUYyOZ6YyNzBB+6cx++RL4bVvBNdUiqUh/w9IS2k5cOC04+AoRXdvnyk Rg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2w41w18jfr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 19:32:13 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA7JVibr156318;
+        Thu, 7 Nov 2019 19:32:12 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2w41wfpde6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 19:32:12 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA7JVvVR002151;
+        Thu, 7 Nov 2019 19:31:57 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Nov 2019 11:31:57 -0800
+Subject: Re: [PATCH] hugetlbfs: Take read_lock on i_mmap for PMD sharing
+To:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <20191107190628.22667-1-longman@redhat.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <ae9384e6-ac8d-8dd3-54c4-34d368c9515c@oracle.com>
+Date:   Thu, 7 Nov 2019 11:31:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107192753.GA55494@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191107190628.22667-1-longman@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911070184
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911070183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 07:27:53PM +0000, Quentin Perret wrote:
-> On Thursday 07 Nov 2019 at 19:43:56 (+0100), Peter Zijlstra wrote:
-> > But you mean something like:
-> > 
-> > 	for (class = prev->sched_class; class; class = class->next) {
-> > 		if (class->balance(rq, rf))
-> > 			break;
-> > 	}
-> > 
-> > 	put_prev_task(rq, prev);
-> > 
-> > 	for_each_class(class) {
-> > 		p = class->pick_next_task(rq);
-> > 		if (p)
-> > 			return p;
-> > 	}
-> > 
-> > 	BUG();
-> > 
-> > like?
+On 11/7/19 11:06 AM, Waiman Long wrote:
+> A customer with large SMP systems (up to 16 sockets) with application
+> that uses large amount of static hugepages (~500-1500GB) are experiencing
+> random multisecond delays. These delays was caused by the long time it
+> took to scan the VMA interval tree with mmap_sem held.
 > 
-> Right, something like that, though what I had was basically doing the
-> pull from within the pick_next_task_*() functions directly, like we were
-> doing before. I'm now seeing how easy it is to get this wrong, and that
-> even good-looking code in this area can be broken in very subtle ways,
-> so I didn't feel comfortable refactoring again so close to rc7. If you
-> feel more confident, I'm more than happy to test a patch implemeting the
-> above :)
+> The sharing of huge PMD does not require changes to the i_mmap at all.
+> As a result, we can just take the read lock and let other threads
+> searching for the right VMA to share in parallel. Once the right
+> VMA is found, either the PMD lock (2M huge page for x86-64) or the
+> mm->page_table_lock will be acquired to perform the actual PMD sharing.
+> 
+> Lock contention, if present, will happen in the spinlock. That is much
+> better than contention in the rwsem where the time needed to scan the
+> the interval tree is indeterminate.
+> 
+> With this patch applied, the customer is seeing significant improvements
+> over the unpatched kernel.
 
-Thing is, if we revert (and we might have to), we'll have to revert more
-than just the one patch due to that other (__pick_migrate_task) borkage
-that got reported today.
+Thanks for getting this tested in the customers environment!
+
+> Signed-off-by: Waiman Long <longman@redhat.com>
+
+Just a small typo in the comment, otherwise.
+
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+
+> ---
+>  mm/hugetlb.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index b45a95363a84..087e7ff00137 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -4842,7 +4842,11 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
+>  	if (!vma_shareable(vma, addr))
+>  		return (pte_t *)pmd_alloc(mm, pud, addr);
+>  
+> -	i_mmap_lock_write(mapping);
+> +	/*
+> +	 * PMD sharing does not require changes to i_mmap. So a read lock
+> +	 * is enuogh.
+
+s/enuogh/enough/
+
+> +	 */
+> +	i_mmap_lock_read(mapping);
+>  	vma_interval_tree_foreach(svma, &mapping->i_mmap, idx, idx) {
+>  		if (svma == vma)
+>  			continue;
+> @@ -4872,7 +4876,7 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
+>  	spin_unlock(ptl);
+>  out:
+>  	pte = (pte_t *)pmd_alloc(mm, pud, addr);
+> -	i_mmap_unlock_write(mapping);
+> +	i_mmap_unlock_read(mapping);
+>  	return pte;
+>  }
+>  
+> 
+
+-- 
+Mike Kravetz
