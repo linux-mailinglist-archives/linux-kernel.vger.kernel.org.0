@@ -2,50 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94689F2D78
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:31:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E482F2DB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387870AbfKGLby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 06:31:54 -0500
-Received: from foss.arm.com ([217.140.110.172]:54514 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727437AbfKGLby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 06:31:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AA6C31B;
-        Thu,  7 Nov 2019 03:31:53 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DECE3F6C4;
-        Thu,  7 Nov 2019 03:31:50 -0800 (PST)
-Date:   Thu, 7 Nov 2019 11:31:47 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        amit.kachhap@arm.com, deller@gmx.de, duwe@suse.de,
-        James.Bottomley@HansenPartnership.com, james.morse@arm.com,
-        jeyu@kernel.org, jpoimboe@redhat.com, jthierry@redhat.com,
-        linux-parisc@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCHv2 0/8] arm64: ftrace cleanup + FTRACE_WITH_REGS
-Message-ID: <20191107113147.GB16965@arrakis.emea.arm.com>
-References: <20191029165832.33606-1-mark.rutland@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029165832.33606-1-mark.rutland@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2388220AbfKGLst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 06:48:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54304 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727178AbfKGLst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 06:48:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A4989AD0B;
+        Thu,  7 Nov 2019 11:48:47 +0000 (UTC)
+Message-ID: <1573126365.3024.4.camel@suse.com>
+Subject: Re: [PATCH 4.19 114/149] UAS: Revert commit 3ae62a42090f ("UAS: fix
+ alignment of scatter/gather segments")
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Date:   Thu, 07 Nov 2019 12:32:45 +0100
+In-Reply-To: <20191105163805.GB2760793@kroah.com>
+References: <Pine.LNX.4.44L0.1911051007140.1678-100000@iolanthe.rowland.org>
+         <1572968467.2921.27.camel@suse.com> <20191105163805.GB2760793@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 04:58:24PM +0000, Mark Rutland wrote:
-> [2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git arm64/ftrace-with-regs
+Am Dienstag, den 05.11.2019, 17:38 +0100 schrieb Greg Kroah-Hartman:
+> > > Given this information, perhaps you will decide that the revert is 
+> > > worthwhile.
+> > 
+> > Damned if I do, damned if I do not.
+> > Check for usbip and special case it?
+> 
+> We should be able to do that in the host controller driver for usbip,
+> right?  What is the symptom if you use a UAS device with usbip and this
+> commit?
 
-I pulled the latest on this branch into the arm64 for-next/core.
+Yes, that patch should then also be applied. Then it will work.
+Without it, commands will fail, as transfers will end prematurely.
 
-Thanks.
+	Regards
+		Oliver
 
--- 
-Catalin
