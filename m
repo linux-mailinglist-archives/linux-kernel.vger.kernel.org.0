@@ -2,64 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D40F251D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 03:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F07FF2518
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 03:16:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732990AbfKGCQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 21:16:34 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:60460 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727751AbfKGCQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 21:16:33 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B5F51A094B;
-        Thu,  7 Nov 2019 03:16:32 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3D8441A06A5;
-        Thu,  7 Nov 2019 03:16:26 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7A437402B4;
-        Thu,  7 Nov 2019 10:16:18 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        manivannan.sadhasivam@linaro.org, andrew.smirnov@gmail.com,
-        marcel.ziswiler@toradex.com, sebastien.szymanski@armadeus.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] dt-bindings: arm: imx: Add the i.MX7D-SDB Rev-A board
-Date:   Thu,  7 Nov 2019 10:14:53 +0800
-Message-Id: <1573092893-10612-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573092893-10612-1-git-send-email-Anson.Huang@nxp.com>
-References: <1573092893-10612-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1732732AbfKGCP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 21:15:58 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45981 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727751AbfKGCP6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 21:15:58 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y24so343006plr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 18:15:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4cKuNUYvAqunvz+72B7anlYEtcmjqeC5FeNltzDFT5k=;
+        b=T59vipNJYtRlVOnfzcZA23VauEahxy7MNspU0b7oX2ekYAE3qzT7B/EnaGYttLoMDQ
+         TkM+K1VxwwR9r3IAcW2Flh4PVi7CpxcgKYiJ1Gp5/FrciIQBzjIveyNa6BeFvA0Cg05m
+         iiljd57ipGroXvyQ0j/MtNI8E5IYIdVFMfilWKgYNhHQNn99lk+fFSHl2AfsNCElOeyb
+         rGDw6zIdYgXGq1SmHNxizrDSS33B0eYcuUOsZeL2H0R8tqygnUZK2kuENLHQVCDiHSXr
+         FjS14E2QKkU0EZ8CxEoVy3Em0+YdFMq2F86KoKPL8YywVWgvqHj1U6OEJg1mNqlq4fmd
+         BB1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4cKuNUYvAqunvz+72B7anlYEtcmjqeC5FeNltzDFT5k=;
+        b=HrZm7pMhqycV5HKlc0KlWVQsLZ2i50zlibqjCMTiaavaOphewh8eIW8cOoSLOzZG8x
+         Bz9Oi2LkF00T3VynX9BF1nOH1eCB9CWgnBSEbAn+8kgNFJXjJYAiDje92Q1+UvHIwKyp
+         Is4uH3xP6m9J4D/GwzXE/cHWFyLUgenr0RZOXrQLo+WAtQvQ34mmM0JayRd21wP5Zsl/
+         ohIWYOJURBqQIloJwpQxp5Rh6SRuWz9fZmyF+Xme94ytIM3ZHvbSwuJjn4/TMXn1XDfk
+         JRmLVHWXU5zs5g6MWLyY37oTxADcv/RSmFOuSod5H+GkbdKwJt8Wp7BVf7F5duNa7dnS
+         woEw==
+X-Gm-Message-State: APjAAAXca/ECqo2YuehKY/BvQ8wkM1ZV9/+Ri4nly6wyT8FLT0hbBATJ
+        um1LAk/gKuVY6BWV5N9e/g20Ig==
+X-Google-Smtp-Source: APXvYqzCKzlvkuqzRAncs0ielDj0zuGNM9QqxzhWJxgll4/9/pZjwl3R0uj4+gXExMgSAmRcPke6aw==
+X-Received: by 2002:a17:902:102:: with SMTP id 2mr1010877plb.156.1573092957436;
+        Wed, 06 Nov 2019 18:15:57 -0800 (PST)
+Received: from localhost ([122.171.110.253])
+        by smtp.gmail.com with ESMTPSA id 70sm326657pfw.160.2019.11.06.18.15.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Nov 2019 18:15:56 -0800 (PST)
+Date:   Thu, 7 Nov 2019 07:45:52 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Javi Merino <javi.merino@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 01/11] thermal: of-thermal: Appease the kernel-doc deity
+Message-ID: <20191107021552.qlg2xvan6sajntgm@vireshk-i7>
+References: <cover.1573046440.git.amit.kucheria@linaro.org>
+ <ebd5991d5554202893fbcab4707be6d26f502aef.1573046440.git.amit.kucheria@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebd5991d5554202893fbcab4707be6d26f502aef.1573046440.git.amit.kucheria@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add board binding for i.MX7D-SDB Rev-A board which is already
-supported.
+On 06-11-19, 18:58, Amit Kucheria wrote:
+> Replace a comment starting with /** by simply /* to avoid having
+> it interpreted as a kernel-doc comment.
+> 
+> Fixes the following warning when compile with make W=1:
+> linux.git/drivers/thermal/of-thermal.c:761: warning: cannot understand function prototype: 'const char *trip_types[] = '
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  drivers/thermal/of-thermal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+> index dc5093be553ec..5235aed2fadd5 100644
+> --- a/drivers/thermal/of-thermal.c
+> +++ b/drivers/thermal/of-thermal.c
+> @@ -754,7 +754,7 @@ static int thermal_of_populate_bind_params(struct device_node *np,
+>  	return ret;
+>  }
+>  
+> -/**
+> +/*
+>   * It maps 'enum thermal_trip_type' found in include/linux/thermal.h
+>   * into the device tree binding of 'trip', property type.
+>   */
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index a41d9e00..70ceeac 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -241,6 +241,7 @@ properties:
-         items:
-           - enum:
-               - fsl,imx7d-sdb             # i.MX7 SabreSD Board
-+              - fsl,imx7d-sdb-reva        # i.MX7 SabreSD Rev-A Board
-               - novtech,imx7d-meerkat96   # i.MX7 Meerkat96 Board
-               - toradex,colibri-imx7d                   # Colibri iMX7 Dual Module
-               - toradex,colibri-imx7d-emmc              # Colibri iMX7 Dual 1GB (eMMC) Module
 -- 
-2.7.4
-
+viresh
