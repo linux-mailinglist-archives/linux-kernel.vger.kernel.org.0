@@ -2,46 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5B9F304D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE61CF3030
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389693AbfKGNoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:44:22 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:39383 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728417AbfKGNmG (ORCPT
+        id S2389492AbfKGNnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:43:14 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:36478 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389057AbfKGNmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:06 -0500
-Received: by mail-il1-f197.google.com with SMTP id o11so2661982ilc.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:05 -0800 (PST)
+        Thu, 7 Nov 2019 08:42:08 -0500
+Received: by mail-il1-f199.google.com with SMTP id y7so2681722ilb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=e/bybNTyffzCSeOhQgOXo0fbtRLBZtaNhLVDBNJSTz0=;
-        b=gHRdR70KzQ4kMP26H1gIHD2rafYj9z5rQCPjZDYOCX5N3neBeESkRsN19O4I8B7XMu
-         WKaeXgzSHv+w7D3kkdXokLqy+TbBLzHxcGm4fpL1ecvphPaoHonbUvaRbsgmjWq5JIat
-         XhMcHKGXj+42dBBm+8d1XF3BPuO1WF3PmoO8AsVzeJ0ZsBzeJS1rWJppWrAgh07vS/OB
-         8URtWZrJPvdjlRHpdj5MJwtXawQ0REmOU8ElIl/PfftFXcwde5QX4DUw0u56JubfjDf0
-         XojLnLJJuoKaxQKvYeyZfZtcoqfROI6Gi1teJITduqxnNq/7XffvSyOxoDNqrsj3fuTL
-         PuJg==
-X-Gm-Message-State: APjAAAWgJTgsWHG1qBj36W++7FzaeFCAImkfZdMAiv4oi7XE6vd911fh
-        OvVUXMyrmWZ8M7tEPvBTew30zbF/0P2bdEbxyVfBDDtHPMIl
-X-Google-Smtp-Source: APXvYqzWljQaJsrZ+AqWGAmWCefLJmmLOH1MlaUPlzVjJXSJlkdhW5pXAl9sPFgHpbd2qO0w4m10rxgCexPmWcK7myr9dWVLOdcX
+        bh=CZJgdUC1TpRcETObVUB558+pxazKYw5Wn3n/HURXADI=;
+        b=gYs1h9FU1lf0sPbPsXcgsyPRj+AOj0X9yz4uwqN+XI3qo5Ch/zI7kXs9x35mQ+U/mA
+         yiwgqQ/zWGqpy49cOg7rWgNclzr9d+kPCjG9UCyLitD2s6xgHKCiCo48foOZ2cOAwpxj
+         pjCC5BqJo77DWpD2m+LZqN2bu6ul2AR1vWoC3lYhkyDo7S04zQSWjmwkYLv8Dzk1LTNy
+         pwPWoTHjsk4UM2DPNSXU+AuiPxQP2XqwfkKFJBJgMiFZU460aUA6DBZhMewPNAAKO+Us
+         epmyKPtwYoZAFM0Vy9PXQ27qZNxoNBlrKB3AjjaJ6SnSyxO0vVQHyrzlk/V1BGOl+WUL
+         bB3A==
+X-Gm-Message-State: APjAAAW25OUrcOK2r91Q6aW22yvS7CqvdXTaVmdBC1gd8ZOO9RFYI5pC
+        3gm33RKN5hiBJc1qahmR8WWoSxQvREtoh0qPyxp2hMUYV/Zl
+X-Google-Smtp-Source: APXvYqynOcIaT2y3jyHS10UgIJT51zZMfk/18yGsgEM4vujcLU66FRilTI2odarVdOVEi2iPozlH+L82DAgMEg7NmWA/wsb0TRhw
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8e8a:: with SMTP id q132mr3481485iod.94.1573134125252;
+X-Received: by 2002:a6b:ed1a:: with SMTP id n26mr3703846iog.112.1573134125729;
  Thu, 07 Nov 2019 05:42:05 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:05 -0800
-In-Reply-To: <000000000000bc17b60571a60434@google.com>
+In-Reply-To: <0000000000002a2fdf0573107004@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b8443c0596c1d480@google.com>
-Subject: Re: INFO: task hung in fuse_reverse_inval_entry
-From:   syzbot <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com>
-To:     dvyukov@google.com, ktkhai@virtuozzo.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, mszeredi@redhat.com,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000bfa1ab0596c1d403@google.com>
+Subject: Re: BUG: corrupted list in p9_write_work
+From:   syzbot <syzbot+1788bd5d4e051da6ec08@syzkaller.appspotmail.com>
+To:     asmadeus@codewreck.org, davem@davemloft.net,
+        dominique.martinet@cea.fr, ericvh@gmail.com,
+        linux-kernel@vger.kernel.org, lucho@ionkov.net,
+        netdev@vger.kernel.org, rminnich@sandia.gov,
+        syzkaller-bugs@googlegroups.com, tomasbortoli@gmail.com,
+        v9fs-developer@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,22 +52,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit c59fd85e4fd07fdf0ab523a5e9734f5338d6aa19
-Author: Kirill Tkhai <ktkhai@virtuozzo.com>
-Date:   Tue Sep 11 10:11:56 2018 +0000
+commit 728356dedeff8ef999cb436c71333ef4ac51a81c
+Author: Tomas Bortoli <tomasbortoli@gmail.com>
+Date:   Tue Aug 14 17:43:42 2018 +0000
 
-     fuse: change interrupt requests allocation algorithm
+     9p: Add refcount to p9_req_t
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15518db2600000
-start commit:   d72e90f3 Linux 4.18-rc6
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10f2258a600000
+start commit:   050cdc6c Merge git://git.kernel.org/pub/scm/linux/kernel/g..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=68af3495408deac5
-dashboard link: https://syzkaller.appspot.com/bug?extid=bb6d800770577a083f8c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11564d1c400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fc570c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=49927b422dcf0b29
+dashboard link: https://syzkaller.appspot.com/bug?extid=1788bd5d4e051da6ec08
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1196b7ba400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1022391e400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: fuse: change interrupt requests allocation algorithm
+#syz fix: 9p: Add refcount to p9_req_t
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
