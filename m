@@ -2,135 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9545DF32DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEB0FF32E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:23:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388843AbfKGPVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 10:21:40 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:39401 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729877AbfKGPVk (ORCPT
+        id S2388931AbfKGPXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 10:23:09 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33804 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfKGPXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 10:21:40 -0500
-Received: by mail-yb1-f196.google.com with SMTP id q18so1062301ybq.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 07:21:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=softbankrobotics.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HJLa0gPMAUv5bPhTtGaJLnlnj68hKkWBcQTQp2Y8E34=;
-        b=B+ofl552YPgYG6agLUogYSqjMLA2umxOSGn21yV1uEwT31g7O/XQa+bfA7zal3lIlY
-         n9FXKNbKV2UT5TdYkLKYcZGqkawb6fbGuxNB33XRqxyHnMdeSGvV1SKbkTwxOM29YHdK
-         CTrk65dnI2YI5M4ulWsWC41tW6TfgkvudMBFZV5zKvTuWt1b90gCuBZhce45pu1S6RSs
-         eJ4hxSJDrze95oS+eMpi8ZNIl7HKN76svCna85rwnt3IK9gDHoK/o5xm7E3YXvvjqKfz
-         zEfyMTwyNPUxJf3CRAuhXBm+RFlTF3JObOTVrzUSSy0OtEK3Fh5b6UnIiz4+n3DZYdru
-         9LLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HJLa0gPMAUv5bPhTtGaJLnlnj68hKkWBcQTQp2Y8E34=;
-        b=VkSUrg0Ib//v2UTEv2HB4xywTtZCvHuHzS0P2N8lktfSt/fWVlR5V7S6haAOi3oVaZ
-         XXwJDv3K/mTWjUG/OV94PLzFkdGt47WYguX1NXY4V+qCC73FWcq06v/NYzILw6SmWTEu
-         kOw1H70ftehOBp5SE5t9MMEdkSfYBT4IUSfFxPtXtfqR518Qrt3ta60jR7+pHBuEuEkL
-         6MV9AsKDu07/YjYd9nmDjesnxYQv225b4Ro/0qVX1hTmDtjz3rdO6Gc7Ya5ffS5K/JF2
-         zh/HiifihbGG0ugeMmJ4ydPy8V4b+V4xt6A4q+oAsO/zJbjsvS35LAGkFnC/QBTVfd+Y
-         IAeA==
-X-Gm-Message-State: APjAAAV2ssKb7mrTFkw0OneleflTvg2CtCltSG04OLU1ny6KKHYoiw5g
-        HZBP6cTsmGwN+I/w3mUi7hcCMTJWAzSjylziIrZyMQ6a3ik7R4b5mMUtB8ha7+ugfci/lCaJpU6
-        0J5S09W0oSTykc2d5zpt0HtdpAgw5Fxk=
-X-Google-Smtp-Source: APXvYqzRuP0KRS6kNgXL+k/rx599gZ4zi3AP+E1yvYWTX39dSFoKRwBgmZ5zlQmRjqF3lwYHFQD1X1VHI+OdjPHCIg4=
-X-Received: by 2002:a25:3b56:: with SMTP id i83mr3914294yba.496.1573140099285;
- Thu, 07 Nov 2019 07:21:39 -0800 (PST)
+        Thu, 7 Nov 2019 10:23:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2bEBCVEzj/UW4TTeCQCzfwpdXCg8fMIpoINpN+K/OOw=; b=qEmmPweXw7L/1q8f4gh06i9On
+        /ueo7gq/0dhyEkAkP6tqn894aUgZRKXLup7jGvLUz/TrKiyx/iWwjuAFO9pP/DrGdUGRebVW3Cc4w
+        OwLEPlne+3E9+1roX5A2rNumX1DIWknYRRPlYpeWzrbzMvcVehNu0q8MwQ13nj/TCwfD8erA3S1VT
+        NJQECMx+KNAxsQvL0iorTdPnqru2s/XJDD6vc3r8xeL8ZuRNK6CtfuDl8gMqC2laNszOrQs7vYG1O
+        czwvqnBznWAclenFOTXpY2B7ahPcapn8CQh+ZgV0QafkH2Uv6f1L6GVykH2jwU9IVGxUrS+FFN9qK
+        5VwH7G25g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iSjcU-0000cB-Ms; Thu, 07 Nov 2019 15:22:46 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0AC5C300692;
+        Thu,  7 Nov 2019 16:21:40 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8F5CE2B212C1C; Thu,  7 Nov 2019 16:22:44 +0100 (CET)
+Date:   Thu, 7 Nov 2019 16:22:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     shile.zhang@linux.alibaba.com
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] Speed booting by sorting ORC unwind tables at
+ build time
+Message-ID: <20191107152244.GD4114@hirez.programming.kicks-ass.net>
+References: <20191107143205.206606-1-shile.zhang@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20191107001642.1127561-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20191107001642.1127561-1-bjorn.andersson@linaro.org>
-From:   Julien Massot <jmassot@softbankrobotics.com>
-Date:   Thu, 7 Nov 2019 16:21:28 +0100
-Message-ID: <CADGp=QcwM8MhkRCjKz0wwHuz5vZGdfHOn0qYp4g_TBjHWzY6CA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] PCI: qcom: Add support for SDM845 PCIe
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107143205.206606-1-shile.zhang@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Thu, Nov 07, 2019 at 10:32:01PM +0800, shile.zhang@linux.alibaba.com wrote:
+> From: Shile Zhang <shile.zhang@linux.alibaba.com>
+> 
+> Hi,
+> 
+> I found the unwind_init taken long time (more than 90ms) in kernel
+> booting, mainly spent on sorting the two ORC unwind tables, orc_unwind
+> and orc_unwind_ip.
+> 
+> I also noticed that this issued has reported and discussed last year:
+> https://lkml.org/lkml/2018/10/8/342
+> But seems no final solution until now, I tried to sort the ORC tables at
+> build time, followed the helpful hints from Josh and Ingo in that thread.
+> And mainly referred the implementation of 'sortextable' tool:
+> https://lore.kernel.org/linux-mips/1334872799-14589-1-git-send-email-ddaney.cavm@gmail.com/
+> 
+> What I did:
+> 
+> - Add a Kconfig to control build-time sorting or runtime sorting;
+> - Referred 'sortextable', create a similar helper tool 'sortorctable',
+>   help to sort the ORC unwind tables at vmlinux link process.
 
-On Thu, Nov 7, 2019 at 1:16 AM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> This adds support necessary for the two PCIe controllers found in Qualcom=
-m
-> SDM845.
+What is the build-time cost for doing this? The link phase is already a
+fairly big bottleneck for building a kernel.
 
-Thanks a lot the gen 3 PCIE works on my 845 platform.
-Tested-by: Julien Massot <jmassot@softbankrobotics.com>
-
---=20
-
-
-*This email and any attachment thereto are confidential and intended=20
-solely for the use of the individual or entity to whom they are addressed.
-
-If you are not the intended recipient, please be advised that disclosing,=
-=20
-copying, distributing or taking any action in reliance on the contents of=
-=20
-this email is strictly prohibited. In such case, please immediately advise=
-=20
-the sender, and delete all copies and attachment from your system.
-This=20
-email shall not be construed and is not tantamount to an offer, an=20
-acceptance of offer, or an agreement by SoftBank Robotics Europe on any=20
-discussion or contractual document whatsoever. No employee or agent is=20
-authorized to represent or bind SoftBank Robotics Europe to third parties=
-=20
-by email, or act on behalf of SoftBank Robotics Europe by email, without=20
-express written confirmation by SoftBank Robotics Europe=E2=80=99 duly auth=
-orized=20
-representatives.
-*
-
-
-
-*Ce message =C3=A9lectronique et =C3=A9ventuelles pi=C3=A8ces=20
-jointes sont confidentiels, et exclusivement destin=C3=A9s =C3=A0 la person=
-ne ou=20
-l'entit=C3=A9 =C3=A0 qui ils sont adress=C3=A9s.
-Si vous n'=C3=AAtes pas le destinataire vis=C3=A9,=20
-vous =C3=AAtes pri=C3=A9 de ne pas divulguer, copier, distribuer ou prendre=
- toute=20
-d=C3=A9cision sur la foi de ce message =C3=A9lectronique. Merci d'en aviser=
-=20
-imm=C3=A9diatement l'exp=C3=A9diteur et de supprimer toutes les copies et =
-=C3=A9ventuelles=20
-pi=C3=A8ces jointes de votre syst=C3=A8me.
-Ce message =C3=A9lectronique n'=C3=A9quivaut pas =C3=A0=20
-une offre, =C3=A0 une acceptation d=E2=80=99offre, ou =C3=A0 un accord de S=
-oftBank Robotics=20
-Europe sur toute discussion ou document contractuel quel qu=E2=80=99il soit=
-, et ne=20
-peut =C3=AAtre interpr=C3=A9t=C3=A9 comme tel. Aucun employ=C3=A9 ou agent =
-de SoftBank Robotics=20
-Europe n'est autoris=C3=A9 =C3=A0 repr=C3=A9senter ou =C3=A0 engager la soc=
-i=C3=A9t=C3=A9 par email, ou =C3=A0=20
-agir au nom et pour le compte de la soci=C3=A9t=C3=A9 par email, sans qu=E2=
-=80=99une=20
-confirmation =C3=A9crite soit donn=C3=A9e par le repr=C3=A9sentant l=C3=A9g=
-al de SoftBank=20
-Robotics Europe ou par toute autre personne ayant re=C3=A7u d=C3=A9l=C3=A9g=
-ation de=20
-pouvoir appropri=C3=A9e.
-*
-
-**
+Can sort{ex,orc}table() be ran concurrently? Do they want to be the same
+(threaded) tool?
