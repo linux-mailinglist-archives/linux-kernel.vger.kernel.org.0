@@ -2,217 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA085F37E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:05:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD2DF37E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbfKGTE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:04:59 -0500
-Received: from ms.lwn.net ([45.79.88.28]:39040 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727296AbfKGTE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:04:58 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id E11736EC;
-        Thu,  7 Nov 2019 19:04:56 +0000 (UTC)
-Date:   Thu, 7 Nov 2019 12:04:55 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Jaskaran Singh <jaskaransingh7654321@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, mchehab+samsung@kernel.org,
-        christian@brauner.io, neilb@suse.com, willy@infradead.org,
-        tobin@kernel.org, stefanha@redhat.com, hofrat@osadl.org,
-        gregkh@linuxfoundation.org, jeffrey.t.kirsher@intel.com,
-        linux-doc@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH][RESEND] docs: filesystems: sysfs: convert sysfs.txt to
- reST
-Message-ID: <20191107120455.29a4c155@lwn.net>
-In-Reply-To: <20191105071846.GA28727@localhost.localdomain>
-References: <20191105071846.GA28727@localhost.localdomain>
-Organization: LWN.net
+        id S1730272AbfKGTFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:05:05 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33453 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730178AbfKGTFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 14:05:04 -0500
+Received: by mail-qk1-f195.google.com with SMTP id 71so3026442qkl.0;
+        Thu, 07 Nov 2019 11:05:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D2aZYGhhhD0fueEZXuZZtBxsPvMYXcl+9GQ42VL43KI=;
+        b=QMrL5nCAR853//4IbtMGC+V9cyv4Cci7a5ZLezHlo8P+sBwSZ7sdElMR64J11gVzVy
+         +jwOVFRlQ856q0LydViBktS8UwVaYvjFOE8Hshwk2Kg7vFAvvi4cycqMZn6M4UAWCAOk
+         PeT1uWVTEy/ffwMqLCnEsdpXLFwX2HCynQx+JcUjU+LUgFlomDNbysXZjfEQjPhC59zw
+         O2XpzH5to18sUHc//d8yst74RbREs30kLGGRa/MLmBzkn8XRbti2wLANRh0SLmW0ZnAY
+         IQNiOZe+U5oyogrSXJDnBlKz0bgOZnAV3g17MmtlrW7o0HwvJmZA2ABKMPy4EkCZv3fy
+         jLpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D2aZYGhhhD0fueEZXuZZtBxsPvMYXcl+9GQ42VL43KI=;
+        b=PK5hs8P2lyeP0ENI0SJmWxb0lSmVUlD2kOy7ThllAhp4CJSkQMGX2fXsW+O6a+8E2f
+         7Zg1I9qSpbd0JXrAZhgZR03iCXILa4Lxr4D4ec+wFtEKh4vZhbUbytiHME/6ilD/9/2B
+         IGAVH1vmNAPbng0sKfmlAXbDiMXGowClvX+N8VX+4FxROJP9s8mhxPH5kxQXKhkQ9+xP
+         QIvPyknFDLAgcLJQual4cqzepl4r+T9yZA1KVz2BYMqg1klF5wSvoSnHpU2ksPkuUq3n
+         n3WgLWfV7t1WArgjUrjULui1W4MQfiFcxW5v83pNX1l5ohDI83l/jpKoLatXrwxMXvKm
+         1v1Q==
+X-Gm-Message-State: APjAAAWFgCxEJHle384Ak6iCZeqgiJympf0iesSWBH7oy2r8pecQoyPA
+        fjHI/lMa5qw6HWHLdyAlUJk=
+X-Google-Smtp-Source: APXvYqzl96Q5hW2MM5DuIR0U3yR8pKDS3P3ZF244FehkB7rIAWEa59eSpL/t9gsb+/nHA8O5jAi9gg==
+X-Received: by 2002:a37:4654:: with SMTP id t81mr4466141qka.0.1573153502452;
+        Thu, 07 Nov 2019 11:05:02 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::2:3f13])
+        by smtp.gmail.com with ESMTPSA id b2sm1834935qtc.21.2019.11.07.11.05.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Nov 2019 11:05:01 -0800 (PST)
+Date:   Thu, 7 Nov 2019 11:04:59 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     axboe@kernel.dk
+Cc:     cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lizefan@huawei.com,
+        hannes@cmpxchg.org, kernel-team@fb.com
+Subject: [PATCH 0.5/5] bfq-iosched: relocate bfqg_*rwstat*() helpers
+Message-ID: <20191107190459.GA3622521@devbig004.ftw2.facebook.com>
+References: <20191106215838.3973497-1-tj@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106215838.3973497-1-tj@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Nov 2019 12:48:46 +0530
-Jaskaran Singh <jaskaransingh7654321@gmail.com> wrote:
+From a7b9100d72d75a1472bed130b6edd271b734776f Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Thu, 7 Nov 2019 11:01:19 -0800
 
-> This patch converts sysfs.txt to sysfs.rst, and adds a corresponding
-> entry in index.rst.
-> 
-> Most of the whitespacing and indentation is kept similar to the
-> original document.
-> 
-> Changes to the original document include:
-> 
->  - Adding an authors statement in the header.
->  - Replacing the underscores in the title with asterisks. This is so
->    that the "The" in the title appears in italics in HTML.
->  - Replacing the tilde (~) headings with equal signs, for reST section
->    headings.
->  - List out the helper macros with backquotes and corresponding description
->    on the next line.
->  - Placing C code and shell code in reST code blocks, with an indentation
->    of an 8 length tab.
->
-> Signed-off-by: Jaskaran Singh <jaskaransingh7654321@gmail.com>
+Collect them right under #ifdef CONFIG_BFQ_CGROUP_DEBUG.  The next
+patch will use them from !DEBUG path and this makes it easy to move
+them out of the ifdef block.
 
-Thanks for working to improve the documentation.  There are some problems
-here, none of which are your creation, but I would sure like to resolve
-them while working with this document.
+This is pure code reorganization.
 
-The first of these is that Documentation/filesystems is really the wrong
-place for this file - it's covering the internal API for subsystems that
-want to create entries in sysfs.  IMO, it belongs in either the driver-API
-manual or the core-API manual - probably the latter.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Jens, this is an extra patch to help fixing the build bug when
+!CONFIG_BFQ_CGROUP_DEBUG.  The git tree has been updated accordingly.
+Please let me know if you want the whole series reposted.
 
->  Documentation/filesystems/index.rst           |   1 +
->  .../filesystems/{sysfs.txt => sysfs.rst}      | 323 ++++++++++--------
->  2 files changed, 189 insertions(+), 135 deletions(-)
->  rename Documentation/filesystems/{sysfs.txt => sysfs.rst} (60%)
-> 
-> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-> index 2c3a9f761205..18b5ea780b9b 100644
-> --- a/Documentation/filesystems/index.rst
-> +++ b/Documentation/filesystems/index.rst
-> @@ -46,4 +46,5 @@ Documentation for filesystem implementations.
->  .. toctree::
->     :maxdepth: 2
->  
-> +   sysfs
->     virtiofs
-> diff --git a/Documentation/filesystems/sysfs.txt b/Documentation/filesystems/sysfs.rst
-> similarity index 60%
-> rename from Documentation/filesystems/sysfs.txt
-> rename to Documentation/filesystems/sysfs.rst
-> index ddf15b1b0d5a..de0de5869323 100644
-> --- a/Documentation/filesystems/sysfs.txt
-> +++ b/Documentation/filesystems/sysfs.rst
-> @@ -1,15 +1,18 @@
-> +======================================================
-> +sysfs - *The* filesystem for exporting kernel objects.
-> +======================================================
->  
-> -sysfs - _The_ filesystem for exporting kernel objects. 
+Thanks.
 
-Nits: We can really just drop emphasis like that, it doesn't really help
-anybody.  Also the period can go on section headers.
+ block/bfq-cgroup.c | 46 +++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-> +Authors:
->  
-> -Patrick Mochel	<mochel@osdl.org>
-> -Mike Murphy <mamurph@cs.clemson.edu>
-> +- Patrick Mochel	<mochel@osdl.org>
-> +- Mike Murphy   	<mamurph@cs.clemson.edu>
-
-I would be absolutely amazed if either of those email addresses works at
-this point.  I'd take them out.
-
-> -Revised:    16 August 2011
-> -Original:   10 January 2003
-> +| Revised:    16 August 2011
-> +| Original:   10 January 2003
-
-Dates like that are a red flag.  See below.
-
->  What it is:
-> -~~~~~~~~~~~
-> +===========
->  
->  sysfs is a ram-based filesystem initially based on ramfs. It provides
->  a means to export kernel data structures, their attributes, and the 
-> @@ -21,16 +24,18 @@ interface.
->  
->  
->  Using sysfs
-> -~~~~~~~~~~~
-> +===========
->  
->  sysfs is always compiled in if CONFIG_SYSFS is defined. You can access
->  it by doing:
->  
-> -    mount -t sysfs sysfs /sys 
-> +.. code-block:: sh
-> +
-> +	mount -t sysfs sysfs /sys
-
-In the spirit of minimal markup, I'd do the above as:
-
-   it by doing::
-
-	mount -t sysfs sysfs /sys
-
-But then I know that others are much more fond of .. code-block and syntax
-highlighting than I am.
-
->  Directory Creation
-> -~~~~~~~~~~~~~~~~~~
-> +==================
->  
->  For every kobject that is registered with the system, a directory is
->  created for it in sysfs. That directory is created as a subdirectory
-> @@ -48,7 +53,7 @@ only modified directly by the function sysfs_schedule_callback().
->  
->  
->  Attributes
-> -~~~~~~~~~~
-> +==========
->  
->  Attributes can be exported for kobjects in the form of regular files in
->  the filesystem. Sysfs forwards file I/O operations to methods defined
-> @@ -67,15 +72,16 @@ you publicly humiliated and your code rewritten without notice.
->  
->  An attribute definition is simply:
->  
-> -struct attribute {
-> -        char                    * name;
-> -        struct module		*owner;
-> -        umode_t                 mode;
-> -};
-> +.. code-block:: c
->  
-> +	struct attribute {
-> +		char                    * name;
-> +		struct module		*owner;
-> +		umode_t                 mode;
-> +	};
-
-Here is where we go pretty far off the rails.  If you go looking in
-include/linux/sysfs.h, the actual definition of this structure is:
-
-struct attribute {
-	const char		*name;
-	umode_t			mode;
-#ifdef CONFIG_DEBUG_LOCK_ALLOC
-	bool			ignore_lockdep:1;
-	struct lock_class_key	*key;
-	struct lock_class_key	skey;
-#endif
-};
-
-Most notably, the owner field went away quite some time ago.
-
-Documentation like this is not really useful to anybody; once a reader
-realizes it doesn't describe current reality, they will justifiably
-disregard it.  This isn't your fault, of course, but converting something
-like this to RST gives the illusion that it has been updated, when that is
-very much not the case.
-
-At a bare minimum, an effort like this needs to put a big flashing warning
-at the top of the file.  But it would be soooooo much better to actually
-update the content as well.
-
-The best way to do that would be to annotate the source with proper
-kerneldoc comments, then pull them into the documentation rather than
-repeating the information here.  Is there any chance you might be up for
-taking on a task like this?
-
-Thanks,
-
-jon
-
+diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
+index 86a607cf19a1..d4755d4ad009 100644
+--- a/block/bfq-cgroup.c
++++ b/block/bfq-cgroup.c
+@@ -1058,17 +1058,34 @@ static ssize_t bfq_io_set_weight(struct kernfs_open_file *of,
+ }
+ 
+ #ifdef CONFIG_BFQ_CGROUP_DEBUG
+-static int bfqg_print_stat(struct seq_file *sf, void *v)
++static int bfqg_print_rwstat(struct seq_file *sf, void *v)
+ {
+-	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)), blkg_prfill_stat,
+-			  &blkcg_policy_bfq, seq_cft(sf)->private, false);
++	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)), blkg_prfill_rwstat,
++			  &blkcg_policy_bfq, seq_cft(sf)->private, true);
+ 	return 0;
+ }
+ 
+-static int bfqg_print_rwstat(struct seq_file *sf, void *v)
++static u64 bfqg_prfill_rwstat_recursive(struct seq_file *sf,
++					struct blkg_policy_data *pd, int off)
+ {
+-	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)), blkg_prfill_rwstat,
+-			  &blkcg_policy_bfq, seq_cft(sf)->private, true);
++	struct blkg_rwstat_sample sum;
++
++	blkg_rwstat_recursive_sum(pd_to_blkg(pd), &blkcg_policy_bfq, off, &sum);
++	return __blkg_prfill_rwstat(sf, pd, &sum);
++}
++
++static int bfqg_print_rwstat_recursive(struct seq_file *sf, void *v)
++{
++	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)),
++			  bfqg_prfill_rwstat_recursive, &blkcg_policy_bfq,
++			  seq_cft(sf)->private, true);
++	return 0;
++}
++
++static int bfqg_print_stat(struct seq_file *sf, void *v)
++{
++	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)), blkg_prfill_stat,
++			  &blkcg_policy_bfq, seq_cft(sf)->private, false);
+ 	return 0;
+ }
+ 
+@@ -1097,15 +1114,6 @@ static u64 bfqg_prfill_stat_recursive(struct seq_file *sf,
+ 	return __blkg_prfill_u64(sf, pd, sum);
+ }
+ 
+-static u64 bfqg_prfill_rwstat_recursive(struct seq_file *sf,
+-					struct blkg_policy_data *pd, int off)
+-{
+-	struct blkg_rwstat_sample sum;
+-
+-	blkg_rwstat_recursive_sum(pd_to_blkg(pd), &blkcg_policy_bfq, off, &sum);
+-	return __blkg_prfill_rwstat(sf, pd, &sum);
+-}
+-
+ static int bfqg_print_stat_recursive(struct seq_file *sf, void *v)
+ {
+ 	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)),
+@@ -1114,14 +1122,6 @@ static int bfqg_print_stat_recursive(struct seq_file *sf, void *v)
+ 	return 0;
+ }
+ 
+-static int bfqg_print_rwstat_recursive(struct seq_file *sf, void *v)
+-{
+-	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)),
+-			  bfqg_prfill_rwstat_recursive, &blkcg_policy_bfq,
+-			  seq_cft(sf)->private, true);
+-	return 0;
+-}
+-
+ static u64 bfqg_prfill_sectors(struct seq_file *sf, struct blkg_policy_data *pd,
+ 			       int off)
+ {
+-- 
+2.17.1
