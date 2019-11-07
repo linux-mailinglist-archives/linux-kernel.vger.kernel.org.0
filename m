@@ -2,93 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1488BF335F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:35:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56E5FF337A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:36:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389285AbfKGPfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 10:35:05 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42168 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389213AbfKGPfD (ORCPT
+        id S2389380AbfKGPgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 10:36:53 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:35826 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727020AbfKGPgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 10:35:03 -0500
-Received: by mail-ot1-f67.google.com with SMTP id b16so2356941otk.9;
-        Thu, 07 Nov 2019 07:35:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w4Awp6aOhgxlUbwSvEpd03sWLJcXbVuHqaesNRPrPJo=;
-        b=ijCUyc5iys61fP5qEnvqB8BCmoBcDMao3mCulvGbWvgt55dkkYzlQq0oJND3XvRnBi
-         YX/rX62aJZPdsgNa5wqocPqqKdiY4uUUBqLXVdkOVPvGzrCzQWan6hlUDPEy6m+8yrx/
-         ryzXIA6mflIgSgR//YvsyL1BcQ/3ElJPQwUxHHpuzOgUDRau5Aho3VfkvjiXUhq/UMSo
-         L2QLyWG0HdNqsrpkzuBewcFBc4q3C6WsFKch57Su8Q3AFKl/WCGb1LZSgIPs7q2NFUaJ
-         COtnVEMPQS6kzIgp3u/4H2p1rCrdZu6XeNJqzALe+E896Lw+1OuBmqf8O38BJwTTKygZ
-         XYIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w4Awp6aOhgxlUbwSvEpd03sWLJcXbVuHqaesNRPrPJo=;
-        b=a5MPQazJJ7QIqCIpfFY4BzZFlvBIVxsYxB7SjgzFO39oNvuqDnQuaQim/xg0amF8p5
-         FIXski+SiTBuKgolhYmlKCAEcZuW+ghvz6nC0FVDfp9O3hhs2hWD6jv7iuGWBGWff8Gf
-         es1thO3fysPJ+Jv7GULytk/iQd4eTM6paHNI1f5CP966moUGEVI14t3tk0Qi/i5Q7f13
-         O18cwUufQEXrsrTWum1IDkoYFl26imNkOBGJXi4q4/PADENNRwrMo2yULHhRqNoiOraS
-         tWACPEguxTiAzU/OVuZmHuu/Z7kXDQs3rg0lqHtB9oUMbB2tS/NlLSUxpZHg+5uMAfe+
-         rztw==
-X-Gm-Message-State: APjAAAWx+w1Vl7s/jpLBi+KDiKnotyBZCK5J93aSpsVOgojibSgHTkCr
-        vNl1R8oycCGS+MLebsQbdJezqzU5rHhvdeL1Xjo=
-X-Google-Smtp-Source: APXvYqztU5GX0wlrnLPTMRH3pBVlSCTlwNpEd98regvGSDq6dRbCARkLpuzO2q7834lI/wC55JMJf9/Mpu2uMwyeWNY=
-X-Received: by 2002:a9d:1b0d:: with SMTP id l13mr1540580otl.84.1573140903023;
- Thu, 07 Nov 2019 07:35:03 -0800 (PST)
+        Thu, 7 Nov 2019 10:36:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573141008;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FAhytQLph68txo2Lut8xXgNzL31NY3OX1jJJVRGMRL8=;
+        b=iNzmf3Uv9c0xAm8X2aqzbpwgTxxbBGiKLwxAK11sfWhCYD6Yfu2fCMtsWaKmDIhJLYiE6A
+        jDZ/AdJlqdWTChLXrmwlROq7luZwTiB7t6uPZ3M6wqGfWR2UNvX8HoVVfdyp14dFWubsTK
+        mWa9tuuOgTgtk4FCfLLMH6pgjlYXJj4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-296-lwzusoTTONmDNFvxeSwQlg-1; Thu, 07 Nov 2019 10:36:45 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A1925107ACC3;
+        Thu,  7 Nov 2019 15:36:41 +0000 (UTC)
+Received: from gondolin (ovpn-117-222.ams2.redhat.com [10.36.117.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 927595DA76;
+        Thu,  7 Nov 2019 15:36:09 +0000 (UTC)
+Date:   Thu, 7 Nov 2019 16:36:06 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        maxime.coquelin@redhat.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, rob.miller@broadcom.com,
+        xiao.w.wang@intel.com, haotian.wang@sifive.com,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
+        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, eperezma@redhat.com,
+        lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com, rdunlap@infradead.org
+Subject: Re: [PATCH V11 3/6] mdev: introduce device specific ops
+Message-ID: <20191107163606.293a4f62.cohuck@redhat.com>
+In-Reply-To: <20191107151109.23261-4-jasowang@redhat.com>
+References: <20191107151109.23261-1-jasowang@redhat.com>
+        <20191107151109.23261-4-jasowang@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <20191106140748.13100-1-gch981213@gmail.com> <20191106140748.13100-2-gch981213@gmail.com>
- <1573132996.8833.3.camel@mtksdaap41>
-In-Reply-To: <1573132996.8833.3.camel@mtksdaap41>
-From:   Chuanhong Guo <gch981213@gmail.com>
-Date:   Thu, 7 Nov 2019 23:34:49 +0800
-Message-ID: <CAJsYDV+UJFHsZWMOrvQFRm5BeG-6-YW8KSatSTxA=_gPuHJ6sw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mtd: mtk-quadspi: add support for memory-mapped flash reading
-To:     Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc:     linux-mtd@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: lwzusoTTONmDNFvxeSwQlg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Thu,  7 Nov 2019 23:11:06 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-On Thu, Nov 7, 2019 at 9:23 PM Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
->
-> On Wed, 2019-11-06 at 22:07 +0800, Chuanhong Guo wrote:
-> > PIO reading mode on this controller is ridiculously inefficient
-> > (one cmd+addr+dummy sequence reads only one byte)
-> > This patch adds support for reading from memory-mapped flash area
-> > which increases reading speed from 1MB/s to 5.6MB/s
->
-> This may not be true for all MTK SoC. Which one are you testing?
->
+> Currently, except for the create and remove, the rest of
+> mdev_parent_ops is designed for vfio-mdev driver only and may not help
+> for kernel mdev driver. With the help of class id, this patch
+> introduces device specific callbacks inside mdev_device
+> structure. This allows different set of callback to be used by
+> vfio-mdev and virtio-mdev.
+>=20
+> Reviewed-by: Parav Pandit <parav@mellanox.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  .../driver-api/vfio-mediated-device.rst       | 35 +++++++++----
+>  MAINTAINERS                                   |  1 +
+>  drivers/gpu/drm/i915/gvt/kvmgt.c              | 18 ++++---
+>  drivers/s390/cio/vfio_ccw_ops.c               | 18 ++++---
+>  drivers/s390/crypto/vfio_ap_ops.c             | 14 +++--
+>  drivers/vfio/mdev/mdev_core.c                 | 24 ++++++++-
+>  drivers/vfio/mdev/mdev_private.h              |  5 ++
+>  drivers/vfio/mdev/vfio_mdev.c                 | 37 ++++++-------
+>  include/linux/mdev.h                          | 43 ++++-----------
+>  include/linux/mdev_vfio_ops.h                 | 52 +++++++++++++++++++
+>  samples/vfio-mdev/mbochs.c                    | 20 ++++---
+>  samples/vfio-mdev/mdpy.c                      | 20 ++++---
+>  samples/vfio-mdev/mtty.c                      | 18 ++++---
+>  13 files changed, 206 insertions(+), 99 deletions(-)
+>  create mode 100644 include/linux/mdev_vfio_ops.h
 
-I tested it on MT7629.
-There should be a 5x reading speed increment under DMA or direct read
-mode than PIO mode because PIO mode needs 30 or 36 clocks for every
-single byte of data while DMA or direct read only needs 24 or 30
-clocks for initial command/address/dummy and every byte of data after
-that only need 8 clocks.
+You dropped my R-b :(, here it is again:
 
-Regards,
-Chuanhong Guo
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+
