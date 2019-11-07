@@ -2,102 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 643C6F29DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71CE7F29BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:51:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbfKGIyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 03:54:49 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39273 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbfKGIyt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:54:49 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x28so2132086pfo.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 00:54:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=REr9FfqxVfrOvMfCnBHOUFhY/pw9eZJd+cJfs5nnvmk=;
-        b=Ub5AuL2yBlrx2kEGok4LLkMsGs9Tg85TheBaiJPVAl5Zup7IALWGjeBGQNQxT66fGQ
-         /+Kx4qiwPKcqzjoOsuuQL20s7hdAkUp1V5GqLlC4CyA4Oh5Qh1iF6hi4f+GocdYoQJOI
-         TEVLqzJZE1uOsHzBekKouNqI77hN5vukb/5zyXZIj5F54WAxVrtm9Xh3GUaULvUhz4+v
-         Cn4dummdKET9/QWP9fYXYzcRNChTj9x7K4V/zV1j2BojghVhhhmEVvq3FgdM+YbDMPip
-         d8lOL0vcQmJYZ5r8tUheQJ+w2J6FE+u4Xwizyk9fU7IUU2M56Ynbz+vgU6uagWRKDDwL
-         SkEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=REr9FfqxVfrOvMfCnBHOUFhY/pw9eZJd+cJfs5nnvmk=;
-        b=oIAneY5VZEd9rxrcuIAEGvGv53eFcKTzDFZFO+Hp8OXPoPVqsYsoNjxDWDfNhLAekn
-         CglUPxD1m3G5MRuqw2NZTt/z726yLS0KYk+kBqZjsfcKA0SzSMcVPRg7RNl6bmc8Rt52
-         mQ0PAEXGNPmGRc8eXS5ds8efBmIp1PWlV12ZwpMxCe1HeAaVN8LWpbz+4Z93F0cBOHfv
-         3qhmr7biuiFkfU55tYI3VZUXtRBhH2jUGe0GNYnwROIugdeD7o5fOSwjpj5pHimtGTvy
-         C8Cmh/40QNzb8NswFishYtPhVtXMcPH9rcTpJ5EyiPzPvKWnDDUxSskcoKNi/P+Rh3C4
-         38jg==
-X-Gm-Message-State: APjAAAVqjH6RHjP1mGhK3SpwrZuAqim2Of+i5txWhIbOOtnmKHeA4n/l
-        XH9fG9MIIRqKdhKOYLzkNnTJXw==
-X-Google-Smtp-Source: APXvYqwDFuK/xyGSDVKNWtwLPNsCCdPj7+umcyIkizF5k0puUXO125ZdEGWjnl7vA9pTpceKyeB6Bg==
-X-Received: by 2002:a63:91c1:: with SMTP id l184mr3073440pge.57.1573116888516;
-        Thu, 07 Nov 2019 00:54:48 -0800 (PST)
-Received: from localhost.localdomain (36-228-119-18.dynamic-ip.hinet.net. [36.228.119.18])
-        by smtp.gmail.com with ESMTPSA id a33sm2402361pgb.57.2019.11.07.00.54.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 00:54:48 -0800 (PST)
-From:   Green Wan <green.wan@sifive.com>
-Cc:     Green Wan <green.wan@sifive.com>, Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Yash Shah <yash.shah@sifive.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/4] MAINTAINERS: Add Green as SiFive PDMA driver maintainer
-Date:   Thu,  7 Nov 2019 16:49:22 +0800
-Message-Id: <20191107084955.7580-5-green.wan@sifive.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191107084955.7580-1-green.wan@sifive.com>
-References: <20191107084955.7580-1-green.wan@sifive.com>
-To:     unlisted-recipients:; (no To-header on input)
+        id S1727932AbfKGIvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 03:51:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726734AbfKGIvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 03:51:15 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A5D82053B;
+        Thu,  7 Nov 2019 08:51:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573116674;
+        bh=8kanmn+RkMfo0K4nKLhPEwPa32ckCOn18hc8EN/WItw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=y0HgH5uxr6nUEK3OE2ja1ID+XEBTYoRgjfLCPUSw5LE5o+RbsJuUri1ZnPjXoA1kr
+         SlbLfTzwPDy13RdN3HjxmOwm7HUJQbFN4Q0RxRWPiT2tZAT0RfNCskLPM9JVEchwff
+         tXVSOzq+Y+zixXbeBil0XJuUCgfJlZK9hRKideQ4=
+Date:   Thu, 7 Nov 2019 09:51:11 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: no need to check return value of debugfs_create
+ functions
+Message-ID: <20191107085111.GA1274176@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update MAINTAINERS for SiFive PDMA driver.
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-Signed-off-by: Green Wan <green.wan@sifive.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-mtd@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mtd/mtdcore.c   |  26 +++-----
+ drivers/mtd/mtdswap.c   |   8 +--
+ drivers/mtd/ubi/debug.c | 128 +++++++++++++---------------------------
+ 3 files changed, 49 insertions(+), 113 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2a427d1e9f01..d319f7f33407 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14785,6 +14785,12 @@ F:	drivers/media/usb/siano/
- F:	drivers/media/usb/siano/
- F:	drivers/media/mmc/siano/
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 6cc7ecb0c788..5fac4355b9c2 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -382,33 +382,21 @@ static struct dentry *dfs_dir_mtd;
+ static void mtd_debugfs_populate(struct mtd_info *mtd)
+ {
+ 	struct device *dev = &mtd->dev;
+-	struct dentry *root, *dent;
++	struct dentry *root;
  
-+SIFIVE PDMA DRIVER
-+M:	Green Wan <green.wan@sifive.com>
-+S:	Maintained
-+F:	drivers/dma/sf-pdma/
-+F:	Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+ 	if (IS_ERR_OR_NULL(dfs_dir_mtd))
+ 		return;
+ 
+ 	root = debugfs_create_dir(dev_name(dev), dfs_dir_mtd);
+-	if (IS_ERR_OR_NULL(root)) {
+-		dev_dbg(dev, "won't show data in debugfs\n");
+-		return;
+-	}
+-
+ 	mtd->dbg.dfs_dir = root;
+ 
+-	if (mtd->dbg.partid) {
+-		dent = debugfs_create_file("partid", 0400, root, mtd,
+-					   &mtd_partid_debug_fops);
+-		if (IS_ERR_OR_NULL(dent))
+-			dev_err(dev, "can't create debugfs entry for partid\n");
+-	}
++	if (mtd->dbg.partid)
++		debugfs_create_file("partid", 0400, root, mtd,
++				    &mtd_partid_debug_fops);
+ 
+-	if (mtd->dbg.partname) {
+-		dent = debugfs_create_file("partname", 0400, root, mtd,
+-					   &mtd_partname_debug_fops);
+-		if (IS_ERR_OR_NULL(dent))
+-			dev_err(dev,
+-				"can't create debugfs entry for partname\n");
+-	}
++	if (mtd->dbg.partname)
++		debugfs_create_file("partname", 0400, root, mtd,
++				    &mtd_partname_debug_fops);
+ }
+ 
+ #ifndef CONFIG_MMU
+diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
+index f92414eb4c86..58eefa43af14 100644
+--- a/drivers/mtd/mtdswap.c
++++ b/drivers/mtd/mtdswap.c
+@@ -1257,7 +1257,6 @@ DEFINE_SHOW_ATTRIBUTE(mtdswap);
+ static int mtdswap_add_debugfs(struct mtdswap_dev *d)
+ {
+ 	struct dentry *root = d->mtd->dbg.dfs_dir;
+-	struct dentry *dent;
+ 
+ 	if (!IS_ENABLED(CONFIG_DEBUG_FS))
+ 		return 0;
+@@ -1265,12 +1264,7 @@ static int mtdswap_add_debugfs(struct mtdswap_dev *d)
+ 	if (IS_ERR_OR_NULL(root))
+ 		return -1;
+ 
+-	dent = debugfs_create_file("mtdswap_stats", S_IRUSR, root, d,
+-				&mtdswap_fops);
+-	if (!dent) {
+-		dev_err(d->dev, "debugfs_create_file failed\n");
+-		return -1;
+-	}
++	debugfs_create_file("mtdswap_stats", S_IRUSR, root, d, &mtdswap_fops);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/mtd/ubi/debug.c b/drivers/mtd/ubi/debug.c
+index a1dff92ceedf..bdf65646f092 100644
+--- a/drivers/mtd/ubi/debug.c
++++ b/drivers/mtd/ubi/debug.c
+@@ -511,8 +511,6 @@ int ubi_debugfs_init_dev(struct ubi_device *ubi)
+ {
+ 	int err, n;
+ 	unsigned long ubi_num = ubi->ubi_num;
+-	const char *fname;
+-	struct dentry *dent;
+ 	struct ubi_debug_info *d = &ubi->dbg;
+ 
+ 	if (!IS_ENABLED(CONFIG_DEBUG_FS))
+@@ -522,95 +520,51 @@ int ubi_debugfs_init_dev(struct ubi_device *ubi)
+ 		     ubi->ubi_num);
+ 	if (n == UBI_DFS_DIR_LEN) {
+ 		/* The array size is too small */
+-		fname = UBI_DFS_DIR_NAME;
+-		dent = ERR_PTR(-EINVAL);
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+-	fname = d->dfs_dir_name;
+-	dent = debugfs_create_dir(fname, dfs_rootdir);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out;
+-	d->dfs_dir = dent;
+-
+-	fname = "chk_gen";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_chk_gen = dent;
+-
+-	fname = "chk_io";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_chk_io = dent;
+-
+-	fname = "chk_fastmap";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_chk_fastmap = dent;
+-
+-	fname = "tst_disable_bgt";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_disable_bgt = dent;
+-
+-	fname = "tst_emulate_bitflips";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_emulate_bitflips = dent;
+-
+-	fname = "tst_emulate_io_failures";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_emulate_io_failures = dent;
+-
+-	fname = "tst_emulate_power_cut";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_emulate_power_cut = dent;
+-
+-	fname = "tst_emulate_power_cut_min";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_power_cut_min = dent;
+-
+-	fname = "tst_emulate_power_cut_max";
+-	dent = debugfs_create_file(fname, S_IWUSR, d->dfs_dir, (void *)ubi_num,
+-				   &dfs_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
+-	d->dfs_power_cut_max = dent;
+-
+-	fname = "detailed_erase_block_info";
+-	dent = debugfs_create_file(fname, S_IRUSR, d->dfs_dir, (void *)ubi_num,
+-				   &eraseblk_count_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto out_remove;
++	d->dfs_dir = debugfs_create_dir(d->dfs_dir_name, dfs_rootdir);
+ 
+-	return 0;
++	d->dfs_chk_gen = debugfs_create_file("chk_gen", S_IWUSR, d->dfs_dir,
++					     (void *)ubi_num, &dfs_fops);
+ 
+-out_remove:
+-	debugfs_remove_recursive(d->dfs_dir);
+-out:
+-	err = dent ? PTR_ERR(dent) : -ENODEV;
+-	ubi_err(ubi, "cannot create \"%s\" debugfs file or directory, error %d\n",
+-		fname, err);
+-	return err;
++	d->dfs_chk_io = debugfs_create_file("chk_io", S_IWUSR, d->dfs_dir,
++					    (void *)ubi_num, &dfs_fops);
 +
- SIFIVE DRIVERS
- M:	Palmer Dabbelt <palmer@dabbelt.com>
- M:	Paul Walmsley <paul.walmsley@sifive.com>
++	d->dfs_chk_fastmap = debugfs_create_file("chk_fastmap", S_IWUSR,
++						 d->dfs_dir, (void *)ubi_num,
++						 &dfs_fops);
++
++	d->dfs_disable_bgt = debugfs_create_file("tst_disable_bgt", S_IWUSR,
++						 d->dfs_dir, (void *)ubi_num,
++						 &dfs_fops);
++
++	d->dfs_emulate_bitflips = debugfs_create_file("tst_emulate_bitflips",
++						      S_IWUSR, d->dfs_dir,
++						      (void *)ubi_num,
++						      &dfs_fops);
++
++	d->dfs_emulate_io_failures = debugfs_create_file("tst_emulate_io_failures",
++							 S_IWUSR, d->dfs_dir,
++							 (void *)ubi_num,
++							 &dfs_fops);
++
++	d->dfs_emulate_power_cut = debugfs_create_file("tst_emulate_power_cut",
++						       S_IWUSR, d->dfs_dir,
++						       (void *)ubi_num,
++						       &dfs_fops);
++	d->dfs_power_cut_min = debugfs_create_file("tst_emulate_power_cut_min",
++						   S_IWUSR, d->dfs_dir,
++						   (void *)ubi_num, &dfs_fops);
++
++	d->dfs_power_cut_max = debugfs_create_file("tst_emulate_power_cut_max",
++						   S_IWUSR, d->dfs_dir,
++						   (void *)ubi_num, &dfs_fops);
++
++	debugfs_create_file("detailed_erase_block_info", S_IRUSR, d->dfs_dir,
++			    (void *)ubi_num, &eraseblk_count_fops);
++
++	return 0;
+ }
+ 
+ /**
 -- 
-2.17.1
+2.23.0
 
