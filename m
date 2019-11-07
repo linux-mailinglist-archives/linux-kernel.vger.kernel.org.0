@@ -2,102 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E42F25FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C1FF2603
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:33:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733112AbfKGDbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 22:31:07 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43802 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727751AbfKGDbG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 22:31:06 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a18so452547plm.10
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 19:31:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YVMKh2e8YQpMospkl4uly62/DXfMMR6TYHQbH303b5U=;
-        b=XFeWOMUhS7MWx/RPebBtmCTa3v9cTmuIqF0sIt4h/CPMv889KM470slck2VUqYY2lo
-         2UeLrke9Zr2PjxyNv0J0juZAmCq54wv+tpRIlsvEyYIDzX3vo0vDFy/K7IFPJpUMpKMo
-         JgZ+rFiOCS4jEjPjW1LKNcPMBrqVqnAqKYXow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YVMKh2e8YQpMospkl4uly62/DXfMMR6TYHQbH303b5U=;
-        b=htO9Z288xvFQ9UiuydX3qANlq50EpCQTqLCPQ4rbQwGmSlOQA92LlzPSf7OM30t4ls
-         fquQY582j2P06oIoR59PLVGBRoX+eMP2icpWzeF/G4XUFF+XNY/Ts+fyuigqg83KJp0q
-         cS5u0QzNqbNp6BuDxS/YK2fvSOPrDO/KIaplu80X6C/2y5G8gSmUmaxSPuR0S5w6gwGZ
-         67U5PVNB6+e7Th2QurbLwY8YHUFf4+U5M9xdwqTcath97WbOVd6JBw6U6mE9hlwoKPpf
-         aYR8q//ruswIc6somaBOxb7qbwafPWJB79egLB27pIODF7xvHaxHsyrkhZ2id3NgfVLZ
-         hJhg==
-X-Gm-Message-State: APjAAAXtwTUWy/WIqswTfNqwCRh6nZxR1ON9Lh9K5lpqiSKGLchhk9mF
-        vbiVlXszoiDu4l2/LlS8Fbl8ew==
-X-Google-Smtp-Source: APXvYqxn6IhqqTyBR6NWv+KCnyGaorjTU5whZhdLjWbHn9627vkK/4GPQH+t7Z4ro0MKx+0DNxFmpQ==
-X-Received: by 2002:a17:902:449:: with SMTP id 67mr1331873ple.20.1573097464392;
-        Wed, 06 Nov 2019 19:31:04 -0800 (PST)
-Received: from hiroh.tok.corp.google.com ([2401:fa00:8f:2:3bf4:6372:5b56:dd4c])
-        by smtp.gmail.com with ESMTPSA id s24sm464642pfm.144.2019.11.06.19.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 19:31:03 -0800 (PST)
-From:   Hirokazu Honda <hiroh@chromium.org>
-To:     linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc:     mchehab@kernel.org, tiffany.lin@mediatek.com, tfiga@chromium.org,
-        acourbot@chromium.org, hiroh@chromium.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: mtk-vcodec: Remove extra area allocation in an input buffer on encoding
-Date:   Thu,  7 Nov 2019 12:30:57 +0900
-Message-Id: <20191107033057.238603-1-hiroh@chromium.org>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+        id S1733136AbfKGDc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 22:32:58 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:40787 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733028AbfKGDc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 22:32:58 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 477pns2cxLzJb;
+        Thu,  7 Nov 2019 04:30:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1573097441; bh=vZsP+gC6xjkhdwkU8RmUdpu99NTy+OKDeJJ+3qq5kYI=;
+        h=Date:From:Subject:To:Cc:From;
+        b=Vp+bEi+GUhpQ5WfPDWNZMnazNS1UYkrwJF8PI1MnS9Xx+cYCK1n7+HhCneO2qFKxH
+         ZIwc+TA5Yr/9I+0ORz59LVWSibS/faCpvKg61RK3aQYU1duQVIst7+lV9babK6QI4G
+         pIQakIJjInH2J5yFhngG4ucKz3nq5HyYI0HqTuykeDPXLjCpmQ8MXBMst6eFquJr7m
+         LPOjCI2/dTx/LVW1AowrEliT4dS/VI8g0lqbeEFvYO/zjIO4NhjulLY8QySAm9ObNO
+         QQzg2QVVy/cQMrNYKmgStqkkx8Qn3wb9F7JCAVrshzi7pjyKUy8i9KUR2zQgibWGqW
+         eGMz8tAmwRYKw==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+Date:   Thu, 07 Nov 2019 04:32:53 +0100
+Message-Id: <a47522045d251146c8f7daaeb18a32716bfc3397.1573097536.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH RESEND] ata_piix: remove open-coded dmi_match(DMI_OEM_STRING)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+To:     linux-ide@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MediaTek encoder allocates non pixel data area for an input buffer every
-plane. As the input buffer should be read-only, the driver should not write
-anything in the buffer. Therefore, the extra data should be unnecessary.
+Since de40614de99 ("firmware: dmi_scan: Add DMI_OEM_STRING support to
+dmi_matches") dmi_check_system() can match OEM_STRINGs itself.
+Use the feature.
 
-Signed-off-by: Hirokazu Honda <hiroh@chromium.org>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/ata/ata_piix.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-index fd8de027e83e..6aad53d97d74 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-@@ -332,14 +332,12 @@ static int vidioc_try_fmt(struct v4l2_format *f,
+diff --git a/drivers/ata/ata_piix.c b/drivers/ata/ata_piix.c
+index e4da725381d3..3ca7720e7d8f 100644
+--- a/drivers/ata/ata_piix.c
++++ b/drivers/ata/ata_piix.c
+@@ -840,6 +840,12 @@ static int piix_broken_suspend(void)
+ 				DMI_MATCH(DMI_PRODUCT_NAME, "Tecra M3"),
+ 			},
+ 		},
++		{
++			.ident = "TECRA M3",
++			.matches = {
++				DMI_MATCH(DMI_OEM_STRING, "Tecra M3,"),
++			},
++		},
+ 		{
+ 			.ident = "TECRA M4",
+ 			.matches = {
+@@ -955,18 +961,10 @@ static int piix_broken_suspend(void)
  
- 		pix_fmt_mp->num_planes = fmt->num_planes;
- 		pix_fmt_mp->plane_fmt[0].sizeimage =
--				pix_fmt_mp->width * pix_fmt_mp->height +
--				((ALIGN(pix_fmt_mp->width, 16) * 2) * 16);
-+			pix_fmt_mp->width * pix_fmt_mp->height;
- 		pix_fmt_mp->plane_fmt[0].bytesperline = pix_fmt_mp->width;
+ 		{ }	/* terminate list */
+ 	};
+-	static const char *oemstrs[] = {
+-		"Tecra M3,",
+-	};
+-	int i;
  
- 		if (pix_fmt_mp->num_planes == 2) {
- 			pix_fmt_mp->plane_fmt[1].sizeimage =
--				(pix_fmt_mp->width * pix_fmt_mp->height) / 2 +
--				(ALIGN(pix_fmt_mp->width, 16) * 16);
-+				(pix_fmt_mp->width * pix_fmt_mp->height) / 2;
- 			pix_fmt_mp->plane_fmt[2].sizeimage = 0;
- 			pix_fmt_mp->plane_fmt[1].bytesperline =
- 							pix_fmt_mp->width;
-@@ -347,8 +345,7 @@ static int vidioc_try_fmt(struct v4l2_format *f,
- 		} else if (pix_fmt_mp->num_planes == 3) {
- 			pix_fmt_mp->plane_fmt[1].sizeimage =
- 			pix_fmt_mp->plane_fmt[2].sizeimage =
--				(pix_fmt_mp->width * pix_fmt_mp->height) / 4 +
--				((ALIGN(pix_fmt_mp->width, 16) / 2) * 16);
-+				(pix_fmt_mp->width * pix_fmt_mp->height) / 4;
- 			pix_fmt_mp->plane_fmt[1].bytesperline =
- 				pix_fmt_mp->plane_fmt[2].bytesperline =
- 				pix_fmt_mp->width / 2;
+ 	if (dmi_check_system(sysids))
+ 		return 1;
+ 
+-	for (i = 0; i < ARRAY_SIZE(oemstrs); i++)
+-		if (dmi_find_device(DMI_DEV_TYPE_OEM_STRING, oemstrs[i], NULL))
+-			return 1;
+-
+ 	/* TECRA M4 sometimes forgets its identify and reports bogus
+ 	 * DMI information.  As the bogus information is a bit
+ 	 * generic, match as many entries as possible.  This manual
 -- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
+2.20.1
 
