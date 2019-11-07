@@ -2,71 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B077DF2851
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 08:47:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1DCAF2863
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 08:49:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfKGHrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 02:47:31 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:45033 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbfKGHra (ORCPT
+        id S1733185AbfKGHtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 02:49:06 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:41640 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfKGHtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 02:47:30 -0500
-Received: from [IPv6:2a02:810c:c200:2e91:9c11:3c5b:d198:83e8] (unknown [IPv6:2a02:810c:c200:2e91:9c11:3c5b:d198:83e8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id AB67A23E40;
-        Thu,  7 Nov 2019 08:47:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
-        s=mail2016061301; t=1573112848;
-        bh=1TyjvgjvYw4OB/HtJtOb05TZVEDh4q+2iHLZKIbZDc0=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=potpmc5fxQnZukSsGdAANNlyqe0Lv8oKGk+HN46dPJvbbW/FKgVi4fvRlZ3WxMNdS
-         AGxdCHOItnVXNmDaTgyuNdoMBHRrV53SOVABKW+VXccW57BZrZhpBJZHp9sU9dDnQP
-         sGHiEeDpqKjqMWoqa6BWHyYcujfyb+fpLLP9Eylk=
-Date:   Thu, 07 Nov 2019 08:47:25 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20191107020436.GD8978@lunn.ch>
-References: <20191106223617.1655-1-michael@walle.cc> <20191106223617.1655-5-michael@walle.cc> <20191107020436.GD8978@lunn.ch>
+        Thu, 7 Nov 2019 02:49:05 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA77mfvP072483;
+        Thu, 7 Nov 2019 07:49:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=jWR+TnPhSA14NeH1OOvS+/rjTxIzSqL1OgNwBLErpNw=;
+ b=OpLiqukL6/T+yKTuQ2BDkARL+NLCwAQ005TcrCbsaeEimafivol+/8UPC7zPUuu1nv54
+ epaUzQ/riizqshB2w1fLfOpyEPJ1Lv/lV9lsDZOnsHltol3tUKdLXpLhFiUY1xpo6u6y
+ KMFG/268J0JS5hXTzOLsrzxAioakoHt4BTX0FDEOWDoNAlziOll2fk/hkZjIu56YCp2A
+ d58tqd3Pwuj7gKxFo0c5DtHdu97WLfzPw9MgcZhPa3PtNuFypeztKLXBIB/NckOsXv1o
+ 8iiWleLFY4oRDMEkvw+GZrAcoPLou5hIpM8z3p+hztdaG8Jp5LyO7liAsO5959Kt525g /w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2w41w145fy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 07:49:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA77mqQA008876;
+        Thu, 7 Nov 2019 07:49:00 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2w41w93xu2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 07:48:59 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA77mt2T019768;
+        Thu, 7 Nov 2019 07:48:56 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Nov 2019 23:48:55 -0800
+Date:   Thu, 7 Nov 2019 10:48:47 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Philipp Reisner <philipp.reisner@linbit.com>
+Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, drbd-dev@tron.linbit.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] block: drbd: remove a stay unlock in __drbd_send_protocol()
+Message-ID: <20191107074847.GA11695@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 4/6] net: phy: at803x: mention AR8033 as same as AR8031
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>
-From:   Michael Walle <michael@walle.cc>
-Message-ID: <1DE4295A-1D25-4FAD-8DAB-45BD97E511C9@walle.cc>
-X-Virus-Scanned: clamav-milter 0.101.4 at web
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911070078
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911070078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 7=2E November 2019 03:04:36 MEZ schrieb Andrew Lunn <andrew@lunn=2Ech>:
->On Wed, Nov 06, 2019 at 11:36:15PM +0100, Michael Walle wrote:
->> The AR8033 is the AR8031 without PTP support=2E All other registers are
->> the same=2E Unfortunately, they share the same PHY ID=2E Therefore, we
->> cannot distinguish between the one with PTP support and the one
->without=2E
->
->Not nice=2E I suppose there might be a PTP register you can read to
->determine this, but that is not very helpful=2E
+There are two callers of this function and they both unlock the mutex so
+this ends up being a double unlock.
 
-I tried that actually=2E=2E There is a PTP enable bit=2E It's default is 1=
- (according to the AR8031 datasheet)=2E Now guess what it's value is on the=
- AR8033=2E=2E its also 1=2E Not enough=2E=2E I also tried to enable the rea=
-ltime counter=2E well that worked too=2E
+Fixes: 44ed167da748 ("drbd: rcu_read_lock() and rcu_dereference() for tconn->net_conf")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analisys.  Not tested.  There is a comment about the lock next to
+the caller in drbd_nl.c that I didn't understand:
 
-And yes=2E I've double checked the package marking=2E It definitely was an=
- AR8033=2E So either I was just lucky, or maybe=2E=2E the AR8033 is just a =
-relabled AR8031 ;)=20
+drivers/block/drbd/drbd_nl.c
+  2509          crypto_free_shash(connection->integrity_tfm);
+  2510          connection->integrity_tfm = crypto.integrity_tfm;
+  2511          if (connection->cstate >= C_WF_REPORT_PARAMS && connection->agreed_pro_version >= 100)
+  2512                  /* Do this without trying to take connection->data.mutex again.  */
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+What does this mean?  We're already holding that lock.  We took it near
+the start of the function.
 
--michael
+  2513                  __drbd_send_protocol(connection, P_PROTOCOL_UPDATE);
+  2514  
+  2515          crypto_free_shash(connection->cram_hmac_tfm);
+  2516          connection->cram_hmac_tfm = crypto.cram_hmac_tfm;
+  2517  
+  2518          mutex_unlock(&connection->resource->conf_update);
+  2519          mutex_unlock(&connection->data.mutex);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Unlocked here.
+
+ drivers/block/drbd/drbd_main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index 5b248763a672..a18155cdce41 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -786,7 +786,6 @@ int __drbd_send_protocol(struct drbd_connection *connection, enum drbd_packet cm
+ 
+ 	if (nc->tentative && connection->agreed_pro_version < 92) {
+ 		rcu_read_unlock();
+-		mutex_unlock(&sock->mutex);
+ 		drbd_err(connection, "--dry-run is not supported by peer");
+ 		return -EOPNOTSUPP;
+ 	}
+-- 
+2.20.1
 
