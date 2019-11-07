@@ -2,47 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DDAFF3005
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D66F2F304C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389023AbfKGNmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:42:07 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:44309 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728568AbfKGNmF (ORCPT
+        id S1731032AbfKGNoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:44:17 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:42447 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728756AbfKGNmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:05 -0500
-Received: by mail-il1-f199.google.com with SMTP id 13so2642709iln.11
+        Thu, 7 Nov 2019 08:42:06 -0500
+Received: by mail-io1-f71.google.com with SMTP id w1so1863664ioj.9
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=rGCeFvT/AQARxs+6mGwlebmAqlHglnh6rUP8Pgma5SE=;
-        b=EeSiBB4zcdokOv2ZUZNwcNvZ6M317dnsJnc637lMbgyMIc0G2MR1+ohAKdXXtpSnQU
-         519BnzC4cIrsm0NoZe9kaakN4KJtcoMpUHdt1GLow1XNa1Wg9W6wSY0FJ46Zl+WcFTL4
-         kj01mpW/i9mVmR7kSSAZRcYyjiSnlA8EeM9+t/LI4BONo2u+GIU1irfrHGt7vq+5LFIp
-         +KCy+XL+LPudYTCkofstrcZo5cx2EdeH5B5mNXFTXR/s8yiKa6ufGdZmHfkmlAi5Ie+T
-         FnnC0MnO+P8ncnLD+y9Ms0T/XiBp4lddHMgujSGw1o1K7IEx1dgvqIm7TizUDljS6ga0
-         4Brw==
-X-Gm-Message-State: APjAAAU3ObJnp75RX/HMIhHcbqY4rDrBgTV+uPBlffYkxnL+nvhu2Owv
-        fhtVqfKOkReqNUU4NKlMlOTNDOYesgOE5DVKYF4lx3Mk0Q50
-X-Google-Smtp-Source: APXvYqxHTBWUBJD+8E1NyDqdkz7hV5BSqgFdxPIDCKCY0BxMuoog4ra33v5nSn+Kxh1U5HB1IkGWjlzMWRyONaT5JSDK+u98616Z
+        bh=Ri77hDWlxGadNlCgJxRYuckJ2NfPljUNUsSx9eNtzWk=;
+        b=OqrigH+FnddswXKOD7l/XrvHO/T4/Y8x1AP02dIYXMOirbf7mibwaRU2CqPAjco/pf
+         Sai6I1d7XlefZbLdJvpHy37Gs1iqnP6+2ThW+FO+qvolUVpKBz/t+aERxkraRzNYU2Ev
+         ml5PJ3ZdE2wIxed5Y/8iNVcRy220z/S6Ki+PSKTbz9U2YHKHbnDhGEuI9AP3rqk5Z8V2
+         rn8D0nPk59CgzdoiFfZ7TlMfNAj7RCm9Dirm/5+LoZ8614m5S7yH9Kinb87CicBqWjnK
+         PBRJxzVUHOQETACZ7dDYyJZ4jUgB7x+NabAUdOPTX78WHJNXSy4uRM6zzeRkk9b2LlRH
+         HuQw==
+X-Gm-Message-State: APjAAAVZ7SqHtsxL1ni3PyA5PSip9HDK5yW3QnYfJWobi2JC9NdsMj29
+        iwqG5OOnki7vco6xHbkHwH3bci/m8OEy6C9RD1L9LKfuMDQZ
+X-Google-Smtp-Source: APXvYqyiaX/HBm4ThpNYBtRUCy00rdSftcGU05xFPcVkDJFu3QBgix3u6xPkEYXW5FgMlBBunB3dqautQmieoQX2FODxU5sVo2Dy
 MIME-Version: 1.0
-X-Received: by 2002:a5e:d917:: with SMTP id n23mr3702806iop.28.1573134124661;
+X-Received: by 2002:a5d:87c4:: with SMTP id q4mr3589286ios.136.1573134124843;
  Thu, 07 Nov 2019 05:42:04 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:04 -0800
-In-Reply-To: <001a113fe6d081698f0568a5dcac@google.com>
+In-Reply-To: <001a113ed49eb535d20568bb75ba@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000af44bb0596c1d4e8@google.com>
-Subject: Re: KASAN: use-after-free Read in _decode_session4
-From:   syzbot <syzbot+a7db9083ed4017ba4423@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, sbrivio@redhat.com, sd@queasysnail.net,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
+Message-ID: <000000000000b207e60596c1d413@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in find_first_zero_bit
+From:   syzbot <syzbot+a88c8270030dc5d71e4f@syzkaller.appspotmail.com>
+To:     aivazian.tigran@gmail.com, akpm@linux-foundation.org,
+        dmitri.vorobiev@gmail.com, gregkh@linuxfoundation.org,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        pombredanne@nexb.com, snakebyte@gmx.de,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        tigran@aivazian.fsnet.co.uk, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,22 +53,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit c6741fbed6dc0f183d26c4b6bca4517672f92e6c
-Author: Stefano Brivio <sbrivio@redhat.com>
-Date:   Thu Mar 15 16:17:11 2018 +0000
+commit d1877155891020cb26ad4fba45bfee52d8da9951
+Author: Tigran Aivazian <aivazian.tigran@gmail.com>
+Date:   Thu Jan 3 23:28:14 2019 +0000
 
-     vti6: Properly adjust vti6 MTU from MTU of lower device
+     bfs: extra sanity checking and static inode bitmap
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1710f0dc600000
-start commit:   0b412605 Merge tag 'drm-fixes-for-v4.16-rc8' of git://peop..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16634ee8600000
+start commit:   b5dbc287 Merge tag 'kbuild-fixes-v4.16-3' of git://git.ker..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8addcf4530d93e53
-dashboard link: https://syzkaller.appspot.com/bug?extid=a7db9083ed4017ba4423
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bf273b800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117045d3800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9b0d91297e224bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=a88c8270030dc5d71e4f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cf65d3800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d99ab3800000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: vti6: Properly adjust vti6 MTU from MTU of lower device
+#syz fix: bfs: extra sanity checking and static inode bitmap
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
