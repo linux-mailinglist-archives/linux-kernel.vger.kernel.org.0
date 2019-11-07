@@ -2,83 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C83F237C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:46:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B45F237F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:47:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732817AbfKGAqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 19:46:13 -0500
-Received: from ozlabs.org ([203.11.71.1]:53073 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732064AbfKGAqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 19:46:12 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 477l826FKPz9sP7;
-        Thu,  7 Nov 2019 11:46:10 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1573087570;
-        bh=nkq5hFWwX1Aoq4w6IgOgECJ2w29yHF3XV8iPziMY2zM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FfgAeGQzeTqx8PGY+C0YnSce/jYm5sBC95kAs7JPFGRg7sZidQxdq91+FWQ9brtzZ
-         Be5ZlPGtZfY8/6wW0fhul2JqbbPhgvMMfUwHOd8LVnCDCrIscakIClbiioYMPF3C/t
-         4Rlyws60j8qpXGu3iXmamS0ORrd+xFtGBJIILHzkbHkybzERlVU4uUxHJPtcptXBwI
-         OoT3giQyul0+UgkKKH5mSJU0+wDtTAL+FWm9R1nb/sCAAE6+LUdekRNcCOGJrEhoyL
-         oABC3N+fHOJRruyV80r6kDPPEhc9lvOtiLDyPvTzsK/008TNejEr2jMqcENii9oeS9
-         ewyc5ZUm14T0Q==
-Date:   Thu, 7 Nov 2019 11:46:08 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the amdgpu tree
-Message-ID: <20191107114608.43ed5708@canb.auug.org.au>
+        id S1732837AbfKGAr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 19:47:29 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34091 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728369AbfKGAr3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 19:47:29 -0500
+Received: by mail-ot1-f65.google.com with SMTP id t4so519661otr.1;
+        Wed, 06 Nov 2019 16:47:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WcWv7dAa4gDC9Dj8dsxQt4ikuyFHBF7nAdUcoszfsjg=;
+        b=uizpXGayOy7FXZYW65hEUmKfzsIJfAZTPxolJZGUCDOGTIZy7Mx7+V86I80jHd64G+
+         J8PZiJ313c91/S9KQwV/pz9cX8DEfC2Kppbp2DztHJ+IKHJUDYySFyP5bpTqpMZ3lYK5
+         IZZSs6qSywzbdKkvpwOcpnQdqSGmGmuawkRpIsc1rrZEJWxDirMpaXKhKkuMb9z03CHw
+         wacoLTZiph/cxlvtSSnay+c2GhWy9UDWWfcZ73Vq1wslVnRq58HP7W2SFz5QvQcFzuA4
+         vhBOv2lo0Hmz3n90kPjtG2zT2xHBQ2B8EMuYDDooWbzzQMFvRJR+VYvEJFFK5zZ3bQ80
+         qsGA==
+X-Gm-Message-State: APjAAAVmWmbKtFbHBLMFQg/gzvr9fVLdj3mBnS9J4Q3xi+gErrW9u5rc
+        pHrsZFS0D2Hv5TbGrXUaBg==
+X-Google-Smtp-Source: APXvYqx/PPUxyzMJ2UiB0lM6YzOXjzkStNCIKXOPQAPgny5GbITC1e39/CkGcee8FOwtWVmeH0EOgQ==
+X-Received: by 2002:a05:6830:22ef:: with SMTP id t15mr508005otc.256.1573087648454;
+        Wed, 06 Nov 2019 16:47:28 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o2sm144650oih.19.2019.11.06.16.47.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 16:47:27 -0800 (PST)
+Date:   Wed, 6 Nov 2019 18:47:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH 4/4] dt-bindings: fttmr010: Add ast2600 compatible
+Message-ID: <20191107004727.GA18425@bogus>
+References: <20191106060301.17408-1-joel@jms.id.au>
+ <20191106060301.17408-5-joel@jms.id.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ig=bSjCG9CkA2qjYOV.YwOS";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106060301.17408-5-joel@jms.id.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ig=bSjCG9CkA2qjYOV.YwOS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed,  6 Nov 2019 16:33:01 +1030, Joel Stanley wrote:
+> The ast2600 contains a fttmr010 derivative.
+> 
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  Documentation/devicetree/bindings/timer/faraday,fttmr010.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Hi all,
-
-After merging the amdgpu tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-ERROR: "dc_dsc_parse_dsc_dpcd" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undef=
-ined!
-ERROR: "dc_dsc_compute_config" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undef=
-ined!
-
-I am not sure what caused this, but CONFIG_DRM_AMD_DC_DCN is not set
-for this build.
-
-I have used the amdgpu tree from next-20191106 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ig=bSjCG9CkA2qjYOV.YwOS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3DaVAACgkQAVBC80lX
-0GwREAgAisQ16G8CKcIge0FsaDkQSN8pL8i0AZ/LIt9kXstMhxfFMRqjr2Uc+wV0
-q/ThBcvRe2JDDALoguSXPHsyiIxo2c0KDRR9dyyv/qMeJcjf8RgUS/SoJrrOHmH7
-Cdv3Chbyo0tjEuUXZkbXrJi8fclzM2ehDOTpjnia/8j/e8erxOXfHy4Tdod8nNBu
-M97T+bKzw6d7RvH9qkeKTWqrgP2kT95Ic9LDIdcalaSFCHz3+MP0tIDmh2KkH62x
-6PIYr7IniwCmfGVNwcWleoehweYUGJNtDMYoxkrUyeaip2aG6RbMDb+ArdCHURnl
-B6IazqwdQ4j0BBkHe3ol8Ib5WFkJvw==
-=K6cQ
------END PGP SIGNATURE-----
-
---Sig_/ig=bSjCG9CkA2qjYOV.YwOS--
+Acked-by: Rob Herring <robh@kernel.org>
