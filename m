@@ -2,262 +2,446 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C04DEF3847
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F5B0F384E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbfKGTO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:14:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727296AbfKGTO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:14:27 -0500
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1864521882;
-        Thu,  7 Nov 2019 19:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573154066;
-        bh=PBhjHpiHePnx25/oiu/RFRiHoTI/vsJnixuQBq2ayKs=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=NA/+2iwH76buFPFddJDOLteOPDxueMx0ZqUkz4q4sgatD7WE0HwiekBN1DZf2HS6X
-         pSVpgG9XF56kj24epcDNdyWLx5xLXJ1f4pmFRoxdOk14loUZapQd6kB5z9I9azLy5G
-         0igDseg4Etza1atj9U48yc2+2xOveYm4kujqEsTg=
-Date:   Thu, 7 Nov 2019 11:14:25 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 1/2 v2] f2fs: support aligned pinned file
-Message-ID: <20191107191425.GA46490@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20191022171602.93637-1-jaegeuk@kernel.org>
+        id S1727957AbfKGTPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:15:07 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:11972 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725871AbfKGTPH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 14:15:07 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA7JCB0Y028444;
+        Thu, 7 Nov 2019 20:14:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=BXNhl4d/3xFleZS5uFtYUWRtk9Cxxb8LfL1afLU96e8=;
+ b=qeZq0KnUS+9t9T6B8unBZ/JHt/PQOyw5cwhFS+RGavrDoa5gISrgSjHfTZaL5PHO5vH7
+ gvBhAz+etc+ziLvkNF/zChF6pVN1eGgKU3YFMS8qKyF49AqGr0gzHcydwqN4D3gA5vFf
+ HkoPcSDGjMhoqTIYy1m+cLLwhNnoDxWBkd8mIO6Rf4sLCfquteYH1IMlJpYgIJzdgB4o
+ nWv7vuDhOytVPKAT0vitDeb4ETfOpRIlMp+RuapnvyTK6YGonHzjLRI9u7YQgFJsu2cv
+ gvmGOg1fW86X1hlWnoqK87+MC+ajd50OeHVRU1HunuhHPBNwb0jtpPSnequPvfLp4JPI KA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2w41vmqa18-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Nov 2019 20:14:36 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9EECD10002A;
+        Thu,  7 Nov 2019 20:14:32 +0100 (CET)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 678B72B188E;
+        Thu,  7 Nov 2019 20:14:32 +0100 (CET)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 7 Nov 2019
+ 20:14:32 +0100
+Received: from localhost (10.129.6.249) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 7 Nov 2019 20:14:31
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
+        <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <lee.jones@linaro.org>,
+        <thierry.reding@gmail.com>, <u.kleine-koenig@pengutronix.de>,
+        <benjamin.gaignard@st.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>
+Subject: [PATCH v2] dt-bindings: mfd: Convert stm32 timers bindings to json-schema
+Date:   Thu, 7 Nov 2019 20:14:25 +0100
+Message-ID: <20191107191425.22273-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022171602.93637-1-jaegeuk@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain
+X-Originating-IP: [10.129.6.249]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-07_05:2019-11-07,2019-11-07 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch supports 2MB-aligned pinned file, which can guarantee no GC at all
-by allocating fully valid 2MB segment.
+Convert the STM32 timers binding to DT schema format using json-schema
 
-Check free segments by has_not_enough_free_secs() with large budget.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
-v2 from v1:
- - avoid to allocate gc'ed segment and pinned segment consecutively
- - avoid to allocate SSR segment
+version 2:
+- merge all (mfd, iio, pwm, counter) bindings in one file
+- fix typo and trailing spaces
+- rework dmas and dma-names properties to allow schemas like:
+  ch1 , ch2, ch4
+  ch2, up, com
+- use patternProperties to describe timer subnode
+- improve st,breakinput property definition to be able to check the values
+  inside de tuple
+ .../bindings/counter/stm32-timer-cnt.txt           |  31 -----
+ .../bindings/iio/timer/stm32-timer-trigger.txt     |  25 ----
+ .../devicetree/bindings/mfd/st,stm32-timers.yaml   | 155 +++++++++++++++++++++
+ .../devicetree/bindings/mfd/stm32-timers.txt       |  73 ----------
+ .../devicetree/bindings/pwm/pwm-stm32.txt          |  38 -----
+ 5 files changed, 155 insertions(+), 167 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+ delete mode 100644 Documentation/devicetree/bindings/iio/timer/stm32-timer-trigger.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/stm32-timers.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-stm32.txt
 
- fs/f2fs/f2fs.h     |  4 +++-
- fs/f2fs/file.c     | 42 +++++++++++++++++++++++++++++++++++++-----
- fs/f2fs/recovery.c |  2 +-
- fs/f2fs/segment.c  | 31 +++++++++++++++++++++++++++----
- fs/f2fs/segment.h  |  2 ++
- fs/f2fs/super.c    |  1 +
- fs/f2fs/sysfs.c    |  2 ++
- 7 files changed, 73 insertions(+), 11 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ca342f4c7db1..c681f51e351b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -890,6 +890,7 @@ enum {
- 	CURSEG_WARM_NODE,	/* direct node blocks of normal files */
- 	CURSEG_COLD_NODE,	/* indirect node blocks */
- 	NO_CHECK_TYPE,
-+	CURSEG_COLD_DATA_PINNED,/* cold data for pinned file */
- };
- 
- struct flush_cmd {
-@@ -1301,6 +1302,7 @@ struct f2fs_sb_info {
- 
- 	/* threshold for gc trials on pinned files */
- 	u64 gc_pin_file_threshold;
-+	struct rw_semaphore pin_sem;
- 
- 	/* maximum # of trials to find a victim segment for SSR and GC */
- 	unsigned int max_victim_search;
-@@ -3116,7 +3118,7 @@ void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
- int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
- void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
- 					unsigned int start, unsigned int end);
--void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
-+void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi, int type);
- int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
- bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
- 					struct cp_control *cpc);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 29bc0a542759..c31a5bbc8090 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1545,12 +1545,44 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 	if (off_end)
- 		map.m_len++;
- 
--	if (f2fs_is_pinned_file(inode))
--		map.m_seg_type = CURSEG_COLD_DATA;
-+	if (!map.m_len)
-+		return 0;
+diff --git a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+deleted file mode 100644
+index c52fcdd4bf6c..000000000000
+--- a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
++++ /dev/null
+@@ -1,31 +0,0 @@
+-STMicroelectronics STM32 Timer quadrature encoder
+-
+-STM32 Timer provides quadrature encoder to detect
+-angular position and direction of rotary elements,
+-from IN1 and IN2 input signals.
+-
+-Must be a sub-node of an STM32 Timer device tree node.
+-See ../mfd/stm32-timers.txt for details about the parent node.
+-
+-Required properties:
+-- compatible:		Must be "st,stm32-timer-counter".
+-- pinctrl-names: 	Set to "default".
+-- pinctrl-0: 		List of phandles pointing to pin configuration nodes,
+-			to set CH1/CH2 pins in mode of operation for STM32
+-			Timer input on external pin.
+-
+-Example:
+-	timers@40010000 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		compatible = "st,stm32-timers";
+-		reg = <0x40010000 0x400>;
+-		clocks = <&rcc 0 160>;
+-		clock-names = "int";
+-
+-		counter {
+-			compatible = "st,stm32-timer-counter";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&tim1_in_pins>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/iio/timer/stm32-timer-trigger.txt b/Documentation/devicetree/bindings/iio/timer/stm32-timer-trigger.txt
+deleted file mode 100644
+index b8e8c769d434..000000000000
+--- a/Documentation/devicetree/bindings/iio/timer/stm32-timer-trigger.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-STMicroelectronics STM32 Timers IIO timer bindings
+-
+-Must be a sub-node of an STM32 Timers device tree node.
+-See ../mfd/stm32-timers.txt for details about the parent node.
+-
+-Required parameters:
+-- compatible:	Must be one of:
+-		"st,stm32-timer-trigger"
+-		"st,stm32h7-timer-trigger"
+-- reg:		Identify trigger hardware block.
+-
+-Example:
+-	timers@40010000 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		compatible = "st,stm32-timers";
+-		reg = <0x40010000 0x400>;
+-		clocks = <&rcc 0 160>;
+-		clock-names = "int";
+-
+-		timer@0 {
+-			compatible = "st,stm32-timer-trigger";
+-			reg = <0>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml b/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
+new file mode 100644
+index 000000000000..e8bd80038fa9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
+@@ -0,0 +1,155 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/st,stm32-timers.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (f2fs_is_pinned_file(inode)) {
-+		block_t len = (map.m_len >> sbi->log_blocks_per_seg) <<
-+					sbi->log_blocks_per_seg;
-+		block_t done = 0;
++title: STMicroelectronics STM32 Timers bindings
 +
-+		if (map.m_len % sbi->blocks_per_seg)
-+			len += sbi->blocks_per_seg;
++description: |
++  This hardware block provides 3 types of timer along with PWM functionality:
++    - advanced-control timers consist of a 16-bit auto-reload counter driven by a programmable
++      prescaler, break input feature, PWM outputs and complementary PWM ouputs channels.
++    - general-purpose timers consist of a 16-bit or 32-bit auto-reload counter driven by a
++      programmable prescaler and PWM outputs.
++    - basic timers consist of a 16-bit auto-reload counter driven by a programmable prescaler.
 +
-+		map.m_len = sbi->blocks_per_seg;
-+next_alloc:
-+		if (has_not_enough_free_secs(sbi, 0,
-+			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
-+			mutex_lock(&sbi->gc_mutex);
-+			err = f2fs_gc(sbi, true, false, NULL_SEGNO);
-+			if (err && err != -ENODATA && err != -EAGAIN)
-+				goto out_err;
-+		}
- 
--	err = f2fs_map_blocks(inode, &map, 1, (f2fs_is_pinned_file(inode) ?
--						F2FS_GET_BLOCK_PRE_DIO :
--						F2FS_GET_BLOCK_PRE_AIO));
-+		down_write(&sbi->pin_sem);
-+		map.m_seg_type = CURSEG_COLD_DATA_PINNED;
-+		f2fs_allocate_new_segments(sbi, CURSEG_COLD_DATA);
-+		err = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_DIO);
-+		up_write(&sbi->pin_sem);
++maintainers:
++  - Benjamin Gaignard <benjamin.gaignard@st.com>
++  - Fabrice Gasnier <fabrice.gasnier@st.com>
 +
-+		done += map.m_len;
-+		len -= map.m_len;
-+		map.m_lblk += map.m_len;
-+		if (!err && len)
-+			goto next_alloc;
++properties:
++  compatible:
++    const: st,stm32-timers
 +
-+		map.m_len = done;
-+	} else {
-+		err = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
-+	}
-+out_err:
- 	if (err) {
- 		pgoff_t last_off;
- 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 783773e4560d..76477f71d4ee 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -711,7 +711,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		f2fs_put_page(page, 1);
- 	}
- 	if (!err)
--		f2fs_allocate_new_segments(sbi);
-+		f2fs_allocate_new_segments(sbi, NO_CHECK_TYPE);
- 	return err;
- }
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 25c750cd0272..8bb37f8a1845 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2690,7 +2690,7 @@ void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
- 	up_read(&SM_I(sbi)->curseg_lock);
- }
- 
--void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
-+void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi, int type)
- {
- 	struct curseg_info *curseg;
- 	unsigned int old_segno;
-@@ -2699,10 +2699,17 @@ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
- 	down_write(&SIT_I(sbi)->sentry_lock);
- 
- 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
-+		if (type != NO_CHECK_TYPE && i != type)
-+			continue;
++  reg:
++    maxItems: 1
 +
- 		curseg = CURSEG_I(sbi, i);
--		old_segno = curseg->segno;
--		SIT_I(sbi)->s_ops->allocate_segment(sbi, i, true);
--		locate_dirty_segment(sbi, old_segno);
-+		if (type == NO_CHECK_TYPE || curseg->next_blkoff ||
-+				get_valid_blocks(sbi, curseg->segno, false) ||
-+				get_ckpt_valid_blocks(sbi, curseg->segno)) {
-+			old_segno = curseg->segno;
-+			SIT_I(sbi)->s_ops->allocate_segment(sbi, i, true);
-+			locate_dirty_segment(sbi, old_segno);
-+		}
- 	}
- 
- 	up_write(&SIT_I(sbi)->sentry_lock);
-@@ -3068,6 +3075,19 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, type);
-+	bool put_pin_sem = false;
++  clocks:
++    maxItems: 1
 +
-+	if (type == CURSEG_COLD_DATA) {
-+		/* GC during CURSEG_COLD_DATA_PINNED allocation */
-+		if (down_read_trylock(&sbi->pin_sem)) {
-+			put_pin_sem = true;
-+		} else {
-+			type = CURSEG_WARM_DATA;
-+			curseg = CURSEG_I(sbi, type);
-+		}
-+	} else if (type == CURSEG_COLD_DATA_PINNED) {
-+		type = CURSEG_COLD_DATA;
-+	}
- 
- 	down_read(&SM_I(sbi)->curseg_lock);
- 
-@@ -3133,6 +3153,9 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 	mutex_unlock(&curseg->curseg_mutex);
- 
- 	up_read(&SM_I(sbi)->curseg_lock);
++  clock-names:
++    items:
++      - const: int
 +
-+	if (put_pin_sem)
-+		up_read(&sbi->pin_sem);
- }
- 
- static void update_device_state(struct f2fs_io_info *fio)
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 325781a1ae4d..a95467b202ea 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -313,6 +313,8 @@ struct sit_entry_set {
-  */
- static inline struct curseg_info *CURSEG_I(struct f2fs_sb_info *sbi, int type)
- {
-+	if (type == CURSEG_COLD_DATA_PINNED)
-+		type = CURSEG_COLD_DATA;
- 	return (struct curseg_info *)(SM_I(sbi)->curseg_array + type);
- }
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f320fd11db48..c02a47ce551b 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2853,6 +2853,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	spin_lock_init(&sbi->dev_lock);
- 
- 	init_rwsem(&sbi->sb_lock);
-+	init_rwsem(&sbi->pin_sem);
- }
- 
- static int init_percpu_info(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index b558b64a4c9c..f164959e4224 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -154,6 +154,8 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	if (f2fs_sb_has_casefold(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "casefold");
-+	len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+				len ? ", " : "", "pin_file");
- 	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
- 	return len;
- }
++  reset:
++    maxItems: 1
++
++  dmas:
++    minItems: 1
++    maxItems: 7
++
++  dma-names:
++    items:
++      - enum: [ ch1, ch2, ch3, ch4, up, trig, com ]
++    minItems: 1
++    maxItems: 7
++    additionalItems: true
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  pwm:
++    type: object
++
++    properties:
++      compatible:
++        const: st,stm32-pwm
++
++      "#pwm-cells":
++        const: 3
++
++      st,breakinput:
++        description: |
++          One or two <index level filter> to describe break input configurations.
++
++        allOf:
++          - $ref: /schemas/types.yaml#/definitions/uint32-matrix
++          - items:
++              items:
++                - description: |
++                    "index" indicates on which break input (0 or 1) the configuration should be applied.
++                  enum: [ 0 , 1]
++                - description: |
++                    "level" gives the active level (0=low or 1=high) of the input signal for this configuration
++                  enum: [ 0, 1 ]
++                - description: |
++                    "filter" gives the filtering value (up to 15) to be applied.
++                  maximum: 15
++
++    required:
++      - "#pwm-cells"
++      - compatible
++
++patternProperties:
++  "^timer@[0-9]+$":
++    type: object
++
++    properties:
++      compatible:
++        enum:
++          - st,stm32-timer-trigger
++          - st,stm32h7-timer-trigger
++
++      reg:
++        maxItems: 1
++        description: identify trigger hardware block.
++
++    required:
++      - compatible
++      - reg
++
++  counter:
++    type: object
++
++    properties:
++      compatible:
++        const: st,stm32-timer-counter
++
++    required:
++      - compatible
++
++required:
++  - "#address-cells"
++  - "#size-cells"
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/stm32mp1-clks.h>
++    timers2: timers@40000000 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      compatible = "st,stm32-timers";
++      reg = <0x40000000 0x400>;
++      clocks = <&rcc TIM2_K>;
++      clock-names = "int";
++      dmas = <&dmamux1 18 0x400 0x1>,
++             <&dmamux1 19 0x400 0x1>,
++             <&dmamux1 20 0x400 0x1>,
++             <&dmamux1 21 0x400 0x1>,
++             <&dmamux1 22 0x400 0x1>;
++      dma-names = "ch1", "ch2", "ch3", "ch4", "up";
++      pwm {
++        compatible = "st,stm32-pwm";
++        #pwm-cells = <3>;
++        st,breakinput = <0 1 5>;
++      };
++      timer@0 {
++        compatible = "st,stm32-timer-trigger";
++        reg = <0>;
++      };
++      counter {
++        compatible = "st,stm32-timer-counter";
++      };
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/mfd/stm32-timers.txt b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
+deleted file mode 100644
+index 15c3b87f51d9..000000000000
+--- a/Documentation/devicetree/bindings/mfd/stm32-timers.txt
++++ /dev/null
+@@ -1,73 +0,0 @@
+-STM32 Timers driver bindings
+-
+-This IP provides 3 types of timer along with PWM functionality:
+-- advanced-control timers consist of a 16-bit auto-reload counter driven by a programmable
+-  prescaler, break input feature, PWM outputs and complementary PWM ouputs channels.
+-- general-purpose timers consist of a 16-bit or 32-bit auto-reload counter driven by a
+-  programmable prescaler and PWM outputs.
+-- basic timers consist of a 16-bit auto-reload counter driven by a programmable prescaler.
+-
+-Required parameters:
+-- compatible: must be "st,stm32-timers"
+-
+-- reg:			Physical base address and length of the controller's
+-			registers.
+-- clock-names:		Set to "int".
+-- clocks: 		Phandle to the clock used by the timer module.
+-			For Clk properties, please refer to ../clock/clock-bindings.txt
+-
+-Optional parameters:
+-- resets:		Phandle to the parent reset controller.
+-			See ../reset/st,stm32-rcc.txt
+-- dmas:			List of phandle to dma channels that can be used for
+-			this timer instance. There may be up to 7 dma channels.
+-- dma-names:		List of dma names. Must match 'dmas' property. Valid
+-			names are: "ch1", "ch2", "ch3", "ch4", "up", "trig",
+-			"com".
+-
+-Optional subnodes:
+-- pwm:			See ../pwm/pwm-stm32.txt
+-- timer:		See ../iio/timer/stm32-timer-trigger.txt
+-- counter:		See ../counter/stm32-timer-cnt.txt
+-
+-Example:
+-	timers@40010000 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		compatible = "st,stm32-timers";
+-		reg = <0x40010000 0x400>;
+-		clocks = <&rcc 0 160>;
+-		clock-names = "int";
+-
+-		pwm {
+-			compatible = "st,stm32-pwm";
+-			pinctrl-0	= <&pwm1_pins>;
+-			pinctrl-names	= "default";
+-		};
+-
+-		timer@0 {
+-			compatible = "st,stm32-timer-trigger";
+-			reg = <0>;
+-		};
+-
+-		counter {
+-			compatible = "st,stm32-timer-counter";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&tim1_in_pins>;
+-		};
+-	};
+-
+-Example with all dmas:
+-	timer@40010000 {
+-		...
+-		dmas = <&dmamux1 11 0x400 0x0>,
+-		       <&dmamux1 12 0x400 0x0>,
+-		       <&dmamux1 13 0x400 0x0>,
+-		       <&dmamux1 14 0x400 0x0>,
+-		       <&dmamux1 15 0x400 0x0>,
+-		       <&dmamux1 16 0x400 0x0>,
+-		       <&dmamux1 17 0x400 0x0>;
+-		dma-names = "ch1", "ch2", "ch3", "ch4", "up", "trig", "com";
+-		...
+-		child nodes...
+-	};
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-stm32.txt b/Documentation/devicetree/bindings/pwm/pwm-stm32.txt
+deleted file mode 100644
+index a8690bfa5e1f..000000000000
+--- a/Documentation/devicetree/bindings/pwm/pwm-stm32.txt
++++ /dev/null
+@@ -1,38 +0,0 @@
+-STMicroelectronics STM32 Timers PWM bindings
+-
+-Must be a sub-node of an STM32 Timers device tree node.
+-See ../mfd/stm32-timers.txt for details about the parent node.
+-
+-Required parameters:
+-- compatible:		Must be "st,stm32-pwm".
+-- pinctrl-names: 	Set to "default".
+-- pinctrl-0: 		List of phandles pointing to pin configuration nodes for PWM module.
+-			For Pinctrl properties see ../pinctrl/pinctrl-bindings.txt
+-- #pwm-cells:		Should be set to 3. This PWM chip uses the default 3 cells
+-			bindings defined in pwm.txt.
+-
+-Optional parameters:
+-- st,breakinput:	One or two <index level filter> to describe break input configurations.
+-			"index" indicates on which break input (0 or 1) the configuration
+-			should be applied.
+-			"level" gives the active level (0=low or 1=high) of the input signal
+-			for this configuration.
+-			"filter" gives the filtering value to be applied.
+-
+-Example:
+-	timers@40010000 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		compatible = "st,stm32-timers";
+-		reg = <0x40010000 0x400>;
+-		clocks = <&rcc 0 160>;
+-		clock-names = "int";
+-
+-		pwm {
+-			compatible = "st,stm32-pwm";
+-			#pwm-cells = <3>;
+-			pinctrl-0	= <&pwm1_pins>;
+-			pinctrl-names	= "default";
+-			st,breakinput = <0 1 5>;
+-		};
+-	};
 -- 
-2.19.0.605.g01d371f741-goog
+2.15.0
 
