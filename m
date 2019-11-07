@@ -2,148 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD7FF3B51
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 23:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF469F3B49
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 23:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfKGWVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 17:21:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbfKGWVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 17:21:46 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EACAE206C3;
-        Thu,  7 Nov 2019 22:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573165305;
-        bh=iRmeLgzLx97ad3lDT1awltLGtHt9Yh2Z2+FBthWhLzo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tAzJyBQSyWdQNNovcDWpTLZmqMJLXU/h6H1FEWel5l6+Jsukyqt+V52CwHsI86uYk
-         X4ubbdJSTWZwuNXJXyt7GgQIhGVDiie1A27jDCMNJ7CkM/8OyVePNYgRlJ7bOw9e7W
-         gYKsX4O1zKR0Qs0w7Ty9qOzAEbowIrrkNNgq4aMY=
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Frederick Lawler <fred@fredlawl.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 2/2] drm: replace Target Link Speed magic numbers with PCI_EXP_LNKCTL2 definitions
-Date:   Thu,  7 Nov 2019 16:20:47 -0600
-Message-Id: <20191107222047.125496-3-helgaas@kernel.org>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-In-Reply-To: <20191107222047.125496-1-helgaas@kernel.org>
-References: <20191107222047.125496-1-helgaas@kernel.org>
+        id S1727563AbfKGWVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 17:21:12 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:32815 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfKGWVL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 17:21:11 -0500
+X-Originating-IP: 92.184.100.203
+Received: from localhost (unknown [92.184.100.203])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id C9CB4C0004;
+        Thu,  7 Nov 2019 22:21:08 +0000 (UTC)
+Date:   Thu, 7 Nov 2019 23:20:50 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: at91: DT for 5.5
+Message-ID: <20191107222050.GA202089@piout.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+Arnd, Olof,
 
-Replace hard-coded magic numbers with the descript PCI_EXP_LNKCTL2
-definitions.  No functional change intended.
----
- drivers/gpu/drm/amd/amdgpu/cik.c | 8 ++++----
- drivers/gpu/drm/amd/amdgpu/si.c  | 8 ++++----
- drivers/gpu/drm/radeon/cik.c     | 8 ++++----
- drivers/gpu/drm/radeon/si.c      | 8 ++++----
- 4 files changed, 16 insertions(+), 16 deletions(-)
+New i2c features for sama5d4 and sama5d2 xplained boards. A new kizbox
+and a rework of the existing kizbox device trees.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/cik.c b/drivers/gpu/drm/amd/amdgpu/cik.c
-index e4a595cdd4c1..3067bb874032 100644
---- a/drivers/gpu/drm/amd/amdgpu/cik.c
-+++ b/drivers/gpu/drm/amd/amdgpu/cik.c
-@@ -1527,13 +1527,13 @@ static void cik_pcie_gen3_enable(struct amdgpu_device *adev)
- 	WREG32_PCIE(ixPCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3)
--		tmp16 |= 3; /* gen3 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN2)
--		tmp16 |= 2; /* gen2 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1; /* gen1 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE(ixPCIE_LC_SPEED_CNTL);
-diff --git a/drivers/gpu/drm/amd/amdgpu/si.c b/drivers/gpu/drm/amd/amdgpu/si.c
-index cf543410a424..d5c83d82063b 100644
---- a/drivers/gpu/drm/amd/amdgpu/si.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si.c
-@@ -1762,13 +1762,13 @@ static void si_pcie_gen3_enable(struct amdgpu_device *adev)
- 	WREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3)
--		tmp16 |= 3;
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN2)
--		tmp16 |= 2;
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1;
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL);
-diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
-index 95ffa0bff2d8..a280442c81aa 100644
---- a/drivers/gpu/drm/radeon/cik.c
-+++ b/drivers/gpu/drm/radeon/cik.c
-@@ -9647,13 +9647,13 @@ static void cik_pcie_gen3_enable(struct radeon_device *rdev)
- 	WREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (speed_cap == PCIE_SPEED_8_0GT)
--		tmp16 |= 3; /* gen3 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (speed_cap == PCIE_SPEED_5_0GT)
--		tmp16 |= 2; /* gen2 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1; /* gen1 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL);
-diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
-index 69993d34d1e9..529e70a42019 100644
---- a/drivers/gpu/drm/radeon/si.c
-+++ b/drivers/gpu/drm/radeon/si.c
-@@ -7230,13 +7230,13 @@ static void si_pcie_gen3_enable(struct radeon_device *rdev)
- 	WREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (speed_cap == PCIE_SPEED_8_0GT)
--		tmp16 |= 3; /* gen3 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (speed_cap == PCIE_SPEED_5_0GT)
--		tmp16 |= 2; /* gen2 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1; /* gen1 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL);
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.5-dt
+
+for you to fetch changes up to e58ee34217246c34cd6bc9f129fb2dc3315ad27c:
+
+  ARM: dts: at91: kizbox: use node labels (2019-11-07 00:38:15 +0100)
+
+----------------------------------------------------------------
+AT91 DT for 5.5
+
+ - New Overkiz Kizbox3 board
+ - Rework of the other Kizbox device trees
+ - New filters for i2c on sama5d4 and sama5d2
+
+----------------------------------------------------------------
+Eugen Hristev (3):
+      ARM: dts: at91: sama5d27_som1_ek: add mmc capabilities for SDMMC0
+      ARM: dts: at91: sama5d2_xplained: add analog and digital filter for i2c
+      ARM: dts: at91: sama5d4_xplained: add digital filter for i2c
+
+Kamel Bouhara (7):
+      ARM: dts: at91: sama5d2: add an rtc label for derived boards
+      dt-bindings: Add vendor prefix for Overkiz SAS
+      dt-bindings: arm: at91: Document Kizbox3 HS board binding
+      ARM: dts: at91: add Overkiz KIZBOX3 board
+      dt-bindings: arm: at91: Document Kizbox2-2 board binding
+      ARM: dts: at91: add a dts and dtsi file for kizbox2 based boards
+      ARM: dts: at91: kizbox: use node labels
+
+ .../devicetree/bindings/arm/atmel-at91.yaml        |  14 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/arm/boot/dts/Makefile                         |   3 +-
+ arch/arm/boot/dts/at91-kizbox.dts                  | 172 +++++----
+ arch/arm/boot/dts/at91-kizbox2-2.dts               |  26 ++
+ arch/arm/boot/dts/at91-kizbox2-common.dtsi         | 258 +++++++++++++
+ arch/arm/boot/dts/at91-kizbox2.dts                 | 244 ------------
+ arch/arm/boot/dts/at91-kizbox3-hs.dts              | 309 ++++++++++++++++
+ arch/arm/boot/dts/at91-kizbox3_common.dtsi         | 412 +++++++++++++++++++++
+ arch/arm/boot/dts/at91-sama5d27_som1_ek.dts        |   1 +
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |   6 +
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts        |   1 +
+ arch/arm/boot/dts/sama5d2.dtsi                     |   2 +-
+ 13 files changed, 1116 insertions(+), 334 deletions(-)
+ create mode 100644 arch/arm/boot/dts/at91-kizbox2-2.dts
+ create mode 100644 arch/arm/boot/dts/at91-kizbox2-common.dtsi
+ delete mode 100644 arch/arm/boot/dts/at91-kizbox2.dts
+ create mode 100644 arch/arm/boot/dts/at91-kizbox3-hs.dts
+ create mode 100644 arch/arm/boot/dts/at91-kizbox3_common.dtsi
+
 -- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
