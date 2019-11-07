@@ -2,200 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD5DCF36EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 19:21:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 864C9F3739
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 19:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfKGSTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 13:19:14 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50102 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725797AbfKGSTO (ORCPT
+        id S1727757AbfKGS3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 13:29:21 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40482 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfKGS3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 13:19:14 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA7I7kmD024868
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2019 13:19:13 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w4np3fx45-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 13:19:13 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Thu, 7 Nov 2019 18:19:10 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Nov 2019 18:19:02 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA7IJ1dU44105970
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Nov 2019 18:19:01 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E2024C046;
-        Thu,  7 Nov 2019 18:19:01 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04D9F4C044;
-        Thu,  7 Nov 2019 18:19:00 +0000 (GMT)
-Received: from pic2.home (unknown [9.145.15.120])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Nov 2019 18:18:59 +0000 (GMT)
-Subject: Re: [PATCH 07/10] ocxl: Save the device serial number in ocxl_fn
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Greg Kurz <groug@kaod.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Wei Yang <richard.weiyang@gmail.com>, Qian Cai <cai@lca.pw>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20191025044721.16617-1-alastair@au1.ibm.com>
- <20191025044721.16617-8-alastair@au1.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Thu, 7 Nov 2019 19:18:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Thu, 7 Nov 2019 13:29:21 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 15so2553611pgt.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 10:29:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L27L6nvKvaj+gPXc0hUn4bbWpeFZdtO6lr7Y2U0Ty4M=;
+        b=rbUomZKewSy4DXhw/7Z7m3aDjtDHGfsAELPyU27m6jCHbYjFFdiyfTC6mZjX4XjgwO
+         secNzkkFwPso2HohuanZpJAlrW2mbDRRAaoXFhhzp5KYENc9r910tqazGZS7+hrBtB7H
+         GFS55JgTj2VCW45MbVTWwrTNTVdZq0gcK9dWG45jOVju9al4s+pZc1UTM1jyxj6fn0/k
+         PodVmbSh5UnsfSL1g25h3ax/kVBD/BGBoj80X6tkfE6MOrom/b6/FSlpPwUGeD1kyG1h
+         pfkkFRvPJSJ/HB6oKRfWpudMsKLPrtBEVaVM3K4k89YH49IJfBD4252Ombv87DBtHJdO
+         cNAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L27L6nvKvaj+gPXc0hUn4bbWpeFZdtO6lr7Y2U0Ty4M=;
+        b=W4VhCH5ouepcS5Kl960ILT9OLUBMBNtEMUGH/0b1EJJhg424mU/c9JeumnKyDxPURH
+         ruLavE+/1LaBj7rF2JbErU49d3G5pn28rvP2vAoaIiHPJQttdaxoOzQfsyPcrJla2uRE
+         5xoFGlOeYK3sBFdkYUYHQttV7bWWSga+RHUnC4ItZuiQFWKxFqD9JvstA6p7n8t654ZW
+         WexZh3loCEegbjpSdZfr3T3kPQTV1XZj+YxAZHQCxgmNMpAP2KmyFhb7F4V2I4bA4Fp+
+         9QVW4q15n2mkPbGRp4qEscTX0DqPM933NWGZrvXrZABJhFqoTZIsFAkLDGt32kfNCbqa
+         +ENQ==
+X-Gm-Message-State: APjAAAWW/MJCP3DPjsPg5NMyMkSLyHCJAvqfsbrJxx6cvd37mf1Lao74
+        A+w+8zgZgT+z+xBBn37gOOg=
+X-Google-Smtp-Source: APXvYqz5WQrxb5VyPVMHdWgZQ8z97ty0BNqyApspbxG5LjM7qj9BgZ/z2h7xzjcYRVuJ/De/poKAug==
+X-Received: by 2002:aa7:82cd:: with SMTP id f13mr5896715pfn.69.1573150968760;
+        Thu, 07 Nov 2019 10:22:48 -0800 (PST)
+Received: from wambui ([197.237.61.225])
+        by smtp.gmail.com with ESMTPSA id e17sm3711816pgg.5.2019.11.07.10.22.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 10:22:48 -0800 (PST)
+Date:   Thu, 7 Nov 2019 21:22:35 +0300
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     Sean Paul <sean@poorly.run>
+Cc:     hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        joe@perches.com
+Subject: Re: [PATCH] drm/rockchip: use DRM_DEV_ERROR for log output
+Message-ID: <20191107182235.GA3585@wambui>
+Reply-To: 20191107133851.GF63329@art_vandelay
+References: <20191107092945.15513-1-wambui.karugax@gmail.com>
+ <4c74db2614cefe23f888d0643c2d7c356086745a.camel@perches.com>
+ <20191107133851.GF63329@art_vandelay>
 MIME-Version: 1.0
-In-Reply-To: <20191025044721.16617-8-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110718-0016-0000-0000-000002C1AD4F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110718-0017-0000-0000-000033233106
-Message-Id: <11327e5f-bc88-620e-f119-495eb7d4b02f@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=775 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911070167
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107133851.GF63329@art_vandelay>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 25/10/2019 à 06:47, Alastair D'Silva a écrit :
-> From: Alastair D'Silva <alastair@d-silva.org>
+On Thu, Nov 07, 2019 at 08:38:51AM -0500, Sean Paul wrote:
+> On Thu, Nov 07, 2019 at 01:54:22AM -0800, Joe Perches wrote:
+> > On Thu, 2019-11-07 at 12:29 +0300, Wambui Karuga wrote:
+> > > Replace the use of the dev_err macro with the DRM_DEV_ERROR
+> > > DRM helper macro.
+> > 
+> > The commit message should show the reason _why_ you are doing
+> > this instead of just stating that you are doing this.
+> > 
+> > It's not that dev_err is uncommon in drivers/gpu/drm.
+> > 
 > 
-> This patch retrieves the serial number of the card and makes it available
-> to consumers of the ocxl driver via the ocxl_fn struct.
+> It is uncommon (this is the sole instance) in rockchip, however. So it makes
+> sense to convert the dev_* prints in rockchip to DRM_DEV for consistency.
 > 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
-
-
-Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
-
-
-
->   drivers/misc/ocxl/config.c | 46 ++++++++++++++++++++++++++++++++++++++
->   include/misc/ocxl.h        |  1 +
->   2 files changed, 47 insertions(+)
+> Wambui, could you also please convert the dev_warn instance as well?
 > 
-> diff --git a/drivers/misc/ocxl/config.c b/drivers/misc/ocxl/config.c
-> index fb0c3b6f8312..a9203c309365 100644
-> --- a/drivers/misc/ocxl/config.c
-> +++ b/drivers/misc/ocxl/config.c
-> @@ -71,6 +71,51 @@ static int find_dvsec_afu_ctrl(struct pci_dev *dev, u8 afu_idx)
->   	return 0;
->   }
->   
-> +/**
-> + * Find a related PCI device (function 0)
-> + * @device: PCI device to match
-> + *
-> + * Returns a pointer to the related device, or null if not found
-> + */
-> +static struct pci_dev *get_function_0(struct pci_dev *dev)
-> +{
-> +	unsigned int devfn = PCI_DEVFN(PCI_SLOT(dev->devfn), 0); // Look for function 0
-> +
-> +	return pci_get_domain_bus_and_slot(pci_domain_nr(dev->bus),
-> +					dev->bus->number, devfn);
-> +}
-> +
-> +static void read_serial(struct pci_dev *dev, struct ocxl_fn_config *fn)
-> +{
-> +	u32 low, high;
-> +	int pos;
-> +
-> +	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DSN);
-> +	if (pos) {
-> +		pci_read_config_dword(dev, pos + 0x04, &low);
-> +		pci_read_config_dword(dev, pos + 0x08, &high);
-> +
-> +		fn->serial = low | ((u64)high) << 32;
-> +
-> +		return;
-> +	}
-> +
-> +	if (PCI_FUNC(dev->devfn) != 0) {
-> +		struct pci_dev *related = get_function_0(dev);
-> +
-> +		if (!related) {
-> +			fn->serial = 0;
-> +			return;
-> +		}
-> +
-> +		read_serial(related, fn);
-> +		pci_dev_put(related);
-> +		return;
-> +	}
-> +
-> +	fn->serial = 0;
-> +}
-> +
->   static void read_pasid(struct pci_dev *dev, struct ocxl_fn_config *fn)
->   {
->   	u16 val;
-> @@ -208,6 +253,7 @@ int ocxl_config_read_function(struct pci_dev *dev, struct ocxl_fn_config *fn)
->   	int rc;
->   
->   	read_pasid(dev, fn);
-> +	read_serial(dev, fn);
->   
->   	rc = read_dvsec_tl(dev, fn);
->   	if (rc) {
-> diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
-> index 6f7c02f0d5e3..9843051c3c5b 100644
-> --- a/include/misc/ocxl.h
-> +++ b/include/misc/ocxl.h
-> @@ -46,6 +46,7 @@ struct ocxl_fn_config {
->   	int dvsec_afu_info_pos; /* offset of the AFU information DVSEC */
->   	s8 max_pasid_log;
->   	s8 max_afu_index;
-> +	u64 serial;
->   };
->   
->   enum ocxl_endian {
+Sure, I can send a patch for that.
+> I'll apply this to drm-misc-next and expand on the commit message a bit.
 > 
+Thanks,
+wambui
 
+> Thanks,
+> 
+> Sean
+> 
+> > $ git grep -w dev_err drivers/gpu/drm | wc -l
+> > 1950
+> > $ git grep -w DRM_DEV_ERROR drivers/gpu/drm | wc -l
+> > 756
+> > 
+> > > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> > []
+> > > @@ -916,7 +916,7 @@ static int dw_mipi_dsi_rockchip_probe(struct platform_device *pdev)
+> > >  	}
+> > >  
+> > >  	if (!dsi->cdata) {
+> > > -		dev_err(dev, "no dsi-config for %s node\n", np->name);
+> > > +		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+> > >  		return -EINVAL;
+> > >  	}
+> > 
+> > 
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> -- 
+> Sean Paul, Software Engineer, Google / Chromium OS
