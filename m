@@ -2,47 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36BD9F302F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB7FF3021
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389041AbfKGNnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:43:10 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:51692 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389049AbfKGNmI (ORCPT
+        id S2389197AbfKGNmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:42:47 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:49164 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389147AbfKGNmJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:08 -0500
-Received: by mail-il1-f198.google.com with SMTP id x2so2614480ilk.18
+        Thu, 7 Nov 2019 08:42:09 -0500
+Received: by mail-il1-f197.google.com with SMTP id c2so2631544ilj.16
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=faF2E7beRwWoi3uIIILRzqXOv61MWqBCOVzVfmKvnUo=;
-        b=QIIvoz/tS2tbWOaB4FAFAn7GeUAV97y9OpaY21NLXP5iFP9x3O679IkK/J3OS1S4TU
-         dyyuREjvGGvigdlCQhfF6VWNG16j34b+O7FneeZTgkBkBFj7K2A/+dnxL8vA7jeQQAhX
-         qyKmrr06uXRkyPSQIGNcZ78ujzS1zC5RNH7LvqxriAuzpXldQAK8PE4LVvb66XvlKG9K
-         3BJcpoDEhqFgOGOFFkLH6llyUXO8OfhpPUi8SGXW9MkvTauw9Lbz5RH+gAxOagS7+5IS
-         XA8pxytrcHTzz1PSgWvqOhBmscqT/SEkgRj7Fy6mEuzjTTmVDKULCbepXPxT03F8BuyM
-         CM5Q==
-X-Gm-Message-State: APjAAAXF8AY+jiimAQ2Z8HcuyOMV59A5muiH6c37w2bKV9LARV6ivVtq
-        YLQQuWcHWQrzbppbOVZ+bV2eslQ+hB+CS+fSSCNCs0ZPLCYp
-X-Google-Smtp-Source: APXvYqzVYKWM2YDzF62mA7+9NC0nUV+ZtoPDNThvpzi9h0wK92j8hN87irxPomSaO4dsmofOF+c0rPnm4WVvuK8z7Omam0qTsX8s
+        bh=Nw05O48tfZnOsvKSy1GxiAM521gtqxH1bmLh1PZrh9M=;
+        b=gjcZKDLbEaMiaD3tvgyMN8N8Sv0aS36Tc7OeZn/1ENvGNR3lWHuQThx+xr8Wd9oDxG
+         VoYcnCmU2qT59KdIrqi7UfL9QEyncAQ3+z74npN2nXIKBFUfbqDRjE82PJsWuQjXRmrL
+         7tdm1/eQxXIrCKt5mAxPWndvpNd3RWTbqQY6LehUIw8zqXXarE+hqIrzQ5RI6yUfhRjv
+         1GH49n1vJ3ipPXkvxt5dxjOS8vIeM7lyIXSHq/8gXvVlN9L65dtVcGuJUl7MpZ18j6bt
+         UX0LHHTqswz6Lq/V8JHDl34ZfEPjJ5r6bSq7zYhAM7cl7DDqda/7WduP089d/3dl1mPI
+         S/Qw==
+X-Gm-Message-State: APjAAAVPERcH+XDHnUeNkQWww/9BoVbfXAiEKF7fx55C7egtxGLQukeo
+        VcwU0sZF/8i0DaDj6ZQ6H4hoO8W3zWT+HmvohSc5Tf3/roNO
+X-Google-Smtp-Source: APXvYqyNENH6B9y0Wez5W5uFuh4AQx6Njq+f4QH6gQ9D1z+gBpWcYcVbu/AE80nseMiHpzphhK8i6DvSZXMZjz4S+ATHb/GjXcIG
 MIME-Version: 1.0
-X-Received: by 2002:a5e:d716:: with SMTP id v22mr3377836iom.152.1573134127190;
+X-Received: by 2002:a5d:8450:: with SMTP id w16mr3313990ior.11.1573134127375;
  Thu, 07 Nov 2019 05:42:07 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:07 -0800
-In-Reply-To: <00000000000014008b057a598671@google.com>
+In-Reply-To: <000000000000bfd4270578abe88b@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d5dacd0596c1d41e@google.com>
-Subject: Re: general protection fault in vb2_mmap
-From:   syzbot <syzbot+52e5bf0ebfa66092937a@syzkaller.appspotmail.com>
-To:     hansverk@cisco.com, hverkuil@xs4all.nl, kyungmin.park@samsung.com,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        m.szyprowski@samsung.com, mchehab+samsung@kernel.org,
-        mchehab@kernel.org, pawel@osciak.com,
-        syzkaller-bugs@googlegroups.com, tfiga@chromium.org
+Message-ID: <000000000000d8b0630596c1d4a0@google.com>
+Subject: Re: possible deadlock in flush_workqueue (2)
+From:   syzbot <syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com>
+To:     aarcange@redhat.com, adilger.kernel@dilger.ca,
+        akpm@linux-foundation.org, aneesh.kumar@linux.vnet.ibm.com,
+        dave@stgolabs.net, davem@davemloft.net, hughd@google.com,
+        jiangshanlai@gmail.com, kirill.shutemov@linux.intel.com,
+        kuznet@ms2.inr.ac.ru, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mhocko@kernel.org, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com, netdev@vger.kernel.org,
+        prakash.sangappa@oracle.com, sbrivio@redhat.com,
+        sd@queasysnail.net, syzkaller-bugs@googlegroups.com, tj@kernel.org,
+        torvalds@linux-foundation.org, tytso@mit.edu,
+        viro@zeniv.linux.org.uk, yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,22 +58,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit cd26d1c4d1bc947b56ae404998ae2276df7b39b7
-Author: Hans Verkuil <hverkuil@xs4all.nl>
-Date:   Tue Nov 13 14:06:46 2018 +0000
+commit e7c58097793ef15d58fadf190ee58738fbf447cd
+Author: Mike Kravetz <mike.kravetz@oracle.com>
+Date:   Tue Jan 8 23:23:32 2019 +0000
 
-     media: vb2: vb2_mmap: move lock up
+     hugetlbfs: revert "Use i_mmap_rwsem to fix page fault/truncate race"
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101a70e2600000
-start commit:   e12e00e3 Merge tag 'kbuild-fixes-v4.20' of git://git.kerne..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ec0d2c600000
+start commit:   ca9eb48f Merge tag 'regulator-v5.0' of git://git.kernel.or..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f215f21f041a0d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=52e5bf0ebfa66092937a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c61b0b400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=109d545d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=963b24abf3f7c2d8
+dashboard link: https://syzkaller.appspot.com/bug?extid=a50c7541a4a55cd49b02
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12097f03400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b55ac5400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: media: vb2: vb2_mmap: move lock up
+#syz fix: hugetlbfs: revert "Use i_mmap_rwsem to fix page fault/truncate  
+race"
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
