@@ -2,103 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC982F3AA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE97F3AAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfKGVpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 16:45:08 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43459 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfKGVpI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 16:45:08 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y23so3929541ljh.10
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 13:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D7bkoIfmChxAzW1ksec2xFter3BulfhV3l8t8jMt0o8=;
-        b=J4Q5rwkR0WSSlDmDqYN9Kqe/AJ3WCJnx1cqvE9HtXpewbCpG5f9IJFYCHTKIpv34kx
-         DHm07h87q/aD2rSKrES3gUnpaKOGs88rHCOpdXLXBY21/nAT8sTC8cmHC/t5Tx40Ct2G
-         GlijRx9m/QGJMeUhMbd8aquNuU/aqEXSTspdM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D7bkoIfmChxAzW1ksec2xFter3BulfhV3l8t8jMt0o8=;
-        b=NCBA223wIDefnqG2vbAH/c/1EpIXwo5VphVwXtYBhd/0P249e2vDHy+lhDCZsyBdvg
-         +7eeaaH5JjCcfJQUb7IuNNIQB/pHs8SLmt9qyrDRjqZrNLRE1/qxsAQxHiOpJl4iESkj
-         qGVtXetbFWTgZRpeVXklJbAbwhU4+hXyJCPJCp9QOzZDq/a9aXHIhjjyA1f1z5Isumoe
-         Wzztrfl/YGcZvm2nlTDebAZqZL11sCqy9IbKnUXwjW0MiO9ak4puZZeA3arBTpuCC1Pp
-         /E3daxnnMdD8X21FKwEhxNp6MHEEvR+MtcnB1rGKWD13MRUcuZReaTCMRLu8L2ZeCy+8
-         WRLA==
-X-Gm-Message-State: APjAAAWgtEI03cV0NbALOoGQC423O2csC5ZbG4pSUx6rA5JFvLfY60R2
-        ywORxQ6DAbkoq/HsJG1DAF6X7nFSmWg=
-X-Google-Smtp-Source: APXvYqzm/KNf9R+vTrNVyokLzYmK8IBioWOudmiApH+KczjOt9PLIsdaqFl0+UgFhEAbb3Z4+ZrbFA==
-X-Received: by 2002:a2e:89c4:: with SMTP id c4mr4108599ljk.197.1573163105106;
-        Thu, 07 Nov 2019 13:45:05 -0800 (PST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id g25sm1724191ljk.36.2019.11.07.13.45.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2019 13:45:03 -0800 (PST)
-Received: by mail-lj1-f177.google.com with SMTP id l20so3953069lje.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 13:45:03 -0800 (PST)
-X-Received: by 2002:a2e:22c1:: with SMTP id i184mr4191987lji.1.1573163103162;
- Thu, 07 Nov 2019 13:45:03 -0800 (PST)
+        id S1727477AbfKGVp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 16:45:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725924AbfKGVp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 16:45:28 -0500
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2B082166E;
+        Thu,  7 Nov 2019 21:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573163126;
+        bh=+2u/MCrAxpfwO9VHiDi1QHr4uX2w6bjyxLIeb9aiSuM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EeBOEpn5O9c3uDCStbIKsbOshbPZ5+KmIiaLNtaUY40Sjcn2KPWdB1MzA8gh8porv
+         6cQ69EGhxOHOviQRLEB/XSKS338JqkXn88I+MyRe4k8oiOekm4iIrqAHDkjdW0ZFa7
+         egkXfhnno87EqaQHt1MH42gYuJNPCVz7Hm7ZEHYk=
+Received: by mail-qt1-f172.google.com with SMTP id o11so4051685qtr.11;
+        Thu, 07 Nov 2019 13:45:26 -0800 (PST)
+X-Gm-Message-State: APjAAAVXtwl6Q9N6tHEjPdKIMUSS35mDz8yCpHpJY8sUTG6pmcINeNkU
+        p8gCaPFPtmRial/LYCW5kCAuJd70XbCRplabmw==
+X-Google-Smtp-Source: APXvYqzKBN4P3iQsDG0cU0SvIyl2nJbDqpbmXRW32fH1yUlg+6382COgYZuSJvJDggzFTfWEPsdivu2KtE2+LyjYfgk=
+X-Received: by 2002:ac8:458c:: with SMTP id l12mr6736244qtn.300.1573163125922;
+ Thu, 07 Nov 2019 13:45:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20191106193459.581614484@linutronix.de> <20191106202806.241007755@linutronix.de>
- <CAMzpN2juuUyLuQ-tiV7hKZvG4agsHKP=rRAt_V4sZhpZW7cv9g@mail.gmail.com>
- <CAHk-=wiGO=+mmEb-sfCsD5mxmL5++gdwkFj_aXcfz1R41MJnEg@mail.gmail.com> <CAMzpN2gt4qM41=96GpNHL-kbgBsjD-zphq+5oK0BXqoCFN4F4Q@mail.gmail.com>
-In-Reply-To: <CAMzpN2gt4qM41=96GpNHL-kbgBsjD-zphq+5oK0BXqoCFN4F4Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 7 Nov 2019 13:44:47 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjocTzo+8OMwyKPX0MCVV=N4wtU8ifwSZ_qJJnDBgKJ8Q@mail.gmail.com>
-Message-ID: <CAHk-=wjocTzo+8OMwyKPX0MCVV=N4wtU8ifwSZ_qJJnDBgKJ8Q@mail.gmail.com>
-Subject: Re: [patch 5/9] x86/ioport: Reduce ioperm impact for sane usage further
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
+References: <20191028215919.83697-1-john.stultz@linaro.org>
+ <20191028215919.83697-7-john.stultz@linaro.org> <87h83rj4ha.fsf@gmail.com>
+ <CALAqxLX47uELsGbdociUKdC6KgDba-1SBVALmgjD3=jxh=fd8g@mail.gmail.com> <87k18mhaiq.fsf@gmail.com>
+In-Reply-To: <87k18mhaiq.fsf@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 7 Nov 2019 15:45:12 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL5_6vLJ4sfaNr=76S8kDWEpfKT05xaLktqFM_xH3puGA@mail.gmail.com>
+Message-ID: <CAL_JsqL5_6vLJ4sfaNr=76S8kDWEpfKT05xaLktqFM_xH3puGA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/9] usb: dwc3: Rework resets initialization to be more flexible
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Yu Chen <chenyu56@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jun Li <lijun.kernel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jack Pham <jackp@codeaurora.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 1:00 PM Brian Gerst <brgerst@gmail.com> wrote:
+On Wed, Oct 30, 2019 at 4:01 AM Felipe Balbi <balbi@kernel.org> wrote:
 >
-> There wouldn't have to be a flush on every task switch.
+>
+> Hi,
+>
+> John Stultz <john.stultz@linaro.org> writes:
+>
+> > On Tue, Oct 29, 2019 at 2:17 AM Felipe Balbi <balbi@kernel.org> wrote:
+> >> John Stultz <john.stultz@linaro.org> writes:
+> >> > The dwc3 core binding specifies one reset.
+> >> >
+> >> > However some variants of the hardware my not have more.
+> >>                                         ^^
+> >>                                         may
+> >>
+> >> According to synopsys databook, there's a single *input* reset signal on
+> >> this IP. What is this extra reset you have?
+> >>
+> >> Is this, perhaps, specific to your glue layer around the synopsys ip?
+> >
+> > Likely (again, I unfortunately don't have a ton of detail on the hardware).
+> >
+> >> Should, perhaps, your extra reset be managed by the glue layer?
 
-No. But we'd have to flush on any switch that currently does that memcpy.
+An extra clock or reset is a silly reason to have a whole other node
+and driver. If there's additional blocks and registers, then yes a
+glue node makes sense.
 
-And my point is that a tlb flush (even the single-page case) is likely
-more expensive than the memcpy.
+> > So yes the dwc3-of-simple does much of this already (it handles
+> > multiple resets, and variable clocks), but unfortunately we seem to
+> > need new bindings for each device added?  I think the suggestion from
+> > Rob was due to the sprawl of bindings for the glue code, and the extra
+> > complexity of the parent node.  So I believe Rob just thought it made
+> > sense to collapse this down into the core?
+> >
+> > I'm not really passionate about either approach, and am happy to
+> > rework (as long as there is eventual progress :).
+> > Just let me know what you'd prefer.
+>
+> Well, I was under the impression we were supposed to describe the
+> HW. Synopsys IP has a single reset input :-p
 
-> Going a step further, we could track which task is mapped to the
-> current cpu like proposed above, and only flush when a different task
-> needs the IO bitmap, or when the bitmap is being freed on task exit.
+John is. His chip requires 2 resets to use the USB block and the
+compatible provides that distinction. Maybe HiSilicon has a newer or
+customized IP version that has 2 resets. The block could have external
+RAMs (because every process has its own) which may have their own
+reset. With NDA specifications and little knowledge of the full
+revision history, we can really never know. Also, omitting clocks and
+resets from the dwc3 node entirely is just as much not describing the
+h/w (only the glue needs clocks?).
 
-Well, that's exactly my "track the last task" optimization for copying
-the thing.
+This block is the oddball. I think there's 1 or 2 other blocks where
+this glue node was done, but please stop. If we did this every time
+there's a variation in clocks or resets, we'd pretty much have glue
+nodes everywhere.
 
-IOW, it's the same optimization as avoiding the memcpy.
-
-Which I think is likely very effective, but also makes it fairly
-pointless to then try to be clever..
-
-So the basic issue remains that playing VM games has almost
-universally been slower and more complex than simply not playing VM
-games. TLB flushes - even invlpg - tends to be pretty slow.
-
-Of course, we probably end up invalidating the TLB's anyway, so maybe
-in this case we don't care. The ioperm bitmap is _technically_
-per-thread, though, so it should be flushed even if the VM isn't
-flushed...
-
-             Linus
+Rob
