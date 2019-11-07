@@ -2,170 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2AC3F2E72
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:48:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C2AF2E5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:46:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388879AbfKGMrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 07:47:51 -0500
-Received: from mga02.intel.com ([134.134.136.20]:26476 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388818AbfKGMru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 07:47:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 04:47:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,278,1569308400"; 
-   d="scan'208";a="402726921"
-Received: from test-hp-compaq-8100-elite-cmt-pc.igk.intel.com ([10.237.149.93])
-  by fmsmga005.fm.intel.com with ESMTP; 07 Nov 2019 04:47:47 -0800
-From:   Piotr Maziarz <piotrx.maziarz@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     rostedt@goodmis.org, mingo@redhat.com, andriy.shevchenko@intel.com,
-        cezary.rojewski@intel.com, gustaw.lewandowski@intel.com,
-        Piotr Maziarz <piotrx.maziarz@linux.intel.com>
-Subject: [PATCH v2 2/2] tracing: Use seq_buf_hex_dump() to dump buffers
-Date:   Thu,  7 Nov 2019 13:45:38 +0100
-Message-Id: <1573130738-29390-2-git-send-email-piotrx.maziarz@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573130738-29390-1-git-send-email-piotrx.maziarz@linux.intel.com>
-References: <1573130738-29390-1-git-send-email-piotrx.maziarz@linux.intel.com>
+        id S2388746AbfKGMqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 07:46:25 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:60264 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388407AbfKGMqY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 07:46:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Xa3xcbvcNii0ckLDCeWLHK/ql7ey1ORYLLY0djGGeQI=; b=G+b5F0zsTBN+89jWdmm+g3GUT
+        dAp0DdRzLdcdJt3d/VA9pu3ahL7Uspd+ccWn2SDhwCutIaN0FES4q/uTVaUihfitkSe/4BPdomRBn
+        jo2BbmEllza+WOBsq0BCfHtnJhco/BmOP5Z7J8n4+8EHBdPb2kF9i13edAE+GgFtAq1DbufjCSUnZ
+        mUg8UYhtZLV80L2GVxYA3KoIyDK8pD7pnfhay26rVUDZ5ftZelLPpWLsueZNXIdBqZKa79+myWtc/
+        unCYTqzClb1hBngRB896GlSl7hagF6dkPl2XUpi1wapvGxfmKvQmtYKWYb7jwJ97kDrKR3Wn0YF69
+        eOHvcNAYA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iShB4-0005kt-9O; Thu, 07 Nov 2019 12:46:18 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1144A301747;
+        Thu,  7 Nov 2019 13:45:11 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 91DF52025EDA7; Thu,  7 Nov 2019 13:46:15 +0100 (CET)
+Date:   Thu, 7 Nov 2019 13:46:15 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jan Stancek <jstancek@redhat.com>, linux-kernel@vger.kernel.org,
+        ltp@lists.linux.it, viro@zeniv.linux.org.uk,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        rfontana@redhat.com
+Subject: Re: [PATCH] kernel: use ktime_get_real_ts64() to calculate
+ acct.ac_btime
+Message-ID: <20191107124615.GG4131@hirez.programming.kicks-ass.net>
+References: <a87876829697e1b3c63601b1401a07af79eddae6.1572651216.git.jstancek@redhat.com>
+ <20191107123224.GA6315@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1911071335320.4256@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1911071335320.4256@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this, buffers can be printed with __print_array macro that has
-no formatting options and can be hard to read. The other way is to
-mimic formatting capability with multiple calls of trace event with one
-call per row which gives performance impact and different timestamp in
-each row.
+On Thu, Nov 07, 2019 at 01:40:47PM +0100, Thomas Gleixner wrote:
+> Typing real_start_time makes me really cringe.
 
-Signed-off-by: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
-Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
+I have a patch fixing that...
+
 ---
-no changes
+Subject: kernel: Rename tsk->real_start_time
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu Nov  7 11:07:58 CET 2019
 
- include/linux/trace_events.h |  5 +++++
- include/linux/trace_seq.h    |  4 ++++
- include/trace/trace_events.h |  6 ++++++
- kernel/trace/trace_output.c  | 15 +++++++++++++++
- kernel/trace/trace_seq.c     | 30 ++++++++++++++++++++++++++++++
- 5 files changed, 60 insertions(+)
+Since it stores CLOCK_BOOTTIME, not, as the name suggests,
+CLOCK_REALTIME, let's rename real_start_time.
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 30a8cdc..60a41b7 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -45,6 +45,11 @@ const char *trace_print_array_seq(struct trace_seq *p,
- 				   const void *buf, int count,
- 				   size_t el_size);
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1132,7 +1132,7 @@ static int de_thread(struct task_struct
+ 		 * also take its birthdate (always earlier than our own).
+ 		 */
+ 		tsk->start_time = leader->start_time;
+-		tsk->real_start_time = leader->real_start_time;
++		tsk->start_boottime = leader->start_boottime;
  
-+const char *
-+trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
-+			 int prefix_type, int rowsize, int groupsize,
-+			 const void *buf, size_t len, bool ascii);
-+
- struct trace_iterator;
- struct trace_event;
+ 		BUG_ON(!same_thread_group(leader, tsk));
+ 		BUG_ON(has_group_leader_pid(tsk));
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -533,7 +533,7 @@ static int do_task_stat(struct seq_file
+ 	nice = task_nice(task);
  
-diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
-index 6609b39a..6c30508 100644
---- a/include/linux/trace_seq.h
-+++ b/include/linux/trace_seq.h
-@@ -92,6 +92,10 @@ extern int trace_seq_path(struct trace_seq *s, const struct path *path);
- extern void trace_seq_bitmask(struct trace_seq *s, const unsigned long *maskp,
- 			     int nmaskbits);
+ 	/* convert nsec -> ticks */
+-	start_time = nsec_to_clock_t(task->real_start_time);
++	start_time = nsec_to_clock_t(task->start_boottime);
  
-+extern int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
-+			      int prefix_type, int rowsize, int groupsize,
-+			      const void *buf, size_t len, bool ascii);
-+
- #else /* CONFIG_TRACING */
- static inline void trace_seq_printf(struct trace_seq *s, const char *fmt, ...)
- {
-diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-index 4ecdfe2..7089760 100644
---- a/include/trace/trace_events.h
-+++ b/include/trace/trace_events.h
-@@ -340,6 +340,12 @@ TRACE_MAKE_SYSTEM_STR();
- 		trace_print_array_seq(p, array, count, el_size);	\
- 	})
+ 	seq_put_decimal_ull(m, "", pid_nr_ns(pid, ns));
+ 	seq_puts(m, " (");
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -879,7 +879,7 @@ struct task_struct {
+ 	u64				start_time;
  
-+#undef __print_hex_dump
-+#define __print_hex_dump(prefix_str, prefix_type,			\
-+			 rowsize, groupsize, buf, len, ascii)		\
-+	trace_print_hex_dump_seq(p, prefix_str, prefix_type,		\
-+				 rowsize, groupsize, buf, len, ascii)
-+
- #undef DECLARE_EVENT_CLASS
- #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
- static notrace enum print_line_t					\
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index d54ce25..d9b4b7c 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -274,6 +274,21 @@ trace_print_array_seq(struct trace_seq *p, const void *buf, int count,
- }
- EXPORT_SYMBOL(trace_print_array_seq);
+ 	/* Boot based time in nsecs: */
+-	u64				real_start_time;
++	u64				start_boottime;
  
-+const char *
-+trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
-+			 int prefix_type, int rowsize, int groupsize,
-+			 const void *buf, size_t len, bool ascii)
-+{
-+	const char *ret = trace_seq_buffer_ptr(p);
-+
-+	trace_seq_putc(p, '\n');
-+	trace_seq_hex_dump(p, prefix_str, prefix_type,
-+			   rowsize, groupsize, buf, len, ascii);
-+	trace_seq_putc(p, 0);
-+	return ret;
-+}
-+EXPORT_SYMBOL(trace_print_hex_dump_seq);
-+
- int trace_raw_output_prep(struct trace_iterator *iter,
- 			  struct trace_event *trace_event)
- {
-diff --git a/kernel/trace/trace_seq.c b/kernel/trace/trace_seq.c
-index 6b1c562..344e4c1 100644
---- a/kernel/trace/trace_seq.c
-+++ b/kernel/trace/trace_seq.c
-@@ -376,3 +376,33 @@ int trace_seq_to_user(struct trace_seq *s, char __user *ubuf, int cnt)
- 	return seq_buf_to_user(&s->seq, ubuf, cnt);
- }
- EXPORT_SYMBOL_GPL(trace_seq_to_user);
-+
-+int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
-+		       int prefix_type, int rowsize, int groupsize,
-+		       const void *buf, size_t len, bool ascii)
-+{
-+		unsigned int save_len = s->seq.len;
-+
-+	if (s->full)
-+		return 0;
-+
-+	__trace_seq_init(s);
-+
-+	if (TRACE_SEQ_BUF_LEFT(s) < 1) {
-+		s->full = 1;
-+		return 0;
-+	}
-+
-+	seq_buf_hex_dump(&(s->seq), prefix_str,
-+		   prefix_type, rowsize, groupsize,
-+		   buf, len, ascii);
-+
-+	if (unlikely(seq_buf_has_overflowed(&s->seq))) {
-+		s->seq.len = save_len;
-+		s->full = 1;
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+EXPORT_SYMBOL(trace_seq_hex_dump);
--- 
-2.7.4
-
+ 	/* MM fault and swap info: this can arguably be seen as either mm-specific or thread-specific: */
+ 	unsigned long			min_flt;
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2130,7 +2130,7 @@ static __latent_entropy struct task_stru
+ 	 */
+ 
+ 	p->start_time = ktime_get_ns();
+-	p->real_start_time = ktime_get_boottime_ns();
++	p->start_boottime = ktime_get_boottime_ns();
+ 
+ 	/*
+ 	 * Make it visible to the rest of the system, but dont wake it up yet.
