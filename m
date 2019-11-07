@@ -2,47 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F366F3349
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41772F3347
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:34:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388761AbfKGPeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 10:34:15 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:52575 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729934AbfKGPeL (ORCPT
+        id S2387939AbfKGPeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 10:34:10 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:41616 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729934AbfKGPeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 10:34:11 -0500
-Received: by mail-il1-f197.google.com with SMTP id t23so2956837ila.19
+        Thu, 7 Nov 2019 10:34:10 -0500
+Received: by mail-io1-f72.google.com with SMTP id v5so2118132iot.8
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 07:34:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=osDgrR7+lhnA50ozJ9XpSP5eOLnLOIc3AVbZc33gEAU=;
-        b=Q4C3opXRZAPjid7I/y0f7LZIXlJKuOZuDtZ1l/fDYhpCxO8f8g85xT/TwDn5BSK6L6
-         pQb5KE09mb+af/iUVfCvndI81PsvhuK8l3iSow4J9MtFICxGQxNADKZYXzKGhyEMm7d5
-         bqeG7obbgY2QcItSyULo5yH9zY/NJLnaPYG2emOYC0SzgZqtM2ffTDE5nk3SE7b654ih
-         +ylOjJHueYILG3F/N/5zkdNaYc8TNQHg4dA5u47218uvZvQ+a20ofiNTGAMa+N96C5u2
-         KMHKFczTX2gsCVT4lbIuF5JAxbt5rPp2yJA2Q1FJESnESFFtRARofD6UnK6Gy1To4fjF
-         yJMg==
-X-Gm-Message-State: APjAAAUW5UyCa6iDVa+d8E8XxIpwPHS2x6FKOkQ+XuDC59lWz4Blz+Vh
-        anHkQbT/cYZQ2j+9EmEF0xESsET/9xKoZc5IedbRX8UDk2qT
-X-Google-Smtp-Source: APXvYqxuKrKOoebLn1vTcIFUPCuUSPVp9E0atQGaXraOKl+d8s9V7HDrPJCcKrN1GZYrnnQAAGkbtkYezQ7fGdeYdocRoz/f6OQE
+        bh=xXSZuLJlKOSAiQeCDNop2/Po7TAwJIhgGKQhTrYo5uc=;
+        b=WQO39mgnjxBFe8n14nGKuheiionN9dlgI+9p9adVSJCTOE5q9VKYQXHArhfMf5c+IB
+         k/A7EEVUbmBsQCOKXxawbSPINHBWZsrF/p6/SdcVUJcbceFdg9TY3qbKKEaTy745WIZw
+         yxN9JV2UfNcvqlITCHRICAUCzYUcJgXX7Ztq00Ik5jCPV/ChcZ+Ox7wONNOIPWt/6BVc
+         1qBxtJmPAw4KhHkt5Ar8STnnPXgs5x/CbltQ5skGc4wnqrG2gaFJwBbPKUsyO7wWgO4o
+         YMYHDfLx+EmT/W6JD7E4eKDGwl018E1tQ+vfQQwXy1LN83drZRKmkdKNQP2PdlOQcdiu
+         tXsA==
+X-Gm-Message-State: APjAAAWCree9qQGWyB/s1Ddnk4pcPHZ73TL7UH+7/HGFkhramMJp1ACp
+        vwyeWZOxMmMNC49I9KCiuCFAowX6Qmt7Bxfolxn6IGgASSJn
+X-Google-Smtp-Source: APXvYqyUy/EHdTm3OkPUEXgsq0v+2vA6a+9xeM0aG5CRFMMGKUgoUlk/A9BrfCK35av6wp5etl0ZlVVeGtJY8MGnXPyIKxZzd1JB
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8219:: with SMTP id l25mr115557iom.292.1573140849022;
+X-Received: by 2002:a6b:700a:: with SMTP id l10mr4184214ioc.164.1573140849301;
  Thu, 07 Nov 2019 07:34:09 -0800 (PST)
 Date:   Thu, 07 Nov 2019 07:34:09 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007ce1f40596c3651f@google.com>
-Subject: KASAN: slab-out-of-bounds Read in build_audio_procunit (2)
-From:   syzbot <syzbot+622d4ecb979f45c6a775@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, alsa-devel@alsa-project.org,
-        andreyknvl@google.com, benquike@gmail.com,
-        dan.carpenter@oracle.com, gregkh@linuxfoundation.org,
+Message-ID: <0000000000008123610596c36579@google.com>
+Subject: WARNING in ath6kl_htc_pipe_rx_complete
+From:   syzbot <syzbot+555908813b2ea35dae9a@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, davem@davemloft.net, kvalo@codeaurora.org,
         linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        perex@perex.cz, rfontana@redhat.com,
-        syzkaller-bugs@googlegroups.com, tiwai@suse.com, wang6495@umn.edu,
-        yuehaibing@huawei.com
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,129 +52,55 @@ syzbot found the following crash on:
 
 HEAD commit:    d60bbfea usb: raw: add raw-gadget interface
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=132e5bcce00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1029829ae00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=79de80330003b5f7
-dashboard link: https://syzkaller.appspot.com/bug?extid=622d4ecb979f45c6a775
+dashboard link: https://syzkaller.appspot.com/bug?extid=555908813b2ea35dae9a
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1478c6b4e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117cbf8ae00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1388a2aae00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13aa35dce00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+622d4ecb979f45c6a775@syzkaller.appspotmail.com
+Reported-by: syzbot+555908813b2ea35dae9a@syzkaller.appspotmail.com
 
-usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 1-1: Product: syz
-usb 1-1: Manufacturer: syz
-usb 1-1: SerialNumber: syz
-usb 1-1: 0:2 : does not exist
-==================================================================
-BUG: KASAN: slab-out-of-bounds in uac_extension_unit_iExtension  
-include/uapi/linux/usb/audio.h:483 [inline]
-BUG: KASAN: slab-out-of-bounds in build_audio_procunit+0xeab/0x13f0  
-sound/usb/mixer.c:2434
-Read of size 1 at addr ffff8881d4aaa735 by task kworker/1:2/83
-
-CPU: 1 PID: 83 Comm: kworker/1:2 Not tainted 5.4.0-rc6+ #0
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 17 at drivers/net/wireless/ath/ath6kl/htc_pipe.c:963  
+ath6kl_htc_pipe_rx_complete+0xc58/0xef0  
+drivers/net/wireless/ath/ath6kl/htc_pipe.c:963
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 17 Comm: kworker/1:0 Not tainted 5.4.0-rc6+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
+Workqueue: events ath6kl_usb_io_comp_work
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
-  kasan_report+0xe/0x20 mm/kasan/common.c:634
-  uac_extension_unit_iExtension include/uapi/linux/usb/audio.h:483 [inline]
-  build_audio_procunit+0xeab/0x13f0 sound/usb/mixer.c:2434
-  parse_audio_extension_unit sound/usb/mixer.c:2483 [inline]
-  parse_audio_unit+0x1812/0x36f0 sound/usb/mixer.c:2761
-  snd_usb_mixer_controls+0x715/0xb90 sound/usb/mixer.c:3095
-  snd_usb_create_mixer+0x2b5/0x1890 sound/usb/mixer.c:3445
-  usb_audio_probe+0xc76/0x2010 sound/usb/card.c:653
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2202
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2202
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2537
-  hub_port_connect drivers/usb/core/hub.c:5184 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
-  port_event drivers/usb/core/hub.c:5470 [inline]
-  hub_event+0x1df8/0x3800 drivers/usb/core/hub.c:5552
+  panic+0x2aa/0x6e1 kernel/panic.c:221
+  __warn.cold+0x2f/0x33 kernel/panic.c:582
+  report_bug+0x27b/0x2f0 lib/bug.c:195
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:ath6kl_htc_pipe_rx_complete+0xc58/0xef0  
+drivers/net/wireless/ath/ath6kl/htc_pipe.c:963
+Code: 45 31 ed e8 da 0f a6 02 e9 01 fb ff ff 4c 8b 74 24 70 4c 8b 6c 24 60  
+e8 f6 84 74 fe 8b 5c 24 6c e9 3b f9 ff ff e8 e8 84 74 fe <0f> 0b 48 c7 c7  
+40 53 03 86 41 bc ea ff ff ff e8 7f 83 fe ff e9 cb
+RSP: 0018:ffff8881da267c00 EFLAGS: 00010293
+RAX: ffff8881da24b000 RBX: ffff8881cf9d0ba0 RCX: 1ffffffff0c06a9e
+RDX: 0000000000000000 RSI: ffffffff82c9a178 RDI: ffff8881cf9d0c10
+RBP: dffffc0000000000 R08: ffff8881da24b000 R09: fffffbfff11ab3b5
+R10: fffffbfff11ab3b4 R11: ffffffff88d59da7 R12: ffff8881cfc18000
+R13: ffff8881d20ca280 R14: 0000000000000000 R15: 0000000000000000
+  ath6kl_usb_io_comp_work+0x11e/0x160  
+drivers/net/wireless/ath/ath6kl/usb.c:598
   process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
   kthread+0x318/0x420 kernel/kthread.c:255
   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 83:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:510 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:483
-  kmalloc include/linux/slab.h:561 [inline]
-  usb_get_configuration+0x311/0x3100 drivers/usb/core/config.c:862
-  usb_enumerate_device drivers/usb/core/hub.c:2370 [inline]
-  usb_new_device+0xd3/0x160 drivers/usb/core/hub.c:2506
-  hub_port_connect drivers/usb/core/hub.c:5184 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
-  port_event drivers/usb/core/hub.c:5470 [inline]
-  hub_event+0x1df8/0x3800 drivers/usb/core/hub.c:5552
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Freed by task 211:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  kasan_set_free_info mm/kasan/common.c:332 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:471
-  slab_free_hook mm/slub.c:1424 [inline]
-  slab_free_freelist_hook mm/slub.c:1475 [inline]
-  slab_free mm/slub.c:3025 [inline]
-  kfree+0xe4/0x320 mm/slub.c:3977
-  do_new_mount fs/namespace.c:2827 [inline]
-  do_mount+0x68a/0x1bf0 fs/namespace.c:3143
-  ksys_mount+0xd7/0x150 fs/namespace.c:3352
-  __do_sys_mount fs/namespace.c:3366 [inline]
-  __se_sys_mount fs/namespace.c:3363 [inline]
-  __x64_sys_mount+0xba/0x150 fs/namespace.c:3363
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881d4aaa600
-  which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 53 bytes to the right of
-  256-byte region [ffff8881d4aaa600, ffff8881d4aaa700)
-The buggy address belongs to the page:
-page:ffffea000752aa80 refcount:1 mapcount:0 mapping:ffff8881da002780  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 ffffea000752c900 0000000a0000000a ffff8881da002780
-raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881d4aaa600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8881d4aaa680: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
-> ffff8881d4aaa700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                      ^
-  ffff8881d4aaa780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8881d4aaa800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
