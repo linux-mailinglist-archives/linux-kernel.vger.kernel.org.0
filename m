@@ -2,46 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE2FF3043
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C6ADF3033
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389591AbfKGNns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:43:48 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:42968 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728687AbfKGNmG (ORCPT
+        id S2389026AbfKGNnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:43:23 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:48370 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389028AbfKGNmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:06 -0500
-Received: by mail-il1-f200.google.com with SMTP id n16so2655794ilm.9
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:06 -0800 (PST)
+        Thu, 7 Nov 2019 08:42:07 -0500
+Received: by mail-io1-f70.google.com with SMTP id q84so1846653iod.15
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=3/xSqB0zH6bltKSKwelvmk7da+xMY4V8SAPC5pNZohE=;
-        b=cHgnJxRukeebPIdj5klMEpB2JYVGm1jBnYVqtyN7G16neWV6sB0a2Q1jT1F3ZtGCXr
-         9QgZfcT1QNUtb0c4hRzkfZW/uSGxQl6mUT8EZ/G6E/ouRV0BXtpwgbZtENoHmR4r6yy4
-         AM8RRwbBo/KsPlH2hw+616ZojirsPhSf7IfFWyh64L4fBQ5QjM8TjQUpaE5EuxQcCwKN
-         BkaStySgBX08qt39GhCy0D/cxE3FlbAif6RbpWoAew6WG9yd7JrhVlS3+xKc4QFUE2pu
-         MhEnwevnV4+pHE+RAHYPF0bhrWtxDN28UXqYTUKYvkSv53zkgS5AHPX3A+DcRYGj6bNl
-         nQbA==
-X-Gm-Message-State: APjAAAUjAlWLuWnAf6b7U2OTr7ZdnZrML5eOxNPLc6Bi1jEkMTnohOAB
-        YWJsLkgvDiK/lb+0UFZgUrpmx9XYejSbzXXsuxrUzqa1cR+M
-X-Google-Smtp-Source: APXvYqzonUEMbV+hU0AEcPcfvumPPjz/o2sJc+Gcuj9N/CKQCOvzx0Ocr0vqAToOGHZRJPi5y9KSv7V9Lxhz3CjGGUmi6G93H8En
+        bh=WTUaaUrmKVHorKvakIXCTTRuudk2YAQScGxgofVTkUI=;
+        b=G6IPdsdpRVz2K2+cLV1gdo4Ga5H0HvY4fm1jADRnKFC2evfPKsT30kZUdd/t19Tz13
+         tY7ZfsPfEvaWtkoxEJBF2Lzw46ipXr6Zh5gjQybC7yDbZW4Y6vJgXBfEAdMjY9Mkkle1
+         UtYHJmW1RsdqOCmy3q8YB3xqTW2O2ILaygB0RG7XzolHY8NWIlav+1xwsNobu38OV3rf
+         UTo1J7cTZTjR6DlvEfV9GxVkvGbTY8wu6UwTH+/z72uxRbtHdRhZ6d22G6peVdMwsMTs
+         tYi9l3CtvNWg0PJ0JW4wv6w6Sr3l+orIbjNSw0H+foXczfoB58k09cVw5ObbtsVb9wCG
+         pSzw==
+X-Gm-Message-State: APjAAAU6Jr5sl3mVg3f09wUUzey5BwH88aZMGrTbFmKOwYglQ+XqcwNW
+        0f12BHV4/ZWj8sL8Fiocxbo5CMOq/CdDQVWmx09pJXamEMcG
+X-Google-Smtp-Source: APXvYqzOTbKLWUtJfV+eTnZAGIHCOihW1P53mf2MSnAtW+U2zup71yFaexRFHdR5rbJrPPIrMXY88woVwchxPC8nR165HI7yQ6Is
 MIME-Version: 1.0
-X-Received: by 2002:a6b:204:: with SMTP id 4mr3534207ioc.303.1573134126045;
+X-Received: by 2002:a5d:8c94:: with SMTP id g20mr3746490ion.13.1573134126988;
  Thu, 07 Nov 2019 05:42:06 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:06 -0800
-In-Reply-To: <00000000000075c8d70574f40fbc@google.com>
+In-Reply-To: <000000000000aa8703057a7ea0bb@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c460630596c1d40d@google.com>
-Subject: Re: KASAN: use-after-free Read in vhci_hub_control
-From:   syzbot <syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, shuah@kernel.org,
-        stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
-        syzkaller-bugs@googlegroups.com, valentina.manea.m@gmail.com
+Message-ID: <000000000000d2c94e0596c1d47b@google.com>
+Subject: Re: WARNING in dma_buf_vunmap
+From:   syzbot <syzbot+a9317fe7ad261fc76b88@syzkaller.appspotmail.com>
+To:     andy@greyhouse.net, davem@davemloft.net,
+        dri-devel@lists.freedesktop.org, gregkh@linuxfoundation.org,
+        hverkuil-cisco@xs4all.nl, j.vosburgh@gmail.com,
+        kyungmin.park@samsung.com, linaro-mm-sig-owner@lists.linaro.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, m.szyprowski@samsung.com,
+        maheshb@google.com, mchehab+samsung@kernel.org, mchehab@kernel.org,
+        netdev@vger.kernel.org, pawel@osciak.com, sumit.semwal@linaro.org,
+        syzkaller-bugs@googlegroups.com, tfiga@chromium.org,
+        vfalico@gmail.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,23 +56,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit 81f7567c51ad97668d1c3a48e8ecc482e64d4161
-Author: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Date:   Fri Oct 5 22:17:44 2018 +0000
+commit 62dcb4f41836bd3c44b5b651bb6df07ea4cb1551
+Author: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Date:   Thu Nov 8 12:23:37 2018 +0000
 
-     usb: usbip: Fix BUG: KASAN: slab-out-of-bounds in vhci_hub_control()
+     media: vb2: check memory model for VIDIOC_CREATE_BUFS
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14046c2c600000
-start commit:   420f51f4 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=116af11c600000
+start commit:   d41217aa Merge tag 'pci-v4.20-fixes-1' of git://git.kernel..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-dashboard link: https://syzkaller.appspot.com/bug?extid=600b03e0cf1b73bb23c4
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1116710a400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119be4ea400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4a0a89f12ca9b0f5
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9317fe7ad261fc76b88
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f7b6f5400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105a2783400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: usb: usbip: Fix BUG: KASAN: slab-out-of-bounds in  
-vhci_hub_control()
+#syz fix: media: vb2: check memory model for VIDIOC_CREATE_BUFS
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
