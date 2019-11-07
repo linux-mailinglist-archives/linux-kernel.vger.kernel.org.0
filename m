@@ -2,273 +2,843 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B0A7F2A2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 782ECF2A2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:08:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387673AbfKGJIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:08:40 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46162 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733139AbfKGJIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:08:39 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e9so1342671ljp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 01:08:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=78AExQw87F6j+5cmQyF8HwoVKs76plqSueLpBLiBxSY=;
-        b=sBTQVe6lfCi/O3jhcnXoPcLWPL8UvZ0+7MOWos7PeXvZebBoczPYeGUAcybOjdcllO
-         byXy65jaMrpox81H52am+4n7uIMv1MtWZDMjK9GOZZQSP4qfrpfX/x7R8hdH5nHgl+bN
-         gnGIJKgR0R7e7QqszE3Szy9+tNULNfrdH3qSjvwdCi8jpyJZvlEzZ4IzyqMjbgYUGxIu
-         CD85w3ZDY/czsSKKibOo9i1FxqQfi7Elnwo+8A+SmK5FOQwu/W3PV0H8aEhH+3O3kkrn
-         ShcXXxcoyRCj7fCgnb6vVgyWNDHS3dCADYnF9zxd3TFOJUdYo5mAZDRpbhSqGbu3LAss
-         rPfw==
+        id S2387798AbfKGJIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:08:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727120AbfKGJIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:08:52 -0500
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1DDA05AFE0
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2019 09:08:52 +0000 (UTC)
+Received: by mail-qt1-f198.google.com with SMTP id l8so1793941qtq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 01:08:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=78AExQw87F6j+5cmQyF8HwoVKs76plqSueLpBLiBxSY=;
-        b=qn8CkKHYro2wLGVrEciNzPRozAzX7briuJWUsjPaXk4lotSos6C++amPwqdtDolcLf
-         eZzW+8mWAhvz6C562pKN0PCQLcsRGz5OBooppcZaXCyZo/PdJckcod7pGBrRYj4Uyu5G
-         KcYCcQU436f40Xe8JUA7pgoueAlMM6p2m1jHDQaX8SagttVASmGzy8Pt8/7Bm6HstbWa
-         /RZc4gA4hp+1Kfr77R+7rwRrOyqr4FVe+gD6Kyc1OUaruMvJNvjzD/AfBA3PkWr6aK6W
-         W5+9dQ3bEz/WBLkcI57D7XCn0neEF3PUb4SGpGEYgI4NTaejw3ToPiEE29+dndqsxkk0
-         GrZw==
-X-Gm-Message-State: APjAAAUb/Ot83/VF892AYlp53Mm3y85owDDG+9z3sE4Q/MJ19Rrr7hN1
-        VF8DMy4OijSD7UImB5mgGJ9VCALSAzsAH1AJr8E=
-X-Google-Smtp-Source: APXvYqxiWO/D0sVPvr380QW2An7LrGN7ck0ITiLwYplgQYiDcIGHEWTDyODHvsqOhrnni4Grr81bK4LPZ2Fi/PKrV78=
-X-Received: by 2002:a2e:9119:: with SMTP id m25mr1595563ljg.24.1573117717108;
- Thu, 07 Nov 2019 01:08:37 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y3kSmNPFNr1syqaEwVgmtYdBZ7wSJEKV0NnWLNNW74g=;
+        b=KJ+E/5+VA+Uvea9N9X54KaxwlZwxF5os+5Rf1PEpJfeNSUsQv7yWGJ/y4WvBFyKtyl
+         bg2AaiZKn1hD5lWkQq2uPqMsHnu0bZSrHZxBz2SxPsC6wIms0VxcgxO/n2aMTD+MEvzR
+         UUDW+2HdrlKbc6/7+MaLXUWuvrC+Zpvq7M9ATT+YHtQ/3nxTVTEGs6ZdpQMQUdCugg1C
+         gUiR07ntdQYEWU8w7IrnbklJa00BU9JMhmWo0KDL0QJDp9UB3S4I95ASjTXp+ajQ2wN5
+         fFkyNWRxcE85V5cLX3CZX4uJY3ylOYexs8pgThI/CEME41SN5bdL2z4/+1Ga0EUFwMx/
+         JEJg==
+X-Gm-Message-State: APjAAAV0/c2xyFbXCfwoao1glG//pV6MGWNWGOjk2x8dX49XEDmLdc7u
+        cdvT0pItgHOON2NwXeHly0qz2ZaOT9dlPXkqrtBt5s1GJ2g+Rk9UwVwvWgYpnnqalvUh7PCD/1F
+        KW2B9XyVkXhvhB4c3er0cCQFs
+X-Received: by 2002:aed:3762:: with SMTP id i89mr2711591qtb.69.1573117731120;
+        Thu, 07 Nov 2019 01:08:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqweC4n74z/ghU3aODI0O03qx4TNMZLpGEG3t2lFq0mpTiNcnn1UrlGFUzbl5VMo/050oDK8bw==
+X-Received: by 2002:aed:3762:: with SMTP id i89mr2711543qtb.69.1573117730668;
+        Thu, 07 Nov 2019 01:08:50 -0800 (PST)
+Received: from redhat.com (bzq-79-178-12-128.red.bezeqint.net. [79.178.12.128])
+        by smtp.gmail.com with ESMTPSA id c195sm928750qkg.6.2019.11.07.01.08.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 01:08:49 -0800 (PST)
+Date:   Thu, 7 Nov 2019 04:08:37 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+Subject: Re: [PATCH V10 6/6] docs: sample driver to demonstrate how to
+ implement virtio-mdev framework
+Message-ID: <20191107040700-mutt-send-email-mst@kernel.org>
+References: <20191106133531.693-1-jasowang@redhat.com>
+ <20191106133531.693-7-jasowang@redhat.com>
 MIME-Version: 1.0
-References: <20191106094400.445834-1-paul.kocialkowski@bootlin.com>
- <20191106094400.445834-3-paul.kocialkowski@bootlin.com> <CAMeQTsa=SWXHt8ZvToa9x5qc6W29B6B4Ssvixs3nd-w=+dYGzA@mail.gmail.com>
- <20191107083140.GJ23790@phenom.ffwll.local>
-In-Reply-To: <20191107083140.GJ23790@phenom.ffwll.local>
-From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date:   Thu, 7 Nov 2019 10:08:26 +0100
-Message-ID: <CAMeQTsZ59B-h8TEyKnc03rz4-aXrAcx3wyWZqDG218Z1RxC5-w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/gma500: Add page flip support on psb/cdv
-To:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        James Hilliard <james.hilliard1@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106133531.693-7-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 9:31 AM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Wed, Nov 06, 2019 at 04:24:59PM +0100, Patrik Jakobsson wrote:
-> > On Wed, Nov 6, 2019 at 10:44 AM Paul Kocialkowski
-> > <paul.kocialkowski@bootlin.com> wrote:
-> > >
-> > > Legacy (non-atomic) page flip support is added to the driver by using the
-> > > mode_set_base CRTC function, that allows configuring a new framebuffer for
-> > > display. Since the function requires the primary plane's fb to be set
-> > > already, this is done prior to calling the function in the page flip helper
-> > > and reverted if the flip fails.
-> > >
-> > > The vblank interrupt handler is also refactored to support passing an event.
-> > > The PIPE_TE_STATUS bit is also considered to indicate vblank on medfield
-> > > only, as explained in psb_enable_vblank.
-> > >
-> > > It was tested by running weston on both poulsbo and cedartrail.
-> > >
-> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > ---
-> > >  drivers/gpu/drm/gma500/cdv_intel_display.c |  1 +
-> > >  drivers/gpu/drm/gma500/gma_display.c       | 46 ++++++++++++++++++++++
-> > >  drivers/gpu/drm/gma500/gma_display.h       |  6 +++
-> > >  drivers/gpu/drm/gma500/psb_intel_display.c |  1 +
-> > >  drivers/gpu/drm/gma500/psb_intel_drv.h     |  3 ++
-> > >  drivers/gpu/drm/gma500/psb_irq.c           | 18 +++++++--
-> > >  6 files changed, 72 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/gma500/cdv_intel_display.c b/drivers/gpu/drm/gma500/cdv_intel_display.c
-> > > index 8b784947ed3b..7109d3d19be0 100644
-> > > --- a/drivers/gpu/drm/gma500/cdv_intel_display.c
-> > > +++ b/drivers/gpu/drm/gma500/cdv_intel_display.c
-> > > @@ -979,6 +979,7 @@ const struct drm_crtc_funcs cdv_intel_crtc_funcs = {
-> > >         .gamma_set = gma_crtc_gamma_set,
-> > >         .set_config = gma_crtc_set_config,
-> > >         .destroy = gma_crtc_destroy,
-> > > +       .page_flip = gma_crtc_page_flip,
-> > >  };
-> > >
-> > >  const struct gma_clock_funcs cdv_clock_funcs = {
-> > > diff --git a/drivers/gpu/drm/gma500/gma_display.c b/drivers/gpu/drm/gma500/gma_display.c
-> > > index bc07ae2a9a1d..17f136985d21 100644
-> > > --- a/drivers/gpu/drm/gma500/gma_display.c
-> > > +++ b/drivers/gpu/drm/gma500/gma_display.c
-> > > @@ -503,6 +503,52 @@ void gma_crtc_destroy(struct drm_crtc *crtc)
-> > >         kfree(gma_crtc);
-> > >  }
-> > >
-> > > +int gma_crtc_page_flip(struct drm_crtc *crtc,
-> > > +                      struct drm_framebuffer *fb,
-> > > +                      struct drm_pending_vblank_event *event,
-> > > +                      uint32_t page_flip_flags,
-> > > +                      struct drm_modeset_acquire_ctx *ctx)
-> > > +{
-> > > +       struct gma_crtc *gma_crtc = to_gma_crtc(crtc);
-> > > +       struct drm_framebuffer *current_fb = crtc->primary->fb;
-> > > +       struct drm_framebuffer *old_fb = crtc->primary->old_fb;
-> > > +       const struct drm_crtc_helper_funcs *crtc_funcs = crtc->helper_private;
-> > > +       struct drm_device *dev = crtc->dev;
-> > > +       unsigned long flags;
-> > > +       int ret;
-> > > +
-> > > +       if (!crtc_funcs->mode_set_base)
-> > > +               return -EINVAL;
-> > > +
-> > > +       /* Using mode_set_base requires the new fb to be set already. */
-> > > +       crtc->primary->fb = fb;
-> > > +
-> > > +       if (event) {
-> > > +               spin_lock_irqsave(&dev->event_lock, flags);
-> > > +
-> > > +               WARN_ON(drm_crtc_vblank_get(crtc) != 0);
-> > > +
-> > > +               gma_crtc->page_flip_event = event;
-> > > +
-> > > +               /* Call this locked if we want an event at vblank interrupt. */
-> > > +               ret = crtc_funcs->mode_set_base(crtc, crtc->x, crtc->y, old_fb);
-> > > +               if (ret) {
-> > > +                       gma_crtc->page_flip_event = NULL;
-> > > +                       drm_crtc_vblank_put(crtc);
-> > > +               }
-> > > +
-> > > +               spin_unlock_irqrestore(&dev->event_lock, flags);
-> > > +       } else {
-> > > +               ret = crtc_funcs->mode_set_base(crtc, crtc->x, crtc->y, old_fb);
-> > > +       }
-> > > +
-> > > +       /* Restore previous fb in case of failure. */
-> > > +       if (ret)
-> > > +               crtc->primary->fb = current_fb;
-> > > +
-> > > +       return ret;
-> > > +}
-> > > +
-> > >  int gma_crtc_set_config(struct drm_mode_set *set,
-> > >                         struct drm_modeset_acquire_ctx *ctx)
-> > >  {
-> > > diff --git a/drivers/gpu/drm/gma500/gma_display.h b/drivers/gpu/drm/gma500/gma_display.h
-> > > index fdbd7ecaa59c..7bd6c1ee8b21 100644
-> > > --- a/drivers/gpu/drm/gma500/gma_display.h
-> > > +++ b/drivers/gpu/drm/gma500/gma_display.h
-> > > @@ -11,6 +11,7 @@
-> > >  #define _GMA_DISPLAY_H_
-> > >
-> > >  #include <linux/pm_runtime.h>
-> > > +#include <drm/drm_vblank.h>
-> > >
-> > >  struct drm_encoder;
-> > >  struct drm_mode_set;
-> > > @@ -71,6 +72,11 @@ extern void gma_crtc_prepare(struct drm_crtc *crtc);
-> > >  extern void gma_crtc_commit(struct drm_crtc *crtc);
-> > >  extern void gma_crtc_disable(struct drm_crtc *crtc);
-> > >  extern void gma_crtc_destroy(struct drm_crtc *crtc);
-> > > +extern int gma_crtc_page_flip(struct drm_crtc *crtc,
-> > > +                             struct drm_framebuffer *fb,
-> > > +                             struct drm_pending_vblank_event *event,
-> > > +                             uint32_t page_flip_flags,
-> > > +                             struct drm_modeset_acquire_ctx *ctx);
-> > >  extern int gma_crtc_set_config(struct drm_mode_set *set,
-> > >                                struct drm_modeset_acquire_ctx *ctx);
-> > >
-> > > diff --git a/drivers/gpu/drm/gma500/psb_intel_display.c b/drivers/gpu/drm/gma500/psb_intel_display.c
-> > > index 4256410535f0..fed3b563e62e 100644
-> > > --- a/drivers/gpu/drm/gma500/psb_intel_display.c
-> > > +++ b/drivers/gpu/drm/gma500/psb_intel_display.c
-> > > @@ -432,6 +432,7 @@ const struct drm_crtc_funcs psb_intel_crtc_funcs = {
-> > >         .gamma_set = gma_crtc_gamma_set,
-> > >         .set_config = gma_crtc_set_config,
-> > >         .destroy = gma_crtc_destroy,
-> > > +       .page_flip = gma_crtc_page_flip,
-> > >  };
-> > >
-> > >  const struct gma_clock_funcs psb_clock_funcs = {
-> > > diff --git a/drivers/gpu/drm/gma500/psb_intel_drv.h b/drivers/gpu/drm/gma500/psb_intel_drv.h
-> > > index cdf10333d1c2..16c6136f778b 100644
-> > > --- a/drivers/gpu/drm/gma500/psb_intel_drv.h
-> > > +++ b/drivers/gpu/drm/gma500/psb_intel_drv.h
-> > > @@ -12,6 +12,7 @@
-> > >  #include <drm/drm_crtc_helper.h>
-> > >  #include <drm/drm_encoder.h>
-> > >  #include <drm/drm_probe_helper.h>
-> > > +#include <drm/drm_vblank.h>
-> > >  #include <linux/gpio.h>
-> > >  #include "gma_display.h"
-> > >
-> > > @@ -182,6 +183,8 @@ struct gma_crtc {
-> > >         struct psb_intel_crtc_state *crtc_state;
-> > >
-> > >         const struct gma_clock_funcs *clock_funcs;
-> > > +
-> > > +       struct drm_pending_vblank_event *page_flip_event;
-> > >  };
-> > >
-> > >  #define to_gma_crtc(x) \
-> > > diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
-> > > index e6265fb85626..f787a51f6335 100644
-> > > --- a/drivers/gpu/drm/gma500/psb_irq.c
-> > > +++ b/drivers/gpu/drm/gma500/psb_irq.c
-> > > @@ -165,11 +165,23 @@ static void mid_pipe_event_handler(struct drm_device *dev, int pipe)
-> > >                 "%s, can't clear status bits for pipe %d, its value = 0x%x.\n",
-> > >                 __func__, pipe, PSB_RVDC32(pipe_stat_reg));
-> > >
-> > > -       if (pipe_stat_val & PIPE_VBLANK_STATUS)
-> > > -               drm_handle_vblank(dev, pipe);
-> > > +       if (pipe_stat_val & PIPE_VBLANK_STATUS ||
-> > > +           (IS_MFLD(dev) && pipe_stat_val & PIPE_TE_STATUS)) {
-> > > +               struct drm_crtc *crtc = drm_crtc_from_index(dev, pipe);
-> > > +               struct gma_crtc *gma_crtc = to_gma_crtc(crtc);
-> > > +               unsigned long flags;
-> > >
-> > > -       if (pipe_stat_val & PIPE_TE_STATUS)
-> > >                 drm_handle_vblank(dev, pipe);
-> > > +
-> > > +               spin_lock_irqsave(&dev->event_lock, flags);
-> > > +               if (gma_crtc->page_flip_event) {
-> > > +                       drm_crtc_send_vblank_event(crtc,
-> > > +                                                  gma_crtc->page_flip_event);
-> > > +                       gma_crtc->page_flip_event = NULL;
-> > > +                       drm_crtc_vblank_put(crtc);
-> > > +               }
-> > > +               spin_unlock_irqrestore(&dev->event_lock, flags);
-> > > +       }
-> > >  }
-> > >
-> > >  /*
-> > > --
-> > > 2.23.0
-> > >
-> >
-> > Looks good!
-> >
-> > Reviewed-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
->
-> I'm assuming you'll also push these?
->
-> Always confusing when maintainer/committers r-b but don't say anything
-> about pushing the patch. Good chances it'll fall through cracks if that
-> happens.
-> -Daniel
+On Wed, Nov 06, 2019 at 09:35:31PM +0800, Jason Wang wrote:
+> This sample driver creates mdev device that simulate virtio net device
+> over virtio mdev transport. The device is implemented through vringh
+> and workqueue. A device specific dma ops is to make sure HVA is used
+> directly as the IOVA. This should be sufficient for kernel virtio
+> driver to work.
+> 
+> Only 'virtio' type is supported right now. I plan to add 'vhost' type
+> on top which requires some virtual IOMMU implemented in this sample
+> driver.
+> 
+> Acked-by: Cornelia Huck <cohuck@redhat.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-Ah sorry, I also find it confusing. I'll push these.
 
--Patrik
+I'd prefer it that we call this something else, e.g.
+mvnet-loopback. Just so people don't expect a fully
+functional device somehow. Can be renamed when applying?
 
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+
+> ---
+>  MAINTAINERS                |   1 +
+>  samples/Kconfig            |  10 +
+>  samples/vfio-mdev/Makefile |   1 +
+>  samples/vfio-mdev/mvnet.c  | 686 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 698 insertions(+)
+>  create mode 100644 samples/vfio-mdev/mvnet.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4997957443df..6e9ad105a28f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17249,6 +17249,7 @@ F:	include/uapi/linux/virtio_*.h
+>  F:	drivers/crypto/virtio/
+>  F:	mm/balloon_compaction.c
+>  F:	include/linux/mdev_virtio_ops.h
+> +F:	samples/vfio-mdev/mvnet.c
+>  
+>  VIRTIO BLOCK AND SCSI DRIVERS
+>  M:	"Michael S. Tsirkin" <mst@redhat.com>
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index c8dacb4dda80..13a2443e18e0 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -131,6 +131,16 @@ config SAMPLE_VFIO_MDEV_MDPY
+>  	  mediated device.  It is a simple framebuffer and supports
+>  	  the region display interface (VFIO_GFX_PLANE_TYPE_REGION).
+>  
+> +config SAMPLE_VIRTIO_MDEV_NET
+> +	tristate "Build VIRTIO net example mediated device sample code -- loadable modules only"
+> +	depends on VIRTIO_MDEV && VHOST_RING && m
+> +	help
+> +	  Build a networking sample device for use as a virtio
+> +	  mediated device. The device coopreates with virtio-mdev bus
+> +	  driver to present an virtio ethernet driver for
+> +	  kernel. It simply loopbacks all packets from its TX
+> +	  virtqueue to its RX virtqueue.
+> +
+>  config SAMPLE_VFIO_MDEV_MDPY_FB
+>  	tristate "Build VFIO mdpy example guest fbdev driver -- loadable module only"
+>  	depends on FB && m
+> diff --git a/samples/vfio-mdev/Makefile b/samples/vfio-mdev/Makefile
+> index 10d179c4fdeb..f34af90ed0a0 100644
+> --- a/samples/vfio-mdev/Makefile
+> +++ b/samples/vfio-mdev/Makefile
+> @@ -3,3 +3,4 @@ obj-$(CONFIG_SAMPLE_VFIO_MDEV_MTTY) += mtty.o
+>  obj-$(CONFIG_SAMPLE_VFIO_MDEV_MDPY) += mdpy.o
+>  obj-$(CONFIG_SAMPLE_VFIO_MDEV_MDPY_FB) += mdpy-fb.o
+>  obj-$(CONFIG_SAMPLE_VFIO_MDEV_MBOCHS) += mbochs.o
+> +obj-$(CONFIG_SAMPLE_VIRTIO_MDEV_NET) += mvnet.o
+> diff --git a/samples/vfio-mdev/mvnet.c b/samples/vfio-mdev/mvnet.c
+> new file mode 100644
+> index 000000000000..a89aecfab68a
+> --- /dev/null
+> +++ b/samples/vfio-mdev/mvnet.c
+> @@ -0,0 +1,686 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Mediated virtual virtio-net device driver.
+> + *
+> + * Copyright (c) 2019, Red Hat Inc. All rights reserved.
+> + *     Author: Jason Wang <jasowang@redhat.com>
+> + *
+> + * Sample driver that creates mdev device that simulates ethernet loopback
+> + * device.
+> + *
+> + * Usage:
+> + *
+> + * # modprobe virtio_mdev
+> + * # modprobe mvnet
+> + * # cd /sys/devices/virtual/mvnet/mvnet/mdev_supported_types/mvnet-virtio
+> + * # echo "83b8f4f2-509f-382f-3c1e-e6bfe0fa1001" > ./create
+> + * # cd devices/83b8f4f2-509f-382f-3c1e-e6bfe0fa1001
+> + * # ls -d virtio0
+> + * virtio0
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/fs.h>
+> +#include <linux/poll.h>
+> +#include <linux/slab.h>
+> +#include <linux/sched.h>
+> +#include <linux/wait.h>
+> +#include <linux/uuid.h>
+> +#include <linux/iommu.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/file.h>
+> +#include <linux/etherdevice.h>
+> +#include <linux/mdev.h>
+> +#include <linux/vringh.h>
+> +#include <linux/mdev_virtio_ops.h>
+> +#include <uapi/linux/virtio_config.h>
+> +#include <uapi/linux/virtio_net.h>
+> +
+> +#define VERSION_STRING  "0.1"
+> +#define DRIVER_AUTHOR   "Red Hat Corporation"
+> +
+> +#define MVNET_CLASS_NAME "mvnet"
+> +#define MVNET_NAME       "mvnet"
+> +
+> +/*
+> + * Global Structures
+> + */
+> +
+> +static struct mvnet_dev {
+> +	struct class	*vd_class;
+> +	struct idr	vd_idr;
+> +	struct device	dev;
+> +} mvnet_dev;
+> +
+> +struct mvnet_virtqueue {
+> +	struct vringh vring;
+> +	struct vringh_kiov iov;
+> +	unsigned short head;
+> +	bool ready;
+> +	u64 desc_addr;
+> +	u64 device_addr;
+> +	u64 driver_addr;
+> +	u32 num;
+> +	void *private;
+> +	irqreturn_t (*cb)(void *data);
+> +};
+> +
+> +#define MVNET_QUEUE_ALIGN PAGE_SIZE
+> +#define MVNET_QUEUE_MAX 256
+> +#define MVNET_DEVICE_ID 0x1
+> +#define MVNET_VENDOR_ID 0
+> +
+> +u64 mvnet_features = (1ULL << VIRTIO_F_ANY_LAYOUT) |
+> +		     (1ULL << VIRTIO_F_VERSION_1) |
+> +		     (1ULL << VIRTIO_F_IOMMU_PLATFORM);
+> +
+> +/* State of each mdev device */
+> +struct mvnet_state {
+> +	struct mvnet_virtqueue vqs[2];
+> +	struct work_struct work;
+> +	/* spinlock to synchronize virtqueue state */
+> +	spinlock_t lock;
+> +	struct mdev_device *mdev;
+> +	struct virtio_net_config config;
+> +	void *buffer;
+> +	u32 status;
+> +	u32 generation;
+> +	u64 features;
+> +	struct list_head next;
+> +};
+> +
+> +static struct mutex mdev_list_lock;
+> +static struct list_head mdev_devices_list;
+> +
+> +static void mvnet_queue_ready(struct mvnet_state *mvnet, unsigned int idx)
+> +{
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +	int ret;
+> +
+> +	ret = vringh_init_kern(&vq->vring, mvnet_features, MVNET_QUEUE_MAX,
+> +			       false, (struct vring_desc *)vq->desc_addr,
+> +			       (struct vring_avail *)vq->driver_addr,
+> +			       (struct vring_used *)vq->device_addr);
+> +}
+> +
+> +static void mvnet_vq_reset(struct mvnet_virtqueue *vq)
+> +{
+> +	vq->ready = 0;
+> +	vq->desc_addr = 0;
+> +	vq->driver_addr = 0;
+> +	vq->device_addr = 0;
+> +	vq->cb = NULL;
+> +	vq->private = NULL;
+> +	vringh_init_kern(&vq->vring, mvnet_features, MVNET_QUEUE_MAX,
+> +			 false, 0, 0, 0);
+> +}
+> +
+> +static void mvnet_reset(struct mvnet_state *mvnet)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < 2; i++)
+> +		mvnet_vq_reset(&mvnet->vqs[i]);
+> +
+> +	mvnet->features = 0;
+> +	mvnet->status = 0;
+> +	++mvnet->generation;
+> +}
+> +
+> +static void mvnet_work(struct work_struct *work)
+> +{
+> +	struct mvnet_state *mvnet = container_of(work, struct
+> +						 mvnet_state, work);
+> +	struct mvnet_virtqueue *txq = &mvnet->vqs[1];
+> +	struct mvnet_virtqueue *rxq = &mvnet->vqs[0];
+> +	size_t read, write, total_write;
+> +	int err;
+> +	int pkts = 0;
+> +
+> +	spin_lock(&mvnet->lock);
+> +
+> +	if (!txq->ready || !rxq->ready)
+> +		goto out;
+> +
+> +	while (true) {
+> +		total_write = 0;
+> +		err = vringh_getdesc_kern(&txq->vring, &txq->iov, NULL,
+> +					  &txq->head, GFP_ATOMIC);
+> +		if (err <= 0)
+> +			break;
+> +
+> +		err = vringh_getdesc_kern(&rxq->vring, NULL, &rxq->iov,
+> +					  &rxq->head, GFP_ATOMIC);
+> +		if (err <= 0) {
+> +			vringh_complete_kern(&txq->vring, txq->head, 0);
+> +			break;
+> +		}
+> +
+> +		while (true) {
+> +			read = vringh_iov_pull_kern(&txq->iov, mvnet->buffer,
+> +						    PAGE_SIZE);
+> +			if (read <= 0)
+> +				break;
+> +
+> +			write = vringh_iov_push_kern(&rxq->iov, mvnet->buffer,
+> +						     read);
+> +			if (write <= 0)
+> +				break;
+> +
+> +			total_write += write;
+> +		}
+> +
+> +		/* Make sure data is wrote before advancing index */
+> +		smp_wmb();
+> +
+> +		vringh_complete_kern(&txq->vring, txq->head, 0);
+> +		vringh_complete_kern(&rxq->vring, rxq->head, total_write);
+> +
+> +		/* Make sure used is visible before rasing the interrupt. */
+> +		smp_wmb();
+> +
+> +		local_bh_disable();
+> +		if (txq->cb)
+> +			txq->cb(txq->private);
+> +		if (rxq->cb)
+> +			rxq->cb(rxq->private);
+> +		local_bh_enable();
+> +
+> +		if (++pkts > 4) {
+> +			schedule_work(&mvnet->work);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	spin_unlock(&mvnet->lock);
+> +}
+> +
+> +static dma_addr_t mvnet_map_page(struct device *dev, struct page *page,
+> +				 unsigned long offset, size_t size,
+> +				 enum dma_data_direction dir,
+> +				 unsigned long attrs)
+> +{
+> +	/* Vringh can only use HVA */
+> +	return (dma_addr_t)(page_address(page) + offset);
+> +}
+> +
+> +static void mvnet_unmap_page(struct device *dev, dma_addr_t dma_addr,
+> +			     size_t size, enum dma_data_direction dir,
+> +			     unsigned long attrs)
+> +{
+> +}
+> +
+> +static void *mvnet_alloc_coherent(struct device *dev, size_t size,
+> +				  dma_addr_t *dma_addr, gfp_t flag,
+> +				  unsigned long attrs)
+> +{
+> +	void *addr = kmalloc(size, flag);
+> +
+> +	if (!addr)
+> +		*dma_addr = DMA_MAPPING_ERROR;
+> +	else
+> +		*dma_addr = (dma_addr_t)addr;
+> +
+> +	return addr;
+> +}
+> +
+> +static void mvnet_free_coherent(struct device *dev, size_t size,
+> +				void *vaddr, dma_addr_t dma_addr,
+> +				unsigned long attrs)
+> +{
+> +	kfree((void *)dma_addr);
+> +}
+> +
+> +static const struct dma_map_ops mvnet_dma_ops = {
+> +	.map_page = mvnet_map_page,
+> +	.unmap_page = mvnet_unmap_page,
+> +	.alloc = mvnet_alloc_coherent,
+> +	.free = mvnet_free_coherent,
+> +};
+> +
+> +static const struct mdev_virtio_device_ops mdev_virtio_ops;
+> +
+> +static int mvnet_create(struct kobject *kobj, struct mdev_device *mdev)
+> +{
+> +	struct mvnet_state *mvnet;
+> +	struct virtio_net_config *config;
+> +	struct device *dev = mdev_dev(mdev);
+> +
+> +	if (!mdev)
+> +		return -EINVAL;
+> +
+> +	mvnet = kzalloc(sizeof(*mvnet), GFP_KERNEL);
+> +	if (!mvnet)
+> +		return -ENOMEM;
+> +
+> +	mvnet->buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> +	if (!mvnet->buffer) {
+> +		kfree(mvnet);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	config = &mvnet->config;
+> +	config->mtu = 1500;
+> +	config->status = VIRTIO_NET_S_LINK_UP;
+> +	eth_random_addr(config->mac);
+> +
+> +	INIT_WORK(&mvnet->work, mvnet_work);
+> +
+> +	spin_lock_init(&mvnet->lock);
+> +	mvnet->mdev = mdev;
+> +	mdev_set_drvdata(mdev, mvnet);
+> +
+> +	mutex_lock(&mdev_list_lock);
+> +	list_add(&mvnet->next, &mdev_devices_list);
+> +	mutex_unlock(&mdev_list_lock);
+> +
+> +	dev->coherent_dma_mask = DMA_BIT_MASK(64);
+> +	set_dma_ops(dev, &mvnet_dma_ops);
+> +
+> +	mdev_set_virtio_ops(mdev, &mdev_virtio_ops);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mvnet_remove(struct mdev_device *mdev)
+> +{
+> +	struct mvnet_state *mds, *tmp_mds;
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	int ret = -EINVAL;
+> +
+> +	mutex_lock(&mdev_list_lock);
+> +	list_for_each_entry_safe(mds, tmp_mds, &mdev_devices_list, next) {
+> +		if (mvnet == mds) {
+> +			list_del(&mvnet->next);
+> +			mdev_set_drvdata(mdev, NULL);
+> +			kfree(mvnet->buffer);
+> +			kfree(mvnet);
+> +			ret = 0;
+> +			break;
+> +		}
+> +	}
+> +	mutex_unlock(&mdev_list_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t
+> +sample_mvnet_dev_show(struct device *dev, struct device_attribute *attr,
+> +		      char *buf)
+> +{
+> +	if (mdev_from_dev(dev))
+> +		return sprintf(buf, "This is MDEV %s\n", dev_name(dev));
+> +
+> +	return sprintf(buf, "\n");
+> +}
+> +
+> +static DEVICE_ATTR_RO(sample_mvnet_dev);
+> +
+> +static struct attribute *mvnet_dev_attrs[] = {
+> +	&dev_attr_sample_mvnet_dev.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group mvnet_dev_group = {
+> +	.name  = "mvnet_dev",
+> +	.attrs = mvnet_dev_attrs,
+> +};
+> +
+> +static const struct attribute_group *mvnet_dev_groups[] = {
+> +	&mvnet_dev_group,
+> +	NULL,
+> +};
+> +
+> +static ssize_t
+> +sample_mdev_dev_show(struct device *dev, struct device_attribute *attr,
+> +		     char *buf)
+> +{
+> +	if (mdev_from_dev(dev))
+> +		return sprintf(buf, "This is MDEV %s\n", dev_name(dev));
+> +
+> +	return sprintf(buf, "\n");
+> +}
+> +
+> +static DEVICE_ATTR_RO(sample_mdev_dev);
+> +
+> +static struct attribute *mdev_dev_attrs[] = {
+> +	&dev_attr_sample_mdev_dev.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group mdev_dev_group = {
+> +	.name  = "vendor",
+> +	.attrs = mdev_dev_attrs,
+> +};
+> +
+> +static const struct attribute_group *mdev_dev_groups[] = {
+> +	&mdev_dev_group,
+> +	NULL,
+> +};
+> +
+> +#define MVNET_STRING_LEN 16
+> +
+> +static ssize_t
+> +name_show(struct kobject *kobj, struct device *dev, char *buf)
+> +{
+> +	char name[MVNET_STRING_LEN];
+> +	const char *name_str = "virtio-net";
+> +
+> +	snprintf(name, MVNET_STRING_LEN, "%s", dev_driver_string(dev));
+> +	if (!strcmp(kobj->name, name))
+> +		return sprintf(buf, "%s\n", name_str);
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static MDEV_TYPE_ATTR_RO(name);
+> +
+> +static ssize_t
+> +available_instances_show(struct kobject *kobj, struct device *dev, char *buf)
+> +{
+> +	return sprintf(buf, "%d\n", INT_MAX);
+> +}
+> +
+> +static MDEV_TYPE_ATTR_RO(available_instances);
+> +
+> +static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
+> +			       char *buf)
+> +{
+> +	return sprintf(buf, "%s\n", VIRTIO_MDEV_DEVICE_API_STRING);
+> +}
+> +
+> +static MDEV_TYPE_ATTR_RO(device_api);
+> +
+> +static struct attribute *mdev_types_attrs[] = {
+> +	&mdev_type_attr_name.attr,
+> +	&mdev_type_attr_device_api.attr,
+> +	&mdev_type_attr_available_instances.attr,
+> +	NULL,
+> +};
+> +
+> +static struct attribute_group mdev_type_group = {
+> +	.name  = "virtio",
+> +	.attrs = mdev_types_attrs,
+> +};
+> +
+> +/* TBD: "vhost" type */
+> +
+> +static struct attribute_group *mdev_type_groups[] = {
+> +	&mdev_type_group,
+> +	NULL,
+> +};
+> +
+> +static int mvnet_set_vq_address(struct mdev_device *mdev, u16 idx,
+> +				u64 desc_area, u64 driver_area, u64 device_area)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +
+> +	vq->desc_addr = desc_area;
+> +	vq->driver_addr = driver_area;
+> +	vq->device_addr = device_area;
+> +
+> +	return 0;
+> +}
+> +
+> +static void mvnet_set_vq_num(struct mdev_device *mdev, u16 idx, u32 num)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +
+> +	vq->num = num;
+> +}
+> +
+> +static void mvnet_kick_vq(struct mdev_device *mdev, u16 idx)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +
+> +	if (vq->ready)
+> +		schedule_work(&mvnet->work);
+> +}
+> +
+> +static void mvnet_set_vq_cb(struct mdev_device *mdev, u16 idx,
+> +			    struct virtio_mdev_callback *cb)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +
+> +	vq->cb = cb->callback;
+> +	vq->private = cb->private;
+> +}
+> +
+> +static void mvnet_set_vq_ready(struct mdev_device *mdev, u16 idx, bool ready)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +
+> +	spin_lock(&mvnet->lock);
+> +	vq->ready = ready;
+> +	if (vq->ready)
+> +		mvnet_queue_ready(mvnet, idx);
+> +	spin_unlock(&mvnet->lock);
+> +}
+> +
+> +static bool mvnet_get_vq_ready(struct mdev_device *mdev, u16 idx)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +
+> +	return vq->ready;
+> +}
+> +
+> +static int mvnet_set_vq_state(struct mdev_device *mdev, u16 idx, u64 state)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +	struct vringh *vrh = &vq->vring;
+> +
+> +	spin_lock(&mvnet->lock);
+> +	vrh->last_avail_idx = state;
+> +	spin_unlock(&mvnet->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static u64 mvnet_get_vq_state(struct mdev_device *mdev, u16 idx)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +	struct mvnet_virtqueue *vq = &mvnet->vqs[idx];
+> +	struct vringh *vrh = &vq->vring;
+> +
+> +	return vrh->last_avail_idx;
+> +}
+> +
+> +static u16 mvnet_get_vq_align(struct mdev_device *mdev)
+> +{
+> +	return MVNET_QUEUE_ALIGN;
+> +}
+> +
+> +static u64 mvnet_get_features(struct mdev_device *mdev)
+> +{
+> +	return mvnet_features;
+> +}
+> +
+> +static int mvnet_set_features(struct mdev_device *mdev, u64 features)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +
+> +	/* DMA mapping must be done by driver */
+> +	if (!(features & (1ULL << VIRTIO_F_IOMMU_PLATFORM)))
+> +		return -EINVAL;
+> +
+> +	mvnet->features = features & mvnet_features;
+> +
+> +	return 0;
+> +}
+> +
+> +static void mvnet_set_config_cb(struct mdev_device *mdev,
+> +				struct virtio_mdev_callback *cb)
+> +{
+> +	/* We don't support config interrupt */
+> +}
+> +
+> +static u16 mvnet_get_vq_num_max(struct mdev_device *mdev)
+> +{
+> +	return MVNET_QUEUE_MAX;
+> +}
+> +
+> +static u32 mvnet_get_device_id(struct mdev_device *mdev)
+> +{
+> +	return MVNET_DEVICE_ID;
+> +}
+> +
+> +static u32 mvnet_get_vendor_id(struct mdev_device *mdev)
+> +{
+> +	return MVNET_VENDOR_ID;
+> +}
+> +
+> +static u8 mvnet_get_status(struct mdev_device *mdev)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +
+> +	return mvnet->status;
+> +}
+> +
+> +static void mvnet_set_status(struct mdev_device *mdev, u8 status)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +
+> +	mvnet->status = status;
+> +
+> +	if (status == 0) {
+> +		spin_lock(&mvnet->lock);
+> +		mvnet_reset(mvnet);
+> +		spin_unlock(&mvnet->lock);
+> +	}
+> +}
+> +
+> +static void mvnet_get_config(struct mdev_device *mdev, unsigned int offset,
+> +			     void *buf, unsigned int len)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +
+> +	if (offset + len < sizeof(struct virtio_net_config))
+> +		memcpy(buf, &mvnet->config + offset, len);
+> +}
+> +
+> +static void mvnet_set_config(struct mdev_device *mdev, unsigned int offset,
+> +			     const void *buf, unsigned int len)
+> +{
+> +	/* No writable config supportted by mvnet */
+> +}
+> +
+> +static u32 mvnet_get_generation(struct mdev_device *mdev)
+> +{
+> +	struct mvnet_state *mvnet = mdev_get_drvdata(mdev);
+> +
+> +	return mvnet->generation;
+> +}
+> +
+> +static const struct mdev_virtio_device_ops mdev_virtio_ops = {
+> +	.set_vq_address         = mvnet_set_vq_address,
+> +	.set_vq_num             = mvnet_set_vq_num,
+> +	.kick_vq                = mvnet_kick_vq,
+> +	.set_vq_cb              = mvnet_set_vq_cb,
+> +	.set_vq_ready           = mvnet_set_vq_ready,
+> +	.get_vq_ready           = mvnet_get_vq_ready,
+> +	.set_vq_state           = mvnet_set_vq_state,
+> +	.get_vq_state           = mvnet_get_vq_state,
+> +	.get_vq_align           = mvnet_get_vq_align,
+> +	.get_features           = mvnet_get_features,
+> +	.set_features           = mvnet_set_features,
+> +	.set_config_cb          = mvnet_set_config_cb,
+> +	.get_vq_num_max         = mvnet_get_vq_num_max,
+> +	.get_device_id          = mvnet_get_device_id,
+> +	.get_vendor_id          = mvnet_get_vendor_id,
+> +	.get_status             = mvnet_get_status,
+> +	.set_status             = mvnet_set_status,
+> +	.get_config             = mvnet_get_config,
+> +	.set_config             = mvnet_set_config,
+> +	.get_generation         = mvnet_get_generation,
+> +};
+> +
+> +static const struct mdev_parent_ops mdev_fops = {
+> +	.owner                  = THIS_MODULE,
+> +	.dev_attr_groups        = mvnet_dev_groups,
+> +	.mdev_attr_groups       = mdev_dev_groups,
+> +	.supported_type_groups  = mdev_type_groups,
+> +	.create                 = mvnet_create,
+> +	.remove			= mvnet_remove,
+> +};
+> +
+> +static void mvnet_device_release(struct device *dev)
+> +{
+> +	dev_dbg(dev, "mvnet: released\n");
+> +}
+> +
+> +static int __init mvnet_dev_init(void)
+> +{
+> +	int ret = 0;
+> +
+> +	pr_info("mvnet_dev: %s\n", __func__);
+> +
+> +	memset(&mvnet_dev, 0, sizeof(mvnet_dev));
+> +
+> +	idr_init(&mvnet_dev.vd_idr);
+> +
+> +	mvnet_dev.vd_class = class_create(THIS_MODULE, MVNET_CLASS_NAME);
+> +
+> +	if (IS_ERR(mvnet_dev.vd_class)) {
+> +		pr_err("Error: failed to register mvnet_dev class\n");
+> +		ret = PTR_ERR(mvnet_dev.vd_class);
+> +		goto failed1;
+> +	}
+> +
+> +	mvnet_dev.dev.class = mvnet_dev.vd_class;
+> +	mvnet_dev.dev.release = mvnet_device_release;
+> +	dev_set_name(&mvnet_dev.dev, "%s", MVNET_NAME);
+> +
+> +	ret = device_register(&mvnet_dev.dev);
+> +	if (ret)
+> +		goto failed2;
+> +
+> +	ret = mdev_register_device(&mvnet_dev.dev, &mdev_fops);
+> +	if (ret)
+> +		goto failed3;
+> +
+> +	mutex_init(&mdev_list_lock);
+> +	INIT_LIST_HEAD(&mdev_devices_list);
+> +
+> +	goto all_done;
+> +
+> +failed3:
+> +
+> +	device_unregister(&mvnet_dev.dev);
+> +failed2:
+> +	class_destroy(mvnet_dev.vd_class);
+> +
+> +failed1:
+> +all_done:
+> +	return ret;
+> +}
+> +
+> +static void __exit mvnet_dev_exit(void)
+> +{
+> +	mvnet_dev.dev.bus = NULL;
+> +	mdev_unregister_device(&mvnet_dev.dev);
+> +
+> +	device_unregister(&mvnet_dev.dev);
+> +	idr_destroy(&mvnet_dev.vd_idr);
+> +	class_destroy(mvnet_dev.vd_class);
+> +	mvnet_dev.vd_class = NULL;
+> +	pr_info("mvnet_dev: Unloaded!\n");
+> +}
+> +
+> +module_init(mvnet_dev_init)
+> +module_exit(mvnet_dev_exit)
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_INFO(supported, "Simulate loopback ethernet device over mdev");
+> +MODULE_VERSION(VERSION_STRING);
+> +MODULE_AUTHOR(DRIVER_AUTHOR);
+> -- 
+> 2.19.1
