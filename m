@@ -2,78 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B736F3A61
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:21:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5513F3A69
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:24:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfKGVVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 16:21:42 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:49659 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfKGVVj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 16:21:39 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iSpDk-00061v-Lo; Thu, 07 Nov 2019 22:21:36 +0100
-Date:   Thu, 7 Nov 2019 22:21:35 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-cc:     Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v3] x86/hyper-v: micro-optimize send_ipi_one case
-In-Reply-To: <877e4bbyw2.fsf@vitty.brq.redhat.com>
-Message-ID: <alpine.DEB.2.21.1911072220590.27903@nanos.tec.linutronix.de>
-References: <20191027151938.7296-1-vkuznets@redhat.com> <877e4bbyw2.fsf@vitty.brq.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1726152AbfKGVYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 16:24:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbfKGVYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 16:24:00 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7A1E2087E;
+        Thu,  7 Nov 2019 21:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573161839;
+        bh=pvXocrqUgH96Z+Rmo4Ydj7s0WmQQdDWbyVAmMp9sxLs=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=Q+cCBu5AHdKSErrHd9CejJV4jS8HOILFKRusRloOj7iA+MBoK4qzT/Q8koqM0UXH5
+         F5AcYeqfGYToSlbYZ/I52d0adSvQiJU2WXadLp7CxwgVPEWJi+AjPZnHL/xLB6Ezf8
+         E3Uv7+B/vNykwVWW5bai5MxurLBnJ/4mnd/spWNw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1572371299-16774-2-git-send-email-tdas@codeaurora.org>
+References: <1572371299-16774-1-git-send-email-tdas@codeaurora.org> <1572371299-16774-2-git-send-email-tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add YAML schemas for the QCOM RPMHCC clock bindings
+User-Agent: alot/0.8.1
+Date:   Thu, 07 Nov 2019 13:23:58 -0800
+Message-Id: <20191107212359.A7A1E2087E@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Nov 2019, Vitaly Kuznetsov wrote:
+Quoting Taniya Das (2019-10-29 10:48:17)
+> The RPMHCC clock provider have a bunch of generic properties that
+> are needed in a device tree. Add a YAML schemas for those.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
-> 
-> > When sending an IPI to a single CPU there is no need to deal with cpumasks.
-> > With 2 CPU guest on WS2019 I'm seeing a minor (like 3%, 8043 -> 7761 CPU
-> > cycles) improvement with smp_call_function_single() loop benchmark. The
-> > optimization, however, is tiny and straitforward. Also, send_ipi_one() is
-> > important for PV spinlock kick.
-> >
-> > I was also wondering if it would make sense to switch to using regular
-> > APIC IPI send for CPU > 64 case but no, it is twice as expesive (12650 CPU
-> > cycles for __send_ipi_mask_ex() call, 26000 for orig_apic.send_IPI(cpu,
-> > vector)).
-> >
-> > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > ---
-> > Changes since v2:
-> >  - Check VP number instead of CPU number against >= 64 [Michael]
-> >  - Check for VP_INVAL
-> 
-> Hi Sasha,
-> 
-> do you have plans to pick this up for hyperv-next or should we ask x86
-> folks to?
+Applied to clk-next
 
-I'm picking up the constant TSC one anyway, so I can just throw that in as
-well.
-
-Thanks,
-
-	tglx
