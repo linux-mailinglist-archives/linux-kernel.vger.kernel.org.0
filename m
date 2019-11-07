@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51FC3F381C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:08:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F581F3837
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:10:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbfKGTIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:08:21 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37217 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727963AbfKGTIU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:08:20 -0500
-Received: by mail-io1-f67.google.com with SMTP id 1so3532507iou.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 11:08:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6tc+3dFnObbCsZTOmcaVyw6tfhQMQsGco5do8dKeQEQ=;
-        b=LgVB184nuWNpFfGTtXqtzbPQCgBsxaiS3I2ido28o3uv6Be63L007ZEgJmeI4p0/bU
-         gZ6XCsGvaUXpCS9kQrcCCvJGsC6gBbU5UgGuwiQXUL2Yq7wIEFglIILOgZw8P9sQ59j7
-         DVtDRA39e/w+eVu+5Fh80AmOIS+cIts7L5UOC6aEPlA7E1tDZ3rxeD/TiAUidkN3wOUr
-         1nHZaIYFTXT5S+tb7PTGosHYi4WLU/P4nMLLf2YXPVRMFdaZd4mZ8LM0dz/v2xb6ZclM
-         3VZLjZEqUWsplJQaLrY2K2NJQ4QLwMKeezr3/t5BIKT6nsMzzJ4vjASSNPhTr64cZv0u
-         0dSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6tc+3dFnObbCsZTOmcaVyw6tfhQMQsGco5do8dKeQEQ=;
-        b=ctKAEVqy6FVcMnIhg0famrhr9PVB9MJM/tahC+A0PzeQx7c+P8eqwSkR5aUKGEB671
-         7X2/csNKwXCc/3irWUs+LH1pCriNFcmCIXAn55HolmkGdn7JPdOPw8q2HSk4rFGMo3Tx
-         FKRMwz+faISn/GPWiLDld8CBKgCQdx9Nr1mtHl4dM6Lj0qV3gv3G5O5t1sybiWF2Ies3
-         fK2j+ov8sXCcb3N4vfEjuy0qBKoOc/X96keogM8qzkY70mpdeap6LwEPs3LM04qiP1rZ
-         9rQn2KevRJwVfMUgvu/QqZg8SSHDR7LfWtTXAvQhOKPltYzcaH2NH7NM6umNIT9dkP70
-         jV7g==
-X-Gm-Message-State: APjAAAVSD2FzCdd61CwKYWa0+yYooJlb0BHOR38/gPC2cmy8v8qFZ5d1
-        RLGcgFIk8YVR+2MwGfp9q+PzVw==
-X-Google-Smtp-Source: APXvYqx5C+YXiG1tSukATm3surkdJTv8OYGBUPh1k6tE3QzNgmrmLWbq9IaV79OTLCPZKjDdSzPfLA==
-X-Received: by 2002:a02:b710:: with SMTP id g16mr3463376jam.111.1573153698830;
-        Thu, 07 Nov 2019 11:08:18 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r1sm237453iod.69.2019.11.07.11.08.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Nov 2019 11:08:17 -0800 (PST)
-Subject: Re: [PATCH 0.5/5] bfq-iosched: relocate bfqg_*rwstat*() helpers
-To:     Tejun Heo <tj@kernel.org>
-Cc:     cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lizefan@huawei.com,
-        hannes@cmpxchg.org, kernel-team@fb.com
-References: <20191106215838.3973497-1-tj@kernel.org>
- <20191107190459.GA3622521@devbig004.ftw2.facebook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4d34b6a3-b141-f0fe-c7e1-e68e0fa52cfb@kernel.dk>
-Date:   Thu, 7 Nov 2019 12:08:15 -0700
+        id S1727399AbfKGTKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:10:04 -0500
+Received: from mout.gmx.net ([212.227.15.15]:38345 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbfKGTKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 14:10:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1573153788;
+        bh=+jCINLffjUOyT+IY08Y5zx4Vxskk9OJZTse82HsxTz4=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=gThPoZTR1eidwzNRwz/Rpz8F9GxRZbr8OjLint+Fa57V8TMbCKrq3pr5YwOSBFmIB
+         u4pqHGnosQL6RsGqMG2MM9FRiYx7qmMMECkcnuseUPXPHgvpdANoOHqHZcAuZE2PYk
+         con9IEykthBhd6QArNo0lkZaKfFxtOJCVOZH3daI=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.167] ([37.4.249.112]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N1fn0-1hn1Ge0GNM-011zQB; Thu, 07
+ Nov 2019 20:09:48 +0100
+Subject: Re: [PATCH v3 1/2] ARM: dts: bcm2711: force CMA into first GB of
+ memory
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20191107095611.18429-1-nsaenzjulienne@suse.de>
+ <20191107095611.18429-2-nsaenzjulienne@suse.de>
+ <20191107112020.GA16965@arrakis.emea.arm.com>
+ <4f82d3b5-fe5e-03a5-220e-f1431cb3a50c@gmail.com>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <8c84654e-f91e-7865-0cf7-99b30820b7d0@gmx.net>
+Date:   Thu, 7 Nov 2019 20:09:46 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191107190459.GA3622521@devbig004.ftw2.facebook.com>
+In-Reply-To: <4f82d3b5-fe5e-03a5-220e-f1431cb3a50c@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:ds3wIfCrqN8mXv4xV2yOkIAZhuvU/WXha9+QIZbz4jW5afq1ugo
+ nxjvgEy4zXDiM3p6JevaZKdzdE1nVBUQS5rVNVX7LWE3+B06qt0Zdoi9xkuuhXBb+9hTNDK
+ qIM8qmvGI0T3IGX9yQlLDgzn2yIGy1ft1bPIHFQ7zXqXayblhOKRNUs6yC+9sbQHFggoFyH
+ EfjC1oBZCE8lPFuiBoHuQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fnoUzY9B470=:Ck+piXC91e3UO6kAhBaICU
+ 7ygijkBy5cG7QMTWiwVxlGSUIZ41eFePjzKTNBmlqFU6iyAYaxLvn5Yq9Z0oPwmQAzwRw47zX
+ 3oU3JDLceXv21bdCiFtvGtLi4/aC+gzHPr/wfv3SSZCJdprq4ncTsuZaa3SPabyiO7z6ZSMhW
+ FocRvE3+PuegJUKVimw3Lo4Y9U64vBcy6Q/gINOyZG2lNL+TJZ51VabJsNO6R1HRqbQr8PCJL
+ RnJnLnZIaB61JxLTqx/DWAJacDV1NW6WGDmkYwC8O9wCYOY568oQLIntI2MI/rIPfmBBdQRps
+ DZjO2AEd1Apd8MCL6NjxWyY1iAm3q/NsvdpCHEstg3fBtY0VwxWEnwRLM4fMOjYlKXBr1L00r
+ 5IwCLZWa/VWV828GOSqIotecrZmZm6OOSjG3u0UHzPqKLdUz0OKFcm8725FoSTazqAeMDDwbU
+ JTyyM/jB8vrTs5P07tkfHHVD3Z2GUJOwbqKGT7UCO/a96djW9iPasBBi1OzjN4t3BxLroMlh0
+ OYr8baQYeLQdSH7wWqZjMzM1tKewa5yV2WKUY2O1MNDimmseaO+Gw335DZg5RmnRKrtlvEb8K
+ uEjaI+iJCGK6OnX5Qb+Khm5dTHlGVNx1yRJ+08zlG29IEq+EqGsfhs7+wiksGu2qjusvALi7I
+ 8NaaLrjRoa7ATT16j2xuNbLpgjIp3lcKhzqsw+vIHZsPx91oVeNWuEAZCPnlZWihvtPkbQUor
+ 2u4pD7FlpOxAHOGMXRcpQoYhTlF7MPowy1cfUsBEvXBy9C83rvggrj2A2XqSvjkXLKoBM40eT
+ YIUG7RqiS/+2zS4bInx5b1OFicvrzYdemOuPoc/6p5g+WktzQZhZ+Wc9vzkbS038L46VopI+q
+ 0Fx3I91zjQ0gtnUytX8TKy7evYlxjAp13OTH11SIGXl7x0JFcWL5kOPrkiLlZ+s2qk+RL0V5m
+ qTDhxhgLQLjnjogcyW+G0gn9S82KIr1Oy8xa8dtVYrQw+3qsET16ky4cpsisAuxB4hixxVcxl
+ RI7BzRBqC2H7hwssXmBYs9yD9OGhXD/+CBeViiV4ORu4TsEfL+rzM+BIPyvbf5GDBPs+nxyUJ
+ Sf+RjIOfVKNH76+Xzd+Ctk1bfcxpzSF5DKWoPacS+u7CtKiO56DwwgdiE3w/icuO7fyKziVAM
+ Se46vmhmq61yCYmrTKjr7LxZZSk2XgxMDu+HlEiVa3oFJ9N+83ZcqKhHxrM9ZCPm+9g4rn0lV
+ 54Nf6g/sANuMDnSQ1LOmHGrG0UcVkaVaUbRdHbdrlGXj6xa4OIQGmuoxgCLk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/19 12:04 PM, Tejun Heo wrote:
-> Jens, this is an extra patch to help fixing the build bug when
-> !CONFIG_BFQ_CGROUP_DEBUG.  The git tree has been updated accordingly.
-> Please let me know if you want the whole series reposted.
 
-I seem to run into issues applying the series with the 0.5 added first
-and with the updated patch 1. So maybe a resend isn't a bad idea :-)
+Am 07.11.19 um 18:59 schrieb Florian Fainelli:
+> On 11/7/19 3:20 AM, Catalin Marinas wrote:
+>> Hi Nicolas,
+...
+>> Sorry, I just realised I can't merge this as it depends on a patch
+>> that's only in -next: 7dbe8c62ceeb ("ARM: dts: Add minimal Raspberry Pi
+>> 4 support").
+>>
+>> I'll queue the second patch in the series to fix the regression
+>> introduces by the ZONE_DMA patches and, AFAICT, the dts update can be
+>> queued independently.
+> I will take it directly, unless you have more stuff coming Stefan?
+Please take. Thanks
 
--- 
-Jens Axboe
-
+Stefan
