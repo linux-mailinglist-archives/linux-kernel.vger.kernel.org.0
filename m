@@ -2,78 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B82F2BD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E136F2BE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:13:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388022AbfKGKIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:08:15 -0500
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:37534 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387956AbfKGKIP (ORCPT
+        id S2387725AbfKGKNT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 7 Nov 2019 05:13:19 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:39395 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbfKGKNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:08:15 -0500
-Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 757122E1456;
-        Thu,  7 Nov 2019 13:08:12 +0300 (MSK)
-Received: from myt4-4db2488e778a.qloud-c.yandex.net (myt4-4db2488e778a.qloud-c.yandex.net [2a02:6b8:c00:884:0:640:4db2:488e])
-        by mxbackcorp1o.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id YimQGnuJHz-8BAG2M7Z;
-        Thu, 07 Nov 2019 13:08:12 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1573121292; bh=FDYer/G1exmbZZ33knvedvfovSeH/qFm/xa0qxTLhTo=;
-        h=Message-ID:Date:To:From:Subject:Cc;
-        b=KalwM8vMV2sOHEiZho98t8ZPPTRG+ZwvCY8NSXYkOYxtTLQdLyfwGBKwSfA9G5tvq
-         1GlSniaRf6Te2IT5VKt5AHmcp6DNmFWdPIg2EghxZ0aPWqiIcur5WPoxVwAHzcNfm2
-         UnFRPeXbnQVfuJ2JEE1R3iziynbewEP6FKTRmICE=
-Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8554:53c0:3d75:2e8a])
-        by myt4-4db2488e778a.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id gHEmmSgsZi-8BWaFZsn;
-        Thu, 07 Nov 2019 13:08:11 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH] fs/quota: use unsigned int helper for sysctl fs.quota.*
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.com>
-Cc:     Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Date:   Thu, 07 Nov 2019 13:08:11 +0300
-Message-ID: <157312129151.3890.6076128127053624123.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Thu, 7 Nov 2019 05:13:19 -0500
+X-Originating-IP: 86.206.246.123
+Received: from xps13 (lfbn-tou-1-421-123.w86-206.abo.wanadoo.fr [86.206.246.123])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 14DDB2412FB;
+        Thu,  7 Nov 2019 10:09:27 +0000 (UTC)
+Date:   Thu, 7 Nov 2019 11:09:26 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: no need to check return value of debugfs_create
+ functions
+Message-ID: <20191107110042.13acd6f5@xps13>
+In-Reply-To: <20191107091518.GA1328892@kroah.com>
+References: <20191107085111.GA1274176@kroah.com>
+        <20191107100923.7c94820e@xps13>
+        <20191107091518.GA1328892@kroah.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Report counters as unsigned, otherwise they turn negative at overflow:
+Hi Greg,
 
-# sysctl fs.quota
-fs.quota.allocated_dquots = 22327
-fs.quota.cache_hits = -489852115
-fs.quota.drops = -487288718
-fs.quota.free_dquots = 22083
-fs.quota.lookups = -486883485
-fs.quota.reads = 22327
-fs.quota.syncs = 335064
-fs.quota.writes = 3088689
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote on Thu, 7 Nov
+2019 10:15:18 +0100:
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- fs/quota/dquot.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Nov 07, 2019 at 10:09:44AM +0100, Miquel Raynal wrote:
+> > Hi Greg,
+> > 
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote on Thu, 7 Nov
+> > 2019 09:51:11 +0100:
+> >   
+> > > When calling debugfs functions, there is no need to ever check the
+> > > return value.  The function can work or not, but the code logic should
+> > > never do something different based on this.  
+> > 
+> > I didn't know about this. Is this something new or has it been the rule
+> > since the beginning? In the  case, don't we need a Fixes tag here?  
+> 
+> It's been the way always, but as of a few kernel releases ago, debugfs
+> is even more "fault-tolerant" of stuff like this.
+> 
+> And there's no need for a "Fixes:" as this is just work to clean up the
+> debugfs api and usage (I have a lot more work to do after these types of
+> changes.)
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 6e826b454082..606e1e39674b 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2865,7 +2865,7 @@ static int do_proc_dqstats(struct ctl_table *table, int write,
- 	/* Update global table */
- 	dqstats.stat[type] =
- 			percpu_counter_sum_positive(&dqstats.counter[type]);
--	return proc_dointvec(table, write, buffer, lenp, ppos);
-+	return proc_douintvec(table, write, buffer, lenp, ppos);
- }
- 
- static struct ctl_table fs_dqstats_table[] = {
+Ok, thanks for the clarification.
+
+Cheers!
+Miquèl
+
+> 
+> >   
+> > > Cc: David Woodhouse <dwmw2@infradead.org>
+> > > Cc: Brian Norris <computersforpeace@gmail.com>
+> > > Cc: Marek Vasut <marek.vasut@gmail.com>
+> > > Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > Cc: Richard Weinberger <richard@nod.at>
+> > > Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> > > Cc: Artem Bityutskiy <dedekind1@gmail.com>
+> > > Cc: linux-mtd@lists.infradead.org
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>  
+> > 
+> > [...]
+> >   
+> > > +
+> > > +	d->dfs_emulate_io_failures = debugfs_create_file("tst_emulate_io_failures",
+> > > +							 S_IWUSR, d->dfs_dir,
+> > > +							 (void *)ubi_num,
+> > > +							 &dfs_fops);
+> > > +
+> > > +	d->dfs_emulate_power_cut = debugfs_create_file("tst_emulate_power_cut",
+> > > +						       S_IWUSR, d->dfs_dir,
+> > > +						       (void *)ubi_num,
+> > > +						       &dfs_fops);  
+> > 
+> > Nitpick: I think we miss an empty line here. I can fix it when applying.  
+> 
+> Ah, oops, sorry about that.
+> 
+> thanks,
+> 
+> greg k-h
 
