@@ -2,128 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9FFF34F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:49:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC5EF34FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:51:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbfKGQtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 11:49:53 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47761 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfKGQtw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 11:49:52 -0500
-Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <m.tretter@pengutronix.de>)
-        id 1iSkyR-0001OE-Fq; Thu, 07 Nov 2019 17:49:31 +0100
-Date:   Thu, 7 Nov 2019 17:49:28 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Rajan Vaja <rajan.vaja@xilinx.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
-        jolly.shah@xilinx.com, dan.carpenter@oracle.com,
-        gustavo@embeddedor.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH] clk: zynqmp: Add support for custom type flags
-Message-ID: <20191107174928.71a921f0@litschi.hi.pengutronix.de>
-In-Reply-To: <1573117086-7405-1-git-send-email-rajan.vaja@xilinx.com>
-References: <1573117086-7405-1-git-send-email-rajan.vaja@xilinx.com>
-Organization: Pengutronix
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1730555AbfKGQvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 11:51:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726810AbfKGQvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 11:51:03 -0500
+Received: from localhost (unknown [106.51.111.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ABD72085B;
+        Thu,  7 Nov 2019 16:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573145463;
+        bh=vhtukU2oNC7F9Y1HZ3CqDAbYwg3qJkSQKGQ29ol4x9Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FDTQzL5NOSTc7jRISFLiIvMs5drUHQ+k39Otyc2CdSWaahz0yjBr8r8S1HOpFGGSl
+         FgCsaYpvxRqXN/9hogGZGnHjUHFjyOlbnUu/0pP8BnHlnjjJX074mbdUjeyQpgnWuE
+         ITt2n9Wi/0PSK04aF56cQWkC0lnkE+Y25wWso6jY=
+Date:   Thu, 7 Nov 2019 22:20:58 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Elliot Berman <eberman@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, saiprakash.ranjan@codeaurora.org,
+        agross@kernel.org, tsoni@codeaurora.org, sidgup@codeaurora.org,
+        psodagud@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/17] firmware: qcom_scm: Order functions, definitions
+ by service/command
+Message-ID: <20191107165058.GP952516@vkoul-mobl>
+References: <1572917256-24205-1-git-send-email-eberman@codeaurora.org>
+ <1572917256-24205-4-git-send-email-eberman@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
-X-SA-Exim-Mail-From: m.tretter@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572917256-24205-4-git-send-email-eberman@codeaurora.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 07 Nov 2019 00:58:06 -0800, Rajan Vaja wrote:
-> Store extra custom type flags received from firmware.
-> 
-> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
->  drivers/clk/zynqmp/clkc.c    | 8 +++++++-
->  drivers/clk/zynqmp/divider.c | 4 ++--
->  2 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-> index a11f93e..0dea55e 100644
-> --- a/drivers/clk/zynqmp/clkc.c
-> +++ b/drivers/clk/zynqmp/clkc.c
-> @@ -2,7 +2,7 @@
->  /*
->   * Zynq UltraScale+ MPSoC clock controller
->   *
-> - *  Copyright (C) 2016-2018 Xilinx
-> + *  Copyright (C) 2016-2019 Xilinx
->   *
->   * Based on drivers/clk/zynq/clkc.c
->   */
-> @@ -86,6 +86,8 @@ struct topology_resp {
->  #define CLK_TOPOLOGY_TYPE		GENMASK(3, 0)
->  #define CLK_TOPOLOGY_FLAGS		GENMASK(23, 8)
->  #define CLK_TOPOLOGY_TYPE_FLAGS		GENMASK(31, 24)
-> +#define CLK_TOPOLOGY_TYPE_FLAG2		GENMASK(7, 4)
+On 04-11-19, 17:27, Elliot Berman wrote:
+> Definitions throughout qcom_scm are loosely grouped and loosely ordered.
+> Sort all the functions/definitions by service ID/command ID to improve
+> sanity when needing to add new functionality to this driver.
 
-What kind of function do these flags indicate? The name is really not
-obvious to me.
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-I would prefer if the defines are kept in the order of the bits in the
-field, i.e., the new define should go between CLK_TOPOLOGY_TYPE and
-CLK_TOPOLOGY_FLAGS.
-
-> +#define CLK_TOPOLOGY_TYPE_FLAG_BITS	8
->  	u32 topology[CLK_GET_TOPOLOGY_RESP_WORDS];
->  };
->  
-> @@ -396,6 +398,10 @@ static int __zynqmp_clock_get_topology(struct clock_topology *topology,
->  		topology[*nnodes].type_flag =
->  				FIELD_GET(CLK_TOPOLOGY_TYPE_FLAGS,
->  					  response->topology[i]);
-> +		topology[*nnodes].type_flag |=
-> +			FIELD_GET(CLK_TOPOLOGY_TYPE_FLAG2,
-> +				  response->topology[i]) <<
-> +			CLK_TOPOLOGY_TYPE_FLAG_BITS;
-
-Shifting the new flags into the existing type_flag field seems like a
-source for code that is really difficult to read. Maybe use a new field
-in the topology for the new flags with a proper name?
-
->  		(*nnodes)++;
->  	}
->  
-> diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-> index d8f5b70d..d376529 100644
-> --- a/drivers/clk/zynqmp/divider.c
-> +++ b/drivers/clk/zynqmp/divider.c
-> @@ -2,7 +2,7 @@
->  /*
->   * Zynq UltraScale+ MPSoC Divider support
->   *
-> - *  Copyright (C) 2016-2018 Xilinx
-> + *  Copyright (C) 2016-2019 Xilinx
->   *
->   * Adjustable divider clock implementation
->   */
-> @@ -37,7 +37,7 @@
->   */
->  struct zynqmp_clk_divider {
->  	struct clk_hw hw;
-> -	u8 flags;
-> +	u16 flags;
-
-This change looks unrelated to the remaining patch.
-
-Michael
-
->  	bool is_frac;
->  	u32 clk_id;
->  	u32 div_type;
+-- 
+~Vinod
