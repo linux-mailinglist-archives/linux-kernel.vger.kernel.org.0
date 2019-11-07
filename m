@@ -2,54 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB7FF3021
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB4CEF302B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389197AbfKGNmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:42:47 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:49164 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389147AbfKGNmJ (ORCPT
+        id S2389073AbfKGNnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:43:03 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:52893 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389084AbfKGNmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:09 -0500
-Received: by mail-il1-f197.google.com with SMTP id c2so2631544ilj.16
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:07 -0800 (PST)
+        Thu, 7 Nov 2019 08:42:08 -0500
+Received: by mail-io1-f71.google.com with SMTP id o5so1841909iob.19
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=Nw05O48tfZnOsvKSy1GxiAM521gtqxH1bmLh1PZrh9M=;
-        b=gjcZKDLbEaMiaD3tvgyMN8N8Sv0aS36Tc7OeZn/1ENvGNR3lWHuQThx+xr8Wd9oDxG
-         VoYcnCmU2qT59KdIrqi7UfL9QEyncAQ3+z74npN2nXIKBFUfbqDRjE82PJsWuQjXRmrL
-         7tdm1/eQxXIrCKt5mAxPWndvpNd3RWTbqQY6LehUIw8zqXXarE+hqIrzQ5RI6yUfhRjv
-         1GH49n1vJ3ipPXkvxt5dxjOS8vIeM7lyIXSHq/8gXvVlN9L65dtVcGuJUl7MpZ18j6bt
-         UX0LHHTqswz6Lq/V8JHDl34ZfEPjJ5r6bSq7zYhAM7cl7DDqda/7WduP089d/3dl1mPI
-         S/Qw==
-X-Gm-Message-State: APjAAAVPERcH+XDHnUeNkQWww/9BoVbfXAiEKF7fx55C7egtxGLQukeo
-        VcwU0sZF/8i0DaDj6ZQ6H4hoO8W3zWT+HmvohSc5Tf3/roNO
-X-Google-Smtp-Source: APXvYqyNENH6B9y0Wez5W5uFuh4AQx6Njq+f4QH6gQ9D1z+gBpWcYcVbu/AE80nseMiHpzphhK8i6DvSZXMZjz4S+ATHb/GjXcIG
+        bh=jkaowxwkOkoiRTHl/PiXUNv+cs8YRuoJfUzBEAMk5lc=;
+        b=VPq08ytviEo0pPIlY8Kd6fQuIU6uj41bZm8HPI8fP2k/RVyOYEfoKcX/qZpYPE0OMf
+         S06Cki/STHob/DfFSQ62/OwKLzN1J7M3xQO1hcGVmKDmzVY/kKqsyqEnyTWl+P14IIDD
+         TPi1NtpeA14LXYCTZjb787i2ls7ZMmen4sDuIM2IvSm3LED8PDCNkqc+jxkr16HxVabA
+         +cGV9RRAIfttNQbxVv+XffOb/qZlp8r8NMmloFEUEy9bn+n2cU1YBmdxarJ0BBvGsARD
+         /mipGbbODz0V0dNJyc2SEJwjD9cf1flkzHWApNCLZOEgU0plxwC7VqEJf8eGwK2N11Mc
+         TrsQ==
+X-Gm-Message-State: APjAAAUN3inWqPtDea5BGNQAzYRljOrUAaVNYsIB8QnYGzZs5150L03p
+        1SR2kkShpM8Gm6thxQRzEp/haqs6zBphoT4AAjfhfzz4vS7F
+X-Google-Smtp-Source: APXvYqz9hJt5ZMGmb626jkP8Il0OisxxpfMRJk1y6Nf0DXo/5VYPvSczXypuhhynVt4UcMLYKdDWNzeKnfIo2dtS1aP9V/BZ0ldP
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8450:: with SMTP id w16mr3313990ior.11.1573134127375;
+X-Received: by 2002:a92:84d4:: with SMTP id y81mr4570955ilk.136.1573134127699;
  Thu, 07 Nov 2019 05:42:07 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:07 -0800
-In-Reply-To: <000000000000bfd4270578abe88b@google.com>
+In-Reply-To: <00000000000060e0ae057a092be8@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d8b0630596c1d4a0@google.com>
-Subject: Re: possible deadlock in flush_workqueue (2)
-From:   syzbot <syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com>
-To:     aarcange@redhat.com, adilger.kernel@dilger.ca,
-        akpm@linux-foundation.org, aneesh.kumar@linux.vnet.ibm.com,
-        dave@stgolabs.net, davem@davemloft.net, hughd@google.com,
-        jiangshanlai@gmail.com, kirill.shutemov@linux.intel.com,
-        kuznet@ms2.inr.ac.ru, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mhocko@kernel.org, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com, netdev@vger.kernel.org,
-        prakash.sangappa@oracle.com, sbrivio@redhat.com,
-        sd@queasysnail.net, syzkaller-bugs@googlegroups.com, tj@kernel.org,
-        torvalds@linux-foundation.org, tytso@mit.edu,
-        viro@zeniv.linux.org.uk, yoshfuji@linux-ipv6.org
+Message-ID: <000000000000dd9f160596c1d465@google.com>
+Subject: Re: KASAN: use-after-free Read in crypto_gcm_init_common
+From:   syzbot <syzbot+e736399a2c4054612307@syzkaller.appspotmail.com>
+To:     Jason@zx2c4.com, ard.biesheuvel@linaro.org, aviadye@mellanox.com,
+        borisp@mellanox.com, daniel@iogearbox.net, davejwatson@fb.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        dirk.vandermerwe@netronome.com, ebiggers3@gmail.com,
+        herbert@gondor.apana.org.au, jakub.kicinski@netronome.com,
+        jason@zx2c4.com, john.fastabend@gmail.com, k.marinushkin@gmail.com,
+        keescook@chromium.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        security@kernel.org, steffen.klassert@secunet.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,23 +56,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit e7c58097793ef15d58fadf190ee58738fbf447cd
-Author: Mike Kravetz <mike.kravetz@oracle.com>
-Date:   Tue Jan 8 23:23:32 2019 +0000
+commit 9354544cbccf68da1b047f8fb7b47630e3c8a59d
+Author: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Date:   Mon Jun 24 04:26:58 2019 +0000
 
-     hugetlbfs: revert "Use i_mmap_rwsem to fix page fault/truncate race"
+     net/tls: fix page double free on TX cleanup
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ec0d2c600000
-start commit:   ca9eb48f Merge tag 'regulator-v5.0' of git://git.kernel.or..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=168ad3c2600000
+start commit:   4710e789 Merge tag 'nfs-for-4.20-2' of git://git.linux-nfs..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=963b24abf3f7c2d8
-dashboard link: https://syzkaller.appspot.com/bug?extid=a50c7541a4a55cd49b02
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12097f03400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b55ac5400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9384ecb1c973baed
+dashboard link: https://syzkaller.appspot.com/bug?extid=e736399a2c4054612307
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17902f5b400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111377e5400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: hugetlbfs: revert "Use i_mmap_rwsem to fix page fault/truncate  
-race"
+#syz fix: net/tls: fix page double free on TX cleanup
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
