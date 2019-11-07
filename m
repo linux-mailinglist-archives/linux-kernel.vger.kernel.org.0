@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08E43F2CD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35860F2CDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:53:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388220AbfKGKvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:51:52 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54624 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727528AbfKGKvw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:51:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z26so1937996wmi.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 02:51:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OvMY+y9t+JrwQeXlyarqTJXF9VkquzjWewr7iQbYsdg=;
-        b=HKwEOaykRl1GaA5HUx+9TcTEGGb7oNvHt2Y9owJSyCUoyem7fwAkvwQBHkQI2FPvWP
-         uD0rulX0IgiMsrRSKmb0gtmwI0JV854FA+6gSUC796H6UFIZXFzBZJ2xOUivRHTVQ7hz
-         7wCtkr90dGCFRE9MIxHYuABRTVM2CaXJ2g8zZntLAHf9IB+LEKPFIzPuvH4ZT93oEQRw
-         CkmsEypotk24LHmyt9u5PQ+ufkPLAAuWaKVGxSQQlNXe6maf3XOUhitNWnifjM/Y/KdZ
-         9bZxWAB3xnwJN98FAhenJ2RmIObgbkD+CCxooE1AqOAT7pNw5Zsa/8pH6e9bXw4Thfeb
-         Hl0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OvMY+y9t+JrwQeXlyarqTJXF9VkquzjWewr7iQbYsdg=;
-        b=X2lkEKKj/uQAe6Lcg4xcBi17ca1A6OyN3EpLvOY+GCzm8q/oW86WHit/EB27cceslz
-         eAMs81rcctfHvYXAkoXMxZJnieBXgTdiEK/i1PyoAqvJODKZpI7nWgXxy9l9Ph34i+6C
-         rPk0FVZd6d/G3kuBehlmMGksEamHxLlmwBolvr6qtVw/pwGB6+G0kiH1N5iKPICLMwJh
-         ikmGnYESQUL6wruyXdVFSu7a9LQWk8cCK3UiXZCo8iD06+3YxDj7YkKln0FYjVWObhpG
-         zlAugtEpGYUxIpJ4tYr+KzC9xA+D8p3r0MxGhoqgViFLOdJMRsAJ4MQR9RJyMCToltTE
-         gp8g==
-X-Gm-Message-State: APjAAAUJSxm4iZTFBWjDdrb5YPXX/FOC6Tek1gd0ye5CzVTMYB7iD/RM
-        0/PkVj5KL50fHOCoB0UjYCD7bRgtioFGK9IYirlo5Q==
-X-Google-Smtp-Source: APXvYqxZvEiiT90pDsnYPJdaxTdcxJka6vY+KKCUJ0OKpqIG88pZzG10bA4lVqLf/rqLW8X5UhbBGNpzEr6t7euuMFw=
-X-Received: by 2002:a1c:b1c3:: with SMTP id a186mr2297717wmf.10.1573123909498;
- Thu, 07 Nov 2019 02:51:49 -0800 (PST)
+        id S2388230AbfKGKxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 05:53:17 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48532 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727278AbfKGKxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 05:53:16 -0500
+Received: from zn.tnic (p200300EC2F0EAD00D550E8D60855E7CD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:ad00:d550:e8d6:855:e7cd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 66C821EC09A3;
+        Thu,  7 Nov 2019 11:53:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1573123995;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=1Q+VyZD3LJu0YtwqTTs/qZamw+Jc53jZHHOGHzHlKIg=;
+        b=gZ/rBTwSpHeiaZMApeke0gJtcetXESaheIlHnpcYNskpjZ1HtQq/1xcQyyShHan/8tD8bo
+        LT9U8v77yk9Ka9doLx+x7NvUkeJmFYBczG/xzSYlwN6TbLvEf50tgW4W7Gxyb7/G9rhahx
+        s1ssJiEnquJcGad08DrPPttq4v4jjv8=
+Date:   Thu, 7 Nov 2019 11:53:10 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        linux-edac@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/MCE/AMD: fix warning about sleep-in-atomic at early
+ boot
+Message-ID: <20191107105310.GD19501@zn.tnic>
+References: <157252708836.3876.4604398213417262402.stgit@buzz>
+ <20191031142955.GA23693@nazgul.tnic>
+ <ad7a25d9-1ca5-0791-ae0a-63c524040bcb@yandex-team.ru>
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191105235608.107702-1-samitolvanen@google.com> <20191105235608.107702-12-samitolvanen@google.com>
- <CANiq72mZC-G_R_RJjapZS+NvkQcrjdiri0NyHUgesFzUpe-MDg@mail.gmail.com>
-In-Reply-To: <CANiq72mZC-G_R_RJjapZS+NvkQcrjdiri0NyHUgesFzUpe-MDg@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 7 Nov 2019 11:51:38 +0100
-Message-ID: <CAKv+Gu9DD12BPV_jNv9Hjw4oSiZvtdiVVjB-B8WLXCoPL4CA9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 11/14] arm64: efi: restore x18 if it was corrupted
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Sami Tolvanen <samitolvanen@google.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ad7a25d9-1ca5-0791-ae0a-63c524040bcb@yandex-team.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Nov 2019 at 05:46, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Wed, Nov 6, 2019 at 12:56 AM Sami Tolvanen <samitolvanen@google.com> wrote:
-> >
-> > If we detect a corrupted x18 and SCS is enabled, restore the register
-> > before jumping back to instrumented code. This is safe, because the
-> > wrapper is called with preemption disabled and a separate shadow stack
-> > is used for interrupt handling.
->
-> In case you do v6: I think putting the explanation about why this is
-> safe in the existing comment would be best given it is justifying a
-> subtlety of the code rather than the change itself. Ard?
->
+On Fri, Nov 01, 2019 at 04:39:17PM +0300, Konstantin Khlebnikov wrote:
+> I tried 5.4 once but there was no warning.
+> Code in 4.19 and in mainline almost the same.
 
-Agreed, but only if you have to respin for other reasons.
+Yes, but early boot code has changed a lot since 4.19. If you can't
+trigger it on 5.4, then I'll drop the BUG splat from your commit message
+and change it to talk about replacing the IPI-sending function, which is
+a good cleanup in itself.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
