@@ -2,53 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C4C5F257A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 03:36:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 408E6F2573
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 03:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732928AbfKGCgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 21:36:14 -0500
-Received: from m17618.mail.qiye.163.com ([59.111.176.18]:51571 "EHLO
-        m17618.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbfKGCgO (ORCPT
+        id S1732982AbfKGCcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 21:32:08 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34505 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbfKGCcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 21:36:14 -0500
-X-Greylist: delayed 549 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 21:36:12 EST
-Received: from P80254710 (unknown [121.12.147.249])
-        by m17618.mail.qiye.163.com (Hmail) with ESMTPA id 90E004E17EE;
-        Thu,  7 Nov 2019 10:27:01 +0800 (CST)
-Date:   Thu, 7 Nov 2019 10:27:06 +0800
-From:   "Peng Hao" <richard.peng@oppo.com>
-To:     pbonzini <pbonzini@redhat.com>, rkrcmar <rkrcmar@redhat.com>
-Cc:     kvm <kvm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH] kvm/x86 : Replace BUG_ON(1) with BUG()
-X-Priority: 3
-X-GUID: 608D3069-12C2-46ED-919C-21192C18CDB7
-X-Has-Attach: no
-X-Mailer: Foxmail 7.2.10.151[en]
-Mime-Version: 1.0
-Message-ID: <201911071027048908705@oppo.com>
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: base64
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZVk9VTE5OS0tKTk9PQk5JSEJZV1koWU
-        FJSUtLSjdXWS1ZQUlXWQkOFx4IWUFZNTQpNjo3JCkuNz5ZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mwg6ITo6CDg6DBgMSlYYLy9M
-        SjZPCTJVSlVKTkxIS0JITUlJSU5KVTMWGhIXVQkSGBMaCR9VCx4VHDsUCwsUVRgUFkVZV1kSC1lB
-        WUpJSlVKSVVKT0xVSU9CWVdZCAFZQUpOQ0M3Bg++
-X-HM-Tid: 0a6e43afc0f59376kuws90e004e17ee
+        Wed, 6 Nov 2019 21:32:08 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l202so649718oig.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 18:32:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AHeH+k3q1YGRdVcK71lwkaCtcvgP7dVsV5GnTtoj2xs=;
+        b=DEq2d9wPFiLHlbBQh4T+yaRBQsYILaoQXq1yI4S1YiUQbtgMwYBgOoYV88hwOdZMU5
+         GHnkt3p84ev9URkfVlSTUApIfb/xp6J1w6wbf46IFkrE2Uxi1de+IGf2+F/G3Skls/0Z
+         h8H060f0oB8KOVdroNFU9e3cmJh4yB18mqmI6UcP7NAgoNNy+AYMzlK/Ti9N0lVdmrW4
+         +J+jisaNy7CTzmhSNNM7yNU5UDAMsZQEsTKcmn1S3cqaefQc5PxCFavlItazoFxA8BEq
+         QUAXc5NnNs0sbaxmyPfFC326BfQypv4XYu8MYRzOmSzdgHUETuJdpFv9Me35Ho33B8sT
+         +RVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AHeH+k3q1YGRdVcK71lwkaCtcvgP7dVsV5GnTtoj2xs=;
+        b=BlMY+cMxV74eFH3TLVQQvAlToEWi5SFtdx+Refd3IqQrtpPUNseMSwWlmCpqo17T9X
+         7zW4FvpgJabS+vNFo7bCoTLV7llN9/4fhBDoFY3DfLqLHkSlvOZTMhS/sh+v53lTacq3
+         orRXFaQ6QEAKhhQV5hk55OcZOw+PrzipBQP+2xCt8cLKVNZCfpESs82mZKCNlnVTsA3H
+         DvllqY/voT6Maq1qI6LBIldKqZCMJDiKPpiEBxc61xs0Kjx54mV3NJ3xx+2dB9U1xsKC
+         tjDAPPthjCjezyTsCOOTLc8SGglf6KLMGIoEsS/NaiusPLboQ5UUE/oAM0tgNHlkywqO
+         QU0g==
+X-Gm-Message-State: APjAAAUUs9ZuFZspBvcEUcSUOgdLRaVuvRExTa2xFPOwWPjZ6cQe6jeI
+        Qn3EIA/mEmeWeFya4wal2LmC1RCC+ysbcrbZH7/3RA==
+X-Google-Smtp-Source: APXvYqztwmeiDA0mnICKAU44hM1wSeOw3WVwMf8C7tYj7HDrnvdXLqu1dNly6uEYJyDZNXKBi9CKk4/YwHZaxpI2HLo=
+X-Received: by 2002:a05:6808:9ae:: with SMTP id e14mr1055079oig.79.1573093927619;
+ Wed, 06 Nov 2019 18:32:07 -0800 (PST)
+MIME-Version: 1.0
+References: <20191106225131.3543616-1-guro@fb.com> <20191106225131.3543616-2-guro@fb.com>
+In-Reply-To: <20191106225131.3543616-2-guro@fb.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 6 Nov 2019 18:31:56 -0800
+Message-ID: <CALvZod7ickiX_D=7cJ_q4qjXebr93B7kh+WU61dagskA3Ye+0Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: hugetlb: switch to css_tryget() in hugetlb_cgroup_charge_cgroup()
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>, stable@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-U2lnbmVkLW9mZi1ieTogUGVuZyBIYW8gPHJpY2hhcmQucGVuZ0BvcHBvLmNvbT4KLS0tCsKgYXJj
-aC94ODYva3ZtL3ZteC9uZXN0ZWQuYyB8IDMgKy0tCsKgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
-aW9uKCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS92bXgvbmVz
-dGVkLmMgYi9hcmNoL3g4Ni9rdm0vdm14L25lc3RlZC5jCmluZGV4IGU3NmViNGYuLmQwZTZjNDAg
-MTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2t2bS92bXgvbmVzdGVkLmMKKysrIGIvYXJjaC94ODYva3Zt
-L3ZteC9uZXN0ZWQuYwpAQCAtNDk0NSw4ICs0OTQ1LDcgQEAgc3RhdGljIGludCBoYW5kbGVfaW52
-ZXB0KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSkKwqAJICovCsKgCQlicmVhazsKwqAJZGVmYXVsdDoK
-LQkJQlVHX09OKDEpOwotCQlicmVhazsKKwkJQlVHKCk7CsKgCX0KwqAKwqAJcmV0dXJuIG5lc3Rl
-ZF92bXhfc3VjY2VlZCh2Y3B1KTsKLS3CoAoyLjcuNA==
+On Wed, Nov 6, 2019 at 2:53 PM Roman Gushchin <guro@fb.com> wrote:
+>
+> An exiting task might belong to an offline cgroup. In this case
+> an attempt to grab a cgroup reference from the task can end up
+> with an infinite loop in hugetlb_cgroup_charge_cgroup(), because
+> neither the cgroup will become online, neither the task will
+> be migrated to a live cgroup.
+>
+> Fix this by switching over to css_tryget(). As css_tryget_online()
+> can't guarantee that the cgroup won't go offline, in most cases
+> the check doesn't make sense. In this particular case users of
+> hugetlb_cgroup_charge_cgroup() are not affected by this change.
+>
+> A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
+> css_tryget() instead of css_tryget_online() in task_get_css()").
+>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
 
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+
+> Cc: stable@vger.kernel.org
+> Cc: Tejun Heo <tj@kernel.org>
+> ---
+>  mm/hugetlb_cgroup.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
+> index f1930fa0b445..2ac38bdc18a1 100644
+> --- a/mm/hugetlb_cgroup.c
+> +++ b/mm/hugetlb_cgroup.c
+> @@ -196,7 +196,7 @@ int hugetlb_cgroup_charge_cgroup(int idx, unsigned long nr_pages,
+>  again:
+>         rcu_read_lock();
+>         h_cg = hugetlb_cgroup_from_task(current);
+> -       if (!css_tryget_online(&h_cg->css)) {
+> +       if (!css_tryget(&h_cg->css)) {
+>                 rcu_read_unlock();
+>                 goto again;
+>         }
+> --
+> 2.17.1
+>
