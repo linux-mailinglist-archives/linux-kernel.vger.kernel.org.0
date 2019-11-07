@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C748F381A
+	by mail.lfdr.de (Postfix) with ESMTP id C18C2F381B
 	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:08:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730951AbfKGTIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:08:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46400 "EHLO mail.kernel.org"
+        id S1728702AbfKGTIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:08:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727963AbfKGTIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:08:11 -0500
+        id S1725906AbfKGTIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 14:08:18 -0500
 Received: from quaco.ghostprotocols.net (179-240-172-58.3g.claro.net.br [179.240.172.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 549BF2085B;
-        Thu,  7 Nov 2019 19:08:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2EAD2166E;
+        Thu,  7 Nov 2019 19:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573153691;
-        bh=GKA5r3QdsSXmNwNcoySiknXQGXR+yp7lsgBPHWUINbI=;
+        s=default; t=1573153698;
+        bh=ktNzO+S3HJOSvFkixFTw2IvreLtpRPHA/eNUz53iQEI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DCCxKQ5r4WWfW1teHigzPbOX0lP576h2/7xi0LZD7bzDTZwhUFGkTorgbcQtxaWEv
-         UnU8JKGI3Ca+yscYpz6yw7mPFGZjW5sBxpWnHmr5DPV0EIbVG9NcnKVbiRjpq5eQdb
-         UqhHsSorT3Ndffykd0JvLEx5keTfN1dSRuZnmDwM=
+        b=kYxh1Q493NootHMv8zLKNiIVTC4g8yJAzggBtIuQpxUrErluygEuXJxqNWCELSszx
+         TuY0wKlQ8gsbZTJcZPh8kB5Tor1i15d8mnc9ZbtB5tcWpHn+dV+BnXaY0Byg1GFGe6
+         iZmvzv7/GPhoYxrrRPlxwcHvB8LnGXvkhGjWFfgc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 48/63] perf machine: Add kernel_dso() method
-Date:   Thu,  7 Nov 2019 15:59:56 -0300
-Message-Id: <20191107190011.23924-49-acme@kernel.org>
+        Ian Rogers <irogers@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 49/63] perf annotate: Fix heap overflow
+Date:   Thu,  7 Nov 2019 15:59:57 -0300
+Message-Id: <20191107190011.23924-50-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191107190011.23924-1-acme@kernel.org>
 References: <20191107190011.23924-1-acme@kernel.org>
@@ -44,54 +50,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Ian Rogers <irogers@google.com>
 
-To reduce boilerplate in some places.
+Fix expand_tabs that copies the source lines '\0' and then appends
+another '\0' at a potentially out of bounds address.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Ian Rogers <irogers@google.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-9s1bgoxxhlnu037e1nqx0tw3@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20191026035644.217548-1-irogers@google.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ tools/perf/util/annotate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 24d9e284daad..e768ef24633f 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -42,6 +42,11 @@
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index ef1866a902c4..bee0fee122f8 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1892,7 +1892,7 @@ static char *expand_tabs(char *line, char **storage, size_t *storage_len)
+ 	}
  
- static void __machine__remove_thread(struct machine *machine, struct thread *th, bool lock);
- 
-+static struct dso *machine__kernel_dso(struct machine *machine)
-+{
-+	return machine->vmlinux_map->dso;
-+}
-+
- static void dsos__init(struct dsos *dsos)
- {
- 	INIT_LIST_HEAD(&dsos->head);
-@@ -861,7 +866,7 @@ size_t machine__fprintf_vmlinux_path(struct machine *machine, FILE *fp)
- {
- 	int i;
- 	size_t printed = 0;
--	struct dso *kdso = machine__kernel_map(machine)->dso;
-+	struct dso *kdso = machine__kernel_dso(machine);
- 
- 	if (kdso->has_build_id) {
- 		char filename[PATH_MAX];
-@@ -1543,8 +1548,7 @@ static bool perf_event__is_extra_kernel_mmap(struct machine *machine,
- static int machine__process_extra_kernel_map(struct machine *machine,
- 					     union perf_event *event)
- {
--	struct map *kernel_map = machine__kernel_map(machine);
--	struct dso *kernel = kernel_map ? kernel_map->dso : NULL;
-+	struct dso *kernel = machine__kernel_dso(machine);
- 	struct extra_kernel_map xm = {
- 		.start = event->mmap.start,
- 		.end   = event->mmap.start + event->mmap.len,
+ 	/* Expand the last region. */
+-	len = line_len + 1 - src;
++	len = line_len - src;
+ 	memcpy(&new_line[dst], &line[src], len);
+ 	dst += len;
+ 	new_line[dst] = '\0';
 -- 
 2.21.0
 
