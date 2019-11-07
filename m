@@ -2,94 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C1CF2F34
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94CF3F2F3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:28:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388828AbfKGN05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:26:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53104 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388681AbfKGN05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:26:57 -0500
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C7C587C0A7
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2019 13:26:56 +0000 (UTC)
-Received: by mail-wr1-f72.google.com with SMTP id v6so996789wrm.18
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:26:56 -0800 (PST)
+        id S2388987AbfKGN2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:28:01 -0500
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:46264 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfKGN2A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 08:28:00 -0500
+Received: by mail-lf1-f53.google.com with SMTP id 19so1574835lft.13
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:27:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=otw/LMNaCwhQgMmtphcj9FWjbVudliiaHCPb5fKJ7oY=;
+        b=o9DFkbSgfcONILRXfz2vEJwroONNdr/qnLpSEg2Ki5GZW3ZAp2fGK9f8iEMBkObjtI
+         A784rbh5Zdb1R3CbMZr2gn4z2+F4iqs/B3zgPUJtzq5xDr2rsTzs+k2Sn49S7kEjjUlI
+         /shcDaMltMxTtRhx3q8jtyAcOtl3TZWRlG2dDVXn6SzAuOlSkd6IHy/e2IxX+6lsewtk
+         jov5+9zUPw5WgkfEKzByYoRLz2JwIRYBJUYeyTSN9DQ3SvGreYzpHxXGVYARg7/noQBK
+         eOmeS9qKO6cjBQy7S4HM2SxsdBG4m1YHEIj1F52RmqHV581u+CqH5vrnFDKq4tIYd3r0
+         97pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=sY5GQZQRR37FgRTpgS+peb+lk0hBcwjkBJyRvYYH6Hw=;
-        b=onqwaL+jR5OVIsV423haibvIO3XmHTSjqK/138T4+agQM/ssvmmXP25TtobiZaGSrY
-         9KY/GjSYPdTxQBBQgGuFDyVjCq4CsQJScZq3c7So020UQdDG/QjBBSCnAs5IeCRoOgC1
-         lmxPLScCvCwFxxged7KEphQUJzbkQ2EuJzinP9b7CQJQ2FuhbswINj77HASaxN3Y/4t8
-         htcJ7Rf1n1LCk6hoQRCxcAZi7U/5ZiLAgZKi3WcsuAvKvh6ipBcuZfJxttqorCDBqZSf
-         dpHHPj0kT9Qrngz7cf94W4sjGDXBlLL+6+FnZBUK52vsuMzKD8VhOPFVfBwn+00T/4wK
-         c1iw==
-X-Gm-Message-State: APjAAAV18cPCoMff14CANI1DFAUcVj6wqHxkbZ7E0Ew2wuBS7lbds1h9
-        tsJTXUAbK8Ri7QJOX1Jk0wm2dGM4BZCUOcboh+Xsx9EpquaIfhTyjCKV5BbuMTkgw5Yv5JOQUt7
-        SuKAqG3A3ZZ4n+g1SzxzMSsXm
-X-Received: by 2002:a1c:3b08:: with SMTP id i8mr2855697wma.56.1573133215360;
-        Thu, 07 Nov 2019 05:26:55 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxTxNfiovI0w9kYuknzKXffvwCptiTG92icmrRUIsqrAdos08hnvVnr3eQTmeYuQjClpj2+4A==
-X-Received: by 2002:a1c:3b08:: with SMTP id i8mr2855658wma.56.1573133215051;
-        Thu, 07 Nov 2019 05:26:55 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id w13sm2269778wrm.8.2019.11.07.05.26.53
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=otw/LMNaCwhQgMmtphcj9FWjbVudliiaHCPb5fKJ7oY=;
+        b=GIMv7/kZ36DiIAq7QjbJHDkvC/uiwk0wlJb+i+hGafxJJ9yxpf9Gf+J6tZE6R9vQtz
+         LfSgKkZa1Xm5R76zkcpehq8oY2o37ZyLE2NL2rKHTaA4IO+V+9a3EBwThZoI6nXfXFx+
+         YECqzIfvAQa9eEdp1npxxXEzTafiLhARPMVkdB0uXfIP5tqOedMYHvi6c4hx48v45NTi
+         PAMC5LVlvVfrKg57DjT4105xhW3azw/wXCyVct8sMXhOzmlN7lUlthxkmm8835Btxchk
+         LKAOCDqbQTCnB3GYOEScuhjs8vnbTfRGTexmxZtYkCEo9CedOz76tJs79ms7DxEarwAS
+         o/SQ==
+X-Gm-Message-State: APjAAAX5gfdEL+z4crGqWZVh9KEKgBAzj8MekLWDfqHxaWQ9mW4E1ziK
+        3tVq/P+t402cBcGMHR14b0P4K0BEt/o=
+X-Google-Smtp-Source: APXvYqwBOahQPdDfqFrzvyNe/0wXA1CuMAdtA0EO4BM/bJ3R2ViH1fJ6lzXjluZp9R3Joi1oXI7/AQ==
+X-Received: by 2002:a19:6d12:: with SMTP id i18mr2456723lfc.153.1573133278543;
+        Thu, 07 Nov 2019 05:27:58 -0800 (PST)
+Received: from mimer.lan (h-137-65.A159.priv.bahnhof.se. [81.170.137.65])
+        by smtp.gmail.com with ESMTPSA id y20sm3151507ljd.99.2019.11.07.05.27.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 05:26:54 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v3] x86/hyper-v: micro-optimize send_ipi_one case
-In-Reply-To: <20191027151938.7296-1-vkuznets@redhat.com>
-References: <20191027151938.7296-1-vkuznets@redhat.com>
-Date:   Thu, 07 Nov 2019 14:26:53 +0100
-Message-ID: <877e4bbyw2.fsf@vitty.brq.redhat.com>
+        Thu, 07 Nov 2019 05:27:57 -0800 (PST)
+From:   Jonas Bonn <jonas@norrbonn.se>
+To:     nicolas.dichtel@6wind.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     davem@davemloft.net, Jonas Bonn <jonas@norrbonn.se>
+Subject: [PATCH v3 0/6] Add namespace awareness to Netlink methods
+Date:   Thu,  7 Nov 2019 14:27:49 +0100
+Message-Id: <20191107132755.8517-1-jonas@norrbonn.se>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+Changed in v3:
+- added patch 6 for setting IPv6 address outside current namespace
+- address checkpatch warnings
+- address comment from Nicolas
 
-> When sending an IPI to a single CPU there is no need to deal with cpumasks.
-> With 2 CPU guest on WS2019 I'm seeing a minor (like 3%, 8043 -> 7761 CPU
-> cycles) improvement with smp_call_function_single() loop benchmark. The
-> optimization, however, is tiny and straitforward. Also, send_ipi_one() is
-> important for PV spinlock kick.
->
-> I was also wondering if it would make sense to switch to using regular
-> APIC IPI send for CPU > 64 case but no, it is twice as expesive (12650 CPU
-> cycles for __send_ipi_mask_ex() call, 26000 for orig_apic.send_IPI(cpu,
-> vector)).
->
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> Changes since v2:
->  - Check VP number instead of CPU number against >= 64 [Michael]
->  - Check for VP_INVAL
+Changed in v2:
+- address comment from Nicolas
+- add accumulated ACK's
 
-Hi Sasha,
+Currently, Netlink has partial support for acting outside of the current
+namespace.  It appears that the intention was to extend this to all the
+methods eventually, but it hasn't been done to date.
 
-do you have plans to pick this up for hyperv-next or should we ask x86
-folks to?
+With this series RTM_SETLINK, RTM_NEWLINK, RTM_NEWADDR, and RTM_NEWNSID
+are extended to respect the selection of the namespace to work in.
 
-Thanks!
+/Jonas
+
+Jonas Bonn (6):
+  rtnetlink: allow RTM_SETLINK to reference other namespaces
+  rtnetlink: skip namespace change if already effect
+  rtnetlink: allow RTM_NEWLINK to act upon interfaces in arbitrary
+    namespaces
+  net: ipv4: allow setting address on interface outside current
+    namespace
+  net: namespace: allow setting NSIDs outside current namespace
+  net: ipv6: allow setting address on interface outside current
+    namespace
+
+ net/core/net_namespace.c | 19 ++++++++++
+ net/core/rtnetlink.c     | 80 ++++++++++++++++++++++++++++++++++------
+ net/ipv4/devinet.c       | 61 ++++++++++++++++++++++--------
+ net/ipv6/addrconf.c      | 13 +++++++
+ 4 files changed, 145 insertions(+), 28 deletions(-)
 
 -- 
-Vitaly
+2.20.1
+
