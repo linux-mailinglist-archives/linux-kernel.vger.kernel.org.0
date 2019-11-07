@@ -2,76 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A343F269F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 619D7F26A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:42:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbfKGEl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 23:41:27 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:54619 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726935AbfKGEl1 (ORCPT
+        id S1733215AbfKGEmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 23:42:40 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:49726 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbfKGEmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 23:41:27 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0ThOmKb0_1573101683;
-Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0ThOmKb0_1573101683)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 07 Nov 2019 12:41:24 +0800
-From:   Lai Jiangshan <laijs@linux.alibaba.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH untested] x86_32: fix extable entry for iret
-Date:   Thu,  7 Nov 2019 04:41:09 +0000
-Message-Id: <20191107044109.22272-1-laijs@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 6 Nov 2019 23:42:40 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0410D886BF;
+        Thu,  7 Nov 2019 17:42:38 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1573101758;
+        bh=StLCXVge82VbJcyGSyaE6MC1vdSTbQKfxMGAum6myqU=;
+        h=From:To:Cc:Subject:Date;
+        b=gg136++WSYzW3ddjXJvecj4jSi0Cc326NAvyMSn6Y4vxV6UYnDhrC6IUokAzmnTIo
+         ovfrqcXctmnfZbXbXf6/84yvDadOOt24g7VNxznhRcK6xionwdVKWgXe0MX/B84cRX
+         7ZW2C+7R64StrFWxzrpHHcscwZ4d6pmlts82OXMrRZAjL4s20ABokXUB873Z7XTqd1
+         t5SPB/+V6Dn81XsLfz/961ci1Tc3AtDmafd0RZN5fZg4jO1MOtbZ7SGIJvC8PkiO8n
+         SZnDmSE65I+3TIgDX5hUNlYAwStfEIE+mzwZKs0WxEMHyvWtoZvNRWujCSKjjhYGVb
+         7IbOMvJtwhcsA==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5dc3a0be0000>; Thu, 07 Nov 2019 17:42:38 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 2D9CB13EEEB;
+        Thu,  7 Nov 2019 17:42:37 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id A694228005F; Thu,  7 Nov 2019 17:42:37 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     broonie@kernel.org, kdasu.kdev@gmail.com,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 0/2] spi: more GPIO CS work
+Date:   Thu,  7 Nov 2019 17:42:33 +1300
+Message-Id: <20191107044235.4864-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3c88c692c287(x86/stackframe/32: Provide consistent pt_regs)
-added code after label .Lirq_return and before 'iret', an instruction
-which should be expected to be found in the extable when there is
-an exception on it. But the extable entry stores the address of
-.Lirq_return not the new address of 'iret', which disables
-the corresponding fixup. This patch fixes the extable entry
-by using a new label.
+I've got a platform using the BCM 58525 CPU. The hardware design
+connects to two SPI devices using a slightly odd arrangement of
+GPIOs and native chip select. These patches however should be
+relevant to any platform using that CPU with "normal" CS GPIOs
 
-CC: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
----
-Purely accidently found, untested.
+Chris Packham (2):
+  spi: bcm-qspi: Convert to use CS GPIO descriptors
+  spi: spi-mem: fallback to using transfers when CS gpios are used
 
- arch/x86/entry/entry_32.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-bcm-qspi.c | 7 +++++--
+ drivers/spi/spi-mem.c      | 2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index f83ca5aa8b77..f62aa6655cfb 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1081,6 +1081,7 @@ restore_all:
- 	 * when returning from IPI handler and when returning from
- 	 * scheduler to user-space.
- 	 */
-+.Lirq_return_ex:
- 	INTERRUPT_RETURN
- 
- restore_all_kernel:
-@@ -1118,7 +1119,7 @@ ENTRY(iret_exc	)
- 
- 	jmp	common_exception
- .previous
--	_ASM_EXTABLE(.Lirq_return, iret_exc)
-+	_ASM_EXTABLE(.Lirq_return_ex, iret_exc)
- ENDPROC(entry_INT80_32)
- 
- .macro FIXUP_ESPFIX_STACK
--- 
-2.20.1
+--=20
+2.24.0
 
