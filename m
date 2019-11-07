@@ -2,93 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E077F3545
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7945BF354C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:03:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387473AbfKGRCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:02:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47682 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726231AbfKGRCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:02:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92CBAAB9D;
-        Thu,  7 Nov 2019 17:02:01 +0000 (UTC)
-Date:   Thu, 7 Nov 2019 18:02:00 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/2] mm: memcg: switch to css_tryget() in
- get_mem_cgroup_from_mm()
-Message-ID: <20191107170200.GX8314@dhcp22.suse.cz>
-References: <20191106225131.3543616-1-guro@fb.com>
- <20191107122125.GS8314@dhcp22.suse.cz>
- <20191107164236.GB2919@castle.dhcp.thefacebook.com>
+        id S2389434AbfKGRDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:03:30 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730605AbfKGRD3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 12:03:29 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA7GsCgB129980;
+        Thu, 7 Nov 2019 12:03:15 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w4pm22093-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Nov 2019 12:03:15 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xA7H1Zw3006129;
+        Thu, 7 Nov 2019 17:03:03 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02wdc.us.ibm.com with ESMTP id 2w41ujt4mb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Nov 2019 17:03:03 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA7H32io39649542
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Nov 2019 17:03:02 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91B20AE064;
+        Thu,  7 Nov 2019 17:03:02 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77DBFAE05C;
+        Thu,  7 Nov 2019 17:03:01 +0000 (GMT)
+Received: from LeoBras.br.ibm.com (unknown [9.18.235.40])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Nov 2019 17:03:01 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH v2 0/4] Replace current->mm by kvm->mm on powerpc/kvm
+Date:   Thu,  7 Nov 2019 14:02:54 -0300
+Message-Id: <20191107170258.36379-1-leonardo@linux.ibm.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107164236.GB2919@castle.dhcp.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=697 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911070159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 07-11-19 16:42:41, Roman Gushchin wrote:
-> On Thu, Nov 07, 2019 at 01:21:25PM +0100, Michal Hocko wrote:
-> > On Wed 06-11-19 14:51:30, Roman Gushchin wrote:
-> > > We've encountered a rcu stall in get_mem_cgroup_from_mm():
-> > > 
-> > >  rcu: INFO: rcu_sched self-detected stall on CPU
-> > >  rcu: 33-....: (21000 ticks this GP) idle=6c6/1/0x4000000000000002 softirq=35441/35441 fqs=5017
-> > >  (t=21031 jiffies g=324821 q=95837) NMI backtrace for cpu 33
-> > >  <...>
-> > >  RIP: 0010:get_mem_cgroup_from_mm+0x2f/0x90
-> > >  <...>
-> > >  __memcg_kmem_charge+0x55/0x140
-> > >  __alloc_pages_nodemask+0x267/0x320
-> > >  pipe_write+0x1ad/0x400
-> > >  new_sync_write+0x127/0x1c0
-> > >  __kernel_write+0x4f/0xf0
-> > >  dump_emit+0x91/0xc0
-> > >  writenote+0xa0/0xc0
-> > >  elf_core_dump+0x11af/0x1430
-> > >  do_coredump+0xc65/0xee0
-> > >  ? unix_stream_sendmsg+0x37d/0x3b0
-> > >  get_signal+0x132/0x7c0
-> > >  do_signal+0x36/0x640
-> > >  ? recalc_sigpending+0x17/0x50
-> > >  exit_to_usermode_loop+0x61/0xd0
-> > >  do_syscall_64+0xd4/0x100
-> > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > 
-> > > The problem is caused by an exiting task which is associated with
-> > > an offline memcg.
-> > 
-> > Hmm, how can we have a task in an offline memcg? I thought that any
-> > existing task will prevent cgroup removal from proceeding. Is this some
-> > sort of race where the task managed to disassociate from the cgroup
-> > while there is still a binding to a memcg existing? What am I missing?
-> 
-> It's an exiting task with the PF_EXITING flag set and it's in their late stages
-> of life.
+By replacing, we would reduce the use of 'global' current on code,
+relying more in the contents of kvm struct.
 
-This is a signal delivery path AFAIU (get_signal) and the coredumping
-happens before do_exit. My understanding is that that unlinking
-happens from cgroup_exit. So either I am misreading the backtrace or
-there is some other way to leave cgroups or there is something more
-going on.
+On code, I found that in kvm_create_vm() there is:
+kvm->mm = current->mm;
 
-JFTR I am not really disputing the patch but I simply do not understand
-how the problem really happened.
+And that on every kvm_*_ioctl we have tests like that:
+if (kvm->mm != current->mm)
+        return -EIO;
+
+So this change would be safe.
+
+Also, I fixed a possible 'use after free' of kvm variable in
+kvm_vm_ioctl_create_spapr_tce, where it does a mutex_unlock(&kvm->lock)
+after a kvm_put_kvm(kvm).
+
+Changes since v1:
+- Fixes possible 'use after free' on kvm_spapr_tce_release (from v1)
+- Fixes possible 'use after free' on kvm_vm_ioctl_create_spapr_tce
+- Fixes undeclared variable error
+
+Build test:
+- https://travis-ci.org/LeoBras/linux-ppc/builds/608807573
+
+Leonardo Bras (4):
+  powerpc/kvm/book3s: Fixes possible 'use after release' of kvm
+  powerpc/kvm/book3s: Replace current->mm by kvm->mm
+  powerpc/kvm/book3e: Replace current->mm by kvm->mm
+  powerpc/kvm/e500: Replace current->mm by kvm->mm
+
+ arch/powerpc/kvm/book3s_64_mmu_hv.c | 10 +++++-----
+ arch/powerpc/kvm/book3s_64_vio.c    | 13 +++++++------
+ arch/powerpc/kvm/book3s_hv.c        | 10 +++++-----
+ arch/powerpc/kvm/booke.c            |  2 +-
+ arch/powerpc/kvm/e500_mmu_host.c    |  6 +++---
+ 5 files changed, 21 insertions(+), 20 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.23.0
+
