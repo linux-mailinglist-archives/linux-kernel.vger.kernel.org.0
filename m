@@ -2,86 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7393CF29D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBA9EF29E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:55:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387584AbfKGIw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 03:52:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733238AbfKGIw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:52:59 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [109.144.217.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 223D62077C;
-        Thu,  7 Nov 2019 08:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573116778;
-        bh=atNfkvWqHmIDqLBv86TZs4C30jzzuzCcG/ghR09esKA=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=N7p8iKhXD7qMUIc0Kc48NqghvP37TKKdvsyPGXuC9QLTBsdANK8T1abwIYv4GvbZf
-         HALn3YEjWZ/T4Syc1ONWryy8bSOJuL+pwfcY0EagM30R0/BsbnWeuKwSw/PyQ+sC3y
-         VG3pBmbXTWwWDLIabQjqa0loryPex93TBVkwUjTs=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 8E51035227FC; Thu,  7 Nov 2019 00:52:55 -0800 (PST)
-Date:   Thu, 7 Nov 2019 00:52:55 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-tip-commits@vger.kernel.org,
-        syzbot <syzkaller@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [tip: timers/core] hrtimer: Annotate lockless access to
- timer->state
-Message-ID: <20191107085255.GK20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191106174804.74723-1-edumazet@google.com>
- <157307905904.29376.8711513726869840596.tip-bot2@tip-bot2>
- <CANn89iKXi3rWWruKoBwQ8rncwLvkbzjZJWuJL3K05fjAhcySwg@mail.gmail.com>
- <CANn89iL=xPxejRPC=wHY7q27fLOvFBK-7HtqU_HJo+go3S9UXA@mail.gmail.com>
+        id S1733272AbfKGIzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 03:55:38 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41385 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727300AbfKGIzh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 03:55:37 -0500
+Received: by mail-lf1-f68.google.com with SMTP id j14so956100lfb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 00:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zWZb6GLCF2st+ZVn+OJmwleeG1odyNOnzVdWxMN71m4=;
+        b=k2Zi5ilUpvfwvkE4Ppxa+x0nf4km4BOuvWm1ykPz7BHyrgqo9vEkTpio3e+6YeSAiA
+         ksg0hvGFAxJJ5+A1qVHYbExIOTneSQo46Sclk8UiCKSz3NT2s4jWy4p2tAEvwQrmNNiU
+         R1dMTOqkY/lBDgJo9yps5cz+dnI+fVkq6IK2r1jtC5lneKbhlws47UcUOwdRPKltMqm6
+         zij//x+VBfeyEyoCWdveF8tUyAQEZ/iEK//xFdiRYEFxUGp0LG7WkmOsphoK1smcLmLN
+         NJv5g+5Rf59q8D3VZyo4H3tIiMq2sFCIea6ZVnCBi3GTqfgWNkPBXG3iEIDBsP1axhe2
+         e4hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zWZb6GLCF2st+ZVn+OJmwleeG1odyNOnzVdWxMN71m4=;
+        b=kf9ejgmSM2vzcO1r6vIThB/yWtRTC9jQl1K2XcEeHm9WMUjj8uXoCnKx8/xYVMe1mb
+         cf+uT6fWBMrbx2ZIOWCkwXmkhnfM8oYP/cUQOU0TDf2ysDmCJw5oFAoEBkpWo8/5JCix
+         sTR6FNATBzY5DZZmW2pVF+HINyniTr3xCOrdIsCAHeIFlZVBTIe8CWmbna1BdbDSgVnv
+         gpUV/Vd5ERTCn1vmlr93UGPZHHPck5yQ1xRvtUyNkVxZmSkV4f1MbOTBYEIQ92T/t2Hc
+         mDLB34ILuKSlqk3Jyg78Js1W8OCo2eW9RlFt3S8Aj4Hhv8KVdnsGld3NlhGCybBGgfAX
+         QV5Q==
+X-Gm-Message-State: APjAAAWfx7O0swUCjs3iV7KgNR7nlU1n/30AxHn2fJ+P4jX1VcDzKcpT
+        /JkJ9WfXILetmNNsll5QX1YJlnq1Fi957IJ7qNy5Yw==
+X-Google-Smtp-Source: APXvYqwjmdL6xPlKTj58mFSrRkwb7zeLwRzSWb8Xgzdfaw5gPK5uHdRZEynEOzKUFWJ8jFmyiGAvxtKcJWxmRt9gblQ=
+X-Received: by 2002:a19:8582:: with SMTP id h124mr1571095lfd.64.1573116935696;
+ Thu, 07 Nov 2019 00:55:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANn89iL=xPxejRPC=wHY7q27fLOvFBK-7HtqU_HJo+go3S9UXA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1572967777-8812-1-git-send-email-rppt@linux.ibm.com>
+ <1572967777-8812-2-git-send-email-rppt@linux.ibm.com> <CAKOZuev93zDGNPX+ySg_jeUg4Z3zKMcpABekUQvHA01kTVn4=A@mail.gmail.com>
+ <CALCETrX=VmSjD6kLT6tuZQ4Efhc_13vZrw1mo4Z2iKqZTT-bzg@mail.gmail.com>
+ <20191105162424.GH30717@redhat.com> <CAKOZuet=g++G+biSP5bU-Rppu6fykU1TVUDj20NapqAYQY4r9A@mail.gmail.com>
+ <20191107083902.GB3247@linux.ibm.com>
+In-Reply-To: <20191107083902.GB3247@linux.ibm.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Thu, 7 Nov 2019 00:54:59 -0800
+Message-ID: <CAKOZuevhEXpMr49KmkBLEyMGsDz8WujKvOGCty8+p7cwVbmoXA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] userfaultfd: require CAP_SYS_PTRACE for UFFD_FEATURE_EVENT_FORK
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Nosh Minwalla <nosh@google.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Tim Murray <timmurray@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 02:59:36PM -0800, Eric Dumazet wrote:
-> On Wed, Nov 6, 2019 at 2:53 PM Eric Dumazet <edumazet@google.com> wrote:
+On Thu, Nov 7, 2019 at 12:39 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> On Tue, Nov 05, 2019 at 08:41:18AM -0800, Daniel Colascione wrote:
+> > On Tue, Nov 5, 2019 at 8:24 AM Andrea Arcangeli <aarcange@redhat.com> wrote:
+> > > The long term plan is to introduce UFFD_FEATURE_EVENT_FORK2 feature
+> > > flag that uses the ioctl to receive the child uffd, it'll consume more
+> > > CPU, but it wouldn't require the PTRACE privilege anymore.
 > >
-> > On Wed, Nov 6, 2019 at 2:24 PM tip-bot2 for Eric Dumazet
-> > <tip-bot2@linutronix.de> wrote:
-> > >
-> > > The following commit has been merged into the timers/core branch of tip:
-> > >
-> > > Commit-ID:     56144737e67329c9aaed15f942d46a6302e2e3d8
-> > > Gitweb:        https://git.kernel.org/tip/56144737e67329c9aaed15f942d46a6302e2e3d8
-> > > Author:        Eric Dumazet <edumazet@google.com>
-> > > AuthorDate:    Wed, 06 Nov 2019 09:48:04 -08:00
-> > > Committer:     Thomas Gleixner <tglx@linutronix.de>
-> > > CommitterDate: Wed, 06 Nov 2019 23:18:31 +01:00
-> > >
-> > > hrtimer: Annotate lockless access to timer->state
-> > >
-> >
-> > I guess we also need to fix timer_pending(), since timer->entry.pprev
-> > could change while we read it.
-> 
-> It is interesting seeing hlist_add_head() has a WRITE_ONCE(h->first, n);,
-> but no WRITE_ONCE() for the pprev change.
-> 
-> The WRITE_ONCE() was added in commit 1c97be677f72b3c338312aecd36d8fff20322f32
-> ("list: Use WRITE_ONCE() when adding to lists and hlists")
+> > Why not just have callers retrieve FDs using recvmsg? This way, you
+> > retrieve the message packet and the file descriptor at the same time
+> > and you don't need any appreciable extra CPU use.
+>
+> I don't follow you here. Can you elaborate on how recvmsg would be used in
+> this case?
 
-The theory is that while the ->next pointer is concurrently accessed by
-RCU readers, the ->pprev pointer is accessed only by updaters, who need
-to supply sufficient synchronization.
+Imagine an AF_UNIX SOCK_DGRAM socket. You call recvmsg(). You get a
+blob of regular data along with some ancillary data. The ancillary
+data may include some file descriptors or it may not. Isn't the UFFD
+message model the same thing? You'd call recvmsg() on a UFFD and get
+back a uffd_msg data structure. If that uffd_msg came with file
+descriptors, these descriptors would be in ancillary data. If you
+didn't reserve enough space for the message or enough space for its
+ancillary data, the recvmsg() call would fail cleanly with MSG_TRUNC
+or MSG_CTRUNC.
 
-But what is this theory missing in practice?
+The nice thing about using recvmsg() for this purpose is that there's
+tons of existing code for dealing with recvmsg()'s calling convention
+and its ancillary data. You can, for example, use recvmsg out of the
+box in a Python script. You could make an ioctl that also returned a
+data blob plus some optional file descriptors, but if recvmsg already
+does exactly that job and it's well-understood, why not just reuse the
+recvmsg interface?
 
-							Thanx, Paul
+How practical is it to actually support recvmsg without being a
+socket? How hard would it be to just become a socket? I don't know. My
+point is only that *from a userspace API* point of view, recvmsg()
+seems ideal.
