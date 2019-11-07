@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C14DFF3596
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E42F35A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:24:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388614AbfKGRSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:18:38 -0500
-Received: from mx1.cock.li ([185.10.68.5]:49151 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729494AbfKGRSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:18:38 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S2387502AbfKGRY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:24:29 -0500
+Received: from mx1.unisoc.com ([222.66.158.135]:63831 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729669AbfKGRY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 12:24:29 -0500
+Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+        by SHSQR01.spreadtrum.com with ESMTPS id xA7HN2jR047371
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 8 Nov 2019 01:23:02 +0800 (CST)
+        (envelope-from lvqiang.huang@unisoc.com)
+Received: from BJMBX01.spreadtrum.com (10.0.64.7) by BJMBX01.spreadtrum.com
+ (10.0.64.7) with Microsoft SMTP Server (TLS) id 15.0.847.32; Fri, 8 Nov 2019
+ 01:23:04 +0800
+Received: from BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7]) by
+ BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7%16]) with mapi id
+ 15.00.0847.030; Fri, 8 Nov 2019 01:22:46 +0800
+From:   =?gb2312?B?u8bCwMe/IChMdnFpYW5nIEh1YW5nKQ==?= 
+        <lvqiang.huang@unisoc.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+CC:     "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: check __ex_table in do_bad()
+Thread-Topic: [PATCH] ARM: check __ex_table in do_bad()
+Thread-Index: AQHVlT9LZv+9LX02T0yFglLQtX/ntKd+6ZYAgAEL2yc=
+Date:   Thu, 7 Nov 2019 17:22:45 +0000
+Message-ID: <CE4726AD-630F-44A0-862B-23BC8E6A7E4C@unisoc.com>
+References: <1573112713-10115-1-git-send-email-Lvqiang.Huang@unisoc.com>,<20191107092404.GV25745@shell.armlinux.org.uk>
+In-Reply-To: <20191107092404.GV25745@shell.armlinux.org.uk>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1573147114; bh=kSDgGNL7a5FG/vlXQNtxHTy3Squ4k6bWY+PPww6VBWo=;
-        h=Date:From:To:Subject:In-Reply-To:References:From;
-        b=IjusG3TWoMtT41PEMvD9gaJqPU8aW0ciVrTczk4yoNvqR5tyF9s5Tl2h9vRHf3Oet
-         YZQOqBGy20ILMErYiwlX8U4XJFXIrqlhSGTnkBHBPn8Wk5dyG5WNFklgw2tTiPntIw
-         vPEzgQzV4fXHEGC6EAXkCV3uQKcBX36TtEhq5YujFTamwgGpOphBOq4SUuFhv2C4lZ
-         2/c3xNRY/rMljDo8KNBS0KQ0USAKTJKyCPs5on8Tepxw7S7jIwPBMlUA+DbVpMB872
-         bFiCNLod0D2NW5wsL24wm2GmJAASA6GEttzwRWaYxpgdppSxtVr8lJU/wFHjV6SxNa
-         1sVLIe+zU4CvA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 07 Nov 2019 17:18:33 +0000
-From:   gameonlinux@redchan.it
-To:     gnu-misc-discuss@gnu.org
-Subject: Re: Is negative publicity always harmful? - I support RMS' past
- "pro-paedo" statements
-In-Reply-To: <bfff5cf7-58e7-5d97-7c7f-9e7b55e3365f@mrbrklyn.com>
-References: <5ec38bda-be9c-337e-ec18-a3b983a68b73@runbox.com>
- <c41d45a4-9065-4d6f-1958-ff52ad21d564@codesourcery.com>
- <imnyqlhp.321942@gmail.com> <87ftj2xkzg.fsf@gnu.org>
- <CAJ=RwfZJa61uhPNy2T2ZDRmbaL6RwyFxfNh3z+1e2utB1hQ52g@mail.gmail.com>
- <1572981600.4630.57.camel@softwarelibre.nl>
- <CAJ=RwfZCMoRphnKk=_oO0EX_XskuePX7cozpTaMzt0xO-EaHMw@mail.gmail.com>
- <bfff5cf7-58e7-5d97-7c7f-9e7b55e3365f@mrbrklyn.com>
-Message-ID: <997f2de6aba6ec29656be686762fd335@redchan.it>
-X-Sender: gameonlinux@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+X-MAIL: SHSQR01.spreadtrum.com xA7HN2jR047371
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Looks like everyone's going all-in in this thread, so be it]
 
-I am glad RMS made past pro-paedophile statements. I support them, as a 
-man, and as an enemy of women who want men to be equal or servile to 
-women.
+DQo+INTaIDIwMTnE6jEx1MI3yNWjrDE3OjI0o6xSdXNzZWxsIEtpbmcgLSBBUk0gTGludXggYWRt
+aW4gPGxpbnV4QGFybWxpbnV4Lm9yZy51az4g0LS1wKO6DQo+IA0KPj4gT24gVGh1LCBOb3YgMDcs
+IDIwMTkgYXQgMDM6NDU6MTNQTSArMDgwMCwgTHZxaWFuZyB3cm90ZToNCj4+IA0KPj4gV2UgZ290
+IG1hbnkgY3Jhc2hzIGluIGZvcl9lYWNoX2ZyYW1lKzB4MTggYXJjaC9hcm0vbGliL2JhY2t0cmFj
+ZS5TDQo+PiAgICAxMDAzOiBsZHIgcjIsIFtzdl9wYywgIy00XQ0KPj4gDQo+PiBUaGUgYmFja3Ry
+YWNlIGlzDQo+PiAgICBkdW1wX2JhY2t0cmFjZQ0KPj4gICAgc2hvd19zdGFjaw0KPj4gICAgc2No
+ZWRfc2hvd190YXNrDQo+PiAgICBzaG93X3N0YXRlX2ZpbHRlcg0KPj4gICAgc3lzcnFfaGFuZGxl
+X3Nob3dzdGF0ZV9ibG9ja2VkDQo+PiAgICBfX2hhbmRsZV9zeXNycQ0KPj4gICAgd3JpdGVfc3lz
+cnFfdHJpZ2dlcg0KPj4gICAgcHJvY19yZWdfd3JpdGUNCj4+ICAgIF9fdmZzX3dyaXRlDQo+PiAg
+ICB2ZnNfd3JpdGUNCj4+ICAgIHN5c193cml0ZQ0KPj4gDQo+PiBSZWxhdGVkIEtlcm5lbCBjb25m
+aWcNCj4+ICAgIENPTkZJR19DUFVfU1dfRE9NQUlOX1BBTj15DQo+PiAgICAjIENPTkZJR19BUk1f
+VU5XSU5EIGlzIG5vdCBzZXQNCj4+ICAgIENPTkZJR19GUkFNRV9QT0lOVEVSPXkNCj4+IA0KPj4g
+VGhlIHRhc2sgQSB3YXMgZHVtcGluZyB0aGUgc3RhY2sgb2YgYW4gVU4gdGFzayBCLiBIb3dldmVy
+LCB0aGUgdGFzayBCDQo+IA0KPiBXaGF0IGlzICJhbiBVTiB0YXNrIEIiPw0KDQpVTiBtZWFucyBU
+QVNLX1VOSU5URVJSVVBUSUJMRS4gDQooU29ycnkgZm9yIHRoZSB0eXBvIGluIHRoZSBsYXN0IHJl
+cGx5KQ0KDQo+PiBzY2hlZHVsZWQgdG8gcnVuIG9uIGFub3RoZXIgQ1BVLCB3aGljaCBjYXVzZSBp
+dCBzdGFjayBjb250ZW50IGNoYW5nZWQuDQo+PiBUaGVuLCB0YXNrIEEgbWF5IGhpdCBhIHBhZ2Ug
+ZG9tYWluIGZhdWx0IGFuZCBkaWUoKS4NCj4+ICAgIFs1MjAuNjYxMzE0XSBVbmhhbmRsZWQgZmF1
+bHQ6IHBhZ2UgZG9tYWluIGZhdWx0ICgweDAxYikgYXQgMHgzMjg0OGMwMg0KPiANCj4gU28sIHRo
+ZSBiYWNrdHJhY2UgY29kZSBpcyB0cnlpbmcgdG8gYWNjZXNzIHVzZXJzcGFjZS4gIEl0IGlzbid0
+IHN1cHBvc2VkDQo+IHRvIGJlIGFjY2Vzc2luZyB1c2Vyc3BhY2UgLSB0aGVyZSBhcmUgbm8gZ3Vh
+cmFudGVlcyB0aGF0IHVzZXJzcGFjZSB3aWxsDQo+IGJlIHVzaW5nIGZyYW1lIHBvaW50ZXJzLiAg
+VGhhdCBpcyB0aGUgYnVnLg0KPiANCg0KVGhlcmUgaXMgYSByYWNlIGNvbmRpdGlvbiB3aGVuIHRy
+eSB0byBnZXQgdGhlIGJhY2t0cmFjZSBvZiBhbm90aGVyIHRhc2ujrHdob3NlIGZyYW1lcyBtYXkg
+dG90YWxseSBjaGFuZ2VkIGR1cmluZyB0aGUgZXhlY3V0aW9uLiANCg0KPiAtLSANCj4gUk1LJ3Mg
+UGF0Y2ggc3lzdGVtOiBodHRwczovL3d3dy5hcm1saW51eC5vcmcudWsvZGV2ZWxvcGVyL3BhdGNo
+ZXMvDQo+IEZUVEMgYnJvYWRiYW5kIGZvciAwLjhtaWxlIGxpbmUgaW4gc3VidXJiaWE6IHN5bmMg
+YXQgMTIuMU1icHMgZG93biA2MjJrYnBzIHVwDQo+IEFjY29yZGluZyB0byBzcGVlZHRlc3QubmV0
+OiAxMS45TWJwcyBkb3duIDUwMGticHMgdXANCg0KDQo9PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpUaGlz
+IGVtYWlsIChpbmNsdWRpbmcgaXRzIGF0dGFjaG1lbnRzKSBpcyBpbnRlbmRlZCBvbmx5IGZvciB0
+aGUgcGVyc29uIG9yIGVudGl0eSB0byB3aGljaCBpdCBpcyBhZGRyZXNzZWQgYW5kIG1heSBjb250
+YWluIGluZm9ybWF0aW9uIHRoYXQgaXMgcHJpdmlsZWdlZCwgY29uZmlkZW50aWFsIG9yIG90aGVy
+d2lzZSBwcm90ZWN0ZWQgZnJvbSBkaXNjbG9zdXJlLiBVbmF1dGhvcml6ZWQgdXNlLCBkaXNzZW1p
+bmF0aW9uLCBkaXN0cmlidXRpb24gb3IgY29weWluZyBvZiB0aGlzIGVtYWlsIG9yIHRoZSBpbmZv
+cm1hdGlvbiBoZXJlaW4gb3IgdGFraW5nIGFueSBhY3Rpb24gaW4gcmVsaWFuY2Ugb24gdGhlIGNv
+bnRlbnRzIG9mIHRoaXMgZW1haWwgb3IgdGhlIGluZm9ybWF0aW9uIGhlcmVpbiwgYnkgYW55b25l
+IG90aGVyIHRoYW4gdGhlIGludGVuZGVkIHJlY2lwaWVudCwgb3IgYW4gZW1wbG95ZWUgb3IgYWdl
+bnQgcmVzcG9uc2libGUgZm9yIGRlbGl2ZXJpbmcgdGhlIG1lc3NhZ2UgdG8gdGhlIGludGVuZGVk
+IHJlY2lwaWVudCwgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4gSWYgeW91IGFyZSBub3QgdGhlIGlu
+dGVuZGVkIHJlY2lwaWVudCwgcGxlYXNlIGRvIG5vdCByZWFkLCBjb3B5LCB1c2Ugb3IgZGlzY2xv
+c2UgYW55IHBhcnQgb2YgdGhpcyBlLW1haWwgdG8gb3RoZXJzLiBQbGVhc2Ugbm90aWZ5IHRoZSBz
+ZW5kZXIgaW1tZWRpYXRlbHkgYW5kIHBlcm1hbmVudGx5IGRlbGV0ZSB0aGlzIGUtbWFpbCBhbmQg
+YW55IGF0dGFjaG1lbnRzIGlmIHlvdSByZWNlaXZlZCBpdCBpbiBlcnJvci4gSW50ZXJuZXQgY29t
+bXVuaWNhdGlvbnMgY2Fubm90IGJlIGd1YXJhbnRlZWQgdG8gYmUgdGltZWx5LCBzZWN1cmUsIGVy
+cm9yLWZyZWUgb3IgdmlydXMtZnJlZS4gVGhlIHNlbmRlciBkb2VzIG5vdCBhY2NlcHQgbGlhYmls
+aXR5IGZvciBhbnkgZXJyb3JzIG9yIG9taXNzaW9ucy4gDQqxvtPKvP68sMbkuL28/r7f09Cxo8Pc
+0NTWyqOsyty3qMLJsaO7pLK7tcPQucK2o6y99reiy824+LG+08q8/sv51rjM2LaoytW8/sjLoaPR
+z737t8e+rcrayKjKudPDoaLQ+7SroaK3orK8u/K4tNbGsb7Tyrz+u/LG5MTayN2ho8j0t8e4w8zY
+tqjK1bz+yMujrMfrzvDUxLbBoaK4tNbGoaIgyrnTw7vyxfvCtrG+08q8/rXEyM66zsTayN2ho8j0
+zvPK1bG+08q8/qOsx+u008+1zbPW0NPAvsPQ1Mm+s/2xvtPKvP68sMv509C4vbz+o6yyotLUu9i4
+tNPKvP61xLe9yr28tL/MuObWqreivP7Iy6Gjzt63qLGj1qS7pcGqzfjNqNDFvLDKsaGisLLIq6Gi
+zt7O87vyt8C2vqGjt6K8/sjLttTIzrrOtO3Cqb75sruz0LWj1PDIzqGjDQo=
 
-The Torah explicitly allows men to marry female children, including in 
-cases of the rape (tahphas) of the girl child: Devarim chapter 22, verse 
-28. Key words: Na'ar (child (hebrew masoretic text)), Padia (child: 
-padia+philos = paedophillia (greek septuagint)) Puella (young girl 
-(latin vulgate))
-
-> Nachmanides points out that a child may be called na'ar from the moment 
-> he is born.
-
-Sunni Islam also allows child brides: Bukari Hadith book 5. Ashia was a 
-child when she married Muhammed:
-Sahih Bukhari 5:58:236
-Sahih Bukhari 7:62:64
-Sahih Bukhari 8:73:151
-
-The vedic traditions also allow, or require, child marraige: saying that 
-if a man fails to marry his daughter off by 9 or 12 he goes to hell.
-
-I am a prolific free-software hacker and have been so for 20 years. (My 
-current project is: libregamewiki.org/Chaos_Esque_Anthology , where I 
-brought the project from 18 weapons to over 200, added spell casting, 
-city generation, built many maps(50+) and 3d models (100+), along with 
-textures, music, etc)
-I am also a licensed attorney.
-
-I support RMS' past statements regarding paedophillia, and am saddened 
-and hurt that he has retracted them and has stepped away on the path to 
-eventually presumably endorsing the jailing, torture, and killing of 
-man-on-girl (AKA: virgin marraige) paedophiles: in keeping with the 
-religion of his despicable country and the rulers there-of (said 
-country's women)
-
-Why RMS? Why?
-Man+girl is GOOD for men.
-It's BAD for women.
-Man being an economic slave to woman is GOOD for women, and BAD for men. 
-There is no happy middle ground.
-
-On 2019-11-06 02:54, Ruben Safir wrote:
-> On 11/5/19 4:02 PM, Thompson, David wrote:
->> Maybe this would be a reasonable request if we ignored all the context
->> of what has transpired in the past month or so (which, we must not
->> forget, was just the straw that broke the camel's back after *years*
->> of problematic behavior),
-> 
-> there has been NO problematic behavior by RMS.  You would never have
-> survived 30+ years in the spotlight like he has.  He has been rock 
-> solid
-> and saying otherwise don't give it any ground.
