@@ -2,159 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1387AF35DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6125EF35DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:40:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730903AbfKGRk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:40:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50006 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730779AbfKGRkz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730743AbfKGRkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 7 Nov 2019 12:40:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=AcNJdWRFj0IiWBDJa9CJHpHPvlD1qpX53iQGww529G4=; b=VEE70/AbA2+/80RtKkwS8hzNgH
-        0f/3J/BsSZ3aRwyDlxRdwuqsD5FF94BN++erCt7XDF1X8q3AHRFysxrvZJAJhD0rv9iTWKFDaAnWX
-        1h1fQcVVwUS5gunbzqZ42JZjy8bCD5HrwTxW7vVMAKYX4DgJY5BpSx70Mo3j1MWwbyfi6qFMl091I
-        RCm1pVnatmrIM+Q9KcbWp06hZjW9Ype5zpwVgWHyvDSxAzox7uiqAAwpt275DOYQsfbUTh2k5fO17
-        cpKC7oNOXiKaF8wHv31ngSy4RUryhOiq8SEhUwfZbxncwQXtQ17K3mnBSxVzVf6aAjWr7AUHq9iyU
-        Reb5jevQ==;
-Received: from [2001:4bb8:184:e48:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSllz-0002ON-Cw; Thu, 07 Nov 2019 17:40:43 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        openrisc@lists.librecores.org, iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] openrisc: use the generic in-place uncached DMA allocator
-Date:   Thu,  7 Nov 2019 18:40:35 +0100
-Message-Id: <20191107174035.13783-3-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191107174035.13783-1-hch@lst.de>
-References: <20191107174035.13783-1-hch@lst.de>
+Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727132AbfKGRkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 12:40:55 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0F702084D;
+        Thu,  7 Nov 2019 17:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573148454;
+        bh=OYgQrmdZmNroAHb74sVUuSnpCtxolSUHgVGyEjv4V5Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rDltopZkGIFVN3tdTyMtIBC0/DHvpYC//97XoCxkCgL1Wprtj27pPVltzMEqfAnS9
+         H4eUUc89erhUBoVs8OiiQr9GmEe8B6Hw/1e6dQBfKiDSw4lxtaIWMORzftVi5lU2bE
+         OiHu70ENCi0eJ9yVREDlYILAWx4y/Po/OkXaHVvE=
+Received: by mail-qt1-f170.google.com with SMTP id u22so3219324qtq.13;
+        Thu, 07 Nov 2019 09:40:53 -0800 (PST)
+X-Gm-Message-State: APjAAAWfQ2jvVcRlr9x0D9Rcemoo8XH0id4cDAfbo6KRn/LiBqMbg1V6
+        XQAf0WxAYTqrUdYMhiOUmVgi8E11W7hnDgIBMg==
+X-Google-Smtp-Source: APXvYqymGGkqABjYdF0xhvWYzF9gyZ7Mx6LFLCCgTmCamvcfGddIsg5zyOUpdwQsy7X4I+/2Uw4D8lnhSwngyNf7W74=
+X-Received: by 2002:ac8:7612:: with SMTP id t18mr5129163qtq.143.1573148453179;
+ Thu, 07 Nov 2019 09:40:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
+ <20191029112700.14548-2-srinivas.kandagatla@linaro.org> <20191105193100.GB4709@bogus>
+ <315fd1f8-b6b5-5df7-604d-4ca92b31772c@linaro.org>
+In-Reply-To: <315fd1f8-b6b5-5df7-604d-4ca92b31772c@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 7 Nov 2019 11:40:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ+EUe8TiNfUN30D9x4XNcUnevUSK2cM9zVQR=jDR1wQQ@mail.gmail.com>
+Message-ID: <CAL_JsqJ+EUe8TiNfUN30D9x4XNcUnevUSK2cM9zVQR=jDR1wQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] ASoC: dt-bindings: add dt bindings for
+ WCD9340/WCD9341 audio codec
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vinod Koul <vinod.koul@linaro.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        spapothi@codeaurora.org, Banajit Goswami <bgoswami@codeaurora.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch openrisc to use the dma-direct allocator and just provide the
-hooks for setting memory uncached or cached.
+On Wed, Nov 6, 2019 at 4:08 AM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+>
+>
+> On 05/11/2019 19:31, Rob Herring wrote:
+> >> +  vdd-micbias-supply:
+> >> +    description: A reference to the micbias supply
+> >> +
+> >> +  qcom,micbias1-microvolts:
+> > The standard unit is 'microvolt', not 'microvolts'.
+> >
+> I started with microvolt but dt_bindings_check reported errors.
+>
+> looking at
+> https://github.com/devicetree-org/dt-schema/blob/master/meta-schemas/vendor-props.yaml#L19
+>   suggested microvolts should be used on vendor properties.
+>
+> Is this a typo in dt-schema ?
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/openrisc/Kconfig      |  1 +
- arch/openrisc/kernel/dma.c | 51 +++++---------------------------------
- 2 files changed, 7 insertions(+), 45 deletions(-)
+Yes, even the DT maintainer gets confused. :) It's fixed now.
 
-diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-index bf326f0edd2f..72469d2d2866 100644
---- a/arch/openrisc/Kconfig
-+++ b/arch/openrisc/Kconfig
-@@ -7,6 +7,7 @@
- config OPENRISC
- 	def_bool y
- 	select ARCH_32BIT_OFF_T
-+	select ARCH_HAS_DMA_SET_UNCACHED
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select OF
- 	select OF_EARLY_FLATTREE
-diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
-index 4d5b8bd1d795..9a5b10164b08 100644
---- a/arch/openrisc/kernel/dma.c
-+++ b/arch/openrisc/kernel/dma.c
-@@ -11,8 +11,6 @@
-  * Copyright (C) 2010-2011 Jonas Bonn <jonas@southpole.se>
-  *
-  * DMA mapping callbacks...
-- * As alloc_coherent is the only DMA callback being used currently, that's
-- * the only thing implemented properly.  The rest need looking into...
-  */
- 
- #include <linux/dma-noncoherent.h>
-@@ -67,62 +65,25 @@ static const struct mm_walk_ops clear_nocache_walk_ops = {
- 	.pte_entry		= page_clear_nocache,
- };
- 
--/*
-- * Alloc "coherent" memory, which for OpenRISC means simply uncached.
-- *
-- * This function effectively just calls __get_free_pages, sets the
-- * cache-inhibit bit on those pages, and makes sure that the pages are
-- * flushed out of the cache before they are used.
-- *
-- * If the NON_CONSISTENT attribute is set, then this function just
-- * returns "normal", cachable memory.
-- *
-- * There are additional flags WEAK_ORDERING and WRITE_COMBINE to take
-- * into consideration here, too.  All current known implementations of
-- * the OR1K support only strongly ordered memory accesses, so that flag
-- * is being ignored for now; uncached but write-combined memory is a
-- * missing feature of the OR1K.
-- */
--void *
--arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
--		gfp_t gfp, unsigned long attrs)
-+int arch_dma_set_uncached(void *cpu_addr, size_t size)
- {
--	unsigned long va;
--	void *page;
--
--	page = alloc_pages_exact(size, gfp | __GFP_ZERO);
--	if (!page)
--		return NULL;
--
--	/* This gives us the real physical address of the first page. */
--	*dma_handle = __pa(page);
--
--	va = (unsigned long)page;
-+	unsigned long va = (unsigned long)cpu_addr;
- 
- 	/*
- 	 * We need to iterate through the pages, clearing the dcache for
- 	 * them and setting the cache-inhibit bit.
- 	 */
--	if (walk_page_range(&init_mm, va, va + size, &set_nocache_walk_ops,
--			NULL)) {
--		free_pages_exact(page, size);
--		return NULL;
--	}
--
--	return (void *)va;
-+	return walk_page_range(&init_mm, va, va + size, &set_nocache_walk_ops,
-+			NULL);
- }
- 
--void
--arch_dma_free(struct device *dev, size_t size, void *vaddr,
--		dma_addr_t dma_handle, unsigned long attrs)
-+void arch_dma_clear_uncached(void *cpu_addr, size_t size)
- {
--	unsigned long va = (unsigned long)vaddr;
-+	unsigned long va = (unsigned long)cpu_addr;
- 
- 	/* walk_page_range shouldn't be able to fail here */
- 	WARN_ON(walk_page_range(&init_mm, va, va + size,
- 			&clear_nocache_walk_ops, NULL));
--
--	free_pages_exact(vaddr, size);
- }
- 
- void arch_sync_dma_for_device(struct device *dev, phys_addr_t addr, size_t size,
--- 
-2.20.1
-
+Rob
