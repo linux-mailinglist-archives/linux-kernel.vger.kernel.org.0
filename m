@@ -2,255 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E778EF2A1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:07:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D31F2A28
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:07:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733290AbfKGJHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:07:08 -0500
-Received: from mail-eopbgr740050.outbound.protection.outlook.com ([40.107.74.50]:22560
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726800AbfKGJHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:07:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U1bgPd9O1pIUYq6FKn4N02mAiKIah54kJN6D8Cu/hNLnXNX/fLyqwYiv6jJqFRKEgjiteDFYfzOyLHg4j7Sy2i1l0LIwInf91SKOStAKNzqE2t+3h59Eav5xp1AL2PvxEYldvsA6nZRGuNZCXSW62LcbtiLpAVO7zoPd+pAF92hwKUP4fRJUF6BNEFbEas4xUDKUoYFvTj/r8dItHsRNvPeeG0J/hRJlbUL9fP38ndrAoOA+EIxs2gjsaiqYonc3XapEMPwtCvoLuMa0EsntmVPTi/IRCaSFkIqviu2TjTvxOYat4/4PctoofbG+o5hZygN6k/iizOd++DqGd8Ac9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vsoMbPhZthgvzW3XntHdKGNDxOqGfz5Pmkpyen+X4nI=;
- b=c0IEsdrvzuqg4QDxerD8YDb4ZhIqkaeHiyNbS4KkqJbViLAeY6ySWrMQOZeU7t8Lw4/gIcHkdR5LWIxFcZPT3WLcwLAb4/+YeFQRs8aU5ylw1t8miJrEkKnP1PF3WMeYr9+LTzNNhaasl04ogEj06SMcQVygPsdxLL/tnJlzoDv78JiQbWMy8TZwA0spTjs8NG+yFEtj1YXO1fihCY5SJo8m2z41XkXbhufFQeKX91u26ps8mrDwD1SaZUELNA8W305SwGVi/qX62U0DEsp5kHd7jOusiOudW5Ct0WNYME2WEV/fMFOXoJ9HrIFetp4pK4s4ccv65V3PM57Q68MCgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=baylibre.com smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vsoMbPhZthgvzW3XntHdKGNDxOqGfz5Pmkpyen+X4nI=;
- b=jDvYt0DSyclckn5O7nNkBKzYCSclsMwJHFHnrcTf0gUJbM43G2XMsWVR0xikce5Zdh+o4Kk6TM0bhK92rDpZE28J0m7HkhF6yG4Q7aykggQk82BNLsPpAyoKymR9cJA5/+U+NLMWsWrlaZ/WeVzENw4RQQcWP1jwQc6q5qs4xZ0=
-Received: from CY4PR02CA0006.namprd02.prod.outlook.com (2603:10b6:903:18::16)
- by SN6PR02MB5133.namprd02.prod.outlook.com (2603:10b6:805:68::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2430.20; Thu, 7 Nov
- 2019 09:07:01 +0000
-Received: from SN1NAM02FT017.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::209) by CY4PR02CA0006.outlook.office365.com
- (2603:10b6:903:18::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2430.20 via Frontend
- Transport; Thu, 7 Nov 2019 09:07:01 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; baylibre.com; dkim=none (message not signed)
- header.d=none;baylibre.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT017.mail.protection.outlook.com (10.152.72.115) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2430.20
- via Frontend Transport; Thu, 7 Nov 2019 09:07:00 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <rajan.vaja@xilinx.com>)
-        id 1iSdkq-0001bY-Ce; Thu, 07 Nov 2019 01:07:00 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <rajan.vaja@xilinx.com>)
-        id 1iSdkl-0002Ij-9j; Thu, 07 Nov 2019 01:06:55 -0800
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <rajan.vaja@xilinx.com>)
-        id 1iSdkf-0002IK-3v; Thu, 07 Nov 2019 01:06:49 -0800
-From:   Rajan Vaja <rajan.vaja@xilinx.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
-        m.tretter@pengutronix.de, jollys@xilinx.com, nava.manne@xilinx.com,
-        tejas.patel@xilinx.com
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>
-Subject: [PATCH] clk: zynqmp: Fix divider calculation
-Date:   Thu,  7 Nov 2019 01:06:14 -0800
-Message-Id: <1573117574-9316-1-git-send-email-rajan.vaja@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(39850400004)(376002)(199004)(189003)(70206006)(50466002)(70586007)(48376002)(305945005)(8676002)(2906002)(26005)(426003)(50226002)(336012)(106002)(316002)(51416003)(81156014)(81166006)(7696005)(9786002)(356004)(6666004)(44832011)(6636002)(186003)(8936002)(36756003)(2616005)(14444005)(486006)(16586007)(478600001)(107886003)(36386004)(126002)(47776003)(4326008)(5660300002)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB5133;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4457ebd4-273d-4c05-e0b7-08d76361d990
-X-MS-TrafficTypeDiagnostic: SN6PR02MB5133:
-X-Microsoft-Antispam-PRVS: <SN6PR02MB5133987FF1E540A3A4971457B7780@SN6PR02MB5133.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:1332;
-X-Forefront-PRVS: 0214EB3F68
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kl3Qq7w/FV7Y8qnqn096w7vVPN0FzcXUe+OnbE/Wn3ae7SpoeX6gBZ0KA3Yek6Vo7fYoly54PM6ng4gaOy+qcX7f8MEk1/U24p69unSnKQwPdZfKpfb5U4XhpGDVTzuzmZXq9bn8Pk3PYnhPpaQEOw2qKV9+d9arTJ8wjlXIlJGDvLaatccVTv41C0VWRfFWc09aEBdofWqNY8arpEYoegiLb24/f+CUGdFnDLJlkplQ6NNPgCnY0B0wmbWP6haqxOq3fAOppT6zE6uPd9H2eHFOTmcEaGLVoQvz8Srs1RiA0IEAYowgcQZuUq05GNOMhzSFKIX3veL3B47s/Hd8KbvfX1JsmCgshlhCGivyzR8FUgc6DV9FWkLjrut35HfTIbp4+rJNVIwAemK3yNfTmByg5nBUw18bdFQ0FocnUJl0RU81OM+3Qyjz5XdOXu00
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2019 09:07:00.7861
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4457ebd4-273d-4c05-e0b7-08d76361d990
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB5133
+        id S2387756AbfKGJHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:07:35 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:43203 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733139AbfKGJHe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:07:34 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 3A48F48B;
+        Thu,  7 Nov 2019 04:07:33 -0500 (EST)
+Received: from imap27 ([10.202.2.77])
+  by compute3.internal (MEProxy); Thu, 07 Nov 2019 04:07:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mxxn.io; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type:content-transfer-encoding; s=fm3; bh=AQejw
+        mKS2aKZE7g8GyM5M2En9zW3SmbfeBJsb9jeEmI=; b=ronHlYQbyPmQXAjmDwmI8
+        TAj/kTPUMzHF4e/4uJT+k7tOO8kvUnHyzLd2eeHfxVIvoNn/K4zrYcBH2D8TfyYz
+        IseIKiYqoP7mWLZdxTJctXiOzc+AC0ohZn96f5Pb3kGT8QZ+qLLXdMCr22M3sQKV
+        keO0z9tV5Xm3MygZ9P1SpNJAProrXjCdr23Zpeys4/Xz1YsQHGQd1UPG/Tv35NnO
+        vh2p2bFGgqJTcMf5HaJggo8MaAEJ3wfRV0onGjQgdzRdC/fPVRcQ0p3xLww0zL7K
+        DVmnPNUg+Ynhn1BVBSem6SyAerAx63nWOUu3MU/CUcEuXPLtNBYjGvyHtrxAUaIA
+        g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=AQejwmKS2aKZE7g8GyM5M2En9zW3SmbfeBJsb9jeE
+        mI=; b=AvbBa09npWQrnLKBgLh0j/GVlkK9vUmGj540beZyNujOiWeyJFCpSQydY
+        7wrDSOoN+jO0nDZ8oKpah3g46G53i7W/yoz423aRTrSCT1eyUuOic+a8nseiHFMv
+        qF5KgO/t4qxDC/MolbxSbf3mevUAqJUqGl26cws3AoIafI9iuTgAGJTHOhuTnoO/
+        ljMu7G5ha2c1O+oEzMu5p71g09+37uLOVzEXIk8klyznRJOJeEH33KK9h94jBC1v
+        FEjHCADELyB89C4tk+lpeJD67zm+lTTIVSLPNDPdMaY58TPSPErCWDOjd3phY3Yx
+        f598qjXtTY1OtKnJM7fiiutNgnJlw==
+X-ME-Sender: <xms:1N7DXdyKEgDJSMqiKMM8oPDd6SZhg-Iaz0RJSyJANtF7Zkik2CeI6w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedruddulecutefuodetggdotefrodftvfcurf
+    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefofgggkfgjfhffhffvufgtgfesthhqredtreerjeenucfhrhhomhepuehlrgkkpgfj
+    rhgrshhtnhhikhcuoegslhgriiesmhiggihnrdhioheqnecuffhomhgrihhnpehfrhgvvg
+    guvghskhhtohhprdhorhhgnecurfgrrhgrmhepmhgrihhlfhhrohhmpegslhgriiesmhig
+    gihnrdhiohenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:1N7DXfhzu3gjcW43kOFM0cVP7jipjcP1PGSotwryb9r4pDlePLPMxw>
+    <xmx:1N7DXXZP4Ogt5oU9m53BSaBtOG6iQm_Ma9Ein6BclnapjvrLAFPqsw>
+    <xmx:1N7DXYffXnC6qg6_TQoHnFm5WE5se_1tiCLrsPCgVX_5Qnws2GTFbg>
+    <xmx:1N7DXcbRco8PsHWydR5Dmi99T1P5fT2u75e8hp0IPJHfQwHxiqaYTQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 7CC4DD2009F; Thu,  7 Nov 2019 04:07:32 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-509-ge3ec61c-fmstable-20191030v1
+Mime-Version: 1.0
+Message-Id: <fe67c7d0-1671-4bc4-af9f-7207d1f1a18e@www.fastmail.com>
+In-Reply-To: <CAO-hwJKJvkW2_Dif4+P7ebBXwb-tLk+PHqks7yqevVZ-CHyTCQ@mail.gmail.com>
+References: <20191106110246.70937-1-blaz@mxxn.io>
+ <CAO-hwJKJvkW2_Dif4+P7ebBXwb-tLk+PHqks7yqevVZ-CHyTCQ@mail.gmail.com>
+Date:   Thu, 07 Nov 2019 18:06:21 +0900
+From:   =?UTF-8?Q?Bla=C5=BE_Hrastnik?= <blaz@mxxn.io>
+To:     "Benjamin Tissoires" <benjamin.tissoires@redhat.com>
+Cc:     "Jiri Kosina" <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] HID: Improve Windows Precision Touchpad detection.
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux doesn't know maximum value of divisor that it can support.
-zynqmp_clk_divider_round_rate() returns actual divider value
-after calculating from parent rate and desired rate, even though
-that rate is not supported by single divider of hardware. It is
-also possible that such divisor value can be achieved through 2
-different dividers. As, Linux tries to set such divisor value(out
-of range) in single divider set divider is getting failed.
+I've submitted a test containing the Surface Book 2 descriptor.
 
-Fix the same by computing best possible combination of two
-divisors which provides more accurate clock rate.
+https://gitlab.freedesktop.org/libevdev/hid-tools/merge_requests/59
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
----
- drivers/clk/zynqmp/divider.c         | 62 +++++++++++++++++++++++++++++++++++-
- include/linux/firmware/xlnx-zynqmp.h |  3 +-
- 2 files changed, 63 insertions(+), 2 deletions(-)
+Bla=C5=BE
 
-diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-index d8f5b70d..d2be24e 100644
---- a/drivers/clk/zynqmp/divider.c
-+++ b/drivers/clk/zynqmp/divider.c
-@@ -2,7 +2,7 @@
- /*
-  * Zynq UltraScale+ MPSoC Divider support
-  *
-- *  Copyright (C) 2016-2018 Xilinx
-+ *  Copyright (C) 2016-2019 Xilinx
-  *
-  * Adjustable divider clock implementation
-  */
-@@ -41,6 +41,7 @@ struct zynqmp_clk_divider {
- 	bool is_frac;
- 	u32 clk_id;
- 	u32 div_type;
-+	u32 max_div;
- };
- 
- static inline int zynqmp_divider_get_val(unsigned long parent_rate,
-@@ -88,6 +89,34 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP_ULL(parent_rate, value);
- }
- 
-+static void zynqmp_compute_divider(struct clk_hw *hw,
-+				   unsigned long rate,
-+				   unsigned long parent_rate,
-+				   u32 max_div,
-+				   int *bestdiv)
-+{
-+	int div1;
-+	int div2;
-+	long error = LONG_MAX;
-+	struct clk_hw *parent_hw = clk_hw_get_parent(hw);
-+	struct zynqmp_clk_divider *pdivider = to_zynqmp_clk_divider(parent_hw);
-+
-+	if (!pdivider)
-+		return;
-+
-+	*bestdiv = 1;
-+	for (div1 = 1; div1 <= pdivider->max_div; div1++) {
-+		for (div2 = 1; div2 <= max_div; div2++) {
-+			long new_error = ((parent_rate / div1) / div2) - rate;
-+
-+			if (abs(new_error) < abs(error)) {
-+				*bestdiv = div2;
-+				error = new_error;
-+			}
-+		}
-+	}
-+}
-+
- /**
-  * zynqmp_clk_divider_round_rate() - Round rate of divider clock
-  * @hw:			handle between common and hardware-specific interfaces
-@@ -125,8 +154,21 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
- 
- 	bestdiv = zynqmp_divider_get_val(*prate, rate);
- 
-+	/*
-+	 * In case of two divisors, compute best divider values and return
-+	 * divider2 value based on compute value. div1 will  be automatically
-+	 * set to optimum based on required total divider value.
-+	 */
-+	if (div_type == TYPE_DIV2 &&
-+	    (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-+		zynqmp_compute_divider(hw, rate, *prate,
-+				       divider->max_div, &bestdiv);
-+	}
-+
- 	if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && divider->is_frac)
- 		bestdiv = rate % *prate ? 1 : bestdiv;
-+
-+	bestdiv = min_t(u32, bestdiv, divider->max_div);
- 	*prate = rate * bestdiv;
- 
- 	return rate;
-@@ -195,6 +237,9 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
- 	struct clk_hw *hw;
- 	struct clk_init_data init;
- 	int ret;
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+	struct zynqmp_pm_query_data qdata = {0};
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
- 
- 	/* allocate the divider */
- 	div = kzalloc(sizeof(*div), GFP_KERNEL);
-@@ -215,6 +260,21 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
- 	div->clk_id = clk_id;
- 	div->div_type = nodes->type;
- 
-+	/*
-+	 * To achieve best possible rate, maximum limit of divider is required
-+	 * while computation. Get maximum supported divisor from firmware. To
-+	 * maintain backward compatibility assign maximum possible value(0xFFFF)
-+	 * if query for max divisor is not successful.
-+	 */
-+	qdata.qid = PM_QID_CLOCK_GET_MAX_DIVISOR;
-+	qdata.arg1 = clk_id;
-+	qdata.arg2 = nodes->type;
-+	ret = eemi_ops->query_data(qdata, ret_payload);
-+	if (ret)
-+		div->max_div = 0XFFFF;
-+	else
-+		div->max_div = ret_payload[1];
-+
- 	hw = &div->hw;
- 	ret = clk_hw_register(NULL, hw);
- 	if (ret) {
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 778abbb..1edb6e9 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -2,7 +2,7 @@
- /*
-  * Xilinx Zynq MPSoC Firmware layer
-  *
-- *  Copyright (C) 2014-2018 Xilinx
-+ *  Copyright (C) 2014-2019 Xilinx
-  *
-  *  Michal Simek <michal.simek@xilinx.com>
-  *  Davorin Mista <davorin.mista@aggios.com>
-@@ -105,6 +105,7 @@ enum pm_query_id {
- 	PM_QID_CLOCK_GET_PARENTS,
- 	PM_QID_CLOCK_GET_ATTRIBUTES,
- 	PM_QID_CLOCK_GET_NUM_CLOCKS = 12,
-+	PM_QID_CLOCK_GET_MAX_DIVISOR,
- };
- 
- enum zynqmp_pm_reset_action {
--- 
-2.7.4
+On Thu, 7 Nov 2019, at 17:48, Benjamin Tissoires wrote:
+> Hi Bla=C5=BE,
+>=20
+> On Wed, Nov 6, 2019 at 12:03 PM Bla=C5=BE Hrastnik <blaz@mxxn.io> wrot=
+e:
+> >
+> > Per Microsoft spec, usage 0xC5 (page 0xFF) returns a blob containing=
 
+> > data used to verify the touchpad as a Windows Precision Touchpad.
+> >
+> >    0x85, REPORTID_PTPHQA,    //    REPORT_ID (PTPHQA)
+> >     0x09, 0xC5,              //    USAGE (Vendor Usage 0xC5)
+> >     0x15, 0x00,              //    LOGICAL_MINIMUM (0)
+> >     0x26, 0xff, 0x00,        //    LOGICAL_MAXIMUM (0xff)
+> >     0x75, 0x08,              //    REPORT_SIZE (8)
+> >     0x96, 0x00, 0x01,        //    REPORT_COUNT (0x100 (256))
+> >     0xb1, 0x02,              //    FEATURE (Data,Var,Abs)
+> >
+> > However, some devices, namely Microsoft's Surface line of products
+> > instead implement a "segmented device certification report" (usage 0=
+xC6)
+> > which returns the same report, but in smaller chunks.
+> >
+> >     0x06, 0x00, 0xff,        //     USAGE_PAGE (Vendor Defined)
+> >     0x85, REPORTID_PTPHQA,   //     REPORT_ID (PTPHQA)
+> >     0x09, 0xC6,              //     USAGE (Vendor usage for segment =
+#)
+> >     0x25, 0x08,              //     LOGICAL_MAXIMUM (8)
+> >     0x75, 0x08,              //     REPORT_SIZE (8)
+> >     0x95, 0x01,              //     REPORT_COUNT (1)
+> >     0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
+> >     0x09, 0xC7,              //     USAGE (Vendor Usage)
+> >     0x26, 0xff, 0x00,        //     LOGICAL_MAXIMUM (0xff)
+> >     0x95, 0x20,              //     REPORT_COUNT (32)
+> >     0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
+> >
+> > By expanding Win8 touchpad detection to also look for the segmented
+> > report, all Surface touchpads are now properly recognized by
+> > hid-multitouch.
+> >
+> > Signed-off-by: Bla=C5=BE Hrastnik <blaz@mxxn.io>
+> > ---
+>=20
+> This looks good to me.
+> We *could* shorten the ifs and make only one conditional, but I find
+> it this way more readable and future proof.
+>=20
+> There is just one last step required before we merge this: add a
+> regression test so we ensure we do not break it in the future.
+>=20
+> It should be merely a matter of sending a MR to
+> https://gitlab.freedesktop.org/libevdev/hid-tools.
+> It should consist in adding the report descriptor in the same way we
+> have=20
+> https://gitlab.freedesktop.org/libevdev/hid-tools/blob/master/tests/te=
+st_multitouch.py#L1656-1658.
+> Then, make sure an unpatched kernel breaks the multitouch test (sudo
+> pytest-3 -k 'multitouch and TestPTP') and that a patched kernel is
+> fixed.
+>=20
+> Cheers,
+> Benjamin
+>=20
+> >  drivers/hid/hid-core.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> > index 63fdbf09b044..2af597cd5d65 100644
+> > --- a/drivers/hid/hid-core.c
+> > +++ b/drivers/hid/hid-core.c
+> > @@ -742,6 +742,10 @@ static void hid_scan_feature_usage(struct hid_p=
+arser *parser, u32 usage)
+> >         if (usage =3D=3D 0xff0000c5 && parser->global.report_count =3D=
+=3D 256 &&
+> >             parser->global.report_size =3D=3D 8)
+> >                 parser->scan_flags |=3D HID_SCAN_FLAG_MT_WIN_8;
+> > +
+> > +       if (usage =3D=3D 0xff0000c6 && parser->global.report_count =3D=
+=3D 1 &&
+> > +           parser->global.report_size =3D=3D 8)
+> > +               parser->scan_flags |=3D HID_SCAN_FLAG_MT_WIN_8;
+> >  }
+> >
+> >  static void hid_scan_collection(struct hid_parser *parser, unsigned=
+ type)
+> > --
+> > 2.23.0
+> >
+>=20
+>
