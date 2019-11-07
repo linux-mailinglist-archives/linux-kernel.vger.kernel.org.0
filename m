@@ -2,106 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4E8F2EAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:00:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51112F2EB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:01:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388728AbfKGNAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:00:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:55734 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbfKGNAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:00:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 865C331B;
-        Thu,  7 Nov 2019 05:00:29 -0800 (PST)
-Received: from [192.168.0.9] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1BAE3F6C4;
-        Thu,  7 Nov 2019 05:00:27 -0800 (PST)
-Subject: Re: [Patch v5 5/6] thermal/cpu-cooling: Update thermal pressure in
- case of a maximum frequency capping
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-To:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-6-git-send-email-thara.gopinath@linaro.org>
- <05c53b6f-fd16-3e8b-e8da-ea56325cec33@arm.com>
-Message-ID: <b97dab99-6796-3427-0c6d-57ea6c3dfb1f@arm.com>
-Date:   Thu, 7 Nov 2019 14:00:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2388825AbfKGNBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:01:15 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:54703 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbfKGNBO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 08:01:14 -0500
+Received: from localhost ([46.78.193.225]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MAfQk-1idk0d0Uye-00B74F; Thu, 07 Nov 2019 14:00:31 +0100
+Date:   Thu, 7 Nov 2019 14:00:29 +0100
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     robh+dt@kernel.org, jic23@kernel.org, mark.rutland@arm.com
+Cc:     mripard@kernel.org, shawnguo@kernel.org, heiko@sntech.de,
+        icenowy@aosc.io, laurent.pinchart@ideasonboard.com,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        gregkh@linuxfoundation.org, christophe.jaillet@wanadoo.fr,
+        tglx@linutronix.de, mchehab+samsung@kernel.org,
+        davem@davemloft.net, paulmck@linux.ibm.com,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] dt-bindings: add parallax ping sensors
+Message-ID: <20191107130027.k2uo547xrfiuxgb7@arbad>
 MIME-Version: 1.0
-In-Reply-To: <05c53b6f-fd16-3e8b-e8da-ea56325cec33@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:U8Bhu4Vf+4KzVDN7o7hwZXPSjh260AOQqJZxXo1LOYq9R7wx45l
+ qnicUAjmKFHfet4tBWVuSROasrooJ/jiN46LNHswEIXeLVnUN7glkp4VpgR/Sn1RYDC7kD9
+ TevZhF2xS/c0uONj+wFOiWRBuZWSs9TUpXBGGkeNEXqBDONi2jliQKZWPdxalt3+TgYcb39
+ +0EOWafbZeC+SJC4ELJ9Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7uSPIhWC6ns=:eGFlqo4N96XxVf0BxSzsKM
+ 9S48F5JPNhf2Zqu1arX8XktQ2tg688u1oGwiLzTZWQPSiUR1s1mre/Zfb0BhbSq5HxTNaiRH2
+ iOwE4P713IPTnNujXHS7Tvyy+JATPfl8vGZj2N4PKFe0QUE9sCmla7gDWEhx6pwHJzj7HpxJF
+ 4ePuKHdm7oKT5l2uZ+xGBdbbLXRSspZcQ4k1KaXd1hTUcj2it8LgnQAakp3tPIBSFjjM3IIWI
+ jmfcpenTyhMpSc/ofkcEsN94qOxPOTGf04+4UMj1Qimch9QPHsZoOhu4oDFXkcjvHSs6JyLxl
+ Km3oY0UdoNe5Hk9DWOAp4kPwHU/IWEncMUwU53i4uUsPEAJXfrHBX7JIgOl2p7UEAHnFCFayP
+ iaCLi7AMI8YStH/Mr/z+A3f2vT+pDbDAsDIYOrg8SH/SzBFF606CYXkn8SdnG5XiGQxzst5JJ
+ CWGg8YAWmYHloaPhRPGv6z9oaK8s5IZkEUkTrI/Bn/dWa9/8rvndZMLWAEd9RGr/71iuRkThy
+ D2kNS1PkFBGkoTJ+L21/SVtIx3dcOfGBWKU0rUUGx/CJnDsPxA9Ct4JccU2AGeQ4Wl7nggegh
+ ExUzzlyGyqk9DdHi+JK1HsMQHzqfyeMwPenI2T3Y0IdVpQo7T07rF/Zdtx3gTJyBUxos04mxf
+ 3P32st9l0vLARle1URYRjJ5btNRR85j48MZPEVrlSeSoeNktplCPMcNpXL3K3/XZ3e92TxNqk
+ gEAcEBmh8dstwu84DiejN3hM+O+lht7Jlenmlp1ZGKjg5rENWLlp4cTRlzDsSdxMAkvMtTCDx
+ ghKQPadixhSaUSjWzovcPQw3eMTGUsZ4bK6wtapZ2PfLz3fBBt+USdaY0vAi4jF21ZlEE+aBf
+ vSSlAcyCaq0IkZX6fI8g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add dt-bindings for parallax PING))) and LaserPING iio sensors, which
+are used for measuring distances.
 
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+---
+ .../bindings/iio/proximity/parallax-ping.yaml      | 51 ++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
 
-On 06/11/2019 13:50, Dietmar Eggemann wrote:
-> On 05/11/2019 19:49, Thara Gopinath wrote:
-> 
-> [...]
-> 
->> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
->> index 391f397..c65b7c4 100644
->> --- a/drivers/thermal/cpu_cooling.c
->> +++ b/drivers/thermal/cpu_cooling.c
->> @@ -218,6 +218,27 @@ static u32 cpu_power_to_freq(struct cpufreq_cooling_device *cpufreq_cdev,
->>  }
->>  
->>  /**
->> + * update_sched_max_capacity - update scheduler about change in cpu
->> + *				max frequency.
->> + * @cpus: list of cpus whose max capacity needs udating in scheduler.
->> + * @cur_max_freq: current maximum frequency.
->> + * @max_freq: highest possible frequency.
->> + */
->> +static void update_sched_max_capacity(struct cpumask *cpus,
->> +				      unsigned int cur_max_freq,
->> +				      unsigned int max_freq)
->> +{
->> +	int cpu;
->> +	unsigned long capacity;
->> +
->> +	for_each_cpu(cpu, cpus) {
->> +		capacity = cur_max_freq * arch_scale_cpu_capacity(cpu);
->> +		capacity /= max_freq;
->> +		update_thermal_pressure(cpu, capacity);
->> +	}
->> +}
->> +
->> +/**
-> 
-> Have you seen
-> https://lore.kernel.org/r/2b19d7da-412c-932f-7251-110eadbef3e3@arm.com ?
-> 
-> Also the naming 'update_thermal_pressure()' is not really suitable for
-> an external task scheduler interface. If I see this called in the
-> cooling device code, I wouldn't guess that this is a task scheduler
-> interface.
-> 
-> [...]
-
-The current interface to bring in frequency and uarch (CPU) invariance
-information into the task scheduler is arch_scale_[freq|cpu]_capacity.
-
-So why not follow this approach for the thermal->sched interface?
-
-+#ifndef arch_scale_thermal_capacity
-+static __always_inline
-+unsigned long arch_scale_thermal_capacity(int cpu)
-+{
-+       return 0;
-+}
-+#endif
-
-Leave per_cpu(thermal_pressure, cpu) within cpu cooling and let cpu
-cooling (or even platform) #define arch_scale_thermal_capacity.
+diff --git a/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml b/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
+new file mode 100644
+index 000000000000..ab8dbdf4f04a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/proximity/parallax-ping.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Parallax PING))) and LaserPING range finder
++
++maintainers:
++  - Andreas Klinger <ak@it-klinger.de>
++
++description: |
++  Bit-banging driver using one GPIO:
++  - ping-gpio is raised by the driver to start measurement
++  - direction of ping-gpio is then switched into input with an interrupt
++    for receiving distance value as PWM signal
++
++  Specifications about the devices can be found at:
++  http://parallax.com/sites/default/files/downloads/28041-LaserPING-2m-Rangefinder-Guide.pdf
++  http://parallax.com/sites/default/files/downloads/28015-PING-Documentation-v1.6.pdf
++
++properties:
++  compatible:
++    enum:
++      - parallax,ping
++      - parallax,laserping
++
++  ping-gpios:
++    description:
++      Definition of the GPIO for the triggering and echo (output and input)
++      This GPIO is set for about 5 us by the driver to tell the device it
++      should initiate the measurement cycle. Afterwards the GPIO is switched
++      to input direction with an interrupt. The device sets it and the
++      length of the input signal corresponds to the measured distance.
++      It needs to be an GPIO which is able to deliver an interrupt because
++      the time between two interrupts is measured in the driver.
++      See Documentation/devicetree/bindings/gpio/gpio.txt for information
++      on how to specify a consumer gpio.
++    maxItems: 1
++
++required:
++  - compatible
++  - ping-gpios
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    proximity {
++        compatible = "parallax,laserping";
++        ping-gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
++    };
+-- 
+2.11.0
