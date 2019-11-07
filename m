@@ -2,397 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9F5CF3106
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:15:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C6ADF3118
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:16:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389604AbfKGOPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:15:05 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34213 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389533AbfKGOO6 (ORCPT
+        id S2389627AbfKGOPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:15:52 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41240 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389136AbfKGOPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:14:58 -0500
-Received: by mail-wr1-f66.google.com with SMTP id e6so3253986wrw.1;
-        Thu, 07 Nov 2019 06:14:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ha5IlEhJUKA4EU8NTC6VSC4fZ/nNaY5kGJON4kbmZRg=;
-        b=BsGHu2VDz/mQkg7CFdmtb16igvW3Ve5jcu8TphWb/43L2CdgFXRYO9NAX4WcI8+9NW
-         KPFbdhNbBI/5hGdrkb2NMOdTkAmLszIbUPLYYUaRZkDftSLH8RSLm8AUqENboNwE/Evr
-         0ddtfpaZyq0Q1VkaXTCceFLeBlO3x8TbXYIaPsCd2WTE+fMpXAcIcnG0PcyY0LOjD0WX
-         JmLTAhPmJo562KIis7Bz6qyVZ42Wg2G0T2e59mX3Y0QRAc9mFzpaBmg5QHxKHb3pwBfF
-         j3lWC6Y42E49bxMLgOsAS7iNAQeVApeVgAh3cx11GruyqlG0Sc+4TwCiiXChazoroNwA
-         Olpg==
+        Thu, 7 Nov 2019 09:15:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573136151;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IQQGeA2GqC4Q8lGdu4U1hGsjXCIjFvgN1cEaPoJfzWs=;
+        b=EhFlS+0PPWLUR4oHDvxc50RGj7aBT7VwgaJkgnHJ5MAL0pC8TY6VDroAs71nEYna7x7Ah2
+        APUnG9pIu7342iqonwD+6c+diFlIdICg3/a1zkET9O5jnq2MyHP5Uxqmw67v+u3P11R0bf
+        Asm2J5gLKO5CEvrFXmoGplEIvdED654=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-206-fTFAQhzxN1y-SOymwlb9FQ-1; Thu, 07 Nov 2019 09:15:49 -0500
+Received: by mail-wr1-f71.google.com with SMTP id e7so1091519wro.22
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 06:15:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Ha5IlEhJUKA4EU8NTC6VSC4fZ/nNaY5kGJON4kbmZRg=;
-        b=l1wjCap/kuyPYX3N8rwPSuQdrEygGregKUJjyGeVlf+TQ/npWQltEn+V/xElU4l9MO
-         Kmh3RMrvAlcOogKs490tnb8j1w6/zPXOeeVrGpeZ6i4T2AWc7SxvVSBNqqj9BnVUc/JF
-         /GY9uT6NuuQX5sxJyRVPo0/i4o+XBNvkb/9I5zdKFskUzVgGSXDoF/nE+nYRs+hKKl7l
-         lHNRKZEF89xG0dtvGMYJf6QnS0Jh8tvfnmqA6DUX2p9HWEPRVDy+tIXwUPAyIb5eleKB
-         zKtkRgKo14DIEImSmt/9A20Gr+fomhG9i8F9KQ+K6RvNVcdG5fqi+HPsLhzwEOBbIHLl
-         jGhw==
-X-Gm-Message-State: APjAAAUkPmOIGOOYeQs5IDKhvxXTsionVkbejWhtqREshv6zFwos6jp4
-        aVPRxiBLNcVVBX/D+Hc8m689XDoPpFA=
-X-Google-Smtp-Source: APXvYqzNV+wsomr5kXBfLkZ4LoK67Rwo5hFGAQtCObNTKLf8Uhx27O8L9wTBmbF3QbDxbkptkzRKqg==
-X-Received: by 2002:a5d:4803:: with SMTP id l3mr3131071wrq.381.1573136094755;
-        Thu, 07 Nov 2019 06:14:54 -0800 (PST)
-Received: from stbsrv-and-01.and.broadcom.net ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id b1sm2453888wrw.77.2019.11.07.06.14.52
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=NuQrs5SJVY4jlHa2zxbalzQjTYTxUlDQ8ZHPfqmiNQ8=;
+        b=X+GP/O2rBFQCJIKP4OTt61RBIw9gj4c9ABMKmAvAcYYrMSVWyzJBbTmhzd9p4js1Uc
+         CKyVlFoB5KYZaHYU6tFgy89U4x8tn1IlQ5TXQ9mlZrLOkc2X4lKBmRPO0UrPoNqVNCdK
+         ZmdlaBlI4hbn8iBaRXfQ5/VScwak4w0rCIDCuWEcoeA/dHPAwKFI3PoUATARj1Sifcxh
+         8xcM1rbRWVbPcWEN7sQgM5AixUNAxAOdiBLh4RqMWZxArFiILGpWe1Ax85Sn5qKHMFHD
+         AB7CCi4iftIT2pWoCvh4EZS5wIcVUoA3aXUVsrsJtyJZ+QDuLMTyxCqhcyhc1IcsgYwJ
+         GHMg==
+X-Gm-Message-State: APjAAAUX2zDkF5M5tEOUyHDQQfjMsNzK19N98SgGURmgZrt/eucCl+Ap
+        TEoFORykRrSnMdir+WVuQZ+nje4AVie4+bin1nWUi6AO4UyF1I6FUKoqFeh8OEbYCzCkCS8uwc9
+        pXO4aJHX87I6JUmL8DeR7IwFW
+X-Received: by 2002:a5d:4982:: with SMTP id r2mr3134196wrq.254.1573136147571;
+        Thu, 07 Nov 2019 06:15:47 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzwgCFT8usXbCPQK392QCEz4oeVoY26l3u2JDtD2xITZhSqFPvEqq5eSP3DgLKVukd6BnLc8A==
+X-Received: by 2002:a5d:4982:: with SMTP id r2mr3134177wrq.254.1573136147337;
+        Thu, 07 Nov 2019 06:15:47 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id m15sm2185865wrq.97.2019.11.07.06.15.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 06:14:54 -0800 (PST)
-From:   Al Cooper <alcooperx@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Al Cooper <alcooperx@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH 13/13] phy: usb: Add support for wake and USB low power mode for 7211 S2/S5
-Date:   Thu,  7 Nov 2019 09:13:39 -0500
-Message-Id: <20191107141339.6079-14-alcooperx@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191107141339.6079-1-alcooperx@gmail.com>
-References: <20191107141339.6079-1-alcooperx@gmail.com>
+        Thu, 07 Nov 2019 06:15:46 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Olaf Hering <olaf@aepfle.de>
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        "open list\:Hyper-V CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] tools/hv: async name resolution in kvp_daemon
+In-Reply-To: <20191107144850.37587edb.olaf@aepfle.de>
+References: <20191024144943.26199-1-olaf@aepfle.de> <874kzfbybk.fsf@vitty.brq.redhat.com> <20191107144850.37587edb.olaf@aepfle.de>
+Date:   Thu, 07 Nov 2019 15:15:45 +0100
+Message-ID: <87zhh7ai26.fsf@vitty.brq.redhat.com>
+MIME-Version: 1.0
+X-MC-Unique: fTFAQhzxN1y-SOymwlb9FQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for 7211 USB wake. Disable all possible 7211 USB logic
-for S2/S5 if USB wake is not enabled.
+Olaf Hering <olaf@aepfle.de> writes:
 
-On the 7211, the XHCI wake signal was not connected properly and
-only goes to the USB1_USB1_CTRL_TP_DIAG1 diagonstic register.
-The workaround is to have VPU code running that polls for the
-proper bit in the DIAG register and to wake the system when
-the bit is asserted.
+> Am Thu, 07 Nov 2019 14:39:11 +0100
+> schrieb Vitaly Kuznetsov <vkuznets@redhat.com>:
+>
+>> Olaf Hering <olaf@aepfle.de> writes:
+>
+>> Is it only EAI_AGAIN or do you see any other return values which justify
+>> the retry? I'm afraid that in case of a e.g. non-existing hostname we'll
+>> be infinitely looping with EAI_FAIL.
+>
+> I currently do not have a setup that reproduces the failure.
+> I think if this thread loops forever, so be it.
+>
+> The report I have shows "getaddrinfo failed: 0xfffffffe Name or service n=
+ot known" on the host side.
+> And that went away within the VM once "networking was fixed", whatever th=
+is means.
+> But hv_kvp_daemon would report the error string forever.
 
-Signed-off-by: Al Cooper <alcooperx@gmail.com>
----
- .../phy/broadcom/phy-brcm-usb-init-synopsis.c | 77 +++++++++++++++++--
- drivers/phy/broadcom/phy-brcm-usb-init.c      | 26 ++++---
- drivers/phy/broadcom/phy-brcm-usb-init.h      | 11 +--
- drivers/phy/broadcom/phy-brcm-usb.c           | 25 ++++--
- 4 files changed, 105 insertions(+), 34 deletions(-)
+Looping forever with a permanent error is pretty unusual...
 
-diff --git a/drivers/phy/broadcom/phy-brcm-usb-init-synopsis.c b/drivers/phy/broadcom/phy-brcm-usb-init-synopsis.c
-index c6504649d307..a2f96fce8c2f 100644
---- a/drivers/phy/broadcom/phy-brcm-usb-init-synopsis.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb-init-synopsis.c
-@@ -26,7 +26,6 @@
- #define   PIARBCTL_MISC_CAM1_MEM_PAGE_MASK		0x00000f00
- #define   PIARBCTL_MISC_CAM0_MEM_PAGE_MASK		0x000000f0
- #define   PIARBCTL_MISC_SATA_PRIORITY_MASK		0x0000000f
--#define PIARBCTL_USB_M_ASB_CTRL		0x10
- 
- #define PIARBCTL_MISC_USB_ONLY_MASK		\
- 	(PIARBCTL_MISC_USB_SELECT_MASK |	\
-@@ -51,14 +50,27 @@
- #define USB_CTRL_USB_PM_STATUS		0x08
- #define USB_CTRL_USB_DEVICE_CTL1	0x10
- #define   USB_CTRL_USB_DEVICE_CTL1_PORT_MODE_MASK	0x00000003
-+#define USB_CTRL_TEST_PORT_CTL		0x30
-+#define   USB_CTRL_TEST_PORT_CTL_TPOUT_SEL_MASK	0x000000ff
-+#define   USB_CTRL_TEST_PORT_CTL_TPOUT_SEL_PME_GEN_MASK	0x0000002e
-+#define USB_CTRL_TP_DIAG1		0x34
-+#define   USB_CTLR_TP_DIAG1_wake_MASK	0x00000002
-+#define USB_CTRL_CTLR_CSHCR		0x50
-+#define   USB_CTRL_CTLR_CSHCR_ctl_pme_en_MASK	0x00040000
- 
- /* Register definitions for the USB_PHY block in 7211b0 */
-+#define USB_PHY_PLL_CTL			0x00
-+#define   USB_PHY_PLL_CTL_PLL_RESETB_MASK		0x40000000
- #define USB_PHY_PLL_LDO_CTL		0x08
- #define   USB_PHY_PLL_LDO_CTL_AFE_CORERDY_MASK		0x00000004
-+#define   USB_PHY_PLL_LDO_CTL_AFE_LDO_PWRDWNB_MASK	0x00000002
-+#define   USB_PHY_PLL_LDO_CTL_AFE_BG_PWRDWNB_MASK	0x00000001
- #define USB_PHY_UTMI_CTL_1		0x04
- #define   USB_PHY_UTMI_CTL_1_POWER_UP_FSM_EN_MASK	0x00000800
- #define   USB_PHY_UTMI_CTL_1_PHY_MODE_MASK		0x0000000c
- #define   USB_PHY_UTMI_CTL_1_PHY_MODE_SHIFT		2
-+#define USB_PHY_IDDQ			0x1c
-+#define   USB_PHY_IDDQ_phy_iddq_MASK			0x00000001
- #define USB_PHY_STATUS			0x20
- #define   USB_PHY_STATUS_pll_lock_MASK			0x00000001
- 
-@@ -199,6 +211,17 @@ static void usb_init_common(struct brcm_usb_init_params *params)
- 	}
- }
- 
-+static void usb_wake_enable_7211b0(struct brcm_usb_init_params *params,
-+				   bool enable)
-+{
-+	void __iomem *ctrl = params->regs[BRCM_REGS_CTRL];
-+
-+	if (enable)
-+		USB_CTRL_SET(ctrl, CTLR_CSHCR, ctl_pme_en);
-+	else
-+		USB_CTRL_UNSET(ctrl, CTLR_CSHCR, ctl_pme_en);
-+}
-+
- static void usb_init_common_7211b0(struct brcm_usb_init_params *params)
- {
- 	void __iomem *ctrl = params->regs[BRCM_REGS_CTRL];
-@@ -210,9 +233,27 @@ static void usb_init_common_7211b0(struct brcm_usb_init_params *params)
- 	if (params->syscon_piarbctl)
- 		syscon_piarbctl_init(params->syscon_piarbctl);
- 
-+	USB_CTRL_UNSET(ctrl, USB_PM, USB_PWRDN);
-+
-+	usb_wake_enable_7211b0(params, false);
-+	if (!params->wake_enabled) {
-+
-+		/* undo possible suspend settings */
-+		brcm_usb_writel(0, usb_phy + USB_PHY_IDDQ);
-+		reg = brcm_usb_readl(usb_phy + USB_PHY_PLL_CTL);
-+		reg |= USB_PHY_PLL_CTL_PLL_RESETB_MASK;
-+		brcm_usb_writel(reg, usb_phy + USB_PHY_PLL_CTL);
-+
-+		/* temporarily enable FSM so PHY comes up properly */
-+		reg = brcm_usb_readl(usb_phy + USB_PHY_UTMI_CTL_1);
-+		reg |= USB_PHY_UTMI_CTL_1_POWER_UP_FSM_EN_MASK;
-+		brcm_usb_writel(reg, usb_phy + USB_PHY_UTMI_CTL_1);
-+	}
-+
- 	/* Init the PHY */
--	reg = brcm_usb_readl(usb_phy + USB_PHY_PLL_LDO_CTL);
--	reg |= USB_PHY_PLL_LDO_CTL_AFE_CORERDY_MASK;
-+	reg = USB_PHY_PLL_LDO_CTL_AFE_CORERDY_MASK |
-+		USB_PHY_PLL_LDO_CTL_AFE_LDO_PWRDWNB_MASK |
-+		USB_PHY_PLL_LDO_CTL_AFE_BG_PWRDWNB_MASK;
- 	brcm_usb_writel(reg, usb_phy + USB_PHY_PLL_LDO_CTL);
- 
- 	/* wait for lock */
-@@ -276,12 +317,36 @@ static void usb_uninit_common(struct brcm_usb_init_params *params)
- 
- }
- 
-+static void usb_uninit_common_7211b0(struct brcm_usb_init_params *params)
-+{
-+	void __iomem *ctrl = params->regs[BRCM_REGS_CTRL];
-+	void __iomem *usb_phy = params->regs[BRCM_REGS_USB_PHY];
-+	u32 reg;
-+
-+	pr_debug("%s\n", __func__);
-+
-+	if (params->wake_enabled) {
-+		USB_CTRL_SET(ctrl, TEST_PORT_CTL, TPOUT_SEL_PME_GEN);
-+		usb_wake_enable_7211b0(params, true);
-+	} else {
-+		USB_CTRL_SET(ctrl, USB_PM, USB_PWRDN);
-+		brcm_usb_writel(0, usb_phy + USB_PHY_PLL_LDO_CTL);
-+		reg = brcm_usb_readl(usb_phy + USB_PHY_PLL_CTL);
-+		reg &= ~USB_PHY_PLL_CTL_PLL_RESETB_MASK;
-+		brcm_usb_writel(reg, usb_phy + USB_PHY_PLL_CTL);
-+		brcm_usb_writel(USB_PHY_IDDQ_phy_iddq_MASK,
-+				usb_phy + USB_PHY_IDDQ);
-+	}
-+
-+}
-+
- static void usb_uninit_xhci(struct brcm_usb_init_params *params)
- {
- 
- 	pr_debug("%s\n", __func__);
- 
--	xhci_soft_reset(params, 1);
-+	if (!params->wake_enabled)
-+		xhci_soft_reset(params, 1);
- }
- 
- static int usb_get_dual_select(struct brcm_usb_init_params *params)
-@@ -309,7 +374,6 @@ static void usb_set_dual_select(struct brcm_usb_init_params *params, int mode)
- 	brcm_usb_writel(reg, USB_CTRL_REG(ctrl, USB_DEVICE_CTL1));
- }
- 
--
- static const struct brcm_usb_init_ops bcm7216_ops = {
- 	.init_ipp = usb_init_ipp,
- 	.init_common = usb_init_common,
-@@ -324,7 +388,7 @@ static const struct brcm_usb_init_ops bcm7211b0_ops = {
- 	.init_ipp = usb_init_ipp,
- 	.init_common = usb_init_common_7211b0,
- 	.init_xhci = usb_init_xhci,
--	.uninit_common = usb_uninit_common,
-+	.uninit_common = usb_uninit_common_7211b0,
- 	.uninit_xhci = usb_uninit_xhci,
- 	.get_dual_select = usb_get_dual_select,
- 	.set_dual_select = usb_set_dual_select,
-@@ -346,4 +410,5 @@ void brcm_usb_dvr_init_7211b0(struct brcm_usb_init_params *params)
- 
- 	params->family_name = "7211";
- 	params->ops = &bcm7211b0_ops;
-+	params->suspend_with_clocks = true;
- }
-diff --git a/drivers/phy/broadcom/phy-brcm-usb-init.c b/drivers/phy/broadcom/phy-brcm-usb-init.c
-index e28e4b1a3f21..b477c1684825 100644
---- a/drivers/phy/broadcom/phy-brcm-usb-init.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb-init.c
-@@ -783,12 +783,24 @@ static void usb_init_ipp(struct brcm_usb_init_params *params)
- 		msleep(50);
- }
- 
-+static void usb_wake_enable(struct brcm_usb_init_params *params,
-+			  bool enable)
-+{
-+	void __iomem *ctrl = params->regs[BRCM_REGS_CTRL];
-+
-+	if (enable)
-+		USB_CTRL_SET(ctrl, USB_PM, RMTWKUP_EN);
-+	else
-+		USB_CTRL_UNSET(ctrl, USB_PM, RMTWKUP_EN);
-+}
-+
- static void usb_init_common(struct brcm_usb_init_params *params)
- {
- 	u32 reg;
- 	void __iomem *ctrl = params->regs[BRCM_REGS_CTRL];
- 
- 	/* Clear any pending wake conditions */
-+	usb_wake_enable(params, false);
- 	reg = brcm_usb_readl(USB_CTRL_REG(ctrl, USB_PM_STATUS));
- 	brcm_usb_writel(reg, USB_CTRL_REG(ctrl, USB_PM_STATUS));
- 
-@@ -935,6 +947,8 @@ static void usb_uninit_common(struct brcm_usb_init_params *params)
- 
- 	if (USB_CTRL_MASK_FAMILY(params, PLL_CTL, PLL_IDDQ_PWRDN))
- 		USB_CTRL_SET_FAMILY(params, PLL_CTL, PLL_IDDQ_PWRDN);
-+	if (params->wake_enabled)
-+		usb_wake_enable(params, true);
- }
- 
- static void usb_uninit_eohci(struct brcm_usb_init_params *params)
-@@ -978,17 +992,6 @@ static void usb_set_dual_select(struct brcm_usb_init_params *params, int mode)
- 	}
- }
- 
--static void usb_wake_enable(struct brcm_usb_init_params *params,
--			  int enable)
--{
--	void __iomem *ctrl = params->regs[BRCM_REGS_CTRL];
--
--	if (enable)
--		USB_CTRL_SET(ctrl, USB_PM, RMTWKUP_EN);
--	else
--		USB_CTRL_UNSET(ctrl, USB_PM, RMTWKUP_EN);
--}
--
- static const struct brcm_usb_init_ops bcm7445_ops = {
- 	.init_ipp = usb_init_ipp,
- 	.init_common = usb_init_common,
-@@ -999,7 +1002,6 @@ static const struct brcm_usb_init_ops bcm7445_ops = {
- 	.uninit_xhci = usb_uninit_xhci,
- 	.get_dual_select = usb_get_dual_select,
- 	.set_dual_select = usb_set_dual_select,
--	.wake_enable = usb_wake_enable,
- };
- 
- void brcm_usb_dvr_init_7445(struct brcm_usb_init_params *params)
-diff --git a/drivers/phy/broadcom/phy-brcm-usb-init.h b/drivers/phy/broadcom/phy-brcm-usb-init.h
-index 570bd9d8c9ec..2955fdc8479b 100644
---- a/drivers/phy/broadcom/phy-brcm-usb-init.h
-+++ b/drivers/phy/broadcom/phy-brcm-usb-init.h
-@@ -46,8 +46,6 @@ struct brcm_usb_init_ops {
- 	void (*uninit_xhci)(struct brcm_usb_init_params *params);
- 	int  (*get_dual_select)(struct brcm_usb_init_params *params);
- 	void (*set_dual_select)(struct brcm_usb_init_params *params, int mode);
--	void (*wake_enable)(struct brcm_usb_init_params *params,
--			    int enable);
- };
- 
- struct  brcm_usb_init_params {
-@@ -62,6 +60,8 @@ struct  brcm_usb_init_params {
- 	const u32 *usb_reg_bits_map;
- 	const struct brcm_usb_init_ops *ops;
- 	struct regmap *syscon_piarbctl;
-+	bool wake_enabled;
-+	bool suspend_with_clocks;
- };
- 
- void brcm_usb_dvr_init_7445(struct brcm_usb_init_params *params);
-@@ -145,13 +145,6 @@ static inline void brcm_usb_uninit_xhci(struct brcm_usb_init_params *ini)
- 		ini->ops->uninit_xhci(ini);
- }
- 
--static inline void brcm_usb_wake_enable(struct brcm_usb_init_params *ini,
--	int enable)
--{
--	if (ini->ops->wake_enable)
--		ini->ops->wake_enable(ini, enable);
--}
--
- static inline int brcm_usb_get_dual_select(struct brcm_usb_init_params *ini)
- {
- 	if (ini->ops->get_dual_select)
-diff --git a/drivers/phy/broadcom/phy-brcm-usb.c b/drivers/phy/broadcom/phy-brcm-usb.c
-index 86d7ba7c3af3..a1de565c2f21 100644
---- a/drivers/phy/broadcom/phy-brcm-usb.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb.c
-@@ -530,16 +530,26 @@ static int brcm_usb_phy_suspend(struct device *dev)
- 	struct brcm_usb_phy_data *priv = dev_get_drvdata(dev);
- 
- 	if (priv->init_count) {
-+		priv->ini.wake_enabled = device_may_wakeup(dev);
- 		if (priv->phys[BRCM_USB_PHY_3_0].inited)
- 			brcm_usb_uninit_xhci(&priv->ini);
- 		if (priv->phys[BRCM_USB_PHY_2_0].inited)
- 			brcm_usb_uninit_eohci(&priv->ini);
- 		brcm_usb_uninit_common(&priv->ini);
--		brcm_usb_wake_enable(&priv->ini, true);
--		if (priv->phys[BRCM_USB_PHY_3_0].inited)
--			clk_disable_unprepare(priv->usb_30_clk);
--		if (priv->phys[BRCM_USB_PHY_2_0].inited || !priv->has_eohci)
--			clk_disable_unprepare(priv->usb_20_clk);
-+
-+		/*
-+		 * Handle the clocks unless needed for wake. This has
-+		 * to work for both older XHCI->3.0-clks, EOHCI->2.0-clks
-+		 * and newer XHCI->2.0-clks/3.0-clks.
-+		 */
-+
-+		if (!priv->ini.suspend_with_clocks) {
-+			if (priv->phys[BRCM_USB_PHY_3_0].inited)
-+				clk_disable_unprepare(priv->usb_30_clk);
-+			if (priv->phys[BRCM_USB_PHY_2_0].inited ||
-+			    !priv->has_eohci)
-+				clk_disable_unprepare(priv->usb_20_clk);
-+		}
- 		if (priv->wake_irq >= 0)
- 			enable_irq_wake(priv->wake_irq);
- 	}
-@@ -552,7 +562,6 @@ static int brcm_usb_phy_resume(struct device *dev)
- 
- 	clk_prepare_enable(priv->usb_20_clk);
- 	clk_prepare_enable(priv->usb_30_clk);
--	brcm_usb_wake_enable(&priv->ini, false);
- 	brcm_usb_init_ipp(&priv->ini);
- 
- 	/*
-@@ -574,6 +583,8 @@ static int brcm_usb_phy_resume(struct device *dev)
- 		} else if (priv->has_xhci) {
- 			brcm_usb_uninit_xhci(&priv->ini);
- 			clk_disable_unprepare(priv->usb_30_clk);
-+			if (!priv->has_eohci)
-+				clk_disable_unprepare(priv->usb_20_clk);
- 		}
- 	} else {
- 		if (priv->has_xhci)
-@@ -584,7 +595,7 @@ static int brcm_usb_phy_resume(struct device *dev)
- 		clk_disable_unprepare(priv->usb_20_clk);
- 		clk_disable_unprepare(priv->usb_30_clk);
- 	}
--
-+	priv->ini.wake_enabled = false;
- 	return 0;
- }
- #endif /* CONFIG_PM_SLEEP */
--- 
-2.17.1
+>
+>> > +=09pthread_detach(t); =20
+>> I think this should be complemented with pthread_cancel/pthread_join
+>> before exiting main().
+>
+> If the thread is detached, it is exactly that: detached. Why do you think=
+ the main thread should wait for the detached thread?
+
+Ah, my bad: you actually can't join a detached thread, scratch my
+comment.
+
+--=20
+Vitaly
 
