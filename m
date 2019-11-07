@@ -2,87 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D82B4F29A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E5DBF299B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:48:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbfKGIss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 03:48:48 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20718 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733209AbfKGIsn (ORCPT
+        id S1733181AbfKGIs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 03:48:28 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:41374 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727408AbfKGIs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:48:43 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA78l3w6010842;
-        Thu, 7 Nov 2019 09:48:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=PasrWJUoa3UFwSs+GtbCxK+KUm1QgPk+g2vbUrQXP80=;
- b=kd6E3oTVgridwBB9jwAR3sTCaMNyVoRrVPxGut+v2corY2YUGVUk30JZlYx5d5A2Q5S0
- 208aDh/t3n7oJavcZG9n3O8QaklwJ13E3HxCUeyQDqy6ARZhE77tfXg+shSL8D38LpxQ
- hi1gz6rGDkpO1UVRAfLDQY+5qUlCjbt9u2Mx53N2e/US1MZLN6Dpzvyd1DXKtbFR6br3
- +DUck8c77IU2hxC+9OtUsn/DkRpwGxRTrgjvcRta83BA6yuZA2c2vDUxF9tTzSyNmBmP
- 2ECZZrPGkKKs/Vz5G3g2Qc8u7lpijilpeC4GSOEIpghrqbAd959ekUXN1SLbQtXPwciA Kw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2w41vduy85-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Nov 2019 09:48:21 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3F992100071;
-        Thu,  7 Nov 2019 09:48:07 +0100 (CET)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 31B332AA977;
-        Thu,  7 Nov 2019 09:48:07 +0100 (CET)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 7 Nov 2019
- 09:48:07 +0100
-Received: from localhost (10.201.22.222) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 7 Nov 2019 09:48:06
- +0100
-From:   Christophe Roullier <christophe.roullier@st.com>
-To:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
-        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <peppe.cavallaro@st.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <christophe.roullier@st.com>, <andrew@lunn.ch>
-Subject: [PATCH V4 net-next 4/4] ARM: dts: stm32: Enable gating of the MAC TX clock during TX low-power mode on stm32mp157c
-Date:   Thu, 7 Nov 2019 09:47:57 +0100
-Message-ID: <20191107084757.17910-5-christophe.roullier@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191107084757.17910-1-christophe.roullier@st.com>
-References: <20191107084757.17910-1-christophe.roullier@st.com>
+        Thu, 7 Nov 2019 03:48:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573116506;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5GkaaySWUIuikkrk8Qp2LFGG/L7X0kNfIu5fvLKbIgk=;
+        b=NzyNDpSKr7sNZciskMSmKQw5zFGKJALA7piHiImrI5gL0rUF56EjkfzZWC1YFpV/EY5mpM
+        v8iKdZqhrJHIfuj7SDsxufc4mvxOzBB7tWmP3mHOKKe0E4ZaKxc6fw0IUySgUzRiFU15kq
+        1cA7gZXS8BjbGg4O7a6DKjZfc9fSv6s=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-217-aF4NKaqTOa2FBXqgmi5b2Q-1; Thu, 07 Nov 2019 03:48:25 -0500
+Received: by mail-qt1-f197.google.com with SMTP id b26so1687004qtr.23
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 00:48:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5GkaaySWUIuikkrk8Qp2LFGG/L7X0kNfIu5fvLKbIgk=;
+        b=QYTyEBKAKoYJdHwOp2mQHCdlI+df3eK/TnUyvglZG6+ISkhM23wPe87uv0UunkIQ6g
+         Qvjq+DnJnT/kB4+OObzTRGxuM1/Bzr0N32EMrec/XGPVwYbDwjPS0vIj8XFAKyuzHwJO
+         Fi77b12rWwIBxz5dW4xZ+UybsM7dMaFsp95emgtGIc9a2+pRh9v7nAZoP3W/1V6b0lN/
+         mv6Sb46WMZtaRhydOpUg4LXSpVE0JBc6ZUNt6wE9PvMp13Eh6ub7C9nlpFzmhvJ0F8hR
+         pMc7wajxHA5f9HrmJFdYf2QBM/+CXb7GvuN5jUpNzsXlLbbpOAcBk7sC1ctCtXKqVG6u
+         FCCQ==
+X-Gm-Message-State: APjAAAUs+DustxpLcxNhx/OetMuL/rjXIr5yHRAuZOGQFrYN5XzroftM
+        33X2iXjuqaIxozdCuW+OhWd8Ll2I5uBGsD7Y+25ZcFmGUkwTRemyYLlb6yhKyvEzf6kjWP+sl1h
+        ePAD+G+QuQt61k85Q3r48jB4tGWhr7HNtrfrwYopl
+X-Received: by 2002:a37:4b97:: with SMTP id y145mr1636940qka.133.1573116503887;
+        Thu, 07 Nov 2019 00:48:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxtse75twJz4aKiv1RqxK/wmk+xVaMgjdKKBd8QMtQCzC/6EdhjtKwtV/rfIIFjcOSfTsg+b9SKEFmXuweXrIc=
+X-Received: by 2002:a37:98c6:: with SMTP id a189mr1714662qke.230.1573116500554;
+ Thu, 07 Nov 2019 00:48:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.22.222]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-07_02:2019-11-07,2019-11-07 signatures=0
+References: <20191106110246.70937-1-blaz@mxxn.io>
+In-Reply-To: <20191106110246.70937-1-blaz@mxxn.io>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 7 Nov 2019 09:48:09 +0100
+Message-ID: <CAO-hwJKJvkW2_Dif4+P7ebBXwb-tLk+PHqks7yqevVZ-CHyTCQ@mail.gmail.com>
+Subject: Re: [PATCH] HID: Improve Windows Precision Touchpad detection.
+To:     =?UTF-8?Q?Bla=C5=BE_Hrastnik?= <blaz@mxxn.io>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+X-MC-Unique: aF4NKaqTOa2FBXqgmi5b2Q-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is no activity on ethernet phy link, the ETH_GTX_CLK is cut
+Hi Bla=C5=BE,
 
-Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Nov 6, 2019 at 12:03 PM Bla=C5=BE Hrastnik <blaz@mxxn.io> wrote:
+>
+> Per Microsoft spec, usage 0xC5 (page 0xFF) returns a blob containing
+> data used to verify the touchpad as a Windows Precision Touchpad.
+>
+>    0x85, REPORTID_PTPHQA,    //    REPORT_ID (PTPHQA)
+>     0x09, 0xC5,              //    USAGE (Vendor Usage 0xC5)
+>     0x15, 0x00,              //    LOGICAL_MINIMUM (0)
+>     0x26, 0xff, 0x00,        //    LOGICAL_MAXIMUM (0xff)
+>     0x75, 0x08,              //    REPORT_SIZE (8)
+>     0x96, 0x00, 0x01,        //    REPORT_COUNT (0x100 (256))
+>     0xb1, 0x02,              //    FEATURE (Data,Var,Abs)
+>
+> However, some devices, namely Microsoft's Surface line of products
+> instead implement a "segmented device certification report" (usage 0xC6)
+> which returns the same report, but in smaller chunks.
+>
+>     0x06, 0x00, 0xff,        //     USAGE_PAGE (Vendor Defined)
+>     0x85, REPORTID_PTPHQA,   //     REPORT_ID (PTPHQA)
+>     0x09, 0xC6,              //     USAGE (Vendor usage for segment #)
+>     0x25, 0x08,              //     LOGICAL_MAXIMUM (8)
+>     0x75, 0x08,              //     REPORT_SIZE (8)
+>     0x95, 0x01,              //     REPORT_COUNT (1)
+>     0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
+>     0x09, 0xC7,              //     USAGE (Vendor Usage)
+>     0x26, 0xff, 0x00,        //     LOGICAL_MAXIMUM (0xff)
+>     0x95, 0x20,              //     REPORT_COUNT (32)
+>     0xb1, 0x02,              //     FEATURE (Data,Var,Abs)
+>
+> By expanding Win8 touchpad detection to also look for the segmented
+> report, all Surface touchpads are now properly recognized by
+> hid-multitouch.
+>
+> Signed-off-by: Bla=C5=BE Hrastnik <blaz@mxxn.io>
+> ---
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index f13c2348d130..8df2986dd452 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -1334,6 +1334,7 @@
- 			st,syscon = <&syscfg 0x4>;
- 			snps,mixed-burst;
- 			snps,pbl = <2>;
-+			snps,en-tx-lpi-clockgating;
- 			snps,axi-config = <&stmmac_axi_config_0>;
- 			snps,tso;
- 			status = "disabled";
--- 
-2.17.1
+This looks good to me.
+We *could* shorten the ifs and make only one conditional, but I find
+it this way more readable and future proof.
+
+There is just one last step required before we merge this: add a
+regression test so we ensure we do not break it in the future.
+
+It should be merely a matter of sending a MR to
+https://gitlab.freedesktop.org/libevdev/hid-tools.
+It should consist in adding the report descriptor in the same way we
+have https://gitlab.freedesktop.org/libevdev/hid-tools/blob/master/tests/te=
+st_multitouch.py#L1656-1658.
+Then, make sure an unpatched kernel breaks the multitouch test (sudo
+pytest-3 -k 'multitouch and TestPTP') and that a patched kernel is
+fixed.
+
+Cheers,
+Benjamin
+
+>  drivers/hid/hid-core.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 63fdbf09b044..2af597cd5d65 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -742,6 +742,10 @@ static void hid_scan_feature_usage(struct hid_parser=
+ *parser, u32 usage)
+>         if (usage =3D=3D 0xff0000c5 && parser->global.report_count =3D=3D=
+ 256 &&
+>             parser->global.report_size =3D=3D 8)
+>                 parser->scan_flags |=3D HID_SCAN_FLAG_MT_WIN_8;
+> +
+> +       if (usage =3D=3D 0xff0000c6 && parser->global.report_count =3D=3D=
+ 1 &&
+> +           parser->global.report_size =3D=3D 8)
+> +               parser->scan_flags |=3D HID_SCAN_FLAG_MT_WIN_8;
+>  }
+>
+>  static void hid_scan_collection(struct hid_parser *parser, unsigned type=
+)
+> --
+> 2.23.0
+>
 
