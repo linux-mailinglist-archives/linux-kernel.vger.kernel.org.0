@@ -2,156 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D872F38C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:37:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2EF6F38EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKGThO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:37:14 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10167 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfKGThN (ORCPT
+        id S1726232AbfKGTpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:45:31 -0500
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:50094 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfKGTpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:37:13 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dc4722b0000>; Thu, 07 Nov 2019 11:36:11 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 07 Nov 2019 11:37:11 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 07 Nov 2019 11:37:11 -0800
-Received: from [10.25.75.102] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 7 Nov
- 2019 19:36:46 +0000
-Subject: Re: [PATCH V11 2/6] modpost: add support for mdev class id
-To:     Jason Wang <jasowang@redhat.com>, <kvm@vger.kernel.org>,
-        <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>,
-        <intel-gvt-dev@lists.freedesktop.org>,
-        <alex.williamson@redhat.com>, <mst@redhat.com>,
-        <tiwei.bie@intel.com>
-CC:     <virtualization@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>, <cohuck@redhat.com>,
-        <maxime.coquelin@redhat.com>, <cunming.liang@intel.com>,
-        <zhihong.wang@intel.com>, <rob.miller@broadcom.com>,
-        <xiao.w.wang@intel.com>, <haotian.wang@sifive.com>,
-        <zhenyuw@linux.intel.com>, <zhi.a.wang@intel.com>,
-        <jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
-        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <farman@linux.ibm.com>, <pasic@linux.ibm.com>,
-        <sebott@linux.ibm.com>, <oberpar@linux.ibm.com>,
-        <heiko.carstens@de.ibm.com>, <gor@linux.ibm.com>,
-        <borntraeger@de.ibm.com>, <akrowiak@linux.ibm.com>,
-        <freude@linux.ibm.com>, <lingshan.zhu@intel.com>,
-        <eperezma@redhat.com>, <lulu@redhat.com>, <parav@mellanox.com>,
-        <christophe.de.dinechin@gmail.com>, <kevin.tian@intel.com>,
-        <stefanha@redhat.com>, <rdunlap@infradead.org>
-References: <20191107151109.23261-1-jasowang@redhat.com>
- <20191107151109.23261-3-jasowang@redhat.com>
-X-Nvconfidentiality: public
-From:   Kirti Wankhede <kwankhede@nvidia.com>
-Message-ID: <89d87e49-e7ee-f3c4-0b81-1c5fba14959b@nvidia.com>
-Date:   Fri, 8 Nov 2019 01:06:40 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
-MIME-Version: 1.0
-In-Reply-To: <20191107151109.23261-3-jasowang@redhat.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573155371; bh=C2IiKLCi5MxuqQL+UTo7qPQFnl5cEfi56SIRvfy2YGM=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ifafetc69TFDlF+u0W/mHtbNzRQR/osuovOIreTBgk1lhGdLJNjFu5Bk9mrqxjrEb
-         d1FRJReVeAsawZC6zhQags+JTG3PbB4NaENHsEBOVclHToJF9KJYSdYyTM3Z7wqYR5
-         Cu9861xR9tSSBHvKUTxcCRHz5x9gpw5qk6WPOuXEMV72OgwdkmPUN3jeB+StDQGHhb
-         +wKc7iPQF/2NZVTfiK+OWuFpP8SvJP0SX8lNSbUxipwIAHaqMSicwHEX95dJVMXWfD
-         AOKSQbVbqm5uT31bTnxX1B7X9/QhlnNUl9r6dHEo7JVXMUWexHbp1Po2Kr1dgK4HFH
-         UhKKQJREHZIgQ==
+        Thu, 7 Nov 2019 14:45:31 -0500
+X-Greylist: delayed 511 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Nov 2019 14:45:30 EST
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 9563DE82
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2019 19:36:58 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FsBEupsVr2RS for <linux-kernel@vger.kernel.org>;
+        Thu,  7 Nov 2019 13:36:58 -0600 (CST)
+Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com [209.85.161.70])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 69160E93
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2019 13:36:58 -0600 (CST)
+Received: by mail-yw1-f70.google.com with SMTP id z202so2580177ywa.22
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 11:36:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZkFXlMbFFaZPtqR0WrXt6SqN0ExODCqAxzlbvcCImE8=;
+        b=aBKIauAVzlqz4mdJxa4Z3Gbk90VcsQAebmyCkrdBhdlulJOUVuykO9nz+/Rc8jmLPZ
+         wUnDVRs1Ab2qmqF2tHtOIUrhy83x3zioKmw4fSUlGfmg5aMnRbhy2xxBayTAHDqIH2MI
+         o8OdiRdDx+IW6Yo9cUGLrbKCfCIH+ct8LU8vyJdKPg/qQQABuZGdwfW1MPWYq2+SVo4d
+         jvftGC5d0A1yhgAgwdrOMLJKyfTBqpVWYTmpfvGdl9bokWLJm6/DTKibgzAtkDe3eV+T
+         iPbC4l98Om1r3MLibf48FFMAEO5l7k8QUauqLo4qx0sHMIuA0oUpRzZwcJ5elw6Ofrtr
+         Zf2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZkFXlMbFFaZPtqR0WrXt6SqN0ExODCqAxzlbvcCImE8=;
+        b=ITDSP9NDK17xUC9sKl8lbdOsWnSQbhm2PnH3K1twE6CzwL8UtKwIEwCRMALsdlC7qH
+         mmBbbRiTecg/dUx4zQ/lsZlKix47PDS1i5v8AKaEnbLauyOTBu4PECc4hfoBpY0gqEg/
+         Z7CL5UfddjPPzbNs6D/u6mzm0IGSkz7FNudu2SM5ZTrakq5VNWUKJHcXU3Zwn7JCDsO5
+         qFtyF64TbJcw4tIMYUzca4iHVYoeE2hBZBMqmJIxGylbMs1d6vuC480SPfd50qCGz9wM
+         jQ2QciUVCUUQcP3PCOKaV2pKw7GZwphE2l+XLazXLVdElkHwhLdJylW0rfAq50dGMS2h
+         /5SQ==
+X-Gm-Message-State: APjAAAUWcnjfHPVjPDRwTfrP9uCbnAn9Bz2gzDu2cVMz+qWbrS6QI3NO
+        ioBtQnkgybDssnNVoaR2R7RTe+uQearewAsninwxWOx9UeWtdWtFplVrvxvurJnWfzfFiYwg51p
+        bIv5aYtPNz22GoOuFfqOcTe01e+dg
+X-Received: by 2002:a25:c748:: with SMTP id w69mr5382236ybe.54.1573155417715;
+        Thu, 07 Nov 2019 11:36:57 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzRIq/jzzrFLOi6NJm2pE0Vvwkym6f6XQ+sRPp91hPUWH2n4/ch6bDJTSH382r4MOtRApiyrA==
+X-Received: by 2002:a25:c748:: with SMTP id w69mr5382172ybe.54.1573155417114;
+        Thu, 07 Nov 2019 11:36:57 -0800 (PST)
+Received: from qiushi.dtc.umn.edu (cs-kh5248-02-umh.cs.umn.edu. [128.101.106.4])
+        by smtp.gmail.com with ESMTPSA id t76sm1725113ywf.39.2019.11.07.11.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 11:36:56 -0800 (PST)
+From:   wu000273@umn.edu
+To:     airlied@linux.ie
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, wu000273@umn.edu
+Subject: [PATCH] drivers: fix a memory leak
+Date:   Thu,  7 Nov 2019 13:36:47 -0600
+Message-Id: <20191107193647.1944-1-wu000273@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Qiushi Wu <wu000273@umn.edu>
 
+In intel_gtt_setup_scratch_page(), "page" is not released if
+pci_dma_mapping_error() return errors. This will lead to memory leak.
+Fix this issue by freeing "page" before return.
 
-On 11/7/2019 8:41 PM, Jason Wang wrote:
-> Add support to parse mdev class id table.
-> 
-> Reviewed-by: Parav Pandit <parav@mellanox.com>
-> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Qiushi Wu <wu000273@umn.edu>
+---
+ drivers/char/agp/intel-gtt.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Reviewed-by: Kirti Wankhede <kwankhede@nvidia.com>
+diff --git a/drivers/char/agp/intel-gtt.c b/drivers/char/agp/intel-gtt.c
+index c6271ce250b3..bd38b179157c 100644
+--- a/drivers/char/agp/intel-gtt.c
++++ b/drivers/char/agp/intel-gtt.c
+@@ -304,8 +304,10 @@ static int intel_gtt_setup_scratch_page(void)
+ 	if (intel_private.needs_dmar) {
+ 		dma_addr = pci_map_page(intel_private.pcidev, page, 0,
+ 				    PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
+-		if (pci_dma_mapping_error(intel_private.pcidev, dma_addr))
++		if (pci_dma_mapping_error(intel_private.pcidev, dma_addr)) {
++			__free_pages(page);
+ 			return -EINVAL;
++		}
+ 
+ 		intel_private.scratch_page_dma = dma_addr;
+ 	} else
+-- 
+2.17.1
 
-Thanks,
-Kirti
-
-> ---
->   drivers/vfio/mdev/vfio_mdev.c     |  2 ++
->   scripts/mod/devicetable-offsets.c |  3 +++
->   scripts/mod/file2alias.c          | 11 +++++++++++
->   3 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/vfio/mdev/vfio_mdev.c b/drivers/vfio/mdev/vfio_mdev.c
-> index 38431e9ef7f5..a6641cd8b5a3 100644
-> --- a/drivers/vfio/mdev/vfio_mdev.c
-> +++ b/drivers/vfio/mdev/vfio_mdev.c
-> @@ -125,6 +125,8 @@ static const struct mdev_class_id vfio_id_table[] = {
->   	{ 0 },
->   };
->   
-> +MODULE_DEVICE_TABLE(mdev, vfio_id_table);
-> +
->   static struct mdev_driver vfio_mdev_driver = {
->   	.name	= "vfio_mdev",
->   	.probe	= vfio_mdev_probe,
-> diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-> index 054405b90ba4..6cbb1062488a 100644
-> --- a/scripts/mod/devicetable-offsets.c
-> +++ b/scripts/mod/devicetable-offsets.c
-> @@ -231,5 +231,8 @@ int main(void)
->   	DEVID(wmi_device_id);
->   	DEVID_FIELD(wmi_device_id, guid_string);
->   
-> +	DEVID(mdev_class_id);
-> +	DEVID_FIELD(mdev_class_id, id);
-> +
->   	return 0;
->   }
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index c91eba751804..45f1c22f49be 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -1335,6 +1335,16 @@ static int do_wmi_entry(const char *filename, void *symval, char *alias)
->   	return 1;
->   }
->   
-> +/* looks like: "mdev:cN" */
-> +static int do_mdev_entry(const char *filename, void *symval, char *alias)
-> +{
-> +	DEF_FIELD(symval, mdev_class_id, id);
-> +
-> +	sprintf(alias, "mdev:c%02X", id);
-> +	add_wildcard(alias);
-> +	return 1;
-> +}
-> +
->   /* Does namelen bytes of name exactly match the symbol? */
->   static bool sym_is(const char *name, unsigned namelen, const char *symbol)
->   {
-> @@ -1407,6 +1417,7 @@ static const struct devtable devtable[] = {
->   	{"typec", SIZE_typec_device_id, do_typec_entry},
->   	{"tee", SIZE_tee_client_device_id, do_tee_entry},
->   	{"wmi", SIZE_wmi_device_id, do_wmi_entry},
-> +	{"mdev", SIZE_mdev_class_id, do_mdev_entry},
->   };
->   
->   /* Create MODULE_ALIAS() statements.
-> 
