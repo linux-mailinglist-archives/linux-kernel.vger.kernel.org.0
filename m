@@ -2,92 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA992F2AC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C6E6F2ADD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:39:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387468AbfKGJej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:34:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47122 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfKGJej (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:34:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QG0HO8l7AP0o3zer/F4ohD8xuJyug3fKka00FDeAzM0=; b=ZNGbeu4qnZB1J0KjFZ3Uta5jL
-        YdCIyJxnDvi75NQZ2GqqFkAaRwrJCfoPJiNz5+OQqAYFrZu+zQCHzskkhvZDE2JZUSEQb/Q+Ct1wF
-        5zA2FmfNCHxkDRMv9GgOpTYAeNhJPSGSDjLlZG8FiQLyzo1fulogWDsgAM/r6rpFGfMgUFKrhpHIT
-        HGxa8++BbK4QKKUeq1Qo194cOaWGJlyBDuw9e5u+tYyvkvmpi1+XMXL7hGRYQziZDBaSiTWabAAC9
-        Z2KxHCEbXiS0I9y4UlyietBfTalAsOOjzrwqHs5iWpM6j9rGKrb8B7ewM/j4CA1b2f2+ruSxtXuFc
-        OIifCiKqQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSeBZ-0001qq-0W; Thu, 07 Nov 2019 09:34:37 +0000
-Date:   Thu, 7 Nov 2019 01:34:36 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, kevin.tian@intel.com,
-        ashok.raj@intel.com, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com
-Subject: Re: [PATCH 1/1] iommu/vt-d: Add Kconfig option to enable/disable
- scalable mode
-Message-ID: <20191107093436.GA4342@infradead.org>
-References: <20191106051130.485-1-baolu.lu@linux.intel.com>
+        id S2387543AbfKGJjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:39:52 -0500
+Received: from spam01.hygon.cn ([110.188.70.11]:63390 "EHLO spam2.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726734AbfKGJjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:39:52 -0500
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam2.hygon.cn with ESMTP id xA79aoag094479;
+        Thu, 7 Nov 2019 17:36:51 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-FE.hygon.cn with ESMTP id xA79aiNP024677;
+        Thu, 7 Nov 2019 17:36:44 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from ubuntu.localdomain (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 7 Nov 2019
+ 17:36:46 +0800
+From:   Jiasen Lin <linjiasen@hygon.cn>
+To:     <jdmason@kudzu.us>, <Shyam-sundar.S-k@amd.com>,
+        <dave.jiang@intel.com>, <allenbh@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <linjiasen@hygon.cn>, <linjiasen007@gmail.com>
+Subject: [PATCH] NTB: Fix an error in get link status
+Date:   Thu, 7 Nov 2019 01:35:36 -0800
+Message-ID: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106051130.485-1-baolu.lu@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam2.hygon.cn xA79aoag094479
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 01:11:30PM +0800, Lu Baolu wrote:
-> This adds a Kconfig option INTEL_IOMMU_SCALABLE_MODE_ON to make
-> it easier for distributions to enable or disable the Intel IOMMU
-> scalable mode during kernel build.
+The offset of PCIe Capability Header for AMD and HYGON NTB is 0x64,
+but the macro which named "AMD_LINK_STATUS_OFFSET" is defined as 0x68.
+It is offset of Device Capabilities Reg rather than Link Control Reg.
 
+This code trigger an error in get link statsus:
 
+	cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+		LNK STA -               0x8fa1
+		Link Status -           Up
+		Link Speed -            PCI-E Gen 0
+		Link Width -            x0
 
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/Kconfig       | 10 ++++++++++
->  drivers/iommu/intel-iommu.c |  5 +++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index e3842eabcfdd..32f30e27791c 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -242,6 +242,16 @@ config INTEL_IOMMU_FLOPPY_WA
->  	  workaround will setup a 1:1 mapping for the first
->  	  16MiB to make floppy (an ISA device) work.
->  
-> +config INTEL_IOMMU_SCALABLE_MODE_ON
+This patch use pcie_capability_read_dword to get link status.
+After fix this issue, we can get link status accurately:
 
-That should have a DEFAULT in the name as it is a default.
+	cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
+		LNK STA -               0x11030042
+		Link Status -           Up
+		Link Speed -            PCI-E Gen 3
+		Link Width -            x16
 
-> +	def_bool n
+Signed-off-by: Jiasen Lin <linjiasen@hygon.cn>
+---
+ drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++--
+ drivers/ntb/hw/amd/ntb_hw_amd.h | 1 -
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-n is the default default, so this can just be bool.
+diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
+index 156c2a1..ae91105 100644
+--- a/drivers/ntb/hw/amd/ntb_hw_amd.c
++++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+@@ -855,8 +855,8 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
+ 
+ 	ndev->cntl_sta = reg;
+ 
+-	rc = pci_read_config_dword(ndev->ntb.pdev,
+-				   AMD_LINK_STATUS_OFFSET, &stat);
++	rc = pcie_capability_read_dword(ndev->ntb.pdev,
++				   PCI_EXP_LNKCTL, &stat);
+ 	if (rc)
+ 		return 0;
+ 	ndev->lnk_sta = stat;
+@@ -1139,6 +1139,7 @@ static const struct ntb_dev_data dev_data[] = {
+ static const struct pci_device_id amd_ntb_pci_tbl[] = {
+ 	{ PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
+ 	{ PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
++	{ PCI_VDEVICE(HYGON, 0x145b), (kernel_ulong_t)&dev_data[0] },
+ 	{ 0, }
+ };
+ MODULE_DEVICE_TABLE(pci, amd_ntb_pci_tbl);
+diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h b/drivers/ntb/hw/amd/ntb_hw_amd.h
+index 139a307..39e5d18 100644
+--- a/drivers/ntb/hw/amd/ntb_hw_amd.h
++++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
+@@ -53,7 +53,6 @@
+ #include <linux/pci.h>
+ 
+ #define AMD_LINK_HB_TIMEOUT	msecs_to_jiffies(1000)
+-#define AMD_LINK_STATUS_OFFSET	0x68
+ #define NTB_LIN_STA_ACTIVE_BIT	0x00000002
+ #define NTB_LNK_STA_SPEED_MASK	0x000F0000
+ #define NTB_LNK_STA_WIDTH_MASK	0x03F00000
+-- 
+2.7.4
 
-> +#ifdef CONFIG_INTEL_IOMMU_SCALABLE_MODE_ON
-> +int intel_iommu_sm = 1;
-> +#else
->  int intel_iommu_sm;
-> +#endif /* CONFIG_INTEL_IOMMU_SCALABLE_MODE_ON */
-
-This can use IS_ENABLED().
-
-But then again the distro can just add iommu=sm_on to CONFIG_CMDLINE
-and have the same effect, so I don't really get the point of the whole
-patch.
-
-Or why we can't just enable it by default for that matter.
