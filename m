@@ -2,80 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE90F26A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ABBBF26B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:54:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733241AbfKGEmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 23:42:42 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:49732 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733195AbfKGEmk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 23:42:40 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 19B92891A9;
-        Thu,  7 Nov 2019 17:42:38 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1573101758;
-        bh=bMEIysSL7qRIOgZGjWsFx8QD9K67pjzCBj+QK0a/HWE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=dbefTGbw+fXQD9rqtgvhApUhfVAxItBd+GI0QGybJkuVJOtg4ZVZ0Tsgna9JcVVpi
-         tIFXGVoOkOKhQ+sGbRjo8ZlOUJKB+rOFmaQafm3gL09kvJw79kYzcfOXAur5jYqHEJ
-         P8LMXnFjQOgIisCcHBsQijf8WqPbYIhjD+iJRZTaz5tJ+W00Oq1BqbrWBPe0QCoqpG
-         BjwSE18/gwTqCHhE+nxeiEipMX4UyAqUXR1VGwlU/z6tiGwU76RkMe38TMr/EXdJ0S
-         1Oyxb0Ba2+csSc81FWoNs9HoYsR5zVnLyeoGRKevIRrpm7dvFEYcdM7KWQYXYn7AEa
-         roaRxhoBh+Zbg==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5dc3a0be0002>; Thu, 07 Nov 2019 17:42:38 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id 68AEC13EEEB;
-        Thu,  7 Nov 2019 17:42:37 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id E331E28005F; Thu,  7 Nov 2019 17:42:37 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     broonie@kernel.org, kdasu.kdev@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 2/2] spi: spi-mem: fallback to using transfers when CS gpios are used
-Date:   Thu,  7 Nov 2019 17:42:35 +1300
-Message-Id: <20191107044235.4864-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191107044235.4864-1-chris.packham@alliedtelesis.co.nz>
-References: <20191107044235.4864-1-chris.packham@alliedtelesis.co.nz>
+        id S1733173AbfKGEyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 23:54:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfKGEyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 23:54:25 -0500
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 715C1218AE
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2019 04:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573102464;
+        bh=Pl4qu8kzGZ9lvi3i1gt+uVv/Z5lppHLT30c0XPXoRw0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ykYRP6DtUkUGypCR6R6+YJS2v4Nw9HpSTGSVcgyZwjfBWCfLb6Ag+poWQuVUlrybk
+         k1t8HwCXGHx9E5dNzjSxxUbG7OpIYhnFxFie1OL8KDyO+4En4+w4Zgs9XGzXR2tJxb
+         1f/Wty+i5K/HW822ID7spFB8P2PkB4hW3jxr8DFc=
+Received: by mail-wm1-f53.google.com with SMTP id b11so949770wmb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 20:54:24 -0800 (PST)
+X-Gm-Message-State: APjAAAXlDQH+Qb0w69fPfDXJaXmZ4mtPAzYfcoqUi+lnP5ppYGYHdF6N
+        65GEnrKCHaWodep65LUlUSfhcdilexX5XhI2CMD+aw==
+X-Google-Smtp-Source: APXvYqzsUFooU67yeXhiAtz+H363Fs4Jc9JTHz4dC5wMwcNYUT67D5nuES5s7t9BRpVPqdMzHUeqAh/sB+dhgfOUqeM=
+X-Received: by 2002:a05:600c:3cf:: with SMTP id z15mr973206wmd.76.1573102462951;
+ Wed, 06 Nov 2019 20:54:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+References: <20191107044109.22272-1-laijs@linux.alibaba.com>
+In-Reply-To: <20191107044109.22272-1-laijs@linux.alibaba.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 6 Nov 2019 20:54:11 -0800
+X-Gmail-Original-Message-ID: <CALCETrWdxV7fOpqZjSqB5NuLhFbSMdgf4UOq8eweVDZ7Qbemeg@mail.gmail.com>
+Message-ID: <CALCETrWdxV7fOpqZjSqB5NuLhFbSMdgf4UOq8eweVDZ7Qbemeg@mail.gmail.com>
+Subject: Re: [PATCH untested] x86_32: fix extable entry for iret
+To:     Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Devices with chip selects driven via GPIO are not compatible with the
-spi-mem operations. Fallback to using standard spi transfers when the
-device is connected with a gpio CS.
+On Wed, Nov 6, 2019 at 8:41 PM Lai Jiangshan <laijs@linux.alibaba.com> wrote:
+>
+> 3c88c692c287(x86/stackframe/32: Provide consistent pt_regs)
+> added code after label .Lirq_return and before 'iret', an instruction
+> which should be expected to be found in the extable when there is
+> an exception on it. But the extable entry stores the address of
+> .Lirq_return not the new address of 'iret', which disables
+> the corresponding fixup. This patch fixes the extable entry
+> by using a new label.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- drivers/spi/spi-mem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Egads!
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index 9f0fa9f3116d..e5a46f0eb93b 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -286,7 +286,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct=
- spi_mem_op *op)
- 	if (!spi_mem_internal_supports_op(mem, op))
- 		return -ENOTSUPP;
-=20
--	if (ctlr->mem_ops) {
-+	if (ctlr->mem_ops && !mem->spi->cs_gpiod) {
- 		ret =3D spi_mem_access_start(mem);
- 		if (ret)
- 			return ret;
---=20
-2.24.0
+What happens if you run tools/testing/selftests/x86/sigreturn_32 with
+and without this patch?
 
+--Andy
