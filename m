@@ -2,74 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3BCF2B99
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79242F2BA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:56:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfKGJ4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:56:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40828 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388022AbfKGJ4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:56:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 99D4EB2EB;
-        Thu,  7 Nov 2019 09:56:20 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     catalin.marinas@arm.com, linux-kernel@vger.kernel.org
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Qian Cai <cai@lca.pw>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/2] arm64: mm: reserve CMA and crashkernel in ZONE_DMA32
-Date:   Thu,  7 Nov 2019 10:56:11 +0100
-Message-Id: <20191107095611.18429-3-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191107095611.18429-1-nsaenzjulienne@suse.de>
-References: <20191107095611.18429-1-nsaenzjulienne@suse.de>
+        id S2388096AbfKGJ4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:56:47 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:41146 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbfKGJ4q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:56:46 -0500
+Received: by mail-yb1-f196.google.com with SMTP id d95so222105ybi.8;
+        Thu, 07 Nov 2019 01:56:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fm76nR80a/OQAHDl6S+Q4Z7EZeWE8/XJctFepQj3/cI=;
+        b=iZNmgeWrVLHUyf1/kz3lZiIqCRpishYYNgkmMmGuWYewId7m3ntRjswTyhLcujBldQ
+         a7RwMQ3Skm2bOSrpDjA7MyDMKv9wqboaX7nk3g4jvq6GelKxWZp9PEIE6vuD6wvZQU5q
+         RikVdr/gG1czRpgbEwBok3MXtY73J+Y8LQkkeFjV1hjDEw7XWJdI9+mrjZZOPhJpUopB
+         nh9pN6SpL3w4UpUxCYKD+p06vT+B1XdMcCmHIy6kj9n6RDKhiOgb2EfmYDfEjOHtE0LG
+         AD+/2Tlke5oTjj872M0nFJRDM1wV99jykwGy4pvW2+ilIgUGD3JaHvJva9a7N25nxkaE
+         mQKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fm76nR80a/OQAHDl6S+Q4Z7EZeWE8/XJctFepQj3/cI=;
+        b=aX+kS5vLIr2Eq+KhNDRrwQzpRTu5c9wKsvKYU6Pv2wI5gIaXaCxiYGPWX3PR6fcK4A
+         DHO1d3RUc1sryBYBYz6DHDpqfE3hYYhisk67Pi7hltl7Xgwx6twOP6vKzVlnZL/uSVvh
+         1MKl3RgZx8Gub8HY9/3eZn4AdILUPb3MdBBcS7Gf1vi6hEFB2FG1Ktr62Fu+9N45oqCk
+         HtZ7GtF3sUZXPthAGqV+Ba0OJ1tBw3lnSvsSQDcFHdaW4idxQNSdZ3OyQG7BrOuTi6Vo
+         k1AgMaqNUZhhJH3O+L6mOSIl9vRSg0J3Yge6uSni4S2NYb8pNhLleUOXgFNbTOhhET8b
+         S3aA==
+X-Gm-Message-State: APjAAAUXbIqeNg8qm14HdOWkzup87AEAp+sUuT73Rtl6Hp4uAXVtt39Z
+        SOe/0sDHQwY2Hn93YF9oNqGGFxbU7eQPowF2OuI=
+X-Google-Smtp-Source: APXvYqzLcmHYbQsOo9koCOUEttSezPItam+DnmJ+3DcDBLpEKbzLbwNf2xc57fFuFRVqjFVOx6hLOIyZ2xkZrMw4FFw=
+X-Received: by 2002:a25:3344:: with SMTP id z65mr2308285ybz.439.1573120604298;
+ Thu, 07 Nov 2019 01:56:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191106234301.283006-1-colin.king@canonical.com>
+ <CAOQ4uxhT4pFzHjjKyoMOc3xVXXqyqc37zd=-pCx2+keA4e6NAg@mail.gmail.com>
+ <02adb5f3-10be-1827-f48b-b621bd61783a@canonical.com> <f88a4ef7-3e2a-9e17-1573-3594288091cd@canonical.com>
+ <bba96a64-a9f7-cd03-e00b-8ee369520ae7@canonical.com>
+In-Reply-To: <bba96a64-a9f7-cd03-e00b-8ee369520ae7@canonical.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 7 Nov 2019 11:56:33 +0200
+Message-ID: <CAOQ4uxgj8FO-yqtHsjh2OaTGvcF3HA5OekqiUuZEFE+LGGaTCg@mail.gmail.com>
+Subject: Re: [PATCH] ovl: create UUIDs for file systems that do not set the
+ superblock UUID
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of ZONE_DMA in arm64 we moved the default CMA and
-crashkernel reservation into that area. This caused a regression on big
-machines that need big CMA and crashkernel reservations. Note that
-ZONE_DMA is only 1GB big.
+On Thu, Nov 7, 2019 at 11:44 AM Colin Ian King <colin.king@canonical.com> wrote:
+>
+> On 07/11/2019 09:12, Colin Ian King wrote:
+> > On 07/11/2019 08:45, Colin Ian King wrote:
+> >> On 07/11/2019 07:08, Amir Goldstein wrote:
+> >>> On Thu, Nov 7, 2019 at 1:43 AM Colin King <colin.king@canonical.com> wrote:
+> >>>>
+> >>>> From: Colin Ian King <colin.king@canonical.com>
+> >>>>
+> >>>> Some file systems such as squashfs do not set the UUID in the
+> >>>> superblock resulting in a zero'd UUID.  In cases were two or more
+> >>>> of these file systems are overlayed on the lower layer we can hit
+> >>>> overlay corruption issues because identical zero'd overlayfs UUIDs
+> >>>> are impossible to differentiate between.  This can be fixed by
+> >>>> creating an overlayfs UUID based on the file system from the
+> >>>> superblock s_magic and s_dev fields.  (This currently seems like
+> >>>> enough information to be able create a UUID, but the could be
+> >>>> scope to use other super block fields such as the pointer s_fs_info
+> >>>> but may need some obfuscation).
+> >>>>
+> >>>
+> >>> The fix is incorrent. uuid stored in xattr needs to have persistent properties.
+> >>> In the use case that you describe, the origin file handle should simply be
+> >>> ignored.
+> >>>
+> >>> Please test attached patch.
+> >>
+> >> Thanks for the patch. Tested, and the error still occurs:
+> >>
+> >> [  163.959633] overlayfs: invalid origin (etc/.pwd.lock, ftype=8000,
+> >> origin ftype=4000).
+> >
+> > Added debug, seems like nouuid is not being set to true, nouuid is false
+> > on the layers 0 and 1.
+>
+> So nouuid is not being set in ovl_lower_uuid_ok() because the code is
+> returning early because of the following statement:
+>
+> if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
+>         return true;
+>
+> ..and not getting to the following for-loop.
+>
 
-Restore the previous behavior as the wide majority of devices are OK
-with reserving these in ZONE_DMA32. The ones that need them in ZONE_DMA
-will configure it explicitly.
+Indeed. I had this bit of information in my mind for a brief moment
+and forgot about it..
 
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- arch/arm64/mm/init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please remove this optimization and change the call to:
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 580d1052ac34..8385d3c0733f 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -88,7 +88,7 @@ static void __init reserve_crashkernel(void)
- 
- 	if (crash_base == 0) {
- 		/* Current arm64 boot protocol requires 2MB alignment */
--		crash_base = memblock_find_in_range(0, ARCH_LOW_ADDRESS_LIMIT,
-+		crash_base = memblock_find_in_range(0, arm64_dma32_phys_limit,
- 				crash_size, SZ_2M);
- 		if (crash_base == 0) {
- 			pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
-@@ -454,7 +454,7 @@ void __init arm64_memblock_init(void)
- 
- 	high_memory = __va(memblock_end_of_DRAM() - 1) + 1;
- 
--	dma_contiguous_reserve(arm64_dma_phys_limit ? : arm64_dma32_phys_limit);
-+	dma_contiguous_reserve(arm64_dma32_phys_limit);
- }
- 
- void __init bootmem_init(void)
--- 
-2.23.0
+       if (ofs->upper_mnt && !ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
+...
 
+Maybe change the language of "falling back to index=off..." to
+"enforcing index=off..."
+
+You may then submit the patch with my Signed-off and yours.
+Please also change the name nouuid to bad_uuid per Dan's review comment.
+
+Thanks,
+Amir.
