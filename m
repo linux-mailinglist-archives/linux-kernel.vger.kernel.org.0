@@ -2,150 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B2D6F3053
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DDAFF3005
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731077AbfKGNpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:45:34 -0500
-Received: from mout.gmx.net ([212.227.15.15]:34823 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726754AbfKGNpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:45:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1573134326;
-        bh=s00K1OOu0aaQsQbtK0UBknbyKhQQRQtn+2TeWxy/ryE=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=KlKZj3AJSJ7e83rhZmtGlKwV7413nvG7hcWkQ5txgMhHU1RppqzDijtXJk+ZpFqJM
-         6h98Q/fA9PhAjIt6L9W+pY57taPuRw2eNuAYEcVmeHNi3QHF7Hwv7zIX3z8qNBrVJB
-         XPeRE1NEfQjXX4xgqHKJnrV2B21Gsa4bSmcTT4r4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([89.0.54.163]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M4s4r-1iSQaI3QmN-0020GY; Thu, 07
- Nov 2019 14:45:25 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-doc@vger.kernel.org
-Cc:     "Paul E . McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Subject: [PATCH] scripts/kernel-doc: Add support for named variable macro arguments
-Date:   Thu,  7 Nov 2019 14:41:33 +0100
-Message-Id: <20191107134133.14690-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        id S2389023AbfKGNmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:42:07 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:44309 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728568AbfKGNmF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 08:42:05 -0500
+Received: by mail-il1-f199.google.com with SMTP id 13so2642709iln.11
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=rGCeFvT/AQARxs+6mGwlebmAqlHglnh6rUP8Pgma5SE=;
+        b=EeSiBB4zcdokOv2ZUZNwcNvZ6M317dnsJnc637lMbgyMIc0G2MR1+ohAKdXXtpSnQU
+         519BnzC4cIrsm0NoZe9kaakN4KJtcoMpUHdt1GLow1XNa1Wg9W6wSY0FJ46Zl+WcFTL4
+         kj01mpW/i9mVmR7kSSAZRcYyjiSnlA8EeM9+t/LI4BONo2u+GIU1irfrHGt7vq+5LFIp
+         +KCy+XL+LPudYTCkofstrcZo5cx2EdeH5B5mNXFTXR/s8yiKa6ufGdZmHfkmlAi5Ie+T
+         FnnC0MnO+P8ncnLD+y9Ms0T/XiBp4lddHMgujSGw1o1K7IEx1dgvqIm7TizUDljS6ga0
+         4Brw==
+X-Gm-Message-State: APjAAAU3ObJnp75RX/HMIhHcbqY4rDrBgTV+uPBlffYkxnL+nvhu2Owv
+        fhtVqfKOkReqNUU4NKlMlOTNDOYesgOE5DVKYF4lx3Mk0Q50
+X-Google-Smtp-Source: APXvYqxHTBWUBJD+8E1NyDqdkz7hV5BSqgFdxPIDCKCY0BxMuoog4ra33v5nSn+Kxh1U5HB1IkGWjlzMWRyONaT5JSDK+u98616Z
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RPtxoPYDoRNPEEEsoABZlK6tUN+SI8PtlbkTIJcv9PqIRBBQIBT
- ADbGulVNTBMQC45gRADoHR3KewaKXWZwELTfzYOLjiSQNcsZof3WaNgRi1MbmZffjNtqxx9
- jsw4jA1JHUAkBiW0+rzlU2yC5+cOS1owwUcc+DDdyHwTt0x0NHk9AZkjc7esKr9NjZbClC4
- pdlkrFvTHjYDTTYrtSoAw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HBIKmeHj6tI=:CJ/0RubdzvprzW/+50mXDe
- pD4U91q8fDY0k+kfYlsyjts5ufP4BQqig4Anp2lLKs05bEazrn4jQfJtVW4RXQ+kQLrRPF/8r
- R+RBLSZCqjC/1mVq1foETEWFXOAmS42LYk9EshI+0GxVqFyLfIOKOdnZWO1q7upI1nfzXNgry
- 6irGF7YfotV5qz1U6cTKNEjjVZxEbHghaT1R2/izt0B1+50BPTW5IReP8zrlMjJDuZthnEGoL
- k3PrrgvTshWP70mz9I/yUZbxNFg6niCA+FSDKWtoWf+stDhWy9ZVXYS6i8cDnPRZl4o1NqmPI
- qNDgxBAZQOeYVTBr1nrQ4btDMM5rNcGASJZ1RPzSg7a+o6w4nXUJN8+XUvx0nwAAHqYei3woi
- MMyw/FjvkCyTJtS6ht79PrmEmJLSTMz0lzGyo/rPVtFGD8ovKWkrW8dtEFZfaui2bStJVr2Eu
- qKeq5xkWd+MUHJXVfxkwKk7UwRQ9Q4cv1LXhk+0yILooct7j6NySANOGpU3Cslb+yblxxB3gm
- rq2US/NVNqafqMjJrHMWASZfjzIDP2XZMc9thJdaLPk693br+0/LkfreJMkdXv6i0Q6lOQzGM
- Rw4tgNj0NGBKtLz3V5g9BJVq3JTIiMQq5BNqHHyZVPNnKJ5HnxjX6Krc53BsZn5TG4n1ipA0y
- P//lTluqC7dySA2nP0sIADV4wpmbXJxXWdm2h+g3dpTtnGRq8as91DS2s2qX9D9OR5sUGaZCx
- ZIdEFR2FwQj/sOcrZPjatHJReHFxNWAjAgJcL9zM4qzTSS1xYHZAzARIoTndDdZAW65OC6ixy
- iffXZKnw1IGSD0WtnG1pQ06m3fWWThAK9O0yLZFs3QkT4SGdp6KR6/v7Ie0UyTYIEi0VcqFDz
- wjxmw8SrOo2IGmn13TqxZ1qA43jHYVxfMK6ZSFQA0QbCikYPNbrK47FIwh19ME0m835+7romH
- 0/PlzIVqV9tL7RnZ9tdNCLwcdGTr+Q5dGMrwvn3laTun1X49oQwz66QUIdr2rTrSzNGayrJgX
- On+rzlr/DPZqufhKMTkLsMVMwqGasLyOQJzspOE03df5VTcs/Bwq5YrehVblU109rntA4bDgM
- mLGPZp6+X7i16QeSA6jmAxjGSL6DYf7j+g3fflFNiZwi9bgNSF1+Z4b/E2zdVhhmCCRYh004u
- J3AIYyak1HNTBCIjuhefiQ/hit5nua5DMozXmeDN9YreW/4w0dAv5OjrWRkXSXvz5ZPqpeYTo
- /k9LVfZ3hviQWIxGuia5q+S84aGdEMib2Py+jMZE+pbm1IHsShte7EKkrWdA=
+X-Received: by 2002:a5e:d917:: with SMTP id n23mr3702806iop.28.1573134124661;
+ Thu, 07 Nov 2019 05:42:04 -0800 (PST)
+Date:   Thu, 07 Nov 2019 05:42:04 -0800
+In-Reply-To: <001a113fe6d081698f0568a5dcac@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000af44bb0596c1d4e8@google.com>
+Subject: Re: KASAN: use-after-free Read in _decode_session4
+From:   syzbot <syzbot+a7db9083ed4017ba4423@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, sbrivio@redhat.com, sd@queasysnail.net,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when kernel-doc encounters a macro with a named variable
-argument[1], such as this:
+syzbot suspects this bug was fixed by commit:
 
-   #define hlist_for_each_entry_rcu(pos, head, member, cond...)
+commit c6741fbed6dc0f183d26c4b6bca4517672f92e6c
+Author: Stefano Brivio <sbrivio@redhat.com>
+Date:   Thu Mar 15 16:17:11 2018 +0000
 
-... it expects the variable argument to be documented as `cond...`,
-rather than `cond`. This is semantically wrong, because the name (as
-used in the macro body) is actually `cond`.
+     vti6: Properly adjust vti6 MTU from MTU of lower device
 
-With this patch, kernel-doc will accept the name without dots (`cond`
-in the example above) in doc comments, and warn if the name with dots
-(`cond...`) is used and verbose mode[2] is enabled.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1710f0dc600000
+start commit:   0b412605 Merge tag 'drm-fixes-for-v4.16-rc8' of git://peop..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8addcf4530d93e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=a7db9083ed4017ba4423
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bf273b800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117045d3800000
 
-The support for the `cond...` syntax can be removed later, when the
-documentation of all such macros has been switched to the new syntax.
+If the result looks correct, please mark the bug fixed by replying with:
 
-Testing this patch on top of v5.4-rc6, `make htmldocs` shows a few
-changes in log output and HTML output:
+#syz fix: vti6: Properly adjust vti6 MTU from MTU of lower device
 
- 1) The following warnings[3] are eliminated:
-
-   ./include/linux/rculist.h:374: warning:
-        Excess function parameter 'cond' description in 'list_for_each_ent=
-ry_rcu'
-   ./include/linux/rculist.h:651: warning:
-        Excess function parameter 'cond' description in 'hlist_for_each_en=
-try_rcu'
-
- 2) For list_for_each_entry_rcu and hlist_for_each_entry_rcu, the
-    correct description is shown
-
- 3) Named variable arguments are shown without dots
-
-
-[1]: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
-[2]: scripts/kernel-doc -v
-[3]: See also https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linu=
-x-rcu.git/commit/?h=3Ddev&id=3D5bc4bc0d6153617eabde275285b7b5a8137fdf3c
-
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-=2D--
- scripts/kernel-doc | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index 81dc91760b23..48696391eccb 100755
-=2D-- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -1449,6 +1449,10 @@ sub push_parameter($$$$) {
- 	      # handles unnamed variable parameters
- 	      $param =3D "...";
- 	    }
-+	    elsif ($param =3D~ /\w\.\.\.$/) {
-+	      # for named variable parameters of the form `x...`, remove the dot=
-s
-+	      $param =3D~ s/\.\.\.$//;
-+	    }
- 	    if (!defined $parameterdescs{$param} || $parameterdescs{$param} eq "=
-") {
- 		$parameterdescs{$param} =3D "variable arguments";
- 	    }
-@@ -1936,6 +1940,18 @@ sub process_name($$) {
- sub process_body($$) {
-     my $file =3D shift;
-
-+    # Until all named variable macro parameters are
-+    # documented using the bare name (`x`) rather than with
-+    # dots (`x...`), strip the dots:
-+    if ($section =3D~ /\w\.\.\.$/) {
-+	$section =3D~ s/\.\.\.$//;
-+
-+	if ($verbose) {
-+	    print STDERR "${file}:$.: warning: Variable macro arguments should b=
-e documented without dots\n";
-+	    ++$warnings;
-+	}
-+    }
-+
-     if (/$doc_sect/i) { # case insensitive for supported section names
- 	$newsection =3D $1;
- 	$newcontents =3D $2;
-=2D-
-2.20.1
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
