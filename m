@@ -2,45 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D59F3006
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7515F3044
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389120AbfKGNmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:42:08 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:45654 "EHLO
+        id S2389626AbfKGNnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:43:49 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:44346 "EHLO
         mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731014AbfKGNmF (ORCPT
+        with ESMTP id S2388956AbfKGNmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:05 -0500
-Received: by mail-io1-f71.google.com with SMTP id c17so1839964ioh.12
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:05 -0800 (PST)
+        Thu, 7 Nov 2019 08:42:06 -0500
+Received: by mail-io1-f71.google.com with SMTP id q13so1848630iot.11
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=gvUkH9WtkGdbkvkGEgBQ+scD8gdIfAilVOE5agk0pc8=;
-        b=MJYwU5cgD6Mz3GwfkpSp4LEBMObsYhNrCZcKn0dqJJX39K97MyaOaKSknxbgABrYCI
-         HGYNBy7uRfCv0UjcDx+Bn5jaE8elkSXgfEnItryKuAi9E+NYi60mXpZtyMqTPrmzo43/
-         A7dc2l4RPt8R071JYMC61PXqP9/bVZCWM5aChi8ksV1Evm77tvn6PshpNq2Yj0eHV+LV
-         ygiiEr0uSeQPpa32MOf02+H7drWwUcV2OnCeH89koA0Pkj2oe5CEVJAQGRCnWl0uVJSd
-         dd+jutHemAuJxLn0LpxJnsW9f5SnXwNLnzISmKour/CZsWiQpNGdO+A8cplun51FZxiT
-         NHSg==
-X-Gm-Message-State: APjAAAUZewpk/upzbHQN5sQB8A6fEJuHhxR6bPgIcjXy94BnnqAlH2oS
-        Ol9xpt8ruhPN9B+hqWwuRLZKw70D4U3vFuwwEo+9yM9oxiln
-X-Google-Smtp-Source: APXvYqyA7RhiUvzMWSWZWI0ZIzVE9r/zHAJ0MtS5719wr8hUNsn3YgfguE5aJGhDksrtNHgLkCcvbS9hR4ypG3I2APwuBGeGv9Ux
+        bh=Vf6K/h0qpqQKsSoL002ZxeehhKzDYr+4ythimfWKfZ8=;
+        b=a9tqGOvdZ/uDUZSIL4LzFZQN3e7qxA4ZstmAGSHy65QbFvY/BWaS1/7lnfhvfwAakJ
+         QDnMMJprY4+9GcTov+KbEyybXfIwNpUUzIcvQRN0DJWp8SYohosDVxJwHWl+OvE8W/NZ
+         fihCM0/8OOLhJA45zwy/gP/triqGCbic1G0LZbPknXzNHYbXM8N7Kcp1l30pdXfye31v
+         b8VmNfv+zpx4P0CXCE8Hgibphdzl7Bx1sAEkM0/w3sdKTt97EHEBCw/LzqowCoa/pXV+
+         ahC3gYa9gfLPhOBCrBbWQz5fnQcCeByHqMzZ2dOzFpxcCRK+OK0h0y+aU9KFUSbtBbOY
+         RJOg==
+X-Gm-Message-State: APjAAAVArvS+RD/B8EzSZLc7Cs08Hnomgur90ge4LXpYbe293U5kuL8r
+        exl03WisR8bsQUCzYlc17h1WIIJiJOTCRedmk5wTUEOZK001
+X-Google-Smtp-Source: APXvYqxtqS9jnDj10uHB/QHrMRUKjJWOjaExI73Hx2xEMNtJxQbyy5I+Msc61BdsDsl5SzjhgXSd4Tpv0SaNrrMljsv9YcDnaitG
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9617:: with SMTP id a23mr3354786ioq.191.1573134125143;
+X-Received: by 2002:a5e:aa10:: with SMTP id s16mr1261527ioe.113.1573134125893;
  Thu, 07 Nov 2019 05:42:05 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:05 -0800
-In-Reply-To: <000000000000d0429205723824d8@google.com>
+In-Reply-To: <00000000000054395605708fbd13@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b6a0aa0596c1d4df@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Write in end_requests
-From:   syzbot <syzbot+cd4b9b3648c78dbd7fca@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, mszeredi@redhat.com,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000c214300596c1d487@google.com>
+Subject: Re: BUG: corrupted list in p9_conn_cancel
+From:   syzbot <syzbot+ad0832746849421bba05@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dominique.martinet@cea.fr, ericvh@gmail.com,
+        jiangyiwen@huwei.com, linux-kernel@vger.kernel.org,
+        lucho@ionkov.net, netdev@vger.kernel.org, rminnich@sandia.gov,
+        syzkaller-bugs@googlegroups.com, tomasbortoli@gmail.com,
+        v9fs-developer@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,22 +51,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit 45ff350bbd9d0f0977ff270a0d427c71520c0c37
-Author: Miklos Szeredi <mszeredi@redhat.com>
-Date:   Thu Jul 26 14:13:11 2018 +0000
+commit 9f476d7c540cb57556d3cc7e78704e6cd5100f5f
+Author: Tomas Bortoli <tomasbortoli@gmail.com>
+Date:   Mon Jul 23 18:42:53 2018 +0000
 
-     fuse: fix unlocked access to processing queue
+     net/9p/trans_fd.c: fix race by holding the lock
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1494e3ec600000
-start commit:   dd63bf22 Merge branch 'i2c/for-current' of git://git.kerne..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11adad06600000
+start commit:   c25c74b7 Merge tag 'trace-v4.18-rc3-2' of git://git.kernel..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ffb4428fdc82f93b
-dashboard link: https://syzkaller.appspot.com/bug?extid=cd4b9b3648c78dbd7fca
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b9732c400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c469a4400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+dashboard link: https://syzkaller.appspot.com/bug?extid=ad0832746849421bba05
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d8db0c400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c12a58400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: fuse: fix unlocked access to processing queue
+#syz fix: net/9p/trans_fd.c: fix race by holding the lock
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
