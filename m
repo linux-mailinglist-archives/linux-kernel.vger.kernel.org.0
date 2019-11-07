@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1980F2318
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 461E3F230B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:09:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732278AbfKGAJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 19:09:40 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37833 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728254AbfKGAJY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732501AbfKGAJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 6 Nov 2019 19:09:24 -0500
-Received: by mail-pf1-f196.google.com with SMTP id p24so586487pfn.4
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 16:09:22 -0800 (PST)
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44145 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728217AbfKGAJX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 19:09:23 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q26so545119pfn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 16:09:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=y30EZ6Y+jB8WvOWqfr0x14yaBZH+ZgcuIUz2TMHfKr8=;
-        b=Ms/xeib/rHCGDzfSHmCcHkzNr0QrkmBmBM+PiHNWLQV65GiIWMFzPN+KQkBP+h0LHI
-         PYKSRO4GlQmy8egZg9qN08T3L22xmPBWvG9IeddjnHmlJGaKSjMCk/1gpGIOIO6YKhvE
-         0B8Misw8QMdogPgh94SDoAh7+lhyOzHgAkBy6/K81hUmAVz5mquyl4if22pR/7fmOGrF
-         oVwSklV90APcYs0BJtt+8SOcVYKHhWcblQS0HvQl9PuyfZK9V2mk/I7sff4p0lhwvMru
-         x6CrTnAsKOb41OXHqOXbdnSKjGfjqu3auMTq7cSalMDIVJVlsPdLFTuWWkU74kNtthdr
-         LGMQ==
+        bh=I4KKU3lnlQMUNYRTg4PG0tZkLk5GCpHdCevi44aaMqI=;
+        b=BSmq2BLgOR2hAg+twaNBN+Lj06RNuWYteaIO9NyMxnlT2bzZibvLzHW0s8ALhlnOmx
+         +ca0rhqfcYfyqeQ4dJJ8PDsPW2BNwJ4EJECnai5F9h/zDdn0cNA0JzHZxWo9cR00oYUM
+         T68KXHA5q8BGJXdrLyXd990555c3Ysgg48PLrEAEakcMzsK3ru07Vm8GvYGQnEP3edO/
+         WQ2BiGbhZ+W/IUUH7PwIdxUE4+9CvGy9P8xipawoJRpbr5gTC8Wyo3GUibMG+XFQnSOD
+         xiaPU+tTleHyfOi2hemCu4pLCvo15tM4b08Ld12kmfC/LUUBGVIOGBG9KtLguHNcRWMw
+         91ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=y30EZ6Y+jB8WvOWqfr0x14yaBZH+ZgcuIUz2TMHfKr8=;
-        b=SaTc9euLT4I8bC001OgKS0xl1xXsm1/yTg0JYC362j/leJRX7eiNJCEnMDObWjguhw
-         rrPnQDY2FfBGep/jH4M0ZMiG/UBasw+7JN0c+/BGXhZ2ZX9S9CfOefiKxCpQte3sOpGt
-         gbDzT/i4cAd6Vz0PiboiObZ1Kj+2ej4o3aXuyZyfjiHxjLsvpKBpqLmweAerz+WQ9V1h
-         Fi5hJITlKJWvbRj2ms+ctfHIxsw+Bm52jC5J5MfLL0tKnb+kf1Mw73aOs83LdE0ha0A6
-         lZNpjTuFyPRkiF/27G8HJpj+iOVFAlMuSyRAy+F0+DwiPb0rIJooczbhj3Ib/NNHgWYh
-         MnZA==
-X-Gm-Message-State: APjAAAVkv67RcPnZTrZP8JBH+w/gpjgSGxAla7FPWqOmo1IuYJVKxtsN
-        gO6ll23g1tPl2sCs0ZDlmt+471MhV3E=
-X-Google-Smtp-Source: APXvYqzinLbWkmOtXo1/RShENTIftrXUZ1DoS+eTqL1HMg19AxARMlNrS8/KhtMbVMbblp3T4J/HXw==
-X-Received: by 2002:a63:d70f:: with SMTP id d15mr764613pgg.424.1573085362094;
-        Wed, 06 Nov 2019 16:09:22 -0800 (PST)
+        bh=I4KKU3lnlQMUNYRTg4PG0tZkLk5GCpHdCevi44aaMqI=;
+        b=ECJeOpGUVRrrz9pP84aCLfI0JSG7WW1ZyvgGAyKBppGjJstK90loRsbBq0oLsdPRdd
+         lFcy/zKB84IHnRT8POc5Q4H86BgBSpk2uzFs6wmg2mAqI/onL7XScyJt9UYc2cjVGxSs
+         n3Px9LY0Q/gZw+pMVr0L2u7KyEJE6B1W418o94A3zskYIir4qqFbmoWZsuAIsJp8sIDz
+         LVQUAyfgRibVmQOUmN2PbmsJ2XfXydEqhiRpS2vVJLU35JnsznMerjEnyHsyaplVajK/
+         TmuY89A4zAsxC2hAI5B8FR2ivNp5T/AstVqd1HjHeqwxZ2NsaKzZN7wCTWRuCVPIVKQo
+         qanA==
+X-Gm-Message-State: APjAAAWdI8jpaYzW0QCMFqtBaWybMftH6h9cj5S+yAao8O/Zhb73JjFR
+        f6kvQuenYgOAFMA7Vjlvt6l5Fg==
+X-Google-Smtp-Source: APXvYqx4fX8Gn+t3Rh3bmDBrB/ZOu/6lTbIy0+fAFGSErMBTtjm4GnANtgUhaKocS8/SeNeX1xNL4g==
+X-Received: by 2002:a63:a747:: with SMTP id w7mr772076pgo.310.1573085363153;
+        Wed, 06 Nov 2019 16:09:23 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z23sm216549pgj.43.2019.11.06.16.09.21
+        by smtp.gmail.com with ESMTPSA id z23sm216549pgj.43.2019.11.06.16.09.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 16:09:21 -0800 (PST)
+        Wed, 06 Nov 2019 16:09:22 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Kishon Vijay Abraham I <kishon@ti.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 1/5] dt-bindings: phy-qcom-qmp: Add SDM845 PCIe to binding
-Date:   Wed,  6 Nov 2019 16:09:13 -0800
-Message-Id: <20191107000917.1092409-2-bjorn.andersson@linaro.org>
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 2/5] phy: qcom-qmp: Increase PHY ready timeout
+Date:   Wed,  6 Nov 2019 16:09:14 -0800
+Message-Id: <20191107000917.1092409-3-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191107000917.1092409-1-bjorn.andersson@linaro.org>
 References: <20191107000917.1092409-1-bjorn.andersson@linaro.org>
@@ -62,54 +62,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the compatible and define necessary clocks and resets for the SDM845
-GEN2 QMP PCIe phy and GEN3 QHP PCIe phy.
+It's typical for the QHP PHY to take slightly above 1ms to initialize,
+so increase the timeout of the PHY ready check to 10ms - as already done
+in the downstream PCIe driver.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v2:
-- Picked up Rob's R-b
+- None
 
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/phy/qualcomm/phy-qcom-qmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index eac9ad3cbbc8..a214ce6d0db2 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -12,6 +12,8 @@ Required properties:
- 	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
- 	       "qcom,msm8998-qmp-ufs-phy" for UFS QMP phy on msm8998,
- 	       "qcom,msm8998-qmp-pcie-phy" for PCIe QMP phy on msm8998,
-+	       "qcom,sdm845-qhp-pcie-phy" for QHP PCIe phy on sdm845,
-+	       "qcom,sdm845-qmp-pcie-phy" for QMP PCIe phy on sdm845,
- 	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
- 	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
- 	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845,
-@@ -52,6 +54,10 @@ Required properties:
- 			"ref", "ref_aux".
- 		For "qcom,msm8998-qmp-pcie-phy" must contain:
- 			"aux", "cfg_ahb", "ref".
-+		For "qcom,sdm845-qhp-pcie-phy" must contain:
-+			"aux", "cfg_ahb", "ref", "refgen".
-+		For "qcom,sdm845-qmp-pcie-phy" must contain:
-+			"aux", "cfg_ahb", "ref", "refgen".
- 		For "qcom,sdm845-qmp-usb3-phy" must contain:
- 			"aux", "cfg_ahb", "ref", "com_aux".
- 		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
-@@ -80,6 +86,10 @@ Required properties:
- 			"ufsphy".
- 		For "qcom,msm8998-qmp-pcie-phy" must contain:
- 			"phy", "common".
-+		For "qcom,sdm845-qhp-pcie-phy" must contain:
-+			"phy".
-+		For "qcom,sdm845-qmp-pcie-phy" must contain:
-+			"phy".
- 		For "qcom,sdm845-qmp-usb3-phy" must contain:
- 			"phy", "common".
- 		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+index 091e20303a14..66f91726b8b2 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -66,7 +66,7 @@
+ /* QPHY_V3_PCS_MISC_CLAMP_ENABLE register bits */
+ #define CLAMP_EN				BIT(0) /* enables i/o clamp_n */
+ 
+-#define PHY_INIT_COMPLETE_TIMEOUT		1000
++#define PHY_INIT_COMPLETE_TIMEOUT		10000
+ #define POWER_DOWN_DELAY_US_MIN			10
+ #define POWER_DOWN_DELAY_US_MAX			11
+ 
 -- 
 2.23.0
 
