@@ -2,91 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49331F3ADE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 23:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E96EF3AF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 23:07:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfKGWDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 17:03:14 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:39482 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfKGWDN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 17:03:13 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA7LxNT7041181;
-        Thu, 7 Nov 2019 22:03:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=caBQ4APPq5Vt6s+rJlcvYq6uLfVJB6rOPPKIIaRtFS4=;
- b=Ej7SL0ls1IlqCtSlouxb1VrEFfZRHDLNKbFBPFY8dB4BMhxmSeENZTnCtKf7+pENnKdC
- dPdCsH7wpyASnHWBQFO/PFb2ytyQhdM09lrkd8rEb+cgrKfXEAqnlddTcTXqlA1YLQby
- DqBLpj5IIXlwCsXvLxcAC3MwCV73d+N3zxgeuXqZ6hOFpJJ48p8QqfToPUFHgZH334XL
- EgNOP9wJgmxzliUm8V6ctSuA516sqjkVkwL29Ku8ejKceu3hNxc2vgq9x9xUY96Du7qP
- T/JiwIkMpQdR1ZJL7gElXFrssawnp4yoQBcaGsZu5rOcRsgPsP5lAfOR1wKDEqk53P4S eQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2w41w11ast-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Nov 2019 22:03:10 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA7LxR4F132371;
-        Thu, 7 Nov 2019 22:03:09 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2w41wjaa5y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Nov 2019 22:03:09 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA7M38Bg027285;
-        Thu, 7 Nov 2019 22:03:08 GMT
-Received: from localhost (/10.145.179.16)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Nov 2019 14:03:07 -0800
-Date:   Thu, 7 Nov 2019 14:03:06 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfs: Correct comment tyops -> typos
-Message-ID: <20191107220306.GI6219@magnolia>
-References: <0ceb6a89da4424a4500789610fae4d05ba45ba86.camel@perches.com>
- <20191107212541.GF6219@magnolia>
- <e8187485a6ee7fffef738f90cddfa052ccdb927c.camel@perches.com>
+        id S1727185AbfKGWHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 17:07:42 -0500
+Received: from mga09.intel.com ([134.134.136.24]:26151 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725946AbfKGWHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 17:07:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 14:07:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,279,1569308400"; 
+   d="scan'208";a="192966898"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 07 Nov 2019 14:07:41 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id A117E580108;
+        Thu,  7 Nov 2019 14:07:41 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH] PCI/DPC: Add pcie_ports=dpc-native parameter to bring
+ back old behavior
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191025202004.GA147688@google.com>
+ <1ade6a9f-9532-c400-9bb0-4e68ed5752ce@linux.intel.com>
+ <CAOesGMhdAUKj9f0=sVwH7kffr=P-LqWWqKxKK3N3e0MpcjLExw@mail.gmail.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <43b431b6-f544-f9f0-d6f3-f383d7b882b9@linux.intel.com>
+Date:   Thu, 7 Nov 2019 14:05:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8187485a6ee7fffef738f90cddfa052ccdb927c.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911070203
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911070203
+In-Reply-To: <CAOesGMhdAUKj9f0=sVwH7kffr=P-LqWWqKxKK3N3e0MpcjLExw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 01:56:13PM -0800, Joe Perches wrote:
-> On Thu, 2019-11-07 at 13:25 -0800, Darrick J. Wong wrote:
-> > On Wed, Nov 06, 2019 at 10:01:15PM -0800, Joe Perches wrote:
-> > > Just fix the typos checkpatch notices...
-> > > 
-> > > Signed-off-by: Joe Perches <joe@perches.com>
-> > 
-> > Looks ok,
-> > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> Darrick?  You are the listed maintainer here.
-> Are you applying this or just reviewing it?
 
-Applying it, though there's another 50+ patches to go...
+On 11/7/19 12:09 PM, Olof Johansson wrote:
+> On Thu, Nov 7, 2019 at 12:02 PM Kuppuswamy Sathyanarayanan
+> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+>> Hi,
+>>
+>> On 10/25/19 1:20 PM, Bjorn Helgaas wrote:
+>>> On Wed, Oct 23, 2019 at 12:22:05PM -0700, Olof Johansson wrote:
+>>>> In commit eed85ff4c0da7 ("PCI/DPC: Enable DPC only if AER is available"),
+>>>> the behavior was changed such that native (kernel) handling of DPC
+>>>> got tied to whether the kernel also handled AER. While this is what
+>>>> the standard recommends, there are BIOSes out there that lack the DPC
+>>>> handling since it was never required in the past.
+>>> Some systems do not grant OS control of AER via _OSC.  I guess the
+>>> problem is that on those systems, the OS DPC driver used to work, but
+>>> after eed85ff4c0da7, it does not.  Right?
+>> I need some clarification on this issue. Do you mean in these systems,
+>> firmware expects OS to handle DPC and AER, but it does not let OS know
+>> about it via _OSC ?
+> The OS and BIOS both assumed behavior as before eed85ff4c0da7 -- AER
+> handled by firmware but DPC handled by kernel.
+>
+> I.e. a classic case of "Sure, the spec says this, but in reality
+> implementations relied on actual behavior", and someone had a
+> regression and need a way to restore previous behavior.
 
---D
+Got it. I don't know whether its good to add hacks to support products 
+that does not follow spec.
+But, do you think it would be useful to add some kind of warning message 
+when this option is
+enabled ? May be it could be useful in debugging.
 
-> 
-> 
+>
+> -Olof
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
+
