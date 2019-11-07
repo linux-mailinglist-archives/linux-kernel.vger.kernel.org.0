@@ -2,49 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D66F2F304C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F7EFF303E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731032AbfKGNoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:44:17 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:42447 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728756AbfKGNmG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388970AbfKGNmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 7 Nov 2019 08:42:06 -0500
-Received: by mail-io1-f71.google.com with SMTP id w1so1863664ioj.9
+Received: from mail-il1-f199.google.com ([209.85.166.199]:38071 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728687AbfKGNmF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 08:42:05 -0500
+Received: by mail-il1-f199.google.com with SMTP id f6so2669601ilg.5
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=Ri77hDWlxGadNlCgJxRYuckJ2NfPljUNUsSx9eNtzWk=;
-        b=OqrigH+FnddswXKOD7l/XrvHO/T4/Y8x1AP02dIYXMOirbf7mibwaRU2CqPAjco/pf
-         Sai6I1d7XlefZbLdJvpHy37Gs1iqnP6+2ThW+FO+qvolUVpKBz/t+aERxkraRzNYU2Ev
-         ml5PJ3ZdE2wIxed5Y/8iNVcRy220z/S6Ki+PSKTbz9U2YHKHbnDhGEuI9AP3rqk5Z8V2
-         rn8D0nPk59CgzdoiFfZ7TlMfNAj7RCm9Dirm/5+LoZ8614m5S7yH9Kinb87CicBqWjnK
-         PBRJxzVUHOQETACZ7dDYyJZ4jUgB7x+NabAUdOPTX78WHJNXSy4uRM6zzeRkk9b2LlRH
-         HuQw==
-X-Gm-Message-State: APjAAAVZ7SqHtsxL1ni3PyA5PSip9HDK5yW3QnYfJWobi2JC9NdsMj29
-        iwqG5OOnki7vco6xHbkHwH3bci/m8OEy6C9RD1L9LKfuMDQZ
-X-Google-Smtp-Source: APXvYqyiaX/HBm4ThpNYBtRUCy00rdSftcGU05xFPcVkDJFu3QBgix3u6xPkEYXW5FgMlBBunB3dqautQmieoQX2FODxU5sVo2Dy
+        bh=V9C3/szOLxcs/lQrxw09yt7xBy3qLGRL88aXaqrhtNg=;
+        b=U6AkBVElYN1u6mzljU5M7J9jJfEpYAAhoVqWIwImwhOJZbk6A/gqqI030YDLMe4dgu
+         K78190pCWgeBNm+kmDjoCcpfnaLdorFT0vjFWHbx3I96ck+Ts8Wp0QUfBPzr1LpskaQQ
+         cYHjGJSkEww08WHLl/Ti99o2L/YzPY23UwY0kQqfbuHmFD277mE8u6KZeSE257NFWNtG
+         VnLL7IzRdhw8iRKmWsT3+3e8zsSdE9ZEidO+dr4Ejtu4dzti8wGcfVWb9byo5N2DaZWp
+         oIAeLnl+oXMySeoEZYHvndmnlhg5FtoVrHVZlbKprqhhNR2isuPEyqY/Lci6ayPqJHHY
+         HdUg==
+X-Gm-Message-State: APjAAAVFnoSjTQXP2zaoO2rfd5buyhdq5aJRvDMfdUQhYrvQkJxTwO1U
+        b1eKTm3aZykonmqG9In2UpNc3kmGIhJlAkHE+9MDf+hyc6qa
+X-Google-Smtp-Source: APXvYqxCUbUYzo+u5rS8f2qDgRbx0mqmdassnoPfmOY5Y2vuj78n07nSmrMgM7MJp/uItBjNn+rZa528BFNhpP5yPG6wP1qdX+ZU
 MIME-Version: 1.0
-X-Received: by 2002:a5d:87c4:: with SMTP id q4mr3589286ios.136.1573134124843;
+X-Received: by 2002:a6b:ba44:: with SMTP id k65mr3353167iof.190.1573134124463;
  Thu, 07 Nov 2019 05:42:04 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:04 -0800
-In-Reply-To: <001a113ed49eb535d20568bb75ba@google.com>
+In-Reply-To: <001a1140ad88c4f006055d3836d2@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b207e60596c1d413@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in find_first_zero_bit
-From:   syzbot <syzbot+a88c8270030dc5d71e4f@syzkaller.appspotmail.com>
-To:     aivazian.tigran@gmail.com, akpm@linux-foundation.org,
-        dmitri.vorobiev@gmail.com, gregkh@linuxfoundation.org,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        pombredanne@nexb.com, snakebyte@gmx.de,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        tigran@aivazian.fsnet.co.uk, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk
+Message-ID: <000000000000ac3e9d0596c1d4fe@google.com>
+Subject: Re: suspicious RCU usage at ./include/net/inet_sock.h:LINE
+From:   syzbot 
+        <syzbot+79de6f09efc55fec084b706de3c91e9457433ac5@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dccp@vger.kernel.org, dvyukov@google.com,
+        ebiggers3@gmail.com, gerrit@erg.abdn.ac.uk, jon.maloy@ericsson.com,
+        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, parthasarathy.bhuvaragan@ericsson.com,
+        syzkaller-bugs@googlegroups.com,
+        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com,
+        yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -53,22 +54,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit d1877155891020cb26ad4fba45bfee52d8da9951
-Author: Tigran Aivazian <aivazian.tigran@gmail.com>
-Date:   Thu Jan 3 23:28:14 2019 +0000
+commit 3f32d0be6c16b902b687453c962d17eea5b8ea19
+Author: Parthasarathy Bhuvaragan <parthasarathy.bhuvaragan@ericsson.com>
+Date:   Tue Sep 25 20:09:10 2018 +0000
 
-     bfs: extra sanity checking and static inode bitmap
+     tipc: lock wakeup & inputq at tipc_link_reset()
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16634ee8600000
-start commit:   b5dbc287 Merge tag 'kbuild-fixes-v4.16-3' of git://git.ker..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1368cfa2600000
+start commit:   464e1d5f
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9b0d91297e224bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=a88c8270030dc5d71e4f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cf65d3800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d99ab3800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bace9f7ec244b823
+dashboard link:  
+https://syzkaller.appspot.com/bug?extid=79de6f09efc55fec084b706de3c91e9457433ac5
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126079e1800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101499e1800000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: bfs: extra sanity checking and static inode bitmap
+#syz fix: tipc: lock wakeup & inputq at tipc_link_reset()
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
