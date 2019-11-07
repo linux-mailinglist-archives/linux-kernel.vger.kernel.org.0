@@ -2,390 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BAA7F230F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51161F231E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:12:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732773AbfKGAJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 19:09:32 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:32959 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732713AbfKGAJ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 19:09:28 -0500
-Received: by mail-pg1-f193.google.com with SMTP id h27so386402pgn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 16:09:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=89QEVdhN3WGoK0p+1tyD0tVTN9zo86ixWKdHd0uIJIE=;
-        b=vYKp4CKG9+BS63XPkKNWq7W5x8rAG1AVvPrIvddk4DVHsD/D/Iy12cvq2e9/FhPvCS
-         5nvigS5h1W9xtDGuqEnj6P4nGkPhzl9sO/bPrKLwLbyKGE6xcWKjiKWyNV0vDGh1pq/Z
-         /BcPCJWOoDyR9QCF+T3iEXORymZExYBBA6+2PchQk0KUbgAI+/PONwGkg7ASGcByGPFx
-         pRkKQlHfh0eyM6+glwSsgQa6CwDX/6TYq9m9h/Zqw4ht+dM25NiSl5+7zw7+1MjrBelP
-         VWkZ2ZexeioQLYOGQosY9n8Mf+cdJPwHiTOYsYLf0g1ZwAXg4s5CgPJd1w6nWO5797iu
-         BcoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=89QEVdhN3WGoK0p+1tyD0tVTN9zo86ixWKdHd0uIJIE=;
-        b=iIkDPPXsVe/WX4G1cVfsneLY3iDTz2UuHTAQpqgxsloYqq6mfkE1wo+MGPlQ89D2CP
-         hNy6cWvWfT2mhBk/IDka0g8w+Q3qhCAlkDLCcb0EsCzTTaV1DOlXNNaix28aJoHDChtG
-         hzYf0h9Q8nUGhjOSK3MYHQFVw9ia8RDXnrPugI8MgN3qpfiQydRsa8mkiLJsk+jAV1rH
-         MY3H4reHfPUTZCV1JL1u8prWH+RtebQgv2rZTm6VPpuFlP2QJxXFIS5V20pBYAdMpTBZ
-         BHqzMRByGKTrXECPQr8lGXZxGiEH2rXeScItFZRZWUvvBtQaB2PpBQusPb/CF+BTRP2W
-         2KfQ==
-X-Gm-Message-State: APjAAAVBnMH7lxE/K2xv7zYkd5+ZRFFzwi6o6SfC0kAOTGyNjE63Sn3o
-        bmF8hcua1Yb31IwrRW8iZUR8dQ==
-X-Google-Smtp-Source: APXvYqxcWkZm0+GLSKXH2zNu3PCaO0LaxzjNVNoQxRoVxqzP62vUYoBvUXwXT0mBOIrWh29nfmL6LA==
-X-Received: by 2002:a63:e608:: with SMTP id g8mr728263pgh.448.1573085366854;
-        Wed, 06 Nov 2019 16:09:26 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z23sm216549pgj.43.2019.11.06.16.09.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 16:09:26 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 5/5] phy: qcom: qmp: Add SDM845 QHP PCIe PHY
-Date:   Wed,  6 Nov 2019 16:09:17 -0800
-Message-Id: <20191107000917.1092409-6-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191107000917.1092409-1-bjorn.andersson@linaro.org>
-References: <20191107000917.1092409-1-bjorn.andersson@linaro.org>
+        id S1727772AbfKGAMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 19:12:36 -0500
+Received: from mx1.cock.li ([185.10.68.5]:57115 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727296AbfKGAMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 19:12:35 -0500
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1573085553; bh=HPC056pbvUiRIlKJFT7KMmJ0lG5uZwy0PdN12dLe7VY=;
+        h=Date:From:To:Subject:In-Reply-To:References:From;
+        b=jNxy/bqF43PKKwNiu3PpuO55NcjWla2nMllQWyJ9Kqe4gYDZVgdMpyIbc3MF290nB
+         MVHdRfY4SSaCJGZyZB2bYd1/yhgps/cQJJgpOkdnrp6BANNvIzsCm5MpOpHQLTR9aP
+         zNpiRlAVxLS5UWIQJy3x9+EvM3rUvYaTKryBG3f9xVevN1tCG3h70WwcPjtMVG4Q/Z
+         MdemDX+gQRDrbC8XGD3Co5yRLIFRhXT36HJyz3Ra0fx40Rgcx0ofLPaVIEDDtP8u/J
+         zACEIYTEpnYINWA8Mm7jaM7epGEqYLj3WRO52NSW8PNDSdp8k/BucTi3y7SA0XEB8z
+         e+XgvnUf98IDQ==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date:   Thu, 07 Nov 2019 00:12:33 +0000
+From:   gameonlinux@redchan.it
+To:     linux-kernel@vger.kernel.org
+Subject: Re: Coreboot vs Libreboot - GNU: Please use Coreboot without the
+ blobs (compile time option). - Why the [edits]?
+In-Reply-To: <30253120.XGK1vlv84B@pc-713>
+References: <b1b6ab4e31856450d82afccaba587b0f@redchan.it>
+ <10419249.ilHZ0GCc2g@pc-713> <9352ba078b5f8fb0f464b6d65209b482@redchan.it>
+ <30253120.XGK1vlv84B@pc-713>
+Message-ID: <3e3bd7aa444b8b020245c575e547295c@redchan.it>
+X-Sender: gameonlinux@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the GEN3 QHP PCIe PHY found in SDM845.
+> I’m pretty much sure the old religions, especially some popular 
+> branches of
+> Islam and Christianism condemn what you say about women.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+You're wrong.
 
-Changes since v2:
-- Sorted header file entries
+Islam explicitly allows men to marry female children.
+Bukari Hadith book 5
+Sahih Bukhari 5:58:236
+Sahih Bukhari 7:62:64
+Sahih Bukhari 8:73:151
 
- drivers/phy/qualcomm/phy-qcom-qmp.c | 157 ++++++++++++++++++++++++++++
- drivers/phy/qualcomm/phy-qcom-qmp.h | 114 ++++++++++++++++++++
- 2 files changed, 271 insertions(+)
+The 5th book of the Torah, the last law book, Devarim, EXPLICITLY 
+commands child marraige, including in cases of rape (tahpas): Devarim 
+chapter 22, verse 28. Relevant words:
+Hebrew masoretic text: Na'ar (child) (>Nachmanides points out that a 
+child may be called na'ar from the moment he is born. )
+Greek septuagint: Padia (child, padia+philos = paedophillia)
+Latin vulgate: Puella (young girl)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index d107563e17c6..ae05a53dccf2 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -166,6 +166,12 @@ static const unsigned int sdm845_qmp_pciephy_regs_layout[] = {
- 	[QPHY_PCS_STATUS]		= 0x174,
- };
- 
-+static const unsigned int sdm845_qhp_pciephy_regs_layout[] = {
-+	[QPHY_SW_RESET]			= 0x00,
-+	[QPHY_START_CTRL]		= 0x08,
-+	[QPHY_PCS_STATUS]		= 0x2ac,
-+};
-+
- static const unsigned int sdm845_ufsphy_regs_layout[] = {
- 	[QPHY_START_CTRL]		= 0x00,
- 	[QPHY_PCS_READY_STATUS]		= 0x160,
-@@ -589,6 +595,126 @@ static const struct qmp_phy_init_tbl sdm845_qmp_pcie_pcs_misc_tbl[] = {
- 	QMP_PHY_INIT_CFG(QPHY_V3_PCS_MISC_PCIE_INT_AUX_CLK_CONFIG1, 0x00),
- };
- 
-+static const struct qmp_phy_init_tbl sdm845_qhp_pcie_serdes_tbl[] = {
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SYSCLK_EN_SEL, 0x27),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SSC_EN_CENTER, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SSC_PER1, 0x31),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SSC_PER2, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SSC_STEP_SIZE1, 0xde),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SSC_STEP_SIZE2, 0x07),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SSC_STEP_SIZE1_MODE1, 0x4c),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SSC_STEP_SIZE2_MODE1, 0x06),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_BIAS_EN_CKBUFLR_EN, 0x18),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CLK_ENABLE1, 0xb0),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_LOCK_CMP1_MODE0, 0x8c),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_LOCK_CMP2_MODE0, 0x20),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_LOCK_CMP1_MODE1, 0x14),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_LOCK_CMP2_MODE1, 0x34),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CP_CTRL_MODE0, 0x06),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CP_CTRL_MODE1, 0x06),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_PLL_RCTRL_MODE0, 0x16),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_PLL_RCTRL_MODE1, 0x16),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_PLL_CCTRL_MODE0, 0x36),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_PLL_CCTRL_MODE1, 0x36),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_RESTRIM_CTRL2, 0x05),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_LOCK_CMP_EN, 0x42),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DEC_START_MODE0, 0x82),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DEC_START_MODE1, 0x68),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DIV_FRAC_START1_MODE0, 0x55),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DIV_FRAC_START2_MODE0, 0x55),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DIV_FRAC_START3_MODE0, 0x03),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DIV_FRAC_START1_MODE1, 0xab),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DIV_FRAC_START2_MODE1, 0xaa),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_DIV_FRAC_START3_MODE1, 0x02),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_INTEGLOOP_GAIN0_MODE0, 0x3f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_INTEGLOOP_GAIN0_MODE1, 0x3f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_VCO_TUNE_MAP, 0x10),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CLK_SELECT, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_HSCLK_SEL1, 0x30),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CORECLK_DIV, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CORE_CLK_EN, 0x73),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CMN_CONFIG, 0x0c),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_SVS_MODE_CLK_SEL, 0x15),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CORECLK_DIV_MODE1, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_CMN_MODE, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_VREGCLK_DIV1, 0x22),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_VREGCLK_DIV2, 0x00),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_BGV_TRIM, 0x20),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_COM_BG_CTRL, 0x07),
-+};
-+
-+static const struct qmp_phy_init_tbl sdm845_qhp_pcie_tx_tbl[] = {
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DRVR_CTRL0, 0x00),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DRVR_TAP_EN, 0x0d),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_TX_BAND_MODE, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_LANE_MODE, 0x1a),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_PARALLEL_RATE, 0x2f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_CML_CTRL_MODE0, 0x09),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_CML_CTRL_MODE1, 0x09),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_CML_CTRL_MODE2, 0x1b),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_PREAMP_CTRL_MODE1, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_PREAMP_CTRL_MODE2, 0x07),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_MIXER_CTRL_MODE0, 0x31),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_MIXER_CTRL_MODE1, 0x31),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_MIXER_CTRL_MODE2, 0x03),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_CTLE_THRESH_DFE, 0x02),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_CGA_THRESH_DFE, 0x00),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RXENGINE_EN0, 0x12),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_CTLE_TRAIN_TIME, 0x25),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_CTLE_DFE_OVRLP_TIME, 0x00),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DFE_REFRESH_TIME, 0x05),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DFE_ENABLE_TIME, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_VGA_GAIN, 0x26),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DFE_GAIN, 0x12),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_EQ_GAIN, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_OFFSET_GAIN, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_PRE_GAIN, 0x09),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_EQ_INTVAL, 0x15),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_EDAC_INITVAL, 0x28),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RXEQ_INITB0, 0x7f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RXEQ_INITB1, 0x07),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RCVRDONE_THRESH1, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RXEQ_CTRL, 0x70),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_UCDR_FO_GAIN_MODE0, 0x8b),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_UCDR_FO_GAIN_MODE1, 0x08),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_UCDR_FO_GAIN_MODE2, 0x0a),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_UCDR_SO_GAIN_MODE0, 0x03),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_UCDR_SO_GAIN_MODE1, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_UCDR_SO_GAIN_MODE2, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_UCDR_SO_CONFIG, 0x0c),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RX_BAND, 0x02),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RX_RCVR_PATH1_MODE0, 0x5c),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RX_RCVR_PATH1_MODE1, 0x3e),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RX_RCVR_PATH1_MODE2, 0x3f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_SIGDET_ENABLES, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_SIGDET_CNTRL, 0xa0),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_SIGDET_DEGLITCH_CNTRL, 0x08),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DCC_GAIN, 0x01),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RX_EN_SIGNAL, 0xc3),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_PSM_RX_EN_CAL, 0x00),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RX_MISC_CNTRL0, 0xbc),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_TS0_TIMER, 0x7f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DLL_HIGHDATARATE, 0x15),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DRVR_CTRL1, 0x0c),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_DRVR_CTRL2, 0x0f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RX_RESETCODE_OFFSET, 0x04),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_VGA_INITVAL, 0x20),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_L0_RSM_START, 0x01),
-+};
-+
-+static const struct qmp_phy_init_tbl sdm845_qhp_pcie_rx_tbl[] = {
-+};
-+
-+static const struct qmp_phy_init_tbl sdm845_qhp_pcie_pcs_tbl[] = {
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_PHY_POWER_STATE_CONFIG, 0x3f),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_PHY_PCS_TX_RX_CONFIG, 0x50),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_PHY_TXMGN_MAIN_V0_M3P5DB, 0x19),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_PHY_TXMGN_POST_V0_M3P5DB, 0x07),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_PHY_TXMGN_MAIN_V0_M6DB, 0x17),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_PHY_TXMGN_POST_V0_M6DB, 0x09),
-+	QMP_PHY_INIT_CFG(PCIE_GEN3_QHP_PHY_POWER_STATE_CONFIG5, 0x9f),
-+};
-+
- static const struct qmp_phy_init_tbl qmp_v3_usb3_serdes_tbl[] = {
- 	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_IVCO, 0x07),
- 	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYSCLK_EN_SEL, 0x14),
-@@ -1383,6 +1509,34 @@ static const struct qmp_phy_cfg sdm845_qmp_pciephy_cfg = {
- 	.pwrdn_delay_max	= 1005,		/* us */
- };
- 
-+static const struct qmp_phy_cfg sdm845_qhp_pciephy_cfg = {
-+	.type = PHY_TYPE_PCIE,
-+	.nlanes = 1,
-+
-+	.serdes_tbl		= sdm845_qhp_pcie_serdes_tbl,
-+	.serdes_tbl_num		= ARRAY_SIZE(sdm845_qhp_pcie_serdes_tbl),
-+	.tx_tbl			= sdm845_qhp_pcie_tx_tbl,
-+	.tx_tbl_num		= ARRAY_SIZE(sdm845_qhp_pcie_tx_tbl),
-+	.rx_tbl			= sdm845_qhp_pcie_rx_tbl,
-+	.rx_tbl_num		= ARRAY_SIZE(sdm845_qhp_pcie_rx_tbl),
-+	.pcs_tbl		= sdm845_qhp_pcie_pcs_tbl,
-+	.pcs_tbl_num		= ARRAY_SIZE(sdm845_qhp_pcie_pcs_tbl),
-+	.clk_list		= sdm845_pciephy_clk_l,
-+	.num_clks		= ARRAY_SIZE(sdm845_pciephy_clk_l),
-+	.reset_list		= sdm845_pciephy_reset_l,
-+	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-+	.vreg_list		= qmp_phy_vreg_l,
-+	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
-+	.regs			= sdm845_qhp_pciephy_regs_layout,
-+
-+	.start_ctrl		= PCS_START | SERDES_START,
-+	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
-+
-+	.has_pwrdn_delay	= true,
-+	.pwrdn_delay_min	= 995,		/* us */
-+	.pwrdn_delay_max	= 1005,		/* us */
-+};
-+
- static const struct qmp_phy_cfg qmp_v3_usb3phy_cfg = {
- 	.type			= PHY_TYPE_USB3,
- 	.nlanes			= 1,
-@@ -2256,6 +2410,9 @@ static const struct of_device_id qcom_qmp_phy_of_match_table[] = {
- 	}, {
- 		.compatible = "qcom,ipq8074-qmp-pcie-phy",
- 		.data = &ipq8074_pciephy_cfg,
-+	}, {
-+		.compatible = "qcom,sdm845-qhp-pcie-phy",
-+		.data = &sdm845_qhp_pciephy_cfg,
- 	}, {
- 		.compatible = "qcom,sdm845-qmp-pcie-phy",
- 		.data = &sdm845_qmp_pciephy_cfg,
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h b/drivers/phy/qualcomm/phy-qcom-qmp.h
-index ab6ff9b45a32..bed19a6965e5 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.h
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
-@@ -409,4 +409,118 @@
- #define QPHY_V4_TX_MID_TERM_CTRL1			0x1d8
- #define QPHY_V4_MULTI_LANE_CTRL1			0x1e0
- 
-+/* PCIE GEN3 COM registers */
-+#define PCIE_GEN3_QHP_COM_SSC_EN_CENTER			0x14
-+#define PCIE_GEN3_QHP_COM_SSC_PER1			0x20
-+#define PCIE_GEN3_QHP_COM_SSC_PER2			0x24
-+#define PCIE_GEN3_QHP_COM_SSC_STEP_SIZE1		0x28
-+#define PCIE_GEN3_QHP_COM_SSC_STEP_SIZE2		0x2c
-+#define PCIE_GEN3_QHP_COM_SSC_STEP_SIZE1_MODE1		0x34
-+#define PCIE_GEN3_QHP_COM_SSC_STEP_SIZE2_MODE1		0x38
-+#define PCIE_GEN3_QHP_COM_BIAS_EN_CKBUFLR_EN		0x54
-+#define PCIE_GEN3_QHP_COM_CLK_ENABLE1			0x58
-+#define PCIE_GEN3_QHP_COM_LOCK_CMP1_MODE0		0x6c
-+#define PCIE_GEN3_QHP_COM_LOCK_CMP2_MODE0		0x70
-+#define PCIE_GEN3_QHP_COM_LOCK_CMP1_MODE1		0x78
-+#define PCIE_GEN3_QHP_COM_LOCK_CMP2_MODE1		0x7c
-+#define PCIE_GEN3_QHP_COM_BGV_TRIM			0x98
-+#define PCIE_GEN3_QHP_COM_CP_CTRL_MODE0			0xb4
-+#define PCIE_GEN3_QHP_COM_CP_CTRL_MODE1			0xb8
-+#define PCIE_GEN3_QHP_COM_PLL_RCTRL_MODE0		0xc0
-+#define PCIE_GEN3_QHP_COM_PLL_RCTRL_MODE1		0xc4
-+#define PCIE_GEN3_QHP_COM_PLL_CCTRL_MODE0		0xcc
-+#define PCIE_GEN3_QHP_COM_PLL_CCTRL_MODE1		0xd0
-+#define PCIE_GEN3_QHP_COM_SYSCLK_EN_SEL			0xdc
-+#define PCIE_GEN3_QHP_COM_RESTRIM_CTRL2			0xf0
-+#define PCIE_GEN3_QHP_COM_LOCK_CMP_EN			0xf8
-+#define PCIE_GEN3_QHP_COM_DEC_START_MODE0		0x100
-+#define PCIE_GEN3_QHP_COM_DEC_START_MODE1		0x108
-+#define PCIE_GEN3_QHP_COM_DIV_FRAC_START1_MODE0		0x11c
-+#define PCIE_GEN3_QHP_COM_DIV_FRAC_START2_MODE0		0x120
-+#define PCIE_GEN3_QHP_COM_DIV_FRAC_START3_MODE0		0x124
-+#define PCIE_GEN3_QHP_COM_DIV_FRAC_START1_MODE1		0x128
-+#define PCIE_GEN3_QHP_COM_DIV_FRAC_START2_MODE1		0x12c
-+#define PCIE_GEN3_QHP_COM_DIV_FRAC_START3_MODE1		0x130
-+#define PCIE_GEN3_QHP_COM_INTEGLOOP_GAIN0_MODE0		0x150
-+#define PCIE_GEN3_QHP_COM_INTEGLOOP_GAIN0_MODE1		0x158
-+#define PCIE_GEN3_QHP_COM_VCO_TUNE_MAP			0x178
-+#define PCIE_GEN3_QHP_COM_BG_CTRL			0x1c8
-+#define PCIE_GEN3_QHP_COM_CLK_SELECT			0x1cc
-+#define PCIE_GEN3_QHP_COM_HSCLK_SEL1			0x1d0
-+#define PCIE_GEN3_QHP_COM_CORECLK_DIV			0x1e0
-+#define PCIE_GEN3_QHP_COM_CORE_CLK_EN			0x1e8
-+#define PCIE_GEN3_QHP_COM_CMN_CONFIG			0x1f0
-+#define PCIE_GEN3_QHP_COM_SVS_MODE_CLK_SEL		0x1fc
-+#define PCIE_GEN3_QHP_COM_CORECLK_DIV_MODE1		0x21c
-+#define PCIE_GEN3_QHP_COM_CMN_MODE			0x224
-+#define PCIE_GEN3_QHP_COM_VREGCLK_DIV1			0x228
-+#define PCIE_GEN3_QHP_COM_VREGCLK_DIV2			0x22c
-+
-+/* PCIE GEN3 QHP Lane registers */
-+#define PCIE_GEN3_QHP_L0_DRVR_CTRL0			0xc
-+#define PCIE_GEN3_QHP_L0_DRVR_CTRL1			0x10
-+#define PCIE_GEN3_QHP_L0_DRVR_CTRL2			0x14
-+#define PCIE_GEN3_QHP_L0_DRVR_TAP_EN			0x18
-+#define PCIE_GEN3_QHP_L0_TX_BAND_MODE			0x60
-+#define PCIE_GEN3_QHP_L0_LANE_MODE			0x64
-+#define PCIE_GEN3_QHP_L0_PARALLEL_RATE			0x7c
-+#define PCIE_GEN3_QHP_L0_CML_CTRL_MODE0			0xc0
-+#define PCIE_GEN3_QHP_L0_CML_CTRL_MODE1			0xc4
-+#define PCIE_GEN3_QHP_L0_CML_CTRL_MODE2			0xc8
-+#define PCIE_GEN3_QHP_L0_PREAMP_CTRL_MODE1		0xd0
-+#define PCIE_GEN3_QHP_L0_PREAMP_CTRL_MODE2		0xd4
-+#define PCIE_GEN3_QHP_L0_MIXER_CTRL_MODE0		0xd8
-+#define PCIE_GEN3_QHP_L0_MIXER_CTRL_MODE1		0xdc
-+#define PCIE_GEN3_QHP_L0_MIXER_CTRL_MODE2		0xe0
-+#define PCIE_GEN3_QHP_L0_CTLE_THRESH_DFE		0xfc
-+#define PCIE_GEN3_QHP_L0_CGA_THRESH_DFE			0x100
-+#define PCIE_GEN3_QHP_L0_RXENGINE_EN0			0x108
-+#define PCIE_GEN3_QHP_L0_CTLE_TRAIN_TIME		0x114
-+#define PCIE_GEN3_QHP_L0_CTLE_DFE_OVRLP_TIME		0x118
-+#define PCIE_GEN3_QHP_L0_DFE_REFRESH_TIME		0x11c
-+#define PCIE_GEN3_QHP_L0_DFE_ENABLE_TIME		0x120
-+#define PCIE_GEN3_QHP_L0_VGA_GAIN			0x124
-+#define PCIE_GEN3_QHP_L0_DFE_GAIN			0x128
-+#define PCIE_GEN3_QHP_L0_EQ_GAIN			0x130
-+#define PCIE_GEN3_QHP_L0_OFFSET_GAIN			0x134
-+#define PCIE_GEN3_QHP_L0_PRE_GAIN			0x138
-+#define PCIE_GEN3_QHP_L0_VGA_INITVAL			0x13c
-+#define PCIE_GEN3_QHP_L0_EQ_INTVAL			0x154
-+#define PCIE_GEN3_QHP_L0_EDAC_INITVAL			0x160
-+#define PCIE_GEN3_QHP_L0_RXEQ_INITB0			0x168
-+#define PCIE_GEN3_QHP_L0_RXEQ_INITB1			0x16c
-+#define PCIE_GEN3_QHP_L0_RCVRDONE_THRESH1		0x178
-+#define PCIE_GEN3_QHP_L0_RXEQ_CTRL			0x180
-+#define PCIE_GEN3_QHP_L0_UCDR_FO_GAIN_MODE0		0x184
-+#define PCIE_GEN3_QHP_L0_UCDR_FO_GAIN_MODE1		0x188
-+#define PCIE_GEN3_QHP_L0_UCDR_FO_GAIN_MODE2		0x18c
-+#define PCIE_GEN3_QHP_L0_UCDR_SO_GAIN_MODE0		0x190
-+#define PCIE_GEN3_QHP_L0_UCDR_SO_GAIN_MODE1		0x194
-+#define PCIE_GEN3_QHP_L0_UCDR_SO_GAIN_MODE2		0x198
-+#define PCIE_GEN3_QHP_L0_UCDR_SO_CONFIG			0x19c
-+#define PCIE_GEN3_QHP_L0_RX_BAND			0x1a4
-+#define PCIE_GEN3_QHP_L0_RX_RCVR_PATH1_MODE0		0x1c0
-+#define PCIE_GEN3_QHP_L0_RX_RCVR_PATH1_MODE1		0x1c4
-+#define PCIE_GEN3_QHP_L0_RX_RCVR_PATH1_MODE2		0x1c8
-+#define PCIE_GEN3_QHP_L0_SIGDET_ENABLES			0x230
-+#define PCIE_GEN3_QHP_L0_SIGDET_CNTRL			0x234
-+#define PCIE_GEN3_QHP_L0_SIGDET_DEGLITCH_CNTRL		0x238
-+#define PCIE_GEN3_QHP_L0_DCC_GAIN			0x2a4
-+#define PCIE_GEN3_QHP_L0_RSM_START			0x2a8
-+#define PCIE_GEN3_QHP_L0_RX_EN_SIGNAL			0x2ac
-+#define PCIE_GEN3_QHP_L0_PSM_RX_EN_CAL			0x2b0
-+#define PCIE_GEN3_QHP_L0_RX_MISC_CNTRL0			0x2b8
-+#define PCIE_GEN3_QHP_L0_TS0_TIMER			0x2c0
-+#define PCIE_GEN3_QHP_L0_DLL_HIGHDATARATE		0x2c4
-+#define PCIE_GEN3_QHP_L0_RX_RESETCODE_OFFSET		0x2cc
-+
-+/* PCIE GEN3 PCS registers */
-+#define PCIE_GEN3_QHP_PHY_TXMGN_MAIN_V0_M3P5DB		0x2c
-+#define PCIE_GEN3_QHP_PHY_TXMGN_POST_V0_M3P5DB		0x40
-+#define PCIE_GEN3_QHP_PHY_TXMGN_MAIN_V0_M6DB		0x54
-+#define PCIE_GEN3_QHP_PHY_TXMGN_POST_V0_M6DB		0x68
-+#define PCIE_GEN3_QHP_PHY_POWER_STATE_CONFIG		0x15c
-+#define PCIE_GEN3_QHP_PHY_POWER_STATE_CONFIG5		0x16c
-+#define PCIE_GEN3_QHP_PHY_PCS_TX_RX_CONFIG		0x174
-+
- #endif
--- 
-2.23.0
+The Vedic traditions have laws that state that if a father fails to 
+marry his girl off by 9 or 12 he goes to a hell.
 
+
+This shows that you do not know what you think you know, you just spout 
+the Americanisms you were told, without reading the original texts in 
+their own languages.
+
+Christianity is simply a heretical pro-woman, anti-male religion run by 
+Americans.
+
+The Sunni Islamics will destroy the American religion eventually, no 
+matter what that requires, and we will marry cute young girls again, 
+nomatter what is required to effect that change. That freedom.
+
+On 2019-11-06 22:32, Alexandre François Garreau wrote:
+> Le mercredi 6 novembre 2019 22:49:07 CET, vous avez écrit :
+>> The man is no a
+>> eunich, but he is not a woman (since he cannot have children).
+> 
+> So you go under M. Garisson definition of a women, according which 
+> sterile
+> cissexual (that is non-transsexual) “women” are actually “men”, and any 
+> man
+> dating whoever is not able to get pregnant is being gay?
+> 
+> Does that also apply to hormonal contraception?  Does it mean a woman 
+> taking
+> the pill is a man?  Damn, trans men must be happy of this consideration 
+> x)
+> 
+> At least it’s easy to become a man through surgery, according your 
+> definitions.
+> 
+> Sooooooo did you check all women you had sex with are fertile? there 
+> are
+> common affections that make women sterile.  Maybe you have been having 
+> gay sex
+> without knowing it.
+> 
+>> A woman
+>> without a womb
+> 
+> Actually if you looked well at the photos, she has one.  That’s the 
+> goal of
+> sex reassignment surgery.
+> 
+>> is like a broken compiler: it's not a compiler: just the
+>> pieces that could have been one. Same with a man without genitals.
+> 
+> If you believe the only purpose of a human is to give birth, “make love 
+> not
+> war” and stop bothering people on mailing lists.  But afaik, according 
+> your
+> definitions… you can’t (give birth).
+> 
+> But wait… you were defending pedophilia… but a prepubere girl can’t get
+> pregnant… so… what’s the point of it?
+> 
+> I mean, having sex with a prepubere girl and with a transsexual woman 
+> is
+> biologically just the same: it can’t give birth.
+> 
+>> In america it is lauded when men have their genitals chopped off.
+> 
+> No, many americans are transphobic too.  And most of them are neither
+> supporters of transgender rights, nor transphobes, but don’t care.  
+> Like
+> everywhere actually.
+> 
+>> But when a man might hint at the wish to marry adorable young girls:
+>> america wants to kill and torture him.
+> 
+> Sadly, yet you’re doing nothing to help but more harm, because nobody 
+> allies
+> with your views and you’re not trying to understand a fuck.
+> 
+>> The old religions
+> 
+> I’m pretty much sure the old religions, especially some popular 
+> branches of
+> Islam and Christianism condemn what you say about women.
+> 
+>> And the libreboot maintainer is a Eunich, NOT a woman - a he or a
+>> neuter.
+> 
+> An eunuch is a man without genitals.  But she has (female) genitals, 
+> female
+> levels of hormone, looks like a woman, and by the virtue of “if it’s 
+> all like
+> a duck, it’s a duck” she’s a woman. period. you just draw essentialism 
+> for the
+> rest.
+> 
+>> I doubt [she]'ll ever contribute anything much more after having [her] 
+>> balls
+>> sliced off of his body. They usually lose the will.
+> 
+> Loss of testosterone imply indeed small depression and loss of will.  
+> That’s
+> why in sex reassignment we gives hormone including testosterone and 
+> female
+> sexual hormones, so the will come back ;) and without the depression 
+> coming
+> with gender dysphoria.
+> 
+> I think she works on other stuff.  LibreBoot is worked on by other 
+> people now.
