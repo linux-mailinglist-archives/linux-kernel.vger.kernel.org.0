@@ -2,85 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D38F316E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:30:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9559CF3161
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:28:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389026AbfKGOaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:30:11 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60448 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfKGOaL (ORCPT
+        id S2389229AbfKGO2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:28:22 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:54561 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbfKGO2V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:30:11 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1iSilj-0003Pv-Rb; Thu, 07 Nov 2019 14:28:16 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] HID: i2c-hid: Reset ALPS touchpads on resume
-Date:   Thu,  7 Nov 2019 22:28:11 +0800
-Message-Id: <20191107142811.5833-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 7 Nov 2019 09:28:21 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id B295223E3F;
+        Thu,  7 Nov 2019 15:28:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
+        s=mail2016061301; t=1573136900;
+        bh=23Xq+LOAvfScLvlQZfupvgtVKHAM1yIBxWL8E5aw5iw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Oqo9ezXig/6bIxb/gHxs5396ziZeEqKTPv7wi2dBmm9sfXfeqwDSinSYlArfvBoO4
+         T+M0QLqKNCKFfY3vCkzSsws7jkSp2jxmB08eFiAR22MV4ePFPEonQJooYEJ8MBEQxz
+         KECUMS7+EAln/nESS67fXlqsZt7DfS5Obf5k2skc=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 07 Nov 2019 15:28:19 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH v2 4/6] net: phy: at803x: mention AR8033 as same as AR8031
+In-Reply-To: <20191107125547.GB22978@lunn.ch>
+References: <20191106223617.1655-1-michael@walle.cc>
+ <20191106223617.1655-5-michael@walle.cc> <20191107020436.GD8978@lunn.ch>
+ <1DE4295A-1D25-4FAD-8DAB-45BD97E511C9@walle.cc>
+ <20191107125547.GB22978@lunn.ch>
+Message-ID: <89dcabd5a1b38e8106d70173922c391b@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.2.3
+X-Virus-Scanned: clamav-milter 0.101.4 at web
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system
-resume") fixes many touchpads and touchscreens, however ALPS touchpads
-start to trigger IRQ storm after system resume.
+Hi Andrew,
 
-Since it's total silence from ALPS, let's bring the old behavior back
-to ALPS touchpads.
 
-Fixes: 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/hid/i2c-hid/i2c-hid-core.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Am 2019-11-07 13:55, schrieb Andrew Lunn:
+>> I tried that actually.. There is a PTP enable bit. It's default is 1
+>> (according to the AR8031 datasheet). Now guess what it's value is on
+>> the AR8033.. its also 1. Not enough.. I also tried to enable the
+>> realtime counter. well that worked too.
+> 
+>> And yes. I've double checked the package marking. It definitely was
+>> an AR8033. So either I was just lucky, or maybe.. the AR8033 is just
+>> a relabled AR8031 ;)
+> 
+> O.K, thanks for trying. We really only need to solve this mystery if
+> anybody actually tries to make use of PTP.
 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index 04c088131e04..4bf30b6d4a2e 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -48,6 +48,7 @@
- #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
- #define I2C_HID_QUIRK_BOGUS_IRQ			BIT(4)
-+#define I2C_HID_QUIRK_RESET_ON_RESUME		BIT(5)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -172,6 +173,8 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
- 	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
- 		 I2C_HID_QUIRK_BOGUS_IRQ },
-+	{ USB_VENDOR_ID_ALPS_JP, HID_ANY_ID,
-+		 I2C_HID_QUIRK_RESET_ON_RESUME },
- 	{ 0, 0 }
- };
- 
-@@ -1212,8 +1215,15 @@ static int i2c_hid_resume(struct device *dev)
- 	 * solves "incomplete reports" on Raydium devices 2386:3118 and
- 	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
- 	 * data after a suspend/resume.
-+	 *
-+	 * However some ALPS touchpads generate IRQ storm without reset, so
-+	 * let's still reset them here.
- 	 */
--	ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
-+	if (ihid->quirks & I2C_HID_QUIRK_RESET_ON_RESUME)
-+		ret = i2c_hid_hwreset(client);
-+	else
-+		ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
-+
- 	if (ret)
- 		return ret;
- 
--- 
-2.17.1
+That might be the next thing on my list; but depends if there is an 
+usable interrupt for the PHY on my board..
 
+-michael
