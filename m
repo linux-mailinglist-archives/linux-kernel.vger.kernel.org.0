@@ -2,154 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B14F2369
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:43:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F640F235F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:39:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbfKGAnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 19:43:52 -0500
-Received: from forward101j.mail.yandex.net ([5.45.198.241]:46196 "EHLO
-        forward101j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725989AbfKGAnw (ORCPT
+        id S1728171AbfKGAjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 19:39:10 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42430 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727718AbfKGAjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 19:43:52 -0500
-X-Greylist: delayed 462 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 19:43:49 EST
-Received: from forward103q.mail.yandex.net (forward103q.mail.yandex.net [IPv6:2a02:6b8:c0e:50:0:640:b21c:d009])
-        by forward101j.mail.yandex.net (Yandex) with ESMTP id A1BAB1BE0623;
-        Thu,  7 Nov 2019 03:36:04 +0300 (MSK)
-Received: from mxback1q.mail.yandex.net (mxback1q.mail.yandex.net [IPv6:2a02:6b8:c0e:39:0:640:25b3:aea5])
-        by forward103q.mail.yandex.net (Yandex) with ESMTP id 9727561E0008;
-        Thu,  7 Nov 2019 03:36:04 +0300 (MSK)
-Received: from vla1-5ff4bc6b92b2.qloud-c.yandex.net (vla1-5ff4bc6b92b2.qloud-c.yandex.net [2a02:6b8:c0d:4201:0:640:5ff4:bc6b])
-        by mxback1q.mail.yandex.net (mxback/Yandex) with ESMTP id k9BSR2EgXn-a4jO0oEg;
-        Thu, 07 Nov 2019 03:36:04 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1573086964;
-        bh=0Lq6YwOkfrlpCshPIicsfPK85Gw3mJANsusjyAh4AFE=;
-        h=From:To:Subject:CC:References:Date:In-Reply-To:Message-ID;
-        b=sjCi6TAV4u82WZ/hff7MhhJxOolG1r5XZ/xDCX2o/7UAHSF7WBQk9y0cyAkACgifr
-         kBzHO0TSv6+SgIEE3mAzyz8nFDcB696tGCe90N6iaXOfgi5l+9XoECVBlTqARKtk9h
-         ZkI/RMa89sCwbU62pvBNa2QifNOqqCQb4EJN05X0=
-Authentication-Results: mxback1q.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by vla1-5ff4bc6b92b2.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id TouxWHQ1UQ-a2VCkA8f;
-        Thu, 07 Nov 2019 03:36:02 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Date:   Thu, 07 Nov 2019 08:35:48 +0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <1573056341-21159-1-git-send-email-yangtiezhu@loongson.cn>
-References: <1573056341-21159-1-git-send-email-yangtiezhu@loongson.cn>
+        Wed, 6 Nov 2019 19:39:10 -0500
+Received: by mail-ot1-f67.google.com with SMTP id b16so465406otk.9;
+        Wed, 06 Nov 2019 16:39:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o+/HJxTvSCyoqhymvzvwCfhGsto5bnJFMBEXf55oU0g=;
+        b=K5VMsvzFXZw3llCAPttG7LMh0RYvA9uO/lHwYpexnh75Q3gBG5NwhyH8ex9Ekwxc1O
+         /+HZJm98OWZDEhKZfJzbxlTuLQiK7fSLvH4+hsxeM/u9DqQg5+bY+MXiDrLT33qIdVBi
+         i/OKMABGluO+kfAUJVxe0XwtnPec67Wq/tBct6KUVp0X27BLwU9GtOc7e3Tu2AHLIoA2
+         jztWF8N+MAVSpB60o9BFNlP3QQb9UZylSCvaNf+0L4NUylApXaypKnw0nbggA0Nx2Cq/
+         TYJNXYaQVNBr87zcLM/0RuaeYi4Haf5xtmZsHxmRI62cLzgoErecuiwc05env5UfSP9G
+         faeQ==
+X-Gm-Message-State: APjAAAXOsZ5uQkXsiR7gGcPEfyXNFEQ4uVKh8EmnBdZ9IQ0iuTBIPpwq
+        Wcuoza6gCMCyMdZpA9lvYg==
+X-Google-Smtp-Source: APXvYqx3kcit6yKTxQqdYPFidJcqRKe6j40BSePHIBgl4Ua3SYXRmKvqCgIbr9Lwwd4KmiWwvLiJEg==
+X-Received: by 2002:a9d:5c0e:: with SMTP id o14mr432330otk.361.1573087148994;
+        Wed, 06 Nov 2019 16:39:08 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 63sm198561oty.58.2019.11.06.16.39.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 16:39:08 -0800 (PST)
+Date:   Wed, 6 Nov 2019 18:39:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: mmc: Add
+ 'fixed-emmc-driver-type-hs{200,400}'
+Message-ID: <20191107003907.GA22634@bogus>
+References: <20191105055015.23656-1-erosca@de.adit-jv.com>
+ <20191105062223.GB1048@kunai>
+ <20191105083213.GA24603@vmlxhi-102.adit-jv.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] MIPS: Scan the DMI system information
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>
-CC:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yinglu Yang <yangyinglu@loongson.cn>
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-Message-ID: <480995AF-A678-479F-A3EA-11662474E600@flygoat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105083213.GA24603@vmlxhi-102.adit-jv.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 05, 2019 at 09:32:13AM +0100, Eugeniu Rosca wrote:
+> Hi Wolfram,
+> 
+> On Tue, Nov 05, 2019 at 07:22:23AM +0100, Wolfram Sang wrote:
+> > Hi Eugeniu,
+> > 
+> > thanks for this work!
+> 
+> Thanks for the prompt response. Very much appreciated.
+> 
+> > 
+> > > A certain eMMC manufacturer provided below requirement:
+> > >  ---snip---
+> > >  Use "drive strength" value of 4 or 1 for HS400 or 0 for HS200.
+> > >  ---snip---
+> > 
+> > I see.
+> > 
+> > > The existing "fixed-emmc-driver-type" property [1] is the closest one
+> > > to implement the above, but it falls short due to being unable to define
+> > > two values to differentiate between HS200 and HS400 (both modes may be
+> > > supported by the same non-removable MMC device).
+> > > 
+> > > To allow users to set a preferred HS200/HS400 "drive strength", provide
+> > > two more bindings inspired from [1]:
+> > >  - fixed-emmc-driver-type-hs200
+> > >  - fixed-emmc-driver-type-hs400
+> > 
+> > Main question before looking at the code: Can't we just extend the
+> > existing binding with an optional second parameter?
 
+I was thinking the same thing...
 
-=E4=BA=8E 2019=E5=B9=B411=E6=9C=887=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=881=
-2:05:41, Tiezhu Yang <yangtiezhu@loongson=2Ecn> =E5=86=99=E5=88=B0:
->Enable DMI scanning on the MIPS architecture, this setups DMI
->identifiers
->(dmi_system_id) for printing it out on task dumps and prepares DIMM
->entry
->information (dmi_memdev_info) from the SMBIOS table=2E With this patch,
->the
->driver can easily match various of mainboards=2E
->
->In the SMBIOS reference specification, the table anchor string "_SM_"
->is
->present in the address range 0xF0000 to 0xFFFFF on a 16-byte boundary,
->but there exists a special case for loongson platform, when call
->function
->dmi_early_remap, it should specify the start address to 0xFFFE000 due
->to
->it is reserved for SMBIOS and can be normally access in the BIOS=2E
->
->Co-developed-by: Yinglu Yang <yangyinglu@loongson=2Ecn>
->Signed-off-by: Yinglu Yang <yangyinglu@loongson=2Ecn>
->Signed-off-by: Tiezhu Yang <yangtiezhu@loongson=2Ecn>
->---
-> arch/mips/Kconfig           | 12 ++++++++++++
->arch/mips/include/asm/dmi=2Eh | 43
->+++++++++++++++++++++++++++++++++++++++++++
-> arch/mips/kernel/setup=2Ec    |  2 ++
-> 3 files changed, 57 insertions(+)
-> create mode 100644 arch/mips/include/asm/dmi=2Eh
->
->diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
->index 7cb8947=2E=2E0a67b18 100644
->--- a/arch/mips/Kconfig
->+++ b/arch/mips/Kconfig
->@@ -2757,6 +2757,18 @@ config HW_PERF_EVENTS
-> 	  Enable hardware performance counter support for perf events=2E If
-> 	  disabled, perf events will use software events only=2E
->=20
->+# Mark as expert because too many people got it wrong=2E
->+# The code disables itself when not needed=2E
->+config DMI
->+	default y
->+	select DMI_SCAN_MACHINE_NON_EFI_FALLBACK
->+	bool "Enable DMI scanning" if EXPERT
->+	help
->+	  Enabled scanning of DMI to identify machine quirks=2E Say Y
->+	  here unless you have verified that your setup is not
->+	  affected by entries in the DMI blacklist=2E Required by PNP
->+	  BIOS code=2E
->+
-> config SMP
-> 	bool "Multi-Processing support"
-> 	depends on SYS_SUPPORTS_SMP
->diff --git a/arch/mips/include/asm/dmi=2Eh b/arch/mips/include/asm/dmi=2E=
-h
->new file mode 100644
->index 0000000=2E=2E1f3da37
->--- /dev/null
->+++ b/arch/mips/include/asm/dmi=2Eh
->@@ -0,0 +1,43 @@
->+/* SPDX-License-Identifier: GPL-2=2E0 */
->+#ifndef _ASM_MIPS_DMI_H
->+#define _ASM_MIPS_DMI_H
->+
->+#define dmi_early_remap		mips_early_memremap
->+#define dmi_early_unmap		mips_early_memunmap
->+#define dmi_remap(_x, _l)	mips_memremap(_x, _l, MEMREMAP_WB)
->+#define dmi_unmap(_x)		mips_memunmap(_x)
->+
->+#define dmi_alloc(l)		memblock_alloc_low(l, PAGE_SIZE)
->+
->+void __init *mips_early_memremap(resource_size_t phys_addr, unsigned
->long size)
->+{
->+#if defined(CONFIG_MACH_LOONGSON64)
->+	if (phys_addr =3D=3D 0xF0000)
->+		phys_addr =3D 0xFFFE000;
->+
->+	return (void *)TO_CAC(phys_addr);
->+#else
->+	return NULL;
->+#endif
->+}
+> 
+> That's a great question/proposal, but before pushing the v2 right away,
+> I would like to first share some thoughts.
+> 
+> >         minItems: 1
+> >         maxItems: 2
+> > 
+> > I tend to favour this approach...
+> 
+> The first question which pops up in my mind is related to the meaning
+> of each item. The option which I envision based on your proposal is:
+> 
+>   * minItems: 1
+>   * maxItems: 2
+>   * Item[0]: Presumably equivalent to the current
+>     "fixed-emmc-driver-type", i.e. the strength value applied in both
+>     HS200 and HS400 modes.
+>   * Item[1] (optional): Presumably equivalent to
+>     "fixed-emmc-driver-type-hs400" proposed in this series. If this
+>     element is provided, the first one should likely change its role
+>     and become an equivalent of "fixed-emmc-driver-type-hs200" from
+>     this series.
+>   + Pro: Full backward compatibility. No need to touch the existing
+>     users of "fixed-emmc-driver-type".
+>   - Con: Not sure we have such DT bindings which dynamically change
+>     their semantics based on the usage pattern.
+>   - Con: Can't easily achieve the same flexibility as accomplished in
+>     this series. For example, current implementation allows users to
+>     define each of the three parameters (i.e. HSx00-agnostic drive
+>     strength, HS200 and HS400 specific drive strengths) individually,
+>     as well as in all possible combinations. This might be needed if,
+>     in certain HSx00 mode, users still need to rely on the
+>     RAW/unmodified drive strength. I am unsure if/how this can be
+>     achieved with an array OF property with a constant or variable
+>     number of elements (I try to sketch one solution below).
+> 
+> One option to achieve a similar degree of flexibility by using an array
+> OF property (instead of several u32 properties) would be to agree on a
+> convention based on magic values, i.e. below DT one-liner could be an
+> example of providing solely the "fixed-emmc-driver-type-hs200" value
+> (based on the agreement that 0xFF values are discarded by the driver):
+> 
+>     fixed-emmc-driver-type = <0xFF 0x1 0xFF>;
 
-Hi Tiezhu,
+I don't understand why you have 3 values instead of 2.
 
-It is really tricky to hijack dmi address here during remap=2E
-I think we should set the dmi table address at  dmi_scan=2Ec by a marco or=
- something else rather than hijack it during remap=2E
+I would just use -1 if you want to ignore an entry. If that's the common 
+case, then I'd stick with what you originally proposed. If rare, then I 
+think an array is the better route.
 
-Btw: Probably we should set DMI default y when MACH_LOONGSON64 is set?
-
-Thanks=2E
-
---=20
-Jiaxun Yang
+Rob
