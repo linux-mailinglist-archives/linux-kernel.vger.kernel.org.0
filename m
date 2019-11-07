@@ -2,125 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91327F3171
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F64F3177
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389374AbfKGOa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:30:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726033AbfKGOa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:30:26 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389453AbfKGObS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:31:18 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50003 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389191AbfKGObR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 09:31:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573137075;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QrHdD94AcwG1Ax7bWiCTd//fNTx3IE4kMIx+0uxwiSM=;
+        b=jV1JYaW0VsH7Gd4vmhJWhnK8LnielSO2GRGYcm0fak8Qt9+rRQcqVICU3Wa7d/Foh+uvIu
+        oEGOlK96X7HQzoGjVyXsw3UtCLY6tVSNHMUf1fxHJea3WWO34FGW3zMHdApN6YuWA3mrlY
+        HbGi4sf3B7QNxsic6ZRIlXI0jAexYns=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-272-SpgoB20dMl6mpmpHXbbyGA-1; Thu, 07 Nov 2019 09:31:10 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C0FC2187F;
-        Thu,  7 Nov 2019 14:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573137025;
-        bh=nunLUUukjE7H+fygHiM0yHAgwOJt5cB9lKYVFnHbO2A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ygxopWXvNWBupUFfq+x0vV43LlTIWXYmOf1NY0ueGzxoPfIsBX5uSzD8OBMbcAVv3
-         55D+6XneAw5b2ySi62WSvlZ1/lROxqh3btERAwqCJ8UssH2gavgbfoM4POfpcO52Cm
-         oa1pCEDIYApB47JJ+9Xbqlt0YgfQBlGmPp0TqSOA=
-Date:   Thu, 7 Nov 2019 14:30:20 +0000
-From:   Will Deacon <will@kernel.org>
-To:     joro@8bytes.org
-Cc:     robin.murphy@arm.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] iommu/arm-smmu: Updates for 5.5
-Message-ID: <20191107143020.GA12988@willie-the-truck>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 33BB0477;
+        Thu,  7 Nov 2019 14:31:06 +0000 (UTC)
+Received: from [10.72.12.21] (ovpn-12-21.pek2.redhat.com [10.72.12.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CBAAB5D6D8;
+        Thu,  7 Nov 2019 14:30:39 +0000 (UTC)
+Subject: Re: [PATCH V9 6/6] docs: sample driver to demonstrate how to
+ implement virtio-mdev framework
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+References: <20191106070548.18980-1-jasowang@redhat.com>
+ <20191106070548.18980-7-jasowang@redhat.com>
+ <88efad07-70aa-3879-31e7-ace4d2ad63a1@infradead.org>
+ <20191106155800.0b8418ec@x1.home>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <1b26d298-0223-c5cc-9dd6-c4005139e32a@redhat.com>
+Date:   Thu, 7 Nov 2019 22:30:37 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191106155800.0b8418ec@x1.home>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: SpgoB20dMl6mpmpHXbbyGA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
 
-Please pull these Arm SMMU updates for 5.5. The main changes are support
-for the Qualcomm SMMUv2 implementation in the SDM845 SoC using the recently
-introduced "implementation hook" code, a bunch of preparatory work to
-expose TTBR1 via the io-pgtable code so that two (distinct) page tables
-can be attached to a domain at the same time and performance improvements
-relating to runtime power management on SMMUv2 during unmap() and general
-dispatch of the new TLB invalidation callbacks.
+On 2019/11/7 =E4=B8=8A=E5=8D=886:58, Alex Williamson wrote:
+> On Wed, 6 Nov 2019 14:50:30 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+>> On 11/5/19 11:05 PM, Jason Wang wrote:
+>>> diff --git a/samples/Kconfig b/samples/Kconfig
+>>> index c8dacb4dda80..13a2443e18e0 100644
+>>> --- a/samples/Kconfig
+>>> +++ b/samples/Kconfig
+>>> @@ -131,6 +131,16 @@ config SAMPLE_VFIO_MDEV_MDPY
+>>>   =09  mediated device.  It is a simple framebuffer and supports
+>>>   =09  the region display interface (VFIO_GFX_PLANE_TYPE_REGION).
+>>>  =20
+>>> +config SAMPLE_VIRTIO_MDEV_NET
+>>> +=09tristate "Build VIRTIO net example mediated device sample code -- l=
+oadable modules only"
+>>> +=09depends on VIRTIO_MDEV && VHOST_RING && m
+>>> +=09help
+>>> +=09  Build a networking sample device for use as a virtio
+>>> +=09  mediated device. The device coopreates with virtio-mdev bus
+>> typo here:
+>> =09                              cooperates
+>>
+> I can fix this on commit relative to V10 if there are no other issues
+> raised:
+>
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index 13a2443e18e0..b7116d97cbbe 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -136,7 +136,7 @@ config SAMPLE_VIRTIO_MDEV_NET
+>          depends on VIRTIO_MDEV && VHOST_RING && m
+>          help
+>            Build a networking sample device for use as a virtio
+> -         mediated device. The device coopreates with virtio-mdev bus
+> +         mediated device. The device cooperates with virtio-mdev bus
+>            driver to present an virtio ethernet driver for
+>            kernel. It simply loopbacks all packets from its TX
+>            virtqueue to its RX virtqueue.
+>
+> Thanks,
+> Alex
 
-The Qualcomm patches necessitated some changes to their firmware interface
-code, but that has been Acked by Andy and Bjorn.
 
-There were some conflicts with the fixes I sent you previously, so this
-branch has those same commits merged in because I didn't want to rebase.
+Thanks, per Michael request, I would rename mvnet and include this fix=20
+in V11.
 
-Cheers,
 
-Will
+>
 
---->8
-
-The following changes since commit 1be08f458d1602275b02f5357ef069957058f3fd:
-
-  iommu/io-pgtable-arm: Support all Mali configurations (2019-10-01 12:16:47 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git for-joerg/arm-smmu/updates
-
-for you to fetch changes up to dd5ddd3c7a8c7ac382a82d15757f0ca3ab2b2dbc:
-
-  iommu/io-pgtable-arm: Rename IOMMU_QCOM_SYS_CACHE and improve doc (2019-11-07 12:19:05 +0000)
-
-----------------------------------------------------------------
-Christophe JAILLET (2):
-      iommu/io-pgtable: Move some initialization data to .init.rodata
-      iommu/arm-smmu: Axe a useless test in 'arm_smmu_master_alloc_smes()'
-
-Rob Clark (1):
-      iommu/arm-smmu: Avoid pathological RPM behaviour for unmaps
-
-Robin Murphy (12):
-      iommu/arm-smmu: Remove .tlb_inv_range indirection
-      iommu/arm-smmu: Remove "leaf" indirection
-      iommu/arm-smmu: Move .tlb_sync method to implementation
-      iommu/arm-smmu: Remove arm_smmu_flush_ops
-      iommu/arm-smmu: Report USF more clearly
-      iommu/io-pgtable: Make selftest gubbins consistently __init
-      iommu/io-pgtable-arm: Rationalise size check
-      iommu/io-pgtable-arm: Simplify bounds checks
-      iommu/io-pgtable-arm: Simplify start level lookup
-      iommu/io-pgtable-arm: Simplify PGD size handling
-      iommu/io-pgtable-arm: Simplify level indexing
-      iommu/io-pgtable-arm: Rationalise MAIR handling
-
-Vivek Gautam (3):
-      firmware: qcom_scm-64: Add atomic version of qcom_scm_call
-      firmware/qcom_scm: Add scm call to handle smmu errata
-      iommu: arm-smmu-impl: Add sdm845 implementation hook
-
-Will Deacon (3):
-      firmware: qcom: scm: Ensure 'a0' status code is treated as signed
-      Merge branch 'for-joerg/arm-smmu/fixes' into for-joerg/arm-smmu/updates
-      iommu/io-pgtable-arm: Rename IOMMU_QCOM_SYS_CACHE and improve doc
-
- drivers/firmware/qcom_scm-32.c     |   5 +
- drivers/firmware/qcom_scm-64.c     | 153 ++++++++++++++++++--------
- drivers/firmware/qcom_scm.c        |   6 +
- drivers/firmware/qcom_scm.h        |   5 +
- drivers/iommu/Makefile             |   2 +-
- drivers/iommu/arm-smmu-impl.c      |   5 +-
- drivers/iommu/arm-smmu-qcom.c      |  51 +++++++++
- drivers/iommu/arm-smmu-v3.c        |   2 +-
- drivers/iommu/arm-smmu.c           | 217 +++++++++++++++++++++----------------
- drivers/iommu/arm-smmu.h           |  16 +--
- drivers/iommu/io-pgtable-arm-v7s.c |  15 +--
- drivers/iommu/io-pgtable-arm.c     | 130 +++++++++++-----------
- drivers/iommu/ipmmu-vmsa.c         |   2 +-
- drivers/iommu/qcom_iommu.c         |   4 +-
- include/linux/io-pgtable.h         |   2 +-
- include/linux/iommu.h              |   8 +-
- include/linux/qcom_scm.h           |   2 +
- 17 files changed, 397 insertions(+), 228 deletions(-)
- create mode 100644 drivers/iommu/arm-smmu-qcom.c
