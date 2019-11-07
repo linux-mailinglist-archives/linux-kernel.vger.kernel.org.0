@@ -2,119 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D85AF384A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:14:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD65BF3852
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:15:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbfKGTOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:14:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55378 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbfKGTOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:14:53 -0500
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727238AbfKGTPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:15:52 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33505 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725871AbfKGTPv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 14:15:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573154150;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G6D0OJgahd98JrkdYL9RHQVvVRXibXEjXiTY+dxNAhk=;
+        b=LN4Fbois/HMi0agT8txEeGiDCXxSbLugKcbsZkgVNMLS+oTYSosCal6rncEae9WWsySpO3
+        7uklQhNuUKx2SbZ/qgetvFKwsy7MjfflM2mqyaim2uQ0ZErI37KsaVBVo+oGZR18UmtXjw
+        aV/RCrp1puq/pgowuoeFEyQz/WrjNBw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-102-bXNoI1sLPQ6PUTEKxUAQtg-1; Thu, 07 Nov 2019 14:15:46 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D9F5F37F73
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2019 19:14:52 +0000 (UTC)
-Received: by mail-qt1-f197.google.com with SMTP id h39so3787643qth.13
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 11:14:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Db1sKYv4li8Fx0mnSJRg6cnhmGpTf7bM9BzTT3nWzCw=;
-        b=ap2KMxrj0v7Mic90RBPgPOGPPxQaxCLcgb4sZuFWTtWEFC8cL5sQy2kRUVKdEK2UC2
-         PvquAmswYunQ12ltszf1WlrffwqYVYph2m4m3EaWOokekVHZh2m+/JxDQhh5pggwFrOy
-         IGSDpzURglInfp8VOVCj4VybwjF8XjtUiuOwCRYF1bmSibEgI/UvNbRt3L3i005R1JiT
-         mGKy9xgsZWZMMz9BQq+LvubX4bq8JYkB/uxGkklCY+A9TX1OAS3PMJcGECRnyKFacrj0
-         Xj/82JNDTS9FPNy6vUh+QQ/ozAM+BMecxlBTejrvQ/cJimYyxAaxv4WE8aSyRl8/EItF
-         X5FQ==
-X-Gm-Message-State: APjAAAWFeOc1ZlbY0SiZN0GA21UA642YaNZgrrv+bf7XFbnfeZugssid
-        bZGYO24IJ3k3sEo6LCuPMu4i43zgUQUCTGrXEMAtzfrdQAZUmMYcIOG7qupm8ScD71jG9t7ULk7
-        wX8UbAaARBBJzpvv6MZZeMKJA
-X-Received: by 2002:ac8:22d9:: with SMTP id g25mr5690580qta.238.1573154092087;
-        Thu, 07 Nov 2019 11:14:52 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz1HSOtXnTHcrA8WP6hedLySfPxynCtPMQPvXsizGqr/cCfleY+sFvwfvz/I1vijoKir9RTqw==
-X-Received: by 2002:ac8:22d9:: with SMTP id g25mr5690533qta.238.1573154091808;
-        Thu, 07 Nov 2019 11:14:51 -0800 (PST)
-Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id l14sm1604372qkj.61.2019.11.07.11.14.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 11:14:50 -0800 (PST)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Jann Horn <jannh@google.com>, Marco Elver <elver@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56A13800C61;
+        Thu,  7 Nov 2019 19:15:45 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 859D610016DA;
+        Thu,  7 Nov 2019 19:15:44 +0000 (UTC)
+Subject: Re: [PATCH] hugetlbfs: Take read_lock on i_mmap for PMD sharing
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] lib/test_meminit.c: Add bulk alloc/free tests
-Date:   Thu,  7 Nov 2019 14:14:47 -0500
-Message-Id: <20191107191447.23058-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.21.0
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <20191107190628.22667-1-longman@redhat.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <cd7f02d2-7f20-4176-4d8a-9f663d6b8ba9@redhat.com>
+Date:   Thu, 7 Nov 2019 14:15:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191107190628.22667-1-longman@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: bXNoI1sLPQ6PUTEKxUAQtg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/7/19 2:06 PM, Waiman Long wrote:
+> A customer with large SMP systems (up to 16 sockets) with application
+> that uses large amount of static hugepages (~500-1500GB) are experiencing
+> random multisecond delays. These delays was caused by the long time it
+> took to scan the VMA interval tree with mmap_sem held.
+>
+> The sharing of huge PMD does not require changes to the i_mmap at all.
+> As a result, we can just take the read lock and let other threads
+> searching for the right VMA to share in parallel. Once the right
+> VMA is found, either the PMD lock (2M huge page for x86-64) or the
+> mm->page_table_lock will be acquired to perform the actual PMD sharing.
+>
+> Lock contention, if present, will happen in the spinlock. That is much
+> better than contention in the rwsem where the time needed to scan the
+> the interval tree is indeterminate.
+>
+> With this patch applied, the customer is seeing significant improvements
+> over the unpatched kernel.
 
-kmem_cache_alloc_bulk/kmem_cache_free_bulk are used to
-make multiple allocations of the same size to avoid the
-overhead of multiple kmalloc/kfree calls. Extend the kmem_cache
-tests to make some calls to these APIs.
+Oh, I forgot to add
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
- lib/test_meminit.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+Suggested-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-diff --git a/lib/test_meminit.c b/lib/test_meminit.c
-index 9729f271d150..20f330948b92 100644
---- a/lib/test_meminit.c
-+++ b/lib/test_meminit.c
-@@ -183,6 +183,9 @@ static bool __init check_buf(void *buf, int size, bool want_ctor,
- 	return fail;
- }
- 
-+#define BULK_SIZE 100
-+static void *bulk_array[BULK_SIZE];
-+
- /*
-  * Test kmem_cache with given parameters:
-  *  want_ctor - use a constructor;
-@@ -203,9 +206,24 @@ static int __init do_kmem_cache_size(size_t size, bool want_ctor,
- 			      want_rcu ? SLAB_TYPESAFE_BY_RCU : 0,
- 			      want_ctor ? test_ctor : NULL);
- 	for (iter = 0; iter < 10; iter++) {
-+		/* Do a test of bulk allocations */
-+		if (!want_rcu && !want_ctor) {
-+			int ret;
-+
-+			ret = kmem_cache_alloc_bulk(c, alloc_mask, BULK_SIZE, bulk_array);
-+			if (!ret) {
-+				fail = true;
-+			} else {
-+				int i;
-+				for (i = 0; i < ret; i++)
-+					fail |= check_buf(bulk_array[i], size, want_ctor, want_rcu, want_zero);
-+				kmem_cache_free_bulk(c, ret, bulk_array);
-+			}
-+		}
-+
- 		buf = kmem_cache_alloc(c, alloc_mask);
- 		/* Check that buf is zeroed, if it must be. */
--		fail = check_buf(buf, size, want_ctor, want_rcu, want_zero);
-+		fail |= check_buf(buf, size, want_ctor, want_rcu, want_zero);
- 		fill_with_garbage_skip(buf, size, want_ctor ? CTOR_BYTES : 0);
- 
- 		if (!want_rcu) {
--- 
-2.21.0
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  mm/hugetlb.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index b45a95363a84..087e7ff00137 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -4842,7 +4842,11 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsign=
+ed long addr, pud_t *pud)
+>  =09if (!vma_shareable(vma, addr))
+>  =09=09return (pte_t *)pmd_alloc(mm, pud, addr);
+> =20
+> -=09i_mmap_lock_write(mapping);
+> +=09/*
+> +=09 * PMD sharing does not require changes to i_mmap. So a read lock
+> +=09 * is enuogh.
+> +=09 */
+> +=09i_mmap_lock_read(mapping);
+>  =09vma_interval_tree_foreach(svma, &mapping->i_mmap, idx, idx) {
+>  =09=09if (svma =3D=3D vma)
+>  =09=09=09continue;
+> @@ -4872,7 +4876,7 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigne=
+d long addr, pud_t *pud)
+>  =09spin_unlock(ptl);
+>  out:
+>  =09pte =3D (pte_t *)pmd_alloc(mm, pud, addr);
+> -=09i_mmap_unlock_write(mapping);
+> +=09i_mmap_unlock_read(mapping);
+>  =09return pte;
+>  }
+> =20
+
+Cheers,
+Longman
 
