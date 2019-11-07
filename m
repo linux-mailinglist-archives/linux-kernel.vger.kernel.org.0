@@ -2,90 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66600F2E9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:56:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A2C3F2EA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388860AbfKGM4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 07:56:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51792 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733250AbfKGM4E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 07:56:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Gyawpv+WI0lozJSUWTS2ESip9V0449YFZgqA+zRI1YQ=; b=l8irkmXsFre5AlFshSr4RYVdK
-        x2OYS1VvM1+Ap6bdD3j6W+5trgT5sj3RkjpcY137yFMDSHl8eE/RpBvkkhOOLndg/9u1hFR7s8dK+
-        WxlfaX41N3nZzPmG3WexDelchUAcB4yW1GtDzeHsEn3lk6LX7aFzs1AdWcVjDqOCDM6bdU//cbqvB
-        osfHGSyIndvDNV9I/ab5C6ih0oXoGqdytaNmSu2ySnhTrZ71R5djL+xdPOxA/RXnQCbsyJPSR7ljU
-        yLTF5xRAvRztq8mekVAHz5AjnRZ7ulAGXUQndYzk4lDmGZ59BWkfWYn6LYyiI7huBFYlOI9DM9IjV
-        ddMsmYdUw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iShKT-0000nk-Am; Thu, 07 Nov 2019 12:56:01 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F0F92300692;
-        Thu,  7 Nov 2019 13:54:54 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 78C9E2025EDA7; Thu,  7 Nov 2019 13:55:59 +0100 (CET)
-Date:   Thu, 7 Nov 2019 13:55:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jan Stancek <jstancek@redhat.com>, linux-kernel@vger.kernel.org,
-        ltp@lists.linux.it, viro@zeniv.linux.org.uk,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        rfontana@redhat.com
-Subject: Re: [PATCH] kernel: use ktime_get_real_ts64() to calculate
- acct.ac_btime
-Message-ID: <20191107125559.GI4131@hirez.programming.kicks-ass.net>
-References: <a87876829697e1b3c63601b1401a07af79eddae6.1572651216.git.jstancek@redhat.com>
- <20191107123224.GA6315@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1911071335320.4256@nanos.tec.linutronix.de>
+        id S2388653AbfKGM6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 07:58:21 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:14770 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726873AbfKGM6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 07:58:20 -0500
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id xA7Cuckt015707;
+        Thu, 7 Nov 2019 13:56:38 +0100
+Date:   Thu, 7 Nov 2019 13:56:38 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     hpa@zytor.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: Re: [patch 5/9] x86/ioport: Reduce ioperm impact for sane usage
+ further
+Message-ID: <20191107125638.GB15642@1wt.eu>
+References: <20191106193459.581614484@linutronix.de>
+ <20191106202806.241007755@linutronix.de>
+ <CAHk-=wjXcS--G3Wd8ZGEOdCNRAWPaUneyN1ryShQL-_yi1kvOA@mail.gmail.com>
+ <20191107082541.GF30739@gmail.com>
+ <20191107091704.GA15536@1wt.eu>
+ <alpine.DEB.2.21.1911071058260.4256@nanos.tec.linutronix.de>
+ <71DE81AC-3AD4-47B3-9CBA-A2C7841A3370@zytor.com>
+ <20191107102756.GD15536@1wt.eu>
+ <5AAEF116-EC9D-4C58-878F-9D27189E123A@zytor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1911071335320.4256@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5AAEF116-EC9D-4C58-878F-9D27189E123A@zytor.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 01:40:47PM +0100, Thomas Gleixner wrote:
-> On Thu, 7 Nov 2019, Peter Zijlstra wrote:
+On Thu, Nov 07, 2019 at 02:50:20AM -0800, hpa@zytor.com wrote:
+> You get access to the ports you are assigned, just like pages you are
+> assigned... the rest is kernel policy, or, for that matter, privileged
+> userspace (get permissions to the necessary ports, then drop privilege... the
+> usual stuff.)
 
-> > +	mono = ktime_get_ns();
-> > +	real = ktime_get_real_ns();
-> > +	/*
-> > +	 * Compute btime by subtracting the elapsed time from the current
-> > +	 * CLOCK_REALTIME.
-> > +	 *
-> > +	 * XXX totally buggered, because it changes results across
-> > +	 * adjtime() calls and suspend/resume.
-> > +	 */
-> > +	delta = mono - tsk->start_time; // elapsed in ns
-> > +	btime = real - delta;		// real ns - elapsed ns
-> > +	do_div(btime, NSEC_PER_SEC);	// truncated to seconds
-> > +	stats->ac_btime = btime;
-> 
-> That has pretty much the same problem as just storing the CLOCK_REALTIME
-> start time at fork and additionally it is wreckaged vs. suspend resume.
+I agree, my point is that there's already no policy checking at the
+moment ports are assigned, hence a process having the permissions to
+request just port 0x70-0x71 to read the hwclock will also have permission
+to request access to the sensor chip a 0x2E and trigger a watchdog
+reset or stop the CPU fan. Thus any policy enforcement is solely done
+by the requesting process itself, assuming it doesn't simply use iopl()
+already, which grants everything.
 
-It's wrecked in general. It also jumps around for any REALTIME
-adjustment.
+This is why I'm really wondering if the real use cases that need all
+this stuff still exist at all in practice.
 
-> So a CLOCK_REALTIME time stamp at fork would at least be correct
-> vs. suspend resume.
-
-But still wrecked vs REALTIME jumps, as in, when DST flips the clock
-back an hour, your timestamp is in the future.
-
-Any which way around the whole thing is buggered.  The only real fix is
-not using REALTIME anything. Which is why I'm loath to add that REALTIME
-timestamp at fork(), it just encourages more use.
+Willy
