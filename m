@@ -2,168 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 952F3F2C0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B68F2C17
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:24:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388124AbfKGKVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:21:11 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47094 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387779AbfKGKVJ (ORCPT
+        id S2387856AbfKGKYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 05:24:44 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:39195 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbfKGKYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:21:09 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iSeuM-00034m-GU; Thu, 07 Nov 2019 11:20:55 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id ADE681C03AB;
-        Thu,  7 Nov 2019 11:20:53 +0100 (CET)
-Date:   Thu, 07 Nov 2019 10:20:53 -0000
-From:   "tip-bot2 for Babu Moger" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/Kconfig: Rename UMIP config parameter
-Cc:     Babu Moger <babu.moger@amd.com>, Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <157298912544.17462.2018334793891409521.stgit@naples-babu.amd.com>
-References: <157298912544.17462.2018334793891409521.stgit@naples-babu.amd.com>
+        Thu, 7 Nov 2019 05:24:44 -0500
+X-Originating-IP: 92.137.17.54
+Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id A94921C0005;
+        Thu,  7 Nov 2019 10:24:39 +0000 (UTC)
+Date:   Thu, 7 Nov 2019 11:24:37 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        John Collis <john.collis@alliedtelesis.co.nz>
+Subject: Re: [PATCH] rtc: ds1307: check for oscillator fault on ds1388
+Message-ID: <20191107102437.GO8309@piout.net>
+References: <20191107011245.26796-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Message-ID: <157312205338.29376.6775745697687176487.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107011245.26796-1-chris.packham@alliedtelesis.co.nz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cpu branch of tip:
+Hi,
 
-Commit-ID:     b971880fe79f4042aaaf426744a5b19521bf77b3
-Gitweb:        https://git.kernel.org/tip/b971880fe79f4042aaaf426744a5b19521bf77b3
-Author:        Babu Moger <Babu.Moger@amd.com>
-AuthorDate:    Tue, 05 Nov 2019 21:25:32 
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 07 Nov 2019 11:07:29 +01:00
+On 07/11/2019 14:12:45+1300, Chris Packham wrote:
+> Ensure that the oscillator is running and check the OSF bit for the
+> ds1388 variant. The FLAG and CONTROL registers are at a different
+> location to the other supported RTCs so this requires an extra case in
+> the existing switch statement.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  drivers/rtc/rtc-ds1307.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+> index 1f7e8aefc1eb..865c06347d0a 100644
+> --- a/drivers/rtc/rtc-ds1307.c
+> +++ b/drivers/rtc/rtc-ds1307.c
+> @@ -101,6 +101,10 @@ enum ds_type {
+>  #	define DS1337_BIT_A2I		0x02
+>  #	define DS1337_BIT_A1I		0x01
+>  #define DS1339_REG_ALARM1_SECS	0x07
+> +#define DS1388_REG_FLAG		0x0b
+> +#	define DS1388_BIT_OSF		0x80
+> +#define DS1388_REG_CONTROL	0x0c
+> +#	define DS1388_BIT_nEOSC		0x80
+>  
+>  #define DS13XX_TRICKLE_CHARGER_MAGIC	0xa0
+>  
+> @@ -1688,6 +1692,26 @@ static int ds1307_probe(struct i2c_client *client,
+>  		}
+>  		break;
+>  
+> +	case ds_1388:
+> +		err = regmap_bulk_read(ds1307->regmap, DS1388_REG_FLAG,
+> +				       regs, 2);
+> +		if (err) {
+> +			dev_dbg(ds1307->dev, "read error %d\n", err);
+> +			goto exit;
+> +		}
+> +
+> +		if (regs[1] & DS1388_BIT_nEOSC) {
+> +			regmap_write(ds1307->regmap, DS1388_REG_CONTROL,
+> +				     regs[1] & ~DS1388_BIT_nEOSC);
+> +		}
+> +
+> +		if (regs[0] & DS1388_BIT_OSF) {
+> +			regmap_write(ds1307->regmap, DS1388_REG_FLAG,
+> +				     regs[0]  & ~DS1388_BIT_OSF);
+> +			dev_warn(ds1307->dev, "SET TIME!\n");
 
-x86/Kconfig: Rename UMIP config parameter
+This is not the correct way to handle that. This information is valuable
+in .read_time where you should return -EINVAL when the time is know to
+be invalid. Then the bit can be reset in .set_time.
 
-AMD 2nd generation EPYC processors support the UMIP (User-Mode
-Instruction Prevention) feature. So, rename X86_INTEL_UMIP to
-generic X86_UMIP and modify the text to cover both Intel and AMD.
 
- [ bp: take of the disabled-features.h copy in tools/ too. ]
-
-Signed-off-by: Babu Moger <babu.moger@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "x86@kernel.org" <x86@kernel.org>
-Link: https://lkml.kernel.org/r/157298912544.17462.2018334793891409521.stgit@naples-babu.amd.com
----
- arch/x86/Kconfig                               | 16 ++++++++--------
- arch/x86/include/asm/disabled-features.h       |  2 +-
- arch/x86/include/asm/umip.h                    |  4 ++--
- arch/x86/kernel/Makefile                       |  2 +-
- tools/arch/x86/include/asm/disabled-features.h |  2 +-
- 5 files changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 896f840..434fae9 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1880,16 +1880,16 @@ config X86_SMAP
- 
- 	  If unsure, say Y.
- 
--config X86_INTEL_UMIP
-+config X86_UMIP
- 	def_bool y
--	depends on CPU_SUP_INTEL
--	prompt "Intel User Mode Instruction Prevention" if EXPERT
-+	depends on CPU_SUP_INTEL || CPU_SUP_AMD
-+	prompt "User Mode Instruction Prevention" if EXPERT
- 	---help---
--	  The User Mode Instruction Prevention (UMIP) is a security
--	  feature in newer Intel processors. If enabled, a general
--	  protection fault is issued if the SGDT, SLDT, SIDT, SMSW
--	  or STR instructions are executed in user mode. These instructions
--	  unnecessarily expose information about the hardware state.
-+	  User Mode Instruction Prevention (UMIP) is a security feature in
-+	  some x86 processors. If enabled, a general protection fault is
-+	  issued if the SGDT, SLDT, SIDT, SMSW or STR instructions are
-+	  executed in user mode. These instructions unnecessarily expose
-+	  information about the hardware state.
- 
- 	  The vast majority of applications do not use these instructions.
- 	  For the very few that do, software emulation is provided in
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index a5ea841..8e1d0bb 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -22,7 +22,7 @@
- # define DISABLE_SMAP	(1<<(X86_FEATURE_SMAP & 31))
- #endif
- 
--#ifdef CONFIG_X86_INTEL_UMIP
-+#ifdef CONFIG_X86_UMIP
- # define DISABLE_UMIP	0
- #else
- # define DISABLE_UMIP	(1<<(X86_FEATURE_UMIP & 31))
-diff --git a/arch/x86/include/asm/umip.h b/arch/x86/include/asm/umip.h
-index db43f2a..aeed98c 100644
---- a/arch/x86/include/asm/umip.h
-+++ b/arch/x86/include/asm/umip.h
-@@ -4,9 +4,9 @@
- #include <linux/types.h>
- #include <asm/ptrace.h>
- 
--#ifdef CONFIG_X86_INTEL_UMIP
-+#ifdef CONFIG_X86_UMIP
- bool fixup_umip_exception(struct pt_regs *regs);
- #else
- static inline bool fixup_umip_exception(struct pt_regs *regs) { return false; }
--#endif  /* CONFIG_X86_INTEL_UMIP */
-+#endif  /* CONFIG_X86_UMIP */
- #endif  /* _ASM_X86_UMIP_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 3578ad2..52ce1e2 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -134,7 +134,7 @@ obj-$(CONFIG_EFI)			+= sysfb_efi.o
- obj-$(CONFIG_PERF_EVENTS)		+= perf_regs.o
- obj-$(CONFIG_TRACING)			+= tracepoint.o
- obj-$(CONFIG_SCHED_MC_PRIO)		+= itmt.o
--obj-$(CONFIG_X86_INTEL_UMIP)		+= umip.o
-+obj-$(CONFIG_X86_UMIP)			+= umip.o
- 
- obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
- obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
-diff --git a/tools/arch/x86/include/asm/disabled-features.h b/tools/arch/x86/include/asm/disabled-features.h
-index a5ea841..8e1d0bb 100644
---- a/tools/arch/x86/include/asm/disabled-features.h
-+++ b/tools/arch/x86/include/asm/disabled-features.h
-@@ -22,7 +22,7 @@
- # define DISABLE_SMAP	(1<<(X86_FEATURE_SMAP & 31))
- #endif
- 
--#ifdef CONFIG_X86_INTEL_UMIP
-+#ifdef CONFIG_X86_UMIP
- # define DISABLE_UMIP	0
- #else
- # define DISABLE_UMIP	(1<<(X86_FEATURE_UMIP & 31))
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
