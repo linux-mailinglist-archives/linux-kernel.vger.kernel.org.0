@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6125EF35DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A649F35F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbfKGRkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:40:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbfKGRkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:40:55 -0500
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2389552AbfKGRme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:42:34 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37929 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727132AbfKGRme (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 12:42:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573148553;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X1foU4cyX2MhxBVBENJ4jXE1nzS/4a8PcCvLYQvqpsc=;
+        b=I8MRldZasAUCkppfLsj5z/l1loKZR+DDCxqazbPnIRaO55R+IjGt6WZI5hOn5urGYZrGPj
+        2ZorB40ied/l0RQEls/xePlVywr5dz/3hdjrIqtAEPjy3HpJKeTK3lsw3OxXRbf/DURfHJ
+        kMwwBU9mxVNSSRwGOdnYiOala4zJCEM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-262-D-hZqIeRMxO76CIz0f9Q7w-1; Thu, 07 Nov 2019 12:42:29 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0F702084D;
-        Thu,  7 Nov 2019 17:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573148454;
-        bh=OYgQrmdZmNroAHb74sVUuSnpCtxolSUHgVGyEjv4V5Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rDltopZkGIFVN3tdTyMtIBC0/DHvpYC//97XoCxkCgL1Wprtj27pPVltzMEqfAnS9
-         H4eUUc89erhUBoVs8OiiQr9GmEe8B6Hw/1e6dQBfKiDSw4lxtaIWMORzftVi5lU2bE
-         OiHu70ENCi0eJ9yVREDlYILAWx4y/Po/OkXaHVvE=
-Received: by mail-qt1-f170.google.com with SMTP id u22so3219324qtq.13;
-        Thu, 07 Nov 2019 09:40:53 -0800 (PST)
-X-Gm-Message-State: APjAAAWfQ2jvVcRlr9x0D9Rcemoo8XH0id4cDAfbo6KRn/LiBqMbg1V6
-        XQAf0WxAYTqrUdYMhiOUmVgi8E11W7hnDgIBMg==
-X-Google-Smtp-Source: APXvYqymGGkqABjYdF0xhvWYzF9gyZ7Mx6LFLCCgTmCamvcfGddIsg5zyOUpdwQsy7X4I+/2Uw4D8lnhSwngyNf7W74=
-X-Received: by 2002:ac8:7612:: with SMTP id t18mr5129163qtq.143.1573148453179;
- Thu, 07 Nov 2019 09:40:53 -0800 (PST)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 026A5477;
+        Thu,  7 Nov 2019 17:42:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B9AEB5C6DC;
+        Thu,  7 Nov 2019 17:42:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wiJ+jaT5Ev-wCg7iGNNO_JFUyMDcat0KDdA2b_+n_cZCQ@mail.gmail.com>
+References: <CAHk-=wiJ+jaT5Ev-wCg7iGNNO_JFUyMDcat0KDdA2b_+n_cZCQ@mail.gmail.com> <157262967752.13142.696874122947836210.stgit@warthog.procyon.org.uk> <20191107090306.GV29418@shao2-debian>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, lkp report check <rong.a.chen@intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkp@lists.01.org
+Subject: Re: [pipe] d60337eff1: phoronix-test-suite.noise-level.0.activity_level 144.0% improvement
 MIME-Version: 1.0
-References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
- <20191029112700.14548-2-srinivas.kandagatla@linaro.org> <20191105193100.GB4709@bogus>
- <315fd1f8-b6b5-5df7-604d-4ca92b31772c@linaro.org>
-In-Reply-To: <315fd1f8-b6b5-5df7-604d-4ca92b31772c@linaro.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 7 Nov 2019 11:40:41 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ+EUe8TiNfUN30D9x4XNcUnevUSK2cM9zVQR=jDR1wQQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ+EUe8TiNfUN30D9x4XNcUnevUSK2cM9zVQR=jDR1wQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] ASoC: dt-bindings: add dt bindings for
- WCD9340/WCD9341 audio codec
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vinod Koul <vinod.koul@linaro.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        spapothi@codeaurora.org, Banajit Goswami <bgoswami@codeaurora.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-ID: <25251.1573148538.1@warthog.procyon.org.uk>
+Date:   Thu, 07 Nov 2019 17:42:18 +0000
+Message-ID: <25252.1573148538@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: D-hZqIeRMxO76CIz0f9Q7w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 4:08 AM Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
->
->
->
-> On 05/11/2019 19:31, Rob Herring wrote:
-> >> +  vdd-micbias-supply:
-> >> +    description: A reference to the micbias supply
-> >> +
-> >> +  qcom,micbias1-microvolts:
-> > The standard unit is 'microvolt', not 'microvolts'.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> > FYI, we noticed a 144.0% improvement of phoronix-test-suite.noise-level=
+.0.activity_level due to commit:
 > >
-> I started with microvolt but dt_bindings_check reported errors.
->
-> looking at
-> https://github.com/devicetree-org/dt-schema/blob/master/meta-schemas/vendor-props.yaml#L19
->   suggested microvolts should be used on vendor properties.
->
-> Is this a typo in dt-schema ?
+> > commit: d60337eff18a3c587832ab8053a567f1da9710d2 ("[RFC PATCH 04/11] pi=
+pe: Use head and tail pointers for the ring, not cursor and length [ver #3]=
+")
+>=20
+> That sounds nice, but is odd. That commit really shouldn't change
+> anything noticeable. David, any idea?
 
-Yes, even the DT maintainer gets confused. :) It's fixed now.
+Yeah, it does sound odd - the only thing that springs particularly to mind =
+is
+that maybe it's an effect of one of the preceding patches that affects the
+waitqueue stuff.
 
-Rob
+TBH, I'm not sure what the Phoronix test suite is actually testing from the
+report.  "noise-level-1.1.0" seems more a reporting script than an actual
+test.
+
+David
+
