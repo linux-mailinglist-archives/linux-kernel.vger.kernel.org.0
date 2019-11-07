@@ -2,79 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AAAEF2E06
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9699F2E09
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:18:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388219AbfKGMSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 07:18:13 -0500
-Received: from mga09.intel.com ([134.134.136.24]:15301 "EHLO mga09.intel.com"
+        id S2388503AbfKGMSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 07:18:55 -0500
+Received: from mga06.intel.com ([134.134.136.31]:62176 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726810AbfKGMSN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 07:18:13 -0500
+        id S1727458AbfKGMSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 07:18:54 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 04:18:12 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 04:18:53 -0800
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,278,1569308400"; 
-   d="scan'208";a="192802796"
-Received: from pmaziarx-mobl.ger.corp.intel.com (HELO [10.237.142.179]) ([10.237.142.179])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Nov 2019 04:18:10 -0800
-Subject: Re: [PATCH 2/2] tracing: Use seq_buf_hex_dump() to dump buffers
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        andriy.shevchenko@intel.com, cezary.rojewski@intel.com,
-        gustaw.lewandowski@intel.com
-References: <1573021660-30540-1-git-send-email-piotrx.maziarz@linux.intel.com>
- <1573021660-30540-2-git-send-email-piotrx.maziarz@linux.intel.com>
- <20191106035512.3ff7bc20@grimm.local.home>
-From:   Piotr Maziarz <piotrx.maziarz@linux.intel.com>
-Message-ID: <743a0466-38ea-d8c2-8954-e5ca72c8b943@linux.intel.com>
-Date:   Thu, 7 Nov 2019 13:18:08 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+   d="scan'208";a="213008221"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Nov 2019 04:18:49 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 184A1115; Thu,  7 Nov 2019 14:18:47 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] PCI: Add missing link delays
+Date:   Thu,  7 Nov 2019 15:18:45 +0300
+Message-Id: <20191107121847.24781-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20191106035512.3ff7bc20@grimm.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-06 9:55, Steven Rostedt wrote:
-> On Wed,  6 Nov 2019 07:27:40 +0100
-> Piotr Maziarz <piotrx.maziarz@linux.intel.com> wrote:
-> 
->> Without this, buffers can be printed with __print_array macro that has
->> no formatting options and can be hard to read. The other way is to
->> mimic formatting capability with multiple calls of trace event with one
->> call per row which gives performance impact and different timestamp in
->> each row.
->>
->> Signed-off-by: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
->> Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
->> ---
->>   include/linux/trace_events.h |  5 +++++
->>   include/linux/trace_seq.h    |  4 ++++
->>   include/trace/trace_events.h |  6 ++++++
->>   kernel/trace/trace_output.c  | 15 +++++++++++++++
->>   kernel/trace/trace_seq.c     | 30 ++++++++++++++++++++++++++++++
->>   5 files changed, 60 insertions(+)
->>
-> 
-> I'd like to see in the patch series (patch 3?) a use case of these
-> added functionality. Or at least a link to what would be using it.
-> 
-> Thanks!
-> 
-> -- Steve
-> 
+Hi,
 
-ASoC: Intel is an initial recipient for this feature. I have a patch for 
-this, but it should be also sent to alsa-devel mailing list, and since 
-hex_dump tracing isn't there yet I'm not sure how this patch series 
-should be sent.
+This is third version of the reworked PCIe link delay patch posted earlier
+here:
 
-Best regards,
-Piotr Maziarz
+  v2: https://lore.kernel.org/linux-pci/20191004123947.11087-1-mika.westerberg@linux.intel.com/
+  v1: https://patchwork.kernel.org/patch/11106611/
+
+Changes from v2:
+
+  * Rebased on top of pci.git/pci/pm.
+  * Update references to PCIe 5.0 spec.
+  * Take d3cold_delay if child devices into account. This allows ACPI _DSM
+    to lower the delay.
+  * Check for pci_dev->skip_bus_pm in pci_pm_resume_noirq().
+  * Drop comment that mentions pciehp where
+    pci_bridge_wait_for_secondary_bus() is called.
+  * Use pcie_downstream_port() in pci_bridge_wait_for_secondary_bus().
+
+Based on the discussion around v2 there is a potential issue when restoring
+PCI_EXP_LNKCTL2 (regardless these patches) that we may need to retrain the
+link. This series does not include fix for that since it is not yet clear
+how we solve it. I can do that as a separate patch once we agree on the
+solution.
+
+I'm submitting these two now in hopes that we can get them included for
+v5.5 because there are systems out there that need them in order to
+function properly.
+
+Changes from v1:
+
+  * Introduce pcie_wait_for_link_delay() in a separate patch
+  * Tidy up changelog, remove some debug output
+  * Rename pcie_wait_downstream_accessible() to
+    pci_bridge_wait_for_secondary_bus() and make it generic to all PCI
+    bridges.
+  * Handle Tpvrh + Trhfa for conventional PCI even though we don't do PM
+    for them right now.
+  * Use pci_dbg() instead of dev_dbg().
+  * Dropped check for pm_suspend_no_platform() and only check for D3cold.
+  * Drop pcie_get_downstream_delay(), same delay applies equally to all
+    devices (it is not entirely clear from the spec).
+
+Mika Westerberg (2):
+  PCI: Introduce pcie_wait_for_link_delay()
+  PCI: Add missing link delays required by the PCIe spec
+
+ drivers/pci/pci-driver.c |  11 +++-
+ drivers/pci/pci.c        | 139 ++++++++++++++++++++++++++++++++++++---
+ drivers/pci/pci.h        |   1 +
+ 3 files changed, 141 insertions(+), 10 deletions(-)
+
+-- 
+2.24.0.rc1
+
