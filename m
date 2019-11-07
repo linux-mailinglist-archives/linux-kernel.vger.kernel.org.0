@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 102FCF3015
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE3FF301C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389337AbfKGNmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:42:19 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:49434 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389127AbfKGNmL (ORCPT
+        id S2389404AbfKGNmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:42:31 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:42994 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389193AbfKGNmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:11 -0500
-Received: by mail-io1-f70.google.com with SMTP id x1so1844074ior.16
+        Thu, 7 Nov 2019 08:42:10 -0500
+Received: by mail-il1-f197.google.com with SMTP id n16so2655968ilm.9
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=e82UTgwLSYIZvR2zraa9Nggc087nss86NXJiBWUJu+E=;
-        b=RNHOVyjaA/G0ds3NxQypcPUPna+mAmz6gOOsIk6bfdPrp/Wd0MDOKk21FQpl2cTMmB
-         HMit5luEbkbkYzpnZEagEGPfnvG9hHbmwOMaTiuXUrpjC02C1EQ2fOds9xJ1MVLDE5pz
-         /hcis9+pXfe63KBPUSLmnOt0KLPTJsVhGhO8mFi8xFq3caK3DeEYQVnkuPYegST3QANg
-         LCmBMQFglEPx8TLLhHx5OMqiCNa6YkeC1UuJMLojUK0QVb3KbJ042G+kSLHkDTh/rvV6
-         IiicDcWMpioUg8Hc510g5++JT3tdb8ogVu+hojvN5k6JLNFK9WSLLma0+rBSwYtVLe7p
-         Z2qQ==
-X-Gm-Message-State: APjAAAW/JZOHfh6Xp61p4ozP5St1vU9JqtTkt86l6F74NOvoK21GAaWy
-        NVSTikEDBgg+4p3jvAi1NWij0Sw/sZp0pVH+548uY+kYRjWk
-X-Google-Smtp-Source: APXvYqy2SR949y+R/aVsMmYYpVrF/WYb/9SXBHKSkoi9zyTyoMPvuzLrrPMK2lAbn35Yo+YCSE2zXinrZz2HbDMgOboAl0ltcz5n
+        bh=Ts1/QN7SlZAv8FzCyonCkAig7h5V9G7HkY3ov7xjs3M=;
+        b=cHRM5kNmj6aQY2LJVS3MRyQMmBVELsi1Z15h2z9iuDzku5qTJrQgEnuG+vvJcB3SJi
+         qOxDioJG6lChlgR3PTZv3XC51I0gZGKti+jViWO/iCIjOibfAhc05bEwygtlmCkSosEB
+         tmvObJsQ6851Ss1LHt/dmns2/tc5Xwx0yJFKTMLKbkto2sS4NjuR/iXi+ajCZip4gb/5
+         FCiGnKNqDRVxbudPH5WiqqjxJ025yABKFywFG9r53/QUVnE29aMfnjJ5DgWg7hBWZSra
+         E4CL1YVBGHEklpqdP+l04gIEKziOhfNOskf4fZYz/GACzni+t6U/ww/FPFpnzmscb/cW
+         /f9A==
+X-Gm-Message-State: APjAAAWr+BYMvj3bev0YMyrxzUSNziTfdf7tQhAfuPKxVmvc+JceDjgE
+        zzFb8twPGprwDrFpvvpcWLmDJuQHPhtCn7pyZwOCnUBUKlDn
+X-Google-Smtp-Source: APXvYqz/g3akW+HYZOqq00GOcwk4TIgPuwUmUsNZ8JleeVUWjArlNV1JzK0GZVOa198jjNQXsMlAh0R+qyRRrxrnABjAL9dYZK4H
 MIME-Version: 1.0
-X-Received: by 2002:a92:35dd:: with SMTP id c90mr4277087ilf.191.1573134129105;
+X-Received: by 2002:a5d:9f02:: with SMTP id q2mr3553203iot.3.1573134129497;
  Thu, 07 Nov 2019 05:42:09 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:09 -0800
-In-Reply-To: <0000000000000cc0de0572736043@google.com>
+In-Reply-To: <00000000000006602605752ffa1a@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f3131f0596c1d4ed@google.com>
-Subject: Re: KASAN: use-after-free Read in __schedule (2)
-From:   syzbot <syzbot+ceded3495a1d59f2d244@syzkaller.appspotmail.com>
-To:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liran.alon@oracle.com, luto@kernel.org, mark.kanda@oracle.com,
-        mingo@redhat.com, patrick.colp@oracle.com, pbonzini@redhat.com,
-        rkrcmar@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
+Message-ID: <000000000000f90bb30596c1d438@google.com>
+Subject: Re: general protection fault in tcp_cleanup_ulp
+From:   syzbot <syzbot+0b3ccd4f62dac2cf3a7d@syzkaller.appspotmail.com>
+To:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+        davem@davemloft.net, edumazet@google.com, john.fastabend@gmail.com,
+        kafai@fb.com, kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, yhs@fb.com,
+        yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,22 +52,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit 26b471c7e2f7befd0f59c35b257749ca57e0ed70
-Author: Liran Alon <liran.alon@oracle.com>
-Date:   Sun Sep 16 11:28:20 2018 +0000
+commit 5607fff303636d48b88414c6be353d9fed700af2
+Author: John Fastabend <john.fastabend@gmail.com>
+Date:   Tue Sep 18 16:01:44 2018 +0000
 
-     KVM: nVMX: Fix bad cleanup on error of get/set nested state IOCTLs
+     bpf: sockmap only allow ESTABLISHED sock state
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14830572600000
-start commit:   234b69e3 ocfs2: fix ocfs2 read block panic
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
-dashboard link: https://syzkaller.appspot.com/bug?extid=ceded3495a1d59f2d244
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1634bbae400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1728324e400000
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17fdc73c600000
+start commit:   28619527 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
+git tree:       bpf
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b3ccd4f62dac2cf3a7d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13537269400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: KVM: nVMX: Fix bad cleanup on error of get/set nested state IOCTLs
+#syz fix: bpf: sockmap only allow ESTABLISHED sock state
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
