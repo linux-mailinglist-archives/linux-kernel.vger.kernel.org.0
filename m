@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F4235F2EF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CFE7F2EF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:13:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388875AbfKGNNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:13:38 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39142 "EHLO
+        id S2388989AbfKGNNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:13:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39532 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727619AbfKGNNf (ORCPT
+        with ESMTP id S1727619AbfKGNNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:13:35 -0500
+        Thu, 7 Nov 2019 08:13:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=UffryeukgEqHpnL1iS02+Ha43Ee+Aa1ndhyYeV576Zg=; b=OE7xEJQ40g16
-        K2AAJCIuVeVpPmffJuQFOPDCD4iRbZH7xwdlNuMqkF7bdytYH1O4Mml9lmEQ84eoz65Q9zMZ5eGPQ
-        sxAo7ol1CPNfBQNt75rcRt8d2ugdcDB/HNgSVkT4a59jipxL62HNN3oM1AxjPAqrKgKhNHAix5hfe
-        DSueI=;
+        List-Archive; bh=WOmUZ1RYVjZFQHJZFGdZnIC3fpebuUYqvoeEbLXTn+Y=; b=lXZ5OiVGTfbS
+        ZivDSSIVQrHmenj9/YfGHVi9li7zosETEuemOS75d5g38zHWrSTu7/KcxC4GthelV01ZY6Q0X8Tk4
+        b4hOg6VXj6n33UqE4MkYyNmO2muWu9BjBt5odI9zgcNmtnhrJhsTZ5aTMxEFcOZ2ZuoOSy7J+MNvT
+        ivQYs=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iShbR-0004NO-He; Thu, 07 Nov 2019 13:13:33 +0000
+        id 1iShbZ-0004Nm-I5; Thu, 07 Nov 2019 13:13:41 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 0B62D27431C3; Thu,  7 Nov 2019 13:13:33 +0000 (GMT)
+        id 0A18327431AF; Thu,  7 Nov 2019 13:13:39 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: ab8500: Remove AB8505 USB regulator" to the regulator tree
-In-Reply-To: <20191106173125.14496-1-stephan@gerhold.net>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     bcm-kernel-feedback-list@broadcom.com, broonie@kernel.org,
+        kdasu.kdev@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: spi-mem: fallback to using transfers when CS gpios are used" to the spi tree
+In-Reply-To: <20191107044235.4864-3-chris.packham@alliedtelesis.co.nz>
 X-Patchwork-Hint: ignore
-Message-Id: <20191107131333.0B62D27431C3@ypsilon.sirena.org.uk>
-Date:   Thu,  7 Nov 2019 13:13:33 +0000 (GMT)
+Message-Id: <20191107131340.0A18327431AF@ypsilon.sirena.org.uk>
+Date:   Thu,  7 Nov 2019 13:13:39 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: ab8500: Remove AB8505 USB regulator
+   spi: spi-mem: fallback to using transfers when CS gpios are used
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -71,79 +71,36 @@ to this mail.
 Thanks,
 Mark
 
-From 99c4f70df3a6446c56ca817c2d0f9c12d85d4e7c Mon Sep 17 00:00:00 2001
-From: Stephan Gerhold <stephan@gerhold.net>
-Date: Wed, 6 Nov 2019 18:31:24 +0100
-Subject: [PATCH] regulator: ab8500: Remove AB8505 USB regulator
+From 05766050d5bd9af24dcaec6b29255a6f2b324543 Mon Sep 17 00:00:00 2001
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Date: Thu, 7 Nov 2019 17:42:35 +1300
+Subject: [PATCH] spi: spi-mem: fallback to using transfers when CS gpios are
+ used
 
-The USB regulator was removed for AB8500 in
-commit 41a06aa738ad ("regulator: ab8500: Remove USB regulator").
-It was then added for AB8505 in
-commit 547f384f33db ("regulator: ab8500: add support for ab8505").
+Devices with chip selects driven via GPIO are not compatible with the
+spi-mem operations. Fallback to using standard spi transfers when the
+device is connected with a gpio CS.
 
-However, there was never an entry added for it in
-ab8505_regulator_match. This causes all regulators after it
-to be initialized with the wrong device tree data, eventually
-leading to an out-of-bounds array read.
-
-Given that it is not used anywhere in the kernel, it seems
-likely that similar arguments against supporting it exist for
-AB8505 (it is controlled by hardware).
-
-Therefore, simply remove it like for AB8500 instead of adding
-an entry in ab8505_regulator_match.
-
-Fixes: 547f384f33db ("regulator: ab8500: add support for ab8505")
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20191106173125.14496-1-stephan@gerhold.net
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Link: https://lore.kernel.org/r/20191107044235.4864-3-chris.packham@alliedtelesis.co.nz
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/ab8500.c       | 17 -----------------
- include/linux/regulator/ab8500.h |  1 -
- 2 files changed, 18 deletions(-)
+ drivers/spi/spi-mem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/ab8500.c b/drivers/regulator/ab8500.c
-index efb2f01a9101..f60e1b26c2d2 100644
---- a/drivers/regulator/ab8500.c
-+++ b/drivers/regulator/ab8500.c
-@@ -953,23 +953,6 @@ static struct ab8500_regulator_info
- 		.update_val_idle	= 0x82,
- 		.update_val_normal	= 0x02,
- 	},
--	[AB8505_LDO_USB] = {
--		.desc = {
--			.name           = "LDO-USB",
--			.ops            = &ab8500_regulator_mode_ops,
--			.type           = REGULATOR_VOLTAGE,
--			.id             = AB8505_LDO_USB,
--			.owner          = THIS_MODULE,
--			.n_voltages     = 1,
--			.volt_table	= fixed_3300000_voltage,
--		},
--		.update_bank            = 0x03,
--		.update_reg             = 0x82,
--		.update_mask            = 0x03,
--		.update_val		= 0x01,
--		.update_val_idle	= 0x03,
--		.update_val_normal	= 0x01,
--	},
- 	[AB8505_LDO_AUDIO] = {
- 		.desc = {
- 			.name		= "LDO-AUDIO",
-diff --git a/include/linux/regulator/ab8500.h b/include/linux/regulator/ab8500.h
-index 7cf8f797e13a..505e94a6e3e8 100644
---- a/include/linux/regulator/ab8500.h
-+++ b/include/linux/regulator/ab8500.h
-@@ -37,7 +37,6 @@ enum ab8505_regulator_id {
- 	AB8505_LDO_AUX6,
- 	AB8505_LDO_INTCORE,
- 	AB8505_LDO_ADC,
--	AB8505_LDO_USB,
- 	AB8505_LDO_AUDIO,
- 	AB8505_LDO_ANAMIC1,
- 	AB8505_LDO_ANAMIC2,
+diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+index 9f0fa9f3116d..e5a46f0eb93b 100644
+--- a/drivers/spi/spi-mem.c
++++ b/drivers/spi/spi-mem.c
+@@ -286,7 +286,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 	if (!spi_mem_internal_supports_op(mem, op))
+ 		return -ENOTSUPP;
+ 
+-	if (ctlr->mem_ops) {
++	if (ctlr->mem_ops && !mem->spi->cs_gpiod) {
+ 		ret = spi_mem_access_start(mem);
+ 		if (ret)
+ 			return ret;
 -- 
 2.20.1
 
