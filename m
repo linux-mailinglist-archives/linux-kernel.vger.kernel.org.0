@@ -2,50 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F7EFF303E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F387CF304E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388970AbfKGNmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:42:06 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:38071 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728687AbfKGNmF (ORCPT
+        id S2389705AbfKGNo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:44:26 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:56918 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730980AbfKGNmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 7 Nov 2019 08:42:05 -0500
-Received: by mail-il1-f199.google.com with SMTP id f6so2669601ilg.5
+Received: by mail-il1-f198.google.com with SMTP id e5so2592081ile.23
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=V9C3/szOLxcs/lQrxw09yt7xBy3qLGRL88aXaqrhtNg=;
-        b=U6AkBVElYN1u6mzljU5M7J9jJfEpYAAhoVqWIwImwhOJZbk6A/gqqI030YDLMe4dgu
-         K78190pCWgeBNm+kmDjoCcpfnaLdorFT0vjFWHbx3I96ck+Ts8Wp0QUfBPzr1LpskaQQ
-         cYHjGJSkEww08WHLl/Ti99o2L/YzPY23UwY0kQqfbuHmFD277mE8u6KZeSE257NFWNtG
-         VnLL7IzRdhw8iRKmWsT3+3e8zsSdE9ZEidO+dr4Ejtu4dzti8wGcfVWb9byo5N2DaZWp
-         oIAeLnl+oXMySeoEZYHvndmnlhg5FtoVrHVZlbKprqhhNR2isuPEyqY/Lci6ayPqJHHY
-         HdUg==
-X-Gm-Message-State: APjAAAVFnoSjTQXP2zaoO2rfd5buyhdq5aJRvDMfdUQhYrvQkJxTwO1U
-        b1eKTm3aZykonmqG9In2UpNc3kmGIhJlAkHE+9MDf+hyc6qa
-X-Google-Smtp-Source: APXvYqxCUbUYzo+u5rS8f2qDgRbx0mqmdassnoPfmOY5Y2vuj78n07nSmrMgM7MJp/uItBjNn+rZa528BFNhpP5yPG6wP1qdX+ZU
+        bh=ENxD+/fIw0mYa6vyCEJ9BP1QogAHJZe3kkohsrzQFAg=;
+        b=oL4AYxtLXsRCDsksDzw6xN9HB1oTZGmK2fByoVIBvay0dD1JqfKpD2MtzU8C90QdHz
+         74pA5q0EImVzZbvPRNc38V+94pD6KmJxmHqVJnPyiMcHKF4Ka0s0ei08gu2IYLZ7PxJg
+         97yb5CaPtieNFtHv9oBPTSlLgjt7RNgyh2Fs88rFXZB1eJZpbTjeaZ0ETNW3oFkj6sDs
+         3SDjOBCEinnkDFQRuz1jOipxm3VA0601npjGYdcMq/6XuCS8vDTqHCnmWbjgGVZn2VeK
+         hR2JAint9nudKxMToMFwhgpkBPLvOI7m0Ra4ADgTMtFgevgIZFWArQB6JMU/yML5kElw
+         LhKA==
+X-Gm-Message-State: APjAAAVYW4wvBIhCe2JjElgMbOpjb09jK3V9PTuttw1CE45hkt/CgU4H
+        oJJcq39JUN6+CWxkBFH2rDk2TUIPE2+8aSFNcNJ7/qPNa+/1
+X-Google-Smtp-Source: APXvYqxgUiKUUpVf8mANbwuq5h5ETdkG1+2bc1EZcA3Iu8zgmeR5189VzsX5FO9eWFvmABYaiGgJH8JWUel87EI/ZKuu+fPSmejM
 MIME-Version: 1.0
-X-Received: by 2002:a6b:ba44:: with SMTP id k65mr3353167iof.190.1573134124463;
- Thu, 07 Nov 2019 05:42:04 -0800 (PST)
+X-Received: by 2002:a6b:ee07:: with SMTP id i7mr3695643ioh.26.1573134125000;
+ Thu, 07 Nov 2019 05:42:05 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:04 -0800
-In-Reply-To: <001a1140ad88c4f006055d3836d2@google.com>
+In-Reply-To: <000000000000ee4dab0570be896c@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ac3e9d0596c1d4fe@google.com>
-Subject: Re: suspicious RCU usage at ./include/net/inet_sock.h:LINE
-From:   syzbot 
-        <syzbot+79de6f09efc55fec084b706de3c91e9457433ac5@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dccp@vger.kernel.org, dvyukov@google.com,
-        ebiggers3@gmail.com, gerrit@erg.abdn.ac.uk, jon.maloy@ericsson.com,
-        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, parthasarathy.bhuvaragan@ericsson.com,
-        syzkaller-bugs@googlegroups.com,
-        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com,
-        yoshfuji@linux-ipv6.org
+Message-ID: <000000000000b4731e0596c1d418@google.com>
+Subject: Re: general protection fault in p9_conn_cancel
+From:   syzbot <syzbot+4d29d76a0da7a8c4d86c@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dominique.martinet@cea.fr, ericvh@gmail.com,
+        jiangyiwen@huwei.com, linux-kernel@vger.kernel.org,
+        lucho@ionkov.net, netdev@vger.kernel.org, rminnich@sandia.gov,
+        syzkaller-bugs@googlegroups.com, tomasbortoli@gmail.com,
+        v9fs-developer@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,23 +51,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit 3f32d0be6c16b902b687453c962d17eea5b8ea19
-Author: Parthasarathy Bhuvaragan <parthasarathy.bhuvaragan@ericsson.com>
-Date:   Tue Sep 25 20:09:10 2018 +0000
+commit 9f476d7c540cb57556d3cc7e78704e6cd5100f5f
+Author: Tomas Bortoli <tomasbortoli@gmail.com>
+Date:   Mon Jul 23 18:42:53 2018 +0000
 
-     tipc: lock wakeup & inputq at tipc_link_reset()
+     net/9p/trans_fd.c: fix race by holding the lock
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1368cfa2600000
-start commit:   464e1d5f
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1150b430600000
+start commit:   30c2c32d Merge tag 'drm-fixes-2018-07-10' of git://anongit..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bace9f7ec244b823
-dashboard link:  
-https://syzkaller.appspot.com/bug?extid=79de6f09efc55fec084b706de3c91e9457433ac5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126079e1800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101499e1800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d29d76a0da7a8c4d86c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e2c5b2400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=179415b2400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: tipc: lock wakeup & inputq at tipc_link_reset()
+#syz fix: net/9p/trans_fd.c: fix race by holding the lock
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
