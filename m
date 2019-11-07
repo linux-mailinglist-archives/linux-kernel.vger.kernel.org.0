@@ -2,88 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8479F3517
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECBA5F351F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbfKGQxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 11:53:47 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38504 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729701AbfKGQxr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 11:53:47 -0500
-Received: by mail-lf1-f68.google.com with SMTP id q28so2140515lfa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 08:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xmFpAJn0hM4hCADfxgFlNxkJRJWoCVfKXlrufraJ+m8=;
-        b=UzYB1aPjPzc7eAqp/cNTEIY689LK/ItFnEl4Q27cI/u5BBjFKhbFMixDDvWFx++y98
-         zNaFXfSm5iPweqOkjDXGeR4QXg4Es67aIbQxktg5/1Jwiv4NA+ob0UcqBWDQdCCC44xI
-         O8lPeMI595A+1KifyBbibn5DCPW50PRPZ8I90=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xmFpAJn0hM4hCADfxgFlNxkJRJWoCVfKXlrufraJ+m8=;
-        b=ASycn4sprWYd/o+SX0MB7f17nCyx2G/jVX+BNuQJLpJtScNwYtsZOye80eZ9rnMJAf
-         8VY89xu/wyvTm5wLi3/Ab2ukIBoemv83ZtMLiSZHD22IMkmhK7GtfPzIEWPsoJ5ucLBK
-         pvq0LVlBgwX35WxCpQYJWlEb8wLL7z4X9QyxdJDJpSb0BZ4gv582jxVVgqSGe8JRazSY
-         ka2rChN3WaKnV2iLXe0uX7wIL8AcSNVoA9efKAFW10Jjr8wcH+kc8vXFUhBHMu3o2Hj/
-         YlXsnW6GSAyTJTh5VfhXBYBJQCkZzRlcpaH4E4hCkiTEAyd+X+hXv83C0l6XllC8doHX
-         CZ3w==
-X-Gm-Message-State: APjAAAU5i1MS9O7UP5wAmDVPqXocBZY+rxmTaXBWuY9yGWL6zRAPrtQH
-        kS6KUcjQ4qOxcUL0RXeqryK10+VHb60=
-X-Google-Smtp-Source: APXvYqxIpK/fuOnGmiHB25dCfe4da+dkxiy0oajch2QlacwNgD+sAQVCQCbtbRphW1/U4Fc73sefWw==
-X-Received: by 2002:ac2:569c:: with SMTP id 28mr2828211lfr.139.1573145623412;
-        Thu, 07 Nov 2019 08:53:43 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id b23sm1415694lfj.49.2019.11.07.08.53.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2019 08:53:42 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id m9so3048967ljh.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 08:53:42 -0800 (PST)
-X-Received: by 2002:a2e:8809:: with SMTP id x9mr3208604ljh.82.1573145621882;
- Thu, 07 Nov 2019 08:53:41 -0800 (PST)
+        id S2389092AbfKGQyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 11:54:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729656AbfKGQyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 11:54:31 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F0152077C;
+        Thu,  7 Nov 2019 16:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573145670;
+        bh=NrSOsZi6jOLY0S57+WA9Ehj9OOtiUIdgVBK+A6ZRj3o=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=hEaP66T1mEMsezjd0r96IK5fJi75C6B9dAaG3QoHBGcUpcikelUP+gNZ0a/ebtezC
+         pXWhKJGx0w7dCtlJKbGf7h0iS47Ta8tZwZKvXWr/9GpltnxQdT4Ch7TZyy1WXiXot/
+         8YS2SFlvkOOF4o8RfFAVuf07+NXVNIxo1pEfwt8A=
+Subject: Re: KASAN: use-after-free Read in vhci_hub_control
+To:     syzbot <syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com>,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, stable@vger.kernel.org,
+        sudipm.mukherjee@gmail.com, syzkaller-bugs@googlegroups.com,
+        valentina.manea.m@gmail.com, shuah <shuah@kernel.org>
+References: <000000000000c460630596c1d40d@google.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <e312222f-d24e-ad18-1801-e266d6497a6a@kernel.org>
+Date:   Thu, 7 Nov 2019 09:54:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191106193459.581614484@linutronix.de> <20191106202806.241007755@linutronix.de>
- <CAHk-=wjXcS--G3Wd8ZGEOdCNRAWPaUneyN1ryShQL-_yi1kvOA@mail.gmail.com>
- <20191107082541.GF30739@gmail.com> <20191107091704.GA15536@1wt.eu>
- <alpine.DEB.2.21.1911071058260.4256@nanos.tec.linutronix.de>
- <71DE81AC-3AD4-47B3-9CBA-A2C7841A3370@zytor.com> <20191107102756.GD15536@1wt.eu>
- <5AAEF116-EC9D-4C58-878F-9D27189E123A@zytor.com> <20191107125638.GB15642@1wt.eu>
- <87h83fd4a2.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87h83fd4a2.fsf@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 7 Nov 2019 08:53:25 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjtdCJYfy6nZSE7nKzUb1WLqh0B6MByTJCKe9OLOQ08PQ@mail.gmail.com>
-Message-ID: <CAHk-=wjtdCJYfy6nZSE7nKzUb1WLqh0B6MByTJCKe9OLOQ08PQ@mail.gmail.com>
-Subject: Re: [patch 5/9] x86/ioport: Reduce ioperm impact for sane usage further
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Willy Tarreau <w@1wt.eu>, Peter Anvin <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <000000000000c460630596c1d40d@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 8:45 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Further a quick look shows that dosemu uses ioperm in a fine grained
-> manner.  From memory it would allow a handful of ports to allow directly
-> accessing a device and depended on the rest of the port accesses to be
-> disallowed so it could trap and emulate them.
+On 11/7/19 6:42 AM, syzbot wrote:
+> syzbot suspects this bug was fixed by commit:
+> 
+> commit 81f7567c51ad97668d1c3a48e8ecc482e64d4161
+> Author: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+> Date:   Fri Oct 5 22:17:44 2018 +0000
+> 
+>      usb: usbip: Fix BUG: KASAN: slab-out-of-bounds in vhci_hub_control()
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14046c2c600000
+> start commit:   420f51f4 Merge tag 'arm64-fixes' of 
+> git://git.kernel.org/p..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+> dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=600b03e0cf1b73bb23c4
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1116710a400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119be4ea400000
+> 
+> If the result looks correct, please mark the bug fixed by replying with:
+> 
+> #syz fix: usb: usbip: Fix BUG: KASAN: slab-out-of-bounds in 
+> vhci_hub_control()
+> 
+> For information about bisection process see: 
+> https://goo.gl/tpsmEJ#bisection
+> 
 
-Yes. Making ioperm() some all-or-nothing thing would be horribly bad,
-and has no real advantages that I can see.
-
-               Linus
+#syz fix: usb: usbip: Fix BUG: KASAN: slab-out-of-bounds in 
+vhci_hub_control()
