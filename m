@@ -2,105 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5628F376A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 19:42:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4755F377B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 19:46:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfKGSmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 13:42:37 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:54996 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfKGSmh (ORCPT
+        id S1727543AbfKGSqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 13:46:13 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:26241 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726882AbfKGSqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 13:42:37 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0142220B7192;
-        Thu,  7 Nov 2019 10:42:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0142220B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573152156;
-        bh=IIgQX9NCafdzdKDo68gnRTo2ABhXlMLZcXZGDGbYSCo=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=kyb8YsJHumSyLq3rC7RM6o3mGIu3AVQWDCrlcnyVYtfYPHWkv+eJuLBSFC405C9T3
-         7Jk3GCscYZavGCi1Rjs4+R1pLaWhEcUk3LhLrP4fO6jBQylW6mXz4hpORlSCvHVGQw
-         RuyPFSx2n2sxVy4qNUTvAnCh4hvVxn6CLoWPg/wI=
-Subject: Re: [PATCH v4 01/10] IMA: Defined an IMA hook to measure keys on key
- create or update
-To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191106190116.2578-1-nramas@linux.microsoft.com>
- <20191106190116.2578-2-nramas@linux.microsoft.com>
- <1573080189.5028.313.camel@linux.ibm.com>
- <c838a233-28fb-cad2-4694-18366c2643a4@linux.microsoft.com>
- <1573098037.5028.325.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <7ce84aa0-729e-c58e-f16a-25490b4e336d@linux.microsoft.com>
-Date:   Thu, 7 Nov 2019 10:42:55 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Thu, 7 Nov 2019 13:46:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573152371;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=SDECKhmd73C0X3Kn9A0XZ2VAWfazh3EPYkxFWbR6MLI=;
+        b=pepMGwXWHGIhElN345CTFsKH+sWtchlylPn24bEjSVXrcHyflt3CqbuctaZRGbHvRR
+        zKGKJf7MW4FSW7dZ+jaIqm3eYyfBweDEdtbNmJkpDQQUYoK8xPREEbGgP1gRucQdONPt
+        IhYYlIamYkW68UaR5QNQWGKYOJ7kew9tn/Cqq/fBw8xYNi69+wu5nLWPS5eSownx7tud
+        mi/HXVheicihh3XqtBOVdBmskXcwf00EVAbtWnGRykL1ijdokRqfNAZxg5b1gbOIWESO
+        stAEwQ72MSYW5S691mS54m+mFS9mj/8dtYv5RKPJkrhtQGmqYtnKf4+HEM54x+Za6ioT
+        vQeg==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXsMnvtxdYcg=="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 44.29.0 AUTH)
+        with ESMTPSA id e07688vA7Ik9oQq
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 7 Nov 2019 19:46:09 +0100 (CET)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Jean-Baptiste Maneyrol <JManeyrol@invensense.com>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH v2 1/2] dt-bindings: iio: imo: mpu6050: add vdd-supply
+Date:   Thu,  7 Nov 2019 19:43:41 +0100
+Message-Id: <20191107184342.20361-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <1573098037.5028.325.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/2019 7:40 PM, Mimi Zohar wrote:
+inv_mpu6050 now supports an additional vdd-supply; document it.
 
->>> I would move the patch that defines the "keyring=" policy option prior
->>> to this one.  Include the call to process_buffer_measurement() in this
->>> patch.  A subsequent patch would add support to defer measuring the
->>> key, by calling a function named something like
->>> ima_queue_key_measurement().
->>>
->>> Mimi
->>
->> As I'd stated in the other response, I wanted to isolate all key related
->> code in a separate C file and build it if and only if all CONFIG
->> dependencies are met.
-> 
-> The basic measuring of keys shouldn't be any different than any other
-> policy rule, other than it is a key and not a file.  This is the
-> reason that I keep saying start out with the basics and then add
-> support to defer measuring keys on the trusted keyrings.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+Changes in v2:
+  - Add Reviewed-by from Linus Walleij
 
-I'll make the changes, rearrange the patches and send an updated set.
+v1: https://lore.kernel.org/linux-iio/20191106183536.123070-1-stephan@gerhold.net/
+---
+ Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-I do have a few questions since I am still not fully understanding the 
-requirements you are targeting. Appreciate if you could please clarify.
-
-As you already know, I am using the "public key" of the given asymmetric 
-key as the "buffer" to measure in process_buffer_measurement().
-
-The measurement decision is not based on whether the keyring is a 
-trusted one or an untrusted one. As long as the IMA policy allows 
-(through the "keyrings=" option) the key will be measured.
-
-Do you want only trusted keyrings to be allowed in the measurement?
-In my opinion, that decision should be deferred to whoever is setting up 
-the IMA policy.
-
-> Only the queueing code needed for measuring keys on the trusted
-> keyrings would be in a separate file.
-> 
-> Mimi
-
-The decision to process key immediately or defer (queue) is based on 
-whether IMA has been initialized or not. Keyring is not used for this 
-decision.
-
-Could you please clarify how queuing is related to keyring's 
-trustworthiness?
-
-The check for whether the key is an asymmetric one or not, and 
-extracting the "public key" if it is an asymmetric key needs to be in a 
-separate file to handle the CONFIG dependencies in IMA.
-
-thanks,
-  -lakshmi
+diff --git a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+index 268bf7568e19..c5ee8a20af9f 100644
+--- a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
++++ b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
+@@ -21,6 +21,7 @@ Required properties:
+   bindings.
+ 
+ Optional properties:
++ - vdd-supply: regulator phandle for VDD supply
+  - vddio-supply: regulator phandle for VDDIO supply
+  - mount-matrix: an optional 3x3 mounting rotation matrix
+  - i2c-gate node.  These devices also support an auxiliary i2c bus.  This is
+-- 
+2.23.0
 
