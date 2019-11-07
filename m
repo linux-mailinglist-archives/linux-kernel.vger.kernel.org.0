@@ -2,106 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 985A0F2EBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:01:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF8CF2EB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:01:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388944AbfKGNBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:01:50 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:55149 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfKGNBt (ORCPT
+        id S2388887AbfKGNBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:01:31 -0500
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:38454 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388542AbfKGNBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:01:49 -0500
-Received: from localhost ([46.78.193.225]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MPoTl-1iGNUE2fiN-00MvAj; Thu, 07 Nov 2019 14:01:17 +0100
-Date:   Thu, 7 Nov 2019 14:01:11 +0100
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     robh+dt@kernel.org, jic23@kernel.org, mark.rutland@arm.com
-Cc:     mripard@kernel.org, shawnguo@kernel.org, heiko@sntech.de,
-        icenowy@aosc.io, laurent.pinchart@ideasonboard.com,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        gregkh@linuxfoundation.org, christophe.jaillet@wanadoo.fr,
-        tglx@linutronix.de, mchehab+samsung@kernel.org,
-        davem@davemloft.net, paulmck@linux.ibm.com,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] iio: add ping sensors to kernel configuration
-Message-ID: <20191107130108.p6maggrs2m7va5pf@arbad>
+        Thu, 7 Nov 2019 08:01:31 -0500
+Received: by mail-ot1-f48.google.com with SMTP id v24so1922580otp.5;
+        Thu, 07 Nov 2019 05:01:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W/dIFA7RW841+yhHN9HyhT5RYn5co+9jS6B4gz+TUCg=;
+        b=fsMCYQIi9FtWrQj80R7tk3J2uWSd5MiVAYM0XTmVnOyYZ8ETU/OxTOd9EA2AOmsV6P
+         OnGnPNxTn4PuT1YQ/XSKHZGC8SVoNj3G5qCi0mDZvGhGbx/M0tQecgKQNhgQQCZTlsix
+         Yzd8PQeyaaX5oFpBdPI+GZc2+FFC6AYtn0FBAGyDuZ7xFa8Xxna7wkSWv4dE0iI8lF8y
+         71sGPkNdFjI8F1bsz6s86UkdP0Wc/Pb10GbYX1j26vTMp2Mi/vk3l1m/mSgBFA/lrKx7
+         jpwTTNO+l8m6nJSLO8XmSWZNKicStmhO24K06X0Xdiku3jVLzbEb4txMcZ30AcH3vKRo
+         p4JA==
+X-Gm-Message-State: APjAAAXTbaAztL3Zdtipletzh1prtCaoFGoUk0ef1rlUJRXIiqabT14F
+        E4akgujGSAVxZHxqX7xWNJFYi21J6eEl4dIR7JJ6lQ==
+X-Google-Smtp-Source: APXvYqwLRYogYe8gkHkJSvcX1qvU6mjS7u4KYWpPWMy9mqIw5ttxjpVCKPmIbInn6HHLuIWVxAwcCPLXpObR/kSwgk0=
+X-Received: by 2002:a9d:7d01:: with SMTP id v1mr2739749otn.167.1573131690285;
+ Thu, 07 Nov 2019 05:01:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Provags-ID: V03:K1:YnPKCWkI+oAHGK0oBCaxn9+OMKi/PZRgpNNf4njdogAkiOtTNnG
- nIU9ZLRabqjm6ssy5vI3auwnqlfrU4Vnd/LTcJd+DnZd+XYzsCMvCvzSiggzVypuSPsVT2z
- UYlViD2P9SzwGGn1e4enBckIzmythSqrSHekYYdo9wgWB+dAxNxTlwEeTWN8H5GcV5KFACt
- XSwoFP3jiNK40N0279tJg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vXoEMobgM+k=:NzkB7c1Kh44XwZRNWoRiRq
- dCXV8pFhpFi8/S5WW3ZkAOC15NTIb1EEzi2+I+ddhefBe/CZN7jkasMjA01Git3bGUj7ltsYW
- ni/B1+S1upIOR0++NYhurkvRpbMNKJnrdiIPhATyWBdP84ic/aU1P9mEIPbLfWx5745xR+FNt
- bue6SIR7DNeT8TmjzZ40RbLw8TYJ63ShDGrPhMzKE7Q/gjNVNYDyN9J2VnFi4tbz5uMYNLQzz
- NJAffcjXU4+9fKeXh+WddIgC5YcEkz02C9PzzdNA1HrKftGrBaS51LbuR6v7y5Uq5MqZsf40r
- At/NRRjN8hMjPcqSmNgIFdRJI/ajl/V0qg+NM7ZxSkzmnl3VKMKBr/T4v1PYQa2neYPL3IaRW
- MPwZAYsN6Gb3okFvkRVud5+83nVcUyWsac7xibNg4sxgmGjno2l/ITavUn1HOCJkcx2WURNli
- 7VslmVubSyoPp76zrkm1Xwu0JDNY/5rI+kWI2PVRMWDMgYD98NwSaDbSC/idNNpXGA+TSIcZ3
- VuCebnFRCZHJ8et2VnGV2vy06xoK9IaxPMygs3ID77nP23G8zUayXVRPfEQZzBFknXOSBreJP
- +44WsmuRkcWQAcQuvEDsz4Elwl24mMN8UXn6WYiWXb956CIGgDCRylGTDj2BC1+AqR2cJr0qf
- GAJS8bkM5ZZKDpjXVw5rhfMkKfJJGhkPMl33u7FgnV37aBJ2duY+Gg64JswUXM2hEDGjl2NVb
- yEHVyaRC1oNI3rp7lzUjeepmG3K8LWrXS7ohNCNqAreoSlq1+kmPmSngnWGegXknJRCeUio/z
- Hibu8Bu1489U8ddZUDNh/UPncHpyJkQ2mSBADIA+aMUQA4CvE1PfBf1lZpNxhRxvPLHPI/PQP
- gJOvN57SIs77985jP6vA==
+References: <49ce5255-a0aa-1c64-90c6-ad80381d333a@linuxfoundation.org>
+In-Reply-To: <49ce5255-a0aa-1c64-90c6-ad80381d333a@linuxfoundation.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 7 Nov 2019 14:01:19 +0100
+Message-ID: <CAJZ5v0ibeSe-CjpQ=+ybH8csg2=itm5H0Jkr-Eqk1BOHYfCG1A@mail.gmail.com>
+Subject: Re: [GIT PULL] cpupower update for Linux 5.5-rc1
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Renninger <trenn@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new configuration variable CONFIG_PING for the newly supported
-parallax ping sensors.
+On Thu, Nov 7, 2019 at 2:00 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> Hi Rafael,
+>
+> Please pull the following update for Linux 5.5-rc1.
+>
+> This cpupower update for Linux 5.5-rc1 consists of bug fixes and
+> improvements to make it more accurate by removing the userspace
+> to kernel transition and read_msr initiated IPI delays.
+>
+> diff is attached.
 
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
----
- drivers/iio/proximity/Kconfig  | 15 +++++++++++++++
- drivers/iio/proximity/Makefile |  1 +
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-index d53601447da4..37606d400805 100644
---- a/drivers/iio/proximity/Kconfig
-+++ b/drivers/iio/proximity/Kconfig
-@@ -58,6 +58,21 @@ config MB1232
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called mb1232.
- 
-+config PING
-+	tristate "Parallax GPIO bitbanged ranger sensors"
-+	depends on GPIOLIB
-+	help
-+	  Say Y here to build a driver for GPIO bitbanged ranger sensors
-+	  with just one GPIO for the trigger and echo. This driver can be
-+	  used to measure the distance of objects.
-+
-+	  Actually supported are:
-+	  - Parallax PING))) (ultrasonic)
-+	  - Parallax LaserPING (time-of-flight)
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ping.
-+
- config RFD77402
- 	tristate "RFD77402 ToF sensor"
- 	depends on I2C
-diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
-index 0bb5f9de13d6..c591b019304e 100644
---- a/drivers/iio/proximity/Makefile
-+++ b/drivers/iio/proximity/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_AS3935)		+= as3935.o
- obj-$(CONFIG_ISL29501)		+= isl29501.o
- obj-$(CONFIG_LIDAR_LITE_V2)	+= pulsedlight-lidar-lite-v2.o
- obj-$(CONFIG_MB1232)		+= mb1232.o
-+obj-$(CONFIG_PING)		+= ping.o
- obj-$(CONFIG_RFD77402)		+= rfd77402.o
- obj-$(CONFIG_SRF04)		+= srf04.o
- obj-$(CONFIG_SRF08)		+= srf08.o
--- 
-2.11.0
+Pulled, thanks!
