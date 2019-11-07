@@ -2,130 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491F6F2CF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:06:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4362F2D06
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:06:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387970AbfKGLGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 06:06:08 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35507 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbfKGLGH (ORCPT
+        id S2388462AbfKGLGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 06:06:43 -0500
+Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.122]:15270 "EHLO
+        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388298AbfKGLG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 06:06:07 -0500
-Received: by mail-lf1-f65.google.com with SMTP id y6so1278455lfj.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 03:06:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9gtlTin+00E64HhGraEWeRmlFe8OE5QOZpkTpU0Z+MM=;
-        b=SDzAUlK65SJ+iY6ZrvmE36CDvTD2wsiRdpMpR4C2iT7oYMkq7fQC5LG7Sox+q04j9t
-         7omCnz1ia+t4dRTId0xMy0/S+9Ns7s0R+SWLc6ENY8tFDsA+z3YBo1rvS7AyRATDP4Lx
-         JwfwgujKOkmqGFUXon8MmzWIGNAM11MhYBUjRk9bXqtq2gREvDTJqkf5qp/rDxDxeHcG
-         t0lkCNr5PodmVLco1lWwUBsB56dsErRZj3aEZ37bPDrgcBDGT17j3WcxalH+g5NTYCI7
-         DwSdG0IN76RlOwERSt11Tj6pUQC871YN/v1CEOd4QnGEYxulwcrmtQMW8JTIpg3hyNjN
-         9pcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9gtlTin+00E64HhGraEWeRmlFe8OE5QOZpkTpU0Z+MM=;
-        b=grc4QEbA7XmOi8vs86XeRA7gJMWJizkn6NdcFCbSkY+fhtzO7vdIXiLlV9kpkGfLig
-         LK6/d5vbaW+BD29nKiSBsGhvgxV3BUvFQAArkaE9nyVmXlYEwYXmXPyZzMvN8u4ReYQ2
-         XtVc6h8sxOjCffB5XHQX3DltwS6gDLDuySKWcuZXxrrPltXORbkTmEm+IGyCq6r2I2L3
-         2r9cRjUJLFRvXFiVETRhYhqy7TSCh6pKQGUCVqHogWuTOertlkVfnK61ikZtFiRV5q/n
-         5oVegRMSRl3QVKYhcDpftTYwgf0f5fn+RODnErHZGotPsbDn80Kf8LUz7lgkxGxwZ9O7
-         PGtA==
-X-Gm-Message-State: APjAAAVUDhwZD1fMU66YU1QjZT/OhgDfV7TOyCKrn/B0pbedt2uxWHIW
-        Shx83ZUWEofyPMAI8Pum5ltWEmoaFGQ=
-X-Google-Smtp-Source: APXvYqwQPIFVgxvw48/U+Nj8sHpu5wsOuh8x/5UwZVW7SmDR31NSl7928vcrdGZ59b6fkEP7eLZw+g==
-X-Received: by 2002:a05:6512:75:: with SMTP id i21mr1951816lfo.180.1573124765855;
-        Thu, 07 Nov 2019 03:06:05 -0800 (PST)
-Received: from jax (h-48-81.A175.priv.bahnhof.se. [94.254.48.81])
-        by smtp.gmail.com with ESMTPSA id 4sm834976lfa.95.2019.11.07.03.06.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Nov 2019 03:06:05 -0800 (PST)
-Date:   Thu, 7 Nov 2019 12:06:03 +0100
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Volodymyr_Babchuk@epam.com, tee-dev@lists.linaro.org,
-        linux-kernel@vger.kernel.org, etienne.carriere@linaro.org
-Subject: Re: [PATCH] tee: optee: Fix dynamic shm pool allocations
-Message-ID: <20191107110603.GA8790@jax>
-References: <1572527274-21925-1-git-send-email-sumit.garg@linaro.org>
+        Thu, 7 Nov 2019 06:06:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573124785;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=XDDMV0r7God8oaw26RRX8bDOEGcPbFm9sSN1MRhg7fc=;
+        b=NXDyGbxgUfNxL/rpFjdji43piZr6pfNLx/U9A8D25L6QS80mfVkNbKnMicEgz8Hp2/
+        LrzsfTZJtiHtZLVSOn8F1tiaz9mK2fZt4hFfyjqIFX6HWUO+FHxKEpXT284siOw9Ugu2
+        fhRx69qNMAMR4xWV5OIuZ42ktRt+zXetJW/ZUjOlZxpK0WA4wUpiPMbxz18cYWEz+FWf
+        kMXJ9SaCfwrjOYRcF99+iM4a43jmj5jCneoc8wXizh7NAT+Q1KNWR2hpFtCIqXbU/OSx
+        lpVigDAGllB5FcPbYd8fNqtErUWal/zzGCZZbZUW2WwOiw0zHf89Qawa3s5P6GIwRnEE
+        eOCg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7PR5/L9P0"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.29.0 DYNA|AUTH)
+        with ESMTPSA id L09db3vA7B6Cdgn
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 7 Nov 2019 12:06:12 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2 0/8] ARM/MIPS: DTS: add child nodes describing the PVRSGX present in some OMAP SoC and JZ4780
+Date:   Thu,  7 Nov 2019 12:06:03 +0100
+Message-Id: <cover.1573124770.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1572527274-21925-1-git-send-email-sumit.garg@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sumit,
+Changes:
+* tried convert bindings to YAML format - suggested by Rob Herring
+* added JZ4780 DTS node (proven to load the driver)
+* removed timer and img,cores properties until we know we really need them - suggested by Rob Herring
 
-On Thu, Oct 31, 2019 at 06:37:54PM +0530, Sumit Garg wrote:
-> In case of dynamic shared memory pool, kernel memory allocated using
-> dmabuf_mgr pool needs to be registered with OP-TEE prior to its usage
-> during optee_open_session() or optee_invoke_func().
-> 
-> So fix dmabuf_mgr pool allocations via an additional call to
-> optee_shm_register().
-> 
-> Fixes: 9733b072a12a ("optee: allow to work without static shared memory")
-> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+PATCH V1 2019-10-18 20:46:35:
 
-Looks good, I'm picking this up. Etienne told me has tested this on some
-of his hardware so I'll add:
-Tested-by: Etienne Carriere <etienne.carriere@linaro.org>
+This patch set defines child nodes for the SGX5xx interface inside
+the OMAP SoC so that a driver can be found and probed by the
+compatible strings and can retrieve information about the SGX revision
+that is included in a specific SoC. It also defines the interrupt number
+to be used by the SGX driver.
 
-Thanks,
-Jens
+There is currently no mainline driver for these GPUs, but a project [1]
+is ongoing with the goal to get the open-source part as provided by TI/IMG
+into drivers/staging/pvr.
 
-> ---
-> 
-> Depends on patch: https://lkml.org/lkml/2019/7/30/506 that adds support
-> to allow registration of kernel buffers with OP-TEE.
-> 
->  drivers/tee/optee/shm_pool.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tee/optee/shm_pool.c b/drivers/tee/optee/shm_pool.c
-> index de1d9b8..0332a53 100644
-> --- a/drivers/tee/optee/shm_pool.c
-> +++ b/drivers/tee/optee/shm_pool.c
-> @@ -17,6 +17,7 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
->  {
->  	unsigned int order = get_order(size);
->  	struct page *page;
-> +	int rc = 0;
->  
->  	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
->  	if (!page)
-> @@ -26,12 +27,21 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
->  	shm->paddr = page_to_phys(page);
->  	shm->size = PAGE_SIZE << order;
->  
-> -	return 0;
-> +	if (shm->flags & TEE_SHM_DMA_BUF) {
-> +		shm->flags |= TEE_SHM_REGISTER;
-> +		rc = optee_shm_register(shm->ctx, shm, &page, 1 << order,
-> +					(unsigned long)shm->kaddr);
-> +	}
-> +
-> +	return rc;
->  }
->  
->  static void pool_op_free(struct tee_shm_pool_mgr *poolm,
->  			 struct tee_shm *shm)
->  {
-> +	if (shm->flags & TEE_SHM_DMA_BUF)
-> +		optee_shm_unregister(shm->ctx, shm);
-> +
->  	free_pages((unsigned long)shm->kaddr, get_order(shm->size));
->  	shm->kaddr = NULL;
->  }
-> -- 
-> 2.7.4
-> 
+The kernel modules built from this project have successfully demonstrated
+to work with the DTS definitions from this patch set on AM335x BeagleBone
+Black and OMAP5 Pyra. They partially works on DM3730 and PandaBoard ES but
+that is likely a problem in the kernel driver or the (non-free) user-space
+blobs.
+
+There is potential to extend this work to JZ4780 (CI20 board) and
+BananaPi-M3 (A83) and even some Intel Poulsbo and CedarView devices.
+
+[1]: https://github.com/openpvrsgx-devgroup
+
+H. Nikolaus Schaller (8):
+  RFC: dt-bindings: add img,pvrsgx.yaml for Imagination GPUs
+  ARM: DTS: am33xx: add sgx gpu child node
+  ARM: DTS: am3517: add sgx gpu child node
+  ARM: DTS: omap3: add sgx gpu child node
+  ARM: DTS: omap36xx: add sgx gpu child node
+  ARM: DTS: omap4: add sgx gpu child node
+  ARM: DTS: omap5: add sgx gpu child node
+  MIPS: DTS: jz4780: add sgx gpu node
+
+ .../devicetree/bindings/gpu/img,pvrsgx.yaml   | 128 ++++++++++++++++++
+ arch/arm/boot/dts/am33xx.dtsi                 |   9 +-
+ arch/arm/boot/dts/am3517.dtsi                 |  11 +-
+ arch/arm/boot/dts/omap34xx.dtsi               |  11 +-
+ arch/arm/boot/dts/omap36xx.dtsi               |  11 +-
+ arch/arm/boot/dts/omap4.dtsi                  |   9 +-
+ arch/arm/boot/dts/omap4470.dts                |  15 ++
+ arch/arm/boot/dts/omap5.dtsi                  |   9 +-
+ arch/mips/boot/dts/ingenic/jz4780.dtsi        |  11 ++
+ 9 files changed, 187 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+ create mode 100644 arch/arm/boot/dts/omap4470.dts
+
+-- 
+2.23.0
+
