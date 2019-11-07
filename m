@@ -2,234 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A99F319C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:36:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80CC7F31A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:39:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389164AbfKGOf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:35:57 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:46510 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfKGOf4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:35:56 -0500
-Received: by mail-yb1-f193.google.com with SMTP id g17so979540ybd.13;
-        Thu, 07 Nov 2019 06:35:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cCJqsx/ftlwibAsAJ5Vcy0JA49jWm4p8qE8hfVDsfVk=;
-        b=p609bKDpHCoHQfbM/eGZgG96SmANx4wFD92aOiUSmPx5mI7JQb5iusZm7PMGjBE0Ur
-         WeK+YljlXYEK2ZWCFagZr7d2o3eoov4TZUw9MXsXfrdJ6v98qDqmFyj1P3tTD931PPBa
-         tCwaFuEHWd65r52ozGGDMdSNYgwZQBnCN9YimJFvUAYgJGkw8uWYTRICATCF1hko1yn0
-         FmUGCcxP8CYFZeoJ1UvtOIfL0LkrGbRWZt2l9ck4MF/ahw7CWemncTIvCwwQXTi1EgII
-         n11omcKJxXVfsYb6mLc4Hu78PO1RIZdLiQDcYi9wQot8m9nr+1rOmh9TW3UppuFlhjbQ
-         JZDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cCJqsx/ftlwibAsAJ5Vcy0JA49jWm4p8qE8hfVDsfVk=;
-        b=SpePYLVDVe3yK4trJNNJBgS/dZSbiztoU433ywbp4EurRxY/wGiloiCE4XmO10nmgu
-         0mSrJ4jXAA5akzh9qymJN13YAqbqIFBNgOHf/sa2mjwMrc/OA5G7JOHLnIsgmVrRQfVK
-         XLSKxHW7KBKwvJrUsRlyGe9aU837bnnNQPKIcnjx8UjFOpH91LmJfb1veWOdh1OTgOCq
-         d8CHQPH7WLQ12qIcze0L1n4EeAxfxKwVXPF7nt2go1pWkqD1QvDiZN0eiGFZ1zZSev5P
-         D6hvaByIdtj+jhKzEfMU68TwEnWC0+MXrngBbgOM6UrCgXLeye+4UXsWwyG3IWKEF2R7
-         A+AQ==
-X-Gm-Message-State: APjAAAV0X1zmcreIgDzyR9yrbxJWpaUsaj62f1hbx3BxgPeny+/5dClP
-        8NjcngrASgS09BE54vnAqFnZEdZg9tHhrQWCzp4=
-X-Google-Smtp-Source: APXvYqyMWpVj32FzQRayhpTWpWdlFXd3D4KTz3BmEyqk9mEJsRvKERSKWHPspwqvIWQCC2SxnvCjPuu22GSaPnAZcbM=
-X-Received: by 2002:a25:c781:: with SMTP id w123mr3644320ybe.509.1573137355279;
- Thu, 07 Nov 2019 06:35:55 -0800 (PST)
+        id S2389211AbfKGOi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:38:57 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6169 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726033AbfKGOi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 09:38:57 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 57C3D9DAF4E7248871DB;
+        Thu,  7 Nov 2019 22:38:46 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 7 Nov 2019
+ 22:38:36 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <vishal@chelsio.com>, <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] cxgb4: Use match_string() helper to simplify the code
+Date:   Thu, 7 Nov 2019 22:35:58 +0800
+Message-ID: <20191107143558.44208-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <1573002091-9744-1-git-send-email-gkulkarni@marvell.com>
- <1573002091-9744-2-git-send-email-gkulkarni@marvell.com> <20191106112810.GA50610@lakrids.cambridge.arm.com>
- <CAKTKpr6U8gUp4C9muN2cL4wn33o2LAa5QnTO2MSmfnBz8oUc=Q@mail.gmail.com>
-In-Reply-To: <CAKTKpr6U8gUp4C9muN2cL4wn33o2LAa5QnTO2MSmfnBz8oUc=Q@mail.gmail.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Thu, 7 Nov 2019 06:35:44 -0800
-Message-ID: <CAKTKpr7za2-s0Ayf2AAW5CJ9WQk9smtTAbsjpiFgEg4+wevK7A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf/core: Adding capability to disable PMUs event multiplexing
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+match_string() returns the array index of a matching string.
+Use it instead of the open-coded implementation.
 
-On Wed, Nov 6, 2019 at 3:28 PM Ganapatrao Kulkarni <gklkml16@gmail.com> wrote:
->
-> Hi Peter, Mark,
->
-> On Wed, Nov 6, 2019 at 3:28 AM Mark Rutland <mark.rutland@arm.com> wrote:
-> >
-> > On Wed, Nov 06, 2019 at 01:01:40AM +0000, Ganapatrao Prabhakerrao Kulkarni wrote:
-> > > When PMUs are registered, perf core enables event multiplexing
-> > > support by default. There is no provision for PMUs to disable
-> > > event multiplexing, if PMUs want to disable due to unavoidable
-> > > circumstances like hardware errata etc.
-> > >
-> > > Adding PMU capability flag PERF_PMU_CAP_NO_MUX_EVENTS and support
-> > > to allow PMUs to explicitly disable event multiplexing.
-> >
-> > Even without multiplexing, this PMU activity can happen when switching
-> > tasks, or when creating/destroying events, so as-is I don't think this
-> > makes much sense.
-> >
-> > If there's an erratum whereby heavy access to the PMU can lockup the
-> > core, and it's possible to workaround that by minimzing accesses, that
-> > should be done in the back-end PMU driver.
->
-> As said in errata,  If there are heavy access to memory like stream
-> application running and along with that if PMU control registers are
-> also accessed frequently, then CPU lockup is seen.
->
-> I ran perf stat with 4 events of thuderx2 PMU as well as with 6 events
-> for stream application.
-> For 4 events run, there is no event multiplexing, where as for 6
-> events run the events are multiplexed.
->
-> For 4 event run:
-> No of times pmu->add is called: 10
-> No of times pmu->del is called: 10
-> No of times pmu->read is called: 310
->
-> For 6 events run:
-> No of times pmu->add is called: 5216
-> No of times pmu->del is called: 5216
-> No of times pmu->read is called: 5216
->
-> Issue happens when the add and del are called too many times as seen
-> with 6 event case.
-> The PMU hardware control registers are programmed when add and del
-> functions are called.
-> For pmu->read no issues since no h/w issue with the data path.
->
-> This is UNCORE driver, not sure context switch has any influence on this?
-> Please suggest me, how can we fix this in back-end PMU driver without
-> any perf core help?
->
-> >
-> > Either way, this minimzes the utility of the PMU.
-> >
-> > Thanks,
-> > Mark.
-> >
-> > >
-> > > Signed-off-by: Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>
-> > > ---
-> > >  include/linux/perf_event.h | 1 +
-> > >  kernel/events/core.c       | 8 ++++++++
-> > >  2 files changed, 9 insertions(+)
-> > >
-> > > diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> > > index 61448c19a132..9e18d841daf7 100644
-> > > --- a/include/linux/perf_event.h
-> > > +++ b/include/linux/perf_event.h
-> > > @@ -247,6 +247,7 @@ struct perf_event;
-> > >  #define PERF_PMU_CAP_HETEROGENEOUS_CPUS              0x40
-> > >  #define PERF_PMU_CAP_NO_EXCLUDE                      0x80
-> > >  #define PERF_PMU_CAP_AUX_OUTPUT                      0x100
-> > > +#define PERF_PMU_CAP_NO_MUX_EVENTS           0x200
-> > >
-> > >  /**
-> > >   * struct pmu - generic performance monitoring unit
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index 4655adbbae10..65452784f81c 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -1092,6 +1092,10 @@ static void __perf_mux_hrtimer_init(struct perf_cpu_context *cpuctx, int cpu)
-> > >       if (pmu->task_ctx_nr == perf_sw_context)
-> > >               return;
-> > >
-> > > +     /* No PMU support */
-> > > +     if (pmu->capabilities & PERF_PMU_CAP_NO_MUX_EVENTS)
-> > > +             return 0;
-> > > +
-> > >       /*
-> > >        * check default is sane, if not set then force to
-> > >        * default interval (1/tick)
-> > > @@ -1117,6 +1121,10 @@ static int perf_mux_hrtimer_restart(struct perf_cpu_context *cpuctx)
-> > >       if (pmu->task_ctx_nr == perf_sw_context)
-> > >               return 0;
-> > >
-> > > +     /* No PMU support */
-> > > +     if (pmu->capabilities & PERF_PMU_CAP_NO_MUX_EVENTS)
-> > > +             return 0;
-> > > +
-> > >       raw_spin_lock_irqsave(&cpuctx->hrtimer_lock, flags);
-> > >       if (!cpuctx->hrtimer_active) {
-> > >               cpuctx->hrtimer_active = 1;
-> > > --
-> > > 2.17.1
-> > >
->
-> Thanks,
-> Ganapat
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-Below diff does workaround without support of perf core.
-Please review and let me know your thoughts?
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
+index c2e9278..50ad135 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/sort.h>
++#include <linux/string.h>
+ 
+ #include "t4_regs.h"
+ #include "cxgb4.h"
+@@ -776,24 +777,18 @@ static int cudbg_get_mem_region(struct adapter *padap,
+ 				struct cudbg_mem_desc *mem_desc)
+ {
+ 	u8 mc, found = 0;
+-	u32 i, idx = 0;
+-	int rc;
++	u32 idx = 0;
++	int rc, i;
+ 
+ 	rc = cudbg_meminfo_get_mem_index(padap, meminfo, mem_type, &mc);
+ 	if (rc)
+ 		return rc;
+ 
+-	for (i = 0; i < ARRAY_SIZE(cudbg_region); i++) {
+-		if (!strcmp(cudbg_region[i], region_name)) {
+-			found = 1;
+-			idx = i;
+-			break;
+-		}
+-	}
+-	if (!found)
++	i = match_string(cudbg_region, ARRAY_SIZE(cudbg_region), region_name);
++	if (i < 0)
+ 		return -EINVAL;
+ 
+-	found = 0;
++	idx = i;
+ 	for (i = 0; i < meminfo->mem_c; i++) {
+ 		if (meminfo->mem[i].idx >= ARRAY_SIZE(cudbg_region))
+ 			continue; /* Skip holes */
+-- 
+2.7.4
 
-root@SBR-26>perf>> git diff
-diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
-index 43d76c85da56..d5c90a93e96b 100644
---- a/drivers/perf/thunderx2_pmu.c
-+++ b/drivers/perf/thunderx2_pmu.c
-@@ -69,6 +69,7 @@ struct tx2_uncore_pmu {
-        int node;
-        int cpu;
-        u32 max_counters;
-+       bool events_mux_disable;
-        u32 prorate_factor;
-        u32 max_events;
-        u64 hrtimer_interval;
-@@ -442,6 +443,8 @@ static int tx2_uncore_event_init(struct perf_event *event)
-        if (!tx2_uncore_validate_event_group(event))
-                return -EINVAL;
 
-+       /* reset flag */
-+       tx2_pmu->events_mux_disable = false;
-        return 0;
- }
-
-@@ -490,10 +493,19 @@ static int tx2_uncore_event_add(struct
-perf_event *event, int flags)
-
-        tx2_pmu = pmu_to_tx2_pmu(event->pmu);
-
-+       /* Erratum ThunderX2 erratum 221.
-+        * Disable support for events multiplexing.
-+        * Limiting the number of events to available hardware counters.
-+        */
-+       if (tx2_pmu->events_mux_disable)
-+               return -EOPNOTSUPP;
-+
-        /* Allocate a free counter */
-        hwc->idx  = alloc_counter(tx2_pmu);
--       if (hwc->idx < 0)
-+       if (hwc->idx < 0) {
-+               tx2_pmu->events_mux_disable = true;
-                return -EAGAIN;
-+       }
-
-        tx2_pmu->events[hwc->idx] = event;
-        /* set counter control and data registers base address */
-@@ -648,6 +660,7 @@ static struct tx2_uncore_pmu
-*tx2_uncore_pmu_init_dev(struct device *dev,
-        tx2_pmu->dev = dev;
-        tx2_pmu->type = type;
-        tx2_pmu->base = base;
-+       tx2_pmu->events_mux_disable = false;
-        tx2_pmu->node = dev_to_node(dev);
-        INIT_LIST_HEAD(&tx2_pmu->entry);
