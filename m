@@ -2,51 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9D4F303B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCA6DF3042
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389554AbfKGNng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:43:36 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:37959 "EHLO
+        id S2389577AbfKGNnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:43:46 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:39665 "EHLO
         mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389006AbfKGNmH (ORCPT
+        with ESMTP id S2388985AbfKGNmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:42:07 -0500
-Received: by mail-io1-f69.google.com with SMTP id q4so989483ion.5
+        Thu, 7 Nov 2019 08:42:06 -0500
+Received: by mail-io1-f69.google.com with SMTP id e17so617856ioc.6
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=+84sf74G2+LtOjaIUAIm5mQgUcZUIwnjbC/PvAs6V+Y=;
-        b=RyOyBRnsmA0GF28L+9c8EeDiVSgrh3VR6Hll8poUyUWYnVsxOPhnW6wG91JqktU8D4
-         NQgeSX+G+lYDv5tosJrx/BOdcGN0NfOvwI6LmEZj0rM1qHl+zG6BAOBN6Ff5n6v5NlT0
-         4QFYJ2eMXvTR/4FoiKL4kRmD842uKNojxW9Q/j/6GN0VUm+BEI4qWzKyQ1w+iuVIxBZI
-         87WRPUZHs2hfIPT46+rVszEOygHguncHYe8USa0Ux6G59Opjr6VtMAA2//jT6G8cz9Ru
-         QYJcb6jXMI90U50slq/nPkvFLW0TZUGYr99aFQGXm9MHejjm3v6hFFDd2I1tIhti5cih
-         fEKQ==
-X-Gm-Message-State: APjAAAXqHXt7e4WZh586JsKHiEH+/dWLPzwLZIh8wX3lZ4xWnkg6XI6b
-        ZI29LXFzQUE+a2mmt4SlyG/aBa8rXQRUJ1E5QRfpHZ1kDX5c
-X-Google-Smtp-Source: APXvYqyDXVEYlUfk7geo3GgENWWqznzoIPNLvT/v/4WhhgkMFihALxGFrTFCqPjEvWIS25EzJfmt9/ngeJ+New1kGdinWyOcoDmF
+        bh=uJH7mAU4uCSDV4aa0L0fNAi/CNHQFgrnxb0qCcwKuQg=;
+        b=EYBgBRL8h1MVtWRuTXtMQZgQhR8SG8jm1Zvu4IIAKWkP7T4m6KMcsVysD9ojFJln4M
+         FR29oNt4JWL5nk8eC0WakUPwL+QUzqQ8T6eqaiUbPwLAKVlMTgq9+TrQSR6I4AkWz2X0
+         BChcgvm2Lz2J/VAL9NSXqhQptIKSac91D7vEEEm+s2hdJxB2VLIWgGyPfzSOd9EBXVmZ
+         e7R0k8o+QcKqffg8HmexUujp7cym7ee/KUrWqVvtI6+yJvTv5eKWIRnXDK9tSyXXUuON
+         9smxdYhhGx9t4Di83mXApIbqpgJbmFwNzB+fCtRq1mp4tiQD0zVYnI8hbNti/2qFGTzg
+         wlbw==
+X-Gm-Message-State: APjAAAVL38aypkn5vdF34hDRiuPt0JEWAEoPdsSgY+54r3kcbyvx4Qhn
+        oulhV2IRjrI8aF09IuEXzruMlkYvcn361f1Dxp7e36N6VYUX
+X-Google-Smtp-Source: APXvYqyHrfdUeqRJ/p/UmqwSEH2PGF9vcIIDWWp+x12afNV5pmko9MIPBQwQ6EP0UabIBzdD2tA0EO3kdrl2IMEkfnCzwaSnZ0AC
 MIME-Version: 1.0
-X-Received: by 2002:a6b:14ca:: with SMTP id 193mr3506977iou.140.1573134126410;
+X-Received: by 2002:a6b:ed05:: with SMTP id n5mr3546499iog.273.1573134126204;
  Thu, 07 Nov 2019 05:42:06 -0800 (PST)
 Date:   Thu, 07 Nov 2019 05:42:06 -0800
-In-Reply-To: <00000000000080601805795ada2e@google.com>
+In-Reply-To: <0000000000006971fa05769d22f6@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c9f0a40596c1d46b@google.com>
-Subject: Re: INFO: task hung in vivid_stop_generating_vid_cap
-From:   syzbot <syzbot+06283a66a648cd073885@syzkaller.appspotmail.com>
-To:     andy@greyhouse.net, davem@davemloft.net, dvyukov@google.com,
-        hans.verkuil@cisco.com, helen.koike@collabora.com,
-        hverkuil-cisco@xs4all.nl, hverkuil@xs4all.nl, j.vosburgh@gmail.com,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, maheshb@google.com,
-        mchehab+samsung@kernel.org, mchehab@kernel.org,
-        mchehab@s-opensource.com, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tfiga@chromium.org,
-        vfalico@gmail.com
+Message-ID: <000000000000c6cd1b0596c1d4a2@google.com>
+Subject: Re: WARNING in request_end
+From:   syzbot <syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmail.com>
+To:     dvyukov@google.com, ebiederm@xmission.com, ktkhai@virtuozzo.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,22 +50,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit d65842f7126aa1a87fb44b7c9980c12630ed4f33
-Author: Hans Verkuil <hverkuil@xs4all.nl>
-Date:   Mon Nov 19 11:09:00 2018 +0000
+commit 4c316f2f3ff315cb48efb7435621e5bfb81df96d
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Fri Sep 28 14:43:22 2018 +0000
 
-     media: vb2: add waiting_in_dqbuf flag
+     fuse: set FR_SENT while locked
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1417a04a600000
-start commit:   9f51ae62 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113124ba600000
+start commit:   0238df64 Linux 4.19-rc7
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=62118286bb772a24
-dashboard link: https://syzkaller.appspot.com/bug?extid=06283a66a648cd073885
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15701a33400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154c8e4d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=88e9a8a39dc0be2d
+dashboard link: https://syzkaller.appspot.com/bug?extid=ef054c4d3f64cd7f7cec
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119bf2e6400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1760f806400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: media: vb2: add waiting_in_dqbuf flag
+#syz fix: fuse: set FR_SENT while locked
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
