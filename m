@@ -2,138 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E1AAF34C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:39:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37DCCF34C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:41:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387552AbfKGQjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 11:39:49 -0500
-Received: from foss.arm.com ([217.140.110.172]:58956 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726877AbfKGQjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 11:39:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14B1830E;
-        Thu,  7 Nov 2019 08:39:48 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7DC7A3F71A;
-        Thu,  7 Nov 2019 08:39:46 -0800 (PST)
-Date:   Thu, 7 Nov 2019 16:39:44 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: Re: [Patch v5 1/6] sched/pelt.c: Add support to track thermal
- pressure
-Message-ID: <20191107163942.74bfnsabh4dyvlo5@e107158-lin.cambridge.arm.com>
-References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-2-git-send-email-thara.gopinath@linaro.org>
+        id S2388539AbfKGQlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 11:41:09 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34609 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729775AbfKGQlI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 11:41:08 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k7so1869140pll.1;
+        Thu, 07 Nov 2019 08:41:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bg6kqSIBxYXX6N9owOwBDRy3DhfK9Nfe+pI6Kd3oi9c=;
+        b=c2ToS8faBSqCzfedGrU0wMS2D4Qu7ZHy/dBBCR57h46vqBxMe9HoET5KzgLXGEGvMS
+         3KI5OJaNqwyvAW3Veq0cBIHKIXq4goSYuryyLiMpRymaPzukb55Rwq8AqD6gODbfedbI
+         IVmtcs6oOGuPXG1prJr/e4FDdUfun83VkQOYKqYzhkM2jl6WTt7FBDCtYGyfr7dW3Tq3
+         4ZUvcPoKX0VYTM39k1kW1aoPOufqKUTL3K6Js+zqoJcQm2B7CSRhHwUlEYEK0Jp/rw5U
+         sxigbGFKlzV/Caeu6Z8nMdt0XDvzXHLkFtysrEJKYTbEE05xo6WMBSj78rZWFG08IsBa
+         X5NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bg6kqSIBxYXX6N9owOwBDRy3DhfK9Nfe+pI6Kd3oi9c=;
+        b=P4bfgxAAMUU7U1YJPtjIzGnnwh6qD4O7Rbx5XycRkOJXaq74gacPwiXqbcwBY4CFUb
+         VBy6ULTLo6MvmeyAe0ozWJKtmCAS5bCn8QydU0PfUhJm88BSFnmX4YJKfhNMXb/slFRZ
+         +W9pQJ5lB5VO9NyPOqJqlInfhSQjglcFynGU/cv1zDubFopYigHKQ/3w2jD7TsVnuvxN
+         KPSsRXSxjszPlO27DKAXtPIEPlEw5nqW/0alF7lEzsNxX0Ry9Vm6Auk9/HMbuloS18r8
+         yMByh8kwFMNFv6Sb7jhAEhZw7cxBW+TjMiAbIqt+F0l+TlYUd0+kWmFhW+4iMSy7jNrU
+         XBFg==
+X-Gm-Message-State: APjAAAXS5e2IMTcOl5Bfq+SEFkAdYJHHdA02XCrwVDK7rF9t+5CJyxPh
+        DwXokXPH8TSJX1iAItwR80c=
+X-Google-Smtp-Source: APXvYqz+yUC70FeNjMNghD4MEe6mV1Uw81F8V0J/pDKFKNS4LOFazlyFVX8zGdYiz34uEGYKXlHeVQ==
+X-Received: by 2002:a17:902:5a41:: with SMTP id f1mr4789890plm.168.1573144867702;
+        Thu, 07 Nov 2019 08:41:07 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a6sm4438511pja.30.2019.11.07.08.41.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Nov 2019 08:41:06 -0800 (PST)
+Date:   Thu, 7 Nov 2019 08:41:04 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Eugen.Hristev@microchip.com
+Cc:     wim@linux-watchdog.org, robh+dt@kernel.org,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] watchdog: sama5d4_wdt: addition of sam9x60
+ compatible watchdog
+Message-ID: <20191107164104.GA7693@roeck-us.net>
+References: <1571648890-15140-1-git-send-email-eugen.hristev@microchip.com>
+ <1571648890-15140-2-git-send-email-eugen.hristev@microchip.com>
+ <20191029132831.GA5643@roeck-us.net>
+ <28c6b394-ae88-f913-312e-6b38be1dc5a8@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1572979786-20361-2-git-send-email-thara.gopinath@linaro.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <28c6b394-ae88-f913-312e-6b38be1dc5a8@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thara
-
-On 11/05/19 13:49, Thara Gopinath wrote:
-> Extrapolating on the exisiting framework to track rt/dl utilization using
-> pelt signals, add a similar mechanism to track thermal pressure. The
-> difference here from rt/dl utilization tracking is that, instead of
-> tracking time spent by a cpu running a rt/dl task through util_avg,
-> the average thermal pressure is tracked through load_avg. This is
-> because thermal pressure signal is weighted "delta" capacity
-> and is not binary(util_avg is binary). "delta capacity" here
-> means delta between the actual capacity of a cpu and the decreased
-> capacity a cpu due to a thermal event.
-> In order to track average thermal pressure, a new sched_avg variable
-> avg_thermal is introduced. Function update_thermal_load_avg can be called
-> to do the periodic bookeeping (accumulate, decay and average)
-> of the thermal pressure.
+On Thu, Nov 07, 2019 at 12:51:15PM +0000, Eugen.Hristev@microchip.com wrote:
 > 
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
->  kernel/sched/pelt.c  | 13 +++++++++++++
->  kernel/sched/pelt.h  |  7 +++++++
->  kernel/sched/sched.h |  1 +
->  3 files changed, 21 insertions(+)
+> >>   
+> >> -	if ((wdt->mr & AT91_WDT_WDFIEN) && irq) {
+> >> +	irq = irq_of_parse_and_map(dev->of_node, 0);
+> >> +	if (!irq) {
+> >> +		dev_warn(dev, "failed to get IRQ from DT\n");
+> >> +		wdt->need_irq = 0;
+> > 
+> > Does it make sense to ignore that ?
 > 
-> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-> index a96db50..3821069 100644
-> --- a/kernel/sched/pelt.c
-> +++ b/kernel/sched/pelt.c
-> @@ -353,6 +353,19 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
->  	return 0;
->  }
->  
-> +int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
-> +{
-> +	if (___update_load_sum(now, &rq->avg_thermal,
-> +			       capacity,
-> +			       capacity,
-> +			       capacity)) {
-> +		___update_load_avg(&rq->avg_thermal, 1, 1);
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-
-Care to add a tracepoint to this new signal like we now have for the other
-ones?
-
-Thanks
-
---
-Qais Yousef
-
-> +
->  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->  /*
->   * irq:
-> diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-> index afff644..c74226d 100644
-> --- a/kernel/sched/pelt.h
-> +++ b/kernel/sched/pelt.h
-> @@ -6,6 +6,7 @@ int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se
->  int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
->  int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
->  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
-> +int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity);
->  
->  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->  int update_irq_load_avg(struct rq *rq, u64 running);
-> @@ -159,6 +160,12 @@ update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
->  }
->  
->  static inline int
-> +update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline int
->  update_irq_load_avg(struct rq *rq, u64 running)
->  {
->  	return 0;
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 0db2c1b..d5d82c8 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -944,6 +944,7 @@ struct rq {
->  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->  	struct sched_avg	avg_irq;
->  #endif
-> +	struct sched_avg	avg_thermal;
->  	u64			idle_stamp;
->  	u64			avg_idle;
->  
-> -- 
-> 2.1.4
+> Hi Guenter,
 > 
+> Can you detail what exactly is ignored ?
+> 
+The missing interrupt.
+
+> >> +static struct sama5d4_wdt_data sama5d4_config;
+> >> +
+> >> +static struct sama5d4_wdt_data sam9x60_config = {
+> >> +	.sam9x60_support = 1,
+> >> +};
+> > 
+> > Unless there is reason to believe that there will be other
+> > configuration data, please just assign the flag value directly
+> > to .data and add a variable to struct sama5d4_wdt to access it.
+> > Please make that variable a bool.
+> 
+> There will be more configuration data for future products, but not at 
+> this moment. Do the change or keep it this way ?
+> 
+If not as part of this series, it is better to just assign
+the flag directly. If there are changes coming at a later time
+which indeed need a structure (with more than one object in it),
+that structure can be added at that time.
+
+Guenter
