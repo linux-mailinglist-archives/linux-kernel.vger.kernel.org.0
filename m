@@ -2,110 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 814C5F2C0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:21:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 884CCF2C09
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:20:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388006AbfKGKVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:21:43 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36933 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733286AbfKGKVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:21:43 -0500
-Received: from [IPv6:2601:646:8600:3281:ac8f:6015:6ba:e227] ([IPv6:2601:646:8600:3281:ac8f:6015:6ba:e227])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id xA7AJRLO1183002
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 7 Nov 2019 02:19:34 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com xA7AJRLO1183002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019091901; t=1573121976;
-        bh=AaGRA4knSHuQOz/lRQToqAJaFbs9AnO7FrD+GG16roo=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=CFISEveAyfzOZeXhayycKsSpoGnXj8I/wJ4SvbZ0CNqUpyuCC1d0TL4XrEG1Z8zR0
-         /V6A8WaRxSuSD2ke/y+dYMcBfYEeuVhHbSoReVXOtLvyE/XNtsah1+TUngIEZUiRkn
-         dw9TFPGQlXaq4N+F6YLK3f97553iP4Cx3re8lJOSlY7625AkR1SoKM4CRnX9Wh7VQY
-         yxUWypZh5duoczKTUHTzLR6qkB48OfI0UOnfd5Ym6SIQbcmpLwbxUwCkFSgFkJzGQX
-         EvNckJbGJofEPA7AGm7LphFCGoeV7Y+Shnqq9TX+oscEWtrvvmmINEGX2ZCVPWeS6p
-         cix0vXDiAeFRw==
-Date:   Thu, 07 Nov 2019 02:19:19 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <alpine.DEB.2.21.1911071058260.4256@nanos.tec.linutronix.de>
-References: <20191106193459.581614484@linutronix.de> <20191106202806.241007755@linutronix.de> <CAHk-=wjXcS--G3Wd8ZGEOdCNRAWPaUneyN1ryShQL-_yi1kvOA@mail.gmail.com> <20191107082541.GF30739@gmail.com> <20191107091704.GA15536@1wt.eu> <alpine.DEB.2.21.1911071058260.4256@nanos.tec.linutronix.de>
+        id S2387961AbfKGKUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 05:20:37 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:41107 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbfKGKUh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 05:20:37 -0500
+Received: by mail-yb1-f196.google.com with SMTP id d95so242912ybi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 02:20:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=djmxnkfgo5IC0LeotOkmJPKSf90Q/NYI5vMLUdSE/0c=;
+        b=HbllSLrCMvfgraY6qsfXqJYjR8v4l8SJdb5g45ZCGfzZAK2DWF2upH3pdyKzeQptgR
+         /rO7ydQYlUaumUmthGapoF79dBYfEKYnXm0HCvYM7CmC8b8c/6OeKAPdFD1fOf1/Wg11
+         tpdM8Hhsd+GnObAz6HySsK4Ug4Kp37Y0MYVAjiSVuwd9aYsaEmzFyV9bFINuh1gSIIVt
+         LZiSzEc36IIWydM3MpjJZMDUrp8tDEFNY0jwpGwjFmAc4WTgnkafqsihuC0Y/iighWbz
+         I5Bz3vBT7FfGQWOk+eHbubIGcrSsuIstlbETISvRGY4erTu9JhBIbRCaEExC7NV3mxkm
+         FuHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=djmxnkfgo5IC0LeotOkmJPKSf90Q/NYI5vMLUdSE/0c=;
+        b=YK9zCOPKAU3QE4pv6ZpeF2NIOLRi+OvscZURS83yrBNusU4S/utHLDIU8AKz+kHinw
+         dYp+G+8jxJ/YJiNEWEuNiXczkS1sZIoq8i+k1tTfCI0svoredu9rKenuYg8ZWmYAHQST
+         vxnRhZPmlAzSwer/YwyS/L9SQTkyToN2Qkk7vTggRcSnMKfFPC7DBtnjo/yYZLItdcQk
+         PYHgKyBQurcKRhW1s3hBJEaYGe1rcbVjJSpYO5G/aCWH2HgYd5HP2QEQolQr4sDeIXXU
+         kx4yAm1zdEcb/GT2+KShJh/9H/QNdrGTdpkTww14/t3Unm3QZQRuWWhtwvEpn6yaZjSd
+         xdag==
+X-Gm-Message-State: APjAAAUE1uEQC3op3McAUMdf9BFpbc8DFAhMfh79/vVU7NvLXBr/AUL+
+        RuOVsMmLo8EC1yVD4E+iVW7b3w==
+X-Google-Smtp-Source: APXvYqwBeLTlEWIuKJ4sTRvTfvckJiN0J+dRftpdoo6pE12XjJU7+Qb1XAVjF8+MEwqMFZmISrLVlA==
+X-Received: by 2002:a25:bdcb:: with SMTP id g11mr2576735ybk.359.1573122036522;
+        Thu, 07 Nov 2019 02:20:36 -0800 (PST)
+Received: from leoy-ThinkPad-X240s (li1038-30.members.linode.com. [45.33.96.30])
+        by smtp.gmail.com with ESMTPSA id z14sm600364ywj.74.2019.11.07.02.20.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Nov 2019 02:20:35 -0800 (PST)
+Date:   Thu, 7 Nov 2019 18:20:29 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: Re: [PATCH v2] perf tests: Fix out of bounds memory access
+Message-ID: <20191107102029.GA32679@leoy-ThinkPad-X240s>
+References: <20191107020244.2427-1-leo.yan@linaro.org>
+ <20191107094226.GC14657@krava>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [patch 5/9] x86/ioport: Reduce ioperm impact for sane usage further
-To:     Thomas Gleixner <tglx@linutronix.de>, Willy Tarreau <w@1wt.eu>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-From:   hpa@zytor.com
-Message-ID: <71DE81AC-3AD4-47B3-9CBA-A2C7841A3370@zytor.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107094226.GC14657@krava>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On November 7, 2019 2:00:27 AM PST, Thomas Gleixner <tglx@linutronix=2Ede> =
-wrote:
->On Thu, 7 Nov 2019, Willy Tarreau wrote:
->> On Thu, Nov 07, 2019 at 09:25:41AM +0100, Ingo Molnar wrote:
->> > I=2Ee=2E the model I'm suggesting is that if a task uses ioperm() or
->iopl()=20
->> > then it should have a bitmap from that point on until exit(), even
->if=20
->> > it's all zeroes or all ones=2E Most applications that are using those
->
->> > primitives really need it all the time and are using just a few
->ioports,=20
->> > so all the tracking doesn't help much anyway=2E
->>=20
->> I'd go even further, considering that any task having called ioperm()
->> or iopl() once is granted access to all 64k ports for life: if the
->task
->> was granted access to any port, it will be able to request access for
->any
->> other port anyway=2E And we cannot claim that finely filtering accesses
->> brings any particular reliability in my opinion, considering that
->it's
->> generally possible to make the system really sick by starting to play
->> with most I/O ports=2E So for me that becomes a matter of trusted vs
->not
->> trusted task=2E Then we can simply have two pages of 0xFF to describe
->> their I/O access bitmap=2E
->>=20
->> > On a related note, another simplification would be that in
->principle we=20
->> > could also use just a single bitmap and emulate iopl() as an
->ioperm(all)=20
->> > or ioperm(none) calls=2E Yeah, it's not fully ABI compatible for
->mixed=20
->> > ioperm()/iopl() uses, but is that ABI actually being relied on in=20
->> > practice?
->>=20
->> You mean you'd have a unified map for all tasks ? In this case I
->think
->> it's simpler and equivalent to simply ignore the values in the calls
->> and grant full perms to the 64k ports range after the calls were
->> validated=2E I could be totally wrong and missing something obvious
->> though=2E
->
->Changing ioperm(single port, port range) to be ioperm(all) is going to
->break a bunch of test cases which actually check whether the permission
->is
->restricted to a single I/O port or the requested port range=2E
->
->Thanks,
->
->	tglx
+On Thu, Nov 07, 2019 at 10:42:26AM +0100, Jiri Olsa wrote:
 
-This seems very undesirable=2E=2E=2E as much as we might wish otherwise, t=
-he port bitmap is the equivalent to the MMU, and there are definitely users=
- doing direct device I/O out there=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+[...]
+
+> > To fix this issue, we will use evlist__open() and evlist__close() pair
+> > functions to prepare and cleanup context for evlist; so 'evsel->id' and
+> > 'evsel->ids' can be initialized properly when invoke do_test() and avoid
+> > the out of bounds memory access.
+> 
+> right, we need to solve this on libperf level, so it's possible
+> to call mmap/munmap multiple time without close/open.. I'll try
+> to send something, but meanwhile this is good workaround
+> 
+> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+
+Thanks for reviewing, Jiri.
+
+You are welcome to send us the fixing patches, I am glad to test it on
+qemu_arm.
+
+Thanks,
+Leo Yan
