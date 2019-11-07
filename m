@@ -2,101 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79ED5F37FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABF6F3801
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:06:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730562AbfKGTGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:06:34 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42681 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbfKGTGd (ORCPT
+        id S1727825AbfKGTGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:06:45 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48848 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727451AbfKGTGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:06:33 -0500
-Received: by mail-pg1-f193.google.com with SMTP id q17so2594264pgt.9;
-        Thu, 07 Nov 2019 11:06:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5BHyYNb+49Gf/5XB6rC7pY0BUN7tCK0r/sMc+v4m91o=;
-        b=Wmy6ixOMzOb3/fMo+IM3tySDr1EcMJwZQ4bf1iRSskw9DhGVJcxECsXhlUIXpGlNkw
-         y+m1/jB2eY7WQKkalEHfCLPzBXBnqwwtHzriTYp92MiQ+jP79671Epi81h3s+gR9xF7V
-         HOD0JGE+v+5k8NON/XRXSnaAHxANA7r6awl/gvJOytQv6T2110ErmcwlZKPv5tO9CzaF
-         q9E+IxVYk02pecrgOrv+L75+j8jUjCX60qrcyNHR49c60Qe7m86zSrMptPfrcruk5DhS
-         PEaUj+wdC5SG5qU2bCym0rctKiT5dioAYcXWnvrzTlKySeRYBh/ujETq0AT1waGRv777
-         N4Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5BHyYNb+49Gf/5XB6rC7pY0BUN7tCK0r/sMc+v4m91o=;
-        b=W6yTzfi+6ORTbmk39B93BYuT+fTbR2CNrJUgXb7dedzYYbUvQBcYpYhxx4n64RMsn7
-         Dn5Pn1D0IlFltAr+WYpFD82hpCmz6K5xKGEL7giU4EqwNvm5FGz7LCGWqHKBj4SaDzko
-         4pIdj/11EbOJUGvyMj+cMW7/6tH2F2h+4TNxmpYXccnW+ZdkTlyOry3cpocTg1LZ0nHW
-         vCKj6CFf3kLiH18whlH6fSFz06/Yskzt0fChPkInQ2zi39I6D7ehFwAWRzJ8V9LgPYkj
-         nc+bCu0vGKuPubwnIAZk8vQOsPwgXMyKJPHFXJ+ot18MpSntF2CQGaFxbKRnBI9n4NHw
-         r0Dg==
-X-Gm-Message-State: APjAAAU8VQ2nr2BagWwvCWMwnwpZF5bufHfKJ1qFZyAuU8H++ZVS0RtR
-        rPxJOnamR7R36KjSfZ47DYc=
-X-Google-Smtp-Source: APXvYqyw5Wk1Y2seoP6DcXKguZT7qNqsVpLYcP4f5BB/JhJaQV7w2RXFoev5GfAcirhMwKbfodvuLw==
-X-Received: by 2002:a63:5848:: with SMTP id i8mr6317989pgm.217.1573153592155;
-        Thu, 07 Nov 2019 11:06:32 -0800 (PST)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id m12sm2725912pjk.13.2019.11.07.11.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 11:06:31 -0800 (PST)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        sibis@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH] clk: qcom: smd: Add missing pnoc clock
-Date:   Thu,  7 Nov 2019 11:06:15 -0800
-Message-Id: <20191107190615.5656-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 7 Nov 2019 14:06:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573153604;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=7V8vcRaNgCDHefA9Xbu64DZmBbu801jLK5Q2vpg+4R0=;
+        b=J/wAADw+GYodYVpL2qoAc7Itfch5a0P8LA+eB2+NNDOxU2mr7ky5RDKDEx7QwqtoF5w+Hq
+        DG8CpRV4hRPHnu9SIDgmi9Egq+7uf65ba0R3AMeGO4Odbur0Ekf/qIE5qZ46vRocDQnD1T
+        5VKXu3UXCnBS3G+SA2plQ5B9hezEJiU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-39-MGRb98xaODGOeml7zPUjJw-1; Thu, 07 Nov 2019 14:06:40 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6CE99107ACC3;
+        Thu,  7 Nov 2019 19:06:38 +0000 (UTC)
+Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9583F5C548;
+        Thu,  7 Nov 2019 19:06:34 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] hugetlbfs: Take read_lock on i_mmap for PMD sharing
+Date:   Thu,  7 Nov 2019 14:06:28 -0500
+Message-Id: <20191107190628.22667-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: MGRb98xaODGOeml7zPUjJw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When MSM8998 support was added, and analysis was done to determine what
-clocks would be consumed.  That analysis had a flaw, which caused the
-pnoc to be skipped.  The pnoc clock needs to be on to access the uart
-for the console.  The clock is on from boot, but has no consumer votes
-in the RPM.  When we attempt to boot the modem, it causes the RPM to
-turn off pnoc, which kills our access to the console and causes CPU hangs.
+A customer with large SMP systems (up to 16 sockets) with application
+that uses large amount of static hugepages (~500-1500GB) are experiencing
+random multisecond delays. These delays was caused by the long time it
+took to scan the VMA interval tree with mmap_sem held.
 
-We need pnoc to be defined, so that clk_smd_rpm_handoff() will put in
-an implicit vote for linux and prevent issues when booting modem.
-Hopefully pnoc can be consumed by the interconnect framework in future
-so that Linux can rely on explicit votes.
+The sharing of huge PMD does not require changes to the i_mmap at all.
+As a result, we can just take the read lock and let other threads
+searching for the right VMA to share in parallel. Once the right
+VMA is found, either the PMD lock (2M huge page for x86-64) or the
+mm->page_table_lock will be acquired to perform the actual PMD sharing.
 
-Fixes: 6131dc81211c ("clk: qcom: smd: Add support for MSM8998 rpm clocks")
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Lock contention, if present, will happen in the spinlock. That is much
+better than contention in the rwsem where the time needed to scan the
+the interval tree is indeterminate.
+
+With this patch applied, the customer is seeing significant improvements
+over the unpatched kernel.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ mm/hugetlb.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index fef5e8157061..930fa4a4c52a 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -648,6 +648,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
- };
- 
- /* msm8998 */
-+DEFINE_CLK_SMD_RPM(msm8998, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
- DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
- DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-@@ -670,6 +671,8 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
- static struct clk_smd_rpm *msm8998_clks[] = {
-+	[RPM_SMD_PCNOC_CLK] = &msm8998_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK] = &msm8998_pcnoc_a_clk,
- 	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
- 	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
- 	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
--- 
-2.17.1
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index b45a95363a84..087e7ff00137 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4842,7 +4842,11 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned=
+ long addr, pud_t *pud)
+ =09if (!vma_shareable(vma, addr))
+ =09=09return (pte_t *)pmd_alloc(mm, pud, addr);
+=20
+-=09i_mmap_lock_write(mapping);
++=09/*
++=09 * PMD sharing does not require changes to i_mmap. So a read lock
++=09 * is enuogh.
++=09 */
++=09i_mmap_lock_read(mapping);
+ =09vma_interval_tree_foreach(svma, &mapping->i_mmap, idx, idx) {
+ =09=09if (svma =3D=3D vma)
+ =09=09=09continue;
+@@ -4872,7 +4876,7 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned =
+long addr, pud_t *pud)
+ =09spin_unlock(ptl);
+ out:
+ =09pte =3D (pte_t *)pmd_alloc(mm, pud, addr);
+-=09i_mmap_unlock_write(mapping);
++=09i_mmap_unlock_read(mapping);
+ =09return pte;
+ }
+=20
+--=20
+2.18.1
 
