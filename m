@@ -2,78 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F39F260A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C51DF261C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733158AbfKGDfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 22:35:22 -0500
-Received: from mail-pf1-f181.google.com ([209.85.210.181]:47099 "EHLO
-        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733150AbfKGDfW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 22:35:22 -0500
-Received: by mail-pf1-f181.google.com with SMTP id 193so1260348pfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 19:35:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MTSqevB9eLaYfcqBeeI8DrNGQzdw1uX8E/KGdMxOgko=;
-        b=zlF70s0+khT1/SKNhBOSlJ24dS4oE7e8RIgO/HwP+ODMguxMDJT5+RSx3lyJsvLPlq
-         oS1s80+LjsNPcWTDyhoKfRaa//uuIxY7ABejlgv6Be53VQ1zIieogniHL+XHp8uyz+Wk
-         ZiEJTHc9LGFjzOXIqGzPnWL5T5gWyYrDlDZj2kozJyL9rlnKtpcvnOAOgQR+w1kfK9vS
-         nWwD9JeR3i0DpI0YgyPbfkcQLeUyJVLXQXe7dagc/EXL093xaHYHM7I3aGbA09xDun7b
-         VFIOa8+gr0pVsyjKSd0j1D30NaZmvWpzYj44ivfva9hi6o/l8avJOSVOAHT4qNY9cm54
-         2sFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MTSqevB9eLaYfcqBeeI8DrNGQzdw1uX8E/KGdMxOgko=;
-        b=EdGm5NLlbQb0bY7eJU5jF1BUcHtlomV0QDLchVjRJ1zbPh6jZfGyXb+c11SSUn+inB
-         xP8RSDh1X9m+BZUZjS9nkxBXPTVE8AUPyclajQIIR+3GEk8I50ZxXtinhsM5APwYsxJv
-         2IRy0sScpjttpSw6qD7l9jgMxUtx9zAeVLewzE+OmH2xtXYCnsoZlvpAFkxa8MPUUzcg
-         IVQaJj8M+4Rwp1leWsjnyRVCI2paaKVeEN5XFkwFxILbTe771bwOyEfiNnsWOf1Idf0b
-         sO4pkn+k2sAl4uiJYsaQlxbhxhIfN3fKc+cBEpPZusklWdADmH4XorQekv/geZ5E6SyE
-         SlEw==
-X-Gm-Message-State: APjAAAW1Rh/7EVe0UlpRC/EWYTlBq13YA9FNZ8GVbfoE26YH/9Za8nkx
-        GcU2xvPGEht/eF0zMdXCKvyd3N0QukI=
-X-Google-Smtp-Source: APXvYqwmh53QyrTU3Dw6PSgNxnGd1rebMHMeSfQoe3aY8m8YDDvGn4WVyLUO3m34TjppX9BGCicB4A==
-X-Received: by 2002:a17:90a:d205:: with SMTP id o5mr2038950pju.46.1573097719548;
-        Wed, 06 Nov 2019 19:35:19 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.79])
-        by smtp.gmail.com with ESMTPSA id c16sm465425pfo.34.2019.11.06.19.35.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Nov 2019 19:35:18 -0800 (PST)
-Subject: Re: [PATCH RESEND] ata_piix: remove open-coded
- dmi_match(DMI_OEM_STRING)
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-ide@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <a47522045d251146c8f7daaeb18a32716bfc3397.1573097536.git.mirq-linux@rere.qmqm.pl>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <caf4017a-4acf-864e-afd8-c6f66e92eac1@kernel.dk>
-Date:   Wed, 6 Nov 2019 20:35:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1733173AbfKGDmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 22:42:38 -0500
+Received: from spam01.hygon.cn ([110.188.70.11]:46345 "EHLO spam1.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733028AbfKGDmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 22:42:37 -0500
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam1.hygon.cn with ESMTP id xA73ckpw000963;
+        Thu, 7 Nov 2019 11:38:46 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-FE.hygon.cn with ESMTP id xA73cf1v094565;
+        Thu, 7 Nov 2019 11:38:41 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from ubuntu.localdomain (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 7 Nov 2019
+ 11:38:42 +0800
+From:   Jiasen Lin <linjiasen@hygon.cn>
+To:     <linux-kernel@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <jdmason@kudzu.us>
+CC:     <allenbh@gmail.com>, <dave.jiang@intel.com>, <linjiasen@hygon.cn>
+Subject: [PATCH] NTB: ntb_perf: Fix address err in perf_copy_chunk
+Date:   Wed, 6 Nov 2019 19:38:33 -0800
+Message-ID: <1573097913-104555-1-git-send-email-linjiasen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <a47522045d251146c8f7daaeb18a32716bfc3397.1573097536.git.mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam1.hygon.cn xA73ckpw000963
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/19 8:32 PM, Michał Mirosław wrote:
-> Since de40614de99 ("firmware: dmi_scan: Add DMI_OEM_STRING support to
-> dmi_matches") dmi_check_system() can match OEM_STRINGs itself.
-> Use the feature.
+peer->outbuf is a virtual address which is get by ioremap, it can not
+be converted to a physical address by virt_to_page and page_to_phys.
+This conversion will result in DMA error, because the destination address
+which is converted by page_to_phys is invalid.
 
-Looks good, applied, thanks.
+We Save the physical address in perf_setup_peer_mw, it is MMIO address
+of NTB BARx. Then fill the destination address of DMA descriptor with
+this physical address to guarantee that the address of memory write
+requests fall in memory window of NBT BARx.
 
+Signed-off-by: Jiasen Lin <linjiasen@hygon.cn>
+---
+ drivers/ntb/test/ntb_perf.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
+index e9b7c2d..1c2fd1a 100644
+--- a/drivers/ntb/test/ntb_perf.c
++++ b/drivers/ntb/test/ntb_perf.c
+@@ -149,6 +149,7 @@ struct perf_peer {
+ 	u64 outbuf_xlat;
+ 	resource_size_t outbuf_size;
+ 	void __iomem *outbuf;
++	phys_addr_t out_phys_addr;
+ 
+ 	/* Inbound MW params */
+ 	dma_addr_t inbuf_xlat;
+@@ -776,7 +777,8 @@ static void perf_dma_copy_callback(void *data)
+ }
+ 
+ static int perf_copy_chunk(struct perf_thread *pthr,
+-			   void __iomem *dst, void *src, size_t len)
++			   void __iomem *dst, void *src, size_t len,
++			   phys_addr_t dst_phys_addr)
+ {
+ 	struct dma_async_tx_descriptor *tx;
+ 	struct dmaengine_unmap_data *unmap;
+@@ -807,8 +809,7 @@ static int perf_copy_chunk(struct perf_thread *pthr,
+ 	}
+ 	unmap->to_cnt = 1;
+ 
+-	unmap->addr[1] = dma_map_page(dma_dev, virt_to_page(dst),
+-		offset_in_page(dst), len, DMA_FROM_DEVICE);
++	unmap->addr[1] = dst_phys_addr;
+ 	if (dma_mapping_error(dma_dev, unmap->addr[1])) {
+ 		ret = -EIO;
+ 		goto err_free_resource;
+@@ -901,6 +902,8 @@ static int perf_run_test(struct perf_thread *pthr)
+ 	u64 total_size, chunk_size;
+ 	void *flt_src;
+ 	int ret = 0;
++	phys_addr_t flt_phys_addr;
++	phys_addr_t bnd_phys_addr;
+ 
+ 	total_size = 1ULL << total_order;
+ 	chunk_size = 1ULL << chunk_order;
+@@ -909,12 +912,15 @@ static int perf_run_test(struct perf_thread *pthr)
+ 	flt_src = pthr->src;
+ 	bnd_dst = peer->outbuf + peer->outbuf_size;
+ 	flt_dst = peer->outbuf;
++	bnd_phys_addr = peer->out_phys_addr + peer->outbuf_size;
++	flt_phys_addr = peer->out_phys_addr;
+ 
+ 	pthr->duration = ktime_get();
+ 
+ 	/* Copied field is cleared on test launch stage */
+ 	while (pthr->copied < total_size) {
+-		ret = perf_copy_chunk(pthr, flt_dst, flt_src, chunk_size);
++		ret = perf_copy_chunk(pthr, flt_dst, flt_src, chunk_size,
++				flt_phys_addr);
+ 		if (ret) {
+ 			dev_err(&perf->ntb->dev, "%d: Got error %d on test\n",
+ 				pthr->tidx, ret);
+@@ -925,8 +931,15 @@ static int perf_run_test(struct perf_thread *pthr)
+ 
+ 		flt_dst += chunk_size;
+ 		flt_src += chunk_size;
+-		if (flt_dst >= bnd_dst || flt_dst < peer->outbuf) {
++		flt_phys_addr += chunk_size;
++
++		if (flt_dst >= bnd_dst ||
++		    flt_dst < peer->outbuf ||
++		    flt_phys_addr >= bnd_phys_addr ||
++		    flt_phys_addr < peer->out_phys_addr) {
++
+ 			flt_dst = peer->outbuf;
++			flt_phys_addr = peer->out_phys_addr;
+ 			flt_src = pthr->src;
+ 		}
+ 
+@@ -1195,6 +1208,9 @@ static ssize_t perf_dbgfs_read_info(struct file *filep, char __user *ubuf,
+ 			"\tOut buffer addr 0x%pK\n", peer->outbuf);
+ 
+ 		pos += scnprintf(buf + pos, buf_size - pos,
++			"\tOut buff phys addr %pa[p]\n", &peer->out_phys_addr);
++
++		pos += scnprintf(buf + pos, buf_size - pos,
+ 			"\tOut buffer size %pa\n", &peer->outbuf_size);
+ 
+ 		pos += scnprintf(buf + pos, buf_size - pos,
+@@ -1388,6 +1404,8 @@ static int perf_setup_peer_mw(struct perf_peer *peer)
+ 	if (!peer->outbuf)
+ 		return -ENOMEM;
+ 
++	peer->out_phys_addr = phys_addr;
++
+ 	if (max_mw_size && peer->outbuf_size > max_mw_size) {
+ 		peer->outbuf_size = max_mw_size;
+ 		dev_warn(&peer->perf->ntb->dev,
 -- 
-Jens Axboe
+2.7.4
 
