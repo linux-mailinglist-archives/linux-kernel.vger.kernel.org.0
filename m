@@ -2,162 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9FE1F36A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 19:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D817F36B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 19:10:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729549AbfKGSI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 13:08:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23336 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725710AbfKGSI5 (ORCPT
+        id S1730260AbfKGSKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 13:10:24 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51898 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbfKGSKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 13:08:57 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA7I7L7I031779
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2019 13:08:55 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w4qcf2dps-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 13:08:55 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Thu, 7 Nov 2019 18:08:52 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Nov 2019 18:08:43 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA7I86IF10486184
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Nov 2019 18:08:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F06D64C044;
-        Thu,  7 Nov 2019 18:08:41 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFE874C04E;
-        Thu,  7 Nov 2019 18:08:40 +0000 (GMT)
-Received: from pic2.home (unknown [9.145.15.120])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Nov 2019 18:08:40 +0000 (GMT)
-Subject: Re: [PATCH 10/10] ocxl: Conditionally bind SCM devices to the generic
- OCXL driver
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Wei Yang <richard.weiyang@gmail.com>, Qian Cai <cai@lca.pw>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20191025044721.16617-1-alastair@au1.ibm.com>
- <20191025044721.16617-11-alastair@au1.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Thu, 7 Nov 2019 19:08:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Thu, 7 Nov 2019 13:10:23 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 4696B29036F
+Received: by jupiter.universe (Postfix, from userid 1000)
+        id 41BBC48009C; Thu,  7 Nov 2019 19:10:17 +0100 (CET)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ahmet Inan <inan@distec.de>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCHv1 1/2] Input: EXC3000: add EXC80Hxx support
+Date:   Thu,  7 Nov 2019 19:10:09 +0100
+Message-Id: <20191107181010.17211-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20191025044721.16617-11-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110718-0012-0000-0000-00000361A638
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110718-0013-0000-0000-0000219D084A
-Message-Id: <b70644d6-2c71-cd71-5d00-e25d99beea91@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911070167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds support for EXC80Hxx controllers, which uses
+a different event type id and has two extra bits for the
+resolution (so the maximum is 16384 instead of 4096).
 
+The patch has been tested with EXC80H60 and EXC80H84.
 
-Le 25/10/2019 à 06:47, Alastair D'Silva a écrit :
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> This patch allows the user to bind OpenCAPI SCM devices to the generic OCXL
-> driver.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ .../bindings/input/touchscreen/exc3000.txt    |  6 ++--
+ drivers/input/touchscreen/exc3000.c           | 34 ++++++++++++++-----
+ 2 files changed, 30 insertions(+), 10 deletions(-)
 
-
-I'm wondering if we should upstream this. Is it of any use outside of 
-some serious debug session for a developer?
-Also we would now have 2 drivers picking up the same device ID, since 
-the SCM driver is always registering for that ID, irrespective of 
-CONFIG_OCXL_SCM_GENERIC
-
-   Fred
-
-
->   drivers/misc/ocxl/Kconfig | 7 +++++++
->   drivers/misc/ocxl/pci.c   | 3 +++
->   2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/misc/ocxl/Kconfig b/drivers/misc/ocxl/Kconfig
-> index 1916fa65f2f2..8a683715c97c 100644
-> --- a/drivers/misc/ocxl/Kconfig
-> +++ b/drivers/misc/ocxl/Kconfig
-> @@ -29,3 +29,10 @@ config OCXL
->   	  dedicated OpenCAPI link, and don't follow the same protocol.
->   
->   	  If unsure, say N.
-> +
-> +config OCXL_SCM_GENERIC
-> +	bool "Treat OpenCAPI Storage Class Memory as a generic OpenCAPI device"
-> +	default n
-> +	help
-> +	  Select this option to treat OpenCAPI Storage Class Memory
-> +	  devices an generic OpenCAPI devices.
-> diff --git a/drivers/misc/ocxl/pci.c b/drivers/misc/ocxl/pci.c
-> index cb920aa88d3a..7137055c1883 100644
-> --- a/drivers/misc/ocxl/pci.c
-> +++ b/drivers/misc/ocxl/pci.c
-> @@ -10,6 +10,9 @@
->    */
->   static const struct pci_device_id ocxl_pci_tbl[] = {
->   	{ PCI_DEVICE(PCI_VENDOR_ID_IBM, 0x062B), },
-> +#ifdef CONFIG_OCXL_SCM_GENERIC
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_IBM, 0x0625), },
-> +#endif
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(pci, ocxl_pci_tbl);
-> 
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt b/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt
+index 68291b94fec2..057b680f0420 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/exc3000.txt
+@@ -1,7 +1,9 @@
+-* EETI EXC3000 Multiple Touch Controller
++* EETI EXC3000 and EXC80Hxx Multiple Touch Controller
+ 
+ Required properties:
+-- compatible: must be "eeti,exc3000"
++- compatible: must be one of
++ * "eeti,exc3000"
++ * "eeti,exc80hxx"
+ - reg: i2c slave address
+ - interrupts: touch controller interrupt
+ - touchscreen-size-x: See touchscreen.txt
+diff --git a/drivers/input/touchscreen/exc3000.c b/drivers/input/touchscreen/exc3000.c
+index e007e2e8f626..7d695022082c 100644
+--- a/drivers/input/touchscreen/exc3000.c
++++ b/drivers/input/touchscreen/exc3000.c
+@@ -23,11 +23,20 @@
+ #define EXC3000_SLOTS_PER_FRAME		5
+ #define EXC3000_LEN_FRAME		66
+ #define EXC3000_LEN_POINT		10
+-#define EXC3000_MT_EVENT		6
++
++#define EXC3000_MT1_EVENT		0x06
++#define EXC3000_MT2_EVENT		0x18
++
+ #define EXC3000_TIMEOUT_MS		100
+ 
++enum exc3000_device_type {
++	EETI_EXC3000,
++	EETI_EXC80Hxx
++};
++
+ struct exc3000_data {
+ 	struct i2c_client *client;
++	enum exc3000_device_type type;
+ 	struct input_dev *input;
+ 	struct touchscreen_properties prop;
+ 	struct timer_list timer;
+@@ -76,8 +85,10 @@ static int exc3000_read_frame(struct i2c_client *client, u8 *buf)
+ 	if (ret != EXC3000_LEN_FRAME)
+ 		return -EIO;
+ 
+-	if (get_unaligned_le16(buf) != EXC3000_LEN_FRAME ||
+-			buf[2] != EXC3000_MT_EVENT)
++	if (get_unaligned_le16(buf) != EXC3000_LEN_FRAME)
++		return -EINVAL;
++
++	if (buf[2] != EXC3000_MT1_EVENT && buf[2] != EXC3000_MT2_EVENT)
+ 		return -EINVAL;
+ 
+ 	return 0;
+@@ -157,6 +168,7 @@ static int exc3000_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+ 
+ 	data->client = client;
++	data->type = id->driver_data;
+ 	timer_setup(&data->timer, exc3000_timer, 0);
+ 
+ 	input = devm_input_allocate_device(&client->dev);
+@@ -168,8 +180,13 @@ static int exc3000_probe(struct i2c_client *client,
+ 	input->name = "EETI EXC3000 Touch Screen";
+ 	input->id.bustype = BUS_I2C;
+ 
+-	input_set_abs_params(input, ABS_MT_POSITION_X, 0, 4095, 0, 0);
+-	input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 4095, 0, 0);
++	if (data->type == EETI_EXC80Hxx) {
++		input_set_abs_params(input, ABS_MT_POSITION_X, 0, 16383, 0, 0);
++		input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 16383, 0, 0);
++	} else {
++		input_set_abs_params(input, ABS_MT_POSITION_X, 0, 4095, 0, 0);
++		input_set_abs_params(input, ABS_MT_POSITION_Y, 0, 4095, 0, 0);
++	}
+ 	touchscreen_parse_properties(input, true, &data->prop);
+ 
+ 	error = input_mt_init_slots(input, EXC3000_NUM_SLOTS,
+@@ -191,14 +208,15 @@ static int exc3000_probe(struct i2c_client *client,
+ }
+ 
+ static const struct i2c_device_id exc3000_id[] = {
+-	{ "exc3000", 0 },
+-	{ }
++	{ "exc3000", EETI_EXC3000 },
++	{ "exc80hxx", EETI_EXC80Hxx }
+ };
+ MODULE_DEVICE_TABLE(i2c, exc3000_id);
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id exc3000_of_match[] = {
+-	{ .compatible = "eeti,exc3000" },
++	{ .compatible = "eeti,exc3000", .data = (const void*) EETI_EXC3000 },
++	{ .compatible = "eeti,exc80hxx", .data = (const void*) EETI_EXC80Hxx },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, exc3000_of_match);
+-- 
+2.24.0.rc1
 
