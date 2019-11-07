@@ -2,105 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC2AF3A39
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBA3DF3A3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:13:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfKGVMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 16:12:33 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:51254 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfKGVMc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 16:12:32 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D7C8820B7192;
-        Thu,  7 Nov 2019 13:12:31 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7C8820B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573161151;
-        bh=Dq/RMVhen0d8e7vLNzh46Ixy8AtVy3mHTdjNkp6DDic=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=RsCmziqVUticNS68QSUKws2DrO/UoBxa18Xihwt7iTe2TWPIwRFs2LZFzAuuc81rf
-         TgtkRW1ijozgN/gAv2RBqRE4lX95WRbLSiduik0gDhQnofP8Qw2TL36s8p3AloT1bt
-         cHuoPTE1ia1FG49S/gVjrWY+89+JmgV+BNKG4WRs=
-Subject: Re: [PATCH v4 01/10] IMA: Defined an IMA hook to measure keys on key
- create or update
-To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191106190116.2578-1-nramas@linux.microsoft.com>
- <20191106190116.2578-2-nramas@linux.microsoft.com>
- <1573080189.5028.313.camel@linux.ibm.com>
- <c838a233-28fb-cad2-4694-18366c2643a4@linux.microsoft.com>
- <1573098037.5028.325.camel@linux.ibm.com>
- <7ce84aa0-729e-c58e-f16a-25490b4e336d@linux.microsoft.com>
- <1573159988.5028.400.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <f45593ae-823e-6d61-d14c-20726bd8cacc@linux.microsoft.com>
-Date:   Thu, 7 Nov 2019 13:12:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727319AbfKGVNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 16:13:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbfKGVNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 16:13:54 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C15F62077C;
+        Thu,  7 Nov 2019 21:13:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573161233;
+        bh=IdWF991UEdSGL4LBEIj6ry547FfieomjyaLj+M/eKx8=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=cp22OJTfDtOBrD/ep2jXPGD0RdytM46wTNahykngHb/V9ieXiP0kn8BDRvOamAMrF
+         a33cxnbOcChXdrOGc1yskmVi/uYTmzZxthMzayD/tTG71XBA+9zmwOxA3ru7wSExF4
+         knn3BRB0UgHpBGKNvH6N+ElHHxFCNjYEn3yp+tBo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1573159988.5028.400.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1572371299-16774-4-git-send-email-tdas@codeaurora.org>
+References: <1572371299-16774-1-git-send-email-tdas@codeaurora.org> <1572371299-16774-4-git-send-email-tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v2 3/3] clk: qcom: clk-rpmh: Add support for RPMHCC for SC7180
+User-Agent: alot/0.8.1
+Date:   Thu, 07 Nov 2019 13:13:53 -0800
+Message-Id: <20191107211353.C15F62077C@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/19 12:53 PM, Mimi Zohar wrote:
+Quoting Taniya Das (2019-10-29 10:48:19)
+> Add support for clock RPMh driver to vote for ARC and VRM managed
+> clock resources.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/clk-rpmh.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 20d4258..3f3e08b 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -391,6 +391,24 @@ static const struct clk_rpmh_desc clk_rpmh_sm8150 =
+=3D {
+>         .num_clks =3D ARRAY_SIZE(sm8150_rpmh_clocks),
+>  };
+>=20
+> +static struct clk_hw *sc7180_rpmh_clocks[] =3D {
 
->>
->> The measurement decision is not based on whether the keyring is a
->> trusted one or an untrusted one. As long as the IMA policy allows
->> (through the "keyrings=" option) the key will be measured.
-> 
-> We should be able to measure all keys being loaded onto any keyring or
-> onto a specific "keyring=".   This shouldn't be any different than any
-> other policy rule.  Once you have this basic feature working, you
-> would address loading keys during early boot.
-Perfect - that's exactly how I have implemented it right now. Will 
-continue to test it.
+I don't think we need to duplicate this array either, unless somehow
+this driver is running on two different SoCs which seems highly
+unlikely.
 
->> Do you want only trusted keyrings to be allowed in the measurement?
->> In my opinion, that decision should be deferred to whoever is setting up
->> the IMA policy.
-> 
-> Right, but it shouldn't be limited to just "trusted" keyrings.  This
-> way you can first test loading keys onto any keyring.
-Thank you.
-
-> Queuing the keys should be independent of measuring the keys.
->   Initially you would start with just measuring the key.  From a high
-> level it would look like:
-> 
->      ima_post_key_create_or_update(...)
->      {
->         "measure key based on
->      policy(key, keyring, ...)"
->      }
-> 
-> This requires the IMA "keyring=" policy option support be defined
-> first.
-> 
-> Subsequently you would add key queuing support, and then update
-> ima_post_key_create_or_update().  It would look like:
-> 
->          ima_post_key_create_or_update(...)
->          {
->              if (custom policy is loaded)
->                 "measure key based on policy(key, keyring, ...)"
->              else
->                  "queue key(key, keyring)"
->          }
-> 
-> Mimi
-
-Yes - I have the above change working. Will continue testing.
-
-thanks,
-  -lakshmi
+> +       [RPMH_CXO_CLK]          =3D &sdm845_bi_tcxo.hw,
+> +       [RPMH_CXO_CLK_A]        =3D &sdm845_bi_tcxo_ao.hw,
+> +       [RPMH_LN_BB_CLK2]       =3D &sdm845_ln_bb_clk2.hw,
+> +       [RPMH_LN_BB_CLK2_A]     =3D &sdm845_ln_bb_clk2_ao.hw,
+> +       [RPMH_LN_BB_CLK3]       =3D &sdm845_ln_bb_clk3.hw,
+> +       [RPMH_LN_BB_CLK3_A]     =3D &sdm845_ln_bb_clk3_ao.hw,
+> +       [RPMH_RF_CLK1]          =3D &sdm845_rf_clk1.hw,
+> +       [RPMH_RF_CLK1_A]        =3D &sdm845_rf_clk1_ao.hw,
+> +       [RPMH_RF_CLK2]          =3D &sdm845_rf_clk2.hw,
+> +       [RPMH_RF_CLK2_A]        =3D &sdm845_rf_clk2_ao.hw,
+> +};
+> +
+> +static const struct clk_rpmh_desc clk_rpmh_sc7180 =3D {
+> +       .clks =3D sc7180_rpmh_clocks,
+> +       .num_clks =3D ARRAY_SIZE(sc7180_rpmh_clocks),
+> +};
+> +
+>  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+>                                          void *data)
+>  {
+> @@ -471,6 +489,7 @@ static int clk_rpmh_probe(struct platform_device *pde=
+v)
+>  static const struct of_device_id clk_rpmh_match_table[] =3D {
+>         { .compatible =3D "qcom,sdm845-rpmh-clk", .data =3D &clk_rpmh_sdm=
+845},
+>         { .compatible =3D "qcom,sm8150-rpmh-clk", .data =3D &clk_rpmh_sm8=
+150},
+> +       { .compatible =3D "qcom,sc7180-rpmh-clk", .data =3D &clk_rpmh_sc7=
+180},
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
