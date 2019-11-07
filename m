@@ -2,167 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 297FAF2909
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD17F28FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbfKGIYB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 7 Nov 2019 03:24:01 -0500
-Received: from m4a0039g.houston.softwaregrp.com ([15.124.2.85]:36696 "EHLO
-        m4a0039g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726734AbfKGIX7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:23:59 -0500
-Received: FROM m4a0039g.houston.softwaregrp.com (15.120.17.146) BY m4a0039g.houston.softwaregrp.com WITH ESMTP;
- Thu,  7 Nov 2019 08:22:50 +0000
-Received: from M9W0068.microfocus.com (2002:f79:bf::f79:bf) by
- M4W0334.microfocus.com (2002:f78:1192::f78:1192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 7 Nov 2019 08:21:41 +0000
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (15.124.72.11) by
- M9W0068.microfocus.com (15.121.0.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Thu, 7 Nov 2019 08:21:41 +0000
+        id S1727278AbfKGIVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 03:21:47 -0500
+Received: from mail-eopbgr820073.outbound.protection.outlook.com ([40.107.82.73]:11533
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726734AbfKGIVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 03:21:46 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E8S3nwjYdQYp5d6nHUJ9j8qeyDOM2DwIo0wc5wQ5Lr3g8d+3N1mdjBP0MN2LKqw5kGZO1O8i0gbSEoXeEU/aghra/0BiraYXNQCXxwwMxZUG6apt28u1RYgBxHUeTH/+pIGhJ+vm7AcKBseAOAaQ+b9wbAIPG1oDSnRu8TUcUy6tixrhY8Lb8imHjKyVzHOltYP7QHycOndeaXD3q3m5MvZFidF/dVcIIMT3r1Yqr86iDWmFbR9jGwqwWICJxqs3Siex50jPUic53y9H4Y6aGTbCSpSEvK8pBrvMDb9UY5SfZBxXq736yu4XjhMha+Th9pOv5Lho2Ce46eiLcVjZog==
+ b=nb5m3Zljd22tmtXjNLlboss3HLkfaS/GRpBzKFRRkodzt+1pzxmMi1xrw1GdXhdhfuYPghC/rL/aLQt+9ko3uGP05/9mrCrcCbvd4GZSK5ji54Gkil1hBWq+dBe5w0kc4iVNpB7DuOjsHvn2mIobS5V3wyfHq2CRSAjZOaSn0nnpeS9oErCMGtTvy5kOGUWOjP8MJHvyZx218AXrGeiTB60fggHytZeXHZwK0FjNf/BQ/3pOqmY/yKNrWepAMvGpFRuSVU03yOVfRZdg0wK9HbHn3zntuEWbNKueEklMja/p4s7SVLroJ9qiUkWjCO+Dww0E1RWEYIMvR+d1nAcomg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zw1gX5UmsSpwOfFbQ4O12YDndiNAwwEx9Oe3l9ve42g=;
- b=OPYHU2xEqbTNh3wctgQ1IY+O2xWFvaN4R1PVdX8yKTI6J6r0cS8poojHB542PXoZrOaVvg1Ny9Z7Gl7l0Wc4sTWMeEMmijTuLgLnrO4MJD57CroU1UCDw1lRtkysoyC8XMHvVbviYk9QWn5Vt13JQE3umBInNpwiQ5EN42dYL2o9gLzXfxhIg6C5XmUBC8y6mIDP/w0G2QzXXqp83ZHCxQpwaWOui0E+T54OBdc4WDuMU0GVJCSnwWVqTbo33BTXqSebL4zynmsgESgorXWIiiLWRA35mlU3rr75VvbbWT37S1jKun8WarHK3OTY/xfyHklkPHC/AAWjmDCXTtmDxQ==
+ bh=C8Ts2d8pHRDLT0IACX/DY/FykRL/kw6c8+nK82VL1xo=;
+ b=Ez+i/azMC18RldXSgwBTZ0c3gdjGbrSg9hfssNvhHta6ox6tuALvdv1De6QJE/TYkeAqtQ1j0U73KvfI1+8/XjV0UwZ0QFOTgH3Lxu0SKBvA7ov50aNXz7MV6K/AkbM7KO7dfoLCr83IgE353lVkuiJs+Y0nn9R6tMxTjZziuOf5BXL7uCnNFKYQnXKnBSUcjfocPY2TtQ/fRGgdgtvAh14DRli+6wkkXh/SNd1TojoD4seStqKKwt0x/SjGOS/8fUIjZ6c9logxumNqaLWsCGSo5Jln4uA3Zp61TfBkJ2TGsfxpEUP8DzNlZac12pNBHF0DfvQsZovPL4UE64H2+g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Received: from MWHPR1801MB1919.namprd18.prod.outlook.com (10.164.204.162) by
- MWHPR1801MB2063.namprd18.prod.outlook.com (10.164.205.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.20; Thu, 7 Nov 2019 08:21:40 +0000
-Received: from MWHPR1801MB1919.namprd18.prod.outlook.com
- ([fe80::7106:bd76:41b8:ef03]) by MWHPR1801MB1919.namprd18.prod.outlook.com
- ([fe80::7106:bd76:41b8:ef03%3]) with mapi id 15.20.2430.020; Thu, 7 Nov 2019
- 08:21:40 +0000
-From:   Joey Lee <JLee@suse.com>
-To:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-CC:     David Howells <dhowells@redhat.com>,
-        "gnomes@lxorguk.ukuu.org.uk" <gnomes@lxorguk.ukuu.org.uk>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jforbes@redhat.com" <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH 18/30] acpi: Disable APEI error injection if the kernel is
- locked down
-Thread-Topic: [PATCH 18/30] acpi: Disable APEI error injection if the kernel
- is locked down
-Thread-Index: AQHVlURhP/mEXrsc5kO6jxmwyldIMQ==
-Date:   Thu, 7 Nov 2019 08:21:40 +0000
-Message-ID: <20191107082131.GI12016@linux-l9pv.suse>
-References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
- <151024877315.28329.472560163492858160.stgit@warthog.procyon.org.uk>
-In-Reply-To: <151024877315.28329.472560163492858160.stgit@warthog.procyon.org.uk>
-Accept-Language: zh-TW, en-US
+ smtp.mailfrom=synaptics.com; dmarc=pass action=none
+ header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C8Ts2d8pHRDLT0IACX/DY/FykRL/kw6c8+nK82VL1xo=;
+ b=N/fe8xy7yeMqYLSD9LyS2Sj8ejGYEVeJkYm9w+HaOGd62WUtipW+hYr7Ee863heJvx7MoJIcMG4rEb1aHxjOaDg+Fq+ytYx5q5hfqlzxrm7LvFJ5YhSQJQUDgKYmZmuGBumUpgtJKOc6LZ5QravCwBrbw9sf5Nmfm/25KsiQ3jA=
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.93.213) by
+ BYAPR03MB4711.namprd03.prod.outlook.com (20.179.94.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Thu, 7 Nov 2019 08:21:42 +0000
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::a8f6:f5d6:f438:ec61]) by BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::a8f6:f5d6:f438:ec61%3]) with mapi id 15.20.2408.024; Thu, 7 Nov 2019
+ 08:21:42 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND v3] ARM: ftrace: remove mcount(),ftrace_caller_old()
+ and  ftrace_call_old()
+Thread-Topic: [PATCH RESEND v3] ARM: ftrace: remove
+ mcount(),ftrace_caller_old() and  ftrace_call_old()
+Thread-Index: AQHVlURih9isV5S0iUaVIqdw6yr7Aw==
+Date:   Thu, 7 Nov 2019 08:21:42 +0000
+Message-ID: <20191107160840.7bd821dc@xhacker.debian>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK2PR02CA0172.apcprd02.prod.outlook.com
- (2603:1096:201:1f::32) To MWHPR1801MB1919.namprd18.prod.outlook.com
- (2603:10b6:301:68::34)
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=JLee@suse.com; 
+x-originating-ip: [124.74.246.114]
+x-clientproxiedby: TYAPR01CA0162.jpnprd01.prod.outlook.com
+ (2603:1096:404:7e::30) To BYAPR03MB4773.namprd03.prod.outlook.com
+ (2603:10b6:a03:139::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [60.251.47.116]
+x-mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2cd6a720-fabc-4209-8354-08d7635b83a7
-x-ms-traffictypediagnostic: MWHPR1801MB2063:
-x-ms-exchange-purlcount: 3
-x-microsoft-antispam-prvs: <MWHPR1801MB20639C911CED73A4CE8E5428A3780@MWHPR1801MB2063.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-office365-filtering-correlation-id: c50b14fd-81cb-4cd1-9ebb-08d7635b8535
+x-ms-traffictypediagnostic: BYAPR03MB4711:
+x-microsoft-antispam-prvs: <BYAPR03MB471190299CAD4CDD7F477F97ED780@BYAPR03MB4711.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1247;
 x-forefront-prvs: 0214EB3F68
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(39860400002)(396003)(376002)(366004)(346002)(189003)(199004)(6436002)(6116002)(66556008)(64756008)(6916009)(4326008)(54906003)(66946007)(6246003)(305945005)(229853002)(5660300002)(478600001)(7736002)(14444005)(3846002)(102836004)(966005)(26005)(25786009)(8676002)(81166006)(66446008)(5640700003)(81156014)(256004)(99286004)(446003)(14454004)(11346002)(6512007)(486006)(476003)(66066001)(316002)(66476007)(2906002)(52116002)(55236004)(33656002)(86362001)(2351001)(6506007)(6486002)(80792005)(386003)(6306002)(186003)(2501003)(76176011)(36756003)(71190400001)(8936002)(71200400001)(9686003)(1076003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR1801MB2063;H:MWHPR1801MB1919.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(366004)(396003)(376002)(39850400004)(199004)(189003)(4326008)(8936002)(66476007)(256004)(86362001)(66066001)(66446008)(64756008)(66556008)(81166006)(5660300002)(66946007)(305945005)(7736002)(1076003)(6116002)(14454004)(2906002)(8676002)(3846002)(81156014)(50226002)(102836004)(25786009)(54906003)(52116002)(71200400001)(71190400001)(6506007)(186003)(386003)(99286004)(26005)(478600001)(486006)(476003)(110136005)(316002)(6436002)(9686003)(6486002)(6512007)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB4711;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: xeWK8XqBa9xqhG7w60uK8focqfbPjbheloLT+mxm345b8EQRf6acNRZssE3n+/2j4c+g0RepNnD28IJ3VDkOHTcidAcj9sa+WQc16ssDVWS76YZyNtDiMrdkg8Hes5MOXKroacwf+bFiJsN3FWr+/0gDxASY0Wlq4seRqx0yy8CMxcOPNJffYjWlPnRw8a6GUec2sty4Sj5zkvrrD8b45Fm9o4SyjozISWB/IqKpoaCPauYFqZgNPHu+J5IQ00hnT50hW4UM+koywugXXWS1hy+8b+91pG+58sWAFUoRznDNRk3LDMTJ9EAbMyk5PbJDxap05LdmgTCmUV+kAnn5TpLwkExo2jt9mEx2xbX+rmc1tRgHwBqOs3mY+Rk+FDjoU7zNMUreqbk7rJAIlVnIHJ4EIMEPzCq5WlbLYWn8KwMbjiV85zVSor5/ABoleE8GhOwajcFeWX2XeP08i/xk6MdN1H9cN5HkvQ911m7XVEM=
+x-microsoft-antispam-message-info: rwE6uvJnadQhfygeQAKGhH3/IQ5ku2ppobxV36FBIFECmbAxctNv3+aPdq37f49/9X4FI1zRZ2lG0tMlWvHJ5eBDng8MmIBjwvuJz4HLTSc2fkWHjjTxOKaI0uhv5nmYuyZGHwBOKreTEFfMZ5+pU0QSz3SpbUQIN6ztoXfjE4jvF0lqAULwByXbpF7NE8MExoqQFg+scRvYM6Q+y6xxy4DJK4matntcegTCDRz19f8QVoNzt6m4QpgL+9kzUiLSKV1Mli0tMZgeH12E0Oq84apliuCWyOGGzbGeJX5o6/yZIxBIaNv+mvkGSDp9DkAAjSm+OKzOfRrJo0aKy3xjjHPbOPz645AQrtjNY2J7F5j9G6wy3AtWSn8SPgWzXaEjrPAmHhgA6w2xJj0UJe9GkP++xrrvS54aU+tXBDE9fRCBjGpd51UOXZCwNoIYXzzt
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <DA7B6F7E6050AA4F9C89EDDE76B4B210@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+Content-ID: <B95173C301D7DD48A4B341BCE1200C8F@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cd6a720-fabc-4209-8354-08d7635b83a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2019 08:21:40.6237
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c50b14fd-81cb-4cd1-9ebb-08d7635b8535
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2019 08:21:42.7010
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j+53XOdLW5OJVsvsRWw+II3NTjP3RQ2cbDxXaOY4lnqdCKGeHujPlamNf467ATeZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1801MB2063
-X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-userprincipalname: S9AKEZR2ayLyrgYiZ6Ihw0UqLv/Rgk+SXTXRLd/Xjpm+0Tw0NWgqXsRyBx/2IkPn2YUO60paAk8w1hploCjRKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB4711
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi experts,
+Commit d3c61619568c ("ARM: 8788/1: ftrace: remove old mcount support")
+removed the old mcount support, but forget to remove these three
+declarations. This patch removes them.
 
-On Thu, Nov 09, 2017 at 05:32:53PM +0000, David Howells wrote:
-> From: Linn Crosetto <linn@hpe.com>
-> 
-> ACPI provides an error injection mechanism, EINJ, for debugging and testing
-> the ACPI Platform Error Interface (APEI) and other RAS features.  If
-> supported by the firmware, ACPI specification 5.0 and later provide for a
-> way to specify a physical memory address to which to inject the error.
-> 
-> Injecting errors through EINJ can produce errors which to the platform are
-> indistinguishable from real hardware errors.  This can have undesirable
-> side-effects, such as causing the platform to mark hardware as needing
-> replacement.
-> 
-> While it does not provide a method to load unauthenticated privileged code,
-> the effect of these errors may persist across reboots and affect trust in
-> the underlying hardware, so disable error injection through EINJ if
-> the kernel is locked down.
-> 
-> Signed-off-by: Linn Crosetto <linn@hpe.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-> cc: linux-acpi@vger.kernel.org
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
 
-I was looking at the lockdown pathes in v5.4-rc kernel and found that the
-"acpi: Disable APEI error injection if the kernel is locked down" did not
-merged with lockdown patch set. This patch be sent with Matthew's pull
-request lockdown patches for 5.2:
-    http://kernsec.org/pipermail/linux-security-module-archive/2019-March/012033.html
+Changes since v2:
+  - really remove mcount() declaration too. I made a mistake when sending o=
+ut v2
 
-But it didn't show in Morris's git:
-    https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/log/?h=next-lockdown
+Changes since v1:
+  - remove mcount() declaration too
 
-Maybe I missed some detail of this patch. Could anyone point out the
-concern of this patch please?
+ arch/arm/include/asm/ftrace.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> ---
-> 
->  drivers/acpi/apei/einj.c |    3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
-> index b38737c83a24..6d71e1e97b20 100644
-> --- a/drivers/acpi/apei/einj.c
-> +++ b/drivers/acpi/apei/einj.c
-> @@ -518,6 +518,9 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
->  	int rc;
->  	u64 base_addr, size;
->  
-> +	if (kernel_is_locked_down("ACPI error injection"))
-> +		return -EPERM;
-> +
->  	/* If user manually set "flags", make sure it is legal */
->  	if (flags && (flags &
->  		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/include/asm/ftrace.h b/arch/arm/include/asm/ftrace.h
+index 18b0197f2384..48ec1d0337da 100644
+--- a/arch/arm/include/asm/ftrace.h
++++ b/arch/arm/include/asm/ftrace.h
+@@ -11,7 +11,6 @@
+ #define MCOUNT_INSN_SIZE	4 /* sizeof mcount call */
+=20
+ #ifndef __ASSEMBLY__
+-extern void mcount(void);
+ extern void __gnu_mcount_nc(void);
+=20
+ #ifdef CONFIG_DYNAMIC_FTRACE
+@@ -23,9 +22,6 @@ static inline unsigned long ftrace_call_adjust(unsigned l=
+ong addr)
+ 	/* With Thumb-2, the recorded addresses have the lsb set */
+ 	return addr & ~1;
+ }
+-
+-extern void ftrace_caller_old(void);
+-extern void ftrace_call_old(void);
+ #endif
+=20
+ #endif
+--=20
+2.23.0.rc1
 
-Thanks
-Joey Lee
