@@ -2,104 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 722A2F351E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1238F3525
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:55:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389629AbfKGQyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 11:54:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729509AbfKGQyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 11:54:31 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [109.144.209.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8015B214D8;
-        Thu,  7 Nov 2019 16:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573145670;
-        bh=xbqAtvVWlrEfOFkrNtCJbqXJ9udKi5GGRhx73z0trbQ=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=WymNmy8vBMhToty5nAepu8+/SlfuivhoGg9hoK7wOOWrvUqW5ynerWrOcoUq56F8Y
-         Uz91JuakzZUCjug2ty0xObKvFnxjQq3CmSOOtK+qejT/pi9vbXiszwPoA4h/mEoSyL
-         MVp65/9RTqUx2fpPCbWqwWloQlOFRzUNMoEBFBSM=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 566F33522919; Thu,  7 Nov 2019 08:54:28 -0800 (PST)
-Date:   Thu, 7 Nov 2019 08:54:28 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-tip-commits@vger.kernel.org,
-        syzbot <syzkaller@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [tip: timers/core] hrtimer: Annotate lockless access to
- timer->state
-Message-ID: <20191107165428.GR20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191106174804.74723-1-edumazet@google.com>
- <157307905904.29376.8711513726869840596.tip-bot2@tip-bot2>
- <CANn89iKXi3rWWruKoBwQ8rncwLvkbzjZJWuJL3K05fjAhcySwg@mail.gmail.com>
- <CANn89iL=xPxejRPC=wHY7q27fLOvFBK-7HtqU_HJo+go3S9UXA@mail.gmail.com>
- <20191107085255.GK20975@paulmck-ThinkPad-P72>
- <CANn89i+8Hq5j234zFRY05QxZU1n=Vr6S-kZCcvn3Z80xYaindg@mail.gmail.com>
- <20191107161149.GQ20975@paulmck-ThinkPad-P72>
- <CANn89iLMD0=tiQ181qQ=qKo=Nom-XX4MqonZw6pKiYUzTDVjQg@mail.gmail.com>
- <CANn89iLqcqKLRgfn7TDnBr9ZatiJVyezXmmZaeN2f2BT=qFe7Q@mail.gmail.com>
+        id S2388974AbfKGQzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 11:55:23 -0500
+Received: from smtprelay0157.hostedemail.com ([216.40.44.157]:59225 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726877AbfKGQzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 11:55:22 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 1733C18022F3A;
+        Thu,  7 Nov 2019 16:55:21 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3868:4321:5007:6119:7808:10004:10400:11026:11658:11914:12043:12114:12296:12297:12438:12555:12679:12681:12760:13069:13161:13229:13311:13357:13439:14181:14394:14659:14721:21080:21627:21795:30046:30051:30054,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: wool61_68cbd436e7d14
+X-Filterd-Recvd-Size: 2188
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  7 Nov 2019 16:55:20 +0000 (UTC)
+Message-ID: <b982566a2b9b4825badce36fdfc3032bd0005151.camel@perches.com>
+Subject: [PATCH] checkpatch: Reduce is_maintained_obsolete lookup runtime
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andy Whitcroft <apw@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 07 Nov 2019 08:55:07 -0800
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANn89iLqcqKLRgfn7TDnBr9ZatiJVyezXmmZaeN2f2BT=qFe7Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 08:39:42AM -0800, Eric Dumazet wrote:
-> On Thu, Nov 7, 2019 at 8:35 AM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > On Thu, Nov 7, 2019 at 8:11 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > >
-> > > OK, so this is due to timer_pending() lockless access to ->entry.pprev
-> > > to determine whether or not the timer is on the list.  New one on me!
-> > >
-> > > Given that use case, I don't have an objection to your patch to list.h.
-> > >
-> > > Except...
-> > >
-> > > Would it make sense to add a READ_ONCE() to hlist_unhashed()
-> > > and to then make timer_pending() invoke hlist_unhashed()?  That
-> > > would better confine the needed uses of READ_ONCE().
-> >
-> > Sounds good to me, I had the same idea but was too lazy to look at the
-> > history of timer_pending()
-> > to check if the pprev pointer check was really the same underlying idea.
-> 
-> Note that forcing READ_ONCE() in hlist_unhashed() might force the compiler
-> to read the pprev pointer twice in some cases.
-> 
-> This was one of the reason for me to add skb_queue_empty_lockless()
-> variant in include/linux/skbuff.h
+The is_maintained_obsolete function can be called twice
+using the same filename.  This function spawns a process
+using get_maintainer.pl.  Store the status of each filename
+when spawned and use the stored result to eliminate the
+spawning of unnecessary duplicate child processes.
 
-Ouch!
+Example:
 
-> /**
->  * skb_queue_empty_lockless - check if a queue is empty
->  * @list: queue head
->  *
->  * Returns true if the queue is empty, false otherwise.
->  * This variant can be used in lockless contexts.
->  */
-> static inline bool skb_queue_empty_lockless(const struct sk_buff_head *list)
-> {
-> return READ_ONCE(list->next) == (const struct sk_buff *) list;
-> }
-> 
-> So maybe add a hlist_unhashed_lockless() to clearly document why
-> callers are using the lockless variant ?
+old:
 
-That sounds like a reasonable approach to me.  There aren't all that
-many uses of hlist_unhashed(), so a name change should not be a problem.
+$ time ./scripts/checkpatch.pl hp100-Move-to-staging.patch > /dev/null
 
-							Thanx, Paul
+real	0m1.767s
+user	0m1.634s
+sys	0m0.141s
+
+new:
+
+$ time ./scripts/checkpatch.pl hp100-Move-to-staging.patch > /dev/null
+
+real	0m1.184s
+user	0m1.085s
+sys	0m0.103s
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ scripts/checkpatch.pl | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a85d719..8756c2 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -888,14 +888,18 @@ sub seed_camelcase_file {
+ 	}
+ }
+ 
++our %maintained_status = ();
++
+ sub is_maintained_obsolete {
+ 	my ($filename) = @_;
+ 
+ 	return 0 if (!$tree || !(-e "$root/scripts/get_maintainer.pl"));
+ 
+-	my $status = `perl $root/scripts/get_maintainer.pl --status --nom --nol --nogit --nogit-fallback -f $filename 2>&1`;
++	if (!exists($maintained_status{$filename})) {
++		$maintained_status{$filename} = `perl $root/scripts/get_maintainer.pl --status --nom --nol --nogit --nogit-fallback -f $filename 2>&1`;
++	}
+ 
+-	return $status =~ /obsolete/i;
++	return $maintained_status{$filename} =~ /obsolete/i;
+ }
+ 
+ sub is_SPDX_License_valid {
+
+
