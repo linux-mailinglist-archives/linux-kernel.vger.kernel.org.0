@@ -2,72 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5AE7F2A9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:28:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8FEF2A9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:29:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733280AbfKGJ2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:28:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:52524 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726734AbfKGJ2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:28:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94A4646A;
-        Thu,  7 Nov 2019 01:28:50 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDE3E3F71A;
-        Thu,  7 Nov 2019 01:28:49 -0800 (PST)
-Date:   Thu, 7 Nov 2019 09:28:48 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 1/5] PCI/PTM: Remove spurious "d" from granularity message
-Message-ID: <20191107092847.GP9723@e119886-lin.cambridge.arm.com>
-References: <20191106222420.10216-1-helgaas@kernel.org>
- <20191106222420.10216-2-helgaas@kernel.org>
+        id S2387556AbfKGJ3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:29:18 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6168 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733309AbfKGJ3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:29:17 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 542A81A8CF82C49C0A7D;
+        Thu,  7 Nov 2019 17:29:14 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 7 Nov 2019 17:29:04 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix potential overflow
+Date:   Thu, 7 Nov 2019 17:29:00 +0800
+Message-ID: <20191107092900.90588-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106222420.10216-2-helgaas@kernel.org>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 04:24:17PM -0600, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> The granularity message has an extra "d":
-> 
->   pci 0000:02:00.0: PTM enabled, 4dns granularity
-> 
-> Remove the "d" so the message is simply "PTM enabled, 4ns granularity".
-> 
-> Fixes: 8b2ec318eece ("PCI: Add PTM clock granularity information")
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Jonathan Yong <jonathan.yong@intel.com
-> ---
->  drivers/pci/pcie/ptm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pcie/ptm.c b/drivers/pci/pcie/ptm.c
-> index 98cfa30f3fae..9361f3aa26ab 100644
-> --- a/drivers/pci/pcie/ptm.c
-> +++ b/drivers/pci/pcie/ptm.c
-> @@ -21,7 +21,7 @@ static void pci_ptm_info(struct pci_dev *dev)
->  		snprintf(clock_desc, sizeof(clock_desc), ">254ns");
->  		break;
->  	default:
-> -		snprintf(clock_desc, sizeof(clock_desc), "%udns",
-> +		snprintf(clock_desc, sizeof(clock_desc), "%uns",
->  			 dev->ptm_granularity);
->  		break;
->  	}
+We expect 64-bit calculation result from below statement, however
+in 32-bit machine, looped left shift operation on pgoff_t type
+variable may cause overflow issue, fix it by forcing type cast.
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+page->index << PAGE_SHIFT;
 
-> -- 
-> 2.24.0.rc1.363.gb1bccd3e3d-goog
-> 
+Fixes: 26de9b117130 ("f2fs: avoid unnecessary updating inode during fsync")
+Fixes: 0a2aa8fbb969 ("f2fs: refactor __exchange_data_block for speed up")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c | 2 +-
+ fs/f2fs/file.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 58f4bade6c2b..8f70dfcafab3 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2204,7 +2204,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 	loff_t i_size = i_size_read(inode);
+ 	const pgoff_t end_index = ((unsigned long long) i_size)
+ 							>> PAGE_SHIFT;
+-	loff_t psize = (page->index + 1) << PAGE_SHIFT;
++	loff_t psize = (loff_t)(page->index + 1) << PAGE_SHIFT;
+ 	unsigned nr_pages = DIV_ROUND_UP(i_size, PAGE_SIZE);
+ 	unsigned offset = 0;
+ 	bool need_balance_fs = false;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index a7d855efc294..3564cb6a4c18 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1139,7 +1139,7 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
+ 				}
+ 				dn.ofs_in_node++;
+ 				i++;
+-				new_size = (dst + i) << PAGE_SHIFT;
++				new_size = (loff_t)(dst + i) << PAGE_SHIFT;
+ 				if (dst_inode->i_size < new_size)
+ 					f2fs_i_size_write(dst_inode, new_size);
+ 			} while (--ilen && (do_replace[i] || blkaddr[i] == NULL_ADDR));
+-- 
+2.18.0.rc1
+
