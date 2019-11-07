@@ -2,102 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30047F3537
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 17:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCACBF353D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbfKGQ7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 11:59:22 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:38361 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728847AbfKGQ7V (ORCPT
+        id S2389521AbfKGRAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:00:02 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:35237 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729692AbfKGRAB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 11:59:21 -0500
-Received: by mail-yw1-f65.google.com with SMTP id s6so826617ywe.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 08:59:20 -0800 (PST)
+        Thu, 7 Nov 2019 12:00:01 -0500
+Received: by mail-il1-f195.google.com with SMTP id z12so2466280ilp.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 09:00:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OY3mL3SJty7WONSqI9Sp3mmm9hhK0YCgUyTwKH16DyM=;
-        b=NNUuOmM7CKWjGHRTbNqGdtPWTCVZ0EOBnHBVZa3Du0rkbJ7FuAdoM+5baW/0stuk3E
-         gCiivLgsL72BauezxIjWfOW69541tetppjNLpG2D95N8+F/Wn/SGBAKFTqnLiB7KU6Lx
-         CX3qq1gGt+ByA9Y561UNZy9VW7qUxNA/RFLeIB6YzUt5jxNcSAniQlhV5waLfLIYwRmI
-         CNEAmi7iXeMVT9AdY2V3t1FWvhKfmU8ccDR4oOIJ+vrikdE91d1U2H6AutP4iBv4Leoj
-         +HqRPkKjWHec2HWsuDwlAK0V8pdoaeVsGF3xzqc4YUKmwU5Ea5BiwNPzJA4399Kyj9sf
-         hYVw==
+        bh=54zJYTA6CYjgn0y4dsSw2cHqSfHEeR/LXlBnsZVQsbs=;
+        b=OlemqC/3HDaxtIPWv5ZDga3wwveV1kqTbSf3cjh11xFe9FcbnciERfEJDJkmVBX5QJ
+         t52vt2RR2Txhhyp+cezqP9bUPsPrV/hB/UbNdAieyHG8pv3S7ZpIjIjsEtHQpgxYH4tj
+         pcAVfslVR1ueqL6MNLAeqaAjOMZ8K5eXcltGgZ4akvpnAttQorNGCyPShFfrSbwBfB2x
+         H/eImmsolpDLaBOCWyy5h73OgUVKwTre9CYt9WblFu++Xa9WSbD7ySVJvtCknwjyJLce
+         UEvsnMnzo3u8clIAgKpCZ+kEEq8DIixwR4pYv5AV62RSDPR6Y9o17CKKL3dNKCeE2u5b
+         L5SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OY3mL3SJty7WONSqI9Sp3mmm9hhK0YCgUyTwKH16DyM=;
-        b=QVfVmAbuQ/YJmQxLxgoxOr/NDOT6oEw2RwoCmkap9MBMjat26rG6ClDMnHm6dI1vRG
-         3xrgmb7vMnB+lvkCLxl6WpFymN6RZT/QnPfQlPon6hmJD9F0ZlZcMGnrRiyW5ZNK5iIE
-         KfiETcXP0KYxg5nJQ4BtZwrRSyfkymzzGT6NOrQEU1WsQwSRFlPnjA/5HUJUJNrM029K
-         VI8kA51B0aWX4Qu8gq2Riyujm+FsLv2poOaqp55BJwgUiWtVZ7Q3MlaUAIRRlenVT+LN
-         ljZo5B/E1WrfJ5t/BUPW2M60D3jyJQ5UA8dN8lqKEA/049Hd/he/6ZYWY0/6v7EoHXBy
-         dONw==
-X-Gm-Message-State: APjAAAVa7VLOAp+RueGqFYbHAAh4Iy8ztcG3okx0BX5z7FWCBktqBtvO
-        ALnMqfUmwnW2xgjYtWKBiZ/AjpNB
-X-Google-Smtp-Source: APXvYqwywasLn6m/7m+9ngq7VemwIJGQsnD+MP7zkTDSAGK5hEfJpgVTJTKBUslwtz2IbJ0bLXpe5g==
-X-Received: by 2002:a81:a303:: with SMTP id a3mr3070741ywh.244.1573145959312;
-        Thu, 07 Nov 2019 08:59:19 -0800 (PST)
-Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
-        by smtp.gmail.com with ESMTPSA id j136sm750614ywj.17.2019.11.07.08.59.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2019 08:59:18 -0800 (PST)
-Received: by mail-yw1-f41.google.com with SMTP id y64so830031ywe.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 08:59:17 -0800 (PST)
-X-Received: by 2002:a0d:fe06:: with SMTP id o6mr1541900ywf.424.1573145957443;
- Thu, 07 Nov 2019 08:59:17 -0800 (PST)
+        bh=54zJYTA6CYjgn0y4dsSw2cHqSfHEeR/LXlBnsZVQsbs=;
+        b=n7Uujgz2W71RdYo4ONhprU6L0pypvJn4yvG7nQAPL+h+Y8t61+0eulX5PuUED5Ud/9
+         oNBgs766nk9JT3nBzqCjWkgTyG9yfZ0eRC9bSWxXANIOTIKLI8jM4ES5f00RTdUpganu
+         T4SNp1magA9pNBOSE+4xJ/RZ24W4xivtgnBYDvL3pRb5xQBbQzEXDr3EDzlQKl+g0Mdt
+         9SvysNEmFdx9rhUnJOvWrM43/SEnzirC3S5j+6vJnpCrLTv0vIBIKBKT4kkAZlk5UEz2
+         WXlfEZ0Imi33BNA3pY0/2dw9yhMJUn1xN+XXrtHVcn2ga3J2AWZxxa4iFE/cRf305ZgG
+         xNtQ==
+X-Gm-Message-State: APjAAAUQfgYxDhxrFEUvHYMywZu+Ckn3CKOLbPSse2Ec9s2kSXdxZgIb
+        yT5dB3KtrRdkxLVXomdQ+QHpXHyonYQ9ARASujD3tg==
+X-Google-Smtp-Source: APXvYqxuI8BuTcbtVZzvXYLJmGhWiYTnRq8s080yO9vxrvuYwO18ULHq92Sn+m65YiTdVY/Al2/8tGf+c+Dg1DGbCCs=
+X-Received: by 2002:a92:109c:: with SMTP id 28mr5758698ilq.142.1573146000389;
+ Thu, 07 Nov 2019 09:00:00 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000f68d660570dcddd8@google.com> <000000000000e51d450596c1d472@google.com>
-In-Reply-To: <000000000000e51d450596c1d472@google.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Thu, 7 Nov 2019 11:58:41 -0500
-X-Gmail-Original-Message-ID: <CA+FuTSdz-+Hj2itAiC5uiP0X7aHP4YPG1+1k_bbE+OCBK+P0Rg@mail.gmail.com>
-Message-ID: <CA+FuTSdz-+Hj2itAiC5uiP0X7aHP4YPG1+1k_bbE+OCBK+P0Rg@mail.gmail.com>
-Subject: Re: kernel BUG at net/ipv4/ip_output.c:LINE!
-To:     syzbot <syzbot+90d5ec0c05e708f3b66d@syzkaller.appspotmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        David Ahern <dsahern@gmail.com>, johannes.berg@intel.com,
-        Martin Lau <kafai@fb.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Peter Oskolkov <posk@google.com>, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        Yonghong Song <yhs@fb.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+References: <20191106174804.74723-1-edumazet@google.com> <157307905904.29376.8711513726869840596.tip-bot2@tip-bot2>
+ <CANn89iKXi3rWWruKoBwQ8rncwLvkbzjZJWuJL3K05fjAhcySwg@mail.gmail.com>
+ <CANn89iL=xPxejRPC=wHY7q27fLOvFBK-7HtqU_HJo+go3S9UXA@mail.gmail.com>
+ <20191107085255.GK20975@paulmck-ThinkPad-P72> <CANn89i+8Hq5j234zFRY05QxZU1n=Vr6S-kZCcvn3Z80xYaindg@mail.gmail.com>
+ <20191107161149.GQ20975@paulmck-ThinkPad-P72> <CANn89iLMD0=tiQ181qQ=qKo=Nom-XX4MqonZw6pKiYUzTDVjQg@mail.gmail.com>
+ <CANn89iLqcqKLRgfn7TDnBr9ZatiJVyezXmmZaeN2f2BT=qFe7Q@mail.gmail.com> <20191107165428.GR20975@paulmck-ThinkPad-P72>
+In-Reply-To: <20191107165428.GR20975@paulmck-ThinkPad-P72>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Thu, 7 Nov 2019 08:59:49 -0800
+Message-ID: <CANn89i+Cc1aOHVFnYvZ93EDee81RaGNrv47ZBVdQXmxMuuMmww@mail.gmail.com>
+Subject: Re: [tip: timers/core] hrtimer: Annotate lockless access to timer->state
+To:     paulmck@kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-tip-commits@vger.kernel.org,
+        syzbot <syzkaller@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 8:42 AM syzbot
-<syzbot+90d5ec0c05e708f3b66d@syzkaller.appspotmail.com> wrote:
+On Thu, Nov 7, 2019 at 8:54 AM Paul E. McKenney <paulmck@kernel.org> wrote:
 >
-> syzbot suspects this bug was fixed by commit:
+> On Thu, Nov 07, 2019 at 08:39:42AM -0800, Eric Dumazet wrote:
+> > On Thu, Nov 7, 2019 at 8:35 AM Eric Dumazet <edumazet@google.com> wrote:
+> > >
+> > > On Thu, Nov 7, 2019 at 8:11 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > OK, so this is due to timer_pending() lockless access to ->entry.pprev
+> > > > to determine whether or not the timer is on the list.  New one on me!
+> > > >
+> > > > Given that use case, I don't have an objection to your patch to list.h.
+> > > >
+> > > > Except...
+> > > >
+> > > > Would it make sense to add a READ_ONCE() to hlist_unhashed()
+> > > > and to then make timer_pending() invoke hlist_unhashed()?  That
+> > > > would better confine the needed uses of READ_ONCE().
+> > >
+> > > Sounds good to me, I had the same idea but was too lazy to look at the
+> > > history of timer_pending()
+> > > to check if the pprev pointer check was really the same underlying idea.
+> >
+> > Note that forcing READ_ONCE() in hlist_unhashed() might force the compiler
+> > to read the pprev pointer twice in some cases.
+> >
+> > This was one of the reason for me to add skb_queue_empty_lockless()
+> > variant in include/linux/skbuff.h
 >
-> commit e7c87bd6cc4ec7b0ac1ed0a88a58f8206c577488
-> Author: Willem de Bruijn <willemb@google.com>
-> Date:   Wed Jan 16 01:19:22 2019 +0000
+> Ouch!
 >
->      bpf: in __bpf_redirect_no_mac pull mac only if present
+> > /**
+> >  * skb_queue_empty_lockless - check if a queue is empty
+> >  * @list: queue head
+> >  *
+> >  * Returns true if the queue is empty, false otherwise.
+> >  * This variant can be used in lockless contexts.
+> >  */
+> > static inline bool skb_queue_empty_lockless(const struct sk_buff_head *list)
+> > {
+> > return READ_ONCE(list->next) == (const struct sk_buff *) list;
+> > }
+> >
+> > So maybe add a hlist_unhashed_lockless() to clearly document why
+> > callers are using the lockless variant ?
 >
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14175486600000
-> start commit:   112cbae2 Merge branch 'linus' of git://git.kernel.org/pub/..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=152cb8ccd35b1f70
-> dashboard link: https://syzkaller.appspot.com/bug?extid=90d5ec0c05e708f3b66d
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153ed6e2400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1539038c400000
->
-> If the result looks correct, please mark the bug fixed by replying with:
->
-> #syz fix: bpf: in __bpf_redirect_no_mac pull mac only if present
+> That sounds like a reasonable approach to me.  There aren't all that
+> many uses of hlist_unhashed(), so a name change should not be a problem.
 
-#syz fix: bpf: in __bpf_redirect_no_mac pull mac only if present
+Maybe I was not clear :  I did not rename skb_queue_empty()
+I chose to add another helper.
+
+Contexts that can safely use skb_queue_empty() still continue to use
+it, since it might help
+the compiler to generate better code.
+
+So If I add hlist_unhashed_lockless(), I would only use it from
+timer_pending() at first.
+
+Then an audit of the code might reveal other potential users.
