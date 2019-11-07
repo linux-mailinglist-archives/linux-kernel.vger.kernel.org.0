@@ -2,128 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED372F3172
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:31:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DE9CF317F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:32:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389401AbfKGObH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:31:07 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726033AbfKGObH (ORCPT
+        id S1731026AbfKGOcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:32:05 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:37210 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729047AbfKGOcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:31:07 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA7EPH7r120325
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2019 09:31:05 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w4jw4qcjb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 09:31:05 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Thu, 7 Nov 2019 14:31:03 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Nov 2019 14:30:59 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA7EUweZ13041862
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Nov 2019 14:30:58 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72424AE05D;
-        Thu,  7 Nov 2019 14:30:58 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44EC0AE065;
-        Thu,  7 Nov 2019 14:30:54 +0000 (GMT)
-Received: from [9.199.52.7] (unknown [9.199.52.7])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Nov 2019 14:30:53 +0000 (GMT)
-Subject: Re: [PATCH v6 0/7] Powerpc/Watchpoint: Few important fixes
-To:     mpe@ellerman.id.au
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>, mikey@neuling.org,
-        npiggin@gmail.com, benh@kernel.crashing.org, paulus@samba.org,
-        naveen.n.rao@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20191017093204.7511-1-ravi.bangoria@linux.ibm.com>
- <10cce8b1-8142-39d3-cd91-58b85dac7c8c@linux.ibm.com>
- <ecb3eda1-f111-9485-c28c-e20020ae1d46@c-s.fr>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Thu, 7 Nov 2019 20:00:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Thu, 7 Nov 2019 09:32:05 -0500
+Received: by mail-yw1-f65.google.com with SMTP id v84so647053ywc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 06:32:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yRYqa1o2NdhEBRGJeqYIB6zt6VJ6WLQd957CNIrLVtU=;
+        b=V31+97gEuKcwS9OaNqcWuLxaf6Dk9IUdRwjbv1EpOWaTkrPxYHB2EW3c7/ri43Q6k7
+         bwFNF/T9wGxfriCODN4BuqYv6VwhvwZPWBTV4Pn0+HUEPmow694LOsl9dm08jzg4mhod
+         Lu5WoqEIQ7TCMvBtSirFujYbjNVn9mXg+n7ZwkwkNz2gJVMUk7E5ofu+1hUzGuG8liRX
+         cTx09BiykjRuupe9Q5PDg6qJXwNkBE1dU1vBm8WzSLfnmHE/Bij8LTKZTUJJAYRdDGd2
+         rbHLjCvp9ZGLmy3aZAkHGBw48R5p5w24mgg3G/2oeRwyxZGzAvUAI9fJkGYLmrWNlsea
+         E+KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yRYqa1o2NdhEBRGJeqYIB6zt6VJ6WLQd957CNIrLVtU=;
+        b=nLFXto8K8le5H1Tds4XLZgMK7sLHvHyTO2ODIgdLrPWcwcfns/Wvigj0WN/ZZUfdsz
+         Mz/oA2vFX2dcp2TrF6Pg3sy2dcy3o8t9f+zcWa7LtYvbDKbD/S1csHpkfcurbcpWHXhc
+         7u2mJ/E8ch/z6ROreEm8gSj2+uvb4xvWi0iq+KfwWYDsLerq05nb02TFuNnNOsNq98Q6
+         7W7o3lYoDEQ3GfZMBNWP54bihZ/+kIFEF26F1r9oBJeWexZFXVk60/AdY8ubV3N6t5E8
+         t03nX/8Pkua5VZm9weQT8RE8PAmnWUrqnV8kK9q3EQuyMClDfgxscUY1Q8PLtuAVqUEp
+         8S+w==
+X-Gm-Message-State: APjAAAVD7i1tPP3UAhIFMe3yz3M6pRUg4NuLD8NWXwbEpSATJIdtVzco
+        VgPBVd4EXrfaXRL/aFHG0B8EGwTm
+X-Google-Smtp-Source: APXvYqzwj902Tyd57AaG3em2GTwZ2M3cPNOVwCrB5xRjJO9YSPN56fPqFIVZ3t+1la8W6v+/h7rVzA==
+X-Received: by 2002:a81:dd1:: with SMTP id 200mr2561355ywn.410.1573137122446;
+        Thu, 07 Nov 2019 06:32:02 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id f194sm1343150ywb.53.2019.11.07.06.32.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2019 06:32:01 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id i15so1008734ybq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 06:32:00 -0800 (PST)
+X-Received: by 2002:a25:cf55:: with SMTP id f82mr3672759ybg.203.1573137120264;
+ Thu, 07 Nov 2019 06:32:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <ecb3eda1-f111-9485-c28c-e20020ae1d46@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110714-0008-0000-0000-0000032C6F23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110714-0009-0000-0000-00004A4B7495
-Message-Id: <047a102b-9578-88cc-872f-06c2952fb74c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=875 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911070143
+References: <0000000000008d5a360575368e31@google.com> <000000000000cd76fb0596c1d41c@google.com>
+In-Reply-To: <000000000000cd76fb0596c1d41c@google.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 7 Nov 2019 09:31:24 -0500
+X-Gmail-Original-Message-ID: <CA+FuTSfVgPM4DZcvaRjDinoyg7cA+Pj4oCO-13+7PsFGrhuC+w@mail.gmail.com>
+Message-ID: <CA+FuTSfVgPM4DZcvaRjDinoyg7cA+Pj4oCO-13+7PsFGrhuC+w@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in _decode_session6
+To:     syzbot <syzbot+e8c1d30881266e47eb33@syzkaller.appspotmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        David Ahern <dsahern@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        johannes.berg@intel.com, Martin Lau <kafai@fb.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Peter Oskolkov <posk@google.com>, songliubraving@fb.com,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        Yonghong Song <yhs@fb.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 7, 2019 at 8:42 AM syzbot
+<syzbot+e8c1d30881266e47eb33@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this bug was fixed by commit:
+>
+> commit e7c87bd6cc4ec7b0ac1ed0a88a58f8206c577488
+> Author: Willem de Bruijn <willemb@google.com>
+> Date:   Wed Jan 16 01:19:22 2019 +0000
+>
+>      bpf: in __bpf_redirect_no_mac pull mac only if present
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1736f974600000
+> start commit:   b36fdc68 Merge tag 'gpio-v4.19-2' of git://git.kernel.org/..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4c7e83258d6e0156
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e8c1d30881266e47eb33
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d42021400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d09f1e400000
+>
+> If the result looks correct, please mark the bug fixed by replying with:
+>
+> #syz fix: bpf: in __bpf_redirect_no_mac pull mac only if present
 
+#syz fix: bpf: in __bpf_redirect_no_mac pull mac only if present
 
-On 10/29/19 7:31 PM, Christophe Leroy wrote:
-> 
-> 
-> Le 29/10/2019 à 05:54, Ravi Bangoria a écrit :
->>
->>
->> On 10/17/19 3:01 PM, Ravi Bangoria wrote:
->>> v5: https://lists.ozlabs.org/pipermail/linuxppc-dev/2019-October/198069.html
->>>
->>> v5->v6:
->>>   - patch 6/7: mpe reported that the perf-hwbreak.c doesn't compile with older
->>>     gcc:
->>>          perf-hwbreak.c:182:2: error: dereferencing type-punned pointer will
->>>          break strict-aliasing rules [-Werror=strict-aliasing]
->>>              temp16 = *((__u16 *)target);
->>>              ^
->>>     Fixed that.
->>>
->>
->> Hi Christophe, Are you ok with the series wrt 8xx?
-> 
-> Yes it looks ok on my 885:
-> 
-> root@vgoip:~# ./ptrace-hwbreak
-> test: ptrace-hwbreak
-> tags: git_version:v5.4-rc4-835-gb235e63aa9f0-dirty
-> PTRACE_SET_DEBUGREG, WO, len: 1: Ok
-> PTRACE_SET_DEBUGREG, WO, len: 2: Ok
-> PTRACE_SET_DEBUGREG, WO, len: 4: Ok
-> PTRACE_SET_DEBUGREG, WO, len: 8: Ok
-> PTRACE_SET_DEBUGREG, RO, len: 1: Ok
-> PTRACE_SET_DEBUGREG, RO, len: 2: Ok
-> PTRACE_SET_DEBUGREG, RO, len: 4: Ok
-> PTRACE_SET_DEBUGREG, RO, len: 8: Ok
-> PTRACE_SET_DEBUGREG, RW, len: 1: Ok
-> PTRACE_SET_DEBUGREG, RW, len: 2: Ok
-> PTRACE_SET_DEBUGREG, RW, len: 4: Ok
-> PTRACE_SET_DEBUGREG, RW, len: 8: Ok
-> PPC_PTRACE_SETHWDEBUG, MODE_EXACT, WO, len: 1: Ok
-> PPC_PTRACE_SETHWDEBUG, MODE_EXACT, RO, len: 1: Ok
-> PPC_PTRACE_SETHWDEBUG, MODE_EXACT, RW, len: 1: Ok
-> success: ptrace-hwbreak
-> 
-> Also ok on book3s/32:
-
-mpe, Can you please pull the series.
-
-Ravi
-
+indeed manually reproduced at e7c87bd6cc4e~1, failed to reproduce at
+e7c87bd6cc4e. Also seems plausible given the stack trace.
