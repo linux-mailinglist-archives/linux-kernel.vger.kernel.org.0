@@ -2,129 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F279DF2CA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59C9DF2CAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388137AbfKGKhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:37:10 -0500
-Received: from foss.arm.com ([217.140.110.172]:53890 "EHLO foss.arm.com"
+        id S2387986AbfKGKiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 05:38:08 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:43787 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727278AbfKGKhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:37:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB1091FB;
-        Thu,  7 Nov 2019 02:37:08 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50D633F71A;
-        Thu,  7 Nov 2019 02:37:08 -0800 (PST)
-Date:   Thu, 7 Nov 2019 10:37:06 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>, james.quinlan@broadcom.com,
-        mbrugger@suse.com, f.fainelli@gmail.com, phil@raspberrypi.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] ARM: dts: bcm2711: Enable PCIe controller
-Message-ID: <20191107103705.GX9723@e119886-lin.cambridge.arm.com>
-References: <20191106214527.18736-1-nsaenzjulienne@suse.de>
- <20191106214527.18736-3-nsaenzjulienne@suse.de>
+        id S1727562AbfKGKiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 05:38:07 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4780H0101Vz9sPk;
+        Thu,  7 Nov 2019 21:38:04 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1573123084;
+        bh=EuCQWBJu7VcB6YgIibTf/Kk620zrgZzJsosDpaxvqdM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Zac4A53Nv8XNqQ4sZ8/pK61XgOySwnxndE/EDPi9MccC+O98Zdgvg7AiPN/1IE9i3
+         xT5kBCIUO2zJmh7aAKK32TRXwO30xS9t+6+gwTMwHqW0PXU9gJVs7ArgZE2HswmWGr
+         dg2rQ8zyI+ptFHDMcXr4kvr5rCf3TLvpZXxQunK+7D03MPRvNhXx8+YoxsYaP5KA98
+         99MVXL4cSSWH7l6/oVxGux+GXVT3GcouTghoAU0GpawbOGoJ3PByLXLZTL8EPGz7BQ
+         0G6RodfBjhytJ8a/8jpTkMhTrAR45avbcbKw3eLNGs+IV1Bi04CSATMUl9EXsfqaAs
+         CMeRt6dGcETcQ==
+Date:   Thu, 7 Nov 2019 21:38:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Xen Devel <Xen-devel@lists.xensource.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the xen-tip tree
+Message-ID: <20191107213800.02ba8bbc@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106214527.18736-3-nsaenzjulienne@suse.de>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Type: multipart/signed; boundary="Sig_/SPy0IXJ7vjzuzfT3wDsAJ6w";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 10:45:24PM +0100, Nicolas Saenz Julienne wrote:
-> This enables bcm2711's PCIe bus, wich is hardwired to a VIA Technologies
+--Sig_/SPy0IXJ7vjzuzfT3wDsAJ6w
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-s/wich/which/
+Hi all,
 
-> XHCI USB 3.0 controller.
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> ---
->  arch/arm/boot/dts/bcm2711.dtsi | 47 ++++++++++++++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-> index a9d84e28f245..c7b2e7b57da6 100644
-> --- a/arch/arm/boot/dts/bcm2711.dtsi
-> +++ b/arch/arm/boot/dts/bcm2711.dtsi
-> @@ -288,6 +288,53 @@
->  		arm,cpu-registers-not-fw-configured;
->  	};
->  
-> +	scb {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +
-> +		ranges = <0x0 0x7c000000  0x0 0xfc000000  0x03800000>,
-> +			 <0x6 0x00000000  0x6 0x00000000  0x40000000>;
-> +
-> +		pcie_0: pcie@7d500000 {
-> +			compatible = "brcm,bcm2711-pcie";
-> +			reg = <0x0 0x7d500000 0x9310>;
-> +			msi-controller;
-> +			msi-parent = <&pcie_0>;
-> +			#address-cells = <3>;
-> +			#interrupt-cells = <1>;
-> +			#size-cells = <2>;
-> +			linux,pci-domain = <0>;
+Commits
 
-pci-domain is unlikely to be needed here.
+  68a7cae93bf9 ("xen: mm: make xen_mm_init static")
+  34fbb76d009d ("xen: mm: include <xen/xen-ops.h> for missing declarations")
 
-> +			brcm,enable-ssc;
-> +			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pcie", "msi";
-> +			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-> +			interrupt-map = <0 0 0 1 &gicv2 GIC_SPI 143
-> +							IRQ_TYPE_LEVEL_HIGH
-> +					 0 0 0 2 &gicv2 GIC_SPI 144
-> +							IRQ_TYPE_LEVEL_HIGH
-> +					 0 0 0 3 &gicv2 GIC_SPI 145
-> +							IRQ_TYPE_LEVEL_HIGH
-> +					 0 0 0 4 &gicv2 GIC_SPI 146
-> +							IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			ranges = <0x02000000 0x0 0xf8000000 0x6 0x00000000
-> +				  0x0 0x04000000>;
+are missing a Signed-off-by from their committer.
 
-Is legacy I/O supported by this controller?
+--=20
+Cheers,
+Stephen Rothwell
 
-> +			/*
-> +			 * The wrapper around the PCIe block has a bug
-> +			 * preventing it from accessing beyond the first 3GB of
-> +			 * memory. As the bus DMA mask is rounded up to the
-> +			 * closest power of two of the dma-range size, we're
-> +			 * forced to set the limit at 2GB. This can be
-> +			 * harmlessly changed in the future once the DMA code
-> +			 * handles non power of two DMA limits.
-> +			 */
-> +			dma-ranges = <0x02000000 0x0 0x00000000 0x0 0x00000000
-> +				      0x0 0x80000000>;
-> +		};
-> +	};
+--Sig_/SPy0IXJ7vjzuzfT3wDsAJ6w
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-Andrew Murray
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3D9AgACgkQAVBC80lX
+0GxZeQf/YpWL5o1rsY+ESuow6Wssv+5TsmAYRd+CUjXVj2292BIhNqkPJJuv8nQj
+G5UOt2553CBCEH99G4RTPKg9oHluBEeD25zmofWEp2Z9W4mGBtojPt/UojfIkX+8
++rrL8dnza2KcLan7+GUqioYM5VwVYoAffZS56SbirF0S8EDOySl1ud1QR6AYSTR7
+NIglQ/U6AmZ/NPqXE11//JBQU+gXtVY5sg84dO/F+NO3FA1jNTmpv8ZdN/V0W/55
+dh+A0Yi9Ju0Oxbwp9a9XRAQa35a1tjzfo+cRBXuCg/Drk7PWEnvLUmSJzsY22xP1
+PagcVpaE5XnbCHhQHRYt46gVQPIz5w==
+=PtIn
+-----END PGP SIGNATURE-----
 
-> +
->  	cpus: cpus {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> -- 
-> 2.23.0
-> 
+--Sig_/SPy0IXJ7vjzuzfT3wDsAJ6w--
