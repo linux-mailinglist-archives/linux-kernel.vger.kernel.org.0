@@ -2,184 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1430F25E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97D9BF25F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733051AbfKGDQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 22:16:43 -0500
-Received: from mga03.intel.com ([134.134.136.65]:33378 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727581AbfKGDQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 22:16:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 19:16:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,276,1569308400"; 
-   d="scan'208";a="233106400"
-Received: from chenyu-office.sh.intel.com ([10.239.158.173])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Nov 2019 19:16:39 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     x86@kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH] x86/resctrl: Add task resctrl information display
-Date:   Thu,  7 Nov 2019 11:27:31 +0800
-Message-Id: <20191107032731.7790-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1733087AbfKGDaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 22:30:12 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38623 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727581AbfKGDaM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 22:30:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573097409;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ysog8BJEqUBkq8d1ilBdsk1voJg26ciFZ92elSxaQhs=;
+        b=PgWbF6u8KTn/195D79iIYGE24dgeLQ0cOG7q4Qqj+x5QlkOUlCHxEFqfkNPSvoKJnRtnV3
+        XLss2XsUtmkEPi4yG6mXZouHDbgAIT9j/O1GvAKf5XkrHF5Zi0Jqy2yEBEmxa+95VogpMN
+        EdN4AyYig840tqChdtz4CID+fwb+N0E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-66-0D2ve2QbP6m0-ulIW5FPqw-1; Wed, 06 Nov 2019 22:30:08 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4A1161800D7B;
+        Thu,  7 Nov 2019 03:30:07 +0000 (UTC)
+Received: from jlaw-desktop.bos.redhat.com (dhcp-17-119.bos.redhat.com [10.18.17.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E42975D9CD;
+        Thu,  7 Nov 2019 03:30:02 +0000 (UTC)
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v2] x86/stacktrace: update kconfig help text for reliable unwinders
+Date:   Wed,  6 Nov 2019 22:29:58 -0500
+Message-Id: <20191107032958.14034-1-joe.lawrence@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: 0D2ve2QbP6m0-ulIW5FPqw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Monitoring tools that want to find out which resctrl CTRL
-and MONITOR groups a task belongs to must currently read
-the "tasks" file in every group until they locate the process
-ID.
+commit 6415b38bae26 ("x86/stacktrace: Enable HAVE_RELIABLE_STACKTRACE
+for the ORC unwinder") added the ORC unwinder as a "reliable" unwinder.
+Update the help text to reflect that change: the frame pointer unwinder
+is no longer the only one that can provide HAVE_RELIABLE_STACKTRACE.
 
-Add an additional file /proc/{pid}/resctrl to provide this
-information.
-
-For example:
- cat /proc/1193/resctrl
-CTRL_MON:/ctrl_grp0
-MON:/ctrl_grp0/mon_groups/mon_grp0
-
-If the resctrl filesystem has not been mounted,
-reading /proc/{pid}/resctrl returns an error:
-cat: /proc/1193/resctrl: No such device
-
-Tested-by: Jinshi Chen <jinshi.chen@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
 ---
- arch/x86/include/asm/resctrl_sched.h   |  4 +++
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 46 ++++++++++++++++++++++++++
- fs/proc/base.c                         |  9 +++++
- 3 files changed, 59 insertions(+)
 
-diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/resctrl_sched.h
-index f6b7fe2833cc..bba362e0e00f 100644
---- a/arch/x86/include/asm/resctrl_sched.h
-+++ b/arch/x86/include/asm/resctrl_sched.h
-@@ -5,6 +5,7 @@
- #ifdef CONFIG_X86_CPU_RESCTRL
- 
- #include <linux/sched.h>
-+#include <linux/proc_fs.h>
- #include <linux/jump_label.h>
- 
- #define IA32_PQR_ASSOC	0x0c8f
-@@ -84,6 +85,9 @@ static inline void resctrl_sched_in(void)
- 		__resctrl_sched_in();
- }
- 
-+int proc_resctrl_show(struct seq_file *m, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk);
-+
- #else
- 
- static inline void resctrl_sched_in(void) {}
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index a46dee8e78db..2317174174e9 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -727,6 +727,52 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk)
-+{
-+	struct rdtgroup *rdtg;
-+	int ret = 0;
-+
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	/* Make sure resctrl has been mounted. */
-+	if (!static_branch_unlikely(&rdt_enable_key)) {
-+		ret = -ENODEV;
-+		goto unlock;
-+	}
-+
-+	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-+		struct rdtgroup *crg;
-+
-+		/*
-+		 * Task information is only relevant for shareable
-+		 * and exclusive groups.
-+		 */
-+		if (rdtg->mode != RDT_MODE_SHAREABLE &&
-+		    rdtg->mode != RDT_MODE_EXCLUSIVE)
-+			continue;
-+
-+		if (rdtg->closid == tsk->closid) {
-+			seq_printf(s, "CTRL_MON:/%s\n", rdtg->kn->name);
-+			list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-+					    mon.crdtgrp_list) {
-+				if (tsk->rmid != crg->mon.rmid)
-+					continue;
-+				seq_printf(s, "MON:%s%s/mon_groups/%s\n",
-+					   rdtg == &rdtgroup_default ? "" : "/",
-+					   rdtg->kn->name, crg->kn->name);
-+				goto unlock;
-+			}
-+			goto unlock;
-+		}
-+	}
-+	ret = -ENOENT;
-+unlock:
-+	mutex_unlock(&rdtgroup_mutex);
-+
-+	return ret;
-+}
-+
- static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
- 				    struct seq_file *seq, void *v)
- {
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ebea9501afb8..d8a61db78db5 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -95,6 +95,9 @@
- #include <linux/sched/stat.h>
- #include <linux/posix-timers.h>
- #include <trace/events/oom.h>
-+#ifdef CONFIG_X86_CPU_RESCTRL
-+#include <asm/resctrl_sched.h>
-+#endif
- #include "internal.h"
- #include "fd.h"
- 
-@@ -3060,6 +3063,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_X86_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score",  S_IRUGO, proc_oom_score),
- 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-@@ -3460,6 +3466,9 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_X86_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score", S_IRUGO, proc_oom_score),
- 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
--- 
-2.17.1
+v2: dropped hunk that added unnecessary text to UNWIND_GUESS
+
+ arch/x86/Kconfig.debug | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+index bf9cd83de777..409c00f74e60 100644
+--- a/arch/x86/Kconfig.debug
++++ b/arch/x86/Kconfig.debug
+@@ -316,10 +316,6 @@ config UNWINDER_FRAME_POINTER
+ =09  unwinder, but the kernel text size will grow by ~3% and the kernel's
+ =09  overall performance will degrade by roughly 5-10%.
+=20
+-=09  This option is recommended if you want to use the livepatch
+-=09  consistency model, as this is currently the only way to get a
+-=09  reliable stack trace (CONFIG_HAVE_RELIABLE_STACKTRACE).
+-
+ config UNWINDER_GUESS
+ =09bool "Guess unwinder"
+ =09depends on EXPERT
+--=20
+2.21.0
 
