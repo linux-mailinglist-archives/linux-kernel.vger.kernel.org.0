@@ -2,76 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD67F2AEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB8AFF2AF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:42:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbfKGJls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:41:48 -0500
-Received: from foss.arm.com ([217.140.110.172]:52772 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726866AbfKGJls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:41:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D388F46A;
-        Thu,  7 Nov 2019 01:41:47 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 391723F71A;
-        Thu,  7 Nov 2019 01:41:47 -0800 (PST)
-Date:   Thu, 7 Nov 2019 09:41:45 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 5/5] PCI: Allow building PCIe things without PCIEPORTBUS
-Message-ID: <20191107094144.GT9723@e119886-lin.cambridge.arm.com>
-References: <20191106222420.10216-1-helgaas@kernel.org>
- <20191106222420.10216-6-helgaas@kernel.org>
+        id S2387863AbfKGJml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:42:41 -0500
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:45277 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387839AbfKGJmj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:42:39 -0500
+Received: by mail-pf1-f177.google.com with SMTP id z4so2219658pfn.12;
+        Thu, 07 Nov 2019 01:42:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uQYM89kRHH7dgWnRcZbS2fUE+Evf4zfFUahI2yZQehQ=;
+        b=lq9z93Sq3s6768GZXvFx2wGQOdf8EhVyRlKanIlIJPwRqzP1b3jXyFPHy68rMvGk5v
+         El8fBttPpQbH+ZxJkV1MfOlpYZ27eYjlfDQD72kqqON/F8qp2o9nhhkoQaXOU+xYo44I
+         Qmxdg/iadOFvliXX+Np/KRFQKDVU505UmNBrGakDW4Beulm24rYCGd+0jtz4zkqUxEeR
+         HtF2PgoNvosgERH1MtGjhg01cFDAyttzbZHcv+Fe/mH5yi7lyKurDZuhKx9VcWucMB01
+         Af2FOavz6eocOzlsJKdwMvjQXL8v0nMxhvkbdev8Ssfnm1fd3kxRqkcD0v+JgHwLKAbZ
+         dg1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=uQYM89kRHH7dgWnRcZbS2fUE+Evf4zfFUahI2yZQehQ=;
+        b=Z1BBXiwV1MWqKS8ngKStAPx6lk1xiihP3d/l9sUeT9KEwDTfEC2o+4hD23QXSGtJqN
+         xssSR+vZzlG9KVteqyJYg8dm8yYGxCUiNPr7poDf7ZNIrbIlGyvSpJoXTz9Hd196G9JK
+         SZx9RaHDCH+bA2qu8LPhYoJ3wmRxHtbopaHMAC1og2QcAzzSVr8f+EEuwiZTGbVOz+3H
+         dH/jwWLjoEbKMKhWu3jA2qvPEIZqwhkM5MbT8arfqoP60OOJWQ2Vtb4nAZV/4mpeiCLC
+         o723nzYFaYkN22s++wp7fiytuSC/LhDTSugzAHs5fbw7TUWfEoJ9BCnbG+j8OHDjja0K
+         iQ+w==
+X-Gm-Message-State: APjAAAUO4ZzE6SX7HZKQv9dwlab+O7u4uEkOhwq+foXB2F6rTv3odLKw
+        uUFHKSFLXjHGGoUF+aY84QQwtKqE5ZM=
+X-Google-Smtp-Source: APXvYqx6yGSJSOhtkKmiM095LncRp44OvC5Rd1pBrTl3bk3ZJHYS+Dr+3e+Z4xM+CbsnR+mKK0rKKg==
+X-Received: by 2002:aa7:9482:: with SMTP id z2mr2764494pfk.98.1573119758546;
+        Thu, 07 Nov 2019 01:42:38 -0800 (PST)
+Received: from voyager.lan ([45.124.203.14])
+        by smtp.gmail.com with ESMTPSA id 12sm1958195pfp.79.2019.11.07.01.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 01:42:37 -0800 (PST)
+From:   Joel Stanley <joel@jms.id.au>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH v2 0/4] clocksource: Add ast2600 support to fttmr010
+Date:   Thu,  7 Nov 2019 20:12:14 +1030
+Message-Id: <20191107094218.13210-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106222420.10216-6-helgaas@kernel.org>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 04:24:21PM -0600, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Some things in drivers/pci/pcie (aspm.c and ptm.c) do not depend on the
-> PCIe portdrv, so we should be able to build them even if PCIEPORTBUS is not
-> selected.  Remove the PCIEPORTBUS guard from building pcie/.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> index 28cdd8c0213a..522d2b974e91 100644
-> --- a/drivers/pci/Makefile
-> +++ b/drivers/pci/Makefile
-> @@ -7,6 +7,8 @@ obj-$(CONFIG_PCI)		+= access.o bus.o probe.o host-bridge.o \
->  				   pci-sysfs.o rom.o setup-res.o irq.o vpd.o \
->  				   setup-bus.o vc.o mmap.o setup-irq.o
->  
-> +obj-$(CONFIG_PCI)		+= pcie/
-> +
->  ifdef CONFIG_PCI
->  obj-$(CONFIG_PROC_FS)		+= proc.o
->  obj-$(CONFIG_SYSFS)		+= slot.o
-> @@ -15,7 +17,6 @@ endif
->  
->  obj-$(CONFIG_OF)		+= of.o
->  obj-$(CONFIG_PCI_QUIRKS)	+= quirks.o
-> -obj-$(CONFIG_PCIEPORTBUS)	+= pcie/
->  obj-$(CONFIG_HOTPLUG_PCI)	+= hotplug/
->  obj-$(CONFIG_PCI_MSI)		+= msi.o
->  obj-$(CONFIG_PCI_ATS)		+= ats.o
+This series adds support for the AST2600 timer.
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+v2 adds r-b tags from Rob, Linus and Cédric (who reviewed the patches on the
+openbmc mailing list[1]). I made two small naming changes in this
+version that were suggested in review.
 
-> -- 
-> 2.24.0.rc1.363.gb1bccd3e3d-goog
-> 
+[1] https://patchwork.ozlabs.org/project/openbmc/list/?series=140990
+
+Joel Stanley (4):
+  clocksource: fttmr010: Parametrise shutdown
+  clocksource: fttmr010: Set interrupt and shutdown
+  clocksource: fttmr010: Add support for ast2600
+  dt-bindings: fttmr010: Add ast2600 compatible
+
+ .../bindings/timer/faraday,fttmr010.txt       |  1 +
+ drivers/clocksource/timer-fttmr010.c          | 68 +++++++++++++++----
+ 2 files changed, 54 insertions(+), 15 deletions(-)
+
+-- 
+2.24.0.rc1
+
