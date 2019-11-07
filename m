@@ -2,95 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA5CF2D1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 491F6F2CF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388224AbfKGLKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 06:10:10 -0500
-Received: from mx21.baidu.com ([220.181.3.85]:56558 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727707AbfKGLKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 06:10:09 -0500
-Received: from BC-Mail-Ex31.internal.baidu.com (unknown [172.31.51.25])
-        by Forcepoint Email with ESMTPS id EFF444C6A6F82;
-        Thu,  7 Nov 2019 18:53:48 +0800 (CST)
-Received: from BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) by
- BC-Mail-Ex31.internal.baidu.com (172.31.51.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Thu, 7 Nov 2019 18:53:50 +0800
-Received: from BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) by
- BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) with mapi id
- 15.01.1713.004; Thu, 7 Nov 2019 18:53:50 +0800
-From:   "Li,Rongqing" <lirongqing@baidu.com>
-To:     "Li,Rongqing" <lirongqing@baidu.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "sergey.senozhatsky.work@gmail.com" 
-        <sergey.senozhatsky.work@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Kan.liang@intel.com" <Kan.liang@intel.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXVt2Ml0gd2F0Y2hkb2cvaGFyZGxvY2t1cDogcmVhc3Np?=
- =?gb2312?Q?gn_last=5Ftimestamp_when_enable_nmi_event?=
-Thread-Topic: [PATCH][v2] watchdog/hardlockup: reassign last_timestamp when
- enable nmi event
-Thread-Index: AQHVhIbsJWHFXEYJak262w7TdcNcAad/qiDw
-Date:   Thu, 7 Nov 2019 10:53:50 +0000
-Message-ID: <2142496f954e4f688056c8cc347369a8@baidu.com>
-References: <1571121247-19392-1-git-send-email-lirongqing@baidu.com>
-In-Reply-To: <1571121247-19392-1-git-send-email-lirongqing@baidu.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.198.4]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S2387970AbfKGLGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 06:06:08 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35507 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbfKGLGH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 06:06:07 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y6so1278455lfj.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 03:06:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9gtlTin+00E64HhGraEWeRmlFe8OE5QOZpkTpU0Z+MM=;
+        b=SDzAUlK65SJ+iY6ZrvmE36CDvTD2wsiRdpMpR4C2iT7oYMkq7fQC5LG7Sox+q04j9t
+         7omCnz1ia+t4dRTId0xMy0/S+9Ns7s0R+SWLc6ENY8tFDsA+z3YBo1rvS7AyRATDP4Lx
+         JwfwgujKOkmqGFUXon8MmzWIGNAM11MhYBUjRk9bXqtq2gREvDTJqkf5qp/rDxDxeHcG
+         t0lkCNr5PodmVLco1lWwUBsB56dsErRZj3aEZ37bPDrgcBDGT17j3WcxalH+g5NTYCI7
+         DwSdG0IN76RlOwERSt11Tj6pUQC871YN/v1CEOd4QnGEYxulwcrmtQMW8JTIpg3hyNjN
+         9pcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9gtlTin+00E64HhGraEWeRmlFe8OE5QOZpkTpU0Z+MM=;
+        b=grc4QEbA7XmOi8vs86XeRA7gJMWJizkn6NdcFCbSkY+fhtzO7vdIXiLlV9kpkGfLig
+         LK6/d5vbaW+BD29nKiSBsGhvgxV3BUvFQAArkaE9nyVmXlYEwYXmXPyZzMvN8u4ReYQ2
+         XtVc6h8sxOjCffB5XHQX3DltwS6gDLDuySKWcuZXxrrPltXORbkTmEm+IGyCq6r2I2L3
+         2r9cRjUJLFRvXFiVETRhYhqy7TSCh6pKQGUCVqHogWuTOertlkVfnK61ikZtFiRV5q/n
+         5oVegRMSRl3QVKYhcDpftTYwgf0f5fn+RODnErHZGotPsbDn80Kf8LUz7lgkxGxwZ9O7
+         PGtA==
+X-Gm-Message-State: APjAAAVUDhwZD1fMU66YU1QjZT/OhgDfV7TOyCKrn/B0pbedt2uxWHIW
+        Shx83ZUWEofyPMAI8Pum5ltWEmoaFGQ=
+X-Google-Smtp-Source: APXvYqwQPIFVgxvw48/U+Nj8sHpu5wsOuh8x/5UwZVW7SmDR31NSl7928vcrdGZ59b6fkEP7eLZw+g==
+X-Received: by 2002:a05:6512:75:: with SMTP id i21mr1951816lfo.180.1573124765855;
+        Thu, 07 Nov 2019 03:06:05 -0800 (PST)
+Received: from jax (h-48-81.A175.priv.bahnhof.se. [94.254.48.81])
+        by smtp.gmail.com with ESMTPSA id 4sm834976lfa.95.2019.11.07.03.06.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Nov 2019 03:06:05 -0800 (PST)
+Date:   Thu, 7 Nov 2019 12:06:03 +0100
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Volodymyr_Babchuk@epam.com, tee-dev@lists.linaro.org,
+        linux-kernel@vger.kernel.org, etienne.carriere@linaro.org
+Subject: Re: [PATCH] tee: optee: Fix dynamic shm pool allocations
+Message-ID: <20191107110603.GA8790@jax>
+References: <1572527274-21925-1-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1572527274-21925-1-git-send-email-sumit.garg@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UGluZyANCg0KVGhhbmtzDQoNCi1MaQ0KDQo+IC0tLS0t08q8/tStvP4tLS0tLQ0KPiC3orz+yMs6
-IGxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj4gW21haWx0bzpsaW51eC1rZXJu
-ZWwtb3duZXJAdmdlci5rZXJuZWwub3JnXSC0+rHtIExpIFJvbmdRaW5nDQo+ILeiy83KsbzkOiAy
-MDE5xOoxMNTCMTXI1SAxNDozNA0KPiDK1bz+yMs6IGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc7
-IHNlcmdleS5zZW5vemhhdHNreS53b3JrQGdtYWlsLmNvbTsNCj4gbGludXgta2VybmVsQHZnZXIu
-a2VybmVsLm9yZzsgdGdseEBsaW51dHJvbml4LmRlOyBLYW4ubGlhbmdAaW50ZWwuY29tDQo+INb3
-zOI6IFtQQVRDSF1bdjJdIHdhdGNoZG9nL2hhcmRsb2NrdXA6IHJlYXNzaWduIGxhc3RfdGltZXN0
-YW1wIHdoZW4NCj4gZW5hYmxlIG5taSBldmVudA0KPiANCj4gbGFzdF90aW1lc3RhbXAgaXMgbm90
-IGluaXRpYWxpemVkIGFuZCBpcyB6ZXJvIGFmdGVyIGJvb3QsIG9yIHN0b3AgdG8gZm9yd2FyZCB3
-aGVuDQo+IG5taSB3YXRjaGRvZyBpcyBkaXNhYmxlZDsgYW5kIGZhbHNlIHBvc2l0aXZlcyBzdGls
-bCBpcyBwb3NzaWJsZSB3aGVuIHJlc3RhcnQgTk1JDQo+IHRpbWVyIGFmdGVyIHN0b3BwaW5nIDEy
-MCBzZWNvbmRzDQo+IA0KPiBzbyByZWFzc2lnbiBsYXN0X3RpbWVzdGFtcCBhbHdheXMgd2hlbiBl
-bmFibGUgbm1pIGV2ZW50DQo+IA0KPiBGaXhlczogN2VkYWViNjg0MWRmICgia2VybmVsL3dhdGNo
-ZG9nOiBQcmV2ZW50IGZhbHNlIHBvc2l0aXZlcyB3aXRoIHR1cmJvDQo+IG1vZGVzIikNCj4gU2ln
-bmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBTaWduZWQt
-b2ZmLWJ5OiBaaGFuZyBZdSA8emhhbmd5dTMxQGJhaWR1LmNvbT4NCj4gLS0tDQo+IA0KPiB2MS0t
-PnYyOiBtYWtlIGl0IGJlIGFibGUgdG8gYmUgY29tcGlsZWQgb24gbm8NCj4gdjEtLT5DT05GSUdf
-SEFSRExPQ0tVUF9DSEVDS19USU1FU1RBTVAgcGxhdGZvcm0NCj4gDQo+IGtlcm5lbC93YXRjaGRv
-Z19obGQuYyB8IDE4ICsrKysrKysrKysrKysrKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDE3IGlu
-c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9rZXJuZWwvd2F0
-Y2hkb2dfaGxkLmMgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMgaW5kZXgNCj4gMjQ3YmYwYjE1ODJj
-Li5mMTRkMTgyODAzODcgMTAwNjQ0DQo+IC0tLSBhL2tlcm5lbC93YXRjaGRvZ19obGQuYw0KPiAr
-KysgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMNCj4gQEAgLTkxLDExICs5MSwyNCBAQCBzdGF0aWMg
-Ym9vbCB3YXRjaGRvZ19jaGVja190aW1lc3RhbXAodm9pZCkNCj4gIAlfX3RoaXNfY3B1X3dyaXRl
-KGxhc3RfdGltZXN0YW1wLCBub3cpOw0KPiAgCXJldHVybiB0cnVlOw0KPiAgfQ0KPiArDQo+ICtz
-dGF0aWMgdm9pZCB3YXRjaGRvZ190b3VjaF90aW1lc3RhbXAoaW50IGNwdSkgew0KPiArDQo+ICsJ
-a3RpbWVfdCBub3cgPSBrdGltZV9nZXRfbW9ub19mYXN0X25zKCk7DQo+ICsNCj4gKwlwZXJfY3B1
-KGxhc3RfdGltZXN0YW1wLCBjcHUpID0gbm93Ow0KPiArfQ0KPiAgI2Vsc2UNCj4gIHN0YXRpYyBp
-bmxpbmUgYm9vbCB3YXRjaGRvZ19jaGVja190aW1lc3RhbXAodm9pZCkgIHsNCj4gIAlyZXR1cm4g
-dHJ1ZTsNCj4gIH0NCj4gKw0KPiArc3RhdGljIHZvaWQgd2F0Y2hkb2dfdG91Y2hfdGltZXN0YW1w
-KGludCBjcHUpIHsNCj4gKw0KPiArfQ0KPiAgI2VuZGlmDQo+IA0KPiAgc3RhdGljIHN0cnVjdCBw
-ZXJmX2V2ZW50X2F0dHIgd2RfaHdfYXR0ciA9IHsgQEAgLTE5Niw2ICsyMDksNyBAQCB2b2lkDQo+
-IGhhcmRsb2NrdXBfZGV0ZWN0b3JfcGVyZl9lbmFibGUodm9pZCkNCj4gIAlpZiAoIWF0b21pY19m
-ZXRjaF9pbmMoJndhdGNoZG9nX2NwdXMpKQ0KPiAgCQlwcl9pbmZvKCJFbmFibGVkLiBQZXJtYW5l
-bnRseSBjb25zdW1lcyBvbmUgaHctUE1VIGNvdW50ZXIuXG4iKTsNCj4gDQo+ICsJd2F0Y2hkb2df
-dG91Y2hfdGltZXN0YW1wKHNtcF9wcm9jZXNzb3JfaWQoKSk7DQo+ICAJcGVyZl9ldmVudF9lbmFi
-bGUodGhpc19jcHVfcmVhZCh3YXRjaGRvZ19ldikpOw0KPiAgfQ0KPiANCj4gQEAgLTI3NCw4ICsy
-ODgsMTAgQEAgdm9pZCBfX2luaXQgaGFyZGxvY2t1cF9kZXRlY3Rvcl9wZXJmX3Jlc3RhcnQodm9p
-ZCkNCj4gIAlmb3JfZWFjaF9vbmxpbmVfY3B1KGNwdSkgew0KPiAgCQlzdHJ1Y3QgcGVyZl9ldmVu
-dCAqZXZlbnQgPSBwZXJfY3B1KHdhdGNoZG9nX2V2LCBjcHUpOw0KPiANCj4gLQkJaWYgKGV2ZW50
-KQ0KPiArCQlpZiAoZXZlbnQpIHsNCj4gKwkJCXdhdGNoZG9nX3RvdWNoX3RpbWVzdGFtcChjcHUp
-Ow0KPiAgCQkJcGVyZl9ldmVudF9lbmFibGUoZXZlbnQpOw0KPiArCQl9DQo+ICAJfQ0KPiAgfQ0K
-PiANCj4gLS0NCj4gMi4xNi4yDQoNCg==
+Hi Sumit,
+
+On Thu, Oct 31, 2019 at 06:37:54PM +0530, Sumit Garg wrote:
+> In case of dynamic shared memory pool, kernel memory allocated using
+> dmabuf_mgr pool needs to be registered with OP-TEE prior to its usage
+> during optee_open_session() or optee_invoke_func().
+> 
+> So fix dmabuf_mgr pool allocations via an additional call to
+> optee_shm_register().
+> 
+> Fixes: 9733b072a12a ("optee: allow to work without static shared memory")
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+
+Looks good, I'm picking this up. Etienne told me has tested this on some
+of his hardware so I'll add:
+Tested-by: Etienne Carriere <etienne.carriere@linaro.org>
+
+Thanks,
+Jens
+
+> ---
+> 
+> Depends on patch: https://lkml.org/lkml/2019/7/30/506 that adds support
+> to allow registration of kernel buffers with OP-TEE.
+> 
+>  drivers/tee/optee/shm_pool.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tee/optee/shm_pool.c b/drivers/tee/optee/shm_pool.c
+> index de1d9b8..0332a53 100644
+> --- a/drivers/tee/optee/shm_pool.c
+> +++ b/drivers/tee/optee/shm_pool.c
+> @@ -17,6 +17,7 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
+>  {
+>  	unsigned int order = get_order(size);
+>  	struct page *page;
+> +	int rc = 0;
+>  
+>  	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
+>  	if (!page)
+> @@ -26,12 +27,21 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
+>  	shm->paddr = page_to_phys(page);
+>  	shm->size = PAGE_SIZE << order;
+>  
+> -	return 0;
+> +	if (shm->flags & TEE_SHM_DMA_BUF) {
+> +		shm->flags |= TEE_SHM_REGISTER;
+> +		rc = optee_shm_register(shm->ctx, shm, &page, 1 << order,
+> +					(unsigned long)shm->kaddr);
+> +	}
+> +
+> +	return rc;
+>  }
+>  
+>  static void pool_op_free(struct tee_shm_pool_mgr *poolm,
+>  			 struct tee_shm *shm)
+>  {
+> +	if (shm->flags & TEE_SHM_DMA_BUF)
+> +		optee_shm_unregister(shm->ctx, shm);
+> +
+>  	free_pages((unsigned long)shm->kaddr, get_order(shm->size));
+>  	shm->kaddr = NULL;
+>  }
+> -- 
+> 2.7.4
+> 
