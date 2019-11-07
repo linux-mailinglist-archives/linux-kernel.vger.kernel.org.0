@@ -2,123 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38AFAF356B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:07:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 951C2F357A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbfKGRHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:07:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726231AbfKGRHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:07:42 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [109.144.209.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AB93206BA;
-        Thu,  7 Nov 2019 17:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573146461;
-        bh=fPQk1CB2fD+joQiucvbdrbH/MOkp35H8ljloJnhHVes=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=FULeloc2Cw14BMI0w6LnhBrCrhL9bUi4jg/5JduqcxU4Ybfb829eYbVWNWZF4gheK
-         tDIboebsOwypoS5vF4/mx2IY93cqYQEIFnewH7V4EQyDY5/XgXLycehA4w0EAzQA5j
-         ZK841bxgxlWiZqX0XKC7AuXoB+tVohNI61d9Kd+s=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id A09D13522919; Thu,  7 Nov 2019 09:07:38 -0800 (PST)
-Date:   Thu, 7 Nov 2019 09:07:38 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-tip-commits@vger.kernel.org,
-        syzbot <syzkaller@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [tip: timers/core] hrtimer: Annotate lockless access to
- timer->state
-Message-ID: <20191107170738.GT20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <157307905904.29376.8711513726869840596.tip-bot2@tip-bot2>
- <CANn89iKXi3rWWruKoBwQ8rncwLvkbzjZJWuJL3K05fjAhcySwg@mail.gmail.com>
- <CANn89iL=xPxejRPC=wHY7q27fLOvFBK-7HtqU_HJo+go3S9UXA@mail.gmail.com>
- <20191107085255.GK20975@paulmck-ThinkPad-P72>
- <CANn89i+8Hq5j234zFRY05QxZU1n=Vr6S-kZCcvn3Z80xYaindg@mail.gmail.com>
- <20191107161149.GQ20975@paulmck-ThinkPad-P72>
- <CANn89iLMD0=tiQ181qQ=qKo=Nom-XX4MqonZw6pKiYUzTDVjQg@mail.gmail.com>
- <CANn89iLqcqKLRgfn7TDnBr9ZatiJVyezXmmZaeN2f2BT=qFe7Q@mail.gmail.com>
- <20191107165428.GR20975@paulmck-ThinkPad-P72>
- <CANn89i+Cc1aOHVFnYvZ93EDee81RaGNrv47ZBVdQXmxMuuMmww@mail.gmail.com>
+        id S1730555AbfKGRLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:11:52 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5744 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726231AbfKGRLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 12:11:52 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6B610380FE4F07C059D1;
+        Fri,  8 Nov 2019 01:11:47 +0800 (CST)
+Received: from A190218597.china.huawei.com (10.202.226.45) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 8 Nov 2019 01:11:39 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>, <maz@kernel.org>
+CC:     <edumazet@google.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <lipeng321@huawei.com>,
+        <mehta.salil@opnsrc.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+Subject: [PATCH V2 net] net: hns: Fix the stray netpoll locks causing deadlock in NAPI path
+Date:   Thu, 7 Nov 2019 17:09:53 +0000
+Message-ID: <20191107170953.7672-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANn89i+Cc1aOHVFnYvZ93EDee81RaGNrv47ZBVdQXmxMuuMmww@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 08:59:49AM -0800, Eric Dumazet wrote:
-> On Thu, Nov 7, 2019 at 8:54 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Thu, Nov 07, 2019 at 08:39:42AM -0800, Eric Dumazet wrote:
-> > > On Thu, Nov 7, 2019 at 8:35 AM Eric Dumazet <edumazet@google.com> wrote:
-> > > >
-> > > > On Thu, Nov 7, 2019 at 8:11 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > > >
-> > > > > OK, so this is due to timer_pending() lockless access to ->entry.pprev
-> > > > > to determine whether or not the timer is on the list.  New one on me!
-> > > > >
-> > > > > Given that use case, I don't have an objection to your patch to list.h.
-> > > > >
-> > > > > Except...
-> > > > >
-> > > > > Would it make sense to add a READ_ONCE() to hlist_unhashed()
-> > > > > and to then make timer_pending() invoke hlist_unhashed()?  That
-> > > > > would better confine the needed uses of READ_ONCE().
-> > > >
-> > > > Sounds good to me, I had the same idea but was too lazy to look at the
-> > > > history of timer_pending()
-> > > > to check if the pprev pointer check was really the same underlying idea.
-> > >
-> > > Note that forcing READ_ONCE() in hlist_unhashed() might force the compiler
-> > > to read the pprev pointer twice in some cases.
-> > >
-> > > This was one of the reason for me to add skb_queue_empty_lockless()
-> > > variant in include/linux/skbuff.h
-> >
-> > Ouch!
-> >
-> > > /**
-> > >  * skb_queue_empty_lockless - check if a queue is empty
-> > >  * @list: queue head
-> > >  *
-> > >  * Returns true if the queue is empty, false otherwise.
-> > >  * This variant can be used in lockless contexts.
-> > >  */
-> > > static inline bool skb_queue_empty_lockless(const struct sk_buff_head *list)
-> > > {
-> > > return READ_ONCE(list->next) == (const struct sk_buff *) list;
-> > > }
-> > >
-> > > So maybe add a hlist_unhashed_lockless() to clearly document why
-> > > callers are using the lockless variant ?
-> >
-> > That sounds like a reasonable approach to me.  There aren't all that
-> > many uses of hlist_unhashed(), so a name change should not be a problem.
-> 
-> Maybe I was not clear :  I did not rename skb_queue_empty()
-> I chose to add another helper.
-> 
-> Contexts that can safely use skb_queue_empty() still continue to use
-> it, since it might help
-> the compiler to generate better code.
-> 
-> So If I add hlist_unhashed_lockless(), I would only use it from
-> timer_pending() at first.
-> 
-> Then an audit of the code might reveal other potential users.
+This patch fixes the problem of the spin locks, originally
+meant for the netpoll path of hns driver, causing deadlock in
+the normal NAPI poll path. The issue happened due to the presence
+of the stray leftover spin lock code related to the netpoll,
+whose support was earlier removed from the HNS[1], got activated
+due to enabling of NET_POLL_CONTROLLER switch.
 
-OK, yes, that approach does make more sense, and thank you for the
-clarification.
+Earlier background:
+The netpoll handling code originally had this bug(as identified
+by Marc Zyngier[2]) of wrong spin lock API being used which did
+not disable the interrupts and hence could cause locking issues.
+i.e. if the lock were first acquired in context to thread like
+'ip' util and this lock if ever got later acquired again in
+context to the interrupt context like TX/RX (Interrupts could
+always pre-empt the lock holding task and acquire the lock again)
+and hence could cause deadlock.
 
-							Thanx, Paul
+Proposed Solution:
+1. If the netpoll was enabled in the HNS driver, which is not
+   right now, we could have simply used spin_[un]lock_irqsave()
+2. But as netpoll is disabled, therefore, it is best to get rid
+   of the existing locks and stray code for now. This should
+   solve the problem reported by Marc.
+
+[1] https://git.kernel.org/torvalds/c/4bd2c03be7
+[2] https://patchwork.ozlabs.org/patch/1189139/
+
+Fixes: 4bd2c03be707 ("net: hns: remove ndo_poll_controller")
+Cc: lipeng <lipeng321@huawei.com>
+Cc: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: David S. Miller <davem@davemloft.net>
+Reported-by: Marc Zyngier <maz@kernel.org>
+Acked-by: Marc Zyngier <maz@kernel.org>
+Tested-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hnae.c     |  1 -
+ drivers/net/ethernet/hisilicon/hns/hnae.h     |  3 ---
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 22 +------------------
+ 3 files changed, 1 insertion(+), 25 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns/hnae.c b/drivers/net/ethernet/hisilicon/hns/hnae.c
+index 6d0457eb4faa..08339278c722 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hnae.c
++++ b/drivers/net/ethernet/hisilicon/hns/hnae.c
+@@ -199,7 +199,6 @@ hnae_init_ring(struct hnae_queue *q, struct hnae_ring *ring, int flags)
+ 
+ 	ring->q = q;
+ 	ring->flags = flags;
+-	spin_lock_init(&ring->lock);
+ 	ring->coal_param = q->handle->coal_param;
+ 	assert(!ring->desc && !ring->desc_cb && !ring->desc_dma_addr);
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns/hnae.h b/drivers/net/ethernet/hisilicon/hns/hnae.h
+index e9c67c06bfd2..6ab9458302e1 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hnae.h
++++ b/drivers/net/ethernet/hisilicon/hns/hnae.h
+@@ -274,9 +274,6 @@ struct hnae_ring {
+ 	/* statistic */
+ 	struct ring_stats stats;
+ 
+-	/* ring lock for poll one */
+-	spinlock_t lock;
+-
+ 	dma_addr_t desc_dma_addr;
+ 	u32 buf_size;       /* size for hnae_desc->addr, preset by AE */
+ 	u16 desc_num;       /* total number of desc */
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+index a48396dd4ebb..14ab20491fd0 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -943,15 +943,6 @@ static int is_valid_clean_head(struct hnae_ring *ring, int h)
+ 	return u > c ? (h > c && h <= u) : (h > c || h <= u);
+ }
+ 
+-/* netif_tx_lock will turn down the performance, set only when necessary */
+-#ifdef CONFIG_NET_POLL_CONTROLLER
+-#define NETIF_TX_LOCK(ring) spin_lock(&(ring)->lock)
+-#define NETIF_TX_UNLOCK(ring) spin_unlock(&(ring)->lock)
+-#else
+-#define NETIF_TX_LOCK(ring)
+-#define NETIF_TX_UNLOCK(ring)
+-#endif
+-
+ /* reclaim all desc in one budget
+  * return error or number of desc left
+  */
+@@ -965,21 +956,16 @@ static int hns_nic_tx_poll_one(struct hns_nic_ring_data *ring_data,
+ 	int head;
+ 	int bytes, pkts;
+ 
+-	NETIF_TX_LOCK(ring);
+-
+ 	head = readl_relaxed(ring->io_base + RCB_REG_HEAD);
+ 	rmb(); /* make sure head is ready before touch any data */
+ 
+-	if (is_ring_empty(ring) || head == ring->next_to_clean) {
+-		NETIF_TX_UNLOCK(ring);
++	if (is_ring_empty(ring) || head == ring->next_to_clean)
+ 		return 0; /* no data to poll */
+-	}
+ 
+ 	if (!is_valid_clean_head(ring, head)) {
+ 		netdev_err(ndev, "wrong head (%d, %d-%d)\n", head,
+ 			   ring->next_to_use, ring->next_to_clean);
+ 		ring->stats.io_err_cnt++;
+-		NETIF_TX_UNLOCK(ring);
+ 		return -EIO;
+ 	}
+ 
+@@ -994,8 +980,6 @@ static int hns_nic_tx_poll_one(struct hns_nic_ring_data *ring_data,
+ 	ring->stats.tx_pkts += pkts;
+ 	ring->stats.tx_bytes += bytes;
+ 
+-	NETIF_TX_UNLOCK(ring);
+-
+ 	dev_queue = netdev_get_tx_queue(ndev, ring_data->queue_index);
+ 	netdev_tx_completed_queue(dev_queue, pkts, bytes);
+ 
+@@ -1055,16 +1039,12 @@ static void hns_nic_tx_clr_all_bufs(struct hns_nic_ring_data *ring_data)
+ 	int head;
+ 	int bytes, pkts;
+ 
+-	NETIF_TX_LOCK(ring);
+-
+ 	head = ring->next_to_use; /* ntu :soft setted ring position*/
+ 	bytes = 0;
+ 	pkts = 0;
+ 	while (head != ring->next_to_clean)
+ 		hns_nic_reclaim_one_desc(ring, &bytes, &pkts);
+ 
+-	NETIF_TX_UNLOCK(ring);
+-
+ 	dev_queue = netdev_get_tx_queue(ndev, ring_data->queue_index);
+ 	netdev_tx_reset_queue(dev_queue);
+ }
+-- 
+2.17.1
+
+
