@@ -2,69 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14572F3936
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 21:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD095F393E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 21:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfKGUJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 15:09:15 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:34293 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725785AbfKGUJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 15:09:15 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0ThRucGg_1573157346;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0ThRucGg_1573157346)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 08 Nov 2019 04:09:13 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     kirill.shutemov@linux.intel.com, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [v2 PATCH] mm: rmap: use VM_BUG_ON_PAGE() in __page_check_anon_rmap()
-Date:   Fri,  8 Nov 2019 04:09:06 +0800
-Message-Id: <1573157346-111316-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726888AbfKGUK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 15:10:56 -0500
+Received: from ms.lwn.net ([45.79.88.28]:39460 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726773AbfKGUKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 15:10:53 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id D35BD2C1;
+        Thu,  7 Nov 2019 20:10:52 +0000 (UTC)
+Date:   Thu, 7 Nov 2019 13:10:51 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Miles Chen <miles.chen@mediatek.com>
+Cc:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Subject: Re: [PATCH] docs: printk-formats: add ptrdiff_t type to
+ printk-formats
+Message-ID: <20191107131051.61308a05@lwn.net>
+In-Reply-To: <20191001100449.19481-1-miles.chen@mediatek.com>
+References: <20191001100449.19481-1-miles.chen@mediatek.com>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __page_check_anon_rmap() just calls two BUG_ON()s protected by
-CONFIG_DEBUG_VM, the #ifdef could be eliminated by using VM_BUG_ON_PAGE().
+On Tue, 1 Oct 2019 18:04:49 +0800
+Miles Chen <miles.chen@mediatek.com> wrote:
 
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
-v2: Use VM_BUG_ON_PAGE() per Kirill and update the subject accordingly.
+> When print the difference between two pointers, we should use
+> the ptrdiff_t modifier %t.
+> 
+> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+> ---
+>  Documentation/core-api/printk-formats.rst | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 
- mm/rmap.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Applied, thanks.
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index d17cbf3..71d58d6 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1055,7 +1055,6 @@ static void __page_set_anon_rmap(struct page *page,
- static void __page_check_anon_rmap(struct page *page,
- 	struct vm_area_struct *vma, unsigned long address)
- {
--#ifdef CONFIG_DEBUG_VM
- 	/*
- 	 * The page's anon-rmap details (mapping and index) are guaranteed to
- 	 * be set up correctly at this point.
-@@ -1068,9 +1067,9 @@ static void __page_check_anon_rmap(struct page *page,
- 	 * are initially only visible via the pagetables, and the pte is locked
- 	 * over the call to page_add_new_anon_rmap.
- 	 */
--	BUG_ON(page_anon_vma(page)->root != vma->anon_vma->root);
--	BUG_ON(page_to_pgoff(page) != linear_page_index(vma, address));
--#endif
-+	VM_BUG_ON_PAGE(page_anon_vma(page)->root != vma->anon_vma->root, page);
-+	VM_BUG_ON_PAGE(page_to_pgoff(page) != linear_page_index(vma, address),
-+		       page);
- }
- 
- /**
--- 
-1.8.3.1
-
+jon
