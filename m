@@ -2,98 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7923CF2A46
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2CACF2A50
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:13:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387874AbfKGJKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:10:41 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:37968 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733142AbfKGJKl (ORCPT
+        id S2387584AbfKGJNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:13:07 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:58662 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbfKGJNH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:10:41 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iSdoJ-0002WC-Ai; Thu, 07 Nov 2019 10:10:35 +0100
-To:     Michael Kelley <mikelley@microsoft.com>
-Subject: RE: [PATCH v5 2/8] arm64: hyperv: Add hypercall and register access  functions
-X-PHP-Originating-Script: 0:main.inc
+        Thu, 7 Nov 2019 04:13:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=stpQ2ZxVbR6vwFgf2kbMBwfdaXFgcnuA4lpQdxAozKo=; b=jnbLISrUxo7DzyoIX7Dwgcg8y
+        bC3qwfzYzuye2C2c6PMptTeYRd37Cl7MMcQwjhBnmwbAoB8QmFMjtWZrsx0cZ56o5VBh/NIdwLkgE
+        sIN+e025d509E07PGAEnTAPSCsYJVvQX3UnB0qohMqWKg0qT/tz9QSzRv6/a51yyWtBgDAxAIryGt
+        +u+7tZpXt8B+x8ZmlCq+/gQg+DJoeA3aa6tsjsyHQUuYeWptQeePwdCNJjQetywE6/Pt+bJmGO10r
+        A0h0nttFg5vbtzuXo2I72B8e3mYoumeScnymEIp/LdKPcZaXI46WDVs4ZEzQdJKNomqCh02NNKzsd
+        nsTTLyAOw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iSdqF-0002Xp-Ry; Thu, 07 Nov 2019 09:12:36 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 61933300692;
+        Thu,  7 Nov 2019 10:11:27 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BAC432B13B364; Thu,  7 Nov 2019 10:12:31 +0100 (CET)
+Date:   Thu, 7 Nov 2019 10:12:31 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [patch 4/9] x86/io: Speedup schedule out of I/O bitmap user
+Message-ID: <20191107091231.GA4131@hirez.programming.kicks-ass.net>
+References: <20191106193459.581614484@linutronix.de>
+ <20191106202806.133597409@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 07 Nov 2019 10:19:56 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <will@kernel.org>, <catalin.marinas@arm.com>,
-        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hyperv@vger.kernel.org>, <devel@linuxdriverproject.org>,
-        <olaf@aepfle.de>, <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>, <jasowang@redhat.com>,
-        <marcelo.cerri@canonical.com>, KY Srinivasan <kys@microsoft.com>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        "boqun.feng" <boqun.feng@gmail.com>
-In-Reply-To: <DM5PR21MB013730D09CB8BA7658DE57F7D7790@DM5PR21MB0137.namprd21.prod.outlook.com>
-References: <1570129355-16005-1-git-send-email-mikelley@microsoft.com>
- <1570129355-16005-3-git-send-email-mikelley@microsoft.com>
- <8cdc86e5bcf861c74069e0d349910c94@www.loen.fr>
- <DM5PR21MB013730D09CB8BA7658DE57F7D7790@DM5PR21MB0137.namprd21.prod.outlook.com>
-Message-ID: <c8403255bf874856c10f07189e27080a@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: mikelley@microsoft.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com, vkuznets@redhat.com, jasowang@redhat.com, marcelo.cerri@canonical.com, kys@microsoft.com, sunilmut@microsoft.com, boqun.feng@gmail.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106202806.133597409@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-06 19:08, Michael Kelley wrote:
-> From: Marc Zyngier <maz@kernel.org>  Sent: Wednesday, November 6,
-> 2019 2:20 AM
->>
->> On 2019-10-03 20:12, Michael Kelley wrote:
->> > Add ARM64-specific code to make Hyper-V hypercalls and to
->> > access virtual processor synthetic registers via hypercalls.
->> > Hypercalls use a Hyper-V specific calling sequence with a non-zero
->> > immediate value per Section 2.9 of the SMC Calling Convention
->> > spec.
->>
->> I find this "following the spec by actively sidestepping it" counter
->> productive. You (or rather the Hyper-V people) are reinventing the
->> wheel (of the slightly square variety) instead of using the standard
->> that the whole of the ARM ecosystem seems happy to take advantage
->> of.
->>
->> I wonder what is the rational for this. If something doesn't quite
->> work for Hyper-V, I think we'd all like to know.
->>
->
-> I'll go another round internally with the Hyper-V people on this
-> topic and impress upon them the desire of the Linux community to
-> have Hyper-V adopt the true spirit of the spec.  But I know they are
-> fairly set in their approach at this point, regardless of the 
-> technical
-> merits or lack thereof.  Hyper-V is shipping and in use as a 
-> commercial
-> product on ARM64 hardware, which makes it harder to change.  I
-> hope we can find a way to avoid a complete impasse ....
+On Wed, Nov 06, 2019 at 08:35:03PM +0100, Thomas Gleixner wrote:
+> There is no requirement to update the TSS I/O bitmap when a thread using it is
+> scheduled out and the incoming thread does not use it.
+> 
+> For the permission check based on the TSS I/O bitmap the CPU calculates the memory
+> location of the I/O bitmap by the address of the TSS and the io_bitmap_base member
+> of the tss_struct. The easiest way to invalidate the I/O bitmap is to switch the
+> offset to an address outside of the TSS limit.
+> 
+> If an I/O instruction is issued from user space the TSS limit causes #GP to be
+> raised in the same was as valid I/O bitmap with all bits set to 1 would do.
+> 
+> This removes the extra work when an I/O bitmap using task is scheduled out
+> and puts the burden on the rare I/O bitmap users when they are scheduled
+> in.
 
-Hyper-V shipping with their own calling convention is fine by me. Linux
-having to implement multiple calling conventions because the Hyper-V
-folks refuse (for undisclosed reason) to adopt the standard isn't fine 
-at
-all.
-
-HV can perfectly retain its interface for Windows or other things, but
-please *at least* implement the standard interface on which all 
-existing
-operating systems rely.
-
-Thanks,
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+This also nicely aligns with that the context switch time is accounted
+to the next task. So by doing the expensive part on switch-in gets it
+all accounted to the task that caused it.
