@@ -2,110 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C6E6F2ADD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17759F2ACF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:36:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbfKGJjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:39:52 -0500
-Received: from spam01.hygon.cn ([110.188.70.11]:63390 "EHLO spam2.hygon.cn"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726734AbfKGJjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:39:52 -0500
-Received: from MK-FE.hygon.cn ([172.23.18.61])
-        by spam2.hygon.cn with ESMTP id xA79aoag094479;
-        Thu, 7 Nov 2019 17:36:51 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from cncheex01.Hygon.cn ([172.23.18.10])
-        by MK-FE.hygon.cn with ESMTP id xA79aiNP024677;
-        Thu, 7 Nov 2019 17:36:44 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from ubuntu.localdomain (172.23.18.44) by cncheex01.Hygon.cn
- (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 7 Nov 2019
- 17:36:46 +0800
-From:   Jiasen Lin <linjiasen@hygon.cn>
-To:     <jdmason@kudzu.us>, <Shyam-sundar.S-k@amd.com>,
-        <dave.jiang@intel.com>, <allenbh@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-ntb@googlegroups.com>,
-        <linjiasen@hygon.cn>, <linjiasen007@gmail.com>
-Subject: [PATCH] NTB: Fix an error in get link status
-Date:   Thu, 7 Nov 2019 01:35:36 -0800
-Message-ID: <1573119336-107732-1-git-send-email-linjiasen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
+        id S1733220AbfKGJgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:36:14 -0500
+Received: from mga01.intel.com ([192.55.52.88]:14474 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726866AbfKGJgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:36:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 01:36:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,277,1569308400"; 
+   d="scan'208";a="205623884"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 07 Nov 2019 01:36:13 -0800
+Received: from [10.226.38.65] (unknown [10.226.38.65])
+        by linux.intel.com (Postfix) with ESMTP id 452DD5802C5;
+        Thu,  7 Nov 2019 01:36:09 -0800 (PST)
+Subject: Re: [PATCH v4 1/2] pinctrl: Add pinmux & GPIO controller driver for a
+ new SoC
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
+References: <cover.1573111648.git.rahul.tanwar@linux.intel.com>
+ <63273c2b9ad14dae2b74e27e679da4d60a67d284.1573111648.git.rahul.tanwar@linux.intel.com>
+ <20191107090712.GV32742@smile.fi.intel.com>
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Message-ID: <59074c5d-fb80-cfbf-b54b-10d9fd14eac0@linux.intel.com>
+Date:   Thu, 7 Nov 2019 17:36:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.23.18.44]
-X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
- (172.23.18.10)
-X-MAIL: spam2.hygon.cn xA79aoag094479
-X-DNSRBL: 
+In-Reply-To: <20191107090712.GV32742@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The offset of PCIe Capability Header for AMD and HYGON NTB is 0x64,
-but the macro which named "AMD_LINK_STATUS_OFFSET" is defined as 0x68.
-It is offset of Device Capabilities Reg rather than Link Control Reg.
 
-This code trigger an error in get link statsus:
+Hi Andy,
 
-	cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
-		LNK STA -               0x8fa1
-		Link Status -           Up
-		Link Speed -            PCI-E Gen 0
-		Link Width -            x0
+On 7/11/2019 5:07 PM, Andy Shevchenko wrote:
+> On Thu, Nov 07, 2019 at 03:36:44PM +0800, Rahul Tanwar wrote:
+> +static void eqbr_gpio_mask_ack_irq(struct irq_data *d)
+>> +{
+>> +	eqbr_gpio_disable_irq(d);
+>> +	eqbr_gpio_ack_irq(d);
+> Potential race?
+>
+>> +}
+>> +static int eqbr_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>> +			       unsigned int selector, unsigned int group)
+>> +{
+>> +	struct eqbr_pinctrl_drv_data *pctl = pinctrl_dev_get_drvdata(pctldev);
+>> +	struct function_desc *func;
+>> +	struct group_desc *grp;
+>> +	unsigned int *pinmux;
+>> +	int i;
+>> +
+>> +	func = pinmux_generic_get_function(pctldev, selector);
+>> +	if (!func)
+>> +		return -EINVAL;
+>> +
+>> +	grp = pinctrl_generic_get_group(pctldev, group);
+>> +	if (!grp)
+>> +		return -EINVAL;
+>> +
+>> +	pinmux = grp->data;
+>> +	for (i = 0; i < grp->num_pins; i++)
+>> +		eqbr_set_pin_mux(pctl, pinmux[i], grp->pins[i]);
+> What if in the middle of the loop mux of one of the pins be changed by parallel
+> thread?
 
-This patch use pcie_capability_read_dword to get link status.
-After fix this issue, we can get link status accurately:
+These are all ops called back from the core pinctrl framework.
+My understanding is that multi-threading serialization is provided by the
+pinctrl framework using mutex's. Drivers don't have to worry about that.
+Drivers only have to worry about multi-core serialization. I checked
+many other existing pinctrl drivers & all of them seem to use spin lock
+only for register accesses (not for serializing the ops itself).
 
-	cat /sys/kernel/debug/ntb_hw_amd/0000:43:00.1/info
-		LNK STA -               0x11030042
-		Link Status -           Up
-		Link Speed -            PCI-E Gen 3
-		Link Width -            x16
+Is this understanding incorrect ?
 
-Signed-off-by: Jiasen Lin <linjiasen@hygon.cn>
----
- drivers/ntb/hw/amd/ntb_hw_amd.c | 5 +++--
- drivers/ntb/hw/amd/ntb_hw_amd.h | 1 -
- 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
-index 156c2a1..ae91105 100644
---- a/drivers/ntb/hw/amd/ntb_hw_amd.c
-+++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
-@@ -855,8 +855,8 @@ static int amd_poll_link(struct amd_ntb_dev *ndev)
- 
- 	ndev->cntl_sta = reg;
- 
--	rc = pci_read_config_dword(ndev->ntb.pdev,
--				   AMD_LINK_STATUS_OFFSET, &stat);
-+	rc = pcie_capability_read_dword(ndev->ntb.pdev,
-+				   PCI_EXP_LNKCTL, &stat);
- 	if (rc)
- 		return 0;
- 	ndev->lnk_sta = stat;
-@@ -1139,6 +1139,7 @@ static const struct ntb_dev_data dev_data[] = {
- static const struct pci_device_id amd_ntb_pci_tbl[] = {
- 	{ PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
- 	{ PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
-+	{ PCI_VDEVICE(HYGON, 0x145b), (kernel_ulong_t)&dev_data[0] },
- 	{ 0, }
- };
- MODULE_DEVICE_TABLE(pci, amd_ntb_pci_tbl);
-diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h b/drivers/ntb/hw/amd/ntb_hw_amd.h
-index 139a307..39e5d18 100644
---- a/drivers/ntb/hw/amd/ntb_hw_amd.h
-+++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
-@@ -53,7 +53,6 @@
- #include <linux/pci.h>
- 
- #define AMD_LINK_HB_TIMEOUT	msecs_to_jiffies(1000)
--#define AMD_LINK_STATUS_OFFSET	0x68
- #define NTB_LIN_STA_ACTIVE_BIT	0x00000002
- #define NTB_LNK_STA_SPEED_MASK	0x000F0000
- #define NTB_LNK_STA_WIDTH_MASK	0x03F00000
--- 
-2.7.4
+>
+>> +	/* 0 mux is reserved for GPIO */
+> Perhaps
+>
+> #define EQBR_GPIO_MODE	0
+>
+> ?
+
+I had first used #define for this but removed it based on Rob Herring
+review feedback. I will add it back here but keep it as 0 in dt bindings..
+
+>> +	return eqbr_set_pin_mux(pctl, 0, pin);
+>> +}
+>> +	for (i = 0; i < npins; i++) {
+>> +		ret = eqbr_pinconf_set(pctldev, pins[i], configs, num_configs);
+>> +		if (ret)
+>> +			return ret;
+> What if in the middle of the loop settings of one of the pins be changed by
+> parallel thread?
+
+Same comments as above..
+
+>
+>> +		group.pins = devm_kcalloc(dev, group.num_pins,
+>> +					  sizeof(*(group.pins)), GFP_KERNEL);
+>> +		pinmux = devm_kcalloc(dev, group.num_pins,
+>> +				      sizeof(*pinmux), GFP_KERNEL);
+> These can be rearranged.
+
+Lost you here. Please elaborate more on what you mean by rearranging. Thanks.
+
+Regards,
+Rahul
+
 
