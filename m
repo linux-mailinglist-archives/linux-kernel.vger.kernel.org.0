@@ -2,146 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9CFF2E5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1487DF2E61
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 13:47:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388724AbfKGMqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 07:46:21 -0500
-Received: from foss.arm.com ([217.140.110.172]:55526 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388407AbfKGMqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 07:46:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25BE831B;
-        Thu,  7 Nov 2019 04:46:20 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E0343F6C4;
-        Thu,  7 Nov 2019 04:46:19 -0800 (PST)
-Date:   Thu, 7 Nov 2019 12:46:17 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH 2/2] PCI: uniphier: Add checking whether PERST# is
- deasserted
-Message-ID: <20191107124617.GA43905@e119886-lin.cambridge.arm.com>
-References: <1573102695-7018-2-git-send-email-hayashi.kunihiko@socionext.com>
- <20191107100207.GV9723@e119886-lin.cambridge.arm.com>
- <20191107205239.65C1.4A936039@socionext.com>
+        id S2388761AbfKGMq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 07:46:58 -0500
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:45315 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727142AbfKGMq6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 07:46:58 -0500
+Received: by mail-ed1-f46.google.com with SMTP id b5so1750140eds.12
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 04:46:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=to:cc:from:subject:openpgp:message-id:date:mime-version
+         :content-language:content-transfer-encoding;
+        bh=3UZ64Sq3eqaV71BBDiKRJ7pJQ02szPhuWPuPnRF5ua8=;
+        b=TVzP13bc6+rklA1VY1K0u5Gh1wAobf7v8J7dEsA5ZOW6re+W/umx/K5W7RMFRsqhuW
+         AJFNr1VAjjqJcJV47/UDkG+zLwWlN3nUCvdf1OKeo9nWmNeVlu/j8FVzzajcFtzKmL+O
+         9hj0alf2F7lGSrCD2V9719kzcaMteyD4k5I6vB5/hTEDYXH7KHfYS3sbkErb1SBMxaS6
+         I1FQGGHC+apaNDUgiquREFNTWyLjiTs3Gcl7so1G8H6aIOtNkW3BHEGhMM99do8pmBG/
+         DDjaP+eG8VKPwzsD7kVYAvcagz6NdRAGHwScgILQFGnEwcBFPFHU53QMAlhsxGW6Xppl
+         7fTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:openpgp:message-id:date
+         :mime-version:content-language:content-transfer-encoding;
+        bh=3UZ64Sq3eqaV71BBDiKRJ7pJQ02szPhuWPuPnRF5ua8=;
+        b=reNGUSPgLG33GLCdm8MJgtWGGwuLNjgisDsz7XxZy7RTJdiBJJpoutP87ynjBEDVin
+         zRCIxqsc3jlilCT34oEuK5muLNQMfKVz8lEn7i3xbAXKFfbP7Bp7rmht5JGsYBI1cdkN
+         74SAbxJduCwC32AQ6441ABlG1/ELyWs6A7l4gXOTaByMhZO34tPxMmbaEOFGM8Oq/TFX
+         DxgmoiVwbe5gh3I/0LI6XeC5997y9T0CzJJ0pp3N697iVp1gFKzeqdmGhg+qboUR2ECa
+         +/Ui3t9u8bMIO/UAJ1eMhSl/DwGVhqsI6d/RlTck//uFijan/gZjHviSMWLJr8sGcLeH
+         jq3w==
+X-Gm-Message-State: APjAAAUfZJRWxpKOw2yG3XYY7F6ZkBZZTlTfMb7ZDtQTcE5tp6+3WYER
+        6lgcVJ/eFzPQXNMa2cxUpx5SSTztx4o=
+X-Google-Smtp-Source: APXvYqwxLGFsmOUY7smS/25Wr44YSCz3ZetiDfk313lHolSsceE66SBuZ93QVpbGr8TNkpzqenfNrw==
+X-Received: by 2002:a17:906:a411:: with SMTP id l17mr2829816ejz.274.1573130816031;
+        Thu, 07 Nov 2019 04:46:56 -0800 (PST)
+Received: from [192.168.27.135] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id k4sm30818edc.49.2019.11.07.04.46.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Nov 2019 04:46:55 -0800 (PST)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Subject: [GIT PULL] interconnect changes for 5.5
+Openpgp: preference=signencrypt
+Message-ID: <5123bf54-5d62-fc5c-8838-17bc34487d83@linaro.org>
+Date:   Thu, 7 Nov 2019 14:46:53 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107205239.65C1.4A936039@socionext.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 08:52:39PM +0900, Kunihiko Hayashi wrote:
-> Hi Andrew,
-> Thank you for your comments.
-> 
-> On Thu, 7 Nov 2019 10:02:08 +0000 <andrew.murray@arm.com> wrote:
-> 
-> > On Thu, Nov 07, 2019 at 01:58:15PM +0900, Kunihiko Hayashi wrote:
-> > > When PERST# is asserted once, EP configuration will be initialized.
-> > 
-> > I don't quite understand this - does the EP/RC mode depend on how often
-> > PERST# is toggled?
-> 
-> I think of connecting this RC controller and EP based on `Linux PCI
-> endpoint framework' in another machine.
-> 
-> While this RC driver is probing, the EP driver might be also probing and
-> configurating itself using configfs. If PERST# is toggled after the EP
-> has done its configuration, this configuration will be lost.
-> 
-> I expect that the EP configurates after RC has toggled PERST#, however,
-> there is no way to synchronize both of them.
-> 
+Hi Greg,
 
-OK I understand where you are coming from now. Please ensure the commit
-message gives this rationale.
+This is a pull request with interconnect patches for the 5.5 merge window.
+All patches have been for a while in linux-next without reported issues. The
+details are in the signed tag. Please consider pulling into char-misc-next.
 
-However, If I understand correctly, doesn't your solution only work some
-of the time? What happens if you boot both machines at the same time,
-and PERST# isn't asserted prior to the kernel booting?
-
-The only way you can ensure the EP is started after the RC is initialised
-is to start the EP after the RC is initialised.
-
-I'm not sure what the solution is here, but it feels like this approach
-only partially solves it.
-
-> 
-> > 
-> > > If PERST# has been already deasserted, it isn't necessary to assert
-> > > here.
-> > 
-> > What is the motativation for this patch? Is it to avoid a delay during
-> > boot, or to fix some bug? Isn't it nice to always reset the IP before
-> > use anyway?
-> 
-> Since EP device usually works without its configuration after PERST#,
-> deassering PERST# here is no problem. Since bus reset breaks configuration
-> of EP as shown above, bus reset should be done before EP has probed.
-> Maybe boot sequence in host machine will do.
-> 
-> 
-> >
-> > > 
-> > > This checks whether PERST# is deasserted using PCL_PINMON register,
-> > > and adds omit controlling PERST#.
-> > 
-> > Should this read 'and omits controlling PERST#'?
-> 
-> Yes, I'll fix it.
-> 
-> 
-> > 
-> > > 
-> > > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > > ---
-> > >  drivers/pci/controller/dwc/pcie-uniphier.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
-> > > index 8fd7bad..1ea4220 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-uniphier.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-uniphier.c
-> > > @@ -22,6 +22,9 @@
-> > >  
-> > >  #include "pcie-designware.h"
-> > >  
-> > > +#define PCL_PINMON			0x0028
-> > > +#define PCL_PINMON_PERST_OUT		BIT(16)
-> > > +
-> > >  #define PCL_PINCTRL0			0x002c
-> > >  #define PCL_PERST_PLDN_REGEN		BIT(12)
-> > >  #define PCL_PERST_NOE_REGEN		BIT(11)
-> > > @@ -100,6 +103,11 @@ static void uniphier_pcie_init_rc(struct uniphier_pcie_priv *priv)
-> > >  	val |= PCL_SYS_AUX_PWR_DET;
-> > >  	writel(val, priv->base + PCL_APP_PM0);
-> > >  
-> > > +	/* return if PERST# is already deasserted */
-> > 
-> > This comment just describes what the following line does which may be
-> > self-explanatory, perhaps a better comment would describe why we avoid
-> > a reset.
-> 
-> Indeed. I'll write the reason here.
-> 
 Thanks,
+Georgi
 
-Andrew Murray
+The following changes since commit 4f5cafb5cb8471e54afdc9054d973535614f7675:
 
-> Thank you,
-> 
-> ---
-> Best Regards,
-> Kunihiko Hayashi
-> 
+  Linux 5.4-rc3 (2019-10-13 16:37:36 -0700)
+
+are available in the Git repository at:
+
+  https://git.linaro.org/people/georgi.djakov/linux.git tags/icc-5.5-rc1
+
+for you to fetch changes up to 0bf9146d94a00c7759a30241eeabd3e2b28c5f15:
+
+  docs: driver-api: make interconnect title quieter (2019-11-02 04:04:35 +0200)
+
+----------------------------------------------------------------
+interconnect patches for 5.5
+
+Here are the interconnect updates for the 5.5-rc1 merge window.
+
+- Disallow the interconnect core to be built as a module, as this will
+bring more complexity when this API is called from other frameworks that
+are built-in only.
+- New interconnect driver for msm8974 platforms.
+- Change the initcall level of a driver, so it is available earlier to
+other dependent drivers.
+- Minor clean-up and a tiny documentation fix.
+
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+
+----------------------------------------------------------------
+Brian Masney (2):
+      dt-bindings: interconnect: qcom: add msm8974 bindings
+      interconnect: qcom: add msm8974 driver
+
+Georgi Djakov (1):
+      interconnect: Add locking in icc_set_tag()
+
+Jordan Crouse (2):
+      interconnect: Move interconnect drivers to core_initcall
+      interconnect: Remove unused module exit code from core
+
+Leonard Crestez (1):
+      interconnect: qcom: Fix icc_onecell_data allocation
+
+Louis Taylor (1):
+      docs: driver-api: make interconnect title quieter
+
+Viresh Kumar (1):
+      interconnect: Disallow interconnect core to be built as a module
+
+ Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml |  62 +
+ Documentation/driver-api/interconnect.rst                        |   2 +-
+ drivers/interconnect/Kconfig                                     |   2 +-
+ drivers/interconnect/core.c                                      |  11 +-
+ drivers/interconnect/qcom/Kconfig                                |   9 +
+ drivers/interconnect/qcom/Makefile                               |   2 +
+ drivers/interconnect/qcom/msm8974.c                              | 796 ++++++++
+ drivers/interconnect/qcom/qcs404.c                               |  17 +-
+ drivers/interconnect/qcom/sdm845.c                               |  16 +-
+ include/dt-bindings/interconnect/qcom,msm8974.h                  | 146 ++
+ 10 files changed, 1051 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
+ create mode 100644 drivers/interconnect/qcom/msm8974.c
+ create mode 100644 include/dt-bindings/interconnect/qcom,msm8974.h
