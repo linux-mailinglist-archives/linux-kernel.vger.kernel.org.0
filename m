@@ -2,152 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C5EF3839
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D164AF3880
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfKGTKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:10:31 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:32931 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfKGTKb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:10:31 -0500
-Received: by mail-il1-f193.google.com with SMTP id m5so2852943ilq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 11:10:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pkb5jMFuLCEWCYW/JsNLSSIWv1a87ksEuR1XT2B21OU=;
-        b=E4yuGYMS1pq9v1+WF35EsKgSb9HtDZWkJ3jNVKnVOGnXkuxGKERzeomvsq61IKZ+BS
-         5vDnyoe59CafR7ujung+DFAh5VrxhyezrfAPIK46pLKEGDol4nS0bHrghLG1+x8cP+Tz
-         XWUXgXGAWb8K+OefOWhoAmQ6PtfilZ7rpXyTKa4SB3qk0/4cnIWvk218Qha95C9QUZdP
-         awkOnTqUy+AocpO/EOWrjgGMutNupXwNBRObdnRnLCRIkg5KqEFN18PnhUM/IkRgjdT0
-         9bDxLZtA6buuUF4XI8ScG6JyWq3De1yqQKC53DMhnvo4wkyS+H61eoKPf70b+0N44EcV
-         lLiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pkb5jMFuLCEWCYW/JsNLSSIWv1a87ksEuR1XT2B21OU=;
-        b=cJK4tqjPzsMb9oXYtRu1syq6Lk2HOQErbcySdKt0Bou6UWx9NiSbAPHPFsyCJImr3a
-         ga5jeB/RJHG9JSJcoBIXVfLIWdO+2uOsIoytcICLVrnZtVF0LHsj5VRkBzzy1LnRw/q9
-         IjahZV8niPjV1oA0Wt8IQ/o3CcDLDfIp+COyIHjmSQ4hI3k19PGODdzjtJqLZEkVxV4r
-         87PSQyemduw/m+k7mZ1zsubiaCZiu6nlhOK9k1kvmSY85Ru+Dz92hrWmvYAEVENVhIGZ
-         0vt4bhwZlmgPG0xGBwzdm7cKW10NJoVfyG4iDCFtz6fdF8KZnq+sq+hUd3uV2PG+I9Pd
-         CuJQ==
-X-Gm-Message-State: APjAAAUl4bnxHVJ2HM8Gh2vRLvkfA1ETNeza7hCylCV7rIKqpYAjgbcT
-        Yb/J1dViAythns2tUjiHwhkY11pk2eCs3+YN7y5MoA==
-X-Google-Smtp-Source: APXvYqwHrMqf0QGsixAbdr9YO/brEv5lOHVZjAT153yUV3MxVGAnMIC9SdFTs2dZJSNR204F/AOxPhvAJj2cdqQv4XA=
-X-Received: by 2002:a92:3b04:: with SMTP id i4mr6543252ila.211.1573153830610;
- Thu, 07 Nov 2019 11:10:30 -0800 (PST)
+        id S1726560AbfKGTXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:23:15 -0500
+Received: from sg2nlvphout02.shr.prod.sin2.secureserver.net ([182.50.132.196]:55036
+        "EHLO sg2nlvphout02.shr.prod.sin2.secureserver.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725497AbfKGTXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 14:23:14 -0500
+X-Greylist: delayed 675 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Nov 2019 14:23:12 EST
+Received: from ip-208-109-9-206.ip.secureserver.net ([208.109.9.206])
+        by : HOSTING RELAY : with ESMTP
+        id SnB2i6QAURQNjSnB2iv4Mp; Thu, 07 Nov 2019 12:10:54 -0700
+x-originating-ip: 208.109.9.206
+Received: from [::1] (port=35442 helo=ip-208-109-9-206.ip.secureserver.net)
+        by ip-208-109-9-206.ip.secureserver.net with esmtpa (Exim 4.92)
+        (envelope-from <richard.martin@netformsolutions.com>)
+        id 1iSnB0-0003is-Oh; Thu, 07 Nov 2019 12:10:38 -0700
 MIME-Version: 1.0
-References: <20191021205426.28825-1-rjones@gateworks.com>
-In-Reply-To: <20191021205426.28825-1-rjones@gateworks.com>
-From:   Bobby Jones <rjones@gateworks.com>
-Date:   Thu, 7 Nov 2019 11:10:19 -0800
-Message-ID: <CALAE=UAEFobA2SXOTJWAqexg+VNN_VTXGLGH+VwqqjKkuFwddg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx: ventana: add fxos8700 on gateworks boards
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Marco Felsch <m.felsch@pengutronix.de>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 07 Nov 2019 12:10:38 -0700
+From:   richard.martin@netformsolutions.com
+To:     richard.martin@netformsolutions.com
+Subject: Occupational Healthcare Physicians- Contact Data
+Message-ID: <43c322520732a7f7d2a22a4a97f12dc5@netformsolutions.com>
+X-Sender: richard.martin@netformsolutions.com
+User-Agent: Roundcube Webmail/1.3.8
+X-CMAE-Envelope: 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
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Shawn,
+Hi ,
 
-I just wanted to follow up with this and see if you had a chance to
-look at this. I submitted this after responding to Marco on my initial
-submission but haven't heard anything since and didn't want it to fall
-through the cracks. It may be worth mentioning that both the bindings
-for the fxos8700 and lsm9ds1 have been accepted by iio.
+Would you be interested in acquiring Contact Details/Contact Data card 
+of Certified Occupational Healthcare Physicians?
 
-In addition to this submission I have the following that I'd like to
-check in on as well:
+We manage and maintain a global healthcare file of 1 million+ active 
+emails for different Physicians Speciality types,
+you can select from below as per your marketing strategies:
 
-[PATCH] ARM: dts: imx: imx6qdl-gw553x.dtsi: add lsm9ds1 iio imu/magn support
-[PATCH] ARM: dts: imx: Add GW5907
-[PATCH] ARM: dts: imx: Add GW5912
-[PATCH] ARM: dts: imx: Add GW5913
-[PATCH] ARM: dts: imx: Add GW5910
-
-Please let me know if there's anything I can do. Thanks!
-
-Regards,
-Bobby
+Physician Speciality type Database that can benefit you with NPI 
+Numbers:- Obstetrician and Gynaecologist ,
+Anaesthesiologist, Psychologists, Oncologist, Cardiologist, 
+Ophthalmologist, Chiropodist, Chiropractors, Optometrists,
+Haematologist, Podiatrist, Orthopaedic Specialist, Paediatrician, 
+Pulmonologist, Rheumatologist, Neurologist,
+Neonatologist,Naturopaths, Nephrologist, Gastroenterologist, Podiatrist, 
+Urologist and many more.
 
 
+Please let me know if you are interested so I can send you the counts, 
+sample and pricing for your review.
+
+Thanks,
+
+Regards
+
+Richard Martin
+Marketing Manager
+Netform Solutions
 
 
-On Mon, Oct 21, 2019 at 1:54 PM Robert Jones <rjones@gateworks.com> wrote:
->
-> Add fxos8700 iio imu entries for Gateworks ventana SBCs.
->
-> Signed-off-by: Robert Jones <rjones@gateworks.com>
-> ---
->  arch/arm/boot/dts/imx6qdl-gw52xx.dtsi | 5 +++++
->  arch/arm/boot/dts/imx6qdl-gw53xx.dtsi | 5 +++++
->  arch/arm/boot/dts/imx6qdl-gw54xx.dtsi | 5 +++++
->  3 files changed, 15 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx6qdl-gw52xx.dtsi b/arch/arm/boot/dts/imx6qdl-gw52xx.dtsi
-> index 1a9a9d9..2d7d01e 100644
-> --- a/arch/arm/boot/dts/imx6qdl-gw52xx.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-gw52xx.dtsi
-> @@ -313,6 +313,11 @@
->                 interrupts = <12 2>;
->                 wakeup-gpios = <&gpio7 12 GPIO_ACTIVE_LOW>;
->         };
-> +
-> +       fxos8700@1e {
-> +               compatible = "nxp,fxos8700";
-> +               reg = <0x1e>;
-> +       };
->  };
->
->  &ldb {
-> diff --git a/arch/arm/boot/dts/imx6qdl-gw53xx.dtsi b/arch/arm/boot/dts/imx6qdl-gw53xx.dtsi
-> index 54b2bea..bf1a2c6 100644
-> --- a/arch/arm/boot/dts/imx6qdl-gw53xx.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-gw53xx.dtsi
-> @@ -304,6 +304,11 @@
->                 interrupts = <11 2>;
->                 wakeup-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
->         };
-> +
-> +       fxos8700@1e {
-> +               compatible = "nxp,fxos8700";
-> +               reg = <0x1e>;
-> +       };
->  };
->
->  &ldb {
-> diff --git a/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi b/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi
-> index 1b6c133..d9e09a9 100644
-> --- a/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi
-> @@ -361,6 +361,11 @@
->                 interrupts = <12 2>;
->                 wakeup-gpios = <&gpio7 12 GPIO_ACTIVE_LOW>;
->         };
-> +
-> +       fxos8700@1e {
-> +               compatible = "nxp,fxos8700";
-> +               reg = <0x1e>;
-> +       };
->  };
->
->  &ldb {
-> --
-> 2.9.2
->
+Please reply with "No Interest" in the subject line if you are not 
+interested in this offer.
+
