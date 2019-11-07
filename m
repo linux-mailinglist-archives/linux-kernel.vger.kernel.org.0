@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEB26F37FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:06:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 000E7F3800
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:06:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730510AbfKGTGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:06:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44712 "EHLO mail.kernel.org"
+        id S1730642AbfKGTGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:06:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727352AbfKGTG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:06:29 -0500
+        id S1726946AbfKGTGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 14:06:37 -0500
 Received: from quaco.ghostprotocols.net (179-240-172-58.3g.claro.net.br [179.240.172.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C4C8222C6;
-        Thu,  7 Nov 2019 19:06:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B424421D6C;
+        Thu,  7 Nov 2019 19:06:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573153588;
-        bh=obswrDG1ZxfUiXZJ7jUiqEfLNTSGT592OfqCFlY8FxQ=;
+        s=default; t=1573153596;
+        bh=jJTEj+RC34URrm6dmyaPlrShoJzL4K1WKRn4uzRNk/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qvS7IjMt1UP18lkoUCiTLu6F5DzUcHkUBA23zt5nCPQnqNnJhJzlr7x6Lzm6rE/yw
-         1sCqMle/1ZDQaGyDr/v0m72IDQklPDiJqZqMVsLkyKZU5XSM6RHdhpc2dEZQmgEuhW
-         W/9qe98+6CnP4b1vTd5uYfKRb0+MUzHp4ziFQuUI=
+        b=DUCGO4FNQs4Sqb5v6XRMX6xgaCUbFwnJ+ZCHjwUXQ5uxOpRHFOkNs4I7zBhz391cL
+         D9iEnBzEBr2/gREhsVWTRooDWR5DdasmVEFwiJlPdWVMF8S+CaAfs0htJ885QmRntj
+         v2oS2Fcu7sTaiynXeU9YLCni0NvoV04rzrnpMrMU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 39/63] perf tools: Fix cross compile for ARM64
-Date:   Thu,  7 Nov 2019 15:59:47 -0300
-Message-Id: <20191107190011.23924-40-acme@kernel.org>
+Subject: [PATCH 40/63] perf inject: Make --strip keep evsels
+Date:   Thu,  7 Nov 2019 15:59:48 -0300
+Message-Id: <20191107190011.23924-41-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191107190011.23924-1-acme@kernel.org>
 References: <20191107190011.23924-1-acme@kernel.org>
@@ -50,62 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-Currently when cross compiling perf tool for ARM64 on my x86 machine I
-get this error:
+create_gcov (refer to the autofdo example in tools/perf/Documentation/intel-pt.txt)
+now needs the evsels to read the perf.data file. So don't strip them.
 
-  arch/arm64/util/sym-handling.c:9:10: fatal error: gelf.h: No such file or directory
-   #include <gelf.h>
-
-For the build, libelf is reported off:
-
-  Auto-detecting system features:
-  ...
-  ...                        libelf: [ OFF ]
-
-Indeed, test-libelf is not built successfully:
-
-  more ./build/feature/test-libelf.make.output
-  test-libelf.c:2:10: fatal error: libelf.h: No such file or directory
-   #include <libelf.h>
-          ^~~~~~~~~~
-  compilation terminated.
-
-I have no such problems natively compiling on ARM64, and I did not
-previously have this issue for cross compiling. Fix by relocating the
-gelf.h include.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lore.kernel.org/lkml/1573045254-39833-1-git-send-email-john.garry@huawei.com
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lore.kernel.org/lkml/20191105100057.21465-1-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arm64/util/sym-handling.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/builtin-inject.c | 54 -------------------------------------
+ 1 file changed, 54 deletions(-)
 
-diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
-index 5df788985130..8dfa3e5229f1 100644
---- a/tools/perf/arch/arm64/util/sym-handling.c
-+++ b/tools/perf/arch/arm64/util/sym-handling.c
-@@ -6,9 +6,10 @@
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index 372ecb3e2c06..1e5d28311e14 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -578,58 +578,6 @@ static void strip_init(struct perf_inject *inject)
+ 		evsel->handler = drop_sample;
+ }
  
- #include "symbol.h" // for the elf__needs_adjust_symbols() prototype
- #include <stdbool.h>
--#include <gelf.h>
- 
- #ifdef HAVE_LIBELF_SUPPORT
-+#include <gelf.h>
-+
- bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
+-static bool has_tracking(struct evsel *evsel)
+-{
+-	return evsel->core.attr.mmap || evsel->core.attr.mmap2 || evsel->core.attr.comm ||
+-	       evsel->core.attr.task;
+-}
+-
+-#define COMPAT_MASK (PERF_SAMPLE_ID | PERF_SAMPLE_TID | PERF_SAMPLE_TIME | \
+-		     PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_IDENTIFIER)
+-
+-/*
+- * In order that the perf.data file is parsable, tracking events like MMAP need
+- * their selected event to exist, except if there is only 1 selected event left
+- * and it has a compatible sample type.
+- */
+-static bool ok_to_remove(struct evlist *evlist,
+-			 struct evsel *evsel_to_remove)
+-{
+-	struct evsel *evsel;
+-	int cnt = 0;
+-	bool ok = false;
+-
+-	if (!has_tracking(evsel_to_remove))
+-		return true;
+-
+-	evlist__for_each_entry(evlist, evsel) {
+-		if (evsel->handler != drop_sample) {
+-			cnt += 1;
+-			if ((evsel->core.attr.sample_type & COMPAT_MASK) ==
+-			    (evsel_to_remove->core.attr.sample_type & COMPAT_MASK))
+-				ok = true;
+-		}
+-	}
+-
+-	return ok && cnt == 1;
+-}
+-
+-static void strip_fini(struct perf_inject *inject)
+-{
+-	struct evlist *evlist = inject->session->evlist;
+-	struct evsel *evsel, *tmp;
+-
+-	/* Remove non-synthesized evsels if possible */
+-	evlist__for_each_entry_safe(evlist, tmp, evsel) {
+-		if (evsel->handler == drop_sample &&
+-		    ok_to_remove(evlist, evsel)) {
+-			pr_debug("Deleting %s\n", perf_evsel__name(evsel));
+-			evlist__remove(evlist, evsel);
+-			evsel__delete(evsel);
+-		}
+-	}
+-}
+-
+ static int __cmd_inject(struct perf_inject *inject)
  {
- 	return ehdr.e_type == ET_EXEC ||
+ 	int ret = -EINVAL;
+@@ -729,8 +677,6 @@ static int __cmd_inject(struct perf_inject *inject)
+ 				evlist__remove(session->evlist, evsel);
+ 				evsel__delete(evsel);
+ 			}
+-			if (inject->strip)
+-				strip_fini(inject);
+ 		}
+ 		session->header.data_offset = output_data_offset;
+ 		session->header.data_size = inject->bytes_written;
 -- 
 2.21.0
 
