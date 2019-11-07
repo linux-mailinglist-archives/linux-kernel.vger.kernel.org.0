@@ -2,197 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A273F2344
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF64F2352
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 01:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732640AbfKGAW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 19:22:56 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41980 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732452AbfKGAWz (ORCPT
+        id S1727916AbfKGAZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 19:25:21 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35871 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfKGAZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 19:22:55 -0500
-Received: by mail-pg1-f195.google.com with SMTP id h4so397677pgv.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 16:22:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DeQmt4uNFQlcdJU+lnHrpKJXh0m7NA3EyMol7F5dCYM=;
-        b=giGLYDsp5nBEBpAmVbLK6sFyoxa5/UJ50tE8VoCfPrp6W3M/UEiX2KvdIeLEJ2pbEq
-         rqmChMG2jWXKMEGjGYb38PCDIBQtczjqxf7xMLdCaAxl1XCgnvZS82lnXyOYv0h7ZRNS
-         dg3kA6sRy2wiHGJjn9Tw9Ow5ZpTJZLdCaQ3CvoZXGzODnkyhFk2KRsiDGB6NyDV4FV5K
-         v8Y/iB6QWdFj/ObvfItlW9S433OjBXvJyigpI6uzjL4yhyETF+cS9yUuGlb9nga5u+Bu
-         xtkP8RKhDxFA9O8y0j/ImYgUOV45yyR85um6frL1KUZN20RK607Eb/IR2RaFFDfsi8iq
-         Mv6A==
+        Wed, 6 Nov 2019 19:25:20 -0500
+Received: by mail-ot1-f66.google.com with SMTP id f10so471305oto.3;
+        Wed, 06 Nov 2019 16:25:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DeQmt4uNFQlcdJU+lnHrpKJXh0m7NA3EyMol7F5dCYM=;
-        b=jnPdTCzgUF10QNM3lL7mvdtiTS6k1k/bIjalku6sqtiCMbaMQ9Y9xBdSyOFHZeuBLj
-         8I9J8/uXEBhX45blCiI9WlLSjcr83BeMOhLo26Z13hhnQzjZUleRPikivBl4CzS/bLzf
-         OAZekg5sL/ScwWkT40zPI9xb+L3bRAVQ9ltfWebT5KSBaq8ICdTmbdkUNfGf2g1+CJ45
-         dEG27yy/yH3pESpZsKuI6PwZQqaq1MWec0Ch3KGDdvQ4/kfroHC8h1speHJI5ArNXxUa
-         QjwzCjHCpECqJRkVJe5EcTZ/WH+zNrLw42A4G9Ed6mwvjjy6I2RgMeN08GUsYidl8RXc
-         e71g==
-X-Gm-Message-State: APjAAAUEJu6FAoZFFzZBIeERcik0fdPDeF5qYCX3500LuUzRlEBBggYL
-        eAMoLeRDywknUhXwY9gDIwQVMA==
-X-Google-Smtp-Source: APXvYqz8xp/n+GG3rQ0DsX2EunuYmwa5YkczlJhRcO9OZcM9dxMuttEfln8l+1pTXxfN4SKHx2XLxg==
-X-Received: by 2002:a63:4622:: with SMTP id t34mr778490pga.359.1573086174966;
-        Wed, 06 Nov 2019 16:22:54 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i13sm155272pfo.39.2019.11.06.16.22.53
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZzUL/AyiBPqE7zvVbE2IsIX3VerKJnUCOltXfkVkFZY=;
+        b=dX86UKYMpfY58LIBEor0FLDCHcTaXD2pV09/g5pViB9UzIb/e7e1ND6/ynuCxo4LVn
+         K5KLhPhDwTmfGwmNhhJ/o6XnUx2l4nXmSfEiC7xmC89sFLbOfsgCuKPwpsr4yAPHuoH3
+         rkTgTlN3GD1LPFODFnFkGrgXhh7c5V/Hvi3sS/LFJjRTGYgw4T5xbc3a5dSpXY+JNQKq
+         pwoj7BNlC07CIYK2/kUD0FYvZaW4ZaLI1SPMjhVXWaZlgEOWxP8Yu2RxeR1AsanT55YE
+         M0bdcAPwkEN7RH2ZRKlPtbSsSeji/GXZu2GNzvf1WQLEWOIb799gOhp/DTSdSRsZxc+E
+         MgkQ==
+X-Gm-Message-State: APjAAAXgyXKBVTetpfHUbyd3zHVCNtQN5kPZKgLCDgT9Qrc/yId4pToL
+        xsN1ASRvBY200taoCGnRbQ==
+X-Google-Smtp-Source: APXvYqySec/Ph58g0+X2o6i2pUtu7IO0vPN9Wq5qgoeq4sY3tbPZ/3k/MyDq8RuZ4cKgUSWTuIBluQ==
+X-Received: by 2002:a05:6830:15ca:: with SMTP id j10mr430974otr.276.1573086319746;
+        Wed, 06 Nov 2019 16:25:19 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w26sm191235otm.28.2019.11.06.16.25.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 16:22:54 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v2 3/3] arm64: dts: qcom: db845c: Enable PCIe controllers
-Date:   Wed,  6 Nov 2019 16:22:47 -0800
-Message-Id: <20191107002247.1127689-4-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191107002247.1127689-1-bjorn.andersson@linaro.org>
-References: <20191107002247.1127689-1-bjorn.andersson@linaro.org>
+        Wed, 06 Nov 2019 16:25:19 -0800 (PST)
+Date:   Wed, 6 Nov 2019 18:25:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Elaine Zhang <zhangqing@rock-chips.com>
+Cc:     heiko@sntech.de, mark.rutland@arm.com, devicetree@vger.kernel.org,
+        amit.kucheria@verdurent.com,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        huangtao@rock-chips.com, linux-pm@vger.kernel.org,
+        xxx@rock-chips.com, daniel.lezcano@linaro.org,
+        linux-kernel@vger.kernel.org, xf@rock-chips.com,
+        edubezval@gmail.com, linux-rockchip@lists.infradead.org,
+        robh+dt@kernel.org, andy.yan@rock-chips.com, rui.zhang@intel.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: rockchip-thermal: Support the RK3308
+ SoC  compatible
+Message-ID: <20191107002518.GA20339@bogus>
+References: <1572923846-23310-1-git-send-email-zhangqing@rock-chips.com>
+ <1572923846-23310-2-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572923846-23310-2-git-send-email-zhangqing@rock-chips.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the two PCIe controllers found on the Dragonboard845c.
+On Tue,  5 Nov 2019 11:17:24 +0800, Elaine Zhang wrote:
+> Add a new compatible for thermal founding on RK3308 SoCs.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  Documentation/devicetree/bindings/thermal/rockchip-thermal.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-
-Changes since v1:
-- Picked up Vinod's R-b
-
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 91 ++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-index f5a85caff1a3..c314b5d55796 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-@@ -340,6 +340,39 @@
- 			   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>;
- };
- 
-+&pcie0 {
-+	status = "okay";
-+	perst-gpio = <&tlmm 35 GPIO_ACTIVE_LOW>;
-+	enable-gpio = <&tlmm 134 GPIO_ACTIVE_HIGH>;
-+
-+	vddpe-3v3-supply = <&pcie0_3p3v_dual>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie0_default_state>;
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1a_0p875>;
-+	vdda-pll-supply = <&vreg_l26a_1p2>;
-+};
-+
-+&pcie1 {
-+	status = "okay";
-+	perst-gpio = <&tlmm 102 GPIO_ACTIVE_LOW>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie1_default_state>;
-+};
-+
-+&pcie1_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1a_0p875>;
-+	vdda-pll-supply = <&vreg_l26a_1p2>;
-+};
-+
- &pm8998_gpio {
- 	vol_up_pin_a: vol-up-active {
- 		pins = "gpio6";
-@@ -382,6 +415,31 @@
- };
- 
- &tlmm {
-+	pcie0_default_state: pcie0-default {
-+		clkreq {
-+			pins = "gpio36";
-+			function = "pci_e0";
-+			bias-pull-up;
-+		};
-+
-+		reset-n {
-+			pins = "gpio35";
-+			function = "gpio";
-+
-+			drive-strength = <2>;
-+			output-low;
-+			bias-pull-down;
-+		};
-+
-+		wake-n {
-+			pins = "gpio37";
-+			function = "gpio";
-+
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	pcie0_pwren_state: pcie0-pwren {
- 		pins = "gpio90";
- 		function = "gpio";
-@@ -390,6 +448,39 @@
- 		bias-disable;
- 	};
- 
-+	pcie1_default_state: pcie1-default {
-+		perst-n {
-+			pins = "gpio102";
-+			function = "gpio";
-+
-+			drive-strength = <16>;
-+			bias-disable;
-+		};
-+
-+		clkreq {
-+			pins = "gpio103";
-+			function = "pci_e1";
-+			bias-pull-up;
-+		};
-+
-+		wake-n {
-+			pins = "gpio11";
-+			function = "gpio";
-+
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		reset-n {
-+			pins = "gpio75";
-+			function = "gpio";
-+
-+			drive-strength = <16>;
-+			bias-pull-up;
-+			output-high;
-+		};
-+	};
-+
- 	sdc2_default_state: sdc2-default {
- 		clk {
- 			pins = "sdc2_clk";
--- 
-2.23.0
-
+Acked-by: Rob Herring <robh@kernel.org>
