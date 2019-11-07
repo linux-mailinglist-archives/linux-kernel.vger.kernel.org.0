@@ -2,102 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB34F297F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB875F2988
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:44:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387779AbfKGInM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 03:43:12 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34110 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbfKGInJ (ORCPT
+        id S1733268AbfKGIoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 03:44:14 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43184 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbfKGIoN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:43:09 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9916A60B12; Thu,  7 Nov 2019 08:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573116188;
-        bh=rNVWgNXpCmjzKl7+DgyZaXwpqUvs9j2dpx4wlh2Z2MQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UFshVw575HfgLXUismyqqMfQjI9opEjoXB4FABby6JnujSFmJoXIsZdauSRArdyiB
-         l8y3pVABGYqQcwJ7gdfGFa4N4FGKz0x6B61YNcQ/69yePiQPdU/XOmXzG6/wjnRTRN
-         fS6LLaiKMfZ0pzGurQK/56cC1XJ0/+zb7IDGUg68=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0940E60AD7;
-        Thu,  7 Nov 2019 08:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573116186;
-        bh=rNVWgNXpCmjzKl7+DgyZaXwpqUvs9j2dpx4wlh2Z2MQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dFubnSHn/1hgvH8iYtRTUnr3NHcXy0uPFQwHOf6Z3SVXlbmsrOU1nY4ay+aGoy2FU
-         gM0CG7rSXtizbecUB4M4BhBbATn70Z5WCcS06ZjwCKwCb62oFfqNhaUwv8PImZyig2
-         FIcmAsC3k85smovWKFGFe3fUHMcEyWnnr1zkKup0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0940E60AD7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 6/6] scsi: ufs: Fix ufshcd_hold() caused scheduling while atomic
-Date:   Thu,  7 Nov 2019 00:42:13 -0800
-Message-Id: <1573116140-22408-7-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1573116140-22408-1-git-send-email-cang@codeaurora.org>
-References: <1573116140-22408-1-git-send-email-cang@codeaurora.org>
+        Thu, 7 Nov 2019 03:44:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Rr5VVptu6KKK3kXl5x5Pd3BbgAvahZHolhBbi/HcDXE=; b=JeuTI/rY4No7kiJ/81lvxDV9p
+        YSX3mqVRxL/j9g+S3f1K3OQ//hzfiLv7UZjIUvLVITFFBZ67fXcpF1QWfBNAqb53UkdYIJyJ37Bfv
+        S6AwGu8oiN8Xe5471gsruxH7xKYBOXhU0xIxrXPWWB9VNW0B1jFEaLkkSKt0zk8oe9Vanu1Hr+8Kq
+        tvu3AcDPu1vH7b/7D2/6ojk/zhhV1UBOIswrZOSm2Ju5u7Hfk8WT+RMKMBTCLbtmw5ktokv4Q1n/+
+        vRUQB2Ng2BfmL5rk6v4ukMhE9bXlTOQCL54D6wIpfhZ8pEKKplioi28m2NKpzd9rvOFL7O+3a6s6p
+        Vhd730FHQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iSdOh-0000T0-Mo; Thu, 07 Nov 2019 08:44:07 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 89C06300692;
+        Thu,  7 Nov 2019 09:43:00 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E6DFD2025EDB2; Thu,  7 Nov 2019 09:44:04 +0100 (CET)
+Date:   Thu, 7 Nov 2019 09:44:04 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc:     linux-kernel@lists.codethink.co.uk, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/core: fix missing static inline on
+ perf_cgroup_switch
+Message-ID: <20191107084404.GY4131@hirez.programming.kicks-ass.net>
+References: <20191106132527.19977-1-ben.dooks@codethink.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106132527.19977-1-ben.dooks@codethink.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The aysnc version of ufshcd_hold(async == true), which is only called
-in queuecommand path as for now, is expected to work in atomic context,
-thus it should not sleep or schedule out. When it runs into the condition
-that clocks are ON but link is still in hibern8 state, it should bail out
-without flushing the clock ungate work.
+On Wed, Nov 06, 2019 at 01:25:27PM +0000, Ben Dooks (Codethink) wrote:
+> It looks like a "static inline" has been missed in front
+> of the empty definition of perf_cgroup_switch under
+> certain configurations. Fixes the following sparse warning:
+> 
+> kernel/events/core.c:1035:1: warning: symbol 'perf_cgroup_switch' was not declared. Should it be static?
+> 
+> Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 9cf5da3..5e112ae8 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -1545,6 +1545,11 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
- 		 */
- 		if (ufshcd_can_hibern8_during_gating(hba) &&
- 		    ufshcd_is_link_hibern8(hba)) {
-+			if (async) {
-+				rc = -EAGAIN;
-+				hba->clk_gating.active_reqs--;
-+				break;
-+			}
- 			spin_unlock_irqrestore(hba->host->host_lock, flags);
- 			flush_work(&hba->clk_gating.ungate_work);
- 			spin_lock_irqsave(hba->host->host_lock, flags);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Thanks!
