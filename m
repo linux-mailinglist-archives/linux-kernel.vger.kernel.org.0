@@ -2,128 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A61E4F2634
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F31D0F2644
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:10:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733128AbfKGEC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 23:02:58 -0500
-Received: from gateway36.websitewelcome.com ([192.185.198.13]:31258 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733028AbfKGEC5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 23:02:57 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 2761B40DBF88A
-        for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2019 20:25:57 -0600 (CST)
-Received: from br164.hostgator.com.br ([192.185.176.180])
-        by cmsmtp with SMTP
-        id SYIVi85tQiJ43SYIVihaC5; Wed, 06 Nov 2019 21:17:23 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=H+g7AYW8DqVIzvI+3N37//r3zkgiBk8GNs4olp1Yr9M=; b=U91k772fD8fY5roAOyl7gkffgL
-        x8A2ije+wEM1tu4ATFKlH0qHZbnChSsjYPrL7vMsFUIBY82XoKdRlOJkxurc6nFMs+NUWvVSRTP9K
-        C5x5j6++848Zc2f/m5w4dt5dQPc71ppSqARGSS1o3TbIF+hfjQrHvZ0v4LkpUZVEtM5kFo0s2eg0i
-        i76o/pNsumT2sdPXsdDeIcpm12S71VQbdzxudC/VgASYt+uvv+2uXd2sE9kWdDiM/LRVhgjTQpOj6
-        LIe3iK5CIWNARfoKn+VpHOifp3BoKrkXvlqs9c3U73NEccnVjoxVNHDkXcqro/A0AJNCltaqJJwFf
-        zmJ1A08A==;
-Received: from [191.31.194.59] (port=34854 helo=castello.castello)
-        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <matheus@castello.eng.br>)
-        id 1iSYIU-000Mrk-9w; Thu, 07 Nov 2019 00:17:22 -0300
-From:   Matheus Castello <matheus@castello.eng.br>
-To:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org
-Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, lee.jones@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v6 2/5] dt-bindings: power: supply: Max17040: Add DT bindings for max17040 fuel gauge
-Date:   Thu,  7 Nov 2019 00:17:07 -0300
-Message-Id: <20191107031710.5672-3-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.24.0.rc2
-In-Reply-To: <20191107031710.5672-1-matheus@castello.eng.br>
-References: <20191105095905.GA31721@pi3>
- <20191107031710.5672-1-matheus@castello.eng.br>
+        id S1733179AbfKGEKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 23:10:53 -0500
+Received: from mga06.intel.com ([134.134.136.31]:40082 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727280AbfKGEKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 23:10:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 20:10:52 -0800
+X-IronPort-AV: E=Sophos;i="5.68,276,1569308400"; 
+   d="scan'208";a="192696501"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 20:10:52 -0800
+Subject: [PATCH 00/16] Memory Hierarchy: Enable target node lookups for
+ reserved memory
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Date:   Wed, 06 Nov 2019 19:56:35 -0800
+Message-ID: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.31.194.59
-X-Source-L: No
-X-Exim-ID: 1iSYIU-000Mrk-9w
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (castello.castello) [191.31.194.59]:34854
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 38
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation of max17040 based fuel gauge characteristics.
-For configure low level state of charge threshold alert signaled from
-max17043/max17044 we add "maxim,alert-low-soc-level" property.
+Yes, this patch series looks like a pile of boring libnvdimm cleanups,
+but buried at the end are some small gems that testing with libnvdimm
+uncovered. These gems will prove more valuable over time for Memory
+Hierarchy management as more platforms, via the ACPI HMAT and EFI
+Specific Purpose Memory, publish reserved or "soft-reserved" ranges to
+Linux. Linux system administrators will expect to be able to interact
+with those ranges with a unique numa node number when/if that memory is
+onlined via the dax_kmem driver [1].
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+One configuration that currently fails to properly convey the target
+node for the resulting memory hotplug operation is persistent memory
+defined by the memmap=nn!ss parameter. For example, today if node1 is a
+memory only node, and all the memory from node1 is specified to
+memmap=nn!ss and subsequently onlined, it will end up being onlined as
+node0 memory. As it stands, memory_add_physaddr_to_nid() can only
+identify online nodes and since node1 in this example has no online cpus
+/ memory the target node is initialized node0.
+
+The fix is to preserve rather than discard the numa_meminfo entries that
+are relevant for reserved memory ranges, and to uplevel the node
+distance helper for determining the "local" (closest) node relative to
+an initiator node.
+
+The first 12 patches are cleanups to make sure that all nvdimm devices
+and their children properly export a numa_node attribute. The switch to
+a device-type is less code and less error prone as a result.
+
+Patch 13 and 14 are the core changes (gems) to allow numa node
+information for offline memory to be tracked.
+
+Patches 15 and 16 use this new capability to fix the conveyance of numa
+node information for memmap=nn!ss assignments. See patch 16 for more
+details.
+
+[1]: https://pmem.io/ndctl/daxctl-reconfigure-device.html
+
 ---
- .../power/supply/max17040_battery.txt         | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/max17040_battery.txt
 
-diff --git a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-new file mode 100644
-index 000000000000..f2d0b22b5f79
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-@@ -0,0 +1,33 @@
-+max17040_battery
-+~~~~~~~~~~~~~~~~
-+
-+Required properties :
-+ - compatible : "maxim,max17040" or "maxim,max77836-battery"
-+ - reg: i2c slave address
-+
-+Optional properties :
-+- maxim,alert-low-soc-level :	The alert threshold that sets the state of
-+ 				charge level (%) where an interrupt is
-+				generated. Can be configured from 1 up to 32
-+				(%). If skipped the power up default value of
-+				4 (%) will be used.
-+- interrupts : 			Interrupt line see Documentation/devicetree/
-+				bindings/interrupt-controller/interrupts.txt
-+- wakeup-source :		This device has wakeup capabilities. Use this
-+				property to use alert low SOC level interrupt
-+				as wake up source.
-+
-+Optional properties support interrupt functionality for alert low state of
-+charge level, present in some ICs in the same family, and should be used with
-+compatible "maxim,max77836-battery".
-+
-+Example:
-+
-+	battery-fuel-gauge@36 {
-+		compatible = "maxim,max77836-battery";
-+		reg = <0x36>;
-+		maxim,alert-low-soc-level = <10>;
-+		interrupt-parent = <&gpio7>;
-+		interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-+		wakeup-source;
-+	};
---
-2.24.0.rc2
+Dan Williams (16):
+      libnvdimm: Move attribute groups to device type
+      libnvdimm: Move region attribute group definition
+      libnvdimm: Move nd_device_attribute_group to device_type
+      libnvdimm: Move nd_numa_attribute_group to device_type
+      libnvdimm: Move nd_region_attribute_group to device_type
+      libnvdimm: Move nd_mapping_attribute_group to device_type
+      libnvdimm: Move nvdimm_attribute_group to device_type
+      libnvdimm: Move nvdimm_bus_attribute_group to device_type
+      dax: Create a dax device_type
+      dax: Simplify root read-only definition for the 'resource' attribute
+      libnvdimm: Simplify root read-only definition for the 'resource' attribute
+      dax: Add numa_node to the default device-dax attributes
+      acpi/mm: Up-level "map to online node" functionality
+      x86/numa: Provide a range-to-target_node lookup facility
+      libnvdimm/e820: Drop the wrapper around memory_add_physaddr_to_nid
+      libnvdimm/e820: Retrieve and populate correct 'target_node' info
 
+
+ arch/powerpc/platforms/pseries/papr_scm.c |   25 ---
+ arch/x86/mm/numa.c                        |   72 ++++++++-
+ drivers/acpi/nfit/core.c                  |    7 -
+ drivers/acpi/numa.c                       |   41 -----
+ drivers/dax/bus.c                         |   22 ++-
+ drivers/nvdimm/btt_devs.c                 |   24 +--
+ drivers/nvdimm/bus.c                      |   15 +-
+ drivers/nvdimm/core.c                     |    8 +
+ drivers/nvdimm/dax_devs.c                 |   27 +--
+ drivers/nvdimm/dimm_devs.c                |   30 ++--
+ drivers/nvdimm/e820.c                     |   30 ----
+ drivers/nvdimm/namespace_devs.c           |   77 +++++-----
+ drivers/nvdimm/nd.h                       |    5 -
+ drivers/nvdimm/of_pmem.c                  |   13 --
+ drivers/nvdimm/pfn_devs.c                 |   38 ++---
+ drivers/nvdimm/region_devs.c              |  235 +++++++++++++++--------------
+ include/linux/acpi.h                      |   23 +++
+ include/linux/libnvdimm.h                 |    7 -
+ include/linux/memory_hotplug.h            |    6 +
+ include/linux/numa.h                      |    2 
+ mm/mempolicy.c                            |   30 ++++
+ 21 files changed, 382 insertions(+), 355 deletions(-)
