@@ -2,132 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F4159F2467
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 02:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3644F24A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 02:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732771AbfKGBnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 20:43:10 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45966 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728306AbfKGBnK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 20:43:10 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z4so971617pfn.12
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 17:43:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9VO4sGrknxbUDh30qhuG3KUeNeC1A4Tt2xPDsLEp5fM=;
-        b=rXc2aBAZzYFknfwCG04vRP6mmQavmHkErS2hQWqXtresgzruUmJgRYIhy6QRzdzu0j
-         QSqFg22DcPwXm3nS5X1Gbk0909scC7T/V5BMU4hictwJB/67vP3qk5XsOrlE+0Hlo1cy
-         jjymQS7NDLdu3FJObNkukz/ZH4eSVMaZZDYsaIwqPf3teBONwlO5/a4rlJI0TatOQQ8B
-         HlXT7D47UujAzQ55gjBWfO57fKa53rtqKHjRaq0x/A3uEnfzeqVxsxciArSUp862pHFM
-         XNh/DBn71FT4u/BADAFKkClTmUpxDd2bvIdlztxBewEA5bt/tDY+hMtLfh6MIE4Jt0zs
-         d5bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9VO4sGrknxbUDh30qhuG3KUeNeC1A4Tt2xPDsLEp5fM=;
-        b=UT6JK19dMKMagMun3U0sMlKrvqmEa0yaVYu4SwtbdTjjhIMlD6zo4AAM+/o+QFa53y
-         4u925V5RU6I490Dr0NRqQipXLalkMztYotOHacnIo5JxN3CJ7J9hQU6vdICnJBYQsrP5
-         Pryh8IJ4B5/nvoObptb/ilLWEDqPF29Pk5j1lzxJGIYlxpcDJOyW0KeV/P0iQJP5pDUo
-         PBRsiaq6j7N91LKFJoP8sE9Gh4t2GL0yv0C5uSBYneyJpiMSXmHXQruOVAgaxp10hQ+B
-         gY74NZCFTq9z4Cb2rl9mA3ik7s8+/WnRqjr2rOTUZp4MTsFzpsTY3FBBwrsJKDQL28QN
-         HEUA==
-X-Gm-Message-State: APjAAAVC0ma4CN9O68CBT7Nt2L0r961+0qTSRg58kDCJW+kDtYvfOxXJ
-        qMeT5njTzBNjl/BMEDLlFgYwBw==
-X-Google-Smtp-Source: APXvYqyCUj+4VEd7NMm6AGfG0FVKEdooHVpzlCAYsRZh4cpIqYfwEevcYEmaRsySPTUu75BpVUGTcw==
-X-Received: by 2002:a62:1ad6:: with SMTP id a205mr594141pfa.64.1573090987977;
-        Wed, 06 Nov 2019 17:43:07 -0800 (PST)
-Received: from localhost ([2620:10d:c090:200::2:deb0])
-        by smtp.gmail.com with ESMTPSA id c19sm274837pfn.44.2019.11.06.17.43.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 17:43:06 -0800 (PST)
-Date:   Wed, 6 Nov 2019 17:43:05 -0800
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>, stable@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/2] mm: memcg: switch to css_tryget() in
- get_mem_cgroup_from_mm()
-Message-ID: <20191107014305.GC96548@cmpxchg.org>
-References: <20191106225131.3543616-1-guro@fb.com>
- <20191107002204.GA96548@cmpxchg.org>
- <CALvZod5=g230Lwnjh7qXyLkoknZJpOiv-nLJ4XYC9rSSzL=e6w@mail.gmail.com>
+        id S1732997AbfKGB53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 20:57:29 -0500
+Received: from mga06.intel.com ([134.134.136.31]:31876 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbfKGB52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 20:57:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 17:57:27 -0800
+X-IronPort-AV: E=Sophos;i="5.68,276,1569308400"; 
+   d="scan'208";a="353661060"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 17:57:27 -0800
+Subject: [PATCH v8 04/12] efi: Common enable/disable infrastructure for EFI
+ soft reservation
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     mingo@redhat.com
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>, peterz@infradead.org,
+        vishal.l.verma@intel.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-efi@vger.kernel.org
+Date:   Wed, 06 Nov 2019 17:43:11 -0800
+Message-ID: <157309099101.1579826.9700865115710403132.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <157309097008.1579826.12818463304589384434.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157309097008.1579826.12818463304589384434.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod5=g230Lwnjh7qXyLkoknZJpOiv-nLJ4XYC9rSSzL=e6w@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 05:25:26PM -0800, Shakeel Butt wrote:
-> On Wed, Nov 6, 2019 at 4:22 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Wed, Nov 06, 2019 at 02:51:30PM -0800, Roman Gushchin wrote:
-> > > We've encountered a rcu stall in get_mem_cgroup_from_mm():
-> > >
-> > >  rcu: INFO: rcu_sched self-detected stall on CPU
-> > >  rcu: 33-....: (21000 ticks this GP) idle=6c6/1/0x4000000000000002 softirq=35441/35441 fqs=5017
-> > >  (t=21031 jiffies g=324821 q=95837) NMI backtrace for cpu 33
-> > >  <...>
-> > >  RIP: 0010:get_mem_cgroup_from_mm+0x2f/0x90
-> > >  <...>
-> > >  __memcg_kmem_charge+0x55/0x140
-> > >  __alloc_pages_nodemask+0x267/0x320
-> > >  pipe_write+0x1ad/0x400
-> > >  new_sync_write+0x127/0x1c0
-> > >  __kernel_write+0x4f/0xf0
-> > >  dump_emit+0x91/0xc0
-> > >  writenote+0xa0/0xc0
-> > >  elf_core_dump+0x11af/0x1430
-> > >  do_coredump+0xc65/0xee0
-> > >  ? unix_stream_sendmsg+0x37d/0x3b0
-> > >  get_signal+0x132/0x7c0
-> > >  do_signal+0x36/0x640
-> > >  ? recalc_sigpending+0x17/0x50
-> > >  exit_to_usermode_loop+0x61/0xd0
-> > >  do_syscall_64+0xd4/0x100
-> > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > >
-> > > The problem is caused by an exiting task which is associated with
-> > > an offline memcg. We're iterating over and over in the
-> > > do {} while (!css_tryget_online()) loop, but obviously the memcg won't
-> > > become online and the exiting task won't be migrated to a live memcg.
-> > >
-> > > Let's fix it by switching from css_tryget_online() to css_tryget().
-> > >
-> > > As css_tryget_online() cannot guarantee that the memcg won't go
-> > > offline, the check is usually useless, except some rare cases
-> > > when for example it determines if something should be presented
-> > > to a user.
-> > >
-> > > A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
-> > > css_tryget() instead of css_tryget_online() in task_get_css()").
-> > >
-> > > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > > Cc: stable@vger.kernel.org
-> > > Cc: Tejun Heo <tj@kernel.org>
-> >
-> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> >
-> > The bug aside, it doesn't matter whether the cgroup is online for the
-> > callers. It used to matter when offlining needed to evacuate all
-> > charges from the memcg, and so needed to prevent new ones from showing
-> > up, but we don't care now.
-> 
-> Should get_mem_cgroup_from_current() and get_mem_cgroup_from_page() be
-> switched to css_tryget() as well then?
+UEFI 2.8 defines an EFI_MEMORY_SP attribute bit to augment the
+interpretation of the EFI Memory Types as "reserved for a specific
+purpose".
 
-Yes. Looking at the remaining css_tryget_online() in memcontrol.c, I
-don't think the online/offline distinction is meaningful for any of
-them anymore.
+The proposed Linux behavior for specific purpose memory is that it is
+reserved for direct-access (device-dax) by default and not available for
+any kernel usage, not even as an OOM fallback.  Later, through udev
+scripts or another init mechanism, these device-dax claimed ranges can
+be reconfigured and hot-added to the available System-RAM with a unique
+node identifier. This device-dax management scheme implements "soft" in
+the "soft reserved" designation by allowing some or all of the
+reservation to be recovered as typical memory. This policy can be
+disabled at compile-time with CONFIG_EFI_SOFT_RESERVE=n, or runtime with
+efi=nosoftreserve.
+
+As for this patch, define the common helpers to determine if the
+EFI_MEMORY_SP attribute should be honored. The determination needs to be
+made early to prevent the kernel from being loaded into soft-reserved
+memory, or otherwise allowing early allocations to land there. Follow-on
+changes are needed per architecture to leverage these helpers in their
+respective mem-init paths.
+
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |    9 ++++++++-
+ drivers/firmware/efi/Kconfig                    |   21 +++++++++++++++++++++
+ drivers/firmware/efi/efi.c                      |    8 ++++++++
+ drivers/firmware/efi/libstub/efi-stub-helper.c  |   19 +++++++++++++++++++
+ include/linux/efi.h                             |   14 ++++++++++++++
+ 5 files changed, 70 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a84a83f8881e..2359dc56d82c 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1168,7 +1168,8 @@
+ 			Format: {"off" | "on" | "skip[mbr]"}
+ 
+ 	efi=		[EFI]
+-			Format: { "old_map", "nochunk", "noruntime", "debug" }
++			Format: { "old_map", "nochunk", "noruntime", "debug",
++				  "nosoftreserve" }
+ 			old_map [X86-64]: switch to the old ioremap-based EFI
+ 			runtime services mapping. 32-bit still uses this one by
+ 			default.
+@@ -1177,6 +1178,12 @@
+ 			firmware implementations.
+ 			noruntime : disable EFI runtime services support
+ 			debug: enable misc debug output
++			nosoftreserve: The EFI_MEMORY_SP (Specific Purpose)
++			attribute may cause the kernel to reserve the
++			memory range for a memory mapping driver to
++			claim. Specify efi=nosoftreserve to disable this
++			reservation and treat the memory by its base type
++			(i.e. EFI_CONVENTIONAL_MEMORY / "System RAM").
+ 
+ 	efi_no_storage_paranoia [EFI; X86]
+ 			Using this parameter you can use more than 50% of
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index b248870a9806..bcc378c19ebe 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -75,6 +75,27 @@ config EFI_MAX_FAKE_MEM
+ 	  Ranges can be set up to this value using comma-separated list.
+ 	  The default value is 8.
+ 
++config EFI_SOFT_RESERVE
++	bool "Reserve EFI Specific Purpose Memory"
++	depends on EFI && EFI_STUB && ACPI_HMAT
++	default ACPI_HMAT
++	help
++	  On systems that have mixed performance classes of memory EFI
++	  may indicate specific purpose memory with an attribute (See
++	  EFI_MEMORY_SP in UEFI 2.8). A memory range tagged with this
++	  attribute may have unique performance characteristics compared
++	  to the system's general purpose "System RAM" pool. On the
++	  expectation that such memory has application specific usage,
++	  and its base EFI memory type is "conventional" answer Y to
++	  arrange for the kernel to reserve it as a "Soft Reserved"
++	  resource, and set aside for direct-access (device-dax) by
++	  default. The memory range can later be optionally assigned to
++	  the page allocator by system administrator policy via the
++	  device-dax kmem facility. Say N to have the kernel treat this
++	  memory as "System RAM" by default.
++
++	  If unsure, say Y.
++
+ config EFI_PARAMS_FROM_FDT
+ 	bool
+ 	help
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index f8f8e273d809..e1cb915b45c6 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -81,6 +81,11 @@ bool efi_runtime_disabled(void)
+ 	return disable_runtime;
+ }
+ 
++bool __pure __efi_soft_reserve_enabled(void)
++{
++	return !efi_enabled(EFI_MEM_NO_SOFT_RESERVE);
++}
++
+ static int __init parse_efi_cmdline(char *str)
+ {
+ 	if (!str) {
+@@ -94,6 +99,9 @@ static int __init parse_efi_cmdline(char *str)
+ 	if (parse_option_str(str, "noruntime"))
+ 		disable_runtime = true;
+ 
++	if (parse_option_str(str, "nosoftreserve"))
++		set_bit(EFI_MEM_NO_SOFT_RESERVE, &efi.flags);
++
+ 	return 0;
+ }
+ early_param("efi", parse_efi_cmdline);
+diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
+index 35dbc2791c97..e02579907f2e 100644
+--- a/drivers/firmware/efi/libstub/efi-stub-helper.c
++++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
+@@ -32,6 +32,7 @@ static unsigned long __chunk_size = EFI_READ_CHUNK_SIZE;
+ static int __section(.data) __nokaslr;
+ static int __section(.data) __quiet;
+ static int __section(.data) __novamap;
++static bool __section(.data) efi_nosoftreserve;
+ 
+ int __pure nokaslr(void)
+ {
+@@ -45,6 +46,10 @@ int __pure novamap(void)
+ {
+ 	return __novamap;
+ }
++bool __pure __efi_soft_reserve_enabled(void)
++{
++	return !efi_nosoftreserve;
++}
+ 
+ #define EFI_MMAP_NR_SLACK_SLOTS	8
+ 
+@@ -211,6 +216,10 @@ efi_status_t efi_high_alloc(efi_system_table_t *sys_table_arg,
+ 		if (desc->type != EFI_CONVENTIONAL_MEMORY)
+ 			continue;
+ 
++		if (efi_soft_reserve_enabled() &&
++		    (desc->attribute & EFI_MEMORY_SP))
++			continue;
++
+ 		if (desc->num_pages < nr_pages)
+ 			continue;
+ 
+@@ -305,6 +314,10 @@ efi_status_t efi_low_alloc_above(efi_system_table_t *sys_table_arg,
+ 		if (desc->type != EFI_CONVENTIONAL_MEMORY)
+ 			continue;
+ 
++		if (efi_soft_reserve_enabled() &&
++		    (desc->attribute & EFI_MEMORY_SP))
++			continue;
++
+ 		if (desc->num_pages < nr_pages)
+ 			continue;
+ 
+@@ -484,6 +497,12 @@ efi_status_t efi_parse_options(char const *cmdline)
+ 			__novamap = 1;
+ 		}
+ 
++		if (IS_ENABLED(CONFIG_EFI_SOFT_RESERVE) &&
++		    !strncmp(str, "nosoftreserve", 7)) {
++			str += strlen("nosoftreserve");
++			efi_nosoftreserve = 1;
++		}
++
+ 		/* Group words together, delimited by "," */
+ 		while (*str && *str != ' ' && *str != ',')
+ 			str++;
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 44c85b559e15..88654910ce29 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1202,6 +1202,7 @@ extern int __init efi_setup_pcdp_console(char *);
+ #define EFI_DBG			8	/* Print additional debug info at runtime */
+ #define EFI_NX_PE_DATA		9	/* Can runtime data regions be mapped non-executable? */
+ #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
++#define EFI_MEM_NO_SOFT_RESERVE	11	/* Is the kernel configured to ignore soft reservations? */
+ 
+ #ifdef CONFIG_EFI
+ /*
+@@ -1212,6 +1213,14 @@ static inline bool efi_enabled(int feature)
+ 	return test_bit(feature, &efi.flags) != 0;
+ }
+ extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
++
++bool __pure __efi_soft_reserve_enabled(void);
++
++static inline bool __pure efi_soft_reserve_enabled(void)
++{
++	return IS_ENABLED(CONFIG_EFI_SOFT_RESERVE)
++		&& __efi_soft_reserve_enabled();
++}
+ #else
+ static inline bool efi_enabled(int feature)
+ {
+@@ -1225,6 +1234,11 @@ efi_capsule_pending(int *reset_type)
+ {
+ 	return false;
+ }
++
++static inline bool efi_soft_reserve_enabled(void)
++{
++	return false;
++}
+ #endif
+ 
+ extern int efi_status_to_err(efi_status_t status);
+
