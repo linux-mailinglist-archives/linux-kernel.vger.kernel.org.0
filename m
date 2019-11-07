@@ -2,235 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E24F3910
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:59:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A47FFF391C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 21:02:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfKGT7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:59:47 -0500
-Received: from mga06.intel.com ([134.134.136.31]:34947 "EHLO mga06.intel.com"
+        id S1727247AbfKGUCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 15:02:13 -0500
+Received: from mga11.intel.com ([192.55.52.93]:38138 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbfKGT7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:59:45 -0500
+        id S1725844AbfKGUCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 15:02:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 11:59:44 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 12:02:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,279,1569308400"; 
-   d="scan'208";a="233379315"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Nov 2019 11:59:44 -0800
-From:   thor.thayer@linux.intel.com
-To:     bp@alien8.de, mchehab@kernel.org, tony.luck@intel.com,
-        james.morse@arm.com, rrichter@marvell.com
-Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCH 2/2] EDAC/altera: Use Altera System Manager driver
-Date:   Thu,  7 Nov 2019 14:01:30 -0600
-Message-Id: <1573156890-26891-3-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573156890-26891-1-git-send-email-thor.thayer@linux.intel.com>
-References: <1573156890-26891-1-git-send-email-thor.thayer@linux.intel.com>
+   d="scan'208";a="353896399"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 07 Nov 2019 12:02:12 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 7058C580108;
+        Thu,  7 Nov 2019 12:02:12 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH] PCI/DPC: Add pcie_ports=dpc-native parameter to bring
+ back old behavior
+To:     Bjorn Helgaas <helgaas@kernel.org>, Olof Johansson <olof@lixom.net>
+Cc:     Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191025202004.GA147688@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <1ade6a9f-9532-c400-9bb0-4e68ed5752ce@linux.intel.com>
+Date:   Thu, 7 Nov 2019 11:59:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191025202004.GA147688@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+Hi,
 
-Simplify the EDAC file by using the Altera System Manager
-driver that abstracts the differences between ARM32 and ARM64.
-Also allows the removal of the Arria10 test function since
-this is handled by the System Manager driver.
+On 10/25/19 1:20 PM, Bjorn Helgaas wrote:
+> On Wed, Oct 23, 2019 at 12:22:05PM -0700, Olof Johansson wrote:
+>> In commit eed85ff4c0da7 ("PCI/DPC: Enable DPC only if AER is available"),
+>> the behavior was changed such that native (kernel) handling of DPC
+>> got tied to whether the kernel also handled AER. While this is what
+>> the standard recommends, there are BIOSes out there that lack the DPC
+>> handling since it was never required in the past.
+> Some systems do not grant OS control of AER via _OSC.  I guess the
+> problem is that on those systems, the OS DPC driver used to work, but
+> after eed85ff4c0da7, it does not.  Right?
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
- drivers/edac/altera_edac.c | 129 +++------------------------------------------
- 1 file changed, 8 insertions(+), 121 deletions(-)
+I need some clarification on this issue. Do you mean in these systems,
+firmware expects OS to handle DPC and AER, but it does not let OS know
+about it via _OSC ?
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index e893ff8731cb..0b57b8c831c7 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -14,6 +14,7 @@
- #include <linux/interrupt.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/kernel.h>
-+#include <linux/mfd/altera-sysmgr.h>
- #include <linux/mfd/syscon.h>
- #include <linux/notifier.h>
- #include <linux/of_address.h>
-@@ -275,7 +276,6 @@ static int a10_unmask_irq(struct platform_device *pdev, u32 mask)
- 	return ret;
- }
- 
--static int socfpga_is_a10(void);
- static int altr_sdram_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *id;
-@@ -399,7 +399,7 @@ static int altr_sdram_probe(struct platform_device *pdev)
- 		goto err;
- 
- 	/* Only the Arria10 has separate IRQs */
--	if (socfpga_is_a10()) {
-+	if (of_machine_is_compatible("altr,socfpga-arria10")) {
- 		/* Arria10 specific initialization */
- 		res = a10_init(mc_vbase);
- 		if (res < 0)
-@@ -502,66 +502,6 @@ module_platform_driver(altr_sdram_edac_driver);
- 
- #endif	/* CONFIG_EDAC_ALTERA_SDRAM */
- 
--/**************** Stratix 10 EDAC Memory Controller Functions ************/
--
--/**
-- * s10_protected_reg_write
-- * Write to a protected SMC register.
-- * @context: Not used.
-- * @reg: Address of register
-- * @value: Value to write
-- * Return: INTEL_SIP_SMC_STATUS_OK (0) on success
-- *	   INTEL_SIP_SMC_REG_ERROR on error
-- *	   INTEL_SIP_SMC_RETURN_UNKNOWN_FUNCTION if not supported
-- */
--static int s10_protected_reg_write(void *context, unsigned int reg,
--				   unsigned int val)
--{
--	struct arm_smccc_res result;
--	unsigned long offset = (unsigned long)context;
--
--	arm_smccc_smc(INTEL_SIP_SMC_REG_WRITE, offset + reg, val, 0, 0,
--		      0, 0, 0, &result);
--
--	return (int)result.a0;
--}
--
--/**
-- * s10_protected_reg_read
-- * Read the status of a protected SMC register
-- * @context: Not used.
-- * @reg: Address of register
-- * @value: Value read.
-- * Return: INTEL_SIP_SMC_STATUS_OK (0) on success
-- *	   INTEL_SIP_SMC_REG_ERROR on error
-- *	   INTEL_SIP_SMC_RETURN_UNKNOWN_FUNCTION if not supported
-- */
--static int s10_protected_reg_read(void *context, unsigned int reg,
--				  unsigned int *val)
--{
--	struct arm_smccc_res result;
--	unsigned long offset = (unsigned long)context;
--
--	arm_smccc_smc(INTEL_SIP_SMC_REG_READ, offset + reg, 0, 0, 0,
--		      0, 0, 0, &result);
--
--	*val = (unsigned int)result.a1;
--
--	return (int)result.a0;
--}
--
--static const struct regmap_config s10_sdram_regmap_cfg = {
--	.name = "s10_ddr",
--	.reg_bits = 32,
--	.reg_stride = 4,
--	.val_bits = 32,
--	.max_register = 0xffd12228,
--	.reg_read = s10_protected_reg_read,
--	.reg_write = s10_protected_reg_write,
--	.use_single_read = true,
--	.use_single_write = true,
--};
--
- /************** </Stratix10 EDAC Memory Controller Functions> ***********/
- 
- /************************* EDAC Parent Probe *************************/
-@@ -1008,11 +948,6 @@ static int __maybe_unused altr_init_memory_port(void __iomem *ioaddr, int port)
- 	return ret;
- }
- 
--static int socfpga_is_a10(void)
--{
--	return of_machine_is_compatible("altr,socfpga-arria10");
--}
--
- static __init int __maybe_unused
- altr_init_a10_ecc_block(struct device_node *np, u32 irq_mask,
- 			u32 ecc_ctrl_en_mask, bool dual_port)
-@@ -1028,34 +963,10 @@ altr_init_a10_ecc_block(struct device_node *np, u32 irq_mask,
- 	/* Get the ECC Manager - parent of the device EDACs */
- 	np_eccmgr = of_get_parent(np);
- 
--	if (socfpga_is_a10()) {
--		ecc_mgr_map = syscon_regmap_lookup_by_phandle(np_eccmgr,
--							      "altr,sysmgr-syscon");
--	} else {
--		struct device_node *sysmgr_np;
--		struct resource res;
--		uintptr_t base;
--
--		sysmgr_np = of_parse_phandle(np_eccmgr,
--					     "altr,sysmgr-syscon", 0);
--		if (!sysmgr_np) {
--			edac_printk(KERN_ERR, EDAC_DEVICE,
--				    "Unable to find altr,sysmgr-syscon\n");
--			return -ENODEV;
--		}
-+	ecc_mgr_map =
-+		altr_sysmgr_regmap_lookup_by_phandle(np_eccmgr,
-+						     "altr,sysmgr-syscon");
- 
--		if (of_address_to_resource(sysmgr_np, 0, &res)) {
--			of_node_put(sysmgr_np);
--			return -ENOMEM;
--		}
--
--		/* Need physical address for SMCC call */
--		base = res.start;
--
--		ecc_mgr_map = regmap_init(NULL, NULL, (void *)base,
--					  &s10_sdram_regmap_cfg);
--		of_node_put(sysmgr_np);
--	}
- 	of_node_put(np_eccmgr);
- 	if (IS_ERR(ecc_mgr_map)) {
- 		edac_printk(KERN_ERR, EDAC_DEVICE,
-@@ -2170,33 +2081,9 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, edac);
- 	INIT_LIST_HEAD(&edac->a10_ecc_devices);
- 
--	if (socfpga_is_a10()) {
--		edac->ecc_mgr_map =
--			syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
--							"altr,sysmgr-syscon");
--	} else {
--		struct device_node *sysmgr_np;
--		struct resource res;
--		uintptr_t base;
--
--		sysmgr_np = of_parse_phandle(pdev->dev.of_node,
--					     "altr,sysmgr-syscon", 0);
--		if (!sysmgr_np) {
--			edac_printk(KERN_ERR, EDAC_DEVICE,
--				    "Unable to find altr,sysmgr-syscon\n");
--			return -ENODEV;
--		}
--
--		if (of_address_to_resource(sysmgr_np, 0, &res))
--			return -ENOMEM;
--
--		/* Need physical address for SMCC call */
--		base = res.start;
--
--		edac->ecc_mgr_map = devm_regmap_init(&pdev->dev, NULL,
--						     (void *)base,
--						     &s10_sdram_regmap_cfg);
--	}
-+	edac->ecc_mgr_map =
-+		altr_sysmgr_regmap_lookup_by_phandle(pdev->dev.of_node,
-+						     "altr,sysmgr-syscon");
- 
- 	if (IS_ERR(edac->ecc_mgr_map)) {
- 		edac_printk(KERN_ERR, EDAC_DEVICE,
+>
+> We should also update negotiate_os_control() to request control of DPC
+> via _OSC.  Kuppuswamy's patch [1] does that but hasn't been merged
+> yet.  That will conflict with this, but I can resolve that.
+>
+> I applied this as below (with the nits Keith noticed) to pci/aer for
+> v5.5, thanks!
+>
+> [1] https://lore.kernel.org/r/b638cbd3e122b4c7a58b949d7224230d2c4b34d4.1570145778.git.sathyanarayanan.kuppuswamy@linux.intel.com
+>
+> commit 35a0b2378c19
+> Author: Olof Johansson <olof@lixom.net>
+> Date:   Wed Oct 23 12:22:05 2019 -0700
+>
+>      PCI/DPC: Add "pcie_ports=dpc-native" to allow DPC without AER control
+>      
+>      Prior to eed85ff4c0da7 ("PCI/DPC: Enable DPC only if AER is available"),
+>      Linux handled DPC events regardless of whether firmware had granted it
+>      ownership of AER or DPC, e.g., via _OSC.
+>      
+>      PCIe r5.0, sec 6.2.10, recommends that the OS link control of DPC to
+>      control of AER, so after eed85ff4c0da7, Linux handles DPC events only if it
+>      has control of AER.
+>      
+>      On platforms that do not grant OS control of AER via _OSC, Linux DPC
+>      handling worked before eed85ff4c0da7 but not after.
+>      
+>      To make Linux DPC handling work on those platforms the same way they did
+>      before, add a "pcie_ports=dpc-native" kernel parameter that makes Linux
+>      handle DPC events regardless of whether it has control of AER.
+>      
+>      [bhelgaas: commit log, move pcie_ports_dpc_native to drivers/pci/]
+>      Link: https://lore.kernel.org/r/20191023192205.97024-1-olof@lixom.net
+>      Signed-off-by: Olof Johansson <olof@lixom.net>
+>      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index c7ac2f3ac99f..806c89f79be8 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3540,6 +3540,8 @@
+>   			even if the platform doesn't give the OS permission to
+>   			use them.  This may cause conflicts if the platform
+>   			also tries to use these services.
+> +		dpc-native	Use native PCIe service for DPC only.  May
+> +				cause conflicts if firmware uses AER or DPC.
+>   		compat	Disable native PCIe services (PME, AER, DPC, PCIe
+>   			hotplug).
+>   
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index a32ec3487a8d..e06f42f58d3d 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -291,7 +291,7 @@ static int dpc_probe(struct pcie_device *dev)
+>   	int status;
+>   	u16 ctl, cap;
+>   
+> -	if (pcie_aer_get_firmware_first(pdev))
+> +	if (pcie_aer_get_firmware_first(pdev) && !pcie_ports_dpc_native)
+>   		return -ENOTSUPP;
+>   
+>   	dpc = devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
+> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+> index 944827a8c7d3..1e673619b101 100644
+> --- a/drivers/pci/pcie/portdrv.h
+> +++ b/drivers/pci/pcie/portdrv.h
+> @@ -25,6 +25,8 @@
+>   
+>   #define PCIE_PORT_DEVICE_MAXSERVICES   5
+>   
+> +extern bool pcie_ports_dpc_native;
+> +
+>   #ifdef CONFIG_PCIEAER
+>   int pcie_aer_init(void);
+>   #else
+> diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+> index 1b330129089f..5075cb9e850c 100644
+> --- a/drivers/pci/pcie/portdrv_core.c
+> +++ b/drivers/pci/pcie/portdrv_core.c
+> @@ -250,8 +250,13 @@ static int get_port_device_capability(struct pci_dev *dev)
+>   		pcie_pme_interrupt_enable(dev, false);
+>   	}
+>   
+> +	/*
+> +	 * With dpc-native, allow Linux to use DPC even if it doesn't have
+> +	 * permission to use AER.
+> +	 */
+>   	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC) &&
+> -	    pci_aer_available() && services & PCIE_PORT_SERVICE_AER)
+> +	    pci_aer_available() &&
+> +	    (pcie_ports_dpc_native || (services & PCIE_PORT_SERVICE_AER)))
+>   		services |= PCIE_PORT_SERVICE_DPC;
+>   
+>   	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM ||
+> diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
+> index 0a87091a0800..160d67c59310 100644
+> --- a/drivers/pci/pcie/portdrv_pci.c
+> +++ b/drivers/pci/pcie/portdrv_pci.c
+> @@ -29,12 +29,20 @@ bool pcie_ports_disabled;
+>    */
+>   bool pcie_ports_native;
+>   
+> +/*
+> + * If the user specified "pcie_ports=dpc-native", use the Linux DPC PCIe
+> + * service even if the platform hasn't given us permission.
+> + */
+> +bool pcie_ports_dpc_native;
+> +
+>   static int __init pcie_port_setup(char *str)
+>   {
+>   	if (!strncmp(str, "compat", 6))
+>   		pcie_ports_disabled = true;
+>   	else if (!strncmp(str, "native", 6))
+>   		pcie_ports_native = true;
+> +	else if (!strncmp(str, "dpc-native", 10))
+> +		pcie_ports_dpc_native = true;
+>   
+>   	return 1;
+>   }
+>
 -- 
-2.7.4
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
