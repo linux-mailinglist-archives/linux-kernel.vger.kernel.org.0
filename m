@@ -2,244 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A81E9F37F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:06:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79ED5F37FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 20:06:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbfKGTGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 14:06:00 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46084 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbfKGTF7 (ORCPT
+        id S1730562AbfKGTGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 14:06:34 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42681 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbfKGTGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:05:59 -0500
-Received: by mail-qt1-f195.google.com with SMTP id u22so3512206qtq.13;
-        Thu, 07 Nov 2019 11:05:58 -0800 (PST)
+        Thu, 7 Nov 2019 14:06:33 -0500
+Received: by mail-pg1-f193.google.com with SMTP id q17so2594264pgt.9;
+        Thu, 07 Nov 2019 11:06:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=U8zpmiqBADxX47OznOybd9yWoe3no3mfK8sqGsDDxeQ=;
-        b=MLQWOL50SgLqIriBuddIFpApYq/Eyf/Ty4qohAkuymWPzpiyXayupTE0X9t79pFy8Q
-         ONhexVDx6tWa4j83oubokoFOOotudgz1XkmKutppjfgHwIe6EnJPmtBAPBzqBkxQDaJm
-         HvjBNkaljz0e5qOe7Wv6lQ4LwcpR2qLBSWRKrCa4Fz7nY6Q6oMEZ71tZJracAxfM1x8S
-         cbMMeFS87AKjm5zjXs/qe5kB8YUp7k2/pnfUCi5MLQICF9zKPdIIddhnoNDxqT+7zV/Q
-         QlQGugssp7mFNeJEoNGKU2h4qRj+2NnE0IlYuhpIZGFc4qVLqTB3/7GtCnS/Ngy1gQJx
-         ERaA==
+        h=from:to:cc:subject:date:message-id;
+        bh=5BHyYNb+49Gf/5XB6rC7pY0BUN7tCK0r/sMc+v4m91o=;
+        b=Wmy6ixOMzOb3/fMo+IM3tySDr1EcMJwZQ4bf1iRSskw9DhGVJcxECsXhlUIXpGlNkw
+         y+m1/jB2eY7WQKkalEHfCLPzBXBnqwwtHzriTYp92MiQ+jP79671Epi81h3s+gR9xF7V
+         HOD0JGE+v+5k8NON/XRXSnaAHxANA7r6awl/gvJOytQv6T2110ErmcwlZKPv5tO9CzaF
+         q9E+IxVYk02pecrgOrv+L75+j8jUjCX60qrcyNHR49c60Qe7m86zSrMptPfrcruk5DhS
+         PEaUj+wdC5SG5qU2bCym0rctKiT5dioAYcXWnvrzTlKySeRYBh/ujETq0AT1waGRv777
+         N4Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U8zpmiqBADxX47OznOybd9yWoe3no3mfK8sqGsDDxeQ=;
-        b=LY42eC6A/j+gGLuFLAcmLKkNzlJmpd00Q9ZBaWgv/UxnQpdEO8cxUc2FD/4rTBnmkZ
-         76I4/4rqckJXJ7vLam8RhnhAojehtuRW/HwSiDqYbANzA15Y7HlDsFluEpS99d+5kb37
-         T96f6oMq2xsYl+evE1nTQgQLi2Gfn7hgG0FQH8LdyQReQu31MKDlBekD1T7d78nh8sGC
-         2CSO/snekOtinRkMnOIucA37b7hjIiFdCkGMsPThVUHP4/BWwBjL4MuZjemkEJvliLLA
-         N50OkFgXyQ4h5ZXspFu2vd4YzLPZyuiuA/zivP0ePmqFFMfGsip9DcKYFlgaA/YdV8J9
-         wRjg==
-X-Gm-Message-State: APjAAAX5UjUEqqZ3qfoWEGcZHK1XNEhbF3tLYkoBliJFcE7vdzQlxmE3
-        8JPiJnkECYcAW69HaJPk1/I=
-X-Google-Smtp-Source: APXvYqx7OcV8j88k3kUZwU07cB8Fnru+N9/4Syy2Nw52WliHVqFiJLsfvwB75ltMAmUhQk0V7mb+Qw==
-X-Received: by 2002:ac8:2ff3:: with SMTP id m48mr1760184qta.127.1573153557730;
-        Thu, 07 Nov 2019 11:05:57 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::2:3f13])
-        by smtp.gmail.com with ESMTPSA id w26sm1382599qkf.59.2019.11.07.11.05.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Nov 2019 11:05:57 -0800 (PST)
-Date:   Thu, 7 Nov 2019 11:05:55 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     axboe@kernel.dk
-Cc:     cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lizefan@huawei.com,
-        hannes@cmpxchg.org, kernel-team@fb.com,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH v2 1/5] bfq-iosched: stop using blkg->stat_bytes and
- ->stat_ios
-Message-ID: <20191107190555.GB3622521@devbig004.ftw2.facebook.com>
-References: <20191106215838.3973497-1-tj@kernel.org>
- <20191106215838.3973497-2-tj@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106215838.3973497-2-tj@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5BHyYNb+49Gf/5XB6rC7pY0BUN7tCK0r/sMc+v4m91o=;
+        b=W6yTzfi+6ORTbmk39B93BYuT+fTbR2CNrJUgXb7dedzYYbUvQBcYpYhxx4n64RMsn7
+         Dn5Pn1D0IlFltAr+WYpFD82hpCmz6K5xKGEL7giU4EqwNvm5FGz7LCGWqHKBj4SaDzko
+         4pIdj/11EbOJUGvyMj+cMW7/6tH2F2h+4TNxmpYXccnW+ZdkTlyOry3cpocTg1LZ0nHW
+         vCKj6CFf3kLiH18whlH6fSFz06/Yskzt0fChPkInQ2zi39I6D7ehFwAWRzJ8V9LgPYkj
+         nc+bCu0vGKuPubwnIAZk8vQOsPwgXMyKJPHFXJ+ot18MpSntF2CQGaFxbKRnBI9n4NHw
+         r0Dg==
+X-Gm-Message-State: APjAAAU8VQ2nr2BagWwvCWMwnwpZF5bufHfKJ1qFZyAuU8H++ZVS0RtR
+        rPxJOnamR7R36KjSfZ47DYc=
+X-Google-Smtp-Source: APXvYqyw5Wk1Y2seoP6DcXKguZT7qNqsVpLYcP4f5BB/JhJaQV7w2RXFoev5GfAcirhMwKbfodvuLw==
+X-Received: by 2002:a63:5848:: with SMTP id i8mr6317989pgm.217.1573153592155;
+        Thu, 07 Nov 2019 11:06:32 -0800 (PST)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id m12sm2725912pjk.13.2019.11.07.11.06.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 11:06:31 -0800 (PST)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        sibis@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH] clk: qcom: smd: Add missing pnoc clock
+Date:   Thu,  7 Nov 2019 11:06:15 -0800
+Message-Id: <20191107190615.5656-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From 4f711dd784f8666ec41fa5319f16838235557a30 Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Thu, 7 Nov 2019 11:01:19 -0800
+When MSM8998 support was added, and analysis was done to determine what
+clocks would be consumed.  That analysis had a flaw, which caused the
+pnoc to be skipped.  The pnoc clock needs to be on to access the uart
+for the console.  The clock is on from boot, but has no consumer votes
+in the RPM.  When we attempt to boot the modem, it causes the RPM to
+turn off pnoc, which kills our access to the console and causes CPU hangs.
 
-When used on cgroup1, bfq uses the blkg->stat_bytes and ->stat_ios
-from blk-cgroup core to populate six stat knobs.  blk-cgroup core is
-moving away from blkg_rwstat to improve scalability and won't be able
-to support this usage.
+We need pnoc to be defined, so that clk_smd_rpm_handoff() will put in
+an implicit vote for linux and prevent issues when booting modem.
+Hopefully pnoc can be consumed by the interconnect framework in future
+so that Linux can rely on explicit votes.
 
-It isn't like the sharing gains all that much.  Let's break it out to
-dedicated rwstat counters which are updated when on cgroup1.  This
-makes use of bfqg_*rwstat*() helpers outside of
-CONFIG_BFQ_CGROUP_DEBUG.  Move them out.
-
-v2: Compile fix when !CONFIG_BFQ_CGROUP_DEBUG.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Paolo Valente <paolo.valente@linaro.org>
+Fixes: 6131dc81211c ("clk: qcom: smd: Add support for MSM8998 rpm clocks")
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 ---
- block/bfq-cgroup.c  | 39 +++++++++++++++++++++++++++------------
- block/bfq-iosched.c |  4 ++++
- block/bfq-iosched.h |  4 ++++
- 3 files changed, 35 insertions(+), 12 deletions(-)
+ drivers/clk/qcom/clk-smd-rpm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-index d4755d4ad009..cea0ae12f937 100644
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -347,6 +347,14 @@ void bfqg_and_blkg_put(struct bfq_group *bfqg)
- 	bfqg_put(bfqg);
- }
- 
-+void bfqg_stats_update_legacy_io(struct request_queue *q, struct request *rq)
-+{
-+	struct bfq_group *bfqg = blkg_to_bfqg(rq->bio->bi_blkg);
-+
-+	blkg_rwstat_add(&bfqg->stats.bytes, rq->cmd_flags, blk_rq_bytes(rq));
-+	blkg_rwstat_add(&bfqg->stats.ios, rq->cmd_flags, 1);
-+}
-+
- /* @stats = 0 */
- static void bfqg_stats_reset(struct bfqg_stats *stats)
- {
-@@ -431,6 +439,8 @@ void bfq_init_entity(struct bfq_entity *entity, struct bfq_group *bfqg)
- 
- static void bfqg_stats_exit(struct bfqg_stats *stats)
- {
-+	blkg_rwstat_exit(&stats->bytes);
-+	blkg_rwstat_exit(&stats->ios);
- #ifdef CONFIG_BFQ_CGROUP_DEBUG
- 	blkg_rwstat_exit(&stats->merged);
- 	blkg_rwstat_exit(&stats->service_time);
-@@ -448,6 +458,10 @@ static void bfqg_stats_exit(struct bfqg_stats *stats)
- 
- static int bfqg_stats_init(struct bfqg_stats *stats, gfp_t gfp)
- {
-+	if (blkg_rwstat_init(&stats->bytes, gfp) ||
-+	    blkg_rwstat_init(&stats->ios, gfp))
-+		return -ENOMEM;
-+
- #ifdef CONFIG_BFQ_CGROUP_DEBUG
- 	if (blkg_rwstat_init(&stats->merged, gfp) ||
- 	    blkg_rwstat_init(&stats->service_time, gfp) ||
-@@ -1057,7 +1071,6 @@ static ssize_t bfq_io_set_weight(struct kernfs_open_file *of,
- 	return bfq_io_set_device_weight(of, buf, nbytes, off);
- }
- 
--#ifdef CONFIG_BFQ_CGROUP_DEBUG
- static int bfqg_print_rwstat(struct seq_file *sf, void *v)
- {
- 	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)), blkg_prfill_rwstat,
-@@ -1082,6 +1095,7 @@ static int bfqg_print_rwstat_recursive(struct seq_file *sf, void *v)
- 	return 0;
- }
- 
-+#ifdef CONFIG_BFQ_CGROUP_DEBUG
- static int bfqg_print_stat(struct seq_file *sf, void *v)
- {
- 	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)), blkg_prfill_stat,
-@@ -1125,7 +1139,8 @@ static int bfqg_print_stat_recursive(struct seq_file *sf, void *v)
- static u64 bfqg_prfill_sectors(struct seq_file *sf, struct blkg_policy_data *pd,
- 			       int off)
- {
--	u64 sum = blkg_rwstat_total(&pd->blkg->stat_bytes);
-+	struct bfq_group *bfqg = blkg_to_bfqg(pd->blkg);
-+	u64 sum = blkg_rwstat_total(&bfqg->stats.bytes);
- 
- 	return __blkg_prfill_u64(sf, pd, sum >> 9);
- }
-@@ -1142,8 +1157,8 @@ static u64 bfqg_prfill_sectors_recursive(struct seq_file *sf,
- {
- 	struct blkg_rwstat_sample tmp;
- 
--	blkg_rwstat_recursive_sum(pd->blkg, NULL,
--			offsetof(struct blkcg_gq, stat_bytes), &tmp);
-+	blkg_rwstat_recursive_sum(pd->blkg, &blkcg_policy_bfq,
-+			offsetof(struct bfq_group, stats.bytes), &tmp);
- 
- 	return __blkg_prfill_u64(sf, pd,
- 		(tmp.cnt[BLKG_RWSTAT_READ] + tmp.cnt[BLKG_RWSTAT_WRITE]) >> 9);
-@@ -1226,13 +1241,13 @@ struct cftype bfq_blkcg_legacy_files[] = {
- 	/* statistics, covers only the tasks in the bfqg */
- 	{
- 		.name = "bfq.io_service_bytes",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_bytes,
-+		.private = offsetof(struct bfq_group, stats.bytes),
-+		.seq_show = bfqg_print_rwstat,
- 	},
- 	{
- 		.name = "bfq.io_serviced",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_ios,
-+		.private = offsetof(struct bfq_group, stats.ios),
-+		.seq_show = bfqg_print_rwstat,
- 	},
- #ifdef CONFIG_BFQ_CGROUP_DEBUG
- 	{
-@@ -1269,13 +1284,13 @@ struct cftype bfq_blkcg_legacy_files[] = {
- 	/* the same statistics which cover the bfqg and its descendants */
- 	{
- 		.name = "bfq.io_service_bytes_recursive",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_bytes_recursive,
-+		.private = offsetof(struct bfq_group, stats.bytes),
-+		.seq_show = bfqg_print_rwstat_recursive,
- 	},
- 	{
- 		.name = "bfq.io_serviced_recursive",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_ios_recursive,
-+		.private = offsetof(struct bfq_group, stats.ios),
-+		.seq_show = bfqg_print_rwstat_recursive,
- 	},
- #ifdef CONFIG_BFQ_CGROUP_DEBUG
- 	{
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index b33be928d164..4629f5580d46 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -5450,6 +5450,10 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
- 	bool idle_timer_disabled = false;
- 	unsigned int cmd_flags;
- 
-+#ifdef CONFIG_BFQ_GROUP_IOSCHED
-+	if (!cgroup_subsys_on_dfl(io_cgrp_subsys) && rq->bio)
-+		bfqg_stats_update_legacy_io(q, rq);
-+#endif
- 	spin_lock_irq(&bfqd->lock);
- 	if (blk_mq_sched_try_insert_merge(q, rq)) {
- 		spin_unlock_irq(&bfqd->lock);
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index 5d1a519640f6..2676c06218f1 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -809,6 +809,9 @@ struct bfq_stat {
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index fef5e8157061..930fa4a4c52a 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -648,6 +648,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
  };
  
- struct bfqg_stats {
-+	/* basic stats */
-+	struct blkg_rwstat		bytes;
-+	struct blkg_rwstat		ios;
- #ifdef CONFIG_BFQ_CGROUP_DEBUG
- 	/* number of ios merged */
- 	struct blkg_rwstat		merged;
-@@ -956,6 +959,7 @@ void bfq_put_async_queues(struct bfq_data *bfqd, struct bfq_group *bfqg);
- 
- /* ---------------- cgroups-support interface ---------------- */
- 
-+void bfqg_stats_update_legacy_io(struct request_queue *q, struct request *rq);
- void bfqg_stats_update_io_add(struct bfq_group *bfqg, struct bfq_queue *bfqq,
- 			      unsigned int op);
- void bfqg_stats_update_io_remove(struct bfq_group *bfqg, unsigned int op);
+ /* msm8998 */
++DEFINE_CLK_SMD_RPM(msm8998, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
+ DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
+ DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
+@@ -670,6 +671,8 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
+ static struct clk_smd_rpm *msm8998_clks[] = {
++	[RPM_SMD_PCNOC_CLK] = &msm8998_pcnoc_clk,
++	[RPM_SMD_PCNOC_A_CLK] = &msm8998_pcnoc_a_clk,
+ 	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
+ 	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
+ 	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
 -- 
 2.17.1
 
