@@ -2,90 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 803F1F33A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24749F33A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:43:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388974AbfKGPmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 10:42:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38770 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfKGPmy (ORCPT
+        id S2388672AbfKGPnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 10:43:46 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38986 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfKGPnq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 10:42:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sQcFjgpx6TV06uR/K58BPWgeUoTItTYfSwgHTWOyYCE=; b=oxqtvIN/n9w8O0qEIbonqAVqQ
-        PSUTG1nDwflONub5P5gHsTmp1fOXHGJj6tU5VuBdKrNxWvVNvdtJ98z9qOr49Cy4iZMN2Aw/Tztjh
-        Igt2CZ8nG1FXv0KKWffX3FCHU3tNGitZlAU5L2p/1I+WNA5SR+zgtEE7Uc8VKOA72FBotYnKLjJHZ
-        sp/+XhZ/9iycAD4c4QsPJZNQDQKCVH4CW0D+5wecVYv4G4x5H1LC6nMta9BTIhWgHPmcKor3o1lF2
-        FHXrnmR0VaFi759CCMytpO+r6T3SSIFf9XXVtXts19T98AeZYSt1Xj+cRP+nltJyGs7z3c5sCghWx
-        sg2OOgzPA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSjvm-0006u4-CD; Thu, 07 Nov 2019 15:42:42 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4B12B301747;
-        Thu,  7 Nov 2019 16:41:35 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D056C2025EDB2; Thu,  7 Nov 2019 16:42:39 +0100 (CET)
-Date:   Thu, 7 Nov 2019 16:42:39 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Quentin Perret <qperret@google.com>, linux-kernel@vger.kernel.org,
-        aaron.lwe@gmail.com, valentin.schneider@arm.com, mingo@kernel.org,
-        pauld@redhat.com, jdesfossez@digitalocean.com,
-        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        kernel-team@android.com, john.stultz@linaro.org
-Subject: Re: NULL pointer dereference in pick_next_task_fair
-Message-ID: <20191107154239.GE4114@hirez.programming.kicks-ass.net>
-References: <20191028174603.GA246917@google.com>
- <20191106120525.GX4131@hirez.programming.kicks-ass.net>
- <33643a5b-1b83-8605-2347-acd1aea04f93@virtuozzo.com>
- <20191106165437.GX4114@hirez.programming.kicks-ass.net>
- <20191106172737.GM5671@hirez.programming.kicks-ass.net>
- <831c2cd4-40a4-31b2-c0aa-b5f579e770d6@virtuozzo.com>
- <20191107132628.GZ4114@hirez.programming.kicks-ass.net>
- <79ecf426-8728-f36b-57ad-5948e5633ffb@virtuozzo.com>
+        Thu, 7 Nov 2019 10:43:46 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t8so2851454qtc.6;
+        Thu, 07 Nov 2019 07:43:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mwaiGtvP4pjM/nFFuK45HtDQzJ+7MTmhsD7fO3UNaLE=;
+        b=rTdt1J+GEp1asFTQuPZVLcym1i5w0oDHdqK+9eXSBrJuj7tdWm6FUF8DlfmazZtYqO
+         ghii+a6FoGSHFZg7Ys67K5plupUG3MZvxdDcnM61T2Z+XSu3/paB3f2akk4aCTK0cbRi
+         7CWFxtSTtTLVzrgtNS9/g1A5TgCMrdM4OOEdsz4V5l7iS35AnyfsaQBFFo4lnnnP6UYu
+         0j+GZmDCRxHFSj7hYHPU6DydmhEF6Yo72kZruft0BxB/Xl2jgVur26PTpGZ/8OdK1nAI
+         9koLUWef6/HPzFUSIEKrgh46voUNO8YEWWCvNlAZxxVvyvE5IZDvc9t+F1VACtj4fj9e
+         8rPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mwaiGtvP4pjM/nFFuK45HtDQzJ+7MTmhsD7fO3UNaLE=;
+        b=MMqKn7+ALEfY4HBsxk0mJ89UUYOadPQbBcXoMzxhhVHErKu7qLJtF7K7YOX0wj1Dnz
+         sf90s5cyZh1F37JgtOWjEFqSgv+tLXdiZHi6AGRfaLVrBKkVyN1E0sj/z10Zfk1bx/R0
+         AmnThrOuLmJhF70mhs2vq0Z0187Gl2uky5vW7mGspcrmtBqxJhfnUzwkX4Pv/g56NoS9
+         jZJlMDRN2k4ye5Z8r98dS7WHZ+tg7RMsDT0l9ZTaZOUOQBVWshKaK6DwMcl5rp94q97L
+         2TR43ifUeQ/F0F7M2Ex5ffKig3XGUty7Cp0JlJ7TaDORyYyW2bie0yOhxsjngJQPBNG4
+         W9lg==
+X-Gm-Message-State: APjAAAVRi91zwiLr52azi7qk+51S6OkVM1mzFWQPx9Uyo43oeQDsY+f9
+        j+M00CphfrXQji0nSnY26AI=
+X-Google-Smtp-Source: APXvYqwJ9bgJnSqOfuwT4NQVIu7t7ruriREekPrkgTiHagbiyhpNcODVa5lJPsXIvI+5oxoMsisDwg==
+X-Received: by 2002:ac8:3a21:: with SMTP id w30mr4498647qte.299.1573141424023;
+        Thu, 07 Nov 2019 07:43:44 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::2:3f13])
+        by smtp.gmail.com with ESMTPSA id f24sm1147320qkh.81.2019.11.07.07.43.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Nov 2019 07:43:43 -0800 (PST)
+Date:   Thu, 7 Nov 2019 07:43:41 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: memcg: switch to css_tryget() in
+ get_mem_cgroup_from_mm()
+Message-ID: <20191107154341.GX3622521@devbig004.ftw2.facebook.com>
+References: <20191106225131.3543616-1-guro@fb.com>
+ <20191107122125.GS8314@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79ecf426-8728-f36b-57ad-5948e5633ffb@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191107122125.GS8314@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 06:12:07PM +0300, Kirill Tkhai wrote:
-> On 07.11.2019 16:26, Peter Zijlstra wrote:
+Hello,
 
-> > Urgh... throttling.
+On Thu, Nov 07, 2019 at 01:21:25PM +0100, Michal Hocko wrote:
+> Hmm, how can we have a task in an offline memcg? I thought that any
+> existing task will prevent cgroup removal from proceeding. Is this some
+> sort of race where the task managed to disassociate from the cgroup
+> while there is still a binding to a memcg existing? What am I missing?
 
-> One more thing about current code in git. After rq->lock became able to
-> be unlocked after put_prev_task() is commited, we got a new corner case.
-> We usually had the same order for running task:
-> 
->   dequeue_task()
->   put_prev_task()
-> 
-> Now the order may be reversed (this is also in case of throttling):
-> 
->   put_prev_task() (called from pick_next_task())
->   dequeue_task()  (called from another cpu)
-> 
-> This is more theoretically, since I don't see a problem here. But there are
-> too many statistics and counters in sched_class methods, that it is impossible
-> to be sure all of them work as expected.
+The previous cgroup one was from bsd process accounting which happens
+after the process is marked head.  This one IIUC is from core dumping
+path.
 
-Hmm,.. where does throttling happen on a remote CPU? I through both
-cfs-bandwidth and dl throttle locally.
+Thanks.
 
-Or are you talking about NO_HZ_FULL's sched_remote_tick() ?
+-- 
+tejun
