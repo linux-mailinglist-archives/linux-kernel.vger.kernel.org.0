@@ -2,201 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D058F24A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 02:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F4159F2467
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 02:43:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732978AbfKGB5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 20:57:25 -0500
-Received: from mga05.intel.com ([192.55.52.43]:63027 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727328AbfKGB5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 20:57:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 17:57:22 -0800
-X-IronPort-AV: E=Sophos;i="5.68,276,1569308400"; 
-   d="scan'208";a="377262864"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 17:57:22 -0800
-Subject: [PATCH v8 03/12] x86/efi: Push EFI_MEMMAP check into leaf routines
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     mingo@redhat.com
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        vishal.l.verma@intel.com, x86@kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-efi@vger.kernel.org
-Date:   Wed, 06 Nov 2019 17:43:05 -0800
-Message-ID: <157309098587.1579826.3091374053198566488.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <157309097008.1579826.12818463304589384434.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <157309097008.1579826.12818463304589384434.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1732771AbfKGBnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 20:43:10 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45966 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728306AbfKGBnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 20:43:10 -0500
+Received: by mail-pf1-f195.google.com with SMTP id z4so971617pfn.12
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 17:43:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9VO4sGrknxbUDh30qhuG3KUeNeC1A4Tt2xPDsLEp5fM=;
+        b=rXc2aBAZzYFknfwCG04vRP6mmQavmHkErS2hQWqXtresgzruUmJgRYIhy6QRzdzu0j
+         QSqFg22DcPwXm3nS5X1Gbk0909scC7T/V5BMU4hictwJB/67vP3qk5XsOrlE+0Hlo1cy
+         jjymQS7NDLdu3FJObNkukz/ZH4eSVMaZZDYsaIwqPf3teBONwlO5/a4rlJI0TatOQQ8B
+         HlXT7D47UujAzQ55gjBWfO57fKa53rtqKHjRaq0x/A3uEnfzeqVxsxciArSUp862pHFM
+         XNh/DBn71FT4u/BADAFKkClTmUpxDd2bvIdlztxBewEA5bt/tDY+hMtLfh6MIE4Jt0zs
+         d5bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9VO4sGrknxbUDh30qhuG3KUeNeC1A4Tt2xPDsLEp5fM=;
+        b=UT6JK19dMKMagMun3U0sMlKrvqmEa0yaVYu4SwtbdTjjhIMlD6zo4AAM+/o+QFa53y
+         4u925V5RU6I490Dr0NRqQipXLalkMztYotOHacnIo5JxN3CJ7J9hQU6vdICnJBYQsrP5
+         Pryh8IJ4B5/nvoObptb/ilLWEDqPF29Pk5j1lzxJGIYlxpcDJOyW0KeV/P0iQJP5pDUo
+         PBRsiaq6j7N91LKFJoP8sE9Gh4t2GL0yv0C5uSBYneyJpiMSXmHXQruOVAgaxp10hQ+B
+         gY74NZCFTq9z4Cb2rl9mA3ik7s8+/WnRqjr2rOTUZp4MTsFzpsTY3FBBwrsJKDQL28QN
+         HEUA==
+X-Gm-Message-State: APjAAAVC0ma4CN9O68CBT7Nt2L0r961+0qTSRg58kDCJW+kDtYvfOxXJ
+        qMeT5njTzBNjl/BMEDLlFgYwBw==
+X-Google-Smtp-Source: APXvYqyCUj+4VEd7NMm6AGfG0FVKEdooHVpzlCAYsRZh4cpIqYfwEevcYEmaRsySPTUu75BpVUGTcw==
+X-Received: by 2002:a62:1ad6:: with SMTP id a205mr594141pfa.64.1573090987977;
+        Wed, 06 Nov 2019 17:43:07 -0800 (PST)
+Received: from localhost ([2620:10d:c090:200::2:deb0])
+        by smtp.gmail.com with ESMTPSA id c19sm274837pfn.44.2019.11.06.17.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 17:43:06 -0800 (PST)
+Date:   Wed, 6 Nov 2019 17:43:05 -0800
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>, stable@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/2] mm: memcg: switch to css_tryget() in
+ get_mem_cgroup_from_mm()
+Message-ID: <20191107014305.GC96548@cmpxchg.org>
+References: <20191106225131.3543616-1-guro@fb.com>
+ <20191107002204.GA96548@cmpxchg.org>
+ <CALvZod5=g230Lwnjh7qXyLkoknZJpOiv-nLJ4XYC9rSSzL=e6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod5=g230Lwnjh7qXyLkoknZJpOiv-nLJ4XYC9rSSzL=e6w@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for adding another EFI_MEMMAP dependent call that needs
-to occur before e820__memblock_setup() fixup the existing efi calls to
-check for EFI_MEMMAP internally. This ends up being cleaner than the
-alternative of checking EFI_MEMMAP multiple times in setup_arch().
+On Wed, Nov 06, 2019 at 05:25:26PM -0800, Shakeel Butt wrote:
+> On Wed, Nov 6, 2019 at 4:22 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> >
+> > On Wed, Nov 06, 2019 at 02:51:30PM -0800, Roman Gushchin wrote:
+> > > We've encountered a rcu stall in get_mem_cgroup_from_mm():
+> > >
+> > >  rcu: INFO: rcu_sched self-detected stall on CPU
+> > >  rcu: 33-....: (21000 ticks this GP) idle=6c6/1/0x4000000000000002 softirq=35441/35441 fqs=5017
+> > >  (t=21031 jiffies g=324821 q=95837) NMI backtrace for cpu 33
+> > >  <...>
+> > >  RIP: 0010:get_mem_cgroup_from_mm+0x2f/0x90
+> > >  <...>
+> > >  __memcg_kmem_charge+0x55/0x140
+> > >  __alloc_pages_nodemask+0x267/0x320
+> > >  pipe_write+0x1ad/0x400
+> > >  new_sync_write+0x127/0x1c0
+> > >  __kernel_write+0x4f/0xf0
+> > >  dump_emit+0x91/0xc0
+> > >  writenote+0xa0/0xc0
+> > >  elf_core_dump+0x11af/0x1430
+> > >  do_coredump+0xc65/0xee0
+> > >  ? unix_stream_sendmsg+0x37d/0x3b0
+> > >  get_signal+0x132/0x7c0
+> > >  do_signal+0x36/0x640
+> > >  ? recalc_sigpending+0x17/0x50
+> > >  exit_to_usermode_loop+0x61/0xd0
+> > >  do_syscall_64+0xd4/0x100
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > >
+> > > The problem is caused by an exiting task which is associated with
+> > > an offline memcg. We're iterating over and over in the
+> > > do {} while (!css_tryget_online()) loop, but obviously the memcg won't
+> > > become online and the exiting task won't be migrated to a live memcg.
+> > >
+> > > Let's fix it by switching from css_tryget_online() to css_tryget().
+> > >
+> > > As css_tryget_online() cannot guarantee that the memcg won't go
+> > > offline, the check is usually useless, except some rare cases
+> > > when for example it determines if something should be presented
+> > > to a user.
+> > >
+> > > A similar problem is described by commit 18fa84a2db0e ("cgroup: Use
+> > > css_tryget() instead of css_tryget_online() in task_get_css()").
+> > >
+> > > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > > Cc: stable@vger.kernel.org
+> > > Cc: Tejun Heo <tj@kernel.org>
+> >
+> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> >
+> > The bug aside, it doesn't matter whether the cgroup is online for the
+> > callers. It used to matter when offlining needed to evacuate all
+> > charges from the memcg, and so needed to prevent new ones from showing
+> > up, but we don't care now.
+> 
+> Should get_mem_cgroup_from_current() and get_mem_cgroup_from_page() be
+> switched to css_tryget() as well then?
 
-Cc: <x86@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/include/asm/efi.h      |    9 ++++++++-
- arch/x86/kernel/setup.c         |   18 ++++++++----------
- arch/x86/platform/efi/efi.c     |    3 +++
- arch/x86/platform/efi/quirks.c  |    3 +++
- drivers/firmware/efi/esrt.c     |    3 +++
- drivers/firmware/efi/fake_mem.c |    2 +-
- include/linux/efi.h             |    1 -
- 7 files changed, 26 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index 43a82e59c59d..45f853bce869 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -140,7 +140,6 @@ extern void efi_delete_dummy_variable(void);
- extern void efi_switch_mm(struct mm_struct *mm);
- extern void efi_recover_from_page_fault(unsigned long phys_addr);
- extern void efi_free_boot_services(void);
--extern void efi_reserve_boot_services(void);
- 
- struct efi_setup_data {
- 	u64 fw_vendor;
-@@ -244,6 +243,8 @@ static inline bool efi_is_64bit(void)
- extern bool efi_reboot_required(void);
- extern bool efi_is_table_address(unsigned long phys_addr);
- 
-+extern void efi_find_mirror(void);
-+extern void efi_reserve_boot_services(void);
- #else
- static inline void parse_efi_setup(u64 phys_addr, u32 data_len) {}
- static inline bool efi_reboot_required(void)
-@@ -254,6 +255,12 @@ static inline  bool efi_is_table_address(unsigned long phys_addr)
- {
- 	return false;
- }
-+static inline void efi_find_mirror(void)
-+{
-+}
-+static inline void efi_reserve_boot_services(void)
-+{
-+}
- #endif /* CONFIG_EFI */
- 
- #endif /* _ASM_X86_EFI_H */
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 77ea96b794bd..1c4b866bc184 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1122,17 +1122,15 @@ void __init setup_arch(char **cmdline_p)
- 
- 	reserve_bios_regions();
- 
--	if (efi_enabled(EFI_MEMMAP)) {
--		efi_fake_memmap();
--		efi_find_mirror();
--		efi_esrt_init();
-+	efi_fake_memmap();
-+	efi_find_mirror();
-+	efi_esrt_init();
- 
--		/*
--		 * The EFI specification says that boot service code won't be
--		 * called after ExitBootServices(). This is, in fact, a lie.
--		 */
--		efi_reserve_boot_services();
--	}
-+	/*
-+	 * The EFI specification says that boot service code won't be
-+	 * called after ExitBootServices(). This is, in fact, a lie.
-+	 */
-+	efi_reserve_boot_services();
- 
- 	/* preallocate 4k for mptable mpc */
- 	e820__memblock_alloc_reserved_mpc_new();
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 425e025341db..e6e41b118d68 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -128,6 +128,9 @@ void __init efi_find_mirror(void)
- 	efi_memory_desc_t *md;
- 	u64 mirror_size = 0, total_size = 0;
- 
-+	if (!efi_enabled(EFI_MEMMAP))
-+		return;
-+
- 	for_each_efi_memory_desc(md) {
- 		unsigned long long start = md->phys_addr;
- 		unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 3b9fd679cea9..7675cf754d90 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -320,6 +320,9 @@ void __init efi_reserve_boot_services(void)
- {
- 	efi_memory_desc_t *md;
- 
-+	if (!efi_enabled(EFI_MEMMAP))
-+		return;
-+
- 	for_each_efi_memory_desc(md) {
- 		u64 start = md->phys_addr;
- 		u64 size = md->num_pages << EFI_PAGE_SHIFT;
-diff --git a/drivers/firmware/efi/esrt.c b/drivers/firmware/efi/esrt.c
-index d6dd5f503fa2..2762e0662bf4 100644
---- a/drivers/firmware/efi/esrt.c
-+++ b/drivers/firmware/efi/esrt.c
-@@ -246,6 +246,9 @@ void __init efi_esrt_init(void)
- 	int rc;
- 	phys_addr_t end;
- 
-+	if (!efi_enabled(EFI_MEMMAP))
-+		return;
-+
- 	pr_debug("esrt-init: loading.\n");
- 	if (!esrt_table_exists())
- 		return;
-diff --git a/drivers/firmware/efi/fake_mem.c b/drivers/firmware/efi/fake_mem.c
-index 9501edc0fcfb..526b45331d96 100644
---- a/drivers/firmware/efi/fake_mem.c
-+++ b/drivers/firmware/efi/fake_mem.c
-@@ -44,7 +44,7 @@ void __init efi_fake_memmap(void)
- 	void *new_memmap;
- 	int i;
- 
--	if (!nr_fake_mem)
-+	if (!efi_enabled(EFI_MEMMAP) || !nr_fake_mem)
- 		return;
- 
- 	/* count up the number of EFI memory descriptor */
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 78c75992b313..44c85b559e15 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1045,7 +1045,6 @@ extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if pos
- extern efi_status_t efi_query_variable_store(u32 attributes,
- 					     unsigned long size,
- 					     bool nonblocking);
--extern void efi_find_mirror(void);
- #else
- 
- static inline efi_status_t efi_query_variable_store(u32 attributes,
-
+Yes. Looking at the remaining css_tryget_online() in memcontrol.c, I
+don't think the online/offline distinction is meaningful for any of
+them anymore.
