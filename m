@@ -2,91 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 987A8F2CE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:59:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA5CF2D1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:10:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387885AbfKGK7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:59:53 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46982 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfKGK7x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:59:53 -0500
-Received: by mail-wr1-f65.google.com with SMTP id b3so2436712wrs.13
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 02:59:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jX1PhmjNScp3jK1QdS94+FmYelbSzRbuM5rLkgj2mRc=;
-        b=gv+58ZdQhGmq+GSICmELQimLBk8wdLBnuM4sV5AYBI6PFK6R1q57SkLujuZFsqBbIW
-         d4fvguep3DRTSE36XkyzSGdawGJvzJcnJsweoUsW1hT+gfrDaH7/oj5XV5BgJD/i/TSh
-         cYZh23loP+Tpux0WccRjDYy2MhqgESdHzw006MnoAb8qYEFqsSSp4INY2zwoR8ffeBVt
-         nCQOtUONYVcwNMYqFvT/8BFQN/R3/iUUmq5oe14x/FA3ILbBkaWej051Z0yiyCAY0lT8
-         38lhC8DMG8rxb8/H5l5Ir8laLTPM2vEPeUceswAFLCIJ+I+He9suOmS8n4pVNVwsg3gf
-         fuKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jX1PhmjNScp3jK1QdS94+FmYelbSzRbuM5rLkgj2mRc=;
-        b=gPSc7gzhVI3SmwTJeVaQU5JiMwhQJESpLYSeeQOC9t2/YfUL7iqLhO36KOdNs9N7RI
-         NFNEAZVSubevMlhku+/+X4wjGBNe0KkTDGBx5YlE8DiIdvgqh7Ij9w1Si0Mf9IH60ymt
-         kUq/4TSzB3zIoinXPLwp9k+UxA0XtJwNYqevDfWTzqrpwDuGzprqq88jX8SusNDi+B+i
-         LXPnOtozyNhycz5ZmlnlntSlzbNBzzaxWGoAwUp3dlDioygk5ZzWl7UJ8Kxlto7Yuca8
-         oZL5JE5s+TQoXRNrfz4kbp/OwhSMJEtYLQw8wCnXDRrjT8IY7Dwz2JA7hse1ZIgP/koP
-         GWpg==
-X-Gm-Message-State: APjAAAW4ZRZK8XjAr0Y1Pzwx8I/viTy+Qdy330XMaUZeN754YNdBb7yI
-        EedKiXsyzcdyPX+WZ9t7riisqA==
-X-Google-Smtp-Source: APXvYqwU4MnGMqehuKQuaV7oe8goOIQTO0A3B4MmI0/ehUPIDN+z0xgTieF9mKZvlobJENIScotayw==
-X-Received: by 2002:adf:dc81:: with SMTP id r1mr2444267wrj.84.1573124391594;
-        Thu, 07 Nov 2019 02:59:51 -0800 (PST)
-Received: from dell ([95.147.198.88])
-        by smtp.gmail.com with ESMTPSA id b186sm1479648wmb.21.2019.11.07.02.59.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Nov 2019 02:59:50 -0800 (PST)
-Date:   Thu, 7 Nov 2019 10:59:49 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com, Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rtc: bd70528: Fix hour register mask
-Message-ID: <20191107105949.GA19195@dell>
-References: <20191023114751.GA14100@localhost.localdomain>
- <20191105165317.GC8309@piout.net>
+        id S2388224AbfKGLKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 06:10:10 -0500
+Received: from mx21.baidu.com ([220.181.3.85]:56558 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727707AbfKGLKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 06:10:09 -0500
+Received: from BC-Mail-Ex31.internal.baidu.com (unknown [172.31.51.25])
+        by Forcepoint Email with ESMTPS id EFF444C6A6F82;
+        Thu,  7 Nov 2019 18:53:48 +0800 (CST)
+Received: from BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) by
+ BC-Mail-Ex31.internal.baidu.com (172.31.51.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Thu, 7 Nov 2019 18:53:50 +0800
+Received: from BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) by
+ BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) with mapi id
+ 15.01.1713.004; Thu, 7 Nov 2019 18:53:50 +0800
+From:   "Li,Rongqing" <lirongqing@baidu.com>
+To:     "Li,Rongqing" <lirongqing@baidu.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Kan.liang@intel.com" <Kan.liang@intel.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXVt2Ml0gd2F0Y2hkb2cvaGFyZGxvY2t1cDogcmVhc3Np?=
+ =?gb2312?Q?gn_last=5Ftimestamp_when_enable_nmi_event?=
+Thread-Topic: [PATCH][v2] watchdog/hardlockup: reassign last_timestamp when
+ enable nmi event
+Thread-Index: AQHVhIbsJWHFXEYJak262w7TdcNcAad/qiDw
+Date:   Thu, 7 Nov 2019 10:53:50 +0000
+Message-ID: <2142496f954e4f688056c8cc347369a8@baidu.com>
+References: <1571121247-19392-1-git-send-email-lirongqing@baidu.com>
+In-Reply-To: <1571121247-19392-1-git-send-email-lirongqing@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.198.4]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191105165317.GC8309@piout.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 05 Nov 2019, Alexandre Belloni wrote:
-
-> On 23/10/2019 14:47:51+0300, Matti Vaittinen wrote:
-> > When RTC is used in 24H mode (and it is by this driver) the maximum
-> > hour value is 24 in BCD. This occupies bits [5:0] - which means
-> > correct mask for HOUR register is 0x3f not 0x1f. Fix the mask
-> > 
-> > Fixes: 32a4a4ebf768 ("rtc: bd70528: Initial support for ROHM bd70528 RTC")
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  include/linux/mfd/rohm-bd70528.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> Applied, thanks.
-
-You have been duped. This is clearly not an RTC patch.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+UGluZyANCg0KVGhhbmtzDQoNCi1MaQ0KDQo+IC0tLS0t08q8/tStvP4tLS0tLQ0KPiC3orz+yMs6
+IGxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj4gW21haWx0bzpsaW51eC1rZXJu
+ZWwtb3duZXJAdmdlci5rZXJuZWwub3JnXSC0+rHtIExpIFJvbmdRaW5nDQo+ILeiy83KsbzkOiAy
+MDE5xOoxMNTCMTXI1SAxNDozNA0KPiDK1bz+yMs6IGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc7
+IHNlcmdleS5zZW5vemhhdHNreS53b3JrQGdtYWlsLmNvbTsNCj4gbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsgdGdseEBsaW51dHJvbml4LmRlOyBLYW4ubGlhbmdAaW50ZWwuY29tDQo+INb3
+zOI6IFtQQVRDSF1bdjJdIHdhdGNoZG9nL2hhcmRsb2NrdXA6IHJlYXNzaWduIGxhc3RfdGltZXN0
+YW1wIHdoZW4NCj4gZW5hYmxlIG5taSBldmVudA0KPiANCj4gbGFzdF90aW1lc3RhbXAgaXMgbm90
+IGluaXRpYWxpemVkIGFuZCBpcyB6ZXJvIGFmdGVyIGJvb3QsIG9yIHN0b3AgdG8gZm9yd2FyZCB3
+aGVuDQo+IG5taSB3YXRjaGRvZyBpcyBkaXNhYmxlZDsgYW5kIGZhbHNlIHBvc2l0aXZlcyBzdGls
+bCBpcyBwb3NzaWJsZSB3aGVuIHJlc3RhcnQgTk1JDQo+IHRpbWVyIGFmdGVyIHN0b3BwaW5nIDEy
+MCBzZWNvbmRzDQo+IA0KPiBzbyByZWFzc2lnbiBsYXN0X3RpbWVzdGFtcCBhbHdheXMgd2hlbiBl
+bmFibGUgbm1pIGV2ZW50DQo+IA0KPiBGaXhlczogN2VkYWViNjg0MWRmICgia2VybmVsL3dhdGNo
+ZG9nOiBQcmV2ZW50IGZhbHNlIHBvc2l0aXZlcyB3aXRoIHR1cmJvDQo+IG1vZGVzIikNCj4gU2ln
+bmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBTaWduZWQt
+b2ZmLWJ5OiBaaGFuZyBZdSA8emhhbmd5dTMxQGJhaWR1LmNvbT4NCj4gLS0tDQo+IA0KPiB2MS0t
+PnYyOiBtYWtlIGl0IGJlIGFibGUgdG8gYmUgY29tcGlsZWQgb24gbm8NCj4gdjEtLT5DT05GSUdf
+SEFSRExPQ0tVUF9DSEVDS19USU1FU1RBTVAgcGxhdGZvcm0NCj4gDQo+IGtlcm5lbC93YXRjaGRv
+Z19obGQuYyB8IDE4ICsrKysrKysrKysrKysrKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDE3IGlu
+c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9rZXJuZWwvd2F0
+Y2hkb2dfaGxkLmMgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMgaW5kZXgNCj4gMjQ3YmYwYjE1ODJj
+Li5mMTRkMTgyODAzODcgMTAwNjQ0DQo+IC0tLSBhL2tlcm5lbC93YXRjaGRvZ19obGQuYw0KPiAr
+KysgYi9rZXJuZWwvd2F0Y2hkb2dfaGxkLmMNCj4gQEAgLTkxLDExICs5MSwyNCBAQCBzdGF0aWMg
+Ym9vbCB3YXRjaGRvZ19jaGVja190aW1lc3RhbXAodm9pZCkNCj4gIAlfX3RoaXNfY3B1X3dyaXRl
+KGxhc3RfdGltZXN0YW1wLCBub3cpOw0KPiAgCXJldHVybiB0cnVlOw0KPiAgfQ0KPiArDQo+ICtz
+dGF0aWMgdm9pZCB3YXRjaGRvZ190b3VjaF90aW1lc3RhbXAoaW50IGNwdSkgew0KPiArDQo+ICsJ
+a3RpbWVfdCBub3cgPSBrdGltZV9nZXRfbW9ub19mYXN0X25zKCk7DQo+ICsNCj4gKwlwZXJfY3B1
+KGxhc3RfdGltZXN0YW1wLCBjcHUpID0gbm93Ow0KPiArfQ0KPiAgI2Vsc2UNCj4gIHN0YXRpYyBp
+bmxpbmUgYm9vbCB3YXRjaGRvZ19jaGVja190aW1lc3RhbXAodm9pZCkgIHsNCj4gIAlyZXR1cm4g
+dHJ1ZTsNCj4gIH0NCj4gKw0KPiArc3RhdGljIHZvaWQgd2F0Y2hkb2dfdG91Y2hfdGltZXN0YW1w
+KGludCBjcHUpIHsNCj4gKw0KPiArfQ0KPiAgI2VuZGlmDQo+IA0KPiAgc3RhdGljIHN0cnVjdCBw
+ZXJmX2V2ZW50X2F0dHIgd2RfaHdfYXR0ciA9IHsgQEAgLTE5Niw2ICsyMDksNyBAQCB2b2lkDQo+
+IGhhcmRsb2NrdXBfZGV0ZWN0b3JfcGVyZl9lbmFibGUodm9pZCkNCj4gIAlpZiAoIWF0b21pY19m
+ZXRjaF9pbmMoJndhdGNoZG9nX2NwdXMpKQ0KPiAgCQlwcl9pbmZvKCJFbmFibGVkLiBQZXJtYW5l
+bnRseSBjb25zdW1lcyBvbmUgaHctUE1VIGNvdW50ZXIuXG4iKTsNCj4gDQo+ICsJd2F0Y2hkb2df
+dG91Y2hfdGltZXN0YW1wKHNtcF9wcm9jZXNzb3JfaWQoKSk7DQo+ICAJcGVyZl9ldmVudF9lbmFi
+bGUodGhpc19jcHVfcmVhZCh3YXRjaGRvZ19ldikpOw0KPiAgfQ0KPiANCj4gQEAgLTI3NCw4ICsy
+ODgsMTAgQEAgdm9pZCBfX2luaXQgaGFyZGxvY2t1cF9kZXRlY3Rvcl9wZXJmX3Jlc3RhcnQodm9p
+ZCkNCj4gIAlmb3JfZWFjaF9vbmxpbmVfY3B1KGNwdSkgew0KPiAgCQlzdHJ1Y3QgcGVyZl9ldmVu
+dCAqZXZlbnQgPSBwZXJfY3B1KHdhdGNoZG9nX2V2LCBjcHUpOw0KPiANCj4gLQkJaWYgKGV2ZW50
+KQ0KPiArCQlpZiAoZXZlbnQpIHsNCj4gKwkJCXdhdGNoZG9nX3RvdWNoX3RpbWVzdGFtcChjcHUp
+Ow0KPiAgCQkJcGVyZl9ldmVudF9lbmFibGUoZXZlbnQpOw0KPiArCQl9DQo+ICAJfQ0KPiAgfQ0K
+PiANCj4gLS0NCj4gMi4xNi4yDQoNCg==
