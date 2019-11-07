@@ -2,76 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E577F32E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A5DDF32E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:24:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388653AbfKGPWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 10:22:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34446 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726877AbfKGPWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 10:22:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 60973B280;
-        Thu,  7 Nov 2019 15:22:50 +0000 (UTC)
-Date:   Thu, 7 Nov 2019 16:22:48 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
-        Joe Perches <joe@perches.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH] MAINTAINERS: Add VSPRINTF
-Message-ID: <20191107152247.kg3k72n63svph4j2@pathway.suse.cz>
-References: <20191031133337.9306-1-pmladek@suse.com>
- <975eccc7-897c-fd14-ef4f-2486729eb67c@rasmusvillemoes.dk>
- <20191031145112.thphlpnjvnykbzyy@pathway.suse.cz>
- <20191031150952.3ag6qa5y4wvikd76@pathway.suse.cz>
- <CAHp75VcBL8XFBSUs=UrdbfUQw535gHbTKQkHLE4Oj3H2_UKiWg@mail.gmail.com>
+        id S2388659AbfKGPYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 10:24:12 -0500
+Received: from mail2.candelatech.com ([208.74.158.173]:43182 "EHLO
+        mail3.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727727AbfKGPYL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 10:24:11 -0500
+Received: from [192.168.1.47] (unknown [50.34.216.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail3.candelatech.com (Postfix) with ESMTPSA id A4F4413C358;
+        Thu,  7 Nov 2019 07:24:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com A4F4413C358
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+        s=default; t=1573140251;
+        bh=51W91Kw2UqEb8Wlp1490MubzBtLUcquzz36+dIa/yk8=;
+        h=Subject:To:References:Cc:From:Date:In-Reply-To:From;
+        b=MLjoN28EsJ7Hcrq5iM3T9oJvb3rV4Ko1evC6v41M1C1VxFkNS9bml8tMltAtqXLBn
+         kfvP/Q95avdsMtK5oWprw9vOTXtUs1W11hsFbL8z4sgdCNWO2r0sNR14LpKng3IeRT
+         r37iAX7JwcSVkDbw9zxUGpSVfE7XdpZEhIyUWU4U=
+Subject: Re: [PATCH net-next] ath10k: fix RX of frames with broken FCS in
+ monitor mode
+To:     =?UTF-8?Q?Linus_L=c3=bcssing?= <linus.luessing@c0d3.blue>
+References: <20191105164932.11799-1-linus.luessing@c0d3.blue>
+ <927cea69-7afc-5c35-df8d-9813392e8928@candelatech.com>
+ <20191107140149.GB19482@otheros>
+Cc:     =?UTF-8?Q?Linus_L=c3=bcssing?= <ll@simonwunderlich.de>,
+        ath10k@lists.infradead.org, Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Ben Greear <greearb@candelatech.com>
+Message-ID: <6ca7e338-d14d-49f6-f51c-600856b59767@candelatech.com>
+Date:   Thu, 7 Nov 2019 07:24:06 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcBL8XFBSUs=UrdbfUQw535gHbTKQkHLE4Oj3H2_UKiWg@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191107140149.GB19482@otheros>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 2019-11-02 12:18:18, Andy Shevchenko wrote:
-> On Thu, Oct 31, 2019 at 5:13 PM Petr Mladek <pmladek@suse.com> wrote:
-> > On Thu 2019-10-31 15:51:12, Petr Mladek wrote:
-> > > On Thu 2019-10-31 14:51:24, Rasmus Villemoes wrote:
-> > > > On 31/10/2019 14.33, Petr Mladek wrote:
-> > > > > printk maintainers have been reviewing patches against vsprintf code last
-> > > > > few years. Most changes have been committed via printk.git last two years.
-> > > > >
-> > > > > New group is used because printk() is not the only vsprintf() user.
-> > > > > Also the group of interested people is not the same.
-> > > >
-> > > > Can you add
-> > > >
-> > > > R: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> > >
-> > > Sure. The more reviewers the better :-)
-> >
-> > I acutally wanted to add also
-> >
-> > R: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Ack
 
-The updated patch is commited in printk.git, branch for-5.5.
 
-You can check it at
-https://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git/commit/?h=for-5.5&id=9d95f0ce36df70e6d7b1f658277c772f589acd84
+On 11/07/2019 06:03 AM, Linus Lüssing wrote:
+> On Tue, Nov 05, 2019 at 09:19:20AM -0800, Ben Greear wrote:
+>> Thanks for adding the counter.  Since it us u32, I doubt you need the spin lock
+>> below?
+>
+> Ok, I can remove the spin-lock.
+>
+> Just for clarification though, if I recall correctly then an increment operator
+> is not guaranteed to work atomically. But you think it's unlikely
+> to race with a concurrent ++ and therefore it's fine for just a debug counter?
+> (and if it were racing, it'd just be a missed +1)
 
-Best Regards,
-Petr
+I think it is fine to be off-by-one, and u32 is atomic so you would never read a really
+weird number, like you can if u64 is non-atomically being incremented.
+
+Thanks,
+Ben
+
+
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
