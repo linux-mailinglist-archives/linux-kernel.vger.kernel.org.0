@@ -2,47 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F387CF304E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D59F3006
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:42:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389705AbfKGNo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:44:26 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:56918 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730980AbfKGNmF (ORCPT
+        id S2389120AbfKGNmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:42:08 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:45654 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731014AbfKGNmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 7 Nov 2019 08:42:05 -0500
-Received: by mail-il1-f198.google.com with SMTP id e5so2592081ile.23
+Received: by mail-io1-f71.google.com with SMTP id c17so1839964ioh.12
         for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:42:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=ENxD+/fIw0mYa6vyCEJ9BP1QogAHJZe3kkohsrzQFAg=;
-        b=oL4AYxtLXsRCDsksDzw6xN9HB1oTZGmK2fByoVIBvay0dD1JqfKpD2MtzU8C90QdHz
-         74pA5q0EImVzZbvPRNc38V+94pD6KmJxmHqVJnPyiMcHKF4Ka0s0ei08gu2IYLZ7PxJg
-         97yb5CaPtieNFtHv9oBPTSlLgjt7RNgyh2Fs88rFXZB1eJZpbTjeaZ0ETNW3oFkj6sDs
-         3SDjOBCEinnkDFQRuz1jOipxm3VA0601npjGYdcMq/6XuCS8vDTqHCnmWbjgGVZn2VeK
-         hR2JAint9nudKxMToMFwhgpkBPLvOI7m0Ra4ADgTMtFgevgIZFWArQB6JMU/yML5kElw
-         LhKA==
-X-Gm-Message-State: APjAAAVYW4wvBIhCe2JjElgMbOpjb09jK3V9PTuttw1CE45hkt/CgU4H
-        oJJcq39JUN6+CWxkBFH2rDk2TUIPE2+8aSFNcNJ7/qPNa+/1
-X-Google-Smtp-Source: APXvYqxgUiKUUpVf8mANbwuq5h5ETdkG1+2bc1EZcA3Iu8zgmeR5189VzsX5FO9eWFvmABYaiGgJH8JWUel87EI/ZKuu+fPSmejM
+        bh=gvUkH9WtkGdbkvkGEgBQ+scD8gdIfAilVOE5agk0pc8=;
+        b=MJYwU5cgD6Mz3GwfkpSp4LEBMObsYhNrCZcKn0dqJJX39K97MyaOaKSknxbgABrYCI
+         HGYNBy7uRfCv0UjcDx+Bn5jaE8elkSXgfEnItryKuAi9E+NYi60mXpZtyMqTPrmzo43/
+         A7dc2l4RPt8R071JYMC61PXqP9/bVZCWM5aChi8ksV1Evm77tvn6PshpNq2Yj0eHV+LV
+         ygiiEr0uSeQPpa32MOf02+H7drWwUcV2OnCeH89koA0Pkj2oe5CEVJAQGRCnWl0uVJSd
+         dd+jutHemAuJxLn0LpxJnsW9f5SnXwNLnzISmKour/CZsWiQpNGdO+A8cplun51FZxiT
+         NHSg==
+X-Gm-Message-State: APjAAAUZewpk/upzbHQN5sQB8A6fEJuHhxR6bPgIcjXy94BnnqAlH2oS
+        Ol9xpt8ruhPN9B+hqWwuRLZKw70D4U3vFuwwEo+9yM9oxiln
+X-Google-Smtp-Source: APXvYqyA7RhiUvzMWSWZWI0ZIzVE9r/zHAJ0MtS5719wr8hUNsn3YgfguE5aJGhDksrtNHgLkCcvbS9hR4ypG3I2APwuBGeGv9Ux
 MIME-Version: 1.0
-X-Received: by 2002:a6b:ee07:: with SMTP id i7mr3695643ioh.26.1573134125000;
+X-Received: by 2002:a5e:9617:: with SMTP id a23mr3354786ioq.191.1573134125143;
  Thu, 07 Nov 2019 05:42:05 -0800 (PST)
-Date:   Thu, 07 Nov 2019 05:42:04 -0800
-In-Reply-To: <000000000000ee4dab0570be896c@google.com>
+Date:   Thu, 07 Nov 2019 05:42:05 -0800
+In-Reply-To: <000000000000d0429205723824d8@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b4731e0596c1d418@google.com>
-Subject: Re: general protection fault in p9_conn_cancel
-From:   syzbot <syzbot+4d29d76a0da7a8c4d86c@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dominique.martinet@cea.fr, ericvh@gmail.com,
-        jiangyiwen@huwei.com, linux-kernel@vger.kernel.org,
-        lucho@ionkov.net, netdev@vger.kernel.org, rminnich@sandia.gov,
-        syzkaller-bugs@googlegroups.com, tomasbortoli@gmail.com,
-        v9fs-developer@lists.sourceforge.net
+Message-ID: <000000000000b6a0aa0596c1d4df@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Write in end_requests
+From:   syzbot <syzbot+cd4b9b3648c78dbd7fca@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,22 +49,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 syzbot suspects this bug was fixed by commit:
 
-commit 9f476d7c540cb57556d3cc7e78704e6cd5100f5f
-Author: Tomas Bortoli <tomasbortoli@gmail.com>
-Date:   Mon Jul 23 18:42:53 2018 +0000
+commit 45ff350bbd9d0f0977ff270a0d427c71520c0c37
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Thu Jul 26 14:13:11 2018 +0000
 
-     net/9p/trans_fd.c: fix race by holding the lock
+     fuse: fix unlocked access to processing queue
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1150b430600000
-start commit:   30c2c32d Merge tag 'drm-fixes-2018-07-10' of git://anongit..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1494e3ec600000
+start commit:   dd63bf22 Merge branch 'i2c/for-current' of git://git.kerne..
 git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d29d76a0da7a8c4d86c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e2c5b2400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=179415b2400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ffb4428fdc82f93b
+dashboard link: https://syzkaller.appspot.com/bug?extid=cd4b9b3648c78dbd7fca
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b9732c400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c469a4400000
 
 If the result looks correct, please mark the bug fixed by replying with:
 
-#syz fix: net/9p/trans_fd.c: fix race by holding the lock
+#syz fix: fuse: fix unlocked access to processing queue
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
