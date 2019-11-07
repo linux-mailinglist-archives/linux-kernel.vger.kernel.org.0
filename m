@@ -2,138 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3329F2476
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 02:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5FBF244E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 02:33:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732943AbfKGBpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 20:45:17 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43033 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbfKGBpR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 20:45:17 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l24so592502qtp.10;
-        Wed, 06 Nov 2019 17:45:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sT9JhCsm7ji7ANGvO8aOX9ZWgfUj6JLCR9TWfO6QprI=;
-        b=XtTKLwu4bHiLHqcm4xyDss30UijRbtv8JirrGKJsiZ0bsGk2pvsaYtKCXSLBThlpA1
-         NwwxGXNUzfBsGkU45VjO1qj7DEhh/0FjRE/PdjdZEBYBAelAyBosPAtv9K7dG9aubMdi
-         YqKQixTNl3OIU1VdUS3wKEuSKM3QWXnh1PMOdPkoQXbsdFQbpVZ+ZvZmyelRttDweQIV
-         Pfh3vth7QDS5Z1xgPvvrAikxhVOqkhThI0wF4WAugEmY794C+MxknPKc5uKSEMsgyjQW
-         zWH66Gse0C23wp+aOrVwr2vuyahnEehEtZcwnHwWWSn/9SHOs85WV9/sa/qY+sV37iup
-         Tsvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sT9JhCsm7ji7ANGvO8aOX9ZWgfUj6JLCR9TWfO6QprI=;
-        b=ePqRpdDRZceiUdrimU2T43y3RyPcRPA5aiO42xHFKP0ozbp4lW8AY2cpxTSSDgJYNY
-         MMmK2PO1lk5K+elODSOj6mKaSzA8wsGzaZ5oH9XjdaCLNGFppnydTcQ+dPmOvXYT8W05
-         0vBC3mzhyCk2brPLbX4kYdZ/BXqac+9I9SgvFE+5uWaJf0eaEmBuNMIiRtj1PicLrXkG
-         gUNdywK26Cr9d1Rs7fPJaojNIZC5cvsTmX8hQ334oAaUDWTrqPnCZEre+MeqN3HUf5bg
-         7lXAxvbrvVzdlyOJVP0pjqoJGwkbHUntMkEQtTzf6byqZf4e2LWuUi9VpYYfStGWMXNf
-         mZ1w==
-X-Gm-Message-State: APjAAAUpbJhUBO8nA0He22R4Zds1wKyVUqZOGBwu2bnEXj1MPUphkYYR
-        mSxueOoMDg2uFa0d+vxJF1Y=
-X-Google-Smtp-Source: APXvYqyUk/PO1CBION0aoWcHxLD0lwe3UjcGIiPjoWQdyHpIYi35jCEX+J4uoUa92p3JqbLbqyZoVQ==
-X-Received: by 2002:ac8:344a:: with SMTP id v10mr1198317qtb.323.1573091116010;
-        Wed, 06 Nov 2019 17:45:16 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id w24sm579224qta.44.2019.11.06.17.45.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 17:45:15 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
-        rfontana@redhat.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: dvb_dummy_fe: Add error messages in case of attach failure
-Date:   Wed,  6 Nov 2019 22:37:45 -0300
-Message-Id: <20191107013745.22147-1-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1732941AbfKGBdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 20:33:49 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55970 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728621AbfKGBdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 20:33:49 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 998114C0239E9B83BE94;
+        Thu,  7 Nov 2019 09:33:40 +0800 (CST)
+Received: from localhost.localdomain (10.90.53.225) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 7 Nov 2019 09:33:34 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <davem@davemloft.net>, <ruxandra.radulescu@nxp.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH v2] dpaa2-ptp: fix compile error
+Date:   Thu, 7 Nov 2019 09:39:49 +0800
+Message-ID: <1573090789-36282-1-git-send-email-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+From: Chenwandun <chenwandun@huawei.com>
 
-Complain if the attach functions fail, for any reason. This is helpful
-when debugging.
+phylink_set_port_modes will be compiled if CONFIG_PHYLINK enabled,
+dpaa2_mac_validate will be compiled if CONFIG_FSL_DPAA2_ETH enabled,
+it should select CONFIG_PHYLINK when dpaa2_mac_validate call
+phylink_set_port_modes
 
-Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.o: In function `dpaa2_mac_validate':
+dpaa2-mac.c:(.text+0x3a1): undefined reference to `phylink_set_port_modes'
+drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.o: In function `dpaa2_mac_connect':
+dpaa2-mac.c:(.text+0x91a): undefined reference to `phylink_create'
+dpaa2-mac.c:(.text+0x94e): undefined reference to `phylink_of_phy_connect'
+dpaa2-mac.c:(.text+0x97f): undefined reference to `phylink_destroy'
+drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.o: In function `dpaa2_mac_disconnect':
+dpaa2-mac.c:(.text+0xa9f): undefined reference to `phylink_disconnect_phy'
+dpaa2-mac.c:(.text+0xab0): undefined reference to `phylink_destroy'
+make: *** [vmlinux] Error 1
+
+Fixes: 719479230893 (dpaa2-eth: add MAC/PHY support through phylink)
+Signed-off-by: Chenwandun <chenwandun@huawei.com>
 ---
- drivers/media/dvb-frontends/dvb_dummy_fe.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/freescale/dpaa2/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-index 4db679cb70ad..ca86857c3667 100644
---- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
-+++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-@@ -114,12 +114,16 @@ struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
- 	if (!state)
--		return NULL;
-+		goto err;
- 
- 	/* create dvb_frontend */
- 	memcpy(&state->frontend.ops, &dvb_dummy_fe_ofdm_ops, sizeof(struct dvb_frontend_ops));
- 	state->frontend.demodulator_priv = state;
- 	return &state->frontend;
-+
-+err:
-+	pr_err("%s: DVB Dummy frontend driver attach failed\n", __func__);
-+	return NULL;
- }
- 
- static const struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops;
-@@ -131,12 +135,16 @@ struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void)
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
- 	if (!state)
--		return NULL;
-+		goto err;
- 
- 	/* create dvb_frontend */
- 	memcpy(&state->frontend.ops, &dvb_dummy_fe_qpsk_ops, sizeof(struct dvb_frontend_ops));
- 	state->frontend.demodulator_priv = state;
- 	return &state->frontend;
-+
-+err:
-+	pr_err("%s: DVB Dummy frontend driver attach failed\n", __func__);
-+	return NULL;
- }
- 
- static const struct dvb_frontend_ops dvb_dummy_fe_qam_ops;
-@@ -148,12 +156,16 @@ struct dvb_frontend *dvb_dummy_fe_qam_attach(void)
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
- 	if (!state)
--		return NULL;
-+		goto err;
- 
- 	/* create dvb_frontend */
- 	memcpy(&state->frontend.ops, &dvb_dummy_fe_qam_ops, sizeof(struct dvb_frontend_ops));
- 	state->frontend.demodulator_priv = state;
- 	return &state->frontend;
-+
-+err:
-+	pr_err("%s: DVB Dummy frontend driver attach failed\n", __func__);
-+	return NULL;
- }
- 
- static const struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops = {
+diff --git a/drivers/net/ethernet/freescale/dpaa2/Kconfig b/drivers/net/ethernet/freescale/dpaa2/Kconfig
+index fbef282..c6fb8e4 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/Kconfig
++++ b/drivers/net/ethernet/freescale/dpaa2/Kconfig
+@@ -2,6 +2,7 @@
+ config FSL_DPAA2_ETH
+ 	tristate "Freescale DPAA2 Ethernet"
+ 	depends on FSL_MC_BUS && FSL_MC_DPIO
++	select PHYLINK
+ 	help
+ 	  This is the DPAA2 Ethernet driver supporting Freescale SoCs
+ 	  with DPAA2 (DataPath Acceleration Architecture v2).
 -- 
-2.24.0
+2.7.4
 
