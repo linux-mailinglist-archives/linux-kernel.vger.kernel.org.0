@@ -2,301 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3846F2D18
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:08:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7B0F2D1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:10:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388375AbfKGLIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 06:08:02 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:60157 "EHLO
-        mail.loongson.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfKGLIB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 06:08:01 -0500
-Received: from [10.20.41.27] (unknown [10.20.41.27])
-        by mail (Coremail) with SMTP id QMiowPDx72MC+8NdK2MAAA--.14S3;
-        Thu, 07 Nov 2019 19:07:53 +0800 (CST)
-Subject: Re: [PATCH] MIPS: Scan the DMI system information
-To:     Jean Delvare <jdelvare@suse.de>
-References: <5959f904-5c46-30a7-7a4f-17f692aca320@loongson.cn>
- <5c042bd8-40ad-e84f-588d-f3ee56f7216d@loongson.cn>
- <20191107114209.5e4cfa4d@endymion>
-Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Huacai Chen <chenhc@lemote.com>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yinglu Yang <yangyinglu@loongson.cn>,
-        Xuefeng Li <lixuefeng@loongson.cn>
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <b8a06bc4-d069-e713-9f56-8a6aa24d4eee@loongson.cn>
-Date:   Thu, 7 Nov 2019 19:07:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S2388304AbfKGLKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 06:10:21 -0500
+Received: from onstation.org ([52.200.56.107]:55338 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727707AbfKGLKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 06:10:21 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id C56A53E89E;
+        Thu,  7 Nov 2019 11:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1573125020;
+        bh=QbmX0feSHkj2IBz00wrWT+q2Nqc82ijEV92sQq0svlo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NtLyXOZmqzf2z4jSd+VRrh+vNbS11NeP0SbJy8Ayqi8JJsVSFOVWqFSwQVFfmXcmx
+         silVvYWhLO7Rq3UNcg5kss290CUlW6sNOSDD4Yx+g0xlt6lKigqJCK9yPHcwZ3G+6L
+         aVpDp2vnHeYstYeX6NNroAa3p0kT2PMdiD3HPPAQ=
+Date:   Thu, 7 Nov 2019 06:10:19 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Rob Clark <robdclark@chromium.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <sean@poorly.run>
+Subject: Re: [Freedreno] drm/msm: 'pp done time out' errors after async
+ commit changes
+Message-ID: <20191107111019.GA24028@onstation.org>
+References: <20191105000129.GA6536@onstation.org>
+ <CAF6AEGv3gs+LFOP3AGthXd4niFb_XYOuwLfEa2G9eb27b1wMMA@mail.gmail.com>
+ <20191105100804.GA9492@onstation.org>
+ <CAF6AEGtB+g=4eiB31jkyuBGW7r0TBSh2oMj6TGtSgQ=q1ZV1tg@mail.gmail.com>
+ <20191106091335.GA16729@onstation.org>
+ <CAF6AEGuEO1jg6KhOFWEMUjq4ZQy5w61dWJk6uLWRzHnMZYZv=g@mail.gmail.com>
+ <CAOCk7NomH2MsZ+FvPFAMWeabOFpyOwODCb_Ro07v+2k2v_C4NA@mail.gmail.com>
+ <CAF6AEGsZkJJTNZ8SzHsSioEnkpekr1Texu5_EeBW1hP-bsOyjQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191107114209.5e4cfa4d@endymion>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: QMiowPDx72MC+8NdK2MAAA--.14S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF18ArWDZr4rKryftryUtrb_yoWxAw4rpF
-        y8J3W5KF4UXr17Gr1Sq343XFnIyrs5JFWrXFy7JF17Awn0qr17Jr4Dt3yjkFy8Ar1kKFy0
-        9r1FgFW3uF15G3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-        17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-        IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-        3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-        nIWIevJa73UjIFyTuYvjfUOGQDUUUUU
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGsZkJJTNZ8SzHsSioEnkpekr1Texu5_EeBW1hP-bsOyjQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07/2019 06:42 PM, Jean Delvare wrote:
-> On Thu, 7 Nov 2019 17:26:58 +0800, Tiezhu Yang wrote:
->> Sorry to resend this email because the mail list server was denied
->> due to it is not plain text.
->>
->> On 11/07/2019 11:42 AM, Jiaxun Yang wrote:
->>> 于 2019年11月7日 GMT+08:00 上午10:42:23, Tiezhu Yang<yangtiezhu@loongson.cn>  写到:
->>>> On 11/07/2019 08:35 AM, Jiaxun Yang wrote:
->>>>> 于 2019年11月7日 GMT+08:00 上午12:05:41, Tiezhu Yang
->>>> <yangtiezhu@loongson.cn>  写到:
->>>>>> Enable DMI scanning on the MIPS architecture, this setups DMI
->>>>>> identifiers
->>>>>> (dmi_system_id) for printing it out on task dumps and prepares DIMM
->>>>>> entry
->>>>>> information (dmi_memdev_info) from the SMBIOS table. With this
->>>> patch,
->>>>>> the
->>>>>> driver can easily match various of mainboards.
->>>>>>
->>>>>> In the SMBIOS reference specification, the table anchor string
->>>> "_SM_"
->>>>>> is
->>>>>> present in the address range 0xF0000 to 0xFFFFF on a 16-byte
->>>> boundary,
->>>>>> but there exists a special case for loongson platform, when call
->>>>>> function
->>>>>> dmi_early_remap, it should specify the start address to 0xFFFE000
->>>> due
->>>>>> to
->>>>>> it is reserved for SMBIOS and can be normally access in the BIOS.
->>>>>>
->>>>>> Co-developed-by: Yinglu Yang<yangyinglu@loongson.cn>
->>>>>> Signed-off-by: Yinglu Yang<yangyinglu@loongson.cn>
->>>>>> Signed-off-by: Tiezhu Yang<yangtiezhu@loongson.cn>
->>>>>> ---
->>>>>> arch/mips/Kconfig           | 12 ++++++++++++
->>>>>> arch/mips/include/asm/dmi.h | 43
->>>>>> +++++++++++++++++++++++++++++++++++++++++++
->>>>>> arch/mips/kernel/setup.c    |  2 ++
->>>>>> 3 files changed, 57 insertions(+)
->>>>>> create mode 100644 arch/mips/include/asm/dmi.h
->>>>>>
->>>>>> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
->>>>>> index 7cb8947..0a67b18 100644
->>>>>> --- a/arch/mips/Kconfig
->>>>>> +++ b/arch/mips/Kconfig
->>>>>> @@ -2757,6 +2757,18 @@ config HW_PERF_EVENTS
->>>>>> 	  Enable hardware performance counter support for perf events. If
->>>>>> 	  disabled, perf events will use software events only.
->>>>>>
->>>>>> +# Mark as expert because too many people got it wrong.
->>>>>> +# The code disables itself when not needed.
->>>>>> +config DMI
->>>>>> +	default y
->>>>>> +	select DMI_SCAN_MACHINE_NON_EFI_FALLBACK
->>>>>> +	bool "Enable DMI scanning" if EXPERT
->>>>>> +	help
->>>>>> +	  Enabled scanning of DMI to identify machine quirks. Say Y
->>>>>> +	  here unless you have verified that your setup is not
->>>>>> +	  affected by entries in the DMI blacklist. Required by PNP
->>>>>> +	  BIOS code.
->>>>>> +
->>>>>> config SMP
->>>>>> 	bool "Multi-Processing support"
->>>>>> 	depends on SYS_SUPPORTS_SMP
->>>>>> diff --git a/arch/mips/include/asm/dmi.h
->>>> b/arch/mips/include/asm/dmi.h
->>>>>> new file mode 100644
->>>>>> index 0000000..1f3da37
->>>>>> --- /dev/null
->>>>>> +++ b/arch/mips/include/asm/dmi.h
->>>>>> @@ -0,0 +1,43 @@
->>>>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>>>> +#ifndef _ASM_MIPS_DMI_H
->>>>>> +#define _ASM_MIPS_DMI_H
->>>>>> +
->>>>>> +#define dmi_early_remap		mips_early_memremap
->>>>>> +#define dmi_early_unmap		mips_early_memunmap
->>>>>> +#define dmi_remap(_x, _l)	mips_memremap(_x, _l, MEMREMAP_WB)
->>>>>> +#define dmi_unmap(_x)		mips_memunmap(_x)
->>>>>> +
->>>>>> +#define dmi_alloc(l)		memblock_alloc_low(l, PAGE_SIZE)
->>>>>> +
->>>>>> +void __init *mips_early_memremap(resource_size_t phys_addr,
->>>> unsigned
->>>>>> long size)
->>>>>> +{
->>>>>> +#if defined(CONFIG_MACH_LOONGSON64)
->>>>>> +	if (phys_addr == 0xF0000)
->>>>>> +		phys_addr = 0xFFFE000;
->>>>>> +
->>>>>> +	return (void *)TO_CAC(phys_addr);
->>>>>> +#else
->>>>>> +	return NULL;
->>>>>> +#endif
->>>>>> +}
->>>>> Hi Tiezhu,
->>>>>
->>>>> It is really tricky to hijack dmi address here during remap.
->>>>> I think we should set the dmi table address at  dmi_scan.c by a marco
->>>> or something else rather than hijack it during remap.
->>>>
->>>> Hi Jiaxun,
->>>>
->>>> Thanks for your review. I agree with you, let me think about it and try
->>>> to
->>>> find a proper way, and then I will send a v2 patch.
->> Hi Jiaxun,
->>
->> It seems that there is no absolutely better way to handle this case.
->>
->> 1. use conditional compilation in drivers/firmware/dmi_scan.c:
->>
->> #if defined(CONFIG_MACH_LOONGSON64)
->>
->> p = dmi_early_remap(0xFFFE000, 0x10000);
->>
->> #else
->>
->> p = dmi_early_remap(0xF0000, 0x10000);
->>
->> #endif
->>
->>
->> This will influence the common code.
->>
->> 2. use callback function in arch/mips/include/asm/dmi.h:
-> I see no reason to go that route if the decision can be made at build
-> time. Callback functions are good when the decision is made at run time.
->
->> struct plat_dmi_ops {
->>
->>           void (*early_memremap)(void);
->>
->>           void (*memremap)(void);
->>
->> };
->>
->> extern struct plat_dmi_ops *dmi_ops;
->>
->> void __init *mips_early_memremap(resource_size_t phys_addr, unsigned long size)
->>
->> {
->>
->>           dmi_ops->early_memremap();
->>
->> }
->>
->> void *mips_memremap(resource_size_t offset, size_t size, unsigned long flags)
->>
->> {
->>
->>           dmi_ops->memremap();
->>
->> }
->>
->>
->> we can implement the callback function in various of MIPS platforms,
->> like this:
->>
->> struct plat_dmi_ops loongson3_dmi_ops = {
->>
->>           .early_memremap = loongson3_early_memremap,
->>
->>           .memremap = loongson3_memremap,
->>
->> };
->>
->> register_dmi_ops(&loongson3_dmi_ops);
->>
->> #ifdef CONFIG_DMI
->>
->> void __init *loongson3_early_memremap(resource_size_t phys_addr, unsigned long size)
->>
->> {
->>
->>           if (phys_addr == 0xF0000)
->>
->>                   phys_addr = 0xfffe000;
->>
->>           return (void *)TO_CAC(phys_addr);
->>
->> }
->>
->> void *loongson3_memremap(resource_size_t offset, size_t size, unsigned long flags)
->>
->> {
->>
->>           return (void *)TO_CAC(phys_addr);
->>
->> }
->>
->> #else
->>
->> void __init __iomem *loongson3_early_memremap(u64 phys_addr, unsigned long size)
->>
->> {
->>
->>           return NULL;
->>
->> }
->>
->> void __init __iomem *loongson3_memremap(u64 phys_addr, unsigned long size)
->>
->> {
->>
->>           return NULL;
->>
->> }
->>
->> #endif
->>
->>
->> This will not influence the common code.
->>
->> What do you think?
->>
->>
->> Hi Jean,
->>
->> Could you give some suggestions?
-> What about:
->
-> #if defined(CONFIG_MACH_LOONGSON64)
-> #define SMBIOS_ENTRY_POINT_SCAN_START	0xFFFE000
-> #else
-> #define SMBIOS_ENTRY_POINT_SCAN_START	0xF0000
-> #endif
->
-> And then just use SMBIOS_ENTRY_POINT_SCAN_START instead of the raw
-> address everywhere it is needed?
+On Wed, Nov 06, 2019 at 08:58:59AM -0800, Rob Clark wrote:
+> On Wed, Nov 6, 2019 at 8:47 AM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+> >
+> > On Wed, Nov 6, 2019 at 9:30 AM Rob Clark <robdclark@gmail.com> wrote:
+> > >
+> > > On Wed, Nov 6, 2019 at 1:13 AM Brian Masney <masneyb@onstation.org> wrote:
+> > > >
+> > > > On Tue, Nov 05, 2019 at 08:23:27AM -0800, Rob Clark wrote:
+> > > > > On Tue, Nov 5, 2019 at 2:08 AM Brian Masney <masneyb@onstation.org> wrote:
+> > > > > > The 'pp done time out' errors go away if I revert the following three
+> > > > > > commits:
+> > > > > >
+> > > > > > cd6d923167b1 ("drm/msm/dpu: async commit support")
+> > > > > > d934a712c5e6 ("drm/msm: add atomic traces")
+> > > > > > 2d99ced787e3 ("drm/msm: async commit support")
+> > > > > >
+> > > > > > I reverted the first one to fix a compiler error, and the second one so
+> > > > > > that the last patch can be reverted without any merge conflicts.
+> > > > > >
+> > > > > > I see that crtc_flush() calls mdp5_ctl_commit(). I tried to use
+> > > > > > crtc_flush_all() in mdp5_flush_commit() and the contents of the frame
+> > > > > > buffer dance around the screen like its out of sync. I renamed
+> > > > > > crtc_flush_all() to mdp5_crtc_flush_all() and removed the static
+> > > > > > declaration. Here's the relevant part of what I tried:
+> > > > > >
+> > > > > > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> > > > > > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> > > > > > @@ -171,7 +171,15 @@ static void mdp5_prepare_commit(struct msm_kms *kms, struct drm_atomic_state *st
+> > > > > >
+> > > > > >  static void mdp5_flush_commit(struct msm_kms *kms, unsigned crtc_mask)
+> > > > > >  {
+> > > > > > -       /* TODO */
+> > > > > > +       struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(kms));
+> > > > > > +       struct drm_crtc *crtc;
+> > > > > > +
+> > > > > > +       for_each_crtc_mask(mdp5_kms->dev, crtc, crtc_mask) {
+> > > > > > +               if (!crtc->state->active)
+> > > > > > +                       continue;
+> > > > > > +
+> > > > > > +               mdp5_crtc_flush_all(crtc);
+> > > > > > +       }
+> > > > > >  }
+> > > > > >
+> > > > > > Any tips would be appreciated.
+> > > > >
+> > > > >
+> > > > > I think this is along the lines of what we need to enable async commit
+> > > > > for mdp5 (but also removing the flush from the atomic-commit path)..
+> > > > > the principle behind the async commit is to do all the atomic state
+> > > > > commit normally, but defer writing the flush bits.  This way, if you
+> > > > > get another async update before the next vblank, you just apply it
+> > > > > immediately instead of waiting for vblank.
+> > > > >
+> > > > > But I guess you are on a command mode panel, if I remember?  Which is
+> > > > > a case I didn't have a way to test.  And I'm not entirely about how
+> > > > > kms_funcs->vsync_time() should be implemented for cmd mode panels.
+> > > >
+> > > > Yes, this is a command-mode panel and there's no hardware frame counter
+> > > > available. The key to getting the display working on this phone was this
+> > > > patch:
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2bab52af6fe68c43b327a57e5ce5fc10eefdfadf
+> > > >
+> > > > > That all said, I think we should first fix what is broken, before
+> > > > > worrying about extending async commit support to mdp5.. which
+> > > > > shouldn't hit the async==true path, due to not implementing
+> > > > > kms_funcs->vsync_time().
+> > > > >
+> > > > > What I think is going on is that, in the cmd mode case,
+> > > > > mdp5_wait_flush() (indirectly) calls mdp5_crtc_wait_for_pp_done(),
+> > > > > which waits for a pp-done irq regardless of whether there is a flush
+> > > > > in progress.  Since there is no flush pending, the irq never comes.
+> > > > > But the expectation is that kms_funcs->wait_flush() returns
+> > > > > immediately if there is nothing to wait for.
+> > > >
+> > > > I don't think that's happening in this case. I added some pr_info()
+> > > > statements to request_pp_done_pending() and mdp5_crtc_pp_done_irq().
+> > > > Here's the first two sets of messages that appear in dmesg:
+> > > >
+> > > > [   14.018907] msm fd900000.mdss: pp done time out, lm=0
+> > > > [   14.018993] request_pp_done_pending: HERE
+> > > > [   14.074208] mdp5_crtc_pp_done_irq: HERE
+> > > > [   14.074368] Console: switching to colour frame buffer device 135x120
+> > > > [   14.138938] msm fd900000.mdss: pp done time out, lm=0
+> > > > [   14.139021] request_pp_done_pending: HERE
+> > > > [   14.158097] mdp5_crtc_pp_done_irq: HERE
+> > > >
+> > > > The messages go on like this with the same pattern.
+> > > >
+> > > > I tried two different changes:
+> > > >
+> > > > 1) I moved the request_pp_done_pending() and corresponding if statement
+> > > >    from mdp5_crtc_atomic_flush() and into mdp5_crtc_atomic_begin().
+> > > >
+> > > > 2) I increased the timeout in wait_for_completion_timeout() by several
+> > > >    increments; all the way to 5 seconds.
+> > >
+> > > increasing the timeout won't help, because the pp-done irq has already
+> > > come at the point where we wait for it..
+> > >
+> > > maybe the easy thing is just add mdp5_crtc->needs_pp, set to true
+> > > before requesting, and false when we get the irq.. and then
+> > > mdp5_crtc_wait_for_pp_done() just returns if needs_pp==false..
+> >
+> > On the otherhand, what about trying to make command mode panels
+> > resemble video mode panels slightly?  Video mode panels have a vsync
+> > counter in hardware, which is missing from command mode - however it
+> > seems like the driver/drm framework would prefer such a counter.
+> > Would it be a reasonable idea to make a software counter, and just
+> > increment it every time the pp_done irq is triggered?
+> >
+> > I'm just thinking that we'll avoid issues long term by trying to make
+> > the code common, rather than diverging it for the two modes.
+> >
+> 
+> *possibly*, but I think we want to account somehow periods where
+> display is not updated.
+> 
+> fwiw, it isn't that uncommon for userspace to use vblanks to "keep
+> time" (drive animations for desktop switch, window
+> maximize/unmaximize, etc).. it could be a surprise when "vblank" is
+> not periodic.
 
-OK, good idea, thank you very much!
-I will send a v2 patch as soon as possible.
+What do you think about using some variation of the current value of
+jiffies in the kernel + the number of pp_done IRQs as the software
+counter for command-mode panels?
 
-Thanks,
-
-Tiezhu Yang
-
->
-
+Brian
