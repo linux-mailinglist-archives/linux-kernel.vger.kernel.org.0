@@ -2,170 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E17CCF28B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:07:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E06F6F28BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 09:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfKGIHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 03:07:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726791AbfKGIHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 03:07:21 -0500
-Received: from rapoport-lnx (nesher1.haifa.il.ibm.com [195.110.40.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14F2F2077C;
-        Thu,  7 Nov 2019 08:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573114040;
-        bh=Vs0vmuJFZJfCdBWbcef1JshwZZc9l+YrjwUdtsaNu3k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KypO2u9qQZOpCT97PagoJmJ05jNzzAwEOh5TQuJtaHcnw290kuyiCyRgXcpTDgoff
-         yL2r3/5Nv3OxL5iW1vDTUMldS7lvQVWUl8vBPDTErZIqUCYXU5EvD9rUB9CL4lekw9
-         M70s0IBFr/3wdhsUYXeg/j3kPNjd4MGq8LMTqoAU=
-Date:   Thu, 7 Nov 2019 10:07:07 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-Message-ID: <20191107080706.GB3239@rapoport-lnx>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-6-jhubbard@nvidia.com>
- <20191105131032.GG25005@rapoport-lnx>
- <9ac948a4-59bf-2427-2007-e460aad2848a@nvidia.com>
+        id S1727736AbfKGIIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 03:08:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61036 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726800AbfKGIH7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 03:07:59 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA77rbm6017415
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2019 03:07:58 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w41w6rfrf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 03:07:56 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 7 Nov 2019 08:07:23 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Nov 2019 08:07:20 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA786h4M22217000
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Nov 2019 08:06:43 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F3B54203F;
+        Thu,  7 Nov 2019 08:07:18 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55C0C4204C;
+        Thu,  7 Nov 2019 08:07:18 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.123])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Nov 2019 08:07:18 +0000 (GMT)
+Subject: Re: s390/pkey: Use memdup_user() rather than duplicating its
+ implementation
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        Joe Perches <joe@perches.com>, linux-s390@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
+ <6137855bb4170c438c7436cbdb7dfd21639a8855.camel@perches.com>
+ <4fa0e106-2565-8610-1356-4adfba08c0a0@web.de>
+ <a4eaf80e-a5dd-4da3-75ca-8231f01af193@de.ibm.com>
+ <20191107064854.GM10409@kadam>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
+Date:   Thu, 7 Nov 2019 09:07:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ac948a4-59bf-2427-2007-e460aad2848a@nvidia.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191107064854.GM10409@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19110708-4275-0000-0000-0000037B8FDE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19110708-4276-0000-0000-0000388EE035
+Message-Id: <604a921d-9240-f271-3f92-675df85784e6@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=495 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911070079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 11:00:06AM -0800, John Hubbard wrote:
-> On 11/5/19 5:10 AM, Mike Rapoport wrote:
-> ...
-> >> ---
-> >>  Documentation/vm/index.rst          |   1 +
-> >>  Documentation/vm/pin_user_pages.rst | 212 ++++++++++++++++++++++
-> > 
-> > I think it belongs to Documentation/core-api.
-> 
-> Done:
-> 
-> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-> index ab0eae1c153a..413f7d7c8642 100644
-> --- a/Documentation/core-api/index.rst
-> +++ b/Documentation/core-api/index.rst
-> @@ -31,6 +31,7 @@ Core utilities
->     generic-radix-tree
->     memory-allocation
->     mm-api
-> +   pin_user_pages
->     gfp_mask-from-fs-io
->     timekeeping
->     boot-time-mm
 
-Thanks!
- 
-> ...
-> >> diff --git a/Documentation/vm/pin_user_pages.rst b/Documentation/vm/pin_user_pages.rst
-> >> new file mode 100644
-> >> index 000000000000..3910f49ca98c
-> >> --- /dev/null
-> >> +++ b/Documentation/vm/pin_user_pages.rst
-> >> @@ -0,0 +1,212 @@
-> >> +.. SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +====================================================
-> >> +pin_user_pages() and related calls
-> >> +====================================================
-> > 
-> > I know this is too much to ask, but having pin_user_pages() a part of more
-> > general GUP description would be really great :)
-> > 
-> 
-> Yes, definitely. But until I saw the reaction to the pin_user_pages() API
-> family, I didn't want to write too much--it could have all been tossed out
-> in favor of a whole different API. But now that we've had some initial
-> reviews, I'm much more confident in being able to write about the larger 
-> API set.
-> 
-> So yes, I'll put that on my pending list.
-> 
-> 
-> ...
-> >> +This document describes the following functions: ::
-> >> +
-> >> + pin_user_pages
-> >> + pin_user_pages_fast
-> >> + pin_user_pages_remote
-> >> +
-> >> + pin_longterm_pages
-> >> + pin_longterm_pages_fast
-> >> + pin_longterm_pages_remote
-> >> +
-> >> +Basic description of FOLL_PIN
-> >> +=============================
-> >> +
-> >> +A new flag for get_user_pages ("gup") has been added: FOLL_PIN. FOLL_PIN has
-> > 
-> > Consider reading this after, say, half a year ;-)
-> > 
-> 
-> OK, OK. I knew when I wrote that that it was not going to stay new forever, but
-> somehow failed to write the right thing anyway. :) 
-> 
-> Here's a revised set of paragraphs:
-> 
-> Basic description of FOLL_PIN
-> =============================
-> 
-> FOLL_PIN and FOLL_LONGTERM are flags that can be passed to the get_user_pages*()
-> ("gup") family of functions. FOLL_PIN has significant interactions and
-> interdependencies with FOLL_LONGTERM, so both are covered here.
-> 
-> Both FOLL_PIN and FOLL_LONGTERM are internal to gup, meaning that neither
-> FOLL_PIN nor FOLL_LONGTERM should not appear at the gup call sites. This allows
-> the associated wrapper functions  (pin_user_pages() and others) to set the
-> correct combination of these flags, and to check for problems as well.
 
-Great, thanks! 
- 
-> thanks,
+On 07.11.19 07:48, Dan Carpenter wrote:
+> On Wed, Nov 06, 2019 at 07:30:19PM +0100, Christian Borntraeger wrote:
+>>
+>>
+>> On 06.11.19 14:00, Markus Elfring wrote:
+>>>>> Reuse existing functionality from memdup_user() instead of keeping
+>>>>> duplicate source code.
+>>>>>
+>>>>> Generated by: scripts/coccinelle/api/memdup_user.cocci
+>>> …
+>>>>> Fixes: f2bbc96e7cfad3891b7bf9bd3e566b9b7ab4553d ("s390/pkey: add CCA AES cipher key support")
+>>>>
+>>>> This doesn't fix anything
+>>>
+>>> How would you categorise the proposed source code reduction and software reuse?
+>>
+>> Cleanup.
+>>
+>> Can you please stop arguing about review feedback that is clearly right? This is not fixing 
+>> anything. The Fixes tag is used to decide if something needs a backport.
 > 
-> John Hubbard
-> NVIDIA
+> Fixes tags are independent from backports.  If you want a backport you
+> should CC stable.
 
--- 
-Sincerely yours,
-Mike.
+I agree, but a Fixes tag increases the likelyhood of automatic backports anyway.
+(e.g. some distro kernel maintainers check for this tag).
+
