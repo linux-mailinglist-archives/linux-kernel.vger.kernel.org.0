@@ -2,106 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF489F3235
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A14B0F3248
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:11:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389269AbfKGPJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 10:09:58 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:63494 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729985AbfKGPJ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 10:09:57 -0500
-Received: from grover.flets-west.jp (softbank126021098169.bbtec.net [126.21.98.169]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id xA7F9lnE027691;
-        Fri, 8 Nov 2019 00:09:48 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com xA7F9lnE027691
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1573139389;
-        bh=j+Cvt6seYHFvw2RmLOUQxrYQHSymidnwSWT4pOwDdsY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aOiwQjF2KC0JtUBdPd/6aFdwBgh2XMjwtnNOmwUVxMk3WkicJKyDS2Tk08WJXhwcO
-         ujwaQ1opOQjDaCgJbA3EcgrmcHGsnZOsxtTbq5PvyWJ6c119vmcihQCKUiLCy/B99v
-         Ncuo2Q16YCWFxhZTPIdL4TOCsi0hwbupcj/dUhsJwmH3w3xKKA2sROC+H1Op2ovlJL
-         rNjTcjNKUAY/lyB3cI2PPA9hE7u7e/RB1ugM1PQM/dIqH6HO6zN36u5PeEeKoqf4Td
-         bAseMh+RlFtMalEL4wMSmaj9zn5hLq/tiG/y/nRW/n0/qT+IyneGLjxPbJFmXd0INS
-         amxIvZYr8yDRw==
-X-Nifty-SrcIP: [126.21.98.169]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] kbuild: rename any-prereq to newer-prereqs
-Date:   Fri,  8 Nov 2019 00:09:45 +0900
-Message-Id: <20191107150945.4513-2-yamada.masahiro@socionext.com>
+        id S2388780AbfKGPKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 10:10:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34822 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388215AbfKGPKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 10:10:54 -0500
+Received: from e123331-lin.home (lfbn-mar-1-643-104.w90-118.abo.wanadoo.fr [90.118.215.104])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0F08207FA;
+        Thu,  7 Nov 2019 15:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573139454;
+        bh=Qkglv5lZHVxnBcuUB4qmpT6t2JaTNwYPtliF7VcRcwI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YH6i2pz8mdC87AGoSELTm3qNQmdhv7s4badW59RvW9uVOCWXGU5Or8rhwvc7JKYIu
+         CwqzwmSLsYOwuwooogQv/RIiuGuGseendiUrjn2AXXfhkE9C9ee7N3NZJDHd4ioh/D
+         SQAMISj+G+InMRoiVxSneOdlXHbvuGCx92nUvE7M=
+From:   Ard Biesheuvel <ardb@kernel.org>
+To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ard Biesheuvel <ardb@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Zou Cao <zoucao@linux.alibaba.com>
+Subject: [GIT PULL 0/4] EFI updates for v5.5
+Date:   Thu,  7 Nov 2019 16:10:32 +0100
+Message-Id: <20191107151036.5586-1-ardb@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191107150945.4513-1-yamada.masahiro@socionext.com>
-References: <20191107150945.4513-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GNU Make manual says:
+The following changes since commit a99d8080aaf358d5d23581244e5da23b35e340b9:
 
-  $?
-      The names of all the prerequisites that are newer than the target,
-      with spaces between them.
+  Linux 5.4-rc6 (2019-11-03 14:07:26 -0800)
 
-To reflect this, rename any-prereq to newer-prereqs, which is clearer
-and more intuitive.
+are available in the Git repository at:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-next
 
- scripts/Kbuild.include | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+for you to fetch changes up to d99c1ba6a73b9e93e2884b7893fe19e3c082ba03:
 
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index b3a1189ec3d9..79713bd48a1e 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -210,17 +210,17 @@ endif
- # (needed for the shell)
- make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst $$,$$$$,$(cmd_$(1)))))
- 
--# Find any prerequisites that is newer than target or that does not exist.
-+# Find any prerequisites that are newer than target or that do not exist.
- # PHONY targets skipped in both cases.
--any-prereq = $(filter-out $(PHONY),$?)
-+newer-prereqs = $(filter-out $(PHONY),$?)
- 
- # Execute command if command has changed or prerequisite(s) are updated.
--if_changed = $(if $(any-prereq)$(cmd-check),                                 \
-+if_changed = $(if $(newer-prereqs)$(cmd-check),                              \
- 	$(cmd);                                                              \
- 	printf '%s\n' 'cmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
- 
- # Execute the command and also postprocess generated .d dependencies file.
--if_changed_dep = $(if $(any-prereq)$(cmd-check),$(cmd_and_fixdep),@:)
-+if_changed_dep = $(if $(newer-prereqs)$(cmd-check),$(cmd_and_fixdep),@:)
- 
- cmd_and_fixdep =                                                             \
- 	$(cmd);                                                              \
-@@ -230,7 +230,7 @@ cmd_and_fixdep =                                                             \
- # Usage: $(call if_changed_rule,foo)
- # Will check if $(cmd_foo) or any of the prerequisites changed,
- # and if so will execute $(rule_foo).
--if_changed_rule = $(if $(any-prereq)$(cmd-check),$(rule_$(1)),@:)
-+if_changed_rule = $(if $(newer-prereqs)$(cmd-check),$(rule_$(1)),@:)
- 
- ###
- # why - tell why a target got built
-@@ -255,7 +255,7 @@ ifeq ($(KBUILD_VERBOSE),2)
- why =                                                                        \
-     $(if $(filter $@, $(PHONY)),- due to target is PHONY,                    \
-         $(if $(wildcard $@),                                                 \
--            $(if $(any-prereq),- due to: $(any-prereq),                      \
-+            $(if $(newer-prereqs),- due to: $(newer-prereqs),                \
-                 $(if $(cmd-check),                                           \
-                     $(if $(cmd_$@),- due to command line change,             \
-                         $(if $(filter $@, $(targets)),                       \
--- 
-2.17.1
+  efi: libstub/tpm: enable tpm eventlog function for ARM platforms (2019-11-07 10:18:45 +0100)
 
+----------------------------------------------------------------
+EFI changes for v5.5:
+- Change my email address to @kernel.org so I am no longer at the mercy of
+  useless corporate email infrastructure
+- Wire up the EFI RNG code for x86. This enables an additional source of
+  entropy during early boot.
+- Enable the TPM event log code on ARM platforms.
+
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      MAINTAINERS: update Ard's email address to @kernel.org
+
+Dominik Brodowski (2):
+      efi/random: use arch-independent efi_call_proto()
+      x86: efi/random: Invoke EFI_RNG_PROTOCOL to seed the UEFI RNG table
+
+Xinwei Kong (1):
+      efi: libstub/tpm: enable tpm eventlog function for ARM platforms
+
+ .mailmap                                |  1 +
+ MAINTAINERS                             |  8 ++++----
+ arch/x86/boot/compressed/eboot.c        |  3 +++
+ drivers/firmware/efi/libstub/Makefile   |  5 +++--
+ drivers/firmware/efi/libstub/arm-stub.c |  2 ++
+ drivers/firmware/efi/libstub/efistub.h  |  2 --
+ drivers/firmware/efi/libstub/random.c   | 23 ++++++++++++++++++-----
+ include/linux/efi.h                     |  2 ++
+ 8 files changed, 33 insertions(+), 13 deletions(-)
