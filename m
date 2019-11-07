@@ -2,152 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C630AF2859
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 08:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E40D2F2852
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 08:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbfKGHsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 02:48:31 -0500
-Received: from mga02.intel.com ([134.134.136.20]:5314 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbfKGHs3 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 02:48:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 23:48:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,277,1569308400"; 
-   d="scan'208";a="227748288"
-Received: from kbl.sh.intel.com ([10.239.159.163])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Nov 2019 23:48:26 -0800
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v7 3/7] perf util: Count the total cycles of all samples
-Date:   Thu,  7 Nov 2019 15:47:15 +0800
-Message-Id: <20191107074719.26139-4-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191107074719.26139-1-yao.jin@linux.intel.com>
-References: <20191107074719.26139-1-yao.jin@linux.intel.com>
+        id S1727389AbfKGHra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 02:47:30 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46183 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfKGHra (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 02:47:30 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e9so1082643ljp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 23:47:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BM2uPCGl7MlHI9VokWMyypQwQOYzLyP9Fc6BRH6jvvk=;
+        b=e0Nr3tnzH6z2O8kaAaDBBEmP8FNNljgsksANCN7e4zCsGQEtEB6DHdHLDMVcUCSsdk
+         FaGhBC0kqPkc0FCnmNL4RsvyHR6jV/4DIN7HIvYuk2nqqUCbnA82VoMvPwCSdJLIt8Hb
+         6PxqOcaz592Qr1cCDq43zVhg7i54P0Ak5pFsTI2b6IpY10UGNmOZQWZR0o1ELZTyb6WY
+         Z+Gv6R4dj7hwv9jQd+qIpCLI3V39onaSiKFJn8+Eqzo5hiAhwRiD+BHQq7kyahqyt5oh
+         Mr+6nKizOhvYwA1xNSnIUQrCaXLIkqos3KBK6J/qJ3NdDtb+ywMBiARoMpGlDHm+1wLg
+         EOPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BM2uPCGl7MlHI9VokWMyypQwQOYzLyP9Fc6BRH6jvvk=;
+        b=aFATXBdQ54mQ7YObn0XUoFI4m3WiIiPlAzigtJpiXkbei01T1czk+SvAUQfyf9RcFv
+         7Oy531z8wGElZfKhPKlHYTY5qH61C8VGyB62MZ2Kw2Dchx7LM+SwLq+atn4pUFmdrP4F
+         +ULnlsP3qK9+XVyJwD76J11pDjSrKB/PCXT9SkUo4AB3WfolNP3FHy2ecylknaEF21+s
+         eImMtprgrK8XIgupMAKI6vloMpPYO3nP2LDO76wKxi+EpE04QSw+UQd6sqBZUG7i0gPG
+         aI7JCAB+4Ja0ghEB6Q1LQqmbmaVDpkNnk554iZ1yBne4vl7sZzN3hc/8a8gfWxe8R8MT
+         TaWg==
+X-Gm-Message-State: APjAAAWAR1ALNIcgWs1CwSIOp7juYVgKUO0KiiAUIxisV/Inqr/n9DB2
+        BmIXc1NcPcDGLY7ZaLUs4TVjn0EYF12269bJlVCsvg==
+X-Google-Smtp-Source: APXvYqyokoWuUYShYSqxv7jcI14diU+pjshZwpkp/N0R94lTjnuDhryL7FM9KYy7sMph07wfsPJvTwRvsjId/hpMBzg=
+X-Received: by 2002:a05:651c:1202:: with SMTP id i2mr1296297lja.218.1573112846765;
+ Wed, 06 Nov 2019 23:47:26 -0800 (PST)
+MIME-Version: 1.0
+References: <20191106060301.17408-1-joel@jms.id.au> <20191106060301.17408-2-joel@jms.id.au>
+In-Reply-To: <20191106060301.17408-2-joel@jms.id.au>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 7 Nov 2019 08:47:15 +0100
+Message-ID: <CACRpkdadKG=FrSRu_OP8S8sv1As35j1DBFnWrzD4MU1EEzAptQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clocksource: fttmr010: Parametrise shutdown
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can get the per sample cycles by hist__account_cycles(). It's also
-useful to know the total cycles of all samples in order to get the
-cycles coverage for a single program block in further. For example,
+On Wed, Nov 6, 2019 at 7:03 AM Joel Stanley <joel@jms.id.au> wrote:
 
-coverage = per block sampled cycles / total sampled cycles
+> In preparation for supporting the ast2600 which uses a different method
+> to clear bits in the control register, use a callback for performing the
+> shutdown sequence.
+>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-This patch creates a new argument 'total_cycles' in hist__account_cycles(),
-which will be added with the cycles of each sample.
+Nice refactoring!
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/builtin-annotate.c | 2 +-
- tools/perf/builtin-diff.c     | 3 ++-
- tools/perf/builtin-report.c   | 2 +-
- tools/perf/builtin-top.c      | 3 ++-
- tools/perf/util/hist.c        | 6 +++++-
- tools/perf/util/hist.h        | 3 ++-
- 6 files changed, 13 insertions(+), 6 deletions(-)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 8db8fc9bddef..6ab0cc45b287 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -201,7 +201,7 @@ static int process_branch_callback(struct evsel *evsel,
- 	if (a.map != NULL)
- 		a.map->dso->hit = 1;
- 
--	hist__account_cycles(sample->branch_stack, al, sample, false);
-+	hist__account_cycles(sample->branch_stack, al, sample, false, NULL);
- 
- 	ret = hist_entry_iter__add(&iter, &a, PERF_MAX_STACK_DEPTH, ann);
- 	return ret;
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index 6728568fe5c4..376dbf10ad64 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -426,7 +426,8 @@ static int diff__process_sample_event(struct perf_tool *tool,
- 			goto out_put;
- 		}
- 
--		hist__account_cycles(sample->branch_stack, &al, sample, false);
-+		hist__account_cycles(sample->branch_stack, &al, sample, false,
-+				     NULL);
- 	}
- 
- 	/*
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 3bbad039abf2..bc15b9dcccd6 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -292,7 +292,7 @@ static int process_sample_event(struct perf_tool *tool,
- 
- 	if (ui__has_annotation() || rep->symbol_ipc) {
- 		hist__account_cycles(sample->branch_stack, &al, sample,
--				     rep->nonany_branch_mode);
-+				     rep->nonany_branch_mode, NULL);
- 	}
- 
- 	ret = hist_entry_iter__add(&iter, &al, rep->max_stack, rep);
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index d96f24c8770d..14c52e4d47f6 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -725,7 +725,8 @@ static int hist_iter__top_callback(struct hist_entry_iter *iter,
- 		perf_top__record_precise_ip(top, he, iter->sample, evsel, al->addr);
- 
- 	hist__account_cycles(iter->sample->branch_stack, al, iter->sample,
--		     !(top->record_opts.branch_stack & PERF_SAMPLE_BRANCH_ANY));
-+		     !(top->record_opts.branch_stack & PERF_SAMPLE_BRANCH_ANY),
-+		     NULL);
- 	return 0;
- }
- 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index a7fa061987e4..0e27d6830011 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -2572,7 +2572,8 @@ int hists__unlink(struct hists *hists)
- }
- 
- void hist__account_cycles(struct branch_stack *bs, struct addr_location *al,
--			  struct perf_sample *sample, bool nonany_branch_mode)
-+			  struct perf_sample *sample, bool nonany_branch_mode,
-+			  u64 *total_cycles)
- {
- 	struct branch_info *bi;
- 
-@@ -2599,6 +2600,9 @@ void hist__account_cycles(struct branch_stack *bs, struct addr_location *al,
- 					nonany_branch_mode ? NULL : prev,
- 					bi[i].flags.cycles);
- 				prev = &bi[i].to;
-+
-+				if (total_cycles)
-+					*total_cycles += bi[i].flags.cycles;
- 			}
- 			free(bi);
- 		}
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 6a186b668303..4d87c7b4c1b2 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -527,7 +527,8 @@ unsigned int hists__sort_list_width(struct hists *hists);
- unsigned int hists__overhead_width(struct hists *hists);
- 
- void hist__account_cycles(struct branch_stack *bs, struct addr_location *al,
--			  struct perf_sample *sample, bool nonany_branch_mode);
-+			  struct perf_sample *sample, bool nonany_branch_mode,
-+			  u64 *total_cycles);
- 
- struct option;
- int parse_filter_percentage(const struct option *opt, const char *arg, int unset);
--- 
-2.17.1
-
+Yours,
+Linus Walleij
