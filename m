@@ -2,122 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE97F3AAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EE00F3AAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 22:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfKGVp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 16:45:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57420 "EHLO mail.kernel.org"
+        id S1727359AbfKGVpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 16:45:16 -0500
+Received: from vps.xff.cz ([195.181.215.36]:35650 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbfKGVp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 16:45:28 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2B082166E;
-        Thu,  7 Nov 2019 21:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573163126;
-        bh=+2u/MCrAxpfwO9VHiDi1QHr4uX2w6bjyxLIeb9aiSuM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EeBOEpn5O9c3uDCStbIKsbOshbPZ5+KmIiaLNtaUY40Sjcn2KPWdB1MzA8gh8porv
-         6cQ69EGhxOHOviQRLEB/XSKS338JqkXn88I+MyRe4k8oiOekm4iIrqAHDkjdW0ZFa7
-         egkXfhnno87EqaQHt1MH42gYuJNPCVz7Hm7ZEHYk=
-Received: by mail-qt1-f172.google.com with SMTP id o11so4051685qtr.11;
-        Thu, 07 Nov 2019 13:45:26 -0800 (PST)
-X-Gm-Message-State: APjAAAVXtwl6Q9N6tHEjPdKIMUSS35mDz8yCpHpJY8sUTG6pmcINeNkU
-        p8gCaPFPtmRial/LYCW5kCAuJd70XbCRplabmw==
-X-Google-Smtp-Source: APXvYqzKBN4P3iQsDG0cU0SvIyl2nJbDqpbmXRW32fH1yUlg+6382COgYZuSJvJDggzFTfWEPsdivu2KtE2+LyjYfgk=
-X-Received: by 2002:ac8:458c:: with SMTP id l12mr6736244qtn.300.1573163125922;
- Thu, 07 Nov 2019 13:45:25 -0800 (PST)
+        id S1725912AbfKGVpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 16:45:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1573163114; bh=BGrAD8UvpxW4rw/cBqSRYppxgp0R9zi8fjyFRCWE9AY=;
+        h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+        b=TdvYPQSvv8h6dPQKJl5xiSdshpLt3NscKqvja8+fyZ9oAcxd+S4xpa4ZlpN3cWbsq
+         uydGrZT0jN/CgxKm0d5n49fgiFkW2DTI0wY0cv59e7V0QBZp6Zm5wIhI0FhJ4jAq+i
+         utioVXoDBiZLJSVKppU1aWh3cjKt0e7+QPBDMxxk=
+Date:   Thu, 7 Nov 2019 22:45:14 +0100
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Cc:     arnd@arndb.de, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, icenowy@aosc.io, kishon@ti.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, mark.rutland@arm.com,
+        mripard@kernel.org, paul.kocialkowski@bootlin.com,
+        robh+dt@kernel.org, tglx@linutronix.de, wens@csie.org
+Subject: Re: [PATCH] phy: allwinner: Fix GENMASK misuse
+Message-ID: <20191107214514.kcz42mcehyrrif4o@core.my.home>
+Mail-Followup-To: Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        arnd@arndb.de, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, icenowy@aosc.io, kishon@ti.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, mark.rutland@arm.com,
+        mripard@kernel.org, paul.kocialkowski@bootlin.com,
+        robh+dt@kernel.org, tglx@linutronix.de, wens@csie.org
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20191020134229.1216351-3-megous@megous.com>
+ <20191107204645.13739-1-rikard.falkeborn@gmail.com>
 MIME-Version: 1.0
-References: <20191028215919.83697-1-john.stultz@linaro.org>
- <20191028215919.83697-7-john.stultz@linaro.org> <87h83rj4ha.fsf@gmail.com>
- <CALAqxLX47uELsGbdociUKdC6KgDba-1SBVALmgjD3=jxh=fd8g@mail.gmail.com> <87k18mhaiq.fsf@gmail.com>
-In-Reply-To: <87k18mhaiq.fsf@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 7 Nov 2019 15:45:12 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL5_6vLJ4sfaNr=76S8kDWEpfKT05xaLktqFM_xH3puGA@mail.gmail.com>
-Message-ID: <CAL_JsqL5_6vLJ4sfaNr=76S8kDWEpfKT05xaLktqFM_xH3puGA@mail.gmail.com>
-Subject: Re: [PATCH v4 6/9] usb: dwc3: Rework resets initialization to be more flexible
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jack Pham <jackp@codeaurora.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107204645.13739-1-rikard.falkeborn@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 4:01 AM Felipe Balbi <balbi@kernel.org> wrote:
->
->
-> Hi,
->
-> John Stultz <john.stultz@linaro.org> writes:
->
-> > On Tue, Oct 29, 2019 at 2:17 AM Felipe Balbi <balbi@kernel.org> wrote:
-> >> John Stultz <john.stultz@linaro.org> writes:
-> >> > The dwc3 core binding specifies one reset.
-> >> >
-> >> > However some variants of the hardware my not have more.
-> >>                                         ^^
-> >>                                         may
-> >>
-> >> According to synopsys databook, there's a single *input* reset signal on
-> >> this IP. What is this extra reset you have?
-> >>
-> >> Is this, perhaps, specific to your glue layer around the synopsys ip?
-> >
-> > Likely (again, I unfortunately don't have a ton of detail on the hardware).
-> >
-> >> Should, perhaps, your extra reset be managed by the glue layer?
+Hello Rikard,
 
-An extra clock or reset is a silly reason to have a whole other node
-and driver. If there's additional blocks and registers, then yes a
-glue node makes sense.
+On Thu, Nov 07, 2019 at 09:46:45PM +0100, Rikard Falkeborn wrote:
+> Arguments are supposed to be ordered high then low.
+> 
+> Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+> ---
+> Spotted while trying to add compile time checks of GENMASK arguments.
+> Patch has only been compile tested.
 
-> > So yes the dwc3-of-simple does much of this already (it handles
-> > multiple resets, and variable clocks), but unfortunately we seem to
-> > need new bindings for each device added?  I think the suggestion from
-> > Rob was due to the sprawl of bindings for the glue code, and the extra
-> > complexity of the parent node.  So I believe Rob just thought it made
-> > sense to collapse this down into the core?
-> >
-> > I'm not really passionate about either approach, and am happy to
-> > rework (as long as there is eventual progress :).
-> > Just let me know what you'd prefer.
->
-> Well, I was under the impression we were supposed to describe the
-> HW. Synopsys IP has a single reset input :-p
+thank you!
 
-John is. His chip requires 2 resets to use the USB block and the
-compatible provides that distinction. Maybe HiSilicon has a newer or
-customized IP version that has 2 resets. The block could have external
-RAMs (because every process has its own) which may have their own
-reset. With NDA specifications and little knowledge of the full
-revision history, we can really never know. Also, omitting clocks and
-resets from the dwc3 node entirely is just as much not describing the
-h/w (only the glue needs clocks?).
+Tested-by: Ondrej Jirman <megous@megous.com>
 
-This block is the oddball. I think there's 1 or 2 other blocks where
-this glue node was done, but please stop. If we did this every time
-there's a variation in clocks or resets, we'd pretty much have glue
-nodes everywhere.
+regards,
+	o.
 
-Rob
+>  drivers/phy/allwinner/phy-sun50i-usb3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/allwinner/phy-sun50i-usb3.c b/drivers/phy/allwinner/phy-sun50i-usb3.c
+> index 1169f3e83a6f..b1c04f71a31d 100644
+> --- a/drivers/phy/allwinner/phy-sun50i-usb3.c
+> +++ b/drivers/phy/allwinner/phy-sun50i-usb3.c
+> @@ -49,7 +49,7 @@
+>  #define SUNXI_LOS_BIAS(n)		((n) << 3)
+>  #define SUNXI_LOS_BIAS_MASK		GENMASK(5, 3)
+>  #define SUNXI_TXVBOOSTLVL(n)		((n) << 0)
+> -#define SUNXI_TXVBOOSTLVL_MASK		GENMASK(0, 2)
+> +#define SUNXI_TXVBOOSTLVL_MASK		GENMASK(2, 0)
+>  
+>  struct sun50i_usb3_phy {
+>  	struct phy *phy;
+> -- 
+> 2.24.0
+> 
