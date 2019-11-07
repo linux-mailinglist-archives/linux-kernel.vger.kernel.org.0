@@ -2,190 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3CDEF3309
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:29:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F45F3382
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 16:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389023AbfKGP3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 10:29:18 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40066 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388539AbfKGP3L (ORCPT
+        id S2387412AbfKGPiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 10:38:11 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37125 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbfKGPiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 10:29:11 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e3so1696196plt.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 07:29:11 -0800 (PST)
+        Thu, 7 Nov 2019 10:38:10 -0500
+Received: by mail-ot1-f65.google.com with SMTP id d5so2388037otp.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 07:38:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=celw7kLC34qqwTTfh++uCkQEjOgc/6nwF8dFF2fJRcA=;
-        b=noW+GrgCtBbtWmvRliYdOAuMA0YUG7D+eX91HjAU5IDNU+EBOcrbt42dkubqBTxW4S
-         WQ8n2ZfnbmfCL4+eE6s1MnG4kJG52VZJ91QbzuQNFIi/COPg+DrUHbZ8+Jcgjj/Q48Re
-         QNX4NY1E7vtLM68r6rfozcc3RNzkIItLOE7o9jhPPrBLVYCbQcAaXYdiCcQx1PUOZm7u
-         oSAbYZ4+XOAXy2q29Df881Gyse5LGoGTyAaPv6aJ5raeRYhtrrpUAm1qesZ/YD4XWer0
-         OQ5NPy7zRFp9dt0jb2kjIPuYcQwfIBFil4fTrnHBnYJ1ukrYml+utoouUC2biDI7it8K
-         q8Eg==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Jd4v4egGKJGkgRNZhq2GcRXm65qlBUr+qY+ED82nBSs=;
+        b=TjGPGZzluGxA23XtvoAFe30pnK3dKTYggzlWGw4HW1cdQfIRr19/QEzaeBymOHbAq9
+         zSwtU2BfG0PiK8LItSMbfzZIRrmBaXOfqDQuwKhF+o77u+KKIxQ7ABMeE/VSQfGqWrjD
+         jBfgtEEIXLXwviT8sqcHL35DTULc1PCcyd4MItLWQAuddhAPmou8Z/rnHGidTESEpRdB
+         5HFzv29nuPiEbZ/Hkb2VfuOdz9RUJ68X9ggboKouro2XSrdjV1rJNcct/fcOFs0UkQFh
+         XFoIFZ+AmPtnnHwjYNthtoxsAfnAWobP/ixQmN/OuS/3gr2xvGenj2E0g8tVwWhwp+zk
+         o5dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=celw7kLC34qqwTTfh++uCkQEjOgc/6nwF8dFF2fJRcA=;
-        b=NZoD6hE3Ccz4SjEhDI1MsM4PyAJtzwcfUJKkBnayDEgyZMnpV323gFy/Qw/rkNqZU5
-         z7BxJu88Zfo0DqEGrynJJ6sA52Cb6G6gWrI/qTTmr2y1kQu36AKEn5wmfL/RzJlegGYy
-         49Ws+xaqTSmw4L7v6tPjZl0xHx999VVEsgvdhA6f8OEmU+cbcF3DCEjNiy/jishEtNXd
-         k4sspFC2qJ4LBsaClOADvA76/Eno39DG3bsyDVZ9bgUagSkkUDSjOzv1LqeouLd8oXVo
-         q1eWSBYrlcv4mOUthXIc7Rw28doDHIACgzTfmsl993eHySZuLm2jtYZlT+fv/SGm0ELR
-         cYqQ==
-X-Gm-Message-State: APjAAAWpMerOW/qE5NUkbKAmK152RqPkzw1b5VpelaKguJCNNWo+aX9X
-        /6OOUEa+rtACuHzO0JpI2pjEPg==
-X-Google-Smtp-Source: APXvYqxwW3UXdXBa6cGLkWhsyLfBz9Kw3ES1wGdovuqY/c7cBz2zbKIbrHc7CxUnNtedCkwAnHzZJw==
-X-Received: by 2002:a17:90a:174a:: with SMTP id 10mr5875131pjm.104.1573140550559;
-        Thu, 07 Nov 2019 07:29:10 -0800 (PST)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id r10sm2405827pgn.68.2019.11.07.07.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 07:29:10 -0800 (PST)
-Date:   Thu, 07 Nov 2019 07:29:10 -0800 (PST)
-X-Google-Original-Date: Wed, 06 Nov 2019 10:45:31 PST (-0800)
-Subject:     Re: [PATCH 17/21] lib: provide a simple generic ioremap implementation
-In-Reply-To: <20191029064834.23438-18-hch@lst.de>
-CC:     Arnd Bergmann <arnd@arndb.de>, guoren@kernel.org, monstr@monstr.eu,
-        green.hu@gmail.com, deanbo422@gmail.com, gxt@pku.edu.cn,
-        x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-mtd@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     Christoph Hellwig <hch@lst.de>
-Message-ID: <mhng-e96b8613-e384-4e94-90f8-d1cf78c5627a@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Jd4v4egGKJGkgRNZhq2GcRXm65qlBUr+qY+ED82nBSs=;
+        b=S34TxYnlkJo+1T8q9FgSEUvzWPPIWfneQ1D0kucVsdrFqVXWn/t/1++5BiDQp4hjiH
+         xqIHU8IBNt4fmBgicXOGTV6xMVvuMJCoo3u2vTTlijKg5SP7COvhdhLyvkpEoShmJ6cp
+         IY1m92Up1m61zIkcnjwsd6b66FqzTc/QcoVkpsTsrhzGtZXpEMgmRSk3Muz2SBMsn3B8
+         R+nvUaf32x9LokJ1GxsWyqmmHwEWtho/bSYUBv4uFhWjE4h5eqpNrht6UeGCh/52q7vl
+         lx0ezQnL85Ac+hdmBVuo7tksnTi9fkfE/HfFeXWKOmC8TBiF6241aXuXxdRmvjGcGZ0m
+         0O+w==
+X-Gm-Message-State: APjAAAVLf764TdNSlt3ZcNJWj2Mrl5UiGuHpsDVcdGx+dVKBhlGqZLm8
+        9OBakMjimwlpvpeoYzNqR+SZKQsskxPjBNP7YXo=
+X-Google-Smtp-Source: APXvYqzikOwSmezF3c+Z57D69vKdT6vdVxyFZT/x0MdEQ+WqZtz2gZEWx0+DfAfGJUFFnzCNQCqA9bYCj91+a5qgENA=
+X-Received: by 2002:a9d:19a9:: with SMTP id k38mr3484986otk.93.1573139638832;
+ Thu, 07 Nov 2019 07:13:58 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a05:6830:1e2f:0:0:0:0 with HTTP; Thu, 7 Nov 2019 07:13:57
+ -0800 (PST)
+Reply-To: jufffirti@gmail.com
+From:   "Mr. Juff Firti" <ibrahimbuba00111@gmail.com>
+Date:   Thu, 7 Nov 2019 16:13:57 +0100
+Message-ID: <CAHf6eUzAMCwf3dk8SXOv6AGTzrqREZ_ujp_sovE2C+GFbb2nBA@mail.gmail.com>
+Subject: Business Transaction, very urgent and treat with confidential.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Oct 2019 23:48:30 PDT (-0700), Christoph Hellwig wrote:
-> A lot of architectures reuse the same simple ioremap implementation, so
-> start lifting the most simple variant to lib/ioremap.c.  It provides
-> ioremap_prot and iounmap, plus a default ioremap that uses prot_noncached,
-> although that can be overridden by asm/io.h.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/asm-generic/io.h | 20 ++++++++++++++++----
->  lib/Kconfig              |  3 +++
->  lib/ioremap.c            | 39 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 58 insertions(+), 4 deletions(-)
->
-> diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-> index 4e45e1cb6560..4a661fdd1937 100644
-> --- a/include/asm-generic/io.h
-> +++ b/include/asm-generic/io.h
-> @@ -923,9 +923,10 @@ static inline void *phys_to_virt(unsigned long address)
->   * DOC: ioremap() and ioremap_*() variants
->   *
->   * Architectures with an MMU are expected to provide ioremap() and iounmap()
-> - * themselves.  For NOMMU architectures we provide a default nop-op
-> - * implementation that expect that the physical address used for MMIO are
-> - * already marked as uncached, and can be used as kernel virtual addresses.
-> + * themselves or rely on GENERIC_IOREMAP.  For NOMMU architectures we provide
-> + * a default nop-op implementation that expect that the physical address used
-> + * for MMIO are already marked as uncached, and can be used as kernel virtual
-> + * addresses.
->   *
->   * ioremap_wc() and ioremap_wt() can provide more relaxed caching attributes
->   * for specific drivers if the architecture choses to implement them.  If they
-> @@ -946,7 +947,18 @@ static inline void iounmap(void __iomem *addr)
->  {
->  }
->  #endif
-> -#endif /* CONFIG_MMU */
-> +#elif defined(CONFIG_GENERIC_IOREMAP)
-> +#include <asm/pgtable.h>
-> +
-> +void __iomem *ioremap_prot(phys_addr_t addr, size_t size, unsigned long prot);
-> +void iounmap(volatile void __iomem *addr);
-> +
-> +static inline void __iomem *ioremap(phys_addr_t addr, size_t size)
-> +{
-> +	/* _PAGE_IOREMAP needs to be supplied by the architecture */
-> +	return ioremap_prot(addr, size, _PAGE_IOREMAP);
-> +}
-> +#endif /* !CONFIG_MMU || CONFIG_GENERIC_IOREMAP */
->
->  #ifndef ioremap_nocache
->  #define ioremap_nocache ioremap
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index 183f92a297ca..afc78aaf2b25 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -638,6 +638,9 @@ config STRING_SELFTEST
->
->  endmenu
->
-> +config GENERIC_IOREMAP
-> +	bool
-> +
->  config GENERIC_LIB_ASHLDI3
->  	bool
->
-> diff --git a/lib/ioremap.c b/lib/ioremap.c
-> index 0a2ffadc6d71..3f0e18543de8 100644
-> --- a/lib/ioremap.c
-> +++ b/lib/ioremap.c
-> @@ -231,3 +231,42 @@ int ioremap_page_range(unsigned long addr,
->
->  	return err;
->  }
-> +
-> +#ifdef CONFIG_GENERIC_IOREMAP
-> +void __iomem *ioremap_prot(phys_addr_t addr, size_t size, unsigned long prot)
-> +{
-> +	unsigned long offset, vaddr;
-> +	phys_addr_t last_addr;
-> +	struct vm_struct *area;
-> +
-> +	/* Disallow wrap-around or zero size */
-> +	last_addr = addr + size - 1;
-> +	if (!size || last_addr < addr)
-> +		return NULL;
-> +
-> +	/* Page-align mappings */
-> +	offset = addr & (~PAGE_MASK);
-> +	addr -= offset;
-> +	size = PAGE_ALIGN(size + offset);
-> +
-> +	area = get_vm_area_caller(size, VM_IOREMAP,
-> +			__builtin_return_address(0));
-> +	if (!area)
-> +		return NULL;
-> +	vaddr = (unsigned long)area->addr;
-> +
-> +	if (ioremap_page_range(vaddr, vaddr + size, addr, __pgprot(prot))) {
-> +		free_vm_area(area);
-> +		return NULL;
-> +	}
-> +
-> +	return (void __iomem *)(vaddr + offset);
-> +}
-> +EXPORT_SYMBOL(ioremap_prot);
-> +
-> +void iounmap(volatile void __iomem *addr)
-> +{
-> +	vunmap((void *)((unsigned long)addr & PAGE_MASK));
-> +}
-> +EXPORT_SYMBOL(iounmap);
-> +#endif /* CONFIG_GENERIC_IOREMAP */
+I am Mr. Juff Firti, a banker, from Burkina Faso. I need your urgent
+assistance to finalize a lucrative business transaction worth $20.M
+USD which requires an uttermost discretion.
 
-Reviewed-by: Palmer Dabbelt <palmer@dabbelt.com>
+  I need you as a foreigner to provide a foreign account to be able to
+receive this money. As soon as the transfer is concluded you shall be
+entitled to 40% of the total fund. Reply me  for more details.
 
-Thanks!  This should let us get rid of arch/riscv/mm/ioremap.c.
+  Best regards
+
+ Mr.Juff Firti.
