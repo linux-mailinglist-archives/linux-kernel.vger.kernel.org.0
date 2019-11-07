@@ -2,206 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73EB2F2670
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:12:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC18F262C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 05:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387659AbfKGEMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 23:12:22 -0500
-Received: from mga17.intel.com ([192.55.52.151]:50428 "EHLO mga17.intel.com"
+        id S1733107AbfKGEBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 23:01:30 -0500
+Received: from ozlabs.org ([203.11.71.1]:44885 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733182AbfKGEMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 23:12:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 20:12:20 -0800
-X-IronPort-AV: E=Sophos;i="5.68,276,1569308400"; 
-   d="scan'208";a="206041327"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 20:12:19 -0800
-Subject: [PATCH 16/16] libnvdimm/e820: Retrieve and populate correct
- 'target_node' info
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Date:   Wed, 06 Nov 2019 19:58:03 -0800
-Message-ID: <157309908326.1582359.13665017314935413372.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1727279AbfKGEBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 23:01:30 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 477qTL4DFsz9sR3;
+        Thu,  7 Nov 2019 15:01:25 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1573099287;
+        bh=ZkjztmTuOdqEDx/B5InDVQPntONR40/RXou+29jYrHM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WPK4hB4oFHVU4FmONb/Oyiez6NFoYsjl0jAj1X/7swN8s1dfpxGoQKuNbEv2O0zfW
+         1p8R3rJ4L8aBQsyRJxbWOF6eihCwWWRmBmPdxakZVnhwIeWmQ4OOlRAdKYnF8DeVof
+         Setfa3wP8/JmmLOccPKrqQ68/POAfuaECAftFL45SvhTMepM5xqDDjdkpY+mc0HACg
+         0v6Utnvd+itzHPi8E5cjsstP0RC0aSavdO7LPbSczh7VaR8SwmRJ1A3aSMTfkTzhT6
+         40nSN+/mS5ivqoSgXAKd3G5ydZVh2m+Mkqg3m6DI+V3XmDtE9ZtcxOq+OMlrCBQIe8
+         KaRFap6Aq1slQ==
+Date:   Thu, 7 Nov 2019 15:01:23 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>
+Subject: linux-next: build warning after merge of the scsi tree
+Message-ID: <20191107145523.1792cafb@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/bgX3.mYz/YLz1Iri_cSeN.I";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new memory_add_physaddr_to_target_node() and
-numa_map_to_online_node() helpers to retrieve the correct id for
-the 'numa_node' (online initiator) and 'target_node' (offline target
-memory node) sysfs attributes.
+--Sig_/bgX3.mYz/YLz1Iri_cSeN.I
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Below is an example from a 4 numa node system where all the memory on
-node2 is pmem / reserved. It should be noted that with the arrival of
-the ACPI HMAT table and EFI Specific Purpose Memory the kernel will
-start to see more platforms with reserved / performance differentiated
-memory in its own numa node. Hence all the stakeholders on the Cc for
-what is ostensibly a libnvdimm local patch.
+Hi all,
 
-=== Before ===
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-/* Notice no online memory on node2 at start */
+drivers/scsi/lpfc/lpfc_init.c: In function 'lpfc_cpumask_of_node_init':
+drivers/scsi/lpfc/lpfc_init.c:6020:6: warning: the address of 'cpu_all_bits=
+' will always evaluate as 'true' [-Waddress]
+ 6020 |  if (!cpumask_of_node(numa_node))
+      |      ^
 
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3708 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
+Introduced by commit
 
-/*
- * Put the pmem namespace into devdax mode so it can be assigned to the
- * kmem driver
- */
+  dcaa21367938 ("scsi: lpfc: Change default IRQ model on AMD architectures")
 
-# ndctl create-namespace -e namespace0.0 -m devdax -f
-{
-  "dev":"namespace0.0",
-  "mode":"devdax",
-  "map":"dev",
-  "size":"3.94 GiB (4.23 GB)",
-  "uuid":"1650af9b-9ba3-4704-acd6-10178399d9a3",
-  [..]
-}
+--=20
+Cheers,
+Stephen Rothwell
 
-/* Online Persistent Memory as System RAM */
+--Sig_/bgX3.mYz/YLz1Iri_cSeN.I
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-# daxctl reconfigure-device --mode=system-ram dax0.0
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":0,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
+-----BEGIN PGP SIGNATURE-----
 
-/* Note that the memory is onlined by default to the wrong node, node0 */
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3DlxMACgkQAVBC80lX
+0GyMBgf+MTvhlwTtGAP7Nvjrtexn1tRvM1SnvLMSouD/2kqNejkmyjkH1u+PEiGK
+UyFH48OLVPha1inAIFWcaqilD8JaQ2qWjR64+pDIRsirCiaf7NQ/zQM9EF8KyKjv
+Tejb1xu6UGko6rNzRNt/fSdZaSjcl2ZB9wXO35IqKKiNvpU1LBBR5k5MBZ7fg9to
+HjskRB9digUnuOR4W6l8eR87P24fYuyXe/yVE+bi9QyKFnmqdwomMg+EfRwHOMR3
+HCaca5pvWkHrk4bAN+NmpzImlbzp8CtMNc+YhREsd1swg0KkfcqAcBxNGlbvgNMm
+SAXr5lFfD7uDtBnOh8FX8OD63WzueQ==
+=MGMv
+-----END PGP SIGNATURE-----
 
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 7926 MB
-node 0 free: 7655 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
-
-
-=== After ===
-
-/* Notice that the "phys_index" error messages are gone */
-
-# daxctl reconfigure-device --mode=system-ram dax0.0
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":2,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
-
-/* Notice that node2 is now correctly populated */
-
-# numactl --hardware
-available: 4 nodes (0-3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3793 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3851 MB
-node 2 cpus:
-node 2 size: 3968 MB
-node 2 free: 3968 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3908 MB
-node distances:
-node   0   1   2   3
-  0:  10  21  21  21
-  1:  21  10  21  21
-  2:  21  21  10  21
-  3:  21  21  21  10
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/e820.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
-index b802291bcde1..23121dd6e494 100644
---- a/drivers/nvdimm/e820.c
-+++ b/drivers/nvdimm/e820.c
-@@ -20,11 +20,12 @@ static int e820_register_one(struct resource *res, void *data)
- {
- 	struct nd_region_desc ndr_desc;
- 	struct nvdimm_bus *nvdimm_bus = data;
-+	int nid = memory_add_physaddr_to_target_node(res->start);
- 
- 	memset(&ndr_desc, 0, sizeof(ndr_desc));
- 	ndr_desc.res = res;
--	ndr_desc.numa_node = memory_add_physaddr_to_nid(res->start);
--	ndr_desc.target_node = ndr_desc.numa_node;
-+	ndr_desc.numa_node = numa_map_to_online_node(nid);
-+	ndr_desc.target_node = nid;
- 	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
- 	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
- 		return -ENXIO;
-
+--Sig_/bgX3.mYz/YLz1Iri_cSeN.I--
