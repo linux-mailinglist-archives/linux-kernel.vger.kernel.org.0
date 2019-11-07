@@ -2,89 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80CC7F31A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:39:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E785F31A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:37:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389211AbfKGOi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:38:57 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6169 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726033AbfKGOi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:38:57 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 57C3D9DAF4E7248871DB;
-        Thu,  7 Nov 2019 22:38:46 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 7 Nov 2019
- 22:38:36 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <vishal@chelsio.com>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] cxgb4: Use match_string() helper to simplify the code
-Date:   Thu, 7 Nov 2019 22:35:58 +0800
-Message-ID: <20191107143558.44208-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2388873AbfKGOhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:37:09 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:48024 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfKGOhJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 09:37:09 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iSiuI-0007ss-9x; Thu, 07 Nov 2019 15:37:06 +0100
+Date:   Thu, 7 Nov 2019 15:37:05 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Jan Stancek <jstancek@redhat.com>, linux-kernel@vger.kernel.org,
+        ltp@lists.linux.it, viro@zeniv.linux.org.uk,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        rfontana@redhat.com
+Subject: Re: [PATCH] kernel: use ktime_get_real_ts64() to calculate
+ acct.ac_btime
+In-Reply-To: <20191107125559.GI4131@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1911071536190.4256@nanos.tec.linutronix.de>
+References: <a87876829697e1b3c63601b1401a07af79eddae6.1572651216.git.jstancek@redhat.com> <20191107123224.GA6315@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1911071335320.4256@nanos.tec.linutronix.de>
+ <20191107125559.GI4131@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-match_string() returns the array index of a matching string.
-Use it instead of the open-coded implementation.
+On Thu, 7 Nov 2019, Peter Zijlstra wrote:
+> On Thu, Nov 07, 2019 at 01:40:47PM +0100, Thomas Gleixner wrote:
+> > On Thu, 7 Nov 2019, Peter Zijlstra wrote:
+> 
+> > > +	mono = ktime_get_ns();
+> > > +	real = ktime_get_real_ns();
+> > > +	/*
+> > > +	 * Compute btime by subtracting the elapsed time from the current
+> > > +	 * CLOCK_REALTIME.
+> > > +	 *
+> > > +	 * XXX totally buggered, because it changes results across
+> > > +	 * adjtime() calls and suspend/resume.
+> > > +	 */
+> > > +	delta = mono - tsk->start_time; // elapsed in ns
+> > > +	btime = real - delta;		// real ns - elapsed ns
+> > > +	do_div(btime, NSEC_PER_SEC);	// truncated to seconds
+> > > +	stats->ac_btime = btime;
+> > 
+> > That has pretty much the same problem as just storing the CLOCK_REALTIME
+> > start time at fork and additionally it is wreckaged vs. suspend resume.
+> 
+> It's wrecked in general. It also jumps around for any REALTIME
+> adjustment.
+> 
+> > So a CLOCK_REALTIME time stamp at fork would at least be correct
+> > vs. suspend resume.
+> 
+> But still wrecked vs REALTIME jumps, as in, when DST flips the clock
+> back an hour, your timestamp is in the future.
+> 
+> Any which way around the whole thing is buggered.  The only real fix is
+> not using REALTIME anything. Which is why I'm loath to add that REALTIME
+> timestamp at fork(), it just encourages more use.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+Fair enough. You have a sane alternative though: CLOCK_TAI
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-index c2e9278..50ad135 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/sort.h>
-+#include <linux/string.h>
- 
- #include "t4_regs.h"
- #include "cxgb4.h"
-@@ -776,24 +777,18 @@ static int cudbg_get_mem_region(struct adapter *padap,
- 				struct cudbg_mem_desc *mem_desc)
- {
- 	u8 mc, found = 0;
--	u32 i, idx = 0;
--	int rc;
-+	u32 idx = 0;
-+	int rc, i;
- 
- 	rc = cudbg_meminfo_get_mem_index(padap, meminfo, mem_type, &mc);
- 	if (rc)
- 		return rc;
- 
--	for (i = 0; i < ARRAY_SIZE(cudbg_region); i++) {
--		if (!strcmp(cudbg_region[i], region_name)) {
--			found = 1;
--			idx = i;
--			break;
--		}
--	}
--	if (!found)
-+	i = match_string(cudbg_region, ARRAY_SIZE(cudbg_region), region_name);
-+	if (i < 0)
- 		return -EINVAL;
- 
--	found = 0;
-+	idx = i;
- 	for (i = 0; i < meminfo->mem_c; i++) {
- 		if (meminfo->mem[i].idx >= ARRAY_SIZE(cudbg_region))
- 			continue; /* Skip holes */
--- 
-2.7.4
+Thanks,
+
+	tglx
 
 
