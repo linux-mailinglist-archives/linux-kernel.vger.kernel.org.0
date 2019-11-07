@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84295F2D4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:19:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D66F2D51
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:20:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbfKGLT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 06:19:56 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38670 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbfKGLT4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 06:19:56 -0500
-Received: by mail-wm1-f65.google.com with SMTP id z19so1967721wmk.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 03:19:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IwdRFDOXkMcHZuF7dT3xdj3njNrFX7fm3v4BU31vZyk=;
-        b=tnuUwkk9ZmM2/TYgNZYHyFz6ylE2usvhuyCX/ajLgnZUOknA13MLnl+Uo7bIqL74eb
-         nLLfx7EIhM0AEHzaHt3LwRFsOuZCEL9zRLrfMz8/wMdBexw6giTTUqnizP81QyJJsgTx
-         0E4oeLldDhsfz5+Zzl54IoWXeeUKDhHeOHg0mR1Ez8s4K8jFl7csKx6u5hJOpbmcQgYQ
-         PwqYSvbZ1u7N927ATftjr5mzVu1XN+ifUJgClGSC5tguZFmmAl+Xw6Jr3ugorTuH8dL7
-         fyT4c6qoAbWYGNUjmsgQbm9iBMhREF3CMrGRYQmQg6x/SzkbHojzmjW77SJLLtdiR1vF
-         Q8uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IwdRFDOXkMcHZuF7dT3xdj3njNrFX7fm3v4BU31vZyk=;
-        b=BMdNjrLo7WFiwCZrr8GD9YwbSvvFvhRbmVzk/SZOexCvnvPP3QYxVI7WGt0HI2P1+w
-         UZBD5YluUoUEF5imZQLEh4lYUIsDWj7MAU1P/mV+rEp00nx/+zt067JiROPPjxorfqab
-         2rNDQWOdn1juUiNCtwLen/xNs6Rvtg9VH36PdrZFpGIphFXDjRna8ZwLeZD0FWS5/SUC
-         3xFO4og9B99Xpsh6iwkSev3SaLKuLwnJnFRatLoLqaz4jygok89GuOEP6NmBqVqxc9vc
-         x1soE7w/HNqnJWhTI/uaeZDBDtln9esze9ukBFXB79QxjKw9lMUNDaBKOXXrfJlzvjv2
-         whoA==
-X-Gm-Message-State: APjAAAW7IArZ+mJ6W2D5o4jvSNGKx/uG98wtYk2YbkUZGcm59eA+Q3lw
-        i18R74xTjjlPQxsQ3jsqMUMQJQ==
-X-Google-Smtp-Source: APXvYqxEPRhIVj+JQur9UlC44Bjo5MEJwHKQbFmC1ZGMMz3NkKm9ScOCnspb3A8Tfggc1Z+2SEmicg==
-X-Received: by 2002:a7b:c8c2:: with SMTP id f2mr2207030wml.99.1573125593844;
-        Thu, 07 Nov 2019 03:19:53 -0800 (PST)
-Received: from localhost.localdomain ([95.147.198.88])
-        by smtp.gmail.com with ESMTPSA id d11sm2566002wrf.80.2019.11.07.03.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 03:19:53 -0800 (PST)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     daniel.thompson@linaro.org, broonie@kernel.org, arnd@arndb.de,
-        linus.walleij@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        baohua@kernel.org, stephan@gerhold.net,
-        Lee Jones <lee.jones@linaro.org>,
-        Barry Song <Baohua.Song@csr.com>
-Subject: [PATCH 1/1] mfd: mfd-core: Honour Device Tree's request to disable a child-device
-Date:   Thu,  7 Nov 2019 11:19:50 +0000
-Message-Id: <20191107111950.1189-1-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.24.0
+        id S2388225AbfKGLUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 06:20:25 -0500
+Received: from foss.arm.com ([217.140.110.172]:54376 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727707AbfKGLUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 06:20:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C6D731B;
+        Thu,  7 Nov 2019 03:20:24 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C6DDF3F6C4;
+        Thu,  7 Nov 2019 03:20:22 -0800 (PST)
+Date:   Thu, 7 Nov 2019 11:20:20 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/2] ARM: dts: bcm2711: force CMA into first GB of
+ memory
+Message-ID: <20191107112020.GA16965@arrakis.emea.arm.com>
+References: <20191107095611.18429-1-nsaenzjulienne@suse.de>
+ <20191107095611.18429-2-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107095611.18429-2-nsaenzjulienne@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now, MFD has assumed all child devices passed to it (via
-mfd_cells) are to be registered. It does not take into account
-requests from Device Tree and the like to disable child devices
-on a per-platform basis.
+Hi Nicolas,
 
-Well now it does.
+On Thu, Nov 07, 2019 at 10:56:10AM +0100, Nicolas Saenz Julienne wrote:
+> diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
+> index ac83dac2e6ba..667658497898 100644
+> --- a/arch/arm/boot/dts/bcm2711.dtsi
+> +++ b/arch/arm/boot/dts/bcm2711.dtsi
+> @@ -12,6 +12,26 @@
+>  
+>  	interrupt-parent = <&gicv2>;
+>  
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		/*
+> +		 * arm64 reserves the CMA by default somewhere in ZONE_DMA32,
+> +		 * that's not good enough for bcm2711 as some devices can
+> +		 * only address the lower 1G of memory (ZONE_DMA).
+> +		 */
+> +		linux,cma {
+> +			compatible = "shared-dma-pool";
+> +			size = <0x2000000>; /* 32MB */
+> +			alloc-ranges = <0x0 0x00000000 0x40000000>;
+> +			reusable;
+> +			linux,cma-default;
+> +		};
+> +	};
+> +
+> +
+>  	soc {
+>  		/*
+>  		 * Defined ranges:
 
-Link: https://www.spinics.net/lists/arm-kernel/msg366309.html
-Link: https://lkml.org/lkml/2019/8/22/1350
+Sorry, I just realised I can't merge this as it depends on a patch
+that's only in -next: 7dbe8c62ceeb ("ARM: dts: Add minimal Raspberry Pi
+4 support").
 
-Reported-by: Barry Song <Baohua.Song@csr.com>
-Reported-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/mfd/mfd-core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+I'll queue the second patch in the series to fix the regression
+introduces by the ZONE_DMA patches and, AFAICT, the dts update can be
+queued independently.
 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index cb3e0a14bbdd..f5a73af60dd4 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -152,6 +152,11 @@ static int mfd_add_device(struct device *parent, int id,
- 	if (parent->of_node && cell->of_compatible) {
- 		for_each_child_of_node(parent->of_node, np) {
- 			if (of_device_is_compatible(np, cell->of_compatible)) {
-+				if (!of_device_is_available(np)) {
-+					/* Ignore disabled devices error free */
-+					ret = 0;
-+					goto fail_alias;
-+				}
- 				pdev->dev.of_node = np;
- 				pdev->dev.fwnode = &np->fwnode;
- 				break;
 -- 
-2.24.0
-
+Catalin
