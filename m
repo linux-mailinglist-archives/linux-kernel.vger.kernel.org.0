@@ -2,96 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B592F3671
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C92FF367A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 19:00:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730843AbfKGR7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:59:33 -0500
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:38758 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727830AbfKGR7d (ORCPT
+        id S1731245AbfKGR7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:59:49 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41338 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731171AbfKGR7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:59:33 -0500
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id CB77A2E15E7;
-        Thu,  7 Nov 2019 20:59:29 +0300 (MSK)
-Received: from myt5-6212ef07a9ec.qloud-c.yandex.net (myt5-6212ef07a9ec.qloud-c.yandex.net [2a02:6b8:c12:3b2d:0:640:6212:ef07])
-        by mxbackcorp1j.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id iFvPSonkQi-xTL8QSb6;
-        Thu, 07 Nov 2019 20:59:29 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1573149569; bh=UsTIMeG7xsDGua2wB4RGJCRGGAhXBbC4sAwyVZakSFM=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=zSzi0lmkJ4ng4EZjtCZJNHjGKtFkodF7uVs67LtyDETpYeiwdJS+vlaZsf1LIw/n8
-         /l6aKMa2Yo+BfyCpcX5Wv6yJaGs6q9AkYKlsORM2pIAOKIExvnxB9lrncf9B8rt7FF
-         BqXPRm0haiSnJq0THZ8NFsx3slDZBzwUdruDEXxo=
-Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8554:53c0:3d75:2e8a])
-        by myt5-6212ef07a9ec.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id kC45TC5435-xTWKke1e;
-        Thu, 07 Nov 2019 20:59:29 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] fs/quota: use unsigned int helper for sysctl fs.quota.*
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.com>,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-References: <157312129151.3890.6076128127053624123.stgit@buzz>
- <20191107115041.GC11400@quack2.suse.cz>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <2bc0f9c6-76a7-f683-d6a2-c62e93698f83@yandex-team.ru>
-Date:   Thu, 7 Nov 2019 20:59:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 7 Nov 2019 12:59:48 -0500
+Received: by mail-pg1-f195.google.com with SMTP id h4so2508109pgv.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 09:59:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:from:to:cc:user-agent:date;
+        bh=O6gBNRGhVZ1gdZRloCa4pu6sdIjr6Vbikqu0zr43xGE=;
+        b=OxGhg6ZoRHVSnJPS/KQ8rA72slPD0/uCvstdZnD41uuJR/XZ+uroAy0C2HsRi8TJEH
+         Ehivz8UEUDJWp/mtRdbhh2Ru2z40X6CTZgFSymicjTvrKVz3nyARqURphSni6IEb4ejJ
+         Gx1FErmbqtJ3pBj1kUb7zhFeX6MKw9dKBkMRs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:from:to:cc
+         :user-agent:date;
+        bh=O6gBNRGhVZ1gdZRloCa4pu6sdIjr6Vbikqu0zr43xGE=;
+        b=Ad5OlVbIks7cqJMFT6oJUQaQd00z+8kz8ilEfnuYIXlrGAid0P/dAV1buNk68aUUy1
+         EC5EbZ9chpxH6gBhn4ntV1H3Fr+QVzSm4my/UyrCsW0VWR4DvDnPWamrRP6EHf9eY0E+
+         qQxqMBgQSRpheGMa7XNShtqRcnEVf/Uk3BfOHrwYsIQjwboQYpuYWltv44cRhe7j9VOx
+         P27hbbD9j6Qitl/hoXI6cJreI9KaXpB55eGAyi2tOYZMG2cQpSlURNMU36zOsZIv7ipj
+         UcPONymlfDmHJisbQUjrDpfeECLWXXPljMb9fR59YZBcnmgqDDmgiFuQZN7Tf3nSvgb5
+         1lbw==
+X-Gm-Message-State: APjAAAWfbeiljh7TkVpPEJCvKJdBZII8qe05HZgzOrTnE8w6qRdmxmoA
+        3w/lZXIRCcL4UpVJkZ947ifjPoPQxP15pg==
+X-Google-Smtp-Source: APXvYqyVCRadOx088g6lxPYOjNqiHOYdn+JqmwRs1jOGVb7nudBtoJQRBm1zQAzNz1+MhSrGJSPaug==
+X-Received: by 2002:a63:2f47:: with SMTP id v68mr6162731pgv.239.1573149587179;
+        Thu, 07 Nov 2019 09:59:47 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id i187sm3674211pfc.177.2019.11.07.09.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 09:59:46 -0800 (PST)
+Message-ID: <5dc45b92.1c69fb81.99916.8f34@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191107115041.GC11400@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191106065017.22144-12-rnayak@codeaurora.org>
+References: <20191106065017.22144-1-rnayak@codeaurora.org> <20191106065017.22144-12-rnayak@codeaurora.org>
+Subject: Re: [PATCH v4 11/14] arm64: dts: qcom: pm6150: Add PM6150/PM6150L PMIC peripherals
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        Kiran Gunda <kgunda@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 07 Nov 2019 09:59:45 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2019 14.50, Jan Kara wrote:
-> On Thu 07-11-19 13:08:11, Konstantin Khlebnikov wrote:
->> Report counters as unsigned, otherwise they turn negative at overflow:
->>
->> # sysctl fs.quota
->> fs.quota.allocated_dquots = 22327
->> fs.quota.cache_hits = -489852115
->> fs.quota.drops = -487288718
->> fs.quota.free_dquots = 22083
->> fs.quota.lookups = -486883485
->> fs.quota.reads = 22327
->> fs.quota.syncs = 335064
->> fs.quota.writes = 3088689
->>
->> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> 
-> Fair enough but then 'stats' array in dqstats should be unsigned as well
-> for consistency and why not actually make everything long when we are at
-> it? percpu_counter we use is s64 anyway...
+Quoting Rajendra Nayak (2019-11-05 22:50:14)
+> From: Kiran Gunda <kgunda@codeaurora.org>
+>=20
+> Add PM6150/PM6150L peripherals such as PON, GPIOs, ADC and other
+> PMIC infra modules.
+>=20
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-Ok. I'll patch this too.
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-> 
-> 								Honza
-> 
->> ---
->>   fs/quota/dquot.c |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
->> index 6e826b454082..606e1e39674b 100644
->> --- a/fs/quota/dquot.c
->> +++ b/fs/quota/dquot.c
->> @@ -2865,7 +2865,7 @@ static int do_proc_dqstats(struct ctl_table *table, int write,
->>   	/* Update global table */
->>   	dqstats.stat[type] =
->>   			percpu_counter_sum_positive(&dqstats.counter[type]);
->> -	return proc_dointvec(table, write, buffer, lenp, ppos);
->> +	return proc_douintvec(table, write, buffer, lenp, ppos);
->>   }
->>   
->>   static struct ctl_table fs_dqstats_table[] = {
->>
