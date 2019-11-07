@@ -2,130 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 592FBF315F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:27:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D38F316E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 15:30:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389028AbfKGO1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 09:27:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726754AbfKGO1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 09:27:53 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [109.144.209.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78EB1207FA;
-        Thu,  7 Nov 2019 14:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573136871;
-        bh=x0tD8QPg5+9rNj9eiZasj+95TTki8u7csrKsOWaOvR8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=ePEqbXEg0stzokyxq8cdFAe7G5ANj+pk90tvrO3MiRQ6pi6YJoabhrAApy3bfwRdy
-         LCClauPRA9NqrjDuJcR4+sdaJkQNkVa4ifgntq9EHm8bl6u4+W/xkc1Nfz7XotP2w1
-         frfy4yE0ZB07wgiiUlVIrKUgX2m4eLGkKJqpfy/4=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id DE07D35227FC; Thu,  7 Nov 2019 06:27:48 -0800 (PST)
-Date:   Thu, 7 Nov 2019 06:27:48 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-doc@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/kernel-doc: Add support for named variable macro
- arguments
-Message-ID: <20191107142748.GN20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191107134133.14690-1-j.neuschaefer@gmx.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191107134133.14690-1-j.neuschaefer@gmx.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2389026AbfKGOaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 09:30:11 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60448 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfKGOaL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 09:30:11 -0500
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1iSilj-0003Pv-Rb; Thu, 07 Nov 2019 14:28:16 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] HID: i2c-hid: Reset ALPS touchpads on resume
+Date:   Thu,  7 Nov 2019 22:28:11 +0800
+Message-Id: <20191107142811.5833-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 02:41:33PM +0100, Jonathan Neuschäfer wrote:
-> Currently, when kernel-doc encounters a macro with a named variable
-> argument[1], such as this:
-> 
->    #define hlist_for_each_entry_rcu(pos, head, member, cond...)
-> 
-> ... it expects the variable argument to be documented as `cond...`,
-> rather than `cond`. This is semantically wrong, because the name (as
-> used in the macro body) is actually `cond`.
-> 
-> With this patch, kernel-doc will accept the name without dots (`cond`
-> in the example above) in doc comments, and warn if the name with dots
-> (`cond...`) is used and verbose mode[2] is enabled.
-> 
-> The support for the `cond...` syntax can be removed later, when the
-> documentation of all such macros has been switched to the new syntax.
-> 
-> Testing this patch on top of v5.4-rc6, `make htmldocs` shows a few
-> changes in log output and HTML output:
-> 
->  1) The following warnings[3] are eliminated:
-> 
->    ./include/linux/rculist.h:374: warning:
->         Excess function parameter 'cond' description in 'list_for_each_entry_rcu'
->    ./include/linux/rculist.h:651: warning:
->         Excess function parameter 'cond' description in 'hlist_for_each_entry_rcu'
-> 
->  2) For list_for_each_entry_rcu and hlist_for_each_entry_rcu, the
->     correct description is shown
-> 
->  3) Named variable arguments are shown without dots
-> 
-> 
-> [1]: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
-> [2]: scripts/kernel-doc -v
-> [3]: See also https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/commit/?h=dev&id=5bc4bc0d6153617eabde275285b7b5a8137fdf3c
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
+Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system
+resume") fixes many touchpads and touchscreens, however ALPS touchpads
+start to trigger IRQ storm after system resume.
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+Since it's total silence from ALPS, let's bring the old behavior back
+to ALPS touchpads.
 
-> ---
->  scripts/kernel-doc | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index 81dc91760b23..48696391eccb 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -1449,6 +1449,10 @@ sub push_parameter($$$$) {
->  	      # handles unnamed variable parameters
->  	      $param = "...";
->  	    }
-> +	    elsif ($param =~ /\w\.\.\.$/) {
-> +	      # for named variable parameters of the form `x...`, remove the dots
-> +	      $param =~ s/\.\.\.$//;
-> +	    }
->  	    if (!defined $parameterdescs{$param} || $parameterdescs{$param} eq "") {
->  		$parameterdescs{$param} = "variable arguments";
->  	    }
-> @@ -1936,6 +1940,18 @@ sub process_name($$) {
->  sub process_body($$) {
->      my $file = shift;
-> 
-> +    # Until all named variable macro parameters are
-> +    # documented using the bare name (`x`) rather than with
-> +    # dots (`x...`), strip the dots:
-> +    if ($section =~ /\w\.\.\.$/) {
-> +	$section =~ s/\.\.\.$//;
-> +
-> +	if ($verbose) {
-> +	    print STDERR "${file}:$.: warning: Variable macro arguments should be documented without dots\n";
-> +	    ++$warnings;
-> +	}
-> +    }
-> +
->      if (/$doc_sect/i) { # case insensitive for supported section names
->  	$newsection = $1;
->  	$newcontents = $2;
-> --
-> 2.20.1
-> 
+Fixes: 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/hid/i2c-hid/i2c-hid-core.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index 04c088131e04..4bf30b6d4a2e 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -48,6 +48,7 @@
+ #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
+ #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
+ #define I2C_HID_QUIRK_BOGUS_IRQ			BIT(4)
++#define I2C_HID_QUIRK_RESET_ON_RESUME		BIT(5)
+ 
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -172,6 +173,8 @@ static const struct i2c_hid_quirks {
+ 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
+ 	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
+ 		 I2C_HID_QUIRK_BOGUS_IRQ },
++	{ USB_VENDOR_ID_ALPS_JP, HID_ANY_ID,
++		 I2C_HID_QUIRK_RESET_ON_RESUME },
+ 	{ 0, 0 }
+ };
+ 
+@@ -1212,8 +1215,15 @@ static int i2c_hid_resume(struct device *dev)
+ 	 * solves "incomplete reports" on Raydium devices 2386:3118 and
+ 	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
+ 	 * data after a suspend/resume.
++	 *
++	 * However some ALPS touchpads generate IRQ storm without reset, so
++	 * let's still reset them here.
+ 	 */
+-	ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++	if (ihid->quirks & I2C_HID_QUIRK_RESET_ON_RESUME)
++		ret = i2c_hid_hwreset(client);
++	else
++		ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
++
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.17.1
+
