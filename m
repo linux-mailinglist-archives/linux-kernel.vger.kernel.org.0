@@ -2,101 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D36A2F2B50
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:49:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 548C5F2B2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 10:48:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388055AbfKGJt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 04:49:26 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33056 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbfKGJt0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 04:49:26 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BF5A060EA7; Thu,  7 Nov 2019 09:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573120165;
-        bh=nxy+6T9NnllQijOQ36oQRnPl7rCsl63sjjuRwTYBbok=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XTUJaW+riPnABOShCYhB+OCyikjiHTeVb7bXQsSSe+WqHItLUkI8dSUisRC1f/ihQ
-         MPiFDxKstQrmIFFKiNQK8zgVPhfynAIbuoICKlm7qLYjhrdvBFeFMl8MNj/HUr1kvc
-         fkZrild8B3Vs639H+Bel58NdiUtMth5Nfg0bhWvs=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C0DD060CA5;
-        Thu,  7 Nov 2019 09:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573120161;
-        bh=nxy+6T9NnllQijOQ36oQRnPl7rCsl63sjjuRwTYBbok=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JlkrQlTXjkp3+VoGxH0MahNj6W5hFWq2pt8pHM2RV8h5Yp3ArlUI5HcHrBEx4TpYy
-         DrrPEvsOC8N6cb90mj9HyBBeGnesCq0hi4PClafRrf8KLi87wAjI7w3Oum6qJ95DJy
-         ISM03syxFvnOmVgRZQllY8w4xu2akfrZ9+9iVLLQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C0DD060CA5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 6/6] scsi: ufs: Fix ufshcd_hold() caused scheduling while atomic
-Date:   Thu,  7 Nov 2019 01:47:57 -0800
-Message-Id: <1573120078-15547-7-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1573120078-15547-1-git-send-email-cang@codeaurora.org>
-References: <1573120078-15547-1-git-send-email-cang@codeaurora.org>
+        id S2387707AbfKGJsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 04:48:03 -0500
+Received: from mga09.intel.com ([134.134.136.24]:61842 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726866AbfKGJsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:48:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 01:48:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,277,1569308400"; 
+   d="scan'208";a="201359528"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Nov 2019 01:48:02 -0800
+Received: from [10.226.38.236] (unknown [10.226.38.236])
+        by linux.intel.com (Postfix) with ESMTP id A2C09580517;
+        Thu,  7 Nov 2019 01:47:59 -0800 (PST)
+Subject: Re: [PATCH v1] staging: intel-dpa: gswip: Introduce Gigabit Ethernet
+ Switch (GSWIP) device driver
+To:     Greg KH <gregkh@linuxfoundation.org>, Andrew Lunn <andrew@lunn.ch>
+References: <03832ecb6a34876ef26a24910816f22694c0e325.1572863013.git.jack.ping.chng@intel.com>
+ <20191104122009.GA2126921@kroah.com> <20191104164209.GC16970@lunn.ch>
+ <4D649A99D5D6C446954219080E51FB468192606D@BGSMSX103.gar.corp.intel.com>
+Cc:     davem@davemloft.net, mallikarjunax.reddy@linux.intel.com,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        "Kim, Cheol Yong" <cheol.yong.kim@intel.com>,
+        "Chng, Jack Ping" <jack.ping.chng@intel.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+From:   "Chng, Jack Ping" <jack.ping.chng@linux.intel.com>
+Message-ID: <5e7a5410-9797-817d-87c6-61dfce9df739@linux.intel.com>
+Date:   Thu, 7 Nov 2019 17:47:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <4D649A99D5D6C446954219080E51FB468192606D@BGSMSX103.gar.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The async version of ufshcd_hold(async == true), which is only called
-in queuecommand path as for now, is expected to work in atomic context,
-thus it should not sleep or schedule out. When it runs into the condition
-that clocks are ON but link is still in hibern8 state, it should bail out
-without flushing the clock ungate work.
+On Mon, Nov 04, 2019 at 01:20:09PM +0100, Greg KH wrote:
+>> On Mon, Nov 04, 2019 at 07:22:20PM +0800, Jack Ping CHNG wrote:
+>>> This driver enables the Intel's LGM SoC GSWIP block.
+>>> GSWIP is a core module tailored for L2/L3/L4+ data plane and QoS functions.
+>>> It allows CPUs and other accelerators connected to the SoC datapath
+>>> to enqueue and dequeue packets through DMAs.
+>>> Most configuration values are stored in tables such as Parsing and
+>>> Classification Engine tables, Buffer Manager tables and Pseudo MAC
+>>> tables.
+>> Why is this being submitted to staging?  What is wrong with the "real"
+>> part of the kernel for this?
+>>
+>> Or even, what is wrong with the current driver?
+>> drivers/net/dsa/lantiq_gswip.c?
+GSWIP (a new HW IP) is part of Intel Datapath Architecture drivers 
+design for new Intel network/GW SoC (LGM).
+Currently there are few other drivers (for different HW blocks in the 
+datapath) which are still under internal code review.
+Once it is done we are planning to submit  staging folder.
+Since the development is ongoing, we thought it is best to submit GSWIP 
+first in drivers/staging/intel-dpa folder.
+In the meantime, we will prepare a more detail TODO list for intel-dpa 
+folder and a README to introduce the dpa.
+>> Jack, your patch does not seem to of made it to any of the lists. So i cannot comment on it contents. If this is a switch driver, please ensure you Cc: the usual suspects for switch drivers.
+>>
+>>         Andrew
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Sure, I will resubmit my patch.
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index d2d56f8..3910c58 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -1545,6 +1545,11 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
- 		 */
- 		if (ufshcd_can_hibern8_during_gating(hba) &&
- 		    ufshcd_is_link_hibern8(hba)) {
-+			if (async) {
-+				rc = -EAGAIN;
-+				hba->clk_gating.active_reqs--;
-+				break;
-+			}
- 			spin_unlock_irqrestore(hba->host->host_lock, flags);
- 			flush_work(&hba->clk_gating.ungate_work);
- 			spin_lock_irqsave(hba->host->host_lock, flags);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Chng Jack Ping
+
+
 
