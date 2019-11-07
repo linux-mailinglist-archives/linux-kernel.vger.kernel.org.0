@@ -2,111 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E46B1F2D68
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:27:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9904F2D6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 12:28:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388178AbfKGL1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 06:27:36 -0500
-Received: from mail-m975.mail.163.com ([123.126.97.5]:47592 "EHLO
-        mail-m975.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfKGL1g (ORCPT
+        id S2387601AbfKGL20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 06:28:26 -0500
+Received: from forward100j.mail.yandex.net ([5.45.198.240]:59980 "EHLO
+        forward100j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727178AbfKGL2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 06:27:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=VxXuxyye1MqjU+hDjg
-        02qbrKx1jLX10dIV/GDARuXpU=; b=b6XWFLM1DY02QNi+PAd31aRrO6jgY1b51z
-        UiunWg4MGfA6LGfW9dtQeS44ggK81ISAo3d/cBoRqO0KR+B3yIph2aZ2OiKLRr6m
-        jW65MQHNHjtcxF2DbkDaCdId16uGV6fd4mXFuA7MkaGAJM3laVsNWXn9IEIsIXYJ
-        IiVR1ElHI=
-Received: from localhost.localdomain (unknown [202.112.113.212])
-        by smtp5 (Coremail) with SMTP id HdxpCgCXTueP_8Nd8iYXAA--.227S3;
-        Thu, 07 Nov 2019 19:27:17 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] dmaengine: sun6i: Fix use after free
-Date:   Thu,  7 Nov 2019 19:26:53 +0800
-Message-Id: <1573126013-17609-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: HdxpCgCXTueP_8Nd8iYXAA--.227S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr17Kr15JFy3XrWfGryfZwb_yoW8KF1kpF
-        43Ja4rur45tF1aga13Z348uF13KF4fJFyUCay5Gwn0vr9xXr1kGa17Aa4Fkr98JFn8CrWf
-        Xrs0gF1ruF4UGwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UypBhUUUUU=
-X-Originating-IP: [202.112.113.212]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBzxVmclaD5QFnNAAAss
+        Thu, 7 Nov 2019 06:28:25 -0500
+Received: from forward100q.mail.yandex.net (forward100q.mail.yandex.net [IPv6:2a02:6b8:c0e:4b:0:640:4012:bb97])
+        by forward100j.mail.yandex.net (Yandex) with ESMTP id 1643D50E20DB;
+        Thu,  7 Nov 2019 14:28:21 +0300 (MSK)
+Received: from mxback12q.mail.yandex.net (mxback12q.mail.yandex.net [IPv6:2a02:6b8:c0e:1b3:0:640:3818:d096])
+        by forward100q.mail.yandex.net (Yandex) with ESMTP id 12F0C7080008;
+        Thu,  7 Nov 2019 14:28:21 +0300 (MSK)
+Received: from vla3-2bcfd5e94671.qloud-c.yandex.net (vla3-2bcfd5e94671.qloud-c.yandex.net [2a02:6b8:c15:350f:0:640:2bcf:d5e9])
+        by mxback12q.mail.yandex.net (mxback/Yandex) with ESMTP id 8dnNpwOQiV-SK3qqaGb;
+        Thu, 07 Nov 2019 14:28:20 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1573126101;
+        bh=j1KzLDE/nTHmQQFbg+MoNJVQOh55Uy5b1uE8Df6LdIk=;
+        h=Reply-to:Subject:To:From:Cc:Date:Message-Id;
+        b=eyns1n7OeOHGvdaDPtkpCLDSbIqLn+dyvv4IbABhRDdB8DPy5kPeDyp5MpMvnmt/U
+         bI95UH0ZzhFEXGHK0hqTvghJClpV7At7i9gj/XyLEQf+9CVrKRdQuHaJ/d0u4ydKvr
+         Z5HZ/EniqjqJ8vjrix9Uot6N96wpXcoPfgW2FsXI=
+Authentication-Results: mxback12q.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by vla3-2bcfd5e94671.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id a4NM0KkwfE-SGVGhG5w;
+        Thu, 07 Nov 2019 14:28:18 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     yangtiezhu@loongson.cn
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yangyinglu@loongson.cn, jdelvare@suse.de,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH REPLY] MIPS: Scan the DMI system information
+Date:   Thu,  7 Nov 2019 19:28:01 +0800
+Message-Id: <20191107112801.7037-1-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.24.0.rc1
+MIME-Version: 1.0
+Reply-to: 1573056341-21159-1-git-send-email-yangtiezhu@loongson.cn
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The members in the LLI list is released in an incorrect way. Read and
-store the next member before releasing it to avoid accessing the freed
-memory.
+Hi Tiezhu and Jean,
 
-Fixes: a90e173f3faf ("dmaengine: sun6i: Add cyclic capability")
+What about do like this?
+We shouldn't follow x86's Kconfig as most of MIPS devices
+don't support DMI.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
+And, we can reuse map/unmap from io.h to reduce
+maintinance overhead.
+
+Thanks
+
+Jiaxun
+
+>8------------------------------------------------------8<
+
+Enable DMI scanning on the MIPS architecture, this setups DMI identifiers
+(dmi_system_id) for printing it out on task dumps and prepares DIMM entry
+information (dmi_memdev_info) from the SMBIOS table. With this patch, the
+driver can easily match various of mainboards.
+
+In the SMBIOS reference specification, the table anchor string "_SM_" is
+present in the address range 0xF0000 to 0xFFFFF on a 16-byte boundary,
+but there exists a special case for loongson platform, when call function
+dmi_early_remap, it should specify the start address to 0xFFFE000 due to
+it is reserved for SMBIOS and can be normally access in the BIOS.
+
+Co-developed-by: Yinglu Yang <yangyinglu@loongson.cn>
+Signed-off-by: Yinglu Yang <yangyinglu@loongson.cn>
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+[jiaxun.yang@flygoat.com: Refine definitions and Kconfig]
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 ---
- drivers/dma/sun6i-dma.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ arch/mips/Kconfig           |  9 +++++++++
+ arch/mips/include/asm/dmi.h | 20 ++++++++++++++++++++
+ arch/mips/kernel/setup.c    |  2 ++
+ drivers/firmware/dmi_scan.c |  6 +++++-
+ 4 files changed, 36 insertions(+), 1 deletion(-)
+ create mode 100644 arch/mips/include/asm/dmi.h
 
-diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
-index 06cd7f867f7c..096aad7e75bb 100644
---- a/drivers/dma/sun6i-dma.c
-+++ b/drivers/dma/sun6i-dma.c
-@@ -687,7 +687,7 @@ static struct dma_async_tx_descriptor *sun6i_dma_prep_slave_sg(
- 	struct sun6i_dma_dev *sdev = to_sun6i_dma_dev(chan->device);
- 	struct sun6i_vchan *vchan = to_sun6i_vchan(chan);
- 	struct dma_slave_config *sconfig = &vchan->cfg;
--	struct sun6i_dma_lli *v_lli, *prev = NULL;
-+	struct sun6i_dma_lli *v_lli, *next, *prev = NULL;
- 	struct sun6i_desc *txd;
- 	struct scatterlist *sg;
- 	dma_addr_t p_lli;
-@@ -752,8 +752,12 @@ static struct dma_async_tx_descriptor *sun6i_dma_prep_slave_sg(
- 	return vchan_tx_prep(&vchan->vc, &txd->vd, flags);
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index c3a022ca3345..414f3a0ea397 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2759,6 +2759,15 @@ config HW_PERF_EVENTS
+ 	  Enable hardware performance counter support for perf events. If
+ 	  disabled, perf events will use software events only.
  
- err_lli_free:
--	for (prev = txd->v_lli; prev; prev = prev->v_lli_next)
--		dma_pool_free(sdev->pool, prev, virt_to_phys(prev));
-+	v_lli = txd->v_lli;
-+	while (v_lli) {
-+		next = v_lli->v_lli_next;
-+		dma_pool_free(sdev->pool, v_lli, virt_to_phys(v_lli));
-+		v_lli = next;
-+	}
- 	kfree(txd);
- 	return NULL;
- }
-@@ -769,7 +773,7 @@ static struct dma_async_tx_descriptor *sun6i_dma_prep_dma_cyclic(
- 	struct sun6i_dma_dev *sdev = to_sun6i_dma_dev(chan->device);
- 	struct sun6i_vchan *vchan = to_sun6i_vchan(chan);
- 	struct dma_slave_config *sconfig = &vchan->cfg;
--	struct sun6i_dma_lli *v_lli, *prev = NULL;
-+	struct sun6i_dma_lli *v_lli, *next, *prev = NULL;
- 	struct sun6i_desc *txd;
- 	dma_addr_t p_lli;
- 	u32 lli_cfg;
-@@ -820,8 +824,12 @@ static struct dma_async_tx_descriptor *sun6i_dma_prep_dma_cyclic(
- 	return vchan_tx_prep(&vchan->vc, &txd->vd, flags);
++config DMI
++	default y if MACH_LOONGSON64
++	select DMI_SCAN_MACHINE_NON_EFI_FALLBACK
++	bool "Enable DMI scanning"
++	help
++	  Enabled scanning of DMI to identify machine quirks. Say Y
++	  here unless you have verified that your setup is not
++	  affected by entries in the DMI blacklist.
++
+ config SMP
+ 	bool "Multi-Processing support"
+ 	depends on SYS_SUPPORTS_SMP
+diff --git a/arch/mips/include/asm/dmi.h b/arch/mips/include/asm/dmi.h
+new file mode 100644
+index 000000000000..5153ef6fe8a2
+--- /dev/null
++++ b/arch/mips/include/asm/dmi.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_MIPS_DMI_H
++#define _ASM_MIPS_DMI_H
++
++#include <linux/io.h>
++#include <linux/memblock.h>
++
++#define dmi_early_remap(x, l)		ioremap_cache(x, l)
++#define dmi_early_unmap(x, l)		iounmap(x)
++#define dmi_remap(x, l)		ioremap_cache(x, l)
++#define dmi_unmap(x)			iounmap(x)
++
++/* MIPS initialize DMI scan before SLAB is ready, so we use memblock here */
++#define dmi_alloc(l)			memblock_alloc_low(l, PAGE_SIZE)
++
++#if defined(CONFIG_MACH_LOONGSON64)
++#define SMBIOS_ENTRY_POINT_SCAN_START	0xfffe000
++#endif
++
++#endif /* _ASM_MIPS_DMI_H */
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index c3d4212b5f1d..da7d312e20eb 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -28,6 +28,7 @@
+ #include <linux/decompress/generic.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/dmi.h>
  
- err_lli_free:
--	for (prev = txd->v_lli; prev; prev = prev->v_lli_next)
--		dma_pool_free(sdev->pool, prev, virt_to_phys(prev));
-+	v_lli = txd->v_lli;
-+	while (v_lli) {
-+		next = v_lli->v_lli_next;
-+		dma_pool_free(sdev->pool, v_lli, virt_to_phys(v_lli));
-+		v_lli = next;
-+	}
- 	kfree(txd);
- 	return NULL;
- }
+ #include <asm/addrspace.h>
+ #include <asm/bootinfo.h>
+@@ -802,6 +803,7 @@ void __init setup_arch(char **cmdline_p)
+ #endif
+ 
+ 	arch_mem_init(cmdline_p);
++	dmi_setup();
+ 
+ 	resource_init();
+ 	plat_smp_setup();
+diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+index 35ed56b9c34f..ee2dbebf2063 100644
+--- a/drivers/firmware/dmi_scan.c
++++ b/drivers/firmware/dmi_scan.c
+@@ -11,6 +11,10 @@
+ #include <asm/dmi.h>
+ #include <asm/unaligned.h>
+ 
++#ifndef SMBIOS_ENTRY_POINT_SCAN_START
++#define SMBIOS_ENTRY_POINT_SCAN_START 0xf0000
++#endif
++
+ struct kobject *dmi_kobj;
+ EXPORT_SYMBOL_GPL(dmi_kobj);
+ 
+@@ -661,7 +665,7 @@ static void __init dmi_scan_machine(void)
+ 			return;
+ 		}
+ 	} else if (IS_ENABLED(CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK)) {
+-		p = dmi_early_remap(0xF0000, 0x10000);
++		p = dmi_early_remap(SMBIOS_ENTRY_POINT_SCAN_START, 0x10000);
+ 		if (p == NULL)
+ 			goto error;
+ 
 -- 
-2.7.4
+2.24.0.rc1
 
