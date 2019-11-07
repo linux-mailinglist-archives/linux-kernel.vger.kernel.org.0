@@ -2,113 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 324FCF260E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1AD2F2600
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 04:32:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733120AbfKGDhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 22:37:54 -0500
-Received: from gateway30.websitewelcome.com ([192.185.152.11]:48991 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733035AbfKGDhy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 22:37:54 -0500
-X-Greylist: delayed 1223 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 22:37:53 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 8DF05CB40
-        for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2019 21:17:32 -0600 (CST)
-Received: from br164.hostgator.com.br ([192.185.176.180])
-        by cmsmtp with SMTP
-        id SYIei861uiJ43SYIeihaKW; Wed, 06 Nov 2019 21:17:32 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Bpq1Lr0RjA7GEI60Pxufk6S9EZ2BnHAO3RgT1P1A6D4=; b=LZsgMkio4tf7pO2NZGhMKsSI0T
-        lNJUYc5xZfCTOFfq69ZD+Sd8zi0KdfyYrRCSehLzoYURzUrs1zKfyDtJZ6zJBwFt+6AeSV7nTuMst
-        an7IMo4yLDVxwXMMObK/Cn1RZkYFu+gT9m55Wj4RsuWUi0ZC77W6T82XSbtrgwaokZxZpmp/4XIVA
-        gIY8ZKptjxHMFtDkOf44i181t1qTm3MLSSB8A3nv/8A2SgzIQf9dQAX6HSf65uFIJSs0af0zVb4Qx
-        a0u9mHnWCmwvPwtIfjJg+JZqwG7q6ooDqdORoVZUGzATkNCPd0a3k8xF4sfMVxRI3iFGDPzAep0e8
-        yXa1QOsA==;
-Received: from [191.31.194.59] (port=34854 helo=castello.castello)
-        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <matheus@castello.eng.br>)
-        id 1iSYId-000Mrk-Kr; Thu, 07 Nov 2019 00:17:32 -0300
-From:   Matheus Castello <matheus@castello.eng.br>
-To:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org
-Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, lee.jones@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v6 5/5] power: supply: max17040: Send uevent in SOC and status change
-Date:   Thu,  7 Nov 2019 00:17:10 -0300
-Message-Id: <20191107031710.5672-6-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.24.0.rc2
-In-Reply-To: <20191107031710.5672-1-matheus@castello.eng.br>
-References: <20191105095905.GA31721@pi3>
- <20191107031710.5672-1-matheus@castello.eng.br>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.31.194.59
-X-Source-L: No
-X-Exim-ID: 1iSYId-000Mrk-Kr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (castello.castello) [191.31.194.59]:34854
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 71
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+        id S1733124AbfKGDcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 22:32:17 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:38126 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733028AbfKGDcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 22:32:17 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6E41A1A0697;
+        Thu,  7 Nov 2019 04:32:14 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 26CD11A0511;
+        Thu,  7 Nov 2019 04:32:08 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 26DB0402B1;
+        Thu,  7 Nov 2019 11:32:00 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, daniel.baluta@nxp.com, peng.fan@nxp.com,
+        fugang.duan@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] arm64: dts: imx8qxp: Remove unnecessary "interrupt-parent" property
+Date:   Thu,  7 Nov 2019 11:30:35 +0800
+Message-Id: <1573097435-19814-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Notify core through power_supply_changed() in case of changes in state
-of charge and power supply status. This is useful for user-space to
-efficiently update current battery level.
+gic is appointed as default interrupt parent for devices, so no need
+to specify it again in device nodes which use it as interrupt parent.
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/power/supply/max17040_battery.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
-index 3fc9e1c7b257..1f5afabdbabc 100644
---- a/drivers/power/supply/max17040_battery.c
-+++ b/drivers/power/supply/max17040_battery.c
-@@ -209,10 +209,19 @@ static void max17040_check_changes(struct i2c_client *client)
- static void max17040_work(struct work_struct *work)
- {
- 	struct max17040_chip *chip;
-+	int last_soc, last_status;
-
- 	chip = container_of(work, struct max17040_chip, work.work);
-+
-+	/* store SOC and status to check changes */
-+	last_soc = chip->soc;
-+	last_status = chip->status;
- 	max17040_check_changes(chip->client);
-
-+	/* check changes and send uevent */
-+	if (last_soc != chip->soc || last_status != chip->status)
-+		power_supply_changed(chip->battery);
-+
- 	queue_delayed_work(system_power_efficient_wq, &chip->work,
- 			   MAX17040_DELAY);
- }
---
-2.24.0.rc2
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+index 9646a41..fb5f752 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+@@ -250,7 +250,6 @@
+ 			compatible = "fsl,imx8qxp-lpuart", "fsl,imx7ulp-lpuart";
+ 			reg = <0x5a060000 0x1000>;
+ 			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_UART0_IPG_CLK>,
+ 				 <&adma_lpcg IMX_ADMA_LPCG_UART0_BAUD_CLK>;
+ 			clock-names = "ipg", "baud";
+@@ -262,7 +261,6 @@
+ 			compatible = "fsl,imx8qxp-lpuart", "fsl,imx7ulp-lpuart";
+ 			reg = <0x5a070000 0x1000>;
+ 			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_UART1_IPG_CLK>,
+ 				 <&adma_lpcg IMX_ADMA_LPCG_UART1_BAUD_CLK>;
+ 			clock-names = "ipg", "baud";
+@@ -274,7 +272,6 @@
+ 			compatible = "fsl,imx8qxp-lpuart", "fsl,imx7ulp-lpuart";
+ 			reg = <0x5a080000 0x1000>;
+ 			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_UART2_IPG_CLK>,
+ 				 <&adma_lpcg IMX_ADMA_LPCG_UART2_BAUD_CLK>;
+ 			clock-names = "ipg", "baud";
+@@ -286,7 +283,6 @@
+ 			compatible = "fsl,imx8qxp-lpuart", "fsl,imx7ulp-lpuart";
+ 			reg = <0x5a090000 0x1000>;
+ 			interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_UART3_IPG_CLK>,
+ 				 <&adma_lpcg IMX_ADMA_LPCG_UART3_BAUD_CLK>;
+ 			clock-names = "ipg", "baud";
+@@ -298,7 +294,6 @@
+ 			compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+ 			reg = <0x5a800000 0x4000>;
+ 			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_I2C0_CLK>;
+ 			clock-names = "per";
+ 			assigned-clocks = <&clk IMX_ADMA_I2C0_CLK>;
+@@ -311,7 +306,6 @@
+ 			compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+ 			reg = <0x5a810000 0x4000>;
+ 			interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_I2C1_CLK>;
+ 			clock-names = "per";
+ 			assigned-clocks = <&clk IMX_ADMA_I2C1_CLK>;
+@@ -324,7 +318,6 @@
+ 			compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+ 			reg = <0x5a820000 0x4000>;
+ 			interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_I2C2_CLK>;
+ 			clock-names = "per";
+ 			assigned-clocks = <&clk IMX_ADMA_I2C2_CLK>;
+@@ -337,7 +330,6 @@
+ 			compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+ 			reg = <0x5a830000 0x4000>;
+ 			interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-parent = <&gic>;
+ 			clocks = <&adma_lpcg IMX_ADMA_LPCG_I2C3_CLK>;
+ 			clock-names = "per";
+ 			assigned-clocks = <&clk IMX_ADMA_I2C3_CLK>;
+@@ -361,7 +353,6 @@
+ 
+ 		usdhc1: mmc@5b010000 {
+ 			compatible = "fsl,imx8qxp-usdhc", "fsl,imx7d-usdhc";
+-			interrupt-parent = <&gic>;
+ 			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x5b010000 0x10000>;
+ 			clocks = <&conn_lpcg IMX_CONN_LPCG_SDHC0_IPG_CLK>,
+@@ -374,7 +365,6 @@
+ 
+ 		usdhc2: mmc@5b020000 {
+ 			compatible = "fsl,imx8qxp-usdhc", "fsl,imx7d-usdhc";
+-			interrupt-parent = <&gic>;
+ 			interrupts = <GIC_SPI 233 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x5b020000 0x10000>;
+ 			clocks = <&conn_lpcg IMX_CONN_LPCG_SDHC1_IPG_CLK>,
+@@ -389,7 +379,6 @@
+ 
+ 		usdhc3: mmc@5b030000 {
+ 			compatible = "fsl,imx8qxp-usdhc", "fsl,imx7d-usdhc";
+-			interrupt-parent = <&gic>;
+ 			interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x5b030000 0x10000>;
+ 			clocks = <&conn_lpcg IMX_CONN_LPCG_SDHC2_IPG_CLK>,
+@@ -446,7 +435,6 @@
+ 		ddr-pmu@5c020000 {
+ 			compatible = "fsl,imx8-ddr-pmu";
+ 			reg = <0x5c020000 0x10000>;
+-			interrupt-parent = <&gic>;
+ 			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 	};
+-- 
+2.7.4
 
