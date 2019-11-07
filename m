@@ -2,89 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF94F2492
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 02:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 718FAF24D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 03:03:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfKGB45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 20:56:57 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43094 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfKGB45 (ORCPT
+        id S1732064AbfKGCC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 21:02:59 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:36492 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbfKGCC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 20:56:57 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA71s5YH187038;
-        Thu, 7 Nov 2019 01:56:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=hHR5/nxvketnU54a1k1e33bJv4PJgcmLZua+X2UwC5I=;
- b=eF/HmLvludviEdI7FYGvN0fyZo+Y58fqWFjoOYN4lACrGMPNnLKKcvTlYmCgbmlS2+MU
- fHFGW7QlbGrnA/m/v7g6mmk/V31asBxRb61FHsTZUzMNlPTvPVUrRQlH5jKZsvKJMG3z
- wJDdBmR3FJTkVGkszvM72/aiRUaNFOZRtuw9L3fiCEVgLZv0m4ZF1BA0OI+mlxz+MwzN
- MxWPrXo6QfyWFG+EqVlDB1OF/P54jZ7cKV7//fhikgUbzhSNeEKJVI2cHWm47GRh37c+
- hKpI8TmivpqiIrytuWVayss+yZdUdkkgDOtr5gu2ADeT8WMxmAN7r8fSwlNGQrhu8/f5 uQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2w41w0tsjq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Nov 2019 01:56:41 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA71s3wG026240;
-        Thu, 7 Nov 2019 01:56:40 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2w41w8g75p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Nov 2019 01:56:40 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA71ub1N025231;
-        Thu, 7 Nov 2019 01:56:37 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Nov 2019 17:56:37 -0800
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the scsi-fixes tree with Linus' tree
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20191106082239.5c4d139c@canb.auug.org.au>
-Date:   Wed, 06 Nov 2019 20:56:34 -0500
-In-Reply-To: <20191106082239.5c4d139c@canb.auug.org.au> (Stephen Rothwell's
-        message of "Wed, 6 Nov 2019 08:22:39 +1100")
-Message-ID: <yq1mud8zbxp.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=989
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911070018
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911070018
+        Wed, 6 Nov 2019 21:02:59 -0500
+Received: by mail-yb1-f196.google.com with SMTP id v17so362033ybs.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 18:02:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=x48pWm4f9iU44CaGrv+6NLJDhaVTJTxRNSeF8LdSSOU=;
+        b=JgWna+jpZAHAjhIZwGuTdiMSXNQZr5F84NM4mXC5sMlcZjWOhc3hE9qqcbEV25kHVf
+         STKZBRPtUDzZIOX51uxCXmYSd8V8JyAmgb8QCHA1cZmPGUkF7Y4A5HbpEednCwMJHdOa
+         P9aAla6rQOtV2T/gfuB0FmjjA5YljwZYxdJddv19UhD9opIcwEoCiu6qDtZGJQCEglgA
+         HX3+1/2biZnfw9byQOAXkahMXlAbTiL/UVGMh3zwvEV7sRUZLgqIKRvQpGmR6aR0MU1z
+         KI0hPfVKCmwAlMtl4t8rE0TbXW/r7cYMrRRrkwQ0A8Edwk76REZkuaBUlEZgabOcWa2F
+         ZSiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=x48pWm4f9iU44CaGrv+6NLJDhaVTJTxRNSeF8LdSSOU=;
+        b=pOXVKILlSPE9oolalWMl6XLha286bvqGc3onnU3FedMrXVgPJx5u9aTPOYxfmn1D2/
+         SXeg0GAMAzOCvmHt8e4CLA9EIzW/93JDLfjrR9NAZPK6twIkLElkLqcoczyFHxlVVHJD
+         PqRYMB5huy44iCobyqtCXd3KmBzJ4/asvuY2o8LMsFWeyEsH2OvY+iRroVIBfaytvabG
+         j4WDIImOqcb1VksVYd9D+OVpHACZVQ8BKm+eO1MEI2cBHtszDpnIeWFXlds8uce6wEzF
+         MTDdRlbqd43ZNHh0Z5L9R5FmqvucrhMxfkWyPt7ddoc0datcapUqe2gA5rvRx6e0BUsO
+         B5AA==
+X-Gm-Message-State: APjAAAU1KPlWuTfDGyDk9sk9s8HcI8IE517HlX/egfi7TR2CGIzY7XUI
+        c67K6K87Pga+T4h+534lu23l6g==
+X-Google-Smtp-Source: APXvYqwBcxame7eANsXdk2WgbBdPCh+DKf7ZNUj6m9cER4+5Z0k7zW/NSYhhF/MoYaTvk9tf4m6vog==
+X-Received: by 2002:a25:6c86:: with SMTP id h128mr1156370ybc.133.1573092178038;
+        Wed, 06 Nov 2019 18:02:58 -0800 (PST)
+Received: from localhost.localdomain (li1038-30.members.linode.com. [45.33.96.30])
+        by smtp.gmail.com with ESMTPSA id x136sm201679ywd.58.2019.11.06.18.02.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 18:02:57 -0800 (PST)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2] perf tests: Fix out of bounds memory access
+Date:   Thu,  7 Nov 2019 10:02:44 +0800
+Message-Id: <20191107020244.2427-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The test case 'Read backward ring buffer' failed on 32-bit architectures
+which were found by LKFT perf testing.  The test failed on arm32 x15
+device, qemu_arm32, qemu_i386, and found intermittent failure on i386;
+the failure log is as below:
 
-Stephen,
+  50: Read backward ring buffer                  :
+  --- start ---
+  test child forked, pid 510
+  Using CPUID GenuineIntel-6-9E-9
+  mmap size 1052672B
+  mmap size 8192B
+  Finished reading overwrite ring buffer: rewind
+  free(): invalid next size (fast)
+  test child interrupted
+  ---- end ----
+  Read backward ring buffer: FAILED!
 
-[Looks like this mail didn't go out last night]
+The log hints there have issue for memory usage, thus free() reports
+error 'invalid next size' and directly exit for the case.  Finally, this
+issue is root caused as out of bounds memory access for the data array
+'evsel->id'.
 
-> 8437bb81853e claims to fix d81e9d494354, however the latter is not an
-> ancestor of the former ...
+The backward ring buffer test invokes do_test() twice.  'evsel->id' is
+allocated at the first call with the flow:
 
-Should be fixed now. d81e9d494354 was part of a series that went through
-Jens' tree post -rc1.
+  test__backward_ring_buffer()
+    `-> do_test()
+	  `-> evlist__mmap()
+	        `-> evlist__mmap_ex()
+	              `-> perf_evsel__alloc_id()
 
+So 'evsel->id' is allocated with one item, and it will be used in
+function perf_evlist__id_add():
+
+   evsel->id[0] = id
+   evsel->ids   = 1
+
+At the second call for do_test(), it skips to initialize 'evsel->id'
+and reuses the array which is allocated in the first call.  But
+'evsel->ids' contains the stale value.  Thus:
+
+   evsel->id[1] = id    -> out of bound access
+   evsel->ids   = 2
+
+To fix this issue, we will use evlist__open() and evlist__close() pair
+functions to prepare and cleanup context for evlist; so 'evsel->id' and
+'evsel->ids' can be initialized properly when invoke do_test() and avoid
+the out of bounds memory access.
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ tools/perf/tests/backward-ring-buffer.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/backward-ring-buffer.c
+index 338cd9faa835..5128f727c0ef 100644
+--- a/tools/perf/tests/backward-ring-buffer.c
++++ b/tools/perf/tests/backward-ring-buffer.c
+@@ -147,6 +147,15 @@ int test__backward_ring_buffer(struct test *test __maybe_unused, int subtest __m
+ 		goto out_delete_evlist;
+ 	}
+ 
++	evlist__close(evlist);
++
++	err = evlist__open(evlist);
++	if (err < 0) {
++		pr_debug("perf_evlist__open: %s\n",
++			 str_error_r(errno, sbuf, sizeof(sbuf)));
++		goto out_delete_evlist;
++	}
++
+ 	err = do_test(evlist, 1, &sample_count, &comm_count);
+ 	if (err != TEST_OK)
+ 		goto out_delete_evlist;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
+
