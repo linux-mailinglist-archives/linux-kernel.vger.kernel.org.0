@@ -2,159 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A1F2F2CC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E077F2CD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 11:52:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbfKGKuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 05:50:00 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55981 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbfKGKuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 05:50:00 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iSfMT-0007Gf-UD; Thu, 07 Nov 2019 10:49:57 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-unionfs@vger.kernel.org, stable@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] ovl: fix lookup failure on multi lower squashfs
-Date:   Thu,  7 Nov 2019 10:49:57 +0000
-Message-Id: <20191107104957.306383-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S2387894AbfKGKwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 05:52:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57227 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727528AbfKGKwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 05:52:18 -0500
+Received: from [IPv6:2601:646:8600:3281:ac8f:6015:6ba:e227] ([IPv6:2601:646:8600:3281:ac8f:6015:6ba:e227])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id xA7AoRDw1190819
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 7 Nov 2019 02:50:28 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com xA7AoRDw1190819
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019091901; t=1573123828;
+        bh=xjHsNjx3y7WGORGoGD9WB7uagne++HGfQiBOzl7OELY=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=UiUMtlqRiId81RDJjjcPVf4gTOcGEIzJ+mXMcajzvrJE4FGs5ueGbvy2Ts0ZXZQzC
+         /bKEPhhg4TrchWdA0/K0fSoxoPCM8dkAlDFBSfKXdYB4QYb0rc9p2wGNOpgE8b+8e5
+         ZkwMuF1JK5s2yKxFv9BhhQlqX7PdJFtgaGK02DKW7Dg8F8bYmLD5IlxyfVNGXbNpvi
+         SbFE96WpBjGVSkCGvf6EdkL6HYwTGuC58bKawBtVpJeqVHL/DXY7v9OpY5/JcMc2zu
+         1EYT7N6BPMdwN9CNrbc9NHCU9U4GCwct6upi9PMGgLNaREcYjqcuoA0X8LI5IC9xF6
+         3cEd4me0NO4qQ==
+Date:   Thu, 07 Nov 2019 02:50:20 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20191107102756.GD15536@1wt.eu>
+References: <20191106193459.581614484@linutronix.de> <20191106202806.241007755@linutronix.de> <CAHk-=wjXcS--G3Wd8ZGEOdCNRAWPaUneyN1ryShQL-_yi1kvOA@mail.gmail.com> <20191107082541.GF30739@gmail.com> <20191107091704.GA15536@1wt.eu> <alpine.DEB.2.21.1911071058260.4256@nanos.tec.linutronix.de> <71DE81AC-3AD4-47B3-9CBA-A2C7841A3370@zytor.com> <20191107102756.GD15536@1wt.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [patch 5/9] x86/ioport: Reduce ioperm impact for sane usage further
+To:     Willy Tarreau <w@1wt.eu>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+From:   hpa@zytor.com
+Message-ID: <5AAEF116-EC9D-4C58-878F-9D27189E123A@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On November 7, 2019 2:27:56 AM PST, Willy Tarreau <w@1wt=2Eeu> wrote:
+>On Thu, Nov 07, 2019 at 02:19:19AM -0800, hpa@zytor=2Ecom wrote:
+>> >Changing ioperm(single port, port range) to be ioperm(all) is going
+>to
+>> >break a bunch of test cases which actually check whether the
+>permission
+>> >is restricted to a single I/O port or the requested port range=2E
+>> >
+>> >Thanks,
+>> >
+>> >	tglx
+>>=20
+>> This seems very undesirable=2E=2E=2E as much as we might wish otherwise=
+,
+>the port
+>> bitmap is the equivalent to the MMU, and there are definitely users
+>doing
+>> direct device I/O out there=2E
+>
+>Doing these, sure, but doing these while ranges are really checked ?
+>I mean, the MMU grants you access to the pages you were assigned=2E Here
+>with the I/O bitmap you just have to ask for access to port X and you
+>get it=2E I could understand the benefit if we had EBUSY in return but
+>that's not the case, you can actually request access to a port range
+>another device driver or process is currently using, and mess up with
+>what it does even by accident=2E I remember streaming 1-bit music in
+>userland from the LED of my floppy drive in the late-90s, it used to
+>cause some trouble to the floppy driver when using mtools in parallel
+>:-)
+>
+>Willy
 
-In the past, overlayfs required that lower fs have non null uuid in
-order to support nfs export and decode copy up origin file handles.
+You get access to the ports you are assigned, just like pages you are assi=
+gned=2E=2E=2E the rest is kernel policy, or, for that matter, privileged us=
+erspace (get permissions to the necessary ports, then drop privilege=2E=2E=
+=2E the usual stuff=2E)
 
-Commit 9df085f3c9a2 ("ovl: relax requirement for non null uuid of
-lower fs") relaxed this requirement for nfs export support, as long
-as uuid (even if null) is unique among all lower fs.
-
-However, said commit unintentionally also relaxed the non null uuid
-requirement for decoding copy up origin file handles, regardless of
-the unique uuid requirement.
-
-Amend this mistake by disabling decoding of copy up origin file handle
-from lower fs with a conflicting uuid.
-
-We still encode copy up origin file handles from those fs, because
-file handles like those already exist in the wild and because they
-might provide useful information in the future.
-
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/lkml/20191106234301.283006-1-colin.king@canonical.com/
-Fixes: 9df085f3c9a2 ("ovl: relax requirement for non null uuid ...")
-Cc: stable@vger.kernel.org # v4.20+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/overlayfs/namei.c     |  8 ++++++++
- fs/overlayfs/ovl_entry.h |  2 ++
- fs/overlayfs/super.c     | 16 ++++++++++------
- 3 files changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index e9717c2f7d45..f47c591402d7 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -325,6 +325,14 @@ int ovl_check_origin_fh(struct ovl_fs *ofs, struct ovl_fh *fh, bool connected,
- 	int i;
- 
- 	for (i = 0; i < ofs->numlower; i++) {
-+		/*
-+		 * If lower fs uuid is not unique among lower fs we cannot match
-+		 * fh->uuid to layer.
-+		 */
-+		if (ofs->lower_layers[i].fsid &&
-+		    ofs->lower_layers[i].fs->bad_uuid)
-+			continue;
-+
- 		origin = ovl_decode_real_fh(fh, ofs->lower_layers[i].mnt,
- 					    connected);
- 		if (origin)
-diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-index a8279280e88d..28348c44ea5b 100644
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -22,6 +22,8 @@ struct ovl_config {
- struct ovl_sb {
- 	struct super_block *sb;
- 	dev_t pseudo_dev;
-+	/* Unusable (conflicting) uuid */
-+	bool bad_uuid;
- };
- 
- struct ovl_layer {
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index afbcb116a7f1..5d4faab57ba0 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1255,17 +1255,18 @@ static bool ovl_lower_uuid_ok(struct ovl_fs *ofs, const uuid_t *uuid)
- {
- 	unsigned int i;
- 
--	if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
--		return true;
--
- 	for (i = 0; i < ofs->numlowerfs; i++) {
- 		/*
- 		 * We use uuid to associate an overlay lower file handle with a
- 		 * lower layer, so we can accept lower fs with null uuid as long
- 		 * as all lower layers with null uuid are on the same fs.
-+		 * if we detect multiple lower fs with the same uuid, we
-+		 * disable lower file handle decoding on all of them.
- 		 */
--		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid))
-+		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid)) {
-+			ofs->lower_fs[i].bad_uuid = true;
- 			return false;
-+		}
- 	}
- 	return true;
- }
-@@ -1277,6 +1278,7 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
- 	unsigned int i;
- 	dev_t dev;
- 	int err;
-+	bool bad_uuid = false;
- 
- 	/* fsid 0 is reserved for upper fs even with non upper overlay */
- 	if (ofs->upper_mnt && ofs->upper_mnt->mnt_sb == sb)
-@@ -1287,10 +1289,11 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
- 			return i + 1;
- 	}
- 
--	if (!ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
-+	if (ofs->upper_mnt && !ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
-+		bad_uuid = true;
- 		ofs->config.index = false;
- 		ofs->config.nfs_export = false;
--		pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', falling back to index=off,nfs_export=off.\n",
-+		pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', enforcing index=off,nfs_export=off.\n",
- 			uuid_is_null(&sb->s_uuid) ? "null" : "conflicting",
- 			path->dentry);
- 	}
-@@ -1303,6 +1306,7 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
- 
- 	ofs->lower_fs[ofs->numlowerfs].sb = sb;
- 	ofs->lower_fs[ofs->numlowerfs].pseudo_dev = dev;
-+	ofs->lower_fs[ofs->numlowerfs].bad_uuid = bad_uuid;
- 	ofs->numlowerfs++;
- 
- 	return ofs->numlowerfs;
--- 
-2.20.1
-
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
