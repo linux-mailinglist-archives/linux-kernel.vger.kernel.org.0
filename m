@@ -2,156 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB35F3625
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57948F364D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 18:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389865AbfKGRsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 12:48:08 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41466 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbfKGRsI (ORCPT
+        id S2389884AbfKGRyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 12:54:20 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60368 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730110AbfKGRyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:48:08 -0500
-Received: by mail-pg1-f194.google.com with SMTP id h4so2494036pgv.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 09:48:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YQHzfatweJlvu9QRgWqn6mLupzORKF19rwgbns+H/Ko=;
-        b=G8fRkvwVCgK+5AnZZD/V83YvXyFilTUx9GafaEg/RlOfkWwhafnHdqdNeGKXLF/H6K
-         FDoIV9FDSYGiZwaMLLnBtT4HOWe9rvBSeoXdkoOt977x30UGwRbKIQD62Y3e0SHPGkJE
-         zj18IxkktF05wkCUiif3Tune+pTbQR19EfTWV8nDz4Wk+HvNaFZ82cJrX2VmWcejNZCG
-         /iA/y8UqcJOl8F5Lh91S8tMoq40Go993jzHkeaTYmeYHGrX9dqqW6SRh5BZnroMcF8Jn
-         BD77+M4HBjqEt44AKkO6oPWfH6+/na5b+Omr1i/uNPazTemCNSqER5sX4i6vu+vqbhQq
-         hrYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YQHzfatweJlvu9QRgWqn6mLupzORKF19rwgbns+H/Ko=;
-        b=ggQfkLriC1a5fkLriF7lR2+QCl4LNGrAxikoqzXzXpp4Q7Yy3IKKglE3DLV/AkjLZJ
-         Hd4J506cfknA7GcZSUal6Rs3DvXWgDrChIrA+GbUKcVDGFbpB0o250pXdiryPTkxjexN
-         tIo3HL3diDF6GQt0wJG1gyvCNO2FUoM+THgvZ+NVaDHeGl0lfnlcGIcaOHDFWVSEw81W
-         AeasgtVamPwZ6p+EJqUYLpzPbvyxPcgv7SdbGPaSZJpBQKux/cDjeUYAdHKdna22Cj1Z
-         GAgl4mEvzcgbkeQcdr4vEUawCht0wkMGg0RjpA+7ezG2FK/RjwrIEbDwnLJsXbcghygh
-         dxiw==
-X-Gm-Message-State: APjAAAWdgmqqkUShYLcbYw73TA6yHGqDbviaiEQiPrKZ9PFf3TySPpRd
-        16wj0Y8VsnPuVtuMrMb8+LJZNQ==
-X-Google-Smtp-Source: APXvYqzAqvPs1jX+juk9qWnYhY1RhnF/vPkdqQeAI9VIRBxgjUBTjIXOsZmOImIrN/73qLNmV/iXGQ==
-X-Received: by 2002:a63:6f47:: with SMTP id k68mr5759534pgc.92.1573148887304;
-        Thu, 07 Nov 2019 09:48:07 -0800 (PST)
-Received: from localhost ([199.201.64.133])
-        by smtp.gmail.com with ESMTPSA id t12sm3323606pgv.45.2019.11.07.09.48.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 09:48:06 -0800 (PST)
-Date:   Thu, 7 Nov 2019 09:45:55 -0800
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH 00/11] mm: fix page aging across multiple cgroups
-Message-ID: <20191107174555.GA116752@cmpxchg.org>
-References: <20190603210746.15800-1-hannes@cmpxchg.org>
- <CALvZod7821vuP_KcOKZkzKu-6b_kzDPrximi3E-Ld95fd=zbMg@mail.gmail.com>
+        Thu, 7 Nov 2019 12:54:20 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA7Hj18W001450;
+        Thu, 7 Nov 2019 17:53:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=cP3odovDn+b8l22dKmKV8q2Mp2Ep7jYU9ngn8YvoPEM=;
+ b=kkeppDWvq5LseXZ7DDEvhTVO157mnZGu2hk+C2ampz6VYdXmimU/BI55qnSltRC7wvqb
+ JvK2X4EoTDAz19GgqiYLpegozuIkVm0ah6krBTu2h0njH2HQ1GX2zUNHW7pzerIEL4/L
+ rclTXKC5HUVechhOgMd7MbdTXECda04KULLkYhowwdzlw38jQ/U7r+lWut8Er6RDshBv
+ ZgkmtJxp2yTq5G4Qb8NvQ7+eXbg37waxFHbdxPFnxgaEWAcgH76lj5gm+VWPCqZQ76mD
+ XeBGa/sifmgf3XhFQL1tJIShcNhm3xaVI/5A5SIu0cDfjl41yYlQljQpsyQXBwl0X7K/ yQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2w41w0yx6t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 17:53:28 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA7Hj29l038325;
+        Thu, 7 Nov 2019 17:51:27 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2w41wffu1d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 17:51:27 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA7HpHGR009182;
+        Thu, 7 Nov 2019 17:51:17 GMT
+Received: from neelam.us.oracle.com (/10.152.128.16)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Nov 2019 09:51:16 -0800
+From:   Alex Kogan <alex.kogan@oracle.com>
+To:     linux@armlinux.org.uk, peterz@infradead.org, mingo@redhat.com,
+        will.deacon@arm.com, arnd@arndb.de, longman@redhat.com,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, guohanjun@huawei.com,
+        jglauber@marvell.com
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        alex.kogan@oracle.com, dave.dice@oracle.com,
+        rahul.x.yadav@oracle.com
+Subject: [PATCH v6 0/5] Add NUMA-awareness to qspinlock
+Date:   Thu,  7 Nov 2019 12:46:17 -0500
+Message-Id: <20191107174622.61718-1-alex.kogan@oracle.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod7821vuP_KcOKZkzKu-6b_kzDPrximi3E-Ld95fd=zbMg@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911070165
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911070165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 06:50:25PM -0800, Shakeel Butt wrote:
-> On Mon, Jun 3, 2019 at 2:59 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > When applications are put into unconfigured cgroups for memory
-> > accounting purposes, the cgrouping itself should not change the
-> > behavior of the page reclaim code. We expect the VM to reclaim the
-> > coldest pages in the system. But right now the VM can reclaim hot
-> > pages in one cgroup while there is eligible cold cache in others.
-> >
-> > This is because one part of the reclaim algorithm isn't truly cgroup
-> > hierarchy aware: the inactive/active list balancing. That is the part
-> > that is supposed to protect hot cache data from one-off streaming IO.
-> >
-> > The recursive cgroup reclaim scheme will scan and rotate the physical
-> > LRU lists of each eligible cgroup at the same rate in a round-robin
-> > fashion, thereby establishing a relative order among the pages of all
-> > those cgroups. However, the inactive/active balancing decisions are
-> > made locally within each cgroup, so when a cgroup is running low on
-> > cold pages, its hot pages will get reclaimed - even when sibling
-> > cgroups have plenty of cold cache eligible in the same reclaim run.
-> >
-> > For example:
-> >
-> >    [root@ham ~]# head -n1 /proc/meminfo
-> >    MemTotal:        1016336 kB
-> >
-> >    [root@ham ~]# ./reclaimtest2.sh
-> >    Establishing 50M active files in cgroup A...
-> >    Hot pages cached: 12800/12800 workingset-a
-> >    Linearly scanning through 18G of file data in cgroup B:
-> >    real    0m4.269s
-> >    user    0m0.051s
-> >    sys     0m4.182s
-> >    Hot pages cached: 134/12800 workingset-a
-> >
-> 
-> Can you share reclaimtest2.sh as well? Maybe a selftest to
-> monitor/test future changes.
+Minor changes from v5, mainly based on feedback from Longman:
+-------------------------------------------------------------
 
-I wish it were more portable, but it really only does what it says in
-the log output, in a pretty hacky way, with all parameters hard-coded
-to my test environment:
+- Make the intra node handoff threshold a configurable parameter 
+via the new kernel boot command-line option "numa_spinlock_threshold".
 
----
+- Add documentation of new command-line options in kernel-parameters.txt.
 
-#!/bin/bash
+- Small fix in cna_try_change_tail() (use cmpxhg_relaxed()).
 
-# this should protect workingset-a from workingset-b
+- Small fix in cna_init_nodes() (return 0).
 
-set -e
-#set -x
+- Minor changes in cna_pass_lock(). 
 
-echo Establishing 50M active files in cgroup A...
-rmdir /cgroup/workingset-a 2>/dev/null || true
-mkdir /cgroup/workingset-a
-echo $$ > /cgroup/workingset-a/cgroup.procs
-rm -f workingset-a
-dd of=workingset-a bs=1M count=0 seek=50 2>/dev/null >/dev/null
-cat workingset-a > /dev/null
-cat workingset-a > /dev/null
-cat workingset-a > /dev/null
-cat workingset-a > /dev/null
-cat workingset-a > /dev/null
-cat workingset-a > /dev/null
-cat workingset-a > /dev/null
-cat workingset-a > /dev/null
-echo -n "Hot pages cached: "
-./mincore workingset-a
 
-echo -n Linearly scanning through 2G of file data cgroup B:
-rmdir /cgroup/workingset-b >/dev/null || true
-mkdir /cgroup/workingset-b
-echo $$ > /cgroup/workingset-b/cgroup.procs
-rm -f workingset-b
-dd of=workingset-b bs=1M count=0 seek=2048 2>/dev/null >/dev/null
-time (
-  cat workingset-b > /dev/null
-  cat workingset-b > /dev/null
-  cat workingset-b > /dev/null
-  cat workingset-b > /dev/null
-  cat workingset-b > /dev/null
-  cat workingset-b > /dev/null
-  cat workingset-b > /dev/null
-  cat workingset-b > /dev/null )
-echo -n "Hot pages cached: "
-./mincore workingset-a
+Summary
+-------
+
+Lock throughput can be increased by handing a lock to a waiter on the
+same NUMA node as the lock holder, provided care is taken to avoid
+starvation of waiters on other NUMA nodes. This patch introduces CNA
+(compact NUMA-aware lock) as the slow path for qspinlock. It is
+enabled through a configuration option (NUMA_AWARE_SPINLOCKS).
+
+CNA is a NUMA-aware version of the MCS lock. Spinning threads are
+organized in two queues, a main queue for threads running on the same
+node as the current lock holder, and a secondary queue for threads
+running on other nodes. Threads store the ID of the node on which
+they are running in their queue nodes. After acquiring the MCS lock and
+before acquiring the spinlock, the lock holder scans the main queue
+looking for a thread running on the same node (pre-scan). If found (call
+it thread T), all threads in the main queue between the current lock
+holder and T are moved to the end of the secondary queue.  If such T
+is not found, we make another scan of the main queue after acquiring 
+the spinlock when unlocking the MCS lock (post-scan), starting at the
+node where pre-scan stopped. If both scans fail to find such T, the
+MCS lock is passed to the first thread in the secondary queue. If the
+secondary queue is empty, the MCS lock is passed to the next thread in the
+main queue. To avoid starvation of threads in the secondary queue, those
+threads are moved back to the head of the main queue after a certain
+number of intra-node lock hand-offs.
+
+More details are available at https://arxiv.org/abs/1810.05600.
+
+We have done some performance evaluation with the locktorture module
+as well as with several benchmarks from the will-it-scale repo.
+The following locktorture results are from an Oracle X5-4 server
+(four Intel Xeon E7-8895 v3 @ 2.60GHz sockets with 18 hyperthreaded
+cores each). Each number represents an average (over 25 runs) of the
+total number of ops (x10^7) reported at the end of each run. The 
+standard deviation is also reported in (), and in general is about 3%
+from the average. The 'stock' kernel is v5.4.0-rc5,
+commit 7c5e136a02ba, compiled in the default configuration. 
+'patch-CNA' is the modified kernel with NUMA_AWARE_SPINLOCKS set; 
+the speedup is calculated dividing 'patch-CNA' by 'stock'.
+
+#thr  	 stock        patch-CNA   speedup (patch-CNA/stock)
+  1  2.726 (0.107)  2.729 (0.096)  1.001
+  2  2.656 (0.113)  2.666 (0.116)  1.004
+  4  4.147 (0.085)  4.255 (0.135)  1.026
+  8  5.388 (0.146)  6.642 (0.155)  1.233
+ 16  6.688 (0.152)  8.035 (0.162)  1.202
+ 32  7.389 (0.203)  8.751 (0.192)  1.184
+ 36  7.420 (0.179)  8.818 (0.173)  1.188
+ 72  6.489 (0.122)  9.403 (0.252)  1.449
+108  6.163 (0.078)  9.504 (0.177)  1.542
+142  5.736 (0.105)  9.371 (0.181)  1.634
+
+The following tables contain throughput results (ops/us) from the same
+setup for will-it-scale/open1_threads: 
+
+#thr  	 stock        patch-CNA   speedup (patch-CNA/stock)
+  1  0.533 (0.001)  0.534 (0.002)  1.003
+  2  0.787 (0.020)  0.801 (0.022)  1.017
+  4  1.418 (0.031)  1.421 (0.022)  1.002
+  8  1.745 (0.112)  1.736 (0.104)  0.995
+ 16  1.779 (0.104)  1.696 (0.090)  0.953
+ 32  0.923 (0.060)  1.634 (0.109)  1.771
+ 36  0.899 (0.087)  1.636 (0.108)  1.821
+ 72  0.837 (0.038)  1.615 (0.086)  1.928
+108  0.841 (0.044)  1.715 (0.087)  2.041
+142  0.802 (0.040)  1.734 (0.085)  2.163
+
+and will-it-scale/lock2_threads:
+
+#thr  	 stock        patch-CNA   speedup (patch-CNA/stock)
+  1  1.590 (0.013)  1.583 (0.010)  0.995
+  2  2.714 (0.054)  2.697 (0.051)  0.994
+  4  5.251 (0.311)  5.252 (0.217)  1.000
+  8  4.358 (0.301)  4.309 (0.305)  0.989
+ 16  4.219 (0.140)  4.161 (0.114)  0.986
+ 32  2.547 (0.117)  4.134 (0.084)  1.623
+ 36  2.560 (0.071)  4.127 (0.122)  1.612
+ 72  1.982 (0.086)  4.097 (0.106)  2.067
+108  2.114 (0.089)  4.082 (0.105)  1.930
+142  1.923 (0.100)  4.024 (0.086)  2.093
+
+Our evaluation shows that CNA also improves performance of user 
+applications that have hot pthread mutexes. Those mutexes are 
+blocking, and waiting threads park and unpark via the futex 
+mechanism in the kernel. Given that kernel futex chains, which
+are hashed by the mutex address, are each protected by a 
+chain-specific spin lock, the contention on a user-mode mutex 
+translates into contention on a kernel level spinlock. 
+
+Here are the results for the leveldb ‘readrandom’ benchmark:
+
+#thr  	 stock        patch-CNA   speedup (patch-CNA/stock)
+  1  0.533 (0.014)  0.533 (0.016)  1.001
+  2  0.667 (0.029)  0.669 (0.027)  1.003
+  4  0.699 (0.018)  0.714 (0.026)  1.021
+  8  0.692 (0.020)  0.696 (0.026)  1.005
+ 16  0.730 (0.029)  0.733 (0.027)  1.004
+ 32  0.726 (0.034)  0.978 (0.118)  1.348
+ 36  0.740 (0.042)  1.099 (0.111)  1.485
+ 72  0.671 (0.033)  1.167 (0.021)  1.739
+108  0.633 (0.017)  1.161 (0.028)  1.834
+142  0.606 (0.016)  1.144 (0.018)  1.887
+
+Additional performance numbers are available in previous revisions
+of the series.
+
+Further comments are welcome and appreciated.
+
+Alex Kogan (5):
+  locking/qspinlock: Rename mcs lock/unlock macros and make them more
+    generic
+  locking/qspinlock: Refactor the qspinlock slow path
+  locking/qspinlock: Introduce CNA into the slow path of qspinlock
+  locking/qspinlock: Introduce starvation avoidance into CNA
+  locking/qspinlock: Introduce the shuffle reduction optimization into
+    CNA
+
+ Documentation/admin-guide/kernel-parameters.txt |  18 ++
+ arch/arm/include/asm/mcs_spinlock.h             |   6 +-
+ arch/x86/Kconfig                                |  19 ++
+ arch/x86/include/asm/qspinlock.h                |   4 +
+ arch/x86/kernel/alternative.c                   |  70 ++++++
+ include/asm-generic/mcs_spinlock.h              |   4 +-
+ kernel/locking/mcs_spinlock.h                   |  20 +-
+ kernel/locking/qspinlock.c                      |  77 +++++-
+ kernel/locking/qspinlock_cna.h                  | 315 ++++++++++++++++++++++++
+ kernel/locking/qspinlock_paravirt.h             |   2 +-
+ 10 files changed, 512 insertions(+), 23 deletions(-)
+ create mode 100644 kernel/locking/qspinlock_cna.h
+
+-- 
+2.11.0 (Apple Git-81)
+
