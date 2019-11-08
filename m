@@ -2,160 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7945F508D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:06:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D559DF50AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:09:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfKHQGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 11:06:05 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:38487 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfKHQGF (ORCPT
+        id S1727720AbfKHQJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 11:09:15 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:46160 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726036AbfKHQJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 11:06:05 -0500
-Received: by mail-yb1-f196.google.com with SMTP id b11so2335437ybj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 08:06:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=pp2jWlCqJKLEk+ibjFXlnfbIxOH3q9oKQMy0Ofpc8qE=;
-        b=P9+KNuvnFxtHeZW47U9PU1hLw36tD6FBGxejakql8CpvkHWnHxaE2Hsb7Ult2eNypQ
-         GfJOBVChlOCUTlmcZG1H+puAgs5DttZdWxZliRFToxhKWccMxT/b0VI05a347WPVP9uY
-         k7uIoL08R6YWDSolqaXK0cW9gcfV0NEyYlPI/6raUnB5Wu3yOQDEuVXKPK6QQxDjte/u
-         NVLBdMqcIJgzkTG+cvIjn3mPQZoK1A6pS4Fu3joklD3YiDU64B/sUcyDfbqSe+hzpfk+
-         gTOUloLnBFdK5+BdO1A3eNjqBPcRGLwipGEtRn6GhK6iCkiDvxjT1gEVcYKAzdmzi6Q1
-         yoCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=pp2jWlCqJKLEk+ibjFXlnfbIxOH3q9oKQMy0Ofpc8qE=;
-        b=gAyK+ViZH6u+jA+iaPgpXRPkrC65inR5e5+gL2oHoJ/N6dyHW7IoSoJgweYaoN/2s2
-         QZqUhHd3p3qJtDygzFRT+Ct1EJNUKo0OVsHNg62x51bJTcO1Dqifpoe6HUF3XUoKbKTi
-         1c9KmfpX4YT6q78S47Ni/CW5EMP6Qm7oIq2wYFvnf5eLXg7OEYC3QEWIxQUSJ3RmpPKP
-         n68zeNY8YVsmKChSyfAmRiOdXgYy3xxr4gNYCANvoeCZvcUjH6eJVC0ILYJ0PFzUIRBy
-         QzXwkNdWyqkP8zRq+SmmCT377LYl5fALRXSengOPPOqmdeqBWz4UO0kE8N8Vd4mnyjdb
-         FjFg==
-X-Gm-Message-State: APjAAAVr1lVZ+6Uks7RDGtRDNb/qDugx2WaNaJ6JRpnK39KeMz7Q7VHe
-        2T4q9/DBxrnnqaGjzyPqzYGJXw==
-X-Google-Smtp-Source: APXvYqwHJn8rPwXJPMSPwZbAmzYjmDgS/hvf7KYotndLpNLBWxDPVgII5ANOE6uR/uxdy54DyxixSw==
-X-Received: by 2002:a25:c64b:: with SMTP id k72mr9417242ybf.4.1573229163819;
-        Fri, 08 Nov 2019 08:06:03 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id 138sm2987950ywr.46.2019.11.08.08.06.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 08:06:03 -0800 (PST)
-Date:   Fri, 8 Nov 2019 11:06:02 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc:     Wambui Karuga <wambui.karugax@gmail.com>,
-        Sean Paul <sean@poorly.run>, hjc@rock-chips.com,
-        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: use DRM_DEV_ERROR for log output
-Message-ID: <20191108160602.GG63329@art_vandelay>
-References: <20191107092945.15513-1-wambui.karugax@gmail.com>
- <20191107133851.GF63329@art_vandelay>
- <20191108124630.GA10207@wambui>
- <4996186.DxzAFJqeGu@diego>
+        Fri, 8 Nov 2019 11:09:14 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA8G4LnJ006738;
+        Fri, 8 Nov 2019 10:07:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=8sfSVCnGboedt/b1ZhqJ7bI2jbmOSniGz207iomPpS4=;
+ b=Wowt4+gy6hEErv+Hrv/3ESKn9QBAXk4FtrZigukHe5fLSbLoIkUkAvcXg29t5BoJX2nB
+ 6SgSxUQDIAaYndZIKvVXS8yWXNhm+2qyNj2yIIyBg5zI8DQusVOhUYm/13ITXvzw569Q
+ co+uuMb6y42zWICCo9yhVfjT5djMr2CiP7AMEBnMhVFoUq7viwkBKU9X0NEkjE7H3Lm/
+ n2TAkKcVOqLUdACAJjwrHkSPPAKB6Fc4b2fAvzzcItljtNlSToprwBp7VCvun68Iiqfr
+ +qHJ9dZUGTEJk0JHGezzGu7KfNvKkrLnt5hU80I+/g9QjHnx+EkVRFzoomWfqlsKx1mj 4A== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2w41w6udan-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 08 Nov 2019 10:07:06 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 8 Nov
+ 2019 16:07:04 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Fri, 8 Nov 2019 16:07:04 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 7C5B92A1;
+        Fri,  8 Nov 2019 16:07:04 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 16:07:04 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Michael Walle <michael@walle.cc>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: wm8904: configure sysclk/FLL automatically
+Message-ID: <20191108160704.GA10439@ediswmail.ad.cirrus.com>
+References: <20191107231548.17454-1-michael@walle.cc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4996186.DxzAFJqeGu@diego>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191107231548.17454-1-michael@walle.cc>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 impostorscore=0 bulkscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 suspectscore=0 adultscore=0 mlxlogscore=805
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911080160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 03:06:44PM +0100, Heiko Stübner wrote:
-> Hi,
+On Fri, Nov 08, 2019 at 12:15:48AM +0100, Michael Walle wrote:
+> This adds a new mode WM8904_CLK_AUTO which automatically enables the FLL
+> if a frequency different than the MCLK is set.
 > 
-> [it seems your Reply-To mail header is set strangely as
-> Reply-To: 20191107133851.GF63329@art_vandelay
-> which confuses my MTA]
+> These additions make the codec work with the simple-card driver in
+> general and especially in systems where the MCLK doesn't match the
+> requested clock.
 > 
-> Am Freitag, 8. November 2019, 13:46:30 CET schrieb Wambui Karuga:
-> > On Thu, Nov 07, 2019 at 08:38:51AM -0500, Sean Paul wrote:
-> > > On Thu, Nov 07, 2019 at 01:54:22AM -0800, Joe Perches wrote:
-> > > > On Thu, 2019-11-07 at 12:29 +0300, Wambui Karuga wrote:
-> > > > > Replace the use of the dev_err macro with the DRM_DEV_ERROR
-> > > > > DRM helper macro.
-> > > > 
-> > > > The commit message should show the reason _why_ you are doing
-> > > > this instead of just stating that you are doing this.
-> > > > 
-> > > > It's not that dev_err is uncommon in drivers/gpu/drm.
-> > > > 
-> > > 
-> > > It is uncommon (this is the sole instance) in rockchip, however. So it makes
-> > > sense to convert the dev_* prints in rockchip to DRM_DEV for consistency.
-> > > 
-> > > Wambui, could you also please convert the dev_warn instance as well?
-> > > 
-> > Hey, Sean.
-> > Trying to convert this dev_warn instance, but the corresponding DRM_WARN
-> > macro does not take the dev parameter which seems to be useful in the
-> > original output.
-> > Should I still convert it to DRM_WARN without the hdmi->dev parameter?
-> 
-> There exists DRM_DEV_ERROR, DRM_DEV_INFO and DRM_DEV_DEBUG to
-> handle actual devices. Interestingly there is no DRM_DEV_WARN though.
-> 
-> So depending on what Sean suggest another option would be to add the
-> missing DRM_DEV_WARN and then use it to replace the dev_warn.
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> ---
+> +static int wm8904_set_sysclk(struct snd_soc_dai *dai, int clk_id,
+> +			     unsigned int freq, int dir)
+> +{
+> +	struct snd_soc_component *component = dai->component;
+> +	struct wm8904_priv *priv = snd_soc_component_get_drvdata(component);
+> +	unsigned long mclk_freq;
+> +	int ret;
+> +
+> +	switch (clk_id) {
+> +	case WM8904_CLK_AUTO:
+> +		mclk_freq = clk_get_rate(priv->mclk);
+> +		/* enable FLL if a different sysclk is desired */
+> +		if (mclk_freq != freq) {
+> +			priv->sysclk_src = WM8904_CLK_FLL;
+> +			ret = wm8904_set_fll(dai, WM8904_FLL_MCLK,
+> +					     WM8904_FLL_MCLK,
+> +					     clk_get_rate(priv->mclk), freq);
 
-Yep, this sounds good to me me.
+minor nit, might as well use mclk_freq rather than calling
+clk_get_rate again, other than that though I think this looks
+good.
 
-Sean
-
-> 
-> 
-> Heiko
-> 
-> 
-> 
-> > 
-> > Thanks,
-> > wambui
-> > > I'll apply this to drm-misc-next and expand on the commit message a bit.
-> > > 
-> > > Thanks,
-> > > 
-> > > Sean
-> > > 
-> > > > $ git grep -w dev_err drivers/gpu/drm | wc -l
-> > > > 1950
-> > > > $ git grep -w DRM_DEV_ERROR drivers/gpu/drm | wc -l
-> > > > 756
-> > > > 
-> > > > > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > > > []
-> > > > > @@ -916,7 +916,7 @@ static int dw_mipi_dsi_rockchip_probe(struct platform_device *pdev)
-> > > > >  	}
-> > > > >  
-> > > > >  	if (!dsi->cdata) {
-> > > > > -		dev_err(dev, "no dsi-config for %s node\n", np->name);
-> > > > > +		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
-> > > > >  		return -EINVAL;
-> > > > >  	}
-> > > > 
-> > > > 
-> > > > 
-> > > > _______________________________________________
-> > > > dri-devel mailing list
-> > > > dri-devel@lists.freedesktop.org
-> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > 
-> > 
-> 
-> 
-> 
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Thanks,
+Charles
