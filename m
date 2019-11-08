@@ -2,93 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47E9FF5850
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:42:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77CCEF586C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfKHUQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 15:16:26 -0500
-Received: from 5.mo1.mail-out.ovh.net ([178.33.45.107]:52672 "EHLO
-        5.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfKHUQZ (ORCPT
+        id S2389308AbfKHUTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 15:19:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727041AbfKHUS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 15:16:25 -0500
-X-Greylist: delayed 25662 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Nov 2019 15:16:24 EST
-Received: from player763.ha.ovh.net (unknown [10.108.57.139])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id BCC7A196058
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2019 21:16:22 +0100 (CET)
-Received: from sk2.org (gw.sk2.org [88.186.243.14])
-        (Authenticated sender: steve@sk2.org)
-        by player763.ha.ovh.net (Postfix) with ESMTPSA id 0C47DBED04EE;
-        Fri,  8 Nov 2019 20:16:13 +0000 (UTC)
-Date:   Fri, 8 Nov 2019 21:17:54 +0100
-From:   Stephen Kitt <steve@sk2.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk/ti/adpll: allocate room for terminating null
-Message-ID: <20191108211754.430d4c52@heffalump.sk2.org>
-In-Reply-To: <20191108170026.55DA52178F@mail.kernel.org>
-References: <20191019155441.2b1b349f@heffalump.sk2.org>
-        <20191019140634.15596-1-steve@sk2.org>
-        <20191108170026.55DA52178F@mail.kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/urfJBMy9eUwjFd6M5Ta2c=G"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 14777999228607679960
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedruddvuddgudefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjqdffgfeufgfipdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgesghdtreerredtvdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekkedrudekiedrvdegfedrudegnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejieefrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+        Fri, 8 Nov 2019 15:18:57 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA8KHcr1122411;
+        Fri, 8 Nov 2019 15:18:36 -0500
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w5c2s6qur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Nov 2019 15:18:36 -0500
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xA8KGNjv029920;
+        Fri, 8 Nov 2019 20:18:35 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma04dal.us.ibm.com with ESMTP id 2w41uk2g2d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Nov 2019 20:18:35 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA8KIYW939911926
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Nov 2019 20:18:35 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF14028058;
+        Fri,  8 Nov 2019 20:18:34 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C93628059;
+        Fri,  8 Nov 2019 20:18:34 +0000 (GMT)
+Received: from talon7.ibm.com (unknown [9.41.103.158])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Nov 2019 20:18:33 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-aspeed@lists.ozlabs.org, andrew@aj.id.au, joel@jms.id.au,
+        maz@kernel.org, jason@lakedaemon.net, tglx@linutronix.de,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Subject: [PATCH 00/12] Aspeed: Add SCU interrupt controller and XDMA engine drivers
+Date:   Fri,  8 Nov 2019 14:18:21 -0600
+Message-Id: <1573244313-9190-1-git-send-email-eajames@linux.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=376 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911080195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/urfJBMy9eUwjFd6M5Ta2c=G
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series first adds a driver to control the interrupt controller provided by
+the System Control Unit (SCU) on the AST2500 and AST2600 SOCs. The interrupts
+made available are necessary for the control of the XDMA engine embedded in the
+same Aspeed SOCs.
+This series then adds a driver to control the XDMA engine. This driver was
+previously sent to the list without support for the AST2600, and has been
+refactored significantly to enable that support. The XDMA engine performs
+automatic DMA operations between the Aspeed SOC (acting as a BMC) and a host
+processor.
 
-On Fri, 08 Nov 2019 09:00:25 -0800, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Stephen Kitt (2019-10-19 07:06:34)
-> > The buffer allocated in ti_adpll_clk_get_name doesn't account for the
-> > terminating null. This patch switches to devm_kasprintf to avoid
-> > overflowing.
-> >=20
-> > Signed-off-by: Stephen Kitt <steve@sk2.org>
-> > --- =20
->=20
-> Please don't send as replies to existing threads. It screws up my
-> tooling and makes it more manual to apply the patch. I guess I'll have
-> to go fix my scripts to ignore certain emails.
+Eddie James (12):
+  dt-bindings: interrupt-controller: Add Aspeed SCU interrupt controller
+  irqchip: Add Aspeed SCU interrupt controller
+  ARM: dts: aspeed: ast2500: Add SCU interrupt controller
+  ARM: dts: aspeed: ast2600: Add SCU interrupt controllers
+  dt-bindings: soc: Add Aspeed XDMA Engine
+  drivers/soc: Add Aspeed XDMA Engine Driver
+  drivers/soc: xdma: Add user interface
+  ARM: dts: aspeed: ast2500: Add XDMA Engine
+  ARM: dts: aspeed: ast2600: Add XDMA Engine
+  ARM: dts: aspeed: witherspoon: Enable XDMA Engine
+  ARM: dts: aspeed: rainier: Enable XDMA engine
+  ARM: dts: aspeed: tacoma: Enable XDMA engine
 
-My bad, sorry about that, I misread the In-Reply-To section of
-submitting-patches :-(.
+ .../interrupt-controller/aspeed,ast2xxx-scu-ic.txt |   26 +
+ .../devicetree/bindings/soc/aspeed/xdma.txt        |   24 +
+ MAINTAINERS                                        |   16 +
+ arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts       |    4 +
+ arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts        |    4 +
+ arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts   |    4 +
+ arch/arm/boot/dts/aspeed-g5.dtsi                   |   21 +-
+ arch/arm/boot/dts/aspeed-g6.dtsi                   |   29 +
+ drivers/irqchip/Makefile                           |    2 +-
+ drivers/irqchip/irq-aspeed-scu-ic.c                |  233 +++++
+ drivers/soc/aspeed/Kconfig                         |    8 +
+ drivers/soc/aspeed/Makefile                        |    1 +
+ drivers/soc/aspeed/aspeed-xdma.c                   | 1079 ++++++++++++++++++++
+ .../interrupt-controller/aspeed-scu-ic.h           |   23 +
+ include/uapi/linux/aspeed-xdma.h                   |   49 +
+ 15 files changed, 1521 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2xxx-scu-ic.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+ create mode 100644 drivers/irqchip/irq-aspeed-scu-ic.c
+ create mode 100644 drivers/soc/aspeed/aspeed-xdma.c
+ create mode 100644 include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
+ create mode 100644 include/uapi/linux/aspeed-xdma.h
 
-Regards,
+-- 
+1.8.3.1
 
-Stephen
-
---Sig_/urfJBMy9eUwjFd6M5Ta2c=G
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl3FzXIACgkQgNMC9Yht
-g5yOAhAAnGdI2emqN4a/GrokLIb57cKV63Y80R0avBz7ROKWLNIDr4LaZ9cB64Yw
-7cZCVIuMbrQHY/nPkVMZEi9Ay3d/BwxDeNOEpstOd5sgPcw89uJbQ7q/+INR6lt7
-REXx/NP4DTgkL+XIymdUPY0D5W7NvszWJy5XRE/UKCQZB/aPxolR+rFH23+wESdg
-P0NfyarVlcSfdjBBh5f+/BzWTpYvokzQEbq1CrIMgHKZrXKy4+Up7uXyiMNrlXUG
-uBcc1XrJFH80f/tRcldSsoaNBjnqtBljCfoXstvpEMs/sG6NCvOcxPH/fHfu4JLi
-9B0/C32B4vOdIzL+yHdXFBYZHq33eRjc3j9+Yj7gGKpRqHji3sDL+XDjbSvZxbf9
-adQ40ZQJvj/e1VDmjqT18pl8RSZnVGqGzXvVQ5WVkKvdIsHEHSlYKHmqmRwvwIMT
-jD5B2zH8lkKQwQMMT0URBSVw9uKyE0QzOWfIKvO+ZpDuE+LptBl7G5KGT0019oh3
-3pGYYype7J5XIs5dF0I7xVTsogwFR7X/fMK2N7yLefJbthPo1bbCx4akl5kIaXG7
-/aVU0RcZzX9ta5dJ6sE+KlWP9OaRo2MoTQmSfxfnWgLP9Bk99UgltFQk+FILXiHG
-+1JRD4bnI5BKUmshBpJ9Rk9h7QTYrJBmn6ed7FRxlwP0piEkFgQ=
-=ZIn8
------END PGP SIGNATURE-----
-
---Sig_/urfJBMy9eUwjFd6M5Ta2c=G--
