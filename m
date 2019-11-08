@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39235F4978
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A14F496E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390129AbfKHLmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:42:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56734 "EHLO mail.kernel.org"
+        id S2388024AbfKHLmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:42:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390074AbfKHLmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:42:38 -0500
+        id S2390101AbfKHLml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90526222C6;
-        Fri,  8 Nov 2019 11:42:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24867222C4;
+        Fri,  8 Nov 2019 11:42:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213358;
-        bh=iqogOG83UqGQrex91E6FXlk3qi2tYosf4jEpV0kVbUk=;
+        s=default; t=1573213360;
+        bh=n5yr41YAv3AwtUDx9GH1S0juy9nxJL2b9z1AYymp6yU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S/FYyXYmzYZvK4H0GH1Z+jQZ9dQCfMeSlaMLfcUCcVqeD9og2WSAj+J2/bYcUqzfi
-         VprdgGrp5RAJoUYNGb9EAwO8OcYR9CwGqIvWAGoaZJnDltX9N8QStHdD6JErqmlS2O
-         6b1AemCPIoZ0GzbGU6xz4/E1QLeprGMCPrv/357g=
+        b=on382SVEvUA6NovKoHdFLBk4E6fHNg/t0xORFKLEkv5zJTuLJK1nw3mgVuh6iprZn
+         M4k++La/H9UI3R7RnFVlzq/tpfHGo7zmrwF3Fa/m2mA1pPdWHrg3f5RkXvn41kzUBE
+         n9ppGuLF5bURojgnuZXtc5BjjaqKF65OOJE6JUBw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ganesh Goudar <ganeshgr@chelsio.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 188/205] cxgb4: Fix endianness issue in t4_fwcache()
-Date:   Fri,  8 Nov 2019 06:37:35 -0500
-Message-Id: <20191108113752.12502-188-sashal@kernel.org>
+Cc:     Hari Vyas <hari.vyas@broadcom.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 189/205] arm64: fix for bad_mode() handler to always result in panic
+Date:   Fri,  8 Nov 2019 06:37:36 -0500
+Message-Id: <20191108113752.12502-189-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,32 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ganesh Goudar <ganeshgr@chelsio.com>
+From: Hari Vyas <hari.vyas@broadcom.com>
 
-[ Upstream commit 0dc235afc59a226d951352b0adf4a89b532a9d13 ]
+[ Upstream commit e4ba15debcfd27f60d43da940a58108783bff2a6 ]
 
-Do not put host-endian 0 or 1 into big endian feild.
+The bad_mode() handler is called if we encounter an uunknown exception,
+with the expectation that the subsequent call to panic() will halt the
+system. Unfortunately, if the exception calling bad_mode() is taken from
+EL0, then the call to die() can end up killing the current user task and
+calling schedule() instead of falling through to panic().
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Remove the die() call altogether, since we really want to bring down the
+machine in this "impossible" case.
+
+Signed-off-by: Hari Vyas <hari.vyas@broadcom.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/traps.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-index 5fe5d16dee724..8350c0c9b89d1 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -3889,7 +3889,7 @@ int t4_fwcache(struct adapter *adap, enum fw_params_param_dev_fwcache op)
- 	c.param[0].mnem =
- 		cpu_to_be32(FW_PARAMS_MNEM_V(FW_PARAMS_MNEM_DEV) |
- 			    FW_PARAMS_PARAM_X_V(FW_PARAMS_PARAM_DEV_FWCACHE));
--	c.param[0].val = (__force __be32)op;
-+	c.param[0].val = cpu_to_be32(op);
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index a0099be4311ae..c8dc3a3640e7e 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -611,7 +611,6 @@ asmlinkage void bad_mode(struct pt_regs *regs, int reason, unsigned int esr)
+ 		handler[reason], smp_processor_id(), esr,
+ 		esr_get_class_string(esr));
  
- 	return t4_wr_mbox(adap, adap->mbox, &c, sizeof(c), NULL);
+-	die("Oops - bad mode", regs, 0);
+ 	local_daif_mask();
+ 	panic("bad mode");
  }
 -- 
 2.20.1
