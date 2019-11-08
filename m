@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 905D1F5542
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA475F5697
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733175AbfKHTBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58508 "EHLO mail.kernel.org"
+        id S2391794AbfKHTJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733084AbfKHTBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:11 -0500
+        id S2390768AbfKHTJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C9FC21D7B;
-        Fri,  8 Nov 2019 19:01:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CE2D21D7B;
+        Fri,  8 Nov 2019 19:09:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239670;
-        bh=9CtT65Z849232WiDVbFzdI/KWnr+z2wOnr7nMlIbsiA=;
+        s=default; t=1573240180;
+        bh=f4/C8FYZEaey0z2GGEk3DtDShdAB6VYvCKi89Fn4O30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MfLZ174tYgXWPotyao2TBWUcsnaMldOwOLGBeTzTCXqi+HGsfUZx4X/weYYCPBANl
-         3l7ZXPeAZpTooNS6xbo1Q3iyZxED3Wp7Q9CA9aORMhbcWetBBvz6a0Wo2tindHWMGt
-         2oFWghjBsa+/QXK9Dsh+t/5Cj5tMOO/uNfjBFZ5Y=
+        b=MTlpJgbjtOsFnn3/uMUxkpoIGeIWp/bccNjii+008L2nK9I5HN11SjZyiuFxvlRSu
+         GjyfSDDeC1tjp6bwW4hvIUOEgEOF75BFbeB/dtU6pORjirmWqwVN088t9wqOUV2OcK
+         cX6YsjFIO7Fk5cZ/sxfiubWulM8mvkvgY39jaU6k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Michael Moese <mmoese@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/79] 8250-men-mcb: fix error checking when get_num_ports returns -ENODEV
-Date:   Fri,  8 Nov 2019 19:50:01 +0100
-Message-Id: <20191108174756.985647000@linuxfoundation.org>
+        stable@vger.kernel.org, Alain Volmat <alain.volmat@st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 074/140] i2c: stm32f7: remove warning when compiling with W=1
+Date:   Fri,  8 Nov 2019 19:50:02 +0100
+Message-Id: <20191108174909.789503405@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Alain Volmat <alain.volmat@st.com>
 
-[ Upstream commit f50b6805dbb993152025ec04dea094c40cc93a0c ]
+[ Upstream commit 348e46fbb4cdb2aead79aee1fd8bb25ec5fd25db ]
 
-The current checking for failure on the number of ports fails when
--ENODEV is returned from the call to get_num_ports. Fix this by making
-num_ports and loop counter i signed rather than unsigned ints. Also
-add check for num_ports being less than zero to check for -ve error
-returns.
+Remove the following warning:
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: e2fea54e4592 ("8250-men-mcb: add support for 16z025 and 16z057")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Michael Moese <mmoese@suse.de>
-Link: https://lore.kernel.org/r/20191013220016.9369-1-colin.king@canonical.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+drivers/i2c/busses/i2c-stm32f7.c:315:
+warning: cannot understand function prototype:
+'struct stm32f7_i2c_spec i2c_specs[] =
+
+Replace a comment starting with /** by simply /* to avoid having
+it interpreted as a kernel-doc comment.
+
+Fixes: aeb068c57214 ("i2c: i2c-stm32f7: add driver")
+Signed-off-by: Alain Volmat <alain.volmat@st.com>
+Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/8250/8250_men_mcb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-stm32f7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/8250/8250_men_mcb.c b/drivers/tty/serial/8250/8250_men_mcb.c
-index 127017cc41d92..057b1eaf6d2eb 100644
---- a/drivers/tty/serial/8250/8250_men_mcb.c
-+++ b/drivers/tty/serial/8250/8250_men_mcb.c
-@@ -71,8 +71,8 @@ static int serial_8250_men_mcb_probe(struct mcb_device *mdev,
- {
- 	struct serial_8250_men_mcb_data *data;
- 	struct resource *mem;
--	unsigned int num_ports;
--	unsigned int i;
-+	int num_ports;
-+	int i;
- 	void __iomem *membase;
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 82705deef7bff..1fac7344ae9c2 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -305,7 +305,7 @@ struct stm32f7_i2c_dev {
+ 	struct regmap *regmap;
+ };
  
- 	mem = mcb_get_resource(mdev, IORESOURCE_MEM);
-@@ -87,7 +87,7 @@ static int serial_8250_men_mcb_probe(struct mcb_device *mdev,
- 	dev_dbg(&mdev->dev, "found a 16z%03u with %u ports\n",
- 		mdev->id, num_ports);
- 
--	if (num_ports == 0 || num_ports > 4) {
-+	if (num_ports <= 0 || num_ports > 4) {
- 		dev_err(&mdev->dev, "unexpected number of ports: %u\n",
- 			num_ports);
- 		return -ENODEV;
-@@ -132,7 +132,7 @@ static int serial_8250_men_mcb_probe(struct mcb_device *mdev,
- 
- static void serial_8250_men_mcb_remove(struct mcb_device *mdev)
- {
--	unsigned int num_ports, i;
-+	int num_ports, i;
- 	struct serial_8250_men_mcb_data *data = mcb_get_drvdata(mdev);
- 
- 	if (!data)
+-/**
++/*
+  * All these values are coming from I2C Specification, Version 6.0, 4th of
+  * April 2014.
+  *
 -- 
 2.20.1
 
