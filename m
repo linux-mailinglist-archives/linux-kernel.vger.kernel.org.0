@@ -2,199 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C955EF3C93
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 01:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F44F3C9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 01:13:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbfKHAIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 19:08:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41234 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfKHAIl (ORCPT
+        id S1727895AbfKHANx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 7 Nov 2019 19:13:53 -0500
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:42517 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfKHANx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 19:08:41 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 94so3666855oty.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 16:08:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CdRcgdPPcTDb9iILEnie34cS22AyZ+s0MuyZNLTIdPc=;
-        b=OMiV97rFdjjolJL7K+mFvRE2r5QNvRPWhZ9yBFxn9cSIfsJT3iKtXkIZ/NZ36mb6wp
-         vEIGwZv+Txfb3eoLv1sly/OCoilMgsv6oKbGWeItyhYfWMH5VuklLuhu672xrykES2MY
-         1ptQ6+IU9sbP0ETaS6ZwBxODhRviDidckAT7U6b29eDdbBsIrETpAM3XhJR7LxgD7WLN
-         UCUlBl+rZ7vUCzCgNEK37pmG8mONVJA/gkj1fpXsXrdbGh5svzQNakDK+1W3X+K/qcg/
-         Ujk60pEKuDdYuvw/Jso8Lzn7uXW3/Y0I+qVE73Q8W/fsvurb9M0ZKNuRzVmhjL7YtadB
-         k9+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CdRcgdPPcTDb9iILEnie34cS22AyZ+s0MuyZNLTIdPc=;
-        b=UXwxuD67j9GNP9Xqg229rF6hsLYSUBwSw2I4A9VG+FDgLojt/LA/nK8DAuDsAwr4pX
-         ZZIzvWEnmeC60g0MB9Q3kETLhB+sk8R3eapDvO4vaM6JoRJffQk2dm9kVkxMf1Upk6sn
-         93oWDyXQWeoVnhlQdgpZL0yeL6ar+OGsS33SsH+q3ow69xjPcO3uu26O2AHQiEtRbFet
-         aaj9Xbl4bUy3plDUVepxkWLGEBEOebnoxiVdEIzBMu90EJwHWdg6TA9WgcWSFB+X2/YA
-         uAIryfQQ9J0RcbhzNieLHhaoT5k9YzHOpuNHNY1pNPyRY4ynGvtb02Lxc9x+jTrHOvsq
-         MJ4w==
-X-Gm-Message-State: APjAAAVdmEMZp+Ai17KE1jFvg3P8DxtzhSs9xsiwlTgBph1FHkDWbHlb
-        fENv8CFf1kK998aqs5MbQdj4q2bIY4sTtfkX5WedDw==
-X-Google-Smtp-Source: APXvYqx0/HLtAvC80DJKdIL3Q5or5GXelew6sVCxuc0Un2WE8IFieq2+Jke4vEpVdBn6zIYda4lypuSdXr1EZPhn58U=
-X-Received: by 2002:a05:6830:1d4c:: with SMTP id p12mr4607913oth.139.1573171719519;
- Thu, 07 Nov 2019 16:08:39 -0800 (PST)
+        Thu, 7 Nov 2019 19:13:53 -0500
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id xA80DOxs031459
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 8 Nov 2019 09:13:24 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id xA80DOoY004514;
+        Fri, 8 Nov 2019 09:13:24 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id xA80CqkT012936;
+        Fri, 8 Nov 2019 09:13:24 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-10172961; Fri, 8 Nov 2019 09:08:04 +0900
+Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Fri, 8
+ Nov 2019 09:08:03 +0900
+From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+To:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "longman@redhat.com" <longman@redhat.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mst@redhat.com" <mst@redhat.com>, "cai@lca.pw" <cai@lca.pw>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>
+Subject: [PATCH 0/3] make pfn walker support ZONE_DEVICE
+Thread-Topic: [PATCH 0/3] make pfn walker support ZONE_DEVICE
+Thread-Index: AQHVlciWlfuQn46br0aHiPqwVpeT6w==
+Date:   Fri, 8 Nov 2019 00:08:03 +0000
+Message-ID: <20191108000855.25209-1-t-fukasawa@vx.jp.nec.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.135]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20191028220027.251605-1-saravanak@google.com> <1593797.btdyhENphq@kreacher>
- <CAGETcx9KSwXgrc0PaWQtBuiET-0ts9HNgjzRcioewjqzjuQGSg@mail.gmail.com> <2876287.EbKXPN90gv@kreacher>
-In-Reply-To: <2876287.EbKXPN90gv@kreacher>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 7 Nov 2019 16:08:02 -0800
-Message-ID: <CAGETcx9_NpmmeLH8XCECYfMxPzoXnE+g6MqPOL2CF1N9wHrf_w@mail.gmail.com>
-Subject: Re: [PATCH v1 2/5] driver core: Allow a device to wait on optional suppliers
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 4:05 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Tuesday, November 5, 2019 11:35:28 PM CET Saravana Kannan wrote:
-> > Looks like I squashed/rebased a bit incorrectly. It's fixed in the
-> > next patch in the series.
->
-> Well, that still is somewhat bisection-unfriendly.
+This patch set tries to make pfn walker support ZONE_DEVICE.
+This idea is from the TODO in below patch:
 
-Agreed. I was just answering why it compiled fine. Sorry about the
-screw up. Any sorry about the accidental top posting last time.
+  commit aad5f69bc161af489dbb5934868bd347282f0764
+  Author: David Hildenbrand <david@redhat.com>
+  Date:   Fri Oct 18 20:19:20 2019 -0700
 
--Saravana
+	fs/proc/page.c: don't access uninitialized memmaps in fs/proc/page.c
 
->
->
-> > On Tue, Nov 5, 2019 at 2:29 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > >
-> > > On Monday, October 28, 2019 11:00:23 PM CET Saravana Kannan wrote:
-> > > > Before this change, if a device is waiting on suppliers, it's assumed
-> > > > that all those suppliers are needed for the device to probe
-> > > > successfully. This change allows marking a devices as waiting only on
-> > > > optional suppliers. This allows a device to wait on suppliers (and link
-> > > > to them as soon as they are available) without preventing the device
-> > > > from being probed.
-> > > >
-> > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > > ---
-> > > >  drivers/base/core.c    | 28 +++++++++++++++++++++++++---
-> > > >  include/linux/device.h |  3 +++
-> > > >  2 files changed, 28 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > > index 17ed054c4132..48cd43a91ce6 100644
-> > > > --- a/drivers/base/core.c
-> > > > +++ b/drivers/base/core.c
-> > > > @@ -480,13 +480,25 @@ EXPORT_SYMBOL_GPL(device_link_add);
-> > > >   * This function is NOT meant to be called from the probe function of the
-> > > >   * consumer but rather from code that creates/adds the consumer device.
-> > > >   */
-> > > > -static void device_link_wait_for_supplier(struct device *consumer)
-> > > > +static void device_link_wait_for_supplier(struct device *consumer,
-> > > > +                                       bool need_for_probe)
-> > > >  {
-> > > >       mutex_lock(&wfs_lock);
-> > > >       list_add_tail(&consumer->links.needs_suppliers, &wait_for_suppliers);
-> > > > +     consumer->links.need_for_probe = need_for_probe;
-> > > >       mutex_unlock(&wfs_lock);
-> > > >  }
-> > > >
-> > > > +static void device_link_wait_for_mandatory_supplier(struct device *consumer)
-> > > > +{
-> > > > +     device_link_wait_for_supplier(consumer, true);
-> > > > +}
-> > > > +
-> > > > +static void device_link_wait_for_optional_supplier(struct device *consumer)
-> > > > +{
-> > > > +     device_link_wait_for_supplier(consumer, false);
-> > > > +}
-> > > > +
-> > > >  /**
-> > > >   * device_link_add_missing_supplier_links - Add links from consumer devices to
-> > > >   *                                       supplier devices, leaving any
-> > > > @@ -656,7 +668,8 @@ int device_links_check_suppliers(struct device *dev)
-> > > >        * probe.
-> > > >        */
-> > > >       mutex_lock(&wfs_lock);
-> > > > -     if (!list_empty(&dev->links.needs_suppliers)) {
-> > > > +     if (!list_empty(&dev->links.needs_suppliers) &&
-> > > > +         dev->links.need_for_probe) {
-> > > >               mutex_unlock(&wfs_lock);
-> > > >               return -EPROBE_DEFER;
-> > > >       }
-> > > > @@ -760,6 +773,15 @@ void device_links_driver_bound(struct device *dev)
-> > > >  {
-> > > >       struct device_link *link;
-> > > >
-> > > > +     /*
-> > > > +      * If a device probes successfully, it's expected to have created all
-> > > > +      * the device links it needs to or make new device links as it needs
-> > > > +      * them. So, it no longer needs to wait on any suppliers.
-> > > > +      */
-> > > > +     mutex_lock(&wfs_lock);
-> > > > +     list_del_init(&dev->links.needs_suppliers);
-> > > > +     mutex_unlock(&wfs_lock);
-> > > > +
-> > > >       device_links_write_lock();
-> > > >
-> > > >       list_for_each_entry(link, &dev->links.consumers, s_node) {
-> > > > @@ -2393,7 +2415,7 @@ int device_add(struct device *dev)
-> > > >
-> > > >       if (fwnode_has_op(dev->fwnode, add_links)
-> > > >           && fwnode_call_int_op(dev->fwnode, add_links, dev))
-> > > > -             device_link_wait_for_supplier(dev);
-> > > > +             device_link_wait_for_mandatory_supplier(dev, true);
-> > >
-> > > Does this compile even?
-> > >
-> > > The function takes one argument according to the definition above ...
-> > >
-> > > >       bus_probe_device(dev);
-> > > >       if (parent)
-> > > > diff --git a/include/linux/device.h b/include/linux/device.h
-> > > > index f1f2aa0b19da..4fd33da9a848 100644
-> > > > --- a/include/linux/device.h
-> > > > +++ b/include/linux/device.h
-> > > > @@ -1156,6 +1156,8 @@ enum dl_dev_state {
-> > > >   * @consumers: List of links to consumer devices.
-> > > >   * @needs_suppliers: Hook to global list of devices waiting for suppliers.
-> > > >   * @defer_sync: Hook to global list of devices that have deferred sync_state.
-> > > > + * @need_for_probe: If needs_suppliers is on a list, this indicates if the
-> > > > + *               suppliers are needed for probe or not.
-> > > >   * @status: Driver status information.
-> > > >   */
-> > > >  struct dev_links_info {
-> > > > @@ -1163,6 +1165,7 @@ struct dev_links_info {
-> > > >       struct list_head consumers;
-> > > >       struct list_head needs_suppliers;
-> > > >       struct list_head defer_sync;
-> > > > +     bool need_for_probe;
-> > > >       enum dl_dev_state status;
-> > > >  };
-> > > >
-> > > >
-> > >
-> > >
-> > >
-> > >
-> >
->
->
->
->
+pfn walker's ZONE_DEVICE support requires capability to identify
+that a memmap has been initialized. The uninitialized cases are 
+as follows:
+
+	a) pages reserved for ZONE_DEVICE driver
+	b) pages currently initializing
+
+This patch set solves both of them.
+
+Toshiki Fukasawa (3):
+  procfs: refactor kpage_*_read() in fs/proc/page.c
+  mm: Introduce subsection_dev_map
+  mm: make pfn walker support ZONE_DEVICE
+
+ fs/proc/page.c           | 155 ++++++++++++++++++++---------------------------
+ include/linux/memremap.h |   6 ++
+ include/linux/mmzone.h   |  19 ++++++
+ mm/memremap.c            |  31 ++++++++++
+ mm/sparse.c              |  32 ++++++++++
+ 5 files changed, 154 insertions(+), 89 deletions(-)
+
+-- 
+1.8.3.1
+
