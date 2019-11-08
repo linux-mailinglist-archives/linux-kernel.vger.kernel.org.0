@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9EEDF55ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDE40F54C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388554AbfKHTFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:05:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35828 "EHLO mail.kernel.org"
+        id S1732540AbfKHSxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:53:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732624AbfKHTFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:05:39 -0500
+        id S1732497AbfKHSxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:53:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B4A02246A;
-        Fri,  8 Nov 2019 19:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88987218AE;
+        Fri,  8 Nov 2019 18:53:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239938;
-        bh=U5zIGPVaSuzAqr8ufcPnmP0+ajgRqoGj3o+Tmjvj4O0=;
+        s=default; t=1573239217;
+        bh=0bQe948ftx6P4hbTLJm624vlLfbcA0R1ysh4srYT92c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aUexDv57pcLwCahhFomht4RN6w56FePCIYq2Kls3WNX9PKWKgbLZmfJnN8NPeMD3i
-         BvUWIuiKnOv81jIgbAbYa3c2eti0kpA2i8lhRnGmy8XL1wqarAVsfnd8RTBLz8/BmN
-         yrZ7Kv/Um3JhqvhFFI36s4rZEuFDU3gucXcCVN64=
+        b=Ae/QLM+9d39Tx6I3uDaoBuI97gUHNmcGp2P9n78jU0YMqb41nU62MFk+m80uOi8Nh
+         7733JVnZ00bTyGCg3EEdmfI0fQmfsJp+D0vhjbMpP9oMqRKs9056Y2zjUZ/x6hjRAa
+         31UM23pvgRFgoOg9gfQmTb1gcwLN6on0dhT0bURA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jing Xiangfeng <jingxiangfeng@huawei.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 034/140] ARM: mm: fix alignment handler faults under memory pressure
-Date:   Fri,  8 Nov 2019 19:49:22 +0100
-Message-Id: <20191108174906.684219403@linuxfoundation.org>
+Subject: [PATCH 4.4 06/75] ARM: mm: fix alignment handler faults under memory pressure
+Date:   Fri,  8 Nov 2019 19:49:23 +0100
+Message-Id: <20191108174713.215864380@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
+References: <20191108174708.135680837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,7 +64,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 36 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
-index 04b36436cbc04..6587432faf057 100644
+index 7d5f4c736a16b..cd18eda014c24 100644
 --- a/arch/arm/mm/alignment.c
 +++ b/arch/arm/mm/alignment.c
 @@ -767,6 +767,36 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
