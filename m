@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F22CF5402
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF07F5404
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732263AbfKHSxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:53:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49774 "EHLO mail.kernel.org"
+        id S1732332AbfKHSx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:53:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732214AbfKHSxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:53:14 -0500
+        id S1732293AbfKHSxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:53:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CFBC218AE;
-        Fri,  8 Nov 2019 18:53:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BE5E21924;
+        Fri,  8 Nov 2019 18:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239193;
-        bh=QZ2jyt3SRLfbIIjDA/HUNbUH1RX8jRWFn0badbzU2h4=;
+        s=default; t=1573239202;
+        bh=uzsmDvzuczXlA0AHuxY816KKdpnievb3gfSuNS9tpm8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j4rPfC0tsH8OI3ga81lEAfXn1ETWjxH+CxvUxHebOVjOMzeAUUnoOCL/jG/AeMa5q
-         v3cCoVPDKTlM1Xk4uZq8IrVIHuHR3QIQzElTpm1WKQ5zKIAk32i7q16NQRgYTurm5B
-         4cUA9RcrIJlA6c1QA+ENMfhGyuIOyz5J1hBuP1so=
+        b=QFpJYXS9OzobqDbti3T9sPaW3iuKT1/kRG3gXv27CR1uHd5YVq2xZIYvgyrjUqDk3
+         B1HjTewpBfKPcFnhYsPRuC3KNp3/mXVUkzEo+DkWkAr8/9sJLSYiqp0/hvN4b8d5DL
+         NlqyrCc7p20PXXsyb/MGKcGCKFbf+vxE1tMYqUb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 30/75] ARM: Move system register accessors to asm/cp15.h
-Date:   Fri,  8 Nov 2019 19:49:47 +0100
-Message-Id: <20191108174738.619206816@linuxfoundation.org>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.4 33/75] firmware/psci: Expose PSCI conduit
+Date:   Fri,  8 Nov 2019 19:49:50 +0100
+Message-Id: <20191108174742.289495161@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
 References: <20191108174708.135680837@linuxfoundation.org>
@@ -46,140 +49,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Murzin <vladimir.murzin@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-Commit 4f2546384150e78cad8045e59a9587fabcd9f9fe upstream.
+commit 09a8d6d48499f93e2abde691f5800081cd858726 upstream.
 
-Headers linux/irqchip/arm-gic.v3.h and arch/arm/include/asm/kvm_hyp.h
-are included in virt/kvm/arm/hyp/vgic-v3-sr.c and both define macros
-called __ACCESS_CP15 and __ACCESS_CP15_64 which obviously creates a
-conflict. These macros were introduced independently for GIC and KVM
-and, in fact, do the same thing.
+In order to call into the firmware to apply workarounds, it is
+useful to find out whether we're using HVC or SMC. Let's expose
+this through the psci_ops.
 
-As an option we could add prefixes to KVM and GIC version of macros so
-they won't clash, but it'd introduce code duplication.  Alternatively,
-we could keep macro in, say, GIC header and include it in KVM one (or
-vice versa), but such dependency would not look nicer.
-
-So we follow arm64 way (it handles this via sysreg.h) and move only
-single set of macros to asm/cp15.h
-
-Cc: Russell King <rmk+kernel@armlinux.org.uk>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
-Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Tested-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/arch_gicv3.h |   27 +++++++++++----------------
- arch/arm/include/asm/cp15.h       |   15 +++++++++++++++
- 2 files changed, 26 insertions(+), 16 deletions(-)
+ drivers/firmware/psci.c |   28 +++++++++++++++++++++++-----
+ include/linux/psci.h    |    7 +++++++
+ 2 files changed, 30 insertions(+), 5 deletions(-)
 
---- a/arch/arm/include/asm/arch_gicv3.h
-+++ b/arch/arm/include/asm/arch_gicv3.h
-@@ -22,9 +22,7 @@
- 
- #include <linux/io.h>
- #include <asm/barrier.h>
--
--#define __ACCESS_CP15(CRn, Op1, CRm, Op2)	p15, Op1, %0, CRn, CRm, Op2
--#define __ACCESS_CP15_64(Op1, CRm)		p15, Op1, %Q0, %R0, CRm
-+#include <asm/cp15.h>
- 
- #define ICC_EOIR1			__ACCESS_CP15(c12, 0, c12, 1)
- #define ICC_DIR				__ACCESS_CP15(c12, 0, c11, 1)
-@@ -102,58 +100,55 @@
- 
- static inline void gic_write_eoir(u32 irq)
- {
--	asm volatile("mcr " __stringify(ICC_EOIR1) : : "r" (irq));
-+	write_sysreg(irq, ICC_EOIR1);
- 	isb();
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -55,7 +55,9 @@ bool psci_tos_resident_on(int cpu)
+ 	return cpu == resident_cpu;
  }
  
- static inline void gic_write_dir(u32 val)
- {
--	asm volatile("mcr " __stringify(ICC_DIR) : : "r" (val));
-+	write_sysreg(val, ICC_DIR);
- 	isb();
+-struct psci_operations psci_ops;
++struct psci_operations psci_ops = {
++	.conduit = PSCI_CONDUIT_NONE,
++};
+ 
+ typedef unsigned long (psci_fn)(unsigned long, unsigned long,
+ 				unsigned long, unsigned long);
+@@ -206,6 +208,22 @@ static unsigned long psci_migrate_info_u
+ 			      0, 0, 0);
  }
  
- static inline u32 gic_read_iar(void)
- {
--	u32 irqstat;
-+	u32 irqstat = read_sysreg(ICC_IAR1);
- 
--	asm volatile("mrc " __stringify(ICC_IAR1) : "=r" (irqstat));
- 	dsb(sy);
++static void set_conduit(enum psci_conduit conduit)
++{
++	switch (conduit) {
++	case PSCI_CONDUIT_HVC:
++		invoke_psci_fn = __invoke_psci_fn_hvc;
++		break;
++	case PSCI_CONDUIT_SMC:
++		invoke_psci_fn = __invoke_psci_fn_smc;
++		break;
++	default:
++		WARN(1, "Unexpected PSCI conduit %d\n", conduit);
++	}
 +
- 	return irqstat;
- }
- 
- static inline void gic_write_pmr(u32 val)
- {
--	asm volatile("mcr " __stringify(ICC_PMR) : : "r" (val));
-+	write_sysreg(val, ICC_PMR);
- }
- 
- static inline void gic_write_ctlr(u32 val)
- {
--	asm volatile("mcr " __stringify(ICC_CTLR) : : "r" (val));
-+	write_sysreg(val, ICC_CTLR);
- 	isb();
- }
- 
- static inline void gic_write_grpen1(u32 val)
- {
--	asm volatile("mcr " __stringify(ICC_IGRPEN1) : : "r" (val));
-+	write_sysreg(val, ICC_IGRPEN1);
- 	isb();
- }
- 
- static inline void gic_write_sgi1r(u64 val)
- {
--	asm volatile("mcrr " __stringify(ICC_SGI1R) : : "r" (val));
-+	write_sysreg(val, ICC_SGI1R);
- }
- 
- static inline u32 gic_read_sre(void)
- {
--	u32 val;
--
--	asm volatile("mrc " __stringify(ICC_SRE) : "=r" (val));
--	return val;
-+	return read_sysreg(ICC_SRE);
- }
- 
- static inline void gic_write_sre(u32 val)
- {
--	asm volatile("mcr " __stringify(ICC_SRE) : : "r" (val));
-+	write_sysreg(val, ICC_SRE);
- 	isb();
- }
- 
---- a/arch/arm/include/asm/cp15.h
-+++ b/arch/arm/include/asm/cp15.h
-@@ -49,6 +49,21 @@
- 
- #ifdef CONFIG_CPU_CP15
- 
-+#define __ACCESS_CP15(CRn, Op1, CRm, Op2)	\
-+	"mrc", "mcr", __stringify(p15, Op1, %0, CRn, CRm, Op2), u32
-+#define __ACCESS_CP15_64(Op1, CRm)		\
-+	"mrrc", "mcrr", __stringify(p15, Op1, %Q0, %R0, CRm), u64
++	psci_ops.conduit = conduit;
++}
 +
-+#define __read_sysreg(r, w, c, t) ({				\
-+	t __val;						\
-+	asm volatile(r " " c : "=r" (__val));			\
-+	__val;							\
-+})
-+#define read_sysreg(...)		__read_sysreg(__VA_ARGS__)
-+
-+#define __write_sysreg(v, r, w, c, t)	asm volatile(w " " c : : "r" ((t)(v)))
-+#define write_sysreg(v, ...)		__write_sysreg(v, __VA_ARGS__)
-+
- extern unsigned long cr_alignment;	/* defined in entry-armv.S */
+ static int get_set_conduit_method(struct device_node *np)
+ {
+ 	const char *method;
+@@ -218,9 +236,9 @@ static int get_set_conduit_method(struct
+ 	}
  
- static inline unsigned long get_cr(void)
+ 	if (!strcmp("hvc", method)) {
+-		invoke_psci_fn = __invoke_psci_fn_hvc;
++		set_conduit(PSCI_CONDUIT_HVC);
+ 	} else if (!strcmp("smc", method)) {
+-		invoke_psci_fn = __invoke_psci_fn_smc;
++		set_conduit(PSCI_CONDUIT_SMC);
+ 	} else {
+ 		pr_warn("invalid \"method\" property: %s\n", method);
+ 		return -EINVAL;
+@@ -480,9 +498,9 @@ int __init psci_acpi_init(void)
+ 	pr_info("probing for conduit method from ACPI.\n");
+ 
+ 	if (acpi_psci_use_hvc())
+-		invoke_psci_fn = __invoke_psci_fn_hvc;
++		set_conduit(PSCI_CONDUIT_HVC);
+ 	else
+-		invoke_psci_fn = __invoke_psci_fn_smc;
++		set_conduit(PSCI_CONDUIT_SMC);
+ 
+ 	return psci_probe();
+ }
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -24,6 +24,12 @@ bool psci_tos_resident_on(int cpu);
+ bool psci_power_state_loses_context(u32 state);
+ bool psci_power_state_is_valid(u32 state);
+ 
++enum psci_conduit {
++	PSCI_CONDUIT_NONE,
++	PSCI_CONDUIT_SMC,
++	PSCI_CONDUIT_HVC,
++};
++
+ struct psci_operations {
+ 	int (*cpu_suspend)(u32 state, unsigned long entry_point);
+ 	int (*cpu_off)(u32 state);
+@@ -32,6 +38,7 @@ struct psci_operations {
+ 	int (*affinity_info)(unsigned long target_affinity,
+ 			unsigned long lowest_affinity_level);
+ 	int (*migrate_info_type)(void);
++	enum psci_conduit conduit;
+ };
+ 
+ extern struct psci_operations psci_ops;
 
 
