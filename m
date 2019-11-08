@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9B2BF5515
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D62FF5678
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389604AbfKHTAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:00:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57238 "EHLO mail.kernel.org"
+        id S2391733AbfKHTJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389418AbfKHTAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:08 -0500
+        id S2390974AbfKHTJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D368224EE;
-        Fri,  8 Nov 2019 18:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E9312087E;
+        Fri,  8 Nov 2019 19:08:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239548;
-        bh=NU7qfOU21zQDW5QJyblEzO5U4tADEDO1kqVIH3u08PE=;
+        s=default; t=1573240139;
+        bh=sKHY9Dd94AFbprDlS8ebwtCQSa7E7TSTpXFGfINHDFo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YQn5E0oUcArjg23eJe07qhFT3Vf7H3csDQNyFET5oXmmKIHrwUzklnyeIgdoVyUfP
-         WKSzEKtD2vT+Kgqpzl+/qP6D3OSYDoW+DUFNBeIAomtDmFRhWJppw6U0tkNln6rL61
-         kX4QI4XjgbtUAum6hmcQ45bwoNv7l+Y+33FWYDBo=
+        b=WxVHc8JlgYh6akklhVwi0zSKVGvyup0Z1HbsV8p1AUWOxbseSxf+r+HTjUES8gLss
+         csowlyYXJvFhq0riT75dT8S67SwyVjklcXMBExN6f44tXk0h6/3ik5M7QoSf8OTwXq
+         Lf297L6Zj357ISN5ereVgi5p295p4u0IPd1Z4k24=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 41/62] net: bcmgenet: reset 40nm EPHY on energy detect
+Subject: [PATCH 5.3 101/140] net: use skb_queue_empty_lockless() in busy poll contexts
 Date:   Fri,  8 Nov 2019 19:50:29 +0100
-Message-Id: <20191108174749.232189821@linuxfoundation.org>
+Message-Id: <20191108174911.338812481@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Berger <opendmb@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 25382b991d252aed961cd434176240f9de6bb15f ]
+[ Upstream commit 3f926af3f4d688e2e11e7f8ed04e277a14d4d4a4 ]
 
-The EPHY integrated into the 40nm Set-Top Box devices can falsely
-detect energy when connected to a disabled peer interface. When the
-peer interface is enabled the EPHY will detect and report the link
-as active, but on occasion may get into a state where it is not
-able to exchange data with the connected GENET MAC. This issue has
-not been observed when the link parameters are auto-negotiated;
-however, it has been observed with a manually configured link.
+Busy polling usually runs without locks.
+Let's use skb_queue_empty_lockless() instead of skb_queue_empty()
 
-It has been empirically determined that issuing a soft reset to the
-EPHY when energy is detected prevents it from getting into this bad
-state.
+Also uses READ_ONCE() in __skb_try_recv_datagram() to address
+a similar potential problem.
 
-Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmgenet.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/crypto/chelsio/chtls/chtls_io.c |    2 +-
+ net/core/datagram.c                     |    2 +-
+ net/core/sock.c                         |    2 +-
+ net/ipv4/tcp.c                          |    2 +-
+ net/sctp/socket.c                       |    2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -1985,6 +1985,8 @@ static void bcmgenet_link_intr_enable(st
- 	 */
- 	if (priv->internal_phy) {
- 		int0_enable |= UMAC_IRQ_LINK_EVENT;
-+		if (GENET_IS_V1(priv) || GENET_IS_V2(priv) || GENET_IS_V3(priv))
-+			int0_enable |= UMAC_IRQ_PHY_DET_R;
- 	} else if (priv->ext_phy) {
- 		int0_enable |= UMAC_IRQ_LINK_EVENT;
- 	} else if (priv->phy_interface == PHY_INTERFACE_MODE_MOCA) {
-@@ -2608,6 +2610,10 @@ static void bcmgenet_irq_task(struct wor
- 		bcmgenet_power_up(priv, GENET_POWER_WOL_MAGIC);
- 	}
+--- a/drivers/crypto/chelsio/chtls/chtls_io.c
++++ b/drivers/crypto/chelsio/chtls/chtls_io.c
+@@ -1701,7 +1701,7 @@ int chtls_recvmsg(struct sock *sk, struc
+ 		return peekmsg(sk, msg, len, nonblock, flags);
  
-+	if (status & UMAC_IRQ_PHY_DET_R &&
-+	    priv->dev->phydev->autoneg != AUTONEG_ENABLE)
-+		phy_init_hw(priv->dev->phydev);
-+
- 	/* Link UP/DOWN event */
- 	if (status & UMAC_IRQ_LINK_EVENT)
- 		phy_mac_interrupt(priv->phydev,
-@@ -2713,8 +2719,7 @@ static irqreturn_t bcmgenet_isr0(int irq
- 	}
+ 	if (sk_can_busy_loop(sk) &&
+-	    skb_queue_empty(&sk->sk_receive_queue) &&
++	    skb_queue_empty_lockless(&sk->sk_receive_queue) &&
+ 	    sk->sk_state == TCP_ESTABLISHED)
+ 		sk_busy_loop(sk, nonblock);
  
- 	/* all other interested interrupts handled in bottom half */
--	status &= (UMAC_IRQ_LINK_EVENT |
--		   UMAC_IRQ_MPD_R);
-+	status &= (UMAC_IRQ_LINK_EVENT | UMAC_IRQ_MPD_R | UMAC_IRQ_PHY_DET_R);
- 	if (status) {
- 		/* Save irq status for bottom-half processing. */
- 		spin_lock_irqsave(&priv->lock, flags);
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -278,7 +278,7 @@ struct sk_buff *__skb_try_recv_datagram(
+ 			break;
+ 
+ 		sk_busy_loop(sk, flags & MSG_DONTWAIT);
+-	} while (sk->sk_receive_queue.prev != *last);
++	} while (READ_ONCE(sk->sk_receive_queue.prev) != *last);
+ 
+ 	error = -EAGAIN;
+ 
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -3593,7 +3593,7 @@ bool sk_busy_loop_end(void *p, unsigned
+ {
+ 	struct sock *sk = p;
+ 
+-	return !skb_queue_empty(&sk->sk_receive_queue) ||
++	return !skb_queue_empty_lockless(&sk->sk_receive_queue) ||
+ 	       sk_busy_loop_timeout(sk, start_time);
+ }
+ EXPORT_SYMBOL(sk_busy_loop_end);
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1961,7 +1961,7 @@ int tcp_recvmsg(struct sock *sk, struct
+ 	if (unlikely(flags & MSG_ERRQUEUE))
+ 		return inet_recv_error(sk, msg, len, addr_len);
+ 
+-	if (sk_can_busy_loop(sk) && skb_queue_empty(&sk->sk_receive_queue) &&
++	if (sk_can_busy_loop(sk) && skb_queue_empty_lockless(&sk->sk_receive_queue) &&
+ 	    (sk->sk_state == TCP_ESTABLISHED))
+ 		sk_busy_loop(sk, nonblock);
+ 
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -8724,7 +8724,7 @@ struct sk_buff *sctp_skb_recv_datagram(s
+ 		if (sk_can_busy_loop(sk)) {
+ 			sk_busy_loop(sk, noblock);
+ 
+-			if (!skb_queue_empty(&sk->sk_receive_queue))
++			if (!skb_queue_empty_lockless(&sk->sk_receive_queue))
+ 				continue;
+ 		}
+ 
 
 
