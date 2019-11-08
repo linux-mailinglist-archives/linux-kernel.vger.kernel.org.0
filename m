@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 096EAF4C84
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78B24F4C59
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731864AbfKHNDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:03:39 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36979 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729443AbfKHNCJ (ORCPT
+        id S1730335AbfKHNCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:02:16 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38536 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729973AbfKHNCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 08:02:09 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so4411073lfp.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:02:08 -0800 (PST)
+        Fri, 8 Nov 2019 08:02:11 -0500
+Received: by mail-lf1-f66.google.com with SMTP id q28so4420718lfa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:02:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zPi0SchlJBpcK2Uafamd7sY3psIZzF+ErFogb8EsMtA=;
-        b=SRXE1NoSEoSCywO+L8E6ng+2FXGjgyGd7B+f0jJ2JaXIveaCYZLPIeDN3ivZQSSkGE
-         u1V/D5rgTkWtpx6sNDzCdXxFB3bSCGyd8bTMf7BINnG8O7NsszC3ReD1KjCbn+P9Wj81
-         /49kVxIImaa1ns64nyNk2b2uJQOsVial126RE=
+        bh=D4oV4L5jtcWTxjf1oA8VyXP7dsMMZPn/dF9MUNC7L/c=;
+        b=aPlA/IoEhffEEFblnc9V412rJ8ksNjaxqTklchpJf/K3W357zmqd5+CvTMVOjUGR9f
+         vHpBOP8gHlMWtsf0tBnmICEexywoHMojiuEDFPSR7FbopkcwuW99c0TFG3mLnJli/rDJ
+         uIN1m9iOBe+LG2yqEIrL2SRuPet7yWk+uHSH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zPi0SchlJBpcK2Uafamd7sY3psIZzF+ErFogb8EsMtA=;
-        b=g8YGU/46v7HgAtqewpczFlJBC0saPATpW3xBL2eZAoAmD9mPsfbJ5MC/J88wUDhQ5x
-         Tf2a6iO4Xzv37Nk7qx/DkBCO2fM31I1eVsJrM6v1x8vDm3RNjKNLqWtxLhHkEwkL5Vlv
-         0EyUcpIIaCSDBpw8EpEtqSgyNQOUDqKt1oEPiMaBtRwAQzc4kgO08GIVAbF6GwRImMwm
-         1YjlwQqsPVVO2gOKJzC1B5/2TzF8NoPobphRyLDreClea1tVwVe80CDm6fiWDGvV61/Z
-         Zv74upooPu4o8tl0poCnpZkVjbLg/qhnZFCj1f5JGdd40Q7P6gIclUVQmnw98jgubLQ0
-         Z6aA==
-X-Gm-Message-State: APjAAAVdQ3aNEZwimPD/v0jKc6qKCpg4mAyqGC645TgBOvpCVvW41JCn
-        2m6XbSAfz3De196Xdl8Er0iMAQ==
-X-Google-Smtp-Source: APXvYqwOqHE3M01CuaW5urlsbt5KzMbJiYrCdCN84TCfTLcHk6GXpiZEJDNrDr2YmEEm613FNacMMA==
-X-Received: by 2002:ac2:5dcc:: with SMTP id x12mr6536635lfq.163.1573218127481;
-        Fri, 08 Nov 2019 05:02:07 -0800 (PST)
+        bh=D4oV4L5jtcWTxjf1oA8VyXP7dsMMZPn/dF9MUNC7L/c=;
+        b=R9fy9GIdJnPo9FaO5GWPBm7wKNhzMTmiX8TseJu3vAEj7Bz7Qfpcu3lW9WizUZeJpT
+         xfuS8tBxvPZAyUXC9+Y/SPrd6hU3V2tgYrBhtL6AnVCnzbn1hFUL5lujMkVpV/DeNBhd
+         jT2sK2GI7725G011zFYxOgliAKJgf39Bj6ZJorGjd6gAJB1mTcVY2G4SAwMoFPK7bRTy
+         pj8yFS0qS9OgBUcq9RYxKJOCczq9fm4z5xMn8suY4SxhgqxFjZg7RhtB+rzPqTqBEUu7
+         Xb59xvObqnquLrkz/ZBgOOMHfdywrKNJmDBR5u4DlO88dAs7fnlQbF7LQnFfn2kIvv5u
+         parA==
+X-Gm-Message-State: APjAAAXHbqkapnrnb0XN8O+QOgrXWNMQHknbOy2V9E9rRcGF/xQ5Xesh
+        AxwRvNeKcUsGR7gBYQu3LWLNhw==
+X-Google-Smtp-Source: APXvYqx/gMz4mkd5jKISKNXvWqvyaBmxQjDUwz3+6YpcYYTuJ8t1hWtanWE3i6cbS5YimIzMWNnZtg==
+X-Received: by 2002:a19:911c:: with SMTP id t28mr6379304lfd.84.1573218128817;
+        Fri, 08 Nov 2019 05:02:08 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.02.06
+        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.02.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 05:02:06 -0800 (PST)
+        Fri, 08 Nov 2019 05:02:08 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -50,9 +50,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         Scott Wood <oss@buserror.net>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-serial@vger.kernel.org
-Subject: [PATCH v4 31/47] serial: ucc_uart: stub out soft_uart_init for !CONFIG_PPC32
-Date:   Fri,  8 Nov 2019 14:01:07 +0100
-Message-Id: <20191108130123.6839-32-linux@rasmusvillemoes.dk>
+Subject: [PATCH v4 32/47] serial: ucc_uart: use of_property_read_u32() in ucc_uart_probe()
+Date:   Fri,  8 Nov 2019 14:01:08 +0100
+Message-Id: <20191108130123.6839-33-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
 References: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
@@ -63,57 +63,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Soft UART hack is only needed for some PPC-based SOCs. To allow
-building this driver for non-PPC, guard soft_uart_init() and its
-helpers by CONFIG_PPC32, and use a no-op soft_uart_init() otherwise.
+For this to work correctly on little-endian hosts, don't access the
+device-tree properties directly in native endianness, but use the
+of_property_read_u32() helper.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/tty/serial/ucc_uart.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/tty/serial/ucc_uart.c | 41 +++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
-index f286e91714cb..313697842e24 100644
+index 313697842e24..f5ea84928a3b 100644
 --- a/drivers/tty/serial/ucc_uart.c
 +++ b/drivers/tty/serial/ucc_uart.c
-@@ -33,7 +33,10 @@
- 
- #include <linux/firmware.h>
- #include <soc/fsl/cpm.h>
--#include <asm/reg.h>
-+
-+#ifdef CONFIG_PPC32
-+#include <asm/reg.h> /* mfspr, SPRN_SVR */
-+#endif
- 
- /*
-  * The GUMR flag for Soft UART.  This would normally be defined in qe.h,
-@@ -1096,6 +1099,8 @@ static const struct uart_ops qe_uart_pops = {
- 	.verify_port    = qe_uart_verify_port,
- };
- 
-+
-+#ifdef CONFIG_PPC32
- /*
-  * Obtain the SOC model number and revision level
-  *
-@@ -1238,6 +1243,16 @@ static int soft_uart_init(struct platform_device *ofdev)
- 	return 0;
- }
- 
-+#else /* !CONFIG_PPC32 */
-+
-+static int soft_uart_init(struct platform_device *ofdev)
-+{
-+	return 0;
-+}
-+
-+#endif
-+
-+
+@@ -1256,10 +1256,10 @@ static int soft_uart_init(struct platform_device *ofdev)
  static int ucc_uart_probe(struct platform_device *ofdev)
  {
  	struct device_node *np = ofdev->dev.of_node;
+-	const unsigned int *iprop;      /* Integer OF properties */
+ 	const char *sprop;      /* String OF properties */
+ 	struct uart_qe_port *qe_port = NULL;
+ 	struct resource res;
++	u32 val;
+ 	int ret;
+ 
+ 	/*
+@@ -1290,23 +1290,19 @@ static int ucc_uart_probe(struct platform_device *ofdev)
+ 
+ 	/* Get the UCC number (device ID) */
+ 	/* UCCs are numbered 1-7 */
+-	iprop = of_get_property(np, "cell-index", NULL);
+-	if (!iprop) {
+-		iprop = of_get_property(np, "device-id", NULL);
+-		if (!iprop) {
+-			dev_err(&ofdev->dev, "UCC is unspecified in "
+-				"device tree\n");
+-			ret = -EINVAL;
+-			goto out_free;
+-		}
++	if (of_property_read_u32(np, "cell-index", &val) &&
++	    of_property_read_u32(np, "device-id", &val)) {
++		dev_err(&ofdev->dev, "UCC is unspecified in device tree\n");
++		ret = -EINVAL;
++		goto out_free;
+ 	}
+ 
+-	if ((*iprop < 1) || (*iprop > UCC_MAX_NUM)) {
+-		dev_err(&ofdev->dev, "no support for UCC%u\n", *iprop);
++	if (val < 1 || val > UCC_MAX_NUM) {
++		dev_err(&ofdev->dev, "no support for UCC%u\n", val);
+ 		ret = -ENODEV;
+ 		goto out_free;
+ 	}
+-	qe_port->ucc_num = *iprop - 1;
++	qe_port->ucc_num = val - 1;
+ 
+ 	/*
+ 	 * In the future, we should not require the BRG to be specified in the
+@@ -1350,13 +1346,12 @@ static int ucc_uart_probe(struct platform_device *ofdev)
+ 	}
+ 
+ 	/* Get the port number, numbered 0-3 */
+-	iprop = of_get_property(np, "port-number", NULL);
+-	if (!iprop) {
++	if (of_property_read_u32(np, "port-number", &val)) {
+ 		dev_err(&ofdev->dev, "missing port-number in device tree\n");
+ 		ret = -EINVAL;
+ 		goto out_free;
+ 	}
+-	qe_port->port.line = *iprop;
++	qe_port->port.line = val;
+ 	if (qe_port->port.line >= UCC_MAX_UART) {
+ 		dev_err(&ofdev->dev, "port-number must be 0-%u\n",
+ 			UCC_MAX_UART - 1);
+@@ -1386,31 +1381,29 @@ static int ucc_uart_probe(struct platform_device *ofdev)
+ 		}
+ 	}
+ 
+-	iprop = of_get_property(np, "brg-frequency", NULL);
+-	if (!iprop) {
++	if (of_property_read_u32(np, "brg-frequency", &val)) {
+ 		dev_err(&ofdev->dev,
+ 		       "missing brg-frequency in device tree\n");
+ 		ret = -EINVAL;
+ 		goto out_np;
+ 	}
+ 
+-	if (*iprop)
+-		qe_port->port.uartclk = *iprop;
++	if (val)
++		qe_port->port.uartclk = val;
+ 	else {
+ 		/*
+ 		 * Older versions of U-Boot do not initialize the brg-frequency
+ 		 * property, so in this case we assume the BRG frequency is
+ 		 * half the QE bus frequency.
+ 		 */
+-		iprop = of_get_property(np, "bus-frequency", NULL);
+-		if (!iprop) {
++		if (of_property_read_u32(np, "bus-frequency", &val)) {
+ 			dev_err(&ofdev->dev,
+ 				"missing QE bus-frequency in device tree\n");
+ 			ret = -EINVAL;
+ 			goto out_np;
+ 		}
+-		if (*iprop)
+-			qe_port->port.uartclk = *iprop / 2;
++		if (val)
++			qe_port->port.uartclk = val / 2;
+ 		else {
+ 			dev_err(&ofdev->dev,
+ 				"invalid QE bus-frequency in device tree\n");
 -- 
 2.23.0
 
