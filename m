@@ -2,225 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A80F5A1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16104F59E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:31:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733230AbfKHVfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34820 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732922AbfKHVew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:34:52 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D5F922473;
-        Fri,  8 Nov 2019 21:34:51 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1iTBu6-0007y3-Ix; Fri, 08 Nov 2019 16:34:50 -0500
-Message-Id: <20191108213450.461898076@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Fri, 08 Nov 2019 16:28:40 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 06/10] ftrace/selftest: Add tests to test register_ftrace_direct()
-References: <20191108212834.594904349@goodmis.org>
+        id S2387583AbfKHV3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:29:16 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:34522 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfKHV3P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:29:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573248551;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=RpCrO/BdsXbNks/Ok4F1Wqjf9N5GuN0H6cCDR5uSLF0=;
+        b=igkw4JxgoHqN6InxGnzqHZ9zXYVMq1ZqM8A7zeEnnoM0Ttx0uhl8bkVv7W25FRvbqA
+        O1KdbQxItp1KclbpDClQc0gjY91UHXUd+VtZtC5hkBpMdFLiz0SE9k1tYEtcohzp9vfa
+        7eelcO7R1RkLb+uGBgg80rYwE/JipvDMyXMKkd/ybe5GUANNnQ4P5bYVqy91D0/mxthj
+        O19dGS9cng0vo8BuIZ6vKSNcyoSa+kwzcQe/oRNZochgWN3cSwg7V96ipVeoO+UnrhuG
+        vglKx2kBP7TY1eLx4b9gD/hDYy9VVk4EZMkhFeKAX3qKsIUOQEF4XmgGs39N2VwUtJhe
+        1n9g==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXsMnvtxdYcg=="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 44.29.0 AUTH)
+        with ESMTPSA id e07688vA8LT6tLL
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 8 Nov 2019 22:29:06 +0100 (CET)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Hai Li <hali@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Jasper Korten <jja2000@gmail.com>
+Subject: [PATCH] drm/msm/dsi: Delay drm_panel_enable() until dsi_mgr_bridge_enable()
+Date:   Fri,  8 Nov 2019 22:28:40 +0100
+Message-Id: <20191108212840.13586-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+At the moment, the MSM DSI driver calls drm_panel_enable() rather early
+from the DSI bridge pre_enable() function. At this point, the encoder
+(e.g. MDP5) is not enabled, so we have not started transmitting
+video data.
 
-Add two test cases that test the new ftrace direct functionality if the
-ftrace-direct sample module is available. One test case tests against each
-available tracer (function, function_graph, mmiotrace, etc), and the other
-test tests against a kprobe at the same location as the direct caller. Both
-tests follow the same pattern of testing combinations:
+However, the drm_panel_funcs documentation states that enable()
+should be called on the panel *after* video data is being transmitted:
 
-  enable test (either the tracer or the kprobe)
-  load direct function module
-  unload direct function module
-  disable test
+  The .prepare() function is typically called before the display controller
+  starts to transmit video data. [...] After the display controller has
+  started transmitting video data, it's safe to call the .enable() function.
+  This will typically enable the backlight to make the image on screen visible.
 
-  enable test
-  load direct function module
-  disable test
-  unload direct function module
+Calling drm_panel_enable() too early causes problems for some panels:
+The TFT LCD panel used in the Samsung Galaxy Tab A 9.7 (2015) (APQ8016)
+uses the MIPI_DCS_SET_DISPLAY_BRIGHTNESS command to control
+backlight/brightness of the screen. The enable sequence is therefore:
 
-  load direct function module
-  enable test
-  disable test
-  unload direct function module
+  drm_panel_enable()
+    drm_panel_funcs.enable():
+      backlight_enable()
+        backlight_ops.update_status():
+          mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
 
-  load direct function module
-  enable test
-  unload direct function module
-  disable test
+The panel seems to silently ignore the MIPI_DCS_SET_DISPLAY_BRIGHTNESS
+command if it is sent too early. This prevents setting the initial brightness,
+causing the display to be enabled with minimum brightness instead.
+Adding various delays in the panel initialization code does not result
+in any difference.
 
-As most the bugs in development happened with various ways of enabling or
-disabling the direct calls with function tracer in one of these
-combinations.
+On the other hand, moving drm_panel_enable() to dsi_mgr_bridge_enable()
+fixes the problem, indicating that the panel requires the video stream
+to be active before the brightness command is accepted.
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Therefore: Move drm_panel_enable() to dsi_mgr_bridge_enable() to
+delay calling it until video data is being transmitted.
+
+Move drm_panel_disable() to dsi_mgr_bridge_disable() for similar reasons.
+(This is not strictly required for the panel affected above...)
+
+Tested-by: Jasper Korten <jja2000@gmail.com>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- .../ftrace/test.d/direct/ftrace-direct.tc     | 53 ++++++++++++++
- .../ftrace/test.d/direct/kprobe-direct.tc     | 71 +++++++++++++++++++
- 2 files changed, 124 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
+Since this is a core change I thought it would be better to send this
+early. I believe Jasper still wants to finish some other changes before
+submitting the initial device tree for the Samsung Galaxy Tab A 9.7 (2015). ;)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc b/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
-new file mode 100644
-index 000000000000..8b8ed3cad51b
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
-@@ -0,0 +1,53 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Test ftrace direct functions against tracers
+I also tested it on msm8916-samsung-a5u-eur, its display is working fine
+with or without this patch.
+---
+ drivers/gpu/drm/msm/dsi/dsi_manager.c | 62 ++++++++++++++++++---------
+ 1 file changed, 41 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+index 271aa7bbca92..eea108865cd3 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+@@ -432,20 +432,8 @@ static void dsi_mgr_bridge_pre_enable(struct drm_bridge *bridge)
+ 		}
+ 	}
+ 
+-	if (panel) {
+-		ret = drm_panel_enable(panel);
+-		if (ret) {
+-			pr_err("%s: enable panel %d failed, %d\n", __func__, id,
+-									ret);
+-			goto panel_en_fail;
+-		}
+-	}
+-
+ 	return;
+ 
+-panel_en_fail:
+-	if (is_dual_dsi && msm_dsi1)
+-		msm_dsi_host_disable(msm_dsi1->host);
+ host1_en_fail:
+ 	msm_dsi_host_disable(host);
+ host_en_fail:
+@@ -464,12 +452,51 @@ static void dsi_mgr_bridge_pre_enable(struct drm_bridge *bridge)
+ 
+ static void dsi_mgr_bridge_enable(struct drm_bridge *bridge)
+ {
+-	DBG("");
++	int id = dsi_mgr_bridge_get_id(bridge);
++	struct msm_dsi *msm_dsi = dsi_mgr_get_dsi(id);
++	struct drm_panel *panel = msm_dsi->panel;
++	bool is_dual_dsi = IS_DUAL_DSI();
++	int ret;
 +
-+rmmod ftrace-direct ||:
-+if ! modprobe ftrace-direct ; then
-+  echo "No ftrace-direct sample module - please make CONFIG_SAMPLE_FTRACE_DIRECT=m"
-+  exit_unresolved;
-+fi
++	DBG("id=%d", id);
++	if (!msm_dsi_device_connected(msm_dsi))
++		return;
 +
-+echo "Let the module run a little"
-+sleep 1
++	/* Do nothing with the host if it is slave-DSI in case of dual DSI */
++	if (is_dual_dsi && !IS_MASTER_DSI_LINK(id))
++		return;
 +
-+grep -q "my_direct_func: wakeing up" trace
++	if (panel) {
++		ret = drm_panel_enable(panel);
++		if (ret) {
++			pr_err("%s: enable panel %d failed, %d\n", __func__, id,
++									ret);
++		}
++	}
+ }
+ 
+ static void dsi_mgr_bridge_disable(struct drm_bridge *bridge)
+ {
+-	DBG("");
++	int id = dsi_mgr_bridge_get_id(bridge);
++	struct msm_dsi *msm_dsi = dsi_mgr_get_dsi(id);
++	struct drm_panel *panel = msm_dsi->panel;
++	bool is_dual_dsi = IS_DUAL_DSI();
++	int ret;
 +
-+rmmod ftrace-direct
++	DBG("id=%d", id);
++	if (!msm_dsi_device_connected(msm_dsi))
++		return;
 +
-+test_tracer() {
-+	tracer=$1
++	/* Do nothing with the host if it is slave-DSI in case of dual DSI */
++	if (is_dual_dsi && !IS_MASTER_DSI_LINK(id))
++		return;
 +
-+	# tracer -> direct -> no direct > no tracer
-+	echo $tracer > current_tracer
-+	modprobe ftrace-direct
-+	rmmod ftrace-direct
-+	echo nop > current_tracer
-+
-+	# tracer -> direct -> no tracer > no direct
-+	echo $tracer > current_tracer
-+	modprobe ftrace-direct
-+	echo nop > current_tracer
-+	rmmod ftrace-direct
-+
-+	# direct -> tracer -> no tracer > no direct
-+	modprobe ftrace-direct
-+	echo $tracer > current_tracer
-+	echo nop > current_tracer
-+	rmmod ftrace-direct
-+
-+	# direct -> tracer -> no direct > no notracer
-+	modprobe ftrace-direct
-+	echo $tracer > current_tracer
-+	rmmod ftrace-direct
-+	echo nop > current_tracer
-+}
-+
-+for t in `cat available_tracers`; do
-+	if [ "$t" != "nop" ]; then
-+		test_tracer $t
-+	fi
-+done
-+
-+echo nop > current_tracer
-+rmmod ftrace-direct ||:
-diff --git a/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc b/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
-new file mode 100644
-index 000000000000..1561106765e4
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
-@@ -0,0 +1,71 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Test ftrace direct functions against kprobes
-+
-+rmmod ftrace-direct ||:
-+if ! modprobe ftrace-direct ; then
-+  echo "No ftrace-direct sample module - please build with CONFIG_SAMPLE_FTRACE_DIRECT=m"
-+  exit_unresolved;
-+fi
-+
-+if [ ! -f kprobe_events ]; then
-+	echo "No kprobe_events file -please build CONFIG_KPROBE_EVENTS"
-+	exit_unresolved;
-+fi
-+
-+echo "Let the module run a little"
-+sleep 1
-+
-+grep -q "my_direct_func: wakeing up" trace
-+
-+rmmod ftrace-direct
-+
-+echo 'p:kwake wake_up_process task=$arg1' > kprobe_events
-+
-+start_direct() {
-+	echo > trace
-+	modprobe ftrace-direct
-+	sleep 0.1
-+	grep -q "my_direct_func: wakeing up" trace
-+}
-+
-+stop_direct() {
-+	rmmod ftrace-direct
-+}
-+
-+enable_probe() {
-+	echo > trace
-+	echo 1 > events/kprobes/kwake/enable
-+	sleep 0.1
-+	grep -q "kwake:" trace
-+}
-+
-+disable_probe() {
-+	echo 0 > events/kprobes/kwake/enable
-+}
-+
-+# probe -> direct -> no direct > no probe
-+enable_probe
-+start_direct
-+stop_direct
-+disable_probe
-+
-+# probe -> direct -> no probe > no direct
-+enable_probe
-+start_direct
-+disable_probe
-+stop_direct
-+
-+# direct -> probe -> no probe > no direct
-+start_direct
-+enable_probe
-+disable_probe
-+stop_direct
-+
-+# direct -> probe -> no direct > no noprobe
-+start_direct
-+enable_probe
-+stop_direct
-+disable_probe
-+
-+echo > kprobe_events
++	if (panel) {
++		ret = drm_panel_disable(panel);
++		if (ret)
++			pr_err("%s: Panel %d OFF failed, %d\n", __func__, id,
++									ret);
++	}
+ }
+ 
+ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+@@ -495,13 +522,6 @@ static void dsi_mgr_bridge_post_disable(struct drm_bridge *bridge)
+ 	if (is_dual_dsi && !IS_MASTER_DSI_LINK(id))
+ 		goto disable_phy;
+ 
+-	if (panel) {
+-		ret = drm_panel_disable(panel);
+-		if (ret)
+-			pr_err("%s: Panel %d OFF failed, %d\n", __func__, id,
+-									ret);
+-	}
+-
+ 	ret = msm_dsi_host_disable(host);
+ 	if (ret)
+ 		pr_err("%s: host %d disable failed, %d\n", __func__, id, ret);
 -- 
 2.23.0
-
 
