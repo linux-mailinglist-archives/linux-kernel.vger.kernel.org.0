@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 137C1F5418
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B6DF544A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732798AbfKHSyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:54:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51040 "EHLO mail.kernel.org"
+        id S2387904AbfKHS4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:56:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732757AbfKHSyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:54:06 -0500
+        id S2387848AbfKHSzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:55:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A656F21D82;
-        Fri,  8 Nov 2019 18:54:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0BB5218AE;
+        Fri,  8 Nov 2019 18:55:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239246;
-        bh=gPAMLegDAe99Aq16OiPS5q2qcCIwEsW1uTVDVwpZUzc=;
+        s=default; t=1573239348;
+        bh=owHE3ZeIOv3rXmhivjkG2BGzQ+rYjTJYyoFrtT9JlVk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tYinyT7KJ1R7QyXvTdscybwoyqSWJLcGYY6YbFizarugTetpdZoY3WIivtFJ8uV+C
-         48LNpblhUkULcVQdnTFvswTaFPFTz7rw4aMBTap++u4vPhsb7yXoHW4msZ9yavnZQZ
-         HMccTTmh+KmbNDFcbA1kboNiV/tyMrxt77NzNfjo=
+        b=oakz9beQXkFsMB4WGOtcYvCUcS4gBwr6mNrFWooshVsayv8mUSVtYQSX+Ko+dtpkn
+         ljm1cqqqpQizUdBGKHJScfTZQAkfa2s1T7/T7hbpsLWg5IdYN9tpv+rA2SeKeOErlN
+         MAdKE3oDt5+qd8reR1locLtdPs6omYjOYqZduV70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linus.walleij@linaro.org, rmk+kernel@armlinux.org.uk, Ard Biesheuvel" 
-        <ardb@kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        "David A. Long" <dave.long@linaro.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 50/75] ARM: spectre-v1: add speculation barrier (csdb) macros
-Date:   Fri,  8 Nov 2019 19:50:07 +0100
-Message-Id: <20191108174754.307959442@linuxfoundation.org>
+        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        Nishanth Menon <nm@ti.com>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 01/34] regulator: ti-abb: Fix timeout in ti_abb_wait_txdone/ti_abb_clear_all_txdone
+Date:   Fri,  8 Nov 2019 19:50:08 +0100
+Message-Id: <20191108174620.512838356@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
-References: <20191108174708.135680837@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,70 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Axel Lin <axel.lin@ingics.com>
 
-Commit a78d156587931a2c3b354534aa772febf6c9e855 upstream.
+[ Upstream commit f64db548799e0330897c3203680c2ee795ade518 ]
 
-Add assembly and C macros for the new CSDB instruction.
+ti_abb_wait_txdone() may return -ETIMEDOUT when ti_abb_check_txdone()
+returns true in the latest iteration of the while loop because the timeout
+value is abb->settling_time + 1. Similarly, ti_abb_clear_all_txdone() may
+return -ETIMEDOUT when ti_abb_check_txdone() returns false in the latest
+iteration of the while loop. Fix it.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Boot-tested-by: Tony Lindgren <tony@atomide.com>
-Reviewed-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Nishanth Menon <nm@ti.com>
+Link: https://lore.kernel.org/r/20190929095848.21960-1-axel.lin@ingics.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/assembler.h |    8 ++++++++
- arch/arm/include/asm/barrier.h   |   13 +++++++++++++
- 2 files changed, 21 insertions(+)
+ drivers/regulator/ti-abb-regulator.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
 
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -441,6 +441,14 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- 	.size \name , . - \name
- 	.endm
+diff --git a/drivers/regulator/ti-abb-regulator.c b/drivers/regulator/ti-abb-regulator.c
+index d2f9942987535..6d17357b3a248 100644
+--- a/drivers/regulator/ti-abb-regulator.c
++++ b/drivers/regulator/ti-abb-regulator.c
+@@ -173,19 +173,14 @@ static int ti_abb_wait_txdone(struct device *dev, struct ti_abb *abb)
+ 	while (timeout++ <= abb->settling_time) {
+ 		status = ti_abb_check_txdone(abb);
+ 		if (status)
+-			break;
++			return 0;
  
-+	.macro	csdb
-+#ifdef CONFIG_THUMB2_KERNEL
-+	.inst.w	0xf3af8014
-+#else
-+	.inst	0xe320f014
-+#endif
-+	.endm
-+
- 	.macro check_uaccess, addr:req, size:req, limit:req, tmp:req, bad:req
- #ifndef CONFIG_CPU_USE_DOMAINS
- 	adds	\tmp, \addr, #\size - 1
---- a/arch/arm/include/asm/barrier.h
-+++ b/arch/arm/include/asm/barrier.h
-@@ -18,6 +18,12 @@
- #define isb(option) __asm__ __volatile__ ("isb " #option : : : "memory")
- #define dsb(option) __asm__ __volatile__ ("dsb " #option : : : "memory")
- #define dmb(option) __asm__ __volatile__ ("dmb " #option : : : "memory")
-+#ifdef CONFIG_THUMB2_KERNEL
-+#define CSDB	".inst.w 0xf3af8014"
-+#else
-+#define CSDB	".inst	0xe320f014"
-+#endif
-+#define csdb() __asm__ __volatile__(CSDB : : : "memory")
- #elif defined(CONFIG_CPU_XSC3) || __LINUX_ARM_ARCH__ == 6
- #define isb(x) __asm__ __volatile__ ("mcr p15, 0, %0, c7, c5, 4" \
- 				    : : "r" (0) : "memory")
-@@ -38,6 +44,13 @@
- #define dmb(x) __asm__ __volatile__ ("" : : : "memory")
- #endif
+ 		udelay(1);
+ 	}
  
-+#ifndef CSDB
-+#define CSDB
-+#endif
-+#ifndef csdb
-+#define csdb()
-+#endif
-+
- #ifdef CONFIG_ARM_HEAVY_MB
- extern void (*soc_mb)(void);
- extern void arm_heavy_mb(void);
+-	if (timeout > abb->settling_time) {
+-		dev_warn_ratelimited(dev,
+-				     "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
+-				     __func__, timeout, readl(abb->int_base));
+-		return -ETIMEDOUT;
+-	}
+-
+-	return 0;
++	dev_warn_ratelimited(dev, "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
++			     __func__, timeout, readl(abb->int_base));
++	return -ETIMEDOUT;
+ }
+ 
+ /**
+@@ -205,19 +200,14 @@ static int ti_abb_clear_all_txdone(struct device *dev, const struct ti_abb *abb)
+ 
+ 		status = ti_abb_check_txdone(abb);
+ 		if (!status)
+-			break;
++			return 0;
+ 
+ 		udelay(1);
+ 	}
+ 
+-	if (timeout > abb->settling_time) {
+-		dev_warn_ratelimited(dev,
+-				     "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
+-				     __func__, timeout, readl(abb->int_base));
+-		return -ETIMEDOUT;
+-	}
+-
+-	return 0;
++	dev_warn_ratelimited(dev, "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
++			     __func__, timeout, readl(abb->int_base));
++	return -ETIMEDOUT;
+ }
+ 
+ /**
+-- 
+2.20.1
+
 
 
