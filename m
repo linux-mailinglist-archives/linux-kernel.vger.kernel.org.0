@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B70E0F45FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38229F45FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733026AbfKHLjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:39:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51744 "EHLO mail.kernel.org"
+        id S1733057AbfKHLjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:39:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732846AbfKHLip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:45 -0500
+        id S1732867AbfKHLit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1CE7222C2;
-        Fri,  8 Nov 2019 11:38:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1130621D7E;
+        Fri,  8 Nov 2019 11:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213125;
-        bh=W6uN9xHq7HGKDzwyHjCpDmU5tv6iPNN8Hw2AZv3Xizw=;
+        s=default; t=1573213128;
+        bh=XASaPVNLquPRF1SYPNjsfMRkaqtaJWywVTdfYYyc8zw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zLLRUHcAX+KJ8SNb7iOrcrDgdbPYe2wV8p1J0eWfiu1fr5rUn/Qg2o6lXkDNaksIc
-         +ICsNPTmC9YIDJqvNiJb/Vzk9n8Aoc6LhFugukCuDiHqMj1kGJVG2dp3UWrRcKfupI
-         itTUeoMLJHjjW6mEgPuCshQIus9Ld5fsvIpzJRyI=
+        b=j8BD64A4bTegWqGl8q9g/FSp3jf59+JusxiOG3EmBAp2PdleN6zHs4a1QPtnWLcJU
+         5LfVt966tt/Mj+0JogPJ807KEpTycsp8AljvCGFZbNKuScch1S6WrqUYpLeFIiMLrg
+         bXUWvw3pdZAxdBU68cm+uBBF4rQ1ADlKnHeRGj9A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alan Tull <atull@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 044/205] arm64: dts: stratix10: i2c clock running out of spec
-Date:   Fri,  8 Nov 2019 06:35:11 -0500
-Message-Id: <20191108113752.12502-44-sashal@kernel.org>
+Cc:     Mitch Williams <mitch.a.williams@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 047/205] i40e: use correct length for strncpy
+Date:   Fri,  8 Nov 2019 06:35:14 -0500
+Message-Id: <20191108113752.12502-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -42,34 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Tull <atull@kernel.org>
+From: Mitch Williams <mitch.a.williams@intel.com>
 
-[ Upstream commit c8da1d15b8a4957f105ad77bb1404d72e304566f ]
+[ Upstream commit 7eb74ff891b4e94b8bac48f648a21e4b94ddee64 ]
 
-DesignWare I2C controller was observed running at 105.93kHz rather
-than the specified 100kHz.  Adjust device tree settings to bring it
-within spec (a slightly conservative 98 MHz).
+Caught by GCC 8. When we provide a length for strncpy, we should not
+include the terminating null. So we must tell it one less than the size
+of the destination buffer.
 
-Signed-off-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Mitch Williams <mitch.a.williams@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/intel/i40e/i40e_ptp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index 7c661753bfaf4..faa017d4cd56b 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -124,6 +124,8 @@
- &i2c1 {
- 	status = "okay";
- 	clock-frequency = <100000>;
-+	i2c-sda-falling-time-ns = <890>;  /* hcnt */
-+	i2c-sdl-falling-time-ns = <890>;  /* lcnt */
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_ptp.c b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
+index 35f2866b38c6b..1199f0502d6d5 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_ptp.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
+@@ -694,7 +694,8 @@ static long i40e_ptp_create_clock(struct i40e_pf *pf)
+ 	if (!IS_ERR_OR_NULL(pf->ptp_clock))
+ 		return 0;
  
- 	adc@14 {
- 		compatible = "lltc,ltc2497";
+-	strncpy(pf->ptp_caps.name, i40e_driver_name, sizeof(pf->ptp_caps.name));
++	strncpy(pf->ptp_caps.name, i40e_driver_name,
++		sizeof(pf->ptp_caps.name) - 1);
+ 	pf->ptp_caps.owner = THIS_MODULE;
+ 	pf->ptp_caps.max_adj = 999999999;
+ 	pf->ptp_caps.n_ext_ts = 0;
 -- 
 2.20.1
 
