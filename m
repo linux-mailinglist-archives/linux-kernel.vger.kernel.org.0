@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D80F555B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A7BF5628
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390366AbfKHTBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59364 "EHLO mail.kernel.org"
+        id S2391403AbfKHTHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:07:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390348AbfKHTBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:52 -0500
+        id S2391386AbfKHTHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:07:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 079062067B;
-        Fri,  8 Nov 2019 19:01:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86641206A3;
+        Fri,  8 Nov 2019 19:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239711;
-        bh=vEco0Qc5gNZWgnkrLje5461Udlzws/Ff4y+WCVIP6Ug=;
+        s=default; t=1573240020;
+        bh=rfJoh8q2ttJiOkExTu/CY0Vkr6sPogKzCVxD224wjXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtHpVG39P/Rz1av6fLgn11wZRTwrB5LnFSXcNvfaRoTWmBmQGTIrLZMh5NbMQRK5C
-         v1oXU3AaEEl/iDoC6rCVQFmPwuM/olpLuWYBQXFpkc1QaEPmRBSUDdzPPtPQsfXZCu
-         +4gZD43laBGFeFe6Ycr0k8OVQ6WplTdo+j49kTqU=
+        b=Kh/0O5Ol1BvpeOFWgYmXU3wik3Dw/haOgYHLGUm1C/S77993IuaSiGSU0IR0I8KkW
+         hCl+zt+knznUDGoDXdP/Fn/ahKu6h8YqEHw0c2VmFx6cyxZKEzdZlQ4lddxbET4XMZ
+         G3ibkhLFZQ324BmfiLcTo15B304GN7PbqRp9lTDY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
-        Nishanth Menon <nm@ti.com>, Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Zhengjun Xing <zhengjun.xing@linux.intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 07/79] regulator: ti-abb: Fix timeout in ti_abb_wait_txdone/ti_abb_clear_all_txdone
-Date:   Fri,  8 Nov 2019 19:49:47 +0100
-Message-Id: <20191108174749.216787984@linuxfoundation.org>
+Subject: [PATCH 5.3 060/140] tracing: Fix "gfp_t" format for synthetic events
+Date:   Fri,  8 Nov 2019 19:49:48 +0100
+Message-Id: <20191108174909.046820456@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
 
-[ Upstream commit f64db548799e0330897c3203680c2ee795ade518 ]
+[ Upstream commit 9fa8c9c647be624e91b09ecffa7cd97ee0600b40 ]
 
-ti_abb_wait_txdone() may return -ETIMEDOUT when ti_abb_check_txdone()
-returns true in the latest iteration of the while loop because the timeout
-value is abb->settling_time + 1. Similarly, ti_abb_clear_all_txdone() may
-return -ETIMEDOUT when ti_abb_check_txdone() returns false in the latest
-iteration of the while loop. Fix it.
+In the format of synthetic events, the "gfp_t" is shown as "signed:1",
+but in fact the "gfp_t" is "unsigned", should be shown as "signed:0".
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Nishanth Menon <nm@ti.com>
-Link: https://lore.kernel.org/r/20190929095848.21960-1-axel.lin@ingics.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The issue can be reproduced by the following commands:
+
+echo 'memlatency u64 lat; unsigned int order; gfp_t gfp_flags; int migratetype' > /sys/kernel/debug/tracing/synthetic_events
+cat  /sys/kernel/debug/tracing/events/synthetic/memlatency/format
+
+name: memlatency
+ID: 2233
+format:
+        field:unsigned short common_type;       offset:0;       size:2; signed:0;
+        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
+        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
+        field:int common_pid;   offset:4;       size:4; signed:1;
+
+        field:u64 lat;  offset:8;       size:8; signed:0;
+        field:unsigned int order;       offset:16;      size:4; signed:0;
+        field:gfp_t gfp_flags;  offset:24;      size:4; signed:1;
+        field:int migratetype;  offset:32;      size:4; signed:1;
+
+print fmt: "lat=%llu, order=%u, gfp_flags=%x, migratetype=%d", REC->lat, REC->order, REC->gfp_flags, REC->migratetype
+
+Link: http://lkml.kernel.org/r/20191018012034.6404-1-zhengjun.xing@linux.intel.com
+
+Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/ti-abb-regulator.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ kernel/trace/trace_events_hist.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/ti-abb-regulator.c b/drivers/regulator/ti-abb-regulator.c
-index cced1ffb896c1..89b9314d64c9d 100644
---- a/drivers/regulator/ti-abb-regulator.c
-+++ b/drivers/regulator/ti-abb-regulator.c
-@@ -173,19 +173,14 @@ static int ti_abb_wait_txdone(struct device *dev, struct ti_abb *abb)
- 	while (timeout++ <= abb->settling_time) {
- 		status = ti_abb_check_txdone(abb);
- 		if (status)
--			break;
-+			return 0;
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index dd310d3b58431..725b9b35f933c 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -674,6 +674,8 @@ static bool synth_field_signed(char *type)
+ {
+ 	if (str_has_prefix(type, "u"))
+ 		return false;
++	if (strcmp(type, "gfp_t") == 0)
++		return false;
  
- 		udelay(1);
- 	}
- 
--	if (timeout > abb->settling_time) {
--		dev_warn_ratelimited(dev,
--				     "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
--				     __func__, timeout, readl(abb->int_base));
--		return -ETIMEDOUT;
--	}
--
--	return 0;
-+	dev_warn_ratelimited(dev, "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
-+			     __func__, timeout, readl(abb->int_base));
-+	return -ETIMEDOUT;
+ 	return true;
  }
- 
- /**
-@@ -205,19 +200,14 @@ static int ti_abb_clear_all_txdone(struct device *dev, const struct ti_abb *abb)
- 
- 		status = ti_abb_check_txdone(abb);
- 		if (!status)
--			break;
-+			return 0;
- 
- 		udelay(1);
- 	}
- 
--	if (timeout > abb->settling_time) {
--		dev_warn_ratelimited(dev,
--				     "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
--				     __func__, timeout, readl(abb->int_base));
--		return -ETIMEDOUT;
--	}
--
--	return 0;
-+	dev_warn_ratelimited(dev, "%s:TRANXDONE timeout(%duS) int=0x%08x\n",
-+			     __func__, timeout, readl(abb->int_base));
-+	return -ETIMEDOUT;
- }
- 
- /**
 -- 
 2.20.1
 
