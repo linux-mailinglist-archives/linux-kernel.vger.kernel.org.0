@@ -2,71 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BFC4F68CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 12:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B498FF68D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 13:09:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfKJLtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 06:49:02 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:53449 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbfKJLtB (ORCPT
+        id S1726731AbfKJMH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 07:07:28 -0500
+Received: from static-dsl-170.87-197-152.telecom.sk ([87.197.152.170]:42710
+        "EHLO sldom.sldom" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726438AbfKJMH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 06:49:01 -0500
-Received: by mail-il1-f197.google.com with SMTP id y17so13712732ila.20
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 03:49:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=muS40/M+U7unS7Nwdhba7+0opY/I2Z2pZGBBgPUq8C0=;
-        b=two3lPNPM+sQiSV14DN4MmD7JMEHp8igOEUgzrfGvP2u1Yd3GZSp8wHUJvaMoYTC/j
-         Wdu1m2nOA9aT3T2dik+HFOOT2NCqvgDS+2AHq6UzOE1ZaZ/JmqZ9/2A5Xa2GOcWIemnl
-         5AfNIqw6Tm32/w6hiBaIj2WaIdqBp8rrP7yvo/1X+Td+zwHS9QVvOyTLsKlMDAgUsejD
-         FdroQfX9CFIvCSwKpQQYQMmz7f0X++bNWqZdZr3T8Sr/tRlCBZ6VT7TTnJsbhN+FSaut
-         AfFYuOyb6CopL3moRVKZNS2fY5tzJUrhwzqjPlP33fnbd0A+n3xFbeuu0vjDalnWkuXU
-         Z5Ew==
-X-Gm-Message-State: APjAAAXI8QP2wG/ZepqVB5km61UeCJXbDwWpCRG0o+V8Elrk26IeKkm+
-        T0LcsaGdDQhD3U5MoaBXH5eUE8uj9N1oTKVGuCqWuT5yMWiF
-X-Google-Smtp-Source: APXvYqwG7iOuXUzrPn9C7IQw34I7LSwhAIRpMFyONIfQ9Z8ZWhdhx/QqVwYg/S2UFNW58oOzV3uQTeJdrwTJ/Pza/72hGbJAuyfE
+        Sun, 10 Nov 2019 07:07:28 -0500
+Received: from Shop01 (localhost [127.0.0.1])
+        by sldom.sldom (Postfix) with SMTP id 9D7A81EC168;
+        Fri,  8 Nov 2019 13:26:58 +0100 (CET)
+Received: from [32.45.102.190] by Shop01; Fri, 08 Nov 2019 09:22:11 -0300
+Message-ID: <u117$9$--pw04442945858913fcc18@7ttd4c>
+From:   "Simon Oliver" <olivia_simon@lihat.dds-akaun.com>
+Reply-To: "Simon Oliver" <olivia_simon@lihat.dds-akaun.com>
+To:     info@tropicart.net
+Subject: Seeking Investment Opportunities
+Date:   Fri, 08 Nov 19 09:22:11 GMT
+X-Mailer: Microsoft Outlook Express 5.00.2615.200
 MIME-Version: 1.0
-X-Received: by 2002:a92:16d4:: with SMTP id 81mr24840022ilw.198.1573386541143;
- Sun, 10 Nov 2019 03:49:01 -0800 (PST)
-Date:   Sun, 10 Nov 2019 03:49:01 -0800
-In-Reply-To: <0000000000003659ef0596fa4cae@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e11df90596fc9955@google.com>
-Subject: Re: KASAN: invalid-free in io_sqe_files_unregister
-From:   syzbot <syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/alternative;
+        boundary="54.7.E384B_49_01F9CAF_."
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
 
-commit 65e19f54d29cd8559ce60cfd0d751bef7afbdc5c
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sat Oct 26 13:20:21 2019 +0000
+--54.7.E384B_49_01F9CAF_.
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-     io_uring: support for larger fixed file sets
+I consider it very important to introduce to you my client who is interest=
+ed to invest $250 million to $500 million dollars in a reputable project  =
+investment, She is well known in her country holding a political office .
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154f483ce00000
-start commit:   5591cf00 Add linux-next specific files for 20191108
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=174f483ce00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=134f483ce00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1036c6ef52866f9
-dashboard link: https://syzkaller.appspot.com/bug?extid=3254bc44113ae1e331ee
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116bb33ae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=173f133ae00000
+She deserve a secret investment outside her country without direct involve=
+ment.  she needs an experience individual or company that can profitably i=
+nvestment and manage the above funds for the period of 15 years or more.
 
-Reported-by: syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com
-Fixes: 65e19f54d29c ("io_uring: support for larger fixed file sets")
+Forward your details to me for further discussion (e.g)  Your name, Teleph=
+one number and Occupation.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thank you
+Oliver Simon
+
+--54.7.E384B_49_01F9CAF_.--
+
