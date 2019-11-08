@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30346F4671
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:42:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31EC7F4673
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:42:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389986AbfKHLm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:42:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56198 "EHLO mail.kernel.org"
+        id S2387675AbfKHLma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:42:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389918AbfKHLmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:42:20 -0500
+        id S2389926AbfKHLmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 855A921D82;
-        Fri,  8 Nov 2019 11:42:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A29A3222C2;
+        Fri,  8 Nov 2019 11:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213340;
-        bh=UVs0BQCbS7l7vr5KRG0CBnk8B8+YWO9XidSyUtzdbGQ=;
+        s=default; t=1573213341;
+        bh=9Z9PeVMgmbJrx/z7THVYJryxPwx40uyoJ4isNwdXKNw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hpS7NcA4rWPErAQrChahRyjeUYE9568cg43eAnhpqPO6cfBy7MM7O15s6Lk6iDLzI
-         9Km6+k2fcRxcAZ9N4E5sCDQqMOPp6BLsMp8pJah8XSiY8dlXlrYX9Qr0sB+5MSmLsK
-         PWVb4/95kprkb39vGBI8CcyABleik3w10J6xP94w=
+        b=u0KfU8ad9MoLI8cikiEqbifdnYIimo6wBHSbSF9/N35gOS9liKryB9u2PQC9pGVt6
+         f40IwXoFluY0OrRAT1Itkz0b6r/MRK0JhhQhmAUckyANgyICNBq2w+b29U9h7NeCic
+         Y2WOzLvI6MlG2rBp1MdSDNXgTB141M9GYsF9Ge0o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     Lina Iyer <ilina@codeaurora.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
         Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 177/205] soc: qcom: apr: Avoid string overflow
-Date:   Fri,  8 Nov 2019 06:37:24 -0500
-Message-Id: <20191108113752.12502-177-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 178/205] drivers: qcom: rpmh-rsc: clear wait_for_compl after use
+Date:   Fri,  8 Nov 2019 06:37:25 -0500
+Message-Id: <20191108113752.12502-178-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,46 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Lina Iyer <ilina@codeaurora.org>
 
-[ Upstream commit 4fadb26574cb74e5de079dd384f25f44f4fb3ec3 ]
+[ Upstream commit 09e97b6c8754c91470455e69ebd827b741f80af5 ]
 
-'adev->name' is used as a NUL-terminated string, but using strncpy() with the
-length equal to the buffer size may result in lack of the termination:
+The wait_for_compl register ensures the request sequence is maintained
+when sending requests from the TCS. Clear the register after sending
+active request and during invalidate of the sleep and wake TCS.
 
-In function 'apr_add_device',
-    inlined from 'of_register_apr_devices' at drivers//soc/qcom/apr.c:264:7,
-    inlined from 'apr_probe' at drivers//soc/qcom/apr.c:290:2:
-drivers//soc/qcom/apr.c:222:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-   strncpy(adev->name, np->name, APR_NAME_SIZE);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This changes it to use the safer strscpy() instead.
-
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/qcom/apr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/qcom/rpmh-rsc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-index 57af8a5373325..ee9197f5aae96 100644
---- a/drivers/soc/qcom/apr.c
-+++ b/drivers/soc/qcom/apr.c
-@@ -219,9 +219,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 	adev->domain_id = id->domain_id;
- 	adev->version = id->svc_version;
- 	if (np)
--		strncpy(adev->name, np->name, APR_NAME_SIZE);
-+		strscpy(adev->name, np->name, APR_NAME_SIZE);
- 	else
--		strncpy(adev->name, id->name, APR_NAME_SIZE);
-+		strscpy(adev->name, id->name, APR_NAME_SIZE);
- 
- 	dev_set_name(&adev->dev, "aprsvc:%s:%x:%x", adev->name,
- 		     id->domain_id, id->svc_id);
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index ee75da66d64bf..75bd9a83aef00 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -121,6 +121,7 @@ static int tcs_invalidate(struct rsc_drv *drv, int type)
+ 			return -EAGAIN;
+ 		}
+ 		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
++		write_tcs_reg_sync(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0);
+ 	}
+ 	bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
+ 	spin_unlock(&tcs->lock);
+@@ -239,6 +240,7 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
+ skip:
+ 		/* Reclaim the TCS */
+ 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
++		write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, i, 0);
+ 		write_tcs_reg(drv, RSC_DRV_IRQ_CLEAR, 0, BIT(i));
+ 		spin_lock(&drv->lock);
+ 		clear_bit(i, drv->tcs_in_use);
 -- 
 2.20.1
 
