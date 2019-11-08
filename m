@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB14F552B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92708F56B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389890AbfKHTAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:00:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57446 "EHLO mail.kernel.org"
+        id S2391898AbfKHTKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:10:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389666AbfKHTAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:20 -0500
+        id S1730571AbfKHTKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:10:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30E8D2087E;
-        Fri,  8 Nov 2019 19:00:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C89F21D7B;
+        Fri,  8 Nov 2019 19:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239615;
-        bh=NA73Es+Vh1SNvAo9n3AQ+edo/B49eTQ+YGnu4Ow7niA=;
+        s=default; t=1573240229;
+        bh=djHxPYlKVZJ1U1PE20hloh4vtR7zK3P9vL7Sm2fJw40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DOIGb3h3ruDFXmT0A6bwkvidt5FsBZFzKM0xOq9rlqbKzBkwhKHIywBoRj5pEVJr/
-         yQWKCfMoT4igjpYrpns+4CKT+yGGsBRLXC9CjiUGUAF2abNMGHd3Espz/uLULTiHA8
-         Nmwmo9DBNEH3LiUMgM/cxhlpHME3QUziwL87dW6A=
+        b=ElPnqhnMq6IAYtVRiYjQC0tlBvu5F4zPS/guVtSUGOpVMXA96IQSN9gf313Au5oXJ
+         +gVXTP8BjvD/S+uVv1Z68zxFfFEjziAlh9ifF+gQAf+mmd7WDm2jTi6lYiqFNTFZ54
+         uxfldvTGir4rd0xktRtJs83/ijhNFrPv9umV9uoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 56/62] iio: adc: stm32-adc: fix a race when using several adcs with dma and irq
+        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 116/140] mlxsw: core: Unpublish devlink parameters during reload
 Date:   Fri,  8 Nov 2019 19:50:44 +0100
-Message-Id: <20191108174759.481533674@linuxfoundation.org>
+Message-Id: <20191108174912.115991691@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,130 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Jiri Pirko <jiri@mellanox.com>
 
-commit dcb10920179ab74caf88a6f2afadecfc2743b910 upstream.
+[ Upstream commit b7265a0df82c1716bf788096217083ed65a8bb14 ]
 
-End of conversion may be handled by using IRQ or DMA. There may be a
-race when two conversions complete at the same time on several ADCs.
-EOC can be read as 'set' for several ADCs, with:
-- an ADC configured to use IRQs. EOCIE bit is set. The handler is normally
-  called in this case.
-- an ADC configured to use DMA. EOCIE bit isn't set. EOC triggers the DMA
-  request instead. It's then automatically cleared by DMA read. But the
-  handler gets called due to status bit is temporarily set (IRQ triggered
-  by the other ADC).
-So both EOC status bit in CSR and EOCIE control bit must be checked
-before invoking the interrupt handler (e.g. call ISR only for
-IRQ-enabled ADCs).
+The devlink parameter "acl_region_rehash_interval" is a runtime
+parameter whose value is stored in a dynamically allocated memory. While
+reloading the driver, this memory is freed and then allocated again. A
+use-after-free might happen if during this time frame someone tries to
+retrieve its value.
 
-Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
+Since commit 070c63f20f6c ("net: devlink: allow to change namespaces
+during reload") the use-after-free can be reliably triggered when
+reloading the driver into a namespace, as after freeing the memory (via
+reload_down() callback) all the parameters are notified.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fix this by unpublishing and then re-publishing the parameters during
+reload.
+
+Fixes: 98bbf70c1c41 ("mlxsw: spectrum: add "acl_region_rehash_interval" devlink param")
+Fixes: 7c62cfb8c574 ("devlink: publish params only after driver init is done")
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- drivers/iio/adc/stm32-adc-core.c |   43 ++++++++++++++++++++++++++++++++++++---
- drivers/iio/adc/stm32-adc-core.h |    1 
- 2 files changed, 41 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/adc/stm32-adc-core.c
-+++ b/drivers/iio/adc/stm32-adc-core.c
-@@ -45,12 +45,16 @@
-  * @eoc1:	adc1 end of conversion flag in @csr
-  * @eoc2:	adc2 end of conversion flag in @csr
-  * @eoc3:	adc3 end of conversion flag in @csr
-+ * @ier:	interrupt enable register offset for each adc
-+ * @eocie_msk:	end of conversion interrupt enable mask in @ier
-  */
- struct stm32_adc_common_regs {
- 	u32 csr;
- 	u32 eoc1_msk;
- 	u32 eoc2_msk;
- 	u32 eoc3_msk;
-+	u32 ier;
-+	u32 eocie_msk;
- };
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -1128,7 +1128,7 @@ __mlxsw_core_bus_device_register(const s
+ 	if (err)
+ 		goto err_thermal_init;
  
- struct stm32_adc_priv;
-@@ -244,6 +248,8 @@ static const struct stm32_adc_common_reg
- 	.eoc1_msk = STM32F4_EOC1,
- 	.eoc2_msk = STM32F4_EOC2,
- 	.eoc3_msk = STM32F4_EOC3,
-+	.ier = STM32F4_ADC_CR1,
-+	.eocie_msk = STM32F4_EOCIE,
- };
+-	if (mlxsw_driver->params_register && !reload)
++	if (mlxsw_driver->params_register)
+ 		devlink_params_publish(devlink);
  
- /* STM32H7 common registers definitions */
-@@ -251,8 +257,24 @@ static const struct stm32_adc_common_reg
- 	.csr = STM32H7_ADC_CSR,
- 	.eoc1_msk = STM32H7_EOC_MST,
- 	.eoc2_msk = STM32H7_EOC_SLV,
-+	.ier = STM32H7_ADC_IER,
-+	.eocie_msk = STM32H7_EOCIE,
- };
+ 	return 0;
+@@ -1201,7 +1201,7 @@ void mlxsw_core_bus_device_unregister(st
+ 			return;
+ 	}
  
-+static const unsigned int stm32_adc_offset[STM32_ADC_MAX_ADCS] = {
-+	0, STM32_ADC_OFFSET, STM32_ADC_OFFSET * 2,
-+};
-+
-+static unsigned int stm32_adc_eoc_enabled(struct stm32_adc_priv *priv,
-+					  unsigned int adc)
-+{
-+	u32 ier, offset = stm32_adc_offset[adc];
-+
-+	ier = readl_relaxed(priv->common.base + offset + priv->cfg->regs->ier);
-+
-+	return ier & priv->cfg->regs->eocie_msk;
-+}
-+
- /* ADC common interrupt for all instances */
- static void stm32_adc_irq_handler(struct irq_desc *desc)
- {
-@@ -263,13 +285,28 @@ static void stm32_adc_irq_handler(struct
- 	chained_irq_enter(chip, desc);
- 	status = readl_relaxed(priv->common.base + priv->cfg->regs->csr);
- 
--	if (status & priv->cfg->regs->eoc1_msk)
-+	/*
-+	 * End of conversion may be handled by using IRQ or DMA. There may be a
-+	 * race here when two conversions complete at the same time on several
-+	 * ADCs. EOC may be read 'set' for several ADCs, with:
-+	 * - an ADC configured to use DMA (EOC triggers the DMA request, and
-+	 *   is then automatically cleared by DR read in hardware)
-+	 * - an ADC configured to use IRQs (EOCIE bit is set. The handler must
-+	 *   be called in this case)
-+	 * So both EOC status bit in CSR and EOCIE control bit must be checked
-+	 * before invoking the interrupt handler (e.g. call ISR only for
-+	 * IRQ-enabled ADCs).
-+	 */
-+	if (status & priv->cfg->regs->eoc1_msk &&
-+	    stm32_adc_eoc_enabled(priv, 0))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 0));
- 
--	if (status & priv->cfg->regs->eoc2_msk)
-+	if (status & priv->cfg->regs->eoc2_msk &&
-+	    stm32_adc_eoc_enabled(priv, 1))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 1));
- 
--	if (status & priv->cfg->regs->eoc3_msk)
-+	if (status & priv->cfg->regs->eoc3_msk &&
-+	    stm32_adc_eoc_enabled(priv, 2))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 2));
- 
- 	chained_irq_exit(chip, desc);
---- a/drivers/iio/adc/stm32-adc-core.h
-+++ b/drivers/iio/adc/stm32-adc-core.h
-@@ -37,6 +37,7 @@
-  * --------------------------------------------------------
-  */
- #define STM32_ADC_MAX_ADCS		3
-+#define STM32_ADC_OFFSET		0x100
- #define STM32_ADCX_COMN_OFFSET		0x300
- 
- /* STM32F4 - Registers for each ADC instance */
+-	if (mlxsw_core->driver->params_unregister && !reload)
++	if (mlxsw_core->driver->params_unregister)
+ 		devlink_params_unpublish(devlink);
+ 	mlxsw_thermal_fini(mlxsw_core->thermal);
+ 	mlxsw_hwmon_fini(mlxsw_core->hwmon);
 
 
