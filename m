@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84B4EF56CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6048BF5514
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732675AbfKHTLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:11:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43456 "EHLO mail.kernel.org"
+        id S2389559AbfKHTAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:00:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391962AbfKHTLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:11:05 -0500
+        id S2389358AbfKHTAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 145CB21D7E;
-        Fri,  8 Nov 2019 19:11:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BF7222515;
+        Fri,  8 Nov 2019 19:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240264;
-        bh=bKoMmIiBMC4E++nd+QbmW9mGEaYvvFbCN54HCakwmvA=;
+        s=default; t=1573239604;
+        bh=6Xj2iPooSQl5tujDDpQRGNwTab15vFzRg6rNxiTGoHs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O+ZSKNjthMwdXC58tYptt2IXo0JT6XNO5NW/1lHAA+0E69eLxUeHhBaVkwn8njwwy
-         Ikznd1pVWrjmdzMfBsBf1Ejg1m4cY2eiYGZFQPsYmWVp/KZ1K5eVxzJD7aA3Z8Eh2h
-         0cqxvEE1NMElz6yKrgutsFEEu97LMm98sniuNeMM=
+        b=Buc4KlxynUvpjj31ne74ik9s4nHX2ljuiG3W7gPeulGwYYjwwsGfUTMWYTP2ywune
+         XnTIv7ew5yBbs6VYYm95im6BevAdpZUIaJ//PZ1lNqsd62RhWh4YFq1XUXwSw9rJ5z
+         uHH2/QHncAbXMihtRl0NlruwDZCa+tbxEoIPtp2Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 121/140] net: bcmgenet: dont set phydev->link from MAC
-Date:   Fri,  8 Nov 2019 19:50:49 +0100
-Message-Id: <20191108174912.376294261@linuxfoundation.org>
+        stable@vger.kernel.org, aneesh.kumar@linux.ibm.com,
+        mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        "Desnes A. Nunes do Rosario" <desnesn@linux.ibm.com>,
+        Sandipan Das <sandipan@linux.ibm.com>
+Subject: [PATCH 4.14 62/62] selftests/powerpc: Fix compile error on tlbie_test due to newer gcc
+Date:   Fri,  8 Nov 2019 19:50:50 +0100
+Message-Id: <20191108174803.966046641@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Berger <opendmb@gmail.com>
+From: Desnes A. Nunes do Rosario <desnesn@linux.ibm.com>
 
-[ Upstream commit 7de48402faa32298c3551ea32c76ccb4f9d3025d ]
+commit 5b216ea1c40cf06eead15054c70e238c9bd4729e upstream.
 
-When commit 28b2e0d2cd13 ("net: phy: remove parameter new_link from
-phy_mac_interrupt()") removed the new_link parameter it set the
-phydev->link state from the MAC before invoking phy_mac_interrupt().
+Newer versions of GCC (>= 9) demand that the size of the string to be
+copied must be explicitly smaller than the size of the destination.
+Thus, the NULL char has to be taken into account on strncpy.
 
-However, once commit 88d6272acaaa ("net: phy: avoid unneeded MDIO
-reads in genphy_read_status") was added this initialization prevents
-the proper determination of the connection parameters by the function
-genphy_read_status().
+This will avoid the following compiling error:
 
-This commit removes that initialization to restore the proper
-functionality.
+  tlbie_test.c: In function 'main':
+  tlbie_test.c:639:4: error: 'strncpy' specified bound 100 equals destination size
+      strncpy(logdir, optarg, LOGDIR_NAME_SIZE);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
 
-Fixes: 88d6272acaaa ("net: phy: avoid unneeded MDIO reads in genphy_read_status")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org # v4.14
+Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191003211010.9711-1-desnesn@linux.ibm.com
+[sandipan: Backported to v4.14]
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmgenet.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ tools/testing/selftests/powerpc/mm/tlbie_test.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -2617,10 +2617,8 @@ static void bcmgenet_irq_task(struct wor
- 	spin_unlock_irq(&priv->lock);
- 
- 	/* Link UP/DOWN event */
--	if (status & UMAC_IRQ_LINK_EVENT) {
--		priv->dev->phydev->link = !!(status & UMAC_IRQ_LINK_UP);
-+	if (status & UMAC_IRQ_LINK_EVENT)
- 		phy_mac_interrupt(priv->dev->phydev);
--	}
- }
- 
- /* bcmgenet_isr1: handle Rx and Tx priority queues */
+--- a/tools/testing/selftests/powerpc/mm/tlbie_test.c
++++ b/tools/testing/selftests/powerpc/mm/tlbie_test.c
+@@ -636,7 +636,7 @@ int main(int argc, char *argv[])
+ 			nrthreads = strtoul(optarg, NULL, 10);
+ 			break;
+ 		case 'l':
+-			strncpy(logdir, optarg, LOGDIR_NAME_SIZE);
++			strncpy(logdir, optarg, LOGDIR_NAME_SIZE - 1);
+ 			break;
+ 		case 't':
+ 			run_time = strtoul(optarg, NULL, 10);
 
 
