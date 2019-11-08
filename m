@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5566F4A21
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:08:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 782FCF4A37
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389013AbfKHLkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:40:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53712 "EHLO mail.kernel.org"
+        id S2391091AbfKHMHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:07:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388974AbfKHLkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:40:46 -0500
+        id S1732382AbfKHLku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:40:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75469222C4;
-        Fri,  8 Nov 2019 11:40:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A168521D7E;
+        Fri,  8 Nov 2019 11:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213245;
-        bh=RoJ98/3J4bGpFbXoIaQYhTZs4qSivjw8NPTnwltpGGc=;
+        s=default; t=1573213249;
+        bh=zgtQn59xKSHLgHf3t2ThmqyQQy/k5Hd9egH/wHnXQc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoLYf2fqb/kF+6vYnEYmWWgUaavB4uwycXjRaurabMpwm3wgPeGHGkiinAtiQuciI
-         v6bSIBc8Gor2WNkvktGfKO6GSTAezlCx0xmuk/lRP+IPFt/XjXssZQ5xB5Vrq/Dncg
-         iVFE3/64zQ3TDruEnSdPQV126WufVVtkuaVeRXYI=
+        b=0iLX8P4p3Uc0jtDTOUntuGCZghvtYLu/qRo1HuHDfwlbIRBOU7CJV/Ndle2o57FcJ
+         P+brYzKHvLz/9XUxGzMRT1YFHN0kWIi3PSrYxfLqriqsRoIrWWbwwRbFRaOr8XstZ6
+         Lwtr5+LA1SdxrxGJwjLVStNdnXNU7uJznPJcCO8Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Philipp Klocke <philipp97kl@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 114/205] sched/debug: Explicitly cast sched_feat() to bool
-Date:   Fri,  8 Nov 2019 06:36:21 -0500
-Message-Id: <20191108113752.12502-114-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 116/205] firmware: arm_scmi: use strlcpy to ensure NULL-terminated strings
+Date:   Fri,  8 Nov 2019 06:36:23 -0500
+Message-Id: <20191108113752.12502-116-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -48,44 +44,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
-[ Upstream commit 7e6f4c5d600c1c8e2a1d900e65cab319d9b6782e ]
+[ Upstream commit ca64b719a1e665ac7449b6a968059176af7365a8 ]
 
-LLVM has a warning that tags expressions like:
+Replace all the memcpy() for copying name strings from the firmware with
+strlcpy() to make sure we are bounded by the source buffer size and we
+also always have NULL-terminated strings.
 
-	if (foo && non-bool-const)
+This is needed to avoid out of bounds accesses if the firmware returns
+a non-terminated string.
 
-This pattern triggers for CONFIG_SCHED_DEBUG=n where sched_feat() ends
-up being whatever bit we select. Avoid the warning with an explicit
-cast to bool.
-
-Reported-by: Philipp Klocke <philipp97kl@gmail.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Olof Johansson <olof@lixom.net>
+Acked-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/sched.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/arm_scmi/base.c    | 2 +-
+ drivers/firmware/arm_scmi/clock.c   | 2 +-
+ drivers/firmware/arm_scmi/perf.c    | 2 +-
+ drivers/firmware/arm_scmi/power.c   | 2 +-
+ drivers/firmware/arm_scmi/sensors.c | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 9a7c3d08b39f8..c32322c73e22a 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1393,7 +1393,7 @@ static const_debug __maybe_unused unsigned int sysctl_sched_features =
- 	0;
- #undef SCHED_FEAT
+diff --git a/drivers/firmware/arm_scmi/base.c b/drivers/firmware/arm_scmi/base.c
+index 9dff33ea6416f..204390297f4bd 100644
+--- a/drivers/firmware/arm_scmi/base.c
++++ b/drivers/firmware/arm_scmi/base.c
+@@ -208,7 +208,7 @@ static int scmi_base_discover_agent_get(const struct scmi_handle *handle,
  
--#define sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
-+#define sched_feat(x) !!(sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
+ 	ret = scmi_do_xfer(handle, t);
+ 	if (!ret)
+-		memcpy(name, t->rx.buf, SCMI_MAX_STR_SIZE);
++		strlcpy(name, t->rx.buf, SCMI_MAX_STR_SIZE);
  
- #endif /* SCHED_DEBUG && CONFIG_JUMP_LABEL */
+ 	scmi_xfer_put(handle, t);
  
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index e4119eb34986c..30fc04e284312 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -111,7 +111,7 @@ static int scmi_clock_attributes_get(const struct scmi_handle *handle,
+ 
+ 	ret = scmi_do_xfer(handle, t);
+ 	if (!ret)
+-		memcpy(clk->name, attr->name, SCMI_MAX_STR_SIZE);
++		strlcpy(clk->name, attr->name, SCMI_MAX_STR_SIZE);
+ 	else
+ 		clk->name[0] = '\0';
+ 
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 64342944d9175..87c99d296ecd3 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -174,7 +174,7 @@ scmi_perf_domain_attributes_get(const struct scmi_handle *handle, u32 domain,
+ 			dom_info->mult_factor =
+ 					(dom_info->sustained_freq_khz * 1000) /
+ 					dom_info->sustained_perf_level;
+-		memcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
++		strlcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
+ 	}
+ 
+ 	scmi_xfer_put(handle, t);
+diff --git a/drivers/firmware/arm_scmi/power.c b/drivers/firmware/arm_scmi/power.c
+index cfa033b05aed5..62f3401a1f01e 100644
+--- a/drivers/firmware/arm_scmi/power.c
++++ b/drivers/firmware/arm_scmi/power.c
+@@ -106,7 +106,7 @@ scmi_power_domain_attributes_get(const struct scmi_handle *handle, u32 domain,
+ 		dom_info->state_set_notify = SUPPORTS_STATE_SET_NOTIFY(flags);
+ 		dom_info->state_set_async = SUPPORTS_STATE_SET_ASYNC(flags);
+ 		dom_info->state_set_sync = SUPPORTS_STATE_SET_SYNC(flags);
+-		memcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
++		strlcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
+ 	}
+ 
+ 	scmi_xfer_put(handle, t);
+diff --git a/drivers/firmware/arm_scmi/sensors.c b/drivers/firmware/arm_scmi/sensors.c
+index 27f2092b9882a..b53d5cc9c9f6c 100644
+--- a/drivers/firmware/arm_scmi/sensors.c
++++ b/drivers/firmware/arm_scmi/sensors.c
+@@ -140,7 +140,7 @@ static int scmi_sensor_description_get(const struct scmi_handle *handle,
+ 			s = &si->sensors[desc_index + cnt];
+ 			s->id = le32_to_cpu(buf->desc[cnt].id);
+ 			s->type = SENSOR_TYPE(attrh);
+-			memcpy(s->name, buf->desc[cnt].name, SCMI_MAX_STR_SIZE);
++			strlcpy(s->name, buf->desc[cnt].name, SCMI_MAX_STR_SIZE);
+ 		}
+ 
+ 		desc_index += num_returned;
 -- 
 2.20.1
 
