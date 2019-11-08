@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8834DF4A33
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9646CF4A2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:08:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391427AbfKHMHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:07:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53908 "EHLO mail.kernel.org"
+        id S2403829AbfKHMHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:07:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389043AbfKHLky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:40:54 -0500
+        id S1731612AbfKHLk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:40:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEE4521D7E;
-        Fri,  8 Nov 2019 11:40:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AF96222C2;
+        Fri,  8 Nov 2019 11:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213253;
-        bh=6Wjnw45fi1Pp9pwaOW/zFICTaYR/dlHhA6uONnThtAM=;
+        s=default; t=1573213257;
+        bh=jVMivIphEJg/VS15640mhwO4FSp2BARzrIpoBp8ADYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Thl/n9uC/fb4uFfpVje9nRtTtWTAQIDOo05DxG3qxVEZx3l9Prevee7H4e6pIRr/m
-         wTx3fcwjWR2ykmQIl7Im/ePqbmxAmrOuFcOWPHsunuoLf7REdqF7ACWaP3eXwKQ7XA
-         LdhEkPZhrcM4+v0khNkHiYxBLiLycNYC573UHusk=
+        b=S97XyX3pbe5dkDxtKzPr75Ul+++Dy1kD1vB5l3a1GY/itG3tCsI5fhU6MUUxT9/Yc
+         dMABCbWY6r4XEWahYt4/7sBM5R544WpmB2Cs/yoMkC1v3QVwK+PuLfAZJWaSfq+WfI
+         KWAN1/rN/w68/GmyKFXNPMT2WNUYE37WgtK0gIec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Radu Pirea <radu.pirea@microchip.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 118/205] tty/serial: atmel: Change the driver to work under at91-usart MFD
-Date:   Fri,  8 Nov 2019 06:36:25 -0500
-Message-Id: <20191108113752.12502-118-sashal@kernel.org>
+Cc:     Daniel Silsby <dansilsby@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 122/205] dmaengine: dma-jz4780: Further residue status fix
+Date:   Fri,  8 Nov 2019 06:36:29 -0500
+Message-Id: <20191108113752.12502-122-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -47,182 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radu Pirea <radu.pirea@microchip.com>
+From: Daniel Silsby <dansilsby@gmail.com>
 
-[ Upstream commit c24d25317a7c6bb3053d4c193b3cf57d1e9a3e4b ]
+[ Upstream commit 83ef4fb7556b6a673f755da670cbacab7e2c7f1b ]
 
-This patch modifies the place where resources and device tree properties
-are searched.
+Func jz4780_dma_desc_residue() expects the index to the next hw
+descriptor as its last parameter. Caller func jz4780_dma_tx_status(),
+however, applied modulus before passing it. When the current hw
+descriptor was last in the list, the index passed became zero.
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+The resulting excess of reported residue especially caused problems
+with cyclic DMA transfer clients, i.e. ALSA AIC audio output, which
+rely on this for determining current DMA location within buffer.
+
+Combined with the recent and related residue-reporting fixes, spurious
+ALSA audio underruns on jz4770 hardware are now fixed.
+
+Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/Kconfig        |  1 +
- drivers/tty/serial/atmel_serial.c | 42 ++++++++++++++++++++-----------
- 2 files changed, 28 insertions(+), 15 deletions(-)
+ drivers/dma/dma-jz4780.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index df8bd0c7b97db..32886c3046413 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -118,6 +118,7 @@ config SERIAL_ATMEL
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_MCTRL_GPIO if GPIOLIB
-+	select MFD_AT91_USART
- 	help
- 	  This enables the driver for the on-chip UARTs of the Atmel
- 	  AT91 processors.
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index dd8949e8fcd7a..251f708f47f76 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -195,8 +195,7 @@ static struct console atmel_console;
+diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
+index 987899610b461..edff93aacad36 100644
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -587,7 +587,7 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
+ 					to_jz4780_dma_desc(vdesc), 0);
+ 	} else if (cookie == jzchan->desc->vdesc.tx.cookie) {
+ 		txstate->residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
+-			  (jzchan->curr_hwdesc + 1) % jzchan->desc->count);
++					jzchan->curr_hwdesc + 1);
+ 	} else
+ 		txstate->residue = 0;
  
- #if defined(CONFIG_OF)
- static const struct of_device_id atmel_serial_dt_ids[] = {
--	{ .compatible = "atmel,at91rm9200-usart" },
--	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ .compatible = "atmel,at91rm9200-usart-serial" },
- 	{ /* sentinel */ }
- };
- #endif
-@@ -926,6 +925,7 @@ static void atmel_tx_dma(struct uart_port *port)
- static int atmel_prepare_tx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
- 	int ret, nent;
-@@ -933,7 +933,7 @@ static int atmel_prepare_tx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	atmel_port->chan_tx = dma_request_slave_channel(port->dev, "tx");
-+	atmel_port->chan_tx = dma_request_slave_channel(mfd_dev, "tx");
- 	if (atmel_port->chan_tx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for tx DMA transfers\n",
-@@ -1104,6 +1104,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
- static int atmel_prepare_rx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	struct dma_async_tx_descriptor *desc;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
-@@ -1115,7 +1116,7 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_CYCLIC, mask);
- 
--	atmel_port->chan_rx = dma_request_slave_channel(port->dev, "rx");
-+	atmel_port->chan_rx = dma_request_slave_channel(mfd_dev, "rx");
- 	if (atmel_port->chan_rx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for rx DMA transfers\n",
-@@ -2246,8 +2247,8 @@ static const char *atmel_type(struct uart_port *port)
-  */
- static void atmel_release_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	release_mem_region(port->mapbase, size);
- 
-@@ -2262,8 +2263,8 @@ static void atmel_release_port(struct uart_port *port)
-  */
- static int atmel_request_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	if (!request_mem_region(port->mapbase, size, "atmel_serial"))
- 		return -EBUSY;
-@@ -2365,27 +2366,28 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- {
- 	int ret;
- 	struct uart_port *port = &atmel_port->uart;
-+	struct platform_device *mpdev = to_platform_device(pdev->dev.parent);
- 
- 	atmel_init_property(atmel_port, pdev);
- 	atmel_set_ops(port);
- 
--	uart_get_rs485_mode(&pdev->dev, &port->rs485);
-+	uart_get_rs485_mode(&mpdev->dev, &port->rs485);
- 
- 	port->iotype		= UPIO_MEM;
- 	port->flags		= UPF_BOOT_AUTOCONF | UPF_IOREMAP;
- 	port->ops		= &atmel_pops;
- 	port->fifosize		= 1;
- 	port->dev		= &pdev->dev;
--	port->mapbase	= pdev->resource[0].start;
--	port->irq	= pdev->resource[1].start;
-+	port->mapbase		= mpdev->resource[0].start;
-+	port->irq		= mpdev->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
--	port->membase	= NULL;
-+	port->membase		= NULL;
- 
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
- 
- 	/* for console, the clock could already be configured */
- 	if (!atmel_port->clk) {
--		atmel_port->clk = clk_get(&pdev->dev, "usart");
-+		atmel_port->clk = clk_get(&mpdev->dev, "usart");
- 		if (IS_ERR(atmel_port->clk)) {
- 			ret = PTR_ERR(atmel_port->clk);
- 			atmel_port->clk = NULL;
-@@ -2718,13 +2720,22 @@ static void atmel_serial_probe_fifos(struct atmel_uart_port *atmel_port,
- static int atmel_serial_probe(struct platform_device *pdev)
- {
- 	struct atmel_uart_port *atmel_port;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = pdev->dev.parent->of_node;
- 	void *data;
- 	int ret = -ENODEV;
- 	bool rs485_enabled;
- 
- 	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
- 
-+	/*
-+	 * In device tree there is no node with "atmel,at91rm9200-usart-serial"
-+	 * as compatible string. This driver is probed by at91-usart mfd driver
-+	 * which is just a wrapper over the atmel_serial driver and
-+	 * spi-at91-usart driver. All attributes needed by this driver are
-+	 * found in of_node of parent.
-+	 */
-+	pdev->dev.of_node = np;
-+
- 	ret = of_alias_get_id(np, "serial");
- 	if (ret < 0)
- 		/* port id not found in platform data nor device-tree aliases:
-@@ -2860,6 +2871,7 @@ static int atmel_serial_remove(struct platform_device *pdev)
- 
- 	clk_put(atmel_port->clk);
- 	atmel_port->clk = NULL;
-+	pdev->dev.of_node = NULL;
- 
- 	return ret;
- }
-@@ -2870,7 +2882,7 @@ static struct platform_driver atmel_serial_driver = {
- 	.suspend	= atmel_serial_suspend,
- 	.resume		= atmel_serial_resume,
- 	.driver		= {
--		.name			= "atmel_usart",
-+		.name			= "atmel_usart_serial",
- 		.of_match_table		= of_match_ptr(atmel_serial_dt_ids),
- 	},
- };
 -- 
 2.20.1
 
