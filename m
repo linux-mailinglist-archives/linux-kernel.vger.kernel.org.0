@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FD95F4B26
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:15:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3110F4B41
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:15:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732165AbfKHLiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:38:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50820 "EHLO mail.kernel.org"
+        id S2387518AbfKHMOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:14:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732106AbfKHLiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:01 -0500
+        id S1732145AbfKHLiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D11721D7E;
-        Fri,  8 Nov 2019 11:38:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89C7622466;
+        Fri,  8 Nov 2019 11:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213080;
-        bh=nL257+5kU0ZhATbuvvRos00sxXWABvhtjW0o5lB36dE=;
+        s=default; t=1573213083;
+        bh=c/ibTNbMklbkWTbukVx7j2j/iB5SSjr6ytTVhUTXei8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eQeEzUOg2hjpVmYJIe0L7xn5enHs8f/BvXj+FV0sNENbEY1rFK+QbpxDsMXBu0gbW
-         SJg/a4tG1ENK1shWjj56RGaRulIRKlVLxMmQou2iDYsk+wDTaHd2PftzQQo17aT2WG
-         jDFobEfyIlpfsptRwqV9zaAxSularrAkJqSZ2sG4=
+        b=BybzZFFxFZ/+W2qexF4BIxROzDqXLndHiVJxbSeLxjcqGNBfMq0oFJAn+jHS6731E
+         KoBbyS1Z3vDCudKLYFo7Lslm0JlkMQKBXsCU+wmsC8aXiKjn8Akoofus4obIwUF1KL
+         DKZbIVffVbtlEtszO/nyfP8SHes9zPNhmtvo7SgQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 007/205] soundwire: intel: Fix uninitialized adev deref
-Date:   Fri,  8 Nov 2019 06:34:34 -0500
-Message-Id: <20191108113752.12502-7-sashal@kernel.org>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Martin Lucina <martin@lucina.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 009/205] arm64: dts: allwinner: a64: Olinuxino: fix DRAM voltage
+Date:   Fri,  8 Nov 2019 06:34:36 -0500
+Message-Id: <20191108113752.12502-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,37 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinod Koul <vkoul@kernel.org>
+From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit e1c815f4b24a305e5bc9eceb541674bf4d02b709 ]
+[ Upstream commit 93366b49a35f3a190052734b3f32c8fe2535b53f ]
 
-In case of error, we can dereference uninitialized 'adev'
+The Olinuxino board uses DDR3L chips which are supposed to be driven
+with 1.35V. The reset default of the AXP is properly set to 1.36V.
 
-drivers/soundwire/intel_init.c:154 sdw_intel_acpi_cb()
-error: uninitialized symbol 'adev'.
+While technically the chips can also run at 1.5 volts, changing the
+voltage on the fly while booting Linux is asking for trouble. Also
+running at a lower voltage saves power.
 
-Fix that by not using adev for warn print and make it pr_err.
+So fix the DCDC5 value to match the actual board design.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Tested-by: Martin Lucina <martin@lucina.net>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soundwire/intel_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soundwire/intel_init.c b/drivers/soundwire/intel_init.c
-index d1ea6b4d0ad30..5c8a20d998786 100644
---- a/drivers/soundwire/intel_init.c
-+++ b/drivers/soundwire/intel_init.c
-@@ -151,7 +151,7 @@ static acpi_status sdw_intel_acpi_cb(acpi_handle handle, u32 level,
- 	struct acpi_device *adev;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 3f531393eaee9..b3f186434f363 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -142,10 +142,14 @@
  
- 	if (acpi_bus_get_device(handle, &adev)) {
--		dev_err(&adev->dev, "Couldn't find ACPI handle\n");
-+		pr_err("%s: Couldn't find ACPI handle\n", __func__);
- 		return AE_NOT_FOUND;
- 	}
+ /* DCDC3 is polyphased with DCDC2 */
+ 
++/*
++ * The board uses DDR3L DRAM chips. 1.36V is the closest to the nominal
++ * 1.35V that the PMIC can drive.
++ */
+ &reg_dcdc5 {
+ 	regulator-always-on;
+-	regulator-min-microvolt = <1500000>;
+-	regulator-max-microvolt = <1500000>;
++	regulator-min-microvolt = <1360000>;
++	regulator-max-microvolt = <1360000>;
+ 	regulator-name = "vcc-ddr3";
+ };
  
 -- 
 2.20.1
