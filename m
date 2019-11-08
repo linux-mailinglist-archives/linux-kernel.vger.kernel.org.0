@@ -2,81 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F207BF5A59
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:47:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BC8F5A61
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731773AbfKHVph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:45:37 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:57222 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728265AbfKHVph (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:45:37 -0500
-Received: (qmail 6968 invoked by uid 2102); 8 Nov 2019 16:45:36 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 8 Nov 2019 16:45:36 -0500
-Date:   Fri, 8 Nov 2019 16:45:36 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Andrey Konovalov <andreyknvl@google.com>
-cc:     linux-usb@vger.kernel.org, <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Felipe Balbi <balbi@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>
-Subject: Re: [PATCH 0/1] usb: gadget: add raw-gadget interface
-In-Reply-To: <cover.1573236684.git.andreyknvl@google.com>
-Message-ID: <Pine.LNX.4.44L0.1911081642461.1498-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        id S1729286AbfKHVuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:50:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726462AbfKHVuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:50:05 -0500
+Subject: Re: [GIT PULL] Ceph fixes for 5.4-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573249805;
+        bh=wB44KTNLx4zivLpP5jo3n08ALKXJKuThlbJQVcom1cY=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=rbvH3ylTTfDKN1altPwkWGqGRZnRKnu6S++B+fTmlpXV2hm70vVcXBYI4D+6ryLan
+         BNucHxaz0GYTRzjwINhZn544D4xRDJt/ZlOVxKA2y4BqBkk2Gokc8atRkXfYWffYuE
+         6iw2z0Yk+PrhZAW/7MfjA66NYVsFPFA2Z5U7tgBk=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191108155853.23314-1-idryomov@gmail.com>
+References: <20191108155853.23314-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191108155853.23314-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
+ tags/ceph-for-5.4-rc7
+X-PR-Tracked-Commit-Id: ff29fde84d1fc82f233c7da0daa3574a3942bec7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0689acfad34e4f60a25e354af2835e1569da81ba
+Message-Id: <157324980496.30145.3297312279339956877.pr-tracker-bot@kernel.org>
+Date:   Fri, 08 Nov 2019 21:50:04 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Nov 2019, Andrey Konovalov wrote:
+The pull request you sent on Fri,  8 Nov 2019 16:58:53 +0100:
 
-> This patchset (currently a single patch) adds a new userspace interface
-> for the USB Gadget subsystem called USB Raw Gadget (I don't mind changing
-> the name to something else if there are better ideas). This is what
-> currently being used to enable coverage-buided USB fuzzing with syzkaller:
-> 
-> https://github.com/google/syzkaller/blob/master/docs/linux/external_fuzzing_usb.md
-> 
-> Initially I was using GadgetFS (together with the Dummy HCD/UDC module)
-> to perform emulation of USB devices for fuzzing, but later switched to a
-> custom written interface. The incentive to implement a different interface
-> was to provide a somewhat raw and direct access to the USB Gadget layer
-> for the userspace, where every USB request is passed to the userspace to
-> get a response. See documentation for the list of differences between
-> Raw Gadget and GadgetFS.
-> 
-> This patchset has been pushed to the public Linux kernel Gerrit instance:
-> 
-> https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2144
-> 
-> Andrey Konovalov (1):
->   usb: gadget: add raw-gadget interface
-> 
->  Documentation/usb/index.rst         |    1 +
->  Documentation/usb/raw-gadget.rst    |   60 ++
->  drivers/usb/gadget/Kconfig          |    9 +
->  drivers/usb/gadget/Makefile         |    2 +
->  drivers/usb/gadget/raw.c            | 1150 +++++++++++++++++++++++++++
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.4-rc7
 
-As a general rule, gadget drivers don't go directly in
-drivers/usb/gadget.  raw.c counts as a legacy driver (because it's not
-written to use the composite gadget framework), so it belongs in
-drivers/usb/gadget/legacy.  That's where the gadgetfs driver lives, for
-example.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0689acfad34e4f60a25e354af2835e1569da81ba
 
-Alan Stern
+Thank you!
 
->  include/uapi/linux/usb/raw_gadget.h |  164 ++++
->  6 files changed, 1386 insertions(+)
->  create mode 100644 Documentation/usb/raw-gadget.rst
->  create mode 100644 drivers/usb/gadget/raw.c
->  create mode 100644 include/uapi/linux/usb/raw_gadget.h
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
