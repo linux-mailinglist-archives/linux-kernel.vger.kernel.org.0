@@ -2,272 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3B6F5B9A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 00:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D713F5B8C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 00:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbfKHXDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 18:03:50 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51675 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfKHXDu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 18:03:50 -0500
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1iTDIA-0002Ia-C0; Sat, 09 Nov 2019 00:03:46 +0100
-Message-ID: <3a0cfce79620152facfe31b442a735db1dcda436.camel@pengutronix.de>
-Subject: Re: [PATCH 15/16] drm/etnaviv: use ktime_t for timeouts
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>, y2038@lists.linaro.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-Date:   Sat, 09 Nov 2019 00:03:41 +0100
-In-Reply-To: <20191108213257.3097633-16-arnd@arndb.de>
-References: <20191108213257.3097633-1-arnd@arndb.de>
-         <20191108213257.3097633-16-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        id S1729443AbfKHXA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 18:00:59 -0500
+Received: from mga04.intel.com ([192.55.52.120]:29126 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728633AbfKHXA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 18:00:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 15:00:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,283,1569308400"; 
+   d="scan'208";a="206142939"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2019 15:00:58 -0800
+Date:   Fri, 8 Nov 2019 15:05:27 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v7 10/11] iommu/vt-d: Support flushing more translation
+ cache types
+Message-ID: <20191108150527.4583eb88@jacob-builder>
+In-Reply-To: <467e60cc-efb1-83d4-2dea-f6131a60428b@redhat.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1571946904-86776-11-git-send-email-jacob.jun.pan@linux.intel.com>
+        <467e60cc-efb1-83d4-2dea-f6131a60428b@redhat.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 08.11.2019, 22:32 +0100 schrieb Arnd Bergmann:
-> struct timespec is being removed from the kernel because it often leads
-> to code that is not y2038-safe.
-> 
-> In the etnaviv driver, monotonic timestamps are used, which do not suffer
-> from overflow, but using ktime_t still leads to better code overall.
-> 
-> The conversion is straightforward for the most part, except for
-> etnaviv_timeout_to_jiffies(), which needs to handle arguments larger
-> than MAX_JIFFY_OFFSET on 32-bit architectures.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 19 +++++++++----------
->  drivers/gpu/drm/etnaviv/etnaviv_drv.h | 21 +++++++++------------
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c |  5 ++---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.h |  2 +-
->  drivers/gpu/drm/etnaviv/etnaviv_gpu.c |  4 ++--
->  drivers/gpu/drm/etnaviv/etnaviv_gpu.h |  4 ++--
->  6 files changed, 25 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> index 1f9c01be40d7..1250c5e06329 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -282,16 +282,13 @@ static int etnaviv_ioctl_gem_new(struct drm_device *dev, void *data,
->  			args->flags, &args->handle);
->  }
->  
-> -#define TS(t) ((struct timespec){ \
-> -	.tv_sec = (t).tv_sec, \
-> -	.tv_nsec = (t).tv_nsec \
-> -})
-> -
->  static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
->  		struct drm_file *file)
->  {
->  	struct drm_etnaviv_gem_cpu_prep *args = data;
->  	struct drm_gem_object *obj;
-> +	ktime_t timeout = ktime_set(args->timeout.tv_sec,
-> +				    args->timeout.tv_nsec);
->  	int ret;
->  
->  	if (args->op & ~(ETNA_PREP_READ | ETNA_PREP_WRITE | ETNA_PREP_NOSYNC))
-> @@ -301,7 +298,7 @@ static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
->  	if (!obj)
->  		return -ENOENT;
->  
-> -	ret = etnaviv_gem_cpu_prep(obj, args->op, &TS(args->timeout));
-> +	ret = etnaviv_gem_cpu_prep(obj, args->op, timeout);
->  
->  	drm_gem_object_put_unlocked(obj);
->  
-> @@ -354,7 +351,8 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
->  {
->  	struct drm_etnaviv_wait_fence *args = data;
->  	struct etnaviv_drm_private *priv = dev->dev_private;
-> -	struct timespec *timeout = &TS(args->timeout);
-> +	ktime_t timeout = ktime_set(args->timeout.tv_sec,
-> +				    args->timeout.tv_nsec);
->  	struct etnaviv_gpu *gpu;
->  
->  	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
-> @@ -368,7 +366,7 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
->  		return -ENXIO;
->  
->  	if (args->flags & ETNA_WAIT_NONBLOCK)
-> -		timeout = NULL;
-> +		timeout = ktime_set(0, 0);
+On Fri, 8 Nov 2019 17:18:10 +0100
+Auger Eric <eric.auger@redhat.com> wrote:
 
-This is a change in behavior, as far as I can see. After this change
-the called internal function is not able to differentiate between a
-NONBLOCK call and a blocking call with 0 timeout. The difference being
-that on a busy object the NONBLOCK call will return -EBUSY, while a
-blocking call will return -ETIMEDOUT.
+> Hi Jacob,
+> 
+> On 10/24/19 9:55 PM, Jacob Pan wrote:
+> > When Shared Virtual Memory is exposed to a guest via vIOMMU,
+> > scalable IOTLB invalidation may be passed down from outside IOMMU
+> > subsystems. This patch adds invalidation functions that can be used
+> > for additional translation cache types.
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >  drivers/iommu/dmar.c        | 46
+> > +++++++++++++++++++++++++++++++++++++++++++++
+> > drivers/iommu/intel-pasid.c |  3 ++- include/linux/intel-iommu.h |
+> > 21 +++++++++++++++++---- 3 files changed, 65 insertions(+), 5
+> > deletions(-)
+> > 
+> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> > index 49bb7d76e646..0ce2d32ff99e 100644
+> > --- a/drivers/iommu/dmar.c
+> > +++ b/drivers/iommu/dmar.c
+> > @@ -1346,6 +1346,20 @@ void qi_flush_iotlb(struct intel_iommu
+> > *iommu, u16 did, u64 addr, qi_submit_sync(&desc, iommu);
+> >  }
+> >  
+> > +/* PASID-based IOTLB Invalidate */
+> > +void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+> > u32 pasid,
+> > +		unsigned int size_order, u64 granu, int ih)
+> > +{
+> > +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
+> > +
+> > +	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
+> > +		QI_EIOTLB_GRAN(granu) | QI_EIOTLB_TYPE;
+> > +	desc.qw1 = QI_EIOTLB_ADDR(addr) | QI_EIOTLB_IH(ih) |
+> > +		QI_EIOTLB_AM(size_order);
+> > +
+> > +	qi_submit_sync(&desc, iommu);
+> > +}
+> > +
+> >  void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16
+> > pfsid, u16 qdep, u64 addr, unsigned mask)
+> >  {
+> > @@ -1369,6 +1383,38 @@ void qi_flush_dev_iotlb(struct intel_iommu
+> > *iommu, u16 sid, u16 pfsid, qi_submit_sync(&desc, iommu);
+> >  }
+> >  
+> > +/* PASID-based device IOTLB Invalidate */
+> > +void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16 sid, u16
+> > pfsid,
+> > +		u32 pasid,  u16 qdep, u64 addr, unsigned
+> > size_order, u64 granu) +{
+> > +	struct qi_desc desc;
+> > +
+> > +	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) |
+> > QI_DEV_EIOTLB_SID(sid) |
+> > +		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
+> > +		QI_DEV_IOTLB_PFSID(pfsid);
+> > +	desc.qw1 = QI_DEV_EIOTLB_GLOB(granu);
+> > +
+> > +	/* If S bit is 0, we only flush a single page. If S bit is
+> > set,
+> > +	 * The least significant zero bit indicates the
+> > invalidation address
+> > +	 * range. VT-d spec 6.5.2.6.
+> > +	 * e.g. address bit 12[0] indicates 8KB, 13[0] indicates
+> > 16KB.
+> > +	 */
+> > +	if (!size_order) {
+> > +		desc.qw0 |= QI_DEV_EIOTLB_ADDR(addr) &
+> > ~QI_DEV_EIOTLB_SIZE;  
+> this is desc.qw1
+> 
+Right, will fix.
 
-But then CLOCK_MONOTONIC starts at 0 and should not never wrap, right?
-If that's the case then we should never encounter a genuine 0 timeout
-and this change would be okay.
+Thanks!
+> With that fixed and the qi_flush_dev_piotlb init issue spotted by Lu,
+> feel free to add my
+> 
+> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> 
+> Thanks
+> 
+> Eric
+> 
+> > +	} else {
+> > +		unsigned long mask = 1UL << (VTD_PAGE_SHIFT +
+> > size_order);
+> > +		desc.qw1 |= QI_DEV_EIOTLB_ADDR(addr & ~mask) |
+> > QI_DEV_EIOTLB_SIZE;
+> > +	}
+> > +	qi_submit_sync(&desc, iommu);
+> > +}
+> > +
+> > +void qi_flush_pasid_cache(struct intel_iommu *iommu, u16 did, u64
+> > granu, int pasid) +{
+> > +	struct qi_desc desc = {.qw1 = 0, .qw2 = 0, .qw3 = 0};
+> > +
+> > +	desc.qw0 = QI_PC_PASID(pasid) | QI_PC_DID(did) |
+> > QI_PC_GRAN(granu) | QI_PC_TYPE;
+> > +	qi_submit_sync(&desc, iommu);
+> > +}
+> >  /*
+> >   * Disable Queued Invalidation interface.
+> >   */
+> > diff --git a/drivers/iommu/intel-pasid.c
+> > b/drivers/iommu/intel-pasid.c index f846a907cfcf..6d7a701ef4d3
+> > 100644 --- a/drivers/iommu/intel-pasid.c
+> > +++ b/drivers/iommu/intel-pasid.c
+> > @@ -491,7 +491,8 @@ pasid_cache_invalidation_with_pasid(struct
+> > intel_iommu *iommu, {
+> >  	struct qi_desc desc;
+> >  
+> > -	desc.qw0 = QI_PC_DID(did) | QI_PC_PASID_SEL |
+> > QI_PC_PASID(pasid);
+> > +	desc.qw0 = QI_PC_DID(did) | QI_PC_GRAN(QI_PC_PASID_SEL) |
+> > +		QI_PC_PASID(pasid) | QI_PC_TYPE;
+> >  	desc.qw1 = 0;
+> >  	desc.qw2 = 0;
+> >  	desc.qw3 = 0;
+> > diff --git a/include/linux/intel-iommu.h
+> > b/include/linux/intel-iommu.h index 6c74c71b1ebf..a25fb3a0ea5b
+> > 100644 --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -332,7 +332,7 @@ enum {
+> >  #define QI_IOTLB_GRAN(gran) 	(((u64)gran) >>
+> > (DMA_TLB_FLUSH_GRANU_OFFSET-4)) #define QI_IOTLB_ADDR(addr)
+> > (((u64)addr) & VTD_PAGE_MASK) #define
+> > QI_IOTLB_IH(ih)		(((u64)ih) << 6) -#define
+> > QI_IOTLB_AM(am)		(((u8)am)) +#define
+> > QI_IOTLB_AM(am)		(((u8)am) & 0x3f) 
+> >  #define QI_CC_FM(fm)		(((u64)fm) << 48)
+> >  #define QI_CC_SID(sid)		(((u64)sid) << 32)
+> > @@ -350,16 +350,21 @@ enum {
+> >  #define QI_PC_DID(did)		(((u64)did) << 16)
+> >  #define QI_PC_GRAN(gran)	(((u64)gran) << 4)
+> >  
+> > -#define QI_PC_ALL_PASIDS	(QI_PC_TYPE | QI_PC_GRAN(0))
+> > -#define QI_PC_PASID_SEL		(QI_PC_TYPE | QI_PC_GRAN(1))
+> > +/* PASID cache invalidation granu */
+> > +#define QI_PC_ALL_PASIDS	0
+> > +#define QI_PC_PASID_SEL		1
+> >  
+> >  #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
+> >  #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
+> > -#define QI_EIOTLB_AM(am)	(((u64)am))
+> > +#define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
+> >  #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
+> >  #define QI_EIOTLB_DID(did)	(((u64)did) << 16)
+> >  #define QI_EIOTLB_GRAN(gran) 	(((u64)gran) << 4)
+> >  
+> > +/* QI Dev-IOTLB inv granu */
+> > +#define QI_DEV_IOTLB_GRAN_ALL		1
+> > +#define QI_DEV_IOTLB_GRAN_PASID_SEL	0
+> > +
+> >  #define QI_DEV_EIOTLB_ADDR(a)	((u64)(a) & VTD_PAGE_MASK)
+> >  #define QI_DEV_EIOTLB_SIZE	(((u64)1) << 11)
+> >  #define QI_DEV_EIOTLB_GLOB(g)	((u64)g)
+> > @@ -655,8 +660,16 @@ extern void qi_flush_context(struct
+> > intel_iommu *iommu, u16 did, u16 sid, u8 fm, u64 type);
+> >  extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64
+> > addr, unsigned int size_order, u64 type);
+> > +extern void qi_flush_piotlb(struct intel_iommu *iommu, u16 did,
+> > u64 addr,
+> > +			u32 pasid, unsigned int size_order, u64
+> > type, int ih); extern void qi_flush_dev_iotlb(struct intel_iommu
+> > *iommu, u16 sid, u16 pfsid, u16 qdep, u64 addr, unsigned mask);
+> > +
+> > +extern void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16
+> > sid, u16 pfsid,
+> > +			u32 pasid, u16 qdep, u64 addr, unsigned
+> > size_order, u64 granu); +
+> > +extern void qi_flush_pasid_cache(struct intel_iommu *iommu, u16
+> > did, u64 granu, int pasid); +
+> >  extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu
+> > *iommu); 
+> >  extern int dmar_ir_support(void);
+> >   
+> 
 
-Regards,
-Lucas
->  
->  	return etnaviv_gpu_wait_fence_interruptible(gpu, args->fence,
->  						    timeout);
-> @@ -403,7 +401,8 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
->  {
->  	struct etnaviv_drm_private *priv = dev->dev_private;
->  	struct drm_etnaviv_gem_wait *args = data;
-> -	struct timespec *timeout = &TS(args->timeout);
-> +	ktime_t timeout = ktime_set(args->timeout.tv_sec,
-> +				    args->timeout.tv_nsec);
->  	struct drm_gem_object *obj;
->  	struct etnaviv_gpu *gpu;
->  	int ret;
-> @@ -423,7 +422,7 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
->  		return -ENOENT;
->  
->  	if (args->flags & ETNA_WAIT_NONBLOCK)
-> -		timeout = NULL;
-> +		timeout = ktime_set(0, 0);
->  
->  	ret = etnaviv_gem_wait_bo(gpu, obj, timeout);
->  
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> index 32cfa5a48d42..57a4e247bbcf 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> @@ -60,8 +60,7 @@ struct drm_gem_object *etnaviv_gem_prime_import_sg_table(struct drm_device *dev,
->  int etnaviv_gem_prime_pin(struct drm_gem_object *obj);
->  void etnaviv_gem_prime_unpin(struct drm_gem_object *obj);
->  void *etnaviv_gem_vmap(struct drm_gem_object *obj);
-> -int etnaviv_gem_cpu_prep(struct drm_gem_object *obj, u32 op,
-> -		struct timespec *timeout);
-> +int etnaviv_gem_cpu_prep(struct drm_gem_object *obj, u32 op, ktime_t timeout);
->  int etnaviv_gem_cpu_fini(struct drm_gem_object *obj);
->  void etnaviv_gem_free_object(struct drm_gem_object *obj);
->  int etnaviv_gem_new_handle(struct drm_device *dev, struct drm_file *file,
-> @@ -106,22 +105,20 @@ static inline size_t size_vstruct(size_t nelem, size_t elem_size, size_t base)
->   * We need to calculate the timeout in terms of number of jiffies
->   * between the specified timeout and the current CLOCK_MONOTONIC time.
->   */
-> -static inline unsigned long etnaviv_timeout_to_jiffies(
-> -	const struct timespec *timeout)
-> +static inline unsigned long etnaviv_timeout_to_jiffies(ktime_t timeout)
->  {
-> -	struct timespec64 ts, to;
-> -
-> -	to = timespec_to_timespec64(*timeout);
-> -
-> -	ktime_get_ts64(&ts);
-> +	s64 remain = ktime_to_ns(ktime_sub(timeout, ktime_get()));
->  
->  	/* timeouts before "now" have already expired */
-> -	if (timespec64_compare(&to, &ts) <= 0)
-> +	if (remain < 0)
->  		return 0;
->  
-> -	ts = timespec64_sub(to, ts);
-> +#ifndef CONFIG_64BIT
-> +	if (remain > ((s64)MAX_JIFFY_OFFSET * NSEC_PER_SEC / HZ))
-> +		return MAX_JIFFY_OFFSET;
-> +#endif
->  
-> -	return timespec64_to_jiffies(&ts);
-> +	return nsecs_to_jiffies(remain);
->  }
->  
->  #endif /* __ETNAVIV_DRV_H__ */
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> index cb1faaac380a..febe5196788e 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -372,8 +372,7 @@ static inline enum dma_data_direction etnaviv_op_to_dma_dir(u32 op)
->  		return DMA_BIDIRECTIONAL;
->  }
->  
-> -int etnaviv_gem_cpu_prep(struct drm_gem_object *obj, u32 op,
-> -		struct timespec *timeout)
-> +int etnaviv_gem_cpu_prep(struct drm_gem_object *obj, u32 op, ktime_t timeout)
->  {
->  	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
->  	struct drm_device *dev = obj->dev;
-> @@ -431,7 +430,7 @@ int etnaviv_gem_cpu_fini(struct drm_gem_object *obj)
->  }
->  
->  int etnaviv_gem_wait_bo(struct etnaviv_gpu *gpu, struct drm_gem_object *obj,
-> -	struct timespec *timeout)
-> +			ktime_t timeout)
->  {
->  	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
->  
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> index d6270acce619..a3461a554a6c 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> @@ -112,7 +112,7 @@ struct etnaviv_gem_submit {
->  void etnaviv_submit_put(struct etnaviv_gem_submit * submit);
->  
->  int etnaviv_gem_wait_bo(struct etnaviv_gpu *gpu, struct drm_gem_object *obj,
-> -	struct timespec *timeout);
-> +	ktime_t timeout);
->  int etnaviv_gem_new_private(struct drm_device *dev, size_t size, u32 flags,
->  	const struct etnaviv_gem_ops *ops, struct etnaviv_gem_object **res);
->  void etnaviv_gem_obj_add(struct drm_device *dev, struct drm_gem_object *obj);
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> index d47d1a8e0219..e42b1c4d902c 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> @@ -1132,7 +1132,7 @@ static void event_free(struct etnaviv_gpu *gpu, unsigned int event)
->   * Cmdstream submission/retirement:
->   */
->  int etnaviv_gpu_wait_fence_interruptible(struct etnaviv_gpu *gpu,
-> -	u32 id, struct timespec *timeout)
-> +	u32 id, ktime_t timeout)
->  {
->  	struct dma_fence *fence;
->  	int ret;
-> @@ -1179,7 +1179,7 @@ int etnaviv_gpu_wait_fence_interruptible(struct etnaviv_gpu *gpu,
->   * that lock in this function while waiting.
->   */
->  int etnaviv_gpu_wait_obj_inactive(struct etnaviv_gpu *gpu,
-> -	struct etnaviv_gem_object *etnaviv_obj, struct timespec *timeout)
-> +	struct etnaviv_gem_object *etnaviv_obj, ktime_t timeout)
->  {
->  	unsigned long remaining;
->  	long ret;
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-> index 8f9bd4edc96a..6d352a435427 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-> @@ -169,9 +169,9 @@ int etnaviv_gpu_debugfs(struct etnaviv_gpu *gpu, struct seq_file *m);
->  void etnaviv_gpu_recover_hang(struct etnaviv_gpu *gpu);
->  void etnaviv_gpu_retire(struct etnaviv_gpu *gpu);
->  int etnaviv_gpu_wait_fence_interruptible(struct etnaviv_gpu *gpu,
-> -	u32 fence, struct timespec *timeout);
-> +	u32 fence, ktime_t timeout);
->  int etnaviv_gpu_wait_obj_inactive(struct etnaviv_gpu *gpu,
-> -	struct etnaviv_gem_object *etnaviv_obj, struct timespec *timeout);
-> +	struct etnaviv_gem_object *etnaviv_obj, ktime_t timeout);
->  struct dma_fence *etnaviv_gpu_submit(struct etnaviv_gem_submit *submit);
->  int etnaviv_gpu_pm_get_sync(struct etnaviv_gpu *gpu);
->  void etnaviv_gpu_pm_put(struct etnaviv_gpu *gpu);
-
+[Jacob Pan]
