@@ -2,125 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8002F4C0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11C75F4C10
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:47:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbfKHMqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:46:44 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46852 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbfKHMqo (ORCPT
+        id S1727364AbfKHMrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:47:10 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:38583 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfKHMrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 07:46:44 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r18so3855799pgu.13
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:46:44 -0800 (PST)
+        Fri, 8 Nov 2019 07:47:06 -0500
+Received: by mail-qv1-f67.google.com with SMTP id q19so2124007qvs.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:47:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5rxvla9MqG20qS8PvXLmnssk4K8x/Hmcm3O9O7mRXxw=;
-        b=uPGazBXt00dkMb4XcC5rtgD+hXWx7CX3wPcgEwLyc7/uLOfYxE6FYllxMnuz+mWElt
-         TFD5nUaNmEAmii33SlcKmcwRB/VpqoHROLQX9ZyCrtx9I4iBwX8+lYIDPNfhEfijDRba
-         bgcv/EsdA1DP+E5Hrr68Xo4mcflJRzSKf1MMQV10Dg+1kcWGz90yKhlmkk11yAfexpqx
-         0dL1pT6VkNqhUK5pZzP1sxhyhWIrBVnYdFEDS5ZRUp5L6g4sixLzlXeJSblLGsL8+M+K
-         g9JsPudijfoCeT2BTdTQukwx+LJytsnw6bdwQ/QAf/tWC8Qgm7SY9Efvhhs+ViecTSzM
-         YUFA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XTqKyPLMoNlwQUs9dVtYz5L4wwqhRY74FJdzJmWrwA0=;
+        b=UUups4bA+gcaJ1l+Nd6ZGTUX3rFaeLICUHtmkV/le2cS7mAAuhyfMyOLWpYmwXzDx7
+         yM893cc1+Y1nEIcrLVmiQlr4y6NN8VG2ndwMC2iFr1l8qPZV2zVMkLHf8EWxJmdtA6FL
+         f6fNaYc0Hccl26yWKoHsMAHcvQwQ6kkaYMv1GG54Qz1nYW/knE9oT2P772wT7mszKshd
+         P17/iPg8qoTTklI6w8bAu2JOJEBfwwhb8SwZyMZntmG3sYwo6pvQZyE0sxgvW7KhlAS8
+         7ere4RUdrsBgxo6FULOjvW7zaMvCFM/W4C+zkh4lqF4jMOMSzsbPAMqtsYKBLv77/JrQ
+         jlyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5rxvla9MqG20qS8PvXLmnssk4K8x/Hmcm3O9O7mRXxw=;
-        b=C3UqMbNCcp+ImtV8BqBL7r8YMahcoVOy+0j1IrWYaHKXRf2oBaErK3MLqjL5ev6Ylf
-         y6PGbcfk3PPuYdjDnRDHWsFGvZX3pbinSVVVmCjVKpxR4vXpIy16cZeHD3+XSk1Rphp6
-         uoZaxPqVtFr8YtPcru09tpm2I5wAk2lzHknnNxM978Wl6TPh1X6jO4UYJQrbOhJuLcWe
-         d138FvPBqCWzB8kDNMa9Usa/KGUmF/IGRU76nhtAhgSoS5+AKuktsX/0i8RwxdQATwRW
-         pYvLPDIRiSiWoBwzyukJOQWaxJLhEsNS/MxqLPE6bquYkUbwoIMnW455U+kS7ZeL0L9Q
-         uYrg==
-X-Gm-Message-State: APjAAAVApbXGzf58i1mx1FuYiunAfEQDHuaA23YxW/0L236nSlnS6klT
-        dUws6RkyyqC2uYB0AMVd8AqAxf4puswSTg==
-X-Google-Smtp-Source: APXvYqyQ+Qhfryqn9y1yTDk88XHS4CTDkPsbWWZl/mPudP1Bo8G6TeUELgpef4D8uHsAaYCDaB2Pyw==
-X-Received: by 2002:a17:90a:c004:: with SMTP id p4mr8684007pjt.104.1573217203600;
-        Fri, 08 Nov 2019 04:46:43 -0800 (PST)
-Received: from wambui ([197.254.95.38])
-        by smtp.gmail.com with ESMTPSA id n23sm5601302pff.137.2019.11.08.04.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 04:46:42 -0800 (PST)
-Date:   Fri, 8 Nov 2019 15:46:30 +0300
-From:   Wambui Karuga <wambui.karugax@gmail.com>
-To:     Sean Paul <sean@poorly.run>
-Cc:     hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
-        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: use DRM_DEV_ERROR for log output
-Message-ID: <20191108124630.GA10207@wambui>
-Reply-To: 20191107133851.GF63329@art_vandelay
-References: <20191107092945.15513-1-wambui.karugax@gmail.com>
- <4c74db2614cefe23f888d0643c2d7c356086745a.camel@perches.com>
- <20191107133851.GF63329@art_vandelay>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XTqKyPLMoNlwQUs9dVtYz5L4wwqhRY74FJdzJmWrwA0=;
+        b=MlvlQotfZqk176ASDR3pg3pifRAkEnuEyQEaBiWzKhabESGrXWLvzZOo7NBftF51oF
+         VKgr/Y/6daJfI2kOSGQ8HjO4vs+J/vIciB11Eyak3EZV/QGLZoRWekYqfMFxXUm8AgIZ
+         iH1GDu/0PskARZEkpK+gRpFtbwYRxlKD+mC/CQo2WE0BrvxI7BvCRQ3ff4JFS6zQMe7p
+         DLoEpdNufJ13bchgXc71TpULNc0c6f9PbwE5+rbQFUd7xS3C/h0lhcS30/TPgAKxiGEX
+         QiE0O7vAi2Ppw/1zncu30NlZZH7fZvtibYTgoUdWtGyx4apGlz2D0qDqo6uf4xdotjDh
+         1ALA==
+X-Gm-Message-State: APjAAAUuC2b86PvYlJ5pJ0+dqFDsfyycFc5xLVuM3+gGqKA/gYuGZ5Vw
+        Z80BprXVFhr2dC82kAu7PtZFCihydj7tuDXBmRzGMw==
+X-Google-Smtp-Source: APXvYqxCe/56vC6QLtn1Arg66NFTCzut/4d957zjBpTBXodKzOQkny/ob2ZlhDKsoW9vso6E7C4wsDttAbdBmYHmvCM=
+X-Received: by 2002:a0c:c125:: with SMTP id f34mr8874671qvh.22.1573217225193;
+ Fri, 08 Nov 2019 04:47:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107133851.GF63329@art_vandelay>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <000000000000f19676058ab7adc4@google.com> <CACT4Y+ZZy5nqduErU8hjKrwThHiybGpwd3QzOviAWftZFZ4d2A@mail.gmail.com>
+ <20190611185206.GG3341036@devbig004.ftw2.facebook.com> <CACT4Y+ZNTh=t62oj_Y5XyQwjOJp3AWwWi8c-4DrX+jKNCVqzzg@mail.gmail.com>
+ <20190723163126.GB23641@gmail.com> <20190724174129.GE213255@gmail.com> <20190724174315.GC569612@devbig004.ftw2.facebook.com>
+In-Reply-To: <20190724174315.GC569612@devbig004.ftw2.facebook.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 8 Nov 2019 13:46:54 +0100
+Message-ID: <CACT4Y+ZcELcq0+V5_6yzto2V_TjiH8cWMJRuuALAY-J8Y-3P6w@mail.gmail.com>
+Subject: Re: linux-next boot error: WARNING: workqueue cpumask: online
+ intersect > possible intersect
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        syzbot <syzbot+4d497898effeb1936245@syzkaller.appspotmail.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 08:38:51AM -0500, Sean Paul wrote:
-> On Thu, Nov 07, 2019 at 01:54:22AM -0800, Joe Perches wrote:
-> > On Thu, 2019-11-07 at 12:29 +0300, Wambui Karuga wrote:
-> > > Replace the use of the dev_err macro with the DRM_DEV_ERROR
-> > > DRM helper macro.
-> > 
-> > The commit message should show the reason _why_ you are doing
-> > this instead of just stating that you are doing this.
-> > 
-> > It's not that dev_err is uncommon in drivers/gpu/drm.
-> > 
-> 
-> It is uncommon (this is the sole instance) in rockchip, however. So it makes
-> sense to convert the dev_* prints in rockchip to DRM_DEV for consistency.
-> 
-> Wambui, could you also please convert the dev_warn instance as well?
-> 
-Hey, Sean.
-Trying to convert this dev_warn instance, but the corresponding DRM_WARN
-macro does not take the dev parameter which seems to be useful in the
-original output.
-Should I still convert it to DRM_WARN without the hdmi->dev parameter?
+On Wed, Jul 24, 2019 at 7:43 PM Tejun Heo <tj@kernel.org> wrote:
+>
+> On Wed, Jul 24, 2019 at 10:41:29AM -0700, Eric Biggers wrote:
+> > The real boot error "general protection fault in dma_direct_max_mapping_size" is
+> > fixed in mainline now.  I believe that unblocks syzbot testing, since it doesn't
+> > appear to have been blocked by "WARNING: workqueue cpumask: online intersect >
+> > possible intersect" by itself.
+> >
+> > Anyway: Tejun and Michael, any other ideas for why "WARNING: workqueue cpumask:
+> > online intersect > possible intersect" is still happening?
+>
+> That code hasn't changed in years.  It gotta be changes in cpumask
+> initialization ordering or sth like that.  The easiest way to find the
+> culprit would be bisecting.  I can't get to it right now.  Anyone
+> interested?
 
-Thanks,
-wambui
-> I'll apply this to drm-misc-next and expand on the commit message a bit.
-> 
-> Thanks,
-> 
-> Sean
-> 
-> > $ git grep -w dev_err drivers/gpu/drm | wc -l
-> > 1950
-> > $ git grep -w DRM_DEV_ERROR drivers/gpu/drm | wc -l
-> > 756
-> > 
-> > > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> > []
-> > > @@ -916,7 +916,7 @@ static int dw_mipi_dsi_rockchip_probe(struct platform_device *pdev)
-> > >  	}
-> > >  
-> > >  	if (!dsi->cdata) {
-> > > -		dev_err(dev, "no dsi-config for %s node\n", np->name);
-> > > +		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
-> > >  		return -EINVAL;
-> > >  	}
-> > 
-> > 
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> -- 
-> Sean Paul, Software Engineer, Google / Chromium OS
+syzkaller will now ignore this warning as it happens on every boot and
+masks all other boot problems:
+https://github.com/google/syzkaller/commit/31b7aac4626757ae0862971db78aaa1338541227
+syzbot will never remind about this again:
+#syz invalid
