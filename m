@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75CDDF5720
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7C15F5760
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388135AbfKHTS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:18:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57250 "EHLO mail.kernel.org"
+        id S2391413AbfKHTUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:20:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389661AbfKHTAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:19 -0500
+        id S2389380AbfKHTAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4501C2249E;
-        Fri,  8 Nov 2019 18:58:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C16092087E;
+        Fri,  8 Nov 2019 18:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239522;
-        bh=6elECeKqNAc5dMrEOCSnn8CogZkyVM4opF6iM+8jqVU=;
+        s=default; t=1573239441;
+        bh=ZUSR9VoPo2ZvIQ3c86SNfsIuM/RV9efVWm0nda1ewrk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=brVdx65ta34UdAItiunlDJzBmcW9PfflIBn7qtpcquDeOcL935n0WeIYBZGDaFyX3
-         gQ9Gg7AeUiOk9+S/0oTmQfDXcjWzuAfMjv5AxjtgfEqrEh/ljSXarRH8VwAEdzoosl
-         d5ejq7UcSI29wC/xe1MFiq35Vb87C5+rc9vstjIA=
+        b=yqyItKqlE9Ma7noQRy9NsVw69Yr5Cs5Zm/dNVq5p/04RZAN3YiqEm3ehrBbcsIKlM
+         EusvaPoVNrVww/GIIeMSkKL9e37erP2aNKL+AcDaKeb9TiSAmr6RON/cQ++JTo4/Tu
+         8/nbtLaIQFFZTgn4+lOEb2fu0B1Ldx//ijOlTHps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Wei Wang <weiwan@google.com>,
-        Craig Gallek <cgallek@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 33/62] selftests: net: reuseport_dualstack: fix uninitalized parameter
+        stable@vger.kernel.org, Bodo Stroesser <bstroesser@ts.fujitsu.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 14/34] scsi: target: core: Do not overwrite CDB byte 1
 Date:   Fri,  8 Nov 2019 19:50:21 +0100
-Message-Id: <20191108174744.651770471@linuxfoundation.org>
+Message-Id: <20191108174633.969621950@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,44 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <weiwan@google.com>
+From: Bodo Stroesser <bstroesser@ts.fujitsu.com>
 
-[ Upstream commit d64479a3e3f9924074ca7b50bd72fa5211dca9c1 ]
+[ Upstream commit 27e84243cb63601a10e366afe3e2d05bb03c1cb5 ]
 
-This test reports EINVAL for getsockopt(SOL_SOCKET, SO_DOMAIN)
-occasionally due to the uninitialized length parameter.
-Initialize it to fix this, and also use int for "test_family" to comply
-with the API standard.
+passthrough_parse_cdb() - used by TCMU and PSCSI - attepts to reset the LUN
+field of SCSI-2 CDBs (bits 5,6,7 of byte 1).  The current code is wrong as
+for newer commands not having the LUN field it overwrites relevant command
+bits (e.g. for SECURITY PROTOCOL IN / OUT). We think this code was
+unnecessary from the beginning or at least it is no longer useful. So we
+remove it entirely.
 
-Fixes: d6a61f80b871 ("soreuseport: test mixed v4/v6 sockets")
-Reported-by: Maciej Żenczykowski <maze@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Wei Wang <weiwan@google.com>
-Cc: Craig Gallek <cgallek@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/r/12498eab-76fd-eaad-1316-c2827badb76a@ts.fujitsu.com
+Signed-off-by: Bodo Stroesser <bstroesser@ts.fujitsu.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/reuseport_dualstack.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/target/target_core_device.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
---- a/tools/testing/selftests/net/reuseport_dualstack.c
-+++ b/tools/testing/selftests/net/reuseport_dualstack.c
-@@ -129,7 +129,7 @@ static void test(int *rcv_fds, int count
+diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
+index cc38a3509f78c..c3d576ed6f135 100644
+--- a/drivers/target/target_core_device.c
++++ b/drivers/target/target_core_device.c
+@@ -1046,27 +1046,6 @@ passthrough_parse_cdb(struct se_cmd *cmd,
  {
- 	struct epoll_event ev;
- 	int epfd, i, test_fd;
--	uint16_t test_family;
-+	int test_family;
- 	socklen_t len;
+ 	unsigned char *cdb = cmd->t_task_cdb;
  
- 	epfd = epoll_create(1);
-@@ -146,6 +146,7 @@ static void test(int *rcv_fds, int count
- 	send_from_v4(proto);
- 
- 	test_fd = receive_once(epfd, proto);
-+	len = sizeof(test_family);
- 	if (getsockopt(test_fd, SOL_SOCKET, SO_DOMAIN, &test_family, &len))
- 		error(1, errno, "failed to read socket domain");
- 	if (test_family != AF_INET)
+-	/*
+-	 * Clear a lun set in the cdb if the initiator talking to use spoke
+-	 * and old standards version, as we can't assume the underlying device
+-	 * won't choke up on it.
+-	 */
+-	switch (cdb[0]) {
+-	case READ_10: /* SBC - RDProtect */
+-	case READ_12: /* SBC - RDProtect */
+-	case READ_16: /* SBC - RDProtect */
+-	case SEND_DIAGNOSTIC: /* SPC - SELF-TEST Code */
+-	case VERIFY: /* SBC - VRProtect */
+-	case VERIFY_16: /* SBC - VRProtect */
+-	case WRITE_VERIFY: /* SBC - VRProtect */
+-	case WRITE_VERIFY_12: /* SBC - VRProtect */
+-	case MAINTENANCE_IN: /* SPC - Parameter Data Format for SA RTPG */
+-		break;
+-	default:
+-		cdb[1] &= 0x1f; /* clear logical unit number */
+-		break;
+-	}
+-
+ 	/*
+ 	 * For REPORT LUNS we always need to emulate the response, for everything
+ 	 * else, pass it up.
+-- 
+2.20.1
+
 
 
