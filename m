@@ -2,113 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A106BF437F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E15FF4388
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:38:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731422AbfKHJh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 04:37:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39422 "EHLO mx1.suse.de"
+        id S1731341AbfKHJic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 04:38:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39778 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730005AbfKHJh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 04:37:59 -0500
+        id S1731477AbfKHJi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 04:38:28 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E19B8AC79;
-        Fri,  8 Nov 2019 09:37:56 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 27B4A1E4331; Fri,  8 Nov 2019 10:37:56 +0100 (CET)
-Date:   Fri, 8 Nov 2019 10:37:56 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     syzbot <syzbot+cd0ec5211ac07c18c049@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, dev@openvswitch.org, jack@suse.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pshelar@ovn.org, syzkaller-bugs@googlegroups.com,
+        by mx1.suse.de (Postfix) with ESMTP id 0B6A7AEAF;
+        Fri,  8 Nov 2019 09:38:24 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     stable@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Ajay Kaher <akaher@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Juergen Gross <jgross@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Oscar Salvador <osalvador@suse.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: BUG: MAX_LOCKDEP_ENTRIES too low!
-Message-ID: <20191108093756.GC20863@quack2.suse.cz>
-References: <000000000000ec7273058b877e1f@google.com>
- <000000000000e676b00596cdbbde@google.com>
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH STABLE 4.4 0/8] page refcount overflow backports
+Date:   Fri,  8 Nov 2019 10:38:06 +0100
+Message-Id: <20191108093814.16032-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000e676b00596cdbbde@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I guess this is more for Peter or Ingo...
+Hi,
 
-On Thu 07-11-19 19:54:08, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
-> 
-> HEAD commit:    99a8efbb NFC: st21nfca: fix double free
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15ed70d8e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cbbed3e8d4eb64bf
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cd0ec5211ac07c18c049
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cf5594e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1036c762e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+cd0ec5211ac07c18c049@syzkaller.appspotmail.com
-> 
-> device 5580n entered promiscuous mode
-> BUG: MAX_LOCKDEP_ENTRIES too low!
-> turning off the locking correctness validator.
-> CPU: 0 PID: 14197 Comm: syz-executor527 Not tainted 5.4.0-rc5+ #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->  alloc_list_entry.cold+0x11/0x18 kernel/locking/lockdep.c:1292
->  add_lock_to_list kernel/locking/lockdep.c:1313 [inline]
->  check_prev_add kernel/locking/lockdep.c:2528 [inline]
->  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
->  validate_chain kernel/locking/lockdep.c:2971 [inline]
->  __lock_acquire+0x2a15/0x4a00 kernel/locking/lockdep.c:3955
->  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
->  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
->  _raw_spin_lock_bh+0x33/0x50 kernel/locking/spinlock.c:175
->  spin_lock_bh include/linux/spinlock.h:343 [inline]
->  netif_addr_lock_bh include/linux/netdevice.h:4055 [inline]
->  dev_set_rx_mode+0x20/0x40 net/core/dev.c:7808
->  dev_set_promiscuity+0xbf/0xe0 net/core/dev.c:7716
->  internal_dev_create+0x387/0x550 net/openvswitch/vport-internal_dev.c:196
->  ovs_vport_add+0x150/0x500 net/openvswitch/vport.c:199
->  new_vport+0x1b/0x1d0 net/openvswitch/datapath.c:194
->  ovs_dp_cmd_new+0x5e5/0xe30 net/openvswitch/datapath.c:1644
->  genl_family_rcv_msg+0x74b/0xf90 net/netlink/genetlink.c:629
->  genl_rcv_msg+0xca/0x170 net/netlink/genetlink.c:654
->  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
->  genl_rcv+0x29/0x40 net/netlink/genetlink.c:665
->  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
->  netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
->  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
->  sock_sendmsg_nosec net/socket.c:637 [inline]
->  sock_sendmsg+0xd7/0x130 net/socket.c:657
->  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
->  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
->  __do_sys_sendmsg net/socket.c:2365 [inline]
->  __se_sys_sendmsg net/socket.c:2363 [inline]
->  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
->  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x441779
-> Code: e8 9c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 1b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffea7e5fcc8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441779
-> RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
-> RBP: 0000000000058f66 R08: 00007ffe00000025 R09: 00007ffe00000025
-> R10: 0000000000000004 R11: 0000000000000246 R12: 00000000006cdbc0
-> R13: 0000000000000013 R14: 0000000000000000 R15: 0000000000000000
-> 
+this series backports the CVE-2019-11487 fixes (page refcount overflow) to
+4.4 stable. It differs from Ajay's series [1] in the following:
+
+- gup.c variants of fast gup for x86 and s390 are fixed too. I've not fixed
+  sparc, mips, sh. It's unlikely the known overflow scenario based on FUSE,
+  which needs 140GB of RAM, is a problem for those architectures, and I don't
+  feel confident enough to patch them. I've sent the same fixup for 4.9 [3]
+- there are some differences in backport adaptations, hopefully not important.
+  My version is taken from our 4.4 based kernel, which was just simpler for me
+  than adding the missing parts to Ajay's version
+- The last patch fixes another problem in the fast gup implementation on x86,
+  that I've previously posted and got merged to 4.9 stable [2].
+
+[1] https://lore.kernel.org/linux-mm/1570581863-12090-1-git-send-email-akaher@vmware.com/
+[2] https://lore.kernel.org/linux-mm/20190802160614.8089-1-vbabka@suse.cz/
+[3] https://lore.kernel.org/linux-mm/9c130fa4-e52d-f8bd-c450-42341c7ab441@suse.cz/
+
+Linus Torvalds (3):
+  mm: make page ref count overflow check tighter and more explicit
+  mm: add 'try_get_page()' helper function
+  mm: prevent get_user_pages() from overflowing page refcount
+
+Matthew Wilcox (1):
+  fs: prevent page refcount overflow in pipe_buf_get
+
+Miklos Szeredi (1):
+  pipe: add pipe_buf_get() helper
+
+Punit Agrawal (1):
+  mm, gup: ensure real head page is ref-counted when using hugepages
+
+Vlastimil Babka (1):
+  x86, mm, gup: prevent get_page() race with munmap in paravirt guest
+
+Will Deacon (1):
+  mm, gup: remove broken VM_BUG_ON_PAGE compound check for hugepages
+
+ arch/s390/mm/gup.c        |  6 +++--
+ arch/x86/mm/gup.c         | 23 ++++++++++++++++++-
+ fs/fuse/dev.c             | 12 +++++-----
+ fs/pipe.c                 |  4 ++--
+ fs/splice.c               | 12 ++++++++--
+ include/linux/mm.h        | 26 ++++++++++++++++++++-
+ include/linux/pipe_fs_i.h | 17 ++++++++++++--
+ kernel/trace/trace.c      |  6 ++++-
+ mm/gup.c                  | 48 +++++++++++++++++++++++++++------------
+ mm/huge_memory.c          |  2 +-
+ mm/hugetlb.c              | 18 +++++++++++++--
+ mm/internal.h             | 17 ++++++++++----
+ 12 files changed, 152 insertions(+), 39 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.23.0
+
