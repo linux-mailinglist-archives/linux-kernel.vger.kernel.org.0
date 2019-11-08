@@ -2,115 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F58F5AE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 23:29:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18579F5AEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 23:33:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbfKHW3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 17:29:44 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40336 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfKHW3n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 17:29:43 -0500
-Received: by mail-io1-f66.google.com with SMTP id p6so8036458iod.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 14:29:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tG3CMleYdOoOJlDJUqZcQjcg5RUyLpG6Jn1aCKR4UeI=;
-        b=0QMe2DamNA24EOuI+UywMP9UlxhPIEd9A3ejSSwX5dRvxIuLh1eyekTxCIaEXQw45R
-         54KJMXm13tA1bXnQ5gJkP3Bc2AXpK5GqrZmTonZGLH7QjaBf30/ySbas7znjaZC8cE1G
-         dvINXztNO0uL0txG0mi6Bc5/ap9kcdnlTiqhlqswN/TjS2cBK4KeW5Nwx13lqVQuEvxX
-         oGKBNxbZ5TalYTw1lCFi09i1ffQkcnGX5b5VkolnEU5VWoGxPkE3Trg9U5Fmdt/c9FIa
-         zNy9okvAx34ttHfQFN4jU4TQ/XK6X0+WuB4rn384C8czKSZAdSDyG4KOBvp6caVBgMS9
-         LBzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tG3CMleYdOoOJlDJUqZcQjcg5RUyLpG6Jn1aCKR4UeI=;
-        b=jIR7BxqK4zfBnK4124bRvAwU+GTkv8w+AyK/6I2x5uimCiuOxcLCxqGswPN7ZtPmlF
-         Kg1AoK7N+UH8nW8sHpYMDGmpMbVQPNBl1IxvQ4d2QvEFkPrK1/3b7uvABy9xq1ueyZIu
-         euWftaqbcfEZgNufaw3CqEE5Xg/NH5uh5gVk0tpT+B8NKgAaupwRgcgTHV+gNtBGDyB6
-         sc2GOtWhqoC/BhEJzN1COxrD0StaCY24jsdhTcTzYZ02LFlq6WTcoj/waapYbKn8k1KD
-         8pj1sb96f8SllAi9bS8UJBUTGzyURCxUaeEyZqKvhCX7FEZYPKpv7+7wK/VNtekoFDD6
-         4mew==
-X-Gm-Message-State: APjAAAWnPVg5kUTuUPViqsVhLxndgW71WCYWtaE2HBXL/xe9Fz7DTHzj
-        6+WwGs+FYjjBrOIdb3Kywl+2iPJ5kkWNQdDvr5rwRm9Vy4dnxw==
-X-Google-Smtp-Source: APXvYqxR2Iojnfzgt1D2EKNQghVo4JbH2TyZSSa7HkkqJ9Q6NanRF7wM7yANUTTIbJh1g1uWd98XskwAsn4twL28rCk=
-X-Received: by 2002:a6b:6509:: with SMTP id z9mr12039319iob.123.1573252182905;
- Fri, 08 Nov 2019 14:29:42 -0800 (PST)
+        id S1730481AbfKHWcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 17:32:51 -0500
+Received: from relay.sw.ru ([185.231.240.75]:40440 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726095AbfKHWcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 17:32:50 -0500
+Received: from [192.168.15.61]
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1iTCnz-0006wD-JO; Sat, 09 Nov 2019 01:32:35 +0300
+Subject: Re: [PATCH v3 1/2] kasan: detect negative size in memory operation
+ function
+To:     Walter Wu <walter-zh.wu@mediatek.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
+References: <20191104020519.27988-1-walter-zh.wu@mediatek.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <34bf9c08-d2f2-a6c6-1dbe-29b1456d8284@virtuozzo.com>
+Date:   Sat, 9 Nov 2019 01:31:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <CAOesGMjVUCd9bN=pggS-ECjMR42b0SqXKewsp+NYFSVqRgSWrg@mail.gmail.com>
- <20191107211801.GA107543@google.com> <20191108110736.GA10708@e121166-lin.cambridge.arm.com>
-In-Reply-To: <20191108110736.GA10708@e121166-lin.cambridge.arm.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 8 Nov 2019 14:29:31 -0800
-Message-ID: <CAOesGMhxs0A-YTXpS9Lqk_sn2=Q5jaCM2+mjEuvtwSX9Y49eMw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the pci tree with the arm-soc tree
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191104020519.27988-1-walter-zh.wu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 3:07 AM Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
->
-> On Thu, Nov 07, 2019 at 03:18:01PM -0600, Bjorn Helgaas wrote:
-> > On Thu, Nov 07, 2019 at 10:27:20AM -0800, Olof Johansson wrote:
-> > > On Wed, Nov 6, 2019 at 2:46 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > Hi all,
-> > > >
-> > > > Today's linux-next merge of the pci tree got a conflict in:
-> > > >
-> > > >   arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> > > >
-> > > > between commit:
-> > > >
-> > > >   68e36a429ef5 ("arm64: dts: ls1028a: Move thermal-zone out of SoC")
-> > > >
-> > > > from the arm-soc tree and commit:
-> > > >
-> > > >   8d49ebe713ab ("arm64: dts: ls1028a: Add PCIe controller DT nodes")
-> > >
-> > > Bjorn, we ask that driver subsystem maintainers don't pick up DT
-> > > changes since it causes conflicts like these.
-> > >
-> > > Is it easy for you to drop this patch, or are we stuck with it?
-> > > Ideally it should never have been sent to you in the first place. :(
-> >
-> > Lorenzo, is it feasible for you to drop it from your pci/layerscape
-> > branch and repush it?  If so, I can redo the merge into my "next"
-> > branch.
->
-> Done. Should we ignore all dts updates from now onwards ?
-
-Thanks!
-
-Indeed, dts updates should only go in through the platform maintainers
-(i.e. through soc tree), unless there are strong reasons to bring them
-in through driver trees.
-
-If there's a need for a dt-include to be shared between driver and
-dts, getting them on a stable branch that's merged through both trees
-is usually the best way. Reach out when that happens and we can
-coordinate.
 
 
-Regards,
+On 11/4/19 5:05 AM, Walter Wu wrote:
 
--Olof
+> 
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index 6814d6d6a023..4ff67e2fd2db 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -99,10 +99,14 @@ bool __kasan_check_write(const volatile void *p, unsigned int size)
+>  }
+>  EXPORT_SYMBOL(__kasan_check_write);
+>  
+> +extern bool report_enabled(void);
+> +
+>  #undef memset
+>  void *memset(void *addr, int c, size_t len)
+>  {
+> -	check_memory_region((unsigned long)addr, len, true, _RET_IP_);
+> +	if (report_enabled() &&
+> +	    !check_memory_region((unsigned long)addr, len, true, _RET_IP_))
+> +		return NULL;
+>  
+>  	return __memset(addr, c, len);
+>  }
+> @@ -110,8 +114,10 @@ void *memset(void *addr, int c, size_t len)
+>  #undef memmove
+>  void *memmove(void *dest, const void *src, size_t len)
+>  {
+> -	check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> -	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> +	if (report_enabled() &&
+> +	   (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
+> +	    !check_memory_region((unsigned long)dest, len, true, _RET_IP_)))
+> +		return NULL;
+>  
+>  	return __memmove(dest, src, len);
+>  }
+> @@ -119,8 +125,10 @@ void *memmove(void *dest, const void *src, size_t len)
+>  #undef memcpy
+>  void *memcpy(void *dest, const void *src, size_t len)
+>  {
+> -	check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> -	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> +	if (report_enabled() &&
+
+            report_enabled() checks seems to be useless.
+
+> +	   (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
+> +	    !check_memory_region((unsigned long)dest, len, true, _RET_IP_)))
+> +		return NULL;
+>  
+>  	return __memcpy(dest, src, len);
+>  }
+> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> index 616f9dd82d12..02148a317d27 100644
+> --- a/mm/kasan/generic.c
+> +++ b/mm/kasan/generic.c
+> @@ -173,6 +173,11 @@ static __always_inline bool check_memory_region_inline(unsigned long addr,
+>  	if (unlikely(size == 0))
+>  		return true;
+>  
+> +	if (unlikely((long)size < 0)) {
+
+        if (unlikely(addr + size < addr)) {
+
+> +		kasan_report(addr, size, write, ret_ip);
+> +		return false;
+> +	}
+> +
+>  	if (unlikely((void *)addr <
+>  		kasan_shadow_to_mem((void *)KASAN_SHADOW_START))) {
+>  		kasan_report(addr, size, write, ret_ip);
+> diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+> index 36c645939bc9..52a92c7db697 100644
+> --- a/mm/kasan/generic_report.c
+> +++ b/mm/kasan/generic_report.c
+> @@ -107,6 +107,24 @@ static const char *get_wild_bug_type(struct kasan_access_info *info)
+>  
+>  const char *get_bug_type(struct kasan_access_info *info)
+>  {
+> +	/*
+> +	 * If access_size is negative numbers, then it has three reasons
+> +	 * to be defined as heap-out-of-bounds bug type.
+> +	 * 1) Casting negative numbers to size_t would indeed turn up as
+> +	 *    a large size_t and its value will be larger than ULONG_MAX/2,
+> +	 *    so that this can qualify as out-of-bounds.
+> +	 * 2) If KASAN has new bug type and user-space passes negative size,
+> +	 *    then there are duplicate reports. So don't produce new bug type
+> +	 *    in order to prevent duplicate reports by some systems
+> +	 *    (e.g. syzbot) to report the same bug twice.
+> +	 * 3) When size is negative numbers, it may be passed from user-space.
+> +	 *    So we always print heap-out-of-bounds in order to prevent that
+> +	 *    kernel-space and user-space have the same bug but have duplicate
+> +	 *    reports.
+> +	 */
+ 
+Completely fail to understand 2) and 3). 2) talks something about *NOT* producing new bug
+type, but at the same time you code actually does that.
+3) says something about user-space which have nothing to do with kasan.
+
+> +	if ((long)info->access_size < 0)
+
+        if (info->access_addr + info->access_size < info->access_addr)
+
+> +		return "heap-out-of-bounds";
+> +
+>  	if (addr_has_shadow(info->access_addr))
+>  		return get_shadow_bug_type(info);
+>  	return get_wild_bug_type(info);
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index 621782100eaa..c79e28814e8f 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -446,7 +446,7 @@ static void print_shadow_for_address(const void *addr)
+>  	}
+>  }
+>  
+> -static bool report_enabled(void)
+> +bool report_enabled(void)
+>  {
+>  	if (current->kasan_depth)
+>  		return false;
+> diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
+> index 0e987c9ca052..b829535a3ad7 100644
+> --- a/mm/kasan/tags.c
+> +++ b/mm/kasan/tags.c
+> @@ -86,6 +86,11 @@ bool check_memory_region(unsigned long addr, size_t size, bool write,
+>  	if (unlikely(size == 0))
+>  		return true;
+>  
+> +	if (unlikely((long)size < 0)) {
+
+        if (unlikely(addr + size < addr)) {
+
+> +		kasan_report(addr, size, write, ret_ip);
+> +		return false;
+> +	}
+> +
+>  	tag = get_tag((const void *)addr);
+>  
+>  	/*
+> diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
+> index 969ae08f59d7..f7ae474aef3a 100644
+> --- a/mm/kasan/tags_report.c
+> +++ b/mm/kasan/tags_report.c
+> @@ -36,6 +36,24 @@
+>  
+>  const char *get_bug_type(struct kasan_access_info *info)
+>  {
+> +	/*
+> +	 * If access_size is negative numbers, then it has three reasons
+> +	 * to be defined as heap-out-of-bounds bug type.
+> +	 * 1) Casting negative numbers to size_t would indeed turn up as
+> +	 *    a large size_t and its value will be larger than ULONG_MAX/2,
+> +	 *    so that this can qualify as out-of-bounds.
+> +	 * 2) If KASAN has new bug type and user-space passes negative size,
+> +	 *    then there are duplicate reports. So don't produce new bug type
+> +	 *    in order to prevent duplicate reports by some systems
+> +	 *    (e.g. syzbot) to report the same bug twice.
+> +	 * 3) When size is negative numbers, it may be passed from user-space.
+> +	 *    So we always print heap-out-of-bounds in order to prevent that
+> +	 *    kernel-space and user-space have the same bug but have duplicate
+> +	 *    reports.
+> +	 */
+> +	if ((long)info->access_size < 0)
+
+        if (info->access_addr + info->access_size < info->access_addr)
+
+> +		return "heap-out-of-bounds";
+> +
+>  #ifdef CONFIG_KASAN_SW_TAGS_IDENTIFY
+>  	struct kasan_alloc_meta *alloc_meta;
+>  	struct kmem_cache *cache;
+> 
