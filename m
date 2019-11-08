@@ -2,138 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F632F5A16
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74563F59E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:31:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733143AbfKHVe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:34:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732960AbfKHVex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:34:53 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 369B721882;
-        Fri,  8 Nov 2019 21:34:52 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1iTBu7-0007zz-5F; Fri, 08 Nov 2019 16:34:51 -0500
-Message-Id: <20191108213451.044504936@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Fri, 08 Nov 2019 16:28:44 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 10/10] ftrace/x86: Add a counter to test function_graph with direct
-References: <20191108212834.594904349@goodmis.org>
+        id S2387662AbfKHV3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:29:33 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35060 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731269AbfKHV3d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:29:33 -0500
+Received: by mail-io1-f68.google.com with SMTP id x21so7920749iol.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 13:29:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mRmwhSGnJWcbro1I2NsU98mvkk0pcwQPiXBcJRg/O6I=;
+        b=nKl15u10ItYfNUfRdfrOlRLJn71C4ibsqBZ/3P+B+74i1afpRcQqn+q6zc8jpdWfF/
+         4TlxJXWMVA2CzKaTu4/TkkDz/vWRfcJCJh6ToAyHjyRSfJH2cy+7BAFBE4bUdTXhkVpa
+         +vhUPS0fXQBcgMO/mJWo4oLl/GXv8laDO3g2E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mRmwhSGnJWcbro1I2NsU98mvkk0pcwQPiXBcJRg/O6I=;
+        b=J9LKIJECKp8xzqep71XOyQMtL5YeDuwdKgKxf3llh61IcnXiiysayizbn6zJ7SLVAL
+         in/yQN9z9rXfg8tm/VsLAbvkYxmgCUowY0l+sKrVlgNYAO1cfHwdxItVnX1JzaxxfmeV
+         0luv11faRmDE06NoN2ejKJH6ArjjljUGvvc6cxrYn8wbhJPIz3NucqgtY0MB+1rWP9GD
+         1jldkBVEhiDGovvGBf8VTRdKjSgmSgxlD12+6wQ6mS05NoFljhQHDHffrZeBMCbODUtC
+         YYBYwHgtT51F1uyLuZviwPcjIHqelIvDmh/lLRiA57fRqa4uQuMsKsnr0LJrbBgBBb8u
+         R64g==
+X-Gm-Message-State: APjAAAWmwhwHefkpMfUYw/gnIw3WwlEDNbU14+czVhi1yB3DmsQ9Gx8q
+        lGk1qwjFDpAJV7BsSqGIWWebay8awLw=
+X-Google-Smtp-Source: APXvYqzKfjtXZKFbG5Sf1UNdx1lsIgoXc0mmOSwuWLPQ4xAlKUOhd2+iBeCra9LBnI5tMDlgGzVWJA==
+X-Received: by 2002:a5e:9706:: with SMTP id w6mr12448833ioj.252.1573248570951;
+        Fri, 08 Nov 2019 13:29:30 -0800 (PST)
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com. [209.85.166.45])
+        by smtp.gmail.com with ESMTPSA id t11sm918271ild.38.2019.11.08.13.29.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 13:29:30 -0800 (PST)
+Received: by mail-io1-f45.google.com with SMTP id v17so6818387iol.12
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 13:29:30 -0800 (PST)
+X-Received: by 2002:a5e:c642:: with SMTP id s2mr914619ioo.218.1573248569668;
+ Fri, 08 Nov 2019 13:29:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+References: <1568411962-1022-1-git-send-email-ilina@codeaurora.org> <1568411962-1022-6-git-send-email-ilina@codeaurora.org>
+In-Reply-To: <1568411962-1022-6-git-send-email-ilina@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 8 Nov 2019 13:29:17 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WeDEaMEEqPr52WBKJ8MLGBZ590ro6nCpemctES0kvvDg@mail.gmail.com>
+Message-ID: <CAD=FV=WeDEaMEEqPr52WBKJ8MLGBZ590ro6nCpemctES0kvvDg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 05/14] of: irq: document properties for wakeup
+ interrupt parent
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>, maz@kernel.org,
+        LinusW <linus.walleij@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        mkshah@codeaurora.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Hi,
 
-As testing for direct calls from the function graph tracer adds a little
-overhead (which is a lot when tracing every function), add a counter that
-can be used to test if function_graph tracer needs to test for a direct
-caller or not.
+On Fri, Sep 13, 2019 at 3:00 PM Lina Iyer <ilina@codeaurora.org> wrote:
+>
+> Some interrupt controllers in a SoC, are always powered on and have a
+> select interrupts routed to them, so that they can wakeup the SoC from
+> suspend. Add wakeup-parent DT property to refer to these interrupt
+> controllers.
+>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/interrupt-controller/interrupts.txt | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+> index 8a3c408..c10e310 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+> @@ -108,3 +108,16 @@ commonly used:
+>                         sensitivity = <7>;
+>                 };
+>         };
+> +
+> +3) Interrupt wakeup parent
+> +--------------------------
+> +
+> +Some interrupt controllers in a SoC, are always powered on and have a select
+> +interrupts routed to them, so that they can wakeup the SoC from suspend. These
+> +interrupt controllers do not fall into the category of a parent interrupt
+> +controller and can be specified by the "wakeup-parent" property and contain a
+> +single phandle referring to the wakeup capable interrupt controller.
+> +
+> +   Example:
+> +       wakeup-parent = <&pdc_intc>;
+> +
 
-It would have been nicer if we could use a static branch, but the static
-branch logic fails when used within the function graph tracer trampoline.
+nit: git flags the above line as whitespace damage.  Please remove
+if/when you spin.
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- arch/x86/kernel/ftrace.c | 8 +++++---
- include/linux/ftrace.h   | 2 ++
- kernel/trace/ftrace.c    | 4 ++++
- 3 files changed, 11 insertions(+), 3 deletions(-)
+Thanks!
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index fef283f6341d..060a361d9d11 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -1049,9 +1049,11 @@ void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent,
- 	 * return address is actually off by one word, and we
- 	 * need to adjust for that.
- 	 */
--	if (ftrace_find_direct_func(self_addr + MCOUNT_INSN_SIZE)) {
--		self_addr = *parent;
--		parent++;
-+	if (ftrace_direct_func_count) {
-+		if (ftrace_find_direct_func(self_addr + MCOUNT_INSN_SIZE)) {
-+			self_addr = *parent;
-+			parent++;
-+		}
- 	}
- 
- 	/*
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 2bc7bd6b8387..55647e185141 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -247,10 +247,12 @@ static inline void ftrace_free_mem(struct module *mod, void *start, void *end) {
- #endif /* CONFIG_FUNCTION_TRACER */
- 
- #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
-+extern int ftrace_direct_func_count;
- int register_ftrace_direct(unsigned long ip, unsigned long addr);
- int unregister_ftrace_direct(unsigned long ip, unsigned long addr);
- struct ftrace_direct_func *ftrace_find_direct_func(unsigned long addr);
- #else
-+# define ftrace_direct_func_count 0
- static inline int register_ftrace_direct(unsigned long ip, unsigned long addr)
- {
- 	return -ENODEV;
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index f57ab704dc2d..0e18ec707a88 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -2367,6 +2367,7 @@ ftrace_find_tramp_ops_new(struct dyn_ftrace *rec)
- /* Protected by rcu_tasks for reading, and direct_mutex for writing */
- static struct ftrace_hash *direct_functions = EMPTY_HASH;
- static DEFINE_MUTEX(direct_mutex);
-+int ftrace_direct_func_count;
- 
- /*
-  * Search the direct_functions hash to see if the given instruction pointer
-@@ -5059,6 +5060,7 @@ int register_ftrace_direct(unsigned long ip, unsigned long addr)
- 		direct->addr = addr;
- 		direct->count = 0;
- 		list_add_rcu(&direct->next, &ftrace_direct_funcs);
-+		ftrace_direct_func_count++;
- 	}
- 
- 	entry->ip = ip;
-@@ -5084,6 +5086,7 @@ int register_ftrace_direct(unsigned long ip, unsigned long addr)
- 			if (free_hash)
- 				free_ftrace_hash(free_hash);
- 			free_hash = NULL;
-+			ftrace_direct_func_count--;
- 		}
- 	} else {
- 		if (!direct->count)
-@@ -5144,6 +5147,7 @@ int unregister_ftrace_direct(unsigned long ip, unsigned long addr)
- 			list_del_rcu(&direct->next);
- 			synchronize_rcu_tasks();
- 			kfree(direct);
-+			ftrace_direct_func_count--;
- 		}
- 	}
-  out_unlock:
--- 
-2.23.0
-
-
+-Doug
