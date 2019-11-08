@@ -2,89 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6484EF568B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14843F56C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403812AbfKHTJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:09:25 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37310 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391772AbfKHTJX (ORCPT
+        id S2391952AbfKHTKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:10:55 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:57512 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388018AbfKHTKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:09:23 -0500
-Received: by mail-pf1-f196.google.com with SMTP id p24so5254203pfn.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 11:09:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:cc:subject:user-agent:date;
-        bh=rJ1urZ8T7mCJHoBlOuQT5kf7O0+8075YXJJdXtDtH7U=;
-        b=D61jjhVfWDWSMveOGbAsO21SqjPj0dRPXQmK22xQFY1GOYifueuPRNL45P6whbv76d
-         +koe7VPSRs9Hh0QYnbedzWgk8x0eJhqNXE50FDnKgoM8VYb8R3vRcxEYY962NbGNzyAH
-         ZozKEI0ik3vBEAuReccVPRkzTxDkUVmi0rZRk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
-         :user-agent:date;
-        bh=rJ1urZ8T7mCJHoBlOuQT5kf7O0+8075YXJJdXtDtH7U=;
-        b=rF5nI/h6OlBsauw0/BiWwTgrCEWY75ypvkvJWTj5cat1b9DtBsaHubUwxSqdAZC7rp
-         YUZj2qd6YRiV7vA1nS0Nbz4EEs3bTdG/HijRzm+v7ZZFGgl3D8p5ZzQprjjS9o59cduM
-         k+/De+5Fl3mAFb69b6dhr8bGNCWsAgbzvA58Kfh9fAiLgPQ2YlaSzZIaUhMGzucbFKTF
-         x0MJP0d/7Sr/4gpWDUqc1EK08gqLF3S0WnL+7R+QJpMIM9KUqFTSUbs5gGnpPvnVcSFS
-         R45e2LXuwAzTRcMkmwk5RARNkNXNAQ2cgCjw72mrZlMoQHh5R8Iqc1WBEx5F2ndrxvBY
-         dnWg==
-X-Gm-Message-State: APjAAAVNjcZwZmRADm5A9NoIRgZqjhNokEBgXjN4PhMlsmv23qB84ZRy
-        BideRM4zmk549xXvkOyp66bh7Q==
-X-Google-Smtp-Source: APXvYqwF6BcI+PSkqcZ1hzG3Fq8z2hINUeBNu1KSX2QSnhuU5EyKjQGpElD+ZP55Yu2cmAcXBJIhOg==
-X-Received: by 2002:a62:174d:: with SMTP id 74mr13732051pfx.145.1573240163193;
-        Fri, 08 Nov 2019 11:09:23 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id l72sm6138763pjb.18.2019.11.08.11.09.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 11:09:22 -0800 (PST)
-Message-ID: <5dc5bd62.1c69fb81.682a4.0fa6@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 8 Nov 2019 14:10:52 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8J3vtK078095;
+        Fri, 8 Nov 2019 19:10:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=hbg3DDTni8M/rgsCn9U3MFMumS+aykGsqnuwmha715Q=;
+ b=SgKfRGUD9CKmat/E11tN9oQZS82RkjlOAlHJdjRXdGBhN1Tajtr1paOCnZPHrzzyiJfG
+ ry+0wQoI8ZLUMr23Jtr1TRf/qofz1gX+sf27/uQf0LU7a+nITKZi8Q5aL0pbutvVMj/B
+ 3TaiK6BG3Mjkmg67LwGFuAWBNBdsRtRFFSItHSUPUuW7bHjiN4v+mgEFME5pcBTuU5A/
+ nobU0FqHHrDxCJvsn9zqw9DrBP2u0DOCpMMZYc1q+GR7yARCnRvA3tYJ0OC3FptNteax
+ 8LV0pZzBbQ1/kostYEQcloeuUzuPHU1D8CGNFlMNZSUriMj2yWv06/9hCMA7cA2pP9LU /A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2w41w175sr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 19:10:27 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8J2q8w117672;
+        Fri, 8 Nov 2019 19:10:27 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2w4k33v07c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 19:10:26 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA8JAOBA010812;
+        Fri, 8 Nov 2019 19:10:24 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Nov 2019 11:10:24 -0800
+Subject: Re: [PATCH] hugetlbfs: Take read_lock on i_mmap for PMD sharing
+To:     Matthew Wilcox <willy@infradead.org>,
+        Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <20191107190628.22667-1-longman@redhat.com>
+ <20191107195441.GF11823@bombadil.infradead.org>
+ <ed46ef09-7766-eb80-a4ad-4c72d8dba188@oracle.com>
+ <20191108020456.sulyjskhq3s5zcaa@linux-p48b>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <ea057d15-5205-9992-af95-b2727df577c4@oracle.com>
+Date:   Fri, 8 Nov 2019 11:10:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5790f59f-951a-f1b4-bb31-f9cefec0c642@codeaurora.org>
-References: <20191106065017.22144-1-rnayak@codeaurora.org> <20191106065017.22144-3-rnayak@codeaurora.org> <5dc4588e.1c69fb81.5f75c.83ad@mx.google.com> <5790f59f-951a-f1b4-bb31-f9cefec0c642@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mka@chromium.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v4 02/14] arm64: dts: sc7180: Add minimal dts/dtsi files for SC7180 soc
-User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 11:09:21 -0800
+In-Reply-To: <20191108020456.sulyjskhq3s5zcaa@linux-p48b>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9435 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911080187
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9435 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911080187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajendra Nayak (2019-11-07 19:48:57)
->=20
-> On 11/7/2019 11:16 PM, Stephen Boyd wrote:
-> > Quoting Rajendra Nayak (2019-11-05 22:50:05)
-> >> +                       qup_uart8_default: qup-uart8-default {
-> >> +                               pinmux {
-> >> +                                       pins =3D "gpio44", "gpio45";
-> >> +                                       function =3D "qup12";
-> >=20
-> > That looks weird to have qup12 function on uart8. It's right?
->=20
-> So we have 2 qup instances each with 6 SEs on sc7180.
-> So the i2c/uart/spi SE instances are numbered from 0 to 5 in the first qup
-> and 6 to 11 in the next.
-> The pinctrl functions however have it named qup0 to 5 for first and
-> qup10 to 15 for the next which is weird. Now all data in the pinctrl
-> driver is autogenerated using hw description so its coming from that.
->=20
-> Just for comparison, on sdm845 we had 2 qup instances with 8 SE's
-> and the function names were qup0 to 8 for first and 9 to 15 for the
-> second.
->=20
+On 11/7/19 6:04 PM, Davidlohr Bueso wrote:
+> On Thu, 07 Nov 2019, Mike Kravetz wrote:
+> 
+>> Note that huge_pmd_share now increments the page count with the semaphore
+>> held just in read mode.  It is OK to do increments in parallel without
+>> synchronization.  However, we don't want anyone else changing the count
+>> while that check in huge_pmd_unshare is happening.  Hence, the need for
+>> taking the semaphore in write mode.
+> 
+> This would be a nice addition to the changelog methinks.
 
-Alright. Good to know the hardware description is all messed up.
+Last night I remembered there is one place where we currently take
+i_mmap_rwsem in read mode and potentially call huge_pmd_unshare.  That
+is in try_to_unmap_one.  Yes, there is a potential race here today.
+But that race is somewhat contained as you need two threads doing some
+combination of page migration and page poisoning to race.  This change
+now allows migration or poisoning to race with page fault.  I would
+really prefer if we do not open up the race window in this manner.
 
+Getting this right in the try_to_unmap_one case is a bit tricky.  I had
+code to do this in the past that was part of a bigger hugetlb synchronization
+change.  All those changes got reverted (commit ddeaab32a89f), but I
+believe it is possible to change try_to_unmap_one calling sequences
+without introducing other issues.
+
+Bottom line is that more changes are needed in this patch.  I'll work
+on those changes unless someone else volunteers.  It will likely take me
+one or two days to come up with and test proposed changes.
+-- 
+Mike Kravetz
