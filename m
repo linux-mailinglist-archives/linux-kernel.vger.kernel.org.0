@@ -2,88 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB72F46DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F765F48EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391181AbfKHLpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:45:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391164AbfKHLpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:45:41 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EFBE222CE;
-        Fri,  8 Nov 2019 11:45:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213541;
-        bh=pfDF5o5Sf/FZB9G8qxf3rgn8Br81z+BJhC63kU1YSUw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X/2QZ7ZbAbUydp58vca/fHD3MBvVKw41NWzCPoT9hBEx+6OkddhXkW+tKlUktsz+l
-         00k0Jc0XuxFLwZryE7vpeLnwJQeR8Fzn1QLsRrCKsEeyVIt1wZcQjXSIebfVb5vzeE
-         QvD8ZfY/JPFJpVf83EHAf18OY8tSD9cHs2IY2uP4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 103/103] ath9k: Fix a locking bug in ath9k_add_interface()
-Date:   Fri,  8 Nov 2019 06:43:08 -0500
-Message-Id: <20191108114310.14363-103-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
-References: <20191108114310.14363-1-sashal@kernel.org>
+        id S2391574AbfKHL7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:59:42 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38246 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390668AbfKHLoI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:44:08 -0500
+Received: by mail-ed1-f66.google.com with SMTP id s10so4771302edi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 03:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:message-id:date:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=g/++kKVU7OFaHGAtlltoncuD16PbRuMbUQv6ZhSLLII=;
+        b=MQkK6jcPMk41V1f5zCzkH34OdDS4xlL7bw4LRqs5P3rbwFw8fnCjM3JmTDWj318k6e
+         FREhlTnJtMiseRK9li/i2KKex9+IDrAKyUH49jSGemHMZiWeInZS/lQMgOAn2dwsFhcM
+         6pyp1VxOrHReOPQT1pX26fYiRvsrjw7YtCK6JVZZYU+MpyJLWDqAdDmMOXEbxkMRHK5z
+         AQUBoWqPwGjInz7Mm2JBDo2MgBqzrdh6ffacLGDm0iN4TYJ2lY+F5o0KAEuQM0fpt9/v
+         2vyB0bXT+enHL6P3Up8bnfzV0dfbKDBtUQNSUWUmKO7kM6o8CHiZWLVmSKHp2yxDU6HK
+         RCNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g/++kKVU7OFaHGAtlltoncuD16PbRuMbUQv6ZhSLLII=;
+        b=O9xluM1jACFIOTw4YDtykZs6OWiPBoFeMzYOZKu0YYJwcFmA4tDOMSXmSr8yn3UT5N
+         CQ7JfY+NkR3uGtmZ/FjPuTIcLBBMw2Ugkk8tz0mBMNGsUipFUtZvQFgyP8xP/bYUJf3A
+         G8r+b/qOeQZQxTLU3fPT1eJ/dUEGPNclERRYQCEsdLaRYM0KQab3ADZKTu3TcVtpXVxA
+         iMRa4IWdQ+r55AQpPIg/DRXjyqMaPfMnw8l1D8LzBXNoKwhZIJyLXpl6oVHkBsCTzARq
+         MzOnkhUR25pDeFOpeaHRGM43UMTFC9lVpcUs5xuw2fmVj4fkAakMEhpN2nKaeyQL02TK
+         sJ/Q==
+X-Gm-Message-State: APjAAAXBRVB+2k/n+f3m5NEM5YVW6o4Ap4TVqFEbVrbKtD4beEYeLkHU
+        GIFRCmBzMYGlp3FZSz9TmDBqjw==
+X-Google-Smtp-Source: APXvYqy+5wkvN8ghdz9sfdp3QIcwFKW0lcB/xb+gSdB1lui68o9slbwHKbtDEd8IikQ88ubpRW95zw==
+X-Received: by 2002:a17:906:278a:: with SMTP id j10mr8262538ejc.125.1573213446765;
+        Fri, 08 Nov 2019 03:44:06 -0800 (PST)
+Received: from [192.168.27.135] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id d11sm123025edq.39.2019.11.08.03.44.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Nov 2019 03:44:06 -0800 (PST)
+Subject: Re: [GIT PULL] interconnect changes for 5.5
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <5123bf54-5d62-fc5c-8838-17bc34487d83@linaro.org>
+ <20191107142111.GB109902@kroah.com>
+ <0cb5a6a6-399f-99e3-dc41-50114eea4025@linaro.org>
+ <20191108103917.GB683302@kroah.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Message-ID: <77e2922b-162c-5554-57f5-85ba278371fe@linaro.org>
+Date:   Fri, 8 Nov 2019 13:44:05 +0200
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+In-Reply-To: <20191108103917.GB683302@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On 8.11.19 г. 12:39 ч., Greg Kroah-Hartman wrote:
+> On Thu, Nov 07, 2019 at 05:42:13PM +0200, Georgi Djakov wrote:
+>> Hi Greg,
+>>
+>> On 11/7/19 16:21, Greg Kroah-Hartman wrote:
+>>> On Thu, Nov 07, 2019 at 02:46:53PM +0200, Georgi Djakov wrote:
+>>>> Hi Greg,
+>>>>
+>>>> This is a pull request with interconnect patches for the 5.5 merge window.
+>>>> All patches have been for a while in linux-next without reported issues. The
+>>>> details are in the signed tag. Please consider pulling into char-misc-next.
+>>>
+>>> I don't know about
+>>> 0003-interconnect-Disallow-interconnect-core-to-be-built-.patch here.
+>>> Shouldn't you just fix up the dependancies of subsystems that rely on
+>>> this?  We are moving more and more to kernels that "just work" with
+>>> everything as modules, even on arm64 systems.  So forbiding the
+>>> interconnect code from being able to be built as a module does not feel
+>>> good to me at all.
+>>
+>> Thank you for commenting on this! The initial idea was to keep everything as
+>> modular as possible. The reasons behind this change is that other core
+>> frameworks like cpufreq (and possibly others) want to call the interconnect
+>> APIs. Some of these frameworks are built-in only and it would be easier to
+>> handle dependencies if interconnect core built-in too. Now each user that
+>> can be built-in has to specify in Kconfig that it depends on INTERCONNECT ||
+>> !INTERCONNECT.
+> 
+> That's fine, when those subsystems start to use those apis, that
+> dependency needs to be added.  Nothing new here, and you forcing it to
+> either be "on or off" isn't going to change that.  Let's do it correctly
+> please.
 
-[ Upstream commit 461cf036057477805a8a391e5fd0f5264a5e56a8 ]
+Alright! That matches with what we do today. Thanks for the guidance!
 
-We tried to revert commit d9c52fd17cb4 ("ath9k: fix tx99 with monitor
-mode interface") but accidentally missed part of the locking change.
-
-The lock has to be held earlier so that we're holding it when we do
-"sc->tx99_vif = vif;" and also there in the current code there is a
-stray unlock before we have taken the lock.
-
-Fixes: 6df0580be8bc ("ath9k: add back support for using active monitor interfaces for tx99")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/ath/ath9k/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
-index 3589f1f3e744d..72ad84fde5c18 100644
---- a/drivers/net/wireless/ath/ath9k/main.c
-+++ b/drivers/net/wireless/ath/ath9k/main.c
-@@ -1250,6 +1250,7 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 	struct ath_vif *avp = (void *)vif->drv_priv;
- 	struct ath_node *an = &avp->mcast_node;
- 
-+	mutex_lock(&sc->mutex);
- 	if (IS_ENABLED(CONFIG_ATH9K_TX99)) {
- 		if (sc->cur_chan->nvifs >= 1) {
- 			mutex_unlock(&sc->mutex);
-@@ -1258,8 +1259,6 @@ static int ath9k_add_interface(struct ieee80211_hw *hw,
- 		sc->tx99_vif = vif;
- 	}
- 
--	mutex_lock(&sc->mutex);
--
- 	ath_dbg(common, CONFIG, "Attach a VIF of type: %d\n", vif->type);
- 	sc->cur_chan->nvifs++;
- 
--- 
-2.20.1
-
+BR,
+Georgi
