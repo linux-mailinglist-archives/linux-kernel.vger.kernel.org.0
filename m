@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06086F54D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB36F566A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733160AbfKHSyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:54:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52030 "EHLO mail.kernel.org"
+        id S2391672AbfKHTIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:08:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733145AbfKHSyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:54:53 -0500
+        id S2403767AbfKHTIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:08:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12CC5222D4;
-        Fri,  8 Nov 2019 18:54:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B8622196F;
+        Fri,  8 Nov 2019 19:08:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239292;
-        bh=XyDUF0kGkyKuyMkjd9zEvhyjfXTmEIEko1RtdM/HBec=;
+        s=default; t=1573240119;
+        bh=6elECeKqNAc5dMrEOCSnn8CogZkyVM4opF6iM+8jqVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mMqlPIex7j95EDft48j6AkAPT5L4E7bLybGNruOzZtPM7I5ttfrmKjMk70BnbO7n3
-         715xMNtYYvlW5oSO29YKCS2fFxMaadLS0EDFDgGbJX13orLWe65/+fGn3j1oorvrxn
-         Y2ZucAWohSFhiy7JzOQSgsTG3fEY7hWBLxypXYDw=
+        b=po71lJQPQUQBD+acYpMxRtkLh1HBK6wWhdpRLI1Jt08vMZzsTtuil3DQI0/bk77G3
+         S2y4bNl4wM8ZUmFtH4ctAgFnUisAdkFEby8mrSKJSnf4l0eNDV3lYtHF5mvTUudk7p
+         gnnLELmnMovdqX/cXoaBtbXzTJcydMBlMk/nF6bc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 65/75] ARM: 8796/1: spectre-v1,v1.1: provide helpers for address sanitization
-Date:   Fri,  8 Nov 2019 19:50:22 +0100
-Message-Id: <20191108174806.118003985@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Wei Wang <weiwan@google.com>,
+        Craig Gallek <cgallek@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 095/140] selftests: net: reuseport_dualstack: fix uninitalized parameter
+Date:   Fri,  8 Nov 2019 19:50:23 +0100
+Message-Id: <20191108174911.028548334@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
-References: <20191108174708.135680837@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,97 +47,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julien Thierry <julien.thierry@arm.com>
+From: Wei Wang <weiwan@google.com>
 
-Commit afaf6838f4bc896a711180b702b388b8cfa638fc upstream.
+[ Upstream commit d64479a3e3f9924074ca7b50bd72fa5211dca9c1 ]
 
-Introduce C and asm helpers to sanitize user address, taking the
-address range they target into account.
+This test reports EINVAL for getsockopt(SOL_SOCKET, SO_DOMAIN)
+occasionally due to the uninitialized length parameter.
+Initialize it to fix this, and also use int for "test_family" to comply
+with the API standard.
 
-Use asm helper for existing sanitization in __copy_from_user().
-
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Fixes: d6a61f80b871 ("soreuseport: test mixed v4/v6 sockets")
+Reported-by: Maciej Żenczykowski <maze@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Wei Wang <weiwan@google.com>
+Cc: Craig Gallek <cgallek@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/assembler.h |   11 +++++++++++
- arch/arm/include/asm/uaccess.h   |   26 ++++++++++++++++++++++++++
- arch/arm/lib/copy_from_user.S    |    6 +-----
- 3 files changed, 38 insertions(+), 5 deletions(-)
+ tools/testing/selftests/net/reuseport_dualstack.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -461,6 +461,17 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- #endif
- 	.endm
+--- a/tools/testing/selftests/net/reuseport_dualstack.c
++++ b/tools/testing/selftests/net/reuseport_dualstack.c
+@@ -129,7 +129,7 @@ static void test(int *rcv_fds, int count
+ {
+ 	struct epoll_event ev;
+ 	int epfd, i, test_fd;
+-	uint16_t test_family;
++	int test_family;
+ 	socklen_t len;
  
-+	.macro uaccess_mask_range_ptr, addr:req, size:req, limit:req, tmp:req
-+#ifdef CONFIG_CPU_SPECTRE
-+	sub	\tmp, \limit, #1
-+	subs	\tmp, \tmp, \addr	@ tmp = limit - 1 - addr
-+	addhs	\tmp, \tmp, #1		@ if (tmp >= 0) {
-+	subhss	\tmp, \tmp, \size	@ tmp = limit - (addr + size) }
-+	movlo	\addr, #0		@ if (tmp < 0) addr = NULL
-+	csdb
-+#endif
-+	.endm
-+
- 	.macro	uaccess_disable, tmp, isb=1
- #ifdef CONFIG_CPU_SW_DOMAIN_PAN
- 	/*
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -138,6 +138,32 @@ static inline void set_fs(mm_segment_t f
- 	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
+ 	epfd = epoll_create(1);
+@@ -146,6 +146,7 @@ static void test(int *rcv_fds, int count
+ 	send_from_v4(proto);
  
- /*
-+ * Sanitise a uaccess pointer such that it becomes NULL if addr+size
-+ * is above the current addr_limit.
-+ */
-+#define uaccess_mask_range_ptr(ptr, size)			\
-+	((__typeof__(ptr))__uaccess_mask_range_ptr(ptr, size))
-+static inline void __user *__uaccess_mask_range_ptr(const void __user *ptr,
-+						    size_t size)
-+{
-+	void __user *safe_ptr = (void __user *)ptr;
-+	unsigned long tmp;
-+
-+	asm volatile(
-+	"	sub	%1, %3, #1\n"
-+	"	subs	%1, %1, %0\n"
-+	"	addhs	%1, %1, #1\n"
-+	"	subhss	%1, %1, %2\n"
-+	"	movlo	%0, #0\n"
-+	: "+r" (safe_ptr), "=&r" (tmp)
-+	: "r" (size), "r" (current_thread_info()->addr_limit)
-+	: "cc");
-+
-+	csdb();
-+	return safe_ptr;
-+}
-+
-+/*
-  * Single-value transfer routines.  They automatically use the right
-  * size if we just have the right pointer type.  Note that the functions
-  * which read from user space (*get_*) need to take care not to leak
---- a/arch/arm/lib/copy_from_user.S
-+++ b/arch/arm/lib/copy_from_user.S
-@@ -93,11 +93,7 @@ ENTRY(arm_copy_from_user)
- #ifdef CONFIG_CPU_SPECTRE
- 	get_thread_info r3
- 	ldr	r3, [r3, #TI_ADDR_LIMIT]
--	adds	ip, r1, r2	@ ip=addr+size
--	sub	r3, r3, #1	@ addr_limit - 1
--	cmpcc	ip, r3		@ if (addr+size > addr_limit - 1)
--	movcs	r1, #0		@ addr = NULL
--	csdb
-+	uaccess_mask_range_ptr r1, r2, r3, ip
- #endif
- 
- #include "copy_template.S"
+ 	test_fd = receive_once(epfd, proto);
++	len = sizeof(test_family);
+ 	if (getsockopt(test_fd, SOL_SOCKET, SO_DOMAIN, &test_family, &len))
+ 		error(1, errno, "failed to read socket domain");
+ 	if (test_family != AF_INET)
 
 
