@@ -2,216 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C62F4644
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB11F4693
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:43:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389213AbfKHLlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:41:11 -0500
-Received: from mga04.intel.com ([192.55.52.120]:37523 "EHLO mga04.intel.com"
+        id S2390421AbfKHLnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:43:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389136AbfKHLlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:41:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 03:41:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,281,1569308400"; 
-   d="scan'208";a="205970904"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2019 03:40:59 -0800
-Received: from andy by smile with local (Exim 4.93-RC1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1iT2dO-0002lG-IF; Fri, 08 Nov 2019 13:40:58 +0200
-Date:   Fri, 8 Nov 2019 13:40:58 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
-        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
-Subject: Re: [PATCH v5 1/2] pinctrl: Add pinmux & GPIO controller driver for
- a new SoC
-Message-ID: <20191108114058.GE32742@smile.fi.intel.com>
-References: <cover.1573196057.git.rahul.tanwar@linux.intel.com>
- <890db37db56e7e49e83b9fa03903bf3482c624c7.1573196057.git.rahul.tanwar@linux.intel.com>
+        id S2388375AbfKHLnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:43:13 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3D38222C6;
+        Fri,  8 Nov 2019 11:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573213393;
+        bh=IMTxs0Vg3w+Hwrt3XgNErfmtrm2IarEi/exW/jkwuQc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GiM7KD3l5Kfwn0CZLSt1vMJk3VMlgKKB5dsfrq1gz6VWUR1xYpPY4dIwiHbPLOu91
+         5P7SsipmIeoP/ZHPxnsQ+adm1bc38voS+jy1LjRTd3Rva58t1Ae4nZwJUzIdYbAI+q
+         ycIZoTfzR/0va1jS/ikuU0ulDi/nz2mFzmcxKlIM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, tee-dev@lists.linaro.org
+Subject: [PATCH AUTOSEL 4.14 002/103] tee: optee: take DT status property into account
+Date:   Fri,  8 Nov 2019 06:41:27 -0500
+Message-Id: <20191108114310.14363-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
+References: <20191108114310.14363-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <890db37db56e7e49e83b9fa03903bf3482c624c7.1573196057.git.rahul.tanwar@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 05:42:22PM +0800, Rahul Tanwar wrote:
-> Intel Lightning Mountain SoC has a pinmux controller & GPIO controller IP which
-> controls pin multiplexing & configuration including GPIO functions selection &
-> GPIO attributes configuration.
-> 
-> This IP is not based on & does not have anything in common with Chassis
-> specification. The pinctrl drivers under pinctrl/intel/* are all based upon
-> Chassis spec compliant pinctrl IPs. So this driver doesn't fit & can not use
-> pinctrl framework under pinctrl/intel/* and it requires a separate new driver.
-> 
-> Add a new GPIO & pin control framework based driver for this IP.
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-> +static void eqbr_gpio_enable_irq(struct irq_data *d)
-> +{
-> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +	struct eqbr_gpio_ctrl *gctrl = gpiochip_get_data(gc);
-> +	unsigned int offset = irqd_to_hwirq(d);
-> +	unsigned long flags;
-> +
+[ Upstream commit db878f76b9ff7487da9bb0f686153f81829f1230 ]
 
-> +	gc->direction_input(gc, offset);
+DT nodes may have a 'status' property which, if set to anything other
+than 'ok' or 'okay', indicates to the OS that the DT node should be
+treated as if it was not present. So add that missing logic to the
+OP-TEE driver.
 
-Does this any IO?
-If so, between above and below a window of possible race.
-Ditto for all other functions that do something similar.
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/tee/optee/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	raw_spin_lock_irqsave(&gctrl->lock, flags);
-> +	writel(BIT(offset), gctrl->membase + GPIO_IRNRNSET);
-> +	raw_spin_unlock_irqrestore(&gctrl->lock, flags);
-> +}
-
-> +		ret = bgpio_init(&gctrl->chip, dev, gctrl->bank->nr_pins / 8,
-> +				 gctrl->membase + GPIO_IN,
-> +				 gctrl->membase + GPIO_OUTSET,
-> +				 gctrl->membase + GPIO_OUTCLR,
-> +				 gctrl->membase + GPIO_DIR,
-
-> +				 NULL,
-> +				 0);
-
-One line?
-
-> +static int get_drv_cur(void __iomem *mem, unsigned int offset)
-> +{
-> +	unsigned int idx = offset / DRV_CUR_PINS; /* 0-15, 16-31 per register*/
-> +	unsigned int val;
-> +
-> +	val = readl(mem + REG_DRCC(idx));
-
-> +	offset %= DRV_CUR_PINS;
-
-From style point of view is better to have
-	... foo = offset / X;
-	... bar = offset % X;
-
-directly in definition block. Moreover, for example, on x86 it might be
-converted by compiler to single idiv call in assembly that returns in
-(eax, edx) both values at once.
-
-> +	val = PARSE_DRV_CURRENT(val, offset);
-> +
-> +	return val;
-> +}
-
-> +	if (!(bank->aval_pinmap & BIT(offset))) {
-> +		dev_err(pctl->dev,
-> +			"PIN: %u is not valid, pinbase: %u, bitmap: %u\n",
-> +			pin, bank->pin_base, bank->aval_pinmap);
-> +		return -ENODEV;
-> +	}
-
-Looks like aval_pinmap is NIH of valid_mask bitmap in GPIO library.
-Can you check if it suits your purposes?
-
-> +static bool is_func_exist(struct eqbr_pmx_func *funcs, const char *name,
-> +			 unsigned int nr_funcs, unsigned int *idx)
-> +{
-> +	int i;
-> +
-
-> +	if (!funcs || !nr_funcs)
-> +		return false;
-
-nr_funcs check is a dup of the one in for loop.
-
-> +	for (i = 0; i < nr_funcs; i++) {
-
-> +		if (funcs[i].name && (strcmp(funcs[i].name, name) == 0) ) {
-
-An extra space, but you may use !strcmp() and make it shorter without redundant
-parentheses.
-
-> +			*idx = i;
-> +			return true;
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-
-> +		switch (op) {
-> +			case OP_COUNT_NR_FUNCS:
-
-case goes usually on the same column as switch.
-
-> +				if (!is_func_exist(funcs, fn_name,
-> +						   *nr_funcs, &fid))
-> +					*nr_funcs = *nr_funcs + 1;
-> +				break;
-> +
-> +			case OP_ADD_FUNCS:
-> +				if (!is_func_exist(funcs, fn_name,
-> +						   *nr_funcs, &fid))
-> +					funcs[i].name = fn_name;
-> +				break;
-> +
-> +			case OP_COUNT_NR_FUNC_GRPS:
-> +				if (is_func_exist(funcs, fn_name,
-> +						  *nr_funcs, &fid))
-> +					funcs[fid].nr_groups++;
-> +				break;
-> +
-> +			case OP_ADD_FUNC_GRPS:
-> +				if (is_func_exist(funcs, fn_name,
-> +						  *nr_funcs, &fid)) {
-
-> +					for(j=0;
-
-Other style issueS.
-
-> +					    j < funcs[fid].nr_groups;
-> +					    j++) {
-> +						if (!funcs[fid].groups[j])
-> +							break;
-> +					}
-> +					funcs[fid].groups[j] = prop->value;
-> +				}
-> +				break;
-> +
-> +			default:
-> +				return -EINVAL;
-
-> +
-
-Redundant blank line.
-
-> +		}
-
-> +	for (i = 0; i < nr_funcs; i++) {
-> +		if (funcs[i].nr_groups) {
-
-	if (!foo)
-		continue;
-?
-
-> +			funcs[i].groups = devm_kcalloc(dev, funcs[i].nr_groups,
-> +						       sizeof(*(funcs[i].groups)),
-> +						       GFP_KERNEL);
-> +			if (!funcs[i].groups)
-> +				return -ENOMEM;
-> +		}
-> +	}
-
+diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+index edb6e4e9ef3ac..ca79c2ba2ef2a 100644
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -590,7 +590,7 @@ static int __init optee_driver_init(void)
+ 		return -ENODEV;
+ 
+ 	np = of_find_matching_node(fw_np, optee_match);
+-	if (!np)
++	if (!np || !of_device_is_available(np))
+ 		return -ENODEV;
+ 
+ 	optee = optee_probe(np);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.20.1
 
