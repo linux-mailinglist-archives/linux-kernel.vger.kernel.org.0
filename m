@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DE0F4615
+	by mail.lfdr.de (Postfix) with ESMTP id DED8AF4616
 	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:40:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388124AbfKHLjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:39:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52608 "EHLO mail.kernel.org"
+        id S2388157AbfKHLjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:39:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387899AbfKHLjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:39:44 -0500
+        id S2387934AbfKHLjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:39:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C344521D6C;
-        Fri,  8 Nov 2019 11:39:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05762222C2;
+        Fri,  8 Nov 2019 11:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213183;
-        bh=bxAO4w5X5zEmrbHOpKpbvHsXKjaiz0sk0Z5cc1tOT0Q=;
+        s=default; t=1573213184;
+        bh=U9HD4B/xPEJdt+6Ll1JEDtratWwqcI5JSfiG63CzEsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C+g3NQT14QfPk77ELNbBD1xl0kw8VbYnp/2xhjqYb12RkXejwPnexwWDPYXeTS1Uh
-         GKRRfKJzk8KBvT5XQe0GTzNJJzgStjilahwLsS+lR/4bmxepTRUR4sBVdez3I8lIBx
-         I6SI93XQA1aMvT+pqEalHTbDM3CLYzxx1PLfQOro=
+        b=mPc8h6ZBUE7o7TG5kyp1XXjDBgCFO0hPAI40UbAtD60dqmrVc/cDwLLKH+1jz+rHL
+         m9xpZmxD3LrEa1WEAeitNmL6DSdkqFy+wegYhVgh3mLrrI7zXEvFdAPSU9D8tXQGUK
+         ysJJrLPQSl4+XkmvTApJTepwuX4joZH/orswApbA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 074/205] net: hns3: Change the dst mac addr of loopback packet
-Date:   Fri,  8 Nov 2019 06:35:41 -0500
-Message-Id: <20191108113752.12502-74-sashal@kernel.org>
+Cc:     Moni Shoua <monis@mellanox.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 075/205] net/mlx5: Fix atomic_mode enum values
+Date:   Fri,  8 Nov 2019 06:35:42 -0500
+Message-Id: <20191108113752.12502-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -45,39 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Moni Shoua <monis@mellanox.com>
 
-[ Upstream commit 7f7d9e501f4123e64b130576621d24f9379adc8f ]
+[ Upstream commit aa7e80b220f3a543eefbe4b7e2c5d2b73e2e2ef7 ]
 
-Currently, the dst mac addr of loopback packet is the same as
-the host' mac addr, the SSU component may loop back the packet
-to host before the packet reaches mac or serdes, which will defect
-the purpose of mac or serdes selftest.
+The field atomic_mode is 4 bits wide and therefore can hold values
+from 0x0 to 0xf. Remove the unnecessary 20 bit shift that made the values
+be incorrect. While that, remove unused enum values.
 
-This patch changes it by adding 0x1f to the last byte of dst mac
-addr.
-
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 57cda166bbe0 ("net/mlx5: Add DCT command interface")
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/mlx5/driver.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index 5bdcd92d86122..0c34ea1223580 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -137,6 +137,7 @@ static void hns3_lp_setup_skb(struct sk_buff *skb)
- 	packet = skb_put(skb, HNS3_NIC_LB_TEST_PACKET_SIZE);
+diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
+index e8b92dee5a726..ae64fced188d1 100644
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -163,10 +163,7 @@ enum mlx5_dcbx_oper_mode {
+ };
  
- 	memcpy(ethh->h_dest, ndev->dev_addr, ETH_ALEN);
-+	ethh->h_dest[5] += 0x1f;
- 	eth_zero_addr(ethh->h_source);
- 	ethh->h_proto = htons(ETH_P_ARP);
- 	skb_reset_mac_header(skb);
+ enum mlx5_dct_atomic_mode {
+-	MLX5_ATOMIC_MODE_DCT_OFF        = 20,
+-	MLX5_ATOMIC_MODE_DCT_NONE       = 0 << MLX5_ATOMIC_MODE_DCT_OFF,
+-	MLX5_ATOMIC_MODE_DCT_IB_COMP    = 1 << MLX5_ATOMIC_MODE_DCT_OFF,
+-	MLX5_ATOMIC_MODE_DCT_CX         = 2 << MLX5_ATOMIC_MODE_DCT_OFF,
++	MLX5_ATOMIC_MODE_DCT_CX         = 2,
+ };
+ 
+ enum {
 -- 
 2.20.1
 
