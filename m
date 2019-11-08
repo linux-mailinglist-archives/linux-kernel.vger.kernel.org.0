@@ -2,84 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89F1CF5892
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3400DF589A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731412AbfKHUfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 15:35:12 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:52165 "EHLO
+        id S1731910AbfKHUfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 15:35:34 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:46863 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbfKHUfL (ORCPT
+        with ESMTP id S1726843AbfKHUfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 15:35:11 -0500
+        Fri, 8 Nov 2019 15:35:34 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MUXd0-1iKLFU3ITg-00QQen; Fri, 08 Nov 2019 21:35:00 +0100
+ 1M890H-1iXpoO1zD1-005LFy; Fri, 08 Nov 2019 21:35:23 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-alpha@vger.kernel.org, netdev@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 1/8] y2038: timex: remove incorrect time_t truncation
-Date:   Fri,  8 Nov 2019 21:34:24 +0100
-Message-Id: <20191108203435.112759-2-arnd@arndb.de>
+        Stephen Boyd <sboyd@kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Subject: [PATCH 2/8] timekeeping: optimize ns_to_timespec64
+Date:   Fri,  8 Nov 2019 21:34:25 +0100
+Message-Id: <20191108203435.112759-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108203435.112759-1-arnd@arndb.de>
 References: <20191108203435.112759-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:dsvYf++PaRS643RBIcfftXOiikOLND2cOaNKY9DSf4lXSBk9638
- lhMQnUQ5oC+UdORdW39GRI2YOYmmzkdt2K8YdgnKGU+Q1xAfY/croquox+EBMHjxSXARGT9
- 0KoXD79AZobQRGcB4BAfLqfv+dMyxMf9KaFtVcRIAA16T+1NEtuZVuDeIlASU8CyEkGCHNx
- gAYJo1aZa8zydstxki2/w==
+X-Provags-ID: V03:K1:p1S8Vm5S9mOTgTtbXxcpOxF1EXzFZzdK9j2/O1Ee3fyzg6An3tR
+ lBZ66pgI6iZBdXJ54mOxMj2nung87BghhEiWfxdG2ow0YQZe3LBxlQHQnjDZSxBjyPP6tsx
+ bfA1fPNf8Y/POpr6MTYVPhxSUZOUYGbIQoes/LWQ9akDbcZ0iPTgN3lULhrc1E8aUwlXJcD
+ AIBfjtmvDO9y5gP5/i1Cw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1nRjZ/tmDjg=:emR5zWF51M5/vEo+98Qgj5
- lnbGKVBN8OwOj2FSuvwsPCgcN6LedIvlNOmNcBKcifHK40VgpKjAFw2tfBI9Pb9lOCisZHMlQ
- UgYJBlUEX2GrQSQBuRRgLPsrsEFg8nAt5dl0UdiO2vrCaYoHrs3ssjTNh77iLW3qkjUfcPA/r
- TLt2R1Ir5LhoMlH5kH9/p7N8FndtLd3Y3wyDbRThOuG7NzJp5DEiHgENEHoLEvpS4YW/kZSWM
- 2R0R1JiGtePuEDlkNZQnnRvAem3cCKuFMhbk5lEvSQDO5xWR+rV1nnyq1taJX9Thu5smjAbjP
- NiJLOb9M+SBxTVhQgzorOSfX7GDqlIZE6LLW2eRc/v7vNTLLWys2+qfw2zZLBLZtdQxMf9XRo
- UNKNJR3sXpJnqnQJywDVKLKrnS6/+gv2+VL/xoQNcBoGDnZbjm2EKnxJVuZJ1MqSb4h8bpdD4
- jVoo0Q3Jia5qgDYIJx4cqCmXe8SvOyVWNlI5xNnZSMQDVJwk3C+G9xeu4wGC6Y70VEI+Jq0uG
- my9rYqeWWl/kYJKkQtupze2O70ykbmjRDmCCwcf0RJdp/bBkDWg96ROBzcZiPjuHi9yNkF8z8
- 664Js3Dn+0KQ22oAb7M58v9laXjw1l1T0VxaaMLE/b3P6tydF0ciIRrcrLuJwqrRv+w6h6gme
- GUnRujq4IU2xuU91uKfsvlGrbIcXJOOKhxgdkl4AZyUcb6TnYO9IIxlslvmpXVV+PSw6B2hXQ
- DcSLQDJmcx9Qy66IRjuTUQ3HlGodY38IH5p3onsw70wnIIEZ01F+I9xFf+q4tZhwQ78OesHYu
- m6wUEUrXwZ3xXgMfnYU8MPbmDMYVB5muevfSfy5ckxLrsP0w8XZ0rOPRQxffJLajGaSxb5YF6
- by1mEgUmD5heT8jjdxbQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:JDO+ITcPMoo=:KOb3c4dgHZm81zl2vb18eF
+ pWebkyKHxGEifiJWZ54rdWO4EDw6xCHtWkieKB+x9+7D8OmHsVfjvpETrYQo2wUdAaE0h1h4+
+ T3+uLnkIkn8wzgp1MBhgy3BtZeAZevrpFrOLa9ymq7Z3Y99Lw1q5dW0OHip+eQCXlsnsBeFlH
+ yTyW9a1FcIopKY5/zJ7SLS6l1CGA/1Y998Zt8dwvZcZYml2lX4lbi5dxrUiAOo6u2u9e82MEg
+ tjY2bZRJuW5F1nGc4q42bxLjo8cJvir56AzHSTuHq1XlPERNu7iaQ4tdBSNx4J4SIkwryAgpU
+ 2cwHhCGxgVwwUfFRwi3XnVA9PSaz8xSEGT7NV6rdZF8+ljVrwb6zwis5Q74WN3EcPbqpyFfH5
+ QafBvgDWytSz/Yz0kNvhi2zOb32YQul2P4/tvNRxuWvYPwHg0QFaxPjmCVV66ZEJQPjlFN3w7
+ 9TjH0JFkW1xK6IJ3jo9ceK5oPk30o8Rlww+3GNPmAVWKrnsJmGOcwbquhV4hsl8PSG75KwGL2
+ cZ9sAynyBuBuxxylD0UoPCZYtwDPWgpvNT0xyh2SSWYimErGmmou0gB405flo+sxy3r8b0F+C
+ 3ebXI8xwQRI85xU7NzPN0kVqiKIoYJG5HG7AD3lsRJ5LFRLJ3lScJZlQee69Fd40hBZYariIS
+ ufxBamy4nk5xIjnf3Xx4iuHQDoTcYpcFM5LYYRmgk9Cc3F9T+FMfetnIf5EBA/llIjoJSx2mn
+ wKx4qlGfFdKr7qy/zBQ+x/mLHhPmupOBOEcaZqCiaq0SBvr8YVTjaBYpjxAFQARuNRyGF4DRk
+ NkKFlRRjatiBtoBOQsS1ta16lpSGOxoTm+AFIERp8O+8nHI6DSSACAYjUWZzy3lhltKMIVVWv
+ +Ff45mQWVHAVLgeUCWOQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A cast to 'time_t' was accidentally left in place during the
-conversion of __do_adjtimex() to 64-bit timestamps, so the
-resulting value is incorrectly truncated.
+I noticed that ns_to_timespec64() calls div_s64_rem(), which is
+a rather slow function on 32-bit architectures, as it cannot take
+advantage of the do_div() optimizations for constant arguments.
 
-Remove the cast so the 64-bit time gets propagated correctly.
+This open-codes the div_s64_rem() function here, so we can pass
+a constant divider into the optimized div_u64_rem() function.
 
-Cc: stable@vger.kernel.org
-Fixes: ead25417f82e ("timex: use __kernel_timex internally")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/time/ntp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/time.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index 65eb796610dc..069ca78fb0bf 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -771,7 +771,7 @@ int __do_adjtimex(struct __kernel_timex *txc, const struct timespec64 *ts,
- 	/* fill PPS status fields */
- 	pps_fill_timex(txc);
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 5c54ca632d08..45a358953f09 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -550,18 +550,21 @@ EXPORT_SYMBOL(set_normalized_timespec64);
+  */
+ struct timespec64 ns_to_timespec64(const s64 nsec)
+ {
+-	struct timespec64 ts;
++	struct timespec64 ts = { 0, 0 };
+ 	s32 rem;
  
--	txc->time.tv_sec = (time_t)ts->tv_sec;
-+	txc->time.tv_sec = ts->tv_sec;
- 	txc->time.tv_usec = ts->tv_nsec;
- 	if (!(time_status & STA_NANO))
- 		txc->time.tv_usec = ts->tv_nsec / NSEC_PER_USEC;
+-	if (!nsec)
+-		return (struct timespec64) {0, 0};
+-
+-	ts.tv_sec = div_s64_rem(nsec, NSEC_PER_SEC, &rem);
+-	if (unlikely(rem < 0)) {
+-		ts.tv_sec--;
+-		rem += NSEC_PER_SEC;
++	if (likely(nsec > 0)) {
++		ts.tv_sec = div_u64_rem(nsec, NSEC_PER_SEC, &rem);
++		ts.tv_nsec = rem;
++	} else if (nsec < 0) {
++		/*
++		 * With negative times, tv_sec points to the earlier
++		 * second, and tv_nsec counts the nanoseconds since
++		 * then, so tv_nsec is always a positive number.
++		 */
++		ts.tv_sec = -div_u64_rem(-nsec - 1, NSEC_PER_SEC, &rem) - 1;
++		ts.tv_nsec = NSEC_PER_SEC - rem - 1;
+ 	}
+-	ts.tv_nsec = rem;
+ 
+ 	return ts;
+ }
 -- 
 2.20.0
 
