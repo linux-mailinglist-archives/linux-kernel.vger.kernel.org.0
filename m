@@ -2,213 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF420F56F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE67CF56F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390262AbfKHTOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:14:09 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46792 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733233AbfKHTOH (ORCPT
+        id S2390849AbfKHTOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:14:15 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:34486 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730980AbfKHTOL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:14:07 -0500
-Received: by mail-oi1-f195.google.com with SMTP id n14so6176318oie.13
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 11:14:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vvdTNvqH26wTJGXzTUajOuQ5X7gI5KuWrrDUcv/SSVU=;
-        b=s275THCxLMpiEae9K4Cyiww9QPLJP+xkcYKqjam+OTgjoJEykSbnoqtRs25ieLXlSZ
-         H7+L5Sval9DluEDJKahHXV6esSjrzYUIKw6ztFljNkdq9Z2kdpla8Q7x9RI2uE1ZNFoh
-         1N8uqRTeMLB53JwSggEVZfdGPJLtdm0BDf6kyTivWKD/gzGYGZiCfSUfiq2Deivaun6U
-         EN43s8hTxhRZ6gLn54PVt7HrZFgZKYiDpg/czQqqIcPqnr6YxvA4qxczjSXb7FCvAxzD
-         FKfmoNs95sJjZp3uWyJPwYs4RLnGzRojIjAb0zQnG8ewXbsSmg32glMDUH0Yjn9rpuRV
-         s0yg==
+        Fri, 8 Nov 2019 14:14:11 -0500
+Received: by mail-io1-f72.google.com with SMTP id a13so6156395iol.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 11:14:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vvdTNvqH26wTJGXzTUajOuQ5X7gI5KuWrrDUcv/SSVU=;
-        b=qqJMCHzxlljbaUjqchdAvPegWXMoiEN/4nAH9lGGECj2IvbwnKCKyzLD5ewmFFhnDc
-         RraYyRRCmZevVKy772c7zulidipoaG8OFn0h5PhyyXvjWdUNHu+cHbYoHDkxJVHOVTTe
-         wkRI+QpY+jPNiU1HGe+bUgE9IMvPre/h5B1h3mluExXsSL0mfhOIumqTD3P/cO7+mlYB
-         Z0PeiTPKFF8xXg2OrRF3J9L9+pJMG6rfl/oz8CR3uomMlyXRbTLh+zxiGUu+VVZ/ElaG
-         1FFMCpFyppGJ6fYSztA++8/sVkNYEg2cMucHVv8qSPBU18jECUaDeLF4QMOVrVg3OxB4
-         AEpw==
-X-Gm-Message-State: APjAAAWeGVwuTMftCQ+fhhNsBpfAIuZbdjGHweF2U8lxPG/jd6COJIb+
-        rcAn1lSXDGaW941Bxtqk5WJsGAxNQYhYVFobbhSkzw==
-X-Google-Smtp-Source: APXvYqxiVzHFpziPlBB8G0GQs786Fsp9mrZzg3zAL1TIJ7MwGe0E9weFin9+o+XGc09kjNAGJcsu5qfk6GnBxzrZGA0=
-X-Received: by 2002:aca:1910:: with SMTP id l16mr10705887oii.73.1573240446300;
- Fri, 08 Nov 2019 11:14:06 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=m6WBr8JhldJsCHGo+l8MVKtDCmIYXLcSEAEq3QAgNQM=;
+        b=R9syNDlyeWL3wcA6ePcWHElMEuRJdpBrYYabQLUXiknjFtCUX9BQsTna7qegffMrzN
+         +yBPridbD820npndUwcFuRGt6pzxUCIxqKjCSnyvW2Dzb1YJ1/2yOJm7EZzdl2CV8suH
+         FhlFx5hSXEjhYLwSxfWnU5lHki/ObIf/2VR+xAIXRfGK947FTR9tM3ROTk/APAq3wq+V
+         LEtPwg7o+guRUUvWXx7iZzIzZSJ5ZghAJqngPu/5WUkN2/G3YHJST6IJdMam8SWhoUQ7
+         y1KXMMaboq2pa65emPLZ0MHxdrJbS/V+xA16zHjeFSB7KsC2Ak8iFc9kV1NLeo0Wqpm9
+         Foww==
+X-Gm-Message-State: APjAAAW+xZvFdaABKYgXYRemm8rUtMMlKod8Ijkc1hQlr9WFRyQswoEo
+        HZrOg2fYTX3tW7y1nSvUT/Gc9RPARGoQrMQGsuHP2YFyIyIN
+X-Google-Smtp-Source: APXvYqzxESX9ewsNLy+icmQIbXyev1khcj7aj6dMItQPL8fJwi+pRBvozfPDfP8OAHURCedOOa9RY/LUPnbXMBy/L8hH+RuegjFJ
 MIME-Version: 1.0
-References: <20191108000855.25209-1-t-fukasawa@vx.jp.nec.com> <20191108000855.25209-3-t-fukasawa@vx.jp.nec.com>
-In-Reply-To: <20191108000855.25209-3-t-fukasawa@vx.jp.nec.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 8 Nov 2019 11:13:55 -0800
-Message-ID: <CAPcyv4h+++k1VTB2xKWHXjC4LC0N=nvDUMcdbGAsDBmwMob5dw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mm: Introduce subsection_dev_map
-To:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>, "cai@lca.pw" <cai@lca.pw>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a92:5fd3:: with SMTP id i80mr3594383ill.275.1573240448805;
+ Fri, 08 Nov 2019 11:14:08 -0800 (PST)
+Date:   Fri, 08 Nov 2019 11:14:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000018f5440596da964b@google.com>
+Subject: kernel BUG at arch/x86/kvm/mmu.c:LINE! (2)
+From:   syzbot <syzbot+824609cfabee9c6e153c@syzkaller.appspotmail.com>
+To:     abbotti@mev.co.uk, bp@alien8.de, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, hpa@zytor.com,
+        hsweeten@visionengravers.com, jmattson@google.com, joro@8bytes.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, olsonse@umich.edu, pbonzini@redhat.com,
+        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 4:15 PM Toshiki Fukasawa
-<t-fukasawa@vx.jp.nec.com> wrote:
->
-> Currently, there is no way to identify pfn on ZONE_DEVICE.
-> Identifying pfn on system memory can be done by using a
-> section-level flag. On the other hand, identifying pfn on
-> ZONE_DEVICE requires a subsection-level flag since ZONE_DEVICE
-> can be created in units of subsections.
->
-> This patch introduces a new bitmap subsection_dev_map so that
-> we can identify pfn on ZONE_DEVICE.
->
-> Also, subsection_dev_map is used to prove that struct pages
-> included in the subsection have been initialized since it is
-> set after memmap_init_zone_device(). We can avoid accessing
-> pages currently being initialized by checking subsection_dev_map.
->
-> Signed-off-by: Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-> ---
->  include/linux/mmzone.h | 19 +++++++++++++++++++
->  mm/memremap.c          |  2 ++
->  mm/sparse.c            | 32 ++++++++++++++++++++++++++++++++
->  3 files changed, 53 insertions(+)
->
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index bda2028..11376c4 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -1174,11 +1174,17 @@ static inline unsigned long section_nr_to_pfn(unsigned long sec)
->
->  struct mem_section_usage {
->         DECLARE_BITMAP(subsection_map, SUBSECTIONS_PER_SECTION);
-> +#ifdef CONFIG_ZONE_DEVICE
-> +       DECLARE_BITMAP(subsection_dev_map, SUBSECTIONS_PER_SECTION);
-> +#endif
+Hello,
 
-Hi Toshiki,
+syzbot found the following crash on:
 
-There is currently an effort to remove the PageReserved() flag as some
-code is using that to detect ZONE_DEVICE. In reviewing those patches
-we realized that what many code paths want is to detect online memory.
-So instead of a subsection_dev_map add a subsection_online_map. That
-way pfn_to_online_page() can reliably avoid ZONE_DEVICE ranges. I
-otherwise question the use case for pfn_walkers to return pages for
-ZONE_DEVICE pages, I think the skip behavior when pfn_to_online_page()
-== false is the right behavior.
+HEAD commit:    847120f8 Merge branch 'for-linus' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d60164e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5e2eca3f31f9bf
+dashboard link: https://syzkaller.appspot.com/bug?extid=824609cfabee9c6e153c
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e2a12ce00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13314994e00000
+
+The bug was bisected to:
+
+commit 1ffe8bdc09f8bfcaad76d71ae68b623c7e03f20f
+Author: Spencer E. Olson <olsonse@umich.edu>
+Date:   Mon Oct 10 14:14:19 2016 +0000
+
+     staging: comedi: ni_mio_common: split out ao arming from ni_ao_inttrig
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122977fae00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=162977fae00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+824609cfabee9c6e153c@syzkaller.appspotmail.com
+Fixes: 1ffe8bdc09f8 ("staging: comedi: ni_mio_common: split out ao arming  
+from ni_ao_inttrig")
+
+L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and  
+https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for  
+details.
+------------[ cut here ]------------
+kernel BUG at arch/x86/kvm/mmu.c:3324!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 8688 Comm: syz-executor906 Not tainted 5.4.0-rc6+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:transparent_hugepage_adjust+0x490/0x530 arch/x86/kvm/mmu.c:3324
+Code: 63 00 48 8b 45 b8 48 83 e8 01 e9 19 fd ff ff e8 36 3c 63 00 48 8b 45  
+b8 48 83 e8 01 48 89 45 c8 e9 a1 fd ff ff e8 20 3c 63 00 <0f> 0b 48 89 df  
+e8 66 9e 9e 00 e9 9f fb ff ff 4c 89 ff e8 59 9e 9e
+RSP: 0018:ffff88809753f690 EFLAGS: 00010293
+RAX: ffff88809549e6c0 RBX: ffff88809753f778 RCX: ffffffff810fe787
+RDX: 0000000000000000 RSI: ffffffff810fe8c0 RDI: 0000000000000007
+RBP: ffff88809753f6d8 R08: ffff88809549e6c0 R09: ffffed10131ed682
+R10: ffffed10131ed681 R11: ffff888098f6b40b R12: ffff88809753f768
+R13: 0000000000000083 R14: 000000000008fe81 R15: 0000000000000000
+FS:  000000000158e880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000009f2a4000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  tdp_page_fault+0x56e/0x650 arch/x86/kvm/mmu.c:4216
+  kvm_mmu_page_fault+0x1dd/0x1800 arch/x86/kvm/mmu.c:5439
+  handle_ept_violation+0x259/0x560 arch/x86/kvm/vmx/vmx.c:5185
+  vmx_handle_exit+0x29f/0x1730 arch/x86/kvm/vmx/vmx.c:5929
+  vcpu_enter_guest arch/x86/kvm/x86.c:8227 [inline]
+  vcpu_run arch/x86/kvm/x86.c:8291 [inline]
+  kvm_arch_vcpu_ioctl_run+0x1cb8/0x70d0 arch/x86/kvm/x86.c:8498
+  kvm_vcpu_ioctl+0x4dc/0xfc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2772
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x443f49
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd991d67d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443f49
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000006
+RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
+R10: 00000000004002e0 R11: 0000000000000246 R12: 0000000000401c50
+R13: 0000000000401ce0 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 911095bae56804bc ]---
+RIP: 0010:transparent_hugepage_adjust+0x490/0x530 arch/x86/kvm/mmu.c:3324
+Code: 63 00 48 8b 45 b8 48 83 e8 01 e9 19 fd ff ff e8 36 3c 63 00 48 8b 45  
+b8 48 83 e8 01 48 89 45 c8 e9 a1 fd ff ff e8 20 3c 63 00 <0f> 0b 48 89 df  
+e8 66 9e 9e 00 e9 9f fb ff ff 4c 89 ff e8 59 9e 9e
+RSP: 0018:ffff88809753f690 EFLAGS: 00010293
+RAX: ffff88809549e6c0 RBX: ffff88809753f778 RCX: ffffffff810fe787
+RDX: 0000000000000000 RSI: ffffffff810fe8c0 RDI: 0000000000000007
+RBP: ffff88809753f6d8 R08: ffff88809549e6c0 R09: ffffed10131ed682
+R10: ffffed10131ed681 R11: ffff888098f6b40b R12: ffff88809753f768
+R13: 0000000000000083 R14: 000000000008fe81 R15: 0000000000000000
+FS:  000000000158e880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000009f2a4000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
->         /* See declaration of similar field in struct zone */
->         unsigned long pageblock_flags[0];
->  };
->
->  void subsection_map_init(unsigned long pfn, unsigned long nr_pages);
-> +#ifdef CONFIG_ZONE_DEVICE
-> +void subsections_mark_device(unsigned long start_pfn, unsigned long size);
-> +#endif
->
->  struct page;
->  struct page_ext;
-> @@ -1367,6 +1373,19 @@ static inline int pfn_present(unsigned long pfn)
->         return present_section(__nr_to_section(pfn_to_section_nr(pfn)));
->  }
->
-> +static inline int pfn_zone_device(unsigned long pfn)
-> +{
-> +#ifdef CONFIG_ZONE_DEVICE
-> +       if (pfn_valid(pfn)) {
-> +               struct mem_section *ms = __pfn_to_section(pfn);
-> +               int idx = subsection_map_index(pfn);
-> +
-> +               return test_bit(idx, ms->usage->subsection_dev_map);
-> +       }
-> +#endif
-> +       return 0;
-> +}
-> +
->  /*
->   * These are _only_ used during initialisation, therefore they
->   * can use __initdata ...  They could have names to indicate
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index 03ccbdf..8a97fd4 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -303,6 +303,8 @@ void *memremap_pages(struct dev_pagemap *pgmap, int nid)
->         memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
->                                 PHYS_PFN(res->start),
->                                 PHYS_PFN(resource_size(res)), pgmap);
-> +       subsections_mark_device(PHYS_PFN(res->start),
-> +                               PHYS_PFN(resource_size(res)));
->         percpu_ref_get_many(pgmap->ref, pfn_end(pgmap) - pfn_first(pgmap));
->         return __va(res->start);
->
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index f6891c1..a3fc9e0a 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -603,6 +603,31 @@ void __init sparse_init(void)
->         vmemmap_populate_print_last();
->  }
->
-> +#ifdef CONFIG_ZONE_DEVICE
-> +void subsections_mark_device(unsigned long start_pfn, unsigned long size)
-> +{
-> +       struct mem_section *ms;
-> +       unsigned long *dev_map;
-> +       unsigned long sec, start_sec, end_sec, pfns;
-> +
-> +       start_sec = pfn_to_section_nr(start_pfn);
-> +       end_sec = pfn_to_section_nr(start_pfn + size - 1);
-> +       for (sec = start_sec; sec <= end_sec;
-> +            sec++, start_pfn += pfns, size -= pfns) {
-> +               pfns = min(size, PAGES_PER_SECTION
-> +                       - (start_pfn & ~PAGE_SECTION_MASK));
-> +               if (WARN_ON(!valid_section_nr(sec)))
-> +                       continue;
-> +               ms = __pfn_to_section(start_pfn);
-> +               if (!ms->usage)
-> +                       continue;
-> +
-> +               dev_map = &ms->usage->subsection_dev_map[0];
-> +               subsection_mask_set(dev_map, start_pfn, pfns);
-> +       }
-> +}
-> +#endif
-> +
->  #ifdef CONFIG_MEMORY_HOTPLUG
->
->  /* Mark all memory sections within the pfn range as online */
-> @@ -782,7 +807,14 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
->                 memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
->                 ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
->         }
-> +#ifdef CONFIG_ZONE_DEVICE
-> +       /* deactivation of a partial section on ZONE_DEVICE */
-> +       if (ms->usage) {
-> +               unsigned long *dev_map = &ms->usage->subsection_dev_map[0];
->
-> +               bitmap_andnot(dev_map, dev_map, map, SUBSECTIONS_PER_SECTION);
-> +       }
-> +#endif
->         if (section_is_early && memmap)
->                 free_map_bootmem(memmap);
->         else
-> --
-> 1.8.3.1
->
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
