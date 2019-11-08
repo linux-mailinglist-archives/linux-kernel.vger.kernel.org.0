@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 679E3F4C47
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:01:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF0AF4C91
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:04:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbfKHNBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:01:37 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43688 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbfKHNBf (ORCPT
+        id S1727768AbfKHNBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:01:36 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39976 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbfKHNBf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Nov 2019 08:01:35 -0500
-Received: by mail-lj1-f193.google.com with SMTP id y23so6099925ljh.10
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:01:32 -0800 (PST)
+Received: by mail-lf1-f67.google.com with SMTP id f4so4411803lfk.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:01:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZekbabXCPgDix0mV9AcQnO633/TLQ+c6dMS4dOgnB5g=;
-        b=B/xZo0RrHCJyuvVZivt2CjwHFp/RR66mRkGQgHnOynN41VAmVQ3pl1D/E66J+ArKGL
-         Gfyb0DEzvNycushflGaz+pEn1sxlOzX7sHsRCL1LiVYG/on1mH3xhc+kbmGVl4LeO5V0
-         df1bV9WCV4KW8U/dTC+tlVjDuAR5cCH+el02s=
+        bh=KoynnpqyM2T+oZqn3mX12olVYK6D1zjkp8rnCkTSUvs=;
+        b=arBXPaYvk7b9VQYEk27Lbsm2eaj47OMjYlVYaqSiH0ymjHtJ0z8jMJOs56Fvd8UuBJ
+         NKk3dJoZqQrq8Qd6neEX/y/JOno76+Cbx1L38NbXMark/8C5i8DIGjC8HDXiz6AkmhZZ
+         Zs4D4v6HFqp/TvlK8kAms9Xw0N+CDuG7slgBM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZekbabXCPgDix0mV9AcQnO633/TLQ+c6dMS4dOgnB5g=;
-        b=NdSeBqvq1Kyi8RjgaNoQqzkdn9uWucR9O0liUC3GPer88FxV0TeEArowb+HRj8wwLf
-         dzqRJqiJkqFy90dyauXpKXBDfpVHjWXbbWhlVMsLggmkGlrfhH2hX+AHhuCLFPSrSDVZ
-         vNTNuPZfx6Vq+M03rzwaodCXLYAWvN7URJUjzpouTCAqZ4MjnOk0jvAJTBIyI6x1vk2N
-         w4n8RTZ1nNpfL6g5UxtwOjjvj0GqNo4LFL7/nb3iulCHfLuBWRxRtqmWN0qqqNMFEeHH
-         MOrBWhJt40vjy0uTX24MUnBNsTAdFHJNcNSjRTIn6TT56QP1YQazCV6lihynZE11aHBx
-         Hu7Q==
-X-Gm-Message-State: APjAAAWkJTTTyjRe8HDPzaJj+ltzrM+l11cEuZKTV6TASO9FRZkinai0
-        TdEoAnhqwGovht/KqYK+gLYjOQ==
-X-Google-Smtp-Source: APXvYqwHe/94bHQUIiS2PHM5f7Vm4tOkuQQeHPPg8bsOABWlpDnKO27QowlfW02ScK7V7DeZLJYQpw==
-X-Received: by 2002:a2e:3805:: with SMTP id f5mr6440382lja.220.1573218091677;
-        Fri, 08 Nov 2019 05:01:31 -0800 (PST)
+        bh=KoynnpqyM2T+oZqn3mX12olVYK6D1zjkp8rnCkTSUvs=;
+        b=WNW/xkKFbtNfmMIEjJumaBcpmyCxDNRqefYAgWfmNs6woJ/7DXZY7g5NNDpyGlr0gR
+         15pATndEzJvY5Cw8u8jsO1bH/5dwczEp0boOkIP8Kei9mqSOFEUkOXBWoKMeumve0vJU
+         qxdxhkm9tBTc9nW0r4SmhPQPYC8XJLdJI+DjeAQQ5inZWBJ1coN3NyQep4atkQ6q9L+I
+         UFhqB3vNTmrgVyCCTsZPelnGonbrewYMyA3KFvuyYzYmJsXI7ps6THIJfrPXVp52iHVf
+         X0dftZ09paQbNW0triHpYlHWF5m6hFUnHXcuFXARmwZqx1QJKR37TuF3MEbTCcCe72UY
+         Ki+Q==
+X-Gm-Message-State: APjAAAVk4RgBo5bECKZH/5Fdc9YJfKGu9nZLQwUsrkl5dwO1lnhuFuUP
+        bAF4KdG9SPCVBT/4MGExqb96Yw==
+X-Google-Smtp-Source: APXvYqw8ntNr9Y7KtuD0WwqwQ/l6wehUmvqisdSJSXgT0uYQXoY9XMkvlc3TmtbKf6RhjcbTykfXxg==
+X-Received: by 2002:a19:f107:: with SMTP id p7mr6501640lfh.91.1573218092860;
+        Fri, 08 Nov 2019 05:01:32 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.01.30
+        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 05:01:31 -0800 (PST)
+        Fri, 08 Nov 2019 05:01:32 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
 Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev@vger.kernel.org
-Subject: [PATCH v4 03/47] soc: fsl: qe: rename qe_(clr/set/clrset)bit* helpers
-Date:   Fri,  8 Nov 2019 14:00:39 +0100
-Message-Id: <20191108130123.6839-4-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v4 04/47] soc: fsl: qe: introduce qe_io{read,write}* wrappers
+Date:   Fri,  8 Nov 2019 14:00:40 +0100
+Message-Id: <20191108130123.6839-5-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
 References: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
@@ -63,94 +62,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make it clear that these operate on big-endian registers (i.e. use the
-iowrite*be primitives) before we introduce more uses of them and allow
-the QE drivers to be built for platforms other than ppc32.
+The QUICC engine drivers use the powerpc-specific out_be32() etc. In
+order to allow those drivers to build for other architectures, those
+must be replaced by iowrite32be(). However, on powerpc, out_be32() is
+a simple inline function while iowrite32be() is out-of-line. So in
+order not to introduce a performance regression on powerpc when making
+the drivers work on other architectures, introduce qe_io* helpers.
+
+Also define the qe_{clr,set,clrset}bits* helpers in terms of these new
+macros.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c |  4 ++--
- drivers/soc/fsl/qe/ucc.c       | 10 +++++-----
- include/soc/fsl/qe/qe.h        | 18 +++++++++---------
- 3 files changed, 16 insertions(+), 16 deletions(-)
+ include/soc/fsl/qe/qe.h | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-index ca0f3be2b6bf..ce6af7d5380f 100644
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -623,8 +623,8 @@ static int ucc_hdlc_poll(struct napi_struct *napi, int budget)
- 
- 	if (howmany < budget) {
- 		napi_complete_done(napi, howmany);
--		qe_setbits32(priv->uccf->p_uccm,
--			     (UCCE_HDLC_RX_EVENTS | UCCE_HDLC_TX_EVENTS) << 16);
-+		qe_setbits_be32(priv->uccf->p_uccm,
-+				(UCCE_HDLC_RX_EVENTS | UCCE_HDLC_TX_EVENTS) << 16);
- 	}
- 
- 	return howmany;
-diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
-index 024d239ac1e1..ae9f2cf560cb 100644
---- a/drivers/soc/fsl/qe/ucc.c
-+++ b/drivers/soc/fsl/qe/ucc.c
-@@ -540,8 +540,8 @@ int ucc_set_tdm_rxtx_clk(u32 tdm_num, enum qe_clock clock,
- 	cmxs1cr = (tdm_num < 4) ? &qe_mux_reg->cmxsi1cr_l :
- 				  &qe_mux_reg->cmxsi1cr_h;
- 
--	qe_clrsetbits32(cmxs1cr, QE_CMXUCR_TX_CLK_SRC_MASK << shift,
--			clock_bits << shift);
-+	qe_clrsetbits_be32(cmxs1cr, QE_CMXUCR_TX_CLK_SRC_MASK << shift,
-+			   clock_bits << shift);
- 
- 	return 0;
- }
-@@ -650,9 +650,9 @@ int ucc_set_tdm_rxtx_sync(u32 tdm_num, enum qe_clock clock,
- 
- 	shift = ucc_get_tdm_sync_shift(mode, tdm_num);
- 
--	qe_clrsetbits32(&qe_mux_reg->cmxsi1syr,
--			QE_CMXUCR_TX_CLK_SRC_MASK << shift,
--			source << shift);
-+	qe_clrsetbits_be32(&qe_mux_reg->cmxsi1syr,
-+			   QE_CMXUCR_TX_CLK_SRC_MASK << shift,
-+			   source << shift);
- 
- 	return 0;
- }
 diff --git a/include/soc/fsl/qe/qe.h b/include/soc/fsl/qe/qe.h
-index c1036d16ed03..a1aa4eb28f0c 100644
+index a1aa4eb28f0c..9cac04c692fd 100644
 --- a/include/soc/fsl/qe/qe.h
 +++ b/include/soc/fsl/qe/qe.h
-@@ -241,20 +241,20 @@ static inline int qe_alive_during_sleep(void)
+@@ -241,21 +241,37 @@ static inline int qe_alive_during_sleep(void)
  #define qe_muram_offset cpm_muram_offset
  #define qe_muram_dma cpm_muram_dma
  
--#define qe_setbits32(_addr, _v) iowrite32be(ioread32be(_addr) |  (_v), (_addr))
--#define qe_clrbits32(_addr, _v) iowrite32be(ioread32be(_addr) & ~(_v), (_addr))
-+#define qe_setbits_be32(_addr, _v) iowrite32be(ioread32be(_addr) |  (_v), (_addr))
-+#define qe_clrbits_be32(_addr, _v) iowrite32be(ioread32be(_addr) & ~(_v), (_addr))
+-#define qe_setbits_be32(_addr, _v) iowrite32be(ioread32be(_addr) |  (_v), (_addr))
+-#define qe_clrbits_be32(_addr, _v) iowrite32be(ioread32be(_addr) & ~(_v), (_addr))
++#ifdef CONFIG_PPC32
++#define qe_iowrite8(val, addr)     out_8(addr, val)
++#define qe_iowrite16be(val, addr)  out_be16(addr, val)
++#define qe_iowrite32be(val, addr)  out_be32(addr, val)
++#define qe_ioread8(addr)           in_8(addr)
++#define qe_ioread16be(addr)        in_be16(addr)
++#define qe_ioread32be(addr)        in_be32(addr)
++#else
++#define qe_iowrite8(val, addr)     iowrite8(val, addr)
++#define qe_iowrite16be(val, addr)  iowrite16be(val, addr)
++#define qe_iowrite32be(val, addr)  iowrite32be(val, addr)
++#define qe_ioread8(addr)           ioread8(addr)
++#define qe_ioread16be(addr)        ioread16be(addr)
++#define qe_ioread32be(addr)        ioread32be(addr)
++#endif
++
++#define qe_setbits_be32(_addr, _v) qe_iowrite32be(qe_ioread32be(_addr) |  (_v), (_addr))
++#define qe_clrbits_be32(_addr, _v) qe_iowrite32be(qe_ioread32be(_addr) & ~(_v), (_addr))
  
--#define qe_setbits16(_addr, _v) iowrite16be(ioread16be(_addr) |  (_v), (_addr))
--#define qe_clrbits16(_addr, _v) iowrite16be(ioread16be(_addr) & ~(_v), (_addr))
-+#define qe_setbits_be16(_addr, _v) iowrite16be(ioread16be(_addr) |  (_v), (_addr))
-+#define qe_clrbits_be16(_addr, _v) iowrite16be(ioread16be(_addr) & ~(_v), (_addr))
+-#define qe_setbits_be16(_addr, _v) iowrite16be(ioread16be(_addr) |  (_v), (_addr))
+-#define qe_clrbits_be16(_addr, _v) iowrite16be(ioread16be(_addr) & ~(_v), (_addr))
++#define qe_setbits_be16(_addr, _v) qe_iowrite16be(qe_ioread16be(_addr) |  (_v), (_addr))
++#define qe_clrbits_be16(_addr, _v) qe_iowrite16be(qe_ioread16be(_addr) & ~(_v), (_addr))
  
--#define qe_setbits8(_addr, _v) iowrite8(ioread8(_addr) |  (_v), (_addr))
--#define qe_clrbits8(_addr, _v) iowrite8(ioread8(_addr) & ~(_v), (_addr))
-+#define qe_setbits_8(_addr, _v) iowrite8(ioread8(_addr) |  (_v), (_addr))
-+#define qe_clrbits_8(_addr, _v) iowrite8(ioread8(_addr) & ~(_v), (_addr))
+-#define qe_setbits_8(_addr, _v) iowrite8(ioread8(_addr) |  (_v), (_addr))
+-#define qe_clrbits_8(_addr, _v) iowrite8(ioread8(_addr) & ~(_v), (_addr))
++#define qe_setbits_8(_addr, _v) qe_iowrite8(qe_ioread8(_addr) |  (_v), (_addr))
++#define qe_clrbits_8(_addr, _v) qe_iowrite8(qe_ioread8(_addr) & ~(_v), (_addr))
  
--#define qe_clrsetbits32(addr, clear, set) \
-+#define qe_clrsetbits_be32(addr, clear, set) \
- 	iowrite32be((ioread32be(addr) & ~(clear)) | (set), (addr))
--#define qe_clrsetbits16(addr, clear, set) \
-+#define qe_clrsetbits_be16(addr, clear, set) \
- 	iowrite16be((ioread16be(addr) & ~(clear)) | (set), (addr))
--#define qe_clrsetbits8(addr, clear, set) \
-+#define qe_clrsetbits_8(addr, clear, set) \
- 	iowrite8((ioread8(addr) & ~(clear)) | (set), (addr))
+ #define qe_clrsetbits_be32(addr, clear, set) \
+-	iowrite32be((ioread32be(addr) & ~(clear)) | (set), (addr))
++	qe_iowrite32be((qe_ioread32be(addr) & ~(clear)) | (set), (addr))
+ #define qe_clrsetbits_be16(addr, clear, set) \
+-	iowrite16be((ioread16be(addr) & ~(clear)) | (set), (addr))
++	qe_iowrite16be((qe_ioread16be(addr) & ~(clear)) | (set), (addr))
+ #define qe_clrsetbits_8(addr, clear, set) \
+-	iowrite8((ioread8(addr) & ~(clear)) | (set), (addr))
++	qe_iowrite8((qe_ioread8(addr) & ~(clear)) | (set), (addr))
  
  /* Structure that defines QE firmware binary files.
+  *
 -- 
 2.23.0
 
