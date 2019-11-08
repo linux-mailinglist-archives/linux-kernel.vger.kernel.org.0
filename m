@@ -2,93 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17625F503A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:52:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9AEF5040
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:54:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfKHPwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 10:52:38 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44116 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbfKHPwh (ORCPT
+        id S1727233AbfKHPyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 10:54:11 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:34115 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfKHPyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 10:52:37 -0500
-Received: by mail-vs1-f65.google.com with SMTP id j85so4065080vsd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 07:52:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+YXITSGLnneLKKdtVpM2UNV6rrznDz/ekZ9r9rBO9SI=;
-        b=UtdbS5YypN2YH6FLlGOHdLiFf7VGVzCal+HYQyJOEHc1TplZS9lq7HNVcpCkHCgAfc
-         pixK196haQ111JSUOpuODK4zRvu904VpaoLrIHPyPx9pZBjtchnP+VeUyg04oEayZVCK
-         0ejE2kydJzubnSrnLLlLHh5mvDDBISkzJrdjwJCkbvtJxolKConD0YFyYU6eZQIm+F6o
-         4y/kT4KIUjKOp6DOVgCump9suG6aURCPiDsr/sAIZ7BB84VivayAJIL/2G5bgDFixvub
-         pWURjxrp2ud/QeUSUXh2QM0K8mJtO9bAQkdRpWxyvSS9zzEQGEY+9UGf74xRDNhEHudH
-         8/gA==
+        Fri, 8 Nov 2019 10:54:10 -0500
+Received: by mail-il1-f198.google.com with SMTP id m12so4030342ilq.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 07:54:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+YXITSGLnneLKKdtVpM2UNV6rrznDz/ekZ9r9rBO9SI=;
-        b=V9VbCSu6VC5LKcUANaSRnkz/mUBrC+MlmNhcFTboM9L4X8Mr/bKSgZJ3Ya1XYAgPOQ
-         A8NNZ1GsJrNMEwJR1lTnO1KAKmJf8cLolyeEeJ9hTz/G4d5IuAAioj0MGxxWoxkKVYPx
-         gY4vv8weDcWKoJEz+u7GjmiMfmyBO4sJzoavGKjJLDcot8M+LP4drzIoaTG9wtq2FM1h
-         afVxlW1kdx3ELiN+MF+e60GzVgXR+qlVI8SMFUT30jfwVd28OhG7m3sIs/y18Z5943k5
-         bWk3d/TcS4Iv4EWBu5xp5bNFYASWS70hvr6+JgVB53dkWpK8SGFLLMMzOC0S2w6fhV9J
-         Th3A==
-X-Gm-Message-State: APjAAAXnH2jUtrQRZaRUKTAYjmVkwSuKD9igirVH8zdc7v+4EbUSEZ9a
-        lCoyXj1dQO5WgBuTTlon048gxvPqMKPRGVVVL+ysyEmqvJA=
-X-Google-Smtp-Source: APXvYqyJwBX4nWIKSR4Vg+1DGbqzLNbIfIhzYdSqam6Gp5jSPrm/x1ZeX7CMad1CA6Abk9HXdJsBIUWpk9690aRO0qA=
-X-Received: by 2002:a67:db9a:: with SMTP id f26mr8325450vsk.84.1573228356636;
- Fri, 08 Nov 2019 07:52:36 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=s332cRTbvTcjjlLB46ZkzaXl2NaFeaIwaT6ESHp+Drs=;
+        b=Qm2nFLRHywPVOEzJJEqjjqPDglIT8S4FI4db1MAjsARu/9B75nTomF7Ch706+qOU4Z
+         CwJIAFw3WSinx5w+LkGjkRavU5fGEonwriIbABNayEKTS+raGeUQCsPMkFD0FSwRW1Eb
+         6a9I0vuU/j5DWjgx7doru0rHKV95ttL+dsVgCcTgvBHuDDx6xPTAdblhVYRjMjRzeiRQ
+         48tYh+0bLpXn1dqFNRVGwqyCPIsQzESQeKLXN9MoIftKR6NOPS9hV8XovBWhaDx+tJng
+         PSsjYAz6lmg6iTlR8xLigP3j0O/nsvMRSzFf0DDYrbH2uNlZYPCmeb3bn09UsHgcbMm3
+         AZqQ==
+X-Gm-Message-State: APjAAAVaxz1RlujQei/kuK+dUuv0gzkJyiidJliUJyhNbtZE2L5PUno+
+        o6Rc2zyO/Mn4whj/hHkTbr3ts1Pfyryaef4hGAexoJckNGYy
+X-Google-Smtp-Source: APXvYqzIc8qMPr+vhqnH6XJzsuF/upi1JbflEe2c6XqHSfDW5wG+XIWeG4APhbntX+YnhLgNg8sgrdIAAI6g8fUnSF9koOM5NU/M
 MIME-Version: 1.0
-References: <20191106165835.2863-1-stephan@gerhold.net>
-In-Reply-To: <20191106165835.2863-1-stephan@gerhold.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 8 Nov 2019 16:52:25 +0100
-Message-ID: <CACRpkdarNDhZvks4AWOX_=rcjprd_tCiaYZ90_+krRwGpKgTtw@mail.gmail.com>
-Subject: Re: [PATCH 0/7] drm/mcde: DSI video mode fixes
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a02:9641:: with SMTP id c59mr11764083jai.40.1573228449602;
+ Fri, 08 Nov 2019 07:54:09 -0800 (PST)
+Date:   Fri, 08 Nov 2019 07:54:09 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e3a8e00596d7ca32@google.com>
+Subject: KMSAN: uninit-value in kernel_sendmsg
+From:   syzbot <syzbot+4b6f070bb7a8ea5420d4@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dhowells@redhat.com, glider@google.com,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 6:01 PM Stephan Gerhold <stephan@gerhold.net> wrote:
+Hello,
 
-> This is a collection of fixes to make DSI video mode work better
-> using the MCDE driver. With these changes, MCDE appears to work
-> properly for the video mode panel I have been testing with.
->
-> Note: The patch that fixes the DSI link register setup for
-> video mode [1] is still necessary; but we still need to finish it
-> and actually make it initialize a panel correctly.
->
-> This series contains only patches for the other parts in MCDE.
-> I have tested it by disabling most of the register setup in the
-> DSI driver, which makes it re-use the properly working DSI register
-> set by the bootloader.
->
-> [1]: https://lists.freedesktop.org/archives/dri-devel/2019-October/238175.html
->
-> Stephan Gerhold (7):
->   drm/mcde: Provide vblank handling unconditionally
->   drm/mcde: Fix frame sync setup for video mode panels
->   drm/mcde: dsi: Make video mode errors more verbose
->   drm/mcde: dsi: Delay start of video stream generator
->   drm/mcde: dsi: Fix duplicated DSI connector
->   drm/mcde: dsi: Enable clocks in pre_enable() instead of mode_set()
->   drm/mcde: Handle pending vblank while disabling display
+syzbot found the following crash on:
 
-Tested all 7 on the Ux500 HREFv60plus with the command mode
-panel without problems.
-Tested-by: Linus Walleij <linus.walleij@linaro.org>
+HEAD commit:    124037e0 kmsan: drop inlines, rename do_kmsan_task_create()
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=1648eb9d600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f03c659d0830ab8d
+dashboard link: https://syzkaller.appspot.com/bug?extid=4b6f070bb7a8ea5420d4
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
 
-I will apply and push to DRM misc for-next with my Tested-by tag.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Yours,
-Linus Walleij
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4b6f070bb7a8ea5420d4@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in rxrpc_send_keepalive+0x2fa/0x830  
+net/rxrpc/output.c:655
+CPU: 0 PID: 3367 Comm: kworker/0:2 Not tainted 5.3.0-rc7+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: krxrpcd rxrpc_peer_keepalive_worker
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+  kmsan_report+0x13a/0x2b0 mm/kmsan/kmsan_report.c:108
+  __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg net/socket.c:657 [inline]
+  kernel_sendmsg+0x2c9/0x440 net/socket.c:677
+  rxrpc_send_keepalive+0x2fa/0x830 net/rxrpc/output.c:655
+  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:369 [inline]
+  rxrpc_peer_keepalive_worker+0xb82/0x1510 net/rxrpc/peer_event.c:430
+  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
+  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+  kthread+0x4b5/0x4f0 kernel/kthread.c:256
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:150 [inline]
+  kmsan_internal_poison_shadow+0x53/0x100 mm/kmsan/kmsan.c:134
+  kmsan_slab_alloc+0xaa/0x120 mm/kmsan/kmsan_hooks.c:103
+  slab_alloc_node mm/slub.c:2790 [inline]
+  slab_alloc mm/slub.c:2799 [inline]
+  kmem_cache_alloc_trace+0x8c5/0xd20 mm/slub.c:2816
+  kmalloc include/linux/slab.h:552 [inline]
+  __hw_addr_create_ex net/core/dev_addr_lists.c:30 [inline]
+  __hw_addr_add_ex net/core/dev_addr_lists.c:76 [inline]
+  __hw_addr_add net/core/dev_addr_lists.c:84 [inline]
+  dev_addr_init+0x152/0x700 net/core/dev_addr_lists.c:464
+  alloc_netdev_mqs+0x2a9/0x1650 net/core/dev.c:9150
+  rtnl_create_link+0x559/0x1190 net/core/rtnetlink.c:2931
+  __rtnl_newlink net/core/rtnetlink.c:3186 [inline]
+  rtnl_newlink+0x2757/0x38d0 net/core/rtnetlink.c:3254
+  rtnetlink_rcv_msg+0x115a/0x1580 net/core/rtnetlink.c:5223
+  netlink_rcv_skb+0x431/0x620 net/netlink/af_netlink.c:2477
+  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:5241
+  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+  netlink_unicast+0xf6c/0x1050 net/netlink/af_netlink.c:1328
+  netlink_sendmsg+0x110f/0x1330 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg net/socket.c:657 [inline]
+  ___sys_sendmsg+0x14ff/0x1590 net/socket.c:2311
+  __sys_sendmsg net/socket.c:2356 [inline]
+  __do_sys_sendmsg net/socket.c:2365 [inline]
+  __se_sys_sendmsg+0x305/0x460 net/socket.c:2363
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2363
+  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:297
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+=====================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
