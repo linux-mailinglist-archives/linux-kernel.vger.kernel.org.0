@@ -2,76 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54205F4F55
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:21:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E559F4F5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfKHPU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 10:20:58 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:44871 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbfKHPU6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 10:20:58 -0500
-X-Originating-IP: 92.137.17.54
-Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 123871BF211;
-        Fri,  8 Nov 2019 15:20:55 +0000 (UTC)
-Date:   Fri, 8 Nov 2019 16:20:55 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the rtc tree
-Message-ID: <20191108152055.GC216543@piout.net>
-References: <20191030154105.16a2797f@canb.auug.org.au>
- <20191108162929.2aeb6f5d@canb.auug.org.au>
+        id S1727516AbfKHPVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 10:21:12 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:58038 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726295AbfKHPVM (ORCPT <rfc822;linux-kernel@vger.kernel.orG>);
+        Fri, 8 Nov 2019 10:21:12 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1iT64S-0007Jg-Oj; Fri, 08 Nov 2019 23:21:08 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1iT64R-0007AC-Fk; Fri, 08 Nov 2019 23:21:07 +0800
+Date:   Fri, 8 Nov 2019 23:21:07 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: inside-secure - Add missed clk_disable_unprepare
+Message-ID: <20191108152107.sw7zs7xidhap2afx@gondor.apana.org.au>
+References: <20191101143715.17708-1-hslester96@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191108162929.2aeb6f5d@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191101143715.17708-1-hslester96@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 08/11/2019 16:29:29+1100, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Nov 01, 2019 at 10:37:15PM +0800, Chuhong Yuan wrote:
+> safexcel_remove misses disabling priv->reg_clk like what is done when
+> probe fails.
+> Add the missed call to fix it.
 > 
-> On Wed, 30 Oct 2019 15:41:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
-> > produced this warning:
-> > 
-> > WARNING: unmet direct dependencies detected for FSL_RCPM
-> >   Depends on [n]: PM_SLEEP [=y] && (ARM || ARM64)
-> >   Selected by [m]:
-> >   - RTC_DRV_FSL_FTM_ALARM [=m] && RTC_CLASS [=y] && (ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST [=y])
-> > 
-> > WARNING: unmet direct dependencies detected for FSL_RCPM
-> >   Depends on [n]: PM_SLEEP [=y] && (ARM || ARM64)
-> >   Selected by [m]:
-> >   - RTC_DRV_FSL_FTM_ALARM [=m] && RTC_CLASS [=y] && (ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST [=y])
-> > 
-> > WARNING: unmet direct dependencies detected for FSL_RCPM
-> >   Depends on [n]: PM_SLEEP [=y] && (ARM || ARM64)
-> >   Selected by [m]:
-> >   - RTC_DRV_FSL_FTM_ALARM [=m] && RTC_CLASS [=y] && (ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST [=y])
-> > 
-> > Introduced by commit
-> > 
-> >   e1c2feb1efa2 ("rtc: fsl-ftm-alarm: allow COMPILE_TEST")
-> 
-> I am still getting these warnings.
-> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+>  drivers/crypto/inside-secure/safexcel.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-I've dropped the patch for now, sorry about that.
-
-
+Patch applied.  Thanks.
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
