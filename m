@@ -2,84 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 585F3F4171
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 08:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62E23F4179
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 08:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbfKHHiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 02:38:16 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36496 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfKHHiP (ORCPT
+        id S1729895AbfKHHnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 02:43:00 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34407 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfKHHnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 02:38:15 -0500
-Received: by mail-lf1-f66.google.com with SMTP id m6so3685747lfl.3;
-        Thu, 07 Nov 2019 23:38:14 -0800 (PST)
+        Fri, 8 Nov 2019 02:43:00 -0500
+Received: by mail-wr1-f68.google.com with SMTP id e6so5912605wrw.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 23:42:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4AAshBfjoQEiO2K81TTl19q6wDqPj9DyhYRACRdMs3w=;
-        b=thAdKuiC0wO/s/dzfd35oK1GLK0UZJV8qIfjuAlCTDFrwax8TpzR2jLJgp7aJEJ32c
-         gscAOPI//t5kvDsvDzzD44w78rUcp2aHYnUqH3z8Hv8IF2kkTf1T+6wbTrP9eNil0vwz
-         iuI+Sgm4kkmbpBCtGRvFm6XCtm7QRZhmECAk4zqy5mJ00uEojoWdLiITO9VJoUSby15Y
-         h9IbKBMSJU2LmpWA5pCNNOL/pYAq8ZHCt1ADi7ay9HVOVXMXqtby2/22vvRz4/U47DHm
-         uHhSZ5ucvKkE5MqRD+ZxVdr8KLCOf8AtnPZdXTZGvkSRZrFiykPE164rxEQa9i1pqIxg
-         OcpA==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=gNQtn7/uUN2ljx3dU/Odyrx4tv892gHBGI+Z3nZ9LAE=;
+        b=AqCytg1X3jPH8kgfye9A9jb26I9SMoTFC+22F5Z1CyA3qarF0mZnlSuzvwb0qbQMNh
+         p6nUXeqy2SAXn2BqmdUMXbMHmiqCvUrIrpZV+9BEwAFJa5QR8ENkHo3gNx1jkGOK6pw2
+         8F2O4VDu/fgPfLNkpj6rf3BEvsg3oesPbqlR1fuqYEkCFOoP5zERf3x3qQErK9gFZVa+
+         i1q39NN4t9jYLtqzXMYKNn1z2/9NUwQ/8v4nTJJsv6iZ6c8sFEreNfdb3zB/4lwA5jPb
+         N0ZMhXUEALlO3YIOBxbBi7yZQR8o7o7hSCufXESr+QSJ2kFKTfckgSOF1G5NDeMhDRbV
+         ZDKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4AAshBfjoQEiO2K81TTl19q6wDqPj9DyhYRACRdMs3w=;
-        b=RaNBXCkav3eXzM85ouDSDfZl1DzhzTF4DOHnKBGPQVtdjUBYAIRfth3LAHEyo4gh4S
-         oyvOuJVRhoIoprfgDUAUSOJ2C3iyTLt8aopBkjCrVvvM2FnCnZz82QvlZ//233X1SJuw
-         coIcf1vczT4v8bL9wyHax4lAI8hxfLF05dK2TX+FP5zuQXxsSpuM9BJghv0XF8eYeKOL
-         /mReDgTQL9LrdfmCulIvjsR4tNoIVYtkN7o9f16Z22w/K2jvmEQjkUXa0U47rjAm3pEJ
-         5iCSsVJRC5Ew/0Arc14EleLRnHSBFVrfBG5CBtNy7Bj9jn71J6iH35yUBrqbTEuljR4l
-         o/Sw==
-X-Gm-Message-State: APjAAAUF9ZnxvTnbKUjurxtf/qKmmpIhRQPw8LnXlMz/O/tgSNO0JCuN
-        /A7rBohB+zZmIcXPJJTvsi4=
-X-Google-Smtp-Source: APXvYqzPdzmBLpJ23sspWX2PodL6cjACgfmwn+Rd10hJoaJ05t9jm3xetETKMt53TFUrI4lpJtCAAw==
-X-Received: by 2002:ac2:5195:: with SMTP id u21mr5409224lfi.97.1573198693605;
-        Thu, 07 Nov 2019 23:38:13 -0800 (PST)
-Received: from gmail.com (c-5eea30e8-74736162.cust.telenor.se. [94.234.48.232])
-        by smtp.gmail.com with ESMTPSA id p18sm2376857lfh.24.2019.11.07.23.38.11
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=gNQtn7/uUN2ljx3dU/Odyrx4tv892gHBGI+Z3nZ9LAE=;
+        b=UVlITnaHs5Xr37QDSl9/2L/xJ0jpT4qvCyVOSNonugREY2H0Z4sN7ZY32VKb9Z2vL1
+         I3wQH5uM85kr6l5cMvWsHlxFcQruzc7ckSnpY4ezLAAz641dVGByjol/bJ8JcnXdncBY
+         xyfDnDY1Sm9tLoS2gjuhhZm7Wcv/HukDwQv3vKm1EGB9E5Y4d4iCAyZt+YNVQNwC8mze
+         5G9Xzlf0ZlfJkRF3fBteZa+seKmYlZTjJX6KqRQmddMjKq2IaFZoNZJ9+fLDq7AiFXnJ
+         lLsI0DetR6/5m0ns7AZTJb4sGgHS9PpDQWu4t0RMnGYixwUgVuOnJwTWRCLtlDx5lSMG
+         5R9w==
+X-Gm-Message-State: APjAAAUfgsGRMxUCDkcp/l8RsfxV2gKVKnxO8zcCKsRP7b31nk8F7OX/
+        +Jye5jYzFAOpFg6c7sJR3yG/9g==
+X-Google-Smtp-Source: APXvYqxYjGaklh3lrhXXSL51hFVk11rNwqJLwFJ6E2Q13uV91J5H5IknfpzHN6C/DoGyNbBlcr1N9g==
+X-Received: by 2002:a5d:5306:: with SMTP id e6mr5554996wrv.187.1573198978705;
+        Thu, 07 Nov 2019 23:42:58 -0800 (PST)
+Received: from dell ([95.147.198.88])
+        by smtp.gmail.com with ESMTPSA id a15sm4465660wrw.10.2019.11.07.23.42.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 23:38:13 -0800 (PST)
-Date:   Fri, 8 Nov 2019 08:40:56 +0100
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: iio: adc: Migrate MCP3911 documentation
- to yaml
-Message-ID: <20191108074020.GB3844@gmail.com>
-References: <20191108072530.3499-1-marcus.folkesson@gmail.com>
+        Thu, 07 Nov 2019 23:42:58 -0800 (PST)
+Date:   Fri, 8 Nov 2019 07:42:55 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     gregkh@google.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yu-Hsuan Hsu <yuhsuan@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 01/10] ASoC: max98090: remove 24-bit format support if RJ
+ is 0
+Message-ID: <20191108074255.GB18902@dell>
+References: <20191107201702.27023-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191108072530.3499-1-marcus.folkesson@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191107201702.27023-1-lee.jones@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 08:25:30AM +0100, Marcus Folkesson wrote:
-> Rewrite bindings to use json-schema vocabulary.
+On Thu, 07 Nov 2019, Lee Jones wrote:
+
+> From: Yu-Hsuan Hsu <yuhsuan@chromium.org>
 > 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> [ Upstream commit 5628c8979642a076f91ee86c3bae5ad251639af0 ]
 
-Forgot Robs tag from v2
+Please ignore this, it was not meant for public review.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+For some reason --suppress-cc=all broke when upgrading yesterday.
 
+Sorry for the noise.
+
+> The supported formats are S16_LE and S24_LE now. However, by datasheet
+> of max98090, S24_LE is only supported when it is in the right justified
+> mode. We should remove 24-bit format if it is not in that mode to avoid
+> triggering error.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
