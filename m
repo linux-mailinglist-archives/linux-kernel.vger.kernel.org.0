@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE9CCF45FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:38:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D6FF45FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:39:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732967AbfKHLi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:38:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51674 "EHLO mail.kernel.org"
+        id S1733001AbfKHLi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:38:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732788AbfKHLim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:42 -0500
+        id S1732701AbfKHLin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7900E21D7E;
-        Fri,  8 Nov 2019 11:38:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 823A321D82;
+        Fri,  8 Nov 2019 11:38:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213122;
-        bh=V4E15JTP8Ncram5dpMtDGj4oBuQLPirvzgjhs8k4/tk=;
+        s=default; t=1573213123;
+        bh=DCGoM8RFU/85m16B7mGU3/4vxVxz030aYpVZQqpMOeU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kYn2jH9n1jsJaZJgFFeOTHlmbMWxmfPVlEHeB3k8kJOF5O+lhmcgjSqKPdqm+I8B7
-         xF41ZqYsTQrxHIgARqnq68drn45rtpsEzwlYPW+Qq4l5IfKEWbkAwm0HasMcHJCJkh
-         tmAye8b+990TjcUNGLJBvBhIWkIhgwUo7swvCRtU=
+        b=BCHCYQKjZu0WXcs3MJUZWdayn7RkZTCkHIrvMnWfAeC1hAoXdV//RnhxQxwDP53N0
+         xzSVBZzUzqif8cm7FLVuTpDBPSJG1dumRFPkPF7CE1Ip60znUzkj8DDpLr/BVqEhts
+         iXKmfgs0Irv9yQXrP6p4p3PWOAAPuRk/jrj1dVrM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 041/205] ARM: dts: exynos: Fix HDMI-HPD line handling on Arndale
-Date:   Fri,  8 Nov 2019 06:35:08 -0500
-Message-Id: <20191108113752.12502-41-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 042/205] ARM: dts: exynos: Fix sound in Snow-rev5 Chromebook
+Date:   Fri,  8 Nov 2019 06:35:09 -0500
+Message-Id: <20191108113752.12502-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -43,55 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 21cb5a27483a3cfdbcb7508a06a30c0a485e1211 ]
+[ Upstream commit 64858773d78e820003a94e5a7179d368213655d6 ]
 
-HDMI-HPD was set active low, moreover by default pincontrol chip sets
-pull-down on the pin. As a result HDMI driver assumes TV is always
-connected regardless of actual state.  The patch fixes it.
+This patch adds missing properties to the CODEC and sound nodes, so the
+audio will work also on Snow rev5 Chromebook. This patch is an extension
+to the commit e9eefc3f8ce0 ("ARM: dts: exynos: Add missing clock and
+DAI properties to the max98095 node in Snow Chromebook")
+and commit 6ab569936d60 ("ARM: dts: exynos: Enable HDMI audio on Snow
+Chromebook").  It has been reported that such changes work fine on the
+rev5 board too.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+[krzk: Fixed typo in phandle to &max98090]
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts  | 4 +++-
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 5 +++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index bb3fcd652b5d7..9c8ab4b7fb2cf 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -149,9 +149,11 @@
- };
+diff --git a/arch/arm/boot/dts/exynos5250-snow-rev5.dts b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
+index 0348b1c49a691..7cbfc6f1f4b8f 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-rev5.dts
++++ b/arch/arm/boot/dts/exynos5250-snow-rev5.dts
+@@ -20,6 +20,14 @@
  
- &hdmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_hpd>;
- 	status = "okay";
- 	ddc = <&i2c_ddc>;
--	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_LOW>;
-+	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
- 	vdd_osc-supply = <&ldo10_reg>;
- 	vdd_pll-supply = <&ldo8_reg>;
- 	vdd-supply = <&ldo8_reg>;
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index b25d520393b8b..d31a68672bfac 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -599,6 +599,11 @@
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
- 	};
+ 		samsung,model = "Snow-I2S-MAX98090";
+ 		samsung,audio-codec = <&max98090>;
 +
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
++		cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		codec {
++			sound-dai = <&max98090 0>, <&hdmi>;
++		};
+ 	};
  };
  
- &pinctrl_1 {
+@@ -31,6 +39,9 @@
+ 		interrupt-parent = <&gpx0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max98090_irq>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "mclk";
++		#sound-dai-cells = <1>;
+ 	};
+ };
+ 
 -- 
 2.20.1
 
