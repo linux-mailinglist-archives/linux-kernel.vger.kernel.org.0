@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFB8F45F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9CCF45FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:38:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732884AbfKHLiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:38:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51598 "EHLO mail.kernel.org"
+        id S1732967AbfKHLi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:38:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732758AbfKHLik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:40 -0500
+        id S1732788AbfKHLim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 168B021D7B;
-        Fri,  8 Nov 2019 11:38:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7900E21D7E;
+        Fri,  8 Nov 2019 11:38:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213120;
-        bh=csGxPfHGGw7vrgsXdVIZiGSXswdvnVTZni67Jb2fpOE=;
+        s=default; t=1573213122;
+        bh=V4E15JTP8Ncram5dpMtDGj4oBuQLPirvzgjhs8k4/tk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qqvTE3tCUWCuGCV8joydZcK8GwRR1THKT2Bgp9vvEZ4ZHMSLcuXbOJVs0Sa4kGVg9
-         9Z0CADew93Fmi+9qqTcqTlZdYDb+W2KlrrqaospwM/hYyTrL3vrFpXwGpMl3O8CCaa
-         fVdx0KBIVhhWdlpZwnjG9UxH+akiYDLPPLryxA00=
+        b=kYn2jH9n1jsJaZJgFFeOTHlmbMWxmfPVlEHeB3k8kJOF5O+lhmcgjSqKPdqm+I8B7
+         xF41ZqYsTQrxHIgARqnq68drn45rtpsEzwlYPW+Qq4l5IfKEWbkAwm0HasMcHJCJkh
+         tmAye8b+990TjcUNGLJBvBhIWkIhgwUo7swvCRtU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Burton <paul.burton@mips.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        linux-mips@linux-mips.org, Sasha Levin <sashal@kernel.org>,
-        linux-mips@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 039/205] MIPS: BCM47XX: Enable USB power on Netgear WNDR3400v3
-Date:   Fri,  8 Nov 2019 06:35:06 -0500
-Message-Id: <20191108113752.12502-39-sashal@kernel.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 041/205] ARM: dts: exynos: Fix HDMI-HPD line handling on Arndale
+Date:   Fri,  8 Nov 2019 06:35:08 -0500
+Message-Id: <20191108113752.12502-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -47,53 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit feef7918667b84f9d5653c501542dd8d84ae32af ]
+[ Upstream commit 21cb5a27483a3cfdbcb7508a06a30c0a485e1211 ]
 
-Setting GPIO 21 high seems to be required to enable power to USB ports
-on the WNDR3400v3. As there is already similar code for WNR3500L,
-make the existing USB power GPIO code generic and use that.
+HDMI-HPD was set active low, moreover by default pincontrol chip sets
+pull-down on the pin. As a result HDMI driver assumes TV is always
+connected regardless of actual state.  The patch fixes it.
 
-Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
-Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20259/
-Cc: Rafał Miłecki <zajec5@gmail.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/bcm47xx/workarounds.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos5250-arndale.dts  | 4 +++-
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 5 +++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/bcm47xx/workarounds.c b/arch/mips/bcm47xx/workarounds.c
-index 1a8a07e7a5633..46eddbec8d9fd 100644
---- a/arch/mips/bcm47xx/workarounds.c
-+++ b/arch/mips/bcm47xx/workarounds.c
-@@ -5,9 +5,8 @@
- #include <bcm47xx_board.h>
- #include <bcm47xx.h>
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index bb3fcd652b5d7..9c8ab4b7fb2cf 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -149,9 +149,11 @@
+ };
  
--static void __init bcm47xx_workarounds_netgear_wnr3500l(void)
-+static void __init bcm47xx_workarounds_enable_usb_power(int usb_power)
- {
--	const int usb_power = 12;
- 	int err;
+ &hdmi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&hdmi_hpd>;
+ 	status = "okay";
+ 	ddc = <&i2c_ddc>;
+-	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_LOW>;
++	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+ 	vdd_osc-supply = <&ldo10_reg>;
+ 	vdd_pll-supply = <&ldo8_reg>;
+ 	vdd-supply = <&ldo8_reg>;
+diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+index b25d520393b8b..d31a68672bfac 100644
+--- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+@@ -599,6 +599,11 @@
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
++
++	hdmi_hpd: hdmi-hpd {
++		samsung,pins = "gpx3-7";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
+ };
  
- 	err = gpio_request_one(usb_power, GPIOF_OUT_INIT_HIGH, "usb_power");
-@@ -23,7 +22,10 @@ void __init bcm47xx_workarounds(void)
- 
- 	switch (board) {
- 	case BCM47XX_BOARD_NETGEAR_WNR3500L:
--		bcm47xx_workarounds_netgear_wnr3500l();
-+		bcm47xx_workarounds_enable_usb_power(12);
-+		break;
-+	case BCM47XX_BOARD_NETGEAR_WNDR3400_V3:
-+		bcm47xx_workarounds_enable_usb_power(21);
- 		break;
- 	default:
- 		/* No workaround(s) needed */
+ &pinctrl_1 {
 -- 
 2.20.1
 
