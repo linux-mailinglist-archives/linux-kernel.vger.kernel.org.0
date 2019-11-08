@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 329D2F49A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A039EF4986
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390505AbfKHMER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:04:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56114 "EHLO mail.kernel.org"
+        id S2390015AbfKHLmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:42:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389894AbfKHLmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:42:19 -0500
+        id S1732711AbfKHLmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48D84222C4;
-        Fri,  8 Nov 2019 11:42:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D472E21D82;
+        Fri,  8 Nov 2019 11:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213338;
-        bh=0ygN0E9IlVH1H4ShoeoX+2esYHh+PfpGzBtEyMhLJ2s=;
+        s=default; t=1573213342;
+        bh=HFUeGsGjfvMfFSXB/QZfG3OacwRa96X7DnJEKW59VN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J6O6Lr6NnF47wbVRc8tCKRY5ASg2k+EOXxu6CA6qVe8CX0UArk98Ee0GvbzSAFYXC
-         xmEDHUFJVtxyqY9Jwqa6elgoqFli+GiwiyKujMfSm4XAwQ3ixR0SJnXW7EOk42DnMb
-         VAoFT1cGE9CpjfW3y0GkCa6/Cl+NNhcy3FGEKtGc=
+        b=QrXJykdZMygu3KrpiTK8opWY8pp2ohTzoXzaZYTaltsFv1GD/GbVzPl8Gj32lQFlH
+         Ooqo7xvDEcnBM+wsmkn7sZljf+bKBmI7bGpgWlcn2L/YiOakxqLW1RABMgqOL5Gwfw
+         CHBm1VT9cZd0ttNOZNxj1H2l1fbab9z/hHOOceog=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 175/205] soc: qcom: geni: geni_se_clk_freq_match() should always accept multiples
-Date:   Fri,  8 Nov 2019 06:37:22 -0500
-Message-Id: <20191108113752.12502-175-sashal@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 179/205] arm64: dts: broadcom: Fix I2C and SPI bus warnings
+Date:   Fri,  8 Nov 2019 06:37:26 -0500
+Message-Id: <20191108113752.12502-179-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,107 +46,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 867d4aa7013fdee8b962cde1711f96c8dd86d926 ]
+[ Upstream commit 7cdbe45da1a189e744e6801aebb462ee47235580 ]
 
-The geni_se_clk_freq_match() has some strange semantics.  Specifically
-it is defined with two modes:
-1. It can find a clock that's an exact multiple of the requested rate
-2. It can find a non-exact match but it can't handle multiples then
+dtc has new checks for I2C and SPI buses. Fix the warnings in node names
+and unit-addresses.
 
-...but callers should always be able to handle a clock that is a
-multiple of the requested clock so mode #2 doesn't really make sense.
-Let's change the semantics so that the non-exact match can also accept
-multiples and then change the code to handle that.
+arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dtb: Warning (i2c_bus_reg): /hsls/i2c@e0000/pcf8574@20: I2C bus unit address format error, expected "27"
+arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dtb: Warning (i2c_bus_reg): /hsls/i2c@e0000/pcf8574@20: I2C bus unit address format error, expected "27"
+arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dtb: Warning (spi_bus_bridge): /hsls/ssp@180000: node name for SPI buses should be 'spi'
+arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dtb: Warning (spi_bus_bridge): /hsls/ssp@190000: node name for SPI buses should be 'spi'
 
-The only caller of this code is the unlanded SPI driver [1] which
-currently passes "exact = True", thus it should be safe to change the
-semantics in this way.  ...and, in fact, the SPI driver should likely
-be modified to pass "exact = False" (with the new semantics) since
-that will allow it to work with SPI devices that request a clock rate
-that doesn't exactly match a rate we can make.
-
-[1] https://lkml.kernel.org/r/1535107336-2214-1-git-send-email-dkota@codeaurora.org
-
-Fixes: eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: Jon Mason <jonmason@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Signed-off-by: Rob Herring <robh@kernel.org>
+Acked-by: Scott Branden <sbranden@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/qcom/qcom-geni-se.c | 37 ++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 15 deletions(-)
+ arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi          | 4 ++--
+ arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 2 +-
+ arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
-index 1b19b8428c4ac..ee89ffb6dde84 100644
---- a/drivers/soc/qcom/qcom-geni-se.c
-+++ b/drivers/soc/qcom/qcom-geni-se.c
-@@ -544,16 +544,17 @@ EXPORT_SYMBOL(geni_se_clk_tbl_get);
-  * @se:		Pointer to the concerned serial engine.
-  * @req_freq:	Requested clock frequency.
-  * @index:	Index of the resultant frequency in the table.
-- * @res_freq:	Resultant frequency which matches or is closer to the
-- *		requested frequency.
-+ * @res_freq:	Resultant frequency of the source clock.
-  * @exact:	Flag to indicate exact multiple requirement of the requested
-  *		frequency.
-  *
-- * This function is called by the protocol drivers to determine the matching
-- * or exact multiple of the requested frequency, as provided by the serial
-- * engine clock in order to meet the performance requirements. If there is
-- * no matching or exact multiple of the requested frequency found, then it
-- * selects the closest floor frequency, if exact flag is not set.
-+ * This function is called by the protocol drivers to determine the best match
-+ * of the requested frequency as provided by the serial engine clock in order
-+ * to meet the performance requirements.
-+ *
-+ * If we return success:
-+ * - if @exact is true  then @res_freq / <an_integer> == @req_freq
-+ * - if @exact is false then @res_freq / <an_integer> <= @req_freq
-  *
-  * Return: 0 on success, standard Linux error codes on failure.
-  */
-@@ -564,6 +565,9 @@ int geni_se_clk_freq_match(struct geni_se *se, unsigned long req_freq,
- 	unsigned long *tbl;
- 	int num_clk_levels;
- 	int i;
-+	unsigned long best_delta;
-+	unsigned long new_delta;
-+	unsigned int divider;
+diff --git a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
+index 1a406a76c86a2..ea854f689fda8 100644
+--- a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
++++ b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
+@@ -639,7 +639,7 @@
+ 			status = "disabled";
+ 		};
  
- 	num_clk_levels = geni_se_clk_tbl_get(se, &tbl);
- 	if (num_clk_levels < 0)
-@@ -572,18 +576,21 @@ int geni_se_clk_freq_match(struct geni_se *se, unsigned long req_freq,
- 	if (num_clk_levels == 0)
- 		return -EINVAL;
+-		ssp0: ssp@66180000 {
++		ssp0: spi@66180000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x66180000 0x1000>;
+ 			interrupts = <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>;
+@@ -650,7 +650,7 @@
+ 			status = "disabled";
+ 		};
  
--	*res_freq = 0;
-+	best_delta = ULONG_MAX;
- 	for (i = 0; i < num_clk_levels; i++) {
--		if (!(tbl[i] % req_freq)) {
-+		divider = DIV_ROUND_UP(tbl[i], req_freq);
-+		new_delta = req_freq - tbl[i] / divider;
-+		if (new_delta < best_delta) {
-+			/* We have a new best! */
- 			*index = i;
- 			*res_freq = tbl[i];
--			return 0;
--		}
+-		ssp1: ssp@66190000 {
++		ssp1: spi@66190000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x66190000 0x1000>;
+ 			interrupts = <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index bc299c3d90683..a9b92e52d50e8 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -138,7 +138,7 @@
+ &i2c1 {
+ 	status = "okay";
  
--		if (!(*res_freq) || ((tbl[i] > *res_freq) &&
--				     (tbl[i] < req_freq))) {
--			*index = i;
--			*res_freq = tbl[i];
-+			/* If the new best is exact then we're done */
-+			if (new_delta == 0)
-+				return 0;
-+
-+			/* Record how close we got */
-+			best_delta = new_delta;
- 		}
- 	}
+-	pcf8574: pcf8574@20 {
++	pcf8574: pcf8574@27 {
+ 		compatible = "nxp,pcf8574a";
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index e283480bfc7e5..cfeaa855bd05a 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -521,7 +521,7 @@
+ 			status = "disabled";
+ 		};
  
+-		ssp0: ssp@180000 {
++		ssp0: spi@180000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x00180000 0x1000>;
+ 			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+@@ -533,7 +533,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		ssp1: ssp@190000 {
++		ssp1: spi@190000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x00190000 0x1000>;
+ 			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.20.1
 
