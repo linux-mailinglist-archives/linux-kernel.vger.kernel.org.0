@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8ED1F557A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEEA3F567E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390612AbfKHTCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:02:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60362 "EHLO mail.kernel.org"
+        id S2389040AbfKHTJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390588AbfKHTCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:02:40 -0500
+        id S2403778AbfKHTJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFCBC214DB;
-        Fri,  8 Nov 2019 19:02:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA94C20673;
+        Fri,  8 Nov 2019 19:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239758;
-        bh=6elECeKqNAc5dMrEOCSnn8CogZkyVM4opF6iM+8jqVU=;
+        s=default; t=1573240148;
+        bh=iTGEvDZxrrICnS95LrEyTxl2/mws/rBxyHZDzWMkPMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nTxQkmmbo0J427vR3f7fJIXp936ooeE51qEKGJxhLQO2PG1j5x9aLpZR9iU9GKOnf
-         HTss4H9OGHi726mLfylfySZRmGd2xVegA/J81YKmW4uv8TtOCJD88Job2UMkJyJcuW
-         kX2RQra5CDrFjBdB79jgT34h0T/XJBO+cQKiCack=
+        b=0UOXMvwcn4pg4HSgDmI9oyPiGuaBObpxnY7FKKf0KnFuGknQt8jQNcFhTZ1y6yXIo
+         BESnJAwBpjAr3pfVmSkEvLB1g7SjJ9p1oQlpzBJ4A5XXMVL5CMwAUmZNkzd/dVSUvZ
+         rZAHO6l+f55aXLJ23MWhG9rNtOPNZOF2JY7M/BtM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Wei Wang <weiwan@google.com>,
-        Craig Gallek <cgallek@google.com>,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 51/79] selftests: net: reuseport_dualstack: fix uninitalized parameter
-Date:   Fri,  8 Nov 2019 19:50:31 +0100
-Message-Id: <20191108174815.058257840@linuxfoundation.org>
+Subject: [PATCH 5.3 104/140] selftests: fib_tests: add more tests for metric update
+Date:   Fri,  8 Nov 2019 19:50:32 +0100
+Message-Id: <20191108174911.493111725@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,44 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <weiwan@google.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit d64479a3e3f9924074ca7b50bd72fa5211dca9c1 ]
+[ Upstream commit 37de3b354150450ba12275397155e68113e99901 ]
 
-This test reports EINVAL for getsockopt(SOL_SOCKET, SO_DOMAIN)
-occasionally due to the uninitialized length parameter.
-Initialize it to fix this, and also use int for "test_family" to comply
-with the API standard.
+This patch adds two more tests to ipv4_addr_metric_test() to
+explicitly cover the scenarios fixed by the previous patch.
 
-Fixes: d6a61f80b871 ("soreuseport: test mixed v4/v6 sockets")
-Reported-by: Maciej Żenczykowski <maze@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Wei Wang <weiwan@google.com>
-Cc: Craig Gallek <cgallek@google.com>
+Suggested-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/net/reuseport_dualstack.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/net/fib_tests.sh |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/tools/testing/selftests/net/reuseport_dualstack.c
-+++ b/tools/testing/selftests/net/reuseport_dualstack.c
-@@ -129,7 +129,7 @@ static void test(int *rcv_fds, int count
- {
- 	struct epoll_event ev;
- 	int epfd, i, test_fd;
--	uint16_t test_family;
-+	int test_family;
- 	socklen_t len;
+--- a/tools/testing/selftests/net/fib_tests.sh
++++ b/tools/testing/selftests/net/fib_tests.sh
+@@ -1438,6 +1438,27 @@ ipv4_addr_metric_test()
+ 	fi
+ 	log_test $rc 0 "Prefix route with metric on link up"
  
- 	epfd = epoll_create(1);
-@@ -146,6 +146,7 @@ static void test(int *rcv_fds, int count
- 	send_from_v4(proto);
- 
- 	test_fd = receive_once(epfd, proto);
-+	len = sizeof(test_family);
- 	if (getsockopt(test_fd, SOL_SOCKET, SO_DOMAIN, &test_family, &len))
- 		error(1, errno, "failed to read socket domain");
- 	if (test_family != AF_INET)
++	# explicitly check for metric changes on edge scenarios
++	run_cmd "$IP addr flush dev dummy2"
++	run_cmd "$IP addr add dev dummy2 172.16.104.0/24 metric 259"
++	run_cmd "$IP addr change dev dummy2 172.16.104.0/24 metric 260"
++	rc=$?
++	if [ $rc -eq 0 ]; then
++		check_route "172.16.104.0/24 dev dummy2 proto kernel scope link src 172.16.104.0 metric 260"
++		rc=$?
++	fi
++	log_test $rc 0 "Modify metric of .0/24 address"
++
++	run_cmd "$IP addr flush dev dummy2"
++	run_cmd "$IP addr add dev dummy2 172.16.104.1/32 peer 172.16.104.2 metric 260"
++	run_cmd "$IP addr change dev dummy2 172.16.104.1/32 peer 172.16.104.2 metric 261"
++	rc=$?
++	if [ $rc -eq 0 ]; then
++		check_route "172.16.104.2 dev dummy2 proto kernel scope link src 172.16.104.1 metric 261"
++		rc=$?
++	fi
++	log_test $rc 0 "Modify metric of address with peer route"
++
+ 	$IP li del dummy1
+ 	$IP li del dummy2
+ 	cleanup
 
 
