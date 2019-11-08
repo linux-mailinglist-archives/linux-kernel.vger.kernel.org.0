@@ -2,85 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCFD4F5162
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:43:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF586F5168
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:44:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfKHQnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 11:43:42 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41432 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfKHQnl (ORCPT
+        id S1727559AbfKHQod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 11:44:33 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51850 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727149AbfKHQoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 11:43:41 -0500
-Received: by mail-lf1-f67.google.com with SMTP id j14so4937655lfb.8;
-        Fri, 08 Nov 2019 08:43:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QQ9Okkt9tA9DcQ4nFpYeZ1WKHytWDSMkKTvTbeicM/E=;
-        b=WEgXKDDOlyqloOBhHSSpkydfNPJ03NP3InerMKtkGE7BGl9rgKG8ashzNF8/l1+yR0
-         H+IjxkCoWYJ1owLsaRCBPRQ6hocLxEmE0HkcSwMEwASexM4/dl5VKSLC0FZikE6TqJkq
-         svoSmD3NDUTcsq92uGofM9gTB8MIJeVhmNYzxeUdGf3kIl3ARzSZAMf3QX0GfY1Hww/3
-         09/PeZbkYQaefV5xpmNtyw/Kve4potPWEOl0cXRK2pZaXYLTZ2Il1aTPS3LdK1MWuGVU
-         LUcX3LcWpM+dk7dDV0X0pPfn8rZGUcgCDd7YfwqFmaGq663F7E3gT1oxUjG3XEF3FCH8
-         5Uug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QQ9Okkt9tA9DcQ4nFpYeZ1WKHytWDSMkKTvTbeicM/E=;
-        b=WNA3oWU5ZfJN5TcchMj/PjtBAES2VMAcnzTn67NeNbWMKunB8UbPPirmIDiR2Cgpty
-         A58CAtnLygszhDkBOyCDF48gjZCWnxy1JG4E9E9YdcaI/qsFlnwKYc5Lz8TWu2UaLDSo
-         +lrruAQJ/N3FgAffAyBBKT+9ivuptlZ8EEYeL6Yy/jY6uw8Vs6zwOc6NEZXVSacTHNrE
-         oVM0Psgf3TwgqfWnYtal2WfZ93m7gP1Sk9EDoKJ/nE+aUAwk9RuaID8+GtVRt6t1RZtg
-         l/k1aKPUyJj4B5vLSQ+ArNE59sxrExRfyNY5dCUaRbUSubxtmbuKRvFud8QH9EB40w8F
-         6x5w==
-X-Gm-Message-State: APjAAAVNIoc2DGWRoQPVAlj9DOS8/dv4phZiKSTw7ZHj9ZZhG7zR374o
-        vhjPDc8hWpNWmWXnj1GHKzO4eQRyWAs=
-X-Google-Smtp-Source: APXvYqyPGYgKX6sIBRZoLrk6RVsabIfXRiR0Rz/knooZTmYPnbXuSAVw6N4BvTqOogMFWgVCslX7rw==
-X-Received: by 2002:ac2:4248:: with SMTP id m8mr7247338lfl.94.1573231419472;
-        Fri, 08 Nov 2019 08:43:39 -0800 (PST)
-Received: from localhost.localdomain ([91.237.107.85])
-        by smtp.googlemail.com with ESMTPSA id a81sm3616844ljf.49.2019.11.08.08.43.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 08:43:38 -0800 (PST)
-From:   Leonid Maksymchuk <leonmaxx@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, chiu@endlessm.com,
-        yurii.pavlovskyi@gmail.com, kristian@klausen.dk,
-        andy@infradead.org, dvhart@infradead.org, corentin.chary@gmail.com,
-        Leonid Maksymchuk <leonmaxx@gmail.com>
-Subject: [PATCH v4 0/3] asus_wmi: Support of ASUS TUF laptops on Ryzen CPUs
-Date:   Fri,  8 Nov 2019 18:43:17 +0200
-Message-Id: <20191108164317.2874-1-leonmaxx@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        Fri, 8 Nov 2019 11:44:32 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8GhtjN157379;
+        Fri, 8 Nov 2019 16:44:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : subject
+ : from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=corp-2019-08-05;
+ bh=hYfdkMRkteIIGT2KkzkdkMeBEpG1ri1et0Pk3CjcHd8=;
+ b=E3x9+d1a1S5vvXX4xu5lf8IHXRaRaQ7IIansWvtjg7s/E2HDCeWt8C4TUus78dgh6Wty
+ e9rNBiuHKlzwAW/yrI+6lHdz7yooGEH8S2az8VH5YqEPKYJXzk2c+rDMJir3dwzWH9Dl
+ ZTGMcuPUq7Btinbv5vEm9pzl47+qzSKFbnJDCzh27JCvxSekJRauM6p0uEd4hS3AVJn4
+ DEatjmazAsc37oX12zd32e5qFdeDzyrG1sqKtWAigHnH289i6JKQ9IDy7ZFYYhDPFc3x
+ 3q5P/gcspWmZiz++HUVlnhzZLpfjsMvOAuvC+TUsUAqHLT9UykEXXAuZpyS9619mK44+ 5g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2w41w16f6t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 16:44:17 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8GhmeS115175;
+        Fri, 8 Nov 2019 16:44:16 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2w50m5nhms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 16:44:16 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA8GiEeO031808;
+        Fri, 8 Nov 2019 16:44:15 GMT
+Received: from asu (/92.220.18.196)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Nov 2019 08:44:14 -0800
+Message-ID: <c77e82629f04f0183853884abbeddd871d8f5ab7.camel@oracle.com>
+Subject: Re: [PATCH] mm: provide interface for retrieving kmem_cache name
+From:   Knut Omang <knut.omang@oracle.com>
+To:     Christopher Lameter <cl@linux.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Fri, 08 Nov 2019 17:44:10 +0100
+In-Reply-To: <alpine.DEB.2.21.1911081534470.32431@www.lameter.com>
+References: <20191107115404.3030723-1-knut.omang@oracle.com>
+         <20191107115806.GP8314@dhcp22.suse.cz>
+         <27006f47b0b85fb99acee2a638207268aef8d010.camel@oracle.com>
+         <20191107131342.GT8314@dhcp22.suse.cz>
+         <alpine.DEB.2.21.1911081534470.32431@www.lameter.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=921
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911080164
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=996 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911080164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 2019-11-08 at 15:37 +0000, Christopher Lameter wrote:
+> On Thu, 7 Nov 2019, Michal Hocko wrote:
+> 
+> > On Thu 07-11-19 13:26:09, Knut Omang wrote:
+> > > On Thu, 2019-11-07 at 12:58 +0100, Michal Hocko wrote:
+> > > > On Thu 07-11-19 12:54:04, Knut Omang wrote:
+> > > > > With the restructuring done in commit 9adeaa226988
+> > > > > ("mm, slab: move memcg_cache_params structure to mm/slab.h")
+> > > > >
+> > > > > it is no longer possible for code external to mm to access
+> 
+> That patch only affected the memcg_cache_params structure and not
+> kmem_cache.
+> 
+> And I do not see any references to the memcg_cache_param?
 
-this patch series adds support of ASUS TUF laptops on Ryzen CPUs to
-existing asus_wmi platform driver and also fixes minor bug.
+Good point, I should have made explicit reference to it. 
 
-v2: fixed indentation.
-v3: patches 2/3 and 3/3 are refactored.
-v4: patch 2/3 are simplified.
+It gets inlined into kmem_cache with CONFIG_SLUB if CONFIG_MEMCG is set
+(include/linux/slub_def.h, line 112)
 
-Leonid Maksymchuk (3):
-  asus_wmi: Fix return value of fan_boost_mode_store
-  asus_wmi: Support fan boost mode on FX505DY/FX705DY
-  asus_wmi: Set default fan boost mode to normal
+> The fields that all allocators need to expose are listed in
+> the struct kmme_cache definition in linux/mm/slab.h.
 
- drivers/platform/x86/asus-wmi.c            | 41 +++++++++++++++++-----
- include/linux/platform_data/x86/asus-wmi.h |  1 +
- 2 files changed, 34 insertions(+), 8 deletions(-)
+So I take that kmem_cache::name was still intended to be public, 
+just that that broke due to the inlining of struct memcg_cache_param 
+in slub_def.h?
 
--- 
-2.23.0
+Knut
 
