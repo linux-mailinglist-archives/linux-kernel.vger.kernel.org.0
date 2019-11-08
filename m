@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15949F5408
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFD2F5409
 	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732492AbfKHSxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:53:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50298 "EHLO mail.kernel.org"
+        id S1732565AbfKHSxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:53:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732452AbfKHSxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:53:34 -0500
+        id S1732519AbfKHSxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:53:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E697D20865;
-        Fri,  8 Nov 2019 18:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD3B521D7F;
+        Fri,  8 Nov 2019 18:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239214;
-        bh=eXUV9usKsFNCJl0ds2onpvux96p6TGBk/4ggU3O/OPA=;
+        s=default; t=1573239220;
+        bh=KOUMRaIXAGCb/5lzwRYuWypD1T7l7uduhC7ayCsSL/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wf5darkdRo0ORFhIy4xr2Cg+MjEqsIBMHzlCr8EuKfaz5WJClOgFa3m1VteGtAu7a
-         +ZRCjVVvUEhniDsb12Fgpr+Bd7jSHx5f1sAr4SltCgIXwcFeONNXryZWy8qdRvDmtG
-         kP16ZLcb9NNyXjCBLB1rl8U0eSuNErrOXxgTSloo=
+        b=dqyiM4canG1/VIFAfAnuHr6TadX6DtHvuuqIpHJH5KKEz/n/uJDLo9ZdUUC174k/f
+         h7W/p/AUW2KcP2Z/nEGCcER+mcKVIfVwmeOcJoWPS1YABhZAVAbRuP0GoRj29+Ipyh
+         rutfthlrF2aH3FLmzNBC3IEDk60wDxDLAZn3inBU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 05/75] ARM: dts: logicpd-torpedo-som: Remove twl_keypad
-Date:   Fri,  8 Nov 2019 19:49:22 +0100
-Message-Id: <20191108174712.152333101@linuxfoundation.org>
+Subject: [PATCH 4.4 07/75] scsi: sni_53c710: fix compilation error
+Date:   Fri,  8 Nov 2019 19:49:24 +0100
+Message-Id: <20191108174714.281663899@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
 References: <20191108174708.135680837@linuxfoundation.org>
@@ -44,38 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adam Ford <aford173@gmail.com>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit 6b512b0ee091edcb8e46218894e4c917d919d3dc ]
+[ Upstream commit 0ee6211408a8e939428f662833c7301394125b80 ]
 
-The TWL4030 used on the Logit PD Torpedo SOM does not have the
-keypad pins routed.  This patch disables the twl_keypad driver
-to remove some splat during boot:
+Drop out memory dev_printk() with wrong device pointer argument.
 
-twl4030_keypad 48070000.i2c:twl@48:keypad: missing or malformed property linux,keymap: -22
-twl4030_keypad 48070000.i2c:twl@48:keypad: Failed to build keymap
-twl4030_keypad: probe of 48070000.i2c:twl@48:keypad failed with error -22
+[mkp: typo]
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-[tony@atomide.com: removed error time stamps]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Link: https://lore.kernel.org/r/20191009151118.32350-1-tbogendoerfer@suse.de
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/logicpd-torpedo-som.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/sni_53c710.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-index e05670423d8b7..a6c59bf698b31 100644
---- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-+++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-@@ -169,3 +169,7 @@
- &twl_gpio {
- 	ti,use-leds;
- };
-+
-+&twl_keypad {
-+	status = "disabled";
-+};
+diff --git a/drivers/scsi/sni_53c710.c b/drivers/scsi/sni_53c710.c
+index 76278072147e2..b0f5220ae23a8 100644
+--- a/drivers/scsi/sni_53c710.c
++++ b/drivers/scsi/sni_53c710.c
+@@ -78,10 +78,8 @@ static int snirm710_probe(struct platform_device *dev)
+ 
+ 	base = res->start;
+ 	hostdata = kzalloc(sizeof(*hostdata), GFP_KERNEL);
+-	if (!hostdata) {
+-		dev_printk(KERN_ERR, dev, "Failed to allocate host data\n");
++	if (!hostdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	hostdata->dev = &dev->dev;
+ 	dma_set_mask(&dev->dev, DMA_BIT_MASK(32));
 -- 
 2.20.1
 
