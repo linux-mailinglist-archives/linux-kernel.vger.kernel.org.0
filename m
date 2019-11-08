@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71A2F45FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:39:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C388AF4601
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733119AbfKHLjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:39:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51904 "EHLO mail.kernel.org"
+        id S1733198AbfKHLjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:39:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732908AbfKHLix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:53 -0500
+        id S1732937AbfKHLi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 855A721D82;
-        Fri,  8 Nov 2019 11:38:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C15EB21D6C;
+        Fri,  8 Nov 2019 11:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213133;
-        bh=nPImtLa7CiPKcBTHi4tjRJteyGGCkBAYAjme1M75yYE=;
+        s=default; t=1573213135;
+        bh=J01Tua1xHqm84z2bULbDOEq1M7xNvcNCSEryKQmdtZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ytZW8iGQGnsv9JbNOB8ZA+gvT3NkHNcegw5jDOoOz5Uln6+Wo8XMc6cO8wb5xG9k8
-         CZ01K0dewBUfoyqlk1nZqnAC6QuIqsPsmjDyigoj58raZRmSrFbHlhoRBz4eNLsdYM
-         A2N5WBv2GO9tqqw7g/ZrizS4wNAJkXEoOGZf7hQA=
+        b=BIAt3tmY76Pkt8HVm4TsOjCQwms2oxVAacypeAQSYhMfK4Ok0IvmpfYVYEyrMzP7Z
+         5Nk81kmObrmk4yqRBFF8jj9Ay8w/RVJBbr78xroA+HTLoweoTMvXKWGBGaaKZosktI
+         +FeP8bIib4RtKyxn6JCoOXjShziMsRIeEeIMSilg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?Patryk=20Ma=C5=82ek?= <patryk.malek@intel.com>,
         Andrew Bowers <andrewx.bowers@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 051/205] i40e: hold the rtnl lock on clearing interrupt scheme
-Date:   Fri,  8 Nov 2019 06:35:18 -0500
-Message-Id: <20191108113752.12502-51-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 053/205] i40e: Prevent deleting MAC address from VF when set by PF
+Date:   Fri,  8 Nov 2019 06:35:20 -0500
+Message-Id: <20191108113752.12502-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -47,53 +47,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Patryk Małek <patryk.malek@intel.com>
 
-[ Upstream commit 5cba17b14182696d6bb0ec83a1d087933f252241 ]
+[ Upstream commit 5907cf6c5bbe78be2ed18b875b316c6028b20634 ]
 
-Hold the rtnl lock when we're clearing interrupt scheme
-in i40e_shutdown and in i40e_remove.
+To prevent VF from deleting MAC address that was assigned by the
+PF we need to check for that scenario when we try to delete a MAC
+address from a VF.
 
 Signed-off-by: Patryk Małek <patryk.malek@intel.com>
 Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 1577dbaab7425..1a66373184d62 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -14208,6 +14208,7 @@ static void i40e_remove(struct pci_dev *pdev)
- 	mutex_destroy(&hw->aq.asq_mutex);
- 
- 	/* Clear all dynamic memory lists of rings, q_vectors, and VSIs */
-+	rtnl_lock();
- 	i40e_clear_interrupt_scheme(pf);
- 	for (i = 0; i < pf->num_alloc_vsi; i++) {
- 		if (pf->vsi[i]) {
-@@ -14216,6 +14217,7 @@ static void i40e_remove(struct pci_dev *pdev)
- 			pf->vsi[i] = NULL;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index d86f3fa7aa6a4..46a71d289bca2 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -2571,6 +2571,16 @@ static int i40e_vc_del_mac_addr_msg(struct i40e_vf *vf, u8 *msg, u16 msglen)
+ 			ret = I40E_ERR_INVALID_MAC_ADDR;
+ 			goto error_param;
  		}
++
++		if (vf->pf_set_mac &&
++		    ether_addr_equal(al->list[i].addr,
++				     vf->default_lan_addr.addr)) {
++			dev_err(&pf->pdev->dev,
++				"MAC addr %pM has been set by PF, cannot delete it for VF %d, reset VF to change MAC addr\n",
++				vf->default_lan_addr.addr, vf->vf_id);
++			ret = I40E_ERR_PARAM;
++			goto error_param;
++		}
  	}
-+	rtnl_unlock();
+ 	vsi = pf->vsi[vf->lan_vsi_idx];
  
- 	for (i = 0; i < I40E_MAX_VEB; i++) {
- 		kfree(pf->veb[i]);
-@@ -14427,7 +14429,13 @@ static void i40e_shutdown(struct pci_dev *pdev)
- 	wr32(hw, I40E_PFPM_WUFC,
- 	     (pf->wol_en ? I40E_PFPM_WUFC_MAG_MASK : 0));
- 
-+	/* Since we're going to destroy queues during the
-+	 * i40e_clear_interrupt_scheme() we should hold the RTNL lock for this
-+	 * whole section
-+	 */
-+	rtnl_lock();
- 	i40e_clear_interrupt_scheme(pf);
-+	rtnl_unlock();
- 
- 	if (system_state == SYSTEM_POWER_OFF) {
- 		pci_wake_from_d3(pdev, pf->wol_en);
 -- 
 2.20.1
 
