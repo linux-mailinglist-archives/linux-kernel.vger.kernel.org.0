@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED838F54E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E0EAF575F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731911AbfKHS4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:56:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54270 "EHLO mail.kernel.org"
+        id S1731580AbfKHTUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:20:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732525AbfKHS4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:56:38 -0500
+        id S2389421AbfKHTAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D918E214DB;
-        Fri,  8 Nov 2019 18:56:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95DAD2248D;
+        Fri,  8 Nov 2019 18:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239397;
-        bh=WZb83f7ajjCS4RolwHUHtussqsT1ehPfqHysGCEZhVo=;
+        s=default; t=1573239505;
+        bh=iKwre2xSx1YiH/5+fhpFyPARnJ3tWS/KJ2o5COKmVjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=twGQ03GMDI4xpbs4BOlCd2exdbMKXvVxM6U4k3DW36/dCZ7MYxSvxkMUmIAZxUeTf
-         HXDnJMNUJc5Cz1TC9IK1OZRqR2Lmy+twbk0OksgtryBQ1XIj2ZWS/8jaWIKed4Wpsx
-         ZKeNDgceAgDUhR2tI4H70q1W84LdYjw8aKe93dmY=
+        b=GfSToNTVmntnmdevLRSNRd7SqQUiYnzpDMIXrztZShZ+SQZwJimUIOv8TiSLjzp2R
+         0y5LREF4IPzp6+9N6/Jpgz2q//e/+M3KJiBXGoq4HF6UdTIBEBAt0Fn9Y1qN1HEI88
+         zFRqz6aHB64tl1YB2thM+tPZFxHZBuPG+aSUizbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 08/34] scsi: scsi_dh_alua: handle RTPG sense code correctly during state transitions
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 27/62] net: dsa: bcm_sf2: Fix IMP setup for port different than 8
 Date:   Fri,  8 Nov 2019 19:50:15 +0100
-Message-Id: <20191108174629.145691706@linuxfoundation.org>
+Message-Id: <20191108174741.364762939@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
-References: <20191108174618.266472504@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hannes Reinecke <hare@suse.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit b6ce6fb121a655aefe41dccc077141c102145a37 ]
+[ Upstream commit 5fc0f21246e50afdf318b5a3a941f7f4f57b8947 ]
 
-Some arrays are not capable of returning RTPG data during state
-transitioning, but rather return an 'LUN not accessible, asymmetric access
-state transition' sense code. In these cases we can set the state to
-'transitioning' directly and don't need to evaluate the RTPG data (which we
-won't have anyway).
+Since it became possible for the DSA core to use a CPU port different
+than 8, our bcm_sf2_imp_setup() function was broken because it assumes
+that registers are applicable to port 8. In particular, the port's MAC
+is going to stay disabled, so make sure we clear the RX_DIS and TX_DIS
+bits if we are not configured for port 8.
 
-Link: https://lore.kernel.org/r/20191007135701.32389-1-hare@suse.de
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 9f91484f6fcc ("net: dsa: make "label" property optional for dsa2")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/device_handler/scsi_dh_alua.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ drivers/net/dsa/bcm_sf2.c |   36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
-index 98787588247bf..60c288526355a 100644
---- a/drivers/scsi/device_handler/scsi_dh_alua.c
-+++ b/drivers/scsi/device_handler/scsi_dh_alua.c
-@@ -527,6 +527,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
- 	unsigned int tpg_desc_tbl_off;
- 	unsigned char orig_transition_tmo;
- 	unsigned long flags;
-+	bool transitioning_sense = false;
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -106,22 +106,11 @@ static void bcm_sf2_imp_setup(struct dsa
+ 	unsigned int i;
+ 	u32 reg, offset;
  
- 	if (!pg->expiry) {
- 		unsigned long transition_tmo = ALUA_FAILOVER_TIMEOUT * HZ;
-@@ -571,13 +572,19 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
- 			goto retry;
- 		}
- 		/*
--		 * Retry on ALUA state transition or if any
--		 * UNIT ATTENTION occurred.
-+		 * If the array returns with 'ALUA state transition'
-+		 * sense code here it cannot return RTPG data during
-+		 * transition. So set the state to 'transitioning' directly.
- 		 */
- 		if (sense_hdr.sense_key == NOT_READY &&
--		    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a)
--			err = SCSI_DH_RETRY;
--		else if (sense_hdr.sense_key == UNIT_ATTENTION)
-+		    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a) {
-+			transitioning_sense = true;
-+			goto skip_rtpg;
-+		}
-+		/*
-+		 * Retry on any other UNIT ATTENTION occurred.
-+		 */
-+		if (sense_hdr.sense_key == UNIT_ATTENTION)
- 			err = SCSI_DH_RETRY;
- 		if (err == SCSI_DH_RETRY &&
- 		    pg->expiry != 0 && time_before(jiffies, pg->expiry)) {
-@@ -665,7 +672,11 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
- 		off = 8 + (desc[7] * 4);
- 	}
+-	if (priv->type == BCM7445_DEVICE_ID)
+-		offset = CORE_STS_OVERRIDE_IMP;
+-	else
+-		offset = CORE_STS_OVERRIDE_IMP2;
+-
+ 	/* Enable the port memories */
+ 	reg = core_readl(priv, CORE_MEM_PSM_VDD_CTRL);
+ 	reg &= ~P_TXQ_PSM_VDD(port);
+ 	core_writel(priv, reg, CORE_MEM_PSM_VDD_CTRL);
  
-+ skip_rtpg:
- 	spin_lock_irqsave(&pg->lock, flags);
-+	if (transitioning_sense)
-+		pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
+-	/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
+-	reg = core_readl(priv, CORE_IMP_CTL);
+-	reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
+-	reg &= ~(RX_DIS | TX_DIS);
+-	core_writel(priv, reg, CORE_IMP_CTL);
+-
+ 	/* Enable forwarding */
+ 	core_writel(priv, SW_FWDG_EN, CORE_SWMODE);
+ 
+@@ -140,10 +129,27 @@ static void bcm_sf2_imp_setup(struct dsa
+ 
+ 	bcm_sf2_brcm_hdr_setup(priv, port);
+ 
+-	/* Force link status for IMP port */
+-	reg = core_readl(priv, offset);
+-	reg |= (MII_SW_OR | LINK_STS);
+-	core_writel(priv, reg, offset);
++	if (port == 8) {
++		if (priv->type == BCM7445_DEVICE_ID)
++			offset = CORE_STS_OVERRIDE_IMP;
++		else
++			offset = CORE_STS_OVERRIDE_IMP2;
 +
- 	sdev_printk(KERN_INFO, sdev,
- 		    "%s: port group %02x state %c %s supports %c%c%c%c%c%c%c\n",
- 		    ALUA_DH_NAME, pg->group_id, print_alua_state(pg->state),
--- 
-2.20.1
-
++		/* Force link status for IMP port */
++		reg = core_readl(priv, offset);
++		reg |= (MII_SW_OR | LINK_STS);
++		core_writel(priv, reg, offset);
++
++		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
++		reg = core_readl(priv, CORE_IMP_CTL);
++		reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
++		reg &= ~(RX_DIS | TX_DIS);
++		core_writel(priv, reg, CORE_IMP_CTL);
++	} else {
++		reg = core_readl(priv, CORE_G_PCTL_PORT(port));
++		reg &= ~(RX_DIS | TX_DIS);
++		core_writel(priv, reg, CORE_G_PCTL_PORT(port));
++	}
+ }
+ 
+ static void bcm_sf2_eee_enable_set(struct dsa_switch *ds, int port, bool enable)
 
 
