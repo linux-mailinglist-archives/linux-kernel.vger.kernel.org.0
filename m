@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B2BF4AF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B97F4AEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403774AbfKHMMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:12:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51640 "EHLO mail.kernel.org"
+        id S2391986AbfKHMMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:12:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732771AbfKHLil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:41 -0500
+        id S1732830AbfKHLip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 655E421D6C;
-        Fri,  8 Nov 2019 11:38:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E7420869;
+        Fri,  8 Nov 2019 11:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213121;
-        bh=Q4mGNBQr66Q94q9GgnenfCd+MuSvKRlgye09kJ8YuMQ=;
+        s=default; t=1573213124;
+        bh=LoGSwEhWqUDWuPoWcpmAiDNc+LQbBg12CiqsW0Xkyo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IlPVRw/hJOxJNi5OclxYXM1GMNU30Y7f6Oq3eXWL8UmxrUv8k4Dbjp9l1KJdO67sW
-         jRb++jGVc0wbBx446EMctI3Ea9ktvcMDPYi99Ju5O6rPUO4lpwE7REIWsB3eYKh6Ln
-         qiBXi0dCDyL3V3Nqjev+k7V9htNh+3ZWYDrBcTqo=
+        b=CXXUwHrfDDCcWOt5ug2cW/WVfMaYuo8pZSDuawPz+HP9q6jfiP0rYHQMf60sCKTZi
+         LpJxQXuzSQU7Jwu4lG0h2OFuElE3KSQR1ChosSc3/uEZiy/HXv1ZTagJwTLwNYsp9D
+         h7wPawMx3jf+ys8ouUKCoYedDuHzVtEHbbMfQJwE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 040/205] ARM: dts: exynos: Use i2c-gpio for HDMI-DDC on Arndale
-Date:   Fri,  8 Nov 2019 06:35:07 -0500
-Message-Id: <20191108113752.12502-40-sashal@kernel.org>
+Cc:     Rick Farrington <ricardo.farrington@cavium.com>,
+        Felix Manlunas <felix.manlunas@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 043/205] liquidio: fix race condition in instruction completion processing
+Date:   Fri,  8 Nov 2019 06:35:10 -0500
+Message-Id: <20191108113752.12502-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -43,88 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Rick Farrington <ricardo.farrington@cavium.com>
 
-[ Upstream commit 620375c8fdf2f9f5110ed48d6c407cc4b7554f86 ]
+[ Upstream commit b943f17e06493fd2c7fd00743093ad5dcdb90e7f ]
 
-HDMI-DDC for unknown reasons doesn't work with Exynos I2C controllers.
-Fortunately i2c-gpio comes to the rescue.
+In lio_enable_irq, the pkt_in_done count register was being cleared to
+zero.  However, there could be some completed instructions which were not
+yet processed due to budget and limit constraints.
+So, only write this register with the number of actual completions
+that were processed.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
+Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts  | 28 ++++++++++++++++-------
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi |  6 +++++
- 2 files changed, 26 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/cavium/liquidio/octeon_device.c   | 5 +++--
+ drivers/net/ethernet/cavium/liquidio/octeon_iq.h       | 2 ++
+ drivers/net/ethernet/cavium/liquidio/request_manager.c | 2 ++
+ 3 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 7a8a5c55701a8..bb3fcd652b5d7 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -150,7 +150,7 @@
+diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_device.c b/drivers/net/ethernet/cavium/liquidio/octeon_device.c
+index f878a552fef3b..d0ed6c4f9e1a2 100644
+--- a/drivers/net/ethernet/cavium/liquidio/octeon_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/octeon_device.c
+@@ -1450,8 +1450,9 @@ void lio_enable_irq(struct octeon_droq *droq, struct octeon_instr_queue *iq)
+ 	}
+ 	if (iq) {
+ 		spin_lock_bh(&iq->lock);
+-		writel(iq->pkt_in_done, iq->inst_cnt_reg);
+-		iq->pkt_in_done = 0;
++		writel(iq->pkts_processed, iq->inst_cnt_reg);
++		iq->pkt_in_done -= iq->pkts_processed;
++		iq->pkts_processed = 0;
+ 		/* this write needs to be flushed before we release the lock */
+ 		mmiowb();
+ 		spin_unlock_bh(&iq->lock);
+diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_iq.h b/drivers/net/ethernet/cavium/liquidio/octeon_iq.h
+index 2327062e8af6b..aecd0d36d6349 100644
+--- a/drivers/net/ethernet/cavium/liquidio/octeon_iq.h
++++ b/drivers/net/ethernet/cavium/liquidio/octeon_iq.h
+@@ -94,6 +94,8 @@ struct octeon_instr_queue {
  
- &hdmi {
- 	status = "okay";
--	ddc = <&i2c_2>;
-+	ddc = <&i2c_ddc>;
- 	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_LOW>;
- 	vdd_osc-supply = <&ldo10_reg>;
- 	vdd_pll-supply = <&ldo8_reg>;
-@@ -452,13 +452,6 @@
- 	};
- };
+ 	u32 pkt_in_done;
  
--&i2c_2 {
--	status = "okay";
--	/* used by HDMI DDC */
--	samsung,i2c-sda-delay = <100>;
--	samsung,i2c-max-bus-freq = <66000>;
--};
--
- &i2c_3 {
- 	status = "okay";
- 
-@@ -547,3 +540,22 @@
- 	status = "okay";
- 	samsung,exynos-sataphy-i2c-phandle = <&sata_phy_i2c>;
- };
++	u32 pkts_processed;
 +
-+&soc {
-+	/*
-+	 * For unknown reasons HDMI-DDC does not work with Exynos I2C
-+	 * controllers. Lets use software I2C over GPIO pins as a workaround.
-+	 */
-+	i2c_ddc: i2c-gpio {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_gpio_bus>;
-+		status = "okay";
-+		compatible = "i2c-gpio";
-+		gpios = <&gpa0 6 0 /* sda */
-+			 &gpa0 7 0 /* scl */
-+			>;
-+		i2c-gpio,delay-us = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index 6ff6dea29d449..b25d520393b8b 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -225,6 +225,12 @@
- 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
- 	};
+ 	/** A spinlock to protect access to the input ring.*/
+ 	spinlock_t iq_flush_running_lock;
  
-+	i2c2_gpio_bus: i2c2-gpio-bus {
-+		samsung,pins = "gpa0-6", "gpa0-7";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
- 	uart2_data: uart2-data {
- 		samsung,pins = "gpa1-0", "gpa1-1";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+index 3deb3c07681fd..1d9ab7f4a2fef 100644
+--- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
++++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+@@ -123,6 +123,7 @@ int octeon_init_instr_queue(struct octeon_device *oct,
+ 	iq->do_auto_flush = 1;
+ 	iq->db_timeout = (u32)conf->db_timeout;
+ 	atomic_set(&iq->instr_pending, 0);
++	iq->pkts_processed = 0;
+ 
+ 	/* Initialize the spinlock for this instruction queue */
+ 	spin_lock_init(&iq->lock);
+@@ -497,6 +498,7 @@ octeon_flush_iq(struct octeon_device *oct, struct octeon_instr_queue *iq,
+ 				lio_process_iq_request_list(oct, iq, 0);
+ 
+ 		if (inst_processed) {
++			iq->pkts_processed += inst_processed;
+ 			atomic_sub(inst_processed, &iq->instr_pending);
+ 			iq->stats.instr_processed += inst_processed;
+ 		}
 -- 
 2.20.1
 
