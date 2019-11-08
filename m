@@ -2,180 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96F7EF5A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8EF6F5A17
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732849AbfKHVen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:34:43 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:45051 "EHLO
+        id S1732602AbfKHVfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:35:01 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:59311 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfKHVem (ORCPT
+        with ESMTP id S1733060AbfKHVez (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:34:42 -0500
+        Fri, 8 Nov 2019 16:34:55 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MaInF-1iNMKJ1SOz-00WBZ3; Fri, 08 Nov 2019 22:34:22 +0100
+ 1MLzSD-1iBFNN1WBV-00Hvwr; Fri, 08 Nov 2019 22:34:36 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+To:     y2038@lists.linaro.org, Christine Caulfield <ccaulfie@redhat.com>,
+        David Teigland <teigland@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
         Willem de Bruijn <willemb@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        John Hurley <john.hurley@netronome.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Pedro Tammela <pctammela@gmail.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>, netdev@vger.kernel.org
-Subject: [PATCH 03/16] net: sock: use __kernel_old_timespec instead of timespec
-Date:   Fri,  8 Nov 2019 22:32:41 +0100
-Message-Id: <20191108213257.3097633-4-arnd@arndb.de>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Windsor <dwindsor@redhat.com>, cluster-devel@redhat.com
+Subject: [PATCH 04/16] dlm: use SO_SNDTIMEO_NEW instead of SO_SNDTIMEO_OLD
+Date:   Fri,  8 Nov 2019 22:32:42 +0100
+Message-Id: <20191108213257.3097633-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108213257.3097633-1-arnd@arndb.de>
 References: <20191108213257.3097633-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:dHZS9u9EEGjfoUU8DwFFYZFr9GRmH/0v+mphqJL+9zdWkvhrYSd
- IjhFW4adgcjrYBzyCFla32nOecMkZ7WtqrNYDuLPjbbUaVAqfFEUwnnJdPdZosywpQApddx
- CwBRz8KhG0DgQk5LRHYpA2Nyccpus4ewZHGyFhMU6ZTzGs+97OmoSj5Z66HJmrU0H+BUrgG
- OpGJIgPhmUJk6jsa0uQfg==
+X-Provags-ID: V03:K1:uHa/QjAGTByeAkpaDyB/vmnZ68MBZaHn8BbKmiyg4MIyd5kOgr/
+ oPvkjfCzukaGEqPfPs46BihWpfl4F/gQJ3kQGEB+v25O7LUWaxKwPkPAcNHU8h+MQbnVZAN
+ hd62BomG6NZ5ED6zjrQMrcCfz99gcXhaVP2VS/iuTaIzr8doR+4KM9eIgD8Ug2xmWNmrivZ
+ JpWyIOQrq1vNgXmSWjp0A==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:scDJt0L2i3s=:/0ToOLlNJ3SE+J0uqz1CcQ
- uqEaJAU2iU3qiFECJgMLAlSwHpUxqfWHl02EDRRsh5ILvCVS30o3bBobHpBzxB3WHHjeDATwY
- KC20Mf2kGiq2fmh2PVXjh3pwFqhFtDQwdZNkE87fzAFSKAAg8rRKrzsCfYfF+9LpbbFPt2FPY
- XmjLvY1wXiiqG0N2Yx3ovraqgjppqtFLHu4bkphwguR9+5Mh6Q7Q9WrbrJPYM80FrBfAZEW5m
- MJRgVhl2CC5VINqjv4YVJcPCKtBUg/l/0lfzv5Y392YNn2aSRJjLKJSmPinDNWkOBV+ICpr3B
- HjcTRFKg4FBajsYoI5meWzTOjEZ6PLAhH8JlF7hxyrncy7o+S8+8/Q6A236Bj//JMkyKayfBN
- dY6DO1elP4J+3Jcxby68osNl9L684vZ6/SFe+gk8OmRi/RBIp3e3wf0BiX3UredWF6sIV/BSA
- ++MBVFOnz5l/hAuilO3ZXvS0Vc3hQ/sBV715NUChQfZMISyyYbSRWEQDtrjJceDVKcUULxSr0
- yygz4xrcSoXt4f9ozxETUCEmETv8uqpHzIjjlooiwccrcRCeo7WxXvP0oOJSMrOG14q2Migpj
- /OiRKhid1N1yzlEvZ8m16fZIQbaNGZ14FL+vgE4HkSWQ3whA3bdAoyr9fg7y3ifzPPfutzfGp
- IRnUup2M6/MNdzbUmck7/LNvIqj1qJgDCYGuZdiAZK+7303FU7NxtW87QH7/4A9kexC8r6dG/
- 7xXIHeMU/5xg6auy0lJUGwT3PsC0Wbh8iwaobHQ6NTTNdPGTohAezNV/KYtoShc66EZgheh9M
- s/BE56MbGfcOAwQ9/8cpN8J6dd37nFr1VHH0z8CLFhrfBnXLnW+KZGY9p80g8cfDY6p4b5bFR
- RPbhyrd4d4f3hzy7WbqQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Qd/hYklCPQw=:UXlIHNa+YNOfgmM92uODnY
+ g60pWnm0PQin6NlohRtJRMf0RxVHPW8A/DGP+UHxznP/Ger+UlSBqc2mbMr0hiW0ds3eyJVPh
+ OhSJFdBuRA22S+jqbdejdgkWLcJ/202e43Vy6IjyKOyOrRMy6FDKP+bM/frQA6NFGduzOfvFy
+ 4lQxVB6UfEWFmsIV7Y4srgYNNUlK4Qp1BuOFcA206mOMH2dKzCOfEQCtRnz7XZqSvmuBUyRxm
+ 72YtEOhqf+OV5PWrRo0MBLhSWamU8PWM4ZZK85PKCx8AG4RelG3GAFLXH23v/AG3gFDspXUBJ
+ 8WQnlWqDch6EfdHCBcykfnayrAsX0d5zpRL3hrDAIQP2WRb6g+p2wV9Ktu2yW+6RsYM1YcJiR
+ eAIVUFE4MuzRm3uvYjcGnJ3/UEjBiPrQOqkbgoN8mKPbNmFddlukm3WSrUza/gUpQR7i/7dw9
+ 1d9x706JHtWe4fwEM8IzLGSYbkjiWuBJnxGLavzbPfXwvMYzV4x52IJxGbWVdu6DqNNNENbWw
+ SUsk2UlFELckfxqSsK6Agai0whttWZ7nw60jpxXzeqJ3OiwHy+o/f3o/X5etTlxaHcnaD/1KW
+ ztWcZ2okEcUFPNbVrOjKvg85SIqZq3ns/6iamtrEjhHPpCRqk2qGgsw71obLWVv2nssAtg17m
+ vixTARz6rY5KMGRim7d+ffqBUmtFXeeTuNlOlLwPymIjHmeTALMTBHUMJUn9cVBNtBsziCiR9
+ MPzcK0XbjKvQoazaLhrBabqX5LKRsUQs+NTs7t6b/MHfgx6NC9wMcWiPdQBPuDmKuO55EddN0
+ zFxE3gb5DxTIPtjdhxPCslQ8VcNyjsEwsGIOsr/uxsNKCRaDgfWpC9xqsqg7kTWMzyADnSB0s
+ UmKbhjv3Lbk+snafAvhA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'timespec' type definition and helpers like ktime_to_timespec()
-or timespec64_to_timespec() should no longer be used in the kernel so
-we can remove them and avoid introducing y2038 issues in new code.
+Eliminate one more use of 'struct timeval' from the kernel so
+we can eventually remove the definition as well.
 
-Change the socket code that needs to pass a timespec to user space for
-backward compatibility to use __kernel_old_timespec instead.  This type
-has the same layout but with a clearer defined name.
-
-Slightly reformat tcp_recv_timestamp() for consistency after the removal
-of timespec64_to_timespec().
+The kernel supports the new format with a 64-bit time_t version
+of timeval here, so use that instead of the old timeval.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/skbuff.h |  7 +++++--
- net/compat.c           |  2 +-
- net/ipv4/tcp.c         | 28 ++++++++++++++++------------
- net/socket.c           |  2 +-
- 4 files changed, 23 insertions(+), 16 deletions(-)
+ fs/dlm/lowcomms.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 64a395c7f689..6d64ffe92867 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3656,9 +3656,12 @@ static inline void skb_get_new_timestamp(const struct sk_buff *skb,
- }
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index 3951d39b9b75..cdfaf4f0e11a 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -1035,7 +1035,7 @@ static void sctp_connect_to_sock(struct connection *con)
+ 	int result;
+ 	int addr_len;
+ 	struct socket *sock;
+-	struct timeval tv = { .tv_sec = 5, .tv_usec = 0 };
++	struct __kernel_sock_timeval tv = { .tv_sec = 5, .tv_usec = 0 };
  
- static inline void skb_get_timestampns(const struct sk_buff *skb,
--				       struct timespec *stamp)
-+				       struct __kernel_old_timespec *stamp)
- {
--	*stamp = ktime_to_timespec(skb->tstamp);
-+	struct timespec64 ts = ktime_to_timespec64(skb->tstamp);
-+
-+	stamp->tv_sec = ts.tv_sec;
-+	stamp->tv_nsec = ts.tv_nsec;
- }
+ 	if (con->nodeid == 0) {
+ 		log_print("attempt to connect sock 0 foiled");
+@@ -1087,12 +1087,12 @@ static void sctp_connect_to_sock(struct connection *con)
+ 	 * since O_NONBLOCK argument in connect() function does not work here,
+ 	 * then, we should restore the default value of this attribute.
+ 	 */
+-	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
++	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_NEW, (char *)&tv,
+ 			  sizeof(tv));
+ 	result = sock->ops->connect(sock, (struct sockaddr *)&daddr, addr_len,
+ 				   0);
+ 	memset(&tv, 0, sizeof(tv));
+-	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
++	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_NEW, (char *)&tv,
+ 			  sizeof(tv));
  
- static inline void skb_get_new_timestampns(const struct sk_buff *skb,
-diff --git a/net/compat.c b/net/compat.c
-index 0f7ded26059e..47d99c784947 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -232,7 +232,7 @@ int put_cmsg_compat(struct msghdr *kmsg, int level, int type, int len, void *dat
- 		    (type == SO_TIMESTAMPNS_OLD || type == SO_TIMESTAMPING_OLD)) {
- 			int count = type == SO_TIMESTAMPNS_OLD ? 1 : 3;
- 			int i;
--			struct timespec *ts = (struct timespec *)data;
-+			struct __kernel_old_timespec *ts = data;
- 			for (i = 0; i < count; i++) {
- 				cts[i].tv_sec = ts[i].tv_sec;
- 				cts[i].tv_nsec = ts[i].tv_nsec;
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index d8876f0e9672..013f635db19c 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1864,29 +1864,33 @@ static void tcp_recv_timestamp(struct msghdr *msg, const struct sock *sk,
- 		if (sock_flag(sk, SOCK_RCVTSTAMP)) {
- 			if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
- 				if (new_tstamp) {
--					struct __kernel_timespec kts = {tss->ts[0].tv_sec, tss->ts[0].tv_nsec};
--
-+					struct __kernel_timespec kts = {
-+						.tv_sec = tss->ts[0].tv_sec,
-+						.tv_nsec = tss->ts[0].tv_nsec,
-+					};
- 					put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMPNS_NEW,
- 						 sizeof(kts), &kts);
- 				} else {
--					struct timespec ts_old = timespec64_to_timespec(tss->ts[0]);
--
-+					struct __kernel_old_timespec ts_old = {
-+						.tv_sec = tss->ts[0].tv_sec,
-+						.tv_nsec = tss->ts[0].tv_nsec,
-+					};
- 					put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMPNS_OLD,
- 						 sizeof(ts_old), &ts_old);
- 				}
- 			} else {
- 				if (new_tstamp) {
--					struct __kernel_sock_timeval stv;
--
--					stv.tv_sec = tss->ts[0].tv_sec;
--					stv.tv_usec = tss->ts[0].tv_nsec / 1000;
-+					struct __kernel_sock_timeval stv = {
-+						.tv_sec = tss->ts[0].tv_sec,
-+						.tv_usec = tss->ts[0].tv_nsec / 1000,
-+					};
- 					put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMP_NEW,
- 						 sizeof(stv), &stv);
- 				} else {
--					struct __kernel_old_timeval tv;
--
--					tv.tv_sec = tss->ts[0].tv_sec;
--					tv.tv_usec = tss->ts[0].tv_nsec / 1000;
-+					struct __kernel_old_timeval tv = {
-+						.tv_sec = tss->ts[0].tv_sec,
-+						.tv_usec = tss->ts[0].tv_nsec / 1000,
-+					};
- 					put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMP_OLD,
- 						 sizeof(tv), &tv);
- 				}
-diff --git a/net/socket.c b/net/socket.c
-index 98f6544b0096..9ab00a080760 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -793,7 +793,7 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
- 				put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMPNS_NEW,
- 					 sizeof(ts), &ts);
- 			} else {
--				struct timespec ts;
-+				struct __kernel_old_timespec ts;
- 
- 				skb_get_timestampns(skb, &ts);
- 				put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMPNS_OLD,
+ 	if (result == -EINPROGRESS)
 -- 
 2.20.0
 
