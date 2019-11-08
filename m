@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 714FBF54F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2753EF573B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388787AbfKHS5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:57:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54990 "EHLO mail.kernel.org"
+        id S2391117AbfKHTTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:19:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732877AbfKHS5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:57:09 -0500
+        id S2389475AbfKHTAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE19A2067B;
-        Fri,  8 Nov 2019 18:57:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0C0B22490;
+        Fri,  8 Nov 2019 18:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239429;
-        bh=/Pa8HVoB323cD1W289vFzgL2XMK+OOY6vI6FZEtgRXQ=;
+        s=default; t=1573239513;
+        bh=52b2NPQwj3xM9cq/tc1U2aDYddp76xptCa/1BAeQLrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ty6vn4oJCuJ00SkN/NuQhMqotRVXHJPqQSSfUQTy7yzaOy+2aFZRy8KddrDmUZWsk
-         LKSCSc2k/trAHGL8qdNd0p6r0INNNv94aCPUuIwLyF3OPwCkeNy7PEqeWAmeq91cCt
-         +O/h0NNiD6kFoZYUd/ZzZfvB2STxn+Iqjq6oehbY=
+        b=eRXNxv00ct5Cefer6wo23jEB7X19xCpR96Or5+yqjUfYAEPvMjlOFTe27DCmMVlQT
+         mkFIje7JVtoCavRyH/pH7Od6haTRGimNdBHkUmj1gGIKLQAjdvrg7mPAGbkw96lfiP
+         iDEBmyBOo9HRoABe6kvf11fznMn9hNSjJB+bX/HY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 10/34] scsi: fix kconfig dependency warning related to 53C700_LE_ON_BE
-Date:   Fri,  8 Nov 2019 19:50:17 +0100
-Message-Id: <20191108174631.033756496@linuxfoundation.org>
+        stable@vger.kernel.org, Jiangfeng Xiao <xiaojiangfeng@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 30/62] net: hisilicon: Fix ping latency when deal with high throughput
+Date:   Fri,  8 Nov 2019 19:50:18 +0100
+Message-Id: <20191108174742.893290343@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
-References: <20191108174618.266472504@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +43,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
 
-[ Upstream commit 8cbf0c173aa096dda526d1ccd66fc751c31da346 ]
+[ Upstream commit e56bd641ca61beb92b135298d5046905f920b734 ]
 
-When building a kernel with SCSI_SNI_53C710 enabled, Kconfig warns:
+This is due to error in over budget processing.
+When dealing with high throughput, the used buffers
+that exceeds the budget is not cleaned up. In addition,
+it takes a lot of cycles to clean up the used buffer,
+and then the buffer where the valid data is located can take effect.
 
-WARNING: unmet direct dependencies detected for 53C700_LE_ON_BE
-  Depends on [n]: SCSI_LOWLEVEL [=y] && SCSI [=y] && SCSI_LASI700 [=n]
-  Selected by [y]:
-  - SCSI_SNI_53C710 [=y] && SCSI_LOWLEVEL [=y] && SNI_RM [=y] && SCSI [=y]
-
-Add the missing depends SCSI_SNI_53C710 to 53C700_LE_ON_BE to fix it.
-
-Link: https://lore.kernel.org/r/20191009151128.32411-1-tbogendoerfer@suse.de
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hip04_eth.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 17b1574920fd6..941e3f25b4a9f 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -986,7 +986,7 @@ config SCSI_SNI_53C710
+--- a/drivers/net/ethernet/hisilicon/hip04_eth.c
++++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
+@@ -174,6 +174,7 @@ struct hip04_priv {
+ 	dma_addr_t rx_phys[RX_DESC_NUM];
+ 	unsigned int rx_head;
+ 	unsigned int rx_buf_size;
++	unsigned int rx_cnt_remaining;
  
- config 53C700_LE_ON_BE
- 	bool
--	depends on SCSI_LASI700
-+	depends on SCSI_LASI700 || SCSI_SNI_53C710
- 	default y
+ 	struct device_node *phy_node;
+ 	struct phy_device *phy;
+@@ -487,7 +488,6 @@ static int hip04_rx_poll(struct napi_str
+ 	struct hip04_priv *priv = container_of(napi, struct hip04_priv, napi);
+ 	struct net_device *ndev = priv->ndev;
+ 	struct net_device_stats *stats = &ndev->stats;
+-	unsigned int cnt = hip04_recv_cnt(priv);
+ 	struct rx_desc *desc;
+ 	struct sk_buff *skb;
+ 	unsigned char *buf;
+@@ -500,8 +500,8 @@ static int hip04_rx_poll(struct napi_str
  
- config SCSI_STEX
--- 
-2.20.1
-
+ 	/* clean up tx descriptors */
+ 	tx_remaining = hip04_tx_reclaim(ndev, false);
+-
+-	while (cnt && !last) {
++	priv->rx_cnt_remaining += hip04_recv_cnt(priv);
++	while (priv->rx_cnt_remaining && !last) {
+ 		buf = priv->rx_buf[priv->rx_head];
+ 		skb = build_skb(buf, priv->rx_buf_size);
+ 		if (unlikely(!skb)) {
+@@ -547,11 +547,13 @@ refill:
+ 		hip04_set_recv_desc(priv, phys);
+ 
+ 		priv->rx_head = RX_NEXT(priv->rx_head);
+-		if (rx >= budget)
++		if (rx >= budget) {
++			--priv->rx_cnt_remaining;
+ 			goto done;
++		}
+ 
+-		if (--cnt == 0)
+-			cnt = hip04_recv_cnt(priv);
++		if (--priv->rx_cnt_remaining == 0)
++			priv->rx_cnt_remaining += hip04_recv_cnt(priv);
+ 	}
+ 
+ 	if (!(priv->reg_inten & RCV_INT)) {
+@@ -636,6 +638,7 @@ static int hip04_mac_open(struct net_dev
+ 	int i;
+ 
+ 	priv->rx_head = 0;
++	priv->rx_cnt_remaining = 0;
+ 	priv->tx_head = 0;
+ 	priv->tx_tail = 0;
+ 	hip04_reset_ppe(priv);
 
 
