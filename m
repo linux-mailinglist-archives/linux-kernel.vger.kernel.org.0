@@ -2,80 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A25EF45C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2232F45D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:37:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731987AbfKHLe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:34:26 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57883 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbfKHLeZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:34:25 -0500
-Received: from 79.184.254.83.ipv4.supernova.orange.pl (79.184.254.83) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 2cb5217da455c9c5; Fri, 8 Nov 2019 12:34:23 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     zhuguangqing83@gmail.com
-Cc:     gregkh@linuxfoundation.org, pavel@ucw.cz, len.brown@intel.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhuguangqing <zhuguangqing@xiaomi.com>
-Subject: Re: [PATCH] PM/wakeup: Add print_wakeup_sour_stats(m, &deleted_ws)
-Date:   Fri, 08 Nov 2019 12:34:23 +0100
-Message-ID: <2538968.KVf98yYfh7@kreacher>
-In-Reply-To: <20191021085140.14030-1-zhuguangqing83@gmail.com>
-References: <20191021085140.14030-1-zhuguangqing83@gmail.com>
+        id S1731911AbfKHLhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:37:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731463AbfKHLhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:37:54 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AB0820869;
+        Fri,  8 Nov 2019 11:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573213074;
+        bh=fUrFUQ0VcsIJkVEdn4DWVyWlVpEN5y6KkxK0GRYbpqI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CtH520QXPkwXtxcOilnL8TiNOtkC1GRuQDZ7QAku0eiPFjooHMr7QjSTbznFl5Nfy
+         47aPFezSZiawBV01lEiN3oAqUomTX4AG+bhRd/s90RIsbAIlhhMhI99YN70UYLTErT
+         s+vVbr9uxAof/ELWJLpYEGgNjJoapO3RgDxsmtoE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 001/205] iio: adc: max9611: explicitly cast gain_selectors
+Date:   Fri,  8 Nov 2019 06:34:28 -0500
+Message-Id: <20191108113752.12502-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, October 21, 2019 10:51:40 AM CET zhuguangqing83@gmail.com wrote:
-> From: zhuguangqing <zhuguangqing@xiaomi.com>
-> 
-> After commit 00ee22c28915 (PM / wakeup: Use seq_open()
-> to show wakeup stats), print_wakeup_source_stats(m, &deleted_ws)
-> is deleted in function wakeup_sources_stats_seq_show().
-> 
-> Because deleted_ws is one of wakeup sources, so it should
-> also be showed. This patch add it to the end of all other
-> wakeup sources.
-> 
-> Signed-off-by: zhuguangqing <zhuguangqing@xiaomi.com>
-> ---
->  drivers/base/power/wakeup.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index 5817b51d2b15..29e9434ccaaa 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -1071,6 +1071,9 @@ static void *wakeup_sources_stats_seq_next(struct seq_file *m,
->  		break;
->  	}
->  
-> +	if (&ws->entry == &wakeup_sources)
-> +		print_wakeup_source_stats(m, &deleted_ws);
-> +
+From: Stefan Agner <stefan@agner.ch>
 
-That would be when NULL is about to be returned, right?
+[ Upstream commit b1ec0802503820ccbc894aadfd2a44da20232f5e ]
 
-Why not to check for !next_ws instead, then?
+After finding a reasonable gain, the function converts the configured
+gain to a gain configuration option selector enum max9611_csa_gain.
+Make the conversion clearly visible by using an explicit cast. This
+also avoids a warning seen with clang:
+  drivers/iio/adc/max9611.c:292:16: warning: implicit conversion from
+      enumeration type 'enum max9611_conf_ids' to different enumeration
+      type 'enum max9611_csa_gain' [-Wenum-conversion]
+                        *csa_gain = gain_selectors[i];
+                                  ~ ^~~~~~~~~~~~~~~~~
 
-Moreover, why to call print_wakeup_source_stats() directly instead of returning
-&deleted_ws?
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/iio/adc/max9611.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also it looks like you need a similar change in wakeup_sources_stats_seq_start(),
-in case n is greater than the number of list entries, don't you?
-
->  	return next_ws;
->  }
->  
-> 
-
-
-
+diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
+index 49c1956e6a674..0884435eec68d 100644
+--- a/drivers/iio/adc/max9611.c
++++ b/drivers/iio/adc/max9611.c
+@@ -289,7 +289,7 @@ static int max9611_read_csa_voltage(struct max9611_dev *max9611,
+ 			return ret;
+ 
+ 		if (*adc_raw > 0) {
+-			*csa_gain = gain_selectors[i];
++			*csa_gain = (enum max9611_csa_gain)gain_selectors[i];
+ 			return 0;
+ 		}
+ 	}
+-- 
+2.20.1
 
