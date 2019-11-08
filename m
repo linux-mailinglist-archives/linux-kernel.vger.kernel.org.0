@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFFCEF5642
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9EEDF55ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391484AbfKHTHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:07:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38476 "EHLO mail.kernel.org"
+        id S2388554AbfKHTFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:05:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390983AbfKHTHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:07:41 -0500
+        id S1732624AbfKHTFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:05:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41B352196F;
-        Fri,  8 Nov 2019 19:07:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B4A02246A;
+        Fri,  8 Nov 2019 19:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240060;
-        bh=Y61ZJb/1fN2SECbdyVM3niqERKXBoze0HLnOYjt7n5s=;
+        s=default; t=1573239938;
+        bh=U5zIGPVaSuzAqr8ufcPnmP0+ajgRqoGj3o+Tmjvj4O0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2mDJEeMoHYCSwjIkhxn70Er9wRTMxdFF/YWnOwfRuQvbi4H54JVpZvVErRhJ1+tMj
-         5ghmYTmp4Wo+KKZkK10+/Pg8tfUvwB9oizcDijNqqVcItS1I9tQqryiMOj7h0UBRxn
-         HgmwlT3LgsougDdrcM3+cjrt75eW+w/TWKNNYtlE=
+        b=aUexDv57pcLwCahhFomht4RN6w56FePCIYq2Kls3WNX9PKWKgbLZmfJnN8NPeMD3i
+         BvUWIuiKnOv81jIgbAbYa3c2eti0kpA2i8lhRnGmy8XL1wqarAVsfnd8RTBLz8/BmN
+         yrZ7Kv/Um3JhqvhFFI36s4rZEuFDU3gucXcCVN64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
-        Eyal Reizer <eyalr@ti.com>, Guy Mishol <guym@ti.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Jing Xiangfeng <jingxiangfeng@huawei.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 033/140] ARM: dts: Use level interrupt for omap4 & 5 wlcore
-Date:   Fri,  8 Nov 2019 19:49:21 +0100
-Message-Id: <20191108174906.487977846@linuxfoundation.org>
+Subject: [PATCH 5.3 034/140] ARM: mm: fix alignment handler faults under memory pressure
+Date:   Fri,  8 Nov 2019 19:49:22 +0100
+Message-Id: <20191108174906.684219403@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
 References: <20191108174900.189064908@linuxfoundation.org>
@@ -47,109 +44,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 087a2b7ec973f6f30f6e7b72cb50b6f7734ffdd2 ]
+[ Upstream commit 67e15fa5b487adb9b78a92789eeff2d6ec8f5cee ]
 
-Commit 572cf7d7b07d ("ARM: dts: Improve omap l4per idling with wlcore edge
-sensitive interrupt") changed wlcore interrupts to use edge interrupt based
-on what's specified in the wl1835mod.pdf data sheet.
+When the system has high memory pressure, the page containing the
+instruction may be paged out.  Using probe_kernel_address() means that
+if the page is swapped out, the resulting page fault will not be
+handled because page faults are disabled by this function.
 
-However, there are still cases where we can have lost interrupts as
-described in omap_gpio_unidle(). And using a level interrupt instead of edge
-interrupt helps as we avoid the check for untriggered GPIO interrupts in
-omap_gpio_unidle().
+Use get_user() to read the instruction instead.
 
-And with commit e6818d29ea15 ("gpio: gpio-omap: configure edge detection
-for level IRQs for idle wakeup") GPIOs idle just fine with level interrupts.
-
-Let's change omap4 and 5 wlcore users back to using level interrupt
-instead of edge interrupt. Let's not change the others as I've only seen
-this on omap4 and 5, probably because the other SoCs don't have l4per idle
-independent of the CPUs.
-
-Fixes: 572cf7d7b07d ("ARM: dts: Improve omap l4per idling with wlcore edge sensitive interrupt")
-Depends-on: e6818d29ea15 ("gpio: gpio-omap: configure edge detection for level IRQs for idle wakeup")
-Cc: Anders Roxell <anders.roxell@linaro.org>
-Cc: Eyal Reizer <eyalr@ti.com>
-Cc: Guy Mishol <guym@ti.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+Fixes: b255188f90e2 ("ARM: fix scheduling while atomic warning in alignment handling code")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap4-droid4-xt894.dts       | 2 +-
- arch/arm/boot/dts/omap4-panda-common.dtsi      | 2 +-
- arch/arm/boot/dts/omap4-sdp.dts                | 2 +-
- arch/arm/boot/dts/omap4-var-som-om44-wlan.dtsi | 2 +-
- arch/arm/boot/dts/omap5-board-common.dtsi      | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/mm/alignment.c | 44 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-index 4454449de00c0..a40fe8d49da64 100644
---- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-+++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-@@ -369,7 +369,7 @@
- 		compatible = "ti,wl1285", "ti,wl1283";
- 		reg = <2>;
- 		/* gpio_100 with gpmc_wait2 pad as wakeirq */
--		interrupts-extended = <&gpio4 4 IRQ_TYPE_EDGE_RISING>,
-+		interrupts-extended = <&gpio4 4 IRQ_TYPE_LEVEL_HIGH>,
- 				      <&omap4_pmx_core 0x4e>;
- 		interrupt-names = "irq", "wakeup";
- 		ref-clock-frequency = <26000000>;
-diff --git a/arch/arm/boot/dts/omap4-panda-common.dtsi b/arch/arm/boot/dts/omap4-panda-common.dtsi
-index 14be2ecb62b1f..55ea8b6189af5 100644
---- a/arch/arm/boot/dts/omap4-panda-common.dtsi
-+++ b/arch/arm/boot/dts/omap4-panda-common.dtsi
-@@ -474,7 +474,7 @@
- 		compatible = "ti,wl1271";
- 		reg = <2>;
- 		/* gpio_53 with gpmc_ncs3 pad as wakeup */
--		interrupts-extended = <&gpio2 21 IRQ_TYPE_EDGE_RISING>,
-+		interrupts-extended = <&gpio2 21 IRQ_TYPE_LEVEL_HIGH>,
- 				      <&omap4_pmx_core 0x3a>;
- 		interrupt-names = "irq", "wakeup";
- 		ref-clock-frequency = <38400000>;
-diff --git a/arch/arm/boot/dts/omap4-sdp.dts b/arch/arm/boot/dts/omap4-sdp.dts
-index 3c274965ff40a..91480ac1f3286 100644
---- a/arch/arm/boot/dts/omap4-sdp.dts
-+++ b/arch/arm/boot/dts/omap4-sdp.dts
-@@ -512,7 +512,7 @@
- 		compatible = "ti,wl1281";
- 		reg = <2>;
- 		interrupt-parent = <&gpio1>;
--		interrupts = <21 IRQ_TYPE_EDGE_RISING>; /* gpio 53 */
-+		interrupts = <21 IRQ_TYPE_LEVEL_HIGH>; /* gpio 53 */
- 		ref-clock-frequency = <26000000>;
- 		tcxo-clock-frequency = <26000000>;
- 	};
-diff --git a/arch/arm/boot/dts/omap4-var-som-om44-wlan.dtsi b/arch/arm/boot/dts/omap4-var-som-om44-wlan.dtsi
-index 6dbbc9b3229cc..d0032213101e6 100644
---- a/arch/arm/boot/dts/omap4-var-som-om44-wlan.dtsi
-+++ b/arch/arm/boot/dts/omap4-var-som-om44-wlan.dtsi
-@@ -69,7 +69,7 @@
- 		compatible = "ti,wl1271";
- 		reg = <2>;
- 		interrupt-parent = <&gpio2>;
--		interrupts = <9 IRQ_TYPE_EDGE_RISING>; /* gpio 41 */
-+		interrupts = <9 IRQ_TYPE_LEVEL_HIGH>; /* gpio 41 */
- 		ref-clock-frequency = <38400000>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
-index 7fff555ee3943..68ac04641bdb1 100644
---- a/arch/arm/boot/dts/omap5-board-common.dtsi
-+++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-@@ -362,7 +362,7 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&wlcore_irq_pin>;
- 		interrupt-parent = <&gpio1>;
--		interrupts = <14 IRQ_TYPE_EDGE_RISING>;	/* gpio 14 */
-+		interrupts = <14 IRQ_TYPE_LEVEL_HIGH>;	/* gpio 14 */
- 		ref-clock-frequency = <26000000>;
- 	};
- };
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index 04b36436cbc04..6587432faf057 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -767,6 +767,36 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
+ 	return NULL;
+ }
+ 
++static int alignment_get_arm(struct pt_regs *regs, u32 *ip, unsigned long *inst)
++{
++	u32 instr = 0;
++	int fault;
++
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_arm(instr);
++
++	return fault;
++}
++
++static int alignment_get_thumb(struct pt_regs *regs, u16 *ip, u16 *inst)
++{
++	u16 instr = 0;
++	int fault;
++
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_thumb16(instr);
++
++	return fault;
++}
++
+ static int
+ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+@@ -774,10 +804,10 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	unsigned long instr = 0, instrptr;
+ 	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
+ 	unsigned int type;
+-	unsigned int fault;
+ 	u16 tinstr = 0;
+ 	int isize = 4;
+ 	int thumb2_32b = 0;
++	int fault;
+ 
+ 	if (interrupts_enabled(regs))
+ 		local_irq_enable();
+@@ -786,15 +816,14 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 	if (thumb_mode(regs)) {
+ 		u16 *ptr = (u16 *)(instrptr & ~1);
+-		fault = probe_kernel_address(ptr, tinstr);
+-		tinstr = __mem_to_opcode_thumb16(tinstr);
++
++		fault = alignment_get_thumb(regs, ptr, &tinstr);
+ 		if (!fault) {
+ 			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
+ 			    IS_T32(tinstr)) {
+ 				/* Thumb-2 32-bit */
+-				u16 tinst2 = 0;
+-				fault = probe_kernel_address(ptr + 1, tinst2);
+-				tinst2 = __mem_to_opcode_thumb16(tinst2);
++				u16 tinst2;
++				fault = alignment_get_thumb(regs, ptr + 1, &tinst2);
+ 				instr = __opcode_thumb32_compose(tinstr, tinst2);
+ 				thumb2_32b = 1;
+ 			} else {
+@@ -803,8 +832,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 			}
+ 		}
+ 	} else {
+-		fault = probe_kernel_address((void *)instrptr, instr);
+-		instr = __mem_to_opcode_arm(instr);
++		fault = alignment_get_arm(regs, (void *)instrptr, &instr);
+ 	}
+ 
+ 	if (fault) {
 -- 
 2.20.1
 
