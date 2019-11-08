@@ -2,128 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A6EF43ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:53:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9E6F43FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:55:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731180AbfKHJxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 04:53:45 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39594 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730573AbfKHJxo (ORCPT
+        id S1731444AbfKHJzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 04:55:51 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34451 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730069AbfKHJzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 04:53:44 -0500
-Received: by mail-wr1-f68.google.com with SMTP id a11so6287662wra.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 01:53:43 -0800 (PST)
+        Fri, 8 Nov 2019 04:55:51 -0500
+Received: by mail-pl1-f193.google.com with SMTP id k7so3821413pll.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 01:55:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bD5Fn3LbdHLtW6P7NmPGZyBXGmZSnfzZNFhZsK1WN44=;
-        b=VYSP9ErePUf1fZPl2fba/NoBG6HT0c/TEOOghm1e708BJfxvweThIA6IXmqIh93ohm
-         meQBbRVDnk2HICKb7IgI5de0aghls0v4jihkkFYXPgnz+EdX6Zu2hcM9S98C3b5M16qN
-         WOH4ImgF3469jUkRTue49eAg1/gMIN+jJudUklK6xseemTt0QmbArcaQJmwlqvOHleNP
-         ScUlj3TM8bHPT0KJkdZWVGTnVufHUVM9xMXeqlod0eIDHxWflMaj/C+XqP2L4xu+NsQE
-         t+JPWIw5fWQJ93QkFCByJCDwpI2JIs8uL5vtOBEoMaXaeulNyQ2MaJnJR8REz0cQFtxS
-         shTw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=spYWTHjb7/MYzsI9bYPcwS26fEghILksNMY9w8ImjM0=;
+        b=ZXIzhvrbd4xxyWux72pPsvlPW99KePyYAt/Ja3nYluiduO6c00vIX+TC0Hp44xFrFf
+         gOsQXi3l6l2Ok3XLfAtQopP3BCRIyDFf/tiJLz8G5Qi9hRXrPW7Q1KipED8u0TFo/YFT
+         6NcNpaRUi/NWOsLPT+U6r9d/QWrdh+i8ABP33IeTi1UuxB+2JJNIV97wZauPsBGAYSw9
+         DcrGud7Lk+STyaH/zkeCIEpzEmoier69vvVaRkpdG5CLs3sPcjZJbDh6dwWDm+KEdJEf
+         2KZWnkhgIcoBXlWVkCdHA0d6uWAfurQma5kglDFOlhDHyIa/MMZoqsHOJeEIeDRfF6oY
+         iSpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bD5Fn3LbdHLtW6P7NmPGZyBXGmZSnfzZNFhZsK1WN44=;
-        b=ml0+CPrt8MVuUDynetTIzSd1TxmZMV6gKRAzD2ii6gHYyh3V0L6ycn0muOqwTO6Kta
-         bzaPbEd6Ibf/YYL8ozxRorbTWmQolJXDJ4CDgnoSobWMmgcNxa0j3f3C0HgM68OOgrPE
-         iXtnGHaKV4Z6SlRM6QT5a5Ef7UcSRzFGWEOHutfqTs751wI0CbbREh7zDHBrT/HW7Fp1
-         Fvkg0zJNXtV6cIbV6ErSC/xXbWFsjfT82x8BdvDWib35GUyph0Q4ldlLzJKkwRZ48lLI
-         9oyRe9gqj7I6Uewz1CvSQrx/iAm4zABqMYswGFHtb/krUjdsNBlMKRHU+DPTehvGv8JY
-         mdAA==
-X-Gm-Message-State: APjAAAWfm/rsWiKZXtaexFDu1zBxQeyM2if6uf6o+YDB2akqr6enmjGe
-        Xlv5C7/+GZWPYllCPRoNiQ0M7b5TS73ean1fZSE=
-X-Google-Smtp-Source: APXvYqzr5LGLxlCBHsxSVIvntfRuYo9GZ5mB+/AEGG7H1x9L6yzHCoU0dK9ixojjv9ZHAb5GssOD5bpzctkISDIVwOU=
-X-Received: by 2002:adf:e2cc:: with SMTP id d12mr7061916wrj.168.1573206822653;
- Fri, 08 Nov 2019 01:53:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20191108082244.GA29418@shao2-debian>
-In-Reply-To: <20191108082244.GA29418@shao2-debian>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Fri, 8 Nov 2019 17:53:31 +0800
-Message-ID: <CACVXFVMGR175kksqB6ux+=xRuVokA2bXOLidoT0=-AmCEgbk2Q@mail.gmail.com>
-Subject: Re: [block] fa53228721: WARNING:at_block/blk-merge.c:#blk_rq_map_sg
-To:     kernel test robot <lkp@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@fb.com>,
-        lkp@lists.01.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=spYWTHjb7/MYzsI9bYPcwS26fEghILksNMY9w8ImjM0=;
+        b=aUoC3cGffAr3074O6iz7Pati/UKYYlK5TgIiEIQoiqvnU0Oq/A/9MCna7N1I+n9a/L
+         P+f0Oy+YnkN0u/rRyupoW8I4KA+w1owrg61vXSWSSEKg5SUYMjnuUkdS15Ggw3tOi/j4
+         mxO+GswMDeq2g+31rHnGI8D8VjK4Wgrb9FBtPzx4P74GUV94TpF1ATumUG5NZomO7LFb
+         lv46OxY+x8EKNlNd3NkwRFClMW9NAj82yJpzTEVF2BQ4GR1u1t1iE0rQA1K+QR6SvaAN
+         yZ8ozc3tH9RavZ1PNAYP+iFF+DsIBN7hd4s3ALUMysMNGscH/QViW+xObWyijWH8J9H6
+         jN9g==
+X-Gm-Message-State: APjAAAU/SEu6/Nf/uL/inrnK4W6K2raTAnfC/SoMqEpD7Wh4NU1rEt1U
+        UmKRe5pSKQNzG1UtqNEpksl3Gw==
+X-Google-Smtp-Source: APXvYqxARYtwBC201uyHdNNTlDXaPFI6/906RtwY8BQdnP0JJkgmWvxjTofTB7u4fR8W6vOkU5NcSg==
+X-Received: by 2002:a17:90a:2a41:: with SMTP id d1mr12471267pjg.87.1573206948601;
+        Fri, 08 Nov 2019 01:55:48 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id v14sm5019009pfe.94.2019.11.08.01.55.44
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Nov 2019 01:55:47 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org,
+        baolin.wang7@gmail.com, freeman.liu@unisoc.com,
+        zhang.lyra@gmail.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: thermal: sprd: Add the Spreadtrum thermal documentation
+Date:   Fri,  8 Nov 2019 17:54:30 +0800
+Message-Id: <0a6b113010ad772a633b9cfeeb280dc41f17b951.1573206815.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 4:23 PM kernel test robot <lkp@intel.com> wrote:
->
-> FYI, we noticed the following commit (built with gcc-7):
->
-> commit: fa53228721876515adabc7bc74368490bd97aa3b ("block: avoid blk_bio_segment_split for small I/O operations")
-> https://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git for-5.5/block
->
-> in testcase: xfstests
-> with following parameters:
->
->         disk: 4HDD
->         fs: xfs
->         test: xfs-group16
->
-> test-description: xfstests is a regression test suite for xfs and other files ystems.
-> test-url: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
->
->
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
->
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->
->
-> +---------------------------------------------+------------+------------+
-> |                                             | d2c9be89f8 | fa53228721 |
-> +---------------------------------------------+------------+------------+
-> | boot_successes                              | 12         | 0          |
-> | boot_failures                               | 0          | 16         |
-> | WARNING:at_block/blk-merge.c:#blk_rq_map_sg | 0          | 16         |
-> | RIP:blk_rq_map_sg                           | 0          | 16         |
-> | kernel_BUG_at_drivers/scsi/scsi_lib.c       | 0          | 16         |
-> | invalid_opcode:#[##]                        | 0          | 16         |
-> | RIP:scsi_init_io                            | 0          | 16         |
-> | Kernel_panic-not_syncing:Fatal_exception    | 0          | 16         |
-> +---------------------------------------------+------------+------------+
->
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <lkp@intel.com>
->
->
-> [  203.892883] WARNING: CPU: 0 PID: 443 at block/blk-merge.c:559 blk_rq_map_sg+0x649/0x700
+From: Freeman Liu <freeman.liu@unisoc.com>
 
-If the bvec crosses page boundary, and meantime its length is
-<=PAGE_SIZE, this issue may be triggered, given
-some device has PAGE_SIZE segment boundary limit.
+Add the Spreadtrum thermal documentation.
 
-The following patch should fix this issue:
+Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ .../devicetree/bindings/thermal/sprd-thermal.txt   |   41 ++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sprd-thermal.txt
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index f22cb6251d06..367d3358de2a 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -319,7 +319,8 @@ void __blk_queue_split(struct request_queue *q,
-struct bio **bio,
-                 */
-                if (!q->limits.chunk_sectors &&
-                    (*bio)->bi_vcnt == 1 &&
--                   (*bio)->bi_io_vec[0].bv_len <= PAGE_SIZE) {
-+                   ((*bio)->bi_io_vec[0].bv_len +
-+                    (*bio)->bi_io_vec[0].bv_offset) <= PAGE_SIZE) {
-                        *nr_segs = 1;
-                        break;
-                }
+diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.txt b/Documentation/devicetree/bindings/thermal/sprd-thermal.txt
+new file mode 100644
+index 0000000..a9da7f4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.txt
+@@ -0,0 +1,41 @@
++* Spreadtrum thermal sensor controller bindings
++
++Required properties:
++- compatible : Should be "sprd,ums512-thermal"
++- reg: Address range of the thermal registers
++- clock-names: "enable" for thermal module enable clock.
++- clocks: Should contain a clock specifier for each entry in clock-names.
++- nvmem-cells: A phandle to the calibration data provided by a nvmem device.
++- nvmem-cell-names: Should be "thm_sign_cal" and "thm_ratio_cal".
++- #thermal-sensor-cells: Should be 1. See ./thermal.txt for a description.
++
++Child nodes properties:
++- reg: Specify the sensor id.
++- nvmem-cells: A phandle to the calibration data provided by a nvmem device.
++- nvmem-cell-names: Should be "sen_delta_cal".
++
++Example:
++
++	ap_thm0: thermal@32200000 {
++		compatible = "sprd,ums512-thermal";
++		reg = <0 0x32200000 0 0x10000>;
++		clock-names = "enable";
++		clocks = <&aonapb_gate CLK_THM0_EB>;
++		#thermal-sensor-cells = <1>;
++		nvmem-cells = <&thm0_sign>, <&thm0_ratio>;
++		nvmem-cell-names = "thm_sign_cal", "thm_ratio_cal";
++
++		prometheus0-sensor@0{
++			reg = <0>;
++			nvmem-cells = <&thm0_sen0>;
++			nvmem-cell-names = "sen_delta_cal";
++		};
++
++		ank1-sensor@1{
++			reg = <1>;
++			nvmem-cells = <&thm0_sen1>;
++			nvmem-cell-names = "sen_delta_cal";
++		};
++
++		......
++	};
+-- 
+1.7.9.5
 
-However, in case of 64K PAGE_SIZE, I guess this way is still not safe enough.
-
-thanks,
-Ming
