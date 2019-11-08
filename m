@@ -2,50 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 685C5F530C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E64F530A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:55:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731150AbfKHRzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 12:55:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33422 "EHLO mail.kernel.org"
+        id S1731026AbfKHRzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 12:55:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbfKHRzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:55:09 -0500
-Subject: Re: [GIT PULL] Power management fix for v5.4-rc7
+        id S1730844AbfKHRzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 12:55:08 -0500
+Subject: Re: [GIT PULL] arm64: Fix for -rc7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573235709;
-        bh=xHy0nvHljiRRq8DzBp+xPk2iIrF2LCGDg3fG2/b1mCw=;
+        s=default; t=1573235708;
+        bh=LK9hwZt3VZD34A6IiTFJNZvFkBUGyeiapHGvJoTWu94=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jdlqnbF3CBofTaEVqz3AAZ9oi6r8N/Rf+wlIApUMKvkLedIBx3/VIhZ5GewuIv1Bt
-         S5a57dYTplwLjgDpbYvBVnw9mUQellAgQQTORCa5eBOd6GfKGjl3gkIgagNAJQCOWV
-         GnjWZPcrQGmKQj10XKQnrjC92KCKXXPU09NYzj3o=
+        b=pheZ+s1Blf6seTLqZeoLwcIUBGt5PfktZzLZmFmJCRqIRCIIy03mF/bbCkFVPosnp
+         mqMOWI4aODD91K88QoPbLwda5L6QF76EVmR/ELjjwv5AGoQBBSBzdD1iuEjPHPcyE9
+         Dffa5QTB2fel1Ue644OAO0lpYWnnajwgtnpTzn1s=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0hTxyzNAyEeeZfqu1XNcFY9mYeft9EnAP+zD6s7x0Csqg@mail.gmail.com>
-References: <CAJZ5v0hTxyzNAyEeeZfqu1XNcFY9mYeft9EnAP+zD6s7x0Csqg@mail.gmail.com>
+In-Reply-To: <20191108103231.GA19153@willie-the-truck>
+References: <20191108103231.GA19153@willie-the-truck>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0hTxyzNAyEeeZfqu1XNcFY9mYeft9EnAP+zD6s7x0Csqg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.4-rc7
-X-PR-Tracked-Commit-Id: c31432fa7f825de0e19838f1ac7746381c509ec4
+X-PR-Tracked-Message-Id: <20191108103231.GA19153@willie-the-truck>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+ tags/arm64-fixes
+X-PR-Tracked-Commit-Id: 6767df245f4736d0cf0c6fb7cf9cf94b27414245
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4d8b3262af02c4245ac396b7f2bc71eb328931e2
-Message-Id: <157323570899.12598.13332361822305090207.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 9e8ed26e6062e4f585fe831fba362eb567648881
+Message-Id: <157323570813.12598.9228674931391309121.pr-tracker-bot@kernel.org>
 Date:   Fri, 08 Nov 2019 17:55:08 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     torvalds@linux-foundation.org, catalin.marinas@arm.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Kernel Mailing List 
+        <linux-arm-kernel@lists.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 8 Nov 2019 12:05:01 +0100:
+The pull request you sent on Fri, 8 Nov 2019 10:32:31 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.4-rc7
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4d8b3262af02c4245ac396b7f2bc71eb328931e2
+https://git.kernel.org/torvalds/c/9e8ed26e6062e4f585fe831fba362eb567648881
 
 Thank you!
 
