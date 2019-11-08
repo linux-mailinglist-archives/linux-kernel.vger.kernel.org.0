@@ -2,148 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D527CF4957
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27E7CF4ADB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391484AbfKHMCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:02:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390266AbfKHLnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:43:00 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2954920656;
-        Fri,  8 Nov 2019 11:42:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213380;
-        bh=7e2XOAxRCZkEiFfovhqWgSe7n5iO8CPSFgffFPsUjWE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kog+ZbiNI4ursv0kVHZzFocvBN/XrSGpqb3J6OGnHwEhJ8n1qhNmf6y1ozP0LGfqq
-         +JulJMgJXq/o95GrJnjQBEE9SR9bxbq3H/yUwnHr8wb8BogVZJrW5Np1/WXAz5YNUR
-         JObK87Yuw0YCe/jEHIlCdBPAk6gA80G6d8fvvG0s=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 203/205] netfilter: nf_tables: avoid BUG_ON usage
-Date:   Fri,  8 Nov 2019 06:37:50 -0500
-Message-Id: <20191108113752.12502-203-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
-References: <20191108113752.12502-1-sashal@kernel.org>
+        id S2391905AbfKHMLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:11:34 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51710 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733060AbfKHLjH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:39:07 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA8BbQlV156719
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2019 06:39:07 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w41w81wda-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 06:39:06 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <hbathini@linux.ibm.com>;
+        Fri, 8 Nov 2019 11:39:04 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Nov 2019 11:39:01 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA8BcP8R38994364
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Nov 2019 11:38:25 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0B8E11C05C;
+        Fri,  8 Nov 2019 11:39:00 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2D7311C04A;
+        Fri,  8 Nov 2019 11:38:59 +0000 (GMT)
+Received: from [9.184.183.121] (unknown [9.184.183.121])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Nov 2019 11:38:59 +0000 (GMT)
+Subject: Re: [PATCH v3] powerpc/fadump: when fadump is supported register the
+ fadump sysfs files.
+To:     Michal Suchanek <msuchanek@suse.de>, linuxppc-dev@lists.ozlabs.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
+References: <20191023175651.24833-1-msuchanek@suse.de>
+ <20191107164757.15140-1-msuchanek@suse.de>
+From:   Hari Bathini <hbathini@linux.ibm.com>
+Date:   Fri, 8 Nov 2019 17:08:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191107164757.15140-1-msuchanek@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19110811-0012-0000-0000-00000361DDEF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19110811-0013-0000-0000-0000219D424D
+Message-Id: <119d91aa-57d4-00db-054c-60769b309c8d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-08_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911080114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit fa5950e498e7face21a1761f327e6c1152f778c3 ]
 
-None of these spots really needs to crash the kernel.
-In one two cases we can jsut report error to userspace, in the other
-cases we can just use WARN_ON (and leak memory instead).
+On 07/11/19 10:17 PM, Michal Suchanek wrote:
+> Currently it is not possible to distinguish the case when fadump is
+> supported by firmware and disabled in kernel and completely unsupported
+> using the kernel sysfs interface. User can investigate the devicetree
+> but it is more reasonable to provide sysfs files in case we get some
+> fadumpv2 in the future.
+> 
+> With this patch sysfs files are available whenever fadump is supported
+> by firmware.
+> 
+> There is duplicate message about lack of support by firmware in
+> fadump_reserve_mem and setup_fadump. Remove the duplicate message in
+> setup_fadump.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netfilter/nf_tables_api.c | 9 ++++++---
- net/netfilter/nft_cmp.c       | 6 ++++--
- net/netfilter/nft_reject.c    | 6 ++++--
- 3 files changed, 14 insertions(+), 7 deletions(-)
+Thanks for doing this, Michal.
+Exporting the node will be helpful in finding if FADump is supported,
+given FADump is now supported on two different platforms...
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 24fddf0322790..289d079008ee8 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -1031,7 +1031,8 @@ static int nf_tables_deltable(struct net *net, struct sock *nlsk,
- 
- static void nf_tables_table_destroy(struct nft_ctx *ctx)
- {
--	BUG_ON(ctx->table->use > 0);
-+	if (WARN_ON(ctx->table->use > 0))
-+		return;
- 
- 	rhltable_destroy(&ctx->table->chains_ht);
- 	kfree(ctx->table->name);
-@@ -1446,7 +1447,8 @@ static void nf_tables_chain_destroy(struct nft_ctx *ctx)
- {
- 	struct nft_chain *chain = ctx->chain;
- 
--	BUG_ON(chain->use > 0);
-+	if (WARN_ON(chain->use > 0))
-+		return;
- 
- 	/* no concurrent access possible anymore */
- 	nf_tables_chain_free_chain_rules(chain);
-@@ -7253,7 +7255,8 @@ int __nft_release_basechain(struct nft_ctx *ctx)
- {
- 	struct nft_rule *rule, *nr;
- 
--	BUG_ON(!nft_is_base_chain(ctx->chain));
-+	if (WARN_ON(!nft_is_base_chain(ctx->chain)))
-+		return 0;
- 
- 	nf_tables_unregister_hook(ctx->net, ctx->chain->table, ctx->chain);
- 	list_for_each_entry_safe(rule, nr, &ctx->chain->rules, list) {
-diff --git a/net/netfilter/nft_cmp.c b/net/netfilter/nft_cmp.c
-index fa90a8402845d..79d48c1d06f4d 100644
---- a/net/netfilter/nft_cmp.c
-+++ b/net/netfilter/nft_cmp.c
-@@ -79,7 +79,8 @@ static int nft_cmp_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 
- 	err = nft_data_init(NULL, &priv->data, sizeof(priv->data), &desc,
- 			    tb[NFTA_CMP_DATA]);
--	BUG_ON(err < 0);
-+	if (err < 0)
-+		return err;
- 
- 	priv->sreg = nft_parse_register(tb[NFTA_CMP_SREG]);
- 	err = nft_validate_register_load(priv->sreg, desc.len);
-@@ -129,7 +130,8 @@ static int nft_cmp_fast_init(const struct nft_ctx *ctx,
- 
- 	err = nft_data_init(NULL, &data, sizeof(data), &desc,
- 			    tb[NFTA_CMP_DATA]);
--	BUG_ON(err < 0);
-+	if (err < 0)
-+		return err;
- 
- 	priv->sreg = nft_parse_register(tb[NFTA_CMP_SREG]);
- 	err = nft_validate_register_load(priv->sreg, desc.len);
-diff --git a/net/netfilter/nft_reject.c b/net/netfilter/nft_reject.c
-index 29f5bd2377b0d..b48e58cceeb72 100644
---- a/net/netfilter/nft_reject.c
-+++ b/net/netfilter/nft_reject.c
-@@ -94,7 +94,8 @@ static u8 icmp_code_v4[NFT_REJECT_ICMPX_MAX + 1] = {
- 
- int nft_reject_icmp_code(u8 code)
- {
--	BUG_ON(code > NFT_REJECT_ICMPX_MAX);
-+	if (WARN_ON_ONCE(code > NFT_REJECT_ICMPX_MAX))
-+		return ICMP_NET_UNREACH;
- 
- 	return icmp_code_v4[code];
- }
-@@ -111,7 +112,8 @@ static u8 icmp_code_v6[NFT_REJECT_ICMPX_MAX + 1] = {
- 
- int nft_reject_icmpv6_code(u8 code)
- {
--	BUG_ON(code > NFT_REJECT_ICMPX_MAX);
-+	if (WARN_ON_ONCE(code > NFT_REJECT_ICMPX_MAX))
-+		return ICMPV6_NOROUTE;
- 
- 	return icmp_code_v6[code];
- }
+Reviewed-by: Hari Bathini <hbathini@linux.ibm.com>
+
+> 
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> ---
+> v2: move the sysfs initialization earlier to avoid condition nesting
+> v3: remove duplicate message
+> ---
+>  arch/powerpc/kernel/fadump.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+> index ed59855430b9..ff0114aeba9b 100644
+> --- a/arch/powerpc/kernel/fadump.c
+> +++ b/arch/powerpc/kernel/fadump.c
+> @@ -1466,16 +1466,15 @@ static void fadump_init_files(void)
+>   */
+>  int __init setup_fadump(void)
+>  {
+> -	if (!fw_dump.fadump_enabled)
+> -		return 0;
+> -
+> -	if (!fw_dump.fadump_supported) {
+> -		printk(KERN_ERR "Firmware-assisted dump is not supported on"
+> -			" this hardware\n");
+> +	if (!fw_dump.fadump_supported)
+>  		return 0;
+> -	}
+>  
+> +	fadump_init_files();
+>  	fadump_show_config();
+> +
+> +	if (!fw_dump.fadump_enabled)
+> +		return 1;
+> +
+>  	/*
+>  	 * If dump data is available then see if it is valid and prepare for
+>  	 * saving it to the disk.
+> @@ -1492,8 +1491,6 @@ int __init setup_fadump(void)
+>  	else if (fw_dump.reserve_dump_area_size)
+>  		fw_dump.ops->fadump_init_mem_struct(&fw_dump);
+>  
+> -	fadump_init_files();
+> -
+>  	return 1;
+>  }
+>  subsys_initcall(setup_fadump);
+> 
+
 -- 
-2.20.1
+- Hari
 
