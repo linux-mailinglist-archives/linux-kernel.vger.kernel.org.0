@@ -2,69 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2647AF44BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16661F44C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731608AbfKHKiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 05:38:14 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:50762 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbfKHKiN (ORCPT
+        id S1731837AbfKHKj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 05:39:27 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41092 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbfKHKj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 05:38:13 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iT1ec-0006Q1-18; Fri, 08 Nov 2019 11:38:10 +0100
-Date:   Fri, 8 Nov 2019 11:37:58 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Florian Weimer <fweimer@redhat.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Darren Hart <darren@dvhart.com>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Yang Tao <yang.tao172@zte.com.cn>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Carlos O'Donell <carlos@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [patch 00/12] futex: Cure robust/PI futex exit races
-In-Reply-To: <87o8xm65ar.fsf@oldenburg2.str.redhat.com>
-Message-ID: <alpine.DEB.2.21.1911081136450.26566@nanos.tec.linutronix.de>
-References: <20191106215534.241796846@linutronix.de> <87zhh78gnf.fsf@oldenburg2.str.redhat.com> <87v9rv8g44.fsf@oldenburg2.str.redhat.com> <87o8xm95rt.fsf@oldenburg2.str.redhat.com> <alpine.DEB.2.21.1911080912520.27903@nanos.tec.linutronix.de>
- <87o8xm65ar.fsf@oldenburg2.str.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 8 Nov 2019 05:39:27 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 94so4786422oty.8
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 02:39:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xknlmhQ8bTxSjbDHhHqkCt9p0L6pwub3YwGQVtWNFCM=;
+        b=jbW+Calw/0AIF+TO89q3qI9FJuV1dfDbJMi3iRUkKu8Jzdxj5J5AkF0rZMUTqfEfbz
+         jp8LPBnf7uJ9OPlVZfi6zcsYBVy5DN1VGqhfuubP9BhZJL7PBn/2L+6CD/5YyfvJ2+2l
+         44+SXmMLOzWbGgjDRibfVv13MbeRRjFsyvwDdRIL9Ob918JYiL8S02lw8BszfeC9CpIH
+         RJowFJTECEKxyR6bE9gdgypLI4aOcX25lFX9wAp8fTiQmchhOVrYLKxFCg4DI/GzwB+z
+         wvBgswYniCpR90X3zMmx4925MIDNrjGAyjXZu2o4FsEwtxj7PMv+5x5XGx7H68AjNLbQ
+         +Cpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xknlmhQ8bTxSjbDHhHqkCt9p0L6pwub3YwGQVtWNFCM=;
+        b=fY5bmQh/qcpKqazcX7s7H3kNiu3uoF8RxFJ2GrEy9aoECr58qN1uZBrz7EfL5qfPff
+         AgMYLjHCW5fKzyZFhZBEZSzIEDtL7e/ZYbwNIU1/hDITbnk8a+AF9hS4DkoGCMDsUlm0
+         Ynb05WY9H7Y/5BaXVUoba15diZxTMyHmVZGQ+V4gjJ10yaZdzZy8ww7kKBUQXHNeGlu0
+         uELRWRhQIWEChHV82a6bv2f91sHkIcCWimWbRC/IgxHHKzrV49G9Qht8AEUyO89b38g8
+         O0yhV3Bk6FUro9dhXmt0OxAoEI5T05FJxD1XRS313ozKbuupcu8prHRJ33Kh6453luNn
+         RbIQ==
+X-Gm-Message-State: APjAAAXqn54G0OeoLqBQW8gnMpV8YKWkNwABGL7Gk1Y5K7xXCgDILDCG
+        xlSy8r9XpjgiDCA5gYBIKdMprPOuZW75iXLBNulJ3g==
+X-Google-Smtp-Source: APXvYqyLZBxmR71fhmdJVJcUa6fCSRpNkLwG762yXhO18tCAh1bm29lOIgeNygv6PD59cS3J6bMkjvM+xaJPZ5K/n7w=
+X-Received: by 2002:a05:6830:1e53:: with SMTP id e19mr8122533otj.161.1573209566001;
+ Fri, 08 Nov 2019 02:39:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1572527274-21925-1-git-send-email-sumit.garg@linaro.org>
+ <20191107110603.GA8790@jax> <CAFA6WYMuHqNZTtoda=P4-pweNOKXw_TLKNcBa-XuR5yBV3uRDw@mail.gmail.com>
+In-Reply-To: <CAFA6WYMuHqNZTtoda=P4-pweNOKXw_TLKNcBa-XuR5yBV3uRDw@mail.gmail.com>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Fri, 8 Nov 2019 11:39:15 +0100
+Message-ID: <CAHUa44Hk0LtCsbOcLq=of_pGSAYOnaod13N88ZMQOymmCGEJ6g@mail.gmail.com>
+Subject: Re: [PATCH] tee: optee: Fix dynamic shm pool allocations
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Carriere Etienne <etienne.carriere@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Nov 2019, Florian Weimer wrote:
-> > On Fri, 8 Nov 2019, Florian Weimer wrote:
-> > Unpatched 5.4-rc6:
+Hi Sumit,
+
+On Thu, Nov 7, 2019 at 1:41 PM Sumit Garg <sumit.garg@linaro.org> wrote:
+>
+> Hi Jens,
+>
+> On Thu, 7 Nov 2019 at 16:36, Jens Wiklander <jens.wiklander@linaro.org> wrote:
 > >
-> > FAIL: nptl/tst-thread-affinity-pthread
-> > original exit status 1
-> > info: Detected CPU set size (in bits): 225
-> > info: Maximum test CPU: 255
-> > error: pthread_create for thread 253 failed: Resource temporarily unavailable
-> 
-> Huh.  Reverting your patches (at commit 26bc672134241a080a83b2ab9aa8abede8d30e1c)
-> fixes the test for me.
-> 
-> > TBH, the futex changes have absolutely nothing to do with that resource
-> > fail.
-> 
-> I suspect that there are some changes to task exit latency, which
-> triggers the latent resource management bug.
+> > Hi Sumit,
+> >
+> > On Thu, Oct 31, 2019 at 06:37:54PM +0530, Sumit Garg wrote:
+> > > In case of dynamic shared memory pool, kernel memory allocated using
+> > > dmabuf_mgr pool needs to be registered with OP-TEE prior to its usage
+> > > during optee_open_session() or optee_invoke_func().
+> > >
+> > > So fix dmabuf_mgr pool allocations via an additional call to
+> > > optee_shm_register().
+> > >
+> > > Fixes: 9733b072a12a ("optee: allow to work without static shared memory")
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> >
+> > Looks good, I'm picking this up. Etienne told me has tested this on some
+> > of his hardware so I'll add:
+> > Tested-by: Etienne Carriere <etienne.carriere@linaro.org>
+> >
+>
+> Thanks for picking this up.
+>
+> >
+> > > ---
+> > >
+> > > Depends on patch: https://lkml.org/lkml/2019/7/30/506 that adds support
+> > > to allow registration of kernel buffers with OP-TEE.
+>
+> You also need to pick up the dependency patch too. The latest v3 of
+> this patch is here [1] although its unchanged from v2. Also, If you
+> pick that up I will drop it from future revisions of Trusted Keys
+> patchset [2].
+>
+> [1] https://lkml.org/lkml/2019/10/31/431
+> [2] https://lkml.org/lkml/2019/10/31/430
 
-Right, and depending on which hardware you run, this changes. On the big
-testbox I use the failure is also bouncing around between thread 252 and
-254.
+So I missed taking [1] into account. I think that it would make more
+sense to merge this patch ("tee: optee: Fix dynamic shm pool
+allocations") with [1] ("tee: optee: allow kernel pages to register as
+shm") into a new patch.
 
-Thanks,
+Cheers,
+Jens
 
-	tglx
+>
+> -Sumit
+>
+> > >
+> > >  drivers/tee/optee/shm_pool.c | 12 +++++++++++-
+> > >  1 file changed, 11 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/tee/optee/shm_pool.c b/drivers/tee/optee/shm_pool.c
+> > > index de1d9b8..0332a53 100644
+> > > --- a/drivers/tee/optee/shm_pool.c
+> > > +++ b/drivers/tee/optee/shm_pool.c
+> > > @@ -17,6 +17,7 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
+> > >  {
+> > >       unsigned int order = get_order(size);
+> > >       struct page *page;
+> > > +     int rc = 0;
+> > >
+> > >       page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
+> > >       if (!page)
+> > > @@ -26,12 +27,21 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
+> > >       shm->paddr = page_to_phys(page);
+> > >       shm->size = PAGE_SIZE << order;
+> > >
+> > > -     return 0;
+> > > +     if (shm->flags & TEE_SHM_DMA_BUF) {
+> > > +             shm->flags |= TEE_SHM_REGISTER;
+> > > +             rc = optee_shm_register(shm->ctx, shm, &page, 1 << order,
+> > > +                                     (unsigned long)shm->kaddr);
+> > > +     }
+> > > +
+> > > +     return rc;
+> > >  }
+> > >
+> > >  static void pool_op_free(struct tee_shm_pool_mgr *poolm,
+> > >                        struct tee_shm *shm)
+> > >  {
+> > > +     if (shm->flags & TEE_SHM_DMA_BUF)
+> > > +             optee_shm_unregister(shm->ctx, shm);
+> > > +
+> > >       free_pages((unsigned long)shm->kaddr, get_order(shm->size));
+> > >       shm->kaddr = NULL;
+> > >  }
+> > > --
+> > > 2.7.4
+> > >
