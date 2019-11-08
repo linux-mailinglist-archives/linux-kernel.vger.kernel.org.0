@@ -2,70 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C87F450A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43AC4F4517
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbfKHKxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 05:53:13 -0500
-Received: from foss.arm.com ([217.140.110.172]:40442 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727016AbfKHKxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 05:53:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72D307CD;
-        Fri,  8 Nov 2019 02:53:12 -0800 (PST)
-Received: from [192.168.0.9] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87F2D3F719;
-        Fri,  8 Nov 2019 02:53:10 -0800 (PST)
-Subject: Re: [Patch v5 6/6] sched/fair: Enable tuning of decay period
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
-        rui.zhang@intel.com, edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-7-git-send-email-thara.gopinath@linaro.org>
- <20191107104901.GA472@linaro.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <706278eb-1906-79f3-7a9f-6ab5080ecb63@arm.com>
-Date:   Fri, 8 Nov 2019 11:53:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730994AbfKHK4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 05:56:18 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34218 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbfKHK4R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 05:56:17 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8AsJnj040693;
+        Fri, 8 Nov 2019 10:55:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=0I56CIW7IhXRaus+/lFEaLNLK2HcD+ZbLGBqaX03oow=;
+ b=YKYbNwzHPGwYQKugCt3krp4d5TQuvtnjyTDpbPlThK+DwTTQMtHmyYUhfqWaNnt2vJjo
+ o27GQXCkZDhk6l5Nh7UxnoYujhRSLKKRVBYhpJSoviMDq0bsiuykMDh59XU2dU+zB33Q
+ h5wARrMa3mAAVxJir+y+l9puABXvVtYZ60470aRece3urOAHZmPLdnnkXQSnZX+8zsPh
+ yxCd/3oVMvsiwucC60Cd4uMFen1ersUdjYABo0zJg+eCfVeXIpgWE3UBms7PgRlRDRZb
+ GuN45k0zDufiDNYfVcAyR6pwrPav5I7F3xuy1Jj6QqLOv6p8i+Dz8Ir7ZAYMaUXvtcgR 5Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2w41w14jyf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 10:55:47 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8AsVQK023409;
+        Fri, 8 Nov 2019 10:55:46 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2w4k31jj1y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 10:55:46 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA8ArXJ0021477;
+        Fri, 8 Nov 2019 10:53:33 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Nov 2019 02:53:33 -0800
+Date:   Fri, 8 Nov 2019 13:53:19 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Beniamin Bia <beniamin.bia@analog.com>
+Cc:     jic23@kernel.org, devel@driverdev.osuosl.org, mark.rutland@arm.com,
+        lars@metafoo.de, biabeniamin@outlook.com,
+        Michael.Hennerich@analog.com, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org, gregkh@linuxfoundation.org,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        nicolas.ferre@microchip.com, robh+dt@kernel.org, pmeerw@pmeerw.net,
+        mchehab+samsung@kernel.org, paulmck@linux.ibm.com,
+        Paul Cercueil <paul.cercueil@analog.com>
+Subject: Re: [PATCH v3 1/4] iio: adc: Add support for AD7091R5 ADC
+Message-ID: <20191108105213.GR10409@kadam>
+References: <20191107150759.5937-1-beniamin.bia@analog.com>
 MIME-Version: 1.0
-In-Reply-To: <20191107104901.GA472@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107150759.5937-1-beniamin.bia@analog.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911080107
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911080107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2019 11:49, Vincent Guittot wrote:
-> Le Tuesday 05 Nov 2019 à 13:49:46 (-0500), Thara Gopinath a écrit :
-
-[...]
-
->>  /**
->> @@ -10444,8 +10465,8 @@ void update_thermal_pressure(int cpu, unsigned long capped_capacity)
->>  static void trigger_thermal_pressure_average(struct rq *rq)
->>  {
->>  #ifdef CONFIG_SMP
->> -	update_thermal_load_avg(rq_clock_task(rq), rq,
->> -				per_cpu(thermal_pressure, cpu_of(rq)));
->> +	update_thermal_load_avg(rq_clock_task(rq) >> sched_thermal_decay_shift,
->> +				rq, per_cpu(thermal_pressure, cpu_of(rq)));
-> 
-> Would be better to create
-> 
-> +static inline u64 rq_clock_thermal(struct rq *rq)
+On Thu, Nov 07, 2019 at 05:07:56PM +0200, Beniamin Bia wrote:
+> +static int ad7091r_set_mode(struct ad7091r_state *st, enum ad7091r_mode mode)
 > +{
-> +       lockdep_assert_held(&rq->lock);
-> +       assert_clock_updated(rq);
+> +	int ret, conf;
+> +
+> +	switch (mode) {
+> +	case AD7091R_MODE_SAMPLE:
+> +		conf = 0;
+> +		break;
+> +	case AD7091R_MODE_COMMAND:
+> +		conf = AD7091R_REG_CONF_CMD;
+> +		break;
+> +	case AD7091R_MODE_AUTOCYCLE:
+> +		conf = AD7091R_REG_CONF_AUTO;
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		break;
 
-IMHO, the asserts can be skipped here since they're already done in
-rq_clock_task().
+return -EINVAL;
 
-> +       return rq_clock_task(rq) >> sched_thermal_decay_shift;
+> +	}
+> +
+> +	ret = regmap_update_bits(st->map, AD7091R_REG_CONF,
+> +				 AD7091R_REG_CONF_MODE_MASK, conf);
+
+
+otherwise conf is uninitialized.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->mode = mode;
+> +
+> +	return ret;
+
+return 0;
+
 > +}
+> +
+> +static int ad7091r_set_channel(struct ad7091r_state *st, unsigned int channel)
+> +{
+> +	unsigned int foo;
+
+Use unsigned int dummy.
+
+> +	int ret;
+> +
+
+Otherwise it looks ok to me.  (Not a domain expert).
+
+regards,
+dan carpenter
