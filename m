@@ -2,117 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5F60F5A60
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:51:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B493F5A6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:56:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbfKHVse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:48:34 -0500
-Received: from mga17.intel.com ([192.55.52.151]:20333 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726231AbfKHVsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:48:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 13:48:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,283,1569308400"; 
-   d="scan'208";a="197038024"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by orsmga008.jf.intel.com with ESMTP; 08 Nov 2019 13:48:32 -0800
-From:   thor.thayer@linux.intel.com
-To:     dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCH] arm64: dts: agilex: Add EDAC Device Tree
-Date:   Fri,  8 Nov 2019 15:50:25 -0600
-Message-Id: <1573249825-21769-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727768AbfKHVyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:54:00 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:45404 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726640AbfKHVyA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:54:00 -0500
+Received: from mr5.cc.vt.edu (mr5.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:72:232:758b])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xA8LrvJO003606
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2019 16:53:58 -0500
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+        by mr5.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xA8LrqF3011430
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2019 16:53:57 -0500
+Received: by mail-qt1-f199.google.com with SMTP id m20so8847934qtq.16
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 13:53:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=6u/kteb+1VP+Ls8+c1O+w3Tz6wSk5cSCfhQVSFvadys=;
+        b=Q4wtksU23Ig8MeynQwLRNdVpVkecBjJeV3uPoA13YJDljjDbSPU2iAaQXgRhBCWvcN
+         SetxxvfRbzFEyz7hIQy7tvH4SfU4766Nlr+VkVA/siTGPYE/050MA1Nr/OmyWJOhYYCg
+         77YJt4WQ27uPZeAv/xj4Y7PQVAKNjLJRlElkHNMw1CJgiBj0vl3IeK+GSXVmlIb2nkuu
+         1TqvYaXeEW4/S+AlDZwUHaTPdhVtg7V/hFwaO3zjtUEWxNbsZSt04qeqlqVaUJNN0u+u
+         uF3H9Uu9WZgL2kNaNSC2d1dG7Sh2uOgwugZdksNgh9OEFWPgGwMJlnAMu9mmUx6FMKMY
+         s5Vw==
+X-Gm-Message-State: APjAAAXCpBYC9ZQNNXRdGVx/PpXRovu5m7nkhqd3eZvySXGE5lVwiPk+
+        H1yqFyxUUJ1ShZ58hQ8lcO9DeZUP/1WSwgdBHv1DCiw8+KEd7SN9xjj0Y3Gzjz7UHq4fCp+QiUV
+        5VvYdee5RK4urqTjCZj1HQKDAmMaUKo2ytjw=
+X-Received: by 2002:aed:255c:: with SMTP id w28mr13431199qtc.185.1573250032488;
+        Fri, 08 Nov 2019 13:53:52 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxrEqcce9cE0K4quRbgg++z7Fi7Lxmqopm81sZn+9yvMdC5nBTIZrteO39T9WWkp7wR4Y06fw==
+X-Received: by 2002:aed:255c:: with SMTP id w28mr13431169qtc.185.1573250032181;
+        Fri, 08 Nov 2019 13:53:52 -0800 (PST)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id e17sm4345469qtk.65.2019.11.08.13.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2019 13:53:50 -0800 (PST)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038@lists.linaro.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Valentin Vidic <vvidic@valentin-vidic.from.hr>,
+        devel@driverdev.osuosl.org
+Subject: Re: [PATCH 01/16] staging: exfat: use prandom_u32() for i_generation
+In-Reply-To: <20191108213257.3097633-2-arnd@arndb.de>
+References: <20191108213257.3097633-1-arnd@arndb.de>
+ <20191108213257.3097633-2-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1573250029_29941P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 08 Nov 2019 16:53:49 -0500
+Message-ID: <33441.1573250029@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+--==_Exmh_1573250029_29941P
+Content-Type: text/plain; charset=us-ascii
 
-Add the device tree nodes required to support the Intel
-Agilex SoCFPGA EDAC framework.
+On Fri, 08 Nov 2019 22:32:39 +0100, Arnd Bergmann said:
+> Similar to commit 46c9a946d766 ("shmem: use monotonic time for i_generation")
+> we should not use the deprecated get_seconds() interface for i_generation.
+>
+> prandom_u32() is the replacement used in other file systems.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
- arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 59 +++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+exfat does some weird stuff with i_generation. but (a) it doesn't require
+monotonic increasing values and (b) this change is orthogonal to the weirdness
+and won't break anything.
 
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-index f9d1b26a3384..2b3468590f30 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-@@ -534,6 +534,65 @@
- 			reg = <0xf8011100 0xc0>;
- 		};
- 
-+		eccmgr {
-+			compatible = "altr,socfpga-s10-ecc-manager",
-+				     "altr,socfpga-a10-ecc-manager";
-+			altr,sysmgr-syscon = <&sysmgr>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			interrupts = <0 15 4>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			ranges;
-+
-+			sdramedac {
-+				compatible = "altr,sdram-edac-s10";
-+				altr,sdr-syscon = <&sdr>;
-+				interrupts = <16 4>;
-+			};
-+
-+			ocram-ecc@ff8cc000 {
-+				compatible = "altr,socfpga-s10-ocram-ecc",
-+					     "altr,socfpga-a10-ocram-ecc";
-+				reg = <0xff8cc000 0x100>;
-+				altr,ecc-parent = <&ocram>;
-+				interrupts = <1 4>;
-+			};
-+
-+			usb0-ecc@ff8c4000 {
-+				compatible = "altr,socfpga-s10-usb-ecc",
-+					     "altr,socfpga-usb-ecc";
-+				reg = <0xff8c4000 0x100>;
-+				altr,ecc-parent = <&usb0>;
-+				interrupts = <2 4>;
-+			};
-+
-+			emac0-rx-ecc@ff8c0000 {
-+				compatible = "altr,socfpga-s10-eth-mac-ecc",
-+					     "altr,socfpga-eth-mac-ecc";
-+				reg = <0xff8c0000 0x100>;
-+				altr,ecc-parent = <&gmac0>;
-+				interrupts = <4 4>;
-+			};
-+
-+			emac0-tx-ecc@ff8c0400 {
-+				compatible = "altr,socfpga-s10-eth-mac-ecc",
-+					     "altr,socfpga-eth-mac-ecc";
-+				reg = <0xff8c0400 0x100>;
-+				altr,ecc-parent = <&gmac0>;
-+				interrupts = <5 4>;
-+			};
-+
-+			sdmmca-ecc@ff8c8c00 {
-+				compatible = "altr,socfpga-s10-sdmmc-ecc",
-+					     "altr,socfpga-sdmmc-ecc";
-+				reg = <0xff8c8c00 0x100>;
-+				altr,ecc-parent = <&mmc>;
-+				interrupts = <14 4>,
-+					     <15 4>;
-+			};
-+		};
-+
- 		qspi: spi@ff8d2000 {
- 			compatible = "cdns,qspi-nor";
- 			#address-cells = <1>;
--- 
-2.7.4
+For the exfat part:
 
+Acked-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+
+
+--==_Exmh_1573250029_29941P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXcXj7QdmEQWDXROgAQI1OQ//ezStXbB8JG2TWINA68IgPvBsh6EuosfW
+k4X4s8YJbQS7QXAZb679Jc0EV1X9yXMdpvKBA9+gEXoimzUYSDinq7D3Nki08Ehc
+Ggchu+Ht0EKLsGJh4lS36sKBMhoSb3CMFznGPWavdcS/pXM9NrGc5oF6NJDSftJg
+RZzoNK19ZZNU8DTPWy40DTolRNTIqCUc0D5po5czSe8yvPB6bSYfRehKxebS/eRC
+okfxJPkJDt2iZ3CcLOlCvPxU+j0qxWvwV7yHf4yAJVW4dstdt5+N6IcYXl2ss7wI
+4OHDOfFT7S07zaFb1Okna33PONu/lzpUTBU5AOhxqBqIe5bc2ki7MtBuyGSW/Y1P
+lde5zW2i+OMDe/091UGZKgfEZLBhYu+bmsNfx7va1Iqds/x5Pov1E642hQVc4/m9
+q5aTBXPQdctAm6noigx8QOoWLMJyFLsVg26+6erYpSf8qA6acX7TuAPu/G3dWq3z
+gdOyJPwSvd2XH+BK1DWKyVlMP639V9xrCZs9XgUDt8cQX7CIhNlAMZ20N34fj+ax
+6iP1E4t4tZAcFBn5ajtKkS0Uq6XdfcB4e9vvLYK9aNrMk5b7AVhPJWwTncx/tcHv
+5cQl1M/h4W7WiXfl8b1ZgdN8Qb3Sl5Qr3pVq0ekrD3HCPHCKiWRVlcwCx2ihwup/
+OD7uQb99evo=
+=bMTp
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1573250029_29941P--
