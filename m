@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31F03F5460
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D20B1F5470
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732750AbfKHS46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:56:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        id S2389119AbfKHS7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:59:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732607AbfKHS44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:56:56 -0500
+        id S1730231AbfKHS7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:59:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 779102067B;
-        Fri,  8 Nov 2019 18:56:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2630822501;
+        Fri,  8 Nov 2019 18:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239415;
-        bh=Yzrfcd5cKL6KuXv+Ofw10dPyZQkvoE/R25g2YhQEWUo=;
+        s=default; t=1573239577;
+        bh=UaPsanH+e9wy15jmwHxSm08uEx/xwo6DuV1U6Bb15w0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S4cpywrpEpgUWK0daunbjEbBXhmcNHAwhwyAyBl8PLYKLdda39+GWm87BkA9U+457
-         omEZoA3yJBGrlGyPr/sA/WuzkNh6wsSE9TQC9b5QJKy65P+AKTnzHZ2iF6NIUtR0cT
-         GeFUFGUlCwUw5ikXD6W5ubngsLF2PxTPd7zKZOvQ=
+        b=pppo7w4uJ3HRqJgj10SDYP6qBZqMEd51zKil0XWXveiCd6cCCu3gKU+I5fxLon7CG
+         JZ9hFHbC6d6wMxoTpJDjeYW57l2vuo1eKCBuGJeQDAN+6qUSiuqoafq4XyvorA8K8q
+         D1WzG74Y28spdvjUR4w5Oo6UQGGTA7V5QWWGP3Yw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 31/34] kbuild: add -fcf-protection=none when using retpoline flags
+        stable@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.14 50/62] dmaengine: qcom: bam_dma: Fix resource leak
 Date:   Fri,  8 Nov 2019 19:50:38 +0100
-Message-Id: <20191108174653.027224327@linuxfoundation.org>
+Message-Id: <20191108174754.305586194@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
-References: <20191108174618.266472504@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Seth Forshee <seth.forshee@canonical.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-[ Upstream commit 29be86d7f9cb18df4123f309ac7857570513e8bc ]
+commit 7667819385457b4aeb5fac94f67f52ab52cc10d5 upstream.
 
-The gcc -fcf-protection=branch option is not compatible with
--mindirect-branch=thunk-extern. The latter is used when
-CONFIG_RETPOLINE is selected, and this will fail to build with
-a gcc which has -fcf-protection=branch enabled by default. Adding
--fcf-protection=none when building with retpoline enabled
-prevents such build failures.
+bam_dma_terminate_all() will leak resources if any of the transactions are
+committed to the hardware (present in the desc fifo), and not complete.
+Since bam_dma_terminate_all() does not cause the hardware to be updated,
+the hardware will still operate on any previously committed transactions.
+This can cause memory corruption if the memory for the transaction has been
+reassigned, and will cause a sync issue between the BAM and its client(s).
 
-Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fix this by properly updating the hardware in bam_dma_terminate_all().
+
+Fixes: e7c0fe2a5c84 ("dmaengine: add Qualcomm BAM dma driver")
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191017152606.34120-1-jeffrey.l.hugo@gmail.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- Makefile | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/dma/qcom/bam_dma.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Makefile b/Makefile
-index 62ce3766032c9..1d50905aaf425 100644
---- a/Makefile
-+++ b/Makefile
-@@ -840,6 +840,12 @@ KBUILD_CFLAGS   += $(call cc-option,-Werror=designated-init)
- # change __FILE__ to the relative path from the srctree
- KBUILD_CFLAGS	+= $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -690,7 +690,21 @@ static int bam_dma_terminate_all(struct
  
-+# ensure -fcf-protection is disabled when using retpoline as it is
-+# incompatible with -mindirect-branch=thunk-extern
-+ifdef CONFIG_RETPOLINE
-+KBUILD_CFLAGS += $(call cc-option,-fcf-protection=none)
-+endif
-+
- # use the deterministic mode of AR if available
- KBUILD_ARFLAGS := $(call ar-option,D)
- 
--- 
-2.20.1
-
+ 	/* remove all transactions, including active transaction */
+ 	spin_lock_irqsave(&bchan->vc.lock, flag);
++	/*
++	 * If we have transactions queued, then some might be committed to the
++	 * hardware in the desc fifo.  The only way to reset the desc fifo is
++	 * to do a hardware reset (either by pipe or the entire block).
++	 * bam_chan_init_hw() will trigger a pipe reset, and also reinit the
++	 * pipe.  If the pipe is left disabled (default state after pipe reset)
++	 * and is accessed by a connected hardware engine, a fatal error in
++	 * the BAM will occur.  There is a small window where this could happen
++	 * with bam_chan_init_hw(), but it is assumed that the caller has
++	 * stopped activity on any attached hardware engine.  Make sure to do
++	 * this first so that the BAM hardware doesn't cause memory corruption
++	 * by accessing freed resources.
++	 */
+ 	if (bchan->curr_txd) {
++		bam_chan_init_hw(bchan, bchan->curr_txd->dir);
+ 		list_add(&bchan->curr_txd->vd.node, &bchan->vc.desc_issued);
+ 		bchan->curr_txd = NULL;
+ 	}
 
 
