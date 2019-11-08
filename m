@@ -2,112 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF63F4653
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C179EF46A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:44:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389621AbfKHLlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:41:46 -0500
-Received: from vps.xff.cz ([195.181.215.36]:46878 "EHLO vps.xff.cz"
+        id S2390578AbfKHLnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:43:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732905AbfKHLll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:41:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1573213299; bh=DTFELkY0GJEkB2dfExMBAyshl9VFk13qMOSBa5R8u4o=;
-        h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-        b=L1r9uYB1CgSwNl9LXzNO62rthSHIe/gMXCu/3zCOzUnXu9jtABcZOiGkCRdIBBXQ3
-         p709SVqoWgeWqfqkUYRVnP79lTFH0l2ONEfdVLhK+M8gou89gfL0kLVV3sQKXwyxBN
-         Qr52LP/xxXm00qR9AW+tn/NHI5FtWtHt88AMDIDw=
-Date:   Fri, 8 Nov 2019 12:41:38 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>, arnd@arndb.de,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        kishon@ti.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        mark.rutland@arm.com, mripard@kernel.org,
-        paul.kocialkowski@bootlin.com, robh+dt@kernel.org,
-        tglx@linutronix.de, wens@csie.org
-Subject: Re: [PATCH] phy: allwinner: Fix GENMASK misuse
-Message-ID: <20191108114138.snghk5n7kwuw7zz3@core.my.home>
-Mail-Followup-To: Icenowy Zheng <icenowy@aosc.io>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>, arnd@arndb.de,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        kishon@ti.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        mark.rutland@arm.com, mripard@kernel.org,
-        paul.kocialkowski@bootlin.com, robh+dt@kernel.org,
-        tglx@linutronix.de, wens@csie.org
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20191020134229.1216351-3-megous@megous.com>
- <20191107204645.13739-1-rikard.falkeborn@gmail.com>
- <20191107214514.kcz42mcehyrrif4o@core.my.home>
- <F563E52E-72BF-4297-A14F-DDE2B490DADB@aosc.io>
+        id S2388679AbfKHLni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:43:38 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE2EC222C6;
+        Fri,  8 Nov 2019 11:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573213417;
+        bh=csGxPfHGGw7vrgsXdVIZiGSXswdvnVTZni67Jb2fpOE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=efux4aWnqPfkXGjYOPbBFWNCgF3+kLw8iSJrWYs/YgbTWALw6lFBgwi5uv5Hxr91a
+         e4XHnULJmMY2kTTuBMzSuTYmvgOUXH98cpfWnOA60cscY173ntjl35C8jN7z7Qtoe1
+         7aQjolwUViqfWrGdROlAETPS0O7Gxb5zJQBhm9rw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Paul Burton <paul.burton@mips.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        linux-mips@linux-mips.org, Sasha Levin <sashal@kernel.org>,
+        linux-mips@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 020/103] MIPS: BCM47XX: Enable USB power on Netgear WNDR3400v3
+Date:   Fri,  8 Nov 2019 06:41:45 -0500
+Message-Id: <20191108114310.14363-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
+References: <20191108114310.14363-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <F563E52E-72BF-4297-A14F-DDE2B490DADB@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 07:29:21PM +0800, Icenowy Zheng wrote:
-> 
-> 
-> 于 2019年11月8日 GMT+08:00 上午5:45:14, "Ondřej Jirman" <megous@megous.com> 写到:
-> >Hello Rikard,
-> >
-> >On Thu, Nov 07, 2019 at 09:46:45PM +0100, Rikard Falkeborn wrote:
-> >> Arguments are supposed to be ordered high then low.
-> >> 
-> >> Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
-> >> ---
-> >> Spotted while trying to add compile time checks of GENMASK arguments.
-> >> Patch has only been compile tested.
-> >
-> >thank you!
-> >
-> >Tested-by: Ondrej Jirman <megous@megous.com>
-> 
-> Does it affect or fix the performance?
+From: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
 
-See here: https://forum.armbian.com/topic/10131-orange-pi-lite2-usb3-now-working/?do=findComment&comment=88904
+[ Upstream commit feef7918667b84f9d5653c501542dd8d84ae32af ]
 
-Quote:
+Setting GPIO 21 high seems to be required to enable power to USB ports
+on the WNDR3400v3. As there is already similar code for WNR3500L,
+make the existing USB power GPIO code generic and use that.
 
-> It may or may not help. On Opi3 I see no change, probably because HUB is
-> really close to the SoC, but on boards without a HUB, SoC's USB3 phy will
-> have to drive the signal over the longer cable and this patch might benefit
-> those boards. 
+Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20259/
+Cc: Rafał Miłecki <zajec5@gmail.com>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/bcm47xx/workarounds.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Maybe someone with boards without PHY will test it more.
+diff --git a/arch/mips/bcm47xx/workarounds.c b/arch/mips/bcm47xx/workarounds.c
+index 1a8a07e7a5633..46eddbec8d9fd 100644
+--- a/arch/mips/bcm47xx/workarounds.c
++++ b/arch/mips/bcm47xx/workarounds.c
+@@ -5,9 +5,8 @@
+ #include <bcm47xx_board.h>
+ #include <bcm47xx.h>
+ 
+-static void __init bcm47xx_workarounds_netgear_wnr3500l(void)
++static void __init bcm47xx_workarounds_enable_usb_power(int usb_power)
+ {
+-	const int usb_power = 12;
+ 	int err;
+ 
+ 	err = gpio_request_one(usb_power, GPIOF_OUT_INIT_HIGH, "usb_power");
+@@ -23,7 +22,10 @@ void __init bcm47xx_workarounds(void)
+ 
+ 	switch (board) {
+ 	case BCM47XX_BOARD_NETGEAR_WNR3500L:
+-		bcm47xx_workarounds_netgear_wnr3500l();
++		bcm47xx_workarounds_enable_usb_power(12);
++		break;
++	case BCM47XX_BOARD_NETGEAR_WNDR3400_V3:
++		bcm47xx_workarounds_enable_usb_power(21);
+ 		break;
+ 	default:
+ 		/* No workaround(s) needed */
+-- 
+2.20.1
 
-regards,
-	o.
-
-> >
-> >regards,
-> >	o.
-> >
-> >>  drivers/phy/allwinner/phy-sun50i-usb3.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/phy/allwinner/phy-sun50i-usb3.c
-> >b/drivers/phy/allwinner/phy-sun50i-usb3.c
-> >> index 1169f3e83a6f..b1c04f71a31d 100644
-> >> --- a/drivers/phy/allwinner/phy-sun50i-usb3.c
-> >> +++ b/drivers/phy/allwinner/phy-sun50i-usb3.c
-> >> @@ -49,7 +49,7 @@
-> >>  #define SUNXI_LOS_BIAS(n)		((n) << 3)
-> >>  #define SUNXI_LOS_BIAS_MASK		GENMASK(5, 3)
-> >>  #define SUNXI_TXVBOOSTLVL(n)		((n) << 0)
-> >> -#define SUNXI_TXVBOOSTLVL_MASK		GENMASK(0, 2)
-> >> +#define SUNXI_TXVBOOSTLVL_MASK		GENMASK(2, 0)
-> >>  
-> >>  struct sun50i_usb3_phy {
-> >>  	struct phy *phy;
-> >> -- 
-> >> 2.24.0
-> >> 
