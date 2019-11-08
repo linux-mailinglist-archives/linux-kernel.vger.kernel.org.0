@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F5EF5452
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F0FF5423
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388114AbfKHS4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:56:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53634 "EHLO mail.kernel.org"
+        id S1733018AbfKHSyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:54:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732196AbfKHS4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:56:06 -0500
+        id S1732994AbfKHSyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:54:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27B1D218AE;
-        Fri,  8 Nov 2019 18:56:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 064382178F;
+        Fri,  8 Nov 2019 18:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239365;
-        bh=0bQe948ftx6P4hbTLJm624vlLfbcA0R1ysh4srYT92c=;
+        s=default; t=1573239272;
+        bh=J0uk805EP9l5Ca02BBLotKgTkavHTiUxv4DsCvLcthw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rmVWgPxuEkOhn2dzZbJtmfGZslQhHxe+breUrwH7TJJCoQzaI4exzNEUOmHQgtd0t
-         pcvOUdc6XLWhNycEAt9OwTeXuImhPxNjsznoNLpKuz1e8LTM3yZmqiix60lQqkgVVp
-         qYtGBgX/SyzVJVf3MZAFFaSOkzrRuN1S00b/4K4s=
+        b=ZtLRhT1HVd1hZ/Zwx8teLi3qje+Swhhsmjzmfvktj+XfigWjyQMK+aLiGgglOa6F8
+         fn2xbBOIYDBD2P17OXbyD5on+sJSImUkc11K0hL7Pz7H2S5gTHMIxoWw/GNuQHmB8x
+         Zbj3FjOd224mFqzhCz0FvfY4ZAFm8XpC2ifb9KJg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jing Xiangfeng <jingxiangfeng@huawei.com>,
+        "linus.walleij@linaro.org, rmk+kernel@armlinux.org.uk, Ard Biesheuvel" 
+        <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 07/34] ARM: mm: fix alignment handler faults under memory pressure
-Date:   Fri,  8 Nov 2019 19:50:14 +0100
-Message-Id: <20191108174628.137522645@linuxfoundation.org>
+        "David A. Long" <dave.long@linaro.org>,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH 4.4 58/75] ARM: spectre-v1: mitigate user accesses
+Date:   Fri,  8 Nov 2019 19:50:15 +0100
+Message-Id: <20191108174759.863122443@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
-References: <20191108174618.266472504@linuxfoundation.org>
+In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
+References: <20191108174708.135680837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,108 +48,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 67e15fa5b487adb9b78a92789eeff2d6ec8f5cee ]
+Commit a3c0f84765bb429ba0fd23de1c57b5e1591c9389 upstream.
 
-When the system has high memory pressure, the page containing the
-instruction may be paged out.  Using probe_kernel_address() means that
-if the page is swapped out, the resulting page fault will not be
-handled because page faults are disabled by this function.
+Spectre variant 1 attacks are about this sequence of pseudo-code:
 
-Use get_user() to read the instruction instead.
+	index = load(user-manipulated pointer);
+	access(base + index * stride);
 
-Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
-Fixes: b255188f90e2 ("ARM: fix scheduling while atomic warning in alignment handling code")
+In order for the cache side-channel to work, the access() must me made
+to memory which userspace can detect whether cache lines have been
+loaded.  On 32-bit ARM, this must be either user accessible memory, or
+a kernel mapping of that same user accessible memory.
+
+The problem occurs when the load() speculatively loads privileged data,
+and the subsequent access() is made to user accessible memory.
+
+Any load() which makes use of a user-maniplated pointer is a potential
+problem if the data it has loaded is used in a subsequent access.  This
+also applies for the access() if the data loaded by that access is used
+by a subsequent access.
+
+Harden the get_user() accessors against Spectre attacks by forcing out
+of bounds addresses to a NULL pointer.  This prevents get_user() being
+used as the load() step above.  As a side effect, put_user() will also
+be affected even though it isn't implicated.
+
+Also harden copy_from_user() by redoing the bounds check within the
+arm_copy_from_user() code, and NULLing the pointer if out of bounds.
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mm/alignment.c | 44 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 36 insertions(+), 8 deletions(-)
+ arch/arm/include/asm/assembler.h |    4 ++++
+ arch/arm/lib/copy_from_user.S    |    9 +++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
-index 7d5f4c736a16b..cd18eda014c24 100644
---- a/arch/arm/mm/alignment.c
-+++ b/arch/arm/mm/alignment.c
-@@ -767,6 +767,36 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
- 	return NULL;
- }
+--- a/arch/arm/include/asm/assembler.h
++++ b/arch/arm/include/asm/assembler.h
+@@ -454,6 +454,10 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
+ 	adds	\tmp, \addr, #\size - 1
+ 	sbcccs	\tmp, \tmp, \limit
+ 	bcs	\bad
++#ifdef CONFIG_CPU_SPECTRE
++	movcs	\addr, #0
++	csdb
++#endif
+ #endif
+ 	.endm
  
-+static int alignment_get_arm(struct pt_regs *regs, u32 *ip, unsigned long *inst)
-+{
-+	u32 instr = 0;
-+	int fault;
-+
-+	if (user_mode(regs))
-+		fault = get_user(instr, ip);
-+	else
-+		fault = probe_kernel_address(ip, instr);
-+
-+	*inst = __mem_to_opcode_arm(instr);
-+
-+	return fault;
-+}
-+
-+static int alignment_get_thumb(struct pt_regs *regs, u16 *ip, u16 *inst)
-+{
-+	u16 instr = 0;
-+	int fault;
-+
-+	if (user_mode(regs))
-+		fault = get_user(instr, ip);
-+	else
-+		fault = probe_kernel_address(ip, instr);
-+
-+	*inst = __mem_to_opcode_thumb16(instr);
-+
-+	return fault;
-+}
-+
- static int
- do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- {
-@@ -774,10 +804,10 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 	unsigned long instr = 0, instrptr;
- 	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
- 	unsigned int type;
--	unsigned int fault;
- 	u16 tinstr = 0;
- 	int isize = 4;
- 	int thumb2_32b = 0;
-+	int fault;
+--- a/arch/arm/lib/copy_from_user.S
++++ b/arch/arm/lib/copy_from_user.S
+@@ -90,6 +90,15 @@
+ 	.text
  
- 	if (interrupts_enabled(regs))
- 		local_irq_enable();
-@@ -786,15 +816,14 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ ENTRY(arm_copy_from_user)
++#ifdef CONFIG_CPU_SPECTRE
++	get_thread_info r3
++	ldr	r3, [r3, #TI_ADDR_LIMIT]
++	adds	ip, r1, r2	@ ip=addr+size
++	sub	r3, r3, #1	@ addr_limit - 1
++	cmpcc	ip, r3		@ if (addr+size > addr_limit - 1)
++	movcs	r1, #0		@ addr = NULL
++	csdb
++#endif
  
- 	if (thumb_mode(regs)) {
- 		u16 *ptr = (u16 *)(instrptr & ~1);
--		fault = probe_kernel_address(ptr, tinstr);
--		tinstr = __mem_to_opcode_thumb16(tinstr);
-+
-+		fault = alignment_get_thumb(regs, ptr, &tinstr);
- 		if (!fault) {
- 			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
- 			    IS_T32(tinstr)) {
- 				/* Thumb-2 32-bit */
--				u16 tinst2 = 0;
--				fault = probe_kernel_address(ptr + 1, tinst2);
--				tinst2 = __mem_to_opcode_thumb16(tinst2);
-+				u16 tinst2;
-+				fault = alignment_get_thumb(regs, ptr + 1, &tinst2);
- 				instr = __opcode_thumb32_compose(tinstr, tinst2);
- 				thumb2_32b = 1;
- 			} else {
-@@ -803,8 +832,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 			}
- 		}
- 	} else {
--		fault = probe_kernel_address((void *)instrptr, instr);
--		instr = __mem_to_opcode_arm(instr);
-+		fault = alignment_get_arm(regs, (void *)instrptr, &instr);
- 	}
+ #include "copy_template.S"
  
- 	if (fault) {
--- 
-2.20.1
-
 
 
