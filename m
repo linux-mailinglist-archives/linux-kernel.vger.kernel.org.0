@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D20B1F5470
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2FB6F5461
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389119AbfKHS7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:59:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56466 "EHLO mail.kernel.org"
+        id S2388643AbfKHS5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:57:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730231AbfKHS7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:59:39 -0500
+        id S2388596AbfKHS5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:57:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2630822501;
-        Fri,  8 Nov 2019 18:59:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B2D021D7E;
+        Fri,  8 Nov 2019 18:57:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239577;
-        bh=UaPsanH+e9wy15jmwHxSm08uEx/xwo6DuV1U6Bb15w0=;
+        s=default; t=1573239420;
+        bh=qnofULetIF8eFnl8QYSI9VeNuk/L/SfVJZm/J9vSS+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pppo7w4uJ3HRqJgj10SDYP6qBZqMEd51zKil0XWXveiCd6cCCu3gKU+I5fxLon7CG
-         JZ9hFHbC6d6wMxoTpJDjeYW57l2vuo1eKCBuGJeQDAN+6qUSiuqoafq4XyvorA8K8q
-         D1WzG74Y28spdvjUR4w5Oo6UQGGTA7V5QWWGP3Yw=
+        b=0DcqJwfZT9yBp8wyFoDL9onbKc0H08XhmSAll59B/NXwDIclahsNFQVWg9Tc7h0xE
+         O//EouLVCnBiyevKkBNA4mUFc/KtavwihDPjPDJWT208B28XbaoyLSzxvmAjjCmJJu
+         rl7qlF7P5ZIdxnW8Pz90caJ1YyiRT0f/31eY/ipY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.14 50/62] dmaengine: qcom: bam_dma: Fix resource leak
-Date:   Fri,  8 Nov 2019 19:50:38 +0100
-Message-Id: <20191108174754.305586194@linuxfoundation.org>
+Subject: [PATCH 4.9 33/34] dmaengine: qcom: bam_dma: Fix resource leak
+Date:   Fri,  8 Nov 2019 19:50:40 +0100
+Message-Id: <20191108174656.942093520@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -69,7 +69,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/dma/qcom/bam_dma.c
 +++ b/drivers/dma/qcom/bam_dma.c
-@@ -690,7 +690,21 @@ static int bam_dma_terminate_all(struct
+@@ -686,7 +686,21 @@ static int bam_dma_terminate_all(struct
  
  	/* remove all transactions, including active transaction */
  	spin_lock_irqsave(&bchan->vc.lock, flag);
