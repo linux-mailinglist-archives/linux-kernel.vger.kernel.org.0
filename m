@@ -2,317 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FAE1F3EA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 05:00:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCDBF3EAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 05:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729847AbfKHEAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 23:00:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726556AbfKHEAB (ORCPT
+        id S1729739AbfKHEGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 23:06:15 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37825 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbfKHEGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 23:00:01 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA83vn8Q048143
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2019 23:00:00 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w504ch4nd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 22:59:59 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 8 Nov 2019 03:59:58 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Nov 2019 03:59:54 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA83xsYu51708068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Nov 2019 03:59:54 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EAFE942041;
-        Fri,  8 Nov 2019 03:59:53 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98AE54203F;
-        Fri,  8 Nov 2019 03:59:52 +0000 (GMT)
-Received: from bangoria.ibmuc.com (unknown [9.199.59.212])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Nov 2019 03:59:52 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     acme@kernel.org
-Cc:     jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [RFC] perf record: Add option to print perf_event_open args and return value
-Date:   Fri,  8 Nov 2019 09:29:49 +0530
-X-Mailer: git-send-email 2.21.0
+        Thu, 7 Nov 2019 23:06:15 -0500
+Received: by mail-qk1-f196.google.com with SMTP id e187so4127772qkf.4;
+        Thu, 07 Nov 2019 20:06:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=931ECh17bKARPx5mSW3Xy5DYB6gHmUTSxaJ0cO1t1L8=;
+        b=TtzrCjYIpR9sP/lnm9ytOl7kq1NU0eLidkTFn+1KyLicHBRVcvqxRMzyQI6qA/2Svs
+         l/1uRghL2zghPMJHk46DFyDK2gHm69ANfEM0/S8XXWf7Ir8aiw5P3hlNwBy/5ovFwGFM
+         G/th9Rv2IPhfFnhdE6B21sePuq3GFBDqr0o6iKbIgU/X0iT/clVGi8XpHfyyEe+ObO93
+         0zB39+OhsC+7QXuzy8/r+5oNXw9ylt895fPHhzgRqlipi02l4oLT3AfO7ee43nPthBra
+         bu8yWdiNWok0pM+oCNbxU9b+ihDz9BI7KM3jzorFrE8XbuIUqO7Rgrtm3CpqtvdaJ0Qr
+         RSKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=931ECh17bKARPx5mSW3Xy5DYB6gHmUTSxaJ0cO1t1L8=;
+        b=k3uOqUYohMJ02AbtfuPuPQx25WgLZ9LCsZDipeq98BK808SMKNEYNpVdVkmEik29DI
+         G10paw9CfELrTHLyVtw4SRgiMDCY9lRgdsFCzmklUL+gq1/ES/+sDh6z9+Hvchrj3b1Z
+         n24ma9KC39jYeN4qge/FLCWNvk5YSb55e+wy1YdEizDL2VlrhoBopybVBuH70eFP0X9b
+         EiQ9+qDSdNmcoK3vrnkQITb7NNT0o9KbuPsrnDubbcHF44veSYxUzeo1bOshGvxXR55l
+         HXrzeKEDZxeTkVpXsBzeVJDe0zk/ZhqcASwrDTLjRHwIz3g4bD/zKkUiAjngjPAthfGW
+         l9mA==
+X-Gm-Message-State: APjAAAVRom+v8doobsaTu88vxTQwxCts2KUAJ8/nwYrJRpm+C/TQeZRP
+        zInEhS+R6GQsAGF70LUJCXY=
+X-Google-Smtp-Source: APXvYqyBACBnxxwvohkR7HscGHmaY/uUCuqV0UH8jzprxfuKaoZptvweNPlK7uhOGhy69+1tYAB9ZA==
+X-Received: by 2002:a37:9d4b:: with SMTP id g72mr6779522qke.121.1573185973510;
+        Thu, 07 Nov 2019 20:06:13 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
+        by smtp.gmail.com with ESMTPSA id k6sm2219884qkd.38.2019.11.07.20.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 20:06:12 -0800 (PST)
+From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+X-Google-Original-From: Daniel W. S. Almeida
+To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
+        rfontana@redhat.com, kstewart@linuxfoundation.org,
+        tglx@linutronix.de, allison@lohutok.net
+Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: dvb_dummy_fe: Fix ERROR: POINTER_LOCATION
+Date:   Fri,  8 Nov 2019 00:58:35 -0300
+Message-Id: <20191108035835.7607-1-dwlsalmeida@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110803-4275-0000-0000-0000037BD615
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110803-4276-0000-0000-0000388F2937
-Message-Id: <20191108035949.32644-1-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911080037
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perf record with verbose=2 already prints this information along with
-whole lot of other traces which requires lot of scrolling. I thought
-to show this information in verbose=1 but I fear that it will be too
-much for level 1. So finally created a new option specifically for
-printing this.
+From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 
-Sample o/p:
-  $ ./perf record --peo-args -- ls > /dev/null
-  ------------------------------------------------------------
-  perf_event_attr:
-    size                             112
-    { sample_period, sample_freq }   4000
-    sample_type                      IP|TID|TIME|PERIOD
-    read_format                      ID
-    disabled                         1
-    inherit                          1
-    exclude_kernel                   1
-    mmap                             1
-    comm                             1
-    freq                             1
-    enable_on_exec                   1
-    task                             1
-    precise_ip                       3
-    sample_id_all                    1
-    exclude_guest                    1
-    mmap2                            1
-    comm_exec                        1
-    ksymbol                          1
-    bpf_event                        1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid 4308  cpu 0  group_fd -1  flags 0x8 = 4
-  sys_perf_event_open: pid 4308  cpu 1  group_fd -1  flags 0x8 = 5
-  sys_perf_event_open: pid 4308  cpu 2  group_fd -1  flags 0x8 = 6
-  sys_perf_event_open: pid 4308  cpu 3  group_fd -1  flags 0x8 = 8
-  sys_perf_event_open: pid 4308  cpu 4  group_fd -1  flags 0x8 = 9
-  sys_perf_event_open: pid 4308  cpu 5  group_fd -1  flags 0x8 = 10
-  sys_perf_event_open: pid 4308  cpu 6  group_fd -1  flags 0x8 = 11
-  sys_perf_event_open: pid 4308  cpu 7  group_fd -1  flags 0x8 = 12
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             1
-    size                             112
-    config                           0x9
-    watermark                        1
-    sample_id_all                    1
-    bpf_event                        1
-    { wakeup_events, wakeup_watermark } 1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8
-  sys_perf_event_open failed, error -13
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.002 MB perf.data (9 samples) ]
+Change foo* bar to foo *bar to avoid ERROR: POINTER_LOCATION in checkpatch.pl
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
 ---
- tools/perf/Documentation/perf-record.txt |  3 ++
- tools/perf/builtin-record.c              |  1 +
- tools/perf/util/debug.c                  |  1 +
- tools/perf/util/debug.h                  |  9 ++++++
- tools/perf/util/evsel.c                  | 36 ++++++++++++------------
- 5 files changed, 32 insertions(+), 18 deletions(-)
+ drivers/media/dvb-frontends/dvb_dummy_fe.c | 24 +++++++++++-----------
+ drivers/media/dvb-frontends/dvb_dummy_fe.h |  6 +++---
+ 2 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index c6f9f31b6039..8257c9b28c13 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -268,6 +268,9 @@ OPTIONS
- --verbose::
- 	Be more verbose (show counter open errors, etc).
+diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+index 4db679cb70ad..8413038aa30b 100644
+--- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
++++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+@@ -31,25 +31,25 @@ static int dvb_dummy_fe_read_status(struct dvb_frontend *fe,
+ 	return 0;
+ }
  
-+--peo-args::
-+	Print perf_event_open() arguments and return value.
-+
- -s::
- --stat::
- 	Record per-thread event counts.  Use it with 'perf report -T' to see
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 23332861de6e..ebb09238fcb0 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -2159,6 +2159,7 @@ static struct option __record_options[] = {
- 		     &record_parse_callchain_opt),
- 	OPT_INCR('v', "verbose", &verbose,
- 		    "be more verbose (show counter open errors, etc)"),
-+	OPT_BOOLEAN(0, "peo-args", &peo_args, "Print perf_event_open() args and return value"),
- 	OPT_BOOLEAN('q', "quiet", &quiet, "don't print any message"),
- 	OPT_BOOLEAN('s', "stat", &record.opts.inherit_stat,
- 		    "per thread counts"),
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index e55114f0336f..692cf6788a55 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -24,6 +24,7 @@
- #include <linux/ctype.h>
- 
- int verbose;
-+bool peo_args;
- bool dump_trace = false, quiet = false;
- int debug_ordered_events;
- static int redirect_to_stderr;
-diff --git a/tools/perf/util/debug.h b/tools/perf/util/debug.h
-index d25ae1c4cee9..3e54c5d86f3d 100644
---- a/tools/perf/util/debug.h
-+++ b/tools/perf/util/debug.h
-@@ -8,6 +8,7 @@
- #include <linux/compiler.h>
- 
- extern int verbose;
-+extern bool peo_args;
- extern bool quiet, dump_trace;
- extern int debug_ordered_events;
- extern int debug_data_convert;
-@@ -30,6 +31,14 @@ extern int debug_data_convert;
- #define pr_debug3(fmt, ...) pr_debugN(3, pr_fmt(fmt), ##__VA_ARGS__)
- #define pr_debug4(fmt, ...) pr_debugN(4, pr_fmt(fmt), ##__VA_ARGS__)
- 
-+/* Special macro to print perf_event_open arguments/return value. */
-+#define pr_debug2_peo(fmt, ...) {				\
-+	if (peo_args)						\
-+		pr_debugN(0, pr_fmt(fmt), ##__VA_ARGS__);	\
-+	else							\
-+		pr_debugN(2, pr_fmt(fmt), ##__VA_ARGS__);	\
-+}
-+
- #define pr_time_N(n, var, t, fmt, ...) \
- 	eprintf_time(n, var, t, fmt, ##__VA_ARGS__)
- 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index abc7fda4a0fe..f87ab5c4a29b 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1524,7 +1524,7 @@ static int __open_attr__fprintf(FILE *fp, const char *name, const char *val,
- 
- static void display_attr(struct perf_event_attr *attr)
+-static int dvb_dummy_fe_read_ber(struct dvb_frontend* fe, u32* ber)
++static int dvb_dummy_fe_read_ber(struct dvb_frontend *fe, u32 *ber)
  {
--	if (verbose >= 2) {
-+	if (verbose >= 2 || peo_args) {
- 		fprintf(stderr, "%.60s\n", graph_dotted_line);
- 		fprintf(stderr, "perf_event_attr:\n");
- 		perf_event_attr__fprintf(stderr, attr, __open_attr__fprintf, NULL);
-@@ -1540,7 +1540,7 @@ static int perf_event_open(struct evsel *evsel,
- 	int fd;
+ 	*ber = 0;
+ 	return 0;
+ }
  
- 	while (1) {
--		pr_debug2("sys_perf_event_open: pid %d  cpu %d  group_fd %d  flags %#lx",
-+		pr_debug2_peo("sys_perf_event_open: pid %d  cpu %d  group_fd %d  flags %#lx",
- 			  pid, cpu, group_fd, flags);
+-static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
++static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
+ {
+ 	*strength = 0;
+ 	return 0;
+ }
  
- 		fd = sys_perf_event_open(&evsel->core.attr, pid, cpu, group_fd, flags);
-@@ -1560,9 +1560,9 @@ static int perf_event_open(struct evsel *evsel,
- 			break;
- 		}
+-static int dvb_dummy_fe_read_snr(struct dvb_frontend* fe, u16* snr)
++static int dvb_dummy_fe_read_snr(struct dvb_frontend *fe, u16 *snr)
+ {
+ 	*snr = 0;
+ 	return 0;
+ }
  
--		pr_debug2("\nsys_perf_event_open failed, error %d\n", -ENOTSUP);
-+		pr_debug2_peo("\nsys_perf_event_open failed, error %d\n", -ENOTSUP);
- 		evsel->core.attr.precise_ip--;
--		pr_debug2("decreasing precise_ip by one (%d)\n", evsel->core.attr.precise_ip);
-+		pr_debug2_peo("decreasing precise_ip by one (%d)\n", evsel->core.attr.precise_ip);
- 		display_attr(&evsel->core.attr);
- 	}
+-static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
++static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
+ {
+ 	*ucblocks = 0;
+ 	return 0;
+@@ -77,12 +77,12 @@ static int dvb_dummy_fe_set_frontend(struct dvb_frontend *fe)
+ 	return 0;
+ }
  
-@@ -1681,12 +1681,12 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 					continue;
- 				}
+-static int dvb_dummy_fe_sleep(struct dvb_frontend* fe)
++static int dvb_dummy_fe_sleep(struct dvb_frontend *fe)
+ {
+ 	return 0;
+ }
  
--				pr_debug2("\nsys_perf_event_open failed, error %d\n",
-+				pr_debug2_peo("\nsys_perf_event_open failed, error %d\n",
- 					  err);
- 				goto try_fallback;
- 			}
+-static int dvb_dummy_fe_init(struct dvb_frontend* fe)
++static int dvb_dummy_fe_init(struct dvb_frontend *fe)
+ {
+ 	return 0;
+ }
+@@ -99,17 +99,17 @@ static int dvb_dummy_fe_set_voltage(struct dvb_frontend *fe,
+ 	return 0;
+ }
  
--			pr_debug2(" = %d\n", fd);
-+			pr_debug2_peo(" = %d\n", fd);
+-static void dvb_dummy_fe_release(struct dvb_frontend* fe)
++static void dvb_dummy_fe_release(struct dvb_frontend *fe)
+ {
+-	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
++	struct dvb_dummy_fe_state *state = fe->demodulator_priv;
+ 	kfree(state);
+ }
  
- 			if (evsel->bpf_fd >= 0) {
- 				int evt_fd = fd;
-@@ -1754,58 +1754,58 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 	 */
- 	if (!perf_missing_features.aux_output && evsel->core.attr.aux_output) {
- 		perf_missing_features.aux_output = true;
--		pr_debug2("Kernel has no attr.aux_output support, bailing out\n");
-+		pr_debug2_peo("Kernel has no attr.aux_output support, bailing out\n");
- 		goto out_close;
- 	} else if (!perf_missing_features.bpf && evsel->core.attr.bpf_event) {
- 		perf_missing_features.bpf = true;
--		pr_debug2("switching off bpf_event\n");
-+		pr_debug2_peo("switching off bpf_event\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.ksymbol && evsel->core.attr.ksymbol) {
- 		perf_missing_features.ksymbol = true;
--		pr_debug2("switching off ksymbol\n");
-+		pr_debug2_peo("switching off ksymbol\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.write_backward && evsel->core.attr.write_backward) {
- 		perf_missing_features.write_backward = true;
--		pr_debug2("switching off write_backward\n");
-+		pr_debug2_peo("switching off write_backward\n");
- 		goto out_close;
- 	} else if (!perf_missing_features.clockid_wrong && evsel->core.attr.use_clockid) {
- 		perf_missing_features.clockid_wrong = true;
--		pr_debug2("switching off clockid\n");
-+		pr_debug2_peo("switching off clockid\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.clockid && evsel->core.attr.use_clockid) {
- 		perf_missing_features.clockid = true;
--		pr_debug2("switching off use_clockid\n");
-+		pr_debug2_peo("switching off use_clockid\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.cloexec && (flags & PERF_FLAG_FD_CLOEXEC)) {
- 		perf_missing_features.cloexec = true;
--		pr_debug2("switching off cloexec flag\n");
-+		pr_debug2_peo("switching off cloexec flag\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.mmap2 && evsel->core.attr.mmap2) {
- 		perf_missing_features.mmap2 = true;
--		pr_debug2("switching off mmap2\n");
-+		pr_debug2_peo("switching off mmap2\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.exclude_guest &&
- 		   (evsel->core.attr.exclude_guest || evsel->core.attr.exclude_host)) {
- 		perf_missing_features.exclude_guest = true;
--		pr_debug2("switching off exclude_guest, exclude_host\n");
-+		pr_debug2_peo("switching off exclude_guest, exclude_host\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.sample_id_all) {
- 		perf_missing_features.sample_id_all = true;
--		pr_debug2("switching off sample_id_all\n");
-+		pr_debug2_peo("switching off sample_id_all\n");
- 		goto retry_sample_id;
- 	} else if (!perf_missing_features.lbr_flags &&
- 			(evsel->core.attr.branch_sample_type &
- 			 (PERF_SAMPLE_BRANCH_NO_CYCLES |
- 			  PERF_SAMPLE_BRANCH_NO_FLAGS))) {
- 		perf_missing_features.lbr_flags = true;
--		pr_debug2("switching off branch sample type no (cycles/flags)\n");
-+		pr_debug2_peo("switching off branch sample type no (cycles/flags)\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.group_read &&
- 		    evsel->core.attr.inherit &&
- 		   (evsel->core.attr.read_format & PERF_FORMAT_GROUP) &&
- 		   perf_evsel__is_group_leader(evsel)) {
- 		perf_missing_features.group_read = true;
--		pr_debug2("switching off group read\n");
-+		pr_debug2_peo("switching off group read\n");
- 		goto fallback_missing_features;
- 	}
- out_close:
+ static const struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops;
+ 
+-struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
++struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
+ {
+-	struct dvb_dummy_fe_state* state = NULL;
++	struct dvb_dummy_fe_state *state = NULL;
+ 
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
+@@ -126,7 +126,7 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops;
+ 
+ struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void)
+ {
+-	struct dvb_dummy_fe_state* state = NULL;
++	struct dvb_dummy_fe_state *state = NULL;
+ 
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
+@@ -143,7 +143,7 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qam_ops;
+ 
+ struct dvb_frontend *dvb_dummy_fe_qam_attach(void)
+ {
+-	struct dvb_dummy_fe_state* state = NULL;
++	struct dvb_dummy_fe_state *state = NULL;
+ 
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
+diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.h b/drivers/media/dvb-frontends/dvb_dummy_fe.h
+index 526fabd7751f..35efe2ce1a88 100644
+--- a/drivers/media/dvb-frontends/dvb_dummy_fe.h
++++ b/drivers/media/dvb-frontends/dvb_dummy_fe.h
+@@ -12,9 +12,9 @@
+ #include <media/dvb_frontend.h>
+ 
+ #if IS_REACHABLE(CONFIG_DVB_DUMMY_FE)
+-extern struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void);
+-extern struct dvb_frontend* dvb_dummy_fe_qpsk_attach(void);
+-extern struct dvb_frontend* dvb_dummy_fe_qam_attach(void);
++extern struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void);
++extern struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void);
++extern struct dvb_frontend *dvb_dummy_fe_qam_attach(void);
+ #else
+ static inline struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
+ {
 -- 
-2.21.0
+2.24.0
 
