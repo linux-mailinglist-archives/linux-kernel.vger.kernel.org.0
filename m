@@ -2,135 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 441F0F44E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:46:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22405F44F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:49:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731795AbfKHKqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 05:46:08 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38856 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731600AbfKHKqH (ORCPT
+        id S1731640AbfKHKtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 05:49:14 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:46400 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbfKHKtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 05:46:07 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z19so5691799wmk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 02:46:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4CBruAMCJFKMfos8U5j6/UiYgs9P6E1HnVdReKS3MqA=;
-        b=Q0cF/YSotKrJUQ00DzbNcgg5SFbACXfUSdCuM5kA3+CYUIWwO5opO0zdGQNlY205VJ
-         MVromrhVqva64s7XtAeEGcDIxDI1qT4LP5+BWk5LLYfztAWH9P3AJx6YJoSobBT4k9Bf
-         lcgblIAZmwVazUM3hlKgNWpwpk7yy8n5m47IVr9b+5h0pL3mHHzFp8mLJdH5xXnPZOX7
-         QdAFOo3J9WRWmwwVDstsCrJqZVwQpZ4AtGEK1qw1PJrgRin4TH+oywZuAS/l4q48VOCT
-         Z/9s2jq8l2DsTSFH/y1y6uNgDs5rGrGYVM92r0DDh3cgVOitYs4jka6NHdG+6oPDtWkq
-         +0pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4CBruAMCJFKMfos8U5j6/UiYgs9P6E1HnVdReKS3MqA=;
-        b=OTZ7AIS5evACbsiq4kuEXqPKSWVoX3Kj3XRECgo02/Ut1BE7sIMKK8/iHjT+PkN0BU
-         m9ena+/+1dFCcp+j5tYb3FUyPmYgbGhCHDUn8D26vGWdoVyQzOCKX3Q3NZM5LrP/oye1
-         64+js6o01R7tYDIoejyyRgcS2ln0lmeYWXgW9PXte5XSSQfcu1xFICo4kU/EP0t3AQ1V
-         cnp1mqAEYKD7ZwpIBEAMVPepURrNiXvb3eztBoujwWcUeyuhPy8hjmp4DYDxXNdPYiiE
-         9WmVQpdK+ZbhdB6fvR4xvIizuZW08mMFXzrbSQjy9SYrYOxvchT33WKY/BndQaOBlyv2
-         nmZg==
-X-Gm-Message-State: APjAAAVQJtaca6CkW/qaY1wMDJ5cu31s9y6iP3DzHdLSYzoNMWQLz+ut
-        IfFSdx1lnJga54toUcPI4fJTBQ==
-X-Google-Smtp-Source: APXvYqz25njYbwovs9pg+pdBGnlz1bVNRBcz/NUAh6IHHrnzt0NMqxeo1MLcjvB3yCr+4j30r7AJSQ==
-X-Received: by 2002:a1c:3d57:: with SMTP id k84mr7225203wma.156.1573209963618;
-        Fri, 08 Nov 2019 02:46:03 -0800 (PST)
-Received: from fat-tyre.localnet ([2001:858:107:1:a5fe:1d4:97a0:40d8])
-        by smtp.gmail.com with ESMTPSA id y6sm3240108wrr.19.2019.11.08.02.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 02:46:02 -0800 (PST)
-From:   Philipp Reisner <philipp.reisner@linbit.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] block: drbd: remove a stay unlock in __drbd_send_protocol()
-Date:   Fri, 08 Nov 2019 11:46:00 +0100
-Message-ID: <6906816.cRlsrm7Sor@fat-tyre>
-In-Reply-To: <20191107074847.GA11695@mwanda>
-References: <20191107074847.GA11695@mwanda>
+        Fri, 8 Nov 2019 05:49:13 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8AjGqi046403;
+        Fri, 8 Nov 2019 10:47:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=kBevcn7bSITNRLFqXhWbTPcrt4smHMbslYxVx+6MMTU=;
+ b=MAIfZ6eVxbW4QkaPitoy1W0MajRcHVkJNP3Z36YXxrAVfEubFE9cuhDFGGKWq1bpBvbj
+ nWL78QajL8j42KbXqnsk5toA9wprVDmJ4JJ2hhB/10vuw+hP7MR5gCvLeZKvNEUarNbs
+ 0JlVoh7EBuHvR7pVSxRWpk9iCEd51jX1HwaPeZZEiKeBkchEeloe3NKrNQ31SFk3bhDJ
+ S19teEm/EqM5+Z53rnthfFxvbWBkQVi5NmQxzpC6WEhE27GUKdqcDZAMBupFWYy8yTy1
+ bvx7DT70HsH31DqZX3K1gSnmSCDmBVYz/FpbnsGR7XD4/pV0rpqOfbchMK8bWFqVq3o+ /g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2w41w14gy8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 10:47:15 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8AgOOf193616;
+        Fri, 8 Nov 2019 10:47:15 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2w4k31hjkq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 10:47:15 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA8Al9vV008851;
+        Fri, 8 Nov 2019 10:47:09 GMT
+Received: from tomti.i.net-space.pl (/10.175.202.125)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Nov 2019 02:47:09 -0800
+Date:   Fri, 8 Nov 2019 11:47:02 +0100
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        corbet@lwn.net, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, eric.snowberg@oracle.com, hpa@zytor.com,
+        jgross@suse.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, rdunlap@infradead.org, ross.philipson@oracle.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v5 2/3] x86/boot: Introduce the kernel_info.setup_type_max
+Message-ID: <20191108104702.vwfmvehbeuza4j5w@tomti.i.net-space.pl>
+References: <20191104151354.28145-1-daniel.kiper@oracle.com>
+ <20191104151354.28145-3-daniel.kiper@oracle.com>
+ <20191108100930.GA4503@zn.tnic>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108100930.GA4503@zn.tnic>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911080104
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911080105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On Fri, Nov 08, 2019 at 11:09:30AM +0100, Borislav Petkov wrote:
+> On Mon, Nov 04, 2019 at 04:13:53PM +0100, Daniel Kiper wrote:
+> > This field contains maximal allowed type for setup_data.
+> >
+> > This patch does not bump setup_header version in arch/x86/boot/header.S
+> > because it will be followed by additional changes coming into the
+> > Linux/x86 boot protocol.
+> >
+> > Suggested-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+> > Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+> > Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> > Reviewed-by: Ross Philipson <ross.philipson@oracle.com>
+> > Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+> > ---
+> > v5 - suggestions/fixes:
+> >    - move incorrect references to the setup_indirect to the
+> >      patch introducing it,
+> >    - do not bump setup_header version in arch/x86/boot/header.S
+> >      (suggested by H. Peter Anvin).
+> > ---
+> >  Documentation/x86/boot.rst             | 9 ++++++++-
+> >  arch/x86/boot/compressed/kernel_info.S | 5 +++++
+> >  arch/x86/include/uapi/asm/bootparam.h  | 3 +++
+> >  3 files changed, 16 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/x86/boot.rst b/Documentation/x86/boot.rst
+> > index c60fafda9427..1dad6eee8a5c 100644
+> > --- a/Documentation/x86/boot.rst
+> > +++ b/Documentation/x86/boot.rst
+> > @@ -73,7 +73,7 @@ Protocol 2.14:	BURNT BY INCORRECT COMMIT ae7e1238e68f2a472a125673ab506d49158c188
+> >  		(x86/boot: Add ACPI RSDP address to setup_header)
+> >  		DO NOT USE!!! ASSUME SAME AS 2.13.
+> >
+> > -Protocol 2.15:	(Kernel 5.5) Added the kernel_info.
+> > +Protocol 2.15:	(Kernel 5.5) Added the kernel_info and kernel_info.setup_type_max.
+> >  =============	============================================================
+> >
+> >  .. note::
+> > @@ -981,6 +981,13 @@ Offset/size:	0x0008/4
+> >    This field contains the size of the kernel_info including kernel_info.header
+> >    and kernel_info.kernel_info_var_len_data.
+> >
+> > +============	==============
+> > +Field name:	setup_type_max
+> > +Offset/size:	0x0008/4
+>
+> You already have
+>
+> Field name:     size_total
+> Offset/size:    0x0008/4
+>
+> at that offset.
+>
+> I guess you mean setup_type_max's offset to be 0x000c and it would be
+> that member:
+>
+> .long   0x01234567      /* Some fixed size data for the bootloaders. */
+>
+> ?
 
-yes, your patch it obviously correct. The comment you are
-referring to is badly worded. We will remove it.
+Yeah, you are right. Would you like me to repost whole patch series or
+could you fix it before committing?
 
-Jens,
-
-are you taking this patch as it is?
-
-best regards,
- Phil
-
-Am Donnerstag, 7. November 2019, 08:48:47 CET schrieb Dan Carpenter:
-> There are two callers of this function and they both unlock the mutex so
-> this ends up being a double unlock.
->=20
-> Fixes: 44ed167da748 ("drbd: rcu_read_lock() and rcu_dereference() for
-> tconn->net_conf") Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static analisys.  Not tested.  There is a comment about the lock next to
-> the caller in drbd_nl.c that I didn't understand:
->=20
-> drivers/block/drbd/drbd_nl.c
->   2509          crypto_free_shash(connection->integrity_tfm);
->   2510          connection->integrity_tfm =3D crypto.integrity_tfm;
->   2511          if (connection->cstate >=3D C_WF_REPORT_PARAMS &&
-> connection->agreed_pro_version >=3D 100) 2512                  /* Do this
-> without trying to take connection->data.mutex again.  */
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ What does th=
-is
-> mean?  We're already holding that lock.  We took it near the start of the
-> function.
->=20
->   2513                  __drbd_send_protocol(connection, P_PROTOCOL_UPDAT=
-E);
-> 2514
->   2515          crypto_free_shash(connection->cram_hmac_tfm);
->   2516          connection->cram_hmac_tfm =3D crypto.cram_hmac_tfm;
->   2517
->   2518          mutex_unlock(&connection->resource->conf_update);
->   2519          mutex_unlock(&connection->data.mutex);
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Unlocked here.
->=20
->  drivers/block/drbd/drbd_main.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_mai=
-n.c
-> index 5b248763a672..a18155cdce41 100644
-> --- a/drivers/block/drbd/drbd_main.c
-> +++ b/drivers/block/drbd/drbd_main.c
-> @@ -786,7 +786,6 @@ int __drbd_send_protocol(struct drbd_connection
-> *connection, enum drbd_packet cm
->=20
->  	if (nc->tentative && connection->agreed_pro_version < 92) {
->  		rcu_read_unlock();
-> -		mutex_unlock(&sock->mutex);
->  		drbd_err(connection, "--dry-run is not supported by peer");
->  		return -EOPNOTSUPP;
->  	}
-
-
-=2D-=20
-LINBIT | Keeping The Digital World Running
-
-DRBD=AE and LINBIT=AE are registered trademarks of LINBIT, Austria.
-
-
-
+Daniel
