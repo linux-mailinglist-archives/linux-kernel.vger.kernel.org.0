@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1316FF5748
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82545F5664
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389911AbfKHTTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:19:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57248 "EHLO mail.kernel.org"
+        id S1733053AbfKHTIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:08:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389455AbfKHTAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:09 -0500
+        id S2391624AbfKHTIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:08:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79EBE2249A;
-        Fri,  8 Nov 2019 18:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14AF320673;
+        Fri,  8 Nov 2019 19:08:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239520;
-        bh=ibnqHHkk4twvcCo4esDFArvVEjPCwfMW+JZc9ZVkvJo=;
+        s=default; t=1573240110;
+        bh=da0Dc3YyHtDFQHAivpF3KR1hwEg05Ph3HgY/GO0aQMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cREx3mau0C9cxEf5Vj+cWLvL0ADDoUE5URSMOdAyZ1+8JgzvqyYHgn07ugsqPNGTp
-         KN7tIFsvM3ZtBxkxuzZHkWCeClmYC1EZKvIOqrbSNg+P2qjFxJUSmeQGIHbjuoZN7i
-         LtmFkXvgral//7gSWdGSTDuoJVA9dgFHoRgs8vfM=
+        b=lRZ3nxjLOtBINJ5LeKFnOukGAvuU0JrsdlEotU6lS/uGqYpy0eKtvKwsolhMKJWTZ
+         sagAhQqjwbvPRLvgJlcIN05Oezp5nPDoqvaANATb3z2CU4jUJoWuu18SE7uqBNsTBe
+         cb2Mc90nz1Q5oWuX+u7/ZvQM1s7DBJE4G4zPODQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhanglin <zhang.lin16@zte.com.cn>,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 32/62] net: Zeroing the structure ethtool_wolinfo in ethtool_get_wol()
+Subject: [PATCH 5.3 092/140] net: rtnetlink: fix a typo fbd -> fdb
 Date:   Fri,  8 Nov 2019 19:50:20 +0100
-Message-Id: <20191108174744.445261116@linuxfoundation.org>
+Message-Id: <20191108174910.866838205@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhanglin <zhang.lin16@zte.com.cn>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-[ Upstream commit 5ff223e86f5addbfae26419cbb5d61d98f6fbf7d ]
+[ Upstream commit 8b73018fe44521c1cf59d7bac53624c87d3f10e2 ]
 
-memset() the structure ethtool_wolinfo that has padded bytes
-but the padded bytes have not been zeroed out.
+A simple typo fix in the nl error message (fbd -> fdb).
 
-Signed-off-by: zhanglin <zhang.lin16@zte.com.cn>
+CC: David Ahern <dsahern@gmail.com>
+Fixes: 8c6e137fbc7f ("rtnetlink: Update rtnl_fdb_dump for strict data checking")
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/ethtool.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/core/rtnetlink.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -1450,11 +1450,13 @@ static int ethtool_reset(struct net_devi
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -3916,7 +3916,7 @@ static int valid_fdb_dump_strict(const s
+ 	ndm = nlmsg_data(nlh);
+ 	if (ndm->ndm_pad1  || ndm->ndm_pad2  || ndm->ndm_state ||
+ 	    ndm->ndm_flags || ndm->ndm_type) {
+-		NL_SET_ERR_MSG(extack, "Invalid values in header for fbd dump request");
++		NL_SET_ERR_MSG(extack, "Invalid values in header for fdb dump request");
+ 		return -EINVAL;
+ 	}
  
- static int ethtool_get_wol(struct net_device *dev, char __user *useraddr)
- {
--	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
-+	struct ethtool_wolinfo wol;
- 
- 	if (!dev->ethtool_ops->get_wol)
- 		return -EOPNOTSUPP;
- 
-+	memset(&wol, 0, sizeof(struct ethtool_wolinfo));
-+	wol.cmd = ETHTOOL_GWOL;
- 	dev->ethtool_ops->get_wol(dev, &wol);
- 
- 	if (copy_to_user(useraddr, &wol, sizeof(wol)))
 
 
