@@ -2,200 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62548F4D0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE007F4CEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729895AbfKHNVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:21:54 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59262 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728371AbfKHNVg (ORCPT
+        id S1727959AbfKHNQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:16:09 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:43235 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbfKHNQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 08:21:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hygrSi0ztJbd+dBSkhH6ffAddwGBz8EoqwwX8uIlEKg=; b=FcWbjedCtVxT9eMmCbXUt5TB3O
-        hNbz5maqjlUJOcixnhbukli4mauHkdIRYMJZYiPg9kUYm8XFa1bs8xFrxkbYsQ4tt2RJL7Qj1kht1
-        pUgcZaAjUQwg/2BZRTmdXgd0HLXf+jLXqwUMUzVlTbMCwRiCEfkYa1WaWOlM6bxnec2OSx4+ZBKp3
-        uKv6oRnefMTEwvdLsRurTpldYlMf0QWzeRdwrD9uMDs6F+nEm0t6iJ7O5M0yETfi5BI71gMEJ0MVS
-        pinqVqwTEUTirNgl4xtNAPeEylrtuD/gxywQXLWSn0CXyBX15CO98siuK+wLe3xP99b06JBoxfZXG
-        7QptLfSA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iT4Ca-0006lR-Oi; Fri, 08 Nov 2019 13:21:25 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F2C11306CBC;
-        Fri,  8 Nov 2019 14:20:15 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 5493620C10EBC; Fri,  8 Nov 2019 14:21:20 +0100 (CET)
-Message-Id: <20191108131909.775434698@infradead.org>
-User-Agent: quilt/0.65
-Date:   Fri, 08 Nov 2019 14:16:00 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     mingo@kernel.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de
-Cc:     linux-kernel@vger.kernel.org, qperret@google.com,
-        valentin.schneider@arm.com, qais.yousef@arm.com,
-        ktkhai@virtuozzo.com, peterz@infradead.org
-Subject: [PATCH 7/7] sched: Further clarify sched_class::set_next_task()
-References: <20191108131553.027892369@infradead.org>
+        Fri, 8 Nov 2019 08:16:09 -0500
+Received: by mail-il1-f199.google.com with SMTP id d11so6820615ild.10
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:16:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=FffDQgwn/dW+1508K0LBJAZybRGysdymW5Wy11WbKVA=;
+        b=NT0OTtTFSTmP26wPlvVWivIm1UnRZA3YdORAPEmJW/8ftD104/MeqzdOqnmiezP9JJ
+         o3iIHCrm1jECXw85V2pSPJO4WFpaIFANMENOf30YvS94shxkVpvSMD5RWvq0E+9zlDhp
+         KRRMcb0kZolhYvNk2yxb5TGBfPSmwg2C1ha6hrGoE5E4v4HHQSwN6BFTEZlfVNBAETRD
+         Z+5bZ5hb0JuNPDDBWl//+ZLmvnFl7Us5k0qnbGKP1Kg8j9IazG3BD1I7+1+zOi4y3qC+
+         RgTylbUW/vXee5iuf6nKaKSeWTp44ldHS5NtbMcwRRFnsFjOZVS+y94gjwCd1Cu+pg6m
+         jUrw==
+X-Gm-Message-State: APjAAAVGCic4wj0nNexfKutNX2Y3apbWxJl1KEdVTcZ7S5FU7ZkAkpBG
+        mj2XwtAKN6I9xveg7zo8C+phZaiaXZ9Vbj+W65JXk1pl7krb
+X-Google-Smtp-Source: APXvYqz8qoOQm5P+K+lDeq1WdI8t8mYMNJE9ma8BuofwhXEctYACRVzeDkXyr18rofd0qRiLq1Xi8pCgXI7idZc0oY/aXpF/BDMt
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Received: by 2002:a6b:bd86:: with SMTP id n128mr9904815iof.214.1573218968409;
+ Fri, 08 Nov 2019 05:16:08 -0800 (PST)
+Date:   Fri, 08 Nov 2019 05:16:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c422a80596d595ee@google.com>
+Subject: KCSAN: data-race in __alloc_file / __alloc_file
+From:   syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>
+To:     elver@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It turns out there really is something special to the first
-set_next_task() invocation. In specific the 'change' pattern really
-should not cause balance_callbacks.
+Hello,
 
-Fixes: f95d4eaee6d0 ("sched/{rt,deadline}: Fix set_next_task vs pick_next_task")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+syzbot found the following crash on:
+
+HEAD commit:    05f22368 x86, kcsan: Enable KCSAN for x86
+git tree:       https://github.com/google/ktsan.git kcsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=10d7fd88e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=87d111955f40591f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ef049d50587836c0606
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in __alloc_file / __alloc_file
+
+write to 0xffff8880bb157398 of 4 bytes by task 10993 on cpu 0:
+  get_cred include/linux/cred.h:253 [inline]
+  __alloc_file+0x74/0x210 fs/file_table.c:105
+  alloc_empty_file+0x8f/0x180 fs/file_table.c:151
+  alloc_file+0x4e/0x2b0 fs/file_table.c:193
+  alloc_file_pseudo+0x11c/0x1b0 fs/file_table.c:232
+  anon_inode_getfile fs/anon_inodes.c:91 [inline]
+  anon_inode_getfile+0x103/0x1d0 fs/anon_inodes.c:74
+  __do_sys_perf_event_open+0xd32/0x1ac0 kernel/events/core.c:11100
+  __se_sys_perf_event_open kernel/events/core.c:10867 [inline]
+  __x64_sys_perf_event_open+0x70/0x90 kernel/events/core.c:10867
+  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+write to 0xffff8880bb157398 of 4 bytes by task 11004 on cpu 1:
+  get_cred include/linux/cred.h:253 [inline]
+  __alloc_file+0x74/0x210 fs/file_table.c:105
+  alloc_empty_file+0x8f/0x180 fs/file_table.c:151
+  path_openat+0x74/0x36e0 fs/namei.c:3514
+  do_filp_open+0x11e/0x1b0 fs/namei.c:3555
+  do_sys_open+0x3b3/0x4f0 fs/open.c:1097
+  __do_sys_open fs/open.c:1115 [inline]
+  __se_sys_open fs/open.c:1110 [inline]
+  __x64_sys_open+0x55/0x70 fs/open.c:1110
+  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 11004 Comm: syz-executor.5 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+==================================================================
+
+
 ---
- kernel/sched/deadline.c  |    7 +++++--
- kernel/sched/fair.c      |    2 +-
- kernel/sched/idle.c      |    4 ++--
- kernel/sched/rt.c        |    7 +++++--
- kernel/sched/sched.h     |    4 ++--
- kernel/sched/stop_task.c |    4 ++--
- 6 files changed, 17 insertions(+), 11 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1743,13 +1743,16 @@ static void start_hrtick_dl(struct rq *r
- }
- #endif
- 
--static void set_next_task_dl(struct rq *rq, struct task_struct *p)
-+static void set_next_task_dl(struct rq *rq, struct task_struct *p, bool first)
- {
- 	p->se.exec_start = rq_clock_task(rq);
- 
- 	/* You can't push away the running task */
- 	dequeue_pushable_dl_task(rq, p);
- 
-+	if (!first)
-+		return;
-+
- 	if (hrtick_enabled(rq))
- 		start_hrtick_dl(rq, p);
- 
-@@ -1782,7 +1785,7 @@ static struct task_struct *pick_next_tas
- 	dl_se = pick_next_dl_entity(rq, dl_rq);
- 	BUG_ON(!dl_se);
- 	p = dl_task_of(dl_se);
--	set_next_task_dl(rq, p);
-+	set_next_task_dl(rq, p, true);
- 	return p;
- }
- 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -10343,7 +10343,7 @@ static void switched_to_fair(struct rq *
-  * This routine is mostly called to set cfs_rq->curr field when a task
-  * migrates between groups/classes.
-  */
--static void set_next_task_fair(struct rq *rq, struct task_struct *p)
-+static void set_next_task_fair(struct rq *rq, struct task_struct *p, bool first)
- {
- 	struct sched_entity *se = &p->se;
- 
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -385,7 +385,7 @@ static void put_prev_task_idle(struct rq
- {
- }
- 
--static void set_next_task_idle(struct rq *rq, struct task_struct *next)
-+static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool first)
- {
- 	update_idle_core(rq);
- 	schedstat_inc(rq->sched_goidle);
-@@ -395,7 +395,7 @@ struct task_struct *pick_next_task_idle(
- {
- 	struct task_struct *next = rq->idle;
- 
--	set_next_task_idle(rq, next);
-+	set_next_task_idle(rq, next, true);
- 
- 	return next;
- }
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1515,13 +1515,16 @@ static void check_preempt_curr_rt(struct
- #endif
- }
- 
--static inline void set_next_task_rt(struct rq *rq, struct task_struct *p)
-+static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool first)
- {
- 	p->se.exec_start = rq_clock_task(rq);
- 
- 	/* The running task is never eligible for pushing */
- 	dequeue_pushable_task(rq, p);
- 
-+	if (!first)
-+		return;
-+
- 	/*
- 	 * If prev task was rt, put_prev_task() has already updated the
- 	 * utilization. We only care of the case where we start to schedule a
-@@ -1572,7 +1575,7 @@ static struct task_struct *pick_next_tas
- 		return NULL;
- 
- 	p = _pick_next_task_rt(rq);
--	set_next_task_rt(rq, p);
-+	set_next_task_rt(rq, p, true);
- 	return p;
- }
- 
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1716,7 +1716,7 @@ struct sched_class {
- 	struct task_struct *(*pick_next_task)(struct rq *rq);
- 
- 	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
--	void (*set_next_task)(struct rq *rq, struct task_struct *p);
-+	void (*set_next_task)(struct rq *rq, struct task_struct *p, bool first);
- 
- #ifdef CONFIG_SMP
- 	int (*balance)(struct rq *rq, struct task_struct *prev, struct rq_flags *rf);
-@@ -1768,7 +1768,7 @@ static inline void put_prev_task(struct
- static inline void set_next_task(struct rq *rq, struct task_struct *next)
- {
- 	WARN_ON_ONCE(rq->curr != next);
--	next->sched_class->set_next_task(rq, next);
-+	next->sched_class->set_next_task(rq, next, false);
- }
- 
- #ifdef CONFIG_SMP
---- a/kernel/sched/stop_task.c
-+++ b/kernel/sched/stop_task.c
-@@ -29,7 +29,7 @@ check_preempt_curr_stop(struct rq *rq, s
- 	/* we're never preempted */
- }
- 
--static void set_next_task_stop(struct rq *rq, struct task_struct *stop)
-+static void set_next_task_stop(struct rq *rq, struct task_struct *stop, bool first)
- {
- 	stop->se.exec_start = rq_clock_task(rq);
- }
-@@ -39,7 +39,7 @@ static struct task_struct *pick_next_tas
- 	if (!sched_stop_runnable(rq))
- 		return NULL;
- 
--	set_next_task_stop(rq, rq->stop);
-+	set_next_task_stop(rq, rq->stop, true);
- 	return rq->stop;
- }
- 
-
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
