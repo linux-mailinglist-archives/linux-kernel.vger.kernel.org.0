@@ -2,93 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24ACCF5169
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:44:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B59BF5167
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:44:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfKHQog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 11:44:36 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46571 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727149AbfKHQof (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 11:44:35 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e9so6865315ljp.13;
-        Fri, 08 Nov 2019 08:44:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cK+IGE/NngSL6LBLRuXqj1unYMeLxTCgHc31IK6M3A8=;
-        b=com7jnRF5SZ9/ccNJQmHeb811+9z4q6zQpNqargqN4kMxwN+PtSkDWcgGhb66Uhr7s
-         pCcM4eXTHQren2dDDoxjDXnlFGcfagRddvzKf3yB/A3Lmezgp4N2RYrfEFH8TpgXHc73
-         +Is0fXX2zvLQAKUuT6+VLdGgh7rhB2ennX5FHcI6XPFIJVQYXX6jehAZjwB0itJuy4jU
-         baXmWFAt85GVpj+/wuOplH8pIYVd7Tsf4olpr4ABfPrOKd6CpHkJLzDRYi7awb/7oxcd
-         cW3fwLLHXvhekF7F5RGUUsT2cd9PtOR1Yued636PH6yHmffOwZMNhyCa2qALr999aqV+
-         Amng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cK+IGE/NngSL6LBLRuXqj1unYMeLxTCgHc31IK6M3A8=;
-        b=ocJquGb7sQhav0TouIOmaCZJ7yhmoIKHhgqbWLP9mIyn4OE0RT7O68m34dE+S+/lHU
-         grI304MFh+2FDkfuQqqQIPqi/ZkQ+3Br7vCNIvbEINO4sYbV2QvYStFzT2kvRlRMmOzq
-         S1ofUDjHKwgdsFjO3RZxaVnW/1fyA6hgpsJC1PEkdyrdl5kCMEks5FwJiiNTunUTLHZT
-         4/e2WLTWyur7miER/GnfqvfjLuFxcV/AK7fen07K5ZaeHbqAn2NT9v92GLIbQEAtnCe+
-         eRjd9lZGwtmPjdmO81b5Yaj6sKKBVeZGSUzeUyNyTqijqYRbj4kJgG6kTy6lsWhMyaxX
-         qGMQ==
-X-Gm-Message-State: APjAAAU5jZ9NaVyn3AbtE9tigc7PoAMLwPYAEY8FR5fx7ytVxahsolIO
-        YLjiLze2jYw0+TiJPcpw449XbayjJio=
-X-Google-Smtp-Source: APXvYqwnqP1/jFgP5c/CIcNf5IFpRJbWD/bxegdrv46BVSwI40CW/JtrxhItMkGjkKVpEuZwWMQAmg==
-X-Received: by 2002:a2e:9112:: with SMTP id m18mr7712122ljg.75.1573231472347;
-        Fri, 08 Nov 2019 08:44:32 -0800 (PST)
-Received: from localhost.localdomain ([91.237.107.85])
-        by smtp.googlemail.com with ESMTPSA id z19sm2696415ljk.66.2019.11.08.08.44.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 08:44:31 -0800 (PST)
-From:   Leonid Maksymchuk <leonmaxx@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, chiu@endlessm.com,
-        yurii.pavlovskyi@gmail.com, kristian@klausen.dk,
-        andy@infradead.org, dvhart@infradead.org, corentin.chary@gmail.com,
-        Leonid Maksymchuk <leonmaxx@gmail.com>
-Subject: [PATCH v4 1/3] asus_wmi: Fix return value of fan_boost_mode_store
-Date:   Fri,  8 Nov 2019 18:44:16 +0200
-Message-Id: <20191108164416.2969-1-leonmaxx@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191108164317.2874-1-leonmaxx@gmail.com>
-References: <20191108164317.2874-1-leonmaxx@gmail.com>
+        id S1727325AbfKHQoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 11:44:30 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2078 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727149AbfKHQo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 11:44:29 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 41E724EA76087BF488D6;
+        Fri,  8 Nov 2019 16:44:27 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 8 Nov 2019 16:44:26 +0000
+Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Fri, 8 Nov 2019
+ 16:44:26 +0000
+Subject: Re: [PATCH v2 6/9] Revert "iommu/arm-smmu: Make arm-smmu-v3
+ explicitly non-modular"
+From:   John Garry <john.garry@huawei.com>
+To:     Will Deacon <will@kernel.org>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     "Isaac J. Manjarres" <isaacm@codeaurora.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20191108151608.20932-1-will@kernel.org>
+ <20191108151608.20932-7-will@kernel.org>
+ <06dfd385-1af0-3106-4cc5-6a5b8e864759@huawei.com>
+Message-ID: <7e906ed1-ab85-7e25-9b29-5497e98da8d8@huawei.com>
+Date:   Fri, 8 Nov 2019 16:44:25 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
+In-Reply-To: <06dfd385-1af0-3106-4cc5-6a5b8e864759@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.202.226.46]
+X-ClientProxiedBy: lhreml703-chm.china.huawei.com (10.201.108.52) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function fan_boost_mode_store should return number of bytes written
-but instead it returns return value of kstrtou8 which is 0 if
-conversion is succefull. This leads to infinite loop after any
-write to it's SysFS entry.
+On 08/11/2019 16:17, John Garry wrote:
+> On 08/11/2019 15:16, Will Deacon wrote:
+>> +MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+> 
+> Hi Will,
+> 
+>>   static struct platform_driver arm_smmu_driver = {
+>>       .driver    = {
+>>           .name        = "arm-smmu-v3",
+>>           .of_match_table    = of_match_ptr(arm_smmu_of_match),
+>> -        .suppress_bind_attrs = true,
+> 
+> Does this mean that we can now manually unbind this driver from the SMMU 
+> device?
+> 
+> Seems dangerous. Here's what happens for me:
+> 
+> root@ubuntu:/sys# cd ./bus/platform/drivers/arm-smmu-v3
+> ind @ubuntu:/sys/bus/platform/drivers/arm-smmu-v3# echo 
+> arm-smmu-v3.0.auto > unbind
+> [   77.580351] hisi_sas_v2_hw HISI0162:01: CQE_AXI_W_ERR (0x800) found!
+> ho [   78.635473] platform arm-smmu-v3.0.auto: CMD_SYNC timeout at 
+> 0x00000146 [hwprod 0x00000146, hwcons 0x00000000]
+> 
+>>       },
+>>       .probe    = arm_smmu_device_probe,
+>> +    .remove    = arm_smmu_device_remove,
+>>       .shutdown = arm_smmu_device_shutdown,
+>>   };
+>> -builtin_platform_driver(arm_smmu_driver);
+>> +module_platform_driver(arm_smmu_driver);
+>> +
 
-Fixes: b096f626a682 ("platform/x86: asus-wmi: Switch fan boost mode")
-Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
----
- drivers/platform/x86/asus-wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+BTW, it now looks like it was your v1 series I was testing there, on 
+your branch iommu/module. It would be helpful to update for ease of testing.
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 821b08e01635..723aa4d969dc 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -1718,7 +1718,7 @@ static ssize_t fan_boost_mode_store(struct device *dev,
- 	asus->fan_boost_mode = new_mode;
- 	fan_boost_mode_write(asus);
- 
--	return result;
-+	return count;
- }
- 
- // Fan boost mode: 0 - normal, 1 - overboost, 2 - silent
--- 
-2.23.0
+Thanks,
+John
 
