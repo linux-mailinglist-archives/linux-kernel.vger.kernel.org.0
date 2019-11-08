@@ -2,76 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46CA4F4292
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 09:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66366F4294
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 09:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730509AbfKHIxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 03:53:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40428 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726072AbfKHIxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 03:53:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BD938B219;
-        Fri,  8 Nov 2019 08:53:38 +0000 (UTC)
-Date:   Fri, 8 Nov 2019 09:53:37 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/2] mm: memcg: switch to css_tryget() in
- get_mem_cgroup_from_mm()
-Message-ID: <20191108085337.GA15658@dhcp22.suse.cz>
-References: <20191106225131.3543616-1-guro@fb.com>
- <20191107122125.GS8314@dhcp22.suse.cz>
- <20191107164236.GB2919@castle.dhcp.thefacebook.com>
- <20191107170200.GX8314@dhcp22.suse.cz>
- <20191107224107.GA8219@castle.DHCP.thefacebook.com>
+        id S1730813AbfKHIyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 03:54:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48354 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbfKHIyM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 03:54:12 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 82BA660D88; Fri,  8 Nov 2019 08:54:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573203251;
+        bh=oSYD5bTk0nZEI+qjwfBwMj09stT85t5HdQnYEDhLbUM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=FIwBAcJ7N1Sb+Xa5ouehdrG/iAlq2MUgQXZM8V/dHVXNfeqWZtr38PhUZJVfJpdtf
+         6fyh2y2N7eXl/CPsDi8ufGV6s3tK28DSgAYF4a63AellVrLz22ErbeYmXxXJFFQtN2
+         D6Qs9FFEaMwoQqrg80snzTnBiy3Wa9NGu9tz7pTw=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D60AF60923;
+        Fri,  8 Nov 2019 08:54:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573203249;
+        bh=oSYD5bTk0nZEI+qjwfBwMj09stT85t5HdQnYEDhLbUM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=Gkcw6NMqBqENXzsUyhmHaezZtGbb8/tUSbgY/knT31tygrd4Es5eS+dtr41uK9bHP
+         bM8ND+PybQ6Pm3rs87FFKFD89rpEJDb4jFp2WszdsOn9xTsi/6ec8SslEvs0fZIL2o
+         yUd61s6KyafFFlQUeG/9qiyY2AQRT7KqMtLKr2VA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D60AF60923
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107224107.GA8219@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath10k: disable cpuidle during downloading firmware.
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191101054035.42101-1-ikjn@chromium.org>
+References: <20191101054035.42101-1-ikjn@chromium.org>
+To:     Ikjoon Jang <ikjn@chromium.org>
+Cc:     ath10k@lists.infradead.org,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ikjoon Jang <ikjn@chromium.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20191108085411.82BA660D88@smtp.codeaurora.org>
+Date:   Fri,  8 Nov 2019 08:54:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 07-11-19 22:41:13, Roman Gushchin wrote:
-> On Thu, Nov 07, 2019 at 06:02:00PM +0100, Michal Hocko wrote:
-> > On Thu 07-11-19 16:42:41, Roman Gushchin wrote:
-[...]
-> > > It's an exiting task with the PF_EXITING flag set and it's in their late stages
-> > > of life.
-> > 
-> > This is a signal delivery path AFAIU (get_signal) and the coredumping
-> > happens before do_exit. My understanding is that that unlinking
-> > happens from cgroup_exit. So either I am misreading the backtrace or
-> > there is some other way to leave cgroups or there is something more
-> > going on.
+Ikjoon Jang <ikjn@chromium.org> wrote:
+
+> Downloading ath10k firmware needs a large number of IOs and
+> cpuidle's miss predictions make it worse. In the worst case,
+> resume time can be three times longer than the average on sdio.
 > 
-> Yeah, you're right. I have no better explanation for this and the similar,
-> mentioned in the commit bsd accounting issue,
-
-Tejun mentioned bsd accounting issue as well, but I do not see any
-explicit reference to it in neither of the two patches.
-
-> than some very rare race condition
-> that allows cgroups to be offlined with a task inside.
+> This patch disables cpuidle during firmware downloading by
+> applying PM_QOS_CPU_DMA_LATENCY in ath10k_download_fw().
 > 
-> I'll think more about it.
+> Tested-on: QCA9880
+> Tested-on: QCA6174 hw3.2 SDIO WLAN.RMH.4.4.1-00029
+> 
+> Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Thanks a lot. As I've said, I am not opposing this change once we have a
-proper changelog but I find the explanation really weak. If there is a
-race then it should be fixed as well.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Thanks!
+3b58d6a599ba ath10k: disable cpuidle during downloading firmware
+
 -- 
-Michal Hocko
-SUSE Labs
+https://patchwork.kernel.org/patch/11222331/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
