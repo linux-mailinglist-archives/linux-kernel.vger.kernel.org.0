@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0F06F56AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D31DCF55C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391476AbfKHTKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:10:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42428 "EHLO mail.kernel.org"
+        id S2390995AbfKHTE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:04:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733054AbfKHTKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:10:15 -0500
+        id S2389782AbfKHTEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:04:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2E3420673;
-        Fri,  8 Nov 2019 19:10:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA4802067B;
+        Fri,  8 Nov 2019 19:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240215;
-        bh=KtYj48o4KEAxpLKreC1Q2lNuWWIVvYTfhACSsyqR/m4=;
+        s=default; t=1573239857;
+        bh=dwVpEfb1cMtg/YqXg8bKLMmHaJGWaMQOLmtkdsLAl14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KuWbMifQRNIwZBwB0gx9XV0rvUGn4QneH9CsjCr+oh5a7TRMcHslvC03mGvSzL1Bw
-         erfDkhOaaBrni9Q3qjMW26AO6S67kPmgugwdNIKR7QWbQe6oeRxoJaNG4o7VDs8KXs
-         Lu7eGqpYrTDhIdcGsx9PDkyBAgqHEXSu/ASVL+YY=
+        b=2hY34G5EBCg0cBDkxIAIc3woNLlQUqsXiEKqjWaG0thPpIxD5xJoay1M0yMIS9ca5
+         HqAexmDgHRKbljJxMhIM+fUFXKNWH7Zl2l8PJksjHSwrLh6VHP5t8pTGkrcbO8apkz
+         Syi4HQfOAwEwLAisYhiU1Dv+nvQ9hA5eGtnYPnIs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kazutoshi Noguchi <noguchi.kazutosi@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 129/140] r8152: add device id for Lenovo ThinkPad USB-C Dock Gen 2
-Date:   Fri,  8 Nov 2019 19:50:57 +0100
-Message-Id: <20191108174912.786493721@linuxfoundation.org>
+        stable@vger.kernel.org, Robert Tivy <rtivy@ti.com>,
+        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH 4.19 78/79] arm64: dts: ti: k3-am65-main: Fix gic-its node unit-address
+Date:   Fri,  8 Nov 2019 19:50:58 +0100
+Message-Id: <20191108174829.580847686@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
+References: <20191108174745.495640141@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kazutoshi Noguchi <noguchi.kazutosi@gmail.com>
+From: Suman Anna <s-anna@ti.com>
 
-[ Upstream commit b3060531979422d5bb18d80226f978910284dc70 ]
+commit 389ce1a7c5279ebfb682fab220b4021b2bd49c8b upstream.
 
-This device is sold as 'ThinkPad USB-C Dock Gen 2 (40AS)'.
-Chipset is RTL8153 and works with r8152.
-Without this, the generic cdc_ether grabs the device, and the device jam
-connected networks up when the machine suspends.
+The gic-its node unit-address has an additional zero compared
+to the actual reg value. Fix it.
 
-Signed-off-by: Kazutoshi Noguchi <noguchi.kazutosi@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ea47eed33a3f ("arm64: dts: ti: Add Support for AM654 SoC")
+Reported-by: Robert Tivy <rtivy@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/usb/cdc_ether.c |    7 +++++++
- drivers/net/usb/r8152.c     |    1 +
- 2 files changed, 8 insertions(+)
 
---- a/drivers/net/usb/cdc_ether.c
-+++ b/drivers/net/usb/cdc_ether.c
-@@ -787,6 +787,13 @@ static const struct usb_device_id	produc
- 	.driver_info = 0,
- },
+---
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+@@ -21,7 +21,7 @@
+ 		 */
+ 		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
  
-+/* ThinkPad USB-C Dock Gen 2 (based on Realtek RTL8153) */
-+{
-+	USB_DEVICE_AND_INTERFACE_INFO(LENOVO_VENDOR_ID, 0xa387, USB_CLASS_COMM,
-+			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
-+	.driver_info = 0,
-+},
-+
- /* NVIDIA Tegra USB 3.0 Ethernet Adapters (based on Realtek RTL8153) */
- {
- 	USB_DEVICE_AND_INTERFACE_INFO(NVIDIA_VENDOR_ID, 0x09ff, USB_CLASS_COMM,
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -5402,6 +5402,7 @@ static const struct usb_device_id rtl815
- 	{REALTEK_USB_DEVICE(VENDOR_ID_LENOVO,  0x7205)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_LENOVO,  0x720c)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_LENOVO,  0x7214)},
-+	{REALTEK_USB_DEVICE(VENDOR_ID_LENOVO,  0xa387)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_TPLINK,  0x0601)},
+-		gic_its: gic-its@18200000 {
++		gic_its: gic-its@1820000 {
+ 			compatible = "arm,gic-v3-its";
+ 			reg = <0x01820000 0x10000>;
+ 			msi-controller;
 
 
