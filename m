@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E613F462D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89EFAF4630
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388576AbfKHLkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:40:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53144 "EHLO mail.kernel.org"
+        id S1732180AbfKHLk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:40:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388499AbfKHLkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:40:10 -0500
+        id S2388528AbfKHLkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:40:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A312720869;
-        Fri,  8 Nov 2019 11:40:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D6FC20869;
+        Fri,  8 Nov 2019 11:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213210;
-        bh=UNQs/91dK9j+/CpReb4++waTjXoKNuAIztVw5SJpU20=;
+        s=default; t=1573213212;
+        bh=Ne3xpqHDEVTaOIwtvgtj6SoGrIn4XBahTRxtBYOMvZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oaG33f26paDniZ6uYNG11JaV/qEswcFo1nwo2/lCgurjUZnuNlUHY9qJ0pGrJ9vd5
-         fXkF/RFuyRd2hHA8nkcn3HijSrYwdFsJWOl3jaok49qicMRpm9wddoSRozMgXgBMIN
-         7YJqYakRiHdoy7znPCTySUumxxza7K2FGevU0qu0=
+        b=P8j4RTqw9jELV558r0fjuJwDIA3GRzvSYI0MD34OFyB4PyUmxeZgtUk4izG79iZHE
+         DBChrRjSHqkkn1FVhvwL2SAcgNL6s81WWzwGx1hxWHZp7fOshzIzSW8CW5wmWrII7U
+         iruLA+kpsBu4N7Xg+BNme/cX9OMKa97MkQ+IVAc0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 091/205] ASoC: sgtl5000: avoid division by zero if lo_vag is zero
-Date:   Fri,  8 Nov 2019 06:35:58 -0500
-Message-Id: <20191108113752.12502-91-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 093/205] ARM: dts: exynos: Disable pull control for S5M8767 PMIC
+Date:   Fri,  8 Nov 2019 06:36:00 -0500
+Message-Id: <20191108113752.12502-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -43,36 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 9ab708aef61f5620113269a9d1bdb1543d1207d0 ]
+[ Upstream commit ef2ecab9af5feae97c47b7f61cdd96f7f49b2c23 ]
 
-In the case where lo_vag <= SGTL5000_LINE_OUT_GND_BASE, lo_vag
-is set to zero and later vol_quot is computed by dividing by
-lo_vag causing a division by zero error.  Fix this by avoiding
-a zero division and set vol_quot to zero in this specific case
-so that the lowest setting for i is correctly set.
+S5M8767 PMIC interrupt line on Exynos5250-based Arndale board has
+external pull-up resistors, so disable any pull control for it in
+in controller node. This fixes support for S5M8767 interrupts and
+enables operation of wakeup from S5M8767 RTC alarm.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/sgtl5000.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5250-arndale.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index 64a52d495b1f5..896412d11a31c 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -1387,7 +1387,7 @@ static int sgtl5000_set_power_regs(struct snd_soc_component *component)
- 	 * Searching for a suitable index solving this formula:
- 	 * idx = 40 * log10(vag_val / lo_cagcntrl) + 15
- 	 */
--	vol_quot = (vag * 100) / lo_vag;
-+	vol_quot = lo_vag ? (vag * 100) / lo_vag : 0;
- 	lo_vol = 0;
- 	for (i = 0; i < ARRAY_SIZE(vol_quot_table); i++) {
- 		if (vol_quot >= vol_quot_table[i])
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 9c8ab4b7fb2cf..4ab1f1c66c27f 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -170,6 +170,8 @@
+ 		reg = <0x66>;
+ 		interrupt-parent = <&gpx3>;
+ 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&s5m8767_irq>;
+ 
+ 		vinb1-supply = <&main_dc_reg>;
+ 		vinb2-supply = <&main_dc_reg>;
+@@ -530,6 +532,13 @@
+ 	cap-sd-highspeed;
+ };
+ 
++&pinctrl_0 {
++	s5m8767_irq: s5m8767-irq {
++		samsung,pins = "gpx3-2";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++};
++
+ &rtc {
+ 	status = "okay";
+ };
 -- 
 2.20.1
 
