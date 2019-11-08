@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD59FF5A37
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E67C3F5A2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388524AbfKHVi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:38:29 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:43755 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388444AbfKHVi3 (ORCPT
+        id S1733273AbfKHVgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:36:47 -0500
+Received: from mail-lj1-f174.google.com ([209.85.208.174]:44882 "EHLO
+        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731097AbfKHVgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:38:29 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N0WwO-1hfVjv2o8i-00wTtI; Fri, 08 Nov 2019 22:37:59 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        linux1394-devel@lists.sourceforge.net
-Subject: [PATCH 16/16] firewire: ohci: stop using get_seconds() for BUS_TIME
-Date:   Fri,  8 Nov 2019 22:32:54 +0100
-Message-Id: <20191108213257.3097633-17-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191108213257.3097633-1-arnd@arndb.de>
-References: <20191108213257.3097633-1-arnd@arndb.de>
+        Fri, 8 Nov 2019 16:36:46 -0500
+Received: by mail-lj1-f174.google.com with SMTP id g3so7673981ljl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 13:36:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qGYbfXBmYeGO7pa06B9v9RYZuC6G4mksi25tARbE4oY=;
+        b=D2lIv3jCmGx6XX86kRru64oEZZHnbWw2knlo1We7LolVbJbNK9HgSHPqCuNFkLo8ad
+         GU8k1DTmDoi/kms3XxcfX7lhY59TGnHP8CiCPpdo/DYtNT8a4RPLc9sR5QaxINzKAI91
+         MruliR/YTKfAHzSlhF17f4O8c+PUKsS3yl0wk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qGYbfXBmYeGO7pa06B9v9RYZuC6G4mksi25tARbE4oY=;
+        b=WI6Y7uVCwAKkwrfLAyFTUOrvsMRaOiB98on3FHtsXvanYNcvTn+74q92c+dSGJiWH9
+         ojIbMwd1rhGL5MuJWI+9/1LASGJM3FOXzSTLjlwA5KoZv5uEzp6gf7Tcm62xY1EmcX9u
+         kGrBFO8HugH6EvolYCvlK6LygkedvvdcYF+qcUccJfIOUUaYNJYDWnwOR6e/i9IR2rCV
+         K8mqIofjAd7iJVLgQNhSlvJuzYfyAKSS+iWsPH/eIu528/rA8+CxD5XdSJqvIk6rL4di
+         n/O0hyWH/vwptq9GGpimd+ug1x22Im8lVmM9SfPRUWsk172R/ZWOcr+H8DeqXDC+srQ9
+         sW5Q==
+X-Gm-Message-State: APjAAAXcSCUESbk9S8jypCrhhuoOOhAaSXQWO6SmsiUbbhHJqbn1VVs7
+        xtv/5GORBO0YRDK/VZGX65UkhdQTWs0=
+X-Google-Smtp-Source: APXvYqygv9/W81QLQVq7URdIVh0eGNZuhtMPyuLcktDoYh4oyp6fYbweY6Pz+r7cyrxPWv/5JGeV3g==
+X-Received: by 2002:a2e:b4e1:: with SMTP id s1mr8195248ljm.5.1573249002438;
+        Fri, 08 Nov 2019 13:36:42 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id n1sm2817702ljg.44.2019.11.08.13.36.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 13:36:41 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id n21so7676307ljg.12
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 13:36:40 -0800 (PST)
+X-Received: by 2002:a05:651c:331:: with SMTP id b17mr8336920ljp.133.1573249000556;
+ Fri, 08 Nov 2019 13:36:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ShTMGp4lVNVsHj+KLbB1IsdO5sH5jn0FUtExiYeIktC9NBhPH68
- Eo6Di/s4x1/c0s0lLRtXEL3+pUqH2jXe+lTpS1u0fj9Wj5g2hSZfutPCDmz9vVx1gkCHN+t
- lGkblZXmLSCwyqit9GXFDVWTAAGNnFLncfw6TYZEMKhOitqIsxr/7PMTbimFz3Ksb8vTWOR
- lcjupetSVcK3O/vCeAMtQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:leyoQLNXbQg=:XqNTH//TUd2wRfId2+/xfy
- eQ+WZQp1hTDWEnjaAb3rr/ypuDM/uWEbbd+ht2cL4NNSBam+Merhk3GCl8f9Na4vCuujDmXp8
- dTjKewx5lcZM1j2vniPAnG5tRQtmf4DXuVdbRTg/AJW7r2nGu5oaik/cj+FLrQALbLu5W3S2g
- gn9HXG8FzCIFPb/yCthoolqyFw1m2CxJZI9yWZgM2EqbmeJkf1nAHcVCMqKOF6TCy1SC0r0pV
- YnTSdvXiIpNhzoHR2kfebW4bI7Jj+aN39JoSq370yilI8ABf3QPD/FULOrAElxyBBCVnigEUv
- qCDQH5Lo1X/AMa0go2UF08ZtuZ3WfXhE9/ULxTNV6KqnBU6W+jSU1tyAJtszmDnwmNIi6v8si
- jSBExJE9oZ5quHrJTc9DZ577cTb/GNuAJUDmoAub3HEkdJ2KxO5YZI0PUcsG22ysKX/+U0i6C
- 0meZYkHhON7G/I6cH0I6NivXIWpO7MNRerECpI5I5D4h5NGqscYeORHflrzpCI25c9GxtLPQJ
- JgpoygF3V4/4nBEOZTUOYfpCRWcaWMe+ZyAt/gYF5GRy5WAU3VETV85RWCDjhPLFKp2LvhP8I
- BZDS6CJDy7h1TOWLwOBMIGvM5bLAayvlR1dex0YsaPLpEh1b22ozGKQF8+DrZy42ok1EDxLpJ
- SJhNU7KVWt3RglSABWD8Pc98EBImv87rsCwacFTUKL806Y2GIsiTq/6DqDKWKsih4BhsCtQax
- TV2lC6jZ38zsEPk/ETTxzKlYrkyogQt7gehGY9ObecJ2WRR+9e6JIM0XpYWBTEeXkZLIY2mLc
- Kn/cN2Ga7qkgoMkPqDxRkgz/aavM11Cuw+uzN2F84JYcYiOLXxXTBZLQ5pqciOre7GWcnWYXf
- 8sV8mV4nOIfQV8FMpaVQ==
+References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
+ <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
+ <CANn89iK9mTJ4BN-X3MeSx5LGXGYafXkhZyaUpdXDjVivTwA6Jg@mail.gmail.com>
+ <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com>
+ <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
+ <CANn89i+RrngUr11_iOYDuqDvAZnPfG3ieJR025M78uhiwEPuvQ@mail.gmail.com>
+ <CAHk-=wi-aTQx5-gD51QC6UWJYxQv1p1CnrPpfbn4X1S4AC7G-g@mail.gmail.com> <CANn89iJh-WcvZYQEfdK=RGswQX8e1rp=CR27a6kWQkgK996P7g@mail.gmail.com>
+In-Reply-To: <CANn89iJh-WcvZYQEfdK=RGswQX8e1rp=CR27a6kWQkgK996P7g@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 8 Nov 2019 13:36:23 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh_-1pj0vsAHiHf_FVardKkN7AZGX73QwGpViMyF7_mvQ@mail.gmail.com>
+Message-ID: <CAHk-=wh_-1pj0vsAHiHf_FVardKkN7AZGX73QwGpViMyF7_mvQ@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        Marco Elver <elver@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ohci driver uses the get_seconds() function to implement the 32-bit
-CSR_BUS_TIME register. This was added in 2010 commit a48777e03ad5
-("firewire: add CSR BUS_TIME support").
+On Fri, Nov 8, 2019 at 12:53 PM Eric Dumazet <edumazet@google.com> wrote:
+>
+> per cpu SNMP counters mostly, with no IRQ safety requirements.
+>
+> Note that this could be implemented using local{64}_add() on arches like x86_64,
+> while others might have to fallback to WRITE_ONCE(variable, variable + add)
 
-As get_seconds() returns a 32-bit value (on 32-bit architectures), it
-seems like a good fit for that register, but it is also deprecated because
-of the y2038/y2106 overflow problem, and should be replaced throughout
-the kernel with either ktime_get_real_seconds() or ktime_get_seconds().
+raw_cpu_add()?
 
-I'm using the latter here, which uses monotonic time. This has the
-advantage of behaving better during concurrent settimeofday() updates
-or leap second adjustments and won't overflow a 32-bit integer, but
-the downside of using CLOCK_MONOTONIC instead of CLOCK_REALTIME is
-that the observed values are not related to external clocks.
+We already use those for vm_counters where we intentionally accept races.
 
-If we instead need UTC but can live with clock jumps or overflows,
-then we should use ktime_get_real_seconds() instead, retaining the
-existing behavior.
-
-Reviewed-by: Clemens Ladisch <clemens@ladisch.de>
-Cc: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Link: https://lore.kernel.org/lkml/20180711124923.1205200-1-arnd@arndb.de/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/firewire/ohci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index 522f3addb5bd..33269316f111 100644
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -1752,7 +1752,7 @@ static u32 update_bus_time(struct fw_ohci *ohci)
- 
- 	if (unlikely(!ohci->bus_time_running)) {
- 		reg_write(ohci, OHCI1394_IntMaskSet, OHCI1394_cycle64Seconds);
--		ohci->bus_time = (lower_32_bits(get_seconds()) & ~0x7f) |
-+		ohci->bus_time = (lower_32_bits(ktime_get_seconds()) & ~0x7f) |
- 		                 (cycle_time_seconds & 0x40);
- 		ohci->bus_time_running = true;
- 	}
--- 
-2.20.0
-
+              Linus
