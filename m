@@ -2,128 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16392F3DE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 03:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6442F3DE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 03:12:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbfKHCIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 21:08:36 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46252 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725940AbfKHCIf (ORCPT
+        id S1728568AbfKHCMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 21:12:50 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38269 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfKHCMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 21:08:35 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA822UWV030672
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2019 21:08:34 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w4tumqqb1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 21:08:34 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Fri, 8 Nov 2019 02:08:32 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Nov 2019 02:08:29 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA828SPT62390484
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Nov 2019 02:08:28 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 925C4AE045;
-        Fri,  8 Nov 2019 02:08:28 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15D1EAE056;
-        Fri,  8 Nov 2019 02:08:27 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.36.138])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Nov 2019 02:08:26 +0000 (GMT)
-Subject: Re: [PATCH] ext4: deaccount delayed allocations at freeing inode in
- ext4_evict_inode()
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        linux-kernel@vger.kernel.org
-Cc:     Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
-        Eric Whitney <enwlinux@gmail.com>
-References: <157233344808.4027.17162642259754563372.stgit@buzz>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Fri, 8 Nov 2019 07:38:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 7 Nov 2019 21:12:50 -0500
+Received: by mail-io1-f68.google.com with SMTP id i13so3284737ioj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 18:12:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mI2H1/JiMrgWfOQwsYN77DP2fyTgPIoA8PWUrElgIAQ=;
+        b=eO8018epbWTB8R8wRPyM0TCODeYfAWo28VHUOHQpZBgRVCa0U7Z2a794XD3/Lchxn1
+         UpNjqP75vS35IFdq+6xkpSkjEt0N47mu00Yivj50HCG43ZWaDX0N16baTt7X86Xp5IlY
+         Rymy1/1GNTxm43BtviiHAJO6H7sfIS4F8HfVBIi7QAbzPv/mxMaU+ZjQoMHdS8E2yfXV
+         7SKtL/cFZskmkgP8qMNmZ/PXPj1kkvuwWO6H/sN7Y3DYcgbq9a/7ZC5+5a/aD+CT4egJ
+         bJyx0zPn32qakht5SQAIhgJavGTUAi0YTmJnCnkxcLpgx16HassQo05wf0FoX1WX21Pk
+         /a5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mI2H1/JiMrgWfOQwsYN77DP2fyTgPIoA8PWUrElgIAQ=;
+        b=NyjmQ1hwDkQab+ONABp3hspDt4fuelP2Nq0dQyvuGKg9By78TTympJx5jLAJ+EY+1S
+         itLnzcI6BkAARfCdXBSNZ0s2/MBLMld5LGPmYM9bAav2zPGosqbcQigTRPSFXDnzXN7b
+         ++HRuHK8xbrm4ZRK7sejBVpLnRWmekP9rVQDcdGiA6Gdaj6lO96gSAXDNgqKVHF7j/j/
+         7SNcl4cN4ulBMXiLg6BuUhOcThMrRKFA1xNoO5Dvj2sJOl+g7uKs+96+B3z/RhbcKE44
+         q7J9GZSOpYHGFEI3M3WS/ZuEi7GHtARH9kM2g5OL2wjr5SwG9pFu1pFya8CSFml5Fkna
+         8//Q==
+X-Gm-Message-State: APjAAAVPKINH2tapYfPHBcKazcw0a1QANXlcVCgYXVgM+agHL04Tt6Du
+        vx3VU+PbU+OGDXI9P5zMZBjZSvWM2EkvauqSwA==
+X-Google-Smtp-Source: APXvYqzY9STxjC9gLO/kjIsthshQUi/v0Ta7sCk09dsOFWeTEwlWPLLDT3FORJqPU8kn1oLY/33hdBrXOcR/4O6nrVU=
+X-Received: by 2002:a6b:8b02:: with SMTP id n2mr7288982iod.66.1573179169510;
+ Thu, 07 Nov 2019 18:12:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <157233344808.4027.17162642259754563372.stgit@buzz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110802-0020-0000-0000-0000038394DC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110802-0021-0000-0000-000021D9CB6A
-Message-Id: <20191108020827.15D1EAE056@d06av26.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911080018
+References: <20191106193459.581614484@linutronix.de> <20191106202806.241007755@linutronix.de>
+ <CAMzpN2juuUyLuQ-tiV7hKZvG4agsHKP=rRAt_V4sZhpZW7cv9g@mail.gmail.com>
+ <CAHk-=wiGO=+mmEb-sfCsD5mxmL5++gdwkFj_aXcfz1R41MJnEg@mail.gmail.com>
+ <CAMzpN2gt4qM41=96GpNHL-kbgBsjD-zphq+5oK0BXqoCFN4F4Q@mail.gmail.com>
+ <CAHk-=wjocTzo+8OMwyKPX0MCVV=N4wtU8ifwSZ_qJJnDBgKJ8Q@mail.gmail.com> <6cac6943-2f6c-d48a-658e-08b3bf87921a@zytor.com>
+In-Reply-To: <6cac6943-2f6c-d48a-658e-08b3bf87921a@zytor.com>
+From:   Brian Gerst <brgerst@gmail.com>
+Date:   Thu, 7 Nov 2019 21:12:38 -0500
+Message-ID: <CAMzpN2hCrcQg_u5sp7WWGjOBv13+ZWtSAecp6bWpT6rsTyo+-Q@mail.gmail.com>
+Subject: Re: [patch 5/9] x86/ioport: Reduce ioperm impact for sane usage further
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 7, 2019 at 8:12 PM H. Peter Anvin <hpa@zytor.com> wrote:
+>
+> On 2019-11-07 13:44, Linus Torvalds wrote:
+> > On Thu, Nov 7, 2019 at 1:00 PM Brian Gerst <brgerst@gmail.com> wrote:
+> >>
+> >> There wouldn't have to be a flush on every task switch.
+> >
+> > No. But we'd have to flush on any switch that currently does that memcpy.
+> >
+> > And my point is that a tlb flush (even the single-page case) is likely
+> > more expensive than the memcpy.
+> >
+> >> Going a step further, we could track which task is mapped to the
+> >> current cpu like proposed above, and only flush when a different task
+> >> needs the IO bitmap, or when the bitmap is being freed on task exit.
+> >
+> > Well, that's exactly my "track the last task" optimization for copying
+> > the thing.
+> >
+> > IOW, it's the same optimization as avoiding the memcpy.
+> >
+> > Which I think is likely very effective, but also makes it fairly
+> > pointless to then try to be clever..
+> >
+> > So the basic issue remains that playing VM games has almost
+> > universally been slower and more complex than simply not playing VM
+> > games. TLB flushes - even invlpg - tends to be pretty slow.
+> >
+> > Of course, we probably end up invalidating the TLB's anyway, so maybe
+> > in this case we don't care. The ioperm bitmap is _technically_
+> > per-thread, though, so it should be flushed even if the VM isn't
+> > flushed...
+> >
+>
+> One option, probably a lot saner (if we care at all, after all, copying 8K
+> really isn't that much, but it might have some impact on real-time processes,
+> which is one of the rather few use cases for direct I/O) would be to keep the
+> bitmask in a pre-formatted TSS (ioperm being per thread, so no concerns about
+> the TSS being in use on another processor), and copy the TSS fields (88 bytes)
+> over if and only if the thread has been migrated to a different CPU, then
+> switch the TSS rather than switching  For the common case (no ioperms) we use
+> the standard per-cpu TSS.
+>
+> That being said, I don't actually know that copying 88 bytes + LTR is any
+> cheaper than copying 8K.
 
+I don't think that can work.  The TSS has to be at a fixed address in
+the cpu_entry_area so that it is visible when running in usermode
+(thanks to Meltdown).
 
-On 10/29/19 12:47 PM, Konstantin Khlebnikov wrote:
-> If inode->i_blocks is zero then ext4_evict_inode() skips ext4_truncate().
-> Delayed allocation extents are freed later in ext4_clear_inode() but this
-> happens when quota reference is already dropped. This leads to leak of
-> reserved space in quota block, which disappears after umount-mount.
-> 
-> This seems broken for a long time but worked somehow until recent changes
-> in delayed allocation.
-
-Sorry, I may have missed it, but could you please help understand
-what recent changes in delayed allocation make this break or worse?
-
-
-A silly query, since I couldn't figure it out. Maybe the code has been
-there ever since like this:-
-So why can't we just move drop_dquot later after the 
-ext4_es_remove_extent() (in function ext4_clear_inode)? Any known
-problems around that?
-
--ritesh
-
-
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> ---
->   fs/ext4/inode.c |    9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 516faa280ced..580898145e8f 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -293,6 +293,15 @@ void ext4_evict_inode(struct inode *inode)
->   				   inode->i_ino, err);
->   			goto stop_handle;
->   		}
-> +	} else if (EXT4_I(inode)->i_reserved_data_blocks) {
-> +		/* Deaccount reserve if inode has only delayed allocations. */
-> +		err = ext4_es_remove_extent(inode, 0, EXT_MAX_BLOCKS);
-> +		if (err) {
-> +			ext4_warning(inode->i_sb,
-> +				     "couldn't remove extents %lu (err %d)",
-> +				     inode->i_ino, err);
-> +			goto stop_handle;
-> +		}
->   	}
-> 
->   	/* Remove xattr references. */
-> 
-
+--
+Brian Gerst
