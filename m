@@ -2,185 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6490FF4C1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:53:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 059FAF4C32
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:55:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfKHMxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:53:20 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13472 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726335AbfKHMxU (ORCPT
+        id S1727664AbfKHMzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:55:06 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:39216 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfKHMzG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 07:53:20 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA8Cq5Kk024045;
-        Fri, 8 Nov 2019 13:52:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=U42CzDCTjvGgKHPDdujEizpP/MuGbL64x7aocKvP598=;
- b=mwDBKYuDjJj4/kG3Ia92rMuR1ojDDvT0Q/HagfYo0vu92FbgZpMc4b+0j9PnLlM4Dj2m
- ofeR0UXVkCROk2BB9ZcmcEqV2T68xXwo07mGPubntHwsAIsThWESPvKlVa8TrBmyF/Zr
- EYCLZHITplwcDmEzXNv1TJRMPezkHmJeDWkRCehV90C4we5ZAUhRWGX2ikyXgbvpsr9f
- blV2b7kOMbRfSOhkEDbHV4w0doWBPdyUmmVTaHUmLHXOtQMWfsOmDfUlkBtMQHx5SZgn
- /t4XjicIsnp7RXnz8Dz8AuaVrOt9RmBBIUXlXXL1ae7nVm2XUh/UV8aEcMmmuNSYTjUU qQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2w41vmuntd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Nov 2019 13:52:50 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 50D1510002A;
-        Fri,  8 Nov 2019 13:52:50 +0100 (CET)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 442D42B6A0D;
-        Fri,  8 Nov 2019 13:52:50 +0100 (CET)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 8 Nov 2019
- 13:52:50 +0100
-Received: from localhost (10.201.20.122) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 8 Nov 2019 13:52:49
- +0100
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>, <lionel.debieve@st.com>
-CC:     <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] dt-bindings: crypto: Convert stm32 HASH bindings to json-schema
-Date:   Fri, 8 Nov 2019 13:52:44 +0100
-Message-ID: <20191108125244.23001-3-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20191108125244.23001-1-benjamin.gaignard@st.com>
-References: <20191108125244.23001-1-benjamin.gaignard@st.com>
+        Fri, 8 Nov 2019 07:55:06 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8CnL0r161752;
+        Fri, 8 Nov 2019 12:53:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=0ukG+qNUolT6jTLSQd6brM8auZXhJs3nqPYpJUiV9c4=;
+ b=K4CxdzvT0OCCSJFEF9z3tUWjap6BZZwswfiN/LWm7Jn5OoIIa2/OpZHA3hujCFKiqd9Q
+ fHVYXprYZpEmlvzaAOaB4tiYRKltW0OOevBQRoeeHBL0JsK+gqq7W2bePOHgTdR2L+9E
+ samDKZJVElgizBgD+ee7v/PZ4k6YC/wmgw8d2oTKMp9/eALQcZTHqQxUxeQc6jBXbp2L
+ yQ5U0vTnbc1Q/zrU2kEdTZFca7tRd17G3rKL/cOe05Tf2m8dbgo7oQzetqyiDuD8/1ye
+ SSsR4f1iEa+Nl8zvSisJcHd47AP+t6UlfkqvX4sy3crzplYTQhRn89KRcUUjVMx05bcB nA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2w41w1d50m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 12:53:02 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8CmilX046841;
+        Fri, 8 Nov 2019 12:53:02 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2w41wcnwvq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Nov 2019 12:53:01 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA8CqtW4025702;
+        Fri, 8 Nov 2019 12:52:57 GMT
+Received: from tomti.i.net-space.pl (/10.175.202.125)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Nov 2019 04:52:55 -0800
+Date:   Fri, 8 Nov 2019 13:52:48 +0100
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        corbet@lwn.net, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, eric.snowberg@oracle.com, hpa@zytor.com,
+        jgross@suse.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, rdunlap@infradead.org, ross.philipson@oracle.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v5 2/3] x86/boot: Introduce the kernel_info.setup_type_max
+Message-ID: <20191108125248.drmm7xakn7t7oyul@tomti.i.net-space.pl>
+References: <20191104151354.28145-1-daniel.kiper@oracle.com>
+ <20191104151354.28145-3-daniel.kiper@oracle.com>
+ <20191108100930.GA4503@zn.tnic>
+ <20191108104702.vwfmvehbeuza4j5w@tomti.i.net-space.pl>
+ <20191108110703.GB4503@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.122]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-08_03:2019-11-08,2019-11-08 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108110703.GB4503@zn.tnic>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=951
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911080127
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911080128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the STM32 HASH binding to DT schema format using json-schema
+On Fri, Nov 08, 2019 at 12:07:03PM +0100, Borislav Petkov wrote:
+> On Fri, Nov 08, 2019 at 11:47:02AM +0100, Daniel Kiper wrote:
+> > Yeah, you are right. Would you like me to repost whole patch series or
+> > could you fix it before committing?
+>
+> Lemme finish looking at patch 3 first.
+>
+> If you have to resend, please remove "This patch" and "We" in your text.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- .../devicetree/bindings/crypto/st,stm32-hash.txt   | 30 ----------
- .../devicetree/bindings/crypto/st,stm32-hash.yaml  | 64 ++++++++++++++++++++++
- 2 files changed, 64 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/crypto/st,stm32-hash.txt
- create mode 100644 Documentation/devicetree/bindings/crypto/st,stm32-hash.yaml
+OK, got your comments. I will repost the patch series probably on Tuesday.
+I hope that it will land in 5.5 then.
 
-diff --git a/Documentation/devicetree/bindings/crypto/st,stm32-hash.txt b/Documentation/devicetree/bindings/crypto/st,stm32-hash.txt
-deleted file mode 100644
-index 04fc246f02f7..000000000000
---- a/Documentation/devicetree/bindings/crypto/st,stm32-hash.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--* STMicroelectronics STM32 HASH
--
--Required properties:
--- compatible: Should contain entries for this and backward compatible
--  HASH versions:
--  - "st,stm32f456-hash" for stm32 F456.
--  - "st,stm32f756-hash" for stm32 F756.
--- reg: The address and length of the peripheral registers space
--- interrupts: the interrupt specifier for the HASH
--- clocks: The input clock of the HASH instance
--
--Optional properties:
--- resets: The input reset of the HASH instance
--- dmas: DMA specifiers for the HASH. See the DMA client binding,
--	 Documentation/devicetree/bindings/dma/dma.txt
--- dma-names: DMA request name. Should be "in" if a dma is present.
--- dma-maxburst: Set number of maximum dma burst supported
--
--Example:
--
--hash1: hash@50060400 {
--	compatible = "st,stm32f756-hash";
--	reg = <0x50060400 0x400>;
--	interrupts = <80>;
--	clocks = <&rcc 0 STM32F7_AHB2_CLOCK(HASH)>;
--	resets = <&rcc STM32F7_AHB2_RESET(HASH)>;
--	dmas = <&dma2 7 2 0x400 0x0>;
--	dma-names = "in";
--	dma-maxburst = <0>;
--};
-diff --git a/Documentation/devicetree/bindings/crypto/st,stm32-hash.yaml b/Documentation/devicetree/bindings/crypto/st,stm32-hash.yaml
-new file mode 100644
-index 000000000000..3c09c9899021
---- /dev/null
-+++ b/Documentation/devicetree/bindings/crypto/st,stm32-hash.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/crypto/st,stm32-hash.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STM32 HASH bindings
-+
-+maintainers:
-+  - Lionel Debieve <lionel.debieve@st.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - st,stm32f456-hash
-+      - st,stm32f756-hash
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 1
-+
-+  dma-names:
-+    items:
-+      - const: in
-+
-+  dma-maxburst:
-+    description: Set number of maximum dma burst supported
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+    #include <dt-bindings/reset/stm32mp1-resets.h>
-+    hash@54002000 {
-+      compatible = "st,stm32f756-hash";
-+      reg = <0x54002000 0x400>;
-+      interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&rcc HASH1>;
-+      resets = <&rcc HASH1_R>;
-+      dmas = <&mdma1 31 0x10 0x1000A02 0x0 0x0>;
-+      dma-names = "in";
-+      dma-maxburst = <2>;
-+    };
-+
-+...
--- 
-2.15.0
-
+Daniel
