@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DEA6F5719
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1D4F54C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390085AbfKHTSA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:18:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57920 "EHLO mail.kernel.org"
+        id S1732425AbfKHSxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:53:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389814AbfKHTAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:39 -0500
+        id S1732341AbfKHSx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:53:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 756532067B;
-        Fri,  8 Nov 2019 19:00:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 128B3218AE;
+        Fri,  8 Nov 2019 18:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239639;
-        bh=Cbdpnm61vvEd58lKCrpoGVTzfBPIKxYz7P5LckuNiB0=;
+        s=default; t=1573239208;
+        bh=5q8MdXl36BTYt1/zFIU1xr7uiq22NFrK9WPUMpYkyg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rSBzAxW1jKWwsxmGvboPHvheUpAFQJ/XHYr8n8FpAVdsHWq+aeXGx1DDXfDsgb+nx
-         6pjaArodrq0I4uAJZzkmkNl/Mf6SrKDGOw4YGGJbf4VygpmOyppeOS1OPu1bnMpng3
-         DW3busAI8ffusZWZaGEpJjcFENi2FxgNp9IAVHBM=
+        b=zXKwNwBG+CZ7/p032AlPwQ0E6MGBcUyM3Vtq7DUrbPzN+PvlKpbRz/A2rD7OhKi67
+         O99fWLmo28k/qTPkBKFZ4mbVHL8vCKoOMq0O1FUy98A371UW0wPV8vTFx8XYUBjwQ4
+         v8+i9D3ZzMAgUQS+oJsj0FQDZFLYC2mh8IaQ4Lvc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 11/79] ASoc: rockchip: i2s: Fix RPM imbalance
-Date:   Fri,  8 Nov 2019 19:49:51 +0100
-Message-Id: <20191108174750.784806972@linuxfoundation.org>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.4 35/75] arm/arm64: smccc: Make function identifiers an unsigned quantity
+Date:   Fri,  8 Nov 2019 19:49:52 +0100
+Message-Id: <20191108174744.434421656@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
+References: <20191108174708.135680837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +48,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit b1e620e7d32f5aad5353cc3cfc13ed99fea65d3a ]
+commit ded4c39e93f3b72968fdb79baba27f3b83dad34c upstream.
 
-If rockchip_pcm_platform_register() fails, e.g. upon deferring to wait
-for an absent DMA channel, we return without disabling RPM, which makes
-subsequent re-probe attempts scream with errors about the unbalanced
-enable. Don't do that.
+Function identifiers are a 32bit, unsigned quantity. But we never
+tell so to the compiler, resulting in the following:
 
-Fixes: ebb75c0bdba2 ("ASoC: rockchip: i2s: Adjust devm usage")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Link: https://lore.kernel.org/r/bcb12a849a05437fb18372bc7536c649b94bdf07.1570029862.git.robin.murphy@arm.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+ 4ac:   b26187e0        mov     x0, #0xffffffff80000001
+
+We thus rely on the firmware narrowing it for us, which is not
+always a reasonable expectation.
+
+Cc: stable@vger.kernel.org
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Tested-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/rockchip/rockchip_i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/arm-smccc.h |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-index 11399f81c92f9..b86f76c3598cd 100644
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -677,7 +677,7 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	ret = rockchip_pcm_platform_register(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not register PCM\n");
--		return ret;
-+		goto err_suspend;
- 	}
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -14,14 +14,16 @@
+ #ifndef __LINUX_ARM_SMCCC_H
+ #define __LINUX_ARM_SMCCC_H
  
- 	return 0;
--- 
-2.20.1
-
++#include <uapi/linux/const.h>
++
+ /*
+  * This file provides common defines for ARM SMC Calling Convention as
+  * specified in
+  * http://infocenter.arm.com/help/topic/com.arm.doc.den0028a/index.html
+  */
+ 
+-#define ARM_SMCCC_STD_CALL		0
+-#define ARM_SMCCC_FAST_CALL		1
++#define ARM_SMCCC_STD_CALL	        _AC(0,U)
++#define ARM_SMCCC_FAST_CALL	        _AC(1,U)
+ #define ARM_SMCCC_TYPE_SHIFT		31
+ 
+ #define ARM_SMCCC_SMC_32		0
 
 
