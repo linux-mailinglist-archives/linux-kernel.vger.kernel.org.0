@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B4AF553D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 009C7F54FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390081AbfKHTBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58340 "EHLO mail.kernel.org"
+        id S2389188AbfKHS7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:59:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390062AbfKHTBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:02 -0500
+        id S1730685AbfKHS7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:59:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA1D62178F;
-        Fri,  8 Nov 2019 19:01:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18D1222509;
+        Fri,  8 Nov 2019 18:59:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239662;
-        bh=8Q9g2juXNBV5no/rSw06P+H5qP7c3cfW0hVwZxa0L+4=;
+        s=default; t=1573239586;
+        bh=PVFCXylIgDGZcUj87fCk4jwfZ9TXjA9zwI3XOHKJw0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NmqXjra6ZgMH7fv8LknQuEk9TEwujUezgCsn89Rw0ZqgaQnEtBKOUQPI2Rqbo/R9S
-         OFLvF6I26JVn5NxwZtHCicQjOIr1Aqx7pAkWdNJYY3UPUEGSrV8f3J7zF4njofQymx
-         zru9Fy03AnF0SAyfoPYX2lEAl3N1rWuRZZYkgqAI=
+        b=sdw788DbVcxQ8Ex5FigWhAm7CuTQM4uXzbbcJMkm9ZDd85OxqaLSfGxTeROfOxA18
+         2XOoqh4MvIFvY+U0S7VuczRncyP8NWiT0qbauVjP5NzJQ6xGfWlmZlEdff/Q7Tt9yy
+         Qi3tI5K4aEmpz+NGwuuk6XudNPUwS+xCWtR7oG1k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 19/79] ARM: dts: imx7s: Correct GPTs ipg clock source
-Date:   Fri,  8 Nov 2019 19:49:59 +0100
-Message-Id: <20191108174755.240726768@linuxfoundation.org>
+Subject: [PATCH 4.14 12/62] ARM: dts: imx7s: Correct GPTs ipg clock source
+Date:   Fri,  8 Nov 2019 19:50:00 +0100
+Message-Id: <20191108174731.554569091@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,10 +61,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index a7f697b0290ff..90f5bdfa9b3ce 100644
+index bf15efbe8a710..836550f2297ac 100644
 --- a/arch/arm/boot/dts/imx7s.dtsi
 +++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -443,7 +443,7 @@
+@@ -450,7 +450,7 @@
  				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
  				reg = <0x302d0000 0x10000>;
  				interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
@@ -73,7 +73,7 @@ index a7f697b0290ff..90f5bdfa9b3ce 100644
  					 <&clks IMX7D_GPT1_ROOT_CLK>;
  				clock-names = "ipg", "per";
  			};
-@@ -452,7 +452,7 @@
+@@ -459,7 +459,7 @@
  				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
  				reg = <0x302e0000 0x10000>;
  				interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
@@ -82,7 +82,7 @@ index a7f697b0290ff..90f5bdfa9b3ce 100644
  					 <&clks IMX7D_GPT2_ROOT_CLK>;
  				clock-names = "ipg", "per";
  				status = "disabled";
-@@ -462,7 +462,7 @@
+@@ -469,7 +469,7 @@
  				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
  				reg = <0x302f0000 0x10000>;
  				interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
@@ -91,7 +91,7 @@ index a7f697b0290ff..90f5bdfa9b3ce 100644
  					 <&clks IMX7D_GPT3_ROOT_CLK>;
  				clock-names = "ipg", "per";
  				status = "disabled";
-@@ -472,7 +472,7 @@
+@@ -479,7 +479,7 @@
  				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
  				reg = <0x30300000 0x10000>;
  				interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
