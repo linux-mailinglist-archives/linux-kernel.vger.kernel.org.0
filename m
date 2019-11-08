@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20775F5518
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EBDCF5546
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389674AbfKHTAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:00:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
+        id S2390159AbfKHTBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:01:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389510AbfKHTAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:12 -0500
+        id S1732355AbfKHTBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:01:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC4BC222CF;
-        Fri,  8 Nov 2019 18:57:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D900721D7B;
+        Fri,  8 Nov 2019 19:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239467;
-        bh=HE82Gu0srBbHPVO2IXUmKw/tid8jQwbjFCwCHNinGWE=;
+        s=default; t=1573239676;
+        bh=QqFSnW4VZGL4nSCk0yARCru6QsnD0NxO+LiLeXxNchw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f3z8vVIRTtFqhghUYhbPE0hGq9wj45wX1gl8RYxGq20UCBBl2LStHhDbuXUGFD3qI
-         fv0xgjIaWAUOHVnEfBjO0+UAnSiJKdFErS2bDHJ+3DrSxYKgGdf+Vth2HR3Hug/PKY
-         Ni1+nGNGRJTXfbuYhokcc8e/WCI1ebXR8yKdmZ3A=
+        b=O1vVUv5TLPKccXOwqQYuIgmVKUrqzih7Ytl6AlAMt35vMKe4CgFxIpZgqyFJONqAu
+         ZH60LKfyi0AD0f/7oIQMY+4j/QkAUztCaRuLUtM+mTwJsCn/1XuiQKMEG2/nXlGhhR
+         ga4m97T1o6oWUuK87R1lheeb4m0Vu0vpL5OrbTGY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 15/62] ARM: davinci: dm365: Fix McBSP dma_slave_map entry
+Subject: [PATCH 4.19 23/79] ARM: davinci: dm365: Fix McBSP dma_slave_map entry
 Date:   Fri,  8 Nov 2019 19:50:03 +0100
-Message-Id: <20191108174733.078832836@linuxfoundation.org>
+Message-Id: <20191108174758.480429753@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
+References: <20191108174745.495640141@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -58,10 +58,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 8be04ec95adf5..d80b2290ac2e0 100644
+index 42665914166a3..83ca89a353002 100644
 --- a/arch/arm/mach-davinci/dm365.c
 +++ b/arch/arm/mach-davinci/dm365.c
-@@ -856,8 +856,8 @@ static s8 dm365_queue_priority_mapping[][2] = {
+@@ -458,8 +458,8 @@ static s8 dm365_queue_priority_mapping[][2] = {
  };
  
  static const struct dma_slave_map dm365_edma_map[] = {
