@@ -2,319 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1973CF594B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9481F5953
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732402AbfKHVKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:10:41 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:46847 "EHLO
+        id S1732532AbfKHVLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:11:07 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:58533 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbfKHVKk (ORCPT
+        with ESMTP id S1731386AbfKHVLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:10:40 -0500
+        Fri, 8 Nov 2019 16:11:05 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M1Hi8-1iVvbf1voI-002mbB; Fri, 08 Nov 2019 22:09:53 +0100
+ 1MrQR7-1i6FJk2Bdf-00oUk0; Fri, 08 Nov 2019 22:10:27 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+To:     y2038@lists.linaro.org, Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
+        x86@kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-ia64@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org
-Subject: [PATCH 04/23] y2038: vdso: change timespec to __kernel_old_timespec
-Date:   Fri,  8 Nov 2019 22:07:24 +0100
-Message-Id: <20191108210824.1534248-4-arnd@arndb.de>
+        "H. Peter Anvin" <hpa@zytor.com>, linux-um@lists.infradead.org
+Subject: [PATCH 05/23] y2038: vdso: change time_t to __kernel_old_time_t
+Date:   Fri,  8 Nov 2019 22:07:25 +0100
+Message-Id: <20191108210824.1534248-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108210236.1296047-1-arnd@arndb.de>
 References: <20191108210236.1296047-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:iUMTIn2k//jQuPHzBKv9Ib37q4ViI/mNhqZJ57OBwpcBl5lp/uG
- Yxus14+SjobKprmmaeZD4XxB2BIGkXNAexaoLA2+T3M+IBa0dDbE8j0r6GxPuFfPxpOPrpm
- NIxvHXrIah5Flb1U5qno5OLifcJ6ykGJnfi2sXO7PX5fpadwCVTpT5nnMW5995xwvOvNpQs
- Q31uAIy0/wP9Ysu2CzPRA==
+X-Provags-ID: V03:K1:o8Zkr+sOZ52wm0ae45/RQryAsK7xYXnsT+HPUpQaufkmPH+Q6/t
+ Mx1QjONjSFAcKcXg6d+qmIO5Nz2Z1PzDnxY6Ir3M0ox/+vbOAVauXJZo7+cMsdRcRszJBe7
+ Aj8ZN5RLd1R69CpmSVEU9MTURTureJNFvVMuvJJDqIIb4Y4IhYa+4XE+s6Ccc/3w7U5VVCC
+ UD2jKhDgaH7FjqUd1a5VA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:KV//2V92wyo=:Skk32CYuicSxZZPRFkUmgX
- of8r2viVfQmq0LSYcMd5JsyQ7bzAea6olG150FsN7SU+t3ElN2w1rxq6FusqtKA+yf16rXESX
- Dt3PochsKFpKQc9csS53CyT34DoP887CohItB8UbmqrsVYl6HpeXYh2LJHFjcPYPmWJWMJBuI
- iU2Jw4dVS7WxPNmGyRHjAO/V/0XB+O10dTNADW5qp/Akc9JHggrhF7a33CM2G0ndH36+9jkqV
- 88Wgo6sZ47FqKryV14wGHcalWv5zn3tfzK+70Wc8aFhuusyAEVf7SYPLMU28ahn7nnEWH2HCK
- BPNxBjz0PhANbnRcMayu1kL6sdbPyykKsCc3ytzsIl8gupa3mBzPp3u/SiBqde8pqWPqpdJ7W
- G0mnyPE0Wa9Qnp38/dkA10CPrnu6m5+1xgcc49OGU6vRHj4MI83ouXumW1Sly+zsREM235j8C
- u/7Lqq2mLg2Oi2m2erPdo2GPygqXcIeXiFGW/snVHW+AYTRwudN3gjSa/BWSjjvlSbutcN6HY
- DdHZf8kl7aW+DKNARzGoD7vuxXvHSyZdkbUhhFRZuSclmQaUGRsxLxdORyCUqgX6HedA6D0Qh
- MViltzh9TOF8ume4tvJxUED11YP3bKS2mse7XLgHWw7LV48lxKKQZRA7S1xUuiZccCel4qHh3
- dj5xgRCPrUMvgmVjhURd2n9M3FxIJ2ZzH5qd5uYUut/3jFnjg1k34wqehASZm5vlvnYQYKE7J
- RndaRjEV6PP3hlZd8cg15A6gWFIvkB0qGq8LMyCl490dGt8bdTLt+ST9tnFQSobtkyOrgAwd/
- DnmI4hzELiV+kqV0nNu3InzQoynFlUdwFNiz0BqNNvVmWTL79UBboap6x7/StzeJZmnz5qelL
- izN88dGZmM8O8Tt7Quaw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1Ts/01x3JdM=:/uunyXLl4bvJWCavpfEcb/
+ 9UoHBVyzqBkcj75fodAjDhjhAyjHi2SMlxz2uJbRFRUmXsG6e6eAogVfcdfts7c47d1reojiA
+ KrgDDY253RADofyZtnh5viCrKGzvxm4TKGABjrnBJ0bt1w3KfIWjCYWav1trSnZDSOZooRHfO
+ WWwwqG5TUQys5Sv+D10PdDh1BmV1PkR0uQvqi3CJd4F1tM+ZGkEG/J9xbVfFsiF8+0dbqDPUQ
+ hr3zgVglY92iRK6SwZ3FDgYMfVogf9R2bfVq1QDRbmGdrtFL2VujlHW7nH5WANGKBkOXxZHrO
+ gXnN2qQQM31mucJGqTVaHLg+IF8tEGR7WvtN5gFD771I0OsvEOSfwY4xnWz6Z8mPCLoTrrfg0
+ iO1f2ahEO0l71Q3MDRR9pChW632vnUMGqXR0Ky4OTVKsj1JqLoKg32dGg6Nf2QnNk4+i5Nn4N
+ 8P3pt9RnLY3nZ8uRAevHKgNdEPEzkueh4uRRA1fLHzn7oheQgyQ958Xc84M2+/zWIdm4pq7h/
+ ReSWhlc/Z0PIHrf6SCL/pkAUlTZ0nXkqcG2+JlONuaSiCIQ1UBPDIwAPipVV24b3qpbmW4+uZ
+ ELTyVt3T3AirdIi6KcrlMebb/OnK4+Dpa2LEw92WHUcZ8wj70YTk2UptblgI1j60iH9hZBR7V
+ DB3kobMcaX8Q7kGMdND8zIaTooRs/2vF0yOcrx4+3ujrUla+IZhROs6oWdLsansep6RTDDz3R
+ 3oqTybQw5FsZaFfFrXLoFrDZGx9IkW9T7vaKNmv/iEf/bxmME60Q+D50eSBPH5cE5flykxY1y
+ 89ZLtDAK60bylXgCvCP2fF5he1cpwrsVM+CNavdYFN4bEulPNhEaj7Ri0q4m9ntK04XxaoFqh
+ BWMSp+QkU2j1ZURv5T0w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to remove 'timespec' completely from the kernel, all
-internal uses should be converted to a y2038-safe type, while
-those that are only for compatibity with existing user space
-should be marked appropriately.
-
-Change vdso to use __kernel_old_timespec in order to avoid
-the deprecated type and mark these interfaces as outdated.
+Only x86 uses the 'time' syscall in vdso, so change that to
+__kernel_old_time_t as a preparation for removing 'time_t' and
+'__kernel_time_t' later.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/ia64/kernel/asm-offsets.c        |  2 +-
- arch/nds32/kernel/vdso/gettimeofday.c | 22 +++++++++++-----------
- arch/sparc/vdso/vclock_gettime.c      | 24 ++++++++++++------------
- arch/x86/um/vdso/um_vdso.c            |  4 ++--
- 4 files changed, 26 insertions(+), 26 deletions(-)
+ arch/x86/entry/vdso/vclock_gettime.c  | 6 +++---
+ arch/x86/entry/vsyscall/vsyscall_64.c | 2 +-
+ arch/x86/um/vdso/um_vdso.c            | 4 ++--
+ lib/vdso/gettimeofday.c               | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/ia64/kernel/asm-offsets.c b/arch/ia64/kernel/asm-offsets.c
-index 00e8e2a1eb19..fb0deb8a4221 100644
---- a/arch/ia64/kernel/asm-offsets.c
-+++ b/arch/ia64/kernel/asm-offsets.c
-@@ -211,7 +211,7 @@ void foo(void)
- 	       offsetof (struct cpuinfo_ia64, ptce_stride));
- 	BLANK();
- 	DEFINE(IA64_TIMESPEC_TV_NSEC_OFFSET,
--	       offsetof (struct timespec, tv_nsec));
-+	       offsetof (struct __kernel_old_timespec, tv_nsec));
- 	DEFINE(IA64_TIME_SN_SPEC_SNSEC_OFFSET,
- 	       offsetof (struct time_sn_spec, snsec));
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index d9ff616bb0f6..7d70935b6758 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -15,7 +15,7 @@
+ #include "../../../../lib/vdso/gettimeofday.c"
  
-diff --git a/arch/nds32/kernel/vdso/gettimeofday.c b/arch/nds32/kernel/vdso/gettimeofday.c
-index 1e69fd5b067b..687abc7145f5 100644
---- a/arch/nds32/kernel/vdso/gettimeofday.c
-+++ b/arch/nds32/kernel/vdso/gettimeofday.c
-@@ -48,9 +48,9 @@ static notrace int vdso_read_retry(const struct vdso_data *vdata, u32 start)
- }
- 
- static notrace long clock_gettime_fallback(clockid_t _clkid,
--					   struct timespec *_ts)
-+					   struct __kernel_old_timespec *_ts)
- {
--	register struct timespec *ts asm("$r1") = _ts;
-+	register struct __kernel_old_timespec *ts asm("$r1") = _ts;
- 	register clockid_t clkid asm("$r0") = _clkid;
- 	register long ret asm("$r0");
- 
-@@ -63,7 +63,7 @@ static notrace long clock_gettime_fallback(clockid_t _clkid,
- 	return ret;
- }
- 
--static notrace int do_realtime_coarse(struct timespec *ts,
-+static notrace int do_realtime_coarse(struct __kernel_old_timespec *ts,
- 				      struct vdso_data *vdata)
- {
- 	u32 seq;
-@@ -78,7 +78,7 @@ static notrace int do_realtime_coarse(struct timespec *ts,
- 	return 0;
- }
- 
--static notrace int do_monotonic_coarse(struct timespec *ts,
-+static notrace int do_monotonic_coarse(struct __kernel_old_timespec *ts,
- 				       struct vdso_data *vdata)
- {
- 	struct timespec tomono;
-@@ -115,7 +115,7 @@ static notrace inline u64 vgetsns(struct vdso_data *vdso)
- 	return ((u64) cycle_delta & vdso->cs_mask) * vdso->cs_mult;
- }
- 
--static notrace int do_realtime(struct timespec *ts, struct vdso_data *vdata)
-+static notrace int do_realtime(struct __kernel_old_timespec *ts, struct vdso_data *vdata)
- {
- 	unsigned count;
- 	u64 ns;
-@@ -133,7 +133,7 @@ static notrace int do_realtime(struct timespec *ts, struct vdso_data *vdata)
- 	return 0;
- }
- 
--static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
-+static notrace int do_monotonic(struct __kernel_old_timespec *ts, struct vdso_data *vdata)
- {
- 	struct timespec tomono;
- 	u64 nsecs;
-@@ -158,7 +158,7 @@ static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
- 	return 0;
- }
- 
--notrace int __vdso_clock_gettime(clockid_t clkid, struct timespec *ts)
-+notrace int __vdso_clock_gettime(clockid_t clkid, struct __kernel_old_timespec *ts)
- {
- 	struct vdso_data *vdata;
- 	int ret = -1;
-@@ -191,10 +191,10 @@ notrace int __vdso_clock_gettime(clockid_t clkid, struct timespec *ts)
- }
- 
- static notrace int clock_getres_fallback(clockid_t _clk_id,
--					  struct timespec *_res)
-+					  struct __kernel_old_timespec *_res)
- {
- 	register clockid_t clk_id asm("$r0") = _clk_id;
--	register struct timespec *res asm("$r1") = _res;
-+	register struct __kernel_old_timespec *res asm("$r1") = _res;
- 	register int ret asm("$r0");
- 
- 	asm volatile ("movi	$r15, %3\n"
-@@ -206,7 +206,7 @@ static notrace int clock_getres_fallback(clockid_t _clk_id,
- 	return ret;
- }
- 
--notrace int __vdso_clock_getres(clockid_t clk_id, struct timespec *res)
-+notrace int __vdso_clock_getres(clockid_t clk_id, struct __kernel_old_timespec *res)
- {
- 	struct vdso_data *vdata = __get_datapage();
- 
-@@ -248,7 +248,7 @@ static notrace inline int gettimeofday_fallback(struct __kernel_old_timeval *_tv
- 
- notrace int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
- {
--	struct timespec ts;
-+	struct __kernel_old_timespec ts;
- 	struct vdso_data *vdata;
- 	int ret;
- 
-diff --git a/arch/sparc/vdso/vclock_gettime.c b/arch/sparc/vdso/vclock_gettime.c
-index a20c5030578d..e794edde6755 100644
---- a/arch/sparc/vdso/vclock_gettime.c
-+++ b/arch/sparc/vdso/vclock_gettime.c
-@@ -63,7 +63,7 @@ notrace static __always_inline struct vvar_data *get_vvar_data(void)
- 	return (struct vvar_data *) ret;
- }
- 
--notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
-+notrace static long vdso_fallback_gettime(long clock, struct __kernel_old_timespec *ts)
- {
- 	register long num __asm__("g1") = __NR_clock_gettime;
- 	register long o0 __asm__("o0") = clock;
-@@ -144,7 +144,7 @@ notrace static __always_inline u64 vgetsns_stick(struct vvar_data *vvar)
- }
- 
- notrace static __always_inline int do_realtime(struct vvar_data *vvar,
--					       struct timespec *ts)
-+					       struct __kernel_old_timespec *ts)
- {
- 	unsigned long seq;
- 	u64 ns;
-@@ -164,7 +164,7 @@ notrace static __always_inline int do_realtime(struct vvar_data *vvar,
- }
- 
- notrace static __always_inline int do_realtime_stick(struct vvar_data *vvar,
--						     struct timespec *ts)
-+						     struct __kernel_old_timespec *ts)
- {
- 	unsigned long seq;
- 	u64 ns;
-@@ -184,7 +184,7 @@ notrace static __always_inline int do_realtime_stick(struct vvar_data *vvar,
- }
- 
- notrace static __always_inline int do_monotonic(struct vvar_data *vvar,
--						struct timespec *ts)
-+						struct __kernel_old_timespec *ts)
- {
- 	unsigned long seq;
- 	u64 ns;
-@@ -204,7 +204,7 @@ notrace static __always_inline int do_monotonic(struct vvar_data *vvar,
- }
- 
- notrace static __always_inline int do_monotonic_stick(struct vvar_data *vvar,
--						      struct timespec *ts)
-+						      struct __kernel_old_timespec *ts)
- {
- 	unsigned long seq;
- 	u64 ns;
-@@ -224,7 +224,7 @@ notrace static __always_inline int do_monotonic_stick(struct vvar_data *vvar,
- }
- 
- notrace static int do_realtime_coarse(struct vvar_data *vvar,
--				      struct timespec *ts)
-+				      struct __kernel_old_timespec *ts)
- {
- 	unsigned long seq;
- 
-@@ -237,7 +237,7 @@ notrace static int do_realtime_coarse(struct vvar_data *vvar,
- }
- 
- notrace static int do_monotonic_coarse(struct vvar_data *vvar,
--				       struct timespec *ts)
-+				       struct __kernel_old_timespec *ts)
- {
- 	unsigned long seq;
- 
-@@ -251,7 +251,7 @@ notrace static int do_monotonic_coarse(struct vvar_data *vvar,
- }
- 
- notrace int
--__vdso_clock_gettime(clockid_t clock, struct timespec *ts)
-+__vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
- {
- 	struct vvar_data *vvd = get_vvar_data();
- 
-@@ -275,11 +275,11 @@ __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 	return vdso_fallback_gettime(clock, ts);
- }
- int
--clock_gettime(clockid_t, struct timespec *)
-+clock_gettime(clockid_t, struct __kernel_old_timespec *)
- 	__attribute__((weak, alias("__vdso_clock_gettime")));
- 
- notrace int
--__vdso_clock_gettime_stick(clockid_t clock, struct timespec *ts)
-+__vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_timespec *ts)
- {
- 	struct vvar_data *vvd = get_vvar_data();
- 
-@@ -311,7 +311,7 @@ __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
- 	if (likely(vvd->vclock_mode != VCLOCK_NONE)) {
- 		if (likely(tv != NULL)) {
- 			union tstv_t {
--				struct timespec ts;
-+				struct __kernel_old_timespec ts;
- 				struct __kernel_old_timeval tv;
- 			} *tstv = (union tstv_t *) tv;
- 			do_realtime(vvd, &tstv->ts);
-@@ -347,7 +347,7 @@ __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct timezone *tz)
- 	if (likely(vvd->vclock_mode != VCLOCK_NONE)) {
- 		if (likely(tv != NULL)) {
- 			union tstv_t {
--				struct timespec ts;
-+				struct __kernel_old_timespec ts;
- 				struct __kernel_old_timeval tv;
- 			} *tstv = (union tstv_t *) tv;
- 			do_realtime_stick(vvd, &tstv->ts);
-diff --git a/arch/x86/um/vdso/um_vdso.c b/arch/x86/um/vdso/um_vdso.c
-index 845336c11364..371724cf70da 100644
---- a/arch/x86/um/vdso/um_vdso.c
-+++ b/arch/x86/um/vdso/um_vdso.c
-@@ -13,7 +13,7 @@
- #include <linux/getcpu.h>
- #include <asm/unistd.h>
- 
--int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
-+int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
- {
- 	long ret;
- 
-@@ -22,7 +22,7 @@ int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 
- 	return ret;
- }
--int clock_gettime(clockid_t, struct timespec *)
-+int clock_gettime(clockid_t, struct __kernel_old_timespec *)
- 	__attribute__((weak, alias("__vdso_clock_gettime")));
+ extern int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz);
+-extern time_t __vdso_time(time_t *t);
++extern __kernel_old_time_t __vdso_time(__kernel_old_time_t *t);
  
  int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ {
+@@ -25,12 +25,12 @@ int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ int gettimeofday(struct __kernel_old_timeval *, struct timezone *)
+ 	__attribute__((weak, alias("__vdso_gettimeofday")));
+ 
+-time_t __vdso_time(time_t *t)
++__kernel_old_time_t __vdso_time(__kernel_old_time_t *t)
+ {
+ 	return __cvdso_time(t);
+ }
+ 
+-time_t time(time_t *t)	__attribute__((weak, alias("__vdso_time")));
++__kernel_old_time_t time(__kernel_old_time_t *t)	__attribute__((weak, alias("__vdso_time")));
+ 
+ 
+ #if defined(CONFIG_X86_64) && !defined(BUILD_VDSO32_64)
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index 76e62bcb8d87..bba5bfdb2a56 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -194,7 +194,7 @@ bool emulate_vsyscall(unsigned long error_code,
+ 		break;
+ 
+ 	case 1:
+-		if (!write_ok_or_segv(regs->di, sizeof(time_t))) {
++		if (!write_ok_or_segv(regs->di, sizeof(__kernel_old_time_t))) {
+ 			ret = -EFAULT;
+ 			goto check_fault;
+ 		}
+diff --git a/arch/x86/um/vdso/um_vdso.c b/arch/x86/um/vdso/um_vdso.c
+index 371724cf70da..2112b8d14668 100644
+--- a/arch/x86/um/vdso/um_vdso.c
++++ b/arch/x86/um/vdso/um_vdso.c
+@@ -37,7 +37,7 @@ int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ int gettimeofday(struct __kernel_old_timeval *, struct timezone *)
+ 	__attribute__((weak, alias("__vdso_gettimeofday")));
+ 
+-time_t __vdso_time(time_t *t)
++__kernel_old_time_t __vdso_time(__kernel_old_time_t *t)
+ {
+ 	long secs;
+ 
+@@ -47,7 +47,7 @@ time_t __vdso_time(time_t *t)
+ 
+ 	return secs;
+ }
+-time_t time(time_t *t) __attribute__((weak, alias("__vdso_time")));
++__kernel_old_time_t time(__kernel_old_time_t *t) __attribute__((weak, alias("__vdso_time")));
+ 
+ long
+ __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index 45f57fd2db64..9ecfd3b547ba 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -164,10 +164,10 @@ __cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ }
+ 
+ #ifdef VDSO_HAS_TIME
+-static __maybe_unused time_t __cvdso_time(time_t *time)
++static __maybe_unused __kernel_old_time_t __cvdso_time(__kernel_old_time_t *time)
+ {
+ 	const struct vdso_data *vd = __arch_get_vdso_data();
+-	time_t t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
++	__kernel_old_time_t t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
+ 
+ 	if (time)
+ 		*time = t;
 -- 
 2.20.0
 
