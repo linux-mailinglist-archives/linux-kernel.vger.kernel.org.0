@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D60BF558F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D51E5F551E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732620AbfKHTDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:03:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32778 "EHLO mail.kernel.org"
+        id S2389709AbfKHTAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:00:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390707AbfKHTDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:03:12 -0500
+        id S2389517AbfKHTAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DE9E20650;
-        Fri,  8 Nov 2019 19:03:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 581372087E;
+        Fri,  8 Nov 2019 19:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239790;
-        bh=hRXQ8sUkkvj8f+ms3hSWiNmVXTyGDsp/hBlvFvf3ciw=;
+        s=default; t=1573239609;
+        bh=vGxDO+FoaJPYXaV2ARZ1fE7BJ10MpE1i8/SaFFZzGKw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vHbJsjctm92LWjwY4KcNXI4i+B/72JG0IkGoaFyxW62kMQBvgGsqUPUBAQTCbkqcG
-         tRigNhkORhePSGQ1jZDpTEVfca735RRZ+wJSjRijhGPK4shiqaKfg/hO1mzCo4tPN7
-         Y9dSVY4YfHOho6yMshZnjc5OUT6T9ShrSfD6EjRg=
+        b=WqfKPlWb+WjICpTL+jX6lNYrRxrBpZdqVQFo4Un1ambepbg5cADaZuqTwQyei6A38
+         vHp9ZXoH9TiCwPVgMKNPu/w7a/iNrOUt1lntobT5zQZd9tao+o7FsQXPe2h7tlezLE
+         YNPcdaJ3+aatQ9OGaQhGLhKbfz6/6b86VKgT6ps0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxim Mikityanskiy <maximmi@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 61/79] net/mlx5e: Fix handling of compressed CQEs in case of low NAPI budget
-Date:   Fri,  8 Nov 2019 19:50:41 +0100
-Message-Id: <20191108174820.613541097@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.14 54/62] platform/x86: pmc_atom: Add Siemens SIMATIC IPC227E to critclk_systems DMI table
+Date:   Fri,  8 Nov 2019 19:50:42 +0100
+Message-Id: <20191108174757.433923274@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxim Mikityanskiy <maximmi@mellanox.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-[ Upstream commit 9df86bdb6746d7fcfc2fda715f7a7c3d0ddb2654 ]
+commit ad0d315b4d4e7138f43acf03308192ec00e9614d upstream.
 
-When CQE compression is enabled, compressed CQEs use the following
-structure: a title is followed by one or many blocks, each containing 8
-mini CQEs (except the last, which may contain fewer mini CQEs).
+The SIMATIC IPC227E uses the PMC clock for on-board components and gets
+stuck during boot if the clock is disabled. Therefore, add this device
+to the critical systems list.
 
-Due to NAPI budget restriction, a complete structure is not always
-parsed in one NAPI run, and some blocks with mini CQEs may be deferred
-to the next NAPI poll call - we have the mlx5e_decompress_cqes_cont call
-in the beginning of mlx5e_poll_rx_cq. However, if the budget is
-extremely low, some blocks may be left even after that, but the code
-that follows the mlx5e_decompress_cqes_cont call doesn't check it and
-assumes that a new CQE begins, which may not be the case. In such cases,
-random memory corruptions occur.
-
-An extremely low NAPI budget of 8 is used when busy_poll or busy_read is
-active.
-
-This commit adds a check to make sure that the previous compressed CQE
-has been completely parsed after mlx5e_decompress_cqes_cont, otherwise
-it prevents a new CQE from being fetched in the middle of a compressed
-CQE.
-
-This commit fixes random crashes in __build_skb, __page_pool_put_page
-and other not-related-directly places, that used to happen when both CQE
-compression and busy_poll/busy_read were enabled.
-
-Fixes: 7219ab34f184 ("net/mlx5e: CQE compression")
-Signed-off-by: Maxim Mikityanskiy <maximmi@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -1267,8 +1267,11 @@ int mlx5e_poll_rx_cq(struct mlx5e_cq *cq
- 	if (unlikely(!test_bit(MLX5E_RQ_STATE_ENABLED, &rq->state)))
- 		return 0;
+---
+ drivers/platform/x86/pmc_atom.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -475,6 +475,13 @@ static const struct dmi_system_id critcl
+ 			DMI_MATCH(DMI_BOARD_NAME, "CB6363"),
+ 		},
+ 	},
++	{
++		.ident = "SIMATIC IPC227E",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "6ES7647-8B"),
++		},
++	},
+ 	{ /*sentinel*/ }
+ };
  
--	if (cq->decmprs_left)
-+	if (cq->decmprs_left) {
- 		work_done += mlx5e_decompress_cqes_cont(rq, cq, 0, budget);
-+		if (cq->decmprs_left || work_done >= budget)
-+			goto out;
-+	}
- 
- 	cqe = mlx5_cqwq_get_cqe(&cq->wq);
- 	if (!cqe) {
 
 
