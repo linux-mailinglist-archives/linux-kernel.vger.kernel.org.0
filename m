@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2437CF53DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9C7F53E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730530AbfKHSwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:52:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48356 "EHLO mail.kernel.org"
+        id S1731132AbfKHSwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:52:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726394AbfKHSwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:52:10 -0500
+        id S1730951AbfKHSwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:52:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7207A2087E;
-        Fri,  8 Nov 2019 18:52:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71C1A214DB;
+        Fri,  8 Nov 2019 18:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239129;
-        bh=JFFwixxiEsokXIStsm47zGSngsWatKm5/5jagaqWF60=;
+        s=default; t=1573239133;
+        bh=GBXGhSu9YMWsJKSnb1S6V/LLVcauS+SavzVE3JSUGhc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lH0uQZ7/ShZ1adtRTFp2nkn0uGuBd6HAXl8J7e9EmnUARaWkuuZ8Pgrpl2P7mYbc2
-         KEYKDj0nheJU/jWb6u3sM/TtJSA/fhPf/ETYDN4aauZmAulPOmh0aOYMe6Wl/fJLOj
-         ljFXYyYL0fsQctGlTtBfddiYtrPVFhqrrwRtHq9U=
+        b=NPVSdCYzfXo2mG21YjlTjKNAvaugii4nQpLA241i4VbNZ7I4W/HMj1XIWzq4yU/yb
+         9fpAayGgbWbJRGECWjQWc+/yYwZExOnjTvMwTyCYZyS6VIfNH/Exy9BS1DeyvBGep/
+         NSznFgpjt+qFNXCx5cTn7Xd5rj6LF2l3VxyufC68=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bodo Stroesser <bstroesser@ts.fujitsu.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 10/75] scsi: target: core: Do not overwrite CDB byte 1
-Date:   Fri,  8 Nov 2019 19:49:27 +0100
-Message-Id: <20191108174718.243317801@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 11/75] of: unittest: fix memory leak in unittest_data_add
+Date:   Fri,  8 Nov 2019 19:49:28 +0100
+Message-Id: <20191108174718.602115181@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
 References: <20191108174708.135680837@linuxfoundation.org>
@@ -46,59 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bodo Stroesser <bstroesser@ts.fujitsu.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 27e84243cb63601a10e366afe3e2d05bb03c1cb5 ]
+[ Upstream commit e13de8fe0d6a51341671bbe384826d527afe8d44 ]
 
-passthrough_parse_cdb() - used by TCMU and PSCSI - attepts to reset the LUN
-field of SCSI-2 CDBs (bits 5,6,7 of byte 1).  The current code is wrong as
-for newer commands not having the LUN field it overwrites relevant command
-bits (e.g. for SECURITY PROTOCOL IN / OUT). We think this code was
-unnecessary from the beginning or at least it is no longer useful. So we
-remove it entirely.
+In unittest_data_add, a copy buffer is created via kmemdup. This buffer
+is leaked if of_fdt_unflatten_tree fails. The release for the
+unittest_data buffer is added.
 
-Link: https://lore.kernel.org/r/12498eab-76fd-eaad-1316-c2827badb76a@ts.fujitsu.com
-Signed-off-by: Bodo Stroesser <bstroesser@ts.fujitsu.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: b951f9dc7f25 ("Enabling OF selftest to run without machine's devicetree")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Reviewed-by: Frank Rowand <frowand.list@gmail.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_device.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ drivers/of/unittest.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
-index bb6a6c35324ae..4198ed4ac6073 100644
---- a/drivers/target/target_core_device.c
-+++ b/drivers/target/target_core_device.c
-@@ -1056,27 +1056,6 @@ passthrough_parse_cdb(struct se_cmd *cmd,
- {
- 	unsigned char *cdb = cmd->t_task_cdb;
- 
--	/*
--	 * Clear a lun set in the cdb if the initiator talking to use spoke
--	 * and old standards version, as we can't assume the underlying device
--	 * won't choke up on it.
--	 */
--	switch (cdb[0]) {
--	case READ_10: /* SBC - RDProtect */
--	case READ_12: /* SBC - RDProtect */
--	case READ_16: /* SBC - RDProtect */
--	case SEND_DIAGNOSTIC: /* SPC - SELF-TEST Code */
--	case VERIFY: /* SBC - VRProtect */
--	case VERIFY_16: /* SBC - VRProtect */
--	case WRITE_VERIFY: /* SBC - VRProtect */
--	case WRITE_VERIFY_12: /* SBC - VRProtect */
--	case MAINTENANCE_IN: /* SPC - Parameter Data Format for SA RTPG */
--		break;
--	default:
--		cdb[1] &= 0x1f; /* clear logical unit number */
--		break;
--	}
--
- 	/*
- 	 * For REPORT LUNS we always need to emulate the response, for everything
- 	 * else, pass it up.
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 2eac3df7dd290..af9e4785b7a6e 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -924,6 +924,7 @@ static int __init unittest_data_add(void)
+ 	of_fdt_unflatten_tree(unittest_data, &unittest_data_node);
+ 	if (!unittest_data_node) {
+ 		pr_warn("%s: No tree to attach; not running tests\n", __func__);
++		kfree(unittest_data);
+ 		return -ENODATA;
+ 	}
+ 	of_node_set_flag(unittest_data_node, OF_DETACHED);
 -- 
 2.20.1
 
