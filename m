@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E197F5680
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F38FF557F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391757AbfKHTJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:09:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40702 "EHLO mail.kernel.org"
+        id S1733280AbfKHTCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:02:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391265AbfKHTJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:09:12 -0500
+        id S1731744AbfKHTCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:02:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE28620673;
-        Fri,  8 Nov 2019 19:09:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9D9C215EA;
+        Fri,  8 Nov 2019 19:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240151;
-        bh=bFVV/iIHpHr3hvUTYGoxW8Qv37Qz2Fo++BWXnU1I4B4=;
+        s=default; t=1573239767;
+        bh=n+DjzyOSmmmFEl8IbLZkY3lr0MNUV7MEu3/2CzBSCnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uReeluiVI6mJtytiBbi+WcGBr+82VT2hD+23tKVb8IIrXabtnZB2oBZB1yoxhCw7E
-         NhSFomFuvKGLqsKfzJzPPUsoHsJ2697mDkRahVuNUrv4jnYyrkRDRHEXM3W3ZkTu/s
-         e6NEbG+KVludph1aCmPEkluU349CJqvi8ZNdRxDc=
+        b=rZIsSdBVbiBwyjjjrVOy/s99D6osF8ZDFP8aQhuN5/CJ+2CRNZ2UKZTNSxD77SB1r
+         VAeL4MYtCp9EG0o3WQYq1xmtv/PbT5DNEFTbqqShd4dSi4Npr/voahPnQPN1qOpM7H
+         atQudN5TGOqTFyye+WRbLBYB6oJLnAHMD8dkwj1U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
-        Karsten Graul <kgraul@linux.ibm.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 105/140] net/smc: fix closing of fallback SMC sockets
-Date:   Fri,  8 Nov 2019 19:50:33 +0100
-Message-Id: <20191108174911.545592682@linuxfoundation.org>
+Subject: [PATCH 4.19 54/79] net: add skb_queue_empty_lockless()
+Date:   Fri,  8 Nov 2019 19:50:34 +0100
+Message-Id: <20191108174818.776614754@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
+References: <20191108174745.495640141@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +43,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ubraun@linux.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit f536dffc0b79738c3104af999318279dccbaa261 ]
+[ Upstream commit d7d16a89350ab263484c0aa2b523dd3a234e4a80 ]
 
-For SMC sockets forced to fallback to TCP, the file is propagated
-from the outer SMC to the internal TCP socket. When closing the SMC
-socket, the internal TCP socket file pointer must be restored to the
-original NULL value, otherwise memory leaks may show up (found with
-CONFIG_DEBUG_KMEMLEAK).
+Some paths call skb_queue_empty() without holding
+the queue lock. We must use a barrier in order
+to not let the compiler do strange things, and avoid
+KCSAN splats.
 
-The internal TCP socket is released in smc_clcsock_release(), which
-calls __sock_release() function in net/socket.c. This calls the
-needed iput(SOCK_INODE(sock)) only, if the file pointer has been reset
-to the original NULL-value.
+Adding a barrier in skb_queue_empty() might be overkill,
+I prefer adding a new helper to clearly identify
+points where the callers might be lockless. This might
+help us finding real bugs.
 
-Fixes: 07603b230895 ("net/smc: propagate file from SMC to TCP socket")
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+The corresponding WRITE_ONCE() should add zero cost
+for current compilers.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/smc/af_smc.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/skbuff.h |   33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
 
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -123,6 +123,12 @@ struct proto smc_proto6 = {
- };
- EXPORT_SYMBOL_GPL(smc_proto6);
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -1380,6 +1380,19 @@ static inline int skb_queue_empty(const
+ }
  
-+static void smc_restore_fallback_changes(struct smc_sock *smc)
+ /**
++ *	skb_queue_empty_lockless - check if a queue is empty
++ *	@list: queue head
++ *
++ *	Returns true if the queue is empty, false otherwise.
++ *	This variant can be used in lockless contexts.
++ */
++static inline bool skb_queue_empty_lockless(const struct sk_buff_head *list)
 +{
-+	smc->clcsock->file->private_data = smc->sk.sk_socket;
-+	smc->clcsock->file = NULL;
++	return READ_ONCE(list->next) == (const struct sk_buff *) list;
 +}
 +
- static int __smc_release(struct smc_sock *smc)
++
++/**
+  *	skb_queue_is_last - check if skb is the last entry in the queue
+  *	@list: queue head
+  *	@skb: buffer
+@@ -1723,9 +1736,11 @@ static inline void __skb_insert(struct s
+ 				struct sk_buff *prev, struct sk_buff *next,
+ 				struct sk_buff_head *list)
  {
- 	struct sock *sk = &smc->sk;
-@@ -141,6 +147,7 @@ static int __smc_release(struct smc_sock
- 		}
- 		sk->sk_state = SMC_CLOSED;
- 		sk->sk_state_change(sk);
-+		smc_restore_fallback_changes(smc);
- 	}
+-	newsk->next = next;
+-	newsk->prev = prev;
+-	next->prev  = prev->next = newsk;
++	/* see skb_queue_empty_lockless() for the opposite READ_ONCE() */
++	WRITE_ONCE(newsk->next, next);
++	WRITE_ONCE(newsk->prev, prev);
++	WRITE_ONCE(next->prev, newsk);
++	WRITE_ONCE(prev->next, newsk);
+ 	list->qlen++;
+ }
  
- 	sk->sk_prot->unhash(sk);
+@@ -1736,11 +1751,11 @@ static inline void __skb_queue_splice(co
+ 	struct sk_buff *first = list->next;
+ 	struct sk_buff *last = list->prev;
+ 
+-	first->prev = prev;
+-	prev->next = first;
++	WRITE_ONCE(first->prev, prev);
++	WRITE_ONCE(prev->next, first);
+ 
+-	last->next = next;
+-	next->prev = last;
++	WRITE_ONCE(last->next, next);
++	WRITE_ONCE(next->prev, last);
+ }
+ 
+ /**
+@@ -1881,8 +1896,8 @@ static inline void __skb_unlink(struct s
+ 	next	   = skb->next;
+ 	prev	   = skb->prev;
+ 	skb->next  = skb->prev = NULL;
+-	next->prev = prev;
+-	prev->next = next;
++	WRITE_ONCE(next->prev, prev);
++	WRITE_ONCE(prev->next, next);
+ }
+ 
+ /**
 
 
