@@ -2,118 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE145F597F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5BCF5994
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:24:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732862AbfKHVPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:15:24 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35274 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731743AbfKHVPY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:15:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B9D536146F; Fri,  8 Nov 2019 21:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573247723;
-        bh=NtCjd02v1Yds9AVIHvham7yjJZsxN1d2DMJTV0OeTJY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E6RDJQz/Iz2rXlNIER8tWf5prgdkcAg5XxJtBuLd7wO+3UL7MXgnTXh1zGvt9p4IA
-         /I5cTIioSMsf+QsXFUw2mwYski2nLn5nMm4eHsZVd0VDEnRiaRvOrfgpHFmQ3o3Fur
-         mcnpZxeYBb7jObWyjPTcQhQdbKte+q9U+NoAQA3w=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1732951AbfKHVPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:15:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732926AbfKHVPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:15:39 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3CC8661275;
-        Fri,  8 Nov 2019 21:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573247720;
-        bh=NtCjd02v1Yds9AVIHvham7yjJZsxN1d2DMJTV0OeTJY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3u/QHiVtXN1/TRGGxZsCGWrvgJQ7Ex9JTHmriYpljoD1XxwgLF/+PlsHm2wWeV8g
-         egyJi7C/JIBtgNQTu/IlcRUg+w1qiEF4hIXH2ROsC8ItHjhuNSN+2Pk7/tEO2kOnZz
-         iEfkIbWuTzPF5Z/pTpUPRpI7YzTJLXdOhkwPDY50=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CC8661275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org
-Cc:     marc.w.gonzalez@free.fr, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v7 6/6] arm64: dts: qcom: msm8998: Add mmcc node
-Date:   Fri,  8 Nov 2019 14:15:10 -0700
-Message-Id: <1573247710-21035-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1573247450-19738-1-git-send-email-jhugo@codeaurora.org>
-References: <1573247450-19738-1-git-send-email-jhugo@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9543720869;
+        Fri,  8 Nov 2019 21:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573247738;
+        bh=0OHKn/NSP13Adarhq9wPSTSqkcmLeCqcUJ/45x0J6ok=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=JPORAN6QAt8G+verpqAPM4zK4BVLDPAyfMBkFDOckhcyz7af3S2g4htaHUO2ENWJP
+         DTKTvMhfJHfDx+T3Y8TyJhCEu2H2fjd9YVZyu8fBP08ybyWbx5Zk5UkyJLwjjXs6SO
+         m8lVWe7z2JXWJXzXW4h/G08DGtzDTqlIqVemrTgM=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191108185503.GB3384779@ulmo>
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com> <1565984527-5272-8-git-send-email-skomatineni@nvidia.com> <20191106231005.F2CD820869@mail.kernel.org> <fcc43ccb-8c6e-d518-4c70-503501706ffd@gmail.com> <20191107152115.GA2580600@ulmo> <20191107191933.0B18021D6C@mail.kernel.org> <20191108101116.GA2583136@ulmo> <20191108181249.E284E214DB@mail.kernel.org> <20191108185503.GB3384779@ulmo>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        jason@lakedaemon.net, jonathanh@nvidia.com,
+        linus.walleij@linaro.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v9 07/22] clk: Add API to get index of the clock parent
+User-Agent: alot/0.8.1
+Date:   Fri, 08 Nov 2019 13:15:37 -0800
+Message-Id: <20191108211538.9543720869@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MSM8998 Multimedia Clock Controller DT node.
+Quoting Thierry Reding (2019-11-08 10:55:03)
+> On Fri, Nov 08, 2019 at 10:12:49AM -0800, Stephen Boyd wrote:
+> >=20
+> > Sure a WARN_ON() sounds fair. That will not take the whole task down
+> > and makes sure that drivers aren't doing something incorrect. Otherwise,
+> > this looks good and we can optimize by caching the parent index later if
+> > we really need to.
+>=20
+> Okay, great. I'll go replace the above patch in the branch that I have.
+> I'm not sure if you saw it, but I had sent this in a pull request for
+> v5.5-rc1 about a week ago because I've got Tegra clock driver patches
+> that depend on this. I can replace this patch with the above proposal
+> and update the Tegra clock driver branch and then resend the two pull
+> requests.
+>=20
+> Does that sound like a plan?
+>=20
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 28 +++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 2f0d4366724b..1d2e8357fb01 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,mmcc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/gpio/gpio.h>
-@@ -1758,6 +1759,33 @@
- 			#size-cells = <0>;
- 		};
- 
-+		mmcc: clock-controller@c8c0000 {
-+			compatible = "qcom,mmcc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x0c8c0000 0x40000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+			clock-names = "xo",
-+				      "gpll0",
-+				      "dsi0dsi",
-+				      "dsi0byte",
-+				      "dsi1dsi",
-+				      "dsi1byte",
-+				      "hdmipll",
-+				      "dpvco",
-+				      "dplink";
-+		};
-+
- 		apcs_glb: mailbox@17911000 {
- 			compatible = "qcom,msm8998-apcs-hmss-global";
- 			reg = <0x17911000 0x1000>;
--- 
-2.17.1
+Yes please refresh the PRs. I don't think anything else is concerning
+but I'll go do a sweep over the Tegra patches right now.
 
