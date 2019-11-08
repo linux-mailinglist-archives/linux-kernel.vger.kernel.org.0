@@ -2,96 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA6DF4CBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADFAEF4CC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbfKHNKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:10:10 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35852 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726879AbfKHNKK (ORCPT
+        id S1728366AbfKHNK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:10:57 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:39280 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbfKHNK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 08:10:10 -0500
-Received: by mail-pf1-f193.google.com with SMTP id v19so4557577pfm.3;
-        Fri, 08 Nov 2019 05:10:09 -0800 (PST)
+        Fri, 8 Nov 2019 08:10:57 -0500
+Received: by mail-il1-f195.google.com with SMTP id a7so4657358ild.6;
+        Fri, 08 Nov 2019 05:10:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XBz1Jc3/FiwJIp4RboH8VljgUQ6jRhtm1XzbxHXczBI=;
-        b=a6qI6CoPQOIV7/MjWLHdMwLEEOsLElkRa+bh/kFYUUDZhpO10RT3wZy9SwZT8GgF7H
-         OiMkj6uihW0+/a5mxow+4Q/Lyd5pWHtKrvHSaNa+oQ7nAajMp+nNGrFLL8ActfNNnT6Y
-         q6MoQc/Aop4wwwOjWKb8EH2w8OwHvHyfLSbL/QS3AfU1Nntx7lN+FrirQ5rYnS91TQ+e
-         agHArMGlnXYf8/tZa7uCdyxljSSppplS6M0Em4Q9dG1yas8ShFFq+9ePF7p+kI8G8gDV
-         1yY2WnCNG15wIDMYfbBbcfT7szvaVzCzAt4azod2PCjJQaur2MHFTNS+LjfnKI2IivIM
-         uMTw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nahHqUz3/obBwpqlgIc7CwCj/FhH1UqSQVTekcxe7BA=;
+        b=OR+SNRg8B5FpGfACVmeUC9pt4iY0Vkss6VVhaboxI2i70dB61cUT6e+fmHi0eBdQVp
+         xOEqrJFBrvbLx777AsccJ7XtJ3EL9tNfbYKjEK3F41nzEq6kx1mPabhcp3PRoZE0k23T
+         mFrWfUXkATA/fnwa/wq6PVR8uVEq75Q/+SjUZwko/mC2Kc3JnroaCMUKakzqRSEA15tZ
+         o9DCgPfnBiaZ6sUYN2mtiQtLRMnVPqK8y9qNtIs0FiSJThAphZWYZph5r9CQg/znQyGV
+         jYVfFeifAGZPpBtkrjc7y+VpJiVgBIRBtkcc3HdfxqRZHqmQOVpkCyRDC1Gr76wAiic9
+         mmkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XBz1Jc3/FiwJIp4RboH8VljgUQ6jRhtm1XzbxHXczBI=;
-        b=Xu+KFalfilVT2afJ2i1XoKHL3XzamyzQW/Qco0ql5/zBzBHGV+j/20AakFfnqWGxBT
-         7fOQ4m3YfnvGuoLWr7MIyeXatyIApb/iOiVw4/lT7Mfvlat+uHv1pQ8g09fU9nRtdB52
-         6XSjRpbabcSTdulAiQkBegZXxah/zi/O6P6jN8a2H4cNNnlP7ip9wirvMFZLTjZNfevh
-         ecwtfNCWC4KKWL1EYUcI+Y8A70gs55av18rxckSnVD64DQmY4NPz1LHRh6yQxN4QLu8E
-         Ai0wwhIxR6ohovn+d7G+KWdDmWe89zO65HHvNlYCSKH0o3I5stb7PL71mPTJCLyiRbMQ
-         54/A==
-X-Gm-Message-State: APjAAAU/6ebKzd7IDd1csBmlQjwV3pBjoxNwV/W2LGXKZkWf+xeqsTp0
-        OREZYy/UP9Uc+xSZyZO+GKo=
-X-Google-Smtp-Source: APXvYqzciQpQ70/OMBDo8jUhaVkvkwXj9G7b/PcEjqu9pt+ztWVa3y/7I7nwrrrScoSE/7G9eokeFA==
-X-Received: by 2002:a63:ae02:: with SMTP id q2mr12144703pgf.210.1573218609219;
-        Fri, 08 Nov 2019 05:10:09 -0800 (PST)
-Received: from localhost (97.64.17.87.16clouds.com. [97.64.17.87])
-        by smtp.gmail.com with ESMTPSA id x20sm6749679pfa.186.2019.11.08.05.10.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Nov 2019 05:10:08 -0800 (PST)
-From:   Song Qiang <songqiang1304521@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com,
-        stefan.popa@analog.com, jic23@kernel.org, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Song Qiang <songqiang1304521@gmail.com>
-Subject: [PATCH 3/3] MAINTAINERS: add maintainer for AD5940
-Date:   Fri,  8 Nov 2019 21:09:46 +0800
-Message-Id: <20191108130946.14740-3-songqiang1304521@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191108130946.14740-1-songqiang1304521@gmail.com>
-References: <20191108130946.14740-1-songqiang1304521@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nahHqUz3/obBwpqlgIc7CwCj/FhH1UqSQVTekcxe7BA=;
+        b=ekTMiRsztUoml0rJVrcloZdNAsnflpVcUHH22C4TwEaOBSS9/7bPgKCmXeN+o+3+OI
+         0ywmxCxt30VY5fE6u23cysXbAiljEf8n7FkSQuR5UyBRoLaRVIy+3/yOQbh7zj65u4hI
+         QUDMlw92C695AgOaunWJAcVTZzhvHLrnSo7k2SLIu/g2WjFA+VvvymQC58z5ce+AO1XZ
+         sd5DaP/z0LlUW2mRjsEhNRJCL+6wP5KWAGh6jk3dyIVF+YTUtDZvPR6Ccyjcn99MLKKe
+         zlZ1pXUAmW6HNmn2ICLNUaDW1YxDpsfM2GxLpCyXnN1rjGPXBHs+u7hKQDnvB4aPh6/V
+         TD3w==
+X-Gm-Message-State: APjAAAXSvoQNKsatTtSm/tVH/tQSDOogaDexTc/KUSqN1AR3843raTM1
+        03DwtJwT4Orqawb7fJOKplrmGYwJOFYv/CUF+lckkRCr
+X-Google-Smtp-Source: APXvYqzAJU4sRg6jJnt/2BiUBevqIWVuv2bDwxN256RfPHia7sufV/QREhysjcqQtvzRFBxS0vnIPjqM1G310HnS5sU=
+X-Received: by 2002:a92:cb84:: with SMTP id z4mr13137312ilo.78.1573218655594;
+ Fri, 08 Nov 2019 05:10:55 -0800 (PST)
+MIME-Version: 1.0
+References: <20191018130507.29893-1-aford173@gmail.com>
+In-Reply-To: <20191018130507.29893-1-aford173@gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Fri, 8 Nov 2019 07:10:45 -0600
+Message-ID: <CAHCN7xJ9aAHjHToM5mGixWvJb7hAOenST7Fkett84nNQdUghmA@mail.gmail.com>
+Subject: Re: [PATCH] fbdev/omap: fix max fclk divider for omap36xx
+To:     linux-fbdev@vger.kernel.org
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Adam Ford <adam.ford@logicpd.com>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself as the maintainer of the driver of AD5940 and it's
-docs.
+On Fri, Oct 18, 2019 at 8:05 AM Adam Ford <aford173@gmail.com> wrote:
+>
+> The OMAP36xx and AM/DM37x TRMs say that the maximum divider for DSS fclk
+> (in CM_CLKSEL_DSS) is 32. Experimentation shows that this is not
+> correct, and using divider of 32 breaks DSS with a flood or underflows
+> and sync losts. Dividers up to 31 seem to work fine.
+>
+> There is another patch to the DT files to limit the divider correctly,
+> but as the DSS driver also needs to know the maximum divider to be able
+> to iteratively find good rates, we also need to do the fix in the DSS
+> driver.
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: stable@vger.kernel.org # linux-4.4.y only
 
-Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This is basically the same patch as the only Tomi reviewed for 4.9,
+but it is based on 4.4.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2a427d1e9f01..c3d29dcc50ad 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -431,6 +431,16 @@ W:	http://ez.analog.com/community/linux-device-drivers
- S:	Supported
- F:	drivers/regulator/ad5398.c
- 
-+AD5940 ANALOG FRONT END DRIVER
-+M:	Song Qiang <songqiang1304521@gmail.com>
-+W:	https://wiki.analog.com/resources/eval/user-guides/ad5940
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/iio/adc/ad5940.c
-+F:	Documentation/devicetree/bindings/iio/adc/adi,ad5940.yaml
-+F:	arch/arm/boot/dts/overlays/rpi-ad5940-overlay.dts
-+F:	Documentation/ABI/testing/sysfs-bus-iio-adc-ad594
-+
- AD714X CAPACITANCE TOUCH SENSOR DRIVER (AD7142/3/7/8/7A)
- M:	Michael Hennerich <michael.hennerich@analog.com>
- W:	http://wiki.analog.com/AD7142
--- 
-2.17.1
+Is there any way these can be integrated?
 
+thank you,
+
+adam
+>
+> diff --git a/drivers/video/fbdev/omap2/dss/dss.c b/drivers/video/fbdev/omap2/dss/dss.c
+> index 9200a8668b49..a57c3a5f4bf8 100644
+> --- a/drivers/video/fbdev/omap2/dss/dss.c
+> +++ b/drivers/video/fbdev/omap2/dss/dss.c
+> @@ -843,7 +843,7 @@ static const struct dss_features omap34xx_dss_feats = {
+>  };
+>
+>  static const struct dss_features omap3630_dss_feats = {
+> -       .fck_div_max            =       32,
+> +       .fck_div_max            =       31,
+>         .dss_fck_multiplier     =       1,
+>         .parent_clk_name        =       "dpll4_ck",
+>         .dpi_select_source      =       &dss_dpi_select_source_omap2_omap3,
+> --
+> 2.17.1
+>
