@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9303AF5569
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BC2F566D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390489AbfKHTCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:02:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59812 "EHLO mail.kernel.org"
+        id S2391685AbfKHTIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:08:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390459AbfKHTCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:02:13 -0500
+        id S2391167AbfKHTIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:08:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBB3F214DB;
-        Fri,  8 Nov 2019 19:02:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0946206A3;
+        Fri,  8 Nov 2019 19:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239732;
-        bh=Qy1e6bHbGD5GJr0rNieFEhlpz/5r6eNcWem9U+clMBo=;
+        s=default; t=1573240122;
+        bh=FpFbVomZCovbpRvXwJCpXLz9MvCarkSRUlBibpRzgH4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jO48OFK28ShDmS0GfjR84H3Obvw0kUsyNr1u2g6p71MyKSL+JjF5WvwP/R17WA6C2
-         +5F6DPX2AdObOS0NmFYg4P4m5mM9iyyEON+fifN14huM/p3EzTrp978CiwqNQkcCcL
-         vwf9ymdiS7g46TWL9IKGUaM1PhMlFfVvJUsdXzak=
+        b=vECszgWg9sBL6IgWFFwun5QZBpyJm4pMJKzk+jZM1mew7zW34JSNPjcmZvJE0lUjD
+         VSDsl0npdw+dO1TC24bubtoftocXO7W6Y/TmnTAPPTnWESWa4IIwXxHBXdoAs/PPR+
+         r6IoBiPRx0lyUJgiOfQca0/lWA3b76YWDAHT2Ncw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 43/79] net: dsa: bcm_sf2: Fix IMP setup for port different than 8
-Date:   Fri,  8 Nov 2019 19:50:23 +0100
-Message-Id: <20191108174811.037430942@linuxfoundation.org>
+Subject: [PATCH 5.3 096/140] udp: fix data-race in udp_set_dev_scratch()
+Date:   Fri,  8 Nov 2019 19:50:24 +0100
+Message-Id: <20191108174911.082386093@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,80 +45,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 5fc0f21246e50afdf318b5a3a941f7f4f57b8947 ]
+[ Upstream commit a793183caa9afae907a0d7ddd2ffd57329369bf5 ]
 
-Since it became possible for the DSA core to use a CPU port different
-than 8, our bcm_sf2_imp_setup() function was broken because it assumes
-that registers are applicable to port 8. In particular, the port's MAC
-is going to stay disabled, so make sure we clear the RX_DIS and TX_DIS
-bits if we are not configured for port 8.
+KCSAN reported a data-race in udp_set_dev_scratch() [1]
 
-Fixes: 9f91484f6fcc ("net: dsa: make "label" property optional for dsa2")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+The issue here is that we must not write over skb fields
+if skb is shared. A similar issue has been fixed in commit
+89c22d8c3b27 ("net: Fix skb csum races when peeking")
+
+While we are at it, use a helper only dealing with
+udp_skb_scratch(skb)->csum_unnecessary, as this allows
+udp_set_dev_scratch() to be called once and thus inlined.
+
+[1]
+BUG: KCSAN: data-race in udp_set_dev_scratch / udpv6_recvmsg
+
+write to 0xffff888120278317 of 1 bytes by task 10411 on cpu 1:
+ udp_set_dev_scratch+0xea/0x200 net/ipv4/udp.c:1308
+ __first_packet_length+0x147/0x420 net/ipv4/udp.c:1556
+ first_packet_length+0x68/0x2a0 net/ipv4/udp.c:1579
+ udp_poll+0xea/0x110 net/ipv4/udp.c:2720
+ sock_poll+0xed/0x250 net/socket.c:1256
+ vfs_poll include/linux/poll.h:90 [inline]
+ do_select+0x7d0/0x1020 fs/select.c:534
+ core_sys_select+0x381/0x550 fs/select.c:677
+ do_pselect.constprop.0+0x11d/0x160 fs/select.c:759
+ __do_sys_pselect6 fs/select.c:784 [inline]
+ __se_sys_pselect6 fs/select.c:769 [inline]
+ __x64_sys_pselect6+0x12e/0x170 fs/select.c:769
+ do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+read to 0xffff888120278317 of 1 bytes by task 10413 on cpu 0:
+ udp_skb_csum_unnecessary include/net/udp.h:358 [inline]
+ udpv6_recvmsg+0x43e/0xe90 net/ipv6/udp.c:310
+ inet6_recvmsg+0xbb/0x240 net/ipv6/af_inet6.c:592
+ sock_recvmsg_nosec+0x5c/0x70 net/socket.c:871
+ ___sys_recvmsg+0x1a0/0x3e0 net/socket.c:2480
+ do_recvmmsg+0x19a/0x5c0 net/socket.c:2601
+ __sys_recvmmsg+0x1ef/0x200 net/socket.c:2680
+ __do_sys_recvmmsg net/socket.c:2703 [inline]
+ __se_sys_recvmmsg net/socket.c:2696 [inline]
+ __x64_sys_recvmmsg+0x89/0xb0 net/socket.c:2696
+ do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 10413 Comm: syz-executor.0 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+
+Fixes: 2276f58ac589 ("udp: use a separate rx queue for packet reception")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/bcm_sf2.c |   36 +++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+ net/ipv4/udp.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -41,22 +41,11 @@ static void bcm_sf2_imp_setup(struct dsa
- 	unsigned int i;
- 	u32 reg, offset;
- 
--	if (priv->type == BCM7445_DEVICE_ID)
--		offset = CORE_STS_OVERRIDE_IMP;
--	else
--		offset = CORE_STS_OVERRIDE_IMP2;
--
- 	/* Enable the port memories */
- 	reg = core_readl(priv, CORE_MEM_PSM_VDD_CTRL);
- 	reg &= ~P_TXQ_PSM_VDD(port);
- 	core_writel(priv, reg, CORE_MEM_PSM_VDD_CTRL);
- 
--	/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
--	reg = core_readl(priv, CORE_IMP_CTL);
--	reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
--	reg &= ~(RX_DIS | TX_DIS);
--	core_writel(priv, reg, CORE_IMP_CTL);
--
- 	/* Enable forwarding */
- 	core_writel(priv, SW_FWDG_EN, CORE_SWMODE);
- 
-@@ -75,10 +64,27 @@ static void bcm_sf2_imp_setup(struct dsa
- 
- 	b53_brcm_hdr_setup(ds, port);
- 
--	/* Force link status for IMP port */
--	reg = core_readl(priv, offset);
--	reg |= (MII_SW_OR | LINK_STS);
--	core_writel(priv, reg, offset);
-+	if (port == 8) {
-+		if (priv->type == BCM7445_DEVICE_ID)
-+			offset = CORE_STS_OVERRIDE_IMP;
-+		else
-+			offset = CORE_STS_OVERRIDE_IMP2;
-+
-+		/* Force link status for IMP port */
-+		reg = core_readl(priv, offset);
-+		reg |= (MII_SW_OR | LINK_STS);
-+		core_writel(priv, reg, offset);
-+
-+		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
-+		reg = core_readl(priv, CORE_IMP_CTL);
-+		reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
-+		reg &= ~(RX_DIS | TX_DIS);
-+		core_writel(priv, reg, CORE_IMP_CTL);
-+	} else {
-+		reg = core_readl(priv, CORE_G_PCTL_PORT(port));
-+		reg &= ~(RX_DIS | TX_DIS);
-+		core_writel(priv, reg, CORE_G_PCTL_PORT(port));
-+	}
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -1316,6 +1316,20 @@ static void udp_set_dev_scratch(struct s
+ 		scratch->_tsize_state |= UDP_SKB_IS_STATELESS;
  }
  
- static void bcm_sf2_gphy_enable_set(struct dsa_switch *ds, bool enable)
++static void udp_skb_csum_unnecessary_set(struct sk_buff *skb)
++{
++	/* We come here after udp_lib_checksum_complete() returned 0.
++	 * This means that __skb_checksum_complete() might have
++	 * set skb->csum_valid to 1.
++	 * On 64bit platforms, we can set csum_unnecessary
++	 * to true, but only if the skb is not shared.
++	 */
++#if BITS_PER_LONG == 64
++	if (!skb_shared(skb))
++		udp_skb_scratch(skb)->csum_unnecessary = true;
++#endif
++}
++
+ static int udp_skb_truesize(struct sk_buff *skb)
+ {
+ 	return udp_skb_scratch(skb)->_tsize_state & ~UDP_SKB_IS_STATELESS;
+@@ -1550,10 +1564,7 @@ static struct sk_buff *__first_packet_le
+ 			*total += skb->truesize;
+ 			kfree_skb(skb);
+ 		} else {
+-			/* the csum related bits could be changed, refresh
+-			 * the scratch area
+-			 */
+-			udp_set_dev_scratch(skb);
++			udp_skb_csum_unnecessary_set(skb);
+ 			break;
+ 		}
+ 	}
 
 
