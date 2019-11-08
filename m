@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45159F49AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:04:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0842F4993
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:04:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390700AbfKHMEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:04:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55790 "EHLO mail.kernel.org"
+        id S2389911AbfKHLmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:42:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389773AbfKHLmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:42:06 -0500
+        id S2389841AbfKHLmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6573E222C5;
-        Fri,  8 Nov 2019 11:42:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D55B021D6C;
+        Fri,  8 Nov 2019 11:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213326;
-        bh=4q0wxmlT8LNfXIg3Vz5jn72hLNxKgjL8rMq45doAlCg=;
+        s=default; t=1573213334;
+        bh=J6ZEfStz5DT4isXE9ce7olgvh3mbHLrQijoXZCL5OSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fUDzYVoGP3euwLnEOkThbzbyljtrqvitknHJ8LAvYUz0/p0MCfgwVHjSl2hqXyBuG
-         lAMDKJFdBtjwQAOpGhztPwRK6ptiEItck0/f/uwxRkEgqwv5+e3RmnPcahEd6BuGts
-         3VznNQC81XAWYbFwuQzA5yfR6Agz0/yUX9QwL3ZE=
+        b=2sgV1b0RERik4NvzP8ic+6j7ZymM4QulxjM1P+2yzUA1xHTn0totqPmZNa98ClY+w
+         b4JwlMfdGwkyUABjpYCiuXVsCBZx/JsC55FbKwomtZceStunegPbNTcPaSSl3pNWaS
+         S6m5QivXJbCp/lZSdjW7EBHDAqT3lvVHOO/flEjQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 168/205] arm64: dts: renesas: r8a77965: Fix HS-USB compatible
-Date:   Fri,  8 Nov 2019 06:37:15 -0500
-Message-Id: <20191108113752.12502-168-sashal@kernel.org>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 172/205] llc: avoid blocking in llc_sap_close()
+Date:   Fri,  8 Nov 2019 06:37:19 -0500
+Message-Id: <20191108113752.12502-172-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -45,34 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 99584d93e301d820d817bba2eb77b9152e13009c ]
+[ Upstream commit 9708d2b5b7c648e8e0a40d11e8cea12f6277f33c ]
 
-Should be "renesas,usbhs-r8a77965", not "renesas,usbhs-r8a7796".
+llc_sap_close() is called by llc_sap_put() which
+could be called in BH context in llc_rcv(). We can't
+block in BH.
 
-Fixes: a06e8af801760a98 ("arm64: dts: renesas: r8a77965: add HS-USB node")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+There is no reason to block it here, kfree_rcu() should
+be sufficient.
+
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/llc.h  | 1 +
+ net/llc/llc_core.c | 4 +---
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 0da4841162610..2ccb1138cdf0c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -545,7 +545,7 @@
- 		};
+diff --git a/include/net/llc.h b/include/net/llc.h
+index 890a87318014d..df282d9b40170 100644
+--- a/include/net/llc.h
++++ b/include/net/llc.h
+@@ -66,6 +66,7 @@ struct llc_sap {
+ 	int sk_count;
+ 	struct hlist_nulls_head sk_laddr_hash[LLC_SK_LADDR_HASH_ENTRIES];
+ 	struct hlist_head sk_dev_hash[LLC_SK_DEV_HASH_ENTRIES];
++	struct rcu_head rcu;
+ };
  
- 		hsusb: usb@e6590000 {
--			compatible = "renesas,usbhs-r8a7796",
-+			compatible = "renesas,usbhs-r8a77965",
- 				     "renesas,rcar-gen3-usbhs";
- 			reg = <0 0xe6590000 0 0x100>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ static inline
+diff --git a/net/llc/llc_core.c b/net/llc/llc_core.c
+index 260b3dc1b4a2a..64d4bef04e730 100644
+--- a/net/llc/llc_core.c
++++ b/net/llc/llc_core.c
+@@ -127,9 +127,7 @@ void llc_sap_close(struct llc_sap *sap)
+ 	list_del_rcu(&sap->node);
+ 	spin_unlock_bh(&llc_sap_list_lock);
+ 
+-	synchronize_rcu();
+-
+-	kfree(sap);
++	kfree_rcu(sap, rcu);
+ }
+ 
+ static struct packet_type llc_packet_type __read_mostly = {
 -- 
 2.20.1
 
