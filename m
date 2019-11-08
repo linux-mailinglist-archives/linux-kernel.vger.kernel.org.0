@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E92F5636
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E287F575D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391454AbfKHTH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:07:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38116 "EHLO mail.kernel.org"
+        id S2391349AbfKHTUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:20:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391441AbfKHTHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:07:24 -0500
+        id S2389427AbfKHTAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29F4D2087E;
-        Fri,  8 Nov 2019 19:07:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D947E224B3;
+        Fri,  8 Nov 2019 18:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240043;
-        bh=ht9JGwRvyPE1oQY2tPbaSAi9RSWCgC0V/DymEc6snjA=;
+        s=default; t=1573239528;
+        bh=bwQbum9VhKjiV6wYsolq6/zxgIAJqakptpATf4eyNIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ELCo2DyELWLDC1Tw39q2GwiAB7M2EwB3rDegDSNvqiJA2uNeDHCnaYpcd8gy7z6+I
-         W017ZD7ObaeqYRi7qrlwrT7FPoP5yg03zwVqtxPf4XM16SXC9AHBn2CvOwaqcFcsOd
-         rYla0iSzKFYRRS4PpCXnaHyjD/EMTfyTIEXKdVFM=
+        b=yLpqhZw+hhS+SUbL40IfQysUheQ/hyQjOw1z66n6c08yjQw2RjjIIfja7kFES7WoI
+         heZNy6o3Vti1fLHv4Enpeoz79wGgzzypxy/naqisu/wGKgZqJ16UQp8rMr9plfbUFk
+         0WjqesusyJotE0UjqAegvnTItGChSbmpOWd3tVM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Xiuli <xiuli.pan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 067/140] ALSA: hda: Add Tigerlake/Jasperlake PCI ID
-Date:   Fri,  8 Nov 2019 19:49:55 +0100
-Message-Id: <20191108174909.430405131@linuxfoundation.org>
+        stable@vger.kernel.org, Jing Xiangfeng <jingxiangfeng@huawei.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 08/62] ARM: mm: fix alignment handler faults under memory pressure
+Date:   Fri,  8 Nov 2019 19:49:56 +0100
+Message-Id: <20191108174726.903891675@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Xiuli <xiuli.pan@linux.intel.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 4750c212174892d26645cdf5ad73fb0e9d594ed3 ]
+[ Upstream commit 67e15fa5b487adb9b78a92789eeff2d6ec8f5cee ]
 
-Add HD Audio Device PCI ID for the Intel Tigerlake and Jasperlake
-platform.
+When the system has high memory pressure, the page containing the
+instruction may be paged out.  Using probe_kernel_address() means that
+if the page is swapped out, the resulting page fault will not be
+handled because page faults are disabled by this function.
 
-Signed-off-by: Pan Xiuli <xiuli.pan@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20191022194402.23178-1-pierre-louis.bossart@linux.intel.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Use get_user() to read the instruction instead.
+
+Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+Fixes: b255188f90e2 ("ARM: fix scheduling while atomic warning in alignment handling code")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_intel.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/mm/alignment.c | 44 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index b0de3e3b33e5c..e1791d01ccc01 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2431,6 +2431,12 @@ static const struct pci_device_id azx_ids[] = {
- 	/* Icelake */
- 	{ PCI_DEVICE(0x8086, 0x34c8),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
-+	/* Jasperlake */
-+	{ PCI_DEVICE(0x8086, 0x38c8),
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
-+	/* Tigerlake */
-+	{ PCI_DEVICE(0x8086, 0xa0c8),
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
- 	/* Elkhart Lake */
- 	{ PCI_DEVICE(0x8086, 0x4b55),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index 2c96190e018bd..96b17a870b91d 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -768,6 +768,36 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
+ 	return NULL;
+ }
+ 
++static int alignment_get_arm(struct pt_regs *regs, u32 *ip, unsigned long *inst)
++{
++	u32 instr = 0;
++	int fault;
++
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_arm(instr);
++
++	return fault;
++}
++
++static int alignment_get_thumb(struct pt_regs *regs, u16 *ip, u16 *inst)
++{
++	u16 instr = 0;
++	int fault;
++
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_thumb16(instr);
++
++	return fault;
++}
++
+ static int
+ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+@@ -775,10 +805,10 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	unsigned long instr = 0, instrptr;
+ 	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
+ 	unsigned int type;
+-	unsigned int fault;
+ 	u16 tinstr = 0;
+ 	int isize = 4;
+ 	int thumb2_32b = 0;
++	int fault;
+ 
+ 	if (interrupts_enabled(regs))
+ 		local_irq_enable();
+@@ -787,15 +817,14 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 	if (thumb_mode(regs)) {
+ 		u16 *ptr = (u16 *)(instrptr & ~1);
+-		fault = probe_kernel_address(ptr, tinstr);
+-		tinstr = __mem_to_opcode_thumb16(tinstr);
++
++		fault = alignment_get_thumb(regs, ptr, &tinstr);
+ 		if (!fault) {
+ 			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
+ 			    IS_T32(tinstr)) {
+ 				/* Thumb-2 32-bit */
+-				u16 tinst2 = 0;
+-				fault = probe_kernel_address(ptr + 1, tinst2);
+-				tinst2 = __mem_to_opcode_thumb16(tinst2);
++				u16 tinst2;
++				fault = alignment_get_thumb(regs, ptr + 1, &tinst2);
+ 				instr = __opcode_thumb32_compose(tinstr, tinst2);
+ 				thumb2_32b = 1;
+ 			} else {
+@@ -804,8 +833,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 			}
+ 		}
+ 	} else {
+-		fault = probe_kernel_address((void *)instrptr, instr);
+-		instr = __mem_to_opcode_arm(instr);
++		fault = alignment_get_arm(regs, (void *)instrptr, &instr);
+ 	}
+ 
+ 	if (fault) {
 -- 
 2.20.1
 
