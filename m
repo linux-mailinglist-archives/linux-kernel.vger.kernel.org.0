@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D370EF4955
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 949E9F4922
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391586AbfKHMCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:02:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57732 "EHLO mail.kernel.org"
+        id S2390523AbfKHLnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:43:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388506AbfKHLnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:43:19 -0500
+        id S2390443AbfKHLn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:43:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85E95222CE;
-        Fri,  8 Nov 2019 11:43:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AE3521D82;
+        Fri,  8 Nov 2019 11:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213399;
-        bh=dkQQjEz/3AL8lCoqR+WhrS+wxdB8zSvy0TZOHAZ0ujY=;
+        s=default; t=1573213405;
+        bh=bQI38G0uBLoRUHG1bRD67xPvAwdXeHP+L7g8f44DKqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r3GvHRLAXFL3mkPir24mZGKmJXlKkmu5zTrbhM+t83COXBacYNiI1vZeI1XUGMSKj
-         rVTm0puyt52LELRiBcyV3CoLusYb6fCJVjOxIO9sHkPZsl9WJYhPtYccyWb96DFEKs
-         erXfWMRtdJojGHXb4icVXXOWr7BOcfYVHxCuv0Ig=
+        b=YNgNNCs1+QseJn0New/+fTmRHCAQUudt/09UPrueUjdgzKXz6ItLeJbpXxIT7yY2U
+         swSvZVU/CU2Qrv3JEDzVZhCuELXtvuV62RZrKb5I2XDN0pifjLNv3GQEoOPFqUgBRh
+         stoYTTCu1dWqolUhf99J/2LdMdgBx1ut15CHjEDU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 006/103] arm64: dts: allwinner: a64: NanoPi-A64: Fix DCDC1 voltage
-Date:   Fri,  8 Nov 2019 06:41:31 -0500
-Message-Id: <20191108114310.14363-6-sashal@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 010/103] rtc: rv8803: fix the rv8803 id in the OF table
+Date:   Fri,  8 Nov 2019 06:41:35 -0500
+Message-Id: <20191108114310.14363-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
 References: <20191108114310.14363-1-sashal@kernel.org>
@@ -44,41 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andre Przywara <andre.przywara@arm.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 480f58cdbe392d4387a2193b6131a277e0111dd0 ]
+[ Upstream commit c856618d20662695fcdb47bf4d560dc457662aec ]
 
-According to the NanoPi-A64 schematics, DCDC1 is connected to a voltage
-rail named "VDD_SYS_3.3V". All users seem to expect 3.3V here: the
-Ethernet PHY, the uSD card slot, the camera interface and the GPIO pins
-on the headers.
-Fix up the voltage on the regulator to lift it up to 3.3V.
+The ID for RV8803 must be rv_8803
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/rtc/rtc-rv8803.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 2beef9e6cb885..aa0b3844ad63e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -126,9 +126,9 @@
- 
- &reg_dcdc1 {
- 	regulator-always-on;
--	regulator-min-microvolt = <3000000>;
--	regulator-max-microvolt = <3000000>;
--	regulator-name = "vcc-3v";
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-3v3";
- };
- 
- &reg_dcdc2 {
+diff --git a/drivers/rtc/rtc-rv8803.c b/drivers/rtc/rtc-rv8803.c
+index aae2576741a61..6e06fb3b0b928 100644
+--- a/drivers/rtc/rtc-rv8803.c
++++ b/drivers/rtc/rtc-rv8803.c
+@@ -622,7 +622,7 @@ MODULE_DEVICE_TABLE(i2c, rv8803_id);
+ static const struct of_device_id rv8803_of_match[] = {
+ 	{
+ 		.compatible = "microcrystal,rv8803",
+-		.data = (void *)rx_8900
++		.data = (void *)rv_8803
+ 	},
+ 	{
+ 		.compatible = "epson,rx8900",
 -- 
 2.20.1
 
