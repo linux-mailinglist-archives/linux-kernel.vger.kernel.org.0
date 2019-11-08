@@ -2,136 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3307FF5949
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22630F5954
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731895AbfKHVKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:10:38 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:40383 "EHLO
+        id S1732565AbfKHVLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:11:24 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:56197 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbfKHVKh (ORCPT
+        with ESMTP id S1726349AbfKHVLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:10:37 -0500
+        Fri, 8 Nov 2019 16:11:23 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MvJwN-1hbuBO0HpZ-00rIaY; Fri, 08 Nov 2019 22:10:35 +0100
+ 1MOzGc-1iGzm719gK-00PNQ7; Fri, 08 Nov 2019 22:11:03 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>
+To:     y2038@lists.linaro.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>
-Subject: [PATCH 06/23] y2038: vdso: nds32: open-code timespec_add_ns()
-Date:   Fri,  8 Nov 2019 22:07:26 +0100
-Message-Id: <20191108210824.1534248-6-arnd@arndb.de>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 07/23] y2038: vdso: powerpc: avoid timespec references
+Date:   Fri,  8 Nov 2019 22:07:27 +0100
+Message-Id: <20191108210824.1534248-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108210236.1296047-1-arnd@arndb.de>
 References: <20191108210236.1296047-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:YuJmh0hdaoXKPB496OqQwH5zF3mK0xLxqrenBpCosELtgojDeG6
- 0ydOvFj7+DITM/cL850c75HGzUSrstupuG0x40X8tVSgqOJJEzjQoFnTixpW6lIarskuNf3
- 8p9iwlohOgg5Ic09T3K1Xsm5JNORDInkJ0iuOX2hm3SuHbgw32nVkc0sU5iORDrl13FAf2d
- NDuF1g3kxV+9ZuX/vNNUA==
+X-Provags-ID: V03:K1:lx86RfWyo1UtJmp56v0swjpp1ZWdSL3mM/CF24wl/EwN3VfO2KR
+ j/eJXK26jFhg4VDBKMZnBKXvjJlTnXuhBv4X0pvatFTBWnn4TEN4bPDkd7iYKgHePuxM/tb
+ wUwHYFsQXBh0x5JEX0SRRQIXE1SdA3wsE47PhksU0OV5C8D0xBjkRrcfg736jm6VFDtgqS3
+ 3QIN7Q4EkUAp7uOhcSRpA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:W7ipudwxVNs=:i23o+CyoqGzloOAK6blQ7L
- H0nBM6ZEN0Zz8/3kx0MorJxywha7JE8NNOPLmX8OSej99FDv/kuAjpwHE6gav7zf1A+dTf97J
- gPPxe+E4J34Moz4o9ROc+e1l68aXTat3nwheFhTxO3jDCEJlbICgpoB95HVxxeDDC7L0bYt3I
- aVknHQ3wLXIJUnQN0Zk+J9TQyqpq2GHFlj+WA5/PQbsE8ZFqCvF87mzNZjoImu7viL4itYUPn
- xVYVEo79PeD4ZrN0iTzdZ3D3TU+PzDSM4YEAcekYxv8OPsG6ua2LBAg/QBAxCll1kJA4CRMv7
- 6SPdy4TF0ym+xNZ+1uPxXAlyXJJ0dwHsfeffms8Z3HWZC+521wLxBYhTj0qErNqxNUXoxwKiZ
- J0gZec1g3FfSuw/+eUkyjFW/awCWr3rKLhP+FTBqQLhGf2Pf5j1+b+xJM+mNMbgE+j3rf47pX
- xwPgZFdphFgoUpmjLSWDmvUzheodPhJi9mS9JuLp90v33vGzT33E8VwE+SplX5rp8JOLQQ1YG
- UWrFZ2vpTi3vLFKP52pnKVODkYiTYr4lavfLqfXFzL/4iqSwxL1cV3LwFRB9xNyQcCUeHdd3o
- TNZ02u6yXaC475jY/OpDb8KcBx1NQvUUZ9FzoOinV1AgR92jJsBvNqm3VIbyHg50NbTUgwXd4
- +/OEgMRJMwURcdcMenvbgLm12/UGdJrQEoifs1mU2M5IldNTtrPmv4NrYV87pj4Ft5ItgyRs5
- XNUTzZwxVGmif6tUMojrweawqqLfcRdW5h/witqeF0KQdoSbpRLN1wXvOh85s5T3Bt9flDh3P
- xwx3dSKCVt117fCza5IlcVAfqreCo6kVwaFVVfY4huHvhnbf9ydVEHZpRevXylWyEXIpsJ5mz
- tdlbq72Zg/YV+Dtf8ZFA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Rd/L+EZnQb0=:UjleirH8JG1dR2gQl/Q6DR
+ GOM0RkhxTsPJjHfHyivo5x41Frwviz6le8FWEzShs/U2Ro/kGU+xvA8mN+yEU2nIEEg3jDcY/
+ c5h2VbhNuKgzzRJJUwUjUx3xltr2qfbQCpGK7KjkXPlTPds/XqqiFPxHnE+0r2c4qOVP4jmP7
+ WwanXtBSlBsEbvLuHq8Hoovn74Ocz54mpPGVpF4Kq66XuWBuCPJMVaJfo7ULJ3i1xOxSnVX3v
+ KbHID6hOzNJieoF2OZkYkhdL7kvpEbwBXAVDQDHMNK5nyYpRmp/6rXp97HYGcm3lAjdfRCmNd
+ iKGTvwcgR4BD4R7NrJ6uq3V9Wl4TJDo6ouEcPv8QnnHZLfgpJ5WWvXodkkxf3pMabfvOAgDec
+ hretNvCjx1E6sWSljXS7Cj/BykZTI6OSLvwDL/rfsF/8+0erJYRNFa1pg6wc/RszUhPdC3lIh
+ 9f5iUfY64HtC4d8ZCP0MxCzKpwq795IWhcW6UEBQzjdDTLq3VMaaLFICBwOGbomGeJtZbUB5f
+ tszDN2uLLaHuc7KmVnlZC+JphbuaI3r6M3ZogEpLcC9QVcrNNl1EeYnGmVYJW032U0WA1p2Np
+ rocuQR0wc8PQeKTGBifdtFBaiuxb+d6uBmhy1Th7HAYjo6pZWfCE4aBLPsalPKfJ5uyVZRN8S
+ FAvLzEts8YFMQ3VgVsAaPV4leRizzFM6abySu+NXDp3N1KTAV8ZfC8EITaj4b/mkrjDQgEx/1
+ dAh6pR9cY1nbX1nEUtalVPv1n/UJvNxsa5HD7vPIR+IHSA/ecLTsBh0LKbNi1cFjZhj0Rjk6P
+ ELCJpRpIXQirHw4bXiw+aIz4FGoVHiIv9GQmp4Ylbo0pplVtQPv/7WOUkeGuCEPqzY/Z9IQcw
+ ywdKmC+WhY23VmlASp5Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The nds32 vdso is now the last user of the deprecated timespec_add_ns().
+As a preparation to stop using 'struct timespec' in the kernel,
+change the powerpc vdso implementation:
 
-Change it to an open-coded version like the one it already uses in
-do_realtime(). What we should really do though is to use the
-generic vdso implementation that is now used in x86. arm and mips.
+- split up the vdso data definition to have equivalent members
+   for seconds and nanoseconds instead of an xtime structure
+
+- use timespec64 as an intermediate for the xtime update
+
+- change the asm-offsets definition to be based the appropriate
+  fixed-length types
+
+This is only a temporary fix for changing the types, in order
+to actually support a 64-bit safe vdso32 version of clock_gettime(),
+the entire powerpc vdso should be replaced with the generic
+lib/vdso/ implementation. If that happens first, this patch
+becomes obsolete.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/nds32/kernel/vdso/gettimeofday.c | 33 ++++++++++++---------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+ arch/powerpc/include/asm/vdso_datapage.h  |  6 ++++--
+ arch/powerpc/kernel/asm-offsets.c         | 14 +++++---------
+ arch/powerpc/kernel/time.c                |  5 +++--
+ arch/powerpc/kernel/vdso32/gettimeofday.S |  6 ++----
+ arch/powerpc/kernel/vdso64/gettimeofday.S |  8 ++++----
+ 5 files changed, 18 insertions(+), 21 deletions(-)
 
-diff --git a/arch/nds32/kernel/vdso/gettimeofday.c b/arch/nds32/kernel/vdso/gettimeofday.c
-index 687abc7145f5..9ec03cf0ec54 100644
---- a/arch/nds32/kernel/vdso/gettimeofday.c
-+++ b/arch/nds32/kernel/vdso/gettimeofday.c
-@@ -81,22 +81,20 @@ static notrace int do_realtime_coarse(struct __kernel_old_timespec *ts,
- static notrace int do_monotonic_coarse(struct __kernel_old_timespec *ts,
- 				       struct vdso_data *vdata)
+diff --git a/arch/powerpc/include/asm/vdso_datapage.h b/arch/powerpc/include/asm/vdso_datapage.h
+index c61d59ed3b45..a115970a6809 100644
+--- a/arch/powerpc/include/asm/vdso_datapage.h
++++ b/arch/powerpc/include/asm/vdso_datapage.h
+@@ -81,7 +81,8 @@ struct vdso_data {
+ 	__u32 stamp_sec_fraction;		/* fractional seconds of stamp_xtime */
+ 	__s32 wtom_clock_nsec;			/* Wall to monotonic clock nsec */
+ 	__s64 wtom_clock_sec;			/* Wall to monotonic clock sec */
+-	struct timespec stamp_xtime;		/* xtime as at tb_orig_stamp */
++	__s64 stamp_xtime_sec;			/* xtime secs as at tb_orig_stamp */
++	__s64 stamp_xtime_nsec;			/* xtime nsecs as at tb_orig_stamp */
+    	__u32 syscall_map_64[SYSCALL_MAP_SIZE]; /* map of syscalls  */
+    	__u32 syscall_map_32[SYSCALL_MAP_SIZE]; /* map of syscalls */
+ };
+@@ -101,7 +102,8 @@ struct vdso_data {
+ 	__u32 tz_dsttime;		/* Type of dst correction	0x5C */
+ 	__s32 wtom_clock_sec;			/* Wall to monotonic clock */
+ 	__s32 wtom_clock_nsec;
+-	struct timespec stamp_xtime;	/* xtime as at tb_orig_stamp */
++	__s32 stamp_xtime_sec;		/* xtime seconds as at tb_orig_stamp */
++	__s32 stamp_xtime_nsec;		/* xtime nsecs as at tb_orig_stamp */
+ 	__u32 stamp_sec_fraction;	/* fractional seconds of stamp_xtime */
+    	__u32 syscall_map_32[SYSCALL_MAP_SIZE]; /* map of syscalls */
+ 	__u32 dcache_block_size;	/* L1 d-cache block size     */
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+index 827f4c354e13..f22bd6d1fe93 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -385,7 +385,8 @@ int main(void)
+ 	OFFSET(CFG_SYSCALL_MAP32, vdso_data, syscall_map_32);
+ 	OFFSET(WTOM_CLOCK_SEC, vdso_data, wtom_clock_sec);
+ 	OFFSET(WTOM_CLOCK_NSEC, vdso_data, wtom_clock_nsec);
+-	OFFSET(STAMP_XTIME, vdso_data, stamp_xtime);
++	OFFSET(STAMP_XTIME_SEC, vdso_data, stamp_xtime_sec);
++	OFFSET(STAMP_XTIME_NSEC, vdso_data, stamp_xtime_nsec);
+ 	OFFSET(STAMP_SEC_FRAC, vdso_data, stamp_sec_fraction);
+ 	OFFSET(CFG_ICACHE_BLOCKSZ, vdso_data, icache_block_size);
+ 	OFFSET(CFG_DCACHE_BLOCKSZ, vdso_data, dcache_block_size);
+@@ -395,18 +396,13 @@ int main(void)
+ 	OFFSET(CFG_SYSCALL_MAP64, vdso_data, syscall_map_64);
+ 	OFFSET(TVAL64_TV_SEC, __kernel_old_timeval, tv_sec);
+ 	OFFSET(TVAL64_TV_USEC, __kernel_old_timeval, tv_usec);
++#endif
++	OFFSET(TSPC64_TV_SEC, __kernel_timespec, tv_sec);
++	OFFSET(TSPC64_TV_NSEC, __kernel_timespec, tv_nsec);
+ 	OFFSET(TVAL32_TV_SEC, old_timeval32, tv_sec);
+ 	OFFSET(TVAL32_TV_USEC, old_timeval32, tv_usec);
+-	OFFSET(TSPC64_TV_SEC, timespec, tv_sec);
+-	OFFSET(TSPC64_TV_NSEC, timespec, tv_nsec);
+ 	OFFSET(TSPC32_TV_SEC, old_timespec32, tv_sec);
+ 	OFFSET(TSPC32_TV_NSEC, old_timespec32, tv_nsec);
+-#else
+-	OFFSET(TVAL32_TV_SEC, __kernel_old_timeval, tv_sec);
+-	OFFSET(TVAL32_TV_USEC, __kernel_old_timeval, tv_usec);
+-	OFFSET(TSPC32_TV_SEC, timespec, tv_sec);
+-	OFFSET(TSPC32_TV_NSEC, timespec, tv_nsec);
+-#endif
+ 	/* timeval/timezone offsets for use by vdso */
+ 	OFFSET(TZONE_TZ_MINWEST, timezone, tz_minuteswest);
+ 	OFFSET(TZONE_TZ_DSTTIME, timezone, tz_dsttime);
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index 694522308cd5..1fad5a04d083 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -885,7 +885,7 @@ static notrace u64 timebase_read(struct clocksource *cs)
+ 
+ void update_vsyscall(struct timekeeper *tk)
  {
--	struct timespec tomono;
- 	u32 seq;
-+	u64 ns;
+-	struct timespec xt;
++	struct timespec64 xt;
+ 	struct clocksource *clock = tk->tkr_mono.clock;
+ 	u32 mult = tk->tkr_mono.mult;
+ 	u32 shift = tk->tkr_mono.shift;
+@@ -957,7 +957,8 @@ void update_vsyscall(struct timekeeper *tk)
+ 	vdso_data->tb_to_xs = new_tb_to_xs;
+ 	vdso_data->wtom_clock_sec = tk->wall_to_monotonic.tv_sec;
+ 	vdso_data->wtom_clock_nsec = tk->wall_to_monotonic.tv_nsec;
+-	vdso_data->stamp_xtime = xt;
++	vdso_data->stamp_xtime_sec = xt.sec;
++	vdso_data->stamp_xtime_nsec = xt.nsec;
+ 	vdso_data->stamp_sec_fraction = frac_sec;
+ 	smp_wmb();
+ 	++(vdso_data->tb_update_count);
+diff --git a/arch/powerpc/kernel/vdso32/gettimeofday.S b/arch/powerpc/kernel/vdso32/gettimeofday.S
+index 4327665ad86f..37ba4c3d965b 100644
+--- a/arch/powerpc/kernel/vdso32/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
+@@ -15,10 +15,8 @@
+ /* Offset for the low 32-bit part of a field of long type */
+ #if defined(CONFIG_PPC64) && defined(CONFIG_CPU_BIG_ENDIAN)
+ #define LOPART	4
+-#define TSPEC_TV_SEC	TSPC64_TV_SEC+LOPART
+ #else
+ #define LOPART	0
+-#define TSPEC_TV_SEC	TSPC32_TV_SEC
+ #endif
  
- 	do {
- 		seq = vdso_read_begin(vdata);
+ 	.text
+@@ -192,7 +190,7 @@ V_FUNCTION_BEGIN(__kernel_time)
+ 	bl	__get_datapage@local
+ 	mr	r9, r3			/* datapage ptr in r9 */
  
--		ts->tv_sec = vdata->xtime_coarse_sec;
--		ts->tv_nsec = vdata->xtime_coarse_nsec;
--
--		tomono.tv_sec = vdata->wtm_clock_sec;
--		tomono.tv_nsec = vdata->wtm_clock_nsec;
-+		ts->tv_sec = vdata->xtime_coarse_sec + vdata->wtm_clock_sec;
-+		ns = vdata->xtime_coarse_nsec + vdata->wtm_clock_nsec;
+-	lwz	r3,STAMP_XTIME+TSPEC_TV_SEC(r9)
++	lwz	r3,STAMP_XTIME_SEC+LOWPART(r9)
  
- 	} while (vdso_read_retry(vdata, seq));
+ 	cmplwi	r11,0			/* check if t is NULL */
+ 	beq	2f
+@@ -268,7 +266,7 @@ __do_get_tspec:
+ 	 * as a 32.32 fixed-point number in r3 and r4.
+ 	 * Load & add the xtime stamp.
+ 	 */
+-	lwz	r5,STAMP_XTIME+TSPEC_TV_SEC(r9)
++	lwz	r5,STAMP_XTIME_SEC+LOWPART(r9)
+ 	lwz	r6,STAMP_SEC_FRAC(r9)
+ 	addc	r4,r4,r6
+ 	adde	r3,r3,r5
+diff --git a/arch/powerpc/kernel/vdso64/gettimeofday.S b/arch/powerpc/kernel/vdso64/gettimeofday.S
+index 07bfe33fe874..1f24e411af80 100644
+--- a/arch/powerpc/kernel/vdso64/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso64/gettimeofday.S
+@@ -116,8 +116,8 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
+ 	 * CLOCK_REALTIME_COARSE, below values are needed for MONOTONIC_COARSE
+ 	 * too
+ 	 */
+-	ld      r4,STAMP_XTIME+TSPC64_TV_SEC(r3)
+-	ld      r5,STAMP_XTIME+TSPC64_TV_NSEC(r3)
++	ld      r4,STAMP_XTIME_SEC(r3)
++	ld      r5,STAMP_XTIME_NSEC(r3)
+ 	bne     cr6,75f
  
--	ts->tv_sec += tomono.tv_sec;
--	timespec_add_ns(ts, tomono.tv_nsec);
-+	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-+	ts->tv_nsec = ns;
-+
- 	return 0;
- }
+ 	/* CLOCK_MONOTONIC_COARSE */
+@@ -220,7 +220,7 @@ V_FUNCTION_BEGIN(__kernel_time)
+ 	mr	r11,r3			/* r11 holds t */
+ 	bl	V_LOCAL_FUNC(__get_datapage)
  
-@@ -135,26 +133,25 @@ static notrace int do_realtime(struct __kernel_old_timespec *ts, struct vdso_dat
+-	ld	r4,STAMP_XTIME+TSPC64_TV_SEC(r3)
++	ld	r4,STAMP_XTIME_SEC(r3)
  
- static notrace int do_monotonic(struct __kernel_old_timespec *ts, struct vdso_data *vdata)
- {
--	struct timespec tomono;
--	u64 nsecs;
-+	u64 ns;
- 	u32 seq;
+ 	cmpldi	r11,0			/* check if t is NULL */
+ 	beq	2f
+@@ -265,7 +265,7 @@ V_FUNCTION_BEGIN(__do_get_tspec)
+ 	mulhdu	r6,r6,r5		/* in units of 2^-32 seconds */
  
- 	do {
- 		seq = vdso_read_begin(vdata);
- 
- 		ts->tv_sec = vdata->xtime_clock_sec;
--		nsecs = vdata->xtime_clock_nsec;
--		nsecs += vgetsns(vdata);
--		nsecs >>= vdata->cs_shift;
-+		ns = vdata->xtime_clock_nsec;
-+		ns += vgetsns(vdata);
-+		ns >>= vdata->cs_shift;
- 
--		tomono.tv_sec = vdata->wtm_clock_sec;
--		tomono.tv_nsec = vdata->wtm_clock_nsec;
-+		ts->tv_sec += vdata->wtm_clock_sec;
-+		ns += vdata->wtm_clock_nsec;
- 
- 	} while (vdso_read_retry(vdata, seq));
- 
--	ts->tv_sec += tomono.tv_sec;
--	ts->tv_nsec = 0;
--	timespec_add_ns(ts, nsecs + tomono.tv_nsec);
-+	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-+	ts->tv_nsec = ns;
-+
- 	return 0;
- }
- 
+ 	/* Add stamp since epoch */
+-	ld	r4,STAMP_XTIME+TSPC64_TV_SEC(r3)
++	ld	r4,STAMP_XTIME_SEC(r3)
+ 	lwz	r5,STAMP_SEC_FRAC(r3)
+ 	or	r0,r4,r5
+ 	or	r0,r0,r6
 -- 
 2.20.0
 
