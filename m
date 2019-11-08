@@ -2,208 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD783F583A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB04F583D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732218AbfKHUHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 15:07:14 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:52534 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729075AbfKHUHN (ORCPT
+        id S2388148AbfKHUH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 15:07:58 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38588 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387874AbfKHUH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 15:07:13 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iTAX5-0002Bl-8G; Fri, 08 Nov 2019 21:06:59 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B13771C0105;
-        Fri,  8 Nov 2019 21:06:58 +0100 (CET)
-Date:   Fri, 08 Nov 2019 20:06:58 -0000
-From:   "tip-bot2 for Zhang Xiaoxu" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mtrr] x86/mtrr: Restrict MTRR ranges dumping and ioctl()
-Cc:     Zhang Xiaoxu <zhangxiaoxu5@huawei.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tyler Hicks <tyhicks@canonical.com>, "x86-ml" <x86@kernel.org>,
-        zhangxiaoxu@huawei.com, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191105071714.27376-1-zhangxiaoxu5@huawei.com>
-References: <20191105071714.27376-1-zhangxiaoxu5@huawei.com>
+        Fri, 8 Nov 2019 15:07:57 -0500
+Received: by mail-wm1-f66.google.com with SMTP id z19so7452501wmk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 12:07:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=gwf03HQCJcAeKeVV6CDOtpVEM+58xqWFoXIO9s1VR2c=;
+        b=NhDzQyPS3minpgWDPizoGqVOo5LUY7O8ofGjJhFjcBBc0tuZyxmovgfXtvEDtqm6kt
+         mAbUOvYMvXf6r2wubPDvUB5Yy3AuG+0bILmDhgKGK5M2SBO6rwpXTQ7ANTanZxpnp9lY
+         shWw618Egw0M0qmXLUzqP+VotL72Rbxwo6IsH2N98Kyn3NkwIvaMArjnlkWRPdhIxNzn
+         5oSRjKXnIf9Y/nBgd1/K/sQHSg84VlklYgJ8zAs0ELzIRHZ4z1bHMUutqq9VixeCCrKU
+         jlUpsfARXvnewUQy2MH2twYVu5srqi8+rErn3h1EFc/y6nouyas0WjWayb5/VMAHwpDi
+         gLdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:in-reply-to
+         :message-id:references:user-agent:mime-version;
+        bh=gwf03HQCJcAeKeVV6CDOtpVEM+58xqWFoXIO9s1VR2c=;
+        b=GfaKpGGVteTLgnyk9I3u9VT5yJudWQdSWd6KhuUoIEHED8aHfg7cBW68ktxli7a+Vy
+         xz2oLkTdSvjyOB/G4KLsaqQ0FldoYrGitDmKRoeNIcggh+tvzcQOj63EW2I4XpVle+wX
+         UOI1GUCs0PUjIb62dgo6Rb1QxyWFM/5Tygk6UTG7P8BJkkmsvjjC/Tr2NRGJMUFAtTQI
+         pln47Via90IO6iQrlnQWjD3Wn64vNUQELolqKWkh9INObfST3bBylLfohBfILldSg0ed
+         F9jIj9lvQ7iciJPtN69hcB7MaEOV9sB8ePwWl9KsivRjPfn0mzXW5cKdOmIUnTCoJmXK
+         yzXw==
+X-Gm-Message-State: APjAAAVNj6sw3tRUViszjlDcWYcJgznFgGCGXtuEFWMqKhe7FfHPDK43
+        1a4GAoqhqty7f55RiXTKWJs=
+X-Google-Smtp-Source: APXvYqwl9KXzZZqdsQGTX5vggm4+Gvse6h9VoWpyn33lsaQWOqOG4teXB3ND+xZvvQYUQa2fmHTr9A==
+X-Received: by 2002:a1c:b1c3:: with SMTP id a186mr10052449wmf.10.1573243675924;
+        Fri, 08 Nov 2019 12:07:55 -0800 (PST)
+Received: from wambui.local ([197.237.61.225])
+        by smtp.googlemail.com with ESMTPSA id f13sm6612474wrq.96.2019.11.08.12.07.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2019 12:07:55 -0800 (PST)
+From:   Wambui Karuga <wambui@karuga.xyz>
+X-Google-Original-From: Wambui Karuga <wambui@wambui>
+Date:   Fri, 8 Nov 2019 23:07:44 +0300 (EAT)
+To:     Sean Paul <sean@poorly.run>
+cc:     =?ISO-8859-15?Q?Heiko_St=FCbner?= <heiko@sntech.de>,
+        Wambui Karuga <wambui.karugax@gmail.com>, hjc@rock-chips.com,
+        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: use DRM_DEV_ERROR for log output
+In-Reply-To: <20191108160602.GG63329@art_vandelay>
+Message-ID: <alpine.LNX.2.21.99999.375.1911082306460.13123@wambui>
+References: <20191107092945.15513-1-wambui.karugax@gmail.com> <20191107133851.GF63329@art_vandelay> <20191108124630.GA10207@wambui> <4996186.DxzAFJqeGu@diego> <20191108160602.GG63329@art_vandelay>
+User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
 MIME-Version: 1.0
-Message-ID: <157324361834.29376.5328593346754751963.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/mixed; boundary="8323329-1284482943-1573243675=:13123"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/mtrr branch of tip:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Commit-ID:     d5a8b06841082ead88493eb918dd646a12c19d8e
-Gitweb:        https://git.kernel.org/tip/d5a8b06841082ead88493eb918dd646a12c19d8e
-Author:        Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
-AuthorDate:    Tue, 05 Nov 2019 15:17:14 +08:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Fri, 08 Nov 2019 20:59:40 +01:00
+--8323329-1284482943-1573243675=:13123
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-x86/mtrr: Restrict MTRR ranges dumping and ioctl()
 
-/proc/mtrr dumps the physical memory ranges of the variable range MTRRs
-along with their respective sizes and caching attributes. Since that
-file is world-readable, it presents a small information leak about the
-physical address ranges of a system which should be blocked.
 
-Make that file root-only.
+On Fri, 8 Nov 2019, Sean Paul wrote:
 
-Make the ioctl root-only as well because the $NAME read ioctl also
-allows access. Replace the checks in the write ioctls with a single one
-on entry.
+> On Fri, Nov 08, 2019 at 03:06:44PM +0100, Heiko Stübner wrote:
+>> Hi,
+>>
+>> [it seems your Reply-To mail header is set strangely as
+>> Reply-To: 20191107133851.GF63329@art_vandelay
+>> which confuses my MTA]
+>>
+>> Am Freitag, 8. November 2019, 13:46:30 CET schrieb Wambui Karuga:
+>>> On Thu, Nov 07, 2019 at 08:38:51AM -0500, Sean Paul wrote:
+>>>> On Thu, Nov 07, 2019 at 01:54:22AM -0800, Joe Perches wrote:
+>>>>> On Thu, 2019-11-07 at 12:29 +0300, Wambui Karuga wrote:
+>>>>>> Replace the use of the dev_err macro with the DRM_DEV_ERROR
+>>>>>> DRM helper macro.
+>>>>>
+>>>>> The commit message should show the reason _why_ you are doing
+>>>>> this instead of just stating that you are doing this.
+>>>>>
+>>>>> It's not that dev_err is uncommon in drivers/gpu/drm.
+>>>>>
+>>>>
+>>>> It is uncommon (this is the sole instance) in rockchip, however. So it makes
+>>>> sense to convert the dev_* prints in rockchip to DRM_DEV for consistency.
+>>>>
+>>>> Wambui, could you also please convert the dev_warn instance as well?
+>>>>
+>>> Hey, Sean.
+>>> Trying to convert this dev_warn instance, but the corresponding DRM_WARN
+>>> macro does not take the dev parameter which seems to be useful in the
+>>> original output.
+>>> Should I still convert it to DRM_WARN without the hdmi->dev parameter?
+>>
+>> There exists DRM_DEV_ERROR, DRM_DEV_INFO and DRM_DEV_DEBUG to
+>> handle actual devices. Interestingly there is no DRM_DEV_WARN though.
+>>
+>> So depending on what Sean suggest another option would be to add the
+>> missing DRM_DEV_WARN and then use it to replace the dev_warn.
+>
+> Yep, this sounds good to me me.
+>
+> Sean
+>
+Okay, I can add DRM_DEV_WARN and replace it there.
 
- [ bp: rewrite commit message. ]
-
-Signed-off-by: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Colin Ian King <colin.king@canonical.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tyler Hicks <tyhicks@canonical.com>
-Cc: x86-ml <x86@kernel.org>
-Cc: zhangxiaoxu@huawei.com
-Link: https://lkml.kernel.org/r/20191105071714.27376-1-zhangxiaoxu5@huawei.com
----
- arch/x86/kernel/cpu/mtrr/if.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
-index 4d36dcc..8e0cee8 100644
---- a/arch/x86/kernel/cpu/mtrr/if.c
-+++ b/arch/x86/kernel/cpu/mtrr/if.c
-@@ -84,6 +84,15 @@ mtrr_file_del(unsigned long base, unsigned long size,
- 	return reg;
- }
- 
-+static ssize_t
-+mtrr_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
-+{
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	return seq_read(file, buf, size, ppos);
-+}
-+
- /*
-  * seq_file can seek but we ignore it.
-  *
-@@ -165,6 +174,9 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- 	struct mtrr_gentry gentry;
- 	void __user *arg = (void __user *) __arg;
- 
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
- 	memset(&gentry, 0, sizeof(gentry));
- 
- 	switch (cmd) {
-@@ -226,8 +238,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_ADD_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err =
- 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
- 				  file, 0);
-@@ -236,24 +246,18 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_SET_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_add(sentry.base, sentry.size, sentry.type, false);
- 		break;
- 	case MTRRIOC_DEL_ENTRY:
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_DEL_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_file_del(sentry.base, sentry.size, file, 0);
- 		break;
- 	case MTRRIOC_KILL_ENTRY:
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_KILL_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_del(-1, sentry.base, sentry.size);
- 		break;
- 	case MTRRIOC_GET_ENTRY:
-@@ -279,8 +283,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_ADD_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err =
- 		    mtrr_file_add(sentry.base, sentry.size, sentry.type, true,
- 				  file, 1);
-@@ -289,8 +291,6 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_SET_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err =
- 		    mtrr_add_page(sentry.base, sentry.size, sentry.type, false);
- 		break;
-@@ -298,16 +298,12 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_DEL_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_file_del(sentry.base, sentry.size, file, 1);
- 		break;
- 	case MTRRIOC_KILL_PAGE_ENTRY:
- #ifdef CONFIG_COMPAT
- 	case MTRRIOC32_KILL_PAGE_ENTRY:
- #endif
--		if (!capable(CAP_SYS_ADMIN))
--			return -EPERM;
- 		err = mtrr_del_page(-1, sentry.base, sentry.size);
- 		break;
- 	case MTRRIOC_GET_PAGE_ENTRY:
-@@ -387,7 +383,7 @@ static int mtrr_open(struct inode *inode, struct file *file)
- static const struct file_operations mtrr_fops = {
- 	.owner			= THIS_MODULE,
- 	.open			= mtrr_open,
--	.read			= seq_read,
-+	.read			= mtrr_read,
- 	.llseek			= seq_lseek,
- 	.write			= mtrr_write,
- 	.unlocked_ioctl		= mtrr_ioctl,
-@@ -436,7 +432,7 @@ static int __init mtrr_if_init(void)
- 	    (!cpu_has(c, X86_FEATURE_CENTAUR_MCR)))
- 		return -ENODEV;
- 
--	proc_create("mtrr", S_IWUSR | S_IRUGO, NULL, &mtrr_fops);
-+	proc_create("mtrr", 0600, NULL, &mtrr_fops);
- 	return 0;
- }
- arch_initcall(mtrr_if_init);
+wambui
+>>
+>>
+>> Heiko
+>>
+>>
+>>
+>>>
+>>> Thanks,
+>>> wambui
+>>>> I'll apply this to drm-misc-next and expand on the commit message a bit.
+>>>>
+>>>> Thanks,
+>>>>
+>>>> Sean
+>>>>
+>>>>> $ git grep -w dev_err drivers/gpu/drm | wc -l
+>>>>> 1950
+>>>>> $ git grep -w DRM_DEV_ERROR drivers/gpu/drm | wc -l
+>>>>> 756
+>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>>>>> []
+>>>>>> @@ -916,7 +916,7 @@ static int dw_mipi_dsi_rockchip_probe(struct platform_device *pdev)
+>>>>>>  	}
+>>>>>>
+>>>>>>  	if (!dsi->cdata) {
+>>>>>> -		dev_err(dev, "no dsi-config for %s node\n", np->name);
+>>>>>> +		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+>>>>>>  		return -EINVAL;
+>>>>>>  	}
+>>>>>
+>>>>>
+>>>>>
+>>>>> _______________________________________________
+>>>>> dri-devel mailing list
+>>>>> dri-devel@lists.freedesktop.org
+>>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>>
+>>>
+>>
+>>
+>>
+>>
+>
+> -- 
+> Sean Paul, Software Engineer, Google / Chromium OS
+>
+--8323329-1284482943-1573243675=:13123--
