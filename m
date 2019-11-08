@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC415F54EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D52EF5684
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732722AbfKHS45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:56:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54472 "EHLO mail.kernel.org"
+        id S2391771AbfKHTJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388399AbfKHS4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:56:47 -0500
+        id S2387556AbfKHTJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5B412067B;
-        Fri,  8 Nov 2019 18:56:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A38920673;
+        Fri,  8 Nov 2019 19:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239406;
-        bh=XrldGzU/vehg9sYXQT4wwRSAys/T6+j97R70Fz5Jux4=;
+        s=default; t=1573240157;
+        bh=tpuQoNJVpjn0kU/NMgrkC7yxYZd56hAMheU7OpqGfzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v2aEUaOdi95wJsfN5a0AzYmoxXWZ9EOIWE9nmnYK0TMkQrZvv8vK0q2/XgQ2Q+oNV
-         Zv8GlKuC550CrviBKqh67RzlrDkfov0DnlVsIMIXndli/nctvzVmRgd1k/8HGN/jYZ
-         0JMa2/yNfGD0iCxH6NmRbB3hDTFV/LVs+W1f6HRw=
+        b=A296bmKCNz3iok/HFy2UaJPYYx7kiG6K3IUWRcgKiMIdhnzC/FS5u/Ywmp8r64W/A
+         I43bGycwq+6t2EO9C7sS2ebER7+IJ/EZFJSimpLn1W0X8qPpi6qaAPPF44d2Ih/ARg
+         Ow1hIx88cWdqCItl6WbdkMk9TKMNTtCTDJvBb/yw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Thiemo Nagel <tnagel@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 28/34] inet: stop leaking jiffies on the wire
+        stable@vger.kernel.org, Takeshi Misawa <jeliantsurux@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+3b3296d032353c33184b@syzkaller.appspotmail.com
+Subject: [PATCH 5.3 107/140] keys: Fix memory leak in copy_net_ns
 Date:   Fri,  8 Nov 2019 19:50:35 +0100
-Message-Id: <20191108174651.026609810@linuxfoundation.org>
+Message-Id: <20191108174911.646944128@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
-References: <20191108174618.266472504@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,94 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Takeshi Misawa <jeliantsurux@gmail.com>
 
-[ Upstream commit a904a0693c189691eeee64f6c6b188bd7dc244e9 ]
+[ Upstream commit 82ecff655e7968151b0047f1b5de03b249e5c1c4 ]
 
-Historically linux tried to stick to RFC 791, 1122, 2003
-for IPv4 ID field generation.
+If copy_net_ns() failed after net_alloc(), net->key_domain is leaked.
+Fix this, by freeing key_domain in error path.
 
-RFC 6864 made clear that no matter how hard we try,
-we can not ensure unicity of IP ID within maximum
-lifetime for all datagrams with a given source
-address/destination address/protocol tuple.
+syzbot report:
+BUG: memory leak
+unreferenced object 0xffff8881175007e0 (size 32):
+  comm "syz-executor902", pid 7069, jiffies 4294944350 (age 28.400s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000a83ed741>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000a83ed741>] slab_post_alloc_hook mm/slab.h:439 [inline]
+    [<00000000a83ed741>] slab_alloc mm/slab.c:3326 [inline]
+    [<00000000a83ed741>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+    [<0000000059fc92b9>] kmalloc include/linux/slab.h:547 [inline]
+    [<0000000059fc92b9>] kzalloc include/linux/slab.h:742 [inline]
+    [<0000000059fc92b9>] net_alloc net/core/net_namespace.c:398 [inline]
+    [<0000000059fc92b9>] copy_net_ns+0xb2/0x220 net/core/net_namespace.c:445
+    [<00000000a9d74bbc>] create_new_namespaces+0x141/0x2a0 kernel/nsproxy.c:103
+    [<000000008047d645>] unshare_nsproxy_namespaces+0x7f/0x100 kernel/nsproxy.c:202
+    [<000000005993ea6e>] ksys_unshare+0x236/0x490 kernel/fork.c:2674
+    [<0000000019417e75>] __do_sys_unshare kernel/fork.c:2742 [inline]
+    [<0000000019417e75>] __se_sys_unshare kernel/fork.c:2740 [inline]
+    [<0000000019417e75>] __x64_sys_unshare+0x16/0x20 kernel/fork.c:2740
+    [<00000000f4c5f2c8>] do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:296
+    [<0000000038550184>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Linux uses a per socket inet generator (inet_id), initialized
-at connection startup with a XOR of 'jiffies' and other
-fields that appear clear on the wire.
+syzbot also reported other leak in copy_net_ns -> setup_net.
+This problem is already fixed by cf47a0b882a4e5f6b34c7949d7b293e9287f1972.
 
-Thiemo Nagel pointed that this strategy is a privacy
-concern as this provides 16 bits of entropy to fingerprint
-devices.
-
-Let's switch to a random starting point, this is just as
-good as far as RFC 6864 is concerned and does not leak
-anything critical.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Thiemo Nagel <tnagel@google.com>
+Fixes: 9b242610514f ("keys: Network namespace domain tag")
+Reported-and-tested-by: syzbot+3b3296d032353c33184b@syzkaller.appspotmail.com
+Signed-off-by: Takeshi Misawa <jeliantsurux@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/ipv4.c     |    2 +-
- net/ipv4/datagram.c |    2 +-
- net/ipv4/tcp_ipv4.c |    4 ++--
- net/sctp/socket.c   |    2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ net/core/net_namespace.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -121,7 +121,7 @@ int dccp_v4_connect(struct sock *sk, str
- 						    inet->inet_daddr,
- 						    inet->inet_sport,
- 						    inet->inet_dport);
--	inet->inet_id = dp->dccps_iss ^ jiffies;
-+	inet->inet_id = prandom_u32();
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -478,6 +478,7 @@ struct net *copy_net_ns(unsigned long fl
  
- 	err = dccp_connect(sk);
- 	rt = NULL;
---- a/net/ipv4/datagram.c
-+++ b/net/ipv4/datagram.c
-@@ -75,7 +75,7 @@ int __ip4_datagram_connect(struct sock *
- 	inet->inet_dport = usin->sin_port;
- 	sk->sk_state = TCP_ESTABLISHED;
- 	sk_set_txhash(sk);
--	inet->inet_id = jiffies;
-+	inet->inet_id = prandom_u32();
- 
- 	sk_dst_set(sk, &rt->dst);
- 	err = 0;
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -239,7 +239,7 @@ int tcp_v4_connect(struct sock *sk, stru
- 							   inet->inet_sport,
- 							   usin->sin_port);
- 
--	inet->inet_id = tp->write_seq ^ jiffies;
-+	inet->inet_id = prandom_u32();
- 
- 	err = tcp_connect(sk);
- 
-@@ -1307,7 +1307,7 @@ struct sock *tcp_v4_syn_recv_sock(const
- 	inet_csk(newsk)->icsk_ext_hdr_len = 0;
- 	if (inet_opt)
- 		inet_csk(newsk)->icsk_ext_hdr_len = inet_opt->opt.optlen;
--	newinet->inet_id = newtp->write_seq ^ jiffies;
-+	newinet->inet_id = prandom_u32();
- 
- 	if (!dst) {
- 		dst = inet_csk_route_child_sock(sk, newsk, req);
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -7734,7 +7734,7 @@ void sctp_copy_sock(struct sock *newsk,
- 	newinet->inet_rcv_saddr = inet->inet_rcv_saddr;
- 	newinet->inet_dport = htons(asoc->peer.port);
- 	newinet->pmtudisc = inet->pmtudisc;
--	newinet->inet_id = asoc->next_tsn ^ jiffies;
-+	newinet->inet_id = prandom_u32();
- 
- 	newinet->uc_ttl = inet->uc_ttl;
- 	newinet->mc_loop = 1;
+ 	if (rv < 0) {
+ put_userns:
++		key_remove_domain(net->key_domain);
+ 		put_user_ns(user_ns);
+ 		net_drop_ns(net);
+ dec_ucounts:
 
 
