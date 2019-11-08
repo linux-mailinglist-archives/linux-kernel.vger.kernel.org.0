@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F959F5654
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D2FF558E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732757AbfKHTIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:08:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39034 "EHLO mail.kernel.org"
+        id S2390715AbfKHTDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:03:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391556AbfKHTII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:08:08 -0500
+        id S2388044AbfKHTDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:03:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B679920673;
-        Fri,  8 Nov 2019 19:08:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D325220650;
+        Fri,  8 Nov 2019 19:03:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240087;
-        bh=OLuwf24e/31bhS3CECSY0LveJTZ4yHq+llR+jExCtEw=;
+        s=default; t=1573239787;
+        bh=b5E4t656muwHmdXlT7k0hXbv0wJVVOwBCGzDoTObq+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K170Vp86J+FGgCLNQldPSvbOa/A1IB1VBbNOMG1xv1R/ftpdqAoLVXkF/Uozqusvx
-         q5E5DIiGW4R7bbMeQKZgdH4pSp8i7aM+9WwUOeE9Yzh7MReTN100+Jf+qqVnIJsTJE
-         Pv7ew+hkI5E7ZJ/JYEAD5gnMkH2WDv7toYPsXIio=
+        b=s/qI/c0ywKtJ12vUinXrXWProexSTTEPRqdJQs+piFBF6qySEABD85/2g7zBg6sJt
+         9n6LsuZGxCyetoXX7A/msE6zh51I02U5P4rMUISXjpJlgMpDklD5onXGFl+XieJNYS
+         3uek72l/buvcAkiKPodRTlM/ip/K/OtFde9c7O00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 085/140] net: annotate lockless accesses to sk->sk_napi_id
-Date:   Fri,  8 Nov 2019 19:50:13 +0100
-Message-Id: <20191108174910.455835258@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Wysochanski <dwysocha@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 34/79] cifs: Fix cifsInodeInfo lock_sem deadlock when reconnect occurs
+Date:   Fri,  8 Nov 2019 19:50:14 +0100
+Message-Id: <20191108174804.999927937@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
+References: <20191108174745.495640141@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,98 +45,180 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dave Wysochanski <dwysocha@redhat.com>
 
-[ Upstream commit ee8d153d46a3b98c064ee15c0c0a3bbf1450e5a1 ]
+[ Upstream commit d46b0da7a33dd8c99d969834f682267a45444ab3 ]
 
-We already annotated most accesses to sk->sk_napi_id
+There's a deadlock that is possible and can easily be seen with
+a test where multiple readers open/read/close of the same file
+and a disruption occurs causing reconnect.  The deadlock is due
+a reader thread inside cifs_strict_readv calling down_read and
+obtaining lock_sem, and then after reconnect inside
+cifs_reopen_file calling down_read a second time.  If in
+between the two down_read calls, a down_write comes from
+another process, deadlock occurs.
 
-We missed sk_mark_napi_id() and sk_mark_napi_id_once()
-which might be called without socket lock held in UDP stack.
+        CPU0                    CPU1
+        ----                    ----
+cifs_strict_readv()
+ down_read(&cifsi->lock_sem);
+                               _cifsFileInfo_put
+                                  OR
+                               cifs_new_fileinfo
+                                down_write(&cifsi->lock_sem);
+cifs_reopen_file()
+ down_read(&cifsi->lock_sem);
 
-KCSAN reported :
-BUG: KCSAN: data-race in udpv6_queue_rcv_one_skb / udpv6_queue_rcv_one_skb
+Fix the above by changing all down_write(lock_sem) calls to
+down_write_trylock(lock_sem)/msleep() loop, which in turn
+makes the second down_read call benign since it will never
+block behind the writer while holding lock_sem.
 
-write to 0xffff888121c6d108 of 4 bytes by interrupt on cpu 0:
- sk_mark_napi_id include/net/busy_poll.h:125 [inline]
- __udpv6_queue_rcv_skb net/ipv6/udp.c:571 [inline]
- udpv6_queue_rcv_one_skb+0x70c/0xb40 net/ipv6/udp.c:672
- udpv6_queue_rcv_skb+0xb5/0x400 net/ipv6/udp.c:689
- udp6_unicast_rcv_skb.isra.0+0xd7/0x180 net/ipv6/udp.c:832
- __udp6_lib_rcv+0x69c/0x1770 net/ipv6/udp.c:913
- udpv6_rcv+0x2b/0x40 net/ipv6/udp.c:1015
- ip6_protocol_deliver_rcu+0x22a/0xbe0 net/ipv6/ip6_input.c:409
- ip6_input_finish+0x30/0x50 net/ipv6/ip6_input.c:450
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ip6_input+0x177/0x190 net/ipv6/ip6_input.c:459
- dst_input include/net/dst.h:442 [inline]
- ip6_rcv_finish+0x110/0x140 net/ipv6/ip6_input.c:76
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ipv6_rcv+0x1a1/0x1b0 net/ipv6/ip6_input.c:284
- __netif_receive_skb_one_core+0xa7/0xe0 net/core/dev.c:5010
- __netif_receive_skb+0x37/0xf0 net/core/dev.c:5124
- process_backlog+0x1d3/0x420 net/core/dev.c:5955
- napi_poll net/core/dev.c:6392 [inline]
- net_rx_action+0x3ae/0xa90 net/core/dev.c:6460
-
-write to 0xffff888121c6d108 of 4 bytes by interrupt on cpu 1:
- sk_mark_napi_id include/net/busy_poll.h:125 [inline]
- __udpv6_queue_rcv_skb net/ipv6/udp.c:571 [inline]
- udpv6_queue_rcv_one_skb+0x70c/0xb40 net/ipv6/udp.c:672
- udpv6_queue_rcv_skb+0xb5/0x400 net/ipv6/udp.c:689
- udp6_unicast_rcv_skb.isra.0+0xd7/0x180 net/ipv6/udp.c:832
- __udp6_lib_rcv+0x69c/0x1770 net/ipv6/udp.c:913
- udpv6_rcv+0x2b/0x40 net/ipv6/udp.c:1015
- ip6_protocol_deliver_rcu+0x22a/0xbe0 net/ipv6/ip6_input.c:409
- ip6_input_finish+0x30/0x50 net/ipv6/ip6_input.c:450
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ip6_input+0x177/0x190 net/ipv6/ip6_input.c:459
- dst_input include/net/dst.h:442 [inline]
- ip6_rcv_finish+0x110/0x140 net/ipv6/ip6_input.c:76
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ipv6_rcv+0x1a1/0x1b0 net/ipv6/ip6_input.c:284
- __netif_receive_skb_one_core+0xa7/0xe0 net/core/dev.c:5010
- __netif_receive_skb+0x37/0xf0 net/core/dev.c:5124
- process_backlog+0x1d3/0x420 net/core/dev.c:5955
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 10890 Comm: syz-executor.0 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-
-Fixes: e68b6e50fa35 ("udp: enable busy polling for all sockets")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
+Suggested-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed--by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/busy_poll.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/cifs/cifsglob.h  |  5 +++++
+ fs/cifs/cifsproto.h |  1 +
+ fs/cifs/file.c      | 23 +++++++++++++++--------
+ fs/cifs/smb2file.c  |  2 +-
+ 4 files changed, 22 insertions(+), 9 deletions(-)
 
---- a/include/net/busy_poll.h
-+++ b/include/net/busy_poll.h
-@@ -122,7 +122,7 @@ static inline void skb_mark_napi_id(stru
- static inline void sk_mark_napi_id(struct sock *sk, const struct sk_buff *skb)
- {
- #ifdef CONFIG_NET_RX_BUSY_POLL
--	sk->sk_napi_id = skb->napi_id;
-+	WRITE_ONCE(sk->sk_napi_id, skb->napi_id);
- #endif
- 	sk_rx_queue_set(sk, skb);
- }
-@@ -132,8 +132,8 @@ static inline void sk_mark_napi_id_once(
- 					const struct sk_buff *skb)
- {
- #ifdef CONFIG_NET_RX_BUSY_POLL
--	if (!sk->sk_napi_id)
--		sk->sk_napi_id = skb->napi_id;
-+	if (!READ_ONCE(sk->sk_napi_id))
-+		WRITE_ONCE(sk->sk_napi_id, skb->napi_id);
- #endif
+diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+index 4dbae6e268d6a..71c2dd0c7f038 100644
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -1286,6 +1286,11 @@ void cifsFileInfo_put(struct cifsFileInfo *cifs_file);
+ struct cifsInodeInfo {
+ 	bool can_cache_brlcks;
+ 	struct list_head llist;	/* locks helb by this inode */
++	/*
++	 * NOTE: Some code paths call down_read(lock_sem) twice, so
++	 * we must always use use cifs_down_write() instead of down_write()
++	 * for this semaphore to avoid deadlocks.
++	 */
+ 	struct rw_semaphore lock_sem;	/* protect the fields above */
+ 	/* BB add in lists for dirty pages i.e. write caching info for oplock */
+ 	struct list_head openFileList;
+diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+index 20adda4de83be..d7ac75ea881c7 100644
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -159,6 +159,7 @@ extern int cifs_unlock_range(struct cifsFileInfo *cfile,
+ 			     struct file_lock *flock, const unsigned int xid);
+ extern int cifs_push_mandatory_locks(struct cifsFileInfo *cfile);
+ 
++extern void cifs_down_write(struct rw_semaphore *sem);
+ extern struct cifsFileInfo *cifs_new_fileinfo(struct cifs_fid *fid,
+ 					      struct file *file,
+ 					      struct tcon_link *tlink,
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index b4e33ef2ff315..a8e2bc47dcf27 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -280,6 +280,13 @@ cifs_has_mand_locks(struct cifsInodeInfo *cinode)
+ 	return has_locks;
  }
  
++void
++cifs_down_write(struct rw_semaphore *sem)
++{
++	while (!down_write_trylock(sem))
++		msleep(10);
++}
++
+ struct cifsFileInfo *
+ cifs_new_fileinfo(struct cifs_fid *fid, struct file *file,
+ 		  struct tcon_link *tlink, __u32 oplock)
+@@ -305,7 +312,7 @@ cifs_new_fileinfo(struct cifs_fid *fid, struct file *file,
+ 	INIT_LIST_HEAD(&fdlocks->locks);
+ 	fdlocks->cfile = cfile;
+ 	cfile->llist = fdlocks;
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	list_add(&fdlocks->llist, &cinode->llist);
+ 	up_write(&cinode->lock_sem);
+ 
+@@ -461,7 +468,7 @@ void _cifsFileInfo_put(struct cifsFileInfo *cifs_file, bool wait_oplock_handler)
+ 	 * Delete any outstanding lock records. We'll lose them when the file
+ 	 * is closed anyway.
+ 	 */
+-	down_write(&cifsi->lock_sem);
++	cifs_down_write(&cifsi->lock_sem);
+ 	list_for_each_entry_safe(li, tmp, &cifs_file->llist->locks, llist) {
+ 		list_del(&li->llist);
+ 		cifs_del_lock_waiters(li);
+@@ -1016,7 +1023,7 @@ static void
+ cifs_lock_add(struct cifsFileInfo *cfile, struct cifsLockInfo *lock)
+ {
+ 	struct cifsInodeInfo *cinode = CIFS_I(d_inode(cfile->dentry));
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	list_add_tail(&lock->llist, &cfile->llist->locks);
+ 	up_write(&cinode->lock_sem);
+ }
+@@ -1038,7 +1045,7 @@ cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
+ 
+ try_again:
+ 	exist = false;
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 
+ 	exist = cifs_find_lock_conflict(cfile, lock->offset, lock->length,
+ 					lock->type, &conf_lock, CIFS_LOCK_OP);
+@@ -1060,7 +1067,7 @@ cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
+ 					(lock->blist.next == &lock->blist));
+ 		if (!rc)
+ 			goto try_again;
+-		down_write(&cinode->lock_sem);
++		cifs_down_write(&cinode->lock_sem);
+ 		list_del_init(&lock->blist);
+ 	}
+ 
+@@ -1113,7 +1120,7 @@ cifs_posix_lock_set(struct file *file, struct file_lock *flock)
+ 		return rc;
+ 
+ try_again:
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	if (!cinode->can_cache_brlcks) {
+ 		up_write(&cinode->lock_sem);
+ 		return rc;
+@@ -1319,7 +1326,7 @@ cifs_push_locks(struct cifsFileInfo *cfile)
+ 	int rc = 0;
+ 
+ 	/* we are going to update can_cache_brlcks here - need a write access */
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	if (!cinode->can_cache_brlcks) {
+ 		up_write(&cinode->lock_sem);
+ 		return rc;
+@@ -1510,7 +1517,7 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	for (i = 0; i < 2; i++) {
+ 		cur = buf;
+ 		num = 0;
+diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
+index b204e84b87fb5..9168b2266e4fa 100644
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -137,7 +137,7 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 
+ 	cur = buf;
+ 
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	list_for_each_entry_safe(li, tmp, &cfile->llist->locks, llist) {
+ 		if (flock->fl_start > li->offset ||
+ 		    (flock->fl_start + length) <
+-- 
+2.20.1
+
 
 
