@@ -2,83 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F0CF45A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:24:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A747F45AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:27:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbfKHLYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:24:45 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48453 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfKHLYp (ORCPT
+        id S1731772AbfKHL1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:27:15 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34504 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730690AbfKHL1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:24:45 -0500
-Received: from 79.184.254.83.ipv4.supernova.orange.pl (79.184.254.83) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id c76056e31ef5e5d1; Fri, 8 Nov 2019 12:24:42 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Breno =?ISO-8859-1?Q?Leit=E3o?= <leitao@debian.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David@rox.of.borg, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Casey Leedom <leedom@chelsio.com>,
-        Shannon Nelson <snelson@pensando.io>,
-        Pensando Drivers <drivers@pensando.io>,
-        Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        netdev@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] power: avs: smartreflex: Remove superfluous cast in debugfs_create_file() call
-Date:   Fri, 08 Nov 2019 12:24:42 +0100
-Message-ID: <4367615.jSCgeRn5tF@kreacher>
-In-Reply-To: <20191021145149.31657-5-geert+renesas@glider.be>
-References: <20191021145149.31657-1-geert+renesas@glider.be> <20191021145149.31657-5-geert+renesas@glider.be>
+        Fri, 8 Nov 2019 06:27:15 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 139so5834523ljf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 03:27:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G6JiAIssBOVEi2xc5+XvlkE+IwHQEpAFSY9OyXbjbm0=;
+        b=pABRQS8Ifv7HSJlZkf+BV3CXrc+JD059RcyVYWDf2ZKVtyzTkdbg+/ldmIr3E5qVju
+         blc+Kh9MYGQ2qX9Y6vdEsovWO/vZZT9tabO4mYAC+/CjNV2GEZO9ModtNXGA+wjnyhaR
+         2FaDpy4Nada5Ebmt33Y1zUM/e9b3mQUCOr+jqlMGnW7Ob1x864IR5LG7+KLVzOTYmvmW
+         ey1YCrYWGWUgcjnBsA4mtrdvElarsgKk/U7RpSfAJDhNO7HITb8F/T/XjCQUnSIsMEWs
+         unE3YBS/S/B4M4AbYVzlp6DC/Xhm3FZ4+fmZ9rmwP+epeXceDvt9kKAbFwrmXgkVatMI
+         IcNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G6JiAIssBOVEi2xc5+XvlkE+IwHQEpAFSY9OyXbjbm0=;
+        b=adiHPPVhXlFTij6VLl7F7Te6UBxy//D6kcB+hCYTic58oYtrjFa9bLggZP/ByQNBfe
+         khxN0krfsS5B6bV3iFA/JK6GQJ4Hl182r+yAk3uGD/PeZ4hPkC0YN6bKWWMLrII8Zqhe
+         xJRUcE0rYdPj+pCEYEgvxHRsVjvns09ailu27mm6sKyDJcts+ZrNbGl4cRI1DrmoT8Or
+         YqGo26RG4ugU/BFkyRoKY0MIDGZR5IME4/JOFG6GRSYcx+GOw/BUkEV6sUUwOWgMZfGm
+         yJErOkJw8ZRkrbufXmgpT1HgkuptJ6WHBUaKbaPn0401CkZiq6aZBMUND6yAfjUPuo8/
+         nQJA==
+X-Gm-Message-State: APjAAAUFDJ67oHEJH+clInzqvQHP9zYKrvr3ZUlw3xi1n4Q0OH/pE8Ii
+        YQGKTUdz9mbTlzmJ4YJ01rKEDTNHedgQzFP9W/iPKg==
+X-Google-Smtp-Source: APXvYqyYZXM623Eo2BJ6ZYR5PkkZw7K96pCoJuYr4fvai4kTlGG1EG/G/RPh1v5brnbpA6ZqXG7mKACgjJFvbjccsMo=
+X-Received: by 2002:a2e:8809:: with SMTP id x9mr6440155ljh.82.1573212433300;
+ Fri, 08 Nov 2019 03:27:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <cover.1572326519.git.baolin.wang@linaro.org> <19910a2f34b9be81f64637a5a5fc8d07bd5f4885.1572326519.git.baolin.wang@linaro.org>
+ <a9f42792-3432-48f2-c5c4-8b03c32995dd@intel.com> <CAMz4kuK=wV1qtO4tOCcqibzKAFD-_p8+OzGOjdkvajVymJ5EgA@mail.gmail.com>
+ <2ed0bcd1-fa74-d095-97ee-7d0c46a4fdbb@intel.com> <CAMz4kuJe64hdVGBTCvZW3t4_JGnTBRF=NhYDookrzNPiXacq_w@mail.gmail.com>
+ <CAMz4ku+KVWw-M4AaPJ=Yn8xeLNaD2W4+gVqEN_P0QRwne3wwzA@mail.gmail.com> <0c70b5cf-4453-b21b-5622-f97ff069cf1b@intel.com>
+In-Reply-To: <0c70b5cf-4453-b21b-5622-f97ff069cf1b@intel.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 8 Nov 2019 19:27:01 +0800
+Message-ID: <CAMz4kuLT_3Hun_=ZiwRsqOcwxNoSasgFTfj7_1naBtVneSiJpg@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] mmc: host: sdhci: Add a variable to defer to
+ complete data requests if needed
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        baolin.wang7@gmail.com, linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, October 21, 2019 4:51:48 PM CET Geert Uytterhoeven wrote:
-> There is no need to cast a typed pointer to a void pointer when calling
-> a function that accepts the latter.  Remove it, as the cast prevents
-> further compiler checks.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, 8 Nov 2019 at 19:24, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 8/11/19 1:08 PM, Baolin Wang wrote:
+> > On 06/11/2019, Baolin Wang <baolin.wang@linaro.org> wrote:
+> >> On Wed, 6 Nov 2019 at 20:02, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> >>>
+> >>> To move ahead in the meantime without a new host API, just defer always
+> >
+> > Before new version, I want to make things clear in case I
+> > misunderstood your points, so you mean I should set always_defer_done
+> > = true for our Spreadtrum host driver in this patch? Or just like
+> > below patch? Thanks.
+> >
+> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> > index 850241f..4bef066 100644
+> > --- a/drivers/mmc/host/sdhci.c
+> > +++ b/drivers/mmc/host/sdhci.c
+> > @@ -3035,7 +3035,7 @@ static inline bool sdhci_defer_done(struct
+> > sdhci_host *host,
+> >  {
+> >         struct mmc_data *data = mrq->data;
+> >
+> > -       return host->pending_reset ||
+> > +       return host->pending_reset || host->always_defer_done ||
+> >                ((host->flags & SDHCI_REQ_USE_DMA) && data &&
+> >                 data->host_cookie == COOKIE_MAPPED);
+> >  }
+> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> > index d89cdb9..a73ce89 100644
+> > --- a/drivers/mmc/host/sdhci.h
+> > +++ b/drivers/mmc/host/sdhci.h
+> > @@ -533,6 +533,7 @@ struct sdhci_host {
+> >         bool pending_reset;     /* Cmd/data reset is pending */
+> >         bool irq_wake_enabled;  /* IRQ wakeup is enabled */
+> >         bool v4_mode;           /* Host Version 4 Enable */
+> > +       bool always_defer_done; /* Always defer to complete requests */
+> >
+> >         struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests done */
+> >         struct mmc_command *cmd;        /* Current command */
+> >
+>
+> Yes
 
-Greg, have you taken this one by any chance?
+Got it. Thanks for your confirming.
 
-> ---
->  drivers/power/avs/smartreflex.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/power/avs/smartreflex.c b/drivers/power/avs/smartreflex.c
-> index 4684e7df833a81e9..5376f3d22f31eade 100644
-> --- a/drivers/power/avs/smartreflex.c
-> +++ b/drivers/power/avs/smartreflex.c
-> @@ -905,7 +905,7 @@ static int omap_sr_probe(struct platform_device *pdev)
->  	sr_info->dbg_dir = debugfs_create_dir(sr_info->name, sr_dbg_dir);
->  
->  	debugfs_create_file("autocomp", S_IRUGO | S_IWUSR, sr_info->dbg_dir,
-> -			    (void *)sr_info, &pm_sr_fops);
-> +			    sr_info, &pm_sr_fops);
->  	debugfs_create_x32("errweight", S_IRUGO, sr_info->dbg_dir,
->  			   &sr_info->err_weight);
->  	debugfs_create_x32("errmaxlimit", S_IRUGO, sr_info->dbg_dir,
-> 
-
-
-
-
+-- 
+Baolin Wang
+Best Regards
