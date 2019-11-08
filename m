@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 271ACF466B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24ED3F4669
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389898AbfKHLmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:42:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55846 "EHLO mail.kernel.org"
+        id S2389856AbfKHLmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:42:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733210AbfKHLmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:42:09 -0500
+        id S2389788AbfKHLmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDBF2222D4;
-        Fri,  8 Nov 2019 11:42:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8872521D7B;
+        Fri,  8 Nov 2019 11:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213328;
-        bh=9fAtqds1VzPCxVoMPO2Bw4wJHGDRYIONBHw1nr1WOKQ=;
+        s=default; t=1573213332;
+        bh=FReMmvb5mhGVKmc7T3QgYVpv0ScYqZMSvTTubSLgang=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x11rAGNtCGzynWS8RquHYTqkOsjakeAU1mQ6GSELTZZg7+Y3RuyxGGh5/KRctVpC8
-         98pSZ1piwcQw4mgnWkzQVvyb/j5gbCCGdnlhzTCW5BBpSCL0zt9m+lx2o0gVYBRf0C
-         vS0yiQsfP83Cbvi7gS70HZrCu5SpBxqOhIcl82tY=
+        b=mzWpkg6LnACP5D9D1IEmSd3xybTvZQDCUgMQ4uCbth5IU+P47/umtN2R6ougtyfeI
+         S++XBPf4U7HebNsNcoOoW9pvaJYTTdEJVnHSJShJDYv7ikXNS9W/IDGZdvLZxISDEQ
+         ZW1YuReiaRw0WUCJGEw8TV49PPUnsAxUu63/Mjq0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 170/205] pinctrl: at91-pio4: fix has_config check in atmel_pctl_dt_subnode_to_map()
-Date:   Fri,  8 Nov 2019 06:37:17 -0500
-Message-Id: <20191108113752.12502-170-sashal@kernel.org>
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
+        Paul Burton <paul.burton@mips.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 171/205] MIPS: lantiq: Do not enable IRQs in dma open
+Date:   Fri,  8 Nov 2019 06:37:18 -0500
+Message-Id: <20191108113752.12502-171-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,68 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-[ Upstream commit b97760ae8e3dc8bb91881c13425a0bff55f2bd85 ]
+[ Upstream commit cc973aecf0b0541918c5ecabe6c90d1f709b5f89 ]
 
-Smatch complains about this condition:
+When a DMA channel is opened the IRQ should not get activated
+automatically, this allows it to pull data out manually without the help
+of interrupts. This is needed for a workaround in the vrx200 Ethernet
+driver.
 
-	if (has_config && num_pins >= 1)
-
-The "has_config" variable is either uninitialized or true.  The
-"num_pins" variable is unsigned and we verified that it is non-zero on
-the lines before so we know "num_pines >= 1" is true.  Really, we could
-just check "num_configs" directly and remove the "has_config" variable.
-
-Fixes: 776180848b57 ("pinctrl: introduce driver for Atmel PIO4 controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Acked-by: Paul Burton <paul.burton@mips.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ arch/mips/lantiq/xway/dma.c        | 1 -
+ drivers/net/ethernet/lantiq_etop.c | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index ef7ab208b951e..9e2f3738bf3ec 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -493,7 +493,6 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	unsigned num_pins, num_configs, reserve;
- 	unsigned long *configs;
- 	struct property	*pins;
--	bool has_config;
- 	u32 pinfunc;
- 	int ret, i;
- 
-@@ -509,9 +508,6 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		return ret;
+diff --git a/arch/mips/lantiq/xway/dma.c b/arch/mips/lantiq/xway/dma.c
+index 664f2f7f55c1c..982859f2b2a38 100644
+--- a/arch/mips/lantiq/xway/dma.c
++++ b/arch/mips/lantiq/xway/dma.c
+@@ -106,7 +106,6 @@ ltq_dma_open(struct ltq_dma_channel *ch)
+ 	spin_lock_irqsave(&ltq_dma_lock, flag);
+ 	ltq_dma_w32(ch->nr, LTQ_DMA_CS);
+ 	ltq_dma_w32_mask(0, DMA_CHAN_ON, LTQ_DMA_CCTRL);
+-	ltq_dma_w32_mask(0, 1 << ch->nr, LTQ_DMA_IRNEN);
+ 	spin_unlock_irqrestore(&ltq_dma_lock, flag);
+ }
+ EXPORT_SYMBOL_GPL(ltq_dma_open);
+diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ethernet/lantiq_etop.c
+index e08301d833e2e..379db19a303c8 100644
+--- a/drivers/net/ethernet/lantiq_etop.c
++++ b/drivers/net/ethernet/lantiq_etop.c
+@@ -439,6 +439,7 @@ ltq_etop_open(struct net_device *dev)
+ 		if (!IS_TX(i) && (!IS_RX(i)))
+ 			continue;
+ 		ltq_dma_open(&ch->dma);
++		ltq_dma_enable_irq(&ch->dma);
+ 		napi_enable(&ch->napi);
  	}
- 
--	if (num_configs)
--		has_config = true;
--
- 	num_pins = pins->length / sizeof(u32);
- 	if (!num_pins) {
- 		dev_err(pctldev->dev, "no pins found in node %pOF\n", np);
-@@ -524,7 +520,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	 * map for each pin.
- 	 */
- 	reserve = 1;
--	if (has_config && num_pins >= 1)
-+	if (num_configs)
- 		reserve++;
- 	reserve *= num_pins;
- 	ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps, num_maps,
-@@ -547,7 +543,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		pinctrl_utils_add_map_mux(pctldev, map, reserved_maps, num_maps,
- 					  group, func);
- 
--		if (has_config) {
-+		if (num_configs) {
- 			ret = pinctrl_utils_add_map_configs(pctldev, map,
- 					reserved_maps, num_maps, group,
- 					configs, num_configs,
+ 	phy_start(dev->phydev);
 -- 
 2.20.1
 
