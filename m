@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB10F554A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC3AF5765
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390202AbfKHTB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58790 "EHLO mail.kernel.org"
+        id S2391416AbfKHTUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:20:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732352AbfKHTB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:26 -0500
+        id S1732289AbfKHTAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0575921D7B;
-        Fri,  8 Nov 2019 19:01:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BFFE214DB;
+        Fri,  8 Nov 2019 18:57:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239685;
-        bh=qXGTM2oCfxyP+vBtLzKiCjtARCt/2w0XbTT/leTHjvc=;
+        s=default; t=1573239476;
+        bh=38h9OxLbGYMEfB6eiKf0+8nZ0bNWOcuSd0cJSLAwGVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AAyg6mzAF3NbPfmoK/y8NkXChhUuSROVKue6UZh00PtUeWEETXwQsXxr2Obbu8/Qt
-         7160oEcadWUmEDmrHTZ3BVaVIKpMBCDPc9Qh0VTRmCf1iJANWrPgpA8t2ron68FJsX
-         J6643IaFKUfjNp7mq6KmneGa6gL0ju661A6cDWzk=
+        b=Dhp+zgJHcfAJqos+MZgoizFcH1AJ3GwYMXAesybFwlFJdB16UR1xLiEwRl4xXxQ3e
+         07uGpCgNP4tsLb1bpwGv+udUvdYj9G+TKYg9+YzGPdx0KKmQ8FNhIKycR7kWHIyWH3
+         8qa717b2JpDp3IOIAiPuDifNNPRfZ/sIRk+pImTo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Zhengjun Xing <zhengjun.xing@linux.intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 26/79] tracing: Fix "gfp_t" format for synthetic events
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 18/62] of: unittest: fix memory leak in unittest_data_add
 Date:   Fri,  8 Nov 2019 19:50:06 +0100
-Message-Id: <20191108174800.826778305@linuxfoundation.org>
+Message-Id: <20191108174734.571469117@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 9fa8c9c647be624e91b09ecffa7cd97ee0600b40 ]
+[ Upstream commit e13de8fe0d6a51341671bbe384826d527afe8d44 ]
 
-In the format of synthetic events, the "gfp_t" is shown as "signed:1",
-but in fact the "gfp_t" is "unsigned", should be shown as "signed:0".
+In unittest_data_add, a copy buffer is created via kmemdup. This buffer
+is leaked if of_fdt_unflatten_tree fails. The release for the
+unittest_data buffer is added.
 
-The issue can be reproduced by the following commands:
-
-echo 'memlatency u64 lat; unsigned int order; gfp_t gfp_flags; int migratetype' > /sys/kernel/debug/tracing/synthetic_events
-cat  /sys/kernel/debug/tracing/events/synthetic/memlatency/format
-
-name: memlatency
-ID: 2233
-format:
-        field:unsigned short common_type;       offset:0;       size:2; signed:0;
-        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-        field:int common_pid;   offset:4;       size:4; signed:1;
-
-        field:u64 lat;  offset:8;       size:8; signed:0;
-        field:unsigned int order;       offset:16;      size:4; signed:0;
-        field:gfp_t gfp_flags;  offset:24;      size:4; signed:1;
-        field:int migratetype;  offset:32;      size:4; signed:1;
-
-print fmt: "lat=%llu, order=%u, gfp_flags=%x, migratetype=%d", REC->lat, REC->order, REC->gfp_flags, REC->migratetype
-
-Link: http://lkml.kernel.org/r/20191018012034.6404-1-zhengjun.xing@linux.intel.com
-
-Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: b951f9dc7f25 ("Enabling OF selftest to run without machine's devicetree")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Reviewed-by: Frank Rowand <frowand.list@gmail.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_events_hist.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/of/unittest.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index bdf104596d122..dac518977e7d0 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -448,6 +448,8 @@ static bool synth_field_signed(char *type)
- {
- 	if (strncmp(type, "u", 1) == 0)
- 		return false;
-+	if (strcmp(type, "gfp_t") == 0)
-+		return false;
- 
- 	return true;
- }
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 7c6aff7618009..87650d42682fc 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -1002,6 +1002,7 @@ static int __init unittest_data_add(void)
+ 	of_fdt_unflatten_tree(unittest_data, NULL, &unittest_data_node);
+ 	if (!unittest_data_node) {
+ 		pr_warn("%s: No tree to attach; not running tests\n", __func__);
++		kfree(unittest_data);
+ 		return -ENODATA;
+ 	}
+ 	of_node_set_flag(unittest_data_node, OF_DETACHED);
 -- 
 2.20.1
 
