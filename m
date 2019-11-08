@@ -2,555 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 752D9F4BB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:36:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF4E9F4BB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:35:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfKHMfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:35:55 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39024 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfKHMfy (ORCPT
+        id S1726741AbfKHMfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:35:33 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44176 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbfKHMfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 07:35:54 -0500
-Received: by mail-pf1-f194.google.com with SMTP id x28so4479519pfo.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:35:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ih0gjgftVSq40UymBQOagIAp1xQi1B6tEC0FaP+FShA=;
-        b=zRMBHUV2eEjt87Zf74mcwV96xH1462ElpJ7oq3OdcoEDXpHsxKR+2ziWjaoiBOzuNS
-         5/Jzoy38Iprz4CD/qZpBz8TYT5i9eeL1gq6EvQF93MpSXuX4soZQU0Oo6xwBnZLAu9hj
-         MqSf4do/ggD6wBeB6UTe6PdClRbaueszP2xSWpdF811hYTxLobUtBQkMwRe7xrZSJMDR
-         sEGG1Fko/RAWj2bnlduTF7m6euAGU7dx5QW8fUPx/A5R3PzVYXbYmArbtvbF346+GJi8
-         1fT16j1gs3a20deEMxbJlR+k8OcsdeCuya6tZNAEOA9WN/c+TsWAs/i6syRlBfFpu9Fd
-         tRpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ih0gjgftVSq40UymBQOagIAp1xQi1B6tEC0FaP+FShA=;
-        b=ET/h6C13EZ0ZTkcW2nLSJpoljJ2SzNBGlmqIiY6k7WPWb7Ybcsj9XjIWzRut0ZD3HO
-         tcJ+9NmgKchlYum7GnQRhK8olIe5duuYbtnoZgVweUPjpzBi0LrIo6EdNTxpQy6e9o0a
-         jH0iYF1+m+BO+Kf4V9r7eazTtAlA/1sTMFuXgp6c1Fjeyww6ETzjgOHWqy63QgGVY8Yw
-         7GCR3tm00AQAPAFBWpE7ASp5RFp9pYoAttkSNDIfmrvfqusARSEHj9xx76uPAbilNt5U
-         1EfliKgcCgRWuIemLXQTVlDufcQJunXvOVdYElzRjbzJObX6/B0J6EtVccZrBE83x/iS
-         i28A==
-X-Gm-Message-State: APjAAAV/rx0fHfWfWy+oaSWOhrs3YDRdsEMI0ZWjiJjcgHasMiu/qRjx
-        rapzQRsgLJvvt/gblje2IeaSZg==
-X-Google-Smtp-Source: APXvYqxOZoGymw/L++nI8ROIiwlWbWKfb+bsFGBsrZ7Vwhw6WypPNbYJHUqHo7bFXfAIEXlvqUg6PA==
-X-Received: by 2002:a17:90a:2623:: with SMTP id l32mr13709025pje.70.1573216553168;
-        Fri, 08 Nov 2019 04:35:53 -0800 (PST)
-Received: from localhost.localdomain ([240e:362:48f:8f00:79bd:a8a7:1834:2d1a])
-        by smtp.gmail.com with ESMTPSA id q34sm5430926pjb.15.2019.11.08.04.35.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Nov 2019 04:35:52 -0800 (PST)
-From:   Zhangfei Gao <zhangfei.gao@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        jonathan.cameron@huawei.com, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org
-Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: [PATCH v8 3/3] crypto: hisilicon - register zip engine to uacce
-Date:   Fri,  8 Nov 2019 20:34:28 +0800
-Message-Id: <1573216468-10379-4-git-send-email-zhangfei.gao@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573216468-10379-1-git-send-email-zhangfei.gao@linaro.org>
-References: <1573216468-10379-1-git-send-email-zhangfei.gao@linaro.org>
+        Fri, 8 Nov 2019 07:35:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pMB7X5BsIcOFIG+976bGTn7Eu98OO5fDsIlf/eZjATk=; b=s2ArXGVRfAz8qyP2d9rrYCKFl
+        4FhL/rN2mujzn/jTzTSJVD3rQUIVIWw72IrU1jiP+Mzx6oak+xZ0gIxReG+Y9N9Hmj/KiBduu/p3/
+        GnkZumGk3JsxUhgCuSivGiP23b5oc1yz6TEuIeDsE7wx6J8IFi+s64Ea0iD4S5EGzw3q3eKUhqjrr
+        01MsrFExjaMHosxeXFuMXSoqfL8DLu+egF+ZoGS7rqq1QvGYqrsLlqM/jgbI+G5VO+mHq/tO/d7Mn
+        bm7YLu5gzj4wj4ZfImntFy8xSCejVF3vP38wLG0J4owxYxpl4/TP1BD7O8vSmkV7UTRlJ3Zuug2pZ
+        a/Hdh6EFw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iT3Tw-0002u7-Um; Fri, 08 Nov 2019 12:35:17 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 378FF303F45;
+        Fri,  8 Nov 2019 13:34:10 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 25E1D28722B70; Fri,  8 Nov 2019 13:35:15 +0100 (CET)
+Date:   Fri, 8 Nov 2019 13:35:15 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <qperret@google.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, linux-kernel@vger.kernel.org,
+        aaron.lwe@gmail.com, valentin.schneider@arm.com, mingo@kernel.org,
+        pauld@redhat.com, jdesfossez@digitalocean.com,
+        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        kernel-team@android.com, john.stultz@linaro.org
+Subject: Re: NULL pointer dereference in pick_next_task_fair
+Message-ID: <20191108123515.GL4131@hirez.programming.kicks-ass.net>
+References: <20191106165437.GX4114@hirez.programming.kicks-ass.net>
+ <20191106172737.GM5671@hirez.programming.kicks-ass.net>
+ <831c2cd4-40a4-31b2-c0aa-b5f579e770d6@virtuozzo.com>
+ <20191107132628.GZ4114@hirez.programming.kicks-ass.net>
+ <20191107153848.GA31774@google.com>
+ <20191107184356.GF4114@hirez.programming.kicks-ass.net>
+ <20191107192907.GA30258@worktop.programming.kicks-ass.net>
+ <20191108110212.GA204618@google.com>
+ <20191108120034.GK4131@hirez.programming.kicks-ass.net>
+ <20191108121526.GB83597@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108121526.GB83597@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register qm to uacce framework for user crypto driver
+On Fri, Nov 08, 2019 at 12:15:26PM +0000, Quentin Perret wrote:
+> Right, with a single loop you'll have to re-iterate the classes from
+> the start in case of RETRY_TASK, but you're re-iterating all the classes
+> too with this patch. You're doing a little less work in the second loop
+> though, so maybe it's worth it. 
 
-Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
----
- drivers/crypto/hisilicon/qm.c           | 256 ++++++++++++++++++++++++++++++--
- drivers/crypto/hisilicon/qm.h           |  11 ++
- drivers/crypto/hisilicon/zip/zip_main.c |  38 ++---
- include/uapi/misc/uacce/hisi_qm.h       |  23 +++
- 4 files changed, 289 insertions(+), 39 deletions(-)
- create mode 100644 include/uapi/misc/uacce/hisi_qm.h
+The thing with the restart is that it'll make your head explode when we
+go do core-scheduling.
 
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-index a8ed6990..bf8442d 100644
---- a/drivers/crypto/hisilicon/qm.c
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -9,6 +9,9 @@
- #include <linux/log2.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-+#include <linux/uacce.h>
-+#include <linux/uaccess.h>
-+#include <uapi/misc/uacce/hisi_qm.h>
- #include "qm.h"
- 
- /* eq/aeq irq enable */
-@@ -465,17 +468,22 @@ static void qm_cq_head_update(struct hisi_qp *qp)
- 
- static void qm_poll_qp(struct hisi_qp *qp, struct hisi_qm *qm)
- {
--	struct qm_cqe *cqe = qp->cqe + qp->qp_status.cq_head;
--
--	if (qp->req_cb) {
--		while (QM_CQE_PHASE(cqe) == qp->qp_status.cqc_phase) {
--			dma_rmb();
--			qp->req_cb(qp, qp->sqe + qm->sqe_size * cqe->sq_head);
--			qm_cq_head_update(qp);
--			cqe = qp->cqe + qp->qp_status.cq_head;
--			qm_db(qm, qp->qp_id, QM_DOORBELL_CMD_CQ,
--			      qp->qp_status.cq_head, 0);
--			atomic_dec(&qp->qp_status.used);
-+	struct qm_cqe *cqe;
-+
-+	if (qp->event_cb) {
-+		qp->event_cb(qp);
-+	} else {
-+		cqe = qp->cqe + qp->qp_status.cq_head;
-+
-+		if (qp->req_cb) {
-+			while (QM_CQE_PHASE(cqe) == qp->qp_status.cqc_phase) {
-+				dma_rmb();
-+				qp->req_cb(qp, qp->sqe + qm->sqe_size *
-+					   cqe->sq_head);
-+				qm_cq_head_update(qp);
-+				cqe = qp->cqe + qp->qp_status.cq_head;
-+				atomic_dec(&qp->qp_status.used);
-+			}
- 		}
- 
- 		/* set c_flag */
-@@ -1271,7 +1279,7 @@ static int qm_qp_ctx_cfg(struct hisi_qp *qp, int qp_id, int pasid)
-  * @qp: The qp we want to start to run.
-  * @arg: Accelerator specific argument.
-  *
-- * After this function, qp can receive request from user. Return qp_id if
-+ * After this function, qp can receive request from user. Return 0 if
-  * successful, Return -EBUSY if failed.
-  */
- int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
-@@ -1316,7 +1324,7 @@ int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
- 
- 	dev_dbg(dev, "queue %d started\n", qp_id);
- 
--	return qp_id;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(hisi_qm_start_qp);
- 
-@@ -1397,6 +1405,213 @@ static void hisi_qm_cache_wb(struct hisi_qm *qm)
- 	}
- }
- 
-+static void qm_qp_event_notifier(struct hisi_qp *qp)
-+{
-+	wake_up_interruptible(&qp->uacce_q->wait);
-+}
-+
-+static int hisi_qm_get_available_instances(struct uacce_device *uacce)
-+{
-+	int i, ret;
-+	struct hisi_qm *qm = uacce->priv;
-+
-+	read_lock(&qm->qps_lock);
-+	for (i = 0, ret = 0; i < qm->qp_num; i++)
-+		if (!qm->qp_array[i])
-+			ret++;
-+	read_unlock(&qm->qps_lock);
-+
-+	return ret;
-+}
-+
-+static int hisi_qm_uacce_get_queue(struct uacce_device *uacce,
-+				   unsigned long arg,
-+				   struct uacce_queue *q)
-+{
-+	struct hisi_qm *qm = uacce->priv;
-+	struct hisi_qp *qp;
-+	u8 alg_type = 0;
-+
-+	qp = hisi_qm_create_qp(qm, alg_type);
-+	if (IS_ERR(qp))
-+		return PTR_ERR(qp);
-+
-+	q->priv = qp;
-+	q->uacce = uacce;
-+	qp->uacce_q = q;
-+	qp->event_cb = qm_qp_event_notifier;
-+	qp->pasid = arg;
-+
-+	return 0;
-+}
-+
-+static void hisi_qm_uacce_put_queue(struct uacce_queue *q)
-+{
-+	struct hisi_qp *qp = q->priv;
-+
-+	hisi_qm_cache_wb(qp->qm);
-+	hisi_qm_release_qp(qp);
-+}
-+
-+/* map sq/cq/doorbell to user space */
-+static int hisi_qm_uacce_mmap(struct uacce_queue *q,
-+			      struct vm_area_struct *vma,
-+			      struct uacce_qfile_region *qfr)
-+{
-+	struct hisi_qp *qp = q->priv;
-+	struct hisi_qm *qm = qp->qm;
-+	size_t sz = vma->vm_end - vma->vm_start;
-+	struct pci_dev *pdev = qm->pdev;
-+	struct device *dev = &pdev->dev;
-+	unsigned long vm_pgoff;
-+	int ret;
-+
-+	switch (qfr->type) {
-+	case UACCE_QFRT_MMIO:
-+		if (qm->ver == QM_HW_V2) {
-+			if (sz > PAGE_SIZE * (QM_DOORBELL_PAGE_NR +
-+			    QM_DOORBELL_SQ_CQ_BASE_V2 / PAGE_SIZE))
-+				return -EINVAL;
-+		} else {
-+			if (sz > PAGE_SIZE * QM_DOORBELL_PAGE_NR)
-+				return -EINVAL;
-+		}
-+
-+		vma->vm_flags |= VM_IO;
-+
-+		return remap_pfn_range(vma, vma->vm_start,
-+				       qm->phys_base >> PAGE_SHIFT,
-+				       sz, pgprot_noncached(vma->vm_page_prot));
-+	case UACCE_QFRT_DUS:
-+		if (sz != qp->qdma.size)
-+			return -EINVAL;
-+
-+		/*
-+		 * dma_mmap_coherent() requires vm_pgoff as 0
-+		 * restore vm_pfoff to initial value for mmap()
-+		 */
-+		vm_pgoff = vma->vm_pgoff;
-+		vma->vm_pgoff = 0;
-+		ret = dma_mmap_coherent(dev, vma, qp->qdma.va,
-+					qp->qdma.dma, sz);
-+		vma->vm_pgoff = vm_pgoff;
-+		return ret;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int hisi_qm_uacce_start_queue(struct uacce_queue *q)
-+{
-+	struct hisi_qp *qp = q->priv;
-+
-+	return hisi_qm_start_qp(qp, qp->pasid);
-+}
-+
-+static void hisi_qm_uacce_stop_queue(struct uacce_queue *q)
-+{
-+	hisi_qm_stop_qp(q->priv);
-+}
-+
-+static int qm_set_sqctype(struct uacce_queue *q, u16 type)
-+{
-+	struct hisi_qm *qm = q->uacce->priv;
-+	struct hisi_qp *qp = q->priv;
-+
-+	write_lock(&qm->qps_lock);
-+	qp->alg_type = type;
-+	write_unlock(&qm->qps_lock);
-+
-+	return 0;
-+}
-+
-+static long hisi_qm_uacce_ioctl(struct uacce_queue *q, unsigned int cmd,
-+				unsigned long arg)
-+{
-+	struct hisi_qp *qp = q->priv;
-+	struct hisi_qp_ctx qp_ctx;
-+
-+	if (cmd == UACCE_CMD_QM_SET_QP_CTX) {
-+		if (copy_from_user(&qp_ctx, (void __user *)arg,
-+				   sizeof(struct hisi_qp_ctx)))
-+			return -EFAULT;
-+
-+		if (qp_ctx.qc_type != 0 && qp_ctx.qc_type != 1)
-+			return -EINVAL;
-+
-+		qm_set_sqctype(q, qp_ctx.qc_type);
-+		qp_ctx.id = qp->qp_id;
-+
-+		if (copy_to_user((void __user *)arg, &qp_ctx,
-+				 sizeof(struct hisi_qp_ctx)))
-+			return -EFAULT;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct uacce_ops uacce_qm_ops = {
-+	.get_available_instances = hisi_qm_get_available_instances,
-+	.get_queue = hisi_qm_uacce_get_queue,
-+	.put_queue = hisi_qm_uacce_put_queue,
-+	.start_queue = hisi_qm_uacce_start_queue,
-+	.stop_queue = hisi_qm_uacce_stop_queue,
-+	.mmap = hisi_qm_uacce_mmap,
-+	.ioctl = hisi_qm_uacce_ioctl,
-+};
-+
-+static int qm_register_uacce(struct hisi_qm *qm)
-+{
-+	struct pci_dev *pdev = qm->pdev;
-+	struct uacce_device *uacce;
-+	unsigned long mmio_page_nr;
-+	unsigned long dus_page_nr;
-+	struct uacce_interface interface = {
-+		.flags = UACCE_DEV_SVA,
-+		.ops = &uacce_qm_ops,
-+	};
-+
-+	strncpy(interface.name, pdev->driver->name, sizeof(interface.name));
-+
-+	uacce = uacce_register(&pdev->dev, &interface);
-+	if (IS_ERR(uacce))
-+		return PTR_ERR(uacce);
-+
-+	if (uacce->flags & UACCE_DEV_SVA) {
-+		qm->use_sva = true;
-+	} else {
-+		/* only consider sva case */
-+		uacce_unregister(uacce);
-+		return -EINVAL;
-+	}
-+
-+	uacce->is_vf = pdev->is_virtfn;
-+	uacce->priv = qm;
-+	uacce->algs = qm->algs;
-+
-+	if (qm->ver == QM_HW_V1) {
-+		mmio_page_nr = QM_DOORBELL_PAGE_NR;
-+		uacce->api_ver = HISI_QM_API_VER_BASE;
-+	} else {
-+		mmio_page_nr = QM_DOORBELL_PAGE_NR +
-+			QM_DOORBELL_SQ_CQ_BASE_V2 / PAGE_SIZE;
-+		uacce->api_ver = HISI_QM_API_VER2_BASE;
-+	}
-+
-+	dus_page_nr = (PAGE_SIZE - 1 + qm->sqe_size * QM_Q_DEPTH +
-+		       sizeof(struct qm_cqe) * QM_Q_DEPTH) >> PAGE_SHIFT;
-+
-+	uacce->qf_pg_num[UACCE_QFRT_MMIO] = mmio_page_nr;
-+	uacce->qf_pg_num[UACCE_QFRT_DUS]  = dus_page_nr;
-+
-+	qm->uacce = uacce;
-+
-+	return 0;
-+}
-+
- /**
-  * hisi_qm_init() - Initialize configures about qm.
-  * @qm: The qm needing init.
-@@ -1421,10 +1636,14 @@ int hisi_qm_init(struct hisi_qm *qm)
- 		return -EINVAL;
- 	}
- 
-+	ret = qm_register_uacce(qm);
-+	if (ret < 0)
-+		dev_warn(&pdev->dev, "fail to register uacce (%d)\n", ret);
-+
- 	ret = pci_enable_device_mem(pdev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to enable device mem!\n");
--		return ret;
-+		goto err_unregister_uacce;
- 	}
- 
- 	ret = pci_request_mem_regions(pdev, qm->dev_name);
-@@ -1433,8 +1652,9 @@ int hisi_qm_init(struct hisi_qm *qm)
- 		goto err_disable_pcidev;
- 	}
- 
--	qm->io_base = ioremap(pci_resource_start(pdev, PCI_BAR_2),
--			      pci_resource_len(qm->pdev, PCI_BAR_2));
-+	qm->phys_base = pci_resource_start(pdev, PCI_BAR_2);
-+	qm->phys_size = pci_resource_len(qm->pdev, PCI_BAR_2);
-+	qm->io_base = ioremap(qm->phys_base, qm->phys_size);
- 	if (!qm->io_base) {
- 		ret = -EIO;
- 		goto err_release_mem_regions;
-@@ -1476,6 +1696,8 @@ int hisi_qm_init(struct hisi_qm *qm)
- 	pci_release_mem_regions(pdev);
- err_disable_pcidev:
- 	pci_disable_device(pdev);
-+err_unregister_uacce:
-+	uacce_unregister(qm->uacce);
- 
- 	return ret;
- }
-@@ -1504,6 +1726,8 @@ void hisi_qm_uninit(struct hisi_qm *qm)
- 	iounmap(qm->io_base);
- 	pci_release_mem_regions(pdev);
- 	pci_disable_device(pdev);
-+
-+	uacce_unregister(qm->uacce);
- }
- EXPORT_SYMBOL_GPL(hisi_qm_uninit);
- 
-diff --git a/drivers/crypto/hisilicon/qm.h b/drivers/crypto/hisilicon/qm.h
-index 103e2fd..16a176f 100644
---- a/drivers/crypto/hisilicon/qm.h
-+++ b/drivers/crypto/hisilicon/qm.h
-@@ -77,6 +77,9 @@
- 
- #define HISI_ACC_SGL_SGE_NR_MAX		255
- 
-+/* page number for queue file region */
-+#define QM_DOORBELL_PAGE_NR		1
-+
- enum qp_state {
- 	QP_STOP,
- };
-@@ -161,7 +164,12 @@ struct hisi_qm {
- 	u32 error_mask;
- 	u32 msi_mask;
- 
-+	const char *algs;
- 	bool use_dma_api;
-+	bool use_sva;
-+	resource_size_t phys_base;
-+	resource_size_t phys_size;
-+	struct uacce_device *uacce;
- };
- 
- struct hisi_qp_status {
-@@ -191,10 +199,13 @@ struct hisi_qp {
- 	struct hisi_qp_ops *hw_ops;
- 	void *qp_ctx;
- 	void (*req_cb)(struct hisi_qp *qp, void *data);
-+	void (*event_cb)(struct hisi_qp *qp);
- 	struct work_struct work;
- 	struct workqueue_struct *wq;
- 
- 	struct hisi_qm *qm;
-+	u16 pasid;
-+	struct uacce_queue *uacce_q;
- };
- 
- int hisi_qm_init(struct hisi_qm *qm);
-diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-index 1b2ee96..1c91587 100644
---- a/drivers/crypto/hisilicon/zip/zip_main.c
-+++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -316,8 +316,14 @@ static void hisi_zip_set_user_domain_and_cache(struct hisi_zip *hisi_zip)
- 	writel(AXUSER_BASE, base + HZIP_BD_RUSER_32_63);
- 	writel(AXUSER_BASE, base + HZIP_SGL_RUSER_32_63);
- 	writel(AXUSER_BASE, base + HZIP_BD_WUSER_32_63);
--	writel(AXUSER_BASE, base + HZIP_DATA_RUSER_32_63);
--	writel(AXUSER_BASE, base + HZIP_DATA_WUSER_32_63);
-+
-+	if (hisi_zip->qm.use_sva) {
-+		writel(AXUSER_BASE | AXUSER_SSV, base + HZIP_DATA_RUSER_32_63);
-+		writel(AXUSER_BASE | AXUSER_SSV, base + HZIP_DATA_WUSER_32_63);
-+	} else {
-+		writel(AXUSER_BASE, base + HZIP_DATA_RUSER_32_63);
-+		writel(AXUSER_BASE, base + HZIP_DATA_WUSER_32_63);
-+	}
- 
- 	/* let's open all compression/decompression cores */
- 	writel(DECOMP_CHECK_ENABLE | ALL_COMP_DECOMP_EN,
-@@ -672,23 +678,12 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	qm->pdev = pdev;
- 	qm->ver = rev_id;
- 
-+	qm->use_dma_api = true;
-+	qm->algs = "zlib\ngzip\n";
- 	qm->sqe_size = HZIP_SQE_SIZE;
- 	qm->dev_name = hisi_zip_name;
- 	qm->fun_type = (pdev->device == PCI_DEVICE_ID_ZIP_PF) ? QM_HW_PF :
- 								QM_HW_VF;
--	switch (uacce_mode) {
--	case 0:
--		qm->use_dma_api = true;
--		break;
--	case 1:
--		qm->use_dma_api = false;
--		break;
--	case 2:
--		qm->use_dma_api = true;
--		break;
--	default:
--		return -EINVAL;
--	}
- 
- 	ret = hisi_qm_init(qm);
- 	if (ret) {
-@@ -976,12 +971,10 @@ static int __init hisi_zip_init(void)
- 		goto err_pci;
- 	}
- 
--	if (uacce_mode == 0 || uacce_mode == 2) {
--		ret = hisi_zip_register_to_crypto();
--		if (ret < 0) {
--			pr_err("Failed to register driver to crypto.\n");
--			goto err_crypto;
--		}
-+	ret = hisi_zip_register_to_crypto();
-+	if (ret < 0) {
-+		pr_err("Failed to register driver to crypto.\n");
-+		goto err_crypto;
- 	}
- 
- 	return 0;
-@@ -996,8 +989,7 @@ static int __init hisi_zip_init(void)
- 
- static void __exit hisi_zip_exit(void)
- {
--	if (uacce_mode == 0 || uacce_mode == 2)
--		hisi_zip_unregister_from_crypto();
-+	hisi_zip_unregister_from_crypto();
- 	pci_unregister_driver(&hisi_zip_pci_driver);
- 	hisi_zip_unregister_debugfs();
- }
-diff --git a/include/uapi/misc/uacce/hisi_qm.h b/include/uapi/misc/uacce/hisi_qm.h
-new file mode 100644
-index 0000000..6435f0b
---- /dev/null
-+++ b/include/uapi/misc/uacce/hisi_qm.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-+#ifndef _UAPI_HISI_QM_H
-+#define _UAPI_HISI_QM_H
-+
-+#include <linux/types.h>
-+
-+/**
-+ * struct hisi_qp_ctx - User data for hisi qp.
-+ * @id: qp_index return to user space
-+ * @qc_type: Accelerator algorithm type
-+ */
-+struct hisi_qp_ctx {
-+	__u16 id;
-+	__u16 qc_type;
-+};
-+
-+#define HISI_QM_API_VER_BASE "hisi_qm_v1"
-+#define HISI_QM_API_VER2_BASE "hisi_qm_v2"
-+
-+/* UACCE_CMD_QM_SET_QP_CTX: Set qp algorithm type */
-+#define UACCE_CMD_QM_SET_QP_CTX	_IOWR('H', 10, struct hisi_qp_ctx)
-+
-+#endif
--- 
-2.7.4
+> And I was the one worried about
+> refactoring the code too much close to the release, so maybe that's for
+> another time ;)
+
+It is either this patch or reverting a bunch of patches :/
+
 
