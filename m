@@ -2,107 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0D8F57EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AFBF583B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:42:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732699AbfKHTvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:51:22 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39586 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732622AbfKHTvW (ORCPT
+        id S2387487AbfKHUHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 15:07:48 -0500
+Received: from alln-iport-2.cisco.com ([173.37.142.89]:4873 "EHLO
+        alln-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729075AbfKHUHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:51:22 -0500
-Received: by mail-wr1-f68.google.com with SMTP id a11so8376728wra.6;
-        Fri, 08 Nov 2019 11:51:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RIq7Ju31y/qMWpSLAwnBA7KnxR+phPe2Cxa8JB0kXdE=;
-        b=KwXJA5P7vuIzRxu2jjoRh/RDwr9CvefzLKufUIBy+/ArIjgYsZd4SOztW2aLo3ig/S
-         MLYwMZNXH5MoCYkzktFQ1lU0TQSaKfn7uaSOtbnQmqBXCA4uiaBhno4JEjy1Rea4gPlO
-         YQaUGMrLSoDYx1Rh3KMnv1RUaW9JEl8LoKDOUX+vksbtJIy/gDCNH/E3b3MaObNBJvt2
-         dpofsgAQDk4R0HBXoJa0yI80pt8uwLszkShHFIUSYTR7H+jlxTPoNTq/0nXTg4sTvdFA
-         vkXbK2ke8dbFrHE6fMNoMGgK19/jYh/g5+m1jUANdQOvyxB7B8NCzc5ng8xoeGgRNULw
-         QLEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RIq7Ju31y/qMWpSLAwnBA7KnxR+phPe2Cxa8JB0kXdE=;
-        b=S1FuaRSu9lCfmJev3uvf+wFXFLCPusv/8raIZGNpMFm8ESuhAqRr8NS5eVkJg4AjhI
-         RkRsaNUTK7RovMeTe+AqavrYjKPM04pJpNn/8V8DfdvtkriBauulNklzyKLJbgbpMQGe
-         dh4wxatcLjir9MmcKMOr6j7tJ6doWol7jWUU/UkxzkxJPdh6hGGFOVRu34QLEzHBTTrF
-         PbTwwVZ4CY2R/p0cZMqy+2qTRHDQ5UtF5oR41ipFkPgkDRdgDUfPjE1mbsWjkJk5f+bm
-         3B9Q03ekFoN13cJPQe0/DFjHeRAQMBoMf6hUgfle8apiDRpBbRQJzUWHJrUJoT8LpEUo
-         olZg==
-X-Gm-Message-State: APjAAAWW8faOjTYK+F4gTjtwqXo0nC/y61ZewNMaNOAhCRP9EAKkqCYK
-        rHB186RqZqbbsWarrr6K1j0=
-X-Google-Smtp-Source: APXvYqw4vLiqza4NZ7wOlgPRWebELPp1Mzj0ZrBg571uG2KBbqDJPJMpWqicJsa/NF3xW95g3Fde/w==
-X-Received: by 2002:a5d:4a50:: with SMTP id v16mr9651286wrs.85.1573242680471;
-        Fri, 08 Nov 2019 11:51:20 -0800 (PST)
-Received: from arch-vook.lan ([77.125.77.116])
-        by smtp.googlemail.com with ESMTPSA id g5sm8629926wmf.37.2019.11.08.11.51.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 11:51:19 -0800 (PST)
-From:   Omer Shalev <omerdeshalev@gmail.com>
-Cc:     omerdeshalev@gmail.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media:usb:cpia2: Properly check framebuffer mmap offsets
-Date:   Fri,  8 Nov 2019 21:50:36 +0000
-Message-Id: <20191108215038.59170-1-omerdeshalev@gmail.com>
-X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 8 Nov 2019 15:07:48 -0500
+X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Nov 2019 15:07:46 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=3146; q=dns/txt; s=iport;
+  t=1573243666; x=1574453266;
+  h=from:to:cc:subject:date:message-id;
+  bh=DrRVxIIRXdAFmb4wXgTdIy5Gpr7D2ps+wz38/V+1l6k=;
+  b=WoD1xaYxz7DhpEzNZ6ngsmK1LdUe7ZytATDVDnczxKttpR3n1Bc7HBLf
+   bT7YTDVvS+QYW+0rUH7tsKYWF+T3C3m89KdPZyRUv5Q/QbHnIElJKjWf3
+   C97D1dHxY01FMcwtxZH08N//1M2kNxXvy0Ymr1Y1S/7Ixu7eigZlUGyGN
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.68,283,1569283200"; 
+   d="scan'208";a="368687233"
+Received: from alln-core-11.cisco.com ([173.36.13.133])
+  by alln-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 08 Nov 2019 20:00:41 +0000
+Received: from zorba.cisco.com ([10.24.83.59])
+        by alln-core-11.cisco.com (8.15.2/8.15.2) with ESMTP id xA8K0eEc022208;
+        Fri, 8 Nov 2019 20:00:40 GMT
+From:   Daniel Walker <danielwa@cisco.com>
+To:     Phillip Lougher <phillip@squashfs.org.uk>
+Cc:     "yusun2@cisco.com" <yusun2@cisco.com>, xe-linux-external@cisco.com,
+        Daniel Walker <dwalker@fifo99.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] fs/squashfs: Make SquashFS xz initialization mode configurable
+Date:   Fri,  8 Nov 2019 12:00:39 -0800
+Message-Id: <20191108200040.20259-1-danielwa@cisco.com>
+X-Mailer: git-send-email 2.17.1
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.24.83.59, [10.24.83.59]
+X-Outbound-Node: alln-core-11.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpai2 driver's mmap implementation wasn't properly check for all
-possible offset values. Given a huge offset value , the calculation
-start_offset + size can wrap around to a low value and pass the check
+From: "yusun2@cisco.com" <yusun2@cisco.com>
 
-Signed-off-by: Omer Shalev <omerdeshalev@gmail.com>
+Make SquashFS xz initialization mode configurable to be either
+XZ_PREALLOC or XZ_DYNALLOC. The default mode is XZ_PREALLOC.
+
+SquashFS multi-threaded per-CPU decompressor is proven to
+effectively resolve the I/O bottleneck and boost the outcome
+of other boot time optimization technologies on some I/O bound
+platforms. However it allocates extra memory on per-processor
+per-mounted-package basis. Making XZ_DYNALLOC mode an option
+for the xz decompressor initialization in SquashFS minimizes
+the memory impact.
+
+Signed-off-by: Yu Sun <yusun2@cisco.com>
+Cc: xe-linux-external@cisco.com
+Signed-off-by: Daniel Walker <dwalker@fifo99.com>
 ---
- drivers/media/usb/cpia2/cpia2_core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/squashfs/Kconfig      | 32 ++++++++++++++++++++++++++++++++
+ fs/squashfs/xz_wrapper.c |  6 +++++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/cpia2/cpia2_core.c b/drivers/media/usb/cpia2/cpia2_core.c
-index 20c50c2d042e..9d621cfb2d74 100644
---- a/drivers/media/usb/cpia2/cpia2_core.c
-+++ b/drivers/media/usb/cpia2/cpia2_core.c
-@@ -2390,18 +2390,22 @@ int cpia2_remap_buffer(struct camera_data *cam, struct vm_area_struct *vma)
- {
- 	const char *adr = (const char *)vma->vm_start;
- 	unsigned long size = vma->vm_end-vma->vm_start;
--	unsigned long start_offset = vma->vm_pgoff << PAGE_SHIFT;
- 	unsigned long start = (unsigned long) adr;
-+	unsigned long start_offset;
- 	unsigned long page, pos;
+diff --git a/fs/squashfs/Kconfig b/fs/squashfs/Kconfig
+index 916e78fabcaa..9cf2ebf89374 100644
+--- a/fs/squashfs/Kconfig
++++ b/fs/squashfs/Kconfig
+@@ -223,3 +223,35 @@ config SQUASHFS_FRAGMENT_CACHE_SIZE
  
- 	DBG("mmap offset:%ld size:%ld\n", start_offset, size);
- 
- 	if (!video_is_registered(&cam->vdev))
- 		return -ENODEV;
+ 	  Note there must be at least one cached fragment.  Anything
+ 	  much more than three will probably not make much difference.
 +
-+	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
-+		return -EINVAL;
++choice
++    prompt "XZ decompressor operation mode"
++    depends on SQUASHFS_XZ
++    default SQUASHFS_XZ_DICT_PREALLOC
++    help
++      Squashfs now utilizes the two different multi-call modes of xz
++      decompression. They each exhibits various trade-offs between
++      decompression performance and memory consumption.
++
++      If in doubt, select "XZ preallocated multi-call mode"
++
++config SQUASHFS_XZ_DICT_PREALLOC
++    bool "XZ preallocated multi-call mode"
++    help
++      Traditionally Squashfs has used XZ_PREALLOC operation mode for
++      xz decompression, under which the xz dictionary buffer is allocated
++      at initialization.
++
++config SQUASHFS_XZ_DICT_DYNALLOC
++    bool "XZ dynamic-allocated multi-call mode"
++    help
++      By default Squashfs uses XZ_PREALLOC operation mode for xz decompressor.
++      This, however, potentially lead to significant increase of memory
++      consumption, especially when SquashFS per-cpu multi-threaded
++      decompressor is applied.
++
++      If the system has memory constraints, setting this option will force
++      SquashFS to use XZ_DYNALLOC mode, and thus reduce memory footprint.
++      In this case, the LZMA2 dictionary is allocated upon needed with the
++      required size.
++endchoice
+diff --git a/fs/squashfs/xz_wrapper.c b/fs/squashfs/xz_wrapper.c
+index 4b2f2051a6dc..6d6946bb5e4c 100644
+--- a/fs/squashfs/xz_wrapper.c
++++ b/fs/squashfs/xz_wrapper.c
+@@ -90,7 +90,11 @@ static void *squashfs_xz_init(struct squashfs_sb_info *msblk, void *buff)
+ 		goto failed;
+ 	}
  
-+	start_offset = vma->vm_pgoff << PAGE_SHIFT;
- 	if (size > cam->frame_size*cam->num_frames  ||
- 	    (start_offset % cam->frame_size) != 0 ||
--	    (start_offset+size > cam->frame_size*cam->num_frames))
-+	    (start_offset > cam->frame_size*cam->num_frames - size))
- 		return -EINVAL;
- 
- 	pos = ((unsigned long) (cam->frame_buffer)) + start_offset;
+-	stream->state = xz_dec_init(XZ_PREALLOC, comp_opts->dict_size);
++	if (IS_ENABLED(CONFIG_SQUASHFS_XZ_DICT_DYNALLOC)) {
++	    stream->state = xz_dec_init(XZ_DYNALLOC, comp_opts->dict_size);
++	} else {
++	    stream->state = xz_dec_init(XZ_PREALLOC, comp_opts->dict_size);
++	}
+ 	if (stream->state == NULL) {
+ 		kfree(stream);
+ 		err = -ENOMEM;
 -- 
-2.23.0
+2.17.1
 
