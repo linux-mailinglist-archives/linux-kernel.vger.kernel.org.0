@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56EFAF5440
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E280F5447
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387675AbfKHSzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:55:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52864 "EHLO mail.kernel.org"
+        id S2387831AbfKHSzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:55:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387543AbfKHSzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:55:31 -0500
+        id S2387662AbfKHSzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:55:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 370E220865;
-        Fri,  8 Nov 2019 18:55:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 248ED20865;
+        Fri,  8 Nov 2019 18:55:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239330;
-        bh=BUTuqTi7EGNrt+/TX54y9XivWt9zhd35Hvj5orNffp8=;
+        s=default; t=1573239336;
+        bh=3Lntj0YJJmf+8l/kLro8iPsjmwtakiQ9erPUHVvONrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o12XQ2hiU6rdy3vh6lzVwxB8KHkUpg/IAKKR1qf5kooJ2Dl9RHRFW9Ldvy3VqBIQN
-         2bBW8ebAlla6BFYyehh7uU9HIl23bpHkpfj4F+UXyfxHQ8IUfcNAjuz3VdIZr7pGLE
-         U1y71kJ3RIKBuQzlf0dK+V2SaCVAPqjDKIQEV5Nc=
+        b=r2k1sWYMp/SgybmED63y95CCViLVPinfgZbktAHvjXy9GT1lSrvgn89CR3sPWGpYq
+         E0LB6z53bpAf1/zyZYvf+ckqGxvRxGOtqH/S98pgXfB0yEihkldXmur6oqRRzmjChC
+         IAVvgd8wn83j6fQWBKP1109Z/UEMXeOlYSTBVuXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
         "David A. Long" <dave.long@linaro.org>,
         Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 41/75] ARM: bugs: prepare processor bug infrastructure
-Date:   Fri,  8 Nov 2019 19:49:58 +0100
-Message-Id: <20191108174749.239886670@linuxfoundation.org>
+Subject: [PATCH 4.4 43/75] ARM: bugs: add support for per-processor bug checking
+Date:   Fri,  8 Nov 2019 19:50:00 +0100
+Message-Id: <20191108174749.716102119@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
 References: <20191108174708.135680837@linuxfoundation.org>
@@ -50,10 +50,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit a5b9177f69329314721aa7022b7e69dab23fa1f0 upstream.
+Commit 9d3a04925deeabb97c8e26d940b501a2873e8af3 upstream.
 
-Prepare the processor bug infrastructure so that it can be expanded to
-check for per-processor bugs.
+Add support for per-processor bug checking - each processor function
+descriptor gains a function pointer for this check, which must not be
+an __init function.  If non-NULL, this will be called whenever a CPU
+enters the kernel via which ever path (boot CPU, secondary CPU startup,
+CPU resuming, etc.)
+
+This allows processor specific bug checks to validate that workaround
+bits are properly enabled by firmware via all entry paths to the kernel.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
@@ -65,47 +71,54 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/bugs.h |    4 ++--
- arch/arm/kernel/Makefile    |    1 +
- arch/arm/kernel/bugs.c      |    9 +++++++++
- 3 files changed, 12 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/proc-fns.h |    4 ++++
+ arch/arm/kernel/bugs.c          |    4 ++++
+ arch/arm/mm/proc-macros.S       |    3 ++-
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/arch/arm/include/asm/bugs.h
-+++ b/arch/arm/include/asm/bugs.h
-@@ -10,10 +10,10 @@
- #ifndef __ASM_BUGS_H
- #define __ASM_BUGS_H
- 
--#ifdef CONFIG_MMU
- extern void check_writebuffer_bugs(void);
- 
--#define check_bugs() check_writebuffer_bugs()
-+#ifdef CONFIG_MMU
-+extern void check_bugs(void);
- #else
- #define check_bugs() do { } while (0)
- #endif
---- a/arch/arm/kernel/Makefile
-+++ b/arch/arm/kernel/Makefile
-@@ -30,6 +30,7 @@ else
- obj-y		+= entry-armv.o
- endif
- 
-+obj-$(CONFIG_MMU)		+= bugs.o
- obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
- obj-$(CONFIG_ISA_DMA_API)	+= dma.o
- obj-$(CONFIG_FIQ)		+= fiq.o fiqasm.o
---- /dev/null
+--- a/arch/arm/include/asm/proc-fns.h
++++ b/arch/arm/include/asm/proc-fns.h
+@@ -37,6 +37,10 @@ extern struct processor {
+ 	 */
+ 	void (*_proc_init)(void);
+ 	/*
++	 * Check for processor bugs
++	 */
++	void (*check_bugs)(void);
++	/*
+ 	 * Disable any processor specifics
+ 	 */
+ 	void (*_proc_fin)(void);
+--- a/arch/arm/kernel/bugs.c
 +++ b/arch/arm/kernel/bugs.c
-@@ -0,0 +1,9 @@
-+// SPDX-Identifier: GPL-2.0
-+#include <linux/init.h>
-+#include <asm/bugs.h>
-+#include <asm/proc-fns.h>
-+
-+void __init check_bugs(void)
-+{
-+	check_writebuffer_bugs();
-+}
+@@ -5,6 +5,10 @@
+ 
+ void check_other_bugs(void)
+ {
++#ifdef MULTI_CPU
++	if (processor.check_bugs)
++		processor.check_bugs();
++#endif
+ }
+ 
+ void __init check_bugs(void)
+--- a/arch/arm/mm/proc-macros.S
++++ b/arch/arm/mm/proc-macros.S
+@@ -258,13 +258,14 @@
+ 	mcr	p15, 0, ip, c7, c10, 4		@ data write barrier
+ 	.endm
+ 
+-.macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0
++.macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
+ 	.type	\name\()_processor_functions, #object
+ 	.align 2
+ ENTRY(\name\()_processor_functions)
+ 	.word	\dabort
+ 	.word	\pabort
+ 	.word	cpu_\name\()_proc_init
++	.word	\bugs
+ 	.word	cpu_\name\()_proc_fin
+ 	.word	cpu_\name\()_reset
+ 	.word	cpu_\name\()_do_idle
 
 
