@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D263CF553E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B84F561B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390099AbfKHTBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58396 "EHLO mail.kernel.org"
+        id S2391345AbfKHTGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:06:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730159AbfKHTBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:05 -0500
+        id S1733176AbfKHTGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:06:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6383A222C5;
-        Fri,  8 Nov 2019 19:01:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30FA320673;
+        Fri,  8 Nov 2019 19:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239664;
-        bh=OskzKgyekS9GSE+7yGkOwIcQl8F2JurHkstQr69ZI+o=;
+        s=default; t=1573240005;
+        bh=RoOwuTEoleM5cqE4Jh826MjpsBVUMzm5KeiWX26H0Vo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SjWHb3OZBlnB2YWF1LjMG46WFH+0CXEfoYLGT7uTdCBa5OST3K9QpSvgP/T6pYyEe
-         Db6crgLRaih4C5cVn/IsNlZ+vy9LLf8Hy9c9h6RhVtBfnQO93EzzW2ioKVPDfxoCg2
-         OqTJ5uFFHc75YBhezqIu0yiZ1QxT9X5ieM37Bdr8=
+        b=t7p25BBWs3WMN27yLIpsy3CTSCoTxFZ8nm7Oli/555NlK81vmvi6ZnMMmaucuxmGu
+         6MAkRyGORsUEES0nNKr75DxHNhee8KUMAsk+FHJJoIk8SyD520IPBcxBAsADpFJsoo
+         Xg5fPs1ZR1+IOjvKPAlpTEDjGzNSlwxXdNv2plG4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 02/79] regulator: of: fix suspend-min/max-voltage parsing
-Date:   Fri,  8 Nov 2019 19:49:42 +0100
-Message-Id: <20191108174746.476200211@linuxfoundation.org>
+Subject: [PATCH 5.3 055/140] drm/amdgpu: fix error handling in amdgpu_bo_list_create
+Date:   Fri,  8 Nov 2019 19:49:43 +0100
+Message-Id: <20191108174908.790526222@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Christian König <christian.koenig@amd.com>
 
-[ Upstream commit 131cb1210d4b58acb0695707dad2eb90dcb50a2a ]
+[ Upstream commit de51a5019ff32960218da8fd899fa3f361b031e9 ]
 
-Currently the regulator-suspend-min/max-microvolt must be within the
-root regulator node but the dt-bindings specifies it as subnode
-properties for the regulator-state-[mem/disk/standby] node. The only DT
-using this bindings currently is the at91-sama5d2_xplained.dts and this
-DT uses it correctly. I don't know if it isn't tested but it can't work
-without this fix.
+We need to drop normal and userptr BOs separately.
 
-Fixes: f7efad10b5c4 ("regulator: add PM suspend and resume hooks")
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Link: https://lore.kernel.org/r/20190917154021.14693-3-m.felsch@pengutronix.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Huang Rui <ray.huang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/of_regulator.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 210fc20f7de7a..b255590aef36e 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -214,12 +214,12 @@ static void of_get_regulation_constraints(struct device_node *np,
- 					"regulator-off-in-suspend"))
- 			suspend_state->enabled = DISABLE_IN_SUSPEND;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+index 61e38e43ad1d5..85b0515c0fdcf 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+@@ -140,7 +140,12 @@ int amdgpu_bo_list_create(struct amdgpu_device *adev, struct drm_file *filp,
+ 	return 0;
  
--		if (!of_property_read_u32(np, "regulator-suspend-min-microvolt",
--					  &pval))
-+		if (!of_property_read_u32(suspend_np,
-+				"regulator-suspend-min-microvolt", &pval))
- 			suspend_state->min_uV = pval;
+ error_free:
+-	while (i--) {
++	for (i = 0; i < last_entry; ++i) {
++		struct amdgpu_bo *bo = ttm_to_amdgpu_bo(array[i].tv.bo);
++
++		amdgpu_bo_unref(&bo);
++	}
++	for (i = first_userptr; i < num_entries; ++i) {
+ 		struct amdgpu_bo *bo = ttm_to_amdgpu_bo(array[i].tv.bo);
  
--		if (!of_property_read_u32(np, "regulator-suspend-max-microvolt",
--					  &pval))
-+		if (!of_property_read_u32(suspend_np,
-+				"regulator-suspend-max-microvolt", &pval))
- 			suspend_state->max_uV = pval;
- 
- 		if (!of_property_read_u32(suspend_np,
+ 		amdgpu_bo_unref(&bo);
 -- 
 2.20.1
 
