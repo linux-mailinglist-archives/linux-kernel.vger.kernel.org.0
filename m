@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06FF9F5695
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A53AF5521
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732635AbfKHTJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:09:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41454 "EHLO mail.kernel.org"
+        id S2389750AbfKHTAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:00:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387473AbfKHTJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:09:37 -0500
+        id S2389531AbfKHTAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBCDB21D7B;
-        Fri,  8 Nov 2019 19:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 589C22178F;
+        Fri,  8 Nov 2019 19:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240177;
-        bh=GYcWA11AodRg7allrpKKPq/XjN8pRSeHNKS8rUMFDeU=;
+        s=default; t=1573239606;
+        bh=juIE9O2WkTITwnXcJG4/fb/ZHO3ZRRo7h5kUhivQu6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c7zcLlooazoicRlB+ulPNEsBX53AECLyXPK14WcvTnsEssy9qhamvMiBJ+ScVlWWn
-         iWWNuU05XaD8luQiXubCRzx9/IhyP3+pFxBdxHJ3cj3r2UPqgoeplyMhpvfWS1v/J4
-         1IGoUeqcoQjclFiXqg8yC+TYx8EsboNveO07X9y0=
+        b=0bl1Tc5Y62zWxRCmaq9jtJ2g8uG3ottw09CZdCugvUmyZ7FKkW5DS8pJVkflsmhue
+         ifj2KQaLBARGBmovOh7Ed96D3N9cUmc8IlSGChTOmwY5i/4ZFtPUebJunRgXNseReG
+         agd7bkzlXjTrmvjCpsWoNFQ8LcEd1idXP0jvrw8I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roi Dayan <roid@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.3 113/140] net/mlx5: Fix flow counter list auto bits struct
+        stable@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 53/62] kbuild: add -fcf-protection=none when using retpoline flags
 Date:   Fri,  8 Nov 2019 19:50:41 +0100
-Message-Id: <20191108174911.959486499@linuxfoundation.org>
+Message-Id: <20191108174756.304875093@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roi Dayan <roid@mellanox.com>
+From: Seth Forshee <seth.forshee@canonical.com>
 
-[ Upstream commit 6dfef396ea13873ae9066ee2e0ad6ee364031fe2 ]
+[ Upstream commit 29be86d7f9cb18df4123f309ac7857570513e8bc ]
 
-The union should contain the extended dest and counter list.
-Remove the resevered 0x40 bits which is redundant.
-This change doesn't break any functionally.
-Everything works today because the code in fs_cmd.c is using
-the correct structs if extended dest or the basic dest.
+The gcc -fcf-protection=branch option is not compatible with
+-mindirect-branch=thunk-extern. The latter is used when
+CONFIG_RETPOLINE is selected, and this will fail to build with
+a gcc which has -fcf-protection=branch enabled by default. Adding
+-fcf-protection=none when building with retpoline enabled
+prevents such build failures.
 
-Fixes: 1b115498598f ("net/mlx5: Introduce extended destination fields")
-Signed-off-by: Roi Dayan <roid@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/mlx5/mlx5_ifc.h |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/include/linux/mlx5/mlx5_ifc.h
-+++ b/include/linux/mlx5/mlx5_ifc.h
-@@ -1437,9 +1437,8 @@ struct mlx5_ifc_extended_dest_format_bit
- };
+diff --git a/Makefile b/Makefile
+index 61660387eb34b..52aaa6150099e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -843,6 +843,12 @@ KBUILD_CFLAGS   += $(call cc-option,-Werror=designated-init)
+ # change __FILE__ to the relative path from the srctree
+ KBUILD_CFLAGS	+= $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
  
- union mlx5_ifc_dest_format_struct_flow_counter_list_auto_bits {
--	struct mlx5_ifc_dest_format_struct_bits dest_format_struct;
-+	struct mlx5_ifc_extended_dest_format_bits extended_dest_format;
- 	struct mlx5_ifc_flow_counter_list_bits flow_counter_list;
--	u8         reserved_at_0[0x40];
- };
++# ensure -fcf-protection is disabled when using retpoline as it is
++# incompatible with -mindirect-branch=thunk-extern
++ifdef CONFIG_RETPOLINE
++KBUILD_CFLAGS += $(call cc-option,-fcf-protection=none)
++endif
++
+ # use the deterministic mode of AR if available
+ KBUILD_ARFLAGS := $(call ar-option,D)
  
- struct mlx5_ifc_fte_match_param_bits {
+-- 
+2.20.1
+
 
 
