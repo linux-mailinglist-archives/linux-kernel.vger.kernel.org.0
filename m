@@ -2,38 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 213DBF4987
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:04:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8C2F497C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:03:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390032AbfKHLmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
+        id S2390080AbfKHLmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:42:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389945AbfKHLmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:42:24 -0500
+        id S2390022AbfKHLmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46E6F21D6C;
-        Fri,  8 Nov 2019 11:42:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B98A9222C4;
+        Fri,  8 Nov 2019 11:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213344;
-        bh=ZcfI9Io9gL+K+leh9xNl/+x3gDLhi0YCH+sL9MOr5HY=;
+        s=default; t=1573213352;
+        bh=nrwlX0+o3IBQvyjj/20EPhRXPTRgqzdCYKUR/stkalw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qqe/slqFj3cpUc/f4ycWtoPu9zSXOAFwrg4zOelWrsUytw7i+9LLVyKKC9hYXnFh6
-         rwiIileUgjIbLhV0eZfiaCrdFDWR/ond62warRAMubNNI+rTCWupgV0pVU4qrt1F4Y
-         PGwd4a820U6aGumvp6pA7k1Et6hheVgKdcyITtw4=
+        b=nREjhohDWst3qN1gtoPIvo4AnQFlagpcudWFVkbYhHwucapQFB6aAZ0JFbGl8eXXi
+         XVAvXP6uKncP8Q0Lgmk3Vkwi0UTUXylUvgLrtKhpHfAbvCNVz68D1ztBLodYiTana7
+         dAFbHX/MWEv+XPYoS8Px11iX2k8Fw3hYRCaBOyvc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
+Cc:     Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 180/205] ARM: dts: bcm: Fix SPI bus warnings
-Date:   Fri,  8 Nov 2019 06:37:27 -0500
-Message-Id: <20191108113752.12502-180-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 183/205] ARM: dts: socfpga: Fix I2C bus unit-address error
+Date:   Fri,  8 Nov 2019 06:37:30 -0500
+Message-Id: <20191108113752.12502-183-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -46,57 +42,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
 
-[ Upstream commit ab0b47d2eff413d60b0a1fc0c1f87f87f0d7f375 ]
+[ Upstream commit cbbc488ed85061a765cf370c3e41f383c1e0add6 ]
 
-dtc has new checks for SPI buses. Fix the warnings in node names.
+dtc has new checks for I2C buses. Fix the warnings in unit-addresses.
 
-arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dtb: Warning (spi_bus_bridge): /axi@18000000/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958525er.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958525xmc.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958622hr.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm958625hr.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
-arch/arm/boot/dts/bcm988312hr.dtb: Warning (spi_bus_bridge): /axi/qspi@27200: node name for SPI buses should be 'spi'
+arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dtb: Warning (i2c_bus_reg): /soc/i2c@ffc04000/adxl345@0: I2C bus unit address format error, expected "53"
 
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
 Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/bcm-hr2.dtsi | 2 +-
- arch/arm/boot/dts/bcm-nsp.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm-hr2.dtsi b/arch/arm/boot/dts/bcm-hr2.dtsi
-index 3084a7c957339..e4d49731287f6 100644
---- a/arch/arm/boot/dts/bcm-hr2.dtsi
-+++ b/arch/arm/boot/dts/bcm-hr2.dtsi
-@@ -216,7 +216,7 @@
- 			reg = <0x33000 0x14>;
- 		};
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+index b280e64941938..31b01a998b2ed 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+@@ -88,7 +88,7 @@
+ 	status = "okay";
+ 	clock-frequency = <100000>;
  
--		qspi: qspi@27200 {
-+		qspi: spi@27200 {
- 			compatible = "brcm,spi-bcm-qspi", "brcm,spi-nsp-qspi";
- 			reg = <0x027200 0x184>,
- 			      <0x027000 0x124>,
-diff --git a/arch/arm/boot/dts/bcm-nsp.dtsi b/arch/arm/boot/dts/bcm-nsp.dtsi
-index 09ba850463228..2b219addeb449 100644
---- a/arch/arm/boot/dts/bcm-nsp.dtsi
-+++ b/arch/arm/boot/dts/bcm-nsp.dtsi
-@@ -273,7 +273,7 @@
- 			brcm,nand-has-wp;
- 		};
+-	adxl345: adxl345@0 {
++	adxl345: adxl345@53 {
+ 		compatible = "adi,adxl345";
+ 		reg = <0x53>;
  
--		qspi: qspi@27200 {
-+		qspi: spi@27200 {
- 			compatible = "brcm,spi-bcm-qspi", "brcm,spi-nsp-qspi";
- 			reg = <0x027200 0x184>,
- 			      <0x027000 0x124>,
 -- 
 2.20.1
 
