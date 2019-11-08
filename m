@@ -2,170 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70F58F5889
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E36F5898
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730799AbfKHUcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 15:32:15 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:51819 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727015AbfKHUcO (ORCPT
+        id S1731795AbfKHUfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 15:35:25 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:51245 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbfKHUfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 15:32:14 -0500
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 7C2142335B;
-        Fri,  8 Nov 2019 21:32:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
-        s=mail2016061301; t=1573245130;
-        bh=6OR+Z5KfeblJ083HHiSeWa7E3WTa5ngobt1H+ZARamA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mTqgr/zojO6QfmKK52aioToRdveSx81BkWNxzWlpWzbqO0A39kt9/PpRamxsOy4Wh
-         w8H02irm/xprzXQ38HU5sG30kBOqlYSokyWxvZr6AeqtehzJ2+UYtP+aHamUFwhJ5i
-         zc2/RHwqa+HtNqKv6zg2oWzfLdJ3G/YL9NScWQfM=
-From:   Michael Walle <michael@walle.cc>
-To:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v2] ASoC: wm8904: configure sysclk/FLL automatically
-Date:   Fri,  8 Nov 2019 21:31:52 +0100
-Message-Id: <20191108203152.19098-1-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
+        Fri, 8 Nov 2019 15:35:24 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1N33V5-1hlqNF3sD7-013KFA; Fri, 08 Nov 2019 21:34:45 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Corey Minyard <minyard@acm.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        linuxppc-dev@lists.ozlabs.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-input@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: [PATCH 0/8] y2038: bug fixes from y2038 work
+Date:   Fri,  8 Nov 2019 21:34:23 +0100
+Message-Id: <20191108203435.112759-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.101.4 at web
-X-Virus-Status: Clean
+X-Provags-ID: V03:K1:onYIVYfp5Mx1RrUFk0F9wq5iI+dqorjM5aBE72U93aTSbPGsiEH
+ OgqmaTzcj80pu1s1hMBgp49QlgyJ7rNubi4HQ+SNtLKHlNHw7UDpadkGCFY+GcDVw41DVye
+ FrU7tCGHXGj1wcbqKgqiBp/hv63ZhOmHxE5v1qZQbLWrHUnVlooIDiEJVfnnnRlsetqKDMj
+ 6/PfgmoNhjrn6CYi3P+AA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:V3pT7w4OZMM=:zYEUjZknHOmFruRY3Tk/pl
+ wRrkB9EkTxkg3VX6P5V+Sz7Mzw/U9rqfhCLPbV5K7bnCIOm6PPWp9uwvkvJPRNr/xaYhNNVDL
+ HBhOO1RU2ihx43VfyjSymHoIRA4e8J6kXO0n+ff3+SvsuXV67dHzWdiJgJdF5fcHeuULLdOGM
+ wEkUwrKPcDyYR2IP5FsRgltiX/Lq+Bh0rqiRA3p94HrILlG/sn6iSj9ZvDGEfMeJ1paYNCGl7
+ K1GkrVql1wtqYBsrKBx9hibZ6cZ759vK8OskStBQQf1G8iFUeRCEmpVMUAPZ9sgkGKd4ETeFV
+ xUJ//Vddt0O+5XMv4EBvpHgRBuqY/HuHqky1CIPHSbRCEVNsobz4XM9t1mJvfH1c/MD7a+azu
+ h3okZcNpYLzCLyuML9cb16m1MQqIcXaN8ql7W7+jhj6tRhSNNWwRN3dvgapg9McTZLBmzu+KF
+ 7POpxVXIIIVfC3tCBYedhED2kopxojiTYfI2bZs6Gx9NaLdGQTabvZX5bYqIL3/SOPdU1gH6U
+ TWAYwU83i4p7DEqD90Lubci9HhuB08X+QOBaBt0IAJEEDtwNU5XLD+lSkHcnluCAUiO9Ltu3E
+ QgtdeFAFmvb6TgiVKr69oZrPobspdM0HrD76sFjegnfjPXFgCXF2exI+am2mash87OEVn3aB0
+ KQrqKLUiNdfqa64AJ9txSQpXu/7YXUnedz76RMpQ/YZ+iaZ5okFTc3k170y2RvKY1VL8oWeM4
+ T0FHUMaj1O35XhR0Cp6Rg6yqR9Top24p39TPTuI3jSJjBXQo/xRwKeAUKp7cOUUulMnWmij4c
+ iyZ7TQZCCMQhwMHmv0ImigrqmoaXKuUYkolCj7pl5gSE30zlpfyPWeHE+jdOO8CqVztGI6UO/
+ ibGTxu1AjHd9Ore1WJPg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a new mode WM8904_CLK_AUTO which automatically enables the FLL
-if a frequency different than the MCLK is set.
+I've gone through the remaining uses of time_t etc and come up with a
+set of 90 patches of varying complexity and importance, to the point
+of being able to remove the old time_t/timeval/timespec from the kernel
+headers completely.
 
-These additions make the codec work with the simple-card driver in
-general and especially in systems where the MCLK doesn't match the
-required clock.
+This set includes the eight patches that I think should be merged
+right away and backported into stable kernels if possible.
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
-changes since v1:
- - replaced second clk_get_rate() with mclk_freq
+Please apply individual patches to the respective maintainer trees
+for either v5.4 or v5.5 as appropriate.
 
-Please note that the v1 patch might still be pending for moderator
-approval.
+For reference, the full series of 90 patches can be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=y2038-endgame
 
- sound/soc/codecs/wm8904.c | 72 ++++++++++++++++++++++++---------------
- sound/soc/codecs/wm8904.h |  1 +
- 2 files changed, 45 insertions(+), 28 deletions(-)
+      Arnd
 
-diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
-index bcb3c9d5abf0..2a7d23a5daa8 100644
---- a/sound/soc/codecs/wm8904.c
-+++ b/sound/soc/codecs/wm8904.c
-@@ -1410,34 +1410,6 @@ static int wm8904_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--
--static int wm8904_set_sysclk(struct snd_soc_dai *dai, int clk_id,
--			     unsigned int freq, int dir)
--{
--	struct snd_soc_component *component = dai->component;
--	struct wm8904_priv *priv = snd_soc_component_get_drvdata(component);
--
--	switch (clk_id) {
--	case WM8904_CLK_MCLK:
--		priv->sysclk_src = clk_id;
--		priv->mclk_rate = freq;
--		break;
--
--	case WM8904_CLK_FLL:
--		priv->sysclk_src = clk_id;
--		break;
--
--	default:
--		return -EINVAL;
--	}
--
--	dev_dbg(dai->dev, "Clock source is %d at %uHz\n", clk_id, freq);
--
--	wm8904_configure_clocking(component);
--
--	return 0;
--}
--
- static int wm8904_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- {
- 	struct snd_soc_component *component = dai->component;
-@@ -1824,6 +1796,50 @@ static int wm8904_set_fll(struct snd_soc_dai *dai, int fll_id, int source,
- 	return 0;
- }
- 
-+static int wm8904_set_sysclk(struct snd_soc_dai *dai, int clk_id,
-+			     unsigned int freq, int dir)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct wm8904_priv *priv = snd_soc_component_get_drvdata(component);
-+	unsigned long mclk_freq;
-+	int ret;
-+
-+	switch (clk_id) {
-+	case WM8904_CLK_AUTO:
-+		mclk_freq = clk_get_rate(priv->mclk);
-+		/* enable FLL if a different sysclk is desired */
-+		if (mclk_freq != freq) {
-+			priv->sysclk_src = WM8904_CLK_FLL;
-+			ret = wm8904_set_fll(dai, WM8904_FLL_MCLK,
-+					     WM8904_FLL_MCLK,
-+					     mclk_freq, freq);
-+			if (ret)
-+				return ret;
-+			break;
-+		}
-+		clk_id = WM8904_CLK_MCLK;
-+		/* fallthrough */
-+
-+	case WM8904_CLK_MCLK:
-+		priv->sysclk_src = clk_id;
-+		priv->mclk_rate = freq;
-+		break;
-+
-+	case WM8904_CLK_FLL:
-+		priv->sysclk_src = clk_id;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(dai->dev, "Clock source is %d at %uHz\n", clk_id, freq);
-+
-+	wm8904_configure_clocking(component);
-+
-+	return 0;
-+}
-+
- static int wm8904_digital_mute(struct snd_soc_dai *codec_dai, int mute)
- {
- 	struct snd_soc_component *component = codec_dai->component;
-diff --git a/sound/soc/codecs/wm8904.h b/sound/soc/codecs/wm8904.h
-index c1bca52f9927..de6340446b1f 100644
---- a/sound/soc/codecs/wm8904.h
-+++ b/sound/soc/codecs/wm8904.h
-@@ -10,6 +10,7 @@
- #ifndef _WM8904_H
- #define _WM8904_H
- 
-+#define WM8904_CLK_AUTO 0
- #define WM8904_CLK_MCLK 1
- #define WM8904_CLK_FLL  2
- 
+Arnd Bergmann (8):
+  y2038: timex: remove incorrect time_t truncation
+  timekeeping: optimize ns_to_timespec64
+  powerpc: fix vdso32 for ppc64le
+  ipmi: kill off 'timespec' usage again
+  netfilter: xt_time: use time64_t
+  lp: fix sparc64 LPSETTIMEOUT ioctl
+  ppdev: fix PPGETTIME/PPSETTIME ioctls
+  Input: input_event: fix struct padding on sparc64
+
+ arch/powerpc/kernel/vdso32/gettimeofday.S |  2 +-
+ drivers/char/ipmi/ipmi_si_intf.c          | 40 ++++++++---------------
+ drivers/char/lp.c                         |  4 +++
+ drivers/char/ppdev.c                      | 16 ++++++---
+ drivers/input/evdev.c                     |  3 ++
+ drivers/input/misc/uinput.c               |  3 ++
+ include/uapi/linux/input.h                |  1 +
+ kernel/time/ntp.c                         |  2 +-
+ kernel/time/time.c                        | 21 +++++++-----
+ net/netfilter/xt_time.c                   | 19 ++++++-----
+ 10 files changed, 61 insertions(+), 50 deletions(-)
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Corey Minyard <minyard@acm.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc: Florian Westphal <fw@strlen.de>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Cc: openipmi-developer@lists.sourceforge.net
+Cc: linux-input@vger.kernel.org
+Cc: netfilter-devel@vger.kernel.org
+Cc: coreteam@netfilter.org
+Cc: netdev@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
+
 -- 
-2.20.1
+2.20.0
 
