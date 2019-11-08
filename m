@@ -2,241 +2,312 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FBBDF536D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:19:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFBFBF5344
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:10:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfKHSTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:19:43 -0500
-Received: from mga01.intel.com ([192.55.52.88]:43693 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726349AbfKHSTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:19:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 10:19:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,282,1569308400"; 
-   d="scan'208";a="193240621"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by orsmga007.jf.intel.com with ESMTP; 08 Nov 2019 10:19:40 -0800
-Message-ID: <530c46a1f4be6477ad75803401cfd4ce18abbd95.camel@intel.com>
-Subject: Re: [PATCH v8 27/27] x86/cet/shstk: Add Shadow Stack instructions
- to opcode map
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Fri, 08 Nov 2019 10:09:17 -0800
-In-Reply-To: <15568c48-b950-484d-d176-0f0e38a94bf7@intel.com>
-References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
-         <20190813205225.12032-28-yu-cheng.yu@intel.com>
-         <15568c48-b950-484d-d176-0f0e38a94bf7@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S1727931AbfKHSK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:10:26 -0500
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:41938 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfKHSK0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:10:26 -0500
+IronPort-SDR: xWtMSIWV6u08FLvwfs6RmotHZVdiS0Z+wKIoAA6MDWM8O9yvhp0Oy5YWKvBX3uvAB5VyGj8WGz
+ D3g4jOO577/CBhfyWR+6eaBgomG06cnQPA7cwdCgP5mdTymLc8SIZpdtxg8DYKyORx8vRtm1d8
+ eBbCHaTpIvXAQFiHars2KCZv2qn6+NdthbewQnOqD6aWmsVA+xHbaGgFlQmaUIux6wDonwN73y
+ B7wjVOvBJEAAFVXMIp+RJ2IkJcO2N41YPTOF3/0Po+KiInTWIOcbD+5Nh7bhNt6ENXIwxZ2WVg
+ GfU=
+X-IronPort-AV: E=Sophos;i="5.68,282,1569312000"; 
+   d="scan'208";a="42941491"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa2.mentor.iphmx.com with ESMTP; 08 Nov 2019 10:10:25 -0800
+IronPort-SDR: cJ2HoOQvWhF2kgqOONtw7dTLSUBbSQhARRgpLNdOm56y0+Zz/d4pC7X9wCb0W/+esi3Ui+AK0I
+ OelaEfNmlar+YzaLsHO8sAgGFebumZDNoZlF3ulCEWjQTFNw5ZSULTj8+K7Q+CIlr14OGR7ZRC
+ CKVQpxDEvCBScstQyvVBAWlQ7aKOucbdREEPevqolIE4AraoH0cs0PeH6XPLsMT0+t7X7Nc170
+ AUkLwrmVZpwwMusLMfNImLDFnUiuD/y8FZaMlbDE/FdmWYXjusnq+E8HCFTQQ4+FNYWe+615l3
+ g7E=
+From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
+To:     'Takashi Iwai' <tiwai@suse.de>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Timo Wischer <twischer@de.adit-jv.com>
+References: <20191105143218.5948-1-andrew_gabbasov@mentor.com>  <20191105143218.5948-2-andrew_gabbasov@mentor.com>      <20191105143218.5948-3-andrew_gabbasov@mentor.com>      <20191105143218.5948-4-andrew_gabbasov@mentor.com>      <20191105143218.5948-5-andrew_gabbasov@mentor.com>      <20191105143218.5948-6-andrew_gabbasov@mentor.com>      <20191105143218.5948-7-andrew_gabbasov@mentor.com>      <20191105143218.5948-8-andrew_gabbasov@mentor.com> <s5hlfss862t.wl-tiwai@suse.de>
+In-Reply-To: <s5hlfss862t.wl-tiwai@suse.de>
+Subject: RE: [PATCH v2 7/8] ALSA: aloop: Support selection of snd_timer instead of jiffies
+Date:   Fri, 8 Nov 2019 21:09:22 +0300
+Organization: Mentor Graphics Corporation
+Message-ID: <000001d5965f$b1926ac0$14b74040$@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQHVk+YmK3KlOO6PeUGxcY472O0ao6d/XF4AgAB4QPA=
+Content-Language: en-us
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-11-08 at 15:27 +0200, Adrian Hunter wrote:
-> On 13/08/19 11:52 PM, Yu-cheng Yu wrote:
-> > Add the following shadow stack management instructions.
-> > 
-> > INCSSP:
-> >     Increment shadow stack pointer by the steps specified.
-> > 
-> > RDSSP:
-> >     Read SSP register into a GPR.
-> > 
-> > SAVEPREVSSP:
-> >     Use "prev ssp" token at top of current shadow stack to
-> >     create a "restore token" on previous shadow stack.
-> > 
-> > RSTORSSP:
-> >     Restore from a "restore token" pointed by a GPR to SSP.
-> > 
-> > WRSS:
-> >     Write to kernel-mode shadow stack (kernel-mode instruction).
-> > 
-> > WRUSS:
-> >     Write to user-mode shadow stack (kernel-mode instruction).
-> > 
-> > SETSSBSY:
-> >     Verify the "supervisor token" pointed by IA32_PL0_SSP MSR,
-> >     if valid, set the token to busy, and set SSP to the value
-> >     of IA32_PL0_SSP MSR.
-> > 
-> > CLRSSBSY:
-> >     Verify the "supervisor token" pointed by a GPR, if valid,
-> >     clear the busy bit from the token.
-> > 
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > ---
-> >  arch/x86/lib/x86-opcode-map.txt               | 26 +++++++++++++------
-> >  tools/objtool/arch/x86/lib/x86-opcode-map.txt | 26 +++++++++++++------
-> >  2 files changed, 36 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-> > index e0b85930dd77..c5e825d44766 100644
-> > --- a/arch/x86/lib/x86-opcode-map.txt
-> > +++ b/arch/x86/lib/x86-opcode-map.txt
-> > @@ -366,7 +366,7 @@ AVXcode: 1
-> >  1b: BNDCN Gv,Ev (F2) | BNDMOV Ev,Gv (66) | BNDMK Gv,Ev (F3) | BNDSTX Ev,Gv
-> >  1c:
-> >  1d:
-> > -1e: f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By
-> > (F3),(v) | SHRX Gy,Ey,By (F2),(v)> >  EndTable> >  > > -Table: 3-byte opcode
-> > 2 (0x0f 0x3a)> > +Table: 3-byte opcode 3 (0x0f 0x3a)> >  Referrer: 3-byte
-> > escape 2> >  AVXcode: 3> >  # 0x0f 0x3a 0x00-0xff> > @@ -948,7 +958,7 @@
-> > GrpTable: Grp7> >  2: LGDT Ms | XGETBV (000),(11B) | XSETBV (001),(11B) |
-> > VMFUNC (100),(11B) | XEND (101)(11B) | XTEST (110)(11B)> >  3: LIDT Ms> > 
-> > 4: SMSW Mw/Rv> > -5: rdpkru (110),(11B) | wrpkru (111),(11B)> > +5: rdpkru
-> > (110),(11B) | wrpkru (111),(11B) | RSTORSSP Mq (F3)> >  6: LMSW Ew> >  7:
-> > INVLPG Mb | SWAPGS (o64),(000),(11B) | RDTSCP (001),(11B)> >  EndTable> > @@
-> > -1019,8 +1029,8 @@ GrpTable: Grp15> >  2: vldmxcsr Md (v1) | WRFSBASE Ry
-> > (F3),(11B)> >  3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)> >  4: XSAVE |
-> > ptwrite Ey (F3),(11B)> > -5: XRSTOR | lfence (11B)> > -6: XSAVEOPT | clwb
-> > (66) | mfence (11B)> > +5: XRSTOR | lfence (11B) | INCSSP Rd (F3),REX.W> >
-> > +6: XSAVEOPT | clwb (66) | mfence (11B) | CLRSSBSY Mq (F3)> >  7: clflush |
-> > clflushopt (66) | sfence (11B)> >  EndTable> >  > > 
-> > > 
-> > > 
-> > +1e: RDSSP Rd (F3),REX.W
-> >  1f: NOP Ev
-> >  # 0x0f 0x20-0x2f
-> >  20: MOV Rd,Cd
-> > @@ -610,7 +610,17 @@ fe: paddd Pq,Qq | vpaddd Vx,Hx,Wx (66),(v1)
-> >  ff: UD0
-> >  EndTable
-> >  
-> > -Table: 3-byte opcode 1 (0x0f 0x38)
-> > +Table: 3-byte opcode 1 (0x0f 0x01)
-> > +Referrer:
-> > +AVXcode:
-> > +# Skip 0x00-0xe7
-> > +e8: SETSSBSY (f3)
-> > +e9:
-> > +ea: SAVEPREVSSP (f3)
-> > +# Skip 0xeb-0xff
-> > +EndTable
-> > +
-> > +Table: 3-byte opcode 2 (0x0f 0x38)
-> >  Referrer: 3-byte escape 1
-> >  AVXcode: 2
-> >  # 0x0f 0x38 0x00-0x0f
-> > @@ -789,12 +799,12 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
-> >  f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
-> >  f2: ANDN Gy,By,Ey (v)
-> >  f3: Grp17 (1A)
-> > -f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
-> > -f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
-> > +f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
-> > +f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSS Pq,Qq (66),REX.W
-> >  f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
-> >  EndTable
-> >  
-> > -Table: 3-byte opcode 2 (0x0f 0x3a)
-> > +Table: 3-byte opcode 3 (0x0f 0x3a)
-> >  Referrer: 3-byte escape 2
-> >  AVXcode: 3
-> >  # 0x0f 0x3a 0x00-0xff
-> > @@ -948,7 +958,7 @@ GrpTable: Grp7
-> >  2: LGDT Ms | XGETBV (000),(11B) | XSETBV (001),(11B) | VMFUNC (100),(11B) | XEND (101)(11B) | XTEST (110)(11B)
-> >  3: LIDT Ms
-> >  4: SMSW Mw/Rv
-> > -5: rdpkru (110),(11B) | wrpkru (111),(11B)
-> > +5: rdpkru (110),(11B) | wrpkru (111),(11B) | RSTORSSP Mq (F3)
-> >  6: LMSW Ew
-> >  7: INVLPG Mb | SWAPGS (o64),(000),(11B) | RDTSCP (001),(11B)
-> >  EndTable
-> > @@ -1019,8 +1029,8 @@ GrpTable: Grp15
-> >  2: vldmxcsr Md (v1) | WRFSBASE Ry (F3),(11B)
-> >  3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)
-> >  4: XSAVE | ptwrite Ey (F3),(11B)
-> > -5: XRSTOR | lfence (11B)
-> > -6: XSAVEOPT | clwb (66) | mfence (11B)
-> > +5: XRSTOR | lfence (11B) | INCSSP Rd (F3),REX.W
-> > +6: XSAVEOPT | clwb (66) | mfence (11B) | CLRSSBSY Mq (F3)
-> >  7: clflush | clflushopt (66) | sfence (11B)
-> >  EndTable
-> >  
-> > diff --git a/tools/objtool/arch/x86/lib/x86-opcode-map.txt b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-> > index e0b85930dd77..c5e825d44766 100644
-> > --- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-> > +++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-> > @@ -366,7 +366,7 @@ AVXcode: 1
-> >  1b: BNDCN Gv,Ev (F2) | BNDMOV Ev,Gv (66) | BNDMK Gv,Ev (F3) | BNDSTX Ev,Gv
-> >  1c:
-> >  1d:
-> > -1e:
-> > +1e: RDSSP Rd (F3),REX.W
-> 
-> RDSSP is in a Grp with ENDBR32 and ENDBR64
-> 
-> >  1f: NOP Ev
-> >  # 0x0f 0x20-0x2f
-> >  20: MOV Rd,Cd
-> > @@ -610,7 +610,17 @@ fe: paddd Pq,Qq | vpaddd Vx,Hx,Wx (66),(v1)
-> >  ff: UD0
-> >  EndTable
-> >  
-> > -Table: 3-byte opcode 1 (0x0f 0x38)
-> > +Table: 3-byte opcode 1 (0x0f 0x01)
-> > +Referrer:
-> > +AVXcode:
-> > +# Skip 0x00-0xe7
-> > +e8: SETSSBSY (f3)
-> > +e9:
-> > +ea: SAVEPREVSSP (f3)
-> 
-> SETSSBSY and SAVEPREVSSP should be in Grp7
-> 
-> > +# Skip 0xeb-0xff
-> > +EndTable
-> > +
-> > +Table: 3-byte opcode 2 (0x0f 0x38)
-> >  Referrer: 3-byte escape 1
-> >  AVXcode: 2
-> >  # 0x0f 0x38 0x00-0x0f
-> > @@ -789,12 +799,12 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
-> >  f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
-> >  f2: ANDN Gy,By,Ey (v)
-> >  f3: Grp17 (1A)
-> > -f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
-> > -f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
-> > +f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
-> > +f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSS Pq,Qq (66),REX.W
-> 
-> I know already commented on this, but WRSS does not have (66) prefix
-> 
-> Also no other instructions have been annotated with REX.W so maybe omit that
+Hello Takashi,
 
-Thanks!  I will look into that.
+Thank you very much for your feedback.
 
-Yu-cheng
+> -----Original Message-----
+> From: Takashi Iwai [mailto:tiwai@suse.de]
+> Sent: Thursday, November 07, 2019 11:05 AM
+
+> On Tue, 05 Nov 2019 15:32:17 +0100,
+> Andrew Gabbasov wrote:
+> > @@ -102,6 +106,13 @@ struct loopback_cable {
+> >  	unsigned int pause;
+> >  	/* timer specific */
+> >  	struct loopback_ops *ops;
+> > +	/* If sound timer is used */
+> > +	struct {
+> > +		int owner;
+> 
+> The term "owner" is a bit confusing here.  It seems holding the PCM
+> direction, but most people expect it being a process-id or something
+> like that from the word.
+
+Will be fixed in next update.
+
+> 
+> > +		struct snd_timer_id id;
+> > +		struct tasklet_struct event_tasklet;
+> 
+> You don't need to make own tasklet.  The timer core calls it via
+> tasklet in anyway unless you pass SNDRV_TIMER_IFLG_FAST -- see below.
+> 
+> And the tasklet is no longer recommended infrastructure in the recent
+> kernel, we should avoid it as much as possible.
+
+See below about the tasklet.
+
+> 
+> >  struct loopback_setup {
+> > @@ -122,6 +133,7 @@ struct loopback {
+> >  	struct loopback_cable *cables[MAX_PCM_SUBSTREAMS][2];
+> >  	struct snd_pcm *pcm[2];
+> >  	struct loopback_setup setup[MAX_PCM_SUBSTREAMS][2];
+> > +	char *timer_source;
+> 
+> This can be const char *, I suppose.
+
+Yes, this will be fixed.
+
+> > +static void loopback_snd_timer_period_elapsed(
+> > +		struct loopback_cable * const cable,
+> > +		const int event, const unsigned long resolution)
+> > +{
+> > +	struct loopback_pcm *dpcm_play =
+> > +			cable->streams[SNDRV_PCM_STREAM_PLAYBACK];
+> > +	struct loopback_pcm *dpcm_capt =
+> > +			cable->streams[SNDRV_PCM_STREAM_CAPTURE];
+> 
+> You shouldn't assign them outside the cable->lock.
+
+I'll move these assigns to after obtaining the lock.
+
+> > +	struct snd_pcm_runtime *valid_runtime;
+> > +	unsigned int running, elapsed_bytes;
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&cable->lock, flags);
+> > +	running = cable->running ^ cable->pause;
+> > +	/* no need to do anything if no stream is running */
+> > +	if (!running) {
+> > +		spin_unlock_irqrestore(&cable->lock, flags);
+> > +		return;
+> > +	}
+> > +
+> > +	if (event == SNDRV_TIMER_EVENT_MSTOP) {
+> > +		if (!dpcm_play || !dpcm_play->substream ||
+> > +		    !dpcm_play->substream->runtime ||
+> > +		    !dpcm_play->substream->runtime->status ||
+> 
+> Would these conditions really happen?
+
+This seems to be kind of over cautiousness ;-)
+I remove all intermediate members checks.
+
+> > +		    dpcm_play->substream->runtime->status->state !=
+> > +		    SNDRV_PCM_STATE_DRAINING) {
+> 
+> What's special with DRAINING state?  The code doesn't show or explain
+> it.  And for other conditions, we keep going even if the event is
+> MSTOP?
+
+There are some comments below in loopback_snd_timer_event() function.
+When the sound timer stops and the stream is in the draining state,
+we still need to flush the data remaining in the buffer, and the regular
+"elapsed" functions are called for that.
+
+> > +			spin_unlock_irqrestore(&cable->lock, flags);
+> > +			return;
+> > +		}
+> > +	}
+> > +
+> > +	valid_runtime = (running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ?
+> > +				dpcm_play->substream->runtime :
+> > +				dpcm_capt->substream->runtime;
+> > +
+> > +	/* resolution is only valid for SNDRV_TIMER_EVENT_TICK events */
+> > +	if (event == SNDRV_TIMER_EVENT_TICK) {
+> > +		/* The hardware rules guarantee that playback and capture
+> period
+> > +		 * are the same. Therefore only one device has to be checked
+> > +		 * here.
+> > +		 */
+> > +		if (loopback_snd_timer_check_resolution(valid_runtime,
+> > +							resolution) < 0) {
+> > +			spin_unlock_irqrestore(&cable->lock, flags);
+> > +			if (cable->running & (1 <<
+SNDRV_PCM_STREAM_PLAYBACK))
+> > +				snd_pcm_stop_xrun(dpcm_play->substream);
+> > +			if (cable->running & (1 <<
+SNDRV_PCM_STREAM_CAPTURE))
+> > +				snd_pcm_stop_xrun(dpcm_capt->substream);
+> 
+> Referencing outside the lock isn't really safe.  In the case of
+> jiffies timer code, it's a kind of OK because it's done in the timer
+> callback function that is assigned for each stream open -- that is,
+> the stream runtime is guaranteed to be present in the timer callback.
+> But I'm not sure about your case...
+
+I re-structure this code a little to make all de-referencing inside the
+lock.
+
+> > @@ -749,6 +1037,152 @@ static struct loopback_ops
+> loopback_jiffies_timer_ops = {
+> >  	.dpcm_info = loopback_jiffies_timer_dpcm_info,
+> >  };
+> >
+> > +static int loopback_parse_timer_id(const char * const str,
+> > +				   struct snd_timer_id *tid)
+> > +{
+> > +	/* [<pref>:](<card name>|<card idx>)[{.,}<dev idx>[{.,}<subdev
+> idx>]] */
+> > +	const char * const sep_dev = ".,";
+> > +	const char * const sep_pref = ":";
+> > +	const char *name = str;
+> > +	char save, *sep;
+> > +	int card = 0, device = 0, subdevice = 0;
+> > +	int err;
+> > +
+> > +	sep = strpbrk(str, sep_pref);
+> > +	if (sep)
+> > +		name = sep + 1;
+> > +	sep = strpbrk(name, sep_dev);
+> > +	if (sep) {
+> > +		save = *sep;
+> > +		*sep = '\0';
+> > +	}
+> > +	err = kstrtoint(name, 0, &card);
+> > +	if (err == -EINVAL) {
+> > +		/* Must be the name, not number */
+> > +		for (card = 0; card < snd_ecards_limit; card++) {
+> > +			if (snd_cards[card] &&
+> > +			    !strcmp(snd_cards[card]->id, name)) {
+> > +				err = 0;
+> > +				break;
+> > +			}
+> > +		}
+> > +	}
+> 
+> As kbuildbot reported, this is obviously broken with the recent
+> kernel.  snd_cards[] is no longer exported!  And I don't want to
+> export again.
+> 
+> IOW, if we need this kind of thing, it's better to modify the existing
+> code in sound/core/init.c and export that function.
+
+Yes, I realized it a little late ;-)
+So far I changed the loop to something like
+
+	for (card_idx = 0; card_idx < snd_ecards_limit; card_idx++) {
+		struct snd_card *card = snd_card_ref(card_idx);
+		if (card) {
+			if (!strcmp(card->id, name))
+				err = 0;
+			snd_card_unref(card);
+		}
+		if (!err)
+			break;
+	}
+
+Of course, adding a separate lookup helper function to sound/core/init.c,
+like, for example,
+	struct snd_card *snd_card_find_id(const char *id)
+that makes similar loop in a more "atomic" way, with proper locking and
+reference incrementing for the result, would be more efficient, so if you
+decide to create such a helper, that would help to eliminate this loop
+from here.
+
+> > +/* call in loopback->cable_lock */
+> > +static int loopback_snd_timer_open(struct loopback_pcm *dpcm)
+> > +{
+> > +	int err = 0;
+> > +	unsigned long flags;
+> > +	struct snd_timer_id tid = {
+> > +		.dev_class = SNDRV_TIMER_CLASS_PCM,
+> > +		.dev_sclass = SNDRV_TIMER_SCLASS_APPLICATION,
+> > +	};
+> > +	struct snd_timer_instance *timer = NULL;
+> 
+> Why initialing to NULL here?
+
+Will be fixed too.
+
+> > +	spin_lock_irqsave(&dpcm->cable->lock, flags);
+> 
+> You need no irqsave version but spin_lock_irq() for the context like
+> open/close that is guaranteed to be sleepable.
+
+And this will be fixed.
+
+> > +	spin_lock_irqsave(&dpcm->cable->lock, flags);
+> > +
+> > +	/* The callback has to be called from another tasklet. If
+> > +	 * SNDRV_TIMER_IFLG_FAST is specified it will be called from the
+> > +	 * snd_pcm_period_elapsed() call of the selected sound card.
+> 
+> Well, you're the one who specifies SNDRV_TIMER_IFLG_XXX, so you know
+> that the flag isn't set.  So tasklet makes little sense.
+
+Indeed, that flag is not set, and the regular callback is already called
+from the tasklet. That's why the callback function, registered here
+(loopback_snd_timer_function) does not use the tasklet.
+However, the ccallback event handler is called by sound core directly,
+without a tasklet, and within "spin_lock_irqsave(&timer->lock, flags)".
+So, it's not possible to call snd_pcm_period_elapsed() directly
+from ccallback function (loopback_snd_timer_event). In order to
+be able to make this call, the local tasklet is used.
+
+> > +	 * snd_pcm_period_elapsed() helds snd_pcm_stream_lock_irqsave().
+> > +	 * Due to our callback loopback_snd_timer_function() also calls
+> > +	 * snd_pcm_period_elapsed() which calls
+> snd_pcm_stream_lock_irqsave().
+> > +	 * This would end up in a dead lock.
+> > +	 */
+> > +	timer->flags |= SNDRV_TIMER_IFLG_AUTO;
+> > +	timer->callback = loopback_snd_timer_function;
+> > +	timer->callback_data = (void *)dpcm->cable;
+> > +	timer->ccallback = loopback_snd_timer_event;
+> 
+> This reminds me that we need a safer way to assign these stuff in
+> general...  But it's above this patch set, in anyway.
+> 
+
+I'm preparing the next version of this patch set with the changes,
+described above, and some more code cleanup. It will be submitted soon.
+
+Thanks!
+
+Best regards,
+Andrew
 
