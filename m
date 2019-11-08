@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 097C6F5523
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 405F2F5668
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389773AbfKHTAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:00:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57238 "EHLO mail.kernel.org"
+        id S2403768AbfKHTIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:08:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389524AbfKHTAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:12 -0500
+        id S2391653AbfKHTIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:08:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3873224A1;
-        Fri,  8 Nov 2019 18:58:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E83AE21D7B;
+        Fri,  8 Nov 2019 19:08:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239525;
-        bh=VF547Q+UrNwRXr4sDr3Y7MlkbWR5j1ZST7OYdWdPn2Y=;
+        s=default; t=1573240116;
+        bh=q+racp7Mz0gV5r1vHVmNXLTrn3k8gMza3q2qAFEI0aw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mi1Uk+ZWg4jClYXjeGbC6lZe4lsbh19g1SpM3FMouZuTtF2BDI/UNWpPHyy+f+Pwf
-         /MWDyMeuBCQOelORlkK680v8n9nsd9YDqsVymZUGLajW7jXuwgJ7FbNttibN1R2XPr
-         vw3lJXsX5Y7vAlHA5M+WYC6tLRKYF+rNUpqDICf4=
+        b=CenRFLhwo597sS4PuJZSSJ26KbSJubFJ/Tsld/n3Ag8sa9fQywQALzwf2V8XyIDj0
+         Q33GABuvGnbkaJIn8enWK23NJq5YOMldHrD+uUoIoORMvmsYqSOOn8M2aJKZlJNXhY
+         vW2gKcFhqvCtZw2mEUvKVJRkXeHNmmGfvrFKr1sg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org, zhanglin <zhang.lin16@zte.com.cn>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 34/62] udp: fix data-race in udp_set_dev_scratch()
+Subject: [PATCH 5.3 094/140] net: Zeroing the structure ethtool_wolinfo in ethtool_get_wol()
 Date:   Fri,  8 Nov 2019 19:50:22 +0100
-Message-Id: <20191108174745.061425151@linuxfoundation.org>
+Message-Id: <20191108174910.977017478@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,102 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: zhanglin <zhang.lin16@zte.com.cn>
 
-[ Upstream commit a793183caa9afae907a0d7ddd2ffd57329369bf5 ]
+[ Upstream commit 5ff223e86f5addbfae26419cbb5d61d98f6fbf7d ]
 
-KCSAN reported a data-race in udp_set_dev_scratch() [1]
+memset() the structure ethtool_wolinfo that has padded bytes
+but the padded bytes have not been zeroed out.
 
-The issue here is that we must not write over skb fields
-if skb is shared. A similar issue has been fixed in commit
-89c22d8c3b27 ("net: Fix skb csum races when peeking")
-
-While we are at it, use a helper only dealing with
-udp_skb_scratch(skb)->csum_unnecessary, as this allows
-udp_set_dev_scratch() to be called once and thus inlined.
-
-[1]
-BUG: KCSAN: data-race in udp_set_dev_scratch / udpv6_recvmsg
-
-write to 0xffff888120278317 of 1 bytes by task 10411 on cpu 1:
- udp_set_dev_scratch+0xea/0x200 net/ipv4/udp.c:1308
- __first_packet_length+0x147/0x420 net/ipv4/udp.c:1556
- first_packet_length+0x68/0x2a0 net/ipv4/udp.c:1579
- udp_poll+0xea/0x110 net/ipv4/udp.c:2720
- sock_poll+0xed/0x250 net/socket.c:1256
- vfs_poll include/linux/poll.h:90 [inline]
- do_select+0x7d0/0x1020 fs/select.c:534
- core_sys_select+0x381/0x550 fs/select.c:677
- do_pselect.constprop.0+0x11d/0x160 fs/select.c:759
- __do_sys_pselect6 fs/select.c:784 [inline]
- __se_sys_pselect6 fs/select.c:769 [inline]
- __x64_sys_pselect6+0x12e/0x170 fs/select.c:769
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-read to 0xffff888120278317 of 1 bytes by task 10413 on cpu 0:
- udp_skb_csum_unnecessary include/net/udp.h:358 [inline]
- udpv6_recvmsg+0x43e/0xe90 net/ipv6/udp.c:310
- inet6_recvmsg+0xbb/0x240 net/ipv6/af_inet6.c:592
- sock_recvmsg_nosec+0x5c/0x70 net/socket.c:871
- ___sys_recvmsg+0x1a0/0x3e0 net/socket.c:2480
- do_recvmmsg+0x19a/0x5c0 net/socket.c:2601
- __sys_recvmmsg+0x1ef/0x200 net/socket.c:2680
- __do_sys_recvmmsg net/socket.c:2703 [inline]
- __se_sys_recvmmsg net/socket.c:2696 [inline]
- __x64_sys_recvmmsg+0x89/0xb0 net/socket.c:2696
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 10413 Comm: syz-executor.0 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-
-Fixes: 2276f58ac589 ("udp: use a separate rx queue for packet reception")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Reviewed-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: zhanglin <zhang.lin16@zte.com.cn>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/udp.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ net/core/ethtool.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1195,6 +1195,20 @@ static void udp_set_dev_scratch(struct s
- 		scratch->_tsize_state |= UDP_SKB_IS_STATELESS;
- }
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -1395,11 +1395,13 @@ static int ethtool_reset(struct net_devi
  
-+static void udp_skb_csum_unnecessary_set(struct sk_buff *skb)
-+{
-+	/* We come here after udp_lib_checksum_complete() returned 0.
-+	 * This means that __skb_checksum_complete() might have
-+	 * set skb->csum_valid to 1.
-+	 * On 64bit platforms, we can set csum_unnecessary
-+	 * to true, but only if the skb is not shared.
-+	 */
-+#if BITS_PER_LONG == 64
-+	if (!skb_shared(skb))
-+		udp_skb_scratch(skb)->csum_unnecessary = true;
-+#endif
-+}
-+
- static int udp_skb_truesize(struct sk_buff *skb)
+ static int ethtool_get_wol(struct net_device *dev, char __user *useraddr)
  {
- 	return udp_skb_scratch(skb)->_tsize_state & ~UDP_SKB_IS_STATELESS;
-@@ -1430,10 +1444,7 @@ static struct sk_buff *__first_packet_le
- 			*total += skb->truesize;
- 			kfree_skb(skb);
- 		} else {
--			/* the csum related bits could be changed, refresh
--			 * the scratch area
--			 */
--			udp_set_dev_scratch(skb);
-+			udp_skb_csum_unnecessary_set(skb);
- 			break;
- 		}
- 	}
+-	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
++	struct ethtool_wolinfo wol;
+ 
+ 	if (!dev->ethtool_ops->get_wol)
+ 		return -EOPNOTSUPP;
+ 
++	memset(&wol, 0, sizeof(struct ethtool_wolinfo));
++	wol.cmd = ETHTOOL_GWOL;
+ 	dev->ethtool_ops->get_wol(dev, &wol);
+ 
+ 	if (copy_to_user(useraddr, &wol, sizeof(wol)))
 
 
