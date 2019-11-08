@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17779F436A
+	by mail.lfdr.de (Postfix) with ESMTP id 92F09F436B
 	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731214AbfKHJgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 04:36:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24776 "EHLO
+        id S1731267AbfKHJgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 04:36:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24896 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730573AbfKHJgF (ORCPT
+        by vger.kernel.org with ESMTP id S1731028AbfKHJgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Nov 2019 04:36:05 -0500
 Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA89WE3u091186
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA89WFZ0091251
         for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2019 04:36:04 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w541c3vur-1
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w541c3vv1-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:36:03 -0500
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <alistair@popple.id.au>;
         Fri, 8 Nov 2019 09:36:01 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Nov 2019 09:35:58 -0000
+        Fri, 8 Nov 2019 09:35:57 -0000
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA89ZvSc66453662
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA89ZLIj41877838
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Nov 2019 09:35:57 GMT
+        Fri, 8 Nov 2019 09:35:21 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47BA711C05C;
-        Fri,  8 Nov 2019 09:35:57 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 6EB0811C04C;
+        Fri,  8 Nov 2019 09:35:56 +0000 (GMT)
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E79C111C05B;
+        by IMSVA (Postfix) with ESMTP id 19A4511C050;
         Fri,  8 Nov 2019 09:35:56 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
@@ -43,36 +43,36 @@ Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
 Received: from townsend.localnet (unknown [9.81.221.11])
         (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 5A0B0A01E3;
-        Fri,  8 Nov 2019 20:35:54 +1100 (AEDT)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 74862A027A;
+        Fri,  8 Nov 2019 20:35:53 +1100 (AEDT)
 From:   Alistair Popple <alistair@popple.id.au>
 To:     Joel Stanley <joel@jms.id.au>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Greg KH <gregkh@linuxfoundation.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
+        Jeremy Kerr <jk@ozlabs.org>, Andrew Jeffery <andrew@aj.id.au>,
         Eddie James <eajames@linux.ibm.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-fsi@lists.ozlabs.org
-Subject: Re: [PATCH v2 02/11] fsi: Move master attributes to fsi-master class
-Date:   Fri, 08 Nov 2019 20:18:57 +1100
-In-Reply-To: <20191108051945.7109-3-joel@jms.id.au>
-References: <20191108051945.7109-1-joel@jms.id.au> <20191108051945.7109-3-joel@jms.id.au>
+Subject: Re: [PATCH v2 04/11] trace: fsi: Print transfer size unsigned
+Date:   Fri, 08 Nov 2019 20:21:01 +1100
+In-Reply-To: <20191108051945.7109-5-joel@jms.id.au>
+References: <20191108051945.7109-1-joel@jms.id.au> <20191108051945.7109-5-joel@jms.id.au>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 X-TM-AS-GCONF: 00
-x-cbid: 19110809-4275-0000-0000-0000037BEAE7
+x-cbid: 19110809-0012-0000-0000-00000361D4FD
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110809-4276-0000-0000-0000388F3ECB
-Message-Id: <1875965.3q8Q5IJkUj@townsend>
+x-cbparentid: 19110809-0013-0000-0000-0000219D38D5
+Message-Id: <2120832.yXaHOgoxCj@townsend>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-08_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=811 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1910280000 definitions=main-1911080093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -81,61 +81,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Acked-by: Alistair Popple <alistair@popple.id.au>
 
-On Friday, 8 November 2019 4:19:36 PM AEDT Joel Stanley wrote:
-> From: Jeremy Kerr <jk@ozlabs.org>
+On Friday, 8 November 2019 4:19:38 PM AEDT Joel Stanley wrote:
+> From: Andrew Jeffery <andrew@aj.id.au>
 > 
-> Populate fsi_master_class->dev_attrs with the existing attribute
-> definitions, so we don't need to explicitly register.
+> Due to other bugs I observed a spurious -1 transfer size.
 > 
-> Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 > Signed-off-by: Joel Stanley <joel@jms.id.au>
 > ---
->  drivers/fsi/fsi-core.c | 23 +++++++++--------------
->  1 file changed, 9 insertions(+), 14 deletions(-)
+>  include/trace/events/fsi.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-> index 0861f6097b33..c773c65a5058 100644
-> --- a/drivers/fsi/fsi-core.c
-> +++ b/drivers/fsi/fsi-core.c
-> @@ -1241,8 +1241,17 @@ static ssize_t master_break_store(struct device *dev,
->  
->  static DEVICE_ATTR(break, 0200, NULL, master_break_store);
->  
-> +static struct attribute *master_attrs[] = {
-> +	&dev_attr_break.attr,
-> +	&dev_attr_rescan.attr,
-> +	NULL
-> +};
-> +
-> +ATTRIBUTE_GROUPS(master);
-> +
->  struct class fsi_master_class = {
->  	.name = "fsi-master",
-> +	.dev_groups = master_groups,
->  };
->  
->  int fsi_master_register(struct fsi_master *master)
-> @@ -1261,20 +1270,6 @@ int fsi_master_register(struct fsi_master *master)
->  		return rc;
->  	}
->  
-> -	rc = device_create_file(&master->dev, &dev_attr_rescan);
-> -	if (rc) {
-> -		device_del(&master->dev);
-> -		ida_simple_remove(&master_ida, master->idx);
-> -		return rc;
-> -	}
-> -
-> -	rc = device_create_file(&master->dev, &dev_attr_break);
-> -	if (rc) {
-> -		device_del(&master->dev);
-> -		ida_simple_remove(&master_ida, master->idx);
-> -		return rc;
-> -	}
-> -
->  	np = dev_of_node(&master->dev);
->  	if (!of_property_read_bool(np, "no-scan-on-init")) {
->  		mutex_lock(&master->scan_lock);
+> diff --git a/include/trace/events/fsi.h b/include/trace/events/fsi.h
+> index 92e5e89e52ed..9832cb8e0eb0 100644
+> --- a/include/trace/events/fsi.h
+> +++ b/include/trace/events/fsi.h
+> @@ -26,7 +26,7 @@ TRACE_EVENT(fsi_master_read,
+>  		__entry->addr = addr;
+>  		__entry->size = size;
+>  	),
+> -	TP_printk("fsi%d:%02d:%02d %08x[%zd]",
+> +	TP_printk("fsi%d:%02d:%02d %08x[%zu]",
+>  		__entry->master_idx,
+>  		__entry->link,
+>  		__entry->id,
+> @@ -56,7 +56,7 @@ TRACE_EVENT(fsi_master_write,
+>  		__entry->data = 0;
+>  		memcpy(&__entry->data, data, size);
+>  	),
+> -	TP_printk("fsi%d:%02d:%02d %08x[%zd] <= {%*ph}",
+> +	TP_printk("fsi%d:%02d:%02d %08x[%zu] <= {%*ph}",
+>  		__entry->master_idx,
+>  		__entry->link,
+>  		__entry->id,
+> @@ -93,7 +93,7 @@ TRACE_EVENT(fsi_master_rw_result,
+>  		if (__entry->write || !__entry->ret)
+>  			memcpy(&__entry->data, data, size);
+>  	),
+> -	TP_printk("fsi%d:%02d:%02d %08x[%zd] %s {%*ph} ret %d",
+> +	TP_printk("fsi%d:%02d:%02d %08x[%zu] %s {%*ph} ret %d",
+>  		__entry->master_idx,
+>  		__entry->link,
+>  		__entry->id,
 > 
 
 
