@@ -2,102 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B60F5945
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF46F594E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732296AbfKHVIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:08:54 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:33093 "EHLO
+        id S1732466AbfKHVKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:10:44 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:49557 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbfKHVIy (ORCPT
+        with ESMTP id S1732137AbfKHVKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:08:54 -0500
+        Fri, 8 Nov 2019 16:10:43 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N5mSj-1hrrj32IW3-017H8q; Fri, 08 Nov 2019 22:08:46 +0100
+ 1M3lkT-1iTSce3JNz-000qeu; Fri, 08 Nov 2019 22:09:27 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org,
+To:     y2038@lists.linaro.org, Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         "David S. Miller" <davem@davemloft.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-arch@vger.kernel.org
-Subject: [PATCH 02/23] y2038: add __kernel_old_timespec and __kernel_old_time_t
-Date:   Fri,  8 Nov 2019 22:07:22 +0100
-Message-Id: <20191108210824.1534248-2-arnd@arndb.de>
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org
+Subject: [PATCH 03/23] y2038: vdso: change timeval to __kernel_old_timeval
+Date:   Fri,  8 Nov 2019 22:07:23 +0100
+Message-Id: <20191108210824.1534248-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108210236.1296047-1-arnd@arndb.de>
 References: <20191108210236.1296047-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:b5N3TpWxS8V8FWtAAfXOHjyNkW2dd6vsCxc3KrZ6/bDozC0UzGX
- z868QcmcxcXwLNvP/3j81Fa4z9V7PlenxpvccLoVz4hKjdilYMaDe/ddhT2s8zuc6t343yp
- NWgkAlequJ80TyMQU6XoRmbEi9koTAj5AzKTrifgQcLBQRXriFwCnD+Qaqn8hJqr6IlGUan
- MybHnAEMRxVEmgjwINzdA==
+X-Provags-ID: V03:K1:VLIICAlTXnc6akV8I31bwvzXwDpY0cN0rydeLsQ3qT4lpr37nsE
+ QSig7L9+fEYaUu4VulfxoNH+E4reHQ6RGrJbyz6AENXlp2ZEvLfgcY5zMAWMTtfjhtb9edx
+ ThuUA780pWF4C2g4IuqR0gBlX5zv2mPKayttxb2UIkHe16yvjCZTYmmmavae5t5ZhdPPiRv
+ OVGfDhmMw8AlwVhNlpN+g==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:q5HMqU+dZb4=:uY+qkO0lXE59wSs58wgWT+
- 9hOYnpRnXLK3Q5CA7O6So4C2b7pZDg8dPtx9dcZ0BzX9ToZrv84PD++2Y366m7viED6W2R8by
- Jt9dhtGloAaPP3DuCRY0+vmILayaAm7UraXmlPaw+ToPZ/OFZ/6VOO16cGYzLvuFECU3nUNhQ
- AIcjQ0GkQo5E1LaNXdF622Vyj2QD+tBUemLVc7vlTY7as80tyjmrgBKD1KtVWfy8OJH6yeTkU
- G7hwfS4qvnRAYdRa+9VJY5W/J3QNbGtkyp7audhrk4nnvxldr6Lj44Lal8YJLRiBMhHhq7AbA
- 1NgnLMS3UZkLRCIxIIfCp3KLHep5m+IAtOfdjKs5hUEM1ueWJiP8PAKkLmaDFGp5W18s4yHWF
- MYUO/mvHXcvYTUe9/jn2VjWe5MZaVQ/JiCpRfI0zV/lnH6Fg7BbfegkwiUwdifmCpiWhRfnjH
- KEbL1KDCUiVrLJkWgNPfiHoRqEz57pn64uYrV+bNK7cpswlfQU13Wi3vRPNyfsiKFyc3tgP2m
- 7iSEfQqLqADbdHdhiy3wm7nYVDEXWzU8NG9DFm+Xl/pb5/UG+YspYxTvsfO4GjZiHOp9QVg7+
- pf7Va5/5mNKVJTbSjHuhGd3BxU8vsw/7V/AX0s2alLrCJeg0Dmlj53MWdBEqcJGZbaLuLiV5J
- rGKQZb34B2HxnRMnKEp3LyYiBV7ltEEQLUDq2Lv8Og6C0VgHuOJV68fpNj4MG6rtF9JF7rfHI
- dWxx0lRApWFEtY/5cWnHsJorajJ0X7o/DPVdd0yQGLCJgwJJHwPfxQk8CCJRDu+dHnbB40MKh
- 6U2XmdRyQoyHCsXkr4TeAFe2JZbkwjMe66DT8QLzALG9LVsfhFh1j4HmvkK8vYUosdOTd35wW
- +m0gcm31rHmV5xpdHInQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2XmZ2WmhQSs=:NtEfBD4YRcAIUdi0aMJ9Mm
+ Mb4MrEng20SlCkVVAtea6ffQ6TULJ8SxAulod/wh653pQ191y5a8Xt10083lB+77jDbyi4+vK
+ MDPPbVDUw0opOuiZldymkKMNZhOr8UO10SDtogxW8SXOgk0rhSB8Cuw9mdlktFSIWkUEEWHCI
+ 0ElYr/fvDtAlD4LLLkQ/uM2yHFlbFaWwkz8s3F5RB5+NgS5dyQzrnM0v8fZJY+zllVf/nLHHg
+ S+JdA/xXJmfin7xMl3GN8tXVcoaVJivmYpohnP8QPHHer9yOutJpyAQkmm2xkfT7h0Igsu3oU
+ X7muOLP+G+TGYA13w4IduabKZm9OUyfp5uiwxnvgWOPSb/mTkZzHPmo24nqv9omNrbgRVXXU7
+ 2niBolECHBbWEeRl1dGen3sUQ7GZ4qbUoUFoUp+i08S7bqkr55zs1TDHv7eUCwQm62DLz5crv
+ C8TlnwrkMQDuNh2GBssvXpj8kYuiUDzF4ktKGI1rpKi5EY/V+fSNMZwlaPqA7OqXF6U2JoFq4
+ e9BFBX6PWHsDUKdIXE5ecwqwRsSlvyXIOmOCRIanfX05ssEC+a1ha6njy87yln9bUWDP0tkaT
+ N2uGm6uY6keDg0rUIdDm344DVUK19EuWbIknJb5TEkWdzzA85DCgwHBXbB82XpfvZSJKjGTUJ
+ 8K/Or/oyje4QwbXSajyrofGYCVLUZd5J20QQom5N/BEI1jgoHhzm7BKPrqJlDrq+o1YRcXBrR
+ NyGWFUaGrsk0KRRa1VAVfG5R6N8Hbgd5U7vg1qjDCdjYmTAiTEab5ZC+Iw5iTZHVOD4p8p1gD
+ yqRjJzL1IDd9qAlDwHeRWKbOoQ+545KRPzlvfMBBBmEn8DURYyTREjntT8XHg8KqjjNQ4FNl+
+ tGkJFPgb3klzzrokdFpg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'struct timespec' definition can no longer be part of the uapi headers
-because it conflicts with a a now incompatible libc definition. Also,
-we really want to remove it in order to prevent new uses from creeping in.
+The gettimeofday() function in vdso uses the traditional 'timeval'
+structure layout, which will be incompatible with future versions of
+glibc on 32-bit architectures that use a 64-bit time_t.
 
-The same namespace conflict exists with time_t, which should also be
-removed. __kernel_time_t could be used safely, but adding 'old' in the
-name makes it clearer that this should not be used for new interfaces.
+This interface is problematic for y2038, when time_t overflows on 32-bit
+architectures, but the plan so far is that a libc with 64-bit time_t
+will not call into the gettimeofday() vdso helper at all, and only
+have a method for entering clock_gettime().  This means we don't have
+to fix it here, though we probably want to add a new clock_gettime()
+entry point using a 64-bit version of 'struct timespec' at some point.
 
-Add a replacement __kernel_old_timespec structure and __kernel_old_time_t
-along the lines of __kernel_old_timeval.
+Changing the vdso code to use __kernel_old_timeval helps isolate
+this usage from the other ones that still need to be fixed properly,
+and it gets us closer to removing the 'timeval' definition from the
+kernel sources.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/uapi/asm-generic/posix_types.h | 1 +
- include/uapi/linux/time_types.h        | 5 +++++
- 2 files changed, 6 insertions(+)
+ arch/nds32/kernel/vdso/gettimeofday.c |  6 +++---
+ arch/powerpc/kernel/asm-offsets.c     |  8 ++++----
+ arch/sparc/vdso/vclock_gettime.c      | 12 ++++++------
+ arch/x86/entry/vsyscall/vsyscall_64.c |  2 +-
+ arch/x86/um/vdso/um_vdso.c            |  4 ++--
+ 5 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/include/uapi/asm-generic/posix_types.h b/include/uapi/asm-generic/posix_types.h
-index f0733a26ebfc..2f9c80595ba7 100644
---- a/include/uapi/asm-generic/posix_types.h
-+++ b/include/uapi/asm-generic/posix_types.h
-@@ -86,6 +86,7 @@ typedef struct {
-  */
- typedef __kernel_long_t	__kernel_off_t;
- typedef long long	__kernel_loff_t;
-+typedef __kernel_long_t	__kernel_old_time_t;
- typedef __kernel_long_t	__kernel_time_t;
- typedef long long __kernel_time64_t;
- typedef __kernel_long_t	__kernel_clock_t;
-diff --git a/include/uapi/linux/time_types.h b/include/uapi/linux/time_types.h
-index 27bfc8fc6904..60b37f29842d 100644
---- a/include/uapi/linux/time_types.h
-+++ b/include/uapi/linux/time_types.h
-@@ -28,6 +28,11 @@ struct __kernel_old_timeval {
- };
- #endif
+diff --git a/arch/nds32/kernel/vdso/gettimeofday.c b/arch/nds32/kernel/vdso/gettimeofday.c
+index b02581891c33..1e69fd5b067b 100644
+--- a/arch/nds32/kernel/vdso/gettimeofday.c
++++ b/arch/nds32/kernel/vdso/gettimeofday.c
+@@ -230,10 +230,10 @@ notrace int __vdso_clock_getres(clockid_t clk_id, struct timespec *res)
+ 	return 0;
+ }
  
-+struct __kernel_old_timespec {
-+	__kernel_time_t	tv_sec;			/* seconds */
-+	long		tv_nsec;		/* nanoseconds */
-+};
-+
- struct __kernel_sock_timeval {
- 	__s64 tv_sec;
- 	__s64 tv_usec;
+-static notrace inline int gettimeofday_fallback(struct timeval *_tv,
++static notrace inline int gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+ 						struct timezone *_tz)
+ {
+-	register struct timeval *tv asm("$r0") = _tv;
++	register struct __kernel_old_timeval *tv asm("$r0") = _tv;
+ 	register struct timezone *tz asm("$r1") = _tz;
+ 	register int ret asm("$r0");
+ 
+@@ -246,7 +246,7 @@ static notrace inline int gettimeofday_fallback(struct timeval *_tv,
+ 	return ret;
+ }
+ 
+-notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
++notrace int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ {
+ 	struct timespec ts;
+ 	struct vdso_data *vdata;
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+index 484f54dab247..827f4c354e13 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -393,8 +393,8 @@ int main(void)
+ 	OFFSET(CFG_DCACHE_LOGBLOCKSZ, vdso_data, dcache_log_block_size);
+ #ifdef CONFIG_PPC64
+ 	OFFSET(CFG_SYSCALL_MAP64, vdso_data, syscall_map_64);
+-	OFFSET(TVAL64_TV_SEC, timeval, tv_sec);
+-	OFFSET(TVAL64_TV_USEC, timeval, tv_usec);
++	OFFSET(TVAL64_TV_SEC, __kernel_old_timeval, tv_sec);
++	OFFSET(TVAL64_TV_USEC, __kernel_old_timeval, tv_usec);
+ 	OFFSET(TVAL32_TV_SEC, old_timeval32, tv_sec);
+ 	OFFSET(TVAL32_TV_USEC, old_timeval32, tv_usec);
+ 	OFFSET(TSPC64_TV_SEC, timespec, tv_sec);
+@@ -402,8 +402,8 @@ int main(void)
+ 	OFFSET(TSPC32_TV_SEC, old_timespec32, tv_sec);
+ 	OFFSET(TSPC32_TV_NSEC, old_timespec32, tv_nsec);
+ #else
+-	OFFSET(TVAL32_TV_SEC, timeval, tv_sec);
+-	OFFSET(TVAL32_TV_USEC, timeval, tv_usec);
++	OFFSET(TVAL32_TV_SEC, __kernel_old_timeval, tv_sec);
++	OFFSET(TVAL32_TV_USEC, __kernel_old_timeval, tv_usec);
+ 	OFFSET(TSPC32_TV_SEC, timespec, tv_sec);
+ 	OFFSET(TSPC32_TV_NSEC, timespec, tv_nsec);
+ #endif
+diff --git a/arch/sparc/vdso/vclock_gettime.c b/arch/sparc/vdso/vclock_gettime.c
+index fc5bdd14de76..a20c5030578d 100644
+--- a/arch/sparc/vdso/vclock_gettime.c
++++ b/arch/sparc/vdso/vclock_gettime.c
+@@ -74,7 +74,7 @@ notrace static long vdso_fallback_gettime(long clock, struct timespec *ts)
+ 	return o0;
+ }
+ 
+-notrace static long vdso_fallback_gettimeofday(struct timeval *tv, struct timezone *tz)
++notrace static long vdso_fallback_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ {
+ 	register long num __asm__("g1") = __NR_gettimeofday;
+ 	register long o0 __asm__("o0") = (long) tv;
+@@ -304,7 +304,7 @@ __vdso_clock_gettime_stick(clockid_t clock, struct timespec *ts)
+ }
+ 
+ notrace int
+-__vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
++__vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ {
+ 	struct vvar_data *vvd = get_vvar_data();
+ 
+@@ -312,7 +312,7 @@ __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ 		if (likely(tv != NULL)) {
+ 			union tstv_t {
+ 				struct timespec ts;
+-				struct timeval tv;
++				struct __kernel_old_timeval tv;
+ 			} *tstv = (union tstv_t *) tv;
+ 			do_realtime(vvd, &tstv->ts);
+ 			/*
+@@ -336,11 +336,11 @@ __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ 	return vdso_fallback_gettimeofday(tv, tz);
+ }
+ int
+-gettimeofday(struct timeval *, struct timezone *)
++gettimeofday(struct __kernel_old_timeval *, struct timezone *)
+ 	__attribute__((weak, alias("__vdso_gettimeofday")));
+ 
+ notrace int
+-__vdso_gettimeofday_stick(struct timeval *tv, struct timezone *tz)
++__vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct timezone *tz)
+ {
+ 	struct vvar_data *vvd = get_vvar_data();
+ 
+@@ -348,7 +348,7 @@ __vdso_gettimeofday_stick(struct timeval *tv, struct timezone *tz)
+ 		if (likely(tv != NULL)) {
+ 			union tstv_t {
+ 				struct timespec ts;
+-				struct timeval tv;
++				struct __kernel_old_timeval tv;
+ 			} *tstv = (union tstv_t *) tv;
+ 			do_realtime_stick(vvd, &tstv->ts);
+ 			/*
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index e7c596dea947..76e62bcb8d87 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -184,7 +184,7 @@ bool emulate_vsyscall(unsigned long error_code,
+ 	 */
+ 	switch (vsyscall_nr) {
+ 	case 0:
+-		if (!write_ok_or_segv(regs->di, sizeof(struct timeval)) ||
++		if (!write_ok_or_segv(regs->di, sizeof(struct __kernel_old_timeval)) ||
+ 		    !write_ok_or_segv(regs->si, sizeof(struct timezone))) {
+ 			ret = -EFAULT;
+ 			goto check_fault;
+diff --git a/arch/x86/um/vdso/um_vdso.c b/arch/x86/um/vdso/um_vdso.c
+index 891868756a51..845336c11364 100644
+--- a/arch/x86/um/vdso/um_vdso.c
++++ b/arch/x86/um/vdso/um_vdso.c
+@@ -25,7 +25,7 @@ int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
+ int clock_gettime(clockid_t, struct timespec *)
+ 	__attribute__((weak, alias("__vdso_clock_gettime")));
+ 
+-int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
++int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ {
+ 	long ret;
+ 
+@@ -34,7 +34,7 @@ int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ 
+ 	return ret;
+ }
+-int gettimeofday(struct timeval *, struct timezone *)
++int gettimeofday(struct __kernel_old_timeval *, struct timezone *)
+ 	__attribute__((weak, alias("__vdso_gettimeofday")));
+ 
+ time_t __vdso_time(time_t *t)
 -- 
 2.20.0
 
