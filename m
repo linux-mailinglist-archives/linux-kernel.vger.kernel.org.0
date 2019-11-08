@@ -2,237 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D713F5B8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 00:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB4ADF5BA2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 00:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbfKHXA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 18:00:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:29126 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728633AbfKHXA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 18:00:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 15:00:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,283,1569308400"; 
-   d="scan'208";a="206142939"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2019 15:00:58 -0800
-Date:   Fri, 8 Nov 2019 15:05:27 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 10/11] iommu/vt-d: Support flushing more translation
- cache types
-Message-ID: <20191108150527.4583eb88@jacob-builder>
-In-Reply-To: <467e60cc-efb1-83d4-2dea-f6131a60428b@redhat.com>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1571946904-86776-11-git-send-email-jacob.jun.pan@linux.intel.com>
-        <467e60cc-efb1-83d4-2dea-f6131a60428b@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728363AbfKHXFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 18:05:55 -0500
+Received: from vsmx011.vodafonemail.xion.oxcs.net ([153.92.174.89]:54594 "EHLO
+        vsmx011.vodafonemail.xion.oxcs.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726095AbfKHXFz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 18:05:55 -0500
+Received: from vsmx003.vodafonemail.xion.oxcs.net (unknown [192.168.75.197])
+        by mta-5-out.mta.xion.oxcs.net (Postfix) with ESMTP id DF76959D3F7;
+        Fri,  8 Nov 2019 23:05:52 +0000 (UTC)
+Received: from lazy.lzy (unknown [93.212.126.195])
+        by mta-7-out.mta.xion.oxcs.net (Postfix) with ESMTPA id 6EF28534352;
+        Fri,  8 Nov 2019 23:05:38 +0000 (UTC)
+Received: from lazy.lzy (localhost [127.0.0.1])
+        by lazy.lzy (8.15.2/8.14.5) with ESMTPS id xA8N5b6n012018
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 9 Nov 2019 00:05:37 +0100
+Received: (from red@localhost)
+        by lazy.lzy (8.15.2/8.15.2/Submit) id xA8N5aYW012017;
+        Sat, 9 Nov 2019 00:05:36 +0100
+Date:   Sat, 9 Nov 2019 00:05:36 +0100
+From:   Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: reeze while write on external usb 3.0 hard disk [Bug 204095]
+Message-ID: <20191108230536.GA11931@lazy.lzy>
+References: <20191017175306.GA3014@lazy.lzy>
+ <Pine.LNX.4.44L0.1910171522200.18407-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1910171522200.18407-100000@netrider.rowland.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-VADE-STATUS: LEGIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Nov 2019 17:18:10 +0100
-Auger Eric <eric.auger@redhat.com> wrote:
-
-> Hi Jacob,
+On Thu, Oct 17, 2019 at 03:23:34PM -0400, Alan Stern wrote:
+> On Thu, 17 Oct 2019, Piergiorgio Sartor wrote:
 > 
-> On 10/24/19 9:55 PM, Jacob Pan wrote:
-> > When Shared Virtual Memory is exposed to a guest via vIOMMU,
-> > scalable IOTLB invalidation may be passed down from outside IOMMU
-> > subsystems. This patch adds invalidation functions that can be used
-> > for additional translation cache types.
+> > > Here is one more thing you can try.  I have no idea whether it will 
+> > > make any difference, but the Changelog entry for the patch you 
+> > > identified suggests that it might help.
+> > > 
+> > > Alan Stern
+> > > 
+> > > 
+> > > 
+> > > Index: usb-devel/drivers/usb/storage/scsiglue.c
+> > > ===================================================================
+> > > --- usb-devel.orig/drivers/usb/storage/scsiglue.c
+> > > +++ usb-devel/drivers/usb/storage/scsiglue.c
+> > > @@ -68,7 +68,6 @@ static const char* host_info(struct Scsi
+> > >  static int slave_alloc (struct scsi_device *sdev)
+> > >  {
+> > >  	struct us_data *us = host_to_us(sdev->host);
+> > > -	int maxp;
+> > >  
+> > >  	/*
+> > >  	 * Set the INQUIRY transfer length to 36.  We don't use any of
+> > > @@ -78,15 +77,6 @@ static int slave_alloc (struct scsi_devi
+> > >  	sdev->inquiry_len = 36;
+> > >  
+> > >  	/*
+> > > -	 * USB has unusual scatter-gather requirements: the length of each
+> > > -	 * scatterlist element except the last must be divisible by the
+> > > -	 * Bulk maxpacket value.  Fortunately this value is always a
+> > > -	 * power of 2.  Inform the block layer about this requirement.
+> > > -	 */
+> > > -	maxp = usb_maxpacket(us->pusb_dev, us->recv_bulk_pipe, 0);
+> > > -	blk_queue_virt_boundary(sdev->request_queue, maxp - 1);
+> > > -
+> > > -	/*
+> > >  	 * Some host controllers may have alignment requirements.
+> > >  	 * We'll play it safe by requiring 512-byte alignment always.
+> > >  	 */
 > > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >  drivers/iommu/dmar.c        | 46
-> > +++++++++++++++++++++++++++++++++++++++++++++
-> > drivers/iommu/intel-pasid.c |  3 ++- include/linux/intel-iommu.h |
-> > 21 +++++++++++++++++---- 3 files changed, 65 insertions(+), 5
-> > deletions(-)
+> > Hi,
 > > 
-> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> > index 49bb7d76e646..0ce2d32ff99e 100644
-> > --- a/drivers/iommu/dmar.c
-> > +++ b/drivers/iommu/dmar.c
-> > @@ -1346,6 +1346,20 @@ void qi_flush_iotlb(struct intel_iommu
-> > *iommu, u16 did, u64 addr, qi_submit_sync(&desc, iommu);
-> >  }
-> >  
-> > +/* PASID-based IOTLB Invalidate */
-> > +void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u64 addr,
-> > u32 pasid,
-> > +		unsigned int size_order, u64 granu, int ih)
-> > +{
-> > +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
-> > +
-> > +	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
-> > +		QI_EIOTLB_GRAN(granu) | QI_EIOTLB_TYPE;
-> > +	desc.qw1 = QI_EIOTLB_ADDR(addr) | QI_EIOTLB_IH(ih) |
-> > +		QI_EIOTLB_AM(size_order);
-> > +
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> > +
-> >  void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16
-> > pfsid, u16 qdep, u64 addr, unsigned mask)
-> >  {
-> > @@ -1369,6 +1383,38 @@ void qi_flush_dev_iotlb(struct intel_iommu
-> > *iommu, u16 sid, u16 pfsid, qi_submit_sync(&desc, iommu);
-> >  }
-> >  
-> > +/* PASID-based device IOTLB Invalidate */
-> > +void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16 sid, u16
-> > pfsid,
-> > +		u32 pasid,  u16 qdep, u64 addr, unsigned
-> > size_order, u64 granu) +{
-> > +	struct qi_desc desc;
-> > +
-> > +	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) |
-> > QI_DEV_EIOTLB_SID(sid) |
-> > +		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
-> > +		QI_DEV_IOTLB_PFSID(pfsid);
-> > +	desc.qw1 = QI_DEV_EIOTLB_GLOB(granu);
-> > +
-> > +	/* If S bit is 0, we only flush a single page. If S bit is
-> > set,
-> > +	 * The least significant zero bit indicates the
-> > invalidation address
-> > +	 * range. VT-d spec 6.5.2.6.
-> > +	 * e.g. address bit 12[0] indicates 8KB, 13[0] indicates
-> > 16KB.
-> > +	 */
-> > +	if (!size_order) {
-> > +		desc.qw0 |= QI_DEV_EIOTLB_ADDR(addr) &
-> > ~QI_DEV_EIOTLB_SIZE;  
-> this is desc.qw1
+> > I tested the patch.
+> > 
+> > Assumming I did everything properly, add patch,
+> > test, issue not showing up, remove patch, re-test,
+> > issue present.
+> > 
+> > It seems this patch you provide solves the issue.
+> > 
+> > Thanks a lot for the support and the solution.
+> > 
+> > I guess now this patch will be integrated into
+> > mainline sometimes.
+> > Please let me know, in this thread or directly, in
+> > which kernel it will be available.
 > 
-Right, will fix.
+> I'm busy for the next few days, but I will submit the patch next week.
 
-Thanks!
-> With that fixed and the qi_flush_dev_piotlb init issue spotted by Lu,
-> feel free to add my
-> 
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> 
-> Thanks
-> 
-> Eric
-> 
-> > +	} else {
-> > +		unsigned long mask = 1UL << (VTD_PAGE_SHIFT +
-> > size_order);
-> > +		desc.qw1 |= QI_DEV_EIOTLB_ADDR(addr & ~mask) |
-> > QI_DEV_EIOTLB_SIZE;
-> > +	}
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> > +
-> > +void qi_flush_pasid_cache(struct intel_iommu *iommu, u16 did, u64
-> > granu, int pasid) +{
-> > +	struct qi_desc desc = {.qw1 = 0, .qw2 = 0, .qw3 = 0};
-> > +
-> > +	desc.qw0 = QI_PC_PASID(pasid) | QI_PC_DID(did) |
-> > QI_PC_GRAN(granu) | QI_PC_TYPE;
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> >  /*
-> >   * Disable Queued Invalidation interface.
-> >   */
-> > diff --git a/drivers/iommu/intel-pasid.c
-> > b/drivers/iommu/intel-pasid.c index f846a907cfcf..6d7a701ef4d3
-> > 100644 --- a/drivers/iommu/intel-pasid.c
-> > +++ b/drivers/iommu/intel-pasid.c
-> > @@ -491,7 +491,8 @@ pasid_cache_invalidation_with_pasid(struct
-> > intel_iommu *iommu, {
-> >  	struct qi_desc desc;
-> >  
-> > -	desc.qw0 = QI_PC_DID(did) | QI_PC_PASID_SEL |
-> > QI_PC_PASID(pasid);
-> > +	desc.qw0 = QI_PC_DID(did) | QI_PC_GRAN(QI_PC_PASID_SEL) |
-> > +		QI_PC_PASID(pasid) | QI_PC_TYPE;
-> >  	desc.qw1 = 0;
-> >  	desc.qw2 = 0;
-> >  	desc.qw3 = 0;
-> > diff --git a/include/linux/intel-iommu.h
-> > b/include/linux/intel-iommu.h index 6c74c71b1ebf..a25fb3a0ea5b
-> > 100644 --- a/include/linux/intel-iommu.h
-> > +++ b/include/linux/intel-iommu.h
-> > @@ -332,7 +332,7 @@ enum {
-> >  #define QI_IOTLB_GRAN(gran) 	(((u64)gran) >>
-> > (DMA_TLB_FLUSH_GRANU_OFFSET-4)) #define QI_IOTLB_ADDR(addr)
-> > (((u64)addr) & VTD_PAGE_MASK) #define
-> > QI_IOTLB_IH(ih)		(((u64)ih) << 6) -#define
-> > QI_IOTLB_AM(am)		(((u8)am)) +#define
-> > QI_IOTLB_AM(am)		(((u8)am) & 0x3f) 
-> >  #define QI_CC_FM(fm)		(((u64)fm) << 48)
-> >  #define QI_CC_SID(sid)		(((u64)sid) << 32)
-> > @@ -350,16 +350,21 @@ enum {
-> >  #define QI_PC_DID(did)		(((u64)did) << 16)
-> >  #define QI_PC_GRAN(gran)	(((u64)gran) << 4)
-> >  
-> > -#define QI_PC_ALL_PASIDS	(QI_PC_TYPE | QI_PC_GRAN(0))
-> > -#define QI_PC_PASID_SEL		(QI_PC_TYPE | QI_PC_GRAN(1))
-> > +/* PASID cache invalidation granu */
-> > +#define QI_PC_ALL_PASIDS	0
-> > +#define QI_PC_PASID_SEL		1
-> >  
-> >  #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
-> >  #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
-> > -#define QI_EIOTLB_AM(am)	(((u64)am))
-> > +#define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
-> >  #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
-> >  #define QI_EIOTLB_DID(did)	(((u64)did) << 16)
-> >  #define QI_EIOTLB_GRAN(gran) 	(((u64)gran) << 4)
-> >  
-> > +/* QI Dev-IOTLB inv granu */
-> > +#define QI_DEV_IOTLB_GRAN_ALL		1
-> > +#define QI_DEV_IOTLB_GRAN_PASID_SEL	0
-> > +
-> >  #define QI_DEV_EIOTLB_ADDR(a)	((u64)(a) & VTD_PAGE_MASK)
-> >  #define QI_DEV_EIOTLB_SIZE	(((u64)1) << 11)
-> >  #define QI_DEV_EIOTLB_GLOB(g)	((u64)g)
-> > @@ -655,8 +660,16 @@ extern void qi_flush_context(struct
-> > intel_iommu *iommu, u16 did, u16 sid, u8 fm, u64 type);
-> >  extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64
-> > addr, unsigned int size_order, u64 type);
-> > +extern void qi_flush_piotlb(struct intel_iommu *iommu, u16 did,
-> > u64 addr,
-> > +			u32 pasid, unsigned int size_order, u64
-> > type, int ih); extern void qi_flush_dev_iotlb(struct intel_iommu
-> > *iommu, u16 sid, u16 pfsid, u16 qdep, u64 addr, unsigned mask);
-> > +
-> > +extern void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16
-> > sid, u16 pfsid,
-> > +			u32 pasid, u16 qdep, u64 addr, unsigned
-> > size_order, u64 granu); +
-> > +extern void qi_flush_pasid_cache(struct intel_iommu *iommu, u16
-> > did, u64 granu, int pasid); +
-> >  extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu
-> > *iommu); 
-> >  extern int dmar_ir_support(void);
-> >   
-> 
+Hi again,
 
-[Jacob Pan]
+this message to let you know I tested
+kernel 5.3.9 (always from Fedora), to
+which Greg Kroah-Hartman added your
+patch, and everything seems to work
+fine, no problems detected so far.
+
+Thanks,
+
+bye,
+
+-- 
+
+piergiorgio
