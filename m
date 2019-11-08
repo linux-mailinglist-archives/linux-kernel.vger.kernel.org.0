@@ -2,189 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 126B5F47C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:52:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3FA0F4812
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:54:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390592AbfKHLw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:52:28 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33937 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388922AbfKHLwS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:52:18 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b72so4805466edf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 03:52:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IOnxCFh4YN+0QSSZGQhAPojghrwSZUgGpZPmxcpF31E=;
-        b=GjMU9TWSMias72NYZf8/pIAPsYqBU2Md+VpsSiGnnatFFveAw6xtOCFAzEi4WXWZHz
-         nRfnfimUDj7TuifnpQh3avxk4E2EOp9sjleGFUPM5EGuAX5M85TUlLhYwm1B4mQl9a2c
-         0QMn+HUckzrpkgHa6z0QEbNfrdWxRlJE0y1OA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IOnxCFh4YN+0QSSZGQhAPojghrwSZUgGpZPmxcpF31E=;
-        b=kfjY7YF+LXScjv7ByGyE5e5Mo4/NWY8VV0f/fH2GuP2C3lAK/4MYeSV05hz5OIW4/T
-         S+TCUi6es8xM2IBJCBbvDSOuaYxHlAYFswlzMDT+aiPlgWyriQXraFZkGLI/4ASt3afE
-         6U7tu0O1HzBymRQVxiEBF+jEqOoWj06xjrjzKpo/sgkbe0mREeo6Zml1ptggGgUeQYou
-         Ul/CHhGFUD5JozsQL2FRM2oMtH5SNFpzsAxhbR2+RnDFDrlHK1w1AsxYEa3E9pUhpLny
-         LUCtwAEflUN+uHk1oBhgc2aCvaJYjMobJOfEHS2ReoM55KIf7W6RaKhtXUca5BHXXPEU
-         mRWA==
-X-Gm-Message-State: APjAAAWnwLO8i1GMbGLM+SoyoxVpSJhxkwGiXGT6yUNmdwgD8geWyKYS
-        mS2ihxYdcrxh/tg+Scw9PSvK9rlQwrFtRg==
-X-Google-Smtp-Source: APXvYqz6Fid30lwxDwW5QQJsfkWwM18p2rCiP4kn7cGshbM1fsnvg/h5inSs+aci/J4bqRsdNABkag==
-X-Received: by 2002:a17:906:7c4e:: with SMTP id g14mr8043591ejp.150.1573213935779;
-        Fri, 08 Nov 2019 03:52:15 -0800 (PST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id e13sm129724edv.42.2019.11.08.03.52.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2019 03:52:14 -0800 (PST)
-Received: by mail-wr1-f41.google.com with SMTP id f2so6672292wrs.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 03:52:14 -0800 (PST)
-X-Received: by 2002:adf:e505:: with SMTP id j5mr7683403wrm.46.1573213933783;
- Fri, 08 Nov 2019 03:52:13 -0800 (PST)
+        id S2390871AbfKHLy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:54:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47290 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387515AbfKHLyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:54:24 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 27467ABE9;
+        Fri,  8 Nov 2019 11:54:22 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E52B31E155F; Fri,  8 Nov 2019 12:54:20 +0100 (CET)
+Date:   Fri, 8 Nov 2019 12:54:20 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Eric Whitney <enwlinux@gmail.com>
+Subject: Re: [PATCH] ext4: deaccount delayed allocations at freeing inode in
+ ext4_evict_inode()
+Message-ID: <20191108115420.GI20863@quack2.suse.cz>
+References: <157233344808.4027.17162642259754563372.stgit@buzz>
+ <20191108020827.15D1EAE056@d06av26.portsmouth.uk.ibm.com>
+ <d00c572b-66ae-42dc-746a-e2c365c9895a@yandex-team.ru>
 MIME-Version: 1.0
-References: <20191007174505.10681-1-ezequiel@collabora.com>
- <20191007174505.10681-2-ezequiel@collabora.com> <20191108111950.717db5ce@collabora.com>
-In-Reply-To: <20191108111950.717db5ce@collabora.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 8 Nov 2019 20:52:02 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DiAnP5pc4SoPV3aDM7k71wYmPtAHzN7thquf47EOioHw@mail.gmail.com>
-Message-ID: <CAAFQd5DiAnP5pc4SoPV3aDM7k71wYmPtAHzN7thquf47EOioHw@mail.gmail.com>
-Subject: Re: [PATCH v2 for 5.4 1/4] media: hantro: Fix s_fmt for dynamic
- resolution changes
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        kernel@collabora.com,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        fbuergisser@chromium.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="u3/rZRmxL6MmkK24"
+Content-Disposition: inline
+In-Reply-To: <d00c572b-66ae-42dc-746a-e2c365c9895a@yandex-team.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 7:20 PM Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
->
-> On Mon,  7 Oct 2019 14:45:02 -0300
-> Ezequiel Garcia <ezequiel@collabora.com> wrote:
->
-> > Commit 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
-> > changed the conditions under S_FMT was allowed for OUTPUT
-> > CAPTURE buffers.
-> >
-> > However, and according to the mem-to-mem stateless decoder specification,
-> > in order to support dynamic resolution changes, S_FMT should be allowed
-> > even if OUTPUT buffers have been allocated.
-> >
-> > Relax decoder S_FMT restrictions on OUTPUT buffers, allowing a resolution
-> > modification, provided the pixel format stays the same.
-> >
-> > Tested on RK3288 platforms using ChromiumOS Video Decode/Encode Accelerator Unittests.
-> >
-> > Fixes: 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
-> > Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> > --
-> > v2:
-> > * Call try_fmt_out before using the format,
-> >   pointed out by Philipp.
-> >
-> >  drivers/staging/media/hantro/hantro_v4l2.c | 28 +++++++++++++++-------
-> >  1 file changed, 19 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/staging/media/hantro/hantro_v4l2.c b/drivers/staging/media/hantro/hantro_v4l2.c
-> > index 3dae52abb96c..586d243cc3cc 100644
-> > --- a/drivers/staging/media/hantro/hantro_v4l2.c
-> > +++ b/drivers/staging/media/hantro/hantro_v4l2.c
-> > @@ -367,19 +367,26 @@ vidioc_s_fmt_out_mplane(struct file *file, void *priv, struct v4l2_format *f)
-> >  {
-> >       struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
-> >       struct hantro_ctx *ctx = fh_to_ctx(priv);
-> > +     struct vb2_queue *vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
-> >       const struct hantro_fmt *formats;
-> >       unsigned int num_fmts;
-> > -     struct vb2_queue *vq;
-> >       int ret;
-> >
-> > -     /* Change not allowed if queue is busy. */
-> > -     vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
-> > -     if (vb2_is_busy(vq))
-> > -             return -EBUSY;
-> > +     ret = vidioc_try_fmt_out_mplane(file, priv, f);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       if (!hantro_is_encoder_ctx(ctx)) {
-> >               struct vb2_queue *peer_vq;
-> >
-> > +             /*
-> > +              * In other to support dynamic resolution change,
->
->                       ^ order
->
-> > +              * the decoder admits a resolution change, as long
-> > +              * as the pixelformat remains. Can't be done if streaming.
-> > +              */
-> > +             if (vb2_is_streaming(vq) || (vb2_is_busy(vq) &&
-> > +                 pix_mp->pixelformat != ctx->src_fmt.pixelformat))
-> > +                     return -EBUSY;
->
-> Sorry to chime in only now, but I'm currently looking at the VP9 spec
-> and it seems the resolution is allowed to change dynamically [1] (I
-> guess the same applies to VP8). IIU the spec correctly, coded frames
-> using the new resolution can reference decoded frames using the old
-> one (can be higher or lower res BTW). If we force a streamoff to change
-> the resolution (as seems to be the case here), we'll lose those ref
-> frames (see the hantro_return_bufs() in stop streaming), right?
-> Hans, Tomasz, any idea how this dynamic resolution change could/should
-> be supported?
 
-The same problem applies to stateful decoders as well. This is an
-inherent limitation of the current V4L2 API. To handle this kind of
-streams we would have to make the format a per-buffer parameter,
-rather than per-queue as it is defined currently.
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Tomasz
+On Fri 08-11-19 11:30:56, Konstantin Khlebnikov wrote:
+> On 08/11/2019 05.08, Ritesh Harjani wrote:
+> > 
+> > 
+> > On 10/29/19 12:47 PM, Konstantin Khlebnikov wrote:
+> > > If inode->i_blocks is zero then ext4_evict_inode() skips ext4_truncate().
+> > > Delayed allocation extents are freed later in ext4_clear_inode() but this
+> > > happens when quota reference is already dropped. This leads to leak of
+> > > reserved space in quota block, which disappears after umount-mount.
+> > > 
+> > > This seems broken for a long time but worked somehow until recent changes
+> > > in delayed allocation.
+> > 
+> > Sorry, I may have missed it, but could you please help understand
+> > what recent changes in delayed allocation make this break or worse?
+> 
+> I don't see problem for 4.19. Haven't bisected yet.
+> Most likely this is around 'reserved cluster accounting'.
+> 
+> I suspect before these changes something always triggered da before
+> unlink and space usage committed and then truncated at eviction.
 
->
-> >               /*
-> >                * Since format change on the OUTPUT queue will reset
-> >                * the CAPTURE queue, we can't allow doing so
-> > @@ -389,12 +396,15 @@ vidioc_s_fmt_out_mplane(struct file *file, void *priv, struct v4l2_format *f)
-> >                                         V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-> >               if (vb2_is_busy(peer_vq))
-> >                       return -EBUSY;
-> > +     } else {
-> > +             /*
-> > +              * The encoder doesn't admit a format change if
-> > +              * there are OUTPUT buffers allocated.
-> > +              */
-> > +             if (vb2_is_busy(vq))
-> > +                     return -EBUSY;
-> >       }
-> >
-> > -     ret = vidioc_try_fmt_out_mplane(file, priv, f);
-> > -     if (ret)
-> > -             return ret;
-> > -
-> >       formats = hantro_get_formats(ctx, &num_fmts);
-> >       ctx->vpu_src_fmt = hantro_find_format(formats, num_fmts,
-> >                                             pix_mp->pixelformat);
->
-> [1] Section "5.16 Reference frame scaling" of
->     https://storage.googleapis.com/downloads.webmproject.org/docs/vp9/vp9-bitstream-specification-v0.6-20160331-draft.pdf
+Yes, I think it's commit 8fcc3a580651 "ext4: rework reserved cluster
+accounting when invalidating pages". Because that commit moved releasing of
+reserved space from page invalidation time to extent status tree eviction
+time. Does attached patch fix the problem for you?
+
+> > A silly query, since I couldn't figure it out. Maybe the code has been
+> > there ever since like this:-
+> 
+> > So why can't we just move drop_dquot later after the ext4_es_remove_extent() (in function ext4_clear_inode)? Any known
+> > problems around that?
+> 
+> Clear_inode is called also when inode evicts from cache while it has nlinks
+> and stays at disk. I'm not sure how this must interact with reserves.
+
+In that case all data should be written out for such inode and thus there
+should be no reserves...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--u3/rZRmxL6MmkK24
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0001-ext4-Fix-leak-of-quota-reservations.patch"
+
+From ee27836b579d3bf750d45cd7081d3433ea6fedd5 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Fri, 8 Nov 2019 12:45:11 +0100
+Subject: [PATCH] ext4: Fix leak of quota reservations
+
+Commit 8fcc3a580651 ("ext4: rework reserved cluster accounting when
+invalidating pages") moved freeing of delayed allocation reservations
+from dirty page invalidation time to time when we evict corresponding
+status extent from extent status tree. For inodes which don't have any
+blocks allocated this may actually happen only in ext4_clear_blocks()
+which is after we've dropped references to quota structures from the
+inode. Thus reservation of quota leaked. Fix the problem by clearing
+quota information from the inode only after evicting extent status tree
+in ext4_clear_inode().
+
+Reported-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Fixes: 8fcc3a580651 ("ext4: rework reserved cluster accounting when invalidating pages")
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/ext4/ialloc.c | 5 -----
+ fs/ext4/super.c  | 2 +-
+ 2 files changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index 764ff4c56233..564e2ceb8417 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -265,13 +265,8 @@ void ext4_free_inode(handle_t *handle, struct inode *inode)
+ 	ext4_debug("freeing inode %lu\n", ino);
+ 	trace_ext4_free_inode(inode);
+ 
+-	/*
+-	 * Note: we must free any quota before locking the superblock,
+-	 * as writing the quota to disk may need the lock as well.
+-	 */
+ 	dquot_initialize(inode);
+ 	dquot_free_inode(inode);
+-	dquot_drop(inode);
+ 
+ 	is_directory = S_ISDIR(inode->i_mode);
+ 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index dd654e53ba3d..9589f09a40f6 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1172,9 +1172,9 @@ void ext4_clear_inode(struct inode *inode)
+ {
+ 	invalidate_inode_buffers(inode);
+ 	clear_inode(inode);
+-	dquot_drop(inode);
+ 	ext4_discard_preallocations(inode);
+ 	ext4_es_remove_extent(inode, 0, EXT_MAX_BLOCKS);
++	dquot_drop(inode);
+ 	if (EXT4_I(inode)->jinode) {
+ 		jbd2_journal_release_jbd_inode(EXT4_JOURNAL(inode),
+ 					       EXT4_I(inode)->jinode);
+-- 
+2.16.4
+
+
+--u3/rZRmxL6MmkK24--
