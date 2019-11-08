@@ -2,323 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3AABF3F8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 06:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 873DBF3F7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 06:14:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfKHFPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 00:15:21 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:27230 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfKHFPU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 00:15:20 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id xA85E4ks007705;
-        Fri, 8 Nov 2019 14:14:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xA85E4ks007705
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1573190048;
-        bh=Idc6mhhIU6S0WcIeoVc6oZ1PavRhukf9adx3dsbfmJM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o5VnrpWiTwCFGElWIogo1yRRY5j5GEXQDEpRE10Lz9Qxusivjhgfi8l9jjIjZg/ZQ
-         gGAZHrFD6Z14HC00sqfn1HbFP6uDBWFQu9Wes1kX6i83m8hPsQqhOHCVbLGg1xQJQZ
-         oRCuUOKMu7vl4QlVeSrJy5YdHIinUPcqvAO/pw9RSFD6IK2qh8rb7BMxXjxhoQCHxf
-         Kl434j8D/YpeH5d5XQAMBo/aDl47I5TUQkee7BbQzzYCzAbhtHQuL/TGRSAIYZy4Xv
-         k69Jx/54rfQjoQ+/CVnr3svSOpG0on4jhNBVcNkqG+ttd5GuxI4x79jO3yNbD60vuH
-         WvHYkqO0/We5g==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Abdiel Janulgue <abdiel.janulgue@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
-        Paulo Zanoni <paulo.r.zanoni@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        dri-devel@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/i915: make more headers self-contained
-Date:   Fri,  8 Nov 2019 14:13:56 +0900
-Message-Id: <20191108051356.29980-2-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191108051356.29980-1-yamada.masahiro@socionext.com>
-References: <20191108051356.29980-1-yamada.masahiro@socionext.com>
+        id S1726394AbfKHFOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 00:14:40 -0500
+Received: from verein.lst.de ([213.95.11.211]:32868 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbfKHFOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 00:14:39 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6282368BE1; Fri,  8 Nov 2019 06:14:34 +0100 (CET)
+Date:   Fri, 8 Nov 2019 06:14:33 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        Guo Ren <guoren@kernel.org>, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guan Xuetao <gxt@pku.edu.cn>, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        openrisc@lists.librecores.org, linux-mtd@lists.infradead.org,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, linux-riscv@lists.infradead.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: generic-iomap tree for linux-next
+Message-ID: <20191108051433.GA29611@lst.de>
+References: <20191029064834.23438-1-hch@lst.de> <20191107204743.GA22863@lst.de> <20191108132000.3e7bd5b8@canb.auug.org.au> <20191108155248.0a32a03a@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108155248.0a32a03a@canb.auug.org.au>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The headers in the gem/selftests/, gt/selftests, gvt/, selftests/
-directories have never been compile-tested, but it would be possible
-to make them self-contained.
+On Fri, Nov 08, 2019 at 03:52:48PM +1100, Stephen Rothwell wrote:
+> Hi Christoph,
+> 
+> On Fri, 8 Nov 2019 13:20:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Thu, 7 Nov 2019 21:47:43 +0100 Christoph Hellwig <hch@lst.de> wrote:
+> > >
+> > > can you add the generic-ioremap tree:
+> > > 
+> > >    git://git.infradead.org/users/hch/ioremap.git
+> > > 
+> > > to linux-next?   
+> > 
+> > I assume you mean the for-next branch?
+> 
+> With that assumption, added from today.
 
-This commit only addresses missing <linux/types.h> and forward
-struct declarations.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/gpu/drm/i915/gem/selftests/mock_context.h | 3 +++
- drivers/gpu/drm/i915/gt/selftests/mock_timeline.h | 2 ++
- drivers/gpu/drm/i915/gvt/cmd_parser.h             | 4 ++++
- drivers/gpu/drm/i915/gvt/display.h                | 5 +++++
- drivers/gpu/drm/i915/gvt/edid.h                   | 4 ++++
- drivers/gpu/drm/i915/gvt/execlist.h               | 2 ++
- drivers/gpu/drm/i915/gvt/fb_decoder.h             | 2 ++
- drivers/gpu/drm/i915/gvt/hypercall.h              | 4 ++++
- drivers/gpu/drm/i915/gvt/interrupt.h              | 3 +++
- drivers/gpu/drm/i915/gvt/mmio.h                   | 2 ++
- drivers/gpu/drm/i915/gvt/page_track.h             | 3 +++
- drivers/gpu/drm/i915/gvt/sched_policy.h           | 3 +++
- drivers/gpu/drm/i915/selftests/mock_drm.h         | 2 ++
- drivers/gpu/drm/i915/selftests/mock_gtt.h         | 3 +++
- drivers/gpu/drm/i915/selftests/mock_region.h      | 5 +++++
- drivers/gpu/drm/i915/selftests/mock_uncore.h      | 3 +++
- 16 files changed, 50 insertions(+)
-
-diff --git a/drivers/gpu/drm/i915/gem/selftests/mock_context.h b/drivers/gpu/drm/i915/gem/selftests/mock_context.h
-index 0b926653914f..45de09ec28d1 100644
---- a/drivers/gpu/drm/i915/gem/selftests/mock_context.h
-+++ b/drivers/gpu/drm/i915/gem/selftests/mock_context.h
-@@ -7,6 +7,9 @@
- #ifndef __MOCK_CONTEXT_H
- #define __MOCK_CONTEXT_H
- 
-+struct drm_file;
-+struct drm_i915_private;
-+
- void mock_init_contexts(struct drm_i915_private *i915);
- 
- struct i915_gem_context *
-diff --git a/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h b/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h
-index 689efc66c908..d2bcc3df6183 100644
---- a/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h
-+++ b/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h
-@@ -7,6 +7,8 @@
- #ifndef __MOCK_TIMELINE__
- #define __MOCK_TIMELINE__
- 
-+#include <linux/types.h>
-+
- struct intel_timeline;
- 
- void mock_timeline_init(struct intel_timeline *timeline, u64 context);
-diff --git a/drivers/gpu/drm/i915/gvt/cmd_parser.h b/drivers/gpu/drm/i915/gvt/cmd_parser.h
-index 286703643002..ab25d151932a 100644
---- a/drivers/gpu/drm/i915/gvt/cmd_parser.h
-+++ b/drivers/gpu/drm/i915/gvt/cmd_parser.h
-@@ -38,6 +38,10 @@
- 
- #define GVT_CMD_HASH_BITS 7
- 
-+struct intel_gvt;
-+struct intel_shadow_wa_ctx;
-+struct intel_vgpu_workload;
-+
- void intel_gvt_clean_cmd_parser(struct intel_gvt *gvt);
- 
- int intel_gvt_init_cmd_parser(struct intel_gvt *gvt);
-diff --git a/drivers/gpu/drm/i915/gvt/display.h b/drivers/gpu/drm/i915/gvt/display.h
-index a87f33e6a23c..b59b34046e1e 100644
---- a/drivers/gpu/drm/i915/gvt/display.h
-+++ b/drivers/gpu/drm/i915/gvt/display.h
-@@ -35,6 +35,11 @@
- #ifndef _GVT_DISPLAY_H_
- #define _GVT_DISPLAY_H_
- 
-+#include <linux/types.h>
-+
-+struct intel_gvt;
-+struct intel_vgpu;
-+
- #define SBI_REG_MAX	20
- #define DPCD_SIZE	0x700
- 
-diff --git a/drivers/gpu/drm/i915/gvt/edid.h b/drivers/gpu/drm/i915/gvt/edid.h
-index f6dfc8b795ec..dfe0cbc6aad8 100644
---- a/drivers/gpu/drm/i915/gvt/edid.h
-+++ b/drivers/gpu/drm/i915/gvt/edid.h
-@@ -35,6 +35,10 @@
- #ifndef _GVT_EDID_H_
- #define _GVT_EDID_H_
- 
-+#include <linux/types.h>
-+
-+struct intel_vgpu;
-+
- #define EDID_SIZE		128
- #define EDID_ADDR		0x50 /* Linux hvm EDID addr */
- 
-diff --git a/drivers/gpu/drm/i915/gvt/execlist.h b/drivers/gpu/drm/i915/gvt/execlist.h
-index 5ccc2c695848..5c0c1fd30c83 100644
---- a/drivers/gpu/drm/i915/gvt/execlist.h
-+++ b/drivers/gpu/drm/i915/gvt/execlist.h
-@@ -35,6 +35,8 @@
- #ifndef _GVT_EXECLIST_H_
- #define _GVT_EXECLIST_H_
- 
-+#include <linux/types.h>
-+
- struct execlist_ctx_descriptor_format {
- 	union {
- 		u32 ldw;
-diff --git a/drivers/gpu/drm/i915/gvt/fb_decoder.h b/drivers/gpu/drm/i915/gvt/fb_decoder.h
-index 60c155085029..67b6ede9e707 100644
---- a/drivers/gpu/drm/i915/gvt/fb_decoder.h
-+++ b/drivers/gpu/drm/i915/gvt/fb_decoder.h
-@@ -36,6 +36,8 @@
- #ifndef _GVT_FB_DECODER_H_
- #define _GVT_FB_DECODER_H_
- 
-+#include <linux/types.h>
-+
- #define _PLANE_CTL_FORMAT_SHIFT		24
- #define _PLANE_CTL_TILED_SHIFT		10
- #define _PIPE_V_SRCSZ_SHIFT		0
-diff --git a/drivers/gpu/drm/i915/gvt/hypercall.h b/drivers/gpu/drm/i915/gvt/hypercall.h
-index 4862fb12778e..9599c0a762b2 100644
---- a/drivers/gpu/drm/i915/gvt/hypercall.h
-+++ b/drivers/gpu/drm/i915/gvt/hypercall.h
-@@ -33,6 +33,10 @@
- #ifndef _GVT_HYPERCALL_H_
- #define _GVT_HYPERCALL_H_
- 
-+#include <linux/types.h>
-+
-+struct device;
-+
- enum hypervisor_type {
- 	INTEL_GVT_HYPERVISOR_XEN = 0,
- 	INTEL_GVT_HYPERVISOR_KVM,
-diff --git a/drivers/gpu/drm/i915/gvt/interrupt.h b/drivers/gpu/drm/i915/gvt/interrupt.h
-index 5313fb1b33e1..fcd663811d37 100644
---- a/drivers/gpu/drm/i915/gvt/interrupt.h
-+++ b/drivers/gpu/drm/i915/gvt/interrupt.h
-@@ -32,6 +32,8 @@
- #ifndef _GVT_INTERRUPT_H_
- #define _GVT_INTERRUPT_H_
- 
-+#include <linux/types.h>
-+
- enum intel_gvt_event_type {
- 	RCS_MI_USER_INTERRUPT = 0,
- 	RCS_DEBUG,
-@@ -135,6 +137,7 @@ enum intel_gvt_event_type {
- 
- struct intel_gvt_irq;
- struct intel_gvt;
-+struct intel_vgpu;
- 
- typedef void (*gvt_event_virt_handler_t)(struct intel_gvt_irq *irq,
- 	enum intel_gvt_event_type event, struct intel_vgpu *vgpu);
-diff --git a/drivers/gpu/drm/i915/gvt/mmio.h b/drivers/gpu/drm/i915/gvt/mmio.h
-index 5874f1cb4306..2e68f4b02c94 100644
---- a/drivers/gpu/drm/i915/gvt/mmio.h
-+++ b/drivers/gpu/drm/i915/gvt/mmio.h
-@@ -36,6 +36,8 @@
- #ifndef _GVT_MMIO_H_
- #define _GVT_MMIO_H_
- 
-+#include <linux/types.h>
-+
- struct intel_gvt;
- struct intel_vgpu;
- 
-diff --git a/drivers/gpu/drm/i915/gvt/page_track.h b/drivers/gpu/drm/i915/gvt/page_track.h
-index fa607a71c3c0..f6eb7135583c 100644
---- a/drivers/gpu/drm/i915/gvt/page_track.h
-+++ b/drivers/gpu/drm/i915/gvt/page_track.h
-@@ -25,6 +25,9 @@
- #ifndef _GVT_PAGE_TRACK_H_
- #define _GVT_PAGE_TRACK_H_
- 
-+#include <linux/types.h>
-+
-+struct intel_vgpu;
- struct intel_vgpu_page_track;
- 
- typedef int (*gvt_page_track_handler_t)(
-diff --git a/drivers/gpu/drm/i915/gvt/sched_policy.h b/drivers/gpu/drm/i915/gvt/sched_policy.h
-index 7b59e3e88b8b..3dacdad5f529 100644
---- a/drivers/gpu/drm/i915/gvt/sched_policy.h
-+++ b/drivers/gpu/drm/i915/gvt/sched_policy.h
-@@ -34,6 +34,9 @@
- #ifndef __GVT_SCHED_POLICY__
- #define __GVT_SCHED_POLICY__
- 
-+struct intel_gvt;
-+struct intel_vgpu;
-+
- struct intel_gvt_sched_policy_ops {
- 	int (*init)(struct intel_gvt *gvt);
- 	void (*clean)(struct intel_gvt *gvt);
-diff --git a/drivers/gpu/drm/i915/selftests/mock_drm.h b/drivers/gpu/drm/i915/selftests/mock_drm.h
-index b39beee9f8f6..5f2aba843fa8 100644
---- a/drivers/gpu/drm/i915/selftests/mock_drm.h
-+++ b/drivers/gpu/drm/i915/selftests/mock_drm.h
-@@ -25,6 +25,8 @@
- #ifndef __MOCK_DRM_H
- #define __MOCK_DRM_H
- 
-+struct drm_i915_private;
-+
- struct drm_file *mock_file(struct drm_i915_private *i915);
- void mock_file_free(struct drm_i915_private *i915, struct drm_file *file);
- 
-diff --git a/drivers/gpu/drm/i915/selftests/mock_gtt.h b/drivers/gpu/drm/i915/selftests/mock_gtt.h
-index 3387393286de..e3f224f43beb 100644
---- a/drivers/gpu/drm/i915/selftests/mock_gtt.h
-+++ b/drivers/gpu/drm/i915/selftests/mock_gtt.h
-@@ -25,6 +25,9 @@
- #ifndef __MOCK_GTT_H
- #define __MOCK_GTT_H
- 
-+struct drm_i915_private;
-+struct i915_ggtt;
-+
- void mock_init_ggtt(struct drm_i915_private *i915, struct i915_ggtt *ggtt);
- void mock_fini_ggtt(struct i915_ggtt *ggtt);
- 
-diff --git a/drivers/gpu/drm/i915/selftests/mock_region.h b/drivers/gpu/drm/i915/selftests/mock_region.h
-index 24608089d833..329bf74dfaca 100644
---- a/drivers/gpu/drm/i915/selftests/mock_region.h
-+++ b/drivers/gpu/drm/i915/selftests/mock_region.h
-@@ -6,6 +6,11 @@
- #ifndef __MOCK_REGION_H
- #define __MOCK_REGION_H
- 
-+#include <linux/types.h>
-+
-+struct drm_i915_private;
-+struct intel_memory_region;
-+
- struct intel_memory_region *
- mock_region_create(struct drm_i915_private *i915,
- 		   resource_size_t start,
-diff --git a/drivers/gpu/drm/i915/selftests/mock_uncore.h b/drivers/gpu/drm/i915/selftests/mock_uncore.h
-index 8a2cc553f466..7acf1ef4d488 100644
---- a/drivers/gpu/drm/i915/selftests/mock_uncore.h
-+++ b/drivers/gpu/drm/i915/selftests/mock_uncore.h
-@@ -25,6 +25,9 @@
- #ifndef __MOCK_UNCORE_H
- #define __MOCK_UNCORE_H
- 
-+struct drm_i915_private;
-+struct intel_uncore;
-+
- void mock_uncore_init(struct intel_uncore *uncore,
- 		      struct drm_i915_private *i915);
- 
--- 
-2.17.1
-
+Yes, and thanks!
