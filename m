@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98929F5023
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99008F5025
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:48:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbfKHPry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 10:47:54 -0500
+        id S1726949AbfKHPsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 10:48:00 -0500
 Received: from mga01.intel.com ([192.55.52.88]:28413 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfKHPry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726049AbfKHPry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Nov 2019 10:47:54 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,11 +17,11 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 07:47:54 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,281,1569308400"; 
-   d="scan'208";a="377794945"
+   d="scan'208";a="377794951"
 Received: from nupoorko-mobl1.amr.corp.intel.com (HELO [10.251.157.201]) ([10.251.157.201])
-  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2019 07:47:44 -0800
-Subject: Re: [alsa-devel] [PATCH 07/14] soundwire: add initial definitions for
- sdw_master_device
+  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2019 07:47:47 -0800
+Subject: Re: [alsa-devel] [PATCH 1/4] soundwire: sdw_slave: add new fields to
+ track probe status
 To:     Vinod Koul <vkoul@kernel.org>
 Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
         gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
@@ -31,18 +31,18 @@ Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
         Sanyog Kale <sanyog.r.kale@intel.com>,
         Bard liao <yung-chuan.liao@linux.intel.com>,
         Rander Wang <rander.wang@linux.intel.com>
-References: <20191023212823.608-1-pierre-louis.bossart@linux.intel.com>
- <20191023212823.608-8-pierre-louis.bossart@linux.intel.com>
- <20191103063051.GJ2695@vkoul-mobl.Dlink>
- <9a8fb9ec-1ccb-4931-1ec6-bfae043e8c88@linux.intel.com>
- <20191108040427.GT952516@vkoul-mobl>
+References: <20191023210657.32440-1-pierre-louis.bossart@linux.intel.com>
+ <20191023210657.32440-2-pierre-louis.bossart@linux.intel.com>
+ <20191103045604.GE2695@vkoul-mobl.Dlink>
+ <f53b28bb-1ec7-a400-54ed-51fd55819ecd@linux.intel.com>
+ <20191108042940.GW952516@vkoul-mobl>
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <d20c13c2-ffed-1147-769f-a483d4d9847b@linux.intel.com>
-Date:   Fri, 8 Nov 2019 08:41:58 -0600
+Message-ID: <e3e10c25-84dc-f4e7-e94b-d18493450021@linux.intel.com>
+Date:   Fri, 8 Nov 2019 08:55:41 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <20191108040427.GT952516@vkoul-mobl>
+In-Reply-To: <20191108042940.GW952516@vkoul-mobl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -53,61 +53,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 11/7/19 10:04 PM, Vinod Koul wrote:
-> On 04-11-19, 08:42, Pierre-Louis Bossart wrote:
+On 11/7/19 10:29 PM, Vinod Koul wrote:
+> On 04-11-19, 08:32, Pierre-Louis Bossart wrote:
 >>
 >>
->> On 11/3/19 1:30 AM, Vinod Koul wrote:
->>> On 23-10-19, 16:28, Pierre-Louis Bossart wrote:
->>>> Since we want an explicit support for the SoundWire Master device, add
->>>> the definitions, following the Grey Bus example.
+>> On 11/2/19 11:56 PM, Vinod Koul wrote:
+>>> On 23-10-19, 16:06, Pierre-Louis Bossart wrote:
+>>>> Changes to the sdw_slave structure needed to solve race conditions on
+>>>> driver probe.
+>>>
+>>> Can you please explain the race you have observed, it would be a very
+>>> useful to document it as well
+>>
+>> the races are explained in the [PATCH 00/18] soundwire: code hardening and
+>> suspend-resume support series.
+> 
+> It would make sense to explain it here as well to give details to
+> reviewers, there is nothing wrong with too much detail!
+> 
 >>>>
->>>> Open: do we need to set a variable when dealing with the master uevent?
+>>>> The functionality is added in the next patch.
 >>>
->>> I dont think we want that or we need that!
+>>> which one..?
 >>
->> In GreyBus there are events and variables set, not sure what they were used
->> for. The code works without setting an event, but we'd need to make a
->> conscious design decision, and I am not too sure what usersace would use the
->> informatio for.
->>
->>>
->>> And to prevent that rather than adding a variable, can you please
->>> modify the device_type and use separate ones for master_device and
->>> slave_device
->>
->> sorry, I don't get the comment. There is only already a different device
->> type
->>
->>
->> struct bus_type sdw_bus_type = {
->> 	.name = "soundwire",
->> 	.match = sdw_bus_match,
->> 	.uevent = sdw_uevent,
+>> [PATCH 00/18] soundwire: code hardening and suspend-resume support
 > 
-> We can remove this
+> Yeah great! let me play detective with 18 patch series. I asked for a
+> patch and got a series!
 > 
->> };
->>
->> struct device_type sdw_slave_type = {
->> 	.name =		"sdw_slave",
->> 	.release =	sdw_slave_release,
-> 
-> Add here:
-> 
->          uevent = sdw_uevent,
-> 
->> };
->>
->> struct device_type sdw_md_type = {
->> 	.name =		"soundwire_master",
->> 	.release =	sdw_md_release,
->> };
-> 
-> And not have here!
-> 
-> Problem solved!
+> Again, please help the maintainer to help you. We would love to see this
+> merged as well, but please step up and give more details in cover
+> letter and changelogs. I shouldn't need to do guesswork and scan through the
+> inbox to find the context!
 
-I will give it a try but I don't know what the 'problem' was.
-The code works as is, and btw you are commenting on the wrong version of 
-the series, v2 was sent yesterday.
+We are clearly not going anywhere.
+
+I partitioned the patches to make your maintainer life easier and help 
+the integration of SoundWire across two trees. All I get is negative 
+feedback, grand-standing, and zero comments on actual changes.
+
+For the record, I am mindful of reviewer/maintainer workload, and I did 
+contact you in September to check your availability and provided a 
+pointer to initial code changes. I did send a first version a week prior 
+to your travel/vacation, I resend another version when you were back and 
+waited yet another two weeks to resend a second version. I also 
+contacted Takashi, Mark and you to suggest this code partition, and did 
+not get any pushback. It's not like I am pushing stuff down your throat, 
+I have been patient and considerate.
+
+Please start with the patches "soundwire: code hardening and 
+suspend-resume support" and come back to this interface description when 
+you have reviewed these changes. It's not detective work, it's working 
+around the consequences of having separate trees for Audio and SoundWire.
+
