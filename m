@@ -2,101 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8EF6F5A17
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C530F5A11
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732602AbfKHVfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:35:01 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:59311 "EHLO
+        id S1732881AbfKHVes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:34:48 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:58019 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733060AbfKHVez (ORCPT
+        with ESMTP id S1726900AbfKHVes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:34:55 -0500
+        Fri, 8 Nov 2019 16:34:48 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MLzSD-1iBFNN1WBV-00Hvwr; Fri, 08 Nov 2019 22:34:36 +0100
+ 1Mt7Ll-1he6UG37Rx-00tSYX; Fri, 08 Nov 2019 22:34:45 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Windsor <dwindsor@redhat.com>, cluster-devel@redhat.com
-Subject: [PATCH 04/16] dlm: use SO_SNDTIMEO_NEW instead of SO_SNDTIMEO_OLD
-Date:   Fri,  8 Nov 2019 22:32:42 +0100
-Message-Id: <20191108213257.3097633-5-arnd@arndb.de>
+To:     y2038@lists.linaro.org, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 05/16] xtensa: ISS: avoid struct timeval
+Date:   Fri,  8 Nov 2019 22:32:43 +0100
+Message-Id: <20191108213257.3097633-6-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108213257.3097633-1-arnd@arndb.de>
 References: <20191108213257.3097633-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:uHa/QjAGTByeAkpaDyB/vmnZ68MBZaHn8BbKmiyg4MIyd5kOgr/
- oPvkjfCzukaGEqPfPs46BihWpfl4F/gQJ3kQGEB+v25O7LUWaxKwPkPAcNHU8h+MQbnVZAN
- hd62BomG6NZ5ED6zjrQMrcCfz99gcXhaVP2VS/iuTaIzr8doR+4KM9eIgD8Ug2xmWNmrivZ
- JpWyIOQrq1vNgXmSWjp0A==
+X-Provags-ID: V03:K1:bIxykHQtSe97eNRKLWHHi2P7ZpF4kFV26LIaUxopMvMff0Y6TwS
+ EHpMHJbnqxFRE8Lm5mODfRoD+r3eac3XJ0c2PcWDZciqhG0ddLpIau+NTbR+edYv8nKhw4c
+ x4o34A3GVlLMI4yZ3Ma/1hhqFfNBaWeZIjAeJ37oPMTD+TXbHKYAq6eu7I8i9slW930BcPK
+ uhy384Y8WEvKnM/Tfn7NA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Qd/hYklCPQw=:UXlIHNa+YNOfgmM92uODnY
- g60pWnm0PQin6NlohRtJRMf0RxVHPW8A/DGP+UHxznP/Ger+UlSBqc2mbMr0hiW0ds3eyJVPh
- OhSJFdBuRA22S+jqbdejdgkWLcJ/202e43Vy6IjyKOyOrRMy6FDKP+bM/frQA6NFGduzOfvFy
- 4lQxVB6UfEWFmsIV7Y4srgYNNUlK4Qp1BuOFcA206mOMH2dKzCOfEQCtRnz7XZqSvmuBUyRxm
- 72YtEOhqf+OV5PWrRo0MBLhSWamU8PWM4ZZK85PKCx8AG4RelG3GAFLXH23v/AG3gFDspXUBJ
- 8WQnlWqDch6EfdHCBcykfnayrAsX0d5zpRL3hrDAIQP2WRb6g+p2wV9Ktu2yW+6RsYM1YcJiR
- eAIVUFE4MuzRm3uvYjcGnJ3/UEjBiPrQOqkbgoN8mKPbNmFddlukm3WSrUza/gUpQR7i/7dw9
- 1d9x706JHtWe4fwEM8IzLGSYbkjiWuBJnxGLavzbPfXwvMYzV4x52IJxGbWVdu6DqNNNENbWw
- SUsk2UlFELckfxqSsK6Agai0whttWZ7nw60jpxXzeqJ3OiwHy+o/f3o/X5etTlxaHcnaD/1KW
- ztWcZ2okEcUFPNbVrOjKvg85SIqZq3ns/6iamtrEjhHPpCRqk2qGgsw71obLWVv2nssAtg17m
- vixTARz6rY5KMGRim7d+ffqBUmtFXeeTuNlOlLwPymIjHmeTALMTBHUMJUn9cVBNtBsziCiR9
- MPzcK0XbjKvQoazaLhrBabqX5LKRsUQs+NTs7t6b/MHfgx6NC9wMcWiPdQBPuDmKuO55EddN0
- zFxE3gb5DxTIPtjdhxPCslQ8VcNyjsEwsGIOsr/uxsNKCRaDgfWpC9xqsqg7kTWMzyADnSB0s
- UmKbhjv3Lbk+snafAvhA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lglGieAmDc8=:3SS5HATOoJTa0ueQh98NLR
+ Txq527OJbLubazTSr+uZbynA65G8JKR8FiyGu6CNvP0AQ32h7g+xGSpr8KDkgjg6Ph960bVun
+ ri/dCTTEQHWtfX6vfF++BnXPBMt2QpLEs8w5KGiRvroySsmvXQmcbV+wc7xDMIuH+cn1qZHzL
+ CPeNZkgShvd+R/OkvTA8qME4QJiIfM1AqQgOwgn2jd5M7Z6E+47pk7FqrYJAbA9yoGo0ZhDbB
+ Yc4J6nLzSqtbccBN1wvVGMgx4qBsJWdnA6ZZj0b7nNJ6hKvNGIn2qGzKh/eXQ7Khbo0TC1o60
+ HahpmBei2f6Ju7rWmM/Fy66k473y7VhiRgBI6vmRJSu5BtcS35JReSDDVeBEbmWWqK1c6Byu0
+ fZHcfeu0a4UuTijAKQvBXiDX6dcGPb7gOfPq9xCgEY9G2QyPBg4Ob6L24lFxO+bJL1dRnK9Xu
+ sLeNB980MVhsnNP2zMLm+bRUSlunldL+oXLle4T1UkEf+arXhxLduDNjJEOz374eWKw7VlTtG
+ T9OyLt2wqJseNFgNDd6xPu7Ub7jEASZ0k18yZxD6XTUo0BVVAy4ZgD22x5F5MkZnkYIzeDITN
+ IxyZ7hiMFPnSQSPWDzxwRSu26Sf0Lk+xqOfuHxg2Z2kCn0Tb3ny49wvlFUuAQLik+3o3bPUHR
+ Chfejv9lBsD9zZCeU+njQadrcMbzdweuiX7UlWBYTp2FAKgFs6EssCzXKuXLNE4DA0zV/X8Z5
+ 0OtdBvZ6j7Sp/25taXA+vU7QaGjufxoDIR7QUh74aFmFBHAh5baLWAZ6cQG6wmWUpA5Qv8Rkf
+ misaXsiy87/On/4iHib79b4GzF3K3vcELrp1Cg9qkAnKZTQMWgA5ri9eaF6RecZ1hG3JSwyQg
+ 5lu1Uf1n9ZMLp209ZYTg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eliminate one more use of 'struct timeval' from the kernel so
-we can eventually remove the definition as well.
-
-The kernel supports the new format with a 64-bit time_t version
-of timeval here, so use that instead of the old timeval.
+'struct timeval' will get removed from the kernel, change the one
+user in arch/xtensa to avoid referencing it, by using a fixed-length
+array instead.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/dlm/lowcomms.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/xtensa/platforms/iss/include/platform/simcall.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-index 3951d39b9b75..cdfaf4f0e11a 100644
---- a/fs/dlm/lowcomms.c
-+++ b/fs/dlm/lowcomms.c
-@@ -1035,7 +1035,7 @@ static void sctp_connect_to_sock(struct connection *con)
- 	int result;
- 	int addr_len;
- 	struct socket *sock;
--	struct timeval tv = { .tv_sec = 5, .tv_usec = 0 };
-+	struct __kernel_sock_timeval tv = { .tv_sec = 5, .tv_usec = 0 };
+diff --git a/arch/xtensa/platforms/iss/include/platform/simcall.h b/arch/xtensa/platforms/iss/include/platform/simcall.h
+index 2ba45858e50a..4e2a48380dbf 100644
+--- a/arch/xtensa/platforms/iss/include/platform/simcall.h
++++ b/arch/xtensa/platforms/iss/include/platform/simcall.h
+@@ -113,9 +113,9 @@ static inline int simc_write(int fd, const void *buf, size_t count)
  
- 	if (con->nodeid == 0) {
- 		log_print("attempt to connect sock 0 foiled");
-@@ -1087,12 +1087,12 @@ static void sctp_connect_to_sock(struct connection *con)
- 	 * since O_NONBLOCK argument in connect() function does not work here,
- 	 * then, we should restore the default value of this attribute.
- 	 */
--	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
-+	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_NEW, (char *)&tv,
- 			  sizeof(tv));
- 	result = sock->ops->connect(sock, (struct sockaddr *)&daddr, addr_len,
- 				   0);
- 	memset(&tv, 0, sizeof(tv));
--	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
-+	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_NEW, (char *)&tv,
- 			  sizeof(tv));
+ static inline int simc_poll(int fd)
+ {
+-	struct timeval tv = { .tv_sec = 0, .tv_usec = 0 };
++	long timeval[2] = { 0, 0 };
  
- 	if (result == -EINPROGRESS)
+-	return __simc(SYS_select_one, fd, XTISS_SELECT_ONE_READ, (int)&tv);
++	return __simc(SYS_select_one, fd, XTISS_SELECT_ONE_READ, (int)&timeval);
+ }
+ 
+ static inline int simc_lseek(int fd, uint32_t off, int whence)
 -- 
 2.20.0
 
