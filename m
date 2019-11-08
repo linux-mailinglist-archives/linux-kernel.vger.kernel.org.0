@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD51F5539
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 852B8F56F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390058AbfKHTBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58226 "EHLO mail.kernel.org"
+        id S2389324AbfKHTOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:14:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390021AbfKHTA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:56 -0500
+        id S2391316AbfKHTGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:06:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB9A42067B;
-        Fri,  8 Nov 2019 19:00:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAB6E22500;
+        Fri,  8 Nov 2019 18:59:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239656;
-        bh=HrRc/uzkTfFPv0L8nCGXB774/xM81RQM7rhRnnprTsk=;
+        s=default; t=1573239560;
+        bh=iha3b15r24zaUNZ4xERM8q/9md4soFmz8jACeueBba8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fhtbjmjcqmLSebKEdoq3SsRsHGM3B74+0wAayhV2FskE0SbCqncFgMCRpEC7tLdm2
-         /JUNw1ROw3S+kBg808wMlDEGt7HdvBhIESGQCWA8feVF10jphN6mDktavDuUjoL+Ld
-         TecNoMK9bOehGG6Cvt9ZKAZ6TDsYrpzsHgDUb8ic=
+        b=2C+Ccl/WUDfkBmJezDFSO45YygFuHT6Jp7d7X3674krupUZWXnecOvAmIuZEZbTlX
+         wNRS0th4iU3TkJvLbqBoD+jZLuzBBc8xO3s1V3b2IRNXNq/nBTKrlvpkUBhcSr9HMJ
+         IM7bzNjUb+gFrmca0cWhvOxoTioC9tTcSedg3YUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        stable@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 17/79] scsi: sni_53c710: fix compilation error
+Subject: [PATCH 4.14 09/62] scsi: scsi_dh_alua: handle RTPG sense code correctly during state transitions
 Date:   Fri,  8 Nov 2019 19:49:57 +0100
-Message-Id: <20191108174754.313536921@linuxfoundation.org>
+Message-Id: <20191108174728.953055636@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Hannes Reinecke <hare@suse.com>
 
-[ Upstream commit 0ee6211408a8e939428f662833c7301394125b80 ]
+[ Upstream commit b6ce6fb121a655aefe41dccc077141c102145a37 ]
 
-Drop out memory dev_printk() with wrong device pointer argument.
+Some arrays are not capable of returning RTPG data during state
+transitioning, but rather return an 'LUN not accessible, asymmetric access
+state transition' sense code. In these cases we can set the state to
+'transitioning' directly and don't need to evaluate the RTPG data (which we
+won't have anyway).
 
-[mkp: typo]
-
-Link: https://lore.kernel.org/r/20191009151118.32350-1-tbogendoerfer@suse.de
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Link: https://lore.kernel.org/r/20191007135701.32389-1-hare@suse.de
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/sni_53c710.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/scsi/device_handler/scsi_dh_alua.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/sni_53c710.c b/drivers/scsi/sni_53c710.c
-index 1f9a087daf69f..3102a75984d3b 100644
---- a/drivers/scsi/sni_53c710.c
-+++ b/drivers/scsi/sni_53c710.c
-@@ -78,10 +78,8 @@ static int snirm710_probe(struct platform_device *dev)
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index 41f5f64101630..135376ee2cbf0 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -523,6 +523,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 	unsigned int tpg_desc_tbl_off;
+ 	unsigned char orig_transition_tmo;
+ 	unsigned long flags;
++	bool transitioning_sense = false;
  
- 	base = res->start;
- 	hostdata = kzalloc(sizeof(*hostdata), GFP_KERNEL);
--	if (!hostdata) {
--		dev_printk(KERN_ERR, dev, "Failed to allocate host data\n");
-+	if (!hostdata)
- 		return -ENOMEM;
--	}
+ 	if (!pg->expiry) {
+ 		unsigned long transition_tmo = ALUA_FAILOVER_TIMEOUT * HZ;
+@@ -567,13 +568,19 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 			goto retry;
+ 		}
+ 		/*
+-		 * Retry on ALUA state transition or if any
+-		 * UNIT ATTENTION occurred.
++		 * If the array returns with 'ALUA state transition'
++		 * sense code here it cannot return RTPG data during
++		 * transition. So set the state to 'transitioning' directly.
+ 		 */
+ 		if (sense_hdr.sense_key == NOT_READY &&
+-		    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a)
+-			err = SCSI_DH_RETRY;
+-		else if (sense_hdr.sense_key == UNIT_ATTENTION)
++		    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a) {
++			transitioning_sense = true;
++			goto skip_rtpg;
++		}
++		/*
++		 * Retry on any other UNIT ATTENTION occurred.
++		 */
++		if (sense_hdr.sense_key == UNIT_ATTENTION)
+ 			err = SCSI_DH_RETRY;
+ 		if (err == SCSI_DH_RETRY &&
+ 		    pg->expiry != 0 && time_before(jiffies, pg->expiry)) {
+@@ -661,7 +668,11 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 		off = 8 + (desc[7] * 4);
+ 	}
  
- 	hostdata->dev = &dev->dev;
- 	dma_set_mask(&dev->dev, DMA_BIT_MASK(32));
++ skip_rtpg:
+ 	spin_lock_irqsave(&pg->lock, flags);
++	if (transitioning_sense)
++		pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
++
+ 	sdev_printk(KERN_INFO, sdev,
+ 		    "%s: port group %02x state %c %s supports %c%c%c%c%c%c%c\n",
+ 		    ALUA_DH_NAME, pg->group_id, print_alua_state(pg->state),
 -- 
 2.20.1
 
