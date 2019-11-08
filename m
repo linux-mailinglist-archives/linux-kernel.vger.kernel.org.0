@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D39DCF4AAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A59E0F4ADA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733306AbfKHLjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:39:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52044 "EHLO mail.kernel.org"
+        id S2388629AbfKHMLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:11:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733053AbfKHLjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:39:07 -0500
+        id S1733127AbfKHLjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:39:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5A0120869;
-        Fri,  8 Nov 2019 11:39:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4D7521D6C;
+        Fri,  8 Nov 2019 11:39:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213146;
-        bh=JT53lHzlxTCvHdD2h1AKBQEq+cdCUIcoomU7kVIRX94=;
+        s=default; t=1573213151;
+        bh=fb+uDVLzQj+oXotwUSncvB4df9zFhWnG3pcDqa1qYLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zS1NjXeAYrql3FpZs96bc4c3cGC8PZYln240rco/nnyShsfrDv2Q+afNO5LDiYDyw
-         9r+D3X0ALz4M86v+6gl8RY6LqvpwIGDQDKUBv+YML1HCQ/YZWk159WGZDcmVuYNzdA
-         5ZN/g7wIoIzrHN9pbFzDYTmZSnfjm8D+SnHXLYUg=
+        b=NbftafiIkkA6f58NU9qzOLsPE/n+7d1Bec+ceHqLED0Q24V88IpSxGuPRI6EK1KvY
+         +QtsxFunXgCnbMwPUEOjWK/nlxO3ONS7GeofPi/mZ1qJuIuh6N9umYiH5HFLgsId0l
+         W2OApOtKNuhUjaEUmx6iHc8y7YkPtLvStG01b+AU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 057/205] iwlwifi: don't WARN on trying to dump dead firmware
-Date:   Fri,  8 Nov 2019 06:35:24 -0500
-Message-Id: <20191108113752.12502-57-sashal@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 060/205] media: i2c: Fix pm_runtime_get_if_in_use() usage in sensor drivers
+Date:   Fri,  8 Nov 2019 06:35:27 -0500
+Message-Id: <20191108113752.12502-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,49 +44,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-[ Upstream commit 84f260251ed8153e84c64eb2c5278ab18d3ddef6 ]
+[ Upstream commit 4d471563d87b2b83e73b8abffb9273950e6d2e36 ]
 
-There's no point in warning here, the user will just get an
-error back to the debugfs file write, and warning just makes
-it seem like there's an internal consistency problem when in
-reality the user just happened to hit this at a bad time.
-Remove the warning.
+pm_runtime_get_if_in_use() returns -EINVAL if runtime PM is disabled. This
+should not be considered an error. Generally the driver has enabled
+runtime PM already so getting this error due to runtime PM being disabled
+will not happen.
 
-Fixes: f45f979dc208 ("iwlwifi: mvm: disable dbg data collect when fw isn't alive")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Instead of checking for lesser or equal to zero, check for zero only.
+Address this for drivers where this pattern exists.
+
+This patch has been produced using the following command:
+
+$ git grep -l pm_runtime_get_if_in_use -- drivers/media/i2c/ | \
+  xargs perl -i -pe 's/(pm_runtime_get_if_in_use\(.*\)) \<\= 0/!$1/'
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/media/i2c/ov13858.c | 2 +-
+ drivers/media/i2c/ov2685.c  | 2 +-
+ drivers/media/i2c/ov5670.c  | 2 +-
+ drivers/media/i2c/ov5695.c  | 2 +-
+ drivers/media/i2c/ov7740.c  | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index a31a42e673c46..8070b2d4c46fe 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -1016,7 +1016,7 @@ int iwl_fw_dbg_collect_desc(struct iwl_fw_runtime *fwrt,
- 	 * If the loading of the FW completed successfully, the next step is to
- 	 * get the SMEM config data. Thus, if fwrt->smem_cfg.num_lmacs is non
- 	 * zero, the FW was already loaded successully. If the state is "NO_FW"
--	 * in such a case - WARN and exit, since FW may be dead. Otherwise, we
-+	 * in such a case - exit, since FW may be dead. Otherwise, we
- 	 * can try to collect the data, since FW might just not be fully
- 	 * loaded (no "ALIVE" yet), and the debug data is accessible.
- 	 *
-@@ -1024,9 +1024,8 @@ int iwl_fw_dbg_collect_desc(struct iwl_fw_runtime *fwrt,
- 	 *	config. In such a case, due to HW access problems, we might
- 	 *	collect garbage.
+diff --git a/drivers/media/i2c/ov13858.c b/drivers/media/i2c/ov13858.c
+index a66f6201f53c7..0e7a85c4996c7 100644
+--- a/drivers/media/i2c/ov13858.c
++++ b/drivers/media/i2c/ov13858.c
+@@ -1230,7 +1230,7 @@ static int ov13858_set_ctrl(struct v4l2_ctrl *ctrl)
+ 	 * Applying V4L2 control value only happens
+ 	 * when power is up for streaming
  	 */
--	if (WARN((fwrt->trans->state == IWL_TRANS_NO_FW) &&
--		 fwrt->smem_cfg.num_lmacs,
--		 "Can't collect dbg data when FW isn't alive\n"))
-+	if (fwrt->trans->state == IWL_TRANS_NO_FW &&
-+	    fwrt->smem_cfg.num_lmacs)
- 		return -EIO;
+-	if (pm_runtime_get_if_in_use(&client->dev) <= 0)
++	if (!pm_runtime_get_if_in_use(&client->dev))
+ 		return 0;
  
- 	if (test_and_set_bit(IWL_FWRT_STATUS_DUMPING, &fwrt->status))
+ 	ret = 0;
+diff --git a/drivers/media/i2c/ov2685.c b/drivers/media/i2c/ov2685.c
+index 385c1886a9470..98a1f2e312b58 100644
+--- a/drivers/media/i2c/ov2685.c
++++ b/drivers/media/i2c/ov2685.c
+@@ -549,7 +549,7 @@ static int ov2685_set_ctrl(struct v4l2_ctrl *ctrl)
+ 		break;
+ 	}
+ 
+-	if (pm_runtime_get_if_in_use(&client->dev) <= 0)
++	if (!pm_runtime_get_if_in_use(&client->dev))
+ 		return 0;
+ 
+ 	switch (ctrl->id) {
+diff --git a/drivers/media/i2c/ov5670.c b/drivers/media/i2c/ov5670.c
+index 7b7c74d773707..53dd30d96e691 100644
+--- a/drivers/media/i2c/ov5670.c
++++ b/drivers/media/i2c/ov5670.c
+@@ -2016,7 +2016,7 @@ static int ov5670_set_ctrl(struct v4l2_ctrl *ctrl)
+ 	}
+ 
+ 	/* V4L2 controls values will be applied only when power is already up */
+-	if (pm_runtime_get_if_in_use(&client->dev) <= 0)
++	if (!pm_runtime_get_if_in_use(&client->dev))
+ 		return 0;
+ 
+ 	switch (ctrl->id) {
+diff --git a/drivers/media/i2c/ov5695.c b/drivers/media/i2c/ov5695.c
+index 9a80decd93d3c..5d107c53364d6 100644
+--- a/drivers/media/i2c/ov5695.c
++++ b/drivers/media/i2c/ov5695.c
+@@ -1110,7 +1110,7 @@ static int ov5695_set_ctrl(struct v4l2_ctrl *ctrl)
+ 		break;
+ 	}
+ 
+-	if (pm_runtime_get_if_in_use(&client->dev) <= 0)
++	if (!pm_runtime_get_if_in_use(&client->dev))
+ 		return 0;
+ 
+ 	switch (ctrl->id) {
+diff --git a/drivers/media/i2c/ov7740.c b/drivers/media/i2c/ov7740.c
+index 8a6a7a5929aa3..7804013934ab5 100644
+--- a/drivers/media/i2c/ov7740.c
++++ b/drivers/media/i2c/ov7740.c
+@@ -510,7 +510,7 @@ static int ov7740_set_ctrl(struct v4l2_ctrl *ctrl)
+ 	int ret;
+ 	u8 val = 0;
+ 
+-	if (pm_runtime_get_if_in_use(&client->dev) <= 0)
++	if (!pm_runtime_get_if_in_use(&client->dev))
+ 		return 0;
+ 
+ 	switch (ctrl->id) {
 -- 
 2.20.1
 
