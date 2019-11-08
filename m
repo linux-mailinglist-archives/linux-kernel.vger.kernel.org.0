@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7096BF56DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06FF9F5695
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391023AbfKHTMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:12:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41392 "EHLO mail.kernel.org"
+        id S1732635AbfKHTJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbfKHTJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:09:35 -0500
+        id S2387473AbfKHTJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 328272087E;
-        Fri,  8 Nov 2019 19:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBCDB21D7B;
+        Fri,  8 Nov 2019 19:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240174;
-        bh=Eo4M+CcVoL5z+LaKljF9jKB5DJ888zaDFmwooiIRzxU=;
+        s=default; t=1573240177;
+        bh=GYcWA11AodRg7allrpKKPq/XjN8pRSeHNKS8rUMFDeU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kQA8enWiMIOpgYYeG6qN8TSjRT901Bpc44W6nHYA3BEdKyy72VmcuHxpoVzL8OZfg
-         bnUZ7f/ylv46fuqclpkzCwBeNkXcr+7PHJceRZNdWWPUx1MgPpY2tliHeLknSaCIcI
-         V3U8L1lgPwQH4YDQj5FwI/bP8nY/FqqyoZqlaUB0=
+        b=c7zcLlooazoicRlB+ulPNEsBX53AECLyXPK14WcvTnsEssy9qhamvMiBJ+ScVlWWn
+         iWWNuU05XaD8luQiXubCRzx9/IhyP3+pFxBdxHJ3cj3r2UPqgoeplyMhpvfWS1v/J4
+         1IGoUeqcoQjclFiXqg8yC+TYx8EsboNveO07X9y0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
+        stable@vger.kernel.org, Roi Dayan <roid@mellanox.com>,
+        Mark Bloch <markb@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.3 112/140] net/mlx5e: Initialize on stack link modes bitmap
-Date:   Fri,  8 Nov 2019 19:50:40 +0100
-Message-Id: <20191108174911.905416820@linuxfoundation.org>
+Subject: [PATCH 5.3 113/140] net/mlx5: Fix flow counter list auto bits struct
+Date:   Fri,  8 Nov 2019 19:50:41 +0100
+Message-Id: <20191108174911.959486499@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
 References: <20191108174900.189064908@linuxfoundation.org>
@@ -43,31 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aya Levin <ayal@mellanox.com>
+From: Roi Dayan <roid@mellanox.com>
 
-[ Upstream commit 926b37f76fb0a22fe93c8873c819fd167180e85c ]
+[ Upstream commit 6dfef396ea13873ae9066ee2e0ad6ee364031fe2 ]
 
-Initialize link modes bitmap on stack before using it, otherwise the
-outcome of ethtool set link ksettings might have unexpected values.
+The union should contain the extended dest and counter list.
+Remove the resevered 0x40 bits which is redundant.
+This change doesn't break any functionally.
+Everything works today because the code in fs_cmd.c is using
+the correct structs if extended dest or the basic dest.
 
-Fixes: 4b95840a6ced ("net/mlx5e: Fix matching of speed to PRM link modes")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
+Fixes: 1b115498598f ("net/mlx5: Introduce extended destination fields")
+Signed-off-by: Roi Dayan <roid@mellanox.com>
+Reviewed-by: Mark Bloch <markb@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mlx5/mlx5_ifc.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -1021,7 +1021,7 @@ static bool ext_link_mode_requested(cons
- {
- #define MLX5E_MIN_PTYS_EXT_LINK_MODE_BIT ETHTOOL_LINK_MODE_50000baseKR_Full_BIT
- 	int size = __ETHTOOL_LINK_MODE_MASK_NBITS - MLX5E_MIN_PTYS_EXT_LINK_MODE_BIT;
--	__ETHTOOL_DECLARE_LINK_MODE_MASK(modes);
-+	__ETHTOOL_DECLARE_LINK_MODE_MASK(modes) = {0,};
+--- a/include/linux/mlx5/mlx5_ifc.h
++++ b/include/linux/mlx5/mlx5_ifc.h
+@@ -1437,9 +1437,8 @@ struct mlx5_ifc_extended_dest_format_bit
+ };
  
- 	bitmap_set(modes, MLX5E_MIN_PTYS_EXT_LINK_MODE_BIT, size);
- 	return bitmap_intersects(modes, adver, __ETHTOOL_LINK_MODE_MASK_NBITS);
+ union mlx5_ifc_dest_format_struct_flow_counter_list_auto_bits {
+-	struct mlx5_ifc_dest_format_struct_bits dest_format_struct;
++	struct mlx5_ifc_extended_dest_format_bits extended_dest_format;
+ 	struct mlx5_ifc_flow_counter_list_bits flow_counter_list;
+-	u8         reserved_at_0[0x40];
+ };
+ 
+ struct mlx5_ifc_fte_match_param_bits {
 
 
