@@ -2,345 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62D73F54E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 335C4F5724
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388444AbfKHS4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:56:54 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40103 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732612AbfKHS4m (ORCPT
+        id S1732428AbfKHTSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:18:41 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39078 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389565AbfKHTAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:56:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573239401;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=CXeheEvNkBpf+BJwcDdKt8DoNtaIV9EI+XPEuMx45wQ=;
-        b=ReAVFiJJEeX7guDFSru1FRAzzL5FFnpa2x8QGXaQyDoe4n9SrLxF+sFD2a0H+2tbRXs0h8
-        tm78DwQwPTTgQvRQBdZ0BAwPhRIaGixt+MJwTRHQQjHHph+l/YwEpx+DbrK+PbSQy0ny7E
-        DvunUOK/H1a/yQEckT1bw8EB2qFB5lM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-331-PS6RtgLeMnWfCwbohRiSPA-1; Fri, 08 Nov 2019 13:56:38 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 122A6477;
-        Fri,  8 Nov 2019 18:56:37 +0000 (UTC)
-Received: from dcbz.redhat.com (ovpn-116-182.ams2.redhat.com [10.36.116.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 388471001B35;
-        Fri,  8 Nov 2019 18:56:35 +0000 (UTC)
-From:   Adrian Reber <areber@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Adrian Reber <areber@redhat.com>
-Subject: [PATCH v3] selftests: add tests for clone3()
-Date:   Fri,  8 Nov 2019 19:56:29 +0100
-Message-Id: <20191108185629.309414-1-areber@redhat.com>
+        Fri, 8 Nov 2019 14:00:14 -0500
+Received: by mail-wr1-f66.google.com with SMTP id a11so8240967wra.6
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 11:00:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Q0460TgzgnaZLvm1IV8VLVUyZ7xHs8aC72SXVYWvcVU=;
+        b=K5YNkYk1UQ4vtj9aLjQOleIjNFwGE4P2DPtHyOJKrm0VgEBuu1FvF13NT7V6HiWCsP
+         2u7A8KRacDJqAIeW1V9A/AKGyW3tacYFM4tF+E8y+VrHe1LrIeGifRm2kZvDP9ShD1xk
+         MSn9TeRoGe9QjWqJAovsmJOxKrpscIvIuP7pHGloR+7Ewb9aGj8swRsEYVzKKcV+0Qk7
+         h7QbtOR1ZxrblMnDQ+DR2f8eSTdXOl9q2CoIfpnLlQ4yMKNtrjw4W4+F28N0cwvSfgwf
+         zO/DiJFBfOQjQzmDvNzJq6tnQqw/F5wbcJLgqLPncsZZvPU5Llar08p05tequHk9kSyr
+         Yrrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Q0460TgzgnaZLvm1IV8VLVUyZ7xHs8aC72SXVYWvcVU=;
+        b=FJNLaIYmSAi/9xH7CvLLhZevm5mi9MewI+7crxfoq/JEeGpaVC3ZahOmIle/aADHj3
+         9tO6B00l3D3YIXfV+J21GQMmRJgpSSglaLvyYw9xRK3SEmEG0B9qrrhJp3fONBDgfI7/
+         rJ3GIUZ4ywsk7jNevHdwaUik1tBlI1Vo5f5nmSFA6gZ0oAB2/lmcApj35bg9SkkNcR1S
+         knv/CyFKxiYFD/dmrrY24SawDhchloieVmFGsKyGZ9kF92uT3yDw5NfI6TJY5gribOq7
+         oxBf84MKOjHykqOe/cCgC9ia6eUTfoGVniJqw6xyuah/O+yf7eSXtwrUkQ7srNoONG3b
+         TPdQ==
+X-Gm-Message-State: APjAAAWwZYL8oq+Kx6tG8Y4G3RnSyVfTGCYv/wOcz74FUvCx7a3szjGc
+        m4dXcJ9qRw3nHy5fqYfrvApYMgsGgcBjvlFulCecNg==
+X-Google-Smtp-Source: APXvYqxjvSn3tePuyqDvQ6GTaS29yRgNed6/yx0spNQiJlJgU2nkcHKd2TvCuJggSLkyrxxhA+C8KKXP8Qjt6n+6A/g=
+X-Received: by 2002:adf:b1cb:: with SMTP id r11mr2543917wra.246.1573239611844;
+ Fri, 08 Nov 2019 11:00:11 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: PS6RtgLeMnWfCwbohRiSPA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
+References: <20191107132755.8517-1-jonas@norrbonn.se> <CAF2d9jjteagJGmt64mNFH-pFmGg_eM8_NNBrDtROcaVKhcNkRQ@mail.gmail.com>
+ <d34174c2-a4d4-b3da-ded5-dcb97a89c80c@gmail.com> <229cdce6-f510-5d9f-401b-69bad4af0722@norrbonn.se>
+In-Reply-To: <229cdce6-f510-5d9f-401b-69bad4af0722@norrbonn.se>
+From:   =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS14KS+4KSwKQ==?= 
+        <maheshb@google.com>
+Date:   Fri, 8 Nov 2019 10:59:55 -0800
+Message-ID: <CAF2d9jg01+AjBHJtMMpzdqV1iyGd-vZzVS96nmGmcVJLK82D3A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Add namespace awareness to Netlink methods
+To:     Jonas Bonn <jonas@norrbonn.se>
+Cc:     David Ahern <dsahern@gmail.com>, nicolas.dichtel@6wind.com,
+        linux-netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds tests for clone3() with different values and sizes
-of struct clone_args.
+On Fri, Nov 8, 2019 at 7:36 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+>
+>
+>
+> On 07/11/2019 22:11, David Ahern wrote:
+> > On 11/7/19 1:40 PM, Mahesh Bandewar (=E0=A4=AE=E0=A4=B9=E0=A5=87=E0=A4=
+=B6 =E0=A4=AC=E0=A4=82=E0=A4=A1=E0=A5=87=E0=A4=B5=E0=A4=BE=E0=A4=B0) wrote:
+> >> On Thu, Nov 7, 2019 at 5:30 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+> >>>
+> >>> Changed in v3:
+> >>> - added patch 6 for setting IPv6 address outside current namespace
+> >>> - address checkpatch warnings
+> >>> - address comment from Nicolas
+> >>>
+> >>> Changed in v2:
+> >>> - address comment from Nicolas
+> >>> - add accumulated ACK's
+> >>>
+> >>> Currently, Netlink has partial support for acting outside of the curr=
+ent
+> >>> namespace.  It appears that the intention was to extend this to all t=
+he
+> >>> methods eventually, but it hasn't been done to date.
+> >>>
+> >>> With this series RTM_SETLINK, RTM_NEWLINK, RTM_NEWADDR, and RTM_NEWNS=
+ID
+> >>> are extended to respect the selection of the namespace to work in.
+> >>>
+> >> This is nice, is there a plan to update userspace commands using this?
+> >
+> > I'm hoping for an iproute2 update and test cases to validate the change=
+s.
+> >
+>
+> I'm looking into it.  The change to iproute2 to support
+> (namespace,index) pairs instead of just (index) to identify interfaces
+> looks to be invasive.  The rest of it looks like trivial changes.
+>
+> I've got all these kernel patches tested against my own "namespace aware
+> network manager" that I'm writing for a customer with a particular use
+> case.  iproute2 wasn't actually in play here.
+>
+I'll echo David's comment for iproute2 as well as tests to ensure this
+new behavior is usable and healthy.
 
-This selftest was initially part of of the clone3() with PID selftest.
-After that patch was almost merged Eugene sent out a couple of patches
-to fix problems with these test.
-
-This commit now only contains the clone3() selftest after the LPC
-decision to rework clone3() with PID to allow setting the PID in
-multiple PID namespaces including all of Eugene's patches.
-
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
-Signed-off-by: Adrian Reber <areber@redhat.com>
----
-v2:
- - Applied Christian's suggestions
- - Skip root-only tests when running as non-root
-v3:
- - Removed unnecessary test case (everything set to 1)
- - Correctly handle children without SIGCHLD
----
- MAINTAINERS                               |   1 +
- tools/testing/selftests/Makefile          |   1 +
- tools/testing/selftests/clone3/.gitignore |   1 +
- tools/testing/selftests/clone3/Makefile   |   7 +
- tools/testing/selftests/clone3/clone3.c   | 203 ++++++++++++++++++++++
- 5 files changed, 213 insertions(+)
- create mode 100644 tools/testing/selftests/clone3/.gitignore
- create mode 100644 tools/testing/selftests/clone3/Makefile
- create mode 100644 tools/testing/selftests/clone3/clone3.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cba1095547fd..0040b7a6410b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12829,6 +12829,7 @@ S:=09Maintained
- T:=09git git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git
- F:=09samples/pidfd/
- F:=09tools/testing/selftests/pidfd/
-+F:=09tools/testing/selftests/clone3/
- K:=09(?i)pidfd
- K:=09(?i)clone3
- K:=09\b(clone_args|kernel_clone_args)\b
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Mak=
-efile
-index 4cdbae6f4e61..ad442364218a 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -4,6 +4,7 @@ TARGETS +=3D bpf
- TARGETS +=3D breakpoints
- TARGETS +=3D capabilities
- TARGETS +=3D cgroup
-+TARGETS +=3D clone3
- TARGETS +=3D cpufreq
- TARGETS +=3D cpu-hotplug
- TARGETS +=3D drivers/dma-buf
-diff --git a/tools/testing/selftests/clone3/.gitignore b/tools/testing/self=
-tests/clone3/.gitignore
-new file mode 100644
-index 000000000000..85d9d3ba2524
---- /dev/null
-+++ b/tools/testing/selftests/clone3/.gitignore
-@@ -0,0 +1 @@
-+clone3
-diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selfte=
-sts/clone3/Makefile
-new file mode 100644
-index 000000000000..ea922c014ae4
---- /dev/null
-+++ b/tools/testing/selftests/clone3/Makefile
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+CFLAGS +=3D -I../../../../usr/include/
-+
-+TEST_GEN_PROGS :=3D clone3
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selfte=
-sts/clone3/clone3.c
-new file mode 100644
-index 000000000000..ca9ac31abbe6
---- /dev/null
-+++ b/tools/testing/selftests/clone3/clone3.c
-@@ -0,0 +1,203 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/* Based on Christian Brauner's clone3() example */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <inttypes.h>
-+#include <linux/types.h>
-+#include <linux/sched.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/un.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <sched.h>
-+
-+#include "../kselftest.h"
-+
-+/*
-+ * Different sizes of struct clone_args
-+ */
-+#ifndef CLONE3_ARGS_SIZE_V0
-+#define CLONE3_ARGS_SIZE_V0 64
-+#endif
-+
-+enum test_mode {
-+=09CLONE3_ARGS_NO_TEST,
-+=09CLONE3_ARGS_ALL_0,
-+=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_BIG,
-+=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
-+=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
-+=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
-+};
-+
-+static pid_t raw_clone(struct clone_args *args, size_t size)
-+{
-+=09return syscall(__NR_clone3, args, size);
-+}
-+
-+static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mo=
-de)
-+{
-+=09struct clone_args args =3D {
-+=09=09.flags =3D flags,
-+=09=09.exit_signal =3D SIGCHLD,
-+=09};
-+
-+=09struct clone_args_extended {
-+=09=09struct clone_args args;
-+=09=09__aligned_u64 excess_space[2];
-+=09} args_ext;
-+
-+=09pid_t pid =3D -1;
-+=09int status;
-+
-+=09memset(&args_ext, 0, sizeof(args_ext));
-+=09if (size > sizeof(struct clone_args))
-+=09=09args_ext.excess_space[1] =3D 1;
-+
-+=09if (size =3D=3D 0)
-+=09=09size =3D sizeof(struct clone_args);
-+
-+=09switch (test_mode) {
-+=09case CLONE3_ARGS_ALL_0:
-+=09=09args.flags =3D 0;
-+=09=09args.exit_signal =3D 0;
-+=09=09break;
-+=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_BIG:
-+=09=09args.exit_signal =3D 0xbadc0ded00000000ULL;
-+=09=09break;
-+=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG:
-+=09=09args.exit_signal =3D 0x0000000080000000ULL;
-+=09=09break;
-+=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG:
-+=09=09args.exit_signal =3D 0x0000000000000100ULL;
-+=09=09break;
-+=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
-+=09=09args.exit_signal =3D 0x00000000000000f0ULL;
-+=09=09break;
-+=09}
-+
-+=09memcpy(&args_ext.args, &args, sizeof(struct clone_args));
-+
-+=09pid =3D raw_clone((struct clone_args *)&args_ext, size);
-+=09if (pid < 0) {
-+=09=09ksft_print_msg("%s - Failed to create new process\n",
-+=09=09=09=09strerror(errno));
-+=09=09return -errno;
-+=09}
-+
-+=09if (pid =3D=3D 0) {
-+=09=09ksft_print_msg("I am the child, my PID is %d\n", getpid());
-+=09=09_exit(EXIT_SUCCESS);
-+=09}
-+
-+=09ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
-+=09=09=09getpid(), pid);
-+
-+=09if (waitpid(-1, &status, __WALL) < 0) {
-+=09=09ksft_print_msg("Child returned %s\n", strerror(errno));
-+=09=09return -errno;
-+=09}
-+=09if (WEXITSTATUS(status))
-+=09=09return WEXITSTATUS(status);
-+
-+=09return 0;
-+}
-+
-+static void test_clone3(uint64_t flags, size_t size, int expected,
-+=09=09       enum test_mode test_mode)
-+{
-+=09int ret;
-+
-+=09ksft_print_msg(
-+=09=09"[%d] Trying clone3() with flags %#" PRIx64 " (size %zu)\n",
-+=09=09getpid(), flags, size);
-+=09ret =3D call_clone3(flags, size, test_mode);
-+=09ksft_print_msg("[%d] clone3() with flags says: %d expected %d\n",
-+=09=09=09getpid(), ret, expected);
-+=09if (ret !=3D expected)
-+=09=09ksft_test_result_fail(
-+=09=09=09"[%d] Result (%d) is different than expected (%d)\n",
-+=09=09=09getpid(), ret, expected);
-+=09else
-+=09=09ksft_test_result_pass(
-+=09=09=09"[%d] Result (%d) matches expectation (%d)\n",
-+=09=09=09getpid(), ret, expected);
-+}
-+int main(int argc, char *argv[])
-+{
-+=09pid_t pid;
-+
-+=09uid_t uid =3D getuid();
-+
-+=09ksft_print_header();
-+=09ksft_set_plan(15);
-+
-+=09/* Just a simple clone3() should return 0.*/
-+=09test_clone3(0, 0, 0, CLONE3_ARGS_NO_TEST);
-+
-+=09/* Do a clone3() in a new PID NS.*/
-+=09if (uid =3D=3D 0)
-+=09=09test_clone3(CLONE_NEWPID, 0, 0, CLONE3_ARGS_NO_TEST);
-+=09else
-+=09=09ksft_test_result_skip("Skipping clone3() with CLONE_NEWPID\n");
-+
-+=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0. */
-+=09test_clone3(0, CLONE3_ARGS_SIZE_V0, 0, CLONE3_ARGS_NO_TEST);
-+
-+=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0 - 8 */
-+=09test_clone3(0, CLONE3_ARGS_SIZE_V0 - 8, -EINVAL, CLONE3_ARGS_NO_TEST);
-+
-+=09/* Do a clone3() with sizeof(struct clone_args) + 8 */
-+=09test_clone3(0, sizeof(struct clone_args) + 8, 0, CLONE3_ARGS_NO_TEST);
-+
-+=09/* Do a clone3() with exit_signal having highest 32 bits non-zero */
-+=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_BIG);
-+
-+=09/* Do a clone3() with negative 32-bit exit_signal */
-+=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG);
-+
-+=09/* Do a clone3() with exit_signal not fitting into CSIGNAL mask */
-+=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG);
-+
-+=09/* Do a clone3() with NSIG < exit_signal < CSIG */
-+=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG);
-+
-+=09/*
-+=09 * Do a clone3() with sizeof(struct clone_args) + 8
-+=09 * and all members set to 0. This resets exit_signal and wait()
-+=09 * will not get a result.
-+=09 */
-+=09test_clone3(0, sizeof(struct clone_args) + 8, 0, CLONE3_ARGS_ALL_0);
-+
-+=09/* Do a clone3() with > page size */
-+=09test_clone3(0, getpagesize() + 8, -E2BIG, CLONE3_ARGS_NO_TEST);
-+
-+=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0 in a new PID NS. */
-+=09if (uid =3D=3D 0)
-+=09=09test_clone3(CLONE_NEWPID, CLONE3_ARGS_SIZE_V0, 0,
-+=09=09=09=09CLONE3_ARGS_NO_TEST);
-+=09else
-+=09=09ksft_test_result_skip("Skipping clone3() with CLONE_NEWPID\n");
-+
-+=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0 - 8 in a new PID NS */
-+=09test_clone3(CLONE_NEWPID, CLONE3_ARGS_SIZE_V0 - 8, -EINVAL,
-+=09=09=09CLONE3_ARGS_NO_TEST);
-+
-+=09/* Do a clone3() with sizeof(struct clone_args) + 8 in a new PID NS */
-+=09if (uid =3D=3D 0)
-+=09=09test_clone3(CLONE_NEWPID, sizeof(struct clone_args) + 8, 0,
-+=09=09=09=09CLONE3_ARGS_NO_TEST);
-+=09else
-+=09=09ksft_test_result_skip("Skipping clone3() with CLONE_NEWPID\n");
-+
-+=09/* Do a clone3() with > page size in a new PID NS */
-+=09test_clone3(CLONE_NEWPID, getpagesize() + 8, -E2BIG,
-+=09=09=09CLONE3_ARGS_NO_TEST);
-+
-+=09return !ksft_get_fail_cnt() ? ksft_exit_pass() : ksft_exit_fail();
-+}
---=20
-2.23.0
-
+> /Jonas
