@@ -2,95 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4055FF465C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:42:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53222F45CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:37:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733054AbfKHLl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:41:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55422 "EHLO mail.kernel.org"
+        id S1731186AbfKHLhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:37:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389673AbfKHLlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:41:52 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726149AbfKHLhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:37:09 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBFD621D7B;
-        Fri,  8 Nov 2019 11:41:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C480320869;
+        Fri,  8 Nov 2019 11:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213311;
-        bh=hVTmL0FORV+KWz1VpzuweX8Ats/8839pboW72CRooBI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SCT51chryrurGhdtaopz153rkWZEITV7g1WAdPJ5oKby6uyyErRAFr9am/df+6XpA
-         GdNvl8qkbQCYL+1yd77NMucZjekEahILR/dO0SEnahrQee6bN8OMAkaPRRWZbOIa3x
-         c8O/YsBOwvu9CcgIjzAbDhFV93Z05gUNw7JeIQWw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+        s=default; t=1573213028;
+        bh=G5j+RwShAgrettv3VQJ2Hzibs0yOoFaJu63CqOxn8Oo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iWFuYTQcqXM/DR65wCIopKLQsBH2V3ve8n4fUHcE6O0QCwEWq5LcBR7HT3UYbVuXy
+         LLH+DzR/qTOHmtgWKoaaTL5pocOV+6Wehrg/cMS5rr/2mDYoYQbR8bXug4dIKrlFDH
+         izPZgMynJUZ3fTgx+ygLAuT+nnb+N95WoPMCQjcs=
+Date:   Fri, 8 Nov 2019 12:37:05 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 158/205] media: dt-bindings: adv748x: Fix decimal unit addresses
-Date:   Fri,  8 Nov 2019 06:37:05 -0500
-Message-Id: <20191108113752.12502-158-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
-References: <20191108113752.12502-1-sashal@kernel.org>
+        Breno =?iso-8859-1?Q?Leit=E3o?= <leitao@debian.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David@rox.of.borg, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Casey Leedom <leedom@chelsio.com>,
+        Shannon Nelson <snelson@pensando.io>,
+        Pensando Drivers <drivers@pensando.io>,
+        Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        netdev@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] power: avs: smartreflex: Remove superfluous cast in
+ debugfs_create_file() call
+Message-ID: <20191108113705.GA721212@kroah.com>
+References: <20191021145149.31657-1-geert+renesas@glider.be>
+ <20191021145149.31657-5-geert+renesas@glider.be>
+ <4367615.jSCgeRn5tF@kreacher>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4367615.jSCgeRn5tF@kreacher>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, Nov 08, 2019 at 12:24:42PM +0100, Rafael J. Wysocki wrote:
+> On Monday, October 21, 2019 4:51:48 PM CET Geert Uytterhoeven wrote:
+> > There is no need to cast a typed pointer to a void pointer when calling
+> > a function that accepts the latter.  Remove it, as the cast prevents
+> > further compiler checks.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Greg, have you taken this one by any chance?
 
-[ Upstream commit 27582f0ea97fe3e4a38beb98ab36cce4b6f029d5 ]
-
-With recent dtc and W=1:
-
-    Warning (graph_port): video-receiver@70/port@10: graph node unit address error, expected "a"
-    Warning (graph_port): video-receiver@70/port@11: graph node unit address error, expected "b"
-
-Unit addresses are always hexadecimal (without prefix), while the bases
-of reg property values depend on their prefixes.
-
-Fixes: e69595170b1cad85 ("media: adv748x: Add adv7481, adv7482 bindings")
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/devicetree/bindings/media/i2c/adv748x.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-index 21ffb5ed81830..54d1d3bc18694 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -73,7 +73,7 @@ Example:
- 			};
- 		};
- 
--		port@10 {
-+		port@a {
- 			reg = <10>;
- 
- 			adv7482_txa: endpoint {
-@@ -83,7 +83,7 @@ Example:
- 			};
- 		};
- 
--		port@11 {
-+		port@b {
- 			reg = <11>;
- 
- 			adv7482_txb: endpoint {
--- 
-2.20.1
+Nope, it's all yours!  :)
 
