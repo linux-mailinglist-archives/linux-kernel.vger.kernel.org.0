@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C40B2F572A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9303AF5569
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389565AbfKHTSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:18:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57242 "EHLO mail.kernel.org"
+        id S2390489AbfKHTCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:02:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389511AbfKHTAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:12 -0500
+        id S2390459AbfKHTCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:02:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80475224B8;
-        Fri,  8 Nov 2019 18:58:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBB3F214DB;
+        Fri,  8 Nov 2019 19:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239531;
-        bh=c4Kv7/xrKmzSuqPqsp605zhWvaRFr5oeH/7XyGqOx/8=;
+        s=default; t=1573239732;
+        bh=Qy1e6bHbGD5GJr0rNieFEhlpz/5r6eNcWem9U+clMBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U46BolCocA/Bha8rE010OPFX5j8xKyzI9BZlzMKafcYCfYGs0fqMnOg8+/E6sCfBJ
-         T6hZ5vsVS3xmRuBT6e1virk2mZZY1pZwhZ3896nIAk1hJTc6JzADX2uwVzK4MWn1yO
-         LNuTYGYX6aJxkVASJYX0255ahnn2ddbbMgtR4w0M=
+        b=jO48OFK28ShDmS0GfjR84H3Obvw0kUsyNr1u2g6p71MyKSL+JjF5WvwP/R17WA6C2
+         +5F6DPX2AdObOS0NmFYg4P4m5mM9iyyEON+fifN14huM/p3EzTrp978CiwqNQkcCcL
+         vwf9ymdiS7g46TWL9IKGUaM1PhMlFfVvJUsdXzak=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 35/62] net: add READ_ONCE() annotation in __skb_wait_for_more_packets()
+Subject: [PATCH 4.19 43/79] net: dsa: bcm_sf2: Fix IMP setup for port different than 8
 Date:   Fri,  8 Nov 2019 19:50:23 +0100
-Message-Id: <20191108174745.656961589@linuxfoundation.org>
+Message-Id: <20191108174811.037430942@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
+References: <20191108174745.495640141@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,79 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 7c422d0ce97552dde4a97e6290de70ec6efb0fc6 ]
+[ Upstream commit 5fc0f21246e50afdf318b5a3a941f7f4f57b8947 ]
 
-__skb_wait_for_more_packets() can be called while other cpus
-can feed packets to the socket receive queue.
+Since it became possible for the DSA core to use a CPU port different
+than 8, our bcm_sf2_imp_setup() function was broken because it assumes
+that registers are applicable to port 8. In particular, the port's MAC
+is going to stay disabled, so make sure we clear the RX_DIS and TX_DIS
+bits if we are not configured for port 8.
 
-KCSAN reported :
-
-BUG: KCSAN: data-race in __skb_wait_for_more_packets / __udp_enqueue_schedule_skb
-
-write to 0xffff888102e40b58 of 8 bytes by interrupt on cpu 0:
- __skb_insert include/linux/skbuff.h:1852 [inline]
- __skb_queue_before include/linux/skbuff.h:1958 [inline]
- __skb_queue_tail include/linux/skbuff.h:1991 [inline]
- __udp_enqueue_schedule_skb+0x2d7/0x410 net/ipv4/udp.c:1470
- __udp_queue_rcv_skb net/ipv4/udp.c:1940 [inline]
- udp_queue_rcv_one_skb+0x7bd/0xc70 net/ipv4/udp.c:2057
- udp_queue_rcv_skb+0xb5/0x400 net/ipv4/udp.c:2074
- udp_unicast_rcv_skb.isra.0+0x7e/0x1c0 net/ipv4/udp.c:2233
- __udp4_lib_rcv+0xa44/0x17c0 net/ipv4/udp.c:2300
- udp_rcv+0x2b/0x40 net/ipv4/udp.c:2470
- ip_protocol_deliver_rcu+0x4d/0x420 net/ipv4/ip_input.c:204
- ip_local_deliver_finish+0x110/0x140 net/ipv4/ip_input.c:231
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ip_local_deliver+0x133/0x210 net/ipv4/ip_input.c:252
- dst_input include/net/dst.h:442 [inline]
- ip_rcv_finish+0x121/0x160 net/ipv4/ip_input.c:413
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ip_rcv+0x18f/0x1a0 net/ipv4/ip_input.c:523
- __netif_receive_skb_one_core+0xa7/0xe0 net/core/dev.c:5010
- __netif_receive_skb+0x37/0xf0 net/core/dev.c:5124
- process_backlog+0x1d3/0x420 net/core/dev.c:5955
-
-read to 0xffff888102e40b58 of 8 bytes by task 13035 on cpu 1:
- __skb_wait_for_more_packets+0xfa/0x320 net/core/datagram.c:100
- __skb_recv_udp+0x374/0x500 net/ipv4/udp.c:1683
- udp_recvmsg+0xe1/0xb10 net/ipv4/udp.c:1712
- inet_recvmsg+0xbb/0x250 net/ipv4/af_inet.c:838
- sock_recvmsg_nosec+0x5c/0x70 net/socket.c:871
- ___sys_recvmsg+0x1a0/0x3e0 net/socket.c:2480
- do_recvmmsg+0x19a/0x5c0 net/socket.c:2601
- __sys_recvmmsg+0x1ef/0x200 net/socket.c:2680
- __do_sys_recvmmsg net/socket.c:2703 [inline]
- __se_sys_recvmmsg net/socket.c:2696 [inline]
- __x64_sys_recvmmsg+0x89/0xb0 net/socket.c:2696
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 13035 Comm: syz-executor.3 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 9f91484f6fcc ("net: dsa: make "label" property optional for dsa2")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/datagram.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dsa/bcm_sf2.c |   36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -97,7 +97,7 @@ int __skb_wait_for_more_packets(struct s
- 	if (error)
- 		goto out_err;
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -41,22 +41,11 @@ static void bcm_sf2_imp_setup(struct dsa
+ 	unsigned int i;
+ 	u32 reg, offset;
  
--	if (sk->sk_receive_queue.prev != skb)
-+	if (READ_ONCE(sk->sk_receive_queue.prev) != skb)
- 		goto out;
+-	if (priv->type == BCM7445_DEVICE_ID)
+-		offset = CORE_STS_OVERRIDE_IMP;
+-	else
+-		offset = CORE_STS_OVERRIDE_IMP2;
+-
+ 	/* Enable the port memories */
+ 	reg = core_readl(priv, CORE_MEM_PSM_VDD_CTRL);
+ 	reg &= ~P_TXQ_PSM_VDD(port);
+ 	core_writel(priv, reg, CORE_MEM_PSM_VDD_CTRL);
  
- 	/* Socket shut down? */
+-	/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
+-	reg = core_readl(priv, CORE_IMP_CTL);
+-	reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
+-	reg &= ~(RX_DIS | TX_DIS);
+-	core_writel(priv, reg, CORE_IMP_CTL);
+-
+ 	/* Enable forwarding */
+ 	core_writel(priv, SW_FWDG_EN, CORE_SWMODE);
+ 
+@@ -75,10 +64,27 @@ static void bcm_sf2_imp_setup(struct dsa
+ 
+ 	b53_brcm_hdr_setup(ds, port);
+ 
+-	/* Force link status for IMP port */
+-	reg = core_readl(priv, offset);
+-	reg |= (MII_SW_OR | LINK_STS);
+-	core_writel(priv, reg, offset);
++	if (port == 8) {
++		if (priv->type == BCM7445_DEVICE_ID)
++			offset = CORE_STS_OVERRIDE_IMP;
++		else
++			offset = CORE_STS_OVERRIDE_IMP2;
++
++		/* Force link status for IMP port */
++		reg = core_readl(priv, offset);
++		reg |= (MII_SW_OR | LINK_STS);
++		core_writel(priv, reg, offset);
++
++		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
++		reg = core_readl(priv, CORE_IMP_CTL);
++		reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
++		reg &= ~(RX_DIS | TX_DIS);
++		core_writel(priv, reg, CORE_IMP_CTL);
++	} else {
++		reg = core_readl(priv, CORE_G_PCTL_PORT(port));
++		reg &= ~(RX_DIS | TX_DIS);
++		core_writel(priv, reg, CORE_G_PCTL_PORT(port));
++	}
+ }
+ 
+ static void bcm_sf2_gphy_enable_set(struct dsa_switch *ds, bool enable)
 
 
