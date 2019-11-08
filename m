@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87208F5754
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07950F54F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732067AbfKHTUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:20:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57250 "EHLO mail.kernel.org"
+        id S2388737AbfKHS5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:57:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389440AbfKHTAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:08 -0500
+        id S2388592AbfKHS5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:57:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4683E22489;
-        Fri,  8 Nov 2019 18:58:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E897E2067B;
+        Fri,  8 Nov 2019 18:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239507;
-        bh=3Ddy8uDAoYay7n5rqdDCjZiHovHW34BQlmlAR7L0+GI=;
+        s=default; t=1573239426;
+        bh=KOUMRaIXAGCb/5lzwRYuWypD1T7l7uduhC7ayCsSL/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0X8Bupf3HoHWfeWaJl7l6ixyPLn/jSAdlGRd7HP4+5LDGIa1dE+8O5xJZRlKLDpMR
-         2/Lw9AH5xmHfcHy8ctQ1kIDcaEOoBT6dvP8+WweG78IZ2YzIKn1bMQWGWURzo0kk93
-         FC5waxz45Z/Zp7s3CPA2J+bjhOvIA4/W1eQZXstE=
+        b=ZODcBF70/KDCBY+Y0waDekESOYKKJnf7N1a0hPmh2rQH2UDx1IMtWhkQqhOAhhmYI
+         jASFl/BurF7nzLboyaES2eDiThsDl1nZPWdYI628K0RClk0SUOgw0xvRPP6n9118cw
+         RQepY6k93vhKVqv+iTVDl1+5HK+Wnq+9lH9DNkxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vijay Khemka <vijaykhemka@fb.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 28/62] net: ethernet: ftgmac100: Fix DMA coherency issue with SW checksum
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 09/34] scsi: sni_53c710: fix compilation error
 Date:   Fri,  8 Nov 2019 19:50:16 +0100
-Message-Id: <20191108174741.707002060@linuxfoundation.org>
+Message-Id: <20191108174630.354050116@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit 88824e3bf29a2fcacfd9ebbfe03063649f0f3254 ]
+[ Upstream commit 0ee6211408a8e939428f662833c7301394125b80 ]
 
-We are calling the checksum helper after the dma_map_single()
-call to map the packet. This is incorrect as the checksumming
-code will touch the packet from the CPU. This means the cache
-won't be properly flushes (or the bounce buffering will leave
-us with the unmodified packet to DMA).
+Drop out memory dev_printk() with wrong device pointer argument.
 
-This moves the calculation of the checksum & vlan tags to
-before the DMA mapping.
+[mkp: typo]
 
-This also has the side effect of fixing another bug: If the
-checksum helper fails, we goto "drop" to drop the packet, which
-will not unmap the DMA mapping.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Fixes: 05690d633f30 ("ftgmac100: Upgrade to NETIF_F_HW_CSUM")
-Reviewed-by: Vijay Khemka <vijaykhemka@fb.com>
-Tested-by: Vijay Khemka <vijaykhemka@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20191009151118.32350-1-tbogendoerfer@suse.de
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/faraday/ftgmac100.c |   25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ drivers/scsi/sni_53c710.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -734,6 +734,18 @@ static int ftgmac100_hard_start_xmit(str
- 	 */
- 	nfrags = skb_shinfo(skb)->nr_frags;
+diff --git a/drivers/scsi/sni_53c710.c b/drivers/scsi/sni_53c710.c
+index 76278072147e2..b0f5220ae23a8 100644
+--- a/drivers/scsi/sni_53c710.c
++++ b/drivers/scsi/sni_53c710.c
+@@ -78,10 +78,8 @@ static int snirm710_probe(struct platform_device *dev)
  
-+	/* Setup HW checksumming */
-+	csum_vlan = 0;
-+	if (skb->ip_summed == CHECKSUM_PARTIAL &&
-+	    !ftgmac100_prep_tx_csum(skb, &csum_vlan))
-+		goto drop;
-+
-+	/* Add VLAN tag */
-+	if (skb_vlan_tag_present(skb)) {
-+		csum_vlan |= FTGMAC100_TXDES1_INS_VLANTAG;
-+		csum_vlan |= skb_vlan_tag_get(skb) & 0xffff;
-+	}
-+
- 	/* Get header len */
- 	len = skb_headlen(skb);
- 
-@@ -760,19 +772,6 @@ static int ftgmac100_hard_start_xmit(str
- 	if (nfrags == 0)
- 		f_ctl_stat |= FTGMAC100_TXDES0_LTS;
- 	txdes->txdes3 = cpu_to_le32(map);
--
--	/* Setup HW checksumming */
--	csum_vlan = 0;
--	if (skb->ip_summed == CHECKSUM_PARTIAL &&
--	    !ftgmac100_prep_tx_csum(skb, &csum_vlan))
--		goto drop;
--
--	/* Add VLAN tag */
--	if (skb_vlan_tag_present(skb)) {
--		csum_vlan |= FTGMAC100_TXDES1_INS_VLANTAG;
--		csum_vlan |= skb_vlan_tag_get(skb) & 0xffff;
+ 	base = res->start;
+ 	hostdata = kzalloc(sizeof(*hostdata), GFP_KERNEL);
+-	if (!hostdata) {
+-		dev_printk(KERN_ERR, dev, "Failed to allocate host data\n");
++	if (!hostdata)
+ 		return -ENOMEM;
 -	}
--
- 	txdes->txdes1 = cpu_to_le32(csum_vlan);
  
- 	/* Next descriptor */
+ 	hostdata->dev = &dev->dev;
+ 	dma_set_mask(&dev->dev, DMA_BIT_MASK(32));
+-- 
+2.20.1
+
 
 
