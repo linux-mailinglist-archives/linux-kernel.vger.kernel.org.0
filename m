@@ -2,78 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FDAF5B4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 23:49:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CA6F5B56
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 23:51:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbfKHWtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 17:49:05 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:39145 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbfKHWtF (ORCPT
+        id S1728371AbfKHWvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 17:51:16 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:41728 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726095AbfKHWvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 17:49:05 -0500
-Received: by mail-il1-f196.google.com with SMTP id a7so6125623ild.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 14:49:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wae4FJoeXjSSIN6WIXQxANW3IlPt4nOq6cEJ/vITa3A=;
-        b=GOxHRcrE0GKpkZiencP0jt95fTcpXZu3TT/w8qFPOAI1mUd4gXgqcDwTAP9ZO8VVBF
-         dfM1YjK+KmAMZhiV4Ye8m2zv7rUjCvLdhyPxjljrUBBM9yiB0bRlRhvaDuJpq7Yy1u/5
-         I+xLRGkI5d6OspOjyvamyLC23bO5rQ3nqRQjsHAVLKmbtM2EAtIrJAdtErkIt9Q90Efe
-         1tR7mz4sEa0BFC70rowh5G2LredBxgpA2+GHxSizEhvpAvPUiriRC4XPVMDZJDM7My4n
-         8uj/ZQhV4z8zrvhTdFYIOquVUpvg3HnxPHC0eBLVt/5OG9969RMRROFZZvbjKWwKb+4p
-         DIEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wae4FJoeXjSSIN6WIXQxANW3IlPt4nOq6cEJ/vITa3A=;
-        b=hHk5L8/wt92iIKROZ2/TL2lrWJI1DtNTU4Ksox5FzRYcsiYcbkTpCRWCg84d0Uoz61
-         2s03mvnmWTn24/UaGTYtPTVqbzpnoM8nkItejUW7ZbIiHFtF58JvsYdCwQHHGNm1X0IA
-         DK0oKLMnw/kauHbVsWFEibisEEsuPQ5TqSipXc44Wv7EA9j8Okdg5H62Lg0dXz0JITmd
-         GJf/hvEWtDjLXrdKAtK0Yp2Yu4Kyq7r1KpbL8P4MzLiUD5ZPvD1e/ZtyryOKWFBjTNWD
-         ZsdkUv0Y6mO4lbpUcDocF8EMvGvqvto9AI92jhJ30LqR+DtKWiVM1BCrO8ZwCqPOwnpV
-         RFqg==
-X-Gm-Message-State: APjAAAVMKu/8s9dUXESG/AIfsyESO8x9C2fWHxan6hs2RrYd0jQBNTcL
-        F3mKGdNI2JEn0NoYbd/TsZ2+nkN1UYSBvHcaYic=
-X-Google-Smtp-Source: APXvYqwGvQxpaAT2c4juU7qywbaTWicJVh6do/fR5zn/PMCh4PQSoYdT8lHJE18e6mZ1pxxNXn3mKG1mTo/ocB3dE5E=
-X-Received: by 2002:a92:5e49:: with SMTP id s70mr16569333ilb.130.1573253342983;
- Fri, 08 Nov 2019 14:49:02 -0800 (PST)
+        Fri, 8 Nov 2019 17:51:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573253474;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=d464DpcuE6mdspnzUiHTqmDKb3ctMZKVUfOjByI5RRw=;
+        b=UVKyPo8zunMkv7A2fwhJ//BNRLoNYWfoe1xTgJrj4M7jQf9nKlApjOOBPVKnNnIrQc029f
+        uaNAcHKwUJMfOQfiDTnsVIkhxmOYDDBsdO2GAslcvHHg/PrOyfHOVYZFqRqnv0AA0vHfZH
+        1GTIo+E3XRYcvRFO5vp4BM9jGX1tlF0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-320-nzSRBjVrMreFWSL-Q56U7A-1; Fri, 08 Nov 2019 17:51:10 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 796A7107ACC4;
+        Fri,  8 Nov 2019 22:51:08 +0000 (UTC)
+Received: from treble (ovpn-123-141.rdu2.redhat.com [10.10.123.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C051B5D9E2;
+        Fri,  8 Nov 2019 22:51:02 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 16:51:00 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH 00/10] ftrace: Add register_ftrace_direct()
+Message-ID: <20191108225100.ea3bhsbdf6oerj6g@treble>
+References: <20191108212834.594904349@goodmis.org>
 MIME-Version: 1.0
-References: <20191107205914.10611-1-deepa.kernel@gmail.com>
- <1672a5861c82c2e3c0c54b5311fd413a8eee5e64.camel@infradead.org>
- <8D8B600C3EC1B64FAD4503F0B66C61F23BB95B@SHSMSX103.ccr.corp.intel.com>
- <addba4e401c3bf23b86cf8dff97256282895e29f.camel@infradead.org> <8D8B600C3EC1B64FAD4503F0B66C61F23BBA24@SHSMSX103.ccr.corp.intel.com>
-In-Reply-To: <8D8B600C3EC1B64FAD4503F0B66C61F23BBA24@SHSMSX103.ccr.corp.intel.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Fri, 8 Nov 2019 14:48:51 -0800
-Message-ID: <CABeXuvoiX639HchLbgTHLiXPh=Yr2dJHUp2Yqc6pNJ3As1OJ8A@mail.gmail.com>
-Subject: Re: [PATCH] intel-iommu: Turn off translations at shutdown
-To:     "Zeng, Jason" <jason.zeng@intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191108212834.594904349@goodmis.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: nzSRBjVrMreFWSL-Q56U7A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > For VMM live update case, we should be able to detect and bypass
-> > > the shutdown that Deepa introduced here, so keep IOMMU still operating?
-> >
-> > Is that a 'yes' to Deepa's "if someone wants to make it conditional, we
-> > can do that" ?
->
-> Yes, I think so. Thanks!
+On Fri, Nov 08, 2019 at 04:28:34PM -0500, Steven Rostedt wrote:
+>=20
+> Alexei mentioned that he would like a way to access the ftrace fentry
+> code to jump directly to a custom eBPF trampoline instead of using
+> ftrace regs caller, as he said it would be faster.
+>=20
+> I proposed a new register_ftrace_direct() function that would allow
+> this to happen and still work with the ftrace infrastructure. I posted
+> a proof of concept patch here:
+>=20
+>  https://lore.kernel.org/r/20191023122307.756b4978@gandalf.local.home
+>=20
+> This patch series is a more complete version, and the start of the
+> actual implementation. I haven't run it through my full test suite but
+> it passes my smoke tests and some other custom tests I built.
+>=20
+> I also realized that I need to make the sample modules depend on X86_64
+> as it has inlined assembly in it that requires that dependency.
+>=20
+> This is based on 5.4-rc6 plus the permanent patches that prevent
+> a ftrace_ops from being disabled by /proc/sys/kernel/ftrace_enabled
+>=20
+> Below is the tree that contains this code.
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+> ftrace/direct
 
-Are these changes already part of the kernel like avoiding shutdown of
-the passthrough devices? device_shutdown() doesn't seem to be doing
-anything selectively as of now.
+Here's the fix for the objtool warning:
 
-Thanks,
-Deepa
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] ftrace/x86: Tell objtool to ignore nondeterministic ftrace=
+ stack layout
+
+Objtool complains about the new ftrace direct trampoline code:
+
+  arch/x86/kernel/ftrace_64.o: warning: objtool: ftrace_regs_caller()+0x190=
+: stack state mismatch: cfa1=3D7+16 cfa2=3D7+24
+
+Typically, code has a deterministic stack layout, such that at a given
+instruction address, the stack frame size is always the same.
+
+That's not the case for the new ftrace_regs_caller() code after it
+adjusts the stack for the direct case.  Just plead ignorance and assume
+it's always the non-direct path.  Note this creates a tiny window for
+ORC to get confused.
+
+Reported-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ arch/x86/include/asm/unwind_hints.h |  8 ++++++++
+ arch/x86/kernel/ftrace_64.S         | 12 +++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/unwind_hints.h b/arch/x86/include/asm/unw=
+ind_hints.h
+index 0bcdb1279361..f5e2eb12cb71 100644
+--- a/arch/x86/include/asm/unwind_hints.h
++++ b/arch/x86/include/asm/unwind_hints.h
+@@ -86,6 +86,14 @@
+ =09UNWIND_HINT sp_offset=3D\sp_offset
+ .endm
+=20
++.macro UNWIND_HINT_SAVE
++=09UNWIND_HINT type=3DUNWIND_HINT_TYPE_SAVE
++.endm
++
++.macro UNWIND_HINT_RESTORE
++=09UNWIND_HINT type=3DUNWIND_HINT_TYPE_RESTORE
++.endm
++
+ #else /* !__ASSEMBLY__ */
+=20
+ #define UNWIND_HINT(sp_reg, sp_offset, type, end)=09=09\
+diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
+index 5d946ab40b52..1c79624a36b2 100644
+--- a/arch/x86/kernel/ftrace_64.S
++++ b/arch/x86/kernel/ftrace_64.S
+@@ -175,6 +175,8 @@ ENTRY(ftrace_regs_caller)
+ =09/* Save the current flags before any operations that can change them */
+ =09pushfq
+=20
++=09UNWIND_HINT_SAVE
++
+ =09/* added 8 bytes to save flags */
+ =09save_mcount_regs 8
+ =09/* save_mcount_regs fills in first two parameters */
+@@ -249,8 +251,16 @@ GLOBAL(ftrace_regs_call)
+ 1:=09restore_mcount_regs
+=20
+=20
++2:
++=09/*
++=09 * The stack layout is nondetermistic here, depending on which path was
++=09 * taken.  This confuses objtool and ORC, rightfully so.  For now,
++=09 * pretend the stack always looks like the non-direct case.
++=09 */
++=09UNWIND_HINT_RESTORE
++
+ =09/* Restore flags */
+-2:=09popfq
++=09popfq
+=20
+ =09/*
+ =09 * As this jmp to ftrace_epilogue can be a short jump
+--=20
+2.20.1
+
