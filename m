@@ -2,56 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9EBF4C5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:03:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E4CF4C7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:04:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731132AbfKHNCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:02:33 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44500 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730662AbfKHNCW (ORCPT
+        id S1731637AbfKHNDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:03:13 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34249 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730733AbfKHNCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 08:02:22 -0500
-Received: by mail-lf1-f65.google.com with SMTP id v4so4391768lfd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:02:21 -0800 (PST)
+        Fri, 8 Nov 2019 08:02:23 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f5so4431763lfp.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:02:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uKxtxAnStDtPqjNJxBgJ+/b3/LBB3oZn+H7vofIc/Cg=;
-        b=OMJjEfRd48l9yUpyE2357XcIsRJLdOdGu6cqnnbciUlwZHeZovkZpyp0t0N/AXUB0G
-         mmPymXL+MPaOrKkaQbKIZvzq8vi1p6BeMnR73GkDYliRrt73eSaJgjoKJvIjcrt4ppVh
-         teAlmhXN/Smyo6qtACnfhoCrC+ohYMOVNT7Ag=
+        bh=IVdoGLW+H0ZKnJRayTBX6GqWyaD6YHKGaBDMMFO7/WI=;
+        b=XGWfSCSUEAVnpUU/P6J3Qpi258NYlF3UJQSunn16SlUdmsp2q+W8Bk2e/nwHBQtUA0
+         fTuY1Ravcq9bFl1d3rl/f799vNBuCYFEgPCX2t9OqCPlkEeIvRZyKcQb8orXRDyeqpLG
+         r3uSJRO/BS/Xt5o6Y8WDp/Fl9289KO+LrOKYM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uKxtxAnStDtPqjNJxBgJ+/b3/LBB3oZn+H7vofIc/Cg=;
-        b=oq4So6VfrtYI61b2bm9+2XzQf/WUHi3ZNGaKS0ziEm1ZA4MigOQd2YZ6xcjTZsxewR
-         5eSHlTRzNDaBlt78q5hsVZwEnoifWTC61YT+IGeHg/rynBY2hg2rltc1ld0iB9aZKN+A
-         9YsSvY6EsfN9Me2XmmS8oHvbMXVYZfBiR1N/GhmNYxMnNhgpMAzaeCrgwJUKvfehwP+y
-         bKoqqC3mBtWHGyErT6VxbElQbASrBzkpftoelqPbAxZbjIEhOTgcMyyTk3kKSQcspo3p
-         ya6H7nZ493C1zEC61uek1epCeYkXIxwdf0dNnY1SJuHATCk7LMN+zEKe0HWKJV2GS1+Z
-         JIfg==
-X-Gm-Message-State: APjAAAU7c5Hmm4cP0s9IpZKDCzOWZbQO2R2/uRW4TUOQLPvgeCDn7Xpy
-        R8a/DGN/p1qSY+AQcJkiPwqu1g==
-X-Google-Smtp-Source: APXvYqzW9GccVQq0zDWdsR9ctlnzwu1b/T1nps4OEjOIXr9eNiXW/Fjo4xt7Q+aH6wPhZ4yaknWlsg==
-X-Received: by 2002:a19:706:: with SMTP id 6mr1175198lfh.93.1573218140577;
-        Fri, 08 Nov 2019 05:02:20 -0800 (PST)
+        bh=IVdoGLW+H0ZKnJRayTBX6GqWyaD6YHKGaBDMMFO7/WI=;
+        b=mz8fjQ1ox9cqNInGo4rdAGIPdkQS94toRhfNh88QgBMSs8locT+E9Iq6VbEoY93HIY
+         uIi/yOKCrcpUvFeOvvLFXgCN6SS7K2l63LOkXcwrYA+oIR9LPO/WAij2xroolRO3flof
+         73jQROmLOpg671dITd766TvH6BdqExe2tDcPQgKVfKvyM3IgXFiQG9CTdPMb4JOrGvUA
+         QD5jzQC5omBfFPLSaltFLfi90laFln14Q/hVcXwZqox/TriRmrT2lXAjPN3zPG0LFVyf
+         no18Z/kvQwgcTmx5Gi+fNtuLaGav7Ug0+I+8WyMWKDXBwL68QwgxE0QsPEjAQN755esm
+         mW+Q==
+X-Gm-Message-State: APjAAAUynwlp7LqZ+2cX9cIDPeL4AAFGXgNR9STRDrr4CMJQboJYc/i1
+        FZyCQHYGRxEZQ+Q01LHk+kKnKw==
+X-Google-Smtp-Source: APXvYqwfxfaitvaPMgKPzDm4mZzVxujIi4YRrNIWmv3dBUm4XchC7Z1ld8b5BxN/rmHZMQ6u7CZ4hg==
+X-Received: by 2002:a19:148:: with SMTP id 69mr6994219lfb.76.1573218141700;
+        Fri, 08 Nov 2019 05:02:21 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.02.19
+        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.02.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 05:02:20 -0800 (PST)
+        Fri, 08 Nov 2019 05:02:21 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
 Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v4 42/47] soc: fsl: qe: avoid IS_ERR_VALUE in ucc_fast.c
-Date:   Fri,  8 Nov 2019 14:01:18 +0100
-Message-Id: <20191108130123.6839-43-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev@vger.kernel.org
+Subject: [PATCH v4 43/47] net/wan/fsl_ucc_hdlc: avoid use of IS_ERR_VALUE()
+Date:   Fri,  8 Nov 2019 14:01:19 +0100
+Message-Id: <20191108130123.6839-44-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
 References: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
@@ -64,84 +65,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 When building this on a 64-bit platform gcc rightly warns that the
 error checking is broken (-ENOMEM stored in an u32 does not compare
-greater than (unsigned long)-MAX_ERRNO). Instead, change the
-ucc_fast_[tr]x_virtual_fifo_base_offset members to s32 and use an
-ordinary check-for-negative. Also, this avoids treating 0 as "this
-cannot have been returned from qe_muram_alloc() so don't free it".
+greater than (unsigned long)-MAX_ERRNO). Instead, now that
+qe_muram_alloc() returns s32, use that type to store the return value
+and use standard kernel style "ret < 0".
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/ucc_fast.c | 15 ++++++---------
- include/soc/fsl/qe/ucc_fast.h |  4 ++--
- 2 files changed, 8 insertions(+), 11 deletions(-)
+ drivers/net/wan/fsl_ucc_hdlc.c | 10 +++++-----
+ drivers/net/wan/fsl_ucc_hdlc.h |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/ucc_fast.c b/drivers/soc/fsl/qe/ucc_fast.c
-index ca0452497a20..ad6193ea4597 100644
---- a/drivers/soc/fsl/qe/ucc_fast.c
-+++ b/drivers/soc/fsl/qe/ucc_fast.c
-@@ -197,6 +197,8 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 			__func__);
- 		return -ENOMEM;
- 	}
-+	uccf->ucc_fast_tx_virtual_fifo_base_offset = -1;
-+	uccf->ucc_fast_rx_virtual_fifo_base_offset = -1;
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index ce6af7d5380f..405b24a5a60d 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -84,8 +84,8 @@ static int uhdlc_init(struct ucc_hdlc_private *priv)
+ 	int ret, i;
+ 	void *bd_buffer;
+ 	dma_addr_t bd_dma_addr;
+-	u32 riptr;
+-	u32 tiptr;
++	s32 riptr;
++	s32 tiptr;
+ 	u32 gumr;
  
- 	/* Fill fast UCC structure */
- 	uccf->uf_info = uf_info;
-@@ -265,10 +267,9 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 	/* Allocate memory for Tx Virtual Fifo */
- 	uccf->ucc_fast_tx_virtual_fifo_base_offset =
- 	    qe_muram_alloc(uf_info->utfs, UCC_FAST_VIRT_FIFO_REGS_ALIGNMENT);
--	if (IS_ERR_VALUE(uccf->ucc_fast_tx_virtual_fifo_base_offset)) {
-+	if (uccf->ucc_fast_tx_virtual_fifo_base_offset < 0) {
- 		printk(KERN_ERR "%s: cannot allocate MURAM for TX FIFO\n",
- 			__func__);
--		uccf->ucc_fast_tx_virtual_fifo_base_offset = 0;
- 		ucc_fast_free(uccf);
- 		return -ENOMEM;
- 	}
-@@ -278,10 +279,9 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
- 		qe_muram_alloc(uf_info->urfs +
- 			   UCC_FAST_RECEIVE_VIRTUAL_FIFO_SIZE_FUDGE_FACTOR,
- 			   UCC_FAST_VIRT_FIFO_REGS_ALIGNMENT);
--	if (IS_ERR_VALUE(uccf->ucc_fast_rx_virtual_fifo_base_offset)) {
-+	if (uccf->ucc_fast_rx_virtual_fifo_base_offset < 0) {
- 		printk(KERN_ERR "%s: cannot allocate MURAM for RX FIFO\n",
- 			__func__);
--		uccf->ucc_fast_rx_virtual_fifo_base_offset = 0;
- 		ucc_fast_free(uccf);
- 		return -ENOMEM;
- 	}
-@@ -384,11 +384,8 @@ void ucc_fast_free(struct ucc_fast_private * uccf)
- 	if (!uccf)
- 		return;
+ 	ut_info = priv->ut_info;
+@@ -195,7 +195,7 @@ static int uhdlc_init(struct ucc_hdlc_private *priv)
+ 	priv->ucc_pram_offset = qe_muram_alloc(sizeof(struct ucc_hdlc_param),
+ 				ALIGNMENT_OF_UCC_HDLC_PRAM);
  
--	if (uccf->ucc_fast_tx_virtual_fifo_base_offset)
--		qe_muram_free(uccf->ucc_fast_tx_virtual_fifo_base_offset);
--
--	if (uccf->ucc_fast_rx_virtual_fifo_base_offset)
--		qe_muram_free(uccf->ucc_fast_rx_virtual_fifo_base_offset);
-+	qe_muram_free(uccf->ucc_fast_tx_virtual_fifo_base_offset);
-+	qe_muram_free(uccf->ucc_fast_rx_virtual_fifo_base_offset);
+-	if (IS_ERR_VALUE(priv->ucc_pram_offset)) {
++	if (priv->ucc_pram_offset < 0) {
+ 		dev_err(priv->dev, "Can not allocate MURAM for hdlc parameter.\n");
+ 		ret = -ENOMEM;
+ 		goto free_tx_bd;
+@@ -233,14 +233,14 @@ static int uhdlc_init(struct ucc_hdlc_private *priv)
  
- 	if (uccf->uf_regs)
- 		iounmap(uccf->uf_regs);
-diff --git a/include/soc/fsl/qe/ucc_fast.h b/include/soc/fsl/qe/ucc_fast.h
-index e9cc46042a83..ba0e838f962a 100644
---- a/include/soc/fsl/qe/ucc_fast.h
-+++ b/include/soc/fsl/qe/ucc_fast.h
-@@ -188,9 +188,9 @@ struct ucc_fast_private {
- 	int stopped_tx;		/* Whether channel has been stopped for Tx
- 				   (STOP_TX, etc.) */
- 	int stopped_rx;		/* Whether channel has been stopped for Rx */
--	u32 ucc_fast_tx_virtual_fifo_base_offset;/* pointer to base of Tx
-+	s32 ucc_fast_tx_virtual_fifo_base_offset;/* pointer to base of Tx
- 						    virtual fifo */
--	u32 ucc_fast_rx_virtual_fifo_base_offset;/* pointer to base of Rx
-+	s32 ucc_fast_rx_virtual_fifo_base_offset;/* pointer to base of Rx
- 						    virtual fifo */
- #ifdef STATISTICS
- 	u32 tx_frames;		/* Transmitted frames counter. */
+ 	/* Alloc riptr, tiptr */
+ 	riptr = qe_muram_alloc(32, 32);
+-	if (IS_ERR_VALUE(riptr)) {
++	if (riptr < 0) {
+ 		dev_err(priv->dev, "Cannot allocate MURAM mem for Receive internal temp data pointer\n");
+ 		ret = -ENOMEM;
+ 		goto free_tx_skbuff;
+ 	}
+ 
+ 	tiptr = qe_muram_alloc(32, 32);
+-	if (IS_ERR_VALUE(tiptr)) {
++	if (tiptr < 0) {
+ 		dev_err(priv->dev, "Cannot allocate MURAM mem for Transmit internal temp data pointer\n");
+ 		ret = -ENOMEM;
+ 		goto free_riptr;
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.h b/drivers/net/wan/fsl_ucc_hdlc.h
+index 8b3507ae1781..71d5ad0a7b98 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.h
++++ b/drivers/net/wan/fsl_ucc_hdlc.h
+@@ -98,7 +98,7 @@ struct ucc_hdlc_private {
+ 
+ 	unsigned short tx_ring_size;
+ 	unsigned short rx_ring_size;
+-	u32 ucc_pram_offset;
++	s32 ucc_pram_offset;
+ 
+ 	unsigned short encoding;
+ 	unsigned short parity;
 -- 
 2.23.0
 
