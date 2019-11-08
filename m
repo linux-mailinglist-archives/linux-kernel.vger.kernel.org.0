@@ -2,99 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C34BF4D61
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D63DF4D7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:46:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfKHNlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:41:31 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:56566 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbfKHNlb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 08:41:31 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8DdJBp173349;
-        Fri, 8 Nov 2019 13:39:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=EN/SCcok43dz7bv91DbkS1Cf4aZc0oMNFHRA92kmMBk=;
- b=ec4plKZTwIJ70M53HTN2vrxpUQlTbWawXoH78zVVd7xv5KQHBovO01FBfvfhKCO2AuBL
- lvaVz/WsLyiMxLpK5y7s975OQslHJ9J038te/d0cV4XdALBup9k5ijXMCuajcMfoa7zW
- 5G2pGqtQ9OTKVkZ2ykc1n82NP1VSxjeEKu30lnjkgqE0bCjo/B3AQdahiaIuCMo4cxGP
- hNTC+IfUni0MlRqR1nfMuwWQ45BLaEI+D8LgiFlKr1oUvE9KaFd0v+TBZFjolQ4VQisP
- UHZb7jGUk3MiRKTReK1k6UrngUQ6wHvCpkV6KydGbO6dpxETtlR3pyK+OLKaoyvon4A7 +g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2w41w15b8q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 08 Nov 2019 13:39:46 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA8DdBFa108201;
-        Fri, 8 Nov 2019 13:39:45 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2w41whtvpq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 08 Nov 2019 13:39:45 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA8DddH7017631;
-        Fri, 8 Nov 2019 13:39:39 GMT
-Received: from tomti.i.net-space.pl (/10.175.202.125)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 08 Nov 2019 05:39:38 -0800
-Date:   Fri, 8 Nov 2019 14:39:31 +0100
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, xen-devel@lists.xenproject.org,
-        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
-        corbet@lwn.net, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, eric.snowberg@oracle.com, hpa@zytor.com,
-        jgross@suse.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        mingo@redhat.com, rdunlap@infradead.org, ross.philipson@oracle.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v5 2/3] x86/boot: Introduce the kernel_info.setup_type_max
-Message-ID: <20191108133931.ah2an7o4wqqax6fj@tomti.i.net-space.pl>
-References: <20191104151354.28145-1-daniel.kiper@oracle.com>
- <20191104151354.28145-3-daniel.kiper@oracle.com>
- <20191108100930.GA4503@zn.tnic>
- <20191108104702.vwfmvehbeuza4j5w@tomti.i.net-space.pl>
- <20191108110703.GB4503@zn.tnic>
- <20191108125248.drmm7xakn7t7oyul@tomti.i.net-space.pl>
- <20191108130338.GD4503@zn.tnic>
+        id S1729031AbfKHNqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:46:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39232 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726845AbfKHNqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 08:46:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9750DACEF;
+        Fri,  8 Nov 2019 13:46:07 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CD4111E3BE4; Fri,  8 Nov 2019 14:46:06 +0100 (CET)
+Date:   Fri, 8 Nov 2019 14:46:06 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
+Message-ID: <20191108134606.GL20863@quack2.suse.cz>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <20191020155935.12297-6-ira.weiny@intel.com>
+ <20191021004536.GD8015@dread.disaster.area>
+ <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
+ <20191108131238.GK20863@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191108130338.GD4503@zn.tnic>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=891
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911080136
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9434 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=969 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911080136
+In-Reply-To: <20191108131238.GK20863@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 02:03:38PM +0100, Borislav Petkov wrote:
-> On Fri, Nov 08, 2019 at 01:52:48PM +0100, Daniel Kiper wrote:
-> > OK, got your comments. I will repost the patch series probably on Tuesday.
-> > I hope that it will land in 5.5 then.
->
-> I don't see why not if you base it ontop of tip:x86/boot and test it
-> properly before sending.
+On Fri 08-11-19 14:12:38, Jan Kara wrote:
+> On Mon 21-10-19 15:49:31, Ira Weiny wrote:
+> > On Mon, Oct 21, 2019 at 11:45:36AM +1100, Dave Chinner wrote:
+> > > On Sun, Oct 20, 2019 at 08:59:35AM -0700, ira.weiny@intel.com wrote:
+> > > That, fundamentally, is the issue here - it's not setting/clearing
+> > > the DAX flag that is the issue, it's doing a swap of the
+> > > mapping->a_ops while there may be other code using that ops
+> > > structure.
+> > > 
+> > > IOWs, if there is any code anywhere in the kernel that
+> > > calls an address space op without holding one of the three locks we
+> > > hold here (i_rwsem, MMAPLOCK, ILOCK) then it can race with the swap
+> > > of the address space operations.
+> > > 
+> > > By limiting the address space swap to file sizes of zero, we rule
+> > > out the page fault path (mmap of a zero length file segv's with an
+> > > access beyond EOF on the first read/write page fault, right?).
+> > 
+> > Yes I checked that and thought we were safe here...
+> > 
+> > > However, other aops callers that might run unlocked and do the wrong
+> > > thing if the aops pointer is swapped between check of the aop method
+> > > existing and actually calling it even if the file size is zero?
+> > > 
+> > > A quick look shows that FIBMAP (ioctl_fibmap())) looks susceptible
+> > > to such a race condition with the current definitions of the XFS DAX
+> > > aops. I'm guessing there will be others, but I haven't looked
+> > > further than this...
+> > 
+> > I'll check for others and think on what to do about this.  ext4 will have the
+> > same problem I think.  :-(
+> 
+> Just as a datapoint, ext4 is bold and sets inode->i_mapping->a_ops on
+> existing inodes when switching journal data flag and so far it has not
+> blown up. What we did to deal with issues Dave describes is that we
+> introduced percpu rw-semaphore guarding switching of aops and then inside
+> problematic functions redirect callbacks in the right direction under this
+> semaphore. Somewhat ugly but it seems to work.
 
-Great!
+Thinking about this some more, perhaps this scheme could be actually
+transformed in something workable. We could have a global (or maybe per-sb
+but I'm not sure it's worth it) percpu rwsem and we could transform aops
+calls into:
 
-> Out of curiosity, is there any particular reason this should be in 5.5?
+percpu_down_read(aops_rwsem);
+do_call();
+percpu_up_read(aops_rwsem);
 
-Just want to have it done... :-))) ...and continue work on stuff which
-depends on it.
+With some macro magic it needn't be even that ugly.
 
-Daniel
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
