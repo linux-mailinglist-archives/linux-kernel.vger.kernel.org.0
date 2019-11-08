@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89EFAF4630
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AE67F4633
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732180AbfKHLk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:40:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53216 "EHLO mail.kernel.org"
+        id S2388686AbfKHLkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:40:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388528AbfKHLkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:40:13 -0500
+        id S1732112AbfKHLkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:40:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D6FC20869;
-        Fri,  8 Nov 2019 11:40:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F27221D7F;
+        Fri,  8 Nov 2019 11:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213212;
-        bh=Ne3xpqHDEVTaOIwtvgtj6SoGrIn4XBahTRxtBYOMvZ0=;
+        s=default; t=1573213220;
+        bh=SbUMUnJim/VLR30Kb/P0spszcZpvqXA7aR6Fp6ri25M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P8j4RTqw9jELV558r0fjuJwDIA3GRzvSYI0MD34OFyB4PyUmxeZgtUk4izG79iZHE
-         DBChrRjSHqkkn1FVhvwL2SAcgNL6s81WWzwGx1hxWHZp7fOshzIzSW8CW5wmWrII7U
-         iruLA+kpsBu4N7Xg+BNme/cX9OMKa97MkQ+IVAc0=
+        b=x1lIGmfqshZUnBzpx1fQl6v/7QFqCftNA0hGDgev0l5afRjWjU3rlTBoVWTrbQ3pg
+         fA8WGWM+sk/FR+lz5yqnJ3OfJHCQB5Mki5a1lrOKrxVfoc5ziLJu5cadSDxxNiIBcH
+         sPAvoDQszeZJoVSYSfYw9xPCdzcrysBr7t6MqMOg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 093/205] ARM: dts: exynos: Disable pull control for S5M8767 PMIC
-Date:   Fri,  8 Nov 2019 06:36:00 -0500
-Message-Id: <20191108113752.12502-93-sashal@kernel.org>
+Cc:     Muhammad Sammar <muhammads@mellanox.com>,
+        Feras Daoud <ferasda@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 097/205] IB/ipoib: Ensure that MTU isn't less than minimum permitted
+Date:   Fri,  8 Nov 2019 06:36:04 -0500
+Message-Id: <20191108113752.12502-97-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -43,49 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Muhammad Sammar <muhammads@mellanox.com>
 
-[ Upstream commit ef2ecab9af5feae97c47b7f61cdd96f7f49b2c23 ]
+[ Upstream commit 142a9c287613560edf5a03c8d142c8b6ebc1995b ]
 
-S5M8767 PMIC interrupt line on Exynos5250-based Arndale board has
-external pull-up resistors, so disable any pull control for it in
-in controller node. This fixes support for S5M8767 interrupts and
-enables operation of wakeup from S5M8767 RTC alarm.
+It is illegal to change MTU to a value lower than the minimum MTU
+stated in ethernet spec. In addition to that we need to add 4 bytes
+for encapsulation header (IPOIB_ENCAP_LEN).
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Before "ifconfig ib0 mtu 0" command, succeeds while it obviously shouldn't.
+
+Signed-off-by: Muhammad Sammar <muhammads@mellanox.com>
+Reviewed-by: Feras Daoud <ferasda@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 9c8ab4b7fb2cf..4ab1f1c66c27f 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -170,6 +170,8 @@
- 		reg = <0x66>;
- 		interrupt-parent = <&gpx3>;
- 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&s5m8767_irq>;
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 78dd36daac00e..d8cb5bbe6eb58 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -243,7 +243,8 @@ static int ipoib_change_mtu(struct net_device *dev, int new_mtu)
+ 		return 0;
+ 	}
  
- 		vinb1-supply = <&main_dc_reg>;
- 		vinb2-supply = <&main_dc_reg>;
-@@ -530,6 +532,13 @@
- 	cap-sd-highspeed;
- };
+-	if (new_mtu > IPOIB_UD_MTU(priv->max_ib_mtu))
++	if (new_mtu < (ETH_MIN_MTU + IPOIB_ENCAP_LEN) ||
++	    new_mtu > IPOIB_UD_MTU(priv->max_ib_mtu))
+ 		return -EINVAL;
  
-+&pinctrl_0 {
-+	s5m8767_irq: s5m8767-irq {
-+		samsung,pins = "gpx3-2";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
+ 	priv->admin_mtu = new_mtu;
 -- 
 2.20.1
 
