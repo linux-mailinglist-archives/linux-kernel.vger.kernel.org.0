@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAD0F466F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30346F4671
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:42:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389963AbfKHLmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:42:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56150 "EHLO mail.kernel.org"
+        id S2389986AbfKHLm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:42:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389903AbfKHLmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:42:19 -0500
+        id S2389918AbfKHLmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6707B21D6C;
-        Fri,  8 Nov 2019 11:42:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 855A921D82;
+        Fri,  8 Nov 2019 11:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213339;
-        bh=fTe/6jv6vp2P2ZrGxFtNky6NeEAfIueFoy7sJP/UR2c=;
+        s=default; t=1573213340;
+        bh=UVs0BQCbS7l7vr5KRG0CBnk8B8+YWO9XidSyUtzdbGQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RU+WiYFUhi7UOyIS8iO3dGbs9Pm8dsuZkGxbCdQdmAg4D+29pMwp8bqVycVjoT1Gf
-         b1JaAAijy4FVThgFzhq1LwcH2dTT8ogt4Fy5Q5CJps0v3lKQcM1BXy0zAhdCjAIAoD
-         ff7u9ZPcViGjETKgcgNlNVs9xHNZwzSJrWS5Ycn8=
+        b=hpS7NcA4rWPErAQrChahRyjeUYE9568cg43eAnhpqPO6cfBy7MM7O15s6Lk6iDLzI
+         9Km6+k2fcRxcAZ9N4E5sCDQqMOPp6BLsMp8pJah8XSiY8dlXlrYX9Qr0sB+5MSmLsK
+         PWVb4/95kprkb39vGBI8CcyABleik3w10J6xP94w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 176/205] soc: qcom: wcnss_ctrl: Avoid string overflow
-Date:   Fri,  8 Nov 2019 06:37:23 -0500
-Message-Id: <20191108113752.12502-176-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 177/205] soc: qcom: apr: Avoid string overflow
+Date:   Fri,  8 Nov 2019 06:37:24 -0500
+Message-Id: <20191108113752.12502-177-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -46,15 +46,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Niklas Cassel <niklas.cassel@linaro.org>
 
-[ Upstream commit 4c96ed170d658d8826d94edec8ac93ee777981a2 ]
+[ Upstream commit 4fadb26574cb74e5de079dd384f25f44f4fb3ec3 ]
 
-'chinfo.name' is used as a NUL-terminated string, but using strncpy() with
-the length equal to the buffer size may result in lack of the termination:
+'adev->name' is used as a NUL-terminated string, but using strncpy() with the
+length equal to the buffer size may result in lack of the termination:
 
-drivers//soc/qcom/wcnss_ctrl.c: In function 'qcom_wcnss_open_channel':
-drivers//soc/qcom/wcnss_ctrl.c:284:2: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-  strncpy(chinfo.name, name, sizeof(chinfo.name));
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'apr_add_device',
+    inlined from 'of_register_apr_devices' at drivers//soc/qcom/apr.c:264:7,
+    inlined from 'apr_probe' at drivers//soc/qcom/apr.c:290:2:
+drivers//soc/qcom/apr.c:222:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(adev->name, np->name, APR_NAME_SIZE);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This changes it to use the safer strscpy() instead.
 
@@ -63,22 +65,25 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/qcom/wcnss_ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/qcom/apr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/qcom/wcnss_ctrl.c b/drivers/soc/qcom/wcnss_ctrl.c
-index df3ccb30bc2dd..373400dd816d6 100644
---- a/drivers/soc/qcom/wcnss_ctrl.c
-+++ b/drivers/soc/qcom/wcnss_ctrl.c
-@@ -281,7 +281,7 @@ struct rpmsg_endpoint *qcom_wcnss_open_channel(void *wcnss, const char *name, rp
- 	struct rpmsg_channel_info chinfo;
- 	struct wcnss_ctrl *_wcnss = wcnss;
+diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+index 57af8a5373325..ee9197f5aae96 100644
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@ -219,9 +219,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+ 	adev->domain_id = id->domain_id;
+ 	adev->version = id->svc_version;
+ 	if (np)
+-		strncpy(adev->name, np->name, APR_NAME_SIZE);
++		strscpy(adev->name, np->name, APR_NAME_SIZE);
+ 	else
+-		strncpy(adev->name, id->name, APR_NAME_SIZE);
++		strscpy(adev->name, id->name, APR_NAME_SIZE);
  
--	strncpy(chinfo.name, name, sizeof(chinfo.name));
-+	strscpy(chinfo.name, name, sizeof(chinfo.name));
- 	chinfo.src = RPMSG_ADDR_ANY;
- 	chinfo.dst = RPMSG_ADDR_ANY;
- 
+ 	dev_set_name(&adev->dev, "aprsvc:%s:%x:%x", adev->name,
+ 		     id->domain_id, id->svc_id);
 -- 
 2.20.1
 
