@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BEEFF48FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1FB9F48F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391600AbfKHMAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:00:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58592 "EHLO mail.kernel.org"
+        id S2391633AbfKHMAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:00:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390612AbfKHLn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:43:57 -0500
+        id S1732452AbfKHLoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:44:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 024A521D6C;
-        Fri,  8 Nov 2019 11:43:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8456E21D6C;
+        Fri,  8 Nov 2019 11:44:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213436;
-        bh=Je3mY+k6AJwFTQTtplBtM3RDBofS3mlAZmUdYt0ev6g=;
+        s=default; t=1573213442;
+        bh=nj4xV/O2BgT3Vx28Imsn78CJnab4xK7OtS0HVjm4e2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iNcfln5jQaHRqzCC5LyKe+l/ZHFCflfHAMT2Pa6IefqzkuMMIOoGlUVLcqzhAPBtq
-         300FbYzNQaiIragc1DYBXE/JLtriDs9DpOKL8pFFNikuV7mXnEeLy0Abmcr8E74n6m
-         bVJ1y3R+E9Gvnr2hg2680B3fk8+/4gfC+E5C+m68=
+        b=0RyiqaApw7Xxde+RdcHerqKmoTa+s4iKGzzclYl8zUj2PW/N0gKMEvVbcBSfPNvcs
+         vW54vm4ZNBAojm0knu225uKVenHFUkVKwVGPf5oYWY+CDTRNYzF1xG9KlLHiiB5iOp
+         pE+uTIsVf1y4cK0eFy9FM72ckLSLvS8XNix3zuMU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sven Schmitt <Sven.Schmitt@mixed-mode.de>,
-        Sven Schmitt <sven.schmitt@mixed-mode.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 033/103] soc: imx: gpc: fix PDN delay
-Date:   Fri,  8 Nov 2019 06:41:58 -0500
-Message-Id: <20191108114310.14363-33-sashal@kernel.org>
+Cc:     Quentin Schulz <quentin.schulz@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 036/103] net: phy: mscc: read 'vsc8531, edge-slowdown' as an u32
+Date:   Fri,  8 Nov 2019 06:42:01 -0500
+Message-Id: <20191108114310.14363-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
 References: <20191108114310.14363-1-sashal@kernel.org>
@@ -45,34 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Schmitt <Sven.Schmitt@mixed-mode.de>
+From: Quentin Schulz <quentin.schulz@bootlin.com>
 
-[ Upstream commit 9f4d61d531e0efc9c3283963ae5ef7e314579191 ]
+[ Upstream commit 36c53cf0f46526b898390659b125155939f67892 ]
 
-imx6_pm_domain_power_off() reads iso and iso2sw from GPC_PGC_PUPSCR_OFFS
-which stores the power up delays.
-So use GPC_PGC_PDNSCR_OFFS for the correct delays.
+In the DT binding, it is specified nowhere that 'vsc8531,edge-slowdown'
+is an u8, even though it's read as an u8 in the driver.
 
-Signed-off-by: Sven Schmitt <sven.schmitt@mixed-mode.de>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Let's update the driver to take into consideration that the
+'vsc8531,edge-slowdown' property is of the default type u32.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/imx/gpc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/mscc.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/imx/gpc.c b/drivers/soc/imx/gpc.c
-index c54d229f8da49..3a12123de4662 100644
---- a/drivers/soc/imx/gpc.c
-+++ b/drivers/soc/imx/gpc.c
-@@ -73,7 +73,7 @@ static int imx6_pm_domain_power_off(struct generic_pm_domain *genpd)
- 		return -EBUSY;
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index 88bcdbcb432cc..fe81741ab66a3 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -112,7 +112,7 @@ struct vsc8531_private {
+ #ifdef CONFIG_OF_MDIO
+ struct vsc8531_edge_rate_table {
+ 	u32 vddmac;
+-	u8 slowdown[8];
++	u32 slowdown[8];
+ };
  
- 	/* Read ISO and ISO2SW power down delays */
--	regmap_read(pd->regmap, pd->reg_offs + GPC_PGC_PUPSCR_OFFS, &val);
-+	regmap_read(pd->regmap, pd->reg_offs + GPC_PGC_PDNSCR_OFFS, &val);
- 	iso = val & 0x3f;
- 	iso2sw = (val >> 8) & 0x3f;
+ static const struct vsc8531_edge_rate_table edge_table[] = {
+@@ -375,8 +375,7 @@ static void vsc85xx_wol_get(struct phy_device *phydev,
+ #ifdef CONFIG_OF_MDIO
+ static int vsc85xx_edge_rate_magic_get(struct phy_device *phydev)
+ {
+-	u8 sd;
+-	u32 vdd;
++	u32 vdd, sd;
+ 	int rc, i, j;
+ 	struct device *dev = &phydev->mdio.dev;
+ 	struct device_node *of_node = dev->of_node;
+@@ -389,7 +388,7 @@ static int vsc85xx_edge_rate_magic_get(struct phy_device *phydev)
+ 	if (rc != 0)
+ 		vdd = MSCC_VDDMAC_3300;
+ 
+-	rc = of_property_read_u8(of_node, "vsc8531,edge-slowdown", &sd);
++	rc = of_property_read_u32(of_node, "vsc8531,edge-slowdown", &sd);
+ 	if (rc != 0)
+ 		sd = 0;
  
 -- 
 2.20.1
