@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18035F4C80
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:04:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B9EBF4C5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:03:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731707AbfKHNDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:03:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43797 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730596AbfKHNCV (ORCPT
+        id S1731132AbfKHNCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:02:33 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44500 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730662AbfKHNCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 08:02:21 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y23so6103217ljh.10
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:02:20 -0800 (PST)
+        Fri, 8 Nov 2019 08:02:22 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v4so4391768lfd.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:02:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FL4wefDICHo32h9247H9jmqyY6zv5MUtAqMoiveQx9g=;
-        b=WM3db+UZNX0xYRn8xFInkWCZ/gGBxlESeid8dXGQU2p17G2KmYfmQKEJM/6nxdjVkz
-         dcCfwIBMRd3gygzYVu0IHJtJgUPU16y1N7AQMDT6+xP5d6gPmR+R/fMCMBXpDEu/jhZJ
-         wIS2GKrKi2LdTuVlyChuB3CdPaAYkTSGlI7eg=
+        bh=uKxtxAnStDtPqjNJxBgJ+/b3/LBB3oZn+H7vofIc/Cg=;
+        b=OMJjEfRd48l9yUpyE2357XcIsRJLdOdGu6cqnnbciUlwZHeZovkZpyp0t0N/AXUB0G
+         mmPymXL+MPaOrKkaQbKIZvzq8vi1p6BeMnR73GkDYliRrt73eSaJgjoKJvIjcrt4ppVh
+         teAlmhXN/Smyo6qtACnfhoCrC+ohYMOVNT7Ag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FL4wefDICHo32h9247H9jmqyY6zv5MUtAqMoiveQx9g=;
-        b=gQ7e8Oubps4qMaL3mtInlkRwQOkgL/h1Nzv/VSK5H9qQXT8lcvDuO7GKir9gLxvbBs
-         B8MQ0vw3G1eKEKLXnsh9c7kaSljui8o/js+BENnfgJs9OXvVFpjBIYvrk5gkKZzVFp+R
-         ADw9rqS+H5THAwjLLkuuAxWik354rKw8VqlNlvs0Cndxqtgd6EL81oFgE6fEBcwblLW5
-         iUBo1Zx3Dth3q/eQFAK6WIpfTC+rFLixrEF8xlAMFBimtTHQkml/WhFIVcWTp06vrRrl
-         QsRiO4zs5PZeGqXnF8WLL1/R0Wp5xW8rMKLnoqfex9Na7zARHXtkudf2NZ1zTXPMLFxE
-         7qyA==
-X-Gm-Message-State: APjAAAVbdycxto8hLn6J3l6jD6eManJ7wlNjoObz+wRPTmlrINyuv/Zs
-        h7456WC3uwP+EzZBCX2qSrqb8w==
-X-Google-Smtp-Source: APXvYqzCkS9lqjETR7JbwYC8m9Tz96BZoapb1R12xn90SEX0h1M81nDkrgY6B1mLpdktlcuraWeZvg==
-X-Received: by 2002:a2e:9a53:: with SMTP id k19mr5922502ljj.246.1573218139469;
-        Fri, 08 Nov 2019 05:02:19 -0800 (PST)
+        bh=uKxtxAnStDtPqjNJxBgJ+/b3/LBB3oZn+H7vofIc/Cg=;
+        b=oq4So6VfrtYI61b2bm9+2XzQf/WUHi3ZNGaKS0ziEm1ZA4MigOQd2YZ6xcjTZsxewR
+         5eSHlTRzNDaBlt78q5hsVZwEnoifWTC61YT+IGeHg/rynBY2hg2rltc1ld0iB9aZKN+A
+         9YsSvY6EsfN9Me2XmmS8oHvbMXVYZfBiR1N/GhmNYxMnNhgpMAzaeCrgwJUKvfehwP+y
+         bKoqqC3mBtWHGyErT6VxbElQbASrBzkpftoelqPbAxZbjIEhOTgcMyyTk3kKSQcspo3p
+         ya6H7nZ493C1zEC61uek1epCeYkXIxwdf0dNnY1SJuHATCk7LMN+zEKe0HWKJV2GS1+Z
+         JIfg==
+X-Gm-Message-State: APjAAAU7c5Hmm4cP0s9IpZKDCzOWZbQO2R2/uRW4TUOQLPvgeCDn7Xpy
+        R8a/DGN/p1qSY+AQcJkiPwqu1g==
+X-Google-Smtp-Source: APXvYqzW9GccVQq0zDWdsR9ctlnzwu1b/T1nps4OEjOIXr9eNiXW/Fjo4xt7Q+aH6wPhZ4yaknWlsg==
+X-Received: by 2002:a19:706:: with SMTP id 6mr1175198lfh.93.1573218140577;
+        Fri, 08 Nov 2019 05:02:20 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.02.18
+        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.02.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 05:02:18 -0800 (PST)
+        Fri, 08 Nov 2019 05:02:20 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v4 41/47] soc: fsl: qe: drop pointless check in qe_sdma_init()
-Date:   Fri,  8 Nov 2019 14:01:17 +0100
-Message-Id: <20191108130123.6839-42-linux@rasmusvillemoes.dk>
+Subject: [PATCH v4 42/47] soc: fsl: qe: avoid IS_ERR_VALUE in ucc_fast.c
+Date:   Fri,  8 Nov 2019 14:01:18 +0100
+Message-Id: <20191108130123.6839-43-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
 References: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
@@ -62,29 +62,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sdma member of struct qe_immap is not at offset zero, so even if
-qe_immr wasn't initialized yet (i.e. NULL), &qe_immr->sdma would not
-be NULL.
+When building this on a 64-bit platform gcc rightly warns that the
+error checking is broken (-ENOMEM stored in an u32 does not compare
+greater than (unsigned long)-MAX_ERRNO). Instead, change the
+ucc_fast_[tr]x_virtual_fifo_base_offset members to s32 and use an
+ordinary check-for-negative. Also, this avoids treating 0 as "this
+cannot have been returned from qe_muram_alloc() so don't free it".
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/soc/fsl/qe/ucc_fast.c | 15 ++++++---------
+ include/soc/fsl/qe/ucc_fast.h |  4 ++--
+ 2 files changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-index 5bf279c679ef..96c2057d8d8e 100644
---- a/drivers/soc/fsl/qe/qe.c
-+++ b/drivers/soc/fsl/qe/qe.c
-@@ -367,9 +367,6 @@ static int qe_sdma_init(void)
- 	struct sdma __iomem *sdma = &qe_immr->sdma;
- 	static s32 sdma_buf_offset = -ENOMEM;
+diff --git a/drivers/soc/fsl/qe/ucc_fast.c b/drivers/soc/fsl/qe/ucc_fast.c
+index ca0452497a20..ad6193ea4597 100644
+--- a/drivers/soc/fsl/qe/ucc_fast.c
++++ b/drivers/soc/fsl/qe/ucc_fast.c
+@@ -197,6 +197,8 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 			__func__);
+ 		return -ENOMEM;
+ 	}
++	uccf->ucc_fast_tx_virtual_fifo_base_offset = -1;
++	uccf->ucc_fast_rx_virtual_fifo_base_offset = -1;
  
--	if (!sdma)
--		return -ENODEV;
+ 	/* Fill fast UCC structure */
+ 	uccf->uf_info = uf_info;
+@@ -265,10 +267,9 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 	/* Allocate memory for Tx Virtual Fifo */
+ 	uccf->ucc_fast_tx_virtual_fifo_base_offset =
+ 	    qe_muram_alloc(uf_info->utfs, UCC_FAST_VIRT_FIFO_REGS_ALIGNMENT);
+-	if (IS_ERR_VALUE(uccf->ucc_fast_tx_virtual_fifo_base_offset)) {
++	if (uccf->ucc_fast_tx_virtual_fifo_base_offset < 0) {
+ 		printk(KERN_ERR "%s: cannot allocate MURAM for TX FIFO\n",
+ 			__func__);
+-		uccf->ucc_fast_tx_virtual_fifo_base_offset = 0;
+ 		ucc_fast_free(uccf);
+ 		return -ENOMEM;
+ 	}
+@@ -278,10 +279,9 @@ int ucc_fast_init(struct ucc_fast_info * uf_info, struct ucc_fast_private ** ucc
+ 		qe_muram_alloc(uf_info->urfs +
+ 			   UCC_FAST_RECEIVE_VIRTUAL_FIFO_SIZE_FUDGE_FACTOR,
+ 			   UCC_FAST_VIRT_FIFO_REGS_ALIGNMENT);
+-	if (IS_ERR_VALUE(uccf->ucc_fast_rx_virtual_fifo_base_offset)) {
++	if (uccf->ucc_fast_rx_virtual_fifo_base_offset < 0) {
+ 		printk(KERN_ERR "%s: cannot allocate MURAM for RX FIFO\n",
+ 			__func__);
+-		uccf->ucc_fast_rx_virtual_fifo_base_offset = 0;
+ 		ucc_fast_free(uccf);
+ 		return -ENOMEM;
+ 	}
+@@ -384,11 +384,8 @@ void ucc_fast_free(struct ucc_fast_private * uccf)
+ 	if (!uccf)
+ 		return;
+ 
+-	if (uccf->ucc_fast_tx_virtual_fifo_base_offset)
+-		qe_muram_free(uccf->ucc_fast_tx_virtual_fifo_base_offset);
 -
- 	/* allocate 2 internal temporary buffers (512 bytes size each) for
- 	 * the SDMA */
- 	if (sdma_buf_offset < 0) {
+-	if (uccf->ucc_fast_rx_virtual_fifo_base_offset)
+-		qe_muram_free(uccf->ucc_fast_rx_virtual_fifo_base_offset);
++	qe_muram_free(uccf->ucc_fast_tx_virtual_fifo_base_offset);
++	qe_muram_free(uccf->ucc_fast_rx_virtual_fifo_base_offset);
+ 
+ 	if (uccf->uf_regs)
+ 		iounmap(uccf->uf_regs);
+diff --git a/include/soc/fsl/qe/ucc_fast.h b/include/soc/fsl/qe/ucc_fast.h
+index e9cc46042a83..ba0e838f962a 100644
+--- a/include/soc/fsl/qe/ucc_fast.h
++++ b/include/soc/fsl/qe/ucc_fast.h
+@@ -188,9 +188,9 @@ struct ucc_fast_private {
+ 	int stopped_tx;		/* Whether channel has been stopped for Tx
+ 				   (STOP_TX, etc.) */
+ 	int stopped_rx;		/* Whether channel has been stopped for Rx */
+-	u32 ucc_fast_tx_virtual_fifo_base_offset;/* pointer to base of Tx
++	s32 ucc_fast_tx_virtual_fifo_base_offset;/* pointer to base of Tx
+ 						    virtual fifo */
+-	u32 ucc_fast_rx_virtual_fifo_base_offset;/* pointer to base of Rx
++	s32 ucc_fast_rx_virtual_fifo_base_offset;/* pointer to base of Rx
+ 						    virtual fifo */
+ #ifdef STATISTICS
+ 	u32 tx_frames;		/* Transmitted frames counter. */
 -- 
 2.23.0
 
