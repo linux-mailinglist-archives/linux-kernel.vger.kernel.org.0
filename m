@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EBDCF5546
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98434F569B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390159AbfKHTBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58612 "EHLO mail.kernel.org"
+        id S2391811AbfKHTJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732355AbfKHTBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:16 -0500
+        id S2391795AbfKHTJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D900721D7B;
-        Fri,  8 Nov 2019 19:01:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D51D820673;
+        Fri,  8 Nov 2019 19:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239676;
-        bh=QqFSnW4VZGL4nSCk0yARCru6QsnD0NxO+LiLeXxNchw=;
+        s=default; t=1573240186;
+        bh=FmP9XTOThCf9edZjXuK00ofv3vQ4dyHYewdZPqO1gm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O1vVUv5TLPKccXOwqQYuIgmVKUrqzih7Ytl6AlAMt35vMKe4CgFxIpZgqyFJONqAu
-         ZH60LKfyi0AD0f/7oIQMY+4j/QkAUztCaRuLUtM+mTwJsCn/1XuiQKMEG2/nXlGhhR
-         ga4m97T1o6oWUuK87R1lheeb4m0Vu0vpL5OrbTGY=
+        b=eH+HPnDXO8Yo3C6ErCuw8/dbpyq7lVWIyWTAZJc2JCl+jlh9/F3fDlnLp9gpBW1HF
+         vvCH2In5gPGamnBW5mXjZNNhg7e+lz1MPvsrFSLwAp1P7YSmKKOTxR/THpyY5b87A7
+         kWPy+fvswhjusRMdmf7Gtgf0UW43vu+cBfw1BrKQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 23/79] ARM: davinci: dm365: Fix McBSP dma_slave_map entry
-Date:   Fri,  8 Nov 2019 19:50:03 +0100
-Message-Id: <20191108174758.480429753@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Mikhak <alan.mikhak@sifive.com>,
+        Marc Zyngier <maz@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <sashal@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: [PATCH 5.3 076/140] irqchip/sifive-plic: Skip contexts except supervisor in plic_init()
+Date:   Fri,  8 Nov 2019 19:50:04 +0100
+Message-Id: <20191108174909.904490504@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Alan Mikhak <alan.mikhak@sifive.com>
 
-[ Upstream commit 564b6bb9d42d31fc80c006658cf38940a9b99616 ]
+[ Upstream commit 41860cc447045c811ce6d5a92f93a065a691fe8e ]
 
-dm365 have only single McBSP, so the device name is without .0
+Modify plic_init() to skip .dts interrupt contexts other
+than supervisor external interrupt.
 
-Fixes: 0c750e1fe481d ("ARM: davinci: dm365: Add dma_slave_map to edma")
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+The .dts entry for plic may specify multiple interrupt contexts.
+For example, it may assign two entries IRQ_M_EXT and IRQ_S_EXT,
+in that order, to the same interrupt controller. This patch
+modifies plic_init() to skip the IRQ_M_EXT context since
+IRQ_S_EXT is currently the only supported context.
+
+If IRQ_M_EXT is not skipped, plic_init() will report "handler
+already present for context" when it comes across the IRQ_S_EXT
+context in the next iteration of its loop.
+
+Without this patch, .dts would have to be edited to replace the
+value of IRQ_M_EXT with -1 for it to be skipped.
+
+Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Paul Walmsley <paul.walmsley@sifive.com> # arch/riscv
+Link: https://lkml.kernel.org/r/1571933503-21504-1-git-send-email-alan.mikhak@sifive.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-davinci/dm365.c | 4 ++--
+ drivers/irqchip/irq-sifive-plic.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 42665914166a3..83ca89a353002 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -458,8 +458,8 @@ static s8 dm365_queue_priority_mapping[][2] = {
- };
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index daefc52b0ec55..7d0a12fe2714a 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -252,8 +252,8 @@ static int __init plic_init(struct device_node *node,
+ 			continue;
+ 		}
  
- static const struct dma_slave_map dm365_edma_map[] = {
--	{ "davinci-mcbsp.0", "tx", EDMA_FILTER_PARAM(0, 2) },
--	{ "davinci-mcbsp.0", "rx", EDMA_FILTER_PARAM(0, 3) },
-+	{ "davinci-mcbsp", "tx", EDMA_FILTER_PARAM(0, 2) },
-+	{ "davinci-mcbsp", "rx", EDMA_FILTER_PARAM(0, 3) },
- 	{ "davinci_voicecodec", "tx", EDMA_FILTER_PARAM(0, 2) },
- 	{ "davinci_voicecodec", "rx", EDMA_FILTER_PARAM(0, 3) },
- 	{ "spi_davinci.2", "tx", EDMA_FILTER_PARAM(0, 10) },
+-		/* skip context holes */
+-		if (parent.args[0] == -1)
++		/* skip contexts other than supervisor external interrupt */
++		if (parent.args[0] != IRQ_S_EXT)
+ 			continue;
+ 
+ 		hartid = plic_find_hart_id(parent.np);
 -- 
 2.20.1
 
