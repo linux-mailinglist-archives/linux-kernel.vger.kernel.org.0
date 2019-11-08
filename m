@@ -2,72 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C38BF616F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 21:29:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 278BAF6164
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 21:29:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfKIU3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 15:29:55 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:53666 "EHLO
+        id S1726731AbfKIU3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 15:29:36 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:53684 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbfKIU3e (ORCPT
+        with ESMTP id S1726609AbfKIU3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 15:29:34 -0500
+        Sat, 9 Nov 2019 15:29:35 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DA8B114742051;
-        Sat,  9 Nov 2019 12:29:33 -0800 (PST)
-Date:   Fri, 08 Nov 2019 11:35:27 -0800 (PST)
-Message-Id: <20191108.113527.2242883926552730503.davem@davemloft.net>
-To:     gregkh@linuxfoundation.org
-Cc:     jwi@linux.ibm.com, sashal@kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 204/205] s390/qeth: limit csum offload
- erratum to L3 devices
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 21D7B1474DF0F;
+        Sat,  9 Nov 2019 12:29:35 -0800 (PST)
+Date:   Fri, 08 Nov 2019 12:19:46 -0800 (PST)
+Message-Id: <20191108.121946.1084660860645163442.davem@davemloft.net>
+To:     sgarzare@redhat.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        smbarber@chromium.org, stefanha@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH] vsock/virtio: fix sock refcnt holding during the
+ shutdown
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191108123416.GA732985@kroah.com>
-References: <20191108120025.GM4787@sasha-vm>
-        <4d8f1938-af6e-7e0e-4085-2f7c53390b2d@linux.ibm.com>
-        <20191108123416.GA732985@kroah.com>
+In-Reply-To: <20191108160850.51278-1-sgarzare@redhat.com>
+References: <20191108160850.51278-1-sgarzare@redhat.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 09 Nov 2019 12:29:34 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 09 Nov 2019 12:29:35 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 8 Nov 2019 13:34:16 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Fri,  8 Nov 2019 17:08:50 +0100
 
-> On Fri, Nov 08, 2019 at 01:16:26PM +0100, Julian Wiedmann wrote:
->> On 08.11.19 13:00, Sasha Levin wrote:
->> > On Fri, Nov 08, 2019 at 12:50:24PM +0100, Julian Wiedmann wrote:
->> >> On 08.11.19 12:37, Sasha Levin wrote:
->> >>> From: Julian Wiedmann <jwi@linux.ibm.com>
->> >>>
->> >>> [ Upstream commit f231dc9dbd789b0f98a15941e3cebedb4ad72ad5 ]
->> >>>
->> >>> Combined L3+L4 csum offload is only required for some L3 HW. So for
->> >>> L2 devices, don't offload the IP header csum calculation.
->> >>>
->> >>
->> >> NACK, this has no relevance for stable.
->> > 
->> > Sure, I'll drop it.
->> > 
->> > Do you have an idea why the centos and ubuntu folks might have
->> > backported this commit into their kernels?
->> > 
->> 
->> No clue, I trust they have their own reasons.
->> 
+> The "42f5cda5eaf4" commit rightly set SOCK_DONE on peer shutdown,
+> but there is an issue if we receive the SHUTDOWN(RDWR) while the
+> virtio_transport_close_timeout() is scheduled.
+> In this case, when the timeout fires, the SOCK_DONE is already
+> set and the virtio_transport_close_timeout() will not call
+> virtio_transport_reset() and virtio_transport_do_close().
+> This causes that both sockets remain open and will never be released,
+> preventing the unloading of [virtio|vhost]_transport modules.
 > 
-> I cant see centos backporting anything unless they were asked to do so.
-> And this really looks like a "bugfix" to me, why isn't this relevant for
-> any older kernel versions?
+> This patch fixes this issue, calling virtio_transport_reset() and
+> virtio_transport_do_close() when we receive the SHUTDOWN(RDWR)
+> and there is nothing left to read.
+> 
+> Fixes: 42f5cda5eaf4 ("vsock/virtio: set SOCK_DONE on peer shutdown")
+> Cc: Stephen Barber <smbarber@chromium.org>
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Yeah seriously, this looks entirely legit.
+Applied and queued up for -stable, thanks.
