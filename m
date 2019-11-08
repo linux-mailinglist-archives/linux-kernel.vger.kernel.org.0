@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F3DF5632
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A384FF5532
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391432AbfKHTHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:07:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38006 "EHLO mail.kernel.org"
+        id S2390012AbfKHTAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:00:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391425AbfKHTHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:07:18 -0500
+        id S2389908AbfKHTAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B26A82196F;
-        Fri,  8 Nov 2019 19:07:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47CC82067B;
+        Fri,  8 Nov 2019 19:00:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240038;
-        bh=cJ6t2TafyczZEuNkVhNQTkIyWqNQmIOm7Mg0qAcJHPw=;
+        s=default; t=1573239644;
+        bh=MEbPA6Qcubxag4Ew2M//KXeX4cegr3py9JHVD7ZNsRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NDcpwX1/OMflu4QwjK2r/vPvKeU2wZLAiSUJSqe42lJme5mNSReer6uzhiktKMEBN
-         BXlq0BBr2BUxsRLLv7nBsd1fE8ruoQovWDsQZmMmVAsAl373tjakOIGaobRl2+3Sf+
-         y6n1paAQ65zjlNIeIu9ycsdCwOebV5qdyFMGCtAI=
+        b=DHJ1b2s1dxtdVw2gGlbuX0E8FSkGWoG4W++NUujTKI7jbHCU0gbhDz8QJRJ4Ak6Mp
+         BskEOulPGAV1B+nJzlSzUvKipcf+5OqgGJK+HStgEoqsIkUAo2vTsqsSuyDscg+x9d
+         rj8iiqBoMXYTD6XzppwSlbss1YM2ejdN5/hfyn0A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 065/140] selftests: kvm: vmx_set_nested_state_test: dont check for VMX support twice
+Subject: [PATCH 4.19 13/79] pinctrl: ns2: Fix off by one bugs in ns2_pinmux_enable()
 Date:   Fri,  8 Nov 2019 19:49:53 +0100
-Message-Id: <20191108174909.315506364@linuxfoundation.org>
+Message-Id: <20191108174752.160133693@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
+References: <20191108174745.495640141@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 700c17d9cec8712f4091692488fb63e2680f7a5d ]
+[ Upstream commit 39b65fbb813089e366b376bd8acc300b6fd646dc ]
 
-vmx_set_nested_state_test() checks if VMX is supported twice: in the very
-beginning (and skips the whole test if it's not) and before doing
-test_vmx_nested_state(). One should be enough.
+The pinctrl->functions[] array has pinctrl->num_functions elements and
+the pinctrl->groups[] array is the same way.  These are set in
+ns2_pinmux_probe().  So the > comparisons should be >= so that we don't
+read one element beyond the end of the array.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20190926081426.GB2332@mwanda
+Acked-by: Scott Branden <scott.branden@broadcom.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/kvm/x86_64/vmx_set_nested_state_test.c       | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
-index 853e370e8a394..a6d85614ae4d6 100644
---- a/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
-@@ -271,12 +271,7 @@ int main(int argc, char *argv[])
- 	state.flags = KVM_STATE_NESTED_RUN_PENDING;
- 	test_nested_state_expect_einval(vm, &state);
+diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+index 4b5cf0e0f16e2..951090faa6a91 100644
+--- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+@@ -640,8 +640,8 @@ static int ns2_pinmux_enable(struct pinctrl_dev *pctrl_dev,
+ 	const struct ns2_pin_function *func;
+ 	const struct ns2_pin_group *grp;
  
--	/*
--	 * TODO: When SVM support is added for KVM_SET_NESTED_STATE
--	 *       add tests here to support it like VMX.
--	 */
--	if (entry->ecx & CPUID_VMX)
--		test_vmx_nested_state(vm);
-+	test_vmx_nested_state(vm);
+-	if (grp_select > pinctrl->num_groups ||
+-		func_select > pinctrl->num_functions)
++	if (grp_select >= pinctrl->num_groups ||
++		func_select >= pinctrl->num_functions)
+ 		return -EINVAL;
  
- 	kvm_vm_free(vm);
- 	return 0;
+ 	func = &pinctrl->functions[func_select];
 -- 
 2.20.1
 
