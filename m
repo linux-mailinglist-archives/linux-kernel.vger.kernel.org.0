@@ -2,53 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8323DF5185
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30DB3F51A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:54:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbfKHQsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 11:48:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfKHQsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 11:48:54 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA1C22178F;
-        Fri,  8 Nov 2019 16:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573231734;
-        bh=9w0yj2YakXAi8n7djqtc+u+Gst/eMLDRpOqSpIO+PbM=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=cwFruo+s6FIdcnltcZTO1uzlzvCFUQn4AfTGqqEaPcp7m10fznEESpWHOpJG4FNuj
-         YupXHvI//X/Wcca950+q3tzgDQ3h4he8U8iDZ7wSin1Lwra4ICJZEvsklftPKvbvQ5
-         ZXur/0ZzPEyniH+s0ji4nzcKxnWcBguh34pw7h64=
-Content-Type: text/plain; charset="utf-8"
+        id S1727894AbfKHQyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 11:54:38 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50264 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbfKHQyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 11:54:37 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA8GmRRQ052691;
+        Fri, 8 Nov 2019 10:48:27 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573231707;
+        bh=4A4O5I7pwI/p0i8/yVVFwm2hJ5HkTiFhKi6/rXJSUUw=;
+        h=From:To:CC:Subject:Date;
+        b=QtANlRoK8Wi271mYRcJwNxC0JxEQigLC2P2SuVnOWIZuOpcnrJdUjUd2Tj8L5S52h
+         qPQBUiwbgUD2KtDqp1aHgLr0jeOTDliBvnBClxLgFmAm6XF5QHxY/i9DhMaikAJKdJ
+         dasuGsg35kyMrlephdT//rLLE4nvFAo2Y7uJKeLo=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA8GmRGp106711
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Nov 2019 10:48:27 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 8 Nov
+ 2019 10:48:11 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 8 Nov 2019 10:48:11 -0600
+Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA8GmNLW117597;
+        Fri, 8 Nov 2019 10:48:24 -0600
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Janek Kotas <jank@cadence.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+Subject: [PATCH v3 0/2] scsi: ufs: Add driver for TI wrapper for Cadence UFS IP
+Date:   Fri, 8 Nov 2019 22:18:55 +0530
+Message-ID: <20191108164857.11466-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191010020725.3990-3-andrew@aj.id.au>
-References: <20191010020725.3990-1-andrew@aj.id.au> <20191010020725.3990-3-andrew@aj.id.au>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, joel@jms.id.au, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: ast2600: Add RMII RCLK gates for all four MACs
-User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 08:48:53 -0800
-Message-Id: <20191108164853.EA1C22178F@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Andrew Jeffery (2019-10-09 19:07:25)
-> RCLK is a fixed 50MHz clock derived from HPLL/HCLK that is described by a
-> single gate for each MAC.
->=20
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> ---
+This series add DT bindings and driver for TI wrapper for Cadence UFS
+IP that is present on TI's J721e SoC
 
-Applied to clk-next
+Vignesh Raghavendra (2):
+  dt-bindings: ufs: ti,j721e-ufs.yaml: Add binding for TI UFS wrapper
+  scsi: ufs: Add driver for TI wrapper for Cadence UFS IP
+
+ .../devicetree/bindings/ufs/ti,j721e-ufs.yaml | 68 ++++++++++++++
+ drivers/scsi/ufs/Kconfig                      | 10 +++
+ drivers/scsi/ufs/Makefile                     |  1 +
+ drivers/scsi/ufs/ti-j721e-ufs.c               | 90 +++++++++++++++++++
+ 4 files changed, 169 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
+ create mode 100644 drivers/scsi/ufs/ti-j721e-ufs.c
+
+-- 
+2.24.0
 
