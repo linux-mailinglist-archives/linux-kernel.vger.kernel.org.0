@@ -2,99 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D1AF42C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3658F42B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:01:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731344AbfKHJBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 04:01:15 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:22070 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728513AbfKHJBP (ORCPT
+        id S1731003AbfKHJAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 04:00:42 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:18424 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729873AbfKHJAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 04:01:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573203674;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rcMCl02DtgAodZc1y0NYd9at6CosXJepzGQl98OpFNI=;
-        b=iWm3B5acdFvtqt5EfRGjE4g529mRBRC2qKHNgNlgj8CXgTYIsvonZz4s3I91YP2wIVuEBo
-        71IOX2VLM4zpCeZeWuQd4eJ77QvgKYptJqaNEAQbV1sLzYgvJyssDOo7PXSz6eEQr/DDOW
-        q0mwOWj6bXMNNWqo6RObQUAGsHjnvB8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-412-yCeEA3aXM7mippN68agMJw-1; Fri, 08 Nov 2019 04:01:10 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45FE0800054;
-        Fri,  8 Nov 2019 09:01:08 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-112.pek2.redhat.com [10.72.12.112])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 68AA85D6A5;
-        Fri,  8 Nov 2019 09:00:58 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com, jgross@suse.com,
-        dhowells@redhat.com, Thomas.Lendacky@amd.com,
-        ebiederm@xmission.com, vgoyal@redhat.com, d.hatayama@fujitsu.com,
-        horms@verge.net.au, kexec@lists.infradead.org
-Subject: [PATCH 3/3 v9] kexec: Fix i386 build warnings that missed declaration of struct kimage
-Date:   Fri,  8 Nov 2019 17:00:27 +0800
-Message-Id: <20191108090027.11082-4-lijiang@redhat.com>
-In-Reply-To: <20191108090027.11082-1-lijiang@redhat.com>
-References: <20191108090027.11082-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: yCeEA3aXM7mippN68agMJw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Fri, 8 Nov 2019 04:00:41 -0500
+Received: from localhost.localdomain (10.28.8.19) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Fri, 8 Nov 2019
+ 17:00:58 +0800
+From:   Qianggui Song <qianggui.song@amlogic.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Qianggui Song <qianggui.song@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v5 0/3] pinctrl: meson-a1: add pinctrl driver
+Date:   Fri, 8 Nov 2019 17:00:33 +0800
+Message-ID: <1573203636-7436-1-git-send-email-qianggui.song@amlogic.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.19]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kbuild test robot reported some build warnings as follow:
+This patchset adds Pin controller driver support for Meson-A1 Soc
+which shares the same register layout of pinmux with previous
+Meson-G12A, however there is difference for gpio and pin config
+registers in A1.
 
-arch/x86/include/asm/crash.h:5:32: warning: 'struct kimage' declared
-inside parameter list will not be visible outside of this definition
-or declaration
-    int crash_load_segments(struct kimage *image);
-                                   ^~~~~~
-    int crash_copy_backup_region(struct kimage *image);
-                                        ^~~~~~
-    int crash_setup_memmap_entries(struct kimage *image,
-                                          ^~~~~~
-The 'struct kimage' is defined in the header file include/linux/kexec.h,
-before using it, need to include its header file or make a declaration.
-Otherwise the above warnings may be triggered.
+Note that since dt-binding patch has been removed from this patch set,
+compiling need header file in patch 1 of [3].
 
-Add a declaration of struct kimage to the file arch/x86/include/asm/
-crash.h, that will solve these compile warnings.
+Changes since v4 at [3]
+ - remove dt-binding patch for it can be merged first according to
+ Linus Walleij's suggestion.
+ - make SoCs before g12a share the same aobus dt paser function
+ - make A1 dt paser function also as common part for later chip will
+ re-use this definition.
+ - modify meson_map_resource return value
 
-Fixes: dd5f726076cc ("kexec: support for kexec on panic using new system ca=
-ll")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Link: https://lkml.kernel.org/r/201910310233.EJRtTMWP%25lkp@intel.com
----
- arch/x86/include/asm/crash.h | 2 ++
- 1 file changed, 2 insertions(+)
+Changes since v3 at [2]
+ - separate ao fixup from meson_pinctrl_parse_dt
+ - provide ao extra dt parse callback for each SoC
 
-diff --git a/arch/x86/include/asm/crash.h b/arch/x86/include/asm/crash.h
-index 3dff55f4ed9d..88eadd08ad70 100644
---- a/arch/x86/include/asm/crash.h
-+++ b/arch/x86/include/asm/crash.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_CRASH_H
- #define _ASM_X86_CRASH_H
-=20
-+struct kimage;
-+
- int crash_load_segments(struct kimage *image);
- int crash_copy_backup_region(struct kimage *image);
- int crash_setup_memmap_entries(struct kimage *image,
---=20
-2.17.1
+Changes since v2 at [1]:
+ - make dt parser callback as a separate patch
+
+Changes since v1 at [0]:
+ - collect Reviewed-by
+ - modify commit log
+ - add an extra dt parser function for a1
+
+[0] https://lore.kernel.org/linux-amlogic/1568700442-18540-1-git-send-email-qianggui.song@amlogic.com/
+[1] https://lore.kernel.org/linux-amlogic/1570532999-23302-1-git-send-email-qianggui.song@amlogic.com/
+[2] https://lore.kernel.org/linux-amlogic/1571050492-6598-1-git-send-email-qianggui.song@amlogic.com/
+[3] https://lore.kernel.org/linux-amlogic/1572004167-24150-1-git-send-email-qianggui.song@amlogic.com/
+
+Qianggui Song (3):
+  pinctrl: meson: add a new callback for SoCs fixup
+  pinctrl: meson: add pinctrl driver support for Meson-A1 SoC
+  arm64: dts: meson: a1: add pinctrl controller support
+
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi  |  18 +
+ drivers/pinctrl/meson/Kconfig              |   6 +
+ drivers/pinctrl/meson/Makefile             |   1 +
+ drivers/pinctrl/meson/pinctrl-meson-a1.c   | 942 +++++++++++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson-axg.c  |   1 +
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c |   9 +
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c |   1 +
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  |   1 +
+ drivers/pinctrl/meson/pinctrl-meson.c      |  34 +-
+ drivers/pinctrl/meson/pinctrl-meson.h      |   7 +
+ drivers/pinctrl/meson/pinctrl-meson8.c     |   1 +
+ drivers/pinctrl/meson/pinctrl-meson8b.c    |   1 +
+ 12 files changed, 1015 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-a1.c
+
+-- 
+1.9.1
 
