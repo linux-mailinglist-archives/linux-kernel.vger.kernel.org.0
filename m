@@ -2,241 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75AA2F591D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:08:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D1AF5907
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:03:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731794AbfKHVFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:05:37 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:38665 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfKHVFg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:05:36 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MI41P-1ifa9R3rIV-00FECL; Fri, 08 Nov 2019 22:03:03 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        rth@twiddle.net, tony.luck@intel.com, paul.burton@mips.com,
-        green.hu@gmail.com, deller@gmx.de, mpe@ellerman.id.au,
-        davem@davemloft.net, tglx@linutronix.de, x86@kernel.org,
-        jdike@addtoit.com, richard@nod.at, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, john.stultz@linaro.org, sboyd@kernel.org,
-        rostedt@goodmis.org, vincenzo.frascino@arm.com,
-        paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org,
-        peterz@infradead.org, will@kernel.org, deepa.kernel@gmail.com,
-        christian@brauner.io, heiko.carstens@de.ibm.com,
-        christophe.leroy@c-s.fr, ebiederm@xmission.com,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, netdev@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: [PATCH 00/23] y2038 cleanups
-Date:   Fri,  8 Nov 2019 22:02:21 +0100
-Message-Id: <20191108210236.1296047-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1730137AbfKHVCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:02:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727065AbfKHVCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:02:55 -0500
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2C8DEC057F52
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2019 21:02:55 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id h191so3527607wme.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 13:02:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Nmq1GRytWblh4euOCRxuEbZgIoXZxuuSJXUDKh29oIk=;
+        b=ltIfLzSQTMtPVB51kMxraCy8xppbBFOq/oPrV1nH6m9O3I7Jtsk84C0DEd/ZW9LQmQ
+         S/Mz3A2siz5MKyN3okWbPD3kiz/3wJOkdEJL5+8XLb8JVsYZ6N5k3dfinCrQqG9UH420
+         8+67qLz6PfC3yC+JoyGHFjwvdWCa3nHrQAPo0Cpd61N4iEWfEO2sfKmzRRuZeO54oTga
+         3WfCtmWs9qZ9vrXCys3Ml0UmSCsfWxOJqMwMdTqIFHo+6EMvDQyzWOZe9EL6X272qlc7
+         m/n3d4D0LjoSRZPuPfDpacXDAqewM8SR4LgaM8a/jv6q+I++lWMGJ2i63tvssRQkT6Tf
+         3tFQ==
+X-Gm-Message-State: APjAAAWCsHkmwCwF/ph9eKSdHIMW7gbzYqMs1VOIfqTLIqQdIS45Hlj9
+        94uzU/0a31rp2ToOyRJo9mYaK8pqJMZ7M9EuGZSW3N23QnIANlIMc4XMTdyTwH44dDZPdI8LT27
+        +DmylVgv8mA8esFSr8UgtV3Yd
+X-Received: by 2002:a1c:dd45:: with SMTP id u66mr9706141wmg.12.1573246973743;
+        Fri, 08 Nov 2019 13:02:53 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy/r6N66RU82TBDTILIQyY7RHqJh4iD/jrgGSamtcwPgbTwlkWB5WWPfNwcD7uzL3Q1oJWlbw==
+X-Received: by 2002:a1c:dd45:: with SMTP id u66mr9706123wmg.12.1573246973469;
+        Fri, 08 Nov 2019 13:02:53 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:e8cd:9f0f:a5dc:7ad5? ([2001:b07:6468:f312:e8cd:9f0f:a5dc:7ad5])
+        by smtp.gmail.com with ESMTPSA id y8sm5515162wmi.9.2019.11.08.13.02.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 13:02:52 -0800 (PST)
+Subject: Re: [PATCH 03/13] kvm: monolithic: fixup x86-32 build
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Maennich <maennich@google.com>
+References: <20191104230001.27774-1-aarcange@redhat.com>
+ <20191104230001.27774-4-aarcange@redhat.com>
+ <6ed4a5cd-38b1-04f8-e3d5-3327a1bd5d87@redhat.com>
+ <678358c1-0621-3d2a-186e-b60742b2a286@redhat.com>
+ <20191105135414.GA30717@redhat.com>
+ <330acce5-a527-543b-84c0-f3d8d277a0e2@redhat.com>
+ <20191105145651.GD30717@redhat.com>
+ <ab18744b-afc7-75d4-b5f3-e77e9aae41a6@redhat.com>
+ <20191108135631.GA22507@linux-8ccs>
+ <b77283e5-a4bc-1849-fbfa-27741ab2dbd5@redhat.com>
+ <20191108200103.GA532@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <9a3d2936-bd26-430f-a962-9b0f6fe0c2a0@redhat.com>
+Date:   Fri, 8 Nov 2019 22:02:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UnBnEVvh9e/TAlbVJpAgl+cZfINqrWh9dLOxhM2cR8aLh8bxi43
- imnX6NUaeePS5+DRA0WRYUJVamsiPbbVcIxpp/4FOrH5eYIasgtQ9F4iNEhxTjL7CjcCc5K
- bAv59di7IK248c9R001Bzfk5n9zBi6XSKGbbURpyvKXfff1XY6BWVKsSxLxE879MSpi2NAc
- hQzqPBvdAyeO+K+Sge1xw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:OIDj0+r1Q9A=:9gN4BqFLWG42/ujpgO6Cgr
- o8zqBPZmLIUIEnDlrrAXeH2vLeBpIadNXhV86RgylTicv9xsmYlpVaFpBMf/H/Yjlzbw54cpy
- eh/U17TACQhr/ys8Bi+1eshVGdQxS5ivhF8awvsaZnAXg9mNAA8jkqXgpcpwWt367C/8Kd86R
- PArvSuqzyeR9kXxr8BvqUTmoaE4g6Rd8F0lY4P97kcm/hZDDTFU9lm0mHxnM0bHAyM+SvOHYd
- iw+439TjI1JHDeQqBpLukAr0wnd9IY2f05cEO8b48Hy7kYtbaI2rom9bTJZ3BbKszOykd7H0q
- oK4Ya32pPC2rfGc0OBMvlJAfW+U7J0Y2JHzAkyUMd/7/mal+bfzBkSg8A0O6/exDyl/Z/WNJy
- m3TRmxcGqeD+mrruFnCOYH9J91b9cbHcwtFZD/CAY9jd9786DVfTW8CKd5BLmZRsHl71EyEi5
- K6mfaAx63kT3i52V/5zPjVHi/xplJ3YpYGzCTEeY7jgkxp6i6NqIi2ghC/8j5/eYAtCM51h3d
- Z8Ob7p2gDLZwWhpdQ4b78C5ehph2lPjnzxiqzxTyMT+MD96QhPQWmWVKsWIK0FAs0qvDqsP2a
- GKGNlVHb+qr7JyGt+fF9+SvIKG13x6Bhw26DKuQtLgfO6qnyM9jMr6nN5/5EV/9nPPKgeZMi6
- a1svux7RWVOd64AYgjbwsp2PjdbU/xpWDDSVGOMhQmktNt60nxmbkWIkGbMHoosfsFgXXEfB4
- i7LmjSLuzVGAOXL0n7HULZV9tfkZIv5cbllBdYB5FinD1QYgQQG36yK6WhFCFvCPmv1hlou8U
- ye11gYsvTwOfF7tDpZ1QmTJ1v1Q1y1VYzfbIpHyUIMvlz8YcXL2vDgC6IMOdob8B3C6bh7EPJ
- j24sn73RDOt7PznprOsg==
+In-Reply-To: <20191108200103.GA532@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a series of cleanups for the y2038 work, mostly intended
-for namespace cleaning: the kernel defines the traditional
-time_t, timeval and timespec types that often lead to y2038-unsafe
-code. Even though the unsafe usage is mostly gone from the kernel,
-having the types and associated functions around means that we
-can still grow new users, and that we may be missing conversions
-to safe types that actually matter.
+On 08/11/19 21:01, Andrea Arcangeli wrote:
+> On Fri, Nov 08, 2019 at 08:51:04PM +0100, Paolo Bonzini wrote:
+>> I suppose we could use code patching mechanism to avoid the retpolines.
+>>  Andrea, what do you think about that?  That would have the advantage
+>> that we won't have to remove kvm_x86_ops. :)
+> 
+> page 17 covers pvops:
+> 
+> https://people.redhat.com/~aarcange/slides/2019-KVM-monolithic.pdf
 
-As there is no rush on any of these patches, I would either
-queue them up in linux-next through my y2038 branch, or
-Thomas could add them to the tip tree if he wants.
+You can patch call instructions directly using text_poke when
+kvm_intel.ko or kvm_amd.ko, I'm not sure why that would be worse for TLB
+or RAM usage.  The hard part is recording the location of the call sites
+using some pushsection/popsection magic.
 
-As mentioned in another series, this is part of a larger
-effort to fix all the remaining bits and pieces that are
-not completed yet from the y2038 conversion, and the full
-set can be found at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=y2038-endgame
-
-Maintainers, please review and provide Acks.
-
-Let me know if you have any opinion on whether we should do
-the include last two patches of this series or not.
-
-     Arnd
-
-Arnd Bergmann (23):
-  y2038: remove CONFIG_64BIT_TIME
-  y2038: add __kernel_old_timespec and __kernel_old_time_t
-  y2038: vdso: change timeval to __kernel_old_timeval
-  y2038: vdso: change timespec to __kernel_old_timespec
-  y2038: vdso: change time_t to __kernel_old_time_t
-  y2038: vdso: nds32: open-code timespec_add_ns()
-  y2038: vdso: powerpc: avoid timespec references
-  y2038: ipc: remove __kernel_time_t reference from headers
-  y2038: stat: avoid 'time_t' in 'struct stat'
-  y2038: uapi: change __kernel_time_t to __kernel_old_time_t
-  y2038: rusage: use __kernel_old_timeval
-  y2038: syscalls: change remaining timeval to __kernel_old_timeval
-  y2038: socket: remove timespec reference in timestamping
-  y2038: make ns_to_compat_timeval use __kernel_old_timeval
-  y2038: elfcore: Use __kernel_old_timeval for process times
-  y2038: timerfd: Use timespec64 internally
-  y2038: time: avoid timespec usage in settimeofday()
-  y2038: itimer: compat handling to itimer.c
-  y2038: use compat_{get,set}_itimer on alpha
-  y2038: move itimer reset into itimer.c
-  y2038: itimer: change implementation to timespec64
-  [RFC] y2038: itimer: use ktime_t internally
-  y2038: allow disabling time32 system calls
-
- arch/Kconfig                              |  11 +-
- arch/alpha/kernel/osf_sys.c               |  67 +-----
- arch/alpha/kernel/syscalls/syscall.tbl    |   4 +-
- arch/ia64/kernel/asm-offsets.c            |   2 +-
- arch/mips/include/uapi/asm/msgbuf.h       |   6 +-
- arch/mips/include/uapi/asm/sembuf.h       |   4 +-
- arch/mips/include/uapi/asm/shmbuf.h       |   6 +-
- arch/mips/include/uapi/asm/stat.h         |  16 +-
- arch/mips/kernel/binfmt_elfn32.c          |   4 +-
- arch/mips/kernel/binfmt_elfo32.c          |   4 +-
- arch/nds32/kernel/vdso/gettimeofday.c     |  61 +++--
- arch/parisc/include/uapi/asm/msgbuf.h     |   6 +-
- arch/parisc/include/uapi/asm/sembuf.h     |   4 +-
- arch/parisc/include/uapi/asm/shmbuf.h     |   6 +-
- arch/powerpc/include/asm/asm-prototypes.h |   3 +-
- arch/powerpc/include/asm/vdso_datapage.h  |   6 +-
- arch/powerpc/include/uapi/asm/msgbuf.h    |   6 +-
- arch/powerpc/include/uapi/asm/sembuf.h    |   4 +-
- arch/powerpc/include/uapi/asm/shmbuf.h    |   6 +-
- arch/powerpc/include/uapi/asm/stat.h      |   2 +-
- arch/powerpc/kernel/asm-offsets.c         |  18 +-
- arch/powerpc/kernel/syscalls.c            |   4 +-
- arch/powerpc/kernel/time.c                |   5 +-
- arch/powerpc/kernel/vdso32/gettimeofday.S |   6 +-
- arch/powerpc/kernel/vdso64/gettimeofday.S |   8 +-
- arch/sparc/include/uapi/asm/msgbuf.h      |   6 +-
- arch/sparc/include/uapi/asm/sembuf.h      |   4 +-
- arch/sparc/include/uapi/asm/shmbuf.h      |   6 +-
- arch/sparc/include/uapi/asm/stat.h        |  24 +-
- arch/sparc/vdso/vclock_gettime.c          |  36 +--
- arch/x86/entry/vdso/vclock_gettime.c      |   6 +-
- arch/x86/entry/vsyscall/vsyscall_64.c     |   4 +-
- arch/x86/include/uapi/asm/msgbuf.h        |   6 +-
- arch/x86/include/uapi/asm/sembuf.h        |   4 +-
- arch/x86/include/uapi/asm/shmbuf.h        |   6 +-
- arch/x86/um/vdso/um_vdso.c                |  12 +-
- fs/aio.c                                  |   2 +-
- fs/binfmt_elf.c                           |  12 +-
- fs/binfmt_elf_fdpic.c                     |  12 +-
- fs/compat_binfmt_elf.c                    |   4 +-
- fs/select.c                               |  10 +-
- fs/timerfd.c                              |  14 +-
- fs/utimes.c                               |   8 +-
- include/linux/compat.h                    |  19 +-
- include/linux/syscalls.h                  |  16 +-
- include/linux/time.h                      |   9 +-
- include/linux/time32.h                    |   2 +-
- include/linux/types.h                     |   2 +-
- include/trace/events/timer.h              |  29 +--
- include/uapi/asm-generic/msgbuf.h         |  12 +-
- include/uapi/asm-generic/posix_types.h    |   1 +
- include/uapi/asm-generic/sembuf.h         |   7 +-
- include/uapi/asm-generic/shmbuf.h         |  12 +-
- include/uapi/linux/cyclades.h             |   6 +-
- include/uapi/linux/elfcore.h              |   8 +-
- include/uapi/linux/errqueue.h             |   7 +
- include/uapi/linux/msg.h                  |   6 +-
- include/uapi/linux/ppp_defs.h             |   4 +-
- include/uapi/linux/resource.h             |   4 +-
- include/uapi/linux/sem.h                  |   4 +-
- include/uapi/linux/shm.h                  |   6 +-
- include/uapi/linux/time.h                 |   6 +-
- include/uapi/linux/time_types.h           |   5 +
- include/uapi/linux/utime.h                |   4 +-
- ipc/syscall.c                             |   2 +-
- kernel/compat.c                           |  24 --
- kernel/power/power.h                      |   2 +-
- kernel/sys.c                              |   4 +-
- kernel/sys_ni.c                           |  23 ++
- kernel/time/hrtimer.c                     |   2 +-
- kernel/time/itimer.c                      | 280 ++++++++++++++--------
- kernel/time/time.c                        |  32 ++-
- lib/vdso/gettimeofday.c                   |   4 +-
- net/core/scm.c                            |   6 +-
- net/socket.c                              |   2 +-
- security/selinux/hooks.c                  |  10 +-
- 76 files changed, 501 insertions(+), 504 deletions(-)
-
--- 
-2.20.0
-
-Cc: rth@twiddle.net
-Cc: tony.luck@intel.com
-Cc: paul.burton@mips.com
-Cc: green.hu@gmail.com
-Cc: deller@gmx.de
-Cc: mpe@ellerman.id.au
-Cc: davem@davemloft.net
-Cc: tglx@linutronix.de
-Cc: x86@kernel.org
-Cc: jdike@addtoit.com
-Cc: richard@nod.at
-Cc: viro@zeniv.linux.org.uk
-Cc: bcrl@kvack.org
-Cc: john.stultz@linaro.org
-Cc: sboyd@kernel.org
-Cc: rostedt@goodmis.org
-Cc: arnd@arndb.de
-Cc: vincenzo.frascino@arm.com
-Cc: paul@paul-moore.com
-Cc: sds@tycho.nsa.gov
-Cc: eparis@parisplace.org
-Cc: peterz@infradead.org
-Cc: will@kernel.org
-Cc: deepa.kernel@gmail.com
-Cc: christian@brauner.io
-Cc: heiko.carstens@de.ibm.com
-Cc: christophe.leroy@c-s.fr
-Cc: ebiederm@xmission.com
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-alpha@vger.kernel.org>
-Cc: linux-ia64@vger.kernel.org>
-Cc: linux-mips@vger.kernel.org>
-Cc: linux-parisc@vger.kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org>
-Cc: sparclinux@vger.kernel.org>
-Cc: linux-um@lists.infradead.org>
-Cc: linux-fsdevel@vger.kernel.org>
-Cc: linux-aio@kvack.org>
-Cc: linux-api@vger.kernel.org>
-Cc: linux-arch@vger.kernel.org>
-Cc: netdev@vger.kernel.org>
-Cc: selinux@vger.kernel.org>
-
+Paolo
