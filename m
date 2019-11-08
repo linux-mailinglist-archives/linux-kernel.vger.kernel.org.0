@@ -2,87 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F84CF419E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 09:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9452F41C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 09:13:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbfKHIFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 03:05:15 -0500
-Received: from mga07.intel.com ([134.134.136.100]:7323 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727421AbfKHIFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 03:05:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 00:05:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,280,1569308400"; 
-   d="scan'208";a="377700784"
-Received: from rafalwi-mobl.ger.corp.intel.com (HELO localhost) ([10.252.3.149])
-  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2019 00:05:02 -0800
-Date:   Fri, 8 Nov 2019 10:05:01 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
-Message-ID: <20191108080501.GA3370@linux.intel.com>
-References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
- <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
- <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
- <20191031211721.GD10507@linux.intel.com>
- <f91d788c-b372-8e2f-7ffb-995f501b5d6b@tycho.nsa.gov>
- <4bf866ae-adc8-7902-3714-b62e548d8584@tycho.nsa.gov>
- <20191101153238.GA2657@linux.intel.com>
- <f3a3d137-a187-9090-f5af-da306ced5371@tycho.nsa.gov>
+        id S1730095AbfKHINh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 03:13:37 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:62012 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726072AbfKHINh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 03:13:37 -0500
+X-UUID: 167b119e3f294fcbaa365433fb373abf-20191108
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=xBlkyXC6QXDUVtiAo1Ep4CtUp9rzUNb55vuuwtwgRxQ=;
+        b=gaNzLAbHUbPc8cHrLJOCkW0kG80ufIGtRF9iUaqDaRtsVQh8ow/lZUTpXlzHkhwouwrhoa21FFfCtS57v/v6pwjhTJvW4jAuON/iUmw/aSuFcmWC7kIVENw0Wf65Tk2ZBpSHD7KJxJVMtyTRWB33G0p+Oa/7YKSqEFo251Z65m0=;
+X-UUID: 167b119e3f294fcbaa365433fb373abf-20191108
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <mark-mc.lee@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 72878197; Fri, 08 Nov 2019 16:13:30 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 8 Nov 2019 16:13:26 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 8 Nov 2019 16:13:26 +0800
+Message-ID: <1573200809.10348.9.camel@mtksdccf07>
+Subject: Re: [PATCH net] net: ethernet: mediatek: rework GDM setup flow
+From:   mtk15127 <Mark-MC.Lee@mediatek.com>
+To:     David Miller <davem@davemloft.net>
+CC:     <sean.wang@mediatek.com>, <john@phrozen.org>,
+        <matthias.bgg@gmail.com>, <andrew@lunn.ch>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <opensource@vdorst.com>,
+        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <jakub.kicinski@netronome.com>,
+        <Mark-MC.Lee@mediatek.com>
+Date:   Fri, 8 Nov 2019 16:13:29 +0800
+In-Reply-To: <20191107.154922.1123372183066604716.davem@davemloft.net>
+References: <20191107105135.1403-1-Mark-MC.Lee@mediatek.com>
+         <20191107.154922.1123372183066604716.davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f3a3d137-a187-9090-f5af-da306ced5371@tycho.nsa.gov>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 01:16:59PM -0400, Stephen Smalley wrote:
-> On 11/1/19 11:32 AM, Sean Christopherson wrote:
-> > On Fri, Nov 01, 2019 at 09:28:17AM -0400, Stephen Smalley wrote:
-> > > On 11/1/19 9:16 AM, Stephen Smalley wrote:
-> > > > So, IIUC, that means that merging the driver will create a regression with
-> > > > respect to LSM control over executable mappings that will only be
-> > > > rectified at some future point in time if/when someone submits LSM hooks
-> > > > or calls to existing hooks to restore such control.  That doesn't seem
-> > > > like a good idea.  Why can't you include at least that basic level of
-> > > > control now?  It is one thing to defer finer grained control or
-> > > > SGX-specific access controls to the future - that I can understand.  But
-> > > > introducing a regression in the existing controls is not really ok.
-> > > 
-> > > Unless you are arguing that the existing checks on mmap/mprotect of
-> > > /dev/sgx/enclave are a coarse-grained approximation (effectively requiring
-> > > WX to the file or execmem for any user of SGX).
-> > 
-> > Yes, that's the argument as running any enclave will require RWX access to
-> > /dev/sgx/enclave.  EXECMEM won't trigger for SGX users as /dev/sgx/enclave
-> > must be MAP_SHARED and it's a non-private file (not backed by anonymous
-> > inode, in case I got the file terminology wrong).
-> 
-> Ok, so for SELinux's purposes, one will need to allow :file { open ioctl map
-> read write execute } to whatever type is ultimately assigned to
-> /dev/sgx/enclave in order to use SGX.
+T24gVGh1LCAyMDE5LTExLTA3IGF0IDE1OjQ5IC0wODAwLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+
+IEZyb206IE1hcmtMZWUgPE1hcmstTUMuTGVlQG1lZGlhdGVrLmNvbT4NCj4gRGF0ZTogVGh1LCA3
+IE5vdiAyMDE5IDE4OjUxOjM1ICswODAwDQo+IA0KPiA+ICsJZm9yIChpID0gMDsgaSA8IDI7IGkr
+Kykgew0KPiANCj4gVGhpcyBpcyBhIHJlZ3Jlc3Npb24sIGJlY2F1c2UgaW4gdGhlIGV4aXN0aW5n
+IGNvZGUuLi4NCj4gDQo+ID4gLQlmb3IgKGkgPSAwOyBpIDwgTVRLX01BQ19DT1VOVDsgaSsrKSB7
+DQo+IA0KPiB0aGUgcHJvcGVyIG1hY3JvIGlzIHVzZWQgaW5zdGVhZCBvZiBhIG1hZ2ljIGNvbnN0
+YW50Lg0KIFllcywgeW91IGFyZSByaWdodCwgSSBtYWtlIGEgbWlzdGFrZSBoZXJlLCB3aWxsIGNv
+cnJlY3QgaXQgaW4gdGhlIG5leHQNCnBhdGNoDQo+IA0KPiBZb3UncmUgZG9pbmcgc28gbWFueSB0
+aGluZ3MgaW4gb25lIGNoYW5nZSwgaXQncyBoYXJkIHRvIHJldmlldw0KPiBhbmQgYXVkaXQuDQo+
+IA0KPiBJZiB5b3UncmUgZ29pbmcgdG8gY29uc29saWRhdGUgY29kZSwgZG8gdGhhdCBvbmx5IGlu
+IG9uZSBjaGFuZ2UuDQo+IA0KPiBUaGVuIG1ha2Ugb3RoZXIgZnVuY3Rpb25hbCBjaGFuZ2VzIHN1
+Y2ggYXMgcHV0dGluZyB0aGUgY2hpcCBpbnRvDQo+IEdETUFfRFJPUF9BTEwgbW9kZSBkdXJpbmcg
+dGhlIHN0b3Agb3BlcmF0aW9uIGV0Yy4NClRoYW5rcyBmb3IgeW91ciBzdWdnZXN0aW9uLCBJIHdp
+bGwgc2VwYXJhdGUgdGhlc2UgY2hhbmdlcyBpbnRvDQphIHBhdGNoIHNlcmllcyB0byBtYWtlIGV2
+ZXJ5IGNoYW5nZSB0byBiZSBtb3JlIGNsZWFyIGZvciBpdHMgDQpwdXJwb3NlLg0KDQoNCg==
 
-AFAIK yes.
-
-/Jarkko
