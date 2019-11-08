@@ -2,85 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B818F5BED
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 00:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE12DF5BF0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 00:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbfKHXlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 18:41:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38900 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728633AbfKHXlB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 18:41:01 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 02E2C6146C; Fri,  8 Nov 2019 23:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573256461;
-        bh=ce7uFrqbivkUs8WW1oFPj3rAOkE1bz0MfUfo7m78NUA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TlrX1J4Io/NfsnQ/fwZH8ZCiSS1dxeuPN+jMehL6DyMdNyqOlXkvZM7xuaeCmatJc
-         UOIV/YCvEWCRnZ2lBekZPBPgdPQak8dP2xPHsSADE8floF00Z6GO/Q+j/2z2EojL3r
-         fwq2nPBiqVbH8BvGdGXnkmlf/BCZezIHy4BFljIY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from eberman-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1729232AbfKHXm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 18:42:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726394AbfKHXm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 18:42:27 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [193.120.164.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: eberman@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F3DB06141A;
-        Fri,  8 Nov 2019 23:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573256460;
-        bh=ce7uFrqbivkUs8WW1oFPj3rAOkE1bz0MfUfo7m78NUA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TXyjitDQr7w1mD0USB2kSrEWv900ff6wRrfzT04f+VnTZIOpzu45d0zTfnxHks3GH
-         uR/fQgAkn4VOnZA7LLd02nvmv1gbnJCC15U/a6/rDupHRupP4T93sMu82Z3Qwgvk6G
-         LIZpkrZ7XwOblELLWjM3HkB3lLtscoGrdW7lDUYo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3DB06141A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=eberman@codeaurora.org
-From:   Elliot Berman <eberman@codeaurora.org>
-To:     sre@kernel.org, tkjos@google.com, gregkh@linuxfoundation.org
-Cc:     tsoni@codeaurora.org, rananta@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Elliot Berman <eberman@codeaurora.org>
-Subject: [PATCH v2 2/2] power: reset: Enable tristate on restart power-off driver
-Date:   Fri,  8 Nov 2019 15:40:52 -0800
-Message-Id: <1573256452-14838-3-git-send-email-eberman@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573256452-14838-1-git-send-email-eberman@codeaurora.org>
-References: <1573256452-14838-1-git-send-email-eberman@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id DE1C0207FA;
+        Fri,  8 Nov 2019 23:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573256547;
+        bh=njd2BrNS+CzqOGrTNd0P/SZn4caSso1i9s77K2rtDlM=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=ZfsypRI+tdJF9WNRVlFaZeKwDUwJ1rHBPopMKn94YcPfzYc59892vSEPLYoDAF2YF
+         h7CTnROlSogdw8odeUevtUempX7ghDinliYP/d43cw7zJ4dXhx9p/KnBzHy7jyZkiP
+         esgvK6ID0tTmEkbM3NSVs/hAcXscUvdc2d1rqESk=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 0512F3520B54; Fri,  8 Nov 2019 15:42:25 -0800 (PST)
+Date:   Fri, 8 Nov 2019 15:42:24 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Subject: Re: [PATCH 1/2] list: add hlist_unhashed_lockless()
+Message-ID: <20191108234224.GF20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191107193738.195914-1-edumazet@google.com>
+ <20191108192448.GB20975@paulmck-ThinkPad-P72>
+ <CANn89iKNLESN7U7BtyzkC6WLVn__Hm727A5cRm6PDuzG5+E4vA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANn89iKNLESN7U7BtyzkC6WLVn__Hm727A5cRm6PDuzG5+E4vA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since reboot_mode is an exported symbol, restart power-off driver can be
-compiled as module.
+On Fri, Nov 08, 2019 at 12:17:49PM -0800, Eric Dumazet wrote:
+> On Fri, Nov 8, 2019 at 11:24 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Thu, Nov 07, 2019 at 11:37:37AM -0800, Eric Dumazet wrote:
+> > > We would like to use hlist_unhashed() from timer_pending(),
+> > > which runs without protection of a lock.
+> > >
+> > > Note that other callers might also want to use this variant.
+> > >
+> > > Instead of forcing a READ_ONCE() for all hlist_unhashed()
+> > > callers, add a new helper with an explicit _lockless suffix
+> > > in the name to better document what is going on.
+> > >
+> > > Also add various WRITE_ONCE() in __hlist_del(), hlist_add_head()
+> > > and hlist_add_before()/hlist_add_behind() to pair with
+> > > the READ_ONCE().
+> > >
+> > > Signed-off-by: Eric Dumazet <edumazet@google.com>
+> > > Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> >
+> > I have queued this, but if you prefer it go some other way:
+> >
+> > Acked-by: Paul E. McKenney <paulmck@kernel.org>
+> >
+> > But shouldn't the uses in include/linux/rculist.h also be converted
+> > into the patch below?  If so, I will squash the following into your
+> > patch.
+> >
+> >                                                 Thanx, Paul
+> >
+> > ------------------------------------------------------------------------
+> 
+> Agreed, thanks for the addition of this Paul.
 
-Signed-off-by: Elliot Berman <eberman@codeaurora.org>
----
- drivers/power/reset/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Very good, squashed and pushed, thank you!
 
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index a564237..8db1d9d 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -150,7 +150,7 @@ config POWER_RESET_QNAP
- 	  Say Y if you have a QNAP NAS.
- 
- config POWER_RESET_RESTART
--	bool "Restart power-off driver"
-+	tristate "Restart power-off driver"
- 	help
- 	  Some boards don't actually have the ability to power off.
- 	  Instead they restart, and u-boot holds the SoC until the
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+							Thanx, Paul
