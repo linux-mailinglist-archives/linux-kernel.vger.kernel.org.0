@@ -2,407 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86A29F4593
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F52DF45A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731569AbfKHLV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:21:26 -0500
-Received: from mail.andi.de1.cc ([85.214.55.253]:46050 "EHLO mail.andi.de1.cc"
+        id S1731983AbfKHLZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:25:00 -0500
+Received: from smtp.asem.it ([151.1.184.197]:64272 "EHLO smtp.asem.it"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727591AbfKHLV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:21:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
-        To:From:Sender:Reply-To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xWoNsZE3eMam3epWhKXZzF+Fy3k0g8hZwl9dYn6J5Pc=; b=KuRC0WlYSc+O2RKjk5nxgZl5e
-        j7MufiW4u/C55OYzLl8maB+J+eoVMpKcVb6qtlwu6JAUet/9J6jAqEOokAmsZ5aiACx4FDNUABt3g
-        Z9okVaa2ySNzamJt/kAsbZC+bJ1s5Dz06ZcdlA5gNpbZe684BN0U6+P+37uGW8ExgD4UU=;
-Received: from [2a02:790:ff:919:7ee9:d3ff:fe1f:a246] (helo=localhost)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iT2KK-0000ai-As; Fri, 08 Nov 2019 12:21:17 +0100
-Received: from andi by localhost with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iT2IP-0004rP-4Q; Fri, 08 Nov 2019 12:19:17 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, andrew.smirnov@gmail.com,
-        manivannan.sadhasivam@linaro.org, andreas@kemnade.info,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, j.neuschaefer@gmx.net,
-        letux-kernel@openphoenux.org
-Subject: [PATCH 2/2] ARM: dts: add devicetree entry for Tolino Shine 3
-Date:   Fri,  8 Nov 2019 12:18:34 +0100
-Message-Id: <20191108111834.18610-3-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191108111834.18610-1-andreas@kemnade.info>
-References: <20191108111834.18610-1-andreas@kemnade.info>
-X-Spam-Score: -1.0 (-)
+        id S1725730AbfKHLY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:24:59 -0500
+X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Nov 2019 06:24:58 EST
+Received: from webmail.asem.it
+        by asem.it (smtp.asem.it)
+        (SecurityGateway 5.5.0)
+        with ESMTP id SG004227403.MSG 
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 12:19:50 +0100S
+Received: from ASAS044.asem.intra (172.16.16.44) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1261.35; Fri, 8
+ Nov 2019 12:19:49 +0100
+Received: from flavio-x.asem.intra (172.16.17.208) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server id 15.1.1261.35 via Frontend
+ Transport; Fri, 8 Nov 2019 12:19:49 +0100
+From:   Flavio Suligoi <f.suligoi@asem.it>
+To:     rokhov <dmitry.torokhov@gmail.com>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Flavio Suligoi <f.suligoi@asem.it>
+Subject: [PATCH] input: ar1021: fix typo in preprocessor macro name
+Date:   Fri, 8 Nov 2019 12:19:07 +0100
+Message-ID: <1573211947-660-1-git-send-email-f.suligoi@asem.it>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-SGHeloLookup-Result: hardfail smtp.helo=webmail.asem.it (does not match 172.16.16.44)
+X-SGSPF-Result: none (smtp.asem.it)
+X-SGOP-RefID: str=0001.0A090207.5DC54F56.0033,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0 (_st=1 _vt=0 _iwf=0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device is almost identical to the Kobo Clara HD. The only
-spotted difference is the SoC. It contains an imx6sl
-instead of an imx6sll.
+Fix spelling mistake.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
 ---
- arch/arm/boot/dts/Makefile                 |   1 +
- arch/arm/boot/dts/imx6sl-tolino-shine3.dts | 326 +++++++++++++++++++++++++++++
- 2 files changed, 327 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6sl-tolino-shine3.dts
+ drivers/input/touchscreen/ar1021_i2c.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index f969c37729d5..1486615470b2 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -550,6 +550,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6qp-zii-rdu2.dtb
- dtb-$(CONFIG_SOC_IMX6SL) += \
- 	imx6sl-evk.dtb \
-+	imx6sl-tolino-shine3.dtb \
- 	imx6sl-warp.dtb
- dtb-$(CONFIG_SOC_IMX6SLL) += \
- 	imx6sll-evk.dtb \
-diff --git a/arch/arm/boot/dts/imx6sl-tolino-shine3.dts b/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
-new file mode 100644
-index 000000000000..0ee49258f22c
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6sl-tolino-shine3.dts
-@@ -0,0 +1,326 @@
-+// SPDX-License-Identifier: (GPL-2.0)
-+/*
-+ * Device tree for the Tolino Shine 3 ebook reader
-+ *
-+ * Name on mainboard is: 37NB-E60K00+4A4
-+ * Serials start with: E60K02 (a number also seen in
-+ * vendor kernel sources)
-+ *
-+ * This mainboard seems to be equipped with different SoCs.
-+ * In the Toline Shine 3 ebook reader it is a i.MX6SL
-+ *
-+ * Copyright 2019 Andreas Kemnade
-+ * based on works
-+ * Copyright 2016 Freescale Semiconductor, Inc.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "imx6sl.dtsi"
-+#include "e60k02.dtsi"
-+
-+/ {
-+	model = "Tolino Shine 3";
-+	compatible = "kobo,tolino-shine3", "fsl,imx6sl";
-+};
-+
-+&gpio_keys {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio_keys>;
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default","sleep";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	pinctrl-1 = <&pinctrl_i2c1_sleep>;
-+};
-+
-+&i2c2 {
-+	pinctrl-names = "default","sleep";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	pinctrl-1 = <&pinctrl_i2c2_sleep>;
-+};
-+
-+&i2c3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_gpio_keys: gpio-keysgrp {
-+		fsl,pins = <
-+			MX6SL_PAD_SD1_DAT1__GPIO5_IO08	0x17059	/* PWR_SW */
-+			MX6SL_PAD_SD1_DAT4__GPIO5_IO12	0x17059	/* HALL_EN */
-+		>;
-+	};
-+
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <
-+			MX6SL_PAD_LCD_DAT0__GPIO2_IO20	0x79
-+			MX6SL_PAD_LCD_DAT1__GPIO2_IO21	0x79
-+			MX6SL_PAD_LCD_DAT2__GPIO2_IO22	0x79
-+			MX6SL_PAD_LCD_DAT3__GPIO2_IO23	0x79
-+			MX6SL_PAD_LCD_DAT4__GPIO2_IO24	0x79
-+			MX6SL_PAD_LCD_DAT5__GPIO2_IO25	0x79
-+			MX6SL_PAD_LCD_DAT6__GPIO2_IO26	0x79
-+			MX6SL_PAD_LCD_DAT7__GPIO2_IO27	0x79
-+			MX6SL_PAD_LCD_DAT8__GPIO2_IO28	0x79
-+			MX6SL_PAD_LCD_DAT9__GPIO2_IO29	0x79
-+			MX6SL_PAD_LCD_DAT10__GPIO2_IO30	0x79
-+			MX6SL_PAD_LCD_DAT11__GPIO2_IO31	0x79
-+			MX6SL_PAD_LCD_DAT12__GPIO3_IO00	0x79
-+			MX6SL_PAD_LCD_DAT13__GPIO3_IO01	0x79
-+			MX6SL_PAD_LCD_DAT14__GPIO3_IO02	0x79
-+			MX6SL_PAD_LCD_DAT15__GPIO3_IO03	0x79
-+			MX6SL_PAD_LCD_DAT16__GPIO3_IO04	0x79
-+			MX6SL_PAD_LCD_DAT17__GPIO3_IO05	0x79
-+			MX6SL_PAD_LCD_DAT18__GPIO3_IO06	0x79
-+			MX6SL_PAD_LCD_DAT19__GPIO3_IO07	0x79
-+			MX6SL_PAD_LCD_DAT20__GPIO3_IO08	0x79
-+			MX6SL_PAD_LCD_DAT21__GPIO3_IO09	0x79
-+			MX6SL_PAD_LCD_DAT22__GPIO3_IO10	0x79
-+			MX6SL_PAD_LCD_DAT23__GPIO3_IO11	0x79
-+			MX6SL_PAD_LCD_CLK__GPIO2_IO15		0x79
-+			MX6SL_PAD_LCD_ENABLE__GPIO2_IO16	0x79
-+			MX6SL_PAD_LCD_HSYNC__GPIO2_IO17	0x79
-+			MX6SL_PAD_LCD_VSYNC__GPIO2_IO18	0x79
-+			MX6SL_PAD_LCD_RESET__GPIO2_IO19	0x79
-+			MX6SL_PAD_KEY_COL3__GPIO3_IO30		0x79
-+			MX6SL_PAD_KEY_ROW7__GPIO4_IO07		0x79
-+			MX6SL_PAD_ECSPI2_MOSI__GPIO4_IO13	0x79
-+			MX6SL_PAD_KEY_COL5__GPIO4_IO02		0x79
-+			MX6SL_PAD_KEY_ROW6__GPIO4_IO05		0x79
-+		>;
-+	};
-+
-+	pinctrl_i2c1: i2c1grp {
-+		fsl,pins = <
-+			MX6SL_PAD_I2C1_SCL__I2C1_SCL	 0x4001f8b1
-+			MX6SL_PAD_I2C1_SDA__I2C1_SDA	 0x4001f8b1
-+		>;
-+	};
-+
-+	pinctrl_i2c1_sleep: i2c1grp-sleep {
-+		fsl,pins = <
-+			MX6SL_PAD_I2C1_SCL__I2C1_SCL	 0x400108b1
-+			MX6SL_PAD_I2C1_SDA__I2C1_SDA	 0x400108b1
-+		>;
-+	};
-+
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <
-+			MX6SL_PAD_I2C2_SCL__I2C2_SCL	 0x4001f8b1
-+			MX6SL_PAD_I2C2_SDA__I2C2_SDA	 0x4001f8b1
-+		>;
-+	};
-+
-+	pinctrl_i2c2_sleep: i2c2grp-sleep {
-+		fsl,pins = <
-+			MX6SL_PAD_I2C2_SCL__I2C2_SCL	 0x400108b1
-+			MX6SL_PAD_I2C2_SDA__I2C2_SDA	 0x400108b1
-+		>;
-+	};
-+
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <
-+			MX6SL_PAD_REF_CLK_24M__I2C3_SCL  0x4001f8b1
-+			MX6SL_PAD_REF_CLK_32K__I2C3_SDA  0x4001f8b1
-+		>;
-+	};
-+
-+	pinctrl_led: ledgrp {
-+		fsl,pins = <
-+			MX6SL_PAD_SD1_DAT6__GPIO5_IO07 0x17059
-+		>;
-+	};
-+
-+	pinctrl_lm3630a_bl_gpio: lm3630a-bl-gpiogrp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_PWRCTRL3__GPIO2_IO10		0x10059 /* HWEN */
-+		>;
-+	};
-+
-+	pinctrl_ricoh_gpio: ricoh_gpiogrp {
-+		fsl,pins = <
-+			MX6SL_PAD_SD1_CLK__GPIO5_IO15                  0x1b8b1 /* ricoh619 chg */
-+			MX6SL_PAD_SD1_DAT0__GPIO5_IO11        0x1b8b1 /* ricoh619 irq */
-+			MX6SL_PAD_KEY_COL2__GPIO3_IO28                         0x1b8b1 /* ricoh619 bat_low_int */
-+		>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <
-+			MX6SL_PAD_UART1_TXD__UART1_TX_DATA 0x1b0b1
-+			MX6SL_PAD_UART1_RXD__UART1_TX_DATA 0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usbotg1: usbotg1grp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_PWRCOM__USB_OTG1_ID 0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX6SL_PAD_SD2_CMD__SD2_CMD		0x17059
-+			MX6SL_PAD_SD2_CLK__SD2_CLK		0x13059
-+			MX6SL_PAD_SD2_DAT0__SD2_DATA0		0x17059
-+			MX6SL_PAD_SD2_DAT1__SD2_DATA1		0x17059
-+			MX6SL_PAD_SD2_DAT2__SD2_DATA2		0x17059
-+			MX6SL_PAD_SD2_DAT3__SD2_DATA3		0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: usdhc2grp-100mhz {
-+		fsl,pins = <
-+			MX6SL_PAD_SD2_CMD__SD2_CMD		0x170b9
-+			MX6SL_PAD_SD2_CLK__SD2_CLK		0x130b9
-+			MX6SL_PAD_SD2_DAT0__SD2_DATA0		0x170b9
-+			MX6SL_PAD_SD2_DAT1__SD2_DATA1		0x170b9
-+			MX6SL_PAD_SD2_DAT2__SD2_DATA2		0x170b9
-+			MX6SL_PAD_SD2_DAT3__SD2_DATA3		0x170b9
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: usdhc2grp-200mhz {
-+		fsl,pins = <
-+			MX6SL_PAD_SD2_CMD__SD2_CMD		0x170f9
-+			MX6SL_PAD_SD2_CLK__SD2_CLK		0x130f9
-+			MX6SL_PAD_SD2_DAT0__SD2_DATA0		0x170f9
-+			MX6SL_PAD_SD2_DAT1__SD2_DATA1		0x170f9
-+			MX6SL_PAD_SD2_DAT2__SD2_DATA2		0x170f9
-+			MX6SL_PAD_SD2_DAT3__SD2_DATA3		0x170f9
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_sleep: usdhc2grp-sleep {
-+		fsl,pins = <
-+			MX6SL_PAD_SD2_CMD__GPIO5_IO04		0x100f9
-+			MX6SL_PAD_SD2_CLK__GPIO5_IO05		0x100f9
-+			MX6SL_PAD_SD2_DAT0__GPIO5_IO01		0x100f9
-+			MX6SL_PAD_SD2_DAT1__GPIO4_IO30		0x100f9
-+			MX6SL_PAD_SD2_DAT2__GPIO5_IO03		0x100f9
-+			MX6SL_PAD_SD2_DAT3__GPIO4_IO28		0x100f9
-+		>;
-+	};
-+
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX6SL_PAD_SD3_CMD__SD3_CMD	0x11059
-+			MX6SL_PAD_SD3_CLK__SD3_CLK	0x11059
-+			MX6SL_PAD_SD3_DAT0__SD3_DATA0	0x11059
-+			MX6SL_PAD_SD3_DAT1__SD3_DATA1	0x11059
-+			MX6SL_PAD_SD3_DAT2__SD3_DATA2	0x11059
-+			MX6SL_PAD_SD3_DAT3__SD3_DATA3	0x11059
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_100mhz: usdhc3grp-100mhz {
-+		fsl,pins = <
-+			MX6SL_PAD_SD3_CMD__SD3_CMD	0x170b9
-+			MX6SL_PAD_SD3_CLK__SD3_CLK	0x170b9
-+			MX6SL_PAD_SD3_DAT0__SD3_DATA0	0x170b9
-+			MX6SL_PAD_SD3_DAT1__SD3_DATA1	0x170b9
-+			MX6SL_PAD_SD3_DAT2__SD3_DATA2	0x170b9
-+			MX6SL_PAD_SD3_DAT3__SD3_DATA3	0x170b9
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_200mhz: usdhc3grp-200mhz {
-+		fsl,pins = <
-+			MX6SL_PAD_SD3_CMD__SD3_CMD	0x170f9
-+			MX6SL_PAD_SD3_CLK__SD3_CLK	0x170f9
-+			MX6SL_PAD_SD3_DAT0__SD3_DATA0	0x170f9
-+			MX6SL_PAD_SD3_DAT1__SD3_DATA1	0x170f9
-+			MX6SL_PAD_SD3_DAT2__SD3_DATA2	0x170f9
-+			MX6SL_PAD_SD3_DAT3__SD3_DATA3	0x170f9
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_sleep: usdhc3grp-sleep {
-+		fsl,pins = <
-+			MX6SL_PAD_SD3_CMD__GPIO5_IO21	0x100c1
-+			MX6SL_PAD_SD3_CLK__GPIO5_IO18	0x100c1
-+			MX6SL_PAD_SD3_DAT0__GPIO5_IO19	0x100c1
-+			MX6SL_PAD_SD3_DAT1__GPIO5_IO20	0x100c1
-+			MX6SL_PAD_SD3_DAT2__GPIO5_IO16	0x100c1
-+			MX6SL_PAD_SD3_DAT3__GPIO5_IO17	0x100c1
-+		>;
-+	};
-+
-+	pinctrl_wifi_power: wifi-powergrp {
-+		fsl,pins = <
-+			MX6SL_PAD_SD2_DAT6__GPIO4_IO29	0x10059	/* WIFI_3V3_ON */
-+		>;
-+	};
-+
-+	pinctrl_wifi_reset: wifi-resetgrp {
-+		fsl,pins = <
-+			MX6SL_PAD_SD2_DAT7__GPIO5_IO00	0x10059	/* WIFI_RST */
-+		>;
-+	};
-+};
-+
-+&leds {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_led>;
-+};
-+
-+&lm3630a {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lm3630a_bl_gpio>;
-+};
-+
-+&reg_wifi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wifi_power>;
-+};
-+
-+&reg_vdd1p1 {
-+	vin-supply = <&dcdc2_reg>;
-+};
-+
-+&reg_vdd2p5 {
-+	vin-supply = <&dcdc2_reg>;
-+};
-+
-+&reg_vdd3p0 {
-+	vin-supply = <&dcdc2_reg>;
-+};
-+
-+&ricoh619 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ricoh_gpio>;
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>;
-+	pinctrl-3 = <&pinctrl_usdhc2_sleep>;
-+};
-+
-+&usdhc3 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
-+	pinctrl-0 = <&pinctrl_usdhc3>;
-+	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-+	pinctrl-3 = <&pinctrl_usdhc3_sleep>;
-+};
-+
-+&wifi_pwrseq {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wifi_reset>;
-+};
+diff --git a/drivers/input/touchscreen/ar1021_i2c.c b/drivers/input/touchscreen/ar1021_i2c.c
+index 28644f3..c0d5c24 100644
+--- a/drivers/input/touchscreen/ar1021_i2c.c
++++ b/drivers/input/touchscreen/ar1021_i2c.c
+@@ -13,7 +13,7 @@
+ #include <linux/irq.h>
+ #include <linux/interrupt.h>
+ 
+-#define AR1021_TOCUH_PKG_SIZE	5
++#define AR1021_TOUCH_PKG_SIZE	5
+ 
+ #define AR1021_MAX_X	4095
+ #define AR1021_MAX_Y	4095
+@@ -25,7 +25,7 @@
+ struct ar1021_i2c {
+ 	struct i2c_client *client;
+ 	struct input_dev *input;
+-	u8 data[AR1021_TOCUH_PKG_SIZE];
++	u8 data[AR1021_TOUCH_PKG_SIZE];
+ };
+ 
+ static irqreturn_t ar1021_i2c_irq(int irq, void *dev_id)
 -- 
-2.11.0
+2.7.4
 
