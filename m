@@ -2,72 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DDFFF57E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8ACEF57F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:06:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732589AbfKHTvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:51:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53582 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731864AbfKHTvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:51:07 -0500
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        id S2388008AbfKHT4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:56:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34392 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387487AbfKHT4O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:56:14 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 056DB60909; Fri,  8 Nov 2019 19:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573242862;
+        bh=RI8pAJ2oaXVf01TTf6CIgXgIZlbNFOUYc89nvR7jJEg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=M/VKpoLAh4IuqvpTb4l6Ncc/ysc3Z3wdcQpAum90P8DyPhePEqjDGjQvfAj9XIVOV
+         uIfYpr7taPThwDehSXhnkIKyfwHbI7tnY2qzVvJIFzlSBCMHoxU6HLy9y5Um6Wp+D+
+         xtNLXBlttgX/obSW1G3HuPG6EKj7nUQHakOv+3Eg=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.226.59.103] (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD301C04BD48
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2019 19:51:06 +0000 (UTC)
-Received: by mail-wr1-f69.google.com with SMTP id u2so3870915wrm.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 11:51:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HVIeOx6nzmd9djN2e4574H+maZm9DfsxWD4R9Q206x0=;
-        b=o6U9lIBo0vWK98k70k1YCIAnki23OjzLILoDLQs6PDhq57VpgGByEsnT6yy2f2kgtD
-         Xk41/+5nftt4tcH3Pj4NJuqS+/tLvD08jouqQ8F+JSam5la10CCzYPk1uDnDX4LJeZ+8
-         oDaJzH7NSW0rrxg91gYVrlFjvgjYEwjzj7PPLTnWtNYnqGdEHN/jty26uRFGnsrEIsGJ
-         9xZqklXViXWaM1CISY9koIQ+0a379k93FvcsGq4jsCZ70Tl4TIMfwVXjrFoUuY9d7YLm
-         mYDwdxWtJJePjm+0QcGhpGhHn6uH7e0tsKt/5ls5NdBJBZmSY5HkZPwV1NWWVKvWloJ9
-         EMUg==
-X-Gm-Message-State: APjAAAUsWzjpwgNQZf4s7bVCua7d1QD4lOL83GZ3JWfPMH6GJYt66nDc
-        8ru5XlOi0T1C/vEav2fkuL1aUQGTA0CEfIi6kUa8i99KKOpC9KgMTYn8fEr8IIQULJd0amcxuQ6
-        tO9J7+mgJzquHnj/sJ3eVRc5a
-X-Received: by 2002:a5d:4ecd:: with SMTP id s13mr10517844wrv.216.1573242665047;
-        Fri, 08 Nov 2019 11:51:05 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxwh5QagsORgLMSC6facSW636Vhv994NNhYmi82cn5LKJsrOsA8bp3Br/6du+5NcGEbfP/45g==
-X-Received: by 2002:a5d:4ecd:: with SMTP id s13mr10517822wrv.216.1573242664769;
-        Fri, 08 Nov 2019 11:51:04 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:e8cd:9f0f:a5dc:7ad5? ([2001:b07:6468:f312:e8cd:9f0f:a5dc:7ad5])
-        by smtp.gmail.com with ESMTPSA id y16sm6599496wro.25.2019.11.08.11.51.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2019 11:51:04 -0800 (PST)
-Subject: Re: [PATCH 03/13] kvm: monolithic: fixup x86-32 build
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthias Maennich <maennich@google.com>
-References: <20191104230001.27774-1-aarcange@redhat.com>
- <20191104230001.27774-4-aarcange@redhat.com>
- <6ed4a5cd-38b1-04f8-e3d5-3327a1bd5d87@redhat.com>
- <678358c1-0621-3d2a-186e-b60742b2a286@redhat.com>
- <20191105135414.GA30717@redhat.com>
- <330acce5-a527-543b-84c0-f3d8d277a0e2@redhat.com>
- <20191105145651.GD30717@redhat.com>
- <ab18744b-afc7-75d4-b5f3-e77e9aae41a6@redhat.com>
- <20191108135631.GA22507@linux-8ccs>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <b77283e5-a4bc-1849-fbfa-27741ab2dbd5@redhat.com>
-Date:   Fri, 8 Nov 2019 20:51:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        (Authenticated sender: rkumbako@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A6C7A60909;
+        Fri,  8 Nov 2019 19:54:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573242857;
+        bh=RI8pAJ2oaXVf01TTf6CIgXgIZlbNFOUYc89nvR7jJEg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cmd8pXp8cny6HvbtoRaaeL+v89GwX7T+3TJVCplfb1vn9gbzYgVYosD99CiYGQKXC
+         eOBVJzkyqodeqqXyvXMe0JZSfwO+jG07B+tXm8tSTIDAH1B9gdO3d2wadMGakTdcfv
+         d7i6VVRqw5o7Zex0DDfCo+lXF2+N8xfp1uOLdk9U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6C7A60909
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkumbako@codeaurora.org
+Subject: Re: [PATCH 4/4] thermal: step_wise: Extend thermal step-wise governor
+ to monitor falling temperature.
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        amit.kucheria@verdurent.com, mark.rutland@arm.com,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1568859503-19725-1-git-send-email-thara.gopinath@linaro.org>
+ <1568859503-19725-5-git-send-email-thara.gopinath@linaro.org>
+From:   Ram Chandrasekar <rkumbako@codeaurora.org>
+Message-ID: <7dbe01d9-6687-f4f8-0739-6b4ff6d4e59b@codeaurora.org>
+Date:   Fri, 8 Nov 2019 12:54:15 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <20191108135631.GA22507@linux-8ccs>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1568859503-19725-5-git-send-email-thara.gopinath@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,33 +69,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/19 14:56, Jessica Yu wrote:
-> And I am
-> not sure what Masahiro (who takes care of all things kbuild-related)
-> thinks of this idea. But before implementing all this, is there
-> absolutely no way around having the duplicated exported symbols? (e.g.,
-> could the modules be configured/built in a mutally exclusive way? I'm
-> lacking the context from the rest of the thread, so not sure which are
-> the problematic modules.)
 
-The problematic modules are kvm_intel and kvm_amd, so we cannot build
-them in a mutually exclusive way (but we know it won't make sense to
-load both).  We will have to build only one of them when built into
-vmlinux, but the module case must support building both.
 
-Currently we put the common symbols in kvm.ko, and kvm.ko acts as a kind
-of "library" for kvm_intel.ko and kvm_amd.ko.  The problem is that
-kvm_intel.ko and kvm_amd.ko currently pass a large array of function
-pointers to kvm.ko, and Andrea measured a substantial performance
-penalty from retpolines when kvm.ko calls back through those pointers.
-
-Therefore he would like to remove kvm.ko, and that would result in
-symbols exported from two modules.
-
-I suppose we could use code patching mechanism to avoid the retpolines.
- Andrea, what do you think about that?  That would have the advantage
-that we won't have to remove kvm_x86_ops. :)
-
-Thanks,
-
-Paolo
+On 9/18/2019 8:18 PM, Thara Gopinath wrote:
+>>From the step wise governor point of view, the policy decisions
+> that has to taken on a thermal trip point that is defined to be monitored
+> for falling temprature is the mirror opposite of the decisions it has
+> to take on a trip point that is monitored for rising temperature.
+> 
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> ---
+>   drivers/thermal/step_wise.c | 59 +++++++++++++++++++++++++++++++++------------
+>   1 file changed, 44 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/thermal/step_wise.c b/drivers/thermal/step_wise.c
+> index 6e051cb..aa8e0a0 100644
+> --- a/drivers/thermal/step_wise.c
+> +++ b/drivers/thermal/step_wise.c
+> @@ -35,7 +35,8 @@
+>    *       deactivate the thermal instance
+>    */
+>   static unsigned long get_target_state(struct thermal_instance *instance,
+> -				enum thermal_trend trend, bool throttle)
+> +				enum thermal_trend trend, bool throttle,
+> +				enum thermal_trip_monitor_type type)
+>   {
+>   	struct thermal_cooling_device *cdev = instance->cdev;
+>   	unsigned long cur_state;
+> @@ -65,11 +66,21 @@ static unsigned long get_target_state(struct thermal_instance *instance,
+>   
+>   	switch (trend) {
+>   	case THERMAL_TREND_RAISING:
+> -		if (throttle) {
+> -			next_target = cur_state < instance->upper ?
+> -				    (cur_state + 1) : instance->upper;
+> -			if (next_target < instance->lower)
+> -				next_target = instance->lower;
+> +		if (type == THERMAL_TRIP_MONITOR_FALLING) {
+> +			if (cur_state <= instance->lower) {
+> +				if (!throttle)
+> +					next_target = THERMAL_NO_TARGET;
+> +			} else {
+> +				if (!throttle)
+> +					next_target = cur_state - 1;
+> +			}
+> +		} else {
+> +			if (throttle) {
+> +				next_target = cur_state < instance->upper ?
+> +					    (cur_state + 1) : instance->upper;
+> +				if (next_target < instance->lower)
+> +					next_target = instance->lower;
+> +			}
+>   		}
+>   		break;
+>   	case THERMAL_TREND_RAISE_FULL:
+> @@ -77,14 +88,23 @@ static unsigned long get_target_state(struct thermal_instance *instance,
+>   			next_target = instance->upper;
+>   		break;
+>   	case THERMAL_TREND_DROPPING:
+> -		if (cur_state <= instance->lower) {
+> -			if (!throttle)
+> -				next_target = THERMAL_NO_TARGET;
+> +		if (type == THERMAL_TRIP_MONITOR_FALLING) {
+> +			if (throttle) {
+> +				next_target = cur_state < instance->upper ?
+> +					(cur_state + 1) : instance->upper;
+> +				if (next_target < instance->lower)
+> +					next_target = instance->lower;
+> +			}
+>   		} else {
+> -			if (!throttle) {
+> -				next_target = cur_state - 1;
+> -				if (next_target > instance->upper)
+> -					next_target = instance->upper;
+> +			if (cur_state <= instance->lower) {
+> +				if (!throttle)
+> +					next_target = THERMAL_NO_TARGET;
+> +			} else {
+> +				if (!throttle) {
+> +					next_target = cur_state - 1;
+> +					if (next_target > instance->upper)
+> +						next_target = instance->upper;
+> +				}
+>   			}
+>   		}
+>   		break;
+> @@ -117,6 +137,8 @@ static void thermal_zone_trip_update(struct thermal_zone_device *tz, int trip)
+>   {
+>   	int trip_temp;
+>   	enum thermal_trip_type trip_type;
+> +	enum thermal_trip_monitor_type monitor_type =
+> +					THERMAL_TRIP_MONITOR_RISING;
+>   	enum thermal_trend trend;
+>   	struct thermal_instance *instance;
+>   	bool throttle = false;
+> @@ -130,9 +152,15 @@ static void thermal_zone_trip_update(struct thermal_zone_device *tz, int trip)
+>   		tz->ops->get_trip_type(tz, trip, &trip_type);
+>   	}
+>   
+> +	if (tz->ops->get_trip_monitor_type)
+> +		tz->ops->get_trip_monitor_type(tz, trip, &monitor_type);
+> +
+>   	trend = get_tz_trend(tz, trip);
+>   
+> -	if (tz->temperature >= trip_temp) {
+> +	if (((monitor_type == THERMAL_TRIP_MONITOR_RISING) &&
+> +	      (tz->temperature >= trip_temp)) ||
+> +	      ((monitor_type == THERMAL_TRIP_MONITOR_FALLING) &&
+> +	      (tz->temperature <= trip_temp))) {
+Governors monitoring warming devices need to have support for 
+hysteresis. Assume a case where the device is in idle when the 
+temperature goes below threshold and we trigger a mitigation. Even a 
+minimal workload or even the processing of the threshold by the governor 
+could warm the device and put the temperature above the threshold and we 
+will have to remove any mitigation. To avoid this ping-pong, its best to 
+add a hysteresis support.
+>   		throttle = true;
+>   		trace_thermal_zone_trip(tz, trip, trip_type);
+>   	}
+> @@ -147,7 +175,8 @@ static void thermal_zone_trip_update(struct thermal_zone_device *tz, int trip)
+>   			continue;
+>   
+>   		old_target = instance->target;
+> -		instance->target = get_target_state(instance, trend, throttle);
+> +		instance->target = get_target_state(instance, trend, throttle,
+> +						    monitor_type);
+>   		dev_dbg(&instance->cdev->device, "old_target=%d, target=%d\n",
+>   					old_target, (int)instance->target);
+>   
+> 
