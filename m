@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5EFF4AA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B84F4AA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733166AbfKHLjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:39:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51918 "EHLO mail.kernel.org"
+        id S1733238AbfKHLjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:39:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732910AbfKHLiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:54 -0500
+        id S1732968AbfKHLi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A107C21D7E;
-        Fri,  8 Nov 2019 11:38:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA4E721D7B;
+        Fri,  8 Nov 2019 11:38:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213134;
-        bh=U24cqw19Ki1GCxDzs7Eviju9mnv0Og7Nxqdr/g0uSQ8=;
+        s=default; t=1573213136;
+        bh=9+wXAdScMRLLd2ki2eKbU2z5dqGISXkxKwkNjAfpYFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SYa/decjF060e8XlXf4f/ym2rrO97WKmRFI0HJVv3dIomy7+LTilJ2EybNdHf+88z
-         vMn7HBpwrcAqimlmwsd2OGDBuKCi8Zyq+ksHy3DqU6CEEgQy6TZLP4XD6n8f7RqHoW
-         AqpUM60/Gsx4v/BTYVcE2aDehjGsOSEZb3KIPTAM=
+        b=Mb5HqADSRdIBKuobVMDovx8oaseO7lu1woWs52Hg8x1oSrU3z/rXUkiSFey9TLtxp
+         Z2GkRnJF48ofUW+mufqcLBk9RvV0JnGbDKW1rVWLuGBI5C3IR0B+5bA6wgIqzIQHIL
+         8AWl381tey6DW7qKOXgfkZaYSrHrE+W42hnJOyWo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lihong Yang <lihong.yang@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 052/205] i40evf: cancel workqueue sync for adminq when a VF is removed
-Date:   Fri,  8 Nov 2019 06:35:19 -0500
-Message-Id: <20191108113752.12502-52-sashal@kernel.org>
+Cc:     Vijay Immanuel <vijayi@attalasystems.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 054/205] IB/rxe: avoid back-to-back retries
+Date:   Fri,  8 Nov 2019 06:35:21 -0500
+Message-Id: <20191108113752.12502-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,36 +43,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lihong Yang <lihong.yang@intel.com>
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-[ Upstream commit babbcc60040abfb7a9e3caa1c58fe182ae73762a ]
+[ Upstream commit 4e4c53df567714b3d08b2b5d8ccb1d175fc9be01 ]
 
-If a VF is being removed, there is no need to continue with the
-workqueue sync for the adminq task, thus cancel it. Without this call,
-when VFs are created and removed right away, there might be a chance for
-the driver to crash with events stuck in the adminq.
+Error retries can occur due to timeouts, NAKs or receiving
+packets beyond the current read request. Avoid back-to-back
+retries due to packet processing, by only retrying the initial
+attempt immediately. Subsequent retries must be due to timeouts.
 
-Signed-off-by: Lihong Yang <lihong.yang@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Continue to process completion packets after scheduling a retry.
+
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40evf/i40evf_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_comp.c  | 18 +++++++++++++++++-
+ drivers/infiniband/sw/rxe/rxe_verbs.h |  1 +
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_main.c b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-index 3fc46d2adc087..f50c19b833686 100644
---- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-@@ -3884,6 +3884,8 @@ static void i40evf_remove(struct pci_dev *pdev)
- 	if (adapter->watchdog_timer.function)
- 		del_timer_sync(&adapter->watchdog_timer);
+diff --git a/drivers/infiniband/sw/rxe/rxe_comp.c b/drivers/infiniband/sw/rxe/rxe_comp.c
+index 83311dd07019b..ed96441595d81 100644
+--- a/drivers/infiniband/sw/rxe/rxe_comp.c
++++ b/drivers/infiniband/sw/rxe/rxe_comp.c
+@@ -191,6 +191,7 @@ static inline void reset_retry_counters(struct rxe_qp *qp)
+ {
+ 	qp->comp.retry_cnt = qp->attr.retry_cnt;
+ 	qp->comp.rnr_retry = qp->attr.rnr_retry;
++	qp->comp.started_retry = 0;
+ }
  
-+	cancel_work_sync(&adapter->adminq_task);
+ static inline enum comp_state check_psn(struct rxe_qp *qp,
+@@ -676,6 +677,20 @@ int rxe_completer(void *arg)
+ 				goto exit;
+ 			}
+ 
++			/* if we've started a retry, don't start another
++			 * retry sequence, unless this is a timeout.
++			 */
++			if (qp->comp.started_retry &&
++			    !qp->comp.timeout_retry) {
++				if (pkt) {
++					rxe_drop_ref(pkt->qp);
++					kfree_skb(skb);
++					skb = NULL;
++				}
 +
- 	i40evf_free_rss(adapter);
++				goto done;
++			}
++
+ 			if (qp->comp.retry_cnt > 0) {
+ 				if (qp->comp.retry_cnt != 7)
+ 					qp->comp.retry_cnt--;
+@@ -692,6 +707,7 @@ int rxe_completer(void *arg)
+ 					rxe_counter_inc(rxe,
+ 							RXE_CNT_COMP_RETRY);
+ 					qp->req.need_retry = 1;
++					qp->comp.started_retry = 1;
+ 					rxe_run_task(&qp->req.task, 1);
+ 				}
  
- 	if (hw->aq.asq.count)
+@@ -701,7 +717,7 @@ int rxe_completer(void *arg)
+ 					skb = NULL;
+ 				}
+ 
+-				goto exit;
++				goto done;
+ 
+ 			} else {
+ 				rxe_counter_inc(rxe, RXE_CNT_RETRY_EXCEEDED);
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index 3b731c7682e5b..a0ec28d2b71a4 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -158,6 +158,7 @@ struct rxe_comp_info {
+ 	int			opcode;
+ 	int			timeout;
+ 	int			timeout_retry;
++	int			started_retry;
+ 	u32			retry_cnt;
+ 	u32			rnr_retry;
+ 	struct rxe_task		task;
 -- 
 2.20.1
 
