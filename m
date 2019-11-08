@@ -2,63 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 873DBF3F7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 06:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AD5AF3F95
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 06:20:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfKHFOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 00:14:40 -0500
-Received: from verein.lst.de ([213.95.11.211]:32868 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbfKHFOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 00:14:39 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6282368BE1; Fri,  8 Nov 2019 06:14:34 +0100 (CET)
-Date:   Fri, 8 Nov 2019 06:14:33 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Guo Ren <guoren@kernel.org>, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Guan Xuetao <gxt@pku.edu.cn>, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        openrisc@lists.librecores.org, linux-mtd@lists.infradead.org,
-        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, linux-riscv@lists.infradead.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: generic-iomap tree for linux-next
-Message-ID: <20191108051433.GA29611@lst.de>
-References: <20191029064834.23438-1-hch@lst.de> <20191107204743.GA22863@lst.de> <20191108132000.3e7bd5b8@canb.auug.org.au> <20191108155248.0a32a03a@canb.auug.org.au>
+        id S1726199AbfKHFUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 00:20:01 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42180 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbfKHFUA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 00:20:00 -0500
+Received: by mail-pg1-f194.google.com with SMTP id q17so3291605pgt.9;
+        Thu, 07 Nov 2019 21:20:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eFsH+L829oE/OwopODh0Rlc4QU2iHdxkZ2p54c8xCJE=;
+        b=giOoN2iCH2gl4XYTC0DGivxErEzR5sLnO1BZwomEBJoVbi1J6uhyraLvE7dTiDRgey
+         RkWQdvxY70+dcIFsnXXexmPODvZCOPIlDXW/h7JVh2rwqwO4IcSi2Xp2LHO5jmI6n6tB
+         bSG64yvooZ4nvkoNm4Qujv/rOpUCB7Xx4fKc7nozepHxazodVWLgjGT1QV2j9BUqLXOb
+         sjJOLcPM7mW+l1DR7IwNuGUDOOCUmyFf2w9zUslEEMAWW2Y2q7OpRZz42SNw2lhx5IQO
+         UHG1cfVpvu3+COKSodN2RSBXIdlb06DLj4zDduX2n4+TrzKvHoGLE0BgQiEZD1irrt4k
+         GUgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=eFsH+L829oE/OwopODh0Rlc4QU2iHdxkZ2p54c8xCJE=;
+        b=eRRau7hwkcFkl+vorjqKw8nJkLvPZuU7LVDP7GW9ePmefTEhF8CfHhy4r80lV7aal2
+         KQ1EimxbvuMfH+bztzY1PxxOKYJhOuTr8qGKpHFqsCWOTAgrJuKYwOxI8PX/ZSmu6nMl
+         v7zHl1734vDCf5olEhbfWCxf89qnB9Wj7xSpbXrOhWQMVnrHQKbnS9NV2GNUTindJTi5
+         sqXnklD/YAtgANQSKCyRUMb23KsfBRvVQO1lg1bS+eHXPUBbhkmF7Ip88mU+999nZ3YB
+         dcOcpPG3JbAnx1fVTAPV7dB5IXGO++aNfW4yltw2WfmYtyF0+cn1SL6GbWbkKlX/dv15
+         AVMA==
+X-Gm-Message-State: APjAAAVZjZot3RuxcDkYs0pTxFmbSITO4pn8Uepnuaydzd9p0cyqCKE7
+        wgFlyY2IQvybfjs80csDEkY=
+X-Google-Smtp-Source: APXvYqyH/KD6c9XA8sPBchDP+LUk0Aegmnor+q9X7ysQCpoU4EoBt0as0FnheT5yRmG7x8dClNiuiQ==
+X-Received: by 2002:a63:234c:: with SMTP id u12mr9239958pgm.384.1573190399697;
+        Thu, 07 Nov 2019 21:19:59 -0800 (PST)
+Received: from voyager.ibm.com ([36.255.48.244])
+        by smtp.gmail.com with ESMTPSA id v19sm3798443pjr.14.2019.11.07.21.19.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2019 21:19:59 -0800 (PST)
+From:   Joel Stanley <joel@jms.id.au>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jeremy Kerr <jk@ozlabs.org>
+Cc:     Alistar Popple <alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsi@lists.ozlabs.org
+Subject: [PATCH v2 00/11] fsi: Patches for 5.5
+Date:   Fri,  8 Nov 2019 15:49:34 +1030
+Message-Id: <20191108051945.7109-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108155248.0a32a03a@canb.auug.org.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 03:52:48PM +1100, Stephen Rothwell wrote:
-> Hi Christoph,
-> 
-> On Fri, 8 Nov 2019 13:20:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Thu, 7 Nov 2019 21:47:43 +0100 Christoph Hellwig <hch@lst.de> wrote:
-> > >
-> > > can you add the generic-ioremap tree:
-> > > 
-> > >    git://git.infradead.org/users/hch/ioremap.git
-> > > 
-> > > to linux-next?   
-> > 
-> > I assume you mean the for-next branch?
-> 
-> With that assumption, added from today.
+This series forms the FSI pull request for 5.5.
 
-Yes, and thanks!
+1-3 adds a FSI class type and updates the documentation for the sysfs files
+4-7 makes some cleanups and fixes to the fsi core
+8-10 adds the support for the FSI master in the ASPEED AST2600 BMC 
+
+The driver has been tested on hardware for most operations. Future
+enhancements include robust error recovery, DMA support and interrupt
+support.
+
+The fix for byte order registers is not squashed in as Andrew's commit
+message is a piece of art that deserves to be in the kernel history. It
+does not need to go to stable as it fixes a patch earlier in this
+series.
+
+Andrew Jeffery (3):
+  trace: fsi: Print transfer size unsigned
+  fsi: core: Fix small accesses and unaligned offsets via sysfs
+  fsi: aspeed: Fix OPB0 byte order register values
+
+Jeremy Kerr (2):
+  fsi: Add fsi-master class
+  fsi: Move master attributes to fsi-master class
+
+Joel Stanley (5):
+  ABI: Update FSI path documentation
+  fsi: Move defines to common header
+  dt-bindings: fsi: Add description of FSI master
+  fsi: Add ast2600 master driver
+  fsi: aspeed: Add trace points
+
+kbuild test robot (1):
+  fsi: fsi_master_class can be static
+
+ Documentation/ABI/testing/sysfs-bus-fsi       |  16 +-
+ .../bindings/fsi/fsi-master-aspeed.txt        |  24 +
+ drivers/fsi/Kconfig                           |   8 +
+ drivers/fsi/Makefile                          |   1 +
+ drivers/fsi/fsi-core.c                        |  67 ++-
+ drivers/fsi/fsi-master-aspeed.c               | 544 ++++++++++++++++++
+ drivers/fsi/fsi-master-hub.c                  |  46 --
+ drivers/fsi/fsi-master.h                      |  71 +++
+ include/trace/events/fsi.h                    |   6 +-
+ include/trace/events/fsi_master_aspeed.h      |  77 +++
+ 10 files changed, 785 insertions(+), 75 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt
+ create mode 100644 drivers/fsi/fsi-master-aspeed.c
+ create mode 100644 include/trace/events/fsi_master_aspeed.h
+
+-- 
+2.24.0.rc1
+
