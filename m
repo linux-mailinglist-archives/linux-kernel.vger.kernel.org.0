@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B84F4AA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE49F4ADF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733238AbfKHLjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:39:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51934 "EHLO mail.kernel.org"
+        id S2391853AbfKHMLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:11:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732968AbfKHLi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:57 -0500
+        id S1733032AbfKHLjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:39:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA4E721D7B;
-        Fri,  8 Nov 2019 11:38:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B28A20869;
+        Fri,  8 Nov 2019 11:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213136;
-        bh=9+wXAdScMRLLd2ki2eKbU2z5dqGISXkxKwkNjAfpYFg=;
+        s=default; t=1573213143;
+        bh=HCqGy/wd7vaxpgsJLDIJABoxOA2NNLLVQDuPO1xglAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mb5HqADSRdIBKuobVMDovx8oaseO7lu1woWs52Hg8x1oSrU3z/rXUkiSFey9TLtxp
-         Z2GkRnJF48ofUW+mufqcLBk9RvV0JnGbDKW1rVWLuGBI5C3IR0B+5bA6wgIqzIQHIL
-         8AWl381tey6DW7qKOXgfkZaYSrHrE+W42hnJOyWo=
+        b=NHfNmBMERPfPvJPsgXvYEo6eqff2hQ/jFfhDzj9vEUjcDSiWIxKBw0j7S5b0HFWiq
+         awcbS04IknrbkI7R9WREal2LjkWVWrO+xvW0Xa0BkqCnkcBYJVvYUCm5OAhLTvyZEV
+         vaCybZC1WFvSXuwBull0VI0phDP1WHVd3kT/Vdsg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vijay Immanuel <vijayi@attalasystems.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 054/205] IB/rxe: avoid back-to-back retries
-Date:   Fri,  8 Nov 2019 06:35:21 -0500
-Message-Id: <20191108113752.12502-54-sashal@kernel.org>
+Cc:     Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 056/205] iwlwifi: drop packets with bad status in CD
+Date:   Fri,  8 Nov 2019 06:35:23 -0500
+Message-Id: <20191108113752.12502-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -43,87 +44,216 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vijay Immanuel <vijayi@attalasystems.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 4e4c53df567714b3d08b2b5d8ccb1d175fc9be01 ]
+[ Upstream commit 7891965d74bc48fb42b5068033192f97c9aa2090 ]
 
-Error retries can occur due to timeouts, NAKs or receiving
-packets beyond the current read request. Avoid back-to-back
-retries due to packet processing, by only retrying the initial
-attempt immediately. Subsequent retries must be due to timeouts.
+We need to drop packets with errors (such as replay,
+MIC, ICV, conversion, duplicate and so on).
 
-Continue to process completion packets after scheduling a retry.
+Drop invalid packets, put the status bits in the metadata and
+move the enum definition to the correct place (FW API header).
 
-Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rxe/rxe_comp.c  | 18 +++++++++++++++++-
- drivers/infiniband/sw/rxe/rxe_verbs.h |  1 +
- 2 files changed, 18 insertions(+), 1 deletion(-)
+ .../net/wireless/intel/iwlwifi/fw/api/rx.h    | 63 +++++++++++++++++++
+ .../net/wireless/intel/iwlwifi/iwl-trans.h    |  1 +
+ .../wireless/intel/iwlwifi/pcie/internal.h    | 60 ------------------
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c  |  8 ++-
+ 4 files changed, 70 insertions(+), 62 deletions(-)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_comp.c b/drivers/infiniband/sw/rxe/rxe_comp.c
-index 83311dd07019b..ed96441595d81 100644
---- a/drivers/infiniband/sw/rxe/rxe_comp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_comp.c
-@@ -191,6 +191,7 @@ static inline void reset_retry_counters(struct rxe_qp *qp)
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/rx.h b/drivers/net/wireless/intel/iwlwifi/fw/api/rx.h
+index 2f599353c8856..2ba1401e5c0d5 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/rx.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/rx.h
+@@ -574,6 +574,69 @@ struct iwl_rx_mpdu_desc {
+ 
+ #define IWL_RX_DESC_SIZE_V1 offsetofend(struct iwl_rx_mpdu_desc, v1)
+ 
++#define IWL_CD_STTS_OPTIMIZED_POS	0
++#define IWL_CD_STTS_OPTIMIZED_MSK	0x01
++#define IWL_CD_STTS_TRANSFER_STATUS_POS	1
++#define IWL_CD_STTS_TRANSFER_STATUS_MSK	0x0E
++#define IWL_CD_STTS_WIFI_STATUS_POS	4
++#define IWL_CD_STTS_WIFI_STATUS_MSK	0xF0
++
++/**
++ * enum iwl_completion_desc_transfer_status -  transfer status (bits 1-3)
++ * @IWL_CD_STTS_UNUSED: unused
++ * @IWL_CD_STTS_UNUSED_2: unused
++ * @IWL_CD_STTS_END_TRANSFER: successful transfer complete.
++ *	In sniffer mode, when split is used, set in last CD completion. (RX)
++ * @IWL_CD_STTS_OVERFLOW: In sniffer mode, when using split - used for
++ *	all CD completion. (RX)
++ * @IWL_CD_STTS_ABORTED: CR abort / close flow. (RX)
++ * @IWL_CD_STTS_ERROR: general error (RX)
++ */
++enum iwl_completion_desc_transfer_status {
++	IWL_CD_STTS_UNUSED,
++	IWL_CD_STTS_UNUSED_2,
++	IWL_CD_STTS_END_TRANSFER,
++	IWL_CD_STTS_OVERFLOW,
++	IWL_CD_STTS_ABORTED,
++	IWL_CD_STTS_ERROR,
++};
++
++/**
++ * enum iwl_completion_desc_wifi_status - wifi status (bits 4-7)
++ * @IWL_CD_STTS_VALID: the packet is valid (RX)
++ * @IWL_CD_STTS_FCS_ERR: frame check sequence error (RX)
++ * @IWL_CD_STTS_SEC_KEY_ERR: error handling the security key of rx (RX)
++ * @IWL_CD_STTS_DECRYPTION_ERR: error decrypting the frame (RX)
++ * @IWL_CD_STTS_DUP: duplicate packet (RX)
++ * @IWL_CD_STTS_ICV_MIC_ERR: MIC error (RX)
++ * @IWL_CD_STTS_INTERNAL_SNAP_ERR: problems removing the snap (RX)
++ * @IWL_CD_STTS_SEC_PORT_FAIL: security port fail (RX)
++ * @IWL_CD_STTS_BA_OLD_SN: block ack received old SN (RX)
++ * @IWL_CD_STTS_QOS_NULL: QoS null packet (RX)
++ * @IWL_CD_STTS_MAC_HDR_ERR: MAC header conversion error (RX)
++ * @IWL_CD_STTS_MAX_RETRANS: reached max number of retransmissions (TX)
++ * @IWL_CD_STTS_EX_LIFETIME: exceeded lifetime (TX)
++ * @IWL_CD_STTS_NOT_USED: completed but not used (RX)
++ * @IWL_CD_STTS_REPLAY_ERR: pn check failed, replay error (RX)
++ */
++enum iwl_completion_desc_wifi_status {
++	IWL_CD_STTS_VALID,
++	IWL_CD_STTS_FCS_ERR,
++	IWL_CD_STTS_SEC_KEY_ERR,
++	IWL_CD_STTS_DECRYPTION_ERR,
++	IWL_CD_STTS_DUP,
++	IWL_CD_STTS_ICV_MIC_ERR,
++	IWL_CD_STTS_INTERNAL_SNAP_ERR,
++	IWL_CD_STTS_SEC_PORT_FAIL,
++	IWL_CD_STTS_BA_OLD_SN,
++	IWL_CD_STTS_QOS_NULL,
++	IWL_CD_STTS_MAC_HDR_ERR,
++	IWL_CD_STTS_MAX_RETRANS,
++	IWL_CD_STTS_EX_LIFETIME,
++	IWL_CD_STTS_NOT_USED,
++	IWL_CD_STTS_REPLAY_ERR,
++};
++
+ struct iwl_frame_release {
+ 	u8 baid;
+ 	u8 reserved;
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
+index 279dd7b7a3fb9..0b8cf7f3af933 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
+@@ -269,6 +269,7 @@ struct iwl_rx_cmd_buffer {
+ 	bool _page_stolen;
+ 	u32 _rx_page_order;
+ 	unsigned int truesize;
++	u8 status;
+ };
+ 
+ static inline void *rxb_addr(struct iwl_rx_cmd_buffer *r)
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h b/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
+index 00f9566bcc213..e9d67ba3e56dd 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
+@@ -102,66 +102,6 @@ struct isr_statistics {
+ 	u32 unhandled;
+ };
+ 
+-#define IWL_CD_STTS_OPTIMIZED_POS	0
+-#define IWL_CD_STTS_OPTIMIZED_MSK	0x01
+-#define IWL_CD_STTS_TRANSFER_STATUS_POS	1
+-#define IWL_CD_STTS_TRANSFER_STATUS_MSK	0x0E
+-#define IWL_CD_STTS_WIFI_STATUS_POS	4
+-#define IWL_CD_STTS_WIFI_STATUS_MSK	0xF0
+-
+-/**
+- * enum iwl_completion_desc_transfer_status -  transfer status (bits 1-3)
+- * @IWL_CD_STTS_END_TRANSFER: successful transfer complete.
+- *	In sniffer mode, when split is used, set in last CD completion. (RX)
+- * @IWL_CD_STTS_OVERFLOW: In sniffer mode, when using split - used for
+- *	all CD completion. (RX)
+- * @IWL_CD_STTS_ABORTED: CR abort / close flow. (RX)
+- */
+-enum iwl_completion_desc_transfer_status {
+-	IWL_CD_STTS_UNUSED,
+-	IWL_CD_STTS_UNUSED_2,
+-	IWL_CD_STTS_END_TRANSFER,
+-	IWL_CD_STTS_OVERFLOW,
+-	IWL_CD_STTS_ABORTED,
+-	IWL_CD_STTS_ERROR,
+-};
+-
+-/**
+- * enum iwl_completion_desc_wifi_status - wifi status (bits 4-7)
+- * @IWL_CD_STTS_VALID: the packet is valid (RX)
+- * @IWL_CD_STTS_FCS_ERR: frame check sequence error (RX)
+- * @IWL_CD_STTS_SEC_KEY_ERR: error handling the security key of rx (RX)
+- * @IWL_CD_STTS_DECRYPTION_ERR: error decrypting the frame (RX)
+- * @IWL_CD_STTS_DUP: duplicate packet (RX)
+- * @IWL_CD_STTS_ICV_MIC_ERR: MIC error (RX)
+- * @IWL_CD_STTS_INTERNAL_SNAP_ERR: problems removing the snap (RX)
+- * @IWL_CD_STTS_SEC_PORT_FAIL: security port fail (RX)
+- * @IWL_CD_STTS_BA_OLD_SN: block ack received old SN (RX)
+- * @IWL_CD_STTS_QOS_NULL: QoS null packet (RX)
+- * @IWL_CD_STTS_MAC_HDR_ERR: MAC header conversion error (RX)
+- * @IWL_CD_STTS_MAX_RETRANS: reached max number of retransmissions (TX)
+- * @IWL_CD_STTS_EX_LIFETIME: exceeded lifetime (TX)
+- * @IWL_CD_STTS_NOT_USED: completed but not used (RX)
+- * @IWL_CD_STTS_REPLAY_ERR: pn check failed, replay error (RX)
+- */
+-enum iwl_completion_desc_wifi_status {
+-	IWL_CD_STTS_VALID,
+-	IWL_CD_STTS_FCS_ERR,
+-	IWL_CD_STTS_SEC_KEY_ERR,
+-	IWL_CD_STTS_DECRYPTION_ERR,
+-	IWL_CD_STTS_DUP,
+-	IWL_CD_STTS_ICV_MIC_ERR,
+-	IWL_CD_STTS_INTERNAL_SNAP_ERR,
+-	IWL_CD_STTS_SEC_PORT_FAIL,
+-	IWL_CD_STTS_BA_OLD_SN,
+-	IWL_CD_STTS_QOS_NULL,
+-	IWL_CD_STTS_MAC_HDR_ERR,
+-	IWL_CD_STTS_MAX_RETRANS,
+-	IWL_CD_STTS_EX_LIFETIME,
+-	IWL_CD_STTS_NOT_USED,
+-	IWL_CD_STTS_REPLAY_ERR,
+-};
+-
+ #define IWL_RX_TD_TYPE_MSK	0xff000000
+ #define IWL_RX_TD_SIZE_MSK	0x00ffffff
+ #define IWL_RX_TD_SIZE_2K	BIT(11)
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+index 1d144985ea589..80a1a50f5da51 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+@@ -1198,7 +1198,8 @@ static void iwl_pcie_rx_reuse_rbd(struct iwl_trans *trans,
+ static void iwl_pcie_rx_handle_rb(struct iwl_trans *trans,
+ 				struct iwl_rxq *rxq,
+ 				struct iwl_rx_mem_buffer *rxb,
+-				bool emergency)
++				bool emergency,
++				int i)
  {
- 	qp->comp.retry_cnt = qp->attr.retry_cnt;
- 	qp->comp.rnr_retry = qp->attr.rnr_retry;
-+	qp->comp.started_retry = 0;
- }
+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+ 	struct iwl_txq *txq = trans_pcie->txq[trans_pcie->cmd_queue];
+@@ -1224,6 +1225,9 @@ static void iwl_pcie_rx_handle_rb(struct iwl_trans *trans,
+ 			.truesize = max_len,
+ 		};
  
- static inline enum comp_state check_psn(struct rxe_qp *qp,
-@@ -676,6 +677,20 @@ int rxe_completer(void *arg)
- 				goto exit;
- 			}
- 
-+			/* if we've started a retry, don't start another
-+			 * retry sequence, unless this is a timeout.
-+			 */
-+			if (qp->comp.started_retry &&
-+			    !qp->comp.timeout_retry) {
-+				if (pkt) {
-+					rxe_drop_ref(pkt->qp);
-+					kfree_skb(skb);
-+					skb = NULL;
-+				}
++		if (trans->cfg->device_family >= IWL_DEVICE_FAMILY_22560)
++			rxcb.status = rxq->cd[i].status;
 +
-+				goto done;
-+			}
-+
- 			if (qp->comp.retry_cnt > 0) {
- 				if (qp->comp.retry_cnt != 7)
- 					qp->comp.retry_cnt--;
-@@ -692,6 +707,7 @@ int rxe_completer(void *arg)
- 					rxe_counter_inc(rxe,
- 							RXE_CNT_COMP_RETRY);
- 					qp->req.need_retry = 1;
-+					qp->comp.started_retry = 1;
- 					rxe_run_task(&qp->req.task, 1);
- 				}
+ 		pkt = rxb_addr(&rxcb);
  
-@@ -701,7 +717,7 @@ int rxe_completer(void *arg)
- 					skb = NULL;
- 				}
+ 		if (pkt->len_n_flags == cpu_to_le32(FH_RSCSR_FRAME_INVALID)) {
+@@ -1430,7 +1434,7 @@ restart:
+ 			goto out;
  
--				goto exit;
-+				goto done;
+ 		IWL_DEBUG_RX(trans, "Q %d: HW = %d, SW = %d\n", rxq->id, r, i);
+-		iwl_pcie_rx_handle_rb(trans, rxq, rxb, emergency);
++		iwl_pcie_rx_handle_rb(trans, rxq, rxb, emergency, i);
  
- 			} else {
- 				rxe_counter_inc(rxe, RXE_CNT_RETRY_EXCEEDED);
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-index 3b731c7682e5b..a0ec28d2b71a4 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -158,6 +158,7 @@ struct rxe_comp_info {
- 	int			opcode;
- 	int			timeout;
- 	int			timeout_retry;
-+	int			started_retry;
- 	u32			retry_cnt;
- 	u32			rnr_retry;
- 	struct rxe_task		task;
+ 		i = (i + 1) & (rxq->queue_size - 1);
+ 
 -- 
 2.20.1
 
