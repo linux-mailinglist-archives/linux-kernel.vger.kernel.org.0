@@ -2,593 +2,523 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728ACF4842
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C93F4851
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391687AbfKHLzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:55:46 -0500
-Received: from mga01.intel.com ([192.55.52.88]:9290 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732842AbfKHLzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:55:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 03:55:41 -0800
-X-IronPort-AV: E=Sophos;i="5.68,281,1569308400"; 
-   d="scan'208";a="196879859"
-Received: from lingshan-mobl5.ccr.corp.intel.com (HELO [10.238.129.48]) ([10.238.129.48])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Nov 2019 03:55:38 -0800
-Subject: Re: [PATCH 1/2] IFC hardware operation layer
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Zhu Lingshan <lingshan.zhu@intel.com>
-Cc:     jasowang@redhat.com, alex.williamson@redhat.com,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com
-References: <1572946660-26265-1-git-send-email-lingshan.zhu@intel.com>
- <1572946660-26265-2-git-send-email-lingshan.zhu@intel.com>
- <20191105061635-mutt-send-email-mst@kernel.org>
-From:   Zhu Lingshan <lingshan.zhu@linux.intel.com>
-Message-ID: <40773308-bce2-9d84-6fba-411fc1349111@linux.intel.com>
-Date:   Fri, 8 Nov 2019 19:55:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2403798AbfKHL4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:56:14 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43684 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389715AbfKHL4M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:56:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rt0cBAqjkAXJh9O4x4c8DVDARkw/ZG57+S0UVTBi104=; b=mZGlr1CNUkbl8GO8qF9eSwEsW
+        ztAXz1ys6dMuN8lSBG8vBmP/1KWYa5iqBxK9xWBgg+Tul6zd5FqriUUhSh5NPgCKeOKD7let8LEeV
+        FwigUm8JDUOvpBwVMcAjT0J2q5f5AzBGzuiT4q/bx3F3WZ5AEfjYRcifUiSBmutihLEZ10xysG7M2
+        Qp9uh/fs+iPTDdPuNL9PKxVV6C012MgMbnJzcLNgEm+/BF7mGSnaUYzH3jtKIMhKf9GCXI+KBU9Ey
+        VpeCsslx1OMGWnH1eDvwaaRGfboNEN6oIpwU/df5mYAQ7/4f2ipK66Vdb3m/2f9pU64RlD+fJfc2B
+        +y9ULCpqQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iT2rw-0003Al-5K; Fri, 08 Nov 2019 11:56:00 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3E19D3075D7;
+        Fri,  8 Nov 2019 12:54:52 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1B04E2025EDB2; Fri,  8 Nov 2019 12:55:57 +0100 (CET)
+Date:   Fri, 8 Nov 2019 12:55:57 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <qperret@google.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, linux-kernel@vger.kernel.org,
+        aaron.lwe@gmail.com, valentin.schneider@arm.com, mingo@kernel.org,
+        pauld@redhat.com, jdesfossez@digitalocean.com,
+        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        kernel-team@android.com, john.stultz@linaro.org
+Subject: Re: NULL pointer dereference in pick_next_task_fair
+Message-ID: <20191108115557.GP5671@hirez.programming.kicks-ass.net>
+References: <20191028174603.GA246917@google.com>
+ <20191106120525.GX4131@hirez.programming.kicks-ass.net>
+ <33643a5b-1b83-8605-2347-acd1aea04f93@virtuozzo.com>
+ <20191106165437.GX4114@hirez.programming.kicks-ass.net>
+ <20191106172737.GM5671@hirez.programming.kicks-ass.net>
+ <831c2cd4-40a4-31b2-c0aa-b5f579e770d6@virtuozzo.com>
+ <20191107132628.GZ4114@hirez.programming.kicks-ass.net>
+ <20191107153848.GA31774@google.com>
+ <20191107184356.GF4114@hirez.programming.kicks-ass.net>
+ <20191107192907.GA30258@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20191105061635-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107192907.GA30258@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 07, 2019 at 08:29:07PM +0100, Peter Zijlstra wrote:
+> I still havne't had food, but this here compiles...
 
-On 11/5/2019 7:29 PM, Michael S. Tsirkin wrote:
-> On Tue, Nov 05, 2019 at 05:37:39PM +0800, Zhu Lingshan wrote:
->> This commit introduced ifcvf_base layer, which handles hardware
->> operations and configurations.
->>
->> Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
->> ---
->>   drivers/vhost/ifcvf/ifcvf_base.c | 344 +++++++++++++++++++++++++++++++++++++++
->>   drivers/vhost/ifcvf/ifcvf_base.h | 132 +++++++++++++++
->>   2 files changed, 476 insertions(+)
->>   create mode 100644 drivers/vhost/ifcvf/ifcvf_base.c
->>   create mode 100644 drivers/vhost/ifcvf/ifcvf_base.h
->>
->> diff --git a/drivers/vhost/ifcvf/ifcvf_base.c b/drivers/vhost/ifcvf/ifcvf_base.c
->> new file mode 100644
->> index 0000000..0659f41
->> --- /dev/null
->> +++ b/drivers/vhost/ifcvf/ifcvf_base.c
->> @@ -0,0 +1,344 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2019 Intel Corporation.
->> + */
->> +
->> +#include "ifcvf_base.h"
->> +
->> +static void *get_cap_addr(struct ifcvf_hw *hw, struct virtio_pci_cap *cap)
->> +{
->> +	struct ifcvf_adapter *ifcvf;
->> +	u32 length, offset;
->> +	u8 bar;
->> +
->> +	length = le32_to_cpu(cap->length);
->> +	offset = le32_to_cpu(cap->offset);
->> +	bar = le32_to_cpu(cap->bar);
->> +
->> +	ifcvf = container_of(hw, struct ifcvf_adapter, vf);
->> +
->> +	if (bar >= IFCVF_PCI_MAX_RESOURCE) {
->> +		IFC_DBG(ifcvf->dev,
->> +			"Invalid bar number %u to get capabilities.\n", bar);
->> +		return NULL;
->> +	}
->> +
->> +	if (offset + length < offset) {
->> +		IFC_DBG(ifcvf->dev, "offset(%u) + length(%u) overflows\n",
->> +			offset, length);
->> +		return NULL;
->> +	}
->> +
->> +	if (offset + length > hw->mem_resource[cap->bar].len) {
->> +		IFC_DBG(ifcvf->dev,
->> +			"offset(%u) + len(%u) overflows bar%u to get capabilities.\n",
->> +			offset, length, bar);
->> +		return NULL;
->> +	}
->> +
->> +	return hw->mem_resource[bar].addr + offset;
->> +}
->> +
->> +int ifcvf_read_config_range(struct pci_dev *dev,
->> +			uint32_t *val, int size, int where)
->> +{
->> +	int ret, i;
->> +
->> +	for (i = 0; i < size; i += 4) {
->> +		ret = pci_read_config_dword(dev, where + i, val + i / 4);
->> +		if (ret < 0)
->> +			return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev)
->> +{
->> +	struct virtio_pci_cap cap;
->> +	u16 notify_off;
->> +	int ret;
->> +	u8 pos;
->> +	u32 i;
->> +
->> +	ret = pci_read_config_byte(dev, PCI_CAPABILITY_LIST, &pos);
->> +
->> +	if (ret < 0) {
->> +		IFC_ERR(&dev->dev, "Failed to read PCI capability list.\n");
->> +		return -EIO;
->> +	}
->> +
->> +	while (pos) {
->> +		ret = ifcvf_read_config_range(dev, (u32 *)&cap,
->> +					      sizeof(cap), pos);
->> +
->> +		if (ret < 0) {
->> +			IFC_ERR(&dev->dev, "Failed to get PCI capability at %x",
->> +				pos);
->> +			break;
->> +		}
->> +
->> +		if (cap.cap_vndr != PCI_CAP_ID_VNDR)
->> +			goto next;
->> +
->> +		IFC_DBG(&dev->dev, "read PCI config: config type: %u, PCI bar: %u,\
->> +			 PCI bar offset: %u, PCI config len: %u.\n",
->> +			cap.cfg_type, cap.bar, cap.offset, cap.length);
->> +
->> +		switch (cap.cfg_type) {
->> +		case VIRTIO_PCI_CAP_COMMON_CFG:
->> +			hw->common_cfg = get_cap_addr(hw, &cap);
->> +			IFC_INFO(&dev->dev, "hw->common_cfg = %p.\n",
->> +				 hw->common_cfg);
->> +			break;
->> +		case VIRTIO_PCI_CAP_NOTIFY_CFG:
->> +			pci_read_config_dword(dev, pos + sizeof(cap),
->> +					      &hw->notify_off_multiplier);
->> +			hw->notify_bar = cap.bar;
->> +			hw->notify_base = get_cap_addr(hw, &cap);
->> +			IFC_INFO(&dev->dev, "hw->notify_base = %p.\n",
->> +				 hw->notify_base);
->> +			break;
->> +		case VIRTIO_PCI_CAP_ISR_CFG:
->> +			hw->isr = get_cap_addr(hw, &cap);
->> +			IFC_INFO(&dev->dev, "hw->isr = %p.\n", hw->isr);
->> +			break;
->> +		case VIRTIO_PCI_CAP_DEVICE_CFG:
->> +			hw->net_cfg = get_cap_addr(hw, &cap);
->> +			IFC_INFO(&dev->dev, "hw->net_cfg = %p.\n", hw->net_cfg);
->> +			break;
->> +		}
->> +next:
->> +		pos = cap.cap_next;
->> +	}
->> +
->> +	if (hw->common_cfg == NULL || hw->notify_base == NULL ||
->> +	    hw->isr == NULL || hw->net_cfg == NULL) {
->> +		IFC_DBG(&dev->dev, "Incomplete PCI capabilities.\n");
->> +		return -1;
->> +	}
->> +
->> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
->> +		iowrite16(i, &hw->common_cfg->queue_select);
->> +		notify_off = ioread16(&hw->common_cfg->queue_notify_off);
->> +		hw->notify_addr[i] = (void *)((u8 *)hw->notify_base +
->> +				     notify_off * hw->notify_off_multiplier);
->> +	}
->> +
->> +	hw->lm_cfg = hw->mem_resource[IFCVF_LM_BAR].addr;
->> +
->> +	IFC_DBG(&dev->dev, "PCI capability mapping: common cfg: %p,\
->> +		notify base: %p\n, isr cfg: %p, device cfg: %p,\
->> +		multiplier: %u\n",
->> +		hw->common_cfg, hw->notify_base, hw->isr,
->> +		hw->net_cfg, hw->notify_off_multiplier);
->> +
->> +	return 0;
->> +}
->> +
->> +u8 ifcvf_get_status(struct ifcvf_hw *hw)
->> +{
->> +	u8 old_gen, new_gen, status;
->> +
->> +	do {
->> +		old_gen = ioread8(&hw->common_cfg->config_generation);
->> +		status = ioread8(&hw->common_cfg->device_status);
->> +		new_gen = ioread8(&hw->common_cfg->config_generation);
->> +	} while (old_gen != new_gen);
->> +
->> +	return status;
->> +}
->> +
->> +void ifcvf_set_status(struct ifcvf_hw *hw, u8 status)
->> +{
->> +	iowrite8(status, &hw->common_cfg->device_status);
->> +}
->> +
->> +void ifcvf_reset(struct ifcvf_hw *hw)
->> +{
->> +	ifcvf_set_status(hw, 0);
->> +	ifcvf_get_status(hw);
->> +}
->> +
->> +static void ifcvf_add_status(struct ifcvf_hw *hw, u8 status)
->> +{
->> +	if (status != 0)
->> +		status |= ifcvf_get_status(hw);
->> +
->> +	ifcvf_set_status(hw, status);
->> +	ifcvf_get_status(hw);
->> +}
->> +
->> +u64 ifcvf_get_features(struct ifcvf_hw *hw)
->> +{
->> +	struct virtio_pci_common_cfg *cfg = hw->common_cfg;
->> +	u32 features_lo, features_hi;
->> +
->> +	iowrite32(0, &cfg->device_feature_select);
->> +	features_lo = ioread32(&cfg->device_feature);
->> +
->> +	iowrite32(1, &cfg->device_feature_select);
->> +	features_hi = ioread32(&cfg->device_feature);
->> +
->> +	return ((u64)features_hi << 32) | features_lo;
->> +}
->> +
->> +void ifcvf_read_net_config(struct ifcvf_hw *hw, u64 offset,
->> +		       void *dst, int length)
->> +{
->> +	u8 old_gen, new_gen, *p;
->> +	int i;
->> +
->> +	WARN_ON(offset + length > sizeof (struct ifcvf_net_config));
->> +
->> +	do {
->> +		old_gen = ioread8(&hw->common_cfg->config_generation);
->> +		p = dst;
->> +
->> +		for (i = 0; i < length; i++)
->> +			*p++ = ioread8((u8 *)hw->net_cfg + offset + i);
->> +
->> +		new_gen = ioread8(&hw->common_cfg->config_generation);
->> +	} while (old_gen != new_gen);
->> +}
->> +
->> +void ifcvf_write_net_config(struct ifcvf_hw *hw, u64 offset,
->> +			    const void *src, int length)
->> +{
->> +	const u8 *p;
->> +	int i;
->> +
->> +	p = src;
->> +	WARN_ON(offset + length > sizeof (struct ifcvf_net_config));
->> +
->> +	for (i = 0; i < length; i++)
->> +		iowrite8(*p++, (u8 *)hw->net_cfg + offset + i);
->> +}
->> +
->> +static void ifcvf_set_features(struct ifcvf_hw *hw, u64 features)
->> +{
->> +	struct virtio_pci_common_cfg *cfg = hw->common_cfg;
->> +
->> +	iowrite32(0, &cfg->guest_feature_select);
->> +	iowrite32(features & ((1ULL << 32) - 1), &cfg->guest_feature);
->> +
->> +	iowrite32(1, &cfg->guest_feature_select);
->> +	iowrite32(features >> 32, &cfg->guest_feature);
->> +}
->> +
->> +static int ifcvf_config_features(struct ifcvf_hw *hw)
->> +{
->> +	struct ifcvf_adapter *ifcvf;
->> +
->> +	ifcvf =	container_of(hw, struct ifcvf_adapter, vf);
->> +	ifcvf_set_features(hw, hw->req_features);
->> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_FEATURES_OK);
->> +
->> +	if (!(ifcvf_get_status(hw) & VIRTIO_CONFIG_S_FEATURES_OK)) {
->> +		IFC_ERR(ifcvf->dev, "Failed to set FEATURES_OK status\n");
->> +		return -EIO;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +void io_write64_twopart(u64 val, u32 *lo, u32 *hi)
->> +{
->> +	iowrite32(val & ((1ULL << 32) - 1), lo);
->> +	iowrite32(val >> 32, hi);
->> +}
->> +
->> +static int ifcvf_hw_enable(struct ifcvf_hw *hw)
->> +{
->> +	struct virtio_pci_common_cfg *cfg;
->> +	struct ifcvf_adapter *ifcvf;
->> +	u8 *lm_cfg;
->> +	u32 i;
->> +
->> +	ifcvf = container_of(hw, struct ifcvf_adapter, vf);
->> +	cfg = hw->common_cfg;
->> +	lm_cfg = hw->lm_cfg;
->> +	iowrite16(IFCVF_MSI_CONFIG_OFF, &cfg->msix_config);
->> +
->> +	if (ioread16(&cfg->msix_config) == VIRTIO_MSI_NO_VECTOR) {
->> +		IFC_ERR(ifcvf->dev, "No msix vector for device config.\n");
->> +		return -1;
->> +	}
->> +
->> +	for (i = 0; i < hw->nr_vring; i++) {
->> +		iowrite16(i, &cfg->queue_select);
->> +		io_write64_twopart(hw->vring[i].desc, &cfg->queue_desc_lo,
->> +				&cfg->queue_desc_hi);
->> +		io_write64_twopart(hw->vring[i].avail, &cfg->queue_avail_lo,
->> +				&cfg->queue_avail_hi);
->> +		io_write64_twopart(hw->vring[i].used, &cfg->queue_used_lo,
->> +				&cfg->queue_used_hi);
->> +		iowrite16(hw->vring[i].size, &cfg->queue_size);
->> +
->> +		*(u32 *)(lm_cfg + IFCVF_LM_RING_STATE_OFFSET +
->> +				(i / 2) * IFCVF_LM_CFG_SIZE + (i % 2) * 4) =
->> +			(u32)hw->vring[i].last_avail_idx |
->> +			((u32)hw->vring[i].last_used_idx << 16);
-> Is this trying to store data into part of device memory BAR?
-> If yes doing it like this isn't portable I think.
->
-Hello Michael
+A more polished patch.
 
-Thanks for your comments, I will replace this with iowrite, I will use a 
-variate representing the address to make it less-dirty.
+---
+Subject: sched: Fix pick_next_task() vs 'change' pattern race
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri Nov 8 11:11:52 CET 2019
 
->> +
->> +		iowrite16(i + IFCVF_MSI_QUEUE_OFF, &cfg->queue_msix_vector);
->> +		if (ioread16(&cfg->queue_msix_vector) ==
->> +		    VIRTIO_MSI_NO_VECTOR) {
->> +			IFC_ERR(ifcvf->dev,
->> +				"No msix vector for queue %u.\n", i);
->> +			return -1;
->> +		}
->> +
->> +		iowrite16(1, &cfg->queue_enable);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void ifcvf_hw_disable(struct ifcvf_hw *hw)
->> +{
->> +	struct virtio_pci_common_cfg *cfg;
->> +	u32 i;
->> +
->> +	cfg = hw->common_cfg;
->> +	iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->msix_config);
->> +
->> +	for (i = 0; i < hw->nr_vring; i++) {
->> +		iowrite16(i, &cfg->queue_select);
->> +		iowrite16(0, &cfg->queue_enable);
->> +		iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->queue_msix_vector);
->> +	}
-> Is it enough to write like this? don't you need to read
-> in order to flush outstanding MSI?
-I will add a read here. Thanks
->
->
->> +}
->> +
->> +int ifcvf_start_hw(struct ifcvf_hw *hw)
->> +{
->> +	ifcvf_reset(hw);
->> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_ACKNOWLEDGE);
->> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER);
->> +
->> +	if (ifcvf_config_features(hw) < 0)
->> +		return -1;
->> +
->> +	if (ifcvf_hw_enable(hw) < 0)
->> +		return -1;
->> +
->> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER_OK);
->> +
->> +	return 0;
->> +}
->> +
->> +void ifcvf_stop_hw(struct ifcvf_hw *hw)
->> +{
->> +	ifcvf_hw_disable(hw);
->> +	ifcvf_reset(hw);
->> +}
->> +
->> +void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid)
->> +{
->> +	iowrite16(qid, hw->notify_addr[qid]);
-> I suspect you didn't validate this driver with sparse, did you?
-> Otherwise I think you would have noticed some warnings
-> as e.g. iowrite16 requires a __iomem address.
->
-will add __iomem in the header files and other defines.
->> +}
->> +
->> +u64 ifcvf_get_queue_notify_off(struct ifcvf_hw *hw, int qid)
->> +{
->> +	return (u8 *)hw->notify_addr[qid] -
->> +		(u8 *)hw->mem_resource[hw->notify_bar].addr;
-> why is the cast of addr need?
-this function can be removed.
->
->> +}
->> diff --git a/drivers/vhost/ifcvf/ifcvf_base.h b/drivers/vhost/ifcvf/ifcvf_base.h
->> new file mode 100644
->> index 0000000..c97f0eb
->> --- /dev/null
->> +++ b/drivers/vhost/ifcvf/ifcvf_base.h
->> @@ -0,0 +1,132 @@
->> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->> +/*
->> + * Copyright (C) 2019 Intel Corporation.
->> + */
->> +
->> +#ifndef _IFCVF_H_
->> +#define _IFCVF_H_
->> +
->> +#include <linux/virtio_mdev_ops.h>
->> +#include <linux/mdev.h>
->> +#include <linux/pci.h>
->> +#include <linux/pci_regs.h>
->> +#include <uapi/linux/virtio_net.h>
->> +#include <uapi/linux/virtio_config.h>
->> +#include <uapi/linux/virtio_pci.h>
->> +
->> +#define IFCVF_VENDOR_ID         0x1AF4
->> +#define IFCVF_DEVICE_ID         0x1041
->
-> I am confused by the above.
->
-> They are used by the virtio layer right?
->
-> So why isn't the id VIRTIO_ID_NET then?
-without our driver, virtio-pci can drive this device, users can still 
-use vfio passthrough on this device. We use VIRTIO_ID_NET in 
-.get_device_id(), so virtio_mdev can match the device. 0x1041 only used 
-in the id_table and the device reports 0x1041.
->
->> +#define IFCVF_SUBSYS_VENDOR_ID  0x8086
->> +#define IFCVF_SUBSYS_DEVICE_ID  0x001A
->> +
->> +#define IFCVF_MDEV_LIMIT	1
->> +
->> +/*
->> + * Some ifcvf feature bits (currently bits 28 through 31) are
->> + * reserved for the transport being used (eg. ifcvf_ring), the
->> + * rest are per-device feature bits.
->> + */
->> +#define IFCVF_TRANSPORT_F_START 28
->> +#define IFCVF_TRANSPORT_F_END   34
->> +
->> +#define IFC_SUPPORTED_FEATURES \
->> +		((1ULL << VIRTIO_NET_F_MAC)			| \
->> +		 (1ULL << VIRTIO_F_ANY_LAYOUT)			| \
->> +		 (1ULL << VIRTIO_F_VERSION_1)			| \
->> +		 (1ULL << VIRTIO_F_ORDER_PLATFORM)			| \
->> +		 (1ULL << VIRTIO_NET_F_GUEST_ANNOUNCE)		| \
->> +		 (1ULL << VIRTIO_NET_F_CTRL_VQ)			| \
->> +		 (1ULL << VIRTIO_NET_F_STATUS)			| \
->> +		 (1ULL << VIRTIO_NET_F_MRG_RXBUF)) /* not fully supported */
-> what does this last one mean?
-> shouldn't we clear the bit if it's incomplete?
-it is supported now:)
->
->> +
->> +//Not support MQ, only one queue pair for now.
-> /* comments like this pls */
-sure
->
->> +#define IFCVF_MAX_QUEUE_PAIRS		1
->> +#define IFCVF_MAX_QUEUES		2
->> +
->> +#define IFCVF_QUEUE_ALIGNMENT		PAGE_SIZE
->> +
->> +#define IFCVF_MSI_CONFIG_OFF	0
->> +#define IFCVF_MSI_QUEUE_OFF	1
->> +#define IFCVF_PCI_MAX_RESOURCE	6
->> +
->> +#define IFCVF_LM_CFG_SIZE		0x40
->> +#define IFCVF_LM_RING_STATE_OFFSET	0x20
->> +#define IFCVF_LM_BAR	4
->> +
->> +#define IFCVF_32_BIT_MASK		0xffffffff
->> +
->> +#define IFC_ERR(dev, fmt, ...)	dev_err(dev, fmt, ##__VA_ARGS__)
->> +#define IFC_DBG(dev, fmt, ...)	dev_dbg(dev, fmt, ##__VA_ARGS__)
->> +#define IFC_INFO(dev, fmt, ...)	dev_info(dev, fmt, ##__VA_ARGS__)
->> +
->> +#define IFC_PRIVATE_TO_VF(adapter) \
->> +	(&((struct ifcvf_adapter *)adapter)->vf)
->> +
->> +#define IFCVF_MAX_INTR (IFCVF_MAX_QUEUE_PAIRS * 2 + 1)
->> +
->> +struct ifcvf_net_config {
->> +	u8    mac[6];
->> +	u16   status;
->> +	u16   max_virtqueue_pairs;
->> +} __packed;
-> Looks like a partial copy of virtio_net_config - reuse that one instead?
-sure
->
->
->> +
->> +struct ifcvf_pci_mem_resource {
->> +	/* Physical address, 0 if not resource. */
->> +	u64      phys_addr;
->> +	/* Length of the resource. */
->> +	u64      len;
->> +	/* Virtual address, NULL when not mapped. */
->> +	u8       *addr;
->> +};
->> +
->> +struct vring_info {
->> +	u64 desc;
->> +	u64 avail;
->> +	u64 used;
->> +	u16 size;
->> +	u16 last_avail_idx;
->> +	u16 last_used_idx;
->> +	bool ready;
->> +	char msix_name[256];
->> +	struct virtio_mdev_callback cb;
->> +};
->> +
->> +struct ifcvf_hw {
->> +	u8	*isr;
->> +	u8	notify_bar;
->> +	u8	*lm_cfg;
->> +	u8	nr_vring;
->> +	u16	*notify_base;
->> +	u16	*notify_addr[IFCVF_MAX_QUEUE_PAIRS * 2];
->> +	u32	notify_off_multiplier;
->> +	u64	req_features;
->> +	struct	virtio_pci_common_cfg *common_cfg;
->> +	struct	ifcvf_net_config *net_cfg;
->> +	struct	vring_info vring[IFCVF_MAX_QUEUE_PAIRS * 2];
->> +	struct	ifcvf_pci_mem_resource mem_resource[IFCVF_PCI_MAX_RESOURCE];
->> +};
->> +
->> +struct ifcvf_adapter {
->> +	struct	device *dev;
->> +	struct	mutex mdev_lock;
->> +	int	mdev_count;
->> +	int	vectors;
->> +	struct	ifcvf_hw vf;
->> +};
->> +
->> +int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev);
->> +int ifcvf_start_hw(struct ifcvf_hw *hw);
->> +void ifcvf_stop_hw(struct ifcvf_hw *hw);
->> +void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid);
->> +u8 ifcvf_get_linkstatus(struct ifcvf_hw *hw);
->> +void ifcvf_read_net_config(struct ifcvf_hw *hw, u64 offset,
->> +			   void *dst, int length);
->> +void ifcvf_write_net_config(struct ifcvf_hw *hw, u64 offset,
->> +			    const void *src, int length);
->> +u8 ifcvf_get_status(struct ifcvf_hw *hw);
->> +void ifcvf_set_status(struct ifcvf_hw *hw, u8 status);
->> +void io_write64_twopart(u64 val, u32 *lo, u32 *hi);
->> +void ifcvf_reset(struct ifcvf_hw *hw);
->> +u64 ifcvf_get_features(struct ifcvf_hw *hw);
->> +
->> +#endif /* _IFCVF_H_ */
->> -- 
->> 1.8.3.1
+Commit 67692435c411 ("sched: Rework pick_next_task() slow-path")
+inadvertly introduced a race because it changed a previously
+unexplored dependency between dropping the rq->lock and
+sched_class::put_prev_task().
+
+The comments about dropping rq->lock, in for example
+newidle_balance(), only mentions the task being current and ->on_cpu
+being set. But when we look at the 'change' pattern (in for example
+sched_setnuma()):
+
+	queued = task_on_rq_queued(p); /* p->on_rq == TASK_ON_RQ_QUEUED */
+	running = task_current(rq, p); /* rq->curr == p */
+
+	if (queued)
+		dequeue_task(...);
+	if (running)
+		put_prev_task(...);
+
+	/* change task properties */
+
+	if (queued)
+		enqueue_task(...);
+	if (running)
+		set_next_task(...);
+
+It becomes obvious that if we do this after put_prev_task() has
+already been called on @p, things go sideways. This is exactly what
+the commit in question allows to happen when it does:
+
+	prev->sched_class->put_prev_task(rq, prev, rf);
+	if (!rq->nr_running)
+		newidle_balance(rq, rf);
+
+The newidle_balance() call will drop rq->lock after we've called
+put_prev_task() and that allows the above 'change' pattern to
+interleave and mess up the state.
+
+Furthermore, it turns out we lost the RT-pull when we put the last DL
+task.
+
+Fix both problems by extracting the balancing from put_prev_task() and
+doing a multi-class balance() pass before put_prev_task().
+
+Fixes: 67692435c411 ("sched: Rework pick_next_task() slow-path")
+Reported-by: Quentin Perret <qperret@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/sched/core.c      |   17 +++++++++--------
+ kernel/sched/deadline.c  |   40 ++++++++++++++++++++--------------------
+ kernel/sched/fair.c      |   15 ++++++++++++---
+ kernel/sched/idle.c      |    9 ++++++++-
+ kernel/sched/rt.c        |   37 +++++++++++++++++++------------------
+ kernel/sched/sched.h     |   30 +++++++++++++++++++++++++++---
+ kernel/sched/stop_task.c |   18 +++++++++++-------
+ 7 files changed, 106 insertions(+), 60 deletions(-)
+
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3929,13 +3929,14 @@ pick_next_task(struct rq *rq, struct tas
+ 	}
+ 
+ restart:
+-	/*
+-	 * Ensure that we put DL/RT tasks before the pick loop, such that they
+-	 * can PULL higher prio tasks when we lower the RQ 'priority'.
+-	 */
+-	prev->sched_class->put_prev_task(rq, prev, rf);
+-	if (!rq->nr_running)
+-		newidle_balance(rq, rf);
++#ifdef CONFIG_SMP
++	for_class_range(class, prev->sched_class, &idle_sched_class) {
++		if (class->balance(rq, prev, rf))
++			break;
++	}
++#endif
++
++	put_prev_task(rq, prev);
+ 
+ 	for_each_class(class) {
+ 		p = class->pick_next_task(rq, NULL, NULL);
+@@ -6201,7 +6202,7 @@ static struct task_struct *__pick_migrat
+ 	for_each_class(class) {
+ 		next = class->pick_next_task(rq, NULL, NULL);
+ 		if (next) {
+-			next->sched_class->put_prev_task(rq, next, NULL);
++			next->sched_class->put_prev_task(rq, next);
+ 			return next;
+ 		}
+ 	}
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1691,6 +1691,22 @@ static void check_preempt_equal_dl(struc
+ 	resched_curr(rq);
+ }
+ 
++static int balance_dl(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
++{
++	if (!on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
++		/*
++		 * This is OK, because current is on_cpu, which avoids it being
++		 * picked for load-balance and preemption/IRQs are still
++		 * disabled avoiding further scheduler activity on it and we've
++		 * not yet started the picking loop.
++		 */
++		rq_unpin_lock(rq, rf);
++		pull_dl_task(rq);
++		rq_repin_lock(rq, rf);
++	}
++
++	return sched_stop_runnable(rq) || sched_dl_runnable(rq);
++}
+ #endif /* CONFIG_SMP */
+ 
+ /*
+@@ -1758,45 +1774,28 @@ static struct task_struct *
+ pick_next_task_dl(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+ 	struct sched_dl_entity *dl_se;
++	struct dl_rq *dl_rq = &rq->dl;
+ 	struct task_struct *p;
+-	struct dl_rq *dl_rq;
+ 
+ 	WARN_ON_ONCE(prev || rf);
+ 
+-	dl_rq = &rq->dl;
+-
+-	if (unlikely(!dl_rq->dl_nr_running))
++	if (!sched_dl_runnable(rq))
+ 		return NULL;
+ 
+ 	dl_se = pick_next_dl_entity(rq, dl_rq);
+ 	BUG_ON(!dl_se);
+-
+ 	p = dl_task_of(dl_se);
+-
+ 	set_next_task_dl(rq, p);
+-
+ 	return p;
+ }
+ 
+-static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
++static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
+ {
+ 	update_curr_dl(rq);
+ 
+ 	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
+ 	if (on_dl_rq(&p->dl) && p->nr_cpus_allowed > 1)
+ 		enqueue_pushable_dl_task(rq, p);
+-
+-	if (rf && !on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
+-		/*
+-		 * This is OK, because current is on_cpu, which avoids it being
+-		 * picked for load-balance and preemption/IRQs are still
+-		 * disabled avoiding further scheduler activity on it and we've
+-		 * not yet started the picking loop.
+-		 */
+-		rq_unpin_lock(rq, rf);
+-		pull_dl_task(rq);
+-		rq_repin_lock(rq, rf);
+-	}
+ }
+ 
+ /*
+@@ -2442,6 +2441,7 @@ const struct sched_class dl_sched_class
+ 	.set_next_task		= set_next_task_dl,
+ 
+ #ifdef CONFIG_SMP
++	.balance		= balance_dl,
+ 	.select_task_rq		= select_task_rq_dl,
+ 	.migrate_task_rq	= migrate_task_rq_dl,
+ 	.set_cpus_allowed       = set_cpus_allowed_dl,
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6423,6 +6423,15 @@ static void task_dead_fair(struct task_s
+ {
+ 	remove_entity_load_avg(&p->se);
+ }
++
++static int
++balance_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
++{
++	if (rq->nr_running)
++		return 1;
++
++	return newidle_balance(rq, rf) != 0;
++}
+ #endif /* CONFIG_SMP */
+ 
+ static unsigned long wakeup_gran(struct sched_entity *se)
+@@ -6599,7 +6608,7 @@ pick_next_task_fair(struct rq *rq, struc
+ 	int new_tasks;
+ 
+ again:
+-	if (!cfs_rq->nr_running)
++	if (!sched_fair_runnable(rq))
+ 		goto idle;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+@@ -6737,7 +6746,7 @@ done: __maybe_unused;
+ /*
+  * Account for a descheduled task:
+  */
+-static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
++static void put_prev_task_fair(struct rq *rq, struct task_struct *prev)
+ {
+ 	struct sched_entity *se = &prev->se;
+ 	struct cfs_rq *cfs_rq;
+@@ -10597,11 +10606,11 @@ const struct sched_class fair_sched_clas
+ 	.check_preempt_curr	= check_preempt_wakeup,
+ 
+ 	.pick_next_task		= pick_next_task_fair,
+-
+ 	.put_prev_task		= put_prev_task_fair,
+ 	.set_next_task          = set_next_task_fair,
+ 
+ #ifdef CONFIG_SMP
++	.balance		= balance_fair,
+ 	.select_task_rq		= select_task_rq_fair,
+ 	.migrate_task_rq	= migrate_task_rq_fair,
+ 
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -365,6 +365,12 @@ select_task_rq_idle(struct task_struct *
+ {
+ 	return task_cpu(p); /* IDLE tasks as never migrated */
+ }
++
++static int
++balance_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
++{
++	return WARN_ON_ONCE(1);
++}
+ #endif
+ 
+ /*
+@@ -375,7 +381,7 @@ static void check_preempt_curr_idle(stru
+ 	resched_curr(rq);
+ }
+ 
+-static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
++static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
+ {
+ }
+ 
+@@ -460,6 +466,7 @@ const struct sched_class idle_sched_clas
+ 	.set_next_task          = set_next_task_idle,
+ 
+ #ifdef CONFIG_SMP
++	.balance		= balance_idle,
+ 	.select_task_rq		= select_task_rq_idle,
+ 	.set_cpus_allowed	= set_cpus_allowed_common,
+ #endif
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1469,6 +1469,22 @@ static void check_preempt_equal_prio(str
+ 	resched_curr(rq);
+ }
+ 
++static int balance_rt(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
++{
++	if (!on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
++		/*
++		 * This is OK, because current is on_cpu, which avoids it being
++		 * picked for load-balance and preemption/IRQs are still
++		 * disabled avoiding further scheduler activity on it and we've
++		 * not yet started the picking loop.
++		 */
++		rq_unpin_lock(rq, rf);
++		pull_rt_task(rq);
++		rq_repin_lock(rq, rf);
++	}
++
++	return sched_stop_runnable(rq) || sched_dl_runnable(rq) || sched_rt_runnable(rq);
++}
+ #endif /* CONFIG_SMP */
+ 
+ /*
+@@ -1552,21 +1568,18 @@ static struct task_struct *
+ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+ 	struct task_struct *p;
+-	struct rt_rq *rt_rq = &rq->rt;
+ 
+ 	WARN_ON_ONCE(prev || rf);
+ 
+-	if (!rt_rq->rt_queued)
++	if (!sched_rt_runnable(rq))
+ 		return NULL;
+ 
+ 	p = _pick_next_task_rt(rq);
+-
+ 	set_next_task_rt(rq, p);
+-
+ 	return p;
+ }
+ 
+-static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
++static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
+ {
+ 	update_curr_rt(rq);
+ 
+@@ -1578,18 +1591,6 @@ static void put_prev_task_rt(struct rq *
+ 	 */
+ 	if (on_rt_rq(&p->rt) && p->nr_cpus_allowed > 1)
+ 		enqueue_pushable_task(rq, p);
+-
+-	if (rf && !on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
+-		/*
+-		 * This is OK, because current is on_cpu, which avoids it being
+-		 * picked for load-balance and preemption/IRQs are still
+-		 * disabled avoiding further scheduler activity on it and we've
+-		 * not yet started the picking loop.
+-		 */
+-		rq_unpin_lock(rq, rf);
+-		pull_rt_task(rq);
+-		rq_repin_lock(rq, rf);
+-	}
+ }
+ 
+ #ifdef CONFIG_SMP
+@@ -2366,8 +2367,8 @@ const struct sched_class rt_sched_class
+ 	.set_next_task          = set_next_task_rt,
+ 
+ #ifdef CONFIG_SMP
++	.balance		= balance_rt,
+ 	.select_task_rq		= select_task_rq_rt,
+-
+ 	.set_cpus_allowed       = set_cpus_allowed_common,
+ 	.rq_online              = rq_online_rt,
+ 	.rq_offline             = rq_offline_rt,
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1727,10 +1727,11 @@ struct sched_class {
+ 	struct task_struct * (*pick_next_task)(struct rq *rq,
+ 					       struct task_struct *prev,
+ 					       struct rq_flags *rf);
+-	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct rq_flags *rf);
++	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
+ 	void (*set_next_task)(struct rq *rq, struct task_struct *p);
+ 
+ #ifdef CONFIG_SMP
++	int (*balance)(struct rq *rq, struct task_struct *prev, struct rq_flags *rf);
+ 	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int sd_flag, int flags);
+ 	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
+ 
+@@ -1773,7 +1774,7 @@ struct sched_class {
+ static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+ {
+ 	WARN_ON_ONCE(rq->curr != prev);
+-	prev->sched_class->put_prev_task(rq, prev, NULL);
++	prev->sched_class->put_prev_task(rq, prev);
+ }
+ 
+ static inline void set_next_task(struct rq *rq, struct task_struct *next)
+@@ -1787,8 +1788,12 @@ static inline void set_next_task(struct
+ #else
+ #define sched_class_highest (&dl_sched_class)
+ #endif
++
++#define for_class_range(class, _from, _to) \
++	for (class = (_from); class != (_to); class = class->next)
++
+ #define for_each_class(class) \
+-   for (class = sched_class_highest; class; class = class->next)
++	for_class_range(class, sched_class_highest, NULL)
+ 
+ extern const struct sched_class stop_sched_class;
+ extern const struct sched_class dl_sched_class;
+@@ -1796,6 +1801,25 @@ extern const struct sched_class rt_sched
+ extern const struct sched_class fair_sched_class;
+ extern const struct sched_class idle_sched_class;
+ 
++static inline bool sched_stop_runnable(struct rq *rq)
++{
++	return rq->stop && task_on_rq_queued(rq->stop);
++}
++
++static inline bool sched_dl_runnable(struct rq *rq)
++{
++	return rq->dl.dl_nr_running > 0;
++}
++
++static inline bool sched_rt_runnable(struct rq *rq)
++{
++	return rq->rt.rt_queued > 0;
++}
++
++static inline bool sched_fair_runnable(struct rq *rq)
++{
++	return rq->cfs.nr_running > 0;
++}
+ 
+ #ifdef CONFIG_SMP
+ 
+--- a/kernel/sched/stop_task.c
++++ b/kernel/sched/stop_task.c
+@@ -15,6 +15,12 @@ select_task_rq_stop(struct task_struct *
+ {
+ 	return task_cpu(p); /* stop tasks as never migrate */
+ }
++
++static int
++balance_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
++{
++	return sched_stop_runnable(rq);
++}
+ #endif /* CONFIG_SMP */
+ 
+ static void
+@@ -31,16 +37,13 @@ static void set_next_task_stop(struct rq
+ static struct task_struct *
+ pick_next_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+-	struct task_struct *stop = rq->stop;
+-
+ 	WARN_ON_ONCE(prev || rf);
+ 
+-	if (!stop || !task_on_rq_queued(stop))
++	if (!sched_stop_runnable(rq))
+ 		return NULL;
+ 
+-	set_next_task_stop(rq, stop);
+-
+-	return stop;
++	set_next_task_stop(rq, rq->stop);
++	return rq->stop;
+ }
+ 
+ static void
+@@ -60,7 +63,7 @@ static void yield_task_stop(struct rq *r
+ 	BUG(); /* the stop task should never yield, its pointless. */
+ }
+ 
+-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
++static void put_prev_task_stop(struct rq *rq, struct task_struct *prev)
+ {
+ 	struct task_struct *curr = rq->curr;
+ 	u64 delta_exec;
+@@ -129,6 +132,7 @@ const struct sched_class stop_sched_clas
+ 	.set_next_task          = set_next_task_stop,
+ 
+ #ifdef CONFIG_SMP
++	.balance		= balance_stop,
+ 	.select_task_rq		= select_task_rq_stop,
+ 	.set_cpus_allowed	= set_cpus_allowed_common,
+ #endif
