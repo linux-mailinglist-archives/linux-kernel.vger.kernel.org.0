@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12E8DF541F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F5EF5452
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732930AbfKHSy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51358 "EHLO mail.kernel.org"
+        id S2388114AbfKHS4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:56:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732894AbfKHSyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:54:21 -0500
+        id S1732196AbfKHS4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:56:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 624AE2178F;
-        Fri,  8 Nov 2019 18:54:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27B1D218AE;
+        Fri,  8 Nov 2019 18:56:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239260;
-        bh=eGIRXN3ZuubHvJtJ1VY8AcPqPsHFDvRiJESLjbShVhs=;
+        s=default; t=1573239365;
+        bh=0bQe948ftx6P4hbTLJm624vlLfbcA0R1ysh4srYT92c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sSxad0fv3lCEXT5FLrJq705XbRMkmwkOuQGs6o30f/ozyDctJAkQnvurzJ147legF
-         D17DIQkan+2klEI0K6Zj7e5GePwUbAC0S1eO9bN8XcPVN9cXUc+Ra+0MG7pWCswo5E
-         7joJQcVjrynx2wIzFrbL8dut0u0uT8RqJypUeiZY=
+        b=rmVWgPxuEkOhn2dzZbJtmfGZslQhHxe+breUrwH7TJJCoQzaI4exzNEUOmHQgtd0t
+         pcvOUdc6XLWhNycEAt9OwTeXuImhPxNjsznoNLpKuz1e8LTM3yZmqiix60lQqkgVVp
+         qYtGBgX/SyzVJVf3MZAFFaSOkzrRuN1S00b/4K4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linus.walleij@linaro.org, rmk+kernel@armlinux.org.uk, Ard Biesheuvel" 
-        <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        stable@vger.kernel.org, Jing Xiangfeng <jingxiangfeng@huawei.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 55/75] ARM: oabi-compat: copy semops using __copy_from_user()
-Date:   Fri,  8 Nov 2019 19:50:12 +0100
-Message-Id: <20191108174757.494478119@linuxfoundation.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 07/34] ARM: mm: fix alignment handler faults under memory pressure
+Date:   Fri,  8 Nov 2019 19:50:14 +0100
+Message-Id: <20191108174628.137522645@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
-References: <20191108174708.135680837@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +46,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 8c8484a1c18e3231648f5ba7cc5ffb7fd70b3ca4 upstream.
+[ Upstream commit 67e15fa5b487adb9b78a92789eeff2d6ec8f5cee ]
 
-__get_user_error() is used as a fast accessor to make copying structure
-members as efficient as possible.  However, with software PAN and the
-recent Spectre variant 1, the efficiency is reduced as these are no
-longer fast accessors.
+When the system has high memory pressure, the page containing the
+instruction may be paged out.  Using probe_kernel_address() means that
+if the page is swapped out, the resulting page fault will not be
+handled because page faults are disabled by this function.
 
-In the case of software PAN, it has to switch the domain register around
-each access, and with Spectre variant 1, it would have to repeat the
-access_ok() check for each access.
+Use get_user() to read the instruction instead.
 
-Rather than using __get_user_error() to copy each semops element member,
-copy each semops element in full using __copy_from_user().
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+Fixes: b255188f90e2 ("ARM: fix scheduling while atomic warning in alignment handling code")
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/sys_oabi-compat.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/mm/alignment.c | 44 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
---- a/arch/arm/kernel/sys_oabi-compat.c
-+++ b/arch/arm/kernel/sys_oabi-compat.c
-@@ -328,9 +328,11 @@ asmlinkage long sys_oabi_semtimedop(int
- 		return -ENOMEM;
- 	err = 0;
- 	for (i = 0; i < nsops; i++) {
--		__get_user_error(sops[i].sem_num, &tsops->sem_num, err);
--		__get_user_error(sops[i].sem_op,  &tsops->sem_op,  err);
--		__get_user_error(sops[i].sem_flg, &tsops->sem_flg, err);
-+		struct oabi_sembuf osb;
-+		err |= __copy_from_user(&osb, tsops, sizeof(osb));
-+		sops[i].sem_num = osb.sem_num;
-+		sops[i].sem_op = osb.sem_op;
-+		sops[i].sem_flg = osb.sem_flg;
- 		tsops++;
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index 7d5f4c736a16b..cd18eda014c24 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -767,6 +767,36 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
+ 	return NULL;
+ }
+ 
++static int alignment_get_arm(struct pt_regs *regs, u32 *ip, unsigned long *inst)
++{
++	u32 instr = 0;
++	int fault;
++
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_arm(instr);
++
++	return fault;
++}
++
++static int alignment_get_thumb(struct pt_regs *regs, u16 *ip, u16 *inst)
++{
++	u16 instr = 0;
++	int fault;
++
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_thumb16(instr);
++
++	return fault;
++}
++
+ static int
+ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+@@ -774,10 +804,10 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	unsigned long instr = 0, instrptr;
+ 	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
+ 	unsigned int type;
+-	unsigned int fault;
+ 	u16 tinstr = 0;
+ 	int isize = 4;
+ 	int thumb2_32b = 0;
++	int fault;
+ 
+ 	if (interrupts_enabled(regs))
+ 		local_irq_enable();
+@@ -786,15 +816,14 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 	if (thumb_mode(regs)) {
+ 		u16 *ptr = (u16 *)(instrptr & ~1);
+-		fault = probe_kernel_address(ptr, tinstr);
+-		tinstr = __mem_to_opcode_thumb16(tinstr);
++
++		fault = alignment_get_thumb(regs, ptr, &tinstr);
+ 		if (!fault) {
+ 			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
+ 			    IS_T32(tinstr)) {
+ 				/* Thumb-2 32-bit */
+-				u16 tinst2 = 0;
+-				fault = probe_kernel_address(ptr + 1, tinst2);
+-				tinst2 = __mem_to_opcode_thumb16(tinst2);
++				u16 tinst2;
++				fault = alignment_get_thumb(regs, ptr + 1, &tinst2);
+ 				instr = __opcode_thumb32_compose(tinstr, tinst2);
+ 				thumb2_32b = 1;
+ 			} else {
+@@ -803,8 +832,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 			}
+ 		}
+ 	} else {
+-		fault = probe_kernel_address((void *)instrptr, instr);
+-		instr = __mem_to_opcode_arm(instr);
++		fault = alignment_get_arm(regs, (void *)instrptr, &instr);
  	}
- 	if (timeout) {
+ 
+ 	if (fault) {
+-- 
+2.20.1
+
 
 
