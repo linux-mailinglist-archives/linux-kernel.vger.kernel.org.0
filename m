@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE23F4B3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:15:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB53F4B2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:15:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392049AbfKHMOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:14:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50894 "EHLO mail.kernel.org"
+        id S1732224AbfKHLiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:38:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732179AbfKHLiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:05 -0500
+        id S1732127AbfKHLiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:38:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C62E620869;
-        Fri,  8 Nov 2019 11:38:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F398E21D7E;
+        Fri,  8 Nov 2019 11:38:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213084;
-        bh=ujdttuElqsOnSKDmfVVumqMuvbvm6Lae0q5bpYUe7iE=;
+        s=default; t=1573213085;
+        bh=yZHetACKVRtNetBPPdhjKthBtWVOXjiKVm+J2t0m8xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gG034E9g1jmZ9EmYDQ354GCecJwN4BebTVZuoSe3iBhDFR4MzX6Keuwz4j3R7fz+6
-         U/6sGpRzJhQ2XTrWqY45AfmPkN8oWQmSSx2RX7aEuxnhdddpBMD9LkW3ihlTCdf8uo
-         lmnuf78SJXNEsrpCROrspfbVqr8VckLEOfHkmSbw=
+        b=F6SGZ5aWhC2mlRl/QQlJdrEXEZaQbI+M/VOcs5vBDWCXBEHPz96U/jGvZ+Z/K7nEP
+         wv0tgNHaO46qytqyEpFKqT58A5qRc+GKZNl60eDDxnkTVvpCAN9XyNaMZf6u32cS0Y
+         atxjoJ+gCYhzKSx4JNIZ4j9WoIEAf0EovcDna+VM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 010/205] arm64: dts: allwinner: a64: NanoPi-A64: Fix DCDC1 voltage
-Date:   Fri,  8 Nov 2019 06:34:37 -0500
-Message-Id: <20191108113752.12502-10-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 011/205] ALSA: pcm: signedness bug in snd_pcm_plug_alloc()
+Date:   Fri,  8 Nov 2019 06:34:38 -0500
+Message-Id: <20191108113752.12502-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -44,41 +42,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andre Przywara <andre.przywara@arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 480f58cdbe392d4387a2193b6131a277e0111dd0 ]
+[ Upstream commit 6f128fa41f310e1f39ebcea9621d2905549ecf52 ]
 
-According to the NanoPi-A64 schematics, DCDC1 is connected to a voltage
-rail named "VDD_SYS_3.3V". All users seem to expect 3.3V here: the
-Ethernet PHY, the uSD card slot, the camera interface and the GPIO pins
-on the headers.
-Fix up the voltage on the regulator to lift it up to 3.3V.
+The "frames" variable is unsigned so the error handling doesn't work
+properly.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/core/oss/pcm_plugin.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 98dbff19f5ccc..5caba225b4f78 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -125,9 +125,9 @@
- 
- &reg_dcdc1 {
- 	regulator-always-on;
--	regulator-min-microvolt = <3000000>;
--	regulator-max-microvolt = <3000000>;
--	regulator-name = "vcc-3v";
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-3v3";
- };
- 
- &reg_dcdc2 {
+diff --git a/sound/core/oss/pcm_plugin.c b/sound/core/oss/pcm_plugin.c
+index 71571d9921598..31cb2acf8afcc 100644
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -111,7 +111,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_substream *plug, snd_pcm_uframes_t frames)
+ 		while (plugin->next) {
+ 			if (plugin->dst_frames)
+ 				frames = plugin->dst_frames(plugin, frames);
+-			if (snd_BUG_ON(frames <= 0))
++			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
+ 				return -ENXIO;
+ 			plugin = plugin->next;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
+@@ -123,7 +123,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_substream *plug, snd_pcm_uframes_t frames)
+ 		while (plugin->prev) {
+ 			if (plugin->src_frames)
+ 				frames = plugin->src_frames(plugin, frames);
+-			if (snd_BUG_ON(frames <= 0))
++			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
+ 				return -ENXIO;
+ 			plugin = plugin->prev;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
 -- 
 2.20.1
 
