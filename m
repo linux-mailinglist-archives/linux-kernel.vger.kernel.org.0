@@ -2,908 +2,571 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB3A4F4C2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:54:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0836F4C37
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:57:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbfKHMyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:54:35 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45256 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfKHMye (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 07:54:34 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z10so1629229wrs.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:54:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DEUph8SrtHouYTsTHsq/Zb4quyzaWw7CRK81W9R4lo8=;
-        b=oP2x7CZiLX324SMYu0hemdpIoDxwcvShCvBv6soTt9r6Djpkt5RwBO1My0N2tSwZTb
-         JY434oHzfiD8Qt58NRGqMnDX3BOUKNGrxZWZXldKahoM4qfOjpQCOx2PjNB6+argPpLJ
-         BCCMlnYiWiY1e6KW/CjqcwKy0lvi4UMS5jq6zUINRdeznEC2QWV4fr5OZRLGVFZehA9w
-         PyTpXfmSGeonIorpxrqgRVOSTwh94UAJh6TlBLdwxZtCOzOPLjDL9xrDZJpicDNGH4O2
-         4/FXCCgKyGz5WwgTzHzgcjqiUjsGSnyR8ChB6paU3yZZxWf7ObQK+DtMdrUeeTE8BBqT
-         R1rA==
+        id S1727325AbfKHM50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:57:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39326 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726726AbfKHM5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 07:57:25 -0500
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E7FC183F3B
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2019 12:57:24 +0000 (UTC)
+Received: by mail-qt1-f199.google.com with SMTP id 6so7105071qtu.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:57:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DEUph8SrtHouYTsTHsq/Zb4quyzaWw7CRK81W9R4lo8=;
-        b=HlDvDYd1EcehKoY2tPcSSTTgj0JvUaxrXdUbFK7iHhDlmynb2+blOpM4l7CAaAKroY
-         GbqvmUDH99jmqFfMOWM5ihXJgM7s0qEsERs6wW4aArE5HI1ehK7IZhz/SJiJKWp/N3TJ
-         Zd8P+ZZoDUxMaK/xf28y9wX1l7nXgqwri5+SjCIj9Wlqbls1RtUCPfwTEZ/NpW49gHkO
-         tTP3mDK4t9WNzrZE62muF6Q2Jf+ElvmTsULGC/D4cigw1GerCXOfT745oJsub67MPYpi
-         sice2VHGS7+8P3PBbDZ12RCRw+k7aWuseZctx9FSINjNL92wHJDdF4PCs0pQcfkQtbx/
-         LR7g==
-X-Gm-Message-State: APjAAAUlj0LIX301YsuI6FrNdgHoKX3xoiszfHz5qZq/VU4LScw6gDhV
-        308x69RdPeE3lyb8yi/Fj1gI5A==
-X-Google-Smtp-Source: APXvYqznX5ZtlOtZXs8wSFrb2n8Dsqkq+VD+c5Yo6sPczLVaurKlyp179/W7+YWAjqdHQbFsVGAIjw==
-X-Received: by 2002:adf:9f52:: with SMTP id f18mr7967576wrg.51.1573217670605;
-        Fri, 08 Nov 2019 04:54:30 -0800 (PST)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id 19sm8515234wrc.47.2019.11.08.04.54.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Nov 2019 04:54:30 -0800 (PST)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Masney <masneyb@onstation.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH 2/2] interconnect: qcom: add msm8974 driver
-Date:   Fri,  8 Nov 2019 14:53:49 +0200
-Message-Id: <20191108125349.24191-3-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191108125349.24191-1-georgi.djakov@linaro.org>
-References: <20191108125349.24191-1-georgi.djakov@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Bwsex6ZANTo076khaX8uZe17kme9slC8G+EBkiLopAM=;
+        b=AZwM8m1uE6zAk8csXhdt3slZoO+Qx/ClN13xEIBa0h67twjqeMf36MUTUR2w+XruQ2
+         5kSr4Pt4uQ8bYdcy1GoGYSLSHNjtAwQyMBClI+DkTfiRWeOYJNyD+7IaqTgn87A7yoMp
+         QSZ9Orxg4xyXPNhC4/c5stk9j0gK42tf5ZH7JwgqT8BTdfCU1ltVw5ly/LXPZB/5s/5D
+         9nHOhjliFURy6QJ+UYbTU1kdxBOvgRBsgRkQQemPXKj5Wb9DirOyIC+YpwdYqsDz8GX8
+         AEcb9K+FkWsaKKoP1uNrYQKaxvmqNm13i1zVJKow7AKgcN3G3JNseawwVKi0Bsk/X3+p
+         bhrw==
+X-Gm-Message-State: APjAAAXoLVhuuiHIoZhhyZLa7TgpysK402e3RxhE3A0t1HtxLJkpfCs1
+        igA8hrnYKs+J5e+WopMsKad+ScUvEFzscTrbu2KTsE8TY41npHqftZJTsANXcUC5PC15/v0TRyA
+        7Pe/d2xRZcJwHazrgZHoPK6Mp
+X-Received: by 2002:a05:620a:532:: with SMTP id h18mr8482082qkh.41.1573217844078;
+        Fri, 08 Nov 2019 04:57:24 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxEyTNTYcMVBeVtO9OlYWsuFtJwlpwJGVdxBOJJ7BUBokuRSqoGHU7ODQ3SCHgubmgmzEaPzA==
+X-Received: by 2002:a05:620a:532:: with SMTP id h18mr8482061qkh.41.1573217843681;
+        Fri, 08 Nov 2019 04:57:23 -0800 (PST)
+Received: from redhat.com (bzq-79-176-6-42.red.bezeqint.net. [79.176.6.42])
+        by smtp.gmail.com with ESMTPSA id o1sm3165616qtb.82.2019.11.08.04.57.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2019 04:57:22 -0800 (PST)
+Date:   Fri, 8 Nov 2019 07:57:16 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Zhu Lingshan <lingshan.zhu@intel.com>
+Cc:     jasowang@redhat.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com
+Subject: Re: [PATCH 1/2] IFC hardware operation layer
+Message-ID: <20191108075143-mutt-send-email-mst@kernel.org>
+References: <1572946660-26265-1-git-send-email-lingshan.zhu@intel.com>
+ <1572946660-26265-2-git-send-email-lingshan.zhu@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572946660-26265-2-git-send-email-lingshan.zhu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Masney <masneyb@onstation.org>
+On Tue, Nov 05, 2019 at 05:37:39PM +0800, Zhu Lingshan wrote:
+> This commit introduced ifcvf_base layer, which handles hardware
+> operations and configurations.
+> 
+> Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
+> ---
+>  drivers/vhost/ifcvf/ifcvf_base.c | 344 +++++++++++++++++++++++++++++++++++++++
+>  drivers/vhost/ifcvf/ifcvf_base.h | 132 +++++++++++++++
+>  2 files changed, 476 insertions(+)
+>  create mode 100644 drivers/vhost/ifcvf/ifcvf_base.c
+>  create mode 100644 drivers/vhost/ifcvf/ifcvf_base.h
+> 
+> diff --git a/drivers/vhost/ifcvf/ifcvf_base.c b/drivers/vhost/ifcvf/ifcvf_base.c
+> new file mode 100644
+> index 0000000..0659f41
+> --- /dev/null
+> +++ b/drivers/vhost/ifcvf/ifcvf_base.c
+> @@ -0,0 +1,344 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2019 Intel Corporation.
+> + */
+> +
+> +#include "ifcvf_base.h"
+> +
+> +static void *get_cap_addr(struct ifcvf_hw *hw, struct virtio_pci_cap *cap)
+> +{
+> +	struct ifcvf_adapter *ifcvf;
+> +	u32 length, offset;
+> +	u8 bar;
+> +
+> +	length = le32_to_cpu(cap->length);
+> +	offset = le32_to_cpu(cap->offset);
+> +	bar = le32_to_cpu(cap->bar);
+> +
+> +	ifcvf = container_of(hw, struct ifcvf_adapter, vf);
+> +
+> +	if (bar >= IFCVF_PCI_MAX_RESOURCE) {
+> +		IFC_DBG(ifcvf->dev,
+> +			"Invalid bar number %u to get capabilities.\n", bar);
+> +		return NULL;
+> +	}
+> +
+> +	if (offset + length < offset) {
+> +		IFC_DBG(ifcvf->dev, "offset(%u) + length(%u) overflows\n",
+> +			offset, length);
+> +		return NULL;
+> +	}
+> +
+> +	if (offset + length > hw->mem_resource[cap->bar].len) {
+> +		IFC_DBG(ifcvf->dev,
+> +			"offset(%u) + len(%u) overflows bar%u to get capabilities.\n",
+> +			offset, length, bar);
+> +		return NULL;
+> +	}
+> +
+> +	return hw->mem_resource[bar].addr + offset;
+> +}
+> +
+> +int ifcvf_read_config_range(struct pci_dev *dev,
+> +			uint32_t *val, int size, int where)
+> +{
+> +	int ret, i;
+> +
+> +	for (i = 0; i < size; i += 4) {
+> +		ret = pci_read_config_dword(dev, where + i, val + i / 4);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev)
+> +{
+> +	struct virtio_pci_cap cap;
+> +	u16 notify_off;
+> +	int ret;
+> +	u8 pos;
+> +	u32 i;
+> +
+> +	ret = pci_read_config_byte(dev, PCI_CAPABILITY_LIST, &pos);
+> +
+> +	if (ret < 0) {
+> +		IFC_ERR(&dev->dev, "Failed to read PCI capability list.\n");
+> +		return -EIO;
+> +	}
+> +
+> +	while (pos) {
+> +		ret = ifcvf_read_config_range(dev, (u32 *)&cap,
+> +					      sizeof(cap), pos);
+> +
+> +		if (ret < 0) {
+> +			IFC_ERR(&dev->dev, "Failed to get PCI capability at %x",
+> +				pos);
+> +			break;
+> +		}
+> +
+> +		if (cap.cap_vndr != PCI_CAP_ID_VNDR)
+> +			goto next;
+> +
+> +		IFC_DBG(&dev->dev, "read PCI config: config type: %u, PCI bar: %u,\
+> +			 PCI bar offset: %u, PCI config len: %u.\n",
+> +			cap.cfg_type, cap.bar, cap.offset, cap.length);
+> +
+> +		switch (cap.cfg_type) {
+> +		case VIRTIO_PCI_CAP_COMMON_CFG:
+> +			hw->common_cfg = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->common_cfg = %p.\n",
+> +				 hw->common_cfg);
+> +			break;
+> +		case VIRTIO_PCI_CAP_NOTIFY_CFG:
+> +			pci_read_config_dword(dev, pos + sizeof(cap),
+> +					      &hw->notify_off_multiplier);
+> +			hw->notify_bar = cap.bar;
+> +			hw->notify_base = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->notify_base = %p.\n",
+> +				 hw->notify_base);
+> +			break;
+> +		case VIRTIO_PCI_CAP_ISR_CFG:
+> +			hw->isr = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->isr = %p.\n", hw->isr);
+> +			break;
+> +		case VIRTIO_PCI_CAP_DEVICE_CFG:
+> +			hw->net_cfg = get_cap_addr(hw, &cap);
+> +			IFC_INFO(&dev->dev, "hw->net_cfg = %p.\n", hw->net_cfg);
+> +			break;
+> +		}
+> +next:
+> +		pos = cap.cap_next;
+> +	}
+> +
+> +	if (hw->common_cfg == NULL || hw->notify_base == NULL ||
+> +	    hw->isr == NULL || hw->net_cfg == NULL) {
+> +		IFC_DBG(&dev->dev, "Incomplete PCI capabilities.\n");
+> +		return -1;
+> +	}
+> +
+> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
+> +		iowrite16(i, &hw->common_cfg->queue_select);
+> +		notify_off = ioread16(&hw->common_cfg->queue_notify_off);
+> +		hw->notify_addr[i] = (void *)((u8 *)hw->notify_base +
+> +				     notify_off * hw->notify_off_multiplier);
+> +	}
+> +
+> +	hw->lm_cfg = hw->mem_resource[IFCVF_LM_BAR].addr;
+> +
+> +	IFC_DBG(&dev->dev, "PCI capability mapping: common cfg: %p,\
+> +		notify base: %p\n, isr cfg: %p, device cfg: %p,\
+> +		multiplier: %u\n",
+> +		hw->common_cfg, hw->notify_base, hw->isr,
+> +		hw->net_cfg, hw->notify_off_multiplier);
+> +
+> +	return 0;
+> +}
+> +
+> +u8 ifcvf_get_status(struct ifcvf_hw *hw)
+> +{
+> +	u8 old_gen, new_gen, status;
+> +
+> +	do {
+> +		old_gen = ioread8(&hw->common_cfg->config_generation);
+> +		status = ioread8(&hw->common_cfg->device_status);
+> +		new_gen = ioread8(&hw->common_cfg->config_generation);
+> +	} while (old_gen != new_gen);
+> +
+> +	return status;
+> +}
+> +
+> +void ifcvf_set_status(struct ifcvf_hw *hw, u8 status)
+> +{
+> +	iowrite8(status, &hw->common_cfg->device_status);
+> +}
+> +
+> +void ifcvf_reset(struct ifcvf_hw *hw)
+> +{
+> +	ifcvf_set_status(hw, 0);
+> +	ifcvf_get_status(hw);
+> +}
+> +
+> +static void ifcvf_add_status(struct ifcvf_hw *hw, u8 status)
+> +{
+> +	if (status != 0)
+> +		status |= ifcvf_get_status(hw);
+> +
+> +	ifcvf_set_status(hw, status);
+> +	ifcvf_get_status(hw);
+> +}
+> +
+> +u64 ifcvf_get_features(struct ifcvf_hw *hw)
+> +{
+> +	struct virtio_pci_common_cfg *cfg = hw->common_cfg;
+> +	u32 features_lo, features_hi;
+> +
+> +	iowrite32(0, &cfg->device_feature_select);
+> +	features_lo = ioread32(&cfg->device_feature);
+> +
+> +	iowrite32(1, &cfg->device_feature_select);
+> +	features_hi = ioread32(&cfg->device_feature);
+> +
+> +	return ((u64)features_hi << 32) | features_lo;
+> +}
+> +
+> +void ifcvf_read_net_config(struct ifcvf_hw *hw, u64 offset,
+> +		       void *dst, int length)
+> +{
+> +	u8 old_gen, new_gen, *p;
+> +	int i;
+> +
+> +	WARN_ON(offset + length > sizeof (struct ifcvf_net_config));
+> +
+> +	do {
+> +		old_gen = ioread8(&hw->common_cfg->config_generation);
+> +		p = dst;
+> +
+> +		for (i = 0; i < length; i++)
+> +			*p++ = ioread8((u8 *)hw->net_cfg + offset + i);
+> +
+> +		new_gen = ioread8(&hw->common_cfg->config_generation);
+> +	} while (old_gen != new_gen);
+> +}
+> +
+> +void ifcvf_write_net_config(struct ifcvf_hw *hw, u64 offset,
+> +			    const void *src, int length)
+> +{
+> +	const u8 *p;
+> +	int i;
+> +
+> +	p = src;
+> +	WARN_ON(offset + length > sizeof (struct ifcvf_net_config));
+> +
+> +	for (i = 0; i < length; i++)
+> +		iowrite8(*p++, (u8 *)hw->net_cfg + offset + i);
+> +}
+> +
+> +static void ifcvf_set_features(struct ifcvf_hw *hw, u64 features)
+> +{
+> +	struct virtio_pci_common_cfg *cfg = hw->common_cfg;
+> +
+> +	iowrite32(0, &cfg->guest_feature_select);
+> +	iowrite32(features & ((1ULL << 32) - 1), &cfg->guest_feature);
+> +
+> +	iowrite32(1, &cfg->guest_feature_select);
+> +	iowrite32(features >> 32, &cfg->guest_feature);
+> +}
+> +
+> +static int ifcvf_config_features(struct ifcvf_hw *hw)
+> +{
+> +	struct ifcvf_adapter *ifcvf;
+> +
+> +	ifcvf =	container_of(hw, struct ifcvf_adapter, vf);
+> +	ifcvf_set_features(hw, hw->req_features);
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_FEATURES_OK);
+> +
+> +	if (!(ifcvf_get_status(hw) & VIRTIO_CONFIG_S_FEATURES_OK)) {
+> +		IFC_ERR(ifcvf->dev, "Failed to set FEATURES_OK status\n");
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +void io_write64_twopart(u64 val, u32 *lo, u32 *hi)
+> +{
+> +	iowrite32(val & ((1ULL << 32) - 1), lo);
+> +	iowrite32(val >> 32, hi);
+> +}
+> +
+> +static int ifcvf_hw_enable(struct ifcvf_hw *hw)
+> +{
+> +	struct virtio_pci_common_cfg *cfg;
+> +	struct ifcvf_adapter *ifcvf;
+> +	u8 *lm_cfg;
+> +	u32 i;
+> +
+> +	ifcvf = container_of(hw, struct ifcvf_adapter, vf);
+> +	cfg = hw->common_cfg;
+> +	lm_cfg = hw->lm_cfg;
+> +	iowrite16(IFCVF_MSI_CONFIG_OFF, &cfg->msix_config);
+> +
+> +	if (ioread16(&cfg->msix_config) == VIRTIO_MSI_NO_VECTOR) {
+> +		IFC_ERR(ifcvf->dev, "No msix vector for device config.\n");
+> +		return -1;
+> +	}
+> +
+> +	for (i = 0; i < hw->nr_vring; i++) {
+> +		iowrite16(i, &cfg->queue_select);
+> +		io_write64_twopart(hw->vring[i].desc, &cfg->queue_desc_lo,
+> +				&cfg->queue_desc_hi);
+> +		io_write64_twopart(hw->vring[i].avail, &cfg->queue_avail_lo,
+> +				&cfg->queue_avail_hi);
+> +		io_write64_twopart(hw->vring[i].used, &cfg->queue_used_lo,
+> +				&cfg->queue_used_hi);
+> +		iowrite16(hw->vring[i].size, &cfg->queue_size);
+> +
+> +		*(u32 *)(lm_cfg + IFCVF_LM_RING_STATE_OFFSET +
+> +				(i / 2) * IFCVF_LM_CFG_SIZE + (i % 2) * 4) =
+> +			(u32)hw->vring[i].last_avail_idx |
+> +			((u32)hw->vring[i].last_used_idx << 16);
+> +
+> +		iowrite16(i + IFCVF_MSI_QUEUE_OFF, &cfg->queue_msix_vector);
+> +		if (ioread16(&cfg->queue_msix_vector) ==
+> +		    VIRTIO_MSI_NO_VECTOR) {
+> +			IFC_ERR(ifcvf->dev,
+> +				"No msix vector for queue %u.\n", i);
+> +			return -1;
+> +		}
+> +
+> +		iowrite16(1, &cfg->queue_enable);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void ifcvf_hw_disable(struct ifcvf_hw *hw)
+> +{
+> +	struct virtio_pci_common_cfg *cfg;
+> +	u32 i;
+> +
+> +	cfg = hw->common_cfg;
+> +	iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->msix_config);
+> +
+> +	for (i = 0; i < hw->nr_vring; i++) {
+> +		iowrite16(i, &cfg->queue_select);
+> +		iowrite16(0, &cfg->queue_enable);
+> +		iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->queue_msix_vector);
+> +	}
+> +}
+> +
+> +int ifcvf_start_hw(struct ifcvf_hw *hw)
+> +{
+> +	ifcvf_reset(hw);
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_ACKNOWLEDGE);
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER);
+> +
+> +	if (ifcvf_config_features(hw) < 0)
+> +		return -1;
+> +
+> +	if (ifcvf_hw_enable(hw) < 0)
+> +		return -1;
+> +
+> +	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER_OK);
+> +
+> +	return 0;
+> +}
+> +
+> +void ifcvf_stop_hw(struct ifcvf_hw *hw)
+> +{
+> +	ifcvf_hw_disable(hw);
+> +	ifcvf_reset(hw);
+> +}
+> +
+> +void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid)
+> +{
+> +	iowrite16(qid, hw->notify_addr[qid]);
+> +}
+> +
+> +u64 ifcvf_get_queue_notify_off(struct ifcvf_hw *hw, int qid)
+> +{
+> +	return (u8 *)hw->notify_addr[qid] -
+> +		(u8 *)hw->mem_resource[hw->notify_bar].addr;
+> +}
+> diff --git a/drivers/vhost/ifcvf/ifcvf_base.h b/drivers/vhost/ifcvf/ifcvf_base.h
+> new file mode 100644
+> index 0000000..c97f0eb
+> --- /dev/null
+> +++ b/drivers/vhost/ifcvf/ifcvf_base.h
+> @@ -0,0 +1,132 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Copyright (C) 2019 Intel Corporation.
 
-Add driver for the Qualcomm MSM8974 interconnect providers that support
-setting system bandwidth requirements between various network-on-chip
-fabrics.
+Given this borrowed BSD licensed code from virtio, can you make this
+licensed similarly?
+See e.g. include/uapi/linux/virtio_config.h for the license to use.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lore.kernel.org/r/20191024103054.9770-3-masneyb@onstation.org
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/interconnect/qcom/Kconfig   |   9 +
- drivers/interconnect/qcom/Makefile  |   2 +
- drivers/interconnect/qcom/msm8974.c | 784 ++++++++++++++++++++++++++++
- 3 files changed, 795 insertions(+)
- create mode 100644 drivers/interconnect/qcom/msm8974.c
 
-diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-index 6ab4012a059a..c49afbea3458 100644
---- a/drivers/interconnect/qcom/Kconfig
-+++ b/drivers/interconnect/qcom/Kconfig
-@@ -5,6 +5,15 @@ config INTERCONNECT_QCOM
- 	help
- 	  Support for Qualcomm's Network-on-Chip interconnect hardware.
- 
-+config INTERCONNECT_QCOM_MSM8974
-+       tristate "Qualcomm MSM8974 interconnect driver"
-+       depends on INTERCONNECT_QCOM
-+       depends on QCOM_SMD_RPM
-+       select INTERCONNECT_QCOM_SMD_RPM
-+       help
-+         This is a driver for the Qualcomm Network-on-Chip on msm8974-based
-+         platforms.
-+
- config INTERCONNECT_QCOM_QCS404
- 	tristate "Qualcomm QCS404 interconnect driver"
- 	depends on INTERCONNECT_QCOM
-diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
-index 67dafb783dec..9adf9e380545 100644
---- a/drivers/interconnect/qcom/Makefile
-+++ b/drivers/interconnect/qcom/Makefile
-@@ -1,9 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0
- 
-+qnoc-msm8974-objs			:= msm8974.o
- qnoc-qcs404-objs			:= qcs404.o
- qnoc-sdm845-objs			:= sdm845.o
- icc-smd-rpm-objs			:= smd-rpm.o
- 
-+obj-$(CONFIG_INTERCONNECT_QCOM_MSM8974) += qnoc-msm8974.o
- obj-$(CONFIG_INTERCONNECT_QCOM_QCS404) += qnoc-qcs404.o
- obj-$(CONFIG_INTERCONNECT_QCOM_SDM845) += qnoc-sdm845.o
- obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += icc-smd-rpm.o
-diff --git a/drivers/interconnect/qcom/msm8974.c b/drivers/interconnect/qcom/msm8974.c
-new file mode 100644
-index 000000000000..ce599a0c83d9
---- /dev/null
-+++ b/drivers/interconnect/qcom/msm8974.c
-@@ -0,0 +1,784 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 Brian Masney <masneyb@onstation.org>
-+ *
-+ * Based on MSM bus code from downstream MSM kernel sources.
-+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
-+ *
-+ * Based on qcs404.c
-+ * Copyright (C) 2019 Linaro Ltd
-+ *
-+ * Here's a rough representation that shows the various buses that form the
-+ * Network On Chip (NOC) for the msm8974:
-+ *
-+ *                         Multimedia Subsystem (MMSS)
-+ *         |----------+-----------------------------------+-----------|
-+ *                    |                                   |
-+ *                    |                                   |
-+ *        Config      |                     Bus Interface | Memory Controller
-+ *       |------------+-+-----------|        |------------+-+-----------|
-+ *                      |                                   |
-+ *                      |                                   |
-+ *                      |             System                |
-+ *     |--------------+-+---------------------------------+-+-------------|
-+ *                    |                                   |
-+ *                    |                                   |
-+ *        Peripheral  |                           On Chip | Memory (OCMEM)
-+ *       |------------+-------------|        |------------+-------------|
-+ */
-+
-+#include <dt-bindings/interconnect/qcom,msm8974.h>
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/interconnect-provider.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "smd-rpm.h"
-+
-+enum {
-+	MSM8974_BIMC_MAS_AMPSS_M0 = 1,
-+	MSM8974_BIMC_MAS_AMPSS_M1,
-+	MSM8974_BIMC_MAS_MSS_PROC,
-+	MSM8974_BIMC_TO_MNOC,
-+	MSM8974_BIMC_TO_SNOC,
-+	MSM8974_BIMC_SLV_EBI_CH0,
-+	MSM8974_BIMC_SLV_AMPSS_L2,
-+	MSM8974_CNOC_MAS_RPM_INST,
-+	MSM8974_CNOC_MAS_RPM_DATA,
-+	MSM8974_CNOC_MAS_RPM_SYS,
-+	MSM8974_CNOC_MAS_DEHR,
-+	MSM8974_CNOC_MAS_QDSS_DAP,
-+	MSM8974_CNOC_MAS_SPDM,
-+	MSM8974_CNOC_MAS_TIC,
-+	MSM8974_CNOC_SLV_CLK_CTL,
-+	MSM8974_CNOC_SLV_CNOC_MSS,
-+	MSM8974_CNOC_SLV_SECURITY,
-+	MSM8974_CNOC_SLV_TCSR,
-+	MSM8974_CNOC_SLV_TLMM,
-+	MSM8974_CNOC_SLV_CRYPTO_0_CFG,
-+	MSM8974_CNOC_SLV_CRYPTO_1_CFG,
-+	MSM8974_CNOC_SLV_IMEM_CFG,
-+	MSM8974_CNOC_SLV_MESSAGE_RAM,
-+	MSM8974_CNOC_SLV_BIMC_CFG,
-+	MSM8974_CNOC_SLV_BOOT_ROM,
-+	MSM8974_CNOC_SLV_PMIC_ARB,
-+	MSM8974_CNOC_SLV_SPDM_WRAPPER,
-+	MSM8974_CNOC_SLV_DEHR_CFG,
-+	MSM8974_CNOC_SLV_MPM,
-+	MSM8974_CNOC_SLV_QDSS_CFG,
-+	MSM8974_CNOC_SLV_RBCPR_CFG,
-+	MSM8974_CNOC_SLV_RBCPR_QDSS_APU_CFG,
-+	MSM8974_CNOC_TO_SNOC,
-+	MSM8974_CNOC_SLV_CNOC_ONOC_CFG,
-+	MSM8974_CNOC_SLV_CNOC_MNOC_MMSS_CFG,
-+	MSM8974_CNOC_SLV_CNOC_MNOC_CFG,
-+	MSM8974_CNOC_SLV_PNOC_CFG,
-+	MSM8974_CNOC_SLV_SNOC_MPU_CFG,
-+	MSM8974_CNOC_SLV_SNOC_CFG,
-+	MSM8974_CNOC_SLV_EBI1_DLL_CFG,
-+	MSM8974_CNOC_SLV_PHY_APU_CFG,
-+	MSM8974_CNOC_SLV_EBI1_PHY_CFG,
-+	MSM8974_CNOC_SLV_RPM,
-+	MSM8974_CNOC_SLV_SERVICE_CNOC,
-+	MSM8974_MNOC_MAS_GRAPHICS_3D,
-+	MSM8974_MNOC_MAS_JPEG,
-+	MSM8974_MNOC_MAS_MDP_PORT0,
-+	MSM8974_MNOC_MAS_VIDEO_P0,
-+	MSM8974_MNOC_MAS_VIDEO_P1,
-+	MSM8974_MNOC_MAS_VFE,
-+	MSM8974_MNOC_TO_CNOC,
-+	MSM8974_MNOC_TO_BIMC,
-+	MSM8974_MNOC_SLV_CAMERA_CFG,
-+	MSM8974_MNOC_SLV_DISPLAY_CFG,
-+	MSM8974_MNOC_SLV_OCMEM_CFG,
-+	MSM8974_MNOC_SLV_CPR_CFG,
-+	MSM8974_MNOC_SLV_CPR_XPU_CFG,
-+	MSM8974_MNOC_SLV_MISC_CFG,
-+	MSM8974_MNOC_SLV_MISC_XPU_CFG,
-+	MSM8974_MNOC_SLV_VENUS_CFG,
-+	MSM8974_MNOC_SLV_GRAPHICS_3D_CFG,
-+	MSM8974_MNOC_SLV_MMSS_CLK_CFG,
-+	MSM8974_MNOC_SLV_MMSS_CLK_XPU_CFG,
-+	MSM8974_MNOC_SLV_MNOC_MPU_CFG,
-+	MSM8974_MNOC_SLV_ONOC_MPU_CFG,
-+	MSM8974_MNOC_SLV_SERVICE_MNOC,
-+	MSM8974_OCMEM_NOC_TO_OCMEM_VNOC,
-+	MSM8974_OCMEM_MAS_JPEG_OCMEM,
-+	MSM8974_OCMEM_MAS_MDP_OCMEM,
-+	MSM8974_OCMEM_MAS_VIDEO_P0_OCMEM,
-+	MSM8974_OCMEM_MAS_VIDEO_P1_OCMEM,
-+	MSM8974_OCMEM_MAS_VFE_OCMEM,
-+	MSM8974_OCMEM_MAS_CNOC_ONOC_CFG,
-+	MSM8974_OCMEM_SLV_SERVICE_ONOC,
-+	MSM8974_OCMEM_VNOC_TO_SNOC,
-+	MSM8974_OCMEM_VNOC_TO_OCMEM_NOC,
-+	MSM8974_OCMEM_VNOC_MAS_GFX3D,
-+	MSM8974_OCMEM_SLV_OCMEM,
-+	MSM8974_PNOC_MAS_PNOC_CFG,
-+	MSM8974_PNOC_MAS_SDCC_1,
-+	MSM8974_PNOC_MAS_SDCC_3,
-+	MSM8974_PNOC_MAS_SDCC_4,
-+	MSM8974_PNOC_MAS_SDCC_2,
-+	MSM8974_PNOC_MAS_TSIF,
-+	MSM8974_PNOC_MAS_BAM_DMA,
-+	MSM8974_PNOC_MAS_BLSP_2,
-+	MSM8974_PNOC_MAS_USB_HSIC,
-+	MSM8974_PNOC_MAS_BLSP_1,
-+	MSM8974_PNOC_MAS_USB_HS,
-+	MSM8974_PNOC_TO_SNOC,
-+	MSM8974_PNOC_SLV_SDCC_1,
-+	MSM8974_PNOC_SLV_SDCC_3,
-+	MSM8974_PNOC_SLV_SDCC_2,
-+	MSM8974_PNOC_SLV_SDCC_4,
-+	MSM8974_PNOC_SLV_TSIF,
-+	MSM8974_PNOC_SLV_BAM_DMA,
-+	MSM8974_PNOC_SLV_BLSP_2,
-+	MSM8974_PNOC_SLV_USB_HSIC,
-+	MSM8974_PNOC_SLV_BLSP_1,
-+	MSM8974_PNOC_SLV_USB_HS,
-+	MSM8974_PNOC_SLV_PDM,
-+	MSM8974_PNOC_SLV_PERIPH_APU_CFG,
-+	MSM8974_PNOC_SLV_PNOC_MPU_CFG,
-+	MSM8974_PNOC_SLV_PRNG,
-+	MSM8974_PNOC_SLV_SERVICE_PNOC,
-+	MSM8974_SNOC_MAS_LPASS_AHB,
-+	MSM8974_SNOC_MAS_QDSS_BAM,
-+	MSM8974_SNOC_MAS_SNOC_CFG,
-+	MSM8974_SNOC_TO_BIMC,
-+	MSM8974_SNOC_TO_CNOC,
-+	MSM8974_SNOC_TO_PNOC,
-+	MSM8974_SNOC_TO_OCMEM_VNOC,
-+	MSM8974_SNOC_MAS_CRYPTO_CORE0,
-+	MSM8974_SNOC_MAS_CRYPTO_CORE1,
-+	MSM8974_SNOC_MAS_LPASS_PROC,
-+	MSM8974_SNOC_MAS_MSS,
-+	MSM8974_SNOC_MAS_MSS_NAV,
-+	MSM8974_SNOC_MAS_OCMEM_DMA,
-+	MSM8974_SNOC_MAS_WCSS,
-+	MSM8974_SNOC_MAS_QDSS_ETR,
-+	MSM8974_SNOC_MAS_USB3,
-+	MSM8974_SNOC_SLV_AMPSS,
-+	MSM8974_SNOC_SLV_LPASS,
-+	MSM8974_SNOC_SLV_USB3,
-+	MSM8974_SNOC_SLV_WCSS,
-+	MSM8974_SNOC_SLV_OCIMEM,
-+	MSM8974_SNOC_SLV_SNOC_OCMEM,
-+	MSM8974_SNOC_SLV_SERVICE_SNOC,
-+	MSM8974_SNOC_SLV_QDSS_STM,
-+};
-+
-+#define RPM_BUS_MASTER_REQ	0x73616d62
-+#define RPM_BUS_SLAVE_REQ	0x766c7362
-+
-+#define to_msm8974_icc_provider(_provider) \
-+	container_of(_provider, struct msm8974_icc_provider, provider)
-+
-+static const struct clk_bulk_data msm8974_icc_bus_clocks[] = {
-+	{ .id = "bus" },
-+	{ .id = "bus_a" },
-+};
-+
-+/**
-+ * struct msm8974_icc_provider - Qualcomm specific interconnect provider
-+ * @provider: generic interconnect provider
-+ * @bus_clks: the clk_bulk_data table of bus clocks
-+ * @num_clks: the total number of clk_bulk_data entries
-+ */
-+struct msm8974_icc_provider {
-+	struct icc_provider provider;
-+	struct clk_bulk_data *bus_clks;
-+	int num_clks;
-+};
-+
-+#define MSM8974_ICC_MAX_LINKS	3
-+
-+/**
-+ * struct msm8974_icc_node - Qualcomm specific interconnect nodes
-+ * @name: the node name used in debugfs
-+ * @id: a unique node identifier
-+ * @links: an array of nodes where we can go next while traversing
-+ * @num_links: the total number of @links
-+ * @buswidth: width of the interconnect between a node and the bus (bytes)
-+ * @mas_rpm_id:	RPM ID for devices that are bus masters
-+ * @slv_rpm_id:	RPM ID for devices that are bus slaves
-+ * @rate: current bus clock rate in Hz
-+ */
-+struct msm8974_icc_node {
-+	unsigned char *name;
-+	u16 id;
-+	u16 links[MSM8974_ICC_MAX_LINKS];
-+	u16 num_links;
-+	u16 buswidth;
-+	int mas_rpm_id;
-+	int slv_rpm_id;
-+	u64 rate;
-+};
-+
-+struct msm8974_icc_desc {
-+	struct msm8974_icc_node **nodes;
-+	size_t num_nodes;
-+};
-+
-+#define DEFINE_QNODE(_name, _id, _buswidth, _mas_rpm_id, _slv_rpm_id,	\
-+		     ...)						\
-+		static struct msm8974_icc_node _name = {		\
-+		.name = #_name,						\
-+		.id = _id,						\
-+		.buswidth = _buswidth,					\
-+		.mas_rpm_id = _mas_rpm_id,				\
-+		.slv_rpm_id = _slv_rpm_id,				\
-+		.num_links = ARRAY_SIZE(((int[]){ __VA_ARGS__ })),	\
-+		.links = { __VA_ARGS__ },				\
-+	}
-+
-+DEFINE_QNODE(mas_ampss_m0, MSM8974_BIMC_MAS_AMPSS_M0, 8, 0, -1);
-+DEFINE_QNODE(mas_ampss_m1, MSM8974_BIMC_MAS_AMPSS_M1, 8, 0, -1);
-+DEFINE_QNODE(mas_mss_proc, MSM8974_BIMC_MAS_MSS_PROC, 8, 1, -1);
-+DEFINE_QNODE(bimc_to_mnoc, MSM8974_BIMC_TO_MNOC, 8, 2, -1, MSM8974_BIMC_SLV_EBI_CH0);
-+DEFINE_QNODE(bimc_to_snoc, MSM8974_BIMC_TO_SNOC, 8, 3, 2, MSM8974_SNOC_TO_BIMC, MSM8974_BIMC_SLV_EBI_CH0, MSM8974_BIMC_MAS_AMPSS_M0);
-+DEFINE_QNODE(slv_ebi_ch0, MSM8974_BIMC_SLV_EBI_CH0, 8, -1, 0);
-+DEFINE_QNODE(slv_ampss_l2, MSM8974_BIMC_SLV_AMPSS_L2, 8, -1, 1);
-+
-+static struct msm8974_icc_node *msm8974_bimc_nodes[] = {
-+	[BIMC_MAS_AMPSS_M0] = &mas_ampss_m0,
-+	[BIMC_MAS_AMPSS_M1] = &mas_ampss_m1,
-+	[BIMC_MAS_MSS_PROC] = &mas_mss_proc,
-+	[BIMC_TO_MNOC] = &bimc_to_mnoc,
-+	[BIMC_TO_SNOC] = &bimc_to_snoc,
-+	[BIMC_SLV_EBI_CH0] = &slv_ebi_ch0,
-+	[BIMC_SLV_AMPSS_L2] = &slv_ampss_l2,
-+};
-+
-+static struct msm8974_icc_desc msm8974_bimc = {
-+	.nodes = msm8974_bimc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8974_bimc_nodes),
-+};
-+
-+DEFINE_QNODE(mas_rpm_inst, MSM8974_CNOC_MAS_RPM_INST, 8, 45, -1);
-+DEFINE_QNODE(mas_rpm_data, MSM8974_CNOC_MAS_RPM_DATA, 8, 46, -1);
-+DEFINE_QNODE(mas_rpm_sys, MSM8974_CNOC_MAS_RPM_SYS, 8, 47, -1);
-+DEFINE_QNODE(mas_dehr, MSM8974_CNOC_MAS_DEHR, 8, 48, -1);
-+DEFINE_QNODE(mas_qdss_dap, MSM8974_CNOC_MAS_QDSS_DAP, 8, 49, -1);
-+DEFINE_QNODE(mas_spdm, MSM8974_CNOC_MAS_SPDM, 8, 50, -1);
-+DEFINE_QNODE(mas_tic, MSM8974_CNOC_MAS_TIC, 8, 51, -1);
-+DEFINE_QNODE(slv_clk_ctl, MSM8974_CNOC_SLV_CLK_CTL, 8, -1, 47);
-+DEFINE_QNODE(slv_cnoc_mss, MSM8974_CNOC_SLV_CNOC_MSS, 8, -1, 48);
-+DEFINE_QNODE(slv_security, MSM8974_CNOC_SLV_SECURITY, 8, -1, 49);
-+DEFINE_QNODE(slv_tcsr, MSM8974_CNOC_SLV_TCSR, 8, -1, 50);
-+DEFINE_QNODE(slv_tlmm, MSM8974_CNOC_SLV_TLMM, 8, -1, 51);
-+DEFINE_QNODE(slv_crypto_0_cfg, MSM8974_CNOC_SLV_CRYPTO_0_CFG, 8, -1, 52);
-+DEFINE_QNODE(slv_crypto_1_cfg, MSM8974_CNOC_SLV_CRYPTO_1_CFG, 8, -1, 53);
-+DEFINE_QNODE(slv_imem_cfg, MSM8974_CNOC_SLV_IMEM_CFG, 8, -1, 54);
-+DEFINE_QNODE(slv_message_ram, MSM8974_CNOC_SLV_MESSAGE_RAM, 8, -1, 55);
-+DEFINE_QNODE(slv_bimc_cfg, MSM8974_CNOC_SLV_BIMC_CFG, 8, -1, 56);
-+DEFINE_QNODE(slv_boot_rom, MSM8974_CNOC_SLV_BOOT_ROM, 8, -1, 57);
-+DEFINE_QNODE(slv_pmic_arb, MSM8974_CNOC_SLV_PMIC_ARB, 8, -1, 59);
-+DEFINE_QNODE(slv_spdm_wrapper, MSM8974_CNOC_SLV_SPDM_WRAPPER, 8, -1, 60);
-+DEFINE_QNODE(slv_dehr_cfg, MSM8974_CNOC_SLV_DEHR_CFG, 8, -1, 61);
-+DEFINE_QNODE(slv_mpm, MSM8974_CNOC_SLV_MPM, 8, -1, 62);
-+DEFINE_QNODE(slv_qdss_cfg, MSM8974_CNOC_SLV_QDSS_CFG, 8, -1, 63);
-+DEFINE_QNODE(slv_rbcpr_cfg, MSM8974_CNOC_SLV_RBCPR_CFG, 8, -1, 64);
-+DEFINE_QNODE(slv_rbcpr_qdss_apu_cfg, MSM8974_CNOC_SLV_RBCPR_QDSS_APU_CFG, 8, -1, 65);
-+DEFINE_QNODE(cnoc_to_snoc, MSM8974_CNOC_TO_SNOC, 8, 52, 75);
-+DEFINE_QNODE(slv_cnoc_onoc_cfg, MSM8974_CNOC_SLV_CNOC_ONOC_CFG, 8, -1, 68);
-+DEFINE_QNODE(slv_cnoc_mnoc_mmss_cfg, MSM8974_CNOC_SLV_CNOC_MNOC_MMSS_CFG, 8, -1, 58);
-+DEFINE_QNODE(slv_cnoc_mnoc_cfg, MSM8974_CNOC_SLV_CNOC_MNOC_CFG, 8, -1, 66);
-+DEFINE_QNODE(slv_pnoc_cfg, MSM8974_CNOC_SLV_PNOC_CFG, 8, -1, 69);
-+DEFINE_QNODE(slv_snoc_mpu_cfg, MSM8974_CNOC_SLV_SNOC_MPU_CFG, 8, -1, 67);
-+DEFINE_QNODE(slv_snoc_cfg, MSM8974_CNOC_SLV_SNOC_CFG, 8, -1, 70);
-+DEFINE_QNODE(slv_ebi1_dll_cfg, MSM8974_CNOC_SLV_EBI1_DLL_CFG, 8, -1, 71);
-+DEFINE_QNODE(slv_phy_apu_cfg, MSM8974_CNOC_SLV_PHY_APU_CFG, 8, -1, 72);
-+DEFINE_QNODE(slv_ebi1_phy_cfg, MSM8974_CNOC_SLV_EBI1_PHY_CFG, 8, -1, 73);
-+DEFINE_QNODE(slv_rpm, MSM8974_CNOC_SLV_RPM, 8, -1, 74);
-+DEFINE_QNODE(slv_service_cnoc, MSM8974_CNOC_SLV_SERVICE_CNOC, 8, -1, 76);
-+
-+static struct msm8974_icc_node *msm8974_cnoc_nodes[] = {
-+	[CNOC_MAS_RPM_INST] = &mas_rpm_inst,
-+	[CNOC_MAS_RPM_DATA] = &mas_rpm_data,
-+	[CNOC_MAS_RPM_SYS] = &mas_rpm_sys,
-+	[CNOC_MAS_DEHR] = &mas_dehr,
-+	[CNOC_MAS_QDSS_DAP] = &mas_qdss_dap,
-+	[CNOC_MAS_SPDM] = &mas_spdm,
-+	[CNOC_MAS_TIC] = &mas_tic,
-+	[CNOC_SLV_CLK_CTL] = &slv_clk_ctl,
-+	[CNOC_SLV_CNOC_MSS] = &slv_cnoc_mss,
-+	[CNOC_SLV_SECURITY] = &slv_security,
-+	[CNOC_SLV_TCSR] = &slv_tcsr,
-+	[CNOC_SLV_TLMM] = &slv_tlmm,
-+	[CNOC_SLV_CRYPTO_0_CFG] = &slv_crypto_0_cfg,
-+	[CNOC_SLV_CRYPTO_1_CFG] = &slv_crypto_1_cfg,
-+	[CNOC_SLV_IMEM_CFG] = &slv_imem_cfg,
-+	[CNOC_SLV_MESSAGE_RAM] = &slv_message_ram,
-+	[CNOC_SLV_BIMC_CFG] = &slv_bimc_cfg,
-+	[CNOC_SLV_BOOT_ROM] = &slv_boot_rom,
-+	[CNOC_SLV_PMIC_ARB] = &slv_pmic_arb,
-+	[CNOC_SLV_SPDM_WRAPPER] = &slv_spdm_wrapper,
-+	[CNOC_SLV_DEHR_CFG] = &slv_dehr_cfg,
-+	[CNOC_SLV_MPM] = &slv_mpm,
-+	[CNOC_SLV_QDSS_CFG] = &slv_qdss_cfg,
-+	[CNOC_SLV_RBCPR_CFG] = &slv_rbcpr_cfg,
-+	[CNOC_SLV_RBCPR_QDSS_APU_CFG] = &slv_rbcpr_qdss_apu_cfg,
-+	[CNOC_TO_SNOC] = &cnoc_to_snoc,
-+	[CNOC_SLV_CNOC_ONOC_CFG] = &slv_cnoc_onoc_cfg,
-+	[CNOC_SLV_CNOC_MNOC_MMSS_CFG] = &slv_cnoc_mnoc_mmss_cfg,
-+	[CNOC_SLV_CNOC_MNOC_CFG] = &slv_cnoc_mnoc_cfg,
-+	[CNOC_SLV_PNOC_CFG] = &slv_pnoc_cfg,
-+	[CNOC_SLV_SNOC_MPU_CFG] = &slv_snoc_mpu_cfg,
-+	[CNOC_SLV_SNOC_CFG] = &slv_snoc_cfg,
-+	[CNOC_SLV_EBI1_DLL_CFG] = &slv_ebi1_dll_cfg,
-+	[CNOC_SLV_PHY_APU_CFG] = &slv_phy_apu_cfg,
-+	[CNOC_SLV_EBI1_PHY_CFG] = &slv_ebi1_phy_cfg,
-+	[CNOC_SLV_RPM] = &slv_rpm,
-+	[CNOC_SLV_SERVICE_CNOC] = &slv_service_cnoc,
-+};
-+
-+static struct msm8974_icc_desc msm8974_cnoc = {
-+	.nodes = msm8974_cnoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8974_cnoc_nodes),
-+};
-+
-+DEFINE_QNODE(mas_graphics_3d, MSM8974_MNOC_MAS_GRAPHICS_3D, 16, 6, -1, MSM8974_MNOC_TO_BIMC);
-+DEFINE_QNODE(mas_jpeg, MSM8974_MNOC_MAS_JPEG, 16, 7, -1, MSM8974_MNOC_TO_BIMC);
-+DEFINE_QNODE(mas_mdp_port0, MSM8974_MNOC_MAS_MDP_PORT0, 16, 8, -1, MSM8974_MNOC_TO_BIMC);
-+DEFINE_QNODE(mas_video_p0, MSM8974_MNOC_MAS_VIDEO_P0, 16, 9, -1);
-+DEFINE_QNODE(mas_video_p1, MSM8974_MNOC_MAS_VIDEO_P1, 16, 10, -1);
-+DEFINE_QNODE(mas_vfe, MSM8974_MNOC_MAS_VFE, 16, 11, -1, MSM8974_MNOC_TO_BIMC);
-+DEFINE_QNODE(mnoc_to_cnoc, MSM8974_MNOC_TO_CNOC, 16, 4, -1);
-+DEFINE_QNODE(mnoc_to_bimc, MSM8974_MNOC_TO_BIMC, 16, -1, 16, MSM8974_BIMC_TO_MNOC);
-+DEFINE_QNODE(slv_camera_cfg, MSM8974_MNOC_SLV_CAMERA_CFG, 16, -1, 3);
-+DEFINE_QNODE(slv_display_cfg, MSM8974_MNOC_SLV_DISPLAY_CFG, 16, -1, 4);
-+DEFINE_QNODE(slv_ocmem_cfg, MSM8974_MNOC_SLV_OCMEM_CFG, 16, -1, 5);
-+DEFINE_QNODE(slv_cpr_cfg, MSM8974_MNOC_SLV_CPR_CFG, 16, -1, 6);
-+DEFINE_QNODE(slv_cpr_xpu_cfg, MSM8974_MNOC_SLV_CPR_XPU_CFG, 16, -1, 7);
-+DEFINE_QNODE(slv_misc_cfg, MSM8974_MNOC_SLV_MISC_CFG, 16, -1, 8);
-+DEFINE_QNODE(slv_misc_xpu_cfg, MSM8974_MNOC_SLV_MISC_XPU_CFG, 16, -1, 9);
-+DEFINE_QNODE(slv_venus_cfg, MSM8974_MNOC_SLV_VENUS_CFG, 16, -1, 10);
-+DEFINE_QNODE(slv_graphics_3d_cfg, MSM8974_MNOC_SLV_GRAPHICS_3D_CFG, 16, -1, 11);
-+DEFINE_QNODE(slv_mmss_clk_cfg, MSM8974_MNOC_SLV_MMSS_CLK_CFG, 16, -1, 12);
-+DEFINE_QNODE(slv_mmss_clk_xpu_cfg, MSM8974_MNOC_SLV_MMSS_CLK_XPU_CFG, 16, -1, 13);
-+DEFINE_QNODE(slv_mnoc_mpu_cfg, MSM8974_MNOC_SLV_MNOC_MPU_CFG, 16, -1, 14);
-+DEFINE_QNODE(slv_onoc_mpu_cfg, MSM8974_MNOC_SLV_ONOC_MPU_CFG, 16, -1, 15);
-+DEFINE_QNODE(slv_service_mnoc, MSM8974_MNOC_SLV_SERVICE_MNOC, 16, -1, 17);
-+
-+static struct msm8974_icc_node *msm8974_mnoc_nodes[] = {
-+	[MNOC_MAS_GRAPHICS_3D] = &mas_graphics_3d,
-+	[MNOC_MAS_JPEG] = &mas_jpeg,
-+	[MNOC_MAS_MDP_PORT0] = &mas_mdp_port0,
-+	[MNOC_MAS_VIDEO_P0] = &mas_video_p0,
-+	[MNOC_MAS_VIDEO_P1] = &mas_video_p1,
-+	[MNOC_MAS_VFE] = &mas_vfe,
-+	[MNOC_TO_CNOC] = &mnoc_to_cnoc,
-+	[MNOC_TO_BIMC] = &mnoc_to_bimc,
-+	[MNOC_SLV_CAMERA_CFG] = &slv_camera_cfg,
-+	[MNOC_SLV_DISPLAY_CFG] = &slv_display_cfg,
-+	[MNOC_SLV_OCMEM_CFG] = &slv_ocmem_cfg,
-+	[MNOC_SLV_CPR_CFG] = &slv_cpr_cfg,
-+	[MNOC_SLV_CPR_XPU_CFG] = &slv_cpr_xpu_cfg,
-+	[MNOC_SLV_MISC_CFG] = &slv_misc_cfg,
-+	[MNOC_SLV_MISC_XPU_CFG] = &slv_misc_xpu_cfg,
-+	[MNOC_SLV_VENUS_CFG] = &slv_venus_cfg,
-+	[MNOC_SLV_GRAPHICS_3D_CFG] = &slv_graphics_3d_cfg,
-+	[MNOC_SLV_MMSS_CLK_CFG] = &slv_mmss_clk_cfg,
-+	[MNOC_SLV_MMSS_CLK_XPU_CFG] = &slv_mmss_clk_xpu_cfg,
-+	[MNOC_SLV_MNOC_MPU_CFG] = &slv_mnoc_mpu_cfg,
-+	[MNOC_SLV_ONOC_MPU_CFG] = &slv_onoc_mpu_cfg,
-+	[MNOC_SLV_SERVICE_MNOC] = &slv_service_mnoc,
-+};
-+
-+static struct msm8974_icc_desc msm8974_mnoc = {
-+	.nodes = msm8974_mnoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8974_mnoc_nodes),
-+};
-+
-+DEFINE_QNODE(ocmem_noc_to_ocmem_vnoc, MSM8974_OCMEM_NOC_TO_OCMEM_VNOC, 16, 54, 78, MSM8974_OCMEM_SLV_OCMEM);
-+DEFINE_QNODE(mas_jpeg_ocmem, MSM8974_OCMEM_MAS_JPEG_OCMEM, 16, 13, -1);
-+DEFINE_QNODE(mas_mdp_ocmem, MSM8974_OCMEM_MAS_MDP_OCMEM, 16, 14, -1);
-+DEFINE_QNODE(mas_video_p0_ocmem, MSM8974_OCMEM_MAS_VIDEO_P0_OCMEM, 16, 15, -1);
-+DEFINE_QNODE(mas_video_p1_ocmem, MSM8974_OCMEM_MAS_VIDEO_P1_OCMEM, 16, 16, -1);
-+DEFINE_QNODE(mas_vfe_ocmem, MSM8974_OCMEM_MAS_VFE_OCMEM, 16, 17, -1);
-+DEFINE_QNODE(mas_cnoc_onoc_cfg, MSM8974_OCMEM_MAS_CNOC_ONOC_CFG, 16, 12, -1);
-+DEFINE_QNODE(slv_service_onoc, MSM8974_OCMEM_SLV_SERVICE_ONOC, 16, -1, 19);
-+DEFINE_QNODE(slv_ocmem, MSM8974_OCMEM_SLV_OCMEM, 16, -1, 18);
-+
-+/* Virtual NoC is needed for connection to OCMEM */
-+DEFINE_QNODE(ocmem_vnoc_to_onoc, MSM8974_OCMEM_VNOC_TO_OCMEM_NOC, 16, 56, 79, MSM8974_OCMEM_NOC_TO_OCMEM_VNOC);
-+DEFINE_QNODE(ocmem_vnoc_to_snoc, MSM8974_OCMEM_VNOC_TO_SNOC, 8, 57, 80);
-+DEFINE_QNODE(mas_v_ocmem_gfx3d, MSM8974_OCMEM_VNOC_MAS_GFX3D, 8, 55, -1, MSM8974_OCMEM_VNOC_TO_OCMEM_NOC);
-+
-+static struct msm8974_icc_node *msm8974_onoc_nodes[] = {
-+	[OCMEM_NOC_TO_OCMEM_VNOC] = &ocmem_noc_to_ocmem_vnoc,
-+	[OCMEM_MAS_JPEG_OCMEM] = &mas_jpeg_ocmem,
-+	[OCMEM_MAS_MDP_OCMEM] = &mas_mdp_ocmem,
-+	[OCMEM_MAS_VIDEO_P0_OCMEM] = &mas_video_p0_ocmem,
-+	[OCMEM_MAS_VIDEO_P1_OCMEM] = &mas_video_p1_ocmem,
-+	[OCMEM_MAS_VFE_OCMEM] = &mas_vfe_ocmem,
-+	[OCMEM_MAS_CNOC_ONOC_CFG] = &mas_cnoc_onoc_cfg,
-+	[OCMEM_SLV_SERVICE_ONOC] = &slv_service_onoc,
-+	[OCMEM_VNOC_TO_SNOC] = &ocmem_vnoc_to_snoc,
-+	[OCMEM_VNOC_TO_OCMEM_NOC] = &ocmem_vnoc_to_onoc,
-+	[OCMEM_VNOC_MAS_GFX3D] = &mas_v_ocmem_gfx3d,
-+	[OCMEM_SLV_OCMEM] = &slv_ocmem,
-+};
-+
-+static struct msm8974_icc_desc msm8974_onoc = {
-+	.nodes = msm8974_onoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8974_onoc_nodes),
-+};
-+
-+DEFINE_QNODE(mas_pnoc_cfg, MSM8974_PNOC_MAS_PNOC_CFG, 8, 43, -1);
-+DEFINE_QNODE(mas_sdcc_1, MSM8974_PNOC_MAS_SDCC_1, 8, 33, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_sdcc_3, MSM8974_PNOC_MAS_SDCC_3, 8, 34, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_sdcc_4, MSM8974_PNOC_MAS_SDCC_4, 8, 36, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_sdcc_2, MSM8974_PNOC_MAS_SDCC_2, 8, 35, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_tsif, MSM8974_PNOC_MAS_TSIF, 8, 37, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_bam_dma, MSM8974_PNOC_MAS_BAM_DMA, 8, 38, -1);
-+DEFINE_QNODE(mas_blsp_2, MSM8974_PNOC_MAS_BLSP_2, 8, 39, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_usb_hsic, MSM8974_PNOC_MAS_USB_HSIC, 8, 40, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_blsp_1, MSM8974_PNOC_MAS_BLSP_1, 8, 41, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(mas_usb_hs, MSM8974_PNOC_MAS_USB_HS, 8, 42, -1, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(pnoc_to_snoc, MSM8974_PNOC_TO_SNOC, 8, 44, 45, MSM8974_SNOC_TO_PNOC, MSM8974_PNOC_SLV_PRNG);
-+DEFINE_QNODE(slv_sdcc_1, MSM8974_PNOC_SLV_SDCC_1, 8, -1, 31);
-+DEFINE_QNODE(slv_sdcc_3, MSM8974_PNOC_SLV_SDCC_3, 8, -1, 32);
-+DEFINE_QNODE(slv_sdcc_2, MSM8974_PNOC_SLV_SDCC_2, 8, -1, 33);
-+DEFINE_QNODE(slv_sdcc_4, MSM8974_PNOC_SLV_SDCC_4, 8, -1, 34);
-+DEFINE_QNODE(slv_tsif, MSM8974_PNOC_SLV_TSIF, 8, -1, 35);
-+DEFINE_QNODE(slv_bam_dma, MSM8974_PNOC_SLV_BAM_DMA, 8, -1, 36);
-+DEFINE_QNODE(slv_blsp_2, MSM8974_PNOC_SLV_BLSP_2, 8, -1, 37);
-+DEFINE_QNODE(slv_usb_hsic, MSM8974_PNOC_SLV_USB_HSIC, 8, -1, 38);
-+DEFINE_QNODE(slv_blsp_1, MSM8974_PNOC_SLV_BLSP_1, 8, -1, 39);
-+DEFINE_QNODE(slv_usb_hs, MSM8974_PNOC_SLV_USB_HS, 8, -1, 40);
-+DEFINE_QNODE(slv_pdm, MSM8974_PNOC_SLV_PDM, 8, -1, 41);
-+DEFINE_QNODE(slv_periph_apu_cfg, MSM8974_PNOC_SLV_PERIPH_APU_CFG, 8, -1, 42);
-+DEFINE_QNODE(slv_pnoc_mpu_cfg, MSM8974_PNOC_SLV_PNOC_MPU_CFG, 8, -1, 43);
-+DEFINE_QNODE(slv_prng, MSM8974_PNOC_SLV_PRNG, 8, -1, 44, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(slv_service_pnoc, MSM8974_PNOC_SLV_SERVICE_PNOC, 8, -1, 46);
-+
-+static struct msm8974_icc_node *msm8974_pnoc_nodes[] = {
-+	[PNOC_MAS_PNOC_CFG] = &mas_pnoc_cfg,
-+	[PNOC_MAS_SDCC_1] = &mas_sdcc_1,
-+	[PNOC_MAS_SDCC_3] = &mas_sdcc_3,
-+	[PNOC_MAS_SDCC_4] = &mas_sdcc_4,
-+	[PNOC_MAS_SDCC_2] = &mas_sdcc_2,
-+	[PNOC_MAS_TSIF] = &mas_tsif,
-+	[PNOC_MAS_BAM_DMA] = &mas_bam_dma,
-+	[PNOC_MAS_BLSP_2] = &mas_blsp_2,
-+	[PNOC_MAS_USB_HSIC] = &mas_usb_hsic,
-+	[PNOC_MAS_BLSP_1] = &mas_blsp_1,
-+	[PNOC_MAS_USB_HS] = &mas_usb_hs,
-+	[PNOC_TO_SNOC] = &pnoc_to_snoc,
-+	[PNOC_SLV_SDCC_1] = &slv_sdcc_1,
-+	[PNOC_SLV_SDCC_3] = &slv_sdcc_3,
-+	[PNOC_SLV_SDCC_2] = &slv_sdcc_2,
-+	[PNOC_SLV_SDCC_4] = &slv_sdcc_4,
-+	[PNOC_SLV_TSIF] = &slv_tsif,
-+	[PNOC_SLV_BAM_DMA] = &slv_bam_dma,
-+	[PNOC_SLV_BLSP_2] = &slv_blsp_2,
-+	[PNOC_SLV_USB_HSIC] = &slv_usb_hsic,
-+	[PNOC_SLV_BLSP_1] = &slv_blsp_1,
-+	[PNOC_SLV_USB_HS] = &slv_usb_hs,
-+	[PNOC_SLV_PDM] = &slv_pdm,
-+	[PNOC_SLV_PERIPH_APU_CFG] = &slv_periph_apu_cfg,
-+	[PNOC_SLV_PNOC_MPU_CFG] = &slv_pnoc_mpu_cfg,
-+	[PNOC_SLV_PRNG] = &slv_prng,
-+	[PNOC_SLV_SERVICE_PNOC] = &slv_service_pnoc,
-+};
-+
-+static struct msm8974_icc_desc msm8974_pnoc = {
-+	.nodes = msm8974_pnoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8974_pnoc_nodes),
-+};
-+
-+DEFINE_QNODE(mas_lpass_ahb, MSM8974_SNOC_MAS_LPASS_AHB, 8, 18, -1);
-+DEFINE_QNODE(mas_qdss_bam, MSM8974_SNOC_MAS_QDSS_BAM, 8, 19, -1);
-+DEFINE_QNODE(mas_snoc_cfg, MSM8974_SNOC_MAS_SNOC_CFG, 8, 20, -1);
-+DEFINE_QNODE(snoc_to_bimc, MSM8974_SNOC_TO_BIMC, 8, 21, 24, MSM8974_BIMC_TO_SNOC);
-+DEFINE_QNODE(snoc_to_cnoc, MSM8974_SNOC_TO_CNOC, 8, 22, 25);
-+DEFINE_QNODE(snoc_to_pnoc, MSM8974_SNOC_TO_PNOC, 8, 29, 28, MSM8974_PNOC_TO_SNOC);
-+DEFINE_QNODE(snoc_to_ocmem_vnoc, MSM8974_SNOC_TO_OCMEM_VNOC, 8, 53, 77, MSM8974_OCMEM_VNOC_TO_OCMEM_NOC);
-+DEFINE_QNODE(mas_crypto_core0, MSM8974_SNOC_MAS_CRYPTO_CORE0, 8, 23, -1, MSM8974_SNOC_TO_BIMC);
-+DEFINE_QNODE(mas_crypto_core1, MSM8974_SNOC_MAS_CRYPTO_CORE1, 8, 24, -1);
-+DEFINE_QNODE(mas_lpass_proc, MSM8974_SNOC_MAS_LPASS_PROC, 8, 25, -1, MSM8974_SNOC_TO_OCMEM_VNOC);
-+DEFINE_QNODE(mas_mss, MSM8974_SNOC_MAS_MSS, 8, 26, -1);
-+DEFINE_QNODE(mas_mss_nav, MSM8974_SNOC_MAS_MSS_NAV, 8, 27, -1);
-+DEFINE_QNODE(mas_ocmem_dma, MSM8974_SNOC_MAS_OCMEM_DMA, 8, 28, -1);
-+DEFINE_QNODE(mas_wcss, MSM8974_SNOC_MAS_WCSS, 8, 30, -1);
-+DEFINE_QNODE(mas_qdss_etr, MSM8974_SNOC_MAS_QDSS_ETR, 8, 31, -1);
-+DEFINE_QNODE(mas_usb3, MSM8974_SNOC_MAS_USB3, 8, 32, -1, MSM8974_SNOC_TO_BIMC);
-+DEFINE_QNODE(slv_ampss, MSM8974_SNOC_SLV_AMPSS, 8, -1, 20);
-+DEFINE_QNODE(slv_lpass, MSM8974_SNOC_SLV_LPASS, 8, -1, 21);
-+DEFINE_QNODE(slv_usb3, MSM8974_SNOC_SLV_USB3, 8, -1, 22);
-+DEFINE_QNODE(slv_wcss, MSM8974_SNOC_SLV_WCSS, 8, -1, 23);
-+DEFINE_QNODE(slv_ocimem, MSM8974_SNOC_SLV_OCIMEM, 8, -1, 26);
-+DEFINE_QNODE(slv_snoc_ocmem, MSM8974_SNOC_SLV_SNOC_OCMEM, 8, -1, 27);
-+DEFINE_QNODE(slv_service_snoc, MSM8974_SNOC_SLV_SERVICE_SNOC, 8, -1, 29);
-+DEFINE_QNODE(slv_qdss_stm, MSM8974_SNOC_SLV_QDSS_STM, 8, -1, 30);
-+
-+static struct msm8974_icc_node *msm8974_snoc_nodes[] = {
-+	[SNOC_MAS_LPASS_AHB] = &mas_lpass_ahb,
-+	[SNOC_MAS_QDSS_BAM] = &mas_qdss_bam,
-+	[SNOC_MAS_SNOC_CFG] = &mas_snoc_cfg,
-+	[SNOC_TO_BIMC] = &snoc_to_bimc,
-+	[SNOC_TO_CNOC] = &snoc_to_cnoc,
-+	[SNOC_TO_PNOC] = &snoc_to_pnoc,
-+	[SNOC_TO_OCMEM_VNOC] = &snoc_to_ocmem_vnoc,
-+	[SNOC_MAS_CRYPTO_CORE0] = &mas_crypto_core0,
-+	[SNOC_MAS_CRYPTO_CORE1] = &mas_crypto_core1,
-+	[SNOC_MAS_LPASS_PROC] = &mas_lpass_proc,
-+	[SNOC_MAS_MSS] = &mas_mss,
-+	[SNOC_MAS_MSS_NAV] = &mas_mss_nav,
-+	[SNOC_MAS_OCMEM_DMA] = &mas_ocmem_dma,
-+	[SNOC_MAS_WCSS] = &mas_wcss,
-+	[SNOC_MAS_QDSS_ETR] = &mas_qdss_etr,
-+	[SNOC_MAS_USB3] = &mas_usb3,
-+	[SNOC_SLV_AMPSS] = &slv_ampss,
-+	[SNOC_SLV_LPASS] = &slv_lpass,
-+	[SNOC_SLV_USB3] = &slv_usb3,
-+	[SNOC_SLV_WCSS] = &slv_wcss,
-+	[SNOC_SLV_OCIMEM] = &slv_ocimem,
-+	[SNOC_SLV_SNOC_OCMEM] = &slv_snoc_ocmem,
-+	[SNOC_SLV_SERVICE_SNOC] = &slv_service_snoc,
-+	[SNOC_SLV_QDSS_STM] = &slv_qdss_stm,
-+};
-+
-+static struct msm8974_icc_desc msm8974_snoc = {
-+	.nodes = msm8974_snoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8974_snoc_nodes),
-+};
-+
-+static int msm8974_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				 u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static void msm8974_icc_rpm_smd_send(struct device *dev, int rsc_type,
-+				     char *name, int id, u64 val)
-+{
-+	int ret;
-+
-+	if (id == -1)
-+		return;
-+
-+	/*
-+	 * Setting the bandwidth requests for some nodes fails and this same
-+	 * behavior occurs on the downstream MSM 3.4 kernel sources based on
-+	 * errors like this in that kernel:
-+	 *
-+	 *   msm_rpm_get_error_from_ack(): RPM NACK Unsupported resource
-+	 *   AXI: msm_bus_rpm_req(): RPM: Ack failed
-+	 *   AXI: msm_bus_rpm_commit_arb(): RPM: Req fail: mas:32, bw:240000000
-+	 *
-+	 * Since there's no publicly available documentation for this hardware,
-+	 * and the bandwidth for some nodes in the path can be set properly,
-+	 * let's not return an error.
-+	 */
-+	ret = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, rsc_type, id,
-+				    val);
-+	if (ret)
-+		dev_dbg(dev, "Cannot set bandwidth for node %s (%d): %d\n",
-+			name, id, ret);
-+}
-+
-+static int msm8974_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct msm8974_icc_node *src_qn, *dst_qn;
-+	struct msm8974_icc_provider *qp;
-+	u64 sum_bw, max_peak_bw, rate;
-+	u32 agg_avg = 0, agg_peak = 0;
-+	struct icc_provider *provider;
-+	struct icc_node *n;
-+	int ret, i;
-+
-+	src_qn = src->data;
-+	dst_qn = dst->data;
-+	provider = src->provider;
-+	qp = to_msm8974_icc_provider(provider);
-+
-+	list_for_each_entry(n, &provider->nodes, node_list)
-+		msm8974_icc_aggregate(n, 0, n->avg_bw, n->peak_bw,
-+				      &agg_avg, &agg_peak);
-+
-+	sum_bw = icc_units_to_bps(agg_avg);
-+	max_peak_bw = icc_units_to_bps(agg_peak);
-+
-+	/* Set bandwidth on source node */
-+	msm8974_icc_rpm_smd_send(provider->dev, RPM_BUS_MASTER_REQ,
-+				 src_qn->name, src_qn->mas_rpm_id, sum_bw);
-+
-+	msm8974_icc_rpm_smd_send(provider->dev, RPM_BUS_SLAVE_REQ,
-+				 src_qn->name, src_qn->slv_rpm_id, sum_bw);
-+
-+	/* Set bandwidth on destination node */
-+	msm8974_icc_rpm_smd_send(provider->dev, RPM_BUS_MASTER_REQ,
-+				 dst_qn->name, dst_qn->mas_rpm_id, sum_bw);
-+
-+	msm8974_icc_rpm_smd_send(provider->dev, RPM_BUS_SLAVE_REQ,
-+				 dst_qn->name, dst_qn->slv_rpm_id, sum_bw);
-+
-+	rate = max(sum_bw, max_peak_bw);
-+
-+	do_div(rate, src_qn->buswidth);
-+
-+	if (src_qn->rate == rate)
-+		return 0;
-+
-+	for (i = 0; i < qp->num_clks; i++) {
-+		ret = clk_set_rate(qp->bus_clks[i].clk, rate);
-+		if (ret) {
-+			dev_err(provider->dev, "%s clk_set_rate error: %d\n",
-+				qp->bus_clks[i].id, ret);
-+			ret = 0;
-+		}
-+	}
-+
-+	src_qn->rate = rate;
-+
-+	return 0;
-+}
-+
-+static int msm8974_icc_probe(struct platform_device *pdev)
-+{
-+	const struct msm8974_icc_desc *desc;
-+	struct msm8974_icc_node **qnodes;
-+	struct msm8974_icc_provider *qp;
-+	struct device *dev = &pdev->dev;
-+	struct icc_onecell_data *data;
-+	struct icc_provider *provider;
-+	struct icc_node *node;
-+	size_t num_nodes, i;
-+	int ret;
-+
-+	/* wait for the RPM proxy */
-+	if (!qcom_icc_rpm_smd_available())
-+		return -EPROBE_DEFER;
-+
-+	desc = of_device_get_match_data(dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	qnodes = desc->nodes;
-+	num_nodes = desc->num_nodes;
-+
-+	qp = devm_kzalloc(dev, sizeof(*qp), GFP_KERNEL);
-+	if (!qp)
-+		return -ENOMEM;
-+
-+	data = devm_kzalloc(dev, struct_size(data, nodes, num_nodes),
-+			    GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	qp->bus_clks = devm_kmemdup(dev, msm8974_icc_bus_clocks,
-+				    sizeof(msm8974_icc_bus_clocks), GFP_KERNEL);
-+	if (!qp->bus_clks)
-+		return -ENOMEM;
-+
-+	qp->num_clks = ARRAY_SIZE(msm8974_icc_bus_clocks);
-+	ret = devm_clk_bulk_get(dev, qp->num_clks, qp->bus_clks);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_bulk_prepare_enable(qp->num_clks, qp->bus_clks);
-+	if (ret)
-+		return ret;
-+
-+	provider = &qp->provider;
-+	INIT_LIST_HEAD(&provider->nodes);
-+	provider->dev = dev;
-+	provider->set = msm8974_icc_set;
-+	provider->aggregate = msm8974_icc_aggregate;
-+	provider->xlate = of_icc_xlate_onecell;
-+	provider->data = data;
-+
-+	ret = icc_provider_add(provider);
-+	if (ret) {
-+		dev_err(dev, "error adding interconnect provider: %d\n", ret);
-+		goto err_disable_clks;
-+	}
-+
-+	for (i = 0; i < num_nodes; i++) {
-+		size_t j;
-+
-+		node = icc_node_create(qnodes[i]->id);
-+		if (IS_ERR(node)) {
-+			ret = PTR_ERR(node);
-+			goto err_del_icc;
-+		}
-+
-+		node->name = qnodes[i]->name;
-+		node->data = qnodes[i];
-+		icc_node_add(node, provider);
-+
-+		dev_dbg(dev, "registered node %s\n", node->name);
-+
-+		/* populate links */
-+		for (j = 0; j < qnodes[i]->num_links; j++)
-+			icc_link_create(node, qnodes[i]->links[j]);
-+
-+		data->nodes[i] = node;
-+	}
-+	data->num_nodes = num_nodes;
-+
-+	platform_set_drvdata(pdev, qp);
-+
-+	return 0;
-+
-+err_del_icc:
-+	list_for_each_entry(node, &provider->nodes, node_list) {
-+		icc_node_del(node);
-+		icc_node_destroy(node->id);
-+	}
-+	icc_provider_del(provider);
-+
-+err_disable_clks:
-+	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
-+
-+	return ret;
-+}
-+
-+static int msm8974_icc_remove(struct platform_device *pdev)
-+{
-+	struct msm8974_icc_provider *qp = platform_get_drvdata(pdev);
-+	struct icc_provider *provider = &qp->provider;
-+	struct icc_node *n;
-+
-+	list_for_each_entry(n, &provider->nodes, node_list) {
-+		icc_node_del(n);
-+		icc_node_destroy(n->id);
-+	}
-+	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
-+
-+	return icc_provider_del(provider);
-+}
-+
-+static const struct of_device_id msm8974_noc_of_match[] = {
-+	{ .compatible = "qcom,msm8974-bimc", .data = &msm8974_bimc},
-+	{ .compatible = "qcom,msm8974-cnoc", .data = &msm8974_cnoc},
-+	{ .compatible = "qcom,msm8974-mmssnoc", .data = &msm8974_mnoc},
-+	{ .compatible = "qcom,msm8974-ocmemnoc", .data = &msm8974_onoc},
-+	{ .compatible = "qcom,msm8974-pnoc", .data = &msm8974_pnoc},
-+	{ .compatible = "qcom,msm8974-snoc", .data = &msm8974_snoc},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, msm8974_noc_of_match);
-+
-+static struct platform_driver msm8974_noc_driver = {
-+	.probe = msm8974_icc_probe,
-+	.remove = msm8974_icc_remove,
-+	.driver = {
-+		.name = "qnoc-msm8974",
-+		.of_match_table = msm8974_noc_of_match,
-+	},
-+};
-+module_platform_driver(msm8974_noc_driver);
-+MODULE_DESCRIPTION("Qualcomm MSM8974 NoC driver");
-+MODULE_AUTHOR("Brian Masney <masneyb@onstation.org>");
-+MODULE_LICENSE("GPL v2");
+> + */
+> +
+> +#ifndef _IFCVF_H_
+> +#define _IFCVF_H_
+> +
+> +#include <linux/virtio_mdev_ops.h>
+> +#include <linux/mdev.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci_regs.h>
+> +#include <uapi/linux/virtio_net.h>
+> +#include <uapi/linux/virtio_config.h>
+> +#include <uapi/linux/virtio_pci.h>
+> +
+> +#define IFCVF_VENDOR_ID         0x1AF4
+> +#define IFCVF_DEVICE_ID         0x1041
+> +#define IFCVF_SUBSYS_VENDOR_ID  0x8086
+> +#define IFCVF_SUBSYS_DEVICE_ID  0x001A
+> +
+> +#define IFCVF_MDEV_LIMIT	1
+> +
+> +/*
+> + * Some ifcvf feature bits (currently bits 28 through 31) are
+> + * reserved for the transport being used (eg. ifcvf_ring), the
+> + * rest are per-device feature bits.
+> + */
+> +#define IFCVF_TRANSPORT_F_START 28
+> +#define IFCVF_TRANSPORT_F_END   34
+> +
+> +#define IFC_SUPPORTED_FEATURES \
+> +		((1ULL << VIRTIO_NET_F_MAC)			| \
+> +		 (1ULL << VIRTIO_F_ANY_LAYOUT)			| \
+> +		 (1ULL << VIRTIO_F_VERSION_1)			| \
+> +		 (1ULL << VIRTIO_F_ORDER_PLATFORM)			| \
+> +		 (1ULL << VIRTIO_NET_F_GUEST_ANNOUNCE)		| \
+> +		 (1ULL << VIRTIO_NET_F_CTRL_VQ)			| \
+> +		 (1ULL << VIRTIO_NET_F_STATUS)			| \
+> +		 (1ULL << VIRTIO_NET_F_MRG_RXBUF)) /* not fully supported */
+> +
+> +//Not support MQ, only one queue pair for now.
+> +#define IFCVF_MAX_QUEUE_PAIRS		1
+> +#define IFCVF_MAX_QUEUES		2
+> +
+> +#define IFCVF_QUEUE_ALIGNMENT		PAGE_SIZE
+> +
+> +#define IFCVF_MSI_CONFIG_OFF	0
+> +#define IFCVF_MSI_QUEUE_OFF	1
+> +#define IFCVF_PCI_MAX_RESOURCE	6
+> +
+> +#define IFCVF_LM_CFG_SIZE		0x40
+> +#define IFCVF_LM_RING_STATE_OFFSET	0x20
+> +#define IFCVF_LM_BAR	4
+> +
+> +#define IFCVF_32_BIT_MASK		0xffffffff
+> +
+> +#define IFC_ERR(dev, fmt, ...)	dev_err(dev, fmt, ##__VA_ARGS__)
+> +#define IFC_DBG(dev, fmt, ...)	dev_dbg(dev, fmt, ##__VA_ARGS__)
+> +#define IFC_INFO(dev, fmt, ...)	dev_info(dev, fmt, ##__VA_ARGS__)
+> +
+> +#define IFC_PRIVATE_TO_VF(adapter) \
+> +	(&((struct ifcvf_adapter *)adapter)->vf)
+> +
+> +#define IFCVF_MAX_INTR (IFCVF_MAX_QUEUE_PAIRS * 2 + 1)
+> +
+> +struct ifcvf_net_config {
+> +	u8    mac[6];
+> +	u16   status;
+> +	u16   max_virtqueue_pairs;
+> +} __packed;
+> +
+> +struct ifcvf_pci_mem_resource {
+> +	/* Physical address, 0 if not resource. */
+> +	u64      phys_addr;
+> +	/* Length of the resource. */
+> +	u64      len;
+> +	/* Virtual address, NULL when not mapped. */
+> +	u8       *addr;
+> +};
+> +
+> +struct vring_info {
+> +	u64 desc;
+> +	u64 avail;
+> +	u64 used;
+> +	u16 size;
+> +	u16 last_avail_idx;
+> +	u16 last_used_idx;
+> +	bool ready;
+> +	char msix_name[256];
+> +	struct virtio_mdev_callback cb;
+> +};
+> +
+> +struct ifcvf_hw {
+> +	u8	*isr;
+> +	u8	notify_bar;
+> +	u8	*lm_cfg;
+> +	u8	nr_vring;
+> +	u16	*notify_base;
+> +	u16	*notify_addr[IFCVF_MAX_QUEUE_PAIRS * 2];
+> +	u32	notify_off_multiplier;
+> +	u64	req_features;
+> +	struct	virtio_pci_common_cfg *common_cfg;
+> +	struct	ifcvf_net_config *net_cfg;
+> +	struct	vring_info vring[IFCVF_MAX_QUEUE_PAIRS * 2];
+> +	struct	ifcvf_pci_mem_resource mem_resource[IFCVF_PCI_MAX_RESOURCE];
+> +};
+> +
+> +struct ifcvf_adapter {
+> +	struct	device *dev;
+> +	struct	mutex mdev_lock;
+> +	int	mdev_count;
+> +	int	vectors;
+> +	struct	ifcvf_hw vf;
+> +};
+> +
+> +int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev);
+> +int ifcvf_start_hw(struct ifcvf_hw *hw);
+> +void ifcvf_stop_hw(struct ifcvf_hw *hw);
+> +void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid);
+> +u8 ifcvf_get_linkstatus(struct ifcvf_hw *hw);
+> +void ifcvf_read_net_config(struct ifcvf_hw *hw, u64 offset,
+> +			   void *dst, int length);
+> +void ifcvf_write_net_config(struct ifcvf_hw *hw, u64 offset,
+> +			    const void *src, int length);
+> +u8 ifcvf_get_status(struct ifcvf_hw *hw);
+> +void ifcvf_set_status(struct ifcvf_hw *hw, u8 status);
+> +void io_write64_twopart(u64 val, u32 *lo, u32 *hi);
+> +void ifcvf_reset(struct ifcvf_hw *hw);
+> +u64 ifcvf_get_features(struct ifcvf_hw *hw);
+> +
+> +#endif /* _IFCVF_H_ */
+> -- 
+> 1.8.3.1
