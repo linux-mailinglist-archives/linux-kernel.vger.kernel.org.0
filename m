@@ -2,225 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2E5F599F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B79F59A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:24:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732748AbfKHVRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:17:17 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:45351 "EHLO
+        id S1733075AbfKHVR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:17:56 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:45817 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfKHVRR (ORCPT
+        with ESMTP id S1726095AbfKHVRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:17:17 -0500
+        Fri, 8 Nov 2019 16:17:55 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MOzjW-1iGzrf2lB6-00POk9; Fri, 08 Nov 2019 22:17:03 +0100
+ 1MwgOK-1hjJ0r0tOk-00yBGN; Fri, 08 Nov 2019 22:17:39 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, Thomas Gleixner <tglx@linutronix.de>
+To:     y2038@lists.linaro.org, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: [PATCH 18/23] y2038: itimer: compat handling to itimer.c
-Date:   Fri,  8 Nov 2019 22:12:17 +0100
-Message-Id: <20191108211323.1806194-9-arnd@arndb.de>
+        Christian Brauner <christian@brauner.io>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        linux-alpha@vger.kernel.org
+Subject: [PATCH 19/23] y2038: use compat_{get,set}_itimer on alpha
+Date:   Fri,  8 Nov 2019 22:12:18 +0100
+Message-Id: <20191108211323.1806194-10-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108210236.1296047-1-arnd@arndb.de>
 References: <20191108210236.1296047-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:sKTu+aehkLi4mpZI9L51qCcvfZPOune5jAXYr+8eQpsLlW4QCre
- AVECqXdKoJqyYpWVKN5iXyYkggKuyzdskAvwx8c4fwEmHcSu598+x8PAkTdgBJOBRnYqTiR
- PH+RnasU01ZA26yDcU8PEJjbQHUI5HU6q6gSAX+Q37nxirWx4WqKLScIcCuhV0mJJTFcamx
- nISOXSw3iMogw3k1mEYsw==
+X-Provags-ID: V03:K1:E3gQKHDY/P5Y9zeE38VfQQ9wJ3KSPGVX2xBd4RGUHKVBkeQ3cnh
+ IkqObZNllWa36SZ83QqDO/3CSSqK5L1RxS4HiP7Gz1x9tR5rNAkZqcsi1zd97to4Urku7br
+ wOB5TOqXT1CjZTRrO9u4pIvL/sKlKt0CEF8I4WVxfmUUkcu3jXo/fbLhOpTLguvEuaXNDuu
+ IwKMBcMOQlfd8/jxNENKw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uvnbtfCZiDE=:4YmbQmmwUOQ/w+FbyCswVu
- mruEkV4ksyGYF2Wu8gnWUkwzudEIDy4wq+pbB4+3QyIplB63BQ5WRn+97jbzGVXAsWUyh0BxN
- 6Qy+ysJ3jADC9pPdAOvmxDrfRVQ5ydD4QzLUrE7CfhWDeHD95qFU9SQV4pNMWxC7HAj/S838W
- /1eS/NklDw8dcQaZE36FWBWMNkoj9LJB1vKlFzfH6pH2Oxk4W0xy7npLbHZPCSO6zHjVr8q1q
- dp8fzePlbsSKDmTq4eafi83UMR12F8aBX+y+egCYZVMeGsWgELXjn6JBLkkflr3QB8P2J0nv9
- PGFBOKFSocsMxwU9l5CeCod/JgQKSMUC2bYUUIfPfNnZaIbZVz89061SC2mS1v1w0EqA4yvXW
- cHRuZ23ZgBUIgKtrY0UMQLPAqPk4+cQQi/B6nmtkzRIwDAmF2IPZCkh9sIjsb7K3OVQEpBJ4D
- 626GAT4vUoG4NIqKlfXy8ZIXkvVbSIoYje51i4DLocCZty205Ajj2ZYRh6IVcWSlfP43dhxvl
- rNz2uTc2i8r0G9Eu5HbyI4aIPOrPaW1uJblP46P8D8YB8owNddFsv1++PN5DtiUnl/zgxjVSi
- xkzDyjmheWVp6BXDXAO5yb/Bl0xLV98qMR8GIZpaY7pxC9MJ0H/dmXGwmpvHTx6MR0z2n9ZyE
- jdpA3sy3QJPsn6irjY6SuALBKERFn9dPbD10onbCOSm0P4tka4PRu0gjAqTVX52PvlE0GbcvE
- 0NTzmeSkUIat5+blFmquysTD68xx1rU1H9gXQU4ghIgQajGQsBNb1R8OokZG4c+KZczxkQcvf
- RlRlIaIOXTDawO8IaBMw5cSRJ5kNFGm67W8Xs2JI8CyZQJ6j3gMAGwRZ5dzPu5GqZITXz9Wjt
- BSv8IH0PdOpaFI/oHY0A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:e/W+TxPQhaM=:ml/G9/qCjz5DPXfgmu4Q4t
+ yZe2Hg0nRciRf2WuBQZW/Os8at/YT+JfAVd8YSPJobZaGTAYEdkdNZ8QjbXRD4RU9n+FIKPYi
+ 7UwA2pXMgUWD3YqOuKCyHXYf7c/TMD0AEKjHm2CGb+P6bGSQkFY9JVHfyfa/uooG6du+p4kTi
+ /+Czem+gkKCBl2npeJeRYC+9myim/rmPn3tRAwHtUWcVUxQyZTL+LEDtPRWrkit1u8ucjFz2o
+ /uzORPNSEPTgi+yBTiBgb6rPAacISnj8GhYslwR9xV5O4rhrZt/o0knlvqJ1OOHRHr7YGgAkt
+ 2e7XN4C918xz/sStEaWB0WUwsBpFoXbwZ4eVkIEYsnlgrBEytl4mM3mGQS5nQwRFblH1/4t1r
+ TZCIlc+mhWGQMAkMNWF56ETeL9+0Pv4ycy2UJrtXDVOoEwkCEujRWdRJj6nbi9PVrP8FwWSu0
+ 6fLrkR34CMHqE9UJxdud/zddxZeLF5D8oJp/LBeKqiLSnlnCZFzMw2jIyR3ZtBo7eNyckaFOO
+ K81KuQ85Dg+q+hukG9UrVDDsqI3mBV8o+iI2SgLa82qIJM0pYgg4PYJRbRJ4bF//AXW5QvrAo
+ 2WpYGNn81uIU6NoSfveSz+6t5DuP7FkMF3nM9z3+0ZOmABNidQI9dPGZkrD+66boSLJDoDbrH
+ HlvqmkedrVT5W0cOkd9cfOz8zxTDLWctcT5BqJ6X0imQRlZnvB30Ui9eYNGI3RQVJirnu3dj9
+ LbCh36iw3QSump2JYcsCSduGbRTQZ5mo0Vhvu2mbq4jUwf9caYjIQyOasgoFdWtf/Wk79yW7j
+ 7OtWtCjpQLM6DDnwJBinuRAUNxOu95fI9kVSzywIoQ912E9IGurxNTfOsreC1IUMlgn5UDFEB
+ 67TnwtzMWoelIJ6k7u6w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The structure is only used in one place, moving it there simplifies the
-interface and helps with later changes to this code.
-
-Rename it to match the other time32 structures in the process.
+The itimer handling for the old alpha osf_setitimer/osf_getitimer
+system calls is identical to the compat version of getitimer/setitimer,
+so just use those directly.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/compat.h | 15 ++++-----------
- kernel/compat.c        | 24 ------------------------
- kernel/time/itimer.c   | 42 +++++++++++++++++++++++++++++++++++-------
- 3 files changed, 39 insertions(+), 42 deletions(-)
+ arch/alpha/kernel/osf_sys.c            | 65 --------------------------
+ arch/alpha/kernel/syscalls/syscall.tbl |  4 +-
+ kernel/time/itimer.c                   |  4 +-
+ 3 files changed, 4 insertions(+), 69 deletions(-)
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 3735a22bfbc0..906a0ea933cd 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -116,14 +116,7 @@ typedef __compat_gid32_t	compat_gid_t;
- struct compat_sel_arg_struct;
- struct rusage;
- 
--struct compat_itimerval {
--	struct old_timeval32	it_interval;
--	struct old_timeval32	it_value;
--};
--
--struct itimerval;
--int get_compat_itimerval(struct itimerval *, const struct compat_itimerval __user *);
--int put_compat_itimerval(struct compat_itimerval __user *, const struct itimerval *);
-+struct old_itimerval32;
- 
- struct compat_tms {
- 	compat_clock_t		tms_utime;
-@@ -668,10 +661,10 @@ compat_sys_get_robust_list(int pid, compat_uptr_t __user *head_ptr,
- 
- /* kernel/itimer.c */
- asmlinkage long compat_sys_getitimer(int which,
--				     struct compat_itimerval __user *it);
-+				     struct old_itimerval32 __user *it);
- asmlinkage long compat_sys_setitimer(int which,
--				     struct compat_itimerval __user *in,
--				     struct compat_itimerval __user *out);
-+				     struct old_itimerval32 __user *in,
-+				     struct old_itimerval32 __user *out);
- 
- /* kernel/kexec.c */
- asmlinkage long compat_sys_kexec_load(compat_ulong_t entry,
-diff --git a/kernel/compat.c b/kernel/compat.c
-index a2bc1d6ceb57..95005f849c68 100644
---- a/kernel/compat.c
-+++ b/kernel/compat.c
-@@ -90,30 +90,6 @@ int compat_put_timespec(const struct timespec *ts, void __user *uts)
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index bbe7a0da6264..94e4cde8071a 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -971,30 +971,6 @@ put_tv_to_tv32(struct timeval32 __user *o, struct __kernel_old_timeval *i)
+ 			    sizeof(struct timeval32));
  }
- EXPORT_SYMBOL_GPL(compat_put_timespec);
  
--int get_compat_itimerval(struct itimerval *o, const struct compat_itimerval __user *i)
+-static inline long
+-get_it32(struct itimerval *o, struct itimerval32 __user *i)
 -{
--	struct compat_itimerval v32;
--
--	if (copy_from_user(&v32, i, sizeof(struct compat_itimerval)))
+-	struct itimerval32 itv;
+-	if (copy_from_user(&itv, i, sizeof(struct itimerval32)))
 -		return -EFAULT;
--	o->it_interval.tv_sec = v32.it_interval.tv_sec;
--	o->it_interval.tv_usec = v32.it_interval.tv_usec;
--	o->it_value.tv_sec = v32.it_value.tv_sec;
--	o->it_value.tv_usec = v32.it_value.tv_usec;
+-	o->it_interval.tv_sec = itv.it_interval.tv_sec;
+-	o->it_interval.tv_usec = itv.it_interval.tv_usec;
+-	o->it_value.tv_sec = itv.it_value.tv_sec;
+-	o->it_value.tv_usec = itv.it_value.tv_usec;
 -	return 0;
 -}
 -
--int put_compat_itimerval(struct compat_itimerval __user *o, const struct itimerval *i)
+-static inline long
+-put_it32(struct itimerval32 __user *o, struct itimerval *i)
 -{
--	struct compat_itimerval v32;
--
--	v32.it_interval.tv_sec = i->it_interval.tv_sec;
--	v32.it_interval.tv_usec = i->it_interval.tv_usec;
--	v32.it_value.tv_sec = i->it_value.tv_sec;
--	v32.it_value.tv_usec = i->it_value.tv_usec;
--	return copy_to_user(o, &v32, sizeof(struct compat_itimerval)) ? -EFAULT : 0;
+-	return copy_to_user(o, &(struct itimerval32){
+-				.it_interval.tv_sec = o->it_interval.tv_sec,
+-				.it_interval.tv_usec = o->it_interval.tv_usec,
+-				.it_value.tv_sec = o->it_value.tv_sec,
+-				.it_value.tv_usec = o->it_value.tv_usec},
+-			    sizeof(struct itimerval32));
 -}
 -
- #ifdef __ARCH_WANT_SYS_SIGPROCMASK
+ static inline void
+ jiffies_to_timeval32(unsigned long jiffies, struct timeval32 *value)
+ {
+@@ -1039,47 +1015,6 @@ SYSCALL_DEFINE2(osf_settimeofday, struct timeval32 __user *, tv,
  
- /*
+ asmlinkage long sys_ni_posix_timers(void);
+ 
+-SYSCALL_DEFINE2(osf_getitimer, int, which, struct itimerval32 __user *, it)
+-{
+-	struct itimerval kit;
+-	int error;
+-
+-	if (!IS_ENABLED(CONFIG_POSIX_TIMERS))
+-		return sys_ni_posix_timers();
+-
+-	error = do_getitimer(which, &kit);
+-	if (!error && put_it32(it, &kit))
+-		error = -EFAULT;
+-
+-	return error;
+-}
+-
+-SYSCALL_DEFINE3(osf_setitimer, int, which, struct itimerval32 __user *, in,
+-		struct itimerval32 __user *, out)
+-{
+-	struct itimerval kin, kout;
+-	int error;
+-
+-	if (!IS_ENABLED(CONFIG_POSIX_TIMERS))
+-		return sys_ni_posix_timers();
+-
+-	if (in) {
+-		if (get_it32(&kin, in))
+-			return -EFAULT;
+-	} else
+-		memset(&kin, 0, sizeof(kin));
+-
+-	error = do_setitimer(which, &kin, out ? &kout : NULL);
+-	if (error || !out)
+-		return error;
+-
+-	if (put_it32(out, &kout))
+-		return -EFAULT;
+-
+-	return 0;
+-
+-}
+-
+ SYSCALL_DEFINE2(osf_utimes, const char __user *, filename,
+ 		struct timeval32 __user *, tvs)
+ {
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 728fe028c02c..8e13b0b2928d 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -89,10 +89,10 @@
+ 80	common	setgroups			sys_setgroups
+ 81	common	osf_old_getpgrp			sys_ni_syscall
+ 82	common	setpgrp				sys_setpgid
+-83	common	osf_setitimer			sys_osf_setitimer
++83	common	osf_setitimer			compat_sys_setitimer
+ 84	common	osf_old_wait			sys_ni_syscall
+ 85	common	osf_table			sys_ni_syscall
+-86	common	osf_getitimer			sys_osf_getitimer
++86	common	osf_getitimer			compat_sys_getitimer
+ 87	common	gethostname			sys_gethostname
+ 88	common	sethostname			sys_sethostname
+ 89	common	getdtablesize			sys_getdtablesize
 diff --git a/kernel/time/itimer.c b/kernel/time/itimer.c
-index 77f1e5635cc1..c52ebb40b60b 100644
+index c52ebb40b60b..4664c6addf69 100644
 --- a/kernel/time/itimer.c
 +++ b/kernel/time/itimer.c
-@@ -112,19 +112,34 @@ SYSCALL_DEFINE2(getitimer, int, which, struct itimerval __user *, value)
- }
- 
- #ifdef CONFIG_COMPAT
-+struct old_itimerval32 {
-+	struct old_timeval32	it_interval;
-+	struct old_timeval32	it_value;
-+};
-+
-+static int put_old_itimerval32(struct old_itimerval32 __user *o, const struct itimerval *i)
-+{
-+	struct old_itimerval32 v32;
-+
-+	v32.it_interval.tv_sec = i->it_interval.tv_sec;
-+	v32.it_interval.tv_usec = i->it_interval.tv_usec;
-+	v32.it_value.tv_sec = i->it_value.tv_sec;
-+	v32.it_value.tv_usec = i->it_value.tv_usec;
-+	return copy_to_user(o, &v32, sizeof(struct old_itimerval32)) ? -EFAULT : 0;
-+}
-+
- COMPAT_SYSCALL_DEFINE2(getitimer, int, which,
--		       struct compat_itimerval __user *, it)
-+		       struct old_itimerval32 __user *, it)
- {
- 	struct itimerval kit;
- 	int error = do_getitimer(which, &kit);
- 
--	if (!error && put_compat_itimerval(it, &kit))
-+	if (!error && put_old_itimerval32(it, &kit))
- 		error = -EFAULT;
+@@ -111,7 +111,7 @@ SYSCALL_DEFINE2(getitimer, int, which, struct itimerval __user *, value)
  	return error;
  }
- #endif
  
--
- /*
-  * The timer is automagically restarted, when interval != 0
-  */
-@@ -310,15 +325,28 @@ SYSCALL_DEFINE3(setitimer, int, which, struct itimerval __user *, value,
- }
- 
- #ifdef CONFIG_COMPAT
-+static int get_old_itimerval32(struct itimerval *o, const struct old_itimerval32 __user *i)
-+{
-+	struct old_itimerval32 v32;
-+
-+	if (copy_from_user(&v32, i, sizeof(struct old_itimerval32)))
-+		return -EFAULT;
-+	o->it_interval.tv_sec = v32.it_interval.tv_sec;
-+	o->it_interval.tv_usec = v32.it_interval.tv_usec;
-+	o->it_value.tv_sec = v32.it_value.tv_sec;
-+	o->it_value.tv_usec = v32.it_value.tv_usec;
-+	return 0;
-+}
-+
- COMPAT_SYSCALL_DEFINE3(setitimer, int, which,
--		       struct compat_itimerval __user *, in,
--		       struct compat_itimerval __user *, out)
-+		       struct old_itimerval32 __user *, in,
-+		       struct old_itimerval32 __user *, out)
- {
- 	struct itimerval kin, kout;
- 	int error;
- 
- 	if (in) {
--		if (get_compat_itimerval(&kin, in))
-+		if (get_old_itimerval32(&kin, in))
- 			return -EFAULT;
- 	} else {
- 		memset(&kin, 0, sizeof(kin));
-@@ -327,7 +355,7 @@ COMPAT_SYSCALL_DEFINE3(setitimer, int, which,
- 	error = do_setitimer(which, &kin, out ? &kout : NULL);
- 	if (error || !out)
- 		return error;
--	if (put_compat_itimerval(out, &kout))
-+	if (put_old_itimerval32(out, &kout))
- 		return -EFAULT;
+-#ifdef CONFIG_COMPAT
++#if defined(CONFIG_COMPAT) || defined(CONFIG_ALPHA)
+ struct old_itimerval32 {
+ 	struct old_timeval32	it_interval;
+ 	struct old_timeval32	it_value;
+@@ -324,7 +324,7 @@ SYSCALL_DEFINE3(setitimer, int, which, struct itimerval __user *, value,
  	return 0;
  }
+ 
+-#ifdef CONFIG_COMPAT
++#if defined(CONFIG_COMPAT) || defined(CONFIG_ALPHA)
+ static int get_old_itimerval32(struct itimerval *o, const struct old_itimerval32 __user *i)
+ {
+ 	struct old_itimerval32 v32;
 -- 
 2.20.0
 
