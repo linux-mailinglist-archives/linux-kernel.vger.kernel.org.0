@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C97DF5433
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9DB4F5457
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733258AbfKHSzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:55:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52212 "EHLO mail.kernel.org"
+        id S2388269AbfKHS41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731278AbfKHSzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:55:06 -0500
+        id S2388133AbfKHS4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:56:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1904920865;
-        Fri,  8 Nov 2019 18:55:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ECAB218AE;
+        Fri,  8 Nov 2019 18:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239301;
-        bh=ujPc1fIhvRd5erak0GQgPSowVKTT2kQickvsRoK/fVc=;
+        s=default; t=1573239374;
+        bh=H8DwnQzxdmC9AtSbI+5z2WagDrrcQST/upFS0U/jWFc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t+L0pGSoOxjsvo6SIPBAT3xDkX8fIClzZnG6E221xjdnWc9E/eVjnlxPhuDJBNf32
-         RH2/jigcUgXruCiCL53NHqdKGZljKv6/kgTHy5kotwqm/fAf18m2ebfM2H21yzAchP
-         KQH6Mlav6guq8BZ3F6zqzsyQX7n5gk5MI+SVNWHI=
+        b=HNnaL5ekdVNTtI85o3Bgvd/UE4iadRSOlBNX20Qm/micE23oW3yUUjRmJYj1Ab9kb
+         ikYAMx8s67f8G+AdGnUQU6vRSt1pPMoYxzCKL2UgTLg1GeOjTwwT/oQnlyKWA63Fjn
+         roHXpCUzckC2YtKztVBL1BKKcnDYqmTjp5WFeUPM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linus.walleij@linaro.org, rmk+kernel@armlinux.org.uk, Ard Biesheuvel" 
-        <ardb@kernel.org>, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 67/75] ARM: make lookup_processor_type() non-__init
-Date:   Fri,  8 Nov 2019 19:50:24 +0100
-Message-Id: <20191108174809.058667447@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Thiemo Nagel <tnagel@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 18/34] dccp: do not leak jiffies on the wire
+Date:   Fri,  8 Nov 2019 19:50:25 +0100
+Message-Id: <20191108174638.029422308@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
-References: <20191108174708.135680837@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,45 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Eric Dumazet <edumazet@google.com>
 
-Commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc upstream.
+[ Upstream commit 3d1e5039f5f87a8731202ceca08764ee7cb010d3 ]
 
-Move lookup_processor_type() out of the __init section so it is callable
-from (eg) the secondary startup code during hotplug.
+For some reason I missed the case of DCCP passive
+flows in my previous patch.
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Fixes: a904a0693c18 ("inet: stop leaking jiffies on the wire")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Thiemo Nagel <tnagel@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/kernel/head-common.S |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/dccp/ipv4.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -122,6 +122,9 @@ __mmap_switched_data:
- 	.long	init_thread_union + THREAD_START_SP @ sp
- 	.size	__mmap_switched_data, . - __mmap_switched_data
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -417,7 +417,7 @@ struct sock *dccp_v4_request_recv_sock(c
+ 	RCU_INIT_POINTER(newinet->inet_opt, rcu_dereference(ireq->ireq_opt));
+ 	newinet->mc_index  = inet_iif(skb);
+ 	newinet->mc_ttl	   = ip_hdr(skb)->ttl;
+-	newinet->inet_id   = jiffies;
++	newinet->inet_id   = prandom_u32();
  
-+	__FINIT
-+	.text
-+
- /*
-  * This provides a C-API version of __lookup_processor_type
-  */
-@@ -133,9 +136,6 @@ ENTRY(lookup_processor_type)
- 	ldmfd	sp!, {r4 - r6, r9, pc}
- ENDPROC(lookup_processor_type)
- 
--	__FINIT
--	.text
--
- /*
-  * Read processor ID register (CP#15, CR0), and look up in the linker-built
-  * supported processor list.  Note that we can't use the absolute addresses
+ 	if (dst == NULL && (dst = inet_csk_route_child_sock(sk, newsk, req)) == NULL)
+ 		goto put_and_exit;
 
 
