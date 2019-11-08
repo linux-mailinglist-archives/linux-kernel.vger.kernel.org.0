@@ -2,75 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF294F5948
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2341F5951
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732387AbfKHVI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:08:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732305AbfKHVIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:08:55 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732486AbfKHVLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:11:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33116 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbfKHVLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:11:05 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F279C60D51; Fri,  8 Nov 2019 21:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573247464;
+        bh=gMzql+Ix2g0NxIDneQUQZiZH3kBmF6KyzpHa+IqKM94=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RGuUvakd1kfgtcNvFquFLz8H9xKEocpsXph56HyjnYhoGW9GpMykKDJl2zZdU9wzl
+         3y2cSUYy4mtHGzeuayqOc7jjBzDRZX/vC+kfLY7I2AqKq5tBAk64CF+0mxhthuugXd
+         qM6fU80B0S3eAoBcQfZglxLeC8QlM6/+FVEedU3I=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95C8C20869;
-        Fri,  8 Nov 2019 21:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573247334;
-        bh=JHqRS3uSKLO7yNAzjFw7Q1nOi5AO9AvovI8DqhUNkqQ=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=LIEyKga2iyXN5fFNmksNgPPGuuAoe7udgxU7uuYQRwcthQLdQkQpEOx62ACht245V
-         JR8r5BgmMHaeOU7WpybnQSm78GwxSrqBCcCTr29Rt3dE0g3+EswURrQH4vOgL9IE/M
-         FEmOsrn0YtW1KaB+o607/aQRtq65Cixnwyb4LzXs=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191108071718.17985-1-alexandru.ardelean@analog.com>
-References: <20191106113551.5557-1-alexandru.ardelean@analog.com> <20191108071718.17985-1-alexandru.ardelean@analog.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     mturquette@baylibre.com, jsarha@ti.com, ce3a@gmx.de,
-        geert+renesas@glider.be, horms@verge.net.au, magnus.damm@gmail.com,
-        wsa+renesas@sang-engineering.com,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: Re: [PATCH v3] clk: clk-gpio: propagate rate change to parent
-User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 13:08:53 -0800
-Message-Id: <20191108210854.95C8C20869@mail.kernel.org>
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E743E60D51;
+        Fri,  8 Nov 2019 21:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573247463;
+        bh=gMzql+Ix2g0NxIDneQUQZiZH3kBmF6KyzpHa+IqKM94=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nHIXCDK3uVtepwNXZsxda7MsFEOjFXJ3/QVRJCXVdvwGrq5IL5HTzSqHP5OGMiR89
+         EHoGjRedfI1cRqhTBumL8GIJLLIUldlLz4Ue9P1uANpRHxMXZ11TO42rB+O+7VURH/
+         tC8LuCL0bqthYHqWxrfvZUXg3waIiBHsUBhHz/vo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E743E60D51
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     david.brown@linaro.org
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v7 0/6] MSM8998 Multimedia Clock Controller
+Date:   Fri,  8 Nov 2019 14:10:50 -0700
+Message-Id: <1573247450-19738-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Alexandru Ardelean (2019-11-07 23:17:18)
-> From: Michael Hennerich <michael.hennerich@analog.com>
->=20
-> For an external clock source, which is gated via a GPIO, the
-> rate change should typically be propagated to the parent clock.
->=20
-> The situation where we are requiring this propagation, is when an
-> external clock is connected to override an internal clock (which typically
-> has a fixed rate). The external clock can have a different rate than the
-> internal one, and may also be variable, thus requiring the rate
-> propagation.
->=20
-> This rate change wasn't propagated until now, and it's unclear about cases
-> where this shouldn't be propagated. Thus, it's unclear whether this is
-> fixing a bug, or extending the current driver behavior. Also, it's unsure
-> about whether this may break any existing setups; in the case that it doe=
-s,
-> a device-tree property may be added to disable this flag.
->=20
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
+The multimedia clock controller (mmcc) is the main clock controller for
+the multimedia subsystem and is required to enable things like display and
+camera.
 
-Applied to clk-next
+v7:
+-port to gcc.yaml.  Drop reviewed-by for DT changes as they got completely
+rewritten
+-drop "clk: qcom: smd: Add XO clock for MSM8998".  Will need to find another
+solution and this is not blocking right now
+-convert mmcc to yaml
+-drop errant clk.h include
+-use blank entries in the DT when no clock is available
 
-Next time please send as a new topic instead of a reply to the original
-patch. Makes it easier for me to apply the patch.
+v6:
+-drop clk_get from mmcc clock provider
+
+v5:
+-handle the case where gcc uses rpmcc for xo, but the link is not specified in dt
+-have gcc select rpmcc
+
+v4:
+-fix makefile to use correct config item
+-pick up tags
+-fix ordering of clocks and clock-names in dt
+-drop MODULE_ALIAS
+-wait for xo in mmcc since that was found to be useful in some debug configs
+
+v3:
+-Rebase onto linux-next to get the final version of the clk parent rewrite
+series
+-Moved the bindings header to the bindings patch per Rob
+-Made xo manditory for GCC to work around the lack of clk orphan probe defer
+to avoid the uart console glitch
+
+v2:
+-Rebased on the "Rewrite clk parent handling" series and updated to the clk init
+mechanisms introduced there.
+-Marked XO clk as CLK_IGNORE_UNUSED to avoid the concern about the XO going away
+"incorrectly" during late init
+-Corrected the name of the XO clock to "xo"
+-Dropped the fake XO clock in GCC to prevent a namespace conflict
+-Fully enumerated the external clocks (DSI PLLs, etc) in the DT binding
+-Cleaned up the weird newlines in the added DT node
+-Added DT header file to msm8998 DT for future clients
+
+Jeffrey Hugo (6):
+  dt-bindings: clock: Document external clocks for MSM8998 gcc
+  arm64: dts: msm8998: Add xo clock to gcc node
+  dt-bindings: clock: Convert qcom,mmcc to DT schema
+  dt-bindings: clock: Add support for the MSM8998 mmcc
+  clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+  arm64: dts: qcom: msm8998: Add mmcc node
+
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |   47 +-
+ .../devicetree/bindings/clock/qcom,mmcc.txt   |   28 -
+ .../devicetree/bindings/clock/qcom,mmcc.yaml  |   96 +
+ arch/arm64/boot/dts/qcom/msm8998.dtsi         |   40 +
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/mmcc-msm8998.c               | 2913 +++++++++++++++++
+ include/dt-bindings/clock/qcom,mmcc-msm8998.h |  210 ++
+ 8 files changed, 3302 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+ create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
+
+-- 
+2.17.1
 
