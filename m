@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8581F575E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14D2F5670
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391365AbfKHTUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:20:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57246 "EHLO mail.kernel.org"
+        id S2390898AbfKHTIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:08:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389417AbfKHTAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:07 -0500
+        id S1733278AbfKHTIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:08:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FF49224D4;
-        Fri,  8 Nov 2019 18:58:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B6562087E;
+        Fri,  8 Nov 2019 19:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239536;
-        bh=ubGUgah5mMIQ73ShyXq6+5OZZSGl5pRlyLuwd1JfvTI=;
+        s=default; t=1573240128;
+        bh=YvjnO8mm8LxPOaeaGVZWVW45loXXHdJad6136bEEwvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IFW94plB2QiKAM3ZYFx8GNQ54risF67QfVAbv4oS5izF5uJa+V5bWAoTNz1axfoZd
-         GG6o6VHKEH19RXSUhQWuOleBHdiInoRSQM0ikC+bHDXp7Mn/uVIB1kKoSY0Z8xGK6B
-         5vittDpnPCMIMtqZHre/Wk+NsRTRte+CNkVRGjg8=
+        b=HButf7zpbKiN6TGiNCXOy0Wk2FMV0pKa93g9a887NKJpku0acLS+BAEmwzo9Ckjvu
+         HjLYaYFjGJNOa7UEqm4wbHk3TW++MMlCU6F586yJ2O4vBjIpKd6nPC1a9N7PxR1hCf
+         O/zZyNv4jBYE7rL00BdgwsSq1BICM1vjFp5Ymdpw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hubert Feurstein <h.feurstein@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 37/62] net: dsa: b53: Do not clear existing mirrored port mask
-Date:   Fri,  8 Nov 2019 19:50:25 +0100
-Message-Id: <20191108174746.893265974@linuxfoundation.org>
+Subject: [PATCH 5.3 098/140] net: add skb_queue_empty_lockless()
+Date:   Fri,  8 Nov 2019 19:50:26 +0100
+Message-Id: <20191108174911.184234366@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +43,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit c763ac436b668d7417f0979430ec0312ede4093d ]
+[ Upstream commit d7d16a89350ab263484c0aa2b523dd3a234e4a80 ]
 
-Clearing the existing bitmask of mirrored ports essentially prevents us
-from capturing more than one port at any given time. This is clearly
-wrong, do not clear the bitmask prior to setting up the new port.
+Some paths call skb_queue_empty() without holding
+the queue lock. We must use a barrier in order
+to not let the compiler do strange things, and avoid
+KCSAN splats.
 
-Reported-by: Hubert Feurstein <h.feurstein@gmail.com>
-Fixes: ed3af5fd08eb ("net: dsa: b53: Add support for port mirroring")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
+Adding a barrier in skb_queue_empty() might be overkill,
+I prefer adding a new helper to clearly identify
+points where the callers might be lockless. This might
+help us finding real bugs.
+
+The corresponding WRITE_ONCE() should add zero cost
+for current compilers.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/b53/b53_common.c |    1 -
- 1 file changed, 1 deletion(-)
+ include/linux/skbuff.h |   33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
 
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -1431,7 +1431,6 @@ int b53_mirror_add(struct dsa_switch *ds
- 		loc = B53_EG_MIR_CTL;
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -1501,6 +1501,19 @@ static inline int skb_queue_empty(const
+ }
  
- 	b53_read16(dev, B53_MGMT_PAGE, loc, &reg);
--	reg &= ~MIRROR_MASK;
- 	reg |= BIT(port);
- 	b53_write16(dev, B53_MGMT_PAGE, loc, reg);
+ /**
++ *	skb_queue_empty_lockless - check if a queue is empty
++ *	@list: queue head
++ *
++ *	Returns true if the queue is empty, false otherwise.
++ *	This variant can be used in lockless contexts.
++ */
++static inline bool skb_queue_empty_lockless(const struct sk_buff_head *list)
++{
++	return READ_ONCE(list->next) == (const struct sk_buff *) list;
++}
++
++
++/**
+  *	skb_queue_is_last - check if skb is the last entry in the queue
+  *	@list: queue head
+  *	@skb: buffer
+@@ -1853,9 +1866,11 @@ static inline void __skb_insert(struct s
+ 				struct sk_buff *prev, struct sk_buff *next,
+ 				struct sk_buff_head *list)
+ {
+-	newsk->next = next;
+-	newsk->prev = prev;
+-	next->prev  = prev->next = newsk;
++	/* see skb_queue_empty_lockless() for the opposite READ_ONCE() */
++	WRITE_ONCE(newsk->next, next);
++	WRITE_ONCE(newsk->prev, prev);
++	WRITE_ONCE(next->prev, newsk);
++	WRITE_ONCE(prev->next, newsk);
+ 	list->qlen++;
+ }
  
+@@ -1866,11 +1881,11 @@ static inline void __skb_queue_splice(co
+ 	struct sk_buff *first = list->next;
+ 	struct sk_buff *last = list->prev;
+ 
+-	first->prev = prev;
+-	prev->next = first;
++	WRITE_ONCE(first->prev, prev);
++	WRITE_ONCE(prev->next, first);
+ 
+-	last->next = next;
+-	next->prev = last;
++	WRITE_ONCE(last->next, next);
++	WRITE_ONCE(next->prev, last);
+ }
+ 
+ /**
+@@ -2011,8 +2026,8 @@ static inline void __skb_unlink(struct s
+ 	next	   = skb->next;
+ 	prev	   = skb->prev;
+ 	skb->next  = skb->prev = NULL;
+-	next->prev = prev;
+-	prev->next = next;
++	WRITE_ONCE(next->prev, prev);
++	WRITE_ONCE(prev->next, next);
+ }
+ 
+ /**
 
 
