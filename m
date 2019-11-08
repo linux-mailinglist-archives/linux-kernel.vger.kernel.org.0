@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34507F5432
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56060F5439
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733238AbfKHSzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:55:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52256 "EHLO mail.kernel.org"
+        id S1733307AbfKHSzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:55:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731291AbfKHSzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:55:05 -0500
+        id S1733294AbfKHSzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:55:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C47ED214DB;
-        Fri,  8 Nov 2019 18:55:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C24A222C5;
+        Fri,  8 Nov 2019 18:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239304;
-        bh=R+Td6S4dI+TenoqDGGPIUd7g1JBpVKmkh8jNH1/o1pk=;
+        s=default; t=1573239315;
+        bh=j3r/n5l6RYREqpwfXTDzpr2BYB8iYzHItBpD0Po+7WA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q6R3R2YSLRCOHXTf2JM9F4hrUp8fGBaPNqR91+Z8eLHuD/pG1UP9pMIQo71rigesl
-         VjPbrdVOEu7J9qZEZM7TSgJyJA1bC/k40SfkEviawDbswVllLcVPwYvHHFCleE80Nx
-         8L+ermw/+5FkR2k6hLjURr2D1Nmao8QJDISAGwKc=
+        b=InPUAoJ08lgozGcxxQI3jTFSpowOc15WHC1j8ieJWvftlq0IP+B/C2b96vULBzYPv
+         P27iERlN7B50BJQXUcrrM2O/kDLUFPtJXOBTEpbVgOENKtT3wPJ8mr5a3jeBucBOxp
+         6AFBSxQSgwbBopqMRbKl8BdJeidqkqAC70iyn49I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "linus.walleij@linaro.org, rmk+kernel@armlinux.org.uk, Ard Biesheuvel" 
-        <ardb@kernel.org>, Julien Thierry <julien.thierry@arm.com>,
+        <ardb@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
+        Julien Thierry <julien.thierry@arm.com>,
         Sasha Levin <sashal@kernel.org>,
         Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 68/75] ARM: split out processor lookup
-Date:   Fri,  8 Nov 2019 19:50:25 +0100
-Message-Id: <20191108174810.091463197@linuxfoundation.org>
+Subject: [PATCH 4.4 72/75] ARM: ensure that processor vtables is not lost after boot
+Date:   Fri,  8 Nov 2019 19:50:29 +0100
+Message-Id: <20191108174812.646613145@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
 References: <20191108174708.135680837@linuxfoundation.org>
@@ -49,13 +51,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 65987a8553061515b5851b472081aedb9837a391 upstream.
+Commit 3a4d0c2172bcf15b7a3d9d498b2b355f9864286b upstream.
 
-Split out the lookup of the processor type and associated error handling
-from the rest of setup_processor() - we will need to use this in the
-secondary CPU bringup path for big.Little Spectre variant 2 mitigation.
+Marek Szyprowski reported problems with CPU hotplug in current kernels.
+This was tracked down to the processor vtables being located in an
+init section, and therefore discarded after kernel boot, despite being
+required after boot to properly initialise the non-boot CPUs.
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Arrange for these tables to end up in .rodata when required.
+
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 383fb3ee8024 ("ARM: spectre-v2: per-CPU vtables to work around big.Little systems")
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
@@ -63,71 +70,34 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/cputype.h |    1 +
- arch/arm/kernel/setup.c        |   31 +++++++++++++++++++------------
- 2 files changed, 20 insertions(+), 12 deletions(-)
+ arch/arm/mm/proc-macros.S |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@ -93,6 +93,7 @@
- #define ARM_CPU_PART_SCORPION		0x510002d0
+--- a/arch/arm/mm/proc-macros.S
++++ b/arch/arm/mm/proc-macros.S
+@@ -259,6 +259,13 @@
+ 	.endm
  
- extern unsigned int processor_id;
-+struct proc_info_list *lookup_processor(u32 midr);
- 
- #ifdef CONFIG_CPU_CP15
- #define read_cpuid(reg)							\
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -599,22 +599,29 @@ static void __init smp_build_mpidr_hash(
- }
- #endif
- 
--static void __init setup_processor(void)
+ .macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
 +/*
-+ * locate processor in the list of supported processor types.  The linker
-+ * builds this table for us from the entries in arch/arm/mm/proc-*.S
++ * If we are building for big.Little with branch predictor hardening,
++ * we need the processor function tables to remain available after boot.
 + */
-+struct proc_info_list *lookup_processor(u32 midr)
- {
--	struct proc_info_list *list;
-+	struct proc_info_list *list = lookup_processor_type(midr);
++#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++	.section ".rodata"
++#endif
+ 	.type	\name\()_processor_functions, #object
+ 	.align 2
+ ENTRY(\name\()_processor_functions)
+@@ -294,6 +301,9 @@ ENTRY(\name\()_processor_functions)
+ 	.endif
  
--	/*
--	 * locate processor in the list of supported processor
--	 * types.  The linker builds this table for us from the
--	 * entries in arch/arm/mm/proc-*.S
--	 */
--	list = lookup_processor_type(read_cpuid_id());
- 	if (!list) {
--		pr_err("CPU configuration botched (ID %08x), unable to continue.\n",
--		       read_cpuid_id());
--		while (1);
-+		pr_err("CPU%u: configuration botched (ID %08x), CPU halted\n",
-+		       smp_processor_id(), midr);
-+		while (1)
-+		/* can't use cpu_relax() here as it may require MMU setup */;
- 	}
+ 	.size	\name\()_processor_functions, . - \name\()_processor_functions
++#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++	.previous
++#endif
+ .endm
  
-+	return list;
-+}
-+
-+static void __init setup_processor(void)
-+{
-+	unsigned int midr = read_cpuid_id();
-+	struct proc_info_list *list = lookup_processor(midr);
-+
- 	cpu_name = list->cpu_name;
- 	__cpu_architecture = __get_cpu_architecture();
- 
-@@ -632,7 +639,7 @@ static void __init setup_processor(void)
- #endif
- 
- 	pr_info("CPU: %s [%08x] revision %d (ARMv%s), cr=%08lx\n",
--		cpu_name, read_cpuid_id(), read_cpuid_id() & 15,
-+		list->cpu_name, midr, midr & 15,
- 		proc_arch[cpu_architecture()], get_cr());
- 
- 	snprintf(init_utsname()->machine, __NEW_UTS_LEN + 1, "%s%c",
+ .macro define_cache_functions name:req
 
 
