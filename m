@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD9B1F5787
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62D73F54E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388672AbfKHTXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:23:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27259 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732371AbfKHSxd (ORCPT
+        id S2388444AbfKHS4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:56:54 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40103 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732612AbfKHS4m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:53:33 -0500
+        Fri, 8 Nov 2019 13:56:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573239211;
+        s=mimecast20190719; t=1573239401;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding;
-        bh=9FwgetzyW8P48cGLGqGtD4GfxfTRlJoRiG4n2Dado8Y=;
-        b=ixqLj5/qZDjREgmFuroudJ1XpJJThA7TmnfmjNiz/xXh0D5/QaD8nmFy3+UxkfB05PebK8
-        4V7uYVbTuhfhpbR+9T2I29gTw3mIakBVJAROwWFQXv2UaGUtRlIbsOxuh+BPQ0z6bVV4jy
-        I5ul+Cx5+KjskUkgnJ9q5bBA0jM3bw4=
+        bh=CXeheEvNkBpf+BJwcDdKt8DoNtaIV9EI+XPEuMx45wQ=;
+        b=ReAVFiJJEeX7guDFSru1FRAzzL5FFnpa2x8QGXaQyDoe4n9SrLxF+sFD2a0H+2tbRXs0h8
+        tm78DwQwPTTgQvRQBdZ0BAwPhRIaGixt+MJwTRHQQjHHph+l/YwEpx+DbrK+PbSQy0ny7E
+        DvunUOK/H1a/yQEckT1bw8EB2qFB5lM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-225-RDOnMV84OlO0Y-tz_4aX-A-1; Fri, 08 Nov 2019 13:53:28 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-331-PS6RtgLeMnWfCwbohRiSPA-1; Fri, 08 Nov 2019 13:56:38 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C2C88017E0;
-        Fri,  8 Nov 2019 18:53:26 +0000 (UTC)
-Received: from rh2.redhat.com (ovpn-125-42.rdu2.redhat.com [10.10.125.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF6A1600C9;
-        Fri,  8 Nov 2019 18:53:24 +0000 (UTC)
-From:   Mike Christie <mchristi@redhat.com>
-To:     mhocko@kernel.org, david@fromorbit.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        martin@urbackup.org, Damien.LeMoal@wdc.com
-Cc:     Mike Christie <mchristi@redhat.com>
-Subject: [PATCH] Add prctl support for controlling mem reclaim V3
-Date:   Fri,  8 Nov 2019 12:53:19 -0600
-Message-Id: <20191108185319.9326-1-mchristi@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 122A6477;
+        Fri,  8 Nov 2019 18:56:37 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-116-182.ams2.redhat.com [10.36.116.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 388471001B35;
+        Fri,  8 Nov 2019 18:56:35 +0000 (UTC)
+From:   Adrian Reber <areber@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Adrian Reber <areber@redhat.com>
+Subject: [PATCH v3] selftests: add tests for clone3()
+Date:   Fri,  8 Nov 2019 19:56:29 +0100
+Message-Id: <20191108185629.309414-1-areber@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: RDOnMV84OlO0Y-tz_4aX-A-1
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: PS6RtgLeMnWfCwbohRiSPA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -52,173 +52,295 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
-amd nbd that have userspace components that can run in the IO path. For
-example, iscsi and nbd's userspace deamons may need to recreate a socket
-and/or send IO on it, and dm-multipath's daemon multipathd may need to
-send SG IO or read/write IO to figure out the state of paths and re-set
-them up.
+This adds tests for clone3() with different values and sizes
+of struct clone_args.
 
-In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
-memalloc_*_save/restore functions to control the allocation behavior,
-but for userspace we would end up hitting an allocation that ended up
-writing data back to the same device we are trying to allocate for.
-The device is then in a state of deadlock, because to execute IO the
-device needs to allocate memory, but to allocate memory the memory
-layers want execute IO to the device.
+This selftest was initially part of of the clone3() with PID selftest.
+After that patch was almost merged Eugene sent out a couple of patches
+to fix problems with these test.
 
-Here is an example with nbd using a local userspace daemon that performs
-network IO to a remote server. We are using XFS on top of the nbd device,
-but it can happen with any FS or other modules layered on top of the nbd
-device that can write out data to free memory.  Here a nbd daemon helper
-thread, msgr-worker-1, is performing a write/sendmsg on a socket to execute
-a request. This kicks off a reclaim operation which results in a WRITE to
-the nbd device and the nbd thread calling back into the mm layer.
+This commit now only contains the clone3() selftest after the LPC
+decision to rework clone3() with PID to allow setting the PID in
+multiple PID namespaces including all of Eugene's patches.
 
-[ 1626.609191] msgr-worker-1   D    0  1026      1 0x00004000
-[ 1626.609193] Call Trace:
-[ 1626.609195]  ? __schedule+0x29b/0x630
-[ 1626.609197]  ? wait_for_completion+0xe0/0x170
-[ 1626.609198]  schedule+0x30/0xb0
-[ 1626.609200]  schedule_timeout+0x1f6/0x2f0
-[ 1626.609202]  ? blk_finish_plug+0x21/0x2e
-[ 1626.609204]  ? _xfs_buf_ioapply+0x2e6/0x410
-[ 1626.609206]  ? wait_for_completion+0xe0/0x170
-[ 1626.609208]  wait_for_completion+0x108/0x170
-[ 1626.609210]  ? wake_up_q+0x70/0x70
-[ 1626.609212]  ? __xfs_buf_submit+0x12e/0x250
-[ 1626.609214]  ? xfs_bwrite+0x25/0x60
-[ 1626.609215]  xfs_buf_iowait+0x22/0xf0
-[ 1626.609218]  __xfs_buf_submit+0x12e/0x250
-[ 1626.609220]  xfs_bwrite+0x25/0x60
-[ 1626.609222]  xfs_reclaim_inode+0x2e8/0x310
-[ 1626.609224]  xfs_reclaim_inodes_ag+0x1b6/0x300
-[ 1626.609227]  xfs_reclaim_inodes_nr+0x31/0x40
-[ 1626.609228]  super_cache_scan+0x152/0x1a0
-[ 1626.609231]  do_shrink_slab+0x12c/0x2d0
-[ 1626.609233]  shrink_slab+0x9c/0x2a0
-[ 1626.609235]  shrink_node+0xd7/0x470
-[ 1626.609237]  do_try_to_free_pages+0xbf/0x380
-[ 1626.609240]  try_to_free_pages+0xd9/0x1f0
-[ 1626.609245]  __alloc_pages_slowpath+0x3a4/0xd30
-[ 1626.609251]  ? ___slab_alloc+0x238/0x560
-[ 1626.609254]  __alloc_pages_nodemask+0x30c/0x350
-[ 1626.609259]  skb_page_frag_refill+0x97/0xd0
-[ 1626.609274]  sk_page_frag_refill+0x1d/0x80
-[ 1626.609279]  tcp_sendmsg_locked+0x2bb/0xdd0
-[ 1626.609304]  tcp_sendmsg+0x27/0x40
-[ 1626.609307]  sock_sendmsg+0x54/0x60
-[ 1626.609308]  ___sys_sendmsg+0x29f/0x320
-[ 1626.609313]  ? sock_poll+0x66/0xb0
-[ 1626.609318]  ? ep_item_poll.isra.15+0x40/0xc0
-[ 1626.609320]  ? ep_send_events_proc+0xe6/0x230
-[ 1626.609322]  ? hrtimer_try_to_cancel+0x54/0xf0
-[ 1626.609324]  ? ep_read_events_proc+0xc0/0xc0
-[ 1626.609326]  ? _raw_write_unlock_irq+0xa/0x20
-[ 1626.609327]  ? ep_scan_ready_list.constprop.19+0x218/0x230
-[ 1626.609329]  ? __hrtimer_init+0xb0/0xb0
-[ 1626.609331]  ? _raw_spin_unlock_irq+0xa/0x20
-[ 1626.609334]  ? ep_poll+0x26c/0x4a0
-[ 1626.609337]  ? tcp_tsq_write.part.54+0xa0/0xa0
-[ 1626.609339]  ? release_sock+0x43/0x90
-[ 1626.609341]  ? _raw_spin_unlock_bh+0xa/0x20
-[ 1626.609342]  __sys_sendmsg+0x47/0x80
-[ 1626.609347]  do_syscall_64+0x5f/0x1c0
-[ 1626.609349]  ? prepare_exit_to_usermode+0x75/0xa0
-[ 1626.609351]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-This patch adds a new prctl command that daemons can use after they have
-done their initial setup, and before they start to do allocations that
-are in the IO path. It sets the PF_MEMALLOC_NOIO and PF_LESS_THROTTLE
-flags so both userspace block and FS threads can use it to avoid the
-allocation recursion and try to prevent from being throttled while
-writing out data to free up memory.
-
-Signed-off-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+Signed-off-by: Adrian Reber <areber@redhat.com>
 ---
-V3=20
-- Drop NOFS, set PF_LESS_THROTTLE and rename prctl flag to reflect it
-is more general and can support both FS and block devices. Both fuse
-and block device daemons, nbd and tcmu-runner, have been tested to
-confirm the more restrictive PF_MEMALLOC_NOIO also works for fuse.
+v2:
+ - Applied Christian's suggestions
+ - Skip root-only tests when running as non-root
+v3:
+ - Removed unnecessary test case (everything set to 1)
+ - Correctly handle children without SIGCHLD
+---
+ MAINTAINERS                               |   1 +
+ tools/testing/selftests/Makefile          |   1 +
+ tools/testing/selftests/clone3/.gitignore |   1 +
+ tools/testing/selftests/clone3/Makefile   |   7 +
+ tools/testing/selftests/clone3/clone3.c   | 203 ++++++++++++++++++++++
+ 5 files changed, 213 insertions(+)
+ create mode 100644 tools/testing/selftests/clone3/.gitignore
+ create mode 100644 tools/testing/selftests/clone3/Makefile
+ create mode 100644 tools/testing/selftests/clone3/clone3.c
 
-- Use CAP_SYS_RESOURCE instead of admin.
-
-V2:
-- Use prctl instead of procfs.
-- Add support for NOFS for fuse.
-- Check permissions.
-
-
- include/uapi/linux/capability.h |  1 +
- include/uapi/linux/prctl.h      |  4 ++++
- kernel/sys.c                    | 26 ++++++++++++++++++++++++++
- 3 files changed, 31 insertions(+)
-
-diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capabilit=
-y.h
-index 240fdb9a60f6..272dc69fa080 100644
---- a/include/uapi/linux/capability.h
-+++ b/include/uapi/linux/capability.h
-@@ -301,6 +301,7 @@ struct vfs_ns_cap_data {
- /* Allow more than 64hz interrupts from the real-time clock */
- /* Override max number of consoles on console allocation */
- /* Override max number of keymaps */
-+/* Control memory reclaim behavior */
-=20
- #define CAP_SYS_RESOURCE     24
-=20
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 7da1b37b27aa..07b4f8131e36 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -234,4 +234,8 @@ struct prctl_mm_map {
- #define PR_GET_TAGGED_ADDR_CTRL=09=0956
- # define PR_TAGGED_ADDR_ENABLE=09=09(1UL << 0)
-=20
-+/* Control reclaim behavior when allocating memory */
-+#define PR_SET_IO_FLUSHER=09=0957
-+#define PR_GET_IO_FLUSHER=09=0958
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cba1095547fd..0040b7a6410b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12829,6 +12829,7 @@ S:=09Maintained
+ T:=09git git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git
+ F:=09samples/pidfd/
+ F:=09tools/testing/selftests/pidfd/
++F:=09tools/testing/selftests/clone3/
+ K:=09(?i)pidfd
+ K:=09(?i)clone3
+ K:=09\b(clone_args|kernel_clone_args)\b
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Mak=
+efile
+index 4cdbae6f4e61..ad442364218a 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -4,6 +4,7 @@ TARGETS +=3D bpf
+ TARGETS +=3D breakpoints
+ TARGETS +=3D capabilities
+ TARGETS +=3D cgroup
++TARGETS +=3D clone3
+ TARGETS +=3D cpufreq
+ TARGETS +=3D cpu-hotplug
+ TARGETS +=3D drivers/dma-buf
+diff --git a/tools/testing/selftests/clone3/.gitignore b/tools/testing/self=
+tests/clone3/.gitignore
+new file mode 100644
+index 000000000000..85d9d3ba2524
+--- /dev/null
++++ b/tools/testing/selftests/clone3/.gitignore
+@@ -0,0 +1 @@
++clone3
+diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selfte=
+sts/clone3/Makefile
+new file mode 100644
+index 000000000000..ea922c014ae4
+--- /dev/null
++++ b/tools/testing/selftests/clone3/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
 +
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index a611d1d58c7d..08c6b682fa99 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2486,6 +2486,32 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, a=
-rg2, unsigned long, arg3,
- =09=09=09return -EINVAL;
- =09=09error =3D GET_TAGGED_ADDR_CTRL();
- =09=09break;
-+=09case PR_SET_IO_FLUSHER:
-+=09=09if (!capable(CAP_SYS_RESOURCE))
-+=09=09=09return -EPERM;
++CFLAGS +=3D -I../../../../usr/include/
 +
-+=09=09if (arg3 || arg4 || arg5)
-+=09=09=09return -EINVAL;
++TEST_GEN_PROGS :=3D clone3
 +
-+=09=09if (arg2 =3D=3D 1)
-+=09=09=09current->flags |=3D PF_MEMALLOC_NOIO | PF_LESS_THROTTLE;
-+=09=09else if (!arg2)
-+=09=09=09current->flags &=3D ~(PF_MEMALLOC_NOIO | PF_LESS_THROTTLE);
-+=09=09else
-+=09=09=09return -EINVAL;
++include ../lib.mk
+diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selfte=
+sts/clone3/clone3.c
+new file mode 100644
+index 000000000000..ca9ac31abbe6
+--- /dev/null
++++ b/tools/testing/selftests/clone3/clone3.c
+@@ -0,0 +1,203 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/* Based on Christian Brauner's clone3() example */
++
++#define _GNU_SOURCE
++#include <errno.h>
++#include <inttypes.h>
++#include <linux/types.h>
++#include <linux/sched.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/syscall.h>
++#include <sys/types.h>
++#include <sys/un.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include <sched.h>
++
++#include "../kselftest.h"
++
++/*
++ * Different sizes of struct clone_args
++ */
++#ifndef CLONE3_ARGS_SIZE_V0
++#define CLONE3_ARGS_SIZE_V0 64
++#endif
++
++enum test_mode {
++=09CLONE3_ARGS_NO_TEST,
++=09CLONE3_ARGS_ALL_0,
++=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_BIG,
++=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
++=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
++=09CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
++};
++
++static pid_t raw_clone(struct clone_args *args, size_t size)
++{
++=09return syscall(__NR_clone3, args, size);
++}
++
++static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mo=
+de)
++{
++=09struct clone_args args =3D {
++=09=09.flags =3D flags,
++=09=09.exit_signal =3D SIGCHLD,
++=09};
++
++=09struct clone_args_extended {
++=09=09struct clone_args args;
++=09=09__aligned_u64 excess_space[2];
++=09} args_ext;
++
++=09pid_t pid =3D -1;
++=09int status;
++
++=09memset(&args_ext, 0, sizeof(args_ext));
++=09if (size > sizeof(struct clone_args))
++=09=09args_ext.excess_space[1] =3D 1;
++
++=09if (size =3D=3D 0)
++=09=09size =3D sizeof(struct clone_args);
++
++=09switch (test_mode) {
++=09case CLONE3_ARGS_ALL_0:
++=09=09args.flags =3D 0;
++=09=09args.exit_signal =3D 0;
 +=09=09break;
-+=09case PR_GET_IO_FLUSHER:
-+=09=09if (!capable(CAP_SYS_RESOURCE))
-+=09=09=09return -EPERM;
-+
-+=09=09if (arg2 || arg3 || arg4 || arg5)
-+=09=09=09return -EINVAL;
-+
-+=09=09if (current->flags & (PF_MEMALLOC_NOIO | PF_LESS_THROTTLE))
-+=09=09=09error =3D 1;
-+=09=09else
-+=09=09=09error =3D 0;
++=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_BIG:
++=09=09args.exit_signal =3D 0xbadc0ded00000000ULL;
 +=09=09break;
- =09default:
- =09=09error =3D -EINVAL;
- =09=09break;
++=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG:
++=09=09args.exit_signal =3D 0x0000000080000000ULL;
++=09=09break;
++=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG:
++=09=09args.exit_signal =3D 0x0000000000000100ULL;
++=09=09break;
++=09case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
++=09=09args.exit_signal =3D 0x00000000000000f0ULL;
++=09=09break;
++=09}
++
++=09memcpy(&args_ext.args, &args, sizeof(struct clone_args));
++
++=09pid =3D raw_clone((struct clone_args *)&args_ext, size);
++=09if (pid < 0) {
++=09=09ksft_print_msg("%s - Failed to create new process\n",
++=09=09=09=09strerror(errno));
++=09=09return -errno;
++=09}
++
++=09if (pid =3D=3D 0) {
++=09=09ksft_print_msg("I am the child, my PID is %d\n", getpid());
++=09=09_exit(EXIT_SUCCESS);
++=09}
++
++=09ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
++=09=09=09getpid(), pid);
++
++=09if (waitpid(-1, &status, __WALL) < 0) {
++=09=09ksft_print_msg("Child returned %s\n", strerror(errno));
++=09=09return -errno;
++=09}
++=09if (WEXITSTATUS(status))
++=09=09return WEXITSTATUS(status);
++
++=09return 0;
++}
++
++static void test_clone3(uint64_t flags, size_t size, int expected,
++=09=09       enum test_mode test_mode)
++{
++=09int ret;
++
++=09ksft_print_msg(
++=09=09"[%d] Trying clone3() with flags %#" PRIx64 " (size %zu)\n",
++=09=09getpid(), flags, size);
++=09ret =3D call_clone3(flags, size, test_mode);
++=09ksft_print_msg("[%d] clone3() with flags says: %d expected %d\n",
++=09=09=09getpid(), ret, expected);
++=09if (ret !=3D expected)
++=09=09ksft_test_result_fail(
++=09=09=09"[%d] Result (%d) is different than expected (%d)\n",
++=09=09=09getpid(), ret, expected);
++=09else
++=09=09ksft_test_result_pass(
++=09=09=09"[%d] Result (%d) matches expectation (%d)\n",
++=09=09=09getpid(), ret, expected);
++}
++int main(int argc, char *argv[])
++{
++=09pid_t pid;
++
++=09uid_t uid =3D getuid();
++
++=09ksft_print_header();
++=09ksft_set_plan(15);
++
++=09/* Just a simple clone3() should return 0.*/
++=09test_clone3(0, 0, 0, CLONE3_ARGS_NO_TEST);
++
++=09/* Do a clone3() in a new PID NS.*/
++=09if (uid =3D=3D 0)
++=09=09test_clone3(CLONE_NEWPID, 0, 0, CLONE3_ARGS_NO_TEST);
++=09else
++=09=09ksft_test_result_skip("Skipping clone3() with CLONE_NEWPID\n");
++
++=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0. */
++=09test_clone3(0, CLONE3_ARGS_SIZE_V0, 0, CLONE3_ARGS_NO_TEST);
++
++=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0 - 8 */
++=09test_clone3(0, CLONE3_ARGS_SIZE_V0 - 8, -EINVAL, CLONE3_ARGS_NO_TEST);
++
++=09/* Do a clone3() with sizeof(struct clone_args) + 8 */
++=09test_clone3(0, sizeof(struct clone_args) + 8, 0, CLONE3_ARGS_NO_TEST);
++
++=09/* Do a clone3() with exit_signal having highest 32 bits non-zero */
++=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_BIG);
++
++=09/* Do a clone3() with negative 32-bit exit_signal */
++=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG);
++
++=09/* Do a clone3() with exit_signal not fitting into CSIGNAL mask */
++=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG);
++
++=09/* Do a clone3() with NSIG < exit_signal < CSIG */
++=09test_clone3(0, 0, -EINVAL, CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG);
++
++=09/*
++=09 * Do a clone3() with sizeof(struct clone_args) + 8
++=09 * and all members set to 0. This resets exit_signal and wait()
++=09 * will not get a result.
++=09 */
++=09test_clone3(0, sizeof(struct clone_args) + 8, 0, CLONE3_ARGS_ALL_0);
++
++=09/* Do a clone3() with > page size */
++=09test_clone3(0, getpagesize() + 8, -E2BIG, CLONE3_ARGS_NO_TEST);
++
++=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0 in a new PID NS. */
++=09if (uid =3D=3D 0)
++=09=09test_clone3(CLONE_NEWPID, CLONE3_ARGS_SIZE_V0, 0,
++=09=09=09=09CLONE3_ARGS_NO_TEST);
++=09else
++=09=09ksft_test_result_skip("Skipping clone3() with CLONE_NEWPID\n");
++
++=09/* Do a clone3() with CLONE3_ARGS_SIZE_V0 - 8 in a new PID NS */
++=09test_clone3(CLONE_NEWPID, CLONE3_ARGS_SIZE_V0 - 8, -EINVAL,
++=09=09=09CLONE3_ARGS_NO_TEST);
++
++=09/* Do a clone3() with sizeof(struct clone_args) + 8 in a new PID NS */
++=09if (uid =3D=3D 0)
++=09=09test_clone3(CLONE_NEWPID, sizeof(struct clone_args) + 8, 0,
++=09=09=09=09CLONE3_ARGS_NO_TEST);
++=09else
++=09=09ksft_test_result_skip("Skipping clone3() with CLONE_NEWPID\n");
++
++=09/* Do a clone3() with > page size in a new PID NS */
++=09test_clone3(CLONE_NEWPID, getpagesize() + 8, -E2BIG,
++=09=09=09CLONE3_ARGS_NO_TEST);
++
++=09return !ksft_get_fail_cnt() ? ksft_exit_pass() : ksft_exit_fail();
++}
 --=20
-2.20.1
+2.23.0
 
