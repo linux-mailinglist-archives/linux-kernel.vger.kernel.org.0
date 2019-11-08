@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FF5DF5638
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD51F5539
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732983AbfKHTHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:07:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38174 "EHLO mail.kernel.org"
+        id S2390058AbfKHTBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:01:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391452AbfKHTH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:07:27 -0500
+        id S2390021AbfKHTA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0420D2196F;
-        Fri,  8 Nov 2019 19:07:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB9A42067B;
+        Fri,  8 Nov 2019 19:00:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573240046;
-        bh=UqFlpraDJaXRjMuRU9H3HABmoY0nCuDWN0BpkO5x+OQ=;
+        s=default; t=1573239656;
+        bh=HrRc/uzkTfFPv0L8nCGXB774/xM81RQM7rhRnnprTsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=REXUrYAuY6iT/nQNZhBgMhAz2v2bEKWSmCgNycVeO2SuQ5oXkByI47aToe7MO8Er3
-         OjZ96r886wLY1zwYRhKLFU/iIcPtu/PKMP/fwDXkDRpd/CRKbGOzekoOv8dVUF8aVX
-         D6pr26N2sbS7niYYfyVdqMVOUYvKmJggKMdxrCZc=
+        b=fhtbjmjcqmLSebKEdoq3SsRsHGM3B74+0wAayhV2FskE0SbCqncFgMCRpEC7tLdm2
+         /JUNw1ROw3S+kBg808wMlDEGt7HdvBhIESGQCWA8feVF10jphN6mDktavDuUjoL+Ld
+         TecNoMK9bOehGG6Cvt9ZKAZ6TDsYrpzsHgDUb8ic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 068/140] of: unittest: fix memory leak in unittest_data_add
-Date:   Fri,  8 Nov 2019 19:49:56 +0100
-Message-Id: <20191108174909.481189005@linuxfoundation.org>
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 17/79] scsi: sni_53c710: fix compilation error
+Date:   Fri,  8 Nov 2019 19:49:57 +0100
+Message-Id: <20191108174754.313536921@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
-References: <20191108174900.189064908@linuxfoundation.org>
+In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
+References: <20191108174745.495640141@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit e13de8fe0d6a51341671bbe384826d527afe8d44 ]
+[ Upstream commit 0ee6211408a8e939428f662833c7301394125b80 ]
 
-In unittest_data_add, a copy buffer is created via kmemdup. This buffer
-is leaked if of_fdt_unflatten_tree fails. The release for the
-unittest_data buffer is added.
+Drop out memory dev_printk() with wrong device pointer argument.
 
-Fixes: b951f9dc7f25 ("Enabling OF selftest to run without machine's devicetree")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Reviewed-by: Frank Rowand <frowand.list@gmail.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+[mkp: typo]
+
+Link: https://lore.kernel.org/r/20191009151118.32350-1-tbogendoerfer@suse.de
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/of/unittest.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/sni_53c710.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index e6b175370f2eb..8b7bd48224657 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -1205,6 +1205,7 @@ static int __init unittest_data_add(void)
- 	of_fdt_unflatten_tree(unittest_data, NULL, &unittest_data_node);
- 	if (!unittest_data_node) {
- 		pr_warn("%s: No tree to attach; not running tests\n", __func__);
-+		kfree(unittest_data);
- 		return -ENODATA;
- 	}
+diff --git a/drivers/scsi/sni_53c710.c b/drivers/scsi/sni_53c710.c
+index 1f9a087daf69f..3102a75984d3b 100644
+--- a/drivers/scsi/sni_53c710.c
++++ b/drivers/scsi/sni_53c710.c
+@@ -78,10 +78,8 @@ static int snirm710_probe(struct platform_device *dev)
  
+ 	base = res->start;
+ 	hostdata = kzalloc(sizeof(*hostdata), GFP_KERNEL);
+-	if (!hostdata) {
+-		dev_printk(KERN_ERR, dev, "Failed to allocate host data\n");
++	if (!hostdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	hostdata->dev = &dev->dev;
+ 	dma_set_mask(&dev->dev, DMA_BIT_MASK(32));
 -- 
 2.20.1
 
