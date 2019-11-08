@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB4DF4637
+	by mail.lfdr.de (Postfix) with ESMTP id 8222AF4638
 	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388987AbfKHLkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:40:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53634 "EHLO mail.kernel.org"
+        id S2389055AbfKHLkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:40:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388839AbfKHLkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:40:41 -0500
+        id S2388997AbfKHLks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:40:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39B5A22475;
-        Fri,  8 Nov 2019 11:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05E9421D7B;
+        Fri,  8 Nov 2019 11:40:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213241;
-        bh=UQqrX8WIV1t+B6MoS4A/O7Fq9b82XTjs3GjfvV153io=;
+        s=default; t=1573213248;
+        bh=nbOFxwzTXJEvjhEzo/ISqTtdrt+QvFHEEBN114iqTos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zmH7a2AaVu7XEAr+gZeMirtrLecsYYGGRBJctRsNm0QgvLsOVd4QGu4Nzaxf/QFN2
-         r37NoAhQ0uoNxDjui60hEiB4W7ey/Nf4B7Q1TNoA7ngOfJC/WMQSwmzNgWkBVn1OqP
-         5uSQWg4RE01eT9SS13FX4VXbqLBWoQQnty92yQug=
+        b=xVgIZPvlbyhPSA418e34SCfDifdTWQy+b8xW7yfZJ2KHtVcsgxeXYN7y8DhwhWFSL
+         VLJ+O2BYkPP0B6wOZArOMk/AGyq1jUFw89InTOVr6MoEifxSV3tjSbB0p4yUdhG2J8
+         S1jJb04p1N03BR3Q0aULj1weMuKYha9rO8dbE5Jw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 110/205] ARM: dts: omap3-gta04: make NAND partitions compatible with recent U-Boot
-Date:   Fri,  8 Nov 2019 06:36:17 -0500
-Message-Id: <20191108113752.12502-110-sashal@kernel.org>
+Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, kernel@pengutronix.de,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 115/205] sched/debug: Use symbolic names for task state constants
+Date:   Fri,  8 Nov 2019 06:36:22 -0500
+Message-Id: <20191108113752.12502-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,59 +48,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-[ Upstream commit fa99c21ecb3cd4021a60d0e8bf880e78b5bd0729 ]
+[ Upstream commit ff28915fd31ccafc0d38e6f84b66df280ed9e86a ]
 
-Vendor defined U-Boot has changed the partition scheme a while ago:
+include/trace/events/sched.h includes <linux/sched.h> (via
+<linux/sched/numa_balancing.h>) and so knows about the TASK_* constants
+used to interpret .prev_state. So instead of duplicating the magic
+numbers make use of the defined macros to ease understanding the
+mapping from state bits to letters which isn't completely intuitive for
+an outsider.
 
-* kernel partition 6MB
-* file system partition uses the remainder up to end of the NAND
-* increased size of the environment partition (to get an OneNAND compatible base address)
-* shrink the U-Boot partition
-
-Let's be compatible (e.g. Debian kernel built from upstream).
-
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel@pengutronix.de
+Link: http://lkml.kernel.org/r/20180905093636.24068-1-u.kleine-koenig@pengutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/trace/events/sched.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index de873e395c05d..bb435684500fc 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -619,22 +619,22 @@
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 5e1a7578c9edd..9a4bdfadab077 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -169,9 +169,14 @@ TRACE_EVENT(sched_switch,
  
- 		bootloaders@80000 {
- 			label = "U-Boot";
--			reg = <0x80000 0x1e0000>;
-+			reg = <0x80000 0x1c0000>;
- 		};
+ 		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+ 		  __print_flags(__entry->prev_state & (TASK_REPORT_MAX - 1), "|",
+-				{ 0x01, "S" }, { 0x02, "D" }, { 0x04, "T" },
+-				{ 0x08, "t" }, { 0x10, "X" }, { 0x20, "Z" },
+-				{ 0x40, "P" }, { 0x80, "I" }) :
++				{ TASK_INTERRUPTIBLE, "S" },
++				{ TASK_UNINTERRUPTIBLE, "D" },
++				{ __TASK_STOPPED, "T" },
++				{ __TASK_TRACED, "t" },
++				{ EXIT_DEAD, "X" },
++				{ EXIT_ZOMBIE, "Z" },
++				{ TASK_PARKED, "P" },
++				{ TASK_DEAD, "I" }) :
+ 		  "R",
  
--		bootloaders_env@260000 {
-+		bootloaders_env@240000 {
- 			label = "U-Boot Env";
--			reg = <0x260000 0x20000>;
-+			reg = <0x240000 0x40000>;
- 		};
- 
- 		kernel@280000 {
- 			label = "Kernel";
--			reg = <0x280000 0x400000>;
-+			reg = <0x280000 0x600000>;
- 		};
- 
--		filesystem@680000 {
-+		filesystem@880000 {
- 			label = "File System";
--			reg = <0x680000 0xf980000>;
-+			reg = <0x880000 0>;	/* 0 = MTDPART_SIZ_FULL */
- 		};
- 	};
- };
+ 		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
 -- 
 2.20.1
 
