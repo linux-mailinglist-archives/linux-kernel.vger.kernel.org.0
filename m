@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C7DF555F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3826EF562C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390404AbfKHTCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:02:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59484 "EHLO mail.kernel.org"
+        id S2391410AbfKHTHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:07:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390384AbfKHTB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:58 -0500
+        id S1731795AbfKHTHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:07:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 024602087E;
-        Fri,  8 Nov 2019 19:01:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DD6521D7B;
+        Fri,  8 Nov 2019 19:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239717;
-        bh=k/o8s5hjllQkz92e/He/Ehay8Se6ofgwmK05UD4sSKY=;
+        s=default; t=1573240025;
+        bh=2kUUZAC+wtzg7AMNOy1KGj2017jVYF+ynzXc66sbHiY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XcHaiQ82DzLFJMme8UcfKgKENqm+/uTaHu9323QIUavICiDfPxxUZet37aqzOArAT
-         APFVWzuraeFARhCkqBEUHht0b5aBTa+cwowJqpkYphYftSMRNa0l3cLzA6aEU+oF9f
-         uKrdL5EaLauUwNnUeCSTxcafdCgY2WVOGO5oB+vI=
+        b=b1n0Copp5qLqBXq71/FyCg9CT1rW52v6S/4qBkfAT4ke4NOwXYq79h9dKJneTv70a
+         k7ekhl1+CD/q8jhhIbD2AOOV8vAeFruu2dF9Z1wiNR2Zp60p6SEAbLV/Zxfsc2nKPl
+         h1pzFi4PnBY/m3JIxbUbaXng1nFJOn5xj23NYM5w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yizhuo <yzhai003@ucr.edu>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Joel Stanley <joel@jms.id.au>, Tao Ren <taoren@fb.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 09/79] regulator: pfuze100-regulator: Variable "val" in pfuze100_regulator_probe() could be uninitialized
-Date:   Fri,  8 Nov 2019 19:49:49 +0100
-Message-Id: <20191108174749.701964705@linuxfoundation.org>
+Subject: [PATCH 5.3 062/140] i2c: aspeed: fix master pending state handling
+Date:   Fri,  8 Nov 2019 19:49:50 +0100
+Message-Id: <20191108174909.150827860@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +47,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yizhuo <yzhai003@ucr.edu>
+From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 
-[ Upstream commit 1252b283141f03c3dffd139292c862cae10e174d ]
+[ Upstream commit 1f0d9cbeec9bb0a1c2013342836f2c9754d6502b ]
 
-In function pfuze100_regulator_probe(), variable "val" could be
-initialized if regmap_read() fails. However, "val" is used to
-decide the control flow later in the if statement, which is
-potentially unsafe.
+In case of master pending state, it should not trigger a master
+command, otherwise data could be corrupted because this H/W shares
+the same data buffer for slave and master operations. It also means
+that H/W command queue handling is unreliable because of the buffer
+sharing issue. To fix this issue, it clears command queue if a
+master command is queued in pending state to use S/W solution
+instead of H/W command queue handling. Also, it refines restarting
+mechanism of the pending master command.
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
-Link: https://lore.kernel.org/r/20190929170957.14775-1-yzhai003@ucr.edu
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 2e57b7cebb98 ("i2c: aspeed: Add multi-master use case support")
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Acked-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Tao Ren <taoren@fb.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/pfuze100-regulator.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-aspeed.c | 54 +++++++++++++++++++++------------
+ 1 file changed, 34 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 31c3a236120a8..69a377ab26041 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -710,7 +710,13 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index fa66951b05d06..7b098ff5f5dd3 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -108,6 +108,12 @@
+ #define ASPEED_I2CD_S_TX_CMD				BIT(2)
+ #define ASPEED_I2CD_M_TX_CMD				BIT(1)
+ #define ASPEED_I2CD_M_START_CMD				BIT(0)
++#define ASPEED_I2CD_MASTER_CMDS_MASK					       \
++		(ASPEED_I2CD_M_STOP_CMD |				       \
++		 ASPEED_I2CD_M_S_RX_CMD_LAST |				       \
++		 ASPEED_I2CD_M_RX_CMD |					       \
++		 ASPEED_I2CD_M_TX_CMD |					       \
++		 ASPEED_I2CD_M_START_CMD)
  
- 		/* SW2~SW4 high bit check and modify the voltage value table */
- 		if (i >= sw_check_start && i <= sw_check_end) {
--			regmap_read(pfuze_chip->regmap, desc->vsel_reg, &val);
-+			ret = regmap_read(pfuze_chip->regmap,
-+						desc->vsel_reg, &val);
-+			if (ret) {
-+				dev_err(&client->dev, "Fails to read from the register.\n");
-+				return ret;
-+			}
+ /* 0x18 : I2CD Slave Device Address Register   */
+ #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
+@@ -336,18 +342,19 @@ static void aspeed_i2c_do_start(struct aspeed_i2c_bus *bus)
+ 	struct i2c_msg *msg = &bus->msgs[bus->msgs_index];
+ 	u8 slave_addr = i2c_8bit_addr_from_msg(msg);
+ 
+-	bus->master_state = ASPEED_I2C_MASTER_START;
+-
+ #if IS_ENABLED(CONFIG_I2C_SLAVE)
+ 	/*
+ 	 * If it's requested in the middle of a slave session, set the master
+ 	 * state to 'pending' then H/W will continue handling this master
+ 	 * command when the bus comes back to the idle state.
+ 	 */
+-	if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE)
++	if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE) {
+ 		bus->master_state = ASPEED_I2C_MASTER_PENDING;
++		return;
++	}
+ #endif /* CONFIG_I2C_SLAVE */
+ 
++	bus->master_state = ASPEED_I2C_MASTER_START;
+ 	bus->buf_index = 0;
+ 
+ 	if (msg->flags & I2C_M_RD) {
+@@ -422,20 +429,6 @@ static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 		}
+ 	}
+ 
+-#if IS_ENABLED(CONFIG_I2C_SLAVE)
+-	/*
+-	 * A pending master command will be started by H/W when the bus comes
+-	 * back to idle state after completing a slave operation so change the
+-	 * master state from 'pending' to 'start' at here if slave is inactive.
+-	 */
+-	if (bus->master_state == ASPEED_I2C_MASTER_PENDING) {
+-		if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE)
+-			goto out_no_complete;
+-
+-		bus->master_state = ASPEED_I2C_MASTER_START;
+-	}
+-#endif /* CONFIG_I2C_SLAVE */
+-
+ 	/* Master is not currently active, irq was for someone else. */
+ 	if (bus->master_state == ASPEED_I2C_MASTER_INACTIVE ||
+ 	    bus->master_state == ASPEED_I2C_MASTER_PENDING)
+@@ -462,11 +455,15 @@ static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ #if IS_ENABLED(CONFIG_I2C_SLAVE)
+ 		/*
+ 		 * If a peer master starts a xfer immediately after it queues a
+-		 * master command, change its state to 'pending' then H/W will
+-		 * continue the queued master xfer just after completing the
+-		 * slave mode session.
++		 * master command, clear the queued master command and change
++		 * its state to 'pending'. To simplify handling of pending
++		 * cases, it uses S/W solution instead of H/W command queue
++		 * handling.
+ 		 */
+ 		if (unlikely(irq_status & ASPEED_I2CD_INTR_SLAVE_MATCH)) {
++			writel(readl(bus->base + ASPEED_I2C_CMD_REG) &
++				~ASPEED_I2CD_MASTER_CMDS_MASK,
++			       bus->base + ASPEED_I2C_CMD_REG);
+ 			bus->master_state = ASPEED_I2C_MASTER_PENDING;
+ 			dev_dbg(bus->dev,
+ 				"master goes pending due to a slave start\n");
+@@ -629,6 +626,14 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+ 			irq_handled |= aspeed_i2c_master_irq(bus,
+ 							     irq_remaining);
+ 	}
 +
- 			if (val & sw_hi) {
- 				if (pfuze_chip->chip_id == PFUZE3000 ||
- 					pfuze_chip->chip_id == PFUZE3001) {
++	/*
++	 * Start a pending master command at here if a slave operation is
++	 * completed.
++	 */
++	if (bus->master_state == ASPEED_I2C_MASTER_PENDING &&
++	    bus->slave_state == ASPEED_I2C_SLAVE_INACTIVE)
++		aspeed_i2c_do_start(bus);
+ #else
+ 	irq_handled = aspeed_i2c_master_irq(bus, irq_remaining);
+ #endif /* CONFIG_I2C_SLAVE */
+@@ -691,6 +696,15 @@ static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
+ 		     ASPEED_I2CD_BUS_BUSY_STS))
+ 			aspeed_i2c_recover_bus(bus);
+ 
++		/*
++		 * If timed out and the state is still pending, drop the pending
++		 * master command.
++		 */
++		spin_lock_irqsave(&bus->lock, flags);
++		if (bus->master_state == ASPEED_I2C_MASTER_PENDING)
++			bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
++		spin_unlock_irqrestore(&bus->lock, flags);
++
+ 		return -ETIMEDOUT;
+ 	}
+ 
 -- 
 2.20.1
 
