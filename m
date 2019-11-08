@@ -2,147 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D130EF41F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 09:16:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0FC6F41F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 09:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbfKHIQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 03:16:23 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50282 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbfKHIQX (ORCPT
+        id S1730530AbfKHIQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 03:16:01 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38448 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbfKHIQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 03:16:23 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9F2D7608FF; Fri,  8 Nov 2019 08:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573200982;
-        bh=YE4mTfL1gCRFuKHoeeEuCd7jY1kBHK31oyr+tOEAPfQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TjNxE5sliFapWQiDw2tjpWK4diVD81tidrvLsZN04xBkXbyqQg245osh8j0WvyRFT
-         obmkRzHZInO9aV54eEBuYua2WAhqMW5Hf0mYUygcwTrpPGxOZEt+Q3rfiAyMt7M4A0
-         1USSxCCVUCgjsZTNvXWj/AX9L2qK2GsFKd5vH4mU=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BDCDB60117;
-        Fri,  8 Nov 2019 08:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573200977;
-        bh=YE4mTfL1gCRFuKHoeeEuCd7jY1kBHK31oyr+tOEAPfQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mdJLYfvDzmqZJsbab5fIcgnplrHe06TgdDAckcjLofpkaj0rT7BUCOY9qoMMI5qhT
-         VJpA5qEPyNv+CQ8G3/WjJYY10pzaNwQ46p4HVRX6xAVWByjc/QIqInTNq0Hf+xtu6T
-         AA0hq2LO40+9TKfW4xeI7YCia+cE4gFEVGOd0KiA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDCDB60117
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 5/5] scsi: ufs: Complete pending requests in host reset and restore path
-Date:   Fri,  8 Nov 2019 00:15:31 -0800
-Message-Id: <1573200932-384-6-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1573200932-384-1-git-send-email-cang@codeaurora.org>
-References: <1573200932-384-1-git-send-email-cang@codeaurora.org>
+        Fri, 8 Nov 2019 03:16:01 -0500
+Received: by mail-lf1-f66.google.com with SMTP id q28so3755025lfa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 00:15:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=7k/5GJxPcjAfS2IRT6Q2if910Z82awVpE2h4G5vntbk=;
+        b=b8+kML5NXkWezdP//cLP5dWSWoD5nHYoxlLAwIndW+2vrRmVPFus8gDgxCEsvWGBIb
+         3XtR8Vh35ZQ61e4HeSEhu8U10O9O8Jpb0Xj0uAXKdHq6p/Nmu6sHNomM1aX4k2+x83y2
+         Nw+v9PNb6hd1I67XzWiyQdQ5mEwcipana1wx293LG11b4cVwl48UKsk6PM4RlYTH+OGq
+         Dgju/863TWDEn38KYVGgM8ZVllBnEnqkUNzmQ9qpugVGuXcz41cBQ896eJNZ4lgckoGY
+         0y+AmiOil9KWvXRe7UthxmMKozfT+WpAYyMaI2+rU1Z4fZBY/cQSxzZULKStgB8daAyG
+         mqAQ==
+X-Gm-Message-State: APjAAAWWA7BeSs67vd/H9wOofDgnmqpRU+CPv1o5q1iRd0/FL4uXGUP0
+        ozJMed7hI6tSZDDbYz92P7WVyU607PA=
+X-Google-Smtp-Source: APXvYqzqKPpdprXbx1ZrVMhXyZAYmPFfcEan4B3qXAiZ2zTTC+XLDPvdq7YGVdM9Dm3ys2NCiCx+TA==
+X-Received: by 2002:ac2:46e3:: with SMTP id q3mr5773132lfo.9.1573200959106;
+        Fri, 08 Nov 2019 00:15:59 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id r22sm2097145ljk.31.2019.11.08.00.15.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2019 00:15:58 -0800 (PST)
+Date:   Fri, 8 Nov 2019 10:15:51 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] mfd: bd70528: Staticize bit value definitions
+Message-ID: <20191108081551.GA19788@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In UFS host reset and restore path, before probe, we stop and start the
-host controller once. After host controller is stopped, the pending
-requests, if any, are cleared from the doorbell, but no completion IRQ
-would be raised due to the hba is stopped.
-These pending requests shall be completed along with the first NOP_OUT
-command(as it is the first command which can raise a transfer completion
-IRQ) sent during probe.
-Since the OCSs of these pending requests are not SUCCESS(because they are
-not yet literally finished), their UPIUs shall be dumped. When there are
-multiple pending requests, the UPIU dump can be overwhelming and may lead
-to stability issues because it is in atomic context.
-Therefore, before probe, complete these pending requests right after host
-controller is stopped.
+Make bit definitions static to reduce the scope.
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/scsi/ufs/ufshcd.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ drivers/mfd/rohm-bd70528.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 5950a7c..4df4136 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -5404,8 +5404,8 @@ static void ufshcd_err_handler(struct work_struct *work)
+diff --git a/drivers/mfd/rohm-bd70528.c b/drivers/mfd/rohm-bd70528.c
+index 55599d5c5c86..ef6786fd3b00 100644
+--- a/drivers/mfd/rohm-bd70528.c
++++ b/drivers/mfd/rohm-bd70528.c
+@@ -105,15 +105,14 @@ static struct regmap_config bd70528_regmap = {
+  * register.
+  */
  
- 	/*
- 	 * if host reset is required then skip clearing the pending
--	 * transfers forcefully because they will automatically get
--	 * cleared after link startup.
-+	 * transfers forcefully because they will get cleared during
-+	 * host reset and restore
- 	 */
- 	if (needs_reset)
- 		goto skip_pending_xfer_clear;
-@@ -6333,9 +6333,13 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
- 	int err;
- 	unsigned long flags;
+-/* bit [0] - Shutdown register */
+-unsigned int bit0_offsets[] = {0};	/* Shutdown register */
+-unsigned int bit1_offsets[] = {1};	/* Power failure register */
+-unsigned int bit2_offsets[] = {2};	/* VR FAULT register */
+-unsigned int bit3_offsets[] = {3};	/* PMU register interrupts */
+-unsigned int bit4_offsets[] = {4, 5};	/* Charger 1 and Charger 2 registers */
+-unsigned int bit5_offsets[] = {6};	/* RTC register */
+-unsigned int bit6_offsets[] = {7};	/* GPIO register */
+-unsigned int bit7_offsets[] = {8};	/* Invalid operation register */
++static unsigned int bit0_offsets[] = {0};	/* Shutdown */
++static unsigned int bit1_offsets[] = {1};	/* Power failure */
++static unsigned int bit2_offsets[] = {2};	/* VR FAULT */
++static unsigned int bit3_offsets[] = {3};	/* PMU interrupts */
++static unsigned int bit4_offsets[] = {4, 5};	/* Charger 1 and Charger 2 */
++static unsigned int bit5_offsets[] = {6};	/* RTC */
++static unsigned int bit6_offsets[] = {7};	/* GPIO */
++static unsigned int bit7_offsets[] = {8};	/* Invalid operation */
  
--	/* Reset the host controller */
-+	/*
-+	 * Stop the host controller and complete the requests
-+	 * cleared by h/w
-+	 */
- 	spin_lock_irqsave(hba->host->host_lock, flags);
- 	ufshcd_hba_stop(hba, false);
-+	ufshcd_complete_requests(hba);
- 	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	/* scale up clocks to max frequency before full reinitialization */
-@@ -6369,7 +6373,6 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
- static int ufshcd_reset_and_restore(struct ufs_hba *hba)
- {
- 	int err = 0;
--	unsigned long flags;
- 	int retries = MAX_HOST_RESET_RETRIES;
- 
- 	do {
-@@ -6379,15 +6382,6 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
- 		err = ufshcd_host_reset_and_restore(hba);
- 	} while (err && --retries);
- 
--	/*
--	 * After reset the door-bell might be cleared, complete
--	 * outstanding requests in s/w here.
--	 */
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	ufshcd_transfer_req_compl(hba);
--	ufshcd_tmc_handler(hba);
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
--
- 	return err;
- }
- 
+ static struct regmap_irq_sub_irq_map bd70528_sub_irq_offsets[] = {
+ 	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
+
+base-commit: d6d5df1db6e9d7f8f76d2911707f7d5877251b02
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.21.0
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
