@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F67F5229
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D8EF5225
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfKHREa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 12:04:30 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:44810 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbfKHREL (ORCPT
+        id S1729688AbfKHREQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 12:04:16 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:34902 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbfKHREN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:04:11 -0500
-Received: by mail-io1-f72.google.com with SMTP id q13so5798201iot.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:04:11 -0800 (PST)
+        Fri, 8 Nov 2019 12:04:13 -0500
+Received: by mail-il1-f199.google.com with SMTP id w69so7552042ilk.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:04:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fTH3wke3SUWD+KbdNuoh7OfY2dQXat+nLBYGUBMdbaU=;
-        b=HJRakgdl+Q6zXzSZgEtqRYLi9QAHSqzOzIkY8QEbsFAKjdnbiHGzlSKgfASxXAUzi+
-         NxfrHBUN91odlpY/MtmWFQybFXqCbOQubifp1/SrHwdAXItbo1S7XOePErOle1IUTfSj
-         m1wv9j7onA+BQiH04ZRdbfqwsmGnZxpFVuEbwpjXnKRTepZYw7VKSMpMYEyZOwCDJWFu
-         SAsKluKA0XUjntFChfON8XIncgPYoHyDnUlyJ+ECEVmlqBsLiPQG/4BuON7llLZUzLLv
-         +VfomasmcRDxW80Xh8hSFRa0gse7qd6ynCE7Qe5TZ52aPykM+V2HCCCsBz/HK8rslsxM
-         DMPQ==
-X-Gm-Message-State: APjAAAVxvflPfrT4f2/GNqgty4oz6GQJOmk5LkPbPUidlAY0Y1C570+r
-        hSYQ9dbUKZO0TqdOnweurBJ01H0cyYOUB5A5jvy8NssKuy+U
-X-Google-Smtp-Source: APXvYqyO/1fM9FwvUsNBAdyyysHvJoiIBXREkWYTIkJi0hcr+2f1QziBzmK5bPqiaK3viqb9n95xokid5VJiBWcBysIkvN2qTsBg
+        bh=Qf6/971redFg5+hNvL72Agdhn9HP6mUxpqJ1caev7c4=;
+        b=Zli6K4OryqPrKMJZEcJGjJvtZ0DA9RjtwbHx+64ZY3D/ZokeykvmchmSNmrlTAeDaZ
+         2hMDJ3819RmOOQpoB0Iuuz/gZJ1JTj71oQyWCNpOHIuZExvt17m3PsIGRHlt9M+F6kir
+         y28YeajBk4ABdAJ6zm820D/mX7pWEL8QOlClBKwfgwxx19pIcztuFudYtk9XhCmB+B9Y
+         x1g3YllpaGqO1KC+A48kPJYe+frNMViMhmOQWbEbqVinuVZZNg8DP0xvqNcRkV1wm4pO
+         m/ZpAuRtsjrGhc9BThjBnLnLRfd/CyGNCFgsyBdea1/spOm4m2mLwif1PZrcMgkQD9Jt
+         Vx2g==
+X-Gm-Message-State: APjAAAU98qd1tk6tue9InDjipfTeewNgD6GjtuH0hRQ3FjlJ1dMHinEx
+        fOCRZAuEBWYokNY7Reck7jFeqPbr7m5fBlddMxcofhttt2Jj
+X-Google-Smtp-Source: APXvYqyQmUieY6KPbHUN5J96vU2WE/TqY+EHvMAdv6Rn77xwW31IsVLTeBCAUL6lDnbae9trKVf56uhf2kJ3gOe5Gj5kN6pHTyGF
 MIME-Version: 1.0
-X-Received: by 2002:a92:d64d:: with SMTP id x13mr13363985ilp.54.1573232650955;
- Fri, 08 Nov 2019 09:04:10 -0800 (PST)
-Date:   Fri, 08 Nov 2019 09:04:10 -0800
+X-Received: by 2002:a6b:6512:: with SMTP id z18mr10894907iob.282.1573232651747;
+ Fri, 08 Nov 2019 09:04:11 -0800 (PST)
+Date:   Fri, 08 Nov 2019 09:04:11 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004f3d820596d8c51c@google.com>
-Subject: KMSAN: uninit-value in digitv_rc_query
-From:   syzbot <syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com>
-To:     glider@google.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000005b4a6c0596d8c5a8@google.com>
+Subject: KMSAN: use-after-free in rxrpc_send_keepalive
+From:   syzbot <syzbot+2e7168a4d3c4ec071fdc@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dhowells@redhat.com, glider@google.com,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,72 +49,84 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    1e76a3e5 kmsan: replace __GFP_NO_KMSAN_SHADOW with kmsan_i..
+HEAD commit:    c38191cb kmsan: fixed unaligned origin handling in kmsan_m..
 git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=16860a63600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f03c659d0830ab8d
-dashboard link: https://syzkaller.appspot.com/bug?extid=6bf9606ee955b646c0e1
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c518e3600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=49548798e87d32d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e7168a4d3c4ec071fdc
 compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c1101b600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15db3cfd600000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c4fec7600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
+Reported-by: syzbot+2e7168a4d3c4ec071fdc@syzkaller.appspotmail.com
 
-dvb-usb: schedule remote query interval to 1000 msecs.
-dvb-usb: Nebula Electronics uDigiTV DVB-T USB2.0) successfully initialized  
-and connected.
-dvb-usb: bulk message failed: -22 (7/0)
-dvb-usb: bulk message failed: -22 (7/0)
-dvb-usb: bulk message failed: -22 (7/-30591)
-dvb-usb: bulk message failed: -22 (7/0)
 =====================================================
-BUG: KMSAN: uninit-value in legacy_dvb_usb_read_remote_control+0x106/0x790  
-drivers/media/usb/dvb-usb/dvb-usb-remote.c:123
-CPU: 1 PID: 3844 Comm: kworker/1:2 Not tainted 5.3.0-rc7+ #0
+BUG: KMSAN: use-after-free in rxrpc_peer_keepalive_dispatch  
+net/rxrpc/peer_event.c:369 [inline]
+BUG: KMSAN: use-after-free in rxrpc_peer_keepalive_worker+0xb82/0x1510  
+net/rxrpc/peer_event.c:430
+CPU: 1 PID: 3995 Comm: kworker/1:2 Not tainted 5.4.0-rc2+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: events legacy_dvb_usb_read_remote_control
+Workqueue: krxrpcd rxrpc_peer_keepalive_worker
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  kmsan_report+0x13a/0x2b0 mm/kmsan/kmsan_report.c:108
+  kmsan_report+0x153/0x2c0 mm/kmsan/kmsan_report.c:113
   __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
-  digitv_rc_query+0x76a/0x890 drivers/media/usb/dvb-usb/digitv.c:259
-  legacy_dvb_usb_read_remote_control+0x106/0x790  
-drivers/media/usb/dvb-usb/dvb-usb-remote.c:123
+  rxrpc_send_keepalive+0x53c/0x830 net/rxrpc/output.c:634
+  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:369 [inline]
+  rxrpc_peer_keepalive_worker+0xb82/0x1510 net/rxrpc/peer_event.c:430
   process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
   worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
   kthread+0x4b5/0x4f0 kernel/kthread.c:256
   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
 
-Local variable description: ----key@digitv_rc_query
-Variable was created at:
-  digitv_rc_query+0x78/0x890 drivers/media/usb/dvb-usb/digitv.c:234
-  legacy_dvb_usb_read_remote_control+0x106/0x790  
-drivers/media/usb/dvb-usb/dvb-usb-remote.c:123
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:154 [inline]
+  kmsan_internal_poison_shadow+0x60/0x120 mm/kmsan/kmsan.c:137
+  kmsan_slab_free+0x8d/0x100 mm/kmsan/kmsan_hooks.c:123
+  slab_free_freelist_hook mm/slub.c:1473 [inline]
+  slab_free mm/slub.c:3040 [inline]
+  kfree+0x4c1/0x2db0 mm/slub.c:3982
+  rxrpc_local_rcu+0x7a/0xe0 net/rxrpc/local_object.c:499
+  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2157 [inline]
+  rcu_core+0xc99/0x1b10 kernel/rcu/tree.c:2377
+  rcu_core_si+0xe/0x10 kernel/rcu/tree.c:2386
+  __do_softirq+0x4a1/0x83a kernel/softirq.c:293
+  invoke_softirq kernel/softirq.c:375 [inline]
+  irq_exit+0x230/0x280 kernel/softirq.c:416
+  exiting_irq+0xe/0x10 arch/x86/include/asm/apic.h:536
+  smp_apic_timer_interrupt+0x48/0x70 arch/x86/kernel/apic/apic.c:1139
+  apic_timer_interrupt+0x2e/0x40 arch/x86/entry/entry_64.S:837
+  native_restore_fl arch/x86/include/asm/irqflags.h:41 [inline]
+  arch_local_irq_restore arch/x86/include/asm/irqflags.h:84 [inline]
+  kmsan_slab_free+0xac/0x100 mm/kmsan/kmsan_hooks.c:127
+  slab_free_freelist_hook mm/slub.c:1473 [inline]
+  slab_free mm/slub.c:3040 [inline]
+  kmem_cache_free+0x2d1/0x2b70 mm/slub.c:3056
+  anon_vma_chain_free mm/rmap.c:134 [inline]
+  unlink_anon_vmas+0x3c1/0xb70 mm/rmap.c:401
+  free_pgtables+0x2e2/0x6a0 mm/memory.c:396
+  exit_mmap+0x53f/0xa00 mm/mmap.c:3162
+  __mmput+0x148/0x590 kernel/fork.c:1081
+  mmput+0x83/0x90 kernel/fork.c:1102
+  exec_mmap fs/exec.c:1048 [inline]
+  flush_old_exec+0xfaf/0x2180 fs/exec.c:1281
+  load_elf_binary+0x1121/0x5f10 fs/binfmt_elf.c:847
+  search_binary_handler+0x2f4/0xac0 fs/exec.c:1659
+  exec_binprm fs/exec.c:1702 [inline]
+  __do_execve_file+0x2218/0x2e90 fs/exec.c:1822
+  do_execveat_common fs/exec.c:1868 [inline]
+  do_execve fs/exec.c:1885 [inline]
+  __do_sys_execve fs/exec.c:1961 [inline]
+  __se_sys_execve+0xec/0x110 fs/exec.c:1956
+  __x64_sys_execve+0x4a/0x70 fs/exec.c:1956
+  do_syscall_64+0xb6/0x160 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
 =====================================================
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 3844 Comm: kworker/1:2 Tainted: G    B             5.3.0-rc7+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events legacy_dvb_usb_read_remote_control
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  panic+0x3c9/0xc1e kernel/panic.c:219
-  kmsan_report+0x2a2/0x2b0 mm/kmsan/kmsan_report.c:131
-  __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
-  digitv_rc_query+0x76a/0x890 drivers/media/usb/dvb-usb/digitv.c:259
-  legacy_dvb_usb_read_remote_control+0x106/0x790  
-drivers/media/usb/dvb-usb/dvb-usb-remote.c:123
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
 
 
 ---
