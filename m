@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BC4F46A2
+	by mail.lfdr.de (Postfix) with ESMTP id C65EDF46A3
 	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:44:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732545AbfKHLnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:43:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58238 "EHLO mail.kernel.org"
+        id S2390614AbfKHLn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:43:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388718AbfKHLnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:43:41 -0500
+        id S2390548AbfKHLnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:43:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C759222C2;
-        Fri,  8 Nov 2019 11:43:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE3312245A;
+        Fri,  8 Nov 2019 11:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213420;
-        bh=qvaJckDGdLrK/qEiSj60eF89SiNSLo3wCVU4ci/H+BM=;
+        s=default; t=1573213424;
+        bh=Cdus/gAvNXvi3IDL1oBXL6KZRkw3aCvgjmB2QuoDHTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=so8UyrBBYmSQdY1yiCWORXqMHAN5lyRTOwMboW5eft/8m1bipWAUhQvhFA2FSMKg3
-         SMvQkHFLMBvLZeFwj5YtlKtczRLTUMyIuwSHttPXFWEk4n31/A9++eCJkg+PdGJUph
-         qpkDeMUKm/TeKHY0GIXCDX6DPDPb0ibkmGfiRrVg=
+        b=bgZtcsAX1rDO+7N7yQ8EeQAw41H+NYCaReo/17vrUTlfHip5faZ7Q4qg3G8V8sCEf
+         noczX3+XvOwO8U+0ZietqswJKJopFI0VCsqb5hZfqEW83o5s+4MNq++/y6GH9qyF+8
+         0ikwzB0hPLxnpkzhSSy2geueVZ+SRNRX5sUGKTqA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rick Farrington <ricardo.farrington@cavium.com>,
-        Felix Manlunas <felix.manlunas@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     =?UTF-8?q?Patryk=20Ma=C5=82ek?= <patryk.malek@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 022/103] liquidio: fix race condition in instruction completion processing
-Date:   Fri,  8 Nov 2019 06:41:47 -0500
-Message-Id: <20191108114310.14363-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 026/103] i40e: Prevent deleting MAC address from VF when set by PF
+Date:   Fri,  8 Nov 2019 06:41:51 -0500
+Message-Id: <20191108114310.14363-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
 References: <20191108114310.14363-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,75 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rick Farrington <ricardo.farrington@cavium.com>
+From: Patryk Małek <patryk.malek@intel.com>
 
-[ Upstream commit b943f17e06493fd2c7fd00743093ad5dcdb90e7f ]
+[ Upstream commit 5907cf6c5bbe78be2ed18b875b316c6028b20634 ]
 
-In lio_enable_irq, the pkt_in_done count register was being cleared to
-zero.  However, there could be some completed instructions which were not
-yet processed due to budget and limit constraints.
-So, only write this register with the number of actual completions
-that were processed.
+To prevent VF from deleting MAC address that was assigned by the
+PF we need to check for that scenario when we try to delete a MAC
+address from a VF.
 
-Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
-Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Patryk Małek <patryk.malek@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cavium/liquidio/octeon_device.c   | 5 +++--
- drivers/net/ethernet/cavium/liquidio/octeon_iq.h       | 2 ++
- drivers/net/ethernet/cavium/liquidio/request_manager.c | 2 ++
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_device.c b/drivers/net/ethernet/cavium/liquidio/octeon_device.c
-index 29d53b1763a72..2a9c925376cc1 100644
---- a/drivers/net/ethernet/cavium/liquidio/octeon_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/octeon_device.c
-@@ -1444,8 +1444,9 @@ void lio_enable_irq(struct octeon_droq *droq, struct octeon_instr_queue *iq)
- 	}
- 	if (iq) {
- 		spin_lock_bh(&iq->lock);
--		writel(iq->pkt_in_done, iq->inst_cnt_reg);
--		iq->pkt_in_done = 0;
-+		writel(iq->pkts_processed, iq->inst_cnt_reg);
-+		iq->pkt_in_done -= iq->pkts_processed;
-+		iq->pkts_processed = 0;
- 		/* this write needs to be flushed before we release the lock */
- 		mmiowb();
- 		spin_unlock_bh(&iq->lock);
-diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_iq.h b/drivers/net/ethernet/cavium/liquidio/octeon_iq.h
-index 5c3c8da976f73..1860603452ee7 100644
---- a/drivers/net/ethernet/cavium/liquidio/octeon_iq.h
-+++ b/drivers/net/ethernet/cavium/liquidio/octeon_iq.h
-@@ -84,6 +84,8 @@ struct octeon_instr_queue {
- 
- 	u32 pkt_in_done;
- 
-+	u32 pkts_processed;
-+
- 	/** A spinlock to protect access to the input ring.*/
- 	spinlock_t iq_flush_running_lock;
- 
-diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
-index 55e8731264634..0ea623768783e 100644
---- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
-+++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
-@@ -122,6 +122,7 @@ int octeon_init_instr_queue(struct octeon_device *oct,
- 	iq->do_auto_flush = 1;
- 	iq->db_timeout = (u32)conf->db_timeout;
- 	atomic_set(&iq->instr_pending, 0);
-+	iq->pkts_processed = 0;
- 
- 	/* Initialize the spinlock for this instruction queue */
- 	spin_lock_init(&iq->lock);
-@@ -474,6 +475,7 @@ octeon_flush_iq(struct octeon_device *oct, struct octeon_instr_queue *iq,
- 				lio_process_iq_request_list(oct, iq, 0);
- 
- 		if (inst_processed) {
-+			iq->pkts_processed += inst_processed;
- 			atomic_sub(inst_processed, &iq->instr_pending);
- 			iq->stats.instr_processed += inst_processed;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index bdb7523216000..b3307b1b3aac1 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -2177,6 +2177,16 @@ static int i40e_vc_del_mac_addr_msg(struct i40e_vf *vf, u8 *msg, u16 msglen)
+ 			ret = I40E_ERR_INVALID_MAC_ADDR;
+ 			goto error_param;
  		}
++
++		if (vf->pf_set_mac &&
++		    ether_addr_equal(al->list[i].addr,
++				     vf->default_lan_addr.addr)) {
++			dev_err(&pf->pdev->dev,
++				"MAC addr %pM has been set by PF, cannot delete it for VF %d, reset VF to change MAC addr\n",
++				vf->default_lan_addr.addr, vf->vf_id);
++			ret = I40E_ERR_PARAM;
++			goto error_param;
++		}
+ 	}
+ 	vsi = pf->vsi[vf->lan_vsi_idx];
+ 
 -- 
 2.20.1
 
