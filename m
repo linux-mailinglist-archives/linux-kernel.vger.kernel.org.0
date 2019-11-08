@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A751FF559C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7FC5F559A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390790AbfKHTDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:03:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33088 "EHLO mail.kernel.org"
+        id S2390771AbfKHTDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:03:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387843AbfKHTDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:03:25 -0500
+        id S1732342AbfKHTD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:03:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E4E92087E;
-        Fri,  8 Nov 2019 19:03:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7173B2087E;
+        Fri,  8 Nov 2019 19:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239804;
-        bh=yUzASy/JA7yMigBVCczCyoIZcMNDuo1175O8fzfNnzo=;
+        s=default; t=1573239807;
+        bh=fSFSw5Ejlq/r2im359kXPiTa6jPTCvToQ8CMGigP3Ug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HB01RT9f9XUOZn/75g1zYITcXT5l2D4mXpk2HS79sxm98ODiKzvkdfoC4NFmeHM/0
-         4MPf+bMU/Uq47KPAWi+1gDzwilG/DPaLAlrg4fArDkykJDWfSzRURkE48d0wu0UzDt
-         cN66Cz6SbVcVqieOLR7z2mD6+0sssSSAIcnh7Btc=
+        b=0FFnXYXFShJGmhRbaJlNV64nfPq1PMpDY/xUmSOPRK4kBqDXHi8RwM4urwG5/6Ro9
+         rVpaKS0MrUvV+bJFSTdGvqF/xq1Bix6Zn4Q8NOLJCcSq/rY9E8bfjoEgbgTXFG4ZWY
+         MorB6S8nKumValhLhUP9zLc6eyRQ514j+ZRuG9BA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 66/79] net: phy: bcm7xxx: define soft_reset for 40nm EPHY
-Date:   Fri,  8 Nov 2019 19:50:46 +0100
-Message-Id: <20191108174822.513246011@linuxfoundation.org>
+Subject: [PATCH 4.19 67/79] net: bcmgenet: reset 40nm EPHY on energy detect
+Date:   Fri,  8 Nov 2019 19:50:47 +0100
+Message-Id: <20191108174823.043570964@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
 References: <20191108174745.495640141@linuxfoundation.org>
@@ -46,33 +46,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Doug Berger <opendmb@gmail.com>
 
-[ Upstream commit fe586b823372a9f43f90e2c6aa0573992ce7ccb7 ]
+[ Upstream commit 25382b991d252aed961cd434176240f9de6bb15f ]
 
-The internal 40nm EPHYs use a "Workaround for putting the PHY in
-IDDQ mode." These PHYs require a soft reset to restore functionality
-after they are powered back up.
+The EPHY integrated into the 40nm Set-Top Box devices can falsely
+detect energy when connected to a disabled peer interface. When the
+peer interface is enabled the EPHY will detect and report the link
+as active, but on occasion may get into a state where it is not
+able to exchange data with the connected GENET MAC. This issue has
+not been observed when the link parameters are auto-negotiated;
+however, it has been observed with a manually configured link.
 
-This commit defines the soft_reset function to use genphy_soft_reset
-during phy_init_hw to accommodate this.
+It has been empirically determined that issuing a soft reset to the
+EPHY when energy is detected prevents it from getting into this bad
+state.
 
-Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
+Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
 Signed-off-by: Doug Berger <opendmb@gmail.com>
 Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/bcm7xxx.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/net/phy/bcm7xxx.c
-+++ b/drivers/net/phy/bcm7xxx.c
-@@ -643,6 +643,7 @@ static int bcm7xxx_28nm_probe(struct phy
- 	.name           = _name,					\
- 	.features       = PHY_BASIC_FEATURES,				\
- 	.flags          = PHY_IS_INTERNAL,				\
-+	.soft_reset	= genphy_soft_reset,				\
- 	.config_init    = bcm7xxx_config_init,				\
- 	.suspend        = bcm7xxx_suspend,				\
- 	.resume         = bcm7xxx_config_init,				\
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -2020,6 +2020,8 @@ static void bcmgenet_link_intr_enable(st
+ 	 */
+ 	if (priv->internal_phy) {
+ 		int0_enable |= UMAC_IRQ_LINK_EVENT;
++		if (GENET_IS_V1(priv) || GENET_IS_V2(priv) || GENET_IS_V3(priv))
++			int0_enable |= UMAC_IRQ_PHY_DET_R;
+ 	} else if (priv->ext_phy) {
+ 		int0_enable |= UMAC_IRQ_LINK_EVENT;
+ 	} else if (priv->phy_interface == PHY_INTERFACE_MODE_MOCA) {
+@@ -2618,9 +2620,14 @@ static void bcmgenet_irq_task(struct wor
+ 	priv->irq0_stat = 0;
+ 	spin_unlock_irq(&priv->lock);
+ 
++	if (status & UMAC_IRQ_PHY_DET_R &&
++	    priv->dev->phydev->autoneg != AUTONEG_ENABLE)
++		phy_init_hw(priv->dev->phydev);
++
+ 	/* Link UP/DOWN event */
+ 	if (status & UMAC_IRQ_LINK_EVENT)
+ 		phy_mac_interrupt(priv->dev->phydev);
++
+ }
+ 
+ /* bcmgenet_isr1: handle Rx and Tx priority queues */
+@@ -2715,7 +2722,7 @@ static irqreturn_t bcmgenet_isr0(int irq
+ 	}
+ 
+ 	/* all other interested interrupts handled in bottom half */
+-	status &= UMAC_IRQ_LINK_EVENT;
++	status &= (UMAC_IRQ_LINK_EVENT | UMAC_IRQ_PHY_DET_R);
+ 	if (status) {
+ 		/* Save irq status for bottom-half processing. */
+ 		spin_lock_irqsave(&priv->lock, flags);
 
 
