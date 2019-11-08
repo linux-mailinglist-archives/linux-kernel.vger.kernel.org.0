@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9108F5545
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E922F569A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733139AbfKHTBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:01:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58578 "EHLO mail.kernel.org"
+        id S2390972AbfKHTJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731286AbfKHTBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:01:14 -0500
+        id S2391386AbfKHTJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A5D62067B;
-        Fri,  8 Nov 2019 19:01:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4F7120673;
+        Fri,  8 Nov 2019 19:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239673;
-        bh=x0F+D/HARx9yU0WLzMqfRG1a2qd4UBpC1RlbhC+gVOk=;
+        s=default; t=1573240183;
+        bh=vKql6JUiWmAi+TSOjs1wfIulR/tIVLIp34fI11fbSJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kLavpDgxRQ/l/Dbj/mm/TbRNEAtFmU5mng23SaQC13h8qPMuZLw0npyfk4/lmj8y8
-         mBe3taWuG0l90bvYadrNN9oDcgj94HzUewyicrtMxUXoQBobVd1Taxm83lODY0CAll
-         rqni3vze/mwNiDhNb7tcvdVu+QGygfkM/tUWcz7M=
+        b=09apCWw/C7Dh6+QA5L6i1XigV5jisZz9097xuFIoXqBwK5OlVDJL7SPSgrfX8P/oU
+         E6pWRDolPkwg/PYT0kcQiAXbJil0N+KCeLWDmmcvIb2pShYO5ECeJm8HD4K6hNidQg
+         fkWVoLkncaAhHlPd1sGIAn5VCn8VAQh2AoFiJQzo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Feilong Lin <linfeilong@huawei.com>,
-        Hu Shiyuan <hushiyuan@huawei.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Dave Wysochanski <dwysocha@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 22/79] perf kmem: Fix memory leak in compact_gfp_flags()
-Date:   Fri,  8 Nov 2019 19:50:02 +0100
-Message-Id: <20191108174757.515759454@linuxfoundation.org>
+Subject: [PATCH 5.3 075/140] cifs: Fix cifsInodeInfo lock_sem deadlock when reconnect occurs
+Date:   Fri,  8 Nov 2019 19:50:03 +0100
+Message-Id: <20191108174909.848986828@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,43 +45,178 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Dave Wysochanski <dwysocha@redhat.com>
 
-[ Upstream commit 1abecfcaa7bba21c9985e0136fa49836164dd8fd ]
+[ Upstream commit d46b0da7a33dd8c99d969834f682267a45444ab3 ]
 
-The memory @orig_flags is allocated by strdup(), it is freed on the
-normal path, but leak to free on the error path.
+There's a deadlock that is possible and can easily be seen with
+a test where multiple readers open/read/close of the same file
+and a disruption occurs causing reconnect.  The deadlock is due
+a reader thread inside cifs_strict_readv calling down_read and
+obtaining lock_sem, and then after reconnect inside
+cifs_reopen_file calling down_read a second time.  If in
+between the two down_read calls, a down_write comes from
+another process, deadlock occurs.
 
-Fix this by adding free(orig_flags) on the error path.
+        CPU0                    CPU1
+        ----                    ----
+cifs_strict_readv()
+ down_read(&cifsi->lock_sem);
+                               _cifsFileInfo_put
+                                  OR
+                               cifs_new_fileinfo
+                                down_write(&cifsi->lock_sem);
+cifs_reopen_file()
+ down_read(&cifsi->lock_sem);
 
-Fixes: 0e11115644b3 ("perf kmem: Print gfp flags in human readable string")
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Feilong Lin <linfeilong@huawei.com>
-Cc: Hu Shiyuan <hushiyuan@huawei.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/f9e9f458-96f3-4a97-a1d5-9feec2420e07@huawei.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fix the above by changing all down_write(lock_sem) calls to
+down_write_trylock(lock_sem)/msleep() loop, which in turn
+makes the second down_read call benign since it will never
+block behind the writer while holding lock_sem.
+
+Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
+Suggested-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed--by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-kmem.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/cifsglob.h  |  5 +++++
+ fs/cifs/cifsproto.h |  1 +
+ fs/cifs/file.c      | 23 +++++++++++++++--------
+ fs/cifs/smb2file.c  |  2 +-
+ 4 files changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
-index b63bca4b0c2a6..56dd5d1476e06 100644
---- a/tools/perf/builtin-kmem.c
-+++ b/tools/perf/builtin-kmem.c
-@@ -686,6 +686,7 @@ static char *compact_gfp_flags(char *gfp_flags)
- 			new = realloc(new_flags, len + strlen(cpt) + 2);
- 			if (new == NULL) {
- 				free(new_flags);
-+				free(orig_flags);
- 				return NULL;
- 			}
+diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+index 5ef5a16c01d26..7289d443bfb33 100644
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -1379,6 +1379,11 @@ void cifsFileInfo_put(struct cifsFileInfo *cifs_file);
+ struct cifsInodeInfo {
+ 	bool can_cache_brlcks;
+ 	struct list_head llist;	/* locks helb by this inode */
++	/*
++	 * NOTE: Some code paths call down_read(lock_sem) twice, so
++	 * we must always use use cifs_down_write() instead of down_write()
++	 * for this semaphore to avoid deadlocks.
++	 */
+ 	struct rw_semaphore lock_sem;	/* protect the fields above */
+ 	/* BB add in lists for dirty pages i.e. write caching info for oplock */
+ 	struct list_head openFileList;
+diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+index 592a6cea2b79f..65b07f92bc71d 100644
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -166,6 +166,7 @@ extern int cifs_unlock_range(struct cifsFileInfo *cfile,
+ 			     struct file_lock *flock, const unsigned int xid);
+ extern int cifs_push_mandatory_locks(struct cifsFileInfo *cfile);
  
++extern void cifs_down_write(struct rw_semaphore *sem);
+ extern struct cifsFileInfo *cifs_new_fileinfo(struct cifs_fid *fid,
+ 					      struct file *file,
+ 					      struct tcon_link *tlink,
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 53dbb6e0d390d..facb52d37d19c 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -281,6 +281,13 @@ cifs_has_mand_locks(struct cifsInodeInfo *cinode)
+ 	return has_locks;
+ }
+ 
++void
++cifs_down_write(struct rw_semaphore *sem)
++{
++	while (!down_write_trylock(sem))
++		msleep(10);
++}
++
+ struct cifsFileInfo *
+ cifs_new_fileinfo(struct cifs_fid *fid, struct file *file,
+ 		  struct tcon_link *tlink, __u32 oplock)
+@@ -306,7 +313,7 @@ cifs_new_fileinfo(struct cifs_fid *fid, struct file *file,
+ 	INIT_LIST_HEAD(&fdlocks->locks);
+ 	fdlocks->cfile = cfile;
+ 	cfile->llist = fdlocks;
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	list_add(&fdlocks->llist, &cinode->llist);
+ 	up_write(&cinode->lock_sem);
+ 
+@@ -464,7 +471,7 @@ void _cifsFileInfo_put(struct cifsFileInfo *cifs_file, bool wait_oplock_handler)
+ 	 * Delete any outstanding lock records. We'll lose them when the file
+ 	 * is closed anyway.
+ 	 */
+-	down_write(&cifsi->lock_sem);
++	cifs_down_write(&cifsi->lock_sem);
+ 	list_for_each_entry_safe(li, tmp, &cifs_file->llist->locks, llist) {
+ 		list_del(&li->llist);
+ 		cifs_del_lock_waiters(li);
+@@ -1027,7 +1034,7 @@ static void
+ cifs_lock_add(struct cifsFileInfo *cfile, struct cifsLockInfo *lock)
+ {
+ 	struct cifsInodeInfo *cinode = CIFS_I(d_inode(cfile->dentry));
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	list_add_tail(&lock->llist, &cfile->llist->locks);
+ 	up_write(&cinode->lock_sem);
+ }
+@@ -1049,7 +1056,7 @@ cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
+ 
+ try_again:
+ 	exist = false;
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 
+ 	exist = cifs_find_lock_conflict(cfile, lock->offset, lock->length,
+ 					lock->type, lock->flags, &conf_lock,
+@@ -1072,7 +1079,7 @@ cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
+ 					(lock->blist.next == &lock->blist));
+ 		if (!rc)
+ 			goto try_again;
+-		down_write(&cinode->lock_sem);
++		cifs_down_write(&cinode->lock_sem);
+ 		list_del_init(&lock->blist);
+ 	}
+ 
+@@ -1125,7 +1132,7 @@ cifs_posix_lock_set(struct file *file, struct file_lock *flock)
+ 		return rc;
+ 
+ try_again:
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	if (!cinode->can_cache_brlcks) {
+ 		up_write(&cinode->lock_sem);
+ 		return rc;
+@@ -1331,7 +1338,7 @@ cifs_push_locks(struct cifsFileInfo *cfile)
+ 	int rc = 0;
+ 
+ 	/* we are going to update can_cache_brlcks here - need a write access */
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	if (!cinode->can_cache_brlcks) {
+ 		up_write(&cinode->lock_sem);
+ 		return rc;
+@@ -1522,7 +1529,7 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	for (i = 0; i < 2; i++) {
+ 		cur = buf;
+ 		num = 0;
+diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
+index e6a1fc72018fd..8b0b512c57920 100644
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -145,7 +145,7 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 
+ 	cur = buf;
+ 
+-	down_write(&cinode->lock_sem);
++	cifs_down_write(&cinode->lock_sem);
+ 	list_for_each_entry_safe(li, tmp, &cfile->llist->locks, llist) {
+ 		if (flock->fl_start > li->offset ||
+ 		    (flock->fl_start + length) <
 -- 
 2.20.1
 
