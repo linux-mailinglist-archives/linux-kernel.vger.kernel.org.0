@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2772F5581
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC415F54EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390636AbfKHTCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:02:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60644 "EHLO mail.kernel.org"
+        id S1732722AbfKHS45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:56:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731744AbfKHTCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:02:51 -0500
+        id S2388399AbfKHS4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:56:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6490D218AE;
-        Fri,  8 Nov 2019 19:02:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5B412067B;
+        Fri,  8 Nov 2019 18:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239769;
-        bh=wBdRuMXM5RgHs1nX//tDyoK5MRAxk45cNXVYJBO2Urc=;
+        s=default; t=1573239406;
+        bh=XrldGzU/vehg9sYXQT4wwRSAys/T6+j97R70Fz5Jux4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CPgRE7MN1v3qUd66pB+kzBs91ToF05b8j4DMKruFWwzofFPGLesJ+ZV18/kPS+XRg
-         JWklLAK8JshgXc6QAKSv5G+ElLhfcovT3z24i617/WPoAsp5gNZz2FWQomyMveJqnJ
-         uwrHCcRhX42/FrliDE5g238qOXWIFZwP17NoW00g=
+        b=v2aEUaOdi95wJsfN5a0AzYmoxXWZ9EOIWE9nmnYK0TMkQrZvv8vK0q2/XgQ2Q+oNV
+         Zv8GlKuC550CrviBKqh67RzlrDkfov0DnlVsIMIXndli/nctvzVmRgd1k/8HGN/jYZ
+         0JMa2/yNfGD0iCxH6NmRbB3hDTFV/LVs+W1f6HRw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        Thiemo Nagel <tnagel@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 55/79] udp: use skb_queue_empty_lockless()
+Subject: [PATCH 4.9 28/34] inet: stop leaking jiffies on the wire
 Date:   Fri,  8 Nov 2019 19:50:35 +0100
-Message-Id: <20191108174819.059758912@linuxfoundation.org>
+Message-Id: <20191108174651.026609810@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,96 +46,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 137a0dbe3426fd7bcfe3f8117b36a87b3590e4eb ]
+[ Upstream commit a904a0693c189691eeee64f6c6b188bd7dc244e9 ]
 
-syzbot reported a data-race [1].
+Historically linux tried to stick to RFC 791, 1122, 2003
+for IPv4 ID field generation.
 
-We should use skb_queue_empty_lockless() to document that we are
-not ensuring a mutual exclusion and silence KCSAN.
+RFC 6864 made clear that no matter how hard we try,
+we can not ensure unicity of IP ID within maximum
+lifetime for all datagrams with a given source
+address/destination address/protocol tuple.
 
-[1]
-BUG: KCSAN: data-race in __skb_recv_udp / __udp_enqueue_schedule_skb
+Linux uses a per socket inet generator (inet_id), initialized
+at connection startup with a XOR of 'jiffies' and other
+fields that appear clear on the wire.
 
-write to 0xffff888122474b50 of 8 bytes by interrupt on cpu 0:
- __skb_insert include/linux/skbuff.h:1852 [inline]
- __skb_queue_before include/linux/skbuff.h:1958 [inline]
- __skb_queue_tail include/linux/skbuff.h:1991 [inline]
- __udp_enqueue_schedule_skb+0x2c1/0x410 net/ipv4/udp.c:1470
- __udp_queue_rcv_skb net/ipv4/udp.c:1940 [inline]
- udp_queue_rcv_one_skb+0x7bd/0xc70 net/ipv4/udp.c:2057
- udp_queue_rcv_skb+0xb5/0x400 net/ipv4/udp.c:2074
- udp_unicast_rcv_skb.isra.0+0x7e/0x1c0 net/ipv4/udp.c:2233
- __udp4_lib_rcv+0xa44/0x17c0 net/ipv4/udp.c:2300
- udp_rcv+0x2b/0x40 net/ipv4/udp.c:2470
- ip_protocol_deliver_rcu+0x4d/0x420 net/ipv4/ip_input.c:204
- ip_local_deliver_finish+0x110/0x140 net/ipv4/ip_input.c:231
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ip_local_deliver+0x133/0x210 net/ipv4/ip_input.c:252
- dst_input include/net/dst.h:442 [inline]
- ip_rcv_finish+0x121/0x160 net/ipv4/ip_input.c:413
- NF_HOOK include/linux/netfilter.h:305 [inline]
- NF_HOOK include/linux/netfilter.h:299 [inline]
- ip_rcv+0x18f/0x1a0 net/ipv4/ip_input.c:523
- __netif_receive_skb_one_core+0xa7/0xe0 net/core/dev.c:5010
- __netif_receive_skb+0x37/0xf0 net/core/dev.c:5124
- process_backlog+0x1d3/0x420 net/core/dev.c:5955
+Thiemo Nagel pointed that this strategy is a privacy
+concern as this provides 16 bits of entropy to fingerprint
+devices.
 
-read to 0xffff888122474b50 of 8 bytes by task 8921 on cpu 1:
- skb_queue_empty include/linux/skbuff.h:1494 [inline]
- __skb_recv_udp+0x18d/0x500 net/ipv4/udp.c:1653
- udp_recvmsg+0xe1/0xb10 net/ipv4/udp.c:1712
- inet_recvmsg+0xbb/0x250 net/ipv4/af_inet.c:838
- sock_recvmsg_nosec+0x5c/0x70 net/socket.c:871
- ___sys_recvmsg+0x1a0/0x3e0 net/socket.c:2480
- do_recvmmsg+0x19a/0x5c0 net/socket.c:2601
- __sys_recvmmsg+0x1ef/0x200 net/socket.c:2680
- __do_sys_recvmmsg net/socket.c:2703 [inline]
- __se_sys_recvmmsg net/socket.c:2696 [inline]
- __x64_sys_recvmmsg+0x89/0xb0 net/socket.c:2696
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Let's switch to a random starting point, this is just as
+good as far as RFC 6864 is concerned and does not leak
+anything critical.
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 8921 Comm: syz-executor.4 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Reported-by: Thiemo Nagel <tnagel@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/udp.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/dccp/ipv4.c     |    2 +-
+ net/ipv4/datagram.c |    2 +-
+ net/ipv4/tcp_ipv4.c |    4 ++--
+ net/sctp/socket.c   |    2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1542,7 +1542,7 @@ static int first_packet_length(struct so
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -121,7 +121,7 @@ int dccp_v4_connect(struct sock *sk, str
+ 						    inet->inet_daddr,
+ 						    inet->inet_sport,
+ 						    inet->inet_dport);
+-	inet->inet_id = dp->dccps_iss ^ jiffies;
++	inet->inet_id = prandom_u32();
  
- 	spin_lock_bh(&rcvq->lock);
- 	skb = __first_packet_length(sk, rcvq, &total);
--	if (!skb && !skb_queue_empty(sk_queue)) {
-+	if (!skb && !skb_queue_empty_lockless(sk_queue)) {
- 		spin_lock(&sk_queue->lock);
- 		skb_queue_splice_tail_init(sk_queue, rcvq);
- 		spin_unlock(&sk_queue->lock);
-@@ -1617,7 +1617,7 @@ struct sk_buff *__skb_recv_udp(struct so
- 				return skb;
- 			}
+ 	err = dccp_connect(sk);
+ 	rt = NULL;
+--- a/net/ipv4/datagram.c
++++ b/net/ipv4/datagram.c
+@@ -75,7 +75,7 @@ int __ip4_datagram_connect(struct sock *
+ 	inet->inet_dport = usin->sin_port;
+ 	sk->sk_state = TCP_ESTABLISHED;
+ 	sk_set_txhash(sk);
+-	inet->inet_id = jiffies;
++	inet->inet_id = prandom_u32();
  
--			if (skb_queue_empty(sk_queue)) {
-+			if (skb_queue_empty_lockless(sk_queue)) {
- 				spin_unlock_bh(&queue->lock);
- 				goto busy_check;
- 			}
-@@ -1644,7 +1644,7 @@ busy_check:
- 				break;
+ 	sk_dst_set(sk, &rt->dst);
+ 	err = 0;
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -239,7 +239,7 @@ int tcp_v4_connect(struct sock *sk, stru
+ 							   inet->inet_sport,
+ 							   usin->sin_port);
  
- 			sk_busy_loop(sk, flags & MSG_DONTWAIT);
--		} while (!skb_queue_empty(sk_queue));
-+		} while (!skb_queue_empty_lockless(sk_queue));
+-	inet->inet_id = tp->write_seq ^ jiffies;
++	inet->inet_id = prandom_u32();
  
- 		/* sk_queue is empty, reader_queue may contain peeked packets */
- 	} while (timeo &&
+ 	err = tcp_connect(sk);
+ 
+@@ -1307,7 +1307,7 @@ struct sock *tcp_v4_syn_recv_sock(const
+ 	inet_csk(newsk)->icsk_ext_hdr_len = 0;
+ 	if (inet_opt)
+ 		inet_csk(newsk)->icsk_ext_hdr_len = inet_opt->opt.optlen;
+-	newinet->inet_id = newtp->write_seq ^ jiffies;
++	newinet->inet_id = prandom_u32();
+ 
+ 	if (!dst) {
+ 		dst = inet_csk_route_child_sock(sk, newsk, req);
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -7734,7 +7734,7 @@ void sctp_copy_sock(struct sock *newsk,
+ 	newinet->inet_rcv_saddr = inet->inet_rcv_saddr;
+ 	newinet->inet_dport = htons(asoc->peer.port);
+ 	newinet->pmtudisc = inet->pmtudisc;
+-	newinet->inet_id = asoc->next_tsn ^ jiffies;
++	newinet->inet_id = prandom_u32();
+ 
+ 	newinet->uc_ttl = inet->uc_ttl;
+ 	newinet->mc_loop = 1;
 
 
