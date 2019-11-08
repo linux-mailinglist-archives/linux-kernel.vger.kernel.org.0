@@ -2,84 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A557F510E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:27:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3067DF50F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:22:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfKHQ1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 11:27:51 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39618 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbfKHQ1v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 11:27:51 -0500
-Received: by mail-io1-f66.google.com with SMTP id k1so6995480ioj.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 08:27:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RiIe/nW+9AsCJyMreIOc9BvirXBLZtzkTWUj49kdOWI=;
-        b=yiW23nuA8TdhuuIrPqsnDodwAfZlz7kLEuj1pDzBF778A3B5Pri8hlJ+VYcC16b6z7
-         0hfXRCpRdcfNrWPLjHrAaxZ2qEDn8qMMaIvQ/5fOfR48fHI2qUnwlD0zX1ctDcmo30Kg
-         bFz8oQrg3pL89wBAb0enYPVHRJ/klENw/8POBBLGoFPn2sv8ZPfTTlwg685l8ZGN2XLt
-         WaHIJJmzPx/q5QKVcZSFYQd0fRgY03/ZuEZ6c+/Ev3Ks7ELhbvgbFeNrMjrlmBN7AEKu
-         NIz3ipy6kdnoXPn3akIMnGDjNXhlht2ZIIEK7C34P/dKZafL+iwwLw5OaL0En/vaR7Xw
-         xqng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RiIe/nW+9AsCJyMreIOc9BvirXBLZtzkTWUj49kdOWI=;
-        b=r4zsri7gukyh3c/OVl1uVpW9HzPoBv8/lS5ZNnEfbVIF/EgguN0uuwRoHnkS48eW3N
-         EwE5LdFmyLbVUqJwchd/xgYX+FEPpdEU/WFfNXEFvW2aLnvl/tJY4cE5eek/t1xfNmMG
-         nxljHl4YJSoKlr4R9kgsfA/P7tTq8h8OZF6YkJMlQxskL1aW5e7PA/8hyYf6rjvxfyhf
-         Ui1p9prNcLbjRTzDeABJLM4DyGR2nub5v6k4u2Hu1ngkhVkLenjGT4JQvXG8oCM95Qw3
-         nWSXjIxSTHf25OKpBk83pPo5Vhh6q8IwDpnAi2fF3Ewx4XhFxUROQe6kZrMeGyj9bRLJ
-         E3gA==
-X-Gm-Message-State: APjAAAU2UqPSCLjgCwkMjAwsy7R3P3rwPD+IhGpGhU+fVDT62C38ooSP
-        mfaGmdUSRdaIpYBZNf0y8q3Sow==
-X-Google-Smtp-Source: APXvYqzFoIhq86iW74zmJxBejj+zma0nFYlI3I/P9W/xmwZlaX3LhI2wzB6oG6o03ZgY2UPVKy6hIw==
-X-Received: by 2002:a02:9f12:: with SMTP id z18mr12194050jal.10.1573230468826;
-        Fri, 08 Nov 2019 08:27:48 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u21sm827186ila.41.2019.11.08.08.27.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Nov 2019 08:27:47 -0800 (PST)
-Subject: Re: [PATCH] block: drbd: remove a stay unlock in
- __drbd_send_protocol()
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>
-Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
-        drbd-dev@tron.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20191107074847.GA11695@mwanda>
- <3a2d491f-3d24-3673-07f3-f601d5fafc97@acm.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <26822f67-1cd7-eeda-2caa-2bc7d420f173@kernel.dk>
-Date:   Fri, 8 Nov 2019 09:27:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <3a2d491f-3d24-3673-07f3-f601d5fafc97@acm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1726845AbfKHQWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 11:22:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55882 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726039AbfKHQWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 11:22:22 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 91B07B353;
+        Fri,  8 Nov 2019 16:22:20 +0000 (UTC)
+Message-ID: <1573230479.5838.7.camel@suse.cz>
+Subject: Re: [PATCH] checkpatch: remove "ipc" from list of expected toplevel
+ directories
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 08 Nov 2019 17:27:59 +0100
+In-Reply-To: <20191108160428.9632-1-ggherdovich@suse.cz>
+References: <20191108160428.9632-1-ggherdovich@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/8/19 9:26 AM, Bart Van Assche wrote:
-> On 11/6/19 11:48 PM, Dan Carpenter wrote:
->> There are two callers of this function and they both unlock the mutex so
->> this ends up being a double unlock.
+On Fri, 2019-11-08 at 17:04 +0100, Giovanni Gherdovich wrote:
+> checkpatch.pl uses a list of expected directory names to understand if it's
+> being run from the top of a kernel tree. Commit 76128326f97c ("toplevel:
+> Move ipc/ to kernel/ipc/: move the files") removed a toplevel directory, so
+> checkpatch.pl need to update its list.
 > 
-> Is there a typo in the patch subject (stay -> stray)?
+> Signed-off-by: Giovanni Gherdovich <ggherdovich@suse.cz>
+> ---
+>  scripts/checkpatch.pl | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 6fcc66afb088..93b8fd1eea57 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -1099,7 +1099,7 @@ sub top_of_kernel_tree {
+>  	my @tree_check = (
+>  		"COPYING", "CREDITS", "Kbuild", "MAINTAINERS", "Makefile",
+>  		"README", "Documentation", "arch", "include", "drivers",
+> -		"fs", "init", "ipc", "kernel", "lib", "scripts",
+> +		"fs", "init", "kernel", "lib", "scripts",
+>  	);
+>  
+>  	foreach my $check (@tree_check) {
 
-I fixed that up while applying, fwiw.
+Nope, this was already fixed by Yunfeng Ye with
+https://lore.kernel.org/lkml/bd70558e-5126-6460-81d7-edf72cbbce7a@huawei.com/
+plus the ipc/ directory is now back in its place.
 
--- 
-Jens Axboe
-
+Sorry for the noise,
+Giovanni
