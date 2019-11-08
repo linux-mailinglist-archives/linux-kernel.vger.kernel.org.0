@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E884BF4646
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D823F464A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389296AbfKHLlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54482 "EHLO mail.kernel.org"
+        id S2389443AbfKHLl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:41:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732718AbfKHLlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:41:15 -0500
+        id S1732718AbfKHLlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:41:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E384A222C4;
-        Fri,  8 Nov 2019 11:41:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69EC322473;
+        Fri,  8 Nov 2019 11:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213274;
-        bh=KBCPrtaK8CUF7LqGnIIJRU4tEy3EaC6ukV+sjBbT34A=;
+        s=default; t=1573213278;
+        bh=BsYITncQjbDdzgjbZ7L3lXwyTDl12qrWP9tYAragwzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wx7cEvQPuV9PYv6mhZjEiEsJbAdwWD/UgZ3gTsegSqSowLX/on8Y16Hhgjf8k+5kq
-         AHVns+34Od5XdK4wqZdbhyFPyNLR1K9zwGv4G3nWnXJ32G1/MWEDPrvaRzMwHyAjhM
-         wsLgV0Ea6ogNVLGNdr/uzQMB5vcTnOZzoHGHhQEU=
+        b=rFYAvhRgntCDCwJ64gEI4rtGeINnZbIHXjxvsajh3EhbECgT1y2dzUh4jMXpQ4gEn
+         XgqmJUBnoLB4RAHLqxmowh6yUSnIrz45U55fMKGgod8FgEVkvesrt8BlSpepPKBtuE
+         Fx2ZrqawqduLbcUPLhLLdZRbvsduoyII+qPt/NaQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wang Shilong <wangshilong1991@gmail.com>,
-        Wang Shilong <wshilong@ddn.com>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 136/205] f2fs: fix setattr project check upon fssetxattr ioctl
-Date:   Fri,  8 Nov 2019 06:36:43 -0500
-Message-Id: <20191108113752.12502-136-sashal@kernel.org>
+Cc:     Quinn Tran <quinn.tran@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 139/205] scsi: qla2xxx: Defer chip reset until target mode is enabled
+Date:   Fri,  8 Nov 2019 06:36:46 -0500
+Message-Id: <20191108113752.12502-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -45,149 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wang Shilong <wangshilong1991@gmail.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-[ Upstream commit c8e927579e00a182eda07e4c45df9c8c699c8ded ]
+[ Upstream commit 93eca6135183f7a71e36acd47655a085ed11bcdc ]
 
-Currently, project quota could be changed by fssetxattr
-ioctl, and existed permission check inode_owner_or_capable()
-is obviously not enough, just think that common users could
-change project id of file, that could make users to
-break project quota easily.
+For target mode, any chip reset triggered before target mode is enabled will
+be held off until user is ready to enable.  This prevents the chip from
+starting or running before it is intended.
 
-This patch try to follow same regular of xfs project
-quota:
-
-"Project Quota ID state is only allowed to change from
-within the init namespace. Enforce that restriction only
-if we are trying to change the quota ID state.
-Everything else is allowed in user namespaces."
-
-Besides that, check and set project id'state should
-be an atomic operation, protect whole operation with
-inode lock.
-
-Signed-off-by: Wang Shilong <wshilong@ddn.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 60 +++++++++++++++++++++++++++++++-------------------
- 1 file changed, 37 insertions(+), 23 deletions(-)
+ drivers/scsi/qla2xxx/qla_os.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6972c6d7c3893..c7ea122997695 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2618,34 +2618,26 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- 	if (projid_eq(kprojid, F2FS_I(inode)->i_projid))
- 		return 0;
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 60b6019a2fcae..bfbdec61b3c6e 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -6051,12 +6051,27 @@ qla2x00_do_dpc(void *data)
+ 		if (test_and_clear_bit
+ 		    (ISP_ABORT_NEEDED, &base_vha->dpc_flags) &&
+ 		    !test_bit(UNLOADING, &base_vha->dpc_flags)) {
++			bool do_reset = true;
++
++			switch (ql2x_ini_mode) {
++			case QLA2XXX_INI_MODE_ENABLED:
++				break;
++			case QLA2XXX_INI_MODE_DISABLED:
++				if (!qla_tgt_mode_enabled(base_vha))
++					do_reset = false;
++				break;
++			case QLA2XXX_INI_MODE_DUAL:
++				if (!qla_dual_mode_enabled(base_vha))
++					do_reset = false;
++				break;
++			default:
++				break;
++			}
  
--	err = mnt_want_write_file(filp);
--	if (err)
--		return err;
+-			ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
+-			    "ISP abort scheduled.\n");
+-			if (!(test_and_set_bit(ABORT_ISP_ACTIVE,
++			if (do_reset && !(test_and_set_bit(ABORT_ISP_ACTIVE,
+ 			    &base_vha->dpc_flags))) {
 -
- 	err = -EPERM;
--	inode_lock(inode);
++				ql_dbg(ql_dbg_dpc, base_vha, 0x4007,
++				    "ISP abort scheduled.\n");
+ 				if (ha->isp_ops->abort_isp(base_vha)) {
+ 					/* failed. retry later */
+ 					set_bit(ISP_ABORT_NEEDED,
+@@ -6064,10 +6079,9 @@ qla2x00_do_dpc(void *data)
+ 				}
+ 				clear_bit(ABORT_ISP_ACTIVE,
+ 						&base_vha->dpc_flags);
++				ql_dbg(ql_dbg_dpc, base_vha, 0x4008,
++				    "ISP abort end.\n");
+ 			}
 -
- 	/* Is it quota file? Do not allow user to mess with it */
- 	if (IS_NOQUOTA(inode))
--		goto out_unlock;
-+		return err;
+-			ql_dbg(ql_dbg_dpc, base_vha, 0x4008,
+-			    "ISP abort end.\n");
+ 		}
  
- 	ipage = f2fs_get_node_page(sbi, inode->i_ino);
--	if (IS_ERR(ipage)) {
--		err = PTR_ERR(ipage);
--		goto out_unlock;
--	}
-+	if (IS_ERR(ipage))
-+		return PTR_ERR(ipage);
- 
- 	if (!F2FS_FITS_IN_INODE(F2FS_INODE(ipage), fi->i_extra_isize,
- 								i_projid)) {
- 		err = -EOVERFLOW;
- 		f2fs_put_page(ipage, 1);
--		goto out_unlock;
-+		return err;
- 	}
- 	f2fs_put_page(ipage, 1);
- 
- 	err = dquot_initialize(inode);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- 	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
- 	if (!IS_ERR(transfer_to[PRJQUOTA])) {
-@@ -2659,9 +2651,6 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- 	inode->i_ctime = current_time(inode);
- out_dirty:
- 	f2fs_mark_inode_dirty_sync(inode, true);
--out_unlock:
--	inode_unlock(inode);
--	mnt_drop_write_file(filp);
- 	return err;
- }
- #else
-@@ -2737,6 +2726,30 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
- 	return 0;
- }
- 
-+static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
-+{
-+	/*
-+	 * Project Quota ID state is only allowed to change from within the init
-+	 * namespace. Enforce that restriction only if we are trying to change
-+	 * the quota ID state. Everything else is allowed in user namespaces.
-+	 */
-+	if (current_user_ns() == &init_user_ns)
-+		return 0;
-+
-+	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
-+		return -EINVAL;
-+
-+	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
-+		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
-+			return -EINVAL;
-+	} else {
-+		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -2764,19 +2777,20 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- 		return err;
- 
- 	inode_lock(inode);
-+	err = f2fs_ioctl_check_project(inode, &fa);
-+	if (err)
-+		goto out;
- 	flags = (fi->i_flags & ~F2FS_FL_XFLAG_VISIBLE) |
- 				(flags & F2FS_FL_XFLAG_VISIBLE);
- 	err = __f2fs_ioc_setflags(inode, flags);
--	inode_unlock(inode);
--	mnt_drop_write_file(filp);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	err = f2fs_ioc_setproject(filp, fa.fsx_projid);
--	if (err)
--		return err;
--
--	return 0;
-+out:
-+	inode_unlock(inode);
-+	mnt_drop_write_file(filp);
-+	return err;
- }
- 
- int f2fs_pin_file_control(struct inode *inode, bool inc)
+ 		if (test_and_clear_bit(FCPORT_UPDATE_NEEDED,
 -- 
 2.20.1
 
