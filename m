@@ -2,92 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6982EF521A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47459F5208
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbfKHRCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 12:02:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731291AbfKHRCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:02:15 -0500
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3D1621D7B;
-        Fri,  8 Nov 2019 17:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573232534;
-        bh=TBvj3ZAD/90gzZRZ4Bq7ZuAaAzf+ONWHDHtJ37qd9aY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x6OOuDwHn0375jbO8T0CHJu4VFrTm+4reQ6H9i4/OduaNg9PuHeaqLsD9Cc7aN5uc
-         BZh2RnBJUvSgPh4Zi3uk5VYzcI4RwV3uF6RCRrB2M5XT3/ex1h/cNKgFmotwZkGJ0N
-         AnsKDTQSfZIEcITFJukKF69zGgyZsEHi2e45V5qc=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Will Deacon <will@kernel.org>, Yunjae Lee <lyj7694@gmail.com>,
-        SeongJae Park <sj38.park@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Richard Henderson <rth@twiddle.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
-        Boqun Feng <boqun.feng@gmail.com>, linux-alpha@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH 13/13] checkpatch: Remove checks relating to [smp_]read_barrier_depends()
-Date:   Fri,  8 Nov 2019 17:01:20 +0000
-Message-Id: <20191108170120.22331-14-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108170120.22331-1-will@kernel.org>
-References: <20191108170120.22331-1-will@kernel.org>
+        id S1727703AbfKHRBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 12:01:55 -0500
+Received: from mail-lj1-f182.google.com ([209.85.208.182]:44552 "EHLO
+        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730745AbfKHRBx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 12:01:53 -0500
+Received: by mail-lj1-f182.google.com with SMTP id g3so6938251ljl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:01:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=areMWrVEmfkCGN5C3vFUMp6ntvtTANx8pMI7+P+pQwk=;
+        b=fTQAG1nv+Xfvawkzfroy56UyjdshaUI6tDZmA2U31BY2vRabBOWqqcIrGwEiaPTMLM
+         UpxslrqN19Q5RkBzYwKrg+R9FYC+kmfTcy86WRoQeVweyUd8I+BSDcL1kR2UVpc9heaR
+         8C9Z7s7NSuSZCqLYqqjNuS4lSdyWdr7omtzoY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=areMWrVEmfkCGN5C3vFUMp6ntvtTANx8pMI7+P+pQwk=;
+        b=jxO0UcFecw31XBZjSU06rCHPduQRGoHsNlCusBnvDmvTLKpsMu9FctI4Ay9t4m53wk
+         tEP8xaqVcqlNPmByCUoYHdoWck1cn/wpignXlHWZR60cg/4YsxUgYLLxYHLZa5/epk9v
+         PBvd0whXbq1ZlcMsFpRfHe0RFzoXvY4eny2yiAWQQM3PvapaQl6emvG4QiKTGSm2Zk3S
+         RxBnQXazspKeymIIVZQ78O831bJNpxYEHG3RLXLPe7p2bNxHBzSNax5F4/1y6YX+jpr6
+         UdYobjF0KAAD40/yow5tNq2cNfg2DNZN3AVfxW3EYggZ5rNzBc8UXiTjSotV6Z4ycZ1y
+         D49g==
+X-Gm-Message-State: APjAAAUmp2PjkYRTjdzH6rUZ2U1kd3kJm0MoimyP1SBCoGTI/xFcMYlk
+        6sbA7/nFfg+WJy3WexrfUxlScEUksE0=
+X-Google-Smtp-Source: APXvYqzqpM8s5ESVfxjdvwEwzN2kNzCBEHQ9IsmHh/igQ+7Ug+UqzjidKbU2uKW1xeBYODI6/WDT6Q==
+X-Received: by 2002:a2e:a175:: with SMTP id u21mr7430836ljl.198.1573232510173;
+        Fri, 08 Nov 2019 09:01:50 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id o5sm3161909lfn.78.2019.11.08.09.01.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 09:01:49 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id r7so6982166ljg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:01:48 -0800 (PST)
+X-Received: by 2002:a2e:8809:: with SMTP id x9mr7562934ljh.82.1573232508697;
+ Fri, 08 Nov 2019 09:01:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
+In-Reply-To: <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 8 Nov 2019 09:01:31 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
+Message-ID: <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        elver@google.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The '[smp_]read_barrier_depends()' macros no longer exist, so we don't
-need to deal with them in the checkpatch script.
+On Fri, Nov 8, 2019 at 5:28 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+> Linus, what do you think of the following fix ?
 
-Signed-off-by: Will Deacon <will@kernel.org>
----
- scripts/checkpatch.pl | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+I think it's incredibly ugly.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 6fcc66afb088..7f5a368206bf 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5787,8 +5787,7 @@ sub process {
- 		my $barriers = qr{
- 			mb|
- 			rmb|
--			wmb|
--			read_barrier_depends
-+			wmb
- 		}x;
- 		my $barrier_stems = qr{
- 			mb__before_atomic|
-@@ -5829,12 +5828,6 @@ sub process {
- 			}
- 		}
- 
--# check for smp_read_barrier_depends and read_barrier_depends
--		if (!$file && $line =~ /\b(smp_|)read_barrier_depends\s*\(/) {
--			WARN("READ_BARRIER_DEPENDS",
--			     "$1read_barrier_depends should only be used in READ_ONCE or DEC Alpha code\n" . $herecurr);
--		}
--
- # check of hardware specific defines
- 		if ($line =~ m@^.\s*\#\s*if.*\b(__i386__|__powerpc64__|__sun__|__s390x__)\b@ && $realfile !~ m@include/asm-@) {
- 			CHK("ARCH_DEFINES",
--- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
+I realize that avoiding the cacheline dirtying might be worth it, but
+I'd like to see some indication that it actually matters and helps
+from a performance angle. We've already dirtied memory fairly close,
+even if it might not share a cacheline (that structure is randomized,
+we've touched - or will touch - 'cred->usage') too.
 
+Honestly, I don't think get_cred() is even in a hotpath. Most cred use
+just use the current cred that doesn't need the 'get'. So the
+optimization looks somewhat questionable - for all we know it just
+makes things worse.
+
+I also don't like using a "WRITE_ONCE()" without a reason for it. In
+this case, the only "reason" is that KCSAN special-cases that thing.
+I'd much rather have some other way to mark it.
+
+So it just looks hacky to me.
+
+I like that people are looking at KCSAN, but I get a very strong
+feeling that right now the workarounds for KCSAN false-positives are
+incredibly ugly, and not always appropriate.
+
+There is absolutely zero need for a WRITE_ONCE() in this case. The
+code would work fine if the compiler did the zero write fifty times,
+and re-ordered it wildly. We have a flag that starts out set, and we
+clear it.  There's really no "write-once" about it.
+
+               Linus
