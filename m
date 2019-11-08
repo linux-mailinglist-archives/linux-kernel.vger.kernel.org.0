@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B208BF573A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F22EF564A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391054AbfKHTTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:19:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57276 "EHLO mail.kernel.org"
+        id S2391048AbfKHTHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:07:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731387AbfKHTAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:00:10 -0500
+        id S2391510AbfKHTHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:07:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 514DB22466;
-        Fri,  8 Nov 2019 18:57:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9A7B222C4;
+        Fri,  8 Nov 2019 19:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239478;
-        bh=ysw7QuSPH6w9H59lOO9u2sSxRofHAlj8WmxiEtXxzkY=;
+        s=default; t=1573240072;
+        bh=gaaJ8b3ZfHjytfh+NG/YwqsMU1/VL4hgRLftpVuGPLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ssNJ8MfYzqWhcNUoWBlo90NURN2Bk9BOVX1Velqsq5ZQ8jvHgI3zHWL2LmHZfZES7
-         6CYvaU2yKKbwrKuDVRvq94zXiF94PPsYBpLI7UnSbnBmQZougI+67XwrX8clAo3Dll
-         KWqFhrSzaxXMgQj7LGLfRu78pJykNbirlKyuJDLA=
+        b=1zhIbAI4300oUfAiC5wyIci7+wzI4JyRvLJvt6n83rQKdSgsZpQiD9NRTY1Vg7A5R
+         5SRA1KQ97W3kvrD33Kzu7cpS0Ddj/S6iH6V1Z8pD3qEyRrp3Gxhk0kb1MhFcOF4NvI
+         33azqJqJ2lyan7ZqgP0qVynInfxnDERO1SZv1xSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Paul Burton <paulburton@kernel.org>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/62] MIPS: bmips: mark exception vectors as char arrays
-Date:   Fri,  8 Nov 2019 19:50:07 +0100
-Message-Id: <20191108174735.046218064@linuxfoundation.org>
+        stable@vger.kernel.org, Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 080/140] cxgb4: request the TX CIDX updates to status page
+Date:   Fri,  8 Nov 2019 19:50:08 +0100
+Message-Id: <20191108174910.158668196@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
-References: <20191108174719.228826381@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,107 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Gorski <jonas.gorski@gmail.com>
+From: Raju Rangoju <rajur@chelsio.com>
 
-[ Upstream commit e4f5cb1a9b27c0f94ef4f5a0178a3fde2d3d0e9e ]
+[ Upstream commit 7c3bebc3d8688b84795c11848c314a2fbfe045e0 ]
 
-The vectors span more than one byte, so mark them as arrays.
+For adapters which support the SGE Doorbell Queue Timer facility,
+we configured the Ethernet TX Queues to send CIDX Updates to the
+Associated Ethernet RX Response Queue with CPL_SGE_EGR_UPDATE
+messages to allow us to respond more quickly to the CIDX Updates.
+But, this was adding load to PCIe Link RX bandwidth and,
+potentially, resulting in higher CPU Interrupt load.
 
-Fixes the following build error when building when using GCC 8.3:
+This patch requests the HW to deliver the CIDX updates to the TX
+queue status page rather than generating an ingress queue message
+(as an interrupt). With this patch, the load on RX bandwidth is
+reduced and a substantial improvement in BW is noticed at lower
+IO sizes.
 
-In file included from ./include/linux/string.h:19,
-                 from ./include/linux/bitmap.h:9,
-                 from ./include/linux/cpumask.h:12,
-                 from ./arch/mips/include/asm/processor.h:15,
-                 from ./arch/mips/include/asm/thread_info.h:16,
-                 from ./include/linux/thread_info.h:38,
-                 from ./include/asm-generic/preempt.h:5,
-                 from ./arch/mips/include/generated/asm/preempt.h:1,
-                 from ./include/linux/preempt.h:81,
-                 from ./include/linux/spinlock.h:51,
-                 from ./include/linux/mmzone.h:8,
-                 from ./include/linux/bootmem.h:8,
-                 from arch/mips/bcm63xx/prom.c:10:
-arch/mips/bcm63xx/prom.c: In function 'prom_init':
-./arch/mips/include/asm/string.h:162:11: error: '__builtin_memcpy' forming offset [2, 32] is out of the bounds [0, 1] of object 'bmips_smp_movevec' with type 'char' [-Werror=array-bounds]
-   __ret = __builtin_memcpy((dst), (src), __len); \
-           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/mips/bcm63xx/prom.c:97:3: note: in expansion of macro 'memcpy'
-   memcpy((void *)0xa0000200, &bmips_smp_movevec, 0x20);
-   ^~~~~~
-In file included from arch/mips/bcm63xx/prom.c:14:
-./arch/mips/include/asm/bmips.h:80:13: note: 'bmips_smp_movevec' declared here
- extern char bmips_smp_movevec;
-
-Fixes: 18a1eef92dcd ("MIPS: BMIPS: Introduce bmips.h")
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: d429005fdf2c ("cxgb4/cxgb4vf: Add support for SGE doorbell queue timer")
+Signed-off-by: Raju Rangoju <rajur@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/bcm63xx/prom.c      |  2 +-
- arch/mips/include/asm/bmips.h | 10 +++++-----
- arch/mips/kernel/smp-bmips.c  |  8 ++++----
- 3 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/sge.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/mips/bcm63xx/prom.c b/arch/mips/bcm63xx/prom.c
-index 7019e2967009e..bbbf8057565b2 100644
---- a/arch/mips/bcm63xx/prom.c
-+++ b/arch/mips/bcm63xx/prom.c
-@@ -84,7 +84,7 @@ void __init prom_init(void)
- 		 * Here we will start up CPU1 in the background and ask it to
- 		 * reconfigure itself then go back to sleep.
- 		 */
--		memcpy((void *)0xa0000200, &bmips_smp_movevec, 0x20);
-+		memcpy((void *)0xa0000200, bmips_smp_movevec, 0x20);
- 		__sync();
- 		set_c0_cause(C_SW0);
- 		cpumask_set_cpu(1, &bmips_booted_mask);
-diff --git a/arch/mips/include/asm/bmips.h b/arch/mips/include/asm/bmips.h
-index b3e2975f83d36..a564915fddc40 100644
---- a/arch/mips/include/asm/bmips.h
-+++ b/arch/mips/include/asm/bmips.h
-@@ -75,11 +75,11 @@ static inline int register_bmips_smp_ops(void)
- #endif
- }
+--- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+@@ -3791,15 +3791,11 @@ int t4_sge_alloc_eth_txq(struct adapter
+ 	 * write the CIDX Updates into the Status Page at the end of the
+ 	 * TX Queue.
+ 	 */
+-	c.autoequiqe_to_viid = htonl((dbqt
+-				      ? FW_EQ_ETH_CMD_AUTOEQUIQE_F
+-				      : FW_EQ_ETH_CMD_AUTOEQUEQE_F) |
++	c.autoequiqe_to_viid = htonl(FW_EQ_ETH_CMD_AUTOEQUEQE_F |
+ 				     FW_EQ_ETH_CMD_VIID_V(pi->viid));
  
--extern char bmips_reset_nmi_vec;
--extern char bmips_reset_nmi_vec_end;
--extern char bmips_smp_movevec;
--extern char bmips_smp_int_vec;
--extern char bmips_smp_int_vec_end;
-+extern char bmips_reset_nmi_vec[];
-+extern char bmips_reset_nmi_vec_end[];
-+extern char bmips_smp_movevec[];
-+extern char bmips_smp_int_vec[];
-+extern char bmips_smp_int_vec_end[];
+ 	c.fetchszm_to_iqid =
+-		htonl(FW_EQ_ETH_CMD_HOSTFCMODE_V(dbqt
+-						 ? HOSTFCMODE_INGRESS_QUEUE_X
+-						 : HOSTFCMODE_STATUS_PAGE_X) |
++		htonl(FW_EQ_ETH_CMD_HOSTFCMODE_V(HOSTFCMODE_STATUS_PAGE_X) |
+ 		      FW_EQ_ETH_CMD_PCIECHN_V(pi->tx_chan) |
+ 		      FW_EQ_ETH_CMD_FETCHRO_F | FW_EQ_ETH_CMD_IQID_V(iqid));
  
- extern int bmips_smp_enabled;
- extern int bmips_cpu_offset;
-diff --git a/arch/mips/kernel/smp-bmips.c b/arch/mips/kernel/smp-bmips.c
-index 382d12eb88f0f..45fbcbbf2504e 100644
---- a/arch/mips/kernel/smp-bmips.c
-+++ b/arch/mips/kernel/smp-bmips.c
-@@ -457,10 +457,10 @@ static void bmips_wr_vec(unsigned long dst, char *start, char *end)
- 
- static inline void bmips_nmi_handler_setup(void)
- {
--	bmips_wr_vec(BMIPS_NMI_RESET_VEC, &bmips_reset_nmi_vec,
--		&bmips_reset_nmi_vec_end);
--	bmips_wr_vec(BMIPS_WARM_RESTART_VEC, &bmips_smp_int_vec,
--		&bmips_smp_int_vec_end);
-+	bmips_wr_vec(BMIPS_NMI_RESET_VEC, bmips_reset_nmi_vec,
-+		bmips_reset_nmi_vec_end);
-+	bmips_wr_vec(BMIPS_WARM_RESTART_VEC, bmips_smp_int_vec,
-+		bmips_smp_int_vec_end);
- }
- 
- struct reset_vec_info {
--- 
-2.20.1
-
 
 
