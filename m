@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8073FF4FDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA25F4FDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:36:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfKHPfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 10:35:46 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44072 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbfKHPfq (ORCPT
+        id S1727390AbfKHPg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 10:36:29 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:45987 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbfKHPg3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 10:35:46 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q26so4780876pfn.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 07:35:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mbqjUWGDXWIaVy6iV3sdofZ0jxt/pVLpoh92ATrPX1Y=;
-        b=vorgUDj6+6UmJsxUwlznw94CFZybpHAl2ne3wb2WfWG1z8CgLHiINfPY04JeSC+0k1
-         /1ztuPLxGB1SErJB1Qvk844TfucGzjQjyH+5c+Ilc4DHUnYlFCfSYrjWcXtv6P6NNdKd
-         I3tYRrSpNfjKot7F5PnRxv/1pPMmbNhi533jw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mbqjUWGDXWIaVy6iV3sdofZ0jxt/pVLpoh92ATrPX1Y=;
-        b=q3eXH6AZNQ3Ls1ACysW81ScFGz+t8PhXmAI0OG2Sh+fCObbFrIRB7EMkis3Ex5j/eE
-         xQ+CW5gtlcJXCbI/bjvdYXn4HGjOxq3PXU0Tgix3Y6IIp12EyAbeYSQLgGV8ugzUGx7b
-         ndpwuHv9l6L7vOUXVJstx3PhVV+rX+02AlA/jLyRYQP8WftgZTBNdNkbsWIsVn6tlMwD
-         ZYHIfoWfLmGHDiKjiXsHh1bvR8SEn+YbCuzU8Fm5FsdQ1/WleqYaAJb/h6Yge8WMns2e
-         gcIgn1ShCTeqsfccs9Iy++6jyMXTq23NY50fJLIBssZdZFxWQXUQNqpuwQpQtXl6og7E
-         nQ1Q==
-X-Gm-Message-State: APjAAAVGPnEtUPoUIlwe/e/c76w5KDRJgKYFeXkk5SalIlD9NuwZmfLO
-        5B39xTDbwh9I6mh8CxOJQWnYWQ==
-X-Google-Smtp-Source: APXvYqwb/aQ3D7gYofOFDmeLVdI6s94UZkNaBx0GgMxCmDj+wJ0R0I6NwdU1Nlz6L3VGQ3sxGI1pxw==
-X-Received: by 2002:a62:d44b:: with SMTP id u11mr12485806pfl.259.1573227345330;
-        Fri, 08 Nov 2019 07:35:45 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id j7sm5528054pgl.38.2019.11.08.07.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 07:35:44 -0800 (PST)
-Date:   Fri, 8 Nov 2019 10:35:43 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Nicolas Geoffray <ngeoffray@google.com>,
-        kernel-team@android.com, Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH 1/2] memfd: Fix COW issue on MAP_PRIVATE and
- F_SEAL_FUTURE_WRITE mappings
-Message-ID: <20191108153543.GC99567@google.com>
-References: <20191107195355.80608-1-joel@joelfernandes.org>
- <20191108063308.GB18778@infradead.org>
+        Fri, 8 Nov 2019 10:36:29 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xA8Fa8BD019745, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xA8Fa8BD019745
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 8 Nov 2019 23:36:08 +0800
+Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Fri, 8 Nov
+ 2019 23:36:08 +0800
+From:   James Tai <james.tai@realtek.com>
+To:     =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+CC:     "linux-realtek-soc@lists.infradead.org" 
+        <linux-realtek-soc@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Lorenzo Pieralisi" <lorenzo.pieralisi@arm.com>
+Subject: RE: [PATCH] arm64: dts: realtek: Add Realtek rtd1619 and mjolnir
+Thread-Topic: [PATCH] arm64: dts: realtek: Add Realtek rtd1619 and mjolnir
+Thread-Index: AdWTrwRiu8TDC5guRneVMItRk6mPLwAihi8AAIJriSA=
+Date:   Fri, 8 Nov 2019 15:36:07 +0000
+Message-ID: <43B123F21A8CFE44A9641C099E4196FFCF920024@RTITMBSVM04.realtek.com.tw>
+References: <43B123F21A8CFE44A9641C099E4196FFCF91BEFA@RTITMBSVM04.realtek.com.tw>
+ <25fdd8eb-f1a0-82ae-9c4b-22325b163b0e@suse.de>
+In-Reply-To: <25fdd8eb-f1a0-82ae-9c4b-22325b163b0e@suse.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.6.95]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108063308.GB18778@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 10:33:08PM -0800, Christoph Hellwig wrote:
-> > -		 * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED
-> > -		 * read-only mapping, take care to not allow mprotect to revert
-> > -		 * protections.
-> > +		 * Since an F_SEAL_FUTURE_WRITE sealed memfd can be mapped as
-> > +		 * MAP_SHARED and read-only, take care to not allow mprotect to
-> > +		 * revert protections on such mappings. Do this only for shared
-> > +		 * mappings. For private mappings, don't need to mask VM_MAYWRITE
-> 
-> This adds an > 80 char line.
-
-Oh, true. Sorry. Andrew I hate to ask you but since you took the patch
-already, could you just the comment for the character limit in the one
-you applied?
-
-thanks,
-
- - Joel
-
+SGkgQW5kcmVhcywNCg0KVGhhbmsgeW91IGZvciB5b3VyIHJldmlldy4NCg0KWy4uLl0NCj4gSnVz
+dCB0byBiZSBzdXJlOiBUaGlzIGlzIG9uZSBjbHVzdGVyIG9mIDYgQ1BVcz8gT3IgaXMgaXQgc29t
+ZSA0KzIgYmlnLkxJVFRMRSwNCj4gRHluYW1pUSBvciB3aGF0ZXZlciBtdWx0aS1jbHVzdGVyIGNv
+bmZpZ3VyYXRpb24gd2l0aCBkaWZmZXJlbnQgZnJlcXVlbmNpZXMsDQo+IHBvd2VyIGRvbWFpbnMg
+b3Igc29tZXRoaW5nPw0KPiANClllcywgaXQgaXMgb25lIGNsdXN0ZXIgb2YgNiBDUFVzLg0KDQpb
+Li4uXQ0KPiA+ICsNCj4gPiArCQlsMjogbDItY2FjaGUgew0KPiA+ICsJCQljb21wYXRpYmxlID0g
+ImNhY2hlIjsNCj4gPiArCQkJbmV4dC1sZXZlbC1jYWNoZSA9IDwmbDM+Ow0KPiA+ICsNCj4gPiAr
+CQl9Ow0KPiA+ICsNCj4gPiArCQlsMzogbDMtY2FjaGUgew0KPiA+ICsJCQljb21wYXRpYmxlID0g
+ImNhY2hlIjsNCj4gPiArCQl9Ow0KPiANCj4gQ2FjaGVzIGxvb2sgd2VpcmQgLSBvbmx5IGNwdTAg
+dXNlcyBMMiBhbmQgYWxsIG90aGVycyB1c2UgTDMgZGlyZWN0bHk/DQo+IA0KWWVzLCBvbmx5IGNw
+dTAgdXNlcyBMMiBhbmQgb3RoZXJzIHVzZSBMMyBkaXJlY3RseS4NCg0KWy4uLl0NCj4gR2VuZXJp
+YyBxdWVzdGlvbiBhbHNvIGFwcGx5aW5nIHRvIG15IFJURDEyOTUvUlREMTE5NSBwYXRjaGVzOiBB
+cmUgeW91IHN1cmUNCj4gYWJvdXQgR0lDX0NQVV9NQVNLX1JBVygweGYpIG9yIGNvdWxkIHRoaXMg
+YmUgR0lDX0NQVV9NQVNLX1NJTVBMRSg2KQ0KPiBpbiB0aGlzIGNhc2U/IFRoaXMgaGVyZSB3b3Vs
+ZCBzZWVtIGVxdWl2YWxlbnQgb2YgR0lDX0NQVV9NQVNLX1NJTVBMRSg4KS4NCj4NClRoZSBHSUN2
+MyBkb2VzIG5vdCBoYXZlIGFmZmluaXR5IGJpdG1hcCBpbiB0aGUgYmluZGluZyBmb3IgUFBJDQpp
+bnRlcnJ1cHRzLiBTbyByZW1vdmUgdGhlIEdJQ19DUFVfTUFTS19SQVcoKSBtYWNyby4NCg0KWy4u
+Ll0gDQo+IA0KPiBBbmQgZG91YmxlLWNoZWNrIHdoZXRoZXIgeW91IGFjdHVhbGx5IG5lZWQgPDI+
+IC0gY29tcGFyZSBydGQxMjl4LmR0c2kgdXNpbmcNCj4gPDE+IGJlY2F1c2Ugbm90aGluZyB3ZW50
+IGJleW9uZCAzMi1iaXQgYWRkcmVzcyBzcGFjZS4gSXQgd2FzIGEgcmV2aWV3DQo+IHJlcXVlc3Qg
+YmFjayB0aGVuLiBDYW4gUlREMTYxOSBoYXZlIG1vcmUgdGhhbiAyIEdpQiBSQU0sIHdpdGggYSBz
+ZWNvbmQNCj4gUkFNIHJlZ2lvbiBpbiBoaWdoIG1lbSwgcmVxdWlyaW5nIHR3byBjZWxscyBmb3Ig
+bWVtb3J5IG5vZGVzPw0KPiANClRoZSBSVEQxNjE5IGNhbiBzdXBwb3J0IG1vcmUgdGhhbiAyIEdp
+QiBSQU0uDQoNClsuLi5dDQo+IA0KPiBJcyB0aGUgVUFSVCBubyBsb25nZXIgYmVoaW5kIGFuIElS
+USBtdXggb24gUlREMTYxOSwgb3IgaXMgdGhlIGFib3ZlIHRoZSBJUlENCj4gbXV4IGludGVycnVw
+dCBhcyBhIHdvcmthcm91bmQgZm9yIGxhY2sgb2YgaW4tdHJlZSBpcnFjaGlwIGRyaXZlcj8NCj4g
+DQpZZXMsIHRoZSBVQVJUIG5vIGxvbmdlciBiZWhpbmQgYW4gSVJRIG11eCBvbiBSVEQxNjE5Lg0K
+DQpbLi4uXSANCj4gQXJlIHlvdSBzdXJlIHlvdSBkb24ndCBoYXZlIEdJQ0MsIEdJQ0gsIEdJQ1Yg
+YW5kIElSUT8gTm8gTUJJIHN1cHBvcnQ/DQo+IA0KVGhlIFJURDE2MTkgZG9uJ3QgaGF2ZSBHSUND
+LCBHSUNILCBHSUNWIGFuZCBubyBzdXBwb3J0IE1CSS4NCg0KPiBGb3IgUlREMTI5NSBJIGV4dGVu
+ZGVkIHRoZSBHSUN2MiBub2RlIGR1cmluZyByZXZpZXcsIGFuZCBLVk0gaW5pdGlhbGl6ZWQNCj4g
+ZmluZSwgYWx0aG91Z2ggSSdtIG5vdCBzdXJlIHdoZXRoZXIgSSd2ZSBydW4gYW4gYWN0dWFsIGd1
+ZXN0IHlldCwgZ2l2ZW4gaG93DQo+IG1hbnkgZHJpdmVycyB3ZXJlIG1pc3Npbmcgc3RpbGwuDQo+
+IA0KPiAoSSdkIGFsc28gYXBwcmVjaWF0ZSBSZWFsdGVrIHRvIHJldmlldyBteSBSVEQxMTk1IHBh
+dGNoJ3MgR0lDIFsxXSBmb3Igd2hldGhlcg0KPiB3ZSBzaG91bGQgaGF2ZSBhbGwgZm91ciByZWdp
+b25zIGFuZCBzb21lIGludGVycnVwdCB0aGVyZSAtIHRoZSBPRU0ncyBVLUJvb3QNCj4gZG9lc24n
+dCBib290IGluIEhZUCBtb2RlLCBzbyBJIGNhbid0IHRlc3QgbXlzZWxmLikNCj4gDQpJIHdpbGwg
+aGVscCB3aXRoIHJldmlldy4NCg0KWy4uLl0NCg0KUmVnYXJkcywNCkphbWVzDQoNCg0K
