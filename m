@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA1C3F570C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED838F54E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:01:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391068AbfKHTQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:16:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33402 "EHLO mail.kernel.org"
+        id S1731911AbfKHS4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:56:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390818AbfKHTDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:03:40 -0500
+        id S1732525AbfKHS4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:56:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C2C12067B;
-        Fri,  8 Nov 2019 19:03:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D918E214DB;
+        Fri,  8 Nov 2019 18:56:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239819;
-        bh=iS5YkiRMX6QfvMF8CirRm7kVBGedLM1vXfK0qMWYnL4=;
+        s=default; t=1573239397;
+        bh=WZb83f7ajjCS4RolwHUHtussqsT1ehPfqHysGCEZhVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lQ0bc8EeH13A5pelWoL0Yeh0s4aRUvPSubsyARqVrlP5apEcKTxGCWLEwfgDBzGmO
-         osIz2KkzJaBLHVK6WoFIEXI7Mk329FxQVXWVlON9+S0OY3XCGxD/7qAOq9RWz611rp
-         EWDPzN8Riy8o81Cs2BuOZSZfbdCqL35nTugEv1Ww=
+        b=twGQ03GMDI4xpbs4BOlCd2exdbMKXvVxM6U4k3DW36/dCZ7MYxSvxkMUmIAZxUeTf
+         HXDnJMNUJc5Cz1TC9IK1OZRqR2Lmy+twbk0OksgtryBQ1XIj2ZWS/8jaWIKed4Wpsx
+         ZKeNDgceAgDUhR2tI4H70q1W84LdYjw8aKe93dmY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 35/79] nbd: protect cmd->status with cmd->lock
+        stable@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 08/34] scsi: scsi_dh_alua: handle RTPG sense code correctly during state transitions
 Date:   Fri,  8 Nov 2019 19:50:15 +0100
-Message-Id: <20191108174805.118697450@linuxfoundation.org>
+Message-Id: <20191108174629.145691706@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174618.266472504@linuxfoundation.org>
+References: <20191108174618.266472504@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Hannes Reinecke <hare@suse.com>
 
-[ Upstream commit de6346ecbc8f5591ebd6c44ac164e8b8671d71d7 ]
+[ Upstream commit b6ce6fb121a655aefe41dccc077141c102145a37 ]
 
-We already do this for the most part, except in timeout and clear_req.
-For the timeout case we take the lock after we grab a ref on the config,
-but that isn't really necessary because we're safe to touch the cmd at
-this point, so just move the order around.
+Some arrays are not capable of returning RTPG data during state
+transitioning, but rather return an 'LUN not accessible, asymmetric access
+state transition' sense code. In these cases we can set the state to
+'transitioning' directly and don't need to evaluate the RTPG data (which we
+won't have anyway).
 
-For the clear_req cause this is initiated by the user, so again is safe.
-
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Link: https://lore.kernel.org/r/20191007135701.32389-1-hare@suse.de
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/nbd.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/scsi/device_handler/scsi_dh_alua.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index bd9aafe86c2fc..da6a36d14f4cf 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -349,17 +349,16 @@ static enum blk_eh_timer_return nbd_xmit_timeout(struct request *req,
- 	struct nbd_device *nbd = cmd->nbd;
- 	struct nbd_config *config;
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index 98787588247bf..60c288526355a 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -527,6 +527,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 	unsigned int tpg_desc_tbl_off;
+ 	unsigned char orig_transition_tmo;
+ 	unsigned long flags;
++	bool transitioning_sense = false;
  
-+	if (!mutex_trylock(&cmd->lock))
-+		return BLK_EH_RESET_TIMER;
-+
- 	if (!refcount_inc_not_zero(&nbd->config_refs)) {
- 		cmd->status = BLK_STS_TIMEOUT;
-+		mutex_unlock(&cmd->lock);
- 		goto done;
+ 	if (!pg->expiry) {
+ 		unsigned long transition_tmo = ALUA_FAILOVER_TIMEOUT * HZ;
+@@ -571,13 +572,19 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 			goto retry;
+ 		}
+ 		/*
+-		 * Retry on ALUA state transition or if any
+-		 * UNIT ATTENTION occurred.
++		 * If the array returns with 'ALUA state transition'
++		 * sense code here it cannot return RTPG data during
++		 * transition. So set the state to 'transitioning' directly.
+ 		 */
+ 		if (sense_hdr.sense_key == NOT_READY &&
+-		    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a)
+-			err = SCSI_DH_RETRY;
+-		else if (sense_hdr.sense_key == UNIT_ATTENTION)
++		    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a) {
++			transitioning_sense = true;
++			goto skip_rtpg;
++		}
++		/*
++		 * Retry on any other UNIT ATTENTION occurred.
++		 */
++		if (sense_hdr.sense_key == UNIT_ATTENTION)
+ 			err = SCSI_DH_RETRY;
+ 		if (err == SCSI_DH_RETRY &&
+ 		    pg->expiry != 0 && time_before(jiffies, pg->expiry)) {
+@@ -665,7 +672,11 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 		off = 8 + (desc[7] * 4);
  	}
- 	config = nbd->config;
  
--	if (!mutex_trylock(&cmd->lock)) {
--		nbd_config_put(nbd);
--		return BLK_EH_RESET_TIMER;
--	}
--
- 	if (config->num_connections > 1) {
- 		dev_err_ratelimited(nbd_to_dev(nbd),
- 				    "Connection timed out, retrying (%d/%d alive)\n",
-@@ -745,7 +744,10 @@ static void nbd_clear_req(struct request *req, void *data, bool reserved)
- {
- 	struct nbd_cmd *cmd = blk_mq_rq_to_pdu(req);
- 
-+	mutex_lock(&cmd->lock);
- 	cmd->status = BLK_STS_IOERR;
-+	mutex_unlock(&cmd->lock);
++ skip_rtpg:
+ 	spin_lock_irqsave(&pg->lock, flags);
++	if (transitioning_sense)
++		pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
 +
- 	blk_mq_complete_request(req);
- }
- 
+ 	sdev_printk(KERN_INFO, sdev,
+ 		    "%s: port group %02x state %c %s supports %c%c%c%c%c%c%c\n",
+ 		    ALUA_DH_NAME, pg->group_id, print_alua_state(pg->state),
 -- 
 2.20.1
 
