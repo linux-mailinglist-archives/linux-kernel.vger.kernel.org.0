@@ -2,36 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18579F5AEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 23:33:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D819BF5AEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 23:32:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730481AbfKHWcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 17:32:51 -0500
-Received: from relay.sw.ru ([185.231.240.75]:40440 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726095AbfKHWcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 17:32:50 -0500
-Received: from [192.168.15.61]
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1iTCnz-0006wD-JO; Sat, 09 Nov 2019 01:32:35 +0300
-Subject: Re: [PATCH v3 1/2] kasan: detect negative size in memory operation
- function
-To:     Walter Wu <walter-zh.wu@mediatek.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        wsd_upstream <wsd_upstream@mediatek.com>
-References: <20191104020519.27988-1-walter-zh.wu@mediatek.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <34bf9c08-d2f2-a6c6-1dbe-29b1456d8284@virtuozzo.com>
-Date:   Sat, 9 Nov 2019 01:31:12 +0300
+        id S1730690AbfKHWbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 17:31:51 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42624 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729164AbfKHWbv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 17:31:51 -0500
+Received: by mail-pf1-f193.google.com with SMTP id s5so5710918pfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 14:31:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uOMwlXA0YCJxSB/0tZdjm9vpOf0PBhXbvsTTJSciZBo=;
+        b=YHtoMo+Smmf4nheTP5Ssye+fQPNTSTfHWaiJRqZmBosU3H1bHsE0rB+sfM7z80Xy0x
+         +N6j9poEJyUySepGAXlMnk8eW7cT5uLI6wP5Gf9UCW37J++SPnLB6BillSJhxVxGICO8
+         GAlIDSlAGuz2RvR9TQNnXpWB4ipZbOWPdnn+tYLf1bMnM9hcP3+he3j58d8X7yrRIHk9
+         L3uJIxmuy0DUngSVJcip8fjHwZXJSJRzsik8BXNpxDCjBTEKtxdjE97THAh4O9SKF4nV
+         i168oYzU2924TUa9C2IHetlzquSSfxYW6loQqdTpicTb4OdswnoSdRNfqWaFeXXa+gpa
+         CbJg==
+X-Gm-Message-State: APjAAAXzXxsZv6S3HZ1q1moM9DtyZ+ozjdQ+CVzTy3IizYhfGq3Qmjj9
+        0IYFfsrCLkw7rBE2bi6qIPIPXQ==
+X-Google-Smtp-Source: APXvYqxgsTzvWwKVeIOAd8QL9w8gxGiA6Qrkb61KTL7dh0OSi94Xnte59tfcevtvB/aF+pXShlPMww==
+X-Received: by 2002:a17:90a:fb53:: with SMTP id iq19mr16819626pjb.138.1573252310306;
+        Fri, 08 Nov 2019 14:31:50 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:1ef2:3602:86ff:fef6:e86b? ([2601:646:c200:1ef2:3602:86ff:fef6:e86b])
+        by smtp.googlemail.com with ESMTPSA id e1sm6479853pgv.82.2019.11.08.14.31.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 14:31:49 -0800 (PST)
+Subject: Re: [patch 2/9] x86/process: Unify copy_thread_tls()
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Stephen Hemminger <stephen@networkplumber.org>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: <20191106193459.581614484@linutronix.de>
+ <20191106202805.948064985@linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Message-ID: <53a6f346-fca1-ac04-ee34-6d472a0d4408@kernel.org>
+Date:   Fri, 8 Nov 2019 14:31:47 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-In-Reply-To: <20191104020519.27988-1-walter-zh.wu@mediatek.com>
+In-Reply-To: <20191106202805.948064985@linutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -40,178 +60,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/4/19 5:05 AM, Walter Wu wrote:
-
+On 11/6/19 11:35 AM, Thomas Gleixner wrote:
+> While looking at the TSS io bitmap it turned out that any change in that
+> area would require identical changes to copy_thread_tls(). The 32 and 64
+> bit variants share sufficient code to consolidate them into a common
+> function to avoid duplication of upcoming modifications.
 > 
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index 6814d6d6a023..4ff67e2fd2db 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -99,10 +99,14 @@ bool __kasan_check_write(const volatile void *p, unsigned int size)
->  }
->  EXPORT_SYMBOL(__kasan_check_write);
->  
-> +extern bool report_enabled(void);
-> +
->  #undef memset
->  void *memset(void *addr, int c, size_t len)
->  {
-> -	check_memory_region((unsigned long)addr, len, true, _RET_IP_);
-> +	if (report_enabled() &&
-> +	    !check_memory_region((unsigned long)addr, len, true, _RET_IP_))
-> +		return NULL;
->  
->  	return __memset(addr, c, len);
->  }
-> @@ -110,8 +114,10 @@ void *memset(void *addr, int c, size_t len)
->  #undef memmove
->  void *memmove(void *dest, const void *src, size_t len)
->  {
-> -	check_memory_region((unsigned long)src, len, false, _RET_IP_);
-> -	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
-> +	if (report_enabled() &&
-> +	   (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
-> +	    !check_memory_region((unsigned long)dest, len, true, _RET_IP_)))
-> +		return NULL;
->  
->  	return __memmove(dest, src, len);
->  }
-> @@ -119,8 +125,10 @@ void *memmove(void *dest, const void *src, size_t len)
->  #undef memcpy
->  void *memcpy(void *dest, const void *src, size_t len)
->  {
-> -	check_memory_region((unsigned long)src, len, false, _RET_IP_);
-> -	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
-> +	if (report_enabled() &&
-
-            report_enabled() checks seems to be useless.
-
-> +	   (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
-> +	    !check_memory_region((unsigned long)dest, len, true, _RET_IP_)))
-> +		return NULL;
->  
->  	return __memcpy(dest, src, len);
->  }
-> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-> index 616f9dd82d12..02148a317d27 100644
-> --- a/mm/kasan/generic.c
-> +++ b/mm/kasan/generic.c
-> @@ -173,6 +173,11 @@ static __always_inline bool check_memory_region_inline(unsigned long addr,
->  	if (unlikely(size == 0))
->  		return true;
->  
-> +	if (unlikely((long)size < 0)) {
-
-        if (unlikely(addr + size < addr)) {
-
-> +		kasan_report(addr, size, write, ret_ip);
-> +		return false;
-> +	}
-> +
->  	if (unlikely((void *)addr <
->  		kasan_shadow_to_mem((void *)KASAN_SHADOW_START))) {
->  		kasan_report(addr, size, write, ret_ip);
-> diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
-> index 36c645939bc9..52a92c7db697 100644
-> --- a/mm/kasan/generic_report.c
-> +++ b/mm/kasan/generic_report.c
-> @@ -107,6 +107,24 @@ static const char *get_wild_bug_type(struct kasan_access_info *info)
->  
->  const char *get_bug_type(struct kasan_access_info *info)
->  {
-> +	/*
-> +	 * If access_size is negative numbers, then it has three reasons
-> +	 * to be defined as heap-out-of-bounds bug type.
-> +	 * 1) Casting negative numbers to size_t would indeed turn up as
-> +	 *    a large size_t and its value will be larger than ULONG_MAX/2,
-> +	 *    so that this can qualify as out-of-bounds.
-> +	 * 2) If KASAN has new bug type and user-space passes negative size,
-> +	 *    then there are duplicate reports. So don't produce new bug type
-> +	 *    in order to prevent duplicate reports by some systems
-> +	 *    (e.g. syzbot) to report the same bug twice.
-> +	 * 3) When size is negative numbers, it may be passed from user-space.
-> +	 *    So we always print heap-out-of-bounds in order to prevent that
-> +	 *    kernel-space and user-space have the same bug but have duplicate
-> +	 *    reports.
-> +	 */
- 
-Completely fail to understand 2) and 3). 2) talks something about *NOT* producing new bug
-type, but at the same time you code actually does that.
-3) says something about user-space which have nothing to do with kasan.
-
-> +	if ((long)info->access_size < 0)
-
-        if (info->access_addr + info->access_size < info->access_addr)
-
-> +		return "heap-out-of-bounds";
-> +
->  	if (addr_has_shadow(info->access_addr))
->  		return get_shadow_bug_type(info);
->  	return get_wild_bug_type(info);
-> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-> index 621782100eaa..c79e28814e8f 100644
-> --- a/mm/kasan/report.c
-> +++ b/mm/kasan/report.c
-> @@ -446,7 +446,7 @@ static void print_shadow_for_address(const void *addr)
->  	}
->  }
->  
-> -static bool report_enabled(void)
-> +bool report_enabled(void)
->  {
->  	if (current->kasan_depth)
->  		return false;
-> diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
-> index 0e987c9ca052..b829535a3ad7 100644
-> --- a/mm/kasan/tags.c
-> +++ b/mm/kasan/tags.c
-> @@ -86,6 +86,11 @@ bool check_memory_region(unsigned long addr, size_t size, bool write,
->  	if (unlikely(size == 0))
->  		return true;
->  
-> +	if (unlikely((long)size < 0)) {
-
-        if (unlikely(addr + size < addr)) {
-
-> +		kasan_report(addr, size, write, ret_ip);
-> +		return false;
-> +	}
-> +
->  	tag = get_tag((const void *)addr);
->  
->  	/*
-> diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
-> index 969ae08f59d7..f7ae474aef3a 100644
-> --- a/mm/kasan/tags_report.c
-> +++ b/mm/kasan/tags_report.c
-> @@ -36,6 +36,24 @@
->  
->  const char *get_bug_type(struct kasan_access_info *info)
->  {
-> +	/*
-> +	 * If access_size is negative numbers, then it has three reasons
-> +	 * to be defined as heap-out-of-bounds bug type.
-> +	 * 1) Casting negative numbers to size_t would indeed turn up as
-> +	 *    a large size_t and its value will be larger than ULONG_MAX/2,
-> +	 *    so that this can qualify as out-of-bounds.
-> +	 * 2) If KASAN has new bug type and user-space passes negative size,
-> +	 *    then there are duplicate reports. So don't produce new bug type
-> +	 *    in order to prevent duplicate reports by some systems
-> +	 *    (e.g. syzbot) to report the same bug twice.
-> +	 * 3) When size is negative numbers, it may be passed from user-space.
-> +	 *    So we always print heap-out-of-bounds in order to prevent that
-> +	 *    kernel-space and user-space have the same bug but have duplicate
-> +	 *    reports.
-> +	 */
-> +	if ((long)info->access_size < 0)
-
-        if (info->access_addr + info->access_size < info->access_addr)
-
-> +		return "heap-out-of-bounds";
-> +
->  #ifdef CONFIG_KASAN_SW_TAGS_IDENTIFY
->  	struct kasan_alloc_meta *alloc_meta;
->  	struct kmem_cache *cache;
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  arch/x86/include/asm/ptrace.h    |    6 ++
+>  arch/x86/include/asm/switch_to.h |   10 ++++
+>  arch/x86/kernel/process.c        |   94 +++++++++++++++++++++++++++++++++++++++
+>  arch/x86/kernel/process_32.c     |   68 ----------------------------
+>  arch/x86/kernel/process_64.c     |   75 -------------------------------
+>  5 files changed, 110 insertions(+), 143 deletions(-)
 > 
+> --- a/arch/x86/include/asm/ptrace.h
+> +++ b/arch/x86/include/asm/ptrace.h
+> @@ -361,5 +361,11 @@ extern int do_get_thread_area(struct tas
+>  extern int do_set_thread_area(struct task_struct *p, int idx,
+>  			      struct user_desc __user *info, int can_allocate);
+>  
+> +#ifdef CONFIG_X86_64
+> +# define do_set_thread_area_64(p, s, t)	do_arch_prctl_64(p, s, t)
+> +#else
+> +# define do_set_thread_area_64(p, s, t)	(0)
+> +#endif
+> +
+>  #endif /* !__ASSEMBLY__ */
+>  #endif /* _ASM_X86_PTRACE_H */
+> --- a/arch/x86/include/asm/switch_to.h
+> +++ b/arch/x86/include/asm/switch_to.h
+> @@ -103,7 +103,17 @@ static inline void update_task_stack(str
+>  	if (static_cpu_has(X86_FEATURE_XENPV))
+>  		load_sp0(task_top_of_stack(task));
+>  #endif
+> +}
+>  
+> +static inline void kthread_frame_init(struct inactive_task_frame *frame,
+> +				      unsigned long fun, unsigned long arg)
+> +{
+> +	frame->bx = fun;
+> +#ifdef CONFIG_X86_32
+> +	frame->di = arg;
+> +#else
+> +	frame->r12 = arg;
+> +#endif
+>  }
+>  
+>  #endif /* _ASM_X86_SWITCH_TO_H */
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -132,6 +132,100 @@ void exit_thread(struct task_struct *tsk
+>  	fpu__drop(fpu);
+>  }
+>  
+> +static int set_new_tls(struct task_struct *p, unsigned long tls)
+> +{
+> +	struct user_desc __user *utls = (struct user_desc __user *)tls;
+> +
+> +	if (in_ia32_syscall())
+> +		return do_set_thread_area(p, -1, utls, 0);
+> +	else
+> +		return do_set_thread_area_64(p, ARCH_SET_FS, tls);
+> +}
+> +
+> +static inline int copy_io_bitmap(struct task_struct *tsk)
+> +{
+> +	if (likely(!test_tsk_thread_flag(current, TIF_IO_BITMAP)))
+> +		return 0;
+> +
+> +	tsk->thread.io_bitmap_ptr = kmemdup(current->thread.io_bitmap_ptr,
+> +					    IO_BITMAP_BYTES, GFP_KERNEL);
+
+tsk->thread.io_bitmap_max = current->thread.io_bitmap_max?
+
+I realize you inherited this from the code you're refactoring, but it
+does seem to be missing.
+
+> +	if (!tsk->thread.io_bitmap_ptr) {
+> +		tsk->thread.io_bitmap_max = 0;
+> +		return -ENOMEM;
+> +	}
+> +	set_tsk_thread_flag(tsk, TIF_IO_BITMAP);
+> +	return 0;
+> +}
+> +
+> +static inline void free_io_bitmap(struct task_struct *tsk)
+> +{
+> +	if (tsk->thread.io_bitmap_ptr) {
+> +		kfree(tsk->thread.io_bitmap_ptr);
+> +		tsk->thread.io_bitmap_ptr = NULL;
+> +		tsk->thread.io_bitmap_max = 0;
+> +	}
+> +}
+> +
+> +int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+> +		    unsigned long arg, struct task_struct *p, unsigned long tls)
+> +{
+> +	struct inactive_task_frame *frame;
+> +	struct fork_frame *fork_frame;
+> +	struct pt_regs *childregs;
+> +	int ret;
+> +
+> +	childregs = task_pt_regs(p);
+> +	fork_frame = container_of(childregs, struct fork_frame, regs);
+> +	frame = &fork_frame->frame;
+> +
+> +	frame->bp = 0;
+> +	frame->ret_addr = (unsigned long) ret_from_fork;
+> +	p->thread.sp = (unsigned long) fork_frame;
+> +	p->thread.io_bitmap_ptr = NULL;
+> +	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
+> +
+> +#ifdef CONFIG_X86_64
+> +	savesegment(gs, p->thread.gsindex);
+> +	p->thread.gsbase = p->thread.gsindex ? 0 : current->thread.gsbase;
+> +	savesegment(fs, p->thread.fsindex);
+> +	p->thread.fsbase = p->thread.fsindex ? 0 : current->thread.fsbase;
+> +	savesegment(es, p->thread.es);
+> +	savesegment(ds, p->thread.ds);
+> +#else
+> +	/* Clear all status flags including IF and set fixed bit. */
+> +	frame->flags = X86_EFLAGS_FIXED;
+> +#endif
+
+Want to do another commit to make the eflags fixup unconditional?  I'm
+wondering if we have a bug.
+
+Other than these questions:
+
+Acked-by: Andy Lutomirski <luto@kernel.org>
