@@ -2,95 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 525BAF4F6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:25:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC72BF4F6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:25:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfKHPZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 10:25:01 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:41597 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbfKHPZA (ORCPT
+        id S1726462AbfKHPY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 10:24:59 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:46493 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726199AbfKHPY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 10:25:00 -0500
-X-Originating-IP: 92.137.17.54
-Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 3A98C240003;
-        Fri,  8 Nov 2019 15:24:57 +0000 (UTC)
-Date:   Fri, 8 Nov 2019 16:24:57 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Jinke Fan <fanjinke@hygon.cn>
-Cc:     a.zummo@towertech.it, puwen@hygon.cn, thomas.lendacky@amd.com,
-        kim.phillips@amd.com, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v4] rtc: Fix the AltCentury value on AMD/Hygon
- platform
-Message-ID: <20191108152457.GD216543@piout.net>
-References: <20191105083943.115320-1-fanjinke@hygon.cn>
+        Fri, 8 Nov 2019 10:24:58 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iT687-0001XH-4B; Fri, 08 Nov 2019 16:24:55 +0100
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 01/11] irqchip/gic-v3-its: Free collection mapping on  device teardown
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191105083943.115320-1-fanjinke@hygon.cn>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 08 Nov 2019 16:34:15 +0109
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <lorenzo.pieralisi@arm.com>, <andrew.murray@arm.com>,
+        Heyi Guo <guoheyi@huawei.com>
+In-Reply-To: <5c3034c6-7593-64c0-0cbe-43dc6a184bbb@huawei.com>
+References: <20191105162258.22214-1-maz@kernel.org>
+ <20191105162258.22214-2-maz@kernel.org>
+ <5c3034c6-7593-64c0-0cbe-43dc6a184bbb@huawei.com>
+Message-ID: <ace82bd937c69b9d2e3a3a6284d5deb4@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, guoheyi@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2019 16:39:43+0800, Jinke Fan wrote:
-> When using following operations:
-> date -s "21190910 19:20:00"
-> hwclock -w
-> to change date from 2019 to 2119 for test, it will fail on Hygon
-> Dhyana and AMD Zen CPUs, while the same operations run ok on Intel i7
-> platform.
-> 
-> MC146818 driver use function mc146818_set_time() to set register
-> RTC_FREQ_SELECT(RTC_REG_A)'s bit4-bit6 field which means divider stage
-> reset value on Intel platform to 0x7.
-> 
-> While AMD/Hygon RTC_REG_A(0Ah)'s bit4 is defined as DV0 [Reference]:
-> DV0 = 0 selects Bank 0, DV0 = 1 selects Bank 1. Bit5-bit6 is defined
-> as reserved.
-> 
-> DV0 is set to 1, it will select Bank 1, which will disable AltCentury
-> register(0x32) access. As UEFI pass acpi_gbl_FADT.century 0x32
-> (AltCentury), the CMOS write will be failed on code:
-> CMOS_WRITE(century, acpi_gbl_FADT.century).
-> 
-> Correct RTC_REG_A bank select bit(DV0) to 0 on AMD/Hygon CPUs, it will
-> enable AltCentury(0x32) register writing and finally setup century as
-> expected.
-> 
-> Test results on Intel i7, AMD EPYC(17h) and Hygon machine show that it
-> works as expected.
-> Compiling for sparc64 and alpha architectures are passed.
-> 
-> Reference:
-> https://www.amd.com/system/files/TechDocs/51192_Bolton_FCH_RRG.pdf
-> section: 3.13 Real Time Clock (RTC)
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Jinke Fan <fanjinke@hygon.cn>
-> ---
-> 
-> v3->v4:
->   - Limited modification to AMD EPYC(17h).
->   - Change the macro RTC_DV0 to RTC_DIV_RESET2.
->   - Make sure save_freq_select's bit4 is cleared.
-> 
-> v2->v3:
->   - Make the changes only relevant to AMD/Hygon.
-> 
-> v1->v2:
->   - Fix the compile errors on sparc64/alpha platform.
-> 
->  drivers/rtc/rtc-mc146818-lib.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-Applied, thanks.
+Hi Zenghui,
 
+On 2019-11-08 14:09, Zenghui Yu wrote:
+> Hi Marc,
+>
+> On 2019/11/6 0:22, Marc Zyngier wrote:
+>> Somehow, we forgot to free the collection mapping when tearing down
+>> a device, hence slowly leaking mapping arrays as devices get removed
+>> from the system. That is, almost never.
+>> Just to be safe, properly free the array on device teardown.
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>> ---
+>>   drivers/irqchip/irq-gic-v3-its.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+>> b/drivers/irqchip/irq-gic-v3-its.c
+>> index 787e8eec9a7f..07d0bde60e16 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -2471,6 +2471,7 @@ static void its_free_device(struct its_device 
+>> *its_dev)
+>>   	raw_spin_lock_irqsave(&its_dev->its->lock, flags);
+>>   	list_del(&its_dev->entry);
+>>   	raw_spin_unlock_irqrestore(&its_dev->its->lock, flags);
+>> +	kfree(its_dev->event_map.col_map);
+>
+> I agreed that this is the appropriate place to free the collection
+> mapping (act as the counterpart of the allocation which happened in
+> its_create_device).  But as pointed out by Heyi [1], this will
+> introduce a double free issue.  We'd better also drop the kfree()
+> in its_irq_domain_free() in this patch?
+>
+> (I find that it had been dropped in the last patch in your
+> irq/gic-5.5-wip branch, but maybe better here.)
+
+Ah, that hunk is in a separate patch that I wasn't really
+planning to send for this round. Let me fix the series (again)
+and resend it...
+
+Thanks for the heads up,
+
+         M.
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Jazz is not dead. It just smells funny...
