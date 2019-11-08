@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1D4F54C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:00:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E89F5630
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:03:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732425AbfKHSxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:53:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50140 "EHLO mail.kernel.org"
+        id S2389303AbfKHTHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:07:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732341AbfKHSx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:53:29 -0500
+        id S2387807AbfKHTHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:07:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 128B3218AE;
-        Fri,  8 Nov 2019 18:53:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5976621D7B;
+        Fri,  8 Nov 2019 19:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239208;
-        bh=5q8MdXl36BTYt1/zFIU1xr7uiq22NFrK9WPUMpYkyg0=;
+        s=default; t=1573240034;
+        bh=K32ZWAUHZYwZ6ldFuJYFcJMs3ik48+4h5AWGsB4QZsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zXKwNwBG+CZ7/p032AlPwQ0E6MGBcUyM3Vtq7DUrbPzN+PvlKpbRz/A2rD7OhKi67
-         O99fWLmo28k/qTPkBKFZ4mbVHL8vCKoOMq0O1FUy98A371UW0wPV8vTFx8XYUBjwQ4
-         v8+i9D3ZzMAgUQS+oJsj0FQDZFLYC2mh8IaQ4Lvc=
+        b=icuVCbF1NC1W1S6kWMokXtH6kKxRMkBl4RFbZe9t3MeO9fxJKVLvzwJO6XuKL4NNq
+         4wGC/z/StAIlm60zmiOTfFBk68Hp0bHAsLgU6KyPZbhQWgm3iIgkLvW5p9SgHSapEK
+         HogkzX3m6zVl0kydpo17BpjtoXzJ/W4pHszaXWOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.4 35/75] arm/arm64: smccc: Make function identifiers an unsigned quantity
+        stable@vger.kernel.org, afzal mohammed <afzal.mohd.ma@gmail.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 064/140] ARM: 8926/1: v7m: remove register save to stack before svc
 Date:   Fri,  8 Nov 2019 19:49:52 +0100
-Message-Id: <20191108174744.434421656@linuxfoundation.org>
+Message-Id: <20191108174909.263966482@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
-References: <20191108174708.135680837@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,54 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: afzal mohammed <afzal.mohd.ma@gmail.com>
 
-commit ded4c39e93f3b72968fdb79baba27f3b83dad34c upstream.
+[ Upstream commit 2ecb287998a47cc0a766f6071f63bc185f338540 ]
 
-Function identifiers are a 32bit, unsigned quantity. But we never
-tell so to the compiler, resulting in the following:
+r0-r3 & r12 registers are saved & restored, before & after svc
+respectively. Intention was to preserve those registers across thread to
+handler mode switch.
 
- 4ac:   b26187e0        mov     x0, #0xffffffff80000001
+On v7-M, hardware saves the register context upon exception in AAPCS
+complaint way. Restoring r0-r3 & r12 is done from stack location where
+hardware saves it, not from the location on stack where these registers
+were saved.
 
-We thus rely on the firmware narrowing it for us, which is not
-always a reasonable expectation.
+To clarify, on stm32f429 discovery board:
 
-Cc: stable@vger.kernel.org
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Greg Hackmann <ghackmann@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+1. before svc, sp - 0x90009ff8
+2. r0-r3,r12 saved to 0x90009ff8 - 0x9000a00b
+3. upon svc, h/w decrements sp by 32 & pushes registers onto stack
+4. after svc,  sp - 0x90009fd8
+5. r0-r3,r12 restored from 0x90009fd8 - 0x90009feb
+
+Above means r0-r3,r12 is not restored from the location where they are
+saved, but since hardware pushes the registers onto stack, the registers
+are restored correctly.
+
+Note that during register saving to stack (step 2), it goes past
+0x9000a000. And it seems, based on objdump, there are global symbols
+residing there, and it perhaps can cause issues on a non-XIP Kernel
+(on XIP, data section is setup later).
+
+Based on the analysis above, manually saving registers onto stack is at
+best no-op and at worst can cause data section corruption. Hence remove
+storing of registers onto stack before svc.
+
+Fixes: b70cd406d7fe ("ARM: 8671/1: V7M: Preserve registers across switch from Thread to Handler mode")
+Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Acked-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/arm-smccc.h |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/mm/proc-v7m.S | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -14,14 +14,16 @@
- #ifndef __LINUX_ARM_SMCCC_H
- #define __LINUX_ARM_SMCCC_H
- 
-+#include <uapi/linux/const.h>
-+
- /*
-  * This file provides common defines for ARM SMC Calling Convention as
-  * specified in
-  * http://infocenter.arm.com/help/topic/com.arm.doc.den0028a/index.html
-  */
- 
--#define ARM_SMCCC_STD_CALL		0
--#define ARM_SMCCC_FAST_CALL		1
-+#define ARM_SMCCC_STD_CALL	        _AC(0,U)
-+#define ARM_SMCCC_FAST_CALL	        _AC(1,U)
- #define ARM_SMCCC_TYPE_SHIFT		31
- 
- #define ARM_SMCCC_SMC_32		0
+diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
+index efebf4120a0c4..1a49d503eafc8 100644
+--- a/arch/arm/mm/proc-v7m.S
++++ b/arch/arm/mm/proc-v7m.S
+@@ -132,7 +132,6 @@ __v7m_setup_cont:
+ 	dsb
+ 	mov	r6, lr			@ save LR
+ 	ldr	sp, =init_thread_union + THREAD_START_SP
+-	stmia	sp, {r0-r3, r12}
+ 	cpsie	i
+ 	svc	#0
+ 1:	cpsid	i
+-- 
+2.20.1
+
 
 
