@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333C5F469C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5717EF469E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:43:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390507AbfKHLni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:43:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57814 "EHLO mail.kernel.org"
+        id S2390549AbfKHLno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:43:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390434AbfKHLnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:43:24 -0500
+        id S2390438AbfKHLnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:43:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECA8221D82;
-        Fri,  8 Nov 2019 11:43:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D874222C6;
+        Fri,  8 Nov 2019 11:43:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213403;
-        bh=pJGj7HwNlJeJIRu3mkf03IkdEkARpRHmioOZLUOcwtE=;
+        s=default; t=1573213404;
+        bh=DPTSHDoRdJEoqWbw2URfzbzEk9FVmflOw3BWvsUFfjg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wa5ChdUppj71GbliX7VmzH976CAVMDn7QQBZl9EdAHcrXV9LQJe0VEapsHCVTW+tL
-         Rkb1kqMrskYZr9+gEwzSfpZOuZpLFub+/Z2PyTGkAAT8LQLmE/04b0L6Gr26xIEZTI
-         RE4hhAW+WJ49ZQyBjAwqxyeQWBuKSFeAAv+zhbSU=
+        b=XWNU9cWQYD74PCEChod5zTjGeiZMApaaMs8ZbDNwo6f3v+nlLRT3wIgrNpTaD5TD2
+         WqmjA3t5qMyXYXTlrpCSomWZY+L/JL8fPiyawIGVjvUg0bvEo0kbdB1FKzTHguiWZ+
+         dJb4kjMTlqaarjxReKZEvD713GUP5tKKZ791g2sA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aapo Vienamo <avienamo@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 008/103] arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
-Date:   Fri,  8 Nov 2019 06:41:33 -0500
-Message-Id: <20191108114310.14363-8-sashal@kernel.org>
+Cc:     Jay Foster <jayfoster@ieee.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 009/103] ARM: dts: at91/trivial: Fix USART1 definition for at91sam9g45
+Date:   Fri,  8 Nov 2019 06:41:34 -0500
+Message-Id: <20191108114310.14363-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
 References: <20191108114310.14363-1-sashal@kernel.org>
@@ -45,32 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aapo Vienamo <avienamo@nvidia.com>
+From: Jay Foster <jayfoster@ieee.org>
 
-[ Upstream commit 6ff7705da8806de45ca1490194f0b4eb07725804 ]
+[ Upstream commit 10af10db8c76fa5b9bf1f52a895c1cb2c0ac24da ]
 
-On p2180 sdmmc4 is powered from a fixed 1.8 V regulator.
+Fix a typo. No functional change made by this patch.
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Jay Foster <jayfoster@ieee.org>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/at91sam9g45.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index f6e6f1e83ba89..be91873c08782 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -282,6 +282,7 @@
- 		status = "okay";
- 		bus-width = <8>;
- 		non-removable;
-+		vqmmc-supply = <&vdd_1v8>;
- 	};
+diff --git a/arch/arm/boot/dts/at91sam9g45.dtsi b/arch/arm/boot/dts/at91sam9g45.dtsi
+index 64fa3f9a39d33..db0921e7a6138 100644
+--- a/arch/arm/boot/dts/at91sam9g45.dtsi
++++ b/arch/arm/boot/dts/at91sam9g45.dtsi
+@@ -566,7 +566,7 @@
+ 					};
+ 				};
  
- 	clocks {
+-				uart1 {
++				usart1 {
+ 					pinctrl_usart1: usart1-0 {
+ 						atmel,pins =
+ 							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PB4 periph A with pullup */
 -- 
 2.20.1
 
