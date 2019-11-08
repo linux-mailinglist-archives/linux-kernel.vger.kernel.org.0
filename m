@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A7AF556B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89FB6F5735
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:05:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390500AbfKHTCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:02:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59858 "EHLO mail.kernel.org"
+        id S2390994AbfKHTTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:19:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732905AbfKHTCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:02:16 -0500
+        id S2389541AbfKHTAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:00:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8366120650;
-        Fri,  8 Nov 2019 19:02:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE9AA224D2;
+        Fri,  8 Nov 2019 18:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239735;
-        bh=j+MyTQC93gaRHL2LgewniO9lqgw9dkID6sNY6VVF/Q4=;
+        s=default; t=1573239534;
+        bh=+cIW7KLZtUsRB6GtC9+pmGknyIq4vm4D5NScT0PFx00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FSaQakA0KJ24jpTDWYVB/XEAvBjoSFkDWposbo/0NXQDBga8GPRxMh/0AOS8l/FMv
-         4r9+RfsmQdhS9kAg9xcFGX1wyHlxu6KlGynFo0mezjgay0DFaZ7xit9H25zjAEzHFI
-         g6DzB4E88BDUZ7b604PZJG528++R4nJC31sprtpU=
+        b=IEvEcaixR0Kcfjg6UkKVQkhDivn3HmXcAXN6OwTYkddIf3TLPCjtfm1gvdrId5r9o
+         48O/0nh/Su83NoVMeXv2RvRlffHg22M9rFAXNFiUfQdYsxUI5X7yqpQyGYFPjkmOI5
+         WWPJSafb/nQ1a2WPhYDjiXHNJthwq78VyrXfbAC8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vijay Khemka <vijaykhemka@fb.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 44/79] net: ethernet: ftgmac100: Fix DMA coherency issue with SW checksum
+        stable@vger.kernel.org, Maxim Mikityanskiy <maximmi@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 36/62] net/mlx5e: Fix handling of compressed CQEs in case of low NAPI budget
 Date:   Fri,  8 Nov 2019 19:50:24 +0100
-Message-Id: <20191108174811.488423255@linuxfoundation.org>
+Message-Id: <20191108174746.153969304@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174719.228826381@linuxfoundation.org>
+References: <20191108174719.228826381@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Maxim Mikityanskiy <maximmi@mellanox.com>
 
-[ Upstream commit 88824e3bf29a2fcacfd9ebbfe03063649f0f3254 ]
+[ Upstream commit 9df86bdb6746d7fcfc2fda715f7a7c3d0ddb2654 ]
 
-We are calling the checksum helper after the dma_map_single()
-call to map the packet. This is incorrect as the checksumming
-code will touch the packet from the CPU. This means the cache
-won't be properly flushes (or the bounce buffering will leave
-us with the unmodified packet to DMA).
+When CQE compression is enabled, compressed CQEs use the following
+structure: a title is followed by one or many blocks, each containing 8
+mini CQEs (except the last, which may contain fewer mini CQEs).
 
-This moves the calculation of the checksum & vlan tags to
-before the DMA mapping.
+Due to NAPI budget restriction, a complete structure is not always
+parsed in one NAPI run, and some blocks with mini CQEs may be deferred
+to the next NAPI poll call - we have the mlx5e_decompress_cqes_cont call
+in the beginning of mlx5e_poll_rx_cq. However, if the budget is
+extremely low, some blocks may be left even after that, but the code
+that follows the mlx5e_decompress_cqes_cont call doesn't check it and
+assumes that a new CQE begins, which may not be the case. In such cases,
+random memory corruptions occur.
 
-This also has the side effect of fixing another bug: If the
-checksum helper fails, we goto "drop" to drop the packet, which
-will not unmap the DMA mapping.
+An extremely low NAPI budget of 8 is used when busy_poll or busy_read is
+active.
 
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Fixes: 05690d633f30 ("ftgmac100: Upgrade to NETIF_F_HW_CSUM")
-Reviewed-by: Vijay Khemka <vijaykhemka@fb.com>
-Tested-by: Vijay Khemka <vijaykhemka@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This commit adds a check to make sure that the previous compressed CQE
+has been completely parsed after mlx5e_decompress_cqes_cont, otherwise
+it prevents a new CQE from being fetched in the middle of a compressed
+CQE.
+
+This commit fixes random crashes in __build_skb, __page_pool_put_page
+and other not-related-directly places, that used to happen when both CQE
+compression and busy_poll/busy_read were enabled.
+
+Fixes: 7219ab34f184 ("net/mlx5e: CQE compression")
+Signed-off-by: Maxim Mikityanskiy <maximmi@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/faraday/ftgmac100.c |   25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -739,6 +739,18 @@ static int ftgmac100_hard_start_xmit(str
- 	 */
- 	nfrags = skb_shinfo(skb)->nr_frags;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@ -1093,8 +1093,11 @@ int mlx5e_poll_rx_cq(struct mlx5e_cq *cq
+ 	if (unlikely(!MLX5E_TEST_BIT(rq->state, MLX5E_RQ_STATE_ENABLED)))
+ 		return 0;
  
-+	/* Setup HW checksumming */
-+	csum_vlan = 0;
-+	if (skb->ip_summed == CHECKSUM_PARTIAL &&
-+	    !ftgmac100_prep_tx_csum(skb, &csum_vlan))
-+		goto drop;
-+
-+	/* Add VLAN tag */
-+	if (skb_vlan_tag_present(skb)) {
-+		csum_vlan |= FTGMAC100_TXDES1_INS_VLANTAG;
-+		csum_vlan |= skb_vlan_tag_get(skb) & 0xffff;
+-	if (cq->decmprs_left)
++	if (cq->decmprs_left) {
+ 		work_done += mlx5e_decompress_cqes_cont(rq, cq, 0, budget);
++		if (cq->decmprs_left || work_done >= budget)
++			goto out;
 +	}
-+
- 	/* Get header len */
- 	len = skb_headlen(skb);
  
-@@ -765,19 +777,6 @@ static int ftgmac100_hard_start_xmit(str
- 	if (nfrags == 0)
- 		f_ctl_stat |= FTGMAC100_TXDES0_LTS;
- 	txdes->txdes3 = cpu_to_le32(map);
--
--	/* Setup HW checksumming */
--	csum_vlan = 0;
--	if (skb->ip_summed == CHECKSUM_PARTIAL &&
--	    !ftgmac100_prep_tx_csum(skb, &csum_vlan))
--		goto drop;
--
--	/* Add VLAN tag */
--	if (skb_vlan_tag_present(skb)) {
--		csum_vlan |= FTGMAC100_TXDES1_INS_VLANTAG;
--		csum_vlan |= skb_vlan_tag_get(skb) & 0xffff;
--	}
--
- 	txdes->txdes1 = cpu_to_le32(csum_vlan);
- 
- 	/* Next descriptor */
+ 	cqe = mlx5_cqwq_get_cqe(&cq->wq);
+ 	if (!cqe) {
 
 
