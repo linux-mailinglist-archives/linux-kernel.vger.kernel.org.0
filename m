@@ -2,136 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E00F3DDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 03:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16392F3DE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 03:08:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbfKHCGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 21:06:30 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35625 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfKHCGa (ORCPT
+        id S1728638AbfKHCIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 21:08:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46252 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725940AbfKHCIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 21:06:30 -0500
-Received: by mail-io1-f68.google.com with SMTP id x21so4639454iol.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 18:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aSgW3A7RWyhsJj378/fhZw4bo/3lSZywb10x/TiQ6js=;
-        b=AobIyWBWp8Z6LpdtKuyma3ufS/KNGQ+bmCTeW6cvoDC7nZ3SHSDceDgHKbyNh1AIwM
-         CxX6yLM6gyuEKDxu8eYrOCBPuL58TvXko5kWxjv1YVWCJzzqo9G0qLEny5lAwy2u80JN
-         +uoc4wzs5+DZjg+oVIZUomGzqkbJXUsZoz2/I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aSgW3A7RWyhsJj378/fhZw4bo/3lSZywb10x/TiQ6js=;
-        b=VOpkD0/S6wUaQJRTxjMGVHWUW4OMu8ic6eUKurAfyEUKqEff7VgdOvh6UBWvyU1GIs
-         9ObfetN3ZLy1IusxeZOax8DODsAELBcNw+770O42pXP2kVPzTYx2L86ceLYiVyH1/GWQ
-         B5vJ57ZW2fS7J2uKmHgQWFsBlgk8ptsajDMuvwutBF58DE4mHetqE6QESdCveU3x0FGP
-         2uTQBYnWYzOMLsWTXkhJJwwoUjXF+B1fiL7f4alZMsQWmURDhS4EhIfHJLj73uXQq97w
-         nhwITNlIeKqvqIdmKBSK2wRRnKjiy5Jjsgt6kYQm62KehS/EMatZfgMIcgniFNBpj/WH
-         3qRQ==
-X-Gm-Message-State: APjAAAXXh7db5GBJeK74Numtt1rbEpqAu6QacgYZbTXDEnImkeYOQphE
-        dJC/+Lpvzc9SswRP/1fyDbgBNJtbF4GUiUXRCyEfMA==
-X-Google-Smtp-Source: APXvYqyn0DsKqg8rSWqcfoMm6d8Fl2Z6dgUSaiBlmZgGR04MFVjbMr+p8KLgwaxrK5kbeIdRnkzz/m2YgeK0W6B0DHA=
-X-Received: by 2002:a02:58c8:: with SMTP id f191mr7652985jab.94.1573178789631;
- Thu, 07 Nov 2019 18:06:29 -0800 (PST)
+        Thu, 7 Nov 2019 21:08:35 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA822UWV030672
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2019 21:08:34 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w4tumqqb1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 21:08:34 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Fri, 8 Nov 2019 02:08:32 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Nov 2019 02:08:29 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA828SPT62390484
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Nov 2019 02:08:28 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 925C4AE045;
+        Fri,  8 Nov 2019 02:08:28 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 15D1EAE056;
+        Fri,  8 Nov 2019 02:08:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.36.138])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Nov 2019 02:08:26 +0000 (GMT)
+Subject: Re: [PATCH] ext4: deaccount delayed allocations at freeing inode in
+ ext4_evict_inode()
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org
+Cc:     Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Eric Whitney <enwlinux@gmail.com>
+References: <157233344808.4027.17162642259754563372.stgit@buzz>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Fri, 8 Nov 2019 07:38:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20191014102308.27441-1-tdas@codeaurora.org> <20191014102308.27441-6-tdas@codeaurora.org>
- <20191029175941.GA27773@google.com> <fa17b97d-bfc4-4e9c-78b5-c225e5b38946@codeaurora.org>
- <20191031174149.GD27773@google.com> <20191107210606.E536F21D79@mail.kernel.org>
-In-Reply-To: <20191107210606.E536F21D79@mail.kernel.org>
-From:   Rob Clark <robdclark@chromium.org>
-Date:   Thu, 7 Nov 2019 18:06:19 -0800
-Message-ID: <CAJs_Fx60uEdGFjJXAjvVy5LLBXXmergRi8diWxhgGqde1wiXXQ@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC)
- driver for SC7180
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <157233344808.4027.17162642259754563372.stgit@buzz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19110802-0020-0000-0000-0000038394DC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19110802-0021-0000-0000-000021D9CB6A
+Message-Id: <20191108020827.15D1EAE056@d06av26.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-07_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911080018
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 1:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Matthias Kaehlcke (2019-10-31 10:41:49)
-> > Hi Taniya,
-> >
-> > On Thu, Oct 31, 2019 at 04:59:26PM +0530, Taniya Das wrote:
-> > > Hi Matthias,
-> > >
-> > > Thanks for your comments.
-> > >
-> > > On 10/29/2019 11:29 PM, Matthias Kaehlcke wrote:
-> > > > Hi Taniya,
-> > > >
-> > > > On Mon, Oct 14, 2019 at 03:53:08PM +0530, Taniya Das wrote:
-> > > > > Add support for the global clock controller found on SC7180
-> > > > > based devices. This should allow most non-multimedia device
-> > > > > drivers to probe and control their clocks.
-> > > > >
-> > > > > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > >
-> > > >
-> > > > v3 also had
-> > > >
-> > > > +   [GCC_DISP_AHB_CLK] = &gcc_disp_ahb_clk.clkr,
-> > > >
-> > > > Removing it makes the dpu_mdss driver unhappy:
-> > > >
-> > > > [    2.999855] dpu_mdss_enable+0x2c/0x58->msm_dss_enable_clk: 'iface' is not available
-> > > >
-> > > > because:
-> > > >
-> > > >          mdss: mdss@ae00000 {
-> > > >                     ...
-> > > >
-> > > >   =>             clocks = <&gcc GCC_DISP_AHB_CLK>,
-> > > >                           <&gcc GCC_DISP_HF_AXI_CLK>,
-> > > >                           <&dispcc DISP_CC_MDSS_MDP_CLK>;
-> > > >                  clock-names = "iface", "gcc_bus", "core";
-> > > >     };
-> > > >
-> > >
-> > > The basic idea as you mentioned below was to move the CRITICAL clocks to
-> > > probe. The clock provider to return NULL in case the clocks are not
-> > > registered.
-> > > This was discussed with Stephen on v3. Thus I submitted the below patch.
-> > > clk: qcom: common: Return NULL from clk_hw OF provider.
-> >
-> > I see. My assumption was that the entire clock hierarchy should be registered,
-> > but Stephen almost certainly knows better :)
-> >
-> > > Yes it would throw these warnings, but no functional issue is observed from
-> > > display. I have tested it on the cheza board.
-> >
-> > The driver considers it an error (uses DEV_ERR to log the message) and doesn't
-> > handle other clocks when one is found missing. I'm not really famililar with
-> > the dpu_mdss driver, but I imagine this can have some side effects. Added some
-> > of the authors/contributors to cc.
->
-> NULL is a valid clk pointer returned by clk_get(). What is the display
-> driver doing that makes it consider NULL an error?
->
 
-do we not have an iface clk?  I think the driver assumes we should
-have one, rather than it being an optional thing.. we could ofc change
-that
 
-BR,
--R
+On 10/29/19 12:47 PM, Konstantin Khlebnikov wrote:
+> If inode->i_blocks is zero then ext4_evict_inode() skips ext4_truncate().
+> Delayed allocation extents are freed later in ext4_clear_inode() but this
+> happens when quota reference is already dropped. This leads to leak of
+> reserved space in quota block, which disappears after umount-mount.
+> 
+> This seems broken for a long time but worked somehow until recent changes
+> in delayed allocation.
+
+Sorry, I may have missed it, but could you please help understand
+what recent changes in delayed allocation make this break or worse?
+
+
+A silly query, since I couldn't figure it out. Maybe the code has been
+there ever since like this:-
+So why can't we just move drop_dquot later after the 
+ext4_es_remove_extent() (in function ext4_clear_inode)? Any known
+problems around that?
+
+-ritesh
+
+
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> ---
+>   fs/ext4/inode.c |    9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 516faa280ced..580898145e8f 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -293,6 +293,15 @@ void ext4_evict_inode(struct inode *inode)
+>   				   inode->i_ino, err);
+>   			goto stop_handle;
+>   		}
+> +	} else if (EXT4_I(inode)->i_reserved_data_blocks) {
+> +		/* Deaccount reserve if inode has only delayed allocations. */
+> +		err = ext4_es_remove_extent(inode, 0, EXT_MAX_BLOCKS);
+> +		if (err) {
+> +			ext4_warning(inode->i_sb,
+> +				     "couldn't remove extents %lu (err %d)",
+> +				     inode->i_ino, err);
+> +			goto stop_handle;
+> +		}
+>   	}
+> 
+>   	/* Remove xattr references. */
+> 
+
