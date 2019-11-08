@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8A66F4ACC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4DDEF4AB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:13:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390329AbfKHMKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:10:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52320 "EHLO mail.kernel.org"
+        id S2387775AbfKHLji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:39:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733228AbfKHLjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:39:20 -0500
+        id S2387416AbfKHLj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:39:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA5A4222C6;
-        Fri,  8 Nov 2019 11:39:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5701720869;
+        Fri,  8 Nov 2019 11:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213159;
-        bh=v0Q4Snohb0rPBMGpAzHmPvwE44PlPjfHwBHTVwdU0+k=;
+        s=default; t=1573213168;
+        bh=ebQIMzzwp7S1oC4ON3K8TO3u8DuQh6RB9yjA/WfUMZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R++CaginImy/LualAnumJkxXWWzrFcWFTK1hHJLpDbCc9MwHN6YbVmZO502J4Js+s
-         HAcxYhkDa5FNDN3QeaI1jb42jWOdxVJ+R3OuyBG7qg/lLyEymaDpZpZTTL4jsvrf1h
-         vNtYvTsfEk+xom9Lb3QnocR0Pf15EXIfKCo5rjM4=
+        b=jrFnPZsocyUn8NAEVVOOpvrrGxuhOLmAiuPV0NlHRtsc+d9kZTdxx1i+n0KoT+Uez
+         aRcF563PYcFUuSSnFLQTUy3m20gXlo6oD3IbTwl2x2xuMgpaaYFlJQUMA8AHaXvQhi
+         k/clEoOPQ5Tze5YhAJTgABY6XH/p9JwQPxKXRAjU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ganapathi Bhat <gbhat@marvell.com>,
-        Vidya Dharmaraju <vidyad@marvell.com>,
-        Cathy Luo <cluo@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 066/205] mwifex: free rx_cmd skb in suspended state
-Date:   Fri,  8 Nov 2019 06:35:33 -0500
-Message-Id: <20191108113752.12502-66-sashal@kernel.org>
+Cc:     Sven Schmitt <Sven.Schmitt@mixed-mode.de>,
+        Sven Schmitt <sven.schmitt@mixed-mode.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 069/205] soc: imx: gpc: fix PDN delay
+Date:   Fri,  8 Nov 2019 06:35:36 -0500
+Message-Id: <20191108113752.12502-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -46,48 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ganapathi Bhat <gbhat@marvell.com>
+From: Sven Schmitt <Sven.Schmitt@mixed-mode.de>
 
-[ Upstream commit 33a164fa8a4c91408e0b7738f754cb1a7827c5f2 ]
+[ Upstream commit 9f4d61d531e0efc9c3283963ae5ef7e314579191 ]
 
-USB suspend handler will kill the presubmitted rx_cmd URB. This
-triggers a call to the corresponding URB complete handler, which
-will free the rx_cmd skb, associated with rx_cmd URB. Due to a
-possible race betwen suspend handler and main thread, depicted in
-'commit bfcacac6c84b ("mwifiex: do no submit URB in suspended
-state")', it is possible that the rx_cmd skb will fail to get
-freed. This causes a memory leak, since the resume handler will
-always allocate a new rx_cmd skb.
+imx6_pm_domain_power_off() reads iso and iso2sw from GPC_PGC_PUPSCR_OFFS
+which stores the power up delays.
+So use GPC_PGC_PDNSCR_OFFS for the correct delays.
 
-To fix this, free the rx_cmd skb in mwifiex_usb_submit_rx_urb, if
-the device is in suspended state.
-
-Signed-off-by: Vidya Dharmaraju <vidyad@marvell.com>
-Signed-off-by: Cathy Luo <cluo@marvell.com>
-Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sven Schmitt <sven.schmitt@mixed-mode.de>
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/usb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/soc/imx/gpc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/usb.c b/drivers/net/wireless/marvell/mwifiex/usb.c
-index 76d80fd545236..d445acc4786b7 100644
---- a/drivers/net/wireless/marvell/mwifiex/usb.c
-+++ b/drivers/net/wireless/marvell/mwifiex/usb.c
-@@ -299,6 +299,12 @@ static int mwifiex_usb_submit_rx_urb(struct urb_context *ctx, int size)
- 	struct usb_card_rec *card = (struct usb_card_rec *)adapter->card;
+diff --git a/drivers/soc/imx/gpc.c b/drivers/soc/imx/gpc.c
+index b3da635970ea7..d160fc2a7b7a2 100644
+--- a/drivers/soc/imx/gpc.c
++++ b/drivers/soc/imx/gpc.c
+@@ -69,7 +69,7 @@ static int imx6_pm_domain_power_off(struct generic_pm_domain *genpd)
+ 	u32 val;
  
- 	if (test_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags)) {
-+		if (card->rx_cmd_ep == ctx->ep) {
-+			mwifiex_dbg(adapter, INFO, "%s: free rx_cmd skb\n",
-+				    __func__);
-+			dev_kfree_skb_any(ctx->skb);
-+			ctx->skb = NULL;
-+		}
- 		mwifiex_dbg(adapter, ERROR,
- 			    "%s: card removed/suspended, EP %d rx_cmd URB submit skipped\n",
- 			    __func__, ctx->ep);
+ 	/* Read ISO and ISO2SW power down delays */
+-	regmap_read(pd->regmap, pd->reg_offs + GPC_PGC_PUPSCR_OFFS, &val);
++	regmap_read(pd->regmap, pd->reg_offs + GPC_PGC_PDNSCR_OFFS, &val);
+ 	iso = val & 0x3f;
+ 	iso2sw = (val >> 8) & 0x3f;
+ 
 -- 
 2.20.1
 
