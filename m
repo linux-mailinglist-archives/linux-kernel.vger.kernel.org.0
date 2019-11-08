@@ -2,314 +2,310 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB887F43A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:41:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01055F43B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:42:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731127AbfKHJll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 04:41:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10558 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728513AbfKHJlk (ORCPT
+        id S1731605AbfKHJmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 04:42:52 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:33007 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730614AbfKHJmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 04:41:40 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA89c9VA025221
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2019 04:41:38 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w55pxrmbs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:41:38 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 8 Nov 2019 09:41:36 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Nov 2019 09:41:33 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA89evcM37945760
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Nov 2019 09:40:57 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8933C11C052;
-        Fri,  8 Nov 2019 09:41:32 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB3C611C054;
-        Fri,  8 Nov 2019 09:41:30 +0000 (GMT)
-Received: from bangoria.ibmuc.com (unknown [9.199.52.75])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Nov 2019 09:41:30 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     acme@kernel.org, jolsa@redhat.com
-Cc:     linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v2] perf tool: Provide an option to print perf_event_open args and return value
-Date:   Fri,  8 Nov 2019 15:11:28 +0530
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191108093024.27077-1-ravi.bangoria@linux.ibm.com>
-References: <20191108093024.27077-1-ravi.bangoria@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110809-4275-0000-0000-0000037BEB60
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110809-4276-0000-0000-0000388F3F57
-Message-Id: <20191108094128.28769-1-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-08_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911080094
+        Fri, 8 Nov 2019 04:42:51 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id xA89fkgW004821;
+        Fri, 8 Nov 2019 18:41:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xA89fkgW004821
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573206108;
+        bh=pA7NSeUpl2yjsp+KrqmtWgEBo9sOQ6mpwb761PWL7zY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yi+pmxmegUb1pvQZXgkrERxCGiaKeM6PbzDJPn/Ke8RblOEXWEAO97JTEzAzmfBbi
+         N60u7B9Zi7mlC1iqnUjmYwKZ1w0l7QpHwuhfLTnCFzaLlPjCxyM5q9uH6DUGQQwwyZ
+         bYQdD0ypUY8IAV8dUthSdETw0Uc1E1coUq61PA/uPFJnSLOj6N9xhxABxrneZ5hjF+
+         rxpOTDAYZwwiy4zokSacEZpBVbiIT5Sbn4WMv9/uyJKysgN4D2XM3pXbhbPBDK7SSr
+         ODRQrgAZB0Puo1Fk+5mK9jCmPbzG6lMjAQOZxjIJqSp69yHF3Cv795iD+3uf2Vb7rT
+         o5goSu4fxJb5g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Abdiel Janulgue <abdiel.janulgue@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
+        Paulo Zanoni <paulo.r.zanoni@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        dri-devel@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/i915: make more headers self-contained
+Date:   Fri,  8 Nov 2019 18:41:42 +0900
+Message-Id: <20191108094142.25942-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perf record with verbose=2 already prints this information along with
-whole lot of other traces which requires lot of scrolling. Introduce
-an option to print only perf_event_open() arguments and return value.
+The headers in the gem/selftests/, gt/selftests, gvt/, selftests/
+directories have never been compile-tested, but it would be possible
+to make them self-contained.
 
-Sample o/p:
-  $ ./perf --debug perf-event-open=1 record -- ls > /dev/null
-  ------------------------------------------------------------
-  perf_event_attr:
-    size                             112
-    { sample_period, sample_freq }   4000
-    sample_type                      IP|TID|TIME|PERIOD
-    read_format                      ID
-    disabled                         1
-    inherit                          1
-    exclude_kernel                   1
-    mmap                             1
-    comm                             1
-    freq                             1
-    enable_on_exec                   1
-    task                             1
-    precise_ip                       3
-    sample_id_all                    1
-    exclude_guest                    1
-    mmap2                            1
-    comm_exec                        1
-    ksymbol                          1
-    bpf_event                        1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid 4308  cpu 0  group_fd -1  flags 0x8 = 4
-  sys_perf_event_open: pid 4308  cpu 1  group_fd -1  flags 0x8 = 5
-  sys_perf_event_open: pid 4308  cpu 2  group_fd -1  flags 0x8 = 6
-  sys_perf_event_open: pid 4308  cpu 3  group_fd -1  flags 0x8 = 8
-  sys_perf_event_open: pid 4308  cpu 4  group_fd -1  flags 0x8 = 9
-  sys_perf_event_open: pid 4308  cpu 5  group_fd -1  flags 0x8 = 10
-  sys_perf_event_open: pid 4308  cpu 6  group_fd -1  flags 0x8 = 11
-  sys_perf_event_open: pid 4308  cpu 7  group_fd -1  flags 0x8 = 12
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             1
-    size                             112
-    config                           0x9
-    watermark                        1
-    sample_id_all                    1
-    bpf_event                        1
-    { wakeup_events, wakeup_watermark } 1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8
-  sys_perf_event_open failed, error -13
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.002 MB perf.data (9 samples) ]
+This commit only addresses missing <linux/types.h> and forward
+struct declarations.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-v1->v2:
- - man page updates.
 
- tools/perf/Documentation/perf.txt |  2 ++
- tools/perf/util/debug.c           |  2 ++
- tools/perf/util/debug.h           |  9 ++++++++
- tools/perf/util/evsel.c           | 36 +++++++++++++++----------------
- 4 files changed, 31 insertions(+), 18 deletions(-)
+Rebase on git://anongit.freedesktop.org/drm-tip
 
-diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-index 401f0ed67439..3f37ded13f8c 100644
---- a/tools/perf/Documentation/perf.txt
-+++ b/tools/perf/Documentation/perf.txt
-@@ -24,6 +24,8 @@ OPTIONS
- 	  data-convert     - data convert command debug messages
- 	  stderr           - write debug output (option -v) to stderr
- 	                     in browser mode
-+	  perf-event-open  - Print perf_event_open() arguments and
-+			     return value
+
+ drivers/gpu/drm/i915/gem/selftests/mock_context.h | 3 +++
+ drivers/gpu/drm/i915/gt/selftests/mock_timeline.h | 2 ++
+ drivers/gpu/drm/i915/gvt/cmd_parser.h             | 4 ++++
+ drivers/gpu/drm/i915/gvt/display.h                | 5 +++++
+ drivers/gpu/drm/i915/gvt/edid.h                   | 4 ++++
+ drivers/gpu/drm/i915/gvt/execlist.h               | 2 ++
+ drivers/gpu/drm/i915/gvt/fb_decoder.h             | 2 ++
+ drivers/gpu/drm/i915/gvt/hypercall.h              | 4 ++++
+ drivers/gpu/drm/i915/gvt/interrupt.h              | 3 +++
+ drivers/gpu/drm/i915/gvt/mmio.h                   | 2 ++
+ drivers/gpu/drm/i915/gvt/page_track.h             | 3 +++
+ drivers/gpu/drm/i915/gvt/sched_policy.h           | 3 +++
+ drivers/gpu/drm/i915/selftests/mock_gtt.h         | 3 +++
+ drivers/gpu/drm/i915/selftests/mock_region.h      | 5 +++++
+ drivers/gpu/drm/i915/selftests/mock_uncore.h      | 3 +++
+ 15 files changed, 48 insertions(+)
+
+diff --git a/drivers/gpu/drm/i915/gem/selftests/mock_context.h b/drivers/gpu/drm/i915/gem/selftests/mock_context.h
+index 0b926653914f..45de09ec28d1 100644
+--- a/drivers/gpu/drm/i915/gem/selftests/mock_context.h
++++ b/drivers/gpu/drm/i915/gem/selftests/mock_context.h
+@@ -7,6 +7,9 @@
+ #ifndef __MOCK_CONTEXT_H
+ #define __MOCK_CONTEXT_H
  
- --buildid-dir::
- 	Setup buildid cache directory. It has higher priority than
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index e55114f0336f..adb656745ecc 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -24,6 +24,7 @@
- #include <linux/ctype.h>
- 
- int verbose;
-+int debug_peo_args;
- bool dump_trace = false, quiet = false;
- int debug_ordered_events;
- static int redirect_to_stderr;
-@@ -180,6 +181,7 @@ static struct debug_variable {
- 	{ .name = "ordered-events",	.ptr = &debug_ordered_events},
- 	{ .name = "stderr",		.ptr = &redirect_to_stderr},
- 	{ .name = "data-convert",	.ptr = &debug_data_convert },
-+	{ .name = "perf-event-open",	.ptr = &debug_peo_args },
- 	{ .name = NULL, }
- };
- 
-diff --git a/tools/perf/util/debug.h b/tools/perf/util/debug.h
-index d25ae1c4cee9..f1734abd98dd 100644
---- a/tools/perf/util/debug.h
-+++ b/tools/perf/util/debug.h
-@@ -8,6 +8,7 @@
- #include <linux/compiler.h>
- 
- extern int verbose;
-+extern int debug_peo_args;
- extern bool quiet, dump_trace;
- extern int debug_ordered_events;
- extern int debug_data_convert;
-@@ -30,6 +31,14 @@ extern int debug_data_convert;
- #define pr_debug3(fmt, ...) pr_debugN(3, pr_fmt(fmt), ##__VA_ARGS__)
- #define pr_debug4(fmt, ...) pr_debugN(4, pr_fmt(fmt), ##__VA_ARGS__)
- 
-+/* Special macro to print perf_event_open arguments/return value. */
-+#define pr_debug2_peo(fmt, ...) {				\
-+	if (debug_peo_args)						\
-+		pr_debugN(0, pr_fmt(fmt), ##__VA_ARGS__);	\
-+	else							\
-+		pr_debugN(2, pr_fmt(fmt), ##__VA_ARGS__);	\
-+}
++struct drm_file;
++struct drm_i915_private;
 +
- #define pr_time_N(n, var, t, fmt, ...) \
- 	eprintf_time(n, var, t, fmt, ##__VA_ARGS__)
+ void mock_init_contexts(struct drm_i915_private *i915);
  
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index d4451846af93..1bf60f325608 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1524,7 +1524,7 @@ static int __open_attr__fprintf(FILE *fp, const char *name, const char *val,
+ struct i915_gem_context *
+diff --git a/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h b/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h
+index 689efc66c908..d2bcc3df6183 100644
+--- a/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h
++++ b/drivers/gpu/drm/i915/gt/selftests/mock_timeline.h
+@@ -7,6 +7,8 @@
+ #ifndef __MOCK_TIMELINE__
+ #define __MOCK_TIMELINE__
  
- static void display_attr(struct perf_event_attr *attr)
- {
--	if (verbose >= 2) {
-+	if (verbose >= 2 || debug_peo_args) {
- 		fprintf(stderr, "%.60s\n", graph_dotted_line);
- 		fprintf(stderr, "perf_event_attr:\n");
- 		perf_event_attr__fprintf(stderr, attr, __open_attr__fprintf, NULL);
-@@ -1540,7 +1540,7 @@ static int perf_event_open(struct evsel *evsel,
- 	int fd;
++#include <linux/types.h>
++
+ struct intel_timeline;
  
- 	while (1) {
--		pr_debug2("sys_perf_event_open: pid %d  cpu %d  group_fd %d  flags %#lx",
-+		pr_debug2_peo("sys_perf_event_open: pid %d  cpu %d  group_fd %d  flags %#lx",
- 			  pid, cpu, group_fd, flags);
+ void mock_timeline_init(struct intel_timeline *timeline, u64 context);
+diff --git a/drivers/gpu/drm/i915/gvt/cmd_parser.h b/drivers/gpu/drm/i915/gvt/cmd_parser.h
+index 286703643002..ab25d151932a 100644
+--- a/drivers/gpu/drm/i915/gvt/cmd_parser.h
++++ b/drivers/gpu/drm/i915/gvt/cmd_parser.h
+@@ -38,6 +38,10 @@
  
- 		fd = sys_perf_event_open(&evsel->core.attr, pid, cpu, group_fd, flags);
-@@ -1560,9 +1560,9 @@ static int perf_event_open(struct evsel *evsel,
- 			break;
- 		}
+ #define GVT_CMD_HASH_BITS 7
  
--		pr_debug2("\nsys_perf_event_open failed, error %d\n", -ENOTSUP);
-+		pr_debug2_peo("\nsys_perf_event_open failed, error %d\n", -ENOTSUP);
- 		evsel->core.attr.precise_ip--;
--		pr_debug2("decreasing precise_ip by one (%d)\n", evsel->core.attr.precise_ip);
-+		pr_debug2_peo("decreasing precise_ip by one (%d)\n", evsel->core.attr.precise_ip);
- 		display_attr(&evsel->core.attr);
- 	}
++struct intel_gvt;
++struct intel_shadow_wa_ctx;
++struct intel_vgpu_workload;
++
+ void intel_gvt_clean_cmd_parser(struct intel_gvt *gvt);
  
-@@ -1681,12 +1681,12 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 					continue;
- 				}
+ int intel_gvt_init_cmd_parser(struct intel_gvt *gvt);
+diff --git a/drivers/gpu/drm/i915/gvt/display.h b/drivers/gpu/drm/i915/gvt/display.h
+index a87f33e6a23c..b59b34046e1e 100644
+--- a/drivers/gpu/drm/i915/gvt/display.h
++++ b/drivers/gpu/drm/i915/gvt/display.h
+@@ -35,6 +35,11 @@
+ #ifndef _GVT_DISPLAY_H_
+ #define _GVT_DISPLAY_H_
  
--				pr_debug2("\nsys_perf_event_open failed, error %d\n",
-+				pr_debug2_peo("\nsys_perf_event_open failed, error %d\n",
- 					  err);
- 				goto try_fallback;
- 			}
++#include <linux/types.h>
++
++struct intel_gvt;
++struct intel_vgpu;
++
+ #define SBI_REG_MAX	20
+ #define DPCD_SIZE	0x700
  
--			pr_debug2(" = %d\n", fd);
-+			pr_debug2_peo(" = %d\n", fd);
+diff --git a/drivers/gpu/drm/i915/gvt/edid.h b/drivers/gpu/drm/i915/gvt/edid.h
+index f6dfc8b795ec..dfe0cbc6aad8 100644
+--- a/drivers/gpu/drm/i915/gvt/edid.h
++++ b/drivers/gpu/drm/i915/gvt/edid.h
+@@ -35,6 +35,10 @@
+ #ifndef _GVT_EDID_H_
+ #define _GVT_EDID_H_
  
- 			if (evsel->bpf_fd >= 0) {
- 				int evt_fd = fd;
-@@ -1754,58 +1754,58 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 	 */
- 	if (!perf_missing_features.aux_output && evsel->core.attr.aux_output) {
- 		perf_missing_features.aux_output = true;
--		pr_debug2("Kernel has no attr.aux_output support, bailing out\n");
-+		pr_debug2_peo("Kernel has no attr.aux_output support, bailing out\n");
- 		goto out_close;
- 	} else if (!perf_missing_features.bpf && evsel->core.attr.bpf_event) {
- 		perf_missing_features.bpf = true;
--		pr_debug2("switching off bpf_event\n");
-+		pr_debug2_peo("switching off bpf_event\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.ksymbol && evsel->core.attr.ksymbol) {
- 		perf_missing_features.ksymbol = true;
--		pr_debug2("switching off ksymbol\n");
-+		pr_debug2_peo("switching off ksymbol\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.write_backward && evsel->core.attr.write_backward) {
- 		perf_missing_features.write_backward = true;
--		pr_debug2("switching off write_backward\n");
-+		pr_debug2_peo("switching off write_backward\n");
- 		goto out_close;
- 	} else if (!perf_missing_features.clockid_wrong && evsel->core.attr.use_clockid) {
- 		perf_missing_features.clockid_wrong = true;
--		pr_debug2("switching off clockid\n");
-+		pr_debug2_peo("switching off clockid\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.clockid && evsel->core.attr.use_clockid) {
- 		perf_missing_features.clockid = true;
--		pr_debug2("switching off use_clockid\n");
-+		pr_debug2_peo("switching off use_clockid\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.cloexec && (flags & PERF_FLAG_FD_CLOEXEC)) {
- 		perf_missing_features.cloexec = true;
--		pr_debug2("switching off cloexec flag\n");
-+		pr_debug2_peo("switching off cloexec flag\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.mmap2 && evsel->core.attr.mmap2) {
- 		perf_missing_features.mmap2 = true;
--		pr_debug2("switching off mmap2\n");
-+		pr_debug2_peo("switching off mmap2\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.exclude_guest &&
- 		   (evsel->core.attr.exclude_guest || evsel->core.attr.exclude_host)) {
- 		perf_missing_features.exclude_guest = true;
--		pr_debug2("switching off exclude_guest, exclude_host\n");
-+		pr_debug2_peo("switching off exclude_guest, exclude_host\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.sample_id_all) {
- 		perf_missing_features.sample_id_all = true;
--		pr_debug2("switching off sample_id_all\n");
-+		pr_debug2_peo("switching off sample_id_all\n");
- 		goto retry_sample_id;
- 	} else if (!perf_missing_features.lbr_flags &&
- 			(evsel->core.attr.branch_sample_type &
- 			 (PERF_SAMPLE_BRANCH_NO_CYCLES |
- 			  PERF_SAMPLE_BRANCH_NO_FLAGS))) {
- 		perf_missing_features.lbr_flags = true;
--		pr_debug2("switching off branch sample type no (cycles/flags)\n");
-+		pr_debug2_peo("switching off branch sample type no (cycles/flags)\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.group_read &&
- 		    evsel->core.attr.inherit &&
- 		   (evsel->core.attr.read_format & PERF_FORMAT_GROUP) &&
- 		   perf_evsel__is_group_leader(evsel)) {
- 		perf_missing_features.group_read = true;
--		pr_debug2("switching off group read\n");
-+		pr_debug2_peo("switching off group read\n");
- 		goto fallback_missing_features;
- 	}
- out_close:
++#include <linux/types.h>
++
++struct intel_vgpu;
++
+ #define EDID_SIZE		128
+ #define EDID_ADDR		0x50 /* Linux hvm EDID addr */
+ 
+diff --git a/drivers/gpu/drm/i915/gvt/execlist.h b/drivers/gpu/drm/i915/gvt/execlist.h
+index 5ccc2c695848..5c0c1fd30c83 100644
+--- a/drivers/gpu/drm/i915/gvt/execlist.h
++++ b/drivers/gpu/drm/i915/gvt/execlist.h
+@@ -35,6 +35,8 @@
+ #ifndef _GVT_EXECLIST_H_
+ #define _GVT_EXECLIST_H_
+ 
++#include <linux/types.h>
++
+ struct execlist_ctx_descriptor_format {
+ 	union {
+ 		u32 ldw;
+diff --git a/drivers/gpu/drm/i915/gvt/fb_decoder.h b/drivers/gpu/drm/i915/gvt/fb_decoder.h
+index 60c155085029..67b6ede9e707 100644
+--- a/drivers/gpu/drm/i915/gvt/fb_decoder.h
++++ b/drivers/gpu/drm/i915/gvt/fb_decoder.h
+@@ -36,6 +36,8 @@
+ #ifndef _GVT_FB_DECODER_H_
+ #define _GVT_FB_DECODER_H_
+ 
++#include <linux/types.h>
++
+ #define _PLANE_CTL_FORMAT_SHIFT		24
+ #define _PLANE_CTL_TILED_SHIFT		10
+ #define _PIPE_V_SRCSZ_SHIFT		0
+diff --git a/drivers/gpu/drm/i915/gvt/hypercall.h b/drivers/gpu/drm/i915/gvt/hypercall.h
+index 4862fb12778e..9599c0a762b2 100644
+--- a/drivers/gpu/drm/i915/gvt/hypercall.h
++++ b/drivers/gpu/drm/i915/gvt/hypercall.h
+@@ -33,6 +33,10 @@
+ #ifndef _GVT_HYPERCALL_H_
+ #define _GVT_HYPERCALL_H_
+ 
++#include <linux/types.h>
++
++struct device;
++
+ enum hypervisor_type {
+ 	INTEL_GVT_HYPERVISOR_XEN = 0,
+ 	INTEL_GVT_HYPERVISOR_KVM,
+diff --git a/drivers/gpu/drm/i915/gvt/interrupt.h b/drivers/gpu/drm/i915/gvt/interrupt.h
+index 5313fb1b33e1..fcd663811d37 100644
+--- a/drivers/gpu/drm/i915/gvt/interrupt.h
++++ b/drivers/gpu/drm/i915/gvt/interrupt.h
+@@ -32,6 +32,8 @@
+ #ifndef _GVT_INTERRUPT_H_
+ #define _GVT_INTERRUPT_H_
+ 
++#include <linux/types.h>
++
+ enum intel_gvt_event_type {
+ 	RCS_MI_USER_INTERRUPT = 0,
+ 	RCS_DEBUG,
+@@ -135,6 +137,7 @@ enum intel_gvt_event_type {
+ 
+ struct intel_gvt_irq;
+ struct intel_gvt;
++struct intel_vgpu;
+ 
+ typedef void (*gvt_event_virt_handler_t)(struct intel_gvt_irq *irq,
+ 	enum intel_gvt_event_type event, struct intel_vgpu *vgpu);
+diff --git a/drivers/gpu/drm/i915/gvt/mmio.h b/drivers/gpu/drm/i915/gvt/mmio.h
+index 5874f1cb4306..2e68f4b02c94 100644
+--- a/drivers/gpu/drm/i915/gvt/mmio.h
++++ b/drivers/gpu/drm/i915/gvt/mmio.h
+@@ -36,6 +36,8 @@
+ #ifndef _GVT_MMIO_H_
+ #define _GVT_MMIO_H_
+ 
++#include <linux/types.h>
++
+ struct intel_gvt;
+ struct intel_vgpu;
+ 
+diff --git a/drivers/gpu/drm/i915/gvt/page_track.h b/drivers/gpu/drm/i915/gvt/page_track.h
+index fa607a71c3c0..f6eb7135583c 100644
+--- a/drivers/gpu/drm/i915/gvt/page_track.h
++++ b/drivers/gpu/drm/i915/gvt/page_track.h
+@@ -25,6 +25,9 @@
+ #ifndef _GVT_PAGE_TRACK_H_
+ #define _GVT_PAGE_TRACK_H_
+ 
++#include <linux/types.h>
++
++struct intel_vgpu;
+ struct intel_vgpu_page_track;
+ 
+ typedef int (*gvt_page_track_handler_t)(
+diff --git a/drivers/gpu/drm/i915/gvt/sched_policy.h b/drivers/gpu/drm/i915/gvt/sched_policy.h
+index 7b59e3e88b8b..3dacdad5f529 100644
+--- a/drivers/gpu/drm/i915/gvt/sched_policy.h
++++ b/drivers/gpu/drm/i915/gvt/sched_policy.h
+@@ -34,6 +34,9 @@
+ #ifndef __GVT_SCHED_POLICY__
+ #define __GVT_SCHED_POLICY__
+ 
++struct intel_gvt;
++struct intel_vgpu;
++
+ struct intel_gvt_sched_policy_ops {
+ 	int (*init)(struct intel_gvt *gvt);
+ 	void (*clean)(struct intel_gvt *gvt);
+diff --git a/drivers/gpu/drm/i915/selftests/mock_gtt.h b/drivers/gpu/drm/i915/selftests/mock_gtt.h
+index 3387393286de..e3f224f43beb 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_gtt.h
++++ b/drivers/gpu/drm/i915/selftests/mock_gtt.h
+@@ -25,6 +25,9 @@
+ #ifndef __MOCK_GTT_H
+ #define __MOCK_GTT_H
+ 
++struct drm_i915_private;
++struct i915_ggtt;
++
+ void mock_init_ggtt(struct drm_i915_private *i915, struct i915_ggtt *ggtt);
+ void mock_fini_ggtt(struct i915_ggtt *ggtt);
+ 
+diff --git a/drivers/gpu/drm/i915/selftests/mock_region.h b/drivers/gpu/drm/i915/selftests/mock_region.h
+index 24608089d833..329bf74dfaca 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_region.h
++++ b/drivers/gpu/drm/i915/selftests/mock_region.h
+@@ -6,6 +6,11 @@
+ #ifndef __MOCK_REGION_H
+ #define __MOCK_REGION_H
+ 
++#include <linux/types.h>
++
++struct drm_i915_private;
++struct intel_memory_region;
++
+ struct intel_memory_region *
+ mock_region_create(struct drm_i915_private *i915,
+ 		   resource_size_t start,
+diff --git a/drivers/gpu/drm/i915/selftests/mock_uncore.h b/drivers/gpu/drm/i915/selftests/mock_uncore.h
+index 8a2cc553f466..7acf1ef4d488 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_uncore.h
++++ b/drivers/gpu/drm/i915/selftests/mock_uncore.h
+@@ -25,6 +25,9 @@
+ #ifndef __MOCK_UNCORE_H
+ #define __MOCK_UNCORE_H
+ 
++struct drm_i915_private;
++struct intel_uncore;
++
+ void mock_uncore_init(struct intel_uncore *uncore,
+ 		      struct drm_i915_private *i915);
+ 
 -- 
-2.21.0
+2.17.1
 
