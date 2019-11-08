@@ -2,77 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15075F56E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6484EF568B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390851AbfKHTN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:13:29 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37327 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390416AbfKHTHf (ORCPT
+        id S2403812AbfKHTJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:09:25 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37310 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391772AbfKHTJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:07:35 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g8so311523plt.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 11:07:35 -0800 (PST)
+        Fri, 8 Nov 2019 14:09:23 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p24so5254203pfn.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 11:09:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=message-id:mime-version:content-transfer-encoding:in-reply-to
          :references:from:to:cc:subject:user-agent:date;
-        bh=kikk2WY5kfcxGjTzJAhY6RUjMX79xyo2nvmOqI9NKHM=;
-        b=JFDvfMdZ5Y0xxtanpVxlYiQHlNVk+Z9yQ83f74eGrenWkdufHlpK8NqhFqwY1ff20M
-         buoDVI3VxY5kZG4l5Ob1JEvmUj+eb5L0Ma02ASUUGACaYD6gU/TLztfHmscpQsj8xP+R
-         MsYzNvmY8GqYQonkW8iFXop4RnW+pIJHoGoMc=
+        bh=rJ1urZ8T7mCJHoBlOuQT5kf7O0+8075YXJJdXtDtH7U=;
+        b=D61jjhVfWDWSMveOGbAsO21SqjPj0dRPXQmK22xQFY1GOYifueuPRNL45P6whbv76d
+         +koe7VPSRs9Hh0QYnbedzWgk8x0eJhqNXE50FDnKgoM8VYb8R3vRcxEYY962NbGNzyAH
+         ZozKEI0ik3vBEAuReccVPRkzTxDkUVmi0rZRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:mime-version
          :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
          :user-agent:date;
-        bh=kikk2WY5kfcxGjTzJAhY6RUjMX79xyo2nvmOqI9NKHM=;
-        b=mKhmYYIjBm55EQQWESrH2qy6gwd6lEz92jhJHdX87veCbOmAtUYLUk/L7laQJ2r0uV
-         enEfo67GlU60hcpWyL9rq83mqlu0quunHM9V87zKov56Mvv9SMcUxwLQ71xQockVrj3C
-         u49upTXHjLTY2lM2yAxn1ql38W6M2TzWlALSugX+L0Om9V+e91GpNFblVqNAlkinn9mA
-         Q9Nlw2r55ONb9SBYo8EOmfgEQ2gy3C8UuSLQDuBI0EKd9sVVDhmnQgb2H/Snu+h0og6r
-         GImskNwDsKZvMYcfMF1Q3hzOwvLpAXlBD0FvdbF25GmDe/dBRQd9GYQJy6tP0gH3N7gK
-         4juQ==
-X-Gm-Message-State: APjAAAUw6BuswBJBXMRxZlFMgqSxnERcYeO/r0TFe0wSyGw/qD6YBdu3
-        2yISTDtSIg+jMnfUtug5OZ/dmQ==
-X-Google-Smtp-Source: APXvYqxoH5Z0CCe1PUE3xdaqaiDsVPjDsTLej5DIBq/bQpgGRGi2K8JEAyDFmgRNW/c+v8ue+O5XoA==
-X-Received: by 2002:a17:902:8f81:: with SMTP id z1mr11544949plo.319.1573240054508;
-        Fri, 08 Nov 2019 11:07:34 -0800 (PST)
+        bh=rJ1urZ8T7mCJHoBlOuQT5kf7O0+8075YXJJdXtDtH7U=;
+        b=rF5nI/h6OlBsauw0/BiWwTgrCEWY75ypvkvJWTj5cat1b9DtBsaHubUwxSqdAZC7rp
+         YUZj2qd6YRiV7vA1nS0Nbz4EEs3bTdG/HijRzm+v7ZZFGgl3D8p5ZzQprjjS9o59cduM
+         k+/De+5Fl3mAFb69b6dhr8bGNCWsAgbzvA58Kfh9fAiLgPQ2YlaSzZIaUhMGzucbFKTF
+         x0MJP0d/7Sr/4gpWDUqc1EK08gqLF3S0WnL+7R+QJpMIM9KUqFTSUbs5gGnpPvnVcSFS
+         R45e2LXuwAzTRcMkmwk5RARNkNXNAQ2cgCjw72mrZlMoQHh5R8Iqc1WBEx5F2ndrxvBY
+         dnWg==
+X-Gm-Message-State: APjAAAVNjcZwZmRADm5A9NoIRgZqjhNokEBgXjN4PhMlsmv23qB84ZRy
+        BideRM4zmk549xXvkOyp66bh7Q==
+X-Google-Smtp-Source: APXvYqwF6BcI+PSkqcZ1hzG3Fq8z2hINUeBNu1KSX2QSnhuU5EyKjQGpElD+ZP55Yu2cmAcXBJIhOg==
+X-Received: by 2002:a62:174d:: with SMTP id 74mr13732051pfx.145.1573240163193;
+        Fri, 08 Nov 2019 11:09:23 -0800 (PST)
 Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id d4sm7368030pjs.9.2019.11.08.11.07.33
+        by smtp.gmail.com with ESMTPSA id l72sm6138763pjb.18.2019.11.08.11.09.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 11:07:34 -0800 (PST)
-Message-ID: <5dc5bcf6.1c69fb81.f3fb6.2bf3@mx.google.com>
+        Fri, 08 Nov 2019 11:09:22 -0800 (PST)
+Message-ID: <5dc5bd62.1c69fb81.682a4.0fa6@mx.google.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191108092824.9773-12-rnayak@codeaurora.org>
-References: <20191108092824.9773-1-rnayak@codeaurora.org> <20191108092824.9773-12-rnayak@codeaurora.org>
+In-Reply-To: <5790f59f-951a-f1b4-bb31-f9cefec0c642@codeaurora.org>
+References: <20191106065017.22144-1-rnayak@codeaurora.org> <20191106065017.22144-3-rnayak@codeaurora.org> <5dc4588e.1c69fb81.5f75c.83ad@mx.google.com> <5790f59f-951a-f1b4-bb31-f9cefec0c642@codeaurora.org>
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Rajendra Nayak <rnayak@codeaurora.org>, agross@kernel.org,
         bjorn.andersson@linaro.org, robh+dt@kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, mka@chromium.org,
-        Kiran Gunda <kgunda@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: Re: [PATCH v5 11/13] arm64: dts: qcom: sc7180-idp: Add RPMh regulators
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v4 02/14] arm64: dts: sc7180: Add minimal dts/dtsi files for SC7180 soc
 User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 11:07:33 -0800
+Date:   Fri, 08 Nov 2019 11:09:21 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajendra Nayak (2019-11-08 01:28:22)
-> From: Kiran Gunda <kgunda@codeaurora.org>
+Quoting Rajendra Nayak (2019-11-07 19:48:57)
 >=20
-> Add the rpmh regulators for the sc7180 idp platform. This platform
-> consists of PMIC PM6150 and PM6150l
+> On 11/7/2019 11:16 PM, Stephen Boyd wrote:
+> > Quoting Rajendra Nayak (2019-11-05 22:50:05)
+> >> +                       qup_uart8_default: qup-uart8-default {
+> >> +                               pinmux {
+> >> +                                       pins =3D "gpio44", "gpio45";
+> >> +                                       function =3D "qup12";
+> >=20
+> > That looks weird to have qup12 function on uart8. It's right?
 >=20
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+> So we have 2 qup instances each with 6 SEs on sc7180.
+> So the i2c/uart/spi SE instances are numbered from 0 to 5 in the first qup
+> and 6 to 11 in the next.
+> The pinctrl functions however have it named qup0 to 5 for first and
+> qup10 to 15 for the next which is weird. Now all data in the pinctrl
+> driver is autogenerated using hw description so its coming from that.
+>=20
+> Just for comparison, on sdm845 we had 2 qup instances with 8 SE's
+> and the function names were qup0 to 8 for first and 9 to 15 for the
+> second.
+>=20
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Alright. Good to know the hardware description is all messed up.
 
