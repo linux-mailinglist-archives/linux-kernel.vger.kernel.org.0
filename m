@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 809E8F5218
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6982EF521A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbfKHRCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 12:02:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46362 "EHLO mail.kernel.org"
+        id S1731507AbfKHRCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 12:02:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731291AbfKHRCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:02:11 -0500
+        id S1731291AbfKHRCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 12:02:15 -0500
 Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5295D206BA;
-        Fri,  8 Nov 2019 17:02:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3D1621D7B;
+        Fri,  8 Nov 2019 17:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573232531;
-        bh=3vyc12aQ3fu+SeD0lMTSciNswbsRVeXAHiot9IWqGvE=;
+        s=default; t=1573232534;
+        bh=TBvj3ZAD/90gzZRZ4Bq7ZuAaAzf+ONWHDHtJ37qd9aY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xdlo0cliQszCKc4t2Mqmv07gu/EtjmdGujKRlItYZPNKg7PznL/g9yalSAA460MAC
-         Rrb/XY6LYdnuqxsYmZj0Y8oX/tdSwW7+d9hctGkzw+BBZIWkq1qy0GW+/mjSNw94uT
-         i0yQNpHPqpmEP485MUsSL0DX//7r8gbAGUzSnxdU=
+        b=x6OOuDwHn0375jbO8T0CHJu4VFrTm+4reQ6H9i4/OduaNg9PuHeaqLsD9Cc7aN5uc
+         BZh2RnBJUvSgPh4Zi3uk5VYzcI4RwV3uF6RCRrB2M5XT3/ex1h/cNKgFmotwZkGJ0N
+         AnsKDTQSfZIEcITFJukKF69zGgyZsEHi2e45V5qc=
 From:   Will Deacon <will@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Will Deacon <will@kernel.org>, Yunjae Lee <lyj7694@gmail.com>,
@@ -40,9 +40,9 @@ Cc:     Will Deacon <will@kernel.org>, Yunjae Lee <lyj7694@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
         Boqun Feng <boqun.feng@gmail.com>, linux-alpha@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: [PATCH 12/13] include/linux: Remove smp_read_barrier_depends() from comments
-Date:   Fri,  8 Nov 2019 17:01:19 +0000
-Message-Id: <20191108170120.22331-13-will@kernel.org>
+Subject: [PATCH 13/13] checkpatch: Remove checks relating to [smp_]read_barrier_depends()
+Date:   Fri,  8 Nov 2019 17:01:20 +0000
+Message-Id: <20191108170120.22331-14-will@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108170120.22331-1-will@kernel.org>
 References: <20191108170120.22331-1-will@kernel.org>
@@ -53,41 +53,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'smp_read_barrier_depends()' doesn't exist any more, so reword the two
-comments that mention it to refer to "dependency ordering" instead.
+The '[smp_]read_barrier_depends()' macros no longer exist, so we don't
+need to deal with them in the checkpatch script.
 
 Signed-off-by: Will Deacon <will@kernel.org>
 ---
- include/linux/percpu-refcount.h | 2 +-
- include/linux/ptr_ring.h        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ scripts/checkpatch.pl | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
-index 7aef0abc194a..246760b93715 100644
---- a/include/linux/percpu-refcount.h
-+++ b/include/linux/percpu-refcount.h
-@@ -155,7 +155,7 @@ static inline bool __ref_is_percpu(struct percpu_ref *ref,
- 	 * between contaminating the pointer value, meaning that
- 	 * READ_ONCE() is required when fetching it.
- 	 *
--	 * The smp_read_barrier_depends() implied by READ_ONCE() pairs
-+	 * The dependency ordering from the READ_ONCE() pairs
- 	 * with smp_store_release() in __percpu_ref_switch_to_percpu().
- 	 */
- 	percpu_ptr = READ_ONCE(ref->percpu_count_ptr);
-diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-index 0abe9a4fc842..b6e94b60fc12 100644
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-@@ -106,7 +106,7 @@ static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
- 		return -ENOSPC;
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 6fcc66afb088..7f5a368206bf 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5787,8 +5787,7 @@ sub process {
+ 		my $barriers = qr{
+ 			mb|
+ 			rmb|
+-			wmb|
+-			read_barrier_depends
++			wmb
+ 		}x;
+ 		my $barrier_stems = qr{
+ 			mb__before_atomic|
+@@ -5829,12 +5828,6 @@ sub process {
+ 			}
+ 		}
  
- 	/* Make sure the pointer we are storing points to a valid data. */
--	/* Pairs with smp_read_barrier_depends in __ptr_ring_consume. */
-+	/* Pairs with the dependency ordering in __ptr_ring_consume. */
- 	smp_wmb();
- 
- 	WRITE_ONCE(r->queue[r->producer++], ptr);
+-# check for smp_read_barrier_depends and read_barrier_depends
+-		if (!$file && $line =~ /\b(smp_|)read_barrier_depends\s*\(/) {
+-			WARN("READ_BARRIER_DEPENDS",
+-			     "$1read_barrier_depends should only be used in READ_ONCE or DEC Alpha code\n" . $herecurr);
+-		}
+-
+ # check of hardware specific defines
+ 		if ($line =~ m@^.\s*\#\s*if.*\b(__i386__|__powerpc64__|__sun__|__s390x__)\b@ && $realfile !~ m@include/asm-@) {
+ 			CHK("ARCH_DEFINES",
 -- 
 2.24.0.rc1.363.gb1bccd3e3d-goog
 
