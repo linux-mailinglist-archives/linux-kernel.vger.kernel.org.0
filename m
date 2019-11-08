@@ -2,132 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E25BF4921
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:01:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B6BF49EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391437AbfKHMBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:01:12 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:43250 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390977AbfKHMBI (ORCPT
+        id S2391493AbfKHMF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:05:57 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58504 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732305AbfKHMFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 07:01:08 -0500
+        Fri, 8 Nov 2019 07:05:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LzWFQdxb4LwLZQfLCTEGrcAMyzovJYdVyqlUvic3qgI=; b=nDl0RKwL5GyOZJA56UhKYSZgD
-        8a0RbGKX4LEAkfSpM38JDQJ3Hz3Of/dtf9bDDsQhwAU5qb54nvJ7STnjA5o2Kn0002LLK3lsqNEHI
-        uBaPoWPOhn1KICAYhsaGpS7uSOE380Xr7Jpv2jLaJ18OTcMTW3Mlp1xDiaIbDRjETkgsf8K3bGy4F
-        ClMFX7Kx0z+d0C8PUlohQt7oNYXyCvjm4fjETEjn3rLu4JgL8L6VXd+CBPmnsMy55VsuF20lJNZL4
-        yaw5AmIZ6QAwN7kagYCFnxH7g+iUn5FZdSpfu9xlzTpgVJa8+pMkBCwbhXR7Ip7EmVOWCDH031MhG
-        GZa9m6KNA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iT2wP-0001zg-In; Fri, 08 Nov 2019 12:00:37 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 141053075F0;
-        Fri,  8 Nov 2019 12:59:30 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0755B2025EDB2; Fri,  8 Nov 2019 13:00:35 +0100 (CET)
-Date:   Fri, 8 Nov 2019 13:00:35 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <qperret@google.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, linux-kernel@vger.kernel.org,
-        aaron.lwe@gmail.com, valentin.schneider@arm.com, mingo@kernel.org,
-        pauld@redhat.com, jdesfossez@digitalocean.com,
-        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        kernel-team@android.com, john.stultz@linaro.org
-Subject: Re: NULL pointer dereference in pick_next_task_fair
-Message-ID: <20191108120034.GK4131@hirez.programming.kicks-ass.net>
-References: <20191106120525.GX4131@hirez.programming.kicks-ass.net>
- <33643a5b-1b83-8605-2347-acd1aea04f93@virtuozzo.com>
- <20191106165437.GX4114@hirez.programming.kicks-ass.net>
- <20191106172737.GM5671@hirez.programming.kicks-ass.net>
- <831c2cd4-40a4-31b2-c0aa-b5f579e770d6@virtuozzo.com>
- <20191107132628.GZ4114@hirez.programming.kicks-ass.net>
- <20191107153848.GA31774@google.com>
- <20191107184356.GF4114@hirez.programming.kicks-ass.net>
- <20191107192907.GA30258@worktop.programming.kicks-ass.net>
- <20191108110212.GA204618@google.com>
+         bh=u1LSxi/xCIm7BKmi90jrl3S/RxiU2mUU9mchFDPyUmk=; b=wvPi+97JaYr5DNz3EiEYA8J1B
+        86NnGoS8DUz4donPwa6uIK0Uh/VQnx7asQLshI9hePIgRQnLk6IDsNzfQMwbGo108UXP4p4RpUAWo
+        uxPeOBGlRcjfUpV2/TkglWeRMWvv4sKtKaZJ7A5ygAf95Tl9ZuqOPJYMbv6xznlW3zjEs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iT31S-0007Cx-Fg; Fri, 08 Nov 2019 12:05:50 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 959772740C6C; Fri,  8 Nov 2019 12:05:49 +0000 (GMT)
+Date:   Fri, 8 Nov 2019 12:05:49 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-spi@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 124/205] gpio: of: Handle SPI chipselect
+ legacy bindings
+Message-ID: <20191108120549.GA5532@sirena.co.uk>
+References: <20191108113752.12502-1-sashal@kernel.org>
+ <20191108113752.12502-124-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
 Content-Disposition: inline
-In-Reply-To: <20191108110212.GA204618@google.com>
+In-Reply-To: <20191108113752.12502-124-sashal@kernel.org>
+X-Cookie: Life is like a simile.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 11:02:12AM +0000, Quentin Perret wrote:
-> On Thursday 07 Nov 2019 at 20:29:07 (+0100), Peter Zijlstra wrote:
-> > I still havne't had food, but this here compiles...
-> 
-> And it seems to work, too :)
 
-Excellent!
+--/9DWx/yDrRhgMJTb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > @@ -3929,13 +3929,17 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-> >  	}
-> > 
-> >  restart:
-> > -	/*
-> > -	 * Ensure that we put DL/RT tasks before the pick loop, such that they
-> > -	 * can PULL higher prio tasks when we lower the RQ 'priority'.
-> > -	 */
-> > -	prev->sched_class->put_prev_task(rq, prev, rf);
-> > -	if (!rq->nr_running)
-> > -		newidle_balance(rq, rf);
-> > +#ifdef CONFIG_SMP
-> > +	for (class = prev->sched_class;
-> > +	     class != &idle_sched_class;
-> > +	     class = class->next) {
-> > +
-> > +		if (class->balance(rq, prev, rf))
-> > +			break;
-> > +	}
-> > +#endif
-> > +
-> > +	put_prev_task(rq, prev);
-> 
-> Right, that looks much cleaner IMO. I'm thinking if we killed the
-> special case for CFS above we could do with a single loop to iterate the
-> classes, and you could fold ->balance() in ->pick_next_task() ...
+On Fri, Nov 08, 2019 at 06:36:31AM -0500, Sasha Levin wrote:
+> From: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> [ Upstream commit 6953c57ab1721ce57914fc5741d0ce0568756bb0 ]
+>=20
+> The SPI chipselects are assumed to be active low in the current
+> binding, so when we want to use GPIO descriptors and handle
+> the active low/high semantics in gpiolib, we need a special
+> parsing quirk to deal with this.
 
-No, you can't, because then you're back to having to restart the pick
-when something happens when we drop the rq halfway down the pick.  Which
-is something I really wanted to get rid of.
+This stuff is *incredibly* fragile, are we sure this isn't manifiesting
+in later kernels as a result of some other fix or cleanup exposing
+issues and won't break without that fixup?  I loose track of all the
+GPIO stuff.
 
-> That would remove one call site to newidle_balance() too, which I think
-> is good. Hackbench probably won't like that, though.
+--/9DWx/yDrRhgMJTb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yeah, that fast path really is important. I've got a few patches pending
-there, fixing a few things and that gets me 2% extra on a sched-yield
-benchmark.
+-----BEGIN PGP SIGNATURE-----
 
-> > +static int balance_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-> > +{
-> > +	if (rq->cfs.nr_running)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3FWhwACgkQJNaLcl1U
+h9D6VAf/aQvUCk5KwmYDafiih+sMdQS5rdG1M0qIchk9PsPJfHsAk/+c+Alwdcq5
+VFhvlX/FDZspFImn1yh2S+YblDxd084LRo3bC/aLlzt5BC3hLBRQoqR3np12R/6B
+sE1WLP9j1G85zUpvCluxCodf5QUPeijr5ByW+L7q70Dmovx8YI8EsNMG7ady8drc
+9sdnO+kpoLizkvJDPsSY67RcxSHmD3gdxq28Bsnc8q2HuHq545Ypip8EicHP1ptX
+Mt+D5+kjLIztZssCVjpYK8Vssqm6kSiz8Acaq7MShBSAo6pVvdDU2cNoLmGXyezg
+R4EkfCZITRI4doWFNGv5hshc54GSng==
+=lio8
+-----END PGP SIGNATURE-----
 
-FWIW that must test rq->nr_running.
-
-> > +		return 1;
-> > +
-> > +	return newidle_balance(rq, rf) != 0;
-> 
-> And you can ignore the RETRY_TASK case here under the assumption that
-> we must have tried to pull from RT/DL before ending up here ?
-
-Well, the balance callback can always return 0 and be correct. The point
-is mostly to avoid more work.
-
-In this case, since fair is the last class and we've already excluded
-idle for balancing, the win is minimal. But since we have the code,
-might as well dtrt.
+--/9DWx/yDrRhgMJTb--
