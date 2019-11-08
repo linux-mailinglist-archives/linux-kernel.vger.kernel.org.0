@@ -2,82 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C635F4FDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1EEFF4FE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 16:37:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfKHPgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 10:36:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42899 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfKHPgQ (ORCPT
+        id S1727429AbfKHPgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 10:36:52 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45941 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbfKHPgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 10:36:16 -0500
-Received: by mail-wr1-f68.google.com with SMTP id a15so7505398wrf.9
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 07:36:15 -0800 (PST)
+        Fri, 8 Nov 2019 10:36:52 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n21so6651062ljg.12
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 07:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=9lMgRNG2cJGG8AVeRQHErI9Gl3XI9KK/U31d8R3ejsQ=;
-        b=EWNepT2WAfQMuRY60vzjXFgqPnRfaJU3DzL/cj1ATfS4TGT6MpPVYa3DtzO31+GY9U
-         vlzIMrIyyXu3srvKdjem8uigYtg+lTS+x/T92CG9/SBuSyIsS7RYo8uBBuyvyjfoLeWW
-         yZqDgtQmGMf9uk3FfTgemAWGIAqlBkVUFBC42XPIuVhMbttBjDtbaKjx6ken+aS2hDMD
-         tz0emFkFCXwHC3dp3nQrWR561uI8jBBybT0ovHdWIZ74nV7TVtQf94Vq7sJf1TXcxcv1
-         OL3LyD1xu/P6yHHnz5cWE6OqYBXaE9mm3K3xUEzwELESrCEGVlic3EbtfcYcZn2x1NwQ
-         ot0w==
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2pe6fLgoaZ20F6d1ALx8ua+vYps6HC8ap7HyPfV+7qA=;
+        b=hrJLm8NT5gvZlCLVkDal51GeCoaKTjY3KJCkYz2j5LVZ+4oYahm+oTar+PhaGjcYwF
+         Igw4em3xySiJL8DsHAdByg4PeswhflQq/4q/J70XFPzXdF1Wc8Rr15NEiV78eWG/51RB
+         XEU3Cxpt44PGidtswt/SH/Wa0gfVqq8VxC+WIS1ubqtu8ZEApFD3XGSOdwv798ltSt3+
+         JOMLZ9Uv8bxKRzVRT7qGi+uOrerthzymaeSnZBlU/eKv0fpHoH40MGb6olgJEzRHplh5
+         BGHGZ/hSZ9QGDtNe8+SnoSeOWzyvb59rXaqUgRbnfag6y7wiNqZoWa19bNOwTtuh+jDu
+         SrWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9lMgRNG2cJGG8AVeRQHErI9Gl3XI9KK/U31d8R3ejsQ=;
-        b=YV0uGSP9+schpLDtkHKKEacpz5t6Zb+6B7HbSpkYMBITD9aXa6NoHAOtxOJ0W69g60
-         FgXsJIsvOT8UQSppr1MgXVjdlIwaXnzaFwrgekMvqJ2RrzmHIRcjUbxYGPlXKHHh3m7y
-         07FINjZ06yUGEBSXmhvMnNfnedRNARlKNEgSUEQcLQsxUQM+CmhalSi1ehETokg978XV
-         To3o4H82eDsver2tF6AwUKaScfvrFexjAyGM4eoFyQAAUD7Kp0O8USGnLJicnnWXnLQt
-         CQG7G4pnr09CtYPtlNl6dVuJDeDfdYtcUxNZrWpwEOUKo47Gw7StoBhZyEVqlyD4G/TY
-         SeSw==
-X-Gm-Message-State: APjAAAXXdaxoKnEm0AA0LCCGQgXk5zMSJwT1fitrFcaH3e46RAxsEwe2
-        vmX0viZHVUa2NbUUe/q1mZ4+yg==
-X-Google-Smtp-Source: APXvYqwWS/q1mGxIc2fbqY27w5J8g01MN+wCCoW1rgz0kKv0EGBVn7dxIb2E7BSFHsFLrS7qaNJgxg==
-X-Received: by 2002:adf:e712:: with SMTP id c18mr8638572wrm.127.1573227374707;
-        Fri, 08 Nov 2019 07:36:14 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id z6sm7422500wro.18.2019.11.08.07.36.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Nov 2019 07:36:13 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     ink@jurassic.park.msu.ru, mattst88@gmail.com, rth@twiddle.net
-Cc:     linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] alpha: __udiv_qrnnd should be exported
-Date:   Fri,  8 Nov 2019 15:36:08 +0000
-Message-Id: <1573227368-32686-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2pe6fLgoaZ20F6d1ALx8ua+vYps6HC8ap7HyPfV+7qA=;
+        b=ujn4ofILBwOqjXX0tcDJkYHmFs34/es18NmTagy/W9LJN5pFAs8AWokw9guxUxb028
+         iN3lbp/nscSeE0G9Q5FS+NsFSDK7pI/+8aK73B/UyBioWIn9rV+qDzEc/4h9Yi3hQ9pk
+         oy2ns3i/oDmn7Ex3ndEBbWUAyoIAm8oWd727aaLfm628jlWsy4jM8qmugnxLgi9BqkD4
+         xQRYqVd3Vk7K26WRZUoCpX2d+1O0+QJAcwObtKIsjxI/08eFntTh6pzqIGu2TDQOlkVg
+         Pw0LFP6/HAoFhbC5Z020SdiQ6iqDRoJM3NWvbxQoo84OqoJqi9E4oKOUPsiVBkXR53P1
+         73uw==
+X-Gm-Message-State: APjAAAUXs8rA9WKKdDF2XBqGlPHl2eZUho1mDlyv1+ACmE+womwRkTtz
+        JcfjKEsWtqubvDUX+0Q7570YRg==
+X-Google-Smtp-Source: APXvYqyUgqYQ3oDvYgH32FgzCklgL9KCOEjJQGak0IjSzDhdq744+iVcrZsQtqMfAO54gdDffckFsw==
+X-Received: by 2002:a2e:81d2:: with SMTP id s18mr7088062ljg.189.1573227409814;
+        Fri, 08 Nov 2019 07:36:49 -0800 (PST)
+Received: from [10.0.156.104] ([195.22.87.57])
+        by smtp.gmail.com with ESMTPSA id q16sm1072855lfm.87.2019.11.08.07.36.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 07:36:48 -0800 (PST)
+Subject: Re: [PATCH v3 0/6] Add namespace awareness to Netlink methods
+To:     David Ahern <dsahern@gmail.com>,
+        =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS14KS+?=
+         =?UTF-8?B?4KSwKQ==?= <maheshb@google.com>
+Cc:     nicolas.dichtel@6wind.com, linux-netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+References: <20191107132755.8517-1-jonas@norrbonn.se>
+ <CAF2d9jjteagJGmt64mNFH-pFmGg_eM8_NNBrDtROcaVKhcNkRQ@mail.gmail.com>
+ <d34174c2-a4d4-b3da-ded5-dcb97a89c80c@gmail.com>
+From:   Jonas Bonn <jonas@norrbonn.se>
+Message-ID: <229cdce6-f510-5d9f-401b-69bad4af0722@norrbonn.se>
+Date:   Fri, 8 Nov 2019 16:36:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
+MIME-Version: 1.0
+In-Reply-To: <d34174c2-a4d4-b3da-ded5-dcb97a89c80c@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building an alpha kernel with mpi set as module, I hit this build
-error:
-ERROR: "__udiv_qrnnd" [lib/mpi/mpi.ko] undefined!
-make[2]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
-make[1]: *** [Makefile:1266: modules] Error 2
 
-This is due to __udiv_qrnnd not exported.
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- arch/alpha/math-emu/math.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/alpha/math-emu/math.c b/arch/alpha/math-emu/math.c
-index d568cd9a3e43..5617ac0889b8 100644
---- a/arch/alpha/math-emu/math.c
-+++ b/arch/alpha/math-emu/math.c
-@@ -401,3 +401,5 @@ alpha_fp_emul_imprecise (struct pt_regs *regs, unsigned long write_mask)
- egress:
- 	return si_code;
- }
-+
-+EXPORT_SYMBOL(__udiv_qrnnd);
--- 
-2.23.0
+On 07/11/2019 22:11, David Ahern wrote:
+> On 11/7/19 1:40 PM, Mahesh Bandewar (महेश बंडेवार) wrote:
+>> On Thu, Nov 7, 2019 at 5:30 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+>>>
+>>> Changed in v3:
+>>> - added patch 6 for setting IPv6 address outside current namespace
+>>> - address checkpatch warnings
+>>> - address comment from Nicolas
+>>>
+>>> Changed in v2:
+>>> - address comment from Nicolas
+>>> - add accumulated ACK's
+>>>
+>>> Currently, Netlink has partial support for acting outside of the current
+>>> namespace.  It appears that the intention was to extend this to all the
+>>> methods eventually, but it hasn't been done to date.
+>>>
+>>> With this series RTM_SETLINK, RTM_NEWLINK, RTM_NEWADDR, and RTM_NEWNSID
+>>> are extended to respect the selection of the namespace to work in.
+>>>
+>> This is nice, is there a plan to update userspace commands using this?
+> 
+> I'm hoping for an iproute2 update and test cases to validate the changes.
+> 
 
+I'm looking into it.  The change to iproute2 to support 
+(namespace,index) pairs instead of just (index) to identify interfaces 
+looks to be invasive.  The rest of it looks like trivial changes.
+
+I've got all these kernel patches tested against my own "namespace aware 
+network manager" that I'm writing for a customer with a particular use 
+case.  iproute2 wasn't actually in play here.
+
+/Jonas
