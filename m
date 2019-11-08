@@ -2,123 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EFDAF4E19
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 15:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DE1F4ECE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 15:58:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfKHO2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 09:28:50 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53167 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfKHO2u (ORCPT
+        id S1726515AbfKHO6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 09:58:45 -0500
+Received: from 17.mo7.mail-out.ovh.net ([188.165.35.227]:38232 "EHLO
+        17.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbfKHO6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 09:28:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id c17so6395584wmk.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 06:28:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+I/9TWym/x4PN0S8rVHcHTbhmDpS2CukgYGOo7Cy7UA=;
-        b=m9bZ9lLiYoYRvTXOjhQB6ZnAE8ibU8dtkFrBQmj8A0I/gs634KYfdKW+fUFClufVsE
-         1O0NMwqKo1fD6qc+lL1cm3P+BWSRXDEuI31D8QNXFYMLHp3+cqRYwNF0syMD6CLqihm+
-         RgTn648Wc5AnzuqDAZ1CiLv2iuCNYe1dsNGHVjKeQ9SNrlrAFB3ha7b2H1w8T+FRazAg
-         KTOd+7oH/OpWR2uyg6lyjMbj1RD6mxmWUiUpczsTQOpc8wpc2PEjxOqxGpw8PCMwZ47M
-         eSb9qHjP9CeQDW1BWSXIWEEEA1xVdKLeHQCWgePcK8cAtLkh+7+EPkia+vNSdEXxwbRH
-         hDAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+I/9TWym/x4PN0S8rVHcHTbhmDpS2CukgYGOo7Cy7UA=;
-        b=NqY+BTDh456039nOlyuKTXXiRckCLi4V2H9hOyChJV1oJEGpHijybI8nbfgKMEPWOv
-         Tglw/fEzxs4zdYESR8MT1EquZoo8a57mZES/o6FU47DRdcWc48/Sp/ouANP8y6UK5x9O
-         th1G5YDnBqoWlVP2IthcLVcq+OaGiotnBu7kIW/0XnseUeP0W/j1P7N69NGkkYN1SdLS
-         0LTOVKUdq3yV6BMB4v2WpskbZw+6E1cImcCZ02NVQV+cDoq9hfsMym1H6+1Tq7gd+6Kc
-         Jjf8qDwcevfZ6FtB0AOZZygpgpoaV5KdryeMb2NpEDk5NI/dHFY02dBvI2ltXrNqFY+g
-         fj6g==
-X-Gm-Message-State: APjAAAVS0i796SsMUCPPBIhnvaQn+fef6PoaCsTB1tUhxsqji7xmxt8S
-        ftb14lhTL1hbJ/AIjV59XTJL4A==
-X-Google-Smtp-Source: APXvYqzkl8NvhGQ2YTQzPNV8/Or+oh3AHAwZ9Yte6+mTECBLB5Lynq/unS9VlaGw3Nma1GQ7H1FgqA==
-X-Received: by 2002:a7b:cbc2:: with SMTP id n2mr7977678wmi.173.1573223327650;
-        Fri, 08 Nov 2019 06:28:47 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id r3sm8012319wre.29.2019.11.08.06.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 06:28:47 -0800 (PST)
-Date:   Fri, 8 Nov 2019 14:28:43 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
-        qais.yousef@arm.com, ktkhai@virtuozzo.com
-Subject: Re: [PATCH 1/7] sched: Fix pick_next_task() vs change pattern race
-Message-ID: <20191108142843.GA123156@google.com>
-References: <20191108131553.027892369@infradead.org>
- <20191108131909.428842459@infradead.org>
+        Fri, 8 Nov 2019 09:58:44 -0500
+X-Greylist: delayed 4198 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Nov 2019 09:58:43 EST
+Received: from player737.ha.ovh.net (unknown [10.108.57.226])
+        by mo7.mail-out.ovh.net (Postfix) with ESMTP id 37A3113DC4C
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2019 13:32:47 +0100 (CET)
+Received: from sk2.org (gw.sk2.org [88.186.243.14])
+        (Authenticated sender: steve@sk2.org)
+        by player737.ha.ovh.net (Postfix) with ESMTPSA id BB328277AF29;
+        Fri,  8 Nov 2019 12:32:35 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 13:34:14 +0100
+From:   Stephen Kitt <steve@sk2.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/clk: convert VL struct to struct_size
+Message-ID: <20191108133414.72981353@heffalump.sk2.org>
+In-Reply-To: <20191107225002.1520821D7F@mail.kernel.org>
+References: <20190927185110.29897-1-steve@sk2.org>
+        <24c5e42f-cb56-f57a-163b-c35392bbf887@embeddedor.com>
+        <20191107225002.1520821D7F@mail.kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108131909.428842459@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/smeQGoduYW09bF10J89sbv6"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 6948772751797865944
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedruddvuddggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdqfffguegfifdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtsehgtdefreertdejnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucfkpheptddrtddrtddrtddpkeekrddukeeirddvgeefrddugeenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrjeefjedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 08 Nov 2019 at 14:15:54 (+0100), Peter Zijlstra wrote:
-> Commit 67692435c411 ("sched: Rework pick_next_task() slow-path")
-> inadvertly introduced a race because it changed a previously
-> unexplored dependency between dropping the rq->lock and
-> sched_class::put_prev_task().
-> 
-> The comments about dropping rq->lock, in for example
-> newidle_balance(), only mentions the task being current and ->on_cpu
-> being set. But when we look at the 'change' pattern (in for example
-> sched_setnuma()):
-> 
-> 	queued = task_on_rq_queued(p); /* p->on_rq == TASK_ON_RQ_QUEUED */
-> 	running = task_current(rq, p); /* rq->curr == p */
-> 
-> 	if (queued)
-> 		dequeue_task(...);
-> 	if (running)
-> 		put_prev_task(...);
-> 
-> 	/* change task properties */
-> 
-> 	if (queued)
-> 		enqueue_task(...);
-> 	if (running)
-> 		set_next_task(...);
-> 
-> It becomes obvious that if we do this after put_prev_task() has
-> already been called on @p, things go sideways. This is exactly what
-> the commit in question allows to happen when it does:
-> 
-> 	prev->sched_class->put_prev_task(rq, prev, rf);
-> 	if (!rq->nr_running)
-> 		newidle_balance(rq, rf);
-> 
-> The newidle_balance() call will drop rq->lock after we've called
-> put_prev_task() and that allows the above 'change' pattern to
-> interleave and mess up the state.
-> 
-> Furthermore, it turns out we lost the RT-pull when we put the last DL
-> task.
-> 
-> Fix both problems by extracting the balancing from put_prev_task() and
-> doing a multi-class balance() pass before put_prev_task().
-> 
-> Fixes: 67692435c411 ("sched: Rework pick_next_task() slow-path")
-> Reported-by: Quentin Perret <qperret@google.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+--Sig_/smeQGoduYW09bF10J89sbv6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The reproducer that triggered in 30sec or so has now been running for
-3 hours:
+On Thu, 07 Nov 2019 14:50:01 -0800, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Gustavo A. R. Silva (2019-10-02 12:20:28)
+> > On 9/27/19 13:51, Stephen Kitt wrote: =20
+> > > There are a few manually-calculated variable-length struct allocations
+> > > left, this converts them to use struct_size.
+> >=20
+> > How did you find this?
+> >=20
+> > Please, mention the tool you used to find this in the commit log. With
+> > that you can add my
+> >=20
+> > Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>=20
+> Any answer? I'm tempted to just apply the patch anyway.
 
-   Tested-by: Quentin Perret <qperret@google.com>
+Sorry, I hadn=E2=80=99t seen Gustavo=E2=80=99s email!
 
-Thanks for fix,
-Quentin
+I didn=E2=80=99t use anything particularly fancy to find these, my history =
+says
+
+	git grep -A1 'kzalloc.*sizeof[^_].*+'
+
+and manual review. I noticed that clk/ had a number of hits, but also commi=
+ts
+to switch to struct_size so I reckoned it was worth pursuing the exercise
+there.
+
+Is it worth adding that to the commit message?
+
+Regards,
+
+Stephen
+
+--Sig_/smeQGoduYW09bF10J89sbv6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl3FYMYACgkQgNMC9Yht
+g5w5zw/8DCOKSiYpV+FQsKtEi89KSPghyiUhXmTrE9xaqVQBtKZRpIGa5fiSQw8K
+4HQ0dwWP3osgh1bEJrxctOajTlkFf/vvdg83eaLHkjSNlJlsKc4yIG2TBzD944w4
+vTDkzIiJuksPv511XQN1CHTBJ59hWTQEUrGBRYmKQGZf1GgwLsQlyAXbQyJ/GIts
+wjjG4ppZ8pQ3BsG1cGINMfXN4IAzHmMhTrQcIKfAcuiX5uWrJlIr+oNS/2G29ens
+mFFqjRxTPetzXTUvbnyqH834CJ8Kt8sPGSX/nnr2XKn+l2ZwDauh6TIEtqCO3TFt
+VWxuTKdXT4jHLeeHLWYmnruUw6K0GUz7TOiPrZh42pzub0SUR8DOwNPYTYgkVCBE
+xOAF0HWmYuSeXlkS+ZxPrlqrRhboFVR5nCkYn378YBOCGyp3Unz3dn+Z8sdD1UzT
+M1PeS0LZOgB5Nvi6b6Z18f/2wlkaB2/DF+1WY6JUy1T+qqism7SCRK/14lSs5XF7
+LJ/EtPj99+5R99KWMyQh7pQVUV2Du/eItx3HI98mYC6JJ05DV4j5Sm4TyJ1BdWkZ
+T5kAE1C0C1aAnR7bfLNomqEB7T5Sve69nV2eGN8iWdr+yyEPYsi6NdYgxUCLG2qE
+Sumfib9j8gTV6xHqcqEHO7uhzNdjBZ/QcFGqo6K1R7WNtttZmow=
+=AIuF
+-----END PGP SIGNATURE-----
+
+--Sig_/smeQGoduYW09bF10J89sbv6--
