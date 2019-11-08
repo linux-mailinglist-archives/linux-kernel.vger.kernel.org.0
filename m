@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5B6F5222
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC15F5227
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbfKHREO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 12:04:14 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:42295 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbfKHREM (ORCPT
+        id S1729895AbfKHREW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 12:04:22 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:42300 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfKHREN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:04:12 -0500
-Received: by mail-il1-f199.google.com with SMTP id n16so7523622ilm.9
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:04:11 -0800 (PST)
+        Fri, 8 Nov 2019 12:04:13 -0500
+Received: by mail-il1-f198.google.com with SMTP id n16so7523648ilm.9
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:04:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=QN5xS5KxvNGZu2HmRrYxKdf1XYg+BBOCeF8tFIXMLpk=;
-        b=sYuLORUfrEXf2km9M+3vZzmMAJo0VXkSJwLhS3w6UXzWkUJwTvNkxd+wKxl0gCsfjf
-         K1J/F7Ik4YgD2O7x1aXAMLpVpuUS8QaT3+DInBsYy0uPdW3FOOrmdqcbnWlNOCMmTsJc
-         LHDi1gqeifBda343oecQvDLQzQp9fAEwIv666JICK/pXOi+gkdw2Tn80PpzrPzPeD+VT
-         uAYR+Y0gAnSbtT6+FpiuG5Qerbb87xZuAdRhDzMU/5KRvInMR5/LmbvPz860tKY/ldEj
-         E7uw/E+4RrTQdZTmX4aR2tSPFrgY86HQi8j7JkRBHI+INAsbnz4FwlfooqRwGd1K35YB
-         2xbQ==
-X-Gm-Message-State: APjAAAVJSS1ppaPDwnb3CTR3WJsKc5m7lgDmq7kHZdihF8moXDxiUf1X
-        fxEwCDrK0srUGQqIVNXj318q3s0q92r182XlFY/i4rNfTfKU
-X-Google-Smtp-Source: APXvYqwfah+WRBuNfot/+FsmEaadmLZdjmyCmAoc7OZ+K9n3aLsgm20Mt9U+INGtJcCpiyawwzqG4R81xWqcoyDY1rlRPR171y1x
+        bh=s7s+0AUIh85QJo5bIS6QtBdWuP0XF27aERvqgQ8hEgw=;
+        b=qgYFnmcVfsRDEib7Y4rBwdKrinF10EhdVCCUO7TZh1ZO3Ei1dLq9mXj6kRZuGoNH/b
+         RWDSD92aJAbhRXGd256O4hw3y+LjGbUB/hHB7aRA/R+Ul0scxqirruxk+hOk5HndYhT4
+         UlR2gfWeLVM6e4fWzj7fvC8wsgVzI2n9m5T7e3xhILXzkE/C+x80SktpsQm1WKuGOUgW
+         FfBU4S7JfPuJunWLEZKvt3aDGvP1TZkwy6J4j6BUmt6gaJoo13AARcsSorFkuWQd81G4
+         xNGiyRn/Uk0ZWzpZ7VNdARoz+roCgoSKXP5bAwVwsnbm1VGRSZwX0HS9y3XOtgPVrxPF
+         J8lQ==
+X-Gm-Message-State: APjAAAWY3ag1Qn2yGSySwUpqoOt7H3UqDbFHd1iKYYtn9VIYkkn6H0nL
+        M2gCD7jSKXiAgnFMMVhhG+VNIGI9iCwuqHT946fdKuDnwi5E
+X-Google-Smtp-Source: APXvYqx+2483goQJH3/cpm8N4DuiOA1eSgQWI2TcafX7e5/N7Y8JNnxclkD+QFHfXEwadHc3wiUuWt8g62R3dNYkNh8zQ1Z73n7q
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b886:: with SMTP id i128mr3112426iof.229.1573232651321;
- Fri, 08 Nov 2019 09:04:11 -0800 (PST)
-Date:   Fri, 08 Nov 2019 09:04:11 -0800
+X-Received: by 2002:a92:9891:: with SMTP id a17mr14106877ill.292.1573232652212;
+ Fri, 08 Nov 2019 09:04:12 -0800 (PST)
+Date:   Fri, 08 Nov 2019 09:04:12 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000054cbe40596d8c519@google.com>
-Subject: KMSAN: uninit-value in i2c_w (2)
-From:   syzbot <syzbot+99706d6390be1ac542a2@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, glider@google.com, gregkh@linuxfoundation.org,
-        hverkuil@xs4all.nl, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        mchehab@kernel.org, opensource@jilayne.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Message-ID: <0000000000006264c60596d8c5fa@google.com>
+Subject: KASAN: use-after-free Read in j1939_session_deactivate
+From:   syzbot <syzbot+a47537d3964ef6c874e1@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kernel@pengutronix.de,
+        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@rempel-privat.de, mkl@pengutronix.de, netdev@vger.kernel.org,
+        robin@protonic.nl, socketcan@hartkopp.net,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,113 +51,120 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    3c8ca708 test_kmsan.c: fix SPDX comment
-git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=163dccc4e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c07a3d4f8a59e198
-dashboard link: https://syzkaller.appspot.com/bug?extid=99706d6390be1ac542a2
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e74070e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13128d64e00000
+HEAD commit:    847120f8 Merge branch 'for-linus' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11077272e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5e2eca3f31f9bf
+dashboard link: https://syzkaller.appspot.com/bug?extid=a47537d3964ef6c874e1
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164973b4e00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+99706d6390be1ac542a2@syzkaller.appspotmail.com
+Reported-by: syzbot+a47537d3964ef6c874e1@syzkaller.appspotmail.com
 
-usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 1-1: config 0 descriptor??
-usb 1-1: string descriptor 0 read error: -71
-gspca_main: gspca_topro-2.14.0 probing 06a2:6810
-gspca_topro: reg_w err -71
-=====================================================
-BUG: KMSAN: uninit-value in i2c_w+0xb7a/0xd70  
-drivers/media/usb/gspca/topro.c:1031
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.4.0-rc3+ #0
+vcan0: j1939_xtp_rx_abort_one: 0x0000000017fc679a: 0x00000: (2) System  
+resources were needed for another task so this connection managed session  
+was terminated.
+vcan0: j1939_tp_rxtimer: 0x000000000eaf12e4: abort rx timeout. Force  
+session deactivation
+==================================================================
+BUG: KASAN: use-after-free in j1939_session_deactivate+0x80/0x90  
+net/can/j1939/transport.c:1033
+Read of size 8 at addr ffff88809958dc00 by task ksoftirqd/0/9
+
+CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 5.4.0-rc6+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  kmsan_report+0x14a/0x2f0 mm/kmsan/kmsan_report.c:110
-  __msan_warning+0x73/0xf0 mm/kmsan/kmsan_instr.c:245
-  i2c_w+0xb7a/0xd70 drivers/media/usb/gspca/topro.c:1031
-  probe_6810 drivers/media/usb/gspca/topro.c:1114 [inline]
-  sd_init+0xc10/0x7c10 drivers/media/usb/gspca/topro.c:4069
-  gspca_dev_probe2+0xe93/0x2230 drivers/media/usb/gspca/gspca.c:1532
-  gspca_dev_probe+0x346/0x3b0 drivers/media/usb/gspca/gspca.c:1605
-  sd_probe+0x8d/0xa0 drivers/media/usb/gspca/gl860/gl860.c:511
-  usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
-  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
-  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x581d/0x72f0 drivers/usb/core/hub.c:5441
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:634
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  j1939_session_deactivate+0x80/0x90 net/can/j1939/transport.c:1033
+  j1939_session_deactivate_activate_next+0x17/0x50  
+net/can/j1939/transport.c:1041
+  j1939_tp_rxtimer+0xc8/0x27b net/can/j1939/transport.c:1150
+  __run_hrtimer kernel/time/hrtimer.c:1514 [inline]
+  __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1576
+  hrtimer_run_softirq+0x17e/0x270 kernel/time/hrtimer.c:1593
+  __do_softirq+0x262/0x98c kernel/softirq.c:292
+  run_ksoftirqd kernel/softirq.c:603 [inline]
+  run_ksoftirqd+0x8e/0x110 kernel/softirq.c:595
+  smpboot_thread_fn+0x6a3/0xa40 kernel/smpboot.c:165
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:151 [inline]
-  kmsan_internal_poison_shadow+0x60/0x110 mm/kmsan/kmsan.c:134
-  kmsan_slab_alloc+0xaa/0x130 mm/kmsan/kmsan_hooks.c:88
-  slab_alloc_node mm/slub.c:2792 [inline]
-  slab_alloc mm/slub.c:2801 [inline]
-  kmem_cache_alloc_trace+0x8c5/0xd20 mm/slub.c:2818
+Allocated by task 9265:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:510 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
+  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3550
   kmalloc include/linux/slab.h:556 [inline]
-  gspca_dev_probe2+0x30d/0x2230 drivers/media/usb/gspca/gspca.c:1464
-  gspca_dev_probe+0x346/0x3b0 drivers/media/usb/gspca/gspca.c:1605
-  sd_probe+0x8d/0xa0 drivers/media/usb/gspca/gl860/gl860.c:511
-  usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
-  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
-  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
-  really_probe+0xd91/0x1f90 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:721
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:828
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:430
-  __device_attach+0x489/0x750 drivers/base/dd.c:894
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:941
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:490
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2201
-  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x581d/0x72f0 drivers/usb/core/hub.c:5441
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-=====================================================
+  kzalloc include/linux/slab.h:690 [inline]
+  j1939_session_new+0x81/0x3f0 net/can/j1939/transport.c:1384
+  j1939_tp_send+0x249/0x750 net/can/j1939/transport.c:1846
+  j1939_sk_send_loop net/can/j1939/socket.c:995 [inline]
+  j1939_sk_sendmsg+0xb76/0x1450 net/can/j1939/socket.c:1100
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg+0xd7/0x130 net/socket.c:657
+  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
+  __compat_sys_sendmsg net/compat.c:642 [inline]
+  __do_compat_sys_sendmsg net/compat.c:649 [inline]
+  __se_compat_sys_sendmsg net/compat.c:646 [inline]
+  __ia32_compat_sys_sendmsg+0x7a/0xb0 net/compat.c:646
+  do_syscall_32_irqs_on arch/x86/entry/common.c:333 [inline]
+  do_fast_syscall_32+0x27b/0xdb3 arch/x86/entry/common.c:404
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+Freed by task 9:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  kasan_set_free_info mm/kasan/common.c:332 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+  __cache_free mm/slab.c:3425 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3756
+  j1939_session_destroy net/can/j1939/transport.c:272 [inline]
+  __j1939_session_release net/can/j1939/transport.c:280 [inline]
+  kref_put include/linux/kref.h:65 [inline]
+  j1939_session_put+0x134/0x180 net/can/j1939/transport.c:285
+  j1939_session_deactivate_locked net/can/j1939/transport.c:1021 [inline]
+  j1939_session_deactivate_locked+0x245/0x2f0 net/can/j1939/transport.c:1009
+  j1939_session_deactivate+0x3d/0x90 net/can/j1939/transport.c:1032
+  j1939_session_deactivate_activate_next+0x17/0x50  
+net/can/j1939/transport.c:1041
+  j1939_tp_rxtimer+0xc8/0x27b net/can/j1939/transport.c:1150
+  __run_hrtimer kernel/time/hrtimer.c:1514 [inline]
+  __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1576
+  hrtimer_run_softirq+0x17e/0x270 kernel/time/hrtimer.c:1593
+  __do_softirq+0x262/0x98c kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff88809958dc00
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 0 bytes inside of
+  512-byte region [ffff88809958dc00, ffff88809958de00)
+The buggy address belongs to the page:
+page:ffffea0002656340 refcount:1 mapcount:0 mapping:ffff8880aa400a80  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea00028faa88 ffffea0002a31c48 ffff8880aa400a80
+raw: 0000000000000000 ffff88809958d000 0000000100000004 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88809958db00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff88809958db80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88809958dc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                    ^
+  ffff88809958dc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809958dd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
