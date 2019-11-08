@@ -2,312 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBFBF5344
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:10:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C7D2F534A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:12:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbfKHSK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:10:26 -0500
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:41938 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfKHSK0 (ORCPT
+        id S1728265AbfKHSMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:12:38 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37095 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbfKHSMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:10:26 -0500
-IronPort-SDR: xWtMSIWV6u08FLvwfs6RmotHZVdiS0Z+wKIoAA6MDWM8O9yvhp0Oy5YWKvBX3uvAB5VyGj8WGz
- D3g4jOO577/CBhfyWR+6eaBgomG06cnQPA7cwdCgP5mdTymLc8SIZpdtxg8DYKyORx8vRtm1d8
- eBbCHaTpIvXAQFiHars2KCZv2qn6+NdthbewQnOqD6aWmsVA+xHbaGgFlQmaUIux6wDonwN73y
- B7wjVOvBJEAAFVXMIp+RJ2IkJcO2N41YPTOF3/0Po+KiInTWIOcbD+5Nh7bhNt6ENXIwxZ2WVg
- GfU=
-X-IronPort-AV: E=Sophos;i="5.68,282,1569312000"; 
-   d="scan'208";a="42941491"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 08 Nov 2019 10:10:25 -0800
-IronPort-SDR: cJ2HoOQvWhF2kgqOONtw7dTLSUBbSQhARRgpLNdOm56y0+Zz/d4pC7X9wCb0W/+esi3Ui+AK0I
- OelaEfNmlar+YzaLsHO8sAgGFebumZDNoZlF3ulCEWjQTFNw5ZSULTj8+K7Q+CIlr14OGR7ZRC
- CKVQpxDEvCBScstQyvVBAWlQ7aKOucbdREEPevqolIE4AraoH0cs0PeH6XPLsMT0+t7X7Nc170
- AUkLwrmVZpwwMusLMfNImLDFnUiuD/y8FZaMlbDE/FdmWYXjusnq+E8HCFTQQ4+FNYWe+615l3
- g7E=
-From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
-To:     'Takashi Iwai' <tiwai@suse.de>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Timo Wischer <twischer@de.adit-jv.com>
-References: <20191105143218.5948-1-andrew_gabbasov@mentor.com>  <20191105143218.5948-2-andrew_gabbasov@mentor.com>      <20191105143218.5948-3-andrew_gabbasov@mentor.com>      <20191105143218.5948-4-andrew_gabbasov@mentor.com>      <20191105143218.5948-5-andrew_gabbasov@mentor.com>      <20191105143218.5948-6-andrew_gabbasov@mentor.com>      <20191105143218.5948-7-andrew_gabbasov@mentor.com>      <20191105143218.5948-8-andrew_gabbasov@mentor.com> <s5hlfss862t.wl-tiwai@suse.de>
-In-Reply-To: <s5hlfss862t.wl-tiwai@suse.de>
-Subject: RE: [PATCH v2 7/8] ALSA: aloop: Support selection of snd_timer instead of jiffies
-Date:   Fri, 8 Nov 2019 21:09:22 +0300
-Organization: Mentor Graphics Corporation
-Message-ID: <000001d5965f$b1926ac0$14b74040$@mentor.com>
+        Fri, 8 Nov 2019 13:12:38 -0500
+Received: by mail-lf1-f65.google.com with SMTP id b20so5156039lfp.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 10:12:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UwOe/0M2mqJUTnI7Cbij9+EXC9Tu0LMdXKdxLl7NQv8=;
+        b=Tty72ZI+f/UrYcmEO8Ttap8J2ndzFJNgOvOIEsjOGXNDZDxbS3eJdFc1wvOgAkhTae
+         HLu2Gs/SEuoh93AyFYWuYVGXZRyvcZzwo9IRcP7UYgKpfdaT0318sOFFV7yfTAuoQUuM
+         qzCAoo7N2AMj7L2Iz8ESsZqrPCxDcoIImZAlU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UwOe/0M2mqJUTnI7Cbij9+EXC9Tu0LMdXKdxLl7NQv8=;
+        b=CmSzuNhmfAEtfa+boKwcWVmpCalPCZ4nEseyJrlQU10iHwemQhmoVFCOF2IPQ81JB5
+         AVl03KUmhIywEBHWl6Itt1ssATAsBPmYhVQE9sf3+4hiptwyJ2ueLjVAlcSnZpdHKk2b
+         VU7uqLE/gcVFRmHSzBn8ZifV9kLDVLzzQ1NxZnSPk9kbx3ocQWAUeRjWpQkZfNZ4iJsx
+         MNAs7PtlFvo9wZOmhvcPm8ntRaJU5gTzgwdW5LpG+rNkMg0fjvlrmhiWZM/u0fEK1Ix/
+         Lqw7ELpxaVNPUdJxuE/J68FCzeuSIhnkz6MBwQ53PkSM4OL/ZJTnPEAYnJoSSbvKORnC
+         fKGA==
+X-Gm-Message-State: APjAAAVdCN1Yim3g8iLLP58Da0uc0XwggVz6ZB/VqyVnydGy9UI9L2WP
+        kpLZOzdUuZ0GnBGW6wB0fk5EAUlrBdc=
+X-Google-Smtp-Source: APXvYqw0DlPlBtiB/khHn+iCIIO6B5wpkUfr5wdVhE4E4d16kQ5wJgGLjaJcigkR6Nx9G4ci7HRJYw==
+X-Received: by 2002:a19:ec16:: with SMTP id b22mr8147481lfa.74.1573236754100;
+        Fri, 08 Nov 2019 10:12:34 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id i30sm3267945lfp.39.2019.11.08.10.12.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 10:12:33 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id q2so7185894ljg.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 10:12:31 -0800 (PST)
+X-Received: by 2002:a05:651c:331:: with SMTP id b17mr7846398ljp.133.1573236751292;
+ Fri, 08 Nov 2019 10:12:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQHVk+YmK3KlOO6PeUGxcY472O0ao6d/XF4AgAB4QPA=
-Content-Language: en-us
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
+ <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
+ <CANn89iK9mTJ4BN-X3MeSx5LGXGYafXkhZyaUpdXDjVivTwA6Jg@mail.gmail.com>
+ <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com>
+ <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
+ <CANn89i+RrngUr11_iOYDuqDvAZnPfG3ieJR025M78uhiwEPuvQ@mail.gmail.com> <CANn89iLN758CpQPKcd++NLdj62LS-ekiEUV91VREzMsamLn9bw@mail.gmail.com>
+In-Reply-To: <CANn89iLN758CpQPKcd++NLdj62LS-ekiEUV91VREzMsamLn9bw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 8 Nov 2019 10:12:15 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg5+N2WS2vO6doxfza1G8zk4DP5RhodiaSeAyf+Ooy7wQ@mail.gmail.com>
+Message-ID: <CAHk-=wg5+N2WS2vO6doxfza1G8zk4DP5RhodiaSeAyf+Ooy7wQ@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        Marco Elver <elver@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Takashi,
+On Fri, Nov 8, 2019 at 10:02 AM Eric Dumazet <edumazet@google.com> wrote:
+>
+> Another interesting KCSAN report :
+>
+> static inline s64 percpu_counter_read_positive(struct percpu_counter *fbc)
+> {
+>         s64 ret = fbc->count;   // data-race ....
 
-Thank you very much for your feedback.
+Yeah, I think that's fundamentally broken on 32-bit. It might need a
+sequence lock instead of that raw_spinlock_t to be sanely done
+properly on 32-bit.
 
-> -----Original Message-----
-> From: Takashi Iwai [mailto:tiwai@suse.de]
-> Sent: Thursday, November 07, 2019 11:05 AM
+Or we just admit that 32-bit doesn't really matter any more in the
+long run, and that this is not a problem in practice because the
+32-bit overflow basically never happens on small machines anyway.
 
-> On Tue, 05 Nov 2019 15:32:17 +0100,
-> Andrew Gabbasov wrote:
-> > @@ -102,6 +106,13 @@ struct loopback_cable {
-> >  	unsigned int pause;
-> >  	/* timer specific */
-> >  	struct loopback_ops *ops;
-> > +	/* If sound timer is used */
-> > +	struct {
-> > +		int owner;
-> 
-> The term "owner" is a bit confusing here.  It seems holding the PCM
-> direction, but most people expect it being a process-id or something
-> like that from the word.
-
-Will be fixed in next update.
-
-> 
-> > +		struct snd_timer_id id;
-> > +		struct tasklet_struct event_tasklet;
-> 
-> You don't need to make own tasklet.  The timer core calls it via
-> tasklet in anyway unless you pass SNDRV_TIMER_IFLG_FAST -- see below.
-> 
-> And the tasklet is no longer recommended infrastructure in the recent
-> kernel, we should avoid it as much as possible.
-
-See below about the tasklet.
-
-> 
-> >  struct loopback_setup {
-> > @@ -122,6 +133,7 @@ struct loopback {
-> >  	struct loopback_cable *cables[MAX_PCM_SUBSTREAMS][2];
-> >  	struct snd_pcm *pcm[2];
-> >  	struct loopback_setup setup[MAX_PCM_SUBSTREAMS][2];
-> > +	char *timer_source;
-> 
-> This can be const char *, I suppose.
-
-Yes, this will be fixed.
-
-> > +static void loopback_snd_timer_period_elapsed(
-> > +		struct loopback_cable * const cable,
-> > +		const int event, const unsigned long resolution)
-> > +{
-> > +	struct loopback_pcm *dpcm_play =
-> > +			cable->streams[SNDRV_PCM_STREAM_PLAYBACK];
-> > +	struct loopback_pcm *dpcm_capt =
-> > +			cable->streams[SNDRV_PCM_STREAM_CAPTURE];
-> 
-> You shouldn't assign them outside the cable->lock.
-
-I'll move these assigns to after obtaining the lock.
-
-> > +	struct snd_pcm_runtime *valid_runtime;
-> > +	unsigned int running, elapsed_bytes;
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&cable->lock, flags);
-> > +	running = cable->running ^ cable->pause;
-> > +	/* no need to do anything if no stream is running */
-> > +	if (!running) {
-> > +		spin_unlock_irqrestore(&cable->lock, flags);
-> > +		return;
-> > +	}
-> > +
-> > +	if (event == SNDRV_TIMER_EVENT_MSTOP) {
-> > +		if (!dpcm_play || !dpcm_play->substream ||
-> > +		    !dpcm_play->substream->runtime ||
-> > +		    !dpcm_play->substream->runtime->status ||
-> 
-> Would these conditions really happen?
-
-This seems to be kind of over cautiousness ;-)
-I remove all intermediate members checks.
-
-> > +		    dpcm_play->substream->runtime->status->state !=
-> > +		    SNDRV_PCM_STATE_DRAINING) {
-> 
-> What's special with DRAINING state?  The code doesn't show or explain
-> it.  And for other conditions, we keep going even if the event is
-> MSTOP?
-
-There are some comments below in loopback_snd_timer_event() function.
-When the sound timer stops and the stream is in the draining state,
-we still need to flush the data remaining in the buffer, and the regular
-"elapsed" functions are called for that.
-
-> > +			spin_unlock_irqrestore(&cable->lock, flags);
-> > +			return;
-> > +		}
-> > +	}
-> > +
-> > +	valid_runtime = (running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ?
-> > +				dpcm_play->substream->runtime :
-> > +				dpcm_capt->substream->runtime;
-> > +
-> > +	/* resolution is only valid for SNDRV_TIMER_EVENT_TICK events */
-> > +	if (event == SNDRV_TIMER_EVENT_TICK) {
-> > +		/* The hardware rules guarantee that playback and capture
-> period
-> > +		 * are the same. Therefore only one device has to be checked
-> > +		 * here.
-> > +		 */
-> > +		if (loopback_snd_timer_check_resolution(valid_runtime,
-> > +							resolution) < 0) {
-> > +			spin_unlock_irqrestore(&cable->lock, flags);
-> > +			if (cable->running & (1 <<
-SNDRV_PCM_STREAM_PLAYBACK))
-> > +				snd_pcm_stop_xrun(dpcm_play->substream);
-> > +			if (cable->running & (1 <<
-SNDRV_PCM_STREAM_CAPTURE))
-> > +				snd_pcm_stop_xrun(dpcm_capt->substream);
-> 
-> Referencing outside the lock isn't really safe.  In the case of
-> jiffies timer code, it's a kind of OK because it's done in the timer
-> callback function that is assigned for each stream open -- that is,
-> the stream runtime is guaranteed to be present in the timer callback.
-> But I'm not sure about your case...
-
-I re-structure this code a little to make all de-referencing inside the
-lock.
-
-> > @@ -749,6 +1037,152 @@ static struct loopback_ops
-> loopback_jiffies_timer_ops = {
-> >  	.dpcm_info = loopback_jiffies_timer_dpcm_info,
-> >  };
-> >
-> > +static int loopback_parse_timer_id(const char * const str,
-> > +				   struct snd_timer_id *tid)
-> > +{
-> > +	/* [<pref>:](<card name>|<card idx>)[{.,}<dev idx>[{.,}<subdev
-> idx>]] */
-> > +	const char * const sep_dev = ".,";
-> > +	const char * const sep_pref = ":";
-> > +	const char *name = str;
-> > +	char save, *sep;
-> > +	int card = 0, device = 0, subdevice = 0;
-> > +	int err;
-> > +
-> > +	sep = strpbrk(str, sep_pref);
-> > +	if (sep)
-> > +		name = sep + 1;
-> > +	sep = strpbrk(name, sep_dev);
-> > +	if (sep) {
-> > +		save = *sep;
-> > +		*sep = '\0';
-> > +	}
-> > +	err = kstrtoint(name, 0, &card);
-> > +	if (err == -EINVAL) {
-> > +		/* Must be the name, not number */
-> > +		for (card = 0; card < snd_ecards_limit; card++) {
-> > +			if (snd_cards[card] &&
-> > +			    !strcmp(snd_cards[card]->id, name)) {
-> > +				err = 0;
-> > +				break;
-> > +			}
-> > +		}
-> > +	}
-> 
-> As kbuildbot reported, this is obviously broken with the recent
-> kernel.  snd_cards[] is no longer exported!  And I don't want to
-> export again.
-> 
-> IOW, if we need this kind of thing, it's better to modify the existing
-> code in sound/core/init.c and export that function.
-
-Yes, I realized it a little late ;-)
-So far I changed the loop to something like
-
-	for (card_idx = 0; card_idx < snd_ecards_limit; card_idx++) {
-		struct snd_card *card = snd_card_ref(card_idx);
-		if (card) {
-			if (!strcmp(card->id, name))
-				err = 0;
-			snd_card_unref(card);
-		}
-		if (!err)
-			break;
-	}
-
-Of course, adding a separate lookup helper function to sound/core/init.c,
-like, for example,
-	struct snd_card *snd_card_find_id(const char *id)
-that makes similar loop in a more "atomic" way, with proper locking and
-reference incrementing for the result, would be more efficient, so if you
-decide to create such a helper, that would help to eliminate this loop
-from here.
-
-> > +/* call in loopback->cable_lock */
-> > +static int loopback_snd_timer_open(struct loopback_pcm *dpcm)
-> > +{
-> > +	int err = 0;
-> > +	unsigned long flags;
-> > +	struct snd_timer_id tid = {
-> > +		.dev_class = SNDRV_TIMER_CLASS_PCM,
-> > +		.dev_sclass = SNDRV_TIMER_SCLASS_APPLICATION,
-> > +	};
-> > +	struct snd_timer_instance *timer = NULL;
-> 
-> Why initialing to NULL here?
-
-Will be fixed too.
-
-> > +	spin_lock_irqsave(&dpcm->cable->lock, flags);
-> 
-> You need no irqsave version but spin_lock_irq() for the context like
-> open/close that is guaranteed to be sleepable.
-
-And this will be fixed.
-
-> > +	spin_lock_irqsave(&dpcm->cable->lock, flags);
-> > +
-> > +	/* The callback has to be called from another tasklet. If
-> > +	 * SNDRV_TIMER_IFLG_FAST is specified it will be called from the
-> > +	 * snd_pcm_period_elapsed() call of the selected sound card.
-> 
-> Well, you're the one who specifies SNDRV_TIMER_IFLG_XXX, so you know
-> that the flag isn't set.  So tasklet makes little sense.
-
-Indeed, that flag is not set, and the regular callback is already called
-from the tasklet. That's why the callback function, registered here
-(loopback_snd_timer_function) does not use the tasklet.
-However, the ccallback event handler is called by sound core directly,
-without a tasklet, and within "spin_lock_irqsave(&timer->lock, flags)".
-So, it's not possible to call snd_pcm_period_elapsed() directly
-from ccallback function (loopback_snd_timer_event). In order to
-be able to make this call, the local tasklet is used.
-
-> > +	 * snd_pcm_period_elapsed() helds snd_pcm_stream_lock_irqsave().
-> > +	 * Due to our callback loopback_snd_timer_function() also calls
-> > +	 * snd_pcm_period_elapsed() which calls
-> snd_pcm_stream_lock_irqsave().
-> > +	 * This would end up in a dead lock.
-> > +	 */
-> > +	timer->flags |= SNDRV_TIMER_IFLG_AUTO;
-> > +	timer->callback = loopback_snd_timer_function;
-> > +	timer->callback_data = (void *)dpcm->cable;
-> > +	timer->ccallback = loopback_snd_timer_event;
-> 
-> This reminds me that we need a safer way to assign these stuff in
-> general...  But it's above this patch set, in anyway.
-> 
-
-I'm preparing the next version of this patch set with the changes,
-described above, and some more code cleanup. It will be submitted soon.
-
-Thanks!
-
-Best regards,
-Andrew
-
+               Linus
