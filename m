@@ -2,742 +2,365 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4E3F4C0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63BB2F4C14
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 13:50:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfKHMrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 07:47:06 -0500
-Received: from mga18.intel.com ([134.134.136.126]:17109 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726101AbfKHMrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 07:47:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 04:47:03 -0800
-X-IronPort-AV: E=Sophos;i="5.68,281,1569308400"; 
-   d="scan'208";a="196892507"
-Received: from lingshan-mobl5.ccr.corp.intel.com (HELO [10.238.129.48]) ([10.238.129.48])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Nov 2019 04:47:00 -0800
-Subject: Re: [PATCH 2/2] IFC VDPA layer
-To:     Jason Wang <jasowang@redhat.com>,
-        Zhu Lingshan <lingshan.zhu@intel.com>
-Cc:     mst@redhat.com, alex williamson <alex.williamson@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan daly <dan.daly@intel.com>,
-        cunming liang <cunming.liang@intel.com>,
-        tiwei bie <tiwei.bie@intel.com>,
-        jason zeng <jason.zeng@intel.com>
-References: <1572946660-26265-1-git-send-email-lingshan.zhu@intel.com>
- <1572946660-26265-3-git-send-email-lingshan.zhu@intel.com>
- <567342941.12778452.1573036792388.JavaMail.zimbra@redhat.com>
-From:   Zhu Lingshan <lingshan.zhu@linux.intel.com>
-Message-ID: <2715a1af-486b-5b9e-580b-a13de5ee826d@linux.intel.com>
-Date:   Fri, 8 Nov 2019 20:46:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1726768AbfKHMue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 07:50:34 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46893 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfKHMue (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 07:50:34 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b3so6887931wrs.13
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 04:50:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=h1rRsM7+DRkVXx86Ozl4pcfkVOljAGPaOjgIAe0lUrs=;
+        b=MDaKUWl7vQ2E8Biz6A/cpa/6O9ARQS37G0UClg+4Eu9xGrLQbpaNEHz8vaHUWBQl+a
+         E5MpAOcAfnNnOrPO6P1/VzzPajttR3u+E1EIv7vXiE6hBp/pafyio9okvrBZYy8ntBAV
+         aBxgJxtMKfUJvVRHM4iezNNoIiYzSGz75VLGr8dJbVm3p/P2F4fb/QHC9Ak1wuavedn+
+         sSGj3xR5MEO1Rn1i2ufhzDOU0dlcsxePZGDx+RmDG+3UU9VGml5GI6NPZfH4rP3HIAq/
+         voB8CTX3hrvqGgNAtFn4s8hyzNAzqxjkWudeNHGUV+HU9hJkjiAiDxs2XTzkFAUoWCYl
+         mWnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=h1rRsM7+DRkVXx86Ozl4pcfkVOljAGPaOjgIAe0lUrs=;
+        b=LCidKO5yIjWX0ajJUk1Iwdhp1GT/3qNb2tuns1pmxz6ER36ai5YL5csFcWhOyC8wy2
+         uC13b+jofFEQbpCpKNVfWIUFxydriX6QDPFfgf/uVyNvjFpFWfyexTDPly7xWqNN08Eu
+         OTeXyXr3KtuFmPPrNsWwoT0bVfmMEbmg1wo3IV4yI8l9XZ/+TfRPG2LioaccX3B3DQLY
+         fCI1GaykxaLwrZppMGsjZGVWn/glq3+S/OJiZyZMfQiyTPizi6PKx1ZDQrI+Lrp+kpWI
+         6YUtNz4tm8hxp/+nHMdsYHp2OS1imkkhfucQlC9ihBehVqh70SCnTAb/c2C2dFZtyKxp
+         159g==
+X-Gm-Message-State: APjAAAXRLYMw30WG/OU/HWzZ/OXl1K59N3xbjf51LJfg5HJW3XczZ0cb
+        Q73fG6Ue+FeVbvnei9kZIcTdAmqDz6ncEQ==
+X-Google-Smtp-Source: APXvYqwy0TpHQXYY5rSBLmHZG5xu4EYvGAtGzDtZClMCMfDnj+9SQt5cUpazJCpeu/YsjpkZsKcv1A==
+X-Received: by 2002:a5d:5230:: with SMTP id i16mr8511074wra.317.1573217429952;
+        Fri, 08 Nov 2019 04:50:29 -0800 (PST)
+Received: from [10.1.2.12] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id f67sm2393601wme.16.2019.11.08.04.50.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Nov 2019 04:50:29 -0800 (PST)
+Subject: Re: [PATCH v5 1/3] pinctrl: meson: add a new callback for SoCs fixup
+To:     Qianggui Song <qianggui.song@amlogic.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1573203636-7436-1-git-send-email-qianggui.song@amlogic.com>
+ <1573203636-7436-2-git-send-email-qianggui.song@amlogic.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <54809378-d4b0-2013-eb22-d6570eff2a8c@baylibre.com>
+Date:   Fri, 8 Nov 2019 13:50:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <567342941.12778452.1573036792388.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1573203636-7436-2-git-send-email-qianggui.song@amlogic.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-On 11/6/2019 6:39 PM, Jason Wang wrote:
->
-> ----- Original Message -----
->> This commit introduced IFC operations for vdpa, which complys to
->> virtio_mdev and vhost_mdev interfaces, handles IFC VF
->> initialization, configuration and removal.
->>
->> Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
->> ---
->>   drivers/vhost/ifcvf/ifcvf_main.c | 605
->>   +++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 605 insertions(+)
->>   create mode 100644 drivers/vhost/ifcvf/ifcvf_main.c
->>
->> diff --git a/drivers/vhost/ifcvf/ifcvf_main.c
->> b/drivers/vhost/ifcvf/ifcvf_main.c
->> new file mode 100644
->> index 0000000..7165457
->> --- /dev/null
->> +++ b/drivers/vhost/ifcvf/ifcvf_main.c
->> @@ -0,0 +1,605 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2019 Intel Corporation.
->> + */
->> +
->> +#include <linux/interrupt.h>
->> +#include <linux/module.h>
->> +#include <linux/mdev.h>
->> +#include <linux/pci.h>
->> +#include <linux/sysfs.h>
->> +#include "ifcvf_base.h"
->> +
->> +#define VERSION_STRING	"0.1"
->> +#define DRIVER_AUTHOR	"Intel Corporation"
->> +#define IFCVF_DRIVER_NAME	"ifcvf"
->> +
->> +static struct ifcvf_hw *mdev_to_vf(struct mdev_device *mdev)
->> +{
->> +	struct ifcvf_asapter *adapter = mdev_get_drvdata(mdev);
->> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
->> +
->> +	return vf;
->> +}
->> +
->> +static irqreturn_t ifcvf_intr_handler(int irq, void *arg)
->> +{
->> +	struct vring_info *vring = arg;
->> +
->> +	if (vring->cb.callback)
->> +		return vring->cb.callback(vring->cb.private);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static u64 ifcvf_mdev_get_features(struct mdev_device *mdev)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	return ifcvf_get_features(vf);
->> +}
->> +
->> +static int ifcvf_mdev_set_features(struct mdev_device *mdev, u64 features)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	vf->req_features = features;
->> +
->> +	return 0;
->> +}
->> +
->> +static u64 ifcvf_mdev_get_vq_state(struct mdev_device *mdev, u16 qid)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +	u16 last_avail_idx;
->> +
->> +	last_avail_idx = *(u16 *)(vf->lm_cfg + IFCVF_LM_RING_STATE_OFFSET +
->> +			 (qid / 2) * IFCVF_LM_CFG_SIZE + (qid % 2) * 4);
->> +
-> Similar to the comment of previous patch, it's better to have a
-> structure for lm_cfg.
+On 08/11/2019 10:00, Qianggui Song wrote:
+> In meson_pinctrl_parse_dt, it contains two parts: reg parsing and
+> SoC relative fixup for AO. Several fixups in the same code make it hard
+> to maintain, so move all fixups to each SoC's callback and make
+> meson_pinctrl_parse_dt just do the reg parsing, separate these two
+> parts.Overview of all current Meson SoCs fixup is as below:
+> 
+> +------+--------------------------------------+--------------------------+
+> |      |                                      |                          |
+> | SoC  |                EE domain             |        AO domain         |
+> +------+--------------------------------------+--------------------------+
+> |m8    | parse regs:                          | parse regs:              |
+> |m8b   |   gpio,mux,pull,pull-enable(skip ds) |    gpio,mux,pull(skip ds)|
+> |gxl   | fixup:                               | fixup:                   |
+> |gxbb  |   no                                 |     pull-enable = pull;  |
+> |axg   |                                      |                          |
+> +------+--------------------------------------+--------------------------+
+> |g12a  | parse regs:                          | parse regs:              |
+> |sm1   |   gpio,mux,pull,pull-enable,ds       |   gpio,mux,ds            |
+> |      | fixup:                               | fixup:                   |
+> |      |   no                                 |   pull = gpio;           |
+> |      |                                      |   pull-enable = gpio;    |
+> +------+--------------------------------------+--------------------------+
+> |a1 or | parse regs:                                                     |
+> |later |  gpio/mux (without ao domain)                                   |
+> |SoCs  | fixup:                                                          |
+> |      |  pull = gpio; pull-enable = gpio; ds = gpio;                    |
+> +------+-----------------------------------------------------------------+
+> Since m8-axg share the same ao fixup, make a common function
+> meson8_aobus_parse_dt_extra to do the job.
+> 
+> Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+> ---
+>  drivers/pinctrl/meson/pinctrl-meson-axg.c  |  1 +
+>  drivers/pinctrl/meson/pinctrl-meson-g12a.c |  9 +++++++++
+>  drivers/pinctrl/meson/pinctrl-meson-gxbb.c |  1 +
+>  drivers/pinctrl/meson/pinctrl-meson-gxl.c  |  1 +
+>  drivers/pinctrl/meson/pinctrl-meson.c      | 25 ++++++++++++++++++-------
+>  drivers/pinctrl/meson/pinctrl-meson.h      |  5 +++++
+>  drivers/pinctrl/meson/pinctrl-meson8.c     |  1 +
+>  drivers/pinctrl/meson/pinctrl-meson8b.c    |  1 +
+>  8 files changed, 37 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> index ad502eda4afa..072765db93d7 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> @@ -1066,6 +1066,7 @@
+>  	.num_banks	= ARRAY_SIZE(meson_axg_aobus_banks),
+>  	.pmx_ops	= &meson_axg_pmx_ops,
+>  	.pmx_data	= &meson_axg_aobus_pmx_banks_data,
+> +	.parse_dt	= meson8_aobus_parse_dt_extra,
+>  };
+>  
+>  static const struct of_device_id meson_axg_pinctrl_dt_match[] = {
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+> index 582665fd362a..41850e3c0091 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+> @@ -1362,6 +1362,14 @@
+>  	.num_pmx_banks	= ARRAY_SIZE(meson_g12a_aobus_pmx_banks),
+>  };
+>  
+> +static int meson_g12a_aobus_parse_dt_extra(struct meson_pinctrl *pc)
+> +{
+> +	pc->reg_pull = pc->reg_gpio;
+> +	pc->reg_pullen = pc->reg_gpio;
+> +
+> +	return 0;
+> +}
+> +
+>  static struct meson_pinctrl_data meson_g12a_periphs_pinctrl_data = {
+>  	.name		= "periphs-banks",
+>  	.pins		= meson_g12a_periphs_pins,
+> @@ -1388,6 +1396,7 @@
+>  	.num_banks	= ARRAY_SIZE(meson_g12a_aobus_banks),
+>  	.pmx_ops	= &meson_axg_pmx_ops,
+>  	.pmx_data	= &meson_g12a_aobus_pmx_banks_data,
+> +	.parse_dt	= meson_g12a_aobus_parse_dt_extra,
+>  };
+>  
+>  static const struct of_device_id meson_g12a_pinctrl_dt_match[] = {
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> index 5bfa56f3847e..926b9997159a 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> @@ -851,6 +851,7 @@
+>  	.num_funcs	= ARRAY_SIZE(meson_gxbb_aobus_functions),
+>  	.num_banks	= ARRAY_SIZE(meson_gxbb_aobus_banks),
+>  	.pmx_ops	= &meson8_pmx_ops,
+> +	.parse_dt	= meson8_aobus_parse_dt_extra,
+>  };
+>  
+>  static const struct of_device_id meson_gxbb_pinctrl_dt_match[] = {
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> index 72c5373c8dc1..8b1a49f5da43 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> @@ -820,6 +820,7 @@
+>  	.num_funcs	= ARRAY_SIZE(meson_gxl_aobus_functions),
+>  	.num_banks	= ARRAY_SIZE(meson_gxl_aobus_banks),
+>  	.pmx_ops	= &meson8_pmx_ops,
+> +	.parse_dt 	= meson8_aobus_parse_dt_extra,
+>  };
+>  
+>  static const struct of_device_id meson_gxl_pinctrl_dt_match[] = {
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+> index 8bba9d053d9f..a812c6d986d9 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> @@ -625,7 +625,7 @@ static struct regmap *meson_map_resource(struct meson_pinctrl *pc,
+>  
+>  	i = of_property_match_string(node, "reg-names", name);
+>  	if (of_address_to_resource(node, i, &res))
+> -		return ERR_PTR(-ENOENT);
+> +		return NULL;
+>  
+>  	base = devm_ioremap_resource(pc->dev, &res);
+>  	if (IS_ERR(base))
+> @@ -665,26 +665,24 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+>  	pc->of_node = gpio_np;
+>  
+>  	pc->reg_mux = meson_map_resource(pc, gpio_np, "mux");
+> -	if (IS_ERR(pc->reg_mux)) {
+> +	if (IS_ERR_OR_NULL(pc->reg_mux)) {
+>  		dev_err(pc->dev, "mux registers not found\n");
+>  		return PTR_ERR(pc->reg_mux);
 
-Hello Jason,
+If pc->reg_mux is NULL, it will return "0" here, which is wrong.
 
-Thanks for your comments!
+Either keep the return ERR_PTR(-ENOENT); in meson_map_resource, or
+	return pc->reg_mux ? -ENOENT : PTR_ERR(pc->reg_mux);
 
-Now I use an variable for the address, and iowrite() for portable purpose.
+>  	}
+>  
+>  	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+> -	if (IS_ERR(pc->reg_gpio)) {
+> +	if (IS_ERR_OR_NULL(pc->reg_gpio)) {
+>  		dev_err(pc->dev, "gpio registers not found\n");
+>  		return PTR_ERR(pc->reg_gpio);
 
->> +	return last_avail_idx;
->> +}
->> +
->> +static int ifcvf_mdev_set_vq_state(struct mdev_device *mdev, u16 qid, u64
->> num)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	vf->vring[qid].last_avail_idx = num;
->> +
->> +	return 0;
->> +}
->> +
->> +static int ifcvf_mdev_set_vq_address(struct mdev_device *mdev, u16 idx,
->> +				     u64 desc_area, u64 driver_area,
->> +				     u64 device_area)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	vf->vring[idx].desc = desc_area;
->> +	vf->vring[idx].avail = driver_area;
->> +	vf->vring[idx].used = device_area;
->> +
->> +	return 0;
->> +}
->> +
->> +static void ifcvf_mdev_set_vq_num(struct mdev_device *mdev, u16 qid, u32
->> num)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	vf->vring[qid].size = num;
->> +}
->> +
->> +static void ifcvf_mdev_set_vq_ready(struct mdev_device *mdev,
->> +				    u16 qid, bool ready)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	vf->vring[qid].ready = ready;
-> There should be a "iowrite16(1, &cfg->queue_enable)" here. And there's
-> probably no need to store ready in vring in this case.
-Yes
->
->> +}
->> +
->> +static bool ifcvf_mdev_get_vq_ready(struct mdev_device *mdev, u16 qid)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	return vf->vring[qid].ready;
-> And the status should be read from cfg->queue_enable.
-Yes
->
->> +}
->> +
->> +static void ifcvf_mdev_set_vq_cb(struct mdev_device *mdev, u16 idx,
->> +				 struct virtio_mdev_callback *cb)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	vf->vring[idx].cb = *cb;
->> +}
->> +
->> +static void ifcvf_mdev_kick_vq(struct mdev_device *mdev, u16 idx)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	ifcvf_notify_queue(vf, idx);
->> +}
->> +
->> +static u8 ifcvf_mdev_get_status(struct mdev_device *mdev)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	return ifcvf_get_status(vf);
->> +}
->> +
->> +static u32 ifcvf_mdev_get_generation(struct mdev_device *mdev)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	return ioread8(&vf->common_cfg->config_generation);
->> +}
->> +
->> +static u32 ifcvf_mdev_get_device_id(struct mdev_device *mdev)
->> +{
->> +	return VIRTIO_ID_NET;
->> +}
->> +
->> +static u32 ifcvf_mdev_get_vendor_id(struct mdev_device *mdev)
->> +{
->> +	return IFCVF_VENDOR_ID;
->> +}
->> +
->> +static u16 ifcvf_mdev_get_vq_align(struct mdev_device *mdev)
->> +{
->> +	return IFCVF_QUEUE_ALIGNMENT;
->> +}
->> +
->> +static u64 ifcvf_mdev_get_mdev_features(struct mdev_device *mdev)
->> +{
->> +	return VIRTIO_MDEV_F_VERSION_1;
->> +}
-> We've decide to remove this API.
-Removed.
->
->> +
->> +static int ifcvf_start_datapath(void *private)
->> +{
->> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(private);
->> +	struct ifcvf_adapter *ifcvf;
->> +	int i, ret = 0;
->> +
->> +	ifcvf = container_of(vf, struct ifcvf_adapter, vf);
->> +
->> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
->> +		if (!vf->vring[i].ready) {
->> +			IFC_ERR(ifcvf->dev,
->> +				"Failed to start datapath, vring %d not ready.\n", i);
->> +			return -EINVAL;
->> +		}
-> This should be not related. Driver can choose to not start a virtqueue.
-removed the codes.
->
->> +
->> +		if (!vf->vring[i].size) {
->> +			IFC_ERR(ifcvf->dev,
->> +				"Failed to start datapath, vring %d size is zero.\n", i);
->> +			return -EINVAL;
->> +		}
->> +
->> +		if (!vf->vring[i].desc || !vf->vring[i].avail ||
->> +			!vf->vring[i].used) {
->> +			IFC_ERR(ifcvf->dev,
->> +				"Failed to start datapath, "
->> +				"invaild value for vring %d desc,"
->> +				"avail_idx or usex_idx.\n", i);
->> +			return -EINVAL;
->> +		}
->> +	}
->> +
->> +	vf->nr_vring = i;
->> +	ret = ifcvf_start_hw(vf);
-> So basically there's no need for ifcvf_start_hw() to care about vq
-> enablement, virtio core will take care of that through set_vq_ready().
-Agreed, however if we don't enable the queue, I observe the hardware 
-will not allow access to the queue, even reading something.
->
->> +
->> +	return ret;
->> +}
->> +
->> +static int ifcvf_stop_datapath(void *private)
->> +{
->> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(private);
->> +	int i;
->> +
->> +	for (i = 0; i < IFCVF_MAX_QUEUES; i++)
->> +		vf->vring[i].cb.callback = NULL;
->> +
->> +	ifcvf_stop_hw(vf);
->> +
->> +	return 0;
->> +}
->> +
->> +static void ifcvf_reset_vring(struct ifcvf_adapter *adapter)
->> +{
->> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
->> +	struct virtio_pci_common_cfg *cfg;
->> +	u8 *lm_cfg;
->> +	int i;
->> +
->> +	cfg = vf->common_cfg;
->> +	lm_cfg = vf->lm_cfg;
->> +
->> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
->> +		vf->vring[i].last_used_idx = 0;
->> +		vf->vring[i].last_avail_idx = 0;
->> +		vf->vring[i].desc = 0;
->> +		vf->vring[i].avail = 0;
->> +		vf->vring[i].used = 0;
->> +		vf->vring[i].ready = 0;
->> +		vf->vring->cb.callback = NULL;
->> +		vf->vring->cb.private = NULL;
->> +
->> +	}
->> +
->> +	ifcvf_reset(vf);
-> So virtio-pci call vp_synchornize_vectors(), do need someting similar
-> here (I mean in ifcvf_reset())?
-Hardware handles most of the reset stuff, when reset the VF, we did not 
-free irqs, the handler still working, so the on-flight irqs can be handled.
->
->> +}
->> +
->> +static void ifcvf_mdev_set_status(struct mdev_device *mdev, u8 status)
->> +{
->> +	struct ifcvf_adapter *adapter = mdev_get_drvdata(mdev);
->> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
->> +	int ret = 0;
->> +
->> +	if (status == 0) {
->> +		ifcvf_stop_datapath(adapter);
->> +		ifcvf_reset_vring(adapter);
->> +		return;
->> +	}
->> +
->> +	if (status & VIRTIO_CONFIG_S_DRIVER_OK) {
->> +		ret = ifcvf_start_datapath(adapter);
-> If device support VIRTIO_CONFIG_S_DRIVER_OK, having something like
-> start_datapath here looks wired.
->
-> If it just to setup the virtqueue etc, can we simply move them to e.g
-> set_vq_num, set_vq_address, etc?
-IMHO, it does not just setup vqs, it also do some config and enabling 
-works for the whole VF.
->
->> +
->> +		if (ret)
->> +			IFC_ERR(adapter->dev, "Failed to set mdev status %u.\n",
->> +				status);
->> +	}
->> +
->> +	ifcvf_set_status(vf, status);
->> +}
->> +
->> +static u16 ifcvf_mdev_get_vq_num_max(struct mdev_device *mdev)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	return vf->vring[0].size;
-> It looks to me the only case that size is set is from
-> ifcvf_mdev_set_vq_num()? So I don't get how is this supposed to
-> work. I belive this should be a query for the hardware or a at least a
-> macro?
-Fixed.
->
->> +}
->> +static void ifcvf_mdev_get_config(struct mdev_device *mdev, unsigned int
->> offset,
->> +			     void *buf, unsigned int len)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	WARN_ON(offset + len > sizeof(struct ifcvf_net_config));
->> +	ifcvf_read_net_config(vf, offset, buf, len);
->> +}
->> +
->> +static void ifcvf_mdev_set_config(struct mdev_device *mdev, unsigned int
->> offset,
->> +			     const void *buf, unsigned int len)
->> +{
->> +	struct ifcvf_hw *vf = mdev_to_vf(mdev);
->> +
->> +	WARN_ON(offset + len > sizeof(struct ifcvf_net_config));
->> +	ifcvf_write_net_config(vf, offset, buf, len);
->> +}
->> +
->> +static struct virtio_mdev_device_ops ifc_mdev_ops = {
->> +	.get_features  = ifcvf_mdev_get_features,
->> +	.set_features  = ifcvf_mdev_set_features,
->> +	.get_status    = ifcvf_mdev_get_status,
->> +	.set_status    = ifcvf_mdev_set_status,
->> +	.get_vq_num_max = ifcvf_mdev_get_vq_num_max,
->> +	.get_vq_state   = ifcvf_mdev_get_vq_state,
->> +	.set_vq_state   = ifcvf_mdev_set_vq_state,
->> +	.set_vq_cb      = ifcvf_mdev_set_vq_cb,
->> +	.set_vq_ready   = ifcvf_mdev_set_vq_ready,
->> +	.get_vq_ready	= ifcvf_mdev_get_vq_ready,
->> +	.set_vq_num     = ifcvf_mdev_set_vq_num,
->> +	.set_vq_address = ifcvf_mdev_set_vq_address,
->> +	.kick_vq        = ifcvf_mdev_kick_vq,
->> +	.get_generation	= ifcvf_mdev_get_generation,
->> +	.get_device_id	= ifcvf_mdev_get_device_id,
->> +	.get_vendor_id	= ifcvf_mdev_get_vendor_id,
->> +	.get_vq_align	= ifcvf_mdev_get_vq_align,
->> +	.get_config	= ifcvf_mdev_get_config,
->> +	.set_config	= ifcvf_mdev_set_config,
->> +	.get_mdev_features = ifcvf_mdev_get_mdev_features,
-> set_config_cb needs to be implemented since you claim to support VIRTIO_NET_F_STATUS.
-control_vq feature bit is removed.
->
->> +};
->> +
->> +static int ifcvf_init_msix(struct ifcvf_adapter *adapter)
->> +{
->> +	struct pci_dev *pdev = to_pci_dev(adapter->dev);
->> +	struct ifcvf_hw *vf = &adapter->vf;
->> +	int vector, i, ret, irq;
->> +
->> +	ret = pci_alloc_irq_vectors(pdev, IFCVF_MAX_INTR,
->> +				    IFCVF_MAX_INTR, PCI_IRQ_MSIX);
->> +	if (ret < 0) {
->> +		IFC_ERR(adapter->dev, "Failed to alloc irq vectors.\n");
->> +		return ret;
->> +	}
->> +
->> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
->> +		vector = i + IFCVF_MSI_QUEUE_OFF;
->> +		irq = pci_irq_vector(pdev, vector);
->> +		ret = request_irq(irq, ifcvf_intr_handler, 0,
->> +				pci_name(pdev), &vf->vring[i]);
->> +		if (ret) {
->> +			IFC_ERR(adapter->dev,
->> +				"Failed to request irq for vq %d.\n", i);
->> +			return ret;
->> +		}
->> +	}
-> Need allocate config interrupt here as well.
->
->> +
->> +	return 0;
->> +}
->> +
->> +static void ifcvf_destroy_adapter(struct ifcvf_adapter *adapter)
->> +{
->> +	struct ifcvf_hw *vf = IFC_PRIVATE_TO_VF(adapter);
->> +	struct pci_dev *pdev = to_pci_dev(adapter->dev);
->> +	int i, vector, irq;
->> +
->> +	for (i = 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
->> +		vector = i + IFCVF_MSI_QUEUE_OFF;
->> +		irq = pci_irq_vector(pdev, vector);
->> +		free_irq(irq, &vf->vring[i]);
->> +	}
->> +}
->> +
->> +static ssize_t name_show(struct kobject *kobj, struct device *dev, char
->> *buf)
->> +{
->> +	const char *name = "vhost accelerator (virtio ring compatible)";
->> +
-> I believe something like "IFCVF vhost/virtio accelerator" is better?
-Agreed.
->
->> +	return sprintf(buf, "%s\n", name);
->> +}
->> +MDEV_TYPE_ATTR_RO(name);
->> +
->> +static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
->> +			       char *buf)
->> +{
->> +	return sprintf(buf, "%s\n", VIRTIO_MDEV_DEVICE_API_STRING);
->> +}
->> +MDEV_TYPE_ATTR_RO(device_api);
->> +
->> +static ssize_t available_instances_show(struct kobject *kobj,
->> +					struct device *dev, char *buf)
->> +{
->> +	struct pci_dev *pdev;
->> +	struct ifcvf_adapter *adapter;
->> +
->> +	pdev = to_pci_dev(dev);
->> +	adapter = pci_get_drvdata(pdev);
->> +
->> +	return sprintf(buf, "%d\n", adapter->mdev_count);
->> +}
->> +
->> +MDEV_TYPE_ATTR_RO(available_instances);
->> +
->> +static ssize_t type_show(struct kobject *kobj,
->> +			struct device *dev, char *buf)
->> +{
->> +	return sprintf(buf, "%s\n", "net");
->> +}
->> +
->> +MDEV_TYPE_ATTR_RO(type);
->> +
->> +
->> +static struct attribute *mdev_types_attrs[] = {
->> +	&mdev_type_attr_name.attr,
->> +	&mdev_type_attr_device_api.attr,
->> +	&mdev_type_attr_available_instances.attr,
->> +	&mdev_type_attr_type.attr,
->> +	NULL,
->> +};
->> +
->> +static struct attribute_group mdev_type_group_virtio = {
->> +	.name  = "virtio_mdev",
->> +	.attrs = mdev_types_attrs,
->> +};
->> +
->> +static struct attribute_group mdev_type_group_vhost = {
->> +	.name  = "vhost_mdev",
->> +	.attrs = mdev_types_attrs,
->> +};
->> +
->> +static struct attribute_group *mdev_type_groups[] = {
->> +	&mdev_type_group_virtio,
->> +	&mdev_type_group_vhost,
->> +	NULL,
->> +};
->> +
->> +const struct attribute_group *mdev_dev_groups[] = {
->> +	NULL,
->> +};
->> +
->> +static int ifcvf_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
->> +{
->> +	struct device *dev = mdev_parent_dev(mdev);
->> +	struct pci_dev *pdev = to_pci_dev(dev);
->> +	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
->> +	int ret = 0;
->> +
->> +	mutex_lock(&adapter->mdev_lock);
->> +
->> +	if (adapter->mdev_count < IFCVF_MDEV_LIMIT) {
->> +		IFC_ERR(&pdev->dev,
->> +			"Can not create mdev, reached limitation %d.\n",
->> +			IFCVF_MDEV_LIMIT);
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	if (!strcmp(kobj->name, "ifcvf-virtio_mdev"))
->> +		mdev_set_virtio_ops(mdev, &ifc_mdev_ops);
->> +
->> +	if (!strcmp(kobj->name, "ifcvf-vhost_mdev"))
->> +		mdev_set_vhost_ops(mdev, &ifc_mdev_ops);
->> +
->> +	mdev_set_drvdata(mdev, adapter);
->> +	mdev_set_iommu_device(mdev_dev(mdev), dev);
->> +	adapter->mdev_count--;
->> +
->> +out:
->> +	mutex_unlock(&adapter->mdev_lock);
->> +	return ret;
->> +}
->> +
->> +static int ifcvf_mdev_remove(struct mdev_device *mdev)
->> +{
->> +	struct device *dev = mdev_parent_dev(mdev);
->> +	struct pci_dev *pdev = to_pci_dev(dev);
->> +	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
->> +
->> +	mutex_lock(&adapter->mdev_lock);
->> +	adapter->mdev_count++;
->> +	mutex_unlock(&adapter->mdev_lock);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct mdev_parent_ops ifcvf_mdev_fops = {
->> +	.owner			= THIS_MODULE,
->> +	.supported_type_groups	= mdev_type_groups,
->> +	.mdev_attr_groups	= mdev_dev_groups,
->> +	.create			= ifcvf_mdev_create,
->> +	.remove			= ifcvf_mdev_remove,
->> +};
->> +
->> +static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct ifcvf_adapter *adapter;
->> +	struct ifcvf_hw *vf;
->> +	int ret, i;
->> +
->> +	adapter = kzalloc(sizeof(struct ifcvf_adapter), GFP_KERNEL);
->> +
->> +	if (adapter == NULL) {
->> +		ret = -ENOMEM;
->> +		goto fail;
->> +	}
->> +
->> +	mutex_init(&adapter->mdev_lock);
->> +	adapter->mdev_count = IFCVF_MDEV_LIMIT;
->> +	adapter->dev = dev;
->> +	pci_set_drvdata(pdev, adapter);
->> +	ret = pci_enable_device(pdev);
->> +
->> +	if (ret) {
->> +		IFC_ERR(adapter->dev, "Failed to enable device.\n");
->> +		goto free_adapter;
->> +	}
->> +
->> +	ret = pci_request_regions(pdev, IFCVF_DRIVER_NAME);
->> +
->> +	if (ret) {
->> +		IFC_ERR(adapter->dev, "Failed to request MMIO region.\n");
->> +		goto disable_device;
->> +	}
->> +
->> +	pci_set_master(pdev);
->> +	ret = ifcvf_init_msix(adapter);
->> +
->> +	if (ret) {
->> +		IFC_ERR(adapter->dev, "Failed to initialize MSIX.\n");
->> +		goto free_msix;
->> +	}
->> +
->> +	vf = &adapter->vf;
->> +
->> +	for (i = 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
->> +		vf->mem_resource[i].phys_addr = pci_resource_start(pdev, i);
->> +		vf->mem_resource[i].len = pci_resource_len(pdev, i);
->> +		if (!vf->mem_resource[i].len) {
->> +			vf->mem_resource[i].addr = NULL;
->> +			continue;
->> +		}
->> +
->> +		vf->mem_resource[i].addr = pci_iomap_range(pdev, i, 0,
->> +				vf->mem_resource[i].len);
->> +		if (!vf->mem_resource[i].addr) {
->> +			IFC_ERR(adapter->dev, "Failed to map IO resource %d\n",
->> +				i);
->> +			ret = -1;
->> +			goto free_msix;
->> +		}
->> +	}
->> +
->> +	if (ifcvf_init_hw(vf, pdev) < 0) {
->> +		ret = -1;
->> +		goto destroy_adapter;
->> +	}
->> +
->> +	ret = mdev_register_device(dev, &ifcvf_mdev_fops);
->> +
->> +	if (ret) {
->> +		IFC_ERR(adapter->dev,  "Failed to register mdev device\n");
->> +		goto destroy_adapter;
->> +	}
->> +
->> +	return 0;
->> +
->> +destroy_adapter:
->> +	ifcvf_destroy_adapter(adapter);
->> +free_msix:
->> +	pci_free_irq_vectors(pdev);
->> +	pci_release_regions(pdev);
->> +disable_device:
->> +	pci_disable_device(pdev);
->> +free_adapter:
->> +	kfree(adapter);
->> +fail:
->> +	return ret;
->> +}
->> +
->> +static void ifcvf_remove(struct pci_dev *pdev)
->> +{
->> +	struct ifcvf_adapter *adapter = pci_get_drvdata(pdev);
->> +	struct device *dev = &pdev->dev;
->> +	struct ifcvf_hw *vf;
->> +	int i;
->> +
->> +	mdev_unregister_device(dev);
->> +
->> +	vf = &adapter->vf;
->> +	for (i = 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
->> +		if (vf->mem_resource[i].addr) {
->> +			pci_iounmap(pdev, vf->mem_resource[i].addr);
->> +			vf->mem_resource[i].addr = NULL;
->> +		}
->> +	}
->> +
->> +	ifcvf_destroy_adapter(adapter);
->> +	pci_free_irq_vectors(pdev);
->> +	pci_release_regions(pdev);
->> +	pci_disable_device(pdev);
->> +	kfree(adapter);
->> +}
->> +
->> +static struct pci_device_id ifcvf_pci_ids[] = {
->> +	{ PCI_DEVICE_SUB(IFCVF_VENDOR_ID,
->> +			IFCVF_DEVICE_ID,
->> +			IFCVF_SUBSYS_VENDOR_ID,
->> +			IFCVF_SUBSYS_DEVICE_ID) },
->> +	{ 0 },
->> +};
->> +MODULE_DEVICE_TABLE(pci, ifcvf_pci_ids);
->> +
->> +static struct pci_driver ifcvf_driver = {
->> +	.name     = IFCVF_DRIVER_NAME,
->> +	.id_table = ifcvf_pci_ids,
->> +	.probe    = ifcvf_probe,
->> +	.remove   = ifcvf_remove,
->> +};
->> +
->> +static int __init ifcvf_init_module(void)
->> +{
->> +	int ret;
->> +
->> +	ret = pci_register_driver(&ifcvf_driver);
->> +	return ret;
->> +}
->> +
->> +static void __exit ifcvf_exit_module(void)
->> +{
->> +	pci_unregister_driver(&ifcvf_driver);
->> +}
-> You probably can do something simpler thorugh module_pci_driver().
->
-> Thanks
->
->> +
->> +module_init(ifcvf_init_module);
->> +module_exit(ifcvf_exit_module);
->> +
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_VERSION(VERSION_STRING);
->> +MODULE_AUTHOR(DRIVER_AUTHOR);
->> --
->> 1.8.3.1
->>
->>
+Ditto
+
+>  	}
+>  
+>  	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+> -	/* Use gpio region if pull one is not present */
+>  	if (IS_ERR(pc->reg_pull))
+> -		pc->reg_pull = pc->reg_gpio;
+> +		pc->reg_pull = NULL;
+>  
+>  	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
+> -	/* Use pull region if pull-enable one is not present */
+>  	if (IS_ERR(pc->reg_pullen))
+> -		pc->reg_pullen = pc->reg_pull;
+> +		pc->reg_pullen = NULL;
+>  
+>  	pc->reg_ds = meson_map_resource(pc, gpio_np, "ds");
+>  	if (IS_ERR(pc->reg_ds)) {
+> @@ -692,6 +690,19 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+>  		pc->reg_ds = NULL;
+>  	}
+>  
+> +	if (pc->data->parse_dt)
+> +		return pc->data->parse_dt(pc);
+> +
+> +	return 0;
+> +}
+> +
+> +int meson8_aobus_parse_dt_extra(struct meson_pinctrl *pc)
+> +{
+> +	if (!pc->reg_pull)
+> +		return -EINVAL;
+> +
+> +	pc->reg_pullen = pc->reg_pull;
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+> index c696f3241a36..bfa1d3599333 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.h
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+> @@ -11,6 +11,8 @@
+>  #include <linux/regmap.h>
+>  #include <linux/types.h>
+>  
+> +struct meson_pinctrl;
+> +
+>  /**
+>   * struct meson_pmx_group - a pinmux group
+>   *
+> @@ -114,6 +116,7 @@ struct meson_pinctrl_data {
+>  	unsigned int num_banks;
+>  	const struct pinmux_ops *pmx_ops;
+>  	void *pmx_data;
+> +	int (*parse_dt)(struct meson_pinctrl *pc);
+>  };
+>  
+>  struct meson_pinctrl {
+> @@ -171,3 +174,5 @@ int meson_pmx_get_groups(struct pinctrl_dev *pcdev,
+>  
+>  /* Common probe function */
+>  int meson_pinctrl_probe(struct platform_device *pdev);
+> +/* Common ao groups extra dt parse function for SoCs before g12a  */
+> +int meson8_aobus_parse_dt_extra(struct meson_pinctrl *pc);
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
+> index 0b97befa6335..dd17100efdcf 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson8.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson8.c
+> @@ -1103,6 +1103,7 @@
+>  	.num_funcs	= ARRAY_SIZE(meson8_aobus_functions),
+>  	.num_banks	= ARRAY_SIZE(meson8_aobus_banks),
+>  	.pmx_ops	= &meson8_pmx_ops,
+> +	.parse_dt	= &meson8_aobus_parse_dt_extra,
+>  };
+>  
+>  static const struct of_device_id meson8_pinctrl_dt_match[] = {
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+> index a7de388388e6..2d5339edd0b7 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson8b.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+> @@ -962,6 +962,7 @@
+>  	.num_funcs	= ARRAY_SIZE(meson8b_aobus_functions),
+>  	.num_banks	= ARRAY_SIZE(meson8b_aobus_banks),
+>  	.pmx_ops	= &meson8_pmx_ops,
+> +	.parse_dt	= &meson8_aobus_parse_dt_extra,
+>  };
+>  
+>  static const struct of_device_id meson8b_pinctrl_dt_match[] = {
+> 
+
