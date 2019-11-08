@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F62BF4645
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70829F4647
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 12:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389252AbfKHLlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 06:41:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54322 "EHLO mail.kernel.org"
+        id S2389329AbfKHLlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 06:41:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389195AbfKHLlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:41:08 -0500
+        id S2389229AbfKHLlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:41:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D09ED21D6C;
-        Fri,  8 Nov 2019 11:41:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8CC3222D4;
+        Fri,  8 Nov 2019 11:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213268;
-        bh=gqF0Xk1DbU2gg9xKC0sPCvRiCbjg6vSi0Iu0g9ztgMQ=;
+        s=default; t=1573213273;
+        bh=QIt9cB9KftKcL9TswJa78nCGJhZ52XYOCwqoXAAJRJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=agqHCrROlrbRL/o00ysRtB5unBu5DNkkW8yhme6N6lsZENDfnlK16ObzRdjQCsXm6
-         u22SMtEAsh610ymnwt1647aGOTZEZVlKA0kw6xtu2p+UfKocC2kwqXLyV+6e/CHeCo
-         kdhPJ4nxha9c3EU8ig/cX9AmqpSYnrEa1Ye9VWJQ=
+        b=Uzg5/5Ge6mn6O+/kEm6UI+7/CjWoST2pqsWG5PO9p3f9pIFsU4Fk4g7ptfuJ+15oB
+         J3kPJUwh/96l+69OqpPcJbFJpCh6OOe6Dmafhl8dw591qE8fNkdXBSO2n1ebhyBce0
+         CHvz2Yjfth7J95KSRzkeoQXDCnMmHoCkB5aWnk5U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 131/205] signal: Always ignore SIGKILL and SIGSTOP sent to the global init
-Date:   Fri,  8 Nov 2019 06:36:38 -0500
-Message-Id: <20191108113752.12502-131-sashal@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.19 135/205] f2fs: fix memory leak of percpu counter in fill_super()
+Date:   Fri,  8 Nov 2019 06:36:42 -0500
+Message-Id: <20191108113752.12502-135-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -43,42 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 86989c41b5ea08776c450cb759592532314a4ed6 ]
+[ Upstream commit 4a70e255449c9a13eed7a6eeecc85a1ea63cef76 ]
 
-If the first process started (aka /sbin/init) receives a SIGKILL it
-will panic the system if it is delivered.  Making the system unusable
-and undebugable.  It isn't much better if the first process started
-receives SIGSTOP.
+In fill_super -> init_percpu_info, we should destroy percpu counter
+in error path, otherwise memory allcoated for percpu counter will
+leak.
 
-So always ignore SIGSTOP and SIGKILL sent to init.
-
-This is done in a separate clause in sig_task_ignored as force_sig_info
-can clear SIG_UNKILLABLE and this protection should work even then.
-
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/signal.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/f2fs/super.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 0e6bc3049427e..7278302e34850 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -78,6 +78,10 @@ static bool sig_task_ignored(struct task_struct *t, int sig, bool force)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 588c575bd72b0..18534d03d112b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2510,8 +2510,12 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
  
- 	handler = sig_handler(t, sig);
- 
-+	/* SIGKILL and SIGSTOP may not be sent to the global init */
-+	if (unlikely(is_global_init(t) && sig_kernel_only(sig)))
-+		return true;
+-	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
++	err = percpu_counter_init(&sbi->total_valid_inode_count, 0,
+ 								GFP_KERNEL);
++	if (err)
++		percpu_counter_destroy(&sbi->alloc_valid_block_count);
 +
- 	if (unlikely(t->signal->flags & SIGNAL_UNKILLABLE) &&
- 	    handler == SIG_DFL && !(force && sig_kernel_only(sig)))
- 		return true;
++	return err;
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
 -- 
 2.20.1
 
