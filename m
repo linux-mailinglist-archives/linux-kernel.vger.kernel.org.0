@@ -2,290 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56720F5966
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C16DDF5996
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:24:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732686AbfKHVNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:13:44 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:39555 "EHLO
+        id S1732983AbfKHVPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:15:46 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:52805 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731687AbfKHVNn (ORCPT
+        with ESMTP id S1732944AbfKHVPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:13:43 -0500
+        Fri, 8 Nov 2019 16:15:45 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MtwpW-1hdHL21W5U-00uJeP; Fri, 08 Nov 2019 22:13:28 +0100
+ 1MBE3k-1idfB62d2c-00ChQV; Fri, 08 Nov 2019 22:13:54 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
+To:     y2038@lists.linaro.org, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        linux-api@vger.kernel.org
-Subject: [PATCH 10/23] y2038: uapi: change __kernel_time_t to __kernel_old_time_t
-Date:   Fri,  8 Nov 2019 22:12:09 +0100
-Message-Id: <20191108211323.1806194-1-arnd@arndb.de>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-alpha@vger.kernel.org
+Subject: [PATCH 11/23] y2038: rusage: use __kernel_old_timeval
+Date:   Fri,  8 Nov 2019 22:12:10 +0100
+Message-Id: <20191108211323.1806194-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108210236.1296047-1-arnd@arndb.de>
 References: <20191108210236.1296047-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:zwDWAHKUX8iR4jhuhwk7qp7pSqmuICttWQvBARCBMBfK/SfKsaj
- 4sSOsyNqS76f8b9ozUpyUt0GTeTA4llifwefp58GUsW0jmooQ6wSB97jBSehNjL6UqC5BNv
- halH7a0LND5nxbhpwfSV5uvFb9PGFlRiVwvz0jNHBGdU1wgwfCkaizle09u2Jcwm2T/bAj8
- D/tqHBLuxECXv1uCQOHzw==
+X-Provags-ID: V03:K1:ccHgshTWM+8bd3ARSVMsRuKkh2xp2UsGP2nSeaQ4JIi6tssxXxX
+ Ksc3ikHH0cvgfaaztiNxX2CA4M+Vpy+c174W7J82D3dRrGrnyPssN3YkhqOJl4UWmIO+gbA
+ agHARrixznilq2Wuz/W8WEdYBVFHiiV/YAO+jxkRGfTb8j7isXTK1lMvsGAaljnSpEG5tr7
+ YONctU0hfEGMMd9SvQr1w==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:YBFovS3jMaI=:OL6ullB6tXpTEa+GH5u+MC
- VBc7j0XvjVUq5I2a+KtXlHRkUS/9Td3CQ7Riv5UUAyqFq4WCt6lKuhxQdEYZd22Ne0izhyIM3
- 52F0AI7lxiknt4DZxNyhE9FHywB0MxsPG8Hrw7IXhCVoLhiWcKvuEjD4ApQYxl4oH7GyJUBje
- LGZd2ekbo0O6XdYNK3g1wq5oZlJYz9IHAu0S3OoOsHcAl4Lx7XntslLveUpsnjjcCS6Q5l7He
- jkCXucdj1RcuGsO2A+bE6npJ2EOlt8q/QKI6Td9+QXIiwB/XYq7ZNAqsCCHyAud0lRfnXSLCU
- d/SqNxyCzFSN9V6wi2z9TPFBouOWcJBBXI5emx6qY3sFMt5/cqYQcxps2D64IlKxL/m6Y566h
- mCicNdzl2RffPxzMqS7uXuVwHVGQmVBsz8EEQW8TqalEakTLuQ8txega+DjfkSB6Lqe8pe5do
- J0XePuSVh+wPRGJvPUKIBuzVi/bFbM0mfWXnXwH31CaOxt/Y1fhgFkHiYiI3wz4pqUpFEaW6O
- ewcMUd1Ixtv3cqxVKl1GkSDdEGXXnS19gMuBG4xSVjHqiByv0hrMEHfOpyOnXhBSFp0nVw/bi
- HqbVLULuZhAYZm1IYbWQg3jPz/txfx2PHu611QuRD8A9iCXFwaETsXTxaFT28UEEExLoAmo3f
- VPzAJxc2JZhinBjH2D/fVLukpRZFWwOhFkRisbaeLfNtO7YrsZBTrUgUVTwkEKh6Yj1F7Pi9G
- 44hzXpEe+myXG3QTmFnJ4Ub7QLhERD2JuzgRGeKZOmO24VU1VlD4boifLXiDrvQthGoov5mLY
- 0Ff9itgme2IaqSoWeO7l5JmSxU7cC8UmHo+2QdlZZ2rVwWSd0/JbEz1z2Cw3i6/rietgnTcjV
- lAzKHyr8NlHxBw8jaGOw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:+IIOzgpyUfs=:iMdRdlqkxA2961O/fF/WN8
+ CcJxoL2fphhDAhIBltVa6+Gt61QsWjNTOFQiqp1MqYVPg9/LFi3ErQAAVruRV7YdbfSaa9mGJ
+ 1r0WVU7G6r8giQHEnP6SQFW4nWLjxin/D1KCbvlc6qSAjJ6vVFl0ueyjfQ+Fi4LX+s1oncHJW
+ vDOYP+1To6pKCk7ZKQrtDy/rhEA0NTXarJh4gni94dM0HE/D0a7pCESI0iC2N4wjJdsbWvjBO
+ 60olqAnUxBnn6DtJ9x7sg7fW2EkXkq9J4rZdAq8+n5fw8SRGLdV2YIdQGLGelKWDPMFrgZK1p
+ G1ZNTYGy4XVQ+WRyzx4kFgQ2gfTeQBMS3uSasDhy/3DqXfNfY+9gEZlZoGHsls9UU4FSpt4QT
+ naE81is5oZu5XB8WhhpmPgVbYzsS9KW8Hee3J7LIfeoUP6FSTxtUCfoiTw5E/VrneZm6t/F6d
+ Iaop9Xga2XLJk/okoECprtGYovshzNQ2ju85E/aKRw5+IRMqM1+q867osQynyE8K1T0Ry0LXT
+ OxIAszMbmXBnTRWViedHLRhWC54m0tpQ2w26mI8SqDO2fK7RyyE3jsPnMNaEocMILUGQ+hTxk
+ egLHmH0JhSPS/PEumYbci3Xc4Xm1npOZXkoL4hTAAQWNMDDBaElo70zMEXWIoEZJqLKM47vrQ
+ ZaqAvVVZUxRGlVmTRDpY/wHuXlsLIsvTB5zTs3f6fTystOzNzqC2xOpL1zox3J//miiRJgN6w
+ 1OQ/pXgBPQ/C9hmGqy3EkDdGMMiO+bpfvLWawHn/qvQrGpxGmGlS21ycwg9KbUiiHqRuiXcAv
+ SBFxzIBWer/VjW7mpIVfMsHuzbNS/YGKGPHCjciAEMG1GdYbGaL5uVxJJh/ISJGG1W68JlKYo
+ tVVXn5q/6uLeJPWY91Jw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is mainly a patch for clarification, and to let us remove
-the time_t definition from the kernel to prevent new users from
-creeping in that might not be y2038-safe.
+There are two 'struct timeval' fields in 'struct rusage'.
 
-All remaining uses of 'time_t' or '__kernel_time_t' are part of
-the user API that cannot be changed by that either have a
-replacement or that do not suffer from the y2038 overflow.
+Unfortunately the definition of timeval is now ambiguous when used in
+user space with a libc that has a 64-bit time_t, and this also changes
+the 'rusage' definition in user space in a way that is incompatible with
+the system call interface.
+
+While there is no good solution to avoid all ambiguity here, change
+the definition in the kernel headers to be compatible with the kernel
+ABI, using __kernel_old_timeval as an unambiguous base type.
+
+In previous discussions, there was also a plan to add a replacement
+for rusage based on 64-bit timestamps and nanosecond resolution,
+i.e. 'struct __kernel_timespec'. I have patches for that as well,
+if anyone thinks we should do that.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/syscalls.h        | 4 ++--
- include/linux/time32.h          | 2 +-
- include/linux/types.h           | 2 +-
- include/uapi/linux/cyclades.h   | 6 +++---
- include/uapi/linux/msg.h        | 6 +++---
- include/uapi/linux/ppp_defs.h   | 4 ++--
- include/uapi/linux/sem.h        | 4 ++--
- include/uapi/linux/shm.h        | 6 +++---
- include/uapi/linux/time.h       | 6 +++---
- include/uapi/linux/time_types.h | 4 ++--
- include/uapi/linux/utime.h      | 4 ++--
- kernel/time/time.c              | 6 +++---
- 12 files changed, 27 insertions(+), 27 deletions(-)
+Question: should we also rename 'struct rusage' into 'struct __kernel_rusage'
+here, to make them completely unambiguous?
+---
+ arch/alpha/kernel/osf_sys.c   | 2 +-
+ include/uapi/linux/resource.h | 4 ++--
+ kernel/sys.c                  | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index f7c561c4dcdd..2f27bc9d5ef0 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1076,7 +1076,7 @@ asmlinkage long sys_fadvise64(int fd, loff_t offset, size_t len, int advice);
- asmlinkage long sys_alarm(unsigned int seconds);
- asmlinkage long sys_getpgrp(void);
- asmlinkage long sys_pause(void);
--asmlinkage long sys_time(time_t __user *tloc);
-+asmlinkage long sys_time(__kernel_old_time_t __user *tloc);
- asmlinkage long sys_time32(old_time32_t __user *tloc);
- #ifdef __ARCH_WANT_SYS_UTIME
- asmlinkage long sys_utime(char __user *filename,
-@@ -1116,7 +1116,7 @@ asmlinkage long sys_sysfs(int option,
- asmlinkage long sys_fork(void);
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index bf497b8b0ec6..bbe7a0da6264 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -963,7 +963,7 @@ put_tv32(struct timeval32 __user *o, struct timespec64 *i)
+ }
  
- /* obsolete: kernel/time/time.c */
--asmlinkage long sys_stime(time_t __user *tptr);
-+asmlinkage long sys_stime(__kernel_old_time_t __user *tptr);
- asmlinkage long sys_stime32(old_time32_t __user *tptr);
- 
- /* obsolete: kernel/signal.c */
-diff --git a/include/linux/time32.h b/include/linux/time32.h
-index 0a1f302a1753..cad4c3186002 100644
---- a/include/linux/time32.h
-+++ b/include/linux/time32.h
-@@ -12,7 +12,7 @@
- #include <linux/time64.h>
- #include <linux/timex.h>
- 
--#define TIME_T_MAX	(time_t)((1UL << ((sizeof(time_t) << 3) - 1)) - 1)
-+#define TIME_T_MAX	(__kernel_old_time_t)((1UL << ((sizeof(__kernel_old_time_t) << 3) - 1)) - 1)
- 
- typedef s32		old_time32_t;
- 
-diff --git a/include/linux/types.h b/include/linux/types.h
-index 05030f608be3..e32c1180b742 100644
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -67,7 +67,7 @@ typedef __kernel_ptrdiff_t	ptrdiff_t;
- 
- #ifndef _TIME_T
- #define _TIME_T
--typedef __kernel_time_t		time_t;
-+typedef __kernel_old_time_t	time_t;
- #endif
- 
- #ifndef _CLOCK_T
-diff --git a/include/uapi/linux/cyclades.h b/include/uapi/linux/cyclades.h
-index 8279bc3d60ca..fc0add2194a9 100644
---- a/include/uapi/linux/cyclades.h
-+++ b/include/uapi/linux/cyclades.h
-@@ -83,9 +83,9 @@ struct cyclades_monitor {
-  * open)
-  */
- struct cyclades_idle_stats {
--    __kernel_time_t in_use;	/* Time device has been in use (secs) */
--    __kernel_time_t recv_idle;	/* Time since last char received (secs) */
--    __kernel_time_t xmit_idle;	/* Time since last char transmitted (secs) */
-+    __kernel_old_time_t in_use;	/* Time device has been in use (secs) */
-+    __kernel_old_time_t recv_idle; /* Time since last char received (secs) */
-+    __kernel_old_time_t xmit_idle; /* Time since last char transmitted (secs) */
-     unsigned long  recv_bytes;	/* Bytes received */
-     unsigned long  xmit_bytes;	/* Bytes transmitted */
-     unsigned long  overruns;	/* Input overruns */
-diff --git a/include/uapi/linux/msg.h b/include/uapi/linux/msg.h
-index e4a0d9a9a9e8..01ee8d54c1c8 100644
---- a/include/uapi/linux/msg.h
-+++ b/include/uapi/linux/msg.h
-@@ -19,9 +19,9 @@ struct msqid_ds {
- 	struct ipc_perm msg_perm;
- 	struct msg *msg_first;		/* first message on queue,unused  */
- 	struct msg *msg_last;		/* last message in queue,unused */
--	__kernel_time_t msg_stime;	/* last msgsnd time */
--	__kernel_time_t msg_rtime;	/* last msgrcv time */
--	__kernel_time_t msg_ctime;	/* last change time */
-+	__kernel_old_time_t msg_stime;	/* last msgsnd time */
-+	__kernel_old_time_t msg_rtime;	/* last msgrcv time */
-+	__kernel_old_time_t msg_ctime;	/* last change time */
- 	unsigned long  msg_lcbytes;	/* Reuse junk fields for 32 bit */
- 	unsigned long  msg_lqbytes;	/* ditto */
- 	unsigned short msg_cbytes;	/* current number of bytes on queue */
-diff --git a/include/uapi/linux/ppp_defs.h b/include/uapi/linux/ppp_defs.h
-index 0039fa39a358..20286bd90ab5 100644
---- a/include/uapi/linux/ppp_defs.h
-+++ b/include/uapi/linux/ppp_defs.h
-@@ -148,8 +148,8 @@ struct ppp_comp_stats {
-  * based on the libc time_t.
-  */
- struct ppp_idle {
--    __kernel_time_t xmit_idle;	/* time since last NP packet sent */
--    __kernel_time_t recv_idle;	/* time since last NP packet received */
-+    __kernel_old_time_t xmit_idle;	/* time since last NP packet sent */
-+    __kernel_old_time_t recv_idle;	/* time since last NP packet received */
- };
- 
- struct ppp_idle32 {
-diff --git a/include/uapi/linux/sem.h b/include/uapi/linux/sem.h
-index 39a1876f039e..75aa3b273cd9 100644
---- a/include/uapi/linux/sem.h
-+++ b/include/uapi/linux/sem.h
-@@ -24,8 +24,8 @@
- /* Obsolete, used only for backwards compatibility and libc5 compiles */
- struct semid_ds {
- 	struct ipc_perm	sem_perm;		/* permissions .. see ipc.h */
--	__kernel_time_t	sem_otime;		/* last semop time */
--	__kernel_time_t	sem_ctime;		/* create/last semctl() time */
-+	__kernel_old_time_t sem_otime;		/* last semop time */
-+	__kernel_old_time_t sem_ctime;		/* create/last semctl() time */
- 	struct sem	*sem_base;		/* ptr to first semaphore in array */
- 	struct sem_queue *sem_pending;		/* pending operations to be processed */
- 	struct sem_queue **sem_pending_last;	/* last pending operation */
-diff --git a/include/uapi/linux/shm.h b/include/uapi/linux/shm.h
-index 6507ad0afc81..8d1f17a4e08e 100644
---- a/include/uapi/linux/shm.h
-+++ b/include/uapi/linux/shm.h
-@@ -28,9 +28,9 @@
- struct shmid_ds {
- 	struct ipc_perm		shm_perm;	/* operation perms */
- 	int			shm_segsz;	/* size of segment (bytes) */
--	__kernel_time_t		shm_atime;	/* last attach time */
--	__kernel_time_t		shm_dtime;	/* last detach time */
--	__kernel_time_t		shm_ctime;	/* last change time */
-+	__kernel_old_time_t	shm_atime;	/* last attach time */
-+	__kernel_old_time_t	shm_dtime;	/* last detach time */
-+	__kernel_old_time_t	shm_ctime;	/* last change time */
- 	__kernel_ipc_pid_t	shm_cpid;	/* pid of creator */
- 	__kernel_ipc_pid_t	shm_lpid;	/* pid of last operator */
- 	unsigned short		shm_nattch;	/* no. of current attaches */
-diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
-index 958932effc5e..a655aa28dc6e 100644
---- a/include/uapi/linux/time.h
-+++ b/include/uapi/linux/time.h
-@@ -8,13 +8,13 @@
- #ifndef _STRUCT_TIMESPEC
- #define _STRUCT_TIMESPEC
- struct timespec {
--	__kernel_time_t	tv_sec;			/* seconds */
--	long		tv_nsec;		/* nanoseconds */
-+	__kernel_old_time_t	tv_sec;		/* seconds */
-+	long			tv_nsec;	/* nanoseconds */
- };
- #endif
- 
- struct timeval {
--	__kernel_time_t		tv_sec;		/* seconds */
-+	__kernel_old_time_t	tv_sec;		/* seconds */
- 	__kernel_suseconds_t	tv_usec;	/* microseconds */
- };
- 
-diff --git a/include/uapi/linux/time_types.h b/include/uapi/linux/time_types.h
-index 60b37f29842d..074e391d73a1 100644
---- a/include/uapi/linux/time_types.h
-+++ b/include/uapi/linux/time_types.h
-@@ -29,8 +29,8 @@ struct __kernel_old_timeval {
- #endif
- 
- struct __kernel_old_timespec {
--	__kernel_time_t	tv_sec;			/* seconds */
--	long		tv_nsec;		/* nanoseconds */
-+	__kernel_old_time_t	tv_sec;		/* seconds */
-+	long			tv_nsec;	/* nanoseconds */
- };
- 
- struct __kernel_sock_timeval {
-diff --git a/include/uapi/linux/utime.h b/include/uapi/linux/utime.h
-index fd9aa26b6860..bc8f13e81d6e 100644
---- a/include/uapi/linux/utime.h
-+++ b/include/uapi/linux/utime.h
-@@ -5,8 +5,8 @@
- #include <linux/types.h>
- 
- struct utimbuf {
--	__kernel_time_t actime;
--	__kernel_time_t modtime;
-+	__kernel_old_time_t actime;
-+	__kernel_old_time_t modtime;
- };
- 
- #endif
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index ddbddf504c23..7eba7c9a7e3e 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -59,9 +59,9 @@ EXPORT_SYMBOL(sys_tz);
-  * why not move it into the appropriate arch directory (for those
-  * architectures that need it).
-  */
--SYSCALL_DEFINE1(time, time_t __user *, tloc)
-+SYSCALL_DEFINE1(time, __kernel_old_time_t __user *, tloc)
+ static inline long
+-put_tv_to_tv32(struct timeval32 __user *o, struct timeval *i)
++put_tv_to_tv32(struct timeval32 __user *o, struct __kernel_old_timeval *i)
  {
--	time_t i = (time_t)ktime_get_real_seconds();
-+	__kernel_old_time_t i = (__kernel_old_time_t)ktime_get_real_seconds();
+ 	return copy_to_user(o, &(struct timeval32){
+ 				.tv_sec = i->tv_sec,
+diff --git a/include/uapi/linux/resource.h b/include/uapi/linux/resource.h
+index cc00fd079631..74ef57b38f9f 100644
+--- a/include/uapi/linux/resource.h
++++ b/include/uapi/linux/resource.h
+@@ -22,8 +22,8 @@
+ #define	RUSAGE_THREAD	1		/* only the calling thread */
  
- 	if (tloc) {
- 		if (put_user(i,tloc))
-@@ -78,7 +78,7 @@ SYSCALL_DEFINE1(time, time_t __user *, tloc)
-  * architectures that need it).
-  */
+ struct	rusage {
+-	struct timeval ru_utime;	/* user time used */
+-	struct timeval ru_stime;	/* system time used */
++	struct __kernel_old_timeval ru_utime;	/* user time used */
++	struct __kernel_old_timeval ru_stime;	/* system time used */
+ 	__kernel_long_t	ru_maxrss;	/* maximum resident set size */
+ 	__kernel_long_t	ru_ixrss;	/* integral shared memory size */
+ 	__kernel_long_t	ru_idrss;	/* integral unshared data size */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a611d1d58c7d..d3aef31e24dc 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1763,8 +1763,8 @@ void getrusage(struct task_struct *p, int who, struct rusage *r)
+ 	unlock_task_sighand(p, &flags);
  
--SYSCALL_DEFINE1(stime, time_t __user *, tptr)
-+SYSCALL_DEFINE1(stime, __kernel_old_time_t __user *, tptr)
- {
- 	struct timespec64 tv;
- 	int err;
+ out:
+-	r->ru_utime = ns_to_timeval(utime);
+-	r->ru_stime = ns_to_timeval(stime);
++	r->ru_utime = ns_to_kernel_old_timeval(utime);
++	r->ru_stime = ns_to_kernel_old_timeval(stime);
+ 
+ 	if (who != RUSAGE_CHILDREN) {
+ 		struct mm_struct *mm = get_task_mm(p);
 -- 
 2.20.0
 
