@@ -2,289 +2,1270 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C487F44EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 085F0F44FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 11:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731815AbfKHKrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 05:47:14 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37107 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729873AbfKHKrO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 05:47:14 -0500
-Received: by mail-wm1-f67.google.com with SMTP id q130so5709049wme.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 02:47:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0NNg0zGyqKJ0CjDC2l4AU4IPx3Itn985JlpvDWoMqe8=;
-        b=RW5RDen1wY419vEK4wTpV0XyJSQzB+EexK5PbkB2iY217FweXvQ55TboQTuEJeKXBj
-         O4Zmmkl+yP1o/xqibpu2P7vAx3Pmtk236CgLUdxiPe+cQ8W69RlCY2FNURqKkadtm321
-         gz2fULRq5czL1DbLd5o/Ipx0QtyVIl93SrgFz1r/oVXC9n49LFTVoaWV1NACdxtXlhkq
-         dDkpCbTKAzmoofArrIRK97JUAtwFW09bXM+76FUSvrQFKzUPAQ61ghdRxUzRivOl/HFI
-         mQeIXC5C2r09m8JoMLuNujzzkxJ1HDbheSFoMlqkr7HP7H1+FrCdkMePECzjKa3xNMFJ
-         zBwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0NNg0zGyqKJ0CjDC2l4AU4IPx3Itn985JlpvDWoMqe8=;
-        b=b4a0VYXQT+6RAD4wsxr0UzB1CWJrhClgCH1eZhdwDdK/vs0codWKWCK+mEXWujLJh5
-         ULISciC8svJaLWnWG9UOqWIp9Ii6FffEdTALZ6rLobsP9M7GnstBXOZCvpYZcuzgHsT6
-         WObMHTHkRWfOY0kTvD2+3yJ04Ryeao0FmyIEWtGi2lLEZRVh50KupK/8LFok04uRG5d8
-         U9dUMIYRWFv6H0kqeTz1/uSckn71KMXvMrxLPW1Gn30Fu3Og77miVcZYFO9T/MHeT/ei
-         QtBPr+QJdgUxWwXFnJpxmd6sgEuhJ6OTS+OnPDNkwtC6SuuYYMAvyW0ttp6jc85K4sT/
-         iZ2A==
-X-Gm-Message-State: APjAAAVQs2DSQdyjoc4043IYzw3Wnv96tSC6VVvQinkbydRnMxD2hD54
-        MK2yYcTtCHpMiepUoGZo6wSugE212Uw=
-X-Google-Smtp-Source: APXvYqxON0z1YCynMVaGDrZhH2Uwt+V9UdhDOGIqYJeRK1N53a0pSsxbNJioYiCac/v5PZHAZk8eEA==
-X-Received: by 2002:a1c:2048:: with SMTP id g69mr7600115wmg.121.1573210028817;
-        Fri, 08 Nov 2019 02:47:08 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:85c9:ca0d:aae1:f680? ([2a01:e34:ed2f:f020:85c9:ca0d:aae1:f680])
-        by smtp.googlemail.com with ESMTPSA id y15sm4835935wrh.94.2019.11.08.02.47.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Nov 2019 02:47:08 -0800 (PST)
-Subject: Re: [PATCH V6 2/3] cpuidle: play_idle: Specify play_idle with an idle
- state
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     mathieu.poirier@linaro.org, mingo@redhat.com, peterz@infradead.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org
-References: <20191030075141.1039-1-daniel.lezcano@linaro.org>
- <20191030075141.1039-2-daniel.lezcano@linaro.org>
- <143021538.HHUP3Pj7i7@kreacher>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <9dfe3bd3-1903-4dc4-0605-27cc867d87ad@linaro.org>
-Date:   Fri, 8 Nov 2019 11:47:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731947AbfKHKvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 05:51:07 -0500
+Received: from foss.arm.com ([217.140.110.172]:40372 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730221AbfKHKvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 05:51:07 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 992E331B;
+        Fri,  8 Nov 2019 02:51:04 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FD263F719;
+        Fri,  8 Nov 2019 02:51:03 -0800 (PST)
+Date:   Fri, 8 Nov 2019 10:51:01 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     devicetree@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        mbrugger@suse.com, linux-pci@vger.kernel.org, phil@raspberrypi.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, james.quinlan@broadcom.com,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org, wahrenst@gmx.net
+Subject: Re: [PATCH 3/4] PCI: brcmstb: add Broadcom STB PCIe host controller
+ driver
+Message-ID: <20191108105100.GH43905@e119886-lin.cambridge.arm.com>
+References: <20191106214527.18736-1-nsaenzjulienne@suse.de>
+ <20191106214527.18736-4-nsaenzjulienne@suse.de>
+ <20191107150033.GY9723@e119886-lin.cambridge.arm.com>
+ <9e9ecc0d89728f98f1a5db6a6076517f4b9c7a79.camel@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <143021538.HHUP3Pj7i7@kreacher>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e9ecc0d89728f98f1a5db6a6076517f4b9c7a79.camel@suse.de>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/2019 02:20, Rafael J. Wysocki wrote:
-> On Wednesday, October 30, 2019 8:51:40 AM CET Daniel Lezcano wrote:
->> Currently, the play_idle function does not allow to tell which idle
->> state we want to go. Improve this by passing the idle state as
->> parameter to the function.
->>
->> Export cpuidle_find_deepest_state() symbol as it is used from the
->> intel_powerclamp driver as a module.
->>
->> There is no functional changes, the cpuidle state is the deepest one.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
->> ---
->>   V6:
->>    - Change variable name 'state' -> 'index':
->>      https://lkml.org/lkml/2019/10/28/874
->>   V4:
->>    - Add EXPORT_SYMBOL_GPL(cpuidle_find_deepest_state) for the
->>      intel_powerclamp driver when this one is compiled as a module
->>   V3:
->>    - Add missing cpuidle.h header
->> ---
->>  drivers/cpuidle/cpuidle.c                | 1 +
->>  drivers/powercap/idle_inject.c           | 4 +++-
->>  drivers/thermal/intel/intel_powerclamp.c | 4 +++-
->>  include/linux/cpu.h                      | 2 +-
->>  kernel/sched/idle.c                      | 4 ++--
->>  5 files changed, 10 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
->> index 18523ea6b11b..b871fc2e8e67 100644
->> --- a/drivers/cpuidle/cpuidle.c
->> +++ b/drivers/cpuidle/cpuidle.c
->> @@ -126,6 +126,7 @@ int cpuidle_find_deepest_state(void)
->>  
->>  	return find_deepest_state(drv, dev, UINT_MAX, 0, false);
->>  }
->> +EXPORT_SYMBOL_GPL(cpuidle_find_deepest_state);
+On Thu, Nov 07, 2019 at 06:30:25PM +0100, Nicolas Saenz Julienne wrote:
+> Hi Andrew,
+> thanks for taking the time to review this.
 > 
-> That doesn't appear to be really necessary to me.
+> On Thu, 2019-11-07 at 15:00 +0000, Andrew Murray wrote:
+> > Thanks for the patch, some initial feedback below, though I will give it a
+> > more detailed review on your respin.
+> > 
+> > On Wed, Nov 06, 2019 at 10:45:25PM +0100, Nicolas Saenz Julienne wrote:
+> > > From: Jim Quinlan <james.quinlan@broadcom.com>
+> > > 
+> > > This commit adds the basic Broadcom STB PCIe controller.  Missing is the
+> > > ability to process MSI. This functionality is added in a subsequent
+> > > commit.
+> > > 
+> > > The PCIe block contains an MDIO interface.  This is a local interface
+> > > only accessible by the PCIe controller.  It cannot be used or shared
+> > > by any other HW.  As such, the small amount of code for this
+> > > controller is included in this driver as there is little upside to put
+> > > it elsewhere.
+> > > 
+> > > This is based on Jim's original submission[1] but adapted and tailored
+> > > specifically to bcm2711's needs (that's the Raspberry Pi 4). Support for
+> > > the rest of the brcmstb family will soon follow once we get support for
+> > > multiple dma-ranges in dma/direct.
+> > 
+> > This commit message is very informative and helpful, though I feel a lot
+> > of this isn't relevant for a commit message (especially as much of it is
+> > time based comments). Instead it would be better to simply describe what
+> > the patch does provide, and any additional helpful notes can be provided
+> > under the '---' after the signed off (which won't make it into git).
 > 
->>  
->>  #ifdef CONFIG_SUSPEND
->>  static void enter_s2idle_proper(struct cpuidle_driver *drv,
->> diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
->> index cd1270614cc6..233c878cbf46 100644
->> --- a/drivers/powercap/idle_inject.c
->> +++ b/drivers/powercap/idle_inject.c
->> @@ -38,6 +38,7 @@
->>  #define pr_fmt(fmt) "ii_dev: " fmt
->>  
->>  #include <linux/cpu.h>
->> +#include <linux/cpuidle.h>
->>  #include <linux/hrtimer.h>
->>  #include <linux/kthread.h>
->>  #include <linux/sched.h>
->> @@ -138,7 +139,8 @@ static void idle_inject_fn(unsigned int cpu)
->>  	 */
->>  	iit->should_run = 0;
->>  
->> -	play_idle(READ_ONCE(ii_dev->idle_duration_us));
->> +	play_idle(READ_ONCE(ii_dev->idle_duration_us),
->> +		  cpuidle_find_deepest_state());
+> Ok noted
 > 
-> The next patch changes this again and I'm not sure why this intermediate
-> change is useful.
+> > > [1] https://patchwork.kernel.org/patch/10605959/
+> > > 
+> > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > Co-developed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > > ---
+> > >  drivers/pci/controller/Kconfig        |  12 +
+> > >  drivers/pci/controller/Makefile       |   1 +
+> > >  drivers/pci/controller/pcie-brcmstb.c | 973 ++++++++++++++++++++++++++
+> > >  3 files changed, 986 insertions(+)
+> > >  create mode 100644 drivers/pci/controller/pcie-brcmstb.c
+> > > 
+> > > diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> > > index f5de9119e8d3..8b3aae91d8af 100644
+> > > --- a/drivers/pci/controller/Kconfig
+> > > +++ b/drivers/pci/controller/Kconfig
+> > > @@ -281,6 +281,18 @@ config VMD
+> > >  	  To compile this driver as a module, choose M here: the
+> > >  	  module will be called vmd.
+> > >  
+> > > +config PCIE_BRCMSTB
+> > > +	bool "Broadcom Brcmstb PCIe host controller"
+> > > +	depends on ARCH_BRCMSTB || BMIPS_GENERIC
+> > 
+> > I can't see what ARCH_BRCMSTB adds here. Given this also depends
+> > on SOC_BRCMSTB. Are all of these depends really necessary?
 > 
->>  }
->>  
->>  /**
->> diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
->> index 53216dcbe173..b55786c169ae 100644
->> --- a/drivers/thermal/intel/intel_powerclamp.c
->> +++ b/drivers/thermal/intel/intel_powerclamp.c
->> @@ -29,6 +29,7 @@
->>  #include <linux/delay.h>
->>  #include <linux/kthread.h>
->>  #include <linux/cpu.h>
->> +#include <linux/cpuidle.h>
->>  #include <linux/thermal.h>
->>  #include <linux/slab.h>
->>  #include <linux/tick.h>
->> @@ -430,7 +431,8 @@ static void clamp_idle_injection_func(struct kthread_work *work)
->>  	if (should_skip)
->>  		goto balance;
->>  
->> -	play_idle(jiffies_to_usecs(w_data->duration_jiffies));
->> +	play_idle(jiffies_to_usecs(w_data->duration_jiffies),
->> +		  cpuidle_find_deepest_state());
+> You're right, too many unnecessary depends. I missed this. For now only
+> ARCH_BCM2835 will do. I'll clean it up.
 > 
-> I don't see a reason for changing the code here like this.
+> > Also should the bool be "Broadcom STB PCIe host contoller" ?
 > 
-> What you really need is to have a way to set a limit on the idle
-> state exit latency for idle injection on ARM.
+> I'd rather keep the STB mention as it's the overall platform this is aimed for
+> (and it's on the driver name), but for the sake of clarity I'll update it to
+> something the likes of: "Bradcom STB & Raspberry Pi 4 PCIe host
+> controller"
+> 
+> > > +	depends on OF
+> > > +	depends on SOC_BRCMSTB
+> > > +	default ARCH_BRCMSTB || BMIPS_GENERIC
+> > 
+> > Please also include COMPILE_TEST in here (look at the other controllers
+> > in the file). This helps improve testing coverage by compiling all drivers
+> > even if they can't be run.
+> 
+> OK
+> 
+> > > +	help
+> > > +	  Say Y here to enable PCIe host controller support for
+> > > +	  Broadcom Settop Box SOCs.  A Broadcom SOC will may have
+> > 
+> > s/Settop/Set top/ or s/Settop/STB/?
+> 
+> Let's default to STB. I'll look around for more offenders.
 
-Mmh, yes you are right. The idle state number is part of the internals
-of the cpuidle framework while the exit latency is an input (from user
-or kernel).
+Happy with anything, just keen for it to be consistent.
 
-> For that you can pass the exit latency limit to play_idle(), but then
-> you need to change powerclamp to pass UNIT_MAX or similar which is
-> ugly, or you can redefine cpuidle_use_deepest_state() to take the
-> exit latency limit as the arg (with 0 meaning use_deepest_state == false).
+> 
+> > > +	  multiple host controllers as opposed to a single host
+> > > +	  controller with multiple ports.
+> > 
+> > I'm sure many other SOCs may have multiple controllers instead of one
+> > with multiple ports. I'm not sure what value this adds here. It's
+> > always better to describe enough information so the user can determine
+> > if this option will enable something they want on their hardware.
+> 
+> Agree, I'll remove that sentence.
+> 
+> > > +
+> > >  config PCI_HYPERV_INTERFACE
+> > >  	tristate "Hyper-V PCI Interface"
+> > >  	depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
+> > > diff --git a/drivers/pci/controller/Makefile
+> > > b/drivers/pci/controller/Makefile
+> > > index a2a22c9d91af..3fc0b0cf5b5b 100644
+> > > --- a/drivers/pci/controller/Makefile
+> > > +++ b/drivers/pci/controller/Makefile
+> > > @@ -30,6 +30,7 @@ obj-$(CONFIG_PCIE_MEDIATEK) += pcie-mediatek.o
+> > >  obj-$(CONFIG_PCIE_MOBIVEIL) += pcie-mobiveil.o
+> > >  obj-$(CONFIG_PCIE_TANGO_SMP8759) += pcie-tango.o
+> > >  obj-$(CONFIG_VMD) += vmd.o
+> > > +obj-$(CONFIG_PCIE_BRCMSTB) += pcie-brcmstb.o
+> > >  # pcie-hisi.o quirks are needed even without CONFIG_PCIE_DW
+> > >  obj-y				+= dwc/
+> > >  
+> > > diff --git a/drivers/pci/controller/pcie-brcmstb.c
+> > > b/drivers/pci/controller/pcie-brcmstb.c
+> > > new file mode 100644
+> > > index 000000000000..880ec11d06a1
+> > > --- /dev/null
+> > > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > > @@ -0,0 +1,973 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/* Copyright (C) 2009 - 2019 Broadcom */
+> > > +
+> > > +#include <linux/clk.h>
+> > > +#include <linux/compiler.h>
+> > > +#include <linux/delay.h>
+> > > +#include <linux/init.h>
+> > > +#include <linux/interrupt.h>
+> > > +#include <linux/io.h>
+> > > +#include <linux/ioport.h>
+> > > +#include <linux/irqdomain.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/list.h>
+> > > +#include <linux/log2.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/of_address.h>
+> > > +#include <linux/of_irq.h>
+> > > +#include <linux/of_pci.h>
+> > > +#include <linux/of_platform.h>
+> > > +#include <linux/pci.h>
+> > > +#include <linux/printk.h>
+> > > +#include <linux/sizes.h>
+> > > +#include <linux/slab.h>
+> > > +#include <linux/string.h>
+> > > +#include <linux/types.h>
+> > > +
+> > > +#include "../pci.h"
+> > 
+> > Is this last include needed? Sometimes controller drivers suffer from copy and
+> > paste and this is often included when it isn't needed.
+> 
+> It's needed in order to call of_pci_get_max_link_speed().
 
-Should it make sense to just get the resume latency in
-cpuidle_use_deepest_state() and pass the value to find_deepest_state()?
+Thanks.
 
-It is the only code path where the constraint is not taken into account
-AFAICT.
+> 
+> > > +
+> > > +/* BRCM_PCIE_CAP_REGS - Offset for the mandatory capability config regs */
+> > > +#define BRCM_PCIE_CAP_REGS				0x00ac
+> > > +
+> > > +/*
+> > > + * Broadcom Settop Box PCIe Register Offsets. The names are from
+> > > + * the chip's RDB and we use them here so that a script can correlate
+> > > + * this code and the RDB to prevent discrepancies.
+> > > + */
+> > > +#define PCIE_RC_CFG_VENDOR_VENDOR_SPECIFIC_REG1		0x0188
+> > > +#define PCIE_RC_CFG_PRIV1_ID_VAL3			0x043c
+> > > +#define PCIE_RC_DL_MDIO_ADDR				0x1100
+> > > +#define PCIE_RC_DL_MDIO_WR_DATA				0x1104
+> > > +#define PCIE_RC_DL_MDIO_RD_DATA				0x1108
+> > > +#define PCIE_MISC_MISC_CTRL				0x4008
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO		0x400c
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI		0x4010
+> > > +#define PCIE_MISC_RC_BAR1_CONFIG_LO			0x402c
+> > > +#define PCIE_MISC_RC_BAR2_CONFIG_LO			0x4034
+> > > +#define PCIE_MISC_RC_BAR2_CONFIG_HI			0x4038
+> > > +#define PCIE_MISC_RC_BAR3_CONFIG_LO			0x403c
+> > > +#define PCIE_MISC_PCIE_CTRL				0x4064
+> > > +#define PCIE_MISC_PCIE_STATUS				0x4068
+> > > +#define PCIE_MISC_REVISION				0x406c
+> > 
+> > PCIE_MISC_REVISION can be removed as it shouldn't be needed
+> 
+> See my comment below regarding revision.
+> 
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT	0x4070
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI		0x4080
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI		0x4084
+> > > +#define PCIE_MISC_HARD_PCIE_HARD_DEBUG			0x4204
+> > > +#define PCIE_INTR2_CPU_BASE				0x4300
+> > > +
+> > > +/*
+> > > + * Broadcom Settop Box PCIe Register Field shift and mask info. The
+> > > + * names are from the chip's RDB and we use them here so that a script
+> > > + * can correlate this code and the RDB to prevent discrepancies.
+> > > + */
+> > > +#define PCIE_RC_CFG_VENDOR_VENDOR_SPECIFIC_REG1_ENDIAN_MODE_BAR2_MASK	
+> > > 0xc
+> > > +#define PCIE_RC_CFG_VENDOR_VENDOR_SPECIFIC_REG1_ENDIAN_MODE_BAR2_SHIFT	
+> > > 0x2
+> > > +#define PCIE_RC_CFG_PRIV1_ID_VAL3_CLASS_CODE_MASK		0xffffff
+> > > +#define PCIE_RC_CFG_PRIV1_ID_VAL3_CLASS_CODE_SHIFT		0x0
+> > > +#define PCIE_MISC_MISC_CTRL_SCB_ACCESS_EN_MASK			0x1000
+> > > +#define PCIE_MISC_MISC_CTRL_SCB_ACCESS_EN_SHIFT			0xc
+> > > +#define PCIE_MISC_MISC_CTRL_CFG_READ_UR_MODE_MASK		0x2000
+> > > +#define PCIE_MISC_MISC_CTRL_CFG_READ_UR_MODE_SHIFT		0xd
+> > > +#define PCIE_MISC_MISC_CTRL_MAX_BURST_SIZE_MASK			0x300000
+> > > +#define PCIE_MISC_MISC_CTRL_MAX_BURST_SIZE_SHIFT		0x14
+> > > +#define PCIE_MISC_MISC_CTRL_SCB0_SIZE_MASK			0xf8000000
+> > > +#define PCIE_MISC_MISC_CTRL_SCB0_SIZE_SHIFT			0x1b
+> > > +#define PCIE_MISC_MISC_CTRL_SCB1_SIZE_MASK			0x7c00000
+> > > +#define PCIE_MISC_MISC_CTRL_SCB1_SIZE_SHIFT			0x16
+> > > +#define PCIE_MISC_MISC_CTRL_SCB2_SIZE_MASK			0x1f
+> > > +#define PCIE_MISC_MISC_CTRL_SCB2_SIZE_SHIFT			0x0
+> > > +#define PCIE_MISC_RC_BAR1_CONFIG_LO_SIZE_MASK			0x1f
+> > > +#define PCIE_MISC_RC_BAR1_CONFIG_LO_SIZE_SHIFT			0x0
+> > > +#define PCIE_MISC_RC_BAR2_CONFIG_LO_SIZE_MASK			0x1f
+> > > +#define PCIE_MISC_RC_BAR2_CONFIG_LO_SIZE_SHIFT			0x0
+> > > +#define PCIE_MISC_RC_BAR3_CONFIG_LO_SIZE_MASK			0x1f
+> > > +#define PCIE_MISC_RC_BAR3_CONFIG_LO_SIZE_SHIFT			0x0
+> > > +#define PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK			0x4
+> > > +#define PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_SHIFT			0x2
+> > > +#define PCIE_MISC_PCIE_CTRL_PCIE_L23_REQUEST_MASK		0x1
+> > > +#define PCIE_MISC_PCIE_CTRL_PCIE_L23_REQUEST_SHIFT		0x0
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_PORT_MASK			0x80
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_PORT_SHIFT			0x7
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_DL_ACTIVE_MASK		0x20
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_DL_ACTIVE_SHIFT		0x5
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_PHYLINKUP_MASK		0x10
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_PHYLINKUP_SHIFT		0x4
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_LINK_IN_L23_MASK		0x40
+> > > +#define PCIE_MISC_PCIE_STATUS_PCIE_LINK_IN_L23_SHIFT		0x6
+> > > +#define PCIE_MISC_REVISION_MAJMIN_MASK				0xffff
+> > > +#define PCIE_MISC_REVISION_MAJMIN_SHIFT				0
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_LIMIT_MASK	0xfff000
+> > > 00
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_LIMIT_SHIFT	0x14
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_BASE_MASK	0xfff0
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_BASE_SHIFT	0x4
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_NUM_MASK_BITS	0xc
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI_BASE_MASK		0xff
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI_BASE_SHIFT	0x0
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI_LIMIT_MASK	0xff
+> > > +#define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI_LIMIT_SHIFT	0x0
+> > > +#define PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK	0x2
+> > > +#define PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_SHIFT 0x1
+> > > +#define PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x080000
+> > > 00
+> > > +#define PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_SHIFT	0x1b
+> > > +#define PCIE_RGR1_SW_INIT_1_PERST_MASK				0x1
+> > > +#define PCIE_RGR1_SW_INIT_1_PERST_SHIFT				0x0
+> > 
+> > Most of the above aren't used anywhere, please remove them.
+> 
+> OK
+> 
+> > > +
+> > > +#define BRCM_NUM_PCIE_OUT_WINS		0x4
+> > > +#define BRCM_MAX_SCB			0x4
+> > > +
+> > > +#define BRCM_MSI_TARGET_ADDR_LT_4GB	0x0fffffffcULL
+> > > +#define BRCM_MSI_TARGET_ADDR_GT_4GB	0xffffffffcULL
+> > 
+> > These two aren't used.
+> 
+> As with the revision, this is only used once MSI is introduced, on the next
+> patch. I'll move it there if you prefer it.
 
-With this simple change, we can manage everything from the pm_qos API
-then and this series is no longer needed.
+Yes please move them to the first point of use.
 
-> In the latter case, it would be quite straightforward to add an
-> exit_latency argument to cpuidle_find_deepest_state() and note that
-> find_deepest_state() takes a max_latency arg already, so that would be
-> a trivial change (hint!).
+> 
+> > > +
+> > > +#define BURST_SIZE_128			0
+> > > +#define BURST_SIZE_256			1
+> > > +#define BURST_SIZE_512			2
+> > > +
+> > > +/* Offsets from PCIE_INTR2_CPU_BASE */
+> > > +#define STATUS				0x0
+> > > +#define SET				0x4
+> > > +#define CLR				0x8
+> > > +#define MASK_STATUS			0xc
+> > > +#define MASK_SET			0x10
+> > > +#define MASK_CLR			0x14
+> > 
+> > Some of the above are not used anywhere.
+> 
+> OK
+> 
+> > > +
+> > > +#define PCIE_BUSNUM_SHIFT		20
+> > > +#define PCIE_SLOT_SHIFT			15
+> > > +#define PCIE_FUNC_SHIFT			12
+> > > +
+> > > +#if defined(__BIG_ENDIAN)
+> > > +#define	DATA_ENDIAN			2	/* PCIe->DDR inbound
+> traffic
+> > > */
+> > > +#define MMIO_ENDIAN			2	/* CPU->PCIe outbound
+> > > traffic */
+> > > +#else
+> > > +#define	DATA_ENDIAN			0
+> > > +#define MMIO_ENDIAN			0
+> > > +#endif
+> > > +
+> > > +#define MDIO_PORT0			0x0
+> > > +#define MDIO_DATA_MASK			0x7fffffff
+> > > +#define MDIO_DATA_SHIFT			0x0
+> > > +#define MDIO_PORT_MASK			0xf0000
+> > > +#define MDIO_PORT_SHIFT			0x16
+> > > +#define MDIO_REGAD_MASK			0xffff
+> > > +#define MDIO_REGAD_SHIFT		0x0
+> > > +#define MDIO_CMD_MASK			0xfff00000
+> > > +#define MDIO_CMD_SHIFT			0x14
+> > > +#define MDIO_CMD_READ			0x1
+> > > +#define MDIO_CMD_WRITE			0x0
+> > > +#define MDIO_DATA_DONE_MASK		0x80000000
+> > > +#define MDIO_RD_DONE(x)			(((x) & MDIO_DATA_DONE_MASK) ? 1
+> > > : 0)
+> > > +#define MDIO_WT_DONE(x)			(((x) & MDIO_DATA_DONE_MASK) ? 0
+> > > : 1)
+> > > +#define SSC_REGS_ADDR			0x1100
+> > > +#define SET_ADDR_OFFSET			0x1f
+> > > +#define SSC_CNTL_OFFSET			0x2
+> > > +#define SSC_CNTL_OVRD_EN_MASK		0x8000
+> > > +#define SSC_CNTL_OVRD_EN_SHIFT		0xf
+> > > +#define SSC_CNTL_OVRD_VAL_MASK		0x4000
+> > > +#define SSC_CNTL_OVRD_VAL_SHIFT		0xe
+> > > +#define SSC_STATUS_OFFSET		0x1
+> > > +#define SSC_STATUS_SSC_MASK		0x400
+> > > +#define SSC_STATUS_SSC_SHIFT		0xa
+> > > +#define SSC_STATUS_PLL_LOCK_MASK	0x800
+> > > +#define SSC_STATUS_PLL_LOCK_SHIFT	0xb
+> > > +
+> > > +#define IDX_ADDR(pcie)	\
+> > > +	((pcie)->reg_offsets[EXT_CFG_INDEX])
+> > > +#define DATA_ADDR(pcie)	\
+> > > +	((pcie)->reg_offsets[EXT_CFG_DATA])
+> > > +#define PCIE_RGR1_SW_INIT_1(pcie) \
+> > > +	((pcie)->reg_offsets[RGR1_SW_INIT_1])
+> > > +
+> > > +enum {
+> > > +	RGR1_SW_INIT_1,
+> > > +	EXT_CFG_INDEX,
+> > > +	EXT_CFG_DATA,
+> > > +};
+> > > +
+> > > +enum {
+> > > +	RGR1_SW_INIT_1_INIT_MASK,
+> > > +	RGR1_SW_INIT_1_INIT_SHIFT,
+> > > +	RGR1_SW_INIT_1_PERST_MASK,
+> > > +	RGR1_SW_INIT_1_PERST_SHIFT,
+> > > +};
+> > > +
+> > > +enum pcie_type {
+> > > +	BCM2711,
+> > > +};
+> > > +
+> > > +struct brcm_window {
+> > > +	dma_addr_t pcie_addr;
+> > > +	phys_addr_t cpu_addr;
+> > > +	dma_addr_t size;
+> > > +};
+> > > +
+> > > +/* Internal PCIe Host Controller Information.*/
+> > > +struct brcm_pcie {
+> > > +	struct device		*dev;
+> > > +	void __iomem		*base;
+> > > +	int			irq;
+> > 
+> > 'irq' isn't used and can be removed.
+> 
+> Yes
+> 
+> > > +	struct clk		*clk;
+> > > +	struct pci_bus		*root_bus;
+> > > +	struct device_node	*dn;
+> > > +	int			id;
+> > 
+> > 'id' isn't used and can be removed.
+> 
+> Yes
+> 
+> > > +	bool			suspended;
+> > > +	bool			ssc;
+> > > +	int			gen;
+> > > +	struct brcm_window	out_wins[BRCM_NUM_PCIE_OUT_WINS];
+> > > +	unsigned int		rev;
+> > 
+> > 'rev' isn't used and can be removed.
+> 
+> It's used by the MSI code further down the line. If you want I'll move it to
+> that patch.
 
+Yes please.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> 
+> > > +	const int		*reg_offsets;
+> > > +	const int		*reg_field_info;
+> > > +	enum pcie_type		type;
+> > > +};
+> > > +
+> > > +struct pcie_cfg_data {
+> > > +	const int		*reg_field_info;
+> > > +	const int		*offsets;
+> > > +	const enum pcie_type	type;
+> > > +};
+> > > +
+> > > +static const int pcie_reg_field_info[] = {
+> > > +	[RGR1_SW_INIT_1_INIT_MASK] = 0x2,
+> > > +	[RGR1_SW_INIT_1_INIT_SHIFT] = 0x1,
+> > > +};
+> > > +
+> > > +static const int pcie_offset_bcm2711[] = {
+> > > +	[RGR1_SW_INIT_1] = 0x9210,
+> > > +	[EXT_CFG_INDEX]  = 0x9000,
+> > > +	[EXT_CFG_DATA]   = 0x8000,
+> > > +};
+> > > +
+> > > +static const struct pcie_cfg_data bcm2711_cfg = {
+> > > +	.reg_field_info	= pcie_reg_field_info,
+> > > +	.offsets	= pcie_offset_bcm2711,
+> > > +	.type		= BCM2711,
+> > > +};
+> > > +
+> > > +static void __iomem *brcm_pcie_map_conf(struct pci_bus *bus, unsigned int
+> > > devfn,
+> > > +					int where);
+> > > +
+> > > +static struct pci_ops brcm_pcie_ops = {
+> > > +	.map_bus = brcm_pcie_map_conf,
+> > > +	.read = pci_generic_config_read,
+> > > +	.write = pci_generic_config_write,
+> > > +};
+> > > +
+> > > +#define bcm_readl(a)		readl(a)
+> > > +#define bcm_writel(d, a)	writel(d, a)
+> > > +#define bcm_readw(a)		readw(a)
+> > > +#define bcm_writew(d, a)	writew(d, a)
+> > 
+> > Is there much value in these macros?
+> 
+> Yes, once we introduce MIPS users, they'll need to use __raw_write*(). It'll
+> make the patch simpler.
+> 
+> > > +
+> > > +/* These macros extract/insert fields to host controller's register set. */
+> > > +#define RD_FLD(base, reg, field) \
+> > > +	rd_fld((base) + reg, reg##_##field##_MASK, reg##_##field##_SHIFT)
+> > > +#define WR_FLD(base, reg, field, val) \
+> > > +	wr_fld((base) + reg, reg##_##field##_MASK, reg##_##field##_SHIFT, val)
+> > > +#define WR_FLD_RB(base, reg, field, val) \
+> > > +	wr_fld_rb((base) + reg, reg##_##field##_MASK, \
+> > > +		reg##_##field##_SHIFT, val)
+> > > +#define WR_FLD_WITH_OFFSET(base, off, reg, field, val) \
+> > > +	wr_fld((base) + reg + (off), reg##_##field##_MASK, \
+> > > +	       reg##_##field##_SHIFT, val)
+> > > +#define EXTRACT_FIELD(val, reg, field) \
+> > > +	(((val) & reg##_##field##_MASK) >> reg##_##field##_SHIFT)
+> > > +#define INSERT_FIELD(val, reg, field, field_val) \
+> > > +	(((val) & ~reg##_##field##_MASK) | \
+> > > +	 (reg##_##field##_MASK & (field_val << reg##_##field##_SHIFT)))
+> > > +
+> > > +static u32 rd_fld(void __iomem *p, u32 mask, int shift)
+> > > +{
+> > > +	return (bcm_readl(p) & mask) >> shift;
+> > > +}
+> > > +
+> > > +static void wr_fld(void __iomem *p, u32 mask, int shift, u32 val)
+> > > +{
+> > > +	u32 reg = bcm_readl(p);
+> > > +
+> > > +	reg = (reg & ~mask) | ((val << shift) & mask);
+> > > +	bcm_writel(reg, p);
+> > > +}
+> > > +
+> > > +static void wr_fld_rb(void __iomem *p, u32 mask, int shift, u32 val)
+> > > +{
+> > > +	wr_fld(p, mask, shift, val);
+> > > +	(void)bcm_readl(p);
+> > > +}
+> > > +
+> > > +static const char *link_speed_to_str(int s)
+> > > +{
+> > > +	switch (s) {
+> > > +	case 1:
+> > > +		return "2.5";
+> > > +	case 2:
+> > > +		return "5.0";
+> > > +	case 3:
+> > > +		return "8.0";
+> > > +	default:
+> > > +		break;
+> > > +	}
+> > > +	return "???";
+> > > +}
+> > > +
+> > > +/*
+> > > + * The roundup_pow_of_two() from log2.h invokes
+> > > + * __roundup_pow_of_two(unsigned long), but we really need a
+> > > + * such a function to take a native u64 since unsigned long
+> > > + * is 32 bits on some configurations.  So we provide this helper
+> > > + * function below.
+> > > + */
+> > > +static u64 roundup_pow_of_two_64(u64 n)
+> > > +{
+> > > +	return 1ULL << fls64(n - 1);
+> > > +}
+> > 
+> > Given that you use this in one place and that it is a single line, I'd
+> > suggest you just drop this function. Alternatively if you wanted to add
+> > this function to log2.h then you already have a bunch of users ready to
+> > be migrated to it:
+> > 
+> > $ git grep "<<
+> > fls64"                                                                      
+> > arch/sparc/mm/init_64.c:        m_end += pa_start & ~((1ul << fls64(m_mask)) -
+> > 1);
+> > drivers/net/ethernet/mellanox/mlx4/en_clock.c:  u64 max_val_cycles_rounded =
+> > 1ULL << fls64(max_val_cycles - 1);
+> > drivers/pci/controller/pcie-cadence-ep.c:       sz = 1ULL << fls64(sz - 1);
+> > drivers/pci/controller/pcie-cadence.c:  u64 sz = 1ULL << fls64(size - 1);
+> > drivers/pci/controller/pcie-rockchip-ep.c:      u64 sz = 1ULL << fls64(size -
+> > 1);
+> > drivers/pci/controller/pcie-rockchip-ep.c:      sz = 1ULL << fls64(sz - 1);
+> 
+> I'll add it to log2.h
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Excellent.
+
+> 
+> > > +
+> > > +/*
+> > > + * This is to convert the size of the inbound "BAR" region to the
+> > > + * non-linear values of PCIE_X_MISC_RC_BAR[123]_CONFIG_LO.SIZE
+> > > + */
+> > > +int encode_ibar_size(u64 size)
+> > > +{
+> > > +	int log2_in = ilog2(size);
+> > > +
+> > > +	if (log2_in >= 12 && log2_in <= 15)
+> > > +		/* Covers 4KB to 32KB (inclusive) */
+> > > +		return (log2_in - 12) + 0x1c;
+> > > +	else if (log2_in >= 16 && log2_in <= 37)
+> > > +		/* Covers 64KB to 32GB, (inclusive) */
+> > 
+> > 2^37 != 32GB?
+> 
+> I picked up Jim's comment.
+> 
+> > > +		return log2_in - 15;
+> > > +	/* Something is awry so disable */
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static u32 mdio_form_pkt(int port, int regad, int cmd)
+> > > +{
+> > > +	u32 pkt = 0;
+> > > +
+> > > +	pkt |= (port << MDIO_PORT_SHIFT) & MDIO_PORT_MASK;
+> > > +	pkt |= (regad << MDIO_REGAD_SHIFT) & MDIO_REGAD_MASK;
+> > > +	pkt |= (cmd << MDIO_CMD_SHIFT) & MDIO_CMD_MASK;
+> > > +
+> > > +	return pkt;
+> > > +}
+> > > +
+> > > +/* negative return value indicates error */
+> > > +static int mdio_read(void __iomem *base, u8 port, u8 regad)
+> > > +{
+> > > +	int tries;
+> > > +	u32 data;
+> > > +
+> > > +	bcm_writel(mdio_form_pkt(port, regad, MDIO_CMD_READ),
+> > > +		   base + PCIE_RC_DL_MDIO_ADDR);
+> > > +	bcm_readl(base + PCIE_RC_DL_MDIO_ADDR);
+> > > +
+> > > +	data = bcm_readl(base + PCIE_RC_DL_MDIO_RD_DATA);
+> > > +	for (tries = 0; !MDIO_RD_DONE(data) && tries < 10; tries++) {
+> > > +		udelay(10);
+> > > +		data = bcm_readl(base + PCIE_RC_DL_MDIO_RD_DATA);
+> > > +	}
+> > > +
+> > > +	return MDIO_RD_DONE(data)
+> > > +		? (data & MDIO_DATA_MASK) >> MDIO_DATA_SHIFT
+> > > +		: -EIO;
+> > > +}
+> > > +
+> > > +/* negative return value indicates error */
+> > > +static int mdio_write(void __iomem *base, u8 port, u8 regad, u16 wrdata)
+> > > +{
+> > > +	int tries;
+> > > +	u32 data;
+> > > +
+> > > +	bcm_writel(mdio_form_pkt(port, regad, MDIO_CMD_WRITE),
+> > > +		   base + PCIE_RC_DL_MDIO_ADDR);
+> > > +	bcm_readl(base + PCIE_RC_DL_MDIO_ADDR);
+> > > +	bcm_writel(MDIO_DATA_DONE_MASK | wrdata,
+> > > +		   base + PCIE_RC_DL_MDIO_WR_DATA);
+> > > +
+> > > +	data = bcm_readl(base + PCIE_RC_DL_MDIO_WR_DATA);
+> > > +	for (tries = 0; !MDIO_WT_DONE(data) && tries < 10; tries++) {
+> > > +		udelay(10);
+> > > +		data = bcm_readl(base + PCIE_RC_DL_MDIO_WR_DATA);
+> > > +	}
+> > > +
+> > > +	return MDIO_WT_DONE(data) ? 0 : -EIO;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Configures device for Spread Spectrum Clocking (SSC) mode; a negative
+> > > + * return value indicates error.
+> > > + */
+> > > +static int set_ssc(void __iomem *base)
+> > 
+> > Please prefix this with brcm_pcie_ (and other similar occurances)
+> > 
+> 
+> OK
+> 
+> > > +{
+> > > +	int tmp;
+> > > +	u16 wrdata;
+> > > +	int pll, ssc;
+> > > +
+> > > +	tmp = mdio_write(base, MDIO_PORT0, SET_ADDR_OFFSET, SSC_REGS_ADDR);
+> > > +	if (tmp < 0)
+> > > +		return tmp;
+> > > +
+> > > +	tmp = mdio_read(base, MDIO_PORT0, SSC_CNTL_OFFSET);
+> > > +	if (tmp < 0)
+> > > +		return tmp;
+> > > +
+> > > +	wrdata = INSERT_FIELD(tmp, SSC_CNTL_OVRD, EN, 1);
+> > > +	wrdata = INSERT_FIELD(wrdata, SSC_CNTL_OVRD, VAL, 1);
+> > > +	tmp = mdio_write(base, MDIO_PORT0, SSC_CNTL_OFFSET, wrdata);
+> > > +	if (tmp < 0)
+> > > +		return tmp;
+> > > +
+> > > +	usleep_range(1000, 2000);
+> > > +	tmp = mdio_read(base, MDIO_PORT0, SSC_STATUS_OFFSET);
+> > > +	if (tmp < 0)
+> > > +		return tmp;
+> > > +
+> > > +	ssc = EXTRACT_FIELD(tmp, SSC_STATUS, SSC);
+> > > +	pll = EXTRACT_FIELD(tmp, SSC_STATUS, PLL_LOCK);
+> > > +
+> > > +	return (ssc && pll) ? 0 : -EIO;
+> > > +}
+> > > +
+> > > +/* Limits operation to a specific generation (1, 2, or 3) */
+> > > +static void set_gen(void __iomem *base, int gen)
+> > > +{
+> > > +	u32 lnkcap = bcm_readl(base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCAP);
+> > > +	u16 lnkctl2 = bcm_readw(base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCTL2);
+> > > +
+> > > +	lnkcap = (lnkcap & ~PCI_EXP_LNKCAP_SLS) | gen;
+> > > +	bcm_writel(lnkcap, base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCAP);
+> > > +
+> > > +	lnkctl2 = (lnkctl2 & ~0xf) | gen;
+> > > +	bcm_writew(lnkctl2, base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCTL2);
+> > > +}
+> > > +
+> > > +static void brcm_pcie_set_outbound_win(struct brcm_pcie *pcie,
+> > > +				       unsigned int win, phys_addr_t cpu_addr,
+> > > +				       dma_addr_t  pcie_addr, dma_addr_t size)
+> > > +{
+> > > +	void __iomem *base = pcie->base;
+> > > +	phys_addr_t cpu_addr_mb, limit_addr_mb;
+> > > +	u32 tmp;
+> > > +
+> > > +	/* Set the base of the pcie_addr window */
+> > > +	bcm_writel(lower_32_bits(pcie_addr) + MMIO_ENDIAN,
+> > > +		   base + PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO + (win * 8));
+> > > +	bcm_writel(upper_32_bits(pcie_addr),
+> > > +		   base + PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI + (win * 8));
+> > > +
+> > > +	cpu_addr_mb = cpu_addr >> 20;
+> > > +	limit_addr_mb = (cpu_addr + size - 1) >> 20;
+> > > +
+> > > +	/* Write the addr base low register */
+> > > +	WR_FLD_WITH_OFFSET(base, (win * 4),
+> > > +			   PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT,
+> > > +			   BASE, cpu_addr_mb);
+> > > +	/* Write the addr limit low register */
+> > > +	WR_FLD_WITH_OFFSET(base, (win * 4),
+> > > +			   PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT,
+> > > +			   LIMIT, limit_addr_mb);
+> > > +
+> > > +	/* Write the cpu addr high register */
+> > > +	tmp = (u32)(cpu_addr_mb >>
+> > > +		PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_NUM_MASK_BITS);
+> > > +	WR_FLD_WITH_OFFSET(base, (win * 8),
+> > > +			   PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI,
+> > > +			   BASE, tmp);
+> > > +	/* Write the cpu limit high register */
+> > > +	tmp = (u32)(limit_addr_mb >>
+> > > +		PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_NUM_MASK_BITS);
+> > > +	WR_FLD_WITH_OFFSET(base, (win * 8),
+> > > +			   PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI,
+> > > +			   LIMIT, tmp);
+> > > +}
+> > > +
+> > > +/* Configuration space read/write support */
+> > > +static int cfg_index(int busnr, int devfn, int reg)
+> > > +{
+> > > +	return ((PCI_SLOT(devfn) & 0x1f) << PCIE_SLOT_SHIFT)
+> > > +		| ((PCI_FUNC(devfn) & 0x07) << PCIE_FUNC_SHIFT)
+> > > +		| (busnr << PCIE_BUSNUM_SHIFT)
+> > > +		| (reg & ~3);
+> > > +}
+> > > +
+> > > +/* The controller is capable of serving in both RC and EP roles */
+> > > +static bool brcm_pcie_rc_mode(struct brcm_pcie *pcie)
+> > > +{
+> > > +	void __iomem *base = pcie->base;
+> > > +	u32 val = bcm_readl(base + PCIE_MISC_PCIE_STATUS);
+> > > +
+> > > +	return !!EXTRACT_FIELD(val, PCIE_MISC_PCIE_STATUS, PCIE_PORT);
+> > > +}
+> > > +
+> > > +static bool brcm_pcie_link_up(struct brcm_pcie *pcie)
+> > > +{
+> > > +	void __iomem *base = pcie->base;
+> > > +	u32 val = bcm_readl(base + PCIE_MISC_PCIE_STATUS);
+> > > +	u32 dla = EXTRACT_FIELD(val, PCIE_MISC_PCIE_STATUS, PCIE_DL_ACTIVE);
+> > > +	u32 plu = EXTRACT_FIELD(val, PCIE_MISC_PCIE_STATUS, PCIE_PHYLINKUP);
+> > > +
+> > > +	return  (dla && plu) ? true : false;
+> > > +}
+> > > +
+> > > +static void __iomem *brcm_pcie_map_conf(struct pci_bus *bus, unsigned int
+> > > devfn,
+> > > +					int where)
+> > > +{
+> > > +	struct brcm_pcie *pcie = bus->sysdata;
+> > > +	void __iomem *base = pcie->base;
+> > > +	int idx;
+> > > +
+> > > +	/* Accesses to the RC go right to the RC registers if slot==0 */
+> > > +	if (pci_is_root_bus(bus))
+> > > +		return PCI_SLOT(devfn) ? NULL : base + where;
+> > > +
+> > > +	/* For devices, write to the config space index register */
+> > > +	idx = cfg_index(bus->number, devfn, 0);
+> > > +	bcm_writel(idx, pcie->base + IDX_ADDR(pcie));
+> > > +	return base + DATA_ADDR(pcie) + where;
+> > > +}
+> > > +
+> > > +static inline void brcm_pcie_bridge_sw_init_set(struct brcm_pcie *pcie,
+> > > +						unsigned int val)
+> > > +{
+> > > +	unsigned int shift = pcie->reg_field_info[RGR1_SW_INIT_1_INIT_SHIFT];
+> > > +	u32 mask =  pcie->reg_field_info[RGR1_SW_INIT_1_INIT_MASK];
+> > > +
+> > > +	wr_fld_rb(pcie->base + PCIE_RGR1_SW_INIT_1(pcie), mask, shift, val);
+> > > +}
+> > > +
+> > > +static inline void brcm_pcie_perst_set(struct brcm_pcie *pcie,
+> > > +				       unsigned int val)
+> > > +{
+> > > +	wr_fld_rb(pcie->base + PCIE_RGR1_SW_INIT_1(pcie),
+> > > +		  PCIE_RGR1_SW_INIT_1_PERST_MASK,
+> > > +		  PCIE_RGR1_SW_INIT_1_PERST_SHIFT, val);
+> > > +}
+> > > +
+> > > +static inline int brcm_pcie_get_rc_bar2_size_and_offset(struct brcm_pcie
+> > > *pcie,
+> > > +							u64 *rc_bar2_size,
+> > > +							u64 *rc_bar2_offset)
+> > > +{
+> > > +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(pcie);
+> > > +	struct device *dev = pcie->dev;
+> > > +	struct resource_entry *entry;
+> > > +	u64 total_mem_size = 0;
+> > > +
+> > > +	*rc_bar2_offset = -1;
+> > > +
+> > > +	resource_list_for_each_entry(entry, &bridge->dma_ranges) {
+> > > +		/*
+> > > +		 * We're promissed the RC will provide a contiguous view of
+> > 
+> > s/promissed/promised/
+> 
+> Corrected
+> 
+> > > +		 * memory to downstream devices. We can then infer the
+> > > +		 * rc_bar2_offset from the lower avaiable dma-range offset.
+> > > +		 */
+> > > +		if (entry->offset < *rc_bar2_offset)
+> > > +			*rc_bar2_offset = entry->offset;
+> > > +
+> > > +		total_mem_size += entry->res->end - entry->res->start + 1;
+> > > +	}
+> > > +
+> > > +	*rc_bar2_size = roundup_pow_of_two_64(total_mem_size);
+> > > +
+> > > +	/*
+> > > +	 * Validate the results:
+> > > +	 *
+> > > +	 * The PCIe host controller by design must set the inbound viewport to
+> > > +	 * be a contiguous arrangement of all of the system's memory.  In
+> > > +	 * addition, its size mut be a power of two.  To further complicate
+> > > +	 * matters, the viewport must start on a pcie-address that is aligned
+> > > +	 * on a multiple of its size.  If a portion of the viewport does not
+> > > +	 * represent system memory -- e.g. 3GB of memory requires a 4GB
+> > > +	 * viewport -- we can map the outbound memory in or after 3GB and even
+> > > +	 * though the viewport will overlap the outbound memory the controller
+> > > +	 * will know to send outbound memory downstream and everything else
+> > > +	 * upstream.
+> > > +	 *
+> > > +	 * For example:
+> > > +	 *
+> > > +	 * - The best-case scenario, memory up to 3GB, is to place the inbound
+> > > +	 *   region in the first 4GB of pcie-space, as some legacy devices can
+> > > +	 *   only address 32bits. We would also like to put the MSI under 4GB
+> > > +	 *   as well, since some devices require a 32bit MSI target address.
+> > > +	 *
+> > > +	 * - If the system memory is 4GB or larger we cannot start the inbound
+> > > +	 *   region at location 0 (since we have to allow some space for
+> > > +	 *   outbound memory @ 3GB). So instead it will  start at the 1x
+> > > +	 *   multiple of its size
+> > > +	 */
+> > > +	if (!*rc_bar2_size || *rc_bar2_offset % *rc_bar2_size ||
+> > > +	    (*rc_bar2_offset < SZ_4G && *rc_bar2_offset > SZ_2G)) {
+> > > +		dev_err(dev, "Invalid rc_bar2_offset/size: size 0x%llx, off
+> > > 0x%llx\n",
+> > > +			*rc_bar2_size, *rc_bar2_offset);
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int brcm_pcie_setup(struct brcm_pcie *pcie)
+> > > +{
+> > > +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(pcie);
+> > > +	u64 rc_bar2_offset, rc_bar2_size;
+> > > +	void __iomem *base = pcie->base;
+> > > +	struct resource_entry *entry;
+> > > +	unsigned int scb_size_val;
+> > > +	struct resource *res;
+> > > +	int num_out_wins = 0;
+> > > +	u32 tmp;
+> > > +	int i, j, ret, limit;
+> > > +	u16 nlw, cls, lnksta;
+> > > +	bool ssc_good = false;
+> > > +	struct device *dev = pcie->dev;
+> > > +
+> > > +	/* Reset the bridge */
+> > > +	brcm_pcie_bridge_sw_init_set(pcie, 1);
+> > > +
+> > > +	usleep_range(100, 200);
+> > > +
+> > > +	/* Take the bridge out of reset */
+> > > +	brcm_pcie_bridge_sw_init_set(pcie, 0);
+> > > +
+> > > +	WR_FLD_RB(base, PCIE_MISC_HARD_PCIE_HARD_DEBUG, SERDES_IDDQ, 0);
+> > > +	/* Wait for SerDes to be stable */
+> > > +	usleep_range(100, 200);
+> > > +
+> > > +	/* Grab the PCIe hw revision number */
+> > > +	tmp = bcm_readl(base + PCIE_MISC_REVISION);
+> > > +	pcie->rev = EXTRACT_FIELD(tmp, PCIE_MISC_REVISION, MAJMIN);
+> > 
+> > This isn't used anywhere
+> 
+> It's used by MSI further down the line.
+> 
+> > > +
+> > > +	/* Set SCB_MAX_BURST_SIZE, CFG_READ_UR_MODE, SCB_ACCESS_EN */
+> > > +	tmp = INSERT_FIELD(0, PCIE_MISC_MISC_CTRL, SCB_ACCESS_EN, 1);
+> > > +	tmp = INSERT_FIELD(tmp, PCIE_MISC_MISC_CTRL, CFG_READ_UR_MODE, 1);
+> > > +	tmp = INSERT_FIELD(tmp, PCIE_MISC_MISC_CTRL, MAX_BURST_SIZE,
+> > > +			   BURST_SIZE_128);
+> > > +	bcm_writel(tmp, base + PCIE_MISC_MISC_CTRL);
+> > > +
+> > > +	ret = brcm_pcie_get_rc_bar2_size_and_offset(pcie, &rc_bar2_size,
+> > > +						    &rc_bar2_offset);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	tmp = lower_32_bits(rc_bar2_offset);
+> > > +	tmp = INSERT_FIELD(tmp, PCIE_MISC_RC_BAR2_CONFIG_LO, SIZE,
+> > > +			   encode_ibar_size(rc_bar2_size));
+> > > +	bcm_writel(tmp, base + PCIE_MISC_RC_BAR2_CONFIG_LO);
+> > > +	bcm_writel(upper_32_bits(rc_bar2_offset),
+> > > +		   base + PCIE_MISC_RC_BAR2_CONFIG_HI);
+> > > +
+> > > +	scb_size_val = rc_bar2_size ?
+> > > +		       ilog2(rc_bar2_size) - 15 : 0xf; /* 0xf is 1GB */
+> > > +	WR_FLD(base, PCIE_MISC_MISC_CTRL, SCB0_SIZE, scb_size_val);
+> > > +
+> > > +	/* disable the PCIe->GISB memory window (RC_BAR1) */
+> > > +	WR_FLD(base, PCIE_MISC_RC_BAR1_CONFIG_LO, SIZE, 0);
+> > > +
+> > > +	/* disable the PCIe->SCB memory window (RC_BAR3) */
+> > > +	WR_FLD(base, PCIE_MISC_RC_BAR3_CONFIG_LO, SIZE, 0);
+> > > +
+> > > +	if (!pcie->suspended) {
+> > > +		/* clear any interrupts we find on boot */
+> > > +		bcm_writel(0xffffffff, base + PCIE_INTR2_CPU_BASE + CLR);
+> > > +		(void)bcm_readl(base + PCIE_INTR2_CPU_BASE + CLR);
+> > > +	}
+> > > +
+> > > +	/* Mask all interrupts since we are not handling any yet */
+> > > +	bcm_writel(0xffffffff, base + PCIE_INTR2_CPU_BASE + MASK_SET);
+> > > +	(void)bcm_readl(base + PCIE_INTR2_CPU_BASE + MASK_SET);
+> > > +
+> > > +	if (pcie->gen)
+> > > +		set_gen(base, pcie->gen);
+> > > +
+> > > +	/* Unassert the fundamental reset */
+> > > +	brcm_pcie_perst_set(pcie, 0);
+> > > +
+> > > +	/*
+> > > +	 * Give the RC/EP time to wake up, before trying to configure RC.
+> > > +	 * Intermittently check status for link-up, up to a total of 100ms
+> > > +	 * when we don't know if the device is there, and up to 1000ms if
+> > > +	 * we do know the device is there.
+> > > +	 */
+> > > +	limit = pcie->suspended ? 1000 : 100;
+> > > +	for (i = 1, j = 0; j < limit && !brcm_pcie_link_up(pcie);
+> > > +	     j += i, i = i * 2)
+> > > +		msleep(i + j > limit ? limit - j : i);
+> > 
+> > Does it need to be this complex? Also waiting a second during resume seems
+> > like a long delay.
+> 
+> I'll simplify it. I didn't want to change it as I assumed this is needed on
+> some odd STB device. We'll deal with it once we enable it.
+
+Thanks.
+
+> 
+> > > +
+> > > +	if (!brcm_pcie_link_up(pcie)) {
+> > > +		dev_info(dev, "link down\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > > +
+> > > +	if (!brcm_pcie_rc_mode(pcie)) {
+> > > +		dev_err(dev, "PCIe misconfigured; is in EP mode\n");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	resource_list_for_each_entry(entry, &bridge->windows) {
+> > > +		res = entry->res;
+> > > +
+> > > +		if (resource_type(res) != IORESOURCE_MEM)
+> > > +			continue;
+> > > +
+> > > +		if (num_out_wins >= BRCM_NUM_PCIE_OUT_WINS) {
+> > > +			dev_err(pcie->dev, "too many outbound wins\n");
+> > > +			return -EINVAL;
+> > > +		}
+> > > +
+> > > +		brcm_pcie_set_outbound_win(pcie, num_out_wins, res->start,
+> > > +					   res->start - entry->offset,
+> > > +					   res->end - res->start + 1);
+> > > +		num_out_wins++;
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * For config space accesses on the RC, show the right class for
+> > > +	 * a PCIe-PCIe bridge (the default setting is to be EP mode).
+> > > +	 */
+> > > +	WR_FLD_RB(base, PCIE_RC_CFG_PRIV1_ID_VAL3, CLASS_CODE, 0x060400);
+> > > +
+> > > +	if (pcie->ssc) {
+> > > +		ret = set_ssc(base);
+> > > +		if (ret == 0)
+> > > +			ssc_good = true;
+> > > +		else
+> > > +			dev_err(dev, "failed attempt to enter ssc mode\n");
+> > > +	}
+> > > +
+> > > +	lnksta = bcm_readw(base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKSTA);
+> > > +	cls = lnksta & PCI_EXP_LNKSTA_CLS;
+> > > +	nlw = (lnksta & PCI_EXP_LNKSTA_NLW) >> PCI_EXP_LNKSTA_NLW_SHIFT;
+> > > +	dev_info(dev, "link up, %s Gbps x%u %s\n", link_speed_to_str(cls),
+> > > +		 nlw, ssc_good ? "(SSC)" : "(!SSC)");
+> > > +
+> > > +	/* PCIe->SCB endian mode for BAR */
+> > > +	/* field ENDIAN_MODE_BAR2 = DATA_ENDIAN */
+> > > +	WR_FLD_RB(base, PCIE_RC_CFG_VENDOR_VENDOR_SPECIFIC_REG1,
+> > > +		  ENDIAN_MODE_BAR2, DATA_ENDIAN);
+> > > +
+> > > +	/*
+> > > +	 * Refclk from RC should be gated with CLKREQ# input when ASPM L0s,L1
+> > > +	 * is enabled =>  setting the CLKREQ_DEBUG_ENABLE field to 1.
+> > > +	 */
+> > > +	WR_FLD_RB(base, PCIE_MISC_HARD_PCIE_HARD_DEBUG, CLKREQ_DEBUG_ENABLE, 1);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/* L23 is a low-power PCIe link state */
+> > > +static void enter_l23(struct brcm_pcie *pcie)
+> > > +{
+> > > +	void __iomem *base = pcie->base;
+> > > +	int l23, i;
+> > > +
+> > > +	/* assert request for L23 */
+> > > +	WR_FLD_RB(base, PCIE_MISC_PCIE_CTRL, PCIE_L23_REQUEST, 1);
+> > > +
+> > > +	/* Wait up to 30 msec for L23 */
+> > > +	l23 = RD_FLD(base, PCIE_MISC_PCIE_STATUS, PCIE_LINK_IN_L23);
+> > > +	for (i = 0; i < 15 && !l23; i++) {
+> > > +		usleep_range(2000, 2400);
+> > > +		l23 = RD_FLD(base, PCIE_MISC_PCIE_STATUS, PCIE_LINK_IN_L23);
+> > > +	}
+> > > +
+> > > +	if (!l23)
+> > > +		dev_err(pcie->dev, "failed to enter L23\n");
+> > > +}
+> > > +
+> > > +static void turn_off(struct brcm_pcie *pcie)
+> > > +{
+> > > +	void __iomem *base = pcie->base;
+> > > +
+> > > +	if (brcm_pcie_link_up(pcie))
+> > > +		enter_l23(pcie);
+> > > +	/* Assert fundamental reset */
+> > > +	brcm_pcie_perst_set(pcie, 1);
+> > > +	/* Deassert request for L23 in case it was asserted */
+> > > +	WR_FLD_RB(base, PCIE_MISC_PCIE_CTRL, PCIE_L23_REQUEST, 0);
+> > > +	/* Turn off SerDes */
+> > > +	WR_FLD_RB(base, PCIE_MISC_HARD_PCIE_HARD_DEBUG, SERDES_IDDQ, 1);
+> > > +	/* Shutdown PCIe bridge */
+> > > +	brcm_pcie_bridge_sw_init_set(pcie, 1);
+> > > +}
+> > > +
+> > > +static int brcm_pcie_suspend(struct device *dev)
+> > > +{
+> > > +	struct brcm_pcie *pcie = dev_get_drvdata(dev);
+> > > +
+> > > +	turn_off(pcie);
+> > > +	clk_disable_unprepare(pcie->clk);
+> > > +	pcie->suspended = true;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int brcm_pcie_resume(struct device *dev)
+> > > +{
+> > > +	struct brcm_pcie *pcie = dev_get_drvdata(dev);
+> > > +	void __iomem *base;
+> > > +	int ret;
+> > > +
+> > > +	base = pcie->base;
+> > > +	clk_prepare_enable(pcie->clk);
+> > > +
+> > > +	/* Take bridge out of reset so we can access the SerDes reg */
+> > > +	brcm_pcie_bridge_sw_init_set(pcie, 0);
+> > > +
+> > > +	/* Turn on SerDes */
+> > > +	WR_FLD_RB(base, PCIE_MISC_HARD_PCIE_HARD_DEBUG, SERDES_IDDQ, 0);
+> > > +	/* Wait for SerDes to be stable */
+> > > +	usleep_range(100, 200);
+> > > +
+> > > +	ret = brcm_pcie_setup(pcie);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	pcie->suspended = false;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void _brcm_pcie_remove(struct brcm_pcie *pcie)
+> > 
+> > I don't see the value in the first underscore here.
+> 
+> It's value is that the real brcm_pcie_remove() and the probe failure cleanup
+> routine share code. It saves some code duplication, that said I have no strong
+> feelings about it.
+
+That's OK then. However I think it's more common to use a double
+underscore for functions like this.
+
+> 
+> > > +{
+> > > +	turn_off(pcie);
+> > > +	clk_disable_unprepare(pcie->clk);
+> > > +	clk_put(pcie->clk);
+> > > +}
+> > > +
+> > > +static int brcm_pcie_remove(struct platform_device *pdev)
+> > > +{
+> > > +	struct brcm_pcie *pcie = platform_get_drvdata(pdev);
+> > > +
+> > > +	pci_stop_root_bus(pcie->root_bus);
+> > > +	pci_remove_root_bus(pcie->root_bus);
+> > > +	_brcm_pcie_remove(pcie);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static const struct of_device_id brcm_pcie_match[] = {
+> > > +	{ .compatible = "brcm,bcm2711-pcie", .data = &bcm2711_cfg },
+> > > +	{},
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, brcm_pcie_match);
+> > > +
+> > > +static int brcm_pcie_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct device_node *dn = pdev->dev.of_node;
+> > > +	const struct of_device_id *of_id;
+> > > +	const struct pcie_cfg_data *data;
+> > > +	struct resource *res;
+> > > +	int ret;
+> > > +	struct brcm_pcie *pcie;
+> > > +	void __iomem *base;
+> > > +	struct pci_host_bridge *bridge;
+> > > +	struct pci_bus *child;
+> > > +
+> > > +	bridge = devm_pci_alloc_host_bridge(&pdev->dev, sizeof(*pcie));
+> > > +	if (!bridge)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	pcie = pci_host_bridge_priv(bridge);
+> > > +
+> > > +	of_id = of_match_node(brcm_pcie_match, dn);
+> > > +	if (!of_id) {
+> > > +		dev_err(&pdev->dev, "failed to look up compatible string\n");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	data = of_id->data;
+> > 
+> > Can you replace the above (from of_match_node to here) with the following?
+> > 
+> > data = of_device_get_match_data(pdev->dev)
+> 
+> Yes, way cleaner.
+> 
+> > > +	pcie->reg_offsets = data->offsets;
+> > > +	pcie->reg_field_info = data->reg_field_info;
+> > > +	pcie->type = data->type;
+> > > +	pcie->dn = dn;
+> > > +	pcie->dev = &pdev->dev;
+> > > +
+> > > +	/* We use the domain number as our controller number */
+> > > +	pcie->id = of_get_pci_domain_nr(dn);
+> > > +	if (pcie->id < 0)
+> > > +		return pcie->id;
+> > 
+> > We don't do anything with this, so you can remove this.
+> 
+> Deleted.
+> 
+> > > +
+> > > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +	if (!res)
+> > > +		return -EINVAL;
+> > 
+> > The majority of controller drivers don't bother to check the return value
+> > here and just pass res into devm_ioremap_resource.
+> 
+> Ok.
+> 
+> > > +
+> > > +	base = devm_ioremap_resource(&pdev->dev, res);
+> > > +	if (IS_ERR(base))
+> > > +		return PTR_ERR(base);
+> > > +
+> > > +	pcie->clk = of_clk_get_by_name(dn, "sw_pcie");
+> > > +	if (IS_ERR(pcie->clk)) {
+> > > +		dev_err(&pdev->dev, "could not get clock\n");
+> > > +		pcie->clk = NULL;
+> > > +	}
+> > 
+> > Is this a good use-case for devm_clk_get_optional?
+> 
+> Yes.
+> 
+> > > +	pcie->base = base;
+> > > +
+> > > +	ret = of_pci_get_max_link_speed(dn);
+> > > +	pcie->gen = (ret < 0) ? 0 : ret;
+> > 
+> > There is no checking that gen isn't too large here, given that we pass
+> > this into a register later we probably want to check it here.
+> 
+> This is checked by of_pci_get_max_link_speed() internally:
+> 
+> 	if (of_property_read_u32(node, "max-link-speed", &max_link_speed) ||
+> 	    max_link_speed > 4)
+> 		return -EINVAL;
+> 
+> 	return max_link_speed;
+
+Ah of course!
+
+Thanks,
+
+Andrew Murray
+
+> 
+> > > +
+> > > +	pcie->ssc = of_property_read_bool(dn, "brcm,enable-ssc");
+> > > +
+> > > +	ret = irq_of_parse_and_map(pdev->dev.of_node, 0);
+> > > +	if (ret == 0)
+> > > +		/* keep going, as we don't use this intr yet */
+> > > +		dev_warn(pcie->dev, "cannot get PCIe interrupt\n");
+> > > +	else
+> > > +		pcie->irq = ret;
+> > 
+> > Given we don't use it yet, please remove it from this patch.
+> 
+> OK
+> 
+> Regards,
+> Nicolas
+> 
+
 
