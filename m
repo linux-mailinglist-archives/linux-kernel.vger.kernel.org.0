@@ -2,169 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8944F52DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 440D2F52D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:48:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730596AbfKHRtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 12:49:07 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37842 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729924AbfKHRtA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:49:00 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 0430B29134E
-Received: by jupiter.universe (Postfix, from userid 1000)
-        id 0408E4800A5; Fri,  8 Nov 2019 18:48:54 +0100 (CET)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv1 5/5] ASoC: da7213: add default clock handling
-Date:   Fri,  8 Nov 2019 18:48:43 +0100
-Message-Id: <20191108174843.11227-6-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.24.0.rc1
-In-Reply-To: <20191108174843.11227-1-sebastian.reichel@collabora.com>
-References: <20191108174843.11227-1-sebastian.reichel@collabora.com>
+        id S1728425AbfKHRsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 12:48:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbfKHRsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 12:48:52 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A98A920673;
+        Fri,  8 Nov 2019 17:48:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573235331;
+        bh=GE9PFeLXesIuv0zEy2ffSpiHpDpB3tEJiSldwNibaS4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MSZsLCIscNKdexiVYE6cN58MOHJ17AuEt3qEIS+AD8PSgv6IX4c+q9ZASqv4F4l3m
+         CKFysVQakrkZdtSGp2zOn7tGmKy9BYdUqPA213MDrjVFD02gjk64+S4FbAyk+qV7gm
+         Sdagw9Xh2NOWKREY3IilhnUb6L1KHT9yyu02L+xs=
+Date:   Fri, 8 Nov 2019 17:48:46 +0000
+From:   Will Deacon <will@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v2 6/9] Revert "iommu/arm-smmu: Make arm-smmu-v3
+ explicitly non-modular"
+Message-ID: <20191108174846.GA22677@willie-the-truck>
+References: <20191108151608.20932-1-will@kernel.org>
+ <20191108151608.20932-7-will@kernel.org>
+ <06dfd385-1af0-3106-4cc5-6a5b8e864759@huawei.com>
+ <7e906ed1-ab85-7e25-9b29-5497e98da8d8@huawei.com>
+ <20191108164728.GB20866@willie-the-truck>
+ <c4cb13d3-3786-2e45-ba57-9965cead9a49@huawei.com>
+ <20191108173248.GA22448@willie-the-truck>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108173248.GA22448@willie-the-truck>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds default clock/PLL configuration to the driver
-for usage with generic drivers like simple-card for usage
-with a fixed rate clock.
+On Fri, Nov 08, 2019 at 05:32:48PM +0000, Will Deacon wrote:
+> On Fri, Nov 08, 2019 at 05:25:09PM +0000, John Garry wrote:
+> > On 08/11/2019 16:47, Will Deacon wrote:
+> > > On Fri, Nov 08, 2019 at 04:44:25PM +0000, John Garry wrote:
+> > > > BTW, it now looks like it was your v1 series I was testing there, on your
+> > > > branch iommu/module. It would be helpful to update for ease of testing.
+> > > 
+> > > Yes, sorry about that. I'll update it now (although I'm not sure it will
+> > > help with this -- I was going to see what happens with other devices such
+> > > as the intel-iommu or storage controllers)
+> > 
+> > So I tried your v2 series for this - it has the same issue, as I
+> > anticipated.
+> 
+> Right, I'm just not sure how resilient drivers are expected to be to force
+> unbinding like this. You can break lots of stuff with root...
+> 
+> > It seems that some iommu drivers do call iommu_device_register(), so maybe a
+> > decent reference. Or simply stop the driver being unbound.
+> 
+> I'm not sure what you mean about iommu_device_register() (we call that
+> already), but I guess we can keep the '.suppress_bind_attrs = true' if
+> necessary. I'll have a play on my laptop and see how well that works if
+> you start unbinding stuff.
 
-Upstreaming this requires a good way to disable the automatic
-clock handling for systems doing it manually to avoid breaking
-existing setups.
+So unbinding the nvme driver goes bang:
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- sound/soc/codecs/da7213.c | 34 +++++++++++++++++++++++++++++++++-
- sound/soc/codecs/da7213.h |  1 +
- 2 files changed, 34 insertions(+), 1 deletion(-)
+[90139.090158] nvme nvme0: failed to set APST feature (-19)
+[90141.966780] Aborting journal on device dm-1-8.
+[90141.967124] Buffer I/O error on dev dm-1, logical block 26247168, lost sync page write
+[90141.967169] JBD2: Error -5 detected when updating journal superblock for dm-1-8.
+[90141.967403] Buffer I/O error on dev dm-1, logical block 0, lost sync page write
+[90141.967454] EXT4-fs (dm-1): I/O error while writing superblock
+[90141.967467] EXT4-fs error (device dm-1): ext4_journal_check_start:61: Detected aborted journal
+[90141.967473] EXT4-fs (dm-1): Remounting filesystem read-only
+[90141.967569] Buffer I/O error on dev dm-1, logical block 0, lost sync page write
+[90141.967682] EXT4-fs (dm-1): I/O error while writing superblock
 
-diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
-index 197609691525..a4ed382ddfc7 100644
---- a/sound/soc/codecs/da7213.c
-+++ b/sound/soc/codecs/da7213.c
-@@ -1163,6 +1163,8 @@ static int da7213_hw_params(struct snd_pcm_substream *substream,
- 			    struct snd_soc_dai *dai)
- {
- 	struct snd_soc_component *component = dai->component;
-+	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
-+	int freq = 0;
- 	u8 dai_ctrl = 0;
- 	u8 fs;
- 
-@@ -1188,38 +1190,54 @@ static int da7213_hw_params(struct snd_pcm_substream *substream,
- 	switch (params_rate(params)) {
- 	case 8000:
- 		fs = DA7213_SR_8000;
-+		freq = DA7213_PLL_FREQ_OUT_98304000;
- 		break;
- 	case 11025:
- 		fs = DA7213_SR_11025;
-+		freq = DA7213_PLL_FREQ_OUT_90316800;
- 		break;
- 	case 12000:
- 		fs = DA7213_SR_12000;
-+		freq = DA7213_PLL_FREQ_OUT_98304000;
- 		break;
- 	case 16000:
- 		fs = DA7213_SR_16000;
-+		freq = DA7213_PLL_FREQ_OUT_98304000;
- 		break;
- 	case 22050:
- 		fs = DA7213_SR_22050;
-+		freq = DA7213_PLL_FREQ_OUT_90316800;
- 		break;
- 	case 32000:
- 		fs = DA7213_SR_32000;
-+		freq = DA7213_PLL_FREQ_OUT_98304000;
- 		break;
- 	case 44100:
- 		fs = DA7213_SR_44100;
-+		freq = DA7213_PLL_FREQ_OUT_90316800;
- 		break;
- 	case 48000:
- 		fs = DA7213_SR_48000;
-+		freq = DA7213_PLL_FREQ_OUT_98304000;
- 		break;
- 	case 88200:
- 		fs = DA7213_SR_88200;
-+		freq = DA7213_PLL_FREQ_OUT_90316800;
- 		break;
- 	case 96000:
- 		fs = DA7213_SR_96000;
-+		freq = DA7213_PLL_FREQ_OUT_98304000;
- 		break;
- 	default:
- 		return -EINVAL;
- 	}
- 
-+	/* setup PLL */
-+	if (da7213->fixed_clk_auto) {
-+		snd_soc_component_set_pll(component, 0, DA7213_SYSCLK_PLL,
-+					  da7213->mclk_rate, freq);
-+	}
-+
- 	snd_soc_component_update_bits(component, DA7213_DAI_CTRL, DA7213_DAI_WORD_LENGTH_MASK,
- 			    dai_ctrl);
- 	snd_soc_component_write(component, DA7213_SR, fs);
-@@ -1700,10 +1718,10 @@ static struct da7213_platform_data
- 	return pdata;
- }
- 
--
- static int da7213_probe(struct snd_soc_component *component)
- {
- 	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
-+	int ret;
- 
- 	pm_runtime_get_sync(component->dev);
- 
-@@ -1836,6 +1854,20 @@ static int da7213_probe(struct snd_soc_component *component)
- 			return PTR_ERR(da7213->mclk);
- 		else
- 			da7213->mclk = NULL;
-+	} else {
-+		/* Store clock rate for fixed clocks for automatic PLL setup */
-+		ret = clk_prepare_enable(da7213->mclk);
-+		if (ret) {
-+			dev_err(component->dev, "Failed to enable mclk\n");
-+			return ret;
-+		}
-+
-+		da7213->mclk_rate = clk_get_rate(da7213->mclk);
-+
-+		clk_disable_unprepare(da7213->mclk);
-+
-+		/* assume fixed clock until set_sysclk() is being called */
-+		da7213->fixed_clk_auto = true;
- 	}
- 
- 	return 0;
-diff --git a/sound/soc/codecs/da7213.h b/sound/soc/codecs/da7213.h
-index 97a250ea39e6..00aca0126cdb 100644
---- a/sound/soc/codecs/da7213.h
-+++ b/sound/soc/codecs/da7213.h
-@@ -532,6 +532,7 @@ struct da7213_priv {
- 	bool master;
- 	bool alc_calib_auto;
- 	bool alc_en;
-+	bool fixed_clk_auto;
- 	struct da7213_platform_data *pdata;
- };
- 
--- 
-2.24.0.rc1
+and I've not managed to recover the thing yet (it's stuck trying to reboot.)
 
+What state was your system in after unbinding the SMMU?
+
+Will
