@@ -2,72 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ADADF43E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:52:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A6EF43ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 10:53:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731181AbfKHJwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 04:52:18 -0500
-Received: from sonic306-1.consmr.mail.bf2.yahoo.com ([74.6.132.40]:37957 "EHLO
-        sonic306-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730623AbfKHJwS (ORCPT
+        id S1731180AbfKHJxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 04:53:45 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39594 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730573AbfKHJxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 04:52:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1573206737; bh=E+ks7AydzaUb4ISZTuxin7s0E6gVmk5020fTLYVYB5E=; h=Date:From:Reply-To:Subject:From:Subject; b=X6nj90XjtlU6T6ebLwSHC3Q5Y58VzSih6V9pYFaTPRCHugJ9LIj0Z7sEFSZlsmuP0GkVfKHFBIuTwHQLtd5O41SE5mnQY562IwpfMvYVYhF5jEmKATuc2KFCunYEKrVOGgHLrmpiZbPO+TKhecWagjKyBqvXjWVI047XcmVC+y9VbTdXisR+miE9lYEe3lAcGti5+4HkvF0tDQmLq2n2SU+6S2kF4hnlm7PxVy+Tbp29h+Ztg1LbY4nVVdYycp4YvsK4dsAr9Xjsy0pXQ+NQs5+C1R7JBGuMDkL8LA9uGYooUWkFVNws1MKbUeYymihqJLrKnLYmo4t/gTdWP7IwZA==
-X-YMail-OSG: D7yO27MVM1kYO3wptMA_ceyfXv0Djd.b8APxJgGNvkPeGP5O9R433Kos3iUlMjR
- ucvQq7ZopJuBpdXht3L1K_QEuOb1TOHqJCKEvZZU.7wHoagWu.iZSwqHa4HTZ14ucWjC6nBR3QhW
- ebb1UFKCpgvJej7XxsRHIEtyZg2NL9EFH9DgBeWDliC_lOoprDn8B.LNLpuYuGcfmEgw6ozV4pso
- 5Sn8jt7caQCorIpsxNbXcMJR4E1iqZ9B29FOkbr4x8SYKpk44EZ9C8iVCqwOSSzmuXM3gzf6khVU
- ofOCxacZwzsgLJx1IZ8V5os6uRMKVbzSVYGaAc9Xjfnuq6lyOvyDZf3nJRZw1bae.SfAZX47shth
- nN24obEpV789EnNFkRP55964buzTwzEOkwKspbidol7X6.XzYRawkMe4UtyWGsrpuHfW8uCsDJBg
- ZvjjwWch8leLywijkgK1AghZCAPp_068DfnnfRejEPwfVAaxbCY2AdNw7tf7_yr1lmVwa5jsjg_X
- xQI8HVPb5fCp48zt9HxaUmI6WA.Y2R9rs1o9mG80Cl6CXY15udPA6VFFxNoq.BBuBy3np.OwAre2
- _y5Rq6AM08_pr.yAPzoKc8.JuFNLdam5vpN2qSwNOaFIPW2l.unJAImt7mF19GVUby4DlsVvRBAC
- aPl2z8QGWArEEtgb3.LD5V6IoIwUxPj8kD9wNm99hZaF3SmIYzrFK9klQFM26MtHGsEivYFAYSS1
- 8tIecMVuFFONrUgBan5SNdxsT1u77LlgdR_djDPGRoeZ9ZffXdEr1pt00KA5vdQfVU7pW5hb3Ugq
- TrwlOPrWz.rRsAFhX0sC54uWazvcXgzlt49ISR1iuJZt149nsOEjbqs.rMdkUD1z3JNpmIwwHWv9
- od1H6ifaypl68dzHklXb9LSaJW0H4EJb24AtzLRcEM_9AcbeDjg5Qlqz7amjRlKFHUVLlGTQ8esf
- wW1Sl5JY6RGOoXiEGMeQM8EOQ3p1iSTXX_DKCPF19l3sxbjogxiEFHkevo_4JCa3jTtwyoTNJhaj
- i.IsdC28Z.XmWysY090xaIi0CLYtsFd8FZJc6ywK77zK3UW8dtWqNyHJX3fPRIJBMfnNqxGoT__W
- x548evzaW1svkbsogw.crzqnol.Bd4rNx2UpN5j.JAwh9rUUmpOjx54xR8BhcZbyHeXIoKBPGXRa
- NAkFlQcbgOHWGPTc6p7uD566naAF6dSfpG.15RVibNfHXNzCmUt8qB7it0qMEY.kOIDIgwEhkqFO
- MV60FyGOMDEPBJHBiBjSKzlrMKkoBEENuyyaX17GafEbWrBj7sESTWh5enCK9vxr37pSxXgCmJ4Q
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Fri, 8 Nov 2019 09:52:17 +0000
-Date:   Fri, 8 Nov 2019 09:52:14 +0000 (UTC)
-From:   Aisha Gaddafi <aishagaddafi66@aol.com>
-Reply-To: gaddafia504@gmail.com
-Message-ID: <515539297.869345.1573206734970@mail.yahoo.com>
-Subject: Dear Friend,
+        Fri, 8 Nov 2019 04:53:44 -0500
+Received: by mail-wr1-f68.google.com with SMTP id a11so6287662wra.6
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 01:53:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bD5Fn3LbdHLtW6P7NmPGZyBXGmZSnfzZNFhZsK1WN44=;
+        b=VYSP9ErePUf1fZPl2fba/NoBG6HT0c/TEOOghm1e708BJfxvweThIA6IXmqIh93ohm
+         meQBbRVDnk2HICKb7IgI5de0aghls0v4jihkkFYXPgnz+EdX6Zu2hcM9S98C3b5M16qN
+         WOH4ImgF3469jUkRTue49eAg1/gMIN+jJudUklK6xseemTt0QmbArcaQJmwlqvOHleNP
+         ScUlj3TM8bHPT0KJkdZWVGTnVufHUVM9xMXeqlod0eIDHxWflMaj/C+XqP2L4xu+NsQE
+         t+JPWIw5fWQJ93QkFCByJCDwpI2JIs8uL5vtOBEoMaXaeulNyQ2MaJnJR8REz0cQFtxS
+         shTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bD5Fn3LbdHLtW6P7NmPGZyBXGmZSnfzZNFhZsK1WN44=;
+        b=ml0+CPrt8MVuUDynetTIzSd1TxmZMV6gKRAzD2ii6gHYyh3V0L6ycn0muOqwTO6Kta
+         bzaPbEd6Ibf/YYL8ozxRorbTWmQolJXDJ4CDgnoSobWMmgcNxa0j3f3C0HgM68OOgrPE
+         iXtnGHaKV4Z6SlRM6QT5a5Ef7UcSRzFGWEOHutfqTs751wI0CbbREh7zDHBrT/HW7Fp1
+         Fvkg0zJNXtV6cIbV6ErSC/xXbWFsjfT82x8BdvDWib35GUyph0Q4ldlLzJKkwRZ48lLI
+         9oyRe9gqj7I6Uewz1CvSQrx/iAm4zABqMYswGFHtb/krUjdsNBlMKRHU+DPTehvGv8JY
+         mdAA==
+X-Gm-Message-State: APjAAAWfm/rsWiKZXtaexFDu1zBxQeyM2if6uf6o+YDB2akqr6enmjGe
+        Xlv5C7/+GZWPYllCPRoNiQ0M7b5TS73ean1fZSE=
+X-Google-Smtp-Source: APXvYqzr5LGLxlCBHsxSVIvntfRuYo9GZ5mB+/AEGG7H1x9L6yzHCoU0dK9ixojjv9ZHAb5GssOD5bpzctkISDIVwOU=
+X-Received: by 2002:adf:e2cc:: with SMTP id d12mr7061916wrj.168.1573206822653;
+ Fri, 08 Nov 2019 01:53:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20191108082244.GA29418@shao2-debian>
+In-Reply-To: <20191108082244.GA29418@shao2-debian>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Fri, 8 Nov 2019 17:53:31 +0800
+Message-ID: <CACVXFVMGR175kksqB6ux+=xRuVokA2bXOLidoT0=-AmCEgbk2Q@mail.gmail.com>
+Subject: Re: [block] fa53228721: WARNING:at_block/blk-merge.c:#blk_rq_map_sg
+To:     kernel test robot <lkp@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@fb.com>,
+        lkp@lists.01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Fri, Nov 8, 2019 at 4:23 PM kernel test robot <lkp@intel.com> wrote:
+>
+> FYI, we noticed the following commit (built with gcc-7):
+>
+> commit: fa53228721876515adabc7bc74368490bd97aa3b ("block: avoid blk_bio_segment_split for small I/O operations")
+> https://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git for-5.5/block
+>
+> in testcase: xfstests
+> with following parameters:
+>
+>         disk: 4HDD
+>         fs: xfs
+>         test: xfs-group16
+>
+> test-description: xfstests is a regression test suite for xfs and other files ystems.
+> test-url: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+>
+>
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
+>
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+>
+>
+> +---------------------------------------------+------------+------------+
+> |                                             | d2c9be89f8 | fa53228721 |
+> +---------------------------------------------+------------+------------+
+> | boot_successes                              | 12         | 0          |
+> | boot_failures                               | 0          | 16         |
+> | WARNING:at_block/blk-merge.c:#blk_rq_map_sg | 0          | 16         |
+> | RIP:blk_rq_map_sg                           | 0          | 16         |
+> | kernel_BUG_at_drivers/scsi/scsi_lib.c       | 0          | 16         |
+> | invalid_opcode:#[##]                        | 0          | 16         |
+> | RIP:scsi_init_io                            | 0          | 16         |
+> | Kernel_panic-not_syncing:Fatal_exception    | 0          | 16         |
+> +---------------------------------------------+------------+------------+
+>
+>
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <lkp@intel.com>
+>
+>
+> [  203.892883] WARNING: CPU: 0 PID: 443 at block/blk-merge.c:559 blk_rq_map_sg+0x649/0x700
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+If the bvec crosses page boundary, and meantime its length is
+<=PAGE_SIZE, this issue may be triggered, given
+some device has PAGE_SIZE segment boundary limit.
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
+The following patch should fix this issue:
 
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index f22cb6251d06..367d3358de2a 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -319,7 +319,8 @@ void __blk_queue_split(struct request_queue *q,
+struct bio **bio,
+                 */
+                if (!q->limits.chunk_sectors &&
+                    (*bio)->bi_vcnt == 1 &&
+-                   (*bio)->bi_io_vec[0].bv_len <= PAGE_SIZE) {
++                   ((*bio)->bi_io_vec[0].bv_len +
++                    (*bio)->bi_io_vec[0].bv_offset) <= PAGE_SIZE) {
+                        *nr_segs = 1;
+                        break;
+                }
 
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
+However, in case of 64K PAGE_SIZE, I guess this way is still not safe enough.
 
-Your Urgent Reply Will Be Appreciated.
-
-Best Regards
-Mrs Aisha Gaddafi
-(gaddafia504@gmail.com)
+thanks,
+Ming
