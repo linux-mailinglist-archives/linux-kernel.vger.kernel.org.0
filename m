@@ -2,78 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A6B3F59D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:28:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FB77F5A14
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 22:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387480AbfKHV06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 16:26:58 -0500
-Received: from mail-qk1-f177.google.com ([209.85.222.177]:44837 "EHLO
-        mail-qk1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387395AbfKHV05 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:26:57 -0500
-Received: by mail-qk1-f177.google.com with SMTP id m16so6567843qki.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 13:26:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=E/re/TtVqjhhFyMNUDrEMQoMA+rNSBWgaDnjt6xblfc=;
-        b=BGsscPnI0I/AhxQtkp1ur0VrFYXf5H8Fg7QmP8nllWAk3LB+1xRvuro/YNq+Wi4p5F
-         3ZAD5u8+aHKV6BCRpJFppf3VuxZKf/sv7n021xyePsMo0qyk4ioIipKyJxsfny2R6RX3
-         muOR0J1B2kxQSzV9581+eZYOESV3d8dZz1I/0lFZM3rKt3ovoGT+VSWRIahQ6OsN3IV1
-         s8FtMLqcLzCVTjdBygGBm4m5G43Y6e3kQ7cTLWjekKCGP5ylAKVgqVGK8DUT21Ht4cN8
-         7GXkMXTsKy8U08dIiAi7+G9AKRSNl22O/wb8ep0nz17TwjAIvaYLFkN2KBK6QMSY1A7d
-         ming==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=E/re/TtVqjhhFyMNUDrEMQoMA+rNSBWgaDnjt6xblfc=;
-        b=S/6tTGdmBHkEx0/Wfqpwnr3Yc5VfKRdwTdJ8dVItdOtlsEi/eLKHL4vAfdKmDqFd3z
-         xJLUVKbN3dJSN8WhZBRJvgWW1FnndF2Zdqu/EjwuELCO+JaQM5Tko+n64dv0HOlujudz
-         oMLR9/pS4fMrTaDYEuVqgyGAH7c9k3sVh9gHlNCicc+1tbms5/WDlwjjzbk47hiD3Q2X
-         etIVRCPR0fyXpgDltoTjujpqg7/FnPlE9Ur+iNHmVGA6n4VZ73tdirir5jwoSaUFSbK/
-         m2bWa1ypQwBwSek5A5kXkXHz4wNA173uNugAG3rpvjFaHDu8MFt6UfSXXGJ5M4LQzAOR
-         2AzQ==
-X-Gm-Message-State: APjAAAUdNYJJ22AxNLdlJcXBMWqJtX9fRK5SR1IPLOlBtPoWIAUncajd
-        tORpL9pF4sSINz76TX9Ft/3N6AXW8H+MNw==
-X-Google-Smtp-Source: APXvYqyLA9raRCjGEtQ5L5aO6bE7f5z5e7jdeJYvdN/uTfRWHR1m08qA/W6lvIBR0YH8Zrl54083xw==
-X-Received: by 2002:a37:9d86:: with SMTP id g128mr11128288qke.191.1573248415230;
-        Fri, 08 Nov 2019 13:26:55 -0800 (PST)
-Received: from ?IPv6:2600:1000:b04c:9cbe:6d67:a89d:e323:d2c? ([2600:1000:b04c:9cbe:6d67:a89d:e323:d2c])
-        by smtp.gmail.com with ESMTPSA id o2sm3375987qte.79.2019.11.08.13.26.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2019 13:26:54 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH -next] mm/vmscan: fix an undefined behavior for zone id
-Date:   Fri, 8 Nov 2019 16:26:52 -0500
-Message-Id: <64E60F6F-7582-427B-8DD5-EF97B1656F5A@lca.pw>
-References: <20191108204407.1435-1-cai@lca.pw>
-Cc:     mhocko@suse.com, hannes@cmpxchg.org, guro@fb.com,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191108204407.1435-1-cai@lca.pw>
-To:     akpm@linux-foundation.org
-X-Mailer: iPhone Mail (17A878)
+        id S1733055AbfKHVey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 16:34:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbfKHVev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:34:51 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4A10215EA;
+        Fri,  8 Nov 2019 21:34:50 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1iTBu5-0007v7-NB; Fri, 08 Nov 2019 16:34:49 -0500
+Message-Id: <20191108212834.594904349@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Fri, 08 Nov 2019 16:28:34 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 00/10] ftrace: Add register_ftrace_direct()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Alexei mentioned that he would like a way to access the ftrace fentry
+code to jump directly to a custom eBPF trampoline instead of using
+ftrace regs caller, as he said it would be faster.
 
-> On Nov 8, 2019, at 3:44 PM, Qian Cai <cai@lca.pw> wrote:
-> 
-> -    for (zid = 0; zid <= zone_idx; zid++) {
-> +    for (zid = 0; zid < zone_idx; zid++) {
->        struct zone *zone =
+I proposed a new register_ftrace_direct() function that would allow
+this to happen and still work with the ftrace infrastructure. I posted
+a proof of concept patch here:
 
-Oops, I think here needs to be,
+ https://lore.kernel.org/r/20191023122307.756b4978@gandalf.local.home
 
-for (zid = 0; zid <= zone_idx && zid < MAX_NR_ZONES; zid++) {
+This patch series is a more complete version, and the start of the
+actual implementation. I haven't run it through my full test suite but
+it passes my smoke tests and some other custom tests I built.
 
-to deal with this MAX_NR_ZONES special case.
+I also realized that I need to make the sample modules depend on X86_64
+as it has inlined assembly in it that requires that dependency.
+
+This is based on 5.4-rc6 plus the permanent patches that prevent
+a ftrace_ops from being disabled by /proc/sys/kernel/ftrace_enabled
+
+Below is the tree that contains this code.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+ftrace/direct
+
+Head SHA1: 9492654d091cb90a487ca669c58f802fa99bcd6f
+
+Enjoy,
+
+-- Steve
+
+
+Steven Rostedt (VMware) (10):
+      ftrace: Separate out the copying of a ftrace_hash from __ftrace_hash_move()
+      ftrace: Separate out functionality from ftrace_location_range()
+      ftrace: Add register_ftrace_direct()
+      ftrace: Add ftrace_find_direct_func()
+      ftrace: Add sample module that uses register_ftrace_direct()
+      ftrace/selftest: Add tests to test register_ftrace_direct()
+      ftrace: Add another example of register_ftrace_direct() use case
+      ftrace/selftests: Update the direct call selftests to test two direct calls
+      ftrace/x86: Add register_ftrace_direct() for custom trampolines
+      ftrace/x86: Add a counter to test function_graph with direct
+
+----
+ arch/x86/Kconfig                                   |   1 +
+ arch/x86/include/asm/ftrace.h                      |  13 +
+ arch/x86/kernel/ftrace.c                           |  14 +
+ arch/x86/kernel/ftrace_64.S                        |  33 +-
+ include/linux/ftrace.h                             |  50 ++-
+ kernel/trace/Kconfig                               |   8 +
+ kernel/trace/ftrace.c                              | 420 +++++++++++++++++++--
+ samples/Kconfig                                    |   7 +
+ samples/Makefile                                   |   1 +
+ samples/ftrace/Makefile                            |   4 +
+ samples/ftrace/ftrace-direct-too.c                 |  51 +++
+ samples/ftrace/ftrace-direct.c                     |  45 +++
+ .../ftrace/test.d/direct/ftrace-direct.tc          |  69 ++++
+ .../ftrace/test.d/direct/kprobe-direct.tc          |  84 +++++
+ 14 files changed, 759 insertions(+), 41 deletions(-)
+ create mode 100644 samples/ftrace/Makefile
+ create mode 100644 samples/ftrace/ftrace-direct-too.c
+ create mode 100644 samples/ftrace/ftrace-direct.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
