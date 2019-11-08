@@ -2,96 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B96CF4C63
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:03:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7587CF4C5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 14:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731366AbfKHNCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 08:02:51 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39445 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730945AbfKHNC2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 08:02:28 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z24so1469371lfh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 05:02:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eoU6yRz6gH6qOWyRe/vJLGf2pgvTpCjyg96xNihJCPI=;
-        b=O/6AGo/ZGsFlsmLzJdyEPO3mV8xhZwNRXLRrD1SwfTKq6IMDjQUNw7j0VpK1oVFyLL
-         wc5e8wLviGXZ87K0ZB9XM3865S7c5VlogZhWCTbefzWUbe06CEYaPSev0sIHG2QmP0NR
-         92+WT/4laZ948//hxG0mEeosoGrg8VxvjMNyk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eoU6yRz6gH6qOWyRe/vJLGf2pgvTpCjyg96xNihJCPI=;
-        b=C+rj40NVxZoZuCoSdXjxQvUTX3+tTs1z19qA++2cglvWlYhLbPgKjhS4SCM5Qym9l2
-         OWrR/Yjgo1DaHUKBRRbIk+3ZwDsE9rh799LbMIuZDchwKX4NCjoX4DL+NfRn1FCcLEQC
-         nNMV6+tWM/xTksJfJ6cYsxC3Kdwp3r9MOXFxr4l/ZAORwvfGSKt8a5WaleiWKkzMqwPp
-         B9AJW+CuA0bDsWYm6TzmFETB8TGRWcpVc5TzuAQql203kPsOvTfOQPidp3FQ9srtBroK
-         9Kx7RGdA4DgrKNBGlZB+RFaIfBpydwfMJiY3mYK3qUaeo3ZydpBr/3ZR4xverwy0sz+j
-         qhrg==
-X-Gm-Message-State: APjAAAVsi4zo53NL3Dr8XKygaa889f9GeE7jMRBf/pJC73enGxPXtbAy
-        q0CtO/r7cU+faxEz39PkHe55Gg==
-X-Google-Smtp-Source: APXvYqwxS6IOvsV8gHqknaTDjoYrWzUraN+5B9FEomuPHvbNlLsU0KSDBbHmOzMq8nrZpelvp/lTbQ==
-X-Received: by 2002:ac2:5097:: with SMTP id f23mr6576512lfm.90.1573218146378;
-        Fri, 08 Nov 2019 05:02:26 -0800 (PST)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id d28sm2454725lfn.33.2019.11.08.05.02.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2019 05:02:25 -0800 (PST)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Wood <oss@buserror.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v4 47/47] soc: fsl: qe: remove PPC32 dependency from CONFIG_QUICC_ENGINE
-Date:   Fri,  8 Nov 2019 14:01:23 +0100
-Message-Id: <20191108130123.6839-48-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
-References: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
+        id S1731211AbfKHNCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 08:02:37 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38246 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730662AbfKHNCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 08:02:36 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CD6587B9FF91A25B08F4;
+        Fri,  8 Nov 2019 21:02:33 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 8 Nov 2019
+ 21:02:25 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <leoyang.li@nxp.com>, <alexandre.belloni@bootlin.com>
+CC:     <linuxppc-dev@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] soc: fsl: Enable COMPILE_TEST
+Date:   Fri, 8 Nov 2019 21:02:13 +0800
+Message-ID: <20191108130213.23684-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are also ARM and ARM64 based SOCs with a QUICC Engine, and the
-core QE code as well as net/wan/fsl_ucc_hdlc and tty/serial/ucc_uart
-has now been modified to not rely on ppcisms.
+When do COMPILE_TEST buiding for RTC_DRV_FSL_FTM_ALARM,
+we get this warning:
 
-So extend the architectures that can select QUICC_ENGINE, and add the
-rather modest requirements of OF && HAS_IOMEM.
+WARNING: unmet direct dependencies detected for FSL_RCPM
+  Depends on [n]: PM_SLEEP [=y] && (ARM || ARM64)
+  Selected by [m]:
+  - RTC_DRV_FSL_FTM_ALARM [=m] && RTC_CLASS [=y] && (ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST [=y])
 
-The core code as well as the ucc_uart driver has been tested on an
-LS1021A (arm), and it has also been tested that the QE code still
-works on an mpc8309 (ppc).
+This enable COMPILE_TEST for FSL_RCPM to fix the issue.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Fixes: e1c2feb1efa2 ("rtc: fsl-ftm-alarm: allow COMPILE_TEST")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/soc/fsl/qe/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+In commit c6c2d36bc46f ("rtc: fsl-ftm-alarm: Fix build error without PM_SLEEP")
+I posted a wrong kconfig warning(which PM_SLEEP is n), sorry for confusion.
+---
+ drivers/soc/fsl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
-index cfa4b2939992..f1974f811572 100644
---- a/drivers/soc/fsl/qe/Kconfig
-+++ b/drivers/soc/fsl/qe/Kconfig
-@@ -5,7 +5,8 @@
+diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
+index 4df32bc..e142662 100644
+--- a/drivers/soc/fsl/Kconfig
++++ b/drivers/soc/fsl/Kconfig
+@@ -43,7 +43,7 @@ config DPAA2_CONSOLE
  
- config QUICC_ENGINE
- 	bool "QUICC Engine (QE) framework support"
--	depends on FSL_SOC && PPC32
-+	depends on OF && HAS_IOMEM
-+	depends on PPC32 || ARM || ARM64 || COMPILE_TEST
- 	select GENERIC_ALLOCATOR
- 	select CRC32
+ config FSL_RCPM
+ 	bool "Freescale RCPM support"
+-	depends on PM_SLEEP && (ARM || ARM64)
++	depends on PM_SLEEP && (ARM || ARM64 || COMPILE_TEST)
  	help
+ 	  The NXP QorIQ Processors based on ARM Core have RCPM module
+ 	  (Run Control and Power Management), which performs all device-level
 -- 
-2.23.0
+2.7.4
+
 
