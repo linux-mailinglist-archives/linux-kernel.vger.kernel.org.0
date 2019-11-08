@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0964F5585
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FDA3F56DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390671AbfKHTC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:02:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60770 "EHLO mail.kernel.org"
+        id S2390996AbfKHTMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:12:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387457AbfKHTC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 14:02:56 -0500
+        id S2390051AbfKHTJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 14:09:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35AB5215EA;
-        Fri,  8 Nov 2019 19:02:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F66B2087E;
+        Fri,  8 Nov 2019 19:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239775;
-        bh=WmOcJMhOy+iSbGh+HRZw31aZbXaM0RzcRwAY467U6fg=;
+        s=default; t=1573240168;
+        bh=lVfUzs0XaUfMA1SqTd9PMM/LNeM6DjQ5596yGRW+XvI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VlvQd4sCeV90xYKexsz5L8TwpBRUhJNdY4PhIWT7lDDBMjq+ik97bU707uiDilBhF
-         NeobbkUqLSKzgboFNhrxMJrQEfcrNPVirDThzBT3b3tf5viLvItNuPDbbufj/HsSVB
-         FgDxxbbbagYLpdEyXqVuytuIHc3uQ9vZoBw17yeE=
+        b=ZIOz8m66vZlBtDJmpCP3YkmKPWQ5evsYhfInVvIq4uh+ogGH3oB25yuSsoavcy3T9
+         hWcoq9MpMFTNV+xCuaHzE0QXkw8tkYFvZjmYPuj50oYnh6tHB1VZ5lp2g6Rw6L8sxw
+         uTk9spj9Nb7OEmNv+oxTVaZ46JcmxLFOPOU+9qig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 57/79] net: use skb_queue_empty_lockless() in busy poll contexts
-Date:   Fri,  8 Nov 2019 19:50:37 +0100
-Message-Id: <20191108174819.403194786@linuxfoundation.org>
+        stable@vger.kernel.org, Dmytro Linkin <dmitrolin@mellanox.com>,
+        Jianbo Liu <jianbol@mellanox.com>,
+        Oz Shlomo <ozsh@mellanox.com>, Roi Dayan <roid@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.3 110/140] net/mlx5e: Determine source port properly for vlan push action
+Date:   Fri,  8 Nov 2019 19:50:38 +0100
+Message-Id: <20191108174911.801053479@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-References: <20191108174745.495640141@linuxfoundation.org>
+In-Reply-To: <20191108174900.189064908@linuxfoundation.org>
+References: <20191108174900.189064908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,81 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dmytro Linkin <dmitrolin@mellanox.com>
 
-[ Upstream commit 3f926af3f4d688e2e11e7f8ed04e277a14d4d4a4 ]
+[ Upstream commit d5dbcc4e87bc8444bd2f1ca4b8f787e1e5677ec2 ]
 
-Busy polling usually runs without locks.
-Let's use skb_queue_empty_lockless() instead of skb_queue_empty()
+Termination tables are used for vlan push actions on uplink ports.
+To support RoCE dual port the source port value was placed in a register.
+Fix the code to use an API method returning the source port according to
+the FW capabilities.
 
-Also uses READ_ONCE() in __skb_try_recv_datagram() to address
-a similar potential problem.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 10caabdaad5a ("net/mlx5e: Use termination table for VLAN push actions")
+Signed-off-by: Dmytro Linkin <dmitrolin@mellanox.com>
+Reviewed-by: Jianbo Liu <jianbol@mellanox.com>
+Reviewed-by: Oz Shlomo <ozsh@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/chelsio/chtls/chtls_io.c |    2 +-
- net/core/datagram.c                     |    2 +-
- net/core/sock.c                         |    2 +-
- net/ipv4/tcp.c                          |    2 +-
- net/sctp/socket.c                       |    2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c |   22 +++++++---
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
---- a/drivers/crypto/chelsio/chtls/chtls_io.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_io.c
-@@ -1716,7 +1716,7 @@ int chtls_recvmsg(struct sock *sk, struc
- 		return peekmsg(sk, msg, len, nonblock, flags);
- 
- 	if (sk_can_busy_loop(sk) &&
--	    skb_queue_empty(&sk->sk_receive_queue) &&
-+	    skb_queue_empty_lockless(&sk->sk_receive_queue) &&
- 	    sk->sk_state == TCP_ESTABLISHED)
- 		sk_busy_loop(sk, nonblock);
- 
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -279,7 +279,7 @@ struct sk_buff *__skb_try_recv_datagram(
- 			break;
- 
- 		sk_busy_loop(sk, flags & MSG_DONTWAIT);
--	} while (sk->sk_receive_queue.prev != *last);
-+	} while (READ_ONCE(sk->sk_receive_queue.prev) != *last);
- 
- 	error = -EAGAIN;
- 
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -3483,7 +3483,7 @@ bool sk_busy_loop_end(void *p, unsigned
- {
- 	struct sock *sk = p;
- 
--	return !skb_queue_empty(&sk->sk_receive_queue) ||
-+	return !skb_queue_empty_lockless(&sk->sk_receive_queue) ||
- 	       sk_busy_loop_timeout(sk, start_time);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+@@ -177,22 +177,32 @@ mlx5_eswitch_termtbl_actions_move(struct
+ 	memset(&src->vlan[1], 0, sizeof(src->vlan[1]));
  }
- EXPORT_SYMBOL(sk_busy_loop_end);
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1948,7 +1948,7 @@ int tcp_recvmsg(struct sock *sk, struct
- 	if (unlikely(flags & MSG_ERRQUEUE))
- 		return inet_recv_error(sk, msg, len, addr_len);
  
--	if (sk_can_busy_loop(sk) && skb_queue_empty(&sk->sk_receive_queue) &&
-+	if (sk_can_busy_loop(sk) && skb_queue_empty_lockless(&sk->sk_receive_queue) &&
- 	    (sk->sk_state == TCP_ESTABLISHED))
- 		sk_busy_loop(sk, nonblock);
++static bool mlx5_eswitch_offload_is_uplink_port(const struct mlx5_eswitch *esw,
++						const struct mlx5_flow_spec *spec)
++{
++	u32 port_mask, port_value;
++
++	if (MLX5_CAP_ESW_FLOWTABLE(esw->dev, flow_source))
++		return spec->flow_context.flow_source == MLX5_VPORT_UPLINK;
++
++	port_mask = MLX5_GET(fte_match_param, spec->match_criteria,
++			     misc_parameters.source_port);
++	port_value = MLX5_GET(fte_match_param, spec->match_value,
++			      misc_parameters.source_port);
++	return (port_mask & port_value & 0xffff) == MLX5_VPORT_UPLINK;
++}
++
+ bool
+ mlx5_eswitch_termtbl_required(struct mlx5_eswitch *esw,
+ 			      struct mlx5_flow_act *flow_act,
+ 			      struct mlx5_flow_spec *spec)
+ {
+-	u32 port_mask = MLX5_GET(fte_match_param, spec->match_criteria,
+-				 misc_parameters.source_port);
+-	u32 port_value = MLX5_GET(fte_match_param, spec->match_value,
+-				  misc_parameters.source_port);
+-
+ 	if (!MLX5_CAP_ESW_FLOWTABLE_FDB(esw->dev, termination_table))
+ 		return false;
  
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -8334,7 +8334,7 @@ struct sk_buff *sctp_skb_recv_datagram(s
- 		if (sk_can_busy_loop(sk)) {
- 			sk_busy_loop(sk, noblock);
+ 	/* push vlan on RX */
+ 	return (flow_act->action & MLX5_FLOW_CONTEXT_ACTION_VLAN_PUSH) &&
+-		((port_mask & port_value) == MLX5_VPORT_UPLINK);
++		mlx5_eswitch_offload_is_uplink_port(esw, spec);
+ }
  
--			if (!skb_queue_empty(&sk->sk_receive_queue))
-+			if (!skb_queue_empty_lockless(&sk->sk_receive_queue))
- 				continue;
- 		}
- 
+ struct mlx5_flow_handle *
 
 
