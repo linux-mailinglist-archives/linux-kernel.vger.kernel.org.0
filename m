@@ -2,102 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47459F5208
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87EC7F5202
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 18:04:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbfKHRBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 12:01:55 -0500
-Received: from mail-lj1-f182.google.com ([209.85.208.182]:44552 "EHLO
-        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730745AbfKHRBx (ORCPT
+        id S1730692AbfKHRBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 12:01:50 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37304 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbfKHRBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:01:53 -0500
-Received: by mail-lj1-f182.google.com with SMTP id g3so6938251ljl.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:01:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=areMWrVEmfkCGN5C3vFUMp6ntvtTANx8pMI7+P+pQwk=;
-        b=fTQAG1nv+Xfvawkzfroy56UyjdshaUI6tDZmA2U31BY2vRabBOWqqcIrGwEiaPTMLM
-         UpxslrqN19Q5RkBzYwKrg+R9FYC+kmfTcy86WRoQeVweyUd8I+BSDcL1kR2UVpc9heaR
-         8C9Z7s7NSuSZCqLYqqjNuS4lSdyWdr7omtzoY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=areMWrVEmfkCGN5C3vFUMp6ntvtTANx8pMI7+P+pQwk=;
-        b=jxO0UcFecw31XBZjSU06rCHPduQRGoHsNlCusBnvDmvTLKpsMu9FctI4Ay9t4m53wk
-         tEP8xaqVcqlNPmByCUoYHdoWck1cn/wpignXlHWZR60cg/4YsxUgYLLxYHLZa5/epk9v
-         PBvd0whXbq1ZlcMsFpRfHe0RFzoXvY4eny2yiAWQQM3PvapaQl6emvG4QiKTGSm2Zk3S
-         RxBnQXazspKeymIIVZQ78O831bJNpxYEHG3RLXLPe7p2bNxHBzSNax5F4/1y6YX+jpr6
-         UdYobjF0KAAD40/yow5tNq2cNfg2DNZN3AVfxW3EYggZ5rNzBc8UXiTjSotV6Z4ycZ1y
-         D49g==
-X-Gm-Message-State: APjAAAUmp2PjkYRTjdzH6rUZ2U1kd3kJm0MoimyP1SBCoGTI/xFcMYlk
-        6sbA7/nFfg+WJy3WexrfUxlScEUksE0=
-X-Google-Smtp-Source: APXvYqzqpM8s5ESVfxjdvwEwzN2kNzCBEHQ9IsmHh/igQ+7Ug+UqzjidKbU2uKW1xeBYODI6/WDT6Q==
-X-Received: by 2002:a2e:a175:: with SMTP id u21mr7430836ljl.198.1573232510173;
-        Fri, 08 Nov 2019 09:01:50 -0800 (PST)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id o5sm3161909lfn.78.2019.11.08.09.01.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2019 09:01:49 -0800 (PST)
-Received: by mail-lj1-f180.google.com with SMTP id r7so6982166ljg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 09:01:48 -0800 (PST)
-X-Received: by 2002:a2e:8809:: with SMTP id x9mr7562934ljh.82.1573232508697;
- Fri, 08 Nov 2019 09:01:48 -0800 (PST)
+        Fri, 8 Nov 2019 12:01:46 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 040D3291340
+Received: by jupiter.universe (Postfix, from userid 1000)
+        id AAFFC48009C; Fri,  8 Nov 2019 18:01:42 +0100 (CET)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [RFCv1] rtc: m41t80: disable clock provider support
+Date:   Fri,  8 Nov 2019 18:01:35 +0100
+Message-Id: <20191108170135.9053-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
-In-Reply-To: <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 8 Nov 2019 09:01:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
-Message-ID: <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        elver@google.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 5:28 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
-> Linus, what do you think of the following fix ?
+Congatec's QMX6 system on module (SoM) uses a m41t62 as RTC. The
+modules SQW clock output defaults to 32768 Hz. This behaviour is
+used to provide the i.MX6 CKIL clock. Once the RTC driver is probed,
+the clock is disabled and all i.MX6 functionality depending on
+the 32 KHz clock have undefined behaviour (e.g. the hardware watchdog
+run to fast or slow).
 
-I think it's incredibly ugly.
+The normal solution would be to properly describe the clock tree
+in DT, but from the kernel's perspective this is a chicken-and-egg
+problem: CKIL is required very early, but the clock is only provided
+after the I2C RTC has been probed.
 
-I realize that avoiding the cacheline dirtying might be worth it, but
-I'd like to see some indication that it actually matters and helps
-from a performance angle. We've already dirtied memory fairly close,
-even if it might not share a cacheline (that structure is randomized,
-we've touched - or will touch - 'cred->usage') too.
+Technically everything is fine by not touching anything, so this
+works around the issue by disabling the clock handling from the
+RTC driver. I guess the proper solution would be to simply mark the
+clock as always-enabled, but this does not seem to be supported by
+the clock framework.
 
-Honestly, I don't think get_cred() is even in a hotpath. Most cred use
-just use the current cred that doesn't need the 'get'. So the
-optimization looks somewhat questionable - for all we know it just
-makes things worse.
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+Hi,
 
-I also don't like using a "WRITE_ONCE()" without a reason for it. In
-this case, the only "reason" is that KCSAN special-cases that thing.
-I'd much rather have some other way to mark it.
+This is a downstream workaround/hack for the issue described in the
+commit message. I would like to upstream a board based on Congatec's
+QMX6, which requires a proper solution for this. Do you think it
+would be ok to have an always-on flag for clocks similar to regulators?
 
-So it just looks hacky to me.
+-- Sebastian
+---
+ drivers/rtc/rtc-m41t80.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I like that people are looking at KCSAN, but I get a very strong
-feeling that right now the workarounds for KCSAN false-positives are
-incredibly ugly, and not always appropriate.
+diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
+index 5f46f85f814b..81743d93d03e 100644
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -973,7 +973,7 @@ static int m41t80_probe(struct i2c_client *client,
+ 		}
+ 	}
+ #endif
+-#ifdef CONFIG_COMMON_CLK
++#if 0
+ 	if (m41t80_data->features & M41T80_FEATURE_SQ)
+ 		m41t80_sqw_register_clk(m41t80_data);
+ #endif
+-- 
+2.24.0.rc1
 
-There is absolutely zero need for a WRITE_ONCE() in this case. The
-code would work fine if the compiler did the zero write fifty times,
-and re-ordered it wildly. We have a flag that starts out set, and we
-clear it.  There's really no "write-once" about it.
-
-               Linus
