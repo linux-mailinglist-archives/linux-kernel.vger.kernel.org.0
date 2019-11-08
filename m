@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E280F5447
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C856F5443
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 19:55:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387831AbfKHSzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 13:55:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
+        id S2387786AbfKHSzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 13:55:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387662AbfKHSzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:55:36 -0500
+        id S2387707AbfKHSzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 13:55:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 248ED20865;
-        Fri,  8 Nov 2019 18:55:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAEF82178F;
+        Fri,  8 Nov 2019 18:55:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573239336;
-        bh=3Lntj0YJJmf+8l/kLro8iPsjmwtakiQ9erPUHVvONrw=;
+        s=default; t=1573239339;
+        bh=OUxU/eQZ6HEuqMpH2FbTVFsxnOXLUuvEPUkI2xixscQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r2k1sWYMp/SgybmED63y95CCViLVPinfgZbktAHvjXy9GT1lSrvgn89CR3sPWGpYq
-         E0LB6z53bpAf1/zyZYvf+ckqGxvRxGOtqH/S98pgXfB0yEihkldXmur6oqRRzmjChC
-         IAVvgd8wn83j6fQWBKP1109Z/UEMXeOlYSTBVuXY=
+        b=qDMisU73ddlhpssefBRHB/CiIfkeATLb1uoPQ0pwhYOLi9nT2F+q1KidWunJTl1E9
+         K+hPjKc0PlFRSCwowKAtC6/aUgxCA/i5eTrav+xUbP1QSO0juYo56aEEj9ruK0oUvN
+         wvTDMC/KNH67NO+9YvzJWjqgt2Xid2ysP41pj9Lw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
         "David A. Long" <dave.long@linaro.org>,
         Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 4.4 43/75] ARM: bugs: add support for per-processor bug checking
-Date:   Fri,  8 Nov 2019 19:50:00 +0100
-Message-Id: <20191108174749.716102119@linuxfoundation.org>
+Subject: [PATCH 4.4 44/75] ARM: spectre: add Kconfig symbol for CPUs vulnerable to Spectre
+Date:   Fri,  8 Nov 2019 19:50:01 +0100
+Message-Id: <20191108174750.253744224@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
 References: <20191108174708.135680837@linuxfoundation.org>
@@ -50,16 +50,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 9d3a04925deeabb97c8e26d940b501a2873e8af3 upstream.
+Commit c58d237d0852a57fde9bc2c310972e8f4e3d155d upstream.
 
-Add support for per-processor bug checking - each processor function
-descriptor gains a function pointer for this check, which must not be
-an __init function.  If non-NULL, this will be called whenever a CPU
-enters the kernel via which ever path (boot CPU, secondary CPU startup,
-CPU resuming, etc.)
-
-This allows processor specific bug checks to validate that workaround
-bits are properly enabled by firmware via all entry paths to the kernel.
+Add a Kconfig symbol for CPUs which are vulnerable to the Spectre
+attacks.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
@@ -71,54 +65,28 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/proc-fns.h |    4 ++++
- arch/arm/kernel/bugs.c          |    4 ++++
- arch/arm/mm/proc-macros.S       |    3 ++-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ arch/arm/mm/Kconfig |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/include/asm/proc-fns.h
-+++ b/arch/arm/include/asm/proc-fns.h
-@@ -37,6 +37,10 @@ extern struct processor {
- 	 */
- 	void (*_proc_init)(void);
- 	/*
-+	 * Check for processor bugs
-+	 */
-+	void (*check_bugs)(void);
-+	/*
- 	 * Disable any processor specifics
- 	 */
- 	void (*_proc_fin)(void);
---- a/arch/arm/kernel/bugs.c
-+++ b/arch/arm/kernel/bugs.c
-@@ -5,6 +5,10 @@
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -396,6 +396,7 @@ config CPU_V7
+ 	select CPU_CP15_MPU if !MMU
+ 	select CPU_HAS_ASID if MMU
+ 	select CPU_PABRT_V7
++	select CPU_SPECTRE if MMU
+ 	select CPU_TLB_V7 if MMU
  
- void check_other_bugs(void)
- {
-+#ifdef MULTI_CPU
-+	if (processor.check_bugs)
-+		processor.check_bugs();
-+#endif
- }
+ # ARMv7M
+@@ -793,6 +794,9 @@ config CPU_BPREDICT_DISABLE
+ 	help
+ 	  Say Y here to disable branch prediction.  If unsure, say N.
  
- void __init check_bugs(void)
---- a/arch/arm/mm/proc-macros.S
-+++ b/arch/arm/mm/proc-macros.S
-@@ -258,13 +258,14 @@
- 	mcr	p15, 0, ip, c7, c10, 4		@ data write barrier
- 	.endm
- 
--.macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0
-+.macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
- 	.type	\name\()_processor_functions, #object
- 	.align 2
- ENTRY(\name\()_processor_functions)
- 	.word	\dabort
- 	.word	\pabort
- 	.word	cpu_\name\()_proc_init
-+	.word	\bugs
- 	.word	cpu_\name\()_proc_fin
- 	.word	cpu_\name\()_reset
- 	.word	cpu_\name\()_do_idle
++config CPU_SPECTRE
++	bool
++
+ config TLS_REG_EMUL
+ 	bool
+ 	select NEED_KUSER_HELPERS
 
 
