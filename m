@@ -2,73 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3544CF3D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 02:46:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 298E9F3DD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 03:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfKHBqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 20:46:32 -0500
-Received: from smtprelay0057.hostedemail.com ([216.40.44.57]:43964 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725928AbfKHBqb (ORCPT
+        id S1728265AbfKHCDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 21:03:35 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:41543 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfKHCDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 20:46:31 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 564B2100E7B44;
-        Fri,  8 Nov 2019 01:46:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2692:2731:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:5007:6691:6742:7514:10004:10400:11232:11658:11914:12297:12663:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21324:21451:21627:30054:30090:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: cough96_558de86610607
-X-Filterd-Recvd-Size: 2341
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  8 Nov 2019 01:46:27 +0000 (UTC)
-Message-ID: <2367894118ccee058ed451927412d7c1a33864bd.camel@perches.com>
-Subject: Re: [PATCH] phy: allwinner: Fix GENMASK misuse
-From:   Joe Perches <joe@perches.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Cc:     megous@megous.com, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, arnd@arndb.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        mripard@kernel.org, kishon@ti.com, paul.kocialkowski@bootlin.com,
-        linux-sunxi@googlegroups.com, robh+dt@kernel.org,
-        tglx@linutronix.de, wens@csie.org,
-        linux-arm-kernel@lists.infradead.org, icenowy@aosc.io
-Date:   Thu, 07 Nov 2019 17:46:14 -0800
-In-Reply-To: <20191107233914.GW25745@shell.armlinux.org.uk>
-References: <20191020134229.1216351-3-megous@megous.com>
-         <20191107204645.13739-1-rikard.falkeborn@gmail.com>
-         <20191107233914.GW25745@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Thu, 7 Nov 2019 21:03:35 -0500
+Received: by mail-il1-f196.google.com with SMTP id z10so3709210ilo.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 18:03:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rb7E4G3AfRv3BBvojQNjoB9UPjH1AyXc4p/SxsSL9W4=;
+        b=IgoQ4CLeR5KSemdl8EH4Mv7SW5YfL/GAg/l1KhpuG8A/axs8uQnarKuxoDx6hd6iQG
+         FsKC8qZR8md/Xc/sMEb0TgU7cYRUSq3Kg1zNXn2/d9L4Nn8slVxXisf0nqJOJxShSe27
+         9t2/w72HYCsTpM0ziXzT+tLqJOigzV/O34KlU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rb7E4G3AfRv3BBvojQNjoB9UPjH1AyXc4p/SxsSL9W4=;
+        b=IUUINaedEMiD7avHvuSUdHJrnOm5Q50LDcEjDZn9Sd+5Rpr4QzmKivBLfTvWevsnlY
+         iv5sYd5pf68e4tUFHPqfEkiqO/Aq/pYIdgvoyYABXwLy6w1HJpAJlwPOALdBD9c+T1Z/
+         cH1sNzUt2PqXV5xkP8C89TCFhBDQgH+/pjqO4zDdqQ6MdituGJCjgj8vszkQd3xMKSIz
+         3hR8fTLU8bxktD4dfuWLa0oWt4jp4BAcwg+hYsSOmnQS7yVL/AXyEuxWoACo+0fXQXFj
+         IIPE3dsZ7YkXhwEA+Hg/YbqmXve1IiI0C/Q6B+SFstBq16Y4ukMmPW1NVXgXgiUnlsMg
+         uqeQ==
+X-Gm-Message-State: APjAAAWElW0UnbPjOY3wA3VRAgQEtSQI6vtKitZ4/gdLynOptu0K6luS
+        aWpmrAfc4PPla4sRN9GsGpXBK6pZTOeI3TmvsVm8ZQ==
+X-Google-Smtp-Source: APXvYqwfvE0lbSsmo3rLw5QoJ6zVMyT9Wrt/mQAmklzCszTTgckYnb+UZs7Y5ORM7LCKGmCVLHGnxLClJWkwQGTwBOI=
+X-Received: by 2002:a92:c9c3:: with SMTP id k3mr9000230ilq.299.1573178614360;
+ Thu, 07 Nov 2019 18:03:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191105000129.GA6536@onstation.org> <CAF6AEGv3gs+LFOP3AGthXd4niFb_XYOuwLfEa2G9eb27b1wMMA@mail.gmail.com>
+ <20191105100804.GA9492@onstation.org> <CAF6AEGtB+g=4eiB31jkyuBGW7r0TBSh2oMj6TGtSgQ=q1ZV1tg@mail.gmail.com>
+ <20191106091335.GA16729@onstation.org> <CAF6AEGuEO1jg6KhOFWEMUjq4ZQy5w61dWJk6uLWRzHnMZYZv=g@mail.gmail.com>
+ <CAOCk7NomH2MsZ+FvPFAMWeabOFpyOwODCb_Ro07v+2k2v_C4NA@mail.gmail.com>
+ <CAF6AEGsZkJJTNZ8SzHsSioEnkpekr1Texu5_EeBW1hP-bsOyjQ@mail.gmail.com>
+ <20191107111019.GA24028@onstation.org> <CAF6AEGtbP=X2+DELajQq9zMZYGgmhyUhe62ncvHvyFnyZexTXg@mail.gmail.com>
+ <CAOCk7NrPdGqc4vo70NmTuyszkPaPe41-e89ym2vAYBY+GTt9BA@mail.gmail.com>
+In-Reply-To: <CAOCk7NrPdGqc4vo70NmTuyszkPaPe41-e89ym2vAYBY+GTt9BA@mail.gmail.com>
+From:   Rob Clark <robdclark@chromium.org>
+Date:   Thu, 7 Nov 2019 18:03:24 -0800
+Message-ID: <CAJs_Fx4UJYd-k3_3AAGJo-8udThhvf6t-J=OZi3jappWjTNnFQ@mail.gmail.com>
+Subject: Re: [Freedreno] drm/msm: 'pp done time out' errors after async commit changes
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Brian Masney <masneyb@onstation.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-11-07 at 23:39 +0000, Russell King - ARM Linux admin wrote:
-> On Thu, Nov 07, 2019 at 09:46:45PM +0100, Rikard Falkeborn wrote:
-> > Arguments are supposed to be ordered high then low.
-> > 
-> > Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
-> > ---
-> > Spotted while trying to add compile time checks of GENMASK arguments.
-> > Patch has only been compile tested.
-> 
-> My feeling, personally, is that GENMASK() really isn't worth the pain
-> it causes.  Can we instead get rid of this thing and just use easier
-> to understand and less error-prone hex masks please?
-> 
-> I don't care what anyone else says, personally I'm going to stick with
-> using hex masks as I find them way easier to get right first time than
-> a problematical opaque macro - and I really don't want the effort of
-> finding out that I've got the arguments wrong when I build it.  It's
-> just _way_ easier and less error prone to use a hex mask straight off.
+On Thu, Nov 7, 2019 at 9:40 AM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+>
+> On Thu, Nov 7, 2019 at 9:17 AM Rob Clark <robdclark@gmail.com> wrote:
+> >
+> > On Thu, Nov 7, 2019 at 3:10 AM Brian Masney <masneyb@onstation.org> wrote:
+> > >
+> > > On Wed, Nov 06, 2019 at 08:58:59AM -0800, Rob Clark wrote:
+> > > > On Wed, Nov 6, 2019 at 8:47 AM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+> > > > >
+> > > > > On Wed, Nov 6, 2019 at 9:30 AM Rob Clark <robdclark@gmail.com> wrote:
+> > > > > >
+> > > > > > On Wed, Nov 6, 2019 at 1:13 AM Brian Masney <masneyb@onstation.org> wrote:
+> > > > > > >
+> > > > > > > On Tue, Nov 05, 2019 at 08:23:27AM -0800, Rob Clark wrote:
+> > > > > > > > On Tue, Nov 5, 2019 at 2:08 AM Brian Masney <masneyb@onstation.org> wrote:
+> > > > > > > > > The 'pp done time out' errors go away if I revert the following three
+> > > > > > > > > commits:
+> > > > > > > > >
+> > > > > > > > > cd6d923167b1 ("drm/msm/dpu: async commit support")
+> > > > > > > > > d934a712c5e6 ("drm/msm: add atomic traces")
+> > > > > > > > > 2d99ced787e3 ("drm/msm: async commit support")
+> > > > > > > > >
+> > > > > > > > > I reverted the first one to fix a compiler error, and the second one so
+> > > > > > > > > that the last patch can be reverted without any merge conflicts.
+> > > > > > > > >
+> > > > > > > > > I see that crtc_flush() calls mdp5_ctl_commit(). I tried to use
+> > > > > > > > > crtc_flush_all() in mdp5_flush_commit() and the contents of the frame
+> > > > > > > > > buffer dance around the screen like its out of sync. I renamed
+> > > > > > > > > crtc_flush_all() to mdp5_crtc_flush_all() and removed the static
+> > > > > > > > > declaration. Here's the relevant part of what I tried:
+> > > > > > > > >
+> > > > > > > > > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> > > > > > > > > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> > > > > > > > > @@ -171,7 +171,15 @@ static void mdp5_prepare_commit(struct msm_kms *kms, struct drm_atomic_state *st
+> > > > > > > > >
+> > > > > > > > >  static void mdp5_flush_commit(struct msm_kms *kms, unsigned crtc_mask)
+> > > > > > > > >  {
+> > > > > > > > > -       /* TODO */
+> > > > > > > > > +       struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(kms));
+> > > > > > > > > +       struct drm_crtc *crtc;
+> > > > > > > > > +
+> > > > > > > > > +       for_each_crtc_mask(mdp5_kms->dev, crtc, crtc_mask) {
+> > > > > > > > > +               if (!crtc->state->active)
+> > > > > > > > > +                       continue;
+> > > > > > > > > +
+> > > > > > > > > +               mdp5_crtc_flush_all(crtc);
+> > > > > > > > > +       }
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > > Any tips would be appreciated.
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > I think this is along the lines of what we need to enable async commit
+> > > > > > > > for mdp5 (but also removing the flush from the atomic-commit path)..
+> > > > > > > > the principle behind the async commit is to do all the atomic state
+> > > > > > > > commit normally, but defer writing the flush bits.  This way, if you
+> > > > > > > > get another async update before the next vblank, you just apply it
+> > > > > > > > immediately instead of waiting for vblank.
+> > > > > > > >
+> > > > > > > > But I guess you are on a command mode panel, if I remember?  Which is
+> > > > > > > > a case I didn't have a way to test.  And I'm not entirely about how
+> > > > > > > > kms_funcs->vsync_time() should be implemented for cmd mode panels.
+> > > > > > >
+> > > > > > > Yes, this is a command-mode panel and there's no hardware frame counter
+> > > > > > > available. The key to getting the display working on this phone was this
+> > > > > > > patch:
+> > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2bab52af6fe68c43b327a57e5ce5fc10eefdfadf
+> > > > > > >
+> > > > > > > > That all said, I think we should first fix what is broken, before
+> > > > > > > > worrying about extending async commit support to mdp5.. which
+> > > > > > > > shouldn't hit the async==true path, due to not implementing
+> > > > > > > > kms_funcs->vsync_time().
+> > > > > > > >
+> > > > > > > > What I think is going on is that, in the cmd mode case,
+> > > > > > > > mdp5_wait_flush() (indirectly) calls mdp5_crtc_wait_for_pp_done(),
+> > > > > > > > which waits for a pp-done irq regardless of whether there is a flush
+> > > > > > > > in progress.  Since there is no flush pending, the irq never comes.
+> > > > > > > > But the expectation is that kms_funcs->wait_flush() returns
+> > > > > > > > immediately if there is nothing to wait for.
+> > > > > > >
+> > > > > > > I don't think that's happening in this case. I added some pr_info()
+> > > > > > > statements to request_pp_done_pending() and mdp5_crtc_pp_done_irq().
+> > > > > > > Here's the first two sets of messages that appear in dmesg:
+> > > > > > >
+> > > > > > > [   14.018907] msm fd900000.mdss: pp done time out, lm=0
+> > > > > > > [   14.018993] request_pp_done_pending: HERE
+> > > > > > > [   14.074208] mdp5_crtc_pp_done_irq: HERE
+> > > > > > > [   14.074368] Console: switching to colour frame buffer device 135x120
+> > > > > > > [   14.138938] msm fd900000.mdss: pp done time out, lm=0
+> > > > > > > [   14.139021] request_pp_done_pending: HERE
+> > > > > > > [   14.158097] mdp5_crtc_pp_done_irq: HERE
+> > > > > > >
+> > > > > > > The messages go on like this with the same pattern.
+> > > > > > >
+> > > > > > > I tried two different changes:
+> > > > > > >
+> > > > > > > 1) I moved the request_pp_done_pending() and corresponding if statement
+> > > > > > >    from mdp5_crtc_atomic_flush() and into mdp5_crtc_atomic_begin().
+> > > > > > >
+> > > > > > > 2) I increased the timeout in wait_for_completion_timeout() by several
+> > > > > > >    increments; all the way to 5 seconds.
+> > > > > >
+> > > > > > increasing the timeout won't help, because the pp-done irq has already
+> > > > > > come at the point where we wait for it..
+> > > > > >
+> > > > > > maybe the easy thing is just add mdp5_crtc->needs_pp, set to true
+> > > > > > before requesting, and false when we get the irq.. and then
+> > > > > > mdp5_crtc_wait_for_pp_done() just returns if needs_pp==false..
+> > > > >
+> > > > > On the otherhand, what about trying to make command mode panels
+> > > > > resemble video mode panels slightly?  Video mode panels have a vsync
+> > > > > counter in hardware, which is missing from command mode - however it
+> > > > > seems like the driver/drm framework would prefer such a counter.
+> > > > > Would it be a reasonable idea to make a software counter, and just
+> > > > > increment it every time the pp_done irq is triggered?
+> > > > >
+> > > > > I'm just thinking that we'll avoid issues long term by trying to make
+> > > > > the code common, rather than diverging it for the two modes.
+> > > > >
+> > > >
+> > > > *possibly*, but I think we want to account somehow periods where
+> > > > display is not updated.
+> > > >
+> > > > fwiw, it isn't that uncommon for userspace to use vblanks to "keep
+> > > > time" (drive animations for desktop switch, window
+> > > > maximize/unmaximize, etc).. it could be a surprise when "vblank" is
+> > > > not periodic.
+> > >
+> > > What do you think about using some variation of the current value of
+> > > jiffies in the kernel + the number of pp_done IRQs as the software
+> > > counter for command-mode panels?
+> > >
+> >
+> > jiffies is probably too coarse.. but we could use monotonic clock, I guess.
+> >
+> > But I suppose even a cmd mode panel has a "vblank", it is just
+> > internal the panel.  Do we get the TE interrupt at regular intervals?
+> > AFAIU this would be tied to the panel's internal vblank.
+>
+> The TE interrupt was first implemented in MDP 1.7.0 (msm8996).  8974
+> predates that.
+> You can get it from the WR_PTR interrupt, but you have to understand
+> details about your panel to configure that correctly.
 
-I agree, but there are already more than 8000 uses of this rather
-silly (and perhaps backwards argument order) macro in the kernel.
+oh, sad.. I kinda assumed it was a pretty common DSI irq since
+forever.. I guess the hw is just managing the flow control to prevent
+tearing?
 
+Well, anyways, I guess we could just use a free-running timer based on
+refresh rate of the panel?
 
+BR,
+-R
