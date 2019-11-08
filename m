@@ -2,63 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ACFAF578F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD6BF578D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 21:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391088AbfKHTYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 14:24:12 -0500
-Received: from sonic304-9.consmr.mail.bf2.yahoo.com ([74.6.128.32]:42520 "EHLO
-        sonic304-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731956AbfKHSxB (ORCPT
+        id S2390084AbfKHTYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 14:24:10 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:43588 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732051AbfKHSxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Nov 2019 13:53:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1573239180; bh=FV1waOWroAVjEnN/rWoqGnF6OwY1eg/3wC8sp7AN1X4=; h=Date:From:Reply-To:Subject:From:Subject; b=uLyr6cML+KqWaZjV1mmmq28p9rnnvYT4TsgH7aWHOGiuJ31eJcPEa1ArN3qhZibJOL7ZTebx0UczH3VLZVqo3qxwemgm8tGXImOmCCcwVScK+VSEYgAsIobhTfFG3PtI/tgqpdLEheFiR0ouSX/lhap31LHboJkLt1q8SJi9RnQZWqaIMDM2qrDW8zwq6/q1RJRGP50Q94WMoW/c3F5yoC8+iwM6sQkGoNr2eUlIJdZo7eWxXFTFtn3ILS9x3VI1NBEaS6vXjzfCN5O782OTrg6NL2vSpPv7kElV5kMyQZTs9VCiBEeVEWnOqVTob1qtjHfhdUTJSzC01M+1dtCZpg==
-X-YMail-OSG: KffsqRwVM1nW1iFB9OdL8DevJCsj69nDE1NpryGNbBMh0zAsocBuzRnICRDBpSX
- l17qT8LtbXLUt9sJ.28GK3BgT8c4NAyvoKptQdpWxB9UkQPJ4L6XIMVWvIZ1SYDQDeyW_uPt0nkS
- DaQAUOlaeMAr1R7QnO8uNriXcRncOqUmJB4DE.NOKpi6kof4vpKN.7EP2GGVtOVLbOBQ7nvv0uSy
- iAMrImK1cG1Kdgg5RNa0J9EGgmItouE_PNQA1tIZTmtf5UvF0Ad4FAZQSZJleZJU9c4pQCY7UMTa
- 16yT8y67cf248fdrBC5R94vq77IAyXfg59DAtUej75k_8dpgBMt06BB.wEGkLZVsovA0tt5mzuKd
- 49PsJ5rXPvF8_kQnKJNP4Brpb0c_tAILe9E70GotijhM.6RK4aSthuyZpSHKZJQ06BQDdqBpzMcm
- A9SqSPolNLZn0ESMlMKIlbvRnuRpU3104SpW4CFBlK95xmvuVMHbRRuz9m0Gjd8WtJ8yYYh4obuU
- h5U9b3pjXYvbhi8vL.251sjPyJRdJdyZ0bo.oFImc92NGQCIV_AiZH3h29536hU8n0W6JUOuj_xl
- Bo5_9aci1h3lGqx9MK.OIip5x12wTqQH_GV3B.5KzPcD5byJA2Tb.3jwdSz6mfc2yNhCyiiOVOku
- aY6w0sWrZavNr5vurE0E2fWE69t8XSkf7QTgcshv9MfY.epdQtL3.KnE4yN.Jda4UzHP2TzSBrxW
- fKaPfHP23F3_0RFPEiNuKhIhrbVbfhmyWBFZBxNCLAZ1rJyARW.esCiQNBZ3x8O1kbpHlhxlhZXC
- WAfegdNWGENgVRd7IgLEnf9muxymD3ZZNZsEejCr4XXMLSpLa5IbN.aJ03LAsYh1Rw184On7EyGh
- QduepzwZodtkAIx7bF5143qlKpo4xC.8wOI3f0OlIRPk265vZcGDuw4mwqkJadZZIkfitaP.R4iV
- TztYwZCAlcuF9MzdV.UK1NeeYB_wlG1PeprOqS5lcrnbWElkf.svmj06W3Csmju_52sj7CqsoyxH
- jXx2KZh8Z2kpnOFhEk7xVovHXchTz3_62uvQUw61VT3bwypsQHt6Dr6Su.K8UIrjA8Nt3AxcPy1v
- 536rjznWWO1_UlP.uR4rBBclPxcRa.u00t7mpm1YRJSn9Su_P1Q.27G4_Evcpm_NNgehXYyUh63s
- UaDvd2_saissOFDYd85Rj9el1zdzNvytmUqHA.45xSx2xyqEiV.63FcdfKIE5gWnyyItHmFp__i8
- yIvsZqg1yJZ66SQ4wT41ifQ1BUM4PK_Gl7QYsTYCB7drWs_SQrYxWCFhzTv6yl6_8q5QmwHXeiuU
- CinA-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Fri, 8 Nov 2019 18:53:00 +0000
-Date:   Fri, 8 Nov 2019 18:52:56 +0000 (UTC)
-From:   mohammado ouattara <mohammadouattara27@gmail.com>
-Reply-To: mohammadouattara53@gmail.com
-Message-ID: <1024787436.1050798.1573239176393@mail.yahoo.com>
-Subject: I am expecting your urgent respond.
+Received: by mail-il1-f198.google.com with SMTP id d11so7824112ild.10
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 10:53:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Sl9ZT+3VnhHk9C9hUuWzxJC0ZnzOKIM3/flYfXRQH6Y=;
+        b=ndKcHQXjIYsuRcJpTPlCUgeSFOC26Du1+s23EirNwPEi/IzwaiJZLSIhWD90769yMG
+         wBfzK0VVASOoUJZah1vZwAzRYFqePMIFS3z0V13ed/ZYvQDtgziG7wuNdqovfHYTxdBZ
+         2ANwbMaj0JwpKZOL5sy322HoMAg004Y49sf2A8o50KyWpijInfwF3+fTRxiZU8Uub1ly
+         ag58NSRvdg0y+xeGKLGNQ5ALmLY6Jj9WL6k4Y2a+cRDyIIeRkXntFpxW8WXHE1u2n6y9
+         coOlUqAMr0W1vK1VJNW/UC9gpgwAYCBdU8VsFbJnR5oWR1l9jyNH1zI0giAALbH02KRJ
+         rqGQ==
+X-Gm-Message-State: APjAAAXwbMOYqB1lfSxQwoxO8k76SoDugeCcftTOphhClLCXaUAqD9UY
+        xpAibYPSAvg2cCXLvZ0ypdszLvu5P+piSBwzgAyflHb9wVDX
+X-Google-Smtp-Source: APXvYqzQP9CYRfTlLHLsV6QBEQYBhPgI8bypq0U9hHsKzSMeEB/CVu4ed4IzOfkvt3dGwLP0hHzE142Gz/VsIc1tEwnjoCJ+zd1h
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Received: by 2002:a02:c4cf:: with SMTP id h15mr12593320jaj.112.1573239180629;
+ Fri, 08 Nov 2019 10:53:00 -0800 (PST)
+Date:   Fri, 08 Nov 2019 10:53:00 -0800
+In-Reply-To: <0000000000005e2bf90570bbe2ab@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000821d620596da4ad0@google.com>
+Subject: Re: KASAN: use-after-free Read in ep_scan_ready_list
+From:   syzbot <syzbot+78b902c73c69102cb767@syzkaller.appspotmail.com>
+To:     asmadeus@codewreck.org, davem@davemloft.net,
+        dominique.martinet@cea.fr, ericvh@gmail.com, jiangyiwen@huwei.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lucho@ionkov.net, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tomasbortoli@gmail.com,
+        v9fs-developer@lists.sourceforge.net, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+syzbot suspects this bug was fixed by commit:
 
-I know that this message will come to you as a surprise. I am the Auditing and Accounting section manager in (BOA BANK) Ouagadougou Burkina Faso.
+commit 430ac66eb4c5b5c4eb846b78ebf65747510b30f1
+Author: Tomas Bortoli <tomasbortoli@gmail.com>
+Date:   Fri Jul 20 09:27:30 2018 +0000
 
-I Hope that you will not expose or betray this trust and confident that I am about to repose on you for the mutual benefit of our both families.
+     net/9p/trans_fd.c: fix race-condition by flushing workqueue before the  
+kfree()
 
-I need your assistance in transferring the sum of ($12.5M) Twelve Million, Five Hundred Thousand United Dollars into your account within 7 to 10 banking days,as one of my Bank clients who died at the collapsing of the world trade center at the United States on September 11th 2001.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=167fa19ae00000
+start commit:   1e09177a Merge tag 'mips_fixes_4.18_3' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+dashboard link: https://syzkaller.appspot.com/bug?extid=78b902c73c69102cb767
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135660c8400000
 
-If you are really interested in my proposal further details of the Transfer will be forwarded unto you as soon as I receive your willingness mail for a successful transfer.
+If the result looks correct, please mark the bug fixed by replying with:
 
-I am expecting your urgent respond.
+#syz fix: net/9p/trans_fd.c: fix race-condition by flushing workqueue  
+before the kfree()
 
-Have a great day,
-Mr mohammad ouattara.
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
