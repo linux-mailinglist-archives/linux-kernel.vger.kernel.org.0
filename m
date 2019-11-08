@@ -2,91 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87580F516D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:45:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EAFFF5173
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2019 17:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfKHQpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 11:45:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40448 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726039AbfKHQpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 11:45:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 23A9DAC59;
-        Fri,  8 Nov 2019 16:45:37 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: most: Convert to the common vmalloc memalloc
-Date:   Fri,  8 Nov 2019 17:45:28 +0100
-Message-Id: <20191108164528.998-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
+        id S1728091AbfKHQpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 11:45:54 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39020 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbfKHQpy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 11:45:54 -0500
+Received: by mail-lj1-f195.google.com with SMTP id p18so6914376ljc.6;
+        Fri, 08 Nov 2019 08:45:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gCwDRHsjMshwUjrnqGW1EzKHumkWqiiCQKHVnFSnF9E=;
+        b=RyHZ5XeSBZdOFsYP3XbnSFbcW5JAvJ/lbSGnoyyZ78hyCwaQ2x+kSZ1DTXU6wg3ilt
+         RZEsOTsq7qqpn+fTm6ATTEJ0x0Y7Fx82cBjpl39ESZlVYf2xLYTTMst7w9wnhuMfS8je
+         Nya4qVRhOJxtgYH8OLEG5jJ4+7irdC2X8rJumxzR7qMDHHL3hi3GRIZLH9wtJRDhYb4l
+         F66cP6zPTPXFUc7nD05c4JjXENsNCf+s4m6UZCMuU5MUAO1IrA02LFpOctaiJBIHcAf+
+         e2meX7kS5gGLV+eyO6q+BerCnKrQNv45tfFD6dSsnrz2q+OVJuYhk5n5l8N69Xrl6TCg
+         Y1xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gCwDRHsjMshwUjrnqGW1EzKHumkWqiiCQKHVnFSnF9E=;
+        b=tyT3HlhV/ppP7I73epp07k/BZQhWWyLvE52RPepYUilMDUI4XPrr5Unu22LMJCp+/q
+         ksD/MKCK8mi85LrqURaXE9O90kl8UyLv6I0TIvcQ5R7RYmsHA/GLy0JUiwwMlVrrv7xR
+         zsOp/ZVVGVmRig7D7jYuBWA4CTuFeiV4fOGWZ9EfYk8wvAUJbhkhtrnwTsWkQCif5LIQ
+         zS9+O6TyLo/W1SI8JA/Bg3lWZCltXtciDP3mHunFlDNo19NAQhWA5uhwyV76oJ7JuEYE
+         BveieJHEJeG1spztN/wB06uJC/aCSPlfpReOPOKqYEpcLbP/bWYhDzwxkSGwR5kpXrSU
+         7Leg==
+X-Gm-Message-State: APjAAAV2fcT27H3oKx/tAKKhUgX1nWpgwNEQxfKDLKMPQuQM8tSe4jN8
+        avuPVn87EB/kaqXqiYOrZYCx9dETKzg=
+X-Google-Smtp-Source: APXvYqxNeXNznXar9K/SaRmW1l/terky20bwTvI63gvGUqLPzCfSMQrwm9riTTcHnNu4NbIhrxwf8w==
+X-Received: by 2002:a2e:4703:: with SMTP id u3mr424645lja.126.1573231551883;
+        Fri, 08 Nov 2019 08:45:51 -0800 (PST)
+Received: from localhost.localdomain ([91.237.107.85])
+        by smtp.googlemail.com with ESMTPSA id d4sm2727416lfi.32.2019.11.08.08.45.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2019 08:45:51 -0800 (PST)
+From:   Leonid Maksymchuk <leonmaxx@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, chiu@endlessm.com,
+        yurii.pavlovskyi@gmail.com, kristian@klausen.dk,
+        andy@infradead.org, dvhart@infradead.org, corentin.chary@gmail.com,
+        Leonid Maksymchuk <leonmaxx@gmail.com>
+Subject: [PATCH v4 2/3] asus_wmi: Support fan boost mode on FX505DY/FX705DY
+Date:   Fri,  8 Nov 2019 18:45:37 +0200
+Message-Id: <20191108164537.3123-1-leonmaxx@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191108164317.2874-1-leonmaxx@gmail.com>
+References: <20191108164317.2874-1-leonmaxx@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recent change (*) in the ALSA memalloc core allows us to drop the
-special vmalloc-specific allocation and page handling.  This patch
-coverts to the common code.
-(*) 1fe7f397cfe2: ALSA: memalloc: Add vmalloc buffer allocation
-                  support
-    7e8edae39fd1: ALSA: pcm: Handle special page mapping in the
-                  default mmap handler
+On ASUS FX505DY/FX705DY laptops fan boost mode is same as in other
+TUF laptop models but have different ACPI device ID and different hotkey
+code.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-
+Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
 ---
+ drivers/platform/x86/asus-wmi.c            | 29 ++++++++++++++++------
+ include/linux/platform_data/x86/asus-wmi.h |  1 +
+ 2 files changed, 23 insertions(+), 7 deletions(-)
 
-Since the prerequisite commits above are found only on for-next branch
-of sound git tree, please give ACK if the patch is OK; then I'll apply
-it on top of my branch.  Thanks!
-
-
- drivers/staging/most/sound/sound.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/most/sound/sound.c b/drivers/staging/most/sound/sound.c
-index 79817061fcfa..add16997f129 100644
---- a/drivers/staging/most/sound/sound.c
-+++ b/drivers/staging/most/sound/sound.c
-@@ -344,8 +344,7 @@ static int pcm_hw_params(struct snd_pcm_substream *substream,
- 		pr_err("Requested number of channels not supported.\n");
- 		return -EINVAL;
- 	}
--	return snd_pcm_lib_alloc_vmalloc_buffer(substream,
--						params_buffer_bytes(hw_params));
-+	return snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(hw_params));
- }
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 723aa4d969dc..4f9c0b99f352 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -61,6 +61,7 @@ MODULE_LICENSE("GPL");
+ #define NOTIFY_KBD_BRTDWN		0xc5
+ #define NOTIFY_KBD_BRTTOGGLE		0xc7
+ #define NOTIFY_KBD_FBM			0x99
++#define NOTIFY_KBD_FBM_2		0xae
  
- /**
-@@ -359,7 +358,7 @@ static int pcm_hw_params(struct snd_pcm_substream *substream,
-  */
- static int pcm_hw_free(struct snd_pcm_substream *substream)
+ #define ASUS_WMI_FNLOCK_BIOS_DISABLED	BIT(0)
+ 
+@@ -195,6 +196,7 @@ struct asus_wmi {
+ 	int agfn_pwm;
+ 
+ 	bool fan_boost_mode_available;
++	u32 fan_boost_mode_dev_id;
+ 	u8 fan_boost_mode_mask;
+ 	u8 fan_boost_mode;
+ 
+@@ -1611,15 +1613,12 @@ static int asus_wmi_fan_init(struct asus_wmi *asus)
+ 
+ /* Fan mode *******************************************************************/
+ 
+-static int fan_boost_mode_check_present(struct asus_wmi *asus)
++static int fan_boost_mode_check_device(struct asus_wmi *asus, u32 dev_id)
  {
--	return snd_pcm_lib_free_vmalloc_buffer(substream);
-+	return snd_pcm_lib_free_pages(substream);
- }
+ 	u32 result;
+ 	int err;
  
- /**
-@@ -469,7 +468,6 @@ static const struct snd_pcm_ops pcm_ops = {
- 	.prepare    = pcm_prepare,
- 	.trigger    = pcm_trigger,
- 	.pointer    = pcm_pointer,
--	.page       = snd_pcm_lib_get_vmalloc_page,
- };
- 
- static int split_arg_list(char *buf, u16 *ch_num, char **sample_res)
-@@ -663,6 +661,8 @@ static int audio_probe_channel(struct most_interface *iface, int channel_id,
- 	pcm->private_data = channel;
- 	strscpy(pcm->name, device_name, sizeof(pcm->name));
- 	snd_pcm_set_ops(pcm, direction, &pcm_ops);
-+	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_VMALLOC,
-+					      NULL, 0, 0);
+-	asus->fan_boost_mode_available = false;
+-
+-	err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_FAN_BOOST_MODE,
+-				    &result);
++	err = asus_wmi_get_devstate(asus, dev_id, &result);
+ 	if (err) {
+ 		if (err == -ENODEV)
+ 			return 0;
+@@ -1630,12 +1629,27 @@ static int fan_boost_mode_check_present(struct asus_wmi *asus)
+ 	if ((result & ASUS_WMI_DSTS_PRESENCE_BIT) &&
+ 			(result & ASUS_FAN_BOOST_MODES_MASK)) {
+ 		asus->fan_boost_mode_available = true;
++		asus->fan_boost_mode_dev_id = dev_id;
+ 		asus->fan_boost_mode_mask = result & ASUS_FAN_BOOST_MODES_MASK;
+ 	}
  
  	return 0;
+ }
  
++static int fan_boost_mode_check_present(struct asus_wmi *asus)
++{
++	int err;
++
++	asus->fan_boost_mode_available = false;
++	err = fan_boost_mode_check_device(asus, ASUS_WMI_DEVID_FAN_BOOST_MODE);
++
++	if (err || asus->fan_boost_mode_available)
++		return err;
++
++	return fan_boost_mode_check_device(asus,
++					   ASUS_WMI_DEVID_FAN_BOOST_MODE_2);
++}
++
+ static int fan_boost_mode_write(struct asus_wmi *asus)
+ {
+ 	int err;
+@@ -1645,7 +1659,7 @@ static int fan_boost_mode_write(struct asus_wmi *asus)
+ 	value = asus->fan_boost_mode;
+ 
+ 	pr_info("Set fan boost mode: %u\n", value);
+-	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_FAN_BOOST_MODE, value,
++	err = asus_wmi_set_devstate(asus->fan_boost_mode_dev_id, value,
+ 				    &retval);
+ 	if (err) {
+ 		pr_warn("Failed to set fan boost mode: %d\n", err);
+@@ -2000,7 +2014,8 @@ static void asus_wmi_handle_event_code(int code, struct asus_wmi *asus)
+ 		return;
+ 	}
+ 
+-	if (asus->fan_boost_mode_available && code == NOTIFY_KBD_FBM) {
++	if (asus->fan_boost_mode_available &&
++			(code == NOTIFY_KBD_FBM || code == NOTIFY_KBD_FBM_2)) {
+ 		fan_boost_mode_switch_next(asus);
+ 		return;
+ 	}
+diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+index 60249e22e844..714782b193b3 100644
+--- a/include/linux/platform_data/x86/asus-wmi.h
++++ b/include/linux/platform_data/x86/asus-wmi.h
+@@ -58,6 +58,7 @@
+ #define ASUS_WMI_DEVID_LIGHT_SENSOR	0x00050022 /* ?? */
+ #define ASUS_WMI_DEVID_LIGHTBAR		0x00050025
+ #define ASUS_WMI_DEVID_FAN_BOOST_MODE	0x00110018
++#define ASUS_WMI_DEVID_FAN_BOOST_MODE_2	0x00120075
+ 
+ /* Misc */
+ #define ASUS_WMI_DEVID_CAMERA		0x00060013
 -- 
-2.16.4
+2.23.0
 
