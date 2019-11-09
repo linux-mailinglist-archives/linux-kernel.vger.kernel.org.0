@@ -2,137 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A532F6160
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 21:27:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C768F6189
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 21:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbfKIU1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 15:27:43 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33280 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfKIU1m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 15:27:42 -0500
-Received: by mail-ed1-f68.google.com with SMTP id a24so5198895edt.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 12:27:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b+8khpJ1Hz+tMD0njO1mPXhcUz3AaktW0QE8s0RXEy0=;
-        b=cAXINlTqhr2dYYRGvd9NyArzc+EEga3e/Nr45Py3EXZQkp8APG66x9NL+TlBrJNRuE
-         WMDl88rcOO5QiMtFtuOZGWGdm0PUfwJsY6KNrS9v3OoAIamKh5LFa69MH/du7nB0Vegs
-         Ts5glrzo3MD0jk5JV6/lzhHpFCYeH3WI4o0woPVbY8tGPYI8J9UFewDOgRVq6DyowxNf
-         KgvNAULB6HecR8O93lRomvc5Ch25S+XIrnY6IHDPqYuiztZdaJZhrZWcbsYBI3ZZc12m
-         ISs2hpsm4bcpFCao14BmtTho/xIPg2rgb0U5+uv0vGlxT836+RM2Lr50snCA9TQWEpl5
-         5Mpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b+8khpJ1Hz+tMD0njO1mPXhcUz3AaktW0QE8s0RXEy0=;
-        b=dbTDhHFBXP9z5zumiog7ly+cr1sqhHbNYq4nOofxNTShWmgx3n5+RBoTDIcdLVr/MJ
-         ZvT5gAk+lz7qtgOWuFFHiJwK8JsSiSP424ulYiWTTN8aSke6khjdPhBbCVFKk2tN4z2A
-         iEO2A+ro0gfW2c4dYXjjN/RuzeQ2DNf877w0+QtxzFe/7oIJLEqMeJzpMVHZVxh/ZnVc
-         9z8OtI4qCVqaS8Ops+DKKje3d/qaQJDWe5MJfT7c04uVU8LTMskBVnjVCJAcxXdSLUk3
-         M4aZFKc6GYYBZZvkMGedLx/8iOMJaBx/lFSyClr4/VbpUE3VQjQr6WTVOvgVEMyBZBcz
-         lfDQ==
-X-Gm-Message-State: APjAAAX40fLqB2raBH5EzfZhD0i5STm0sfWFpkewrH6rhN+PDIXq/xh1
-        gLQ70mQ6eNhgX1o3+mNcJHgA6wDk1odg3jA3T+sNLQ==
-X-Google-Smtp-Source: APXvYqzHkGJ3thq037poRWi7Fb25K2gOcNkPsCPTR5ycyhsTeNJ5+LOyIylym/6LOuq7Wh1X2CEkYzCBoL15Tpu5SS4=
-X-Received: by 2002:a17:906:d93b:: with SMTP id rn27mr3416343ejb.184.1573331260654;
- Sat, 09 Nov 2019 12:27:40 -0800 (PST)
+        id S1726560AbfKIUwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 15:52:30 -0500
+Received: from gentwo.org ([3.19.106.255]:39100 "EHLO gentwo.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbfKIUwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 15:52:30 -0500
+Received: by gentwo.org (Postfix, from userid 1002)
+        id 9CEE23EC14; Sat,  9 Nov 2019 20:52:29 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by gentwo.org (Postfix) with ESMTP id 9A0DA3E886;
+        Sat,  9 Nov 2019 20:52:29 +0000 (UTC)
+Date:   Sat, 9 Nov 2019 20:52:29 +0000 (UTC)
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@www.lameter.com
+To:     Yu Zhao <yuzhao@google.com>
+cc:     Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v4 2/2] mm: avoid slub allocation while holding
+ list_lock
+In-Reply-To: <20191108193958.205102-2-yuzhao@google.com>
+Message-ID: <alpine.DEB.2.21.1911092024560.9034@www.lameter.com>
+References: <20190914000743.182739-1-yuzhao@google.com> <20191108193958.205102-1-yuzhao@google.com> <20191108193958.205102-2-yuzhao@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <5123bf54-5d62-fc5c-8838-17bc34487d83@linaro.org>
- <20191107142111.GB109902@kroah.com> <0cb5a6a6-399f-99e3-dc41-50114eea4025@linaro.org>
- <20191108103917.GB683302@kroah.com> <CAOCOHw4d0q3uGTAh_UrNWr+Wi6ObDKUFn7M_zkD8cFTkNFEUDA@mail.gmail.com>
- <20191109084820.GC1289838@kroah.com>
-In-Reply-To: <20191109084820.GC1289838@kroah.com>
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-Date:   Sat, 9 Nov 2019 12:27:29 -0800
-Message-ID: <CAOCOHw4AFz2Rj3sLTrboA0pBOkL_5MbitJnFHgBYaVBbWyYATw@mail.gmail.com>
-Subject: Re: [GIT PULL] interconnect changes for 5.5
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 9, 2019 at 12:48 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, 8 Nov 2019, Yu Zhao wrote:
+
+> If we are already under list_lock, don't call kmalloc(). Otherwise we
+> will run into deadlock because kmalloc() also tries to grab the same
+> lock.
+
+How did this happen? The kmalloc needs to be always done before the
+list_lock is taken.
+
+> Fixing the problem by using a static bitmap instead.
 >
-> On Fri, Nov 08, 2019 at 05:36:46PM -0800, Bjorn Andersson wrote:
-> > On Fri, Nov 8, 2019 at 2:39 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Thu, Nov 07, 2019 at 05:42:13PM +0200, Georgi Djakov wrote:
-> > > > Hi Greg,
-> > > >
-> > > > On 11/7/19 16:21, Greg Kroah-Hartman wrote:
-> > > > > On Thu, Nov 07, 2019 at 02:46:53PM +0200, Georgi Djakov wrote:
-> > > > >> Hi Greg,
-> > > > >>
-> > > > >> This is a pull request with interconnect patches for the 5.5 merge window.
-> > > > >> All patches have been for a while in linux-next without reported issues. The
-> > > > >> details are in the signed tag. Please consider pulling into char-misc-next.
-> > > > >
-> > > > > I don't know about
-> > > > > 0003-interconnect-Disallow-interconnect-core-to-be-built-.patch here.
-> > > > > Shouldn't you just fix up the dependancies of subsystems that rely on
-> > > > > this?  We are moving more and more to kernels that "just work" with
-> > > > > everything as modules, even on arm64 systems.  So forbiding the
-> > > > > interconnect code from being able to be built as a module does not feel
-> > > > > good to me at all.
-> > > >
-> > > > Thank you for commenting on this! The initial idea was to keep everything as
-> > > > modular as possible. The reasons behind this change is that other core
-> > > > frameworks like cpufreq (and possibly others) want to call the interconnect
-> > > > APIs. Some of these frameworks are built-in only and it would be easier to
-> > > > handle dependencies if interconnect core built-in too. Now each user that
-> > > > can be built-in has to specify in Kconfig that it depends on INTERCONNECT ||
-> > > > !INTERCONNECT.
-> > >
-> > > That's fine, when those subsystems start to use those apis, that
-> > > dependency needs to be added.  Nothing new here, and you forcing it to
-> > > either be "on or off" isn't going to change that.  Let's do it correctly
-> > > please.
-> > >
-> >
-> > Please no!
-> >
-> > Making our frameworks tristate means that we can no longer rely on
-> > include file stubs (as framework=m, client=y will fail), so every
-> > single client must add the "depends on framework || framework=n" - in
-> > contrast to nothing the framework itself is bool.
+>   WARNING: possible recursive locking detected
+>   --------------------------------------------
+>   mount-encrypted/4921 is trying to acquire lock:
+>   (&(&n->list_lock)->rlock){-.-.}, at: ___slab_alloc+0x104/0x437
 >
-> What's wrong with a single "depends on framework"?  If your code relies
-> on this framework, you should depend on it, right?
-
-As your question shows, everyone gets this wrong and the build breaks
-all the time (it's not "depends on framework", it's "depends on
-framework || framework=n" - and everyone you'll talk to will be
-puzzled as to why this is).
-
-But consistently introducing this for clocks, regulators, pinctrl,
-resets, etc should be a task so large that people will come out
-educated from it - or whatever it is that one feels after fixing
-thousands of Kconfig entries.
-
-> Include file stubs
-> feels odd for a core functionality, if you can live without that
-> functionality, then sure, don't depend on it and all should be just
-> fine.
+>   but task is already holding lock:
+>   (&(&n->list_lock)->rlock){-.-.}, at: __kmem_cache_shutdown+0x81/0x3cb
 >
-
-Odd or not, it's what we have in all these frameworks.
-
-Regards,
-Bjorn
-
-> thanks,
+>   other info that might help us debug this:
+>    Possible unsafe locking scenario:
 >
-> greg k-h
+>          CPU0
+>          ----
+>     lock(&(&n->list_lock)->rlock);
+>     lock(&(&n->list_lock)->rlock);
+>
+>    *** DEADLOCK ***
+
+
+Ahh. list_slab_objects() in shutdown?
+
+There is a much easier fix for this:
+
+
+
+[FIX] slub: Remove kmalloc under list_lock from list_slab_objects()
+
+list_slab_objects() is called when a slab is destroyed and there are objects still left
+to list the objects in the syslog. This is a pretty rare event.
+
+And there it seems we take the list_lock and call kmalloc while holding that lock.
+
+Perform the allocation in free_partial() before the list_lock is taken.
+
+Fixes: bbd7d57bfe852d9788bae5fb171c7edb4021d8ac ("slub: Potential stack overflow")
+Signed-off-by: Christoph Lameter <cl@linux.com>
+
+Index: linux/mm/slub.c
+===================================================================
+--- linux.orig/mm/slub.c	2019-10-15 13:54:57.032655296 +0000
++++ linux/mm/slub.c	2019-11-09 20:43:52.374187381 +0000
+@@ -3690,14 +3690,11 @@ error:
+ }
+
+ static void list_slab_objects(struct kmem_cache *s, struct page *page,
+-							const char *text)
++					const char *text, unsigned long *map)
+ {
+ #ifdef CONFIG_SLUB_DEBUG
+ 	void *addr = page_address(page);
+ 	void *p;
+-	unsigned long *map = bitmap_zalloc(page->objects, GFP_ATOMIC);
+-	if (!map)
+-		return;
+ 	slab_err(s, page, text, s->name);
+ 	slab_lock(page);
+
+@@ -3723,6 +3720,10 @@ static void free_partial(struct kmem_cac
+ {
+ 	LIST_HEAD(discard);
+ 	struct page *page, *h;
++	unsigned long *map = bitmap_alloc(oo_objects(s->max), GFP_KERNEL);
++
++	if (!map)
++		return;
+
+ 	BUG_ON(irqs_disabled());
+ 	spin_lock_irq(&n->list_lock);
+@@ -3732,7 +3733,8 @@ static void free_partial(struct kmem_cac
+ 			list_add(&page->slab_list, &discard);
+ 		} else {
+ 			list_slab_objects(s, page,
+-			"Objects remaining in %s on __kmem_cache_shutdown()");
++			"Objects remaining in %s on __kmem_cache_shutdown()",
++			map);
+ 		}
+ 	}
+ 	spin_unlock_irq(&n->list_lock);
