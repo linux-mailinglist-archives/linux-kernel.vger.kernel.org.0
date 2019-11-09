@@ -2,143 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F575F5CDD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 03:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24ED7F5CE1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 03:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfKICA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 21:00:59 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39382 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbfKICA6 (ORCPT
+        id S1726512AbfKICEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 21:04:40 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16412 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfKICEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 21:00:58 -0500
-Received: by mail-oi1-f193.google.com with SMTP id v138so6979780oif.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 18:00:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CMB5JpKwIq6S9PN7vvpe5VBnbdzeo3jW3I3cqODAscQ=;
-        b=xi6zg9bQ0lHizHa87ygqX+qHqSdrFuEi4KcpTdAJ0Y9WXNEF4W0XNWCa/V5JZgIHwR
-         EDe8LdE4gbvHrM2W5CXoHOBFd30nN1QbrGjHz/KrKn+qXidbyuaIIjTmrGy57pxcOoik
-         u1D3HxJ8YWfEv0OqS8d0CX5jL1xcbyNQxEEd3nC3HIlDzf0OuMTAMjTwYFMOEuEy1Z+g
-         I41Sl+6KLFxzaT49rj/EQhObdyEQG1p380oOGciQxj16F07Zv6EDL0WQrzU84Z1USW1c
-         QyEJqcH89E+RXdq5JjS5yoxl6tQYcvH+xa6gqu6ziiQmcxkiUNtiiXpzLT1afcf1Hcwt
-         2YdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CMB5JpKwIq6S9PN7vvpe5VBnbdzeo3jW3I3cqODAscQ=;
-        b=GCAlWWSvmcJGOFa+wcngHJK/rBu1AdBeGi+gzyM48ZfvtI9ao54SmgHs0hjiwS6Vxp
-         27aAqZWQ/bhsAFK0aBeUGdLDEConfbBPLHnQRHF561sRFE2x5I1LReWo3/NLmVmMlsDw
-         rckPUtsyDABWXSook+6RFuN4KnJDFxuQqCiHsjOHw9cjhQ9Qvb/Cfs5GcTf44b9YUAHt
-         c0lrFSSvOzruRA9WkVQeyA9/scOeNLfbbXcptho1Pw9zpUnkT0nXznQewW8htwmYrI0T
-         Vj77t1QiL1RMPYhYUEbvEmwwLX1uiIkWA1ybTthOL+NorE/WjyqpBCXPVxzSNYPXnZCD
-         4yRA==
-X-Gm-Message-State: APjAAAU1eJl/j55k1fB7uFFf+qzrABRDeDZZy2FqiXPOdVoVEBrbmLhh
-        B0OjiCwHdGlodgetH7ZhD8j4qpz+GW0ziniVHlzmAg==
-X-Google-Smtp-Source: APXvYqxbOAODZRmObVlkB1fFi8tbZoBup8I2xNiMTryRx94QSzzOKknAk0ruAKgUXiqvkpyg0rBnaBT3Cym0nNLt/Wk=
-X-Received: by 2002:aca:55c1:: with SMTP id j184mr13409516oib.105.1573264857672;
- Fri, 08 Nov 2019 18:00:57 -0800 (PST)
+        Fri, 8 Nov 2019 21:04:39 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dc61e7a0002>; Fri, 08 Nov 2019 18:03:38 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 08 Nov 2019 18:04:39 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 08 Nov 2019 18:04:39 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 9 Nov
+ 2019 02:04:35 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Sat, 9 Nov 2019 02:04:35 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dc61eb30000>; Fri, 08 Nov 2019 18:04:35 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Ira Weiny <ira.weiny@intel.com>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 0/1] IB/umem: use get_user_pages_fast() to pin DMA pages
+Date:   Fri, 8 Nov 2019 18:04:33 -0800
+Message-ID: <20191109020434.389855-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20191106170727.14457-2-sean.j.christopherson@intel.com>
- <CAPcyv4gJk2cXLdT2dZwCH2AssMVNxUfdx-bYYwJwy1LwFxOs0w@mail.gmail.com>
- <1cf71906-ba99-e637-650f-fc08ac4f3d5f@redhat.com> <CAPcyv4hMOxPDKAZtTvWKEMPBwE_kPrKPB_JxE2YfV5EKkKj_dQ@mail.gmail.com>
- <20191106233913.GC21617@linux.intel.com> <CAPcyv4jysxEu54XK2kUYnvTqUL7zf2fJvv7jWRR=P4Shy+3bOQ@mail.gmail.com>
- <CAPcyv4i3M18V9Gmx3x7Ad12VjXbq94NsaUG9o71j59mG9-6H9Q@mail.gmail.com>
- <0db7c328-1543-55db-bc02-c589deb3db22@redhat.com> <CAPcyv4gMu547patcROaqBqbwxut5au-WyE_M=XsKxyCLbLXHTg@mail.gmail.com>
- <20191107155846.GA7760@linux.intel.com> <20191109014323.GB8254@linux.intel.com>
-In-Reply-To: <20191109014323.GB8254@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 8 Nov 2019 18:00:46 -0800
-Message-ID: <CAPcyv4hAY_OfExNP+_067Syh9kZAapppNwKZemVROfxgbDLLYQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] KVM: MMU: Do not treat ZONE_DEVICE pages as being reserved
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        David Hildenbrand <david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573265018; bh=OqJk4HwxLFuiZxdO7FdtWiG3lR2+WoDbxn35lzBPFEw=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=YOCyGKxWMrdneUTApO1JO0AD8WOGde1bL/i2yAwWv9uB/2L10471+O5wB9x8Z0fw/
+         TpmNgOUBtwduig9BYJ5LfK9tDpHgLYbDqeegbLVsY4krqNGwM7Q4uvSibNlFQdzjQ/
+         CZ6bRrmWwfOzM3KDmnDSpJm74cIlI7Nm89IaJa8SnX46RBO0WvJ9dlG0squYSR4AGT
+         Fb4HYE4t/Y+1VfG8lpweNGrsEL2MvOnQ/oHyThXUXDsj+qGbS48d21+vj55/jo+Os8
+         pAc5nVyWGSsQT8FiD75YWNFQvVRFdiDwFZoHaFYiIE9lHwIvmu8QXlWwvsfL4ixkj9
+         LqCoDBxhGIvCw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 5:43 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Thu, Nov 07, 2019 at 07:58:46AM -0800, Sean Christopherson wrote:
-> > On Thu, Nov 07, 2019 at 07:36:45AM -0800, Dan Williams wrote:
-> > > On Thu, Nov 7, 2019 at 3:12 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
-> > > >
-> > > > On 07/11/19 06:48, Dan Williams wrote:
-> > > > >> How do mmu notifiers get held off by page references and does that
-> > > > >> machinery work with ZONE_DEVICE? Why is this not a concern for the
-> > > > >> VM_IO and VM_PFNMAP case?
-> > > > > Put another way, I see no protection against truncate/invalidate
-> > > > > afforded by a page pin. If you need guarantees that the page remains
-> > > > > valid in the VMA until KVM can install a mmu notifier that needs to
-> > > > > happen under the mmap_sem as far as I can see. Otherwise gup just
-> > > > > weakly asserts "this pinned page was valid in this vma at one point in
-> > > > > time".
-> > > >
-> > > > The MMU notifier is installed before gup, so any invalidation will be
-> > > > preceded by a call to the MMU notifier.  In turn,
-> > > > invalidate_range_start/end is called with mmap_sem held so there should
-> > > > be no race.
-> > > >
-> > > > However, as Sean mentioned, early put_page of ZONE_DEVICE pages would be
-> > > > racy, because we need to keep the reference between the gup and the last
-> > > > time we use the corresponding struct page.
-> > >
-> > > If KVM is establishing the mmu_notifier before gup then there is
-> > > nothing left to do with that ZONE_DEVICE page, so I'm struggling to
-> > > see what further qualification of kvm_is_reserved_pfn() buys the
-> > > implementation.
-> >
-> > Insertion into KVM's secondary MMU is mutually exclusive with an invalidate
-> > from the mmu_notifier.  KVM holds a reference to the to-be-inserted page
-> > until the page has been inserted, which ensures that the page is pinned and
-> > thus won't be invalidated until after the page is inserted.  This prevents
-> > an invalidate from racing with insertion.  Dropping the reference
-> > immediately after gup() would allow the invalidate to run prior to the page
-> > being inserted, and so KVM would map the stale PFN into the guest's page
-> > tables after it was invalidated in the host.
->
-> My previous analysis is wrong, although I did sort of come to the right
-> conclusion.
->
-> The part that's wrong is that KVM does not rely on pinning a page/pfn when
-> installing the pfn into its secondary MMU (guest page tables).  Instead,
-> KVM keeps track of mmu_notifier invalidate requests and cancels insertion
-> if an invalidate occured at any point between the start of hva_to_pfn(),
-> i.e. the get_user_pages() call, and acquiring KVM's mmu lock (which must
-> also be grabbed by mmu_notifier invalidate).  So for any pfn, regardless
-> of whether it's backed by a struct page, KVM inserts a pfn if and only if
-> it is guaranteed to get an mmu_notifier invalidate for the pfn (and isn't
-> already invalidated).
->
-> In the page fault flow, KVM doesn't care whether or not the pfn remains
-> valid in the associated vma.  In other words, Dan's idea of immediately
-> doing put_page() on ZONE_DEVICE pages would work for *page faults*...
->
-> ...but not for all the other flows where KVM uses gfn_to_pfn(), and thus
-> get_user_pages().  When accessing entire pages of guest memory, e.g. for
-> nested virtualization, KVM gets the page associated with a gfn, maps it
-> with kmap() to get a kernel address and keeps the mapping/page until it's
-> done reading/writing the page.  Immediately putting ZONE_DEVICE pages
-> would result in use-after-free scenarios for these flows.
+Hi Jason, Andrew,
 
-Thanks for this clarification. I do want to put out though that
-ZONE_DEVICE pages go idle, they don't get freed. As long as KVM drops
-its usage on invalidate it's perfectly fine for KVM to operate on idle
-ZONE_DEVICE pages. The common case is that ZONE_DEVICE pages are
-accessed and mapped while idle. Only direct-I/O temporarily marks them
-busy to synchronize with invalidate. KVM obviates that need by
-coordinating with mmu-notifiers instead.
+Jason: Here is the change to get_user_pages_fast(), that you requested
+during the review of "mm/gup: track dma-pinned pages: FOLL_PIN,
+FOLL_LONGTERM" [1].
+
+This is a stand-alone patch that applies to today's 5.4.0-rc6 linux.git.
+
+If anyone could please provide any run-time testing (and of course,
+Reviewed-by's), that would be huge. I've compiled and run it, but
+bpftrace tells me (as I already knew) that my current anemic IB setup
+is not actually exercising this code path.
+
+Andrew: unless instructed otherwise, I plan to also re-post this as part
+of the next (v3) version of [1], and hopefully have the whole series go
+through your tree. That would avoid merge conflicts, and as I understand
+it, there is no particular urgency for this patch, so we might as well
+do it the easy way.
+
+
+John Hubbard (1):
+  IB/umem: use get_user_pages_fast() to pin DMA pages
+
+ drivers/infiniband/core/umem.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+--=20
+2.24.0
+
