@@ -2,159 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E554F6127
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 20:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A29F612A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 20:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfKITR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 14:17:58 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40295 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbfKITRy (ORCPT
+        id S1726545AbfKITVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 14:21:00 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:34753 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfKITU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 14:17:54 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 15so6320227pgt.7
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 11:17:54 -0800 (PST)
+        Sat, 9 Nov 2019 14:20:59 -0500
+Received: by mail-il1-f195.google.com with SMTP id p6so8174136ilp.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 11:20:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TY/VtRKwYYhLwNyDqkkRR3WLEh0rigRGo+K8ilv6++I=;
-        b=g/eGJl9U1jxbmYciVtsfJlQad5WJ9yjfHBla5ZFyS8bkdypSn6QJNcS+QzONHVDmxz
-         c3bkKkAA9KmJyZdaBb/uS1OAnpIVOPuWkOHCwaNST4/PMCibEJWbUj2oec78TJVoaXAh
-         ZbYGWvn9nzwcN52NfDz5SD0MvWzK4S78iTyQI=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MkH89WBzNu1RX65KEpd7wgGkq9IjrOpUII7CjYIWD7Q=;
+        b=Yx8JTiSUcJDTDqeV3JVqYyR8mb11sdfgDH3KPlIJpVSaAEotIGmprjGixANdnPex4g
+         pIs8vrUy87i6mT5L5tHi2oIioAsuUdd7d5Aj3pIZoUS92kclX6r76i5cDjqlujc/WhcX
+         A0I0bpGuBFQ1qIPoACyLBYKW8vkRuLumYNpws=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TY/VtRKwYYhLwNyDqkkRR3WLEh0rigRGo+K8ilv6++I=;
-        b=Eca2NgC9Fc0kFJVWQI1/WrChMC2yWvZeXt0nNCH0bGiVmDtXcdfPYUFUFEuGW3Q98n
-         SZ0KAOjpAv4Bkl1gtTe7G1JZkf5HhTBjQzk+wudKxGvWFgldMnUp//M5mS1c4ht0SeuW
-         Is1CrAi50Z83xLzw4VIpkByGF1RHZUZq7PJ+ebirend1nmdJXtRbuzoKN3m9ShrJpwho
-         jhiMIRUVTevgT4Mibu7q4/6OPocsSLwkxjGXVpOKTlIrwcds6t3g2LPYk/AtmuHo+Rie
-         +IPiXSFBuNc3EB6Uq4qC1bjx30CJ4Hd/VEl+SnGD5qasB9mURxeIlkmiPPq/xJPjH0bj
-         FeFg==
-X-Gm-Message-State: APjAAAVsMdNXuKsvS7WbNuGNkq/8sa2GZyy4qyPG/zS7ANU5/4oyTtT2
-        s8Wkm1QvIS9valkb7g6wuCnl5Q==
-X-Google-Smtp-Source: APXvYqwLoettSe3c6USEi+mt/ICgOC1tLDB2bnaxht2vYq9Nq+Ctfo+iismzUSyrS1z789xLf+LMZA==
-X-Received: by 2002:a17:90a:ba89:: with SMTP id t9mr22462463pjr.138.1573327074178;
-        Sat, 09 Nov 2019 11:17:54 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id i11sm9193577pgd.7.2019.11.09.11.17.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2019 11:17:53 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Paul Burton <paul.burton@mips.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     qiaochong@loongson.cn, kgdb-bugreport@lists.sourceforge.net,
-        ralf@linux-mips.org, Douglas Anderson <dianders@chromium.org>,
-        Chuhong Yuan <hslester96@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 5/5] kdb: Get rid of confusing diag msg from "rd" if current task has no regs
-Date:   Sat,  9 Nov 2019 11:16:44 -0800
-Message-Id: <20191109111624.5.I121f4c6f0c19266200bf6ef003de78841e5bfc3d@changeid>
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-In-Reply-To: <20191109191644.191766-1-dianders@chromium.org>
-References: <20191109191644.191766-1-dianders@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MkH89WBzNu1RX65KEpd7wgGkq9IjrOpUII7CjYIWD7Q=;
+        b=TJB5Cmk7dEK2Gi43Zsij234RvNUZwot85B5YWQLgOQItZmDXzVtVYX2newgJRcyDl6
+         WoQmm0aEye2AxwhsiUIBbg/t8TpYzvyviGnGlD75DnAVdKVqkNQ3nCRXZq4rg2YCLbsk
+         gaD0JQhPPn+42yffL0BHIv26tR11MPrY5Xm70mfy8yKK6Gf1IEBowWau3Gfk+b67gVQB
+         hCc8LCebTXo+NTxK/FFTteDDC+BnvncD7DQphJ323Whx/0wUgsffZpYaVzNTlueM3XOw
+         t1IGFABfu5rV7avB+niF/spaFzMOtLjg51WO4EEqjU/RLSo0QhvMHtWuB/s5SIF8z2HW
+         RViQ==
+X-Gm-Message-State: APjAAAXO0WiBmJNbuy0fQTQAH3BVDrOWBlyEpH46HHoO1m9OfRSG7fJo
+        KIPvx+LfrAWxZwVvCEyuRcd8RsinLp8=
+X-Google-Smtp-Source: APXvYqxDgxLrW9x38pGleJHL7xMfKC4d4Yf7J2koyp44X+/A9D8bLbUc2YhVphBXT2W2Hxzm5uTpQg==
+X-Received: by 2002:a92:99ca:: with SMTP id t71mr19965324ilk.61.1573327257128;
+        Sat, 09 Nov 2019 11:20:57 -0800 (PST)
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com. [209.85.166.43])
+        by smtp.gmail.com with ESMTPSA id b9sm1361893ilq.46.2019.11.09.11.20.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 Nov 2019 11:20:56 -0800 (PST)
+Received: by mail-io1-f43.google.com with SMTP id i13so8612603ioj.5
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 11:20:56 -0800 (PST)
+X-Received: by 2002:a02:7158:: with SMTP id n24mr18296678jaf.127.1573327255569;
+ Sat, 09 Nov 2019 11:20:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190925200220.157670-1-dianders@chromium.org>
+ <20190925125811.v3.3.Id33c06cbd1516b49820faccd80da01c7c4bf15c7@changeid>
+ <20191007135459.lj3qc2tqzcv3xcia@holly.lan> <CAD=FV=Vqj9JqGCQX_Foij8EkFtSy8r2wB3uoXNae6PECwNV+CQ@mail.gmail.com>
+ <20191010150735.dhrj3pbjgmjrdpwr@holly.lan> <CAD=FV=VuOVpvEB60-prMxuPyjcrJ-9O2hyaLKf86c-r9BVocdg@mail.gmail.com>
+In-Reply-To: <CAD=FV=VuOVpvEB60-prMxuPyjcrJ-9O2hyaLKf86c-r9BVocdg@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Sat, 9 Nov 2019 11:20:42 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UQeHp9=HGWUHHHpYTt0w+AfTMhTrVAjLeiEReszJLJfQ@mail.gmail.com>
+Message-ID: <CAD=FV=UQeHp9=HGWUHHHpYTt0w+AfTMhTrVAjLeiEReszJLJfQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] kdb: Fix "btc <cpu>" crash if the CPU didn't round up
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If you switch to a sleeping task with the "pid" command and then type
-"rd", kdb tells you this:
+Hi,
 
-  No current kdb registers.  You may need to select another task
-  diag: -17: Invalid register name
+On Thu, Oct 10, 2019 at 9:38 AM Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi,
+>
+> On Thu, Oct 10, 2019 at 8:07 AM Daniel Thompson
+> <daniel.thompson@linaro.org> wrote:
+> > > Reading through other control flows of the various backtrace commands,
+> > > it looks like it is intentional to leave the current task changed when
+> > > you explicitly do an action on that task (or a CPU).
+> > >
+> > > Actually, though, it wasn't clear to me that it ever made sense for
+> > > any of these commands to implicitly leave the current task changed.
+> > > If you agree, I can send a follow-up patch to change this behavior.
+> >
+> > Personally I don't like implicit changes of state but I might need a bit
+> > more thinking to agree (or disagree ;-) ).
+>
+> I can post up a followup after this series lands and change it.  I
+> have a feeling nobody is relying on the old behavior and thus nobody
+> will notice but it would be nice to get this cleaner.
 
-The first message makes sense, but not the second.  Fix it by just
-returning 0 after commands accessing the current registers finish if
-we've already printed the "No current kdb registers" error.
+Sorry it took so long, but follow-up series can be found at:
 
-While fixing kdb_rd(), change the function to use "if" rather than
-"ifdef".  It cleans the function up a bit and any modern compiler will
-have no trouble handling still producing good code.
+https://lore.kernel.org/r/20191109191644.191766-1-dianders@chromium.org
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
- kernel/debug/kdb/kdb_main.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index ba12e9f4661e..b22292b649c4 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -543,9 +543,8 @@ int kdbgetaddrarg(int argc, const char **argv, int *nextarg,
- 		if (diag)
- 			return diag;
- 	} else if (symname[0] == '%') {
--		diag = kdb_check_regs();
--		if (diag)
--			return diag;
-+		if (kdb_check_regs())
-+			return 0;
- 		/* Implement register values with % at a later time as it is
- 		 * arch optional.
- 		 */
-@@ -1836,8 +1835,7 @@ static int kdb_go(int argc, const char **argv)
-  */
- static int kdb_rd(int argc, const char **argv)
- {
--	int len = kdb_check_regs();
--#if DBG_MAX_REG_NUM > 0
-+	int len = 0;
- 	int i;
- 	char *rname;
- 	int rsize;
-@@ -1846,8 +1844,14 @@ static int kdb_rd(int argc, const char **argv)
- 	u16 reg16;
- 	u8 reg8;
- 
--	if (len)
--		return len;
-+	if (kdb_check_regs())
-+		return 0;
-+
-+	/* Fallback to Linux showregs() if we don't have DBG_MAX_REG_NUM */
-+	if (DBG_MAX_REG_NUM <= 0) {
-+		kdb_dumpregs(kdb_current_regs);
-+		return 0;
-+	}
- 
- 	for (i = 0; i < DBG_MAX_REG_NUM; i++) {
- 		rsize = dbg_reg_def[i].size * 2;
-@@ -1889,12 +1893,7 @@ static int kdb_rd(int argc, const char **argv)
- 		}
- 	}
- 	kdb_printf("\n");
--#else
--	if (len)
--		return len;
- 
--	kdb_dumpregs(kdb_current_regs);
--#endif
- 	return 0;
- }
- 
-@@ -1928,9 +1927,8 @@ static int kdb_rm(int argc, const char **argv)
- 	if (diag)
- 		return diag;
- 
--	diag = kdb_check_regs();
--	if (diag)
--		return diag;
-+	if (kdb_check_regs())
-+		return 0;
- 
- 	diag = KDB_BADREG;
- 	for (i = 0; i < DBG_MAX_REG_NUM; i++) {
--- 
-2.24.0.432.g9d3f5f5b63-goog
-
+-Doug
