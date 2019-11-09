@@ -2,56 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3E7CF6125
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 20:17:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32518F6128
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 20:18:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbfKITRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 14:17:55 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39755 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726597AbfKITRv (ORCPT
+        id S1726800AbfKITSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 14:18:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44639 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfKITRw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 14:17:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x28so7382918pfo.6
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 11:17:50 -0800 (PST)
+        Sat, 9 Nov 2019 14:17:52 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q26so7356001pfn.11
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 11:17:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mXFzTIQULMmuTDmTZ6dVKohz/gl+dRtj6ccr6Op88KM=;
-        b=LI5ozv1fTxbjr7x/dcDUh1mB2Iwxyf2fpfKuXvFQulIkd9YYm2IU8paiccu3EotNtk
-         wDJqmbFshW43M/V4r+iGHGDG6uw/mJwvq0g2eyrCfenSMsNd3qcwuHmUVNq/PlOW7tvy
-         1pLLqJgWNfjC/p5racDr1lFjxnY0r9jZw5HQE=
+        bh=UdlwD0l05r56537ZBZYEooUnd8vbBxRtlaKpE7fqAgY=;
+        b=NLQ6dNGBL5ct6UJg2zXevzC9R85rhjVpEA/eT4radmFPIgj37/pjxfoV34DQie4lTh
+         TE4+U3wNwWf4Ci2oq0z1pRyZ7I7ZfIheiQWvUXZopwXMO8fYuFLiGtXNCXjOOTOdD7mX
+         rESo8a7OKHr6CB4kPC5aiR1O8Qig+P5oawiuQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mXFzTIQULMmuTDmTZ6dVKohz/gl+dRtj6ccr6Op88KM=;
-        b=PaEqFLodY4HruKJzaULC0CSG5rC8mag4GtrFxeQnhK1CZgrMwLo1gFK+BbX0z11aWE
-         qar59IriJ3QGFpYIYMU/xCjOrlmihYXxUxMskReyzhu8pysRVaLtXTL8amE4KIJIjdvF
-         4AB2756hzfxkBcExLaPQollVGEBFibBSQ+tlUOjtAP0r99hYEiExgo3Sq0N7jTMjZpLO
-         3Hb7memwbZxKg8uJldJ/jaIF6Npki/t0DOtPkrcXqAS7EHLvpcbsMp3VcB/vpaK12n+I
-         lZxjxO65E7szvgqGlYBX64nhnxhg2/2Mkn4ZdQrIQawYTWSCayynZ5L3nHksH0MeL67R
-         fZvQ==
-X-Gm-Message-State: APjAAAXdehiZAWy0eYHIorU5mnzTZpMXHA9hvHZHbeSAJALiR8X7p2WK
-        l9sNs+AW+EqxoDuXQBRlT41pnA==
-X-Google-Smtp-Source: APXvYqyJ/5A4gHEs+sAnhcIJcA/HukdqC84S1VJK0RNlrtJ8DJl9XngaqApx43e536fdHhCsG/SlEA==
-X-Received: by 2002:a63:ec4b:: with SMTP id r11mr19367156pgj.147.1573327070394;
-        Sat, 09 Nov 2019 11:17:50 -0800 (PST)
+        bh=UdlwD0l05r56537ZBZYEooUnd8vbBxRtlaKpE7fqAgY=;
+        b=S5C9um2VzP0EqJqh6GyYd9yYhcuvlpIRs4Ak040BoI4I4rEKwfgws9aqm1nPSEwOVT
+         CpwFVDPiLgyxWJJMK4ZiD2Z+fWn0zsRENQdz/Jtqs3Vy7AvTdHRTd5sHZ5WwZDATmWR2
+         KxJRvDdMECzuuDVb899tZ2VKrf0pVr2TJ+6Gcalm/Eh0PDZwKbE9rT9Dj9UbNK1rMb8v
+         S3zSXc5T/TvN/63hlbxoc3cXoktOvu29D6zRVvGMwtHPRd3o35K/KTW1WE57GXi5AZkl
+         ca6gAxgjEj0mWR89hzWPbnuLlP9heF8d7MYiAsEfHFhXZMexV0njjK0NXLDdc+u918yX
+         e6Pg==
+X-Gm-Message-State: APjAAAW1Iymmxb7uQGnXsO+OrhPv4Nzb8H8NOAowvnfMYTutgZWWtUYg
+        8I/iu4nsWE9P+6XbITmRrxp/hQ==
+X-Google-Smtp-Source: APXvYqyTjqH2ukN5+R/IrhRSCm7VfIfTxcGx/J78VEuTMSsmPKQJE+5BxRcNcYkWSBUKVLBqE+l7Nw==
+X-Received: by 2002:a63:555b:: with SMTP id f27mr19571417pgm.66.1573327071863;
+        Sat, 09 Nov 2019 11:17:51 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id i11sm9193577pgd.7.2019.11.09.11.17.49
+        by smtp.gmail.com with ESMTPSA id i11sm9193577pgd.7.2019.11.09.11.17.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2019 11:17:49 -0800 (PST)
+        Sat, 09 Nov 2019 11:17:51 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Paul Burton <paul.burton@mips.com>,
         Jason Wessel <jason.wessel@windriver.com>,
         Daniel Thompson <daniel.thompson@linaro.org>
 Cc:     qiaochong@loongson.cn, kgdb-bugreport@lists.sourceforge.net,
         ralf@linux-mips.org, Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>
-Subject: [PATCH 2/5] kdb: kdb_current_regs should be private
-Date:   Sat,  9 Nov 2019 11:16:41 -0800
-Message-Id: <20191109111623.2.Iadbfb484e90b557cc4b5ac9890bfca732cd99d77@changeid>
+        Chuhong Yuan <hslester96@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 3/5] kdb: kdb_current_task shouldn't be exported
+Date:   Sat,  9 Nov 2019 11:16:42 -0800
+Message-Id: <20191109111623.3.I14b22b5eb15ca8f3812ab33e96621231304dc1f7@changeid>
 X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
 In-Reply-To: <20191109191644.191766-1-dianders@chromium.org>
 References: <20191109191644.191766-1-dianders@chromium.org>
@@ -62,42 +67,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of the patch ("MIPS: kdb: Remove old workaround for backtracing on
-other CPUs") there is no reason for kdb_current_regs to be in the
-public "kdb.h".  Let's move it next to kdb_current_task.
+The kdb_current_task variable has been declared in
+"kernel/debug/kdb/kdb_private.h" since 2010 when kdb was added to the
+mainline kernel.  This is not a public header.  There should be no
+reason that kdb_current_task should be exported and there are no
+in-kernel users that need it.  Remove the export.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- include/linux/kdb.h            | 2 --
- kernel/debug/kdb/kdb_private.h | 1 +
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ kernel/debug/kdb/kdb_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/linux/kdb.h b/include/linux/kdb.h
-index 68bd88223417..24cd447659e0 100644
---- a/include/linux/kdb.h
-+++ b/include/linux/kdb.h
-@@ -183,8 +183,6 @@ int kdb_process_cpu(const struct task_struct *p)
- 	return cpu;
- }
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index 4567fe998c30..4d44b3746836 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -73,7 +73,6 @@ int kdb_nextline = 1;
+ int kdb_state;			/* General KDB state */
  
--/* kdb access to register set for stack dumping */
--extern struct pt_regs *kdb_current_regs;
- #ifdef CONFIG_KALLSYMS
- extern const char *kdb_walk_kallsyms(loff_t *pos);
- #else /* ! CONFIG_KALLSYMS */
-diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
-index 55d052061ef9..e829b22f3946 100644
---- a/kernel/debug/kdb/kdb_private.h
-+++ b/kernel/debug/kdb/kdb_private.h
-@@ -242,6 +242,7 @@ extern void debug_kusage(void);
+ struct task_struct *kdb_current_task;
+-EXPORT_SYMBOL(kdb_current_task);
+ struct pt_regs *kdb_current_regs;
  
- extern void kdb_set_current_task(struct task_struct *);
- extern struct task_struct *kdb_current_task;
-+extern struct pt_regs *kdb_current_regs;
- 
- #ifdef CONFIG_KDB_KEYBOARD
- extern void kdb_kbd_cleanup_state(void);
+ const char *kdb_diemsg;
 -- 
 2.24.0.432.g9d3f5f5b63-goog
 
