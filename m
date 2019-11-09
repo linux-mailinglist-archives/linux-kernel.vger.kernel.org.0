@@ -2,91 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 442C1F610A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 20:04:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 900DBF6110
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 20:10:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfKITEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 14:04:36 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47282 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfKITEg (ORCPT
+        id S1726537AbfKITKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 14:10:12 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46427 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfKITKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 14:04:36 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1E1B928E979;
-        Sat,  9 Nov 2019 19:04:34 +0000 (GMT)
-Date:   Sat, 9 Nov 2019 20:04:30 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/5] media: hantro: Use output buffer width and
- height for H264 decoding
-Message-ID: <20191109200430.30367d27@collabora.com>
-In-Reply-To: <HE1PR06MB4011E69C56DA82EAB9ECEAEEAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
-References: <HE1PR06MB4011EDD5F2686A05BC35F61CAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
-        <20191106223408.2176-1-jonas@kwiboo.se>
-        <HE1PR06MB4011E69C56DA82EAB9ECEAEEAC790@HE1PR06MB4011.eurprd06.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Sat, 9 Nov 2019 14:10:11 -0500
+Received: by mail-io1-f68.google.com with SMTP id c6so9886089ioo.13;
+        Sat, 09 Nov 2019 11:10:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m3uHaDtX3ciBcivMZkabAXv4IXjFfi/2JONmJEnyS4M=;
+        b=OzQb2szxIOCMkG7rpfV7iXzqQ4zN4waKC8TIK07OVor9Nkn/w6S5TD3VPil6TGism5
+         N7sxi6TFacDj8wDuXvqUKN0e/a2okRozjUaav/IZaFAFADsYQBWI9yKA3Jbz9kCavgrD
+         mu7xIHK4ip6j9erJ3VRgFN53eJWqyGToD4+u2BvFhIUJixFLpx+5hKb8d6dBVne6WngW
+         w380DqebBQySGHVYeDMJpAJkgX1xOD0KxLOXh0+yovMZk9BBH9/bbIe4DDdIA8STfz59
+         sLeil7/LYCTR53E6bByKg5V3bGq82Yjce99r2hBDEu+4+7qkLhLnGs9xB8V09whZIYA+
+         k5Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m3uHaDtX3ciBcivMZkabAXv4IXjFfi/2JONmJEnyS4M=;
+        b=B4y82udQeWwPcjvHhe2Rx66lk1w959KLnuAJghuq9/PjXisUjwuaQyIEYFzbkUvZ8+
+         xC+BDTwgZqZIVnB98g7c7Zl1gvlGsiubcWKDse/0vWK+G4EffYIYdNMGmccgksMT/bn6
+         gznAQ1n/okWFfW0yGlzL7joowf+U0RsARLKMplWUe7mAdsnR2nyE+b2/6jL6Kh+lUMeo
+         /zR0MYILw/gt0qTtXCuBYsgl5ke1i7y1tke7wStf9qsZishB+vh3ji5P84WLSPNgz8Fi
+         i9czLbkBwYsuCIBrKJmrTGPNaQp885vJ5FGkU1oiby4vjMefeULG/aqPZVRzCR+22kh6
+         Zbgw==
+X-Gm-Message-State: APjAAAXQDdt5rd/YuJKnec30+gl6mE/VhJpUKO5WE4jXaSMcYIIn++FG
+        /LS2IRtuE1tC4EB9GByBeCfG3FN6kNK4DEUuPVY=
+X-Google-Smtp-Source: APXvYqyCcuNQztMPdKAwb9hw9bvQ+cvwApp4ySFAb9AH82h57COZOkZtMCvC2QTO/tDHbKmfFTj/6EewefH4XbTyU5o=
+X-Received: by 2002:a5e:da45:: with SMTP id o5mr17159702iop.265.1573326610808;
+ Sat, 09 Nov 2019 11:10:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20191108213257.3097633-1-arnd@arndb.de> <20191108213257.3097633-4-arnd@arndb.de>
+In-Reply-To: <20191108213257.3097633-4-arnd@arndb.de>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Sat, 9 Nov 2019 11:09:58 -0800
+Message-ID: <CABeXuvpCejkkjT80U9pywkV6FnO5rxk4rZzpmAEnUdwmzBN0Og@mail.gmail.com>
+Subject: Re: [PATCH 03/16] net: sock: use __kernel_old_timespec instead of timespec
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Willem de Bruijn <willemb@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        John Hurley <john.hurley@netronome.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Pedro Tammela <pctammela@gmail.com>,
+        Linux Network Devel Mailing List <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Nov 2019 22:34:22 +0000
-Jonas Karlman <jonas@kwiboo.se> wrote:
-
-> Calculations for motion vector buffer offset is based on width and height
-> from the configured output format, lets use the same values for macroblock
-> width and height hw regs.
-
-Still don't see what was the problem with
-sps->pic_{width,height}_in_mbs_minus1, but okay.
-
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
-> 
-> Fixes: dea0a82f3d22 ("media: hantro: Add support for H264 decoding on G1")
-
-Is this really fixing a bug? Do you have cases where
-->pic_{width,height}_in_mbs_minus1 and
-MB_{WIDTH,HEIGHT}(src_fmt.{width,height}) do not match?
-
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
-> Changes in v3:
->   - change to use src_fmt instead of dst_fmt (Boris)
-> Changes in v2:
->   - new patch split from "media: hantro: Fix H264 motion vector buffer offset"
-> ---
->  drivers/staging/media/hantro/hantro_g1_h264_dec.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/hantro/hantro_g1_h264_dec.c b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
-> index 30d977c3d529..27d40d8d3728 100644
-> --- a/drivers/staging/media/hantro/hantro_g1_h264_dec.c
-> +++ b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
-> @@ -51,8 +51,8 @@ static void set_params(struct hantro_ctx *ctx)
->  	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
->  
->  	/* Decoder control register 1. */
-> -	reg = G1_REG_DEC_CTRL1_PIC_MB_WIDTH(sps->pic_width_in_mbs_minus1 + 1) |
-> -	      G1_REG_DEC_CTRL1_PIC_MB_HEIGHT_P(sps->pic_height_in_map_units_minus1 + 1) |
-> +	reg = G1_REG_DEC_CTRL1_PIC_MB_WIDTH(MB_WIDTH(ctx->src_fmt.width)) |
-> +	      G1_REG_DEC_CTRL1_PIC_MB_HEIGHT_P(MB_HEIGHT(ctx->src_fmt.height)) |
->  	      G1_REG_DEC_CTRL1_REF_FRAMES(sps->max_num_ref_frames);
->  	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL1);
->  
-
+Acked-by: Deepa Dinamani <deepa.kernel@gmail.com>
