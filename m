@@ -2,68 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ECCEF5D37
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 04:37:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 664B2F5D40
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 04:43:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfKIDhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 22:37:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5750 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725895AbfKIDhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 22:37:35 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5E7C2D1528BB2E8FAC0A;
-        Sat,  9 Nov 2019 11:37:32 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Sat, 9 Nov 2019
- 11:37:26 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jk@ozlabs.org>, <joel@jms.id.au>, <eajames@linux.ibm.com>,
-        <andrew@aj.id.au>
-CC:     <alistair@popple.id.au>, <linux-fsi@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] fsi: aspeed: Use devm_kfree in aspeed_master_release()
-Date:   Sat, 9 Nov 2019 11:36:34 +0800
-Message-ID: <20191109033634.30544-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20191109033209.45244-1-yuehaibing@huawei.com>
-References: <20191109033209.45244-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S1726604AbfKIDni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 22:43:38 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46233 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbfKIDni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 22:43:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 19:43:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,283,1569308400"; 
+   d="scan'208";a="228378624"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 08 Nov 2019 19:43:36 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 1/1] iommu/vt-d: Add Kconfig option to enable/disable scalable mode
+Date:   Sat,  9 Nov 2019 11:40:39 +0800
+Message-Id: <20191109034039.27964-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'aspeed' is allocated by devm_kzalloc(), it should not be
-freed by kfree().
+This adds Kconfig option INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON
+to make it easier for distributions to enable or disable the
+Intel IOMMU scalable mode by default during kernel build.
 
-Fixes: 1edac1269c02 ("fsi: Add ast2600 master driver")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
-v2: fix log typos
----
- drivers/fsi/fsi-master-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/Kconfig       | 9 +++++++++
+ drivers/iommu/intel-iommu.c | 7 ++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
-index 3dd82dd..0f63eec 100644
---- a/drivers/fsi/fsi-master-aspeed.c
-+++ b/drivers/fsi/fsi-master-aspeed.c
-@@ -361,7 +361,7 @@ static void aspeed_master_release(struct device *dev)
- 	struct fsi_master_aspeed *aspeed =
- 		to_fsi_master_aspeed(dev_to_fsi_master(dev));
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index e3842eabcfdd..fbdf3fd291d9 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -242,6 +242,15 @@ config INTEL_IOMMU_FLOPPY_WA
+ 	  workaround will setup a 1:1 mapping for the first
+ 	  16MiB to make floppy (an ISA device) work.
  
--	kfree(aspeed);
-+	devm_kfree(dev, aspeed);
- }
++config INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON
++	prompt "Enable Intel IOMMU scalable mode by default"
++	depends on INTEL_IOMMU
++	help
++	  Selecting this option will enable the scalable mode if
++	  hardware presents the capability. If this option is not
++	  selected, scalable mode support could also be enabled
++	  by passing intel_iommu=sm_on to the kernel.
++
+ config IRQ_REMAP
+ 	bool "Support for Interrupt Remapping"
+ 	depends on X86_64 && X86_IO_APIC && PCI_MSI && ACPI
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 6db6d969e31c..6051fe790c61 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -355,9 +355,14 @@ static phys_addr_t intel_iommu_iova_to_phys(struct iommu_domain *domain,
+ int dmar_disabled = 0;
+ #else
+ int dmar_disabled = 1;
+-#endif /*CONFIG_INTEL_IOMMU_DEFAULT_ON*/
++#endif /* CONFIG_INTEL_IOMMU_DEFAULT_ON */
  
- /* mmode encoders */
++#ifdef INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON
++int intel_iommu_sm = 1;
++#else
+ int intel_iommu_sm;
++#endif /* INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON */
++
+ int intel_iommu_enabled = 0;
+ EXPORT_SYMBOL_GPL(intel_iommu_enabled);
+ 
 -- 
-2.7.4
-
+2.17.1
 
