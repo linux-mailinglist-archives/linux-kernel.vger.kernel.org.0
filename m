@@ -2,229 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD07DF61FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 01:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42AE2F61F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 01:30:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfKJA42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 19:56:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726470AbfKJA41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 19:56:27 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [216.9.110.3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E38220B7C;
-        Sun, 10 Nov 2019 00:56:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573347386;
-        bh=BUdFQb1kZQPx4ojrvJZEsGbT37KVn2Olmo5PxzNJ0ts=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=CkiMgTTcMrqVeCCUu1Ej0COoXnMBxb150kdeBXTLRvzn0Ww6G59cnIxi9rEeKYYFr
-         GlydRKlKIdFq+qyHJ6m8cSCaeoxHvoAB/mk3P5WrSiCYTgfeIPoAbwnOBCrDdtnHt5
-         hQu8wfiCv2tV7iKzEDcUQ/6lr/mTlc9bwQ1GD02w=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id BE053352280C; Sat,  9 Nov 2019 10:53:36 -0800 (PST)
-Date:   Sat, 9 Nov 2019 10:53:36 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: [PATCH 1/2] list: add hlist_unhashed_lockless()
-Message-ID: <20191109185336.GA19013@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191107193738.195914-1-edumazet@google.com>
- <20191108192448.GB20975@paulmck-ThinkPad-P72>
- <CANn89iKNLESN7U7BtyzkC6WLVn__Hm727A5cRm6PDuzG5+E4vA@mail.gmail.com>
- <20191108234224.GF20975@paulmck-ThinkPad-P72>
- <CANn89iJsh5X4k2SsT0iNdRJPs4k2Hun3EJak1iomcKahmEJJwg@mail.gmail.com>
- <20191109175440.GJ20975@paulmck-ThinkPad-P72>
+        id S1726699AbfKJAai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 19:30:38 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43774 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfKJAah (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 19:30:37 -0500
+Received: by mail-pg1-f195.google.com with SMTP id l24so6586810pgh.10
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 16:30:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=QJ9M/1JvgfL9a3naUkuoeUKHp140e3y+7LN+oRlvvF0=;
+        b=NCxT1PtSjVriRDY0McvWgqg1c96vuIp6GwyYFPzUd8SsWhDu6AwFt1cy+ZjLXPFvGF
+         LhFFE+gwmzFecxdZ7WNuy7InOhsm6d1xROIkSmVm+R/UZHOYYc7nSCM4IoA5iXAfPatm
+         I6bAdoT4eqFv5eCSyEzQQq9jCwzRNgp0LEGoIgQ9u1tfVLi6LtpyzphrogFujaLOJVAY
+         OpDqbE7AQHo3fmg66SEF31pePDtgnfa8yQZZJK3WeV2qZX2nI++q4iPd7J0bGKA18H42
+         6mx/bhK0qpDwTlrSoV9ISWG//olIHZOODsFZWsDrk43o7EN8QE9jfWMqBCkPc44h1l1/
+         NRAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=QJ9M/1JvgfL9a3naUkuoeUKHp140e3y+7LN+oRlvvF0=;
+        b=FNAMu23WJl1/bN0peKEB/9NMrpqUhz61F6qLhXdJzUi8lb6i2QHO+XoepEjYlgmaLa
+         umJUuLvDzrERT/wLhN9XgOlicc9ekruCpgICrtLH7xSOVKikhzD6TlxeamWQSt4juara
+         2XVC+dNC4Yuz68CQZu/J+zQANFFm7GN8pnZ5My5qG4NL4+oik2e4X0X8OzzH2qM+yizd
+         oX6Y/pYQihwL85TlwMrZXsqWEa6icCIpohsgwA4zkZT9Fwxy2oS5CJmQjwwlxvha5ev4
+         Bkd4MjfWr6PseqW5ZUGQxEucxLizKbHxsjrYTClon6uFxfLBGmf+L5Kjog/xJQdRk1Zm
+         tDkA==
+X-Gm-Message-State: APjAAAV9e0oFlUXua44GXP9b/OQ+dfRHTShyvff645GapsJGJQ2eb0q2
+        mTG9kFIFnPe8dfoJ5I7qj5xcfA==
+X-Google-Smtp-Source: APXvYqxu6JimPLetLyzs5b3fNNN+T5TOM3IxKtOOtZlw0hsFzmo99TMBKf40oTi9kAjJRpBteOx8Ug==
+X-Received: by 2002:a17:90a:d792:: with SMTP id z18mr24756222pju.34.1573345835992;
+        Sat, 09 Nov 2019 16:30:35 -0800 (PST)
+Received: from localhost ([2601:602:9200:a1a5:7c60:912:1380:6df8])
+        by smtp.gmail.com with ESMTPSA id 126sm3785679pgi.9.2019.11.09.16.30.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Nov 2019 16:30:35 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: Re: [PATCH v4 3/4] soc: amlogic: Add support for Secure power domains controller
+In-Reply-To: <1572868028-73076-4-git-send-email-jianxin.pan@amlogic.com>
+References: <1572868028-73076-1-git-send-email-jianxin.pan@amlogic.com> <1572868028-73076-4-git-send-email-jianxin.pan@amlogic.com>
+Date:   Sat, 09 Nov 2019 21:09:31 +0100
+Message-ID: <7hmud4stfo.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191109175440.GJ20975@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 09, 2019 at 09:54:40AM -0800, Paul E. McKenney wrote:
-> On Fri, Nov 08, 2019 at 07:15:16PM -0800, Eric Dumazet wrote:
-> > On Fri, Nov 8, 2019 at 3:42 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > >
-> > > On Fri, Nov 08, 2019 at 12:17:49PM -0800, Eric Dumazet wrote:
-> > > > On Fri, Nov 8, 2019 at 11:24 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > > >
-> > > > > On Thu, Nov 07, 2019 at 11:37:37AM -0800, Eric Dumazet wrote:
-> > > > > > We would like to use hlist_unhashed() from timer_pending(),
-> > > > > > which runs without protection of a lock.
-> > > > > >
-> > > > > > Note that other callers might also want to use this variant.
-> > > > > >
-> > > > > > Instead of forcing a READ_ONCE() for all hlist_unhashed()
-> > > > > > callers, add a new helper with an explicit _lockless suffix
-> > > > > > in the name to better document what is going on.
-> > > > > >
-> > > > > > Also add various WRITE_ONCE() in __hlist_del(), hlist_add_head()
-> > > > > > and hlist_add_before()/hlist_add_behind() to pair with
-> > > > > > the READ_ONCE().
-> > > > > >
-> > > > > > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > > > > > Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> > > > > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > >
-> > > > > I have queued this, but if you prefer it go some other way:
-> > > > >
-> > > > > Acked-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > >
-> > > > > But shouldn't the uses in include/linux/rculist.h also be converted
-> > > > > into the patch below?  If so, I will squash the following into your
-> > > > > patch.
-> > > > >
-> > > > >                                                 Thanx, Paul
-> > > > >
-> > > > > ------------------------------------------------------------------------
-> > > >
-> > > > Agreed, thanks for the addition of this Paul.
-> > >
-> > > Very good, squashed and pushed, thank you!
-> > >
-> > 
-> > I have another KCSAN report of a bug that will force us to use
-> > hlist_unhashed_lockless() from sk_unhashed()
-> > 
-> > (Meaning we also need to add some WRITE_ONCE() annotations to
-> > include/linux/list_nulls.h )
-> > 
-> > BUG: KCSAN: data-race in inet_unhash / inet_unhash
-> > 
-> > write to 0xffff8880a69a0170 of 8 bytes by interrupt on cpu 1:
-> >  __hlist_nulls_del include/linux/list_nulls.h:88 [inline]
-> >  hlist_nulls_del_init_rcu include/linux/rculist_nulls.h:36 [inline]
-> >  __sk_nulls_del_node_init_rcu include/net/sock.h:676 [inline]
-> >  inet_unhash+0x38f/0x4a0 net/ipv4/inet_hashtables.c:612
-> >  tcp_set_state+0xfa/0x3e0 net/ipv4/tcp.c:2249
-> >  tcp_done+0x93/0x1e0 net/ipv4/tcp.c:3854
-> >  tcp_write_err+0x7e/0xc0 net/ipv4/tcp_timer.c:56
-> >  tcp_retransmit_timer+0x9b8/0x16d0 net/ipv4/tcp_timer.c:479
-> >  tcp_write_timer_handler+0x42d/0x510 net/ipv4/tcp_timer.c:599
-> >  tcp_write_timer+0xd1/0xf0 net/ipv4/tcp_timer.c:619
-> >  call_timer_fn+0x5f/0x2f0 kernel/time/timer.c:1404
-> >  expire_timers kernel/time/timer.c:1449 [inline]
-> >  __run_timers kernel/time/timer.c:1773 [inline]
-> >  __run_timers kernel/time/timer.c:1740 [inline]
-> >  run_timer_softirq+0xc0c/0xcd0 kernel/time/timer.c:1786
-> >  __do_softirq+0x115/0x33f kernel/softirq.c:292
-> >  invoke_softirq kernel/softirq.c:373 [inline]
-> >  irq_exit+0xbb/0xe0 kernel/softirq.c:413
-> >  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-> >  smp_apic_timer_interrupt+0xe6/0x280 arch/x86/kernel/apic/apic.c:1137
-> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-> >  native_safe_halt+0xe/0x10 arch/x86/kernel/paravirt.c:71
-> >  arch_cpu_idle+0x1f/0x30 arch/x86/kernel/process.c:571
-> >  default_idle_call+0x1e/0x40 kernel/sched/idle.c:94
-> >  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-> >  do_idle+0x1af/0x280 kernel/sched/idle.c:263
-> >  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:355
-> >  start_secondary+0x208/0x260 arch/x86/kernel/smpboot.c:264
-> >  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
-> > 
-> > read to 0xffff8880a69a0170 of 8 bytes by interrupt on cpu 0:
-> >  sk_unhashed include/net/sock.h:607 [inline]
-> >  inet_unhash+0x3d/0x4a0 net/ipv4/inet_hashtables.c:592
-> >  tcp_set_state+0xfa/0x3e0 net/ipv4/tcp.c:2249
-> >  tcp_done+0x93/0x1e0 net/ipv4/tcp.c:3854
-> >  tcp_write_err+0x7e/0xc0 net/ipv4/tcp_timer.c:56
-> >  tcp_retransmit_timer+0x9b8/0x16d0 net/ipv4/tcp_timer.c:479
-> >  tcp_write_timer_handler+0x42d/0x510 net/ipv4/tcp_timer.c:599
-> >  tcp_write_timer+0xd1/0xf0 net/ipv4/tcp_timer.c:619
-> >  call_timer_fn+0x5f/0x2f0 kernel/time/timer.c:1404
-> >  expire_timers kernel/time/timer.c:1449 [inline]
-> >  __run_timers kernel/time/timer.c:1773 [inline]
-> >  __run_timers kernel/time/timer.c:1740 [inline]
-> >  run_timer_softirq+0xc0c/0xcd0 kernel/time/timer.c:1786
-> >  __do_softirq+0x115/0x33f kernel/softirq.c:292
-> >  invoke_softirq kernel/softirq.c:373 [inline]
-> >  irq_exit+0xbb/0xe0 kernel/softirq.c:413
-> >  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-> >  smp_apic_timer_interrupt+0xe6/0x280 arch/x86/kernel/apic/apic.c:1137
-> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-> >  native_safe_halt+0xe/0x10 arch/x86/kernel/paravirt.c:71
-> >  arch_cpu_idle+0x1f/0x30 arch/x86/kernel/process.c:571
-> >  default_idle_call+0x1e/0x40 kernel/sched/idle.c:94
-> >  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-> >  do_idle+0x1af/0x280 kernel/sched/idle.c:263
-> >  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:355
-> >  rest_init+0xec/0xf6 init/main.c:452
-> >  arch_call_rest_init+0x17/0x37
-> >  start_kernel+0x838/0x85e init/main.c:786
-> >  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:490
-> >  x86_64_start_kernel+0x72/0x76 arch/x86/kernel/head64.c:471
-> >  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
-> > 
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.4.0-rc6+ #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine,
-> > BIOS Google 01/01/2011
-> 
-> Like this?
+Hi Jianxin,
 
-Hmmm...  Do you also need this?
+Jianxin Pan <jianxin.pan@amlogic.com> writes:
 
-						Thanx, Paul
+> Add support for the Amlogic Secure Power controller. In A1/C1 series, power
+> control registers are in secure domain, and should be accessed by smc.
+>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
 
-------------------------------------------------------------------------
+This driver is looking pretty good.  A few more minor comments below.
 
-commit cf78c8772c9dc26a36c0e5eae1262cc396bbfb3f
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Sat Nov 9 10:45:47 2019 -0800
+[...]
 
-    rcu: Add a hlist_nulls_unhashed_lockless() function
+> +static bool pwrc_secure_is_off(struct meson_secure_pwrc_domain *pwrc_domain)
+> +{
+> +	int sts = 1;
+
+What does 'sts' mean?  status?  or something else?  Please use a more
+descriptive name.
+
+> +	if (meson_sm_call(pwrc_domain->pwrc->fw, SM_PWRC_GET, &sts,
+> +			  pwrc_domain->index, 0, 0, 0, 0) < 0)
+> +		pr_err("failed to get power domain status\n");
+
+Does any bit in this register mean the power domain is off?  I think it
+would be better (and more future proof) if you checked the specific bit
+(or mask)
+
+> +	return !!sts;
+
+and then:
+
+    return sts & bitmask;
     
-    This commit adds an hlist_nulls_unhashed_lockless() to allow lockless
-    checking for whether or note an hlist_nulls_node is hashed or not.
-    While in the area, this commit also adds a docbook comment to the existing
-    hlist_nulls_unhashed() function.
-    
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> +}
+> +
+> +static int meson_secure_pwrc_off(struct generic_pm_domain *domain)
+> +{
+> +	int sts = 0;
 
-diff --git a/include/linux/list_nulls.h b/include/linux/list_nulls.h
-index 1ecd356..fa6e847 100644
---- a/include/linux/list_nulls.h
-+++ b/include/linux/list_nulls.h
-@@ -56,11 +56,33 @@ static inline unsigned long get_nulls_value(const struct hlist_nulls_node *ptr)
- 	return ((unsigned long)ptr) >> 1;
- }
- 
-+/**
-+ * hlist_nulls_unhashed - Has node been removed and reinitialized?
-+ * @h: Node to be checked
-+ *
-+ * Not that not all removal functions will leave a node in unhashed state.
-+ * For example, hlist_del_init_rcu() leaves the node in unhashed state,
-+ * but hlist_nulls_del() does not.
-+ */
- static inline int hlist_nulls_unhashed(const struct hlist_nulls_node *h)
- {
- 	return !h->pprev;
- }
- 
-+/**
-+ * hlist_nulls_unhashed_lockless - Has node been removed and reinitialized?
-+ * @h: Node to be checked
-+ *
-+ * Not that not all removal functions will leave a node in unhashed state.
-+ * For example, hlist_del_init_rcu() leaves the node in unhashed state,
-+ * but hlist_nulls_del() does not.  Unlike hlist_nulls_unhashed(), this
-+ * function may be used locklessly.
-+ */
-+static inline int hlist_nulls_unhashed_lockless(const struct hlist_nulls_node *h)
-+{
-+	return !READ_ONCE(h->pprev);
-+}
-+
- static inline int hlist_nulls_empty(const struct hlist_nulls_head *h)
- {
- 	return is_a_nulls(READ_ONCE(h->first));
+Like above, what does sts mean?
+
+> +	struct meson_secure_pwrc_domain *pwrc_domain =
+> +		container_of(domain, struct meson_secure_pwrc_domain, base);
+> +
+> +	if (meson_sm_call(pwrc_domain->pwrc->fw, SM_PWRC_SET, NULL,
+> +			  pwrc_domain->index, PWRC_OFF, 0, 0, 0) < 0) {
+> +		pr_err("failed to set power domain off\n");
+> +		sts = -EINVAL;
+> +	}
+> +
+> +	return sts;
+
+It looks to me like sts is only used as a return code, so maybe call it
+ret for clarity?  or rename it to something more descriptive.
+
+> +}
+> +
+> +static int meson_secure_pwrc_on(struct generic_pm_domain *domain)
+> +{
+> +	int sts = 0;
+> +	struct meson_secure_pwrc_domain *pwrc_domain =
+> +		container_of(domain, struct meson_secure_pwrc_domain, base);
+> +
+> +	if (meson_sm_call(pwrc_domain->pwrc->fw, SM_PWRC_SET, NULL,
+> +			  pwrc_domain->index, PWRC_ON, 0, 0, 0) < 0) {
+> +		pr_err("failed to set power domain on\n");
+> +		sts = -EINVAL;
+> +	}
+> +
+> +	return sts;
+
+same comment as above.
+
+> +}
+> +
+> +#define SEC_PD(__name, __flag)			\
+> +[PWRC_##__name##_ID] =				\
+> +{						\
+> +	.name = #__name,			\
+> +	.index = PWRC_##__name##_ID,		\
+> +	.is_off = pwrc_secure_is_off,	\
+> +	.flags = __flag,			\
+> +}
+> +
+> +static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+> +	SEC_PD(DSPA,	0),
+> +	SEC_PD(DSPB,	0),
+> +	/* UART should keep working in ATF after suspend and before resume */
+> +	SEC_PD(UART,	GENPD_FLAG_ALWAYS_ON),
+> +	/* DMC is for DDR PHY ana/dig and DMC, and should be always on */
+> +	SEC_PD(DMC,	GENPD_FLAG_ALWAYS_ON),
+> +	SEC_PD(I2C,	0),
+> +	SEC_PD(PSRAM,	0),
+> +	SEC_PD(ACODEC,	0),
+> +	SEC_PD(AUDIO,	0),
+> +	SEC_PD(OTP,	0),
+> +	SEC_PD(DMA,	0),
+> +	SEC_PD(SD_EMMC,	0),
+> +	SEC_PD(RAMA,	0),
+> +	/* SRAMB is used as AFT runtime memory, and should be always on */
+
+AFT?  I assume you mean ATF?
+
+> +	SEC_PD(RAMB,	GENPD_FLAG_ALWAYS_ON),
+> +	SEC_PD(IR,	0),
+> +	SEC_PD(SPICC,	0),
+> +	SEC_PD(SPIFC,	0),
+> +	SEC_PD(USB,	0),
+> +	/* NIC is for NIC400, and should be always on */
+
+Why?
+
+> +	SEC_PD(NIC,	GENPD_FLAG_ALWAYS_ON),
+> +	SEC_PD(PDMIN,	0),
+> +	SEC_PD(RSA,	0),
+> +};
+
+[...]
+
+Kevin
