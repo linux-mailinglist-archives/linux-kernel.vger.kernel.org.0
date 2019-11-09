@@ -2,102 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B962F5E88
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 11:47:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C282AF5E79
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 11:32:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbfKIKrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 05:47:08 -0500
-Received: from www.linux-watchdog.org ([185.87.125.42]:42220 "EHLO
-        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfKIKrI (ORCPT
+        id S1726467AbfKIKc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 05:32:28 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40675 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfKIKc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 05:47:08 -0500
-X-Greylist: delayed 476 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Nov 2019 05:47:07 EST
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id B130140204; Sat,  9 Nov 2019 10:54:43 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org B130140204
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1573293283;
-        bh=JzQx7YpNmpxma75B7LPm6zaJOGPNcTDGsH5LTJkoSnA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ksE1U0tZBYAX8bJb5Rq3vBibSUYcDahJ22nhZPcAoJnJaQwPZdyug7mibTFrLpU1h
-         1uFA7kGR4+satPBRQFCJivIiTjXPei+zI1GeDHlxmV2pvbYmGgnwfNiZ7eiGC2tKmn
-         dRJ8DpY/RA9EqXTyntUeR0rG3xEl6duzKXIdoxMg=
-Date:   Sat, 9 Nov 2019 10:54:43 +0100
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: [GIT PULL REQUEST] watchdog - v5.4-rc7 Fixes
-Message-ID: <20191109095443.GA21465@www.linux-watchdog.org>
+        Sat, 9 Nov 2019 05:32:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q2so8810473ljg.7
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 02:32:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=x90YfWLsoz/i9rgd4aZmTpssHGEfM8PqRGQW6oK14VU=;
+        b=xJQL45WxbQyvkeWDLo0XQ3Wek6whiF8weRmZKEI4SfrPIsm69lRWxUZRmlMyjQUrUf
+         aXHqPo3euRTmrPZZttzD7H31AYbOptoOBhcwX74M/87oEStJ9zxe2sMy93dJXd6rn952
+         R+G+KT3ftLHiw0wPjGKvzCJJYyv6vJs9Xhr+ZAwbnFHQg/wNELDLGzBv+ce5fNZ/gx7y
+         W2xVJoqWCEGPr4GvgWE/6XpqrOkttDU+GzKMXY0DTm/l5LRrZ11+9f+EdT+nCEUZkhD/
+         Xid6/NnH0BF6qgoDHP5F9Xa6S52aLOwWFDWxJGeF7NPwLrxUhdiAidxp/OLolYCjwDWL
+         JnnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=x90YfWLsoz/i9rgd4aZmTpssHGEfM8PqRGQW6oK14VU=;
+        b=Zs736QBYns3nRrqF+QPuMhCdLyIFBCPMP4Hv8agqUg54/kVYeeLGKx/F/jhtdomBuB
+         va9ICeN4mPuV3wHPX+ViB/Yzkn7gIzCEfh+V2r8FvlMEMkb7oMQlGTRZIHpw56igM3+p
+         SC1Ub0973qPqpc3/Y1kxLNq2yCzlFkcLv/98lJChgAMg+MYVRv/9OSYX4QMKupz95xve
+         H1utW2B6l90JTJe2d9RuJL+Ce/oKfDcn6qQsziwQ4iXa8pVfn+SWYdV9aerMCyiSoyAt
+         lQ/FRowdyv9NhhhR5cFHQ5qR8HTeGSqXSIoEopKQvxPdFyPw45L0yfUbybty+HR+DRjX
+         hVGQ==
+X-Gm-Message-State: APjAAAX/LuMWBqLi87mBR6g88PnqViksyuEDj6q88dRkCkbUvyYi9Z8y
+        5V6N3LKRvJ9+1/LQZl9Nk/nUegIg2RAFAg/E5JvHGgukMIA=
+X-Google-Smtp-Source: APXvYqy44Cl7iUEB+kI/Z7uZnPSKeMJdbg8nNjnafCmVZv8bSJ9eNA2sqJew1ncCvJjhiHNU8vIcv6puulr95WGMwq8=
+X-Received: by 2002:a2e:888a:: with SMTP id k10mr9893540lji.195.1573295546106;
+ Sat, 09 Nov 2019 02:32:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+References: <20191108174708.135680837@linuxfoundation.org>
+In-Reply-To: <20191108174708.135680837@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Sat, 9 Nov 2019 16:02:14 +0530
+Message-ID: <CA+G9fYuga3ZCTfzuXwx4Rk7kR5==zgbv57+jLpbYrXRfowd4Ow@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/75] 4.4.200-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Sat, 9 Nov 2019 at 00:24, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.4.200 release.
+> There are 75 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun 10 Nov 2019 05:42:11 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.200-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Please pull the watchdog fixes for v5.4-rc7.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-This series contains:
-* cpwd: fix build regression
-* pm8916_wdt: fix pretimeout registration flow
-* meson: Fix the wrong value of left time
-* imx_sc_wdt: Pretimeout should follow SCU firmware format
-* bd70528: Add MODULE_ALIAS to allow module auto loading
+Summary
+------------------------------------------------------------------------
 
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit a99d8080aaf358d5d23581244e5da23b35e340b9:
+kernel: 4.4.200-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: 6afbf4832d8a30149fdb36136e222f795f2e9ec9
+git describe: v4.4.199-76-g6afbf4832d8a
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.199-76-g6afbf4832d8a
 
-  Linux 5.4-rc6 (2019-11-03 14:07:26 -0800)
 
-are available in the git repository at:
+No regressions (compared to build v4.4.199)
 
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.4-rc7
+No fixes (compared to build v4.4.199)
 
-for you to fetch changes up to 81363f248aecd2b5f10547af268a4dfaf8963489:
+Ran 16997 total tests in the following environments and test suites.
 
-  watchdog: bd70528: Add MODULE_ALIAS to allow module auto loading (2019-11-05 16:58:12 +0100)
+Environments
+--------------
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
 
-----------------------------------------------------------------
-linux-watchdog 5.4-rc7 tag
+Test Suites
+-----------
+* build
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-cpuhotplug-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* network-basic-tests
+* perf
+* prep-tmp-disk
+* kvm-unit-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-open-posix-tests
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* install-android-platform-tools-r2600
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
 
-----------------------------------------------------------------
-Anson Huang (1):
-      watchdog: imx_sc_wdt: Pretimeout should follow SCU firmware format
-
-Arnd Bergmann (1):
-      watchdog: cpwd: fix build regression
-
-Jorge Ramirez-Ortiz (1):
-      watchdog: pm8916_wdt: fix pretimeout registration flow
-
-Matti Vaittinen (1):
-      watchdog: bd70528: Add MODULE_ALIAS to allow module auto loading
-
-Xingyu Chen (1):
-      watchdog: meson: Fix the wrong value of left time
-
- drivers/watchdog/bd70528_wdt.c    |  1 +
- drivers/watchdog/cpwd.c           |  8 +++++++-
- drivers/watchdog/imx_sc_wdt.c     |  8 +++++++-
- drivers/watchdog/meson_gxbb_wdt.c |  4 ++--
- drivers/watchdog/pm8916_wdt.c     | 15 +++++++++++----
- 5 files changed, 28 insertions(+), 8 deletions(-)
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
-
+--=20
+Linaro LKFT
+https://lkft.linaro.org
