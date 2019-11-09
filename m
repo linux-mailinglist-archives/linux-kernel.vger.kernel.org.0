@@ -2,114 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E901BF5D01
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 03:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 057D3F5D05
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 03:35:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfKIC3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 21:29:12 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41750 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfKIC3M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 21:29:12 -0500
-Received: by mail-pf1-f194.google.com with SMTP id p26so6350195pfq.8
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 18:29:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qNSiQdl3ZwenPCbCOWazKugSKkgISu7+mZNw6o59RZo=;
-        b=kM6g4pATq5GdRAigFw42iUxJ/YwhRDauE8okdUyuzDuzUoo7Uofu2bfEmRsMVfWjDf
-         /8ABMHE18e6eVEM0BdkkhTcn+3P4dvIYiqHTZtv4hXIGO5n/lbXgfrzztYHpOpaWtdaM
-         eIUxoy80VngjqELFvW8sqVSWNaw7jB4AD/4xB03b6h14stANeyOJdeJHMRO+Lw8gCyeG
-         q9YomsjYNmiDAXsvkTdWyVMeZ8PxqxrJ5pbqMdluFri/UYXrBNra4JC5273BUPeAgBNm
-         JzdzGf2yZpeKzynZYxsQzg4MKzm1hlP4s5TYGJnvU8GwMNgsbo4hoOJtXQkDWiQyicV9
-         /WwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qNSiQdl3ZwenPCbCOWazKugSKkgISu7+mZNw6o59RZo=;
-        b=UenHjRl7v2+zKq5dJ0ja0VMWlg43BLSIV+yq04L80umed/SkpUbUZOmgLjQS2cze4u
-         x5b9JKRT/Fi+bIM8K4FnNTHdhxYCnuMra38mAijcvanB+y9McIoOrC6y0rhYsQoVnRog
-         08VOdsVrlQ2E0KiCDkRiYMgY+OmUxzK31zWzR0f5WrRmncHn9geWWZ5LI33FUnepXS15
-         2XkeMbd3zZMbMhMGq4tZ0gpM9gliCRVqZ/HKI4fT1SuaqFhuwJmq3mQ5NS5lW8hPUjrU
-         yTKTixcfGgOfC7iCJpsG+dfedfxrgeg4qhWkkAdfSDWLsbSNghTlM28nGiD8Siua4Ggo
-         lVKg==
-X-Gm-Message-State: APjAAAWx9nMqAtA6wWmXth9bxySVHLgAzj1mpVPpz829jVQsaGDTVih6
-        u/aBzMzlnNsKGzLYNVP+JAk=
-X-Google-Smtp-Source: APXvYqyDIXRKakSRHU5zT9qxMd9r9qlmNlYqQMnMExV32fz8Wt4sHdaBfzcKT5h8oZ+JDmvjq3gbQw==
-X-Received: by 2002:a17:90a:3808:: with SMTP id w8mr18440977pjb.143.1573266551382;
-        Fri, 08 Nov 2019 18:29:11 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::2:f248])
-        by smtp.gmail.com with ESMTPSA id 82sm8412448pfa.115.2019.11.08.18.29.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Nov 2019 18:29:10 -0800 (PST)
-Date:   Fri, 8 Nov 2019 18:29:09 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH 03/10] ftrace: Add register_ftrace_direct()
-Message-ID: <20191109022907.6zzo6orhxpt5n2sv@ast-mbp.dhcp.thefacebook.com>
-References: <20191108212834.594904349@goodmis.org>
- <20191108213450.032003836@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108213450.032003836@goodmis.org>
-User-Agent: NeoMutt/20180223
+        id S1726424AbfKICfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 21:35:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725990AbfKICfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Nov 2019 21:35:05 -0500
+Subject: Re: [GIT] Networking
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573266904;
+        bh=ZnfK/xdvUd4/XUscNHvzylDj0cqnh+/IIfsSY8oJja8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=xFPZjqNURR+/wYdQsZQvl5jwEX7fJqlLuplVonjrLq30eUaLywiG1WcgYSRs/DnsI
+         YeuspYUSkn8vpWPfs1UAstM0JdEtYSDkGyBibfEkWclMurncoXNeYN2lHogg03FQQb
+         h5RRJ8bl492xEvX9szmLMI9xFN/pwTxqWpwoJR/s=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191108.173432.1139057558916119461.davem@davemloft.net>
+References: <20191108.173432.1139057558916119461.davem@davemloft.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191108.173432.1139057558916119461.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
+ refs/heads/master
+X-PR-Tracked-Commit-Id: a2582cdc32f071422e0197a6c59bd1235b426ce2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0058b0a506e40d9a2c62015fe92eb64a44d78cd9
+Message-Id: <157326690465.18517.1376695479110349158.pr-tracker-bot@kernel.org>
+Date:   Sat, 09 Nov 2019 02:35:04 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 04:28:37PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> Add the start of the functionality to allow other trampolines to use the
-> ftrace mcount/fentry/nop location. This adds two new functions:
-> 
->  register_ftrace_direct() and unregister_ftrace_direct()
-> 
-> Both take two parameters: the first is the instruction address of where the
-> mcount/fentry/nop exists, and the second is the trampoline to have that
-> location called.
-> 
-> This will handle cases where ftrace is already used on that same location,
-> and will make it still work, where the registered direct called trampoline
-> will get called after all the registered ftrace callers are handled.
-> 
-> Currently, it will not allow for IP_MODIFY functions to be called at the
-> same locations, which include some kprobes and live kernel patching.
-> 
-> At this point, no architecture supports this. This is only the start of
-> implementing the framework.
-> 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-...
-> +struct ftrace_ops direct_ops = {
-> +	.func		= call_direct_funcs,
-> +	.flags		= FTRACE_OPS_FL_IPMODIFY | FTRACE_OPS_FL_RECURSION_SAFE
-> +			  | FTRACE_OPS_FL_DIRECT | FTRACE_OPS_FL_SAVE_REGS
-> +			  | FTRACE_OPS_FL_PERMANENT,
-> +};
+The pull request you sent on Fri, 08 Nov 2019 17:34:32 -0800 (PST):
 
-The whole set looks great. Thank you for adding FL_PERMANENT to it.
-Is there a way to do a replacement of direct call?
-If I use unregister(old)+register(new) some events will be missed.
-If I use register(new)+unregister(old) for short period of time both new and
-old will be triggering on all cpus which will likely confuse bpf tracing.
-Something like modify_ftrace_direct() should solve it. It's still racy. In a
-sense that some cpus will be executing old while other cpus will be executing
-new, but per-cpu there will be no double accounting. How difficult would be
-to add such feature?
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git refs/heads/master
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0058b0a506e40d9a2c62015fe92eb64a44d78cd9
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
