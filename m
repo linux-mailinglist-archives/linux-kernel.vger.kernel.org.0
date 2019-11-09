@@ -2,103 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2420BF5E8E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 11:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B47F5E96
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 12:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbfKIK5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 05:57:00 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34062 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfKIK47 (ORCPT
+        id S1726390AbfKILII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 06:08:08 -0500
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:52289 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726143AbfKILII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 05:56:59 -0500
-Received: by mail-wm1-f68.google.com with SMTP id v3so9172406wmh.1;
-        Sat, 09 Nov 2019 02:56:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JHLfdo8EDYpxKc5h1UVzYd5rkwgO5xInaju1os9b+ho=;
-        b=SfmDrMNFhZrsAWXRX9Nk5Koc/lkJ6XYxu32hCyrsCin2aAcMyn0oie0m+oobQbQ74W
-         9YhqazEroPzLtEjVmTQD7BcMEaaaXl795pYJp9bme3oBttWkPqXjrm9SE43wmJDyFu11
-         o1VT3TOucgjsyqvcDOwOVZWq3C5Wu21rNAmN4vCC/fYG8MbRGMhMZYs4EZKa2OWO2o2q
-         F7jhzABV386Zk9F4v4LFklNGpqqE7GUs/55ny5MeUh8ABfp85taeVVfAdskUG8+53NZ0
-         RtGWo1z1VPJB5JoCJ4N25e3toiXE0LjsNte7cSPp4tX5oTFuFFGiUfGXsboDvYYDGuBo
-         ITKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JHLfdo8EDYpxKc5h1UVzYd5rkwgO5xInaju1os9b+ho=;
-        b=nMRco2rPBf1vDw5xYAKKDAW3snMBpXJFJzeTSE43EjALWI1qF5fLqcjf5b0gwbar4U
-         CwqkoLpIb+cbygheZLVVwvopCq8xLTl2MzIbJz/GgHJVZ0bzZtN1LecIxLmO2cXfiNKY
-         vxqxeAsUiiWbiZcTPPwu8pjTnWCi+mf1Z/YXfPAZ/fhT5lxl7mttk0KMk+cz2MUA5qeB
-         Z2ucJgkUPQD4bbJfmwaJLBcEzEwkMJAazYtA4NAwtRFz8k+qP66aXqDoYNmJqxWKFkhz
-         CEEC7OPBe0FZN2YJIPjAVHPYYd+TtxP9hHv0S55fVM4MnU3LB1grEt/xmjeA3rs+bX1V
-         nzjQ==
-X-Gm-Message-State: APjAAAWEaOsfZlZn7TcXjYQK9tmqCvdyOQLLlQVdjuNHXSru2x0Ahsaa
-        nRglxZWfvRfwtdej2bOYUWQ=
-X-Google-Smtp-Source: APXvYqxhXAZg/XDWVA2jUZjEBESbC0l9FJaojQQtz3TAEVdRDHSDneX5AN2Bqc3wy8oUC8OTUHaU8A==
-X-Received: by 2002:a1c:6146:: with SMTP id v67mr12605556wmb.102.1573297017263;
-        Sat, 09 Nov 2019 02:56:57 -0800 (PST)
-Received: from localhost.localdomain ([86.121.29.241])
-        by smtp.gmail.com with ESMTPSA id l10sm14846296wrg.90.2019.11.09.02.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2019 02:56:56 -0800 (PST)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     shawnguo@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc:     leoyang.li@nxp.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>
-Subject: [PATCH] ARM: dts: ls1021a-tsn: Use interrupts for the SGMII PHYs
-Date:   Sat,  9 Nov 2019 12:56:42 +0200
-Message-Id: <20191109105642.30700-1-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 9 Nov 2019 06:08:08 -0500
+Received: from [192.168.2.10] ([46.9.232.237])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id TOb3iwTk7PMT8TOb6iPBE6; Sat, 09 Nov 2019 12:08:05 +0100
+Subject: Re: [PATCH] media: rockchip/rga: fix potential use after free
+To:     Pan Bian <bianpan2016@163.com>, Jacob Chen <jacob-chen@iotwrt.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1572969354-8967-1-git-send-email-bianpan2016@163.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <e89f6a90-4899-0945-e11a-67be6a28e7c0@xs4all.nl>
+Date:   Sat, 9 Nov 2019 12:08:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <1572969354-8967-1-git-send-email-bianpan2016@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfAEIQNDj0MrkNwMDONLTaAveOQTV90nc/m7292hp5RhbHodvPvVOF7YABtpCI5/hudEn1y22ZqA+1Zv8Q5vySCxJngJ6HhmqrH0G4Pbt7P+WOd0lz5Y4
+ 63/JBeAViow65qolHk+fGi3DH5TAgkFqMuZyXAoygqjBxjI/S2NCX4SYVCL5wvIpNseOd29oQlXoTF6BPxGwODycBm/YXesDN/5rRDPxhPSdkdkx6ze4KaX/
+ rIRLjaZ0DUHD0Q5blMv6aM+rE2gn/llYsl1ETROOdfA3aHM7GZ/aBax1Vb5CFJfB/rFttkCOqDlGu0X+fH53RGgAg4cza3jzMzgoxrlYQ+9534j/mKlg7JcY
+ X5BUCQK0PuMiecZaAZ4JadtiuegxK/ePgPiemh52wAr2qxgako0xpEPjqnh2HHDBtVfIUhF5tV0O+mDwtS3ikCxbAjMRyQUywTz2KwIoccd+y/+sjuoIwD+3
+ MfVUAq0p1Ft5fY6e
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the LS1021A-TSN board, the 2 Atheros AR8031 PHYs for eth0 and eth1
-have interrupt lines connected to the shared IRQ2_B LS1021A pin.
+On 11/5/19 4:55 PM, Pan Bian wrote:
+> The variable vga->vfd is an alias for vfd. Therefore, releasing vfd and
+> then unregister vga->vfd will lead to a use after free bug. In fact, the
+> free operation and the unregister operation are reversed.
+> 
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+> ---
+>  drivers/media/platform/rockchip/rga/rga.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
+> index e9ff12b6b5bb..613b868fce33 100644
+> --- a/drivers/media/platform/rockchip/rga/rga.c
+> +++ b/drivers/media/platform/rockchip/rga/rga.c
+> @@ -901,9 +901,9 @@ static int rga_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  rel_vdev:
+> -	video_device_release(vfd);
+> -unreg_video_dev:
+>  	video_unregister_device(rga->vfd);
+> +unreg_video_dev:
+> +	video_device_release(vfd);
+>  unreg_v4l2_dev:
+>  	v4l2_device_unregister(&rga->v4l2_dev);
+>  err_put_clk:
+> 
 
-The interrupts are active low, but the GICv2 controller does not support
-active-low and falling-edge interrupts, so the only mode it can be
-configured in is rising-edge.
+This isn't right, you need to update the goto labels as well.
 
-The interrupt number was obtained by subtracting 32 from the listed
-interrupt ID from LS1021ARM.pdf Table 5-1. Interrupt assignments.
+With this change unreg_video_dev releases the vdev, while rel_vdev
+unregisters it. Very confusing.
 
-Switching to interrupts offloads the PHY library from the task of
-polling the MDIO status and AN registers (1, 4, 5) every second.
+I'd also rename unreg_video_dev to unreg_vdev to be consistent with
+rel_vdev.
 
-Unfortunately, the BCM5464R quad PHY connected to the switch does not
-appear to have an interrupt line routed to the SoC.
+Regards,
 
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
----
- arch/arm/boot/dts/ls1021a-tsn.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/ls1021a-tsn.dts b/arch/arm/boot/dts/ls1021a-tsn.dts
-index 5b7689094b70..4532b2bd3fd1 100644
---- a/arch/arm/boot/dts/ls1021a-tsn.dts
-+++ b/arch/arm/boot/dts/ls1021a-tsn.dts
-@@ -203,11 +203,15 @@
- 	/* AR8031 */
- 	sgmii_phy1: ethernet-phy@1 {
- 		reg = <0x1>;
-+		/* SGMII1_PHY_INT_B: connected to IRQ2, active low */
-+		interrupts = <GIC_SPI 165 IRQ_TYPE_EDGE_RISING>;
- 	};
- 
- 	/* AR8031 */
- 	sgmii_phy2: ethernet-phy@2 {
- 		reg = <0x2>;
-+		/* SGMII2_PHY_INT_B: connected to IRQ2, active low */
-+		interrupts = <GIC_SPI 165 IRQ_TYPE_EDGE_RISING>;
- 	};
- 
- 	/* BCM5464 quad PHY */
--- 
-2.17.1
-
+	Hans
