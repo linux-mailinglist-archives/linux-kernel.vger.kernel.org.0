@@ -2,207 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 966F3F5D3B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 04:43:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB60EF5D45
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 04:47:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbfKIDmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 8 Nov 2019 22:42:52 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:38787 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbfKIDmw (ORCPT
+        id S1726462AbfKIDrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 8 Nov 2019 22:47:21 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:46879 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfKIDrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Nov 2019 22:42:52 -0500
-Received: by mail-yw1-f68.google.com with SMTP id s6so3034809ywe.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2019 19:42:51 -0800 (PST)
+        Fri, 8 Nov 2019 22:47:21 -0500
+Received: by mail-io1-f66.google.com with SMTP id c6so8508990ioo.13;
+        Fri, 08 Nov 2019 19:47:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LEQk7sFAoN8CWP8jvTuW+bl0ja9oHBLlsIXGwrkQBgw=;
-        b=pcaAEX9THRPG51rpy1I+pgw0cWw+N8IrYBja/ek9sUwGb+zm7wMEoheVy1nBpfraFe
-         kZsq5tNPZaXWJ4lBkGt36OiNdQUGyngdmEwuFWlQW9Ujr08CScd696vQNGGdmXBXLonP
-         43W6dDloj+a/N+u+QQ59R32kZlvA2BucQtP9wwUdvuB8qAAOR0AffLaktMhLFEkzRmiJ
-         K7FeUS8BgQ2S4wp5wN+0/27s9GqWc/rVTaBdTgVVrcyxv/HZCzhQpoPIVCLshKDoBCh0
-         geeLon2l6kMQt2PijHYEUBxT553RDPqRncquLtmwbAloQ9TPOBS2S95wKpKQakre2c9f
-         HdoA==
+        bh=h2SQyHk4OQR7AxFi3CbCcGVXnvbVftYqGAUdD/StU5o=;
+        b=E9p3eCxp1KAq1fkVs/GTTwxsf0/Mf9rqaiKFftUMTZERrn6nwEly3asPys28sFAjUM
+         gIuBZQzvWryeMWSz1DCLueQfdeSIo64XWS7zg6hIjLJLYgT/LZDRohX65EvZPQcuRTa9
+         xh0H/ZrZbPN6wSv1JhPkZnwgCJA8Z+vRPdjlHP3NtPpqoQIa18juliZxgmRF2H7m1Hw3
+         fzRC8V/5NB1NA0Z38kncafhzpIDQXiDWymwx98gjd41zzZVP/s3JCdEtFEE+dKpU8wBL
+         SvkMwwdfAMVUc/coMpKRy1F9+laPDaFusZMeOlWGv4yuYDtDV3CZ5lMqqi6ZyZojWDh7
+         xRHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LEQk7sFAoN8CWP8jvTuW+bl0ja9oHBLlsIXGwrkQBgw=;
-        b=WtAPXukRVAnRQ2YLu7nCYaw6ZigPhINfc6OvgkgAQ+LuPhiSK3hwsgugAtCyNWyvBY
-         3qPq65qzMP5AljmMGbtSpE4c6pka9x2AemiUWcdin0A5MFcvl/ZhxST2SRzbzvS8X7wY
-         jlRlMabjn5G5vTzY+q3XGuFrKKANXR+ANBwmEF/hKCuWSnZwAfrtcZAENrS/8LNKDari
-         gDPUHQUp5IL8b+Yq10TvKYwNGmirOCUT/zbKPLGfg6xMsxJlluwUtxsXwtxuaW78430g
-         bmx5VHjARLd8N2ooAOfwiGgeeWpGPoemZLv/sVRAgguHik7QGLmrxbK+XnN7aWisklpk
-         Bzaw==
-X-Gm-Message-State: APjAAAVXjNyovxUPH/slrHRulJ28dcxdp0SbTxrntrhrOkt80GjnLQwh
-        b88Cy28Jhc1a3nLhIYsJTFuA2S1g3/FtbgXDEKc=
-X-Google-Smtp-Source: APXvYqzGkkeTMB3qmgYiGSfd6/0k0jCXQ9rZvvxElwuOEjwo6Q8RNPceNRI9F+uK9A3p9BsnZqCKG3wB5gjDuIXVtew=
-X-Received: by 2002:a81:1881:: with SMTP id 123mr9470290ywy.287.1573270970767;
- Fri, 08 Nov 2019 19:42:50 -0800 (PST)
+        bh=h2SQyHk4OQR7AxFi3CbCcGVXnvbVftYqGAUdD/StU5o=;
+        b=ByL1oQhnos1NUPRWggM9QB+ir1lrk3UzUgGVJDrk1d0RnNFGTzoGNSnKyRJ7CaX9G6
+         m5w7iodzj47HhY29aeYIBj7GfFgvKXeSs22K/k4JjLKv3L1uPhCQkUL75OAgA2xUu8DA
+         t/Z7PvOivf+9LDspPtWLMQuBRrOodDVOl8LmkOq18Hfw9ksZfq9W98q92xo5X+Tm/kLO
+         zYOExp0PMtzn0br6b92o3d8KDLrwWftIzZDfMlX0IxCcDjgZIGjUhpH1wgiT0SY2ekBr
+         0NxD2sAKwhEz/zakZpnjuadkzkBZS8dtIIsXUVT/5iFMLaFU74hlDWndrKCvN6lrDVbx
+         j+3Q==
+X-Gm-Message-State: APjAAAXPgcVWDZuMuvRgBTX1ZZDM8wAEQr7DOWalg18/hsAMPlfTKIpx
+        P/fsL4CwEb6z90sdiDdcl9alrKF1Rcp+v3aZVweCyQ==
+X-Google-Smtp-Source: APXvYqy+aE7LG6DaM3sK816nVMFNM+1dgmSai5gO5QCnC92d4dMrDobegUoGx6PPNR1WC4EE7RxmeCpZO1flaSpz0Do=
+X-Received: by 2002:a02:6a24:: with SMTP id l36mr14717803jac.46.1573271239729;
+ Fri, 08 Nov 2019 19:47:19 -0800 (PST)
 MIME-Version: 1.0
-References: <0000000000009b403005942237bf@google.com> <27b57b11aadf1bd41ad8326101713ca0be7b8edf.camel@gmail.com>
- <CANpmjNPUc0nzo87zZJ_GE3+29m+SNt0c-+H7T5xUVskXxaun8Q@mail.gmail.com>
- <acd6b0d98a7ebcb4ead9b263ec5c568c5a747166.camel@gmail.com> <CACT4Y+Yb93ZFW-SJhN1fza2eDxyrnYVnwdBjYuVP+vY8DhNfJg@mail.gmail.com>
-In-Reply-To: <CACT4Y+Yb93ZFW-SJhN1fza2eDxyrnYVnwdBjYuVP+vY8DhNfJg@mail.gmail.com>
-From:   Balbir Singh <bsingharora@gmail.com>
-Date:   Sat, 9 Nov 2019 14:42:39 +1100
-Message-ID: <CAKTCnznC6sK3Wm7ccNo5EyCMkze9V1g_gTJEc7UMd-rMH2Lf9w@mail.gmail.com>
-Subject: Re: KCSAN: data-race in taskstats_exit / taskstats_exit
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Marco Elver <elver@google.com>,
-        syzbot <syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <20191108212840.13586-1-stephan@gerhold.net> <CAOCk7No7r6Frdu8jSbdBCroXeF+HY=kqEQoJnK0HbkyjLse5Rg@mail.gmail.com>
+ <20191108234654.GA997@gerhold.net>
+In-Reply-To: <20191108234654.GA997@gerhold.net>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Fri, 8 Nov 2019 20:47:08 -0700
+Message-ID: <CAOCk7NqvidvNrYKm-iCw6g6wM9NOaa17nqq75W1nQdPBDhijig@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH] drm/msm/dsi: Delay drm_panel_enable() until dsi_mgr_bridge_enable()
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Jasper Korten <jja2000@gmail.com>, David Airlie <airlied@linux.ie>,
+        Sean Paul <sean@poorly.run>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Hai Li <hali@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 7:55 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+On Fri, Nov 8, 2019 at 4:47 PM Stephan Gerhold <stephan@gerhold.net> wrote:
 >
-> On Fri, Nov 8, 2019 at 1:54 AM Balbir Singh <bsingharora@gmail.com> wrote:
+> On Fri, Nov 08, 2019 at 03:12:28PM -0700, Jeffrey Hugo wrote:
+> > On Fri, Nov 8, 2019 at 2:29 PM Stephan Gerhold <stephan@gerhold.net> wrote:
+> > >
+> > > At the moment, the MSM DSI driver calls drm_panel_enable() rather early
+> > > from the DSI bridge pre_enable() function. At this point, the encoder
+> > > (e.g. MDP5) is not enabled, so we have not started transmitting
+> > > video data.
+> > >
+> > > However, the drm_panel_funcs documentation states that enable()
+> > > should be called on the panel *after* video data is being transmitted:
+> > >
+> > >   The .prepare() function is typically called before the display controller
+> > >   starts to transmit video data. [...] After the display controller has
+> > >   started transmitting video data, it's safe to call the .enable() function.
+> > >   This will typically enable the backlight to make the image on screen visible.
+> > >
+> > > Calling drm_panel_enable() too early causes problems for some panels:
+> > > The TFT LCD panel used in the Samsung Galaxy Tab A 9.7 (2015) (APQ8016)
+> > > uses the MIPI_DCS_SET_DISPLAY_BRIGHTNESS command to control
+> > > backlight/brightness of the screen. The enable sequence is therefore:
+> > >
+> > >   drm_panel_enable()
+> > >     drm_panel_funcs.enable():
+> > >       backlight_enable()
+> > >         backlight_ops.update_status():
+> > >           mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
+> > >
+> > > The panel seems to silently ignore the MIPI_DCS_SET_DISPLAY_BRIGHTNESS
+> > > command if it is sent too early. This prevents setting the initial brightness,
+> > > causing the display to be enabled with minimum brightness instead.
+> > > Adding various delays in the panel initialization code does not result
+> > > in any difference.
+> > >
+> > > On the other hand, moving drm_panel_enable() to dsi_mgr_bridge_enable()
+> > > fixes the problem, indicating that the panel requires the video stream
+> > > to be active before the brightness command is accepted.
+> > >
+> > > Therefore: Move drm_panel_enable() to dsi_mgr_bridge_enable() to
+> > > delay calling it until video data is being transmitted.
+> > >
+> > > Move drm_panel_disable() to dsi_mgr_bridge_disable() for similar reasons.
+> > > (This is not strictly required for the panel affected above...)
+> > >
+> > > Tested-by: Jasper Korten <jja2000@gmail.com>
+> > > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+> > > ---
+> > > Since this is a core change I thought it would be better to send this
+> > > early. I believe Jasper still wants to finish some other changes before
+> > > submitting the initial device tree for the Samsung Galaxy Tab A 9.7 (2015). ;)
+> > >
+> > > I also tested it on msm8916-samsung-a5u-eur, its display is working fine
+> > > with or without this patch.
 > >
-> > On Wed, 2019-11-06 at 11:23 +0100, Marco Elver wrote:
-> > > On Wed, 6 Nov 2019 at 01:10, Balbir Singh <bsingharora@gmail.com> wrote:
-> > > >
-> > > > On Fri, 2019-10-04 at 21:26 -0700, syzbot wrote:
-> > > > > Hello,
-> > > > >
-> > > > > syzbot found the following crash on:
-> > > > >
-> > > > > HEAD commit:    b4bd9343 x86, kcsan: Enable KCSAN for x86
-> > > > > git tree:       https://github.com/google/ktsan.git kcsan
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=125329db600000
-> > > > > kernel config:
-> > > > > https://syzkaller.appspot.com/x/.config?x=c0906aa620713d80
-> > > > > dashboard link:
-> > > > > https://syzkaller.appspot.com/bug?extid=c5d03165a1bd1dead0c1
-> > > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > > >
-> > > > > Unfortunately, I don't have any reproducer for this crash yet.
-> > > > >
-> > > > > IMPORTANT: if you fix the bug, please add the following tag to the
-> > > > > commit:
-> > > > > Reported-by: syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com
-> > > > >
-> > > > > ==================================================================
-> > > > > BUG: KCSAN: data-race in taskstats_exit / taskstats_exit
-> > > > >
-> > > > > write to 0xffff8881157bbe10 of 8 bytes by task 7951 on cpu 0:
-> > > > >   taskstats_tgid_alloc kernel/taskstats.c:567 [inline]
-> > > > >   taskstats_exit+0x6b7/0x717 kernel/taskstats.c:596
-> > > > >   do_exit+0x2c2/0x18e0 kernel/exit.c:864
-> > > > >   do_group_exit+0xb4/0x1c0 kernel/exit.c:983
-> > > > >   get_signal+0x2a2/0x1320 kernel/signal.c:2734
-> > > > >   do_signal+0x3b/0xc00 arch/x86/kernel/signal.c:815
-> > > > >   exit_to_usermode_loop+0x250/0x2c0 arch/x86/entry/common.c:159
-> > > > >   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-> > > > >   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-> > > > >   do_syscall_64+0x2d7/0x2f0 arch/x86/entry/common.c:299
-> > > > >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > > >
-> > > > > read to 0xffff8881157bbe10 of 8 bytes by task 7949 on cpu 1:
-> > > > >   taskstats_tgid_alloc kernel/taskstats.c:559 [inline]
-> > > > >   taskstats_exit+0xb2/0x717 kernel/taskstats.c:596
-> > > > >   do_exit+0x2c2/0x18e0 kernel/exit.c:864
-> > > > >   do_group_exit+0xb4/0x1c0 kernel/exit.c:983
-> > > > >   __do_sys_exit_group kernel/exit.c:994 [inline]
-> > > > >   __se_sys_exit_group kernel/exit.c:992 [inline]
-> > > > >   __x64_sys_exit_group+0x2e/0x30 kernel/exit.c:992
-> > > > >   do_syscall_64+0xcf/0x2f0 arch/x86/entry/common.c:296
-> > > > >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > > >
-> > > >
-> > > > Sorry I've been away and just catching up with email
-> > > >
-> > > > I don't think this is a bug, if I interpret the report correctly it shows
-> > > > a
-> > > > race
-> > > >
-> > > > static struct taskstats *taskstats_tgid_alloc(struct task_struct *tsk)
-> > > > {
-> > > >         struct signal_struct *sig = tsk->signal;
-> > > >         struct taskstats *stats;
-> > > >
-> > > > #1      if (sig->stats || thread_group_empty(tsk)) <- the check of sig-
-> > > > >stats
-> > > >                 goto ret;
-> > > >
-> > > >         /* No problem if kmem_cache_zalloc() fails */
-> > > >         stats = kmem_cache_zalloc(taskstats_cache, GFP_KERNEL);
-> > > >
-> > > >         spin_lock_irq(&tsk->sighand->siglock);
-> > > >         if (!sig->stats) {
-> > > > #2              sig->stats = stats; <- here in setting sig->stats
-> > > >                 stats = NULL;
-> > > >         }
-> > > >         spin_unlock_irq(&tsk->sighand->siglock);
-> > > >
-> > > >         if (stats)
-> > > >                 kmem_cache_free(taskstats_cache, stats);
-> > > > ret:
-> > > >         return sig->stats;
-> > > > }
-> > > >
-> > > > The worst case scenario is that we might see sig->stats as being NULL when
-> > > > two
-> > > > threads belonging to the same tgid. We do free up stats if we got that
-> > > > wrong
-> > > >
-> > > > Am I misinterpreting the report?
-> > > >
-> > > > Balbir Singh.
-> > >
-> > > The plain concurrent reads/writes are a data race, which may manifest
-> > > in various undefined behaviour due to compiler optimizations [1, 2].
-> > > Note that, "data race" does not necessarily imply "race condition";
-> > > some data races are race conditions (usually the more interesting
-> > > bugs) -- but not *all* data races are race conditions (sometimes
-> > > referred to as "benign races"). KCSAN reports data races according to
-> > > the LKMM.
-> > > [1] https://lwn.net/Articles/793253/
-> > > [2] https://lwn.net/Articles/799218/
-> > >
-> > > If there is no race condition here that warrants heavier
-> > > synchronization (locking etc.), we still have the data race which
-> > > needs fixing by using marked atomic operations (READ_ONCE, WRITE_ONCE,
-> > > atomic_t, etc.). We also need to consider memory ordering requirements
-> > > (do we need smp_*mb(), smp_load_acquire/smp_store_release, ..)?
-> > >
-> > > In the case here, the pattern is double-checked locking, which is
-> > > incorrect without atomic operations and the correct memory ordering.
-> > > There is a lengthy discussion here:
-> > >
-> > https://lore.kernel.org/lkml/20191021113327.22365-1-christian.brauner@ubuntu.com/
-> > >
-> > >
-> >
-> > I am still not convinced unless someone can prove that unsigned long reads are
-> > non-atomic,
+> > Nack, please.  I was curious so I threw this on the Lenovo Miix 630
+> > laptop.  I don't get a display back with this patch.  I'll try to
+> > figure out why, but currently I can't get into the machine.
 >
-> None of the relevant standards guarantee this. C standard very
-> explicitly states the opposite - any data race renders behavior of the
-> program as undefined. LKMM does not give any defined behavior to data
-> races either. QED ;)
+> Thanks for testing the patch! Let's try to figure that out...
 >
+> I'm a bit confused, but this might be because I'm not very familiar with
+> the MSM8998 laptops. It does not seem to have display in mainline yet,
+> so do you have a link to all the patches you are using at the moment?
 
-Fair enough! I am going to have a read the specification, in the
-meanwhile, I agree changes are needed based on what you've just stated
-above
+The mdp5 support is there.  Some of the dependencies have dragged out.
+I'd have to make sense of my development tree as to what is relevant.
+>
+> Judging from the patches I was able to find, the Lenovo Miix 630 is
+> using a DSI to eDP bridge.
+> Isn't the panel managed by the bridge driver in that case?
 
-Balbir
+It uses the TI SN65 bridge.
 
-> > acquire/release and barriers semantics don't matter because the
-> > code deals with the race inside of a lock if the read was spurious, The
-> > assumption is based on the face that sig->stats can be NULL or the kzalloc'ed
-> > value in all cases.
-> >
-> > Balbir Singh.
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/acd6b0d98a7ebcb4ead9b263ec5c568c5a747166.camel%40gmail.com.
+>
+> struct msm_dsi contains:
+>         /*
+>          * panel/external_bridge connected to dsi bridge output, only one of the
+>          * two can be valid at a time
+>          */
+>         struct drm_panel *panel;
+>         struct drm_bridge *external_bridge;
+>
+> So if you have "external_bridge" set in your case, "panel" should be NULL.
+> I have only moved code that uses msm_dsi->panel, so my patch really
+> shouldn't make any difference for you.
+>
+> Am I confusing something here?
+
+I don't think panel is null in my case.  I need to trace a few things
+through to be sure.
+
+Taking a quick look at the datasheet for the bridge, I suspect that
+operations are occurring in the enable() phase of the bridge, that
+need to occur before video data is transmitted.  Based on your
+analysis in the commit message, I suspect these operations need to be
+moved to pre_enable().
+
+I'm hoping to gather more data this weekend, which will hopefully
+identify what we need to do to move this forward without causing
+regressions.
