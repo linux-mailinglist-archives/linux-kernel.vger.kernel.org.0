@@ -2,164 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A7AF5E86
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 11:46:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2420BF5E8E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 11:57:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbfKIKqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 05:46:16 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33556 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfKIKqP (ORCPT
+        id S1726349AbfKIK5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 05:57:00 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34062 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfKIK47 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 05:46:15 -0500
-Received: by mail-lf1-f67.google.com with SMTP id d6so6006790lfc.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 02:46:12 -0800 (PST)
+        Sat, 9 Nov 2019 05:56:59 -0500
+Received: by mail-wm1-f68.google.com with SMTP id v3so9172406wmh.1;
+        Sat, 09 Nov 2019 02:56:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4UwkKgL7QHQVRwe8tvh/dFC6LdCmbrhTK7UqRShgUPQ=;
-        b=e7dFTkkrBmCNdqF34d3iiK+gKWmRcXrK3NLTHt7WA2A/4stvOk92DcsKTWQnlM8ghZ
-         DKAtSzTeD+oCRPuxYaPHwJPQyF0nzCGnW+dw7AZs/CSHeicTMVJ6RJWW7Gi7/knY0Drs
-         OobmXQ+7LaC4uhim+ekj29puE4niKdhy1uAXKdDGJajG7P07xsQJ7r6No2uOgRJ/YMA+
-         K49zXF5nzzMX66VD6yOwAXY21qg8tNayAj0G8ng2xOjX0JSK2XhfpJNE7ObF6wY3UIGm
-         fB7OxBk5/26kJcV52AFy1nkUpVMZAhGHx/JlDE+18pr6TTBZJDeID8JD5Mdg5MfpRosW
-         ZQGQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JHLfdo8EDYpxKc5h1UVzYd5rkwgO5xInaju1os9b+ho=;
+        b=SfmDrMNFhZrsAWXRX9Nk5Koc/lkJ6XYxu32hCyrsCin2aAcMyn0oie0m+oobQbQ74W
+         9YhqazEroPzLtEjVmTQD7BcMEaaaXl795pYJp9bme3oBttWkPqXjrm9SE43wmJDyFu11
+         o1VT3TOucgjsyqvcDOwOVZWq3C5Wu21rNAmN4vCC/fYG8MbRGMhMZYs4EZKa2OWO2o2q
+         F7jhzABV386Zk9F4v4LFklNGpqqE7GUs/55ny5MeUh8ABfp85taeVVfAdskUG8+53NZ0
+         RtGWo1z1VPJB5JoCJ4N25e3toiXE0LjsNte7cSPp4tX5oTFuFFGiUfGXsboDvYYDGuBo
+         ITKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4UwkKgL7QHQVRwe8tvh/dFC6LdCmbrhTK7UqRShgUPQ=;
-        b=T6vgcMuYxhCu4Z88VmgSni4C5amNQEDCJOWje+DpC2uK7GT2NB9oAcRvecJRq2qUD4
-         uEmkQplV+f7iTRGKHNDVqOpSfJ4emZ+dbuWWLgh7WDyJuN5EXbB6/oI3/hVwe7SlnYJv
-         Tsn9uQSgEh5oP8MO4mRKUu8hSoNi+SUg8KvUn14GIaUlaMMfaHWQXnVy0EnGFhORTmfF
-         0kUndy3U93EmhAADsX/rH7Hen4dd3zeBMFOF1DLnS2g/79UQHpec0p8oHuDxZQ7j92bF
-         xFHJKO44eePMGgX7608jzl1KYCQYqGGmEtZ0SfKmHrHJeIUSFz1+z8vOzJisq6aBm4FN
-         fuEg==
-X-Gm-Message-State: APjAAAXdCbY94wA+WtL8pH02c+LfD+cN/aM/nKUSNop0rFYrWMdIt9W0
-        c/S/hsejHITjTu2Ri1TVsfY5uiYuejZSvxLufEhzHCcMnYA=
-X-Google-Smtp-Source: APXvYqy8nrExtm1/Qbhy0rr4pbYil/M9IUBSELB1eZbXd1ciGmc44Al5QRBBsGEqbKTjAv6T7iYZXZWqfE4PLtwXtAM=
-X-Received: by 2002:a19:9116:: with SMTP id t22mr9058262lfd.99.1573296371865;
- Sat, 09 Nov 2019 02:46:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20191108174745.495640141@linuxfoundation.org>
-In-Reply-To: <20191108174745.495640141@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sat, 9 Nov 2019 16:16:00 +0530
-Message-ID: <CA+G9fYsKOjK68DUwCyJUctmqq1GENvN_ugN6Dn+G5Np3WSXydQ@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/79] 4.19.83-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JHLfdo8EDYpxKc5h1UVzYd5rkwgO5xInaju1os9b+ho=;
+        b=nMRco2rPBf1vDw5xYAKKDAW3snMBpXJFJzeTSE43EjALWI1qF5fLqcjf5b0gwbar4U
+         CwqkoLpIb+cbygheZLVVwvopCq8xLTl2MzIbJz/GgHJVZ0bzZtN1LecIxLmO2cXfiNKY
+         vxqxeAsUiiWbiZcTPPwu8pjTnWCi+mf1Z/YXfPAZ/fhT5lxl7mttk0KMk+cz2MUA5qeB
+         Z2ucJgkUPQD4bbJfmwaJLBcEzEwkMJAazYtA4NAwtRFz8k+qP66aXqDoYNmJqxWKFkhz
+         CEEC7OPBe0FZN2YJIPjAVHPYYd+TtxP9hHv0S55fVM4MnU3LB1grEt/xmjeA3rs+bX1V
+         nzjQ==
+X-Gm-Message-State: APjAAAWEaOsfZlZn7TcXjYQK9tmqCvdyOQLLlQVdjuNHXSru2x0Ahsaa
+        nRglxZWfvRfwtdej2bOYUWQ=
+X-Google-Smtp-Source: APXvYqxhXAZg/XDWVA2jUZjEBESbC0l9FJaojQQtz3TAEVdRDHSDneX5AN2Bqc3wy8oUC8OTUHaU8A==
+X-Received: by 2002:a1c:6146:: with SMTP id v67mr12605556wmb.102.1573297017263;
+        Sat, 09 Nov 2019 02:56:57 -0800 (PST)
+Received: from localhost.localdomain ([86.121.29.241])
+        by smtp.gmail.com with ESMTPSA id l10sm14846296wrg.90.2019.11.09.02.56.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2019 02:56:56 -0800 (PST)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     shawnguo@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc:     leoyang.li@nxp.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>
+Subject: [PATCH] ARM: dts: ls1021a-tsn: Use interrupts for the SGMII PHYs
+Date:   Sat,  9 Nov 2019 12:56:42 +0200
+Message-Id: <20191109105642.30700-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 9 Nov 2019 at 00:32, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.83 release.
-> There are 79 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun 10 Nov 2019 05:42:11 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.83-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On the LS1021A-TSN board, the 2 Atheros AR8031 PHYs for eth0 and eth1
+have interrupt lines connected to the shared IRQ2_B LS1021A pin.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+The interrupts are active low, but the GICv2 controller does not support
+active-low and falling-edge interrupts, so the only mode it can be
+configured in is rising-edge.
 
-Summary
-------------------------------------------------------------------------
+The interrupt number was obtained by subtracting 32 from the listed
+interrupt ID from LS1021ARM.pdf Table 5-1. Interrupt assignments.
 
-kernel: 4.19.83-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: b56f5a59d51ac99b2c9af3df39a0a7a573053bcc
-git describe: v4.19.82-80-gb56f5a59d51a
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.82-80-gb56f5a59d51a
+Switching to interrupts offloads the PHY library from the task of
+polling the MDIO status and AN registers (1, 4, 5) every second.
 
-No regressions (compared to build v4.19.82-80-g54bd90285427)
+Unfortunately, the BCM5464R quad PHY connected to the switch does not
+appear to have an interrupt line routed to the SoC.
 
-No fixes (compared to build v4.19.82-80-g54bd90285427)
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+---
+ arch/arm/boot/dts/ls1021a-tsn.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Ran 23927 total tests in the following environments and test suites.
+diff --git a/arch/arm/boot/dts/ls1021a-tsn.dts b/arch/arm/boot/dts/ls1021a-tsn.dts
+index 5b7689094b70..4532b2bd3fd1 100644
+--- a/arch/arm/boot/dts/ls1021a-tsn.dts
++++ b/arch/arm/boot/dts/ls1021a-tsn.dts
+@@ -203,11 +203,15 @@
+ 	/* AR8031 */
+ 	sgmii_phy1: ethernet-phy@1 {
+ 		reg = <0x1>;
++		/* SGMII1_PHY_INT_B: connected to IRQ2, active low */
++		interrupts = <GIC_SPI 165 IRQ_TYPE_EDGE_RISING>;
+ 	};
+ 
+ 	/* AR8031 */
+ 	sgmii_phy2: ethernet-phy@2 {
+ 		reg = <0x2>;
++		/* SGMII2_PHY_INT_B: connected to IRQ2, active low */
++		interrupts = <GIC_SPI 165 IRQ_TYPE_EDGE_RISING>;
+ 	};
+ 
+ 	/* BCM5464 quad PHY */
+-- 
+2.17.1
 
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* network-basic-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* ssuite
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
