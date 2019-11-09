@@ -2,78 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27638F5F8E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 15:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60EC7F5F9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 15:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfKIOcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 09:32:02 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:51323 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfKIOcC (ORCPT
+        id S1726485AbfKIOtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 09:49:22 -0500
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:56149 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfKIOtW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 09:32:02 -0500
-Received: by mail-io1-f70.google.com with SMTP id v14so8424026iob.18
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2019 06:32:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=JZi5tkp/gckqrQSG8tYsCT0DyycZxwi5ufMcg5DoU5o=;
-        b=IrIZsa5QBtHNOphFV7mlc4mrxrhX680skJgGJNdZSXaRY3rtucuHZMRdpYtB11c9Xh
-         ObXe5TspVwgLs+VEViuFLOmBeIHq/Qsdv50TMTJdV5jMoCDqtTRpwSMX0080RGE0JUOF
-         CgVRn6CsUSq0Q3ccaolfNJwjCJNFtL4wuuLTCxq3RIwuwu1P0sUNgRBPB2yg1OqEU2Ml
-         UZcyiArankqgeF7D1qUMCJJ5KmJhGRMgay8TMjncwVGH3anfk3t+NFRvIkWGoYwatki3
-         PTrNn3lA1wmnLj+t/AX6TyvQl5mtAxfq7+YOyUOBuZQg5cuuc/EoCHTsiwE51M7NvKRZ
-         2nHg==
-X-Gm-Message-State: APjAAAWiYhseS3LP9s2rFltRxB3RvwZAH4I36ZF5DbNEghbP6csFxx9x
-        g0ZejXH762dBSwmPU0AfJSvZ2VCzFzyPS9B4E7JgrF6Je5Ck
-X-Google-Smtp-Source: APXvYqyoeCdf8LV4IECaLdOHYImFqe90Hff/exUBRMytawJCGLHrKdaUiBLrWfSr7NsrTpsl73JiShExe8f7ksVJLj1e/jt5f1X9
+        Sat, 9 Nov 2019 09:49:22 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id D6E31101C01C0;
+        Sat,  9 Nov 2019 15:49:19 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 937602F7319; Sat,  9 Nov 2019 15:49:19 +0100 (CET)
+Date:   Sat, 9 Nov 2019 15:49:19 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] PCI: Add missing link delays required by the PCIe
+ spec
+Message-ID: <20191109144919.a2whrvyih4k4fu42@wunner.de>
+References: <20191107121847.24781-1-mika.westerberg@linux.intel.com>
+ <20191107121847.24781-3-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7847:: with SMTP id h7mr16503562iop.141.1573309921226;
- Sat, 09 Nov 2019 06:32:01 -0800 (PST)
-Date:   Sat, 09 Nov 2019 06:32:01 -0800
-In-Reply-To: <0000000000002b42040573b8495a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f9fb820596eac28b@google.com>
-Subject: Re: WARNING: refcount bug in igmp_start_timer
-From:   syzbot <syzbot+e28037ac1c96d2a86e89@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, ap420073@gmail.com, ast@kernel.org,
-        benjamin.gaignard@linaro.org, cmetcalf@ezchip.com,
-        daniel.vetter@ffwll.ch, daniel.vetter@intel.com,
-        daniel@iogearbox.net, davem@davemloft.net, ecree@solarflare.com,
-        edumazet@google.com, f.fainelli@gmail.com, idosch@mellanox.com,
-        jiri@mellanox.com, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, mcroce@redhat.com,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        petrm@mellanox.com, sd@queasysnail.net, stephen@networkplumber.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        vincent.abriou@st.com, xiangxia.m.yue@gmail.com,
-        xiyou.wangcong@gmail.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107121847.24781-3-mika.westerberg@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+On Thu, Nov 07, 2019 at 03:18:47PM +0300, Mika Westerberg wrote:
+> +static int pci_bus_max_d3cold_delay(const struct pci_bus *bus)
+> +{
+> +	const struct pci_dev *pdev;
+> +	int min_delay = 100;
+> +	int max_delay = 0;
+> +
+> +	list_for_each_entry(pdev, &bus->devices, bus_list) {
+> +		if (pdev->d3cold_delay < min_delay)
+> +			min_delay = pdev->d3cold_delay;
+> +		if (pdev->d3cold_delay > max_delay)
+> +			max_delay = pdev->d3cold_delay;
+> +	}
 
-commit 323ebb61e32b478e2432c5a3cbf9e2ca678a9609
-Author: Edward Cree <ecree@solarflare.com>
-Date:   Tue Aug 6 13:53:55 2019 +0000
+You need to hold pci_bus_sem when accessing the devices list.
 
-     net: use listified RX for handling GRO_NORMAL skbs
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a5452ce00000
-start commit:   ae596de1 Compiler Attributes: naked can be shared
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
-dashboard link: https://syzkaller.appspot.com/bug?extid=e28037ac1c96d2a86e89
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=178537da400000
+> +	if (!dev->subordinate || list_empty(&dev->subordinate->devices))
+> +		return;
 
-If the result looks correct, please mark the bug fixed by replying with:
+Same here.
 
-#syz fix: net: use listified RX for handling GRO_NORMAL skbs
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> +	child = list_first_entry(&dev->subordinate->devices, struct pci_dev,
+> +				 bus_list);
+
+And again.
+
+
+Thanks,
+
+Lukas
