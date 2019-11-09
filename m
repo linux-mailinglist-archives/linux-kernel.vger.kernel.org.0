@@ -2,97 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 118D0F5FC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 16:16:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 091B0F5FF9
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2019 16:18:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfKIPQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 10:16:05 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39480 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726372AbfKIPPy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 10:15:54 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA9FFj9w067009;
-        Sat, 9 Nov 2019 09:15:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573312545;
-        bh=q54WWdOI9rdwUEth2Kb8Y2jtiHd96DerLSZQMBvr0mw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=N6uE/FDsYmPVkQCW3YW4pahPNsaAlK2OLy85H0HC9Jr2Nx9Vt/oW7jNR0Y6wtKcLr
-         LZht9DdUPsEqxQ8dC9j2v6/gsYKVrVQucIotruUNWLm4PVVb3DqL/xTWGum4NKGavX
-         ZbdKHyxCciRTs2Fol1hFLSA2lmeTZUxVj0AsJ90k=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA9FFjUT087338
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 9 Nov 2019 09:15:45 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Sat, 9 Nov
- 2019 09:15:45 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Sat, 9 Nov 2019 09:15:45 -0600
-Received: from [10.250.98.116] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA9FFe6i024185;
-        Sat, 9 Nov 2019 09:15:41 -0600
-Subject: Re: [PATCH v5 net-next 00/12] net: ethernet: ti: introduce new cpsw
- switchdev based driver
-To:     Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>
-CC:     <netdev@vger.kernel.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
-References: <20191024100914.16840-1-grygorii.strashko@ti.com>
- <20191024160549.GY5610@atomide.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <dc621a9d-eb92-5df9-81d7-ad2b037ac3c7@ti.com>
-Date:   Sat, 9 Nov 2019 17:15:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191024160549.GY5610@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1726609AbfKIPSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 10:18:25 -0500
+Received: from mout.gmx.net ([212.227.17.21]:53791 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726399AbfKIPSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 10:18:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1573312675;
+        bh=uP/XbEEvf4mcHKe6aF2GqY6Yix9EhtEn9u4SahQ/Dc0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=gMKCYmU2Otd2VMataBJYbfnFOr++8zNwFdLsbKGI+UVoEiW8BTUx9+xaec3YohN4F
+         3Itupw4ymK1TRzWIcTkFNfm0iM8G6a1NAivAJ6kCGAV9m0YbuI49/BAl29+ZqKZsry
+         3PE2t7X0nUTbxb3ooZRUSagqAoqSOKJSzQmpkEJY=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([79.150.153.135]) by mail.gmx.com
+ (mrgmx105 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 1M2wKq-1iUYQg3MNw-003PQy; Sat, 09 Nov 2019 16:17:55 +0100
+From:   Pedro Ortega <portega.kernel@gmx.com>
+Cc:     portega.kernel@gmx.com, Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: iio: adc: ad7280: Add spaces around math operator
+Date:   Sat,  9 Nov 2019 16:17:28 +0100
+Message-Id: <20191109151729.3792-1-portega.kernel@gmx.com>
+X-Mailer: git-send-email 2.17.1
+X-Provags-ID: V03:K1:Eyrv4sqPGuCIKeoNeulmdzBC1DkFdbkU80HEIn24yXyYOkOAu3R
+ q3b85dMisGT2zJRlI+pyUGyGpsj6tnfm/AdWZpZCsm6oIYNT/xB2eIyIWebllfettqWH982
+ e1vCHzNWxolx0K+mPxQiY8MU3SWWfO2ATaJPwtZdOa8DDmtCRQP/AZwLbkB19Z8g2kIX9dI
+ WTn/f7iyQWXBnWs2HCVMQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Ig2aZhlc3Yw=:W8QvoQ4ql6WL3we9fv05DQ
+ lIoBfAv+OMKUMqeNRm3r3aWo8Q1ilJQsInYqCT4gt5L/W+IbbyEd9FhEOBUqL+DYRopFXt8p0
+ NyMZzJSFZnADp9SyIHtmQdws31H5DcvJba/iSqQkUiabdpUVjGcMV8tjHxa1Oao/9cnsNZiK7
+ eOCJjLCYiYMaW9HN7JiNYX8ZcMC1u2mxaOY6K+YRRBZc/RZFLfKwcovL73Kbxcdn14fKGaEvX
+ cQi8oVDlzWwjdQtqayqjH3kYMjNUuyq+xkT1dtl1doSjVlTR+YfaJWM5UtoiH+e2NXdMTk4uL
+ qLMxU6YcRPph1dS2T8t07iJNzci+z05ZfHnP/V1aoG2X3zghHqhkzN1mrRtIYqw0QbPA46/sz
+ prRItVkbxJMbJnPDuDby/7vmA+rXxMMVExEiKqY6xuvioyPDmU6LSuNqFwGhHBf0aKbmAQkgF
+ irkJZx75oDgv7+f+D+bP2tqJYeN26ikO/cAID755Ec+HBm1uG0l+J+lWSIGCDdTYQsojX3dS0
+ GufU0d47uGvOVGIdPr/Vp+wU1tuZGWLelZ3E9mQLv/j+vtXSLZFvUP4mmR3JRbSHZXBXsEqUK
+ klzDXEU2kPXvFnIiCUYZ+Ku1XaNSdqLq5uttiAbl15qX6w6iA9nhYaw0iFwufzw2911RrqItU
+ 3y7/yygCIvV5M21KvBmjmtbXEVnt962J9Ft4uThLPro3NF+I5n/8zQ+6LgkZUgonXCMzFcRJz
+ 6lAWDoPWbXWH3Nfm5/BH0+PqgPDNbXND/X5SrgDa99RjT1OPeEV9IEHC1KmscrBZq3rQt45On
+ Lm220OH0Ua6ILEe0zlImQJpfFAEOn4F7to8AKyPfGQ9TMiH95MNqFa/0WG/n2U/vrvPJY5n1X
+ VhgFWOBhh6BYpaKaLSKPkHXgHVYJfG7IC3QCC9Q02sB6ACtQS3JAxJzV4MIc5KLtIyC3C+cWg
+ ZrjHG6mej8HqrPEFTwbnuZg84ehlJkwLLN/scp3kRMDVOWJRKfdbYvJ6QbufGqW6NTf3eISG9
+ dqI/rG5mBxgHJMYY//zHQesiWNTA/3Bnya2wx1J6UcFgn4bp+djC5P0IcgrgMpSagnwzivwZS
+ Txch5xlKuGHvqGjelbNQmLLf8wJsYH1h9kAJr0KO3rd+SGMarDg+emSLtnaiNoGL4VN684jR7
+ pSPOPKVUA9SmAzalUR4wWcy2OzL/JUXcl9Qa/oI/GElC1fcscy7d61oLnoNgBTVlGcPkcZ6iN
+ Zk+lMtl2qG/N4VOE7t3SlmJNGvK8s30+rcCHui+vcbRGpiC9XFyCt1foyouM=
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+Add spaces around the minus math operator to increase readability.
 
-On 24/10/2019 19:05, Tony Lindgren wrote:
-> Hi,
-> 
-> * Grygorii Strashko <grygorii.strashko@ti.com> [191024 10:10]:
->> This the RFC v5 which introduces new CPSW switchdev based driver which is
->> operating in dual-emac mode by default, thus working as 2 individual
->> network interfaces. The Switch mode can be enabled by configuring devlink driver
->> parameter "switch_mode" to 1/true:
->> 	devlink dev param set platform/48484000.ethernet_switch \
->> 	name switch_mode value 1 cmode runtime
-> 
-> Just wondering about the migration plan.. Is this a replacement
-> driver or used in addition to the old driver?
-> 
+Signed-off-by: Pedro Ortega <portega.kernel@gmx.com>
+=2D--
+ drivers/staging/iio/adc/ad7280a.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sry, I've missed you mail.
+diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/a=
+d7280a.c
+index 19a5f244dcae..34ca0d09db85 100644
+=2D-- a/drivers/staging/iio/adc/ad7280a.c
++++ b/drivers/staging/iio/adc/ad7280a.c
+@@ -825,14 +825,14 @@ static irqreturn_t ad7280_event_handler(int irq, voi=
+d *private)
+ }
 
-As it's pretty big change the idea is to keep both drivers at least for sometime.
-Step 1: add new driver and enable it on one platform. Do announcement.
-Step 2: switch all one-port and dual mac drivers to the new driver
-Step 3: switch all other platform to cpsw switchdev and deprecate old driver.
+ static IIO_DEVICE_ATTR_NAMED(in_thresh_low_value,
+-			     in_voltage-voltage_thresh_low_value,
++			     in_voltage - voltage_thresh_low_value,
+ 			     0644,
+ 			     ad7280_read_channel_config,
+ 			     ad7280_write_channel_config,
+ 			     AD7280A_CELL_UNDERVOLTAGE);
 
--- 
-Best regards,
-grygorii
+ static IIO_DEVICE_ATTR_NAMED(in_thresh_high_value,
+-			     in_voltage-voltage_thresh_high_value,
++			     in_voltage - voltage_thresh_high_value,
+ 			     0644,
+ 			     ad7280_read_channel_config,
+ 			     ad7280_write_channel_config,
+=2D-
+2.17.1
+
