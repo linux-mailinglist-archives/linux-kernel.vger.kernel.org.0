@@ -2,91 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCAAF6AA0
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 18:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3CAEF6AB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 19:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfKJR43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 12:56:29 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35909 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbfKJR42 (ORCPT
+        id S1727040AbfKJSTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 13:19:00 -0500
+Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:47920
+        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfKJSTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 12:56:28 -0500
-Received: by mail-pg1-f196.google.com with SMTP id k13so7748245pgh.3
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 09:56:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=PtqYt1fGL7WFdKH+RvL3PePfXJx2mou2pQEcrG9jbZU=;
-        b=eVmU9oeMjmQDjIG/u141aHB4siTpgnOngq2Vm7FyIX5/WuPm6g8wB7QIkf6tc8DFZe
-         TaZN211+gXNsTlie89ha1k3T7BEvzB5lOtuOoyDyISrPE/wyOPU3vKxPZoq7QVVTcsQG
-         bbvVZtDkfVGV5GI76doDZTkUyYZoXgkIzs6R/+nHgc1LxIuKuHHwnG+lnuNyQPV1YtqU
-         fmt4wtEWVthRJYtyvnbxaGzBPTMl4QDwd7L0JuqVHKuN4zavs3K0ZmTUaXPMn8hV/rHB
-         TFnWY5PtwWQZRD9ulOPkIKIOzylqEoDf7q+YDkbfHt3PZTU2oHZq5tIqu8oPiMnHePcy
-         7F0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=PtqYt1fGL7WFdKH+RvL3PePfXJx2mou2pQEcrG9jbZU=;
-        b=jXBGCaKUBfDz/S2RrUTQR+LPocNX8CtML70RjwbiHvFtBP9ZqQqf7xrD0UtS8GT7wI
-         tjb47qsX9J9Jwn7mmXYr4XUz6pzFcPjh6Nd0h2k637R/Nbl2yPjVF7WOz07ScJxZjlI6
-         xdokt9VI1ACrBqdBIyiSaef2Emy/xrgMUvAzaiwDT8VYCGIModsyV1DO4CdIBTr7yST6
-         mvLbBvLuD7U4ssCRFJZ7pnY3yMLGX4DaRTo+A81tyWQC53+SkPZtAqAmy7o9Q+DaNNIk
-         aY+CDMVUKWb+MmgNwqLtLmHcr7erADzY192Tr+wpMAdV0LIYj5VL/eoUW2/hMSFowUdh
-         oAmw==
-X-Gm-Message-State: APjAAAXjCUuO5q0imM8DtuGGHaeu+njqyg187SNgdStppnd7bnVeBSdh
-        M6Dy/Er5FKhV8+vX09/A9uvRi0FV
-X-Google-Smtp-Source: APXvYqxcsOvCIMeB2vwv7Hk4q37bewW4KNu4hwZ+1YEdJWYKPnUYyheC3m5dhgqu8IxOz6admeV8xw==
-X-Received: by 2002:a63:5b1d:: with SMTP id p29mr24023814pgb.209.1573408588139;
-        Sun, 10 Nov 2019 09:56:28 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id z14sm15104414pfq.66.2019.11.10.09.56.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Nov 2019 09:56:27 -0800 (PST)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] staging/octeon: Fix test build on MIPS
-Date:   Sun, 10 Nov 2019 09:56:20 -0800
-Message-Id: <20191110175620.20290-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.17.1
+        Sun, 10 Nov 2019 13:19:00 -0500
+Received: from list by blaine.gmane.org with local (Exim 4.89)
+        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
+        id 1iTrnX-0002aN-O6
+        for linux-kernel@vger.kernel.org; Sun, 10 Nov 2019 19:18:51 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-kernel@vger.kernel.org
+From:   "Andrey Jr. Melnikov" <temnota.am@gmail.com>
+Subject: Re: [PATCH] mtd: rawnand: driver for Mediatek MT7621 SoC NAND flash controller
+Date:   Sun, 10 Nov 2019 20:37:45 +0300
+Message-ID: <7gul9g-je5.ln1@banana.localnet>
+References: <20191107073521.11413-1-gerg@kernel.org> <20191107092053.Horde.i3MVcW9RqZDOQBMADZX9fuc@www.vdorst.com> <20191110123531.5a27206a@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+User-Agent: tin/2.2.1-20140504 ("Tober an Righ") (UNIX) (Linux/4.3.3-bananian (armv7l))
+Cc:     driverdev-devel@linuxdriverproject.org,
+        linux-mediatek@lists.infradead.org, linux-mtd@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mips:allmodconfig fails to build.
+In gmane.linux.drivers.mtd Boris Brezillon <boris.brezillon@collabora.com> wrote:
+> +Richard and Miquel
 
-drivers/staging/octeon/ethernet-rx.c: In function 'cvm_oct_poll':
-drivers/staging/octeon/ethernet-defines.h:30:38: error:
-	'CONFIG_CAVIUM_OCTEON_CVMSEG_SIZE' undeclared
+> On Thu, 07 Nov 2019 09:20:53 +0000
+> René van Dorst <opensource@vdorst.com> wrote:
 
-Octeon defines are only available if CONFIG_CPU_CAVIUM_OCTEON
-is enabled. Since the driver uses those defines, we have to use
-the dummy defines if this flag is not enabled.
+> > Quoting gerg@kernel.org:
+> > 
+> > > From: Greg Ungerer <gerg@kernel.org>
 
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Fixes: 171a9bae68c7 ("staging/octeon: Allow test build on !MIPS")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/staging/octeon/octeon-ethernet.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[..skipp..]
 
-diff --git a/drivers/staging/octeon/octeon-ethernet.h b/drivers/staging/octeon/octeon-ethernet.h
-index a8a864b40913..70848c6c86ec 100644
---- a/drivers/staging/octeon/octeon-ethernet.h
-+++ b/drivers/staging/octeon/octeon-ethernet.h
-@@ -14,7 +14,7 @@
- #include <linux/of.h>
- #include <linux/phy.h>
- 
--#ifdef CONFIG_MIPS
-+#ifdef CONFIG_CPU_CAVIUM_OCTEON
- 
- #include <asm/octeon/octeon.h>
- 
--- 
-2.17.1
+> > +CC DENG Qingfang, Chuanhong Guo, Weijie Gao to the list.
+> > 
+> > Hi Greg,
+> > 
+> > Thanks for posting this driver.
+> > 
+> > But I would like to mention that the openwrt community is currently  
+> > working on a
+> > new version which is based a newer version of the MediaTek vendor driver.
+> > That version is currently targeted for the openwrt 4.19 kernel.
+> > See full pull request [1] and NAND driver patch [2]
+> > 
+> > It would be a shame if duplicate work has been done.
+
+> Sorry, but if there's duplicate effort that's kinda your (OpenWRT folks)
+> fault: since when OpenWRT is the central point for kernel drivers?
+> Correct me if I'm wrong, but I don't remember seeing this driver posted
+> to the MTD ML. Plus, the driver you're pointing to still implements the
+> legacy hooks and is based on 4.19, and it has been decided that all new
+> NAND controller drivers should implement the new ->exec_op() hook
+> instead.
+
+I'm already sent to Greg Ungerer 5.3 variant of this patch.
+but it:
+- PIO only (old driver from 3.4.x kernel have "DMA")
+- strange SLOW (4.19 on same hardware is faster)
+
+you may grab it from http://lc.vrtpro.ru/lede/5.3-new-mtk7621-nand-driver.patch
 
