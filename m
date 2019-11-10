@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0586BF64E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:03:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D897F64D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbfKJCsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:48:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56770 "EHLO mail.kernel.org"
+        id S1728988AbfKJDCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:02:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729327AbfKJCsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:48:52 -0500
+        id S1727316AbfKJCtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:49:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6161422573;
-        Sun, 10 Nov 2019 02:48:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D794122593;
+        Sun, 10 Nov 2019 02:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354132;
-        bh=ekjUL9iEKKF0msi9brH469zdJuKPgU6PU/D6LgKa3SA=;
+        s=default; t=1573354148;
+        bh=uNuL2SlXQPCd2xQq6qydXDinsZiQ5RcmM24s08p/bDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iluuvFwOyTcb2MUUd31672baK6BvMk2EzqFbSk4Y6gYJtBFzW/BxBItspwcEM4KJ7
-         qiqBXiCxQPYUDJGPVzvBuLwqeVhIY/pTeVUhV0+PauSzvpzFIo7vLpGwYRE9J6Eg7K
-         MrmKgLvTEOr9VUIMzrOVccr3O2rHeWCMDNdT7Xwg=
+        b=ZPh4riEbq5mBMDe2+Ff0hyub5hQCxUNmXjU9nI7uRh8BpQXpOUI+9DCZF9lxRG/a9
+         S8ubYSh76zU3eQt/aHDru69DMo/+kdqn0o4lDdRVzPcCaBugSzeaSZ7YaVqjj/Wwz1
+         QHIJy7MnILlgGkCOw4W4+UD+h7XWkNyUL4YLXSpk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.9 04/66] powerpc/iommu: Avoid derefence before pointer check
-Date:   Sat,  9 Nov 2019 21:47:43 -0500
-Message-Id: <20191110024846.32598-4-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 12/66] net: xilinx: fix return type of ndo_start_xmit function
+Date:   Sat,  9 Nov 2019 21:47:51 -0500
+Message-Id: <20191110024846.32598-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024846.32598-1-sashal@kernel.org>
 References: <20191110024846.32598-1-sashal@kernel.org>
@@ -43,38 +43,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Breno Leitao <leitao@debian.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 984ecdd68de0fa1f63ce205d6c19ef5a7bc67b40 ]
+[ Upstream commit 81255af8d9d5565004792c295dde49344df450ca ]
 
-The tbl pointer is being derefenced by IOMMU_PAGE_SIZE prior the check
-if it is not NULL.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-Just moving the dereference code to after the check, where there will
-be guarantee that 'tbl' will not be NULL.
+Found by coccinelle.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/xilinx/ll_temac_main.c       | 3 ++-
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 3 ++-
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c     | 9 +++++----
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-index 5f202a566ec5f..9bfdd2510fd5e 100644
---- a/arch/powerpc/kernel/iommu.c
-+++ b/arch/powerpc/kernel/iommu.c
-@@ -765,9 +765,9 @@ dma_addr_t iommu_map_page(struct device *dev, struct iommu_table *tbl,
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index a9bd665fd1225..545f60877bb7d 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -673,7 +673,8 @@ static inline int temac_check_tx_bd_space(struct temac_local *lp, int num_frag)
+ 	return 0;
+ }
  
- 	vaddr = page_address(page) + offset;
- 	uaddr = (unsigned long)vaddr;
--	npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
+-static int temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t
++temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct temac_local *lp = netdev_priv(ndev);
+ 	struct cdmac_bd *cur_p;
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 5f21ddff9e0f9..46fcf3ec2caf7 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -655,7 +655,8 @@ static inline int axienet_check_tx_bd_space(struct axienet_local *lp,
+  * start the transmission. Additionally if checksum offloading is supported,
+  * it populates AXI Stream Control fields with appropriate values.
+  */
+-static int axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t
++axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	u32 ii;
+ 	u32 num_frag;
+diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+index aa02a03a6d8db..034b36442ee75 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
++++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+@@ -1005,9 +1005,10 @@ static int xemaclite_close(struct net_device *dev)
+  * deferred and the Tx queue is stopped so that the deferred socket buffer can
+  * be transmitted when the Emaclite device is free to transmit data.
+  *
+- * Return:	0, always.
++ * Return:	NETDEV_TX_OK, always.
+  */
+-static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
++static netdev_tx_t
++xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
+ {
+ 	struct net_local *lp = netdev_priv(dev);
+ 	struct sk_buff *new_skb;
+@@ -1028,7 +1029,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
+ 		/* Take the time stamp now, since we can't do this in an ISR. */
+ 		skb_tx_timestamp(new_skb);
+ 		spin_unlock_irqrestore(&lp->reset_lock, flags);
+-		return 0;
++		return NETDEV_TX_OK;
+ 	}
+ 	spin_unlock_irqrestore(&lp->reset_lock, flags);
  
- 	if (tbl) {
-+		npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
- 		align = 0;
- 		if (tbl->it_page_shift < PAGE_SHIFT && size >= PAGE_SIZE &&
- 		    ((unsigned long)vaddr & ~PAGE_MASK) == 0)
+@@ -1037,7 +1038,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
+ 	dev->stats.tx_bytes += len;
+ 	dev_consume_skb_any(new_skb);
+ 
+-	return 0;
++	return NETDEV_TX_OK;
+ }
+ 
+ /**
 -- 
 2.20.1
 
