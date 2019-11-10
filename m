@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAA8F640F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D5DDF646C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:00:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbfKJC5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:57:05 -0500
+        id S1729717AbfKJDAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:00:01 -0500
 Received: from mail.kernel.org ([198.145.29.99]:47264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729396AbfKJC4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:56:48 -0500
+        id S1729270AbfKJC4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:56:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01F462248F;
-        Sun, 10 Nov 2019 02:48:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54C32224D7;
+        Sun, 10 Nov 2019 02:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354096;
-        bh=ty4jM+l1o5jHcZfIlJd9naAI9QaKwSjPCQLnsWRdjcU=;
+        s=default; t=1573354100;
+        bh=ElvsYt0MM69cxFu8JeKl5tePwzNqdMnAb3PJ5Cr7Nt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A2eIP11HdC/VN167SbyXQBE9t5AUss6bBST1pTpcw1RI79kGfBIcmZKcR8PymQ4tz
-         x4lN9xah9NSbZs53L82bnDL6gvyHmIGwKMXCsuTEF/D60PCQNxNbjCN0qwPzHvsc7l
-         TwGzycUlJQ+zltq5r7NXS96DVzaq8GYX5bkT8QHM=
+        b=Ve/OVUuNaM+TTVqXHKndq2ufCuj2/Oc1mlzPlbyf9CYqsDmrL+tDUWcfqDBWlw3s2
+         v00mjUOSGadpGuZjrQ20bKo2Mu5no2hrT8AZkzuf2YOL+HfBjRrxjbqGHkksdTAKli
+         dxND5e0U8XeQFxcV6RlkWTxJ7JyUrHnHk42aOztA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 089/109] iwlwifi: api: annotate compressed BA notif array sizes
-Date:   Sat,  9 Nov 2019 21:45:21 -0500
-Message-Id: <20191110024541.31567-89-sashal@kernel.org>
+Cc:     Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Ondrey Zary <linux@rainbow-software.org>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 091/109] scsi: NCR5380: Clear all unissued commands on host reset
+Date:   Sat,  9 Nov 2019 21:45:23 -0500
+Message-Id: <20191110024541.31567-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
@@ -44,48 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Hannes Reinecke <hare@suse.com>
 
-[ Upstream commit 6f68cc367ab6578a33cca21b6056804165621f00 ]
+[ Upstream commit 1aeeeed7f03c576f096eede7b0384f99a98f588c ]
 
-Annotate the compressed BA notification array sizes and
-make both of them 0-length since the length of 1 is just
-confusing - it may be different than that and the offset
-to the second one needs to be calculated in the C code
-anyhow.
+When doing a host reset we should be clearing all outstanding commands, not
+just the command triggering the reset.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+[mkp: adjusted Hannes' SoB address]
+
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Ondrey Zary <linux@rainbow-software.org>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/api/tx.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/NCR5380.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
-index 14ad9fb895f93..a9c8352a76418 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
-@@ -722,9 +722,9 @@ enum iwl_mvm_ba_resp_flags {
-  * @tfd_cnt: number of TFD-Q elements
-  * @ra_tid_cnt: number of RATID-Q elements
-  * @tfd: array of TFD queue status updates. See &iwl_mvm_compressed_ba_tfd
-- *	for details.
-+ *	for details. Length in @tfd_cnt.
-  * @ra_tid: array of RA-TID queue status updates. For debug purposes only. See
-- *	&iwl_mvm_compressed_ba_ratid for more details.
-+ *	&iwl_mvm_compressed_ba_ratid for more details. Length in @ra_tid_cnt.
-  */
- struct iwl_mvm_compressed_ba_notif {
- 	__le32 flags;
-@@ -741,7 +741,7 @@ struct iwl_mvm_compressed_ba_notif {
- 	__le32 tx_rate;
- 	__le16 tfd_cnt;
- 	__le16 ra_tid_cnt;
--	struct iwl_mvm_compressed_ba_tfd tfd[1];
-+	struct iwl_mvm_compressed_ba_tfd tfd[0];
- 	struct iwl_mvm_compressed_ba_ratid ra_tid[0];
- } __packed; /* COMPRESSED_BA_RES_API_S_VER_4 */
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index 8caa51797511e..9131d30b2da75 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -2309,7 +2309,7 @@ static int NCR5380_host_reset(struct scsi_cmnd *cmd)
+ 	spin_lock_irqsave(&hostdata->lock, flags);
  
+ #if (NDEBUG & NDEBUG_ANY)
+-	scmd_printk(KERN_INFO, cmd, __func__);
++	shost_printk(KERN_INFO, instance, __func__);
+ #endif
+ 	NCR5380_dprint(NDEBUG_ANY, instance);
+ 	NCR5380_dprint_phase(NDEBUG_ANY, instance);
+@@ -2327,10 +2327,13 @@ static int NCR5380_host_reset(struct scsi_cmnd *cmd)
+ 	 * commands!
+ 	 */
+ 
+-	if (list_del_cmd(&hostdata->unissued, cmd)) {
++	list_for_each_entry(ncmd, &hostdata->unissued, list) {
++		struct scsi_cmnd *cmd = NCR5380_to_scmd(ncmd);
++
+ 		cmd->result = DID_RESET << 16;
+ 		cmd->scsi_done(cmd);
+ 	}
++	INIT_LIST_HEAD(&hostdata->unissued);
+ 
+ 	if (hostdata->selecting) {
+ 		hostdata->selecting->result = DID_RESET << 16;
 -- 
 2.20.1
 
