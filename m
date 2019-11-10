@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFF0F668B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D507F66B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:15:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbfKJClm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:41:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
+        id S1728238AbfKJDPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:15:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727422AbfKJClZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:41:25 -0500
+        id S1727576AbfKJClq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:41:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0355B21019;
-        Sun, 10 Nov 2019 02:41:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24F2621882;
+        Sun, 10 Nov 2019 02:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353684;
-        bh=ThFLDZe1hOaFdWIq1h+j+kEKwDv0hoNIwX9dEIFPTjM=;
+        s=default; t=1573353706;
+        bh=SnSXXWbCh4DGjwAfNxcppyi0n+IUynSU9WgHWmixTn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=owD7c0G4IMnlKcde15U+okKcS9fOKITmurya5tbmLWtcxHA2oH121EmSWOEXVYVTM
-         FfA/POJoaRDY3iaRACqLsXz29ROyq1F8FUXdFiKRL77ss7DyY9t1AmAQz1L6tBzWDO
-         aMzCEl3t77Jq3Y9AzBXqx/bRAo8NBWq14TCy/dVg=
+        b=oGzySkuveJAksPLxd9DdP0SdcMwojqsQfj/UBZxNujerA4Zf1WiCgIq2+F/nLm8+U
+         EJPZFCJOZENrn9S56c4hdeF+yRANkU9bwRHZqNZZeQ4R61bSAV7BpdC+YROwdhlrYz
+         ibYHvYYZ9mKHesrisY+F0mc2nFgHk3mN6NoQ4Yt4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
+Cc:     Jian Shen <shenjian15@huawei.com>, Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 042/191] net: xilinx: fix return type of ndo_start_xmit function
-Date:   Sat,  9 Nov 2019 21:37:44 -0500
-Message-Id: <20191110024013.29782-42-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 047/191] net: hns3: Fix cmdq registers initialization issue for vf
+Date:   Sat,  9 Nov 2019 21:37:49 -0500
+Message-Id: <20191110024013.29782-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,89 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-[ Upstream commit 81255af8d9d5565004792c295dde49344df450ca ]
+[ Upstream commit 37dc9cdbdc1bd64bd3b6ea285a9c2e811404dc82 ]
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+According to hardware's description, the head pointer register should
+be written before the tail pointer register while initializing the vf
+command queue. Otherwise, it may trigger an interrupt even though there
+is no command received.
 
-Found by coccinelle.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: fedd0c15d288 ("net: hns3: Add HNS3 VF IMP(Integrated Management Proc) cmd interface")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/xilinx/ll_temac_main.c       | 3 ++-
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 3 ++-
- drivers/net/ethernet/xilinx/xilinx_emaclite.c     | 9 +++++----
- 3 files changed, 9 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index 60abc9250f56a..2241f98970926 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -674,7 +674,8 @@ static inline int temac_check_tx_bd_space(struct temac_local *lp, int num_frag)
- 	return 0;
- }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+index fb471fe2c4946..d8c0cc8e04c9d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+@@ -132,8 +132,8 @@ static int hclgevf_init_cmd_queue(struct hclgevf_dev *hdev,
+ 		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_DEPTH_REG, reg_val);
  
--static int temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t
-+temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct temac_local *lp = netdev_priv(ndev);
- 	struct cdmac_bd *cur_p;
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 66b30ebd45ee8..28764268a44f8 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -657,7 +657,8 @@ static inline int axienet_check_tx_bd_space(struct axienet_local *lp,
-  * start the transmission. Additionally if checksum offloading is supported,
-  * it populates AXI Stream Control fields with appropriate values.
-  */
--static int axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t
-+axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	u32 ii;
- 	u32 num_frag;
-diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-index 42f1f518dad69..c77c81eb7ab3b 100644
---- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-@@ -1020,9 +1020,10 @@ static int xemaclite_close(struct net_device *dev)
-  * deferred and the Tx queue is stopped so that the deferred socket buffer can
-  * be transmitted when the Emaclite device is free to transmit data.
-  *
-- * Return:	0, always.
-+ * Return:	NETDEV_TX_OK, always.
-  */
--static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
-+static netdev_tx_t
-+xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
- {
- 	struct net_local *lp = netdev_priv(dev);
- 	struct sk_buff *new_skb;
-@@ -1044,7 +1045,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
- 		/* Take the time stamp now, since we can't do this in an ISR. */
- 		skb_tx_timestamp(new_skb);
- 		spin_unlock_irqrestore(&lp->reset_lock, flags);
--		return 0;
-+		return NETDEV_TX_OK;
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_TAIL_REG, 0);
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_HEAD_REG, 0);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_TAIL_REG, 0);
+ 		break;
+ 	case HCLGEVF_TYPE_CRQ:
+ 		reg_val = (u32)ring->desc_dma_addr;
+@@ -145,8 +145,8 @@ static int hclgevf_init_cmd_queue(struct hclgevf_dev *hdev,
+ 		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_DEPTH_REG, reg_val);
+ 
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_TAIL_REG, 0);
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_HEAD_REG, 0);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_TAIL_REG, 0);
+ 		break;
  	}
- 	spin_unlock_irqrestore(&lp->reset_lock, flags);
  
-@@ -1053,7 +1054,7 @@ static int xemaclite_send(struct sk_buff *orig_skb, struct net_device *dev)
- 	dev->stats.tx_bytes += len;
- 	dev_consume_skb_any(new_skb);
- 
--	return 0;
-+	return NETDEV_TX_OK;
- }
- 
- /**
 -- 
 2.20.1
 
