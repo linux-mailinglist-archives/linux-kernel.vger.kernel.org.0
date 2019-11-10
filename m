@@ -2,47 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4882F6706
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:17:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CABFF6701
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:17:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfKJCkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:40:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33182 "EHLO mail.kernel.org"
+        id S1728060AbfKJDR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:17:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbfKJCkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:40:18 -0500
+        id S1726749AbfKJCkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:40:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BAD4214E0;
-        Sun, 10 Nov 2019 02:40:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81F072184C;
+        Sun, 10 Nov 2019 02:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353617;
-        bh=8SPFOrRoN/mrEuHoV96QktHoNh7jF4I73r9+t65ysAY=;
+        s=default; t=1573353620;
+        bh=AoDNuKQXbiefCOInJ5AY2FFn7JlFLLag6G8EitqjtWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ztXHEVJlPBwB7/JIeJANfxr+H39lG42mErRwa2pNa/TZ9Tz4aQjxqtCXGV1VyPrT2
-         /Z0iQpS6SqwsUAkP2oRiV+xRwUIaUYltDKB3FDv+IsKCRL2FJh5sw0sILEwNr6S02U
-         TFO0vXudeolXvUp7pluv573vmkO4qLV5Phz081ok=
+        b=UZn7h5MhahZg5ixdurmOo049YTGV3P30WiVPxOrX/AsSZ+UcjCQj5yPft1UBli6Mi
+         5o95F/CmGFgU2qoG5gIJQQJNRbIKPbE33oe4CYEe7n1xmm3Tu67xMY+fQlpNaR5S1r
+         yaFKaxI+BGUHDfLotC5wxud0pdg6Mn6JWLJ1zeR8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 003/191] media: vsp1: Fix vsp1_regs.h license header
-Date:   Sat,  9 Nov 2019 21:37:05 -0500
-Message-Id: <20191110024013.29782-3-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 005/191] media: ov2680: don't register the v4l2 subdevice before checking chip ID
+Date:   Sat,  9 Nov 2019 21:37:07 -0500
+Message-Id: <20191110024013.29782-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -51,37 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
 
-[ Upstream commit 5eea860a6fec1e60709d19832015ee0991d3e80c ]
+[ Upstream commit b7a417628abf49dae98cb80a272dc133b0e4d1a3 ]
 
-All source files of the vsp1 driver are licensed under the GPLv2+ except
-for vsp1_regs.h which is licensed under GPLv2. This is caused by a bad
-copy&paste that dates back from the initial version of the driver. Fix
-it.
+The driver registers the v4l2 subdevice before attempting to power on the
+chip and checking its ID. This means that a media device driver that it's
+waiting for this subdevice to be bound, will prematurely expose its media
+device node to userspace because if something goes wrong the media entity
+will be cleaned up again on the ov2680 probe function.
 
-Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Acked-by: Sergei Shtylyov<sergei.shtylyov@cogentembedded.com>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This also simplifies the probe function error path since no initialization
+is made before attempting to enable the resources or checking the chip ID.
+
+Fixes: 3ee47cad3e69 ("media: ov2680: Add Omnivision OV2680 sensor driver")
+
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vsp1/vsp1_regs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov2680.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 3738ff2f7b850..f6e4157095cc0 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * vsp1_regs.h  --  R-Car VSP1 Registers Definitions
-  *
+diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
+index f753a1c333ef9..3ccd584568fb5 100644
+--- a/drivers/media/i2c/ov2680.c
++++ b/drivers/media/i2c/ov2680.c
+@@ -1088,26 +1088,20 @@ static int ov2680_probe(struct i2c_client *client)
+ 
+ 	mutex_init(&sensor->lock);
+ 
+-	ret = ov2680_v4l2_init(sensor);
++	ret = ov2680_check_id(sensor);
+ 	if (ret < 0)
+ 		goto lock_destroy;
+ 
+-	ret = ov2680_check_id(sensor);
++	ret = ov2680_v4l2_init(sensor);
+ 	if (ret < 0)
+-		goto error_cleanup;
++		goto lock_destroy;
+ 
+ 	dev_info(dev, "ov2680 init correctly\n");
+ 
+ 	return 0;
+ 
+-error_cleanup:
+-	dev_err(dev, "ov2680 init fail: %d\n", ret);
+-
+-	media_entity_cleanup(&sensor->sd.entity);
+-	v4l2_async_unregister_subdev(&sensor->sd);
+-	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
+-
+ lock_destroy:
++	dev_err(dev, "ov2680 init fail: %d\n", ret);
+ 	mutex_destroy(&sensor->lock);
+ 
+ 	return ret;
 -- 
 2.20.1
 
