@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E02F62B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C1EF62BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:45:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbfKJCpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:45:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43984 "EHLO mail.kernel.org"
+        id S1728748AbfKJCpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:45:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728572AbfKJCod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:33 -0500
+        id S1728592AbfKJCof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D4C321D7F;
-        Sun, 10 Nov 2019 02:44:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F9D421D82;
+        Sun, 10 Nov 2019 02:44:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353871;
-        bh=LC0TPsH+HUPj01rsBWyN/9j4+EIjXpxXbLbHZ65ebpg=;
+        s=default; t=1573353874;
+        bh=J7af8Qtw38Ew9P8n51YmBy+yIcLcxX26TQGIZ7m712s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wYgWePNn2mWsoOuNZThRiABIXwWFdGN5w+jas/GwRz7sB0AgOd2+tpUMMrYQZLgkl
-         CZaL5oWOXLARlbplykFB5o1VhRX6JU0RoIHwaM8NT0LcRTS2oPA1JzkVH9yxQ8p3xh
-         Z3xo88bXTc7LOO0J1UDh9qmuz+Wwsupq/AAgqCXA=
+        b=VteY9gRcnJY2TuewLGeTHaOEOURGNqqjxMSNrn0zcRU03ZLPzWSMQMXZ1JIYbKzmj
+         P7huH+GL+8Br/N6J/wtHNsvBff3L3bPSKbp/VbUzlH3N0vHJ4QTulK+zuFvros8Ngd
+         5CZqkPJKkm/Tb/xxrBY4HioMNlKJzjkCiJT8HL0o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 151/191] ARM: dts: realview: Fix SPI controller node names
-Date:   Sat,  9 Nov 2019 21:39:33 -0500
-Message-Id: <20191110024013.29782-151-sashal@kernel.org>
+Cc:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 153/191] Bluetooth: hci_serdev: clear HCI_UART_PROTO_READY to avoid closing proto races
+Date:   Sat,  9 Nov 2019 21:39:35 -0500
+Message-Id: <20191110024013.29782-153-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,90 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 
-[ Upstream commit 016add12977bcc30f77d7e48fc9a3a024cb46645 ]
+[ Upstream commit 7cf7846d27bfc9731e449857db3eec5e0e9701ba ]
 
-SPI controller nodes should be named 'spi' rather than 'ssp'. Fixing the
-name enables dtc SPI bus checks.
+Clearing HCI_UART_PROTO_READY will avoid usage of proto function pointers
+before running the proto close function pointer. There is chance of kernel
+crash, due to usage of non proto close function pointers after proto close.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/arm-realview-eb.dtsi    | 2 +-
- arch/arm/boot/dts/arm-realview-pb1176.dts | 2 +-
- arch/arm/boot/dts/arm-realview-pb11mp.dts | 2 +-
- arch/arm/boot/dts/arm-realview-pbx.dtsi   | 2 +-
- arch/arm/boot/dts/versatile-ab.dts        | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/bluetooth/hci_serdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/arm-realview-eb.dtsi b/arch/arm/boot/dts/arm-realview-eb.dtsi
-index a917cf8825ca8..0e4c7c4c8c093 100644
---- a/arch/arm/boot/dts/arm-realview-eb.dtsi
-+++ b/arch/arm/boot/dts/arm-realview-eb.dtsi
-@@ -371,7 +371,7 @@
- 			clock-names = "uartclk", "apb_pclk";
- 		};
+diff --git a/drivers/bluetooth/hci_serdev.c b/drivers/bluetooth/hci_serdev.c
+index aa2543b3c2869..46e20444ba19b 100644
+--- a/drivers/bluetooth/hci_serdev.c
++++ b/drivers/bluetooth/hci_serdev.c
+@@ -368,6 +368,7 @@ void hci_uart_unregister_device(struct hci_uart *hu)
+ {
+ 	struct hci_dev *hdev = hu->hdev;
  
--		ssp: ssp@1000d000 {
-+		ssp: spi@1000d000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x1000d000 0x1000>;
- 			clocks = <&sspclk>, <&pclk>;
-diff --git a/arch/arm/boot/dts/arm-realview-pb1176.dts b/arch/arm/boot/dts/arm-realview-pb1176.dts
-index f935b72d3d964..f2a1d25eb6cf3 100644
---- a/arch/arm/boot/dts/arm-realview-pb1176.dts
-+++ b/arch/arm/boot/dts/arm-realview-pb1176.dts
-@@ -380,7 +380,7 @@
- 			clock-names = "apb_pclk";
- 		};
++	clear_bit(HCI_UART_PROTO_READY, &hu->flags);
+ 	hci_unregister_dev(hdev);
+ 	hci_free_dev(hdev);
  
--		pb1176_ssp: ssp@1010b000 {
-+		pb1176_ssp: spi@1010b000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x1010b000 0x1000>;
- 			interrupt-parent = <&intc_dc1176>;
-diff --git a/arch/arm/boot/dts/arm-realview-pb11mp.dts b/arch/arm/boot/dts/arm-realview-pb11mp.dts
-index 36203288de426..7f9cbdf33a510 100644
---- a/arch/arm/boot/dts/arm-realview-pb11mp.dts
-+++ b/arch/arm/boot/dts/arm-realview-pb11mp.dts
-@@ -523,7 +523,7 @@
- 			clock-names = "uartclk", "apb_pclk";
- 		};
- 
--		ssp@1000d000 {
-+		spi@1000d000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x1000d000 0x1000>;
- 			interrupt-parent = <&intc_pb11mp>;
-diff --git a/arch/arm/boot/dts/arm-realview-pbx.dtsi b/arch/arm/boot/dts/arm-realview-pbx.dtsi
-index 10868ba3277f5..a5676697ff3b7 100644
---- a/arch/arm/boot/dts/arm-realview-pbx.dtsi
-+++ b/arch/arm/boot/dts/arm-realview-pbx.dtsi
-@@ -362,7 +362,7 @@
- 			clock-names = "uartclk", "apb_pclk";
- 		};
- 
--		ssp: ssp@1000d000 {
-+		ssp: spi@1000d000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x1000d000 0x1000>;
- 			clocks = <&sspclk>, <&pclk>;
-diff --git a/arch/arm/boot/dts/versatile-ab.dts b/arch/arm/boot/dts/versatile-ab.dts
-index 5f61d36090270..6f4f60ba5429c 100644
---- a/arch/arm/boot/dts/versatile-ab.dts
-+++ b/arch/arm/boot/dts/versatile-ab.dts
-@@ -373,7 +373,7 @@
- 			clock-names = "apb_pclk";
- 		};
- 
--		ssp@101f4000 {
-+		spi@101f4000 {
- 			compatible = "arm,pl022", "arm,primecell";
- 			reg = <0x101f4000 0x1000>;
- 			interrupts = <11>;
 -- 
 2.20.1
 
