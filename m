@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A6AAF65D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:10:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA11F65C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:09:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbfKJDJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 22:09:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43742 "EHLO mail.kernel.org"
+        id S1728996AbfKJDJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728543AbfKJCo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:26 -0500
+        id S1728582AbfKJCoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B78921655;
-        Sun, 10 Nov 2019 02:44:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2920221848;
+        Sun, 10 Nov 2019 02:44:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353866;
-        bh=Sg8qrQudyXGXbUZiWMaBT0NuDvDe+WK1N9/ihXre3Q4=;
+        s=default; t=1573353873;
+        bh=NW5M5tG5jivL/ewIrjwbSjVjsD2EhZihRfAaDgW/z/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0kwALOfWONzGrUrbGac1CiV62VxHO1ob3YKkADF2sqtxlUP5y45ya3M3rsSXEg1SF
-         ljia4BaUBV6VRiDOQb3dmM1SZCLxpeuHFx3vWewmrSHF25SEL7kaSSeCRFOExTn0tw
-         EfAlC+wvz4kntbyrWZab8kK2sDK7tFgHiT16Z1LE=
+        b=fwPECRHjgZlOvVXSDAGDQxDk6Lo5JXsLw7tIJ/1qdd9x5Cywc54CbBFs0+R04FECk
+         39kcxynt1nF5PSx2K5xT8B3pKMtPCKGFt9F+3L+nNlQE9Ssn5NxRWZ5d+87Hr8afeW
+         LzbatGfx+5FNSletuA8AewXc219Y+biOtPZL7dqY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 146/191] f2fs: update i_size after DIO completion
-Date:   Sat,  9 Nov 2019 21:39:28 -0500
-Message-Id: <20191110024013.29782-146-sashal@kernel.org>
+Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 152/191] firmware: dell_rbu: Make payload memory uncachable
+Date:   Sat,  9 Nov 2019 21:39:34 -0500
+Message-Id: <20191110024013.29782-152-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,83 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Stuart Hayes <stuart.w.hayes@gmail.com>
 
-[ Upstream commit 0a4daae5ffea39f5015334e4d18a6a80b447cae4 ]
+[ Upstream commit 6aecee6ad41cf97c0270f72da032c10eef025bf0 ]
 
-This is related to
-ee70daaba82d ("xfs: update i_size after unwritten conversion in dio completion")
+The dell_rbu driver takes firmware update payloads and puts them in memory so
+the system BIOS can find them after a reboot.  This sometimes fails (though
+rarely), because the memory containing the payload is in the CPU cache but
+never gets written back to main memory before the system is rebooted (CPU
+cache contents are lost on reboot).
 
-If we update i_size during dio_write, dio_read can read out stale data, which
-breaks xfstests/465.
+With this patch, the payload memory will be changed to uncachable to ensure
+that the payload is actually in main memory before the system is rebooted.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/data.c | 15 +++++++--------
- fs/f2fs/f2fs.h |  1 +
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/firmware/dell_rbu.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9511466bc7857..c0d0744a52a55 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -887,7 +887,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 	struct f2fs_summary sum;
- 	struct node_info ni;
- 	block_t old_blkaddr;
--	pgoff_t fofs;
- 	blkcnt_t count = 1;
- 	int err;
+diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
+index fb8af5cb7c9bf..ccefa84f73057 100644
+--- a/drivers/firmware/dell_rbu.c
++++ b/drivers/firmware/dell_rbu.c
+@@ -45,6 +45,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/firmware.h>
+ #include <linux/dma-mapping.h>
++#include <asm/set_memory.h>
  
-@@ -916,12 +915,10 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 					old_blkaddr, old_blkaddr);
- 	f2fs_set_data_blkaddr(dn);
- 
--	/* update i_size */
--	fofs = f2fs_start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
--							dn->ofs_in_node;
--	if (i_size_read(dn->inode) < ((loff_t)(fofs + 1) << PAGE_SHIFT))
--		f2fs_i_size_write(dn->inode,
--				((loff_t)(fofs + 1) << PAGE_SHIFT));
+ MODULE_AUTHOR("Abhay Salunke <abhay_salunke@dell.com>");
+ MODULE_DESCRIPTION("Driver for updating BIOS image on DELL systems");
+@@ -181,6 +182,11 @@ static int create_packet(void *data, size_t length)
+ 			packet_data_temp_buf = NULL;
+ 		}
+ 	}
 +	/*
-+	 * i_size will be updated by direct_IO. Otherwise, we'll get stale
-+	 * data from unwritten block via dio_read.
++	 * set to uncachable or it may never get written back before reboot
 +	 */
- 	return 0;
- }
++	set_memory_uc((unsigned long)packet_data_temp_buf, 1 << ordernum);
++
+ 	spin_lock(&rbu_data.lock);
  
-@@ -1087,6 +1084,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 					last_ofs_in_node = dn.ofs_in_node;
- 				}
- 			} else {
-+				WARN_ON(flag != F2FS_GET_BLOCK_PRE_DIO &&
-+					flag != F2FS_GET_BLOCK_DIO);
- 				err = __allocate_data_block(&dn,
- 							map->m_seg_type);
- 				if (!err)
-@@ -1266,7 +1265,7 @@ static int get_data_block_dio(struct inode *inode, sector_t iblock,
- 			struct buffer_head *bh_result, int create)
- {
- 	return __get_data_block(inode, iblock, bh_result, create,
--						F2FS_GET_BLOCK_DEFAULT, NULL,
-+						F2FS_GET_BLOCK_DIO, NULL,
- 						f2fs_rw_hint_to_seg_type(
- 							inode->i_write_hint));
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index fb216488d67a9..6beda9147d3a0 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -600,6 +600,7 @@ enum {
- 	F2FS_GET_BLOCK_DEFAULT,
- 	F2FS_GET_BLOCK_FIEMAP,
- 	F2FS_GET_BLOCK_BMAP,
-+	F2FS_GET_BLOCK_DIO,
- 	F2FS_GET_BLOCK_PRE_DIO,
- 	F2FS_GET_BLOCK_PRE_AIO,
- 	F2FS_GET_BLOCK_PRECACHE,
+ 	newpacket->data = packet_data_temp_buf;
+@@ -349,6 +355,8 @@ static void packet_empty_list(void)
+ 		 * to make sure there are no stale RBU packets left in memory
+ 		 */
+ 		memset(newpacket->data, 0, rbu_data.packetsize);
++		set_memory_wb((unsigned long)newpacket->data,
++			1 << newpacket->ordernum);
+ 		free_pages((unsigned long) newpacket->data,
+ 			newpacket->ordernum);
+ 		kfree(newpacket);
 -- 
 2.20.1
 
