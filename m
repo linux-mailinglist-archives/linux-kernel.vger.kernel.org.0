@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50BFBF653E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EFCAF653A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:05:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbfKJCqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:46:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48410 "EHLO mail.kernel.org"
+        id S1729042AbfKJCqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:46:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728931AbfKJCpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:45:54 -0500
+        id S1728961AbfKJCqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:46:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6D60215EA;
-        Sun, 10 Nov 2019 02:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D158214E0;
+        Sun, 10 Nov 2019 02:45:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353953;
-        bh=8JSNvn9TVCSWekjREP0P9IlnAzsxkji+Lf9fjESjWsc=;
+        s=default; t=1573353959;
+        bh=Nzgnhf+2GHFkypQFGo5Xy3DsKIb1HLQt3PdfciKOnvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jNcVY88vgWrBfji2IdJ8M+qLLkNfMghVK389z77SgF1YJtItdafBmboKW0hHCZM/z
-         xa3DjHtUFoIIGaCLQ8DT1MfzmzRc/1rZ13m7CdpIzdr8bzSwM0qUs8RB6bYKH+bCKf
-         HQHG0QZmwChvUg7AaEvhtW0WiyEo/BWQQmgjMPck=
+        b=Aoe9fZGVYd1HhxA9ldTX1moyd4Oi9blFGmJLaORWsb8ZvnzNr2xo/62wtq/rF6ZpX
+         jEbGuzzWNOP7NQBLo6Gw1ai06azDp0o7axLDvvOFnkAGG9WdhOUsW4t8NZSVkgru3l
+         zY/YQAur7a7oBD5J6UUTpX3BL5wzEdRcpnk9CLo0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Breno Leitao <leitao@debian.org>,
+Cc:     Anton Blanchard <anton@samba.org>, Joel Stanley <joel@jms.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 010/109] powerpc/iommu: Avoid derefence before pointer check
-Date:   Sat,  9 Nov 2019 21:44:02 -0500
-Message-Id: <20191110024541.31567-10-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.14 013/109] powerpc: Fix duplicate const clang warning in user access code
+Date:   Sat,  9 Nov 2019 21:44:05 -0500
+Message-Id: <20191110024541.31567-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
@@ -43,38 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Breno Leitao <leitao@debian.org>
+From: Anton Blanchard <anton@samba.org>
 
-[ Upstream commit 984ecdd68de0fa1f63ce205d6c19ef5a7bc67b40 ]
+[ Upstream commit e00d93ac9a189673028ac125a74b9bc8ae73eebc ]
 
-The tbl pointer is being derefenced by IOMMU_PAGE_SIZE prior the check
-if it is not NULL.
+This re-applies commit b91c1e3e7a6f ("powerpc: Fix duplicate const
+clang warning in user access code") (Jun 2015) which was undone in
+commits:
+  f2ca80905929 ("powerpc/sparse: Constify the address pointer in __get_user_nosleep()") (Feb 2017)
+  d466f6c5cac1 ("powerpc/sparse: Constify the address pointer in __get_user_nocheck()") (Feb 2017)
+  f84ed59a612d ("powerpc/sparse: Constify the address pointer in __get_user_check()") (Feb 2017)
 
-Just moving the dereference code to after the check, where there will
-be guarantee that 'tbl' will not be NULL.
+We see a large number of duplicate const errors in the user access
+code when building with llvm/clang:
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
+  include/linux/pagemap.h:576:8: warning: duplicate 'const' declaration specifier [-Wduplicate-decl-specifier]
+        ret = __get_user(c, uaddr);
+
+The problem is we are doing const __typeof__(*(ptr)), which will hit
+the warning if ptr is marked const.
+
+Removing const does not seem to have any effect on GCC code
+generation.
+
+Signed-off-by: Anton Blanchard <anton@samba.org>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/uaccess.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-index af7a20dc6e093..80b6caaa9b92e 100644
---- a/arch/powerpc/kernel/iommu.c
-+++ b/arch/powerpc/kernel/iommu.c
-@@ -785,9 +785,9 @@ dma_addr_t iommu_map_page(struct device *dev, struct iommu_table *tbl,
- 
- 	vaddr = page_address(page) + offset;
- 	uaddr = (unsigned long)vaddr;
--	npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
- 
- 	if (tbl) {
-+		npages = iommu_num_pages(uaddr, size, IOMMU_PAGE_SIZE(tbl));
- 		align = 0;
- 		if (tbl->it_page_shift < PAGE_SHIFT && size >= PAGE_SIZE &&
- 		    ((unsigned long)vaddr & ~PAGE_MASK) == 0)
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 51f00c00d7e49..3865d1d235976 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -234,7 +234,7 @@ do {								\
+ ({								\
+ 	long __gu_err;						\
+ 	__long_type(*(ptr)) __gu_val;				\
+-	const __typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
++	__typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
+ 	__chk_user_ptr(ptr);					\
+ 	if (!is_kernel_addr((unsigned long)__gu_addr))		\
+ 		might_fault();					\
+@@ -248,7 +248,7 @@ do {								\
+ ({									\
+ 	long __gu_err = -EFAULT;					\
+ 	__long_type(*(ptr)) __gu_val = 0;				\
+-	const __typeof__(*(ptr)) __user *__gu_addr = (ptr);		\
++	__typeof__(*(ptr)) __user *__gu_addr = (ptr);		\
+ 	might_fault();							\
+ 	if (access_ok(VERIFY_READ, __gu_addr, (size))) {		\
+ 		barrier_nospec();					\
+@@ -262,7 +262,7 @@ do {								\
+ ({								\
+ 	long __gu_err;						\
+ 	__long_type(*(ptr)) __gu_val;				\
+-	const __typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
++	__typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
+ 	__chk_user_ptr(ptr);					\
+ 	barrier_nospec();					\
+ 	__get_user_size(__gu_val, __gu_addr, (size), __gu_err);	\
 -- 
 2.20.1
 
