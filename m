@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 765C7F62C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D17BAF62C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbfKJCpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:45:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44370 "EHLO mail.kernel.org"
+        id S1728818AbfKJCp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:45:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728632AbfKJCom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:42 -0500
+        id S1728656AbfKJCos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE4F221D7B;
-        Sun, 10 Nov 2019 02:44:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7ACF215EA;
+        Sun, 10 Nov 2019 02:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353881;
-        bh=irSFSlP4lDy18Th9gU+TMXSW4JZxVtRA522JoQhDzh0=;
+        s=default; t=1573353887;
+        bh=YUdWJefQqbJCfgysInUFfykhGjVrzLCnQMM6zBJYnkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=epz5I0ydhLZtxw06ZtIgQPeG4w7P4pXiLG9Xe/b428NihDvKEt8CFbJndK71DlONm
-         oSdA58LsGx0NKbG+Nzd40kPzW/2cA8S+3HOAGLOnIolTec+u5rPC9BCw5Wn6yXubOk
-         zJ5vk+Lbd/5dz7yGfJ0JaPtN04STiYi+xpf82gjM=
+        b=Vxhm1GP9BfqhIBPvV1WvFlw0B4k5wW2RadfUv2SIIKmBmUCwKMQERhAqdbTpuI4k1
+         0xHgC3Ik8FKG/jkNBaWjJ6k9MG0lXXetLjz2m5XZY+Clmqylgld5A/6aKveu0lRLpK
+         w6GDzp7Qu+99AP2acQoZrZ4UILbWzYpBOokHikAA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 158/191] crypto: s5p-sss: Fix Fix argument list alignment
-Date:   Sat,  9 Nov 2019 21:39:40 -0500
-Message-Id: <20191110024013.29782-158-sashal@kernel.org>
+Cc:     Erel Geron <erelx.geron@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 161/191] iwlwifi: fix non_shared_ant for 22000 devices
+Date:   Sat,  9 Nov 2019 21:39:43 -0500
+Message-Id: <20191110024013.29782-161-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -46,43 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Manszewski <c.manszewski@samsung.com>
+From: Erel Geron <erelx.geron@intel.com>
 
-[ Upstream commit 6c12b6ba45490eeb820fdceccf5a53f42a26799c ]
+[ Upstream commit a40287727d9b737e183959fd31a4e0c55f312853 ]
 
-Fix misalignment of continued argument list.
+The non-shared antenna was wrong for 22000 device series.
+Fix it to ANT_B for correct antenna preference by coex in MVM driver.
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: e34d975e40ff ("iwlwifi: Add a000 HW family support")
+Signed-off-by: Erel Geron <erelx.geron@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/s5p-sss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/cfg/22000.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 9021ad9df0c45..b7216935236f0 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -491,7 +491,7 @@ static void s5p_unset_indata(struct s5p_aes_dev *dev)
- }
- 
- static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
--			    struct scatterlist **dst)
-+			   struct scatterlist **dst)
- {
- 	void *pages;
- 	int len;
-@@ -1889,7 +1889,7 @@ static int s5p_set_indata_start(struct s5p_aes_dev *dev,
- }
- 
- static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
--				struct ablkcipher_request *req)
-+				 struct ablkcipher_request *req)
- {
- 	struct scatterlist *sg;
- 	int err;
+diff --git a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
+index b4347806a59ed..a0de61aa0feff 100644
+--- a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
++++ b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
+@@ -143,7 +143,7 @@ static const struct iwl_ht_params iwl_22000_ht_params = {
+ 	.ucode_api_min = IWL_22000_UCODE_API_MIN,			\
+ 	.led_mode = IWL_LED_RF_STATE,					\
+ 	.nvm_hw_section_num = NVM_HW_SECTION_NUM_FAMILY_22000,		\
+-	.non_shared_ant = ANT_A,					\
++	.non_shared_ant = ANT_B,					\
+ 	.dccm_offset = IWL_22000_DCCM_OFFSET,				\
+ 	.dccm_len = IWL_22000_DCCM_LEN,					\
+ 	.dccm2_offset = IWL_22000_DCCM2_OFFSET,				\
 -- 
 2.20.1
 
