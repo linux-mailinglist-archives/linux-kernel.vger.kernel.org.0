@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B057AF642A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48270F6408
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:57:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbfKJC5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:57:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47266 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729400AbfKJC4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729455AbfKJC4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sat, 9 Nov 2019 21:56:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728932AbfKJC4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:56:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5425621D82;
-        Sun, 10 Nov 2019 02:47:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A22222085B;
+        Sun, 10 Nov 2019 02:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354042;
-        bh=FTJPCXRcxDMOJSToYEtqeq6c2U9ZZgf1fojkXraSZa8=;
+        s=default; t=1573354046;
+        bh=kTWHcQgmOh92E8ZW7W0vJ+QVMthQ0RSoHstpcaD/z3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tYyDDN4Gkq7VhvlbKkoFee632hy7LO4/lsthpccbMIaw1eNdplslwnpcSWCEGySx2
-         nh/VJOduTv7yTNfKxml5KEHuyw0y1AnC50akeJcxGbZNaVwUugzJaAqgcoqgDCryVk
-         jaJo4h2z8qCPPrAGK/zOoGXmfAD0ngzX7mDJ+P+8=
+        b=jKNe0NPTUrTBnn3MaVEVmGsAxC7dKAu+wD3VkwR1+tNfdRDW2AQ6aIFcoS0IdqVz0
+         tMl3v12mo+OKlfNY+ftWNiRb/LnG1us/m7XihRxBYcc2tGRYZYytZ+H1jde0jVOucL
+         Gd/QpOgJg88CFuD7kWwAhRKDa6kv9XALX7az5W2c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 054/109] usb: gadget: uvc: configfs: Drop leaked references to config items
-Date:   Sat,  9 Nov 2019 21:44:46 -0500
-Message-Id: <20191110024541.31567-54-sashal@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 057/109] phy: brcm-sata: allow PHY_BRCM_SATA driver to be built for DSL SoCs
+Date:   Sat,  9 Nov 2019 21:44:49 -0500
+Message-Id: <20191110024541.31567-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
@@ -43,57 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 86f3daed59bceb4fa7981d85e89f63ebbae1d561 ]
+[ Upstream commit 26728df4b254ae06247726a9a6e64823e39ac504 ]
 
-Some of the .allow_link() and .drop_link() operations implementations
-call config_group_find_item() and then leak the reference to the
-returned item. Fix this by dropping those references where needed.
+Broadcom ARM-based DSL SoCs (BCM63xx product line) have the same
+Broadcom SATA PHY that other SoCs are using, make it possible to select
+that driver on these platforms.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/uvc_configfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/phy/broadcom/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-index 844cb738bafd0..fc604439b25a1 100644
---- a/drivers/usb/gadget/function/uvc_configfs.c
-+++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -543,6 +543,7 @@ static int uvcg_control_class_allow_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- 	return ret;
- }
-@@ -578,6 +579,7 @@ static void uvcg_control_class_drop_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- }
+diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
+index 64fc59c3ae6d9..181b8fde2bfe6 100644
+--- a/drivers/phy/broadcom/Kconfig
++++ b/drivers/phy/broadcom/Kconfig
+@@ -60,7 +60,8 @@ config PHY_NS2_USB_DRD
  
-@@ -2037,6 +2039,7 @@ static int uvcg_streaming_class_allow_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- 	return ret;
- }
-@@ -2077,6 +2080,7 @@ static void uvcg_streaming_class_drop_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- }
- 
+ config PHY_BRCM_SATA
+ 	tristate "Broadcom SATA PHY driver"
+-	depends on ARCH_BRCMSTB || ARCH_BCM_IPROC || BMIPS_GENERIC || COMPILE_TEST
++	depends on ARCH_BRCMSTB || ARCH_BCM_IPROC || BMIPS_GENERIC || \
++		   ARCH_BCM_63XX || COMPILE_TEST
+ 	depends on OF
+ 	select GENERIC_PHY
+ 	default ARCH_BCM_IPROC
 -- 
 2.20.1
 
