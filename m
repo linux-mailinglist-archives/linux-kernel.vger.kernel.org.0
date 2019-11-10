@@ -2,33 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67611F6664
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:13:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 481BCF6668
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbfKJCmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:42:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39136 "EHLO mail.kernel.org"
+        id S1728414AbfKJDNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:13:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727967AbfKJCmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:42:42 -0500
+        id S1727991AbfKJCmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:42:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD06621848;
-        Sun, 10 Nov 2019 02:42:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD6FF21655;
+        Sun, 10 Nov 2019 02:42:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353762;
-        bh=NBNBvP45RE2ewafMBBNQHhDvHIX7XZ6vY2f8zsAHmcI=;
+        s=default; t=1573353765;
+        bh=kYX34TqtCC3SM/hdhNIA6q1CTQZWCDNDaa35a4w3VJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oCjQ2fOqYtN3eTmBl+n8EyzaMWt4uH1y4dlLFwFYCR/eLZsWMPessgxWnhI7+OW7s
-         iSgBuONtecP/LVh5kixyWRSTPIW+PhhsJr7lAPkPHFF/KJvd1SEerB81uh2vEgB19d
-         blYlD3h3JIpZrOy2j7rgMBstll0SbZ28jk2ObUQE=
+        b=oCPKLjnO/jzuDQ6spo0qC/MfkajzkKzqWn494OJaDC/+hwLXzwFl3maQKwE0+BUi0
+         wlfyWSkbP9ZxJLlxfJsgygl2WYF7Lk0aJhQDjd+2ZEW+3fihzfeKy4AiziFMHhhD4D
+         EHqh4qUo8PLQD0gxvKDQ+Pj8m2diG55HXhb+LLmY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 074/191] x86/mce-inject: Reset injection struct after injection
-Date:   Sat,  9 Nov 2019 21:38:16 -0500
-Message-Id: <20191110024013.29782-74-sashal@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 077/191] ARM: dts: stm32: Fix SPI controller node names
+Date:   Sat,  9 Nov 2019 21:38:19 -0500
+Message-Id: <20191110024013.29782-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -41,46 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 7401a633c34adc7aefd3edfec60074cb0475a3e8 ]
+[ Upstream commit 1ba23b1df0bb6eec430408614c3a11280941e112 ]
 
-Clear the MCE struct which is used for collecting the injection details
-after injection.
+SPI controller nodes should be named 'spi' rather than 'qspi'. Fixing the
+name enables dtc SPI bus checks.
 
-Also, populate it with more details from the machine.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20180905081954.10391-1-bp@alien8.de
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/mcheck/mce-inject.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/stm32mp157c.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-inject.c b/arch/x86/kernel/cpu/mcheck/mce-inject.c
-index ff1c00b695aed..1ceccc4a5472c 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-inject.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-inject.c
-@@ -106,6 +106,9 @@ static void setup_inj_struct(struct mce *m)
- 	memset(m, 0, sizeof(struct mce));
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 185541a5b69fb..c50c36baba758 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -947,7 +947,7 @@
+ 			dma-requests = <48>;
+ 		};
  
- 	m->cpuvendor = boot_cpu_data.x86_vendor;
-+	m->time	     = ktime_get_real_seconds();
-+	m->cpuid     = cpuid_eax(1);
-+	m->microcode = boot_cpu_data.microcode;
- }
- 
- /* Update fake mce registers on current CPU. */
-@@ -580,6 +583,9 @@ static int inj_bank_set(void *data, u64 val)
- 	m->bank = val;
- 	do_inject();
- 
-+	/* Reset injection struct */
-+	setup_inj_struct(&i_mce);
-+
- 	return 0;
- }
- 
+-		qspi: qspi@58003000 {
++		qspi: spi@58003000 {
+ 			compatible = "st,stm32f469-qspi";
+ 			reg = <0x58003000 0x1000>, <0x70000000 0x10000000>;
+ 			reg-names = "qspi", "qspi_mm";
 -- 
 2.20.1
 
