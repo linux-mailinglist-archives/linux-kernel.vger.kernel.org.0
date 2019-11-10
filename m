@@ -2,170 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D7B4F6B8C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F57AF6B82
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfKJVKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 16:10:50 -0500
-Received: from ozlabs.org ([203.11.71.1]:47885 "EHLO ozlabs.org"
+        id S1727312AbfKJVA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 16:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726856AbfKJVKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 16:10:50 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 47B69g21Jbz9sPK; Mon, 11 Nov 2019 08:10:46 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1573420247;
-        bh=sgl6XwaqQKuWwNLFcxgCVCJd1ny8a3Y5WhLWIZgRB+w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GXUH/ZucMTSO8lUMwgX4o1MuQVS9+ZQ/DD/1O8usLKlRKOyhuj/4hI8/57w/C9XLP
-         SnmdxtnIbeEhqXifQjE5gJSakdwrJwzIk2m0e2GOxJZ7fI2ctXgvC+WP6SVSAFn6M4
-         Rwg/wedGqEhGy8Ca+ER2oTOv+sJZHGOBeMj9j3os=
-Date:   Sun, 10 Nov 2019 19:40:06 +0000
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Ram Pai <linuxram@us.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@ozlabs.org, mdroth@linux.vnet.ibm.com,
-        hch@lst.de, andmike@us.ibm.com, sukadev@linux.vnet.ibm.com,
-        mst@redhat.com, ram.n.pai@gmail.com, aik@ozlabs.ru, cai@lca.pw,
-        tglx@linutronix.de, bauerman@linux.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 1/2] powerpc/pseries/iommu: Share the per-cpu TCE page
- with the hypervisor.
-Message-ID: <20191110194006.GQ2461@umbus.Home>
-References: <1573254011-1604-1-git-send-email-linuxram@us.ibm.com>
- <1573254011-1604-2-git-send-email-linuxram@us.ibm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="63aIh6YiuHX+oBFP"
-Content-Disposition: inline
-In-Reply-To: <1573254011-1604-2-git-send-email-linuxram@us.ibm.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1727134AbfKJVAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 16:00:07 -0500
+Subject: Re: [GIT pull] core/urgent for v5.4-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573419607;
+        bh=gl41Y0a2mg8fkhIE3apq1UjVqmhWKEoKFIUW79uZZfM=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=2pS6+B85Jy74Zl23yv89LokEHONo31cDx0P+xPoDIhgxgrp/3TCHHYcvk0ipvmgn7
+         6zLzqrPWco32s4Z/+0uhdBDDrG68aYZbEVB1tqShrOyIQZBdJmQsHS8u87wiPkx+I5
+         WUma+K/hEGGFoKLnQ1VUnR/u2M+b+SC457WHkJf8=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
+References: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ core-urgent-for-linus
+X-PR-Tracked-Commit-Id: b0c51f158455e31d5024100cf3580fcd88214b0e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 20c7e29684bfe88bfc5f0c7bf60833116bf5e89f
+Message-Id: <157341960745.30887.2781298983758671779.pr-tracker-bot@kernel.org>
+Date:   Sun, 10 Nov 2019 21:00:07 +0000
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The pull request you sent on Sun, 10 Nov 2019 10:21:53 -0000:
 
---63aIh6YiuHX+oBFP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
 
-On Fri, Nov 08, 2019 at 03:00:10PM -0800, Ram Pai wrote:
-> The hypervisor needs to access the contents of the page holding the TCE
-> entries while setting up the TCE entries in the IOMMU's TCE table.
->=20
-> For SecureVMs, since this page is encrypted, the hypervisor cannot
-> access valid entries. Share the page with the hypervisor. This ensures
-> that the hypervisor sees those valid entries.
->=20
-> Why is this safe?
->    The page contains only TCE entries; not any sensitive data
->    belonging to the Secure VM. The hypervisor has a genuine need to know
->    the value of the TCE entries, without which it will not be able to
->    DMA to/from the pages pointed to by the TCE entries. In a Secure
->    VM the TCE entries point to pages that are also shared with the
->    hypervisor; example: pages containing bounce buffers.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/20c7e29684bfe88bfc5f0c7bf60833116bf5e89f
 
-The bit that may not be obvious to reviewers from the above is this:
+Thank you!
 
-This is *not* a page of "live" TCEs which are actively used for
-translation.  Instead this is just a transient buffer with a batch of
-TCEs to set, passed to the hypervisor with the H_PUT_TCE_INDIRECT call.
-
->=20
-> Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-> ---
->  arch/powerpc/platforms/pseries/iommu.c | 23 ++++++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platfo=
-rms/pseries/iommu.c
-> index 8d9c2b1..a302aaa 100644
-> --- a/arch/powerpc/platforms/pseries/iommu.c
-> +++ b/arch/powerpc/platforms/pseries/iommu.c
-> @@ -37,6 +37,7 @@
->  #include <asm/mmzone.h>
->  #include <asm/plpar_wrappers.h>
->  #include <asm/svm.h>
-> +#include <asm/ultravisor.h>
-> =20
->  #include "pseries.h"
-> =20
-> @@ -179,6 +180,23 @@ static int tce_build_pSeriesLP(struct iommu_table *t=
-bl, long tcenum,
-> =20
->  static DEFINE_PER_CPU(__be64 *, tce_page);
-> =20
-> +/*
-> + * Allocate a tce page.  If secure VM, share the page with the hyperviso=
-r.
-> + *
-> + * NOTE: the TCE page is shared with the hypervisor explicitly and remai=
-ns
-> + * shared for the lifetime of the kernel. It is implicitly unshared at k=
-ernel
-> + * shutdown through a UV_UNSHARE_ALL_PAGES ucall.
-> + */
-> +static __be64 *alloc_tce_page(void)
-> +{
-> +	__be64 *tcep =3D (__be64 *)__get_free_page(GFP_ATOMIC);
-> +
-> +	if (tcep && is_secure_guest())
-> +		uv_share_page(PHYS_PFN(__pa(tcep)), 1);
-> +
-> +	return tcep;
-> +}
-> +
->  static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
->  				     long npages, unsigned long uaddr,
->  				     enum dma_data_direction direction,
-> @@ -206,8 +224,7 @@ static int tce_buildmulti_pSeriesLP(struct iommu_tabl=
-e *tbl, long tcenum,
->  	 * from iommu_alloc{,_sg}()
->  	 */
->  	if (!tcep) {
-> -		tcep =3D (__be64 *)__get_free_page(GFP_ATOMIC);
-> -		/* If allocation fails, fall back to the loop implementation */
-> +		tcep =3D alloc_tce_page();
->  		if (!tcep) {
->  			local_irq_restore(flags);
->  			return tce_build_pSeriesLP(tbl, tcenum, npages, uaddr,
-> @@ -405,7 +422,7 @@ static int tce_setrange_multi_pSeriesLP(unsigned long=
- start_pfn,
->  	tcep =3D __this_cpu_read(tce_page);
-> =20
->  	if (!tcep) {
-> -		tcep =3D (__be64 *)__get_free_page(GFP_ATOMIC);
-> +		tcep =3D alloc_tce_page();
->  		if (!tcep) {
->  			local_irq_enable();
->  			return -ENOMEM;
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---63aIh6YiuHX+oBFP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl3IZ5MACgkQbDjKyiDZ
-s5K+kQ/+PKlvYDKC8LlZl7hGJs9oVVlDQG/Q3tWSAsQWzhygYK+NhJxNT1t0AF0I
-0HnXRPw673myMED+6+j/cIS6zKg3N9GoOwBnaIxh+CzpsbzGtG+4XpCPcrAVO5+k
-9vBX6Bhr+UmvI4V1tfW6Q3c7MEMEtH4VX57ZSZe9Poq5p39NVyX3nggrIZxlsgjC
-SI90Vj/iGgfs3lyT+bIq9TU9N7pduaW6+JvNArThePpmUMgwc+EbVSGEh851wsGe
-Uav8B7Axg8ZlKsA1XSf+WfHU4Z+/fsYYOBMSfecs1SvyxizGaWoGXayKe1aaGWSj
-amPV9YZYecLkDPZG558cvT20KGnJ6JpJwebhVVzKIv8b/oLOzIjrHEku7Jy1OR+o
-PfYzfpt2Ddc2NGQjsq8ppB6FuAAMRcn5FXtXnxWqS0AbIo+nJ7r9R2gYk1TD+VF7
-S/7LmPh1Cd/xBZyxJFruj0qL21lGA9J0ff1MY7/qZ/8tySd0qJ4ehfQElJAFGSQC
-4JFQFXrC6GLyHdAgF3jCr7AVIcSEy7Zwt4ueNYtPoFFXYqR29UXzGngVUXSb1+90
-nZ9AJDRbFwtQo0ySgMYrchZw9ZOcRkDVuU730lwznf9+n0XpEdBjCauCuV0AK4PY
-yrrBbg8WWdqOYmtgafVuQmUQhX2NFMVYx98wTFJWLT9FaJVBoo4=
-=zGQn
------END PGP SIGNATURE-----
-
---63aIh6YiuHX+oBFP--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
