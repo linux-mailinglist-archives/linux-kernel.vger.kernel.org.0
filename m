@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38367F6293
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4627F6296
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfKJCoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:44:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42786 "EHLO mail.kernel.org"
+        id S1728483AbfKJCoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:44:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728463AbfKJCn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:43:59 -0500
+        id S1728467AbfKJCoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 851D921924;
-        Sun, 10 Nov 2019 02:43:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5AF5215EA;
+        Sun, 10 Nov 2019 02:44:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353839;
-        bh=Clahr9tyx0YwPFKHVEbZpyqfQUlA1RpfBoLTc9F30ng=;
+        s=default; t=1573353841;
+        bh=xOH+ix3LhRxkW9EZ3qVwZJdXRhikzraxle2sk20ZrZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HbDpAkUpmKX84ZKLdP8GPAvdUWpc2x0As5G6GMZA37ZG1O33lyG24wpgJhoAhAm5/
-         67gqFjdJvwFupfz5Do9A3/I7J++LyT1Ar73cDZvAjEJJtR79x5Dz9TFqQB+zbifYxA
-         M9BvZ/uLwlg370PpSN19Vv18y6uePHZCWlBJ4cGw=
+        b=EJAKc8deEj1hmZivqutvrHBvmJj8XU0pRCQ1B+dywO6u6QHAJvenezoRL4Mt8H7h9
+         RtBh4fNkjWt6XEkDldCLRUBIduKreazBhdskFZ6o9zQFJS3trBN7OF0i9EibXoRfBx
+         mHbxi8LWSpoZYIUVG06CfA3Q5BW2OXpmxO6nudJM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chengguang Xu <cgxu519@gmx.com>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 128/191] f2fs: fix remount problem of option io_bits
-Date:   Sat,  9 Nov 2019 21:39:10 -0500
-Message-Id: <20191110024013.29782-128-sashal@kernel.org>
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 129/191] phy: lantiq: Fix compile warning
+Date:   Sat,  9 Nov 2019 21:39:11 -0500
+Message-Id: <20191110024013.29782-129-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -44,36 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chengguang Xu <cgxu519@gmx.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-[ Upstream commit c6b1867b1da3b1203b4c49988afeebdcbdf65499 ]
+[ Upstream commit 3a00dae006623d799266d85f28b5f76ef07d6b6c ]
 
-Currently we show mount option "io_bits=%u" as "io_size=%uKB",
-it will cause option parsing problem(unrecognized mount option)
-in remount.
+This local variable is unused, remove it.
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: dea54fbad332 ("phy: Add an USB PHY driver for the Lantiq SoCs using the RCU module")
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/phy/lantiq/phy-lantiq-rcu-usb2.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d9106bbe7df63..c3f07171a5ab9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1336,7 +1336,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 				from_kgid_munged(&init_user_ns,
- 					F2FS_OPTION(sbi).s_resgid));
- 	if (F2FS_IO_SIZE_BITS(sbi))
--		seq_printf(seq, ",io_size=%uKB", F2FS_IO_SIZE_KB(sbi));
-+		seq_printf(seq, ",io_bits=%u",
-+				F2FS_OPTION(sbi).write_io_size_bits);
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (test_opt(sbi, FAULT_INJECTION)) {
- 		seq_printf(seq, ",fault_injection=%u",
+diff --git a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
+index 986224fca9e91..5a180f71d8d4d 100644
+--- a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
++++ b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
+@@ -156,7 +156,6 @@ static int ltq_rcu_usb2_of_parse(struct ltq_rcu_usb2_priv *priv,
+ {
+ 	struct device *dev = priv->dev;
+ 	const __be32 *offset;
+-	int ret;
+ 
+ 	priv->reg_bits = of_device_get_match_data(dev);
+ 
 -- 
 2.20.1
 
