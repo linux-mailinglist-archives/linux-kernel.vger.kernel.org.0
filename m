@@ -2,98 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED985F6BCC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 23:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F1F0F6BD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 23:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfKJWfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 17:35:34 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43898 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbfKJWfe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 17:35:34 -0500
-Received: by mail-lj1-f193.google.com with SMTP id y23so11663660ljh.10
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 14:35:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+NBVMvAeSjvjjX1c0c+htPmEjTBHiy+YFhFok5r1cTA=;
-        b=MM8GecQS9398VBncpNfj2q30ym0v7Wd61Hikdfm/vCnzORHKlwKdao3VidtKG5V5T4
-         J+el26ZulK3mESVoyXcPjV8Qd3QdsikjbXc+H3+u1R2+Hc/HUkIytR0o+SIDGXmnJ3rl
-         veUNtlt/IAoEx8JGzCoA131B1WO66X6wpkocI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+NBVMvAeSjvjjX1c0c+htPmEjTBHiy+YFhFok5r1cTA=;
-        b=TbZ9FDCrs0UvG1+DxUnXPVRP9CwUqpsZlKnr3H1ZEnW3W71bpm8rkeG+qIXVREQRdk
-         61tAjWR1DWZQRRs8iCBE0XFz1zX0vX2AI0+U3uenuhM9nxVxpVWEUgya5FuJBgJcZnvw
-         HxoQSNI42pUIfX13OG4LE6TxIh4EmnxI5IPO49jdgVlIhcI13Aq4b6a5U9x3sLHtxqtn
-         jSzserYRnEOVEkp7hjr6uAHknlfAsa5JazphXDc8ECjlAQ6ZOwdfOc65QC20LMqkXLcV
-         LGlZOuOKWmfyoer2lqQP8fuT9mzJzC/eNIN7OvxjQmFSsKAkBumywFI1N45/sked+1ez
-         wySA==
-X-Gm-Message-State: APjAAAUr8stCtVmCKdoc1msNmveq15lS0pp5rG/iTuIbRaMpw5kpn3Pl
-        GlKqRtP8RS1kCpp2ddT7nJkqTQwjGdg=
-X-Google-Smtp-Source: APXvYqwHGepIzIn2/ocJSWNiAnX4z7uqNK7eZevLD/40MmT9GJsOl8P8PC2XaBnm3bIVPGZrS341ow==
-X-Received: by 2002:a2e:b4da:: with SMTP id r26mr18157ljm.153.1573425331558;
-        Sun, 10 Nov 2019 14:35:31 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id x18sm5896429ljc.39.2019.11.10.14.35.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Nov 2019 14:35:30 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id n5so11684971ljc.9
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 14:35:29 -0800 (PST)
-X-Received: by 2002:a2e:8809:: with SMTP id x9mr13989546ljh.82.1573425329687;
- Sun, 10 Nov 2019 14:35:29 -0800 (PST)
+        id S1726810AbfKJW7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 17:59:21 -0500
+Received: from mleia.com ([178.79.152.223]:57924 "EHLO mail.mleia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726610AbfKJW7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 17:59:20 -0500
+X-Greylist: delayed 355 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Nov 2019 17:59:19 EST
+Received: from mail.mleia.com (localhost [127.0.0.1])
+        by mail.mleia.com (Postfix) with ESMTP id 8AC713AE374;
+        Sun, 10 Nov 2019 22:53:23 +0000 (UTC)
+Subject: Re: [PATCH] usb: gadget: udc: lpc32xx: don't dereference ep until it
+ has been null checked
+To:     Colin King <colin.king@canonical.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Roland Stigge <stigge@antcom.de>,
+        Arnd Bergmann <arnd@arndb.de>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191110221413.22321-1-colin.king@canonical.com>
+From:   Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <0e5105e3-768e-c8eb-dd73-d097bb7edfb2@mleia.com>
+Date:   Mon, 11 Nov 2019 00:53:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
- <698b03300532f80dfbd30fa35446a33e58ae0c89.camel@perches.com>
-In-Reply-To: <698b03300532f80dfbd30fa35446a33e58ae0c89.camel@perches.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 10 Nov 2019 14:35:13 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiwhMFo6GFUAg3CZJMix4TJo59NBaSDciQxW23RHR8Zbg@mail.gmail.com>
-Message-ID: <CAHk-=wiwhMFo6GFUAg3CZJMix4TJo59NBaSDciQxW23RHR8Zbg@mail.gmail.com>
-Subject: Re: [GIT pull] core/urgent for v5.4-rc7
-To:     Joe Perches <joe@perches.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jiri Slaby <jslaby@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191110221413.22321-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20191110_225323_591453_2C3ACE0D 
+X-CRM114-Status: UNSURE (   7.74  )
+X-CRM114-Notice: Please train this message. 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 10, 2019 at 2:01 PM Joe Perches <joe@perches.com> wrote:
->
-> trivia:
->
-> This idiom '!!(logical test)' is odd and redundant.
-> Logical test result is already 0 or 1, no !! is unnecessary.
+On 11/11/2019 12:14 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer ep is currently being dereferenced when initializing pointer
+> udc before ep is being null checked.  Fix this by only dereferencing
+> ep after it has been null checked.
+> 
+> Addresses-Coverity: ("Dereference before null check")
+> Fixes: 24a28e428351 ("USB: gadget driver for LPC32xx")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-You are of course correct.
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 
-I have to say, I personally have always disliked the idiomatic C "!!"
-pattern. I don't think it reads well, although that's probably "C
-cultural" - once you are used to the pattern, you don't think of it as
-anything else.
-
-Personally, I prefer "x != 0" over "!!x" since it reads much better to
-a human, and is equally legible whether you're used to the !! pattern
-or not.
-
-C is not perl, the Obfuscated C contest not-withstanding.
-
-And since modern C has bool, if you really want to use a cast-to-bool
-instead of "x != 0", I think doing exactly that is preferable to "!!".
-
-So I think both "x != 0" and "(bool)x" are preferable to "!!x", and
-would also have made it obvious how odd and redundant the test was in
-this case.
-
-But "!!x" is shorter, of course. And it you learnt C with that pattern
-it looks obvious.
-
-                Linus
+--
+Best wishes,
+Vladimir
