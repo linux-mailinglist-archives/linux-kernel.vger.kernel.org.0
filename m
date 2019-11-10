@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE64BF62E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:46:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D262EF62E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:46:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbfKJCq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:46:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48704 "EHLO mail.kernel.org"
+        id S1727587AbfKJCqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:46:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfKJCqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:46:01 -0500
+        id S1728251AbfKJCqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:46:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6A2E2085B;
-        Sun, 10 Nov 2019 02:45:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB0EE21D7B;
+        Sun, 10 Nov 2019 02:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353960;
-        bh=2nG+f6/8R2SGBJCEGEqoz1aBXB5qp42nEOs/chALn5Q=;
+        s=default; t=1573353969;
+        bh=Xty7iWILayDsbcoONT7/PYhnmYTucCABnBcNNL2l8eU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=St736J5rjWNZsmsMD9S6YwrQt/fx2JUfe2bv7q2sn5oNfZCFcc2YKYxpy9OISuKjg
-         8tqFLEJIUlJ3KYpK1DEJ21YKAHXoU3HSoEpI+tTxYheTSjcw/iyVsGdnSNnh1wAz8h
-         LDkWf3Zsinei4txSaHP32DaOA7kOLJ2tFyHU8RR0=
+        b=0LNERqct8kEGaXx8Lv3ufMrkx9bdbPw2ZeLVPcX09lGx6GaQvjvjiEp/XbK4M7DLb
+         U8GcAhokRJnGeid4MZuL0+o6nfCEP14iRpUEF5qiCNMFUrwz+c46sKWosbQuqVruAF
+         BrVAEdtbypsZJwIp3/U/X0/TqCwhcemWBzNotdko=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?H=C3=A5kon=20Bugge?= <Haakon.Bugge@oracle.com>,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 014/109] RDMA/i40iw: Fix incorrect iterator type
-Date:   Sat,  9 Nov 2019 21:44:06 -0500
-Message-Id: <20191110024541.31567-14-sashal@kernel.org>
+Cc:     Andreas Kemnade <andreas@kemnade.info>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 017/109] power: supply: twl4030_charger: fix charging current out-of-bounds
+Date:   Sat,  9 Nov 2019 21:44:09 -0500
+Message-Id: <20191110024541.31567-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,35 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Håkon Bugge <Haakon.Bugge@oracle.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit 802fa45cd320de319e86c93bca72abec028ba059 ]
+[ Upstream commit 8314c212f995bc0d06b54ad02ef0ab4089781540 ]
 
-Commit f27b4746f378 ("i40iw: add connection management code") uses an
-incorrect rcu iterator, whilst holding the rtnl_lock. Since the
-critical region invokes i40iw_manage_qhash(), which is a sleeping
-function, the rcu locking and traversal cannot be used.
+the charging current uses unsigned int variables, if we step back
+if the current is still low, we would run into negative which
+means setting the target to a huge value.
+Better add checks here.
 
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_cm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/twl4030_charger.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_cm.c b/drivers/infiniband/hw/i40iw/i40iw_cm.c
-index b7f1ce5333cb8..880c63579ba88 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_cm.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_cm.c
-@@ -1667,7 +1667,7 @@ static enum i40iw_status_code i40iw_add_mqh_6(struct i40iw_device *iwdev,
- 	unsigned long flags;
+diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
+index 0cc12bfe7b020..d3cba954bab54 100644
+--- a/drivers/power/supply/twl4030_charger.c
++++ b/drivers/power/supply/twl4030_charger.c
+@@ -420,7 +420,8 @@ static void twl4030_current_worker(struct work_struct *data)
  
- 	rtnl_lock();
--	for_each_netdev_rcu(&init_net, ip_dev) {
-+	for_each_netdev(&init_net, ip_dev) {
- 		if ((((rdma_vlan_dev_vlan_id(ip_dev) < I40IW_NO_VLAN) &&
- 		      (rdma_vlan_dev_real_dev(ip_dev) == iwdev->netdev)) ||
- 		     (ip_dev == iwdev->netdev)) && (ip_dev->flags & IFF_UP)) {
+ 	if (v < USB_MIN_VOLT) {
+ 		/* Back up and stop adjusting. */
+-		bci->usb_cur -= USB_CUR_STEP;
++		if (bci->usb_cur >= USB_CUR_STEP)
++			bci->usb_cur -= USB_CUR_STEP;
+ 		bci->usb_cur_target = bci->usb_cur;
+ 	} else if (bci->usb_cur >= bci->usb_cur_target ||
+ 		   bci->usb_cur + USB_CUR_STEP > USB_MAX_CURRENT) {
 -- 
 2.20.1
 
