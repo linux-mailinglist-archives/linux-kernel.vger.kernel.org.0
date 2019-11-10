@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57659F6880
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 11:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F40CF687E
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 11:24:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfKJKYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 05:24:14 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:54409 "EHLO
+        id S1726847AbfKJKYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 05:24:08 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:54413 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbfKJKYJ (ORCPT
+        with ESMTP id S1726800AbfKJKYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 05:24:09 -0500
+        Sun, 10 Nov 2019 05:24:08 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iTkO3-0004Xl-Sn; Sun, 10 Nov 2019 11:24:04 +0100
+        id 1iTkO4-0004Xs-VE; Sun, 10 Nov 2019 11:24:05 +0100
 Date:   Sun, 10 Nov 2019 10:21:53 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] sched/urgent for v5.4-rc7
+Subject: [GIT pull] timers/urgent for v5.4-rc7
 References: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
-Message-ID: <157338131324.14789.7419190771030534276.tglx@nanos.tec.linutronix.de>
+Message-ID: <157338131324.14789.9347520189915553665.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -33,467 +33,211 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest sched-urgent-for-linus git tree from:
+please pull the latest timers-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
 
-up to:  6e2df0581f56: sched: Fix pick_next_task() vs 'change' pattern race
+up to:  52338415cf4d: timekeeping/vsyscall: Update VDSO data unconditionally
 
-Two fixes for scheduler regressions:
+A small set of fixes for timekeepoing and clocksource drivers:
 
-   - Plug a subtle race condition which was introduced with the rework of
-     the next task selection functionality. The change of task properties
-     became unprotected which can be observed inconsistently causing state
-     corruption.
+  - VDSO data was updated conditional on the availability of a VDSO capable
+    clocksource. This causes the VDSO functions which do not depend on a
+    VDSO capable clocksource to operate on stale data. Always update
+    unconditionally.
 
-   - A trivial compile fix for CONFIG_CGROUPS=n
+  - Prevent a double free in the mediatek driver
+
+  - Use the proper helper in the sh_mtu2 driver so it won't attempt to
+    initialize non-existing interrupts.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Peter Zijlstra (1):
-      sched: Fix pick_next_task() vs 'change' pattern race
+Fabien Parent (1):
+      clocksource/drivers/mediatek: Fix error handling
 
-Qais Yousef (1):
-      sched/core: Fix compilation error when cgroup not selected
+Geert Uytterhoeven (1):
+      clocksource/drivers/sh_mtu2: Do not loop using platform_get_irq_by_name()
+
+Huacai Chen (1):
+      timekeeping/vsyscall: Update VDSO data unconditionally
 
 
- kernel/sched/core.c      | 23 ++++++++++++++++-------
- kernel/sched/deadline.c  | 40 ++++++++++++++++++++--------------------
- kernel/sched/fair.c      | 15 ++++++++++++---
- kernel/sched/idle.c      |  9 ++++++++-
- kernel/sched/rt.c        | 37 +++++++++++++++++++------------------
- kernel/sched/sched.h     | 30 +++++++++++++++++++++++++++---
- kernel/sched/stop_task.c | 18 +++++++++++-------
- 7 files changed, 113 insertions(+), 59 deletions(-)
+ arch/arm64/include/asm/vdso/vsyscall.h |  7 -------
+ arch/mips/include/asm/vdso/vsyscall.h  |  7 -------
+ drivers/clocksource/sh_mtu2.c          | 16 +++++++++++-----
+ drivers/clocksource/timer-mediatek.c   | 10 ++--------
+ include/asm-generic/vdso/vsyscall.h    |  7 -------
+ kernel/time/vsyscall.c                 |  9 +++------
+ 6 files changed, 16 insertions(+), 40 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index dd05a378631a..0f2eb3629070 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1073,6 +1073,7 @@ uclamp_update_active(struct task_struct *p, enum uclamp_id clamp_id)
- 	task_rq_unlock(rq, p, &rf);
+diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
+index 0c731bfc7c8c..0c20a7c1bee5 100644
+--- a/arch/arm64/include/asm/vdso/vsyscall.h
++++ b/arch/arm64/include/asm/vdso/vsyscall.h
+@@ -30,13 +30,6 @@ int __arm64_get_clock_mode(struct timekeeper *tk)
  }
+ #define __arch_get_clock_mode __arm64_get_clock_mode
  
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
- static inline void
- uclamp_update_active_tasks(struct cgroup_subsys_state *css,
- 			   unsigned int clamps)
-@@ -1091,7 +1092,6 @@ uclamp_update_active_tasks(struct cgroup_subsys_state *css,
- 	css_task_iter_end(&it);
- }
- 
--#ifdef CONFIG_UCLAMP_TASK_GROUP
- static void cpu_util_update_eff(struct cgroup_subsys_state *css);
- static void uclamp_update_root_tg(void)
+-static __always_inline
+-int __arm64_use_vsyscall(struct vdso_data *vdata)
+-{
+-	return !vdata[CS_HRES_COARSE].clock_mode;
+-}
+-#define __arch_use_vsyscall __arm64_use_vsyscall
+-
+ static __always_inline
+ void __arm64_update_vsyscall(struct vdso_data *vdata, struct timekeeper *tk)
  {
-@@ -3929,13 +3929,22 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+diff --git a/arch/mips/include/asm/vdso/vsyscall.h b/arch/mips/include/asm/vdso/vsyscall.h
+index 195314732233..00d41b94ba31 100644
+--- a/arch/mips/include/asm/vdso/vsyscall.h
++++ b/arch/mips/include/asm/vdso/vsyscall.h
+@@ -28,13 +28,6 @@ int __mips_get_clock_mode(struct timekeeper *tk)
+ }
+ #define __arch_get_clock_mode __mips_get_clock_mode
+ 
+-static __always_inline
+-int __mips_use_vsyscall(struct vdso_data *vdata)
+-{
+-	return (vdata[CS_HRES_COARSE].clock_mode != VDSO_CLOCK_NONE);
+-}
+-#define __arch_use_vsyscall __mips_use_vsyscall
+-
+ /* The asm-generic header needs to be included after the definitions above */
+ #include <asm-generic/vdso/vsyscall.h>
+ 
+diff --git a/drivers/clocksource/sh_mtu2.c b/drivers/clocksource/sh_mtu2.c
+index 354b27d14a19..62812f80b5cc 100644
+--- a/drivers/clocksource/sh_mtu2.c
++++ b/drivers/clocksource/sh_mtu2.c
+@@ -328,12 +328,13 @@ static int sh_mtu2_register(struct sh_mtu2_channel *ch, const char *name)
+ 	return 0;
+ }
+ 
++static const unsigned int sh_mtu2_channel_offsets[] = {
++	0x300, 0x380, 0x000,
++};
++
+ static int sh_mtu2_setup_channel(struct sh_mtu2_channel *ch, unsigned int index,
+ 				 struct sh_mtu2_device *mtu)
+ {
+-	static const unsigned int channel_offsets[] = {
+-		0x300, 0x380, 0x000,
+-	};
+ 	char name[6];
+ 	int irq;
+ 	int ret;
+@@ -356,7 +357,7 @@ static int sh_mtu2_setup_channel(struct sh_mtu2_channel *ch, unsigned int index,
+ 		return ret;
  	}
  
- restart:
-+#ifdef CONFIG_SMP
- 	/*
--	 * Ensure that we put DL/RT tasks before the pick loop, such that they
--	 * can PULL higher prio tasks when we lower the RQ 'priority'.
-+	 * We must do the balancing pass before put_next_task(), such
-+	 * that when we release the rq->lock the task is in the same
-+	 * state as before we took rq->lock.
-+	 *
-+	 * We can terminate the balance pass as soon as we know there is
-+	 * a runnable task of @class priority or higher.
- 	 */
--	prev->sched_class->put_prev_task(rq, prev, rf);
--	if (!rq->nr_running)
--		newidle_balance(rq, rf);
-+	for_class_range(class, prev->sched_class, &idle_sched_class) {
-+		if (class->balance(rq, prev, rf))
-+			break;
-+	}
-+#endif
-+
-+	put_prev_task(rq, prev);
+-	ch->base = mtu->mapbase + channel_offsets[index];
++	ch->base = mtu->mapbase + sh_mtu2_channel_offsets[index];
+ 	ch->index = index;
  
- 	for_each_class(class) {
- 		p = class->pick_next_task(rq, NULL, NULL);
-@@ -6201,7 +6210,7 @@ static struct task_struct *__pick_migrate_task(struct rq *rq)
- 	for_each_class(class) {
- 		next = class->pick_next_task(rq, NULL, NULL);
- 		if (next) {
--			next->sched_class->put_prev_task(rq, next, NULL);
-+			next->sched_class->put_prev_task(rq, next);
- 			return next;
- 		}
+ 	return sh_mtu2_register(ch, dev_name(&mtu->pdev->dev));
+@@ -408,7 +409,12 @@ static int sh_mtu2_setup(struct sh_mtu2_device *mtu,
  	}
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 2dc48720f189..a8a08030a8f7 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1691,6 +1691,22 @@ static void check_preempt_equal_dl(struct rq *rq, struct task_struct *p)
- 	resched_curr(rq);
- }
  
-+static int balance_dl(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-+{
-+	if (!on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
-+		/*
-+		 * This is OK, because current is on_cpu, which avoids it being
-+		 * picked for load-balance and preemption/IRQs are still
-+		 * disabled avoiding further scheduler activity on it and we've
-+		 * not yet started the picking loop.
-+		 */
-+		rq_unpin_lock(rq, rf);
-+		pull_dl_task(rq);
-+		rq_repin_lock(rq, rf);
-+	}
+ 	/* Allocate and setup the channels. */
+-	mtu->num_channels = 3;
++	ret = platform_irq_count(pdev);
++	if (ret < 0)
++		goto err_unmap;
 +
-+	return sched_stop_runnable(rq) || sched_dl_runnable(rq);
-+}
- #endif /* CONFIG_SMP */
++	mtu->num_channels = min_t(unsigned int, ret,
++				  ARRAY_SIZE(sh_mtu2_channel_offsets));
  
- /*
-@@ -1758,45 +1774,28 @@ static struct task_struct *
- pick_next_task_dl(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
- 	struct sched_dl_entity *dl_se;
-+	struct dl_rq *dl_rq = &rq->dl;
- 	struct task_struct *p;
--	struct dl_rq *dl_rq;
+ 	mtu->channels = kcalloc(mtu->num_channels, sizeof(*mtu->channels),
+ 				GFP_KERNEL);
+diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
+index a562f491b0f8..9318edcd8963 100644
+--- a/drivers/clocksource/timer-mediatek.c
++++ b/drivers/clocksource/timer-mediatek.c
+@@ -268,15 +268,12 @@ static int __init mtk_syst_init(struct device_node *node)
  
- 	WARN_ON_ONCE(prev || rf);
+ 	ret = timer_of_init(node, &to);
+ 	if (ret)
+-		goto err;
++		return ret;
  
--	dl_rq = &rq->dl;
--
--	if (unlikely(!dl_rq->dl_nr_running))
-+	if (!sched_dl_runnable(rq))
- 		return NULL;
+ 	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
+ 					TIMER_SYNC_TICKS, 0xffffffff);
  
- 	dl_se = pick_next_dl_entity(rq, dl_rq);
- 	BUG_ON(!dl_se);
--
- 	p = dl_task_of(dl_se);
--
- 	set_next_task_dl(rq, p);
--
- 	return p;
+ 	return 0;
+-err:
+-	timer_of_cleanup(&to);
+-	return ret;
  }
  
--static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-+static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
- {
- 	update_curr_dl(rq);
+ static int __init mtk_gpt_init(struct device_node *node)
+@@ -293,7 +290,7 @@ static int __init mtk_gpt_init(struct device_node *node)
  
- 	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
- 	if (on_dl_rq(&p->dl) && p->nr_cpus_allowed > 1)
- 		enqueue_pushable_dl_task(rq, p);
+ 	ret = timer_of_init(node, &to);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	/* Configure clock source */
+ 	mtk_gpt_setup(&to, TIMER_CLK_SRC, GPT_CTRL_OP_FREERUN);
+@@ -311,9 +308,6 @@ static int __init mtk_gpt_init(struct device_node *node)
+ 	mtk_gpt_enable_irq(&to, TIMER_CLK_EVT);
+ 
+ 	return 0;
+-err:
+-	timer_of_cleanup(&to);
+-	return ret;
+ }
+ TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
+ TIMER_OF_DECLARE(mtk_mt6765, "mediatek,mt6765-timer", mtk_syst_init);
+diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/vsyscall.h
+index e94b19782c92..ce4103208619 100644
+--- a/include/asm-generic/vdso/vsyscall.h
++++ b/include/asm-generic/vdso/vsyscall.h
+@@ -25,13 +25,6 @@ static __always_inline int __arch_get_clock_mode(struct timekeeper *tk)
+ }
+ #endif /* __arch_get_clock_mode */
+ 
+-#ifndef __arch_use_vsyscall
+-static __always_inline int __arch_use_vsyscall(struct vdso_data *vdata)
+-{
+-	return 1;
+-}
+-#endif /* __arch_use_vsyscall */
 -
--	if (rf && !on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
--		/*
--		 * This is OK, because current is on_cpu, which avoids it being
--		 * picked for load-balance and preemption/IRQs are still
--		 * disabled avoiding further scheduler activity on it and we've
--		 * not yet started the picking loop.
--		 */
--		rq_unpin_lock(rq, rf);
--		pull_dl_task(rq);
--		rq_repin_lock(rq, rf);
+ #ifndef __arch_update_vsyscall
+ static __always_inline void __arch_update_vsyscall(struct vdso_data *vdata,
+ 						   struct timekeeper *tk)
+diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
+index 4bc37ac3bb05..5ee0f7709410 100644
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -110,8 +110,7 @@ void update_vsyscall(struct timekeeper *tk)
+ 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+ 	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+ 
+-	if (__arch_use_vsyscall(vdata))
+-		update_vdso_data(vdata, tk);
++	update_vdso_data(vdata, tk);
+ 
+ 	__arch_update_vsyscall(vdata, tk);
+ 
+@@ -124,10 +123,8 @@ void update_vsyscall_tz(void)
+ {
+ 	struct vdso_data *vdata = __arch_get_k_vdso_data();
+ 
+-	if (__arch_use_vsyscall(vdata)) {
+-		vdata[CS_HRES_COARSE].tz_minuteswest = sys_tz.tz_minuteswest;
+-		vdata[CS_HRES_COARSE].tz_dsttime = sys_tz.tz_dsttime;
 -	}
++	vdata[CS_HRES_COARSE].tz_minuteswest = sys_tz.tz_minuteswest;
++	vdata[CS_HRES_COARSE].tz_dsttime = sys_tz.tz_dsttime;
+ 
+ 	__arch_sync_vdso_data(vdata);
  }
- 
- /*
-@@ -2442,6 +2441,7 @@ const struct sched_class dl_sched_class = {
- 	.set_next_task		= set_next_task_dl,
- 
- #ifdef CONFIG_SMP
-+	.balance		= balance_dl,
- 	.select_task_rq		= select_task_rq_dl,
- 	.migrate_task_rq	= migrate_task_rq_dl,
- 	.set_cpus_allowed       = set_cpus_allowed_dl,
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 682a754ea3e1..22a2fed29054 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6570,6 +6570,15 @@ static void task_dead_fair(struct task_struct *p)
- {
- 	remove_entity_load_avg(&p->se);
- }
-+
-+static int
-+balance_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+{
-+	if (rq->nr_running)
-+		return 1;
-+
-+	return newidle_balance(rq, rf) != 0;
-+}
- #endif /* CONFIG_SMP */
- 
- static unsigned long wakeup_gran(struct sched_entity *se)
-@@ -6746,7 +6755,7 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
- 	int new_tasks;
- 
- again:
--	if (!cfs_rq->nr_running)
-+	if (!sched_fair_runnable(rq))
- 		goto idle;
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
-@@ -6884,7 +6893,7 @@ done: __maybe_unused;
- /*
-  * Account for a descheduled task:
-  */
--static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+static void put_prev_task_fair(struct rq *rq, struct task_struct *prev)
- {
- 	struct sched_entity *se = &prev->se;
- 	struct cfs_rq *cfs_rq;
-@@ -10414,11 +10423,11 @@ const struct sched_class fair_sched_class = {
- 	.check_preempt_curr	= check_preempt_wakeup,
- 
- 	.pick_next_task		= pick_next_task_fair,
--
- 	.put_prev_task		= put_prev_task_fair,
- 	.set_next_task          = set_next_task_fair,
- 
- #ifdef CONFIG_SMP
-+	.balance		= balance_fair,
- 	.select_task_rq		= select_task_rq_fair,
- 	.migrate_task_rq	= migrate_task_rq_fair,
- 
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 8dad5aa600ea..f65ef1e2f204 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -365,6 +365,12 @@ select_task_rq_idle(struct task_struct *p, int cpu, int sd_flag, int flags)
- {
- 	return task_cpu(p); /* IDLE tasks as never migrated */
- }
-+
-+static int
-+balance_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+{
-+	return WARN_ON_ONCE(1);
-+}
- #endif
- 
- /*
-@@ -375,7 +381,7 @@ static void check_preempt_curr_idle(struct rq *rq, struct task_struct *p, int fl
- 	resched_curr(rq);
- }
- 
--static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
- {
- }
- 
-@@ -460,6 +466,7 @@ const struct sched_class idle_sched_class = {
- 	.set_next_task          = set_next_task_idle,
- 
- #ifdef CONFIG_SMP
-+	.balance		= balance_idle,
- 	.select_task_rq		= select_task_rq_idle,
- 	.set_cpus_allowed	= set_cpus_allowed_common,
- #endif
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index ebaa4e619684..9b8adc01be3d 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1469,6 +1469,22 @@ static void check_preempt_equal_prio(struct rq *rq, struct task_struct *p)
- 	resched_curr(rq);
- }
- 
-+static int balance_rt(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-+{
-+	if (!on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
-+		/*
-+		 * This is OK, because current is on_cpu, which avoids it being
-+		 * picked for load-balance and preemption/IRQs are still
-+		 * disabled avoiding further scheduler activity on it and we've
-+		 * not yet started the picking loop.
-+		 */
-+		rq_unpin_lock(rq, rf);
-+		pull_rt_task(rq);
-+		rq_repin_lock(rq, rf);
-+	}
-+
-+	return sched_stop_runnable(rq) || sched_dl_runnable(rq) || sched_rt_runnable(rq);
-+}
- #endif /* CONFIG_SMP */
- 
- /*
-@@ -1552,21 +1568,18 @@ static struct task_struct *
- pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
- 	struct task_struct *p;
--	struct rt_rq *rt_rq = &rq->rt;
- 
- 	WARN_ON_ONCE(prev || rf);
- 
--	if (!rt_rq->rt_queued)
-+	if (!sched_rt_runnable(rq))
- 		return NULL;
- 
- 	p = _pick_next_task_rt(rq);
--
- 	set_next_task_rt(rq, p);
--
- 	return p;
- }
- 
--static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-+static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
- {
- 	update_curr_rt(rq);
- 
-@@ -1578,18 +1591,6 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct rq_fla
- 	 */
- 	if (on_rt_rq(&p->rt) && p->nr_cpus_allowed > 1)
- 		enqueue_pushable_task(rq, p);
--
--	if (rf && !on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
--		/*
--		 * This is OK, because current is on_cpu, which avoids it being
--		 * picked for load-balance and preemption/IRQs are still
--		 * disabled avoiding further scheduler activity on it and we've
--		 * not yet started the picking loop.
--		 */
--		rq_unpin_lock(rq, rf);
--		pull_rt_task(rq);
--		rq_repin_lock(rq, rf);
--	}
- }
- 
- #ifdef CONFIG_SMP
-@@ -2366,8 +2367,8 @@ const struct sched_class rt_sched_class = {
- 	.set_next_task          = set_next_task_rt,
- 
- #ifdef CONFIG_SMP
-+	.balance		= balance_rt,
- 	.select_task_rq		= select_task_rq_rt,
--
- 	.set_cpus_allowed       = set_cpus_allowed_common,
- 	.rq_online              = rq_online_rt,
- 	.rq_offline             = rq_offline_rt,
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 0db2c1b3361e..c8870c5bd7df 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1727,10 +1727,11 @@ struct sched_class {
- 	struct task_struct * (*pick_next_task)(struct rq *rq,
- 					       struct task_struct *prev,
- 					       struct rq_flags *rf);
--	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct rq_flags *rf);
-+	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
- 	void (*set_next_task)(struct rq *rq, struct task_struct *p);
- 
- #ifdef CONFIG_SMP
-+	int (*balance)(struct rq *rq, struct task_struct *prev, struct rq_flags *rf);
- 	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int sd_flag, int flags);
- 	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
- 
-@@ -1773,7 +1774,7 @@ struct sched_class {
- static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
- {
- 	WARN_ON_ONCE(rq->curr != prev);
--	prev->sched_class->put_prev_task(rq, prev, NULL);
-+	prev->sched_class->put_prev_task(rq, prev);
- }
- 
- static inline void set_next_task(struct rq *rq, struct task_struct *next)
-@@ -1787,8 +1788,12 @@ static inline void set_next_task(struct rq *rq, struct task_struct *next)
- #else
- #define sched_class_highest (&dl_sched_class)
- #endif
-+
-+#define for_class_range(class, _from, _to) \
-+	for (class = (_from); class != (_to); class = class->next)
-+
- #define for_each_class(class) \
--   for (class = sched_class_highest; class; class = class->next)
-+	for_class_range(class, sched_class_highest, NULL)
- 
- extern const struct sched_class stop_sched_class;
- extern const struct sched_class dl_sched_class;
-@@ -1796,6 +1801,25 @@ extern const struct sched_class rt_sched_class;
- extern const struct sched_class fair_sched_class;
- extern const struct sched_class idle_sched_class;
- 
-+static inline bool sched_stop_runnable(struct rq *rq)
-+{
-+	return rq->stop && task_on_rq_queued(rq->stop);
-+}
-+
-+static inline bool sched_dl_runnable(struct rq *rq)
-+{
-+	return rq->dl.dl_nr_running > 0;
-+}
-+
-+static inline bool sched_rt_runnable(struct rq *rq)
-+{
-+	return rq->rt.rt_queued > 0;
-+}
-+
-+static inline bool sched_fair_runnable(struct rq *rq)
-+{
-+	return rq->cfs.nr_running > 0;
-+}
- 
- #ifdef CONFIG_SMP
- 
-diff --git a/kernel/sched/stop_task.c b/kernel/sched/stop_task.c
-index 7e1cee4e65b2..c0640739e05e 100644
---- a/kernel/sched/stop_task.c
-+++ b/kernel/sched/stop_task.c
-@@ -15,6 +15,12 @@ select_task_rq_stop(struct task_struct *p, int cpu, int sd_flag, int flags)
- {
- 	return task_cpu(p); /* stop tasks as never migrate */
- }
-+
-+static int
-+balance_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+{
-+	return sched_stop_runnable(rq);
-+}
- #endif /* CONFIG_SMP */
- 
- static void
-@@ -31,16 +37,13 @@ static void set_next_task_stop(struct rq *rq, struct task_struct *stop)
- static struct task_struct *
- pick_next_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
--	struct task_struct *stop = rq->stop;
--
- 	WARN_ON_ONCE(prev || rf);
- 
--	if (!stop || !task_on_rq_queued(stop))
-+	if (!sched_stop_runnable(rq))
- 		return NULL;
- 
--	set_next_task_stop(rq, stop);
--
--	return stop;
-+	set_next_task_stop(rq, rq->stop);
-+	return rq->stop;
- }
- 
- static void
-@@ -60,7 +63,7 @@ static void yield_task_stop(struct rq *rq)
- 	BUG(); /* the stop task should never yield, its pointless. */
- }
- 
--static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+static void put_prev_task_stop(struct rq *rq, struct task_struct *prev)
- {
- 	struct task_struct *curr = rq->curr;
- 	u64 delta_exec;
-@@ -129,6 +132,7 @@ const struct sched_class stop_sched_class = {
- 	.set_next_task          = set_next_task_stop,
- 
- #ifdef CONFIG_SMP
-+	.balance		= balance_stop,
- 	.select_task_rq		= select_task_rq_stop,
- 	.set_cpus_allowed	= set_cpus_allowed_common,
- #endif
 
 
