@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A9FF64E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:03:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1215F64F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:04:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfKJCst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:48:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56552 "EHLO mail.kernel.org"
+        id S1728208AbfKJDDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:03:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbfKJCss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:48:48 -0500
+        id S1728087AbfKJCsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:48:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3111C22573;
-        Sun, 10 Nov 2019 02:48:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DD0D22582;
+        Sun, 10 Nov 2019 02:48:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354127;
-        bh=XO4jExzsjGqVGycvgNA7RUSP7N/Lq6fZtpDKT8aTcWE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=nS3GTpbVSU79UOfmOdapDWmuwF2+haTWnVM541S4JD+jvl6faBaLd3/uVsTcSB4c1
-         TYXtksx/NaTCA+DkRoNZL6NfeOsziAasRUAvnJIWGue+Mc+J6t1uiobsJ28I+ltC8A
-         MBhQve/U373CldWdFSqIFKvnejtpD07YalyieLk4=
+        s=default; t=1573354129;
+        bh=nl6Vclgv9ewfJPYnz2RDeFn5PkpJj7SCpo04XJ7eSoY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=K761KyJNAI9lCFJ/fswezAVsGirmGY4FzicV1TvT5FVr5YX8eCHybyPhPH0YqUL7Z
+         My8632wnL/bom3QwzuW0rPR8CyKHgLY/1cgIkZ2RVvXuuw82gH0P4oKLylto/iXusf
+         cMLTUaameD0GamS/wYX9JaQkPE2vRAgvTiQAOwmk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 01/66] s390/qeth: invoke softirqs after napi_schedule()
-Date:   Sat,  9 Nov 2019 21:47:40 -0500
-Message-Id: <20191110024846.32598-1-sashal@kernel.org>
+Cc:     Sinan Kaya <okaya@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 02/66] PCI/ACPI: Correct error message for ASPM disabling
+Date:   Sat,  9 Nov 2019 21:47:41 -0500
+Message-Id: <20191110024846.32598-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191110024846.32598-1-sashal@kernel.org>
+References: <20191110024846.32598-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -41,60 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Sinan Kaya <okaya@kernel.org>
 
-[ Upstream commit 4d19db777a2f32c9b76f6fd517ed8960576cb43e ]
+[ Upstream commit 1ad61b612b95980a4d970c52022aa01dfc0f6068 ]
 
-Calling napi_schedule() from process context does not ensure that the
-NET_RX softirq is run in a timely fashion. So trigger it manually.
+If _OSC execution fails today for platforms without an _OSC entry, code is
+printing a misleading message saying disabling ASPM as follows:
 
-This is no big issue with current code. A call to ndo_open() is usually
-followed by a ndo_set_rx_mode() call, and for qeth this contains a
-spin_unlock_bh(). Except for OSN, where qeth_l2_set_rx_mode() bails out
-early.
-Nevertheless it's best to not depend on this behaviour, and just fix
-the issue at its source like all other drivers do. For instance see
-commit 83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule").
+  acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
 
-Fixes: a1c3ed4c9ca0 ("qeth: NAPI support for l2 and l3 discipline")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+We need to ensure that platform supports ASPM to begin with.
+
+Reported-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_l2_main.c | 3 +++
- drivers/s390/net/qeth_l3_main.c | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/acpi/pci_root.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-index 6ba4e921d2fd3..51152681aba6e 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -991,7 +991,10 @@ static int __qeth_l2_open(struct net_device *dev)
- 
- 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
- 		napi_enable(&card->napi);
-+		local_bh_disable();
- 		napi_schedule(&card->napi);
-+		/* kick-start the NAPI softirq: */
-+		local_bh_enable();
- 	} else
- 		rc = -EIO;
- 	return rc;
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
-index 6e6ba1baf9c48..b40a61d9ad9ec 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -3005,7 +3005,10 @@ static int __qeth_l3_open(struct net_device *dev)
- 
- 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
- 		napi_enable(&card->napi);
-+		local_bh_disable();
- 		napi_schedule(&card->napi);
-+		/* kick-start the NAPI softirq: */
-+		local_bh_enable();
- 	} else
- 		rc = -EIO;
- 	return rc;
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index b66815f35be6b..317ecc2e5757b 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -454,8 +454,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm)
+ 	decode_osc_support(root, "OS supports", support);
+ 	status = acpi_pci_osc_support(root, support);
+ 	if (ACPI_FAILURE(status)) {
+-		dev_info(&device->dev, "_OSC failed (%s); disabling ASPM\n",
+-			 acpi_format_exception(status));
++		dev_info(&device->dev, "_OSC failed (%s)%s\n",
++			 acpi_format_exception(status),
++			 pcie_aspm_support_enabled() ? "; disabling ASPM" : "");
+ 		*no_aspm = 1;
+ 		return;
+ 	}
 -- 
 2.20.1
 
