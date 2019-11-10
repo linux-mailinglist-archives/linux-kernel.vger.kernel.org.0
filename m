@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1691F6259
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:42:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79501F625E
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfKJCmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38378 "EHLO mail.kernel.org"
+        id S1727943AbfKJCmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:42:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727864AbfKJCm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:42:28 -0500
+        id S1727879AbfKJCmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:42:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C57F21924;
-        Sun, 10 Nov 2019 02:42:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D955D21850;
+        Sun, 10 Nov 2019 02:42:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353748;
-        bh=WcxXUNBUSv0CfufluOGxMfubxgccM0aLRAa4a4l2zR8=;
+        s=default; t=1573353751;
+        bh=5UlIQR2DCq+pOvDPurmJbhIK5FNedXV0/VZEjZx8hAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AvB5/bTFEJ3NIita8ZjU2u9T9mu2E9GbSjLsePvGDk1+gxxTG8DNHUoGkvz5mrYep
-         9EgskcdnVWjU75doBiIX4IMvcvxh2ouMzWJjyyJxPyMjdQEX5ZWCD3I9JzNUBysyqw
-         FXuprZF4kizDI5fXKp6VN/kcEahlU8W1337u8mOg=
+        b=H/fpViD2xFDP/p6T9eySFGHY/1RX5dbhxmj3Q7ThVaOnPj+MIq/H0EBOBoKKRSph2
+         JR3x3J7fgaBNaCDPsIQoR8FC4ZjHVvLVV/TkhBhZQlMwCP6ttpyLPWVoneGQlv1vSt
+         B33sG8esixyyMdWNSEyvk3QbTKE6Pb8Ru6sjN4+g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>, Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 064/191] f2fs: avoid infinite loop in f2fs_alloc_nid
-Date:   Sat,  9 Nov 2019 21:38:06 -0500
-Message-Id: <20191110024013.29782-64-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 067/191] ARM: dts: ux500: Fix LCDA clock line muxing
+Date:   Sat,  9 Nov 2019 21:38:09 -0500
+Message-Id: <20191110024013.29782-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,37 +42,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit f84262b0862d43b71b3e80a036cdd9d82e620367 ]
+[ Upstream commit ecde29569e3484e1d0a032bf4074449bce4d4a03 ]
 
-If we have an error in f2fs_build_free_nids, we're able to fall into a loop
-to find free nids.
+The "lcdaclk_b_1" group is muxed with the function "lcd"
+but needs a separate entry to be muxed in with "lcda"
+rather than "lcd".
 
-Suggested-by: Chao Yu <chao@kernel.org>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/node.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/ste-href-family-pinctrl.dtsi | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index aa8f19e1bdb3d..e5d474681471c 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2367,8 +2367,9 @@ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
- 	spin_unlock(&nm_i->nid_list_lock);
+diff --git a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
+index 5c5cea232743d..1ec193b0c5065 100644
+--- a/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
++++ b/arch/arm/boot/dts/ste-href-family-pinctrl.dtsi
+@@ -607,16 +607,20 @@
  
- 	/* Let's scan nat pages and its caches to get free nids */
--	f2fs_build_free_nids(sbi, true, false);
--	goto retry;
-+	if (!f2fs_build_free_nids(sbi, true, false))
-+		goto retry;
-+	return false;
- }
- 
- /*
+ 			mcde {
+ 				lcd_default_mode: lcd_default {
+-					default_mux {
++					default_mux1 {
+ 						/* Mux in VSI0 and all the data lines */
+ 						function = "lcd";
+ 						groups =
+ 						"lcdvsi0_a_1", /* VSI0 for LCD */
+ 						"lcd_d0_d7_a_1", /* Data lines */
+ 						"lcd_d8_d11_a_1", /* TV-out */
+-						"lcdaclk_b_1", /* Clock line for TV-out */
+ 						"lcdvsi1_a_1"; /* VSI1 for HDMI */
+ 					};
++					default_mux2 {
++						function = "lcda";
++						groups =
++						"lcdaclk_b_1"; /* Clock line for TV-out */
++					};
+ 					default_cfg1 {
+ 						pins =
+ 						"GPIO68_E1", /* VSI0 */
 -- 
 2.20.1
 
