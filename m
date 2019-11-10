@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2F1F66C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:16:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 083BFF66B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:15:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfKJDP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 22:15:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35260 "EHLO mail.kernel.org"
+        id S1727496AbfKJClf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:41:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727302AbfKJClN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:41:13 -0500
+        id S1727329AbfKJClR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:41:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E907821850;
-        Sun, 10 Nov 2019 02:41:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 345D9215EA;
+        Sun, 10 Nov 2019 02:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353672;
-        bh=6rLXOOpyhENEwIWRMZg72JBdXNe4tH+Hrc/ZYftRZBI=;
+        s=default; t=1573353675;
+        bh=0o0S7Wo9i1/gjx7t8f6sdM3bNtyEYb15PcbUreEvHys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dyQecCYNxowagmHGSDkEKKm5wLO5zKsLbOsrwoa/W/kZ3DdChFH4f3fqiKtW8XGlO
-         y+Gn0F14abKhdyGyUiBh5EzhEzYUOQBSEjy/FF6rgICqWAaCv4FWN1XHlXJYOJ2D6z
-         AFVbGT7ct2MiE6E6bHU7IuZfqCXoI967PuHZMrtE=
+        b=XJluvpAJJdVSQVMKsuIaa4lhcLeV6s+1wiVN5/9lybCdkOn12+XgrwyLJet2naS4o
+         Dc/IDZUhgGzBIUwRlu3+VN7OowyEQGKj4oieisKOCuHDXI6Un5/V7maEgCTkXUupYX
+         v89ZFSd7HM69CjLXNUZ3bv4M3hKY95aGCeZxL6eQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 038/191] power: supply: twl4030_charger: disable eoc interrupt on linear charge
-Date:   Sat,  9 Nov 2019 21:37:40 -0500
-Message-Id: <20191110024013.29782-38-sashal@kernel.org>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 039/191] net: mvpp2: fix the number of queues per cpu for PPv2.2
+Date:   Sat,  9 Nov 2019 21:37:41 -0500
+Message-Id: <20191110024013.29782-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,73 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit 079cdff3d0a09c5da10ae1be35def7a116776328 ]
+[ Upstream commit 70afb58e9856a70ff9e45760af2d0ebeb7c46ac2 ]
 
-This avoids getting woken up from suspend after power interruptions
-when the bci wrongly thinks the battery is full just because
-of input current going low because of low input power
+The Marvell PPv2.2 engine only has 8 Rx queues per CPU, while PPv2.1 has
+16 of them. This patch updates the code so that the Rx queues mask width
+is selected given the version of the network controller used.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/supply/twl4030_charger.c | 27 +++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2.h      | 3 ++-
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 7 ++++---
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
-index adcaa0a10a6f4..0e202d4273fb6 100644
---- a/drivers/power/supply/twl4030_charger.c
-+++ b/drivers/power/supply/twl4030_charger.c
-@@ -440,6 +440,7 @@ static void twl4030_current_worker(struct work_struct *data)
- static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
- {
- 	int ret;
-+	u32 reg;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+index 67b9e81b7c024..46911b67b0398 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+@@ -253,7 +253,8 @@
+ #define     MVPP2_ISR_ENABLE_INTERRUPT(mask)	((mask) & 0xffff)
+ #define     MVPP2_ISR_DISABLE_INTERRUPT(mask)	(((mask) << 16) & 0xffff0000)
+ #define MVPP2_ISR_RX_TX_CAUSE_REG(port)		(0x5480 + 4 * (port))
+-#define     MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK	0xffff
++#define     MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(version) \
++					((version) == MVPP21 ? 0xffff : 0xff)
+ #define     MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK	0xff0000
+ #define     MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_OFFSET	16
+ #define     MVPP2_CAUSE_RX_FIFO_OVERRUN_MASK	BIT(24)
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 9b608d23ff7ee..29f1260535325 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -908,7 +908,7 @@ static void mvpp2_interrupts_unmask(void *arg)
+ 	u32 val;
  
- 	if (bci->usb_mode == CHARGE_OFF)
- 		enable = false;
-@@ -453,14 +454,38 @@ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
- 			bci->usb_enabled = 1;
- 		}
+ 	val = MVPP2_CAUSE_MISC_SUM_MASK |
+-		MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK;
++		MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(port->priv->hw_version);
+ 	if (port->has_tx_irqs)
+ 		val |= MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK;
  
--		if (bci->usb_mode == CHARGE_AUTO)
-+		if (bci->usb_mode == CHARGE_AUTO) {
-+			/* Enable interrupts now. */
-+			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_ICHGEOC |
-+					TWL4030_TBATOR2 | TWL4030_TBATOR1 |
-+					TWL4030_BATSTS);
-+			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
-+				       TWL4030_INTERRUPTS_BCIIMR1A);
-+			if (ret < 0) {
-+				dev_err(bci->dev,
-+					"failed to unmask interrupts: %d\n",
-+					ret);
-+				return ret;
-+			}
- 			/* forcing the field BCIAUTOUSB (BOOT_BCI[1]) to 1 */
- 			ret = twl4030_clear_set_boot_bci(0, TWL4030_BCIAUTOUSB);
-+		}
+@@ -928,7 +928,7 @@ mvpp2_shared_interrupt_mask_unmask(struct mvpp2_port *port, bool mask)
+ 	if (mask)
+ 		val = 0;
+ 	else
+-		val = MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK;
++		val = MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(MVPP22);
  
- 		/* forcing USBFASTMCHG(BCIMFSTS4[2]) to 1 */
- 		ret = twl4030_clear_set(TWL_MODULE_MAIN_CHARGE, 0,
- 			TWL4030_USBFASTMCHG, TWL4030_BCIMFSTS4);
- 		if (bci->usb_mode == CHARGE_LINEAR) {
-+			/* Enable interrupts now. */
-+			reg = ~(u32)(TWL4030_ICHGLOW | TWL4030_TBATOR2 |
-+					TWL4030_TBATOR1 | TWL4030_BATSTS);
-+			ret = twl_i2c_write_u8(TWL4030_MODULE_INTERRUPTS, reg,
-+				       TWL4030_INTERRUPTS_BCIIMR1A);
-+			if (ret < 0) {
-+				dev_err(bci->dev,
-+					"failed to unmask interrupts: %d\n",
-+					ret);
-+				return ret;
-+			}
- 			twl4030_clear_set_boot_bci(TWL4030_BCIAUTOAC|TWL4030_CVENAC, 0);
- 			/* Watch dog key: WOVF acknowledge */
- 			ret = twl_i2c_write_u8(TWL_MODULE_MAIN_CHARGE, 0x33,
+ 	for (i = 0; i < port->nqvecs; i++) {
+ 		struct mvpp2_queue_vector *v = port->qvecs + i;
+@@ -3059,7 +3059,8 @@ static int mvpp2_poll(struct napi_struct *napi, int budget)
+ 	}
+ 
+ 	/* Process RX packets */
+-	cause_rx = cause_rx_tx & MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK;
++	cause_rx = cause_rx_tx &
++		   MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(port->priv->hw_version);
+ 	cause_rx <<= qv->first_rxq;
+ 	cause_rx |= qv->pending_cause_rx;
+ 	while (cause_rx && budget > 0) {
 -- 
 2.20.1
 
