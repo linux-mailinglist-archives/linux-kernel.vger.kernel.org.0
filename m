@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C3FF628A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70E4EF628C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbfKJCns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:43:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42160 "EHLO mail.kernel.org"
+        id S1726586AbfKJCnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:43:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728380AbfKJCnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:43:40 -0500
+        id S1728402AbfKJCnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:43:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28D9321655;
-        Sun, 10 Nov 2019 02:43:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5584521924;
+        Sun, 10 Nov 2019 02:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353818;
-        bh=LC+E78fvu722VluQCYlasBmdFrh1pt4nmBi4TrD9/8g=;
+        s=default; t=1573353822;
+        bh=Si7KddTlpBoJb+HqiYLW4wmn16wkQOtypJpyIXeDOJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PFtPAGJ6Tsyu6Z8pa3CYHU+1UPvk6HFulZI5Fip/DI1ckfHZEiLjF6hCvlDanO15i
-         P3+zwBl1oD7dzv7M4EODkcmsk/NhS1S9J+SrqaSS9Rgv8iJM25zoqixlJ6bLmnd327
-         8WUiiZStPGwmrViW3hBFDydsbeG1CpNJCEgH4rZM=
+        b=zqXVHjBS6wgjr2kdwZMCVsK/TVBhclom43LgObfOkjl2DhLgl99LcCKpzp+QFveSf
+         G0hi+e2PkLX+CkOEHEoAie1ztU7KSlAriVcaTVx/bPnL5EH4bgGdCY9yPhq3rcGpVS
+         sagzCAcxqWkAeUdtKwYji+eRN+70QNcoj5aBuDm0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 114/191] coresight: tmc-etr: Handle driver mode specific ETR buffers
-Date:   Sat,  9 Nov 2019 21:38:56 -0500
-Message-Id: <20191110024013.29782-114-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 117/191] coresight: dynamic-replicator: Handle multiple connections
+Date:   Sat,  9 Nov 2019 21:38:59 -0500
+Message-Id: <20191110024013.29782-117-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -46,34 +46,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 96a7f644006ecc05eaaa1a5d09373d0ee63beb0a ]
+[ Upstream commit 30af4fb619e5126cb3152072e687b377fc9398d6 ]
 
-Since the ETR could be driven either by SYSFS or by perf, it
-becomes complicated how we deal with the buffers used for each
-of these modes. The ETR driver cannot simply free the current
-attached buffer without knowing the provider (i.e, sysfs vs perf).
+When a replicator port is enabled, we block the traffic
+on the other port and route all traffic to the new enabled
+port. If there are two active trace sessions each targeting
+the two different paths from the replicator, the second session
+will disable the first session and route all the data to the
+second path.
+                    ETR
+                 /
+e.g, replicator
+                 \
+                    ETB
 
-To solve this issue, we provide:
-1) the driver-mode specific etr buffer to be retained in the drvdata
-2) the etr_buf for a session should be passed on when enabling the
-   hardware, which will be stored in drvdata->etr_buf. This will be
-   replaced (not free'd) as soon as the hardware is disabled, after
-   necessary sync operation.
+If CPU0 is operated in sysfs mode to ETR and CPU1 is operated
+in perf mode to ETB, depending on the order in which the
+replicator is enabled one device is blocked.
 
-The advantages of this are :
-
-1) The common code path doesn't need to worry about how to dispose
-   an existing buffer, if it is about to start a new session with a
-   different buffer, possibly in a different mode.
-2) The driver mode can control its buffers and can get access to the
-   saved session even when the hardware is operating in a different
-   mode. (e.g, we can still access a trace buffer from a sysfs mode
-   even if the etr is now used in perf mode, without disrupting the
-   current session.)
-
-Towards this, we introduce a sysfs specific data which will hold the
-etr_buf used for sysfs mode of operation, controlled solely by the
-sysfs mode handling code.
+Ideally we need trace-id for the session to make the
+right choice. That implies we need a trace-id allocation
+logic for the coresight subsystem and use that to route
+the traffic. The short term solution is to only manage
+the "target port" and leave the other port untouched.
+That leaves both the paths unaffected, except that some
+unwanted traffic may be pushed to the paths (if the Trace-IDs
+are not far enough), which is still fine and can be filtered
+out while processing rather than silently blocking the data.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
@@ -81,188 +80,111 @@ Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../hwtracing/coresight/coresight-tmc-etr.c   | 58 ++++++++++++-------
- drivers/hwtracing/coresight/coresight-tmc.h   |  2 +
- 2 files changed, 40 insertions(+), 20 deletions(-)
+ .../coresight/coresight-dynamic-replicator.c  | 64 ++++++++++++++-----
+ 1 file changed, 47 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 11963647e19ae..2d6f428176ff8 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -895,10 +895,15 @@ static void tmc_sync_etr_buf(struct tmc_drvdata *drvdata)
- 		tmc_etr_buf_insert_barrier_packet(etr_buf, etr_buf->offset);
- }
- 
--static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
-+static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
-+			      struct etr_buf *etr_buf)
- {
- 	u32 axictl, sts;
--	struct etr_buf *etr_buf = drvdata->etr_buf;
-+
-+	/* Callers should provide an appropriate buffer for use */
-+	if (WARN_ON(!etr_buf || drvdata->etr_buf))
-+		return;
-+	drvdata->etr_buf = etr_buf;
- 
- 	/*
- 	 * If this ETR is connected to a CATU, enable it before we turn
-@@ -960,13 +965,16 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
-  * also updating the @bufpp on where to find it. Since the trace data
-  * starts at anywhere in the buffer, depending on the RRP, we adjust the
-  * @len returned to handle buffer wrapping around.
-+ *
-+ * We are protected here by drvdata->reading != 0, which ensures the
-+ * sysfs_buf stays alive.
-  */
- ssize_t tmc_etr_get_sysfs_trace(struct tmc_drvdata *drvdata,
- 				loff_t pos, size_t len, char **bufpp)
- {
- 	s64 offset;
- 	ssize_t actual = len;
--	struct etr_buf *etr_buf = drvdata->etr_buf;
-+	struct etr_buf *etr_buf = drvdata->sysfs_buf;
- 
- 	if (pos + actual > etr_buf->len)
- 		actual = etr_buf->len - pos;
-@@ -996,7 +1004,14 @@ tmc_etr_free_sysfs_buf(struct etr_buf *buf)
- 
- static void tmc_etr_sync_sysfs_buf(struct tmc_drvdata *drvdata)
- {
--	tmc_sync_etr_buf(drvdata);
-+	struct etr_buf *etr_buf = drvdata->etr_buf;
-+
-+	if (WARN_ON(drvdata->sysfs_buf != etr_buf)) {
-+		tmc_etr_free_sysfs_buf(drvdata->sysfs_buf);
-+		drvdata->sysfs_buf = NULL;
-+	} else {
-+		tmc_sync_etr_buf(drvdata);
-+	}
- }
- 
- static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
-@@ -1017,6 +1032,8 @@ static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
- 
- 	/* Disable CATU device if this ETR is connected to one */
- 	tmc_etr_disable_catu(drvdata);
-+	/* Reset the ETR buf used by hardware */
-+	drvdata->etr_buf = NULL;
- }
- 
- static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
-@@ -1024,7 +1041,7 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- 	int ret = 0;
- 	unsigned long flags;
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
--	struct etr_buf *new_buf = NULL, *free_buf = NULL;
-+	struct etr_buf *sysfs_buf = NULL, *new_buf = NULL, *free_buf = NULL;
- 
- 	/*
- 	 * If we are enabling the ETR from disabled state, we need to make
-@@ -1035,7 +1052,8 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- 	 * with the lock released.
- 	 */
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
--	if (!drvdata->etr_buf || (drvdata->etr_buf->size != drvdata->size)) {
-+	sysfs_buf = READ_ONCE(drvdata->sysfs_buf);
-+	if (!sysfs_buf || (sysfs_buf->size != drvdata->size)) {
- 		spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 		/* Allocate memory with the locks released */
-@@ -1064,14 +1082,14 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- 	 * If we don't have a buffer or it doesn't match the requested size,
- 	 * use the buffer allocated above. Otherwise reuse the existing buffer.
- 	 */
--	if (!drvdata->etr_buf ||
--	    (new_buf && drvdata->etr_buf->size != new_buf->size)) {
--		free_buf = drvdata->etr_buf;
--		drvdata->etr_buf = new_buf;
-+	sysfs_buf = READ_ONCE(drvdata->sysfs_buf);
-+	if (!sysfs_buf || (new_buf && sysfs_buf->size != new_buf->size)) {
-+		free_buf = sysfs_buf;
-+		drvdata->sysfs_buf = new_buf;
- 	}
- 
- 	drvdata->mode = CS_MODE_SYSFS;
--	tmc_etr_enable_hw(drvdata);
-+	tmc_etr_enable_hw(drvdata, drvdata->sysfs_buf);
- out:
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
-@@ -1156,13 +1174,13 @@ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
- 		goto out;
- 	}
- 
--	/* If drvdata::etr_buf is NULL the trace data has been read already */
--	if (drvdata->etr_buf == NULL) {
-+	/* If sysfs_buf is NULL the trace data has been read already */
-+	if (!drvdata->sysfs_buf) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 
--	/* Disable the TMC if need be */
-+	/* Disable the TMC if we are trying to read from a running session */
- 	if (drvdata->mode == CS_MODE_SYSFS)
- 		tmc_etr_disable_hw(drvdata);
- 
-@@ -1176,7 +1194,7 @@ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
- int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata)
- {
- 	unsigned long flags;
--	struct etr_buf *etr_buf = NULL;
-+	struct etr_buf *sysfs_buf = NULL;
- 
- 	/* config types are set a boot time and never change */
- 	if (WARN_ON_ONCE(drvdata->config_type != TMC_CONFIG_TYPE_ETR))
-@@ -1191,22 +1209,22 @@ int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata)
- 		 * buffer. Since the tracer is still enabled drvdata::buf can't
- 		 * be NULL.
- 		 */
--		tmc_etr_enable_hw(drvdata);
-+		tmc_etr_enable_hw(drvdata, drvdata->sysfs_buf);
- 	} else {
- 		/*
- 		 * The ETR is not tracing and the buffer was just read.
- 		 * As such prepare to free the trace buffer.
- 		 */
--		etr_buf =  drvdata->etr_buf;
--		drvdata->etr_buf = NULL;
-+		sysfs_buf = drvdata->sysfs_buf;
-+		drvdata->sysfs_buf = NULL;
- 	}
- 
- 	drvdata->reading = false;
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	/* Free allocated memory out side of the spinlock */
--	if (etr_buf)
--		tmc_free_etr_buf(etr_buf);
-+	if (sysfs_buf)
-+		tmc_etr_free_sysfs_buf(sysfs_buf);
- 
- 	return 0;
- }
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 7027bd60c4cc8..872f63e3651ba 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.h
-+++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -170,6 +170,7 @@ struct etr_buf {
-  * @trigger_cntr: amount of words to store after a trigger.
-  * @etr_caps:	Bitmask of capabilities of the TMC ETR, inferred from the
-  *		device configuration register (DEVID)
-+ * @sysfs_data:	SYSFS buffer for ETR.
-  */
- struct tmc_drvdata {
- 	void __iomem		*base;
-@@ -189,6 +190,7 @@ struct tmc_drvdata {
- 	enum tmc_mem_intf_width	memwidth;
- 	u32			trigger_cntr;
- 	u32			etr_caps;
-+	struct etr_buf		*sysfs_buf;
+diff --git a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+index f6d0571ab9dd5..d31f1d8758b24 100644
+--- a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+@@ -34,26 +34,42 @@ struct replicator_state {
+ 	struct coresight_device	*csdev;
  };
  
- struct etr_buf_operations {
++/*
++ * replicator_reset : Reset the replicator configuration to sane values.
++ */
++static void replicator_reset(struct replicator_state *drvdata)
++{
++	CS_UNLOCK(drvdata->base);
++
++	writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
++	writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
++
++	CS_LOCK(drvdata->base);
++}
++
+ static int replicator_enable(struct coresight_device *csdev, int inport,
+ 			      int outport)
+ {
++	u32 reg;
+ 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
++	switch (outport) {
++	case 0:
++		reg = REPLICATOR_IDFILTER0;
++		break;
++	case 1:
++		reg = REPLICATOR_IDFILTER1;
++		break;
++	default:
++		WARN_ON(1);
++		return -EINVAL;
++	}
++
+ 	CS_UNLOCK(drvdata->base);
+ 
+-	/*
+-	 * Ensure that the other port is disabled
+-	 * 0x00 - passing through the replicator unimpeded
+-	 * 0xff - disable (or impede) the flow of ATB data
+-	 */
+-	if (outport == 0) {
+-		writel_relaxed(0x00, drvdata->base + REPLICATOR_IDFILTER0);
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
+-	} else {
+-		writel_relaxed(0x00, drvdata->base + REPLICATOR_IDFILTER1);
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
+-	}
+ 
++	/* Ensure that the outport is enabled. */
++	writel_relaxed(0x00, drvdata->base + reg);
+ 	CS_LOCK(drvdata->base);
+ 
+ 	dev_info(drvdata->dev, "REPLICATOR enabled\n");
+@@ -63,15 +79,25 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
+ static void replicator_disable(struct coresight_device *csdev, int inport,
+ 				int outport)
+ {
++	u32 reg;
+ 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
++	switch (outport) {
++	case 0:
++		reg = REPLICATOR_IDFILTER0;
++		break;
++	case 1:
++		reg = REPLICATOR_IDFILTER1;
++		break;
++	default:
++		WARN_ON(1);
++		return;
++	}
++
+ 	CS_UNLOCK(drvdata->base);
+ 
+ 	/* disable the flow of ATB data through port */
+-	if (outport == 0)
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
+-	else
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
++	writel_relaxed(0xff, drvdata->base + reg);
+ 
+ 	CS_LOCK(drvdata->base);
+ 
+@@ -156,7 +182,11 @@ static int replicator_probe(struct amba_device *adev, const struct amba_id *id)
+ 	desc.groups = replicator_groups;
+ 	drvdata->csdev = coresight_register(&desc);
+ 
+-	return PTR_ERR_OR_ZERO(drvdata->csdev);
++	if (!IS_ERR(drvdata->csdev)) {
++		replicator_reset(drvdata);
++		return 0;
++	}
++	return PTR_ERR(drvdata->csdev);
+ }
+ 
+ #ifdef CONFIG_PM
 -- 
 2.20.1
 
