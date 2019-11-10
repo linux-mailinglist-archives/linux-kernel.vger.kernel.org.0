@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C323CF6405
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F89F632A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:50:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbfKJC4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:56:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59834 "EHLO mail.kernel.org"
+        id S1729619AbfKJCuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:50:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbfKJCtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:49:45 -0500
+        id S1729527AbfKJCtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:49:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B7C822595;
-        Sun, 10 Nov 2019 02:49:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16C40225AE;
+        Sun, 10 Nov 2019 02:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354184;
-        bh=rYpbs0dKw7NuXQPuiS1JlwOkFwEBEGYINd5c/qDq/JM=;
+        s=default; t=1573354185;
+        bh=SWnbQ6ESsCx2svhKme4+smyFG/NDFa640/NUKAqdQIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1wOdY7priKmOwnQsCIxsz7B3RGXOtXrVCNR0FGfoRpe49GkA/1QPtLweJYuLqP29u
-         8M/FgNKjcWLdVvrKo2Y9v3JrTpaag895fpC84+3GpCeA/BeZoQznogCa+KTg+S8LWP
-         bvWjnoBjafZDIvn+hEs7rzGvyNCrhSq/LqCjHe7M=
+        b=K3ixPP4BTK7FkESH9MsA+O3Jf4z4MpJXNr4aGksBpQWVG6+Qi4iIWYvmGNsTbotrC
+         uMX64K4QZiKjKW67NEom3uqVGXZuRpUXNJtiHlQ3KEKgTU7y8gsMhQcbvEQ/AslKTN
+         jEX2k04WMamh28TjII+5oJScdzWABZ3U5cLmkCgc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc:     Joel Pepper <joel.pepper@rwth-aachen.de>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 33/66] usb: gadget: uvc: configfs: Drop leaked references to config items
-Date:   Sat,  9 Nov 2019 21:48:12 -0500
-Message-Id: <20191110024846.32598-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 34/66] usb: gadget: uvc: configfs: Prevent format changes after linking header
+Date:   Sat,  9 Nov 2019 21:48:13 -0500
+Message-Id: <20191110024846.32598-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024846.32598-1-sashal@kernel.org>
 References: <20191110024846.32598-1-sashal@kernel.org>
@@ -43,57 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Joel Pepper <joel.pepper@rwth-aachen.de>
 
-[ Upstream commit 86f3daed59bceb4fa7981d85e89f63ebbae1d561 ]
+[ Upstream commit cb2200f7af8341aaf0c6abd7ba37e4c667c41639 ]
 
-Some of the .allow_link() and .drop_link() operations implementations
-call config_group_find_item() and then leak the reference to the
-returned item. Fix this by dropping those references where needed.
+While checks are in place to avoid attributes and children of a format
+being manipulated after the format is linked into the streaming header,
+the linked flag was never actually set, invalidating the protections.
+Update the flag as appropriate in the header link calls.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Joel Pepper <joel.pepper@rwth-aachen.de>
 Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/uvc_configfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/gadget/function/uvc_configfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-index d7dcd39fe12cb..3803dda54666b 100644
+index 3803dda54666b..3d843e14447bb 100644
 --- a/drivers/usb/gadget/function/uvc_configfs.c
 +++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -543,6 +543,7 @@ static int uvcg_control_class_allow_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
+@@ -772,6 +772,7 @@ static int uvcg_streaming_header_allow_link(struct config_item *src,
+ 	format_ptr->fmt = target_fmt;
+ 	list_add_tail(&format_ptr->entry, &src_hdr->formats);
+ 	++src_hdr->num_fmt;
++	++target_fmt->linked;
+ 
  out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- 	return ret;
- }
-@@ -584,6 +585,7 @@ static int uvcg_control_class_drop_link(struct config_item *src,
- unlock:
  	mutex_unlock(&opts->lock);
+@@ -810,6 +811,8 @@ static int uvcg_streaming_header_drop_link(struct config_item *src,
+ 			break;
+ 		}
+ 
++	--target_fmt->linked;
++
  out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- 	return ret;
- }
-@@ -2047,6 +2049,7 @@ static int uvcg_streaming_class_allow_link(struct config_item *src,
- unlock:
  	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
  	mutex_unlock(su_mutex);
- 	return ret;
- }
-@@ -2091,6 +2094,7 @@ static int uvcg_streaming_class_drop_link(struct config_item *src,
- unlock:
- 	mutex_unlock(&opts->lock);
- out:
-+	config_item_put(header);
- 	mutex_unlock(su_mutex);
- 	return ret;
- }
 -- 
 2.20.1
 
