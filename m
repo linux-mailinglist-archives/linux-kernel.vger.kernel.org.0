@@ -2,214 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EDF3F6B99
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E89DBF6B9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:31:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfKJVWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 16:22:08 -0500
-Received: from mx1.cock.li ([185.10.68.5]:57923 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726878AbfKJVWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 16:22:07 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_40,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S1727047AbfKJVbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 16:31:04 -0500
+Received: from mga07.intel.com ([134.134.136.100]:26860 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726882AbfKJVbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 16:31:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2019 13:31:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,290,1569308400"; 
+   d="scan'208";a="405018231"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Nov 2019 13:30:58 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iTunR-000Fxb-Sm; Mon, 11 Nov 2019 05:30:57 +0800
+Date:   Mon, 11 Nov 2019 05:30:49 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Alex Kogan <alex.kogan@oracle.com>
+Cc:     kbuild-all@lists.01.org, linux@armlinux.org.uk,
+        peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        guohanjun@huawei.com, jglauber@marvell.com,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        alex.kogan@oracle.com, dave.dice@oracle.com,
+        rahul.x.yadav@oracle.com
+Subject: Re: [PATCH v6 3/5] locking/qspinlock: Introduce CNA into the slow
+ path of qspinlock
+Message-ID: <201911110540.8p3UoQAR%lkp@intel.com>
+References: <20191107174622.61718-4-alex.kogan@oracle.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firemail.cc; s=mail;
-        t=1573420922; bh=lEdjgG1zaZn0Swd39hhnJzMSEq7d1iMSsu0yWEiy0ZA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fR4UOTzBtVepCGpHXo25f5FhwjgRVWqPfvfXMHAgeJ7nqCiwlvFcnwot+ErHzaJQ8
-         Me7newj6pn5ukl91xkSBi0RY5QlyOLIEUvhlRBgBOZW62gcH0xi33ZUTVSqGw4rz4I
-         OJkFGJ6ygGVlaEH5oN0ae5sMf4G5yk6AmGdnjTWOyvoHplTKv2BB91kK40xv5BcgHe
-         wYSVum11TeOhcVWBYim1R+t8qFCk6+xgkLovOEK6aMUkx3haIIdS/rJc6oll1//l4+
-         AuwZZgyYXfSA2ucUebnIEgNEV/LgFaGquMDn6ZxNnrGuCUt8iZvfrzDx7grk8BXLHh
-         S8g9I9iNplUuw==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Sun, 10 Nov 2019 21:21:58 +0000
-From:   nipponmail@firemail.cc
-To:     =?UTF-8?Q?Alexandre_Fran=C3=A7ois_Garreau?= 
-        <galex-713@galex-713.eu>
-Cc:     gnu-system-discuss@gnu.org, rms@gnu.org,
-        Dmitry Alexandrov <321942@gmail.com>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Jean Louis <bugs@gnu.support>, mrbrklyn@panix.com,
-        Paul Smith <psmith@gnu.org>,
-        Adam Spiers <gnu-system-discuss@adamspiers.org>,
-        debian-user@lists.debian.org, Paolo Bonzini <bonzini@gnu.org>,
-        torvalds@linux-foundation.org, esr@thyrsus.com
-Subject: =?UTF-8?Q?Re=3A_Truth_in_Software=3A_Alexandre_Fran=C3=A7ois_Gar?=
- =?UTF-8?Q?reau=3A_Will_you_try_my_free-software_before_condemning_it=2E_-?=
- =?UTF-8?Q?-_Threats_of_being_=22banned_from_conferences=22?=
-In-Reply-To: <2757405.bGq9mVWlxT@pc-713>
-References: <137347c2ec26c62c3a8304a50aed13b2@firemail.cc>
- <8661217.ur3r6JdI2d@pc-713> <2757405.bGq9mVWlxT@pc-713>
-Message-ID: <d16aee9e350e4d637e197226f29f2f29@firemail.cc>
-X-Sender: nipponmail@firemail.cc
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191107174622.61718-4-alex.kogan@oracle.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oh great, threats and power-plays.
+Hi Alex,
 
-Alexandre François Garreau:
+Thank you for the patch! Perhaps something to improve:
 
-I am not asking you as a friend to "please review my game, oh great 
-one". I am demanding that you actually use the free-software you blindly 
-criticize. You then make demands "give me direct link, stop saying 
-things I don't like, etc". It is your offense against me that you libel 
-me and my work because you disagree with my (correct) opinions.
+[auto build test WARNING on linus/master]
+[cannot apply to v5.4-rc6 next-20191108]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-[Turn on javascript and let sourceforge resolve whatever mirror it wants 
-to give you the link from (their JS is free software).]
+url:    https://github.com/0day-ci/linux/commits/Alex-Kogan/locking-qspinlock-Rename-mcs-lock-unlock-macros-and-make-them-more-generic/20191109-180535
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 0058b0a506e40d9a2c62015fe92eb64a44d78cd9
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-21-gb31adac-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-On 2019-11-10 06:16, Alexandre François Garreau wrote:
-> I recall the story of this very promising hacker\u2026 with good 
-> ideas\u2026 he
-> developed a whole purely functional OS/language/network system from the
-> ground\u2026 named \u201curbit\u201d.  Really worthy, interesting and 
-> impressing.  Yet being
-> a famously known White Supremacist, and notably using his money (gained
-> through his project) to disparage his opinions, and back up politicians 
-> such
-> as Trump\u2026 well\u2026 he was banned from some conventions 
-> (LambdaCon or something
-> alike afair) and not that well supported\u2026
-> 
-> So some opinions are better held separately from some work x) (for rms 
-> it\u2019s
-> still fine, I believe, though: and he stays pretty consistent in the 
-> long run).
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Software hacking is not "work". It is a hobby. I will not allow you 
-people to dictate to me what I am to believe or not to believe; what I 
-am to say and not to say. I do not go to your pointless conventions: I 
-am an _Attorney_; I go to seminars on law, not on how to identify 
-yourself to the authorities in exchange for no gain for yourself.
 
-I do _not_ hold your conference organizers in high esteem: the entire 
-point of these conferences is to identify the keyholders so as to bring 
-pressure down upon them. Anyone that goes to these who has not all-ready 
-been identified is a naive moron.
+sparse warnings: (new ones prefixed by >>)
 
-Additionally it allows outsiders, like yourself, who do not program, to 
-set themselves up as gatekeepers to the "community".
+   kernel/locking/qspinlock.c:450:14: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *[assigned] node @@    got ct mcs_spinlock *[assigned] node @@
+   kernel/locking/qspinlock.c:450:14: sparse:    expected struct mcs_spinlock *[assigned] node
+   kernel/locking/qspinlock.c:450:14: sparse:    got struct mcs_spinlock [pure] *
+   kernel/locking/qspinlock.c:498:22: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *prev @@    got struct struct mcs_spinlock *prev @@
+   kernel/locking/qspinlock.c:498:22: sparse:    expected struct mcs_spinlock *prev
+   kernel/locking/qspinlock.c:498:22: sparse:    got struct mcs_spinlock [pure] *
+>> kernel/locking/qspinlock_cna.h:141:60: sparse: sparse: incorrect type in initializer (different modifiers) @@    expected struct mcs_spinlock *tail_2nd @@    got struct struct mcs_spinlock *tail_2nd @@
+>> kernel/locking/qspinlock_cna.h:141:60: sparse:    expected struct mcs_spinlock *tail_2nd
+>> kernel/locking/qspinlock_cna.h:141:60: sparse:    got struct mcs_spinlock [pure] *
+   kernel/locking/qspinlock.c:450:14: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *[assigned] node @@    got ct mcs_spinlock *[assigned] node @@
+   kernel/locking/qspinlock.c:450:14: sparse:    expected struct mcs_spinlock *[assigned] node
+   kernel/locking/qspinlock.c:450:14: sparse:    got struct mcs_spinlock [pure] *
+   kernel/locking/qspinlock.c:498:22: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *prev @@    got struct struct mcs_spinlock *prev @@
+   kernel/locking/qspinlock.c:498:22: sparse:    expected struct mcs_spinlock *prev
+   kernel/locking/qspinlock.c:498:22: sparse:    got struct mcs_spinlock [pure] *
+>> kernel/locking/qspinlock_cna.h:107:18: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *tail_2nd @@    got struct struct mcs_spinlock *tail_2nd @@
+   kernel/locking/qspinlock_cna.h:107:18: sparse:    expected struct mcs_spinlock *tail_2nd
+   kernel/locking/qspinlock_cna.h:107:18: sparse:    got struct mcs_spinlock [pure] *
+>> kernel/locking/qspinlock_cna.h:240:61: sparse: sparse: incorrect type in argument 2 (different modifiers) @@    expected struct mcs_spinlock *pred_start @@    got struct struct mcs_spinlock *pred_start @@
+>> kernel/locking/qspinlock_cna.h:240:61: sparse:    expected struct mcs_spinlock *pred_start
+   kernel/locking/qspinlock_cna.h:240:61: sparse:    got struct mcs_spinlock [pure] *
+   kernel/locking/qspinlock_cna.h:252:26: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *tail_2nd @@    got struct struct mcs_spinlock *tail_2nd @@
+   kernel/locking/qspinlock_cna.h:252:26: sparse:    expected struct mcs_spinlock *tail_2nd
+   kernel/locking/qspinlock_cna.h:252:26: sparse:    got struct mcs_spinlock [pure] *
+   kernel/locking/qspinlock.c:450:14: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *[assigned] node @@    got ct mcs_spinlock *[assigned] node @@
+   kernel/locking/qspinlock.c:450:14: sparse:    expected struct mcs_spinlock *[assigned] node
+   kernel/locking/qspinlock.c:450:14: sparse:    got struct mcs_spinlock [pure] *
+   kernel/locking/qspinlock.c:498:22: sparse: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *prev @@    got struct struct mcs_spinlock *prev @@
+   kernel/locking/qspinlock.c:498:22: sparse:    expected struct mcs_spinlock *prev
+   kernel/locking/qspinlock.c:498:22: sparse:    got struct mcs_spinlock [pure] *
 
-Let me fill you in about how social-ostracization works:
-1) First you have to have something I want, or the ability to take from 
-me something I otherwise normally would have.
-2) Second you have to be willing to give it to me.
-3) Third the cost cannot be too prohibitive.
+vim +141 kernel/locking/qspinlock_cna.h
 
-Fourth: You threaten to withhold that thing if I do not obey you 
-regarding (whatever), and you threaten to make sure your fellows do the 
-same.
-
-However in this instance:
-1) You will never give me what I want: (cute young girls as brides). 
-Ever.
-We are intractable enemies thusly, no further evaluation of the 
-ladder-logic needed:
-The only way I get what I want is if I defeat you/yours: you are simply 
-an obstacle.
-
-You withholding what you will never give equates to a benefit/detriment 
-spread of quantum nullus.
-
-Thus I have no reason to contemplate any of your demands.
-
-What you are "withholding" is "philos with thine fellow hackers at a 
-conference we, non-hackers, control". This is not something I want in 
-the first place. The hackers that attend such conferences essentially 
-submit to you people: they are fools. (And Yes: linus, socially, is a 
-fool. A complete and utter fool, and is not generally respected. He is 
-ruled by the women in his life, and they are used to control him)
-
-RMS is respected for never giving in to demands.
+    90	
+    91	static inline bool cna_try_change_tail(struct qspinlock *lock, u32 val,
+    92					       struct mcs_spinlock *node)
+    93	{
+    94		struct mcs_spinlock *head_2nd, *tail_2nd;
+    95		u32 new;
+    96	
+    97		/* If the secondary queue is empty, do what MCS does. */
+    98		if (node->locked <= 1)
+    99			return __try_clear_tail(lock, val, node);
+   100	
+   101		/*
+   102		 * Try to update the tail value to the last node in the secondary queue.
+   103		 * If successful, pass the lock to the first thread in the secondary
+   104		 * queue. Doing those two actions effectively moves all nodes from the
+   105		 * secondary queue into the main one.
+   106		 */
+ > 107		tail_2nd = decode_tail(node->locked);
+   108		head_2nd = tail_2nd->next;
+   109		new = ((struct cna_node *)tail_2nd)->encoded_tail + _Q_LOCKED_VAL;
+   110	
+   111		if (atomic_try_cmpxchg_relaxed(&lock->val, &val, new)) {
+   112			/*
+   113			 * Try to reset @next in tail_2nd to NULL, but no need to check
+   114			 * the result - if failed, a new successor has updated it.
+   115			 */
+   116			cmpxchg_relaxed(&tail_2nd->next, head_2nd, NULL);
+   117			arch_mcs_pass_lock(&head_2nd->locked, 1);
+   118			return true;
+   119		}
+   120	
+   121		return false;
+   122	}
+   123	
+   124	/*
+   125	 * cna_splice_tail -- splice nodes in the main queue between [first, last]
+   126	 * onto the secondary queue.
+   127	 */
+   128	static void cna_splice_tail(struct mcs_spinlock *node,
+   129				    struct mcs_spinlock *first,
+   130				    struct mcs_spinlock *last)
+   131	{
+   132		/* remove [first,last] */
+   133		node->next = last->next;
+   134	
+   135		/* stick [first,last] on the secondary queue tail */
+   136		if (node->locked <= 1) { /* if secondary queue is empty */
+   137			/* create secondary queue */
+   138			last->next = first;
+   139		} else {
+   140			/* add to the tail of the secondary queue */
+ > 141			struct mcs_spinlock *tail_2nd = decode_tail(node->locked);
+   142			struct mcs_spinlock *head_2nd = tail_2nd->next;
+   143	
+   144			tail_2nd->next = first;
+   145			last->next = head_2nd;
+   146		}
+   147	
+   148		node->locked = ((struct cna_node *)last)->encoded_tail;
+   149	}
+   150	
+   151	/*
+   152	 * cna_scan_main_queue - scan the main waiting queue looking for the first
+   153	 * thread running on the same NUMA node as the lock holder. If found (call it
+   154	 * thread T), move all threads in the main queue between the lock holder and
+   155	 * T to the end of the secondary queue and return 0; otherwise, return the
+   156	 * encoded pointer of the last scanned node in the primary queue (so a
+   157	 * subsequent scan can be resumed from that node)
+   158	 *
+   159	 * Schematically, this may look like the following (nn stands for numa_node and
+   160	 * et stands for encoded_tail).
+   161	 *
+   162	 *   when cna_scan_main_queue() is called (the secondary queue is empty):
+   163	 *
+   164	 *  A+------------+   B+--------+   C+--------+   T+--------+
+   165	 *   |mcs:next    | -> |mcs:next| -> |mcs:next| -> |mcs:next| -> NULL
+   166	 *   |mcs:locked=1|    |cna:nn=0|    |cna:nn=2|    |cna:nn=1|
+   167	 *   |cna:nn=1    |    +--------+    +--------+    +--------+
+   168	 *   +----------- +
+   169	 *
+   170	 *   when cna_scan_main_queue() returns (the secondary queue contains B and C):
+   171	 *
+   172	 *  A+----------------+    T+--------+
+   173	 *   |mcs:next        | ->  |mcs:next| -> NULL
+   174	 *   |mcs:locked=C.et | -+  |cna:nn=1|
+   175	 *   |cna:nn=1        |  |  +--------+
+   176	 *   +--------------- +  +-----+
+   177	 *                             \/
+   178	 *          B+--------+   C+--------+
+   179	 *           |mcs:next| -> |mcs:next| -+
+   180	 *           |cna:nn=0|    |cna:nn=2|  |
+   181	 *           +--------+    +--------+  |
+   182	 *               ^                     |
+   183	 *               +---------------------+
+   184	 *
+   185	 * The worst case complexity of the scan is O(n), where n is the number
+   186	 * of current waiters. However, the amortized complexity is close to O(1),
+   187	 * as the immediate successor is likely to be running on the same node once
+   188	 * threads from other nodes are moved to the secondary queue.
+   189	 */
+   190	static u32 cna_scan_main_queue(struct mcs_spinlock *node,
+   191				       struct mcs_spinlock *pred_start)
+   192	{
+   193		struct cna_node *cn = (struct cna_node *)node;
+   194		struct cna_node *cni = (struct cna_node *)READ_ONCE(pred_start->next);
+   195		struct cna_node *last;
+   196		int my_numa_node = cn->numa_node;
+   197	
+   198		/* find any next waiter on 'our' NUMA node */
+   199		for (last = cn;
+   200		     cni && cni->numa_node != my_numa_node;
+   201		     last = cni, cni = (struct cna_node *)READ_ONCE(cni->mcs.next))
+   202			;
+   203	
+   204		/* if found, splice any skipped waiters onto the secondary queue */
+   205		if (cni) {
+   206			if (last != cn)	/* did we skip any waiters? */
+   207				cna_splice_tail(node, node->next,
+   208						(struct mcs_spinlock *)last);
+   209			return 0;
+   210		}
+   211	
+   212		return last->encoded_tail;
+   213	}
+   214	
+   215	__always_inline u32 cna_pre_scan(struct qspinlock *lock,
+   216					  struct mcs_spinlock *node)
+   217	{
+   218		struct cna_node *cn = (struct cna_node *)node;
+   219	
+   220		cn->pre_scan_result = cna_scan_main_queue(node, node);
+   221	
+   222		return 0;
+   223	}
+   224	
+   225	static inline void cna_pass_lock(struct mcs_spinlock *node,
+   226					 struct mcs_spinlock *next)
+   227	{
+   228		struct cna_node *cn = (struct cna_node *)node;
+   229		struct mcs_spinlock *next_holder = next, *tail_2nd;
+   230		u32 val = 1;
+   231	
+   232		u32 scan = cn->pre_scan_result;
+   233	
+   234		/*
+   235		 * check if a successor from the same numa node has not been found in
+   236		 * pre-scan, and if so, try to find it in post-scan starting from the
+   237		 * node where pre-scan stopped (stored in @pre_scan_result)
+   238		 */
+   239		if (scan > 0)
+ > 240			scan = cna_scan_main_queue(node, decode_tail(scan));
 
 ---
-Alexandre François Garreau:
-Honestly: how old are you? You come to these mailing lists, you simply 
-demand that others change the names of variables you don't like and 
-"simplify" things, you give "helpful hints" about something we obviously 
-allready know, as if you are a complete neophile to computers and mail 
-software, and you do not have the presence of mind to realize that the 
-same is not the case for all other contemporaneously-existant living 
-beings. It's like you believe that there is
-only YOU in existance; and as it's first principal, and WE /SURELY/ do 
-not
-posess any more knowlege than YOU on any particular subject.
-
-You remind me of a friend of mine who discovered things once he joined a 
-scam-
-artist tech company, and then happily reported those "new tech 
-discoveries" to
-me: with ARROGANCE; these things I had been configuring and utilizing on 
-my
-servers well over a decade before.
-
-Alexandre François Garreau:
-Basically: you are a consumer who has no respect for the people who make 
-the
-things that you use: you feel entitled: even though you will never 
-understand
-how to create these things yourself. You feel entitled to make demands, 
-entitled
-to demand the progenitor bend to YOUR will, etc. You feel entitled to 
-give your
-libelous opinion on things you do not even have an opinion on (having 
-never used
-them)
-
------
-
-RMS: Once you said you wanted an Empire game in GNU.
-My Work has such capabilities: you can build little towns and cities and 
-take land with them, capture or destroy eachother, and all buildings 
-have interiors. You can play as medevial or futuristic etc, it's all in 
-3d, and all free-software.
-
-
-
-On 2019-11-10 06:16, Alexandre François Garreau wrote:
-> Le dimanche 10 novembre 2019 07:08:48 CET, vous avez écrit :
->> Yet you don’t seem to provide precise URLs, as I asked last time (I 
->> won’t
->> bother these are DVD instead of archives though), and I’m not fond of
->> surfing the web very long ><
-> 
-> And a *direct* URL please.  As otherwise for some reason sourceforge
-> downloading doesn’t work here with firefox.
-> 
-> Also, there’s no need to post to other people, they’re likely not 
-> interested.
-> Giving a non-totally-negative image to one person is already at least 
-> enough
-> ;) it will disparage itself at some point by itself ^^
-> 
-> Just, stop giving people reasons for disliking you (like hateful 
-> speech,
-> especially about freedoms of half mankind), that’d help a lot, too 
-> (actually
-> quite more I guess).
-> 
-> I recall the story of this very promising hacker… with good ideas… he
-> developed a whole purely functional OS/language/network system from the
-> ground… named “urbit”.  Really worthy, interesting and impressing.  Yet 
-> being
-> a famously known White Supremacist, and notably using his money (gained
-> through his project) to disparage his opinions, and back up politicians 
-> such
-> as Trump… well… he was banned from some conventions (LambdaCon or 
-> something
-> alike afair) and not that well supported…
-> 
-> So some opinions are better held separately from some work x) (for rms 
-> it’s
-> still fine, I believe, though: and he stays pretty consistent in the 
-> long run).
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
