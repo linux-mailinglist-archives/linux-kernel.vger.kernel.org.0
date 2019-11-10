@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 596BFF6632
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2326DF661D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbfKJDMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 22:12:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41478 "EHLO mail.kernel.org"
+        id S1728362AbfKJCnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:43:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728305AbfKJCnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:43:25 -0500
+        id S1728324AbfKJCn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:43:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6428F21655;
-        Sun, 10 Nov 2019 02:43:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7365721019;
+        Sun, 10 Nov 2019 02:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353805;
-        bh=p6r+QGUnfn2ffH/1ck6OW/KCJMN+5kOwAu34b+yJ69o=;
+        s=default; t=1573353807;
+        bh=suy9kcpXlrTjYytryumXlkz3d++3xYNnQeFYcINn9Dw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mp3tq539kQ0Isth3KGE0QTHuOyUPmhfoPpF0uxcMxdLAy57jxb72icAYHQ/wmbH0P
-         GChWxV8cK1aCiEWPsvFfhQ3LPVsPnbDStL/uBlSsjM6XWq+5xbFBsSvihpyluDyExD
-         b6ntQVemwItDzvPV1ZKt76wTpjpH3QIx6G05w6FE=
+        b=jR1YSdO18qQtgCqefGgRBX/DDknUB/Uion+saPm7m5jrKAnmzD+zVWmeyPnkdnkk4
+         hB/HibkGLh2mtFHGMxDm4Jx9649LSBNjQReJAvy2GukQbInz8ujX78TV0oY0ay7+gx
+         dI7MgAfqeyJKHqH1c9VX8b+QStXkrmw9ctaYFNdc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     zhong jiang <zhongjiang@huawei.com>,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 103/191] ARM: at91: pm: call put_device instead of of_node_put in at91_pm_config_ws
-Date:   Sat,  9 Nov 2019 21:38:45 -0500
-Message-Id: <20191110024013.29782-103-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 104/191] phy: brcm-sata: allow PHY_BRCM_SATA driver to be built for DSL SoCs
+Date:   Sat,  9 Nov 2019 21:38:46 -0500
+Message-Id: <20191110024013.29782-104-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -44,48 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 95590a6286c547b7287d01c55515fb96b904aa03 ]
+[ Upstream commit 26728df4b254ae06247726a9a6e64823e39ac504 ]
 
-of_find_device_by_node takes a reference to the struct device when it
-finds a match via get_device. but it fails to put_device in
-at91_pm_config_ws, for_each_matching_node_and_match will get and put
-the node properly, there is no need to call the of_put_node. Therefore,
-just call put_device instead of of_node_put in at91_pm_config_ws.
+Broadcom ARM-based DSL SoCs (BCM63xx product line) have the same
+Broadcom SATA PHY that other SoCs are using, make it possible to select
+that driver on these platforms.
 
-Fixes: d7484f5c6b3b ("ARM: at91: pm: configure wakeup sources for ULP1 mode")
-Suggested-by: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-at91/pm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/phy/broadcom/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 0921e2c10edfd..e2e4df3d11e53 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -143,15 +143,15 @@ static int at91_pm_config_ws(unsigned int pm_mode, bool set)
+diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
+index 8786a9674471d..aa917a61071db 100644
+--- a/drivers/phy/broadcom/Kconfig
++++ b/drivers/phy/broadcom/Kconfig
+@@ -60,7 +60,8 @@ config PHY_NS2_USB_DRD
  
- 			/* Check if enabled on SHDWC. */
- 			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
--				goto put_node;
-+				goto put_device;
- 
- 			mode |= wsi->pmc_fsmr_bit;
- 			if (wsi->set_polarity)
- 				polarity |= wsi->pmc_fsmr_bit;
- 		}
- 
--put_node:
--		of_node_put(np);
-+put_device:
-+		put_device(&pdev->dev);
- 	}
- 
- 	if (mode) {
+ config PHY_BRCM_SATA
+ 	tristate "Broadcom SATA PHY driver"
+-	depends on ARCH_BRCMSTB || ARCH_BCM_IPROC || BMIPS_GENERIC || COMPILE_TEST
++	depends on ARCH_BRCMSTB || ARCH_BCM_IPROC || BMIPS_GENERIC || \
++		   ARCH_BCM_63XX || COMPILE_TEST
+ 	depends on OF
+ 	select GENERIC_PHY
+ 	default ARCH_BCM_IPROC
 -- 
 2.20.1
 
