@@ -2,114 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19EACF61F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 01:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EFFFF61FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 01:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfKJAgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 19:36:25 -0500
-Received: from mx1.cock.li ([185.10.68.5]:56291 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726470AbfKJAgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 19:36:25 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,LOTS_OF_MONEY,NO_RECEIVED,NO_RELAYS
-        shortcircuit=_SCTYPE_ autolearn=disabled version=3.4.2
+        id S1726604AbfKJAoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 19:44:20 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33301 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfKJAoU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 19:44:20 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a17so9362513wmb.0;
+        Sat, 09 Nov 2019 16:44:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hxpVc6VloLtI21c23qGZC1El6cBTlpdM4jZz6yMTkmA=;
+        b=klj75VtANyXUMxZErrb+Mrj6v8k+DtfwnCvpdajSa7kRe7jaiH6o6gMQsX9pS3gDy6
+         i0HB/SHbrlpjZCS0bRAXKCLDoqcd+gXCTvS5zn/Ag1RkVgcfXjGlzRn8nI44Xw51J8HW
+         dARN/2sPEW8/up0yAVe66llPjlu2f5I0XEnlr6zi738ichmXj/zgamVaCQAQ4xfK8spi
+         1Uv8tBX4Kke00rVka2a9RHAfYDYuLtnXuhNn98UEYjyr3XpwDV/K/aW5CC6I9CUMyP+2
+         5j0xp5iuYduQCTmUQ4hcVOOw6DvMTOnsVyzeIgs8e4PNs0qOpUlf9FSyBX5U/rQyQQJ4
+         MWmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hxpVc6VloLtI21c23qGZC1El6cBTlpdM4jZz6yMTkmA=;
+        b=BbN2jxCsSdsyBCMqagtYl6x8vggGyD7wp0R9olvpej+CTRLeAnSkDgIo5KXD7cjduy
+         NqxFacF+2dH0+l4nkT//Sh4BNwvZgIKKhFQSqv291V/2hUoVRYG5aYVck6tSoq1osDSo
+         qYszmjrVzVe/j6xWja0E6uCoxtqiqFLbSDJMgIJF816Sc6rMq3SUs4z/e6I826y/P5xU
+         eIun9VPiVePscnZ8I0fR8tD1sXZCIqmG1X7j3tHT9fS9iKxdp/F9e4WFPCL6C5cOlii3
+         +n600T9rY1shEna942it5yeukNGiHXLytKODlTRI8T0GzhhBMdQelDo0CpUKIzEIWA1z
+         VvEg==
+X-Gm-Message-State: APjAAAU5qNn5rimAEswCb1+/HIGWBG0vOEdL9rvDkGbhD8MdsX5VeF6b
+        lqP8S1Z56sM8OX683OpaR6bvfE4I
+X-Google-Smtp-Source: APXvYqwCGkgs1w71x4U/Gfuc46BuGATIUbwMW2VpkWaVLv+PUFVhtG87xExa7Hyl1Tk7My+8JCmGcQ==
+X-Received: by 2002:a7b:c0c3:: with SMTP id s3mr13941059wmh.20.1573346656935;
+        Sat, 09 Nov 2019 16:44:16 -0800 (PST)
+Received: from debian (host-78-144-219-162.as13285.net. [78.144.219.162])
+        by smtp.gmail.com with ESMTPSA id l10sm18361739wrg.90.2019.11.09.16.44.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Nov 2019 16:44:15 -0800 (PST)
+Date:   Sun, 10 Nov 2019 00:44:13 +0000
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>
+Subject: Re: libtraceevent installing in wrong folder
+Message-ID: <20191110004413.6pnyivofpjdvwj6b@debian>
+References: <20191108161157.g5aadocnfvragqb2@debian>
+ <20191108120548.4118879a@gandalf.local.home>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firemail.cc; s=mail;
-        t=1573346180; bh=fM76dojns24yTURF01TkoisrR0ysKJmyx7SjOvKyBJI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0xl+AnU/LNwgdRHb49nbYBBfV748+VW2YcNxGW0EfrrcP0pdPgW63aLrjfZ4j/UF4
-         hsUC0C5BzHipprPrwebk5CWmMPuMCbyClONpGrB92W0od1gkT2v1paCs3Ia3i/RyvB
-         fthEW/+FVeZwSOuPpm6s6lBCtIIJqlOzn7Nv2pYQSVaV3EyAGSC7HresoBlfJvU+Mz
-         uk6VnMoRG9tm27dAVDXIsEEm4IV661hLgG3Hu82c9Vba9EBUBTlviMB5mGJfXghE+b
-         EI0lkJPjllZ0eR+tH4jQvMPxOV8qWS73OFFVfKWZGcozLKRobj8JV7uLw0Redpnlmj
-         KrLUiMVHfVpOw==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Sun, 10 Nov 2019 00:36:19 +0000
-From:   nipponmail@firemail.cc
-To:     Dmitry Alexandrov <321942@gmail.com>
-Cc:     =?UTF-8?Q?Alexandre_Fran=C3=A7ois_Garreau?= 
-        <galex-713@galex-713.eu>, gnu-system-discuss@gnu.org,
-        gnu-system-discuss 
-        <gnu-system-discuss-bounces+nipponmail=firemail.cc@gnu.org>,
-        rms@gnu.org
-Subject: Re: GNU/Linux Activation Technologies - You joke, but it's a reality
- now. GrSecurity is doing JUST THAT.
-In-Reply-To: <36ewiyma.321942@gmail.com>
-References: <E1iTQkY-0004OJ-Q7@nvs406.mirohost.net>
- <11417260.v0MZe6fCPb@pc-713> <36ewiyma.321942@gmail.com>
-Message-ID: <ac0713476c46b1ad0ac85916ed50099b@firemail.cc>
-X-Sender: nipponmail@firemail.cc
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: multipart/mixed; boundary="ldmoq22qh3rkwm2q"
+Content-Disposition: inline
+In-Reply-To: <20191108120548.4118879a@gandalf.local.home>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You joke, but GrSecurity is selling licenses for it's kernel patch for 
-$10,000, and does per-seat licensing. It prevents redistribution of it's 
-derivative work via an "access agreement" where-in the licensee promises 
-not to redistribute the derivative work, or else suffer a forfeiture of 
-his remaining balance, as well as suffer a penalty of recieving no 
-furthur versions (which he allready paid for).
 
-So: yes: it is allready happening.
-It's not a joke anymore.
+--ldmoq22qh3rkwm2q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yet you here see this as "insane talk" and "yea they can do that, let's 
-patch the /next version/ of the GPL to prevent it!"
-
-No: they /cannot/ do that. Section 6 forbids additional restrictive 
-terms, they have added an addional restrictive term (licensee shall no 
-redistribute except to customers if required), and are enforcing said 
-restrictive term with a negative covenant.
-
-
-PLEASE Read: 
-perens.com/2017/06/28/warning-grsecurity-potential-contributory-infringement-risk-for-customers/
-
-And Page 10 on of this brief: 
-perens.com/static/OSS_Spenger_v_Perens/0_2018cv15189/docs1/pdf/18.pdf
-(which does discuss the copyright matter, even though the case is on 
-another)
-
-
-On 2019-11-09 20:27, Dmitry Alexandrov wrote:
-> Alexandre François Garreau <galex-713@galex-713.eu> wrote:
->> Le samedi 9 novembre 2019, 14:25:58 CET Richard Stallman a écrit :
->>> You should install GNU/Linux Activation Technologies Client if you 
->>> are running GNU/Linux.
->>> 
->>> Most distributions are already selling licenses.
->> 
->> I guess this is a forged, illegitimate, mail as it was sent through 
->> something  dealing with PHP.
+On Fri, Nov 08, 2019 at 12:05:48PM -0500, Steven Rostedt wrote:
 > 
-> Yes, of course.  Though, would consider the fact that it originates
-> from the Ukraine more suspicious, than usage of PHP mailer.
+> [ I also added linux-trace-devel, but it was good to Cc LKML too ]
 > 
->> However might someone enlight me on what “GNU/Linux Activation 
->> Technologies  Client” is and how is it supposed to be installed?  Is 
->> it a trojan?
+> On Fri, 8 Nov 2019 16:11:57 +0000
+> Sudip Mukherjee <sudipm.mukherjee@gmail.com> wrote:
 > 
-> No, itʼs a someoneʼs joke [0].  It was already advertised in a same
-> manner on other gnu.org m/l a week ago or so.
+> > Hi Steve,
+> > 
+> > I tried to install libtraceevent. and I used the command:
+> > "make DESTDIR=/home/sudip/test prefix=/usr install" from tool/lib/traceevent
+> > 
+
+<snip>
+
+> > 
+> > I am seeing two problems:
+> > 1) It created another home/sudip/test folder inside /home/sudip/test and
+> > the header files are installed in /home/sudip/test/home/sudip/test/usr/include folder.
+> > They should have been in /home/sudip/test/usr/include.
+> > 
+> > 2) I used prefix=/usr but the 'pkgconfig' still went to /usr/local
+> > 
+> > Did I do something wrong?
 > 
->> Is it free? x)
+> No, but you showed that the installation part is poorly tested. I
+> mostly tested just the code from trace-cmd, and even the installation
+> paths from that repo. I should have tested the kernel repo as well, but
+> failed to do this.
 > 
-> | GNU Project and Linux Foundation set the following fees:
-> |
-> |   - Single GNU/Linux copy license: $99
-> |   - Volume license (starting from 25 copies, only for
-> organizations): $49 for every machine
-> |   - Key Server license: $999 and full license fee for every license 
-> sold
-> |
-> | Key Server licenses are only sold by GNU Project and Linux 
-> Foundation.
-> 
-> [0] https://notabug.org/GLAT/howtotell
+> Thanks for reporting, I need to take a look, or if you want to have a go
+> at it, that would be great too :-)
+
+Attached is a patch for the wrong installation of header files.
+For the pkgconfig, the problem is at:
+pkgconfig_dir ?= $(word 1,$(shell $(PKG_CONFIG)                 \
+                        --variable pc_path pkg-config | tr ":" " "))
+
+This is checking 'pc_path' which is the search path used by pkg-config
+and then its taking the first path from that list and using in pkgconfig_dir,
+which can be wrong.
+A reliable way to get the pkg-config location is if I use:
+
+pkg=$(pkg-config --list-all | head -1 | cut -d ' ' -f 1)
+pkg-config --variable=pcfiledir $pkg
+
+But I will need to see how I can use this in a Makefile, will send this
+patch later, or if you can find a better way before me that will be great.
+
+--
+Regards
+Sudip
+
+--ldmoq22qh3rkwm2q
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0001-libtraceevent-fix-header-installation.patch"
+
+From 1ff159997d1dd299bb0e612baeb573aac45eac03 Mon Sep 17 00:00:00 2001
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date: Sat, 9 Nov 2019 23:33:54 +0000
+Subject: [PATCH] libtraceevent: fix header installation
+
+When we passed some location in DESTDIR, install_headers called
+do_install with DESTDIR as part of the second argument. But do_install
+is again using '$(DESTDIR_SQ)$2', so as a result the headers were
+installed in a location $DESTDIR/$DESTDIR. In my testing I passed
+DESTDIR=/home/sudip/test and the headers were installed in:
+/home/sudip/test/home/sudip/test/usr/include/traceevent.
+Lets remove DESTDIR from the second argument of do_install so that the
+headers are installed in the correct location.
+
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ tools/lib/traceevent/Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
+index 5315f3787f8d..cbb429f55062 100644
+--- a/tools/lib/traceevent/Makefile
++++ b/tools/lib/traceevent/Makefile
+@@ -232,10 +232,10 @@ install_pkgconfig:
+ 
+ install_headers:
+ 	$(call QUIET_INSTALL, headers) \
+-		$(call do_install,event-parse.h,$(DESTDIR)$(includedir_SQ),644); \
+-		$(call do_install,event-utils.h,$(DESTDIR)$(includedir_SQ),644); \
+-		$(call do_install,trace-seq.h,$(DESTDIR)$(includedir_SQ),644); \
+-		$(call do_install,kbuffer.h,$(DESTDIR)$(includedir_SQ),644)
++		$(call do_install,event-parse.h,$(includedir_SQ),644); \
++		$(call do_install,event-utils.h,$(includedir_SQ),644); \
++		$(call do_install,trace-seq.h,$(includedir_SQ),644); \
++		$(call do_install,kbuffer.h,$(includedir_SQ),644)
+ 
+ install: install_lib
+ 
+-- 
+2.11.0
+
+
+--ldmoq22qh3rkwm2q--
