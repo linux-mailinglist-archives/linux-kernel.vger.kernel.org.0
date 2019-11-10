@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBA93F6676
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BEA6F6672
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729548AbfKJDOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 22:14:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38684 "EHLO mail.kernel.org"
+        id S1729201AbfKJDN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:13:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727905AbfKJCme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:42:34 -0500
+        id S1727938AbfKJCmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:42:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECAE221850;
-        Sun, 10 Nov 2019 02:42:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A2CA21850;
+        Sun, 10 Nov 2019 02:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353753;
-        bh=fMAtgmI930Z8gUhddQonnfxS9dGC3YaYHi8d80VubaY=;
+        s=default; t=1573353757;
+        bh=9vHTsqmnu+cuuI3EJ+XhZIbw+Rq+l0wS6KturhsKzNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iT7uIdoTUGWNNerBq14UUNWZjckRdPz5m8LnLNF3WkAbvYf9GHE/PTlF5Xln8s8oG
-         SJlq309R9UKfjxOg8AuCC0wA0cBaDTxV9Ximg6WxAdqCG+TELgfwnivKzqIyrnn86j
-         JB/hiVKahe+IYpWIA8ZPUet/jo6jmDTJx+eB8mWo=
+        b=EK7OGkIaJejCgEQbokUG+pfZ5pIMWWTibpfXO7qrpUSQ8wdAaEkYyg0U3c7w2mWjg
+         Mur4B+9Ne45n5YK0P60pvlX/FNlQ71rNRYYyYeBR1yqYsFHXpMmQx5zGCYZpVy3Sl3
+         VYNSpcsEN8GWtCGqEXA8bcLS0HKmuFYJktSG/Weo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org,
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>,
         clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 069/191] spi: pic32: Use proper enum in dmaengine_prep_slave_rg
-Date:   Sat,  9 Nov 2019 21:38:11 -0500
-Message-Id: <20191110024013.29782-69-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 071/191] cpufeature: avoid warning when compiling with clang
+Date:   Sat,  9 Nov 2019 21:38:13 -0500
+Message-Id: <20191110024013.29782-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -44,57 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit 8cfde7847d5ed0bb77bace41519572963e43cd17 ]
+[ Upstream commit c785896b21dd8e156326ff660050b0074d3431df ]
 
-Clang warns when one enumerated type is converted implicitly to another:
+The table id (second) argument to MODULE_DEVICE_TABLE is often
+referenced otherwise. This is not the case for CPU features. This
+leads to warnings when building the kernel with Clang:
+  arch/arm/crypto/aes-ce-glue.c:450:1: warning: variable
+    'cpu_feature_match_AES' is not needed and will not be emitted
+    [-Wunneeded-internal-declaration]
+  module_cpu_feature_match(AES, aes_init);
+  ^
 
-drivers/spi/spi-pic32.c:323:8: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-                                          DMA_FROM_DEVICE,
-                                          ^~~~~~~~~~~~~~~
-drivers/spi/spi-pic32.c:333:8: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-                                          DMA_TO_DEVICE,
-                                          ^~~~~~~~~~~~~
-2 warnings generated.
+Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
+("modules: mark __inittest/__exittest as __maybe_unused").
 
-Use the proper enums from dma_transfer_direction (DMA_FROM_DEVICE =
-DMA_DEV_TO_MEM = 2, DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1) to satify Clang.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/159
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 67bad2fdb754 ("cpu: add generic support for CPU feature based module autoloading")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-pic32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/cpufeature.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
-index f8a45af1fa9f2..288002f6c613e 100644
---- a/drivers/spi/spi-pic32.c
-+++ b/drivers/spi/spi-pic32.c
-@@ -320,7 +320,7 @@ static int pic32_spi_dma_transfer(struct pic32_spi *pic32s,
- 	desc_rx = dmaengine_prep_slave_sg(master->dma_rx,
- 					  xfer->rx_sg.sgl,
- 					  xfer->rx_sg.nents,
--					  DMA_FROM_DEVICE,
-+					  DMA_DEV_TO_MEM,
- 					  DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 	if (!desc_rx) {
- 		ret = -EINVAL;
-@@ -330,7 +330,7 @@ static int pic32_spi_dma_transfer(struct pic32_spi *pic32s,
- 	desc_tx = dmaengine_prep_slave_sg(master->dma_tx,
- 					  xfer->tx_sg.sgl,
- 					  xfer->tx_sg.nents,
--					  DMA_TO_DEVICE,
-+					  DMA_MEM_TO_DEV,
- 					  DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 	if (!desc_tx) {
- 		ret = -EINVAL;
+diff --git a/include/linux/cpufeature.h b/include/linux/cpufeature.h
+index 986c06c88d814..84d3c81b59781 100644
+--- a/include/linux/cpufeature.h
++++ b/include/linux/cpufeature.h
+@@ -45,7 +45,7 @@
+  * 'asm/cpufeature.h' of your favorite architecture.
+  */
+ #define module_cpu_feature_match(x, __initfunc)			\
+-static struct cpu_feature const cpu_feature_match_ ## x[] =	\
++static struct cpu_feature const __maybe_unused cpu_feature_match_ ## x[] = \
+ 	{ { .feature = cpu_feature(x) }, { } };			\
+ MODULE_DEVICE_TABLE(cpu, cpu_feature_match_ ## x);		\
+ 								\
 -- 
 2.20.1
 
