@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14433F65B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FEECF6608
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:11:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbfKJDJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 22:09:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44568 "EHLO mail.kernel.org"
+        id S1729170AbfKJDKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:10:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728642AbfKJCop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:45 -0500
+        id S1728683AbfKJCow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71FBF215EA;
-        Sun, 10 Nov 2019 02:44:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 147AB21655;
+        Sun, 10 Nov 2019 02:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353885;
-        bh=ltuqeh4pgWkWNtMciU1akQaTGuNdUOU/m4QsRZ0H6Ok=;
+        s=default; t=1573353891;
+        bh=WpEQZ96HSyMvJyMLElFdXV/w39V1EhtGl8Y9d68T/ME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1QPHLZOp9Qt3DBwXh+CyuSgyhGs+so5OpmVDJV/9LYgYaO/B5thRb9x8LhVJ3X0XT
-         CMSrpanaDri+LmNTl5ze2ZALk86bnYOIxept0bs3i3cnOhzGshiZrfioSbuFIRCg0H
-         GTyPKqiMjuC5gb0E+gdTOyyCVrxTmhdP0OhTv02M=
+        b=S/0/6SEwkD2ayaACbkvmQh6EyLs7u8CQH/NHsuNA3v1omK9vFuSrJYd2/k74CkyxJ
+         hFxuo+YQum1mo5BsANr1xumr9TFrS/kAXqjEOOd1BgS4nmgyzsZiWsuectljdgixdd
+         JB9ADSuSnpUll6pAOFupgaLiYDevEIvyS9j7Y/48=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+Cc:     Johannes Berg <johannes.berg@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 160/191] iwlwifi: dbg: don't crash if the firmware crashes in the middle of a debug dump
-Date:   Sat,  9 Nov 2019 21:39:42 -0500
-Message-Id: <20191110024013.29782-160-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 163/191] iwlwifi: api: annotate compressed BA notif array sizes
+Date:   Sat,  9 Nov 2019 21:39:45 -0500
+Message-Id: <20191110024013.29782-163-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -44,56 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 79f25b10c9da3dbc953e47033d0494e51580ac3b ]
+[ Upstream commit 6f68cc367ab6578a33cca21b6056804165621f00 ]
 
-We can dump data from the firmware either when it crashes,
-or when the firmware is alive.
-Not all the data is available if the firmware is running
-(like the Tx / Rx FIFOs which are available only when the
-firmware is halted), so we first check that the firmware
-is alive to compute the required size for the dump and then
-fill the buffer with the data.
+Annotate the compressed BA notification array sizes and
+make both of them 0-length since the length of 1 is just
+confusing - it may be different than that and the offset
+to the second one needs to be calculated in the C code
+anyhow.
 
-When we allocate the buffer, we test the STATUS_FW_ERROR
-bit to check if the firmware is alive or not. This bit
-can be changed during the course of the dump since it is
-modified in the interrupt handler.
-
-We hit a case where we allocate the buffer while the
-firmware is sill working, and while we start to fill the
-buffer, the firmware crashes. Then we test STATUS_FW_ERROR
-again and decide to fill the buffer with data like the
-FIFOs even if no room was allocated for this data in the
-buffer. This means that we overflow the buffer that was
-allocated leading to memory corruption.
-
-To fix this, test the STATUS_FW_ERROR bit only once and
-rely on local variables to check if we should dump fifos
-or other firmware components.
-
-Fixes: 04fd2c28226f ("iwlwifi: mvm: add rxf and txf to dump data")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/fw/api/tx.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index a31a42e673c46..37657e999ff8b 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -824,7 +824,7 @@ void iwl_fw_error_dump(struct iwl_fw_runtime *fwrt)
- 	}
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+index 514b86123d3d3..80853f6cbd6d2 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+@@ -747,9 +747,9 @@ enum iwl_mvm_ba_resp_flags {
+  * @tfd_cnt: number of TFD-Q elements
+  * @ra_tid_cnt: number of RATID-Q elements
+  * @tfd: array of TFD queue status updates. See &iwl_mvm_compressed_ba_tfd
+- *	for details.
++ *	for details. Length in @tfd_cnt.
+  * @ra_tid: array of RA-TID queue status updates. For debug purposes only. See
+- *	&iwl_mvm_compressed_ba_ratid for more details.
++ *	&iwl_mvm_compressed_ba_ratid for more details. Length in @ra_tid_cnt.
+  */
+ struct iwl_mvm_compressed_ba_notif {
+ 	__le32 flags;
+@@ -766,7 +766,7 @@ struct iwl_mvm_compressed_ba_notif {
+ 	__le32 tx_rate;
+ 	__le16 tfd_cnt;
+ 	__le16 ra_tid_cnt;
+-	struct iwl_mvm_compressed_ba_tfd tfd[1];
++	struct iwl_mvm_compressed_ba_tfd tfd[0];
+ 	struct iwl_mvm_compressed_ba_ratid ra_tid[0];
+ } __packed; /* COMPRESSED_BA_RES_API_S_VER_4 */
  
- 	/* We only dump the FIFOs if the FW is in error state */
--	if (test_bit(STATUS_FW_ERROR, &fwrt->trans->status)) {
-+	if (fifo_data_len) {
- 		iwl_fw_dump_fifos(fwrt, &dump_data);
- 		if (radio_len)
- 			iwl_read_radio_regs(fwrt, &dump_data);
 -- 
 2.20.1
 
