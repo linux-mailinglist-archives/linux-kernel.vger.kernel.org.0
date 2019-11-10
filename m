@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB3EF68F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 13:36:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF8D6F68F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 13:44:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfKJMgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 07:36:15 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:54541 "EHLO
+        id S1726663AbfKJMnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 07:43:53 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:54559 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfKJMgO (ORCPT
+        with ESMTP id S1726301AbfKJMnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 07:36:14 -0500
+        Sun, 10 Nov 2019 07:43:52 -0500
 Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iTmRr-0005NX-EL; Sun, 10 Nov 2019 13:36:07 +0100
-Date:   Sun, 10 Nov 2019 13:36:04 +0100 (CET)
+        id 1iTmZI-0005Vb-8n; Sun, 10 Nov 2019 13:43:48 +0100
+Date:   Sun, 10 Nov 2019 13:43:46 +0100 (CET)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+To:     Andy Lutomirski <luto@amacapital.net>
+cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
         Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <JGross@suse.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [patch 2/9] x86/process: Unify copy_thread_tls()
-In-Reply-To: <alpine.DEB.2.21.1911090040520.2605@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1911101332490.12583@nanos.tec.linutronix.de>
-References: <20191106193459.581614484@linutronix.de> <20191106202805.948064985@linutronix.de> <53a6f346-fca1-ac04-ee34-6d472a0d4408@kernel.org> <alpine.DEB.2.21.1911090040520.2605@nanos.tec.linutronix.de>
+Subject: Re: [patch 4/9] x86/io: Speedup schedule out of I/O bitmap user
+In-Reply-To: <53B49BD3-6F9C-4A78-B203-1BD53034014D@amacapital.net>
+Message-ID: <alpine.DEB.2.21.1911101341430.12583@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1911090043430.2605@nanos.tec.linutronix.de> <53B49BD3-6F9C-4A78-B203-1BD53034014D@amacapital.net>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="8323329-894609131-1573389828=:12583"
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -41,43 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 9 Nov 2019, Thomas Gleixner wrote:
-> On Fri, 8 Nov 2019, Andy Lutomirski wrote:
-> > On 11/6/19 11:35 AM, Thomas Gleixner wrote:
-> > > +static inline int copy_io_bitmap(struct task_struct *tsk)
-> > > +{
-> > > +	if (likely(!test_tsk_thread_flag(current, TIF_IO_BITMAP)))
-> > > +		return 0;
-> > > +
-> > > +	tsk->thread.io_bitmap_ptr = kmemdup(current->thread.io_bitmap_ptr,
-> > > +					    IO_BITMAP_BYTES, GFP_KERNEL);
-> > 
-> > tsk->thread.io_bitmap_max = current->thread.io_bitmap_max?
-> > 
-> > I realize you inherited this from the code you're refactoring, but it
-> > does seem to be missing.
-> 
-> It already got copied with the task struct :)
->  
-> > > +#ifdef CONFIG_X86_64
-> > > +	savesegment(gs, p->thread.gsindex);
-> > > +	p->thread.gsbase = p->thread.gsindex ? 0 : current->thread.gsbase;
-> > > +	savesegment(fs, p->thread.fsindex);
-> > > +	p->thread.fsbase = p->thread.fsindex ? 0 : current->thread.fsbase;
-> > > +	savesegment(es, p->thread.es);
-> > > +	savesegment(ds, p->thread.ds);
-> > > +#else
-> > > +	/* Clear all status flags including IF and set fixed bit. */
-> > > +	frame->flags = X86_EFLAGS_FIXED;
-> > > +#endif
-> > 
-> > Want to do another commit to make the eflags fixup unconditional?  I'm
-> > wondering if we have a bug.
-> 
-> Let me look at that.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-64bit does not have flags in the inactive_task_frame ...
+--8323329-894609131-1573389828=:12583
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Fri, 8 Nov 2019, Andy Lutomirski wrote:
+> > On Nov 8, 2019, at 3:45 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > ﻿On Fri, 8 Nov 2019, Andy Lutomirski wrote:
+> >> SDM vol 3 27.5.2 says the BUILD_BUG_ON is right.  Or am I
+> >> misunderstanding you?
+> >> 
+> >> I'm reasonably confident that the TSS limit is indeed 0x67 after VM
+> >> exit, and I wrote the existing code that tries to optimize this to avoid
+> >> LTR when not needed.
+> > 
+> > The BUILD_BUG_ON(IO_BITMAP_OFFSET - 1 == 0x67) in the VMX code is bogus in
+> > two aspects:
+> > 
+> > 1) This wants to be in generic x86 code
+> 
+> I think disagree. The only thing special about 0x67 is that VMX hard
+> codes it. It’s specifically a VMX-ism. So I think the VMX code should
+> indeed assert that 0x67 is a safe value.
+
+Yes, it is a VMX specific issue, but I really prefer the build to fail in
+the common code without having to enable VMX if something changes the
+TSS layout in incompatible ways.
 
 Thanks,
 
 	tglx
+--8323329-894609131-1573389828=:12583--
