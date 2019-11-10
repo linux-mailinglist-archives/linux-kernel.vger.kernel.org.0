@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E979AF62C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0372F62C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfKJCpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:45:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44840 "EHLO mail.kernel.org"
+        id S1727836AbfKJCpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:45:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727668AbfKJCou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:50 -0500
+        id S1727533AbfKJCpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:45:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1D4421655;
-        Sun, 10 Nov 2019 02:44:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3350721848;
+        Sun, 10 Nov 2019 02:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353889;
-        bh=yN32PYfjsyUrcNe1jxL8v16H/2fHGlbsjA34/dPKFko=;
+        s=default; t=1573353905;
+        bh=h74CyComC6k5V4ED1SOpCza5IBa+Ykwmr9amfdKUrkU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2kEZbDvG2YsQ8CZNygGSJ5hIZ48/g7dQKZ+a+KBcIcQQT+kAsyXcL9cpeoJMrcro
-         kn4IPu8u6IWfOUrUgt1NK5pp6OvVZITW7vomqSSwBDj2A0b97Fiqr6+kpxx3U7b96V
-         L/GVqwupyx7+92cknUxTqVm6auZfGMMttc12d6vU=
+        b=cvowxg3e62dcU+CfKGcOPnHHOPlFcS4KGJMnf6gDLG72hT6b6IHwPIWyQj364BtD7
+         2NocAG5WuA/tQIEu9EMg30K7Po2fqxzOf8LszwDMWxYnXlzA5b1ZMt9/lTRdFGyu1w
+         I+PJk/a+wso4pmhdobeCa8Tkol26hYexHHTTruXM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 162/191] iwlwifi: pcie: read correct prph address for newer devices
-Date:   Sat,  9 Nov 2019 21:39:44 -0500
-Message-Id: <20191110024013.29782-162-sashal@kernel.org>
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 170/191] scsi: NCR5380: Withhold disconnect privilege for REQUEST SENSE
+Date:   Sat,  9 Nov 2019 21:39:52 -0500
+Message-Id: <20191110024013.29782-170-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -44,58 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 84fb372c892e231e9a2ffdaa5c2df52d94aa536c ]
+[ Upstream commit 7c8ed783c2faa1e3f741844ffac41340338ea0f4 ]
 
-For newer devices we have higher range of periphery
-addresses. Currently it is masked out, so we end up
-reading another address.
+This is mostly needed because an AztecMonster II target has been observed
+disconnecting REQUEST SENSE commands and then failing to reselect properly.
 
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Suggested-by: Michael Schmitz <schmitzmic@gmail.com>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/scsi/NCR5380.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index 7d319b6863feb..954f932e9c88e 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -1830,18 +1830,30 @@ static u32 iwl_trans_pcie_read32(struct iwl_trans *trans, u32 ofs)
- 	return readl(IWL_TRANS_GET_PCIE_TRANS(trans)->hw_base + ofs);
- }
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index d600d3e94ba4a..144bb0c2b3064 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -938,6 +938,8 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
+ 	int len;
+ 	int err;
+ 	bool ret = true;
++	bool can_disconnect = instance->irq != NO_IRQ &&
++			      cmd->cmnd[0] != REQUEST_SENSE;
  
-+static u32 iwl_trans_pcie_prph_msk(struct iwl_trans *trans)
-+{
-+	if (trans->cfg->device_family >= IWL_DEVICE_FAMILY_22560)
-+		return 0x00FFFFFF;
-+	else
-+		return 0x000FFFFF;
-+}
-+
- static u32 iwl_trans_pcie_read_prph(struct iwl_trans *trans, u32 reg)
- {
-+	u32 mask = iwl_trans_pcie_prph_msk(trans);
-+
- 	iwl_trans_pcie_write32(trans, HBUS_TARG_PRPH_RADDR,
--			       ((reg & 0x000FFFFF) | (3 << 24)));
-+			       ((reg & mask) | (3 << 24)));
- 	return iwl_trans_pcie_read32(trans, HBUS_TARG_PRPH_RDAT);
- }
+ 	NCR5380_dprint(NDEBUG_ARBITRATION, instance);
+ 	dsprintk(NDEBUG_ARBITRATION, instance, "starting arbitration, id = %d\n",
+@@ -1157,7 +1159,7 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
  
- static void iwl_trans_pcie_write_prph(struct iwl_trans *trans, u32 addr,
- 				      u32 val)
- {
-+	u32 mask = iwl_trans_pcie_prph_msk(trans);
-+
- 	iwl_trans_pcie_write32(trans, HBUS_TARG_PRPH_WADDR,
--			       ((addr & 0x000FFFFF) | (3 << 24)));
-+			       ((addr & mask) | (3 << 24)));
- 	iwl_trans_pcie_write32(trans, HBUS_TARG_PRPH_WDAT, val);
- }
+ 	dsprintk(NDEBUG_SELECTION, instance, "target %d selected, going into MESSAGE OUT phase.\n",
+ 	         scmd_id(cmd));
+-	tmp[0] = IDENTIFY(((instance->irq == NO_IRQ) ? 0 : 1), cmd->device->lun);
++	tmp[0] = IDENTIFY(can_disconnect, cmd->device->lun);
  
+ 	len = 1;
+ 	data = tmp;
 -- 
 2.20.1
 
