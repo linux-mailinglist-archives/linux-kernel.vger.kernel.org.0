@@ -2,53 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77FCBF6BAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A89BF6BAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:55:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfKJVpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 16:45:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbfKJVpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 16:45:06 -0500
-Subject: Re: [GIT PULL] ARM: SoC fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573422306;
-        bh=6ztCkRLgUdLXLrPFiMrkTkRl+X/swTXQkXHriYk06lo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=wnKx7IGC6AE9osQ8BEpJ34GvsqZJi8eoE0y9hVGUIYpGEe27tpp34kNLtWon9pDYn
-         LYCUZh2LiGhDxKm1hV2s5bghEFGwcsD98ewKZyjBap47EXftTps6M2R/9Qr1DW/yQg
-         p5dr1phjUYHMGBdrRHWVE5NzHjuS6hcn/pl/JNO4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191110182506.a2o7r5nyoqaz27gc@localhost>
-References: <20191110182506.a2o7r5nyoqaz27gc@localhost>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191110182506.a2o7r5nyoqaz27gc@localhost>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
-X-PR-Tracked-Commit-Id: 002d3c65ee81a604430da61e20de7a5b32a0afd5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 44866956804eb0904f733d8436bfb56245578870
-Message-Id: <157342230601.7021.10139790143615521649.pr-tracker-bot@kernel.org>
-Date:   Sun, 10 Nov 2019 21:45:06 +0000
-To:     Olof Johansson <olof@lixom.net>
-Cc:     torvalds@linux-foundation.org, olof@lixom.net, arm@kernel.org,
-        soc@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+        id S1727152AbfKJVzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 16:55:39 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34302 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbfKJVzj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 16:55:39 -0500
+Received: by mail-wr1-f65.google.com with SMTP id e6so12621935wrw.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 13:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=802X/0I8nW87iZxQ0qhEL5M55KFKYdUCM0ggeRN6az8=;
+        b=tepStVoiDlO3fAQzsMKbUMTj4bM+ceo8m1lHfvZl52eI5B2Cojs0KWLoNS6vt57wP0
+         yoYLH5BlQiyU7SyGONyjdayUbNO/meA7IzLFS9hyco+s/JPr8t1UZWNSbceWgsZMGVpA
+         PL3i6y+//xGTaSaJNPkEVUqYPwi/QvLBq1DtH97GphWUv0/NpCWh8ml2ZOh5NnI8xaz+
+         OkciJp+HqBk22aabcBZ0zFcKDKnq6CQV4V8Dsz33uqwfHuu7eM9i8xgOJxZpZGbwX3rb
+         Li16n7yJkltDRIa6OnuOYCSbOvvu8wkdpdfBQ0IXLb9ZqPA+MuIAseAhehvXakGugLG4
+         QwNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=802X/0I8nW87iZxQ0qhEL5M55KFKYdUCM0ggeRN6az8=;
+        b=cZSSOfqzD4Kd7xO0/NTK8QCyMC91Fe74yOS/kBAsqah+JLGh8XLQbIZw+ePu2GZsry
+         +fiwYvS9cQXSw5Je1aIgBuLVjqd54O6BVsCpltwylTRE6nd0HAVFkzKseIRY0GU8vTll
+         dB+VXdOMPc33vkx1uuj12q77w2uSio3HD4EyMqIatGHHYv6hvw6RnKimxG6X+c70mxv8
+         T1f2eXCzGXChDtOxki5eQw+lEkXMFj/A2w6uyhmFrPTXzTJQoAzTmahvBjzN5V3sDmCJ
+         7X06UpSF6MJi1QGm18Ak2nd1cF3p758g8GvtVwcia/iIEB52wu00unSic9BEag2q4VvB
+         Pqsw==
+X-Gm-Message-State: APjAAAU+19c0X2l1bLzwgEktXdT5Z5NcPMT41g10/2ofAnD4XbWn3G3Q
+        kXPhpTWV/voi0L3VVNWZIDv0+HEdr5k=
+X-Google-Smtp-Source: APXvYqz5EiBqezEmST9bha5x5Er1nMydqsxXCG40ssy+ZbUFURh7omWR+KF7gNWqC1i37SbjxGxlSw==
+X-Received: by 2002:a5d:67c2:: with SMTP id n2mr9997135wrw.222.1573422935619;
+        Sun, 10 Nov 2019 13:55:35 -0800 (PST)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id d11sm14555824wrn.28.2019.11.10.13.55.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2019 13:55:35 -0800 (PST)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
+        ttayar@habana.ai
+Cc:     gregkh@linuxfoundation.org
+Subject: [PATCH 1/6] habanalabs: read F/W versions before failure
+Date:   Sun, 10 Nov 2019 23:55:28 +0200
+Message-Id: <20191110215533.754-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 10 Nov 2019 10:25:06 -0800:
+Move the read of the F/W boot versions before exiting on possible failures
+of the F/W boot. This will help debug boot failures as we will be able to
+know the F/W boot version.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+---
+ drivers/misc/habanalabs/goya/goya.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/44866956804eb0904f733d8436bfb56245578870
-
-Thank you!
-
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index d3ee9e2aa57e..4e767e1d78e4 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -2296,6 +2296,10 @@ static int goya_init_cpu(struct hl_device *hdev, u32 cpu_timeout)
+ 		10000,
+ 		cpu_timeout);
+ 
++	/* Read U-Boot version now in case we will later fail */
++	goya_read_device_fw_version(hdev, FW_COMP_UBOOT);
++	goya_read_device_fw_version(hdev, FW_COMP_PREBOOT);
++
+ 	if (rc) {
+ 		dev_err(hdev->dev, "Error in ARM u-boot!");
+ 		switch (status) {
+@@ -2347,10 +2351,6 @@ static int goya_init_cpu(struct hl_device *hdev, u32 cpu_timeout)
+ 		return -EIO;
+ 	}
+ 
+-	/* Read U-Boot version now in case we will later fail */
+-	goya_read_device_fw_version(hdev, FW_COMP_UBOOT);
+-	goya_read_device_fw_version(hdev, FW_COMP_PREBOOT);
+-
+ 	if (!hdev->fw_loading) {
+ 		dev_info(hdev->dev, "Skip loading FW\n");
+ 		goto out;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.17.1
+
