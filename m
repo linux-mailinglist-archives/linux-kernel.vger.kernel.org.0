@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C79C7F629C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E17F62A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfKJCoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:44:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
+        id S1728531AbfKJCoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:44:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726857AbfKJCoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:04 -0500
+        id S1727032AbfKJCoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB6BB21D7F;
-        Sun, 10 Nov 2019 02:44:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46C7C222CD;
+        Sun, 10 Nov 2019 02:44:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353843;
-        bh=ruwTrmd0clXQGGZZmo8V50xrv053nKh84sC0o73hv7g=;
+        s=default; t=1573353845;
+        bh=bM9cRdbOq7bN8J7dnv5tjh1Vva7808rZD3E11I9ZnJs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SEP4YpOM+Vi3Y5Ex1H/s9wUwibRaB5HNWe/SOsede1vh4eS5Myj8DX9rX6Fo3/xDz
-         w9hjjLfL4V7zoyoLzfZdCL3Pq7/JkX6mwKxXbpalpHAq8OR3X/4C2+wbPliDYBJTkc
-         Gwb0AZbCGhCuPgmVpt+nxPSjEiKCslsD2tw/BXqE=
+        b=17aQd07OtDYdVJoySJfKD/nPUVXadvvE7ObqL119f+QpXN/9JMgPjydJpeNEI6Xks
+         NGuye8zx8lOBkWoje30pE4oCcmXIcWZ8PCZJHOBnKlSax2wstJkLujm4HPKwdEduTh
+         46MCzb8JfOj1uaul5DDj+XTDGz50OdpD4FvFsTOk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Li Yang <leoyang.li@nxp.com>, Sasha Levin <sashal@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 131/191] arm64: dts: fsl: Fix I2C and SPI bus warnings
-Date:   Sat,  9 Nov 2019 21:39:13 -0500
-Message-Id: <20191110024013.29782-131-sashal@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-efi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 133/191] efi: honour memory reservations passed via a linux specific config table
+Date:   Sat,  9 Nov 2019 21:39:15 -0500
+Message-Id: <20191110024013.29782-133-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,137 +43,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit b739c177e1aeab532f355493439a1901b85be38c ]
+[ Upstream commit 71e0940d52e107748b270213a01d3b1546657d74 ]
 
-dtc has new checks for I2C and SPI buses. Fix the SPI bus node names
-and warnings in unit-addresses.
+In order to allow the OS to reserve memory persistently across a
+kexec, introduce a Linux-specific UEFI configuration table that
+points to the head of a linked list in memory, allowing each kernel
+to add list items describing memory regions that the next kernel
+should treat as reserved.
 
-arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dtb: Warning (i2c_bus_reg): /soc/i2c@2180000/eeprom@57: I2C bus unit address format error, expected "53"
-arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dtb: Warning (i2c_bus_reg): /soc/i2c@2180000/eeprom@56: I2C bus unit address format error, expected "52"
+This is useful, e.g., for GICv3 based ARM systems that cannot disable
+DMA access to the LPI tables, forcing them to reuse the same memory
+region again after a kexec reboot.
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Li Yang <leoyang.li@nxp.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Acked-by: Li Yang <leoyang.li@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Tested-by: Jeremy Linton <jeremy.linton@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi    | 2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi    | 6 +++---
- arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts | 4 ++--
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi    | 4 ++--
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi    | 4 ++--
- 5 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/firmware/efi/efi.c | 27 ++++++++++++++++++++++++++-
+ include/linux/efi.h        |  8 ++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-index 68ac78c4564dc..5da732f82fa0c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-@@ -337,7 +337,7 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index d54fca902e64f..f265309859781 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -52,7 +52,8 @@ struct efi __read_mostly efi = {
+ 	.properties_table	= EFI_INVALID_TABLE_ADDR,
+ 	.mem_attr_table		= EFI_INVALID_TABLE_ADDR,
+ 	.rng_seed		= EFI_INVALID_TABLE_ADDR,
+-	.tpm_log		= EFI_INVALID_TABLE_ADDR
++	.tpm_log		= EFI_INVALID_TABLE_ADDR,
++	.mem_reserve		= EFI_INVALID_TABLE_ADDR,
+ };
+ EXPORT_SYMBOL(efi);
  
--		dspi: dspi@2100000 {
-+		dspi: spi@2100000 {
- 			compatible = "fsl,ls1012a-dspi", "fsl,ls1021a-v1.0-dspi";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 7881e3d81a9ab..b9c0f2de8f12c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -284,7 +284,7 @@
- 			interrupts = <0 43 0x4>;
- 		};
+@@ -487,6 +488,7 @@ static __initdata efi_config_table_type_t common_tables[] = {
+ 	{EFI_MEMORY_ATTRIBUTES_TABLE_GUID, "MEMATTR", &efi.mem_attr_table},
+ 	{LINUX_EFI_RANDOM_SEED_TABLE_GUID, "RNG", &efi.rng_seed},
+ 	{LINUX_EFI_TPM_EVENT_LOG_GUID, "TPMEventLog", &efi.tpm_log},
++	{LINUX_EFI_MEMRESERVE_TABLE_GUID, "MEMRESERVE", &efi.mem_reserve},
+ 	{NULL_GUID, NULL, NULL},
+ };
  
--		qspi: quadspi@1550000 {
-+		qspi: spi@1550000 {
- 			compatible = "fsl,ls1043a-qspi", "fsl,ls1021a-qspi";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -382,7 +382,7 @@
- 			ranges = <0x0 0x5 0x00000000 0x8000000>;
- 		};
+@@ -594,6 +596,29 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
+ 		early_memunmap(tbl, sizeof(*tbl));
+ 	}
  
--		dspi0: dspi@2100000 {
-+		dspi0: spi@2100000 {
- 			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -395,7 +395,7 @@
- 			status = "disabled";
- 		};
++	if (efi.mem_reserve != EFI_INVALID_TABLE_ADDR) {
++		unsigned long prsv = efi.mem_reserve;
++
++		while (prsv) {
++			struct linux_efi_memreserve *rsv;
++
++			/* reserve the entry itself */
++			memblock_reserve(prsv, sizeof(*rsv));
++
++			rsv = early_memremap(prsv, sizeof(*rsv));
++			if (rsv == NULL) {
++				pr_err("Could not map UEFI memreserve entry!\n");
++				return -ENOMEM;
++			}
++
++			if (rsv->size)
++				memblock_reserve(rsv->base, rsv->size);
++
++			prsv = rsv->next;
++			early_memunmap(rsv, sizeof(*rsv));
++		}
++	}
++
+ 	return 0;
+ }
  
--		dspi1: dspi@2110000 {
-+		dspi1: spi@2110000 {
- 			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-index 440e111651d53..a59b48203688a 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-@@ -57,12 +57,12 @@
- 		reg = <0x4c>;
- 	};
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index cc3391796c0b8..f43fc61fbe2c9 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -672,6 +672,7 @@ void efi_native_runtime_setup(void);
+ #define LINUX_EFI_LOADER_ENTRY_GUID		EFI_GUID(0x4a67b082, 0x0a4c, 0x41cf,  0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f)
+ #define LINUX_EFI_RANDOM_SEED_TABLE_GUID	EFI_GUID(0x1ce1e5bc, 0x7ceb, 0x42f2,  0x81, 0xe5, 0x8a, 0xad, 0xf1, 0x80, 0xf5, 0x7b)
+ #define LINUX_EFI_TPM_EVENT_LOG_GUID		EFI_GUID(0xb7799cb0, 0xeca2, 0x4943,  0x96, 0x67, 0x1f, 0xae, 0x07, 0xb7, 0x47, 0xfa)
++#define LINUX_EFI_MEMRESERVE_TABLE_GUID		EFI_GUID(0x888eb0c6, 0x8ede, 0x4ff5,  0xa8, 0xf0, 0x9a, 0xee, 0x5c, 0xb9, 0x77, 0xc2)
  
--	eeprom@56 {
-+	eeprom@52 {
- 		compatible = "atmel,24c512";
- 		reg = <0x52>;
- 	};
+ typedef struct {
+ 	efi_guid_t guid;
+@@ -957,6 +958,7 @@ extern struct efi {
+ 	unsigned long mem_attr_table;	/* memory attributes table */
+ 	unsigned long rng_seed;		/* UEFI firmware random seed */
+ 	unsigned long tpm_log;		/* TPM2 Event Log table */
++	unsigned long mem_reserve;	/* Linux EFI memreserve table */
+ 	efi_get_time_t *get_time;
+ 	efi_set_time_t *set_time;
+ 	efi_get_wakeup_time_t *get_wakeup_time;
+@@ -1667,4 +1669,10 @@ extern int efi_tpm_eventlog_init(void);
+ /* Workqueue to queue EFI Runtime Services */
+ extern struct workqueue_struct *efi_rts_wq;
  
--	eeprom@57 {
-+	eeprom@53 {
- 		compatible = "atmel,24c512";
- 		reg = <0x53>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index ef83786b8b905..de6af453a6e16 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -202,7 +202,7 @@
- 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
--		qspi: quadspi@1550000 {
-+		qspi: spi@1550000 {
- 			compatible = "fsl,ls1021a-qspi";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -361,7 +361,7 @@
- 			#thermal-sensor-cells = <1>;
- 		};
- 
--		dspi: dspi@2100000 {
-+		dspi: spi@2100000 {
- 			compatible = "fsl,ls1021a-v1.0-dspi";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-index 8cb78dd996728..ebe0cd4bf2b7e 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -469,7 +469,7 @@
- 			mmu-masters = <&fsl_mc 0x300 0>;
- 		};
- 
--		dspi: dspi@2100000 {
-+		dspi: spi@2100000 {
- 			status = "disabled";
- 			compatible = "fsl,ls2080a-dspi", "fsl,ls2085a-dspi";
- 			#address-cells = <1>;
-@@ -595,7 +595,7 @@
- 				  3 0 0x5 0x20000000 0x00010000>;
- 		};
- 
--		qspi: quadspi@20c0000 {
-+		qspi: spi@20c0000 {
- 			status = "disabled";
- 			compatible = "fsl,ls2080a-qspi", "fsl,ls1021a-qspi";
- 			#address-cells = <1>;
++struct linux_efi_memreserve {
++	phys_addr_t	next;
++	phys_addr_t	base;
++	phys_addr_t	size;
++};
++
+ #endif /* _LINUX_EFI_H */
 -- 
 2.20.1
 
