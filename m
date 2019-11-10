@@ -2,54 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBBAFF6B7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:00:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C341DF6B86
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 22:05:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfKJVAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 16:00:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46564 "EHLO mail.kernel.org"
+        id S1727083AbfKJVFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 16:05:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbfKJVAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 16:00:12 -0500
-Subject: Re: [GIT pull] sched/urgent for v5.4-rc7
+        id S1726882AbfKJVFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 16:05:19 -0500
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96C5F2085B
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 21:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573419611;
-        bh=lYsgtyyzhtyyTVQrIAZ3Dy/ONZpi5L0c6PYcGD/UNVA=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=DnbSZvSXtsVRBC/nAFF7Yczl+UEgFgydM4oQeovSg1K0aENqsqoAfL62OadqydvHQ
-         z4ALzdP7eR4+oQEuWKMBNKEWrurAUtMyHKhlx66/juZz9bA1VRXRGV44cqQs6LJLeL
-         3Zv4rHeaugrCnvh+sGAlHDHHGVOGz4dRhj9Fpacw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <157338131324.14789.7419190771030534276.tglx@nanos.tec.linutronix.de>
-References: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
- <157338131324.14789.7419190771030534276.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <157338131324.14789.7419190771030534276.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- sched-urgent-for-linus
-X-PR-Tracked-Commit-Id: 6e2df0581f569038719cf2bc2b3baa3fcc83cab4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 81388c2b3fb16972c699aab8a4f80ba85d0f9360
-Message-Id: <157341961163.30887.2718920238137478640.pr-tracker-bot@kernel.org>
-Date:   Sun, 10 Nov 2019 21:00:11 +0000
+        s=default; t=1573419918;
+        bh=BiMOa7BVbdDsJpnGBQ+dlgWZV0phrTRJm8NQ8hGPUjI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lit8Iot77iV2m7g9crnRYkCdYRUbiWTJa8v2jP/oXy2LnVqMoI77kOzseCejvLSFt
+         ym2nQbVpnEsk0t0XMy96z/JBpH7GeG2IBjbhhfpowisiSuD/3NYuCNLtw3BVbwYHcU
+         xRUsxXNehgaQG3yKkUwBBAsniPmVqg0atovEl/74=
+Received: by mail-wm1-f48.google.com with SMTP id u18so3615201wmc.3
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 13:05:18 -0800 (PST)
+X-Gm-Message-State: APjAAAUkQJ+aNvS6mO4GiW4wWkPHyNtcYa409O319+hCWOvT189OV1hl
+        XE8tE4wvKLhvJfXSUXOfcDakoFJafO+6hTETA6nTww==
+X-Google-Smtp-Source: APXvYqxzCf7oNyiVNbpysNqNTAvbbJ6LTMktOnPu2KporXXemX5yXNQqGMLUQWX3ULVTSTVlBLEq44uERvdx6B2bF2s=
+X-Received: by 2002:a7b:c1ca:: with SMTP id a10mr18936242wmj.161.1573419917046;
+ Sun, 10 Nov 2019 13:05:17 -0800 (PST)
+MIME-Version: 1.0
+References: <20191106193459.581614484@linutronix.de> <20191106202806.425388355@linutronix.de>
+ <a1afc4bb-c90e-db58-42f2-da91a50b1872@kernel.org> <alpine.DEB.2.21.1911102125110.12583@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1911102125110.12583@nanos.tec.linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 10 Nov 2019 13:05:05 -0800
+X-Gmail-Original-Message-ID: <CALCETrXLNub_pTMKvVQiq26=8VQPnx865+w0e-ZnHEg9a397_A@mail.gmail.com>
+Message-ID: <CALCETrXLNub_pTMKvVQiq26=8VQPnx865+w0e-ZnHEg9a397_A@mail.gmail.com>
+Subject: Re: [patch 7/9] x86/iopl: Restrict iopl() permission scope
 To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 10 Nov 2019 10:21:53 -0000:
+On Sun, Nov 10, 2019 at 12:31 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Sun, 10 Nov 2019, Andy Lutomirski wrote:
+> > On 11/6/19 11:35 AM, Thomas Gleixner wrote:
+> > > +
+> > > +   if (IS_ENABLED(CONFIG_X86_IOPL_EMULATION)) {
+> > > +           struct tss_struct *tss;
+> > > +           unsigned int tss_base;
+> > > +
+> > > +           /* Prevent racing against a task switch */
+> > > +           preempt_disable();
+> > > +           tss = this_cpu_ptr(&cpu_tss_rw);
+> > > +           if (level == 3) {
+> > > +                   /* Grant access to all I/O ports */
+> > > +                   set_thread_flag(TIF_IO_BITMAP);
+> > > +                   tss_base = IO_BITMAP_OFFSET_VALID_ALL;
+> >
+> > Where is the actual TSS updated?
+>
+> Here. It sets the offset to the all zero bitmap. That's all it needs.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
+Ah, I see.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/81388c2b3fb16972c699aab8a4f80ba85d0f9360
+> > I think what you need to do is have a single function, called by
+> > exit_thread(), switch_to(), and here, that updates the TSS to match a
+> > given task's IO bitmap state.  This is probably switch_to_bitmap() or
+> > similar.
+>
+> Well, no. exit_thread() and this here actually fiddle with the TIF bit
+> which is not what the switch to case does. There is some stuff which can be
+> shared.
 
-Thank you!
+I was thinking that the code that read iopl_emul and t->io_bitmap_ptr
+and updated x86_tss.io_bitmap_base could be factored out of
+switch_to().  Suppose you call that tss_update_io_bitmap().  And you
+could have another tiny helper:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+static void update_tif_io_bitmap(void)
+{
+  if (...->iopl_emul || ...->io_bitmap_ptr)
+    set_thread_flag(TIF_IO_BITMAP);
+  else
+    clear_thread_flag(TIF_IO_BITMAP);
+}
+
+Then the whole iopl emulation path becomes:
+
+preempt_disable();
+...->iopl_emul = iopl;
+update_tif_io_bitmap();
+tss_update_io_bitmap();
+
+and switch_to() does
+
+if (new or prev has TIF_IO_BITMAP)
+  tss_update_io_bitmap();
+
+and exit_thread() does:
+
+...->iopl_emul = 0;
+kfree(...);
+...->io_bitmap_ptr = 0;
+clear_thread_flag(TIF_IO_BITMAP) or update_tif_io_bitmap();
+tss_update_io_bitmap();
+
+and ioperm() does:
+
+kmalloc (if needed);
+update the thread_struct copy of the bitmap.
+set_thread_flag(TIF_IO_BITMAP) or update_tif_io_bitmap();
+tss_update_io_bitmap();
+
+Does that make sense?
+
+>
+> > (Maybe it already is, but I swear I checked all the patches in the
+> > series and I can't find the body of tss_update_io_bitmap().  But you
+> > should call it in all branches of this if-else thing.)
+>
+> It's in that very same patch:
+>
+> > -static void tss_update_io_bitmap(struct tss_struct *tss,
+> > -                                struct thread_struct *thread)
+
+But where did the line you just deleted come from?  I'm obviously just
+bad at reading emails somewhere.
+
+> > +void tss_update_io_bitmap(struct tss_struct *tss, struct thread_struct *thread)
+> >  {
+>
+> Let me try to get a bit more reuse. Which still leaves the TIF bit fiddling
+> in this code path.
+>
+> Thanks,
+>
+>         tglx
