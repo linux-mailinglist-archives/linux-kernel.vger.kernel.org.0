@@ -2,208 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B386F69AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 16:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30A49F69CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 16:37:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfKJPae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 10:30:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbfKJPad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 10:30:33 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C0CC20818;
-        Sun, 10 Nov 2019 15:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573399832;
-        bh=EbDDty/PRRrKzUouBpk/BmdXSWYVbU7Vs7tIavpArIw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fb0bAFD8AXj1puFSjbev0zZsRVdqvpycJy0u0hk6x2qaYTu21YDf8zYvAvYvoBcxT
-         TSMZDHD+t9W+RU7S8j9exm5jfxpFRme4BJmxlIxAUbCL0W9azHNxvYpARqeuaZHk8m
-         wFlwKkjTFV8H/Sy/SyGHXSmIgdDh4SSw8/De/WzU=
-Date:   Sun, 10 Nov 2019 15:30:26 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Jean-Baptiste Maneyrol <JManeyrol@invensense.com>
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: imo: mpu6050: add vdd-supply
-Message-ID: <20191110153026.6e5087b3@archlinux>
-In-Reply-To: <MN2PR12MB33733917812945D0293D9D27C47B0@MN2PR12MB3373.namprd12.prod.outlook.com>
-References: <20191107184342.20361-1-stephan@gerhold.net>
-        <MN2PR12MB33733917812945D0293D9D27C47B0@MN2PR12MB3373.namprd12.prod.outlook.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726910AbfKJPhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 10:37:12 -0500
+Received: from forward104j.mail.yandex.net ([5.45.198.247]:55889 "EHLO
+        forward104j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726653AbfKJPhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 10:37:12 -0500
+X-Greylist: delayed 321 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Nov 2019 10:37:11 EST
+Received: from forward103q.mail.yandex.net (forward103q.mail.yandex.net [IPv6:2a02:6b8:c0e:50:0:640:b21c:d009])
+        by forward104j.mail.yandex.net (Yandex) with ESMTP id 5D05A4A11C7;
+        Sun, 10 Nov 2019 18:31:47 +0300 (MSK)
+Received: from mxback7q.mail.yandex.net (mxback7q.mail.yandex.net [IPv6:2a02:6b8:c0e:41:0:640:cbbf:d618])
+        by forward103q.mail.yandex.net (Yandex) with ESMTP id 5572161E0005;
+        Sun, 10 Nov 2019 18:31:47 +0300 (MSK)
+Received: from vla5-9cb0c276d29e.qloud-c.yandex.net (vla5-9cb0c276d29e.qloud-c.yandex.net [2a02:6b8:c18:3588:0:640:9cb0:c276])
+        by mxback7q.mail.yandex.net (mxback/Yandex) with ESMTP id FSAetauLC0-VkeGYqD8;
+        Sun, 10 Nov 2019 18:31:47 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=golovin.in; s=mail; t=1573399907;
+        bh=J9gGtCi1bqhoTbjtK0ZLFDb2RPEmtebHwiHCJTTfQV4=;
+        h=Subject:To:From:Cc:Date:Message-Id;
+        b=ucwdZ079I8uW6r0LnYZ6jCy87vyQV/a6SlR1OCEI9A8r0pCWur7Fsl0l1ylRp3pRs
+         hP2VnvyYLwr+9Ubr+KsA9K644hmpAFsP8dQgaVC+IVoJ/+OYI1CBDuoxmim/V8pnOf
+         n9wWCRy2u1z8KR2O7Nx/GutWx28wD4GXy0+pyx10=
+Authentication-Results: mxback7q.mail.yandex.net; dkim=pass header.i=@golovin.in
+Received: by vla5-9cb0c276d29e.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id 5WwNymo0nq-Vi0mgFID;
+        Sun, 10 Nov 2019 18:31:45 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Dmitry Golovin <dima@golovin.in>
+Cc:     Dmitry Golovin <dima@golovin.in>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Maennich <maennich@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH] ARM: kbuild: use correct nm executable
+Date:   Sun, 10 Nov 2019 17:30:39 +0200
+Message-Id: <20191110153043.111710-1-dima@golovin.in>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Nov 2019 12:11:46 +0000
-Jean-Baptiste Maneyrol <JManeyrol@invensense.com> wrote:
+Since $(NM) variable can be easily overridden for the whole build, it's
+better to use it instead of $(CROSS_COMPILE)nm. The use of $(CROSS_COMPILE)
+prefixed variables where their calculated equivalents can be used is
+incorrect. This fixes issues with builds where $(NM) is set to llvm-nm.
 
-> Reviewed-by: Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>
-Hi Jean-Baptiste,
+Link: https://github.com/ClangBuiltLinux/linux/issues/766
+Signed-off-by: Dmitry Golovin <dima@golovin.in>
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Matthias Maennich <maennich@google.com>
+---
+ arch/arm/boot/compressed/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm assuming that applies for both patches given you gave comments on
-v1 that applied to patch 2!
-
-Thanks,
-
-Jonathan
-
->=20
-> Best regards,
-> JB
->=20
-> From: linux-iio-owner@vger.kernel.org <linux-iio-owner@vger.kernel.org> o=
-n behalf of Stephan Gerhold <stephan@gerhold.net>
->=20
-> Sent: Thursday, November 7, 2019 19:43
->=20
-> To: Jonathan Cameron <jic23@kernel.org>
->=20
-> Cc: Hartmut Knaack <knaack.h@gmx.de>; Lars-Peter Clausen <lars@metafoo.de=
->; Peter Meerwald-Stadler <pmeerw@pmeerw.net>; Rob Herring <robh+dt@kernel.=
-org>; Mark Rutland <mark.rutland@arm.com>; Linus Walleij <linus.walleij@lin=
-aro.org>; Brian Masney <masneyb@onstation.org>;
->  Jonathan Marek <jonathan@marek.ca>; Jean-Baptiste Maneyrol <JManeyrol@in=
-vensense.com>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; devic=
-etree@vger.kernel.org <devicetree@vger.kernel.org>; linux-kernel@vger.kerne=
-l.org <linux-kernel@vger.kernel.org>;
->  Stephan Gerhold <stephan@gerhold.net>
->=20
-> Subject: [PATCH v2 1/2] dt-bindings: iio: imo: mpu6050: add vdd-supply
->=20
-> =C2=A0
->=20
->=20
-> =C2=A0CAUTION: This email originated from outside of the organization. Pl=
-ease make sure the sender is who they say they are and do not click links o=
-r open attachments unless you recognize the sender and know the content is =
-safe.
->=20
->=20
->=20
-> inv_mpu6050 now supports an additional vdd-supply; document it.
->=20
->=20
->=20
->=20
->=20
->=20
->=20
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->=20
->=20
->=20
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
->=20
->=20
->=20
-> ---
->=20
->=20
->=20
-> Changes in v2:
->=20
->=20
->=20
-> =C2=A0 - Add Reviewed-by from Linus Walleij
->=20
->=20
->=20
->=20
->=20
->=20
->=20
-> v1:=20
-> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lore.kernel.org_li=
-nux-2Diio_20191106183536.123070-2D1-2Dstephan-40gerhold.net_&d=3DDwIDAg&c=
-=3DWoJWtq5JV8YrKnzRxvD8NxmTP_1wxfE0prPmo0NeZwg&r=3D4jiDX_1brsSWfCjfA6Ovj1d4=
-h9MF8q7Xk5aBwG28mVk&m=3DO82MQPnLTvlD0nxDzFW1KS3aZpWiI3qYUZwJUy_qqxc&s=3Dddv=
-zqy0PywWDCnge7xbJIhpqN9NltbLrzi4EBVdeA_o&e=3D
->=20
->=20
->=20
->=20
-> ---
->=20
->=20
->=20
-> =C2=A0Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt | 1 +
->=20
->=20
->=20
-> =C2=A01 file changed, 1 insertion(+)
->=20
->=20
->=20
->=20
->=20
->=20
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt b/=
-Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
->=20
->=20
->=20
-> index 268bf7568e19..c5ee8a20af9f 100644
->=20
->=20
->=20
-> --- a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
->=20
->=20
->=20
-> +++ b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
->=20
->=20
->=20
-> @@ -21,6 +21,7 @@ Required properties:
->=20
->=20
->=20
-> =C2=A0=C2=A0 bindings.
->=20
->=20
->=20
-> =C2=A0
->=20
->=20
->=20
-> =C2=A0Optional properties:
->=20
->=20
->=20
-> + - vdd-supply: regulator phandle for VDD supply
->=20
->=20
->=20
-> =C2=A0 - vddio-supply: regulator phandle for VDDIO supply
->=20
->=20
->=20
-> =C2=A0 - mount-matrix: an optional 3x3 mounting rotation matrix
->=20
->=20
->=20
-> =C2=A0 - i2c-gate node.=C2=A0 These devices also support an auxiliary i2c=
- bus.=C2=A0 This is
->=20
->=20
->=20
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index 9219389bbe61..a1e883c5e5c4 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -121,7 +121,7 @@ ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin -I$(obj)
+ asflags-y := -DZIMAGE
+ 
+ # Supply kernel BSS size to the decompressor via a linker symbol.
+-KBSS_SZ = $(shell echo $$(($$($(CROSS_COMPILE)nm $(obj)/../../../../vmlinux | \
++KBSS_SZ = $(shell echo $$(($$($(NM) $(obj)/../../../../vmlinux | \
+ 		sed -n -e 's/^\([^ ]*\) [AB] __bss_start$$/-0x\1/p' \
+ 		       -e 's/^\([^ ]*\) [AB] __bss_stop$$/+0x\1/p') )) )
+ LDFLAGS_vmlinux = --defsym _kernel_bss_size=$(KBSS_SZ)
+@@ -165,7 +165,7 @@ $(obj)/bswapsdi2.S: $(srctree)/arch/$(SRCARCH)/lib/bswapsdi2.S
+ # The .data section is already discarded by the linker script so no need
+ # to bother about it here.
+ check_for_bad_syms = \
+-bad_syms=$$($(CROSS_COMPILE)nm $@ | sed -n 's/^.\{8\} [bc] \(.*\)/\1/p') && \
++bad_syms=$$($(NM) $@ | sed -n 's/^.\{8\} [bc] \(.*\)/\1/p') && \
+ [ -z "$$bad_syms" ] || \
+   ( echo "following symbols must have non local/private scope:" >&2; \
+     echo "$$bad_syms" >&2; false )
+-- 
+2.23.0
 
