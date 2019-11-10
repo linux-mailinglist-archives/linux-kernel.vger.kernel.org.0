@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4627F6296
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C79C7F629C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:44:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbfKJCoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:44:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
+        id S1727428AbfKJCoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:44:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728467AbfKJCoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:01 -0500
+        id S1726857AbfKJCoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5AF5215EA;
-        Sun, 10 Nov 2019 02:44:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB6BB21D7F;
+        Sun, 10 Nov 2019 02:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353841;
-        bh=xOH+ix3LhRxkW9EZ3qVwZJdXRhikzraxle2sk20ZrZA=;
+        s=default; t=1573353843;
+        bh=ruwTrmd0clXQGGZZmo8V50xrv053nKh84sC0o73hv7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJAKc8deEj1hmZivqutvrHBvmJj8XU0pRCQ1B+dywO6u6QHAJvenezoRL4Mt8H7h9
-         RtBh4fNkjWt6XEkDldCLRUBIduKreazBhdskFZ6o9zQFJS3trBN7OF0i9EibXoRfBx
-         mHbxi8LWSpoZYIUVG06CfA3Q5BW2OXpmxO6nudJM=
+        b=SEP4YpOM+Vi3Y5Ex1H/s9wUwibRaB5HNWe/SOsede1vh4eS5Myj8DX9rX6Fo3/xDz
+         w9hjjLfL4V7zoyoLzfZdCL3Pq7/JkX6mwKxXbpalpHAq8OR3X/4C2+wbPliDYBJTkc
+         Gwb0AZbCGhCuPgmVpt+nxPSjEiKCslsD2tw/BXqE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 129/191] phy: lantiq: Fix compile warning
-Date:   Sat,  9 Nov 2019 21:39:11 -0500
-Message-Id: <20191110024013.29782-129-sashal@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, Sasha Levin <sashal@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 131/191] arm64: dts: fsl: Fix I2C and SPI bus warnings
+Date:   Sat,  9 Nov 2019 21:39:13 -0500
+Message-Id: <20191110024013.29782-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,32 +43,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hauke Mehrtens <hauke@hauke-m.de>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 3a00dae006623d799266d85f28b5f76ef07d6b6c ]
+[ Upstream commit b739c177e1aeab532f355493439a1901b85be38c ]
 
-This local variable is unused, remove it.
+dtc has new checks for I2C and SPI buses. Fix the SPI bus node names
+and warnings in unit-addresses.
 
-Fixes: dea54fbad332 ("phy: Add an USB PHY driver for the Lantiq SoCs using the RCU module")
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dtb: Warning (i2c_bus_reg): /soc/i2c@2180000/eeprom@57: I2C bus unit address format error, expected "53"
+arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dtb: Warning (i2c_bus_reg): /soc/i2c@2180000/eeprom@56: I2C bus unit address format error, expected "52"
+
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Li Yang <leoyang.li@nxp.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Acked-by: Li Yang <leoyang.li@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/lantiq/phy-lantiq-rcu-usb2.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi    | 2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi    | 6 +++---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts | 4 ++--
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi    | 4 ++--
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi    | 4 ++--
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-index 986224fca9e91..5a180f71d8d4d 100644
---- a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-+++ b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-@@ -156,7 +156,6 @@ static int ltq_rcu_usb2_of_parse(struct ltq_rcu_usb2_priv *priv,
- {
- 	struct device *dev = priv->dev;
- 	const __be32 *offset;
--	int ret;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+index 68ac78c4564dc..5da732f82fa0c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+@@ -337,7 +337,7 @@
+ 			status = "disabled";
+ 		};
  
- 	priv->reg_bits = of_device_get_match_data(dev);
+-		dspi: dspi@2100000 {
++		dspi: spi@2100000 {
+ 			compatible = "fsl,ls1012a-dspi", "fsl,ls1021a-v1.0-dspi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 7881e3d81a9ab..b9c0f2de8f12c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -284,7 +284,7 @@
+ 			interrupts = <0 43 0x4>;
+ 		};
  
+-		qspi: quadspi@1550000 {
++		qspi: spi@1550000 {
+ 			compatible = "fsl,ls1043a-qspi", "fsl,ls1021a-qspi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -382,7 +382,7 @@
+ 			ranges = <0x0 0x5 0x00000000 0x8000000>;
+ 		};
+ 
+-		dspi0: dspi@2100000 {
++		dspi0: spi@2100000 {
+ 			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -395,7 +395,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		dspi1: dspi@2110000 {
++		dspi1: spi@2110000 {
+ 			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
+index 440e111651d53..a59b48203688a 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
+@@ -57,12 +57,12 @@
+ 		reg = <0x4c>;
+ 	};
+ 
+-	eeprom@56 {
++	eeprom@52 {
+ 		compatible = "atmel,24c512";
+ 		reg = <0x52>;
+ 	};
+ 
+-	eeprom@57 {
++	eeprom@53 {
+ 		compatible = "atmel,24c512";
+ 		reg = <0x53>;
+ 	};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index ef83786b8b905..de6af453a6e16 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -202,7 +202,7 @@
+ 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+-		qspi: quadspi@1550000 {
++		qspi: spi@1550000 {
+ 			compatible = "fsl,ls1021a-qspi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -361,7 +361,7 @@
+ 			#thermal-sensor-cells = <1>;
+ 		};
+ 
+-		dspi: dspi@2100000 {
++		dspi: spi@2100000 {
+ 			compatible = "fsl,ls1021a-v1.0-dspi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+index 8cb78dd996728..ebe0cd4bf2b7e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+@@ -469,7 +469,7 @@
+ 			mmu-masters = <&fsl_mc 0x300 0>;
+ 		};
+ 
+-		dspi: dspi@2100000 {
++		dspi: spi@2100000 {
+ 			status = "disabled";
+ 			compatible = "fsl,ls2080a-dspi", "fsl,ls2085a-dspi";
+ 			#address-cells = <1>;
+@@ -595,7 +595,7 @@
+ 				  3 0 0x5 0x20000000 0x00010000>;
+ 		};
+ 
+-		qspi: quadspi@20c0000 {
++		qspi: spi@20c0000 {
+ 			status = "disabled";
+ 			compatible = "fsl,ls2080a-qspi", "fsl,ls1021a-qspi";
+ 			#address-cells = <1>;
 -- 
 2.20.1
 
