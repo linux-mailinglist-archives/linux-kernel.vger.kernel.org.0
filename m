@@ -2,99 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E8D6F6B54
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 21:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85880F6B5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 21:37:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbfKJUb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 15:31:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:54999 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbfKJUb2 (ORCPT
+        id S1727084AbfKJUhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 15:37:02 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:44402 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbfKJUhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 15:31:28 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iTtrn-0002wB-0X; Sun, 10 Nov 2019 21:31:23 +0100
-Date:   Sun, 10 Nov 2019 21:31:21 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [patch 7/9] x86/iopl: Restrict iopl() permission scope
-In-Reply-To: <a1afc4bb-c90e-db58-42f2-da91a50b1872@kernel.org>
-Message-ID: <alpine.DEB.2.21.1911102125110.12583@nanos.tec.linutronix.de>
-References: <20191106193459.581614484@linutronix.de> <20191106202806.425388355@linutronix.de> <a1afc4bb-c90e-db58-42f2-da91a50b1872@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 10 Nov 2019 15:37:02 -0500
+Received: by mail-il1-f194.google.com with SMTP id i6so10109337ilr.11
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 12:37:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PYkUdq1QNwEYjmWnKj0EdSuQZBm50tV0WRMLPz5fi40=;
+        b=YjKrdXSAahH1StV8EmSM0xqq4aLCOmXxLU+j1f4BFwlEJmyrOlP8RZba67nit3HqzZ
+         DM0QOGvUfkHeJ0i1omMyHJ0v9iSEfXl49WzFAq70cWB6KBQF91bZV/aZ7PJDYo5vvjsl
+         m8lqsOILU324B9CX+YylLNIqu+CqkNaL2lm4GmxdverQZZagLlK5LldN8LpbxzuwoOjk
+         0pPRitP0e2w3MEHCNpLzlYHyIV2jUULL7hRCoXLd6klTDgrgpxBHNxWt5VAJP6m0vOGn
+         wVQVH7CDt3gNJvsHaLfqExGe/GjEMeQLmbEy16STAvESl8tCI9lljvE6NN8rMSnHRdeL
+         S2GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PYkUdq1QNwEYjmWnKj0EdSuQZBm50tV0WRMLPz5fi40=;
+        b=Oyp+9pP/HYHYb1Ej7yJsdAlO6NfontvzCr0PKey2SOssQvqiBEHY02mhFwAxk4SJMN
+         +sCOVbPmeWyC8zYu74WLzz1dXznq402tGekqwUKyIh7SOphjeVV3N/7XUKBOPf7KNrWt
+         6Ys/D5B63JkaloGoSaXWbvjt1wN/t3oouIzpnb2obLRJvwY+Cte9QCowgblh9WB+p8cY
+         xaBhq9ed66BQyJy6gelTy5uPq0e0rYA9Zll4JjB2qgz4jf0wFWZ7nwUW8S3iMDHZQFxH
+         OA3wzgqg3fcNdDWJrhAaWJY/vjmi6gONO/awm8crYuCmwwZ+NEnSKELzH8pjZjwaDhC4
+         dG1w==
+X-Gm-Message-State: APjAAAUwkDG9ROOGZ7Ya+X2ObzM04lUpR65rhor0d/3Ck9g/v7oal1mI
+        zY7p0Kuiw3K8JpxvXKTl2bQYpmrAhreDqOqupKs=
+X-Google-Smtp-Source: APXvYqxONBNYETcCcUx22bjTXa1sKNF4MrVTIE2FFq9+pLOdkaD4ocrmdqnJ9MtBZc99i0YC9k5Ha4jPIpBl2Wj89B0=
+X-Received: by 2002:a92:d7c2:: with SMTP id g2mr17371311ilq.81.1573418221372;
+ Sun, 10 Nov 2019 12:37:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20191107205914.10611-1-deepa.kernel@gmail.com>
+ <1672a5861c82c2e3c0c54b5311fd413a8eee5e64.camel@infradead.org>
+ <8D8B600C3EC1B64FAD4503F0B66C61F23BB95B@SHSMSX103.ccr.corp.intel.com>
+ <addba4e401c3bf23b86cf8dff97256282895e29f.camel@infradead.org>
+ <8D8B600C3EC1B64FAD4503F0B66C61F23BBA24@SHSMSX103.ccr.corp.intel.com>
+ <CABeXuvoiX639HchLbgTHLiXPh=Yr2dJHUp2Yqc6pNJ3As1OJ8A@mail.gmail.com> <CABeXuvqMpXbSNasET4-u16Hrj710fe-V706tsFZhOTJoir8Xjw@mail.gmail.com>
+In-Reply-To: <CABeXuvqMpXbSNasET4-u16Hrj710fe-V706tsFZhOTJoir8Xjw@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Sun, 10 Nov 2019 12:36:49 -0800
+Message-ID: <CABeXuvrYzLoc7YGtmXDJqEovwyERbndN4cC6UaYAw5+qABRr8A@mail.gmail.com>
+Subject: Re: [PATCH] intel-iommu: Turn off translations at shutdown
+To:     "Zeng, Jason" <jason.zeng@intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, rminnich@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 10 Nov 2019, Andy Lutomirski wrote:
-> On 11/6/19 11:35 AM, Thomas Gleixner wrote:
-> > +
-> > +	if (IS_ENABLED(CONFIG_X86_IOPL_EMULATION)) {
-> > +		struct tss_struct *tss;
-> > +		unsigned int tss_base;
-> > +
-> > +		/* Prevent racing against a task switch */
-> > +		preempt_disable();
-> > +		tss = this_cpu_ptr(&cpu_tss_rw);
-> > +		if (level == 3) {
-> > +			/* Grant access to all I/O ports */
-> > +			set_thread_flag(TIF_IO_BITMAP);
-> > +			tss_base = IO_BITMAP_OFFSET_VALID_ALL;
-> 
-> Where is the actual TSS updated?
+On Sun, Nov 10, 2019 at 10:24 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> On Fri, Nov 8, 2019 at 2:48 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> >
+> > > > > For VMM live update case, we should be able to detect and bypass
+> > > > > the shutdown that Deepa introduced here, so keep IOMMU still operating?
+> > > >
+> > > > Is that a 'yes' to Deepa's "if someone wants to make it conditional, we
+> > > > can do that" ?
+> > >
+> > > Yes, I think so. Thanks!
+> >
+> > Are these changes already part of the kernel like avoiding shutdown of
+> > the passthrough devices? device_shutdown() doesn't seem to be doing
+> > anything selectively as of now.
+>
+> I've posted the v2 without the conditional for now:
+> https://lore.kernel.org/patchwork/patch/1151225/
+>
+> As a side topic, I'm trying to support https://www.linuxboot.org/. I
+> have a couple of more such cleanups coming. The VMM live updates and
+> linuxboot seem to have contradicting requirements and they both use
+> kexec. So kexec_in_progress doesn't seem like a sufficient indicator
+> to distinguish between the two. Do you already have an idea on how to
+> distiguish between them? Does a separate sys_reboot() command
+> parameter sound ok? Or, we could use the flags in the sys_kexec_load()
+> depending on how the live update feature is implemented.
 
-Here. It sets the offset to the all zero bitmap. That's all it needs.
+Also, the AMD driver disables iommu at shutdown already. So the live
+update feature is already broken on AMD.
 
-> > +		} else if (t->io_bitmap_ptr) {
-> > +			/* Thread has a I/O bitmap */
-> > +			tss_update_io_bitmap(tss, t);
-> > +			set_thread_flag(TIF_IO_BITMAP);
-> > +			tss_base = IO_BITMAP_OFFSET_VALID_MAP;
-> > +		} else {
-> > +			/* Take it out of the context switch work burden */
-> > +			clear_thread_flag(TIF_IO_BITMAP);
-> > +			tss_base = IO_BITMAP_OFFSET_INVALID;
-> 
-> Ditto.
-> 
-> I think what you need to do is have a single function, called by
-> exit_thread(), switch_to(), and here, that updates the TSS to match a
-> given task's IO bitmap state.  This is probably switch_to_bitmap() or
-> similar.
-
-Well, no. exit_thread() and this here actually fiddle with the TIF bit
-which is not what the switch to case does. There is some stuff which can be
-shared.
-
-> (Maybe it already is, but I swear I checked all the patches in the
-> series and I can't find the body of tss_update_io_bitmap().  But you
-> should call it in all branches of this if-else thing.)
-
-It's in that very same patch:
-
-> -static void tss_update_io_bitmap(struct tss_struct *tss,
-> -                                struct thread_struct *thread)
-> +void tss_update_io_bitmap(struct tss_struct *tss, struct thread_struct *thread)
->  {
-
-Let me try to get a bit more reuse. Which still leaves the TIF bit fiddling
-in this code path.
-
-Thanks,
-
-	tglx
+-Deepa
