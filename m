@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC51DF6641
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:12:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A07F662A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:12:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbfKJDMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 22:12:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40720 "EHLO mail.kernel.org"
+        id S1728262AbfKJCnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:43:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728200AbfKJCnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:43:12 -0500
+        id S1728227AbfKJCnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:43:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 233B5222BE;
-        Sun, 10 Nov 2019 02:43:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A7B021848;
+        Sun, 10 Nov 2019 02:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353792;
-        bh=tlbUosy2fq8Q/oWAJId8gRxFvS+jxOmsLcfyNhEtnSc=;
+        s=default; t=1573353795;
+        bh=gzEchfM7M9ylyt97dkh+RkFlfZBYYPbqX4JcKuUKC2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0GO9r9TzM9xRZ6Yfb3EwtFaOcjcFnf4FvfgddpOj1nEP3Kf7+h02+u3YAxQcUcE6i
-         +pqhiB0xKtzAt5lVGilb4FERVWkZdw6hmHnBvgNHh1wa6o6oMf7UvF8QI5RQQVfQDi
-         ofNSLm6fGjtjqD3MiptFoZ9EONECXc+6H2mAMyvQ=
+        b=bGfnF+2z9yFd/nwjAnDj87XVajMAXltviGtPTbgOaD9tj93hlKpAHmZw5UJRugCIr
+         KfuzSuFGAKuBNaUehD0ngQ7nGjMi2V0mjPDdg7QemcbKQYrlOhaViYmWtty54j5SLK
+         bmB7Iv+ww428o8RAauUUsqTkoDl1+HT/XMmROEg4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+Cc:     Brad Love <brad@nextdimension.cc>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 092/191] media: imx: work around false-positive warning, again
-Date:   Sat,  9 Nov 2019 21:38:34 -0500
-Message-Id: <20191110024013.29782-92-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 094/191] media: au0828: Fix incorrect error messages
+Date:   Sat,  9 Nov 2019 21:38:36 -0500
+Message-Id: <20191110024013.29782-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -45,60 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit 8d1a4817cce1b15b4909f0e324a4f5af5952da67 ]
+[ Upstream commit f347596f2bf114a3af3d80201c6e6bef538d884f ]
 
-A warning that I thought to be solved by a previous patch of mine
-has resurfaced with gcc-8:
+Correcting red herring error messages.
 
-media/imx/imx-media-csi.c: In function 'csi_link_validate':
-media/imx/imx-media-csi.c:1025:20: error: 'upstream_ep' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-media/imx/imx-media-csi.c:1026:24: error: 'upstream_ep.bus_type' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-media/imx/imx-media-csi.c:127:19: error: 'upstream_ep.bus.parallel.bus_width' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-media/imx/imx-media-csi.c: In function 'csi_enum_mbus_code':
-media/imx/imx-media-csi.c:132:9: error: '*((void *)&upstream_ep+12)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-media/imx/imx-media-csi.c:132:48: error: 'upstream_ep.bus.parallel.bus_width' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Where appropriate, replaces au0282_dev_register with:
+- au0828_analog_register
+- au0828_dvb_register
 
-I spent some more time digging in this time, and think I have a better
-fix, bailing out of the function that either initializes or errors
-out here, which simplifies the code enough for gcc to figure out
-what is going on. The earlier partial workaround can be removed now,
-as the new workaround is better.
-
-Fixes: 890f27693f2a ("media: imx: work around false-positive warning")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Brad Love <brad@nextdimension.cc>
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/imx/imx-media-csi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/usb/au0828/au0828-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index d17ce1fb4ef51..0f8fdc347091b 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -166,6 +166,9 @@ static int csi_get_upstream_endpoint(struct csi_priv *priv,
- 	struct v4l2_subdev *sd;
- 	struct media_pad *pad;
+diff --git a/drivers/media/usb/au0828/au0828-core.c b/drivers/media/usb/au0828/au0828-core.c
+index e3f63299f85c0..07e3322bb1827 100644
+--- a/drivers/media/usb/au0828/au0828-core.c
++++ b/drivers/media/usb/au0828/au0828-core.c
+@@ -632,7 +632,7 @@ static int au0828_usb_probe(struct usb_interface *interface,
+ 	/* Analog TV */
+ 	retval = au0828_analog_register(dev, interface);
+ 	if (retval) {
+-		pr_err("%s() au0282_dev_register failed to register on V4L2\n",
++		pr_err("%s() au0828_analog_register failed to register on V4L2\n",
+ 			__func__);
+ 		mutex_unlock(&dev->lock);
+ 		goto done;
+@@ -641,7 +641,7 @@ static int au0828_usb_probe(struct usb_interface *interface,
+ 	/* Digital TV */
+ 	retval = au0828_dvb_register(dev);
+ 	if (retval)
+-		pr_err("%s() au0282_dev_register failed\n",
++		pr_err("%s() au0828_dvb_register failed\n",
+ 		       __func__);
  
-+	if (!IS_ENABLED(CONFIG_OF))
-+		return -ENXIO;
-+
- 	if (!priv->src_sd)
- 		return -EPIPE;
- 
-@@ -1072,7 +1075,7 @@ static int csi_link_validate(struct v4l2_subdev *sd,
- 			     struct v4l2_subdev_format *sink_fmt)
- {
- 	struct csi_priv *priv = v4l2_get_subdevdata(sd);
--	struct v4l2_fwnode_endpoint upstream_ep = {};
-+	struct v4l2_fwnode_endpoint upstream_ep;
- 	bool is_csi2;
- 	int ret;
- 
+ 	/* Remote controller */
 -- 
 2.20.1
 
