@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CFE8F62F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:47:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A771F62F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:47:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbfKJCrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:47:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52216 "EHLO mail.kernel.org"
+        id S1729304AbfKJCrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:47:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729251AbfKJCrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:47:09 -0500
+        id S1729284AbfKJCrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:47:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CCFF21850;
-        Sun, 10 Nov 2019 02:47:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 154C42085B;
+        Sun, 10 Nov 2019 02:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354028;
-        bh=MVEB1rulFVTgLvp4viPo/jogXx9ZW15pj8a72RY3pU0=;
+        s=default; t=1573354031;
+        bh=QoUn/h3MNMbwtHEOTvmPQwcQ21/PcGqIt0aNnHTGS3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qwgMSeTz4pW6ui7kTi6HbJPOF3W/Fhe5g/vSYqDaML1x7y3fiK0L07ZFgABFfjoU4
-         jz9LPwtkuyIKjw1b5+/HFtcUGXvrjn1rti+Mg05bznPzNhVpPhw2Psnd16ZPRmfTID
-         PwsSUrZ0e6QjhU+06b3hxwg6NFjtivCZ3MJnLY98=
+        b=i/zL4czTCSRLgpuB9pQZEwghjUONdkWHL9S5tT+8dUENxN5yFDP+owkHoZ4DUrILX
+         AgIvkKB1a0jCYaw2C4RJqj5N3p17z757PlgWHv2FIFDNiyI6r2jMuWjGrvZswsVCO/
+         /dUDzx78C3y8jcGzqO5fboZqKO+xOtmLwsyX3sVY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Matthew Whitehead <tedheadster@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
         Andy Lutomirski <luto@amacapital.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 046/109] x86/CPU: Use correct macros for Cyrix calls
-Date:   Sat,  9 Nov 2019 21:44:38 -0500
-Message-Id: <20191110024541.31567-46-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 047/109] x86/CPU: Change query logic so CPUID is enabled before testing
+Date:   Sat,  9 Nov 2019 21:44:39 -0500
+Message-Id: <20191110024541.31567-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
@@ -52,63 +51,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Whitehead <tedheadster@gmail.com>
 
-[ Upstream commit 03b099bdcdf7125d4a63dc9ddeefdd454e05123d ]
+[ Upstream commit 2893cc8ff892fa74972d8dc0e1d0dc65116daaa3 ]
 
-There are comments in processor-cyrix.h advising you to _not_ make calls
-using the deprecated macros in this style:
+Presently we check first if CPUID is enabled. If it is not already
+enabled, then we next call identify_cpu_without_cpuid() and clear
+X86_FEATURE_CPUID.
 
-  setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
+Unfortunately, identify_cpu_without_cpuid() is the function where CPUID
+becomes _enabled_ on Cyrix 6x86/6x86L CPUs.
 
-This is because it expands the macro into a non-functioning calling
-sequence. The calling order must be:
+Reverse the calling sequence so that CPUID is first enabled, and then
+check a second time to see if the feature has now been activated.
 
-  outb(CX86_CCR2, 0x22);
-  inb(0x23);
+[ bp: Massage commit message and remove trailing whitespace. ]
 
-From the comments:
-
- * When using the old macros a line like
- *   setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x88);
- * gets expanded to:
- *  do {
- *    outb((CX86_CCR2), 0x22);
- *    outb((({
- *        outb((CX86_CCR2), 0x22);
- *        inb(0x23);
- *    }) | 0x88), 0x23);
- *  } while (0);
-
-The new macros fix this problem, so use them instead.
-
+Suggested-by: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Andy Lutomirski <luto@amacapital.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180921212041.13096-2-tedheadster@gmail.com
+Link: http://lkml.kernel.org/r/20180921212041.13096-3-tedheadster@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/cyrix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/common.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
-index fa61c870ada94..1d9b8aaea06c8 100644
---- a/arch/x86/kernel/cpu/cyrix.c
-+++ b/arch/x86/kernel/cpu/cyrix.c
-@@ -437,7 +437,7 @@ static void cyrix_identify(struct cpuinfo_x86 *c)
- 			/* enable MAPEN  */
- 			setCx86(CX86_CCR3, (ccr3 & 0x0f) | 0x10);
- 			/* enable cpuid  */
--			setCx86_old(CX86_CCR4, getCx86_old(CX86_CCR4) | 0x80);
-+			setCx86(CX86_CCR4, getCx86(CX86_CCR4) | 0x80);
- 			/* disable MAPEN */
- 			setCx86(CX86_CCR3, ccr3);
- 			local_irq_restore(flags);
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 551c6bed7c8ce..1784deefbc8c9 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1037,6 +1037,9 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	memset(&c->x86_capability, 0, sizeof c->x86_capability);
+ 	c->extended_cpuid_level = 0;
+ 
++	if (!have_cpuid_p())
++		identify_cpu_without_cpuid(c);
++
+ 	/* cyrix could have cpuid enabled via c_identify()*/
+ 	if (have_cpuid_p()) {
+ 		cpu_detect(c);
+@@ -1053,7 +1056,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 		if (this_cpu->c_bsp_init)
+ 			this_cpu->c_bsp_init(c);
+ 	} else {
+-		identify_cpu_without_cpuid(c);
+ 		setup_clear_cpu_cap(X86_FEATURE_CPUID);
+ 	}
+ 
 -- 
 2.20.1
 
