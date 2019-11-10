@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07183F650E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A90F6509
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:04:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbfKJCq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:46:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51376 "EHLO mail.kernel.org"
+        id S1729223AbfKJCq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:46:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729151AbfKJCqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:46:53 -0500
+        id S1729186AbfKJCqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:46:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A25EE21D82;
-        Sun, 10 Nov 2019 02:46:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E78462184C;
+        Sun, 10 Nov 2019 02:46:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354012;
-        bh=UI1J+tDPK+dDqNQkuwW+1DwMI88CGJiKXEB/ID8jN98=;
+        s=default; t=1573354013;
+        bh=CiWs7HHikm8Jl6O3S8E4plgF2fWYCecAL5qC1fbENDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jz+NMqZSaLR5hrem+7Ms85c46pi4jMQiP5BRidGDR2FGu9RXiYVLQ6pHDKYWCErSn
-         F++khQuZc7v/NmE/4kEeNbx0N3HPdd4OgEZje2sKrSf8oDSjJ5dqO0qjGWW6jAlq0X
-         YosFLqKfGW4jstg0BngLmxcVUwWo+poWaFI52psE=
+        b=u1QQsdlGl2MyEU4Qn0AGpepYQIwl3yvaWuSTyfT5d9RU9Whi3SR9yFemRGEaRmUiU
+         GEErbFsql76zlMtFZOLSv4FpqC9DYlV+oN4VNI2kKUKj6Zl2NKHOpTIs9hl7JWjVyU
+         m5MG0G9pWtn1llDuG1Si9iJxjf/k0t7ssqgQJZwo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Agner <stefan@agner.ch>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 037/109] crypto: arm/crc32 - avoid warning when compiling with Clang
-Date:   Sat,  9 Nov 2019 21:44:29 -0500
-Message-Id: <20191110024541.31567-37-sashal@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 038/109] ARM: dts: marvell: Fix SPI and I2C bus warnings
+Date:   Sat,  9 Nov 2019 21:44:30 -0500
+Message-Id: <20191110024541.31567-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
@@ -45,44 +45,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit cd560235d8f9ddd94aa51e1c4dabdf3212b9b241 ]
+[ Upstream commit cf680cc5251487b9a39919c3cda31a108af19cf8 ]
 
-The table id (second) argument to MODULE_DEVICE_TABLE is often
-referenced otherwise. This is not the case for CPU features. This
-leads to a warning when building the kernel with Clang:
-  arch/arm/crypto/crc32-ce-glue.c:239:33: warning: variable
-    'crc32_cpu_feature' is not needed and will not be emitted
-    [-Wunneeded-internal-declaration]
-  static const struct cpu_feature crc32_cpu_feature[] = {
-                                  ^
+dtc has new checks for I2C and SPI buses. Fix the warnings in node names
+and unit-addresses.
 
-Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
-("modules: mark __inittest/__exittest as __maybe_unused").
+arch/arm/boot/dts/dove-cubox.dtb: Warning (i2c_bus_reg): /i2c-mux/i2c@0/clock-generator: I2C bus unit address format error, expected "60"
+arch/arm/boot/dts/dove-cubox-es.dtb: Warning (i2c_bus_reg): /i2c-mux/i2c@0/clock-generator: I2C bus unit address format error, expected "60"
+arch/arm/boot/dts/dove-cubox.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
+arch/arm/boot/dts/dove-cubox-es.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
+arch/arm/boot/dts/dove-dove-db.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
+arch/arm/boot/dts/dove-sbc-a510.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@10600: node name for SPI buses should be 'spi'
+arch/arm/boot/dts/dove-sbc-a510.dtb: Warning (spi_bus_bridge): /mbus/internal-regs/spi-ctrl@14600: node name for SPI buses should be 'spi'
+arch/arm/boot/dts/orion5x-kuroboxpro.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
+arch/arm/boot/dts/orion5x-linkstation-lschl.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
+arch/arm/boot/dts/orion5x-linkstation-lsgl.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
+arch/arm/boot/dts/orion5x-linkstation-lswtgl.dtb: Warning (i2c_bus_reg): /soc/internal-regs/i2c@11000/rtc: I2C bus unit address format error, expected "32"
 
-Fixes: 2a9faf8b7e43 ("crypto: arm/crc32 - enable module autoloading based on CPU feature bits")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/crypto/crc32-ce-glue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/dove-cubox.dts           | 2 +-
+ arch/arm/boot/dts/dove.dtsi                | 6 +++---
+ arch/arm/boot/dts/orion5x-linkstation.dtsi | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/crypto/crc32-ce-glue.c b/arch/arm/crypto/crc32-ce-glue.c
-index 96e62ec105d06..cd9e93b46c2dd 100644
---- a/arch/arm/crypto/crc32-ce-glue.c
-+++ b/arch/arm/crypto/crc32-ce-glue.c
-@@ -236,7 +236,7 @@ static void __exit crc32_pmull_mod_exit(void)
- 				  ARRAY_SIZE(crc32_pmull_algs));
- }
+diff --git a/arch/arm/boot/dts/dove-cubox.dts b/arch/arm/boot/dts/dove-cubox.dts
+index 580e3cbcfbf7c..3e1584e787aec 100644
+--- a/arch/arm/boot/dts/dove-cubox.dts
++++ b/arch/arm/boot/dts/dove-cubox.dts
+@@ -87,7 +87,7 @@
+ 	status = "okay";
+ 	clock-frequency = <100000>;
  
--static const struct cpu_feature crc32_cpu_feature[] = {
-+static const struct cpu_feature __maybe_unused crc32_cpu_feature[] = {
- 	{ cpu_feature(CRC32) }, { cpu_feature(PMULL) }, { }
- };
- MODULE_DEVICE_TABLE(cpu, crc32_cpu_feature);
+-	si5351: clock-generator {
++	si5351: clock-generator@60 {
+ 		compatible = "silabs,si5351a-msop";
+ 		reg = <0x60>;
+ 		#address-cells = <1>;
+diff --git a/arch/arm/boot/dts/dove.dtsi b/arch/arm/boot/dts/dove.dtsi
+index f4a07bb7c3a29..c78471b05ab46 100644
+--- a/arch/arm/boot/dts/dove.dtsi
++++ b/arch/arm/boot/dts/dove.dtsi
+@@ -155,7 +155,7 @@
+ 				  0xffffe000 MBUS_ID(0x03, 0x01) 0 0x0000800   /* CESA SRAM  2k */
+ 				  0xfffff000 MBUS_ID(0x0d, 0x00) 0 0x0000800>; /* PMU  SRAM  2k */
+ 
+-			spi0: spi-ctrl@10600 {
++			spi0: spi@10600 {
+ 				compatible = "marvell,orion-spi";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+@@ -168,7 +168,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			i2c: i2c-ctrl@11000 {
++			i2c: i2c@11000 {
+ 				compatible = "marvell,mv64xxx-i2c";
+ 				reg = <0x11000 0x20>;
+ 				#address-cells = <1>;
+@@ -218,7 +218,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			spi1: spi-ctrl@14600 {
++			spi1: spi@14600 {
+ 				compatible = "marvell,orion-spi";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/orion5x-linkstation.dtsi b/arch/arm/boot/dts/orion5x-linkstation.dtsi
+index e9991c83d7b70..117d71546ed0f 100644
+--- a/arch/arm/boot/dts/orion5x-linkstation.dtsi
++++ b/arch/arm/boot/dts/orion5x-linkstation.dtsi
+@@ -156,7 +156,7 @@
+ &i2c {
+ 	status = "okay";
+ 
+-	rtc {
++	rtc@32 {
+ 		compatible = "ricoh,rs5c372a";
+ 		reg = <0x32>;
+ 	};
 -- 
 2.20.1
 
