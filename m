@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C24F62D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:46:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E594FF62D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbfKJCqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:46:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47794 "EHLO mail.kernel.org"
+        id S1728989AbfKJCqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:46:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727812AbfKJCpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:45:43 -0500
+        id S1727960AbfKJCpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:45:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C94C21655;
-        Sun, 10 Nov 2019 02:45:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75303222BE;
+        Sun, 10 Nov 2019 02:45:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353942;
-        bh=k2A1BTemWvg7On3V9rWsnCXdzojip5BlRvpssb7PQBA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UoCgDKMmmGEp08trX5ii14ciVQBFC70EL5HsqVdqaMJ3mjmaXHBqfSwLSft8VMjMt
-         Ejgk7K8a5wwCCn3EppU2rPToxkBwRAI3HHuXaARdbHS0VotGGxRUiUNC9JqwTcYDY6
-         6nmyRnU+YYE+ZNIlnhwo1PrM0tzGrDqMG9ABm6g4=
+        s=default; t=1573353945;
+        bh=2Ryiu54J7RjdKSMXF03LaKQ2DIslLnR9lwAhh7kigR0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HoZn1n1vVQVitiSRBGinfcaNZPb0gHaO0DO2O4BW3goI5qeTje/E99cF02MwNo+Jh
+         2MOvBFqs3VDjY+8D/6ZcYSfnWqYnXLgncORU9dPKWE1hS4lTqK6u+q9wzDDj1Dj4RG
+         Vqrg/jht19+NlpMGlqqmXjsQl6uszL9VKsUqn7jQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 001/109] s390/qeth: invoke softirqs after napi_schedule()
-Date:   Sat,  9 Nov 2019 21:43:53 -0500
-Message-Id: <20191110024541.31567-1-sashal@kernel.org>
+Cc:     Nava kishore Manne <nava.manne@xilinx.com>,
+        Nava kishore Manne <navam@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 003/109] serial: uartps: Fix suspend functionality
+Date:   Sat,  9 Nov 2019 21:43:55 -0500
+Message-Id: <20191110024541.31567-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
+References: <20191110024541.31567-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -41,60 +45,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Nava kishore Manne <nava.manne@xilinx.com>
 
-[ Upstream commit 4d19db777a2f32c9b76f6fd517ed8960576cb43e ]
+[ Upstream commit 4b9d33c6a30688344a3e95179654ea31b07f59b7 ]
 
-Calling napi_schedule() from process context does not ensure that the
-NET_RX softirq is run in a timely fashion. So trigger it manually.
+The driver's suspend/resume functions were buggy.
+If UART node contains any child node in the DT and
+the child is established a communication path with
+the parent UART. The relevant /dev/ttyPS* node will
+be not available for other operations.
+If the driver is trying to do any operations like
+suspend/resume without checking the tty->dev status
+it leads to the kernel crash/hang.
 
-This is no big issue with current code. A call to ndo_open() is usually
-followed by a ndo_set_rx_mode() call, and for qeth this contains a
-spin_unlock_bh(). Except for OSN, where qeth_l2_set_rx_mode() bails out
-early.
-Nevertheless it's best to not depend on this behaviour, and just fix
-the issue at its source like all other drivers do. For instance see
-commit 83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule").
+This patch fix this issue by call the device_may_wake()
+with the generic parameter of type struct device.
+in the uart suspend and resume paths.
 
-Fixes: a1c3ed4c9ca0 ("qeth: NAPI support for l2 and l3 discipline")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+It also fixes a race condition in the uart suspend
+path(i.e uart_suspend_port() should be called at the
+end of cdns_uart_suspend API this path updates the same)
+
+Signed-off-by: Nava kishore Manne <navam@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_l2_main.c | 3 +++
- drivers/s390/net/qeth_l3_main.c | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/tty/serial/xilinx_uartps.c | 41 +++++++++---------------------
+ 1 file changed, 12 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-index 2845316db5545..6fa07c2469150 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -869,7 +869,10 @@ static int __qeth_l2_open(struct net_device *dev)
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index b0da63737aa19..0dbfd02e3b196 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1342,24 +1342,11 @@ static struct uart_driver cdns_uart_uart_driver = {
+ static int cdns_uart_suspend(struct device *device)
+ {
+ 	struct uart_port *port = dev_get_drvdata(device);
+-	struct tty_struct *tty;
+-	struct device *tty_dev;
+-	int may_wake = 0;
+-
+-	/* Get the tty which could be NULL so don't assume it's valid */
+-	tty = tty_port_tty_get(&port->state->port);
+-	if (tty) {
+-		tty_dev = tty->dev;
+-		may_wake = device_may_wakeup(tty_dev);
+-		tty_kref_put(tty);
+-	}
++	int may_wake;
  
- 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
- 		napi_enable(&card->napi);
-+		local_bh_disable();
- 		napi_schedule(&card->napi);
-+		/* kick-start the NAPI softirq: */
-+		local_bh_enable();
- 	} else
- 		rc = -EIO;
- 	return rc;
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
-index d9830c86d0c11..8bccfd686b735 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -2849,7 +2849,10 @@ static int __qeth_l3_open(struct net_device *dev)
+-	/*
+-	 * Call the API provided in serial_core.c file which handles
+-	 * the suspend.
+-	 */
+-	uart_suspend_port(&cdns_uart_uart_driver, port);
+-	if (!(console_suspend_enabled && !may_wake)) {
++	may_wake = device_may_wakeup(device);
++
++	if (console_suspend_enabled && may_wake) {
+ 		unsigned long flags = 0;
  
- 	if (qdio_stop_irq(card->data.ccwdev, 0) >= 0) {
- 		napi_enable(&card->napi);
-+		local_bh_disable();
- 		napi_schedule(&card->napi);
-+		/* kick-start the NAPI softirq: */
-+		local_bh_enable();
- 	} else
- 		rc = -EIO;
- 	return rc;
+ 		spin_lock_irqsave(&port->lock, flags);
+@@ -1374,7 +1361,11 @@ static int cdns_uart_suspend(struct device *device)
+ 		spin_unlock_irqrestore(&port->lock, flags);
+ 	}
+ 
+-	return 0;
++	/*
++	 * Call the API provided in serial_core.c file which handles
++	 * the suspend.
++	 */
++	return uart_suspend_port(&cdns_uart_uart_driver, port);
+ }
+ 
+ /**
+@@ -1388,17 +1379,9 @@ static int cdns_uart_resume(struct device *device)
+ 	struct uart_port *port = dev_get_drvdata(device);
+ 	unsigned long flags = 0;
+ 	u32 ctrl_reg;
+-	struct tty_struct *tty;
+-	struct device *tty_dev;
+-	int may_wake = 0;
+-
+-	/* Get the tty which could be NULL so don't assume it's valid */
+-	tty = tty_port_tty_get(&port->state->port);
+-	if (tty) {
+-		tty_dev = tty->dev;
+-		may_wake = device_may_wakeup(tty_dev);
+-		tty_kref_put(tty);
+-	}
++	int may_wake;
++
++	may_wake = device_may_wakeup(device);
+ 
+ 	if (console_suspend_enabled && !may_wake) {
+ 		struct cdns_uart *cdns_uart = port->private_data;
 -- 
 2.20.1
 
