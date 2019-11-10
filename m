@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B888F6248
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79783F624C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:42:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfKJClz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:41:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36714 "EHLO mail.kernel.org"
+        id S1727708AbfKJCmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:42:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727611AbfKJClu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:41:50 -0500
+        id S1727654AbfKJCl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:41:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2E4A20650;
-        Sun, 10 Nov 2019 02:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19742214E0;
+        Sun, 10 Nov 2019 02:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353709;
-        bh=E6NZP6ynkriCsftnvRMiOdDW/QfXQMjf7r0Z3bIB+9g=;
+        s=default; t=1573353715;
+        bh=UcedAKmJKOMClQiJe28VF5OGfa6QxtsLch4F49QvOxk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lwcQ2ZmnyJep36azdb+xgyGzOSYgjkGOnrff6NIGU/QHnQFHXU81AAHAWe/rCsneM
-         oQ0NkfaMCvnFOXyVAkDRIW7qYSAUbcvITQ25Fuhkbwfb43hmH981ANIswhegZ+AjBL
-         HLCgYVoCK+ykD7Vvo5z09nMSz5LhJZXRTzMeOpk0=
+        b=eHudNbIz1OuZMo5SlwvBlnptuYOwG/supxD/zKadvyaiJJvVj9Qd/e8ctRx+iP6Qb
+         VYz550OpVho+2666j8mYteE+hAeWxWA7N9A/tPfbFP73HZJeg1/Ura1ZT1eYW+qbue
+         VAn0yJdZNC+6ZEMhElOOUR5ZeiKla3koxagRY1I8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jian Shen <shenjian15@huawei.com>, Peng Li <lipeng321@huawei.com>,
         Salil Mehta <salil.mehta@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 048/191] net: hns3: Clear client pointer when initialize client failed or unintialize finished
-Date:   Sat,  9 Nov 2019 21:37:50 -0500
-Message-Id: <20191110024013.29782-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 050/191] net: hns3: Fix parameter type for q_id in hclge_tm_q_to_qs_map_cfg()
+Date:   Sat,  9 Nov 2019 21:37:52 -0500
+Message-Id: <20191110024013.29782-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -46,188 +46,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jian Shen <shenjian15@huawei.com>
 
-[ Upstream commit 49dd80541c75c2f21c28bbbdd958e993b55bf97b ]
+[ Upstream commit 32c7fbc8ffd752c6aa05d2dd7c13b0f0aa00ddaa ]
 
-If initialize client failed or finish uninitializing client, we should
-clear the client pointer. It may cause unexpected result when use
-uninitialized client. Meanwhile, we also should check whether client
-exist when uninitialize it.
+So far all the places calling hclge_tm_q_to_qs_map_cfg() are assigning
+an u16 type value to "q_id", and in the processing of
+hclge_tm_q_to_qs_map_cfg(), it also converts the "q_id" to le16.
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+The max tqp number for pf can be more than 256, we should use "u16" to
+store the queue id, instead of "u8", which may cause data lost.
+
+Fixes: 848440544b41 ("net: hns3: Add support of TX Scheduler & Shaper to HNS3 driver")
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../hisilicon/hns3/hns3pf/hclge_main.c        | 25 +++++++++-----
- .../hisilicon/hns3/hns3vf/hclgevf_main.c      | 33 ++++++++++++++-----
- 2 files changed, 41 insertions(+), 17 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 6907280d316fb..671144d1f14ac 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5467,13 +5467,13 @@ static int hclge_init_client_instance(struct hnae3_client *client,
- 			vport->nic.client = client;
- 			ret = client->ops->init_instance(&vport->nic);
- 			if (ret)
--				return ret;
-+				goto clear_nic;
- 
- 			ret = hclge_init_instance_hw(hdev);
- 			if (ret) {
- 			        client->ops->uninit_instance(&vport->nic,
- 			                                     0);
--			        return ret;
-+				goto clear_nic;
- 			}
- 
- 			if (hdev->roce_client &&
-@@ -5482,11 +5482,11 @@ static int hclge_init_client_instance(struct hnae3_client *client,
- 
- 				ret = hclge_init_roce_base_info(vport);
- 				if (ret)
--					return ret;
-+					goto clear_roce;
- 
- 				ret = rc->ops->init_instance(&vport->roce);
- 				if (ret)
--					return ret;
-+					goto clear_roce;
- 			}
- 
- 			break;
-@@ -5496,7 +5496,7 @@ static int hclge_init_client_instance(struct hnae3_client *client,
- 
- 			ret = client->ops->init_instance(&vport->nic);
- 			if (ret)
--				return ret;
-+				goto clear_nic;
- 
- 			break;
- 		case HNAE3_CLIENT_ROCE:
-@@ -5508,16 +5508,25 @@ static int hclge_init_client_instance(struct hnae3_client *client,
- 			if (hdev->roce_client && hdev->nic_client) {
- 				ret = hclge_init_roce_base_info(vport);
- 				if (ret)
--					return ret;
-+					goto clear_roce;
- 
- 				ret = client->ops->init_instance(&vport->roce);
- 				if (ret)
--					return ret;
-+					goto clear_roce;
- 			}
- 		}
- 	}
- 
- 	return 0;
-+
-+clear_nic:
-+	hdev->nic_client = NULL;
-+	vport->nic.client = NULL;
-+	return ret;
-+clear_roce:
-+	hdev->roce_client = NULL;
-+	vport->roce.client = NULL;
-+	return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 11e9259ca0407..0d45d045706c7 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -298,7 +298,7 @@ static int hclge_tm_qs_to_pri_map_cfg(struct hclge_dev *hdev,
  }
  
- static void hclge_uninit_client_instance(struct hnae3_client *client,
-@@ -5537,7 +5546,7 @@ static void hclge_uninit_client_instance(struct hnae3_client *client,
- 		}
- 		if (client->type == HNAE3_CLIENT_ROCE)
- 			return;
--		if (client->ops->uninit_instance) {
-+		if (hdev->nic_client && client->ops->uninit_instance) {
- 			hclge_uninit_instance_hw(hdev);
- 			client->ops->uninit_instance(&vport->nic, 0);
- 			hdev->nic_client = NULL;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 5570fb5dc2eb4..83fcdd326de71 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1629,17 +1629,17 @@ static int hclgevf_init_client_instance(struct hnae3_client *client,
- 
- 		ret = client->ops->init_instance(&hdev->nic);
- 		if (ret)
--			return ret;
-+			goto clear_nic;
- 
- 		if (hdev->roce_client && hnae3_dev_roce_supported(hdev)) {
- 			struct hnae3_client *rc = hdev->roce_client;
- 
- 			ret = hclgevf_init_roce_base_info(hdev);
- 			if (ret)
--				return ret;
-+				goto clear_roce;
- 			ret = rc->ops->init_instance(&hdev->roce);
- 			if (ret)
--				return ret;
-+				goto clear_roce;
- 		}
- 		break;
- 	case HNAE3_CLIENT_UNIC:
-@@ -1648,7 +1648,7 @@ static int hclgevf_init_client_instance(struct hnae3_client *client,
- 
- 		ret = client->ops->init_instance(&hdev->nic);
- 		if (ret)
--			return ret;
-+			goto clear_nic;
- 		break;
- 	case HNAE3_CLIENT_ROCE:
- 		if (hnae3_dev_roce_supported(hdev)) {
-@@ -1659,15 +1659,24 @@ static int hclgevf_init_client_instance(struct hnae3_client *client,
- 		if (hdev->roce_client && hdev->nic_client) {
- 			ret = hclgevf_init_roce_base_info(hdev);
- 			if (ret)
--				return ret;
-+				goto clear_roce;
- 
- 			ret = client->ops->init_instance(&hdev->roce);
- 			if (ret)
--				return ret;
-+				goto clear_roce;
- 		}
- 	}
- 
- 	return 0;
-+
-+clear_nic:
-+	hdev->nic_client = NULL;
-+	hdev->nic.client = NULL;
-+	return ret;
-+clear_roce:
-+	hdev->roce_client = NULL;
-+	hdev->roce.client = NULL;
-+	return ret;
- }
- 
- static void hclgevf_uninit_client_instance(struct hnae3_client *client,
-@@ -1676,13 +1685,19 @@ static void hclgevf_uninit_client_instance(struct hnae3_client *client,
- 	struct hclgevf_dev *hdev = ae_dev->priv;
- 
- 	/* un-init roce, if it exists */
--	if (hdev->roce_client)
-+	if (hdev->roce_client) {
- 		hdev->roce_client->ops->uninit_instance(&hdev->roce, 0);
-+		hdev->roce_client = NULL;
-+		hdev->roce.client = NULL;
-+	}
- 
- 	/* un-init nic/unic, if this was not called by roce client */
--	if ((client->ops->uninit_instance) &&
--	    (client->type != HNAE3_CLIENT_ROCE))
-+	if (client->ops->uninit_instance && hdev->nic_client &&
-+	    client->type != HNAE3_CLIENT_ROCE) {
- 		client->ops->uninit_instance(&hdev->nic, 0);
-+		hdev->nic_client = NULL;
-+		hdev->nic.client = NULL;
-+	}
- }
- 
- static int hclgevf_pci_init(struct hclgevf_dev *hdev)
+ static int hclge_tm_q_to_qs_map_cfg(struct hclge_dev *hdev,
+-				    u8 q_id, u16 qs_id)
++				    u16 q_id, u16 qs_id)
+ {
+ 	struct hclge_nq_to_qs_link_cmd *map;
+ 	struct hclge_desc desc;
 -- 
 2.20.1
 
