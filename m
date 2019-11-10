@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68CEEF6489
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72201F64B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:01:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfKJDAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 22:00:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47212 "EHLO mail.kernel.org"
+        id S1729575AbfKJDBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:01:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729188AbfKJC4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:56:46 -0500
+        id S1728892AbfKJC4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:56:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ABBE22501;
-        Sun, 10 Nov 2019 02:48:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 280F622517;
+        Sun, 10 Nov 2019 02:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354109;
-        bh=D9BMxha0RO46131/kkwWGslWAShKLwmYASEHjQQUC7w=;
+        s=default; t=1573354114;
+        bh=53PUyJaNZYK0oeRLvc+fYR/x3wIhJ/IcdmR/TmGCqtk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ogBsKBSaKivmTLLUbl7g9cGoxhLnGcSyn38j/nbwICrTkcmVgMi8zxBN8gs6rvKi6
-         m16gZlguEZqhZnY6day0JUFIQl0dOb97Qa0CrMjwf24UstomyUxEFiJgodvJBC43xI
-         c+z9CGmtfp8ybBVczr/dlgLZCWKEml5lFbTF2HNY=
+        b=S8axQSLdugOWb+FVBhaFWD0sjR5imbWWnNVQdnnOMaaS+PEkGK/D9JedjLEwX6LzF
+         JisJa8+oNjkho36lOTf+z21y94/vhJzydfshXoF2snWXokBmDf+pqTOvgydZC/1x2Q
+         16iuijR/65D+srW+nm6S5d0GKtn+Rqhmhfo9siTw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 099/109] scsi: NCR5380: Check for bus reset
-Date:   Sat,  9 Nov 2019 21:45:31 -0500
-Message-Id: <20191110024541.31567-99-sashal@kernel.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>, Sasha Levin <sashal@kernel.org>,
+        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 103/109] arm64: dts: rockchip: enable display nodes on rk3328-rock64
+Date:   Sat,  9 Nov 2019 21:45:35 -0500
+Message-Id: <20191110024541.31567-103-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
@@ -44,141 +42,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Heiko Stuebner <heiko@sntech.de>
 
-[ Upstream commit 6b0e87a6aafe12d75c2bea6fc8e49e88b98b3083 ]
+[ Upstream commit e78d53c7b2873e0724eb765a88ccde42560b0e05 ]
 
-The SR_RST bit isn't latched. Hence, detecting a bus reset isn't reliable.
-When it is detected, the right thing to do is to drop all connected and
-disconnected commands. The code for that is already present so refactor it and
-call it when SR_RST is set.
+Enable necessary nodes to get output on the hdmi port of the board.
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/NCR5380.c | 74 +++++++++++++++++++++++++-----------------
- 1 file changed, 45 insertions(+), 29 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3328-rock64.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index a85c5155fcf40..21377ac71168c 100644
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -131,6 +131,7 @@
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+index 3f8f528099a80..19c086f1bf6db 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+@@ -146,6 +146,14 @@
+ 	status = "okay";
+ };
  
- static int do_abort(struct Scsi_Host *);
- static void do_reset(struct Scsi_Host *);
-+static void bus_reset_cleanup(struct Scsi_Host *);
- 
- /**
-  * initialize_SCp - init the scsi pointer field
-@@ -885,7 +886,14 @@ static irqreturn_t __maybe_unused NCR5380_intr(int irq, void *dev_id)
- 			/* Probably Bus Reset */
- 			NCR5380_read(RESET_PARITY_INTERRUPT_REG);
- 
--			dsprintk(NDEBUG_INTR, instance, "unknown interrupt\n");
-+			if (sr & SR_RST) {
-+				/* Certainly Bus Reset */
-+				shost_printk(KERN_WARNING, instance,
-+					     "bus reset interrupt\n");
-+				bus_reset_cleanup(instance);
-+			} else {
-+				dsprintk(NDEBUG_INTR, instance, "unknown interrupt\n");
-+			}
- #ifdef SUN3_SCSI_VME
- 			dregs->csr |= CSR_DMA_ENABLE;
- #endif
-@@ -2303,31 +2311,12 @@ static int NCR5380_abort(struct scsi_cmnd *cmd)
- }
- 
- 
--/**
-- * NCR5380_host_reset - reset the SCSI host
-- * @cmd: SCSI command undergoing EH
-- *
-- * Returns SUCCESS
-- */
--
--static int NCR5380_host_reset(struct scsi_cmnd *cmd)
-+static void bus_reset_cleanup(struct Scsi_Host *instance)
- {
--	struct Scsi_Host *instance = cmd->device->host;
- 	struct NCR5380_hostdata *hostdata = shost_priv(instance);
- 	int i;
--	unsigned long flags;
- 	struct NCR5380_cmd *ncmd;
- 
--	spin_lock_irqsave(&hostdata->lock, flags);
--
--#if (NDEBUG & NDEBUG_ANY)
--	shost_printk(KERN_INFO, instance, __func__);
--#endif
--	NCR5380_dprint(NDEBUG_ANY, instance);
--	NCR5380_dprint_phase(NDEBUG_ANY, instance);
--
--	do_reset(instance);
--
- 	/* reset NCR registers */
- 	NCR5380_write(MODE_REG, MR_BASE);
- 	NCR5380_write(TARGET_COMMAND_REG, 0);
-@@ -2339,14 +2328,6 @@ static int NCR5380_host_reset(struct scsi_cmnd *cmd)
- 	 * commands!
- 	 */
- 
--	list_for_each_entry(ncmd, &hostdata->unissued, list) {
--		struct scsi_cmnd *cmd = NCR5380_to_scmd(ncmd);
--
--		cmd->result = DID_RESET << 16;
--		cmd->scsi_done(cmd);
--	}
--	INIT_LIST_HEAD(&hostdata->unissued);
--
- 	if (hostdata->selecting) {
- 		hostdata->selecting->result = DID_RESET << 16;
- 		complete_cmd(instance, hostdata->selecting);
-@@ -2380,6 +2361,41 @@ static int NCR5380_host_reset(struct scsi_cmnd *cmd)
- 
- 	queue_work(hostdata->work_q, &hostdata->main_task);
- 	maybe_release_dma_irq(instance);
-+}
++&hdmi {
++	status = "okay";
++};
 +
-+/**
-+ * NCR5380_host_reset - reset the SCSI host
-+ * @cmd: SCSI command undergoing EH
-+ *
-+ * Returns SUCCESS
-+ */
++&hdmiphy {
++	status = "okay";
++};
 +
-+static int NCR5380_host_reset(struct scsi_cmnd *cmd)
-+{
-+	struct Scsi_Host *instance = cmd->device->host;
-+	struct NCR5380_hostdata *hostdata = shost_priv(instance);
-+	unsigned long flags;
-+	struct NCR5380_cmd *ncmd;
-+
-+	spin_lock_irqsave(&hostdata->lock, flags);
-+
-+#if (NDEBUG & NDEBUG_ANY)
-+	shost_printk(KERN_INFO, instance, __func__);
-+#endif
-+	NCR5380_dprint(NDEBUG_ANY, instance);
-+	NCR5380_dprint_phase(NDEBUG_ANY, instance);
-+
-+	list_for_each_entry(ncmd, &hostdata->unissued, list) {
-+		struct scsi_cmnd *scmd = NCR5380_to_scmd(ncmd);
-+
-+		scmd->result = DID_RESET << 16;
-+		scmd->scsi_done(scmd);
-+	}
-+	INIT_LIST_HEAD(&hostdata->unissued);
-+
-+	do_reset(instance);
-+	bus_reset_cleanup(instance);
-+
- 	spin_unlock_irqrestore(&hostdata->lock, flags);
+ &i2c1 {
+ 	status = "okay";
  
- 	return SUCCESS;
+@@ -333,3 +341,11 @@
+ &usb_host0_ohci {
+ 	status = "okay";
+ };
++
++&vop {
++	status = "okay";
++};
++
++&vop_mmu {
++	status = "okay";
++};
 -- 
 2.20.1
 
