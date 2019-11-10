@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7CC0F625F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87BFBF6260
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:43:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbfKJCmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:42:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38790 "EHLO mail.kernel.org"
+        id S1728005AbfKJCmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:42:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727926AbfKJCmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:42:37 -0500
+        id S1727974AbfKJCmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:42:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0510921655;
-        Sun, 10 Nov 2019 02:42:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AE3D21850;
+        Sun, 10 Nov 2019 02:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353755;
-        bh=sJpkFUrgohK/C7vqVYjIlffCWI2Cx3yz6dcd7eNIJfg=;
+        s=default; t=1573353763;
+        bh=yz5PejhQbGuzk/AXf4ICBQpxa/55np+whAzr4vywspM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ORsQZ53/cfH9bjiV4Cw8KPaEkWGhWapv9XoitnFTxfOke/BTNaSkPijHERh+gy6kL
-         ZsoeRyC1dervPdZDMWP4f0nk7n3VqtJPpGMF+ntQ73EGYoS1fPc+zniiM0OPnDseBC
-         PAkIc4DHJvM/5Jcd6dKFh0vMR3PbyIGDReImn/aU=
+        b=NZGMreGONhEO86M7oWH4baXUn3P0SWhVrb44fmC2Eyk5fyE/hnly04xAnsDfxBhk2
+         aIHTHpFQpHZBU8OjMaRXI4v3xlFEXVSSSJ2yj5RFQtJkznq5n7DSKkdRPaW+KSZRQ0
+         72Mo2UQp/ikaMGsU3w9SrLfkQ7A4p0S0k9A4N0VY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@google.com>,
-        =?UTF-8?q?Stephan=20M=C3=BCller?= <smueller@chronox.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 070/191] crypto: chacha20 - Fix chacha20_block() keystream alignment (again)
-Date:   Sat,  9 Nov 2019 21:38:12 -0500
-Message-Id: <20191110024013.29782-70-sashal@kernel.org>
+Cc:     =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 075/191] ARM: dts: stm32: enable display on stm32mp157c-ev1 board
+Date:   Sat,  9 Nov 2019 21:38:17 -0500
+Message-Id: <20191110024013.29782-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -46,214 +44,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Yannick Fertré <yannick.fertre@st.com>
 
-[ Upstream commit a5e9f557098e54af44ade5d501379be18435bfbf ]
+[ Upstream commit 67330599f93672bd351123c729e2591a460fd24c ]
 
-In commit 9f480faec58c ("crypto: chacha20 - Fix keystream alignment for
-chacha20_block()"), I had missed that chacha20_block() can be called
-directly on the buffer passed to get_random_bytes(), which can have any
-alignment.  So, while my commit didn't break anything, it didn't fully
-solve the alignment problems.
+Enable panel raydium RM68200, DSI bridge & display controller.
 
-Revert my solution and just update chacha20_block() to use
-put_unaligned_le32(), so the output buffer need not be aligned.
-This is simpler, and on many CPUs it's the same speed.
-
-But, I kept the 'tmp' buffers in extract_crng_user() and
-_get_random_bytes() 4-byte aligned, since that alignment is actually
-needed for _crng_backtrack_protect() too.
-
-Reported-by: Stephan Müller <smueller@chronox.de>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/chacha20_generic.c |  7 ++++---
- drivers/char/random.c     | 24 ++++++++++++------------
- include/crypto/chacha20.h |  3 +--
- lib/chacha20.c            |  6 +++---
- 4 files changed, 20 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/stm32mp157c-ev1.dts | 73 ++++++++++++++++++++++++---
+ 1 file changed, 67 insertions(+), 6 deletions(-)
 
-diff --git a/crypto/chacha20_generic.c b/crypto/chacha20_generic.c
-index e451c3cb6a56e..3ae96587caf9a 100644
---- a/crypto/chacha20_generic.c
-+++ b/crypto/chacha20_generic.c
-@@ -18,20 +18,21 @@
- static void chacha20_docrypt(u32 *state, u8 *dst, const u8 *src,
- 			     unsigned int bytes)
- {
--	u32 stream[CHACHA20_BLOCK_WORDS];
-+	/* aligned to potentially speed up crypto_xor() */
-+	u8 stream[CHACHA20_BLOCK_SIZE] __aligned(sizeof(long));
+diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+index 372bc2ea6b921..063ee8ac5dcbd 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+@@ -6,6 +6,7 @@
+ /dts-v1/;
  
- 	if (dst != src)
- 		memcpy(dst, src, bytes);
+ #include "stm32mp157c-ed1.dts"
++#include <dt-bindings/gpio/gpio.h>
  
- 	while (bytes >= CHACHA20_BLOCK_SIZE) {
- 		chacha20_block(state, stream);
--		crypto_xor(dst, (const u8 *)stream, CHACHA20_BLOCK_SIZE);
-+		crypto_xor(dst, stream, CHACHA20_BLOCK_SIZE);
- 		bytes -= CHACHA20_BLOCK_SIZE;
- 		dst += CHACHA20_BLOCK_SIZE;
- 	}
- 	if (bytes) {
- 		chacha20_block(state, stream);
--		crypto_xor(dst, (const u8 *)stream, bytes);
-+		crypto_xor(dst, stream, bytes);
- 	}
- }
- 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 0a84b7f468ad0..86fe1df902393 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -433,9 +433,9 @@ static int crng_init_cnt = 0;
- static unsigned long crng_global_init_time = 0;
- #define CRNG_INIT_CNT_THRESH (2*CHACHA20_KEY_SIZE)
- static void _extract_crng(struct crng_state *crng,
--			  __u32 out[CHACHA20_BLOCK_WORDS]);
-+			  __u8 out[CHACHA20_BLOCK_SIZE]);
- static void _crng_backtrack_protect(struct crng_state *crng,
--				    __u32 tmp[CHACHA20_BLOCK_WORDS], int used);
-+				    __u8 tmp[CHACHA20_BLOCK_SIZE], int used);
- static void process_random_ready_list(void);
- static void _get_random_bytes(void *buf, int nbytes);
- 
-@@ -929,7 +929,7 @@ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
- 	unsigned long	flags;
- 	int		i, num;
- 	union {
--		__u32	block[CHACHA20_BLOCK_WORDS];
-+		__u8	block[CHACHA20_BLOCK_SIZE];
- 		__u32	key[8];
- 	} buf;
- 
-@@ -976,7 +976,7 @@ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
- }
- 
- static void _extract_crng(struct crng_state *crng,
--			  __u32 out[CHACHA20_BLOCK_WORDS])
-+			  __u8 out[CHACHA20_BLOCK_SIZE])
- {
- 	unsigned long v, flags;
- 
-@@ -993,7 +993,7 @@ static void _extract_crng(struct crng_state *crng,
- 	spin_unlock_irqrestore(&crng->lock, flags);
- }
- 
--static void extract_crng(__u32 out[CHACHA20_BLOCK_WORDS])
-+static void extract_crng(__u8 out[CHACHA20_BLOCK_SIZE])
- {
- 	struct crng_state *crng = NULL;
- 
-@@ -1011,7 +1011,7 @@ static void extract_crng(__u32 out[CHACHA20_BLOCK_WORDS])
-  * enough) to mutate the CRNG key to provide backtracking protection.
-  */
- static void _crng_backtrack_protect(struct crng_state *crng,
--				    __u32 tmp[CHACHA20_BLOCK_WORDS], int used)
-+				    __u8 tmp[CHACHA20_BLOCK_SIZE], int used)
- {
- 	unsigned long	flags;
- 	__u32		*s, *d;
-@@ -1023,14 +1023,14 @@ static void _crng_backtrack_protect(struct crng_state *crng,
- 		used = 0;
- 	}
- 	spin_lock_irqsave(&crng->lock, flags);
--	s = &tmp[used / sizeof(__u32)];
-+	s = (__u32 *) &tmp[used];
- 	d = &crng->state[4];
- 	for (i=0; i < 8; i++)
- 		*d++ ^= *s++;
- 	spin_unlock_irqrestore(&crng->lock, flags);
- }
- 
--static void crng_backtrack_protect(__u32 tmp[CHACHA20_BLOCK_WORDS], int used)
-+static void crng_backtrack_protect(__u8 tmp[CHACHA20_BLOCK_SIZE], int used)
- {
- 	struct crng_state *crng = NULL;
- 
-@@ -1046,7 +1046,7 @@ static void crng_backtrack_protect(__u32 tmp[CHACHA20_BLOCK_WORDS], int used)
- static ssize_t extract_crng_user(void __user *buf, size_t nbytes)
- {
- 	ssize_t ret = 0, i = CHACHA20_BLOCK_SIZE;
--	__u32 tmp[CHACHA20_BLOCK_WORDS];
-+	__u8 tmp[CHACHA20_BLOCK_SIZE] __aligned(4);
- 	int large_request = (nbytes > 256);
- 
- 	while (nbytes) {
-@@ -1625,7 +1625,7 @@ static void _warn_unseeded_randomness(const char *func_name, void *caller,
-  */
- static void _get_random_bytes(void *buf, int nbytes)
- {
--	__u32 tmp[CHACHA20_BLOCK_WORDS];
-+	__u8 tmp[CHACHA20_BLOCK_SIZE] __aligned(4);
- 
- 	trace_get_random_bytes(nbytes, _RET_IP_);
- 
-@@ -2251,7 +2251,7 @@ u64 get_random_u64(void)
- 	batch = raw_cpu_ptr(&batched_entropy_u64);
- 	spin_lock_irqsave(&batch->batch_lock, flags);
- 	if (batch->position % ARRAY_SIZE(batch->entropy_u64) == 0) {
--		extract_crng((__u32 *)batch->entropy_u64);
-+		extract_crng((u8 *)batch->entropy_u64);
- 		batch->position = 0;
- 	}
- 	ret = batch->entropy_u64[batch->position++];
-@@ -2278,7 +2278,7 @@ u32 get_random_u32(void)
- 	batch = raw_cpu_ptr(&batched_entropy_u32);
- 	spin_lock_irqsave(&batch->batch_lock, flags);
- 	if (batch->position % ARRAY_SIZE(batch->entropy_u32) == 0) {
--		extract_crng(batch->entropy_u32);
-+		extract_crng((u8 *)batch->entropy_u32);
- 		batch->position = 0;
- 	}
- 	ret = batch->entropy_u32[batch->position++];
-diff --git a/include/crypto/chacha20.h b/include/crypto/chacha20.h
-index b83d66073db03..f76302d99e2be 100644
---- a/include/crypto/chacha20.h
-+++ b/include/crypto/chacha20.h
-@@ -13,13 +13,12 @@
- #define CHACHA20_IV_SIZE	16
- #define CHACHA20_KEY_SIZE	32
- #define CHACHA20_BLOCK_SIZE	64
--#define CHACHA20_BLOCK_WORDS	(CHACHA20_BLOCK_SIZE / sizeof(u32))
- 
- struct chacha20_ctx {
- 	u32 key[8];
+ / {
+ 	model = "STMicroelectronics STM32MP157C eval daughter on eval mother";
+@@ -19,6 +20,58 @@
+ 		serial0 = &uart4;
+ 		ethernet0 = &ethernet0;
+ 	};
++
++	panel_backlight: panel-backlight {
++		compatible = "gpio-backlight";
++		gpios = <&gpiod 13 GPIO_ACTIVE_LOW>;
++		default-on;
++		status = "okay";
++	};
++};
++
++&cec {
++	pinctrl-names = "default";
++	pinctrl-0 = <&cec_pins_a>;
++	status = "okay";
++};
++
++&dsi {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			dsi_in: endpoint {
++				remote-endpoint = <&ltdc_ep0_out>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++			dsi_out: endpoint {
++				remote-endpoint = <&dsi_panel_in>;
++			};
++		};
++	};
++
++	panel-dsi@0 {
++		compatible = "raydium,rm68200";
++		reg = <0>;
++		reset-gpios = <&gpiof 15 GPIO_ACTIVE_LOW>;
++		backlight = <&panel_backlight>;
++		status = "okay";
++
++		port {
++			dsi_panel_in: endpoint {
++				remote-endpoint = <&dsi_out>;
++			};
++		};
++	};
  };
  
--void chacha20_block(u32 *state, u32 *stream);
-+void chacha20_block(u32 *state, u8 *stream);
- void crypto_chacha20_init(u32 *state, struct chacha20_ctx *ctx, u8 *iv);
- int crypto_chacha20_setkey(struct crypto_skcipher *tfm, const u8 *key,
- 			   unsigned int keysize);
-diff --git a/lib/chacha20.c b/lib/chacha20.c
-index c1cc50fb68c9f..d907fec6a9ed1 100644
---- a/lib/chacha20.c
-+++ b/lib/chacha20.c
-@@ -16,9 +16,9 @@
- #include <asm/unaligned.h>
- #include <crypto/chacha20.h>
+ &ethernet0 {
+@@ -40,12 +93,6 @@
+ 	};
+ };
  
--void chacha20_block(u32 *state, u32 *stream)
-+void chacha20_block(u32 *state, u8 *stream)
- {
--	u32 x[16], *out = stream;
-+	u32 x[16];
- 	int i;
+-&cec {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&cec_pins_a>;
+-	status = "okay";
+-};
+-
+ &i2c2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c2_pins_a>;
+@@ -62,6 +109,20 @@
+ 	status = "okay";
+ };
  
- 	for (i = 0; i < ARRAY_SIZE(x); i++)
-@@ -67,7 +67,7 @@ void chacha20_block(u32 *state, u32 *stream)
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(x); i++)
--		out[i] = cpu_to_le32(x[i] + state[i]);
-+		put_unaligned_le32(x[i] + state[i], &stream[i * sizeof(u32)]);
- 
- 	state[12]++;
- }
++&ltdc {
++	status = "okay";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ltdc_ep0_out: endpoint@0 {
++			reg = <0>;
++			remote-endpoint = <&dsi_in>;
++		};
++	};
++};
++
+ &m_can1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&m_can1_pins_a>;
 -- 
 2.20.1
 
