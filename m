@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57859F66C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21037F66CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:16:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfKJCkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:40:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33612 "EHLO mail.kernel.org"
+        id S1727164AbfKJCk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:40:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbfKJCkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:40:32 -0500
+        id S1726960AbfKJCkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:40:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FCA9222C4;
-        Sun, 10 Nov 2019 02:40:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8058521848;
+        Sun, 10 Nov 2019 02:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353632;
-        bh=H6WRcRF4jr5TKpnkFhGUjOIpidjg4AoHJXVq/R2DmTI=;
+        s=default; t=1573353635;
+        bh=tUyb4ZvDNTErODYS3eWyY51LlfThwbwFhqkZafNHPF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kPWZWmrs+U37S2EQ+w7t2vNPp8zy+H/dH3PkgYDFUBhNQl3MOr6VYqZo2yoJ+cmJK
-         ykmg8D5xfixo3cXW3DFP5/b+26RJkaHhmSna6r7Y4bDU6Y1N4Y/HP4wxnwoQ/ZpoGW
-         yek4PuVvtbePeG8OrOQ9EjPhXwyNVx+4pNdzsnD4=
+        b=iEsV7HaU+XUodwJ9eOj44pbkFdJj1QX9VDQJlrnxoaCNjav7afCfap2PldYy0Ybfy
+         R3N7be+6sGNrBN8aDVX2v0Eaf/vM/FsmTX2Kg4AuJ6QV+Lh+JxIS3GiaRGeWK0+qT/
+         CJZ8ZMi3FOD51Lh7J86tPXnciPO5b67bZnXviH84=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yonghong Song <yhs@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 015/191] samples/bpf: fix a compilation failure
-Date:   Sat,  9 Nov 2019 21:37:17 -0500
-Message-Id: <20191110024013.29782-15-sashal@kernel.org>
+Cc:     Shuming Fan <shumingf@realtek.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 018/191] ASoC: rt5682: Fix the boost volume at the begining of playback
+Date:   Sat,  9 Nov 2019 21:37:20 -0500
+Message-Id: <20191110024013.29782-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,60 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghong Song <yhs@fb.com>
+From: Shuming Fan <shumingf@realtek.com>
 
-[ Upstream commit 534e0e52bc23de588e81b5a6f75e10c8c4b189fc ]
+[ Upstream commit 28b20dde5e1c943ab899549a655ac4935cffccbb ]
 
-samples/bpf build failed with the following errors:
+This patch fixed the boost volume at the begining of playback
+while DAC volume set to lower level.
 
-  $ make samples/bpf/
-  ...
-  HOSTCC  samples/bpf/sockex3_user.o
-  /data/users/yhs/work/net-next/samples/bpf/sockex3_user.c:16:8: error: redefinition of ‘struct bpf_flow_keys’
-   struct bpf_flow_keys {
-          ^
-  In file included from /data/users/yhs/work/net-next/samples/bpf/sockex3_user.c:4:0:
-  ./usr/include/linux/bpf.h:2338:9: note: originally defined here
-    struct bpf_flow_keys *flow_keys;
-           ^
-  make[3]: *** [samples/bpf/sockex3_user.o] Error 1
-
-Commit d58e468b1112d ("flow_dissector: implements flow dissector BPF hook")
-introduced struct bpf_flow_keys in include/uapi/linux/bpf.h and hence
-caused the naming conflict with samples/bpf/sockex3_user.c.
-
-The fix is to rename struct bpf_flow_keys in samples/bpf/sockex3_user.c
-to flow_keys to avoid the conflict.
-
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Shuming Fan <shumingf@realtek.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/bpf/sockex3_user.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt5682.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/samples/bpf/sockex3_user.c b/samples/bpf/sockex3_user.c
-index 5ba3ae9d180ba..22f74d0e14934 100644
---- a/samples/bpf/sockex3_user.c
-+++ b/samples/bpf/sockex3_user.c
-@@ -13,7 +13,7 @@
- #define PARSE_IP_PROG_FD (prog_fd[0])
- #define PROG_ARRAY_FD (map_fd[0])
+diff --git a/sound/soc/codecs/rt5682.c b/sound/soc/codecs/rt5682.c
+index 6f5dac09ceded..baa00f04288bd 100644
+--- a/sound/soc/codecs/rt5682.c
++++ b/sound/soc/codecs/rt5682.c
+@@ -68,6 +68,7 @@ struct rt5682_priv {
  
--struct bpf_flow_keys {
-+struct flow_keys {
- 	__be32 src;
- 	__be32 dst;
- 	union {
-@@ -64,7 +64,7 @@ int main(int argc, char **argv)
- 	(void) f;
+ static const struct reg_sequence patch_list[] = {
+ 	{0x01c1, 0x1000},
++	{RT5682_DAC_ADC_DIG_VOL1, 0xa020},
+ };
  
- 	for (i = 0; i < 5; i++) {
--		struct bpf_flow_keys key = {}, next_key;
-+		struct flow_keys key = {}, next_key;
- 		struct pair value;
+ static const struct reg_default rt5682_reg[] = {
+@@ -1449,6 +1450,8 @@ static int rt5682_hp_event(struct snd_soc_dapm_widget *w,
+ 			RT5682_NG2_EN_MASK, RT5682_NG2_EN);
+ 		snd_soc_component_update_bits(component,
+ 			RT5682_DEPOP_1, 0x60, 0x60);
++		snd_soc_component_update_bits(component,
++			RT5682_DAC_ADC_DIG_VOL1, 0x00c0, 0x0080);
+ 		break;
  
- 		sleep(1);
+ 	case SND_SOC_DAPM_POST_PMD:
+@@ -1456,6 +1459,8 @@ static int rt5682_hp_event(struct snd_soc_dapm_widget *w,
+ 			RT5682_DEPOP_1, 0x60, 0x0);
+ 		snd_soc_component_write(component,
+ 			RT5682_HP_CTRL_2, 0x0000);
++		snd_soc_component_update_bits(component,
++			RT5682_DAC_ADC_DIG_VOL1, 0x00c0, 0x0000);
+ 		break;
+ 
+ 	default:
 -- 
 2.20.1
 
