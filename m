@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8160F64B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3748EF64CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfKJCtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:49:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58308 "EHLO mail.kernel.org"
+        id S1728220AbfKJDCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 22:02:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729417AbfKJCtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:49:20 -0500
+        id S1727813AbfKJCtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:49:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C26C22794;
-        Sun, 10 Nov 2019 02:49:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBEB322573;
+        Sun, 10 Nov 2019 02:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354160;
-        bh=q0HxcKvb9Z3rOWVbGowKsn/8p/HzGtoz1XeQPsgPasI=;
+        s=default; t=1573354162;
+        bh=DRVLIb+S6bls2U4zyuL8VSpcvNgjGL1bKo8eVmAIHsg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XN3U4RjU56WXBUsigLF9E0OiKoesiowo94Eo+swj0Ow3pnRLV+fx2Wi82uLnG0fbv
-         4Hp7LpNbKK4ajB8KlEEHjPMQRuOWKEZUjkkqgMTn+RenfiIC+Ml9rkPA6IAUYFfAER
-         sx+PDgGP5nKoQeUMW+74OfHkSe99o2sIH5n7eSJE=
+        b=QwlT3SVOp5xE0/S0qPfPUg5yKwV2rcbaK20br75/DRa4r53boNA3JI1eaTCoCTlWm
+         vfgAHOEfc1zTvsnJJ9L9FqAuXyc5h4ezQWp2842cg1ct6BhaU+vF5QI2rnb7jRaESF
+         03MO6Mq13tUJqGJQi2btvZQ/+Ty5rcoAe3QkpNWI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Petr Machata <petrm@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 17/66] mlxsw: spectrum: Init shaper for TCs 8..15
-Date:   Sat,  9 Nov 2019 21:47:56 -0500
-Message-Id: <20191110024846.32598-17-sashal@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.9 19/66] f2fs: fix to recover inode's uid/gid during POR
+Date:   Sat,  9 Nov 2019 21:47:58 -0500
+Message-Id: <20191110024846.32598-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024846.32598-1-sashal@kernel.org>
 References: <20191110024846.32598-1-sashal@kernel.org>
@@ -44,46 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Machata <petrm@mellanox.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit a9f36656b519a9a21309793c306941a3cd0eeb8f ]
+[ Upstream commit dc4cd1257c86451cec3e8e352cc376348e4f4af4 ]
 
-With introduction of MC-aware mode to mlxsw, it became necessary to
-configure TCs above 7 as well. There is now code in mlxsw to disable ETS
-for these higher classes, but disablement of max shaper was neglected.
+Step to reproduce this bug:
+1. logon as root
+2. mount -t f2fs /dev/sdd /mnt;
+3. touch /mnt/file;
+4. chown system /mnt/file; chgrp system /mnt/file;
+5. xfs_io -f /mnt/file -c "fsync";
+6. godown /mnt;
+7. umount /mnt;
+8. mount -t f2fs /dev/sdd /mnt;
 
-By default, max shaper is currently disabled to begin with, so the
-problem is just cosmetic. However, for symmetry, do like we do for ETS
-configuration, and call mlxsw_sp_port_ets_maxrate_set() for both TC i
-and i + 8.
+After step 8) we will expect file's uid/gid are all system, but during
+recovery, these two fields were not been recovered, fix it.
 
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/f2fs/recovery.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-index 585a40cc6470b..8460c4807567c 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -2191,6 +2191,13 @@ static int mlxsw_sp_port_ets_init(struct mlxsw_sp_port *mlxsw_sp_port)
- 						    MLXSW_REG_QEEC_MAS_DIS);
- 		if (err)
- 			return err;
-+
-+		err = mlxsw_sp_port_ets_maxrate_set(mlxsw_sp_port,
-+						    MLXSW_REG_QEEC_HIERARCY_TC,
-+						    i + 8, i,
-+						    MLXSW_REG_QEEC_MAS_DIS);
-+		if (err)
-+			return err;
- 	}
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 9de1480a86bd3..e87b7d7e80fc7 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -179,6 +179,8 @@ static void recover_inode(struct inode *inode, struct page *page)
+ 	char *name;
  
- 	/* Map all priorities to traffic class 0. */
+ 	inode->i_mode = le16_to_cpu(raw->i_mode);
++	i_uid_write(inode, le32_to_cpu(raw->i_uid));
++	i_gid_write(inode, le32_to_cpu(raw->i_gid));
+ 	f2fs_i_size_write(inode, le64_to_cpu(raw->i_size));
+ 	inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
+ 	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
 -- 
 2.20.1
 
