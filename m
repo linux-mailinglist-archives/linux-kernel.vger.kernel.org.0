@@ -2,36 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B38AF62BD
+	by mail.lfdr.de (Postfix) with ESMTP id 8F180F62BE
 	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbfKJCpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:45:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44142 "EHLO mail.kernel.org"
+        id S1728774AbfKJCpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:45:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727585AbfKJCog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:44:36 -0500
+        id S1728617AbfKJCok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:44:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D57721655;
-        Sun, 10 Nov 2019 02:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AB6A21848;
+        Sun, 10 Nov 2019 02:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353875;
-        bh=r64Ku2WpgWZ33C/ouKN9RgAuvGGM6d+Ynye61UfTUIw=;
+        s=default; t=1573353879;
+        bh=LlzMNDJ0JCchkYkAHu29SOMVRQeTRHAAwXM9PKy8u+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gfYPUb1iz3k4vnUSbDZ7ogTd6QxwrmaYkV6Rr1jb1d28U+ZUzpns4TabVSYP7naq1
-         WTbgpCasANM4VWN9/Bo4gkSymGwwvBB6w8mvFaf2HV/K5kx3E4kuxaQOBn9jGCO1C2
-         G0ltCabgoc+HdpTeq5wMIX99UMI5rYs39FG54bvU=
+        b=D0tNJv57iUmVUWbNs2zqpneo7YwUmQr+6mmfdg7Cr7MFR3y45EwVzhyLdzc62rxNe
+         Sa5wfQfTwOkuoE11jWNpaAUtSmuFH0WJPypVjSXSEvOWVXDD+fjPQlE9DDcfKByuyC
+         Et94AL0E3L/caDsN05VygW+/XUc+IA8lfQNadfec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 154/191] Bluetooth: L2CAP: Detect if remote is not able to use the whole MPS
-Date:   Sat,  9 Nov 2019 21:39:36 -0500
-Message-Id: <20191110024013.29782-154-sashal@kernel.org>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        Olaf Aepfle <olaf@aepfle.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Marcelo Cerri <marcelo.cerri@canonical.com>,
+        Josh Poulson <jopoulso@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 156/191] x86/hyperv: Suppress "PCI: Fatal: No config space access function found"
+Date:   Sat,  9 Nov 2019 21:39:38 -0500
+Message-Id: <20191110024013.29782-156-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -44,42 +55,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit a5c3021bb62b970713550db3f7fd08aa70665d7e ]
+[ Upstream commit 2f285f46240d67060061d153786740d4df53cd78 ]
 
-If the remote is not able to fully utilize the MPS choosen recalculate
-the credits based on the actual amount it is sending that way it can
-still send packets of MTU size without credits dropping to 0.
+A Generation-2 Linux VM on Hyper-V doesn't have the legacy PCI bus, and
+users always see the scary warning, which is actually harmless.
 
-Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Suppress it.
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: KY Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+Cc: Olaf Aepfle <olaf@aepfle.de>
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Marcelo Cerri <marcelo.cerri@canonical.com>
+Cc: Josh Poulson <jopoulso@microsoft.com>
+Link: https://lkml.kernel.org/r/ <KU1P153MB0166D977DC930996C4BF538ABF1D0@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/l2cap_core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/hyperv/hv_init.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index 260ef5426e0ca..974c1b8a689c1 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -6819,6 +6819,16 @@ static int l2cap_le_data_rcv(struct l2cap_chan *chan, struct sk_buff *skb)
- 		chan->sdu_len = sdu_len;
- 		chan->sdu_last_frag = skb;
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 3fb8551552862..8a9cff1f129dc 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -17,6 +17,7 @@
+  *
+  */
  
-+		/* Detect if remote is not able to use the selected MPS */
-+		if (skb->len + L2CAP_SDULEN_SIZE < chan->mps) {
-+			u16 mps_len = skb->len + L2CAP_SDULEN_SIZE;
-+
-+			/* Adjust the number of credits */
-+			BT_DBG("chan->mps %u -> %u", chan->mps, mps_len);
-+			chan->mps = mps_len;
-+			l2cap_chan_le_send_credits(chan);
-+		}
-+
- 		return 0;
- 	}
++#include <linux/efi.h>
+ #include <linux/types.h>
+ #include <asm/apic.h>
+ #include <asm/desc.h>
+@@ -257,6 +258,22 @@ static int hv_cpu_die(unsigned int cpu)
+ 	return 0;
+ }
  
++static int __init hv_pci_init(void)
++{
++	int gen2vm = efi_enabled(EFI_BOOT);
++
++	/*
++	 * For Generation-2 VM, we exit from pci_arch_init() by returning 0.
++	 * The purpose is to suppress the harmless warning:
++	 * "PCI: Fatal: No config space access function found"
++	 */
++	if (gen2vm)
++		return 0;
++
++	/* For Generation-1 VM, we'll proceed in pci_arch_init().  */
++	return 1;
++}
++
+ /*
+  * This function is to be invoked early in the boot sequence after the
+  * hypervisor has been detected.
+@@ -333,6 +350,8 @@ void __init hyperv_init(void)
+ 
+ 	hv_apic_init();
+ 
++	x86_init.pci.arch_init = hv_pci_init;
++
+ 	/*
+ 	 * Register Hyper-V specific clocksource.
+ 	 */
 -- 
 2.20.1
 
