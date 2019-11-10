@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B70F6223
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D764FF622A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 03:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfKJCk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:40:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33270 "EHLO mail.kernel.org"
+        id S1726986AbfKJCkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:40:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726789AbfKJCkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:40:23 -0500
+        id S1726879AbfKJCk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:40:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D659D214E0;
-        Sun, 10 Nov 2019 02:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74149214E0;
+        Sun, 10 Nov 2019 02:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353622;
-        bh=5jKDS4f6adCK47ipLVZiaAL1ffsI2Sc6gz7VkiAQEZM=;
+        s=default; t=1573353627;
+        bh=oO0gUUG/vj63i5VoHzt41VVsBO2NgniuaSJlilhfdaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fuNV6S7B3PZ3UFd4wCL9Sfn1Q0ewkTT9q8AZ3iBQDbXG/giCTQESQez1/yIWTXK23
-         //X4PcYOXADO/SCf7fvA2nW3I5OXpFneudErsfj+HuYmXuJ/d6RmJCW+V2YIhZABYZ
-         BnCItkMLGPpPJDk+5bpQ5mY531o9IN3v/X8esA40=
+        b=XEWhsSV9NiosNOrZLv/YenTHS8tzauTd4M4a4pK+wGJuD37DU7Qpsv7yUIWa/leqr
+         dqUhUzZx4tf5l/uVcxKgLoTtTDUw2X1kZWTH2I5AUBEufqo++uJzhi3h55YVfR9sDI
+         7vcw/Ldc1D6tE+/bIk3W3kJn41qbpbEvBgPPURVw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 007/191] net: socionext: Fix two sleep-in-atomic-context bugs in ave_rxfifo_reset()
-Date:   Sat,  9 Nov 2019 21:37:09 -0500
-Message-Id: <20191110024013.29782-7-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 011/191] serial: samsung: Enable baud clock for UART reset procedure in resume
+Date:   Sat,  9 Nov 2019 21:37:13 -0500
+Message-Id: <20191110024013.29782-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
@@ -43,54 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 0020f5c807ef67954d9210eea0ba17a6134cdf7d ]
+[ Upstream commit 1ff3652bc7111df26b5807037f624be294cf69d5 ]
 
-The driver may sleep with holding a spinlock.
-The function call paths (from bottom to top) in Linux-4.17 are:
+Ensure that the baud clock is also enabled for UART register writes in
+driver resume. On Exynos5433 SoC this is needed to avoid external abort
+issue.
 
-[FUNC] usleep_range
-drivers/net/ethernet/socionext/sni_ave.c, 892:
-	usleep_range in ave_rxfifo_reset
-drivers/net/ethernet/socionext/sni_ave.c, 932:
-	ave_rxfifo_reset in ave_irq_handler
-
-[FUNC] usleep_range
-drivers/net/ethernet/socionext/sni_ave.c, 888:
-	usleep_range in ave_rxfifo_reset
-drivers/net/ethernet/socionext/sni_ave.c, 932:
-	ave_rxfifo_reset in ave_irq_handler
-
-To fix these bugs, usleep_range() is replaced with udelay().
-
-These bugs are found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/socionext/sni_ave.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/samsung.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/ethernet/socionext/sni_ave.c b/drivers/net/ethernet/socionext/sni_ave.c
-index f27d67a4d3045..09d25b87cf7c0 100644
---- a/drivers/net/ethernet/socionext/sni_ave.c
-+++ b/drivers/net/ethernet/socionext/sni_ave.c
-@@ -906,11 +906,11 @@ static void ave_rxfifo_reset(struct net_device *ndev)
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index c6058b52d5d59..2a49b6d876b87 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1944,7 +1944,11 @@ static int s3c24xx_serial_resume(struct device *dev)
  
- 	/* assert reset */
- 	writel(AVE_GRR_RXFFR, priv->base + AVE_GRR);
--	usleep_range(40, 50);
-+	udelay(50);
+ 	if (port) {
+ 		clk_prepare_enable(ourport->clk);
++		if (!IS_ERR(ourport->baudclk))
++			clk_prepare_enable(ourport->baudclk);
+ 		s3c24xx_serial_resetport(port, s3c24xx_port_to_cfg(port));
++		if (!IS_ERR(ourport->baudclk))
++			clk_disable_unprepare(ourport->baudclk);
+ 		clk_disable_unprepare(ourport->clk);
  
- 	/* negate reset */
- 	writel(0, priv->base + AVE_GRR);
--	usleep_range(10, 20);
-+	udelay(20);
- 
- 	/* negate interrupt status */
- 	writel(AVE_GI_RXOVF, priv->base + AVE_GISR);
+ 		uart_resume_port(&s3c24xx_uart_drv, port);
+@@ -1967,7 +1971,11 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
+ 			if (rx_enabled(port))
+ 				uintm &= ~S3C64XX_UINTM_RXD_MSK;
+ 			clk_prepare_enable(ourport->clk);
++			if (!IS_ERR(ourport->baudclk))
++				clk_prepare_enable(ourport->baudclk);
+ 			wr_regl(port, S3C64XX_UINTM, uintm);
++			if (!IS_ERR(ourport->baudclk))
++				clk_disable_unprepare(ourport->baudclk);
+ 			clk_disable_unprepare(ourport->clk);
+ 		}
+ 	}
 -- 
 2.20.1
 
