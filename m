@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D9BF6548
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F816F653F
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 04:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbfKJCqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 9 Nov 2019 21:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47854 "EHLO mail.kernel.org"
+        id S1729000AbfKJCqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 9 Nov 2019 21:46:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbfKJCpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:45:44 -0500
+        id S1728913AbfKJCpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:45:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 431D421D7F;
-        Sun, 10 Nov 2019 02:45:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A752D21850;
+        Sun, 10 Nov 2019 02:45:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573353944;
-        bh=63nU4fdCgX2p8UUb5OJm+yB5Xgb0CqU3zNEb9oVmn4Y=;
+        s=default; t=1573353946;
+        bh=srycieWXSGszwVJ8ASQMK8t1Lxk8Er2ie0ADMyYiDBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ULg3zxWEHUW58PIhgr0ocODVJZU/+KQp4VvUTmb3UR3/iFNxZ/ziHBQIRiA/jVEdr
-         RRjIBsEOV9O6fWm4/8FAY/2Xf9J/t+JtquY+fEJ9WwrQV1RRbpvKJjXNpZCit3B1zU
-         Tfh4VzMCEAkaUdm1UUw+b1P+2+rBUxhBHPqHbGTg=
+        b=sG5rDt7uJYHMnS+fkf34ybJdZdjo8Ml+IMX9Il5bk/D0bRE3tf53w77b1EGnYljwB
+         JgapFapLnTBKSHL8uRVnCGXF/0+UKIQzNjYhFr56hD4QimSZLxi5ej6GucXRYhb15E
+         tqJP0aCvTntj4ngv6QiaE1Ctod38eqPXDDd5mTDE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 002/109] PCI/ACPI: Correct error message for ASPM disabling
-Date:   Sat,  9 Nov 2019 21:43:54 -0500
-Message-Id: <20191110024541.31567-2-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 004/109] serial: samsung: Enable baud clock for UART reset procedure in resume
+Date:   Sat,  9 Nov 2019 21:43:56 -0500
+Message-Id: <20191110024541.31567-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
 References: <20191110024541.31567-1-sashal@kernel.org>
@@ -45,40 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sinan Kaya <okaya@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 1ad61b612b95980a4d970c52022aa01dfc0f6068 ]
+[ Upstream commit 1ff3652bc7111df26b5807037f624be294cf69d5 ]
 
-If _OSC execution fails today for platforms without an _OSC entry, code is
-printing a misleading message saying disabling ASPM as follows:
+Ensure that the baud clock is also enabled for UART register writes in
+driver resume. On Exynos5433 SoC this is needed to avoid external abort
+issue.
 
-  acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
-
-We need to ensure that platform supports ASPM to begin with.
-
-Reported-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/pci_root.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/serial/samsung.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index eb857d6ea1fef..96911360a28e7 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -454,8 +454,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm)
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
- 	if (ACPI_FAILURE(status)) {
--		dev_info(&device->dev, "_OSC failed (%s); disabling ASPM\n",
--			 acpi_format_exception(status));
-+		dev_info(&device->dev, "_OSC failed (%s)%s\n",
-+			 acpi_format_exception(status),
-+			 pcie_aspm_support_enabled() ? "; disabling ASPM" : "");
- 		*no_aspm = 1;
- 		return;
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index f4b8e4e17a868..808373d4e37a6 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1922,7 +1922,11 @@ static int s3c24xx_serial_resume(struct device *dev)
+ 
+ 	if (port) {
+ 		clk_prepare_enable(ourport->clk);
++		if (!IS_ERR(ourport->baudclk))
++			clk_prepare_enable(ourport->baudclk);
+ 		s3c24xx_serial_resetport(port, s3c24xx_port_to_cfg(port));
++		if (!IS_ERR(ourport->baudclk))
++			clk_disable_unprepare(ourport->baudclk);
+ 		clk_disable_unprepare(ourport->clk);
+ 
+ 		uart_resume_port(&s3c24xx_uart_drv, port);
+@@ -1945,7 +1949,11 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
+ 			if (rx_enabled(port))
+ 				uintm &= ~S3C64XX_UINTM_RXD_MSK;
+ 			clk_prepare_enable(ourport->clk);
++			if (!IS_ERR(ourport->baudclk))
++				clk_prepare_enable(ourport->baudclk);
+ 			wr_regl(port, S3C64XX_UINTM, uintm);
++			if (!IS_ERR(ourport->baudclk))
++				clk_disable_unprepare(ourport->baudclk);
+ 			clk_disable_unprepare(ourport->clk);
+ 		}
  	}
 -- 
 2.20.1
