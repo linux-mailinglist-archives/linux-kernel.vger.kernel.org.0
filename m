@@ -2,147 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5057FF69C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 16:34:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0FB3F69DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 16:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfKJPeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 10:34:31 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37247 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbfKJPea (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 10:34:30 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b17so2524323wmj.2
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 07:34:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TdV7XpL7RLMLTh9ti2lAMwlGymLkQ1keBdQ4En0w/Ak=;
-        b=S7pDiUJTmZdd/uzPKx2/egn4wtdkDj6ZN+GbeZ8bd8wuMNesmVqCWs0mLUPBqXnGIP
-         04tf8X95H/BXQken000sNnH1u2MxO+GXTR+m6Sb5cpGfapjsQJVfXsLhxvrrPQqW6TQG
-         5AYLttaGrvkgjZv33SP/G0caCriKPPc+GEYe+tAK8BNxc06u63DJ+/2CwHYaD2F++IUH
-         cdVBjE/Oj/c5xpu1en+nhiomLFdrTjT4Zan4da4r6svZG8f0e/Hg2Qjm4/7XDVu1FSXt
-         1A/vwTeQNBT6lB6c97u5nUIK0JgXe388KIDpVayhUXezNteCh965n3ubYS9gB6XlpKSk
-         zW3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TdV7XpL7RLMLTh9ti2lAMwlGymLkQ1keBdQ4En0w/Ak=;
-        b=LQr+1IiOWxqmhByhK0EhJiQep2x+cSQNRL+kLjy60OWIu1NH4BLiBfHZva4Sw+N0MV
-         BcSSXXOD9hTljy+rWZ+lEPT1u9rsm8GPp5IELy6gY6yFR2CU5IHEnEcuj6+r0Uyzoz5j
-         pERjFEwrjDNRrLj35xaRp9PVDYaMwGu9OARdYJqEw/3QhrmG+CHakzqoANzEjzFUAF2S
-         QScRV8YFKJssEak0gsDnA4e61OebAXyL4kWyktMM57e77A000vSRdkQbqtCYG+ZOxNF9
-         C7BVo1+VROeZAilIsB0p0NYQkks3uoIEOZXaEcNf9OwxuzCiXMy2oksTnko3s/rnIue0
-         XAOw==
-X-Gm-Message-State: APjAAAUL2irhWam0gos14yWwd4VyDSrTJZfNH5BpspRTqZXHI8YtT/E6
-        113Csjo2NVXXRyRo2gPf1/5L3Aw=
-X-Google-Smtp-Source: APXvYqxbe2qmRGV42IwbDleF6tZuhMOaSpFNGQ3wwjB+5LGby/VPIgwJXAvZ2hhzcRePiHBFXE8KPg==
-X-Received: by 2002:a7b:c4c7:: with SMTP id g7mr10031750wmk.144.1573400068402;
-        Sun, 10 Nov 2019 07:34:28 -0800 (PST)
-Received: from avx2 ([46.53.254.55])
-        by smtp.gmail.com with ESMTPSA id f6sm13622818wrm.61.2019.11.10.07.34.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Nov 2019 07:34:27 -0800 (PST)
-Date:   Sun, 10 Nov 2019 18:34:25 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     pbonzini@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: "statsfs" API design
-Message-ID: <20191110153424.GA5141@avx2>
-References: <20191109184441.GA5092@avx2>
- <20191110091435.GC1435668@kroah.com>
+        id S1726896AbfKJPmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 10:42:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726653AbfKJPmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 10:42:32 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 398CE206DF;
+        Sun, 10 Nov 2019 15:42:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573400550;
+        bh=filNipiIL+CojQ5NHq1u4otFdr1sJVcSn9uBuU1tBT0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=0ozdXLfVkNaM1MDdzNZISOpXniSTj6wqr2wSXKuXqFkW9/vh3JtEog23iS5oo+tp1
+         qhmXa2/rBe2ZkqTvUYrn68F/2cchMwASUDAjCCRJY0h1rkhyL3FPYp8Yku7HEltThC
+         5qEyYX5TclfnlzjOFMOpKfm1mRRcufEB2eFlzb+A=
+Date:   Sun, 10 Nov 2019 16:42:28 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 5.4-rc7
+Message-ID: <20191110154228.GA2867363@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191110091435.GC1435668@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 10, 2019 at 10:14:35AM +0100, Greg KH wrote:
-> On Sat, Nov 09, 2019 at 09:44:41PM +0300, Alexey Dobriyan wrote:
-> > > statsfs is a proposal for a new Linux kernel synthetic filesystem,
-> > > to be mounted in /sys/kernel/stats
-> > 
-> > I think /proc experiment teaches pretty convincingly that dressing
-> > things into a filesystem can be done but ultimately is a stupid idea.
-> > It adds so much overhead for small-to-medium systems.
-> > 
-> > > The first user of statsfs would be KVM, which is currently exposing
-> > > its stats in debugfs
-> > 
-> > > Google has KVM patches to gather statistics in a binary format
-> > 
-> > Which is a right thing to do.
-> 
-> It's always "simpler" to just take binary data and suck it in.
+The following changes since commit d6d5df1db6e9d7f8f76d2911707f7d5877251b02:
 
-Faster too!
+  Linux 5.4-rc5 (2019-10-27 13:19:19 -0400)
 
-> That works for a year or so until another value needs to be supported.
-> Or removed.  Or features are backported.
-> 
-> The reason text values in individual files work is they are "self
-> describable" and "self discoverable".
+are available in the Git repository at:
 
-Untrue. Applications always knows what the data means, by definition:
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.4-rc7
 
-	"0x42"
+for you to fetch changes up to 9d55499d8da49e9261e95a490f3fda41d955f505:
 
-What is this? 4-char NUL-terminated string? Or an integer 66? Or a
-4-byte nonce blob for some kind of crypto algorithm.
+  intel_th: pci: Add Jasper Lake PCH support (2019-11-04 15:01:25 +0100)
 
-In the other direction: describe every field of /proc/*/stat file
-without looking to the manpage:
+----------------------------------------------------------------
+Char/Misc driver fixes for 5.4-rc7
 
-$ cat /proc/self/stat
-5349 (cat) R 5342 5349 5342 34826 5349 4210688 91 0 0 0 0 0 0 0 20 0 1 0 864988 9183232 184 18446744073709551615 94352028622848 94352028651936 140733810522864 0 0 0 0 0 0 0 0 0 17 5 0 0 0 0 0 94352030751824 94352030753376 94352060055552 140733810527527 140733810527547 140733810527547 140733810532335 0
+Here are a number of late-arrival driver fixes for issues reported for
+some char/misc drivers for 5.4-rc7
 
-> You "know" what the value is and
-> that it is supported because the file is there or not.  With binary
-> values in a single file you do not know any of that.
+These all come from the different subsystem/driver maintainers as things
+that they had reports for and wanted to see fixed.
 
-You _always_ know that.
+All of these have been in linux-next with no reported issues.
 
-> So you need some way of describing the data to userspace in order for
-> this to work properly over the next 20+ years.
-> 
-> Maybe something like varlink which describes the data coming from the
-> kernel in an easy-to-handle format?  Or something else, but just using
-> blobs does not work over the long-term, sorry.
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Text doesn't work either. Why do you think /proc/*/maps have 1 space
-character at the end of anon mappings? Because someone fucked up.
-Here is how people use /proc in the field:
+----------------------------------------------------------------
+Alexander Shishkin (4):
+      intel_th: gth: Fix the window switching sequence
+      intel_th: msu: Fix an uninitialized mutex
+      intel_th: pci: Add Comet Lake PCH support
+      intel_th: pci: Add Jasper Lake PCH support
 
-	https://stackoverflow.com/questions/3596781/how-to-detect-if-the-current-process-is-being-run-by-gdb
+Bard Liao (1):
+      soundwire: intel: fix intel_register_dai PDI offsets and numbers
 
-	open /proc/*/status
-	read
-	strstr("TracerPid:")
+Colin Ian King (2):
+      intel_th: msu: Fix missing allocation failure check on a kstrndup
+      intel_th: msu: Fix overflow in shift of an unsigned int
 
-I'd humbly suggest to define the minimum amount of work for the task:
-* some kind of percpu loop to gather stats
-* some kind of accumulation code, possibly with min/max/avg
-* write clear data
-* copy_to_user
+Georgi Djakov (1):
+      interconnect: Add locking in icc_set_tag()
 
-and realise that everything alse is a waste of electricity, namely,
+Greg Kroah-Hartman (3):
+      Merge tag 'icc-5.4-rc5' of https://git.linaro.org/people/georgi.djakov/linux into char-misc-linus
+      Merge tag 'thunderbolt-fixes-for-v5.4-1' of git://git.kernel.org/.../westeri/thunderbolt into char-misc-next
+      Merge tag 'soundwire-5.4-rc6' of git://git.kernel.org/.../vkoul/soundwire into char-misc-linus
 
-* pathname allocation (4KB)
-* VFS '/' split, lookups (/sys/kernel/.../" means 3+ lookups
-* 192 bytes for each dentry
-* 550+ bytes per inode
-* 3 system calls per act of gathering statistics
-	userspace will be written in the most stupid way possible
-	without openat() etc
-* userspace snprintf() for pathname
-* kernel space snprintf() somewhere
-* multiple copying inside kernel (vsnprintf.c)
-* general inability for userspace to estimate the amount of data in decimal
-  (nobody does that), so nicely sized buffers of 4K or 1K or 16KB (bash)
-  will be used which is a waste.
+Leonard Crestez (1):
+      interconnect: qcom: Fix icc_onecell_data allocation
+
+Michal Suchanek (2):
+      soundwire: depend on ACPI
+      soundwire: depend on ACPI || OF
+
+Mika Westerberg (3):
+      thunderbolt: Read DP IN adapter first two dwords in one go
+      thunderbolt: Fix lockdep circular locking depedency warning
+      thunderbolt: Drop unnecessary read when writing LC command in Ice Lake
+
+Pierre-Louis Bossart (1):
+      soundwire: slave: fix scanf format
+
+Wei Yongjun (1):
+      intel_th: msu: Fix possible memory leak in mode_store()
+
+ drivers/hwtracing/intel_th/gth.c   |  3 +++
+ drivers/hwtracing/intel_th/msu.c   | 11 ++++++++---
+ drivers/hwtracing/intel_th/pci.c   | 10 ++++++++++
+ drivers/interconnect/core.c        |  4 ++++
+ drivers/interconnect/qcom/qcs404.c |  3 ++-
+ drivers/interconnect/qcom/sdm845.c |  3 ++-
+ drivers/soundwire/Kconfig          |  1 +
+ drivers/soundwire/intel.c          |  4 ++--
+ drivers/soundwire/slave.c          |  3 ++-
+ drivers/thunderbolt/nhi_ops.c      |  1 -
+ drivers/thunderbolt/switch.c       | 28 +++++++++++-----------------
+ 11 files changed, 45 insertions(+), 26 deletions(-)
