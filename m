@@ -2,81 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A893F687B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 11:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F830F6883
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2019 11:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfKJKYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 05:24:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:54397 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfKJKYC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 05:24:02 -0500
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iTkO0-0004XU-2e; Sun, 10 Nov 2019 11:24:00 +0100
-Date:   Sun, 10 Nov 2019 10:21:53 -0000
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] core/urgent for v5.4-rc7
-Message-ID: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+        id S1726730AbfKJKb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 05:31:27 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39012 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726609AbfKJKb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 05:31:27 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 25439E7F0BEA32D02061;
+        Sun, 10 Nov 2019 18:31:25 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.82) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Sun, 10 Nov 2019 18:31:18 +0800
+From:   Zheng Yongjun <zhengyongjun3@huawei.com>
+To:     <sudeep.holla@arm.com>, <linux-arm-kernel@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <zhengyongjun3@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] firmware: arm_scmi: Remove set but not used variable 'val'
+Date:   Sun, 10 Nov 2019 18:30:10 +0800
+Message-ID: <20191110103010.117132-1-zhengyongjun3@huawei.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.82]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-please pull the latest core-urgent-for-linus git tree from:
+drivers/firmware/arm_scmi/perf.c: In function scmi_perf_fc_ring_db:
+drivers/firmware/arm_scmi/perf.c:323:7: warning: variable val set but not used [-Wunused-but-set-variable]
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
+val is never used, so remove it.
 
-up to:  b0c51f158455: stacktrace: Don't skip first entry on noncurrent tasks
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+---
+ drivers/firmware/arm_scmi/perf.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-A small fix for a stacktrace regression. Saving a stacktrace for a foreign
-task skipped an extra entry which makes e.g. the output of /proc/$PID/stack
-incomplete.
-
-Thanks,
-
-	tglx
-
------------------->
-Jiri Slaby (1):
-      stacktrace: Don't skip first entry on noncurrent tasks
-
-
- kernel/stacktrace.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
-index 6d1f68b7e528..c9ea7eb2cb1a 100644
---- a/kernel/stacktrace.c
-+++ b/kernel/stacktrace.c
-@@ -141,7 +141,8 @@ unsigned int stack_trace_save_tsk(struct task_struct *tsk, unsigned long *store,
- 	struct stacktrace_cookie c = {
- 		.store	= store,
- 		.size	= size,
--		.skip	= skipnr + 1,
-+		/* skip this function if they are tracing us */
-+		.skip	= skipnr + !!(current == tsk),
- 	};
- 
- 	if (!try_get_task_stack(tsk))
-@@ -298,7 +299,8 @@ unsigned int stack_trace_save_tsk(struct task_struct *task,
- 	struct stack_trace trace = {
- 		.entries	= store,
- 		.max_entries	= size,
--		.skip		= skipnr + 1,
-+		/* skip this function if they are tracing us */
-+		.skip	= skipnr + !!(current == task),
- 	};
- 
- 	save_stack_trace_tsk(task, &trace);
-
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 4a8012e3cb8c..efa98d2ee045 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -319,10 +319,8 @@ static void scmi_perf_fc_ring_db(struct scmi_fc_db_info *db)
+ 		SCMI_PERF_FC_RING_DB(64);
+ #else
+ 	{
+-		u64 val = 0;
+-
+ 		if (db->mask)
+-			val = ioread64_hi_lo(db->addr) & db->mask;
++			ioread64_hi_lo(db->addr) & db->mask;
+ 		iowrite64_hi_lo(db->set, db->addr);
+ 	}
+ #endif
+-- 
+2.23.0
 
