@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C918F76F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E25DF76F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbfKKOr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:47:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48746 "EHLO
+        id S1727419AbfKKOrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:47:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48764 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfKKOr0 (ORCPT
+        with ESMTP id S1727439AbfKKOra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:47:26 -0500
+        Mon, 11 Nov 2019 09:47:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=39zsXjOcI9UltLMnovj/xvFkgF3Ak87IbBqezS8pxs0=; b=B5aIsvi1Ea3HwqsV0thqRq4GjS
-        0U3X0J78QdUW1tuKExaCgmQQajPS1YCf+qa7eKoyQEeMfAiQmkt81HyIGijytzyCGIQFDorMrLDAU
-        wRzCHeXhkX6TVQhtlXu83jccyGR9uCk6Y4ey/7uub+2593ugqcuiBlOtauQKKLZN8POdQSWx3KfMi
-        5SyzYXwzJ/fxoL3hG5fV1ZN3jWGdS+bHQqDemsWAFTI35Wj8KbXPR+uTGxM+ptOb7+H/WFa2T+4mO
-        7xO94rhlEi1YbQbhVHet0Hbx32eRu4pUawa6hlpOhQA/5CpxCXGg6MfYWT+F+BQOgNGLGo8/5syHF
-        4Gmjmw/w==;
+        bh=8DVkfpEw5rYdUnaM+NBpjQJ6vzHDL9N060qKRsLkW1I=; b=Ynn+amnfvu7rb/E8VBd/DTVkZi
+        fsE258nwyG81zRKpZ6lT61wFSyvYVNGbksoQBBcG3eCva8X/NYkUCm5p6U5ZJS8hM1pB3RqIF29Ht
+        GMukPiU1qsjLfVCy0G6Kzo/TzJnxb3ryDkjXEnp4x/Cg6NGHBi9apDurCvBhFdqPCwlg5ZO/SltWE
+        gOcptC14fuKzDdbJdAdLzMm+VX8loSdHClBMrvujfKyq+UAJSH42dUIYQkcU4xWPRLWQbQcU6xXOG
+        WAREPkfyb/hYQQZbWaNprb8uMtbiuwb/5nCwZ5tRYRq4yamMjhkXeI3yjqjQ2cB2u2EPl4LsptXSF
+        Uih+qBtA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUAyD-0006aU-1L; Mon, 11 Nov 2019 14:47:09 +0000
+        id 1iUAyD-0006aX-22; Mon, 11 Nov 2019 14:47:09 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id ED1C8307051;
-        Mon, 11 Nov 2019 15:45:57 +0100 (CET)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 366FB307383;
+        Mon, 11 Nov 2019 15:45:58 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 9F05829A37A8F; Mon, 11 Nov 2019 15:47:03 +0100 (CET)
-Message-Id: <20191111132458.162172862@infradead.org>
+        id A38DE29A37A91; Mon, 11 Nov 2019 15:47:03 +0100 (CET)
+Message-Id: <20191111132458.220458362@infradead.org>
 User-Agent: quilt/0.65
-Date:   Mon, 11 Nov 2019 14:13:04 +0100
+Date:   Mon, 11 Nov 2019 14:13:05 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -45,8 +45,9 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com, jeyu@kernel.org, alexei.starovoitov@gmail.com,
-        paulmck@kernel.org, mathieu.desnoyers@efficios.com
-Subject: [PATCH -v5 12/17] x86/kprobes: Fix ordering
+        rabin@rab.in, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>, james.morse@arm.com
+Subject: [PATCH -v5 13/17] arm/ftrace: Use __patch_text_real()
 References: <20191111131252.921588318@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,151 +56,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kprobes does something like:
+Instead of flipping text protection, use the patch_text infrastructure
+that uses a fixmap alias where required.
 
-register:
-	arch_arm_kprobe()
-	  text_poke(INT3)
-          /* guarantees nothing, INT3 will become visible at some point, maybe */
-
-        kprobe_optimizer()
-	  /* guarantees the bytes after INT3 are unused */
-	  syncrhonize_rcu_tasks();
-	  text_poke_bp(JMP32);
-	  /* implies IPI-sync, kprobe really is enabled */
-
-
-unregister:
-	__disarm_kprobe()
-	  unoptimize_kprobe()
-	    text_poke_bp(INT3 + tail);
-	    /* implies IPI-sync, so tail is guaranteed visible */
-          arch_disarm_kprobe()
-            text_poke(old);
-	    /* guarantees nothing, old will maybe become visible */
-
-	synchronize_rcu()
-
-        free-stuff
-
-Now the problem is that on register, the synchronize_rcu_tasks() does
-not imply sufficient to guarantee all CPUs have already observed INT3
-(although in practise this is exceedingly unlikely not to have
-happened) (similar to how MEMBARRIER_CMD_PRIVATE_EXPEDITED does not
-imply MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE).
-
-Worse, even if it did, we'd have to do 2 synchronize calls to provide
-the guarantee we're looking for, the first to ensure INT3 is visible,
-the second to guarantee nobody is then still using the instruction
-bytes after INT3.
-
-Similar on unregister; the synchronize_rcu() between
-__unregister_kprobe_top() and __unregister_kprobe_bottom() does not
-guarantee all CPUs are free of the INT3 (and observe the old text).
-
-Therefore, sprinkle some IPI-sync love around. This guarantees that
-all CPUs agree on the text and RCU once again provides the required
-guaranteed.
+This removes the last user of set_all_modules_text_*().
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: hpa@zytor.com
-Cc: paulmck@kernel.org
-Cc: mathieu.desnoyers@efficios.com
+Cc: ard.biesheuvel@linaro.org
+Cc: rabin@rab.in
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: james.morse@arm.com
 ---
- arch/x86/include/asm/text-patching.h |    1 +
- arch/x86/kernel/alternative.c        |   11 ++++++++---
- arch/x86/kernel/kprobes/core.c       |    2 ++
- arch/x86/kernel/kprobes/opt.c        |   12 ++++--------
- 4 files changed, 15 insertions(+), 11 deletions(-)
+ arch/arm/kernel/ftrace.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -42,6 +42,7 @@ extern void text_poke_early(void *addr,
-  * an inconsistent instruction while you patch.
-  */
- extern void *text_poke(void *addr, const void *opcode, size_t len);
-+extern void text_poke_sync(void);
- extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate);
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -936,6 +936,11 @@ static void do_sync_core(void *info)
- 	sync_core();
- }
+--- a/arch/arm/kernel/ftrace.c
++++ b/arch/arm/kernel/ftrace.c
+@@ -22,6 +22,7 @@
+ #include <asm/ftrace.h>
+ #include <asm/insn.h>
+ #include <asm/set_memory.h>
++#include <asm/patch.h>
  
-+void text_poke_sync(void)
-+{
-+	on_each_cpu(do_sync_core, NULL, 1);
-+}
+ #ifdef CONFIG_THUMB2_KERNEL
+ #define	NOP		0xf85deb04	/* pop.w {lr} */
+@@ -31,13 +32,15 @@
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 
++static int patch_text_remap = 0;
 +
- struct text_poke_loc {
- 	s32 rel_addr; /* addr := _stext + rel_addr */
- 	s32 rel32;
-@@ -1085,7 +1090,7 @@ static void text_poke_bp_batch(struct te
- 	for (i = 0; i < nr_entries; i++)
- 		text_poke(text_poke_addr(&tp[i]), &int3, sizeof(int3));
+ static int __ftrace_modify_code(void *data)
+ {
+ 	int *command = data;
  
--	on_each_cpu(do_sync_core, NULL, 1);
-+	text_poke_sync();
+-	set_kernel_text_rw();
++	patch_text_remap++;
+ 	ftrace_modify_all_code(*command);
+-	set_kernel_text_ro();
++	patch_text_remap--;
  
- 	/*
- 	 * Second step: update all but the first byte of the patched range.
-@@ -1107,7 +1112,7 @@ static void text_poke_bp_batch(struct te
- 		 * not necessary and we'd be safe even without it. But
- 		 * better safe than sorry (plus there's not only Intel).
- 		 */
--		on_each_cpu(do_sync_core, NULL, 1);
-+		text_poke_sync();
+ 	return 0;
+ }
+@@ -59,13 +62,13 @@ static unsigned long adjust_address(stru
+ 
+ int ftrace_arch_code_modify_prepare(void)
+ {
+-	set_all_modules_text_rw();
++	patch_text_remap++;
+ 	return 0;
+ }
+ 
+ int ftrace_arch_code_modify_post_process(void)
+ {
+-	set_all_modules_text_ro();
++	patch_text_remap--;
+ 	/* Make sure any TLB misses during machine stop are cleared. */
+ 	flush_tlb_all();
+ 	return 0;
+@@ -97,10 +100,7 @@ static int ftrace_modify_code(unsigned l
+ 			return -EINVAL;
  	}
  
- 	/*
-@@ -1123,7 +1128,7 @@ static void text_poke_bp_batch(struct te
- 	}
- 
- 	if (do_sync)
--		on_each_cpu(do_sync_core, NULL, 1);
-+		text_poke_sync();
- 
- 	/*
- 	 * sync_core() implies an smp_mb() and orders this store against
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -502,11 +502,13 @@ int arch_prepare_kprobe(struct kprobe *p
- void arch_arm_kprobe(struct kprobe *p)
- {
- 	text_poke(p->addr, ((unsigned char []){INT3_INSN_OPCODE}), 1);
-+	text_poke_sync();
- }
- 
- void arch_disarm_kprobe(struct kprobe *p)
- {
- 	text_poke(p->addr, &p->opcode, 1);
-+	text_poke_sync();
- }
- 
- void arch_remove_kprobe(struct kprobe *p)
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -444,14 +444,10 @@ void arch_optimize_kprobes(struct list_h
- /* Replace a relative jump with a breakpoint (int3).  */
- void arch_unoptimize_kprobe(struct optimized_kprobe *op)
- {
--	u8 insn_buff[JMP32_INSN_SIZE];
+-	if (probe_kernel_write((void *)pc, &new, MCOUNT_INSN_SIZE))
+-		return -EPERM;
 -
--	/* Set int3 to first byte for kprobes */
--	insn_buff[0] = INT3_INSN_OPCODE;
--	memcpy(insn_buff + 1, op->optinsn.copied_insn, DISP32_SIZE);
--
--	text_poke_bp(op->kp.addr, insn_buff, JMP32_INSN_SIZE,
--		     text_gen_insn(JMP32_INSN_OPCODE, op->kp.addr, op->optinsn.insn));
-+	arch_arm_kprobe(&op->kp);
-+	text_poke(op->kp.addr + INT3_INSN_SIZE,
-+		  op->optinsn.copied_insn, DISP32_SIZE);
-+	text_poke_sync();
- }
+-	flush_icache_range(pc, pc + MCOUNT_INSN_SIZE);
++	__patch_text_real((void *)pc, new, patch_text_remap);
  
- /*
+ 	return 0;
+ }
 
 
