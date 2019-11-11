@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C496F7C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BEBDF7B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbfKKSns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:43:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35242 "EHLO mail.kernel.org"
+        id S1726946AbfKKSc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:32:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728967AbfKKSnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:43:45 -0500
+        id S1727222AbfKKScx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:32:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C40A214E0;
-        Mon, 11 Nov 2019 18:43:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CAAB20674;
+        Mon, 11 Nov 2019 18:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497825;
-        bh=YEEGNQYgDRCfA+H+yE2304eYWEyqkrXcJaCd6xGXhBk=;
+        s=default; t=1573497172;
+        bh=foS21jyDG7+AiNiYalDNGoY+ubZ8bYGRS1cP3+yOoZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qlTwUkFSlm75gkQW5t7AVbnuGKN/BXMIxZzM2Dll7tmvn4drkaB7PBmtCyhcJvx0m
-         fZ1nGzwdMzcfSw3+BCN/wU6zmULzhs9tJU87v0FUEycvO0OPAqXliHnrdBGdTyLdzM
-         yIl/Jw5ClqmqdGdny+vfUmpIa+tGQp4llorXeM/Q=
+        b=XbcIsA1VAfQR+ycg9PQQfpgBUZEGbh34YVJgHaHHpFbY2JtGchbCRuvgDEYBDMbqD
+         OETS6pblHM2WRC4Xjtmv7WRn4+uMkju/fmdMHh55UVJLJoPW3oHuNDaQPzw3qk6kHH
+         WvDK4yKFbUSwSsC+CMOax72IWVHVFraXsi8kxxZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-Subject: [PATCH 4.19 067/125] usbip: Fix vhci_urb_enqueue() URB null transfer buffer error path
-Date:   Mon, 11 Nov 2019 19:28:26 +0100
-Message-Id: <20191111181449.127832423@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Meyer <thomas@m3y3r.de>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.9 27/65] configfs: Fix bool initialization/comparison
+Date:   Mon, 11 Nov 2019 19:28:27 +0100
+Message-Id: <20191111181346.107117626@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,34 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuah Khan <shuah@kernel.org>
+From: Thomas Meyer <thomas@m3y3r.de>
 
-commit 2c904963b1dd2acd4bc785b6c72e10a6283c2081 upstream.
+commit 3f6928c347707a65cee10a9f54b85ad5fb078b3f upstream.
 
-Fix vhci_urb_enqueue() to print debug msg and return error instead of
-failing with BUG_ON.
+Bool initializations should use true and false. Bool tests don't need
+comparisons.
 
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/vhci_hcd.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/configfs/file.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -702,8 +702,10 @@ static int vhci_urb_enqueue(struct usb_h
+--- a/fs/configfs/file.c
++++ b/fs/configfs/file.c
+@@ -166,7 +166,7 @@ configfs_read_bin_file(struct file *file
+ 		retval = -ETXTBSY;
+ 		goto out;
  	}
- 	vdev = &vhci_hcd->vdev[portnum-1];
+-	buffer->read_in_progress = 1;
++	buffer->read_in_progress = true;
  
--	/* patch to usb_sg_init() is in 2.5.60 */
--	BUG_ON(!urb->transfer_buffer && urb->transfer_buffer_length);
-+	if (!urb->transfer_buffer && urb->transfer_buffer_length) {
-+		dev_dbg(dev, "Null URB transfer buffer\n");
-+		return -EINVAL;
-+	}
+ 	if (buffer->needs_read_fill) {
+ 		/* perform first read with buf == NULL to get extent */
+@@ -325,7 +325,7 @@ configfs_write_bin_file(struct file *fil
+ 		len = -ETXTBSY;
+ 		goto out;
+ 	}
+-	buffer->write_in_progress = 1;
++	buffer->write_in_progress = true;
  
- 	spin_lock_irqsave(&vhci->lock, flags);
+ 	/* buffer grows? */
+ 	if (*ppos + count > buffer->bin_buffer_size) {
+@@ -429,8 +429,8 @@ static int check_perm(struct inode * ino
+ 	}
+ 	mutex_init(&buffer->mutex);
+ 	buffer->needs_read_fill = 1;
+-	buffer->read_in_progress = 0;
+-	buffer->write_in_progress = 0;
++	buffer->read_in_progress = false;
++	buffer->write_in_progress = false;
+ 	buffer->ops = ops;
+ 	file->private_data = buffer;
+ 	goto Done;
+@@ -488,10 +488,10 @@ static int configfs_release_bin_file(str
+ 	ssize_t len = 0;
+ 	int ret;
  
+-	buffer->read_in_progress = 0;
++	buffer->read_in_progress = false;
+ 
+ 	if (buffer->write_in_progress) {
+-		buffer->write_in_progress = 0;
++		buffer->write_in_progress = false;
+ 
+ 		len = bin_attr->write(item, buffer->bin_buffer,
+ 				buffer->bin_buffer_size);
 
 
