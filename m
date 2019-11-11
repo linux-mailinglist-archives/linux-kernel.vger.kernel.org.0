@@ -2,102 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7423F7F83
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 091BAF7F88
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:14:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbfKKTLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:11:37 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35903 "EHLO
+        id S1727237AbfKKTN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:13:26 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45775 "EHLO
         mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfKKTLg (ORCPT
+        with ESMTP id S1726962AbfKKTN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:11:36 -0500
-Received: by mail-io1-f67.google.com with SMTP id s3so15821702ioe.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:11:34 -0800 (PST)
+        Mon, 11 Nov 2019 14:13:26 -0500
+Received: by mail-io1-f67.google.com with SMTP id v17so14716519iol.12
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:13:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2HgDUfvYTFbpP69aWKc0kGJILBYPdrw3d304UudQR6Y=;
-        b=eTbtsuOY1bdhKdbXYiPZJ/aG2Qace47DkAJbL4Op2wp42tGwtELx5aJ26CvJ9Jb3qT
-         vlhJLgZkDCviw9bLoBdRKzAEYECphGMJH3AnxorVg1SBo/rDG5z1xL1PRUcddapYELJc
-         JlDIgnKwPtZybDPnZO/Vil39jXyaJ3tn4cWD3olZQTk/Xys15Qnjc5WHDiyzLrr1dhpI
-         gUDI74hAWak5E6pqdOxyvLhSsu+bf3+IfPyWmb5suN58S2X3MoWTIFC9SW4Y0R3aIW+5
-         ErM2InmMnwLQIG+6QpsYESxWHX25EqnFNz7/WEo+Dks7zTq3u5LsV9tqWiolA629rCzm
-         iHFw==
+         :cc;
+        bh=6/VuShNsnnLijV7FTC/n5bXISdKsCNAaXvgZUSZTI2M=;
+        b=LJD0mvfv2cmwh1rKoSNdTEkyl/8Q60pawfFcL1Kw3tYIjHphsWJZb2VHREb0zO65uc
+         hZvetOs6fqaX3107UfQ4zOYB7AaO45SnC7PkhUH4Kz31DyCORaPOy/9C6foVMLwO3D4p
+         7nt8q35NszzZrsPBZ8zY+O1iykoiIXmVu6glWUVlsHKfTAhoBU+4nR8qgwsgvBK6FfcO
+         LD+1TXFb6raocmGQk4b9Sh4KZObiELFVAoi4YgJ8I69l515pvcQGtQuRnIFnZlBpY8yP
+         HBSP3doCHTYo2Vgd8uGO38qecy2wPBX/Z5xB5jfDRmFU9N290xmG7r5aVThn9dt8MaIY
+         yHuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2HgDUfvYTFbpP69aWKc0kGJILBYPdrw3d304UudQR6Y=;
-        b=am7Hb/zNWut5nnSVgJMYGSnXBGCeCiWc+MIHZDOJ+dIm0kAW3pnSSRr/d/PnxecExJ
-         R5t69kQpGzIVyMVYE16oDukoiBhwG7JetajU19bgc8wfJRN/SyNeEs4ZFA6xmBQBLV3a
-         jMLXdUyKuXw/P7ZTPZRAMpQDXh4wU6IBjy/Tf+eYMOUNNztFWX1f6klo9cD+8pijN14B
-         fRLSwA+MZj5HlgYTigjrn7sPNNkQIolGOiMPtmeZEqdJa3MaoVDfJdZO7ggfWzkSWgL7
-         WcCrBcKtO0+At+y913L2vabv3nVJX8faeXsOhuozSUKJ1vuF0ZkfSSQ1LKh+dAqzZtfd
-         uSWw==
-X-Gm-Message-State: APjAAAWj5Lujf/iQBNnPPaWYyrVS5EC9cvMa/GHt6CF1qEFaZfJzMsNi
-        GXum0OtJZ/BM9ucUTy/Xe5diIqvugSeUpZurCfm+uQ==
-X-Google-Smtp-Source: APXvYqy1znbPoGeXemeR0vFArovOl/+lq8cNdMivbT38ZF3jpW8pGC7IQIdwYmdC0F0dJSIodB17Xximee0fFWz8NMY=
-X-Received: by 2002:a02:c54b:: with SMTP id g11mr2199988jaj.136.1573499493869;
- Mon, 11 Nov 2019 11:11:33 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=6/VuShNsnnLijV7FTC/n5bXISdKsCNAaXvgZUSZTI2M=;
+        b=QN+MiVsx1bqQIPouDBvZsYqslh6pu/tdMzs6cx8UBeZ5DoCJgtMcXrUAk4QFs5wGix
+         gNTmK/u8Kp3gjmMsHwPtES861EEG8Y5DA4OqnBNZiNZTDW0s+02rKOp7bRPbfho1m1Sq
+         vVAOfxqtEapfiFIb881Y8S6LzAuL/45un9Bj/1bBr3BMEc1/h5KGxKOhjZ1kCNpXMXLb
+         vFRms3s1JtXE4r8DOOoSDZt0aToRdiIkCUEA8MvyQoQtcdRtxjLfM7aMLTWzRMlpVulP
+         9H5BOcgLIkik4ylM18IVkJLK70TZrsLVIiSl2O+x2e7wvZCsUfesq2xphL+DrfHdTM0L
+         XRkw==
+X-Gm-Message-State: APjAAAU1HjkW8/yFXxyHqD35TW1lDNKHJbjj1Gh5ipmGqMCUcVt/9wBc
+        LRrA0Plism/R1nn1FKyDCzxCYD+MwfZlUurqUutJgg==
+X-Google-Smtp-Source: APXvYqwYT2bnWA0uOOetpBpSlXqEyNb8DbeCdss54JdYY85ZOwBw8QacpCiJTlDrPqsRtQrjpsB4m/+bxWyN8bzIj2Y=
+X-Received: by 2002:a05:6638:a27:: with SMTP id 7mr25838960jao.114.1573499604758;
+ Mon, 11 Nov 2019 11:13:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20191021124428.2541-1-brgl@bgdev.pl> <20191021124428.2541-6-brgl@bgdev.pl>
- <20191111080837.GF18902@dell>
-In-Reply-To: <20191111080837.GF18902@dell>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 11 Nov 2019 20:11:23 +0100
-Message-ID: <CAMRc=Me_b5c_e+qZ1s=TgTh7k_bQqrqthC8VTb7ak8+3AOEugg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] dt-bindings: mfd: max77650: convert the binding
- document to yaml
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
+References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+ <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+ <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
+ <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+ <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
+ <CANn89iJiuOkKc2AVmccM8z9e_d4zbV61K-3z49ao1UwRDdFiHw@mail.gmail.com> <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
+In-Reply-To: <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Mon, 11 Nov 2019 11:13:13 -0800
+Message-ID: <CANn89i+x7Yxjxr4Fdaow-51-A-oBK3MqTscbQ4VXQuk4pX9aCg@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pon., 11 lis 2019 o 09:08 Lee Jones <lee.jones@linaro.org> napisa=C5=82(a):
+On Mon, Nov 11, 2019 at 11:01 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Mon, 21 Oct 2019, Bartosz Golaszewski wrote:
->
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> On Mon, Nov 11, 2019 at 10:44 AM Eric Dumazet <edumazet@google.com> wrote:
 > >
-> > Convert the binding document for MAX77650 core MFD module to YAML.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  .../devicetree/bindings/mfd/max77650.txt      |  46 ------
-> >  .../devicetree/bindings/mfd/max77650.yaml     | 149 ++++++++++++++++++
-> >  2 files changed, 149 insertions(+), 46 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/max77650.yaml
+> > An interesting case is the race in ksys_write()
 >
-> Applied, thanks.
+> Not really.
 >
+> > if (ppos) {
+> >      pos = *ppos; // data-race
+>
+> That code uses "fdget_pos().
+>
+> Which does mutual exclusion _if_ the file is something we care about
+> pos for, and if it has more than one process using it.
+>
+> Basically the rule there is that we don't care about the data race in
+> certain circumstances. We don't care about non-regular files, for
+> example, because those are what POSIX gives guarantees for.
+>
+> (We have since moved towards FMODE_STREAM handling instead of the
+> older FMODE_ATOMIC_POS which does this better, and it's possible we
+> should get rid of the FMODE_ATOMIC_POS behavior in favor of
+> FMODE_STREAM entirely)
+>
+> Again, that's pretty hard to tell something like KCSAN.
 
-Hi Lee,
+Well, this is hard to explain to humans... Probably less than 10 on
+this planet could tell that.
 
-FYI this series is already in next through Rob's DT tree.
+What about this other one, it looks like multiple threads can
+manipulate tsk->min_flt++; at the same time  in faultin_page()
 
-Bart
+Should we not care, or should we mirror min_flt with a second
+atomic_long_t, or simply convert min_flt to atomic_long_t ?
 
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+BUG: KCSAN: data-race in __get_user_pages / __get_user_pages
+
+read to 0xffff8880b0b8f650 of 8 bytes by task 11553 on cpu 1:
+ faultin_page mm/gup.c:653 [inline]
+ __get_user_pages+0x78f/0x1160 mm/gup.c:845
+ __get_user_pages_locked mm/gup.c:1023 [inline]
+ get_user_pages_remote+0x206/0x3e0 mm/gup.c:1163
+ process_vm_rw_single_vec mm/process_vm_access.c:109 [inline]
+ process_vm_rw_core.isra.0+0x3a4/0x8c0 mm/process_vm_access.c:216
+ process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:284
+ __do_sys_process_vm_writev mm/process_vm_access.c:306 [inline]
+ __se_sys_process_vm_writev mm/process_vm_access.c:301 [inline]
+ __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:301
+ do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+write to 0xffff8880b0b8f650 of 8 bytes by task 11531 on cpu 0:
+ faultin_page mm/gup.c:653 [inline]
+ __get_user_pages+0x7b1/0x1160 mm/gup.c:845
+ __get_user_pages_locked mm/gup.c:1023 [inline]
+ get_user_pages_remote+0x206/0x3e0 mm/gup.c:1163
+ process_vm_rw_single_vec mm/process_vm_access.c:109 [inline]
+ process_vm_rw_core.isra.0+0x3a4/0x8c0 mm/process_vm_access.c:216
+ process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:284
+ __do_sys_process_vm_writev mm/process_vm_access.c:306 [inline]
+ __se_sys_process_vm_writev mm/process_vm_access.c:301 [inline]
+ __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:301
+ do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 11531 Comm: syz-executor.4 Not tainted 5.4.0-rc6+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine,
+BIOS Google 01/01/2011
