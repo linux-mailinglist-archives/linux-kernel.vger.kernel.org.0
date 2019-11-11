@@ -2,112 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89B6F7A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A33F7A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfKKSLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:11:47 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37330 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbfKKSLr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:11:47 -0500
-Received: by mail-oi1-f195.google.com with SMTP id y194so12325855oie.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:11:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3pgVptoZYzsTOg+Xnbn8wJxFJTLIjKkmJmwvN7XoJgQ=;
-        b=i9ch4lILRaYqfz/biLOzhARRxhRCCeK3gnVplQShtM/nd+5UbGdqmLYsR4tPaMnvI8
-         rU8IX4XJ1RembDWbHn9/sJ+e8tJV/laUzzjIBHFMeSQarQkEjliPeJw4B3Di1Iux8h1w
-         uBcLlToGB33i6Gpb5sjZqMf73JEiORYGDmOKqY5ggBLWwSjxgPKxELtKOHLiyMG+RiKR
-         sOIWk+uQ5sdPG8uhsZutjfrlq09+BFLi5TCrEiRl9hzwOKTIOD5oIhHTP5JnGNvnVmZw
-         Z4NqFP+Vimio1Y/iJHx7Maj4hxEtpcnCBKm1gE9OMacV4wCyudog46ejd5l5JlVflGBl
-         LNwA==
-X-Gm-Message-State: APjAAAWbJM5laRBlAP1Iv0+lrnMfgJhiDbnSdBOAByyEYZGa1OkyO6+p
-        RQEdqVCoKjdiCi43jBuHkyRy2ssE
-X-Google-Smtp-Source: APXvYqy1X0wUWZC/1e18BAMqn7WeVSGS3O2hmYUeKDVYF64U8jTw3M0qNMsxoRWRrfZio7C6Hh1zTg==
-X-Received: by 2002:a05:6808:8e9:: with SMTP id d9mr241839oic.29.1573495906199;
-        Mon, 11 Nov 2019 10:11:46 -0800 (PST)
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com. [209.85.167.174])
-        by smtp.gmail.com with ESMTPSA id z13sm5118596otq.29.2019.11.11.10.11.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2019 10:11:45 -0800 (PST)
-Received: by mail-oi1-f174.google.com with SMTP id l20so12289218oie.10
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:11:45 -0800 (PST)
-X-Received: by 2002:aca:1702:: with SMTP id j2mr240762oii.13.1573495904943;
- Mon, 11 Nov 2019 10:11:44 -0800 (PST)
+        id S1726950AbfKKSOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:14:44 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:42876 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726763AbfKKSOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:14:43 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1iUECv-00018v-1q; Mon, 11 Nov 2019 11:14:33 -0700
+To:     Yash Shah <yash.shah@sifive.com>,
+        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "Anup.Patel@wdc.com" <Anup.Patel@wdc.com>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "ren_guo@c-sky.com" <ren_guo@c-sky.com>,
+        "bmeng.cn@gmail.com" <bmeng.cn@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Sachin Ghadi <sachin.ghadi@sifive.com>
+References: <1573450015-16475-1-git-send-email-yash.shah@sifive.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <91f35033-ffc8-cd2e-36f7-c6f4f25be36b@deltatee.com>
+Date:   Mon, 11 Nov 2019 11:14:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191108130123.6839-1-linux@rasmusvillemoes.dk>
- <20191108130123.6839-48-linux@rasmusvillemoes.dk> <CADRPPNQwnmPCh8nzQ5vBTLoieO-r2u0huh17mwcinhfhNgo04A@mail.gmail.com>
- <14894529-a6bd-9b7e-eacc-06d5e49cc8e8@rasmusvillemoes.dk>
-In-Reply-To: <14894529-a6bd-9b7e-eacc-06d5e49cc8e8@rasmusvillemoes.dk>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Mon, 11 Nov 2019 12:11:33 -0600
-X-Gmail-Original-Message-ID: <CADRPPNQHtRhZOw0DuTQoPF_RgFHSFG4rGCtETFvCCSS8H6i=iQ@mail.gmail.com>
-Message-ID: <CADRPPNQHtRhZOw0DuTQoPF_RgFHSFG4rGCtETFvCCSS8H6i=iQ@mail.gmail.com>
-Subject: Re: [PATCH v4 47/47] soc: fsl: qe: remove PPC32 dependency from CONFIG_QUICC_ENGINE
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Scott Wood <oss@buserror.net>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1573450015-16475-1-git-send-email-yash.shah@sifive.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: sachin.ghadi@sifive.com, tglx@linutronix.de, bmeng.cn@gmail.com, ren_guo@c-sky.com, rppt@linux.ibm.com, Anup.Patel@wdc.com, aou@eecs.berkeley.edu, palmer@dabbelt.com, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, paul.walmsley@sifive.com, yash.shah@sifive.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_FREE autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: Re: [PATCH] RISC-V: Add address map dumper
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 1:36 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 09/11/2019 00.48, Li Yang wrote:
-> > On Fri, Nov 8, 2019 at 7:05 AM Rasmus Villemoes
-> > <linux@rasmusvillemoes.dk> wrote:
-> >>
-> >> There are also ARM and ARM64 based SOCs with a QUICC Engine, and the
-> >> core QE code as well as net/wan/fsl_ucc_hdlc and tty/serial/ucc_uart
-> >> has now been modified to not rely on ppcisms.
-> >>
-> >> So extend the architectures that can select QUICC_ENGINE, and add the
-> >> rather modest requirements of OF && HAS_IOMEM.
-> >>
-> >> The core code as well as the ucc_uart driver has been tested on an
-> >> LS1021A (arm), and it has also been tested that the QE code still
-> >> works on an mpc8309 (ppc).
-> >>
-> >> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> >> ---
-> >>  drivers/soc/fsl/qe/Kconfig | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
-> >> index cfa4b2939992..f1974f811572 100644
-> >> --- a/drivers/soc/fsl/qe/Kconfig
-> >> +++ b/drivers/soc/fsl/qe/Kconfig
-> >> @@ -5,7 +5,8 @@
-> >>
-> >>  config QUICC_ENGINE
-> >>         bool "QUICC Engine (QE) framework support"
-> >> -       depends on FSL_SOC && PPC32
-> >> +       depends on OF && HAS_IOMEM
-> >> +       depends on PPC32 || ARM || ARM64 || COMPILE_TEST
-> >
-> > Can you also add PPC64?  It is also used on some PPC64 platforms
-> > (QorIQ T series).
->
-> Sure, but if that's the only thing in the whole series, perhaps you
-> could amend it when applying instead of me sending all 47 patches again.
 
-Sure.  I can do that.
 
->
-> Should PPC32 || PPC64 be spelled PPC?
+On 2019-11-10 10:27 p.m., Yash Shah wrote:
+> Add support for dumping the kernel address space layout to the console.
+> User can enable CONFIG_DEBUG_VM_LAYOUT to dump the virtual memory region
+> into dmesg buffer during boot-up.
 
-Yes.  That will be good.
+Cool, I'd find this useful. Though, is there any reason we don't do this
+more generally for all architectures?
 
-Regards,
-Leo
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> ---
+> This patch is based on Linux 5.4-rc6 and tested on SiFive HiFive Unleashed
+> board.
+> ---
+>  arch/riscv/Kconfig.debug |  9 +++++++++
+>  arch/riscv/mm/init.c     | 30 ++++++++++++++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+> 
+> diff --git a/arch/riscv/Kconfig.debug b/arch/riscv/Kconfig.debug
+> index e69de29..cdedfd3 100644
+> --- a/arch/riscv/Kconfig.debug
+> +++ b/arch/riscv/Kconfig.debug
+> @@ -0,0 +1,9 @@
+> +config DEBUG_VM_LAYOUT
+> +	bool "Print virtual memory layout on boot up"
+> +	depends on DEBUG_KERNEL
+> +	help
+> +	  Say Y here if you want to dump the kernel virtual memory layout to
+> +	  dmesg log on boot up. This information is only useful for kernel
+> +	  developers who are working in architecture specific areas of the
+> +	  kernel. It is probably not a good idea to enable this feature in a
+> +	  production kernel.
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 79cfb35..fcb8144 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -55,6 +55,36 @@ void __init mem_init(void)
+>  	memblock_free_all();
+>  
+>  	mem_init_print_info(NULL);
+> +#ifdef CONFIG_DEBUG_VM_LAYOUT
+
+Generally, it's best to avoid #ifdefs inside functions, it's even
+counter-indicated in the style guide[1].
+
+> +#define MLK(b, t) b, t, (((t) - (b)) >> 10)
+> +#define MLM(b, t) b, t, (((t) - (b)) >> 20)
+> +#define MLK_ROUNDUP(b, t) b, t, DIV_ROUND_UP(((t) - (b)), SZ_1K)
+
+I personally find these inline defines rather ugly. Maybe it would be
+better to have a helper function that prints a single line. Also seems
+like MLK and MLK_ROUNDUP could be the same assuming the entries in MLK
+are aligned...
+
+> +
+> +	pr_notice("Virtual kernel memory layout:\n"
+> +			"    fixmap  : 0x%08lx - 0x%08lx   (%4ld kB)\n"
+> +			"    vmemmap : 0x%08lx - 0x%08lx   (%4ld MB)\n"
+> +			"    vmalloc : 0x%08lx - 0x%08lx   (%4ld MB)\n"
+> +			"    lowmem  : 0x%08lx - 0x%08lx   (%4ld MB)\n"
+> +			"      .init : 0x%px - 0x%px   (%4td kB)\n"
+> +			"      .text : 0x%px - 0x%px   (%4td kB)\n"
+> +			"      .data : 0x%px - 0x%px   (%4td kB)\n"
+> +			"       .bss : 0x%px - 0x%px   (%4td kB)\n",
+> +
+> +			MLK(FIXADDR_START, FIXADDR_TOP),
+> +			MLM(VMEMMAP_START, VMEMMAP_END),
+> +			MLM(VMALLOC_START, VMALLOC_END),
+> +			MLM(PAGE_OFFSET, (unsigned long)high_memory),
+> +
+> +			MLK_ROUNDUP(__init_begin, __init_end),
+> +			MLK_ROUNDUP(_text, _etext),
+> +			MLK_ROUNDUP(_sdata, _edata),
+> +			MLK_ROUNDUP(__bss_start, __bss_stop));
+> +
+> +#undef MLK
+> +#undef MLM
+> +#undef MLK_ROUNDUP
+> +#endif
+>  }
+>  
+>  #ifdef CONFIG_BLK_DEV_INITRD
+
+Thanks,
+
+Logan
+
+[1]
+https://www.kernel.org/doc/html/latest/process/coding-style.html#conditional-compilation
