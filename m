@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA234F7D67
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:56:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A28F7B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730714AbfKKS41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:56:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54646 "EHLO mail.kernel.org"
+        id S1727814AbfKKSeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:34:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729132AbfKKS4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:56:23 -0500
+        id S1728373AbfKKSef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BC132173B;
-        Mon, 11 Nov 2019 18:56:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9254222C5;
+        Mon, 11 Nov 2019 18:34:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498582;
-        bh=xfEgfX5Tk17FlbuIssIAcm1s/tupxh1PPvYDHYPfdbQ=;
+        s=default; t=1573497275;
+        bh=j1227qPE8Hj0hT9pr0IYy4IV8VS1IsyFc3vDGB7EdNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yu8ZLQSk72pXzfssojLFdQhb6weVcReWuxffoeKyP+19IYsWgTqGYiKCXEh+kbXge
-         uAulr5EyPaZdn9eLkEoy6L76QLCV+9XQQOv6GBYBlHY2+OWhkFpD1TJrnldgd2KBtV
-         qIex18b9mcOpzUPZfWo7W9vl5qFmX0kcEFwPOWf4=
+        b=1h8pf4Z9g08yo0Xr5XW6FaFbMEqP+iKB73AlKr0tvsF+t0vVrTCdv7zdXEbrEFtrt
+         +s4wd0rxTFhgb3mD9jzgtKhHe0yMVEWNOiMQIdehzvXLxyegEtYC+GaTirD18TiTeT
+         lRrat3HGFx+6YyKbu2J0WphKuA9cZSAX2xs1iLI8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 162/193] iommu/amd: Apply the same IVRS IOAPIC workaround to Acer Aspire A315-41
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 64/65] mm/filemap.c: dont initiate writeback if mapping has no dirty pages
 Date:   Mon, 11 Nov 2019 19:29:04 +0100
-Message-Id: <20191111181513.079727590@linuxfoundation.org>
+Message-Id: <20191111181356.611049234@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit ad3e8da2d422c63c13819a53d3c5ea9312cc0b9d ]
+commit c3aab9a0bd91b696a852169479b7db1ece6cbf8c upstream.
 
-Acer Aspire A315-41 requires the very same workaround as the existing
-quirk for Dell Latitude 5495.  Add the new entry for that.
+Functions like filemap_write_and_wait_range() should do nothing if inode
+has no dirty pages or pages currently under writeback.  But they anyway
+construct struct writeback_control and this does some atomic operations if
+CONFIG_CGROUP_WRITEBACK=y - on fast path it locks inode->i_lock and
+updates state of writeback ownership, on slow path might be more work.
+Current this path is safely avoided only when inode mapping has no pages.
 
-BugLink: https://bugzilla.suse.com/show_bug.cgi?id=1137799
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+For example generic_file_read_iter() calls filemap_write_and_wait_range()
+at each O_DIRECT read - pretty hot path.
+
+This patch skips starting new writeback if mapping has no dirty tags set.
+If writeback is already in progress filemap_write_and_wait_range() will
+wait for it.
+
+Link: http://lkml.kernel.org/r/156378816804.1087.8607636317907921438.stgit@buzz
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/iommu/amd_iommu_quirks.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ mm/filemap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu_quirks.c b/drivers/iommu/amd_iommu_quirks.c
-index c235f79b7a200..5120ce4fdce32 100644
---- a/drivers/iommu/amd_iommu_quirks.c
-+++ b/drivers/iommu/amd_iommu_quirks.c
-@@ -73,6 +73,19 @@ static const struct dmi_system_id ivrs_quirks[] __initconst = {
- 		},
- 		.driver_data = (void *)&ivrs_ioapic_quirks[DELL_LATITUDE_5495],
- 	},
-+	{
-+		/*
-+		 * Acer Aspire A315-41 requires the very same workaround as
-+		 * Dell Latitude 5495
-+		 */
-+		.callback = ivrs_ioapic_quirk_cb,
-+		.ident = "Acer Aspire A315-41",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Aspire A315-41"),
-+		},
-+		.driver_data = (void *)&ivrs_ioapic_quirks[DELL_LATITUDE_5495],
-+	},
- 	{
- 		.callback = ivrs_ioapic_quirk_cb,
- 		.ident = "Lenovo ideapad 330S-15ARR",
--- 
-2.20.1
-
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -383,7 +383,8 @@ int __filemap_fdatawrite_range(struct ad
+ 		.range_end = end,
+ 	};
+ 
+-	if (!mapping_cap_writeback_dirty(mapping))
++	if (!mapping_cap_writeback_dirty(mapping) ||
++	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+ 		return 0;
+ 
+ 	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
 
 
