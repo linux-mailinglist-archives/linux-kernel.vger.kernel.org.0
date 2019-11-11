@@ -2,134 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C843AF79CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DA99F79D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:23:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfKKRXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 12:23:06 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39362 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbfKKRXG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 12:23:06 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 29so9849334pgm.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 09:23:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=yAajaC8HCWYzucX9F7lpdzKRK9O4DP5SS69z8MpuzC8=;
-        b=X/LzmRNI+PAfGCx7iOXc7jITwTbPHloj6W9cE45iZE62pceyrxHDPEHiavfj9tEFm4
-         3ssTDoHViE0PIaYRTxiES+N/vQ0V6XBCRSxJLkNHA5EmXVvGMUKq6TH0JVEbtbv7eJIs
-         og7HVJoMSxXZSuRdEpfAiyzG2OcgsCx2ssepg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=yAajaC8HCWYzucX9F7lpdzKRK9O4DP5SS69z8MpuzC8=;
-        b=LOOafWwy3rVssb/U4UQErtDrpsBTytakKnZ5qeLqpOf6sRboZwyQho7x3rwHgO+Pa8
-         wGm/WdQhUoLvuiVGGXYSUcMK5/DmbaZiEEt1IJFyPJdx8jeE7zwUPq1EYEQ5RPKg7Wr+
-         jadP9MVkVO6JTFai1ba1xmJTOm+NKujH7HkZnfk+tYuTtH274sZ4JITld+owdVsdkhMQ
-         Enematj9jCxhIFJmlA9sBpZ75iBzhVvo+1Vjpi9qo4RafeLmT0O8buC+8hxFjkItE0ul
-         F7YN0umM5grC6lQSNDrM1e8bkrijeFP/xvKPnlBQL8pJiotlkWb+Y8LO5lB0IljmfGPE
-         54Hg==
-X-Gm-Message-State: APjAAAWXi+u08Z7sBS5M64rp1As0L3anREl08qVgDHDm8qHwwoj33ovX
-        hnIXAO1HHa8MnA3yAol4FtJqLg==
-X-Google-Smtp-Source: APXvYqyYRSzpwUPLuEiDxWQRl2mmu7HM3K81RSwKffyFA1Sp64Zbaq8qhH85VUnK4TNVxH3gOyo1gQ==
-X-Received: by 2002:a17:90a:5d0e:: with SMTP id s14mr85161pji.55.1573492985697;
-        Mon, 11 Nov 2019 09:23:05 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o15sm22800000pgn.49.2019.11.11.09.23.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 09:23:04 -0800 (PST)
-Date:   Mon, 11 Nov 2019 09:23:03 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 11/29] vmlinux.lds.h: Replace RODATA with RO_DATA
-Message-ID: <201911110922.17A2112B0@keescook>
-References: <20191011000609.29728-1-keescook@chromium.org>
- <20191011000609.29728-12-keescook@chromium.org>
- <CAMuHMdXfPyti1wFBb0hhf3CeDSQ=zVv7cV-taeYCmDswMQkXPQ@mail.gmail.com>
+        id S1727210AbfKKRXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 12:23:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbfKKRXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 12:23:25 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2536A214DB;
+        Mon, 11 Nov 2019 17:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573493004;
+        bh=FdXhlcSnmQXZ512UJAwnB/JLm0W9BnHa+GET9e6BVV8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VcdI+yQ6JQj+/B1nStLolWUligtFElZUe7UsWr7g/kmdLjIhj6L9UgPV9fWDeYY2d
+         IrSwoefmKTdFqj1LjlY0Z/EicQr+OA4Rrcr4EYpw7cpyzDLOM1oP4opT7UDKwjs6ij
+         GMLfc6i277bBXRE4ZSOEDrxjN96fjopM6xkMbMKc=
+Date:   Mon, 11 Nov 2019 18:23:22 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     lantianyu1986@gmail.com, alex.williamson@redhat.com,
+        cohuck@redhat.com, KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, sashal@kernel.org,
+        mchehab+samsung@kernel.org, davem@davemloft.net, robh@kernel.org,
+        Jonathan.Cameron@huawei.com, paulmck@linux.ibm.com,
+        Michael Kelley <mikelley@microsoft.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, vkuznets <vkuznets@redhat.com>
+Subject: Re: [PATCH] VFIO/VMBUS: Add VFIO VMBUS driver support
+Message-ID: <20191111172322.GB1077444@kroah.com>
+References: <20191111084507.9286-1-Tianyu.Lan@microsoft.com>
+ <20191111094920.GA135867@kroah.com>
+ <20191111084712.37ba7d5a@hermes.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXfPyti1wFBb0hhf3CeDSQ=zVv7cV-taeYCmDswMQkXPQ@mail.gmail.com>
+In-Reply-To: <20191111084712.37ba7d5a@hermes.lan>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 05:58:06PM +0100, Geert Uytterhoeven wrote:
-> Hi Kees,
+On Mon, Nov 11, 2019 at 08:47:12AM -0800, Stephen Hemminger wrote:
+> On Mon, 11 Nov 2019 01:49:20 -0800
+> "Greg KH" <gregkh@linuxfoundation.org> wrote:
 > 
-> On Fri, Oct 11, 2019 at 2:07 AM Kees Cook <keescook@chromium.org> wrote:
-> > There's no reason to keep the RODATA macro: replace the callers with
-> > the expected RO_DATA macro.
-> >
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >  arch/alpha/kernel/vmlinux.lds.S      | 2 +-
-> >  arch/ia64/kernel/vmlinux.lds.S       | 2 +-
-> >  arch/microblaze/kernel/vmlinux.lds.S | 2 +-
-> >  arch/mips/kernel/vmlinux.lds.S       | 2 +-
-> >  arch/um/include/asm/common.lds.S     | 2 +-
-> >  arch/xtensa/kernel/vmlinux.lds.S     | 2 +-
-> >  include/asm-generic/vmlinux.lds.h    | 4 +---
-> >  7 files changed, 7 insertions(+), 9 deletions(-)
+> > > +	ret = sysfs_create_bin_file(&channel->kobj,  
+> > &ring_buffer_bin_attr);
+> > > +	if (ret)
+> > > +		dev_notice(&dev->device,
+> > > +			   "sysfs create ring bin file failed; %d\n",  
+> > ret);
+> > > +  
+> > 
+> > Again, don't create sysfs files on your own, the bus code should be
+> > doing this for you automatically and in a way that is race-free.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Somehow you missed:
-> 
->     arch/m68k/kernel/vmlinux-std.lds:  RODATA
->     arch/m68k/kernel/vmlinux-sun3.lds:      RODATA
+> The sysfs file is only created if the VFIO/UIO driveris used.
 
-Argh. I've sent a patch; sorry and thanks for catching this. For my own
-cross-build testing, which defconfig targets will hit these two linker
-scripts?
+That's even worse.  Again, sysfs files should be automatically created
+by the driver core when the device is created.  To randomly add/remove
+random files after that happens means userspace is never notified of
+that and that's not good.
 
--Kees
+We've been working for a while to fix up these types of races, don't
+purposfully add new ones for no good reason please :)
 
-> 
-> Leading to build failures in next-20191111:
-> 
->     /opt/cross/kisskb/gcc-4.6.3-nolibc/m68k-linux/bin/m68k-linux-ld:./arch/m68k/kernel/vmlinux.lds:29:
-> syntax error
->     make[1]: *** [/kisskb/src/Makefile:1075: vmlinux] Error 1
-> 
-> Reported-by: noreply@ellerman.id.au
-> http://kisskb.ellerman.id.au/kisskb/buildresult/14022846/
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+thanks,
 
--- 
-Kees Cook
+greg k-h
