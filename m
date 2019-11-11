@@ -2,201 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 023C3F6E49
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FC6F6E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 07:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfKKF7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 00:59:50 -0500
-Received: from mga01.intel.com ([192.55.52.88]:12455 "EHLO mga01.intel.com"
+        id S1726991AbfKKGBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 01:01:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbfKKF7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 00:59:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2019 21:59:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,291,1569308400"; 
-   d="scan'208";a="287086311"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 10 Nov 2019 21:59:49 -0800
-Received: from [10.226.38.118] (rtanwar-mobl.gar.corp.intel.com [10.226.38.118])
-        by linux.intel.com (Postfix) with ESMTP id 0E53F580261;
-        Sun, 10 Nov 2019 21:59:43 -0800 (PST)
-Subject: Re: [PATCH v5 1/2] pinctrl: Add pinmux & GPIO controller driver for a
- new SoC
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
-        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
-References: <cover.1573196057.git.rahul.tanwar@linux.intel.com>
- <890db37db56e7e49e83b9fa03903bf3482c624c7.1573196057.git.rahul.tanwar@linux.intel.com>
- <20191108114058.GE32742@smile.fi.intel.com>
-From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Message-ID: <b6283998-fc3f-678d-1647-384f2c7749ca@linux.intel.com>
-Date:   Mon, 11 Nov 2019 13:59:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1725796AbfKKGBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 01:01:36 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D88320656;
+        Mon, 11 Nov 2019 06:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573452094;
+        bh=r2/46Oo7bzlP9QELn0pm6e6LdiAFm+dgs0+pcUxGDOQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WlVHQzIJM20xcbXlcK1Ol8oaCuqcHpKxgfD4GWSGZ890mzTBiDyJocMWMK/aajIoH
+         zFEHtHcOpa+qWbMSIWCY1uyqCuFSyrpbnu15vhkyvsKgfLDNJC3dtC1zA6XlkMTyNi
+         wFW4EpAhLRmhgJW/gN20IziDGpQejHQXTUTHFvMI=
+Date:   Mon, 11 Nov 2019 07:01:29 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andres Freund <andres@anarazel.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        John Keeping <john@metanate.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.3 111/344] perf unwind: Fix libunwind when tid != pid
+Message-ID: <20191111060129.GA3197363@kroah.com>
+References: <20191003154540.062170222@linuxfoundation.org>
+ <20191003154551.163214533@linuxfoundation.org>
+ <20191110014621.n5yfednqfl7g3atr@alap3.anarazel.de>
 MIME-Version: 1.0
-In-Reply-To: <20191108114058.GE32742@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191110014621.n5yfednqfl7g3atr@alap3.anarazel.de>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 09, 2019 at 05:46:21PM -0800, Andres Freund wrote:
+> Hi,
+> 
+> On 2019-10-03 17:51:16 +0200, Greg Kroah-Hartman wrote:
+> > From: John Keeping <john@metanate.com>
+> >
+> > [ Upstream commit e8ba2906f6b9054102ad035ac9cafad9d4168589 ]
+> >
+> > Commit e5adfc3e7e77 ("perf map: Synthesize maps only for thread group
+> > leader") changed the recording side so that we no longer get mmap events
+> > for threads other than the thread group leader (when synthesising these
+> > events for threads which exist before perf is started).
+> >
+> > When a file recorded after this change is loaded, the lack of mmap
+> > records mean that unwinding is not set up for any other threads.
+> >
+> > This can be seen in a simple record/report scenario:
+> >
+> > 	perf record --call-graph=dwarf -t $TID
+> > 	perf report
+> >
+> > If $TID is a process ID then the report will show call graphs, but if
+> > $TID is a secondary thread the output is as if --call-graph=none was
+> > specified.
+> >
+> > Following the rationale in that commit, move the libunwind fields into
+> > struct map_groups and update the libunwind functions to take this
+> > instead of the struct thread.  This is only required for
+> > unwind__finish_access which must now be called from map_groups__delete
+> > and the others are changed for symmetry.
+> >
+> > Note that unwind__get_entries keeps the thread argument since it is
+> > required for symbol lookup and the libdw unwind provider uses the thread
+> > ID.
+> >
+> > Signed-off-by: John Keeping <john@metanate.com>
+> > Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Fixes: e5adfc3e7e77 ("perf map: Synthesize maps only for thread group leader")
+> > Link: http://lkml.kernel.org/r/20190815100146.28842-2-john@metanate.com
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> 
+> This unfortunately broke --call-graph dwarf on 5.3 (and presumably older
+> branches), because while this commit has been included in stable, the
+> prerequisite
+> 
+> commit ab6cd0e5276e24403751e0b3b8ed807738a8571f
+> Author:     John Keeping <john@metanate.com>
+> AuthorDate: 2019-08-15 11:01:44 +0100
+> Commit:     Arnaldo Carvalho de Melo <acme@redhat.com>
+> CommitDate: 2019-08-16 12:25:23 -0300
+> 
+>     perf map: Use zalloc for map_groups
+> 
+>     In the next commit we will add new fields to map_groups and we need
+>     these to be null if no value is assigned.  The simplest way to achieve
+>     this is to request zeroed memory from the allocator.
+> 
+>     Signed-off-by: John Keeping <john@metanate.com>
+>     Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+>     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>     Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>     Cc: Namhyung Kim <namhyung@kernel.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Cc: john keeping <john@metanate.com>
+>     Link: http://lkml.kernel.org/r/20190815100146.28842-1-john@metanate.com
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> has not.
+> 
+> 
+> The crash I get is:
+> 
+> Thread 1 "perf" received signal SIGSEGV, Segmentation fault.
+> 0x0000555555872238 in unwind__flush_access (mg=0x555555c53b50) at util/unwind-libunwind.c:76
+> 76			mg->unwind_libunwind_ops->flush_access(mg);
+> (gdb) bt
+> #0  0x0000555555872238 in unwind__flush_access (mg=0x555555c53b50) at util/unwind-libunwind.c:76
+> #1  0x0000555555800ac4 in ____thread__set_comm (exec=true, timestamp=325096707055731, str=0x7ffff7f96ed8 "sleep", thread=0x555555c53bc0) at util/thread.c:254
+> #2  __thread__set_comm (thread=thread@entry=0x555555c53bc0, str=str@entry=0x7ffff7f96ed8 "sleep", timestamp=325096707055731, exec=exec@entry=true)
+>     at util/thread.c:268
+> #3  0x00005555557f132a in machine__process_comm_event (machine=0x555555c4bc68, event=0x7ffff7f96ec8, sample=0x7fffffff8f70) at util/machine.c:600
+> #4  0x00005555557fa93b in perf_session__deliver_event (session=0x555555c4baf0, event=0x7ffff7f96ec8, tool=0x555555acb9a0 <record>, file_offset=73416)
+>     at util/session.c:1473
+> #5  0x00005555557feae8 in do_flush (show_progress=true, oe=0x555555c52610) at util/ordered-events.c:243
+> #6  __ordered_events__flush (oe=oe@entry=0x555555c52610, how=how@entry=OE_FLUSH__FINAL, timestamp=timestamp@entry=0) at util/ordered-events.c:322
+> #7  0x00005555557fef45 in __ordered_events__flush (timestamp=<optimized out>, how=<optimized out>, oe=<optimized out>) at util/ordered-events.c:338
+> #8  ordered_events__flush (how=OE_FLUSH__FINAL, oe=0x555555c52610) at util/ordered-events.c:340
+> #9  ordered_events__flush (oe=oe@entry=0x555555c52610, how=how@entry=OE_FLUSH__FINAL) at util/ordered-events.c:338
+> #10 0x00005555557fd17c in __perf_session__process_events (session=0x555555c4baf0) at util/session.c:2152
+> #11 perf_session__process_events (session=session@entry=0x555555c4baf0) at util/session.c:2181
+> #12 0x0000555555729379 in process_buildids (rec=0x555555acb9a0 <record>) at builtin-record.c:829
+> #13 record__finish_output (rec=0x555555acb9a0 <record>) at builtin-record.c:1037
+> #14 0x000055555572c000 in __cmd_record (rec=0x555555acb9a0 <record>, argv=<optimized out>, argc=2) at builtin-record.c:1661
+> #15 cmd_record (argc=2, argv=<optimized out>) at builtin-record.c:2450
+> #16 0x000055555579cd9d in run_builtin (p=0x555555ad4958 <commands+216>, argc=5, argv=0x7fffffffdcc0) at perf.c:304
+> #17 0x0000555555714baa in handle_internal_command (argv=0x7fffffffdcc0, argc=5) at perf.c:356
+> #18 run_argv (argcp=<synthetic pointer>, argv=<synthetic pointer>) at perf.c:400
+> #19 main (argc=5, argv=0x7fffffffdcc0) at perf.c:525
+> 
+> (gdb) p *mg
+> $7 = {maps = {entries = {rb_node = 0x0}, names = {rb_node = 0x0}, lock = {lock = pthread_rwlock_t = {Status = Not acquired, Shared = No,
+>         Prefers = Readers}}}, machine = 0x555555c4bc68, refcnt = {refs = {counter = 1}}, addr_space = 0x693f6967632e6775,
+>   unwind_libunwind_ops = 0xa32313438313d64}
+> 
+> (gdb) p mg->unwind_libunwind_ops
+> $8 = (struct unwind_libunwind_ops *) 0xa32313438313d64
+> 
+> (gdb) p *mg->unwind_libunwind_ops
+> Cannot access memory at address 0xa32313438313d64
+> 
+> which makes sense, because map_groups__new() allocates the group with
+> malloc, and map_groups__init() only initializes map_groups->{maps,machine,refcnt}
+> 
+> 
+> A bit surprised that nobody complained about this so far...
 
-Hi Andy,
+Thanks, I've queued up the other patch for 5.3.y now.
 
-On 8/11/2019 7:40 PM, Andy Shevchenko wrote:
-> On Fri, Nov 08, 2019 at 05:42:22PM +0800, Rahul Tanwar wrote:
->> Intel Lightning Mountain SoC has a pinmux controller & GPIO controller IP which
->> controls pin multiplexing & configuration including GPIO functions selection &
->> GPIO attributes configuration.
->>
->> This IP is not based on & does not have anything in common with Chassis
->> specification. The pinctrl drivers under pinctrl/intel/* are all based upon
->> Chassis spec compliant pinctrl IPs. So this driver doesn't fit & can not use
->> pinctrl framework under pinctrl/intel/* and it requires a separate new driver.
->>
->> Add a new GPIO & pin control framework based driver for this IP.
->> +static void eqbr_gpio_enable_irq(struct irq_data *d)
->> +{
->> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->> +	struct eqbr_gpio_ctrl *gctrl = gpiochip_get_data(gc);
->> +	unsigned int offset = irqd_to_hwirq(d);
->> +	unsigned long flags;
->> +
->> +	gc->direction_input(gc, offset);
-> Does this any IO?
-> If so, between above and below a window of possible race.
-> Ditto for all other functions that do something similar.
-
-gpio-mmio lib uses its own spin lock when it does IO in gc->direction_input()
-And that would set pin direction as input (hw ensures that the pin is not
-driven high when set direction) while below will enable interrupton that
-pin. I do not see any possible race condition in that..
-
->> +	raw_spin_lock_irqsave(&gctrl->lock, flags);
->> +	writel(BIT(offset), gctrl->membase + GPIO_IRNRNSET);
->> +	raw_spin_unlock_irqrestore(&gctrl->lock, flags);
->> +}
->> +		ret = bgpio_init(&gctrl->chip, dev, gctrl->bank->nr_pins / 8,
->> +				 gctrl->membase + GPIO_IN,
->> +				 gctrl->membase + GPIO_OUTSET,
->> +				 gctrl->membase + GPIO_OUTCLR,
->> +				 gctrl->membase + GPIO_DIR,
->> +				 NULL,
->> +				 0);
-> One line?
-
-Sure, missed it.
-
->> +static int get_drv_cur(void __iomem *mem, unsigned int offset)
->> +{
->> +	unsigned int idx = offset / DRV_CUR_PINS; /* 0-15, 16-31 per register*/
->> +	unsigned int val;
->> +
->> +	val = readl(mem + REG_DRCC(idx));
->> +	offset %= DRV_CUR_PINS;
-> From style point of view is better to have
-> 	... foo = offset / X;
-> 	... bar = offset % X;
->
-> directly in definition block. Moreover, for example, on x86 it might be
-> converted by compiler to single idiv call in assembly that returns in
-> (eax, edx) both values at once.
-
-Ok, i will change it like that but will have to introduce one more variable.
-
->> +	val = PARSE_DRV_CURRENT(val, offset);
->> +
->> +	return val;
->> +}
->> +	if (!(bank->aval_pinmap & BIT(offset))) {
->> +		dev_err(pctl->dev,
->> +			"PIN: %u is not valid, pinbase: %u, bitmap: %u\n",
->> +			pin, bank->pin_base, bank->aval_pinmap);
->> +		return -ENODEV;
->> +	}
-> Looks like aval_pinmap is NIH of valid_mask bitmap in GPIO library.
-> Can you check if it suits your purposes?
-
-I did check about it earlier & now as well. It doesn't suit our purpose.
-aval_pinmapin the driver indicates whether pad control of this pad is
-available or not. It's for all pins irrespective of if it is used as a
-gpio or not. Whereas, valid_mask bitmap of GPIO library is just to
-indicate if that gpio line is valid or not. valid_mask would have been
-useful if this driver was purely a GPIO driver.
-
->> +static bool is_func_exist(struct eqbr_pmx_func *funcs, const char *name,
->> +			 unsigned int nr_funcs, unsigned int *idx)
->> +{
->> +	int i;
->> +
->> +	if (!funcs || !nr_funcs)
->> +		return false;
-> nr_funcs check is a dup of the one in for loop.
-
-Sure, noted.
-
->> +	for (i = 0; i < nr_funcs; i++) {
->> +		if (funcs[i].name && (strcmp(funcs[i].name, name) == 0) ) {
-> An extra space, but you may use !strcmp() and make it shorter without redundant
-> parentheses.
-
-Well noted, thanks.
-
->> +			*idx = i;
->> +			return true;
->> +		}
->> +	}
->> +
->> +	return false;
->> +}
->> +		switch (op) {
->> +			case OP_COUNT_NR_FUNCS:
-> case goes usually on the same column as switch.
-
-Sure, will change, didn't know about it. Thanks.
-
->> +				if (!is_func_exist(funcs, fn_name,
->> +						   *nr_funcs, &fid))
->> +					*nr_funcs = *nr_funcs + 1;
->> +				break;
->> +
->> +			case OP_ADD_FUNCS:
->> +				if (!is_func_exist(funcs, fn_name,
->> +						   *nr_funcs, &fid))
->> +					funcs[i].name = fn_name;
->> +				break;
->> +
->> +			case OP_COUNT_NR_FUNC_GRPS:
->> +				if (is_func_exist(funcs, fn_name,
->> +						  *nr_funcs, &fid))
->> +					funcs[fid].nr_groups++;
->> +				break;
->> +
->> +			case OP_ADD_FUNC_GRPS:
->> +				if (is_func_exist(funcs, fn_name,
->> +						  *nr_funcs, &fid)) {
->> +					for(j=0;
-> Other style issueS.
-
-Will fix in v6, thanks.
-
->> +		}
->> +	for (i = 0; i < nr_funcs; i++) {
->> +		if (funcs[i].nr_groups) {
-> 	if (!foo)
-> 		continue;
-> ?
-
-Sure, will change. Thanks.
-
-Regards,
-Rahul
-
+greg k-h
