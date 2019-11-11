@@ -2,82 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 048ACF6D01
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 03:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7EF9F6D08
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 04:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfKKC7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 21:59:00 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37943 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726742AbfKKC7A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 21:59:00 -0500
-Received: by mail-qt1-f194.google.com with SMTP id p20so14154323qtq.5
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 18:58:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=65bhuoPgriNtBUE2R+ohrdrdN/rvxnp383N9kf00A4s=;
-        b=dmSbbkVEbFq3Auqxd7cNVOfavGXhUuzR/jNDxWcpYZsb/q5otj5juiciqFQLs5h9zu
-         ua8wpEmtXRG49V+5P/HRsP8O5U1OgNREa/hCWX85nLnyvR+pIvYWO8pyTnnOGgTgrPwg
-         ytx7Ll+rB1zUqY22w/s3m4fbnn94LFpxK1s/YMhyHR0/q/DPboqWMsPIu+WhxBb4N1ej
-         WiPWDyK9nT7cThdxDd0bn7yBFfsFaXJwjrGzb2J7IrhEl3XuWFfyzsOxt7J85W/iQChi
-         73+Xuu5oCmnJfCcbRdhWgFfA3/8KENy2CKbN8AuXD/bjuJUZsyVREd+a/7dGd37Yy6cT
-         jyDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=65bhuoPgriNtBUE2R+ohrdrdN/rvxnp383N9kf00A4s=;
-        b=eOj7JtRzwSe0I+JDGyYKoZpfnjx9yFWuMlEman2eFcYA5569ux+90uXliwDrrzetn8
-         BmIdR1In5OIHuIwj5n1YZXxRTDXPUxpnISNfZEo3wOJQiwvrwjohwcnEXn2HJiqilTf1
-         hQ0N9yXT5/sHM0vElz7YewhqRnD1pJHRdVp3do9n+gI4ilYJw4io79CKuR3piAG3sn9s
-         OsxQWaKHgooekQbYD3cEbwmIvo/cWhSScdlgtDD1ohmLgnt6LoF1oAPgOJ90tOUg5MKc
-         XuWCoUl1CADvoMDOUpsaDeOl1P4w0lyb0iClLgXqrhTyIUc2i8vDYtIQRIf8XDZ5quc7
-         nzGQ==
-X-Gm-Message-State: APjAAAXK9WV5qFWXIX0Ge+R/xDy6juPq2ccM2whGinOAf74Ys3rI3AxP
-        wc5y7wx6qtoAuWquTxPekHIFDyd9FNCmgg==
-X-Google-Smtp-Source: APXvYqzgxJuH1MyOEI2dRYJeUBelSt0rQZuJ56c5fwz39EZF78E2gj0SlimsTSCYTi0Z+TMmH4PwUw==
-X-Received: by 2002:ac8:524a:: with SMTP id y10mr23155907qtn.325.1573441137896;
-        Sun, 10 Nov 2019 18:58:57 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id r80sm6465873qke.121.2019.11.10.18.58.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Nov 2019 18:58:57 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 1/1] iommu/vt-d: Add Kconfig option to enable/disable scalable mode
-Date:   Sun, 10 Nov 2019 21:58:56 -0500
-Message-Id: <472617D4-1652-45FB-90A4-0D45766DB78B@lca.pw>
-References: <20191109034039.27964-1-baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, kevin.tian@intel.com,
-        ashok.raj@intel.com, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com
-In-Reply-To: <20191109034039.27964-1-baolu.lu@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-X-Mailer: iPhone Mail (17A878)
+        id S1726823AbfKKDEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 22:04:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54276 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726742AbfKKDEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 22:04:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 224DDAE55;
+        Mon, 11 Nov 2019 03:04:48 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     linux-realtek-soc@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        James Tai <james.tai@realtek.com>
+Subject: [PATCH 0/7] arm64: dts: Initial RTD1395 and BPi-M4 support
+Date:   Mon, 11 Nov 2019 04:04:27 +0100
+Message-Id: <20191111030434.29977-1-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+This patch series adds initial Device Trees for Realtek RTD1395 SoC and
+Banana Pi BPI-M4 SBC.
 
-> On Nov 8, 2019, at 10:43 PM, Lu Baolu <baolu.lu@linux.intel.com> wrote:
->=20
-> +config INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON
-> +    prompt "Enable Intel IOMMU scalable mode by default"
-> +    depends on INTEL_IOMMU
-> +    help
-> +      Selecting this option will enable the scalable mode if
-> +      hardware presents the capability. If this option is not
-> +      selected, scalable mode support could also be enabled
-> +      by passing intel_iommu=3Dsm_on to the kernel.
-> +
+It is based on my RTD1195 series and James' pending RTD1619 DT bindings patch.
 
-Does it also make sense to mention which hardware presents this capability o=
-r how to check it?=
+It starts with some refactorings to align the various SoCs and to demonstrate
+to James what I meant with the r-bus node and GIC mask in RTD1619 DT v1 review.
+
+RTD1395 family seems pretty similar to RTD1295 family, but allows for more RAM
+and therefore uses #address-cells of 2 vs. 1, and it uses a different reserved
+memory region for RPC. RTD1295 resets appear sufficiently compatible for now.
+
+More details at:
+https://en.opensuse.org/HCL:BananaPi_M4
+
+Latest experimental patches at:
+https://github.com/afaerber/linux/commits/rtd1295-next
+
+Have a lot of fun!
+
+Cheers,
+Andreas
+
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: James Tai <james.tai@realtek.com>
+
+Andreas Färber (7):
+  arm64: dts: realtek: rtd129x: Fix GIC CPU masks for RTD1293
+  arm64: dts: realtek: rtd129x: Use reserved-memory for RPC regions
+  arm64: dts: realtek: rtd129x: Introduce r-bus
+  ARM: dts: rtd1195: Fix GIC CPU mask
+  ARM: dts: rtd1195: Introduce r-bus
+  dt-bindings: arm: realtek: Add RTD1395 and Banana Pi BPI-M4
+  arm64: dts: realtek: Add RTD1395 and BPi-M4
+
+ Documentation/devicetree/bindings/arm/realtek.yaml |   6 +
+ arch/arm/boot/dts/rtd1195.dtsi                     |  60 ++++----
+ arch/arm64/boot/dts/realtek/Makefile               |   2 +
+ arch/arm64/boot/dts/realtek/rtd1293.dtsi           |  12 +-
+ arch/arm64/boot/dts/realtek/rtd1295.dtsi           |  21 +--
+ arch/arm64/boot/dts/realtek/rtd1296.dtsi           |   8 +-
+ arch/arm64/boot/dts/realtek/rtd129x.dtsi           | 159 ++++++++++++---------
+ arch/arm64/boot/dts/realtek/rtd1395-bpi-m4.dts     |  30 ++++
+ arch/arm64/boot/dts/realtek/rtd1395.dtsi           |  65 +++++++++
+ arch/arm64/boot/dts/realtek/rtd139x.dtsi           | 141 ++++++++++++++++++
+ 10 files changed, 387 insertions(+), 117 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/realtek/rtd1395-bpi-m4.dts
+ create mode 100644 arch/arm64/boot/dts/realtek/rtd1395.dtsi
+ create mode 100644 arch/arm64/boot/dts/realtek/rtd139x.dtsi
+
+-- 
+2.16.4
+
