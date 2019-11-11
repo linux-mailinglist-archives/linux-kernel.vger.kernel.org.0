@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE5DDF7D1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:53:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0CAF7D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:53:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfKKSxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:53:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47884 "EHLO mail.kernel.org"
+        id S1730262AbfKKSx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:53:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbfKKSxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:53:11 -0500
+        id S1729594AbfKKSx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:53:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67C4420818;
-        Mon, 11 Nov 2019 18:53:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84078204EC;
+        Mon, 11 Nov 2019 18:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498391;
-        bh=i5gkfhBnIMrzvhHOoZ2F2H3K1hIYR9G5ZodLMKdollY=;
+        s=default; t=1573498405;
+        bh=PqiC49kc30tvGS27xJH3WX24/feVFXmbvnQN0nLxgJ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jZxZV1cezY/j5IR/khYpTAnmyuc2WwPddArZNXzEuNDeERY0VkwPkgEyH7Z5PfUPb
-         Jr3nXX5n8fEVkY1nOGR3o9WtI4f6EXEAeSwpWFK9HyTaSzIHAlFt4V3TApuiCVdor3
-         +at2245wi+Yf9vUTnGu/94YI9W4KbMCu3oiIZiWU=
+        b=Xuc/M00klHF1RhOiVf2Sr2ckRCLv4V8otAusOpdOOv5n1UvJBvAmAcwI6Pnfl1TIS
+         8Hmhagjv/4DCOXaYKPuhdrJjUSCj3z13PveHn6ANxyYdH2appftpZXe3OQqzqVo7Ae
+         h6wq8gXWP4FBy7mas9srWuyDMvIoAoL5QRvSyCxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cyrill Gorcunov <gorcunov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 5.3 069/193] x86/dumpstack/64: Dont evaluate exception stacks before setup
-Date:   Mon, 11 Nov 2019 19:27:31 +0100
-Message-Id: <20191111181506.198102010@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 5.3 070/193] x86/apic/32: Avoid bogus LDR warnings
+Date:   Mon, 11 Nov 2019 19:27:32 +0100
+Message-Id: <20191111181506.275154395@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -44,67 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Jan Beulich <jbeulich@suse.com>
 
-commit e361362b08cab1098b64b0e5fd8c879f086b3f46 upstream.
+commit fe6f85ca121e9c74e7490fe66b0c5aae38e332c3 upstream.
 
-Cyrill reported the following crash:
+The removal of the LDR initialization in the bigsmp_32 APIC code unearthed
+a problem in setup_local_APIC().
 
-  BUG: unable to handle page fault for address: 0000000000001ff0
-  #PF: supervisor read access in kernel mode
-  RIP: 0010:get_stack_info+0xb3/0x148
+The code checks unconditionally for a mismatch of the logical APIC id by
+comparing the early APIC id which was initialized in get_smp_config() with
+the actual LDR value in the APIC.
 
-It turns out that if the stack tracer is invoked before the exception stack
-mappings are initialized in_exception_stack() can erroneously classify an
-invalid address as an address inside of an exception stack:
+Due to the removal of the bogus LDR initialization the check now can
+trigger on bigsmp_32 APIC systems emitting a warning for every booting
+CPU. This is of course a false positive because the APIC is not using
+logical destination mode.
 
-    begin = this_cpu_read(cea_exception_stacks);  <- 0
-    end = begin + sizeof(exception stacks);
+Restrict the check and the possibly resulting fixup to systems which are
+actually using the APIC in logical destination mode.
 
-i.e. any address between 0 and end will be considered as exception stack
-address and the subsequent code will then try to derefence the resulting
-stack frame at a non mapped address.
+[ tglx: Massaged changelog and added Cc stable ]
 
- end = begin + (unsigned long)ep->size;
-     ==> end = 0x2000
-
- regs = (struct pt_regs *)end - 1;
-     ==> regs = 0x2000 - sizeof(struct pt_regs *) = 0x1ff0
-
- info->next_sp   = (unsigned long *)regs->sp;
-     ==> Crashes due to accessing 0x1ff0
-
-Prevent this by checking the validity of the cea_exception_stack base
-address and bailing out if it is zero.
-
-Fixes: afcd21dad88b ("x86/dumpstack/64: Use cpu_entry_area instead of orig_ist")
-Reported-by: Cyrill Gorcunov <gorcunov@gmail.com>
+Fixes: bae3a8d3308 ("x86/apic: Do not initialize LDR and DFR for bigsmp")
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Cyrill Gorcunov <gorcunov@gmail.com>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1910231950590.1852@nanos.tec.linutronix.de
+Link: https://lkml.kernel.org/r/666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/dumpstack_64.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kernel/apic/apic.c |   28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
---- a/arch/x86/kernel/dumpstack_64.c
-+++ b/arch/x86/kernel/dumpstack_64.c
-@@ -94,6 +94,13 @@ static bool in_exception_stack(unsigned
- 	BUILD_BUG_ON(N_EXCEPTION_STACKS != 6);
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1573,9 +1573,6 @@ static void setup_local_APIC(void)
+ {
+ 	int cpu = smp_processor_id();
+ 	unsigned int value;
+-#ifdef CONFIG_X86_32
+-	int logical_apicid, ldr_apicid;
+-#endif
  
- 	begin = (unsigned long)__this_cpu_read(cea_exception_stacks);
-+	/*
-+	 * Handle the case where stack trace is collected _before_
-+	 * cea_exception_stacks had been initialized.
-+	 */
-+	if (!begin)
-+		return false;
+ 
+ 	if (disable_apic) {
+@@ -1616,16 +1613,21 @@ static void setup_local_APIC(void)
+ 	apic->init_apic_ldr();
+ 
+ #ifdef CONFIG_X86_32
+-	/*
+-	 * APIC LDR is initialized.  If logical_apicid mapping was
+-	 * initialized during get_smp_config(), make sure it matches the
+-	 * actual value.
+-	 */
+-	logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
+-	ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
+-	WARN_ON(logical_apicid != BAD_APICID && logical_apicid != ldr_apicid);
+-	/* always use the value from LDR */
+-	early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
++	if (apic->dest_logical) {
++		int logical_apicid, ldr_apicid;
 +
- 	end = begin + sizeof(struct cea_exception_stacks);
- 	/* Bail if @stack is outside the exception stack area. */
- 	if (stk < begin || stk >= end)
++		/*
++		 * APIC LDR is initialized.  If logical_apicid mapping was
++		 * initialized during get_smp_config(), make sure it matches
++		 * the actual value.
++		 */
++		logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
++		ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
++		if (logical_apicid != BAD_APICID)
++			WARN_ON(logical_apicid != ldr_apicid);
++		/* Always use the value from LDR. */
++		early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
++	}
+ #endif
+ 
+ 	/*
 
 
