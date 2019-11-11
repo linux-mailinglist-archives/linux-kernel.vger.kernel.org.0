@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A3DF7B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:37:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF1AFF7CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:52:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbfKKSg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:36:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55424 "EHLO mail.kernel.org"
+        id S1730020AbfKKSvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:51:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727746AbfKKSgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:36:53 -0500
+        id S1729527AbfKKSv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:51:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CAC3204FD;
-        Mon, 11 Nov 2019 18:36:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95E48204FD;
+        Mon, 11 Nov 2019 18:51:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497413;
-        bh=LhPWK2V7Segxol/WkLGxQ23Hr9rDFRaY8YxQpfE+9KI=;
+        s=default; t=1573498288;
+        bh=k7CnPFN7GwwicI3kfUDsPK9j2FEwj2wKM5uIvLlDaIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ISsINZ5NrXUqWzIJP3IK1z4z+h239+GX/Of3JvjdFplniPH+/oJSYhp/n2feeafW1
-         1Gg4/rHMQ8Yh8sWt+TvJlPruKYiXMk3qvtvxZbYlMJZynDb6xRVdwIY6oAAgZHCrHL
-         lnxnsjP0G5QV2yi1ueXKD+vzTdyCGM8WFWIHky7A=
+        b=tp+ciXm8QF874S7wd10tGb7n2iEsljxo0ji533NtBOkUHUsHoJ7SLfvVSpXI4fpD4
+         RITyLi8+QbO0AtMch6/cQ+I3buu0ChMD4iENtN35uBY5jpV1nOTbU9c9x4d60PtqcH
+         GHFJHSj80F4Sxb+afZaySAV4tqwJs973X/SH0Dm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Johan Hovold <johan@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 009/105] nfc: netlink: fix double device reference drop
-Date:   Mon, 11 Nov 2019 19:27:39 +0100
-Message-Id: <20191111181426.141943937@linuxfoundation.org>
+        stable@vger.kernel.org, Franklin S Cooper Jr <fcooper@ti.com>,
+        Wen Yang <wenyang@linux.alibaba.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 5.3 078/193] can: dev: add missing of_node_put() after calling of_get_child_by_name()
+Date:   Mon, 11 Nov 2019 19:27:40 +0100
+Message-Id: <20191111181506.885222735@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Wen Yang <wenyang@linux.alibaba.com>
 
-[ Upstream commit 025ec40b81d785a98f76b8bdb509ac10773b4f12 ]
+commit db9ee384f6f71f7c5296ce85b7c1a2a2527e7c72 upstream.
 
-The function nfc_put_device(dev) is called twice to drop the reference
-to dev when there is no associated local llcp. Remove one of them to fix
-the bug.
+of_node_put() needs to be called when the device node which is got
+from of_get_child_by_name() finished using.
 
-Fixes: 52feb444a903 ("NFC: Extend netlink interface for LTO, RW, and MIUX parameters support")
-Fixes: d9b8d8e19b07 ("NFC: llcp: Service Name Lookup netlink interface")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2290aefa2e90 ("can: dev: Add support for limiting configured bitrate")
+Cc: Franklin S Cooper Jr <fcooper@ti.com>
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/nfc/netlink.c |    2 --
- 1 file changed, 2 deletions(-)
 
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -1100,7 +1100,6 @@ static int nfc_genl_llc_set_params(struc
+---
+ drivers/net/can/dev.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -842,6 +842,7 @@ void of_can_transceiver(struct net_devic
+ 		return;
  
- 	local = nfc_llcp_find_local(dev);
- 	if (!local) {
--		nfc_put_device(dev);
- 		rc = -ENODEV;
- 		goto exit;
- 	}
-@@ -1160,7 +1159,6 @@ static int nfc_genl_llc_sdreq(struct sk_
- 
- 	local = nfc_llcp_find_local(dev);
- 	if (!local) {
--		nfc_put_device(dev);
- 		rc = -ENODEV;
- 		goto exit;
- 	}
+ 	ret = of_property_read_u32(dn, "max-bitrate", &priv->bitrate_max);
++	of_node_put(dn);
+ 	if ((ret && ret != -EINVAL) || (!ret && !priv->bitrate_max))
+ 		netdev_warn(dev, "Invalid value for transceiver max bitrate. Ignoring bitrate limit.\n");
+ }
 
 
