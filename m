@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3EB9F7BA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1137F7B3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbfKKSi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:38:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57392 "EHLO mail.kernel.org"
+        id S1727527AbfKKSeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:34:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729007AbfKKSi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:38:27 -0500
+        id S1728247AbfKKSeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35D9B204FD;
-        Mon, 11 Nov 2019 18:38:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63A502184C;
+        Mon, 11 Nov 2019 18:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497506;
-        bh=V/BFtrfACRvAuMyvrEX6mCnc3UD+mqWzo5Lyq4xWR2s=;
+        s=default; t=1573497239;
+        bh=66wL/elgqWcPDK61K2tTh/dkD/z9xVROLztGgJA3LKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DLsfiytpB0Kr72BDtMVKMvCWagAQRuS9Hqu6UVs7Z7JrBNu5D9pkAlU8mOEDjo9GJ
-         sXSh68qyUOn1a5ILtccndL5fk2d5j+kBqsWXduEiKPM1CsEptGTjteMK1+AKKdsaV6
-         bvEdGAq8/lxrA0O5Soy6wCSlqHz21WMjP2Qe4w4g=
+        b=PCUDmIbGGXQ1Gp2G6FBnhnwIdhbl0aYeRiS9AKEvd3jd8lqEEfG7o9annPvYDW0On
+         R7c2LLEr2aoB4TOGlVFW5Hw8w7lQf9xMQLg9aad6KGY6E5VFZcl1dqKsFNQF6unesN
+         7XHmi72pBPr1OIVCI6lI5GyWlLv0ZVwkmgVS2FLM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 077/105] scsi: qla2xxx: Initialized mailbox to prevent driver load failure
-Date:   Mon, 11 Nov 2019 19:28:47 +0100
-Message-Id: <20191111181446.334591904@linuxfoundation.org>
+Subject: [PATCH 4.9 48/65] usb: dwc3: remove the call trace of USBx_GFLADJ
+Date:   Mon, 11 Nov 2019 19:28:48 +0100
+Message-Id: <20191111181350.338631408@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Himanshu Madhani <hmadhani@marvell.com>
+From: Yinbo Zhu <yinbo.zhu@nxp.com>
 
-[ Upstream commit c2ff2a36eff60efb5e123c940115216d6bf65684 ]
+[ Upstream commit a7d9874c6f3fbc8d25cd9ceba35b6822612c4ebf ]
 
-This patch fixes issue with Gen7 adapter in a blade environment where one
-of the ports will not be detected by driver. Firmware expects mailbox 11 to
-be set or cleared by driver for newer ISP.
+layerscape board sometimes reported some usb call trace, that is due to
+kernel sent LPM tokerns automatically when it has no pending transfers
+and think that the link is idle enough to enter L1, which procedure will
+ask usb register has a recovery,then kernel will compare USBx_GFLADJ and
+set GFLADJ_30MHZ, GFLADJ_30MHZ_REG until GFLADJ_30MHZ is equal 0x20, if
+the conditions were met then issue occur, but whatever the conditions
+whether were met that usb is all need keep GFLADJ_30MHZ of value is 0x20
+(xhci spec ask use GFLADJ_30MHZ to adjust any offset from clock source
+that generates the clock that drives the SOF counter, 0x20 is default
+value of it)That is normal logic, so need remove the call trace.
 
-Following message is seen in the log file:
-
-[   18.810892] qla2xxx [0000:d8:00.0]-1820:1: **** Failed=102 mb[0]=4005 mb[1]=37 mb[2]=20 mb[3]=8
-[   18.819596]  cmd=2 ****
-
-[mkp: typos]
-
-Link: https://lore.kernel.org/r/20191022193643.7076-2-hmadhani@marvell.com
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_mbx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
-index 929ec087b8eb3..459481ce5872d 100644
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -624,6 +624,7 @@ qla2x00_execute_fw(scsi_qla_host_t *vha, uint32_t risc_addr)
- 		mcp->mb[2] = LSW(risc_addr);
- 		mcp->mb[3] = 0;
- 		mcp->mb[4] = 0;
-+		mcp->mb[11] = 0;
- 		ha->flags.using_lr_setting = 0;
- 		if (IS_QLA25XX(ha) || IS_QLA81XX(ha) || IS_QLA83XX(ha) ||
- 		    IS_QLA27XX(ha)) {
-@@ -667,7 +668,7 @@ qla2x00_execute_fw(scsi_qla_host_t *vha, uint32_t risc_addr)
- 		if (ha->flags.exchoffld_enabled)
- 			mcp->mb[4] |= ENABLE_EXCHANGE_OFFLD;
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 73dc5a6c61088..7154a93f01143 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -227,8 +227,7 @@ static void dwc3_frame_length_adjustment(struct dwc3 *dwc)
  
--		mcp->out_mb |= MBX_4|MBX_3|MBX_2|MBX_1;
-+		mcp->out_mb |= MBX_4 | MBX_3 | MBX_2 | MBX_1 | MBX_11;
- 		mcp->in_mb |= MBX_3 | MBX_2 | MBX_1;
- 	} else {
- 		mcp->mb[1] = LSW(risc_addr);
+ 	reg = dwc3_readl(dwc->regs, DWC3_GFLADJ);
+ 	dft = reg & DWC3_GFLADJ_30MHZ_MASK;
+-	if (!dev_WARN_ONCE(dwc->dev, dft == dwc->fladj,
+-	    "request value same as default, ignoring\n")) {
++	if (dft != dwc->fladj) {
+ 		reg &= ~DWC3_GFLADJ_30MHZ_MASK;
+ 		reg |= DWC3_GFLADJ_30MHZ_SDBND_SEL | dwc->fladj;
+ 		dwc3_writel(dwc->regs, DWC3_GFLADJ, reg);
 -- 
 2.20.1
 
