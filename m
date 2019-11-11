@@ -2,68 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A4BF794D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FCD0F7949
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:58:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfKKQ61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:58:27 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39040 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727027AbfKKQ6Z (ORCPT
+        id S1726981AbfKKQ6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:58:19 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38250 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbfKKQ6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:58:25 -0500
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xABGw1ir031439
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Nov 2019 11:58:02 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id C0DC94202FD; Mon, 11 Nov 2019 11:58:00 -0500 (EST)
-Date:   Mon, 11 Nov 2019 11:58:00 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Jann Horn <jannh@google.com>
-Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ingo Molnar <mingo@elte.hu>
-Subject: Re: For review: documentation of clone3() system call
-Message-ID: <20191111165800.GD7017@mit.edu>
-References: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
- <20191107151941.dw4gtul5lrtax4se@wittgenstein>
- <2eb2ab4c-b177-29aa-cdc4-420b24cfd7b3@gmail.com>
- <CAG48ez2of684J6suPZpko7JFV6hg5KQsrP0KAn8B8-C3PM9OfQ@mail.gmail.com>
+        Mon, 11 Nov 2019 11:58:18 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a14so12092567oid.5;
+        Mon, 11 Nov 2019 08:58:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N5Vcj3yE2rkXP4doP0O2V7gRihUnv+nSjX4pf/13Rw8=;
+        b=CBQ8W26nBhfvyynYKCEr3k8TGOtrtm34pDWrxm8OKM7Um9zQELtwz7Umd1M/a6q8Mi
+         Onlte7cJBZM/IajBJgyVCrO1wacbaIh/ws+ue+BsmgLhbtThvvFKBs602VdJbQkt/CXu
+         CmWa51IaSDH4hnQUuJpCm2FcvVpAXPYVqoDA8mWAFIRfCnxU9gKgBFR2QJ1aZfoWWhiz
+         WoIdYP+9++Y2feuBw5/gKL2Ke8sd2f6XlgPYionZf2kwaaityTsdGBnoMNtP12Y2XWFF
+         RLAkdyR+pOj1alVTcfuWhByYoYDkHMH1MgKwbB9k63qBkauP4Yor8yI9HM/Yr8ZLo6MR
+         bs0w==
+X-Gm-Message-State: APjAAAUHXO2fEm89dRaWb3V9JHhwcK3sJ+QcJL7RokoyXfyCOgZip+hS
+        JiDyK5/jBvsdjxM3r2XN9eFHc5BwGqc8LxHCzOw=
+X-Google-Smtp-Source: APXvYqy/vMjYcYeqIvTqdLd5GGnLez7ZmWGDKl5AqUc+6PF8GisVTiuTjJisyx2dw7CZpTj+GRrxuJBIdtOSyrbYjfw=
+X-Received: by 2002:aca:fc92:: with SMTP id a140mr23499698oii.153.1573491497306;
+ Mon, 11 Nov 2019 08:58:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2of684J6suPZpko7JFV6hg5KQsrP0KAn8B8-C3PM9OfQ@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <20191011000609.29728-1-keescook@chromium.org> <20191011000609.29728-12-keescook@chromium.org>
+In-Reply-To: <20191011000609.29728-12-keescook@chromium.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Nov 2019 17:58:06 +0100
+Message-ID: <CAMuHMdXfPyti1wFBb0hhf3CeDSQ=zVv7cV-taeYCmDswMQkXPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/29] vmlinux.lds.h: Replace RODATA with RO_DATA
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Will Deacon <will@kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michal Simek <monstr@monstr.eu>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 03:55:35PM +0100, Jann Horn wrote:
-> Not on Linux, but on OpenBSD, they do use MAP_STACK now AFAIK; this
-> was announced here:
-> <http://openbsd-archive.7691.n7.nabble.com/stack-register-checking-td338238.html>.
-> Basically they periodically check whether the userspace stack pointer
-> points into a MAP_STACK region, and if not, they kill the process. So
-> even if it's a no-op on Linux...
+Hi Kees,
 
-Hmm, is that something we should do in Linux?  Even if we only check
-on syscall entry, which should be pretty inexpensive, it seems like it
-would be very effective in protecting various ROP techniques.
+On Fri, Oct 11, 2019 at 2:07 AM Kees Cook <keescook@chromium.org> wrote:
+> There's no reason to keep the RODATA macro: replace the callers with
+> the expected RO_DATA macro.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/alpha/kernel/vmlinux.lds.S      | 2 +-
+>  arch/ia64/kernel/vmlinux.lds.S       | 2 +-
+>  arch/microblaze/kernel/vmlinux.lds.S | 2 +-
+>  arch/mips/kernel/vmlinux.lds.S       | 2 +-
+>  arch/um/include/asm/common.lds.S     | 2 +-
+>  arch/xtensa/kernel/vmlinux.lds.S     | 2 +-
+>  include/asm-generic/vmlinux.lds.h    | 4 +---
+>  7 files changed, 7 insertions(+), 9 deletions(-)
 
-      	      		   	      	      - Ted
+Somehow you missed:
+
+    arch/m68k/kernel/vmlinux-std.lds:  RODATA
+    arch/m68k/kernel/vmlinux-sun3.lds:      RODATA
+
+Leading to build failures in next-20191111:
+
+    /opt/cross/kisskb/gcc-4.6.3-nolibc/m68k-linux/bin/m68k-linux-ld:./arch/m68k/kernel/vmlinux.lds:29:
+syntax error
+    make[1]: *** [/kisskb/src/Makefile:1075: vmlinux] Error 1
+
+Reported-by: noreply@ellerman.id.au
+http://kisskb.ellerman.id.au/kisskb/buildresult/14022846/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
