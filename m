@@ -2,84 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A4FAF7C1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D1D5F7C24
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbfKKSn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:43:26 -0500
-Received: from forward106p.mail.yandex.net ([77.88.28.109]:55623 "EHLO
-        forward106p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728301AbfKKSnV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:43:21 -0500
-X-Greylist: delayed 351 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Nov 2019 13:43:19 EST
-Received: from forward100q.mail.yandex.net (forward100q.mail.yandex.net [IPv6:2a02:6b8:c0e:4b:0:640:4012:bb97])
-        by forward106p.mail.yandex.net (Yandex) with ESMTP id B98701C806FA;
-        Mon, 11 Nov 2019 21:37:26 +0300 (MSK)
-Received: from mxback8q.mail.yandex.net (mxback8q.mail.yandex.net [IPv6:2a02:6b8:c0e:42:0:640:b38f:32ec])
-        by forward100q.mail.yandex.net (Yandex) with ESMTP id B41CC7080002;
-        Mon, 11 Nov 2019 21:37:26 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback8q.mail.yandex.net (mxback/Yandex) with ESMTP id Fm9TxESHgv-bPd8t6v3;
-        Mon, 11 Nov 2019 21:37:25 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=golovin.in; s=mail; t=1573497445;
-        bh=Kr8Q2CYrVzqyFN3+KQChl/ZmdG+3/pTsRbqPDvZ9Fks=;
-        h=Message-Id:Date:Cc:Subject:To:From;
-        b=0AgvEJRsURO6sGtecisNH6I2lDJ54V2JAceWcUvHyXAnXtKKbeLunJnwPU6TWGnii
-         Bn9j0Ykvy8GTF7jCTOnbtINI/X+br9PLuzJg60pEkOMQevn5g2R3JkHsiGZxWY//07
-         f0SY09SjPC/o6lMy23G899p+Zw3q5mZA2qLZAqdQ=
-Authentication-Results: mxback8q.mail.yandex.net; dkim=pass header.i=@golovin.in
-Received: by vla1-b2d94eaf2344.qloud-c.yandex.net with HTTP;
-        Mon, 11 Nov 2019 21:37:25 +0300
-From:   Dmitry Golovin <dima@golovin.in>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ethan Sommer <e5ten.arch@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2] kbuild: support byacc as alternative YACC to bison
+        id S1728667AbfKKSni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:43:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728229AbfKKSnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:43:32 -0500
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4C1B214E0;
+        Mon, 11 Nov 2019 18:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573497811;
+        bh=93uHfnNutgEilBVJIHVlpC/Kf/LkFBDLYXUemZhTj0s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ubAmmBDinRl5NGqinEY+dr5aM29YlNmPVCE45ZDGv6KcSWalFgyi3EDutEp5ENqG+
+         cGWyVrsYzgmp70eOfCxSKKlJNIafRzt9b5Kc8JGVkv71RW97Bdf4UDUnL5ClVa+gDx
+         uxk1sGDobpaIwuiIfuJhxZH9NOQJjXndsRvyxYAY=
+Received: by mail-qk1-f171.google.com with SMTP id 15so12072448qkh.6;
+        Mon, 11 Nov 2019 10:43:31 -0800 (PST)
+X-Gm-Message-State: APjAAAX8BXL5LkjiI1DGlIvQ4dAFssNsa/tut//nZayppXapvwtgsSUY
+        7jizeUhNunqNDmK+GBEWCSOOFHJO7QzIOAwKyQ==
+X-Google-Smtp-Source: APXvYqy1cZUz+/KY/qM9trYtoI87h+hdwAwyrKM3PiBoGE0vBz8iWLoHwg4r+OzvbS/+2aMlRC6kl5Pgalcr+n0qzsU=
+X-Received: by 2002:a37:30b:: with SMTP id 11mr2097687qkd.254.1573497810827;
+ Mon, 11 Nov 2019 10:43:30 -0800 (PST)
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Mon, 11 Nov 2019 20:37:25 +0200
-Message-Id: <17102241573497445@vla1-b2d94eaf2344.qloud-c.yandex.net>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+References: <20191104070116.GM57214@dtor-ws> <20191104183702.8894-1-TheSven73@gmail.com>
+ <CAHCN7xJc6DeyQV27OVjD14a8hZT+_Fo9qo-iHgLO414t3y6hVQ@mail.gmail.com>
+ <CAGngYiXp52g7X=KLVqxTAhK0AJ9mpgGyaptbkYvhwWfRkQCaXQ@mail.gmail.com>
+ <CAHCN7xLhqHzcHro7HYUdNAi8K3ToeruOtLw=0SZNAgNqUpxvHQ@mail.gmail.com>
+ <20191104233621.GP57214@dtor-ws> <CAGngYiW0+QkLNmjp4yre2upqsvgEL4Or8rm09k5o7=9WHryyhg@mail.gmail.com>
+ <20191111181657.GA57214@dtor-ws>
+In-Reply-To: <20191111181657.GA57214@dtor-ws>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 11 Nov 2019 12:43:19 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+MgveQX+9sZ4Q2zqtYZWxEpMBXaDJRxjQ4B7em00VnRA@mail.gmail.com>
+Message-ID: <CAL_Jsq+MgveQX+9sZ4Q2zqtYZWxEpMBXaDJRxjQ4B7em00VnRA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] Input: ili210x - add ILI2117 support
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Sven Van Asbroeck <thesven73@gmail.com>,
+        Marek Vasut <marex@denx.de>, Adam Ford <aford173@gmail.com>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hmm, this is unfortunate since there is no common way to
-> specify the header path directly.
-> 
-> I am not sure how much effort we should invent
-> to support non-GNU implementation
-> since we already rely on various GNU tools.
-> 
-> If we decide to support byacc,
-> we must carry the restriction
-> that bans GNU-extension.
+On Mon, Nov 11, 2019 at 12:17 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> On Tue, Nov 05, 2019 at 10:29:53AM -0500, Sven Van Asbroeck wrote:
+> > On Mon, Nov 4, 2019 at 6:36 PM Dmitry Torokhov
+> > <dmitry.torokhov@gmail.com> wrote:
+> > >
+> > > OK, I refreshed the branch with fixes and a couple of new patches. It is
+> > > on top of 5.3 now. If this works for you guys I will be merging it for
+> > > 5.5.
+> > >
+> >
+> > According to the ili2117a/2118a datasheet I have, there are still a
+> > few loose ends.
+> > Some of these might be too inconsequential to worry about.
+> > Dmitry, tell me which ones you think are important, if any,
+> > and I will spin a patch if you like. Or you can do it, just let me know.
+> >
+> > >       { "ili210x", (long)&ili210x_chip },
+> > >       { "ili2117", (long)&ili211x_chip },
+> > >       { "ili251x", (long)&ili251x_chip },
+> > >
+> > >       { .compatible = "ilitek,ili210x", .data = &ili210x_chip },
+> > >       { .compatible = "ilitek,ili2117", .data = &ili211x_chip },
+> > >       { .compatible = "ilitek,ili251x", .data = &ili251x_chip },
+> >
+> > My datasheet says ILI2117A/ILI2118A, so maybe the compatible string should
+> > really be "ilitek,ili211x", just like the other variants ?
+>
+> We have not landed the DT for 2117, so we can either rename it as
+> "ilitek,ili211x" or have 2 separate compatibles.
+>
+> Rob, do you have preference?
 
-In fact Linux now can be built without using GNU
-binutils and using LLVM tools instead. It's just
-one architecture and a specific config now, but
-eventually the others will be built too. You can
-follow the progress here:
-https://github.com/ClangBuiltLinux/continuous-integration/issues/73
+The rule is we don't do wildcards for compatible strings. However, if
+there's not a visible difference to s/w or you can determine which is
+which by ID registers, then it is fine to have a single compatible. I
+couldn't find a datasheet, so can't give better answer.
 
-I believe that compatibility with different
-alternative tools is a good thing as long as it
-doesn't add unwanted complexity. And as this patch
-is just changing command-line flags to their
-portable variants and explicitly adds a couple of
-definitions that are presumed by GNU bison, I
-can't see a problem with it.
-
-Regards,
-Dmitry
+Rob
