@@ -2,227 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0480AF82F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:36:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2E1F8306
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:38:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfKKWf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 17:35:58 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60110 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbfKKWfw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 17:35:52 -0500
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iUIHm-0000vs-1v; Mon, 11 Nov 2019 23:35:50 +0100
-Message-Id: <20191111223053.099163798@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Mon, 11 Nov 2019 23:03:30 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Linus Torvalds <torvalds@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [patch V2 16/16] selftests/x86/iopl: Extend test to cover IOPL
- emulation
-References: <20191111220314.519933535@linutronix.de>
+        id S1727625AbfKKWha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 17:37:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33642 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726912AbfKKWha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 17:37:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AAEA9AC8B;
+        Mon, 11 Nov 2019 22:37:28 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     Hartley Sweeten <hsweeten@visionengravers.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH] ARM: ep93xx: Avoid soc_device_to_device()
+Date:   Mon, 11 Nov 2019 23:37:22 +0100
+Message-Id: <20191111223722.2364-1-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+ep93xx_init_soc() uses soc_device_to_device() to return a device
+to ep93xx_init_devices(), where it is passed on to its callers,
+who all ignore the return value. As this helper is deprecated,
+change the return type of ep93xx_init_devices() to void and
+have ep93xx_init_soc() return the soc_device instead.
 
-Add tests that the now emulated iopl() functionality:
-
-    - does not longer allow user space to disable interrupts.
-
-    - does restore a I/O bitmap when IOPL is dropped
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- tools/testing/selftests/x86/iopl.c |  129 +++++++++++++++++++++++++++++++++----
- 1 file changed, 118 insertions(+), 11 deletions(-)
+ arch/arm/mach-ep93xx/core.c     | 12 ++++--------
+ arch/arm/mach-ep93xx/platform.h |  2 +-
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
---- a/tools/testing/selftests/x86/iopl.c
-+++ b/tools/testing/selftests/x86/iopl.c
-@@ -35,6 +35,16 @@ static void sethandler(int sig, void (*h
- 
+diff --git a/arch/arm/mach-ep93xx/core.c b/arch/arm/mach-ep93xx/core.c
+index 6fb19a393fd2..7a0c82b30564 100644
+--- a/arch/arm/mach-ep93xx/core.c
++++ b/arch/arm/mach-ep93xx/core.c
+@@ -937,7 +937,7 @@ static const char __init *ep93xx_get_machine_name(void)
+ 	return kasprintf(GFP_KERNEL,"%s", machine_desc->name);
  }
  
-+static void clearhandler(int sig)
-+{
-+	struct sigaction sa;
-+	memset(&sa, 0, sizeof(sa));
-+	sa.sa_handler = SIG_DFL;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(sig, &sa, 0))
-+		err(1, "sigaction");
-+}
-+
- static jmp_buf jmpbuf;
- 
- static void sigsegv(int sig, siginfo_t *si, void *ctx_void)
-@@ -42,25 +52,128 @@ static void sigsegv(int sig, siginfo_t *
- 	siglongjmp(jmpbuf, 1);
- }
- 
-+static bool try_outb(unsigned short port)
-+{
-+	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
-+	if (sigsetjmp(jmpbuf, 1) != 0) {
-+		return false;
-+	} else {
-+		asm volatile ("outb %%al, %w[port]"
-+			      : : [port] "Nd" (port), "a" (0));
-+		return true;
-+	}
-+	clearhandler(SIGSEGV);
-+}
-+
-+static void expect_ok_outb(unsigned short port)
-+{
-+	if (!try_outb(port)) {
-+		printf("[FAIL]\toutb to 0x%02hx failed\n", port);
-+		exit(1);
-+	}
-+
-+	printf("[OK]\toutb to 0x%02hx worked\n", port);
-+}
-+
-+static void expect_gp_outb(unsigned short port)
-+{
-+	if (try_outb(port)) {
-+		printf("[FAIL]\toutb to 0x%02hx worked\n", port);
-+		nerrs++;
-+	}
-+
-+	printf("[OK]\toutb to 0x%02hx failed\n", port);
-+}
-+
-+static bool try_cli(void)
-+{
-+	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
-+	if (sigsetjmp(jmpbuf, 1) != 0) {
-+		return false;
-+	} else {
-+		asm volatile ("cli");
-+		return true;
-+	}
-+	clearhandler(SIGSEGV);
-+}
-+
-+static bool try_sti(void)
-+{
-+	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
-+	if (sigsetjmp(jmpbuf, 1) != 0) {
-+		return false;
-+	} else {
-+		asm volatile ("sti");
-+		return true;
-+	}
-+	clearhandler(SIGSEGV);
-+}
-+
-+static void expect_gp_sti(void)
-+{
-+	if (try_sti()) {
-+		printf("[FAIL]\tSTI worked\n");
-+		nerrs++;
-+	} else {
-+		printf("[OK]\tSTI faulted\n");
-+	}
-+}
-+
-+static void expect_gp_cli(void)
-+{
-+	if (try_cli()) {
-+		printf("[FAIL]\tCLI worked\n");
-+		nerrs++;
-+	} else {
-+		printf("[OK]\tCLI faulted\n");
-+	}
-+}
-+
- int main(void)
+-static struct device __init *ep93xx_init_soc(void)
++static struct soc_device __init *ep93xx_init_soc(void)
  {
- 	cpu_set_t cpuset;
-+
- 	CPU_ZERO(&cpuset);
- 	CPU_SET(0, &cpuset);
- 	if (sched_setaffinity(0, sizeof(cpuset), &cpuset) != 0)
- 		err(1, "sched_setaffinity to CPU 0");
- 
- 	/* Probe for iopl support.  Note that iopl(0) works even as nonroot. */
--	if (iopl(3) != 0) {
-+	switch(iopl(3)) {
-+	case 0:
-+		break;
-+	case -ENOSYS:
-+		printf("[OK]\tiopl() nor supported\n");
-+		return 0;
-+	default:
- 		printf("[OK]\tiopl(3) failed (%d) -- try running as root\n",
- 		       errno);
- 		return 0;
+ 	struct soc_device_attribute *soc_dev_attr;
+ 	struct soc_device *soc_dev;
+@@ -958,13 +958,11 @@ static struct device __init *ep93xx_init_soc(void)
+ 		return NULL;
  	}
  
--	/* Restore our original state prior to starting the test. */
-+	/* Make sure that CLI/STI are blocked even with IOPL level 3 */
-+	expect_gp_cli();
-+	expect_gp_sti();
-+	expect_ok_outb(0x80);
-+
-+	/* Establish an I/O bitmap to test the restore */
-+	if (ioperm(0x80, 1, 1) != 0)
-+		err(1, "ioperm(0x80, 1, 1) failed\n");
-+
-+	/* Restore our original state prior to starting the fork test. */
- 	if (iopl(0) != 0)
- 		err(1, "iopl(0)");
- 
-+	/*
-+	 * Verify that IOPL emulation is disabled and the I/O bitmap still
-+	 * works.
-+	 */
-+	expect_ok_outb(0x80);
-+	expect_gp_outb(0xed);
-+	/* Drop the I/O bitmap */
-+	if (ioperm(0x80, 1, 0) != 0)
-+		err(1, "ioperm(0x80, 1, 0) failed\n");
-+
- 	pid_t child = fork();
- 	if (child == -1)
- 		err(1, "fork");
-@@ -90,14 +203,9 @@ int main(void)
- 
- 	printf("[RUN]\tparent: write to 0x80 (should fail)\n");
- 
--	sethandler(SIGSEGV, sigsegv, 0);
--	if (sigsetjmp(jmpbuf, 1) != 0) {
--		printf("[OK]\twrite was denied\n");
--	} else {
--		asm volatile ("outb %%al, $0x80" : : "a" (0));
--		printf("[FAIL]\twrite was allowed\n");
--		nerrs++;
--	}
-+	expect_gp_outb(0x80);
-+	expect_gp_cli();
-+	expect_gp_sti();
- 
- 	/* Test the capability checks. */
- 	printf("\tiopl(3)\n");
-@@ -133,4 +241,3 @@ int main(void)
- done:
- 	return nerrs ? 1 : 0;
+-	return soc_device_to_device(soc_dev);
++	return soc_dev;
  }
+ 
+-struct device __init *ep93xx_init_devices(void)
++void __init ep93xx_init_devices(void)
+ {
+-	struct device *parent;
 -
-
+ 	/* Disallow access to MaverickCrunch initially */
+ 	ep93xx_devcfg_clear_bits(EP93XX_SYSCON_DEVCFG_CPENA);
+ 
+@@ -975,7 +973,7 @@ struct device __init *ep93xx_init_devices(void)
+ 			       EP93XX_SYSCON_DEVCFG_GONIDE |
+ 			       EP93XX_SYSCON_DEVCFG_HONIDE);
+ 
+-	parent = ep93xx_init_soc();
++	ep93xx_init_soc();
+ 
+ 	/* Get the GPIO working early, other devices need it */
+ 	platform_device_register(&ep93xx_gpio_device);
+@@ -989,8 +987,6 @@ struct device __init *ep93xx_init_devices(void)
+ 	platform_device_register(&ep93xx_wdt_device);
+ 
+ 	gpio_led_register_device(-1, &ep93xx_led_data);
+-
+-	return parent;
+ }
+ 
+ void ep93xx_restart(enum reboot_mode mode, const char *cmd)
+diff --git a/arch/arm/mach-ep93xx/platform.h b/arch/arm/mach-ep93xx/platform.h
+index b4045a186239..8a3a2be50f11 100644
+--- a/arch/arm/mach-ep93xx/platform.h
++++ b/arch/arm/mach-ep93xx/platform.h
+@@ -34,7 +34,7 @@ void ep93xx_register_ac97(void);
+ void ep93xx_register_ide(void);
+ void ep93xx_register_adc(void);
+ 
+-struct device *ep93xx_init_devices(void);
++void ep93xx_init_devices(void);
+ extern void ep93xx_timer_init(void);
+ 
+ void ep93xx_restart(enum reboot_mode, const char *);
+-- 
+2.16.4
 
