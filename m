@@ -2,121 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 086BBF75EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB978F75F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:06:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfKKOFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:05:40 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36729 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfKKOFj (ORCPT
+        id S1727123AbfKKOG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:06:26 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46392 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfKKOG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:05:39 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f10so11330945oto.3;
-        Mon, 11 Nov 2019 06:05:39 -0800 (PST)
+        Mon, 11 Nov 2019 09:06:26 -0500
+Received: by mail-wr1-f66.google.com with SMTP id b3so14734913wrs.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 06:06:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hkWWZbsPhAe/B+lg1NTrPkrZfdIPdtnDPLZ91eTI/hg=;
-        b=lwVw/MSbrrSR96HQiTRGjp4qyBLP9BUVvOJ7zUjQCJ+Bl51zdrH0ZeOYPfQadmnrQv
-         LC5pnKVzGGUcbXy6983YIevobRGuUKI8LfdKq87vJVZ+tQLGuXqUNjr6WV+SKGRZeNG5
-         SAUmQffDJJdfo3GY1YHH0dmHFc7/IFMLCI++HYj0MOvgYZwynSc8XJ58ylbJ0pq+J+3d
-         tw4DkYPn71ln2qqUxDBP/pCGu2ZTb0zVjMcLZjiGi/NSbiSK3er1e+4bLrJoUjs79t5Q
-         XRTuWN3LbqzYx5ByPRiLLGnmUAIv/qwtEknadUJmdAlv4XPahOJY0XdT9crvnySe5hmr
-         KWJQ==
+         :cc;
+        bh=+/Y2KrElV7WuOlbhVtVkPVZzokBiLzkE9XqPZHWAkRo=;
+        b=V+PBH9roG+uCAcjxBMg9abG2Rixd7T7rZJTeWi9rlCB3JwgOQW4JDoCm2FnJR/rHCK
+         +TvvQeJmjCyuQeWjVuVij10wQ4Wf8Tp5b8DocHurl5bczScO2d+flwcuFF8LkRVSmbnJ
+         tNEj3i+Z66lJ/gTERRJTsH80ffpfkkhw56HPEelAat/7df5znfFS7yvmnIF4YUpfrk1E
+         hditUWupkBjHbji9Z/fBaHwT5adp89U4Nael8+gfx8p9H22WClNyYhsDp7dP3THgQiFJ
+         WqjIg5TLN9F+f6mpS2zVxKnbYrZUJS2Z/9iWC95blO74NM8BpduPtKWwDHzW8quXr92n
+         hoIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hkWWZbsPhAe/B+lg1NTrPkrZfdIPdtnDPLZ91eTI/hg=;
-        b=GzagR0fdtY7WlsJVA/cI5mq1yR091sWgCAuwT46BZc+sJciyhR7bkizfC9t4KBbSL2
-         tbg3bynXyFZL2h3cmgzFn+Ic8nKjsnUnyx0qjRYSbqw1s8CDp2sPl20g9HeCn+TGo4hV
-         82hqInCTSqYpBLcNI4y0pgh7pLOcJjyvoCrDgfUzCxDUHk96vbnLvhgz5rWJDY5PP7MN
-         Qi8nexvejVWjDWjGP2PsSlp9DatjKfi72qC0yrZk5+0/TAbFhdJDoYzoeEVUYa4lvH73
-         8DwH24aOTxSNEaaFNEO/9FUM/WH4+UHc49l6I0nMw0pUaXLmR9aaXdapd6hUJZ6+9Cpq
-         kFJA==
-X-Gm-Message-State: APjAAAWa8wyjkSCrVs3wrKB2C3k1dWiSuSiCdTMaU5NW/ZFbkbCB9vd8
-        y+EGNSTO/gJQZH6992rH6NQpa3E/pwmKlbq2LT8=
-X-Google-Smtp-Source: APXvYqwKDHSLwIppJngXejpzqHPV4YxZhwzU8jDUQEbttYpesGP+AXtsC0jFnvcDk5ZDCNQNKmxcyJVC4p07NzbkNRQ=
-X-Received: by 2002:a05:6830:3:: with SMTP id c3mr8817650otp.15.1573481138383;
- Mon, 11 Nov 2019 06:05:38 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=+/Y2KrElV7WuOlbhVtVkPVZzokBiLzkE9XqPZHWAkRo=;
+        b=j1M8B8z1RzOnySYBjLVZSpg0xDAUJ9GSUgI4OJnzDalu3+roC1ADEzEpHniYJtm2KJ
+         VIhuKyOChwjqjE71tTjeYiAR1sI8GHXYtZgbkFuw+UdO+nHANv/kWeQdtPJwu628NYab
+         3TvD7MZLafgtDNAFxL0NHcKOg0aSkLCQoE6RTLd9tiX2Gsxsq7EKJ8mvyA7FeSmt36xT
+         ncoR63CRuJG7W/xmPsAAjonOFy7CJAH8ZaZ0OxZUyzewmcFQxwxqKGB7AP7OFgytxkDd
+         GL9FtyXcD6WC0Z0LoC6OUFq1b35eIGOKEjidEqx70GJVKl16n4HrQqp/T8kMFjdYFncI
+         1qNw==
+X-Gm-Message-State: APjAAAVxTkxsxR+V0hmgVxItC+gDOu0UhchhayKVjW92wf2WtOjz1SBC
+        wu0kOE+EvikqNOF3VUSOhWMLL+gXkogT8M8Egi5Uv1uc
+X-Google-Smtp-Source: APXvYqzJmR6xKNzmrAO5WakZhRYkbTzcJJBSgDfP/W5waJggUNc7WXU+ecqQovItkxBWOSgNvjzjSKKyRU6lPNvOkeQ=
+X-Received: by 2002:adf:c641:: with SMTP id u1mr21451436wrg.361.1573481184040;
+ Mon, 11 Nov 2019 06:06:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20191014141718.22603-1-narmstrong@baylibre.com>
- <20191014141718.22603-2-narmstrong@baylibre.com> <20191023201141.GA21235@bogus>
- <CA+3zgmsJPsvXgsjDQKKrSG+UNdY3SK+hKCTD2X3hGG+OXejHig@mail.gmail.com> <CAKgpwJWU3jB0DWEKE09TOV+YLceBFJ75ZirAXQbuhj8v3FwjXg@mail.gmail.com>
-In-Reply-To: <CAKgpwJWU3jB0DWEKE09TOV+YLceBFJ75ZirAXQbuhj8v3FwjXg@mail.gmail.com>
-From:   Tim <elatllat@gmail.com>
-Date:   Mon, 11 Nov 2019 09:05:27 -0500
-Message-ID: <CA+3zgmtJqN-3Q-kjMhh58B+T7z_1TA-C6be7+UP6nuQb7eq=8A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] doc: dt: bindings: usb: dwc3: Update entries for
- disabling SS instances in park mode
-To:     Jun Li <lijun.kernel@gmail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Felipe Balbi <balbi@kernel.org>, khilman@baylibre.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dongjin Kim <tobetter@gmail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh@kernel.org>
+References: <20191111133421.14390-1-anup.patel@wdc.com> <MN2PR04MB60612DF0F3191A8240F71F458D740@MN2PR04MB6061.namprd04.prod.outlook.com>
+In-Reply-To: <MN2PR04MB60612DF0F3191A8240F71F458D740@MN2PR04MB6061.namprd04.prod.outlook.com>
+From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
+Date:   Mon, 11 Nov 2019 16:05:40 +0200
+Message-ID: <CAEn-LTpLu0ht=_HpK11Sa=frSvQt_1Nz48M3XZero=CJPidxDg@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: Enable SYSCON reboot and poweroff drivers
+To:     Anup Patel <Anup.Patel@wdc.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Anup Patel <anup@brainfault.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Speculation;
+On Mon, Nov 11, 2019 at 3:43 PM Anup Patel <Anup.Patel@wdc.com> wrote:
+>
+> Correct Palmer's email address
+>
+> > -----Original Message-----
+> > From: Anup Patel
+> > Sent: Monday, November 11, 2019 7:05 PM
+> > To: Palmer Dabbelt <palmer@sifive.com>; Paul Walmsley
+> > <paul.walmsley@sifive.com>
+> > Cc: Atish Patra <Atish.Patra@wdc.com>; Alistair Francis
+> > <Alistair.Francis@wdc.com>; Christoph Hellwig <hch@lst.de>; Anup Patel
+> > <anup@brainfault.org>; linux-riscv@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; Anup Patel <Anup.Patel@wdc.com>
+> > Subject: [PATCH] RISC-V: Enable SYSCON reboot and poweroff drivers
+> >
+> > We can use SYSCON reboot and poweroff drivers for the SiFive test device
+> > found on QEMU virt machine and SiFive SOCs.
+> >
+> > This patch enables SYSCON reboot and poweroff drivers in RV64 and RV32
+> > defconfigs.
+> >
+> > Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> > ---
+> >  arch/riscv/configs/defconfig      | 4 ++++
+> >  arch/riscv/configs/rv32_defconfig | 4 ++++
+> >  2 files changed, 8 insertions(+)
+> >
+> > diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> > index 420a0dbef386..73a6ee31a7d2 100644
+> > --- a/arch/riscv/configs/defconfig
+> > +++ b/arch/riscv/configs/defconfig
+> > @@ -63,6 +63,10 @@ CONFIG_HW_RANDOM_VIRTIO=y  CONFIG_SPI=y
+> > CONFIG_SPI_SIFIVE=y  # CONFIG_PTP_1588_CLOCK is not set
+> > +CONFIG_POWER_RESET=y
 
-Maybe the kernel maintainers prefer to optimistically permit future
-products to easily remove workarounds via quirk flags.
-Even if data from testing were shown, and it did not impact
-performance, code reduction and clarity are desirable.
+Why not to add
 
-On Sun, Nov 10, 2019 at 8:58 PM Jun Li <lijun.kernel@gmail.com> wrote:
+    select POWER_RESET
+
+to arch/riscv/Kconfig ?
+
+This seems to be a popular choice (?). I went this path recently while
+enabling gpio-restart on SiFive Unleashed on a private branch.
+
+[..]
+arch/arm/mach-exynos/Kconfig:   select POWER_RESET
+arch/arm/mach-exynos/Kconfig:   select POWER_RESET_SYSCON
+arch/arm/mach-exynos/Kconfig:   select POWER_RESET_SYSCON_POWEROFF
+arch/arm/mach-gemini/Kconfig:   select POWER_RESET
+arch/arm/mach-gemini/Kconfig:   select POWER_RESET_GEMINI_POWEROFF
+arch/arm/mach-gemini/Kconfig:   select POWER_RESET_SYSCON
+arch/arm/mach-hisi/Kconfig:     select POWER_RESET
+arch/arm/mach-hisi/Kconfig:     select POWER_RESET_HISI
+arch/arm/mach-integrator/Kconfig:       select POWER_RESET
+arch/arm/mach-integrator/Kconfig:       select POWER_RESET_VERSATILE
+arch/arm/mach-realview/Kconfig: select POWER_RESET
+arch/arm/mach-realview/Kconfig: select POWER_RESET_VERSATILE
+arch/arm/mach-versatile/Kconfig:        select POWER_RESET
+arch/arm/mach-versatile/Kconfig:        select POWER_RESET_VERSATILE
+arch/arm/mach-vexpress/Kconfig: select POWER_RESET
+arch/arm/mach-vexpress/Kconfig: select POWER_RESET_VEXPRESS
+arch/arm64/Kconfig:     select POWER_RESET
+[..]
+
+> > +CONFIG_POWER_RESET_SYSCON=y
+> > +CONFIG_POWER_RESET_SYSCON_POWEROFF=y
+> > +CONFIG_SYSCON_REBOOT_MODE=y
+> >  CONFIG_DRM=y
+> >  CONFIG_DRM_RADEON=y
+> >  CONFIG_DRM_VIRTIO_GPU=y
+> > diff --git a/arch/riscv/configs/rv32_defconfig
+> > b/arch/riscv/configs/rv32_defconfig
+> > index 87ee6e62b64b..1429e1254295 100644
+> > --- a/arch/riscv/configs/rv32_defconfig
+> > +++ b/arch/riscv/configs/rv32_defconfig
+> > @@ -61,6 +61,10 @@ CONFIG_VIRTIO_CONSOLE=y
+> > CONFIG_HW_RANDOM=y  CONFIG_HW_RANDOM_VIRTIO=y  #
+> > CONFIG_PTP_1588_CLOCK is not set
+> > +CONFIG_POWER_RESET=y
+> > +CONFIG_POWER_RESET_SYSCON=y
+> > +CONFIG_POWER_RESET_SYSCON_POWEROFF=y
+> > +CONFIG_SYSCON_REBOOT_MODE=y
+> >  CONFIG_DRM=y
+> >  CONFIG_DRM_RADEON=y
+> >  CONFIG_DRM_VIRTIO_GPU=y
+> > --
+> > 2.17.1
 >
-> Hi Neil
 >
-> As I got the information from Synopsys, this bug exists on current IP ver=
-sions,
-> and per my tests with external USB3 hub + 2 Super speed udisks on data
-> read by dd, I can reproduce this issue with different kernel versions, al=
-so I
-> didn't see obvious performance drop by dd tests after disable park mode f=
-or
-> super speed, so should we just disable it by default so no need a quirk?
->
-> Li Jun
->
-> Tim <elatllat@gmail.com> =E4=BA=8E2019=E5=B9=B411=E6=9C=8811=E6=97=A5=E5=
-=91=A8=E4=B8=80 =E4=B8=8A=E5=8D=888:42=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > Thanks for working on this Neil,
-> > Is there something that needs doing for this patch to make it into 5.3 =
-or 5.4?
-> > As previously mentioned the patch set fixes the issue on affected hardw=
-are;
-> >     https://patchwork.kernel.org/patch/11164515/
-> >
-> >
-> >
-> > On Wed, Oct 23, 2019 at 4:11 PM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Mon, Oct 14, 2019 at 04:17:16PM +0200, Neil Armstrong wrote:
-> > > > This patch updates the documentation with the information related
-> > > > to the quirks that needs to be added for disabling all SuperSpeed X=
-HCi
-> > > > instances in park mode.
-> > > >
-> > > > CC: Dongjin Kim <tobetter@gmail.com>
-> > > > Cc: Jianxin Pan <jianxin.pan@amlogic.com>
-> > > > Reported-by: Tim <elatllat@gmail.com>
-> > > > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/usb/dwc3.txt | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > >
-> > > Sigh, what's one more to the never ending list of quirks...
-> > >
-> > > Acked-by: Rob Herring <robh@kernel.org>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
