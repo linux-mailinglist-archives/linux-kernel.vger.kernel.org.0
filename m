@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3668F7B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D7CF7CF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:52:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfKKSfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:35:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53160 "EHLO mail.kernel.org"
+        id S1730032AbfKKSvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:51:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727547AbfKKSfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:35:16 -0500
+        id S1730068AbfKKSvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:51:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DB5F20659;
-        Mon, 11 Nov 2019 18:35:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 859FD204FD;
+        Mon, 11 Nov 2019 18:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497315;
-        bh=5shsiuGVpMOzq5flnd+ZIoIzHgqAS7cOLYrX4/j23uI=;
+        s=default; t=1573498295;
+        bh=tfTjVbb2PM8vc4h1koe7Q75PEeh7/YdUyeYVGiN66Uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RGpWx//dqiJdLZzwNszWOzK3YxyRf59/y/gq4/VcoDCeHniMyZdUX5Eq5aw8lX7gE
-         DXruRVz2cD44kwHorVT12lgdyki8rODlNE0BUj6sHw3JL3wLIdnnhdxuvouYA/izgw
-         GO6JL8lxLTQs9yG2705XaeT7Vw0HASikzxDIaLRQ=
+        b=XBJ87el7rEsPGU3g8eUOXlji4ewcE75UhrIN/NxaGQysLdNQ1FTHU4qZunkJypVeW
+         ima/SxagApmgRzrP+W5y82KYyD4JMfeLaxzZ9kgCjNAP5zT3e96A6DNkE3WMDIIpIm
+         aaIVXLGUJBJSsh6vHZal8Wv/jwGTq5mIFVprVs8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Tristan Madani <tristmd@gmail.com>
-Subject: [PATCH 4.14 012/105] ALSA: timer: Fix incorrectly assigned timer instance
+        stable@vger.kernel.org,
+        syzbot+863724e7128e14b26732@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 5.3 080/193] can: peak_usb: fix slab info leak
 Date:   Mon, 11 Nov 2019 19:27:42 +0100
-Message-Id: <20191111181428.400790917@linuxfoundation.org>
+Message-Id: <20191111181507.035626625@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,61 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit e7af6307a8a54f0b873960b32b6a644f2d0fbd97 upstream.
+commit f7a1337f0d29b98733c8824e165fca3371d7d4fd upstream.
 
-The clean up commit 41672c0c24a6 ("ALSA: timer: Simplify error path in
-snd_timer_open()") unified the error handling code paths with the
-standard goto, but it introduced a subtle bug: the timer instance is
-stored in snd_timer_open() incorrectly even if it returns an error.
-This may eventually lead to UAF, as spotted by fuzzer.
+Fix a small slab info leak due to a failure to clear the command buffer
+at allocation.
 
-The culprit is the snd_timer_open() code checks the
-SNDRV_TIMER_IFLG_EXCLUSIVE flag with the common variable timeri.
-This variable is supposed to be the newly created instance, but we
-(ab-)used it for a temporary check before the actual creation of a
-timer instance.  After that point, there is another check for the max
-number of instances, and it bails out if over the threshold.  Before
-the refactoring above, it worked fine because the code returned
-directly from that point.  After the refactoring, however, it jumps to
-the unified error path that stores the timeri variable in return --
-even if it returns an error.  Unfortunately this stored value is kept
-in the caller side (snd_timer_user_tselect()) in tu->timeri.  This
-causes inconsistency later, as if the timer was successfully
-assigned.
+The first 16 bytes of the command buffer are always sent to the device
+in pcan_usb_send_cmd() even though only the first two may have been
+initialised in case no argument payload is provided (e.g. when waiting
+for a response).
 
-In this patch, we fix it by not re-using timeri variable but a
-temporary variable for testing the exclusive connection, so timeri
-remains NULL at that point.
-
-Fixes: 41672c0c24a6 ("ALSA: timer: Simplify error path in snd_timer_open()")
-Reported-and-tested-by: Tristan Madani <tristmd@gmail.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191106165547.23518-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: bb4785551f64 ("can: usb: PEAK-System Technik USB adapters driver core")
+Cc: stable <stable@vger.kernel.org>     # 3.4
+Reported-by: syzbot+863724e7128e14b26732@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/timer.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/can/usb/peak_usb/pcan_usb_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -298,11 +298,11 @@ int snd_timer_open(struct snd_timer_inst
- 		goto unlock;
- 	}
- 	if (!list_empty(&timer->open_list_head)) {
--		timeri = list_entry(timer->open_list_head.next,
-+		struct snd_timer_instance *t =
-+			list_entry(timer->open_list_head.next,
- 				    struct snd_timer_instance, open_list);
--		if (timeri->flags & SNDRV_TIMER_IFLG_EXCLUSIVE) {
-+		if (t->flags & SNDRV_TIMER_IFLG_EXCLUSIVE) {
- 			err = -EBUSY;
--			timeri = NULL;
- 			goto unlock;
- 		}
- 	}
+--- a/drivers/net/can/usb/peak_usb/pcan_usb_core.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
+@@ -750,7 +750,7 @@ static int peak_usb_create_dev(const str
+ 	dev = netdev_priv(netdev);
+ 
+ 	/* allocate a buffer large enough to send commands */
+-	dev->cmd_buf = kmalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);
++	dev->cmd_buf = kzalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);
+ 	if (!dev->cmd_buf) {
+ 		err = -ENOMEM;
+ 		goto lbl_free_candev;
 
 
