@@ -2,61 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4249DF6E15
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F776F6E1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:28:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKKF1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 00:27:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39472 "EHLO mail.kernel.org"
+        id S1727001AbfKKF2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 00:28:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbfKKF1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 00:27:44 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726167AbfKKF2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 00:28:35 -0500
+Received: from localhost (unknown [106.201.42.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DA5620656;
-        Mon, 11 Nov 2019 05:27:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FEFE20656;
+        Mon, 11 Nov 2019 05:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573450064;
-        bh=23/dZyyNZJ5f/N9y6NkELPHEMcSatZdi+Z6beaSX7Xk=;
+        s=default; t=1573450114;
+        bh=4yaDpNQuxUENXy3kqRG8Msg475RHYza2D5Myb1olFzw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=trbF5BI8pXai20Z08vOQYuIeeFNCcVcSOFhO5RbUEz5l6Qv/zYBUWW3I4qPQhX3ve
-         DBQaeMhs68y3UxY3oYUutNhjeNb8+GnOeA0rE24LcCHcUHkisLfr80W2YHE+vt7yKk
-         kcjICYV4moz3RN7vKwg+qKwZ/pvGovXNFju7RYc0=
-Date:   Mon, 11 Nov 2019 06:27:41 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     linux-realtek-soc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] base: soc: Export soc_device_to_device() helper
-Message-ID: <20191111052741.GB3176397@kroah.com>
-References: <20191103013645.9856-3-afaerber@suse.de>
- <20191111045609.7026-1-afaerber@suse.de>
+        b=ekDLb5RvoW/V2AB1uG3TZ5tiCoHfyYQx2wS41vt4ZM7sqJncKYBmdH+svDUZOAZJ6
+         /vYdChQb2GsXpa6hL9MT52Obq/g7tTTZAWgrxtJIdXuS+r3bFTDY8uxp4MNboPZGHS
+         0iZVlpF/Q+jGJC5Ds85Ksx82RhG3TJ8pBNYJP/ik=
+Date:   Mon, 11 Nov 2019 10:58:28 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     robh+dt@kernel.org, nm@ti.com, ssantosh@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
+        lokeshvutla@ti.com, t-kristo@ti.com, tony@atomide.com,
+        j-keerthy@ti.com
+Subject: Re: [PATCH v4 09/15] dmaengine: ti: New driver for K3 UDMA -
+ split#1: defines, structs, io func
+Message-ID: <20191111052828.GN952516@vkoul-mobl>
+References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
+ <20191101084135.14811-10-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191111045609.7026-1-afaerber@suse.de>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191101084135.14811-10-peter.ujfalusi@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 05:56:09AM +0100, Andreas Färber wrote:
-> Use of soc_device_to_device() in driver modules causes a build failure.
-> Given that the helper is nicely documented in include/linux/sys_soc.h,
-> let's export it as GPL symbol.
+On 01-11-19, 10:41, Peter Ujfalusi wrote:
 
-I thought we were fixing the soc drivers to not need this.  What
-happened to that effort?  I thought I had patches in my tree (or
-someone's tree) that did some of this work already, such that this
-symbol isn't needed anymore.
+> +struct udma_chan {
+> +	struct virt_dma_chan vc;
+> +	struct dma_slave_config	cfg;
+> +	struct udma_dev *ud;
+> +	struct udma_desc *desc;
+> +	struct udma_desc *terminated_desc;
 
-thanks,
+descriptor and not a list?
 
-greg k-h
+> +	struct udma_static_tr static_tr;
+> +	char *name;
+> +
+> +	struct udma_tchan *tchan;
+> +	struct udma_rchan *rchan;
+> +	struct udma_rflow *rflow;
+> +
+> +	bool psil_paired;
+> +
+> +	int irq_num_ring;
+> +	int irq_num_udma;
+> +
+> +	bool cyclic;
+> +	bool paused;
+> +
+> +	enum udma_chan_state state;
+> +	struct completion teardown_completed;
+> +
+> +	u32 bcnt; /* number of bytes completed since the start of the channel */
+> +	u32 in_ring_cnt; /* number of descriptors in flight */
+> +
+> +	bool pkt_mode; /* TR or packet */
+> +	bool needs_epib; /* EPIB is needed for the communication or not */
+> +	u32 psd_size; /* size of Protocol Specific Data */
+> +	u32 metadata_size; /* (needs_epib ? 16:0) + psd_size */
+> +	u32 hdesc_size; /* Size of a packet descriptor in packet mode */
+> +	bool notdpkt; /* Suppress sending TDC packet */
+> +	int remote_thread_id;
+> +	u32 src_thread;
+> +	u32 dst_thread;
+> +	enum psil_endpoint_type ep_type;
+> +	bool enable_acc32;
+> +	bool enable_burst;
+> +	enum udma_tp_level channel_tpl; /* Channel Throughput Level */
+> +
+> +	/* dmapool for packet mode descriptors */
+> +	bool use_dma_pool;
+> +	struct dma_pool *hdesc_pool;
+> +
+> +	u32 id;
+> +	enum dma_transfer_direction dir;
+
+why does channel have this, it already exists in descriptor
+
+> +static irqreturn_t udma_udma_irq_handler(int irq, void *data)
+> +{
+> +	struct udma_chan *uc = data;
+> +
+> +	udma_tr_event_callback(uc);
+
+any reason why we want to call a fn and not code here..?
+-- 
+~Vinod
