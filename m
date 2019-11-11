@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40444F7DFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8445FF7EE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:08:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728378AbfKKTA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:00:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47184 "EHLO mail.kernel.org"
+        id S1728685AbfKKSgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:36:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730266AbfKKSwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:52:44 -0500
+        id S1727809AbfKKSgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:36:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 212D3214E0;
-        Mon, 11 Nov 2019 18:52:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D7CC21E6F;
+        Mon, 11 Nov 2019 18:36:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498363;
-        bh=GljriKZcIAZnKM+PpplXTpfRqDzoARCo8tRmW/P50FE=;
+        s=default; t=1573497371;
+        bh=SNtsy/z4FWgC3bWyR7N0GujPzO3MgVzSeQ07JyZcL7Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qoipM7p7S4N4s/oconz395UsFgRgrBiEXG3VpD7FUeyRWSLG+CpVCFpd+8Nxom6UY
-         0JRAldsnnh0ijnlzASiyexQ5ySrgavd32WbA4aZBzCz0ecJL4lzwYpeHk6VdI2vxIz
-         0XVtb8TrbsXjOy/hkuG9FvuGL1GRE2dxux44YP1U=
+        b=EugWN5FPmRalJ1APhbj1LJRT2Ipt0p0C+VkkcueSQvIldDqATpD48kiLNktZXxovj
+         CMffE1tSZpRoLY3sBNocszajtBCoTkRYojKPRSMVSveYs0oAjGrTmoEyZhTgCL1LOS
+         wGozJ9Eq61xxfmkEVQGSaj+fwSLwAUS4Ta37KkNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhang Lixu <lixu.zhang@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 097/193] HID: intel-ish-hid: fix wrong error handling in ishtp_cl_alloc_tx_ring()
-Date:   Mon, 11 Nov 2019 19:27:59 +0100
-Message-Id: <20191111181508.297833449@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>
+Subject: [PATCH 4.14 030/105] netfilter: ipset: Fix an error code in ip_set_sockfn_get()
+Date:   Mon, 11 Nov 2019 19:28:00 +0100
+Message-Id: <20191111181438.153342258@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Lixu <lixu.zhang@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 16ff7bf6dbcc6f77d2eec1ac9120edf44213c2f1 ]
+commit 30b7244d79651460ff114ba8f7987ed94c86b99a upstream.
 
-When allocating tx ring buffers failed, should free tx buffers, not rx buffers.
+The copy_to_user() function returns the number of bytes remaining to be
+copied.  In this code, that positive return is checked at the end of the
+function and we return zero/success.  What we should do instead is
+return -EFAULT.
 
-Signed-off-by: Zhang Lixu <lixu.zhang@intel.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: a7b4f989a629 ("netfilter: ipset: IP set core support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hid/intel-ish-hid/ishtp/client-buffers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/ipset/ip_set_core.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/intel-ish-hid/ishtp/client-buffers.c b/drivers/hid/intel-ish-hid/ishtp/client-buffers.c
-index 1b0a0cc605e77..513d7a4a1b8ac 100644
---- a/drivers/hid/intel-ish-hid/ishtp/client-buffers.c
-+++ b/drivers/hid/intel-ish-hid/ishtp/client-buffers.c
-@@ -84,7 +84,7 @@ int ishtp_cl_alloc_tx_ring(struct ishtp_cl *cl)
- 	return	0;
- out:
- 	dev_err(&cl->device->dev, "error in allocating Tx pool\n");
--	ishtp_cl_free_rx_ring(cl);
-+	ishtp_cl_free_tx_ring(cl);
- 	return	-ENOMEM;
- }
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -1950,8 +1950,9 @@ ip_set_sockfn_get(struct sock *sk, int o
+ 		}
  
--- 
-2.20.1
-
+ 		req_version->version = IPSET_PROTOCOL;
+-		ret = copy_to_user(user, req_version,
+-				   sizeof(struct ip_set_req_version));
++		if (copy_to_user(user, req_version,
++				 sizeof(struct ip_set_req_version)))
++			ret = -EFAULT;
+ 		goto done;
+ 	}
+ 	case IP_SET_OP_GET_BYNAME: {
+@@ -2008,7 +2009,8 @@ ip_set_sockfn_get(struct sock *sk, int o
+ 	}	/* end of switch(op) */
+ 
+ copy:
+-	ret = copy_to_user(user, data, copylen);
++	if (copy_to_user(user, data, copylen))
++		ret = -EFAULT;
+ 
+ done:
+ 	vfree(data);
 
 
