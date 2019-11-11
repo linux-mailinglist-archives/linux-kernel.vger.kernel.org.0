@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FABBF7D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 862A6F7B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbfKKSzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:55:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53238 "EHLO mail.kernel.org"
+        id S1727485AbfKKSeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:34:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730007AbfKKSzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:55:44 -0500
+        id S1728394AbfKKSel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6551F21783;
-        Mon, 11 Nov 2019 18:55:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60E062184C;
+        Mon, 11 Nov 2019 18:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498544;
-        bh=lesCjPfVbmccshqGOePfUxiBPLe03ulNgUg/hcMlxdw=;
+        s=default; t=1573497280;
+        bh=u2WiRRQuim1fNDHS1TtGI7F5skQJaI+p4MRwZPmLl5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z3OyKVKvx+01zX7wDso0RK8IHX0mhnsvaJRruugmxJTp9skKtCJ+qcAlEi3xNNc8v
-         +l84fwgN3GB4Ftkzk3eLMF59CanIUUX11HLEpk+S7NgmxAT7yDSB1iu0G9s69SiPT2
-         iZltFBK1oCNSRi43u/467GhfUr/hZJTTquoSI7BI=
+        b=ZIkOyYweziXWGOGFn1HMbrfTfeooCgcIFsbutxb8/6k+wIYzI7CJVJ7XloYXf8KCb
+         rjynH1o3sWHocup5xIEeR0S1d2BMKHQFcvgwt9OQIxDT8LwqwsQbRfbgIvaVWjtP2m
+         dWyR2j6b4/rx89yYokAvGsz4jtnD+03qzgb4+kBo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 148/193] USB: ldusb: use unsigned size format specifiers
-Date:   Mon, 11 Nov 2019 19:28:50 +0100
-Message-Id: <20191111181512.062947342@linuxfoundation.org>
+Subject: [PATCH 4.9 51/65] USB: Skip endpoints with 0 maxpacket length
+Date:   Mon, 11 Nov 2019 19:28:51 +0100
+Message-Id: <20191111181351.189411366@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-[ Upstream commit 88f6bf3846ee90bf33aa1ce848cd3bfb3229f4a4 ]
+[ Upstream commit d482c7bb0541d19dea8bff437a9f3c5563b5b2d2 ]
 
-A recent info-leak bug manifested itself along with warning about a
-negative buffer overflow:
+Endpoints with a maxpacket length of 0 are probably useless.  They
+can't transfer any data, and it's not at all unlikely that an HCD will
+crash or hang when trying to handle an URB for such an endpoint.
 
-	ldusb 1-1:0.28: Read buffer overflow, -131383859965943 bytes dropped
+Currently the USB core does not check for endpoints having a maxpacket
+value of 0.  This patch adds a check, printing a warning and skipping
+over any endpoints it catches.
 
-when it was really a rather large positive one.
+Now, the USB spec does not rule out endpoints having maxpacket = 0.
+But since they wouldn't have any practical use, there doesn't seem to
+be any good reason for us to accept them.
 
-A sanity check that prevents this has now been put in place, but let's
-fix up the size format specifiers, which should all be unsigned.
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191022143203.5260-3-johan@kernel.org
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910281050420.1485-100000@iolanthe.rowland.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/ldusb.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/usb/core/config.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
-index f5e34c5034547..8f86b4ebca898 100644
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -487,7 +487,7 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
- 	}
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
--		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
-+		dev_warn(&dev->intf->dev, "Read buffer overflow, %zu bytes dropped\n",
- 			 *actual_buffer-bytes_to_read);
+diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
+index 94ec2dc27748e..e8061b02b7e3b 100644
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -343,6 +343,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
  
- 	/* copy one interrupt_in_buffer from ring_buffer into userspace */
-@@ -562,8 +562,9 @@ static ssize_t ld_usb_write(struct file *file, const char __user *buffer,
- 	/* write the data into interrupt_out_buffer from userspace */
- 	bytes_to_write = min(count, write_buffer_size*dev->interrupt_out_endpoint_size);
- 	if (bytes_to_write < count)
--		dev_warn(&dev->intf->dev, "Write buffer overflow, %zd bytes dropped\n", count-bytes_to_write);
--	dev_dbg(&dev->intf->dev, "%s: count = %zd, bytes_to_write = %zd\n",
-+		dev_warn(&dev->intf->dev, "Write buffer overflow, %zu bytes dropped\n",
-+			count - bytes_to_write);
-+	dev_dbg(&dev->intf->dev, "%s: count = %zu, bytes_to_write = %zu\n",
- 		__func__, count, bytes_to_write);
+ 	/* Validate the wMaxPacketSize field */
+ 	maxp = usb_endpoint_maxp(&endpoint->desc);
++	if (maxp == 0) {
++		dev_warn(ddev, "config %d interface %d altsetting %d endpoint 0x%X has wMaxPacketSize 0, skipping\n",
++		    cfgno, inum, asnum, d->bEndpointAddress);
++		goto skip_to_next_endpoint_or_interface_descriptor;
++	}
  
- 	if (copy_from_user(dev->interrupt_out_buffer, buffer, bytes_to_write)) {
+ 	/* Find the highest legal maxpacket size for this endpoint */
+ 	i = 0;		/* additional transactions per microframe */
 -- 
 2.20.1
 
