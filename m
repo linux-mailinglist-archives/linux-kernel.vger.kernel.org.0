@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61FEDF7D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A66F7C93
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730870AbfKKS5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:57:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57378 "EHLO mail.kernel.org"
+        id S1729025AbfKKSre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:47:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730832AbfKKS5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:57:40 -0500
+        id S1730116AbfKKSr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:47:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADA042184C;
-        Mon, 11 Nov 2019 18:57:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3E6621655;
+        Mon, 11 Nov 2019 18:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498659;
-        bh=Yg5APykiLBbTYygB+VJWegrWeN78ZT6GmOlo7CdiLaE=;
+        s=default; t=1573498045;
+        bh=MnjhQlZwaODzj+JadDJkhh9j+AWvo5XL4w5QwgNBMyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=af0WtYrWRuM6dTkFxT6foArhqbF4hQrXT0MZ+VdtGLF6FkGcs4jCxN0UeZtOgPqJJ
-         IB7nL1zTkLaxs5dl1iMTldyOZvs1Ha2EqCJCvzV1gvpubNAi8HGJOIIoqu+SI3Cak2
-         4OuLdF89e64p6v0RuDaDSdfMfbMNmwEazRaGuPas=
+        b=fKtqDXYO46Zt4xBKjMyIG4pswWAUWDAy+HVrb+6kQHgFbUsRkyj/POZ1LcFv6lpkm
+         rQcaqzUodYObG3rGMczr1QHejd35hEdugkABKrEonLFZ0jI08K97Y3aCotUDMeHwbd
+         +WjuFFiInU4x/WM+rhLHS2Em/ytZpmAdhrbowHYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 182/193] arm64: apply ARM64_ERRATUM_843419 workaround for Brahma-B53 core
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 125/125] cgroup,writeback: dont switch wbs immediately on dead wbs if the memcg is dead
 Date:   Mon, 11 Nov 2019 19:29:24 +0100
-Message-Id: <20191111181514.532157274@linuxfoundation.org>
+Message-Id: <20191111181456.356001524@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,84 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 1cf45b8fdbb87040e1d1bd793891089f4678aa41 ]
+commit 65de03e251382306a4575b1779c57c87889eee49 upstream.
 
-The Broadcom Brahma-B53 core is susceptible to the issue described by
-ARM64_ERRATUM_843419 so this commit enables the workaround to be applied
-when executing on that core.
+cgroup writeback tries to refresh the associated wb immediately if the
+current wb is dead.  This is to avoid keeping issuing IOs on the stale
+wb after memcg - blkcg association has changed (ie. when blkcg got
+disabled / enabled higher up in the hierarchy).
 
-Since there are now multiple entries to match, we must convert the
-existing ARM64_ERRATUM_843419 into an erratum list and use
-cpucap_multi_entry_cap_matches to match our entries.
+Unfortunately, the logic gets triggered spuriously on inodes which are
+associated with dead cgroups.  When the logic is triggered on dead
+cgroups, the attempt fails only after doing quite a bit of work
+allocating and initializing a new wb.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+While c3aab9a0bd91 ("mm/filemap.c: don't initiate writeback if mapping
+has no dirty pages") alleviated the issue significantly as it now only
+triggers when the inode has dirty pages.  However, the condition can
+still be triggered before the inode is switched to a different cgroup
+and the logic simply doesn't make sense.
+
+Skip the immediate switching if the associated memcg is dying.
+
+This is a simplified version of the following two patches:
+
+ * https://lore.kernel.org/linux-mm/20190513183053.GA73423@dennisz-mbp/
+ * http://lkml.kernel.org/r/156355839560.2063.5265687291430814589.stgit@buzz
+
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Fixes: e8a7abf5a5bd ("writeback: disassociate inodes from dying bdi_writebacks")
+Acked-by: Dennis Zhou <dennis@kernel.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- Documentation/arm64/silicon-errata.rst |  2 ++
- arch/arm64/kernel/cpu_errata.c         | 23 ++++++++++++++++++++---
- 2 files changed, 22 insertions(+), 3 deletions(-)
+ fs/fs-writeback.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
-index 8c87c68dcc324..d5f72a5b214f8 100644
---- a/Documentation/arm64/silicon-errata.rst
-+++ b/Documentation/arm64/silicon-errata.rst
-@@ -93,6 +93,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | Broadcom       | Brahma-B53      | N/A             | ARM64_ERRATUM_845719        |
- +----------------+-----------------+-----------------+-----------------------------+
-+| Broadcom       | Brahma-B53      | N/A             | ARM64_ERRATUM_843419        |
-++----------------+-----------------+-----------------+-----------------------------+
- +----------------+-----------------+-----------------+-----------------------------+
- | Cavium         | ThunderX ITS    | #22375,24313    | CAVIUM_ERRATUM_22375        |
- +----------------+-----------------+-----------------+-----------------------------+
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 799d62ef7a9bd..ed4c2f28f1576 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -755,6 +755,23 @@ static const struct midr_range erratum_845719_list[] = {
- };
- #endif
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -582,10 +582,13 @@ void wbc_attach_and_unlock_inode(struct
+ 	spin_unlock(&inode->i_lock);
  
-+#ifdef CONFIG_ARM64_ERRATUM_843419
-+static const struct arm64_cpu_capabilities erratum_843419_list[] = {
-+	{
-+		/* Cortex-A53 r0p[01234] */
-+		.matches = is_affected_midr_range,
-+		ERRATA_MIDR_REV_RANGE(MIDR_CORTEX_A53, 0, 0, 4),
-+		MIDR_FIXED(0x4, BIT(8)),
-+	},
-+	{
-+		/* Brahma-B53 r0p[0] */
-+		.matches = is_affected_midr_range,
-+		ERRATA_MIDR_REV(MIDR_BRAHMA_B53, 0, 0),
-+	},
-+	{},
-+};
-+#endif
-+
- const struct arm64_cpu_capabilities arm64_errata[] = {
- #ifdef CONFIG_ARM64_WORKAROUND_CLEAN_CACHE
- 	{
-@@ -786,11 +803,11 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- #endif
- #ifdef CONFIG_ARM64_ERRATUM_843419
- 	{
--	/* Cortex-A53 r0p[01234] */
- 		.desc = "ARM erratum 843419",
- 		.capability = ARM64_WORKAROUND_843419,
--		ERRATA_MIDR_REV_RANGE(MIDR_CORTEX_A53, 0, 0, 4),
--		MIDR_FIXED(0x4, BIT(8)),
-+		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
-+		.matches = cpucap_multi_entry_cap_matches,
-+		.match_list = erratum_843419_list,
- 	},
- #endif
- #ifdef CONFIG_ARM64_ERRATUM_845719
--- 
-2.20.1
-
+ 	/*
+-	 * A dying wb indicates that the memcg-blkcg mapping has changed
+-	 * and a new wb is already serving the memcg.  Switch immediately.
++	 * A dying wb indicates that either the blkcg associated with the
++	 * memcg changed or the associated memcg is dying.  In the first
++	 * case, a replacement wb should already be available and we should
++	 * refresh the wb immediately.  In the second case, trying to
++	 * refresh will keep failing.
+ 	 */
+-	if (unlikely(wb_dying(wbc->wb)))
++	if (unlikely(wb_dying(wbc->wb) && !css_is_dying(wbc->wb->memcg_css)))
+ 		inode_switch_wbs(inode, wbc->wb_id);
+ }
+ 
 
 
