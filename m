@@ -2,138 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E81F7EF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BD6F7E20
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfKKShy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:37:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49524 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728893AbfKKShp (ORCPT
+        id S1730386AbfKKTBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:01:54 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36416 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729338AbfKKSum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:37:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E7F7D60F40; Mon, 11 Nov 2019 18:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573497463;
-        bh=XUkpMv4++eaCLngkRhw1OHredjSZzbrBaEaI/2OxE7Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kti4XqbdrQfRjqyR/k/Xny8Sb0xtKtDh1D3IZqqkBWb5xWvg+wQqdIJqZHwXihIhc
-         PP/E99tj4XKhLGPKvShQANy20h4r2YeA4de5RLgEzbdHe1GbxE6mAjUHe/A+LCs8td
-         mU/GHTayXswE5ngA9/blI9wj0zEDC+iSQbDuMgAY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7B643602EE;
-        Mon, 11 Nov 2019 18:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573497460;
-        bh=XUkpMv4++eaCLngkRhw1OHredjSZzbrBaEaI/2OxE7Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CCIKVj49JlSCWHldgpmCB4IXhwNUaHHiNm5k6jIRWgDZVugsSUC8R1s7h2Mz1ZCsf
-         5lnoABiZDh9Qs36KSbNKgzk5Nte+p3XnHPr5lDmSPuekBBSB+t7v0kAfyUTaFl+OjP
-         EWvdgpv61XulzSMrBvfQ+X5+gMoYvPKOCMmok6p4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B643602EE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Mon, 11 Nov 2019 11:37:38 -0700
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     evgreen@chromium.org, linus.walleij@linaro.org, maz@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC v2 06/14] dt-bindings/interrupt-controller: pdc: add
- SPI config register
-Message-ID: <20191111183738.GJ16900@codeaurora.org>
-References: <1568411962-1022-1-git-send-email-ilina@codeaurora.org>
- <1568411962-1022-7-git-send-email-ilina@codeaurora.org>
- <5d92829e.1c69fb81.d860a.9096@mx.google.com>
- <5da6b849.1c69fb81.a9b04.1b9f@mx.google.com>
- <20191105205832.GE16900@codeaurora.org>
- <5dc219a0.1c69fb81.f5014.42d2@mx.google.com>
+        Mon, 11 Nov 2019 13:50:42 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k15so14972363lja.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:50:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tzwj0Bcu0+gyIzlUlN7XJHfbOaRzWPHagplExJJIvPs=;
+        b=ew5m8ZL/3PZXEH82FW7NciyTpX79pXMZzxowB+MlMPaTW/kiutG2GumvXkfpUaRgOq
+         P2W1GftekPzYO7cncT0B3PbtH2mr6stdJFhMeleFIDj20NSRAHa/lpsPd2tHpgwHBNki
+         C9b4sV+Ddh67bYfuCFNneVQaMCjOafWrdcZl4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tzwj0Bcu0+gyIzlUlN7XJHfbOaRzWPHagplExJJIvPs=;
+        b=atJmU9Igr+lGVogFj/mLfrXWCDejevlTESkLd6v5D62btodHIdn53DJmYnh8y/K+RF
+         hYzaxofY/WU5gWJJwnbLUG++R93nRx2maCGT+T+SSarFpWeVHSBacgu035JSweCfabHX
+         zmo3Xil9P73UMlLx5GBpbvx0NgC482Tlt5qojvKkhl3b//PXn4pMMp9YmSzAmZ5DJwJu
+         Xr/0Qd5lgxHq4vlV6SFwRvDEVNi1lpJVj3zaMOxjyZb2OZfKHMcPp64x9j95dauG2uQj
+         d1VAqAle0fJT9jm2lytlsovWxFOObIonWxcUiZ2b5qNs74F+MtZqLqsvyvi/A8UCR2SY
+         4J+g==
+X-Gm-Message-State: APjAAAUWl0sZzwmzMb9L4Qqxa70SwfVkO6pCJZPpQrhE8dUSxKRmZBtB
+        1wrv2p+jC2boQzAT5PDh/7zzUNzwN6E=
+X-Google-Smtp-Source: APXvYqxgnjQlnUBf2y4y+UqZYWyjA3YHZzywxlbc3RmgPNtSO5Jy8A4kUpJC8N1c62zT3D1xwi5Brg==
+X-Received: by 2002:a2e:8601:: with SMTP id a1mr17604295lji.159.1573498240124;
+        Mon, 11 Nov 2019 10:50:40 -0800 (PST)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id z24sm8026839lfj.40.2019.11.11.10.50.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2019 10:50:39 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id q5so4669385lfo.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:50:38 -0800 (PST)
+X-Received: by 2002:a19:c790:: with SMTP id x138mr16826204lff.61.1573498238697;
+ Mon, 11 Nov 2019 10:50:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <5dc219a0.1c69fb81.f5014.42d2@mx.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+ <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+ <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
+ <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com> <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
+In-Reply-To: <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Nov 2019 10:50:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
+Message-ID: <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05 2019 at 17:53 -0700, Stephen Boyd wrote:
->Quoting Lina Iyer (2019-11-05 12:58:32)
->> On Tue, Oct 15 2019 at 00:27 -0600, Stephen Boyd wrote:
->> >
->> >I had another idea the other day. Maybe a better approach would be to
->> >make the mailbox or SCM code an interrupt controller with the
->> >appropriate functions to poke the bits necessary to make the interrupts
->> >work. Then we can make it a chip in the hierarchy between the GIC and
->> >PDC and make the interrupts call through from PDC to GIC. The locking
->> >could be handled in each respective driver if necessary, and otherwise
->> >we don't have to use a regmap or remap the same registers (except we may
->> >need to describe if the parent is the mailbox node or the scm fimware
->> >node).
->> >
->> Wouldn't that be a stretch to image the SCM register write  or a random
->> register write as an interrupt controller? But I agree that it solves
->> the issue of determining whether we want to use SCM or regmap.
+On Mon, Nov 11, 2019 at 10:31 AM Eric Dumazet <edumazet@google.com> wrote:
 >
->As far as I can tell it's similar to PDC which is basically a gate on
->the line from a dedicated chip pad or a GPIO pad that lets the interrupt
->flow through to the GIC or not. Isn't this yet another hardware block on
->those paths that control the edge type or something?
->
->>
->> But, we would still need to add syscon to the mailbox and then regmap
->> the registers for the interrupt contoller.
->
->I'm saying that we can make the mailbox driver an interrupt controller
->driver too. Or if that doesn't work, we can map the region twice in each
->driver with ioremap and cross fingers that they don't touch the same
->register at the same time. It sounds like that is the case. We won't be
->able to fancily reserve the register region and map it in one function
->call, but maybe that can be fixed by limiting the size or offset that is
->reserved for each driver manually based on the same register property
->that's described in DT. Basically, one node in DT
->
-> mailbox@f00 {
->   reg = <0xf00 0x1000>;
-> };
->
->And then each driver will ioremap() the whole register region that's
->parsed from DT but each driver will mark sub-regions as reserved for the
->respective driver. That way we don't have to worry about using a regmap
->here and we'll still know what drivers are using what regions of IO in
->/proc/iomem.
+> Problem is that KASAN/KCSAN stops as soon as one issue is hit,
+> regardless of it being a false positive or not.
 
-Marc: What do you think of Stephen's idea? Summarizing my understanding
-below -
+So mayb e that - together with the known huge base of false positives
+- just means that KCSAN needs some more work before it can be used as
+a basis for sending out patches.
 
-We need to set an addition register for GPIOs that are routed to PDC and
-the register may need to be written using a SCM call (SDM845) or written
-from Linux (SDM855). The idea proposed here is -
-Create multiple irqchips, one for each type of register access and then
-put them in hierarchy based on the target.
+Maybe the reporting needs to create a hash of the location, and report
+once per location? Or something like that.
 
-SDM845:
-TLMM  --> PDC  --> PDC-SCM-IF  --> GIC
+Maybe KCSAN needs a way to filter out known false positives on a KCSAN
+side, without having to change the source for a tool that gives too
+much noise?
 
-SDM855:
-TLMM  --> PDC  --> PDC-LNX-IF  --> GIC
+> If we do not annotate the false positive, the real issues might be
+> hidden for years.
 
-The hierarchy would be explicit from the DT. So we would not have to
-worry about figuring out using a property in DT or resource name. (May
-be we can use a compatible instead?). The use of reserved_resource(),
-suggested by Stephen, would help avoid other drivers writing to this
-register which is part of a generic dump area for one-off registers.
+I don't think "change the kernel source for a tool that isn't good
+enough" is the solution.
 
---Lina
+> There is no pattern really, only a lot of noise (small ' bugs'  that
+> have no real impact)
+
+Yeah, if it hasn't shown any real bugs so far, that just strengthens
+the "it needs much fewer false positives to be useful".
+
+KASAN and lockdep can afford to stop after the first problem, because
+the problems they report - and the additional annotations you might
+want to add - are quality problems and annotations.
+
+                Linus
