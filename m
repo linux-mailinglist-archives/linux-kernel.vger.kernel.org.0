@@ -2,99 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EA24F830C
+	by mail.lfdr.de (Postfix) with ESMTP id ECF37F830D
 	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfKKWia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 17:38:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbfKKWi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 17:38:29 -0500
-Received: from localhost (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A00E8206A3;
-        Mon, 11 Nov 2019 22:38:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573511909;
-        bh=MTnAZHsrbhZ3P2DpDk2IhyzQezhY/28XsVTmndfHSJk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lMct2kYf+NtU1SSeKGfu7vJH+lus4FP6GOyRkboWV2X3sC6a6hYEvnBaDzjUm/cFG
-         O8wPTx72oFD+CoDcM+Bn8RH1J0ao4dObawW4zfgl6LVYl/AZuIHtfkP86umsfTXR1R
-         bv1eSQGZO9nNCe8iPPmE+Upkh4kyU4/dp8DzS0e0=
-Date:   Mon, 11 Nov 2019 23:38:26 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 4/4] irq_work: Weaken ordering in irq_work_run_list()
-Message-ID: <20191111223825.GA27917@lenoir>
-References: <20191108160858.31665-1-frederic@kernel.org>
- <20191108160858.31665-5-frederic@kernel.org>
- <20191111084313.GN4131@hirez.programming.kicks-ass.net>
+        id S1727316AbfKKWjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 17:39:16 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40089 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727224AbfKKWjQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 17:39:16 -0500
+Received: by mail-ot1-f66.google.com with SMTP id m15so12630353otq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 14:39:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g2SfPwwCQiLJRr/QX6Jd0995kGjIbxtkaUwuaS+0KzI=;
+        b=QAutOGyZC2XBfUx8rcwZ8HFguppkLV/FZuntrpc1YDFSMLg3IPLKq9PfArFl26TVk7
+         w4osLNDiXI5MLZ49Ri97ZpcjYhSc/7aiq0QacbVHW7i9/9vlCudzLfgIXEmUbEvHxJRG
+         iWYi07lvXHup+RmzZXG9fO256Gwq0YaCir8/aI0hWlf0BlostjS6n+SAdgYMAAjNi9j/
+         dPbbm/ozOJkqU2vfB4Ef4UCrmKK8aptLRaD1tPPDXzrEQu63uyJZSvQqeEDwbltY4pwk
+         Q5LEZeiA+UBjnJQ4ADx+kpEes0bEKZG8f2RxLBH1H64zRhqfK/4QwEdPHwd/IyhKDzbc
+         D7Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g2SfPwwCQiLJRr/QX6Jd0995kGjIbxtkaUwuaS+0KzI=;
+        b=N4qcKaaqxrhL32V5IJKWGnJVLAQ5QXKSDUiJzeN6qFGE/tf/GGw1HyMm2MTa8bnN1O
+         S3Ry7Ntimee1qNQD9ikNx9739VFtV8SPcg+gcxF8tQtVnSN4hjnA0+spQjTdBCRJGImj
+         6CqaUZ04Xz9RRCGDBLMw22TJFLdcbNtPNS2PZxa95Q5fZOZeT+1V46R4323wkx6dAdS1
+         BhnwaJBbJhSdMWG5JypTSN4dIQ6e7uNxnlUxgK6igpiuVtCkbQLX+F20FV87HLXfa7dY
+         SM0tH/wQaR721jix1Z4tXapFS+E71QZf7vmR8NoCAqijER8zrAVvamayZe7vU/E1f84O
+         1yuQ==
+X-Gm-Message-State: APjAAAVcVKrGQCk9lf80rjK/Vc8dv3sw7+D/7ZnGcLn7WQlzZ8P8wCmQ
+        b4RHn4+jZ/dKFBbRZ4FbLkzY5cE1M5XgQCcOUzKWjw==
+X-Google-Smtp-Source: APXvYqwuPw6B3Eul0BUNOj75pgGdIrj38jhNAnCqZC+wN/A9+QYJl0ffSUE2EA40M628idljzMnoDclHo3qzonh8Om8=
+X-Received: by 2002:a9d:2d89:: with SMTP id g9mr22364185otb.126.1573511955643;
+ Mon, 11 Nov 2019 14:39:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191111084313.GN4131@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191111221229.24732-1-sean.j.christopherson@intel.com> <20191111221229.24732-2-sean.j.christopherson@intel.com>
+In-Reply-To: <20191111221229.24732-2-sean.j.christopherson@intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 11 Nov 2019 14:39:04 -0800
+Message-ID: <CAPcyv4hyPWv0OpZVBJ-Vq8pGny1B59EkvykZ0RKZAgHB0tq2og@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] KVM: MMU: Do not treat ZONE_DEVICE pages as being reserved
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adam Borowski <kilobyte@angband.pl>,
+        David Hildenbrand <david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 09:43:13AM +0100, Peter Zijlstra wrote:
-> On Fri, Nov 08, 2019 at 05:08:58PM +0100, Frederic Weisbecker wrote:
-> 
-> > diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-> > index 49c53f80a13a..b709ab05cbfd 100644
-> > --- a/kernel/irq_work.c
-> > +++ b/kernel/irq_work.c
-> > @@ -34,8 +34,8 @@ static bool irq_work_claim(struct irq_work *work)
-> >  	oflags = atomic_fetch_or(IRQ_WORK_CLAIMED, &work->flags);
-> >  	/*
-> >  	 * If the work is already pending, no need to raise the IPI.
-> > +	 * The pairing atomic_andnot() followed by a barrier in irq_work_run()
-> > +	 * makes sure everything we did before is visible.
-> >  	 */
-> >  	if (oflags & IRQ_WORK_PENDING)
-> >  		return false;
-> 
-> > @@ -151,14 +151,16 @@ static void irq_work_run_list(struct llist_head *list)
-> >  		 * to claim that work don't rely on us to handle their data
-> >  		 * while we are in the middle of the func.
-> >  		 */
-> > -		flags = atomic_fetch_andnot(IRQ_WORK_PENDING, &work->flags);
-> > +		atomic_andnot(IRQ_WORK_PENDING, &work->flags);
-> > +		smp_mb__after_atomic();
-> 
-> I think I'm prefering you use:
-> 
-> 		flags = atomic_fetch_andnot_acquire(IRQ_WORK_PENDING, &work->flags);
+On Mon, Nov 11, 2019 at 2:12 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> Explicitly exempt ZONE_DEVICE pages from kvm_is_reserved_pfn() and
+> instead manually handle ZONE_DEVICE on a case-by-case basis.  For things
+> like page refcounts, KVM needs to treat ZONE_DEVICE pages like normal
+> pages, e.g. put pages grabbed via gup().  But for flows such as setting
+> A/D bits or shifting refcounts for transparent huge pages, KVM needs to
+> to avoid processing ZONE_DEVICE pages as the flows in question lack the
+> underlying machinery for proper handling of ZONE_DEVICE pages.
+>
+> This fixes a hang reported by Adam Borowski[*] in dev_pagemap_cleanup()
+> when running a KVM guest backed with /dev/dax memory, as KVM straight up
+> doesn't put any references to ZONE_DEVICE pages acquired by gup().
+>
+> Note, Dan Williams proposed an alternative solution of doing put_page()
+> on ZONE_DEVICE pages immediately after gup() in order to simplify the
+> auditing needed to ensure is_zone_device_page() is called if and only if
+> the backing device is pinned (via gup()).  But that approach would break
+> kvm_vcpu_{un}map() as KVM requires the page to be pinned from map() 'til
+> unmap() when accessing guest memory, unlike KVM's secondary MMU, which
+> coordinates with mmu_notifier invalidations to avoid creating stale
+> page references, i.e. doesn't rely on pages being pinned.
+>
+> [*] http://lkml.kernel.org/r/20190919115547.GA17963@angband.pl
+>
+> Reported-by: Adam Borowski <kilobyte@angband.pl>
+> Debugged-by: David Hildenbrand <david@redhat.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
 
-Ah good point. Preparing that.
+Acked-by: Dan Williams <dan.j.williams@intel.com>
 
-> 
-> Also, I'm cursing at myself for the horrible comments here.
+> Cc: stable@vger.kernel.org
 
-Hmm, I wrote many of those, which one? :o)
+Perhaps add:
 
-Thanks.
+Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
 
-> 
-> >  		work->func(work);
-> >  		/*
-> >  		 * Clear the BUSY bit and return to the free state if
-> >  		 * no-one else claimed it meanwhile.
-> >  		 */
-> > -		(void)atomic_cmpxchg(&work->flags, flags, flags & ~IRQ_WORK_BUSY);
-> > +		(void)atomic_cmpxchg(&work->flags, flags & ~IRQ_WORK_PENDING,
-> > +				     flags & ~IRQ_WORK_CLAIMED);
-> >  	}
-> >  }
-> >  
-> > -- 
-> > 2.23.0
-> > 
+...since that was the first kernel that broke KVM's assumption about
+which pfn types needed to have the reference count managed.
