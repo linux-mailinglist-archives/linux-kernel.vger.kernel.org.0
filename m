@@ -2,50 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83AD0F7D50
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D676F7AF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729460AbfKKSze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:55:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
+        id S1727560AbfKKSbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:31:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730623AbfKKSz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:55:28 -0500
+        id S1727536AbfKKSbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:31:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C994C21925;
-        Mon, 11 Nov 2019 18:55:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAD8A21D7F;
+        Mon, 11 Nov 2019 18:31:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498527;
-        bh=WnFA7oiZERpmd60xOy6aeNpoUKb+ts+wqlxEfGaYfMc=;
+        s=default; t=1573497064;
+        bh=sZm9OB5ufSxzSMHNmt8bxYi6l9HN+YeT7KVGd3d+tek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fv5LzZ3s8bnpisPX2cNhEUqgRHVEsNzuhzDgMMORRSi0U7bF0idy1H5LRq1MFC3qu
-         KWtl6YTNNlIxQyE36YgksBNoU2StbLpVMfN4i6/rTIHbQrVZ7noOBrFkfX2ySzOvux
-         Usi/Je2RfnGmts9AqwiVfdhQRjEB7iSgWkSMnfmQ=
+        b=rpkxcNKJO5T4KiJipmiupneVUGPviiP+bJBSRN1nN7+IrFwDzAtN/trd9qKQ0yFCX
+         /CHbrqerM9imIOFJNyyw8YlY7oZQp6YtDbJdKut+ZDJG6tMuz5pM7Z2cus9qnKfIT1
+         BZNOXXnoF/5K4Pnddz6goOTjJ/4EAF6Al/+JGSnI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 144/193] perf/x86/amd/ibs: Fix reading of the IBS OpData register and thus precise RIP validity
+        stable@vger.kernel.org,
+        Chandana Kishori Chiluveru <cchiluve@codeaurora.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 32/43] usb: gadget: composite: Fix possible double free memory bug
 Date:   Mon, 11 Nov 2019 19:28:46 +0100
-Message-Id: <20191111181511.780625977@linuxfoundation.org>
+Message-Id: <20191111181323.665254368@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,52 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
 
-[ Upstream commit 317b96bb14303c7998dbcd5bc606bd8038fdd4b4 ]
+[ Upstream commit 1c20c89b0421b52b2417bb0f62a611bc669eda1d ]
 
-The loop that reads all the IBS MSRs into *buf stopped one MSR short of
-reading the IbsOpData register, which contains the RipInvalid status bit.
+composite_dev_cleanup call from the failure of configfs_composite_bind
+frees up the cdev->os_desc_req and cdev->req. If the previous calls of
+bind and unbind is successful these will carry stale values.
 
-Fix the offset_max assignment so the MSR gets read, so the RIP invalid
-evaluation is based on what the IBS h/w output, instead of what was
-left in memory.
+Consider the below sequence of function calls:
+configfs_composite_bind()
+        composite_dev_prepare()
+                - Allocate cdev->req, cdev->req->buf
+        composite_os_desc_req_prepare()
+                - Allocate cdev->os_desc_req, cdev->os_desc_req->buf
+configfs_composite_unbind()
+        composite_dev_cleanup()
+                - free the cdev->os_desc_req->buf and cdev->req->buf
+Next composition switch
+configfs_composite_bind()
+        - If it fails goto err_comp_cleanup will call the
+	  composite_dev_cleanup() function
+        composite_dev_cleanup()
+	        - calls kfree up with the stale values of cdev->req->buf and
+		  cdev->os_desc_req from the previous configfs_composite_bind
+		  call. The free call on these stale values leads to double free.
 
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: d47e8238cd76 ("perf/x86-ibs: Take instruction pointer from ibs sample")
-Link: https://lkml.kernel.org/r/20191023150955.30292-1-kim.phillips@amd.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Hence, Fix this issue by setting request and buffer pointer to NULL after
+kfree.
+
+Signed-off-by: Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/ibs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/composite.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index 5b35b7ea5d728..98ba21a588a15 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -614,7 +614,7 @@ fail:
- 	if (event->attr.sample_type & PERF_SAMPLE_RAW)
- 		offset_max = perf_ibs->offset_max;
- 	else if (check_rip)
--		offset_max = 2;
-+		offset_max = 3;
- 	else
- 		offset_max = 1;
- 	do {
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index 351a406b97af7..0f2d1e98481fb 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -2068,14 +2068,18 @@ void composite_dev_cleanup(struct usb_composite_dev *cdev)
+ 			usb_ep_dequeue(cdev->gadget->ep0, cdev->os_desc_req);
+ 
+ 		kfree(cdev->os_desc_req->buf);
++		cdev->os_desc_req->buf = NULL;
+ 		usb_ep_free_request(cdev->gadget->ep0, cdev->os_desc_req);
++		cdev->os_desc_req = NULL;
+ 	}
+ 	if (cdev->req) {
+ 		if (cdev->setup_pending)
+ 			usb_ep_dequeue(cdev->gadget->ep0, cdev->req);
+ 
+ 		kfree(cdev->req->buf);
++		cdev->req->buf = NULL;
+ 		usb_ep_free_request(cdev->gadget->ep0, cdev->req);
++		cdev->req = NULL;
+ 	}
+ 	cdev->next_string_id = 0;
+ 	device_remove_file(&cdev->gadget->dev, &dev_attr_suspended);
 -- 
 2.20.1
 
