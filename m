@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0D01F7D5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:56:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 748F7F7B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730438AbfKKSz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:55:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53628 "EHLO mail.kernel.org"
+        id S1727761AbfKKSeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:34:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbfKKSzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:55:54 -0500
+        id S1728294AbfKKSeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DB9A21655;
-        Mon, 11 Nov 2019 18:55:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94A3E21925;
+        Mon, 11 Nov 2019 18:34:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498553;
-        bh=NRVQEEOYqmHMZ/IprkdRMMJEbAnjRbByMOHCbnyi9T0=;
+        s=default; t=1573497251;
+        bh=8TCRa5j57pe7+Mx5RkLfWcn+fZoJqmv6pWa/XoPllB8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rNCX2XU/AzN5eU68CMYVRuY07i4WYhYGrBY0dztFxAPhH3AiT82bqaZw1LGL5sTZ3
-         dFCPqGB+aPP37q010ZHXzeQ5dvpm5rs2eVB9ngMLmCmggXEWtoJfx0YIZOJVjT48aa
-         HKTdARhIoMqp6tNY/AjQYqCKalZeV6D+BJ9ftFhg=
+        b=or6BUi9M2laiJGqMdwAy02nDLABFmbVG2ih6r6G1pFiFrYk/l/poQb/LSYZ0qXYRP
+         ET+zchhChuH4kKifmBFen7AYHi/SKNKHAdF4mgkgBVJ9K0pegr3ONlK30Bp/hc/gD0
+         TWyNJJYJ2ApgAATUsQCel3POYAfjhc0WBqBeNn4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 113/193] ARC: [plat-hsdk]: Enable on-board SPI NOR flash IC
+        stable@vger.kernel.org, Kevin Hao <haokexin@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.9 15/65] dump_stack: avoid the livelock of the dump_lock
 Date:   Mon, 11 Nov 2019 19:28:15 +0100
-Message-Id: <20191111181509.460497844@linuxfoundation.org>
+Message-Id: <20191111181343.934460230@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Kevin Hao <haokexin@gmail.com>
 
-[ Upstream commit 8ca8fa7f22dcb0a3265490a690b0c3e27de681f9 ]
+commit 5cbf2fff3bba8d3c6a4d47c1754de1cf57e2b01f upstream.
 
-HSDK board has sst26wf016b SPI NOR flash IC installed, enable it.
+In the current code, we use the atomic_cmpxchg() to serialize the output
+of the dump_stack(), but this implementation suffers the thundering herd
+problem.  We have observed such kind of livelock on a Marvell cn96xx
+board(24 cpus) when heavily using the dump_stack() in a kprobe handler.
+Actually we can let the competitors to wait for the releasing of the
+lock before jumping to atomic_cmpxchg().  This will definitely mitigate
+the thundering herd problem.  Thanks Linus for the suggestion.
 
-Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+[akpm@linux-foundation.org: fix comment]
+Link: http://lkml.kernel.org/r/20191030031637.6025-1-haokexin@gmail.com
+Fixes: b58d977432c8 ("dump_stack: serialize the output from dump_stack()")
+Signed-off-by: Kevin Hao <haokexin@gmail.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arc/boot/dts/hsdk.dts      | 8 ++++++++
- arch/arc/configs/hsdk_defconfig | 2 ++
- 2 files changed, 10 insertions(+)
+ lib/dump_stack.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
-index bfc7f5f5d6f26..9bea5daadd23f 100644
---- a/arch/arc/boot/dts/hsdk.dts
-+++ b/arch/arc/boot/dts/hsdk.dts
-@@ -264,6 +264,14 @@
- 			clocks = <&input_clk>;
- 			cs-gpios = <&creg_gpio 0 GPIO_ACTIVE_LOW>,
- 				   <&creg_gpio 1 GPIO_ACTIVE_LOW>;
-+
-+			spi-flash@0 {
-+				compatible = "sst26wf016b", "jedec,spi-nor";
-+				reg = <0>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				spi-max-frequency = <4000000>;
-+			};
- 		};
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -44,7 +44,12 @@ retry:
+ 		was_locked = 1;
+ 	} else {
+ 		local_irq_restore(flags);
+-		cpu_relax();
++		/*
++		 * Wait for the lock to release before jumping to
++		 * atomic_cmpxchg() in order to mitigate the thundering herd
++		 * problem.
++		 */
++		do { cpu_relax(); } while (atomic_read(&dump_lock) != -1);
+ 		goto retry;
+ 	}
  
- 		creg_gpio: gpio@14b0 {
-diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
-index 403125d9c9a34..fe9de80e41ee3 100644
---- a/arch/arc/configs/hsdk_defconfig
-+++ b/arch/arc/configs/hsdk_defconfig
-@@ -31,6 +31,8 @@ CONFIG_INET=y
- CONFIG_DEVTMPFS=y
- # CONFIG_STANDALONE is not set
- # CONFIG_PREVENT_FIRMWARE_BUILD is not set
-+CONFIG_MTD=y
-+CONFIG_MTD_SPI_NOR=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
--- 
-2.20.1
-
 
 
