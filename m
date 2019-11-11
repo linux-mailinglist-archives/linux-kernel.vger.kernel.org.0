@@ -2,146 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E022DF83A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 00:38:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 363C3F83A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 00:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfKKXhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 18:37:21 -0500
-Received: from mga07.intel.com ([134.134.136.100]:41352 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727224AbfKKXhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 18:37:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 15:37:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,294,1569308400"; 
-   d="scan'208";a="197848772"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga008.jf.intel.com with ESMTP; 11 Nov 2019 15:37:19 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Junaid Shahid <junaids@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4.14 STABLE 2/2] KVM: x86: introduce is_pae_paging
-Date:   Mon, 11 Nov 2019 15:37:18 -0800
-Message-Id: <20191111233718.28438-3-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111233718.28438-1-sean.j.christopherson@intel.com>
-References: <20191111233718.28438-1-sean.j.christopherson@intel.com>
+        id S1727483AbfKKXhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 18:37:39 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37106 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbfKKXhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 18:37:39 -0500
+Received: by mail-pl1-f195.google.com with SMTP id bb5so183445plb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 15:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dbubxE0xgSr5ksKDTw0XJflMoEKnD/vPTnArmSwuz/c=;
+        b=XJiQM6izQ3EdqFpU//vf0g9TJrNjK30LoEEuLytoDpf77SVn8DVbJB4Y/TQ98XuZ5/
+         +hUyHJiV/pvgVcZGWn2c9XIZZU5k68LxG9mwDk6gIWUV0/hryUUP3L9RYb5KU9lKmQTU
+         UQOYCiHzlc5GI3hp2xaXxE5kxl2fwyWUte1KnTEJZyKTjZnn/j5h/JAoI0Gc4TClmrLu
+         QjK+Dw/PFCQhXffjGRv9G+WOpgHO4a9HaCq6qC8fUzABPJayGC98ROMMYjGNsX7wZE3J
+         vAWjUq5Up3oz5LZ4R6h2vxZLk5ewC1cr/NqsiseriRWe1/3RhWoNvkPbVAaT3RQxuYal
+         +hcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dbubxE0xgSr5ksKDTw0XJflMoEKnD/vPTnArmSwuz/c=;
+        b=t3oMEEJXkRR2gTFg6VlKFStfG5Nid/hL6HLC3ldmnWuClA9Fl72PWbmJUpj14fs3PN
+         taTB+KNFFYL7tDOhem/uaq3kPaNWYBpuiqavOeq8fE8Vru4TukIEiiTkpWCTIOptuYKp
+         2aqtSUutK8SutTVjmyzFZ237hUowGRMnHCjKcBEiye58k+hY2f/jQ6X9zBIQX1JtAU8k
+         R9Ob7BpqQDV5FWQ3JgG7UaIBTcgZ+PnTCKIx0/9e6Bvf5OiB+Fcg2E0/pnjgxf9ffUaa
+         jyKc/9IEsI+OqQtOZOITPBQScXFcXsmoJqf0UqQOSN3PBB38e7j0eL8klNVlAtGyNFuy
+         ZJ0Q==
+X-Gm-Message-State: APjAAAW4qIg2/LOYzTYt5j+zjuOn8gxuG8PA0CETawuIsjsqcQPX4n0h
+        KbiytGwUG5fqAcw+ru7uQPbDWg==
+X-Google-Smtp-Source: APXvYqwfI6yk/1FEF/2vNfst6ZSXex8XDaA76VJ8X196QzpGAQV6zXVmCwB0tL3GCfovb3hs7VCIAw==
+X-Received: by 2002:a17:902:d891:: with SMTP id b17mr16154772plz.256.1573515457439;
+        Mon, 11 Nov 2019 15:37:37 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id e17sm16216877pgg.5.2019.11.11.15.37.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 15:37:36 -0800 (PST)
+Date:   Mon, 11 Nov 2019 15:37:34 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        s-anna@ti.com
+Subject: Re: [PATCH 09/17] remoteproc/omap: Remove the unused fields from
+ platform data
+Message-ID: <20191111233734.GK3108315@builder>
+References: <20191028124238.19224-1-t-kristo@ti.com>
+ <20191028124238.19224-10-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028124238.19224-10-t-kristo@ti.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
 
-Upstream commit bf03d4f9334728bf7c8ffc7de787df48abd6340e.
+> From: Suman Anna <s-anna@ti.com>
+> 
+> The following fields: .name, .oh_name, .oh_name_opt, .mbox_name,
+> .firmware, .ops and .set_bootaddr, are removed from the platform data,
+> as these are no longer needed after the addition of DT support to the
+> OMAP remoteproc driver.
+> 
+> The .name field was used to give a name to the remoteproc, and this
+> is replaced with the device name. The .ops field was never used by
+> the OMAP remoteproc driver. The .mbox_name was used to define the
+> sub-mailbox node used for communication with the remote processor,
+> and is retrieved using the 'mboxes' property in the DT node. The
+> .firmware field is encoded directly in the OMAP remoteproc driver and
+> is retrieved using driver match data. The .set_bootaddr ops was used
+> for using a OMAP Control Module API to configure the boot address for
+> the processor, and is now implemented within the driver using a
+> syscon property.
+> 
+> The .oh_name field is used to define the primary hwmod for the processor
+> node, and is represented using the 'ti,hwmods' property in the DT node.
+> The .oh_name_opt field was primarily defined to identify the hwmod for
+> the second cpu in a dual Cortex-M3/M4 IPU processor sub-system. This
+> hwmod entry is no longer defined usually, but rather a single hwmod
+> representing both the processors in the IPU sub-system is defined.
+> A single firmware image (either in SMP-mode or a combined image for
+> non-SMP mode) is used, with both the resets released together always
+> as part of the device management. Any power management and recovery
+> aspects require that both the processors be managed as one entity due
+> to the presence of shared MMU and unicache within the IPU sub-system.
+> 
+> The OMAP remoteproc platform data structure is eventually expected
+> to be removed completely once the other dependencies with the
+> mach-omap layer are met.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
 
-Checking for 32-bit PAE is quite common around code that fiddles with
-the PDPTRs.  Add a function to compress all checks into a single
-invocation.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Moving to the common helper also fixes a subtle bug in kvm_set_cr3()
-where it fails to check is_long_mode() and results in KVM incorrectly
-attempting to load PDPTRs for a 64-bit guest.
-
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[sean: backport to 4.x; handle vmx.c split in 5.x, call out the bugfix]
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/vmx.c | 7 +++----
- arch/x86/kvm/x86.c | 8 ++++----
- arch/x86/kvm/x86.h | 5 +++++
- 3 files changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 02c0326dc259..532598637b24 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4476,7 +4476,7 @@ static void ept_load_pdptrs(struct kvm_vcpu *vcpu)
- 		      (unsigned long *)&vcpu->arch.regs_dirty))
- 		return;
- 
--	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
-+	if (is_pae_paging(vcpu)) {
- 		vmcs_write64(GUEST_PDPTR0, mmu->pdptrs[0]);
- 		vmcs_write64(GUEST_PDPTR1, mmu->pdptrs[1]);
- 		vmcs_write64(GUEST_PDPTR2, mmu->pdptrs[2]);
-@@ -4488,7 +4488,7 @@ static void ept_save_pdptrs(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
- 
--	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
-+	if (is_pae_paging(vcpu)) {
- 		mmu->pdptrs[0] = vmcs_read64(GUEST_PDPTR0);
- 		mmu->pdptrs[1] = vmcs_read64(GUEST_PDPTR1);
- 		mmu->pdptrs[2] = vmcs_read64(GUEST_PDPTR2);
-@@ -10914,8 +10914,7 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
- 		 * If PAE paging and EPT are both on, CR3 is not used by the CPU and
- 		 * must not be dereferenced.
- 		 */
--		if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu) &&
--		    !nested_ept) {
-+		if (is_pae_paging(vcpu) && !nested_ept) {
- 			if (!load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3)) {
- 				*entry_failure_code = ENTRY_FAIL_PDPTE;
- 				return 1;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 801e7faba728..ddab027a0370 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -619,7 +619,7 @@ bool pdptrs_changed(struct kvm_vcpu *vcpu)
- 	gfn_t gfn;
- 	int r;
- 
--	if (is_long_mode(vcpu) || !is_pae(vcpu) || !is_paging(vcpu))
-+	if (!is_pae_paging(vcpu))
- 		return false;
- 
- 	if (!test_bit(VCPU_EXREG_PDPTR,
-@@ -848,8 +848,8 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
- 	if (is_long_mode(vcpu) &&
- 	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
- 		return 1;
--	else if (is_pae(vcpu) && is_paging(vcpu) &&
--		   !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
-+	else if (is_pae_paging(vcpu) &&
-+		 !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
- 		return 1;
- 
- 	vcpu->arch.cr3 = cr3;
-@@ -7751,7 +7751,7 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
- 		kvm_update_cpuid(vcpu);
- 
- 	idx = srcu_read_lock(&vcpu->kvm->srcu);
--	if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu)) {
-+	if (is_pae_paging(vcpu)) {
- 		load_pdptrs(vcpu, vcpu->arch.walk_mmu, kvm_read_cr3(vcpu));
- 		mmu_reset_needed = 1;
- 	}
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index c88305d997b0..68eb0d03e5fc 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -94,6 +94,11 @@ static inline int is_paging(struct kvm_vcpu *vcpu)
- 	return likely(kvm_read_cr0_bits(vcpu, X86_CR0_PG));
- }
- 
-+static inline bool is_pae_paging(struct kvm_vcpu *vcpu)
-+{
-+	return !is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu);
-+}
-+
- static inline u32 bit(int bitno)
- {
- 	return 1 << (bitno & 31);
--- 
-2.24.0
-
+> ---
+>  include/linux/platform_data/remoteproc-omap.h | 17 +----------------
+>  1 file changed, 1 insertion(+), 16 deletions(-)
+> 
+> diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+> index 7e3a16097672..6bea01e199fe 100644
+> --- a/include/linux/platform_data/remoteproc-omap.h
+> +++ b/include/linux/platform_data/remoteproc-omap.h
+> @@ -2,38 +2,23 @@
+>  /*
+>   * Remote Processor - omap-specific bits
+>   *
+> - * Copyright (C) 2011 Texas Instruments, Inc.
+> + * Copyright (C) 2011-2018 Texas Instruments Incorporated - http://www.ti.com/
+>   * Copyright (C) 2011 Google, Inc.
+>   */
+>  
+>  #ifndef _PLAT_REMOTEPROC_H
+>  #define _PLAT_REMOTEPROC_H
+>  
+> -struct rproc_ops;
+>  struct platform_device;
+>  
+>  /*
+>   * struct omap_rproc_pdata - omap remoteproc's platform data
+> - * @name: the remoteproc's name
+> - * @oh_name: omap hwmod device
+> - * @oh_name_opt: optional, secondary omap hwmod device
+> - * @firmware: name of firmware file to load
+> - * @mbox_name: name of omap mailbox device to use with this rproc
+> - * @ops: start/stop rproc handlers
+>   * @device_enable: omap-specific handler for enabling a device
+>   * @device_shutdown: omap-specific handler for shutting down a device
+> - * @set_bootaddr: omap-specific handler for setting the rproc boot address
+>   */
+>  struct omap_rproc_pdata {
+> -	const char *name;
+> -	const char *oh_name;
+> -	const char *oh_name_opt;
+> -	const char *firmware;
+> -	const char *mbox_name;
+> -	const struct rproc_ops *ops;
+>  	int (*device_enable)(struct platform_device *pdev);
+>  	int (*device_shutdown)(struct platform_device *pdev);
+> -	void (*set_bootaddr)(u32);
+>  };
+>  
+>  #if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+> -- 
+> 2.17.1
+> 
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
