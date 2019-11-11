@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 391CFF74F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 14:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7749F74FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 14:31:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfKKNbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 08:31:14 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47335 "EHLO
+        id S1727123AbfKKNbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 08:31:44 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23045 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726897AbfKKNbO (ORCPT
+        with ESMTP id S1726843AbfKKNbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 08:31:14 -0500
+        Mon, 11 Nov 2019 08:31:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573479073;
+        s=mimecast20190719; t=1573479103;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kKHcRoF7prIMnwnvQYPeH2Xko5af8fJGBlM20TjEI64=;
-        b=RiF6oFBKVqbB6f3DgeshmAoK/3B1JBQtPoc7tOE+yXXnqwLniVjpMdRUxklq5ekWBl6/Bq
-        v520t2rW2tsWaFD/Lo0caV/o8YgxDLwntgpnu1CiAO0zakaijfabV9q+hHvaiEGS80qH2p
-        eUnnktoQz/Z7ov5iv98w2O1J0IjCoww=
+        bh=QPQD8E2XCAm9S6Dc8C7OkBjON/HEZp/bVrno+fWX5wE=;
+        b=OV5sfXUoaMB5HYcn/7E92v8CxycJJAhN0lFaxFp/oCbcz+EJHUcAPDNAo3Y85amJpp9QDa
+        migcKK71ufzMUxNLQuuhRl2hTlRMg3V77ZOchZ/pwvMichZuG274+ZMsXlA9vnvxITiknT
+        lUV19vvbz80Nwyc+3WxkWYmHKRQduz0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-kd1QToK1OuK8ryWcLMcDew-1; Mon, 11 Nov 2019 08:31:10 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-177-pW-gECs3OH-dVdv8impuaQ-1; Mon, 11 Nov 2019 08:31:40 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0CAB2107ACC4;
-        Mon, 11 Nov 2019 13:31:09 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D4901005502;
+        Mon, 11 Nov 2019 13:31:39 +0000 (UTC)
 Received: from krava (unknown [10.40.205.88])
-        by smtp.corp.redhat.com (Postfix) with SMTP id E120026FBA;
-        Mon, 11 Nov 2019 13:31:07 +0000 (UTC)
-Date:   Mon, 11 Nov 2019 14:31:07 +0100
+        by smtp.corp.redhat.com (Postfix) with SMTP id F19D6608FB;
+        Mon, 11 Nov 2019 13:31:37 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 14:31:37 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
 To:     Andi Kleen <andi@firstfloor.org>
 Cc:     jolsa@kernel.org, acme@kernel.org, linux-kernel@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v5 10/13] perf stat: Use affinity for opening events
-Message-ID: <20191111133107.GG12923@krava>
+Subject: Re: [PATCH v5 04/13] perf evlist: Maintain evlist->all_cpus
+Message-ID: <20191111133137.GH12923@krava>
 References: <20191107181646.506734-1-andi@firstfloor.org>
- <20191107181646.506734-11-andi@firstfloor.org>
+ <20191107181646.506734-5-andi@firstfloor.org>
 MIME-Version: 1.0
-In-Reply-To: <20191107181646.506734-11-andi@firstfloor.org>
+In-Reply-To: <20191107181646.506734-5-andi@firstfloor.org>
 User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: kd1QToK1OuK8ryWcLMcDew-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: pW-gECs3OH-dVdv8impuaQ-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -56,45 +56,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 10:16:43AM -0800, Andi Kleen wrote:
+On Thu, Nov 07, 2019 at 10:16:37AM -0800, Andi Kleen wrote:
 
 SNIP
 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 2fb83aabbef5..9f8a9393ce4a 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -776,7 +776,7 @@ static int record__open(struct record *rec)
->  =09=09=09if ((errno =3D=3D EINVAL || errno =3D=3D EBADF) &&
->  =09=09=09    pos->leader !=3D pos &&
->  =09=09=09    pos->weak_group) {
-> -=09=09=09        pos =3D perf_evlist__reset_weak_group(evlist, pos);
-> +=09=09=09        pos =3D perf_evlist__reset_weak_group(evlist, pos, true=
-);
->  =09=09=09=09goto try_again;
->  =09=09=09}
->  =09=09=09rc =3D -errno;
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 1a586009e5a7..7f9ec41d8f62 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -65,6 +65,7 @@
->  #include "util/target.h"
->  #include "util/time-utils.h"
->  #include "util/top.h"
-> +#include "util/affinity.h"
->  #include "asm/bug.h"
+> diff --git a/tools/perf/lib/cpumap.c b/tools/perf/lib/cpumap.c
+> index d81656b4635e..b9f573438b93 100644
+> --- a/tools/perf/lib/cpumap.c
+> +++ b/tools/perf/lib/cpumap.c
+> @@ -286,3 +286,46 @@ int perf_cpu_map__max(struct perf_cpu_map *map)
 > =20
->  #include <linux/time64.h>
-> @@ -440,6 +441,7 @@ static enum counter_recovery stat_handle_error(struct=
- evsel *counter)
->  =09=09=09ui__warning("%s event is not supported by the kernel.\n",
->  =09=09=09=09    perf_evsel__name(counter));
->  =09=09counter->supported =3D false;
-> +=09=09counter->errored =3D true;
+>  =09return max;
+>  }
+> +
+> +struct perf_cpu_map *perf_cpu_map__merge(struct perf_cpu_map *orig,
+> +=09=09=09=09=09 struct perf_cpu_map *other)
+> +{
+> +=09int *tmp_cpus;
+> +=09int tmp_len;
+> +=09int i, j, k;
+> +=09struct perf_cpu_map *merged;
+> +
+> +=09if (!orig && !other)
+> +=09=09return NULL;
+> +=09if (!orig) {
+> +=09=09perf_cpu_map__get(other);
+> +=09=09return other;
+> +=09}
+> +=09if (!other)
+> +=09=09return orig;
 
-how is errored different from supported?
-why can't you use it?
+so we bump refcnt for other but not for orig?
+
+could you please put to the comment expected results
+wrt refcnt values for above cases?
+
+> +=09if (orig->nr =3D=3D other->nr &&
+> +=09    !memcmp(orig->map, other->map, orig->nr * sizeof(int)))
+> +=09=09return orig;
+> +=09tmp_len =3D orig->nr + other->nr;
+> +=09tmp_cpus =3D malloc(tmp_len * sizeof(int));
+> +=09if (!tmp_cpus)
+> +=09=09return NULL;
+> +=09i =3D j =3D k =3D 0;
+> +=09while (i < orig->nr && j < other->nr) {
+> +=09=09if (orig->map[i] <=3D other->map[j]) {
+> +=09=09=09if (orig->map[i] =3D=3D other->map[j])
+> +=09=09=09=09j++;
+> +=09=09=09tmp_cpus[k++] =3D orig->map[i++];
+> +=09=09} else
+> +=09=09=09tmp_cpus[k++] =3D other->map[j++];
+> +=09}
+> +=09while (i < orig->nr)
+> +=09=09tmp_cpus[k++] =3D orig->map[i++];
+> +=09while (j < other->nr)
+> +=09=09tmp_cpus[k++] =3D other->map[j++];
+> +=09assert(k <=3D tmp_len);
+> +=09merged =3D cpu_map__trim_new(k, tmp_cpus);
+> +=09free(tmp_cpus);
+> +=09perf_cpu_map__put(orig);
+> +=09return merged;
+
+please use some comments and blank lines to separate
+the code above, it's too much.. ;-)
+
+SNIP
+
+>  LIBPERF_API int perf_cpu_map__cpu(const struct perf_cpu_map *cpus, int i=
+dx);
+>  LIBPERF_API int perf_cpu_map__nr(const struct perf_cpu_map *cpus);
+> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-t=
+est.c
+> index 8b286e9b7549..5fa37cf7f283 100644
+> --- a/tools/perf/tests/builtin-test.c
+> +++ b/tools/perf/tests/builtin-test.c
+> @@ -259,6 +259,11 @@ static struct test generic_tests[] =3D {
+>  =09=09.desc =3D "Print cpu map",
+>  =09=09.func =3D test__cpu_map_print,
+>  =09},
+> +=09{
+> +=09=09.desc =3D "Merge cpu map",
+> +=09=09.func =3D test__cpu_map_merge,
+> +=09},
+
+awesome ,thanks
 
 jirka
 
