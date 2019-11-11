@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DE6F7EBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA164F7E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbfKKTFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:05:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58526 "EHLO mail.kernel.org"
+        id S1727656AbfKKSjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:39:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729151AbfKKSj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:39:28 -0500
+        id S1728287AbfKKSji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:39:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7670221655;
-        Mon, 11 Nov 2019 18:39:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B23C204FD;
+        Mon, 11 Nov 2019 18:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497568;
-        bh=kiDTsuVHTMiEWSIL275Ny5D5Tpvc9FYAKfy5rRCxoQA=;
+        s=default; t=1573497577;
+        bh=4NAm3x63MqEBoEc1MXh1AeWlJFcd6N+VLDeC6aeUhFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l2DMyFlwaeUoXxmI66sgHTqScDb2LuhhYUMgZPK2Gfu3on1SF4YQ5/pvOX8Ua+7S5
-         CAMfHpnHXOBcgqMzIAULgDCwv70ePKP6YcqpnpcxzxHzs2/4VUhoJPNqzA7JR8Me1O
-         SPairmXbncbTArfqTQZTGthfTquJBpxnwm+tPvAI=
+        b=n83Kh3CAY90Uu1K8qFrjD16bqNcsq6xeK0z6G4i8VxZvCyw9ZbuU2jlTT3QkGudF+
+         pIhYypFaEouiFnQrSFu17Lv86XB6vsEWkh7El8CSvvwaUH/2aYX6oZ3Ox+C/fC1Xbj
+         MwbTKGw/leMur1voLFD6lH1MmpqTZN1jmWvtV8pg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>, bhe@redhat.com,
-        ebiederm@xmission.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 100/105] x86/apic: Move pending interrupt check code into its own function
-Date:   Mon, 11 Nov 2019 19:29:10 +0100
-Message-Id: <20191111181449.206849538@linuxfoundation.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 102/105] x86/apic/32: Avoid bogus LDR warnings
+Date:   Mon, 11 Nov 2019 19:29:12 +0100
+Message-Id: <20191111181449.454254098@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
 References: <20191111181421.390326245@linuxfoundation.org>
@@ -45,153 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+From: Jan Beulich <jbeulich@suse.com>
 
-[ Upstream commit 9b217f33017715903d0956dfc58f82d2a2d00e63 ]
+[ Upstream commit fe6f85ca121e9c74e7490fe66b0c5aae38e332c3 ]
 
-The pending interrupt check code is mixed with the local APIC setup code,
-that looks messy.
+The removal of the LDR initialization in the bigsmp_32 APIC code unearthed
+a problem in setup_local_APIC().
 
-Extract the related code, move it into a new function named
-apic_pending_intr_clear().
+The code checks unconditionally for a mismatch of the logical APIC id by
+comparing the early APIC id which was initialized in get_smp_config() with
+the actual LDR value in the APIC.
 
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Due to the removal of the bogus LDR initialization the check now can
+trigger on bigsmp_32 APIC systems emitting a warning for every booting
+CPU. This is of course a false positive because the APIC is not using
+logical destination mode.
+
+Restrict the check and the possibly resulting fixup to systems which are
+actually using the APIC in logical destination mode.
+
+[ tglx: Massaged changelog and added Cc stable ]
+
+Fixes: bae3a8d3308 ("x86/apic: Do not initialize LDR and DFR for bigsmp")
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: bhe@redhat.com
-Cc: ebiederm@xmission.com
-Link: https://lkml.kernel.org/r/20180301055930.2396-2-douly.fnst@cn.fujitsu.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/apic.c | 100 ++++++++++++++++++++----------------
- 1 file changed, 55 insertions(+), 45 deletions(-)
+ arch/x86/kernel/apic/apic.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
 diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index ea2de324ab021..98fecdbec6402 100644
+index 97d1290d1f0d8..6415b4aead546 100644
 --- a/arch/x86/kernel/apic/apic.c
 +++ b/arch/x86/kernel/apic/apic.c
-@@ -1362,6 +1362,56 @@ static void lapic_setup_esr(void)
- 			oldvalue, value);
- }
- 
-+static void apic_pending_intr_clear(void)
-+{
-+	long long max_loops = cpu_khz ? cpu_khz : 1000000;
-+	unsigned long long tsc = 0, ntsc;
-+	unsigned int value, queued;
-+	int i, j, acked = 0;
-+
-+	if (boot_cpu_has(X86_FEATURE_TSC))
-+		tsc = rdtsc();
-+	/*
-+	 * After a crash, we no longer service the interrupts and a pending
-+	 * interrupt from previous kernel might still have ISR bit set.
-+	 *
-+	 * Most probably by now CPU has serviced that pending interrupt and
-+	 * it might not have done the ack_APIC_irq() because it thought,
-+	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
-+	 * does not clear the ISR bit and cpu thinks it has already serivced
-+	 * the interrupt. Hence a vector might get locked. It was noticed
-+	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
-+	 */
-+	do {
-+		queued = 0;
-+		for (i = APIC_ISR_NR - 1; i >= 0; i--)
-+			queued |= apic_read(APIC_IRR + i*0x10);
-+
-+		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
-+			value = apic_read(APIC_ISR + i*0x10);
-+			for (j = 31; j >= 0; j--) {
-+				if (value & (1<<j)) {
-+					ack_APIC_irq();
-+					acked++;
-+				}
-+			}
-+		}
-+		if (acked > 256) {
-+			printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
-+			       acked);
-+			break;
-+		}
-+		if (queued) {
-+			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
-+				ntsc = rdtsc();
-+				max_loops = (cpu_khz << 10) - (ntsc - tsc);
-+			} else
-+				max_loops--;
-+		}
-+	} while (queued && max_loops > 0);
-+	WARN_ON(max_loops <= 0);
-+}
-+
- /**
-  * setup_local_APIC - setup the local APIC
-  *
-@@ -1371,13 +1421,11 @@ static void lapic_setup_esr(void)
- void setup_local_APIC(void)
+@@ -1422,9 +1422,6 @@ void setup_local_APIC(void)
  {
  	int cpu = smp_processor_id();
--	unsigned int value, queued;
--	int i, j, acked = 0;
--	unsigned long long tsc = 0, ntsc;
--	long long max_loops = cpu_khz ? cpu_khz : 1000000;
-+	unsigned int value;
-+#ifdef CONFIG_X86_32
-+	int i;
-+#endif
+ 	unsigned int value;
+-#ifdef CONFIG_X86_32
+-	int logical_apicid, ldr_apicid;
+-#endif
  
--	if (boot_cpu_has(X86_FEATURE_TSC))
--		tsc = rdtsc();
  
  	if (disable_apic) {
- 		disable_ioapic_support();
-@@ -1437,45 +1485,7 @@ void setup_local_APIC(void)
- 	value &= ~APIC_TPRI_MASK;
- 	apic_write(APIC_TASKPRI, value);
+@@ -1465,16 +1462,21 @@ void setup_local_APIC(void)
+ 	apic->init_apic_ldr();
  
+ #ifdef CONFIG_X86_32
 -	/*
--	 * After a crash, we no longer service the interrupts and a pending
--	 * interrupt from previous kernel might still have ISR bit set.
--	 *
--	 * Most probably by now CPU has serviced that pending interrupt and
--	 * it might not have done the ack_APIC_irq() because it thought,
--	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
--	 * does not clear the ISR bit and cpu thinks it has already serivced
--	 * the interrupt. Hence a vector might get locked. It was noticed
--	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
+-	 * APIC LDR is initialized.  If logical_apicid mapping was
+-	 * initialized during get_smp_config(), make sure it matches the
+-	 * actual value.
 -	 */
--	do {
--		queued = 0;
--		for (i = APIC_ISR_NR - 1; i >= 0; i--)
--			queued |= apic_read(APIC_IRR + i*0x10);
--
--		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
--			value = apic_read(APIC_ISR + i*0x10);
--			for (j = 31; j >= 0; j--) {
--				if (value & (1<<j)) {
--					ack_APIC_irq();
--					acked++;
--				}
--			}
--		}
--		if (acked > 256) {
--			printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
--			       acked);
--			break;
--		}
--		if (queued) {
--			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
--				ntsc = rdtsc();
--				max_loops = (cpu_khz << 10) - (ntsc - tsc);
--			} else
--				max_loops--;
--		}
--	} while (queued && max_loops > 0);
--	WARN_ON(max_loops <= 0);
-+	apic_pending_intr_clear();
+-	logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
+-	ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
+-	WARN_ON(logical_apicid != BAD_APICID && logical_apicid != ldr_apicid);
+-	/* always use the value from LDR */
+-	early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
++	if (apic->dest_logical) {
++		int logical_apicid, ldr_apicid;
++
++		/*
++		 * APIC LDR is initialized.  If logical_apicid mapping was
++		 * initialized during get_smp_config(), make sure it matches
++		 * the actual value.
++		 */
++		logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
++		ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
++		if (logical_apicid != BAD_APICID)
++			WARN_ON(logical_apicid != ldr_apicid);
++		/* Always use the value from LDR. */
++		early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
++	}
+ #endif
  
  	/*
- 	 * Now that we are all set up, enable the APIC
 -- 
 2.20.1
 
