@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A99F3F7B1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85A5BF7D2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbfKKScf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:32:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49790 "EHLO mail.kernel.org"
+        id S1730437AbfKKSxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:53:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727939AbfKKSca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:32:30 -0500
+        id S1729260AbfKKSxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:53:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEE1221655;
-        Mon, 11 Nov 2019 18:32:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C04D921783;
+        Mon, 11 Nov 2019 18:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497149;
-        bh=jzd8bCuaKS3R/qCkg6PjO2h88t4oeDAWV0bb695XCu8=;
+        s=default; t=1573498433;
+        bh=tkG/7XE93bwOWzGz6iLk765b1fbL6BXtghTwdX2w60A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S4OoadAy2Qxc++k9gbLC1/RdRoS7IPcBPi1ysWcFt/hk/vAw4VVfCrg7O50DiL1sx
-         bLlK/gR+5rm+F9C2IH79ye4nBrWmuDAzInZZ+4285Ism6X8rKJLaPGImlOefqtRzOL
-         DU56vq1iozRm49EgHlolL5X2J0CS/lxtdzUoxVuk=
+        b=fdVEXvXg29R72HxDBMl1YZsDEbig63kq9l4BWj3EMCN27HNmokDCx+z8v4lbnuyp0
+         izsKQRFnRk6qgqbdZVcsBb2SQkG2mpz4rRXLnA3Z23i/sDmfgHYKyURWGigp2EDpR1
+         1gxUMqRXdTbtk0OJ1DONCdMOwl/YGD4TSoWX63MM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 20/65] netfilter: nf_tables: Align nft_expr private data to 64-bit
-Date:   Mon, 11 Nov 2019 19:28:20 +0100
-Message-Id: <20191111181344.684135289@linuxfoundation.org>
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 119/193] scsi: qla2xxx: Initialized mailbox to prevent driver load failure
+Date:   Mon, 11 Nov 2019 19:28:21 +0100
+Message-Id: <20191111181509.947823219@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Himanshu Madhani <hmadhani@marvell.com>
 
-commit 250367c59e6ba0d79d702a059712d66edacd4a1a upstream.
+[ Upstream commit c2ff2a36eff60efb5e123c940115216d6bf65684 ]
 
-Invoking the following commands on a 32-bit architecture with strict
-alignment requirements (such as an ARMv7-based Raspberry Pi) results
-in an alignment exception:
+This patch fixes issue with Gen7 adapter in a blade environment where one
+of the ports will not be detected by driver. Firmware expects mailbox 11 to
+be set or cleared by driver for newer ISP.
 
- # nft add table ip test-ip4
- # nft add chain ip test-ip4 output { type filter hook output priority 0; }
- # nft add rule  ip test-ip4 output quota 1025 bytes
+Following message is seen in the log file:
 
-Alignment trap: not handling instruction e1b26f9f at [<7f4473f8>]
-Unhandled fault: alignment exception (0x001) at 0xb832e824
-Internal error: : 1 [#1] PREEMPT SMP ARM
-Hardware name: BCM2835
-[<7f4473fc>] (nft_quota_do_init [nft_quota])
-[<7f447448>] (nft_quota_init [nft_quota])
-[<7f4260d0>] (nf_tables_newrule [nf_tables])
-[<7f4168dc>] (nfnetlink_rcv_batch [nfnetlink])
-[<7f416bd0>] (nfnetlink_rcv [nfnetlink])
-[<8078b334>] (netlink_unicast)
-[<8078b664>] (netlink_sendmsg)
-[<8071b47c>] (sock_sendmsg)
-[<8071bd18>] (___sys_sendmsg)
-[<8071ce3c>] (__sys_sendmsg)
-[<8071ce94>] (sys_sendmsg)
+[   18.810892] qla2xxx [0000:d8:00.0]-1820:1: **** Failed=102 mb[0]=4005 mb[1]=37 mb[2]=20 mb[3]=8
+[   18.819596]  cmd=2 ****
 
-The reason is that nft_quota_do_init() calls atomic64_set() on an
-atomic64_t which is only aligned to 32-bit, not 64-bit, because it
-succeeds struct nft_expr in memory which only contains a 32-bit pointer.
-Fix by aligning the nft_expr private data to 64-bit.
+[mkp: typos]
 
-Fixes: 96518518cc41 ("netfilter: add nftables")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v3.13+
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lore.kernel.org/r/20191022193643.7076-2-hmadhani@marvell.com
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/netfilter/nf_tables.h |    3 ++-
+ drivers/scsi/qla2xxx/qla_mbx.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/net/netfilter/nf_tables.h
-+++ b/include/net/netfilter/nf_tables.h
-@@ -705,7 +705,8 @@ struct nft_expr_ops {
-  */
- struct nft_expr {
- 	const struct nft_expr_ops	*ops;
--	unsigned char			data[];
-+	unsigned char			data[]
-+		__attribute__((aligned(__alignof__(u64))));
- };
+diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
+index abfb9c800ce28..ac4640f456786 100644
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -710,6 +710,7 @@ qla2x00_execute_fw(scsi_qla_host_t *vha, uint32_t risc_addr)
+ 		mcp->mb[2] = LSW(risc_addr);
+ 		mcp->mb[3] = 0;
+ 		mcp->mb[4] = 0;
++		mcp->mb[11] = 0;
+ 		ha->flags.using_lr_setting = 0;
+ 		if (IS_QLA25XX(ha) || IS_QLA81XX(ha) || IS_QLA83XX(ha) ||
+ 		    IS_QLA27XX(ha) || IS_QLA28XX(ha)) {
+@@ -754,7 +755,7 @@ qla2x00_execute_fw(scsi_qla_host_t *vha, uint32_t risc_addr)
+ 		if (ha->flags.exchoffld_enabled)
+ 			mcp->mb[4] |= ENABLE_EXCHANGE_OFFLD;
  
- static inline void *nft_expr_priv(const struct nft_expr *expr)
+-		mcp->out_mb |= MBX_4|MBX_3|MBX_2|MBX_1;
++		mcp->out_mb |= MBX_4 | MBX_3 | MBX_2 | MBX_1 | MBX_11;
+ 		mcp->in_mb |= MBX_3 | MBX_2 | MBX_1;
+ 	} else {
+ 		mcp->mb[1] = LSW(risc_addr);
+-- 
+2.20.1
+
 
 
