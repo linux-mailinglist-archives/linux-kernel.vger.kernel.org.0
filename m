@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AA9F7BEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:42:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 665ECF7CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:52:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfKKSlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:41:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60532 "EHLO mail.kernel.org"
+        id S1728397AbfKKSvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:51:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729292AbfKKSlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:41:17 -0500
+        id S1729976AbfKKSvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:51:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1296F21E6F;
-        Mon, 11 Nov 2019 18:41:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EF14222BD;
+        Mon, 11 Nov 2019 18:51:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497676;
-        bh=6VIKjkADuQVWzy7sSUCb36dA36xQEKAE3RYlBg5BnCQ=;
+        s=default; t=1573498298;
+        bh=AC7j0hTvdLJC4KtmliyQnPkC2qsF+C31855uvSXbV0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kt9oUWPAJJAjQeePrJJ3lOPXwT80z2v0OVJgKrexL9k+kmweT9JE4MNA36aCEF+QG
-         zR1vKDMIV/0Zg6r0aEESvLiVkIZ9AWYl6AEbM1InvHUGK4Yez6gNQ8tfdfYSlqe1h7
-         HHVppEF93HAGM5zdOmzKLU3xxRF0+PzItE2VALc0=
+        b=Cb6CxVbNbRE1cie9Q7NWp6147GMEBZBdYodcIYOgfVqOcjMjQ1kaIT9xlkyD6H0VF
+         mpuaHmNxgJakuRipkgdCbmnmWXuroKL6NP48DRaj5dxf+bWfcrRhO3z8eEuQPRJwaP
+         HyDXmUhkjiz/fci/TOnNoqrCs5O0WXslVtzEavbE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.19 024/125] tools: gpio: Use !building_out_of_srctree to determine srctree
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 5.3 081/193] configfs: fix a deadlock in configfs_symlink()
 Date:   Mon, 11 Nov 2019 19:27:43 +0100
-Message-Id: <20191111181443.791947996@linuxfoundation.org>
+Message-Id: <20191111181507.118324581@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuah Khan <skhan@linuxfoundation.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 4a6a6f5c4aeedb72db871d60bfcca89835f317aa upstream.
+commit 351e5d869e5ac10cb40c78b5f2d7dfc816ad4587 upstream.
 
-make TARGETS=gpio kselftest fails with:
+Configfs abuses symlink(2).  Unlike the normal filesystems, it
+wants the target resolved at symlink(2) time, like link(2) would've
+done.  The problem is that ->symlink() is called with the parent
+directory locked exclusive, so resolving the target inside the
+->symlink() is easily deadlocked.
 
-Makefile:23: tools/build/Makefile.include: No such file or directory
-
-When the gpio tool make is invoked from tools Makefile, srctree is
-cleared and the current logic check for srctree equals to empty
-string to determine srctree location from CURDIR.
-
-When the build in invoked from selftests/gpio Makefile, the srctree
-is set to "." and the same logic used for srctree equals to empty is
-needed to determine srctree.
-
-Check building_out_of_srctree undefined as the condition for both
-cases to fix "make TARGETS=gpio kselftest" build failure.
+Short of really ugly games in sys_symlink() itself, all we can
+do is to unlock the parent before resolving the target and
+relock it after.  However, that invalidates the checks done
+by the caller of ->symlink(), so we have to
+	* check that dentry is still where it used to be
+(it couldn't have been moved, but it could've been unhashed)
+	* recheck that it's still negative (somebody else
+might've successfully created a symlink with the same name
+while we were looking the target up)
+	* recheck the permissions on the parent directory.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/gpio/Makefile |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/configfs/symlink.c |   33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
---- a/tools/gpio/Makefile
-+++ b/tools/gpio/Makefile
-@@ -3,7 +3,11 @@ include ../scripts/Makefile.include
+--- a/fs/configfs/symlink.c
++++ b/fs/configfs/symlink.c
+@@ -143,11 +143,42 @@ int configfs_symlink(struct inode *dir,
+ 	    !type->ct_item_ops->allow_link)
+ 		goto out_put;
  
- bindir ?= /usr/bin
++	/*
++	 * This is really sick.  What they wanted was a hybrid of
++	 * link(2) and symlink(2) - they wanted the target resolved
++	 * at syscall time (as link(2) would've done), be a directory
++	 * (which link(2) would've refused to do) *AND* be a deep
++	 * fucking magic, making the target busy from rmdir POV.
++	 * symlink(2) is nothing of that sort, and the locking it
++	 * gets matches the normal symlink(2) semantics.  Without
++	 * attempts to resolve the target (which might very well
++	 * not even exist yet) done prior to locking the parent
++	 * directory.  This perversion, OTOH, needs to resolve
++	 * the target, which would lead to obvious deadlocks if
++	 * attempted with any directories locked.
++	 *
++	 * Unfortunately, that garbage is userland ABI and we should've
++	 * said "no" back in 2005.  Too late now, so we get to
++	 * play very ugly games with locking.
++	 *
++	 * Try *ANYTHING* of that sort in new code, and you will
++	 * really regret it.  Just ask yourself - what could a BOFH
++	 * do to me and do I want to find it out first-hand?
++	 *
++	 *  AV, a thoroughly annoyed bastard.
++	 */
++	inode_unlock(dir);
+ 	ret = get_target(symname, &path, &target_item, dentry->d_sb);
++	inode_lock(dir);
+ 	if (ret)
+ 		goto out_put;
  
--ifeq ($(srctree),)
-+# This will work when gpio is built in tools env. where srctree
-+# isn't set and when invoked from selftests build, where srctree
-+# is set to ".". building_out_of_srctree is undefined for in srctree
-+# builds
-+ifndef building_out_of_srctree
- srctree := $(patsubst %/,%,$(dir $(CURDIR)))
- srctree := $(patsubst %/,%,$(dir $(srctree)))
- endif
+-	ret = type->ct_item_ops->allow_link(parent_item, target_item);
++	if (dentry->d_inode || d_unhashed(dentry))
++		ret = -EEXIST;
++	else
++		ret = inode_permission(dir, MAY_WRITE | MAY_EXEC);
++	if (!ret)
++		ret = type->ct_item_ops->allow_link(parent_item, target_item);
+ 	if (!ret) {
+ 		mutex_lock(&configfs_symlink_mutex);
+ 		ret = create_link(parent_item, target_item, dentry);
 
 
