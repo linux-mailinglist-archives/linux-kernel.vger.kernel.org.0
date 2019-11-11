@@ -2,112 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B58F4F7A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A533DF7A5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:00:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfKKSFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:05:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35621 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfKKSFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:05:17 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r7so14826288ljg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NvHuArWQZSt4FAfTL9KeJpBsocvaDQs9zK3jRy53Tcc=;
-        b=ag0ij2l3tpP9oh4bJbAnRGep+63OugvYZJhjMCwlauwgfrGQ7pqUmJvv8qj0uakSts
-         ZDSkRSJFWChbxsuYWUpcogXRNaLW+mnwqdTCozn5LsyQqxp2G8J+ESzbHFLEaLpk8fc1
-         Wny6vPFLNuEJ1jLedmt1cN279S4odF0GC9reA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NvHuArWQZSt4FAfTL9KeJpBsocvaDQs9zK3jRy53Tcc=;
-        b=eYxB1ChF2BlqMjk/96kxg/FKtAfCYj43KWMnPddUa5kie5C8eqyJX95HJGyQioUMDQ
-         a41sAIOzEUJX6K1pio1JOoMnCbqBBmxOML1nnNHPnJfobISMDxJIMX1izsIsi0oYyfi0
-         62e/D1/ANm7//1XPag4xgMFWD83bkt03JGtqh4Xv0dMclI4pNuh6yDiu7T65au2I5N0p
-         09j57xzCH7vCLmunQE3SUc+MQN1PVLtSJNfeFYkUbue5jTzgZ4Uf3fDyIaKiXlzDHFjj
-         QB1AX04vNjzSZ+8GVwUCHIx07Sv0xloq4QVLC0tfRbatYFRzhN2TroM0Kca4PPlbFU2q
-         e8SA==
-X-Gm-Message-State: APjAAAVZWHf9cxpGCUt6ZYaSdZVH05nVNjk5jgwhl9qpcXCz6vRX2GjG
-        vbN0Z4iFeIY2VefKVGXicwG0PwEOXKE=
-X-Google-Smtp-Source: APXvYqw29lH3zxk41alcWpSnLyRUPps85P0iCS5mmPFXPpPn4DR8BDcYHGnHm0JHEDSUtlnmAaLVFA==
-X-Received: by 2002:a2e:b4f0:: with SMTP id s16mr8187414ljm.123.1573495514543;
-        Mon, 11 Nov 2019 10:05:14 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id c12sm8732853ljk.77.2019.11.11.10.05.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2019 10:05:11 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id b20so10594467lfp.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:05:11 -0800 (PST)
-X-Received: by 2002:ac2:498a:: with SMTP id f10mr4549583lfl.170.1573495511138;
- Mon, 11 Nov 2019 10:05:11 -0800 (PST)
-MIME-Version: 1.0
-References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
- <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
- <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com> <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
-In-Reply-To: <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 11 Nov 2019 10:04:54 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
-Message-ID: <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Marco Elver <elver@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726988AbfKKSAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:00:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33684 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726741AbfKKSAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:00:24 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4F721B2E9;
+        Mon, 11 Nov 2019 18:00:21 +0000 (UTC)
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc:     x86@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Quentin Perret <qperret@qperret.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Doug Smythies <dsmythies@telus.net>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>
+Subject: [PATCH 0/6] Add support for frequency invariance for (some) x86
+Date:   Mon, 11 Nov 2019 19:05:43 +0100
+Message-Id: <20191111180549.12166-1-ggherdovich@suse.cz>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 9:52 AM Eric Dumazet <edumazet@google.com> wrote:
->
-> Now I wonder what to do with the ~400 KCSAN reports sitting in
-> pre-moderation queue.
+v2 at https://lore.kernel.org/lkml/20191002122926.385-1-ggherdovich@suse.cz/
 
-So regular KASAN reports are fairly easy to deal with: they report
-actual bugs. They may be hard to hit, but generally there's no
-question about something like a use-after-free or whatever.
+Changes wrt v2:
 
-The problem with KCSAN is that it's not clear how many of the reports
-have been actual real honest-to-goodness bugs that could cause
-problems, and how many of them are "this isn't actually a bug, but an
-annotation will shut up KCSAN".
+- Removing the tick_disable mechanism. Frequency scale-invariance isn't
+  just about helping schedutil choose better frequencies, but also
+  providing the scheduler load balancer with better metrics. All users of
+  PELT signals benefit from this feature. The tick_disable patch disabled
+  frequency invariant calculation when a specific driver is in use
+  (intel_pstate in active mode).
 
-My gut feeling would be that it would be best to ignore the ones that
-are "an annotation will shut up KCSAN", and look at the ones that are
-real bugs.
+- static_branch_enable(&arch_scale_freq_key) is now called earlier, right
+  after we learn that X86_FEATURE_APERFMPERF is available. Previously Peter
+  Z. commented "if we can't tell the max_freq we don't want to use the
+  invariant stuff.". I've decided to do it differently: if we can't tell
+  the max_freq, then it's because the CPU encodes max_freq in MSRs in a way
+  this patch doesn't understand, and we assume max_p is the max_freq which
+  seems like a safe bet. As a reminder, max_freq=max_p is encoded by
+  setting arch_max_freq=1024 as default value. I'm open to feedback.
 
-Is there a pattern to those real bugs? Is there perhaps a way to make
-KCSAN notice _that_ pattern in particular, and suppress the ones that
-are "we can shut these up with annotations that don't really change
-the code"?
+- Refactoring the switch case statement in set_cpu_max_freq() as Rafael
+  W. Now the first patch doesn't hint at what the following patch will
+  bring along.
 
-I think it would be much better for the kernel - and much better for
-KCSAN - if the problem reports KCSAN reports are real problems that
-can actually be triggered as problems, and that it behaves much more
-like KASAN in that respect.
+- Handling the case were turbo is disabled at runtime and a _PPC ACPI
+  notification is issued, as requested by Rafael W. This happens eg. when
+  some laptop model is disconnected from AC. (Patch #6)
 
-Yes, yes, then once the *real* problems have been handled, maybe we
-can expand the search to be "stylistic issues" and "in theory, this
-could cause problems with a compiler that did X" issues.
+- Handling all Intel x86_64 micro-arches.
 
-But I think the "just annotate" thing makes people more likely to
-dismiss KCSAN issues, and I don't think it's healthy.
+- A note for Srinivas P., who expressed concern for Atoms: on Atom CPUs the
+  max_freq is set to the highest turbo level, as a power-efficiency
+  oriented measure. In this way the ratio curr_freq/max_freq tends to be
+  lower, PELT signals are consequently lower, and schedutil doesn't push
+  too hard on speed. (Patches #4 and #5).
 
-                Linus
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Cover Letter from v2:
+
+v1 at https://lore.kernel.org/lkml/20190909024216.5942-1-ggherdovich@suse.cz/
+
+Changes wrt v1:
+
+- add x86-specific implementation of arch_scale_freq_invariant() using a
+  static key that checks for the availability of APERF and MPERF
+- refer to GOLDMONT_D instead of GOLDMONT_X, according to recent rename
+- set arch_cpu_freq to 1024 from x86_arch_scale_freq_tick_disable() to prevent
+  PELT from being fed stale data
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Cover Letter from v1:
+
+This is a resend with of Peter Zijlstra's patch to support frequency
+scale-invariance on x86 from May 2018 [see 1]. I've added some modifications
+and included performance test results. If Peter doesn't mind, I'm slapping my
+name on it :)
+
+The changes from Peter's original implementation are:
+
+1) normalizing against the 4-cores turbo level instead or 1-core turbo
+2) removing the run-time search for when the above value isn't found in the
+   various Intel MSRs -- the base frequency value is taken in that case.
+
+The section "4. KNOWN LIMITATIONS" in the first patch commit message addresses
+the reason why this approach was dropped back in 2018, and explains that the
+performance gains outweight that issue.
+
+The second patch from Srinivas is taken verbatim from the May 2018 submission
+as it still applies.
+
+I apologies for the length of patch #1 commit message; I've made a table of
+contents with summaries of each section that should make easier to skim
+through the content.
+
+This submission incorporates the feedback and requests for additional tests
+received during the presentation made at OSPM 2019 in Pisa three months ago.
+
+[1] https://lore.kernel.org/lkml/20180516044911.28797-2-srinivas.pandruvada@linux.intel.com/
+
+
+Giovanni Gherdovich (6):
+  x86,sched: Add support for frequency invariance
+  x86,sched: Add support for frequency invariance on SKYLAKE_X
+  x86,sched: Add support for frequency invariance on XEON_PHI_KNL/KNM
+  x86,sched: Add support for frequency invariance on ATOM_GOLDMONT*
+  x86,sched: Add support for frequency invariance on ATOM
+  x86: intel_pstate: handle runtime turbo disablement/enablement in
+    freq. invariance
+
+ arch/x86/include/asm/topology.h |  25 ++++
+ arch/x86/kernel/smpboot.c       | 324 +++++++++++++++++++++++++++++++++++++++-
+ drivers/cpufreq/intel_pstate.c  |   1 +
+ kernel/sched/core.c             |   1 +
+ kernel/sched/sched.h            |   7 +
+ 5 files changed, 357 insertions(+), 1 deletion(-)
+
+-- 
+2.16.4
+
