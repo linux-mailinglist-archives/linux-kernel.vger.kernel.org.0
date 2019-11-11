@@ -2,39 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE26BF7C4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83AD0F7D50
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbfKKSox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:44:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36530 "EHLO mail.kernel.org"
+        id S1729460AbfKKSze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:55:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729759AbfKKSoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:44:46 -0500
+        id S1730623AbfKKSz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:55:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED5FF204FD;
-        Mon, 11 Nov 2019 18:44:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C994C21925;
+        Mon, 11 Nov 2019 18:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497885;
-        bh=3iNS7/C6a0Lio62IpjKjE3izWfZiLXsULx097bg3Q/U=;
+        s=default; t=1573498527;
+        bh=WnFA7oiZERpmd60xOy6aeNpoUKb+ts+wqlxEfGaYfMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=abm00pVSy6Cjysd3dl7h8HbDu3TrAnG5hhGIS4siGI414hRPC4QZhww3lTr3FwGkR
-         31TiMxqKR+2FNYoQf0qPOJwiDvKGUIyzlLfhvcsxySW6q+WImOEzNIB8mKVBdAlYpt
-         t+AXgIJWuRNwFCM2kfTL3nTQtp+4TwvBKr0iMn10=
+        b=Fv5LzZ3s8bnpisPX2cNhEUqgRHVEsNzuhzDgMMORRSi0U7bF0idy1H5LRq1MFC3qu
+         KWtl6YTNNlIxQyE36YgksBNoU2StbLpVMfN4i6/rTIHbQrVZ7noOBrFkfX2ySzOvux
+         Usi/Je2RfnGmts9AqwiVfdhQRjEB7iSgWkSMnfmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/125] bonding: fix unexpected IFF_BONDING bit unset
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 144/193] perf/x86/amd/ibs: Fix reading of the IBS OpData register and thus precise RIP validity
 Date:   Mon, 11 Nov 2019 19:28:46 +0100
-Message-Id: <20191111181451.722271158@linuxfoundation.org>
+Message-Id: <20191111181511.780625977@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,98 +55,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Kim Phillips <kim.phillips@amd.com>
 
-[ Upstream commit 65de65d9033750d2cf1b336c9d6e9da3a8b5cc6e ]
+[ Upstream commit 317b96bb14303c7998dbcd5bc606bd8038fdd4b4 ]
 
-The IFF_BONDING means bonding master or bonding slave device.
-->ndo_add_slave() sets IFF_BONDING flag and ->ndo_del_slave() unsets
-IFF_BONDING flag.
+The loop that reads all the IBS MSRs into *buf stopped one MSR short of
+reading the IbsOpData register, which contains the RipInvalid status bit.
 
-bond0<--bond1
+Fix the offset_max assignment so the MSR gets read, so the RIP invalid
+evaluation is based on what the IBS h/w output, instead of what was
+left in memory.
 
-Both bond0 and bond1 are bonding device and these should keep having
-IFF_BONDING flag until they are removed.
-But bond1 would lose IFF_BONDING at ->ndo_del_slave() because that routine
-do not check whether the slave device is the bonding type or not.
-This patch adds the interface type check routine before removing
-IFF_BONDING flag.
-
-Test commands:
-    ip link add bond0 type bond
-    ip link add bond1 type bond
-    ip link set bond1 master bond0
-    ip link set bond1 nomaster
-    ip link del bond1 type bond
-    ip link add bond1 type bond
-
-Splat looks like:
-[  226.665555] proc_dir_entry 'bonding/bond1' already registered
-[  226.666440] WARNING: CPU: 0 PID: 737 at fs/proc/generic.c:361 proc_register+0x2a9/0x3e0
-[  226.667571] Modules linked in: bonding af_packet sch_fq_codel ip_tables x_tables unix
-[  226.668662] CPU: 0 PID: 737 Comm: ip Not tainted 5.4.0-rc3+ #96
-[  226.669508] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[  226.670652] RIP: 0010:proc_register+0x2a9/0x3e0
-[  226.671612] Code: 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 39 01 00 00 48 8b 04 24 48 89 ea 48 c7 c7 a0 0b 14 9f 48 8b b0 e
-0 00 00 00 e8 07 e7 88 ff <0f> 0b 48 c7 c7 40 2d a5 9f e8 59 d6 23 01 48 8b 4c 24 10 48 b8 00
-[  226.675007] RSP: 0018:ffff888050e17078 EFLAGS: 00010282
-[  226.675761] RAX: dffffc0000000008 RBX: ffff88805fdd0f10 RCX: ffffffff9dd344e2
-[  226.676757] RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff88806c9f6b8c
-[  226.677751] RBP: ffff8880507160f3 R08: ffffed100d940019 R09: ffffed100d940019
-[  226.678761] R10: 0000000000000001 R11: ffffed100d940018 R12: ffff888050716008
-[  226.679757] R13: ffff8880507160f2 R14: dffffc0000000000 R15: ffffed100a0e2c1e
-[  226.680758] FS:  00007fdc217cc0c0(0000) GS:ffff88806c800000(0000) knlGS:0000000000000000
-[  226.681886] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  226.682719] CR2: 00007f49313424d0 CR3: 0000000050e46001 CR4: 00000000000606f0
-[  226.683727] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  226.684725] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  226.685681] Call Trace:
-[  226.687089]  proc_create_seq_private+0xb3/0xf0
-[  226.687778]  bond_create_proc_entry+0x1b3/0x3f0 [bonding]
-[  226.691458]  bond_netdev_event+0x433/0x970 [bonding]
-[  226.692139]  ? __module_text_address+0x13/0x140
-[  226.692779]  notifier_call_chain+0x90/0x160
-[  226.693401]  register_netdevice+0x9b3/0xd80
-[  226.694010]  ? alloc_netdev_mqs+0x854/0xc10
-[  226.694629]  ? netdev_change_features+0xa0/0xa0
-[  226.695278]  ? rtnl_create_link+0x2ed/0xad0
-[  226.695849]  bond_newlink+0x2a/0x60 [bonding]
-[  226.696422]  __rtnl_newlink+0xb9f/0x11b0
-[  226.696968]  ? rtnl_link_unregister+0x220/0x220
-[ ... ]
-
-Fixes: 0b680e753724 ("[PATCH] bonding: Add priv_flag to avoid event mishandling")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: d47e8238cd76 ("perf/x86-ibs: Take instruction pointer from ibs sample")
+Link: https://lkml.kernel.org/r/20191023150955.30292-1-kim.phillips@amd.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/events/amd/ibs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 136a972ea903a..9b8143dca5123 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1798,7 +1798,8 @@ err_detach:
- 	slave_disable_netpoll(new_slave);
- 
- err_close:
--	slave_dev->priv_flags &= ~IFF_BONDING;
-+	if (!netif_is_bond_master(slave_dev))
-+		slave_dev->priv_flags &= ~IFF_BONDING;
- 	dev_close(slave_dev);
- 
- err_restore_mac:
-@@ -2004,7 +2005,8 @@ static int __bond_release_one(struct net_device *bond_dev,
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 5b35b7ea5d728..98ba21a588a15 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -614,7 +614,7 @@ fail:
+ 	if (event->attr.sample_type & PERF_SAMPLE_RAW)
+ 		offset_max = perf_ibs->offset_max;
+ 	else if (check_rip)
+-		offset_max = 2;
++		offset_max = 3;
  	else
- 		dev_set_mtu(slave_dev, slave->original_mtu);
- 
--	slave_dev->priv_flags &= ~IFF_BONDING;
-+	if (!netif_is_bond_master(slave_dev))
-+		slave_dev->priv_flags &= ~IFF_BONDING;
- 
- 	bond_free_slave(slave);
- 
+ 		offset_max = 1;
+ 	do {
 -- 
 2.20.1
 
