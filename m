@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 588C8F7D4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C05CF7BA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:38:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbfKKSzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:55:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52170 "EHLO mail.kernel.org"
+        id S1728429AbfKKSiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:38:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728884AbfKKSzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:55:18 -0500
+        id S1728027AbfKKSiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:38:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F23EF2173B;
-        Mon, 11 Nov 2019 18:55:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8313F21E6F;
+        Mon, 11 Nov 2019 18:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498517;
-        bh=Z5CEjgq2ljlTHK2PBa5/v+pJ3uM3+XprsHPKtfcyc7g=;
+        s=default; t=1573497495;
+        bh=UqEsKD7kxd9sYdPrPpIkXzZPJTqKw70J1KYSfWLwVi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g2GkPkmNwqReNJr9KH5Hv8PjOu6k9wU5nUihiEDyP/GNv3PMfFfASj7A9dtjgnKpH
-         0rFI3bRnzg2qRsxUoWVnq6oZLDqwfSvAHoVVrMLsX+wBlMKTFJSB336oWgEOvmayQK
-         wt4EN5BTNG5iWpdnePl/+coQe4Jgo5XdW8ZutsU8=
+        b=DVBa4NbNu6DEQRG+fsXL0THqVRsOxjfojORYQnX+b4K8V5Wx0hU/KtCoY+Qxd1Kdm
+         N8D3tYYD0OT9iD2iCCDk96+VyqtFcR4J4DdjgqYib2XNdfnThseoWxeepMJR9cFver
+         mbn/tDgAXjU+ELTAABm7IbwRzbUy6KFDwzRqDDYg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 141/193] usb: dwc3: pci: prevent memory leak in dwc3_pci_probe
+Subject: [PATCH 4.14 073/105] scsi: qla2xxx: fixup incorrect usage of host_byte
 Date:   Mon, 11 Nov 2019 19:28:43 +0100
-Message-Id: <20191111181511.558159952@linuxfoundation.org>
+Message-Id: <20191111181445.921280627@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Hannes Reinecke <hare@suse.com>
 
-[ Upstream commit 9bbfceea12a8f145097a27d7c7267af25893c060 ]
+[ Upstream commit 66cf50e65b183c863825f5c28a818e3f47a72e40 ]
 
-In dwc3_pci_probe a call to platform_device_alloc allocates a device
-which is correctly put in case of error except one case: when the call to
-platform_device_add_properties fails it directly returns instead of
-going to error handling. This commit replaces return with the goto.
+DRIVER_ERROR is a a driver byte setting, not a host byte.  The qla2xxx
+driver should rather return DID_ERROR here to be in line with the other
+drivers.
 
-Fixes: 1a7b12f69a94 ("usb: dwc3: pci: Supply device properties via driver data")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Link: https://lore.kernel.org/r/20191018140458.108278-1-hare@suse.de
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/dwc3-pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_bsg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-index 5e8e18222f922..023f0357efd77 100644
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -258,7 +258,7 @@ static int dwc3_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+index 2ea0ef93f5cbb..7472d3882ad41 100644
+--- a/drivers/scsi/qla2xxx/qla_bsg.c
++++ b/drivers/scsi/qla2xxx/qla_bsg.c
+@@ -258,7 +258,7 @@ qla2x00_process_els(struct bsg_job *bsg_job)
+ 	srb_t *sp;
+ 	const char *type;
+ 	int req_sg_cnt, rsp_sg_cnt;
+-	int rval =  (DRIVER_ERROR << 16);
++	int rval =  (DID_ERROR << 16);
+ 	uint16_t nextlid = 0;
  
- 	ret = platform_device_add_properties(dwc->dwc3, p);
- 	if (ret < 0)
--		return ret;
-+		goto err;
- 
- 	ret = dwc3_pci_quirks(dwc);
- 	if (ret)
+ 	if (bsg_request->msgcode == FC_BSG_RPT_ELS) {
+@@ -433,7 +433,7 @@ qla2x00_process_ct(struct bsg_job *bsg_job)
+ 	struct Scsi_Host *host = fc_bsg_to_shost(bsg_job);
+ 	scsi_qla_host_t *vha = shost_priv(host);
+ 	struct qla_hw_data *ha = vha->hw;
+-	int rval = (DRIVER_ERROR << 16);
++	int rval = (DID_ERROR << 16);
+ 	int req_sg_cnt, rsp_sg_cnt;
+ 	uint16_t loop_id;
+ 	struct fc_port *fcport;
+@@ -1951,7 +1951,7 @@ qlafx00_mgmt_cmd(struct bsg_job *bsg_job)
+ 	struct Scsi_Host *host = fc_bsg_to_shost(bsg_job);
+ 	scsi_qla_host_t *vha = shost_priv(host);
+ 	struct qla_hw_data *ha = vha->hw;
+-	int rval = (DRIVER_ERROR << 16);
++	int rval = (DID_ERROR << 16);
+ 	struct qla_mt_iocb_rqst_fx00 *piocb_rqst;
+ 	srb_t *sp;
+ 	int req_sg_cnt = 0, rsp_sg_cnt = 0;
 -- 
 2.20.1
 
