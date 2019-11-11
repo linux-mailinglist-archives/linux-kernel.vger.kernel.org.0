@@ -2,41 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60605F7DC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24298F7C6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730715AbfKKS4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:56:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54846 "EHLO mail.kernel.org"
+        id S1729951AbfKKSqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:46:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729132AbfKKS43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:56:29 -0500
+        id S1729942AbfKKSqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:46:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 122022184C;
-        Mon, 11 Nov 2019 18:56:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B089620674;
+        Mon, 11 Nov 2019 18:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498588;
-        bh=/5o7LaMl3y15TxiYn3Ng6YMwWWRx3K5V37qTdQwql9E=;
+        s=default; t=1573497960;
+        bh=GPc0qoZpSOwDlAZgLtPpJV1kA3K3Ak5qPJTdixVkS/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jBC5ND2naDCT2oOK84o8lKb3k++COb1h9l7PzX5oFKie1v6gtWfG/gZ2s4dhUx6tB
-         6O90vEUa9fbt9zhpbthkA/S3OSPidAZM5JDrOr+oAU5SGCuvgtSqGJC7dZYhoSX91Y
-         l6xrE5vRkTkBA34RcdC00zIsu20VAuPRKJOGaCOU=
+        b=bHvWUxRfCZYwzsKgBLjsSuECAtI5G/4dbwTQoALV3HgBbWXPqwPXX5KfshuzqqEEK
+         tL1dg6i6xFMiu6kiqzMQALd9urqKn2W7WIiw9oyaCHa4QeyZzqmRMIYStwCeJVVO9a
+         Lcd71kjt53tTLUZ1NPHfNETYydUeiGLawG6zay2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 164/193] drm/amdgpu/sdma5: do not execute 0-sized IBs (v2)
+Subject: [PATCH 4.19 107/125] net: mscc: ocelot: fix vlan_filtering when enslaving to bridge before link is up
 Date:   Mon, 11 Nov 2019 19:29:06 +0100
-Message-Id: <20191111181513.220655267@linuxfoundation.org>
+Message-Id: <20191111181454.239381369@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,34 +49,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+From: Vladimir Oltean <olteanv@gmail.com>
 
-[ Upstream commit 9bdf63d3579e36942f4b91d3558a90da8116bb40 ]
+[ Upstream commit 1c44ce560b4de639f237b458be1729489ff44d0a ]
 
-This seems to help with https://bugs.freedesktop.org/show_bug.cgi?id=111481.
+Background information: the driver operates the hardware in a mode where
+a single VLAN can be transmitted as untagged on a particular egress
+port. That is the "native VLAN on trunk port" use case. Its value is
+held in port->vid.
 
-v2: insert a NOP instead of skipping all 0-sized IBs to avoid breaking older hw
+Consider the following command sequence (no network manager, all
+interfaces are down, debugging prints added by me):
 
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+$ ip link add dev br0 type bridge vlan_filtering 1
+$ ip link set dev swp0 master br0
+
+Kernel code path during last command:
+
+br_add_slave -> ocelot_netdevice_port_event (NETDEV_CHANGEUPPER):
+[   21.401901] ocelot_vlan_port_apply: port 0 vlan aware 0 pvid 0 vid 0
+
+br_add_slave -> nbp_vlan_init -> switchdev_port_attr_set -> ocelot_port_attr_set (SWITCHDEV_ATTR_ID_BRIDGE_VLAN_FILTERING):
+[   21.413335] ocelot_vlan_port_apply: port 0 vlan aware 1 pvid 0 vid 0
+
+br_add_slave -> nbp_vlan_init -> nbp_vlan_add -> br_switchdev_port_vlan_add -> switchdev_port_obj_add -> ocelot_port_obj_add -> ocelot_vlan_vid_add
+[   21.667421] ocelot_vlan_port_apply: port 0 vlan aware 1 pvid 1 vid 1
+
+So far so good. The bridge has replaced the driver's default pvid used
+in standalone mode (0) with its own default_pvid (1). The port's vid
+(native VLAN) has also changed from 0 to 1.
+
+$ ip link set dev swp0 up
+
+[   31.722956] 8021q: adding VLAN 0 to HW filter on device swp0
+do_setlink -> dev_change_flags -> vlan_vid_add -> ocelot_vlan_rx_add_vid -> ocelot_vlan_vid_add:
+[   31.728700] ocelot_vlan_port_apply: port 0 vlan aware 1 pvid 1 vid 0
+
+The 8021q module uses the .ndo_vlan_rx_add_vid API on .ndo_open to make
+ports be able to transmit and receive 802.1p-tagged traffic by default.
+This API is supposed to offload a VLAN sub-interface, which for a switch
+port means to add a VLAN that is not a pvid, and tagged on egress.
+
+But the driver implementation of .ndo_vlan_rx_add_vid is wrong: it adds
+back vid 0 as "egress untagged". Now back to the initial paragraph:
+there is a single untagged VID that the driver keeps track of, and that
+has just changed from 1 (the pvid) to 0. So this breaks the bridge
+core's expectation, because it has changed vid 1 from untagged to
+tagged, when what the user sees is.
+
+$ bridge vlan
+port    vlan ids
+swp0     1 PVID Egress Untagged
+
+br0      1 PVID Egress Untagged
+
+But curiously, instead of manifesting itself as "untagged and
+pvid-tagged traffic gets sent as tagged on egress", the bug:
+
+- is hidden when vlan_filtering=0
+- manifests as dropped traffic when vlan_filtering=1, due to this setting:
+
+	if (port->vlan_aware && !port->vid)
+		/* If port is vlan-aware and tagged, drop untagged and priority
+		 * tagged frames.
+		 */
+		val |= ANA_PORT_DROP_CFG_DROP_UNTAGGED_ENA |
+		       ANA_PORT_DROP_CFG_DROP_PRIO_S_TAGGED_ENA |
+		       ANA_PORT_DROP_CFG_DROP_PRIO_C_TAGGED_ENA;
+
+which would have made sense if it weren't for this bug. The setting's
+intention was "this is a trunk port with no native VLAN, so don't accept
+untagged traffic". So the driver was never expecting to set VLAN 0 as
+the value of the native VLAN, 0 was just encoding for "invalid".
+
+So the fix is to not send 802.1p traffic as untagged, because that would
+change the port's native vlan to 0, unbeknownst to the bridge, and
+trigger unexpected code paths in the driver.
+
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 7142529f1688 ("net: mscc: ocelot: add VLAN filtering")
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mscc/ocelot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
-index 5eeb72fcc123a..6a51e6a4a035b 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
-@@ -264,6 +264,7 @@ static void gmc_v10_0_flush_gpu_tlb(struct amdgpu_device *adev,
+diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
+index e05a59ae9a593..965f13944c76b 100644
+--- a/drivers/net/ethernet/mscc/ocelot.c
++++ b/drivers/net/ethernet/mscc/ocelot.c
+@@ -886,7 +886,7 @@ end:
+ static int ocelot_vlan_rx_add_vid(struct net_device *dev, __be16 proto,
+ 				  u16 vid)
+ {
+-	return ocelot_vlan_vid_add(dev, vid, false, true);
++	return ocelot_vlan_vid_add(dev, vid, false, false);
+ }
  
- 	job->vm_pd_addr = amdgpu_gmc_pd_addr(adev->gart.bo);
- 	job->vm_needs_flush = true;
-+	job->ibs->ptr[job->ibs->length_dw++] = ring->funcs->nop;
- 	amdgpu_ring_pad_ib(ring, &job->ibs[0]);
- 	r = amdgpu_job_submit(job, &adev->mman.entity,
- 			      AMDGPU_FENCE_OWNER_UNDEFINED, &fence);
+ static int ocelot_vlan_rx_kill_vid(struct net_device *dev, __be16 proto,
 -- 
 2.20.1
 
