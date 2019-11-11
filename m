@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D441F7C8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43264F7D84
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:57:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbfKKSrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:47:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39982 "EHLO mail.kernel.org"
+        id S1730620AbfKKS5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730088AbfKKSrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:47:16 -0500
+        id S1729045AbfKKS5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:57:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42851204FD;
-        Mon, 11 Nov 2019 18:47:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AFCD222C1;
+        Mon, 11 Nov 2019 18:57:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498035;
-        bh=s4/wBkg+YESr2cSegNSj+TZ8r3jJ7fwVhpD74JPTdKQ=;
+        s=default; t=1573498649;
+        bh=jciIuqN6+XJ0SohuD/SxNfkHQ9OpVxARqL5y9dtpxGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WTXbK3uTBrlLdW3kORnFrz7a0UicWve1myHk3ltAXwTk+MLsp5C9h8sWr3/uaEpgW
-         H7qpvFgEgdVja6WwWnyia4c0FseACKibzTf2tJbLo2200LMNtRYyxoNtDi8HRpWy5l
-         Pu732ontlZd+5ZiybLN4ikuZxJXZxL5Vq2dFjKA8=
+        b=0+clynyva2d7wCrL1UoFWj3U+fkp2cKm6kA2OEbPyyeaA+spqvgcQ+wUK9V6eG/wx
+         OPdafkbHOJWqroSNs/3m5gob+spbyEmlZkgWcupx99joOJa6rZFtPGvbPB+CaBItnC
+         rRtiPDbSAinNxOVaqxdmJ979Lk6EBhrLxKh4b0hU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Randolph=20Maa=C3=9Fen?= <gaireg@gaireg.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 122/125] iio: imu: mpu6050: Add support for the ICM 20602 IMU
-Date:   Mon, 11 Nov 2019 19:29:21 +0100
-Message-Id: <20191111181456.018241247@linuxfoundation.org>
+        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 180/193] arm64: apply ARM64_ERRATUM_845719 workaround for Brahma-B53 core
+Date:   Mon, 11 Nov 2019 19:29:22 +0100
+Message-Id: <20191111181514.384894649@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,223 +44,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randolph Maaßen <gaireg@gaireg.de>
+From: Doug Berger <opendmb@gmail.com>
 
-[ Upstream commit 22904bdff97839960bd98b3452a583b1daee628b ]
+[ Upstream commit bfc97f9f199cb041cf897af3af096540948cc705 ]
 
-The Invensense ICM-20602 is a 6-axis MotionTracking device that
-combines a 3-axis gyroscope and an 3-axis accelerometer. It is very
-similar to the ICM-20608 imu which is already supported by the mpu6050
-driver. The main difference is that the ICM-20602 has the i2c bus
-disable bit in a separate register.
+The Broadcom Brahma-B53 core is susceptible to the issue described by
+ARM64_ERRATUM_845719 so this commit enables the workaround to be applied
+when executing on that core.
 
-Signed-off-by: Randolph Maaßen <gaireg@gaireg.de>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Since there are now multiple entries to match, we must convert the
+existing ARM64_ERRATUM_845719 into an erratum list.
+
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/imu/inv_mpu6050/Kconfig        |  8 +++---
- drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 31 ++++++++++++++++++++++
- drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c  |  6 +++++
- drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h  |  8 ++++++
- drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c  | 12 ++++++---
- 5 files changed, 58 insertions(+), 7 deletions(-)
+ Documentation/arm64/silicon-errata.rst |  3 +++
+ arch/arm64/include/asm/cputype.h       |  2 ++
+ arch/arm64/kernel/cpu_errata.c         | 13 +++++++++++--
+ 3 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/imu/inv_mpu6050/Kconfig b/drivers/iio/imu/inv_mpu6050/Kconfig
-index 5483b2ea754dd..d2fe9dbddda74 100644
---- a/drivers/iio/imu/inv_mpu6050/Kconfig
-+++ b/drivers/iio/imu/inv_mpu6050/Kconfig
-@@ -13,8 +13,8 @@ config INV_MPU6050_I2C
- 	select INV_MPU6050_IIO
- 	select REGMAP_I2C
- 	help
--	  This driver supports the Invensense MPU6050/6500/9150 and ICM20608
--	  motion tracking devices over I2C.
-+	  This driver supports the Invensense MPU6050/6500/9150 and
-+	  ICM20608/20602 motion tracking devices over I2C.
- 	  This driver can be built as a module. The module will be called
- 	  inv-mpu6050-i2c.
+diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
+index 47feda6c15bcc..8c87c68dcc324 100644
+--- a/Documentation/arm64/silicon-errata.rst
++++ b/Documentation/arm64/silicon-errata.rst
+@@ -91,6 +91,9 @@ stable kernels.
+ | ARM            | MMU-500         | #841119,826419  | N/A                         |
+ +----------------+-----------------+-----------------+-----------------------------+
+ +----------------+-----------------+-----------------+-----------------------------+
++| Broadcom       | Brahma-B53      | N/A             | ARM64_ERRATUM_845719        |
+++----------------+-----------------+-----------------+-----------------------------+
+++----------------+-----------------+-----------------+-----------------------------+
+ | Cavium         | ThunderX ITS    | #22375,24313    | CAVIUM_ERRATUM_22375        |
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Cavium         | ThunderX ITS    | #23144          | CAVIUM_ERRATUM_23144        |
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index b1454d117cd2c..aca07c2f6e6e3 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -79,6 +79,7 @@
+ #define CAVIUM_CPU_PART_THUNDERX_83XX	0x0A3
+ #define CAVIUM_CPU_PART_THUNDERX2	0x0AF
  
-@@ -24,7 +24,7 @@ config INV_MPU6050_SPI
- 	select INV_MPU6050_IIO
- 	select REGMAP_SPI
- 	help
--	  This driver supports the Invensense MPU6050/6500/9150 and ICM20608
--	  motion tracking devices over SPI.
-+	  This driver supports the Invensense MPU6050/6500/9150 and
-+	  ICM20608/20602 motion tracking devices over SPI.
- 	  This driver can be built as a module. The module will be called
- 	  inv-mpu6050-spi.
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-index d80ef468508a1..cb80c9e49fc7b 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-@@ -37,6 +37,29 @@ static const int gyro_scale_6050[] = {133090, 266181, 532362, 1064724};
-  */
- static const int accel_scale[] = {598, 1196, 2392, 4785};
++#define BRCM_CPU_PART_BRAHMA_B53	0x100
+ #define BRCM_CPU_PART_VULCAN		0x516
  
-+static const struct inv_mpu6050_reg_map reg_set_icm20602 = {
-+	.sample_rate_div	= INV_MPU6050_REG_SAMPLE_RATE_DIV,
-+	.lpf                    = INV_MPU6050_REG_CONFIG,
-+	.accel_lpf              = INV_MPU6500_REG_ACCEL_CONFIG_2,
-+	.user_ctrl              = INV_MPU6050_REG_USER_CTRL,
-+	.fifo_en                = INV_MPU6050_REG_FIFO_EN,
-+	.gyro_config            = INV_MPU6050_REG_GYRO_CONFIG,
-+	.accl_config            = INV_MPU6050_REG_ACCEL_CONFIG,
-+	.fifo_count_h           = INV_MPU6050_REG_FIFO_COUNT_H,
-+	.fifo_r_w               = INV_MPU6050_REG_FIFO_R_W,
-+	.raw_gyro               = INV_MPU6050_REG_RAW_GYRO,
-+	.raw_accl               = INV_MPU6050_REG_RAW_ACCEL,
-+	.temperature            = INV_MPU6050_REG_TEMPERATURE,
-+	.int_enable             = INV_MPU6050_REG_INT_ENABLE,
-+	.int_status             = INV_MPU6050_REG_INT_STATUS,
-+	.pwr_mgmt_1             = INV_MPU6050_REG_PWR_MGMT_1,
-+	.pwr_mgmt_2             = INV_MPU6050_REG_PWR_MGMT_2,
-+	.int_pin_cfg            = INV_MPU6050_REG_INT_PIN_CFG,
-+	.accl_offset            = INV_MPU6500_REG_ACCEL_OFFSET,
-+	.gyro_offset            = INV_MPU6050_REG_GYRO_OFFSET,
-+	.i2c_if                 = INV_ICM20602_REG_I2C_IF,
+ #define QCOM_CPU_PART_FALKOR_V1		0x800
+@@ -105,6 +106,7 @@
+ #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
+ #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
+ #define MIDR_CAVIUM_THUNDERX2 MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX2)
++#define MIDR_BRAHMA_B53 MIDR_CPU_MODEL(ARM_CPU_IMP_BRCM, BRCM_CPU_PART_BRAHMA_B53)
+ #define MIDR_BRCM_VULCAN MIDR_CPU_MODEL(ARM_CPU_IMP_BRCM, BRCM_CPU_PART_VULCAN)
+ #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
+ #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 4465be78ee466..d9da4201ba858 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -743,6 +743,16 @@ static const struct midr_range erratum_1418040_list[] = {
+ };
+ #endif
+ 
++#ifdef CONFIG_ARM64_ERRATUM_845719
++static const struct midr_range erratum_845719_list[] = {
++	/* Cortex-A53 r0p[01234] */
++	MIDR_REV_RANGE(MIDR_CORTEX_A53, 0, 0, 4),
++	/* Brahma-B53 r0p[0] */
++	MIDR_REV(MIDR_BRAHMA_B53, 0, 0),
++	{},
 +};
++#endif
 +
- static const struct inv_mpu6050_reg_map reg_set_6500 = {
- 	.sample_rate_div	= INV_MPU6050_REG_SAMPLE_RATE_DIV,
- 	.lpf                    = INV_MPU6050_REG_CONFIG,
-@@ -57,6 +80,7 @@ static const struct inv_mpu6050_reg_map reg_set_6500 = {
- 	.int_pin_cfg		= INV_MPU6050_REG_INT_PIN_CFG,
- 	.accl_offset		= INV_MPU6500_REG_ACCEL_OFFSET,
- 	.gyro_offset		= INV_MPU6050_REG_GYRO_OFFSET,
-+	.i2c_if                 = 0,
- };
- 
- static const struct inv_mpu6050_reg_map reg_set_6050 = {
-@@ -77,6 +101,7 @@ static const struct inv_mpu6050_reg_map reg_set_6050 = {
- 	.int_pin_cfg		= INV_MPU6050_REG_INT_PIN_CFG,
- 	.accl_offset		= INV_MPU6050_REG_ACCEL_OFFSET,
- 	.gyro_offset		= INV_MPU6050_REG_GYRO_OFFSET,
-+	.i2c_if                 = 0,
- };
- 
- static const struct inv_mpu6050_chip_config chip_config_6050 = {
-@@ -139,6 +164,12 @@ static const struct inv_mpu6050_hw hw_info[] = {
- 		.reg = &reg_set_6500,
- 		.config = &chip_config_6050,
+ const struct arm64_cpu_capabilities arm64_errata[] = {
+ #ifdef CONFIG_ARM64_WORKAROUND_CLEAN_CACHE
+ 	{
+@@ -783,10 +793,9 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ #endif
+ #ifdef CONFIG_ARM64_ERRATUM_845719
+ 	{
+-	/* Cortex-A53 r0p[01234] */
+ 		.desc = "ARM erratum 845719",
+ 		.capability = ARM64_WORKAROUND_845719,
+-		ERRATA_MIDR_REV_RANGE(MIDR_CORTEX_A53, 0, 0, 4),
++		ERRATA_MIDR_RANGE_LIST(erratum_845719_list),
  	},
-+	{
-+		.whoami = INV_ICM20602_WHOAMI_VALUE,
-+		.name = "ICM20602",
-+		.reg = &reg_set_icm20602,
-+		.config = &chip_config_6050,
-+	},
- };
- 
- int inv_mpu6050_switch_engine(struct inv_mpu6050_state *st, bool en, u32 mask)
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c
-index dd758e3d403da..e46eb4ddea210 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c
-@@ -127,6 +127,7 @@ static int inv_mpu_probe(struct i2c_client *client,
- 	st = iio_priv(dev_get_drvdata(&client->dev));
- 	switch (st->chip_type) {
- 	case INV_ICM20608:
-+	case INV_ICM20602:
- 		/* no i2c auxiliary bus on the chip */
- 		break;
- 	default:
-@@ -179,6 +180,7 @@ static const struct i2c_device_id inv_mpu_id[] = {
- 	{"mpu9250", INV_MPU9250},
- 	{"mpu9255", INV_MPU9255},
- 	{"icm20608", INV_ICM20608},
-+	{"icm20602", INV_ICM20602},
- 	{}
- };
- 
-@@ -213,6 +215,10 @@ static const struct of_device_id inv_of_match[] = {
- 		.compatible = "invensense,icm20608",
- 		.data = (void *)INV_ICM20608
- 	},
-+	{
-+		.compatible = "invensense,icm20602",
-+		.data = (void *)INV_ICM20602
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, inv_of_match);
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-index e69a59659dbcf..bdbaf6e01ce3e 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-@@ -44,6 +44,7 @@
-  *  @int_pin_cfg;	Controls interrupt pin configuration.
-  *  @accl_offset:	Controls the accelerometer calibration offset.
-  *  @gyro_offset:	Controls the gyroscope calibration offset.
-+ *  @i2c_if:		Controls the i2c interface
-  */
- struct inv_mpu6050_reg_map {
- 	u8 sample_rate_div;
-@@ -65,6 +66,7 @@ struct inv_mpu6050_reg_map {
- 	u8 int_pin_cfg;
- 	u8 accl_offset;
- 	u8 gyro_offset;
-+	u8 i2c_if;
- };
- 
- /*device enum */
-@@ -77,6 +79,7 @@ enum inv_devices {
- 	INV_MPU9250,
- 	INV_MPU9255,
- 	INV_ICM20608,
-+	INV_ICM20602,
- 	INV_NUM_PARTS
- };
- 
-@@ -193,6 +196,10 @@ struct inv_mpu6050_state {
- #define INV_MPU6050_BIT_PWR_ACCL_STBY       0x38
- #define INV_MPU6050_BIT_PWR_GYRO_STBY       0x07
- 
-+/* ICM20602 register */
-+#define INV_ICM20602_REG_I2C_IF             0x70
-+#define INV_ICM20602_BIT_I2C_IF_DIS         0x40
-+
- #define INV_MPU6050_REG_FIFO_COUNT_H        0x72
- #define INV_MPU6050_REG_FIFO_R_W            0x74
- 
-@@ -259,6 +266,7 @@ struct inv_mpu6050_state {
- #define INV_MPU9255_WHOAMI_VALUE		0x73
- #define INV_MPU6515_WHOAMI_VALUE		0x74
- #define INV_ICM20608_WHOAMI_VALUE		0xAF
-+#define INV_ICM20602_WHOAMI_VALUE		0x12
- 
- /* scan element definition */
- enum inv_mpu6050_scan {
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c
-index 227f50afff22f..a112c3f45f748 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c
-@@ -31,9 +31,14 @@ static int inv_mpu_i2c_disable(struct iio_dev *indio_dev)
- 	if (ret)
- 		return ret;
- 
--	st->chip_config.user_ctrl |= INV_MPU6050_BIT_I2C_IF_DIS;
--	ret = regmap_write(st->map, st->reg->user_ctrl,
--			   st->chip_config.user_ctrl);
-+	if (st->reg->i2c_if) {
-+		ret = regmap_write(st->map, st->reg->i2c_if,
-+				   INV_ICM20602_BIT_I2C_IF_DIS);
-+	} else {
-+		st->chip_config.user_ctrl |= INV_MPU6050_BIT_I2C_IF_DIS;
-+		ret = regmap_write(st->map, st->reg->user_ctrl,
-+				   st->chip_config.user_ctrl);
-+	}
- 	if (ret) {
- 		inv_mpu6050_set_power_itg(st, false);
- 		return ret;
-@@ -81,6 +86,7 @@ static const struct spi_device_id inv_mpu_id[] = {
- 	{"mpu9250", INV_MPU9250},
- 	{"mpu9255", INV_MPU9255},
- 	{"icm20608", INV_ICM20608},
-+	{"icm20602", INV_ICM20602},
- 	{}
- };
- 
+ #endif
+ #ifdef CONFIG_CAVIUM_ERRATUM_23154
 -- 
 2.20.1
 
