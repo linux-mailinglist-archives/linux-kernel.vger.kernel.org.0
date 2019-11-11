@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37BFFF7B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:37:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E18A1F7B0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfKKSgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54600 "EHLO mail.kernel.org"
+        id S1726951AbfKKScJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:32:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728701AbfKKSgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:36:21 -0500
+        id S1727875AbfKKScH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:32:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 058562184C;
-        Mon, 11 Nov 2019 18:36:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 618C12190F;
+        Mon, 11 Nov 2019 18:32:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497380;
-        bh=Wr+QOl9fx70tvSuUnMOSAVArjRVbhH+B/hgCt7RzL2I=;
+        s=default; t=1573497126;
+        bh=9rwcGNJwXRz1TQF3iWxvI878p/j1SmxPATv1k3BaV3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lefi1gxcsa1NGs8ad5kYlriRSYKxD46M6C91FIdr+Rag+jbEH7fTa4xtLBUwbp36i
-         HRqgQlhlFdnPNSobYs3ob42KjLmi/fxziKh3QLr/uIeSDArBbcVxtZ+9PqnNidSKcg
-         78SLLtJXCkCK95oZycCBWiWlBQde4adEyJVKo9mY=
+        b=fE4rpnbOtBhnZpMXC1lnhOi2jB8t81No2W+nuBNxGtdJRMz44hb6vRgkRuLqSfklh
+         qRSC7fLv0Pj5SgfW4vbH/b+kMDrUYw/139aWpKFqZmxqf+teL3X2+6OuV2qVFzrQN9
+         lStgbgxCSHWpAcbYwl9uOwrkYH+QQhfSgcbNYHg0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernd Krumboeck <b.krumboeck@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Johan Hovold <johan@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 033/105] can: usb_8dev: fix use-after-free on disconnect
-Date:   Mon, 11 Nov 2019 19:28:03 +0100
-Message-Id: <20191111181438.542525502@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 04/65] net: usb: qmi_wwan: add support for DW5821e with eSIM support
+Date:   Mon, 11 Nov 2019 19:28:04 +0100
+Message-Id: <20191111181334.277109220@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Aleksander Morgado <aleksander@aleksander.es>
 
-commit 3759739426186a924675651b388d1c3963c5710e upstream.
+[ Upstream commit e497df686e8fed8c1dd69179010656362858edb3 ]
 
-The driver was accessing its driver data after having freed it.
+Exactly same layout as the default DW5821e module, just a different
+vid/pid.
 
-Fixes: 0024d8ad1639 ("can: usb_8dev: Add support for USB2CAN interface from 8 devices")
-Cc: stable <stable@vger.kernel.org>     # 3.9
-Cc: Bernd Krumboeck <b.krumboeck@gmail.com>
-Cc: Wolfgang Grandegger <wg@grandegger.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+The QMI interface is exposed in USB configuration #1:
+
+P:  Vendor=413c ProdID=81e0 Rev=03.18
+S:  Manufacturer=Dell Inc.
+S:  Product=DW5821e-eSIM Snapdragon X20 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#=0x0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#=0x1 Alt= 0 #EPs= 1 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
+I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+
+Signed-off-by: Aleksander Morgado <aleksander@aleksander.es>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/can/usb/usb_8dev.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/can/usb/usb_8dev.c
-+++ b/drivers/net/can/usb/usb_8dev.c
-@@ -1007,9 +1007,8 @@ static void usb_8dev_disconnect(struct u
- 		netdev_info(priv->netdev, "device disconnected\n");
- 
- 		unregister_netdev(priv->netdev);
--		free_candev(priv->netdev);
--
- 		unlink_all_urbs(priv);
-+		free_candev(priv->netdev);
- 	}
- 
- }
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -951,6 +951,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x413c, 0x81b6, 8)},	/* Dell Wireless 5811e */
+ 	{QMI_FIXED_INTF(0x413c, 0x81b6, 10)},	/* Dell Wireless 5811e */
+ 	{QMI_FIXED_INTF(0x413c, 0x81d7, 0)},	/* Dell Wireless 5821e */
++	{QMI_FIXED_INTF(0x413c, 0x81e0, 0)},	/* Dell Wireless 5821e with eSIM support*/
+ 	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
+ 	{QMI_FIXED_INTF(0x03f0, 0x9d1d, 1)},	/* HP lt4120 Snapdragon X5 LTE */
+ 	{QMI_FIXED_INTF(0x22de, 0x9061, 3)},	/* WeTelecom WPD-600N */
 
 
