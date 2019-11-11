@@ -2,106 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 431F9F796E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:05:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B3FF7974
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:06:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbfKKRFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 12:05:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44734 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726879AbfKKRFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 12:05:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8E132B28D;
-        Mon, 11 Nov 2019 17:05:33 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
-Cc:     Anup Patel <Anup.Patel@wdc.com>, Anup Patel <anup@brainfault.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        id S1726988AbfKKRG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 12:06:28 -0500
+Received: from utopia.booyaka.com ([74.50.51.50]:38950 "EHLO
+        utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfKKRG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 12:06:27 -0500
+Received: (qmail 31259 invoked by uid 1019); 11 Nov 2019 17:06:26 -0000
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 11 Nov 2019 17:06:26 -0000
+Date:   Mon, 11 Nov 2019 17:06:26 +0000 (UTC)
+From:   Paul Walmsley <paul@pwsan.com>
+To:     Anup Patel <Anup.Patel@wdc.com>
+cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Anup Patel <anup@brainfault.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Atish Patra <Atish.Patra@wdc.com>,
         Alistair Francis <Alistair.Francis@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        "linux-riscv\@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
         Christoph Hellwig <hch@lst.de>
 Subject: Re: [PATCH] RISC-V: Enable SYSCON reboot and poweroff drivers
+In-Reply-To: <20191111133421.14390-1-anup.patel@wdc.com>
+Message-ID: <alpine.DEB.2.21.999.1911111705350.30304@utopia.booyaka.com>
 References: <20191111133421.14390-1-anup.patel@wdc.com>
-        <mvmv9rqcxpq.fsf@suse.de>
-        <MN2PR04MB60616625B9BEFF634FA680728D740@MN2PR04MB6061.namprd04.prod.outlook.com>
-        <mvm5zjqcwlr.fsf@suse.de>
-        <MN2PR04MB60611FB55CDCF6AB5930C73A8D740@MN2PR04MB6061.namprd04.prod.outlook.com>
-        <mvm1ruecpyv.fsf@suse.de>
-        <CAEn-LTrL_Dtka6So3Pj=G+BV2a-UoHxGGLLDF4dqAG68AnH_5g@mail.gmail.com>
-X-Yow:  Did I do an INCORRECT THING??
-Date:   Mon, 11 Nov 2019 18:05:33 +0100
-In-Reply-To: <CAEn-LTrL_Dtka6So3Pj=G+BV2a-UoHxGGLLDF4dqAG68AnH_5g@mail.gmail.com>
-        (David Abdurachmanov's message of "Mon, 11 Nov 2019 19:01:23 +0200")
-Message-ID: <mvmwoc6baxu.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+User-Agent: Alpine 2.21.999 (DEB 260 2018-02-26)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Nov 11 2019, David Abdurachmanov wrote:
+On Mon, 11 Nov 2019, Anup Patel wrote:
 
-> On Mon, Nov 11, 2019 at 6:55 PM Andreas Schwab <schwab@suse.de> wrote:
->>
->> On Nov 11 2019, Anup Patel wrote:
->>
->> >> -----Original Message-----
->> >> From: Andreas Schwab <schwab@suse.de>
->> >> Sent: Monday, November 11, 2019 8:02 PM
->> >> To: Anup Patel <Anup.Patel@wdc.com>
->> >> Cc: Palmer Dabbelt <palmer@dabbelt.com>; Paul Walmsley
->> >> <paul.walmsley@sifive.com>; Atish Patra <Atish.Patra@wdc.com>; Alistair
->> >> Francis <Alistair.Francis@wdc.com>; Christoph Hellwig <hch@lst.de>; Anup
->> >> Patel <anup@brainfault.org>; linux-riscv@lists.infradead.org; linux-
->> >> kernel@vger.kernel.org
->> >> Subject: Re: [PATCH] RISC-V: Enable SYSCON reboot and poweroff drivers
->> >>
->> >> On Nov 11 2019, Anup Patel wrote:
->> >>
->> >> >> -----Original Message-----
->> >> >> From: Andreas Schwab <schwab@suse.de>
->> >> >> Sent: Monday, November 11, 2019 7:38 PM
->> >> >> To: Anup Patel <Anup.Patel@wdc.com>
->> >> >> Cc: Palmer Dabbelt <palmer@sifive.com>; Paul Walmsley
->> >> >> <paul.walmsley@sifive.com>; Atish Patra <Atish.Patra@wdc.com>;
->> >> >> Alistair Francis <Alistair.Francis@wdc.com>; Christoph Hellwig
->> >> >> <hch@lst.de>; Anup Patel <anup@brainfault.org>;
->> >> >> linux-riscv@lists.infradead.org; linux- kernel@vger.kernel.org
->> >> >> Subject: Re: [PATCH] RISC-V: Enable SYSCON reboot and poweroff
->> >> >> drivers
->> >> >>
->> >> >> On Nov 11 2019, Anup Patel wrote:
->> >> >>
->> >> >> > We can use SYSCON reboot and poweroff drivers for the SiFive test
->> >> >> > device found on QEMU virt machine and SiFive SOCs.
->> >> >>
->> >> >> I don't see any syscon-reboot compatible in the device tree.
->> >> >
->> >> > I have sent patch to QEMU as well for generating SYSCON DT nodes.
->> >>
->> >> What about the kernel DT?
->> >
->> > For QEMU virt machine, the DT is generated by QEMU at runtime
->> > so we don't need an explicit DT file in Linux sources.
->>
->> What about the HiFiveU?
->
-> Unleashed uses gpio-restart which depends on gpio driver (not upstreamed and
-> not posted for review on mailing list). I have that working on my build.
+> We can use SYSCON reboot and poweroff drivers for the
+> SiFive test device found on QEMU virt machine and SiFive
+> SOCs.
+> 
+> This patch enables SYSCON reboot and poweroff drivers
+> in RV64 and RV32 defconfigs.
+> 
+> Signed-off-by: Anup Patel <anup.patel@wdc.com>
 
-I do have that, too.  But I wonder about the "SiFive SOCs" reference
-above.
+I'd much prefer Christoph's driver, once it's fixed up per my earlier 
+comments.  This business with writing random registers based on what's in 
+the DT data has always been a bad idea.
 
-Andreas.
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+- Paul
