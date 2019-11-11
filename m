@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA692F82F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0480AF82F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:36:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbfKKWgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 17:36:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60100 "EHLO
+        id S1727205AbfKKWf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 17:35:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:60110 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbfKKWfv (ORCPT
+        with ESMTP id S1727344AbfKKWfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 17:35:51 -0500
+        Mon, 11 Nov 2019 17:35:52 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iUIHl-0000vh-ES; Mon, 11 Nov 2019 23:35:49 +0100
-Message-Id: <20191111223052.990437835@linutronix.de>
+        id 1iUIHm-0000vs-1v; Mon, 11 Nov 2019 23:35:50 +0100
+Message-Id: <20191111223053.099163798@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 11 Nov 2019 23:03:29 +0100
+Date:   Mon, 11 Nov 2019 23:03:30 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -27,7 +27,8 @@ Cc:     x86@kernel.org, Linus Torvalds <torvalds@linuxfoundation.org>,
         Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>
-Subject: [patch V2 15/16] x86/iopl: Remove legacy IOPL option
+Subject: [patch V2 16/16] selftests/x86/iopl: Extend test to cover IOPL
+ emulation
 References: <20191111220314.519933535@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -38,281 +39,190 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-The IOPL emulation via the I/O bitmap is sufficient. Remove the legacy
-cruft dealing with the (e)flags based IOPL mechanism.
+Add tests that the now emulated iopl() functionality:
+
+    - does not longer allow user space to disable interrupts.
+
+    - does restore a I/O bitmap when IOPL is dropped
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com> (Paravirt and Xen parts)
----
-V2: Adapted to changes in the previous patches.
----
- arch/x86/Kconfig                      |   10 +------
- arch/x86/include/asm/paravirt.h       |    4 --
- arch/x86/include/asm/paravirt_types.h |    2 -
- arch/x86/include/asm/processor.h      |   26 ++----------------
- arch/x86/include/asm/xen/hypervisor.h |    2 -
- arch/x86/kernel/ioport.c              |   47 +++++++---------------------------
- arch/x86/kernel/paravirt.c            |    2 -
- arch/x86/kernel/process_32.c          |    9 ------
- arch/x86/kernel/process_64.c          |   11 -------
- arch/x86/xen/enlighten_pv.c           |   10 -------
- 10 files changed, 16 insertions(+), 107 deletions(-)
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1269,14 +1269,8 @@ config X86_IOPL_EMULATION
+---
+ tools/testing/selftests/x86/iopl.c |  129 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 118 insertions(+), 11 deletions(-)
+
+--- a/tools/testing/selftests/x86/iopl.c
++++ b/tools/testing/selftests/x86/iopl.c
+@@ -35,6 +35,16 @@ static void sethandler(int sig, void (*h
  
- 	  The emulation restricts the functionality of the syscall to
- 	  only allowing the full range I/O port access, but prevents the
--	  ability to disable interrupts from user space.
--
--config X86_IOPL_LEGACY
--	bool "IOPL Legacy"
--	---help---
--	Allow the full IOPL permissions, i.e. user space access to all
--	65536 I/O ports and also the ability to disable interrupts, which
--	is overbroad and can result in system lockups.
-+	  ability to disable interrupts from user space which would be
-+	  granted if the hardware IOPL mechanism would be used.
- 
- config X86_IOPL_NONE
- 	bool "IOPL None"
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -294,10 +294,6 @@ static inline void write_idt_entry(gate_
- {
- 	PVOP_VCALL3(cpu.write_idt_entry, dt, entry, g);
- }
--static inline void set_iopl_mask(unsigned mask)
--{
--	PVOP_VCALL1(cpu.set_iopl_mask, mask);
--}
- 
- static inline void paravirt_activate_mm(struct mm_struct *prev,
- 					struct mm_struct *next)
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -140,8 +140,6 @@ struct pv_cpu_ops {
- 
- 	void (*load_sp0)(unsigned long sp0);
- 
--	void (*set_iopl_mask)(unsigned mask);
--
- 	void (*wbinvd)(void);
- 
- 	/* cpuid emulation, mostly so that caps bits can be disabled */
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -517,10 +517,10 @@ struct thread_struct {
- 	struct io_bitmap	*io_bitmap;
- 
- 	/*
--	 * IOPL. Priviledge level dependent I/O permission which includes
--	 * user space CLI/STI when granted.
-+	 * IOPL. Priviledge level dependent I/O permission which is
-+	 * emulated via the I/O bitmap to prevent user space from disabling
-+	 * interrupts.
- 	 */
--	unsigned long		iopl;
- 	unsigned long		iopl_emul;
- 
- 	mm_segment_t		addr_limit;
-@@ -553,25 +553,6 @@ static inline void arch_thread_struct_wh
-  */
- #define TS_COMPAT		0x0002	/* 32bit syscall active (64BIT)*/
- 
--/*
-- * Set IOPL bits in EFLAGS from given mask
-- */
--static inline void native_set_iopl_mask(unsigned mask)
--{
--#ifdef CONFIG_X86_32
--	unsigned int reg;
--
--	asm volatile ("pushfl;"
--		      "popl %0;"
--		      "andl %1, %0;"
--		      "orl %2, %0;"
--		      "pushl %0;"
--		      "popfl"
--		      : "=&r" (reg)
--		      : "i" (~X86_EFLAGS_IOPL), "r" (mask));
--#endif
--}
--
- static inline void
- native_load_sp0(unsigned long sp0)
- {
-@@ -611,7 +592,6 @@ static inline void load_sp0(unsigned lon
- 	native_load_sp0(sp0);
  }
  
--#define set_iopl_mask native_set_iopl_mask
- #endif /* CONFIG_PARAVIRT_XXL */
++static void clearhandler(int sig)
++{
++	struct sigaction sa;
++	memset(&sa, 0, sizeof(sa));
++	sa.sa_handler = SIG_DFL;
++	sigemptyset(&sa.sa_mask);
++	if (sigaction(sig, &sa, 0))
++		err(1, "sigaction");
++}
++
+ static jmp_buf jmpbuf;
  
- /* Free all resources held by a thread. */
---- a/arch/x86/include/asm/xen/hypervisor.h
-+++ b/arch/x86/include/asm/xen/hypervisor.h
-@@ -62,6 +62,4 @@ void xen_arch_register_cpu(int num);
- void xen_arch_unregister_cpu(int num);
- #endif
+ static void sigsegv(int sig, siginfo_t *si, void *ctx_void)
+@@ -42,25 +52,128 @@ static void sigsegv(int sig, siginfo_t *
+ 	siglongjmp(jmpbuf, 1);
+ }
  
--extern void xen_set_iopl_mask(unsigned mask);
--
- #endif /* _ASM_X86_XEN_HYPERVISOR_H */
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -144,28 +144,23 @@ SYSCALL_DEFINE3(ioperm, unsigned long, f
- 
- /*
-  * The sys_iopl functionality depends on the level argument, which if
-- * granted for the task is used by the CPU to check I/O instruction and
-- * CLI/STI against the current priviledge level (CPL). If CPL is less than
-- * or equal the tasks IOPL level the instructions take effect. If not a #GP
-- * is raised. The default IOPL is 0, i.e. no permissions.
-+ * granted for the task is used to enable access to all 65536 I/O ports.
-  *
-- * Setting IOPL to level 0-2 is disabling the userspace access. Only level
-- * 3 enables it. If set it allows the user space thread:
-+ * This does not use the IOPL mechanism provided by the CPU as that would
-+ * also allow the user space task to use the CLI/STI instructions.
-  *
-- * - Unrestricted access to all 65535 I/O ports
-- * - The usage of CLI/STI instructions
-+ * Disabling interrupts in a user space task is dangerous as it might lock
-+ * up the machine and the semantics vs. syscalls and exceptions is
-+ * undefined.
-  *
-- * The advantage over ioperm is that the context switch does not require to
-- * update the I/O bitmap which is especially true when a large number of
-- * ports is accessed. But the allowance of CLI/STI in userspace is
-- * considered a major problem.
-+ * Setting IOPL to level 0-2 is disabling I/O permissions. Level 3
-+ * 3 enables them.
-  *
-  * IOPL is strictly per thread and inherited on fork.
-  */
- SYSCALL_DEFINE1(iopl, unsigned int, level)
++static bool try_outb(unsigned short port)
++{
++	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
++	if (sigsetjmp(jmpbuf, 1) != 0) {
++		return false;
++	} else {
++		asm volatile ("outb %%al, %w[port]"
++			      : : [port] "Nd" (port), "a" (0));
++		return true;
++	}
++	clearhandler(SIGSEGV);
++}
++
++static void expect_ok_outb(unsigned short port)
++{
++	if (!try_outb(port)) {
++		printf("[FAIL]\toutb to 0x%02hx failed\n", port);
++		exit(1);
++	}
++
++	printf("[OK]\toutb to 0x%02hx worked\n", port);
++}
++
++static void expect_gp_outb(unsigned short port)
++{
++	if (try_outb(port)) {
++		printf("[FAIL]\toutb to 0x%02hx worked\n", port);
++		nerrs++;
++	}
++
++	printf("[OK]\toutb to 0x%02hx failed\n", port);
++}
++
++static bool try_cli(void)
++{
++	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
++	if (sigsetjmp(jmpbuf, 1) != 0) {
++		return false;
++	} else {
++		asm volatile ("cli");
++		return true;
++	}
++	clearhandler(SIGSEGV);
++}
++
++static bool try_sti(void)
++{
++	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
++	if (sigsetjmp(jmpbuf, 1) != 0) {
++		return false;
++	} else {
++		asm volatile ("sti");
++		return true;
++	}
++	clearhandler(SIGSEGV);
++}
++
++static void expect_gp_sti(void)
++{
++	if (try_sti()) {
++		printf("[FAIL]\tSTI worked\n");
++		nerrs++;
++	} else {
++		printf("[OK]\tSTI faulted\n");
++	}
++}
++
++static void expect_gp_cli(void)
++{
++	if (try_cli()) {
++		printf("[FAIL]\tCLI worked\n");
++		nerrs++;
++	} else {
++		printf("[OK]\tCLI faulted\n");
++	}
++}
++
+ int main(void)
  {
- 	struct thread_struct *t = &current->thread;
--	struct pt_regs *regs = current_pt_regs();
- 	unsigned int old;
+ 	cpu_set_t cpuset;
++
+ 	CPU_ZERO(&cpuset);
+ 	CPU_SET(0, &cpuset);
+ 	if (sched_setaffinity(0, sizeof(cpuset), &cpuset) != 0)
+ 		err(1, "sched_setaffinity to CPU 0");
  
- 	/*
-@@ -178,10 +173,7 @@ SYSCALL_DEFINE1(iopl, unsigned int, leve
- 	if (level > 3)
- 		return -EINVAL;
- 
--	if (IS_ENABLED(CONFIG_X86_IOPL_EMULATION))
--		old = t->iopl_emul;
--	else
--		old = t->iopl >> X86_EFLAGS_IOPL_BIT;
-+	old = t->iopl_emul;
- 
- 	/* No point in going further if nothing changes */
- 	if (level == old)
-@@ -194,25 +186,8 @@ SYSCALL_DEFINE1(iopl, unsigned int, leve
- 			return -EPERM;
+ 	/* Probe for iopl support.  Note that iopl(0) works even as nonroot. */
+-	if (iopl(3) != 0) {
++	switch(iopl(3)) {
++	case 0:
++		break;
++	case -ENOSYS:
++		printf("[OK]\tiopl() nor supported\n");
++		return 0;
++	default:
+ 		printf("[OK]\tiopl(3) failed (%d) -- try running as root\n",
+ 		       errno);
+ 		return 0;
  	}
  
--	if (IS_ENABLED(CONFIG_X86_IOPL_EMULATION)) {
--		t->iopl_emul = level;
--		task_update_io_bitmap();
+-	/* Restore our original state prior to starting the test. */
++	/* Make sure that CLI/STI are blocked even with IOPL level 3 */
++	expect_gp_cli();
++	expect_gp_sti();
++	expect_ok_outb(0x80);
++
++	/* Establish an I/O bitmap to test the restore */
++	if (ioperm(0x80, 1, 1) != 0)
++		err(1, "ioperm(0x80, 1, 1) failed\n");
++
++	/* Restore our original state prior to starting the fork test. */
+ 	if (iopl(0) != 0)
+ 		err(1, "iopl(0)");
+ 
++	/*
++	 * Verify that IOPL emulation is disabled and the I/O bitmap still
++	 * works.
++	 */
++	expect_ok_outb(0x80);
++	expect_gp_outb(0xed);
++	/* Drop the I/O bitmap */
++	if (ioperm(0x80, 1, 0) != 0)
++		err(1, "ioperm(0x80, 1, 0) failed\n");
++
+ 	pid_t child = fork();
+ 	if (child == -1)
+ 		err(1, "fork");
+@@ -90,14 +203,9 @@ int main(void)
+ 
+ 	printf("[RUN]\tparent: write to 0x80 (should fail)\n");
+ 
+-	sethandler(SIGSEGV, sigsegv, 0);
+-	if (sigsetjmp(jmpbuf, 1) != 0) {
+-		printf("[OK]\twrite was denied\n");
 -	} else {
--		/*
--		 * Change the flags value on the return stack, which has
--		 * been set up on system-call entry. See also the fork and
--		 * signal handling code how this is handled.
--		 */
--		regs->flags = (regs->flags & ~X86_EFLAGS_IOPL) |
--			(level << X86_EFLAGS_IOPL_BIT);
--		/* Store the new level in the thread struct */
--		t->iopl = level << X86_EFLAGS_IOPL_BIT;
--		/*
--		 * X86_32 switches immediately and XEN handles it via
--		 * emulation.
--		 */
--		set_iopl_mask(t->iopl);
+-		asm volatile ("outb %%al, $0x80" : : "a" (0));
+-		printf("[FAIL]\twrite was allowed\n");
+-		nerrs++;
 -	}
-+	t->iopl_emul = level;
-+	task_update_io_bitmap();
++	expect_gp_outb(0x80);
++	expect_gp_cli();
++	expect_gp_sti();
  
- 	return 0;
+ 	/* Test the capability checks. */
+ 	printf("\tiopl(3)\n");
+@@ -133,4 +241,3 @@ int main(void)
+ done:
+ 	return nerrs ? 1 : 0;
  }
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -341,8 +341,6 @@ struct paravirt_patch_template pv_ops =
- 	.cpu.iret		= native_iret,
- 	.cpu.swapgs		= native_swapgs,
- 
--	.cpu.set_iopl_mask	= native_set_iopl_mask,
 -
- 	.cpu.start_context_switch	= paravirt_nop,
- 	.cpu.end_context_switch		= paravirt_nop,
- 
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -187,15 +187,6 @@ EXPORT_SYMBOL_GPL(start_thread);
- 	 */
- 	load_TLS(next, cpu);
- 
--	/*
--	 * Restore IOPL if needed.  In normal use, the flags restore
--	 * in the switch assembly will handle this.  But if the kernel
--	 * is running virtualized at a non-zero CPL, the popf will
--	 * not restore flags, so it must be done in a separate step.
--	 */
--	if (get_kernel_rpl() && unlikely(prev->iopl != next->iopl))
--		set_iopl_mask(next->iopl);
--
- 	switch_to_extra(prev_p, next_p);
- 
- 	/*
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -497,17 +497,6 @@ void compat_start_thread(struct pt_regs
- 
- 	switch_to_extra(prev_p, next_p);
- 
--#ifdef CONFIG_XEN_PV
--	/*
--	 * On Xen PV, IOPL bits in pt_regs->flags have no effect, and
--	 * current_pt_regs()->flags may not match the current task's
--	 * intended IOPL.  We need to switch it manually.
--	 */
--	if (unlikely(static_cpu_has(X86_FEATURE_XENPV) &&
--		     prev->iopl != next->iopl))
--		xen_set_iopl_mask(next->iopl);
--#endif
--
- 	if (static_cpu_has_bug(X86_BUG_SYSRET_SS_ATTRS)) {
- 		/*
- 		 * AMD CPUs have a misfeature: SYSRET sets the SS selector but
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -837,15 +837,6 @@ static void xen_load_sp0(unsigned long s
- 	this_cpu_write(cpu_tss_rw.x86_tss.sp0, sp0);
- }
- 
--void xen_set_iopl_mask(unsigned mask)
--{
--	struct physdev_set_iopl set_iopl;
--
--	/* Force the change at ring 0. */
--	set_iopl.iopl = (mask == 0) ? 1 : (mask >> 12) & 3;
--	HYPERVISOR_physdev_op(PHYSDEVOP_set_iopl, &set_iopl);
--}
--
- static void xen_io_delay(void)
- {
- }
-@@ -1055,7 +1046,6 @@ static const struct pv_cpu_ops xen_cpu_o
- 	.write_idt_entry = xen_write_idt_entry,
- 	.load_sp0 = xen_load_sp0,
- 
--	.set_iopl_mask = xen_set_iopl_mask,
- 	.io_delay = xen_io_delay,
- 
- 	/* Xen takes care of %gs when switching to usermode for us */
 
 
