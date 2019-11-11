@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 021C3F7C76
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED87FF7D78
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:57:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730010AbfKKSqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:46:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38978 "EHLO mail.kernel.org"
+        id S1730796AbfKKS5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:57:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730006AbfKKSq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:46:29 -0500
+        id S1730795AbfKKS5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:57:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE9B721783;
-        Mon, 11 Nov 2019 18:46:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB53920659;
+        Mon, 11 Nov 2019 18:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497988;
-        bh=zpUcZ+oBkJmWgjCKBCcDcw/Qeg1OskxaYaBdQ+im6A8=;
+        s=default; t=1573498624;
+        bh=Xn9xmVhJbceB5TGo945eRhwsCmVWx9YAH+0OcuDbu0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V+tzj/+GQZFBT2XI9O0BJqtcYwFtQP3SdyB5jPqTJFlEiZzu6lXfz/hen2+0cVa52
-         W+o/oTO4lN+p9+ndFp28A4mW1QvMop8furhBto1IrBINqJYggAnyqeMAIerKIflsnl
-         fkc6i3ChCbg7Nr/57ZAKGRPtSnsQiCtJQ3RjJ6y4=
+        b=l/OiCAUzHN4spkNqzzpIc+aLQ8t+wCivsxh3rj1TMytuRriy0+14z8lzvLpjTE1Bp
+         23/swtMGLam+Cm51kSkL/mBeqZ6mkFfabWRi8y/ZuNR+DYp2XL+wMcR7bybHVpXyJj
+         9NgBs1uZQfNBRHA6xKyqYaoVfeLTkHMVcF1wCoZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Neil Brown <neilb@suse.de>,
+        kbuild test robot <lkp@intel.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 115/125] net: ethernet: arc: add the missed clk_disable_unprepare
-Date:   Mon, 11 Nov 2019 19:29:14 +0100
-Message-Id: <20191111181455.255030663@linuxfoundation.org>
+Subject: [PATCH 5.3 173/193] SUNRPC: Destroy the back channel when we destroy the host transport
+Date:   Mon, 11 Nov 2019 19:29:15 +0100
+Message-Id: <20191111181513.881682174@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +46,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 4202e219edd6cc164c042e16fa327525410705ae ]
+[ Upstream commit 669996add4c92476e0f8d6b4cd2bb308d1939fd7 ]
 
-The remove misses to disable and unprepare priv->macclk like what is done
-when probe fails.
-Add the missed call in remove.
+When we're destroying the host transport mechanism, we should ensure
+that we do not leak memory by failing to release any back channel
+slots that might still exist.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Neil Brown <neilb@suse.de>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/arc/emac_rockchip.c | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/sunrpc/bc_xprt.h | 5 +++++
+ net/sunrpc/backchannel_rqst.c  | 2 +-
+ net/sunrpc/xprt.c              | 5 +++++
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
-index 0f65768026072..a1df2ebab07f0 100644
---- a/drivers/net/ethernet/arc/emac_rockchip.c
-+++ b/drivers/net/ethernet/arc/emac_rockchip.c
-@@ -265,6 +265,9 @@ static int emac_rockchip_remove(struct platform_device *pdev)
- 	if (priv->regulator)
- 		regulator_disable(priv->regulator);
- 
-+	if (priv->soc_data->need_div_macclk)
-+		clk_disable_unprepare(priv->macclk);
-+
- 	free_netdev(ndev);
- 	return err;
+diff --git a/include/linux/sunrpc/bc_xprt.h b/include/linux/sunrpc/bc_xprt.h
+index 87d27e13d8859..d796058cdff2a 100644
+--- a/include/linux/sunrpc/bc_xprt.h
++++ b/include/linux/sunrpc/bc_xprt.h
+@@ -64,6 +64,11 @@ static inline int xprt_setup_backchannel(struct rpc_xprt *xprt,
+ 	return 0;
  }
+ 
++static inline void xprt_destroy_backchannel(struct rpc_xprt *xprt,
++					    unsigned int max_reqs)
++{
++}
++
+ static inline bool svc_is_backchannel(const struct svc_rqst *rqstp)
+ {
+ 	return false;
+diff --git a/net/sunrpc/backchannel_rqst.c b/net/sunrpc/backchannel_rqst.c
+index 7eb251372f947..195b40c5dae4b 100644
+--- a/net/sunrpc/backchannel_rqst.c
++++ b/net/sunrpc/backchannel_rqst.c
+@@ -220,7 +220,7 @@ void xprt_destroy_bc(struct rpc_xprt *xprt, unsigned int max_reqs)
+ 		goto out;
+ 
+ 	spin_lock_bh(&xprt->bc_pa_lock);
+-	xprt->bc_alloc_max -= max_reqs;
++	xprt->bc_alloc_max -= min(max_reqs, xprt->bc_alloc_max);
+ 	list_for_each_entry_safe(req, tmp, &xprt->bc_pa_list, rq_bc_pa_list) {
+ 		dprintk("RPC:        req=%p\n", req);
+ 		list_del(&req->rq_bc_pa_list);
+diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
+index 20631d64312cb..ac796f3d42409 100644
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -1935,6 +1935,11 @@ static void xprt_destroy_cb(struct work_struct *work)
+ 	rpc_destroy_wait_queue(&xprt->sending);
+ 	rpc_destroy_wait_queue(&xprt->backlog);
+ 	kfree(xprt->servername);
++	/*
++	 * Destroy any existing back channel
++	 */
++	xprt_destroy_backchannel(xprt, UINT_MAX);
++
+ 	/*
+ 	 * Tear down transport state and free the rpc_xprt
+ 	 */
 -- 
 2.20.1
 
