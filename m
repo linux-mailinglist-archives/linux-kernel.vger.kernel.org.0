@@ -2,86 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21116F730C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 12:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E17D6F7311
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 12:28:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfKKL1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 06:27:00 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40991 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfKKL1A (ORCPT
+        id S1726983AbfKKL25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 06:28:57 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41241 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfKKL25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 06:27:00 -0500
-Received: by mail-wr1-f68.google.com with SMTP id p4so14188935wrm.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 03:26:58 -0800 (PST)
+        Mon, 11 Nov 2019 06:28:57 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p4so14196004wrm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 03:28:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=Pa4yLrRRJrTvDCTKV7j9zkWSjluubOWsot5AwNZziFk=;
-        b=MMzQCpygtMnyYjiQIFS+/BfIy0BdjWDImAQ8uUehCobiZwfMMM0Y+wSeT7qoOlF5Bf
-         A/aIQFgmyPZDM8OWE51brXONTY9KdXqm84kdWxo++lnT33J+AUZL7csqcWNXbHI9q1yW
-         EJRrjNaKGqQKfRd/GQPIN0DHabkvGe9nmuCt7XyVUEt5IMtZwzfBDMAGSPXUAfeh6gf2
-         p3suvBT3NtWXcCji0jyTgWSS2YHUgTdAWofZsHzH8HFLuDarkeL6GoU/yQiPNEa3OSII
-         BdXnPt4UmMssmm30vn1PQClWHkavnKbrlU02B7bMRrtR4rryc0HLwOsUnuQz1Idql8DJ
-         NWIw==
+        bh=VCIU/ruaYoPrO6tp9vJ9FadSx4Mgkcrp/rqcgWyosK4=;
+        b=rt0hKZf8KBrscbpSv+fqIleKs28btBwXk5Dvhzd7aPfW6psShTE5FTBv1mwp08YNYb
+         H2EP6L7Ke9t/OMWMjHoWD6oMoigiNhUXGrlLtM2n7322seTdWsDcige5HkKumIyNsU5P
+         yaNTiNmVXGLnBzGQ/k6vo2L2dZpu//WA+wKkXwmzku0FQnpZeH9+ETc62vZr9AHrt66y
+         L71y5gKugg1Ke73hs3iEryZY78WMuTUaVME8ncaUff5J7L3DwK3z06AYUgnrVgGghSqW
+         EFp+dAIecAK/rVPgpzHoz5sTHSD7CAe/Dti1JlRuUMpR0WyiWGwtIHi2sVOp/uHPZqSD
+         dOgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=Pa4yLrRRJrTvDCTKV7j9zkWSjluubOWsot5AwNZziFk=;
-        b=B5tqN2KtlPMuLL2MSRmPfgdONXyPtpje8ILqRjOxPM4ca744CA55Ir0tpQcu5iQduz
-         gyB05H4OaHyUsD6jH5jftqxLJjnZUbLKJR5WdqnhvTbU6DOYIvzNmM8YGJLJNUcxDAG7
-         1FZdL+5H0f2xIqaZsLI9lNqUwMGJpVs5xKVddfmZdH0FWdDK+cc2mh0jq6lD2oCC8R1z
-         0PMwi0VDsSV+7kXvf1iLjIKhxXqSq5gq48kK6yKQXyzFfDUOobOsVItKHIUS1iBqc8fj
-         J2RNPd0DrC6RXIEnB+/deH8TDEcxshmrs9EqHNSjzESTRwQlyGVp8o3fcfon90L7cF5D
-         LC/w==
-X-Gm-Message-State: APjAAAXqr7YlUUKUQVEegr9TgCS3G21i9AkgDGV/koAYpCKaMPGgrWsE
-        gf5kmdijrooonnMx0HqOLXXQAw==
-X-Google-Smtp-Source: APXvYqzU0tWl6tXFwZxpKX/HcCH9W/vDJ+gkXXF3qBjaQgCFCI9igBdHVWfJ4FDKbmiBVNRCezMEow==
-X-Received: by 2002:adf:ecc7:: with SMTP id s7mr13048781wro.305.1573471618209;
-        Mon, 11 Nov 2019 03:26:58 -0800 (PST)
+        bh=VCIU/ruaYoPrO6tp9vJ9FadSx4Mgkcrp/rqcgWyosK4=;
+        b=TYh0BQyZKs3jJcoqhtmQouYD8L1lcwMeuxTQx1oG0UKvWejR5HEYeNCQbKvPwIUY6v
+         i5E72TFvAs3e5iL2DUtnj1GXEfFMBccaPz3F8zKV+59trOfQ2KgUVjRZNkUPEZsvSHWe
+         HCI8R1SF8TxaelmOw3dwA068fT8BZqcK70pnKeH+xDVCJgJoLBRhpwFaozpPKTIhScyN
+         w9fmpRc0dU5gGCX1m/z4sqki10PhqVNZ2OvBtr8D1YQ/SZ9cpDIUdRbsLd9eoU6HYmdd
+         OxlKsJ78qKZa2yo1+FMjPwdtHvEbHCOBRzjPNWKvwXPpZce1kHPnrUHEJ8qGP90VY+bq
+         dXYQ==
+X-Gm-Message-State: APjAAAWNIWBEmveyN3lQxEGc4WPsnPojXpWiHGiZngbM3HSK1kz5e63t
+        Cx8K8S9GMYO6Cd9poBWN4BSfSA==
+X-Google-Smtp-Source: APXvYqyMJgtgV0bLvBkQaySmSbtMQNWN+rcf6xUT/gS+40mNdpwznf/9DJgGBm2Sw5a5ebr8gKkBww==
+X-Received: by 2002:a05:6000:343:: with SMTP id e3mr21544323wre.20.1573471735373;
+        Mon, 11 Nov 2019 03:28:55 -0800 (PST)
 Received: from dell ([95.147.198.88])
-        by smtp.gmail.com with ESMTPSA id b3sm17597864wmh.17.2019.11.11.03.26.57
+        by smtp.gmail.com with ESMTPSA id m3sm17705312wrb.67.2019.11.11.03.28.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 03:26:57 -0800 (PST)
-Date:   Mon, 11 Nov 2019 11:26:50 +0000
+        Mon, 11 Nov 2019 03:28:54 -0800 (PST)
+Date:   Mon, 11 Nov 2019 11:28:42 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH] mfd: ti_am335x_tscadc: Fix static checker warning
-Message-ID: <20191111112650.GJ3218@dell>
-References: <20191109050618.20637-1-vigneshr@ti.com>
+To:     Kiran Gunda <kgunda@codeaurora.org>
+Cc:     swboyd@chromium.org, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org
+Subject: Re: [PATCH V2] mfd: qcom-spmi-pmic: Add support for pm6150 and
+ pm6150l
+Message-ID: <20191111112842.GK3218@dell>
+References: <1572931309-16250-1-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191109050618.20637-1-vigneshr@ti.com>
+In-Reply-To: <1572931309-16250-1-git-send-email-kgunda@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 09 Nov 2019, Vignesh Raghavendra wrote:
+On Tue, 05 Nov 2019, Kiran Gunda wrote:
 
-> It is possible that platform_get_resource() might return NULL and
-> therefore code needs to check for this condition before
-> de-referencing the pointer.
-> Therefore move the de-referencing of 'res' pointer after
-> devm_ioremap_resource() which would have checked the validity of the
-> pointer
+> Add the compatibles and PMIC ids for pm6150 and pm6150l PMICs
+> found on SC7180 based platforms.
 > 
-> Reported-by: Dan Murphy <dmurphy@ti.com>
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
 > ---
->  drivers/mfd/ti_am335x_tscadc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  - Changes from V1:
+>    Sorted the macros and compatibles.
+> 
+>  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt | 2 ++
+>  drivers/mfd/qcom-spmi-pmic.c                             | 4 ++++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
+> index 1437062..b5fc64e 100644
+> --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
+> +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
+> @@ -32,6 +32,8 @@ Required properties:
+>                     "qcom,pm8998",
+>                     "qcom,pmi8998",
+>                     "qcom,pm8005",
+> +		   "qcom,pm6150",
+> +		   "qcom,pm6150l",
 
-Applied, thanks.
+Tabbing looks off.
 
 -- 
 Lee Jones [李琼斯]
