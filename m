@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C15F7C6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23336F7D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbfKKSqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:46:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38220 "EHLO mail.kernel.org"
+        id S1730501AbfKKSzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:55:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729528AbfKKSp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:45:57 -0500
+        id S1729864AbfKKSzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:55:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9597320674;
-        Mon, 11 Nov 2019 18:45:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FD8720818;
+        Mon, 11 Nov 2019 18:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497957;
-        bh=NJT/dnqZQQ5GqTsg0JsodvxiF/DmvijiBBevYIJ0iqs=;
+        s=default; t=1573498500;
+        bh=oa7+ObusdG651tsz+lRNsmIw5Rwdto7V/xiHEg4SlIM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pmdsDwBVHvoG8Mp7bGIVdDwP+1jz9L4OlE8n02EReY3aOHr4AiYow19DfkoAfuq4a
-         95gt1Iiq/XhEeP4409PHPDrceWH9GEphD5l5lJqgHAgBBnHaIPCTHtLFnPqlxRngWw
-         Yv2++lCvZGws8Lbv0NqRcVeSqxA4XhNqwQ2HovOU=
+        b=yEXypkrDngJUknxQghkYciV3VofDAlfQa7HcKd7oGBSNA0IOZMuu+SNMm1tlSVlYi
+         fngP8+DheGYNJPevcUOs9LkCtsd5suSmdzblerQzQC6oLukciM6q8lpi9Aw2czno1b
+         PChPIujWMqAh+FUaralnd5E2IpMvIvDBc7KfvF2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 080/125] RDMA/uverbs: Prevent potential underflow
+Subject: [PATCH 5.3 137/193] usb: dwc3: select CONFIG_REGMAP_MMIO
 Date:   Mon, 11 Nov 2019 19:28:39 +0100
-Message-Id: <20191111181450.802298592@linuxfoundation.org>
+Message-Id: <20191111181511.282245835@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit a9018adfde809d44e71189b984fa61cc89682b5e ]
+[ Upstream commit a51bab592fbbef10f0e42a8aed86adfbf6a68fa7 ]
 
-The issue is in drivers/infiniband/core/uverbs_std_types_cq.c in the
-UVERBS_HANDLER(UVERBS_METHOD_CQ_CREATE) function.  We check that:
+After many randconfig builds, one configuration caused a link
+error with dwc3-meson-g12a lacking the regmap-mmio code:
 
-        if (attr.comp_vector >= attrs->ufile->device->num_comp_vectors) {
+drivers/usb/dwc3/dwc3-meson-g12a.o: In function `dwc3_meson_g12a_probe':
+dwc3-meson-g12a.c:(.text+0x9f): undefined reference to `__devm_regmap_init_mmio_clk'
 
-But we don't check if "attr.comp_vector" is negative.  It could
-potentially lead to an array underflow.  My concern would be where
-cq->vector is used in the create_cq() function from the cxgb4 driver.
+Add the select statement that we have for all other users
+of that dependency.
 
-And really "attr.comp_vector" is appears as a u32 to user space so that's
-the right type to use.
-
-Fixes: 9ee79fce3642 ("IB/core: Add completion queue (cq) object actions")
-Link: https://lore.kernel.org/r/20191011133419.GA22905@mwanda
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: c99993376f72 ("usb: dwc3: Add Amlogic G12A DWC3 glue")
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/uverbs.h | 2 +-
- include/rdma/ib_verbs.h          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/dwc3/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
-index 5df8e548cc146..4a14de2d8c716 100644
---- a/drivers/infiniband/core/uverbs.h
-+++ b/drivers/infiniband/core/uverbs.h
-@@ -98,7 +98,7 @@ ib_uverbs_init_udata_buf_or_null(struct ib_udata *udata,
- 
- struct ib_uverbs_device {
- 	atomic_t				refcount;
--	int					num_comp_vectors;
-+	u32					num_comp_vectors;
- 	struct completion			comp;
- 	struct device			       *dev;
- 	struct ib_device	__rcu	       *ib_dev;
-diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-index b7d63c3970d18..f3d475024d376 100644
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -310,7 +310,7 @@ struct ib_tm_caps {
- 
- struct ib_cq_init_attr {
- 	unsigned int	cqe;
--	int		comp_vector;
-+	u32		comp_vector;
- 	u32		flags;
- };
- 
+diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+index 89abc6078703f..556a876c78962 100644
+--- a/drivers/usb/dwc3/Kconfig
++++ b/drivers/usb/dwc3/Kconfig
+@@ -102,6 +102,7 @@ config USB_DWC3_MESON_G12A
+        depends on ARCH_MESON || COMPILE_TEST
+        default USB_DWC3
+        select USB_ROLE_SWITCH
++	select REGMAP_MMIO
+        help
+          Support USB2/3 functionality in Amlogic G12A platforms.
+ 	 Say 'Y' or 'M' if you have one such device.
 -- 
 2.20.1
 
