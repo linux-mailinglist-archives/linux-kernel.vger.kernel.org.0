@@ -2,220 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DB0FF6EF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 08:18:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8E40F6EF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 08:20:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfKKHSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 02:18:17 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43482 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725812AbfKKHSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 02:18:17 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A14D48DEC969A6888331;
-        Mon, 11 Nov 2019 15:18:14 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 11 Nov
- 2019 15:18:12 +0800
-Subject: Re: [PATCH] f2fs: Fix deadlock under storage almost full/dirty
- condition
-To:     Sahitya Tummala <stummala@codeaurora.org>
-CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1573211027-30785-1-git-send-email-stummala@codeaurora.org>
- <5c491884-91d3-5b85-6d49-569a8d06f3a3@huawei.com>
- <20191111034026.GA15669@codeaurora.org>
- <9ece86fd-ff53-3a70-627e-c6acb03b9264@huawei.com>
- <20191111064441.GC15669@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <46f2e438-a1b9-c7fa-4c83-241dc85253e8@huawei.com>
-Date:   Mon, 11 Nov 2019 15:18:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726910AbfKKHUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 02:20:03 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58187 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfKKHUC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 02:20:02 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iU3zQ-0005vi-5D; Mon, 11 Nov 2019 08:19:56 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iU3zM-0007yV-Kj; Mon, 11 Nov 2019 08:19:52 +0100
+Date:   Mon, 11 Nov 2019 08:19:52 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-pwm@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Grant Erickson <marathon96@gmail.com>,
+        Joachim Eastwood <manabian@gmail.com>,
+        Neil Brown <neilb@suse.de>, Wen Yang <wen.yang99@zte.com.cn>
+Subject: Re: [PATCH] pwm: omap-dmtimer: Add missing put_device() call in
+ pwm_omap_dmtimer_probe()
+Message-ID: <20191111071952.6pbswbboqreen6im@pengutronix.de>
+References: <fd7a56e4-2a35-a6c4-e5bd-1e53a6c48687@web.de>
 MIME-Version: 1.0
-In-Reply-To: <20191111064441.GC15669@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fd7a56e4-2a35-a6c4-e5bd-1e53a6c48687@web.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sahitya,
+Hello Markus,
 
-On 2019/11/11 14:44, Sahitya Tummala wrote:
-> Hi Chao,
+On Sat, Nov 09, 2019 at 01:26:50PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 9 Nov 2019 13:09:42 +0100
 > 
-> On Mon, Nov 11, 2019 at 02:28:47PM +0800, Chao Yu wrote:
->> Hi Sahitya,
->>
->> On 2019/11/11 11:40, Sahitya Tummala wrote:
->>> Hi Chao,
->>>
->>> On Mon, Nov 11, 2019 at 10:51:10AM +0800, Chao Yu wrote:
->>>> On 2019/11/8 19:03, Sahitya Tummala wrote:
->>>>> There could be a potential deadlock when the storage capacity
->>>>> is almost full and theren't enough free segments available, due
->>>>> to which FG_GC is needed in the atomic commit ioctl as shown in
->>>>> the below callstack -
->>>>>
->>>>> schedule_timeout
->>>>> io_schedule_timeout
->>>>> congestion_wait
->>>>> f2fs_drop_inmem_pages_all
->>>>> f2fs_gc
->>>>> f2fs_balance_fs
->>>>> __write_node_page
->>>>> f2fs_fsync_node_pages
->>>>> f2fs_do_sync_file
->>>>> f2fs_ioctl
->>>>>
->>>>> If this inode doesn't have i_gc_failures[GC_FAILURE_ATOMIC] set,
->>>>> then it waits forever in f2fs_drop_inmem_pages_all(), for this
->>>>> atomic inode to be dropped. And the rest of the system is stuck
->>>>> waiting for sbi->gc_mutex lock, which is acquired by f2fs_balance_fs()
->>>>> in the stack above.
->>>>
->>>> I think the root cause of this issue is there is potential infinite loop in
->>>> f2fs_drop_inmem_pages_all() for the case of gc_failure is true, because once the
->>>> first inode in inode_list[ATOMIC_FILE] list didn't suffer gc failure, we will
->>>> skip dropping its in-memory cache and calling iput(), and traverse the list
->>>> again, most possibly there is the same inode in the head of that list.
->>>>
->>>
->>> I thought we are expecting for those atomic updates (without any gc failures) to be
->>> committed by doing congestion_wait() and thus retrying again. Hence, I just
->>
->> Nope, we only need to drop inode which encounter gc failures, and keep the rest
->> inodes.
->>
->>> fixed only if we are ending up waiting for commit to happen in the atomic
->>> commit path itself, which will be a deadlock.
->>
->> Look into call stack you provide, I don't think it's correct to drop such inode,
->> as its dirty pages should be committed before f2fs_fsync_node_pages(), so
->> calling f2fs_drop_inmem_pages won't release any inmem pages, and won't help
->> looped GC caused by skipping due to inmem pages.
->>
->> And then I figure out below fix...
->>
+> A coccicheck run provided information like the following.
 > 
-> Thanks for the explanation.
-> The fix below looks good to me.
+> drivers/pwm/pwm-omap-dmtimer.c:304:2-8: ERROR: missing put_device;
+> call of_find_device_by_node on line 255, but without a corresponding
+> object release within this function.
+> 
+> Generated by: scripts/coccinelle/free/put_device.cocci
+> 
+> Thus add jump targets to fix the exception handling for this
+> function implementation.
+> 
+> Fixes: b7290cf6ff7869ec12070aa146c370728cab62c2 ("pwm: pwm-omap-dmtimer: Adapt driver to utilize dmtimer pdata ops")
+> Fixes: 6604c6556db9e41c85f2839f66bd9d617bcf9f87 ("pwm: Add PWM driver for OMAP using dual-mode timers")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/pwm/pwm-omap-dmtimer.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+> index 00772fc53490..958854213786 100644
+> --- a/drivers/pwm/pwm-omap-dmtimer.c
+> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+> @@ -301,12 +301,13 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+>  put:
+>  	of_node_put(timer);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto check_timer_pdev;
+> 
+>  	omap = devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
+>  	if (!omap) {
+>  		pdata->free(dm_timer);
+> -		return -ENOMEM;
+> +		ret = -ENOMEM;
+> +		goto put_device;
+>  	}
+> 
+>  	omap->pdata = pdata;
+> @@ -340,12 +341,19 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "failed to register PWM\n");
+>  		omap->pdata->free(omap->dm_timer);
+> -		return ret;
+> +		goto put_device;
+>  	}
+> 
+>  	platform_set_drvdata(pdev, omap);
+> 
+>  	return 0;
+> +
+> +check_timer_pdev:
+> +	if (timer_pdev)
+> +put_device:
+> +		put_device(&timer_pdev->dev);
 
-So could you submit v2? :)
+This is ugly but necessary with the driver as is because the error
+handling is interwinded within the normal path through this function.
 
-Thanks,
+I would prefer to clean this up first, then this fix gets a bit nicer.
+Will send a patch in reply to this mail.
 
-> 
-> Thanks,
-> Sahitya.
-> 
->>>
->>>> Could you please check below fix:
->>>>
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index 7bf7b0194944..8a3a35b42a37 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -1395,6 +1395,7 @@ struct f2fs_sb_info {
->>>>  	unsigned int gc_mode;			/* current GC state */
->>>>  	unsigned int next_victim_seg[2];	/* next segment in victim section */
->>>>  	/* for skip statistic */
->>>> +	unsigned int atomic_files;		/* # of opened atomic file */
->>>>  	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
->>>>  	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
->>>>
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index ecd063239642..79f4b348951a 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -2047,6 +2047,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->>>>  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->>>>  	if (list_empty(&fi->inmem_ilist))
->>>>  		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
->>>> +	sbi->atomic_files++;
->>>>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->>>>
->>>>  	/* add inode in inmem_list first and set atomic_file */
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 8b977bbd6822..6aa0bb693697 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -288,6 +288,8 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi,
->>>> bool gc_failure)
->>>>  	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
->>>>  	struct inode *inode;
->>>>  	struct f2fs_inode_info *fi;
->>>> +	unsigned int count = sbi->atomic_files;
->>>
->>> If the sbi->atomic_files decrements just after this, then the below exit condition
->>> may not work. In that case, looped will never be >= count.
->>>
->>>> +	unsigned int looped = 0;
->>>>  next:
->>>>  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->>>>  	if (list_empty(head)) {
->>>> @@ -296,22 +298,29 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi,
->>>> bool gc_failure)
->>>>  	}
->>>>  	fi = list_first_entry(head, struct f2fs_inode_info, inmem_ilist);
->>>>  	inode = igrab(&fi->vfs_inode);
->>>> +	if (inode)
->>>> +		list_move_tail(&fi->inmem_ilist, head);
->>>>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->>>>
->>>>  	if (inode) {
->>>>  		if (gc_failure) {
->>>> -			if (fi->i_gc_failures[GC_FAILURE_ATOMIC])
->>>> -				goto drop;
->>>> -			goto skip;
->>>> +			if (!fi->i_gc_failures[GC_FAILURE_ATOMIC])
->>>> +				goto skip;
->>>>  		}
->>>> -drop:
->>>>  		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
->>>>  		f2fs_drop_inmem_pages(inode);
->>>> +skip:
->>>>  		iput(inode);
->>>
->>> Does this result into f2fs_evict_inode() in this context for this inode?
->>
->> Yup, we need to call igrab/iput in pair in f2fs_drop_inmem_pages_all() anyway.
->>
->> Previously, we may have .i_count leak...
->>
->> Thanks,
->>
->>>
->>> thanks,
->>>
->>>>  	}
->>>> -skip:
->>>> +
->>>>  	congestion_wait(BLK_RW_ASYNC, HZ/50);
->>>>  	cond_resched();
->>>> +
->>>> +	if (gc_failure) {
->>>> +		if (++looped >= count)
->>>> +			return;
->>>> +	}
->>>> +
->>>>  	goto next;
->>>>  }
->>>>
->>>> @@ -334,6 +343,7 @@ void f2fs_drop_inmem_pages(struct inode *inode)
->>>>  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->>>>  	if (!list_empty(&fi->inmem_ilist))
->>>>  		list_del_init(&fi->inmem_ilist);
->>>> +	sbi->atomic_files--;
->>>>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->>>>  }
->>>>
->>>> Thanks,
->>>
-> 
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
