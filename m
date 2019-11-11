@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70971F7CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:52:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69267F7B81
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:37:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbfKKSvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:51:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45520 "EHLO mail.kernel.org"
+        id S1728789AbfKKSgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:36:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727543AbfKKSvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:51:21 -0500
+        id S1728129AbfKKSgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:36:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B367204FD;
-        Mon, 11 Nov 2019 18:51:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 373F3204FD;
+        Mon, 11 Nov 2019 18:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498280;
-        bh=ZX6R4GWSqAZPNA1XwDrGuydIQia0Bwzb5xuyTh9Pim4=;
+        s=default; t=1573497409;
+        bh=b0+wHfdxK6blSJTOX65f88M9L+pTzgIeBUoYaIac8RU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GdyocKtUnwTKG0I2Bd7TR5uWywdA8NcN2Gv//9EDMY4KiHv905tZMxWs0FYv4Q29K
-         rUi7fbNWuZVr+6gZMOG9hVZsMgJClOXTKKDWkPp1go78QTbmBZeJ8WLsiPaBkbGf28
-         BKYg4VUBWalMWIJbnh6lfkMUpGn6d31IHiR3jpdI=
+        b=Bf7Em//kQiMv6H02C/GNd64GUIVMJ5cbrHwGe/ulqIqHaIuSg1A9wrPeVsbRMKXon
+         EInLT5UeuYj8YXfJMr8oF+ML0gWg43WKA5teMLceJJTCSNScMo1kcJ7DT0evRq2J9y
+         rBPQid7w7Vd0nbeO2yEKWWV9Hd3hcLA5p/tY4mYg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 5.3 076/193] can: rx-offload: can_rx_offload_queue_sorted(): fix error handling, avoid skb mem leak
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 008/105] NFC: fdp: fix incorrect free object
 Date:   Mon, 11 Nov 2019 19:27:38 +0100
-Message-Id: <20191111181506.732874177@linuxfoundation.org>
+Message-Id: <20191111181425.450178863@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Pan Bian <bianpan2016@163.com>
 
-commit ca913f1ac024559ebc17f0b599af262f0ad997c9 upstream.
+[ Upstream commit 517ce4e93368938b204451285e53014549804868 ]
 
-If the rx-offload skb_queue is full can_rx_offload_queue_sorted() will
-not queue the skb and return with an error.
+The address of fw_vsc_cfg is on stack. Releasing it with devm_kfree() is
+incorrect, which may result in a system crash or other security impacts.
+The expected object to free is *fw_vsc_cfg.
 
-None of the callers of this function, issue a kfree_skb() to free the
-not queued skb. This results in a memory leak.
-
-This patch fixes the problem by freeing the skb in case of a full queue.
-The return value is adjusted to -ENOBUFS to better reflect the actual
-problem.
-
-The device stats handling is left to the callers, as this function might
-be used in both the rx and tx path.
-
-Fixes: 55059f2b7f86 ("can: rx-offload: introduce can_rx_offload_get_echo_skb() and can_rx_offload_queue_sorted() functions")
-Cc: linux-stable <stable@vger.kernel.org>
-Cc: Martin Hundebøll <martin@geanix.com>
-Reported-by: Martin Hundebøll <martin@geanix.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/can/rx-offload.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/nfc/fdp/i2c.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/rx-offload.c
-+++ b/drivers/net/can/rx-offload.c
-@@ -207,8 +207,10 @@ int can_rx_offload_queue_sorted(struct c
- 	unsigned long flags;
+--- a/drivers/nfc/fdp/i2c.c
++++ b/drivers/nfc/fdp/i2c.c
+@@ -267,7 +267,7 @@ static void fdp_nci_i2c_read_device_prop
+ 						  *fw_vsc_cfg, len);
  
- 	if (skb_queue_len(&offload->skb_queue) >
--	    offload->skb_queue_len_max)
--		return -ENOMEM;
-+	    offload->skb_queue_len_max) {
-+		kfree_skb(skb);
-+		return -ENOBUFS;
-+	}
- 
- 	cb = can_rx_offload_get_cb(skb);
- 	cb->timestamp = timestamp;
+ 		if (r) {
+-			devm_kfree(dev, fw_vsc_cfg);
++			devm_kfree(dev, *fw_vsc_cfg);
+ 			goto vsc_read_err;
+ 		}
+ 	} else {
 
 
