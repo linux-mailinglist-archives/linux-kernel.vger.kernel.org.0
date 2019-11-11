@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A830F7BC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E115DF7D74
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbfKKSjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:39:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58766 "EHLO mail.kernel.org"
+        id S1730790AbfKKS5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:57:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728254AbfKKSjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:39:40 -0500
+        id S1730788AbfKKS5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:57:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C1B02196E;
-        Mon, 11 Nov 2019 18:39:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E2B720659;
+        Mon, 11 Nov 2019 18:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497579;
-        bh=qMniKZ600avFidGQRAxOvWNIc/Fv4rGe7VfVytJg73A=;
+        s=default; t=1573498620;
+        bh=mYlaCVYg9rolJoPN4lknTJh4sLZ+CqjFaF0axUGNGzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MRQnRZSlUtJGHesKKqFljNDheoXWyHT8lWM8DgPEymN3QeTwtSRp4f/DsZibuO4Qo
-         M7+y7CEux/ZQGGflV66AdkVb7qY0JxKXEPTlgujBo3s+lSyFNz5k+fE3HVhArwiXQF
-         QoHU2+aUBxBCBdRTlW6OpcvqoqgKp6sVBgZ0mhc0=
+        b=J8yNWncZbj/PVB+6GMAKiq4SXn/dJjpi+pruaj4Z93aVJ5ad78o4OOeLY5eHeZzf0
+         GrpoddUXQ8h2bQw7qkSQHjHK/+Tv2CqFJhMww7G8+R7zjc7PnL7hRxo5rM8DWwk00f
+         7ORmn92i80iC/c67vKAFwH563KVmTIoZnadzOY7o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Neil Brown <neilb@suse.de>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 103/105] can: flexcan: disable completely the ECC mechanism
-Date:   Mon, 11 Nov 2019 19:29:13 +0100
-Message-Id: <20191111181449.558889091@linuxfoundation.org>
+Subject: [PATCH 5.3 172/193] SUNRPC: The RDMA back channel mustnt disappear while requests are outstanding
+Date:   Mon, 11 Nov 2019 19:29:14 +0100
+Message-Id: <20191111181513.812361342@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joakim Zhang <qiangqing.zhang@nxp.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 5e269324db5adb2f5f6ec9a93a9c7b0672932b47 ]
+[ Upstream commit 9edb455e6797bb50aa38ef71e62668966065ede8 ]
 
-The ECC (memory error detection and correction) mechanism can be
-activated or not, controlled by the ECCDIS bit in CAN_MECR. When
-disabled, updates on indications and reporting registers are stopped.
-So if want to disable ECC completely, had better assert ECCDIS bit, not
-just mask the related interrupts.
+If there are RDMA back channel requests being processed by the
+server threads, then we should hold a reference to the transport
+to ensure it doesn't get freed from underneath us.
 
-Fixes: cdce844865be ("can: flexcan: add vf610 support for FlexCAN")
-Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reported-by: Neil Brown <neilb@suse.de>
+Fixes: 63cae47005af ("xprtrdma: Handle incoming backward direction RPC calls")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/flexcan.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/sunrpc/xprtrdma/backchannel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/can/flexcan.c b/drivers/net/can/flexcan.c
-index 7280f3a8aa041..84dd79041285a 100644
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -1018,6 +1018,7 @@ static int flexcan_chip_start(struct net_device *dev)
- 		reg_mecr = flexcan_read(&regs->mecr);
- 		reg_mecr &= ~FLEXCAN_MECR_ECRWRDIS;
- 		flexcan_write(reg_mecr, &regs->mecr);
-+		reg_mecr |= FLEXCAN_MECR_ECCDIS;
- 		reg_mecr &= ~(FLEXCAN_MECR_NCEFAFRZ | FLEXCAN_MECR_HANCEI_MSK |
- 			      FLEXCAN_MECR_FANCEI_MSK);
- 		flexcan_write(reg_mecr, &regs->mecr);
+diff --git a/net/sunrpc/xprtrdma/backchannel.c b/net/sunrpc/xprtrdma/backchannel.c
+index 59e624b1d7a0d..7cccaab9a17ae 100644
+--- a/net/sunrpc/xprtrdma/backchannel.c
++++ b/net/sunrpc/xprtrdma/backchannel.c
+@@ -165,6 +165,7 @@ void xprt_rdma_bc_free_rqst(struct rpc_rqst *rqst)
+ 	spin_lock(&xprt->bc_pa_lock);
+ 	list_add_tail(&rqst->rq_bc_pa_list, &xprt->bc_pa_list);
+ 	spin_unlock(&xprt->bc_pa_lock);
++	xprt_put(xprt);
+ }
+ 
+ static struct rpc_rqst *rpcrdma_bc_rqst_get(struct rpcrdma_xprt *r_xprt)
+@@ -261,6 +262,7 @@ void rpcrdma_bc_receive_call(struct rpcrdma_xprt *r_xprt,
+ 
+ 	/* Queue rqst for ULP's callback service */
+ 	bc_serv = xprt->bc_serv;
++	xprt_get(xprt);
+ 	spin_lock(&bc_serv->sv_cb_lock);
+ 	list_add(&rqst->rq_bc_list, &bc_serv->sv_cb_list);
+ 	spin_unlock(&bc_serv->sv_cb_lock);
 -- 
 2.20.1
 
