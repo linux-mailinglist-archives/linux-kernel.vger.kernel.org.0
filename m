@@ -2,42 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 749E7F7BA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D41F7D52
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729006AbfKKSi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:38:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57332 "EHLO mail.kernel.org"
+        id S1730643AbfKKSzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:55:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728989AbfKKSiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:38:23 -0500
+        id S1728484AbfKKSzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:55:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA69B21925;
-        Mon, 11 Nov 2019 18:38:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE732222BD;
+        Mon, 11 Nov 2019 18:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497503;
-        bh=/yTxoQdhsdVTBQCLwhVcQgv5+8lzYPyz6uvpfgB+Vy8=;
+        s=default; t=1573498530;
+        bh=Tqhu+9f03OilOW6+eILq5Bv9vTNqSi1CiKwBg/6mxrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gxh3ZjGtLKIEq4EmfiJ8MOsTngAq+9KVjh0cmJC30kz02vnaf8XH7sni6rdPb/G8B
-         9kfdQzXFFwE2m/Ij391Xhcy+PxQ5c9B2hY5lUykKWx71Vt4ZWzdScKzGCrCqjlaqXI
-         iHtnCZz2ejKjcYnVxbYMlc3foy30zTbGsltXRZVQ=
+        b=qZ1X7nXF5NyEgZcz+vDHtYk0sly0enGmvRwMtTXK0ReaexQtviXTPvt8QIlSf+Snb
+         EHCDIZlaPjDmbou1ZzN5+OSEyX6FdxG1yL5oiPn3dvLSY8hTE4ndDeXkrMdPcW0K8i
+         ps+q2ys/mhKJeELu9SNSLnFokX/iezY/ZU/uxqDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 076/105] scsi: lpfc: Honor module parameter lpfc_use_adisc
-Date:   Mon, 11 Nov 2019 19:28:46 +0100
-Message-Id: <20191111181446.238322297@linuxfoundation.org>
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 145/193] perf/x86/amd/ibs: Handle erratum #420 only on the affected CPU family (10h)
+Date:   Mon, 11 Nov 2019 19:28:47 +0100
+Message-Id: <20191111181511.854049502@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,63 +55,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Wagner <dwagner@suse.de>
+From: Kim Phillips <kim.phillips@amd.com>
 
-[ Upstream commit 0fd103ccfe6a06e40e2d9d8c91d96332cc9e1239 ]
+[ Upstream commit e431e79b60603079d269e0c2a5177943b95fa4b6 ]
 
-The initial lpfc_desc_set_adisc implementation in commit
-dea3101e0a5c ("lpfc: add Emulex FC driver version 8.0.28") enabled ADISC if
+This saves us writing the IBS control MSR twice when disabling the
+event.
 
-	cfg_use_adisc && RSCN_MODE && FCP_2_DEVICE
+I searched revision guides for all families since 10h, and did not
+find occurrence of erratum #420, nor anything remotely similar:
+so we isolate the secondary MSR write to family 10h only.
 
-In commit 92d7f7b0cde3 ("[SCSI] lpfc: NPIV: add NPIV support on top of
-SLI-3") this changed to
+Also unconditionally update the count mask for IBS Op implementations
+that have read & writeable current count (CurCnt) fields in addition
+to the MaxCnt field.  These bits were reserved on prior
+implementations, and therefore shouldn't have negative impact.
 
-	(cfg_use_adisc && RSC_MODE) || FCP_2_DEVICE
-
-and later in commit ffc954936b13 ("[SCSI] lpfc 8.3.13: FC Discovery Fixes
-and enhancements.") to
-
-	(cfg_use_adisc && RSC_MODE) || (FCP_2_DEVICE && FCP_TARGET)
-
-A customer reports that after a devloss, an ADISC failure is logged. It
-turns out the ADISC flag is set even the user explicitly set lpfc_use_adisc
-= 0.
-
-[Sat Dec 22 22:55:58 2018] lpfc 0000:82:00.0: 2:(0):0203 Devloss timeout on WWPN 50:01:43:80:12:8e:40:20 NPort x05df00 Data: x82000000 x8 xa
-[Sat Dec 22 23:08:20 2018] lpfc 0000:82:00.0: 2:(0):2755 ADISC failure DID:05DF00 Status:x9/x70000
-
-[mkp: fixed Hannes' email]
-
-Fixes: 92d7f7b0cde3 ("[SCSI] lpfc: NPIV: add NPIV support on top of SLI-3")
-Cc: Dick Kennedy <dick.kennedy@broadcom.com>
-Cc: James Smart <james.smart@broadcom.com>
-Link: https://lore.kernel.org/r/20191022072112.132268-1-dwagner@suse.de
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Daniel Wagner <dwagner@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: c9574fe0bdb9 ("perf/x86-ibs: Implement workaround for IBS erratum #420")
+Link: https://lkml.kernel.org/r/20191023150955.30292-2-kim.phillips@amd.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_nportdisc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/events/amd/ibs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
-index 36fb549eb4e86..a0658d1582287 100644
---- a/drivers/scsi/lpfc/lpfc_nportdisc.c
-+++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
-@@ -809,9 +809,9 @@ lpfc_disc_set_adisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
- 
- 	if (!(vport->fc_flag & FC_PT2PT)) {
- 		/* Check config parameter use-adisc or FCP-2 */
--		if ((vport->cfg_use_adisc && (vport->fc_flag & FC_RSCN_MODE)) ||
-+		if (vport->cfg_use_adisc && ((vport->fc_flag & FC_RSCN_MODE) ||
- 		    ((ndlp->nlp_fcp_info & NLP_FCP_2_DEVICE) &&
--		     (ndlp->nlp_type & NLP_FCP_TARGET))) {
-+		     (ndlp->nlp_type & NLP_FCP_TARGET)))) {
- 			spin_lock_irq(shost->host_lock);
- 			ndlp->nlp_flag |= NLP_NPR_ADISC;
- 			spin_unlock_irq(shost->host_lock);
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 98ba21a588a15..26c36357c4c9c 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -377,7 +377,8 @@ static inline void perf_ibs_disable_event(struct perf_ibs *perf_ibs,
+ 					  struct hw_perf_event *hwc, u64 config)
+ {
+ 	config &= ~perf_ibs->cnt_mask;
+-	wrmsrl(hwc->config_base, config);
++	if (boot_cpu_data.x86 == 0x10)
++		wrmsrl(hwc->config_base, config);
+ 	config &= ~perf_ibs->enable_mask;
+ 	wrmsrl(hwc->config_base, config);
+ }
+@@ -553,7 +554,8 @@ static struct perf_ibs perf_ibs_op = {
+ 	},
+ 	.msr			= MSR_AMD64_IBSOPCTL,
+ 	.config_mask		= IBS_OP_CONFIG_MASK,
+-	.cnt_mask		= IBS_OP_MAX_CNT,
++	.cnt_mask		= IBS_OP_MAX_CNT | IBS_OP_CUR_CNT |
++				  IBS_OP_CUR_CNT_RAND,
+ 	.enable_mask		= IBS_OP_ENABLE,
+ 	.valid_mask		= IBS_OP_VAL,
+ 	.max_period		= IBS_OP_MAX_CNT << 4,
 -- 
 2.20.1
 
