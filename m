@@ -2,46 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80675F7D5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:56:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E37B5F7C1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfKKS4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:56:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54002 "EHLO mail.kernel.org"
+        id S1729022AbfKKSnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:43:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729325AbfKKS4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:56:05 -0500
+        id S1728300AbfKKSnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:43:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7830E20818;
-        Mon, 11 Nov 2019 18:56:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A50721783;
+        Mon, 11 Nov 2019 18:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498565;
-        bh=ygJQPBu2LlwrjY1MmWjJIX7q1jI3QH98eAB3vXm+lQQ=;
+        s=default; t=1573497797;
+        bh=QiTlitfYGxD2rq2OwiN44AMkLuoCVAPxbQZCfxigeZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OZli4X4ht8byxEYmoaTgExDFEuCLq6YF8YDbgOosDSDShZckCfF+05EhpEwrJayDa
-         jTfRF2hj2S3vlwtFFYdA3DbfQrQkK6VRYqQW9eYGA4WaVw59dK6gJUAAkpF6VZ43Zy
-         p3wc9TgvWKLlsX1kuJMiKV+ibZ3gNqa1D+2uExTM=
+        b=ORQeLjbrKPbC45kdqtskSQERFm27ITPu8qKc3W59JoY1yAy2XNrQMHq+ygFZJc3qt
+         i2fOtnXnjmGdgL1zXTegzHN9u7EHVwJYDm0/+THA+LWciejlygVI3PrKsbJnKFt4Fj
+         3Y7LRMar2wS20YMtWCZVQKBL0Te1Pe4aPcwtqzB0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        yuqi jin <jinyuqi@huawei.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 116/193] net: stmmac: Fix the problem of tso_xmit
-Date:   Mon, 11 Nov 2019 19:28:18 +0100
-Message-Id: <20191111181509.701697275@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 060/125] ALSA: usb-audio: Remove superfluous bLength checks
+Date:   Mon, 11 Nov 2019 19:28:19 +0100
+Message-Id: <20191111181448.330781223@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,43 +42,238 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuqi jin <jinyuqi@huawei.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 34c15202896d11e3974788daf9005a84ec45f7a2 ]
+commit b8e4f1fdfa422398c2d6c47bfb7d1feb3046d70a upstream.
 
-When the address width of DMA is greater than 32, the packet header occupies
-a BD descriptor. The starting address of the data should be added to the
-header length.
+Now that we got the more comprehensive validation code for USB-audio
+descriptors, the check of overflow in each descriptor unit parser
+became superfluous.  Drop some of the obvious cases.
 
-Fixes: a993db88d17d ("net: stmmac: Enable support for > 32 Bits addressing in XGMAC")
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Signed-off-by: yuqi jin <jinyuqi@huawei.com>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/usb/clock.c |   14 +++------
+ sound/usb/mixer.c |   84 ------------------------------------------------------
+ 2 files changed, 6 insertions(+), 92 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index fe2d3029de5ea..ed0e694a08553 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2906,6 +2906,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 	} else {
- 		stmmac_set_desc_addr(priv, first, des);
- 		tmp_pay_len = pay_len;
-+		des += proto_hdr_len;
+--- a/sound/usb/clock.c
++++ b/sound/usb/clock.c
+@@ -52,39 +52,37 @@ static void *find_uac_clock_desc(struct
+ static bool validate_clock_source_v2(void *p, int id)
+ {
+ 	struct uac_clock_source_descriptor *cs = p;
+-	return cs->bLength == sizeof(*cs) && cs->bClockID == id;
++	return cs->bClockID == id;
+ }
+ 
+ static bool validate_clock_source_v3(void *p, int id)
+ {
+ 	struct uac3_clock_source_descriptor *cs = p;
+-	return cs->bLength == sizeof(*cs) && cs->bClockID == id;
++	return cs->bClockID == id;
+ }
+ 
+ static bool validate_clock_selector_v2(void *p, int id)
+ {
+ 	struct uac_clock_selector_descriptor *cs = p;
+-	return cs->bLength >= sizeof(*cs) && cs->bClockID == id &&
+-		cs->bLength == 7 + cs->bNrInPins;
++	return cs->bClockID == id;
+ }
+ 
+ static bool validate_clock_selector_v3(void *p, int id)
+ {
+ 	struct uac3_clock_selector_descriptor *cs = p;
+-	return cs->bLength >= sizeof(*cs) && cs->bClockID == id &&
+-		cs->bLength == 11 + cs->bNrInPins;
++	return cs->bClockID == id;
+ }
+ 
+ static bool validate_clock_multiplier_v2(void *p, int id)
+ {
+ 	struct uac_clock_multiplier_descriptor *cs = p;
+-	return cs->bLength == sizeof(*cs) && cs->bClockID == id;
++	return cs->bClockID == id;
+ }
+ 
+ static bool validate_clock_multiplier_v3(void *p, int id)
+ {
+ 	struct uac3_clock_multiplier_descriptor *cs = p;
+-	return cs->bLength == sizeof(*cs) && cs->bClockID == id;
++	return cs->bClockID == id;
+ }
+ 
+ #define DEFINE_FIND_HELPER(name, obj, validator, type)		\
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -755,13 +755,6 @@ static int uac_mixer_unit_get_channels(s
+ {
+ 	int mu_channels;
+ 
+-	if (desc->bLength < sizeof(*desc))
+-		return -EINVAL;
+-	if (!desc->bNrInPins)
+-		return -EINVAL;
+-	if (desc->bLength < sizeof(*desc) + desc->bNrInPins)
+-		return -EINVAL;
+-
+ 	switch (state->mixer->protocol) {
+ 	case UAC_VERSION_1:
+ 	case UAC_VERSION_2:
+@@ -1796,13 +1789,6 @@ static int parse_clock_source_unit(struc
+ 	if (state->mixer->protocol != UAC_VERSION_2)
+ 		return -EINVAL;
+ 
+-	if (hdr->bLength != sizeof(*hdr)) {
+-		usb_audio_dbg(state->chip,
+-			      "Bogus clock source descriptor length of %d, ignoring.\n",
+-			      hdr->bLength);
+-		return 0;
+-	}
+-
+ 	/*
+ 	 * The only property of this unit we are interested in is the
+ 	 * clock source validity. If that isn't readable, just bail out.
+@@ -1861,62 +1847,20 @@ static int parse_audio_feature_unit(stru
+ 	__u8 *bmaControls;
+ 
+ 	if (state->mixer->protocol == UAC_VERSION_1) {
+-		if (hdr->bLength < 7) {
+-			usb_audio_err(state->chip,
+-				      "unit %u: invalid UAC_FEATURE_UNIT descriptor\n",
+-				      unitid);
+-			return -EINVAL;
+-		}
+ 		csize = hdr->bControlSize;
+-		if (!csize) {
+-			usb_audio_dbg(state->chip,
+-				      "unit %u: invalid bControlSize == 0\n",
+-				      unitid);
+-			return -EINVAL;
+-		}
+ 		channels = (hdr->bLength - 7) / csize - 1;
+ 		bmaControls = hdr->bmaControls;
+-		if (hdr->bLength < 7 + csize) {
+-			usb_audio_err(state->chip,
+-				      "unit %u: invalid UAC_FEATURE_UNIT descriptor\n",
+-				      unitid);
+-			return -EINVAL;
+-		}
+ 	} else if (state->mixer->protocol == UAC_VERSION_2) {
+ 		struct uac2_feature_unit_descriptor *ftr = _ftr;
+-		if (hdr->bLength < 6) {
+-			usb_audio_err(state->chip,
+-				      "unit %u: invalid UAC_FEATURE_UNIT descriptor\n",
+-				      unitid);
+-			return -EINVAL;
+-		}
+ 		csize = 4;
+ 		channels = (hdr->bLength - 6) / 4 - 1;
+ 		bmaControls = ftr->bmaControls;
+-		if (hdr->bLength < 6 + csize) {
+-			usb_audio_err(state->chip,
+-				      "unit %u: invalid UAC_FEATURE_UNIT descriptor\n",
+-				      unitid);
+-			return -EINVAL;
+-		}
+ 	} else { /* UAC_VERSION_3 */
+ 		struct uac3_feature_unit_descriptor *ftr = _ftr;
+ 
+-		if (hdr->bLength < 7) {
+-			usb_audio_err(state->chip,
+-				      "unit %u: invalid UAC3_FEATURE_UNIT descriptor\n",
+-				      unitid);
+-			return -EINVAL;
+-		}
+ 		csize = 4;
+ 		channels = (ftr->bLength - 7) / 4 - 1;
+ 		bmaControls = ftr->bmaControls;
+-		if (hdr->bLength < 7 + csize) {
+-			usb_audio_err(state->chip,
+-				      "unit %u: invalid UAC3_FEATURE_UNIT descriptor\n",
+-				      unitid);
+-			return -EINVAL;
+-		}
  	}
  
- 	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
--- 
-2.20.1
-
+ 	/* parse the source unit */
+@@ -2120,15 +2064,11 @@ static int parse_audio_input_terminal(st
+ 
+ 	if (state->mixer->protocol == UAC_VERSION_2) {
+ 		struct uac2_input_terminal_descriptor *d_v2 = raw_desc;
+-		if (d_v2->bLength < sizeof(*d_v2))
+-			return -EINVAL;
+ 		control = UAC2_TE_CONNECTOR;
+ 		term_id = d_v2->bTerminalID;
+ 		bmctls = le16_to_cpu(d_v2->bmControls);
+ 	} else if (state->mixer->protocol == UAC_VERSION_3) {
+ 		struct uac3_input_terminal_descriptor *d_v3 = raw_desc;
+-		if (d_v3->bLength < sizeof(*d_v3))
+-			return -EINVAL;
+ 		control = UAC3_TE_INSERTION;
+ 		term_id = d_v3->bTerminalID;
+ 		bmctls = le32_to_cpu(d_v3->bmControls);
+@@ -2390,18 +2330,7 @@ static int build_audio_procunit(struct m
+ 	const char *name = extension_unit ?
+ 		"Extension Unit" : "Processing Unit";
+ 
+-	if (desc->bLength < 13) {
+-		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
+-		return -EINVAL;
+-	}
+-
+ 	num_ins = desc->bNrInPins;
+-	if (desc->bLength < 13 + num_ins ||
+-	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
+-		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
+-		return -EINVAL;
+-	}
+-
+ 	for (i = 0; i < num_ins; i++) {
+ 		err = parse_audio_unit(state, desc->baSourceID[i]);
+ 		if (err < 0)
+@@ -2656,13 +2585,6 @@ static int parse_audio_selector_unit(str
+ 	const struct usbmix_name_map *map;
+ 	char **namelist;
+ 
+-	if (desc->bLength < 5 || !desc->bNrInPins ||
+-	    desc->bLength < 5 + desc->bNrInPins) {
+-		usb_audio_err(state->chip,
+-			"invalid SELECTOR UNIT descriptor %d\n", unitid);
+-		return -EINVAL;
+-	}
+-
+ 	for (i = 0; i < desc->bNrInPins; i++) {
+ 		err = parse_audio_unit(state, desc->baSourceID[i]);
+ 		if (err < 0)
+@@ -3168,8 +3090,6 @@ static int snd_usb_mixer_controls(struct
+ 		if (mixer->protocol == UAC_VERSION_1) {
+ 			struct uac1_output_terminal_descriptor *desc = p;
+ 
+-			if (desc->bLength < sizeof(*desc))
+-				continue; /* invalid descriptor? */
+ 			/* mark terminal ID as visited */
+ 			set_bit(desc->bTerminalID, state.unitbitmap);
+ 			state.oterm.id = desc->bTerminalID;
+@@ -3181,8 +3101,6 @@ static int snd_usb_mixer_controls(struct
+ 		} else if (mixer->protocol == UAC_VERSION_2) {
+ 			struct uac2_output_terminal_descriptor *desc = p;
+ 
+-			if (desc->bLength < sizeof(*desc))
+-				continue; /* invalid descriptor? */
+ 			/* mark terminal ID as visited */
+ 			set_bit(desc->bTerminalID, state.unitbitmap);
+ 			state.oterm.id = desc->bTerminalID;
+@@ -3208,8 +3126,6 @@ static int snd_usb_mixer_controls(struct
+ 		} else {  /* UAC_VERSION_3 */
+ 			struct uac3_output_terminal_descriptor *desc = p;
+ 
+-			if (desc->bLength < sizeof(*desc))
+-				continue; /* invalid descriptor? */
+ 			/* mark terminal ID as visited */
+ 			set_bit(desc->bTerminalID, state.unitbitmap);
+ 			state.oterm.id = desc->bTerminalID;
 
 
