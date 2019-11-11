@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D6CF7C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F512F7AE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfKKSor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:44:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36450 "EHLO mail.kernel.org"
+        id S1727412AbfKKSam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:30:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729749AbfKKSom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:44:42 -0500
+        id S1727366AbfKKSaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:30:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46898204FD;
-        Mon, 11 Nov 2019 18:44:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE92B21925;
+        Mon, 11 Nov 2019 18:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497881;
-        bh=VkUJ9Gsze1TFv8GHo1eZ9XvY5w9VauaoEJVkzxwl9SM=;
+        s=default; t=1573497038;
+        bh=Umhrk4I3/8m4n1PENLs+C//lxigBRjVE7+2A8v6Wleo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EMZ0eugVoycAUodNdNECkQILMI0J+aXhIMSZyfhThzQJFHmPyvmhkGtHxleJ1q9Zq
-         4I2EdAFbYh8P45uK+nMZg05JeuNrIk9z/dSqFRTwaa/FGidnWOQ8nTn4lyLw3xpeyD
-         kayFXtXyTtsRB7mYyJBgGyiqKq6L27epSk2/Vcy0=
+        b=UyiwXI7QEhPDfBHWEE/VM7E9NTOc8OODLR1kWIujkzV2xM3zE8tduFvQfM5Zdslxn
+         d71gHmli0oOznUjr4ieE90JhWc5EPvLsJ8Ou8y2dptpmCtvxxcB6wUYf2yr8+5fZv7
+         8dzzbOOcchAKjO9y9ZiSkGWKyy28DC0potuozLb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 078/125] net/mlx5: prevent memory leak in mlx5_fpga_conn_create_cq
-Date:   Mon, 11 Nov 2019 19:28:37 +0100
-Message-Id: <20191111181450.548753263@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.4 24/43] configfs: fix a deadlock in configfs_symlink()
+Date:   Mon, 11 Nov 2019 19:28:38 +0100
+Message-Id: <20191111181316.605135587@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit c8c2a057fdc7de1cd16f4baa51425b932a42eb39 ]
+commit 351e5d869e5ac10cb40c78b5f2d7dfc816ad4587 upstream.
 
-In mlx5_fpga_conn_create_cq if mlx5_vector2eqn fails the allocated
-memory should be released.
+Configfs abuses symlink(2).  Unlike the normal filesystems, it
+wants the target resolved at symlink(2) time, like link(2) would've
+done.  The problem is that ->symlink() is called with the parent
+directory locked exclusive, so resolving the target inside the
+->symlink() is easily deadlocked.
 
-Fixes: 537a50574175 ("net/mlx5: FPGA, Add high-speed connection routines")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Short of really ugly games in sys_symlink() itself, all we can
+do is to unlock the parent before resolving the target and
+relock it after.  However, that invalidates the checks done
+by the caller of ->symlink(), so we have to
+	* check that dentry is still where it used to be
+(it couldn't have been moved, but it could've been unhashed)
+	* recheck that it's still negative (somebody else
+might've successfully created a symlink with the same name
+while we were looking the target up)
+	* recheck the permissions on the parent directory.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/configfs/symlink.c |   33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c
-index 8ca1d1949d930..d8d0b6bd5c5ae 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c
-@@ -462,8 +462,10 @@ static int mlx5_fpga_conn_create_cq(struct mlx5_fpga_conn *conn, int cq_size)
- 	}
+--- a/fs/configfs/symlink.c
++++ b/fs/configfs/symlink.c
+@@ -157,11 +157,42 @@ int configfs_symlink(struct inode *dir,
+ 	    !type->ct_item_ops->allow_link)
+ 		goto out_put;
  
- 	err = mlx5_vector2eqn(mdev, smp_processor_id(), &eqn, &irqn);
--	if (err)
-+	if (err) {
-+		kvfree(in);
- 		goto err_cqwq;
-+	}
++	/*
++	 * This is really sick.  What they wanted was a hybrid of
++	 * link(2) and symlink(2) - they wanted the target resolved
++	 * at syscall time (as link(2) would've done), be a directory
++	 * (which link(2) would've refused to do) *AND* be a deep
++	 * fucking magic, making the target busy from rmdir POV.
++	 * symlink(2) is nothing of that sort, and the locking it
++	 * gets matches the normal symlink(2) semantics.  Without
++	 * attempts to resolve the target (which might very well
++	 * not even exist yet) done prior to locking the parent
++	 * directory.  This perversion, OTOH, needs to resolve
++	 * the target, which would lead to obvious deadlocks if
++	 * attempted with any directories locked.
++	 *
++	 * Unfortunately, that garbage is userland ABI and we should've
++	 * said "no" back in 2005.  Too late now, so we get to
++	 * play very ugly games with locking.
++	 *
++	 * Try *ANYTHING* of that sort in new code, and you will
++	 * really regret it.  Just ask yourself - what could a BOFH
++	 * do to me and do I want to find it out first-hand?
++	 *
++	 *  AV, a thoroughly annoyed bastard.
++	 */
++	inode_unlock(dir);
+ 	ret = get_target(symname, &path, &target_item, dentry->d_sb);
++	inode_lock(dir);
+ 	if (ret)
+ 		goto out_put;
  
- 	cqc = MLX5_ADDR_OF(create_cq_in, in, cq_context);
- 	MLX5_SET(cqc, cqc, log_cq_size, ilog2(cq_size));
--- 
-2.20.1
-
+-	ret = type->ct_item_ops->allow_link(parent_item, target_item);
++	if (dentry->d_inode || d_unhashed(dentry))
++		ret = -EEXIST;
++	else
++		ret = inode_permission(dir, MAY_WRITE | MAY_EXEC);
++	if (!ret)
++		ret = type->ct_item_ops->allow_link(parent_item, target_item);
+ 	if (!ret) {
+ 		mutex_lock(&configfs_symlink_mutex);
+ 		ret = create_link(parent_item, target_item, dentry);
 
 
