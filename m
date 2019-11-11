@@ -2,123 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2D10F7F0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:09:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61E81F7EF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbfKKTHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:07:54 -0500
-Received: from mx1.cock.li ([185.10.68.5]:51747 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728773AbfKKSg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:36:58 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+        id S1728914AbfKKShy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:37:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49524 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728893AbfKKShp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:37:45 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E7F7D60F40; Mon, 11 Nov 2019 18:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573497463;
+        bh=XUkpMv4++eaCLngkRhw1OHredjSZzbrBaEaI/2OxE7Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Kti4XqbdrQfRjqyR/k/Xny8Sb0xtKtDh1D3IZqqkBWb5xWvg+wQqdIJqZHwXihIhc
+         PP/E99tj4XKhLGPKvShQANy20h4r2YeA4de5RLgEzbdHe1GbxE6mAjUHe/A+LCs8td
+         mU/GHTayXswE5ngA9/blI9wj0zEDC+iSQbDuMgAY=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7B643602EE;
+        Mon, 11 Nov 2019 18:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573497460;
+        bh=XUkpMv4++eaCLngkRhw1OHredjSZzbrBaEaI/2OxE7Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CCIKVj49JlSCWHldgpmCB4IXhwNUaHHiNm5k6jIRWgDZVugsSUC8R1s7h2Mz1ZCsf
+         5lnoABiZDh9Qs36KSbNKgzk5Nte+p3XnHPr5lDmSPuekBBSB+t7v0kAfyUTaFl+OjP
+         EWvdgpv61XulzSMrBvfQ+X5+gMoYvPKOCMmok6p4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B643602EE
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Mon, 11 Nov 2019 11:37:38 -0700
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     evgreen@chromium.org, linus.walleij@linaro.org, maz@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC v2 06/14] dt-bindings/interrupt-controller: pdc: add
+ SPI config register
+Message-ID: <20191111183738.GJ16900@codeaurora.org>
+References: <1568411962-1022-1-git-send-email-ilina@codeaurora.org>
+ <1568411962-1022-7-git-send-email-ilina@codeaurora.org>
+ <5d92829e.1c69fb81.d860a.9096@mx.google.com>
+ <5da6b849.1c69fb81.a9b04.1b9f@mx.google.com>
+ <20191105205832.GE16900@codeaurora.org>
+ <5dc219a0.1c69fb81.f5014.42d2@mx.google.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firemail.cc; s=mail;
-        t=1573497414; bh=F6+fKuB9VlM/JzaEphjBNyziAWDmoBexPCn7fubbWsk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YgTT2nnEnb545IKXWp3i3ustVqq0i+9Ebu46B1tnuVeIktSVqSLqo7dO16Gj4gMxi
-         upC+iKhcXFKAON3CtRRjCFbWGWTy53Y0/wkAmXXR9L70TRF3nkebsunPYMdTekI5ok
-         FmvdE5aBVL15u7jVO7v0c8k03buDJlVLjNp29C29Df+TlKFQQx6yKMH4xMqyRFD1qq
-         4BSYqom1IW74NKpftBSloJnQH7n7fuiLWeRvPyNlVlHxkwGwfpGMReB+lzhKou+yo9
-         gWmjHY7BBLxy0F+P31/mAUGQsBlwNalPy61kY/MxxHagPgfS2XD81iH0VvtTGDfh/c
-         P55Tx3ZpWALmQ==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Mon, 11 Nov 2019 18:36:50 +0000
-From:   nipponmail@firemail.cc
-To:     rms@gnu.org
-Cc:     gnu-system-discuss@gnu.org, esr@thyrsus.com,
-        torvalds@linux-foundation.org, bugs@gnu.support, ams@gnu.org,
-        bruce@perens.com, licensing@fsf.org
-Subject: GrSecurity brags about it's GCC plugins (which violate the GPL for
- the same reason it's kernel patch does) -- Is this not a threat to the gnu gpl
- system?
-Message-ID: <cb3382d8f66c4cc9ef5c532c67edaa0e@firemail.cc>
-X-Sender: nipponmail@firemail.cc
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <5dc219a0.1c69fb81.f5014.42d2@mx.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Is this not a threat to the whole GNU-GPL system?
-grsecurity.org
-grsecurity.net
-> Unlike the manual, ad-hoc approach to finding and fixing Spectre v1 
-> vulnerabilities employed elsewhere, our much higher coverage Respectre® 
-> compiler plugin discovers and automatically instruments the code with 
-> high-performance fixes.
+On Tue, Nov 05 2019 at 17:53 -0700, Stephen Boyd wrote:
+>Quoting Lina Iyer (2019-11-05 12:58:32)
+>> On Tue, Oct 15 2019 at 00:27 -0600, Stephen Boyd wrote:
+>> >
+>> >I had another idea the other day. Maybe a better approach would be to
+>> >make the mailbox or SCM code an interrupt controller with the
+>> >appropriate functions to poke the bits necessary to make the interrupts
+>> >work. Then we can make it a chip in the hierarchy between the GIC and
+>> >PDC and make the interrupts call through from PDC to GIC. The locking
+>> >could be handled in each respective driver if necessary, and otherwise
+>> >we don't have to use a regmap or remap the same registers (except we may
+>> >need to describe if the parent is the mailbox node or the scm fimware
+>> >node).
+>> >
+>> Wouldn't that be a stretch to image the SCM register write  or a random
+>> register write as an interrupt controller? But I agree that it solves
+>> the issue of determining whether we want to use SCM or regmap.
+>
+>As far as I can tell it's similar to PDC which is basically a gate on
+>the line from a dedicated chip pad or a GPIO pad that lets the interrupt
+>flow through to the GIC or not. Isn't this yet another hardware block on
+>those paths that control the edge type or something?
+>
+>>
+>> But, we would still need to add syscon to the mailbox and then regmap
+>> the registers for the interrupt contoller.
+>
+>I'm saying that we can make the mailbox driver an interrupt controller
+>driver too. Or if that doesn't work, we can map the region twice in each
+>driver with ioremap and cross fingers that they don't touch the same
+>register at the same time. It sounds like that is the case. We won't be
+>able to fancily reserve the register region and map it in one function
+>call, but maybe that can be fixed by limiting the size or offset that is
+>reserved for each driver manually based on the same register property
+>that's described in DT. Basically, one node in DT
+>
+> mailbox@f00 {
+>   reg = <0xf00 0x1000>;
+> };
+>
+>And then each driver will ioremap() the whole register region that's
+>parsed from DT but each driver will mark sub-regions as reserved for the
+>respective driver. That way we don't have to worry about using a regmap
+>here and we'll still know what drivers are using what regions of IO in
+>/proc/iomem.
 
-Can you do something about this please? Does this not bother you?
+Marc: What do you think of Stephen's idea? Summarizing my understanding
+below -
 
-I for one, was convinced to join the free software movement and program 
-for it because of the promise of the GPL. But here, with their "access 
-agreement" they blatantly violate it (version 2, section 6 for the 
-kernel patch, I'm sure you know which section for GCC). They 
-infact-and-indeed do add an additional restrictive term.
+We need to set an addition register for GPIOs that are routed to PDC and
+the register may need to be written using a SCM call (SDM845) or written
+from Linux (SDM855). The idea proposed here is -
+Create multiple irqchips, one for each type of register access and then
+put them in hierarchy based on the target.
 
-This is allowed to stand.
+SDM845:
+TLMM  --> PDC  --> PDC-SCM-IF  --> GIC
 
-It is less likely that I myself would have contributed code if it were 
-not for the promise of the GPL that others could not close derivative 
-works to me. That promise is being shown to be a lie. I doubt I'm the 
-only one who was attracted by the GPL, but now that it is shown to be a 
-false promise: the spell likely is broken.
+SDM855:
+TLMM  --> PDC  --> PDC-LNX-IF  --> GIC
 
-Can you please do something about this.
-Why all the silence? Why is no one angry about this?
-This is as blatant of a violation as they come: it cuts at the very root 
-of the whole point of Free Software:
-RMS you wanted the code to come back to you: you made it clear in your 
-EMACS license/notice. GrSecurity (OpenSourceSecurity) have completely 
-obliterated what you intended. And it is allowed to stand.
+The hierarchy would be explicit from the DT. So we would not have to
+worry about figuring out using a property in DT or resource name. (May
+be we can use a compatible instead?). The use of reserved_resource(),
+suggested by Stephen, would help avoid other drivers writing to this
+register which is part of a generic dump area for one-off registers.
 
-Why? Please will nothing be done? Will nothing be discussed?
-
-GCC is your compiler: They're doing EXACTLY what you DID NOT WANT to 
-happen regarding plugins: they have effectively created PROPRIETARY 
-plugins. The lawyers told you it could not happen, so that you would 
-agree to allow plugins. Now apparently it has happened.
-
-Now you can only get GrSec, the patch, the compiler plugins, if you have 
-10k+, and you are not permitted to redistribute it (or else).
-
-Yes this is a violation of section 6 of version 2 of the GPL (I know 
-some programmers argue otherwise because programmers think they know 
-everything about every field)
-
-> "UHHHHHMMMMM we put it in a SEPARATE writing, thus we can impose 
-> additional restrictive terms!"
-
-> UHHH, Punishing a recipient for breaking our additional negative 
-> covenant is not violating the license :^), they didn't HAVE to violate 
-> our restrictions! It was their choice!
-
-> Ahem
-> Although previous to our additional restriction, under the GPL the 
-> recipient is free to distribute the source to anyone without 
-> repercussion or harm.
-> Once we chose to add our access agreement, the recipient after paying 
-> us 10k, agrees to never freely distribute the work except to his own 
-> customers on demand: under penalty of forfeiting the remainder of his 
-> balance and no further updates (which he already paid for)
-> This is clearly not an additional restriction not-present in the 
-> licensing terms
-> :^)
-> We also don't tell the linux kernel team about the fixes we silently 
-> fix in our GPL-Respecting additional-restrictive terms derivative work.
-> We'll tell you though, unless you distribute the Work: then you're cut 
-> off. Better not redistribute
-> :^)
-
-The federal copyright lawsuit would cost 600k to finance. 
-OpenSourceSecurity makes 120k a year, off of government contract(s/ors).
-
-GCC plugins have been part of GrSecurity for a very long time, I 
-remember them writing about them in the early/mid 2000s
-
+--Lina
