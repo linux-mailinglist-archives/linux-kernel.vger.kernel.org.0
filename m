@@ -2,138 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2120FF6F50
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 08:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1924DF6F58
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 09:02:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfKKH7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 02:59:52 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:55172 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbfKKH7v (ORCPT
+        id S1727012AbfKKICE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 11 Nov 2019 03:02:04 -0500
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:35478 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfKKICE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 02:59:51 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAB7xf7o026902;
-        Mon, 11 Nov 2019 01:59:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573459181;
-        bh=Lz8MXx9Ipzrc2GJ3x5jttN6h2LWeeejmmWOpGkLe3GA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=b18hgvTxSvyb/8sGeN9WquAaxtxGP5I1R2C/nuG64urQaoOt5TlTLK3H8ykY6eK2u
-         dElAXU8CtAF83saXafzu0I93nyQP6UJtFDdXr/e2amfMp6YhIXrjKS8v+YcQ09Pgih
-         pGuPs8g+ea+bfUxIFx75PIqPteOepDlV0BahpAWY=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAB7xf0J074396
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Nov 2019 01:59:41 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 11
- Nov 2019 01:59:39 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 11 Nov 2019 01:59:22 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAB7xZZH105987;
-        Mon, 11 Nov 2019 01:59:36 -0600
-Subject: Re: [PATCH v4 05/15] dmaengine: Add support for reporting DMA cached
- data amount
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
-        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>
-References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
- <20191101084135.14811-6-peter.ujfalusi@ti.com>
- <20191111043957.GL952516@vkoul-mobl>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <796d2a17-0807-c0f3-fda8-434357edeccf@ti.com>
-Date:   Mon, 11 Nov 2019 10:00:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 11 Nov 2019 03:02:04 -0500
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id xAB81YtL004733
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 11 Nov 2019 17:01:34 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id xAB81XoH029777;
+        Mon, 11 Nov 2019 17:01:33 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id xAB7xwjS001591;
+        Mon, 11 Nov 2019 17:01:33 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-641210; Mon, 11 Nov 2019 17:00:13 +0900
+Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Mon,
+ 11 Nov 2019 17:00:13 +0900
+From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+To:     Michal Hocko <mhocko@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "longman@redhat.com" <longman@redhat.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mst@redhat.com" <mst@redhat.com>, "cai@lca.pw" <cai@lca.pw>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>
+Subject: Re: [PATCH 0/3] make pfn walker support ZONE_DEVICE
+Thread-Topic: [PATCH 0/3] make pfn walker support ZONE_DEVICE
+Thread-Index: AQHVlciWlfuQn46br0aHiPqwVpeT66eAaKCAgAShS4A=
+Date:   Mon, 11 Nov 2019 08:00:12 +0000
+Message-ID: <5fc7da0c-bd79-9f3b-e5d9-8688648cf032@vx.jp.nec.com>
+References: <20191108000855.25209-1-t-fukasawa@vx.jp.nec.com>
+ <20191108091851.GB15658@dhcp22.suse.cz>
+In-Reply-To: <20191108091851.GB15658@dhcp22.suse.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.135]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <08075FF5519BA149B29FF17900429CC7@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20191111043957.GL952516@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/11/2019 6.39, Vinod Koul wrote:
-> On 01-11-19, 10:41, Peter Ujfalusi wrote:
->> A DMA hardware can have big cache or FIFO and the amount of data sitting in
->> the DMA fabric can be an interest for the clients.
+On 2019/11/08 18:18, Michal Hocko wrote:
+> On Fri 08-11-19 00:08:03, Toshiki Fukasawa wrote:
+>> This patch set tries to make pfn walker support ZONE_DEVICE.
+>> This idea is from the TODO in below patch:
 >>
->> For example in audio we want to know the delay in the data flow and in case
->> the DMA have significantly large FIFO/cache, it can affect the latenc/delay
+>>    commit aad5f69bc161af489dbb5934868bd347282f0764
+>>    Author: David Hildenbrand <david@redhat.com>
+>>    Date:   Fri Oct 18 20:19:20 2019 -0700
 >>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> Reviewed-by: Tero Kristo <t-kristo@ti.com>
->> ---
->>  drivers/dma/dmaengine.h   | 8 ++++++++
->>  include/linux/dmaengine.h | 2 ++
->>  2 files changed, 10 insertions(+)
+>> 	fs/proc/page.c: don't access uninitialized memmaps in fs/proc/page.c
 >>
->> diff --git a/drivers/dma/dmaengine.h b/drivers/dma/dmaengine.h
->> index 501c0b063f85..b0b97475707a 100644
->> --- a/drivers/dma/dmaengine.h
->> +++ b/drivers/dma/dmaengine.h
->> @@ -77,6 +77,7 @@ static inline enum dma_status dma_cookie_status(struct dma_chan *chan,
->>  		state->last = complete;
->>  		state->used = used;
->>  		state->residue = 0;
->> +		state->in_flight_bytes = 0;
->>  	}
->>  	return dma_async_is_complete(cookie, complete, used);
->>  }
->> @@ -87,6 +88,13 @@ static inline void dma_set_residue(struct dma_tx_state *state, u32 residue)
->>  		state->residue = residue;
->>  }
->>  
->> +static inline void dma_set_in_flight_bytes(struct dma_tx_state *state,
->> +					   u32 in_flight_bytes)
->> +{
->> +	if (state)
->> +		state->in_flight_bytes = in_flight_bytes;
->> +}
->> +
->>  struct dmaengine_desc_callback {
->>  	dma_async_tx_callback callback;
->>  	dma_async_tx_callback_result callback_result;
->> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
->> index 0e8b426bbde9..c4c5219030a6 100644
->> --- a/include/linux/dmaengine.h
->> +++ b/include/linux/dmaengine.h
->> @@ -682,11 +682,13 @@ static inline struct dma_async_tx_descriptor *txd_next(struct dma_async_tx_descr
->>   * @residue: the remaining number of bytes left to transmit
->>   *	on the selected transfer for states DMA_IN_PROGRESS and
->>   *	DMA_PAUSED if this is implemented in the driver, else 0
->> + * @in_flight_bytes: amount of data in bytes cached by the DMA.
->>   */
->>  struct dma_tx_state {
->>  	dma_cookie_t last;
->>  	dma_cookie_t used;
->>  	u32 residue;
->> +	u32 in_flight_bytes;
+>> pfn walker's ZONE_DEVICE support requires capability to identify
+>> that a memmap has been initialized. The uninitialized cases are
+>> as follows:
+>>
+>> 	a) pages reserved for ZONE_DEVICE driver
+>> 	b) pages currently initializing
+>>
+>> This patch set solves both of them.
 > 
-> Should we add this here or use the dmaengine_result()
+> Why do we want this? What is the usecase?
 
-Ideally at the time dmaengine_result is used (at tx completion callback)
-there should be nothing in flight ;)
+We are writing a test program for hwpoison, which is a use case.
+Without this patch, we can't see the HWPOISON flag on the
+ZONE_DEVICE page.
 
-The reason why it is added to dma_tx_state is that clients can check at
-any time while the DMA is running the number of cached bytes.
-Audio needs this for cyclic and UART also needs to know it.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thanks,
+Toshiki Fukasawa
