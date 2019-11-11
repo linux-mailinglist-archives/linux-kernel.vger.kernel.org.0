@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE45CF7B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:38:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C7DF7B21
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfKKShY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:37:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55978 "EHLO mail.kernel.org"
+        id S1728032AbfKKScq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:32:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728840AbfKKShT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:37:19 -0500
+        id S1728017AbfKKSco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:32:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8778620659;
-        Mon, 11 Nov 2019 18:37:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50A97214E0;
+        Mon, 11 Nov 2019 18:32:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497439;
-        bh=JrqC55S5QczD954ew1qGZH7eAhMLRs+5mE/0I5VsuTc=;
+        s=default; t=1573497163;
+        bh=h84yVnebq0dEJoUvnyfxDfIpXymOAbgZO0hAwffhZOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VqxuzbFzAdLL/Nd2Dm7R8jQ8HfqnOJKR7LGdB4va5bpC8piUubKSsGBFhqjtqG9rP
-         /ORneEPl/z+139IGDLVtjXnf00PR0+3e3g0SoWdgwmY/qwrJpCuxD2NXZNF64B0uM5
-         +eDsoZVhXay2XEI1SRSyKAB/mu950+G7yn4/jmbM=
+        b=gthHs7DQNK3HDQ6lNNJCucsUmmqrTNrstt8CfyzjvZK4AK/kFtuIw37IdMoZelid4
+         Bo/4GD9LXH+J2r6A0XqfWzrPedRakTWEAn5Cc1O7aWHer+64qyrIGBRwp2EDvshC60
+         mDXHIObi/dWV33Q8evvz1NzTYrwlDq9Y5216Ixt0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 4.14 055/105] ASoC: tlv320dac31xx: mark expected switch fall-through
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.9 25/65] can: gs_usb: gs_can_open(): prevent memory leak
 Date:   Mon, 11 Nov 2019 19:28:25 +0100
-Message-Id: <20191111181443.787487517@linuxfoundation.org>
+Message-Id: <20191111181345.723945789@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 09fc38c1af4cb888255e9ecf267bf9757c12885d upstream
+commit fb5be6a7b4863ecc44963bb80ca614584b6c7817 upstream.
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+In gs_can_open() if usb_submit_urb() fails the allocated urb should be
+released.
 
-Addresses-Coverity-ID: 1195220
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Fixes: d08e973a77d1 ("can: gs_usb: Added support for the GS_USB CAN devices")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/soc/codecs/tlv320aic31xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/codecs/tlv320aic31xx.c
-+++ b/sound/soc/codecs/tlv320aic31xx.c
-@@ -941,7 +941,7 @@ static int aic31xx_set_dai_fmt(struct sn
- 	case SND_SOC_DAIFMT_I2S:
- 		break;
- 	case SND_SOC_DAIFMT_DSP_A:
--		dsp_a_val = 0x1;
-+		dsp_a_val = 0x1; /* fall through */
- 	case SND_SOC_DAIFMT_DSP_B:
- 		/*
- 		 * NOTE: This CODEC samples on the falling edge of BCLK in
+---
+ drivers/net/can/usb/gs_usb.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/net/can/usb/gs_usb.c
++++ b/drivers/net/can/usb/gs_usb.c
+@@ -632,6 +632,7 @@ static int gs_can_open(struct net_device
+ 					   rc);
+ 
+ 				usb_unanchor_urb(urb);
++				usb_free_urb(urb);
+ 				break;
+ 			}
+ 
 
 
