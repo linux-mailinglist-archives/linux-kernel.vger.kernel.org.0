@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2575AF7D21
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A38AF7B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:37:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730380AbfKKSxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:53:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48292 "EHLO mail.kernel.org"
+        id S1728500AbfKKSgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:36:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730389AbfKKSxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:53:30 -0500
+        id S1728670AbfKKSgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:36:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C067520818;
-        Mon, 11 Nov 2019 18:53:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CD9D2184C;
+        Mon, 11 Nov 2019 18:36:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498409;
-        bh=5b8/2op+ItCBvm/1g6xyyc4i0Q7+o/zfLH0FOPa8fHE=;
+        s=default; t=1573497368;
+        bh=4WJhdgNgB/WxPq4VgTBrlWHTLCa7rOxekKv6IQLcclY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=15kwTQ0EGxeXsCO060QdvyRzbZ/gNQ+TNu0FSgJ/pHCgioR8k/vpTBqlNvNXBypUN
-         J2vDpb4u7vk+kUspvzhzUPP1qmAK9pUdjiYjsa44pBQb6a9GeOonRQ4IU81t+aafaU
-         aZoqRHdU8fswqA1+lOJNwGE3WoNWgrTB4YEssnVg=
+        b=rTelq3DBQorQoRYPb/sGnflKNW0yj3HexyNHXG+pefKJcBMslv7XkXELeJC41heeP
+         OPo/vrANbVHqsyx7pwrz5Vtoyrj6m21pLLN5hu1VezJZaGS+NG/ZjrnjOfhOvz15I9
+         +RL853PTP3V5SaJHsksv7rQstAu2EW/MyI0zpPMQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.3 071/193] SMB3: Fix persistent handles reconnect
+        stable@vger.kernel.org, Hendrik Donner <hd@os-cillation.de>,
+        David Ahern <dsahern@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 003/105] ipv4: Fix table id reference in fib_sync_down_addr
 Date:   Mon, 11 Nov 2019 19:27:33 +0100
-Message-Id: <20191111181506.350324816@linuxfoundation.org>
+Message-Id: <20191111181423.196686464@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: David Ahern <dsahern@kernel.org>
 
-commit d243af7ab9feb49f11f2c0050d2077e2d9556f9b upstream.
+[ Upstream commit e0a312629fefa943534fc46f7bfbe6de3fdaf463 ]
 
-When the client hits a network reconnect, it re-opens every open
-file with a create context to reconnect a persistent handle. All
-create context types should be 8-bytes aligned but the padding
-was missed for that one. As a result, some servers don't allow
-us to reconnect handles and return an error. The problem occurs
-when the problematic context is not at the end of the create
-request packet. Fix this by adding a proper padding at the end
-of the reconnect persistent handle context.
+Hendrik reported routes in the main table using source address are not
+removed when the address is removed. The problem is that fib_sync_down_addr
+does not account for devices in the default VRF which are associated
+with the main table. Fix by updating the table id reference.
 
-Cc: Stable <stable@vger.kernel.org> # 4.19.x
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: 5a56a0b3a45d ("net: Don't delete routes in different VRFs")
+Reported-by: Hendrik Donner <hd@os-cillation.de>
+Signed-off-by: David Ahern <dsahern@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2pdu.h |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv4/fib_semantics.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -836,6 +836,7 @@ struct create_durable_handle_reconnect_v
- 	struct create_context ccontext;
- 	__u8   Name[8];
- 	struct durable_reconnect_context_v2 dcontext;
-+	__u8   Pad[4];
- } __packed;
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -1471,8 +1471,8 @@ int fib_sync_down_addr(struct net_device
+ 	int ret = 0;
+ 	unsigned int hash = fib_laddr_hashfn(local);
+ 	struct hlist_head *head = &fib_info_laddrhash[hash];
++	int tb_id = l3mdev_fib_table(dev) ? : RT_TABLE_MAIN;
+ 	struct net *net = dev_net(dev);
+-	int tb_id = l3mdev_fib_table(dev);
+ 	struct fib_info *fi;
  
- /* See MS-SMB2 2.2.13.2.5 */
+ 	if (!fib_info_laddrhash || local == 0)
 
 
