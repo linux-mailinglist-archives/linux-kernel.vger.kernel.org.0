@@ -2,178 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D4DEF73DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 13:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F475F744F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 13:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfKKM3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 07:29:07 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34792 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfKKM3H (ORCPT
+        id S1727065AbfKKMpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 07:45:53 -0500
+Received: from 3.mo173.mail-out.ovh.net ([46.105.34.1]:46963 "EHLO
+        3.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfKKMpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 07:29:07 -0500
-Received: by mail-wm1-f66.google.com with SMTP id j18so3055129wmk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 04:29:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dSewQoeACmq1i1jpvr49vxw60LKl1U3C6WonRLxoHo0=;
-        b=m742fK844x/AKk8KLUcMNI/xB3PL7U/PKYIrZRbBI6HHBHB0Xftdnqn+CdxGBajHiU
-         qf/+lGuVOwdsUcByXWOoq/4uWy+RyPAHX+FmSkh8ivk3IZJGEMcRK5s1U9PG6pctruAU
-         x5cdMfvqDVbx9PpWanjh+YnIsNlR7xKuTDuyChMjREHTPvLJkhQZ0Mz5Kp4aFScRUtKy
-         VY/yBirGXm6Ex8bwo0kQzpK+jJyz+juMYkp3GOgMwtP7DUNJdtpzHghBe6MIPTjJf55T
-         cmrW18SFS6MUx5JKGDvhlVfYSbYwOiNZ7+HzSR9v+xtby+FIjUHWluguBGptbDkXrn8V
-         ViFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dSewQoeACmq1i1jpvr49vxw60LKl1U3C6WonRLxoHo0=;
-        b=gfjQlVaUsgmeE3XDKKPscdTrHmGIb569LlgtDUoKZ5YmhP55lfQbnCWK2CAeHymjqs
-         NPWM6OVWq/GSmnbyf5ehyK7lSmepog4eDg+CWhdidvMatwIRPZledENozfM3bN7UMrv9
-         teVYVD0gKaCXQEJ1qR6Y87EoT35j1oqeHbdCLe6qbb6WFcxdxLQgsUw1tYhkoOfhBVAW
-         w5/yiEUaRX48YupNC0A0T+VvEvJR+6I5Wu4zXJCdsBg+V5K4Xamt3I1FfWnA/rrXhTO/
-         EJx5RmP2wGXxvfgiYGiukk1boDuWcv64BCkTXO7jmegoyBkTaa3efp8Ev9CN+46/tLQ9
-         uczQ==
-X-Gm-Message-State: APjAAAXcggoM/Kv9DVkwXHgEP9bDKHOScHMquOL91pGxAEpvaUvkp6T4
-        HN1P2dwC9fMS+v7H9I0JEHlxlg==
-X-Google-Smtp-Source: APXvYqyZIKxeXx4xEQ1NF4pOosCu14x+2PE3xpwtY7eYZ1cc7Li7ooYJvY2hEnMV6QiKRzLBKjnX6Q==
-X-Received: by 2002:a7b:c768:: with SMTP id x8mr21085407wmk.26.1573475344622;
-        Mon, 11 Nov 2019 04:29:04 -0800 (PST)
-Received: from netronome.com ([2001:982:756:703:d63d:7eff:fe99:ac9d])
-        by smtp.gmail.com with ESMTPSA id y2sm22728920wmy.2.2019.11.11.04.29.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Nov 2019 04:29:04 -0800 (PST)
-Date:   Mon, 11 Nov 2019 13:29:03 +0100
-From:   Simon Horman <simon.horman@netronome.com>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: net: dp83869: Add TI dp83869 phy
-Message-ID: <20191111122902.567r2geh4popqknq@netronome.com>
-References: <20191107174002.11227-1-dmurphy@ti.com>
+        Mon, 11 Nov 2019 07:45:52 -0500
+Received: from player788.ha.ovh.net (unknown [10.109.160.253])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id 9ADE211D7E3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 12:26:39 +0100 (CET)
+Received: from kaod.org (lfbn-1-2229-223.w90-76.abo.wanadoo.fr [90.76.50.223])
+        (Authenticated sender: clg@kaod.org)
+        by player788.ha.ovh.net (Postfix) with ESMTPSA id 9FB97BEE6275;
+        Mon, 11 Nov 2019 11:26:26 +0000 (UTC)
+Subject: Re: [PATCH] KVM: PPC: Book3S HV: XIVE: Free previous EQ page when
+ setting up a new one
+To:     Greg Kurz <groug@kaod.org>, Paul Mackerras <paulus@ozlabs.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Lijun Pan <ljp@linux.ibm.com>,
+        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <157346576671.818016.10401178701091199969.stgit@bahia.lan>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <3373a85a-09bb-3345-ef27-68177c360786@kaod.org>
+Date:   Mon, 11 Nov 2019 12:26:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107174002.11227-1-dmurphy@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <157346576671.818016.10401178701091199969.stgit@bahia.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 5003217712743287575
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedruddvjedgvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdqfffguegfifdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepveorughrihgtpgfnvggpifhorghtvghruceotghlgheskhgrohgurdhorhhgqeenucfkpheptddrtddrtddrtddpledtrdejiedrhedtrddvvdefnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejkeekrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheptghlgheskhgrohgurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 11:40:01AM -0600, Dan Murphy wrote:
-> Add dt bindings for the TI dp83869 Gigabit ethernet phy
-> device.
+On 11/11/2019 10:49, Greg Kurz wrote:
+> The EQ page is allocated by the guest and then passed to the hypervisor
+> with the H_INT_SET_QUEUE_CONFIG hcall. A reference is taken on the page
+> before handing it over to the HW. This reference is dropped either when
+> the guest issues the H_INT_RESET hcall or when the KVM device is released.
+> But, the guest can legitimately call H_INT_SET_QUEUE_CONFIG several times
+> to reset the EQ (vCPU hot unplug) or set a new EQ (guest reboot). In both
+> cases the EQ page reference is leaked. This is especially visible when
+> the guest memory is backed with huge pages: start a VM up to the guest
+> userspace, either reboot it or unplug a vCPU, quit QEMU. The leak is
+> observed by comparing the value of HugePages_Free in /proc/meminfo before
+> and after the VM is run.
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> CC: Rob Herring <robh+dt@kernel.org>
+> Note that the EQ reset path seems to be calling put_page() but this is
+> done after xive_native_configure_queue() which clears the qpage field
+> in the XIVE queue structure, ie. the put_page() block is a nop and the
+> previous page pointer was just overwritten anyway. In the other case of
+> configuring a new EQ page, nothing seems to be done to release the old
+> one.
+
+Yes. Nice catch. I think we should try to fix the problem differently. 
+
+The routine xive_native_configure_queue() is only suited for XIVE 
+drivers doing their own EQ page allocation: Linux PowerNV and the 
+KVM XICS-over-XIVE device. The KVM XIVE device acts as a proxy for 
+the guest OS doing the allocation and it has different needs.
+
+Having a specific xive_native_configure_queue() for the KVM XIVE 
+device seems overkill. May be, we could introduce a helper routine 
+in KVM XIVE device calling xive_native_configure_queue() and handling 
+the page reference how it should be ? That is to drop the previous
+page reference in case of a change on q->qpage.
+
+
+Also, we should try to preserve the previous setting until the whole 
+configuration is in place. That seems possible up to the call to 
+xive_native_configure_queue(). If kvmppc_xive_attach_escalation()
+fails I think it is too late, as the HW has been configured by 
+xive_native_configure_queue(), and we should just cleanup everything. 
+
+Thanks,
+
+C. 
+
+
+> Fix both cases by always calling put_page() on the existing EQ page in
+> kvmppc_xive_native_set_queue_config(). This is a seemless change for the
+> EQ reset case. However this causes xive_native_configure_queue() to be
+> called twice for the new EQ page case: one time to reset the EQ and another
+> time to configure the new page. This is needed because we cannot release
+> the EQ page before calling xive_native_configure_queue() since it may still
+> be used by the HW. We cannot modify xive_native_configure_queue() to drop
+> the reference either because this function is also used by the XICS-on-XIVE
+> device which requires free_pages() instead of put_page(). This isn't a big
+> deal anyway since H_INT_SET_QUEUE_CONFIG isn't a hot path.
+> 
+> Reported-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+> Cc: stable@vger.kernel.org # v5.2
+> Fixes: 13ce3297c576 ("KVM: PPC: Book3S HV: XIVE: Add controls for the EQ configuration")
+> Signed-off-by: Greg Kurz <groug@kaod.org>
 > ---
+>  arch/powerpc/kvm/book3s_xive_native.c |   21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
 > 
-> v2 - No changes 
+> diff --git a/arch/powerpc/kvm/book3s_xive_native.c b/arch/powerpc/kvm/book3s_xive_native.c
+> index 34bd123fa024..8ab908d23dc2 100644
+> --- a/arch/powerpc/kvm/book3s_xive_native.c
+> +++ b/arch/powerpc/kvm/book3s_xive_native.c
+> @@ -570,10 +570,12 @@ static int kvmppc_xive_native_set_queue_config(struct kvmppc_xive *xive,
+>  		 __func__, server, priority, kvm_eq.flags,
+>  		 kvm_eq.qshift, kvm_eq.qaddr, kvm_eq.qtoggle, kvm_eq.qindex);
+>  
+> -	/* reset queue and disable queueing */
+> -	if (!kvm_eq.qshift) {
+> -		q->guest_qaddr  = 0;
+> -		q->guest_qshift = 0;
+> +	/*
+> +	 * Reset queue and disable queueing. It will be re-enabled
+> +	 * later on if the guest is configuring a new EQ page.
+> +	 */
+> +	if (q->guest_qshift) {
+> +		page = virt_to_page(q->qpage);
+>  
+>  		rc = xive_native_configure_queue(xc->vp_id, q, priority,
+>  						 NULL, 0, true);
+> @@ -583,12 +585,13 @@ static int kvmppc_xive_native_set_queue_config(struct kvmppc_xive *xive,
+>  			return rc;
+>  		}
+>  
+> -		if (q->qpage) {
+> -			put_page(virt_to_page(q->qpage));
+> -			q->qpage = NULL;
+> -		}
+> +		put_page(page);
+>  
+> -		return 0;
+> +		if (!kvm_eq.qshift) {
+> +			q->guest_qaddr  = 0;
+> +			q->guest_qshift = 0;
+> +			return 0;
+> +		}
+>  	}
+>  
+>  	/*
 > 
->  .../devicetree/bindings/net/ti,dp83869.yaml   | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/ti,dp83869.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/ti,dp83869.yaml b/Documentation/devicetree/bindings/net/ti,dp83869.yaml
-> new file mode 100644
-> index 000000000000..6fe3e451da8a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/ti,dp83869.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2019 Texas Instruments Incorporated
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/net/ti,dp83869.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: TI DP83869 ethernet PHY
-> +
-> +allOf:
-> +  - $ref: "ethernet-controller.yaml#"
-> +
-> +maintainers:
-> +  - Dan Murphy <dmurphy@ti.com>
-> +
-> +description: |
-> +  The DP83869HM device is a robust, fully-featured Gigabit (PHY) transceiver
-> +  with integrated PMD sublayers that supports 10BASE-Te, 100BASE-TX and
-> +  1000BASE-T Ethernet protocols. The DP83869 also supports 1000BASE-X and
-> +  100BASE-FX Fiber protocols.
-> +  This device interfaces to the MAC layer through Reduced GMII (RGMII) and
-> +  SGMII The DP83869HM supports Media Conversion in Managed mode. In this mode,
-> +  the DP83869HM can run 1000BASE-X-to-1000BASE-T and 100BASE-FX-to-100BASE-TX
-> +  conversions.  The DP83869HM can also support Bridge Conversion from RGMII to
-> +  SGMII and SGMII to RGMII.
-> +
-> +  Specifications about the charger can be found at:
-> +    http://www.ti.com/lit/ds/symlink/dp83869hm.pdf
-> +
-> +properties:
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ti,min-output-impedance:
-> +    type: boolean
-> +    description: |
-> +       MAC Interface Impedance control to set the programmable output impedance
-> +       to a minimum value (35 ohms).
-> +
-> +  ti,max-output-impedance:
-> +    type: boolean
-> +    description: |
-> +       MAC Interface Impedance control to set the programmable output impedance
-> +       to a maximum value (70 ohms).
-> +
-> +  tx-fifo-depth:
-> +    $ref: /schemas/types.yaml#definitions/uint32
-> +    description: |
-> +       Transmitt FIFO depth see dt-bindings/net/ti-dp83869.h for values
-> +
-> +  rx-fifo-depth:
-> +    $ref: /schemas/types.yaml#definitions/uint32
-> +    description: |
-> +       Receive FIFO depth see dt-bindings/net/ti-dp83869.h for values
-> +
-> +  ti,clk-output-sel:
-> +    $ref: /schemas/types.yaml#definitions/uint32
-> +    description: |
-> +       Muxing option for CLK_OUT pin see dt-bindings/net/ti-dp83869.h for values.
-> +
-> +  ti,op-mode:
-> +    $ref: /schemas/types.yaml#definitions/uint32
-> +    description: |
-> +       Operational mode for the PHY.  If this is not set then the operational
-> +       mode is set by the straps. see dt-bindings/net/ti-dp83869.h for values
-> +
-> +required:
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/net/ti-dp83869.h>
 
-The header above does not exist until patch 2 is applied.
-Which means that make dtbs_check fails.
-
-Perhaps adding the header could be moved into this patch?
-
-> +    mdio0 {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      ethphy0: ethernet-phy@0 {
-> +        reg = <0>;
-> +        tx-fifo-depth = <DP83869_PHYCR_FIFO_DEPTH_4_B_NIB>;
-> +        rx-fifo-depth = <DP83869_PHYCR_FIFO_DEPTH_4_B_NIB>;
-> +        ti,op-mode = <DP83869_RGMII_COPPER_ETHERNET>;
-> +        ti,max-output-impedance = "true";
-> +        ti,clk-output-sel = <DP83869_CLK_O_SEL_CHN_A_RCLK>;
-> +      };
-> +    };
-> -- 
-> 2.22.0.214.g8dca754b1e
-> 
