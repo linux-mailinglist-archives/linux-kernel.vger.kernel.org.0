@@ -2,90 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 335C2F81FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 22:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F520F8230
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 22:26:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfKKVQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 16:16:54 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33406 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727480AbfKKVQn (ORCPT
+        id S1727058AbfKKV00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 16:26:26 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38473 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbfKKV0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 16:16:43 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t5so15393939ljk.0;
-        Mon, 11 Nov 2019 13:16:41 -0800 (PST)
+        Mon, 11 Nov 2019 16:26:25 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c13so11593268pfp.5;
+        Mon, 11 Nov 2019 13:26:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HzU4Em/jAGZPIDjIbLxQtLRkI9MSE1QrI5BazFDeU+g=;
-        b=LIpkEbMUel9UPxujxayC9reONTyWYPFNh9mFHg5noiWUpH9n12BAfoh5mTxv8JMXGG
-         gISRHA+W8XBKj0QuO2FIkHB3jJviaMUPJ/0U8yLq7Wl3Vhla5OncNfdbccfyBK6pIjkC
-         Tx1j/n/nW2+58p9Oyl94Z87qoAyYKARClWM9LQimFPhSiKbW0jNUMquNZD7CMmtMfDyl
-         LwMpsyLqmVgQNL7kh1Aa+jDerymGKrf6rShbF5p1ybe16F5Rq77za2hMpvF65AlCszLm
-         JEPc1/EayKYIVvHWt5VzgxI31FMhkXy8Yu+dVy/+oLWO0Sg6dMX8qa+dGbWZFwIGVtkb
-         ZvuA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S/dDooYdItgV3dLbLJwFFfSuew2iW89I9IXIwYwXJT8=;
+        b=FURjo+S6eX+GpCTzL+4WYgJP0xbKD4mutUow02AJzUr3Mu/xqTmgWrCKIS4yHwbu2o
+         TlaAO0kWY7FJpI7Kn4i92tOm5dVfzZiqwuwbRCu756b0G2rRPYNmK0Hp/uC9ehkzaA3i
+         7MxMZljKrBSMHAcgTyo4qny8IKF7VCCDkgoQr+PUSeF2m2+itMy1iKrJJT6thyRvcmUw
+         UdLSG99ni3iv3TrSPmcjypFrNwpLMCrBnOoQZQlvmjgZKa69e+SFPEK8YsG66duPyUJz
+         FIzYtlRScjTVXBX7lIRpvOph9gozt8btjKQQe9/kFbZ+0k1wIeSvXcDVbfjykyQAtdEY
+         eCMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HzU4Em/jAGZPIDjIbLxQtLRkI9MSE1QrI5BazFDeU+g=;
-        b=V5Y+HkG5m35N366C3Yl279Z9NqHnVDpPzy7mgGSL91/7WHZtru/QLqoxuOIL6Zp926
-         OkL5vGI7f+aDHAcUyjwfyLHUaF+spCNfCX6/LHR8Gsvo4m+ap+7sxLAXiMRSPIppzo9t
-         HEE89DyD3KZVYdeEhjXL/NfsQbdSuKnHq+NINIhRQe0QxVy84VIASvicdDRgnMIQpvAO
-         VVWopmrJ1YBZ0sm67qN/komzbPFh+ppr82cTUpb3sv3Zs/fMwwlCevaMK+xp9N47akU3
-         0ES22d3UGL6+omwUdp8x1Hsnow1AG2YWlpOhYSFP2YJD5hCB68WSWNkgnLU2d3U7NxQ5
-         ePxQ==
-X-Gm-Message-State: APjAAAWbzQG6ckDncr8ekwaenaj5RdSZwsk2J3emePhxYgO6nWfPBgg/
-        acTHI1cOoATYK+MFwqtfPM0=
-X-Google-Smtp-Source: APXvYqxHXuW0ui2OCx/3DMvtAgxaM0zGFqKl5bAN8SNMT3vs9cWXLqGG9IBn1FShX5OC31J9C7xJvA==
-X-Received: by 2002:a2e:9a12:: with SMTP id o18mr17625625lji.191.1573507001338;
-        Mon, 11 Nov 2019 13:16:41 -0800 (PST)
-Received: from localhost.localdomain (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
-        by smtp.gmail.com with ESMTPSA id n19sm7913150lfl.85.2019.11.11.13.16.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 13:16:40 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 17/17] ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-Date:   Tue, 12 Nov 2019 00:15:56 +0300
-Message-Id: <20191111211556.20723-18-digetx@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191111211556.20723-1-digetx@gmail.com>
-References: <20191111211556.20723-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S/dDooYdItgV3dLbLJwFFfSuew2iW89I9IXIwYwXJT8=;
+        b=S70XIyHNvIJa6kpNZcIRcV87VOLgUZu/uS7ARuoSTMgpv97s+deEn++AMc8Wr5G5eK
+         oiQaauRE1yjAy4i3iFt/5ioUzpjogXpzIDQma/bqCVCDmt3e8NOsDcdQz/t0qqPmGNLc
+         YxBWWJJbhGxs0Cu+dJHdUDb2nzq4z4e9+qgnIK290Gd303stRGkvPbFr5wnm/KQJAgZ6
+         TF9baKxANdG5Mw4i0+POidWoQcMnW6hE367BO9EJ8W/cetlohPd5JwwmxGMUX7Zwl9bf
+         qkccVQC1KHhkD+YF5780A8Zxk2LI66ddbxHxocrcwTSHI8dXmW4w0oXeSq0lXti+Cpmi
+         yqSg==
+X-Gm-Message-State: APjAAAXpfllMZ7XGFCsqgE9yVNwm4A8EZvwD9eWhcuPEzFag/kBdg462
+        8NReA//RYysYVYRSQsGjOkRffHnz1BWY6fob4Hg=
+X-Google-Smtp-Source: APXvYqzDtAPHhWESSr2uQPA5m1h2JhmEZlv/3xnWGoainOX2XoYPVefT+ORyUyE9fpcnPs4M+jW8Efqn5Pe1+ThDgwA=
+X-Received: by 2002:a17:90a:326b:: with SMTP id k98mr1569237pjb.50.1573507584464;
+ Mon, 11 Nov 2019 13:26:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191111140502.17541-1-tonylu@linux.alibaba.com>
+In-Reply-To: <20191111140502.17541-1-tonylu@linux.alibaba.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Mon, 11 Nov 2019 13:26:13 -0800
+Message-ID: <CAM_iQpUaPsFHrDmd7fLjWZLbbo8j1uD6opuT+zKqPTVuQPKniA@mail.gmail.com>
+Subject: Re: [PATCH] net: remove static inline from dev_put/dev_hold
+To:     Tony Lu <tonylu@linux.alibaba.com>
+Cc:     David Miller <davem@davemloft.net>, shemminger@osdl.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
-it is now a proper platform driver.
+On Mon, Nov 11, 2019 at 6:12 AM Tony Lu <tonylu@linux.alibaba.com> wrote:
+>
+> This patch removes static inline from dev_put/dev_hold in order to help
+> trace the pcpu_refcnt leak of net_device.
+>
+> We have sufferred this kind of issue for several times during
+> manipulating NIC between different net namespaces. It prints this
+> log in dmesg:
+>
+>   unregister_netdevice: waiting for eth0 to become free. Usage count = 1
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I debugged a nasty dst refcnt leak in TCP a long time ago, so I can
+feel your pain.
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index a27592d3b1fa..aa94369bdd0f 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,6 +25,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
-+CONFIG_ARM_TEGRA_CPUIDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
--- 
-2.23.0
 
+>
+> However, it is hard to find out who called and leaked refcnt in time. It
+> only left the crime scene but few evidence. Once leaked, it is not
+> safe to fix it up on the running host. We can't trace dev_put/dev_hold
+> directly, for the functions are inlined and used wildly amoung modules.
+> And this issue is common, there are tens of patches fix net_device
+> refcnt leak for various causes.
+>
+> To trace the refcnt manipulating, this patch removes static inline from
+> dev_put/dev_hold. We can use handy tools, such as eBPF with kprobe, to
+> find out who holds but forgets to put refcnt. This will not be called
+> frequently, so the overhead is limited.
+
+I think tracepoint serves the purpose of tracking function call history,
+you can add tracepoint for each of dev_put()/dev_hold(), which could
+also inherit the trace filter and trigger too.
+
+The netdev refcnt itself is not changed very frequently, but it is
+refcnt'ed by other things like dst too which is changed frequently.
+This is why usually when you see the netdev refcnt leak warning,
+the problem is probably somewhere else, like dst refcnt leak.
+
+Hope this helps.
+
+Thanks.
