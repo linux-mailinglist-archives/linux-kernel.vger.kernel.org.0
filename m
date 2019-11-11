@@ -2,73 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C918F7A88
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:10:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41644F7A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:12:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfKKSKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:10:47 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34660 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbfKKSKr (ORCPT
+        id S1727093AbfKKSM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:12:27 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42046 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbfKKSM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:10:47 -0500
-Received: by mail-oi1-f195.google.com with SMTP id l202so12318172oig.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:10:44 -0800 (PST)
+        Mon, 11 Nov 2019 13:12:27 -0500
+Received: by mail-pf1-f196.google.com with SMTP id s5so11170409pfh.9;
+        Mon, 11 Nov 2019 10:12:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nVbr8MtQ7ZO4CacZdX8JXbKAIcqSlSq2oEAfHRt0wK4=;
+        b=rAOdIV0cCiN/zHYvwhWIVgXx6j5+Wf+Kltc5JVcq3LZqB2idl67vTbao209IAhsOJO
+         980kByl8h8gzi5u9MoLkuIMU+J1tK13rnVQSpcIfxDynST3M8SY3mbwuUZmQnRjCzSVU
+         xjyNPeWM+AOJWH8eAgXI0u7hoqLP+LFGs+D7Tgg3EYKvTEJy0i8MBPtSwU7LEQwNZIVC
+         oFXqEEX2LUkWS48LTsa4ZCJarmvwhpV9sovnHsrGelEG2OW8+UQ9vhX82MdJCZcg2CIJ
+         1l/iM03xHSUoVRcAr6zMMoTmIgNdySjl/H3XT9ofIHmTIeZWMdMox2/3Jq1KZWnRIovv
+         +E5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U0dm5D6eillHbo+SYeBB7f0hErK0a+Kk33c8eTHG8H4=;
-        b=uBlfCgXqo7AHGAgUEqHHHg8XNyocTzO00ikzLes8lxILlAohEc7WBWYNwBmgyDB16n
-         GMnGGZ1u7pjJHra3S+s+3Z3p04cMAv9MAr2Wu4/d3yRziyv+eaMsRgMaDf8pEP4Fyp5+
-         atTY3cUvR8Pc5qUuvO0aQ5jNN5jQJt0PDvwPCh7GP+wIDNw+h8O7Go3AwDfQ8430L/2w
-         87SDrUwSwVFO7xIU5ktQ/rsFiNbnbtpCGdGuL1pJACWV1XjTZw+j9MoSYv72ewztdVNA
-         7zXSJdjUaWMfZRncQjt+f343vB5c3GRAOHiYha0cdm5KlXIc2i5Qt9RnQMGdTivGiMOd
-         eMdA==
-X-Gm-Message-State: APjAAAXzZNO23iYqvBtrZjHqPi7HlrmCVGZWnEeeM2T3mErCZfnvezaU
-        FRXs/3nz819hzHYgX8eNuQPLMOIw3ikppUBSII+giQ==
-X-Google-Smtp-Source: APXvYqy5+K5Ca70nfdLzLpsHL1LP47SJMH7uBNWJHVoxDJt89nuKEY13OiKJzKEWbKRlo+wgCcXId9NnMQPQFowaWfc=
-X-Received: by 2002:aca:882:: with SMTP id 124mr284378oii.54.1573495843776;
- Mon, 11 Nov 2019 10:10:43 -0800 (PST)
-MIME-Version: 1.0
-References: <201911110920.5840E9AF1@keescook>
-In-Reply-To: <201911110920.5840E9AF1@keescook>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Nov 2019 19:10:32 +0100
-Message-ID: <CAMuHMdX_EM0e=fN6udZsPfa-YGX7KkNEgCQtdC0M51LGmWOxzA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Convert missed RODATA to RO_DATA
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Borislav Petkov <bp@suse.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nVbr8MtQ7ZO4CacZdX8JXbKAIcqSlSq2oEAfHRt0wK4=;
+        b=gl2NmYtWsgSKU1FBdfEoSbr5PGoKbBMKnPB1tsdXVXOIsKUoWwRvLQtXlcy4oVVbse
+         K1j1SakYm2df3UXp6RVbuWLSvbnJqCiFdzUHao762f98z5/nhF46hcMSxQoaXz10yQxW
+         XKkdg+OWXuquToNlhJLIWMmZWfOcyM7/EhcOA5RU+lnyEa1+armVF968ervgaxLz+5jL
+         rWTpS5H+Pn8iy9GzEjUPhQ/luLTbg1zirfq1MH9cOMxQyb6fi1qnrC4iTeHqdydbGFsS
+         KEmVbTUmpEoiAfE6Ch6x0AxiLkt08qqih3+YtFRKZb0KogxMVzv/jDwIEOFh3SlzVlfZ
+         VNMg==
+X-Gm-Message-State: APjAAAXmtCbnrZPGfHo4NBAWsiHRInVkkG2U1LIA2EP8IYMUWgbkGOJi
+        Y4vWUIzkrilQ1V+Hf3uf//g=
+X-Google-Smtp-Source: APXvYqzqab4rU4p2tyKosUenhapYrI0ueVPZGyWP01XeA+pX8HJKu1zEfgSHrqmDQY9JAg6YU5WFvA==
+X-Received: by 2002:a65:6843:: with SMTP id q3mr24328556pgt.361.1573495945788;
+        Mon, 11 Nov 2019 10:12:25 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:533:7f79:a8e9:b74c:7d75:d0c])
+        by smtp.gmail.com with ESMTPSA id c12sm18301057pfp.67.2019.11.11.10.12.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 10:12:25 -0800 (PST)
+From:   madhuparnabhowmik04@gmail.com
+To:     paulmck@kernel.org, joel@joelfernandes.org, corbet@lwn.net,
+        mchehab@kernel.org
+Cc:     rcu@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+Subject: [PATCH] Documentation: RCU: whatisRCU: Updated full list of RCU API
+Date:   Mon, 11 Nov 2019 23:41:22 +0530
+Message-Id: <20191111181122.28083-1-madhuparnabhowmik04@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 6:22 PM Kees Cook <keescook@chromium.org> wrote:
-> I missed two instances of the old RODATA macro (seems I was searching
-> for vmlinux.lds* not vmlinux*lds*). Fix both instances and double-check
-> the entire tree for other "RODATA" instances in linker scripts.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: c82318254d15 ("vmlinux.lds.h: Replace RODATA with RO_DATA")
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  arch/m68k/kernel/vmlinux-std.lds  | 2 +-
->  arch/m68k/kernel/vmlinux-sun3.lds | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+This patch updates the list of RCU API in whatisRCU.rst.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ Documentation/RCU/whatisRCU.rst | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-                        Geert
-
+diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
+index 2f6f6ebbc8b0..c7f147b8034f 100644
+--- a/Documentation/RCU/whatisRCU.rst
++++ b/Documentation/RCU/whatisRCU.rst
+@@ -884,11 +884,14 @@ in docbook.  Here is the list, by category.
+ RCU list traversal::
+ 
+ 	list_entry_rcu
++	list_entry_lockless
+ 	list_first_entry_rcu
+ 	list_next_rcu
+ 	list_for_each_entry_rcu
+ 	list_for_each_entry_continue_rcu
+ 	list_for_each_entry_from_rcu
++	list_first_or_null_rcu
++	list_next_or_null_rcu
+ 	hlist_first_rcu
+ 	hlist_next_rcu
+ 	hlist_pprev_rcu
+@@ -902,7 +905,7 @@ RCU list traversal::
+ 	hlist_bl_first_rcu
+ 	hlist_bl_for_each_entry_rcu
+ 
+-RCU pointer/list udate::
++RCU pointer/list update::
+ 
+ 	rcu_assign_pointer
+ 	list_add_rcu
+@@ -912,10 +915,12 @@ RCU pointer/list udate::
+ 	hlist_add_behind_rcu
+ 	hlist_add_before_rcu
+ 	hlist_add_head_rcu
++	hlist_add_tail_rcu
+ 	hlist_del_rcu
+ 	hlist_del_init_rcu
+ 	hlist_replace_rcu
+-	list_splice_init_rcu()
++	list_splice_init_rcu
++	list_splice_tail_init_rcu
+ 	hlist_nulls_del_init_rcu
+ 	hlist_nulls_del_rcu
+ 	hlist_nulls_add_head_rcu
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
