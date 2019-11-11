@@ -2,66 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A8D8F7AB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:24:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 279E8F7ABB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:25:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfKKSY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:24:28 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:55736 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726821AbfKKSY2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:24:28 -0500
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xABIOH6Y022708
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Nov 2019 13:24:18 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 16C0A4202FD; Mon, 11 Nov 2019 13:24:17 -0500 (EST)
-Date:   Mon, 11 Nov 2019 13:24:17 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     syzbot <syzbot+9567fda428fba259deba@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Jan Kara <jack@suse.cz>
-Subject: Re: general protection fault in ext4_writepages
-Message-ID: <20191111182417.GB5165@mit.edu>
-References: <00000000000073d3a70597069799@google.com>
- <20191111051236.2717D11C05B@d06av25.portsmouth.uk.ibm.com>
- <20191111053231.F129B11C04C@d06av25.portsmouth.uk.ibm.com>
+        id S1726995AbfKKSZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:25:58 -0500
+Received: from foss.arm.com ([217.140.110.172]:49022 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726821AbfKKSZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:25:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E2421FB;
+        Mon, 11 Nov 2019 10:25:57 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B31A3F534;
+        Mon, 11 Nov 2019 10:25:56 -0800 (PST)
+Date:   Mon, 11 Nov 2019 18:25:54 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH][next] kselftest: arm64: fix spelling mistake "contiguos"
+ -> "contiguous"
+Message-ID: <20191111182553.GB60539@arrakis.emea.arm.com>
+References: <20191111091236.37165-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191111053231.F129B11C04C@d06av25.portsmouth.uk.ibm.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191111091236.37165-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 11:02:31AM +0530, Ritesh Harjani wrote:
+On Mon, Nov 11, 2019 at 09:12:36AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Updating the link.
+> There is a spelling mistake in an error message literal string. Fix it.
 > 
-> On 11/11/19 10:42 AM, Ritesh Harjani wrote:
-> > Hello Ted,
-> > 
-> > This issue seems to be coming via fault injection failure in slab
-> > allocation. This should be fixed via below patch on your latest ext4
-> > branch.
-> > 
-> > https://marc.info/?l=linux-ext4&m=804&w=2
-> https://marc.info/?l=linux-ext4&m=157303310723804&w=2
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Agreed, although unfortunately I wasn't able to make the reproducer
-cause a failure _without_ the patch.  Perhaps something other than
-enabling FAILSLAB and KASAN was needed?
+Queued for 5.5. Thanks.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git test
-
-Let's see if the Syzbot can confirm that the patch addresses the problem.
-
-      	     	 	    	    	 - Ted
+-- 
+Catalin
