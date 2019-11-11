@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2536F7BB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:39:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BD7FF7B17
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbfKKSi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:38:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57944 "EHLO mail.kernel.org"
+        id S1727954AbfKKSc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:32:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729098AbfKKSi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:38:56 -0500
+        id S1727939AbfKKScY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:32:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7438F214E0;
-        Mon, 11 Nov 2019 18:38:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBA3821783;
+        Mon, 11 Nov 2019 18:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497536;
-        bh=OQ64BzoaDbE/hhnAqYHTuEgdYzGDYxNt+YJB5VUtBcc=;
+        s=default; t=1573497143;
+        bh=nnJzIxaWfKrfXXPn1m88ZMoTv/P6sxqm6t4t3sBo0LA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=okvbkRrBaS8cAFnfLcKb7uEF7EEPWS1roc3+V+mfzyUw1GYNlRRmH/KHK0vO5qyhT
-         F4dcmHh0neUPXmNENPL/kO3Q1/WCyz86Hq7RGgu2L9g73exNHlysLODxwEdhakLXqr
-         UZ5X4pmYo+NqPzJ9FTalqPw/Qejgc5JcUMq/3Qbo=
+        b=OsZg16QIo6DnnhAE9sRTenTAjZVN1/7n03LuYwaOzzx4I7k50PxibmAzX5gKoyt9g
+         5bJGP03TyIJSyyu+D8Yh5E8IwgRqqt8q+Y4QpWGHl8zAEG8JFr3JdzdgeE7mGrOeCe
+         xqVmWipiC23AcfdBGZYRkDTdeeO6gkGAayAJ0bG4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Andrew F. Davis" <afd@ti.com>, Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 4.14 048/105] ASoC: tlv320aic31xx: Handle inverted BCLK in non-DSP modes
+        stable@vger.kernel.org, Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.9 18/65] ceph: fix use-after-free in __ceph_remove_cap()
 Date:   Mon, 11 Nov 2019 19:28:18 +0100
-Message-Id: <20191111181441.765541673@linuxfoundation.org>
+Message-Id: <20191111181344.476514494@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,66 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Andrew F. Davis" <afd@ti.com>
+From: Luis Henriques <lhenriques@suse.com>
 
-commit dcb407b257af06fa58b0544ec01ec9e0d3927e02 upstream
+commit ea60ed6fcf29eebc78f2ce91491e6309ee005a01 upstream.
 
-Currently BCLK inverting is only handled when the DAI format is
-DSP, but the BCLK may be inverted in any supported mode. Without
-this using this CODEC in any other mode than DSP with the BCLK
-inverted leads to bad sampling timing and very poor audio quality.
+KASAN reports a use-after-free when running xfstest generic/531, with the
+following trace:
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+[  293.903362]  kasan_report+0xe/0x20
+[  293.903365]  rb_erase+0x1f/0x790
+[  293.903370]  __ceph_remove_cap+0x201/0x370
+[  293.903375]  __ceph_remove_caps+0x4b/0x70
+[  293.903380]  ceph_evict_inode+0x4e/0x360
+[  293.903386]  evict+0x169/0x290
+[  293.903390]  __dentry_kill+0x16f/0x250
+[  293.903394]  dput+0x1c6/0x440
+[  293.903398]  __fput+0x184/0x330
+[  293.903404]  task_work_run+0xb9/0xe0
+[  293.903410]  exit_to_usermode_loop+0xd3/0xe0
+[  293.903413]  do_syscall_64+0x1a0/0x1c0
+[  293.903417]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+This happens because __ceph_remove_cap() may queue a cap release
+(__ceph_queue_cap_release) which can be scheduled before that cap is
+removed from the inode list with
+
+	rb_erase(&cap->ci_node, &ci->i_caps);
+
+And, when this finally happens, the use-after-free will occur.
+
+This can be fixed by removing the cap from the inode list before being
+removed from the session list, and thus eliminating the risk of an UAF.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/soc/codecs/tlv320aic31xx.c |   28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
 
---- a/sound/soc/codecs/tlv320aic31xx.c
-+++ b/sound/soc/codecs/tlv320aic31xx.c
-@@ -924,6 +924,18 @@ static int aic31xx_set_dai_fmt(struct sn
- 		return -EINVAL;
- 	}
+---
+ fs/ceph/caps.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -933,6 +933,11 @@ void __ceph_remove_cap(struct ceph_cap *
  
-+	/* signal polarity */
-+	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
-+	case SND_SOC_DAIFMT_NB_NF:
-+		break;
-+	case SND_SOC_DAIFMT_IB_NF:
-+		iface_reg2 |= AIC31XX_BCLKINV_MASK;
-+		break;
-+	default:
-+		dev_err(codec->dev, "Invalid DAI clock signal polarity\n");
-+		return -EINVAL;
-+	}
+ 	dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
+ 
++	/* remove from inode's cap rbtree, and clear auth cap */
++	rb_erase(&cap->ci_node, &ci->i_caps);
++	if (ci->i_auth_cap == cap)
++		ci->i_auth_cap = NULL;
 +
- 	/* interface format */
- 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
- 	case SND_SOC_DAIFMT_I2S:
-@@ -931,16 +943,12 @@ static int aic31xx_set_dai_fmt(struct sn
- 	case SND_SOC_DAIFMT_DSP_A:
- 		dsp_a_val = 0x1;
- 	case SND_SOC_DAIFMT_DSP_B:
--		/* NOTE: BCLKINV bit value 1 equas NB and 0 equals IB */
--		switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
--		case SND_SOC_DAIFMT_NB_NF:
--			iface_reg2 |= AIC31XX_BCLKINV_MASK;
--			break;
--		case SND_SOC_DAIFMT_IB_NF:
--			break;
--		default:
--			return -EINVAL;
--		}
-+		/*
-+		 * NOTE: This CODEC samples on the falling edge of BCLK in
-+		 * DSP mode, this is inverted compared to what most DAIs
-+		 * expect, so we invert for this mode
-+		 */
-+		iface_reg2 ^= AIC31XX_BCLKINV_MASK;
- 		iface_reg1 |= (AIC31XX_DSP_MODE <<
- 			       AIC31XX_IFACE1_DATATYPE_SHIFT);
- 		break;
+ 	/* remove from session list */
+ 	spin_lock(&session->s_cap_lock);
+ 	if (session->s_cap_iterator == cap) {
+@@ -968,11 +973,6 @@ void __ceph_remove_cap(struct ceph_cap *
+ 
+ 	spin_unlock(&session->s_cap_lock);
+ 
+-	/* remove from inode list */
+-	rb_erase(&cap->ci_node, &ci->i_caps);
+-	if (ci->i_auth_cap == cap)
+-		ci->i_auth_cap = NULL;
+-
+ 	if (removed)
+ 		ceph_put_cap(mdsc, cap);
+ 
 
 
