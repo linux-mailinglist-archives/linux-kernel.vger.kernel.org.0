@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088D2F76FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4CFF76FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:48:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfKKOr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:47:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48652 "EHLO
+        id S1727260AbfKKOrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:47:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48616 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbfKKOrR (ORCPT
+        with ESMTP id S1727010AbfKKOrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:47:17 -0500
+        Mon, 11 Nov 2019 09:47:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=TjyDEh8C28K6PfcmZCallRBiJEgYFMbz6s05aN+pBGw=; b=roZuExGIiwpq8WdZnG9xwc8YtH
-        LsCbWIuCyQIeeca+gG1pArL3fCPM/wm8AGM+J7ohpIxp/J4aDEa2xL5z+NpNqzLuZY2EbPoooZgTe
-        ZnEjj1q8OU6pz6VAmO26EOMQi/rCaCbwuxBlCxJaCwih/wEYBLF05E0qwmry+KaWgCjGHbX6+iJte
-        DeEH86k1c68OM9WLkCv4ENazAx90k3N7Ugvw4MJ6MPuI2Bz8kLcWlWxAUbuCYuS80KJiP5woSXPvN
-        rHjl4eKIIGPN2qGPw8t4Wgq2Lyshn8Q6f6AC+7IgdCLsaxnBE20DZLLpFB1aVGhkHXTqoYqPyPkWs
-        S75mEIXA==;
+        bh=4svTgr24B3DFbicDirGPWmJ5CQkIQvaSubBKnXTLtnY=; b=MhtjAktEDsF6spFEpXZMI8txgn
+        0x2rI54GtKHzBZGVa+3rWTHXiIkZB/i2WDwMtRzZZ3PcG9mMil9JRtKuOVO1pdxzFcrCAUaBJd/V5
+        geESq1a0IR9D7SX2SrV/vb359RZ7BnzCxxeDwk5uJhCRxYxeBxIY2mgPfXIoPPX+HRUcLFF2grUQR
+        Ecs37vwT4W3Sq+x9vd2wBCIhKx0faEVYc/6nUi9CXR5xEsJ4jLKxIoYdsD5Qx0qgN7D6Ig2nvbm7h
+        PCJnxD4YexiNnCYhSHqkHGHI4iONZ3FaeGKi+KMy2m3Hu2WXlfcarBZXigdSPqZoRHGi3VPpLjTbN
+        7iC0TuzQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUAyB-0006a3-Kc; Mon, 11 Nov 2019 14:47:07 +0000
+        id 1iUAy9-0006Zh-SM; Mon, 11 Nov 2019 14:47:06 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 14FA03070D5;
-        Mon, 11 Nov 2019 15:45:58 +0100 (CET)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E075B306E66;
+        Mon, 11 Nov 2019 15:45:57 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 948C129A37A8D; Mon, 11 Nov 2019 15:47:03 +0100 (CET)
-Message-Id: <20191111132457.989922744@infradead.org>
+        id 995C529A37A8E; Mon, 11 Nov 2019 15:47:03 +0100 (CET)
+Message-Id: <20191111132458.047052889@infradead.org>
 User-Agent: quilt/0.65
-Date:   Mon, 11 Nov 2019 14:13:01 +0100
+Date:   Mon, 11 Nov 2019 14:13:02 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -45,7 +45,7 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com, jeyu@kernel.org, alexei.starovoitov@gmail.com
-Subject: [PATCH -v5 09/17] x86/alternative: Remove text_poke_loc::len
+Subject: [PATCH -v5 10/17] x86/alternative: Shrink text_poke_loc
 References: <20191111131252.921588318@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,68 +54,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per the BUG_ON(len != insn.length) in text_poke_loc_init(), tp->len
-must indeed be the same as text_opcode_size(tp->opcode). Use this to
-remove this field from the structure.
+Employ the fact that all text must be within a s32 displacement of one
+another to shrink the text_poke_loc::addr field. Make it relative to
+_stext.
 
-Sadly, due to 8 byte alignment, this only increases the structure
-padding.
+This then shrinks struct text_poke_loc to 16 bytes, and consequently
+increases TP_VEC_MAX from 170 to 256.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/kernel/alternative.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/x86/kernel/alternative.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -938,7 +938,6 @@ static void do_sync_core(void *info)
+@@ -937,7 +937,7 @@ static void do_sync_core(void *info)
+ }
  
  struct text_poke_loc {
- 	void *addr;
--	int len;
+-	void *addr;
++	s32 rel_addr; /* addr := _stext + rel_addr */
  	s32 rel32;
  	u8 opcode;
  	const u8 text[POKE_MAX_OPCODE_SIZE];
-@@ -965,6 +964,7 @@ int notrace poke_int3_handler(struct pt_
- {
- 	struct text_poke_loc *tp;
- 	void *ip;
-+	int len;
+@@ -948,13 +948,18 @@ static struct bp_patching_desc {
+ 	int nr_entries;
+ } bp_patching;
  
- 	/*
- 	 * Having observed our INT3 instruction, we now must observe
-@@ -1004,7 +1004,8 @@ int notrace poke_int3_handler(struct pt_
++static inline void *text_poke_addr(struct text_poke_loc *tp)
++{
++	return _stext + tp->rel_addr;
++}
++
+ static int notrace patch_cmp(const void *key, const void *elt)
+ {
+ 	struct text_poke_loc *tp = (struct text_poke_loc *) elt;
+ 
+-	if (key < tp->addr)
++	if (key < text_poke_addr(tp))
+ 		return -1;
+-	if (key > tp->addr)
++	if (key > text_poke_addr(tp))
+ 		return 1;
+ 	return 0;
+ }
+@@ -1000,7 +1005,7 @@ int notrace poke_int3_handler(struct pt_
+ 			return 0;
+ 	} else {
+ 		tp = bp_patching.vec;
+-		if (tp->addr != ip)
++		if (text_poke_addr(tp) != ip)
  			return 0;
  	}
  
--	ip += tp->len;
-+	len = text_opcode_size(tp->opcode);
-+	ip += len;
- 
- 	switch (tp->opcode) {
- 	case INT3_INSN_OPCODE:
-@@ -1085,10 +1086,12 @@ static void text_poke_bp_batch(struct te
- 	 * Second step: update all but the first byte of the patched range.
+@@ -1078,7 +1083,7 @@ static void text_poke_bp_batch(struct te
+ 	 * First step: add a int3 trap to the address that will be patched.
  	 */
- 	for (do_sync = 0, i = 0; i < nr_entries; i++) {
--		if (tp[i].len - sizeof(int3) > 0) {
-+		int len = text_opcode_size(tp[i].opcode);
-+
-+		if (len - sizeof(int3) > 0) {
- 			text_poke((char *)tp[i].addr + sizeof(int3),
+ 	for (i = 0; i < nr_entries; i++)
+-		text_poke(tp[i].addr, &int3, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), &int3, sizeof(int3));
+ 
+ 	on_each_cpu(do_sync_core, NULL, 1);
+ 
+@@ -1089,7 +1094,7 @@ static void text_poke_bp_batch(struct te
+ 		int len = text_opcode_size(tp[i].opcode);
+ 
+ 		if (len - sizeof(int3) > 0) {
+-			text_poke((char *)tp[i].addr + sizeof(int3),
++			text_poke(text_poke_addr(&tp[i]) + sizeof(int3),
  				  (const char *)tp[i].text + sizeof(int3),
--				  tp[i].len - sizeof(int3));
-+				  len - sizeof(int3));
+ 				  len - sizeof(int3));
  			do_sync++;
- 		}
+@@ -1113,7 +1118,7 @@ static void text_poke_bp_batch(struct te
+ 		if (tp[i].text[0] == INT3_INSN_OPCODE)
+ 			continue;
+ 
+-		text_poke(tp[i].addr, tp[i].text, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), tp[i].text, sizeof(int3));
+ 		do_sync++;
  	}
-@@ -1141,7 +1144,6 @@ void text_poke_loc_init(struct text_poke
+ 
+@@ -1143,7 +1148,7 @@ void text_poke_loc_init(struct text_poke
+ 	BUG_ON(!insn_complete(&insn));
  	BUG_ON(len != insn.length);
  
- 	tp->addr = addr;
--	tp->len = len;
+-	tp->addr = addr;
++	tp->rel_addr = addr - (void *)_stext;
  	tp->opcode = insn.opcode.bytes[0];
  
  	switch (tp->opcode) {
+@@ -1192,7 +1197,7 @@ static bool tp_order_fail(void *addr)
+ 		return true;
+ 
+ 	tp = &tp_vec[tp_vec_nr - 1];
+-	if ((unsigned long)tp->addr > (unsigned long)addr)
++	if ((unsigned long)text_poke_addr(tp) > (unsigned long)addr)
+ 		return true;
+ 
+ 	return false;
 
 
