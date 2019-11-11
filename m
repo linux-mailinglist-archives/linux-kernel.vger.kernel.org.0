@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F92EF7F1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A19A6F7E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfKKSe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:34:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52638 "EHLO mail.kernel.org"
+        id S1729186AbfKKSjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:39:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728431AbfKKSex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:34:53 -0500
+        id S1729177AbfKKSjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:39:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19F6B214E0;
-        Mon, 11 Nov 2019 18:34:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5BA221655;
+        Mon, 11 Nov 2019 18:39:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497292;
-        bh=mENUcsyP8U4Z9kgmBjen1ZITceKxhUGaaV9IBTNDxTY=;
+        s=default; t=1573497591;
+        bh=3NBsUnB2jvtB3ZFBdUQ15Z1mIQDFnP6GAfPPNfWIal0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pLZf9GMgAJb0wH3n0GqSjbV6eQQOk4mZIXW6wHYBOEq88Tnu0JTW21BUJzByTA4sC
-         3FOS2MALGnjqSaorpRopw2tbelGKAF+b0cGtSksiyQNwg0Hn8e+pM0URL5LsMw2h+2
-         do77b/1OqRfkie7SAlgtwprg7U22ffopH/unA+AE=
+        b=tFoIqR9/ybsxV08AGJiml/SD6JjQly0Ob2Roce1gIRir+bN+ntVoSclwgKlG7IgLP
+         H1/JAADdCKvNXr0IyLCjRJ+w6YfQJplt4+YWzu6bvnmk99rgRg4NA/ZYtCjUYSGljS
+         c6DGeXqqabPtyjpRRn98O1Q8NViSBVXC4/JN6gYk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiangfeng Xiao <xiaojiangfeng@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 55/65] net: hisilicon: Fix "Trying to free already-free IRQ"
-Date:   Mon, 11 Nov 2019 19:28:55 +0100
-Message-Id: <20191111181352.898909744@linuxfoundation.org>
+Subject: [PATCH 4.14 086/105] usb: dwc3: remove the call trace of USBx_GFLADJ
+Date:   Mon, 11 Nov 2019 19:28:56 +0100
+Message-Id: <20191111181447.430945033@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+From: Yinbo Zhu <yinbo.zhu@nxp.com>
 
-[ Upstream commit 63a41746827cb16dc6ad0d4d761ab4e7dda7a0c3 ]
+[ Upstream commit a7d9874c6f3fbc8d25cd9ceba35b6822612c4ebf ]
 
-When rmmod hip04_eth.ko, we can get the following warning:
+layerscape board sometimes reported some usb call trace, that is due to
+kernel sent LPM tokerns automatically when it has no pending transfers
+and think that the link is idle enough to enter L1, which procedure will
+ask usb register has a recovery,then kernel will compare USBx_GFLADJ and
+set GFLADJ_30MHZ, GFLADJ_30MHZ_REG until GFLADJ_30MHZ is equal 0x20, if
+the conditions were met then issue occur, but whatever the conditions
+whether were met that usb is all need keep GFLADJ_30MHZ of value is 0x20
+(xhci spec ask use GFLADJ_30MHZ to adjust any offset from clock source
+that generates the clock that drives the SOF counter, 0x20 is default
+value of it)That is normal logic, so need remove the call trace.
 
-Task track: rmmod(1623)>bash(1591)>login(1581)>init(1)
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1623 at kernel/irq/manage.c:1557 __free_irq+0xa4/0x2ac()
-Trying to free already-free IRQ 200
-Modules linked in: ping(O) pramdisk(O) cpuinfo(O) rtos_snapshot(O) interrupt_ctrl(O) mtdblock mtd_blkdevrtfs nfs_acl nfs lockd grace sunrpc xt_tcpudp ipt_REJECT iptable_filter ip_tables x_tables nf_reject_ipv
-CPU: 0 PID: 1623 Comm: rmmod Tainted: G           O    4.4.193 #1
-Hardware name: Hisilicon A15
-[<c020b408>] (rtos_unwind_backtrace) from [<c0206624>] (show_stack+0x10/0x14)
-[<c0206624>] (show_stack) from [<c03f2be4>] (dump_stack+0xa0/0xd8)
-[<c03f2be4>] (dump_stack) from [<c021a780>] (warn_slowpath_common+0x84/0xb0)
-[<c021a780>] (warn_slowpath_common) from [<c021a7e8>] (warn_slowpath_fmt+0x3c/0x68)
-[<c021a7e8>] (warn_slowpath_fmt) from [<c026876c>] (__free_irq+0xa4/0x2ac)
-[<c026876c>] (__free_irq) from [<c0268a14>] (free_irq+0x60/0x7c)
-[<c0268a14>] (free_irq) from [<c0469e80>] (release_nodes+0x1c4/0x1ec)
-[<c0469e80>] (release_nodes) from [<c0466924>] (__device_release_driver+0xa8/0x104)
-[<c0466924>] (__device_release_driver) from [<c0466a80>] (driver_detach+0xd0/0xf8)
-[<c0466a80>] (driver_detach) from [<c0465e18>] (bus_remove_driver+0x64/0x8c)
-[<c0465e18>] (bus_remove_driver) from [<c02935b0>] (SyS_delete_module+0x198/0x1e0)
-[<c02935b0>] (SyS_delete_module) from [<c0202ed0>] (__sys_trace_return+0x0/0x10)
----[ end trace bb25d6123d849b44 ]---
-
-Currently "rmmod hip04_eth.ko" call free_irq more than once
-as devres_release_all and hip04_remove both call free_irq.
-This results in a 'Trying to free already-free IRQ' warning.
-To solve the problem free_irq has been moved out of hip04_remove.
-
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hip04_eth.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/dwc3/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index 407e1177d9d1a..4436a0307f32e 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -953,7 +953,6 @@ static int hip04_remove(struct platform_device *pdev)
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 9b093978bd24d..48755c501201d 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -282,8 +282,7 @@ static void dwc3_frame_length_adjustment(struct dwc3 *dwc)
  
- 	hip04_free_ring(ndev, d);
- 	unregister_netdev(ndev);
--	free_irq(ndev->irq, ndev);
- 	of_node_put(priv->phy_node);
- 	cancel_work_sync(&priv->tx_timeout_task);
- 	free_netdev(ndev);
+ 	reg = dwc3_readl(dwc->regs, DWC3_GFLADJ);
+ 	dft = reg & DWC3_GFLADJ_30MHZ_MASK;
+-	if (!dev_WARN_ONCE(dwc->dev, dft == dwc->fladj,
+-	    "request value same as default, ignoring\n")) {
++	if (dft != dwc->fladj) {
+ 		reg &= ~DWC3_GFLADJ_30MHZ_MASK;
+ 		reg |= DWC3_GFLADJ_30MHZ_SDBND_SEL | dwc->fladj;
+ 		dwc3_writel(dwc->regs, DWC3_GFLADJ, reg);
 -- 
 2.20.1
 
