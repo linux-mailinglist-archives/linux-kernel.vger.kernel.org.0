@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B427FF7DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1C8BF7E9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbfKKTAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:00:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48544 "EHLO mail.kernel.org"
+        id S1728891AbfKKSlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:41:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727543AbfKKSxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:53:40 -0500
+        id S1729369AbfKKSlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:41:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0FC4214E0;
-        Mon, 11 Nov 2019 18:53:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19E81222BD;
+        Mon, 11 Nov 2019 18:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498419;
-        bh=MegO0AW1S5ijek+lrnxfYqx5M+fzH8XtDZcN2iYagM4=;
+        s=default; t=1573497679;
+        bh=UIq6QvcPqMu1sCDLRquDFWYrzeshzFfZ9v+MFhMzqMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hmJAva2jpEk3pfQ65FmNbBSdiw7RcIjdaF7hjDvvMnXHrUmnN1QSBl39wusAvt5gY
-         p4zn2qQQP5Ig6FRqfPOhApS3R4tO0BXJadLYui/tWUCnPPvqVMJTF9xb1zWw0LgHJs
-         rL7T3hRwxnO35faN/vCIIboShZVcAxrdFS90Jbnk=
+        b=x80RBQ/eK3WH/XRaQ4Tm+jBQa8X0Hkz8m0ezWekm4pP7nZPFU+xqpI/vBQ8ZAL7Ai
+         uCnP/fD7WSSS/ECcInL9Es8c89h7g7P20phyC6B7yf3Qg8E1i0IXKGzIAEqhgsSJYD
+         RU6zlXoofkVmvNVDwkwmsE5GPTHkuUY7ij/eX7g4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Joe Burmeister <joe.burmeister@devtank.co.uk>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 5.3 074/193] can: c_can: c_can_poll(): only read status register after status IRQ
-Date:   Mon, 11 Nov 2019 19:27:36 +0100
-Message-Id: <20191111181506.582132325@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 025/125] perf tools: Fix time sorting
+Date:   Mon, 11 Nov 2019 19:27:44 +0100
+Message-Id: <20191111181443.955790326@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,93 +48,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 3cb3eaac52c0f145d895f4b6c22834d5f02b8569 upstream.
+commit 722ddfde366fd46205456a9c5ff9b3359dc9a75e upstream.
 
-When the status register is read without the status IRQ pending, the
-chip may not raise the interrupt line for an upcoming status interrupt
-and the driver may miss a status interrupt.
+The final sort might get confused when the comparison is done over
+bigger numbers than int like for -s time.
 
-It is critical that the BUSOFF status interrupt is forwarded to the
-higher layers, since no more interrupts will follow without
-intervention.
+Check the following report for longer workloads:
 
-Thanks to Wolfgang and Joe for bringing up the first idea.
+  $ perf report -s time -F time,overhead --stdio
 
-Signed-off-by: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
-Cc: Wolfgang Grandegger <wg@grandegger.com>
-Cc: Joe Burmeister <joe.burmeister@devtank.co.uk>
-Fixes: fa39b54ccf28 ("can: c_can: Get rid of pointless interrupts")
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Fix hist_entry__sort() to properly return int64_t and not possible cut
+int.
+
+Fixes: 043ca389a318 ("perf tools: Use hpp formats to sort final output")
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org # v3.16+
+Link: http://lore.kernel.org/lkml/20191104232711.16055-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/c_can/c_can.c |   25 ++++++++++++++++++++-----
- drivers/net/can/c_can/c_can.h |    1 +
- 2 files changed, 21 insertions(+), 5 deletions(-)
+ tools/perf/util/hist.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/c_can/c_can.c
-+++ b/drivers/net/can/c_can/c_can.c
-@@ -97,6 +97,9 @@
- #define BTR_TSEG2_SHIFT		12
- #define BTR_TSEG2_MASK		(0x7 << BTR_TSEG2_SHIFT)
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -1508,7 +1508,7 @@ int hists__collapse_resort(struct hists
+ 	return 0;
+ }
  
-+/* interrupt register */
-+#define INT_STS_PENDING		0x8000
-+
- /* brp extension register */
- #define BRP_EXT_BRPE_MASK	0x0f
- #define BRP_EXT_BRPE_SHIFT	0
-@@ -1029,10 +1032,16 @@ static int c_can_poll(struct napi_struct
- 	u16 curr, last = priv->last_status;
- 	int work_done = 0;
- 
--	priv->last_status = curr = priv->read_reg(priv, C_CAN_STS_REG);
--	/* Ack status on C_CAN. D_CAN is self clearing */
--	if (priv->type != BOSCH_D_CAN)
--		priv->write_reg(priv, C_CAN_STS_REG, LEC_UNUSED);
-+	/* Only read the status register if a status interrupt was pending */
-+	if (atomic_xchg(&priv->sie_pending, 0)) {
-+		priv->last_status = curr = priv->read_reg(priv, C_CAN_STS_REG);
-+		/* Ack status on C_CAN. D_CAN is self clearing */
-+		if (priv->type != BOSCH_D_CAN)
-+			priv->write_reg(priv, C_CAN_STS_REG, LEC_UNUSED);
-+	} else {
-+		/* no change detected ... */
-+		curr = last;
-+	}
- 
- 	/* handle state changes */
- 	if ((curr & STATUS_EWARN) && (!(last & STATUS_EWARN))) {
-@@ -1083,10 +1092,16 @@ static irqreturn_t c_can_isr(int irq, vo
+-static int hist_entry__sort(struct hist_entry *a, struct hist_entry *b)
++static int64_t hist_entry__sort(struct hist_entry *a, struct hist_entry *b)
  {
- 	struct net_device *dev = (struct net_device *)dev_id;
- 	struct c_can_priv *priv = netdev_priv(dev);
-+	int reg_int;
- 
--	if (!priv->read_reg(priv, C_CAN_INT_REG))
-+	reg_int = priv->read_reg(priv, C_CAN_INT_REG);
-+	if (!reg_int)
- 		return IRQ_NONE;
- 
-+	/* save for later use */
-+	if (reg_int & INT_STS_PENDING)
-+		atomic_set(&priv->sie_pending, 1);
-+
- 	/* disable all interrupts and schedule the NAPI */
- 	c_can_irq_control(priv, false);
- 	napi_schedule(&priv->napi);
---- a/drivers/net/can/c_can/c_can.h
-+++ b/drivers/net/can/c_can/c_can.h
-@@ -198,6 +198,7 @@ struct c_can_priv {
- 	struct net_device *dev;
- 	struct device *device;
- 	atomic_t tx_active;
-+	atomic_t sie_pending;
- 	unsigned long tx_dir;
- 	int last_status;
- 	u16 (*read_reg) (const struct c_can_priv *priv, enum reg index);
+ 	struct hists *hists = a->hists;
+ 	struct perf_hpp_fmt *fmt;
 
 
