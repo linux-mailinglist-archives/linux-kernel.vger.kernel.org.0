@@ -2,56 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B3FF7974
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0A54F797F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:08:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfKKRG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 12:06:28 -0500
-Received: from utopia.booyaka.com ([74.50.51.50]:38950 "EHLO
-        utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfKKRG1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 12:06:27 -0500
-Received: (qmail 31259 invoked by uid 1019); 11 Nov 2019 17:06:26 -0000
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 11 Nov 2019 17:06:26 -0000
-Date:   Mon, 11 Nov 2019 17:06:26 +0000 (UTC)
-From:   Paul Walmsley <paul@pwsan.com>
-To:     Anup Patel <Anup.Patel@wdc.com>
-cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Anup Patel <anup@brainfault.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] RISC-V: Enable SYSCON reboot and poweroff drivers
-In-Reply-To: <20191111133421.14390-1-anup.patel@wdc.com>
-Message-ID: <alpine.DEB.2.21.999.1911111705350.30304@utopia.booyaka.com>
-References: <20191111133421.14390-1-anup.patel@wdc.com>
-User-Agent: Alpine 2.21.999 (DEB 260 2018-02-26)
+        id S1727031AbfKKRIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 12:08:44 -0500
+Received: from muru.com ([72.249.23.125]:41552 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726871AbfKKRIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 12:08:43 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 678BE8047;
+        Mon, 11 Nov 2019 17:09:11 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 09:08:26 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Sekhar Nori <nsekhar@ti.com>, netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Ivan Vecera <ivecera@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 net-next 00/12] net: ethernet: ti: introduce new cpsw
+ switchdev based driver
+Message-ID: <20191111170826.GT5610@atomide.com>
+References: <20191024100914.16840-1-grygorii.strashko@ti.com>
+ <20191024160549.GY5610@atomide.com>
+ <dc621a9d-eb92-5df9-81d7-ad2b037ac3c7@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc621a9d-eb92-5df9-81d7-ad2b037ac3c7@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Nov 2019, Anup Patel wrote:
-
-> We can use SYSCON reboot and poweroff drivers for the
-> SiFive test device found on QEMU virt machine and SiFive
-> SOCs.
+* Grygorii Strashko <grygorii.strashko@ti.com> [191109 15:16]:
+> Hi Tony,
 > 
-> This patch enables SYSCON reboot and poweroff drivers
-> in RV64 and RV32 defconfigs.
+> On 24/10/2019 19:05, Tony Lindgren wrote:
+> > Hi,
+> > 
+> > * Grygorii Strashko <grygorii.strashko@ti.com> [191024 10:10]:
+> > > This the RFC v5 which introduces new CPSW switchdev based driver which is
+> > > operating in dual-emac mode by default, thus working as 2 individual
+> > > network interfaces. The Switch mode can be enabled by configuring devlink driver
+> > > parameter "switch_mode" to 1/true:
+> > > 	devlink dev param set platform/48484000.ethernet_switch \
+> > > 	name switch_mode value 1 cmode runtime
+> > 
+> > Just wondering about the migration plan.. Is this a replacement
+> > driver or used in addition to the old driver?
+> > 
 > 
-> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> Sry, I've missed you mail.
+> 
+> As it's pretty big change the idea is to keep both drivers at least for sometime.
+> Step 1: add new driver and enable it on one platform. Do announcement.
+> Step 2: switch all one-port and dual mac drivers to the new driver
+> Step 3: switch all other platform to cpsw switchdev and deprecate old driver.
 
-I'd much prefer Christoph's driver, once it's fixed up per my earlier 
-comments.  This business with writing random registers based on what's in 
-the DT data has always been a bad idea.
+OK sounds good to me. So for the dts changes, we keep the old binding
+and just add a new module there?
 
+Or do you also have to disable some parts of the old dts?
 
-- Paul
+Regards,
+
+Tony
