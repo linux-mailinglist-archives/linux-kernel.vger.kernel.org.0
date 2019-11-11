@@ -2,87 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF849F7748
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF58EF7753
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfKKPAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 10:00:21 -0500
-Received: from mail-sh.amlogic.com ([58.32.228.43]:50227 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfKKPAU (ORCPT
+        id S1726959AbfKKPDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 10:03:24 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:60054 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726888AbfKKPDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 10:00:20 -0500
-Received: from [192.168.0.108] (223.167.21.236) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 11 Nov
- 2019 23:00:39 +0800
-Subject: Re: [PATCH v4 3/4] soc: amlogic: Add support for Secure power domains
- controller
-To:     Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>
-References: <1572868028-73076-1-git-send-email-jianxin.pan@amlogic.com>
- <1572868028-73076-4-git-send-email-jianxin.pan@amlogic.com>
- <7hmud4stfo.fsf@baylibre.com>
- <57b9c706-c341-c7cf-698a-66335b34442b@amlogic.com>
- <7h36eucw1u.fsf@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <8e227a22-97af-fbdf-945f-f99b12d736c2@amlogic.com>
-Date:   Mon, 11 Nov 2019 23:00:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Mon, 11 Nov 2019 10:03:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573484603;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/lyJlehl3SHL3cILoyZTYkZm+/0A3k7QAa57z5CMFPs=;
+        b=UtnDIhaiYGW6Xq1ftX1xYrogHdC375XfeuoTshI0iXSGa58BuwLCuA+roGY39APpjtc6Mj
+        xyT63N7dIkraMhk/Kfm32+zqLiPcuz4Lbzh3aqRkWG+bgV5c9iSmSQJuLAsr21cIPtKT+d
+        CTHBT4Pt09l9AncLBS4yKd7L2WSJFDE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-231-oVSFwkg6M_O6eCXYgu36-g-1; Mon, 11 Nov 2019 10:03:20 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 65813800C61;
+        Mon, 11 Nov 2019 15:03:18 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (dhcp-192-200.str.redhat.com [10.33.192.200])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 493CB52F3;
+        Mon, 11 Nov 2019 15:03:13 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>
+Cc:     Christian Brauner <christian@brauner.io>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: For review: documentation of clone3() system call
+References: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
+Date:   Mon, 11 Nov 2019 16:03:11 +0100
+In-Reply-To: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
+        (Michael Kerrisk's message of "Fri, 25 Oct 2019 18:59:31 +0200")
+Message-ID: <87tv7awj4g.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <7h36eucw1u.fsf@baylibre.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [223.167.21.236]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: oVSFwkg6M_O6eCXYgu36-g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kevin,
+* Michael Kerrisk:
 
-On 2019/11/11 22:44, Kevin Hilman wrote:
-> Hi Jianxin,
-> 
-> Jianxin Pan <jianxin.pan@amlogic.com> writes:
-> 
-> [...]
-> 
->>>> +	SEC_PD(RAMB,	GENPD_FLAG_ALWAYS_ON),
->>>> +	SEC_PD(IR,	0),
->>>> +	SEC_PD(SPICC,	0),
->>>> +	SEC_PD(SPIFC,	0),
->>>> +	SEC_PD(USB,	0),
->>>> +	/* NIC is for NIC400, and should be always on */
->>>
->>> Why?
->>>
->> NIC domain is for ARM CoreLink NIC-400 Network Interconnect, and should be always on since bootloader.
-> 
-> OK, makes sense.  I suggest a minor change to the comment to remind that
-> this is an interconnect:
-> 
->    /* NIC is for the Arm NIC-400 interconnect, and should be always on */
-> 
-OK, I will update it, and thanks for the advice.
-> Thanks,
-> 
-> Kevin
-> 
-> .
-> 
+>        Another  difference  for  the  raw clone() system call is that the
+>        stack argument may be NULL, in which case the child uses a  dupli=
+=E2=80=90
+>        cate  of the parent's stack.  (Copy-on-write semantics ensure that
+>        the child gets separate copies of stack pages when either  process
+>        modifies  the  stack.)   In  this case, for correct operation, the
+>        CLONE_VM option should not be specified.  (If the child shares the
+>        parent's  memory  because of the use of the CLONE_VM flag, then no
+>        copy-on-write duplication occurs and chaos is likely to result.)
+
+I think sharing the stack also works with CLONE_VFORK with CLONE_VM, as
+long as measures are taken to preserve the return address in a register.
+
+Thanks,
+Florian
 
