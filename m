@@ -2,112 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8612F778C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AAEF7799
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKKPUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 10:20:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53271 "EHLO
+        id S1726950AbfKKPZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 10:25:28 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51629 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726857AbfKKPUw (ORCPT
+        with ESMTP id S1726832AbfKKPZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 10:20:52 -0500
+        Mon, 11 Nov 2019 10:25:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573485651;
+        s=mimecast20190719; t=1573485926;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=C1zGHKvwpfTIUGcapQ+PDyzQUKdMx+4TB/qV51A6KfM=;
-        b=ZYzyx+8k88KApyTDKgLQLPjMrXkY7WyCLfrmL/wRjCWkjU8JvFLNWHAJkTZD/zHZiIl7Iw
-        +XxcFy7n0nk+RxKe7hwqCJgp34FqP8OF+at4RI2KxovGN5f0oLakv4emNRoZasZiS9p+0f
-        FSe0q/hoN0YdnxkwXqv3eAtuQ8c5cyk=
+        bh=RTpgrGON4kavQjrqlqN+As1k4CmcekptcYakwUxrssY=;
+        b=aNrxQL7t5MpgXV37oFxbAuRYh9yOJwxNGsU2WtcJlwiM4J0O6smV1OGIsa/rO+3f950JGd
+        9MAzmvWE9okOhw45rEstlh7ly91KghitCT4+bN5Kuv2GDUI3mjpjqSAUOwZWlB6a2awFmf
+        1vQuTG4xDgGQspX+GXWJs+VgxT9v9xE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-6-vBGvGzzCMIG6kes1J63o-g-1; Mon, 11 Nov 2019 10:20:48 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-386-lGc3MC08MDKlQT_hnW38rw-1; Mon, 11 Nov 2019 10:25:21 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F7F5911AD;
-        Mon, 11 Nov 2019 15:20:46 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (dhcp-192-200.str.redhat.com [10.33.192.200])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2E6F060852;
-        Mon, 11 Nov 2019 15:20:38 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: For review: documentation of clone3() system call
-References: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
-        <87tv7awj4g.fsf@oldenburg2.str.redhat.com>
-        <CAG48ez3zpBwU6vHSuY6VoP+Uw_Jz6uxYN1Teg2wSpwZrPmAn-g@mail.gmail.com>
-Date:   Mon, 11 Nov 2019 16:20:36 +0100
-In-Reply-To: <CAG48ez3zpBwU6vHSuY6VoP+Uw_Jz6uxYN1Teg2wSpwZrPmAn-g@mail.gmail.com>
-        (Jann Horn's message of "Mon, 11 Nov 2019 16:15:58 +0100")
-Message-ID: <875zjqwibf.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78A3F8EBAC9;
+        Mon, 11 Nov 2019 15:25:19 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 4938619C4F;
+        Mon, 11 Nov 2019 15:25:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 11 Nov 2019 16:25:19 +0100 (CET)
+Date:   Mon, 11 Nov 2019 16:25:15 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>
+Subject: Re: [PATCH v7 1/2] fork: extend clone3() to support setting a PID
+Message-ID: <20191111152514.GA11389@redhat.com>
+References: <20191111131704.656169-1-areber@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: vBGvGzzCMIG6kes1J63o-g-1
+In-Reply-To: <20191111131704.656169-1-areber@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: lGc3MC08MDKlQT_hnW38rw-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Jann Horn:
-
-> On Mon, Nov 11, 2019 at 4:03 PM Florian Weimer <fweimer@redhat.com> wrote=
-:
->>
->> * Michael Kerrisk:
->>
->> >        Another  difference  for  the  raw clone() system call is that =
-the
->> >        stack argument may be NULL, in which case the child uses a  dup=
-li=E2=80=90
->> >        cate  of the parent's stack.  (Copy-on-write semantics ensure t=
-hat
->> >        the child gets separate copies of stack pages when either  proc=
-ess
->> >        modifies  the  stack.)   In  this case, for correct operation, =
-the
->> >        CLONE_VM option should not be specified.  (If the child shares =
-the
->> >        parent's  memory  because of the use of the CLONE_VM flag, then=
- no
->> >        copy-on-write duplication occurs and chaos is likely to result.=
-)
->>
->> I think sharing the stack also works with CLONE_VFORK with CLONE_VM, as
->> long as measures are taken to preserve the return address in a register.
+On 11/11, Adrian Reber wrote:
 >
-> That basically just requires that the userspace function declaration
-> for clone3 includes __attribute__((returns_twice)), right?
+> v7:
+>  - changed set_tid to be an array to set the PID of a process
+>    in multiple nested PID namespaces at the same time as discussed
+>    at LPC 2019 (container MC)
 
-The clone3 implementation itself would have to store the return address
-in a register because at the time of the second return, a return address
-on the stack may have been corrupted by the subprocess because what used
-to be the stack frame of the clone function has since been reused for
-something else.
+cough... iirc you convinced me this is not needed when we discussed
+the previous version ;) Nevermind, probably my memory fools me.
 
-__attribute__ ((returns_twice)) is likely needed as well, but that
-benefits the caller.  It's also not clear that it is sufficient for this
-to work in all cases.  (But the mandatory-to-implement vfork function
-faces the same problems.)
+So far I only have some cosmetic nits,
 
-Thanks,
-Florian
+> @@ -175,6 +187,18 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+>
+>  =09for (i =3D ns->level; i >=3D 0; i--) {
+>  =09=09int pid_min =3D 1;
+> +=09=09int t_pos =3D 0;
+                    ^^^^^
+
+I won't insist, but I'd suggest to cache set_tid[t_pos] instead to make
+the code a bit more simple.
+
+> @@ -186,12 +210,24 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+>  =09=09if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+>  =09=09=09pid_min =3D RESERVED_PIDS;
+
+You can probably move this code into the "else" branch below.
+
+IOW, something like
+
+
+=09for (i =3D ns->level; i >=3D 0; i--) {
+=09=09int xxx =3D 0;
+
+=09=09if (set_tid_size) {
+=09=09=09int pos =3D ns->level - i;
+
+=09=09=09xxx =3D set_tid[pos];
+=09=09=09if (xxx < 1 || xxx >=3D pid_max)
+=09=09=09=09return ERR_PTR(-EINVAL);
+=09=09=09/* Also fail if a PID !=3D 1 is requested and no PID 1 exists */
+=09=09=09if (xxx !=3D 1 && !tmp->child_reaper)
+=09=09=09=09return ERR_PTR(-EINVAL);
+=09=09=09if (!ns_capable(tmp->user_ns, CAP_SYS_ADMIN))
+=09=09=09=09return ERR_PTR(-EPERM);
+=09=09=09set_tid_size--;
+=09=09}
+
+=09=09idr_preload(GFP_KERNEL);
+=09=09spin_lock_irq(&pidmap_lock);
+
+=09=09if (xxx) {
+=09=09=09nr =3D idr_alloc(&tmp->idr, NULL, xxx, xxx + 1,
+=09=09=09=09=09GFP_ATOMIC);
+=09=09=09/*
+=09=09=09 * If ENOSPC is returned it means that the PID is
+=09=09=09 * alreay in use. Return EEXIST in that case.
+=09=09=09 */
+=09=09=09if (nr =3D=3D -ENOSPC)
+=09=09=09=09nr =3D -EEXIST;
+=09=09} else {
+=09=09=09int pid_min =3D 1;
+=09=09=09/*
+=09=09=09 * init really needs pid 1, but after reaching the
+=09=09=09 * maximum wrap back to RESERVED_PIDS
+=09=09=09 */
+=09=09=09if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+=09=09=09=09pid_min =3D RESERVED_PIDS;
+=09=09=09/*
+=09=09=09 * Store a null pointer so find_pid_ns does not find
+=09=09=09 * a partially initialized PID (see below).
+=09=09=09 */
+=09=09=09nr =3D idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+=09=09=09=09=09      pid_max, GFP_ATOMIC);
+=09=09}
+
+=09=09...
+
+This way only the "if (set_tid_size)" block has to play with set_tid_size/s=
+et_tid.
+
+note also that this way we can easily allow set_tid[some_level] =3D=3D 0, w=
+e can
+simply do
+
+=09-=09if (xxx < 1 || xxx >=3D pid_max)
+=09+=09if (xxx < 0 || xxx >=3D pid_max)
+
+although I don't think this is really useful.
+
+Oleg.
 
