@@ -2,133 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D155F8147
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:34:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77437F8153
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfKKUeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 15:34:36 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45321 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfKKUeg (ORCPT
+        id S1727535AbfKKUgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 15:36:14 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33245 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbfKKUgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:34:36 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z10so10809639wrs.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 12:34:35 -0800 (PST)
+        Mon, 11 Nov 2019 15:36:12 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a17so728764wmb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 12:36:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UHvLQwIVksvr5k5bLuPU04kyrWXF24MECcQaDAhulgU=;
-        b=u1QOyZm72auICNe/agQRvD76+7ro+01/Ibi7UBUsLpaNqrFQHH4ZpUdJfJl8c+s7fn
-         J9ie6GUM5utLEicdy0ehxuLG6k/hCFHQNEUH1ERdmAbZOeiq0HKKZl7q7mWz8zZjX0IY
-         usMkhDVS77iGPpP3y2soiJBqg3pPbNY7D+ITOy4Y8mnyz8g8YFd4AuYmLDGNMipiPYll
-         C3Dn39Kfln3vT/1y0elvB/Ki+Ka3pxdk0z/UTVtgv6LplsFDv+5tdUBDlvGvF5rSpbfo
-         DJ1ciLjvX4Eltv9CZ0/T5u9ySMuy5c8xsXs3ynCNQwLkwTPSrk9r/9bnRtqxtnXaqScT
-         QYgA==
+        bh=0Hs8WKz86XzUIoluSOZo0Sxzyo8CVkAKNCavkYaNLGw=;
+        b=QH7tBeUVEVlA5jM/gxqSk27QzuUocFCCtBKHp/KhmIws/ve+jW1kwLgGQock2xhwDo
+         pMPHUSBY5mQhQk1dGlDAwzsNulaz1U8qi4iOAbC0AdV/qxkS7BZKJMA1G6yLPNpEbbf9
+         w+th7huiKfGVn9FmXt9B4THl2ZFnhaXr6a2uX/gZFmvyQIVT6ARZ/Qcel4NfYtlXqdbs
+         6pRsyVqwM7PI7IRHzJPvCo5o2aTR+angYBjSXjDmIdn3ummriEKZoa6PKJ3TUn52jQ56
+         1c332P4a5VI7jtGXiEOn3rKBPOrnrswHLDd6BQGZ2CIV2YFXFGRA0msz7Ji0hr7U5C5P
+         6h7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UHvLQwIVksvr5k5bLuPU04kyrWXF24MECcQaDAhulgU=;
-        b=Y1T5gX2xFcHYiMPSLmqZ/fbjCO3f96Dh3U6dR7NynAqFP4scGF8P5dqhxThRwu2nPD
-         IQmT5jzhJxZMZSg65HeDhKAPezQQUwERul08exYHcdNYGL7Q1gbPxj3ycE8w45YUsGfN
-         APFbdYQowdvvHCkA3CsCvV0geQyarRfpG2M2WXHIfrlHpC5w2WJCjyI21rdFNiCwR/4o
-         RtUF3PtNY/Z636X2Cptn+ou6ZtN87dQ1OtjfBH9ROGoJwqDJ6EgL98c5b157iqQ6PrZW
-         f/5zLS7QZMIJJaCdjXiEjW9ykp6aO+HLCymIFpAtxEkUS6fpIJ34oqGV6IUDNWLEps1D
-         ix3g==
-X-Gm-Message-State: APjAAAVi7tDsjz6xmPakC3ZTpC3gZlFGKuPKwNTtiJ0qH2afP56EqIE5
-        TmjoEpGKgmvByWjgkVlAtQ+y559fMBasQzq7sDRxxQ==
-X-Google-Smtp-Source: APXvYqxMkbEVgLDw+ecBh6mhpn3uCg//2j/aC3/omThzqHg940ogglWEyRJ/mlr28NYV3KAXhCx7RGOs9X042cty6Jo=
-X-Received: by 2002:adf:f1c7:: with SMTP id z7mr24268843wro.355.1573504474504;
- Mon, 11 Nov 2019 12:34:34 -0800 (PST)
+        bh=0Hs8WKz86XzUIoluSOZo0Sxzyo8CVkAKNCavkYaNLGw=;
+        b=suhNoNqcbs88GZmYipoeHvqHhPHlsq8eAIlTvIeiZMIj56pwD+OMk+xfo9uCiGiNC4
+         q+9rp5meUass68gWfvT8HBCJf4/5V2IEsfHshNhGOWwz2vYZXC7b3l5Z3u9H8E76Hxez
+         D5qXuaya+kQteeGH9OetscuPHPGs+vkRQ3hkZ7rTgMr5m3Zr/2ogIQGgwfU/L5Uoj+Md
+         sEGCa5MtrmBREnXbAbxyEK6Q0HVZfI5OjO1u+ksW+iwSPWgo4P4BkeEyv95eGOz7cAWm
+         9HWcXb/zwIpt7QxZMjbOj4SfwaUpZhvgKvKhzOhoQJEBs1AcVfVO66DB65te3UUPPczH
+         tV1g==
+X-Gm-Message-State: APjAAAUKzA9lUSysu7bTD2XtQwWrIeNIMvd0fMtoR98raVvOD4+u06yf
+        Al97Gqb7zWKoj5PWJ8ZxudEgZqaR/G+2l3Ts5ng=
+X-Google-Smtp-Source: APXvYqwlG/2OIQhaPChGUJzXk1eNkMHqGbXaIe3aV9yzHDBxGh6AxWYo/M0y57THQ4STLSIuzBPpulqUP/0eKpB6Ic8=
+X-Received: by 2002:a7b:c408:: with SMTP id k8mr754117wmi.67.1573504570718;
+ Mon, 11 Nov 2019 12:36:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20191017170531.171244-1-irogers@google.com> <20191023082912.GB22919@krava>
- <20191111142511.GF9365@kernel.org>
-In-Reply-To: <20191111142511.GF9365@kernel.org>
-From:   Ian Rogers <irogers@google.com>
-Date:   Mon, 11 Nov 2019 12:34:23 -0800
-Message-ID: <CAP-5=fUB-FddKaKOCYfU2Zu+AX88U9dFFmZ4Fdv146vKvQSr1g@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: avoid reading out of scope array
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, He Kuang <hekuang@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
+References: <1573504078-7691-1-git-send-email-kmahlkuc@linux.vnet.ibm.com>
+In-Reply-To: <1573504078-7691-1-git-send-email-kmahlkuc@linux.vnet.ibm.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 11 Nov 2019 15:35:58 -0500
+Message-ID: <CADnq5_PL1y0O=w6DcZ4uq7B8tJxFx-KpTEr+m2-vVz+d64sVbQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: Clean up code in radeon_pci_shutdown()
+To:     Kyle Mahlkuch <kmahlkuc@linux.vnet.ibm.com>
+Cc:     Chunming Zhou <David1.Zhou@amd.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Stephane Eranian <eranian@google.com>
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Arnaldo, this patch shouldn't be added. It was replaced with
-the longer v2 patch that addressed the memory issues properly. That
-was followed by a number of improved versions.
+On Mon, Nov 11, 2019 at 3:29 PM Kyle Mahlkuch
+<kmahlkuc@linux.vnet.ibm.com> wrote:
+>
+> From: KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>
+>
+> This fixes the formatting on one comment and consolidates the
+> pci_get_drvdata() into the radeon_suspend_kms().
+>
+> Signed-off-by: Kyle Mahlkuch <kmahlkuc@linux.vnet.ibm.com>
 
-Ian
+Applied.  Thanks!
 
-On Mon, Nov 11, 2019 at 6:25 AM Arnaldo Carvalho de Melo
-<arnaldo.melo@gmail.com> wrote:
+Alex
+
+> ---
+>  drivers/gpu/drm/radeon/radeon_drv.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 >
-> Em Wed, Oct 23, 2019 at 10:29:12AM +0200, Jiri Olsa escreveu:
-> > On Thu, Oct 17, 2019 at 10:05:31AM -0700, Ian Rogers wrote:
-> > > Modify tracepoint name into 2 sys components and assemble at use. This
-> > > avoids the sys_name array being out of scope at the point of use.
-> > > Bug caught with LLVM's address sanitizer with fuzz generated input of
-> > > ":cs\1" to parse_events.
-> > >
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > >  tools/perf/util/parse-events.y | 36 +++++++++++++++++++++++-----------
-> > >  1 file changed, 25 insertions(+), 11 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-> > > index 48126ae4cd13..28be39a703c9 100644
-> > > --- a/tools/perf/util/parse-events.y
-> > > +++ b/tools/perf/util/parse-events.y
-> > > @@ -104,7 +104,8 @@ static void inc_group_count(struct list_head *list,
-> > >     struct list_head *head;
-> > >     struct parse_events_term *term;
-> > >     struct tracepoint_name {
-> > > -           char *sys;
-> > > +           char *sys1;
-> > > +           char *sys2;
-> > >             char *event;
-> > >     } tracepoint_name;
-> > >     struct parse_events_array array;
-> > > @@ -425,9 +426,19 @@ tracepoint_name opt_event_config
-> > >     if (error)
-> > >             error->idx = @1.first_column;
-> > >
-> > > -   if (parse_events_add_tracepoint(list, &parse_state->idx, $1.sys, $1.event,
-> > > -                                   error, $2))
-> > > -           return -1;
-> > > +        if ($1.sys2) {
-> > > +           char sys_name[128];
-> > > +           snprintf(&sys_name, sizeof(sys_name), "%s-%s",
-> > > +                   $1.sys1, $1.sys2);
-> > > +           if (parse_events_add_tracepoint(list, &parse_state->idx,
-> > > +                                           sys_name, $1.event,
-> > > +                                           error, $2))
-> > > +                   return -1;
-> > > +        } else
-> > > +           if (parse_events_add_tracepoint(list, &parse_state->idx,
-> > > +                                           $1.sys1, $1.event,
-> > > +                                           error, $2))
-> > > +                   return -1;
-> >
-> > nice catch, please enclose all multiline condition legs with {}
-> >
-> > other than that
-> >
-> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+> index 4528f4d..357d29a 100644
+> --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> @@ -379,10 +379,6 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+>  static void
+>  radeon_pci_shutdown(struct pci_dev *pdev)
+>  {
+> -#ifdef CONFIG_PPC64
+> -       struct drm_device *ddev = pci_get_drvdata(pdev);
+> -#endif
+> -
+>         /* if we are running in a VM, make sure the device
+>          * torn down properly on reboot/shutdown
+>          */
+> @@ -390,13 +386,14 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+>                 radeon_pci_remove(pdev);
 >
-> Ian, this one isn't applying to my perf/core branch, can you please
-> address Jiri's comment and resubmit?
+>  #ifdef CONFIG_PPC64
+> -       /* Some adapters need to be suspended before a
+> +       /*
+> +        * Some adapters need to be suspended before a
+>          * shutdown occurs in order to prevent an error
+>          * during kexec.
+>          * Make this power specific becauase it breaks
+>          * some non-power boards.
+>          */
+> -       radeon_suspend_kms(ddev, true, true, false);
+> +       radeon_suspend_kms(pci_get_drvdata(pdev), true, true, false);
+>  #endif
+>  }
 >
-> - arnaldo
+> --
+> 1.8.3.1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
