@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3D21F7ED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7134F7F21
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729077AbfKKSiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:38:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57682 "EHLO mail.kernel.org"
+        id S1727728AbfKKSes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:34:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729052AbfKKSim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:38:42 -0500
+        id S1727498AbfKKSeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 965B0204FD;
-        Mon, 11 Nov 2019 18:38:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96DED2173B;
+        Mon, 11 Nov 2019 18:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497521;
-        bh=r/zHST7sbQn4HJhL+bHCL92FufqTQL80sDjkQ7/HcAQ=;
+        s=default; t=1573497284;
+        bh=Jlv9ukXX2oMCUigdyLnVYSC/Qt/S2pddvMuA9duPMcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pN8Dn4KjZpM5QoE3H7thFbacOHmiPDmVcWUbGbx0EbMbkkMXDh96uEeIR3XVBeums
-         DdWZK4MgTPlkMVQg8BnP2ex0hWaLLP+DfppgAvmOLrzi/U65QZGim7h11laBV8dhk4
-         YDNzQbyOMW+Ue6TTP+1p5pVSgBMF+JD0ifqmNHkQ=
+        b=uFz8EJvRBqHifok2T4X5uWnloqI8tPPKetdkJUNaiNQ5j6C/mhQAjfLJtuOrWRkgB
+         PdlrJ4rdn+mvJNlabRscJ8hcrQe9xqNHZH21Gs/x05Amm46NRHZ365lZZtHnF2ZoCy
+         J16m7o/Bk8oXeMuF4O6FrS0OdJBmTWKRVjq3NmYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dakshaja Uppalapati <dakshaja@chelsio.com>,
+        Potnuri Bharat Teja <bharat@chelsio.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 081/105] macsec: fix refcnt leak in module exit routine
-Date:   Mon, 11 Nov 2019 19:28:51 +0100
-Message-Id: <20191111181446.909215798@linuxfoundation.org>
+Subject: [PATCH 4.9 52/65] RDMA/iw_cxgb4: Avoid freeing skb twice in arp failure case
+Date:   Mon, 11 Nov 2019 19:28:52 +0100
+Message-Id: <20191111181351.621458821@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,74 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Potnuri Bharat Teja <bharat@chelsio.com>
 
-[ Upstream commit 2bce1ebed17da54c65042ec2b962e3234bad5b47 ]
+[ Upstream commit d4934f45693651ea15357dd6c7c36be28b6da884 ]
 
-When a macsec interface is created, it increases a refcnt to a lower
-device(real device). when macsec interface is deleted, the refcnt is
-decreased in macsec_free_netdev(), which is ->priv_destructor() of
-macsec interface.
+_put_ep_safe() and _put_pass_ep_safe() free the skb before it is freed by
+process_work(). fix double free by freeing the skb only in process_work().
 
-The problem scenario is this.
-When nested macsec interfaces are exiting, the exit routine of the
-macsec module makes refcnt leaks.
-
-Test commands:
-    ip link add dummy0 type dummy
-    ip link add macsec0 link dummy0 type macsec
-    ip link add macsec1 link macsec0 type macsec
-    modprobe -rv macsec
-
-[  208.629433] unregister_netdevice: waiting for macsec0 to become free. Usage count = 1
-
-Steps of exit routine of macsec module are below.
-1. Calls ->dellink() in __rtnl_link_unregister().
-2. Checks refcnt and wait refcnt to be 0 if refcnt is not 0 in
-netdev_run_todo().
-3. Calls ->priv_destruvtor() in netdev_run_todo().
-
-Step2 checks refcnt, but step3 decreases refcnt.
-So, step2 waits forever.
-
-This patch makes the macsec module do not hold a refcnt of the lower
-device because it already holds a refcnt of the lower device with
-netdev_upper_dev_link().
-
-Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1dad0ebeea1c ("iw_cxgb4: Avoid touch after free error in ARP failure handlers")
+Link: https://lore.kernel.org/r/1572006880-5800-1-git-send-email-bharat@chelsio.com
+Signed-off-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
+Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/macsec.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/infiniband/hw/cxgb4/cm.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
-index aa204c98af79c..9bcb7c3e879f3 100644
---- a/drivers/net/macsec.c
-+++ b/drivers/net/macsec.c
-@@ -2993,12 +2993,10 @@ static const struct nla_policy macsec_rtnl_policy[IFLA_MACSEC_MAX + 1] = {
- static void macsec_free_netdev(struct net_device *dev)
- {
- 	struct macsec_dev *macsec = macsec_priv(dev);
--	struct net_device *real_dev = macsec->real_dev;
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index e5752352e0fb1..605d50ad123cc 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -490,7 +490,6 @@ static int _put_ep_safe(struct c4iw_dev *dev, struct sk_buff *skb)
  
- 	free_percpu(macsec->stats);
- 	free_percpu(macsec->secy.tx_sc.stats);
- 
--	dev_put(real_dev);
+ 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
+ 	release_ep_resources(ep);
+-	kfree_skb(skb);
+ 	return 0;
  }
  
- static void macsec_setup(struct net_device *dev)
-@@ -3239,8 +3237,6 @@ static int macsec_newlink(struct net *net, struct net_device *dev,
- 	if (err < 0)
- 		return err;
+@@ -501,7 +500,6 @@ static int _put_pass_ep_safe(struct c4iw_dev *dev, struct sk_buff *skb)
+ 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
+ 	c4iw_put_ep(&ep->parent_ep->com);
+ 	release_ep_resources(ep);
+-	kfree_skb(skb);
+ 	return 0;
+ }
  
--	dev_hold(real_dev);
--
- 	macsec->nest_level = dev_get_nest_level(real_dev) + 1;
- 	netdev_lockdep_set_classes(dev);
- 	lockdep_set_class_and_subclass(&dev->addr_list_lock,
 -- 
 2.20.1
 
