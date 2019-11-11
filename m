@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A19A6F7E8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C953F7F61
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfKKSjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:39:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
+        id S1727152AbfKKTKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:10:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729177AbfKKSjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:39:52 -0500
+        id S1727786AbfKKSby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:31:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5BA221655;
-        Mon, 11 Nov 2019 18:39:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DF57214E0;
+        Mon, 11 Nov 2019 18:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497591;
-        bh=3NBsUnB2jvtB3ZFBdUQ15Z1mIQDFnP6GAfPPNfWIal0=;
+        s=default; t=1573497113;
+        bh=MnjhQlZwaODzj+JadDJkhh9j+AWvo5XL4w5QwgNBMyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tFoIqR9/ybsxV08AGJiml/SD6JjQly0Ob2Roce1gIRir+bN+ntVoSclwgKlG7IgLP
-         H1/JAADdCKvNXr0IyLCjRJ+w6YfQJplt4+YWzu6bvnmk99rgRg4NA/ZYtCjUYSGljS
-         c6DGeXqqabPtyjpRRn98O1Q8NViSBVXC4/JN6gYk=
+        b=cTFoLSfAxCJevBnHf6DN8idr93rN+ipzkB3n4UcpbW+H3hE6PHBaPNEefGydgeSDK
+         Qg5tmJXIg1+JfMW1F4sbBSHKltYTnAR7zpzDYz12UCv/qd9IT6iTipV+Iwp+kR+ggP
+         wfiHuHNcEbVoCD1EE6RoHSAftDdHVO9JM3rm+Cd4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 086/105] usb: dwc3: remove the call trace of USBx_GFLADJ
-Date:   Mon, 11 Nov 2019 19:28:56 +0100
-Message-Id: <20191111181447.430945033@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.4 43/43] cgroup,writeback: dont switch wbs immediately on dead wbs if the memcg is dead
+Date:   Mon, 11 Nov 2019 19:28:57 +0100
+Message-Id: <20191111181329.189491027@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yinbo Zhu <yinbo.zhu@nxp.com>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit a7d9874c6f3fbc8d25cd9ceba35b6822612c4ebf ]
+commit 65de03e251382306a4575b1779c57c87889eee49 upstream.
 
-layerscape board sometimes reported some usb call trace, that is due to
-kernel sent LPM tokerns automatically when it has no pending transfers
-and think that the link is idle enough to enter L1, which procedure will
-ask usb register has a recovery,then kernel will compare USBx_GFLADJ and
-set GFLADJ_30MHZ, GFLADJ_30MHZ_REG until GFLADJ_30MHZ is equal 0x20, if
-the conditions were met then issue occur, but whatever the conditions
-whether were met that usb is all need keep GFLADJ_30MHZ of value is 0x20
-(xhci spec ask use GFLADJ_30MHZ to adjust any offset from clock source
-that generates the clock that drives the SOF counter, 0x20 is default
-value of it)That is normal logic, so need remove the call trace.
+cgroup writeback tries to refresh the associated wb immediately if the
+current wb is dead.  This is to avoid keeping issuing IOs on the stale
+wb after memcg - blkcg association has changed (ie. when blkcg got
+disabled / enabled higher up in the hierarchy).
 
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Unfortunately, the logic gets triggered spuriously on inodes which are
+associated with dead cgroups.  When the logic is triggered on dead
+cgroups, the attempt fails only after doing quite a bit of work
+allocating and initializing a new wb.
+
+While c3aab9a0bd91 ("mm/filemap.c: don't initiate writeback if mapping
+has no dirty pages") alleviated the issue significantly as it now only
+triggers when the inode has dirty pages.  However, the condition can
+still be triggered before the inode is switched to a different cgroup
+and the logic simply doesn't make sense.
+
+Skip the immediate switching if the associated memcg is dying.
+
+This is a simplified version of the following two patches:
+
+ * https://lore.kernel.org/linux-mm/20190513183053.GA73423@dennisz-mbp/
+ * http://lkml.kernel.org/r/156355839560.2063.5265687291430814589.stgit@buzz
+
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Fixes: e8a7abf5a5bd ("writeback: disassociate inodes from dying bdi_writebacks")
+Acked-by: Dennis Zhou <dennis@kernel.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/usb/dwc3/core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/fs-writeback.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 9b093978bd24d..48755c501201d 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -282,8 +282,7 @@ static void dwc3_frame_length_adjustment(struct dwc3 *dwc)
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -582,10 +582,13 @@ void wbc_attach_and_unlock_inode(struct
+ 	spin_unlock(&inode->i_lock);
  
- 	reg = dwc3_readl(dwc->regs, DWC3_GFLADJ);
- 	dft = reg & DWC3_GFLADJ_30MHZ_MASK;
--	if (!dev_WARN_ONCE(dwc->dev, dft == dwc->fladj,
--	    "request value same as default, ignoring\n")) {
-+	if (dft != dwc->fladj) {
- 		reg &= ~DWC3_GFLADJ_30MHZ_MASK;
- 		reg |= DWC3_GFLADJ_30MHZ_SDBND_SEL | dwc->fladj;
- 		dwc3_writel(dwc->regs, DWC3_GFLADJ, reg);
--- 
-2.20.1
-
+ 	/*
+-	 * A dying wb indicates that the memcg-blkcg mapping has changed
+-	 * and a new wb is already serving the memcg.  Switch immediately.
++	 * A dying wb indicates that either the blkcg associated with the
++	 * memcg changed or the associated memcg is dying.  In the first
++	 * case, a replacement wb should already be available and we should
++	 * refresh the wb immediately.  In the second case, trying to
++	 * refresh will keep failing.
+ 	 */
+-	if (unlikely(wb_dying(wbc->wb)))
++	if (unlikely(wb_dying(wbc->wb) && !css_is_dying(wbc->wb->memcg_css)))
+ 		inode_switch_wbs(inode, wbc->wb_id);
+ }
+ 
 
 
