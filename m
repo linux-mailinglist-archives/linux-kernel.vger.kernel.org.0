@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03ECAF7D2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64EFFF7B02
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730544AbfKKSx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:53:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49222 "EHLO mail.kernel.org"
+        id S1727747AbfKKSbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:31:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728456AbfKKSx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:53:57 -0500
+        id S1727729AbfKKSbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:31:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 179B02184C;
-        Mon, 11 Nov 2019 18:53:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3A9A21655;
+        Mon, 11 Nov 2019 18:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498436;
-        bh=0UXlZxhZLcvEzM7joCVK81AnM9ibdqsJS+MsEByHkqk=;
+        s=default; t=1573497102;
+        bh=O8JqrFNL5fiRfUfBZHt8d/7Bp/awQ18JHCgSuhlLIGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pRZssEUfvz6yWpbOw0fraG7V6FaeGgiwIGn4XTofGw9T40lvFGOTHcU4VLTA4NjCH
-         x2cYPgIGAk6Ze1G+02ZDZDYLnH+IlSLrM6cHLKNEF+YvuU0qLLFrd/fEMdD9BqWYhS
-         ggzzIlb15unIPLWynTESDLtfAstcAeGmySu+siWg=
+        b=v6CG+hn7ydaxhOUHEjR7Lgg7wKjVW/MZGcLifx4koYbhAvWIBFJCRfWuLiIJpWRne
+         AThJDf9BQ4yZUajz5YOmxLBJ2pAs7+0czYBTXbNRhsvcPHjtLnkuGgiXr2GwcIVMjm
+         /me7PBqYpZCFvnZCMwiCS2zqj32W2UeGa4w/4ME0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>, Martin KaFai Lau <kafai@fb.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 120/193] bpf: Fix use after free in bpf_get_prog_name
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 08/43] ALSA: hda/ca0132 - Fix possible workqueue stall
 Date:   Mon, 11 Nov 2019 19:28:22 +0100
-Message-Id: <20191111181510.026805214@linuxfoundation.org>
+Message-Id: <20191111181256.361449912@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +42,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 3b4d9eb2ee74dd5ea7fa36cffb0ca7f5bc4924da ]
+commit 15c2b3cc09a31620914955cb2a89c277c18ee999 upstream.
 
-There is one more problematic case I noticed while recently fixing BPF kallsyms
-handling in cd7455f1013e ("bpf: Fix use after free in subprog's jited symbol
-removal") and that is bpf_get_prog_name().
+The unsolicited event handler for the headphone jack on CA0132 codec
+driver tries to reschedule the another delayed work with
+cancel_delayed_work_sync().  It's no good idea, unfortunately,
+especially after we changed the work queue to the standard global
+one; this may lead to a stall because both works are using the same
+global queue.
 
-If BTF has been attached to the prog, then we may be able to fetch the function
-signature type id in kallsyms through prog->aux->func_info[prog->aux->func_idx].type_id.
-However, while the BTF object itself is torn down via RCU callback, the prog's
-aux->func_info is immediately freed via kvfree(prog->aux->func_info) once the
-prog's refcount either hit zero or when subprograms were already exposed via
-kallsyms and we hit the error path added in 5482e9a93c83 ("bpf: Fix memleak in
-aux->func_info and aux->btf").
+Fix it by dropping the _sync but does call cancel_delayed_work()
+instead.
 
-This violates RCU as well since kallsyms could be walked in parallel where we
-could access aux->func_info. Hence, defer kvfree() to after RCU grace period.
-Looking at ba64e7d85252 ("bpf: btf: support proper non-jit func info") there
-is no reason/dependency where we couldn't defer the kvfree(aux->func_info) into
-the RCU callback.
+Fixes: 993884f6a26c ("ALSA: hda/ca0132 - Delay HP amp turnon.")
+BugLink: https://bugzilla.suse.com/show_bug.cgi?id=1155836
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191105134316.19294-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 5482e9a93c83 ("bpf: Fix memleak in aux->func_info and aux->btf")
-Fixes: ba64e7d85252 ("bpf: btf: support proper non-jit func info")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Yonghong Song <yhs@fb.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Link: https://lore.kernel.org/bpf/875f2906a7c1a0691f2d567b4d8e4ea2739b1e88.1571779205.git.daniel@iogearbox.net
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/syscall.c | 2 +-
+ sound/pci/hda/patch_ca0132.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index af5c60b07463e..aac966b32c42e 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1316,6 +1316,7 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
- {
- 	struct bpf_prog_aux *aux = container_of(rcu, struct bpf_prog_aux, rcu);
- 
-+	kvfree(aux->func_info);
- 	free_used_maps(aux);
- 	bpf_prog_uncharge_memlock(aux->prog);
- 	security_bpf_prog_free(aux);
-@@ -1326,7 +1327,6 @@ static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
- {
- 	bpf_prog_kallsyms_del_all(prog);
- 	btf_put(prog->aux->btf);
--	kvfree(prog->aux->func_info);
- 	bpf_prog_free_linfo(prog);
- 
- 	if (deferred)
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -4440,7 +4440,7 @@ static void hp_callback(struct hda_codec
+ 	/* Delay enabling the HP amp, to let the mic-detection
+ 	 * state machine run.
+ 	 */
+-	cancel_delayed_work_sync(&spec->unsol_hp_work);
++	cancel_delayed_work(&spec->unsol_hp_work);
+ 	schedule_delayed_work(&spec->unsol_hp_work, msecs_to_jiffies(500));
+ 	tbl = snd_hda_jack_tbl_get(codec, cb->nid);
+ 	if (tbl)
 
 
