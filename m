@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3251F6E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 07:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8369BF6E5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 07:03:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfKKGBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 01:01:39 -0500
-Received: from mail-eopbgr40139.outbound.protection.outlook.com ([40.107.4.139]:24958
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1726853AbfKKGDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 01:03:19 -0500
+Received: from mail-eopbgr80098.outbound.protection.outlook.com ([40.107.8.98]:10694
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726780AbfKKGBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 01:01:38 -0500
+        id S1725796AbfKKGDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 01:03:19 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NHmK2kjDK52VKMtj/XbFxGCAfxlxKLAVZ15a7sfOWmpirZvZPIfIYHZaQe/ScPDnhoNjoJwqBUf3uZ8jJH00ityg+fqWqLuvoejVDZ2/oxSPLju/hCfEsGzgkVPJ6gjVnLbMwK25HS61S6HKIAPZxawdBmtWnAheGT9kd4PvE+wT1DpbIB0oiX+viRbfVGnZPnNDn5qx4bFbU8ry2eZjMaMxJJFCEsHr6rwMSqJshpPU6FIHhQP45Izzo00zjZH4qMSMchCNTvj65nK9kWn7/Val6MlDgjKsBUOd9HHvKz5HCf/yJoZBGla4dZipM3aZIdzlIJfmpHPKfXl4q/NTsQ==
+ b=jS0G4pu50xDTO9m0rh8/x5RyNQvd8H2WOr7nj6H/GIGX6aYlJzSCXSPUKBpY5uvOUuBreYaRg20vKhNYmSU6dpsI4/C4GoKAoLpkpRLqsv/N64RGST9csX1+dhuqbb7KXw0/6QJrG1ttndcOzABIVqqMPaDfUOLirRU2Dfbit7f3p82IUqx+NC2XLys9LUbIdAxf7Tx08K8IL0iF/FoWSmhyqmM9MXtbRcRPUJnD9fx/OAE8Qn1RDyI+lrPH0Sb+Pv12xgllPManDhWrYVEpG0MiFD0qlJnnN3DXyORsmB9KiIMvpzfFfahoyrVVBU9nfMquL78GSW+Hl64Fx2gP9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mrKz/JGeAMcYogAV+kTxwDp31ubUPX8FuiXIAOlBpbY=;
- b=CI56fMdYU7bRbO8S59wIXD7YpIpoDwFOP/XkEFTIMoEsC9wSlsKSQoXSng3xw82Yh0QsV2u7umzVUMSWR6qaG84u/qiLHFxbd1I6lW7ET+UCDMfKbxUTKnlWF919DOyJLg3Xt9DZxB5q1LnWTlS+v6ZgDcMV6pFA0ArJPkWLDLHVSxhTBIyRTas+q40MP4tHZXFjoWrSPLjXTtxNzHOmXjM0H7xzWv/HLTTliONycLZpBWNwm+kZTVeKPgP35G8rxXIEuHw6bSVoF/rbfApPM0QMRPKU3OLtatwvRCxlflpqOhVXeZLkSpbTtCf77n7iGF7j1yRkvbcCy/FGj3/dXw==
+ bh=+Oc5+g5bUvICKCEU1iJ3KIC5pL91lYYSjVAfV4ms5lw=;
+ b=NpDGhVghyViQfZ4DeyQcD7TGwNYSVOuqcGAg68PJ+4RptGuEWg3vRV8Dd85Uhb3vXZR5clGeRbnAAaqN5emecAf0fXL46rYD/h0SKFWno6f6LIc0eHox+ZvF3p1Ai5FTnOeY+jy3TOwG2V4YlJUPg2Dbx+Cjl8aTTeMzpKHG76L/ATF2SL3qUcRw+4kOMOoyEhPhS3vmu5xCSikKejg3HsLQ1IfpArSaPkRZMV/yrACfa6U1Bkbx/VhKAavD5iT3V7D7J+4HLofWyOGIhxF1hUPBXS8csVQGc+sfttHiSCrIjPyzbVA64g1evCRc8qer61z8u++oq2vVrwhYDNPvLA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
  dkim=pass header.d=habana.ai; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mrKz/JGeAMcYogAV+kTxwDp31ubUPX8FuiXIAOlBpbY=;
- b=jGcWj7OszBWY4HgJnkXu/NpuAAU1l1TT7t4JC+tKCHDc9sjbUaMGNUPim98tST/QXK/74MsoU5OnUUGQ8cM9lo80P4yIODc9yMI2YklMd1/9l0VtoQVAtpQYRKCkBKebVUR1Ufg8LyKL+vvcqdqNljW51rlEpaYMJkzdp9e7gJM=
+ bh=+Oc5+g5bUvICKCEU1iJ3KIC5pL91lYYSjVAfV4ms5lw=;
+ b=BCcj9zefEKezwkal2ajRi9VkqTmSuGQwKN7DVhD0P2YLEo4t7CzNuJznomynCmDtSi+1Ov4yy5HvsK44Nxp3KQxDPYrJyu9QTsnFF+/w5/+SjEUEQhZP3hLpA2XFkqx0XxtLrv4fd07LkDMBvhTwlyfxXioYR1TlQleeq68+Su4=
 Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
- AM6PR0202MB3368.eurprd02.prod.outlook.com (52.133.10.23) with Microsoft SMTP
+ AM6PR0202MB3381.eurprd02.prod.outlook.com (52.133.28.30) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.22; Mon, 11 Nov 2019 06:01:32 +0000
+ 15.20.2430.25; Mon, 11 Nov 2019 06:03:15 +0000
 Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
  ([fe80::240e:7545:887b:939e]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
  ([fe80::240e:7545:887b:939e%4]) with mapi id 15.20.2430.027; Mon, 11 Nov 2019
- 06:01:32 +0000
+ 06:03:15 +0000
 From:   Omer Shpigelman <oshpigelman@habana.ai>
 To:     Oded Gabbay <oded.gabbay@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Tomer Tayar <ttayar@habana.ai>
 CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH 3/6] habanalabs: set ETR as non-secured
-Thread-Topic: [PATCH 3/6] habanalabs: set ETR as non-secured
-Thread-Index: AQHVmBGXX2drukS2bEWeUYrNJGMNgqeFeouQ
-Date:   Mon, 11 Nov 2019 06:01:32 +0000
-Message-ID: <AM6PR0202MB3382576D2A8E491F80446F70B8740@AM6PR0202MB3382.eurprd02.prod.outlook.com>
+Subject: RE: [PATCH 4/6] habanalabs: increase max jobs number to 512
+Thread-Topic: [PATCH 4/6] habanalabs: increase max jobs number to 512
+Thread-Index: AQHVmBGX9nbjFJHkIkmsLHj+/r6XeaeFe2AA
+Date:   Mon, 11 Nov 2019 06:03:15 +0000
+Message-ID: <AM6PR0202MB338239BB13CB3245480B1CA4B8740@AM6PR0202MB3382.eurprd02.prod.outlook.com>
 References: <20191110215533.754-1-oded.gabbay@gmail.com>
- <20191110215533.754-3-oded.gabbay@gmail.com>
-In-Reply-To: <20191110215533.754-3-oded.gabbay@gmail.com>
+ <20191110215533.754-4-oded.gabbay@gmail.com>
+In-Reply-To: <20191110215533.754-4-oded.gabbay@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -56,37 +56,42 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=oshpigelman@habana.ai; 
 x-originating-ip: [141.226.8.173]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f0bb4e77-b39f-4e08-9259-08d7666c9a61
-x-ms-traffictypediagnostic: AM6PR0202MB3368:
+x-ms-office365-filtering-correlation-id: 92818d94-9ba2-4a8d-e6c6-08d7666cd772
+x-ms-traffictypediagnostic: AM6PR0202MB3381:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR0202MB3368F9B177662643AFF5C4A2B8740@AM6PR0202MB3368.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2733;
+x-microsoft-antispam-prvs: <AM6PR0202MB3381A1DC51F147A9A52C43F8B8740@AM6PR0202MB3381.eurprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
 x-forefront-prvs: 0218A015FA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(39840400004)(376002)(136003)(189003)(199004)(476003)(11346002)(26005)(229853002)(7696005)(66066001)(4326008)(256004)(186003)(102836004)(6436002)(446003)(6246003)(5660300002)(86362001)(52536014)(9686003)(6636002)(486006)(55016002)(71200400001)(71190400001)(53546011)(6506007)(76176011)(74316002)(305945005)(7736002)(66946007)(2906002)(66556008)(76116006)(33656002)(3846002)(66476007)(6116002)(66446008)(81156014)(8936002)(81166006)(8676002)(2501003)(478600001)(558084003)(99286004)(25786009)(64756008)(110136005)(14454004)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3368;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(396003)(39840400004)(376002)(366004)(199004)(189003)(476003)(9686003)(74316002)(26005)(7736002)(6246003)(478600001)(486006)(66066001)(81166006)(81156014)(4744005)(305945005)(55016002)(6636002)(14454004)(8676002)(4326008)(8936002)(25786009)(52536014)(86362001)(76116006)(66446008)(64756008)(446003)(6116002)(6436002)(66556008)(66476007)(3846002)(11346002)(256004)(66946007)(186003)(110136005)(71200400001)(71190400001)(5660300002)(229853002)(2906002)(6506007)(316002)(102836004)(33656002)(99286004)(2501003)(7696005)(76176011)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3381;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: habana.ai does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2Br4I1agntw4RC2oBOx91CH5hJVdF6Mk3mph7kIKhnviW1ipxzqOvfmqr+Z+PbM0xQqDRPUo5UgcpPVSswfyhvRmSZU8Bzr1k1GKMSinjs8F9LwtxpcQ7eKT82C75NNkin8BXs8HC46NAvDCNuFJEhqqsdwPkXkMvHEx9NP3lWmFwLrTbhM9PatgfjeN/aQsruFkW6RY0u8qOwYT+4b+9ysNaXAhSlr6nu/KIxAMlLLMY+zvbw4HlqhHGmm8aKNBXTBxasz9V2cfQoaqCuvMdYYUiq5LV05yBQ0pWNO59Pi0s55HgbDVPN+/zo75IUKL4ivVYmg9pG7an/NF2ASfNJQhGyGQqYVOjVTHKKl3Io2P/AduQFmYJUEz0YcQg1P2rWxtgYMB1bEt/EoAwej547WjIsqZMCnRpceYSu5Gvsn5GSem1UWFGs+QldZitaL8
+x-microsoft-antispam-message-info: dlbVTkUvPmDEKB6QYXGbHjMmidrxGKvjtLYfhSqRpwemYRFwtK7Of7Ht1zZRoR5G9V18aoXE/TT+e/6z05S1bZBbu8ZtyC8lOjSADsEmtqBrNTyyVJW7DWotjvxbDQv1dhfhh8hDO0uBL0S2aLTrqNLgdw2nW6JubayFCFJ+rpg1c0VbPX7YyLghNyPXoCxFUg5ARQVa7ptMfYHJDL1bpYHg9e0zxbe4ADbVIYypJlDq4Yn6HCi3E9nwEAvhFth205BDZ0apSEqwD6gFN2RdLiEYxiM4i8BskN3eOBT9FKgheVhGIHJtgNaquAVJJKK2wm4qg/G0AriQTuCy7InoEhQ8J1tvPTfX978mnfCg6U0SfE9X8qM+CUd3ZhQSqKF36nibVeHof6nj7wagFYIVKtHYvKuC6MFSCudRuRlDZkUJUSKT4Q2G8Z2mUrfZzH3B
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0bb4e77-b39f-4e08-9259-08d7666c9a61
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2019 06:01:32.7622
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92818d94-9ba2-4a8d-e6c6-08d7666cd772
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2019 06:03:15.1748
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FfI8A6eZqcxc92RdOxgC8pXzAFNc896gYQxRolZ6WPWDi8cCLVW9lIoyUWKjhIHTVKtlxLQ9Z1gCc3rhVVeWVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3368
+X-MS-Exchange-CrossTenant-userprincipalname: ygRVKdgn7yzvujiSBG0FKWZAN71y+pG3ykFm3OOltdhJulS17SY+TK4Yr+weaGJ+Z3KCNFr5FP5nk8tpl/0EkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3381
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU3VuLCBOb3YgMTAsIDIwMTkgYXQgMTE6NTYgUE0gT2RlZCBHYWJiYXkgd3JvdGU6DQo+IEVU
-UiBzaG91bGQgYWx3YXlzIGJlIG5vbi1zZWN1cmVkIGFzIGl0IGlzIHVzZWQgYnkgdGhlIHVzZXJz
-IHRvIHJlY29yZA0KPiBwcm9maWxpbmcvdHJhY2UgZGF0YS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6
-IE9kZWQgR2FiYmF5IDxvZGVkLmdhYmJheUBnbWFpbC5jb20+DQoNClJldmlld2VkLWJ5OiBPbWVy
-IFNocGlnZWxtYW4gPG9zaHBpZ2VsbWFuQGhhYmFuYS5haT4NCg0K
+T24gU3VuLCBOb3YgMTAsIDIwMTkgYXQgMTE6NTYgUE0gT2RlZCBHYWJiYXkgd3JvdGU6DQo+IElu
+IHRyYWluaW5nLCB0aGVyZSBpcyBhIG5lZWQgZm9yIGEgbGFyZ2UgYW1vdW50IG9mIHBhdGNoaW5n
+IHRvIHRoZSByZWNpcGUuDQo+IFRoaXMgcmVzdWx0cyBpbiBtYW55IGNvbW1hbmQgYnVmZmVycyBj
+b250YWlucyBhIGxvdCBvZiBETUEgcGFja2V0cy4gVGhlDQo+IG51bWJlciBvZiBjb21tYW5kIGJ1
+ZmZlcnMgcGVyIENTIGlzIGxhcmdlciB0aGFuIHRoZSBjdXJyZW50IG1heGltdW0gb2YNCj4gNjQs
+IHdoaWNoIGlzIGFuIGFyYml0cmFyeSBudW1iZXIgdGhhdCBpcyBlbm91Z2ggZm9yIGluZmVyZW5j
+ZSwgYnV0IGl0IGhhcyBubw0KPiByZWFsIGFmZmVjdCBvbiB0aGUgY29kZSBhbmQvb3IgcmVzb3Vy
+Y2VzIG9mIHRoZSBob3N0IG1hY2hpbmUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBPZGVkIEdhYmJh
+eSA8b2RlZC5nYWJiYXlAZ21haWwuY29tPg0KDQpSZXZpZXdlZC1ieTogT21lciBTaHBpZ2VsbWFu
+IDxvc2hwaWdlbG1hbkBoYWJhbmEuYWk+DQo=
