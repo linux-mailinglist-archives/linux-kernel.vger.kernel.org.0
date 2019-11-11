@@ -2,119 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42217F806A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2AE7F8074
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:49:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfKKTrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:47:33 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44554 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbfKKTrc (ORCPT
+        id S1727577AbfKKTtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:49:17 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50496 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbfKKTtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:47:32 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q26so11353605pfn.11;
-        Mon, 11 Nov 2019 11:47:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+9p0geAPYzACJGr4kM2hyRnJuBulukbnnM2rKBijSkE=;
-        b=Lr9u6dKcMnxosBmDkOTOg/HV8B2blEwxnmgWJEQ2EzK/7M8d+TwKUi1LeMvLaCcIvH
-         045v2cS+xss3k7mIyOINO21skpydLlCsLjZOMyFZt9lqc0j8Kw+G/U/H5OHwuoVOLsbY
-         JH5OQc6ooy9GVhVlmvcMkmvYq6TRkF4nMwNv7Dclp8OPKYSgjnTYzV4KKhkkyMQhQnDw
-         1MdhLmr033d7wLIn09fqyh66HhHqE6IS40S+twJZCqFQUK9UO+SRbc3lb/VAk3v28ihn
-         9JyMgllUKc8iRUgf/wPPEilaHxllpAYuShMzivAI5MLAof85ZJaIvil4uAgMZnEuhxvR
-         QaOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+9p0geAPYzACJGr4kM2hyRnJuBulukbnnM2rKBijSkE=;
-        b=GUxs/5ZrSBSkbcz91RGwObBlUpLFoolFZgLhkrkRcQ60yhGyvBsm5OLD0PdBDDoSoY
-         /Su7muB4LgAiCxnS8fkNFD2QozmbjYOBOVl3bvNVWo1xGkawPMzMG3IpKsGot19pKOED
-         3rm1jwVzfoKNU8xX/h1If8tSE6/aKk5FW2YznMB90Rhq9jRILog328KYNMRShtHp0Zhl
-         r8AcmhTU9kh3ktEYXEkkKFoZnNc/MM7ttMzX+FhWlVCegjYEQTmSLOGYAiYHLVU8DHhO
-         kOXqDgsAAsoi1ORxWSAHM9sAxsWix3zTGVvelruWkx6wnJ3X/dJX3v8tYCCRebrmIuI1
-         4PxQ==
-X-Gm-Message-State: APjAAAWuH9VNnzQ/iY4k7haoWxl04P4vhAJqWUd+Mu3S1G1Fh4KQbTHb
-        Yti3GOFpVqB4ibRg/I2sejg=
-X-Google-Smtp-Source: APXvYqwcKjEdlZMRYppAqHUMbv7gQ99eeSBVdLpKqj2EkFkNJV09fdgaGoK6Idh+rD+cOgW29Fu9yA==
-X-Received: by 2002:aa7:9f86:: with SMTP id z6mr32086375pfr.102.1573501651618;
-        Mon, 11 Nov 2019 11:47:31 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::a925])
-        by smtp.gmail.com with ESMTPSA id s2sm4623877pgv.48.2019.11.11.11.47.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Nov 2019 11:47:30 -0800 (PST)
-Date:   Mon, 11 Nov 2019 11:47:28 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org,
-        bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-        kernel-team@fb.com
-Subject: Re: [PATCH -v5 00/17] Rewrite x86/ftrace to use text_poke (and more)
-Message-ID: <20191111194726.udayafzpqxeqjyrj@ast-mbp.dhcp.thefacebook.com>
-References: <20191111131252.921588318@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191111131252.921588318@infradead.org>
-User-Agent: NeoMutt/20180223
+        Mon, 11 Nov 2019 14:49:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=84REvcwjrpVztiWS0w7fns355oyY2epT8nBgVsXKgpw=; b=kEFIHQp4fA0u
+        Mdn9IbceTH6wxHJhAly7ch5YFvZS/zqIXMMkhZsX2nS+gp/N+9o0tBluJ4+/kiSV/Iylsz1R01h6G
+        FgTJlqqdIyiEmUXWFZRSDffsRQaT5/IjpUVxqF5usptC0aWMgA63+ktJpWup7My6IvUy1Wrb/uV40
+        OrRTg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iUFgT-0005Ne-3Z; Mon, 11 Nov 2019 19:49:09 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 9E5AD27429EB; Mon, 11 Nov 2019 19:49:08 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     "Cc:"@sirena.co.uk, "Cc:"@sirena.co.uk,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Applied "spi: pxa2xx: Add missed security checks" to the spi tree
+In-Reply-To: <20191109080943.30428-1-hslester96@gmail.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191111194908.9E5AD27429EB@ypsilon.sirena.org.uk>
+Date:   Mon, 11 Nov 2019 19:49:08 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 02:12:52PM +0100, Peter Zijlstra wrote:
-> Ftrace is one of the last W^X violators (after this only KLP is left). These
-> patches move it over to the generic text_poke() interface and thereby get rid
-> of this oddity.
-> 
-> The first 14 patches are the same as in the -v4 posting. The last 3 patches are
-> new.
-> 
-> Will, patch 13, arm/ftrace, is unchanged. This is because this way it preserves
-> behaviour, but if you can provide me a tested-by for the simpler variant I can
-> drop that in.
-> 
-> Patch 15 reworks ftrace's event_create_dir(), which ran module code before the
-> module was finished loading (before we even applied jump_labels and all that).
-> 
-> Patch 16 and 17 address minor review feedback.
-> 
-> Ingo, Alexei wants patch #1 for some BPF stuff, can he get that in a topic branch?
+The patch
 
-Thanks Peter!
-Much appreciate it.
+   spi: pxa2xx: Add missed security checks
 
-I've re-tested the patch 1 alone (it seems to be exactly the same as you posted
-it originally back on Aug 27 and then on Oct 7). And now I tested my stuff with
-this whole set. No conflicts. Feel free to add to patch 1 alone or the whole set:
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Tested-by: Alexei Starovoitov <ast@kernel.org>
-Some of the patches I think are split too fine. I would have combined them, but
-we try hard to limit our sets to less than fifteen in bpf/netdev land fwiw.
+has been applied to the spi tree at
 
-It was a poor judgment on my side to use text_poke() in my patch (to avoid
-explicit dependency on your patch) and not mention the obvious race in the
-commit log and intended fix when trees converge:
-        case BPF_MOD_CALL_TO_CALL:
-                if (memcmp(ip, old_insn, X86_CALL_SIZE))
-                        goto out;
--               text_poke(ip, new_insn, X86_CALL_SIZE);
-+               text_poke_bp(ip, new_insn, X86_CALL_SIZE, NULL);
-                break;
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
 
-To avoid the issue in the first place the best is to have your 1st patch in tip
-and bpf-next/net-next trees. We had "the same patch in multiple trees"
-situation in the past and git did the right thing during the merge window. So I
-don't anticipate any issues this time around.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-One more question.
-What is the reason you stick to int3 style poking when 8 byte write is atomic?
-Can text_poke() patch nop5 by combining the call/jmp5 insn with extra 3 bytes
-after the nop and write 8 ?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 5eb263ef08b5014cfc2539a838f39d2fd3531423 Mon Sep 17 00:00:00 2001
+From: Chuhong Yuan <hslester96@gmail.com>
+Date: Sat, 9 Nov 2019 16:09:43 +0800
+Subject: [PATCH] spi: pxa2xx: Add missed security checks
+
+pxa2xx_spi_init_pdata misses checks for devm_clk_get and
+platform_get_irq.
+Add checks for them to fix the bugs.
+
+Since ssp->clk and ssp->irq are used in probe, they are mandatory here.
+So we cannot use _optional() for devm_clk_get and platform_get_irq.
+
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Link: https://lore.kernel.org/r/20191109080943.30428-1-hslester96@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-pxa2xx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 6eb6805ee51d..9bc710c1b9e5 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -1557,7 +1557,13 @@ pxa2xx_spi_init_pdata(struct platform_device *pdev)
+ #endif
+ 
+ 	ssp->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(ssp->clk))
++		return NULL;
++
+ 	ssp->irq = platform_get_irq(pdev, 0);
++	if (ssp->irq < 0)
++		return NULL;
++
+ 	ssp->type = type;
+ 	ssp->dev = &pdev->dev;
+ 	ssp->port_id = pxa2xx_spi_get_port_id(&pdev->dev);
+-- 
+2.20.1
 
