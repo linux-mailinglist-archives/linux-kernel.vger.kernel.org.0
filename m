@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26085F7B1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD6FF7B01
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbfKKSci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:32:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49860 "EHLO mail.kernel.org"
+        id S1727733AbfKKSbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:31:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbfKKScc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:32:32 -0500
+        id S1727720AbfKKSbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:31:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85129214E0;
-        Mon, 11 Nov 2019 18:32:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E00BA214E0;
+        Mon, 11 Nov 2019 18:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497152;
-        bh=xyMvxFs3n+DXTMRN/z4818+BuC0ek5IfaKxMsXLPTRY=;
+        s=default; t=1573497099;
+        bh=hsj6mtJD8TKRNhJwMDJL0ulHgOWI8gc8BwKJnbp9dbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eyZbAPGvynZg4M8H7Bxu74yYj+37rJrG20PFvWokrL5rsWwaD25MZlMH+fhuOfuja
-         jJi8nGTqr2kiRp9520KGjzqBO4amYbvi+vM13/nxuxkwrsDX2F63LisZjQlDC18Uwq
-         WhqY13A3vJfqZIjOpbcJ8OdV/YWGIvl8tnBd1TYo=
+        b=Wd92Nh2JuviRSagjsJrBCYdgn2jTQQemHtd8KXtSUWSmrHR/1/T5ZQam0PQtpum0g
+         Yf00QKxYTAu1Ba+doeAt5Js0RFVKGvHuPFgxf1stQXdv3A3/ufzivqty3V0/jLJhdq
+         Ijs4LgnVnv2G+xhkdcrIBBTalwU+UZz1FeBgmIzg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>
-Subject: [PATCH 4.9 21/65] netfilter: ipset: Fix an error code in ip_set_sockfn_get()
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 07/43] ALSA: bebob: fix to detect configured source of sampling clock for Focusrite Saffire Pro i/o series
 Date:   Mon, 11 Nov 2019 19:28:21 +0100
-Message-Id: <20191111181344.889126080@linuxfoundation.org>
+Message-Id: <20191111181255.718857357@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 30b7244d79651460ff114ba8f7987ed94c86b99a upstream.
+commit 706ad6746a66546daf96d4e4a95e46faf6cf689a upstream.
 
-The copy_to_user() function returns the number of bytes remaining to be
-copied.  In this code, that positive return is checked at the end of the
-function and we return zero/success.  What we should do instead is
-return -EFAULT.
+For Focusrite Saffire Pro i/o, the lowest 8 bits of register represents
+configured source of sampling clock. The next lowest 8 bits represents
+whether the configured source is actually detected or not just after
+the register is changed for the source.
 
-Fixes: a7b4f989a629 ("netfilter: ipset: IP set core support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Current implementation evaluates whole the register to detect configured
+source. This results in failure due to the next lowest 8 bits when the
+source is connected in advance.
+
+This commit fixes the bug.
+
+Fixes: 25784ec2d034 ("ALSA: bebob: Add support for Focusrite Saffire/SaffirePro series")
+Cc: <stable@vger.kernel.org> # v3.16+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Link: https://lore.kernel.org/r/20191102150920.20367-1-o-takashi@sakamocchi.jp
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/ipset/ip_set_core.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ sound/firewire/bebob/bebob_focusrite.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@ -1942,8 +1942,9 @@ ip_set_sockfn_get(struct sock *sk, int o
- 		}
+--- a/sound/firewire/bebob/bebob_focusrite.c
++++ b/sound/firewire/bebob/bebob_focusrite.c
+@@ -28,6 +28,8 @@
+ #define SAFFIRE_CLOCK_SOURCE_SPDIF		1
  
- 		req_version->version = IPSET_PROTOCOL;
--		ret = copy_to_user(user, req_version,
--				   sizeof(struct ip_set_req_version));
-+		if (copy_to_user(user, req_version,
-+				 sizeof(struct ip_set_req_version)))
-+			ret = -EFAULT;
- 		goto done;
- 	}
- 	case IP_SET_OP_GET_BYNAME: {
-@@ -2000,7 +2001,8 @@ ip_set_sockfn_get(struct sock *sk, int o
- 	}	/* end of switch(op) */
+ /* clock sources as returned from register of Saffire Pro 10 and 26 */
++#define SAFFIREPRO_CLOCK_SOURCE_SELECT_MASK	0x000000ff
++#define SAFFIREPRO_CLOCK_SOURCE_DETECT_MASK	0x0000ff00
+ #define SAFFIREPRO_CLOCK_SOURCE_INTERNAL	0
+ #define SAFFIREPRO_CLOCK_SOURCE_SKIP		1 /* never used on hardware */
+ #define SAFFIREPRO_CLOCK_SOURCE_SPDIF		2
+@@ -190,6 +192,7 @@ saffirepro_both_clk_src_get(struct snd_b
+ 		map = saffirepro_clk_maps[1];
  
- copy:
--	ret = copy_to_user(user, data, copylen);
-+	if (copy_to_user(user, data, copylen))
-+		ret = -EFAULT;
- 
- done:
- 	vfree(data);
+ 	/* In a case that this driver cannot handle the value of register. */
++	value &= SAFFIREPRO_CLOCK_SOURCE_SELECT_MASK;
+ 	if (value >= SAFFIREPRO_CLOCK_SOURCE_COUNT || map[value] < 0) {
+ 		err = -EIO;
+ 		goto end;
 
 
