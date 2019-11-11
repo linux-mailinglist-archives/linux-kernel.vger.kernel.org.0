@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88EB4F7E26
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC08F7E96
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbfKKSuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:50:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43782 "EHLO mail.kernel.org"
+        id S1728557AbfKKSlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:41:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbfKKSuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:50:10 -0500
+        id S1727916AbfKKSlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:41:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED54F21655;
-        Mon, 11 Nov 2019 18:50:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B39C8204FD;
+        Mon, 11 Nov 2019 18:40:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498209;
-        bh=Bu+uXoeGnACmyjuFJfj8RwZfUwF3IpUjwV0R6AsXDdY=;
+        s=default; t=1573497660;
+        bh=C5xQkwwGDricWqdA8SR940TB54ZWtqNg32onbdI9kCY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o7KC1A4giCUWW+APHJehXD3LDM1ppWJHJ8Vk5TwvU2lU6ZGLdsN8RiMcCOGoFmRz9
-         dC+FaRgNyp34/cuV3EbK8qiWm61S+NBJVzx0zzN5aMkgqkMpkh6Jl9to2N07dumJEQ
-         3OnlVvFAD2HGyCQtxDPR0qwNJl36DyU7QNFzZD4U=
+        b=LESdrdiHMK0VU1cO4QMHiFe3AmMZ/dDCvWOkNuUv+DnkAgY6OIqTM8xX2qaFQK9ys
+         4tDF+/ulwHoEM5IzpjaNUv62eHVe+SaJYCor4zT8+Au603bdoWAmE24GzTsNk92ZiH
+         pf5BArBS7VmB8YqeKvOe5wtNQQ2Le5CiCHZBoH28=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 5.3 053/193] ceph: add missing check in d_revalidate snapdir handling
-Date:   Mon, 11 Nov 2019 19:27:15 +0100
-Message-Id: <20191111181504.894591335@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 002/125] CDC-NCM: handle incomplete transfer of MTU
+Date:   Mon, 11 Nov 2019 19:27:21 +0100
+Message-Id: <20191111181439.367240413@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 1f08529c84cfecaf1261ed9b7e17fab18541c58f upstream.
+[ Upstream commit 332f989a3b0041b810836c5c3747e59aad7e9d0b ]
 
-We should not play with dcache without parent locked...
+A malicious device may give half an answer when asked
+for its MTU. The driver will proceed after this with
+a garbage MTU. Anything but a complete answer must be treated
+as an error.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+V2: used sizeof as request by Alexander
+
+Reported-and-tested-by: syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ceph/inode.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/usb/cdc_ncm.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1432,6 +1432,7 @@ retry_lookup:
- 		dout(" final dn %p\n", dn);
- 	} else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
- 		    req->r_op == CEPH_MDS_OP_MKSNAP) &&
-+	           test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
- 		   !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
- 		struct inode *dir = req->r_parent;
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -578,8 +578,8 @@ static void cdc_ncm_set_dgram_size(struc
+ 	/* read current mtu value from device */
+ 	err = usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
+ 			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
+-			      0, iface_no, &max_datagram_size, 2);
+-	if (err < 0) {
++			      0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
++	if (err < sizeof(max_datagram_size)) {
+ 		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
+ 		goto out;
+ 	}
+@@ -590,7 +590,7 @@ static void cdc_ncm_set_dgram_size(struc
+ 	max_datagram_size = cpu_to_le16(ctx->max_datagram_size);
+ 	err = usbnet_write_cmd(dev, USB_CDC_SET_MAX_DATAGRAM_SIZE,
+ 			       USB_TYPE_CLASS | USB_DIR_OUT | USB_RECIP_INTERFACE,
+-			       0, iface_no, &max_datagram_size, 2);
++			       0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
+ 	if (err < 0)
+ 		dev_dbg(&dev->intf->dev, "SET_MAX_DATAGRAM_SIZE failed\n");
  
 
 
