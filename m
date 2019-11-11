@@ -2,215 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B69F6F29
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 08:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F1D9F6F2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 08:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfKKHlv convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 11 Nov 2019 02:41:51 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:49780 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbfKKHlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 02:41:51 -0500
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 9E3E6162B64E7E894F6A;
-        Mon, 11 Nov 2019 15:41:40 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id xAB7d6ej071507;
-        Mon, 11 Nov 2019 15:39:06 +0800 (GMT-8)
-        (envelope-from zhong.shiqi@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019111115391041-386045 ;
-          Mon, 11 Nov 2019 15:39:10 +0800 
-From:   zhongshiqi <zhong.shiqi@zte.com.cn>
-To:     Julia.Lawall@lip6.fr
-Cc:     Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
-        michal.lkml@markovi.net, corbet@lwn.net, cocci@systeme.lip6.fr,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        cheng.shengyu@zte.com.cn, zhongshiqi <zhong.shiqi@zte.com.cn>
-Subject: [PATCH v7] coccicheck: Support search for SmPL scripts within selected directory hierarchy
-Date:   Mon, 11 Nov 2019 15:42:04 +0800
-Message-Id: <1573458124-14528-1-git-send-email-zhong.shiqi@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726955AbfKKHoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 02:44:04 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:52704 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfKKHoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 02:44:04 -0500
+X-AuditID: c0a8fbf4-183ff70000001fa6-2a-5dc91142f9cc
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id AE.99.08102.24119CD5; Mon, 11 Nov 2019 08:44:02 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Mon, 11 Nov 2019 08:43:51 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "thorsten.scherer@eckelmann.de" <thorsten.scherer@eckelmann.de>
+CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 40/62] gpio: gpio-siox: Use new GPIO_LINE_DIRECTION
+Thread-Topic: [PATCH 40/62] gpio: gpio-siox: Use new GPIO_LINE_DIRECTION
+Thread-Index: AQHVk8QgoRngmXYXw0mZFckOpTZFOKeFipWAgAAEqgA=
+Date:   Mon, 11 Nov 2019 07:43:50 +0000
+Message-ID: <e38b59d9c8bcf81bbd49fed2d9d17350d4dc4866.camel@fi.rohmeurope.com>
+References: <cover.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
+         <91a796dd2811b58f4be30875f5ef644f0e43f241.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
+         <20191111072715.GB4117@ws067.eckelmann.group>
+In-Reply-To: <20191111072715.GB4117@ws067.eckelmann.group>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <211694E4CEF9A842893FA40F0AB0A7C2@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-11-11 15:39:10,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-11-11 15:39:07
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse-fl1.zte.com.cn xAB7d6ej071507
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SaUgUURzn7cyuz2P0ua7ta0ulhbCMPMAPi5mIfWiViMCgKBcbdXSlPWRm
+        DZUCP5TlVUr6wUXL25RCVCIVLVlE1DxA80oNpRSVUjyiLI9mnDw+vd97v+sP7w8JebZMBRNN
+        FoY10Qa1zIHsePW34XyYa4/O/3Gxl2ajpJfU1BW2kJqCrRqJpunlFtAMtxbLNMVV3aTmy0qQ
+        ZjL/OQiF2pXxR3ba1g6VtsU6baedGm2TaZ9t+2vXGz2vyW45BsfQlnuRiQkmv5A7jvqmp6NE
+        0oJjSufMnDQddDhmAXuIUSDO3M0EWcABytEIwPND4xLx0g3w4MYimQUglKFgnDVhJ0AFuoRX
+        +8MECYEqCDz88wcQgtzQZfwif5EQsAJp8ZBt1k7EQXj03cQeJtFpvLnat6eh0FX8ZqpWKnZ9
+        ArhmrGEvyJ43PHk4IRUwQB44M31ZImACKXHj/C+pODXClW2DhIjd8eLXnf/vaty+Obs3M4HO
+        4vpWP9Eaimerv5MiPoULssXZKOSKe4q+kXngmPVIg/XQbT3ith5xW4+4S4G0DmAjnWhIoC1M
+        gC/LJPuyZr2RP2LNxkYgfu5GM9i1hduABAIbOA4landqu75bJ3eOMcel6mlOH80mGxjOBjAk
+        1AqqOYXnqDg6NY1hzfvUCUiqlZT3bL5OjoSuuwyTxLD77EkI1ZhacO7RyV1ZJoFJiU80WA5p
+        CbQXwh1UCo4xxTEsnWzRRwv7Ec3xCyJQTnzva8FOcUm0kX8Vrb3gHMxbLCknYGdJVTkhJ01m
+        E6NSUm9deCkSpPpk00HRElBCoHajlIhnnfgNP8hZ4iskfEVHf5dQYaEPKVU6KOzbKqm5ULhc
+        HeNTYXUJGWO7Ctw+eo0biTkdJ8PRobe9yxSfPXYi9J3uQfE+tg9XIotlzbmDOa1ufyKmPXfT
+        ygbe9wXOj2TkDA5MXqwMGXKIVHh3RhXd1DWNrayt1RrCqn0fRLnfDyq9ETvl8/t6PTcRUBgO
+        zuTOrLdn9EVKa9Ukp6cDfAiWo/8Bh7+3Y54DAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-*Allow defining the environment variable “COCCI” as a directory to
- search SmPL scripts.
-
-*Start a corresponding file determination if it contains an acceptable
- path.
-
-*Adjust software documentation for using coccicheck with
- a selected directory.
-
-Signed-off-by: zhongshiqi <zhong.shiqi@zte.com.cn>
----
-Changes in v7:
-        1:adjust coccinelle.rst documentation
-        2:fix a repo of "default"
-
-Changes in v6:
-        update coccinelle.rst documents and add instructions for use this
-
-Changes in v5:
-        rewrite change description as an enumeration
-
-Changes in v4:
-        rewrite change description in another wording
-
-Changes in v3:
-        1:rewrite change description
-        2:fix patch subject
-        3:modify commit log
-
-Changes in v2:
-        1.fix patch subject according to the reply by Markus
-        <Markus.Elfring@web.de>
-        2.change description in “imperative mood”
-
----
- Documentation/dev-tools/coccinelle.rst | 69 +++++++++++++++++++++-------------
- scripts/coccicheck                     |  4 ++
- 2 files changed, 47 insertions(+), 26 deletions(-)
-
-diff --git a/Documentation/dev-tools/coccinelle.rst b/Documentation/dev-tools/coccinelle.rst
-index 00a3409..90abe21 100644
---- a/Documentation/dev-tools/coccinelle.rst
-+++ b/Documentation/dev-tools/coccinelle.rst
-@@ -100,8 +100,8 @@ Two other modes provide some common combinations of these modes.
-   It should be used with the C option (described later)
-   which checks the code on a file basis.
- 
--Examples
--~~~~~~~~
-+Using Coccinelle with the default configuration
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- To make a report for every semantic patch, run the following command::
- 
-@@ -127,41 +127,36 @@ To enable verbose messages set the V= variable, for example::
- 
-    make coccicheck MODE=report V=1
- 
--Coccinelle parallelization
-----------------------------
-+Using Coccinelle with a single file selection
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--By default, coccicheck tries to run as parallel as possible. To change
--the parallelism, set the J= variable. For example, to run across 4 CPUs::
-+The optional make variable COCCI can be used to check a single
-+semantic patch. In that case, the variable must be initialized with
-+the name of the semantic patch to apply.
- 
--   make coccicheck MODE=report J=4
-+For instance::
- 
--As of Coccinelle 1.0.2 Coccinelle uses Ocaml parmap for parallelization,
--if support for this is detected you will benefit from parmap parallelization.
-+	make coccicheck COCCI=<my_SP.cocci> MODE=patch
- 
--When parmap is enabled coccicheck will enable dynamic load balancing by using
--``--chunksize 1`` argument, this ensures we keep feeding threads with work
--one by one, so that we avoid the situation where most work gets done by only
--a few threads. With dynamic load balancing, if a thread finishes early we keep
--feeding it more work.
-+or::
- 
--When parmap is enabled, if an error occurs in Coccinelle, this error
--value is propagated back, the return value of the ``make coccicheck``
--captures this return value.
-+	make coccicheck COCCI=<my_SP.cocci> MODE=report
- 
--Using Coccinelle with a single semantic patch
-----------------------------------------------
- 
--The optional make variable COCCI can be used to check a single
--semantic patch. In that case, the variable must be initialized with
--the name of the semantic patch to apply.
-+Using Coccinelle with directory selection
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The optional make variable COCCI can be used to search semantic patch in a
-+directory. In that case, the variable must be initialized with the name of
-+a directory which contains semantic patches.
- 
- For instance::
- 
--	make coccicheck COCCI=<my_SP.cocci> MODE=patch
-+	make coccicheck COCCI=<my_SPDIR> MODE=patch
- 
- or::
- 
--	make coccicheck COCCI=<my_SP.cocci> MODE=report
-+	make coccicheck COCCI=<my_SPDIR> MODE=report
- 
- 
- Controlling Which Files are Processed by Coccinelle
-@@ -187,12 +182,34 @@ In these modes, which works on a file basis, there is no information
- about semantic patches displayed, and no commit message proposed.
- 
- This runs every semantic patch in scripts/coccinelle by default. The
--COCCI variable may additionally be used to only apply a single
--semantic patch as shown in the previous section.
-+COCCI variable may additionally be used to apply a single semantic
-+patch or a directory which contains semantic patches as shown in the
-+previous section.
- 
- The "report" mode is the default. You can select another one with the
- MODE variable explained above.
- 
-+Coccinelle parallelization
-+--------------------------
-+
-+By default, coccicheck tries to run as parallel as possible. To change
-+the parallelism, set the J= variable. For example, to run across 4 CPUs::
-+
-+   make coccicheck MODE=report J=4
-+
-+As of Coccinelle 1.0.2 Coccinelle uses Ocaml parmap for parallelization,
-+if support for this is detected you will benefit from parmap parallelization.
-+
-+When parmap is enabled coccicheck will enable dynamic load balancing by using
-+``--chunksize 1`` argument, this ensures we keep feeding threads with work
-+one by one, so that we avoid the situation where most work gets done by only
-+a few threads. With dynamic load balancing, if a thread finishes early we keep
-+feeding it more work.
-+
-+When parmap is enabled, if an error occurs in Coccinelle, this error
-+value is propagated back, the return value of the ``make coccicheck``
-+captures this return value.
-+
- Debugging Coccinelle SmPL patches
- ---------------------------------
- 
-diff --git a/scripts/coccicheck b/scripts/coccicheck
-index e04d328..e64a22e 100755
---- a/scripts/coccicheck
-+++ b/scripts/coccicheck
-@@ -257,6 +257,10 @@ if [ "$COCCI" = "" ] ; then
-     for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
- 	coccinelle $f
-     done
-+elif [ -d "$COCCI" ] ; then
-+    for f in `find $COCCI/ -name '*.cocci' -type f | sort`; do
-+    coccinelle $f
-+    done
- else
-     coccinelle $COCCI
- fi
--- 
-2.9.5
-
+SGVsbG8gVGhvcnN0ZW4sDQoNCk9uIE1vbiwgMjAxOS0xMS0xMSBhdCAwODoyNyArMDEwMCwgVGhv
+cnN0ZW4gU2NoZXJlciB3cm90ZToNCj4gSGVsbG8sDQo+IA0KPiBPbiBUdWUsIE5vdiAwNSwgMjAx
+OSBhdCAxMjozMDo1OFBNICswMjAwLCBNYXR0aSBWYWl0dGluZW4gd3JvdGU6DQo+ID4gSXQncyBo
+YXJkIGZvciBvY2Nhc2lvbmFsIEdQSU8gY29kZSByZWFkZXIvd3JpdGVyIHRvIGtub3cgaWYgdmFs
+dWVzDQo+ID4gMC8xDQo+ID4gZXF1YWwgdG8gSU4gb3IgT1VULiBVc2UgZGVmaW5lZCBHUElPX0xJ
+TkVfRElSRUNUSU9OX0lOIGFuZA0KPiA+IEdQSU9fTElORV9ESVJFQ1RJT05fT1VUIHRvIGhlbHAg
+dGhlbSBvdXQuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogTWF0dGkgVmFpdHRpbmVuIDxtYXR0
+aS52YWl0dGluZW5AZmkucm9obWV1cm9wZS5jb20+DQo+IA0KPiBmb3IgU0lPWCBncGlvOg0KPiAN
+Cj4gQWNrZWQtYnk6IFRob3JzdGVuIFNjaGVyZXIgPHQuc2NoZXJlckBlY2tlbG1hbm4uZGU+DQo+
+IA0KPiA+IFBhdGNoZXMgYXJlIGNvbXBpbGUtdGVzdGVkIG9ubHkuIEkgaGF2ZSBubyBIVyB0byBy
+ZWFsbHkgdGVzdA0KPiA+IHRoZW0uICBUaHVzDQo+ID4gSSdkIGFwcHJlY2lhdGUgY2FyZWZ1bGwg
+cmV2aWV3LiBUaGlzIHdvcmsgaXMgbWFpbmx5IGFib3V0DQo+ID4gY29udmVydGluZw0KPiA+IHpl
+cm9zIGFuZCBvbmVzIHRvIHRoZSBuZXcgZGVmaW5lcyBidXQgaXQgd291bGRuJ3QgYmUgZmlyc3Qg
+dGltZSBJDQo+ID4gZ2V0IGl0IHdyb25nIGluIG9uZSBvZiB0aGUgcGF0Y2hlcw0KPiA+IDopICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQo+IA0KPiBB
+cHBsaWVkIHRoZSBwYXRjaChlcykgYW5kIHRlc3RlZCB0aGVtIHdpdGggU0lPWCBkZXZpY2UNCj4g
+DQo+IFRlc3RlZC1ieTogVGhvcnN0ZW4gU2NoZXJlciA8dC5zY2hlcmVyQGVja2VsbWFubi5kZT4N
+Cj4gDQoNCkJpZyB0aGFua3MhIEl0J3MgX3JlYWxseV8gbmljZSB0aGF0IHNvbWVvbmUgdGFrZXMg
+dGhlIHRpbWUgdG8gZG8gdGhlDQp0ZXN0aW5nISBIaWdobHkgYXBwcmVjaWF0ZWQhIDpdDQoNCkJy
+LA0KCU1hdHRpIFZhaXR0aW5lbg0K
