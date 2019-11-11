@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67E67F7D73
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:57:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DD65F7C75
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfKKS47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:56:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55816 "EHLO mail.kernel.org"
+        id S1730002AbfKKSq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:46:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730771AbfKKS45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:56:57 -0500
+        id S1729996AbfKKSqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:46:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD5D120659;
-        Mon, 11 Nov 2019 18:56:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 170D021925;
+        Mon, 11 Nov 2019 18:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498616;
-        bh=qJMV2D7zefnFIwYl4xthDJdFX921UiPywST2gBTbYnc=;
+        s=default; t=1573497984;
+        bh=qoJBrkv55Yvx3fUS2dlYaAZ2YK1eLNgX8mG9LyfTzr8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QxNxCNdMtXxV/d++hmA/eEL8V6ONBCqtm3slawpUX5jeIZTkBFJcYGLC9MztNbL3C
-         IyoDllq4UGN6ddsh82wiHhpiiqyYiSu625/EhdqcsMFq1Y0x0r2pfviXmXQ3O/9vbt
-         GfMpD4R05ZWC7n0Gw7idZb9AVWVR5FTsfmVZWLes=
+        b=XJafm2i+4gq5Hvf3oxvQEM64ijF8+HI01m8aKxxMiS7HF7D3wqoYPbF4YfUL80cj9
+         MbW8QIOtM8crO0l0AWKOnpUzTOdqQwz/kZ9fWVgglpugWGvC/P0UwNHF3mbB+jjt0Q
+         IaJbXIWIGTLm34jDrOou9lXZxspN9FFaq7eKzBtU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Brown <neilb@suse.de>,
+        stable@vger.kernel.org,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 171/193] SUNRPC: The TCP back channel mustnt disappear while requests are outstanding
+Subject: [PATCH 4.19 114/125] NFSv4: Dont allow a cached open with a revoked delegation
 Date:   Mon, 11 Nov 2019 19:29:13 +0100
-Message-Id: <20191111181513.741817623@linuxfoundation.org>
+Message-Id: <20191111181455.122357586@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,52 +47,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 875f0706accd6501c3209bb99df8573171fb5d75 ]
+[ Upstream commit be3df3dd4c70ee020587a943a31b98a0fb4b6424 ]
 
-If there are TCP back channel requests being processed by the
-server threads, then we should hold a reference to the transport
-to ensure it doesn't get freed from underneath us.
+If the delegation is marked as being revoked, we must not use it
+for cached opens.
 
-Reported-by: Neil Brown <neilb@suse.de>
-Fixes: 2ea24497a1b3 ("SUNRPC: RPC callbacks may be split across several..")
+Fixes: 869f9dfa4d6d ("NFSv4: Fix races between nfs_remove_bad_delegation() and delegation return")
 Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/backchannel_rqst.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/nfs/delegation.c | 10 ++++++++++
+ fs/nfs/delegation.h |  1 +
+ fs/nfs/nfs4proc.c   |  7 ++-----
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/net/sunrpc/backchannel_rqst.c b/net/sunrpc/backchannel_rqst.c
-index 339e8c077c2db..7eb251372f947 100644
---- a/net/sunrpc/backchannel_rqst.c
-+++ b/net/sunrpc/backchannel_rqst.c
-@@ -307,8 +307,8 @@ void xprt_free_bc_rqst(struct rpc_rqst *req)
- 		 */
- 		dprintk("RPC:       Last session removed req=%p\n", req);
- 		xprt_free_allocation(req);
--		return;
- 	}
-+	xprt_put(xprt);
+diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+index 825a8c52165a2..c5c3394148f72 100644
+--- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -54,6 +54,16 @@ nfs4_is_valid_delegation(const struct nfs_delegation *delegation,
+ 	return false;
  }
  
- /*
-@@ -339,7 +339,7 @@ found:
- 		spin_unlock(&xprt->bc_pa_lock);
- 		if (new) {
- 			if (req != new)
--				xprt_free_bc_rqst(new);
-+				xprt_free_allocation(new);
- 			break;
- 		} else if (req)
- 			break;
-@@ -368,6 +368,7 @@ void xprt_complete_bc_request(struct rpc_rqst *req, uint32_t copied)
- 	set_bit(RPC_BC_PA_IN_USE, &req->rq_bc_pa_state);
++struct nfs_delegation *nfs4_get_valid_delegation(const struct inode *inode)
++{
++	struct nfs_delegation *delegation;
++
++	delegation = rcu_dereference(NFS_I(inode)->delegation);
++	if (nfs4_is_valid_delegation(delegation, 0))
++		return delegation;
++	return NULL;
++}
++
+ static int
+ nfs4_do_check_delegation(struct inode *inode, fmode_t flags, bool mark)
+ {
+diff --git a/fs/nfs/delegation.h b/fs/nfs/delegation.h
+index c95477823fa6b..dd0f3eed3890d 100644
+--- a/fs/nfs/delegation.h
++++ b/fs/nfs/delegation.h
+@@ -66,6 +66,7 @@ int nfs4_lock_delegation_recall(struct file_lock *fl, struct nfs4_state *state,
+ bool nfs4_copy_delegation_stateid(struct inode *inode, fmode_t flags, nfs4_stateid *dst, struct rpc_cred **cred);
+ bool nfs4_refresh_delegation_stateid(nfs4_stateid *dst, struct inode *inode);
  
- 	dprintk("RPC:       add callback request to list\n");
-+	xprt_get(xprt);
- 	spin_lock(&bc_serv->sv_cb_lock);
- 	list_add(&req->rq_bc_list, &bc_serv->sv_cb_list);
- 	wake_up(&bc_serv->sv_cb_waitq);
++struct nfs_delegation *nfs4_get_valid_delegation(const struct inode *inode);
+ void nfs_mark_delegation_referenced(struct nfs_delegation *delegation);
+ int nfs4_have_delegation(struct inode *inode, fmode_t flags);
+ int nfs4_check_delegation(struct inode *inode, fmode_t flags);
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 75faef7af22d3..792f8821b5d6b 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -1393,8 +1393,6 @@ static int can_open_delegated(struct nfs_delegation *delegation, fmode_t fmode,
+ 		return 0;
+ 	if ((delegation->type & fmode) != fmode)
+ 		return 0;
+-	if (test_bit(NFS_DELEGATION_RETURNING, &delegation->flags))
+-		return 0;
+ 	switch (claim) {
+ 	case NFS4_OPEN_CLAIM_NULL:
+ 	case NFS4_OPEN_CLAIM_FH:
+@@ -1751,7 +1749,6 @@ static void nfs4_return_incompatible_delegation(struct inode *inode, fmode_t fmo
+ static struct nfs4_state *nfs4_try_open_cached(struct nfs4_opendata *opendata)
+ {
+ 	struct nfs4_state *state = opendata->state;
+-	struct nfs_inode *nfsi = NFS_I(state->inode);
+ 	struct nfs_delegation *delegation;
+ 	int open_mode = opendata->o_arg.open_flags;
+ 	fmode_t fmode = opendata->o_arg.fmode;
+@@ -1768,7 +1765,7 @@ static struct nfs4_state *nfs4_try_open_cached(struct nfs4_opendata *opendata)
+ 		}
+ 		spin_unlock(&state->owner->so_lock);
+ 		rcu_read_lock();
+-		delegation = rcu_dereference(nfsi->delegation);
++		delegation = nfs4_get_valid_delegation(state->inode);
+ 		if (!can_open_delegated(delegation, fmode, claim)) {
+ 			rcu_read_unlock();
+ 			break;
+@@ -2293,7 +2290,7 @@ static void nfs4_open_prepare(struct rpc_task *task, void *calldata)
+ 					data->o_arg.open_flags, claim))
+ 			goto out_no_action;
+ 		rcu_read_lock();
+-		delegation = rcu_dereference(NFS_I(data->state->inode)->delegation);
++		delegation = nfs4_get_valid_delegation(data->state->inode);
+ 		if (can_open_delegated(delegation, data->o_arg.fmode, claim))
+ 			goto unlock_no_action;
+ 		rcu_read_unlock();
 -- 
 2.20.1
 
