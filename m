@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08D4F7AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67D6CF7C47
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbfKKSah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:30:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46932 "EHLO mail.kernel.org"
+        id S1729761AbfKKSor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:44:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727366AbfKKSaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:30:35 -0500
+        id S1729749AbfKKSom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:44:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F9B8214E0;
-        Mon, 11 Nov 2019 18:30:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46898204FD;
+        Mon, 11 Nov 2019 18:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497035;
-        bh=HdtFNxoTPLhhrcYzweLwnXMSkfQyx/SykXzCvleGZ/A=;
+        s=default; t=1573497881;
+        bh=VkUJ9Gsze1TFv8GHo1eZ9XvY5w9VauaoEJVkzxwl9SM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JJcwSQsdbBMCIDgFhmFMUuJgPWsWliUGvuEmX79Y0eN2Vfq7K0TA1/y0ix4UfrWQj
-         ieNlgde2oyxBs7hw5nlEO0MA0D2OThrqk6YotCiDq1QpXggJkzGgiJiLrLxn4KObBQ
-         YU/DNgne072PqQOZxegAha7oqriUX8iDgYHZo3K0=
+        b=EMZ0eugVoycAUodNdNECkQILMI0J+aXhIMSZyfhThzQJFHmPyvmhkGtHxleJ1q9Zq
+         4I2EdAFbYh8P45uK+nMZg05JeuNrIk9z/dSqFRTwaa/FGidnWOQ8nTn4lyLw3xpeyD
+         kayFXtXyTtsRB7mYyJBgGyiqKq6L27epSk2/Vcy0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH 4.4 23/43] drivers: usb: usbip: Add missing break statement to switch
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 078/125] net/mlx5: prevent memory leak in mlx5_fpga_conn_create_cq
 Date:   Mon, 11 Nov 2019 19:28:37 +0100
-Message-Id: <20191111181314.607907458@linuxfoundation.org>
+Message-Id: <20191111181450.548753263@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,30 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <garsilva@embeddedor.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 7c92e5fbf4dac0dd4dd41a0383adc54f16f403e2 upstream.
+[ Upstream commit c8c2a057fdc7de1cd16f4baa51425b932a42eb39 ]
 
-Add missing break statement to prevent the code for case
-USB_PORT_FEAT_C_RESET falling through to the default case.
+In mlx5_fpga_conn_create_cq if mlx5_vector2eqn fails the allocated
+memory should be released.
 
-Addresses-Coverity-ID: 143155
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 537a50574175 ("net/mlx5: FPGA, Add high-speed connection routines")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/usbip/vhci_hcd.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -303,6 +303,7 @@ static int vhci_hub_control(struct usb_h
- 			default:
- 				break;
- 			}
-+			break;
- 		default:
- 			usbip_dbg_vhci_rh(" ClearPortFeature: default %x\n",
- 					  wValue);
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c
+index 8ca1d1949d930..d8d0b6bd5c5ae 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c
+@@ -462,8 +462,10 @@ static int mlx5_fpga_conn_create_cq(struct mlx5_fpga_conn *conn, int cq_size)
+ 	}
+ 
+ 	err = mlx5_vector2eqn(mdev, smp_processor_id(), &eqn, &irqn);
+-	if (err)
++	if (err) {
++		kvfree(in);
+ 		goto err_cqwq;
++	}
+ 
+ 	cqc = MLX5_ADDR_OF(create_cq_in, in, cq_context);
+ 	MLX5_SET(cqc, cqc, log_cq_size, ilog2(cq_size));
+-- 
+2.20.1
+
 
 
