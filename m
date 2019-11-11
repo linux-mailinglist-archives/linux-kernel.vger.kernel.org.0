@@ -2,152 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E190FF7FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:30:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06C51F7FF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:30:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfKKTaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:30:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727237AbfKKTaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:30:06 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3CA621E6F;
-        Mon, 11 Nov 2019 19:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573500606;
-        bh=s6vN2gztyPnVL0ZfK6FlvDDglneenMZ9wnAvmSRIS7E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vr86xYOW630eigCpwelKLTDYNr9rFZGS2edjSgFdYW9w0JtjC2RgTy4L13R2rzvY9
-         0ir24c8alb9DzKQ/GkUoYnW1U6r9Y8sU11QwwQQAnO1505hJ3KbPPP6AWPv8HLer3+
-         ZbEs1aCXfDhK4gNaavPU3TdLypCOLTvN5z//CPIg=
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Frederick Lawler <fred@fredlawl.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Ilia Mirkin <imirkin@alum.mit.edu>,
-        linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 2/2] drm: replace Target Link Speed magic numbers with PCI_EXP_LNKCTL2 definitions
-Date:   Mon, 11 Nov 2019 13:29:32 -0600
-Message-Id: <20191111192932.36048-3-helgaas@kernel.org>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-In-Reply-To: <20191111192932.36048-1-helgaas@kernel.org>
-References: <20191111192932.36048-1-helgaas@kernel.org>
+        id S1727385AbfKKTaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:30:46 -0500
+Received: from sonic316-11.consmr.mail.bf2.yahoo.com ([74.6.130.121]:44791
+        "EHLO sonic316-11.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726983AbfKKTap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 14:30:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1573500642; bh=Y+QMmBxhxETT6cijWO0kim3WKJ/S+sx6+I6sJR+T9sg=; h=Date:From:Reply-To:Subject:From:Subject; b=A7tchzra8oF89AF3ZuXu9nc4wCnISN/EqMrfsuBZhBiv95qp4cG+a7KNeqJNwTA0/swyQrk4cheDiYYItxS/YfXhxoE7I4Og4LLytjKYB/8qAGJoS1adRTKevq2l09fHkoM3nksuW385MusuRjHrtgHJgA3b2fRGBo0F2FWDpxjTMayErOZpioUVQdil1G0X/AGrP2T7LMrqXs7XNmBgC/v0Za7hbkHrdaMdbAQmoC++KYbB/Fw/ny6kZFYVWy+a4JriSzeMPCFX/vgzOOtwrW7UCikdLk0V8fibsouTg/aURG/NIylOixv2AHwqPJnuGOk0n5euI4hemenbGlg8aw==
+X-YMail-OSG: F9WZyNIVM1m7fNvno3sS1SmYJmPHZZzcSDCCCHRbVzUa7RBVNIE9Dp2O8lh0Stz
+ ZcdJnbdwOkoslgkwITdrH4NPvnDzH.bRUJ2nMNtQ5Jk3Qg4XlJXGRGOZo4tAPjyCTIolucqltbUm
+ Y8K1nLe0VpTPfcWL6qeNx4.lxpri7iefey8yXkC1_cwHf1ffm24xRampPPcYSDGnk6VtYwsiewSt
+ .ghEoyTqYzbPuvFOn2ZfNlcD39WsZqCCGgHb75i7XndiifrEcanbuVrnDYje2yASpFPx5HJjovFc
+ q5LH3xdsIeqbxz1YCOHIG77AoeBUnAqLWDLBbxn7siCbl8qs0LEFK9gOXdQMLJwzRbYbn6se9Yo8
+ 5GRfT_f46gC0t6ub5t4ieJOPSuFy1t4XZ0CckKz6Aeh9UNnxa8Zjvuk2wLyd5CV8OuoUFizpnTgd
+ 7NmZqQ2K8eATus6XNICDZ9xCawyRrGpqp43lFiIc1keGmx61N0I3tgbbs7Dgcc9QMSaA9QRnRpIw
+ n1OPR1KZxM9p6LSvas1n5s7zZcAoeaN_LZSC00z4gpUGKhCVi6iw.bdz9ex8Hny3..N8eaxFYCpt
+ PuXWrvz8TQSpFx45aJv8fJHV9oP2MVu3mt4Jv1LkuEcztN6_S6WYFo9oRqVzPT5v.wTi6VY5jD5U
+ 35cHYUPMeYIydsU8BIvXDxzgrpjCOUFqJ3mTx2OrczwGCJcQgS77M.LcYvKK6u7AYEPUM1PAX4k8
+ pGFyC0u7brjmoGf89GFFfcdDTyr6yj4S4C17gTbqTWZr0Q5gO4VDiD516x6ogZswkQPBC_hV95Qs
+ cupTE2eYsis5LhJ0FyMwvyLYkU4yFAwe6bTsXsc2X.TJ9rSPImHnWJ5VFF1RAfz5GItVSmhh9LCn
+ Ez03Ttw8LmgsN2Y7Cl9tEAZFNYcN1oQWY2XGIO5K5lhWys383RMwFbqwLWpzNEDGnWjhmpGQ8gHt
+ rPul_oVHvOQCJO94PqawouP0hmOzWn70fX9AMSOA7cI83pae3_7ymrpBTda7pJNXrrPY2syiAQMG
+ 5kgLEGI5lXkv2VP.QgOtnr1rzQPtvkivAn53q7IEJXiTeE_JYO8dRJaEXGqU8d1E_Qd61oGEvFdn
+ OuIxnaxtz6o82Yh9GCjH84o0EPCLOt29TAdhwBiTiZHq5KfP_k1PppAZgczTR9S1k_1BgQvIIXma
+ kLLVkhbsM9.wxo.eaI595aRYDmua2yzh2VvQVzr6g52gNiT7_nVEx6JEt.k.1Yauqa1NNkxKdn6o
+ ODfGFNF_PlUdp3wqKYCRFEv1ZOebKkHl3OemvhaWw68Qi1qJXFajZCFCXI3QsQnf2.iwCBabszjO
+ atrSeMw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.bf2.yahoo.com with HTTP; Mon, 11 Nov 2019 19:30:42 +0000
+Date:   Mon, 11 Nov 2019 19:30:42 +0000 (UTC)
+From:   mohammado ouattara <mohammadouattara27@gmail.com>
+Reply-To: mohammadouattara53@gmail.com
+Message-ID: <383819251.1749023.1573500642450@mail.yahoo.com>
+Subject: I am expecting your urgent respond.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+ Dear Friend,
 
-Replace hard-coded magic numbers with the descript PCI_EXP_LNKCTL2
-definitions.  No functional change intended.
+I know that this message will come to you as a surprise. I am the Auditing and Accounting section manager in (BOA BANK) Ouagadougou Burkina Faso.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/cik.c | 8 ++++----
- drivers/gpu/drm/amd/amdgpu/si.c  | 8 ++++----
- drivers/gpu/drm/radeon/cik.c     | 8 ++++----
- drivers/gpu/drm/radeon/si.c      | 8 ++++----
- 4 files changed, 16 insertions(+), 16 deletions(-)
+I Hope that you will not expose or betray this trust and confident that I am about to repose on you for the mutual benefit of our both families.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/cik.c b/drivers/gpu/drm/amd/amdgpu/cik.c
-index e4a595cdd4c1..3067bb874032 100644
---- a/drivers/gpu/drm/amd/amdgpu/cik.c
-+++ b/drivers/gpu/drm/amd/amdgpu/cik.c
-@@ -1527,13 +1527,13 @@ static void cik_pcie_gen3_enable(struct amdgpu_device *adev)
- 	WREG32_PCIE(ixPCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3)
--		tmp16 |= 3; /* gen3 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN2)
--		tmp16 |= 2; /* gen2 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1; /* gen1 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE(ixPCIE_LC_SPEED_CNTL);
-diff --git a/drivers/gpu/drm/amd/amdgpu/si.c b/drivers/gpu/drm/amd/amdgpu/si.c
-index cf543410a424..d5c83d82063b 100644
---- a/drivers/gpu/drm/amd/amdgpu/si.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si.c
-@@ -1762,13 +1762,13 @@ static void si_pcie_gen3_enable(struct amdgpu_device *adev)
- 	WREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3)
--		tmp16 |= 3;
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN2)
--		tmp16 |= 2;
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1;
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL);
-diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
-index 95ffa0bff2d8..a280442c81aa 100644
---- a/drivers/gpu/drm/radeon/cik.c
-+++ b/drivers/gpu/drm/radeon/cik.c
-@@ -9647,13 +9647,13 @@ static void cik_pcie_gen3_enable(struct radeon_device *rdev)
- 	WREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (speed_cap == PCIE_SPEED_8_0GT)
--		tmp16 |= 3; /* gen3 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (speed_cap == PCIE_SPEED_5_0GT)
--		tmp16 |= 2; /* gen2 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1; /* gen1 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL);
-diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
-index 69993d34d1e9..529e70a42019 100644
---- a/drivers/gpu/drm/radeon/si.c
-+++ b/drivers/gpu/drm/radeon/si.c
-@@ -7230,13 +7230,13 @@ static void si_pcie_gen3_enable(struct radeon_device *rdev)
- 	WREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL, speed_cntl);
- 
- 	pci_read_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
--	tmp16 &= ~0xf;
-+	tmp16 &= ~PCI_EXP_LNKCTL2_TLS;
- 	if (speed_cap == PCIE_SPEED_8_0GT)
--		tmp16 |= 3; /* gen3 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_8_0GT; /* gen3 */
- 	else if (speed_cap == PCIE_SPEED_5_0GT)
--		tmp16 |= 2; /* gen2 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_5_0GT; /* gen2 */
- 	else
--		tmp16 |= 1; /* gen1 */
-+		tmp16 |= PCI_EXP_LNKCTL2_TLS_2_5GT; /* gen1 */
- 	pci_write_config_word(rdev->pdev, gpu_pos + PCI_EXP_LNKCTL2, tmp16);
- 
- 	speed_cntl = RREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL);
--- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
+I need your assistance in transferring the sum of ($12.5M) Twelve Million, Five Hundred Thousand United Dollars into your account within 7 to 10 banking days,as one of my Bank clients who died at the collapsing of the world trade center at the United States on September 11th 2001.
+
+If you are really interested in my proposal further details of the Transfer will be forwarded unto you as soon as I receive your willingness mail for a successful transfer.
+
+I am expecting your urgent respond.
+
+Have a great day,
+Mr mohammad ouattara.
+
 
