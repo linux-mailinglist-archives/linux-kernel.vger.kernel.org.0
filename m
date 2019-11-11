@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FDEF7DA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE95FF7B44
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730964AbfKKS6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:58:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59218 "EHLO mail.kernel.org"
+        id S1727411AbfKKSe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:34:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730969AbfKKS6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:58:33 -0500
+        id S1727632AbfKKSeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4B020659;
-        Mon, 11 Nov 2019 18:58:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEEEC21925;
+        Mon, 11 Nov 2019 18:34:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498712;
-        bh=VjBJjGkhxd208KtGX8GJ99gXfwQ8SlxNZiSzPHhRfDU=;
+        s=default; t=1573497264;
+        bh=34iO7JmVcXpXn7LTOurI6kkO/0cJKor/J47L6tLTihY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d8+8j6OFtIeWiqgQ+chEvEGQMhegBSawNaqURyjnkcAb4sMNCGqEQVbU8VwLU3Bm3
-         KDKohEOQzj/4gvse3q931xK4ebjQ4lqJrgfkyexgnZnl7E2U55dbVZUxa8q712AtfI
-         5wrECL1WbORQnCtkjndD0GH9EutuRdIqLRikPmlo=
+        b=NH+DRLPAFg5Np+ClwIqZ2lVhWTVNvo+FbC3s9wgUY+U/sxzGG0YDNRvqR1k/LDS/M
+         KbSHNjZ/X+p/faI0zXk4ef5CcCSJmtFBY2U2eblcLTparonmSybQavWHOTNK6O9BDF
+         D4h2a4tN15G6NM+Yo0u1uNdUc2H/kAwMZOXbhtGc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiangfeng Xiao <xiaojiangfeng@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 158/193] net: hisilicon: Fix "Trying to free already-free IRQ"
+        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>, bhe@redhat.com,
+        ebiederm@xmission.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 60/65] x86/apic: Move pending interrupt check code into its own function
 Date:   Mon, 11 Nov 2019 19:29:00 +0100
-Message-Id: <20191111181512.788966600@linuxfoundation.org>
+Message-Id: <20191111181355.364498204@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +45,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-[ Upstream commit 63a41746827cb16dc6ad0d4d761ab4e7dda7a0c3 ]
+[ Upstream commit 9b217f33017715903d0956dfc58f82d2a2d00e63 ]
 
-When rmmod hip04_eth.ko, we can get the following warning:
+The pending interrupt check code is mixed with the local APIC setup code,
+that looks messy.
 
-Task track: rmmod(1623)>bash(1591)>login(1581)>init(1)
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1623 at kernel/irq/manage.c:1557 __free_irq+0xa4/0x2ac()
-Trying to free already-free IRQ 200
-Modules linked in: ping(O) pramdisk(O) cpuinfo(O) rtos_snapshot(O) interrupt_ctrl(O) mtdblock mtd_blkdevrtfs nfs_acl nfs lockd grace sunrpc xt_tcpudp ipt_REJECT iptable_filter ip_tables x_tables nf_reject_ipv
-CPU: 0 PID: 1623 Comm: rmmod Tainted: G           O    4.4.193 #1
-Hardware name: Hisilicon A15
-[<c020b408>] (rtos_unwind_backtrace) from [<c0206624>] (show_stack+0x10/0x14)
-[<c0206624>] (show_stack) from [<c03f2be4>] (dump_stack+0xa0/0xd8)
-[<c03f2be4>] (dump_stack) from [<c021a780>] (warn_slowpath_common+0x84/0xb0)
-[<c021a780>] (warn_slowpath_common) from [<c021a7e8>] (warn_slowpath_fmt+0x3c/0x68)
-[<c021a7e8>] (warn_slowpath_fmt) from [<c026876c>] (__free_irq+0xa4/0x2ac)
-[<c026876c>] (__free_irq) from [<c0268a14>] (free_irq+0x60/0x7c)
-[<c0268a14>] (free_irq) from [<c0469e80>] (release_nodes+0x1c4/0x1ec)
-[<c0469e80>] (release_nodes) from [<c0466924>] (__device_release_driver+0xa8/0x104)
-[<c0466924>] (__device_release_driver) from [<c0466a80>] (driver_detach+0xd0/0xf8)
-[<c0466a80>] (driver_detach) from [<c0465e18>] (bus_remove_driver+0x64/0x8c)
-[<c0465e18>] (bus_remove_driver) from [<c02935b0>] (SyS_delete_module+0x198/0x1e0)
-[<c02935b0>] (SyS_delete_module) from [<c0202ed0>] (__sys_trace_return+0x0/0x10)
----[ end trace bb25d6123d849b44 ]---
+Extract the related code, move it into a new function named
+apic_pending_intr_clear().
 
-Currently "rmmod hip04_eth.ko" call free_irq more than once
-as devres_release_all and hip04_remove both call free_irq.
-This results in a 'Trying to free already-free IRQ' warning.
-To solve the problem free_irq has been moved out of hip04_remove.
-
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: bhe@redhat.com
+Cc: ebiederm@xmission.com
+Link: https://lkml.kernel.org/r/20180301055930.2396-2-douly.fnst@cn.fujitsu.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hip04_eth.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kernel/apic/apic.c | 100 ++++++++++++++++++++----------------
+ 1 file changed, 55 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index f51bc0255556f..4606a7e4a6d19 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -1041,7 +1041,6 @@ static int hip04_remove(struct platform_device *pdev)
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 232350519062b..264daf1f49915 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1281,6 +1281,56 @@ static void lapic_setup_esr(void)
+ 			oldvalue, value);
+ }
  
- 	hip04_free_ring(ndev, d);
- 	unregister_netdev(ndev);
--	free_irq(ndev->irq, ndev);
- 	of_node_put(priv->phy_node);
- 	cancel_work_sync(&priv->tx_timeout_task);
- 	free_netdev(ndev);
++static void apic_pending_intr_clear(void)
++{
++	long long max_loops = cpu_khz ? cpu_khz : 1000000;
++	unsigned long long tsc = 0, ntsc;
++	unsigned int value, queued;
++	int i, j, acked = 0;
++
++	if (boot_cpu_has(X86_FEATURE_TSC))
++		tsc = rdtsc();
++	/*
++	 * After a crash, we no longer service the interrupts and a pending
++	 * interrupt from previous kernel might still have ISR bit set.
++	 *
++	 * Most probably by now CPU has serviced that pending interrupt and
++	 * it might not have done the ack_APIC_irq() because it thought,
++	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
++	 * does not clear the ISR bit and cpu thinks it has already serivced
++	 * the interrupt. Hence a vector might get locked. It was noticed
++	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
++	 */
++	do {
++		queued = 0;
++		for (i = APIC_ISR_NR - 1; i >= 0; i--)
++			queued |= apic_read(APIC_IRR + i*0x10);
++
++		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
++			value = apic_read(APIC_ISR + i*0x10);
++			for (j = 31; j >= 0; j--) {
++				if (value & (1<<j)) {
++					ack_APIC_irq();
++					acked++;
++				}
++			}
++		}
++		if (acked > 256) {
++			printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
++			       acked);
++			break;
++		}
++		if (queued) {
++			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
++				ntsc = rdtsc();
++				max_loops = (cpu_khz << 10) - (ntsc - tsc);
++			} else
++				max_loops--;
++		}
++	} while (queued && max_loops > 0);
++	WARN_ON(max_loops <= 0);
++}
++
+ /**
+  * setup_local_APIC - setup the local APIC
+  *
+@@ -1290,13 +1340,11 @@ static void lapic_setup_esr(void)
+ void setup_local_APIC(void)
+ {
+ 	int cpu = smp_processor_id();
+-	unsigned int value, queued;
+-	int i, j, acked = 0;
+-	unsigned long long tsc = 0, ntsc;
+-	long long max_loops = cpu_khz ? cpu_khz : 1000000;
++	unsigned int value;
++#ifdef CONFIG_X86_32
++	int i;
++#endif
+ 
+-	if (boot_cpu_has(X86_FEATURE_TSC))
+-		tsc = rdtsc();
+ 
+ 	if (disable_apic) {
+ 		disable_ioapic_support();
+@@ -1356,45 +1404,7 @@ void setup_local_APIC(void)
+ 	value &= ~APIC_TPRI_MASK;
+ 	apic_write(APIC_TASKPRI, value);
+ 
+-	/*
+-	 * After a crash, we no longer service the interrupts and a pending
+-	 * interrupt from previous kernel might still have ISR bit set.
+-	 *
+-	 * Most probably by now CPU has serviced that pending interrupt and
+-	 * it might not have done the ack_APIC_irq() because it thought,
+-	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
+-	 * does not clear the ISR bit and cpu thinks it has already serivced
+-	 * the interrupt. Hence a vector might get locked. It was noticed
+-	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
+-	 */
+-	do {
+-		queued = 0;
+-		for (i = APIC_ISR_NR - 1; i >= 0; i--)
+-			queued |= apic_read(APIC_IRR + i*0x10);
+-
+-		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
+-			value = apic_read(APIC_ISR + i*0x10);
+-			for (j = 31; j >= 0; j--) {
+-				if (value & (1<<j)) {
+-					ack_APIC_irq();
+-					acked++;
+-				}
+-			}
+-		}
+-		if (acked > 256) {
+-			printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
+-			       acked);
+-			break;
+-		}
+-		if (queued) {
+-			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
+-				ntsc = rdtsc();
+-				max_loops = (cpu_khz << 10) - (ntsc - tsc);
+-			} else
+-				max_loops--;
+-		}
+-	} while (queued && max_loops > 0);
+-	WARN_ON(max_loops <= 0);
++	apic_pending_intr_clear();
+ 
+ 	/*
+ 	 * Now that we are all set up, enable the APIC
 -- 
 2.20.1
 
