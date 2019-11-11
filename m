@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71CE1F7AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A1EF7B27
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfKKSaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:30:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46376 "EHLO mail.kernel.org"
+        id S1728087AbfKKSdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:33:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbfKKSaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:30:09 -0500
+        id S1728065AbfKKSc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:32:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F4B921783;
-        Mon, 11 Nov 2019 18:30:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D2CD20856;
+        Mon, 11 Nov 2019 18:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497009;
-        bh=jlnTzvoyGLFnWfdd3rhWLJ0o0stvG4YQ6aaLNBAKQag=;
+        s=default; t=1573497178;
+        bh=ZK/ZBjuL36PlHFysUhKmPHj4iSBscDJgj7PWaoy0ufo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F1h/qXSmphk+5uua7dZ5bpwkPpaZwkEle+gwMU0oRBbTsAH0cIJYg94MtaJugpMDu
-         YeIGdpJOM+C7a8atXx09KmuHxI6DgpDqCbAkhwpxDP9q9RvBUDD68TnVxie68K8f+4
-         /QZ26/ptbnsmhNhj1ghmNYAtIQe93olwPaTfFNqM=
+        b=EeFelDZ9cJwfG94u/dZD6Cmc2+FJgMoHSupHeMgqh59dBe5l52H9cCrlmxutimQOu
+         X3ooclmNdUW0NhOFRmgUWx9U2YS5hrTuQCxMJo+8EACYZo+g3dpmzGy8WjY3IeoCA6
+         Auhcldl6UwRLF0RxCeiW1DLJUJ0oDcsOR4z2b848=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.4 15/43] iio: imu: adis16480: make sure provided frequency is positive
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.9 29/65] configfs_register_group() shouldnt be (and isnt) called in rmdirable parts
 Date:   Mon, 11 Nov 2019 19:28:29 +0100
-Message-Id: <20191111181305.391419048@linuxfoundation.org>
+Message-Id: <20191111181346.363794532@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 24e1eb5c0d78cfb9750b690bbe997d4d59170258 upstream.
+commit f19e4ed1e1edbfa3c9ccb9fed17759b7d6db24c6 upstream.
 
-It could happen that either `val` or `val2` [provided from userspace] is
-negative. In that case the computed frequency could get a weird value.
+revert cc57c07343bd "configfs: fix registered group removal"
+It was an attempt to handle something that fundamentally doesn't
+work - configfs_register_group() should never be done in a part
+of tree that can be rmdir'ed.  And in mainline it never had been,
+so let's not borrow trouble; the fix was racy anyway, it would take
+a lot more to make that work and desired semantics is not clear.
 
-Fix this by checking that neither of the 2 variables is negative, and check
-that the computed result is not-zero.
-
-Fixes: e4f959390178 ("iio: imu: adis16480 switch sampling frequency attr to core support")
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/imu/adis16480.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/configfs/dir.c |   11 -----------
+ 1 file changed, 11 deletions(-)
 
---- a/drivers/iio/imu/adis16480.c
-+++ b/drivers/iio/imu/adis16480.c
-@@ -266,8 +266,11 @@ static int adis16480_set_freq(struct iio
- 	struct adis16480 *st = iio_priv(indio_dev);
- 	unsigned int t;
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -1782,16 +1782,6 @@ void configfs_unregister_group(struct co
+ 	struct dentry *dentry = group->cg_item.ci_dentry;
+ 	struct dentry *parent = group->cg_item.ci_parent->ci_dentry;
  
-+	if (val < 0 || val2 < 0)
-+		return -EINVAL;
-+
- 	t =  val * 1000 + val2 / 1000;
--	if (t <= 0)
-+	if (t == 0)
- 		return -EINVAL;
+-	mutex_lock(&subsys->su_mutex);
+-	if (!group->cg_item.ci_parent->ci_group) {
+-		/*
+-		 * The parent has already been unlinked and detached
+-		 * due to a rmdir.
+-		 */
+-		goto unlink_group;
+-	}
+-	mutex_unlock(&subsys->su_mutex);
+-
+ 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+ 	spin_lock(&configfs_dirent_lock);
+ 	configfs_detach_prep(dentry, NULL);
+@@ -1806,7 +1796,6 @@ void configfs_unregister_group(struct co
+ 	dput(dentry);
  
- 	t = 2460000 / t;
+ 	mutex_lock(&subsys->su_mutex);
+-unlink_group:
+ 	unlink_group(group);
+ 	mutex_unlock(&subsys->su_mutex);
+ }
 
 
