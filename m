@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B549F7D1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:53:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81187F7B78
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:37:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbfKKSxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:53:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47804 "EHLO mail.kernel.org"
+        id S1728740AbfKKSgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:36:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729132AbfKKSxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:53:07 -0500
+        id S1728723AbfKKSga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:36:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8293B20818;
-        Mon, 11 Nov 2019 18:53:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0648F214E0;
+        Mon, 11 Nov 2019 18:36:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498387;
-        bh=lwTFZ7ccN1LwjlZfvn5muDamt7xi4s5czdnU/1JsfDY=;
+        s=default; t=1573497389;
+        bh=HnFFDYxUvaBTgrEftAE9AwROrLlOKZdZoREsjO6/fcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Okvb9+WYbPT7OJr3WD9f3CJsi3Wzk1iqAANalmwJ0dc4/K6kuv/ALhAcBnhrUx+NL
-         Yy8nFsjh2BJrUyDry6pvmBMkt+3Y6FbxjS2/XOS2jhZC/dgOW8QwOHPqf9XdEEyDkJ
-         kZNM+5i14vwTn08CCYRDE1cifkcH2wVTighPYPdw=
+        b=cua6MEJax65t7BUr0HAX3eE1bkXMwmOR4iABsOQqJIpbAv5wUyc7ZO9Q8gyIaydki
+         L8/AYkq+rqqIea4M40yQ6Vq1Nb0/rkoP7a0gY91JyLVSJ5zXRW5EkDPst6dQF3bJbd
+         mVPlrP4weyAv1cuj2GMSzM+JxmUBJqdBO5LvUDMU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 104/193] net/mlx5e: Tx, Fix assumption of single WQEBB of NOP in cleanup flow
+        stable@vger.kernel.org,
+        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.14 036/105] can: rx-offload: can_rx_offload_queue_sorted(): fix error handling, avoid skb mem leak
 Date:   Mon, 11 Nov 2019 19:28:06 +0100
-Message-Id: <20191111181508.801899723@linuxfoundation.org>
+Message-Id: <20191111181439.261699885@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tariq Toukan <tariqt@mellanox.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-[ Upstream commit 0c258dec8d98af15b34dbffdb89c008b6da01ff8 ]
+commit ca913f1ac024559ebc17f0b599af262f0ad997c9 upstream.
 
-Cited patch removed the assumption only in datapath.
-Here we remove it also form control/cleanup flow.
+If the rx-offload skb_queue is full can_rx_offload_queue_sorted() will
+not queue the skb and return with an error.
 
-Fixes: 9ab0233728ca ("net/mlx5e: Tx, Don't implicitly assume SKB-less wqe has one WQEBB")
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+None of the callers of this function, issue a kfree_skb() to free the
+not queued skb. This results in a memory leak.
+
+This patch fixes the problem by freeing the skb in case of a full queue.
+The return value is adjusted to -ENOBUFS to better reflect the actual
+problem.
+
+The device stats handling is left to the callers, as this function might
+be used in both the rx and tx path.
+
+Fixes: 55059f2b7f86 ("can: rx-offload: introduce can_rx_offload_get_echo_skb() and can_rx_offload_queue_sorted() functions")
+Cc: linux-stable <stable@vger.kernel.org>
+Cc: Martin Hundebøll <martin@geanix.com>
+Reported-by: Martin Hundebøll <martin@geanix.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 6 +++++-
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c   | 4 ++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/can/rx-offload.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index 9d5f6e56188f8..f3a2970c3fcf0 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -1347,9 +1347,13 @@ static void mlx5e_deactivate_txqsq(struct mlx5e_txqsq *sq)
- 	/* last doorbell out, godspeed .. */
- 	if (mlx5e_wqc_has_room_for(wq, sq->cc, sq->pc, 1)) {
- 		u16 pi = mlx5_wq_cyc_ctr2ix(wq, sq->pc);
-+		struct mlx5e_tx_wqe_info *wi;
- 		struct mlx5e_tx_wqe *nop;
+--- a/drivers/net/can/rx-offload.c
++++ b/drivers/net/can/rx-offload.c
+@@ -216,8 +216,10 @@ int can_rx_offload_queue_sorted(struct c
+ 	unsigned long flags;
  
--		sq->db.wqe_info[pi].skb = NULL;
-+		wi = &sq->db.wqe_info[pi];
-+
-+		memset(wi, 0, sizeof(*wi));
-+		wi->num_wqebbs = 1;
- 		nop = mlx5e_post_nop(wq, sq->sqn, &sq->pc);
- 		mlx5e_notify_hw(wq, sq->pc, sq->uar_map, &nop->ctrl);
- 	}
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-index 600e92cb629a2..9aaf74407a11f 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-@@ -551,8 +551,8 @@ void mlx5e_free_txqsq_descs(struct mlx5e_txqsq *sq)
- 		wi = &sq->db.wqe_info[ci];
- 		skb = wi->skb;
+ 	if (skb_queue_len(&offload->skb_queue) >
+-	    offload->skb_queue_len_max)
+-		return -ENOMEM;
++	    offload->skb_queue_len_max) {
++		kfree_skb(skb);
++		return -ENOBUFS;
++	}
  
--		if (!skb) { /* nop */
--			sq->cc++;
-+		if (!skb) {
-+			sq->cc += wi->num_wqebbs;
- 			continue;
- 		}
- 
--- 
-2.20.1
-
+ 	cb = can_rx_offload_get_cb(skb);
+ 	cb->timestamp = timestamp;
 
 
