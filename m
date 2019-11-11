@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 838FFF7C67
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFCD3F7BBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbfKKSpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:45:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38094 "EHLO mail.kernel.org"
+        id S1727419AbfKKSjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:39:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729246AbfKKSpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:45:51 -0500
+        id S1727166AbfKKSjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:39:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA12920674;
-        Mon, 11 Nov 2019 18:45:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDCC021783;
+        Mon, 11 Nov 2019 18:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497950;
-        bh=+Vpmt56nQU9q+fWQ80iwQhJ7ao0djqDkThe4tFknWvA=;
+        s=default; t=1573497553;
+        bh=EMX2mwMsPDVTT5OCb9gPwQH/OyP+Vv3ygfv94ADuU+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mstTC3iAPl7ThYOghBhUf56aAyPnNnpmZ3fl5YFYgwo+71xObBYGqTn5lolJwf6IR
-         inBWdTN1rtHrgRz1Jyt91k5aVAmjxArpITdYHgKb1cV3jqWTHCCeTkul6WTD3QbNfO
-         ZJgIhvjng1Nz1R6pBGSe/mmT+BXY5IWkVDcCRpXU=
+        b=zIUFu9v2adjpElE8goL92/ehRPmuSi7gxBJtUHr+HQUcZrBAbd49vyGI8Pd7Jl394
+         zUROA0YalKISBoDRsAA12w+QFwg9YhCi705THWvG9KHVjA2qRYitf+AGV0imyFyuZa
+         L1x5UH+cTyYBSA8+mRrVVsss6EcvTCqjv8psWlBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Nicolas Waisman <nico@semmle.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 105/125] fjes: Handle workqueue allocation failure
-Date:   Mon, 11 Nov 2019 19:29:04 +0100
-Message-Id: <20191111181453.950179740@linuxfoundation.org>
+        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 095/105] hv_netvsc: Fix error handling in netvsc_attach()
+Date:   Mon, 11 Nov 2019 19:29:05 +0100
+Message-Id: <20191111181448.566869694@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Upstream commit 85ac30fa2e24f628e9f4f9344460f4015d33fd7d ]
+[ Upstream commit 719b85c336ed35565d0f3982269d6f684087bb00 ]
 
-In the highly unlikely event that we fail to allocate either of the
-"/txrx" or "/control" workqueues, we should bail cleanly rather than
-blindly march on with NULL queue pointer(s) installed in the
-'fjes_adapter' instance.
+If rndis_filter_open() fails, we need to remove the rndis device created
+in earlier steps, before returning an error code. Otherwise, the retry of
+netvsc_attach() from its callers will fail and hang.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Reported-by: Nicolas Waisman <nico@semmle.com>
-Link: https://lore.kernel.org/lkml/CADJ_3a8WFrs5NouXNqS5WYe7rebFP+_A5CheeqAyD_p7DFJJcg@mail.gmail.com/
-Signed-off-by: Will Deacon <will@kernel.org>
+Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/fjes/fjes_main.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc_drv.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/fjes/fjes_main.c b/drivers/net/fjes/fjes_main.c
-index d3eae12390457..61a9843346ad7 100644
---- a/drivers/net/fjes/fjes_main.c
-+++ b/drivers/net/fjes/fjes_main.c
-@@ -1252,8 +1252,17 @@ static int fjes_probe(struct platform_device *plat_dev)
- 	adapter->open_guard = false;
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 33c1f6548fb79..5a44b97952669 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -969,7 +969,7 @@ static int netvsc_attach(struct net_device *ndev,
+ 	if (netif_running(ndev)) {
+ 		ret = rndis_filter_open(nvdev);
+ 		if (ret)
+-			return ret;
++			goto err;
  
- 	adapter->txrx_wq = alloc_workqueue(DRV_NAME "/txrx", WQ_MEM_RECLAIM, 0);
-+	if (unlikely(!adapter->txrx_wq)) {
-+		err = -ENOMEM;
-+		goto err_free_netdev;
-+	}
+ 		rdev = nvdev->extension;
+ 		if (!rdev->link_state)
+@@ -977,6 +977,13 @@ static int netvsc_attach(struct net_device *ndev,
+ 	}
+ 
+ 	return 0;
 +
- 	adapter->control_wq = alloc_workqueue(DRV_NAME "/control",
- 					      WQ_MEM_RECLAIM, 0);
-+	if (unlikely(!adapter->control_wq)) {
-+		err = -ENOMEM;
-+		goto err_free_txrx_wq;
-+	}
++err:
++	netif_device_detach(ndev);
++
++	rndis_filter_device_remove(hdev, nvdev);
++
++	return ret;
+ }
  
- 	INIT_WORK(&adapter->tx_stall_task, fjes_tx_stall_task);
- 	INIT_WORK(&adapter->raise_intr_rxdata_task,
-@@ -1270,7 +1279,7 @@ static int fjes_probe(struct platform_device *plat_dev)
- 	hw->hw_res.irq = platform_get_irq(plat_dev, 0);
- 	err = fjes_hw_init(&adapter->hw);
- 	if (err)
--		goto err_free_netdev;
-+		goto err_free_control_wq;
- 
- 	/* setup MAC address (02:00:00:00:00:[epid])*/
- 	netdev->dev_addr[0] = 2;
-@@ -1292,6 +1301,10 @@ static int fjes_probe(struct platform_device *plat_dev)
- 
- err_hw_exit:
- 	fjes_hw_exit(&adapter->hw);
-+err_free_control_wq:
-+	destroy_workqueue(adapter->control_wq);
-+err_free_txrx_wq:
-+	destroy_workqueue(adapter->txrx_wq);
- err_free_netdev:
- 	free_netdev(netdev);
- err_out:
+ static int netvsc_set_channels(struct net_device *net,
 -- 
 2.20.1
 
