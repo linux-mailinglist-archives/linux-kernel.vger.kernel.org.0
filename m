@@ -2,74 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B6FF6DDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D2BF6DD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfKKFXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 00:23:49 -0500
-Received: from mga03.intel.com ([134.134.136.65]:45254 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbfKKFXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 00:23:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2019 21:23:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,291,1569308400"; 
-   d="scan'208";a="228824039"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Nov 2019 21:23:46 -0800
-Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, kevin.tian@intel.com,
-        ashok.raj@intel.com, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com
-Subject: Re: [PATCH v2 1/1] iommu/vt-d: Add Kconfig option to enable/disable
- scalable mode
-To:     Qian Cai <cai@lca.pw>
-References: <20191109034039.27964-1-baolu.lu@linux.intel.com>
- <472617D4-1652-45FB-90A4-0D45766DB78B@lca.pw>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <f5b8521e-d88d-5439-34e2-f7b54a77c9d3@linux.intel.com>
-Date:   Mon, 11 Nov 2019 13:20:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726879AbfKKFWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 00:22:44 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47067 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfKKFWn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 00:22:43 -0500
+Received: by mail-pg1-f193.google.com with SMTP id r18so8661808pgu.13
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 21:22:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wn68B/9oTQwMIS3XezYv2F3iHvuzpiojYbkvmpMuIps=;
+        b=OrmjFwvr4biPvwrdT3kD+iqfanRLDTEy+qgIcQW0X6kulRevk5kmkeJoBypeigKALq
+         y1VCFkDcyIPv4H7dQXHNCIH2F7D2WGzTza4DB20+hjf009mzaWm5pxLMrJebIetlfMSZ
+         2oUcqsxGhobF3XOoVhw19OuiCTP4kYvTu1ZAFc7eB2hdEWHJ5w+hJh+iQikAQBdwxxjo
+         U1dRZ6sY7pJe3GjME9fLguElpzgwwviwPcx5r8DfsHPwdMhFgUsxlrhfDqlwfkrQ/CS3
+         rfMgtYMURSjBQWPkZa7Rmzw60qlbIwTg8dsKFnsLp+cSwUd2nugWvWycGEjCHK3+V+tE
+         HR5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wn68B/9oTQwMIS3XezYv2F3iHvuzpiojYbkvmpMuIps=;
+        b=VTU7xYh/Xg+/UNwCbuMcEcyiVTLVMKFudzIGXz4klbYFHnl3lNp2zxGTBZwYFCOZTx
+         huwWrgUV01FbA9Q8C3UVHCROkdOQxrCu2dELcTirYGF7aLdnEipo3Il7izN9FDlKQHsI
+         KCxAfoTeaVD9Y2fu9x6RqOvUHN9yaLFTvZDARXS7RFX7KWc+U0bXMO/vp5EEJGj+szYE
+         9wMyOwVEZzwsqHcvKmtnkFP8HuxldL1kiy+brgwdBw2W41SdrAad9a8kiBS+wtp1TzYO
+         UjeXHbIgfr6gjYfr/IM4orw1cscU/nQ8m9jyET17KKOqhNEt9MeXZRad48cGsEySn4ok
+         YaBw==
+X-Gm-Message-State: APjAAAXxg8aLU4RI/tkH2o74FvhtuNtbcSQDTkRkSax+4oYX2SQ+ewdM
+        jeabmVeQmB0wp3NuEilU3DT2
+X-Google-Smtp-Source: APXvYqwyFuqsrSanrsgjZWam9y+4GIL/Fjuql1Gjr5R6qpTb9d+I0He5/Y2DwCn4UgfPYQhDRvm/pA==
+X-Received: by 2002:a17:90a:741:: with SMTP id s1mr32134482pje.107.1573449762760;
+        Sun, 10 Nov 2019 21:22:42 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:6309:fffb:304b:b40d:24e5:f9a8])
+        by smtp.gmail.com with ESMTPSA id x25sm13239593pfq.73.2019.11.10.21.22.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Nov 2019 21:22:41 -0800 (PST)
+Date:   Mon, 11 Nov 2019 10:52:32 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Kever Yang <kever.yang@rock-chips.com>
+Cc:     heiko@sntech.de, linux-rockchip@lists.infradead.org,
+        Akash Gajjar <akash@openedev.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: rk3399-rock960: add vdd_log
+Message-ID: <20191111052232.GA2842@Mani-XPS-13-9360>
+References: <20191111005158.25070-1-kever.yang@rock-chips.com>
+ <20191111005158.25070-2-kever.yang@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <472617D4-1652-45FB-90A4-0D45766DB78B@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191111005158.25070-2-kever.yang@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Kever,
 
-On 11/11/19 10:58 AM, Qian Cai wrote:
+On Mon, Nov 11, 2019 at 08:51:57AM +0800, Kever Yang wrote:
+> Add vdd_log node according to rock960 schematic V13.
 > 
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+> ---
 > 
->> On Nov 8, 2019, at 10:43 PM, Lu Baolu <baolu.lu@linux.intel.com> wrote:
->>
->> +config INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON
->> +    prompt "Enable Intel IOMMU scalable mode by default"
->> +    depends on INTEL_IOMMU
->> +    help
->> +      Selecting this option will enable the scalable mode if
->> +      hardware presents the capability. If this option is not
->> +      selected, scalable mode support could also be enabled
->> +      by passing intel_iommu=sm_on to the kernel.
->> +
+>  arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> Does it also make sense to mention which hardware presents this capability or how to check it?
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> index c7d48d41e184..73afee257115 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> @@ -76,6 +76,18 @@
+>  		regulator-always-on;
+>  		vin-supply = <&vcc5v0_sys>;
+>  	};
+> +
+> +	vdd_log: vdd-log {
+> +		compatible = "pwm-regulator";
+> +		pwms = <&pwm2 0 25000 1>;
+> +		regulator-name = "vdd_log";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <800000>;
+> +		regulator-max-microvolt = <1400000>;
+> +		regulator-init-microvolt = <950000>;
+
+The default value seems to be 0.9v as per both Rock960 and Ficus schematics.
+
+Other than that,
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Thanks,
+Mani
+
+> +		vin-supply = <&vcc_sys>;
+> +	};
+>  };
+>  
+>  &cpu_l0 {
+> -- 
+> 2.17.1
 > 
-
-The scalable mode is defined in VT-d 3.0. The scalable mode capability
-could be checked by reading /sys/devices/virtual/iommu/dmar*/intel-
-iommu/ecap. It's currently not friendly for reading. You need to decode
-it according to the spec.
-
-Best regards,
-baolu
-
-
