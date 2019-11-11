@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DA3EF7B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 627ACF7B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfKKScB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:32:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48748 "EHLO mail.kernel.org"
+        id S1727630AbfKKSe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:34:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727814AbfKKSb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:31:57 -0500
+        id S1728445AbfKKSe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC3B22184C;
-        Mon, 11 Nov 2019 18:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A7B52173B;
+        Mon, 11 Nov 2019 18:34:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497116;
-        bh=HNqy7dCWHOAhnEqVQn3eWdl3OjUnIi+Gkos2zhsq6Iw=;
+        s=default; t=1573497295;
+        bh=TEiizNpeGGn/64SlXyUHTweTnVZKaRelha1g5chG8j8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0OpkyrrFztYjYJVi0xOcMLa3JUP7/THSL58dwLg7zIEBSjq+XoDsGYGx5o2KRol+S
-         Ks4C1tpqprmR2+ztII0ssoNzvbnSsVhjb7JaEQTpJPpO3978MPWi2MyLc0Uc/yKbCs
-         Ie4EOGSQ1OXSi4V2+V2dPYFG0MAE9QEc4hJgQ8xc=
+        b=Elz9X8buQzX30V8y1EBE1o364hcaiXqXVxcP3BR0g3rqVqAksDo2BWbGvKsxTjw3q
+         76TIsXgYcYWl019IH0qp6CSaWvUeoqlmp61MgCmFIN3whVtYYv7hMSSy5GDXMYxy70
+         htaD/MZVjkd4YntYjZdP8cRNJ9eLQ/T9kQyrXuNk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 42/43] mm/filemap.c: dont initiate writeback if mapping has no dirty pages
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 56/65] NFSv4: Dont allow a cached open with a revoked delegation
 Date:   Mon, 11 Nov 2019 19:28:56 +0100
-Message-Id: <20191111181328.697316041@linuxfoundation.org>
+Message-Id: <20191111181353.479829307@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,49 +45,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit c3aab9a0bd91b696a852169479b7db1ece6cbf8c upstream.
+[ Upstream commit be3df3dd4c70ee020587a943a31b98a0fb4b6424 ]
 
-Functions like filemap_write_and_wait_range() should do nothing if inode
-has no dirty pages or pages currently under writeback.  But they anyway
-construct struct writeback_control and this does some atomic operations if
-CONFIG_CGROUP_WRITEBACK=y - on fast path it locks inode->i_lock and
-updates state of writeback ownership, on slow path might be more work.
-Current this path is safely avoided only when inode mapping has no pages.
+If the delegation is marked as being revoked, we must not use it
+for cached opens.
 
-For example generic_file_read_iter() calls filemap_write_and_wait_range()
-at each O_DIRECT read - pretty hot path.
-
-This patch skips starting new writeback if mapping has no dirty tags set.
-If writeback is already in progress filemap_write_and_wait_range() will
-wait for it.
-
-Link: http://lkml.kernel.org/r/156378816804.1087.8607636317907921438.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 869f9dfa4d6d ("NFSv4: Fix races between nfs_remove_bad_delegation() and delegation return")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/filemap.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/nfs/delegation.c | 10 ++++++++++
+ fs/nfs/delegation.h |  1 +
+ fs/nfs/nfs4proc.c   |  7 ++-----
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -340,7 +340,8 @@ int __filemap_fdatawrite_range(struct ad
- 		.range_end = end,
- 	};
+diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+index dff600ae0d747..46afd7cdcc378 100644
+--- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -52,6 +52,16 @@ nfs4_is_valid_delegation(const struct nfs_delegation *delegation,
+ 	return false;
+ }
  
--	if (!mapping_cap_writeback_dirty(mapping))
-+	if (!mapping_cap_writeback_dirty(mapping) ||
-+	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
++struct nfs_delegation *nfs4_get_valid_delegation(const struct inode *inode)
++{
++	struct nfs_delegation *delegation;
++
++	delegation = rcu_dereference(NFS_I(inode)->delegation);
++	if (nfs4_is_valid_delegation(delegation, 0))
++		return delegation;
++	return NULL;
++}
++
+ static int
+ nfs4_do_check_delegation(struct inode *inode, fmode_t flags, bool mark)
+ {
+diff --git a/fs/nfs/delegation.h b/fs/nfs/delegation.h
+index e9d5557968739..2c6cb7fb7d5ee 100644
+--- a/fs/nfs/delegation.h
++++ b/fs/nfs/delegation.h
+@@ -62,6 +62,7 @@ int nfs4_open_delegation_recall(struct nfs_open_context *ctx, struct nfs4_state
+ int nfs4_lock_delegation_recall(struct file_lock *fl, struct nfs4_state *state, const nfs4_stateid *stateid);
+ bool nfs4_copy_delegation_stateid(struct inode *inode, fmode_t flags, nfs4_stateid *dst, struct rpc_cred **cred);
+ 
++struct nfs_delegation *nfs4_get_valid_delegation(const struct inode *inode);
+ void nfs_mark_delegation_referenced(struct nfs_delegation *delegation);
+ int nfs4_have_delegation(struct inode *inode, fmode_t flags);
+ int nfs4_check_delegation(struct inode *inode, fmode_t flags);
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 8354dfae7038e..ca4249ae644f2 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -1368,8 +1368,6 @@ static int can_open_delegated(struct nfs_delegation *delegation, fmode_t fmode,
  		return 0;
- 
- 	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
+ 	if ((delegation->type & fmode) != fmode)
+ 		return 0;
+-	if (test_bit(NFS_DELEGATION_RETURNING, &delegation->flags))
+-		return 0;
+ 	switch (claim) {
+ 	case NFS4_OPEN_CLAIM_NULL:
+ 	case NFS4_OPEN_CLAIM_FH:
+@@ -1628,7 +1626,6 @@ static void nfs4_return_incompatible_delegation(struct inode *inode, fmode_t fmo
+ static struct nfs4_state *nfs4_try_open_cached(struct nfs4_opendata *opendata)
+ {
+ 	struct nfs4_state *state = opendata->state;
+-	struct nfs_inode *nfsi = NFS_I(state->inode);
+ 	struct nfs_delegation *delegation;
+ 	int open_mode = opendata->o_arg.open_flags;
+ 	fmode_t fmode = opendata->o_arg.fmode;
+@@ -1645,7 +1642,7 @@ static struct nfs4_state *nfs4_try_open_cached(struct nfs4_opendata *opendata)
+ 		}
+ 		spin_unlock(&state->owner->so_lock);
+ 		rcu_read_lock();
+-		delegation = rcu_dereference(nfsi->delegation);
++		delegation = nfs4_get_valid_delegation(state->inode);
+ 		if (!can_open_delegated(delegation, fmode, claim)) {
+ 			rcu_read_unlock();
+ 			break;
+@@ -2142,7 +2139,7 @@ static void nfs4_open_prepare(struct rpc_task *task, void *calldata)
+ 		if (can_open_cached(data->state, data->o_arg.fmode, data->o_arg.open_flags))
+ 			goto out_no_action;
+ 		rcu_read_lock();
+-		delegation = rcu_dereference(NFS_I(data->state->inode)->delegation);
++		delegation = nfs4_get_valid_delegation(data->state->inode);
+ 		if (can_open_delegated(delegation, data->o_arg.fmode, claim))
+ 			goto unlock_no_action;
+ 		rcu_read_unlock();
+-- 
+2.20.1
+
 
 
