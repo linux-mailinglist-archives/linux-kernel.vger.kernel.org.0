@@ -2,91 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54992F80FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 853F3F810D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:22:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfKKURm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 15:17:42 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:42367 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727059AbfKKURD (ORCPT
+        id S1727837AbfKKUWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 15:22:09 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40954 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727811AbfKKUWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:17:03 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MiJdI-1i0zpq2YCs-00fOE5; Mon, 11 Nov 2019 21:16:52 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-nfs@vger.kernel.org,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 19/19] nfsd: remove nfs4_reset_lease() declarations
-Date:   Mon, 11 Nov 2019 21:16:39 +0100
-Message-Id: <20191111201639.2240623-20-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191111201639.2240623-1-arnd@arndb.de>
-References: <20191111201639.2240623-1-arnd@arndb.de>
+        Mon, 11 Nov 2019 15:22:07 -0500
+Received: by mail-qt1-f194.google.com with SMTP id o49so17057268qta.7;
+        Mon, 11 Nov 2019 12:22:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Xeq2lcRUVceDqmGyTHaj5d+0Pjk/GmEvYbMYOaMNQzg=;
+        b=I+isjLS5f/apV9ftRVQ09plliCCSpaqV3/UG7fSAdpU4mXCS9TaslJ2OzYYcJa+j4n
+         QSq2fKk559J9ZwzNBSmRcRWOqDKtJFMut2l4D4AysPeV4nNRjuINtm0bSDdbt9IW5WqH
+         fk7DBoj1Gfk75bFq/L1incchih0DAFe4toGXAMySezDb4h0C8qnQ85GO/CZmhr7Xmn2Z
+         YmkIWBnZ5XrTRzEhwYSUSYhKq4/mrelNXQJIAWahBjVhyaHz09RNaDbErBL8JsSE/2Fm
+         nF7x3JxoNiQc4F8UFz+deld6cUww6o5u4xPk2EwGcjDPCXrN1kQZ4MIem70TJeY2ZEmj
+         Rchg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=Xeq2lcRUVceDqmGyTHaj5d+0Pjk/GmEvYbMYOaMNQzg=;
+        b=WDtNaI/JGyYRTR04uW+IxzxoiRZdJG01GReahRFuLYF7j6gvUDhNkkY7KrHZUw4PWn
+         mVy7htEpiQKIpCCuFxg1TRsoTmTyAuzDah3t4HKfyv9KoQkNCIswL/m0ZRPBWRl+4sR9
+         eBoDnlLV39VzxYxx/0mNgdpLUPYfNgTMbdZ/NqxQV1go4S1ABmk4P8uR4r3HATQIR7nd
+         2t/w/3CfGg5lt577XD7OUr3KKr58RkUsPMcd9MxA15kpVA51KEU6C6MgR2zNEoeTLsdP
+         Cam51SKpY6R3VEY+h7m5MEBiMBdTyvJm2nfRPRIjKHhW3q9rpKUU0i5DcZ9qIMprBSUd
+         x2qQ==
+X-Gm-Message-State: APjAAAVsje4oQLs74AzCHqmQiJUi97udJQ0yGmpO9lKH/z2vMk9t9EYb
+        mo5411ZF8JwkSqM/TH49mIjHRaAG
+X-Google-Smtp-Source: APXvYqwa00JjUN0TOeR6m2QaHZ1qxjWiq2WnqYCIB/Dud8d6Y2hjnVEpkXsiVWMbx5a69qCX7z3+Ng==
+X-Received: by 2002:ac8:1084:: with SMTP id a4mr28347343qtj.114.1573503726517;
+        Mon, 11 Nov 2019 12:22:06 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::2:d6e0])
+        by smtp.gmail.com with ESMTPSA id n49sm9587576qtk.94.2019.11.11.12.22.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Nov 2019 12:22:05 -0800 (PST)
+Date:   Mon, 11 Nov 2019 12:22:03 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: [GIT PULL] cgroup fixes for v5.4-rc7
+Message-ID: <20191111202203.GC4163745@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:iafSuqH4Bp5e/AWz4sqAojsBIoYJnl02pkxascDjDPERrJsK5XY
- LuEVM2fqvh7m8JQnJKf732b2ymBeNnsygXViheIEE3f6FrCguecj23HqhwZRfpUdu80LURB
- gckupp9jrTa2thabVPppYnnMb8tsb6lU4wvWKhYMJg5DALwIuE3EC/1jiQkFqODqYrE958R
- YtJs0Lv6+joejC+leu3ZQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xGriYet1jFg=:/7jxH/nP273V1JjwioFy5f
- weSwzG82+77qaVH+KI7EcZrjwsUGhIVamdtpqMdnbCs36cuBxpsagITBnkyJngB6ZGKtZ/1kk
- lXrvwbV4AXeKGg1GnNOXhTM0GP4rP7rfBY7mEfeqiu9upppe0mKPZTlIVcip841Qcqx3Ma0nn
- vePqUtm2Y7a2NU1NHIeBQemiMDkQfV/Z+tCobAE2xfIsTLpi99QRU0FZnGbg7fldgd2XWy8V0
- JpwSqlZKos7f1wWwb7VgMYAHaLisxIzb3JX81eFVmTLbX0uNKMD0voZNZ+cWheh3i+HJaqbsF
- tKIOQ0ll6Y+Q6hndX7mZWCQdVFUeLAMDBSBgoLUs1nbH5a0xdOX7a6gz6ItLyU+BqP4KXH2DV
- rDFIpKRqnZqWvvYTdVqLx23v++HLYTnOu8E7My6GxofEUC3ePXcYWIRR8hp65uR15AdFRV/MS
- CLPyY0OiYkmJh7SU8TaQNza5iokt60ZZfr/rVVCv827HunPlTwtGV/AuAxLsMV2WYFGAg48P7
- Qb69Dlyva9zd4MpPR06pUmR5em8CsMZRDsmynkKANk1Xu6ZpJeQ/388Shfw8bo9PhTVlWZ2n7
- QAJx6wb8JPs7O0Wr12Hw2Ia0MvWpv1iA2vrcuoqlQ83cQLkywWKHRy0Lbrer7uG5YE+NuZByH
- SbTt0S3526fDNdnV8L9Yy2AAdw33Uz61+oC37Rx68D2Oc9JVDqrXcE66K1MIx/I5q2aVTcsPv
- c3SQzwHmdgY8Ub3y3w4m/EicJHOWEJZtHHr/RQiDBOa7uxazVPKTyk+onqlmKdEX+pFXM1jdX
- i754BZt1xhazqH80w7YY2OHBa7aaZ4CMa4ltQuuH/DfirTbR/AAZy3V6/VagRnhk31J7oFSZ4
- 7GX3Mi2TvHQhTkiGcQZw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function was removed a long time ago, but the declaration
-and a dummy implementation are still there, referencing the
-deprecated time_t type.
+Hello, Linus.
 
-Remove both.
+Sorry, I sat on this for too long.
 
-Fixes: f958a1320ff7 ("nfsd4: remove unnecessary lease-setting function")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/nfsd/nfsd.h | 2 --
- 1 file changed, 2 deletions(-)
+There's an inadvertent preemption point in ptrace_stop() which was
+reliably triggering for a test scenario significantly slowing it down.
+This pull request contains Oleg's fix to remove the unwanted
+preemption point.
 
-diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-index af2947551e9c..e74979b5849e 100644
---- a/fs/nfsd/nfsd.h
-+++ b/fs/nfsd/nfsd.h
-@@ -142,7 +142,6 @@ int nfs4_state_start(void);
- int nfs4_state_start_net(struct net *net);
- void nfs4_state_shutdown(void);
- void nfs4_state_shutdown_net(struct net *net);
--void nfs4_reset_lease(time_t leasetime);
- int nfs4_reset_recoverydir(char *recdir);
- char * nfs4_recoverydir(void);
- bool nfsd4_spo_must_allow(struct svc_rqst *rqstp);
-@@ -153,7 +152,6 @@ static inline int nfs4_state_start(void) { return 0; }
- static inline int nfs4_state_start_net(struct net *net) { return 0; }
- static inline void nfs4_state_shutdown(void) { }
- static inline void nfs4_state_shutdown_net(struct net *net) { }
--static inline void nfs4_reset_lease(time_t leasetime) { }
- static inline int nfs4_reset_recoverydir(char *recdir) { return 0; }
- static inline char * nfs4_recoverydir(void) {return NULL; }
- static inline bool nfsd4_spo_must_allow(struct svc_rqst *rqstp)
+Thanks.
+
+The following changes since commit 9e208aa06c2109b45eec6be049a8e47034748c20:
+
+  Merge tag 'xfs-5.4-fixes-3' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux (2019-10-10 11:47:16 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.4-fixes
+
+for you to fetch changes up to 937c6b27c73e02cd4114f95f5c37ba2c29fadba1:
+
+  cgroup: freezer: call cgroup_enter_frozen() with preemption disabled in ptrace_stop() (2019-10-11 08:39:57 -0700)
+
+----------------------------------------------------------------
+Oleg Nesterov (1):
+      cgroup: freezer: call cgroup_enter_frozen() with preemption disabled in ptrace_stop()
+
+ kernel/signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index c4da1ef56fdf..bcd46f547db3 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2205,8 +2205,8 @@ static void ptrace_stop(int exit_code, int why, int clear_code, kernel_siginfo_t
+ 		 */
+ 		preempt_disable();
+ 		read_unlock(&tasklist_lock);
+-		preempt_enable_no_resched();
+ 		cgroup_enter_frozen();
++		preempt_enable_no_resched();
+ 		freezable_schedule();
+ 		cgroup_leave_frozen(true);
+ 	} else {
+
 -- 
-2.20.0
-
+tejun
