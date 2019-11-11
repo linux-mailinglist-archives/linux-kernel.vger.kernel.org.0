@@ -2,59 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A9E4F76EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B89B7F7705
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:50:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfKKOq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:46:58 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32413 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726950AbfKKOq6 (ORCPT
+        id S1726955AbfKKOt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:49:58 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:41800 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfKKOt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:46:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573483617;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=TTG00YjKWUOsl5rhCzwn1XMhrGVfmW5FmkbQYzSqxw0=;
-        b=FfrYydfFHoExK37VSKx8D3B+Jck58qhyc3zy8NUjcb4wmfpv+Qok7ui4tLEPGw+yV7ycPx
-        MfBoLELLQOt9BSOfpPYBetofsnqWAaQmSJobotKIhqqtVeVnJtqwZOs1lZ/2WuVQJGIuQ5
-        7qRym6rxR6smz9UuhgP36+R3bHAy8ac=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-397-LFO5OSYsM2CoTk2uPiWi_A-1; Mon, 11 Nov 2019 09:46:56 -0500
-Received: by mail-wr1-f70.google.com with SMTP id p6so10058742wrs.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 06:46:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jRkkSKwLtbw789qcSoLZDfx7wzSdmL3oq2GXGl90y/M=;
-        b=BnGg6oR85wSRrDoUO+8GuTCmcjQj+/8On4blEsbP5wheoJ7ex3OmpWhpa98pybtUhv
-         oRLr7H2rlVaWlK7sjyKPLzdUSpRLVM9xFkMgXr75C/bZbj1r9ZQtTUM9wQ+fOOk1Rd7l
-         z6O82M/ioxi8hH5Qz3mjnuytgLIGRvKDgeoYVCCSfsWs1tpQMtstQXDvmX08xVdQusl2
-         dcLUAPFHWLae5gFhZCtfR1wdlkTwg1vnGha0hA+g+o/uEWzjeyjlOjuMDKhwhJFslBHd
-         +mMd/fdvvwGWalT93Z70ApHbjo36XJ9j18xjPL4dZVmjmBax/jgQDdRlF9IUiUCI5arq
-         rCvQ==
-X-Gm-Message-State: APjAAAVbzue3FKVgmkIX1VC/sNg1BxofDAuRkP5nJrnSm8h7iF61TSMZ
-        Fq9RbCQ6okcpXloL9qwsXNTUrHl268lA57OG+10dt+eRV2yCWrLJWDu49RcoMugOh+UHABewcDl
-        GnmXCZBkiJM65aANDexemBgca
-X-Received: by 2002:adf:9185:: with SMTP id 5mr22369375wri.389.1573483614933;
-        Mon, 11 Nov 2019 06:46:54 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyjqc/t6JzGynXh2pZeszWWrEVTnuQ1w9EknjY1/ptxdfimEElgI3QDGqXkPhfkULlRqq2r1Q==
-X-Received: by 2002:adf:9185:: with SMTP id 5mr22369347wri.389.1573483614614;
-        Mon, 11 Nov 2019 06:46:54 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:a0f7:472a:1e7:7ef? ([2001:b07:6468:f312:a0f7:472a:1e7:7ef])
-        by smtp.gmail.com with ESMTPSA id c144sm18931831wmd.1.2019.11.11.06.46.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2019 06:46:54 -0800 (PST)
-Subject: Re: [PATCH v1 1/3] KVM: VMX: Consider PID.PIR to determine if vCPU
- has pending interrupts
-To:     Joao Martins <joao.m.martins@oracle.com>, kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
+        Mon, 11 Nov 2019 09:49:57 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xABEme8H132966;
+        Mon, 11 Nov 2019 14:48:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=nCtY+7bdd6mv8eDFRHIRK+wmFtnJwxI7n+WAF/dPn8A=;
+ b=Ulr0/sLsLSiw3RXJBoQlA05oYd/mcLKXQ+nBThVFbv03XAo78feVR1Zfn20e9uohxdT1
+ hWT6G0VNTXHilRfbJ0IWokVG6CBkG2EQOwZh/2izWmsoEJz+L3n3oe1KxGrEYyCpqPPu
+ Ver//X//qTU64DMq/JjYyLhhJm5iI8FShtdA8OmZTKN5TehcAcO1H2FcF3HP1I2iLTUb
+ Rfzy0mer7+5YrmLmskM73HFVDp46plw7wvD8MunwgH/wOP+qGguwBxL07jWFE/1VvLzy
+ YkbOERI2JJ9n1BDGZY8cShF2iOjZFAxXdXieCRzWPVwqbCtwjPfhwXM+8SE/vmcSELYR NA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2w5ndpydhw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Nov 2019 14:48:51 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xABEmNM8175977;
+        Mon, 11 Nov 2019 14:48:51 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2w6r8jrb7s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Nov 2019 14:48:50 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xABEmmQY005104;
+        Mon, 11 Nov 2019 14:48:48 GMT
+Received: from [10.175.169.52] (/10.175.169.52)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 11 Nov 2019 14:48:48 +0000
+Subject: Re: [PATCH v1 2/3] KVM: VMX: Do not change PID.NDST when loading a
+ blocked vCPU
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
@@ -64,72 +54,74 @@ Cc:     linux-kernel@vger.kernel.org,
         Liran Alon <liran.alon@oracle.com>,
         Jag Raman <jag.raman@oracle.com>
 References: <20191106175602.4515-1-joao.m.martins@oracle.com>
- <20191106175602.4515-2-joao.m.martins@oracle.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <67bca655-fea3-4b57-be3c-7dc58026b5d9@redhat.com>
-Date:   Mon, 11 Nov 2019 15:46:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <20191106175602.4515-3-joao.m.martins@oracle.com>
+ <15c8c821-25ff-eb62-abd3-8d7d69650744@redhat.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <314a4120-036c-e954-bc9f-e57dee3bbb7c@oracle.com>
+Date:   Mon, 11 Nov 2019 14:48:44 +0000
 MIME-Version: 1.0
-In-Reply-To: <20191106175602.4515-2-joao.m.martins@oracle.com>
+In-Reply-To: <15c8c821-25ff-eb62-abd3-8d7d69650744@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-MC-Unique: LFO5OSYsM2CoTk2uPiWi_A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9437 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911110137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9437 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911110137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/19 18:56, Joao Martins wrote:
-> Commit 17e433b54393 ("KVM: Fix leak vCPU's VMCS value into other pCPU")
-> introduced vmx_dy_apicv_has_pending_interrupt() in order to determine
-> if a vCPU have a pending posted interrupt. This routine is used by
-> kvm_vcpu_on_spin() when searching for a a new runnable vCPU to schedule
-> on pCPU instead of a vCPU doing busy loop.
->=20
-> vmx_dy_apicv_has_pending_interrupt() determines if a
-> vCPU has a pending posted interrupt solely based on PID.ON. However,
-> when a vCPU is preempted, vmx_vcpu_pi_put() sets PID.SN which cause
-> raised posted interrupts to only set bit in PID.PIR without setting
-> PID.ON (and without sending notification vector), as depicted in VT-d
-> manual section 5.2.3 "Interrupt-Posting Hardware Operation".
->=20
-> Therefore, checking PID.ON is insufficient to determine if a vCPU has
-> pending posted interrupts and instead we should also check if there is
-> some bit set on PID.PIR.
->=20
-> Fixes: 17e433b54393 ("KVM: Fix leak vCPU's VMCS value into other pCPU")
-> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
-> Signed-off-by: Liran Alon <liran.alon@oracle.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 31ce6bc2c371..18b0bee662a5 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6141,7 +6141,10 @@ static int vmx_sync_pir_to_irr(struct kvm_vcpu *vc=
-pu)
-> =20
->  static bool vmx_dy_apicv_has_pending_interrupt(struct kvm_vcpu *vcpu)
->  {
-> -=09return pi_test_on(vcpu_to_pi_desc(vcpu));
-> +=09struct pi_desc *pi_desc =3D vcpu_to_pi_desc(vcpu);
-> +
-> +=09return pi_test_on(pi_desc) ||
-> +=09=09!bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS);
->  }
-> =20
->  static void vmx_load_eoi_exitmap(struct kvm_vcpu *vcpu, u64 *eoi_exit_bi=
-tmap)
+On 11/11/19 2:39 PM, Paolo Bonzini wrote:
+> On 06/11/19 18:56, Joao Martins wrote:
+>> When vCPU enters block phase, pi_pre_block() inserts vCPU to a per pCPU
+>> linked list of all vCPUs that are blocked on this pCPU. Afterwards, it
+>> changes PID.NV to POSTED_INTR_WAKEUP_VECTOR which its handler
+>> (wakeup_handler()) is responsible to kick (unblock) any vCPU on that
+>> linked list that now has pending posted interrupts.
+>>
+>> While vCPU is blocked (in kvm_vcpu_block()), it may be preempted which
+>> will cause vmx_vcpu_pi_put() to set PID.SN.  If later the vCPU will be
+>> scheduled to run on a different pCPU, vmx_vcpu_pi_load() will clear
+>> PID.SN but will also *overwrite PID.NDST to this different pCPU*.
+>> Instead of keeping it with original pCPU which vCPU had entered block
+>> phase on.
+>>
+>> This results in an issue because when a posted interrupt is delivered,
+>> the wakeup_handler() will be executed and fail to find blocked vCPU on
+>> its per pCPU linked list of all vCPUs that are blocked on this pCPU.
+>> Which is due to the vCPU being placed on a *different* per pCPU
+>> linked list than the original pCPU that it had entered block phase.
+>>
+>> The regression is introduced by commit c112b5f50232 ("KVM: x86:
+>> Recompute PID.ON when clearing PID.SN"). Therefore, partially revert
+>> it and reintroduce the condition in vmx_vcpu_pi_load() responsible for
+>> avoiding changing PID.NDST when loading a blocked vCPU.
+>>
+>> Fixes: c112b5f50232 ("KVM: x86: Recompute PID.ON when clearing PID.SN")
+>> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+>> Signed-off-by: Liran Alon <liran.alon@oracle.com>
+> 
+> Something wrong in the SoB line?
+> 
+I can't spot any mistake; at least it looks chained correctly for me. What's the
+issue you see with the Sob line?
 
-Should we check the bitmap only if SN is false?  We have a precondition
-that if SN is clear then non-empty PIR implies ON=3D1 (modulo the small
-window in vmx_vcpu_pi_load of course), so that'd be a bit faster.
+The only thing I forgot was a:
 
-Paolo
+Tested-by: Nathan Ni <nathan.ni@oracle.com>
 
+> Otherwise looks good.
+
+If you want I can resubmit the series with the Tb and Jag Rb, unless you think
+it's OK doing on commit? Otherwise I can resubmit.
+
+	Joao
