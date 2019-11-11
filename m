@@ -2,125 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFCB2F8152
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:36:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6F1EF8158
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:37:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfKKUgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 15:36:11 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:41074 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbfKKUgK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:36:10 -0500
-Received: by mail-il1-f196.google.com with SMTP id q15so8197601ils.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 12:36:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RhwkYq4Xoz6qbJxRjALfE8MZM5xtYEgYwlSWURLNNtQ=;
-        b=B9HpL7ShmycybCbB/KdQWKQzEjjgaaa2GSg05G+IyWGcNoKGdgq+i3AiZZCpkls2rS
-         gWMgTexeJ+B4g7hN2MsYpn0sfu/aBgzJ6zU7levUDZ604CgComvqjicKfg73ofP3OH25
-         9ycCPobwBCJUpzAIFobC/0KchLKnUC7Z6IiPn2X8cpZQ/YAbllHMWVb/3AMBcBaf4KoW
-         dScRXQubsprrYmMAUXK6/M3tTpcYw7KrdK55qvc1kEfnPqYpfwtGm1Vm/W2RlRZstHAo
-         R7Y38IjXOHk9FgG6h87nYylUA5Q04K6tz486W2iWPF60eTVLBAjh/3o1o4P8F0lQR7mt
-         mjSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RhwkYq4Xoz6qbJxRjALfE8MZM5xtYEgYwlSWURLNNtQ=;
-        b=A/LQ2NNxlkDET8Bv9qBSFfOnKWgXbld0NWYfNZy47frHWtmIFX9iXFGaexdp4yAYgq
-         joWKubQ0rIonrEq9KCFVk1JK/2cKUqpCyCGNW3jlAARfb5EPL9A1hhn+nlBI38FDr9T+
-         s8jXBndeSx+vXLB6Wj2sLFrbMFW7R1eWh+KfOSMvyUx9N6GDbosxfFimCzmkYKcwQ3Lf
-         FlcVFL2l3hOvQrsCu40yhmLFeUJU1M9d3GzSg8RcdC3tBX7tAtuN1Vdb7+3EZRyjPSU9
-         LMCiywRBs0SfOhR5OPf9E4HOoNAPqs8dTlHOkooRK11kjgvZJ1t7qfLep96oQl/VIUSV
-         /uqQ==
-X-Gm-Message-State: APjAAAXgtMHowZvooHE9KipBhtgV0fuLiDl7Vlu5zmSqjInUZGC8YYuq
-        Mx6KKkmra5yuGAlEsAhP0U4mEdqGIoS7mbu5D5A=
-X-Google-Smtp-Source: APXvYqw/oX9kFdOdp1RxxwqQqOlb8BoSGIn/0vDLMRtz4c5Dc3hYdAWfMCCtxk3vtpCQEBmY83VIYWpzy68OPyIjcJo=
-X-Received: by 2002:a92:7786:: with SMTP id s128mr33173924ilc.204.1573504569865;
- Mon, 11 Nov 2019 12:36:09 -0800 (PST)
+        id S1727392AbfKKUhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 15:37:46 -0500
+Received: from verein.lst.de ([213.95.11.211]:51892 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726939AbfKKUhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 15:37:46 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 45C7368B05; Mon, 11 Nov 2019 21:37:43 +0100 (CET)
+Date:   Mon, 11 Nov 2019 21:37:43 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alan Mikhak <alan.mikhak@sifive.com>
+Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-nvme@lists.infradead.org, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, bhelgaas@google.com, hch@lst.de,
+        palmer@dabbelt.com, paul.walmsley@sifive.com
+Subject: Re: [PATCH RFC] PCI: endpoint: Add NVMe endpoint function driver
+Message-ID: <20191111203743.GA25876@lst.de>
+References: <1573493889-22336-1-git-send-email-alan.mikhak@sifive.com>
 MIME-Version: 1.0
-References: <20191021193343.41320-1-kdasu.kdev@gmail.com> <20191105200344.1e8c3eab@xps13>
- <1718371158.75883.1572995022606.JavaMail.zimbra@nod.at>
-In-Reply-To: <1718371158.75883.1572995022606.JavaMail.zimbra@nod.at>
-From:   Kamal Dasu <kdasu.kdev@gmail.com>
-Date:   Mon, 11 Nov 2019 15:35:59 -0500
-Message-ID: <CAC=U0a3_OKJ7Fza_5WAst1BZjGm+4e-JvgZZ_QYpL1m5siTYEA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: set mtd partition panic write flag
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573493889-22336-1-git-send-email-alan.mikhak@sifive.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Richard,
+On Mon, Nov 11, 2019 at 09:38:09AM -0800, Alan Mikhak wrote:
+> A design goal is to not modify the Linux NVMe target driver
+> at all.
 
-On Tue, Nov 5, 2019 at 6:03 PM Richard Weinberger <richard@nod.at> wrote:
->
-> ----- Urspr=C3=BCngliche Mail -----
-> > Von: "Miquel Raynal" <miquel.raynal@bootlin.com>
-> > An: "Kamal Dasu" <kdasu.kdev@gmail.com>
-> > CC: "linux-mtd" <linux-mtd@lists.infradead.org>, "bcm-kernel-feedback-l=
-ist" <bcm-kernel-feedback-list@broadcom.com>,
-> > "linux-kernel" <linux-kernel@vger.kernel.org>, "David Woodhouse" <dwmw2=
-@infradead.org>, "Brian Norris"
-> > <computersforpeace@gmail.com>, "Marek Vasut" <marek.vasut@gmail.com>, "=
-richard" <richard@nod.at>, "Vignesh Raghavendra"
-> > <vigneshr@ti.com>
-> > Gesendet: Dienstag, 5. November 2019 20:03:44
-> > Betreff: Re: [PATCH] mtd: set mtd partition panic write flag
->
-> > Hi Kamal,
-> >
-> > Richard, something to look into below :)
->
-> I'm still recovering from a bad cold. So my brain is not fully working ;)
-
-Thanks for reviewing this. Hope you are feeling better now.
-
->
-> > Kamal Dasu <kdasu.kdev@gmail.com> wrote on Mon, 21 Oct 2019 15:32:52
-> > -0400:
-> >
-> >> Check mtd panic write flag and set the mtd partition panic
-> >> write flag so that low level drivers can use it to take
-> >> required action to ensure oops data gets written to assigned
-> >> mtd partition.
-> >
-> > I feel there is something wrong with the current implementation
-> > regarding partitions but I am not sure this is the right fix. Is this
-> > something you detected with some kind of static checker or did you
-> > actually experience an issue?
-> >
-> > In the commit log you say "check mtd (I suppose you mean the
-> > master) panic write flag and set the mtd partition panic write flag"
-> > which makes sense, but in reality my understanding is that you do the
-> > opposite: you check mtd->oops_panic_write which is the partitions'
-> > structure, and set part->parent->oops_panic_write which is the master's
-> > flag.
->
-> IIUC the problem happens when you run mtdoops on a mtd partition.
-> The the flag is only set for the partition instead for the master.
->
-> So the right fix would be setting the parent's oops_panic_write in
-
-How do I get access to the parts parent in the core ?. Maybe I am
-missing something.
-
-> mtd_panic_write().
-> Then we don't have to touch mtdpart.c
->
-> Thanks,
-> //richard
+As I told you before that is not a "goal" but a fundamental mistake and
+against the design philosophy of all major Linux subsystems.  Please fix
+your series to move all command parsing to the code based on flags for
+fabrics vs PCIe in the few places where they significantly differ.
