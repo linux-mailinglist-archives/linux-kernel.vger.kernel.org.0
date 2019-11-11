@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EF78F7EDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:08:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28811F7E01
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbfKKSfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:35:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53838 "EHLO mail.kernel.org"
+        id S1730515AbfKKSwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:52:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728596AbfKKSft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:35:49 -0500
+        id S1730274AbfKKSwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:52:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03D812196E;
-        Mon, 11 Nov 2019 18:35:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 490A0204EC;
+        Mon, 11 Nov 2019 18:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497348;
-        bh=DgOeGiA0kYlJ1pwptbjhYwSRiBmoHrCye0hH9BMijLQ=;
+        s=default; t=1573498343;
+        bh=dguNy2Uy53wWhZ5XJNoj++7yvyxtrq34d78ej4hQFm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yDfc0waTE+mJ83/fjioNmFOwQvf60cCPnTLaLpk4RyaIlTJ3J8WQPjlXnxB4mqLGo
-         KWnrmMBJxHfGWnlpGr4Mhn9ePDHq7L6d4pd/MCdU0VIzMh3hxJRe50xL+W/HJaVMhs
-         mzeWMNqrnsck4LvKBTmvMxCisKugWI4zHTEI+Nw4=
+        b=QlRWc6Rfrn37VHAmJriUoDWnze0/JpXPGIugJTOairpq9Xq3HWVFi6mdZgMxjqHBM
+         6oHirgjhV+s1lhani/QcUCkEKBFM8GHFObH8mrmjXqBcnY/0W5uwhefSNQ8Rbh25aG
+         VlIX655NjpVkOF8XMt6/ZsTxkvK5hu1p9flsZ/KM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Steve Capper <steve.capper@arm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 023/105] arm64: Do not mask out PTE_RDONLY in pte_same()
-Date:   Mon, 11 Nov 2019 19:27:53 +0100
-Message-Id: <20191111181436.637567352@linuxfoundation.org>
+        stable@vger.kernel.org, Zhenfang Wang <zhenfang.wang@unisoc.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 092/193] dmaengine: sprd: Fix the link-list pointer register configuration issue
+Date:   Mon, 11 Nov 2019 19:27:54 +0100
+Message-Id: <20191111181507.930056795@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Zhenfang Wang <zhenfang.wang@unisoc.com>
 
-commit 6767df245f4736d0cf0c6fb7cf9cf94b27414245 upstream.
+[ Upstream commit 8b6bc5fd71e677864d1a3b896b3069a6e0c5e214 ]
 
-Following commit 73e86cb03cf2 ("arm64: Move PTE_RDONLY bit handling out
-of set_pte_at()"), the PTE_RDONLY bit is no longer managed by
-set_pte_at() but built into the PAGE_* attribute definitions.
-Consequently, pte_same() must include this bit when checking two PTEs
-for equality.
+We will set the link-list pointer register point to next link-list
+configuration's physical address, which can load DMA configuration
+from the link-list node automatically.
 
-Remove the arm64-specific pte_same() function, practically reverting
-commit 747a70e60b72 ("arm64: Fix copy-on-write referencing in HugeTLB")
+But the link-list node's physical address can be larger than 32bits,
+and now Spreadtrum DMA driver only supports 32bits physical address,
+which may cause loading a incorrect DMA configuration when starting
+the link-list transfer mode. According to the DMA datasheet, we can
+use SRC_BLK_STEP register (bit28 - bit31) to save the high bits of the
+link-list node's physical address to fix this issue.
 
-Fixes: 73e86cb03cf2 ("arm64: Move PTE_RDONLY bit handling out of set_pte_at()")
-Cc: <stable@vger.kernel.org> # 4.14.x-
-Cc: Will Deacon <will@kernel.org>
-Cc: Steve Capper <steve.capper@arm.com>
-Reported-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 4ac695464763 ("dmaengine: sprd: Support DMA link-list mode")
+Signed-off-by: Zhenfang Wang <zhenfang.wang@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Link: https://lore.kernel.org/r/eadfe9295499efa003e1c344e67e2890f9d1d780.1568267061.git.baolin.wang@linaro.org
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/pgtable.h |   17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/dma/sprd-dma.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -258,23 +258,6 @@ static inline void set_pte_at(struct mm_
- 	set_pte(ptep, pte);
- }
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index 525dc7338fe3b..a4a91f233121a 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -134,6 +134,10 @@
+ #define SPRD_DMA_SRC_TRSF_STEP_OFFSET	0
+ #define SPRD_DMA_TRSF_STEP_MASK		GENMASK(15, 0)
  
--#define __HAVE_ARCH_PTE_SAME
--static inline int pte_same(pte_t pte_a, pte_t pte_b)
--{
--	pteval_t lhs, rhs;
--
--	lhs = pte_val(pte_a);
--	rhs = pte_val(pte_b);
--
--	if (pte_present(pte_a))
--		lhs &= ~PTE_RDONLY;
--
--	if (pte_present(pte_b))
--		rhs &= ~PTE_RDONLY;
--
--	return (lhs == rhs);
--}
--
- /*
-  * Huge pte definitions.
-  */
++/* SPRD DMA_SRC_BLK_STEP register definition */
++#define SPRD_DMA_LLIST_HIGH_MASK	GENMASK(31, 28)
++#define SPRD_DMA_LLIST_HIGH_SHIFT	28
++
+ /* define DMA channel mode & trigger mode mask */
+ #define SPRD_DMA_CHN_MODE_MASK		GENMASK(7, 0)
+ #define SPRD_DMA_TRG_MODE_MASK		GENMASK(7, 0)
+@@ -717,6 +721,7 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
+ 	u32 int_mode = flags & SPRD_DMA_INT_MASK;
+ 	int src_datawidth, dst_datawidth, src_step, dst_step;
+ 	u32 temp, fix_mode = 0, fix_en = 0;
++	phys_addr_t llist_ptr;
+ 
+ 	if (dir == DMA_MEM_TO_DEV) {
+ 		src_step = sprd_dma_get_step(slave_cfg->src_addr_width);
+@@ -814,13 +819,16 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
+ 		 * Set the link-list pointer point to next link-list
+ 		 * configuration's physical address.
+ 		 */
+-		hw->llist_ptr = schan->linklist.phy_addr + temp;
++		llist_ptr = schan->linklist.phy_addr + temp;
++		hw->llist_ptr = lower_32_bits(llist_ptr);
++		hw->src_blk_step = (upper_32_bits(llist_ptr) << SPRD_DMA_LLIST_HIGH_SHIFT) &
++			SPRD_DMA_LLIST_HIGH_MASK;
+ 	} else {
+ 		hw->llist_ptr = 0;
++		hw->src_blk_step = 0;
+ 	}
+ 
+ 	hw->frg_step = 0;
+-	hw->src_blk_step = 0;
+ 	hw->des_blk_step = 0;
+ 	return 0;
+ }
+-- 
+2.20.1
+
 
 
