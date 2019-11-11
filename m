@@ -2,212 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82844F7E1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE93F7DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:00:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbfKKTBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:01:40 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33696 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbfKKSuu (ORCPT
+        id S1730201AbfKKTAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:00:09 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38428 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729568AbfKKTAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:50:50 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c184so11302177pfb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:50:50 -0800 (PST)
+        Mon, 11 Nov 2019 14:00:03 -0500
+Received: by mail-oi1-f193.google.com with SMTP id a14so12441308oid.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:00:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OWH4ZBjmP1PLAL/11yQZ4HO6sSk47LP135Lp1gszF60=;
-        b=Ltf7PulmhFtdy+4C35b3m8AnAibdIVdG9rTbvR7cbDuEbGdhOKRneKymSPq0DAbF2P
-         maHgL/z8DJu2qQV0vvSm3XtBmBJrKI+eMcta7SlWYg/aqvN+Y9/y3NwvkGJeEBSmABe8
-         rQiwgf1hFz93afRB9aodrG/W+hMaRkxPDy9is=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Hij9WRW9jexaTExPnUz0qaTqt1chIxl/l165TeSCuFk=;
+        b=RVbyU4ESVWlXQ8T3vJoN/oZeBZzpoGo5ihXG901x+xkoVGygn+QUOW8Q+wh00/DvOP
+         giok/SgrwR70kYfkO45hsvOAP+WhHiPqYwDj0dHHMkve8fY461e4iJtlRNi7eR1DhAnr
+         msvmqz3cgRr9WTZZh2vG1SNXT9gxsC4kYzoWV5sLY5uoS7y7h9f1x7peNvMd98iVG6e6
+         HxL1ITDDClLoV1YB9+VYGF7sapY8UPo3CA5UJHCfPI+qLRQi3yfO44XttBTSfdrQ6EaD
+         7jEOcmSiHHrw/5DNMhwm1YzJ+xQTSjO1kZJk+T45B0zkAzCPjVfZEJtuP1V0O9Lh2wbP
+         Pj6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OWH4ZBjmP1PLAL/11yQZ4HO6sSk47LP135Lp1gszF60=;
-        b=fVpA6r4aRWRiejtDRuzoagoodSq9tId1HC0gdORFXxV6cEfOX453Gb8J6Ye7kpGC/e
-         neU3SZKoCPmpud6EyfCND9rcWJr3kf4Vr0SiIKeivvPvUNDpgzYBHINYCauW37v+o8KP
-         rXF0p0W4uAazs9OaQ55gk7aeoN4OSKnaBnfIs7Wj7jgf1wP3NPTme2mkoL89S2pXwMqO
-         Y3XxFWUVDA/HqInsd5/+GujPZ6X04fiyXO61rd3YTbgOF9PJ+/luPsrjphvmwHxADbFq
-         LgToDda1TI06/lEdCnanWQoNcTYKA8MfJDsErE06XD7iv44UanXu/Zej8Dhmbfmlblj/
-         RKlA==
-X-Gm-Message-State: APjAAAVYjTyEho6iA9pUwTmsF1M9SO7mvOlnr6CpeUYAM1+LU5+49/ik
-        HQDiHgr4M9bcqFeRNlXUEnQDnA==
-X-Google-Smtp-Source: APXvYqxtRavfXUUC2pTJnOwgb19bdqqa3Gl+jyiZglHZKNr8qmKJMQreuU4dtR7TNV2atvAU1AlW/w==
-X-Received: by 2002:a62:1c8:: with SMTP id 191mr31885384pfb.152.1573498250075;
-        Mon, 11 Nov 2019 10:50:50 -0800 (PST)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id v63sm15220971pfb.181.2019.11.11.10.50.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 11 Nov 2019 10:50:49 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Martin K Petersen <martin.petersen@oracle.com>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Alexis Savery <asavery@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Evan Green <evgreen@chromium.org>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/2] loop: Better discard support for block devices
-Date:   Mon, 11 Nov 2019 10:50:30 -0800
-Message-Id: <20191111185030.215451-3-evgreen@chromium.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191111185030.215451-1-evgreen@chromium.org>
-References: <20191111185030.215451-1-evgreen@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hij9WRW9jexaTExPnUz0qaTqt1chIxl/l165TeSCuFk=;
+        b=Xa94xmyENAyoOa9lHifA4GeBi3VvWNdNmAlnug4Ds5Se7crI5TGRij9lVxrA7V8mPw
+         r/nR5qY6+8ciYLJNwuJmIgNIIZFEAFeJEkRITPj3jL8kiAe977Gndl3SPk7ZhJnG7R2A
+         ja0gFP341qndZcPKabLr29sBTi3Q+gd+ip8ExGROMsCeg467U6sTvT8G7NdQ5f4zvqfY
+         FuT2FzQB1qXaec+z8JgUg7zHOMW1XU41BeN3SjVCEgTqFQH9rMaP4/6ct/G/5HADThI6
+         cd4wSma3kWeYo0qIaZ7qtmk6N8/qnMoYbI614ak23rdh+5iHDGFri7LW39J9lcE4LXQa
+         lVeA==
+X-Gm-Message-State: APjAAAW7AlFfBiHj1SBr0hhj/PPr6s/+IwdvKJHe5hfLKrEssKwy1jPz
+        HrVOCNjJ2o6h4dijMkMorEAcgt5FPHS/deSADgtueA==
+X-Google-Smtp-Source: APXvYqwuLe2W6zNidCS4fhh7tulT13NX4MB6+vyTZa/nE+xFjVDnEnM6AgSgW+nAjTQsXtyrboaM6eqO5Q/xA8t81gM=
+X-Received: by 2002:aca:5413:: with SMTP id i19mr388074oib.121.1573498802654;
+ Mon, 11 Nov 2019 11:00:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+ <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+ <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
+ <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+ <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com> <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 11 Nov 2019 19:59:50 +0100
+Message-ID: <CANpmjNOJOBcKh23tPi_+Lv1ONfL_kkK9q6qqS51LK4h63n2swA@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the backing device for a loop device is a block device,
-then mirror the "write zeroes" capabilities of the underlying
-block device into the loop device. Copy this capability into both
-max_write_zeroes_sectors and max_discard_sectors of the loop device.
+On Mon, 11 Nov 2019 at 19:50, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Nov 11, 2019 at 10:31 AM Eric Dumazet <edumazet@google.com> wrote:
+> >
+> > Problem is that KASAN/KCSAN stops as soon as one issue is hit,
+> > regardless of it being a false positive or not.
+>
+> So mayb e that - together with the known huge base of false positives
+> - just means that KCSAN needs some more work before it can be used as
+> a basis for sending out patches.
+>
+> Maybe the reporting needs to create a hash of the location, and report
+> once per location? Or something like that.
+>
+> Maybe KCSAN needs a way to filter out known false positives on a KCSAN
+> side, without having to change the source for a tool that gives too
+> much noise?
+>
+> > If we do not annotate the false positive, the real issues might be
+> > hidden for years.
+>
+> I don't think "change the kernel source for a tool that isn't good
+> enough" is the solution.
+>
+> > There is no pattern really, only a lot of noise (small ' bugs'  that
+> > have no real impact)
+>
+> Yeah, if it hasn't shown any real bugs so far, that just strengthens
+> the "it needs much fewer false positives to be useful".
+>
+> KASAN and lockdep can afford to stop after the first problem, because
+> the problems they report - and the additional annotations you might
+> want to add - are quality problems and annotations.
 
-The reason for this is that REQ_OP_DISCARD on a loop device translates
-into blkdev_issue_zeroout(), rather than blkdev_issue_discard(). This
-presents a consistent interface for loop devices (that discarded data
-is zeroed), regardless of the backing device type of the loop device.
-There should be no behavior change for loop devices backed by regular
-files.
+There is a fundamental limitation here. As I understand, in an ideal
+world we'd only find true logic bugs, *race conditions*, first, and
+*data races* later. Some data races are also race conditions, which a
+tool like KCSAN can report. However, not all race conditions are data
+races and vice-versa.
 
-While in there, differentiate between REQ_OP_DISCARD and
-REQ_OP_WRITE_ZEROES, which are different for block devices,
-but which the loop device had just been lumping together, since
-they're largely the same for files.
+The intent is to report data races according to the LKMM. KCSAN
+currently does that. On syzbot, we do not even report all data races
+because we use a very conservative config, to filter things like data
+races between plain and ONCE/atomic accesses, etc. A data race
+detector can only work at the memory model/language level.
 
-This change fixes blktest block/003, and removes an extraneous
-error print in block/013 when testing on a loop device backed
-by a block device that does not support discard.
+Deeper analysis, to find only race conditions, requires conveying the
+intended logic and patterns to a tool. This requires 1) the developer
+either writing a spec or model of their code, and then 2) the tool
+verifying that the implementation matches.  People have done this for
+small bits of code using model checkers (and other formal methods),
+but this just doesn't scale!
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
----
+KCSAN finds real problems today. Maybe not all of them are race
+conditions, but they are data races. We already have several options
+to filter data races, and will keep adding more. However, a tool that
+magically proves that there are no concurrency related logic bugs is
+an entirely different beast.
 
-Changes in v6: None
-Changes in v5:
-- Don't mirror discard if lo_encrypt_key_size is non-zero (Gwendal)
-
-Changes in v4:
-- Mirror blkdev's write_zeroes into loopdev's discard_sectors.
-
-Changes in v3:
-- Updated commit description
-
-Changes in v2: None
-
- drivers/block/loop.c | 57 ++++++++++++++++++++++++++++----------------
- 1 file changed, 37 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index d749156a3d88..236f6deb0772 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
- 	return ret;
- }
- 
--static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
-+static int lo_discard(struct loop_device *lo, struct request *rq,
-+		int mode, loff_t pos)
- {
--	/*
--	 * We use punch hole to reclaim the free space used by the
--	 * image a.k.a. discard. However we do not support discard if
--	 * encryption is enabled, because it may give an attacker
--	 * useful information.
--	 */
- 	struct file *file = lo->lo_backing_file;
--	int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
-+	struct request_queue *q = lo->lo_queue;
- 	int ret;
- 
--	if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-+	if (!blk_queue_discard(q)) {
- 		ret = -EOPNOTSUPP;
- 		goto out;
- 	}
-@@ -599,8 +594,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- 	case REQ_OP_FLUSH:
- 		return lo_req_flush(lo, rq);
- 	case REQ_OP_DISCARD:
-+		return lo_discard(lo, rq,
-+			FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
-+
- 	case REQ_OP_WRITE_ZEROES:
--		return lo_discard(lo, rq, pos);
-+		return lo_discard(lo, rq,
-+			FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
-+
- 	case REQ_OP_WRITE:
- 		if (lo->transfer)
- 			return lo_write_transfer(lo, rq, pos);
-@@ -854,6 +854,21 @@ static void loop_config_discard(struct loop_device *lo)
- 	struct file *file = lo->lo_backing_file;
- 	struct inode *inode = file->f_mapping->host;
- 	struct request_queue *q = lo->lo_queue;
-+	struct request_queue *backingq;
-+
-+	/*
-+	 * If the backing device is a block device, mirror its zeroing
-+	 * capability. REQ_OP_DISCARD translates to a zero-out even when backed
-+	 * by block devices to keep consistent behavior with file-backed loop
-+	 * devices.
-+	 */
-+	if (S_ISBLK(inode->i_mode) && !lo->lo_encrypt_key_size) {
-+		backingq = bdev_get_queue(inode->i_bdev);
-+		blk_queue_max_discard_sectors(q,
-+			backingq->limits.max_write_zeroes_sectors);
-+
-+		blk_queue_max_write_zeroes_sectors(q,
-+			backingq->limits.max_write_zeroes_sectors);
- 
- 	/*
- 	 * We use punch hole to reclaim the free space used by the
-@@ -861,22 +876,24 @@ static void loop_config_discard(struct loop_device *lo)
- 	 * encryption is enabled, because it may give an attacker
- 	 * useful information.
- 	 */
--	if ((!file->f_op->fallocate) ||
--	    lo->lo_encrypt_key_size) {
-+	} else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
- 		q->limits.discard_granularity = 0;
- 		q->limits.discard_alignment = 0;
- 		blk_queue_max_discard_sectors(q, 0);
- 		blk_queue_max_write_zeroes_sectors(q, 0);
--		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
--		return;
--	}
- 
--	q->limits.discard_granularity = inode->i_sb->s_blocksize;
--	q->limits.discard_alignment = 0;
-+	} else {
-+		q->limits.discard_granularity = inode->i_sb->s_blocksize;
-+		q->limits.discard_alignment = 0;
-+
-+		blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-+		blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-+	}
- 
--	blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
--	blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
--	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-+	if (q->limits.max_write_zeroes_sectors)
-+		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-+	else
-+		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
- }
- 
- static void loop_unprepare_queue(struct loop_device *lo)
--- 
-2.21.0
-
+Thanks,
+-- Marco
