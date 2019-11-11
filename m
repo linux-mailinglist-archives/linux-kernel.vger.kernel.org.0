@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E90FF7D0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C63F7C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbfKKSwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:52:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47060 "EHLO mail.kernel.org"
+        id S1729714AbfKKSoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:44:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729650AbfKKSwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:52:42 -0500
+        id S1728988AbfKKSoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:44:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0829214E0;
-        Mon, 11 Nov 2019 18:52:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 630AC204FD;
+        Mon, 11 Nov 2019 18:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498360;
-        bh=tY0oOqPs5y4Z3QzaxhFPBAKTG3CHb+oGU/zS+s/xIZc=;
+        s=default; t=1573497851;
+        bh=rFBPy2VRMvzAOnfZRRCqZflqwuN5tFT+7CLO1zRORlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IDzXOJNz9DfJIXQzHNOeAmvu3f3xKM4BnjPDCwY2+KzOvoq58UBxDhStzKwt3JpNk
-         w2WYM9whr433IMApbL5QVcE4j4n2aWN6V0RCrUtwNQSIIQ9mVDjDbU4SGxTbUgiAhA
-         eCPUES4JZPkyi79syrubUJgVKBDlXbOE7DWS2jlE=
+        b=P3CY4Fv8xwcSCbDaaHE3KBkFCB39rHAT4A4yfsc4xcohjm+3bgBZvqA1IaQWH+pF8
+         VxeK/U91UVkvmzx+WOoYCI1DZthb9z6OKvdnxW6goSV4ZA5pzS4Q6WYu0dZwDZQmjx
+         cVdwl7PbOcd+X3/LgyRi/R0wm6horvkEb+Mno7l0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenfang Wang <zhenfang.wang@unisoc.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 096/193] dmaengine: sprd: Fix the possible memory leak issue
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.19 039/125] intel_th: pci: Add Comet Lake PCH support
 Date:   Mon, 11 Nov 2019 19:27:58 +0100
-Message-Id: <20191111181508.229679609@linuxfoundation.org>
+Message-Id: <20191111181445.713743472@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit ec1ac309596a7bdf206743b092748205f6cd5720 ]
+commit 3adbb5718dd5264666ddbc2b9b43799d292e9cb6 upstream.
 
-If we terminate the channel to free all descriptors associated with this
-channel, we will leak the memory of current descriptor if the current
-descriptor is not completed, since it had been deteled from the desc_issued
-list and have not been added into the desc_completed list.
+This adds support for Intel TH on Comet Lake PCH.
 
-Thus we should check if current descriptor is completed or not, when freeing
-the descriptors associated with one channel, if not, we should free it to
-avoid this issue.
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191028070651.9770-7-alexander.shishkin@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 9b3b8171f7f4 ("dmaengine: sprd: Add Spreadtrum DMA driver")
-Reported-by: Zhenfang Wang <zhenfang.wang@unisoc.com>
-Tested-by: Zhenfang Wang <zhenfang.wang@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Link: https://lore.kernel.org/r/170dbbc6d5366b6fa974ce2d366652e23a334251.1570609788.git.baolin.wang@linaro.org
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sprd-dma.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/hwtracing/intel_th/pci.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index a4a91f233121a..8546ad0347208 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -212,6 +212,7 @@ struct sprd_dma_dev {
- 	struct sprd_dma_chn	channels[0];
- };
- 
-+static void sprd_dma_free_desc(struct virt_dma_desc *vd);
- static bool sprd_dma_filter_fn(struct dma_chan *chan, void *param);
- static struct of_dma_filter_info sprd_dma_info = {
- 	.filter_fn = sprd_dma_filter_fn,
-@@ -613,12 +614,19 @@ static int sprd_dma_alloc_chan_resources(struct dma_chan *chan)
- static void sprd_dma_free_chan_resources(struct dma_chan *chan)
- {
- 	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
-+	struct virt_dma_desc *cur_vd = NULL;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&schan->vc.lock, flags);
-+	if (schan->cur_desc)
-+		cur_vd = &schan->cur_desc->vd;
-+
- 	sprd_dma_stop(schan);
- 	spin_unlock_irqrestore(&schan->vc.lock, flags);
- 
-+	if (cur_vd)
-+		sprd_dma_free_desc(cur_vd);
-+
- 	vchan_free_chan_resources(&schan->vc);
- 	pm_runtime_put(chan->device->dev);
- }
-@@ -1031,15 +1039,22 @@ static int sprd_dma_resume(struct dma_chan *chan)
- static int sprd_dma_terminate_all(struct dma_chan *chan)
- {
- 	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
-+	struct virt_dma_desc *cur_vd = NULL;
- 	unsigned long flags;
- 	LIST_HEAD(head);
- 
- 	spin_lock_irqsave(&schan->vc.lock, flags);
-+	if (schan->cur_desc)
-+		cur_vd = &schan->cur_desc->vd;
-+
- 	sprd_dma_stop(schan);
- 
- 	vchan_get_all_descriptors(&schan->vc, &head);
- 	spin_unlock_irqrestore(&schan->vc.lock, flags);
- 
-+	if (cur_vd)
-+		sprd_dma_free_desc(cur_vd);
-+
- 	vchan_dma_desc_free_list(&schan->vc, &head);
- 	return 0;
- }
--- 
-2.20.1
-
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -176,6 +176,11 @@ static const struct pci_device_id intel_
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+ 	},
+ 	{
++		/* Comet Lake PCH */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x06a6),
++		.driver_data = (kernel_ulong_t)&intel_th_2x,
++	},
++	{
+ 		/* Ice Lake NNPI */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x45c5),
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
 
 
