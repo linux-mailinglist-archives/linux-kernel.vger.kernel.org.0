@@ -2,76 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA8CDF773F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B89F774B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfKKO7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:59:38 -0500
-Received: from foss.arm.com ([217.140.110.172]:46832 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726889AbfKKO7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:59:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD53031B;
-        Mon, 11 Nov 2019 06:59:37 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06D583F534;
-        Mon, 11 Nov 2019 06:59:36 -0800 (PST)
-Date:   Mon, 11 Nov 2019 14:59:34 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Tom Joseph <tjoseph@cadence.com>
-Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2]PCI: cadence: Convert drivers to core library
-Message-ID: <20191111145934.GC9653@e121166-lin.cambridge.arm.com>
-References: <1573475444-17903-1-git-send-email-tjoseph@cadence.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573475444-17903-1-git-send-email-tjoseph@cadence.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727164AbfKKPAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 10:00:31 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45704 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbfKKPAb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 10:00:31 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xABEmXYx144677;
+        Mon, 11 Nov 2019 14:59:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=lOs4Q755rWn2yin72lVv51mq0OtKjhD3FBFGWHRvPig=;
+ b=dIrSy8/AGjkkTWZ+Nfz4Uu6MBenA7ggIrP9bI8bSzjpdxYV3z6HFxFDyABTYjP2eUa6T
+ PcRB1HA2TmYOcCDu+0h+1cYk8+DIy0pvFPW5S9Az9ml2V1JzfTZZ4EsyZo+yYPjD76sC
+ PM0BvAzttOOD6KdgMHHIgv/NYCloDsoLWhkp094+yVAQS/PKdeslE4a1Q4EA4H0Dk++Q
+ x38ga1YUVMuSn0wcX8ivHgJ/X6BUV7htmFdkVyUoTo7GOMFOu+UC5DKHann4LFA62dzY
+ TfUY90p/E1Y9iNnQZ/QYFYyre30BBBdHZCs6AHXo+4RQg0kmc4+T/W9rn7odTTYtps/P TA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2w5mvtfg5p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Nov 2019 14:59:27 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xABEmNYt175996;
+        Mon, 11 Nov 2019 14:59:27 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2w6r8jrstx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Nov 2019 14:59:27 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xABExPxL011909;
+        Mon, 11 Nov 2019 14:59:26 GMT
+Received: from [192.168.14.112] (/79.182.207.213)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 11 Nov 2019 06:59:25 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH v1 2/3] KVM: VMX: Do not change PID.NDST when loading a
+ blocked vCPU
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <b61dc2b2-14be-4d4f-f512-5280010d930a@oracle.com>
+Date:   Mon, 11 Nov 2019 16:59:20 +0200
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jag Raman <jag.raman@oracle.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4E05E5FC-0064-47DE-B4B2-B3BDAF23C072@oracle.com>
+References: <20191106175602.4515-1-joao.m.martins@oracle.com>
+ <20191106175602.4515-3-joao.m.martins@oracle.com>
+ <15c8c821-25ff-eb62-abd3-8d7d69650744@redhat.com>
+ <314a4120-036c-e954-bc9f-e57dee3bbb7c@oracle.com>
+ <49912d14-1f79-2658-9471-4193807ad667@redhat.com>
+ <b61dc2b2-14be-4d4f-f512-5280010d930a@oracle.com>
+To:     Joao Martins <joao.m.martins@oracle.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9437 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=980
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911110137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9437 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911110137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 12:30:42PM +0000, Tom Joseph wrote:
-> This patch series intend to refactor the cadence pcie host and endpoint
-> driver files as a library, such that this can be used by other platform
-> drivers. A new directory 'cadence' is created to group all the cadence
-> derivatives.
-> 
-> v4:
-> - Updated commit title for [PATCH 2/2] as adviced by Andrew
-> 
-> v3:
-> - Commit logs rephrased and corrected as suggested by Andrew and Kishon
-> - Created a new folder 'cadence', as suggested by Kishon.
-> - Removed few unwanted codes, as pointed out by review comments
-> 
-> Tom Joseph (2):
->   PCI: cadence: Refactor driver to use as a core library
->   PCI: cadence: Move all files to per-device cadence directory
-> 
->  drivers/pci/controller/Kconfig                     |  29 +---
->  drivers/pci/controller/Makefile                    |   4 +-
->  drivers/pci/controller/cadence/Kconfig             |  45 ++++++
->  drivers/pci/controller/cadence/Makefile            |   5 +
->  .../pci/controller/{ => cadence}/pcie-cadence-ep.c |  96 +-----------
->  .../controller/{ => cadence}/pcie-cadence-host.c   |  95 +----------
->  drivers/pci/controller/cadence/pcie-cadence-plat.c | 174 +++++++++++++++++++++
->  .../pci/controller/{ => cadence}/pcie-cadence.c    |   0
->  .../pci/controller/{ => cadence}/pcie-cadence.h    |  77 +++++++++
->  9 files changed, 315 insertions(+), 210 deletions(-)
->  create mode 100644 drivers/pci/controller/cadence/Kconfig
->  create mode 100644 drivers/pci/controller/cadence/Makefile
->  rename drivers/pci/controller/{ => cadence}/pcie-cadence-ep.c (83%)
->  rename drivers/pci/controller/{ => cadence}/pcie-cadence-host.c (76%)
->  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-plat.c
->  rename drivers/pci/controller/{ => cadence}/pcie-cadence.c (100%)
->  rename drivers/pci/controller/{ => cadence}/pcie-cadence.h (82%)
-> 
 
-Applied to pci/cadence, thanks.
 
-Lorenzo
+> On 11 Nov 2019, at 16:56, Joao Martins <joao.m.martins@oracle.com> =
+wrote:
+>=20
+> On 11/11/19 2:50 PM, Paolo Bonzini wrote:
+>> On 11/11/19 15:48, Joao Martins wrote:
+>>>>>=20
+>>>>> Fixes: c112b5f50232 ("KVM: x86: Recompute PID.ON when clearing =
+PID.SN")
+>>>>> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+>>>>> Signed-off-by: Liran Alon <liran.alon@oracle.com>
+>>>> Something wrong in the SoB line?
+>>>>=20
+>>> I can't spot any mistake; at least it looks chained correctly for =
+me. What's the
+>>> issue you see with the Sob line?
+>>=20
+>> Liran's line after yours is confusing.  Did he help with the analysis =
+or
+>> anything like that?
+>>=20
+> He was initially reviewing my patches, but then helped improving the =
+problem
+> description in the commit messages so felt correct to give credit.
+>=20
+> 	Joao
+
+I think proper action is to just remove me from the SoB line.
+
+-Liran=
