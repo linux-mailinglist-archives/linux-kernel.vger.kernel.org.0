@@ -2,81 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3EA7F77E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:40:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF9BF77E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:40:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfKKPkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 10:40:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726965AbfKKPkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 10:40:03 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727065AbfKKPkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 10:40:41 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34153 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726845AbfKKPkk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 10:40:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573486840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WE2qSoaU6rMv77NUdEk+fYAcqsHv/qRqfECvV2K4njU=;
+        b=GLDB6akgbe16cbkcoKbuYnH4Es9+CnrzaoDoT3Tq2+AVu/ntTqE9lbVRn8zmJ28+fLiShS
+        0MOhlAB7F2tmlRt7hkYfpq0NuzkXwYB8NeowOr0xZJEMXcmqqH5P0LQLz7CC4KgDN5N6x2
+        qFaCFkjbwGWyu6y+PfCz0raK3RrKm90=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-231-lTx-VP4UPU2sPnhSdZ3KzQ-1; Mon, 11 Nov 2019 10:40:37 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E57D22196E;
-        Mon, 11 Nov 2019 15:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573486803;
-        bh=fIMS1YCPUO+d4NLi94WgM6DC/eRYtzSD8x7U2/QuiQs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zp6k4XU7wY4KEfsrdTGJ3QbS7/ydrxCFaPi4ky5+hjFqCqymmtiKfH0BmU+dCixYv
-         RV3rqMCVH8jycSEIfwUWOJbs2fn7eEECn9ITOX63fykqBS/dN5A5651lbCOvvjmC5V
-         OqCGiNGZpFlBXgP9+VFeMf0IPc1FIgqEQM6zvOCg=
-Date:   Mon, 11 Nov 2019 16:40:01 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     devel@driverdev.osuosl.org, Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging/octeon: Fix test build on MIPS
-Message-ID: <20191111154001.GA813474@kroah.com>
-References: <20191110175620.20290-1-linux@roeck-us.net>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A2E9ADB60;
+        Mon, 11 Nov 2019 15:40:35 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-116-65.ams2.redhat.com [10.36.116.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 88B9449AF;
+        Mon, 11 Nov 2019 15:40:30 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 16:40:28 +0100
+From:   Adrian Reber <areber@redhat.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>
+Subject: Re: [PATCH v7 1/2] fork: extend clone3() to support setting a PID
+Message-ID: <20191111154028.GF514519@dcbz.redhat.com>
+References: <20191111131704.656169-1-areber@redhat.com>
+ <20191111152514.GA11389@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20191111152514.GA11389@redhat.com>
+X-Operating-System: Linux (5.3.8-300.fc31.x86_64)
+X-Load-Average: 1.08 1.12 1.23
+X-Unexpected: The Spanish Inquisition
+X-GnuPG-Key: gpg --recv-keys D3C4906A
+Organization: Red Hat
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: lTx-VP4UPU2sPnhSdZ3KzQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <20191110175620.20290-1-linux@roeck-us.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 10, 2019 at 09:56:20AM -0800, Guenter Roeck wrote:
-> mips:allmodconfig fails to build.
-> 
-> drivers/staging/octeon/ethernet-rx.c: In function 'cvm_oct_poll':
-> drivers/staging/octeon/ethernet-defines.h:30:38: error:
-> 	'CONFIG_CAVIUM_OCTEON_CVMSEG_SIZE' undeclared
-> 
-> Octeon defines are only available if CONFIG_CPU_CAVIUM_OCTEON
-> is enabled. Since the driver uses those defines, we have to use
-> the dummy defines if this flag is not enabled.
-> 
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Fixes: 171a9bae68c7 ("staging/octeon: Allow test build on !MIPS")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> Cc: stable <stable@vger.kernel.org>
-> ---
->  drivers/staging/octeon/octeon-ethernet.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/octeon/octeon-ethernet.h b/drivers/staging/octeon/octeon-ethernet.h
-> index a8a864b40913..70848c6c86ec 100644
-> --- a/drivers/staging/octeon/octeon-ethernet.h
-> +++ b/drivers/staging/octeon/octeon-ethernet.h
-> @@ -14,7 +14,7 @@
->  #include <linux/of.h>
->  #include <linux/phy.h>
->  
-> -#ifdef CONFIG_MIPS
-> +#ifdef CONFIG_CPU_CAVIUM_OCTEON
->  
->  #include <asm/octeon/octeon.h>
->  
+On Mon, Nov 11, 2019 at 04:25:15PM +0100, Oleg Nesterov wrote:
+> On 11/11, Adrian Reber wrote:
+> >
+> > v7:
+> >  - changed set_tid to be an array to set the PID of a process
+> >    in multiple nested PID namespaces at the same time as discussed
+> >    at LPC 2019 (container MC)
+>=20
+> cough... iirc you convinced me this is not needed when we discussed
+> the previous version ;) Nevermind, probably my memory fools me.
 
-Already in my tree, sorry for the delay, will show up in 5.5-rc1 and get
-backported to 5.4.y
+You are right. You suggested the same thing and we didn't listen ;)
 
-thanks,
+> So far I only have some cosmetic nits,
 
-greg k-h
+Thanks for the quick review. I will try to apply your suggestions.
+
+> > @@ -175,6 +187,18 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+> >
+> >  =09for (i =3D ns->level; i >=3D 0; i--) {
+> >  =09=09int pid_min =3D 1;
+> > +=09=09int t_pos =3D 0;
+>                     ^^^^^
+>=20
+> I won't insist, but I'd suggest to cache set_tid[t_pos] instead to make
+> the code a bit more simple.
+>=20
+> > @@ -186,12 +210,24 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+> >  =09=09if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+> >  =09=09=09pid_min =3D RESERVED_PIDS;
+>=20
+> You can probably move this code into the "else" branch below.
+>=20
+> IOW, something like
+>=20
+>=20
+> =09for (i =3D ns->level; i >=3D 0; i--) {
+> =09=09int xxx =3D 0;
+>=20
+> =09=09if (set_tid_size) {
+> =09=09=09int pos =3D ns->level - i;
+>=20
+> =09=09=09xxx =3D set_tid[pos];
+> =09=09=09if (xxx < 1 || xxx >=3D pid_max)
+> =09=09=09=09return ERR_PTR(-EINVAL);
+> =09=09=09/* Also fail if a PID !=3D 1 is requested and no PID 1 exists */
+> =09=09=09if (xxx !=3D 1 && !tmp->child_reaper)
+> =09=09=09=09return ERR_PTR(-EINVAL);
+> =09=09=09if (!ns_capable(tmp->user_ns, CAP_SYS_ADMIN))
+> =09=09=09=09return ERR_PTR(-EPERM);
+> =09=09=09set_tid_size--;
+> =09=09}
+>=20
+> =09=09idr_preload(GFP_KERNEL);
+> =09=09spin_lock_irq(&pidmap_lock);
+>=20
+> =09=09if (xxx) {
+> =09=09=09nr =3D idr_alloc(&tmp->idr, NULL, xxx, xxx + 1,
+> =09=09=09=09=09GFP_ATOMIC);
+> =09=09=09/*
+> =09=09=09 * If ENOSPC is returned it means that the PID is
+> =09=09=09 * alreay in use. Return EEXIST in that case.
+> =09=09=09 */
+> =09=09=09if (nr =3D=3D -ENOSPC)
+> =09=09=09=09nr =3D -EEXIST;
+> =09=09} else {
+> =09=09=09int pid_min =3D 1;
+> =09=09=09/*
+> =09=09=09 * init really needs pid 1, but after reaching the
+> =09=09=09 * maximum wrap back to RESERVED_PIDS
+> =09=09=09 */
+> =09=09=09if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+> =09=09=09=09pid_min =3D RESERVED_PIDS;
+> =09=09=09/*
+> =09=09=09 * Store a null pointer so find_pid_ns does not find
+> =09=09=09 * a partially initialized PID (see below).
+> =09=09=09 */
+> =09=09=09nr =3D idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+> =09=09=09=09=09      pid_max, GFP_ATOMIC);
+> =09=09}
+>=20
+> =09=09...
+>=20
+> This way only the "if (set_tid_size)" block has to play with set_tid_size=
+/set_tid.
+>=20
+> note also that this way we can easily allow set_tid[some_level] =3D=3D 0,=
+ we can
+> simply do
+>=20
+> =09-=09if (xxx < 1 || xxx >=3D pid_max)
+> =09+=09if (xxx < 0 || xxx >=3D pid_max)
+>=20
+> although I don't think this is really useful.
+
+Yes. I explicitly didn't allow 0 as a PID as I didn't thought it would
+be useful (or maybe even valid).
+
+=09=09Adrian
+
