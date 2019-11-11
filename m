@@ -2,103 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E17D6F7311
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 12:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 302E1F7315
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 12:30:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKKL25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 06:28:57 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41241 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfKKL25 (ORCPT
+        id S1726915AbfKKLaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 06:30:18 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36595 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfKKLaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 06:28:57 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so14196004wrm.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 03:28:56 -0800 (PST)
+        Mon, 11 Nov 2019 06:30:18 -0500
+Received: by mail-io1-f67.google.com with SMTP id s3so14202179ioe.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 03:30:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=VCIU/ruaYoPrO6tp9vJ9FadSx4Mgkcrp/rqcgWyosK4=;
-        b=rt0hKZf8KBrscbpSv+fqIleKs28btBwXk5Dvhzd7aPfW6psShTE5FTBv1mwp08YNYb
-         H2EP6L7Ke9t/OMWMjHoWD6oMoigiNhUXGrlLtM2n7322seTdWsDcige5HkKumIyNsU5P
-         yaNTiNmVXGLnBzGQ/k6vo2L2dZpu//WA+wKkXwmzku0FQnpZeH9+ETc62vZr9AHrt66y
-         L71y5gKugg1Ke73hs3iEryZY78WMuTUaVME8ncaUff5J7L3DwK3z06AYUgnrVgGghSqW
-         EFp+dAIecAK/rVPgpzHoz5sTHSD7CAe/Dti1JlRuUMpR0WyiWGwtIHi2sVOp/uHPZqSD
-         dOgQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=ahQjEqN0msxnPPtBKJuvO8gARkgG9QlCn5oGRaitOGA=;
+        b=hYy71oDk0ja97PxEbmtpSVsduEg7VwMY1uZVO3hdvwxcJjr9uElhRtgPjZK9xaXjVP
+         7G8CVlQxODXEWaB2tzfSdsMMPUSHz0zr/+KG+PUQwMu/MpNyg+eSTiPImDJk1K9Dt7hh
+         KGSze/FIO0fmwmDIsqL2avCTGceEfNUt3WibpmaiDm9lN/8XXxs/+O74BTMXJV2t2f2/
+         w3rNXDTmdS6FdtnkSFdqoyTAKEdWGqM8ZBNL+O4qEYH7Uu8Rnyoq5sI0pUHDSYCbAemO
+         4It66FAH0lds+x+ZSGheTYs1puDjhyHtU9yKiXjxadjBQdyB3fbp22sYuJ5qJz0+p/Og
+         /UQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=VCIU/ruaYoPrO6tp9vJ9FadSx4Mgkcrp/rqcgWyosK4=;
-        b=TYh0BQyZKs3jJcoqhtmQouYD8L1lcwMeuxTQx1oG0UKvWejR5HEYeNCQbKvPwIUY6v
-         i5E72TFvAs3e5iL2DUtnj1GXEfFMBccaPz3F8zKV+59trOfQ2KgUVjRZNkUPEZsvSHWe
-         HCI8R1SF8TxaelmOw3dwA068fT8BZqcK70pnKeH+xDVCJgJoLBRhpwFaozpPKTIhScyN
-         w9fmpRc0dU5gGCX1m/z4sqki10PhqVNZ2OvBtr8D1YQ/SZ9cpDIUdRbsLd9eoU6HYmdd
-         OxlKsJ78qKZa2yo1+FMjPwdtHvEbHCOBRzjPNWKvwXPpZce1kHPnrUHEJ8qGP90VY+bq
-         dXYQ==
-X-Gm-Message-State: APjAAAWNIWBEmveyN3lQxEGc4WPsnPojXpWiHGiZngbM3HSK1kz5e63t
-        Cx8K8S9GMYO6Cd9poBWN4BSfSA==
-X-Google-Smtp-Source: APXvYqyMJgtgV0bLvBkQaySmSbtMQNWN+rcf6xUT/gS+40mNdpwznf/9DJgGBm2Sw5a5ebr8gKkBww==
-X-Received: by 2002:a05:6000:343:: with SMTP id e3mr21544323wre.20.1573471735373;
-        Mon, 11 Nov 2019 03:28:55 -0800 (PST)
-Received: from dell ([95.147.198.88])
-        by smtp.gmail.com with ESMTPSA id m3sm17705312wrb.67.2019.11.11.03.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 03:28:54 -0800 (PST)
-Date:   Mon, 11 Nov 2019 11:28:42 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Kiran Gunda <kgunda@codeaurora.org>
-Cc:     swboyd@chromium.org, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org
-Subject: Re: [PATCH V2] mfd: qcom-spmi-pmic: Add support for pm6150 and
- pm6150l
-Message-ID: <20191111112842.GK3218@dell>
-References: <1572931309-16250-1-git-send-email-kgunda@codeaurora.org>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=ahQjEqN0msxnPPtBKJuvO8gARkgG9QlCn5oGRaitOGA=;
+        b=GbTcnUjal6eoZzYd/mUY6E4rAInqGJ2KBidDdkvNr9TcFDy0dEX0jXq8KFGfdO9+/W
+         F/x3R5DT+p+bFN/f9TPkiKHz+by+KqD/WVHWo5hjT4WJFWdBe+bsoOnoYngVW7BTOmNf
+         bSL5wRn4r5ZhbLy3xJ4O9UfWbfkYzMndfD80fQCxAvR/4AgRN7jf9xMWiJWpNfLFj9ob
+         DE/ifPQDXm/NVqbiVfJSJm8Atcr4WjZeNoX+O49Ohrjobg8d3fTsLxMwOtvloyNuOHik
+         ySKsMVI16DwYpKkM4T6HHhjPvbJH0+TDaD+sKqh1U2zujsRIGA75Zl18xLESwBiJJFzx
+         vBxQ==
+X-Gm-Message-State: APjAAAXgvTKleXQvSHX4jHMcOCemuEbZqIhKpiUZBU0TxtdBkhHvQn6S
+        VO6byNCZQyCEIfwLwNxSkGiQ+p4sGcE1X6/wpKk=
+X-Google-Smtp-Source: APXvYqxtuWCXHjaN3FBSTnPjRKQT8jcVJaZ1Ox41G//PoAjgopozEZ4uFcuGY1n3pEMJBOafjp0THAGDGgLTGUPqXTs=
+X-Received: by 2002:a05:6638:6b6:: with SMTP id d22mr25058629jad.60.1573471817372;
+ Mon, 11 Nov 2019 03:30:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1572931309-16250-1-git-send-email-kgunda@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a6b:8dcc:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 03:30:17
+ -0800 (PST)
+Reply-To: jessicavail090@gmail.com
+From:   Jessica Vail <dennis.daniels275@gmail.com>
+Date:   Mon, 11 Nov 2019 11:30:17 +0000
+Message-ID: <CAEKsyWFn-AHKR3KrkjJc_fP-vjbL2pPtr4csRnT=LBJoFGubGw@mail.gmail.com>
+Subject: Hi
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 05 Nov 2019, Kiran Gunda wrote:
+Hi dear,
 
-> Add the compatibles and PMIC ids for pm6150 and pm6150l PMICs
-> found on SC7180 based platforms.
-> 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> ---
->  - Changes from V1:
->    Sorted the macros and compatibles.
-> 
->  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt | 2 ++
->  drivers/mfd/qcom-spmi-pmic.c                             | 4 ++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-> index 1437062..b5fc64e 100644
-> --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-> +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-> @@ -32,6 +32,8 @@ Required properties:
->                     "qcom,pm8998",
->                     "qcom,pmi8998",
->                     "qcom,pm8005",
-> +		   "qcom,pm6150",
-> +		   "qcom,pm6150l",
+I'm Jessica Vail, from the United States,please i wish to have a
+communication with you.
 
-Tabbing looks off.
+I am waiting for your answer,
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Jessica Vail
