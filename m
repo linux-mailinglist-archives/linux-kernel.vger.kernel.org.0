@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241B3F6D16
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 04:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C3BF6D0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 04:05:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfKKDFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 22:05:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54290 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726756AbfKKDEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726893AbfKKDEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 10 Nov 2019 22:04:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54300 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726763AbfKKDEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 22:04:50 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0EC3AFF7;
-        Mon, 11 Nov 2019 03:04:48 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 3F824B13E;
+        Mon, 11 Nov 2019 03:04:49 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH 1/7] arm64: dts: realtek: rtd129x: Fix GIC CPU masks for RTD1293
-Date:   Mon, 11 Nov 2019 04:04:28 +0100
-Message-Id: <20191111030434.29977-2-afaerber@suse.de>
+Subject: [PATCH 2/7] arm64: dts: realtek: rtd129x: Use reserved-memory for RPC regions
+Date:   Mon, 11 Nov 2019 04:04:29 +0100
+Message-Id: <20191111030434.29977-3-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191111030434.29977-1-afaerber@suse.de>
 References: <20191111030434.29977-1-afaerber@suse.de>
@@ -35,92 +35,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert from GIC_CPU_MASK_RAW() to GIC_CPU_MASK_SIMPLE().
+Move /reserved-memory node from RTD1295 to RTD129x DT.
+Convert RPC /memreserve/s into /reserved-memory nodes.
 
-In case of RTD1293 adjust the arch timer and VGIC interrupts'
-CPU masks to its smaller number of CPUs.
-
-Fixes: cf976f660ee8 ("arm64: dts: realtek: Add RTD1293 and Synology DS418j")
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- arch/arm64/boot/dts/realtek/rtd1293.dtsi | 12 ++++++++----
- arch/arm64/boot/dts/realtek/rtd1295.dtsi |  8 ++++----
- arch/arm64/boot/dts/realtek/rtd1296.dtsi |  8 ++++----
- 3 files changed, 16 insertions(+), 12 deletions(-)
+ arch/arm64/boot/dts/realtek/rtd1295.dtsi | 13 +------------
+ arch/arm64/boot/dts/realtek/rtd129x.dtsi | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/realtek/rtd1293.dtsi b/arch/arm64/boot/dts/realtek/rtd1293.dtsi
-index bd4e22723f7b..2d92b56ac94d 100644
---- a/arch/arm64/boot/dts/realtek/rtd1293.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd1293.dtsi
-@@ -36,16 +36,20 @@
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 14
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 11
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 10
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>;
-+			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
- 
- &arm_pmu {
- 	interrupt-affinity = <&cpu0>, <&cpu1>;
- };
-+
-+&gic {
-+	interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+};
 diff --git a/arch/arm64/boot/dts/realtek/rtd1295.dtsi b/arch/arm64/boot/dts/realtek/rtd1295.dtsi
-index 93f0e1d97721..34f6cc6f16fe 100644
+index 34f6cc6f16fe..1402abe80ea1 100644
 --- a/arch/arm64/boot/dts/realtek/rtd1295.dtsi
 +++ b/arch/arm64/boot/dts/realtek/rtd1295.dtsi
-@@ -61,13 +61,13 @@
+@@ -2,7 +2,7 @@
+ /*
+  * Realtek RTD1295 SoC
+  *
+- * Copyright (c) 2016-2017 Andreas Färber
++ * Copyright (c) 2016-2019 Andreas Färber
+  */
+ 
+ #include "rtd129x.dtsi"
+@@ -47,17 +47,6 @@
+ 		};
+ 	};
+ 
+-	reserved-memory {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges;
+-
+-		tee@10100000 {
+-			reg = <0x10100000 0xf00000>;
+-			no-map;
+-		};
+-	};
+-
  	timer {
  		compatible = "arm,armv8-timer";
  		interrupts = <GIC_PPI 13
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 14
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 11
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 10
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>;
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
+diff --git a/arch/arm64/boot/dts/realtek/rtd129x.dtsi b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
+index 4433114476f5..8d80cca945bc 100644
+--- a/arch/arm64/boot/dts/realtek/rtd129x.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
+@@ -2,14 +2,12 @@
+ /*
+  * Realtek RTD1293/RTD1295/RTD1296 SoC
+  *
+- * Copyright (c) 2016-2017 Andreas Färber
++ * Copyright (c) 2016-2019 Andreas Färber
+  */
  
-diff --git a/arch/arm64/boot/dts/realtek/rtd1296.dtsi b/arch/arm64/boot/dts/realtek/rtd1296.dtsi
-index 0f9e59cac086..fb864a139c97 100644
---- a/arch/arm64/boot/dts/realtek/rtd1296.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd1296.dtsi
-@@ -50,13 +50,13 @@
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 14
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 11
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 10
--			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>;
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
+ /memreserve/	0x0000000000000000 0x0000000000030000;
+-/memreserve/	0x000000000001f000 0x0000000000001000;
+ /memreserve/	0x0000000000030000 0x00000000000d0000;
+ /memreserve/	0x0000000001b00000 0x00000000004be000;
+-/memreserve/	0x0000000001ffe000 0x0000000000004000;
  
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/reset/realtek,rtd1295.h>
+@@ -19,6 +17,25 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		rpc_comm: rpc@1f000 {
++			reg = <0x1f000 0x1000>;
++		};
++
++		rpc_ringbuf: rpc@1ffe000 {
++			reg = <0x1ffe000 0x4000>;
++		};
++
++		tee: tee@10100000 {
++			reg = <0x10100000 0xf00000>;
++			no-map;
++		};
++	};
++
+ 	arm_pmu: arm-pmu {
+ 		compatible = "arm,cortex-a53-pmu";
+ 		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.16.4
 
