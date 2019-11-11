@@ -2,73 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13FB3F785F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0FBF7864
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:07:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfKKQHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:07:02 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:34310 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfKKQHC (ORCPT
+        id S1727010AbfKKQHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:07:47 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22961 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726845AbfKKQHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:07:02 -0500
-Received: by mail-io1-f71.google.com with SMTP id a13so13831718iol.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:07:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=gFl20HjZDqq+nPQeJUYSxv5Bfmo8ZIyMRQ74ccfUZsc=;
-        b=MES1xGW/S8lVHtljDnvMNfc59ZpNbXLbdnYbfIk34BqpFhYGG709rxX6R7YFsKpy9k
-         b64gZfxyLordDKipYgGBAncmzTj+kQfeUhcY+iTQbj3RNsQP4IA1WhR0Hhf4a9bSW58N
-         1LBnWoI72sKdnhTB4UcMe8eHWbTsJ84YPpc/vlo4cRpcTOvbLVtEe4UNBwaa1fDeC+H9
-         O3YxdinRsC4LVzDZ3dMJw/YeLV+b+u9uCzGulaiE6BhCSeyUkbxp2mAdusM023o1znNL
-         GcRl8N6yqYS1RgIt7GTA7Yt0/UOb/vFpjnHLKKa/PmARyH0TqU3UbqxTRqBU4TK52ZHA
-         pF3g==
-X-Gm-Message-State: APjAAAVeSybTIm7qb7o7slxKiC3DPig0ivKse13aRRy1ufaCsoP1XM0A
-        Dawh/3oO+ZwKH+S9H5T3PsSTPrexAWeRN2OGz7QYpVqcPNms
-X-Google-Smtp-Source: APXvYqywxuAwIOiw8d0TKszs0yk4o9kaGMvUJ9K55SHH6Im/F08TWUOQQw1vBGPnwfBhSwGcTMIJv9gca9cNfCX3fkgdzA02Qkyu
+        Mon, 11 Nov 2019 11:07:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573488465;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=J8ErC4PVdVGwBCyt7dEhWq/0IJ1CoVRGTxaHLB8Usq8=;
+        b=Wu/WJSWib3Csf3EFxK36wJidLLasgG9eSg3mKt6EYDQSUkKFGwoDrFd+v/VPC6kaJG2MX4
+        iLm73jfSyKfIX4z/jAxBHL8RY6i0rA/fIS2KVeY77pYX55jN+rmt8GjWAroo1FLudBsBbT
+        8ovkpWLLJDJtataYNQnSZVOvS+xrasE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-292-yzbKBR5MO1a2Nt2c4kU-hQ-1; Mon, 11 Nov 2019 11:07:42 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 700A0100551C;
+        Mon, 11 Nov 2019 16:07:40 +0000 (UTC)
+Received: from krava (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D399210027A5;
+        Mon, 11 Nov 2019 16:07:38 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 17:07:38 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] perf session: Fix compression processing
+Message-ID: <20191111160738.GD26980@krava>
+References: <20191103222441.GE8251@krava>
+ <d57725e6-e62f-b37e-6cb4-28bf521faaea@linux.intel.com>
+ <20191111145640.GB26980@krava>
+ <69782f54-f5f5-f89f-9c8d-172d4de331d0@linux.intel.com>
+ <20191111154612.GC26980@krava>
+ <84f6c330-95bc-b615-4366-8a243d1f5c20@linux.intel.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:dd0f:: with SMTP id n15mr31057502ilm.146.1573488421314;
- Mon, 11 Nov 2019 08:07:01 -0800 (PST)
-Date:   Mon, 11 Nov 2019 08:07:01 -0800
-In-Reply-To: <000000000000aae1480596a5632b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000692ac105971452c5@google.com>
-Subject: Re: WARNING: refcount bug in j1939_netdev_start
-From:   syzbot <syzbot+afd421337a736d6c1ee6@syzkaller.appspotmail.com>
-To:     bst@pengutronix.de, davem@davemloft.net,
-        dev.kurt@vandijck-laurijssen.be, ecathinds@gmail.com,
-        kernel@pengutronix.de, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@rempel-privat.de,
-        lkp@intel.com, maxime.jayat@mobile-devices.fr, mkl@pengutronix.de,
-        netdev@vger.kernel.org, o.rempel@pengutronix.de, robin@protonic.nl,
-        socketcan@hartkopp.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <84f6c330-95bc-b615-4366-8a243d1f5c20@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: yzbKBR5MO1a2Nt2c4kU-hQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Mon, Nov 11, 2019 at 06:53:35PM +0300, Alexey Budankov wrote:
+> On 11.11.2019 18:46, Jiri Olsa wrote:
+> > On Mon, Nov 11, 2019 at 06:41:47PM +0300, Alexey Budankov wrote:
+> >> On 11.11.2019 17:56, Jiri Olsa wrote:
+> >>> On Mon, Nov 11, 2019 at 05:38:49PM +0300, Alexey Budankov wrote:
+> >>>>
+> >>>> On 04.11.2019 1:24, Jiri Olsa wrote:
+> >>>>> hi,
+> >>>> <SNIP>
+> >>>>> ---
+> >>>>> The compressed data processing occasionally fails with:
+> >>>>>   $ perf report --stdio -vv
+> >>>>>   decomp (B): 44519 to 163000
+> >>>>>   decomp (B): 48119 to 174800
+> >>>>>   decomp (B): 65527 to 131072
+> >>>>>   fetch_mmaped_event: head=3D0x1ffe0 event->header_size=3D0x28, mma=
+p_size=3D0x20000: fuzzed perf.data?
+> >>>>>   Error:
+> >>>>>   failed to process sample
+> >>>>>   ...
+> >>>>>
+> >>>>> It's caused by recent fuzzer fix that does not take into account
+> >>>>> that compressed data do not need to by fully present in the buffer,
+> >>>>> so it's ok to just return NULL and not to fail.
+> >>>>>
+> >>>>> Fixes: 57fc032ad643 ("perf session: Avoid infinite loop when seeing=
+ invalid header.size")
+> >>>>> Link: http://lkml.kernel.org/n/tip-q1biqscs4stcmc9bs1iokfro@git.ker=
+nel.org
+> >>>>> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> >>>>> ---
+> >>>>>  tools/perf/util/session.c | 8 +++++---
+> >>>>>  1 file changed, 5 insertions(+), 3 deletions(-)
+> >>>>>
+> >>>>> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> >>>>> index f07b8ecb91bc..3589ed14a629 100644
+> >>>>> --- a/tools/perf/util/session.c
+> >>>>> +++ b/tools/perf/util/session.c
+> >>>>> @@ -1959,7 +1959,7 @@ static int __perf_session__process_pipe_event=
+s(struct perf_session *session)
+> >>>>> =20
+> >>>>>  static union perf_event *
+> >>>>>  fetch_mmaped_event(struct perf_session *session,
+> >>>>> -=09=09   u64 head, size_t mmap_size, char *buf)
+> >>>>> +=09=09   u64 head, size_t mmap_size, char *buf, bool decomp)
+> >>>>
+> >>>> bools in interface make code less transparent.
+> >>>>
+> >>>>>  {
+> >>>>>  =09union perf_event *event;
+> >>>>> =20
+> >>>>> @@ -1979,6 +1979,8 @@ fetch_mmaped_event(struct perf_session *sessi=
+on,
+> >>>>>  =09=09/* We're not fetching the event so swap back again */
+> >>>>>  =09=09if (session->header.needs_swap)
+> >>>>>  =09=09=09perf_event_header__bswap(&event->header);
+> >>>>> +=09=09if (decomp)
+> >>>>> +=09=09=09return NULL;
+> >>>>>  =09=09pr_debug("%s: head=3D%#" PRIx64 " event->header_size=3D%#x, =
+mmap_size=3D%#zx: fuzzed perf.data?\n",
+> >>>>>  =09=09=09 __func__, head, event->header.size, mmap_size);
+> >>>>>  =09=09return ERR_PTR(-EINVAL);
+> >>>>> @@ -1997,7 +1999,7 @@ static int __perf_session__process_decomp_eve=
+nts(struct perf_session *session)
+> >>>>>  =09=09return 0;
+> >>>>> =20
+> >>>>>  =09while (decomp->head < decomp->size && !session_done()) {
+> >>>>> -=09=09union perf_event *event =3D fetch_mmaped_event(session, deco=
+mp->head, decomp->size, decomp->data);
+> >>>>> +=09=09union perf_event *event =3D fetch_mmaped_event(session, deco=
+mp->head, decomp->size, decomp->data, true);
+> >>>>
+> >>>> It looks like this call can be skipped, at all, in this case.
+> >>>
+> >>> not sure what you mean, we are in decomp code no?
+> >>
+> >> Ok, it is inside "not fetching" branch.=20
+> >> NULL return value means to proceed getting further over the trace.
+> >> Checking record type =3D=3D COMPRESSED at the higher level could=20
+> >> probably be cleaner fix and also work faster.
+> >=20
+> > any chance you could post the fix? the patch I did was a
+> > quick fix to get the feature working for presentation ;-)
+> > you're probably thinking of the proper approach
+>=20
+> Please share the exact reproducing steps=20
+> so I could come up with something.
 
-commit 9d71dd0c70099914fcd063135da3c580865e924c
-Author: The j1939 authors <linux-can@vger.kernel.org>
-Date:   Mon Oct 8 09:48:36 2018 +0000
+'perf record -z' for longer workloads
 
-     can: add support of SAE J1939 protocol
+jirka
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17100f3ae00000
-start commit:   9805a683 Merge branch 'x86-urgent-for-linus' of git://git...
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=14900f3ae00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10900f3ae00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=896c87b73c6fcda6
-dashboard link: https://syzkaller.appspot.com/bug?extid=afd421337a736d6c1ee6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d713c6e00000
-
-Reported-by: syzbot+afd421337a736d6c1ee6@syzkaller.appspotmail.com
-Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
