@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2764FF7F12
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:09:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B427FF7DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728580AbfKKSfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:35:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53588 "EHLO mail.kernel.org"
+        id S1730038AbfKKTAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:00:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727417AbfKKSfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:35:38 -0500
+        id S1727543AbfKKSxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:53:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D9FB21783;
-        Mon, 11 Nov 2019 18:35:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0FC4214E0;
+        Mon, 11 Nov 2019 18:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497337;
-        bh=C5xQkwwGDricWqdA8SR940TB54ZWtqNg32onbdI9kCY=;
+        s=default; t=1573498419;
+        bh=MegO0AW1S5ijek+lrnxfYqx5M+fzH8XtDZcN2iYagM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CWzX311XaB38ezuKJHWuffEVeNYMZu4IcnenIoRRyfczWmIQwRdnkX1zvZIQzUffT
-         aucLJZK778GfcuD1xo1qnJD2pshL3xhi+iynQDMuZ940GgBLufqtsqMnXxYlq9jbED
-         M7X0BLaJLI1dt/pSRkOOpV+hnjoU/1obGFrxFM0I=
+        b=hmJAva2jpEk3pfQ65FmNbBSdiw7RcIjdaF7hjDvvMnXHrUmnN1QSBl39wusAvt5gY
+         p4zn2qQQP5Ig6FRqfPOhApS3R4tO0BXJadLYui/tWUCnPPvqVMJTF9xb1zWw0LgHJs
+         rL7T3hRwxnO35faN/vCIIboShZVcAxrdFS90Jbnk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 002/105] CDC-NCM: handle incomplete transfer of MTU
-Date:   Mon, 11 Nov 2019 19:27:32 +0100
-Message-Id: <20191111181422.777911819@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Joe Burmeister <joe.burmeister@devtank.co.uk>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 5.3 074/193] can: c_can: c_can_poll(): only read status register after status IRQ
+Date:   Mon, 11 Nov 2019 19:27:36 +0100
+Message-Id: <20191111181506.582132325@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
 
-[ Upstream commit 332f989a3b0041b810836c5c3747e59aad7e9d0b ]
+commit 3cb3eaac52c0f145d895f4b6c22834d5f02b8569 upstream.
 
-A malicious device may give half an answer when asked
-for its MTU. The driver will proceed after this with
-a garbage MTU. Anything but a complete answer must be treated
-as an error.
+When the status register is read without the status IRQ pending, the
+chip may not raise the interrupt line for an upcoming status interrupt
+and the driver may miss a status interrupt.
 
-V2: used sizeof as request by Alexander
+It is critical that the BUSOFF status interrupt is forwarded to the
+higher layers, since no more interrupts will follow without
+intervention.
 
-Reported-and-tested-by: syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Thanks to Wolfgang and Joe for bringing up the first idea.
+
+Signed-off-by: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+Cc: Wolfgang Grandegger <wg@grandegger.com>
+Cc: Joe Burmeister <joe.burmeister@devtank.co.uk>
+Fixes: fa39b54ccf28 ("can: c_can: Get rid of pointless interrupts")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/usb/cdc_ncm.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/usb/cdc_ncm.c
-+++ b/drivers/net/usb/cdc_ncm.c
-@@ -578,8 +578,8 @@ static void cdc_ncm_set_dgram_size(struc
- 	/* read current mtu value from device */
- 	err = usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
- 			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
--			      0, iface_no, &max_datagram_size, 2);
--	if (err < 0) {
-+			      0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
-+	if (err < sizeof(max_datagram_size)) {
- 		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
- 		goto out;
- 	}
-@@ -590,7 +590,7 @@ static void cdc_ncm_set_dgram_size(struc
- 	max_datagram_size = cpu_to_le16(ctx->max_datagram_size);
- 	err = usbnet_write_cmd(dev, USB_CDC_SET_MAX_DATAGRAM_SIZE,
- 			       USB_TYPE_CLASS | USB_DIR_OUT | USB_RECIP_INTERFACE,
--			       0, iface_no, &max_datagram_size, 2);
-+			       0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
- 	if (err < 0)
- 		dev_dbg(&dev->intf->dev, "SET_MAX_DATAGRAM_SIZE failed\n");
+---
+ drivers/net/can/c_can/c_can.c |   25 ++++++++++++++++++++-----
+ drivers/net/can/c_can/c_can.h |    1 +
+ 2 files changed, 21 insertions(+), 5 deletions(-)
+
+--- a/drivers/net/can/c_can/c_can.c
++++ b/drivers/net/can/c_can/c_can.c
+@@ -97,6 +97,9 @@
+ #define BTR_TSEG2_SHIFT		12
+ #define BTR_TSEG2_MASK		(0x7 << BTR_TSEG2_SHIFT)
  
++/* interrupt register */
++#define INT_STS_PENDING		0x8000
++
+ /* brp extension register */
+ #define BRP_EXT_BRPE_MASK	0x0f
+ #define BRP_EXT_BRPE_SHIFT	0
+@@ -1029,10 +1032,16 @@ static int c_can_poll(struct napi_struct
+ 	u16 curr, last = priv->last_status;
+ 	int work_done = 0;
+ 
+-	priv->last_status = curr = priv->read_reg(priv, C_CAN_STS_REG);
+-	/* Ack status on C_CAN. D_CAN is self clearing */
+-	if (priv->type != BOSCH_D_CAN)
+-		priv->write_reg(priv, C_CAN_STS_REG, LEC_UNUSED);
++	/* Only read the status register if a status interrupt was pending */
++	if (atomic_xchg(&priv->sie_pending, 0)) {
++		priv->last_status = curr = priv->read_reg(priv, C_CAN_STS_REG);
++		/* Ack status on C_CAN. D_CAN is self clearing */
++		if (priv->type != BOSCH_D_CAN)
++			priv->write_reg(priv, C_CAN_STS_REG, LEC_UNUSED);
++	} else {
++		/* no change detected ... */
++		curr = last;
++	}
+ 
+ 	/* handle state changes */
+ 	if ((curr & STATUS_EWARN) && (!(last & STATUS_EWARN))) {
+@@ -1083,10 +1092,16 @@ static irqreturn_t c_can_isr(int irq, vo
+ {
+ 	struct net_device *dev = (struct net_device *)dev_id;
+ 	struct c_can_priv *priv = netdev_priv(dev);
++	int reg_int;
+ 
+-	if (!priv->read_reg(priv, C_CAN_INT_REG))
++	reg_int = priv->read_reg(priv, C_CAN_INT_REG);
++	if (!reg_int)
+ 		return IRQ_NONE;
+ 
++	/* save for later use */
++	if (reg_int & INT_STS_PENDING)
++		atomic_set(&priv->sie_pending, 1);
++
+ 	/* disable all interrupts and schedule the NAPI */
+ 	c_can_irq_control(priv, false);
+ 	napi_schedule(&priv->napi);
+--- a/drivers/net/can/c_can/c_can.h
++++ b/drivers/net/can/c_can/c_can.h
+@@ -198,6 +198,7 @@ struct c_can_priv {
+ 	struct net_device *dev;
+ 	struct device *device;
+ 	atomic_t tx_active;
++	atomic_t sie_pending;
+ 	unsigned long tx_dir;
+ 	int last_status;
+ 	u16 (*read_reg) (const struct c_can_priv *priv, enum reg index);
 
 
