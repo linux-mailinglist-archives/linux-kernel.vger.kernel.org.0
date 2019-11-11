@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE24DF7AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FCEF7B52
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbfKKSbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:31:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47692 "EHLO mail.kernel.org"
+        id S1727656AbfKKSfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:35:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbfKKSbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:31:11 -0500
+        id S1728462AbfKKSfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:35:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4F4221783;
-        Mon, 11 Nov 2019 18:31:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 927C22184C;
+        Mon, 11 Nov 2019 18:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497070;
-        bh=RJg+NpvpsDYYNN2voNdfNoMG1zjJq7mpF5ZJMNMGIcQ=;
+        s=default; t=1573497304;
+        bh=jkFw479g9c3o3bHrBcjw+ehcmIV6VOjxiBTu98j3sag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MYwuQmVJOZVpVBizKOuQIS/yulijKj6DjrSi5YtRiaDIYhIC7w70vNtBSk78l/Fmj
-         i+vwbfrfqdVkLgLwpJ4qrIUEAVGUZhUq7uZCmeHEDIS5wPFQf5v+eQkEnetlXHn7Yv
-         iQ3EISoxmVz+fLDJeyzC1HDMR1eAqRg5Gpq94LFI=
+        b=Q5bkq66TrlDQgbrb2cNMq43OeU8BEgZBhqe9iTHdZ/lGdXsF1BzkzRNY6GlzBn5by
+         YnHfyJOZVU5WSI9cODqorTaDv2ezdY31kMxpbizDJxQAYEi/olTC97aLEfjdlskkbz
+         id4P7b76Tixnr3bSQkEaaothIAzjrRQLDQRL625o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +40,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 34/43] perf/x86/amd/ibs: Fix reading of the IBS OpData register and thus precise RIP validity
-Date:   Mon, 11 Nov 2019 19:28:48 +0100
-Message-Id: <20191111181324.929853900@linuxfoundation.org>
+Subject: [PATCH 4.9 49/65] perf/x86/amd/ibs: Fix reading of the IBS OpData register and thus precise RIP validity
+Date:   Mon, 11 Nov 2019 19:28:49 +0100
+Message-Id: <20191111181350.557559863@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -85,12 +85,14 @@ Link: https://lkml.kernel.org/r/20191023150955.30292-1-kim.phillips@amd.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/perf_event_amd_ibs.c |    2 +-
+ arch/x86/events/amd/ibs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/perf_event_amd_ibs.c
-+++ b/arch/x86/kernel/cpu/perf_event_amd_ibs.c
-@@ -555,7 +555,7 @@ static int perf_ibs_handle_irq(struct pe
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 112e3c4636b4f..a8317d384773a 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -624,7 +624,7 @@ fail:
  	if (event->attr.sample_type & PERF_SAMPLE_RAW)
  		offset_max = perf_ibs->offset_max;
  	else if (check_rip)
@@ -99,5 +101,8 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  	else
  		offset_max = 1;
  	do {
+-- 
+2.20.1
+
 
 
