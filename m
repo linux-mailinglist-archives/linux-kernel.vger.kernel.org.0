@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4153CF7B50
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C704AF7D9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfKKSfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:35:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52834 "EHLO mail.kernel.org"
+        id S1730107AbfKKS62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:58:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728445AbfKKSfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:35:02 -0500
+        id S1730952AbfKKS6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:58:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 184932173B;
-        Mon, 11 Nov 2019 18:35:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B59621655;
+        Mon, 11 Nov 2019 18:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497301;
-        bh=hSXP5BlIrHprB8jAsQ1pVwfYd3uQUcImPHcJBB0/Ahg=;
+        s=default; t=1573498705;
+        bh=htiOC1uVGR+O9cmER5N2/CdEIVGN+j7kvh9EzVsIIPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vJ+GeeP3fl/tTQqcwJjUAi8iCi7z1KOQ5b3aqXS+rad1fO4vZ7x5i4c+G2TK7jQDa
-         ZKKJ7sRk4rrGdNKxmjngnR24hh35luJeFYsyzeNEsa9PgZz8K8q8ME/JZdbdrslOsN
-         9L8QHWHmNd0Nkb6QHutjBl0uDloUfCTfprfYrq+g=
+        b=1hzb8tIxSGq/EujvfR5LNA6bltbbrZTDXXUrLvjT89URdw2U2fNKgt0RUiC/7ZzW/
+         ZrgQDV9O7/Ft6hlZBbVw91CNXkuSZ2TitC1eFX1a/gDaEvKoJve2RPK3tPO4JnjkeH
+         NqsU3Px2qsf1pAYKnVLtayoK7sLbfAKxB28NT+5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manfred Rudigier <manfred.rudigier@omicronenergy.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        Anton Eidelman <anton@lightbitslabs.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 58/65] igb: Fix constant media auto sense switching when no cable is connected
+Subject: [PATCH 5.3 156/193] nvme-multipath: fix possible io hang after ctrl reconnect
 Date:   Mon, 11 Nov 2019 19:28:58 +0100
-Message-Id: <20191111181354.197999818@linuxfoundation.org>
+Message-Id: <20191111181512.649678505@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
+From: Anton Eidelman <anton@lightbitslabs.com>
 
-[ Upstream commit 8d5cfd7f76a2414e23c74bb8858af7540365d985 ]
+[ Upstream commit af8fd0424713a2adb812d10d55e86718152cf656 ]
 
-At least on the i350 there is an annoying behavior that is maybe also
-present on 82580 devices, but was probably not noticed yet as MAS is not
-widely used.
+The following scenario results in an IO hang:
+1) ctrl completes a request with NVME_SC_ANA_TRANSITION.
+   NVME_NS_ANA_PENDING bit in ns->flags is set and ana_work is triggered.
+2) ana_work: nvme_read_ana_log() tries to get the ANA log page from the ctrl.
+   This fails because ctrl disconnects.
+   Therefore nvme_update_ns_ana_state() is not called
+   and NVME_NS_ANA_PENDING bit in ns->flags is not cleared.
+3) ctrl reconnects: nvme_mpath_init(ctrl,...) calls
+   nvme_read_ana_log(ctrl, groups_only=true).
+   However, nvme_update_ana_state() does not update namespaces
+   because nr_nsids = 0 (due to groups_only mode).
+4) scan_work calls nvme_validate_ns() finds the ns and re-validates OK.
 
-If no cable is connected on both fiber/copper ports the media auto sense
-code will constantly swap between them as part of the watchdog task and
-produce many unnecessary kernel log messages.
+Result:
+The ctrl is now live but NVME_NS_ANA_PENDING bit in ns->flags is still set.
+Consequently ctrl will never be considered a viable path by __nvme_find_path().
+IO will hang if ctrl is the only or the last path to the namespace.
 
-The swap code responsible for this behavior (switching to fiber) should
-not be executed if the current media type is copper and there is no signal
-detected on the fiber port. In this case we can safely wait until the
-AUTOSENSE_EN bit is cleared.
+More generally, while ctrl is reconnecting, its ANA state may change.
+And because nvme_mpath_init() requests ANA log in groups_only mode,
+these changes are not propagated to the existing ctrl namespaces.
+This may result in a mal-function or an IO hang.
 
-Signed-off-by: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Solution:
+nvme_mpath_init() will nvme_read_ana_log() with groups_only set to false.
+This will not harm the new ctrl case (no namespaces present),
+and will make sure the ANA state of namespaces gets updated after reconnect.
+
+Note: Another option would be for nvme_mpath_init() to invoke
+nvme_parse_ana_log(..., nvme_set_ns_ana_state) for each existing namespace.
+
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvme/host/multipath.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 7956176c2c73e..7e35bd6656307 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -1677,7 +1677,8 @@ static void igb_check_swap_media(struct igb_adapter *adapter)
- 	if ((hw->phy.media_type == e1000_media_type_copper) &&
- 	    (!(connsw & E1000_CONNSW_AUTOSENSE_EN))) {
- 		swap_now = true;
--	} else if (!(connsw & E1000_CONNSW_SERDESD)) {
-+	} else if ((hw->phy.media_type != e1000_media_type_copper) &&
-+		   !(connsw & E1000_CONNSW_SERDESD)) {
- 		/* copper signal takes time to appear */
- 		if (adapter->copper_tries < 4) {
- 			adapter->copper_tries++;
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 30de7efef0035..d320684d25b20 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -715,7 +715,7 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ 		goto out;
+ 	}
+ 
+-	error = nvme_read_ana_log(ctrl, true);
++	error = nvme_read_ana_log(ctrl, false);
+ 	if (error)
+ 		goto out_free_ana_log_buf;
+ 	return 0;
 -- 
 2.20.1
 
