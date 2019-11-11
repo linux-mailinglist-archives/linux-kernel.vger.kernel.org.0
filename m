@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E56D2F7C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:42:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45902F7B30
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbfKKSmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:42:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33970 "EHLO mail.kernel.org"
+        id S1727394AbfKKSda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:33:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727520AbfKKSmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:42:44 -0500
+        id S1727345AbfKKSdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:33:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C6D721655;
-        Mon, 11 Nov 2019 18:42:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B27F21655;
+        Mon, 11 Nov 2019 18:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497763;
-        bh=e5fGjKC5doeQl5lfiI/9I0APVgbO57C6bfP4IPd3Mrw=;
+        s=default; t=1573497202;
+        bh=hsj6mtJD8TKRNhJwMDJL0ulHgOWI8gc8BwKJnbp9dbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aTYw4TCRcgKKE5JjUJd1id7AtzFWOYhN/UWBeoIGbcsFiGWPNynZtmc8LJLTmPLhv
-         PtJQH5TjhN98yWApG5t/KBohkNEekYgwVvWNWp3GYWHDm0GPB8uxcx28wqsApm+b4b
-         E+LjfTqMjhm4W3jDyfMeavFE7y/gCL43nwwN+0N0=
+        b=LekTA0vfa67Ytojm6gpfU5L51WYczedNtxn5zofJL4dnD+MgWPhLy3pPwyWlHLRNR
+         Pvluz6Hc+M7hlWgm8OSITht+J5wPo077ABLQbqiOp75xVNV1eq7nKGBEGKUjtqvVv+
+         DC6mZasjEbdnJwi3p6K9wi+8OsopGuwDo4o5rrnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+863724e7128e14b26732@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 051/125] can: peak_usb: fix slab info leak
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 10/65] ALSA: bebob: fix to detect configured source of sampling clock for Focusrite Saffire Pro i/o series
 Date:   Mon, 11 Nov 2019 19:28:10 +0100
-Message-Id: <20191111181447.158385769@linuxfoundation.org>
+Message-Id: <20191111181339.256403940@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit f7a1337f0d29b98733c8824e165fca3371d7d4fd upstream.
+commit 706ad6746a66546daf96d4e4a95e46faf6cf689a upstream.
 
-Fix a small slab info leak due to a failure to clear the command buffer
-at allocation.
+For Focusrite Saffire Pro i/o, the lowest 8 bits of register represents
+configured source of sampling clock. The next lowest 8 bits represents
+whether the configured source is actually detected or not just after
+the register is changed for the source.
 
-The first 16 bytes of the command buffer are always sent to the device
-in pcan_usb_send_cmd() even though only the first two may have been
-initialised in case no argument payload is provided (e.g. when waiting
-for a response).
+Current implementation evaluates whole the register to detect configured
+source. This results in failure due to the next lowest 8 bits when the
+source is connected in advance.
 
-Fixes: bb4785551f64 ("can: usb: PEAK-System Technik USB adapters driver core")
-Cc: stable <stable@vger.kernel.org>     # 3.4
-Reported-by: syzbot+863724e7128e14b26732@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+This commit fixes the bug.
+
+Fixes: 25784ec2d034 ("ALSA: bebob: Add support for Focusrite Saffire/SaffirePro series")
+Cc: <stable@vger.kernel.org> # v3.16+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Link: https://lore.kernel.org/r/20191102150920.20367-1-o-takashi@sakamocchi.jp
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/usb/peak_usb/pcan_usb_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/firewire/bebob/bebob_focusrite.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/can/usb/peak_usb/pcan_usb_core.c
-+++ b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
-@@ -758,7 +758,7 @@ static int peak_usb_create_dev(const str
- 	dev = netdev_priv(netdev);
+--- a/sound/firewire/bebob/bebob_focusrite.c
++++ b/sound/firewire/bebob/bebob_focusrite.c
+@@ -28,6 +28,8 @@
+ #define SAFFIRE_CLOCK_SOURCE_SPDIF		1
  
- 	/* allocate a buffer large enough to send commands */
--	dev->cmd_buf = kmalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);
-+	dev->cmd_buf = kzalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);
- 	if (!dev->cmd_buf) {
- 		err = -ENOMEM;
- 		goto lbl_free_candev;
+ /* clock sources as returned from register of Saffire Pro 10 and 26 */
++#define SAFFIREPRO_CLOCK_SOURCE_SELECT_MASK	0x000000ff
++#define SAFFIREPRO_CLOCK_SOURCE_DETECT_MASK	0x0000ff00
+ #define SAFFIREPRO_CLOCK_SOURCE_INTERNAL	0
+ #define SAFFIREPRO_CLOCK_SOURCE_SKIP		1 /* never used on hardware */
+ #define SAFFIREPRO_CLOCK_SOURCE_SPDIF		2
+@@ -190,6 +192,7 @@ saffirepro_both_clk_src_get(struct snd_b
+ 		map = saffirepro_clk_maps[1];
+ 
+ 	/* In a case that this driver cannot handle the value of register. */
++	value &= SAFFIREPRO_CLOCK_SOURCE_SELECT_MASK;
+ 	if (value >= SAFFIREPRO_CLOCK_SOURCE_COUNT || map[value] < 0) {
+ 		err = -EIO;
+ 		goto end;
 
 
