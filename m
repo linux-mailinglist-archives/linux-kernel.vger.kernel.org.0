@@ -2,140 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26BD2F75E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:04:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 265C1F75F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:06:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfKKOEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:04:23 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:52345 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726834AbfKKOEX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:04:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573481061;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=u0pgqK+Di47rvdGG8Ohb/KWFrkUcTYrwZy2v64eurK4=;
-        b=FBakSwx0eb8Wklfylv7BUV4dY64e0MHhBIMSM17m6J+3HZiSoSZNJvKLnFi30nJOyyHvxM
-        N12O5WHo6TdwCHQfChk4B5ZTIkBGUra6ip1R0X9M/SpwR/mPoX1g0m+ROhwk1PvqjN8zFN
-        WFjdKfO3svFlWzoIccH9+QsHD3ca81c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-u4gGE7GCPoWB9r04_uyJsw-1; Mon, 11 Nov 2019 09:04:18 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3B0A7107ACC6;
-        Mon, 11 Nov 2019 14:04:17 +0000 (UTC)
-Received: from krava (unknown [10.40.205.88])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1B735289AA;
-        Mon, 11 Nov 2019 14:04:15 +0000 (UTC)
-Date:   Mon, 11 Nov 2019 15:04:15 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     jolsa@kernel.org, acme@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v5 13/13] perf stat: Use affinity for enabling/disabling
- events
-Message-ID: <20191111140415.GA26980@krava>
-References: <20191107181646.506734-1-andi@firstfloor.org>
- <20191107181646.506734-14-andi@firstfloor.org>
+        id S1727109AbfKKOGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:06:00 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6193 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726871AbfKKOF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 09:05:59 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CC3578906ADB136723DE;
+        Mon, 11 Nov 2019 22:05:57 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 11 Nov 2019
+ 22:05:39 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <yuehaibing@huawei.com>, <gregory.clement@bootlin.com>,
+        <tiny.windzz@gmail.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] clk: armada-xp: remove unused code
+Date:   Mon, 11 Nov 2019 22:04:20 +0800
+Message-ID: <20191111140420.36092-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20191107181646.506734-14-andi@firstfloor.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: u4gGE7GCPoWB9r04_uyJsw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 10:16:46AM -0800, Andi Kleen wrote:
+drivers/clk/mvebu/armada-xp.c:171:38: warning:
+ mv98dx3236_coreclks defined but not used [-Wunused-const-variable=]
+drivers/clk/mvebu/armada-xp.c:213:41: warning:
+ mv98dx3236_gating_desc defined but not used [-Wunused-const-variable=]
 
-SNIP
+They are not used since commit 337072604224 ("clk: mvebu:
+Expand mv98dx3236-core-clock support").
 
-> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-> index 33080f79b977..571bb102b432 100644
-> --- a/tools/perf/util/evlist.c
-> +++ b/tools/perf/util/evlist.c
-> @@ -378,11 +378,28 @@ bool evsel__cpu_iter_skip(struct evsel *ev, int cpu=
-)
->  void evlist__disable(struct evlist *evlist)
->  {
->  =09struct evsel *pos;
-> +=09struct affinity affinity;
-> +=09int cpu, i;
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/mvebu/armada-xp.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
 
-should we have the fallback to current code in here (and below) as well?
-also for reading/openning?
+diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+index fa15682..4566565 100644
+--- a/drivers/clk/mvebu/armada-xp.c
++++ b/drivers/clk/mvebu/armada-xp.c
+@@ -50,12 +50,6 @@ static u32 __init axp_get_tclk_freq(void __iomem *sar)
+ 	return 250000000;
+ }
+ 
+-/* MV98DX3236 TCLK frequency is fixed to 200MHz */
+-static u32 __init mv98dx3236_get_tclk_freq(void __iomem *sar)
+-{
+-	return 200000000;
+-}
+-
+ static const u32 axp_cpu_freqs[] __initconst = {
+ 	1000000000,
+ 	1066000000,
+@@ -93,12 +87,6 @@ static u32 __init axp_get_cpu_freq(void __iomem *sar)
+ 	return cpu_freq;
+ }
+ 
+-/* MV98DX3236 CLK frequency is fixed to 800MHz */
+-static u32 __init mv98dx3236_get_cpu_freq(void __iomem *sar)
+-{
+-	return 800000000;
+-}
+-
+ static const int axp_nbclk_ratios[32][2] __initconst = {
+ 	{0, 1}, {1, 2}, {2, 2}, {2, 2},
+ 	{1, 2}, {1, 2}, {1, 1}, {2, 3},
+@@ -168,11 +156,6 @@ static const struct coreclk_soc_desc axp_coreclks = {
+ 	.num_ratios = ARRAY_SIZE(axp_coreclk_ratios),
+ };
+ 
+-static const struct coreclk_soc_desc mv98dx3236_coreclks = {
+-	.get_tclk_freq = mv98dx3236_get_tclk_freq,
+-	.get_cpu_freq = mv98dx3236_get_cpu_freq,
+-};
+-
+ /*
+  * Clock Gating Control
+  */
+@@ -210,15 +193,6 @@ static const struct clk_gating_soc_desc axp_gating_desc[] __initconst = {
+ 	{ }
+ };
+ 
+-static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __initconst = {
+-	{ "ge1", NULL, 3, 0 },
+-	{ "ge0", NULL, 4, 0 },
+-	{ "pex00", NULL, 5, 0 },
+-	{ "sdio", NULL, 17, 0 },
+-	{ "xor0", NULL, 22, 0 },
+-	{ }
+-};
+-
+ static void __init axp_clk_init(struct device_node *np)
+ {
+ 	struct device_node *cgnp =
+-- 
+2.7.4
 
-jirka
-
-> +
-> +=09if (affinity__setup(&affinity) < 0)
-> +=09=09return;
-> +
-> +=09evlist__for_each_cpu (evlist, i, cpu) {
-> +=09=09affinity__set(&affinity, cpu);
-> =20
-> +=09=09evlist__for_each_entry(evlist, pos) {
-> +=09=09=09if (evsel__cpu_iter_skip(pos, cpu))
-> +=09=09=09=09continue;
-> +=09=09=09if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos-=
->core.fd)
-> +=09=09=09=09continue;
-> +=09=09=09evsel__disable_cpu(pos, pos->cpu_iter - 1);
-> +=09=09}
-> +=09}
-> +=09affinity__cleanup(&affinity);
->  =09evlist__for_each_entry(evlist, pos) {
-> -=09=09if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->co=
-re.fd)
-> +=09=09if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
->  =09=09=09continue;
-> -=09=09evsel__disable(pos);
-> +=09=09pos->disabled =3D true;
->  =09}
-> =20
->  =09evlist->enabled =3D false;
-> @@ -391,11 +408,28 @@ void evlist__disable(struct evlist *evlist)
->  void evlist__enable(struct evlist *evlist)
->  {
->  =09struct evsel *pos;
-> +=09struct affinity affinity;
-> +=09int cpu, i;
-> =20
-> +=09if (affinity__setup(&affinity) < 0)
-> +=09=09return;
-> +
-> +=09evlist__for_each_cpu (evlist, i, cpu) {
-> +=09=09affinity__set(&affinity, cpu);
-> +
-> +=09=09evlist__for_each_entry(evlist, pos) {
-> +=09=09=09if (evsel__cpu_iter_skip(pos, cpu))
-> +=09=09=09=09continue;
-> +=09=09=09if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
-> +=09=09=09=09continue;
-> +=09=09=09evsel__enable_cpu(pos, pos->cpu_iter - 1);
-> +=09=09}
-> +=09}
-> +=09affinity__cleanup(&affinity);
->  =09evlist__for_each_entry(evlist, pos) {
->  =09=09if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
->  =09=09=09continue;
-> -=09=09evsel__enable(pos);
-> +=09=09pos->disabled =3D false;
->  =09}
-> =20
->  =09evlist->enabled =3D true;
-> --=20
-> 2.23.0
->=20
 
