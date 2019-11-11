@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 093EFF7C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EB21F7AE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfKKSqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:46:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39504 "EHLO mail.kernel.org"
+        id S1727468AbfKKSat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:30:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728474AbfKKSqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:46:51 -0500
+        id S1727420AbfKKSar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:30:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1FB821783;
-        Mon, 11 Nov 2019 18:46:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6708B214E0;
+        Mon, 11 Nov 2019 18:30:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498011;
-        bh=vSa3OwHpZ8OUxXteH9FhHaMegSgNgzkJ4irP9Ed/s90=;
+        s=default; t=1573497046;
+        bh=y/EzYc3L6edo1ur9WPq4mwtfpeuypnsd12zZoJ/6Kzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aNP51DAJDtB+1S8XoqxGshO0mm0bJPIxHrHF8tdkEMUMfaE+kX8UnYLQ58/eUNDqj
-         Zf+Gqn8gVAzunhuq1Eya+rVu3hVZlkJFGcNTqrX1/tBICD47vTo6AxfLO7sooiF3Sk
-         dq+Rh7QnTEdVyETTCgPSkUOdHUr8lINbz8F5UHV4=
+        b=WBItQIQNOVLJbDHPKo86yzBr+w5A8zdjlYqlMwP2OmjhnLcRTr/FalF1tYCWy40Am
+         6NKY9/lCLtQC8d7LXXQtWHRehriYuLgQZJMEvhZy4XG0JJ4xt95bVLav0sRzWSzZ+Y
+         bIdpsVU6tYHeuryWWbcp8SxT5PbKZ4V4WjZEAmRw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Daniel Wagner <dwagner@suse.de>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 082/125] scsi: lpfc: Honor module parameter lpfc_use_adisc
+Subject: [PATCH 4.4 27/43] scsi: lpfc: Honor module parameter lpfc_use_adisc
 Date:   Mon, 11 Nov 2019 19:28:41 +0100
-Message-Id: <20191111181451.116334245@linuxfoundation.org>
+Message-Id: <20191111181319.179410245@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -89,10 +89,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
-index a6619fd8238c1..ae6301c796785 100644
+index 193733e8c8235..3a4613f9fb9fc 100644
 --- a/drivers/scsi/lpfc/lpfc_nportdisc.c
 +++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
-@@ -844,9 +844,9 @@ lpfc_disc_set_adisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
+@@ -759,9 +759,9 @@ lpfc_disc_set_adisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
  
  	if (!(vport->fc_flag & FC_PT2PT)) {
  		/* Check config parameter use-adisc or FCP-2 */
