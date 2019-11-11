@@ -2,152 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9114F7887
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50ACBF7891
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:17:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfKKQPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:15:08 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52245 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbfKKQPH (ORCPT
+        id S1726976AbfKKQRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:17:35 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34092 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfKKQRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:15:07 -0500
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iUCLE-0006lT-FV; Mon, 11 Nov 2019 16:15:00 +0000
-Date:   Mon, 11 Nov 2019 17:14:59 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Subject: Re: [PATCH v7 1/2] fork: extend clone3() to support setting a PID
-Message-ID: <20191111161458.fjodxyx566dar6ob@wittgenstein>
-References: <20191111131704.656169-1-areber@redhat.com>
- <20191111152514.GA11389@redhat.com>
- <20191111154028.GF514519@dcbz.redhat.com>
+        Mon, 11 Nov 2019 11:17:35 -0500
+Received: by mail-lj1-f193.google.com with SMTP id 139so14458663ljf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:17:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K/+NFqs0F+NSUfd9yCmnz5NfQc9F7D35Qd2TZxptiX8=;
+        b=jPTS9N+R74bh1Vi/8HgMkFBkvF2G9BvI1CqYFpl+82rzgOHZezGCUmSX2VxdSqFWbq
+         924RyJmQL6IZYkVH6zP5yIGQL3oqEPs5cwD5fTKlsacctKGPRGzYILULOMuMbKwrTyo/
+         GBVEkwPVCMHO3ievhZ1snWHQtd3eH3Y5BAP7nfD6zXnWKUOiwWNEQjYhGjd8zFd7WpSx
+         KxmjqAoqqt6VApsZD6FOcWVteMvdyZAJybbgoRv9dqcFj8UF4VEdcW1SpMhVukV+lumS
+         Hq6lVl2t9BDWQLFjzSD34jd91EMwY31vft5jmR+R2ft3JiVM7STO8Y/ouJfkSAWGJkQf
+         6PCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K/+NFqs0F+NSUfd9yCmnz5NfQc9F7D35Qd2TZxptiX8=;
+        b=spnvb+gzgaykVPEf1FODVvjsToTc9vOcPDrsFKgroaO8Prr5e0pr94UwDMxOyhV2FB
+         f6aZHCdUKP4WtqQlJhTLaht34jpPVqZ4l08rThusHMGiJcSx8Z+4IIUoA9aCBZW+6oxT
+         E3YXLmtM97Kfm8UKNx+aA1iYS0krcwVepMoWqnN0kO8WS9oHM0Hf1eDBwMmpchWx+8QB
+         FDxkugClOAB2ROarxMOfiFEXuT+VALZr3i/c7xUqMETUWBu0YgZ1lV/J9F19p29jsgnS
+         JTZWvNMS/RVK2EwB0rdfm01J09gENYRtidjO2aKFZzvdQL4/ETwu8zZRVTNLMNwuL8Pd
+         7B9g==
+X-Gm-Message-State: APjAAAXoXnJmVuWtmwqcAmE3gVVNiJlWQ++/zMu7Qql/AXON6eXagg2s
+        DW+tqXNQZKXXmuG4i5HLzi0fPATmrgaO5Q==
+X-Google-Smtp-Source: APXvYqxpxfjJ/s3M4kO1mxQa6K/91iX/y7vl00YTJOHXEqtqPK6JQW/OgzcB3eejbE0jMkgpOxdTFA==
+X-Received: by 2002:a2e:9981:: with SMTP id w1mr16477357lji.205.1573489053004;
+        Mon, 11 Nov 2019 08:17:33 -0800 (PST)
+Received: from localhost (c-413e70d5.07-21-73746f28.bbcust.telenor.se. [213.112.62.65])
+        by smtp.gmail.com with ESMTPSA id 70sm3015191lfh.86.2019.11.11.08.17.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 08:17:32 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shuah@kernel.org, songliubraving@fb.com,
+        simon.horman@netronome.com,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests: bpf: add missing object file to TEST_FILES
+Date:   Mon, 11 Nov 2019 17:17:28 +0100
+Message-Id: <20191111161728.8854-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191111154028.GF514519@dcbz.redhat.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 04:40:28PM +0100, Adrian Reber wrote:
-> On Mon, Nov 11, 2019 at 04:25:15PM +0100, Oleg Nesterov wrote:
-> > On 11/11, Adrian Reber wrote:
-> > >
-> > > v7:
-> > >  - changed set_tid to be an array to set the PID of a process
-> > >    in multiple nested PID namespaces at the same time as discussed
-> > >    at LPC 2019 (container MC)
-> > 
-> > cough... iirc you convinced me this is not needed when we discussed
-> > the previous version ;) Nevermind, probably my memory fools me.
-> 
-> You are right. You suggested the same thing and we didn't listen ;)
-> 
-> > So far I only have some cosmetic nits,
-> 
-> Thanks for the quick review. I will try to apply your suggestions.
-> 
-> > > @@ -175,6 +187,18 @@ struct pid *alloc_pid(struct pid_namespace *ns)
-> > >
-> > >  	for (i = ns->level; i >= 0; i--) {
-> > >  		int pid_min = 1;
-> > > +		int t_pos = 0;
-> >                     ^^^^^
-> > 
-> > I won't insist, but I'd suggest to cache set_tid[t_pos] instead to make
-> > the code a bit more simple.
-> > 
-> > > @@ -186,12 +210,24 @@ struct pid *alloc_pid(struct pid_namespace *ns)
-> > >  		if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
-> > >  			pid_min = RESERVED_PIDS;
-> > 
-> > You can probably move this code into the "else" branch below.
-> > 
-> > IOW, something like
-> > 
-> > 
-> > 	for (i = ns->level; i >= 0; i--) {
-> > 		int xxx = 0;
-> > 
-> > 		if (set_tid_size) {
-> > 			int pos = ns->level - i;
-> > 
-> > 			xxx = set_tid[pos];
-> > 			if (xxx < 1 || xxx >= pid_max)
-> > 				return ERR_PTR(-EINVAL);
-> > 			/* Also fail if a PID != 1 is requested and no PID 1 exists */
-> > 			if (xxx != 1 && !tmp->child_reaper)
-> > 				return ERR_PTR(-EINVAL);
-> > 			if (!ns_capable(tmp->user_ns, CAP_SYS_ADMIN))
-> > 				return ERR_PTR(-EPERM);
-> > 			set_tid_size--;
-> > 		}
-> > 
-> > 		idr_preload(GFP_KERNEL);
-> > 		spin_lock_irq(&pidmap_lock);
-> > 
-> > 		if (xxx) {
-> > 			nr = idr_alloc(&tmp->idr, NULL, xxx, xxx + 1,
-> > 					GFP_ATOMIC);
-> > 			/*
-> > 			 * If ENOSPC is returned it means that the PID is
-> > 			 * alreay in use. Return EEXIST in that case.
-> > 			 */
-> > 			if (nr == -ENOSPC)
-> > 				nr = -EEXIST;
-> > 		} else {
-> > 			int pid_min = 1;
-> > 			/*
-> > 			 * init really needs pid 1, but after reaching the
-> > 			 * maximum wrap back to RESERVED_PIDS
-> > 			 */
-> > 			if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
-> > 				pid_min = RESERVED_PIDS;
-> > 			/*
-> > 			 * Store a null pointer so find_pid_ns does not find
-> > 			 * a partially initialized PID (see below).
-> > 			 */
-> > 			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> > 					      pid_max, GFP_ATOMIC);
-> > 		}
-> > 
-> > 		...
-> > 
-> > This way only the "if (set_tid_size)" block has to play with set_tid_size/set_tid.
-> > 
-> > note also that this way we can easily allow set_tid[some_level] == 0, we can
-> > simply do
-> > 
-> > 	-	if (xxx < 1 || xxx >= pid_max)
-> > 	+	if (xxx < 0 || xxx >= pid_max)
-> > 
-> > although I don't think this is really useful.
-> 
-> Yes. I explicitly didn't allow 0 as a PID as I didn't thought it would
-> be useful (or maybe even valid).
+When installing kselftests to its own directory and run the
+test_lwt_ip_encap.sh it will complain that test_lwt_ip_encap.o can't be
+found. Same with the test_tc_edt.sh test it will complain that
+test_tc_edt.o can't be found.
 
-How do you express: I don't care about a specific pid in pidns level
-<n>, just give me a random one? For example,
+$ ./test_lwt_ip_encap.sh
+starting egress IPv4 encap test
+Error opening object test_lwt_ip_encap.o: No such file or directory
+Object hashing failed!
+Cannot initialize ELF context!
+Failed to parse eBPF program: Invalid argument
 
-set_tid[0] = 1234
-set_tid[1] = 5678
-set_tid[2] = random_pid()
-set_tid[3] = 9
+Rework to add test_lwt_ip_encap.o and test_tc_edt.o to TEST_FILES so the
+object file gets installed when installing kselftest.
 
-Wouldn't that be potentially useful?
+Fixes: 74b5a5968fe8 ("selftests/bpf: Replace test_progs and test_maps w/ general rule")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Acked-by: Song Liu <songliubraving@fb.com>
+---
+ tools/testing/selftests/bpf/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Christian
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index b334a6db15c1..b03dc2298fea 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -38,7 +38,8 @@ TEST_GEN_PROGS += test_progs-bpf_gcc
+ endif
+ 
+ TEST_GEN_FILES =
+-TEST_FILES =
++TEST_FILES = test_lwt_ip_encap.o \
++	test_tc_edt.o
+ 
+ # Order correspond to 'make run_tests' order
+ TEST_PROGS := test_kmod.sh \
+-- 
+2.20.1
+
