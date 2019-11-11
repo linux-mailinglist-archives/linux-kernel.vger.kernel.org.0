@@ -2,41 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2795F7CC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:49:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC521F7CC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbfKKStZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:49:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42682 "EHLO mail.kernel.org"
+        id S1729365AbfKKStc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:49:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729030AbfKKStW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:49:22 -0500
+        id S1728483AbfKKSt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:49:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32747222C1;
-        Mon, 11 Nov 2019 18:49:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95004214E0;
+        Mon, 11 Nov 2019 18:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498162;
-        bh=5JEQzBaVD+E8HXLBNVDBN6pR2xH6E2s/FT8ItNrMRsI=;
+        s=default; t=1573498168;
+        bh=ZQRMH/NgMNXxgrieFgfnI1PiHCxREH4+oFSF9pucr7Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hZZEHobIMX45GvvjIv1zcpq0vTgwo9FW/SVM6QmJwSWHJdopMm5vq/vbkDyY8Kxz+
-         /A/vXxA8Geumy5+88yKyHFs9Gbwd+23U6rJDSFRR2KTI1dgyRSAWNHS53W7E412i9+
-         XueDKQ/XpnCqFpWOW2VwIb6AiRrT6I6xAp2czPkU=
+        b=oCehlGkMEO5mBoc94CfR1ZheS94XxhEQjCrkzLTcPZbreFlqIAGmPlEOq/e4vaU0i
+         k1Jy/j8Fb5On7OSztOyP38UG/xF/xLXnIBa2WFc15gNFMjIJymy61DonOiRwdcF/JW
+         PdRlUXM3/okLusrB0SE38z8p55NLHWpq3YFko1IY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Keeping <john@metanate.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andres Freund <andres@anarazel.de>
-Subject: [PATCH 5.3 041/193] perf map: Use zalloc for map_groups
-Date:   Mon, 11 Nov 2019 19:27:03 +0100
-Message-Id: <20191111181503.990965328@linuxfoundation.org>
+        stable@vger.kernel.org, Yong Zhao <yong.zhao@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 5.3 042/193] drm/radeon: fix si_enable_smc_cac() failed issue
+Date:   Mon, 11 Nov 2019 19:27:04 +0100
+Message-Id: <20191111181504.070314915@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -49,40 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Keeping <john@metanate.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit ab6cd0e5276e24403751e0b3b8ed807738a8571f upstream.
+commit 2c409ba81be25516afe05ae27a4a15da01740b01 upstream.
 
-In the next commit we will add new fields to map_groups and we need
-these to be null if no value is assigned.  The simplest way to achieve
-this is to request zeroed memory from the allocator.
+Need to set the dte flag on this asic.
 
-Signed-off-by: John Keeping <john@metanate.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: john keeping <john@metanate.com>
-Link: http://lkml.kernel.org/r/20190815100146.28842-1-john@metanate.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Andres Freund <andres@anarazel.de>
+Port the fix from amdgpu:
+5cb818b861be114 ("drm/amd/amdgpu: fix si_enable_smc_cac() failed issue")
+
+Reviewed-by: Yong Zhao <yong.zhao@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/map.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/si_dpm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -637,7 +637,7 @@ bool map_groups__empty(struct map_groups
- 
- struct map_groups *map_groups__new(struct machine *machine)
- {
--	struct map_groups *mg = malloc(sizeof(*mg));
-+	struct map_groups *mg = zalloc(sizeof(*mg));
- 
- 	if (mg != NULL)
- 		map_groups__init(mg, machine);
+--- a/drivers/gpu/drm/radeon/si_dpm.c
++++ b/drivers/gpu/drm/radeon/si_dpm.c
+@@ -1958,6 +1958,7 @@ static void si_initialize_powertune_defa
+ 		case 0x682C:
+ 			si_pi->cac_weights = cac_weights_cape_verde_pro;
+ 			si_pi->dte_data = dte_data_sun_xt;
++			update_dte_from_pl2 = true;
+ 			break;
+ 		case 0x6825:
+ 		case 0x6827:
 
 
