@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A94BF7B34
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04AC1F7AE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbfKKSdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:33:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50906 "EHLO mail.kernel.org"
+        id S1727445AbfKKSaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:30:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728153AbfKKSdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:33:31 -0500
+        id S1727420AbfKKSao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:30:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E5D5214E0;
-        Mon, 11 Nov 2019 18:33:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6C1320674;
+        Mon, 11 Nov 2019 18:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497210;
-        bh=YUrDBmEZdgID93bbtuJb1eaRIraFqaGkPIKly41YPBU=;
+        s=default; t=1573497044;
+        bh=UEy7KH4A/4mCBkcVdLytqSpgFF0Uz+nEJMakBLOHAIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rbNnJuQqHn0jMf5a8JkIJNtuopr33hQ69zPb5SghZU1Ih9m3ceW2Xis9Bd3RxGacY
-         BzyCW6DpURn4ORB1SLyHBhvrkD5OapaVOpkI0E4Po98pKabNUeLs36MOBgRz0vDILm
-         rNsLVzAHC3qrZ4bxvdHlNRDxCBpBNrZ0Kzh2Kns4=
+        b=TEKE+7e2zzwuvlqvoaxeKdRAASLgavD71unvRE0R+lVia6jb4AtolGBRjR7gfh02C
+         /qnP6NAto7aK56MHNT+/UtUhoIDI1/hBMjmbLCV6C7JyExFwEwa6hNbXgu+64VgRkK
+         UhcVjm0UN+F/WMvk5S81YpEQiBh1cQe/Q2Vpq3Sk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhang Lixu <lixu.zhang@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 39/65] HID: intel-ish-hid: fix wrong error handling in ishtp_cl_alloc_tx_ring()
-Date:   Mon, 11 Nov 2019 19:28:39 +0100
-Message-Id: <20191111181347.530950048@linuxfoundation.org>
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 26/43] scsi: qla2xxx: fixup incorrect usage of host_byte
+Date:   Mon, 11 Nov 2019 19:28:40 +0100
+Message-Id: <20191111181317.115100793@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Lixu <lixu.zhang@intel.com>
+From: Hannes Reinecke <hare@suse.com>
 
-[ Upstream commit 16ff7bf6dbcc6f77d2eec1ac9120edf44213c2f1 ]
+[ Upstream commit 66cf50e65b183c863825f5c28a818e3f47a72e40 ]
 
-When allocating tx ring buffers failed, should free tx buffers, not rx buffers.
+DRIVER_ERROR is a a driver byte setting, not a host byte.  The qla2xxx
+driver should rather return DID_ERROR here to be in line with the other
+drivers.
 
-Signed-off-by: Zhang Lixu <lixu.zhang@intel.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Link: https://lore.kernel.org/r/20191018140458.108278-1-hare@suse.de
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/intel-ish-hid/ishtp/client-buffers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_bsg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/intel-ish-hid/ishtp/client-buffers.c b/drivers/hid/intel-ish-hid/ishtp/client-buffers.c
-index b9b917d2d50db..c41dbb167c91b 100644
---- a/drivers/hid/intel-ish-hid/ishtp/client-buffers.c
-+++ b/drivers/hid/intel-ish-hid/ishtp/client-buffers.c
-@@ -90,7 +90,7 @@ int ishtp_cl_alloc_tx_ring(struct ishtp_cl *cl)
- 	return	0;
- out:
- 	dev_err(&cl->device->dev, "error in allocating Tx pool\n");
--	ishtp_cl_free_rx_ring(cl);
-+	ishtp_cl_free_tx_ring(cl);
- 	return	-ENOMEM;
- }
+diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+index c26acde797f0d..2d5375d677367 100644
+--- a/drivers/scsi/qla2xxx/qla_bsg.c
++++ b/drivers/scsi/qla2xxx/qla_bsg.c
+@@ -252,7 +252,7 @@ qla2x00_process_els(struct fc_bsg_job *bsg_job)
+ 	srb_t *sp;
+ 	const char *type;
+ 	int req_sg_cnt, rsp_sg_cnt;
+-	int rval =  (DRIVER_ERROR << 16);
++	int rval =  (DID_ERROR << 16);
+ 	uint16_t nextlid = 0;
  
+ 	if (bsg_job->request->msgcode == FC_BSG_RPT_ELS) {
+@@ -426,7 +426,7 @@ qla2x00_process_ct(struct fc_bsg_job *bsg_job)
+ 	struct Scsi_Host *host = bsg_job->shost;
+ 	scsi_qla_host_t *vha = shost_priv(host);
+ 	struct qla_hw_data *ha = vha->hw;
+-	int rval = (DRIVER_ERROR << 16);
++	int rval = (DID_ERROR << 16);
+ 	int req_sg_cnt, rsp_sg_cnt;
+ 	uint16_t loop_id;
+ 	struct fc_port *fcport;
+@@ -1910,7 +1910,7 @@ qlafx00_mgmt_cmd(struct fc_bsg_job *bsg_job)
+ 	struct Scsi_Host *host = bsg_job->shost;
+ 	scsi_qla_host_t *vha = shost_priv(host);
+ 	struct qla_hw_data *ha = vha->hw;
+-	int rval = (DRIVER_ERROR << 16);
++	int rval = (DID_ERROR << 16);
+ 	struct qla_mt_iocb_rqst_fx00 *piocb_rqst;
+ 	srb_t *sp;
+ 	int req_sg_cnt = 0, rsp_sg_cnt = 0;
 -- 
 2.20.1
 
