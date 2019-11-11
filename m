@@ -2,226 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C23EF7DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:58:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB56BF7B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730178AbfKKS6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:58:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfKKS6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:58:50 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B86EC21783;
-        Mon, 11 Nov 2019 18:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498729;
-        bh=GlRrlBty4j3KSFWVLF8ywo++7MO3lh4DNNTxXAti2ts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I+7fVLCm7ZvkO6S+0ao9pOecYF15eDtRscYAagzF0BsQce0S89VQiEQPqsN+yp01F
-         VPI7e3fFLiO8cqpcs6nsvl8xOezKoQnQ9YIDyeu4C+j46J+MqdaLRcIe/O6M8RLOBA
-         97f9H5C63rFypQie6QUOK+Z3hvVJ8vAMY61tvK5g=
-Date:   Mon, 11 Nov 2019 19:30:59 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Sasha Levin <sashal@kernel.org>, lkft-triage@lists.linaro.org,
-        Dan Rue <dan.rue@linaro.org>,
-        Daniel Diaz <daniel.diaz@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        linux- stable <stable@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: stable-rc 4.14.154-rc1/0d12dcf336c6: regressions detected in
- project stable v.4.14.y on OE - sanity
-Message-ID: <20191111183059.GA1140707@kroah.com>
-References: <0100016e5ae0878e-7b9d1bef-b3be-4350-8823-440929ca4a81-000000@email.amazonses.com>
- <CA+G9fYt=+ymENJg1-m=F3BF8dn7mzxvt5Di34Jw5qFLBHXA5bA@mail.gmail.com>
+        id S1727804AbfKKSbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:31:55 -0500
+Received: from mail-il1-f175.google.com ([209.85.166.175]:41097 "EHLO
+        mail-il1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727782AbfKKSbx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:31:53 -0500
+Received: by mail-il1-f175.google.com with SMTP id q15so7854353ils.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:31:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iWOXc+EiqcU5H2TykGQZYDpiMbC9s1fYB+z2D6AtvNM=;
+        b=YfoMu5DKYfsR0tNMI8Y6oXFEmrxVnNwbVT6yQu1skXYBRqdUK+d7Nz1mUfzIaTxEOf
+         LN7BdAHu+145MTzjapQ3ETRZ2DsWujz6s49PeX89txZlGlrxWEtw0DYkzCiv1fyF7EBX
+         C9jJEhk1XFJBTMSaHN0xFQwLnlDmvmb3QlngHaNvJ4CV7KZvZuO4ZWDl0yJdS19a+bz0
+         di5KbzXTFInAXCvWA87tDfct+ajuxct9GV9v8mPKgsi37A7vwMlWHKWU61zEWgibEcQh
+         AJvL2G5JpTXuM0LhmCOOhvBHJ7p+nA4+6IWpi7BPbKrUm5B6e6KNFKvu7PTC1isc691x
+         /4Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iWOXc+EiqcU5H2TykGQZYDpiMbC9s1fYB+z2D6AtvNM=;
+        b=N8AFf0k7UimqqpFKNpUJZ2ZJCLEygBaHK59zGLdQRPDGlzSGiIhtKA3hZrUQo1FFnW
+         vuBLMQL6R7XC9foHMlNLX8VogmEGuxXzJYgd0zhKOzkUZVbNU7II0RcI28yVhIWjinTx
+         uto0hzYAP+DCbHnk/O9rY9kSREClhb4P3omeoZf6E3rRJO61Ir6fRokszD6uYw+ejwhH
+         hRIIzQHlK7ijgKG4fjG+FltXrDl537MdE0SAU3JaRGJ4RMImnKF9rx7VfuYyaRxF3b9K
+         n7fALXmiovfeHKZUvuVV+mBg2W6OW2vQyeKWjQsHM40W2EmJkteJ7FUhhCVLMamaNOnI
+         +jRQ==
+X-Gm-Message-State: APjAAAVQi8CGEiqZ0FhrdtqKnCE66NHLOnFUJyV4YM4NHPbqkEDoNa+z
+        wm3weZibJXrHyTvttele8UPGafuUElLrS4hGaeOpX2fS
+X-Google-Smtp-Source: APXvYqzUEvYRTJe9cbdvlByvu6y7i8FNldZVzZrF5+/xcHTKkSFGpd6n+38fNwnltLonPBMO+6mWdvpiAX5UueUgUnI=
+X-Received: by 2002:a92:99cb:: with SMTP id t72mr28744656ilk.218.1573497112535;
+ Mon, 11 Nov 2019 10:31:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYt=+ymENJg1-m=F3BF8dn7mzxvt5Di34Jw5qFLBHXA5bA@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+ <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+ <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com> <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+In-Reply-To: <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Mon, 11 Nov 2019 10:31:40 -0800
+Message-ID: <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 11:45:35PM +0530, Naresh Kamboju wrote:
-> Hi Greg,
-> 
-> Regressions detected in project stable v.4.14.
-> arm64, arm, x86_64 boot failed.
-> 
-> Summary
-> ------------------------------------------------------------------------
->   git branch: linux-4.14.y
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
->   git commit: a67492b55c53045e9c0b9969f04410723448c1ee
->   git describe: v4.14.153-104-ga67492b55c53
->   make_kernelversion: 4.14.154-rc1
->   kernel-config:
-> http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/juno/lkft/linux-stable-rc-4.14/641/config
-> 
-> 
-> arm64 kernel crash log:
-> ---------------------------
-> [    0.000000] Linux version 4.14.154-rc1 (oe-user@oe-host) (gcc
-> version 7.3.0 (GCC)) #1 SMP PREEMPT Mon Nov 11 17:15:34 UTC 2019
-> [    0.000000] Boot CPU: AArch64 Processor [410fd033]
-> [    0.000000] Machine model: ARM Juno development board (r2)
-> [    0.000000] earlycon: pl11 at MMIO 0x000000007ff80000 (options '')
-> [    0.000000] bootconsole [pl11] enabled
-> [    0.000000] efi: Getting EFI parameters from FDT:
-> [    0.000000] efi: UEFI not found.
-> [    0.000000] cma: Reserved 16 MiB at 0x00000000fe000000
-> [    0.000000] NUMA: No NUMA configuration found
-> [    0.000000] NUMA: Faking a node at [mem
-> 0x0000000000000000-0x00000009ffffffff]
-> [    0.000000] NUMA: NODE_DATA [mem 0x9fffc6f80-0x9fffc8bff]
-> [    0.000000] Zone ranges:
-> [    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
-> [    0.000000]   Normal   [mem 0x0000000100000000-0x00000009ffffffff]
-> [    0.000000] Movable zone start for each node
-> [    0.000000] Early memory node ranges
-> [    0.000000]   node   0: [mem 0x0000000080000000-0x00000000feffffff]
-> [    0.000000]   node   0: [mem 0x0000000880000000-0x00000009ffffffff]
-> [    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000009ffffffff]
-> [    0.000000] On node 0 totalpages: 2093056
-> [    0.000000]   DMA zone: 8192 pages used for memmap
-> [    0.000000]   DMA zone: 0 pages reserved
-> [    0.000000]   DMA zone: 520192 pages, LIFO batch:31
-> [    0.000000]   Normal zone: 24576 pages used for memmap
-> [    0.000000]   Normal zone: 1572864 pages, LIFO batch:31
-> [    0.000000] psci: probing for conduit method from DT.
-> [    0.000000] psci: PSCIv1.1 detected in firmware.
-> [    0.000000] psci: Using standard PSCI v0.2 function IDs
-> [    0.000000] psci: Trusted OS migration not required
-> [    0.000000] psci: SMC Calling Convention v1.0
-> [    0.000000] percpu: Embedded 25 pages/cpu s62280 r8192 d31928 u102400
-> [    0.000000] pcpu-alloc: s62280 r8192 d31928 u102400 alloc=25*4096
-> [    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5
-> [    0.000000] Detected VIPT I-cache on CPU0
-> [    0.000000] CPU features: enabling workaround for ARM erratum 845719
-> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 2060288
-> [    0.000000] Policy zone: Normal
-> [    0.000000] Kernel command line: console=ttyAMA0,115200n8
-> root=/dev/nfs rw
-> nfsroot=10.66.16.123:/var/lib/lava/dispatcher/tmp/1004132/extract-nfsrootfs-jn9hl2x_,tcp,hard,intr,vers=3
-> rootwait earlycon=pl011,0x7ff80000 debug systemd.log_target=null
-> user_debug=31 androidboot.hardware=juno loglevel=9
-> sky2.mac_address=0x00,0x02,0xF7,0x00,0x68,0x15 ip=dhcp
-> [    0.000000] PID hash table entries: 4096 (order: 3, 32768 bytes)
-> [    0.000000] software IO TLB: mapped [mem 0xf9fff000-0xfdfff000] (64MB)
-> [    0.000000] Memory: 8123672K/8372224K available (12988K kernel
-> code, 1878K rwdata, 5196K rodata, 1728K init, 12356K bss, 232168K
-> reserved, 16384K cma-reserved)
-> [    0.000000] Virtual kernel memory layout:
-> [    0.000000]     modules : 0xffff000000000000 - 0xffff000008000000
-> (   128 MB)
-> [    0.000000]     vmalloc : 0xffff000008000000 - 0xffff7dffbfff0000
-> (129022 GB)
-> [    0.000000]       .text : 0xffff000008080000 - 0xffff000008d30000
-> ( 12992 KB)
-> [    0.000000]     .rodata : 0xffff000008d30000 - 0xffff000009250000
-> (  5248 KB)
-> [    0.000000]       .init : 0xffff000009250000 - 0xffff000009400000
-> (  1728 KB)
-> [    0.000000]       .data : 0xffff000009400000 - 0xffff0000095d5a00
-> (  1879 KB)
-> [    0.000000]        .bss : 0xffff0000095d5a00 - 0xffff00000a1e6dd0
-> ( 12357 KB)
-> [    0.000000]     fixed   : 0xffff7dfffe7f9000 - 0xffff7dfffec00000
-> (  4124 KB)
-> [    0.000000]     PCI I/O : 0xffff7dfffee00000 - 0xffff7dffffe00000
-> (    16 MB)
-> [    0.000000]     vmemmap : 0xffff7e0000000000 - 0xffff800000000000
-> (  2048 GB maximum)
-> [    0.000000]               0xffff7e0000000000 - 0xffff7e0026000000
-> (   608 MB actual)
-> [    0.000000]     memory  : 0xffff800000000000 - 0xffff800980000000
-> ( 38912 MB)
-> [    0.000000] Unable to handle kernel NULL pointer dereference at
-> virtual address 00000510
-> [    0.000000] Mem abort info:
-> [    0.000000]   Exception class = DABT (current EL), IL = 32 bits
-> [    0.000000]   SET = 0, FnV = 0
-> [    0.000000]   EA = 0, S1PTW = 0
-> [    0.000000] Data abort info:
-> [    0.000000]   ISV = 0, ISS = 0x00000004
-> [    0.000000]   CM = 0, WnR = 0
-> [    0.000000] [0000000000000510] user address but active_mm is swapper
-> [    0.000000] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> [    0.000000] Modules linked in:
-> [    0.000000] Process swapper (pid: 0, stack limit = 0xffff000009400000)
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.14.154-rc1 #1
-> [    0.000000] Hardware name: ARM Juno development board (r2) (DT)
-> [    0.000000] task: ffff000009419780 task.stack: ffff000009400000
-> [    0.000000] PC is at __rmqueue+0x3c4/0x908
-> [    0.000000] LR is at __rmqueue+0x384/0x908
-> [    0.000000] pc : [<ffff0000082594ec>] lr : [<ffff0000082594ac>]
-> pstate: 600000c5
-> [    0.000000] sp : ffff000009403b10
-> [    0.000000] x29: ffff000009403b10 x28: 0000000000000000
-> [    0.000000] x27: 000000000000000a x26: ffff80097ffc7700
-> [    0.000000] x25: 00007ff6800387c0 x24: 0000000000000000
-> [    0.000000] x23: ffff00000940f000 x22: ffff80097ffc7800
-> [    0.000000] x21: ffffffffffffff00 x20: ffff80097ffc7840
-> [    0.000000] x19: ffff0000093ef000 x18: 0000000000000001
-> [    0.000000] x17: 000000000000001c x16: 000000000000001b
-> [    0.000000] x15: 000000000000001a x14: ffff0000096833f8
-> [    0.000000] x13: ffff0000095e3198 x12: 000000000c67c24e
-> [    0.000000] x11: ffff000009419fb0 x10: ffff00000a174000
-> [    0.000000] x9 : ffff00000988b728 x8 : 0000000000000000
-> [    0.000000] x7 : ffff0000092cf3a4 x6 : 0000000000000000
-> [    0.000000] x5 : fffffffffffff1ff x4 : ffff7e0025de0020
-> [    0.000000] x3 : ffff7e0025dd0020 x2 : 000000000000000a
-> [    0.000000] x1 : 000000000000001e x0 : 0000000000000410
-> [    0.000000] Call trace:
-> [    0.000000] Exception stack(0xffff0000094039d0 to 0xffff000009403b10)
-> [    0.000000] 39c0:
-> 0000000000000410 000000000000001e
-> [    0.000000] 39e0: 000000000000000a ffff7e0025dd0020
-> ffff7e0025de0020 fffffffffffff1ff
-> [    0.000000] 3a00: 0000000000000000 ffff0000092cf3a4
-> 0000000000000000 ffff00000988b728
-> [    0.000000] 3a20: ffff00000a174000 ffff000009419fb0
-> 000000000c67c24e ffff0000095e3198
-> [    0.000000] 3a40: ffff0000096833f8 000000000000001a
-> 000000000000001b 000000000000001c
-> [    0.000000] 3a60: 0000000000000001 ffff0000093ef000
-> ffff80097ffc7840 ffffffffffffff00
-> [    0.000000] 3a80: ffff80097ffc7800 ffff00000940f000
-> 0000000000000000 00007ff6800387c0
-> [    0.000000] 3aa0: ffff80097ffc7700 000000000000000a
-> 0000000000000000 ffff000009403b10
-> [    0.000000] 3ac0: ffff0000082594ac ffff000009403b10
-> ffff0000082594ec 00000000600000c5
-> [    0.000000] 3ae0: ffffffffffffff00 ffff80097ffc7800
-> ffffffffffffffff ffff0000082594ac
-> [    0.000000] 3b00: ffff000009403b10 ffff0000082594ec
-> [    0.000000] [<ffff0000082594ec>] __rmqueue+0x3c4/0x908
-> [    0.000000] [<ffff000008259e98>] get_page_from_freelist+0x468/0xcb8
-> [    0.000000] [<ffff00000825aa3c>] __alloc_pages_nodemask+0x12c/0x1248
-> [    0.000000] [<ffff0000082cdba8>] new_slab+0xc0/0x568
-> [    0.000000] [<ffff0000082d5328>] __kmem_cache_create+0x2e0/0x628
-> [    0.000000] [<ffff000009271dec>] create_boot_cache+0xa8/0xdc
-> [    0.000000] [<ffff000009275b40>] kmem_cache_init+0x58/0x120
-> [    0.000000] [<ffff000009250b3c>] start_kernel+0x200/0x3d8
-> [    0.000000] Code: 8b000401 8b010800 d37df000 8b081000 (f9408000)
-> [    0.000000] random: get_random_bytes called from
-> print_oops_end_marker+0x54/0x70 with crng_init=0
-> [    0.000000] ---[ end trace c75a488acdeef932 ]---
-> [    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-> [    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill
-> the idle task!
-> 
-> 
-> Full test log link,
-> https://lkft.validation.linaro.org/scheduler/job/1004132#L482
+On Mon, Nov 11, 2019 at 10:05 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Nov 11, 2019 at 9:52 AM Eric Dumazet <edumazet@google.com> wrote:
+> >
+> > Now I wonder what to do with the ~400 KCSAN reports sitting in
+> > pre-moderation queue.
+>
+> So regular KASAN reports are fairly easy to deal with: they report
+> actual bugs. They may be hard to hit, but generally there's no
+> question about something like a use-after-free or whatever.
+>
+> The problem with KCSAN is that it's not clear how many of the reports
+> have been actual real honest-to-goodness bugs that could cause
+> problems, and how many of them are "this isn't actually a bug, but an
+> annotation will shut up KCSAN".
+>
+> My gut feeling would be that it would be best to ignore the ones that
+> are "an annotation will shut up KCSAN", and look at the ones that are
+> real bugs.
+>
+> Is there a pattern to those real bugs? Is there perhaps a way to make
+> KCSAN notice _that_ pattern in particular, and suppress the ones that
+> are "we can shut these up with annotations that don't really change
+> the code"?
+>
+> I think it would be much better for the kernel - and much better for
+> KCSAN - if the problem reports KCSAN reports are real problems that
+> can actually be triggered as problems, and that it behaves much more
+> like KASAN in that respect.
+>
+> Yes, yes, then once the *real* problems have been handled, maybe we
+> can expand the search to be "stylistic issues" and "in theory, this
+> could cause problems with a compiler that did X" issues.
+>
+> But I think the "just annotate" thing makes people more likely to
+> dismiss KCSAN issues, and I don't think it's healthy.
+>
 
-Any chance you can bisect?
+Problem is that KASAN/KCSAN stops as soon as one issue is hit,
+regardless of it being a false positive or not.
 
-thanks,
+(Same happens with LOCKDEP seeing only one issue, then disabling itself)
 
-greg k-h
+If we do not annotate the false positive, the real issues might be
+hidden for years.
+
+There is no pattern really, only a lot of noise (small ' bugs'  that
+have no real impact)
