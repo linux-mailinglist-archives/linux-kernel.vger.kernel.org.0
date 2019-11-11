@@ -2,144 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 091BAF7F88
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDB0F7FA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:15:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfKKTN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:13:26 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45775 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfKKTN0 (ORCPT
+        id S1727797AbfKKTPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:15:31 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27637 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726949AbfKKTPb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:13:26 -0500
-Received: by mail-io1-f67.google.com with SMTP id v17so14716519iol.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:13:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6/VuShNsnnLijV7FTC/n5bXISdKsCNAaXvgZUSZTI2M=;
-        b=LJD0mvfv2cmwh1rKoSNdTEkyl/8Q60pawfFcL1Kw3tYIjHphsWJZb2VHREb0zO65uc
-         hZvetOs6fqaX3107UfQ4zOYB7AaO45SnC7PkhUH4Kz31DyCORaPOy/9C6foVMLwO3D4p
-         7nt8q35NszzZrsPBZ8zY+O1iykoiIXmVu6glWUVlsHKfTAhoBU+4nR8qgwsgvBK6FfcO
-         LD+1TXFb6raocmGQk4b9Sh4KZObiELFVAoi4YgJ8I69l515pvcQGtQuRnIFnZlBpY8yP
-         HBSP3doCHTYo2Vgd8uGO38qecy2wPBX/Z5xB5jfDRmFU9N290xmG7r5aVThn9dt8MaIY
-         yHuw==
+        Mon, 11 Nov 2019 14:15:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573499730;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=MXbL31P0IYDtqcq6qHdukj+j63qKz90Nd8tCQFpdhYo=;
+        b=acgerPF5RkzfENb3GI1cQze41lalopINVAf2FR8a19TcPpYcTGdEWaCCOK3880LKpnGZlY
+        OsbjR6Ur9w1H7e+vFL1LoDtVdozenGWu7y7yXYk39zC21EkFX4unPSPItBt+BPaAH94Ky+
+        3dZgrmcsp7J1khcBJc1UwI2fy2VSSco=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-71-iJAPnOwNNAOn_9Fnph2LcQ-1; Mon, 11 Nov 2019 14:15:29 -0500
+Received: by mail-wr1-f71.google.com with SMTP id q12so2666044wrr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:15:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6/VuShNsnnLijV7FTC/n5bXISdKsCNAaXvgZUSZTI2M=;
-        b=QN+MiVsx1bqQIPouDBvZsYqslh6pu/tdMzs6cx8UBeZ5DoCJgtMcXrUAk4QFs5wGix
-         gNTmK/u8Kp3gjmMsHwPtES861EEG8Y5DA4OqnBNZiNZTDW0s+02rKOp7bRPbfho1m1Sq
-         vVAOfxqtEapfiFIb881Y8S6LzAuL/45un9Bj/1bBr3BMEc1/h5KGxKOhjZ1kCNpXMXLb
-         vFRms3s1JtXE4r8DOOoSDZt0aToRdiIkCUEA8MvyQoQtcdRtxjLfM7aMLTWzRMlpVulP
-         9H5BOcgLIkik4ylM18IVkJLK70TZrsLVIiSl2O+x2e7wvZCsUfesq2xphL+DrfHdTM0L
-         XRkw==
-X-Gm-Message-State: APjAAAU1HjkW8/yFXxyHqD35TW1lDNKHJbjj1Gh5ipmGqMCUcVt/9wBc
-        LRrA0Plism/R1nn1FKyDCzxCYD+MwfZlUurqUutJgg==
-X-Google-Smtp-Source: APXvYqwYT2bnWA0uOOetpBpSlXqEyNb8DbeCdss54JdYY85ZOwBw8QacpCiJTlDrPqsRtQrjpsB4m/+bxWyN8bzIj2Y=
-X-Received: by 2002:a05:6638:a27:: with SMTP id 7mr25838960jao.114.1573499604758;
- Mon, 11 Nov 2019 11:13:24 -0800 (PST)
-MIME-Version: 1.0
-References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
- <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
- <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
- <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
- <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
- <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
- <CANn89iJiuOkKc2AVmccM8z9e_d4zbV61K-3z49ao1UwRDdFiHw@mail.gmail.com> <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
-In-Reply-To: <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Mon, 11 Nov 2019 11:13:13 -0800
-Message-ID: <CANn89i+x7Yxjxr4Fdaow-51-A-oBK3MqTscbQ4VXQuk4pX9aCg@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Marco Elver <elver@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MXbL31P0IYDtqcq6qHdukj+j63qKz90Nd8tCQFpdhYo=;
+        b=izG0au6+kDJWeLDHMo1JgcKUzY2XhVnSSMBOL4n80bGqlSn3OrvyRBmV7bjzKK9q7p
+         aM1fSnQbjMLqzP0Q+O5M69JJ80efbNC6sRVAPjfLmORMGCR7xSIFVPNKFkYkn+eqTU4V
+         76TIHrK3jCuBCRpS4Cm7xJ1PNz6D0GHrF3LxvO0f0iPi3UOzWg9flf5jKtrLAcd/ebl/
+         zNyCMEmxIStOJKbONPTHo+LNib9HTjX+y+5admR2TFDP4Zx39V4iG3JrCQG7X2k4zX4x
+         9REJdTxPajVPmU2EV1F2cG4FNllmWGE3FtDZwDmrVrYwa7VyPsOEyGK9tdYyz+o+6IRO
+         BxCA==
+X-Gm-Message-State: APjAAAWxyzyUVNByuwAHZ0ZO3Z2tvZYg8FdVbRqREWD2hZKLLpQ/c1DD
+        0S8eCrkYOJ0Qnm7blj1i0NEwrCICz1CcuiVt2aAb1Tdgh4IDSFMjOp3hUG19cUk6Um7kaCXA9qB
+        J71Z3XrBJrw9FnERkOvaYflk2
+X-Received: by 2002:adf:9786:: with SMTP id s6mr16010293wrb.188.1573499727513;
+        Mon, 11 Nov 2019 11:15:27 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwMA0iXMYBtSAK6xNIx73LEz/q0H0IE8ruho9T5MZSF3Oq1lrSQVESW1HPGLguBk1ORuT4PRw==
+X-Received: by 2002:adf:9786:: with SMTP id s6mr16010258wrb.188.1573499726976;
+        Mon, 11 Nov 2019 11:15:26 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:8c9d:1a6f:4730:367c? ([2001:b07:6468:f312:8c9d:1a6f:4730:367c])
+        by smtp.gmail.com with ESMTPSA id b17sm17965088wru.36.2019.11.11.11.15.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2019 11:15:26 -0800 (PST)
+Subject: Re: [PATCH 1/2] KVM: MMU: Do not treat ZONE_DEVICE pages as being
+ reserved
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Adam Borowski <kilobyte@angband.pl>,
+        David Hildenbrand <david@redhat.com>
+References: <1cf71906-ba99-e637-650f-fc08ac4f3d5f@redhat.com>
+ <CAPcyv4hMOxPDKAZtTvWKEMPBwE_kPrKPB_JxE2YfV5EKkKj_dQ@mail.gmail.com>
+ <20191106233913.GC21617@linux.intel.com>
+ <CAPcyv4jysxEu54XK2kUYnvTqUL7zf2fJvv7jWRR=P4Shy+3bOQ@mail.gmail.com>
+ <CAPcyv4i3M18V9Gmx3x7Ad12VjXbq94NsaUG9o71j59mG9-6H9Q@mail.gmail.com>
+ <0db7c328-1543-55db-bc02-c589deb3db22@redhat.com>
+ <CAPcyv4gMu547patcROaqBqbwxut5au-WyE_M=XsKxyCLbLXHTg@mail.gmail.com>
+ <20191107155846.GA7760@linux.intel.com>
+ <20191109014323.GB8254@linux.intel.com>
+ <CAPcyv4hAY_OfExNP+_067Syh9kZAapppNwKZemVROfxgbDLLYQ@mail.gmail.com>
+ <20191111182750.GE11805@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <707ce7d4-7149-f4c4-c150-801962a3197d@redhat.com>
+Date:   Mon, 11 Nov 2019 20:15:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191111182750.GE11805@linux.intel.com>
+Content-Language: en-US
+X-MC-Unique: iJAPnOwNNAOn_9Fnph2LcQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 11:01 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, Nov 11, 2019 at 10:44 AM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > An interesting case is the race in ksys_write()
->
-> Not really.
->
-> > if (ppos) {
-> >      pos = *ppos; // data-race
->
-> That code uses "fdget_pos().
->
-> Which does mutual exclusion _if_ the file is something we care about
-> pos for, and if it has more than one process using it.
->
-> Basically the rule there is that we don't care about the data race in
-> certain circumstances. We don't care about non-regular files, for
-> example, because those are what POSIX gives guarantees for.
->
-> (We have since moved towards FMODE_STREAM handling instead of the
-> older FMODE_ATOMIC_POS which does this better, and it's possible we
-> should get rid of the FMODE_ATOMIC_POS behavior in favor of
-> FMODE_STREAM entirely)
->
-> Again, that's pretty hard to tell something like KCSAN.
+On 11/11/19 19:27, Sean Christopherson wrote:
+>> Thanks for this clarification. I do want to put out though that
+>> ZONE_DEVICE pages go idle, they don't get freed. As long as KVM drops
+>> its usage on invalidate it's perfectly fine for KVM to operate on idle
+>> ZONE_DEVICE pages. The common case is that ZONE_DEVICE pages are
+>> accessed and mapped while idle. Only direct-I/O temporarily marks them
+>> busy to synchronize with invalidate. KVM obviates that need by
+>> coordinating with mmu-notifiers instead.
+> Only the KVM MMU, e.g. page fault handler, coordinates via mmu_notifier,
+> the kvm_vcpu_map() case would continue using pages across an invalidate.
 
-Well, this is hard to explain to humans... Probably less than 10 on
-this planet could tell that.
+Yes, and it gets/puts the page correctly.
 
-What about this other one, it looks like multiple threads can
-manipulate tsk->min_flt++; at the same time  in faultin_page()
+Paolo
 
-Should we not care, or should we mirror min_flt with a second
-atomic_long_t, or simply convert min_flt to atomic_long_t ?
-
-BUG: KCSAN: data-race in __get_user_pages / __get_user_pages
-
-read to 0xffff8880b0b8f650 of 8 bytes by task 11553 on cpu 1:
- faultin_page mm/gup.c:653 [inline]
- __get_user_pages+0x78f/0x1160 mm/gup.c:845
- __get_user_pages_locked mm/gup.c:1023 [inline]
- get_user_pages_remote+0x206/0x3e0 mm/gup.c:1163
- process_vm_rw_single_vec mm/process_vm_access.c:109 [inline]
- process_vm_rw_core.isra.0+0x3a4/0x8c0 mm/process_vm_access.c:216
- process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:284
- __do_sys_process_vm_writev mm/process_vm_access.c:306 [inline]
- __se_sys_process_vm_writev mm/process_vm_access.c:301 [inline]
- __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:301
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-write to 0xffff8880b0b8f650 of 8 bytes by task 11531 on cpu 0:
- faultin_page mm/gup.c:653 [inline]
- __get_user_pages+0x7b1/0x1160 mm/gup.c:845
- __get_user_pages_locked mm/gup.c:1023 [inline]
- get_user_pages_remote+0x206/0x3e0 mm/gup.c:1163
- process_vm_rw_single_vec mm/process_vm_access.c:109 [inline]
- process_vm_rw_core.isra.0+0x3a4/0x8c0 mm/process_vm_access.c:216
- process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:284
- __do_sys_process_vm_writev mm/process_vm_access.c:306 [inline]
- __se_sys_process_vm_writev mm/process_vm_access.c:301 [inline]
- __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:301
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 11531 Comm: syz-executor.4 Not tainted 5.4.0-rc6+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine,
-BIOS Google 01/01/2011
