@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E646DF76EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:47:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 188B4F76FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:48:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfKKOrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:47:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48648 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbfKKOrR (ORCPT
+        id S1727487AbfKKOrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:47:46 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:40984 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbfKKOr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:47:17 -0500
+        Mon, 11 Nov 2019 09:47:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KJGs8SxkcPD2SAGIWx8b4wB5ck5tD95hTOnR4IN4KSU=; b=aynPu28scJhQ5dq1+bGw/lDjD8
-        xwnPoVAnwhvqhVSXu9V6fv8Gye68gsqsKpSmJ2f+CseF88mtVtRSaQrdyL7NudcTZFI13xiZzdcaT
-        Ra0r+B+Z+RmPwYboOdtsFfkz/sEmsUrm65lcduNlmOCh4WLSGa1BKqvWlXBLxG8zRwPwmlG+Oguvq
-        rnKBz4UDyKSehTndx+ai2JJge5jeW9Md6epTMDCGJeXVDb0TqfH/kqCvK/lMsKh+kYow5WDrjYv13
-        QhEcTT9eZI9+uw2ZFvmjhwBjg1G4j9yuoiq1ZtGbD/lP2hkAwF1mEmUqZPYurDEim8zs6Xj6fBnLK
-        pJ4dHWpw==;
+        bh=LFQwvvnKEMmErblNKbs48mN5sa0jPCoHfpYrCHI0bMk=; b=BJ83ZQEIlkrlI665hKreyC36Be
+        I5A2511CIDXVPEvc9wDiOeGx3hukGLw11XQx+Ox8Rd+PXgRIIc2GfVaNot27TOeiFgFs8Y2oca4li
+        3GO//5dXw4WrPldbYUc23wUPXURMEfh4WM5q5t52ES9kbusHkynw12KnQOjfN1PZyVj5shkwMaE0L
+        sb/OmBQB9HCOURENzSgNDzSD3WVAR49WEs5MhO6FCMrJjU0b++d5UzklvsBcK2CwueOs3NK7fOaba
+        ma1UckS0q4UOTtFInnByMrbWphN0c/01AYmM8SDW/8UpXvktLs7OtyCGC9xgFkJLZrMzy0ZPa4RQk
+        Lb3DE++g==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUAyB-0006a9-OR; Mon, 11 Nov 2019 14:47:07 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUAyB-0003t8-Dw; Mon, 11 Nov 2019 14:47:07 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 30CAD3072BB;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 30962307295;
         Mon, 11 Nov 2019 15:45:58 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id ADD9F29A37A93; Mon, 11 Nov 2019 15:47:03 +0100 (CET)
-Message-Id: <20191111132458.401696663@infradead.org>
+        id B1F3C29A37A94; Mon, 11 Nov 2019 15:47:03 +0100 (CET)
+Message-Id: <20191111132458.460144656@infradead.org>
 User-Agent: quilt/0.65
-Date:   Mon, 11 Nov 2019 14:13:08 +0100
+Date:   Mon, 11 Nov 2019 14:13:09 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -45,7 +45,7 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com, jeyu@kernel.org, alexei.starovoitov@gmail.com
-Subject: [PATCH -v5 16/17] x86/kprobe: Add comments to arch_{,un}optimize_kprobes()
+Subject: [PATCH -v5 17/17] x86/alternative: Use INT3_INSN_SIZE
 References: <20191111131252.921588318@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,45 +54,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a few words describing how it is safe to overwrite the 4 bytes
-after a kprobe. In specific it is possible the JMP.d32 required for
-the optimized kprobe overwrites multiple instructions.
+Use INT3_INSN_SIZE instead of sizeof(int3).
 
+Suggested-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/kernel/kprobes/opt.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ arch/x86/kernel/alternative.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -414,8 +414,12 @@ int arch_prepare_optimized_kprobe(struct
- }
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1088,7 +1088,7 @@ static void text_poke_bp_batch(struct te
+ 	 * First step: add a int3 trap to the address that will be patched.
+ 	 */
+ 	for (i = 0; i < nr_entries; i++)
+-		text_poke(text_poke_addr(&tp[i]), &int3, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), &int3, INT3_INSN_SIZE);
  
- /*
-- * Replace breakpoints (int3) with relative jumps.
-+ * Replace breakpoints (INT3) with relative jumps (JMP.d32).
-  * Caller must call with locking kprobe_mutex and text_mutex.
-+ *
-+ * The caller will have installed a regular kprobe and after that issued
-+ * syncrhonize_rcu_tasks(), this ensures that the instruction(s) that live in
-+ * the 4 bytes after the INT3 are unused and can now be overwritten.
-  */
- void arch_optimize_kprobes(struct list_head *oplist)
- {
-@@ -441,7 +445,13 @@ void arch_optimize_kprobes(struct list_h
+ 	text_poke_sync();
+ 
+@@ -1098,10 +1098,10 @@ static void text_poke_bp_batch(struct te
+ 	for (do_sync = 0, i = 0; i < nr_entries; i++) {
+ 		int len = text_opcode_size(tp[i].opcode);
+ 
+-		if (len - sizeof(int3) > 0) {
+-			text_poke(text_poke_addr(&tp[i]) + sizeof(int3),
+-				  (const char *)tp[i].text + sizeof(int3),
+-				  len - sizeof(int3));
++		if (len - INT3_INSN_SIZE > 0) {
++			text_poke(text_poke_addr(&tp[i]) + INT3_INSN_SIZE,
++				  (const char *)tp[i].text + INT3_INSN_SIZE,
++				  len - INT3_INSN_SIZE);
+ 			do_sync++;
+ 		}
  	}
- }
+@@ -1123,7 +1123,7 @@ static void text_poke_bp_batch(struct te
+ 		if (tp[i].text[0] == INT3_INSN_OPCODE)
+ 			continue;
  
--/* Replace a relative jump with a breakpoint (int3).  */
-+/*
-+ * Replace a relative jump (JMP.d32) with a breakpoint (INT3).
-+ *
-+ * After that, we can restore the 4 bytes after the INT3 to undo what
-+ * arch_optimize_kprobes() scribbled. This is safe since those bytes will be
-+ * unused once the INT3 lands.
-+ */
- void arch_unoptimize_kprobe(struct optimized_kprobe *op)
- {
- 	arch_arm_kprobe(&op->kp);
+-		text_poke(text_poke_addr(&tp[i]), tp[i].text, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), tp[i].text, INT3_INSN_SIZE);
+ 		do_sync++;
+ 	}
+ 
 
 
