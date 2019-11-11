@@ -2,67 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5547DF7A85
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C918F7A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfKKSKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:10:03 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39929 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfKKSKD (ORCPT
+        id S1727010AbfKKSKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:10:47 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34660 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbfKKSKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:10:03 -0500
-Received: by mail-ot1-f66.google.com with SMTP id e17so12026678otk.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:10:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=eV8dwz+0YdX/nvlDV+U1joDQKmfhCLGvw6vJzuSprRw=;
-        b=d+OhEcB+e7wvXw1luhle4V02zKKJPMXST/5ZqBmA5plCWNn2WFgz7Df7xK+FMDtzm2
-         85I6jRXVwniGVPcjLBgs3GeyCZDIUPTKAYpmmoDu4znX5LwpFVwzqUzfOIlpmy4gUjPn
-         HqjKiRK9+66/GDNzu4Eq9F1l/EymHIxYXTmtI8DZWJ3EF9PiU1h6l4wEtY1mQoKbDwvN
-         OrURGsJi1Xb6fZPXokNWbxShQi/0p75XffzMN6mqZKwlc0Gy2CsHNXf4tcCxkV1CA9wN
-         PeVqkHZFmqE9nPFd32DoNXNH/mmaaHepOPVIprc/k3r2WDvpKwHsRggMXaTwnQKA2YUb
-         QKLQ==
+        Mon, 11 Nov 2019 13:10:47 -0500
+Received: by mail-oi1-f195.google.com with SMTP id l202so12318172oig.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:10:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=eV8dwz+0YdX/nvlDV+U1joDQKmfhCLGvw6vJzuSprRw=;
-        b=VEVVmngCQtlf2dzgFFPSEteNmrnDgRG3XqJE0gkI1YjJRvSP77DX5kcQdRrWd8w6Ao
-         TqUbdWKnE75Dxj7GkiYN8R6xgl6/UcZQTb29/mnIGdNYKD4sQqghpSVjlKedtCCR2Cfc
-         /BS3aCaWW8eCr1AAC5lSFg/eF86Nt8PVI25bYalDwnP/463BsIX0ZPaPfV+axqM/8hd+
-         Uq56Rkt1nCkaJzK5bY65L56vhsNfdewIirKFvT86pcYSIus/jH6Mws5g2n0ElxC8b4if
-         GzPRNuJklCCMyGlKN6NDwmVrxA7grhbH31SmN3aD7tENareOnPqCKgU5sAmFJpcV484/
-         iChA==
-X-Gm-Message-State: APjAAAWWs9e6WZ9346ZK9wSjaCmgf2t+CtrErTy1ztZHeYnQJYKu6cRf
-        Y+je7bhPfqzUZ36ImTAOKaNux+oOCTEt1Yk6Icw=
-X-Google-Smtp-Source: APXvYqzxdfyhl5+WEoSIYx+x+XAeUb7BjAYJp8AK3UAH6O0J1H/ajksDup6MbGPaXFby23GKFHMxPvvzkhj+r/v5u/g=
-X-Received: by 2002:a05:6830:1611:: with SMTP id g17mr22733272otr.29.1573495802909;
- Mon, 11 Nov 2019 10:10:02 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U0dm5D6eillHbo+SYeBB7f0hErK0a+Kk33c8eTHG8H4=;
+        b=uBlfCgXqo7AHGAgUEqHHHg8XNyocTzO00ikzLes8lxILlAohEc7WBWYNwBmgyDB16n
+         GMnGGZ1u7pjJHra3S+s+3Z3p04cMAv9MAr2Wu4/d3yRziyv+eaMsRgMaDf8pEP4Fyp5+
+         atTY3cUvR8Pc5qUuvO0aQ5jNN5jQJt0PDvwPCh7GP+wIDNw+h8O7Go3AwDfQ8430L/2w
+         87SDrUwSwVFO7xIU5ktQ/rsFiNbnbtpCGdGuL1pJACWV1XjTZw+j9MoSYv72ewztdVNA
+         7zXSJdjUaWMfZRncQjt+f343vB5c3GRAOHiYha0cdm5KlXIc2i5Qt9RnQMGdTivGiMOd
+         eMdA==
+X-Gm-Message-State: APjAAAXzZNO23iYqvBtrZjHqPi7HlrmCVGZWnEeeM2T3mErCZfnvezaU
+        FRXs/3nz819hzHYgX8eNuQPLMOIw3ikppUBSII+giQ==
+X-Google-Smtp-Source: APXvYqy5+K5Ca70nfdLzLpsHL1LP47SJMH7uBNWJHVoxDJt89nuKEY13OiKJzKEWbKRlo+wgCcXId9NnMQPQFowaWfc=
+X-Received: by 2002:aca:882:: with SMTP id 124mr284378oii.54.1573495843776;
+ Mon, 11 Nov 2019 10:10:43 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:aca:ad55:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 10:10:02
- -0800 (PST)
-Reply-To: jacobwilliams777@e1.ru
-From:   "DR. JACOB WILLIAMS" <obluts@gmail.com>
-Date:   Mon, 11 Nov 2019 10:10:02 -0800
-Message-ID: <CANd=yQV4FJRbK880tDYdOrPosVfsGJoN26omegsT7FE9dis64w@mail.gmail.com>
-Subject: trade investment
-To:     undisclosed-recipients:;
+References: <201911110920.5840E9AF1@keescook>
+In-Reply-To: <201911110920.5840E9AF1@keescook>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Nov 2019 19:10:32 +0100
+Message-ID: <CAMuHMdX_EM0e=fN6udZsPfa-YGX7KkNEgCQtdC0M51LGmWOxzA@mail.gmail.com>
+Subject: Re: [PATCH] m68k: Convert missed RODATA to RO_DATA
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Borislav Petkov <bp@suse.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 11, 2019 at 6:22 PM Kees Cook <keescook@chromium.org> wrote:
+> I missed two instances of the old RODATA macro (seems I was searching
+> for vmlinux.lds* not vmlinux*lds*). Fix both instances and double-check
+> the entire tree for other "RODATA" instances in linker scripts.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: c82318254d15 ("vmlinux.lds.h: Replace RODATA with RO_DATA")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/m68k/kernel/vmlinux-std.lds  | 2 +-
+>  arch/m68k/kernel/vmlinux-sun3.lds | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Please it's CONFIDENTIAL.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- My name is Dr.Jacob Williams, I have Huge funds to invest in your
-country or in Europe, Arab, America, Scandinavian, America,Asia or any
-other country. Please get back to me for details.Funds generated from
-excess crude oil deal.
-
- Best regards.
-
-Dr.Jacob Williams
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
