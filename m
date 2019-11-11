@@ -2,105 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73984F7004
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB0C6F7007
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:02:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfKKJBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 04:01:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43026 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbfKKJBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 04:01:04 -0500
-Received: from localhost (unknown [106.201.42.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60B34206BA;
-        Mon, 11 Nov 2019 09:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573462864;
-        bh=z/j9crcHsk7S4aU9B2I6s0jBvYdfKN9sp40Q4ClK9J4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e69J39U/DZqIZdafDyLMGrY+J4YYs6R8wCZts1udWAxa3Xhh2I/nPeAbcxehxjL/F
-         IlHNETuf6ciTeHdl4WU+En9BixkF7hVwiHh8IFPPhLOrfJAlgJNT8lmZaw7kmMydY9
-         CTHYUhLs399fKoWZGmHus2OLDQB3QXS1NUL58kPc=
-Date:   Mon, 11 Nov 2019 14:30:57 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     robh+dt@kernel.org, nm@ti.com, ssantosh@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
-        lokeshvutla@ti.com, t-kristo@ti.com, tony@atomide.com,
-        j-keerthy@ti.com
-Subject: Re: [PATCH v4 09/15] dmaengine: ti: New driver for K3 UDMA -
- split#1: defines, structs, io func
-Message-ID: <20191111090057.GT952516@vkoul-mobl>
-References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
- <20191101084135.14811-10-peter.ujfalusi@ti.com>
- <20191111052828.GN952516@vkoul-mobl>
- <00777586-a3ac-2404-5226-e8c887936a32@ti.com>
+        id S1726995AbfKKJCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 04:02:02 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37594 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbfKKJCC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 04:02:02 -0500
+Received: by mail-lj1-f196.google.com with SMTP id d5so3399544ljl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 01:02:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=J+4i9mZoCL1GCd56Hjin1Hm5nAxN8vwHz8ReT6VBzAU=;
+        b=qwKQdYsV+CJnfUed4JoOTRPuy3g6h3Ghlb/J7Ngat+9phsf79Qc+1QAeDV1mT7/YYK
+         Llae6rR+jiGLex1wF4IkWp3uYCHvCGmXlB/iMo6pyZqNIxo6v1+v4b7yeh0IcNEmvFnd
+         KUCnd34D11QHORSe8KH7tJK03YXGDBJMj0Th9QgCua1zZ4i/VTa9ffjqXpnXllCkR3R5
+         9YJozsIvA/j3d+3beIecowjV94XbYIQqXY0ckJ62+n/S60q6jEgD3weKvzRjJ/hi9Lfy
+         5VFnYTI+vaLT6dNDg9yURzOUTZH4MvybL+4cMvOoJrTDR5pULis9Hlp5so6koeh7Ckfy
+         xe6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=J+4i9mZoCL1GCd56Hjin1Hm5nAxN8vwHz8ReT6VBzAU=;
+        b=sRUHNn+ap8RG2wH8TSX4w2kfGd0gSuM0ydGykw1wZGkt8R5d0+ntZLjbuz8hMTeuAS
+         H7r3TQENShxi9jcoE916RyzRCL5GzWAHzLhe39CTwCgktYKbggAJAqk+fQCyqlS55oyd
+         gqD/16JoXaTScPAaE7VCihyCpFgL15LUgkqb/LNIC4R1soyEFoYS1hUNVYsYQXPGrSj8
+         8SnYD1YlTLlTKYzRNI99LBafcDO8IgQj/hFIeQLdIIBXlx1gtRacrQgM04Sfoz9F7LI1
+         ybyrNzWp5bikKTSG21IsAVFz4WinWHV2A98G/f5VLJyOWViTfp6RPuGx+IXYoideGZ8P
+         fkyw==
+X-Gm-Message-State: APjAAAVUNh/kZTte9Fh2CYcUroPZ5VNA6nXgOL2lmFrgTZn4jD8XcYPK
+        7vuOCdje8TlNdD1KuVLdnRkB5vjYkcCjeOwjwl4=
+X-Google-Smtp-Source: APXvYqxr5S31FfCpGJxZ49ENIia4uHA2LBS/lZwwCKUN0lk+PVDxn8GNckF1xUNnIwI40Y7yNbCUucUmB1aR8MdkvyE=
+X-Received: by 2002:a2e:b5b7:: with SMTP id f23mr15613270ljn.236.1573462920462;
+ Mon, 11 Nov 2019 01:02:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00777586-a3ac-2404-5226-e8c887936a32@ti.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Received: by 2002:a19:892:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 01:01:59 -0800 (PST)
+Reply-To: mark.bill@planetmail.net
+From:   "Mr. Mark Bill" <johnsonopaul@gmail.com>
+Date:   Mon, 11 Nov 2019 10:01:59 +0100
+Message-ID: <CAFW0C0VB9T6DXg0wPHEiDps-3k3KzprM8R8s5Lga3fD7qkmndw@mail.gmail.com>
+Subject: Greetings
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-11-19, 10:33, Peter Ujfalusi wrote:
-> On 11/11/2019 7.28, Vinod Koul wrote:
-> > On 01-11-19, 10:41, Peter Ujfalusi wrote:
+Greetings
 
-> >> +	struct udma_static_tr static_tr;
-> >> +	char *name;
-> >> +
-> >> +	struct udma_tchan *tchan;
-> >> +	struct udma_rchan *rchan;
-> >> +	struct udma_rflow *rflow;
-> >> +
-> >> +	bool psil_paired;
-> >> +
-> >> +	int irq_num_ring;
-> >> +	int irq_num_udma;
-> >> +
-> >> +	bool cyclic;
-> >> +	bool paused;
-> >> +
-> >> +	enum udma_chan_state state;
-> >> +	struct completion teardown_completed;
-> >> +
-> >> +	u32 bcnt; /* number of bytes completed since the start of the channel */
-> >> +	u32 in_ring_cnt; /* number of descriptors in flight */
-> >> +
-> >> +	bool pkt_mode; /* TR or packet */
-> >> +	bool needs_epib; /* EPIB is needed for the communication or not */
-> >> +	u32 psd_size; /* size of Protocol Specific Data */
-> >> +	u32 metadata_size; /* (needs_epib ? 16:0) + psd_size */
-> >> +	u32 hdesc_size; /* Size of a packet descriptor in packet mode */
-> >> +	bool notdpkt; /* Suppress sending TDC packet */
-> >> +	int remote_thread_id;
-> >> +	u32 src_thread;
-> >> +	u32 dst_thread;
-> >> +	enum psil_endpoint_type ep_type;
-> >> +	bool enable_acc32;
-> >> +	bool enable_burst;
-> >> +	enum udma_tp_level channel_tpl; /* Channel Throughput Level */
-> >> +
-> >> +	/* dmapool for packet mode descriptors */
-> >> +	bool use_dma_pool;
-> >> +	struct dma_pool *hdesc_pool;
-> >> +
-> >> +	u32 id;
-> >> +	enum dma_transfer_direction dir;
-> > 
-> > why does channel have this, it already exists in descriptor
-> 
-> The channel can not change role, it is set when it was requested. In the
-
-how do you do this on set? The channel is requested, we do not know the
-direction. When prep_ is invoked we know it..
-
--- 
-~Vinod
+I wonder why you continue neglecting my emails. Please, acknowledge the
+receipt of this message in reference to the subject above as I intend to send
+to you the details of the project.
+Sometimes, try to check your spam box because most of these correspondences
+fall out sometimes in SPAM folder.
+Best regards.
+Mr.Mark Bil
