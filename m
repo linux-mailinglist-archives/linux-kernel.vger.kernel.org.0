@@ -2,70 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B57A2F744E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 13:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66F03F7453
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 13:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfKKMpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 07:45:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726834AbfKKMpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 07:45:46 -0500
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81A512067B;
-        Mon, 11 Nov 2019 12:45:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573476346;
-        bh=WDxipH3XLB+HfXaUZVK+cmzbhva8WgS/ApH5twhhsWc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SSUQBKR6JLC3ewYFOQo4yHy+RGXZpUGmrE7icwLKEYPpw3bdXBepxFdp68ZXSr75B
-         IvMrYpO2hXuFGD0v11QZ049hbuzuBxUN9nSmbp1LRRYw4PD+ZPT2Nd7JaEI2m9VHcL
-         mKbHd2FEvQjOL0SeE7dW1r2m5uLbQ81g1A9MXPX8=
-Date:   Mon, 11 Nov 2019 13:45:42 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     emilio@elopez.com.ar, mturquette@baylibre.com, sboyd@kernel.org,
-        wens@csie.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] clk: sunxi: use of_device_get_match_data
-Message-ID: <20191111124542.GO4345@gilmour.lan>
-References: <1573403720-7916-1-git-send-email-clabbe@baylibre.com>
+        id S1726927AbfKKMsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 07:48:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53417 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbfKKMsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 07:48:31 -0500
+Received: by mail-wm1-f67.google.com with SMTP id u18so5553120wmc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 04:48:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LueFggV2mFZxu+VUXQPu24NK+wGUjIR5etrw8L3OYL8=;
+        b=hlskkMzHuS9VjPDw7su1MuaSy4UKB/cuCbdV3y3X9IZv5WR6cpIayQK4ozvCLeGzMP
+         ihs4CctijXAgpFBbqCCCN88t8nbiXnFeeeAvBYOQ11PHTVFGxHhmyuBJFe+3+xfA77RR
+         FHMtHBCbAWQFWWYSsk13lR3NUuyoPmXwtuRCK+ThfsfC7YAkwPLKAGbU7yaUFEuFBLKU
+         5SMWdckdwHtRdm3Vuam+QOjQ0Zdwico2zXB8uGOz5bPZpVAXME3tFReUi4L9NiGZZJ/V
+         iaiEBAg21L0Ve1eJXYo645eZ32j/nTElMcxPkX0QUSbaihWx7grcK4EG7PX3WJEXbsoj
+         Yo5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LueFggV2mFZxu+VUXQPu24NK+wGUjIR5etrw8L3OYL8=;
+        b=S90o09zPoviAG0p9tjF+AZecNpA2JSKDqjC9lTFDCyOUpfHxFtQxb9RXgNO8dHA5ne
+         nCQRgD9/c5Ls7xLOOYLq2K7ASdUHxzTgTwKiASW3R2g8sdteblmJ7naUKJ8NHgHsjbzm
+         bIi7zkddYLUXv08P8bLJC/lSTFpJUNsR3t5iFmDISRR4fbgRqC9dtNpTeQUbV6I+mB1P
+         LOx3g1zH5NyWeh0jXq6ALRdGPCaynj68nNk3DElATh/ka8T6LLo/m7QLeB0XGQOU58ox
+         u8Skz73rcVng8DfKRFocecTB52JjNwKAf5GJejhdIYu4AHch1ixylGyzYiQbzI3kcFby
+         GK2w==
+X-Gm-Message-State: APjAAAXNW27wptBuY1OIiwbLFfTkHa4duxmo8c7S8gwYJNfJvPPBC2TM
+        pbLYmy5eACjkRnHyCX81Row4cw==
+X-Google-Smtp-Source: APXvYqzR0+iSF3vPdqISM3JWy3ouLqoSAfFd0Vk+1PYXQknCvCZY112q3J7ZdtQDU3yTPdYF3TEp1A==
+X-Received: by 2002:a7b:c858:: with SMTP id c24mr21422418wml.174.1573476508859;
+        Mon, 11 Nov 2019 04:48:28 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id w81sm23284941wmg.5.2019.11.11.04.48.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Nov 2019 04:48:28 -0800 (PST)
+Subject: Re: [PATCH v3 02/11] mfd: wcd934x: add support to wcd9340/wcd9341
+ codec
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     robh@kernel.org, broonie@kernel.org, linus.walleij@linaro.org,
+        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        linux-gpio@vger.kernel.org
+References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
+ <20191029112700.14548-3-srinivas.kandagatla@linaro.org>
+ <20191111111836.GH3218@dell>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <ce2244ac-2219-3cc0-8ad6-7491295fbbef@linaro.org>
+Date:   Mon, 11 Nov 2019 12:48:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/JIF1IJL1ITjxcV4"
-Content-Disposition: inline
-In-Reply-To: <1573403720-7916-1-git-send-email-clabbe@baylibre.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191111111836.GH3218@dell>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---/JIF1IJL1ITjxcV4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Sun, Nov 10, 2019 at 04:35:20PM +0000, Corentin Labbe wrote:
-> The usage of of_device_get_match_data reduce the code size a bit.
->
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+On 11/11/2019 11:18, Lee Jones wrote:
+> On Tue, 29 Oct 2019, Srinivas Kandagatla wrote:
+> 
+>> Qualcomm WCD9340/WCD9341 Codec is a standalone Hi-Fi audio codec IC.
+>>
+>> This codec has integrated SoundWire controller, pin controller and
+>> interrupt controller.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+> 
+> No changelog?
 
-Queued for 5.6, thanks!
-Maxime
+I have done that in cover letter.
+If you prefer it here, I can add that in next version.
 
---/JIF1IJL1ITjxcV4
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+>>   drivers/mfd/Kconfig                   |  12 +
+>>   drivers/mfd/Makefile                  |   1 +
+>>   drivers/mfd/wcd934x.c                 | 306 +++++++++++++++
+>>   include/linux/mfd/wcd934x/registers.h | 529 ++++++++++++++++++++++++++
+>>   include/linux/mfd/wcd934x/wcd934x.h   |  31 ++
+>>   5 files changed, 879 insertions(+)
+>>   create mode 100644 drivers/mfd/wcd934x.c
+>>   create mode 100644 include/linux/mfd/wcd934x/registers.h
+>>   create mode 100644 include/linux/mfd/wcd934x/wcd934x.h
+> 
+> This driver reads much better now. Thanks for making the changes.
+> 
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>> index ae24d3ea68ea..9fe7e54b13bf 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -1967,6 +1967,18 @@ config MFD_STMFX
+>>   	  additional drivers must be enabled in order to use the functionality
+>>   	  of the device.
+>>   
+>> +config MFD_WCD934X
+>> +	tristate "Support for WCD9340/WCD9341 Codec"
+>> +	depends on SLIMBUS
+>> +	select REGMAP
+>> +	select REGMAP_SLIMBUS
+>> +	select REGMAP_IRQ
+>> +	select MFD_CORE
+>> +	help
+>> +	  Support for the Qualcomm WCD9340/WCD9341 Codec.
+>> +	  This driver provides common support wcd934x audio codec and its
+>> +	  associated Pin Controller, Soundwire Controller and Audio codec.
+> 
+> Your capitalisation of devices is all over the place in both your help
+> section and in the commit message. Either capitalise them all or none
+> of them. Personally I would prefer all, rather than none. What ever
+> you choose, please be consistent.
+> 
+> Same for "wcd934x", this should read "WCD934x" in all comments and the
+> help.
 
------BEGIN PGP SIGNATURE-----
+I agree, will fix it along with other Nits you suggested.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXclX9gAKCRDj7w1vZxhR
-xXQrAQCuBvWXvw9bB/NYXgGhHA5eGk4zCcGrX2njuT6ALJldIAEA+N8WJYaZVKxA
-jDggN/JLd5CcVAR68UGM79sdoFQlags=
-=venc
------END PGP SIGNATURE-----
 
---/JIF1IJL1ITjxcV4--
+[...]
+>> +static void wcd934x_slim_remove(struct slim_device *sdev)
+>> +{
+>> +	struct wcd934x_ddata *ddata = dev_get_drvdata(&sdev->dev);
+>> +
+>> +	regulator_bulk_disable(WCD934X_MAX_SUPPLY, ddata->supplies);
+>> +	mfd_remove_devices(&sdev->dev);
+>> +	kfree(ddata);
+>> +}
+>> +
+>> +static const struct slim_device_id wcd934x_slim_id[] = {
+>> +	{ SLIM_MANF_ID_QCOM, SLIM_PROD_CODE_WCD9340, 0x1, 0x0 },
+> 
+> What do the last parameters mean? Might be better to define them.
+
+This is Instance ID and Device ID of SLIMBus enumeration address.
+
+
+> 
+>> +	{}
+>> +};
+> 
+> [...]
+> 
