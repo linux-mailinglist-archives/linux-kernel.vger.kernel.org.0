@@ -2,50 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 747EBF7B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FABBF7D56
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbfKKSeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:34:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51944 "EHLO mail.kernel.org"
+        id S1730677AbfKKSzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:55:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbfKKSeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:34:20 -0500
+        id S1730007AbfKKSzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:55:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C4E92190F;
-        Mon, 11 Nov 2019 18:34:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6551F21783;
+        Mon, 11 Nov 2019 18:55:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497258;
-        bh=E96gvs1NXjW1VnSLVyGghXIHAbH03uuVsaYwe+itlj0=;
+        s=default; t=1573498544;
+        bh=lesCjPfVbmccshqGOePfUxiBPLe03ulNgUg/hcMlxdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H7kXlswIrFR5NIHWTR8q9Eg7SqN6hUh3/doZ8SOqYWuS57OFSNdQe0F/1TKNPrki3
-         rPtRRcNZ+fsVzASOcJd5w9317wt7x4vqt7F4akdHvj2gKrpSZyiRh+gC6J1UMQC+dt
-         IIMFUElB6LNq1Xqdqpf5aKYE/gcdPp5mZ/gCb5P4=
+        b=z3OyKVKvx+01zX7wDso0RK8IHX0mhnsvaJRruugmxJTp9skKtCJ+qcAlEi3xNNc8v
+         +l84fwgN3GB4Ftkzk3eLMF59CanIUUX11HLEpk+S7NgmxAT7yDSB1iu0G9s69SiPT2
+         iZltFBK1oCNSRi43u/467GhfUr/hZJTTquoSI7BI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 50/65] perf/x86/amd/ibs: Handle erratum #420 only on the affected CPU family (10h)
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 148/193] USB: ldusb: use unsigned size format specifiers
 Date:   Mon, 11 Nov 2019 19:28:50 +0100
-Message-Id: <20191111181350.880646578@linuxfoundation.org>
+Message-Id: <20191111181512.062947342@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,68 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit e431e79b60603079d269e0c2a5177943b95fa4b6 ]
+[ Upstream commit 88f6bf3846ee90bf33aa1ce848cd3bfb3229f4a4 ]
 
-This saves us writing the IBS control MSR twice when disabling the
-event.
+A recent info-leak bug manifested itself along with warning about a
+negative buffer overflow:
 
-I searched revision guides for all families since 10h, and did not
-find occurrence of erratum #420, nor anything remotely similar:
-so we isolate the secondary MSR write to family 10h only.
+	ldusb 1-1:0.28: Read buffer overflow, -131383859965943 bytes dropped
 
-Also unconditionally update the count mask for IBS Op implementations
-that have read & writeable current count (CurCnt) fields in addition
-to the MaxCnt field.  These bits were reserved on prior
-implementations, and therefore shouldn't have negative impact.
+when it was really a rather large positive one.
 
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: c9574fe0bdb9 ("perf/x86-ibs: Implement workaround for IBS erratum #420")
-Link: https://lkml.kernel.org/r/20191023150955.30292-2-kim.phillips@amd.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+A sanity check that prevents this has now been put in place, but let's
+fix up the size format specifiers, which should all be unsigned.
+
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191022143203.5260-3-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/ibs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/misc/ldusb.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index a8317d384773a..5f72b473f3ed3 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -388,7 +388,8 @@ static inline void perf_ibs_disable_event(struct perf_ibs *perf_ibs,
- 					  struct hw_perf_event *hwc, u64 config)
- {
- 	config &= ~perf_ibs->cnt_mask;
--	wrmsrl(hwc->config_base, config);
-+	if (boot_cpu_data.x86 == 0x10)
-+		wrmsrl(hwc->config_base, config);
- 	config &= ~perf_ibs->enable_mask;
- 	wrmsrl(hwc->config_base, config);
- }
-@@ -563,7 +564,8 @@ static struct perf_ibs perf_ibs_op = {
- 	},
- 	.msr			= MSR_AMD64_IBSOPCTL,
- 	.config_mask		= IBS_OP_CONFIG_MASK,
--	.cnt_mask		= IBS_OP_MAX_CNT,
-+	.cnt_mask		= IBS_OP_MAX_CNT | IBS_OP_CUR_CNT |
-+				  IBS_OP_CUR_CNT_RAND,
- 	.enable_mask		= IBS_OP_ENABLE,
- 	.valid_mask		= IBS_OP_VAL,
- 	.max_period		= IBS_OP_MAX_CNT << 4,
+diff --git a/drivers/usb/misc/ldusb.c b/drivers/usb/misc/ldusb.c
+index f5e34c5034547..8f86b4ebca898 100644
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -487,7 +487,7 @@ static ssize_t ld_usb_read(struct file *file, char __user *buffer, size_t count,
+ 	}
+ 	bytes_to_read = min(count, *actual_buffer);
+ 	if (bytes_to_read < *actual_buffer)
+-		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
++		dev_warn(&dev->intf->dev, "Read buffer overflow, %zu bytes dropped\n",
+ 			 *actual_buffer-bytes_to_read);
+ 
+ 	/* copy one interrupt_in_buffer from ring_buffer into userspace */
+@@ -562,8 +562,9 @@ static ssize_t ld_usb_write(struct file *file, const char __user *buffer,
+ 	/* write the data into interrupt_out_buffer from userspace */
+ 	bytes_to_write = min(count, write_buffer_size*dev->interrupt_out_endpoint_size);
+ 	if (bytes_to_write < count)
+-		dev_warn(&dev->intf->dev, "Write buffer overflow, %zd bytes dropped\n", count-bytes_to_write);
+-	dev_dbg(&dev->intf->dev, "%s: count = %zd, bytes_to_write = %zd\n",
++		dev_warn(&dev->intf->dev, "Write buffer overflow, %zu bytes dropped\n",
++			count - bytes_to_write);
++	dev_dbg(&dev->intf->dev, "%s: count = %zu, bytes_to_write = %zu\n",
+ 		__func__, count, bytes_to_write);
+ 
+ 	if (copy_from_user(dev->interrupt_out_buffer, buffer, bytes_to_write)) {
 -- 
 2.20.1
 
