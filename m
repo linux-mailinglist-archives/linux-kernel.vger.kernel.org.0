@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A54EF7EF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D1CBF7E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:03:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbfKKSiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:38:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57006 "EHLO mail.kernel.org"
+        id S1727729AbfKKSrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:47:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728927AbfKKSiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:38:10 -0500
+        id S1730050AbfKKSq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:46:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEC0E214E0;
-        Mon, 11 Nov 2019 18:38:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14F9621655;
+        Mon, 11 Nov 2019 18:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497489;
-        bh=fVttVjr+D6cUItgUAufminP6729wf7iFYBif/RxkV9A=;
+        s=default; t=1573498018;
+        bh=xmWQpLT2KJLMmCxIVrT4Qukhiz7jYNjuK8yXyTX1ISM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HUBmD/wO1MMQkhU5/fIT0jwJD1+Kzo4H3LHANsI3iEajqYuAVTcxCmzneNTZJtzo2
-         IM6lML6Z8MpscrREtoM1Yxp2wERyOD25WzY7d9E4x6/WqAobelFM+iJWKIrFwwNuZX
-         YX3O5BtqyLWUNu348gWvOYVaIHLblx42brmStLz8=
+        b=MSXDGjA61GmdkcEB8ZnmHPUVPVIc+93w5FkAwRDdKzYaKpZhZBkWuk6jI4HlIAAwB
+         CxsZC7zdz2J+sVcnwlhCA0f2weoYQm1N/3pxxd6AmEDeTaHOSR3YpQn56GXb5KBSPd
+         /vfaVjBwg15iTmXIeHFghEEOxxSC5xjOs0BRSEeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kamal Heib <kamalheib1@gmail.com>,
-        =?UTF-8?q?Michal=20Kalderon=C2=A0?= <michal.kalderon@marvell.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 071/105] RDMA/qedr: Fix reported firmware version
-Date:   Mon, 11 Nov 2019 19:28:41 +0100
-Message-Id: <20191111181445.791561925@linuxfoundation.org>
+Subject: [PATCH 4.19 084/125] netfilter: nf_flow_table: set timeout before insertion into hashes
+Date:   Mon, 11 Nov 2019 19:28:43 +0100
+Message-Id: <20191111181451.347524746@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamal Heib <kamalheib1@gmail.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[ Upstream commit b806c94ee44e53233b8ce6c92d9078d9781786a5 ]
+[ Upstream commit daf61b026f4686250e6afa619e6d7b49edc61df7 ]
 
-Remove spaces from the reported firmware version string.
-Actual value:
-$ cat /sys/class/infiniband/qedr0/fw_ver
-8. 37. 7. 0
+Other garbage collector might remove an entry not fully set up yet.
 
-Expected value:
-$ cat /sys/class/infiniband/qedr0/fw_ver
-8.37.7.0
+[570953.958293] RIP: 0010:memcmp+0x9/0x50
+[...]
+[570953.958567]  flow_offload_hash_cmp+0x1e/0x30 [nf_flow_table]
+[570953.958585]  flow_offload_lookup+0x8c/0x110 [nf_flow_table]
+[570953.958606]  nf_flow_offload_ip_hook+0x135/0xb30 [nf_flow_table]
+[570953.958624]  nf_flow_offload_inet_hook+0x35/0x37 [nf_flow_table_inet]
+[570953.958646]  nf_hook_slow+0x3c/0xb0
+[570953.958664]  __netif_receive_skb_core+0x90f/0xb10
+[570953.958678]  ? ip_rcv_finish+0x82/0xa0
+[570953.958692]  __netif_receive_skb_one_core+0x3b/0x80
+[570953.958711]  __netif_receive_skb+0x18/0x60
+[570953.958727]  netif_receive_skb_internal+0x45/0xf0
+[570953.958741]  napi_gro_receive+0xcd/0xf0
+[570953.958764]  ixgbe_clean_rx_irq+0x432/0xe00 [ixgbe]
+[570953.958782]  ixgbe_poll+0x27b/0x700 [ixgbe]
+[570953.958796]  net_rx_action+0x284/0x3c0
+[570953.958817]  __do_softirq+0xcc/0x27c
+[570953.959464]  irq_exit+0xe8/0x100
+[570953.960097]  do_IRQ+0x59/0xe0
+[570953.960734]  common_interrupt+0xf/0xf
 
-Fixes: ec72fce401c6 ("qedr: Add support for RoCE HW init")
-Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
-Acked-by: Michal Kalderon <michal.kalderon@marvell.com>
-Link: https://lore.kernel.org/r/20191007210730.7173-1-kamalheib1@gmail.com
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fixes: 43c8f131184f ("netfilter: nf_flow_table: fix missing error check for rhashtable_insert_fast")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/qedr/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_flow_table_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/qedr/main.c b/drivers/infiniband/hw/qedr/main.c
-index ddb05b42e5e6a..3e48ed64760b7 100644
---- a/drivers/infiniband/hw/qedr/main.c
-+++ b/drivers/infiniband/hw/qedr/main.c
-@@ -73,7 +73,7 @@ static void qedr_get_dev_fw_str(struct ib_device *ibdev, char *str)
- 	struct qedr_dev *qedr = get_qedr_dev(ibdev);
- 	u32 fw_ver = (u32)qedr->attr.fw_ver;
+diff --git a/net/netfilter/nf_flow_table_core.c b/net/netfilter/nf_flow_table_core.c
+index 8ade405129444..70bd730ca0597 100644
+--- a/net/netfilter/nf_flow_table_core.c
++++ b/net/netfilter/nf_flow_table_core.c
+@@ -187,6 +187,8 @@ int flow_offload_add(struct nf_flowtable *flow_table, struct flow_offload *flow)
+ {
+ 	int err;
  
--	snprintf(str, IB_FW_VERSION_NAME_MAX, "%d. %d. %d. %d",
-+	snprintf(str, IB_FW_VERSION_NAME_MAX, "%d.%d.%d.%d",
- 		 (fw_ver >> 24) & 0xFF, (fw_ver >> 16) & 0xFF,
- 		 (fw_ver >> 8) & 0xFF, fw_ver & 0xFF);
++	flow->timeout = (u32)jiffies + NF_FLOW_TIMEOUT;
++
+ 	err = rhashtable_insert_fast(&flow_table->rhashtable,
+ 				     &flow->tuplehash[0].node,
+ 				     nf_flow_offload_rhash_params);
+@@ -203,7 +205,6 @@ int flow_offload_add(struct nf_flowtable *flow_table, struct flow_offload *flow)
+ 		return err;
+ 	}
+ 
+-	flow->timeout = (u32)jiffies + NF_FLOW_TIMEOUT;
+ 	return 0;
  }
+ EXPORT_SYMBOL_GPL(flow_offload_add);
 -- 
 2.20.1
 
