@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B4E3F7C66
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C60CDF7D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:56:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfKKSpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:45:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38020 "EHLO mail.kernel.org"
+        id S1730458AbfKKS4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:56:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729362AbfKKSpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:45:47 -0500
+        id S1730701AbfKKS4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:56:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3266820659;
-        Mon, 11 Nov 2019 18:45:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 379E32173B;
+        Mon, 11 Nov 2019 18:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497947;
-        bh=bzp0MO4stnUNNQs3nttCLb6EdBmNW3XoxLsUxuYDDEM=;
+        s=default; t=1573498578;
+        bh=6GKlE5c1X7Fx/I6EQaAYcQY55nqx95iZiiBVJ7+o18o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bI+FnEq8T2fwNUJAbo45bfzeopKHcJiLeYdP6p0oTtZ9N4oOq06r8k2R0w6TjI5sK
-         cKYjld2PgJw82Hqt6IRCEuFcuFJTWik1efssTk2nRx2aQi3rx80SIoCThoHg/zWi9N
-         ToiHqZtqtY9is1aPjSKVJpwoLAFUJ21bHXNcmLYw=
+        b=sG8IYItIOp6ji3ILSwvtBVuArFHUAcHZb6vN7KWpyKpWlCcFHLNFn9olFDwz48991
+         BMDdWnOSNTACCaSKv+4voJub03T//D0zbvdTlfD2IO9jzDV8LCXS/h/0RCk7Q/9hOC
+         N9/WdGChTUsh4BkhoPlHO0QiKshsnWVoHRFYqiCw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Anton Eidelman <anton@lightbitslabs.com>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 104/125] nvme-multipath: fix possible io hang after ctrl reconnect
+Subject: [PATCH 5.3 161/193] net: mscc: ocelot: refuse to overwrite the ports native vlan
 Date:   Mon, 11 Nov 2019 19:29:03 +0100
-Message-Id: <20191111181453.821670586@linuxfoundation.org>
+Message-Id: <20191111181513.003301670@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +48,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Eidelman <anton@lightbitslabs.com>
+From: Vladimir Oltean <olteanv@gmail.com>
 
-[ Upstream commit af8fd0424713a2adb812d10d55e86718152cf656 ]
+[ Upstream commit b9cd75e6689560140dadaed98eb4b41aad75d55d ]
 
-The following scenario results in an IO hang:
-1) ctrl completes a request with NVME_SC_ANA_TRANSITION.
-   NVME_NS_ANA_PENDING bit in ns->flags is set and ana_work is triggered.
-2) ana_work: nvme_read_ana_log() tries to get the ANA log page from the ctrl.
-   This fails because ctrl disconnects.
-   Therefore nvme_update_ns_ana_state() is not called
-   and NVME_NS_ANA_PENDING bit in ns->flags is not cleared.
-3) ctrl reconnects: nvme_mpath_init(ctrl,...) calls
-   nvme_read_ana_log(ctrl, groups_only=true).
-   However, nvme_update_ana_state() does not update namespaces
-   because nr_nsids = 0 (due to groups_only mode).
-4) scan_work calls nvme_validate_ns() finds the ns and re-validates OK.
+The switch driver keeps a "vid" variable per port, which signifies _the_
+VLAN ID that is stripped on that port's egress (aka the native VLAN on a
+trunk port).
 
-Result:
-The ctrl is now live but NVME_NS_ANA_PENDING bit in ns->flags is still set.
-Consequently ctrl will never be considered a viable path by __nvme_find_path().
-IO will hang if ctrl is the only or the last path to the namespace.
+That is the way the hardware is designed (mostly). The port->vid is
+programmed into REW:PORT:PORT_VLAN_CFG:PORT_VID and the rewriter is told
+to send all traffic as tagged except the one having port->vid.
 
-More generally, while ctrl is reconnecting, its ANA state may change.
-And because nvme_mpath_init() requests ANA log in groups_only mode,
-these changes are not propagated to the existing ctrl namespaces.
-This may result in a mal-function or an IO hang.
+There exists a possibility of finer-grained egress untagging decisions:
+using the VCAP IS1 engine, one rule can be added to match every
+VLAN-tagged frame whose VLAN should be untagged, and set POP_CNT=1 as
+action. However, the IS1 can hold at most 512 entries, and the VLANs are
+in the order of 6 * 4096.
 
-Solution:
-nvme_mpath_init() will nvme_read_ana_log() with groups_only set to false.
-This will not harm the new ctrl case (no namespaces present),
-and will make sure the ANA state of namespaces gets updated after reconnect.
+So the code is fine for now. But this sequence of commands:
 
-Note: Another option would be for nvme_mpath_init() to invoke
-nvme_parse_ana_log(..., nvme_set_ns_ana_state) for each existing namespace.
+$ bridge vlan add dev swp0 vid 1 pvid untagged
+$ bridge vlan add dev swp0 vid 2 untagged
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+makes untagged and pvid-tagged traffic be sent out of swp0 as tagged
+with VID 1, despite user's request.
+
+Prevent that from happening. The user should temporarily remove the
+existing untagged VLAN (1 in this case), add it back as tagged, and then
+add the new untagged VLAN (2 in this case).
+
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 7142529f1688 ("net: mscc: ocelot: add VLAN filtering")
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mscc/ocelot.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 892ef52122329..838ee58d80cda 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -575,7 +575,7 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 		goto out;
- 	}
+diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
+index 07ca3e0cdf92b..7ffe5959a7e73 100644
+--- a/drivers/net/ethernet/mscc/ocelot.c
++++ b/drivers/net/ethernet/mscc/ocelot.c
+@@ -260,8 +260,15 @@ static int ocelot_vlan_vid_add(struct net_device *dev, u16 vid, bool pvid,
+ 		port->pvid = vid;
  
--	error = nvme_read_ana_log(ctrl, true);
-+	error = nvme_read_ana_log(ctrl, false);
- 	if (error)
- 		goto out_free_ana_log_buf;
- 	return 0;
+ 	/* Untagged egress vlan clasification */
+-	if (untagged)
++	if (untagged && port->vid != vid) {
++		if (port->vid) {
++			dev_err(ocelot->dev,
++				"Port already has a native VLAN: %d\n",
++				port->vid);
++			return -EBUSY;
++		}
+ 		port->vid = vid;
++	}
+ 
+ 	ocelot_vlan_port_apply(ocelot, port);
+ 
 -- 
 2.20.1
 
