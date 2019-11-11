@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14938F7E48
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DD76F7E46
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbfKKSrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:47:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40442 "EHLO mail.kernel.org"
+        id S1729224AbfKKSro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:47:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729701AbfKKSrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:47:35 -0500
+        id S1730140AbfKKSrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:47:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8716F21783;
-        Mon, 11 Nov 2019 18:47:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C01F921783;
+        Mon, 11 Nov 2019 18:47:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498055;
-        bh=+17ehECNh07udlERtfUPO5OuTbHalhbftKl0CqacctQ=;
+        s=default; t=1573498058;
+        bh=L1K7yYDdUDF0ZtxsBbAvchdHeIG5+ZbeQBrv3H+s6+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m1Ie5PD0oQJbHrRMtm8lG/k5+KK65epV+EyUe1xmOxAPughH/Vg7b3dP5RYYCqFQa
-         xN8wUv4cnzK5E+VDAx8feePt56MJlyQlgqmaIyH3rZwno59oLbMSZINCtEyLWjYbI5
-         zcHAtQM4FvHSZ9+spws6u1Eecx/eCjSaV/QjXLOk=
+        b=S9Yyx55Gh7OCLXOuKsNN1aoFVMODtAuU+0SvYVBknavjC2tXXS8Zt9wYH+YGXSFYH
+         HkjszMgkslGPQTL82KO5tyPCO/syDM4sQyC/pRc9RgixMO21BeXtsV/WjKHNJLf+p8
+         4BPJYYuhdqKm5NiMuzUQq3MPXGvzME60bhBN86gc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Johan Hovold <johan@kernel.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 010/193] nfc: netlink: fix double device reference drop
-Date:   Mon, 11 Nov 2019 19:26:32 +0100
-Message-Id: <20191111181500.678797788@linuxfoundation.org>
+Subject: [PATCH 5.3 011/193] NFC: st21nfca: fix double free
+Date:   Mon, 11 Nov 2019 19:26:33 +0100
+Message-Id: <20191111181500.744759856@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -46,39 +45,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 025ec40b81d785a98f76b8bdb509ac10773b4f12 ]
+[ Upstream commit 99a8efbb6e30b72ac98cecf81103f847abffb1e5 ]
 
-The function nfc_put_device(dev) is called twice to drop the reference
-to dev when there is no associated local llcp. Remove one of them to fix
-the bug.
+The variable nfcid_skb is not changed in the callee nfc_hci_get_param()
+if error occurs. Consequently, the freed variable nfcid_skb will be
+freed again, resulting in a double free bug. Set nfcid_skb to NULL after
+releasing it to fix the bug.
 
-Fixes: 52feb444a903 ("NFC: Extend netlink interface for LTO, RW, and MIUX parameters support")
-Fixes: d9b8d8e19b07 ("NFC: llcp: Service Name Lookup netlink interface")
 Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/nfc/netlink.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/nfc/st21nfca/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -1099,7 +1099,6 @@ static int nfc_genl_llc_set_params(struc
- 
- 	local = nfc_llcp_find_local(dev);
- 	if (!local) {
--		nfc_put_device(dev);
- 		rc = -ENODEV;
- 		goto exit;
- 	}
-@@ -1159,7 +1158,6 @@ static int nfc_genl_llc_sdreq(struct sk_
- 
- 	local = nfc_llcp_find_local(dev);
- 	if (!local) {
--		nfc_put_device(dev);
- 		rc = -ENODEV;
- 		goto exit;
- 	}
+--- a/drivers/nfc/st21nfca/core.c
++++ b/drivers/nfc/st21nfca/core.c
+@@ -708,6 +708,7 @@ static int st21nfca_hci_complete_target_
+ 							NFC_PROTO_FELICA_MASK;
+ 		} else {
+ 			kfree_skb(nfcid_skb);
++			nfcid_skb = NULL;
+ 			/* P2P in type A */
+ 			r = nfc_hci_get_param(hdev, ST21NFCA_RF_READER_F_GATE,
+ 					ST21NFCA_RF_READER_F_NFCID1,
 
 
