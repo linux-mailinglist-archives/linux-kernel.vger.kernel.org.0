@@ -2,182 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F3EF797A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4B3F7987
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfKKRIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 12:08:40 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48434 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726871AbfKKRIk (ORCPT
+        id S1726927AbfKKRMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 12:12:09 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:41888 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfKKRMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 12:08:40 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0260C8EE0EA;
-        Mon, 11 Nov 2019 09:08:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1573492120;
-        bh=+Yg/2jPdCK9r7LUFp9lf3LC20PR2r7b13Z6eUeXo5fI=;
-        h=Subject:From:To:Cc:Date:From;
-        b=Ec0dqc9Eke3jRGhrYb0AiGUL/pUxCL/34BHchrx7/A0d3J7Bx0IQPXBW83GtC/3KP
-         ZQV1BQZIkCjmkr4io+/gSKt/opUHgYkIqulElpvAz2J61kSC5BQ80vyWu76Q1l5/mc
-         3Loq6PmfJNVUyGTtGuc8H0utq96BqL2tRqTAAJmA=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 2NXRgvZTG6vd; Mon, 11 Nov 2019 09:08:39 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5B5778EE0CE;
-        Mon, 11 Nov 2019 09:08:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1573492119;
-        bh=+Yg/2jPdCK9r7LUFp9lf3LC20PR2r7b13Z6eUeXo5fI=;
-        h=Subject:From:To:Cc:Date:From;
-        b=clbtaX41kDCW2jTMcrcN3te4zV1v4hja8JaHJneYvJs3eVypoG10F++KzmzpxvV6a
-         m3N8UO8ovWUhXa1ko5QiNuvp12bhe8xgsf+7yGXgcuuyNmI89wc0fZJfzFEmzngEWc
-         egl9bXXJdWZE2gKcS79qA2Jy+pjY1Y5pAnFTWp2c=
-Message-ID: <1573492117.6865.5.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 5.4-rc7
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Mon, 11 Nov 2019 09:08:37 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Nov 2019 12:12:09 -0500
+Received: by mail-io1-f71.google.com with SMTP id p2so1589883ioh.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 09:12:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=yM/UpwGqJ2Iq9llUcUVI+4Q+oGbiDijz949nOElRGZY=;
+        b=YERRYKds5l6btKd7pSpkdLiiD73EhdLVLvX9vbyFOMcv0Pj0NxH+juKNckVqQBEY+b
+         DYDRjFnwFeMtATvebpVPki3DAVMWGK8TDdqS1ySRpITvyJoEvnFEI8PvVa3C7wLo/J2e
+         ZdW3j6rS5z9+l8B7n0UNrcbBWA2CexvYNXCRf0VrcSHh/+tx7E0Xp/LvKqntwhfO5Bb+
+         vigVeWBD3g3xxb1/PfD65dnH/5NCdLPvn9wBvMybEl3jd1i+8QVB3tI4ytHdzBMq+lx+
+         0AFVc+y3dVuf0S6pO7V8ZMcW07JyM3jsG+HdN/MjP04FS5oQgzMCojKIOHJ/UgCvmz+m
+         XGxA==
+X-Gm-Message-State: APjAAAUUuBX0xjHI/UnQhmiFge4A1V2IWhvIT14St4oMfNhfc7iRgHNC
+        GFCyS55cnCxmZpg7c+qOJejWwvP/3p8dzEBX+VSYjgrArFSs
+X-Google-Smtp-Source: APXvYqwv1e16900Cr2dC2eH58JKjwfDIIYRWf5MtJFzqWbpAZYp0khw926tNiihZcF9XwRTsfFQiJZv+SqjWAmP3he8a3qUswLIk
+MIME-Version: 1.0
+X-Received: by 2002:a5e:d70c:: with SMTP id v12mr22955105iom.284.1573492328484;
+ Mon, 11 Nov 2019 09:12:08 -0800 (PST)
+Date:   Mon, 11 Nov 2019 09:12:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004bddcf0597153b91@google.com>
+Subject: KASAN: use-after-free Read in check_matching_master_slave
+From:   syzbot <syzbot+5ab7470f121c0165470f@syzkaller.appspotmail.com>
+To:     alsa-devel@alsa-project.org, enric.balletbo@collabora.com,
+        gregkh@linuxfoundation.org, kirr@nexedi.com,
+        linux-kernel@vger.kernel.org, linux@roeck-us.net, perex@perex.cz,
+        rfontana@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Three small changes: two in the core and one in the qla2xxx driver. The
-sg_tablesize fix affects a thinko in the migration to blk-mq of certain
-legacy drivers which could cause an oops and the sd core change should
-only affect zoned block devices which were wrongly suppressing error
-messages for reset all zones. 
+Hello,
 
-The patch is available here:
+syzbot found the following crash on:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+HEAD commit:    6980b7f6 Add linux-next specific files for 20191111
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1658f9fce00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2af7db1972ec750e
+dashboard link: https://syzkaller.appspot.com/bug?extid=5ab7470f121c0165470f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-The short changelog is:
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Damien Le Moal (1):
-      scsi: sd_zbc: Fix sd_zbc_complete()
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5ab7470f121c0165470f@syzkaller.appspotmail.com
 
-Martin Wilck (1):
-      scsi: qla2xxx: fix NPIV tear down process
+==================================================================
+BUG: KASAN: use-after-free in __list_add_valid+0x9a/0xa0 lib/list_debug.c:26
+Read of size 8 at addr ffff888095ac8078 by task syz-executor.0/4457
 
-Michael Schmitz (1):
-      scsi: core: Handle drivers which set sg_tablesize to zero
+CPU: 1 PID: 4457 Comm: syz-executor.0 Not tainted 5.4.0-rc6-next-20191111 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:634
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  __list_add_valid+0x9a/0xa0 lib/list_debug.c:26
+  __list_add include/linux/list.h:60 [inline]
+  list_add_tail include/linux/list.h:93 [inline]
+  list_move_tail include/linux/list.h:214 [inline]
+  check_matching_master_slave.part.0+0x116/0x550 sound/core/timer.c:179
+  check_matching_master_slave sound/core/timer.c:177 [inline]
+  snd_timer_check_slave sound/core/timer.c:207 [inline]
+  snd_timer_open+0x466/0x1150 sound/core/timer.c:270
+  snd_timer_user_tselect sound/core/timer.c:1738 [inline]
+  __snd_timer_user_ioctl.isra.0+0x7ed/0x2070 sound/core/timer.c:2008
+  snd_timer_user_ioctl+0x7a/0xa7 sound/core/timer.c:2038
+  vfs_ioctl fs/ioctl.c:47 [inline]
+  file_ioctl fs/ioctl.c:545 [inline]
+  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
+  __do_sys_ioctl fs/ioctl.c:756 [inline]
+  __se_sys_ioctl fs/ioctl.c:754 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45a219
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f41e77d2c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045a219
+RDX: 0000000020029fcc RSI: 0000000040345410 RDI: 0000000000000003
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f41e77d36d4
+R13: 00000000004cf428 R14: 00000000004d9760 R15: 00000000ffffffff
 
-And the diffstat:
+Allocated by task 4339:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:510 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
+  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
+  kmalloc include/linux/slab.h:556 [inline]
+  kzalloc include/linux/slab.h:670 [inline]
+  snd_timer_instance_new+0x4a/0x300 sound/core/timer.c:96
+  snd_timer_user_tselect sound/core/timer.c:1725 [inline]
+  __snd_timer_user_ioctl.isra.0+0x665/0x2070 sound/core/timer.c:2008
+  snd_timer_user_ioctl+0x7a/0xa7 sound/core/timer.c:2038
+  vfs_ioctl fs/ioctl.c:47 [inline]
+  file_ioctl fs/ioctl.c:545 [inline]
+  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
+  __do_sys_ioctl fs/ioctl.c:756 [inline]
+  __se_sys_ioctl fs/ioctl.c:754 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
- drivers/scsi/qla2xxx/qla_mid.c |  8 +++++---
- drivers/scsi/qla2xxx/qla_os.c  |  8 +++++---
- drivers/scsi/scsi_lib.c        |  3 ++-
- drivers/scsi/sd_zbc.c          | 29 ++++++++++-------------------
- 4 files changed, 22 insertions(+), 26 deletions(-)
+Freed by task 4339:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  kasan_set_free_info mm/kasan/common.c:332 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+  __cache_free mm/slab.c:3426 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3757
+  snd_timer_instance_free sound/core/timer.c:120 [inline]
+  snd_timer_instance_free+0x7c/0xa0 sound/core/timer.c:114
+  snd_timer_user_tselect sound/core/timer.c:1740 [inline]
+  __snd_timer_user_ioctl.isra.0+0x160d/0x2070 sound/core/timer.c:2008
+  snd_timer_user_ioctl+0x7a/0xa7 sound/core/timer.c:2038
+  vfs_ioctl fs/ioctl.c:47 [inline]
+  file_ioctl fs/ioctl.c:545 [inline]
+  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
+  __do_sys_ioctl fs/ioctl.c:756 [inline]
+  __se_sys_ioctl fs/ioctl.c:754 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-With full diff below.
+The buggy address belongs to the object at ffff888095ac8000
+  which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 120 bytes inside of
+  256-byte region [ffff888095ac8000, ffff888095ac8100)
+The buggy address belongs to the page:
+page:ffffea000256b200 refcount:1 mapcount:0 mapping:ffff8880aa4008c0  
+index:0xffff888095ac8c00
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea0001815608 ffffea0001eb9308 ffff8880aa4008c0
+raw: ffff888095ac8c00 ffff888095ac8000 0000000100000005 0000000000000000
+page dumped because: kasan: bad access detected
 
-James
+Memory state around the buggy address:
+  ffff888095ac7f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff888095ac7f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff888095ac8000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                 ^
+  ffff888095ac8080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888095ac8100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
 
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/scsi/qla2xxx/qla_mid.c b/drivers/scsi/qla2xxx/qla_mid.c
-index 6afad68e5ba2..238240984bc1 100644
---- a/drivers/scsi/qla2xxx/qla_mid.c
-+++ b/drivers/scsi/qla2xxx/qla_mid.c
-@@ -76,9 +76,11 @@ qla24xx_deallocate_vp_id(scsi_qla_host_t *vha)
- 	 * ensures no active vp_list traversal while the vport is removed
- 	 * from the queue)
- 	 */
--	for (i = 0; i < 10 && atomic_read(&vha->vref_count); i++)
--		wait_event_timeout(vha->vref_waitq,
--		    atomic_read(&vha->vref_count), HZ);
-+	for (i = 0; i < 10; i++) {
-+		if (wait_event_timeout(vha->vref_waitq,
-+		    !atomic_read(&vha->vref_count), HZ) > 0)
-+			break;
-+	}
- 
- 	spin_lock_irqsave(&ha->vport_slock, flags);
- 	if (atomic_read(&vha->vref_count)) {
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 3568031c6504..e6ff17f38178 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1119,9 +1119,11 @@ qla2x00_wait_for_sess_deletion(scsi_qla_host_t *vha)
- 
- 	qla2x00_mark_all_devices_lost(vha, 0);
- 
--	for (i = 0; i < 10; i++)
--		wait_event_timeout(vha->fcport_waitQ, test_fcport_count(vha),
--		    HZ);
-+	for (i = 0; i < 10; i++) {
-+		if (wait_event_timeout(vha->fcport_waitQ,
-+		    test_fcport_count(vha), HZ) > 0)
-+			break;
-+	}
- 
- 	flush_workqueue(vha->hw->wq);
- }
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index dc210b9d4896..3a352a4601b1 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1882,7 +1882,8 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
- {
- 	unsigned int cmd_size, sgl_size;
- 
--	sgl_size = scsi_mq_inline_sgl_size(shost);
-+	sgl_size = max_t(unsigned int, sizeof(struct scatterlist),
-+				scsi_mq_inline_sgl_size(shost));
- 	cmd_size = sizeof(struct scsi_cmnd) + shost->hostt->cmd_size + sgl_size;
- 	if (scsi_host_get_prot(shost))
- 		cmd_size += sizeof(struct scsi_data_buffer) +
-diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
-index de4019dc0f0b..1efc69e194f8 100644
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -263,25 +263,16 @@ void sd_zbc_complete(struct scsi_cmnd *cmd, unsigned int good_bytes,
- 	int result = cmd->result;
- 	struct request *rq = cmd->request;
- 
--	switch (req_op(rq)) {
--	case REQ_OP_ZONE_RESET:
--	case REQ_OP_ZONE_RESET_ALL:
--
--		if (result &&
--		    sshdr->sense_key == ILLEGAL_REQUEST &&
--		    sshdr->asc == 0x24)
--			/*
--			 * INVALID FIELD IN CDB error: reset of a conventional
--			 * zone was attempted. Nothing to worry about, so be
--			 * quiet about the error.
--			 */
--			rq->rq_flags |= RQF_QUIET;
--		break;
--
--	case REQ_OP_WRITE:
--	case REQ_OP_WRITE_ZEROES:
--	case REQ_OP_WRITE_SAME:
--		break;
-+	if (req_op(rq) == REQ_OP_ZONE_RESET &&
-+	    result &&
-+	    sshdr->sense_key == ILLEGAL_REQUEST &&
-+	    sshdr->asc == 0x24) {
-+		/*
-+		 * INVALID FIELD IN CDB error: reset of a conventional
-+		 * zone was attempted. Nothing to worry about, so be
-+		 * quiet about the error.
-+		 */
-+		rq->rq_flags |= RQF_QUIET;
- 	}
- }
- 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
