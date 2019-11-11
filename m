@@ -2,127 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3217F7925
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8AF4F7928
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:51:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfKKQvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:51:17 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:44298 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfKKQvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:51:12 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3AF2620063D;
-        Mon, 11 Nov 2019 17:51:10 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D9E020062E;
-        Mon, 11 Nov 2019 17:51:10 +0100 (CET)
-Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id EAEA0205FE;
-        Mon, 11 Nov 2019 17:51:09 +0100 (CET)
-From:   Ioana Ciornei <ioana.ciornei@nxp.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH 4/4] staging: dpaa2-ethsw: ordered workqueue should be per ethsw
-Date:   Mon, 11 Nov 2019 18:50:58 +0200
-Message-Id: <1573491058-24766-5-git-send-email-ioana.ciornei@nxp.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1573491058-24766-1-git-send-email-ioana.ciornei@nxp.com>
-References: <1573491058-24766-1-git-send-email-ioana.ciornei@nxp.com>
-Reply-to: ioana.ciornei@nxp.com
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727148AbfKKQv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:51:29 -0500
+Received: from mail-lj1-f178.google.com ([209.85.208.178]:46187 "EHLO
+        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbfKKQv2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 11:51:28 -0500
+Received: by mail-lj1-f178.google.com with SMTP id e9so14528141ljp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:51:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aeNceNPo4fD73RiaH/hTBoQsDr0kmiNbYJTGEnnIYNQ=;
+        b=JmJIJEsYG9Wpj4YU/56e8ykDzFdN2fR4vGH46xHy3bkh2I24Hnn5R/34gNiaGVe8A0
+         +rVGaLTkWv6CwWmzdAT4f5P6hMwCoAq6LfbYEKOIFQw5NJ+7EEWplIoj/gNrKAbvmwqO
+         i4JZsCoqZ1wP4f7j3+yTHe9LMpjypC2/CgyEg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aeNceNPo4fD73RiaH/hTBoQsDr0kmiNbYJTGEnnIYNQ=;
+        b=etvBGZ/vrY4/y7WcIjy56ZcYFUOe4DKj4WyE5EPzDhdB4BG3NteUeGc0XzJu7br4rv
+         pWFInugFRmQEWTMOFX5ni1Z6fOY8gzDEe6G5OQt617/HVcoBpZPFYXb5/BeLLxKczeAW
+         G7suqgaX0d7Z1TZaWGEgWBDZmS63nlB5EFQrDXOxOo0MlbyVNxUnFtkVyRRnJ7f7+jLc
+         /a9VSoOLmdTxVbHRf651f8yvBtELsAWs7m+8Q2+27HG5aqyHg70OLQdVclyFhdqyLzEt
+         Mhgjv83NV56/GBw0dJUTkITGrQtZMaV28ZrQ288lrlN4OOU14u/arNIz73jUX52QJT6Y
+         mZBg==
+X-Gm-Message-State: APjAAAViF2djJvnPPKC5+dGDSC+nfvJe2xDeYuxts5a0ZpchSSqIhhLL
+        iyvjCAvltH+ZvDhHlMzVhYzwmb2Ly30=
+X-Google-Smtp-Source: APXvYqwNN0uSXY75JyHXwIUvgn3qFq9E6trQozbCkrN2heMebG3IuXq1MzZAGXYtMiHAGSZu8hI6fg==
+X-Received: by 2002:a2e:558:: with SMTP id 85mr17098922ljf.67.1573491085037;
+        Mon, 11 Nov 2019 08:51:25 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id 68sm8575423ljf.26.2019.11.11.08.51.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2019 08:51:23 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id q2so14578930ljg.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:51:23 -0800 (PST)
+X-Received: by 2002:a2e:8809:: with SMTP id x9mr16952774ljh.82.1573491083270;
+ Mon, 11 Nov 2019 08:51:23 -0800 (PST)
+MIME-Version: 1.0
+References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Nov 2019 08:51:06 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+Message-ID: <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Marco Elver <elver@google.com>, Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a different ordered workqueue per dpaa2-ethsw instance.  Without
-this change, we overwrite the global queue and leak memory when probing
-multiple instances of the driver.
+On Mon, Nov 11, 2019 at 7:51 AM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> I dislike the explicit annotation approach, because it shifts the
+> burden of proving correctness from the automatic verifier to the
+> programmer.
 
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
----
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 17 +++++++++--------
- drivers/staging/fsl-dpaa2/ethsw/ethsw.h |  1 +
- 2 files changed, 10 insertions(+), 8 deletions(-)
+Yes.
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index 37ee9b0aa326..39c0fe347188 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -18,8 +18,6 @@
- 
- #include "ethsw.h"
- 
--static struct workqueue_struct *ethsw_owq;
--
- /* Minimal supported DPSW version */
- #define DPSW_MIN_VER_MAJOR		8
- #define DPSW_MIN_VER_MINOR		1
-@@ -1229,8 +1227,10 @@ static int port_switchdev_event(struct notifier_block *unused,
- 				unsigned long event, void *ptr)
- {
- 	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
-+	struct ethsw_port_priv *port_priv = netdev_priv(dev);
- 	struct ethsw_switchdev_event_work *switchdev_work;
- 	struct switchdev_notifier_fdb_info *fdb_info = ptr;
-+	struct ethsw_core *ethsw = port_priv->ethsw_data;
- 
- 	if (!ethsw_port_dev_check(dev))
- 		return NOTIFY_DONE;
-@@ -1266,7 +1266,7 @@ static int port_switchdev_event(struct notifier_block *unused,
- 		return NOTIFY_DONE;
- 	}
- 
--	queue_work(ethsw_owq, &switchdev_work->work);
-+	queue_work(ethsw->workqueue, &switchdev_work->work);
- 
- 	return NOTIFY_DONE;
- 
-@@ -1427,9 +1427,10 @@ static int ethsw_init(struct fsl_mc_device *sw_dev)
- 		}
- 	}
- 
--	ethsw_owq = alloc_ordered_workqueue("%s_ordered", WQ_MEM_RECLAIM,
--					    "ethsw");
--	if (!ethsw_owq) {
-+	ethsw->workqueue = alloc_ordered_workqueue("%s_%d_ordered",
-+						   WQ_MEM_RECLAIM, "ethsw",
-+						   ethsw->sw_attr.id);
-+	if (!ethsw->workqueue) {
- 		err = -ENOMEM;
- 		goto err_close;
- 	}
-@@ -1441,7 +1442,7 @@ static int ethsw_init(struct fsl_mc_device *sw_dev)
- 	return 0;
- 
- err_destroy_ordered_workqueue:
--	destroy_workqueue(ethsw_owq);
-+	destroy_workqueue(ethsw->workqueue);
- 
- err_close:
- 	dpsw_close(ethsw->mc_io, 0, ethsw->dpsw_handle);
-@@ -1529,7 +1530,7 @@ static int ethsw_remove(struct fsl_mc_device *sw_dev)
- 
- 	ethsw_teardown_irqs(sw_dev);
- 
--	destroy_workqueue(ethsw_owq);
-+	destroy_workqueue(ethsw->workqueue);
- 
- 	dpsw_disable(ethsw->mc_io, 0, ethsw->dpsw_handle);
- 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h b/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
-index db7eef134230..a0244f7d5003 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
-@@ -70,6 +70,7 @@ struct ethsw_core {
- 	struct notifier_block		port_nb;
- 	struct notifier_block		port_switchdev_nb;
- 	struct notifier_block		port_switchdevb_nb;
-+	struct workqueue_struct		*workqueue;
- };
- 
- #endif	/* __ETHSW_H */
--- 
-1.9.1
+However, sometimes explicit annotations are very useful as
+documentation and as showing of intent even if they might not change
+behavior or code generation.
 
+But they generally should never _replace_ checking - in fact, the
+annotations themselves should hopefully be checked for correctness
+too.
+
+So a good annotation would implicitly document intent, but it should
+also be something that we can check being true, so that we also have
+the check that reality actually _matches_ the intent too. Because
+misleading and wrong documentation is worse than no documentation at
+all.
+
+Side note: an example of a dangerous annotation is the one that Eric
+pointed out, where a 64-bit read in percpu_counter_read_positive()
+could be changed to READ_ONCE(), and we would compile it cleanly, but
+on 32-bit it wouldn't actually be atomic.
+
+We at one time tried to actually verify that READ/WRITE_ONCE() was
+done only on types that could actually be accessed atomically (always
+ignoring alpha because the pain is not worth it), but it showed too
+many problems.
+
+So now we silently accept things that aren't actually atomic. We do
+access them "once" in the sense that we don't allow the compiler to
+reload it, but it's not "once" in the LKMM sense of one single value.
+
+That's ok for some cases. But it's actually a horrid horrid thing from
+a documentation standpoint, and I hate it, and it's dangerous.
+
+                Linus
