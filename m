@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21E7BF7D86
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C29B8F7C90
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730628AbfKKS5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:57:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57288 "EHLO mail.kernel.org"
+        id S1729591AbfKKSr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:47:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727262AbfKKS5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:57:36 -0500
+        id S1730103AbfKKSrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:47:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 348702184C;
-        Mon, 11 Nov 2019 18:57:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B13B204FD;
+        Mon, 11 Nov 2019 18:47:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498656;
-        bh=WO2DEEc8wfvZ5rNQKeh5fsVrAnqj7ZhxdyRMnL7mEws=;
+        s=default; t=1573498042;
+        bh=ZZD3P9bX6jJOAa0xFQLXVAuNjTf37Uhk8BgWgKMRGgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P3AE2R3aWjG5uHILsh5HwZZqQ8NpHXkAKmzVXNt02ZFJ2Qbjzq3JfGX3WojmoqwnT
-         CpR+4w+ib1DxaJNW8VbiWk+B2Yc9KWnF78UEqK9Ex2seu0P+k+UJCTG84hd/b74GVC
-         Y38IbRtzwjherqpo3MasHTd79IKWc/me/w6FZevI=
+        b=B/mtzFXUIPLYGfKv3tplIrYu4L/dTSj8aRXBxarGWfARpFgSK0vWSERj4JtT70rXH
+         HOjLsGPKrk6N2HNGTbMigvmTUCLxi65ooVtvQHiDOtyTrw+mrpROUddufy9KDvaQR3
+         J9C4cXGJ+NLqKo6vVnn+fvmy3ci3L0uM1e7vnSSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 181/193] arm64: Brahma-B53 is SSB and spectre v2 safe
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 124/125] mm/filemap.c: dont initiate writeback if mapping has no dirty pages
 Date:   Mon, 11 Nov 2019 19:29:23 +0100
-Message-Id: <20191111181514.460202989@linuxfoundation.org>
+Message-Id: <20191111181456.247399096@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit e059770cb1cdfbcbe3f1748f76005861cc79dd1a ]
+commit c3aab9a0bd91b696a852169479b7db1ece6cbf8c upstream.
 
-Add the Brahma-B53 CPU (all versions) to the whitelists of CPUs for the
-SSB and spectre v2 mitigations.
+Functions like filemap_write_and_wait_range() should do nothing if inode
+has no dirty pages or pages currently under writeback.  But they anyway
+construct struct writeback_control and this does some atomic operations if
+CONFIG_CGROUP_WRITEBACK=y - on fast path it locks inode->i_lock and
+updates state of writeback ownership, on slow path might be more work.
+Current this path is safely avoided only when inode mapping has no pages.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+For example generic_file_read_iter() calls filemap_write_and_wait_range()
+at each O_DIRECT read - pretty hot path.
+
+This patch skips starting new writeback if mapping has no dirty tags set.
+If writeback is already in progress filemap_write_and_wait_range() will
+wait for it.
+
+Link: http://lkml.kernel.org/r/156378816804.1087.8607636317907921438.stgit@buzz
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/kernel/cpu_errata.c | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/filemap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index d9da4201ba858..799d62ef7a9bd 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -489,6 +489,7 @@ static const struct midr_range arm64_ssb_cpus[] = {
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
-+	MIDR_ALL_VERSIONS(MIDR_BRAHMA_B53),
- 	{},
- };
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -438,7 +438,8 @@ int __filemap_fdatawrite_range(struct ad
+ 		.range_end = end,
+ 	};
  
-@@ -573,6 +574,7 @@ static const struct midr_range spectre_v2_safe_list[] = {
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
- 	MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
-+	MIDR_ALL_VERSIONS(MIDR_BRAHMA_B53),
- 	{ /* sentinel */ }
- };
+-	if (!mapping_cap_writeback_dirty(mapping))
++	if (!mapping_cap_writeback_dirty(mapping) ||
++	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+ 		return 0;
  
--- 
-2.20.1
-
+ 	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
 
 
