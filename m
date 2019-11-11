@@ -2,108 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 853F3F810D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BACEF8129
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:25:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfKKUWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 15:22:09 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40954 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbfKKUWH (ORCPT
+        id S1727392AbfKKUZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 15:25:01 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33122 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfKKUZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:22:07 -0500
-Received: by mail-qt1-f194.google.com with SMTP id o49so17057268qta.7;
-        Mon, 11 Nov 2019 12:22:07 -0800 (PST)
+        Mon, 11 Nov 2019 15:25:01 -0500
+Received: by mail-oi1-f196.google.com with SMTP id m193so12687670oig.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 12:25:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Xeq2lcRUVceDqmGyTHaj5d+0Pjk/GmEvYbMYOaMNQzg=;
-        b=I+isjLS5f/apV9ftRVQ09plliCCSpaqV3/UG7fSAdpU4mXCS9TaslJ2OzYYcJa+j4n
-         QSq2fKk559J9ZwzNBSmRcRWOqDKtJFMut2l4D4AysPeV4nNRjuINtm0bSDdbt9IW5WqH
-         fk7DBoj1Gfk75bFq/L1incchih0DAFe4toGXAMySezDb4h0C8qnQ85GO/CZmhr7Xmn2Z
-         YmkIWBnZ5XrTRzEhwYSUSYhKq4/mrelNXQJIAWahBjVhyaHz09RNaDbErBL8JsSE/2Fm
-         nF7x3JxoNiQc4F8UFz+deld6cUww6o5u4xPk2EwGcjDPCXrN1kQZ4MIem70TJeY2ZEmj
-         Rchg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vOfyNjirhZJpCYD/14r+NEmeylR+17cr7FHoRrl56Eg=;
+        b=dWfGQJGbeWaicejJBkwOAjX8oYfy6+0uZOeGW/ISyKeITlGByBW9LZD0ef0cBcubzE
+         5VowYn+IFL3EjC5xJN98eoBJ9cxZurvUFXmKGHv1gMlwUAt2IJQhnG3HCcFE4yDs3pWb
+         XLdbPgHB58v6MJSb7XzlKSm8nHqKiutilSbBjh40Ow8IDfWkiK9Zc47coLaMutfIxTpv
+         xiOAoKCAR3q6SIm1Xx6H30p83uuVTAoIrXdrC6aCa9jLbptNxGMx/X6uQA01wED4UyBo
+         ad+zy/cCPRnzazbtYB2TFdfXk0pT7JRbUbwCY3lgBPQdFIOMfyQqU8r4WxBMICIuDJ57
+         wbYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=Xeq2lcRUVceDqmGyTHaj5d+0Pjk/GmEvYbMYOaMNQzg=;
-        b=WDtNaI/JGyYRTR04uW+IxzxoiRZdJG01GReahRFuLYF7j6gvUDhNkkY7KrHZUw4PWn
-         mVy7htEpiQKIpCCuFxg1TRsoTmTyAuzDah3t4HKfyv9KoQkNCIswL/m0ZRPBWRl+4sR9
-         eBoDnlLV39VzxYxx/0mNgdpLUPYfNgTMbdZ/NqxQV1go4S1ABmk4P8uR4r3HATQIR7nd
-         2t/w/3CfGg5lt577XD7OUr3KKr58RkUsPMcd9MxA15kpVA51KEU6C6MgR2zNEoeTLsdP
-         Cam51SKpY6R3VEY+h7m5MEBiMBdTyvJm2nfRPRIjKHhW3q9rpKUU0i5DcZ9qIMprBSUd
-         x2qQ==
-X-Gm-Message-State: APjAAAVsje4oQLs74AzCHqmQiJUi97udJQ0yGmpO9lKH/z2vMk9t9EYb
-        mo5411ZF8JwkSqM/TH49mIjHRaAG
-X-Google-Smtp-Source: APXvYqwa00JjUN0TOeR6m2QaHZ1qxjWiq2WnqYCIB/Dud8d6Y2hjnVEpkXsiVWMbx5a69qCX7z3+Ng==
-X-Received: by 2002:ac8:1084:: with SMTP id a4mr28347343qtj.114.1573503726517;
-        Mon, 11 Nov 2019 12:22:06 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::2:d6e0])
-        by smtp.gmail.com with ESMTPSA id n49sm9587576qtk.94.2019.11.11.12.22.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Nov 2019 12:22:05 -0800 (PST)
-Date:   Mon, 11 Nov 2019 12:22:03 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: [GIT PULL] cgroup fixes for v5.4-rc7
-Message-ID: <20191111202203.GC4163745@devbig004.ftw2.facebook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vOfyNjirhZJpCYD/14r+NEmeylR+17cr7FHoRrl56Eg=;
+        b=SEachN9Lv8vdewPtCXIKMywvx544UHmeOl0aFPKr4zVnucrnp5eFZCp3OPQX3BeRLP
+         IMkTH5vwx7n2eh7tYQq3FQocmt8/6Re9sL4TA+lQOkk24DtgK835JuV0ouL3HMaIdHRS
+         TeXlEnFE+GJeLVC/6IaiFawmCzqlBaZeOQsL7wWszBqWIDT+q7orkKVN0QptEpwW5JPm
+         lFL4wix5vycgDxM+6OC4igoKo9GFysQTHGhiPkn5/xPEdbF24Wmr7iO9bvngD9fK6eGx
+         iYG8asqR4Ah/5pmpQVtvlKwF5CpCnvlf53Hucn+K9UjjamiCShqdfU8zqyBpPslS907+
+         0UlA==
+X-Gm-Message-State: APjAAAVeaQc4gHc51WOF9l4Tolj3lbXMqmhkqLFs+qVZn+SqZb2dL5QP
+        JBrxQ1fAK04gdOIEzA7J00PW571xBkyRg7qvh5/SaQ==
+X-Google-Smtp-Source: APXvYqy1VzfjRJuVb1MDElB7+dHlzd2kffgrpg+vPM+DJzWy3J/vzxZA0hSOvGwfYP2VYVG9yRo/VcuFRjBJ95zHNq8=
+X-Received: by 2002:a05:6808:9a1:: with SMTP id e1mr689381oig.175.1573503899982;
+ Mon, 11 Nov 2019 12:24:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
+ <20191107151941.dw4gtul5lrtax4se@wittgenstein> <2eb2ab4c-b177-29aa-cdc4-420b24cfd7b3@gmail.com>
+ <CAG48ez2of684J6suPZpko7JFV6hg5KQsrP0KAn8B8-C3PM9OfQ@mail.gmail.com> <20191111165800.GD7017@mit.edu>
+In-Reply-To: <20191111165800.GD7017@mit.edu>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 11 Nov 2019 21:24:33 +0100
+Message-ID: <CAG48ez3K6g7NSFmeuw-4paqPQTDYmNkZ-nVvufk25EB+Us850w@mail.gmail.com>
+Subject: Re: For review: documentation of clone3() system call
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+On Mon, Nov 11, 2019 at 5:58 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> On Mon, Nov 11, 2019 at 03:55:35PM +0100, Jann Horn wrote:
+> > Not on Linux, but on OpenBSD, they do use MAP_STACK now AFAIK; this
+> > was announced here:
+> > <http://openbsd-archive.7691.n7.nabble.com/stack-register-checking-td338238.html>.
+> > Basically they periodically check whether the userspace stack pointer
+> > points into a MAP_STACK region, and if not, they kill the process. So
+> > even if it's a no-op on Linux...
+>
+> Hmm, is that something we should do in Linux?  Even if we only check
+> on syscall entry, which should be pretty inexpensive, it seems like it
+> would be very effective in protecting various ROP techniques.
 
-Sorry, I sat on this for too long.
-
-There's an inadvertent preemption point in ptrace_stop() which was
-reliably triggering for a test scenario significantly slowing it down.
-This pull request contains Oleg's fix to remove the unwanted
-preemption point.
-
-Thanks.
-
-The following changes since commit 9e208aa06c2109b45eec6be049a8e47034748c20:
-
-  Merge tag 'xfs-5.4-fixes-3' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux (2019-10-10 11:47:16 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.4-fixes
-
-for you to fetch changes up to 937c6b27c73e02cd4114f95f5c37ba2c29fadba1:
-
-  cgroup: freezer: call cgroup_enter_frozen() with preemption disabled in ptrace_stop() (2019-10-11 08:39:57 -0700)
-
-----------------------------------------------------------------
-Oleg Nesterov (1):
-      cgroup: freezer: call cgroup_enter_frozen() with preemption disabled in ptrace_stop()
-
- kernel/signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index c4da1ef56fdf..bcd46f547db3 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2205,8 +2205,8 @@ static void ptrace_stop(int exit_code, int why, int clear_code, kernel_siginfo_t
- 		 */
- 		preempt_disable();
- 		read_unlock(&tasklist_lock);
--		preempt_enable_no_resched();
- 		cgroup_enter_frozen();
-+		preempt_enable_no_resched();
- 		freezable_schedule();
- 		cgroup_leave_frozen(true);
- 	} else {
-
--- 
-tejun
+I'm not a big fan, especially if that would only happen on syscall
+entry; at the point where you have enough control to perform syscalls,
+it probably isn't too difficult to move your ROP stack over to a
+legitimate stack.
