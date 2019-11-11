@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B35F82FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49B8BF82FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfKKWg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 17:36:27 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60033 "EHLO
+        id S1727521AbfKKWgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 17:36:18 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:60044 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfKKWfq (ORCPT
+        with ESMTP id S1727148AbfKKWfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 17:35:46 -0500
+        Mon, 11 Nov 2019 17:35:47 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iUIHg-0000uG-HL; Mon, 11 Nov 2019 23:35:44 +0100
-Message-Id: <20191111223052.292300453@linutronix.de>
+        id 1iUIHh-0000uR-63; Mon, 11 Nov 2019 23:35:45 +0100
+Message-Id: <20191111223052.400498664@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 11 Nov 2019 23:03:22 +0100
+Date:   Mon, 11 Nov 2019 23:03:23 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -26,9 +26,9 @@ Cc:     x86@kernel.org, Linus Torvalds <torvalds@linuxfoundation.org>,
         Stephen Hemminger <stephen@networkplumber.org>,
         Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [patch V2 08/16] x86/ioperm: Add bitmap sequence number
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: [patch V2 09/16] x86/ioperm: Move TSS bitmap update to exit to user
+ work
 References: <20191111220314.519933535@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,149 +37,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a globally unique sequence number which is incremented when ioperm() is
-changing the I/O bitmap of a task. Store the new sequence number in the
-io_bitmap structure and compare it along with the actual struct pointer
-with the one which was last loaded on a CPU. Only update the bitmap if
-either of the two changes. That should further reduce the overhead of I/O
-bitmap scheduling when there are only a few I/O bitmap users on the system.
+There is no point to update the TSS bitmap for tasks which use I/O bitmaps
+on every context switch. It's enough to update it right before exiting to
+user space.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+That reduces the context switch bitmap handling to invalidating the io
+bitmap base offset in the TSS when the outgoing task has TIF_IO_BITMAP
+set. It also removes the requirement to update the tasks bitmap atomically
+in ioperm().
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
 V2: New patch
 ---
- arch/x86/include/asm/iobitmap.h  |    1 
- arch/x86/include/asm/processor.h |    8 +++++++
- arch/x86/kernel/cpu/common.c     |    1 
- arch/x86/kernel/ioport.c         |    9 +++++---
- arch/x86/kernel/process.c        |   40 +++++++++++++++++++++++++++++----------
- 5 files changed, 46 insertions(+), 13 deletions(-)
+ arch/x86/entry/common.c         |    4 ++
+ arch/x86/include/asm/iobitmap.h |    2 +
+ arch/x86/kernel/ioport.c        |   27 +++----------------
+ arch/x86/kernel/process.c       |   56 +++++++++++++++++++++++++---------------
+ 4 files changed, 47 insertions(+), 42 deletions(-)
 
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -33,6 +33,7 @@
+ #include <asm/cpufeature.h>
+ #include <asm/fpu/api.h>
+ #include <asm/nospec-branch.h>
++#include <asm/iobitmap.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/syscalls.h>
+@@ -196,6 +197,9 @@ static void exit_to_usermode_loop(struct
+ 	/* Reload ti->flags; we may have rescheduled above. */
+ 	cached_flags = READ_ONCE(ti->flags);
+ 
++	if (unlikely(cached_flags & _TIF_IO_BITMAP))
++		tss_update_io_bitmap();
++
+ 	fpregs_assert_state_consistent();
+ 	if (unlikely(cached_flags & _TIF_NEED_FPU_LOAD))
+ 		switch_fpu_return();
 --- a/arch/x86/include/asm/iobitmap.h
 +++ b/arch/x86/include/asm/iobitmap.h
-@@ -5,6 +5,7 @@
- #include <asm/processor.h>
+@@ -13,4 +13,6 @@ struct io_bitmap {
+ 	};
+ };
  
- struct io_bitmap {
-+	u64			sequence;
- 	unsigned int		io_bitmap_max;
- 	union {
- 		unsigned long	bits[IO_BITMAP_LONGS];
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -366,6 +366,14 @@ struct tss_struct {
- 	struct x86_hw_tss	x86_tss;
- 
- 	/*
-+	 * The bitmap pointer and the sequence number of the last active
-+	 * bitmap. last_bitmap cannot be dereferenced. It's solely for
-+	 * comparison.
-+	 */
-+	struct io_bitmap	*last_bitmap;
-+	u64			last_sequence;
++void tss_update_io_bitmap(void);
 +
-+	/*
- 	 * Store the dirty size of the last io bitmap offender. The next
- 	 * one will have to do the cleanup as the switch out to a non io
- 	 * bitmap user will just set x86_tss.io_bitmap_base to a value
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1861,6 +1861,7 @@ void cpu_init(void)
- 	/* Initialize the TSS. */
- 	tss_setup_ist(tss);
- 	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
-+	tss->last_bitmap = NULL;
- 	tss->io_bitmap_prev_max = 0;
- 	memset(tss->io_bitmap_bytes, 0xff, sizeof(tss->io_bitmap_bytes));
- 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
+ #endif
 --- a/arch/x86/kernel/ioport.c
 +++ b/arch/x86/kernel/ioport.c
-@@ -14,6 +14,8 @@
- #include <asm/iobitmap.h>
- #include <asm/desc.h>
- 
-+static atomic64_t io_bitmap_sequence;
-+
- /*
-  * this changes the io permissions bitmap in the current task.
+@@ -21,9 +21,8 @@ static atomic64_t io_bitmap_sequence;
   */
-@@ -76,14 +78,15 @@ long ksys_ioperm(unsigned long from, uns
+ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
+ {
+-	unsigned int i, max_long, bytes, bytes_updated;
+ 	struct thread_struct *t = &current->thread;
+-	struct tss_struct *tss;
++	unsigned int i, max_long;
+ 	struct io_bitmap *iobm;
  
- 	iobm->io_bitmap_max = bytes;
+ 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
+@@ -51,13 +50,9 @@ long ksys_ioperm(unsigned long from, uns
+ 	}
+ 
+ 	/*
+-	 * Update the tasks bitmap and the TSS copy. This requires to have
+-	 * preemption disabled to protect against a context switch.
++	 * Update the tasks bitmap. The update of the TSS bitmap happens on
++	 * exit to user mode. So this needs no protection.
+ 	 */
+-	preempt_disable();
+-	tss = this_cpu_ptr(&cpu_tss_rw);
+-
+-	/* Update the bitmap */
+ 	if (turn_on)
+ 		bitmap_clear(iobm->bits, from, num);
+ 	else
+@@ -73,27 +68,15 @@ long ksys_ioperm(unsigned long from, uns
+ 			max_long = i;
+ 	}
+ 
+-	bytes = (max_long + 1) * sizeof(unsigned long);
+-	bytes_updated = max(bytes, iobm->io_bitmap_max);
+-
+-	iobm->io_bitmap_max = bytes;
++	iobm->io_bitmap_max = (max_long + 1) * sizeof(unsigned long);
+ 
+ 	/* Update the sequence number to force an update in switch_to() */
+ 	iobm->sequence = atomic64_add_return(1, &io_bitmap_sequence);
+ 	/* Set the tasks io_bitmap pointer (might be the same) */
+ 	t->io_bitmap = iobm;
+-	/* Mark it active for context switching */
++	/* Mark it active for context switching and exit to user mode */
+ 	set_thread_flag(TIF_IO_BITMAP);
  
 -	/* Update the TSS: */
 -	memcpy(tss->io_bitmap_bytes, iobm->bitmap_bytes, bytes_updated);
+-	/* Make the bitmap base in the TSS valid */
+-	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_VALID;
 -
-+	/* Update the sequence number to force an update in switch_to() */
-+	iobm->sequence = atomic64_add_return(1, &io_bitmap_sequence);
- 	/* Set the tasks io_bitmap pointer (might be the same) */
- 	t->io_bitmap = iobm;
- 	/* Mark it active for context switching */
- 	set_thread_flag(TIF_IO_BITMAP);
- 
-+	/* Update the TSS: */
-+	memcpy(tss->io_bitmap_bytes, iobm->bitmap_bytes, bytes_updated);
- 	/* Make the bitmap base in the TSS valid */
- 	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_VALID;
+-	/* Make sure the TSS limit covers the I/O bitmap. */
+-	refresh_tss_limit();
+-	preempt_enable();
+-
+ 	return 0;
+ }
  
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -354,6 +354,29 @@ void arch_setup_new_exec(void)
+@@ -354,8 +354,31 @@ void arch_setup_new_exec(void)
  	}
  }
  
-+static void switch_to_update_io_bitmap(struct tss_struct *tss,
-+				       struct io_bitmap *iobm)
+-static void switch_to_update_io_bitmap(struct tss_struct *tss,
+-				       struct io_bitmap *iobm)
++static inline void tss_invalidate_io_bitmap(struct tss_struct *tss)
 +{
 +	/*
-+	 * Copy at least the byte range of the incoming tasks bitmap which
-+	 * covers the permitted I/O ports.
++	 * Invalidate the I/O bitmap by moving io_bitmap_base outside the
++	 * TSS limit so any subsequent I/O access from user space will
++	 * trigger a #GP.
 +	 *
-+	 * If the previous task which used an I/O bitmap had more bits
-+	 * permitted, then the copy needs to cover those as well so they
-+	 * get turned off.
++	 * This is correct even when VMEXIT rewrites the TSS limit
++	 * to 0x67 as the only requirement is that the base points
++	 * outside the limit.
 +	 */
-+	memcpy(tss->io_bitmap_bytes, iobm->bitmap_bytes,
-+	       max(tss->io_bitmap_prev_max, iobm->io_bitmap_max));
-+
-+	/*
-+	 * Store the new max and the sequence number of this bitmap
-+	 * and a pointer to the bitmap itself.
-+	 */
-+	tss->io_bitmap_prev_max = iobm->io_bitmap_max;
-+	tss->last_sequence = iobm->sequence;
-+	tss->last_bitmap = iobm;
++	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
 +}
 +
- static inline void switch_to_bitmap(struct thread_struct *next,
- 				    unsigned long tifp, unsigned long tifn)
++static inline void switch_to_bitmap(unsigned long tifp)
++{
++	/*
++	 * Invalidate I/O bitmap if the previous task used it. If the next
++	 * task has an I/O bitmap it will handle it on exit to user mode.
++	 */
++	if (tifp & _TIF_IO_BITMAP)
++		tss_invalidate_io_bitmap(this_cpu_ptr(&cpu_tss_rw));
++}
++
++static void tss_copy_io_bitmap(struct tss_struct *tss, struct io_bitmap *iobm)
  {
-@@ -363,18 +386,15 @@ static inline void switch_to_bitmap(stru
- 		struct io_bitmap *iobm = next->io_bitmap;
+ 	/*
+ 	 * Copy at least the byte range of the incoming tasks bitmap which
+@@ -377,13 +400,15 @@ static void switch_to_update_io_bitmap(s
+ 	tss->last_bitmap = iobm;
+ }
+ 
+-static inline void switch_to_bitmap(struct thread_struct *next,
+-				    unsigned long tifp, unsigned long tifn)
++/**
++ * tss_update_io_bitmap - Update I/O bitmap before exiting to usermode
++ */
++void tss_update_io_bitmap(void)
+ {
+ 	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
+ 
+-	if (tifn & _TIF_IO_BITMAP) {
+-		struct io_bitmap *iobm = next->io_bitmap;
++	if (test_thread_flag(TIF_IO_BITMAP)) {
++		struct io_bitmap *iobm = current->thread.io_bitmap;
  
  		/*
--		 * Copy at least the size of the incoming tasks bitmap
--		 * which covers the last permitted I/O port.
--		 *
--		 * If the previous task which used an io bitmap had more
--		 * bits permitted, then the copy needs to cover those as
--		 * well so they get turned off.
-+		 * Only copy bitmap data when the bitmap or the sequence
-+		 * number differs. The update time is accounted to the
-+		 * incoming task.
+ 		 * Only copy bitmap data when the bitmap or the sequence
+@@ -392,7 +417,7 @@ static inline void switch_to_bitmap(stru
  		 */
--		memcpy(tss->io_bitmap_bytes, iobm->bitmap_bytes,
--		       max(tss->io_bitmap_prev_max, iobm->io_bitmap_max));
-+		if (tss->last_bitmap != iobm ||
-+		    tss->last_sequence != iobm->sequence)
-+			switch_to_update_io_bitmap(tss, iobm);
+ 		if (tss->last_bitmap != iobm ||
+ 		    tss->last_sequence != iobm->sequence)
+-			switch_to_update_io_bitmap(tss, iobm);
++			tss_copy_io_bitmap(tss, iobm);
  
--		/* Store the new max and set io_bitmap_base valid */
--		tss->io_bitmap_prev_max = iobm->io_bitmap_max;
-+		/* Enable the bitmap */
+ 		/* Enable the bitmap */
  		tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_VALID;
+@@ -405,18 +430,8 @@ static inline void switch_to_bitmap(stru
+ 		 * limit.
+ 		 */
+ 		refresh_tss_limit();
+-	} else if (tifp & _TIF_IO_BITMAP) {
+-		/*
+-		 * Do not touch the bitmap. Let the next bitmap using task
+-		 * deal with the mess. Just make the io_bitmap_base invalid
+-		 * by moving it outside the TSS limit so any subsequent I/O
+-		 * access from user space will trigger a #GP.
+-		 *
+-		 * This is correct even when VMEXIT rewrites the TSS limit
+-		 * to 0x67 as the only requirement is that the base points
+-		 * outside the limit.
+-		 */
+-		tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
++	} else {
++		tss_invalidate_io_bitmap(tss);
+ 	}
+ }
  
- 		/*
+@@ -630,7 +645,8 @@ void __switch_to_xtra(struct task_struct
+ 
+ 	tifn = READ_ONCE(task_thread_info(next_p)->flags);
+ 	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
+-	switch_to_bitmap(next, tifp, tifn);
++
++	switch_to_bitmap(tifp);
+ 
+ 	propagate_user_return_notify(prev_p, next_p);
+ 
 
 
