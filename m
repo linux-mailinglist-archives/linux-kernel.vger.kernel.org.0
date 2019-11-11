@@ -2,79 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E5C0F6F57
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 09:01:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D89F6F5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 09:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfKKIBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 03:01:49 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41413 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726978AbfKKIBt (ORCPT
+        id S1726829AbfKKIE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 03:04:56 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31739 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726770AbfKKIE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 03:01:49 -0500
+        Mon, 11 Nov 2019 03:04:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573459307;
+        s=mimecast20190719; t=1573459495;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/y8p7TWJ4+9dx0qZYntYI0vqqca78jHSFlqFEn+6Y9I=;
-        b=DUu2/kvZEmOvof4/tNV1rY+CmIG+onkYRpmW/YoL5wM0wE/UHKoU4I2JIexa5kSXs6k3wI
-        vohzwLE6eRERY21Evf5pbpSMuaScSHB6aECxKqgts17sps4gRUrch21sElvlTPxMEH/onZ
-        I+MsxkWGBK6btT1yx2xWhd8Uly1hfQQ=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-232-hDHuI4ayN9uwvkCSqtPvPg-1; Mon, 11 Nov 2019 03:01:46 -0500
-Received: by mail-pf1-f199.google.com with SMTP id j2so12040802pfa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 00:01:46 -0800 (PST)
+         content-transfer-encoding:content-transfer-encoding;
+        bh=A9dYMCoBKwMezl1qACKOOLgxGxk0IE3Nin8lXmnvd8M=;
+        b=P5eho0RSvcAfgYUEmO2kfqjfq4zGW2KPOXjhnnkKxy/QhOyZJvGEUVbKw8NhWwiUBYNfVw
+        58lQwUsWo5oPSmH19/J7GoZAQmsm3swYRtv/FhtyLKvD4vARjUGmP5r8JPvA7hlC1xjr6H
+        7v2jHhjzE2NS7Vw5j3IuqWEtgWs/UGM=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-152-E5Tbw4UVM8qdZvcxcej0UA-1; Mon, 11 Nov 2019 03:04:53 -0500
+Received: by mail-pl1-f197.google.com with SMTP id a11so10098729plp.21
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 00:04:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=D7Q1sNAJK7KGCeC1/osi4u/yd8LMbojW2DcAg7eyhwk=;
-        b=QBQpxemsr+wzaa7prbvECzSe9a7nk7vpAzo2OcwZyDH34c53OuQE6Yx1DAVtNORNEc
-         QjtV0neCOBtKXFenKPLJZCajhgHr6Ve3lbvno+Jq2VUe2CLwy/y28PQiV4a0kWPa/aVx
-         ZQCc/rpyWxTHQrZx4StgfwSnPaZnHiyBvvClnMgEz4w/2TB+OQZXS92gxNWdEHOPkGwW
-         KRC/PgY7qKfxIduT2RakRm6QLK6KSbNYyAYv+7jPWtg+5BP2q7zxo6VQGfNj4/fijlK8
-         UFKQGEP9QXBH8g9ivbFSbYdKmaQRtjGMKBvYt6aDLgDHLXKqYudjFKdLongAKxo5j5Cu
-         rnAA==
-X-Gm-Message-State: APjAAAWNYKg2l5KCRFk3XzDSMQmucwEx81uoJ3sDwNzysmmsdQ4gVyfb
-        dwmWSWGrw69/rbhHswidkWXMXjnZv6qfsfLe+5FHXgb/NWy47Hk+oLrD+NlNuqME6SM+6kpxLW3
-        djzC8UPLPW21gYdwW4NzGEOe1
-X-Received: by 2002:a62:fcd2:: with SMTP id e201mr404509pfh.52.1573459301444;
-        Mon, 11 Nov 2019 00:01:41 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw/PM/uE1YEEDp1OQcYhDW64ur/c96jF9ficCBtta087Mx43bjXxmhjovhzV8sTDdZdS3kXpw==
-X-Received: by 2002:a62:fcd2:: with SMTP id e201mr404459pfh.52.1573459301055;
-        Mon, 11 Nov 2019 00:01:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CQAhTC/o2YJhj0AZfjwdsGhelqoKVj50q9FveL4NL08=;
+        b=lu7LWh9y511pZmSd8iNboz1Qw+yTYnl1wmje5JwfuFSJL6LDiLIU2MB6vMN19s5NQc
+         FAn4R2X+RpsJ24iBq390R+TDTqLrY8XeLUfL10jeP6hIYY3NsRlL5Jdde/Uy6GuBJKCt
+         Dbl3B0CIHU0wmfM7POZHhTcUCr643+Ma8TMiYQgYdOmSxeMklV87A5bRHtdZYfojNxDJ
+         a0zjZhU+FSzsufqe9z+gbucmhqGzvrUeKcdU0qn+UvKktSvv2dFhUmp32RIQwAS3LWlv
+         45lCdNR2OxKw58mDZKZutJIlBHh/XFcfJqGWPR8CcPhmuo0/MrfYxYdiegiwxrDossdj
+         P/SA==
+X-Gm-Message-State: APjAAAWw7i9gFte+Gk1UKzqcCiTpR08tgaJ0mzO2yqt678v8z3U+C3qc
+        GsxpdJCWboedbWaY6Qhfs9bAH5q5v/NxhzLZJ2369bFMTE+UF73yD0J/IgJGe4l98m6EQQdXHRC
+        mYRstBnJnmqGxPJtQv3i/6ayn
+X-Received: by 2002:a17:90a:cc18:: with SMTP id b24mr31115547pju.141.1573459491920;
+        Mon, 11 Nov 2019 00:04:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwYn3i3YBnhT+ZAxJ1SZwxD2hnT8z5SmG2cTnSfOAsjmdb/sBRMzhcOXON77fu4WCIQlrVPaQ==
+X-Received: by 2002:a17:90a:cc18:: with SMTP id b24mr31115508pju.141.1573459491651;
+        Mon, 11 Nov 2019 00:04:51 -0800 (PST)
 Received: from localhost ([122.177.0.15])
-        by smtp.gmail.com with ESMTPSA id r33sm12736180pjb.5.2019.11.11.00.01.38
+        by smtp.gmail.com with ESMTPSA id y1sm15008239pfq.138.2019.11.11.00.04.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Nov 2019 00:01:39 -0800 (PST)
+        Mon, 11 Nov 2019 00:04:50 -0800 (PST)
 From:   Bhupesh Sharma <bhsharma@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     bhsharma@redhat.com, bhupesh.linux@gmail.com,
-        Boris Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
         James Morse <james.morse@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Will Deacon <will@kernel.org>,
         Steve Capper <steve.capper@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Dave Anderson <anderson@redhat.com>,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
         linux-arm-kernel@lists.infradead.org, kexec@lists.infradead.org
-Subject: [PATCH v4 1/3] crash_core, vmcoreinfo: Append 'MAX_PHYSMEM_BITS' to vmcoreinfo
-Date:   Mon, 11 Nov 2019 13:31:20 +0530
-Message-Id: <1573459282-26989-2-git-send-email-bhsharma@redhat.com>
+Subject: [PATCH v4 2/3] arm64/crash_core: Export TCR_EL1.T1SZ in vmcoreinfo
+Date:   Mon, 11 Nov 2019 13:34:44 +0530
+Message-Id: <1573459485-27219-1-git-send-email-bhsharma@redhat.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573459282-26989-1-git-send-email-bhsharma@redhat.com>
-References: <1573459282-26989-1-git-send-email-bhsharma@redhat.com>
-X-MC-Unique: hDHuI4ayN9uwvkCSqtPvPg-1
+X-MC-Unique: E5Tbw4UVM8qdZvcxcej0UA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -83,71 +73,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now user-space tools like 'makedumpfile' and 'crash' need to rely
-on a best-guess method of determining value of 'MAX_PHYSMEM_BITS'
-supported by underlying kernel.
+vabits_actual variable on arm64 indicates the actual VA space size,
+and allows a single binary to support both 48-bit and 52-bit VA
+spaces.
 
-This value is used in user-space code to calculate the bit-space
-required to store a section for SPARESMEM (similar to the existing
-calculation method used in the kernel implementation):
+If the ARMv8.2-LVA optional feature is present, and we are running
+with a 64KB page size; then it is possible to use 52-bits of address
+space for both userspace and kernel addresses. However, any kernel
+binary that supports 52-bit must also be able to fall back to 48-bit
+at early boot time if the hardware feature is not present.
 
-  #define SECTIONS_SHIFT    (MAX_PHYSMEM_BITS - SECTION_SIZE_BITS)
+Since TCR_EL1.T1SZ indicates the size offset of the memory region
+addressed by TTBR1_EL1 (and hence can be used for determining the
+vabits_actual value) it makes more sense to export the same in
+vmcoreinfo rather than vabits_actual variable, as the name of the
+variable can change in future kernel versions, but the architectural
+constructs like TCR_EL1.T1SZ can be used better to indicate intended
+specific fields to user-space.
 
-Now, regressions have been reported in user-space utilities
-like 'makedumpfile' and 'crash' on arm64, with the recently added
-kernel support for 52-bit physical address space, as there is
-no clear method of determining this value in user-space
-(other than reading kernel CONFIG flags).
+User-space utilities like makedumpfile and crash-utility, need to
+read/write this value from/to vmcoreinfo for determining if a virtual
+address lies in the linear map range.
 
-As per suggestion from makedumpfile maintainer (Kazu), it makes more
-sense to append 'MAX_PHYSMEM_BITS' to vmcoreinfo in the core code itself
-rather than in arch-specific code, so that the user-space code for other
-archs can also benefit from this addition to the vmcoreinfo and use it
-as a standard way of determining 'SECTIONS_SHIFT' value in user-land.
+The user-space computation for determining whether an address lies in
+the linear map range is the same as we have in kernel-space:
 
-A reference 'makedumpfile' implementation which reads the
-'MAX_PHYSMEM_BITS' value from vmcoreinfo in a arch-independent fashion
-is available here:
+  #define __is_lm_address(addr)=09(!(((u64)addr) & BIT(vabits_actual - 1)))
 
-[0]. https://github.com/bhupesh-sharma/makedumpfile/blob/remove-max-phys-me=
-m-bit-v1/arch/ppc64.c#L471
-
-Cc: Boris Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: James Morse <james.morse@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Will Deacon <will@kernel.org>
 Cc: Steve Capper <steve.capper@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: Dave Anderson <anderson@redhat.com>
 Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Cc: x86@kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 Cc: kexec@lists.infradead.org
 Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
 ---
- kernel/crash_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/include/asm/pgtable-hwdef.h | 1 +
+ arch/arm64/kernel/crash_core.c         | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 9f1557b98468..18175687133a 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -413,6 +413,7 @@ static int __init crash_save_vmcoreinfo_init(void)
- =09VMCOREINFO_LENGTH(mem_section, NR_SECTION_ROOTS);
- =09VMCOREINFO_STRUCT_SIZE(mem_section);
- =09VMCOREINFO_OFFSET(mem_section, section_mem_map);
-+=09VMCOREINFO_NUMBER(MAX_PHYSMEM_BITS);
- #endif
- =09VMCOREINFO_STRUCT_SIZE(page);
- =09VMCOREINFO_STRUCT_SIZE(pglist_data);
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/as=
+m/pgtable-hwdef.h
+index d9fbd433cc17..d2e7aff5821e 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -215,6 +215,7 @@
+ #define TCR_TxSZ(x)=09=09(TCR_T0SZ(x) | TCR_T1SZ(x))
+ #define TCR_TxSZ_WIDTH=09=096
+ #define TCR_T0SZ_MASK=09=09(((UL(1) << TCR_TxSZ_WIDTH) - 1) << TCR_T0SZ_OF=
+FSET)
++#define TCR_T1SZ_MASK=09=09(((UL(1) << TCR_TxSZ_WIDTH) - 1) << TCR_T1SZ_OF=
+FSET)
+=20
+ #define TCR_EPD0_SHIFT=09=097
+ #define TCR_EPD0_MASK=09=09(UL(1) << TCR_EPD0_SHIFT)
+diff --git a/arch/arm64/kernel/crash_core.c b/arch/arm64/kernel/crash_core.=
+c
+index ca4c3e12d8c5..f78310ba65ea 100644
+--- a/arch/arm64/kernel/crash_core.c
++++ b/arch/arm64/kernel/crash_core.c
+@@ -7,6 +7,13 @@
+ #include <linux/crash_core.h>
+ #include <asm/memory.h>
+=20
++static inline u64 get_tcr_el1_t1sz(void);
++
++static inline u64 get_tcr_el1_t1sz(void)
++{
++=09return (read_sysreg(tcr_el1) & TCR_T1SZ_MASK) >> TCR_T1SZ_OFFSET;
++}
++
+ void arch_crash_save_vmcoreinfo(void)
+ {
+ =09VMCOREINFO_NUMBER(VA_BITS);
+@@ -15,5 +22,7 @@ void arch_crash_save_vmcoreinfo(void)
+ =09=09=09=09=09=09kimage_voffset);
+ =09vmcoreinfo_append_str("NUMBER(PHYS_OFFSET)=3D0x%llx\n",
+ =09=09=09=09=09=09PHYS_OFFSET);
++=09vmcoreinfo_append_str("NUMBER(tcr_el1_t1sz)=3D0x%llx\n",
++=09=09=09=09=09=09get_tcr_el1_t1sz());
+ =09vmcoreinfo_append_str("KERNELOFFSET=3D%lx\n", kaslr_offset());
+ }
 --=20
 2.7.4
 
