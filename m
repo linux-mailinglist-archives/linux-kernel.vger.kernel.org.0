@@ -2,50 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1897F7C59
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F33DEF7D93
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729860AbfKKSp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:45:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37514 "EHLO mail.kernel.org"
+        id S1730936AbfKKS6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:58:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729859AbfKKSpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:45:24 -0500
+        id S1730179AbfKKS6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:58:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1F8221655;
-        Mon, 11 Nov 2019 18:45:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EBE520659;
+        Mon, 11 Nov 2019 18:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497923;
-        bh=raTRrfmLpLliBo6BC0N/2uLNLfOJBhAN9HZ3cp3ABxU=;
+        s=default; t=1573498690;
+        bh=nrBgn8UFKW74PBHjlnB2QG55PmpfCVjWh3tNrM096r4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MWrdzemnG1LyaUp7TI5nMr9DFRndQgD07ZT6w0i36K4NaSJdyM+vxPl1sCz04T5Jf
-         nDguRzc20cKUwou93GtBkWJIL5ytyo//5Nk51B3coxpiWs1lIC9l4VR6fXKXJjm3OY
-         Vf6c79ur0qs/hmGDqJmCjymtxfXBeF4LdOkZ3lNQ=
+        b=qQcHGX5ajghLkw2L4p2WKaB3Bp4IjysLdrkKbBXf7UgGOn1VxLngNvGyqiUi5jbQh
+         SD2OwXSr3NXyPsz15JXP6iCjySjJkze0VMqqFuz4DIBsL3ALNgsGJy/M27Q0AcdPqX
+         gVfRJGrwdgHxKsZ9GoTYfagxptvgg725uihNGzUE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
+        stable@vger.kernel.org,
+        Valentin Schneider <valentin.schneider@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Dietmar.Eggemann@arm.com,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        linux-drivers-review@eclists.intel.com,
-        linux-perf@eclists.intel.com, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 097/125] perf/x86/uncore: Fix event group support
-Date:   Mon, 11 Nov 2019 19:28:56 +0100
-Message-Id: <20191111181452.768177907@linuxfoundation.org>
+        Thomas Gleixner <tglx@linutronix.de>, hannes@cmpxchg.org,
+        lizefan@huawei.com, morten.rasmussen@arm.com, qperret@google.com,
+        tj@kernel.org, vincent.guittot@linaro.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 155/193] sched/topology: Allow sched_asym_cpucapacity to be disabled
+Date:   Mon, 11 Nov 2019 19:28:57 +0100
+Message-Id: <20191111181512.570764400@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,166 +51,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
 
-[ Upstream commit 75be6f703a141b048590d659a3954c4fedd30bba ]
+[ Upstream commit e284df705cf1eeedb5ec3a66ed82d17a64659150 ]
 
-The events in the same group don't start or stop simultaneously.
-Here is the ftrace when enabling event group for uncore_iio_0:
+While the static key is correctly initialized as being disabled, it will
+remain forever enabled once turned on. This means that if we start with an
+asymmetric system and hotplug out enough CPUs to end up with an SMP system,
+the static key will remain set - which is obviously wrong. We should detect
+this and turn off things like misfit migration and capacity aware wakeups.
 
-  # perf stat -e "{uncore_iio_0/event=0x1/,uncore_iio_0/event=0xe/}"
+As Quentin pointed out, having separate root domains makes this slightly
+trickier. We could have exclusive cpusets that create an SMP island - IOW,
+the domains within this root domain will not see any asymmetry. This means
+we can't just disable the key on domain destruction, we need to count how
+many asymmetric root domains we have.
 
-            <idle>-0     [000] d.h.  8959.064832: read_msr: a41, value
-  b2b0b030		//Read counter reg of IIO unit0 counter0
-            <idle>-0     [000] d.h.  8959.064835: write_msr: a48, value
-  400001			//Write Ctrl reg of IIO unit0 counter0 to enable
-  counter0. <------ Although counter0 is enabled, Unit Ctrl is still
-  freezed. Nothing will count. We are still good here.
-            <idle>-0     [000] d.h.  8959.064836: read_msr: a40, value
-  30100                   //Read Unit Ctrl reg of IIO unit0
-            <idle>-0     [000] d.h.  8959.064838: write_msr: a40, value
-  30000			//Write Unit Ctrl reg of IIO unit0 to enable all
-  counters in the unit by clear Freeze bit  <------Unit0 is un-freezed.
-  Counter0 has been enabled. Now it starts counting. But counter1 has not
-  been enabled yet. The issue starts here.
-            <idle>-0     [000] d.h.  8959.064846: read_msr: a42, value 0
-			//Read counter reg of IIO unit0 counter1
-            <idle>-0     [000] d.h.  8959.064847: write_msr: a49, value
-  40000e			//Write Ctrl reg of IIO unit0 counter1 to enable
-  counter1.   <------ Now, counter1 just starts to count. Counter0 has
-  been running for a while.
+Consider the following example using Juno r0 which is 2+4 big.LITTLE, where
+two identical cpusets are created: they both span both big and LITTLE CPUs:
 
-Current code un-freezes the Unit Ctrl right after the first counter is
-enabled. The subsequent group events always loses some counter values.
+    asym0    asym1
+  [       ][       ]
+   L  L  B  L  L  B
 
-Implement pmu_enable and pmu_disable support for uncore, which can help
-to batch hardware accesses.
+  $ cgcreate -g cpuset:asym0
+  $ cgset -r cpuset.cpus=0,1,3 asym0
+  $ cgset -r cpuset.mems=0 asym0
+  $ cgset -r cpuset.cpu_exclusive=1 asym0
 
-No one uses uncore_enable_box and uncore_disable_box. Remove them.
+  $ cgcreate -g cpuset:asym1
+  $ cgset -r cpuset.cpus=2,4,5 asym1
+  $ cgset -r cpuset.mems=0 asym1
+  $ cgset -r cpuset.cpu_exclusive=1 asym1
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+  $ cgset -r cpuset.sched_load_balance=0 .
+
+(the CPU numbering may look odd because on the Juno LITTLEs are CPUs 0,3-5
+and bigs are CPUs 1-2)
+
+If we make one of those SMP (IOW remove asymmetry) by e.g. hotplugging its
+big core, we would end up with an SMP cpuset and an asymmetric cpuset - the
+static key must remain set, because we still have one asymmetric root domain.
+
+With the above example, this could be done with:
+
+  $ echo 0 > /sys/devices/system/cpu/cpu2/online
+
+Which would result in:
+
+    asym0   asym1
+  [       ][    ]
+   L  L  B  L  L
+
+When both SMP and asymmetric cpusets are present, all CPUs will observe
+sched_asym_cpucapacity being set (it is system-wide), but not all CPUs
+observe asymmetry in their sched domain hierarchy:
+
+  per_cpu(sd_asym_cpucapacity, <any CPU in asym0>) == <some SD at DIE level>
+  per_cpu(sd_asym_cpucapacity, <any CPU in asym1>) == NULL
+
+Change the simple key enablement to an increment, and decrement the key
+counter when destroying domains that cover asymmetric CPUs.
+
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Dietmar.Eggemann@arm.com
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: linux-drivers-review@eclists.intel.com
-Cc: linux-perf@eclists.intel.com
-Fixes: 087bfbb03269 ("perf/x86: Add generic Intel uncore PMU support")
-Link: https://lkml.kernel.org/r/1572014593-31591-1-git-send-email-kan.liang@linux.intel.com
+Cc: hannes@cmpxchg.org
+Cc: lizefan@huawei.com
+Cc: morten.rasmussen@arm.com
+Cc: qperret@google.com
+Cc: tj@kernel.org
+Cc: vincent.guittot@linaro.org
+Fixes: df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
+Link: https://lkml.kernel.org/r/20191023153745.19515-3-valentin.schneider@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/uncore.c | 44 +++++++++++++++++++++++++++++-----
- arch/x86/events/intel/uncore.h | 12 ----------
- 2 files changed, 38 insertions(+), 18 deletions(-)
+ kernel/sched/topology.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 2690135bf83f0..7098b9b05d566 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -485,10 +485,8 @@ void uncore_pmu_event_start(struct perf_event *event, int flags)
- 	local64_set(&event->hw.prev_count, uncore_read_counter(box, event));
- 	uncore_enable_event(box, event);
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 1906edb44d63c..93a8749763ea0 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -2008,7 +2008,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 	rcu_read_unlock();
  
--	if (box->n_active == 1) {
--		uncore_enable_box(box);
-+	if (box->n_active == 1)
- 		uncore_pmu_start_hrtimer(box);
--	}
- }
+ 	if (has_asym)
+-		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
++		static_branch_inc_cpuslocked(&sched_asym_cpucapacity);
  
- void uncore_pmu_event_stop(struct perf_event *event, int flags)
-@@ -512,10 +510,8 @@ void uncore_pmu_event_stop(struct perf_event *event, int flags)
- 		WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
- 		hwc->state |= PERF_HES_STOPPED;
- 
--		if (box->n_active == 0) {
--			uncore_disable_box(box);
-+		if (box->n_active == 0)
- 			uncore_pmu_cancel_hrtimer(box);
--		}
- 	}
- 
- 	if ((flags & PERF_EF_UPDATE) && !(hwc->state & PERF_HES_UPTODATE)) {
-@@ -769,6 +765,40 @@ static int uncore_pmu_event_init(struct perf_event *event)
- 	return ret;
- }
- 
-+static void uncore_pmu_enable(struct pmu *pmu)
-+{
-+	struct intel_uncore_pmu *uncore_pmu;
-+	struct intel_uncore_box *box;
-+
-+	uncore_pmu = container_of(pmu, struct intel_uncore_pmu, pmu);
-+	if (!uncore_pmu)
-+		return;
-+
-+	box = uncore_pmu_to_box(uncore_pmu, smp_processor_id());
-+	if (!box)
-+		return;
-+
-+	if (uncore_pmu->type->ops->enable_box)
-+		uncore_pmu->type->ops->enable_box(box);
-+}
-+
-+static void uncore_pmu_disable(struct pmu *pmu)
-+{
-+	struct intel_uncore_pmu *uncore_pmu;
-+	struct intel_uncore_box *box;
-+
-+	uncore_pmu = container_of(pmu, struct intel_uncore_pmu, pmu);
-+	if (!uncore_pmu)
-+		return;
-+
-+	box = uncore_pmu_to_box(uncore_pmu, smp_processor_id());
-+	if (!box)
-+		return;
-+
-+	if (uncore_pmu->type->ops->disable_box)
-+		uncore_pmu->type->ops->disable_box(box);
-+}
-+
- static ssize_t uncore_get_attr_cpumask(struct device *dev,
- 				struct device_attribute *attr, char *buf)
+ 	if (rq && sched_debug_enabled) {
+ 		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
+@@ -2103,8 +2103,12 @@ int sched_init_domains(const struct cpumask *cpu_map)
+  */
+ static void detach_destroy_domains(const struct cpumask *cpu_map)
  {
-@@ -794,6 +824,8 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
- 		pmu->pmu = (struct pmu) {
- 			.attr_groups	= pmu->type->attr_groups,
- 			.task_ctx_nr	= perf_invalid_context,
-+			.pmu_enable	= uncore_pmu_enable,
-+			.pmu_disable	= uncore_pmu_disable,
- 			.event_init	= uncore_pmu_event_init,
- 			.add		= uncore_pmu_event_add,
- 			.del		= uncore_pmu_event_del,
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index 42fa3974c421c..40e040ec31b50 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -412,18 +412,6 @@ static inline int uncore_freerunning_hw_config(struct intel_uncore_box *box,
- 	return -EINVAL;
- }
++	unsigned int cpu = cpumask_any(cpu_map);
+ 	int i;
  
--static inline void uncore_disable_box(struct intel_uncore_box *box)
--{
--	if (box->pmu->type->ops->disable_box)
--		box->pmu->type->ops->disable_box(box);
--}
--
--static inline void uncore_enable_box(struct intel_uncore_box *box)
--{
--	if (box->pmu->type->ops->enable_box)
--		box->pmu->type->ops->enable_box(box);
--}
--
- static inline void uncore_disable_event(struct intel_uncore_box *box,
- 				struct perf_event *event)
- {
++	if (rcu_access_pointer(per_cpu(sd_asym_cpucapacity, cpu)))
++		static_branch_dec_cpuslocked(&sched_asym_cpucapacity);
++
+ 	rcu_read_lock();
+ 	for_each_cpu(i, cpu_map)
+ 		cpu_attach_domain(NULL, &def_root_domain, i);
 -- 
 2.20.1
 
