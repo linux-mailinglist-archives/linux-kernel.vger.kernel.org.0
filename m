@@ -2,49 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3BDF9A59
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 21:12:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D05F9A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 21:12:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfKLUMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 15:12:31 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48928 "EHLO
+        id S1727176AbfKLUMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 15:12:22 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:48938 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfKLUMI (ORCPT
+        with ESMTP id S1726957AbfKLUMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 15:12:08 -0500
+        Tue, 12 Nov 2019 15:12:09 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B6150154D23BE;
-        Tue, 12 Nov 2019 12:12:07 -0800 (PST)
-Date:   Mon, 11 Nov 2019 14:41:43 -0800 (PST)
-Message-Id: <20191111.144143.1922066976980512193.davem@davemloft.net>
-To:     mschiffer@universe-factory.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        roopa@cumulusnetworks.com, nikolay@cumulusnetworks.com
-Subject: Re: [PATCH net-next 2/2] bridge: implement get_link_ksettings
- ethtool method
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id D1376154D250F;
+        Tue, 12 Nov 2019 12:12:08 -0800 (PST)
+Date:   Mon, 11 Nov 2019 15:14:35 -0800 (PST)
+Message-Id: <20191111.151435.931035548376130641.davem@davemloft.net>
+To:     clabbe@baylibre.com
+Cc:     alexandre.torgue@st.com, joabreu@synopsys.com, mripard@kernel.org,
+        peppe.cavallaro@st.com, wens@csie.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-sunxi@googlegroups.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: dwmac-sun8i: Use the correct function
+ in exit path
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <8e414e98928aba7f11ea997498fb18af05434f5f.1573321597.git.mschiffer@universe-factory.net>
-References: <cover.1573321597.git.mschiffer@universe-factory.net>
-        <8e414e98928aba7f11ea997498fb18af05434f5f.1573321597.git.mschiffer@universe-factory.net>
+In-Reply-To: <1573385448-30282-1-git-send-email-clabbe@baylibre.com>
+References: <1573385448-30282-1-git-send-email-clabbe@baylibre.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 12 Nov 2019 12:12:07 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 12 Nov 2019 12:12:09 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Sat,  9 Nov 2019 18:54:14 +0100
+From: Corentin Labbe <clabbe@baylibre.com>
+Date: Sun, 10 Nov 2019 11:30:48 +0000
 
-> +		if (cmd->base.speed == (__u32)SPEED_UNKNOWN ||
-> +		    cmd->base.speed < ecmd.base.speed) {
-> +			cmd->base.speed = ecmd.base.speed;
-> +		}
+> When PHY is not powered, the probe function fail and some resource are
+> still unallocated.
+> Furthermore some BUG happens:
+> dwmac-sun8i 5020000.ethernet: EMAC reset timeout
+> ------------[ cut here ]------------
+> kernel BUG at /linux-next/net/core/dev.c:9844!
+> 
+> So let's use the right function (stmmac_pltfr_remove) in the error path.
+> 
+> Fixes: 9f93ac8d4085 ("net-next: stmmac: Add dwmac-sun8i")
+> Cc: <stable@vger.kernel.org> # v4.15+
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 
-Curly braces are unnecessary for single line statements, so please remove.
+Applied.
