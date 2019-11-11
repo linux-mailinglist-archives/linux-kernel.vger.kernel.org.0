@@ -2,95 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5C8CF74C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 14:27:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C79EBF74C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 14:28:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfKKN1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 08:27:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726879AbfKKN1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 08:27:23 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBCC32196E;
-        Mon, 11 Nov 2019 13:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573478842;
-        bh=3khfY817g3PS5TkES+rklqgKgMSJFdurf0htRIWV3E8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m+qMg8uHBw99MxUsk26njdjGjDT/Ta8ES+ZVEG2GQ0udk7tYSiKb+Jd1xciKXpB8F
-         twU/HuO8oIndjNsYOzuMjoEa907GWnUixaMXCV1d3Wa3GFZc5BFH+gfgMfWCP1lcli
-         Fpo2XworndBJncJiA4o6dYYhc2YNDoBJat65lfPM=
-Date:   Mon, 11 Nov 2019 13:27:17 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Zhenyu Ye <yezhenyu2@huawei.com>
-Cc:     catalin.marinas@arm.com, maz@kernel.org, suzuki.poulose@arm.com,
-        mark.rutland@arm.com, tangnianyao@huawei.com,
-        xiexiangyou@huawei.com, linux-kernel@vger.kernel.org,
-        arm@kernel.org
-Subject: Re: [RFC PATCH v2] arm64: cpufeatures: add support for tlbi range
- instructions
-Message-ID: <20191111132716.GA9394@willie-the-truck>
-References: <5DC960EB.9050503@huawei.com>
+        id S1727027AbfKKN2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 08:28:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51762 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726910AbfKKN2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 08:28:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 52D3FAD00;
+        Mon, 11 Nov 2019 13:28:13 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 14:28:12 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Chris Down <chris@chrisdown.name>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, guro@fb.com, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm/vmscan: fix an undefined behavior for zone id
+Message-ID: <20191111132812.GK1396@dhcp22.suse.cz>
+References: <20191108204407.1435-1-cai@lca.pw>
+ <64E60F6F-7582-427B-8DD5-EF97B1656F5A@lca.pw>
+ <20191111130516.GA891635@chrisdown.name>
+ <20191111131427.GB891635@chrisdown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5DC960EB.9050503@huawei.com>
+In-Reply-To: <20191111131427.GB891635@chrisdown.name>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 09:23:55PM +0800, Zhenyu Ye wrote:
-> ARMv8.4-TLBI provides TLBI invalidation instruction that apply to a
-> range of input addresses. This patch adds support for this feature.
-> This is the second version of the patch.
+On Mon 11-11-19 13:14:27, Chris Down wrote:
+> Chris Down writes:
+> > Ah, I just saw this in my local checkout and thought it was from my
+> > changes, until I saw it's also on clean mmots checkout. Thanks for the
+> > fixup!
 > 
-> I traced the __flush_tlb_range() for a minute and get some statistical
-> data as below:
-> 
-> 	PAGENUM		COUNT
-> 	1		34944
-> 	2		5683
-> 	3		1343
-> 	4		7857
-> 	5		838
-> 	9		339
-> 	16		933
-> 	19		427
-> 	20		5821
-> 	23		279
-> 	41		338
-> 	141		279
-> 	512		428
-> 	1668		120
-> 	2038		100
-> 
-> Those data are based on kernel-5.4.0, where PAGENUM = end - start, COUNT
-> shows number of calls to the __flush_tlb_range() in a minute. There only
-> shows the data which COUNT >= 100. The kernel is started normally, and
-> transparent hugepage is opened. As we can see, though most user TLBI
-> ranges were 1 pages long, the num of long-range can not be ignored.
-> 
-> The new feature of TLB range can improve lots of performance compared to
-> the current implementation. As an example, flush 512 ranges needs only 1
-> instruction as opposed to 512 instructions using current implementation.
-> 
-> And for a new hardware feature, support is better than not.
-> 
-> Signed-off-by: Zhenyu Ye <yezhenyu2@huawei.com>
-> ---
-> ChangeLog v1 -> v2:
-> - Change the main implementation of this feature.
-> - Add some comments.
+> Also, does this mean we should change callers that may pass through
+> zone_idx=MAX_NR_ZONES to become MAX_NR_ZONES-1 in a separate commit, then
+> remove this interim fixup? I'm worried otherwise we might paper over real
+> issues in future.
 
-How does this address my concerns here:
+Yes, removing this special casing is reasonable. I am not sure
+MAX_NR_ZONES - 1 is a better choice though. It is error prone and
+zone_idx is the highest zone we should consider and MAX_NR_ZONES - 1
+be ZONE_DEVICE if it is configured. But ZONE_DEVICE is really standing
+outside of MM reclaim code AFAIK. It would be probably better to have
+MAX_LRU_ZONE (equal to MOVABLE) and use it instead.
 
-https://lore.kernel.org/linux-arm-kernel/20191031131649.GB27196@willie-the-truck/
-
-?
-
-Will
+-- 
+Michal Hocko
+SUSE Labs
