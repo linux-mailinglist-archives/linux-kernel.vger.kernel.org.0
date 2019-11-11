@@ -2,68 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66551F8346
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 00:12:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088B2F834A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 00:16:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfKKXMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 18:12:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfKKXMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 18:12:31 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1C512173B;
-        Mon, 11 Nov 2019 23:12:29 +0000 (UTC)
-Date:   Mon, 11 Nov 2019 18:12:28 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tony Lu <tonylu@linux.alibaba.com>
-Cc:     mingo@redhat.com, sanagi.koki@jp.fujitsu.co, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] net: add missing semicolon in net_dev_template
-Message-ID: <20191111181228.49396467@gandalf.local.home>
-In-Reply-To: <20191111141752.31655-1-tonylu@linux.alibaba.com>
-References: <20191111141752.31655-1-tonylu@linux.alibaba.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726928AbfKKXQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 18:16:13 -0500
+Received: from smtprelay0001.hostedemail.com ([216.40.44.1]:50588 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726845AbfKKXQN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 18:16:13 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id DA04540E1;
+        Mon, 11 Nov 2019 23:16:11 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2198:2199:2200:2393:2551:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3868:3871:3872:4250:4321:4605:5007:6691:7901:8828:10004:10400:11026:11232:11658:11914:12050:12297:12438:12740:12760:12895:13069:13311:13357:13439:14180:14659:21080:21627:21972:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: nut53_18ddf32dd8d37
+X-Filterd-Recvd-Size: 2182
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 11 Nov 2019 23:16:10 +0000 (UTC)
+Message-ID: <c2c803570b92fc18ac62902bd99075ccc33eb5b6.camel@perches.com>
+Subject: Re: [PATCH v2 3/3] staging: wfx: replace u32 by __le32
+From:   Joe Perches <joe@perches.com>
+To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>,
+        Jules Irenge <jbi.octave@gmail.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 11 Nov 2019 15:15:54 -0800
+In-Reply-To: <3445403.d56fhTCmfW@pc-42>
+References: <20191111133055.214410-1-jbi.octave@gmail.com>
+         <20191111133055.214410-3-jbi.octave@gmail.com> <3445403.d56fhTCmfW@pc-42>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Nov 2019 22:17:53 +0800
-Tony Lu <tonylu@linux.alibaba.com> wrote:
-
-> This patch adds missing semicolon in the end of net_dev_template.
+On Mon, 2019-11-11 at 16:58 +0000, Jerome Pouiller wrote:
+> On Monday 11 November 2019 14:30:55 CET Jules Irenge wrote:
+> [...]
+> > -       u32   count_rts_failures;
+> > -       u32   count_ack_failures;
+> > -       u32   count_rx_multicast_frames;
+> > -       u32   count_rx_frames_success;
+> > -       u32   count_rx_cmacicv_errors;
+> > -       u32   count_rx_cmac_replays;
+> > -       u32   count_rx_mgmt_ccmp_replays;
+> [...]
+> > +       __le32   count_rts_failures;
+> > +       __le32   count_rx_multicast_frames;
+> > +       __le32   count_rx_cmacicv_errors;
+> > +       __le32   count_rx_cmac_replays;
+> > +       __le32   count_rx_mgmt_ccmp_replays;
+> > +       __le32   count_rx_beacon;
+> > +       __le32   count_miss_beacon;
+> > +       __le32   count_ack_failures;
+> > +       __le32   count_rx_frames_success;
+> >         u32   count_rx_bipmic_errors;
+> > -       u32   count_rx_beacon;
+> > -       u32   count_miss_beacon;
 > 
-> Fixes: cf66ba58b5cb ("netdev: Add tracepoints to netdev layer")
-> Signed-off-by: Tony Lu <tonylu@linux.alibaba.com>
-> ---
->  include/trace/events/net.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hello Jules,
 > 
-> diff --git a/include/trace/events/net.h b/include/trace/events/net.h
-> index 2399073c3afc..3b28843652d2 100644
-> --- a/include/trace/events/net.h
-> +++ b/include/trace/events/net.h
-> @@ -138,7 +138,7 @@ DECLARE_EVENT_CLASS(net_dev_template,
->  
->  	TP_printk("dev=%s skbaddr=%p len=%u",
->  		__get_str(name), __entry->skbaddr, __entry->len)
-> -)
-> +);
+> Your patch reorders members of the structure. It will break API with the 
+> chip.
 
-Actually, we are thinking of making a sweeping patch set to remove all
-these semicolons, as they are not needed, and would also allow more
-flexible processing of the trace event macros.
-
--- Steve
-
->  
->  DEFINE_EVENT(net_dev_template, net_dev_queue,
->  
+And if the hardware really is le, then almost certainly
+_all_ the members of the struct should be __le32
 
