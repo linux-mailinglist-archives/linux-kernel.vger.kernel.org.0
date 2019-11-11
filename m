@@ -2,142 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC133F82CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:15:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5395F82D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:20:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfKKWPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 17:15:31 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38250 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726916AbfKKWPb (ORCPT
+        id S1727022AbfKKWUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 17:20:34 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58961 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726928AbfKKWUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 17:15:31 -0500
-Received: by mail-lf1-f68.google.com with SMTP id q28so11123894lfa.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 14:15:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JRXrodVHYhiGAfwYVYOvpqNqKsOaJKtvlzrom6mvWYM=;
-        b=UysnqbJjbZklK2plaqyIEe+XW5WofM07UNZ/iralSzFfBCjam7qpOU2k0pD/PSeHMh
-         6a/D31RBqtZB9pgmEoumiBOjb8orhAaDSK7pXCUApMgFV0LdjwZbELZPs+cxaiPfonUR
-         2pdP//ukce48f3YrL24RkhoCF99krNL+g2GKY=
+        Mon, 11 Nov 2019 17:20:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573510832;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=UIFl6RmKYvRvDaC9fCanWXjZvHHx2uDomG3MEDvY3qg=;
+        b=idmSHDSDHkyBbCT66Y1lnQNF36NATim8YPh41M/JRZOKIpIZCSesjosimZZ9qL76x7tlfn
+        nJKeKJZqNJ21Mycv8fYDW7PhTPis3VsF+BJ5Y+uUzCBuvkpjSR4eryxDApVf8z9cJji95C
+        mI1CoAi6gBfwBN37Rv8unQTtFnAySqE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-177-lP46nyTrNGazN40oUa4Wfg-1; Mon, 11 Nov 2019 17:20:30 -0500
+Received: by mail-wr1-f70.google.com with SMTP id j17so10812764wru.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 14:20:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JRXrodVHYhiGAfwYVYOvpqNqKsOaJKtvlzrom6mvWYM=;
-        b=GToS+4PIiO3u2pAjsNBO2Q5TxgOh/X1AlTmnmBYISaUTaYxp7lJ+ku+zh5fKvdy5CB
-         BTSclsEC6+vNQhgxFvpG3+LDbYDR+Ek0jN6OmB2tRGmaDoAe1gtEkFlU2oMpDaGq7SeN
-         70JSP0u8BAziZA9dHo4M+TNMaqXL2PTrXKb9PDImbwZqcu0vM+zTytnN7tFuHHfgu6wc
-         4udTFwFyX/ZhFXO1AZ0KNTANeeylWp2qGzs1+REbSWPSTumcUGGA+BV1aiMhQulMz6Fy
-         YccuqBYrZcA0P3YS52ciDhS3+ur4VwUEhTGCOVCHmpHpLrZ/XhXZUNhP3knqu4HToe56
-         E9YQ==
-X-Gm-Message-State: APjAAAV562LCSQwFy3jWMS1jZGm3vthYlAtD3479u9BN1Qhto/gg8eUi
-        k724jT9L/ooNh3mZiMfcJD0lBBSgBdc=
-X-Google-Smtp-Source: APXvYqxkHnYkKqHXF33wJikEKSAcRL+wwJC3Liou9mSqBVHPdLOM/v67G69jS60uz532oU/4kZLUqQ==
-X-Received: by 2002:ac2:4a8a:: with SMTP id l10mr16950312lfp.185.1573510527947;
-        Mon, 11 Nov 2019 14:15:27 -0800 (PST)
-Received: from [192.168.0.107] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
-        by smtp.gmail.com with ESMTPSA id r19sm7432742lfi.13.2019.11.11.14.15.25
+        bh=ElUsUIBHVYFueoajxjC1Kl74zzWp1gWpLdEqumq8Hjw=;
+        b=lNlCx7XQg8i/Jj8eFji8zw3papXAkkz7gO+fxW9bg66AnPt0HjcieHgicYOfqprn8B
+         ogWlwBZD4uJaw+yD6EpUKlpdj8EQcX8OaC5xCz+w0cl/cLdd7PvVMMRQ/llkHqkbaF+l
+         CxuN9lny7wRThr5xzWwwc0gEeKn1UxzCblUZTdRr+WwnEVew1TOuGU0JpuVTRrG8BJKj
+         5ANcPTnlhc6uoeLRHDkwL+TUChsAvXHc/8t0nMIkjKUiDbtKUajDZddNjH9K97wJFKx+
+         pNzZ5g35TtECkJD/gHCDX1+5Bba/fuZ9Dmm1t9+p1EotM3Asz++WtwzJqfwW1uXTfW/X
+         kF4w==
+X-Gm-Message-State: APjAAAXqvVR2dwqgAXWCDTUT4CbC26DDvaGQH/57SI6JFfiRcDosPmqz
+        aUg6f0yYlPXblEWsyshAJTKT7Fw06018ynCLOPBie1rMXNkevIzeE+SJe8hD46+OQjIQU7Jal2Y
+        vw0b4UFI9LLlNsI0EpcuICWMH
+X-Received: by 2002:adf:f9c4:: with SMTP id w4mr13729955wrr.88.1573510829300;
+        Mon, 11 Nov 2019 14:20:29 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzFPwqxhXxeAs0oL0Dbs5sot6UdqdoMZ4qtgoJqKMBpzKaZcxnJ8IkS9GT/UFBY0Amj9EWzQg==
+X-Received: by 2002:adf:f9c4:: with SMTP id w4mr13729930wrr.88.1573510828911;
+        Mon, 11 Nov 2019 14:20:28 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:8c9d:1a6f:4730:367c? ([2001:b07:6468:f312:8c9d:1a6f:4730:367c])
+        by smtp.gmail.com with ESMTPSA id 4sm1494255wmd.33.2019.11.11.14.20.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2019 14:15:27 -0800 (PST)
-Subject: Re: [PATCH net-next 2/2] bridge: implement get_link_ksettings ethtool
- method
-To:     Matthias Schiffer <mschiffer@universe-factory.net>,
-        netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, davem@davemloft.net,
-        roopa@cumulusnetworks.com
-References: <cover.1573321597.git.mschiffer@universe-factory.net>
- <8e414e98928aba7f11ea997498fb18af05434f5f.1573321597.git.mschiffer@universe-factory.net>
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <5da07a98-bae3-2d67-d60b-2e58be9d8377@cumulusnetworks.com>
-Date:   Tue, 12 Nov 2019 00:15:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Mon, 11 Nov 2019 14:20:28 -0800 (PST)
+Subject: Re: [PATCH v2 1/3] KVM: MMU: Do not treat ZONE_DEVICE pages as being
+ reserved
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20191111221229.24732-1-sean.j.christopherson@intel.com>
+ <20191111221229.24732-2-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <85ab4f91-973f-f12d-5361-6125ac524bb4@redhat.com>
+Date:   Mon, 11 Nov 2019 23:20:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <8e414e98928aba7f11ea997498fb18af05434f5f.1573321597.git.mschiffer@universe-factory.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191111221229.24732-2-sean.j.christopherson@intel.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MC-Unique: lP46nyTrNGazN40oUa4Wfg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2019 19:54, Matthias Schiffer wrote:
-> We return the maximum speed of all active ports. This matches how the link
-> speed would give an upper limit for traffic to/from any single peer if the
-> bridge were replaced with a hardware switch.
-> 
-> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+On 11/11/19 23:12, Sean Christopherson wrote:
+> Explicitly exempt ZONE_DEVICE pages from kvm_is_reserved_pfn() and
+> instead manually handle ZONE_DEVICE on a case-by-case basis.  For things
+> like page refcounts, KVM needs to treat ZONE_DEVICE pages like normal
+> pages, e.g. put pages grabbed via gup().  But for flows such as setting
+> A/D bits or shifting refcounts for transparent huge pages, KVM needs to
+> to avoid processing ZONE_DEVICE pages as the flows in question lack the
+> underlying machinery for proper handling of ZONE_DEVICE pages.
+>=20
+> This fixes a hang reported by Adam Borowski[*] in dev_pagemap_cleanup()
+> when running a KVM guest backed with /dev/dax memory, as KVM straight up
+> doesn't put any references to ZONE_DEVICE pages acquired by gup().
+>=20
+> Note, Dan Williams proposed an alternative solution of doing put_page()
+> on ZONE_DEVICE pages immediately after gup() in order to simplify the
+> auditing needed to ensure is_zone_device_page() is called if and only if
+> the backing device is pinned (via gup()).  But that approach would break
+> kvm_vcpu_{un}map() as KVM requires the page to be pinned from map() 'til
+> unmap() when accessing guest memory, unlike KVM's secondary MMU, which
+> coordinates with mmu_notifier invalidations to avoid creating stale
+> page references, i.e. doesn't rely on pages being pinned.
+>=20
+> [*] http://lkml.kernel.org/r/20190919115547.GA17963@angband.pl
+>=20
+> Reported-by: Adam Borowski <kilobyte@angband.pl>
+> Debugged-by: David Hildenbrand <david@redhat.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  net/bridge/br_device.c | 37 +++++++++++++++++++++++++++++++++++--
->  1 file changed, 35 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
-> index e804a3016902..e8a2d0c13592 100644
-> --- a/net/bridge/br_device.c
-> +++ b/net/bridge/br_device.c
-> @@ -263,6 +263,38 @@ static void br_getinfo(struct net_device *dev, struct ethtool_drvinfo *info)
->  	strlcpy(info->bus_info, "N/A", sizeof(info->bus_info));
+>  arch/x86/kvm/mmu.c       |  8 ++++----
+>  include/linux/kvm_host.h |  1 +
+>  virt/kvm/kvm_main.c      | 26 +++++++++++++++++++++++---
+>  3 files changed, 28 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index 24c23c66b226..bf82b1f2e834 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -3306,7 +3306,7 @@ static void transparent_hugepage_adjust(struct kvm_=
+vcpu *vcpu,
+>  =09 * here.
+>  =09 */
+>  =09if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+> -=09    level =3D=3D PT_PAGE_TABLE_LEVEL &&
+> +=09    !kvm_is_zone_device_pfn(pfn) && level =3D=3D PT_PAGE_TABLE_LEVEL =
+&&
+>  =09    PageTransCompoundMap(pfn_to_page(pfn)) &&
+>  =09    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+>  =09=09unsigned long mask;
+> @@ -5914,9 +5914,9 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm=
+ *kvm,
+>  =09=09 * the guest, and the guest page table is using 4K page size
+>  =09=09 * mapping if the indirect sp has level =3D 1.
+>  =09=09 */
+> -=09=09if (sp->role.direct &&
+> -=09=09=09!kvm_is_reserved_pfn(pfn) &&
+> -=09=09=09PageTransCompoundMap(pfn_to_page(pfn))) {
+> +=09=09if (sp->role.direct && !kvm_is_reserved_pfn(pfn) &&
+> +=09=09    !kvm_is_zone_device_pfn(pfn) &&
+> +=09=09    PageTransCompoundMap(pfn_to_page(pfn))) {
+>  =09=09=09pte_list_remove(rmap_head, sptep);
+> =20
+>  =09=09=09if (kvm_available_flush_tlb_with_range())
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index a817e446c9aa..4ad1cd7d2d4d 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -966,6 +966,7 @@ int kvm_cpu_has_pending_timer(struct kvm_vcpu *vcpu);
+>  void kvm_vcpu_kick(struct kvm_vcpu *vcpu);
+> =20
+>  bool kvm_is_reserved_pfn(kvm_pfn_t pfn);
+> +bool kvm_is_zone_device_pfn(kvm_pfn_t pfn);
+> =20
+>  struct kvm_irq_ack_notifier {
+>  =09struct hlist_node link;
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index b8534c6b8cf6..bc9d10a0a334 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -149,10 +149,30 @@ __weak int kvm_arch_mmu_notifier_invalidate_range(s=
+truct kvm *kvm,
+>  =09return 0;
 >  }
->  
-> +static int br_get_link_ksettings(struct net_device *dev,
-> +				 struct ethtool_link_ksettings *cmd)
+> =20
+> +bool kvm_is_zone_device_pfn(kvm_pfn_t pfn)
 > +{
-> +	struct net_bridge *br = netdev_priv(dev);
-> +	struct net_bridge_port *p;
+> +=09/*
+> +=09 * The metadata used by is_zone_device_page() to determine whether or
+> +=09 * not a page is ZONE_DEVICE is guaranteed to be valid if and only if
+> +=09 * the device has been pinned, e.g. by get_user_pages().  WARN if the
+> +=09 * page_count() is zero to help detect bad usage of this helper.
+> +=09 */
+> +=09if (!pfn_valid(pfn) || WARN_ON_ONCE(!page_count(pfn_to_page(pfn))))
+> +=09=09return false;
 > +
-> +	cmd->base.duplex = DUPLEX_UNKNOWN;
-> +	cmd->base.port = PORT_OTHER;
-> +	cmd->base.speed = SPEED_UNKNOWN;
-> +
-> +	list_for_each_entry(p, &br->port_list, list) {
-> +		struct ethtool_link_ksettings ecmd;
-> +		struct net_device *pdev = p->dev;
-> +
-> +		if (!netif_running(pdev) || !netif_oper_up(pdev))
-> +			continue;
-> +
-> +		if (__ethtool_get_link_ksettings(pdev, &ecmd))
-> +			continue;
-> +
-> +		if (ecmd.base.speed == (__u32)SPEED_UNKNOWN)
-> +			continue;
-> +
-> +		if (cmd->base.speed == (__u32)SPEED_UNKNOWN ||
-> +		    cmd->base.speed < ecmd.base.speed) {
-> +			cmd->base.speed = ecmd.base.speed;
-> +		}
-> +	}
-> +
-> +	return 0;
+> +=09return is_zone_device_page(pfn_to_page(pfn));
 > +}
 > +
->  static netdev_features_t br_fix_features(struct net_device *dev,
->  	netdev_features_t features)
+>  bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
 >  {
-> @@ -365,8 +397,9 @@ static int br_del_slave(struct net_device *dev, struct net_device *slave_dev)
+> +=09/*
+> +=09 * ZONE_DEVICE pages currently set PG_reserved, but from a refcountin=
+g
+> +=09 * perspective they are "normal" pages, albeit with slightly differen=
+t
+> +=09 * usage rules.
+> +=09 */
+>  =09if (pfn_valid(pfn))
+> -=09=09return PageReserved(pfn_to_page(pfn));
+> +=09=09return PageReserved(pfn_to_page(pfn)) &&
+> +=09=09       !kvm_is_zone_device_pfn(pfn);
+> =20
+>  =09return true;
 >  }
->  
->  static const struct ethtool_ops br_ethtool_ops = {
-> -	.get_drvinfo    = br_getinfo,
-> -	.get_link	= ethtool_op_get_link,
-> +	.get_drvinfo		 = br_getinfo,
-> +	.get_link		 = ethtool_op_get_link,
-> +	.get_link_ksettings	 = br_get_link_ksettings,
->  };
->  
->  static const struct net_device_ops br_netdev_ops = {
-> 
+> @@ -1865,7 +1885,7 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty);
+> =20
+>  void kvm_set_pfn_dirty(kvm_pfn_t pfn)
+>  {
+> -=09if (!kvm_is_reserved_pfn(pfn)) {
+> +=09if (!kvm_is_reserved_pfn(pfn) && !kvm_is_zone_device_pfn(pfn)) {
+>  =09=09struct page *page =3D pfn_to_page(pfn);
+> =20
+>  =09=09SetPageDirty(page);
+> @@ -1875,7 +1895,7 @@ EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
+> =20
+>  void kvm_set_pfn_accessed(kvm_pfn_t pfn)
+>  {
+> -=09if (!kvm_is_reserved_pfn(pfn))
+> +=09if (!kvm_is_reserved_pfn(pfn) && !kvm_is_zone_device_pfn(pfn))
+>  =09=09mark_page_accessed(pfn_to_page(pfn));
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_set_pfn_accessed);
+>=20
 
-Code-wise this is ok, but it could cause potential issues because devices will suddenly
-have speed (without duplex), and macvlan/8021q are examples which use the lowerdev's
-get_link_ksettings. I searched for potential problems with some user-space software
-but couldn't find any, so I hope it will be fine. :)
-Let's see where this goes.
+Queued, thanks -- the other two will wait for after the merge window to
+avoid pointless conflicts.
 
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Paolo
 
