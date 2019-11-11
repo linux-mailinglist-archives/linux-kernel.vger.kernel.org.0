@@ -2,156 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83703F71D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 11:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2EAFF71F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 11:29:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfKKK1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 05:27:34 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34216 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKK1d (ORCPT
+        id S1727102AbfKKK31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 05:29:27 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:42783 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726912AbfKKK30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 05:27:33 -0500
-Received: by mail-lj1-f196.google.com with SMTP id 139so13182590ljf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 02:27:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=LmDGe9nbcft4FfiC7VIPeLGhuJNW2Ho/gKIE1PaBIMA=;
-        b=pbYmS+sj9/Xg+7ygHJVkcwG3oGaI6xvEK6pqHKXVilldcg8RhYL++hW4UcEGOkgi3p
-         naFdSam+osJp3j3+k5kpCH7NDhuKUGSJD3WxAxb7bXKITg3ZzHrlfzcnHtnmRx9rBKr9
-         AgRgmwtTxgONi09FwKLX4FoPpir/In2HHlxUSfr2hWFfL/18fkEQP3mTkO5s3XtH389D
-         xS82ENU156O2lG4d7w0gOXua4jXYaJTOUpF52WK1OI2Dl4evobrRvYoR+ihQzxLYcKKy
-         HDwq+SiStMhXGrC39ckB2pi92kHK76a7500BRdvjXy5o80BkEUlrJVxmHGmXBiw2cAQD
-         4tkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=LmDGe9nbcft4FfiC7VIPeLGhuJNW2Ho/gKIE1PaBIMA=;
-        b=Hb9jVN1+PooE4y13VnR5smOhGHUGGXWOwtDSQzlVIDAIvP5w1MphdvD9oYg0vPFuwG
-         95yBbrokibe5hvG3T+ykB81EcLNC7P9r13J9jUsj9JftsZIBo7D8S/WClRIBfoIuvOxD
-         wdgzCXKCj5D2WWtPYV6WCAthGM84U1K7efJn0SXHNLKQPuKvvpGnVwILFS5lz6GZWvG/
-         Y9z83bqm+j274pd/Wr1pdNANx4sMQzIkx3W3iNqYy6xWtgY/CLPG4I49B3ETF8973Qq6
-         jpnqfFZqDUrhrKXHJ7uFj1r7xuktIfE/G5GLZVGjCdsENq6ULIqqyNlP5DX/6zRHUnV3
-         30Fg==
-X-Gm-Message-State: APjAAAU2NiTNf88H7M7dKPAhbSyf1teBpZZo1CF1TM1zjMNFsO2waScv
-        4+kn1AktauJWV47aZ05JQcP4/A==
-X-Google-Smtp-Source: APXvYqwrAfWdClrHsOovnWIo78k9n+aSyR28Ot4/nVq05+jBIEmotXV5NGxizzM6V8YJ1+vpvGmeiQ==
-X-Received: by 2002:a2e:9a55:: with SMTP id k21mr13959899ljj.85.1573468051139;
-        Mon, 11 Nov 2019 02:27:31 -0800 (PST)
-Received: from localhost (h-93-159.A463.priv.bahnhof.se. [46.59.93.159])
-        by smtp.gmail.com with ESMTPSA id 4sm7272360lfa.95.2019.11.11.02.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 02:27:30 -0800 (PST)
-Date:   Mon, 11 Nov 2019 11:27:30 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jean Delvare <jdelvare@suse.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: remove helpers for ref-counting clients
-Message-ID: <20191111102730.GA30651@bigcity.dyn.berto.se>
-References: <20191109212615.9254-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191109212615.9254-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Mon, 11 Nov 2019 05:29:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573468166;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pcVRVS2wigfNxAtSVYLPPaPRSK4c2t19oDRB3orBUZ8=;
+        b=Qu8oR+yS+SqKnZKhq7MLdSGa7rTRFICVguQD0H8Odfe6wr9GUAVwXwMnBOJSX7jzKbEi5o
+        gzUH6SjKbp9xeBjhAjRy6mERaKnfY9eSs1cQBcUOMDvMOm6UcGlBD92+7O6wB8xKtXIHXA
+        ZrAYGJhK0OkDbK4QJiUdDjUt72GFF2s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-401-z809MnJvNym6fsK2ylp1rQ-1; Mon, 11 Nov 2019 05:29:23 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 531491005500;
+        Mon, 11 Nov 2019 10:29:21 +0000 (UTC)
+Received: from dustball.usersys.redhat.com (unknown [10.43.17.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 640765D6A3;
+        Mon, 11 Nov 2019 10:29:18 +0000 (UTC)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     darrick.wong@oracle.com, naresh.kamboju@linaro.org,
+        hch@infradead.org
+Cc:     ltp@lists.linux.it, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, chrubis@suse.cz,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        broonie@kernel.org, arnd@arndb.de, lkft-triage@lists.linaro.org,
+        linux-ext4@vger.kernel.org, tytso@mit.edu, jstancek@redhat.com
+Subject: [PATCH] iomap: fix return value of iomap_dio_bio_actor on 32bit systems
+Date:   Mon, 11 Nov 2019 11:28:10 +0100
+Message-Id: <b757ff64ddf68519fc3d55b66fcd8a1d4b436395.1573467154.git.jstancek@redhat.com>
+In-Reply-To: <20191111083815.GA29540@infradead.org>
+References: <20191111083815.GA29540@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: z809MnJvNym6fsK2ylp1rQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Naresh reported LTP diotest4 failing for 32bit x86 and arm -next
+kernels on ext4. Same problem exists in 5.4-rc7 on xfs.
 
-Thanks for your work.
+The failure comes down to:
+  openat(AT_FDCWD, "testdata-4.5918", O_RDWR|O_DIRECT) =3D 4
+  mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) =3D 0xb7f7=
+b000
+  read(4, 0xb7f7b000, 4096)              =3D 0 // expects -EFAULT
 
-On 2019-11-09 22:26:15 +0100, Wolfram Sang wrote:
-> There are no in-tree users of these helpers anymore, and there
-> shouldn't. Most use cases went away once the driver model started to
-> refcount for us. There have been users like the media subsystem, but
-> they all switched to better refcounting methods meanwhile. Media did
-> this in 2008. Last user (IPMI) left 2018. Remove this cruft.
+Problem is conversion at iomap_dio_bio_actor() return. Ternary
+operator has a return type and an attempt is made to convert each
+of operands to the type of the other. In this case "ret" (int)
+is converted to type of "copied" (unsigned long). Both have size
+of 4 bytes:
+    size_t copied =3D 0;
+    int ret =3D -14;
+    long long actor_ret =3D copied ? copied : ret;
 
-Nice to clean out some old stuff :-)
+    On x86_64: actor_ret =3D=3D -14;
+    On x86   : actor_ret =3D=3D 4294967282
 
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Replace ternary operator with 2 return statements to avoid this
+unwanted conversion.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Fixes: 4721a6010990 ("iomap: dio data corruption and spurious errors when p=
+ipes fill")
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ fs/iomap/direct-io.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/i2c/i2c-core-base.c | 32 --------------------------------
->  include/linux/i2c.h         |  3 ---
->  2 files changed, 35 deletions(-)
-> 
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 9c55d24c7a30..5a44a92ed1fb 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -1743,38 +1743,6 @@ EXPORT_SYMBOL(i2c_del_driver);
->  
->  /* ------------------------------------------------------------------------- */
->  
-> -/**
-> - * i2c_use_client - increments the reference count of the i2c client structure
-> - * @client: the client being referenced
-> - *
-> - * Each live reference to a client should be refcounted. The driver model does
-> - * that automatically as part of driver binding, so that most drivers don't
-> - * need to do this explicitly: they hold a reference until they're unbound
-> - * from the device.
-> - *
-> - * A pointer to the client with the incremented reference counter is returned.
-> - */
-> -struct i2c_client *i2c_use_client(struct i2c_client *client)
-> -{
-> -	if (client && get_device(&client->dev))
-> -		return client;
-> -	return NULL;
-> -}
-> -EXPORT_SYMBOL(i2c_use_client);
-> -
-> -/**
-> - * i2c_release_client - release a use of the i2c client structure
-> - * @client: the client being no longer referenced
-> - *
-> - * Must be called when a user of a client is finished with it.
-> - */
-> -void i2c_release_client(struct i2c_client *client)
-> -{
-> -	if (client)
-> -		put_device(&client->dev);
-> -}
-> -EXPORT_SYMBOL(i2c_release_client);
-> -
->  struct i2c_cmd_arg {
->  	unsigned	cmd;
->  	void		*arg;
-> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-> index 8f512b992acd..23583f76c6dc 100644
-> --- a/include/linux/i2c.h
-> +++ b/include/linux/i2c.h
-> @@ -861,9 +861,6 @@ static inline bool i2c_client_has_driver(struct i2c_client *client)
->  	return !IS_ERR_OR_NULL(client) && client->dev.driver;
->  }
->  
-> -extern struct i2c_client *i2c_use_client(struct i2c_client *client);
-> -extern void i2c_release_client(struct i2c_client *client);
-> -
->  /* call the i2c_client->command() of all attached clients with
->   * the given arguments */
->  extern void i2c_clients_command(struct i2c_adapter *adap,
-> -- 
-> 2.20.1
-> 
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 1fc28c2da279..7c58f51d7da7 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -318,7 +318,9 @@ static void iomap_dio_bio_end_io(struct bio *bio)
+ =09=09if (pad)
+ =09=09=09iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
+ =09}
+-=09return copied ? copied : ret;
++=09if (copied)
++=09=09return copied;
++=09return ret;
+ }
+=20
+ static loff_t
+--=20
+1.8.3.1
 
--- 
-Regards,
-Niklas Söderlund
