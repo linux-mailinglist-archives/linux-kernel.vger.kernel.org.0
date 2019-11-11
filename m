@@ -2,45 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC7E2F7D85
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:57:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1897F7C59
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbfKKS5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:57:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57130 "EHLO mail.kernel.org"
+        id S1729860AbfKKSp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:45:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729045AbfKKS5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:57:34 -0500
+        id S1729859AbfKKSpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:45:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A412222C2;
-        Mon, 11 Nov 2019 18:57:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1F8221655;
+        Mon, 11 Nov 2019 18:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498652;
-        bh=nRbuoaP0ls5mMuvPlcnbXxC++POTCv9TaXemck2nBYA=;
+        s=default; t=1573497923;
+        bh=raTRrfmLpLliBo6BC0N/2uLNLfOJBhAN9HZ3cp3ABxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=haFJOXT0WewyYFCKMh18x39cNXism/hLLNnQ4KkMwW+yoyaZTF9Zf/PeqBSL6Crq0
-         deGX4qMiJqqWczqh2cn008DJByFoB9GKrDulcw8zoXoOxDlztZ9jWC3rfEJF6fEEtX
-         kwRuy1QjOd3kePvfeyfzB5unwkwR9Vf7ROqXioxI=
+        b=MWrdzemnG1LyaUp7TI5nMr9DFRndQgD07ZT6w0i36K4NaSJdyM+vxPl1sCz04T5Jf
+         nDguRzc20cKUwou93GtBkWJIL5ytyo//5Nk51B3coxpiWs1lIC9l4VR6fXKXJjm3OY
+         Vf6c79ur0qs/hmGDqJmCjymtxfXBeF4LdOkZ3lNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Valentin Schneider <valentin.schneider@arm.com>,
+        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Dietmar.Eggemann@arm.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, hannes@cmpxchg.org,
-        lizefan@huawei.com, morten.rasmussen@arm.com, qperret@google.com,
-        tj@kernel.org, vincent.guittot@linaro.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 154/193] sched/topology: Dont try to build empty sched domains
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        linux-drivers-review@eclists.intel.com,
+        linux-perf@eclists.intel.com, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 097/125] perf/x86/uncore: Fix event group support
 Date:   Mon, 11 Nov 2019 19:28:56 +0100
-Message-Id: <20191111181512.492886334@linuxfoundation.org>
+Message-Id: <20191111181452.768177907@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,121 +55,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valentin Schneider <valentin.schneider@arm.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit cd1cb3350561d2bf544ddfef76fbf0b1c9c7178f ]
+[ Upstream commit 75be6f703a141b048590d659a3954c4fedd30bba ]
 
-Turns out hotplugging CPUs that are in exclusive cpusets can lead to the
-cpuset code feeding empty cpumasks to the sched domain rebuild machinery.
+The events in the same group don't start or stop simultaneously.
+Here is the ftrace when enabling event group for uncore_iio_0:
 
-This leads to the following splat:
+  # perf stat -e "{uncore_iio_0/event=0x1/,uncore_iio_0/event=0xe/}"
 
-    Internal error: Oops: 96000004 [#1] PREEMPT SMP
-    Modules linked in:
-    CPU: 0 PID: 235 Comm: kworker/5:2 Not tainted 5.4.0-rc1-00005-g8d495477d62e #23
-    Hardware name: ARM Juno development board (r0) (DT)
-    Workqueue: events cpuset_hotplug_workfn
-    pstate: 60000005 (nZCv daif -PAN -UAO)
-    pc : build_sched_domains (./include/linux/arch_topology.h:23 kernel/sched/topology.c:1898 kernel/sched/topology.c:1969)
-    lr : build_sched_domains (kernel/sched/topology.c:1966)
-    Call trace:
-    build_sched_domains (./include/linux/arch_topology.h:23 kernel/sched/topology.c:1898 kernel/sched/topology.c:1969)
-    partition_sched_domains_locked (kernel/sched/topology.c:2250)
-    rebuild_sched_domains_locked (./include/linux/bitmap.h:370 ./include/linux/cpumask.h:538 kernel/cgroup/cpuset.c:955 kernel/cgroup/cpuset.c:978 kernel/cgroup/cpuset.c:1019)
-    rebuild_sched_domains (kernel/cgroup/cpuset.c:1032)
-    cpuset_hotplug_workfn (kernel/cgroup/cpuset.c:3205 (discriminator 2))
-    process_one_work (./arch/arm64/include/asm/jump_label.h:21 ./include/linux/jump_label.h:200 ./include/trace/events/workqueue.h:114 kernel/workqueue.c:2274)
-    worker_thread (./include/linux/compiler.h:199 ./include/linux/list.h:268 kernel/workqueue.c:2416)
-    kthread (kernel/kthread.c:255)
-    ret_from_fork (arch/arm64/kernel/entry.S:1167)
-    Code: f860dae2 912802d6 aa1603e1 12800000 (f8616853)
+            <idle>-0     [000] d.h.  8959.064832: read_msr: a41, value
+  b2b0b030		//Read counter reg of IIO unit0 counter0
+            <idle>-0     [000] d.h.  8959.064835: write_msr: a48, value
+  400001			//Write Ctrl reg of IIO unit0 counter0 to enable
+  counter0. <------ Although counter0 is enabled, Unit Ctrl is still
+  freezed. Nothing will count. We are still good here.
+            <idle>-0     [000] d.h.  8959.064836: read_msr: a40, value
+  30100                   //Read Unit Ctrl reg of IIO unit0
+            <idle>-0     [000] d.h.  8959.064838: write_msr: a40, value
+  30000			//Write Unit Ctrl reg of IIO unit0 to enable all
+  counters in the unit by clear Freeze bit  <------Unit0 is un-freezed.
+  Counter0 has been enabled. Now it starts counting. But counter1 has not
+  been enabled yet. The issue starts here.
+            <idle>-0     [000] d.h.  8959.064846: read_msr: a42, value 0
+			//Read counter reg of IIO unit0 counter1
+            <idle>-0     [000] d.h.  8959.064847: write_msr: a49, value
+  40000e			//Write Ctrl reg of IIO unit0 counter1 to enable
+  counter1.   <------ Now, counter1 just starts to count. Counter0 has
+  been running for a while.
 
-The faulty line in question is:
+Current code un-freezes the Unit Ctrl right after the first counter is
+enabled. The subsequent group events always loses some counter values.
 
-  cap = arch_scale_cpu_capacity(cpumask_first(cpu_map));
+Implement pmu_enable and pmu_disable support for uncore, which can help
+to batch hardware accesses.
 
-and we're not checking the return value against nr_cpu_ids (we shouldn't
-have to!), which leads to the above.
+No one uses uncore_enable_box and uncore_disable_box. Remove them.
 
-Prevent generate_sched_domains() from returning empty cpumasks, and add
-some assertion in build_sched_domains() to scream bloody murder if it
-happens again.
-
-The above splat was obtained on my Juno r0 with the following reproducer:
-
-  $ cgcreate -g cpuset:asym
-  $ cgset -r cpuset.cpus=0-3 asym
-  $ cgset -r cpuset.mems=0 asym
-  $ cgset -r cpuset.cpu_exclusive=1 asym
-
-  $ cgcreate -g cpuset:smp
-  $ cgset -r cpuset.cpus=4-5 smp
-  $ cgset -r cpuset.mems=0 smp
-  $ cgset -r cpuset.cpu_exclusive=1 smp
-
-  $ cgset -r cpuset.sched_load_balance=0 .
-
-  $ echo 0 > /sys/devices/system/cpu/cpu4/online
-  $ echo 0 > /sys/devices/system/cpu/cpu5/online
-
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Dietmar.Eggemann@arm.com
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: hannes@cmpxchg.org
-Cc: lizefan@huawei.com
-Cc: morten.rasmussen@arm.com
-Cc: qperret@google.com
-Cc: tj@kernel.org
-Cc: vincent.guittot@linaro.org
-Fixes: 05484e098448 ("sched/topology: Add SD_ASYM_CPUCAPACITY flag detection")
-Link: https://lkml.kernel.org/r/20191023153745.19515-2-valentin.schneider@arm.com
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: linux-drivers-review@eclists.intel.com
+Cc: linux-perf@eclists.intel.com
+Fixes: 087bfbb03269 ("perf/x86: Add generic Intel uncore PMU support")
+Link: https://lkml.kernel.org/r/1572014593-31591-1-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cgroup/cpuset.c  | 3 ++-
- kernel/sched/topology.c | 5 ++++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/events/intel/uncore.c | 44 +++++++++++++++++++++++++++++-----
+ arch/x86/events/intel/uncore.h | 12 ----------
+ 2 files changed, 38 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 5aa37531ce76f..a8122c405603b 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -786,7 +786,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
- 			continue;
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 2690135bf83f0..7098b9b05d566 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -485,10 +485,8 @@ void uncore_pmu_event_start(struct perf_event *event, int flags)
+ 	local64_set(&event->hw.prev_count, uncore_read_counter(box, event));
+ 	uncore_enable_event(box, event);
  
--		if (is_sched_load_balance(cp))
-+		if (is_sched_load_balance(cp) &&
-+		    !cpumask_empty(cp->effective_cpus))
- 			csa[csn++] = cp;
+-	if (box->n_active == 1) {
+-		uncore_enable_box(box);
++	if (box->n_active == 1)
+ 		uncore_pmu_start_hrtimer(box);
+-	}
+ }
  
- 		/* skip @cp's subtree if not a partition root */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index f751ce0b783e5..1906edb44d63c 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1927,7 +1927,7 @@ next_level:
- static int
- build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *attr)
- {
--	enum s_alloc alloc_state;
-+	enum s_alloc alloc_state = sa_none;
- 	struct sched_domain *sd;
- 	struct s_data d;
- 	struct rq *rq = NULL;
-@@ -1935,6 +1935,9 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 	struct sched_domain_topology_level *tl_asym;
- 	bool has_asym = false;
+ void uncore_pmu_event_stop(struct perf_event *event, int flags)
+@@ -512,10 +510,8 @@ void uncore_pmu_event_stop(struct perf_event *event, int flags)
+ 		WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
+ 		hwc->state |= PERF_HES_STOPPED;
  
-+	if (WARN_ON(cpumask_empty(cpu_map)))
-+		goto error;
+-		if (box->n_active == 0) {
+-			uncore_disable_box(box);
++		if (box->n_active == 0)
+ 			uncore_pmu_cancel_hrtimer(box);
+-		}
+ 	}
+ 
+ 	if ((flags & PERF_EF_UPDATE) && !(hwc->state & PERF_HES_UPTODATE)) {
+@@ -769,6 +765,40 @@ static int uncore_pmu_event_init(struct perf_event *event)
+ 	return ret;
+ }
+ 
++static void uncore_pmu_enable(struct pmu *pmu)
++{
++	struct intel_uncore_pmu *uncore_pmu;
++	struct intel_uncore_box *box;
 +
- 	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
- 	if (alloc_state != sa_rootdomain)
- 		goto error;
++	uncore_pmu = container_of(pmu, struct intel_uncore_pmu, pmu);
++	if (!uncore_pmu)
++		return;
++
++	box = uncore_pmu_to_box(uncore_pmu, smp_processor_id());
++	if (!box)
++		return;
++
++	if (uncore_pmu->type->ops->enable_box)
++		uncore_pmu->type->ops->enable_box(box);
++}
++
++static void uncore_pmu_disable(struct pmu *pmu)
++{
++	struct intel_uncore_pmu *uncore_pmu;
++	struct intel_uncore_box *box;
++
++	uncore_pmu = container_of(pmu, struct intel_uncore_pmu, pmu);
++	if (!uncore_pmu)
++		return;
++
++	box = uncore_pmu_to_box(uncore_pmu, smp_processor_id());
++	if (!box)
++		return;
++
++	if (uncore_pmu->type->ops->disable_box)
++		uncore_pmu->type->ops->disable_box(box);
++}
++
+ static ssize_t uncore_get_attr_cpumask(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+@@ -794,6 +824,8 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
+ 		pmu->pmu = (struct pmu) {
+ 			.attr_groups	= pmu->type->attr_groups,
+ 			.task_ctx_nr	= perf_invalid_context,
++			.pmu_enable	= uncore_pmu_enable,
++			.pmu_disable	= uncore_pmu_disable,
+ 			.event_init	= uncore_pmu_event_init,
+ 			.add		= uncore_pmu_event_add,
+ 			.del		= uncore_pmu_event_del,
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index 42fa3974c421c..40e040ec31b50 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -412,18 +412,6 @@ static inline int uncore_freerunning_hw_config(struct intel_uncore_box *box,
+ 	return -EINVAL;
+ }
+ 
+-static inline void uncore_disable_box(struct intel_uncore_box *box)
+-{
+-	if (box->pmu->type->ops->disable_box)
+-		box->pmu->type->ops->disable_box(box);
+-}
+-
+-static inline void uncore_enable_box(struct intel_uncore_box *box)
+-{
+-	if (box->pmu->type->ops->enable_box)
+-		box->pmu->type->ops->enable_box(box);
+-}
+-
+ static inline void uncore_disable_event(struct intel_uncore_box *box,
+ 				struct perf_event *event)
+ {
 -- 
 2.20.1
 
