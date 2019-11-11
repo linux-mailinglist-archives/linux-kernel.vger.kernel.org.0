@@ -2,62 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E55DF70FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E461EF710C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfKKJnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 04:43:39 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:44010 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbfKKJnj (ORCPT
+        id S1726893AbfKKJoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 04:44:19 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55565 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbfKKJoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 04:43:39 -0500
-Received: by mail-yb1-f195.google.com with SMTP id r201so5962939ybc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 01:43:39 -0800 (PST)
+        Mon, 11 Nov 2019 04:44:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so12504996wmb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 01:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=xhU+UUGSqf8gaih2oGk2cjJYS9BzMMgqNSOBE/sk61E=;
-        b=nqo2iHdsQlyNLUs7o8woP3r9ANYPJ8WxJhXnUtgMb0YUos7Rl4A5FiFIFdB91uiQM4
-         HniHzoKOPwgIYaP5QWR8yN4tbyqkl+ZOZ2rHAQFdJKi2LVbD7QngZuFDRUTs5i9g7sWt
-         06BIhhaoJCJo0qF1Zyo+IgGarzeevMgB0PiPT5yRKT1UDNRUnMV23js0Gy8fb0yQhzWQ
-         TnIGG3avYFrlKL2r/Y5CLLVigOOaTPBpivZ9wENpKqBzbjZMw5NgGWZPlEE5JiIYEN2e
-         gY2gEMQBSMZ0Yd9VW28xVl9QroQbFc3cfsL9oubl4cXRe1i3OJ+Dkts0XI8HZQuf975u
-         ZBtQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vyGmHFPAq5MfFWdVpHAlD4EbsOFVG2Efcfbi4EJCxA8=;
+        b=lkyWCxmvKBof7iItTmaB71uyz6oqJTFW2bQpJkvXn0WLVrdk8YZuLe53ZZTjEqgq5k
+         W1kwPabkfEkTtnIHzP0gE2Cxr3Vc8YribXNSLbcB4drD+v8g/8jGORCoxVmrhrcwmcE8
+         tYMG0SImcnIlqhl68380xL/ubgLmb80IJole32NOhZV67G5eM/CuvBIWajhFHhfeRYgH
+         tJKNjhSBQludY+eABLZp9qdgNM5PeStR2XGg9gMzKQublYnZufw8tqIyN5u2PpR5/5Dj
+         Y4RX5dAvqKga6OEvdIZM4bRFLccaElKZ0pqgvGwLDRqJJ+1VdF++h8nx5OCeitYE0KGq
+         6rtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=xhU+UUGSqf8gaih2oGk2cjJYS9BzMMgqNSOBE/sk61E=;
-        b=oH6cS0aTE7DN3YP+YomYt8/vyJmLbqeKCygK+PUbN0RbZ+PrY0dGkA0dpjFnuridK0
-         mHFATPRQ2Ieo/mT9jidRgd5uo+qgogftgFh8SE2JB52WCS4ODuYUinAdUBI8s7BlFteY
-         k0k+T7fh57Mlndf0emAsAijalwJREsTtYzeDGkZk7i4zn9svVxMeRt+3lpFaAbm6iWMd
-         4CyJvc3qS3AMF9aIQfH04cVlA5J19Nz3el7lPawAT57Jx+kuwhe1KKmQeOazqQ4znGbI
-         pGKnBmLtgqiLkGF6cTbkzofZaABSBSZSwT/hRIP7OuyXRCa4XROIjNJLRRZ72LqjxdFm
-         THaw==
-X-Gm-Message-State: APjAAAUFGniphemFbejPVycHdBN7qVCpSBumTdIKlVdRqkgVY8OuGjnB
-        zV92s4yzvJS6zFLgSfQACmyr41T0QovLiRDlEHo=
-X-Google-Smtp-Source: APXvYqy7sKEJz6WHFBMJkZIiyfALGbYUVuLSs6YUs5aQXu0fkLcZ0lWPhynm/vssHGXD8HO8aJ4xbRKobhu4NzImxXc=
-X-Received: by 2002:a25:cf92:: with SMTP id f140mr18478667ybg.454.1573465418437;
- Mon, 11 Nov 2019 01:43:38 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vyGmHFPAq5MfFWdVpHAlD4EbsOFVG2Efcfbi4EJCxA8=;
+        b=oDBt2/4Ayz+3B2hwMzxbaVx+sfdFLHBwrP4AsDLujkyp8eng11ZLVUYykpWcQ0kCyS
+         48gJgn3W9QCoXLIBiEnhPfYANZmWutAfQTaahdU7FVGy++JTIXPGMkSiF0Ma5+gQNNKX
+         E8tm/ex1qO2xhOm/sl6OdBeN9denLBE4WBLtqBILKDD/NUiC8rKCx3ZXq0mQn4Ep68af
+         a9iD09LLRZu8IbhvRkL6+SrRqSGBJv6HZp5qGqIiczgbqghNDtqdnuJ2WFznxFJwP2YG
+         tuoajO/HZzUsYQqDBQruLiFOapD4T8s9f8F0FaxQCHXYVBSzrYbzyeopQsaGRGKfJcJy
+         fDbw==
+X-Gm-Message-State: APjAAAWGgVj8Yet7c1FEZBbrIGOBMAAPGB9Wm7u8b337ErWSSwfDzUte
+        8xfPeLcFf+m296tpmEOOt3NJ95HsPbW6yaNovtPFDg==
+X-Google-Smtp-Source: APXvYqxrlb7SP7eTmE5hQeLx53eyUjf5tTLurh+KzNkL06pAbGV4qk3tTWVeJmJ5824+3L3yDLMiJHa9NY31q7nWnww=
+X-Received: by 2002:a1c:64d6:: with SMTP id y205mr18115743wmb.136.1573465456652;
+ Mon, 11 Nov 2019 01:44:16 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a81:6bd7:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 01:43:37
- -0800 (PST)
-Reply-To: convy009@gmail.com
-From:   Ruben CONVY <rubenconvy1919@gmail.com>
-Date:   Mon, 11 Nov 2019 01:43:37 -0800
-Message-ID: <CADCRkohJbbhH=p6xfkTryy+bwqt4pYnD1uQELiuSR8awmBMwCg@mail.gmail.com>
-Subject: Why continued silence 2
-To:     undisclosed-recipients:;
+References: <1573449229-13918-1-git-send-email-anshuman.khandual@arm.com> <dcca9d9b-449a-1a97-c792-467966d8eec2@arm.com>
+In-Reply-To: <dcca9d9b-449a-1a97-c792-467966d8eec2@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 11 Nov 2019 09:44:05 +0000
+Message-ID: <CAKv+Gu90hqAefaWyXVb7CMGv8JF4nniVKVNNtUg-KOFPdNcOXg@mail.gmail.com>
+Subject: Re: [PATCH] efi: Fix comment for efi_mem_type() wrt absent physical addresses
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Did you receive my previous email regarding your family inheritance?
-Reply strictly through: convy009@gmail.com
+On Mon, 11 Nov 2019 at 05:27, Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+> On 11/11/2019 10:43 AM, Anshuman Khandual wrote:
+> > A previous commit f99afd08a45f ("efi: Update efi_mem_type() to return an
+> > error rather than 0") changed the return type from EFI_RESERVED_TYPE to
+> > -EINVAL when the searched physical address is not present in any memory
+> > descriptor. But the comment preceding the function never changed. Lets
+> > change the comment now to reflect the new return type -EINVAL.
+>
+> In the subject line, s/PATCH/PATCH V2/. Not sending yet another patch just
+> to fix this (in order to reduce spam). But please let me know in case that
+> will be essential.
+>
 
-Best Regards,
+No worries, I can queue it like this.
 
-Ruben CONVY
+Thanks,
+
+> >
+> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Cc: linux-efi@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> > ---
+> > Changes in V2:
+> >
+> > - Changed comment for efi_mem_type() instead of the return type per Ard
+> >
+> > V1: (https://lore.kernel.org/patchwork/patch/1149002/)
+> >
+> >  drivers/firmware/efi/efi.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> > index 77ca52d86e30..47b0bf7a2b7f 100644
+> > --- a/drivers/firmware/efi/efi.c
+> > +++ b/drivers/firmware/efi/efi.c
+> > @@ -899,7 +899,7 @@ u64 efi_mem_attributes(unsigned long phys_addr)
+> >   *
+> >   * Search in the EFI memory map for the region covering @phys_addr.
+> >   * Returns the EFI memory type if the region was found in the memory
+> > - * map, EFI_RESERVED_TYPE (zero) otherwise.
+> > + * map, -EINVAL otherwise.
+> >   */
+> >  int efi_mem_type(unsigned long phys_addr)
+> >  {
+> >
