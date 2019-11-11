@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91DD0F7F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CAD4F7F73
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:11:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfKKTJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:09:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50800 "EHLO mail.kernel.org"
+        id S1727429AbfKKSap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:30:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728148AbfKKSd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:33:27 -0500
+        id S1727411AbfKKSam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:30:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33DF721872;
-        Mon, 11 Nov 2019 18:33:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84FE720674;
+        Mon, 11 Nov 2019 18:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497204;
-        bh=AtAWPOCu6lMVkXMXhsRugQz95QvYSlyLDAkluKdUCrg=;
+        s=default; t=1573497041;
+        bh=xBY9KLAK1d8S4cs3Js4dOxZAJaPz5wbidMGeRJhHRQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nn78vLvdhHN9LO07ZPb/p6PncdQow/Qgg72h4IxA8M2GQi61GRxymy4Jq63sNdR4R
-         wu8HH6RGdXdihhtajJiTQh9E6mwbI3GicH3dv5D1eoQGfgVIGh5cNJJjW7s0G+1vpB
-         3IMLAl/f3nK7EDjO23xCkHNQXpNSnClop5IxTOws=
+        b=wx7U8tbOEPC/YR5evKeA8SsrUDl3Ggtmi3hUpZXKEDuVNUN3dLxqoF0BCMS+fOhiz
+         7D3d2EKzxBDjgz9QEIK/JpyvlVZCB8tAWCwufNMoX3DgHVQxcl/7EiNjPwT0Ko3xsS
+         tyRggJ2WFZqp5Riwq3VDFJWYJatsEz26OnGsKDTo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vidya Sagar <vidyas@nvidia.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 4.9 37/65] PCI: tegra: Enable Relaxed Ordering only for Tegra20 & Tegra30
-Date:   Mon, 11 Nov 2019 19:28:37 +0100
-Message-Id: <20191111181347.225448602@linuxfoundation.org>
+Subject: [PATCH 4.4 25/43] PCI: tegra: Enable Relaxed Ordering only for Tegra20 & Tegra30
+Date:   Mon, 11 Nov 2019 19:28:39 +0100
+Message-Id: <20191111181316.742248806@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -87,7 +87,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -603,12 +603,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NV
+@@ -586,12 +586,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NV
  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
  
