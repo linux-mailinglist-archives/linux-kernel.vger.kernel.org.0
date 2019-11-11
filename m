@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C128AF7C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98972F7BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:40:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbfKKSpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:45:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37740 "EHLO mail.kernel.org"
+        id S1729223AbfKKSkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:40:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbfKKSpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:45:34 -0500
+        id S1728639AbfKKSkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:40:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DDCB21655;
-        Mon, 11 Nov 2019 18:45:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32596214E0;
+        Mon, 11 Nov 2019 18:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497933;
-        bh=L1kLxcvshvOYxkYmrXxv0EM21Jlx7kQrRA384vulsYs=;
+        s=default; t=1573497602;
+        bh=5i1sxnLp1gpuWfgcIBlkwT5BI+AVOtU+/bjDCfqdO+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sXI8PJHvRNC6rYEBlha3oDm7cc8NDJtCxc+pLRTECOF9PNZNkgRunEGewWok4AdsM
-         KJTnI7kZ07FGGnPRxx5kLygnBYGXchDsfVEp4bIXNDbovZRWBSayhH8xld5BhPkoz/
-         /6Zf5wXE27Ctief3nPr8RaSqRHt4zCY0rBrLLHqo=
+        b=Fuor0FygJlwxZOZp0OE/uC88FRFdJf+nyQ8hTsPzBZGzFCZ9KbJxIm/+J0+cOyS+O
+         NrNLUmSNUUN1Z4HnhYpiGE/nqoLES01l53Hkp9kurHKQZKC+l67FszzQs9aKAInRgP
+         U1t1+IBodFZAvv2brmfFV16T1NnCv5VvkoUwaxFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, GwanYeong Kim <gy741.kim@gmail.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/125] usbip: tools: Fix read_usb_vudc_device() error path handling
+Subject: [PATCH 4.14 089/105] USB: Skip endpoints with 0 maxpacket length
 Date:   Mon, 11 Nov 2019 19:28:59 +0100
-Message-Id: <20191111181453.260215108@linuxfoundation.org>
+Message-Id: <20191111181447.746051692@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: GwanYeong Kim <gy741.kim@gmail.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-[ Upstream commit 28df0642abbf6d66908a2858922a7e4b21cdd8c2 ]
+[ Upstream commit d482c7bb0541d19dea8bff437a9f3c5563b5b2d2 ]
 
-This isn't really accurate right. fread() doesn't always
-return 0 in error. It could return < number of elements
-and set errno.
+Endpoints with a maxpacket length of 0 are probably useless.  They
+can't transfer any data, and it's not at all unlikely that an HCD will
+crash or hang when trying to handle an URB for such an endpoint.
 
-Signed-off-by: GwanYeong Kim <gy741.kim@gmail.com>
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Link: https://lore.kernel.org/r/20191018032223.4644-1-gy741.kim@gmail.com
+Currently the USB core does not check for endpoints having a maxpacket
+value of 0.  This patch adds a check, printing a warning and skipping
+over any endpoints it catches.
+
+Now, the USB spec does not rule out endpoints having maxpacket = 0.
+But since they wouldn't have any practical use, there doesn't seem to
+be any good reason for us to accept them.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910281050420.1485-100000@iolanthe.rowland.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/usb/usbip/libsrc/usbip_device_driver.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/core/config.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/usb/usbip/libsrc/usbip_device_driver.c b/tools/usb/usbip/libsrc/usbip_device_driver.c
-index ec3a0b794f159..67ae6c1557b8c 100644
---- a/tools/usb/usbip/libsrc/usbip_device_driver.c
-+++ b/tools/usb/usbip/libsrc/usbip_device_driver.c
-@@ -81,7 +81,7 @@ int read_usb_vudc_device(struct udev_device *sdev, struct usbip_usb_device *dev)
- 	FILE *fd = NULL;
- 	struct udev_device *plat;
- 	const char *speed;
--	int ret = 0;
-+	size_t ret;
+diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
+index d03d0e46b121d..cfb8f1126cf82 100644
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -348,6 +348,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
  
- 	plat = udev_device_get_parent(sdev);
- 	path = udev_device_get_syspath(plat);
-@@ -91,8 +91,10 @@ int read_usb_vudc_device(struct udev_device *sdev, struct usbip_usb_device *dev)
- 	if (!fd)
- 		return -1;
- 	ret = fread((char *) &descr, sizeof(descr), 1, fd);
--	if (ret < 0)
-+	if (ret != 1) {
-+		err("Cannot read vudc device descr file: %s", strerror(errno));
- 		goto err;
+ 	/* Validate the wMaxPacketSize field */
+ 	maxp = usb_endpoint_maxp(&endpoint->desc);
++	if (maxp == 0) {
++		dev_warn(ddev, "config %d interface %d altsetting %d endpoint 0x%X has wMaxPacketSize 0, skipping\n",
++		    cfgno, inum, asnum, d->bEndpointAddress);
++		goto skip_to_next_endpoint_or_interface_descriptor;
 +	}
- 	fclose(fd);
  
- 	copy_descr_attr(dev, &descr, bDeviceClass);
+ 	/* Find the highest legal maxpacket size for this endpoint */
+ 	i = 0;		/* additional transactions per microframe */
 -- 
 2.20.1
 
