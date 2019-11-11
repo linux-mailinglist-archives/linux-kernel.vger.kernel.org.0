@@ -2,136 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1A7F8006
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8EE5F8020
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:33:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfKKTdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:33:13 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:44862 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727555AbfKKTdL (ORCPT
+        id S1727870AbfKKTdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:33:41 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:39367 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727797AbfKKTdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:33:11 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 53FAA20B490A;
-        Mon, 11 Nov 2019 11:33:10 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 53FAA20B490A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573500790;
-        bh=vVWpClEcFcpAowfWbFY2ESxzTm/YP//DDYRJ/xxk6To=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=eBXUregc316UFl+Gocc0g/Qz8shfEDGUumHzIXECKiuau/UHXD1f/sSvmnq/QCC6w
-         0M/bqLtrDMaNRbIfkZD57YN32hpwV5HcIaFWRczObp6ggXfk8I56CWuMb2HKL7p+xS
-         Zi9562Li+ETyvfuBFk9r1jvdffzu970JHHthru9s=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 10/10] IMA: Call queue and dequeue functions to measure keys.
-Date:   Mon, 11 Nov 2019 11:33:03 -0800
-Message-Id: <20191111193303.12781-11-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191111193303.12781-1-nramas@linux.microsoft.com>
-References: <20191111193303.12781-1-nramas@linux.microsoft.com>
+        Mon, 11 Nov 2019 14:33:39 -0500
+Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1N3bCH-1hmQ3w3kY7-010fCN; Mon, 11 Nov 2019 20:33:36 +0100
+Received: by mail-qk1-f179.google.com with SMTP id h15so12180561qka.13;
+        Mon, 11 Nov 2019 11:33:34 -0800 (PST)
+X-Gm-Message-State: APjAAAXXUehROR4hg16SrGsmLkhlWeNJFltpGV8/mDO3s1mh8skoqwjh
+        tY/46NCrVFjCjJg/qAPgy/4Ru1VJxk+kMV3sub8=
+X-Google-Smtp-Source: APXvYqzRT3LvGe5JvZLYKm1upZpHxk2xc9ns43ZUwTpi/JlFXD7dYhA8+4Mt4XVDG2f3/qLjEL/Ms2I9EThmbgvV8Jg=
+X-Received: by 2002:a37:58d:: with SMTP id 135mr2321779qkf.394.1573500813881;
+ Mon, 11 Nov 2019 11:33:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20191029064834.23438-1-hch@lst.de> <20191029064834.23438-11-hch@lst.de>
+ <CAK8P3a2o4R+E2hTrHrmNy7K1ki3_98aWE5a-fjkQ_NWW=xd_gQ@mail.gmail.com>
+ <20191111101531.GA12294@lst.de> <CAK8P3a0rTvfPP2LUMw8EC0xz5gfZP5+NUkoaZBJrtYYfr6YRig@mail.gmail.com>
+ <20191111102923.GA12974@lst.de>
+In-Reply-To: <20191111102923.GA12974@lst.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 11 Nov 2019 20:33:17 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2b=td4JhYOcK1jUshh8Mp-5_w4v+dAr_JjnH783=ptBQ@mail.gmail.com>
+Message-ID: <CAK8P3a2b=td4JhYOcK1jUshh8Mp-5_w4v+dAr_JjnH783=ptBQ@mail.gmail.com>
+Subject: Re: [PATCH 10/21] asm-generic: ioremap_uc should behave the same with
+ and without MMU
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Guo Ren <guoren@kernel.org>, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        "open list:SYNOPSYS ARC ARCHITECTURE" 
+        <linux-snps-arc@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        "moderated list:NIOS2 ARCHITECTURE" 
+        <nios2-dev@lists.rocketboards.org>, openrisc@lists.librecores.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:VkzlYprmjLZkUUcNJ+eTrkc1uyTcHlM+BFAEE68s21ucomSZQaJ
+ Mq1HsbOKR10W9ktsWQqC2d+1fxNFc++gSh355I/Sm9Nt0OELiCU5GE/ejcbxdc0XoKGFGOR
+ lJT0aj3OKGGsrqrwmqhZcVjRTdGYhtUjAmaLqUrUWTfS9gPcJXopxjb/cHOb3V99Jjg8KyM
+ BDe7AsIZLiGgQ+SW18UXg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hdS04Xdlzj8=:M/ucaK4r3dinqbK80C41xd
+ FMDjqQL3YWPxy6jHWBpvqKj9qZWP8X6dfE8RQCodF9mGe6XJZOKEt4p5phfvsuDjwfDAuR77q
+ 5sbXk3f1gGuA3fUl2kc50FhfPxqpKsTvCyJ9PMoA1vJWANud2ysKvaSTXrsxfuBDYbDYflWwD
+ FkAIhnavF1mnucw3hAUZbu/DkQc78rhm6yA66+iyf0ibiFIB1fiFKcy3QWM1WJMSymvmz+Cik
+ 0TMLecIni73LtmjHaEJqdQ07OpzRu6o2+nc6q2bAY8v58NfnuF4PC+RAMX5jsCwhiMQuTAAzH
+ d9cCFvrdweO5pjBwUMsl1fDngiL0PhMkFoHuG2mp6WTu+9yigHaCDYkLBnzqo3wCtFy+yT589
+ vZ/FGbV4Lx/67Cyy8ORfHd/Q4I+ytFVw6wwtG0/mHwHZbYfS5buusBz3lQKNPLkaAr33vhbEI
+ HXyb+ZMaKffgQFt++5lnGgDgUJQspoUegjhdEeGEI5XiZQJLi3elBg+C5Gkccpc1LDKrpW2ka
+ YjGgj5260Lt3d8KDG/qdbMttJAKgU/xdQzH2MW0jtDV/+7cUj/sApumoILyv1cXORKI+bqwSx
+ ogfAEpKRHtcZ3qEtQueZhW8Xu+2e019UPGPVU0qRA4v2G6oIRAzpinHe15u698zmzbDymL58Y
+ lwxjoo4VbkwFV/6Hr98ctBchu4Q9vloUQ/pqLZpaLK1ga8iZgXmf+PzlaojeIr0ObdDBvevEx
+ 7OZcdxrTy7Y1NqggNs6PW94MGROjlUKfXkY5V9wZiL5kUIPMuEbzKs1fxUg2d59L21Tn3fP6m
+ i7fEXDMKusM1lgLeJl9N0qIk4SBBs+5bFUkc1R6uO78ROGzNzWdO/juF7AjegP2MSh3mgCkLn
+ JUwmUH8sWRrwHApJ0rkA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keys should be queued for measurement if custom IMA policies have
-not been applied. Keys queued for measurement, if any, need to be
-processed when custom IMA policies have been applied.
+On Mon, Nov 11, 2019 at 11:29 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Mon, Nov 11, 2019 at 11:27:27AM +0100, Arnd Bergmann wrote:
+> > Ok, fair enough. Let's just go with your version for now, if only to not
+> > hold your series up more. I'd still suggest we change atyfb to only
+> > use ioremap_uc() on i386 and maybe ia64. I can send a patch for that.
+>
+> I don't think we even need it on ia64.  But lets kick off a dicussion
+> with the atyfb, x86 and ia64 maintainers after this series is in.
+> Which was kinda my plan anyway.
 
-This patch adds the call to ima_queue_key_for_measurement in the IMA hook
-function and the call to ima_process_queued_keys_for_measurement when
-custom IMA policies have been applied.
+I missed your reply and already sent my patch now. I guess it doesn't
+hurt to discuss that in parallel. Anyway I think that this patch is the
+last one you want an Ack from me for (let me know if I missed one), so
 
-NOTE:
-If the kernel is built with CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
-then the IMA policy for measuring keys should be applied as part of
-custom IMA policies. Keys will be queued up until custom policies
-are applied and processed when applied.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_asymmetric_keys.c | 31 ++++++++++++++++++--
- security/integrity/ima/ima_policy.c          | 12 ++++++++
- 2 files changed, 41 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index 4a38b4957b8c..fab1d4672715 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -158,15 +158,42 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 				   unsigned long flags, bool create)
- {
- 	const struct public_key *pk;
-+	bool key_queued = false;
- 
--	/* Only asymmetric keys are handled */
-+	/* Only asymmetric keys are handled by this hook. */
- 	if (key->type != &key_type_asymmetric)
- 		return;
- 
-+	if (!ima_process_keys_for_measurement)
-+		key_queued = ima_queue_key_for_measurement(keyring, key);
-+
- 	/*
--	 * Get the public_key of the given asymmetric key to measure.
-+	 * Need to check again if the key was queued or not because
-+	 * ima_process_keys_for_measurement could have flipped from
-+	 * false to true after it was checked above, but before the key
-+	 * could be queued by ima_queue_key_for_measurement().
- 	 */
-+	if (key_queued)
-+		return;
-+
-+	/* Public key of the given asymmetric key is measured. */
- 	pk = key->payload.data[asym_crypto];
-+
-+	/*
-+	 * keyring->description points to the name of the keyring
-+	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
-+	 * which the given key is linked to.
-+	 *
-+	 * The name of the keyring is passed in the "eventname"
-+	 * parameter to process_buffer_measurement() and is set
-+	 * in the "eventname" field in ima_event_data for
-+	 * the key measurement IMA event.
-+	 *
-+	 * The name of the keyring is also passed in the "keyring"
-+	 * parameter to process_buffer_measurement() to check
-+	 * if the IMA policy is configured to measure a key linked
-+	 * to the given keyring.
-+	 */
- 	process_buffer_measurement(pk->key, pk->keylen,
- 				   keyring->description,
- 				   KEYRING_CHECK, 0,
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index d1889eee9287..d130bdcbc174 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -759,6 +759,18 @@ void ima_update_policy(void)
- 		kfree(arch_policy_entry);
- 	}
- 	ima_update_policy_flag();
-+
-+	/*
-+	 * Custom IMA policies have been setup.
-+	 * Process key(s) queued up for measurement now.
-+	 *
-+	 * NOTE:
-+	 *   Custom IMA policies always overwrite builtin policies
-+	 *   (policies compiled in code). If one wants measurement
-+	 *   of asymmetric keys then it has to be configured in
-+	 *   custom policies and updated here.
-+	 */
-+	ima_process_queued_keys_for_measurement();
- }
- 
- /* Keep the enumeration in sync with the policy_tokens! */
--- 
-2.17.1
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
