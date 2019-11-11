@@ -2,104 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DBD4F7FBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:21:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D128F7FC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:24:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfKKTVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:21:50 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38319 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbfKKTVs (ORCPT
+        id S1727443AbfKKTXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:23:47 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:34355 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbfKKTXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:21:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c13so11321701pfp.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:21:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=ENjlE2+CrfkXc2Q7mLSVouta0KsTjqmsOLCAhcO+7eQ=;
-        b=l0HiMZP+b+mZ9p/Hx0jZWQg6r+cIYVPzDukzFvAkW0W63WUQ6Z3du7s+GssF3kQ0Rb
-         fU60AAq2srBAMp6wDzN3IREAiS9O+4RvGJt7uiHp7sTrGseDdNIFnYL0etGEZKLoSedK
-         5ZQMUdNtFqsBU+OKopxsWXK4Z+3TYzr52Ls1hpCited7/UsMzMG6n8YCF+WY7bqRxb5c
-         mBxp6AKBs0apNa5Ee6BLRbEJ1Tu/r4EUHiht0UfZFp/EvH4jfV9uoErshi0nQgEAChdS
-         IMStg6EIKZqBCtvy+QkOZw+etC1HHIPjQlNf6flb9L05SURrheFB0XuG5RSdV/0RBisb
-         u0MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=ENjlE2+CrfkXc2Q7mLSVouta0KsTjqmsOLCAhcO+7eQ=;
-        b=Qm32RvrWzjRdDvcpkJKcxzvp2sWPSUvijl9Bgnu65A46l4gF5s6OI//DsnsrJjlj/6
-         FXYREr7QYOH3s3rKqJKNKWmf7414NEPfbVVKwXPiqQ/0Mmq2+Xf3DL9hzhY9bZ1RekJu
-         98iY8lYFLc5pQm+Qwv0zGVS2a2Tk9XVhsP/jqulOyrUwJBr/y7HsZeb5u71jCbjCmyrm
-         psbQZmyoMsuvSEMdVP9ggwSpwiEXazty2Qb/tUee40St6x4sjcYtJJr3CdvoDjnsSNpm
-         Mw+6j5hap0BvJvZn6UGnAxJuF/4PYLJBt8JMhEClyDnVwrl80pIIxStHFOumDgcDaTus
-         2o8A==
-X-Gm-Message-State: APjAAAUYrEFJUNsvyUgdy9NLdC/k0nsDF9W+TfAtC6eCJ3TN1Pi1Q3Ua
-        8zegC4dfXtlrp9M9ms/WDyL602lq0l8Tpw==
-X-Google-Smtp-Source: APXvYqwN5zcAG2LINss6GXyueKmSTOhdlbEsZ/PLP8wu6FsYB5FbGntlXUi6GjR0CKSLO+/zFR7vaQ==
-X-Received: by 2002:a63:1c1f:: with SMTP id c31mr11872860pgc.292.1573500105937;
-        Mon, 11 Nov 2019 11:21:45 -0800 (PST)
-Received: from localhost ([49.248.192.129])
-        by smtp.gmail.com with ESMTPSA id b5sm16982813pfp.149.2019.11.11.11.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Nov 2019 11:21:45 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        swboyd@chromium.org, sivaa@codeaurora.org,
-        Andy Gross <agross@kernel.org>
-Cc:     devicetree@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: sdm845: thermal: Add critical interrupt support
-Date:   Tue, 12 Nov 2019 00:51:29 +0530
-Message-Id: <c536e9cdb448bbad3441f6580fa57f1f921fb580.1573499020.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1573499020.git.amit.kucheria@linaro.org>
-References: <cover.1573499020.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1573499020.git.amit.kucheria@linaro.org>
-References: <cover.1573499020.git.amit.kucheria@linaro.org>
+        Mon, 11 Nov 2019 14:23:47 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MTi9N-1iK6p22quT-00Tzhu; Mon, 11 Nov 2019 20:23:05 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-ia64@vger.kernel.org,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] video: fbdev: atyfb: only use ioremap_uc() on i386 and ia64
+Date:   Mon, 11 Nov 2019 20:22:50 +0100
+Message-Id: <20191111192258.2234502-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:G7fVZrN2su3CbpdSj/kq71EeeeKTYZoe6x6zvxOtFZEbiSWv0zR
+ Xw+By6rp1RvmAwdIceDuVMJG6W49a4GYU5M7TsOb4PVcuFbmtc4zDHnbboKsEbR9a/vwmVG
+ gMfZ9mqmc9EZcj6sVDak1e2jRHvgU1GfZC4GJJZ+6geK8zKloktS54pQoixLcw3apObAvgo
+ 37ky04f59Xwy19jvSnR4Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gTxDTasTuXo=:DtDj9YCkmH7bphqvBqN2kc
+ y2HCCFlcKtkkxIT1zvuffgBD/NjjOrR4LAaUWC38J7zAv3ccLY7YoCKr7esjNGTPU4Bm7vfNW
+ 3+Sj80/UK2nG5u3ic8f7jrj5w+4S1r9X4YsEQ+46xyqiQsao7J6xBlOrqgR1IrpM3fwT9OBuB
+ oqdwG3t6hG3AqDJxC09ls/SRfvVndfBmyO3ruCNtKApuxM5M2kjSBPYq1ZCt18nmkxnwNm5h9
+ 48Ra3ulZBQxlDoJJ4ceP+De+h+EU0nZknsRvpNuVJLPZw8nqgksAWCComGiuatMGtr3RsPXrO
+ NxMgDA0DFe2/FUx21eVhAt2TD39hUOHS2W4/RPBFZ1nrffYh6we0SK+AWn75lOjkzTiz5jdBt
+ sFKRUSl2edXQXlZStoDBByKUF7qMwQBvn6ZKt8Q0+Is0FyaGCUyCxVA8QzH5cH87e8eHdKQB/
+ pXGZpoJGuNGDlhIg7LO38RnKy0xfTlWMsZcFT0CcHuD14fzrXfQ4EJfQi3VlONjX2pMKmTYoy
+ uYRBC9HrfTpInyi+GMPZOE3NoNWZ15CzZC7vEsPxb63kNjQyglrGrjnLHq/z39MNcVvaIY/9G
+ T17lcEpSTAVBSOo85r2PPWOI6B8f9PKLpVlW4lvn8MGWYqz3UMX8v2Y6hMYvCfpjCMMInNxF1
+ B408DQyNh/c7kt24ojj+STA80/0IuB8tVTbT6BCwyDzwBq615+5FIHAe37/brRYdCA5WJHYhJ
+ aboiguFX21swpruRbFolY595RugViK+R8oN9ovjz9pLuBYx0eF7TMmxkMk9A3LUZTTOK9pRSh
+ KgVlttJjfHZ2lQelvU3AwaGH06fVl23G9NaclTxJ8k1DV1iUcl4W6Y2Cy2WrPO32aqWaY3ZqG
+ QuRPIIlhHo3Yt4D6gr9w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register critical interrupts for each of the two tsens controllers
+ioremap_uc() is only meaningful on old x86-32 systems with the PAT
+extension, and on ia64 with its slightly unconventional ioremap()
+behavior, everywhere else this is the same as ioremap() anyway.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Message-Id: <3686bd40c99692feb955e936b608b080e2cb1826.1568624011.git.amit.kucheria@linaro.org>
+Change the only driver that still references ioremap_uc() to only do so
+on x86-32/ia64 in order to allow removing that interface at some
+point in the future for the other architectures.
+
+On some architectures, ioremap_uc() just returns NULL, changing
+the driver to call ioremap() means that they now have a chance
+of working correctly.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/aty/atyfb_base.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 0990d5761860..3b643b04ab5a 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -2950,8 +2950,9 @@
- 			reg = <0 0x0c263000 0 0x1ff>, /* TM */
- 			      <0 0x0c222000 0 0x1ff>; /* SROT */
- 			#qcom,sensors = <13>;
--			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "uplow";
-+			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "uplow", "critical";
- 			#thermal-sensor-cells = <1>;
- 		};
+diff --git a/drivers/video/fbdev/aty/atyfb_base.c b/drivers/video/fbdev/aty/atyfb_base.c
+index 79d548746efd..bdbaca7200b2 100644
+--- a/drivers/video/fbdev/aty/atyfb_base.c
++++ b/drivers/video/fbdev/aty/atyfb_base.c
+@@ -3420,11 +3420,15 @@ static int atyfb_setup_generic(struct pci_dev *pdev, struct fb_info *info,
+ 	}
  
-@@ -2960,8 +2961,9 @@
- 			reg = <0 0x0c265000 0 0x1ff>, /* TM */
- 			      <0 0x0c223000 0 0x1ff>; /* SROT */
- 			#qcom,sensors = <8>;
--			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "uplow";
-+			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 509 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "uplow", "critical";
- 			#thermal-sensor-cells = <1>;
- 		};
+ 	info->fix.mmio_start = raddr;
++#if defined(__i386__) || defined(__ia64__)
+ 	/*
+ 	 * By using strong UC we force the MTRR to never have an
+ 	 * effect on the MMIO region on both non-PAT and PAT systems.
+ 	 */
+ 	par->ati_regbase = ioremap_uc(info->fix.mmio_start, 0x1000);
++#else
++	par->ati_regbase = ioremap(info->fix.mmio_start, 0x1000);
++#endif
+ 	if (par->ati_regbase == NULL)
+ 		return -ENOMEM;
  
 -- 
-2.17.1
+2.20.0
 
