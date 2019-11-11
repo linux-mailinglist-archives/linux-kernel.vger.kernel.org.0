@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F512F7AE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B15F7B32
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfKKSam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:30:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47016 "EHLO mail.kernel.org"
+        id S1728162AbfKKSdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:33:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727366AbfKKSaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:30:39 -0500
+        id S1727164AbfKKSd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:33:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE92B21925;
-        Mon, 11 Nov 2019 18:30:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84A9A21655;
+        Mon, 11 Nov 2019 18:33:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497038;
-        bh=Umhrk4I3/8m4n1PENLs+C//lxigBRjVE7+2A8v6Wleo=;
+        s=default; t=1573497208;
+        bh=CscTPnHSPFlq+sLbG/O7EI8VoX3qwe5OhcLIve2oju0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UyiwXI7QEhPDfBHWEE/VM7E9NTOc8OODLR1kWIujkzV2xM3zE8tduFvQfM5Zdslxn
-         d71gHmli0oOznUjr4ieE90JhWc5EPvLsJ8Ou8y2dptpmCtvxxcB6wUYf2yr8+5fZv7
-         8dzzbOOcchAKjO9y9ZiSkGWKyy28DC0potuozLb0=
+        b=u7BHBh0dF2DVqZKJQGH1G9qbIkGCIZc+TQCHvEw7/fL7U3rfe//Tp/91+LW/lV3QP
+         RioIZrpohFEdIvm/eeoo/Qnbps4G9YwS4i6Ow5Qkre9yYBcmyS8JenEzvc3oZjmE4L
+         zg1Pe4NkiFg0lKxkMB6cJ8POyLuBic/Pqb/BW/7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.4 24/43] configfs: fix a deadlock in configfs_symlink()
+        stable@vger.kernel.org,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 38/65] dmaengine: xilinx_dma: Fix control reg update in vdma_channel_set_config
 Date:   Mon, 11 Nov 2019 19:28:38 +0100
-Message-Id: <20191111181316.605135587@linuxfoundation.org>
+Message-Id: <20191111181347.341728892@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,81 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
 
-commit 351e5d869e5ac10cb40c78b5f2d7dfc816ad4587 upstream.
+[ Upstream commit 6c6de1ddb1be3840f2ed5cc9d009a622720940c9 ]
 
-Configfs abuses symlink(2).  Unlike the normal filesystems, it
-wants the target resolved at symlink(2) time, like link(2) would've
-done.  The problem is that ->symlink() is called with the parent
-directory locked exclusive, so resolving the target inside the
-->symlink() is easily deadlocked.
+In vdma_channel_set_config clear the delay, frame count and master mask
+before updating their new values. It avoids programming incorrect state
+when input parameters are different from default.
 
-Short of really ugly games in sys_symlink() itself, all we can
-do is to unlock the parent before resolving the target and
-relock it after.  However, that invalidates the checks done
-by the caller of ->symlink(), so we have to
-	* check that dentry is still where it used to be
-(it couldn't have been moved, but it could've been unhashed)
-	* recheck that it's still negative (somebody else
-might've successfully created a symlink with the same name
-while we were looking the target up)
-	* recheck the permissions on the parent directory.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Acked-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Link: https://lore.kernel.org/r/1569495060-18117-3-git-send-email-radhey.shyam.pandey@xilinx.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/configfs/symlink.c |   33 ++++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+ drivers/dma/xilinx/xilinx_dma.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/fs/configfs/symlink.c
-+++ b/fs/configfs/symlink.c
-@@ -157,11 +157,42 @@ int configfs_symlink(struct inode *dir,
- 	    !type->ct_item_ops->allow_link)
- 		goto out_put;
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index 8288fe4d17c38..cd271f7826051 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -72,6 +72,9 @@
+ #define XILINX_DMA_DMACR_CIRC_EN		BIT(1)
+ #define XILINX_DMA_DMACR_RUNSTOP		BIT(0)
+ #define XILINX_DMA_DMACR_FSYNCSRC_MASK		GENMASK(6, 5)
++#define XILINX_DMA_DMACR_DELAY_MASK		GENMASK(31, 24)
++#define XILINX_DMA_DMACR_FRAME_COUNT_MASK	GENMASK(23, 16)
++#define XILINX_DMA_DMACR_MASTER_MASK		GENMASK(11, 8)
  
-+	/*
-+	 * This is really sick.  What they wanted was a hybrid of
-+	 * link(2) and symlink(2) - they wanted the target resolved
-+	 * at syscall time (as link(2) would've done), be a directory
-+	 * (which link(2) would've refused to do) *AND* be a deep
-+	 * fucking magic, making the target busy from rmdir POV.
-+	 * symlink(2) is nothing of that sort, and the locking it
-+	 * gets matches the normal symlink(2) semantics.  Without
-+	 * attempts to resolve the target (which might very well
-+	 * not even exist yet) done prior to locking the parent
-+	 * directory.  This perversion, OTOH, needs to resolve
-+	 * the target, which would lead to obvious deadlocks if
-+	 * attempted with any directories locked.
-+	 *
-+	 * Unfortunately, that garbage is userland ABI and we should've
-+	 * said "no" back in 2005.  Too late now, so we get to
-+	 * play very ugly games with locking.
-+	 *
-+	 * Try *ANYTHING* of that sort in new code, and you will
-+	 * really regret it.  Just ask yourself - what could a BOFH
-+	 * do to me and do I want to find it out first-hand?
-+	 *
-+	 *  AV, a thoroughly annoyed bastard.
-+	 */
-+	inode_unlock(dir);
- 	ret = get_target(symname, &path, &target_item, dentry->d_sb);
-+	inode_lock(dir);
- 	if (ret)
- 		goto out_put;
+ #define XILINX_DMA_REG_DMASR			0x0004
+ #define XILINX_DMA_DMASR_EOL_LATE_ERR		BIT(15)
+@@ -2054,8 +2057,10 @@ int xilinx_vdma_channel_set_config(struct dma_chan *dchan,
+ 	chan->config.gen_lock = cfg->gen_lock;
+ 	chan->config.master = cfg->master;
  
--	ret = type->ct_item_ops->allow_link(parent_item, target_item);
-+	if (dentry->d_inode || d_unhashed(dentry))
-+		ret = -EEXIST;
-+	else
-+		ret = inode_permission(dir, MAY_WRITE | MAY_EXEC);
-+	if (!ret)
-+		ret = type->ct_item_ops->allow_link(parent_item, target_item);
- 	if (!ret) {
- 		mutex_lock(&configfs_symlink_mutex);
- 		ret = create_link(parent_item, target_item, dentry);
++	dmacr &= ~XILINX_DMA_DMACR_GENLOCK_EN;
+ 	if (cfg->gen_lock && chan->genlock) {
+ 		dmacr |= XILINX_DMA_DMACR_GENLOCK_EN;
++		dmacr &= ~XILINX_DMA_DMACR_MASTER_MASK;
+ 		dmacr |= cfg->master << XILINX_DMA_DMACR_MASTER_SHIFT;
+ 	}
+ 
+@@ -2069,11 +2074,13 @@ int xilinx_vdma_channel_set_config(struct dma_chan *dchan,
+ 	chan->config.delay = cfg->delay;
+ 
+ 	if (cfg->coalesc <= XILINX_DMA_DMACR_FRAME_COUNT_MAX) {
++		dmacr &= ~XILINX_DMA_DMACR_FRAME_COUNT_MASK;
+ 		dmacr |= cfg->coalesc << XILINX_DMA_DMACR_FRAME_COUNT_SHIFT;
+ 		chan->config.coalesc = cfg->coalesc;
+ 	}
+ 
+ 	if (cfg->delay <= XILINX_DMA_DMACR_DELAY_MAX) {
++		dmacr &= ~XILINX_DMA_DMACR_DELAY_MASK;
+ 		dmacr |= cfg->delay << XILINX_DMA_DMACR_DELAY_SHIFT;
+ 		chan->config.delay = cfg->delay;
+ 	}
+-- 
+2.20.1
+
 
 
