@@ -2,87 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFCA5F8041
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBF7F8044
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:37:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfKKThO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:37:14 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45674 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfKKThO (ORCPT
+        id S1727354AbfKKThs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:37:48 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38299 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbfKKThr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:37:14 -0500
-Received: by mail-qt1-f193.google.com with SMTP id 30so16899835qtz.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:37:14 -0800 (PST)
+        Mon, 11 Nov 2019 14:37:47 -0500
+Received: by mail-io1-f65.google.com with SMTP id i13so14543352ioj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:37:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
-        b=jWLH/Nb3ARoqt8//qTfxHjziKi4gpEwaRC39Uf6KF94uH8Kztm1t2pbE4WT++Kc1z6
-         UEp+9rVJEiletoL0fW8f85HB+YFdHO0b2dYZONCT8OkfM3AWMhutbHG316kizVCK4sWi
-         D/kdQgVfXSKTZCMmuUSS9+nJ5pW/kr2QCAeUa7/48DlPqpJC0r5rXbs2j+NLPeoim2uG
-         gXq5SoF0X32jc66gbMAIdmPnYsVI0DekLkScHJdWDAlHY8CsjSwCtCh7Chw2ry80UXB2
-         XZ6tX6l6Ir1Y2cod3+BDj+hVj2hmYDOSbjSsZVsPmXRRILggGtJDKJFFer/UD8QpcjmT
-         q/Uw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Tjpx5W7e7hh3YundOT3Y5omRle8TPAfSWZ5zGMH9jMc=;
+        b=V+nzXDHw0skWoqJdyWz9Rdx7fNPDeHhrAd8kmRI2OMSc0u7Jg9liQSmQF3eteMdg64
+         N7K1Mt6HYT8g0Mi/ZFZ7Su1w6rOVUR+QiqTw8RKfH10TpFVKkQFBQaPtaGt6wkKKbb/8
+         O53R/ZMO2RQCQ+8SlSir2Cg4uM43UWTBjK+sESIAyXMvNg2s19L4iOeXfpWG4j9qCFri
+         nXb1+BKV+F/5vh5QaJdbCWbbJAFdRj564A+3/ZweIGORbKn3dqiaN+TGayhHbsHc1QxY
+         lxCyq3yA13b8+j5ervk2YqJZjjKvXv1PkWXEEPVvWeTaHeY7SVbRyqU3PHodlCkXUEt/
+         LpNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
-        b=nofedMDA/kkmlSVaQeFC+6nwrYjCwRgF+WiCLwGfqEZe6FZkizTZjbd9Y9F90Blx4E
-         DLiD2cbNwcz7udRUnIh4Xd2ZCyy/d9C5nIv7lANyD5EA0Wta8eiOPgfvlQT0M2GGXIj6
-         0sYV/aP1jr6DxIgtWQJTyodfbg13/AGoyJDCHAAKAr6q90+YQyWEiXusWcYrMEyduem8
-         2LDn2KhFQxi4Hxjy3/ATBvSWAvI7wTTbKp/TMg4nXnSdfO2/rmtqgs7dd2p+FdgyDde4
-         VYXmokkAdS6Ve1UKsF3iNGt1aKJPP5C1iuFrIocYnbtTjicVb1zIsUGWQiY5KSXP06sT
-         P+5w==
-X-Gm-Message-State: APjAAAWimsGbWVlV/7xrTP4r4uK3/UyzRxpHL5jdqgJF/j8/80+q2KrW
-        YXZ6TKA5nJVndZjEKbUdNjcEat8VaYew7DQz4bk=
-X-Google-Smtp-Source: APXvYqy21iD1Po3wMqif5UGdJBrZz47rRdKOcDm/4XbGRo93dQ7BRJ0zXZFE8JIazFD9kCYylKcYELLmm94JWF+Xwq4=
-X-Received: by 2002:ac8:53c5:: with SMTP id c5mr28295178qtq.55.1573501033473;
- Mon, 11 Nov 2019 11:37:13 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Tjpx5W7e7hh3YundOT3Y5omRle8TPAfSWZ5zGMH9jMc=;
+        b=XXIIm5RkZ+q3VR1XkAyGYhCL8JdC/RJOqZtNHBn/Fgseb82wP4xf+/IJcN2gTEkoNm
+         89YM8XamZgK/Vn9szsvnI4WEDwBJ5qDdlZWIO/rdxPWySKy22kOI380rxLu9eoOMy+UM
+         hTFdBbCIWcAJFaSwbp916w8z/j13P8i47vQmTQCkET7JbtyI22gfRFoo0cb7yEgx2vGQ
+         VUkQ555t6JJIv/ntOQdNx1I3PkvalUbW7o8ka2V6U5aAStHjRLzbh7PBBIEKEGBNoN0E
+         mxhF29hUY1b3hddCn/TtPOmUjjHxo9EbyQ0WRVlAjsRSHgOJVhlfs3gglqZPT9EZpbe6
+         7Gxg==
+X-Gm-Message-State: APjAAAV/3o6UhHuUBgrw0veo6yA4gKbdZn5NqHEJrxC6VzxpMExY7z47
+        z9v1vIe9kg3m/T+k6vLC2cGZDg==
+X-Google-Smtp-Source: APXvYqwgn6zN2XKEdcnAdpxA3h/aPY56cMiq5P/zNmFabJ/SWU/jO7LQBfMsKg2bkrcRgPyoTfN2Gw==
+X-Received: by 2002:a02:a402:: with SMTP id c2mr13107642jal.5.1573501066412;
+        Mon, 11 Nov 2019 11:37:46 -0800 (PST)
+Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id x5sm2287716ila.34.2019.11.11.11.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 11:37:45 -0800 (PST)
+Date:   Mon, 11 Nov 2019 12:37:43 -0700
+From:   Ross Zwisler <zwisler@google.com>
+To:     Jacob Rasmussen <jacobraz@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Jacob Rasmussen <jacobraz@google.com>,
+        Bard Liao <bardliao@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Subject: Re: [PATCH] ASoC: rt5645: Fixed buddy jack support.
+Message-ID: <20191111193743.GA201426@google.com>
+References: <20191111185957.217244-1-jacobraz@google.com>
 MIME-Version: 1.0
-Received: by 2002:ad4:4c45:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 11:37:13
- -0800 (PST)
-Reply-To: kylieelizabethwatson2019@gmail.com
-From:   "Sgt,Kylie Elizabeth Watson" <bilazagre2@gmail.com>
-Date:   Tue, 12 Nov 2019 00:07:13 +0430
-Message-ID: <CAGk+aha0MFLbBFfKQ9MaTG6PYpzxutvPhANX-XyTRkRp+uxzVw@mail.gmail.com>
-Subject: Assist Request From You
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191111185957.217244-1-jacobraz@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Accept my greetings to you
+On Mon, Nov 11, 2019 at 11:59:57AM -0700, Jacob Rasmussen wrote:
+> The headphone jack on buddy was broken with the following commit:
+> commit 6b5da66322c5 ("ASoC: rt5645: read jd1_1 status for jd
+> detection").
+> This changes the jd_mode for buddy to 4 so buddy can read from the same
+> register that was used in the working version of this driver without
+> affecting any other devices that might use this, since no other device uses
+> jd_mode = 4. To test this I plugged and uplugged the headphone jack, verifying
+> audio works.
+> 
+> Signed-off-by: Jacob Rasmussen <jacobraz@google.com>
 
-Assist Request From You
-
-I am 28 years old single an orphan my parents died when I am five
-years old nobody to help me,I send you my business proposal with tears
-and sorrow,Please let this not be a surprised message to you because I
-decided to contact you on this magnitude and lucrative transaction for
-our present and future survival in life. Moreover, I have laid all the
-solemn trust in you before i decided to disclose this successful and
-confidential transaction to you.
-
-I am  Kylie Elizabeth Watson ,I hope all is well with you? I am female
-soldier working as United Nations peace keeping troop in Afghanistan
-on war against terrorism. I have in my possession the sum of
-$3.5million USD Which I made here in Afghanistan 2014,I deposited this
-money with a Red Cross agent. I want you to stand as my beneficiary
-and receive the fund And keep it safe so that as soon as am through
-with my mission here in Afghanistan.
-
-You will assist me to invest it in a good profitable Venture or you
-keep it for me until I arrive your country, I will give You 40% of the
-total money for your assistance after you have receive The money.
-Please reply back to me if you are willing to work with me so that I
-can send you the information where the money is been deposited, your
-urgent reply is needed in my email address below
-(kylieelizabethwatson2019@gmail.com) so i can send you more details.
-
-Thank Yours
-Sgt,Kylie Elizabeth Watson
+Reviewed-by: Ross Zwisler <zwisler@google.com>
