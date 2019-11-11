@@ -2,122 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C69F7E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2D10F7F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730091AbfKKSrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:47:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730078AbfKKSrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:47:13 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B772020659;
-        Mon, 11 Nov 2019 18:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498031;
-        bh=3zmmWrkhVixF8ktXxPXABX3RrKfAi2nvAkczyrrvkv0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZlTs3b4U3+RHP3+Ork6FqsffxY84QzyvOsHUp4T9zA9Lgnr6Ea2X32HrcR7j+PjA7
-         RdKCIhHJjIplHj9KV3M+9nCNFnzh3cgUj+cmaQ50MxHV4X3pU0nFPjbDt1oEk6D5H8
-         Ekwh27zn4CvKg/hiIpyfjSgCRZjV95bpCuZYi5TI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 121/125] blkcg: make blkcg_print_stat() print stats only for online blkgs
-Date:   Mon, 11 Nov 2019 19:29:20 +0100
-Message-Id: <20191111181455.889495503@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728978AbfKKTHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:07:54 -0500
+Received: from mx1.cock.li ([185.10.68.5]:51747 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728773AbfKKSg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:36:58 -0500
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firemail.cc; s=mail;
+        t=1573497414; bh=F6+fKuB9VlM/JzaEphjBNyziAWDmoBexPCn7fubbWsk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YgTT2nnEnb545IKXWp3i3ustVqq0i+9Ebu46B1tnuVeIktSVqSLqo7dO16Gj4gMxi
+         upC+iKhcXFKAON3CtRRjCFbWGWTy53Y0/wkAmXXR9L70TRF3nkebsunPYMdTekI5ok
+         FmvdE5aBVL15u7jVO7v0c8k03buDJlVLjNp29C29Df+TlKFQQx6yKMH4xMqyRFD1qq
+         4BSYqom1IW74NKpftBSloJnQH7n7fuiLWeRvPyNlVlHxkwGwfpGMReB+lzhKou+yo9
+         gWmjHY7BBLxy0F+P31/mAUGQsBlwNalPy61kY/MxxHagPgfS2XD81iH0VvtTGDfh/c
+         P55Tx3ZpWALmQ==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date:   Mon, 11 Nov 2019 18:36:50 +0000
+From:   nipponmail@firemail.cc
+To:     rms@gnu.org
+Cc:     gnu-system-discuss@gnu.org, esr@thyrsus.com,
+        torvalds@linux-foundation.org, bugs@gnu.support, ams@gnu.org,
+        bruce@perens.com, licensing@fsf.org
+Subject: GrSecurity brags about it's GCC plugins (which violate the GPL for
+ the same reason it's kernel patch does) -- Is this not a threat to the gnu gpl
+ system?
+Message-ID: <cb3382d8f66c4cc9ef5c532c67edaa0e@firemail.cc>
+X-Sender: nipponmail@firemail.cc
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+Is this not a threat to the whole GNU-GPL system?
+grsecurity.org
+grsecurity.net
+> Unlike the manual, ad-hoc approach to finding and fixing Spectre v1 
+> vulnerabilities employed elsewhere, our much higher coverage Respectre® 
+> compiler plugin discovers and automatically instruments the code with 
+> high-performance fixes.
 
-[ Upstream commit b0814361a25cba73a224548843ed92d8ea78715a ]
+Can you do something about this please? Does this not bother you?
 
-blkcg_print_stat() iterates blkgs under RCU and doesn't test whether
-the blkg is online.  This can call into pd_stat_fn() on a pd which is
-still being initialized leading to an oops.
+I for one, was convinced to join the free software movement and program 
+for it because of the promise of the GPL. But here, with their "access 
+agreement" they blatantly violate it (version 2, section 6 for the 
+kernel patch, I'm sure you know which section for GCC). They 
+infact-and-indeed do add an additional restrictive term.
 
-The heaviest operation - recursively summing up rwstat counters - is
-already done while holding the queue_lock.  Expand queue_lock to cover
-the other operations and skip the blkg if it isn't online yet.  The
-online state is protected by both blkcg and queue locks, so this
-guarantees that only online blkgs are processed.
+This is allowed to stand.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Roman Gushchin <guro@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Fixes: 903d23f0a354 ("blk-cgroup: allow controllers to output their own stats")
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- block/blk-cgroup.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+It is less likely that I myself would have contributed code if it were 
+not for the promise of the GPL that others could not close derivative 
+works to me. That promise is being shown to be a lie. I doubt I'm the 
+only one who was attracted by the GPL, but now that it is shown to be a 
+false promise: the spell likely is broken.
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 5275241346930..a06547fe6f6b4 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -955,9 +955,14 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
- 		int i;
- 		bool has_stats = false;
- 
-+		spin_lock_irq(blkg->q->queue_lock);
-+
-+		if (!blkg->online)
-+			goto skip;
-+
- 		dname = blkg_dev_name(blkg);
- 		if (!dname)
--			continue;
-+			goto skip;
- 
- 		/*
- 		 * Hooray string manipulation, count is the size written NOT
-@@ -967,8 +972,6 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
- 		 */
- 		off += scnprintf(buf+off, size-off, "%s ", dname);
- 
--		spin_lock_irq(blkg->q->queue_lock);
--
- 		rwstat = blkg_rwstat_recursive_sum(blkg, NULL,
- 					offsetof(struct blkcg_gq, stat_bytes));
- 		rbytes = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_READ]);
-@@ -981,8 +984,6 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
- 		wios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_WRITE]);
- 		dios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_DISCARD]);
- 
--		spin_unlock_irq(blkg->q->queue_lock);
--
- 		if (rbytes || wbytes || rios || wios) {
- 			has_stats = true;
- 			off += scnprintf(buf+off, size-off,
-@@ -1023,6 +1024,8 @@ next:
- 				seq_commit(sf, -1);
- 			}
- 		}
-+	skip:
-+		spin_unlock_irq(blkg->q->queue_lock);
- 	}
- 
- 	rcu_read_unlock();
--- 
-2.20.1
+Can you please do something about this.
+Why all the silence? Why is no one angry about this?
+This is as blatant of a violation as they come: it cuts at the very root 
+of the whole point of Free Software:
+RMS you wanted the code to come back to you: you made it clear in your 
+EMACS license/notice. GrSecurity (OpenSourceSecurity) have completely 
+obliterated what you intended. And it is allowed to stand.
 
+Why? Please will nothing be done? Will nothing be discussed?
 
+GCC is your compiler: They're doing EXACTLY what you DID NOT WANT to 
+happen regarding plugins: they have effectively created PROPRIETARY 
+plugins. The lawyers told you it could not happen, so that you would 
+agree to allow plugins. Now apparently it has happened.
+
+Now you can only get GrSec, the patch, the compiler plugins, if you have 
+10k+, and you are not permitted to redistribute it (or else).
+
+Yes this is a violation of section 6 of version 2 of the GPL (I know 
+some programmers argue otherwise because programmers think they know 
+everything about every field)
+
+> "UHHHHHMMMMM we put it in a SEPARATE writing, thus we can impose 
+> additional restrictive terms!"
+
+> UHHH, Punishing a recipient for breaking our additional negative 
+> covenant is not violating the license :^), they didn't HAVE to violate 
+> our restrictions! It was their choice!
+
+> Ahem
+> Although previous to our additional restriction, under the GPL the 
+> recipient is free to distribute the source to anyone without 
+> repercussion or harm.
+> Once we chose to add our access agreement, the recipient after paying 
+> us 10k, agrees to never freely distribute the work except to his own 
+> customers on demand: under penalty of forfeiting the remainder of his 
+> balance and no further updates (which he already paid for)
+> This is clearly not an additional restriction not-present in the 
+> licensing terms
+> :^)
+> We also don't tell the linux kernel team about the fixes we silently 
+> fix in our GPL-Respecting additional-restrictive terms derivative work.
+> We'll tell you though, unless you distribute the Work: then you're cut 
+> off. Better not redistribute
+> :^)
+
+The federal copyright lawsuit would cost 600k to finance. 
+OpenSourceSecurity makes 120k a year, off of government contract(s/ors).
+
+GCC plugins have been part of GrSecurity for a very long time, I 
+remember them writing about them in the early/mid 2000s
 
