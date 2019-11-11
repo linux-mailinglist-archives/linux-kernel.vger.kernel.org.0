@@ -2,105 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 455BAF77EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C6DF77F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:44:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfKKPm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 10:42:26 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:37865 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726897AbfKKPm0 (ORCPT
+        id S1727036AbfKKPoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 10:44:37 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44290 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbfKKPog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 10:42:26 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iUBpc-0004LY-Pn; Mon, 11 Nov 2019 16:42:20 +0100
-To:     Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH 1/2] arm64: Rename =?UTF-8?Q?WORKAROUND=5F=31=31=36=35?=  =?UTF-8?Q?=35=32=32=20to=20SPECULATIVE=5FAT?=
-X-PHP-Originating-Script: 0:main.inc
+        Mon, 11 Nov 2019 10:44:36 -0500
+Received: by mail-oi1-f193.google.com with SMTP id s71so11846653oih.11
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 07:44:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OiLblMDqbLY1U4Bw7/7i/UGPkUsRgy9FGPSsY6DaoiY=;
+        b=koUS8N61d+pMyaRWxBX6khAZh4nn16pc82MIgcsyt8zstMqXfRdgunWrP/pCSdGHo4
+         +ZItylzVCbiCTGJ5uBeZQRADK32ndBhqBUso0MnIXQLCsA5nYXr8Brt2JRsR4wUvMCQW
+         feXAncwHNrpSmoxrS9dVBV1OeXQOtPKkwfQEab7ppRq3vkBkRfs/C91MEqcPhw6uQas4
+         RTjK3LiZQyr0xUQKxH0bmhRnXkAaZTiYZaBoNuSZ44Kb6vGdL/qXyKvWh3DaSFiPs/TK
+         Sf41OiJgvZuvLue2rbeyTtPHJUk9uKq/lEjyS0xmPwk9trRkWizQAHOr0QuiuPL0Rsu5
+         zbZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OiLblMDqbLY1U4Bw7/7i/UGPkUsRgy9FGPSsY6DaoiY=;
+        b=UK+F7yRQm+Z/n7tYBjKbDGnk1mws5Ni3ivc4sTehjLtoWF3zH1eI81l9QniHmJW88p
+         lnd9FzzHTaBM0GBop5pt3wz+1IOhRYHC07h9sJVoYk9z+hvblLQCQP3eBLglC+iGHSuM
+         4W1DoWl+0swPUO/Nse2wtLA8kc1vUYJqC0B+MOBTMTAxLnMjfNYEnQ7xTZqH9ldwP8Z9
+         wJ9xnxfzcDLehow1KiLniCQ56ol1I+Y3oSBPjboQW2CZM+fCbj9RHiVmS5dpOLIKmPci
+         Zl5NUaXPfeN/uDKakr4HeMDp0R/S4Wh5ecmZvZFqqoTvELn6vpH66UjcLXzkhaGJvh/c
+         sB6w==
+X-Gm-Message-State: APjAAAVm7HiFR1xa+LW6Z+4+79srzvZishl3od5L02Nf6B8fXGmJIbya
+        JpsphpIS9Mii/7NrZTGMF2MZ6uwEW9+6Yu5oRlk=
+X-Google-Smtp-Source: APXvYqzGpgpXek0/OVESAc/xjACPjWco9/B5v7WHt3WaFIE2i1H6olGrnrme+gjTmXuy8Sp5qQtPqzabXoz7PPaUdRQ=
+X-Received: by 2002:aca:2803:: with SMTP id 3mr1129329oix.113.1573487075885;
+ Mon, 11 Nov 2019 07:44:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 11 Nov 2019 16:51:41 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20191111141157.55062-2-steven.price@arm.com>
-References: <20191111141157.55062-1-steven.price@arm.com>
- <20191111141157.55062-2-steven.price@arm.com>
-Message-ID: <160a852027f4481cc63aed72c4f4a409@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: steven.price@arm.com, catalin.marinas@arm.com, will@kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+References: <20191016144540.18810-1-sudipm.mukherjee@gmail.com>
+ <20191016144540.18810-4-sudipm.mukherjee@gmail.com> <20191017211022.4247d821@gandalf.local.home>
+In-Reply-To: <20191017211022.4247d821@gandalf.local.home>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Mon, 11 Nov 2019 15:43:59 +0000
+Message-ID: <CADVatmMJgb1b5foOZeFres5ubk53H8Amy0_Mggo9obO0CTV0SA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] parport: daisy: use new parport device model
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
+Hi Greg,
 
-On 2019-11-11 15:21, Steven Price wrote:
-> Cortex-A55 is affected by a similar erratum, so rename the existing
-> workaround for errarum 1165522 so it can be used for both errata.
-
-nit: erratum
-
+On Fri, Oct 18, 2019 at 2:10 AM Steven Rostedt <rostedt@goodmis.org> wrote:
 >
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  arch/arm64/Kconfig                |  4 ++++
->  arch/arm64/include/asm/cpucaps.h  |  2 +-
->  arch/arm64/include/asm/kvm_host.h |  2 +-
->  arch/arm64/include/asm/kvm_hyp.h  |  3 +--
->  arch/arm64/kernel/cpu_errata.c    | 17 +++++++++++++----
->  arch/arm64/kvm/hyp/switch.c       |  2 +-
->  arch/arm64/kvm/hyp/tlb.c          |  4 ++--
->  7 files changed, 23 insertions(+), 11 deletions(-)
+> On Wed, 16 Oct 2019 15:45:40 +0100
+> Sudip Mukherjee <sudipm.mukherjee@gmail.com> wrote:
 >
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 3f047afb982c..6cb4eff602c6 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -510,9 +510,13 @@ config ARM64_ERRATUM_1418040
+> > Modify parport daisy driver to use the new parallel port device model.
+> >
+> > Last attempt was '1aec4211204d ("parport: daisy: use new parport device
+> > model")' which failed as daisy was also trying to load the low level
+> > driver and that resulted in a deadlock.
+> >
+> > Cc: Michal Kubecek <mkubecek@suse.cz>
+> > Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> > ---
+> >
+> > Steven, Michal,
+> > Can you please test this series in your test environment and verify that
+> > I am not breaking anything this time.
+> >
+> >
 >
->  	  If unsure, say Y.
+> I checked out 1aec4211204d~1 (just before the broken commit), and
+> applied these four patches. It booted with the config that wouldn't
+> boot with the broken commit.
 >
-> +config ARM64_WORKAROUND_SPECULATIVE_AT
-> +	bool
-> +
->  config ARM64_ERRATUM_1165522
->  	bool "Cortex-A76: Speculative AT instruction using out-of-context
-> translation regime could cause subsequent request to generate an
-> incorrect translation"
->  	default y
-> +	select ARM64_WORKAROUND_SPECULATIVE_AT
+> Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-I'd object that ARM64_ERRATUM_1319367 (and its big brother 1319537)
-are also related to speculative AT execution, and yet are not covered
-by this configuration symbol.
+A gentle ping on this series.
 
-I can see three solutions to this:
 
-- Either you call it SPECULATIVE_AT_VHE and introduce 
-SPECULATIVE_AT_NVHE
-   for symmetry
-
-- Or you make SPECULATIVE_AT cover all the speculative AT errata, which
-   may or may not work...
-
-- Or even better, you just ammend the documentation to say that 1165522
-   also covers the newly found A55 one (just like we have for A57/A72)
-
-What do you think?
-
-         M.
 -- 
-Jazz is not dead. It just smells funny...
+Regards
+Sudip
