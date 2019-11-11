@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2FDF7D05
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E845F7B60
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730479AbfKKSwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:52:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46358 "EHLO mail.kernel.org"
+        id S1728569AbfKKSfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:35:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729712AbfKKSwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:52:04 -0500
+        id S1728413AbfKKSff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:35:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C490D21655;
-        Mon, 11 Nov 2019 18:52:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA079214E0;
+        Mon, 11 Nov 2019 18:35:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498323;
-        bh=pYiD5XQ6xXwI0VHYyplrBPnfndUDuOw7iznLoigB0xs=;
+        s=default; t=1573497335;
+        bh=6VIKjkADuQVWzy7sSUCb36dA36xQEKAE3RYlBg5BnCQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QeMf0SEzhdUhXcoCyg8sIEHr2hEpXnbdxlYp+t3/G7yzTiWyEwsVIGHlqyQtHOkre
-         gUPbK0X7yglpuFylrJXOusphbEJO9TLjMfMcwb9B4gh+M8KvWTZf9hP+ICWz1LKXlQ
-         6MXY5HuoDNqocBgaIKjWkpALOrxnJ14bvECBBVRY=
+        b=uq9S/CcGv/2CbRY1du1SC2fhlfhi13wycmboyNaqpTtNF7u0Oq4dEea+WtKfRf/YK
+         Uqhym80QjLCoJwAtiq1+/Y379t24ClWx+2Iy6ZeF0DX42HKOcJ4nNzROky156SAMvn
+         dR7v3fmjpdAZzlBB/+IgfqdJ0/Pxln8HBj6l8vqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.3 087/193] ALSA: usb-audio: Fix possible NULL dereference at create_yamaha_midi_quirk()
+        stable@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.14 019/105] tools: gpio: Use !building_out_of_srctree to determine srctree
 Date:   Mon, 11 Nov 2019 19:27:49 +0100
-Message-Id: <20191111181507.570042598@linuxfoundation.org>
+Message-Id: <20191111181433.608041362@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Shuah Khan <skhan@linuxfoundation.org>
 
-commit 60849562a5db4a1eee2160167e4dce4590d3eafe upstream.
+commit 4a6a6f5c4aeedb72db871d60bfcca89835f317aa upstream.
 
-The previous addition of descriptor validation may lead to a NULL
-dereference at create_yamaha_midi_quirk() when either injd or outjd is
-NULL.  Add proper non-NULL checks.
+make TARGETS=gpio kselftest fails with:
 
-Fixes: 57f8770620e9 ("ALSA: usb-audio: More validations of descriptor units")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Makefile:23: tools/build/Makefile.include: No such file or directory
+
+When the gpio tool make is invoked from tools Makefile, srctree is
+cleared and the current logic check for srctree equals to empty
+string to determine srctree location from CURDIR.
+
+When the build in invoked from selftests/gpio Makefile, the srctree
+is set to "." and the same logic used for srctree equals to empty is
+needed to determine srctree.
+
+Check building_out_of_srctree undefined as the condition for both
+cases to fix "make TARGETS=gpio kselftest" build failure.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/gpio/Makefile |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -248,8 +248,8 @@ static int create_yamaha_midi_quirk(stru
- 					NULL, USB_MS_MIDI_OUT_JACK);
- 	if (!injd && !outjd)
- 		return -ENODEV;
--	if (!snd_usb_validate_midi_desc(injd) ||
--	    !snd_usb_validate_midi_desc(outjd))
-+	if (!(injd && snd_usb_validate_midi_desc(injd)) ||
-+	    !(outjd && snd_usb_validate_midi_desc(outjd)))
- 		return -ENODEV;
- 	if (injd && (injd->bLength < 5 ||
- 		     (injd->bJackType != USB_MS_EMBEDDED &&
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -3,7 +3,11 @@ include ../scripts/Makefile.include
+ 
+ bindir ?= /usr/bin
+ 
+-ifeq ($(srctree),)
++# This will work when gpio is built in tools env. where srctree
++# isn't set and when invoked from selftests build, where srctree
++# is set to ".". building_out_of_srctree is undefined for in srctree
++# builds
++ifndef building_out_of_srctree
+ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
+ srctree := $(patsubst %/,%,$(dir $(srctree)))
+ endif
 
 
