@@ -2,64 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0C6F7007
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:02:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50236F700D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:03:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfKKJCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 04:02:02 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37594 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKJCC (ORCPT
+        id S1727009AbfKKJDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 04:03:17 -0500
+Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:40126 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726768AbfKKJDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 04:02:02 -0500
-Received: by mail-lj1-f196.google.com with SMTP id d5so3399544ljl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 01:02:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=J+4i9mZoCL1GCd56Hjin1Hm5nAxN8vwHz8ReT6VBzAU=;
-        b=qwKQdYsV+CJnfUed4JoOTRPuy3g6h3Ghlb/J7Ngat+9phsf79Qc+1QAeDV1mT7/YYK
-         Llae6rR+jiGLex1wF4IkWp3uYCHvCGmXlB/iMo6pyZqNIxo6v1+v4b7yeh0IcNEmvFnd
-         KUCnd34D11QHORSe8KH7tJK03YXGDBJMj0Th9QgCua1zZ4i/VTa9ffjqXpnXllCkR3R5
-         9YJozsIvA/j3d+3beIecowjV94XbYIQqXY0ckJ62+n/S60q6jEgD3weKvzRjJ/hi9Lfy
-         5VFnYTI+vaLT6dNDg9yURzOUTZH4MvybL+4cMvOoJrTDR5pULis9Hlp5so6koeh7Ckfy
-         xe6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=J+4i9mZoCL1GCd56Hjin1Hm5nAxN8vwHz8ReT6VBzAU=;
-        b=sRUHNn+ap8RG2wH8TSX4w2kfGd0gSuM0ydGykw1wZGkt8R5d0+ntZLjbuz8hMTeuAS
-         H7r3TQENShxi9jcoE916RyzRCL5GzWAHzLhe39CTwCgktYKbggAJAqk+fQCyqlS55oyd
-         gqD/16JoXaTScPAaE7VCihyCpFgL15LUgkqb/LNIC4R1soyEFoYS1hUNVYsYQXPGrSj8
-         8SnYD1YlTLlTKYzRNI99LBafcDO8IgQj/hFIeQLdIIBXlx1gtRacrQgM04Sfoz9F7LI1
-         ybyrNzWp5bikKTSG21IsAVFz4WinWHV2A98G/f5VLJyOWViTfp6RPuGx+IXYoideGZ8P
-         fkyw==
-X-Gm-Message-State: APjAAAVUNh/kZTte9Fh2CYcUroPZ5VNA6nXgOL2lmFrgTZn4jD8XcYPK
-        7vuOCdje8TlNdD1KuVLdnRkB5vjYkcCjeOwjwl4=
-X-Google-Smtp-Source: APXvYqxr5S31FfCpGJxZ49ENIia4uHA2LBS/lZwwCKUN0lk+PVDxn8GNckF1xUNnIwI40Y7yNbCUucUmB1aR8MdkvyE=
-X-Received: by 2002:a2e:b5b7:: with SMTP id f23mr15613270ljn.236.1573462920462;
- Mon, 11 Nov 2019 01:02:00 -0800 (PST)
+        Mon, 11 Nov 2019 04:03:16 -0500
+Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+        by SHSQR01.spreadtrum.com with ESMTPS id xAB92QK1059110
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 11 Nov 2019 17:02:27 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from localhost (10.0.74.88) by BJMBX01.spreadtrum.com (10.0.64.7)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 11 Nov 2019 17:02:44
+ +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH v2 0/5] Add Unisoc's SC9863A support
+Date:   Mon, 11 Nov 2019 17:02:25 +0800
+Message-ID: <20191111090230.3402-1-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Received: by 2002:a19:892:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 01:01:59 -0800 (PST)
-Reply-To: mark.bill@planetmail.net
-From:   "Mr. Mark Bill" <johnsonopaul@gmail.com>
-Date:   Mon, 11 Nov 2019 10:01:59 +0100
-Message-ID: <CAFW0C0VB9T6DXg0wPHEiDps-3k3KzprM8R8s5Lga3fD7qkmndw@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.0.74.88]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL: SHSQR01.spreadtrum.com xAB92QK1059110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings
 
-I wonder why you continue neglecting my emails. Please, acknowledge the
-receipt of this message in reference to the subject above as I intend to send
-to you the details of the project.
-Sometimes, try to check your spam box because most of these correspondences
-fall out sometimes in SPAM folder.
-Best regards.
-Mr.Mark Bil
+SC9863A has Octa-core ARM Cortex A55 application processor. Find more
+details about it on the website: http://www.unisoc.com/sc9863a
+
+This patch-set also convert sprd.txt and sprd-uart.txt to json-schema.
+
+Changes from V1: 
+- Convert DT bindings to json-schema.
+
+Chunyan Zhang (5):
+  dt-bindings: arm: Convert sprd board/soc bindings to json-schema
+  dt-bindings: serial: Convert sprd-uart to json-schema
+  dt-bindings: arm: Add bindings for Unisoc SC9863A
+  dt-bindings: serial: Add a new compatible string for SC9863A
+  arm64: dts: Add Unisoc's SC9863A SoC support
+
+ .../devicetree/bindings/arm/sprd.txt          |  14 -
+ .../devicetree/bindings/arm/sprd.yaml         |  33 ++
+ .../devicetree/bindings/serial/sprd-uart.txt  |  32 --
+ .../devicetree/bindings/serial/sprd-uart.yaml |  70 +++
+ arch/arm64/boot/dts/sprd/Makefile             |   3 +-
+ arch/arm64/boot/dts/sprd/sc9863a.dtsi         | 536 ++++++++++++++++++
+ arch/arm64/boot/dts/sprd/sharkl3.dtsi         | 188 ++++++
+ arch/arm64/boot/dts/sprd/sp9863a-1h10.dts     |  40 ++
+ 8 files changed, 869 insertions(+), 47 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/sprd.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/sprd.yaml
+ delete mode 100644 Documentation/devicetree/bindings/serial/sprd-uart.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/sprd-uart.yaml
+ create mode 100644 arch/arm64/boot/dts/sprd/sc9863a.dtsi
+ create mode 100644 arch/arm64/boot/dts/sprd/sharkl3.dtsi
+ create mode 100644 arch/arm64/boot/dts/sprd/sp9863a-1h10.dts
+
+-- 
+2.20.1
+
+
