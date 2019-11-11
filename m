@@ -2,84 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8730F70F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E55DF70FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:43:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfKKJli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 04:41:38 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:48070 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726857AbfKKJlh (ORCPT
+        id S1726857AbfKKJnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 04:43:39 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:44010 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbfKKJnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 04:41:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573465296;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xH9paoH84WAP3S/ATWHs4L3GR0FO8tvE2c1L9kietRg=;
-        b=JqdEErT9cwFYr3CMZgBawGC4ZWMKWqG7hNf49a4Zb4h2m5G30ymEJKS8cZVAX2uqGArDE0
-        of9xl9Q6q8mFhfMiC9Kga9uiOd3BhvPrXmH0c6PB2jW3VppZy8JjdqC77VjCUK6N05VwKv
-        JQmMQJ9YvqrXIaA6TRDQU9ng+ppFejs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-412-_hgx6tiHOsGX5hz3cbUKkA-1; Mon, 11 Nov 2019 04:41:35 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BA28477;
-        Mon, 11 Nov 2019 09:41:34 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 103AE5DA7D;
-        Mon, 11 Nov 2019 09:41:34 +0000 (UTC)
-Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id ED0854BB5C;
-        Mon, 11 Nov 2019 09:41:33 +0000 (UTC)
-Date:   Mon, 11 Nov 2019 04:41:33 -0500 (EST)
-From:   Jan Stancek <jstancek@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, ltp@lists.linux.it,
-        viro@zeniv.linux.org.uk, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, rfontana@redhat.com
-Message-ID: <475677126.11444968.1573465293662.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20191107125559.GI4131@hirez.programming.kicks-ass.net>
-References: <a87876829697e1b3c63601b1401a07af79eddae6.1572651216.git.jstancek@redhat.com> <20191107123224.GA6315@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1911071335320.4256@nanos.tec.linutronix.de> <20191107125559.GI4131@hirez.programming.kicks-ass.net>
-Subject: Re: [PATCH] kernel: use ktime_get_real_ts64() to calculate
- acct.ac_btime
+        Mon, 11 Nov 2019 04:43:39 -0500
+Received: by mail-yb1-f195.google.com with SMTP id r201so5962939ybc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 01:43:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=xhU+UUGSqf8gaih2oGk2cjJYS9BzMMgqNSOBE/sk61E=;
+        b=nqo2iHdsQlyNLUs7o8woP3r9ANYPJ8WxJhXnUtgMb0YUos7Rl4A5FiFIFdB91uiQM4
+         HniHzoKOPwgIYaP5QWR8yN4tbyqkl+ZOZ2rHAQFdJKi2LVbD7QngZuFDRUTs5i9g7sWt
+         06BIhhaoJCJo0qF1Zyo+IgGarzeevMgB0PiPT5yRKT1UDNRUnMV23js0Gy8fb0yQhzWQ
+         TnIGG3avYFrlKL2r/Y5CLLVigOOaTPBpivZ9wENpKqBzbjZMw5NgGWZPlEE5JiIYEN2e
+         gY2gEMQBSMZ0Yd9VW28xVl9QroQbFc3cfsL9oubl4cXRe1i3OJ+Dkts0XI8HZQuf975u
+         ZBtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=xhU+UUGSqf8gaih2oGk2cjJYS9BzMMgqNSOBE/sk61E=;
+        b=oH6cS0aTE7DN3YP+YomYt8/vyJmLbqeKCygK+PUbN0RbZ+PrY0dGkA0dpjFnuridK0
+         mHFATPRQ2Ieo/mT9jidRgd5uo+qgogftgFh8SE2JB52WCS4ODuYUinAdUBI8s7BlFteY
+         k0k+T7fh57Mlndf0emAsAijalwJREsTtYzeDGkZk7i4zn9svVxMeRt+3lpFaAbm6iWMd
+         4CyJvc3qS3AMF9aIQfH04cVlA5J19Nz3el7lPawAT57Jx+kuwhe1KKmQeOazqQ4znGbI
+         pGKnBmLtgqiLkGF6cTbkzofZaABSBSZSwT/hRIP7OuyXRCa4XROIjNJLRRZ72LqjxdFm
+         THaw==
+X-Gm-Message-State: APjAAAUFGniphemFbejPVycHdBN7qVCpSBumTdIKlVdRqkgVY8OuGjnB
+        zV92s4yzvJS6zFLgSfQACmyr41T0QovLiRDlEHo=
+X-Google-Smtp-Source: APXvYqy7sKEJz6WHFBMJkZIiyfALGbYUVuLSs6YUs5aQXu0fkLcZ0lWPhynm/vssHGXD8HO8aJ4xbRKobhu4NzImxXc=
+X-Received: by 2002:a25:cf92:: with SMTP id f140mr18478667ybg.454.1573465418437;
+ Mon, 11 Nov 2019 01:43:38 -0800 (PST)
 MIME-Version: 1.0
-X-Originating-IP: [10.43.17.163, 10.4.195.4]
-Thread-Topic: kernel: use ktime_get_real_ts64() to calculate acct.ac_btime
-Thread-Index: j00i/ne0YYWt2EQwNR0Jpc5QU9IvTg==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: _hgx6tiHOsGX5hz3cbUKkA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Received: by 2002:a81:6bd7:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 01:43:37
+ -0800 (PST)
+Reply-To: convy009@gmail.com
+From:   Ruben CONVY <rubenconvy1919@gmail.com>
+Date:   Mon, 11 Nov 2019 01:43:37 -0800
+Message-ID: <CADCRkohJbbhH=p6xfkTryy+bwqt4pYnD1uQELiuSR8awmBMwCg@mail.gmail.com>
+Subject: Why continued silence 2
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Did you receive my previous email regarding your family inheritance?
+Reply strictly through: convy009@gmail.com
 
------ Original Message -----
-> It's wrecked in general. It also jumps around for any REALTIME
-> adjustment.
->=20
-> > So a CLOCK_REALTIME time stamp at fork would at least be correct
-> > vs. suspend resume.
->=20
-> But still wrecked vs REALTIME jumps, as in, when DST flips the clock
-> back an hour, your timestamp is in the future.
->=20
-> Any which way around the whole thing is buggered.  The only real fix is
-> not using REALTIME anything. Which is why I'm loath to add that REALTIME
-> timestamp at fork(), it just encourages more use.
+Best Regards,
 
-Thank you for feedback and listing all other problems.
-I'll adjust test expectations.
-
-Regards,
-Jan
-
+Ruben CONVY
