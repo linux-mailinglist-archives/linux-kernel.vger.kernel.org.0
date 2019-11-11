@@ -2,139 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E54F75E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:04:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61519F760C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfKKOEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:04:54 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33483 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbfKKOEy (ORCPT
+        id S1726982AbfKKOMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:12:13 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:39595 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726832AbfKKOMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:04:54 -0500
-Received: by mail-qt1-f195.google.com with SMTP id y39so15808419qty.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 06:04:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XYVomfoUOz+2dXFVT1MrIwqA9RjQftapicqclx+MmeQ=;
-        b=U3ZOYeDAezylhF8/Ittif28Vr6c8z5gRnnMr+GaYMAWii/m1ikhIodaE8tpRYm/YwN
-         dwoNRmWz+ftp5JR2jkkowcsmb2+/zIS4X44+up2Vp/ldpbVUXR1rnWc6GXz8BXVgwRMe
-         djGod7Fzbc5bYdWKHyLwdRag6rgkn5fe6ojMS4FsqX5+KPdj1q31y8Kl4S1PTCOdGBZQ
-         Vf4pk8EKHd5UOnQrjgEQ6Gj5irOMQ0sFKUCnOZekLhIweNsjhLXn2RnCrh5GZwAWxXJd
-         I6rPmdBbxZeN0/dJNlJxBIZ1Y6VOg1Xc7tEHXGpFqlBBk+iwmfCt9NBbl28TxjWxFGQi
-         /6yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XYVomfoUOz+2dXFVT1MrIwqA9RjQftapicqclx+MmeQ=;
-        b=RD70CH2s5Pv4fmgHV2RoqlLzd07Znmjw0zscxkABtP0DLE8M8ASm9of9i0wbH7txlQ
-         Ckfy+Hmv6CBs+tlEg1hC/1lfyL+9QWv6pMuDfV3bufdUw97G1J29Zz+mH7RK6rb3aT9w
-         qNFyE7CwjItk4ckEK9c2Mz6FKrLgL4TIuQfDAVrRqJmJ/6pprktgFV8s1l7k4FM8wQ4a
-         W+auAqOo37psBu42EtQ0po3YATWnE+/mmxXuk72Tw+oqnm6Dsz/9KDx4bbmsFc9GVmp8
-         9wEvGjHECJiQH4+WtJmK2CBdT3LrBzxofdVYU3775Dr7Y/F4dYxmEq9Bp1p20lzvOwte
-         ps4w==
-X-Gm-Message-State: APjAAAWm7wX2VLDihgtaXT6h/XuXlyU/4SUHNwc5N32gyrsZRD/WQvNr
-        UNefDhfi8Jb2QQoqdjH+AWM=
-X-Google-Smtp-Source: APXvYqxfRziSPu4cYp648NXJXS9DdsYMnD+4dhFaNcmzTJKhl076ZDYGHCRtlJRn/ByjjECfhO6VaQ==
-X-Received: by 2002:aed:2799:: with SMTP id a25mr26414466qtd.226.1573481093347;
-        Mon, 11 Nov 2019 06:04:53 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id a18sm7971101qkc.2.2019.11.11.06.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 06:04:52 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 9C5AD411B3; Mon, 11 Nov 2019 11:04:50 -0300 (-03)
-Date:   Mon, 11 Nov 2019 11:04:50 -0300
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v2 1/4] perf probe: Generate event name with line number
-Message-ID: <20191111140450.GB9365@kernel.org>
-References: <157314406866.4063.16995747442215702109.stgit@devnote2>
- <157314407850.4063.2307803945694526578.stgit@devnote2>
+        Mon, 11 Nov 2019 09:12:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=tonylu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Tho9KK0_1573481523;
+Received: from localhost(mailfrom:tonylu@linux.alibaba.com fp:SMTPD_---0Tho9KK0_1573481523)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 11 Nov 2019 22:12:03 +0800
+From:   Tony Lu <tonylu@linux.alibaba.com>
+To:     davem@davemloft.net
+Cc:     shemminger@osdl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: remove static inline from dev_put/dev_hold
+Date:   Mon, 11 Nov 2019 22:05:03 +0800
+Message-Id: <20191111140502.17541-1-tonylu@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157314407850.4063.2307803945694526578.stgit@devnote2>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Nov 08, 2019 at 01:27:58AM +0900, Masami Hiramatsu escreveu:
-> Generate event name from function name with line number
-> as <function>_L<line_number>. Note that this is only for
-> the new event which is defined by the line number of
-> function (except for line 0).
-> 
-> If there is another event on same line, you have to use
-> "-f" option. In that case, the new event has "_1" suffix.
-> 
->  e.g.
->   # perf probe -a kernel_read:1
->   Added new events:
->     probe:kernel_read_L1 (on kernel_read:1)
+This patch removes static inline from dev_put/dev_hold in order to help
+trace the pcpu_refcnt leak of net_device.
 
-While testing this, using the same function (kernel_read), I found it
-confusing that it is possible to insert probes in lines seemingly with
-no code, for instance:
+We have sufferred this kind of issue for several times during
+manipulating NIC between different net namespaces. It prints this
+log in dmesg:
 
-[root@quaco ~]# perf probe -a kernel_read:1
-Added new event:
-  probe:kernel_read_L1 (on kernel_read:1)
+  unregister_netdevice: waiting for eth0 to become free. Usage count = 1
 
-You can now use it in all perf tools, such as:
+However, it is hard to find out who called and leaked refcnt in time. It
+only left the crime scene but few evidence. Once leaked, it is not
+safe to fix it up on the running host. We can't trace dev_put/dev_hold
+directly, for the functions are inlined and used wildly amoung modules.
+And this issue is common, there are tens of patches fix net_device
+refcnt leak for various causes.
 
-	perf record -e probe:kernel_read_L1 -aR sleep 1
+To trace the refcnt manipulating, this patch removes static inline from
+dev_put/dev_hold. We can use handy tools, such as eBPF with kprobe, to
+find out who holds but forgets to put refcnt. This will not be called
+frequently, so the overhead is limited.
 
-[root@quaco ~]# perf probe -a kernel_read:2
-Added new event:
-  probe:kernel_read_L2 (on kernel_read:2)
+Signed-off-by: Tony Lu <tonylu@linux.alibaba.com>
+---
+ include/linux/netdevice.h | 24 ++++--------------------
+ net/core/dev.c            | 24 ++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+), 20 deletions(-)
 
-You can now use it in all perf tools, such as:
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index c20f190b4c18..872d266c6da5 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3720,27 +3720,11 @@ extern unsigned int	netdev_budget_usecs;
+ /* Called by rtnetlink.c:rtnl_unlock() */
+ void netdev_run_todo(void);
+ 
+-/**
+- *	dev_put - release reference to device
+- *	@dev: network device
+- *
+- * Release reference to device to allow it to be freed.
+- */
+-static inline void dev_put(struct net_device *dev)
+-{
+-	this_cpu_dec(*dev->pcpu_refcnt);
+-}
++/* Release reference to device to allow it to be freed. */
++void dev_put(struct net_device *dev);
+ 
+-/**
+- *	dev_hold - get reference to device
+- *	@dev: network device
+- *
+- * Hold reference to device to keep it from being freed.
+- */
+-static inline void dev_hold(struct net_device *dev)
+-{
+-	this_cpu_inc(*dev->pcpu_refcnt);
+-}
++/* Hold reference to device to keep it from being freed. */
++void dev_hold(struct net_device *dev);
+ 
+ /* Carrier loss detection, dial on demand. The functions netif_carrier_on
+  * and _off may be called from IRQ context, but it is caller
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 99ac84ff398f..620fb3d6718a 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1294,6 +1294,30 @@ void netdev_notify_peers(struct net_device *dev)
+ }
+ EXPORT_SYMBOL(netdev_notify_peers);
+ 
++/**
++ *	dev_put - release reference to device
++ *	@dev: network device
++ *
++ * Release reference to device to allow it to be freed.
++ */
++void dev_put(struct net_device *dev)
++{
++	this_cpu_dec(*dev->pcpu_refcnt);
++}
++EXPORT_SYMBOL(dev_put);
++
++/**
++ *	dev_hold - get reference to device
++ *	@dev: network device
++ *
++ * Hold reference to device to keep it from being freed.
++ */
++void dev_hold(struct net_device *dev)
++{
++	this_cpu_inc(*dev->pcpu_refcnt);
++}
++EXPORT_SYMBOL(dev_hold);
++
+ static int __dev_open(struct net_device *dev, struct netlink_ext_ack *extack)
+ {
+ 	const struct net_device_ops *ops = dev->netdev_ops;
+-- 
+2.24.0
 
-	perf record -e probe:kernel_read_L2 -aR sleep 1
-
-[root@quaco ~]#
-[root@quaco ~]# perf probe --list
-  probe:kernel_read_L1 (on kernel_read@fs/read_write.c)
-  probe:kernel_read_L2 (on kernel_read:1@fs/read_write.c)
-[root@quaco ~]# perf probe -L kernel_read
-<kernel_read@/usr/src/debug/kernel-5.3.fc30/linux-5.3.8-200.fc30.x86_64/fs/read_write.c:0>
-      0  ssize_t kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
-      1  {
-      2         mm_segment_t old_fs;
-      3         ssize_t result;
-
-      5         old_fs = get_fs();
-      6         set_fs(KERNEL_DS);
-                /* The cast to a user pointer is valid due to the set_fs() */
-      8         result = vfs_read(file, (void __user *)buf, count, pos);
-      9         set_fs(old_fs);
-     10         return result;
-         }
-         EXPORT_SYMBOL(kernel_read);
-
-
-[root@quaco ~]#
-
-
-What is the point of putting a probe on line 2? I is not initializing,
-etc, 1 as well, notthing there and we already have 0 (or not specifying
-a line number) to put a probe at the start of a function, can you
-clarify?
-
-I'll apply this patch, the problem above isn't strictly related to it.
-
-- Arnaldo
