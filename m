@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18908F7B29
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B91CF7C31
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfKKSdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:33:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
+        id S1728456AbfKKSoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:44:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728091AbfKKSdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:33:06 -0500
+        id S1728130AbfKKSoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:44:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CC3020656;
-        Mon, 11 Nov 2019 18:33:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55BD6204FD;
+        Mon, 11 Nov 2019 18:44:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497184;
-        bh=LbnEZgm2BvH2olWHVKKrQ0U9lIl1aIiEKSTyer5PYJc=;
+        s=default; t=1573497841;
+        bh=dywrqtEgRpBStaOON3XI5ekgKLo9hIVBLPXy10+jWHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NUFu9u2EbYc8fPjbmbfnPnG+g3KXLbLWCguq7rqZwhEhcdtnjtcoubH9PaxKdeqkI
-         s5Nnb/RQFkZfszLLtOLgnIQ6cXefdTg3NcRUTDxkPaJNeSAJLYYnkpOIkrYt1XB5RI
-         gJvwrEGjN5eg4N4sTCR8V2GoQ7PPAR9MEOkCW0JY=
+        b=sscScEYyhU1DXMlrhNckLb9Z9ehXvUR3UZ/FemxJHkID7jebj3rMTeApHbZVouaaE
+         4W+BEQb7Xw8bwslitM1q3huFJf+vJVJtc+II+62OuYYMzV+WT8DrMvUzN1AsS3nm7+
+         d3F3/9OfblZrBQQ2hhWdU0AmCXEPH9QH4zMhTafc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.9 31/65] configfs: provide exclusion between IO and removals
+        stable@vger.kernel.org, Zhenfang Wang <zhenfang.wang@unisoc.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 072/125] dmaengine: sprd: Fix the possible memory leak issue
 Date:   Mon, 11 Nov 2019 19:28:31 +0100
-Message-Id: <20191111181346.600326765@linuxfoundation.org>
+Message-Id: <20191111181449.739146488@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,277 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Baolin Wang <baolin.wang@linaro.org>
 
-commit b0841eefd9693827afb9888235e26ddd098f9cef upstream.
+[ Upstream commit ec1ac309596a7bdf206743b092748205f6cd5720 ]
 
-Make sure that attribute methods are not called after the item
-has been removed from the tree.  To do so, we
-	* at the point of no return in removals, grab ->frag_sem
-exclusive and mark the fragment dead.
-	* call the methods of attributes with ->frag_sem taken
-shared and only after having verified that the fragment is still
-alive.
+If we terminate the channel to free all descriptors associated with this
+channel, we will leak the memory of current descriptor if the current
+descriptor is not completed, since it had been deteled from the desc_issued
+list and have not been added into the desc_completed list.
 
-	The main benefit is for method instances - they are
-guaranteed that the objects they are accessing *and* all ancestors
-are still there.  Another win is that we don't need to bother
-with extra refcount on config_item when opening a file -
-the item will be alive for as long as it stays in the tree, and
-we won't touch it/attributes/any associated data after it's
-been removed from the tree.
+Thus we should check if current descriptor is completed or not, when freeing
+the descriptors associated with one channel, if not, we should free it to
+avoid this issue.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 9b3b8171f7f4 ("dmaengine: sprd: Add Spreadtrum DMA driver")
+Reported-by: Zhenfang Wang <zhenfang.wang@unisoc.com>
+Tested-by: Zhenfang Wang <zhenfang.wang@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Link: https://lore.kernel.org/r/170dbbc6d5366b6fa974ce2d366652e23a334251.1570609788.git.baolin.wang@linaro.org
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/configfs/dir.c  |   23 ++++++++++++++++
- fs/configfs/file.c |   75 ++++++++++++++++++++++++++++++++++++++++-------------
- 2 files changed, 80 insertions(+), 18 deletions(-)
+ drivers/dma/sprd-dma.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/fs/configfs/dir.c
-+++ b/fs/configfs/dir.c
-@@ -1474,6 +1474,7 @@ static int configfs_rmdir(struct inode *
- 	struct config_item *item;
- 	struct configfs_subsystem *subsys;
- 	struct configfs_dirent *sd;
-+	struct configfs_fragment *frag;
- 	struct module *subsys_owner = NULL, *dead_item_owner = NULL;
- 	int ret;
- 
-@@ -1531,6 +1532,16 @@ static int configfs_rmdir(struct inode *
- 		}
- 	} while (ret == -EAGAIN);
- 
-+	frag = sd->s_frag;
-+	if (down_write_killable(&frag->frag_sem)) {
-+		spin_lock(&configfs_dirent_lock);
-+		configfs_detach_rollback(dentry);
-+		spin_unlock(&configfs_dirent_lock);
-+		return -EINTR;
-+	}
-+	frag->frag_dead = true;
-+	up_write(&frag->frag_sem);
-+
- 	/* Get a working ref for the duration of this function */
- 	item = configfs_get_config_item(dentry);
- 
-@@ -1832,6 +1843,12 @@ void configfs_unregister_group(struct co
- 	struct configfs_subsystem *subsys = group->cg_subsys;
- 	struct dentry *dentry = group->cg_item.ci_dentry;
- 	struct dentry *parent = group->cg_item.ci_parent->ci_dentry;
-+	struct configfs_dirent *sd = dentry->d_fsdata;
-+	struct configfs_fragment *frag = sd->s_frag;
-+
-+	down_write(&frag->frag_sem);
-+	frag->frag_dead = true;
-+	up_write(&frag->frag_sem);
- 
- 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
- 	spin_lock(&configfs_dirent_lock);
-@@ -1957,12 +1974,18 @@ void configfs_unregister_subsystem(struc
- 	struct config_group *group = &subsys->su_group;
- 	struct dentry *dentry = group->cg_item.ci_dentry;
- 	struct dentry *root = dentry->d_sb->s_root;
-+	struct configfs_dirent *sd = dentry->d_fsdata;
-+	struct configfs_fragment *frag = sd->s_frag;
- 
- 	if (dentry->d_parent != root) {
- 		pr_err("Tried to unregister non-subsystem!\n");
- 		return;
- 	}
- 
-+	down_write(&frag->frag_sem);
-+	frag->frag_dead = true;
-+	up_write(&frag->frag_sem);
-+
- 	inode_lock_nested(d_inode(root),
- 			  I_MUTEX_PARENT);
- 	inode_lock_nested(d_inode(dentry), I_MUTEX_CHILD);
---- a/fs/configfs/file.c
-+++ b/fs/configfs/file.c
-@@ -62,22 +62,32 @@ struct configfs_buffer {
- 	};
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index 1ed1c7efa2885..9e8ce56a83d8a 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -181,6 +181,7 @@ struct sprd_dma_dev {
+ 	struct sprd_dma_chn	channels[0];
  };
  
-+static inline struct configfs_fragment *to_frag(struct file *file)
-+{
-+	struct configfs_dirent *sd = file->f_path.dentry->d_fsdata;
-+
-+	return sd->s_frag;
-+}
- 
--static int fill_read_buffer(struct configfs_buffer * buffer)
-+static int fill_read_buffer(struct file *file, struct configfs_buffer *buffer)
++static void sprd_dma_free_desc(struct virt_dma_desc *vd);
+ static bool sprd_dma_filter_fn(struct dma_chan *chan, void *param);
+ static struct of_dma_filter_info sprd_dma_info = {
+ 	.filter_fn = sprd_dma_filter_fn,
+@@ -493,12 +494,19 @@ static int sprd_dma_alloc_chan_resources(struct dma_chan *chan)
+ static void sprd_dma_free_chan_resources(struct dma_chan *chan)
  {
--	ssize_t count;
-+	struct configfs_fragment *frag = to_frag(file);
-+	ssize_t count = -ENOENT;
+ 	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
++	struct virt_dma_desc *cur_vd = NULL;
+ 	unsigned long flags;
  
- 	if (!buffer->page)
- 		buffer->page = (char *) get_zeroed_page(GFP_KERNEL);
- 	if (!buffer->page)
- 		return -ENOMEM;
- 
--	count = buffer->attr->show(buffer->item, buffer->page);
-+	down_read(&frag->frag_sem);
-+	if (!frag->frag_dead)
-+		count = buffer->attr->show(buffer->item, buffer->page);
-+	up_read(&frag->frag_sem);
+ 	spin_lock_irqsave(&schan->vc.lock, flags);
++	if (schan->cur_desc)
++		cur_vd = &schan->cur_desc->vd;
 +
- 	if (count < 0)
- 		return count;
- 	if (WARN_ON_ONCE(count > (ssize_t)SIMPLE_ATTR_SIZE))
- 		return -EIO;
--
- 	buffer->needs_read_fill = 0;
- 	buffer->count = count;
- 	return 0;
-@@ -110,7 +120,7 @@ configfs_read_file(struct file *file, ch
+ 	sprd_dma_stop(schan);
+ 	spin_unlock_irqrestore(&schan->vc.lock, flags);
  
- 	mutex_lock(&buffer->mutex);
- 	if (buffer->needs_read_fill) {
--		retval = fill_read_buffer(buffer);
-+		retval = fill_read_buffer(file, buffer);
- 		if (retval)
- 			goto out;
- 	}
-@@ -147,6 +157,7 @@ static ssize_t
- configfs_read_bin_file(struct file *file, char __user *buf,
- 		       size_t count, loff_t *ppos)
- {
-+	struct configfs_fragment *frag = to_frag(file);
- 	struct configfs_buffer *buffer = file->private_data;
- 	ssize_t retval = 0;
- 	ssize_t len = min_t(size_t, count, PAGE_SIZE);
-@@ -162,7 +173,12 @@ configfs_read_bin_file(struct file *file
- 
- 	if (buffer->needs_read_fill) {
- 		/* perform first read with buf == NULL to get extent */
--		len = buffer->bin_attr->read(buffer->item, NULL, 0);
-+		down_read(&frag->frag_sem);
-+		if (!frag->frag_dead)
-+			len = buffer->bin_attr->read(buffer->item, NULL, 0);
-+		else
-+			len = -ENOENT;
-+		up_read(&frag->frag_sem);
- 		if (len <= 0) {
- 			retval = len;
- 			goto out;
-@@ -182,8 +198,13 @@ configfs_read_bin_file(struct file *file
- 		buffer->bin_buffer_size = len;
- 
- 		/* perform second read to fill buffer */
--		len = buffer->bin_attr->read(buffer->item,
--					     buffer->bin_buffer, len);
-+		down_read(&frag->frag_sem);
-+		if (!frag->frag_dead)
-+			len = buffer->bin_attr->read(buffer->item,
-+						     buffer->bin_buffer, len);
-+		else
-+			len = -ENOENT;
-+		up_read(&frag->frag_sem);
- 		if (len < 0) {
- 			retval = len;
- 			vfree(buffer->bin_buffer);
-@@ -234,9 +255,16 @@ fill_write_buffer(struct configfs_buffer
++	if (cur_vd)
++		sprd_dma_free_desc(cur_vd);
++
+ 	vchan_free_chan_resources(&schan->vc);
+ 	pm_runtime_put(chan->device->dev);
  }
- 
- static int
--flush_write_buffer(struct configfs_buffer *buffer, size_t count)
-+flush_write_buffer(struct file *file, struct configfs_buffer *buffer, size_t count)
+@@ -814,15 +822,22 @@ static int sprd_dma_resume(struct dma_chan *chan)
+ static int sprd_dma_terminate_all(struct dma_chan *chan)
  {
--	return buffer->attr->store(buffer->item, buffer->page, count);
-+	struct configfs_fragment *frag = to_frag(file);
-+	int res = -ENOENT;
+ 	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
++	struct virt_dma_desc *cur_vd = NULL;
+ 	unsigned long flags;
+ 	LIST_HEAD(head);
+ 
+ 	spin_lock_irqsave(&schan->vc.lock, flags);
++	if (schan->cur_desc)
++		cur_vd = &schan->cur_desc->vd;
 +
-+	down_read(&frag->frag_sem);
-+	if (!frag->frag_dead)
-+		res = buffer->attr->store(buffer->item, buffer->page, count);
-+	up_read(&frag->frag_sem);
-+	return res;
- }
+ 	sprd_dma_stop(schan);
  
+ 	vchan_get_all_descriptors(&schan->vc, &head);
+ 	spin_unlock_irqrestore(&schan->vc.lock, flags);
  
-@@ -266,7 +294,7 @@ configfs_write_file(struct file *file, c
- 	mutex_lock(&buffer->mutex);
- 	len = fill_write_buffer(buffer, buf, count);
- 	if (len > 0)
--		len = flush_write_buffer(buffer, len);
-+		len = flush_write_buffer(file, buffer, len);
- 	if (len > 0)
- 		*ppos += len;
- 	mutex_unlock(&buffer->mutex);
-@@ -342,6 +370,7 @@ out:
- static int __configfs_open_file(struct inode *inode, struct file *file, int type)
- {
- 	struct dentry *dentry = file->f_path.dentry;
-+	struct configfs_fragment *frag = to_frag(file);
- 	struct configfs_attribute *attr;
- 	struct configfs_buffer *buffer;
- 	int error;
-@@ -351,8 +380,13 @@ static int __configfs_open_file(struct i
- 	if (!buffer)
- 		goto out;
- 
-+	error = -ENOENT;
-+	down_read(&frag->frag_sem);
-+	if (unlikely(frag->frag_dead))
-+		goto out_free_buffer;
++	if (cur_vd)
++		sprd_dma_free_desc(cur_vd);
 +
- 	error = -EINVAL;
--	buffer->item = configfs_get_config_item(dentry->d_parent);
-+	buffer->item = to_item(dentry->d_parent);
- 	if (!buffer->item)
- 		goto out_free_buffer;
- 
-@@ -410,6 +444,7 @@ static int __configfs_open_file(struct i
- 	buffer->read_in_progress = false;
- 	buffer->write_in_progress = false;
- 	file->private_data = buffer;
-+	up_read(&frag->frag_sem);
+ 	vchan_dma_desc_free_list(&schan->vc, &head);
  	return 0;
- 
- out_put_module:
-@@ -417,6 +452,7 @@ out_put_module:
- out_put_item:
- 	config_item_put(buffer->item);
- out_free_buffer:
-+	up_read(&frag->frag_sem);
- 	kfree(buffer);
- out:
- 	return error;
-@@ -426,8 +462,6 @@ static int configfs_release(struct inode
- {
- 	struct configfs_buffer *buffer = filp->private_data;
- 
--	if (buffer->item)
--		config_item_put(buffer->item);
- 	module_put(buffer->owner);
- 	if (buffer->page)
- 		free_page((unsigned long)buffer->page);
-@@ -453,12 +487,17 @@ static int configfs_release_bin_file(str
- 	buffer->read_in_progress = false;
- 
- 	if (buffer->write_in_progress) {
-+		struct configfs_fragment *frag = to_frag(file);
- 		buffer->write_in_progress = false;
- 
--		/* result of ->release() is ignored */
--		buffer->bin_attr->write(buffer->item, buffer->bin_buffer,
--				buffer->bin_buffer_size);
--
-+		down_read(&frag->frag_sem);
-+		if (!frag->frag_dead) {
-+			/* result of ->release() is ignored */
-+			buffer->bin_attr->write(buffer->item,
-+					buffer->bin_buffer,
-+					buffer->bin_buffer_size);
-+		}
-+		up_read(&frag->frag_sem);
- 		/* vfree on NULL is safe */
- 		vfree(buffer->bin_buffer);
- 		buffer->bin_buffer = NULL;
+ }
+-- 
+2.20.1
+
 
 
