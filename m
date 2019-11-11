@@ -2,236 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8D46F7479
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 14:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB273F7485
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 14:07:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfKKNEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 08:04:39 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:59787 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfKKNEi (ORCPT
+        id S1726994AbfKKNG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 08:06:59 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51598 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726902AbfKKNG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 08:04:38 -0500
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id BC69F20003;
-        Mon, 11 Nov 2019 13:04:29 +0000 (UTC)
-Date:   Mon, 11 Nov 2019 14:06:24 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     "Kalakodima Venkata Rajesh (RBEI/ECF3)" 
-        <VenkataRajesh.Kalakodima@in.bosch.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "kieran.bingham+renesas@ideasonboard.com" 
-        <kieran.bingham+renesas@ideasonboard.com>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "horms@verge.net.au" <horms@verge.net.au>,
-        "uli+renesas@fpond.eu" <uli+renesas@fpond.eu>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "koji.matsuoka.xm@renesas.com" <koji.matsuoka.xm@renesas.com>,
-        "muroya@ksk.co.jp" <muroya@ksk.co.jp>,
-        "Harsha Manjula Mallikarjun (RBEI/ECF3)" 
-        <Harsha.ManjulaMallikarjun@in.bosch.com>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/8] drm: rcar-du: Add Color Management Module (CMM)
-Message-ID: <20191111130624.auplcgd2nwyaw5f3@uno.localdomain>
-References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
- <e731216a728c4035af88c92b70756197@in.bosch.com>
+        Mon, 11 Nov 2019 08:06:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573477618;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/nIfQxqLHF8WJH+rEaKW6Wt3dYLJAu1w6JfOqOMD8TI=;
+        b=VRK2HZDqMjCOZJaP107O+VzKJFetiqMs0fr9SNJk4neAWpK2/I4Xt17S2+xiAXuvU69j2d
+        wGz8y3p7M77jXMEzvOQUnDIaAMX+9fikPhZ+5zQ/WPfxITuib/erXXczYMel3cRteBl9ev
+        t38be5nXrvNe8IAv/DJajVDENDRP+tw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-78-22L5RAfJMgG7Pxd9cNt5QA-1; Mon, 11 Nov 2019 08:06:55 -0500
+Received: by mail-wm1-f71.google.com with SMTP id t203so6830195wmt.7
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 05:06:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=4OAS54iB143xVEPD/7rq6ekQ537whRG3Ob2iaMwvFJk=;
+        b=uDeX4Rj5YRP9N4kUBBeH1npu1Kwvgp4XbvFRY+4LiHN8C18CVEEwj7bCBkpeUb7HEi
+         GVyI1zQjZ2pxj1AFTjVL2VTe4TgC7Px/Rg7L7aHh4kTttEg+e8vI4QRX9BhQKH31C7da
+         vrOpzHeDkGCsn83Ki2+3hQ7pBSojxU3BD9WDUPXpTJkvpDBwtqOmxbbi7H16Ard2/WLw
+         /4krOQ1DEHEzX7uo4fHzmXubl9qQOChuxr71YIPQdw2dptiZ6NFjw+MQDofWwtwSJu9V
+         p0Aved5EMaY9r4LT3+zRnHCEarwLduRc9VL8K7vRhnMc0namq6GJPLNVnegUhc2CpVO+
+         saBg==
+X-Gm-Message-State: APjAAAW/J8Gv+Pt7Re9nlvPg7L9Tw0dgbN4gaDy837TTkJR5lgCUpFs0
+        l1Ufy0kOlP4HcJoIIyrn7SRjB+XMI8kOPOQr/A1LtEHgrworemBnlbKEEfppHOPxR7w+ZJdoqy9
+        S/LYJi9W6aphUw8D+Hml1R2+S
+X-Received: by 2002:a5d:6585:: with SMTP id q5mr19749280wru.158.1573477614479;
+        Mon, 11 Nov 2019 05:06:54 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwK2Cvl8KVfnsUhyxsRzcj2clNeIUa936ISnpCpoXkcJmOTBt3FjGd2Dp3SQ4hPmqtyC6A7zA==
+X-Received: by 2002:a5d:6585:: with SMTP id q5mr19749257wru.158.1573477614262;
+        Mon, 11 Nov 2019 05:06:54 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id w10sm13512097wmd.26.2019.11.11.05.06.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 05:06:53 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH 1/2] KVM: X86: Single target IPI fastpath
+In-Reply-To: <1573283135-5502-1-git-send-email-wanpengli@tencent.com>
+References: <1573283135-5502-1-git-send-email-wanpengli@tencent.com>
+Date:   Mon, 11 Nov 2019 14:06:52 +0100
+Message-ID: <87mud2sgsz.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="u6q34lyragniy4ty"
-Content-Disposition: inline
-In-Reply-To: <e731216a728c4035af88c92b70756197@in.bosch.com>
-User-Agent: NeoMutt/20180716
+X-MC-Unique: 22L5RAfJMgG7Pxd9cNt5QA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Wanpeng Li <kernellwp@gmail.com> writes:
 
---u6q34lyragniy4ty
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+> +
+>  static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+>  {
+>  =09struct vcpu_vmx *vmx =3D to_vmx(vcpu);
+> @@ -6615,6 +6645,12 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+>  =09=09=09=09  | (1 << VCPU_EXREG_CR3));
+>  =09vcpu->arch.regs_dirty =3D 0;
+> =20
+> +=09vmx->exit_reason =3D vmx->fail ? 0xdead : vmcs_read32(VM_EXIT_REASON)=
+;
+> +=09vcpu->fast_vmexit =3D false;
+> +=09if (!is_guest_mode(vcpu) &&
+> +=09=09vmx->exit_reason =3D=3D EXIT_REASON_MSR_WRITE)
+> +=09=09vcpu->fast_vmexit =3D handle_ipi_fastpath(vcpu);
 
-Hello,
+I have to admit this looks too much to me :-( Yes, I see the benefits of
+taking a shortcut (by actualy penalizing all other MSR writes) but the
+question I have is: where do we stop?
 
-On Mon, Nov 11, 2019 at 11:21:28AM +0000, Kalakodima Venkata Rajesh (RBEI/ECF3) wrote:
-> Hi Jacopo,
->
-> Please find comments below.
->
-> Best regards,
->
-> Rajesh Kv
-> RBEI/ECF3
->
-> > -----Original Message-----
-> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > owner@vger.kernel.org> On Behalf Of Jacopo Mondi
-> > Sent: Tuesday, October 15, 2019 4:16 PM
-> > To: laurent.pinchart@ideasonboard.com;
-> > kieran.bingham+renesas@ideasonboard.com; geert@linux-m68k.org;
-> > horms@verge.net.au; uli+renesas@fpond.eu; Kalakodima Venkata Rajesh
-> > (RBEI/ECF3) <VenkataRajesh.Kalakodima@in.bosch.com>
-> > Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>; airlied@linux.ie;
-> > daniel@ffwll.ch; koji.matsuoka.xm@renesas.com; muroya@ksk.co.jp; Harsha
-> > Manjula Mallikarjun (RBEI/ECF3) <Harsha.ManjulaMallikarjun@in.bosch.com>;
-> > ezequiel@collabora.com; seanpaul@chromium.org; linux-renesas-
-> > soc@vger.kernel.org; dri-devel@lists.freedesktop.org; linux-
-> > kernel@vger.kernel.org
-> > Subject: [PATCH v5 0/8] drm: rcar-du: Add Color Management Module (CMM)
-> >
-> > References:
-> > A reference to the v1 cover letter, with some background on the CMM is
-> > available here:
-> > https://lkml.org/lkml/2019/6/6/583
-> > v2:
-> > https://lore.kernel.org/linux-renesas-soc/20190706140746.29132-10-
-> > jacopo+renesas@jmondi.org/
-> > v3:
-> > https://lore.kernel.org/linux-renesas-soc/20190825135154.11488-1-
-> > jacopo+renesas@jmondi.org/
-> > v4:
-> > https://lore.kernel.org/linux-renesas-soc/20190906135436.10622-1-
-> > jacopo+renesas@jmondi.org/
-> >
-> > Again, quite a consistent changelog, mostly due to the developments happened
-> > on Ezequiel's VOP unit following Sean's advices.
-> >
-> > I here implemented the same, and moved the CMM handling to the crtc being
-> > and enable callbacks. As a result the overall implementation results quite a lot
-> > simplified, mostly on the CMM driver side.
-> >
-> > I have dropped tags and acks on the CMM driver and CMM enablement patches
-> > in DU crtc driver because of the number of changes.
-> >
-> > A more detailed change log:
-> >
-> > - Rebased on renesas-devel-2019-10-07-v5.4-rc4
-> >
-> > * Bindings/DT
-> > - Included Rob's comments on the yaml file license and the use of 'OneOf'
-> >   in the compatible property description
-> > - Use the bracketed style suggested by Kieran for the 'renesas,cmm' property
-> >   introduced in patch 2
-> > - Re-order the properties in the SoC DTS files as suggested by Kieran
-> >
-> > * CMM/DU
-> > - As anticipated, moved CMM management to the crtc from the atomic commit
-> > tail
-> >   helper where it was implemented in v4
-> >   This allow to correctly support resume/suspend and proper ordering of the
-> > CMM
-> >   enable and setup operations (enable -before- setup)
-> > - As a consequence the CMM driver is greatly simplified by removing the need
-> >   to cache the LUT table entries provided to cmm_setup() and later re-apply
-> >   them at enable time.
-> > - Better support handling of disabled CMM config option by returning -ENODEV
-> >   at cmm_init() time as suggested by Kieran.
-> >
-> > * Testing
-> > I have tested by injecting a color inversion LUT table and enabling/disabling it
-> > every 50 displayed frames:
-> > https://jmondi.org/cgit/kmsxx/log/?h=gamma_lut
-> >
-> > CMM functionalities are retained between suspend/resume cycles (tested with
-> > suspend-to-idle) without requiring a re-programming of the LUT tables.
-> >
-> > Testing with real world use cases might be beneficial. Rajesh are you still
-> > interested in giving this series a spin
->
-> I have tested version v3 of CMM module with a demo application based on libdrm
-> library. I could successfully test setting of Gamma LUT.
+Also, this 'shortcut' creates an imbalance in tracing: you don't go down
+to kvm_emulate_wrmsr() so handle_ipi_fastpath() should probably gain a
+tracepoint.
 
-\o/
+Looking at 'fast_vmexit' name makes me think this is something
+generic. Is this so? Maybe we can create some sort of an infrastructure
+for fast vmexit handling and make it easy to hook things up to it?
 
-If you want to, please send your Tested-by tag, so that it can be
-collected, as CMM support will be collected for the v5.6 merge window, as we
-had a small issue that prevented v6 from being part of the v5.5 one.
+(Maybe it's just me who thinks the codebase is already too complex,
+let's see what Paolo and other reviewers have to say).
 
->
-> Next step is to test on full featured graphics stack i.e. involving Weston and OpenGL.
-> Weston can set Gamma. I have to stop this work for a while due to other high prio activities.
-> I plan to resume soon.
->
+--=20
+Vitaly
 
-Thanks for testing and please keep us posted!
-
-Thanks
-   j
-
-> >
-> > Laurent, Kieran, could we fast-track review of this and hopefully try to have it
-> > merged for v5.5 ?
-> >
-> > Thanks Ezequiel for having suggested me this solution.
-> >
-> > Thanks
-> >    j
-> >
-> > Jacopo Mondi (8):
-> >   dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
-> >   dt-bindings: display, renesas,du: Document cmms property
-> >   drm: rcar-du: Add support for CMM
-> >   drm: rcar-du: kms: Initialize CMM instances
-> >   drm: rcar-du: crtc: Control CMM operations
-> >   drm: rcar-du: crtc: Register GAMMA_LUT properties
-> >   arm64: dts: renesas: Add CMM units to Gen3 SoCs
-> >   drm: rcar-du: kms: Expand comment in vsps parsing routine
-> >
-> >  .../bindings/display/renesas,cmm.yaml         |  67 ++++++
-> >  .../bindings/display/renesas,du.txt           |   5 +
-> >  arch/arm64/boot/dts/renesas/r8a7795.dtsi      |  39 ++++
-> >  arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  31 ++-
-> >  arch/arm64/boot/dts/renesas/r8a77965.dtsi     |  31 ++-
-> >  arch/arm64/boot/dts/renesas/r8a77990.dtsi     |  21 ++
-> >  arch/arm64/boot/dts/renesas/r8a77995.dtsi     |  21 ++
-> >  drivers/gpu/drm/rcar-du/Kconfig               |   7 +
-> >  drivers/gpu/drm/rcar-du/Makefile              |   1 +
-> >  drivers/gpu/drm/rcar-du/rcar_cmm.c            | 198 ++++++++++++++++++
-> >  drivers/gpu/drm/rcar-du/rcar_cmm.h            |  60 ++++++
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c        |  89 ++++++++
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.h        |   2 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_drv.h         |   2 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_group.c       |   5 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_group.h       |   2 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c         |  82 +++++++-
-> >  drivers/gpu/drm/rcar-du/rcar_du_regs.h        |   5 +
-> >  18 files changed, 665 insertions(+), 3 deletions(-)  create mode 100644
-> > Documentation/devicetree/bindings/display/renesas,cmm.yaml
-> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
-> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
-> >
-> > --
-> > 2.23.0
->
-
---u6q34lyragniy4ty
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl3JXMoACgkQcjQGjxah
-VjyHxw//YOPTQ1K5syH6PsaJ8ptTzm+gh0f9gDufusYADRI2Pu8CURR7OZwHUBxd
-8rUwEMagvQDWbGwL2okFnlxcnKYygiH49mMSiSUWoWaI8+iOBhDgwVxJSIc8Gr9F
-zcX/bCfgNVR3zcCkd7+hTXu5f/Ymw5jpa64I5aFxILmfK2JV2WQgdBvY7Se2eT8g
-mC1z1x21BDKvGfsTAtdGYE9HI/bda50VshbBSgYDIb8YyVvEQlVPcl2DZKCN2cyh
-RV/87uiIGclAgW5buhhBAmQticmUBCXGTJWhkcEUCkqYH5R/hgtjV9SI00AhY4Ws
-sxTA1PA6A/Qs2WBYl2+UDwenrqBdwg+uFDevOIkh3P5p+AD5GCowy7TMbgbVJUE7
-USIHzzYB1Ai+arUW5XAybgVupKNvD+UVGTPj04XD0aBoRc2vKE27bwWR9VdpsTBv
-TRNNTQIxg5i2Qpv23DyhsqM3AaqPqCQM95zgBPjpT5IZ/vvqgX+SDLm6KqqgWvlT
-/mCnVMu26HhPN6yw9IM4Ea6S6SGpq1OxWozbvUQFrw4zbn9jXBkW9sspUkUe2ZTv
-WJ0as519wvCWkqcXsLc/XnX/OaekD9KtatUObE2bLFsLAOwDlXt83gjIpAu+4lzQ
-/V9Isg6cOR1Nqx7j8+I5MdBnPNxwi7Oarl5Pd9EANRy/CSUBtTk=
-=io+m
------END PGP SIGNATURE-----
-
---u6q34lyragniy4ty--
