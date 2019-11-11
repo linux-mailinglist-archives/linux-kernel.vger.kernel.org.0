@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C6FF7B91
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D92EF7D35
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbfKKShc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:37:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56190 "EHLO mail.kernel.org"
+        id S1730565AbfKKSyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:54:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728205AbfKKSh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:37:28 -0500
+        id S1730557AbfKKSyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:54:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91A7A204FD;
-        Mon, 11 Nov 2019 18:37:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5ACC421655;
+        Mon, 11 Nov 2019 18:54:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497448;
-        bh=uxEvp3r+DUrdQpzFfJWDPNp1kudzxm5ipX/GdX8RGgI=;
+        s=default; t=1573498457;
+        bh=R+el7rO3eiIues16qfwZj/4Kx0WIpg6QO+zltnqFJL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RqHurOv5/boyi3xdYZdYbi06i3f89cKibi0Jl/LUIVuL3iFyuQIxv7PaS9sq6xz4G
-         J2VYYfSQFBksH5elsP31P6aSPQECbsVJJ0zg9cbAN5OkGBXgjETyqHo6KVhajAx7zn
-         KDvpuHyvAbYSQQkIKQL7s2gzaFRjEfFG/sPuUplM=
+        b=SBfmlGEmFUR/9UY+lssaeHQ0gcr7Ne4AbgH5DLBgw1+h720VAxgVxgNuY9mCdWf0P
+         mi4fL6JE6PnBLCN3MsSR0buiN83n8hBIMZJWVByCSZN87fxVmdfYomP4GqqMzzLqEO
+         dDSMrbT0bKQAxyuWd/g5c6sgFCS7w9rH2VjmjIcM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 4.14 058/105] ASoC: davinci-mcasp: Fix an error handling path in davinci_mcasp_probe()
+        stable@vger.kernel.org, Kal Cutter Conley <kal.conley@dectris.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 126/193] xsk: Fix registration of Rx-only sockets
 Date:   Mon, 11 Nov 2019 19:28:28 +0100
-Message-Id: <20191111181444.554038205@linuxfoundation.org>
+Message-Id: <20191111181510.477881145@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Magnus Karlsson <magnus.karlsson@intel.com>
 
-commit 1b8b68b05d1868404316d32e20782b00442aba90 upstream
+[ Upstream commit 2afd23f78f39da84937006ecd24aa664a4ab052b ]
 
-All error handling paths in this function 'goto err' except this one.
+Having Rx-only AF_XDP sockets can potentially lead to a crash in the
+system by a NULL pointer dereference in xsk_umem_consume_tx(). This
+function iterates through a list of all sockets tied to a umem and
+checks if there are any packets to send on the Tx ring. Rx-only
+sockets do not have a Tx ring, so this will cause a NULL pointer
+dereference. This will happen if you have registered one or more
+Rx-only sockets to a umem and the driver is checking the Tx ring even
+on Rx, or if the XDP_SHARED_UMEM mode is used and there is a mix of
+Rx-only and other sockets tied to the same umem.
 
-If one of the 2 previous memory allocations fails, we should go through
-the existing error handling path. Otherwise there is an unbalanced
-pm_runtime_enable()/pm_runtime_disable().
+Fixed by only putting sockets with a Tx component on the list that
+xsk_umem_consume_tx() iterates over.
 
-Fixes: dd55ff8346a9 ("ASoC: davinci-mcasp: Add set_tdm_slots() support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: ac98d8aab61b ("xsk: wire upp Tx zero-copy functions")
+Reported-by: Kal Cutter Conley <kal.conley@dectris.com>
+Signed-off-by: Magnus Karlsson <magnus.karlsson@intel.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Link: https://lore.kernel.org/bpf/1571645818-16244-1-git-send-email-magnus.karlsson@intel.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/davinci/davinci-mcasp.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/xdp/xdp_umem.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/sound/soc/davinci/davinci-mcasp.c
-+++ b/sound/soc/davinci/davinci-mcasp.c
-@@ -2022,8 +2022,10 @@ static int davinci_mcasp_probe(struct pl
- 			     GFP_KERNEL);
+diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
+index 688aac7a6943a..182f9eb48dde9 100644
+--- a/net/xdp/xdp_umem.c
++++ b/net/xdp/xdp_umem.c
+@@ -26,6 +26,9 @@ void xdp_add_sk_umem(struct xdp_umem *umem, struct xdp_sock *xs)
+ {
+ 	unsigned long flags;
  
- 	if (!mcasp->chconstr[SNDRV_PCM_STREAM_PLAYBACK].list ||
--	    !mcasp->chconstr[SNDRV_PCM_STREAM_CAPTURE].list)
--		return -ENOMEM;
-+	    !mcasp->chconstr[SNDRV_PCM_STREAM_CAPTURE].list) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
++	if (!xs->tx)
++		return;
++
+ 	spin_lock_irqsave(&umem->xsk_list_lock, flags);
+ 	list_add_rcu(&xs->list, &umem->xsk_list);
+ 	spin_unlock_irqrestore(&umem->xsk_list_lock, flags);
+@@ -35,6 +38,9 @@ void xdp_del_sk_umem(struct xdp_umem *umem, struct xdp_sock *xs)
+ {
+ 	unsigned long flags;
  
- 	ret = davinci_mcasp_set_ch_constraints(mcasp);
- 	if (ret)
++	if (!xs->tx)
++		return;
++
+ 	spin_lock_irqsave(&umem->xsk_list_lock, flags);
+ 	list_del_rcu(&xs->list);
+ 	spin_unlock_irqrestore(&umem->xsk_list_lock, flags);
+-- 
+2.20.1
+
 
 
