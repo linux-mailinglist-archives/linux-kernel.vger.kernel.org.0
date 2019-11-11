@@ -2,99 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76ECF713A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9192F713C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfKKJzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 04:55:43 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33581 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKJzn (ORCPT
+        id S1726946AbfKKJzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 04:55:51 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54067 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfKKJzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 04:55:43 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w9so7074212wrr.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 01:55:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Gybf1/2X828gYds0XJm1yRNQvfU7LgDOs8KBBOEIR6I=;
-        b=QaKzTLAmgKQAew3pQIQYl7GmvT7T2OvypC5mj7USCrZ86/l6FwOR663z/m7YeSCFA5
-         6u/3P7Y5LBQZ3UrswirpO/MhkXHJKSrtuNM7tUaHTeD/Cay/8boD4uz/NarPAIkiHZFs
-         CdcacLcaSGTk1yLDZm6pgS7NbYzsWQ5grLcRKsqPUH6SdhSmKTwPGP9s+k5yialvCdvp
-         JJbphSvrMH5j2DCeYE9kMHedQpX+dGTvQ+5Om0NQI14x1XqDF0Di6ZJNF0rCEs3FQwkz
-         nOE33oFO5rtcoh+uFapJyu0LnqvfcWNbhSjcbWvxTV5sOK3U0mHCSjymziaa8T8bYCip
-         l0tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Gybf1/2X828gYds0XJm1yRNQvfU7LgDOs8KBBOEIR6I=;
-        b=YB2kdw5ANkT9ryklxTF3SSEokNiaPRtauilgB7cGfER4xwckECz30x+mc1CE3/Fe0a
-         qp2wAEaPHudpwTnlGsUwD+83ZpmWgWb4J7gAVGv63j/NmVu7yTCT/Qvph+37rnhZyzQV
-         uf8LQuIdgZi9JEgAwfvYbFSMH4fGeknqtI81mnI4C2KRcXFjFPWMomF6EtLLT3zIflDz
-         KqYFZhbq8jIA1bOd4XQYNkC6oMqRmwNfVkUiENhpNYPstzwMs+jIxF/6WOiC6leQYaDm
-         4rbzDYplSA1U5krPAlUmfcfSuEE6VriGpEF2SVHfkK2g24ezf2K3ovH2+k44cODsYHoU
-         aLhw==
-X-Gm-Message-State: APjAAAUX7pJ9QlUUXqDbTes2x+y3zmVD2OJ3RtQoapJpsjJAyemMuDnn
-        V6/EXZHPG8RdtfjSiHQxZ9+J1Q==
-X-Google-Smtp-Source: APXvYqxTlFFHRltdDLX3nlxD7ri/LPn4CQxB7t8iu9ZXgxOwm6kOYoOj1NPkCxZAOIiIgYu9rZq3Eg==
-X-Received: by 2002:adf:a119:: with SMTP id o25mr14985475wro.74.1573466140765;
-        Mon, 11 Nov 2019 01:55:40 -0800 (PST)
-Received: from dell ([95.147.198.88])
-        by smtp.gmail.com with ESMTPSA id g4sm16120987wru.75.2019.11.11.01.55.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 01:55:40 -0800 (PST)
-Date:   Mon, 11 Nov 2019 09:55:32 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH] mfd: madera: Improve handling of regulator unbinding
-Message-ID: <20191111095532.GB3218@dell>
-References: <20191105114040.22010-1-ckeepax@opensource.cirrus.com>
+        Mon, 11 Nov 2019 04:55:47 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1iU6QA-0005W7-NO; Mon, 11 Nov 2019 10:55:42 +0100
+Message-ID: <7379bfe6c530132caab4cd930cd94f0e28c935ff.camel@pengutronix.de>
+Subject: Re: [PATCH 15/16] drm/etnaviv: use ktime_t for timeouts
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Emil Velikov <emil.velikov@collabora.com>
+Date:   Mon, 11 Nov 2019 10:55:40 +0100
+In-Reply-To: <CAK8P3a13jSRqzZ-aDETdxk-BKgfXaAhdWiSn7aW+u3MFf06fWw@mail.gmail.com>
+References: <20191108213257.3097633-1-arnd@arndb.de>
+         <20191108213257.3097633-16-arnd@arndb.de>
+         <3a0cfce79620152facfe31b442a735db1dcda436.camel@pengutronix.de>
+         <CAK8P3a13jSRqzZ-aDETdxk-BKgfXaAhdWiSn7aW+u3MFf06fWw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191105114040.22010-1-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 05 Nov 2019, Charles Keepax wrote:
-
-> The current unbinding process for Madera has some issues. The trouble
-> is runtime PM is disabled as the first step of the process, but
-> some of the drivers release IRQs causing regmap IRQ to issue a
-> runtime get which fails. To allow runtime PM to remain enabled during
-> mfd_remove_devices, the DCVDD regulator must remain available. In
-> the case of external DCVDD's this is simple, the regulator can simply
-> be disabled/put after the call to mfd_remove_devices. However, in
-> the case of an internally supplied DCVDD the regulator needs to be
-> released after all the MFD children, except for the regulator child
-> itself, have been removed. This is achieved by having the regulator
-> driver itself do the disable/put, as it is the last driver removed from
-> the MFD.
+On Sa, 2019-11-09 at 13:12 +0100, Arnd Bergmann wrote:
+> On Sat, Nov 9, 2019 at 12:03 AM Lucas Stach <l.stach@pengutronix.de> wrote:
+> > Am Freitag, den 08.11.2019, 22:32 +0100 schrieb Arnd Bergmann:
+> > > struct timespec is being removed from the kernel because it often leads
+> > > to code that is not y2038-safe.
+> > > 
+> > > In the etnaviv driver, monotonic timestamps are used, which do not suffer
+> > > from overflow, but using ktime_t still leads to better code overall.
+> > > 
+> > > The conversion is straightforward for the most part, except for
+> > > etnaviv_timeout_to_jiffies(), which needs to handle arguments larger
+> > > than MAX_JIFFY_OFFSET on 32-bit architectures.
+> > > 
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > @@ -368,7 +366,7 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
+> > >               return -ENXIO;
+> > > 
+> > >       if (args->flags & ETNA_WAIT_NONBLOCK)
+> > > -             timeout = NULL;
+> > > +             timeout = ktime_set(0, 0);
+> > 
+> > This is a change in behavior, as far as I can see. After this change
+> > the called internal function is not able to differentiate between a
+> > NONBLOCK call and a blocking call with 0 timeout. The difference being
+> > that on a busy object the NONBLOCK call will return -EBUSY, while a
+> > blocking call will return -ETIMEDOUT.
 > 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Ah, good point. I created this patch a long time ago (cherry-picked it out
+> of an older branch I had done), so I don't remember how I concluded this
+> was a safe conversion, of if I missed that difference originally.
+> 
+> > But then CLOCK_MONOTONIC starts at 0 and should not never wrap, right?
+> 
+> Yes, that is correct.
+> 
+> > If that's the case then we should never encounter a genuine 0 timeout
+> > and this change would be okay.
+> 
+> That's quite likely, I'd say any program passing {0,0} as a timeout without
+> ETNA_WAIT_NONBLOCK is already broken, but if we leave it like that,
+> it would be best to describe the reasoning in the changelog.
+> 
+> Should I change the changelog, or change the patch to restore the
+> current behavior instead?
+> 
+> I guess I could fold the change below into my patch to make it transparent
+> to the application again.
 
-I'm fine with it, but Mark needs to review.
+If we assume 0 to never be a valid timeout, due to monotonic clock
+starting at 0 and never wrapping then I think we shouldn't introduce
+any additional code complexity to fix up the return value for this
+specific case. I'm not aware of any etnaviv userspace being broken in
+this way to rely on the return value for an invalid timeout input.
 
-> ---
->  drivers/mfd/madera-core.c        | 20 ++++++++++++--------
->  drivers/regulator/arizona-ldo1.c | 14 +++++++++++++-
->  2 files changed, 25 insertions(+), 9 deletions(-)
+Please just amend the commit message to mention the change in behavior
+and why we think it is safe to do.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Regards,
+Lucas
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>       Arnd
+> 
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> index 1250c5e06329..162cedfb7f72 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> @@ -354,6 +354,7 @@ static int etnaviv_ioctl_wait_fence(struct
+> drm_device *dev, void *data,
+>         ktime_t timeout = ktime_set(args->timeout.tv_sec,
+>                                     args->timeout.tv_nsec);
+>         struct etnaviv_gpu *gpu;
+> +       int ret;
+> 
+>         if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+>                 return -EINVAL;
+> @@ -365,8 +366,12 @@ static int etnaviv_ioctl_wait_fence(struct
+> drm_device *dev, void *data,
+>         if (!gpu)
+>                 return -ENXIO;
+> 
+> -       if (args->flags & ETNA_WAIT_NONBLOCK)
+> -               timeout = ktime_set(0, 0);
+> +       if (args->flags & ETNA_WAIT_NONBLOCK) {
+> +               ret = etnaviv_gpu_wait_fence_interruptible(gpu, args->fence,
+> +                                                          ktime_set(0, 0));
+> +
+> +               return (ret == -ETIMEDOUT) ? -EBUSY : ret;
+> +       }
+> 
+>         return etnaviv_gpu_wait_fence_interruptible(gpu, args->fence,
+>                                                     timeout);
+> @@ -421,10 +426,13 @@ static int etnaviv_ioctl_gem_wait(struct
+> drm_device *dev, void *data,
+>         if (!obj)
+>                 return -ENOENT;
+> 
+> -       if (args->flags & ETNA_WAIT_NONBLOCK)
+> -               timeout = ktime_set(0, 0);
+> -
+> -       ret = etnaviv_gem_wait_bo(gpu, obj, timeout);
+> +       if (args->flags & ETNA_WAIT_NONBLOCK) {
+> +               ret = etnaviv_gem_wait_bo(gpu, obj, ktime_set(0, 0));
+> +               if (ret == -ETIMEDOUT)
+> +                       ret = -EBUSY;
+> +       } else {
+> +               ret = etnaviv_gem_wait_bo(gpu, obj, timeout);
+> +       }
+> 
+>         drm_gem_object_put_unlocked(obj);
+> 
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> index e42b1c4d902c..fa6986c5a5fe 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> @@ -1135,6 +1135,7 @@ int etnaviv_gpu_wait_fence_interruptible(struct
+> etnaviv_gpu *gpu,
+>         u32 id, ktime_t timeout)
+>  {
+>         struct dma_fence *fence;
+> +       unsigned long remaining;
+>         int ret;
+> 
+>         /*
+> @@ -1151,12 +1152,12 @@ int
+> etnaviv_gpu_wait_fence_interruptible(struct etnaviv_gpu *gpu,
+>         if (!fence)
+>                 return 0;
+> 
+> -       if (!timeout) {
+> -               /* No timeout was requested: just test for completion */
+> -               ret = dma_fence_is_signaled(fence) ? 0 : -EBUSY;
+> +       if (!timeout ||
+> +           (remaining = etnaviv_timeout_to_jiffies(timeout)) == 0) {
+> +               /* No timeout was requested, or timeout is already expired,
+> +                * just test for completion */
+> +               ret = dma_fence_is_signaled(fence) ? 0 : -ETIMEDOUT;
+>         } else {
+> -               unsigned long remaining = etnaviv_timeout_to_jiffies(timeout);
+> -
+>                 ret = dma_fence_wait_timeout(fence, true, remaining);
+>                 if (ret == 0)
+>                         ret = -ETIMEDOUT;
+> @@ -1185,7 +1186,7 @@ int etnaviv_gpu_wait_obj_inactive(struct etnaviv_gpu *gpu,
+>         long ret;
+> 
+>         if (!timeout)
+> -               return !is_active(etnaviv_obj) ? 0 : -EBUSY;
+> +               return !is_active(etnaviv_obj) ? 0 : -ETIMEDOUT;
+> 
+>         remaining = etnaviv_timeout_to_jiffies(timeout);
+
