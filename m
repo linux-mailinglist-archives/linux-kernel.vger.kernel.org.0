@@ -2,40 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D095F7AFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF543F7C55
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfKKSbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:31:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48042 "EHLO mail.kernel.org"
+        id S1729841AbfKKSpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:45:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727654AbfKKSb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:31:28 -0500
+        id S1729835AbfKKSpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:45:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4060421783;
-        Mon, 11 Nov 2019 18:31:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 356BF204FD;
+        Mon, 11 Nov 2019 18:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497087;
-        bh=xr/Dd1JcudKThJha1471Fr+uThR/E6hFHmTW6eILGXc=;
+        s=default; t=1573497914;
+        bh=2MUUxH0+/1Q/fC2bt8PDd6ElIdFFwK2lIWGBYTdCZt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FpaoU3vmyJR6Tzlk3DnP/J+ptqwpJv1jMslmrMN/0ZJEPpo8btmu0PO+Bb4kLZz5b
-         nGdZmSY7mcZIbnCWHn39OE96GOVmrfO7R2vgdaT9hwSgU0W7ndtbsqw770fflyQTGc
-         9wohTqRjGDFYO+v8PCjyPc8Sbj6R/zoPV9quf350=
+        b=OVj2PJj+B/mz7NQQgjQikXoHSZblPq/jDLTX1s4phI1muBkkdisx+ng3Fx3+uHgq0
+         qoFj2O1aNmJPj89o4OJn2qJVw0zwl/mOS+1Vttxhd2e8HiGveXD5ekodNavpiJvMIp
+         PdIG34QLjqr8zEIZPpubP+pf25S/d3ElkVzsxXxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 40/43] e1000: fix memory leaks
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 095/125] perf/x86/amd/ibs: Fix reading of the IBS OpData register and thus precise RIP validity
 Date:   Mon, 11 Nov 2019 19:28:54 +0100
-Message-Id: <20191111181328.008691412@linuxfoundation.org>
+Message-Id: <20191111181452.535755844@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +55,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Kim Phillips <kim.phillips@amd.com>
 
-[ Upstream commit 8472ba62154058b64ebb83d5f57259a352d28697 ]
+[ Upstream commit 317b96bb14303c7998dbcd5bc606bd8038fdd4b4 ]
 
-In e1000_set_ringparam(), 'tx_old' and 'rx_old' are not deallocated if
-e1000_up() fails, leading to memory leaks. Refactor the code to fix this
-issue.
+The loop that reads all the IBS MSRs into *buf stopped one MSR short of
+reading the IbsOpData register, which contains the RipInvalid status bit.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fix the offset_max assignment so the MSR gets read, so the RIP invalid
+evaluation is based on what the IBS h/w output, instead of what was
+left in memory.
+
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: d47e8238cd76 ("perf/x86-ibs: Take instruction pointer from ibs sample")
+Link: https://lkml.kernel.org/r/20191023150955.30292-1-kim.phillips@amd.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/events/amd/ibs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-index d70b2e5d52228..cbb0bdf851770 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-@@ -628,6 +628,7 @@ static int e1000_set_ringparam(struct net_device *netdev,
- 	for (i = 0; i < adapter->num_rx_queues; i++)
- 		rxdr[i].count = rxdr->count;
- 
-+	err = 0;
- 	if (netif_running(adapter->netdev)) {
- 		/* Try to get new resources before deleting old */
- 		err = e1000_setup_all_rx_resources(adapter);
-@@ -648,14 +649,13 @@ static int e1000_set_ringparam(struct net_device *netdev,
- 		adapter->rx_ring = rxdr;
- 		adapter->tx_ring = txdr;
- 		err = e1000_up(adapter);
--		if (err)
--			goto err_setup;
- 	}
- 	kfree(tx_old);
- 	kfree(rx_old);
- 
- 	clear_bit(__E1000_RESETTING, &adapter->flags);
--	return 0;
-+	return err;
-+
- err_setup_tx:
- 	e1000_free_all_rx_resources(adapter);
- err_setup_rx:
-@@ -667,7 +667,6 @@ err_alloc_rx:
- err_alloc_tx:
- 	if (netif_running(adapter->netdev))
- 		e1000_up(adapter);
--err_setup:
- 	clear_bit(__E1000_RESETTING, &adapter->flags);
- 	return err;
- }
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 80c6d84cad67b..fac0867907d4d 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -625,7 +625,7 @@ fail:
+ 	if (event->attr.sample_type & PERF_SAMPLE_RAW)
+ 		offset_max = perf_ibs->offset_max;
+ 	else if (check_rip)
+-		offset_max = 2;
++		offset_max = 3;
+ 	else
+ 		offset_max = 1;
+ 	do {
 -- 
 2.20.1
 
