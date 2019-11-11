@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A04EF7F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:10:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85578F7DF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfKKScE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:32:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48850 "EHLO mail.kernel.org"
+        id S1730533AbfKKSxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:53:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbfKKSb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:31:59 -0500
+        id S1728848AbfKKSwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:52:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 649FF21872;
-        Mon, 11 Nov 2019 18:31:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 060DC20818;
+        Mon, 11 Nov 2019 18:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497118;
-        bh=V7fR2feFxpMluVrwWC+xnfViuaQzXmb080OJoqaBQr4=;
+        s=default; t=1573498373;
+        bh=N1fXnElCxnJo7SUkIASvC5jDqYqX/TV4zRbeym2fMSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uEkeiclkiUlxRiMgFR65O2of/UnbXS46dhT4sjnUZcN9PK15lzFdc7Av+t3CNkwlu
-         PtLY+jQuNtn8cDKQabJ6QC0A4soRG2D3T31q0FTg1v5kNh9i1y/Arlir55FuE7S5nl
-         vWmtOgCqWXfIIlq2jgaGvNQ3mnr7GI06cNHeOjp0=
+        b=mr12KgQnkzwq5HrLuu+An/EHRsdzKxNvgnvD0qdCYK5jhv9whxCEnwdEThe9SJrC6
+         8N4GhLF6Gj4Vuws5p+khM0/jQpSDbqoI7gMIsbjbsC3POoPLlX5Jvv4WLnzKp7cj40
+         chGwC3OLtuvt/jZn1DZXSr1sCiXSZPDyStKEIBIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 01/65] CDC-NCM: handle incomplete transfer of MTU
-Date:   Mon, 11 Nov 2019 19:28:01 +0100
-Message-Id: <20191111181332.043906842@linuxfoundation.org>
+        stable@vger.kernel.org, Potnuri Bharat Teja <bharat@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 100/193] iw_cxgb4: fix ECN check on the passive accept
+Date:   Mon, 11 Nov 2019 19:28:02 +0100
+Message-Id: <20191111181508.514147291@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,46 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Potnuri Bharat Teja <bharat@chelsio.com>
 
-[ Upstream commit 332f989a3b0041b810836c5c3747e59aad7e9d0b ]
+[ Upstream commit 612e0486ad0845c41ac10492e78144f99e326375 ]
 
-A malicious device may give half an answer when asked
-for its MTU. The driver will proceed after this with
-a garbage MTU. Anything but a complete answer must be treated
-as an error.
+pass_accept_req() is using the same skb for handling accept request and
+sending accept reply to HW. Here req and rpl structures are pointing to
+same skb->data which is over written by INIT_TP_WR() and leads to
+accessing corrupt req fields in accept_cr() while checking for ECN flags.
+Reordered code in accept_cr() to fetch correct req fields.
 
-V2: used sizeof as request by Alexander
-
-Reported-and-tested-by: syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 92e7ae7172 ("iw_cxgb4: Choose appropriate hw mtu index and ISS for iWARP connections")
+Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Link: https://lore.kernel.org/r/20191003104353.11590-1-bharat@chelsio.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/cdc_ncm.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/cxgb4/cm.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
---- a/drivers/net/usb/cdc_ncm.c
-+++ b/drivers/net/usb/cdc_ncm.c
-@@ -576,8 +576,8 @@ static void cdc_ncm_set_dgram_size(struc
- 	/* read current mtu value from device */
- 	err = usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
- 			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
--			      0, iface_no, &max_datagram_size, 2);
--	if (err < 0) {
-+			      0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
-+	if (err < sizeof(max_datagram_size)) {
- 		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
- 		goto out;
- 	}
-@@ -588,7 +588,7 @@ static void cdc_ncm_set_dgram_size(struc
- 	max_datagram_size = cpu_to_le16(ctx->max_datagram_size);
- 	err = usbnet_write_cmd(dev, USB_CDC_SET_MAX_DATAGRAM_SIZE,
- 			       USB_TYPE_CLASS | USB_DIR_OUT | USB_RECIP_INTERFACE,
--			       0, iface_no, &max_datagram_size, 2);
-+			       0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
- 	if (err < 0)
- 		dev_dbg(&dev->intf->dev, "SET_MAX_DATAGRAM_SIZE failed\n");
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index e87fc04084704..9e8eca7b613c0 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -2424,20 +2424,6 @@ static int accept_cr(struct c4iw_ep *ep, struct sk_buff *skb,
+ 	enum chip_type adapter_type = ep->com.dev->rdev.lldi.adapter_type;
  
+ 	pr_debug("ep %p tid %u\n", ep, ep->hwtid);
+-
+-	skb_get(skb);
+-	rpl = cplhdr(skb);
+-	if (!is_t4(adapter_type)) {
+-		skb_trim(skb, roundup(sizeof(*rpl5), 16));
+-		rpl5 = (void *)rpl;
+-		INIT_TP_WR(rpl5, ep->hwtid);
+-	} else {
+-		skb_trim(skb, sizeof(*rpl));
+-		INIT_TP_WR(rpl, ep->hwtid);
+-	}
+-	OPCODE_TID(rpl) = cpu_to_be32(MK_OPCODE_TID(CPL_PASS_ACCEPT_RPL,
+-						    ep->hwtid));
+-
+ 	cxgb_best_mtu(ep->com.dev->rdev.lldi.mtus, ep->mtu, &mtu_idx,
+ 		      enable_tcp_timestamps && req->tcpopt.tstamp,
+ 		      (ep->com.remote_addr.ss_family == AF_INET) ? 0 : 1);
+@@ -2483,6 +2469,20 @@ static int accept_cr(struct c4iw_ep *ep, struct sk_buff *skb,
+ 		if (tcph->ece && tcph->cwr)
+ 			opt2 |= CCTRL_ECN_V(1);
+ 	}
++
++	skb_get(skb);
++	rpl = cplhdr(skb);
++	if (!is_t4(adapter_type)) {
++		skb_trim(skb, roundup(sizeof(*rpl5), 16));
++		rpl5 = (void *)rpl;
++		INIT_TP_WR(rpl5, ep->hwtid);
++	} else {
++		skb_trim(skb, sizeof(*rpl));
++		INIT_TP_WR(rpl, ep->hwtid);
++	}
++	OPCODE_TID(rpl) = cpu_to_be32(MK_OPCODE_TID(CPL_PASS_ACCEPT_RPL,
++						    ep->hwtid));
++
+ 	if (CHELSIO_CHIP_VERSION(adapter_type) > CHELSIO_T4) {
+ 		u32 isn = (prandom_u32() & ~7UL) - 1;
+ 		opt2 |= T5_OPT_2_VALID_F;
+-- 
+2.20.1
+
 
 
