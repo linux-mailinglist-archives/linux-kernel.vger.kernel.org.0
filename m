@@ -2,80 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D38F71CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 11:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B708FF71D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 11:26:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfKKKYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 05:24:50 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:59446 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKKYt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 05:24:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KkshqQCTszdoi49VntJOylBToP8vc+lvnQmxVqr0Mdk=; b=qHzGFNZowiTaHCrMC2MX4k+Wg
-        pEs9U2ks7/S/H0ug9+CYH+PsxYummgRjkI3+NSKKOVBxZOO2bzdBoeG5daFjdBrvl8lXeL+MdwFI3
-        8H8gEcAqAp+/mqR5d6RctcvMJLVQ4qGTYY7tbvrT534N4llMtAq7FWiG9ThU1ZY/yt7i2VC+VoDWp
-        XajjNXCkGNPEfmarOa6F6E8Fw5y8nJt60JuQUocjWSIpF4IrjfjtonqhMYEAjzyDlY+BzOu2+I8c/
-        hEPuMQc5AG7OGZYgFw7tl2A6Pq67wS2DtzWT3YF3cpUsc/oBRKHQrobzIkwMqg5WRK688uZrMwL91
-        nh9fdBDaQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38166)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iU6sD-0004wv-Ct; Mon, 11 Nov 2019 10:24:41 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iU6sA-0000Pq-76; Mon, 11 Nov 2019 10:24:38 +0000
-Date:   Mon, 11 Nov 2019 10:24:38 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Message-ID: <20191111102438.GG25745@shell.armlinux.org.uk>
-References: <20191111121953.25f34810@canb.auug.org.au>
+        id S1726893AbfKKK0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 05:26:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbfKKK0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 05:26:09 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 335BC214DB;
+        Mon, 11 Nov 2019 10:26:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573467969;
+        bh=2z8hwJsgg/ju8i4+eMGguE3rZCyoHUgwt0bw+ZYB8KM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=smvBKhhcHads27xPsXAticFXTQpqu1E/0aHowUyGC3JnKrDgqgeEkR7czO3TbqemG
+         29V7Ppi88wdSIU+L06wHCS9JvtnwH8KxL+2J2ZVxE8SYvrHy0FIISOGAl5QYORsnVz
+         GHVuztMhZkFiWVmjk6hnTnUAozhD9GcDfhSvl59c=
+Date:   Mon, 11 Nov 2019 10:26:03 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     catalin.marinas@arm.com, john.garry@huawei.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: Kconfig: make CMDLINE_FORCE depend on CMDLINE
+Message-ID: <20191111102603.GA8903@willie-the-truck>
+References: <20191111085956.6158-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191111121953.25f34810@canb.auug.org.au>
+In-Reply-To: <20191111085956.6158-1-anders.roxell@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Stephen, patch coming today.
+On Mon, Nov 11, 2019 at 09:59:56AM +0100, Anders Roxell wrote:
+> When building allmodconfig KCONFIG_ALLCONFIG=$(pwd)/arch/arm64/configs/defconfig
+> CONFIG_CMDLINE_FORCE gets enabled. Which forces the user to pass the
+> full cmdline to CONFIG_CMDLINE="...".
+> 
+> Rework so that CONFIG_CMDLINE_FORCE gets set only if CONFIG_CMDLINE is
+> set to something except an empty string.
+> 
+> Suggested-by: John Garry <john.garry@huawei.com>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  arch/arm64/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 50df79d4aa3b..64764ca92fca 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1629,6 +1629,7 @@ config CMDLINE
+>  
+>  config CMDLINE_FORCE
+>  	bool "Always use the default kernel command string"
+> +	depends on CMDLINE != ""
+>  	help
+>  	  Always use the default kernel command string, even if the boot
+>  	  loader passes other arguments to the kernel.
 
-On Mon, Nov 11, 2019 at 12:19:53PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (arm
-> multi_v7_defconfig.) produced this warning:
-> 
-> In file included from net/core/ethtool.c:21:
-> include/linux/sfp.h:566:12: warning: 'sfp_bus_add_upstream' defined but not used [-Wunused-function]
->   566 | static int sfp_bus_add_upstream(struct sfp_bus *bus, void *upstream,
->       |            ^~~~~~~~~~~~~~~~~~~~
-> 
-> Introduced by commit
-> 
->   727b3668b730 ("net: sfp: rework upstream interface")
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Acked-by: Will Deacon <will@kernel.org>
 
-
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Will
