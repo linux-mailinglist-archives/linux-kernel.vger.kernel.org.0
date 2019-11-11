@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1323CF7CBF
+	by mail.lfdr.de (Postfix) with ESMTP id F2795F7CC1
 	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:49:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbfKKStW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:49:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42606 "EHLO mail.kernel.org"
+        id S1730290AbfKKStZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:49:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730283AbfKKStS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:49:18 -0500
+        id S1729030AbfKKStW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:49:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1EFC214E0;
-        Mon, 11 Nov 2019 18:49:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32747222C1;
+        Mon, 11 Nov 2019 18:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498158;
-        bh=m2SnlxfeqDDA/C/rowAZC/hT+5u1gHbiPnQRT5redXA=;
+        s=default; t=1573498162;
+        bh=5JEQzBaVD+E8HXLBNVDBN6pR2xH6E2s/FT8ItNrMRsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e4spZwTDwAxMX+uMomNMxY70efy09gduDMlJ92Cqmjvj8xLzBvK3fnK0R8y3AkK5B
-         50jUwfGBqxnniTgmUiaYINvN4eX8qai0weo7yjwVa1aeNFDv+gTLndQYVWKOp1dlJ0
-         adVKryGMXbTd/ZjsMYdr8PjzLYXYJ3oWLvPl6nRI=
+        b=hZZEHobIMX45GvvjIv1zcpq0vTgwo9FW/SVM6QmJwSWHJdopMm5vq/vbkDyY8Kxz+
+         /A/vXxA8Geumy5+88yKyHFs9Gbwd+23U6rJDSFRR2KTI1dgyRSAWNHS53W7E412i9+
+         XueDKQ/XpnCqFpWOW2VwIb6AiRrT6I6xAp2czPkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
+        stable@vger.kernel.org, John Keeping <john@metanate.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.3 040/193] perf tools: Fix time sorting
-Date:   Mon, 11 Nov 2019 19:27:02 +0100
-Message-Id: <20191111181503.922866109@linuxfoundation.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andres Freund <andres@anarazel.de>
+Subject: [PATCH 5.3 041/193] perf map: Use zalloc for map_groups
+Date:   Mon, 11 Nov 2019 19:27:03 +0100
+Message-Id: <20191111181503.990965328@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -48,46 +49,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: John Keeping <john@metanate.com>
 
-commit 722ddfde366fd46205456a9c5ff9b3359dc9a75e upstream.
+commit ab6cd0e5276e24403751e0b3b8ed807738a8571f upstream.
 
-The final sort might get confused when the comparison is done over
-bigger numbers than int like for -s time.
+In the next commit we will add new fields to map_groups and we need
+these to be null if no value is assigned.  The simplest way to achieve
+this is to request zeroed memory from the allocator.
 
-Check the following report for longer workloads:
-
-  $ perf report -s time -F time,overhead --stdio
-
-Fix hist_entry__sort() to properly return int64_t and not possible cut
-int.
-
-Fixes: 043ca389a318 ("perf tools: Use hpp formats to sort final output")
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: John Keeping <john@metanate.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org # v3.16+
-Link: http://lore.kernel.org/lkml/20191104232711.16055-1-jolsa@kernel.org
+Cc: john keeping <john@metanate.com>
+Link: http://lkml.kernel.org/r/20190815100146.28842-1-john@metanate.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Andres Freund <andres@anarazel.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/hist.c |    2 +-
+ tools/perf/util/map.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -1618,7 +1618,7 @@ int hists__collapse_resort(struct hists
- 	return 0;
- }
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -637,7 +637,7 @@ bool map_groups__empty(struct map_groups
  
--static int hist_entry__sort(struct hist_entry *a, struct hist_entry *b)
-+static int64_t hist_entry__sort(struct hist_entry *a, struct hist_entry *b)
+ struct map_groups *map_groups__new(struct machine *machine)
  {
- 	struct hists *hists = a->hists;
- 	struct perf_hpp_fmt *fmt;
+-	struct map_groups *mg = malloc(sizeof(*mg));
++	struct map_groups *mg = zalloc(sizeof(*mg));
+ 
+ 	if (mg != NULL)
+ 		map_groups__init(mg, machine);
 
 
