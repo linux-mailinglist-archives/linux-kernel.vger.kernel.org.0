@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C29B8F7C90
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61FEDF7D88
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:58:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729591AbfKKSr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:47:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40156 "EHLO mail.kernel.org"
+        id S1730870AbfKKS5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:57:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730103AbfKKSrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:47:22 -0500
+        id S1730832AbfKKS5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:57:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B13B204FD;
-        Mon, 11 Nov 2019 18:47:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADA042184C;
+        Mon, 11 Nov 2019 18:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498042;
-        bh=ZZD3P9bX6jJOAa0xFQLXVAuNjTf37Uhk8BgWgKMRGgI=;
+        s=default; t=1573498659;
+        bh=Yg5APykiLBbTYygB+VJWegrWeN78ZT6GmOlo7CdiLaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B/mtzFXUIPLYGfKv3tplIrYu4L/dTSj8aRXBxarGWfARpFgSK0vWSERj4JtT70rXH
-         HOjLsGPKrk6N2HNGTbMigvmTUCLxi65ooVtvQHiDOtyTrw+mrpROUddufy9KDvaQR3
-         J9C4cXGJ+NLqKo6vVnn+fvmy3ci3L0uM1e7vnSSU=
+        b=af0WtYrWRuM6dTkFxT6foArhqbF4hQrXT0MZ+VdtGLF6FkGcs4jCxN0UeZtOgPqJJ
+         IB7nL1zTkLaxs5dl1iMTldyOZvs1Ha2EqCJCvzV1gvpubNAi8HGJOIIoqu+SI3Cak2
+         4OuLdF89e64p6v0RuDaDSdfMfbMNmwEazRaGuPas=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 124/125] mm/filemap.c: dont initiate writeback if mapping has no dirty pages
-Date:   Mon, 11 Nov 2019 19:29:23 +0100
-Message-Id: <20191111181456.247399096@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 182/193] arm64: apply ARM64_ERRATUM_843419 workaround for Brahma-B53 core
+Date:   Mon, 11 Nov 2019 19:29:24 +0100
+Message-Id: <20191111181514.532157274@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,49 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit c3aab9a0bd91b696a852169479b7db1ece6cbf8c upstream.
+[ Upstream commit 1cf45b8fdbb87040e1d1bd793891089f4678aa41 ]
 
-Functions like filemap_write_and_wait_range() should do nothing if inode
-has no dirty pages or pages currently under writeback.  But they anyway
-construct struct writeback_control and this does some atomic operations if
-CONFIG_CGROUP_WRITEBACK=y - on fast path it locks inode->i_lock and
-updates state of writeback ownership, on slow path might be more work.
-Current this path is safely avoided only when inode mapping has no pages.
+The Broadcom Brahma-B53 core is susceptible to the issue described by
+ARM64_ERRATUM_843419 so this commit enables the workaround to be applied
+when executing on that core.
 
-For example generic_file_read_iter() calls filemap_write_and_wait_range()
-at each O_DIRECT read - pretty hot path.
+Since there are now multiple entries to match, we must convert the
+existing ARM64_ERRATUM_843419 into an erratum list and use
+cpucap_multi_entry_cap_matches to match our entries.
 
-This patch skips starting new writeback if mapping has no dirty tags set.
-If writeback is already in progress filemap_write_and_wait_range() will
-wait for it.
-
-Link: http://lkml.kernel.org/r/156378816804.1087.8607636317907921438.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/filemap.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/arm64/silicon-errata.rst |  2 ++
+ arch/arm64/kernel/cpu_errata.c         | 23 ++++++++++++++++++++---
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -438,7 +438,8 @@ int __filemap_fdatawrite_range(struct ad
- 		.range_end = end,
- 	};
+diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
+index 8c87c68dcc324..d5f72a5b214f8 100644
+--- a/Documentation/arm64/silicon-errata.rst
++++ b/Documentation/arm64/silicon-errata.rst
+@@ -93,6 +93,8 @@ stable kernels.
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Broadcom       | Brahma-B53      | N/A             | ARM64_ERRATUM_845719        |
+ +----------------+-----------------+-----------------+-----------------------------+
++| Broadcom       | Brahma-B53      | N/A             | ARM64_ERRATUM_843419        |
+++----------------+-----------------+-----------------+-----------------------------+
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Cavium         | ThunderX ITS    | #22375,24313    | CAVIUM_ERRATUM_22375        |
+ +----------------+-----------------+-----------------+-----------------------------+
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 799d62ef7a9bd..ed4c2f28f1576 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -755,6 +755,23 @@ static const struct midr_range erratum_845719_list[] = {
+ };
+ #endif
  
--	if (!mapping_cap_writeback_dirty(mapping))
-+	if (!mapping_cap_writeback_dirty(mapping) ||
-+	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
- 		return 0;
- 
- 	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
++#ifdef CONFIG_ARM64_ERRATUM_843419
++static const struct arm64_cpu_capabilities erratum_843419_list[] = {
++	{
++		/* Cortex-A53 r0p[01234] */
++		.matches = is_affected_midr_range,
++		ERRATA_MIDR_REV_RANGE(MIDR_CORTEX_A53, 0, 0, 4),
++		MIDR_FIXED(0x4, BIT(8)),
++	},
++	{
++		/* Brahma-B53 r0p[0] */
++		.matches = is_affected_midr_range,
++		ERRATA_MIDR_REV(MIDR_BRAHMA_B53, 0, 0),
++	},
++	{},
++};
++#endif
++
+ const struct arm64_cpu_capabilities arm64_errata[] = {
+ #ifdef CONFIG_ARM64_WORKAROUND_CLEAN_CACHE
+ 	{
+@@ -786,11 +803,11 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ #endif
+ #ifdef CONFIG_ARM64_ERRATUM_843419
+ 	{
+-	/* Cortex-A53 r0p[01234] */
+ 		.desc = "ARM erratum 843419",
+ 		.capability = ARM64_WORKAROUND_843419,
+-		ERRATA_MIDR_REV_RANGE(MIDR_CORTEX_A53, 0, 0, 4),
+-		MIDR_FIXED(0x4, BIT(8)),
++		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
++		.matches = cpucap_multi_entry_cap_matches,
++		.match_list = erratum_843419_list,
+ 	},
+ #endif
+ #ifdef CONFIG_ARM64_ERRATUM_845719
+-- 
+2.20.1
+
 
 
