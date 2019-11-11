@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B2A6F7E90
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2764FF7F12
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:09:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbfKKSkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:40:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59714 "EHLO mail.kernel.org"
+        id S1728580AbfKKSfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:35:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729263AbfKKSkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:40:31 -0500
+        id S1727417AbfKKSfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:35:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDE120659;
-        Mon, 11 Nov 2019 18:40:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D9FB21783;
+        Mon, 11 Nov 2019 18:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497631;
-        bh=bR5o7skpK6KDCD0QAk0Qsb4kd3q/ojkGwfvWrbP2So0=;
+        s=default; t=1573497337;
+        bh=C5xQkwwGDricWqdA8SR940TB54ZWtqNg32onbdI9kCY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iVZYna1f1kK77ODepxGY00wrRtrOMUVv8vK21+EthVgfJR+P75jLPHZ/v2DESmG4M
-         PEWi9w3jqX/JL8pdKa6XgIWMzUmGXkF5e+p807H4VksMLDmiZUmtmIcNjNoEyumSVg
-         Xsjtp1YWjRvBFusnBU6yjidcJ9V/t3Sgg4lOQJsk=
+        b=CWzX311XaB38ezuKJHWuffEVeNYMZu4IcnenIoRRyfczWmIQwRdnkX1zvZIQzUffT
+         aucLJZK778GfcuD1xo1qnJD2pshL3xhi+iynQDMuZ940GgBLufqtsqMnXxYlq9jbED
+         M7X0BLaJLI1dt/pSRkOOpV+hnjoU/1obGFrxFM0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 012/125] net: mscc: ocelot: dont handle netdev events for other netdevs
-Date:   Mon, 11 Nov 2019 19:27:31 +0100
-Message-Id: <20191111181441.257500678@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 002/105] CDC-NCM: handle incomplete transfer of MTU
+Date:   Mon, 11 Nov 2019 19:27:32 +0100
+Message-Id: <20191111181422.777911819@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 7afb3e575e5aa9f5a200a3eb3f45d8130f6d6601 ]
+[ Upstream commit 332f989a3b0041b810836c5c3747e59aad7e9d0b ]
 
-The check that the event is actually for this device should be moved
-from the "port" handler to the net device handler.
+A malicious device may give half an answer when asked
+for its MTU. The driver will proceed after this with
+a garbage MTU. Anything but a complete answer must be treated
+as an error.
 
-Otherwise the port handler will deny bonding configuration for other
-net devices in the same system (like enetc in the LS1028A) that don't
-have the lag_upper_info->tx_type restriction that ocelot has.
+V2: used sizeof as request by Alexander
 
-Fixes: dc96ee3730fc ("net: mscc: ocelot: add bonding support")
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Reported-and-tested-by: syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mscc/ocelot.c |    6 +++---
+ drivers/net/usb/cdc_ncm.c |    6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mscc/ocelot.c
-+++ b/drivers/net/ethernet/mscc/ocelot.c
-@@ -1506,9 +1506,6 @@ static int ocelot_netdevice_port_event(s
- 	struct ocelot_port *ocelot_port = netdev_priv(dev);
- 	int err = 0;
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -578,8 +578,8 @@ static void cdc_ncm_set_dgram_size(struc
+ 	/* read current mtu value from device */
+ 	err = usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
+ 			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
+-			      0, iface_no, &max_datagram_size, 2);
+-	if (err < 0) {
++			      0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
++	if (err < sizeof(max_datagram_size)) {
+ 		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
+ 		goto out;
+ 	}
+@@ -590,7 +590,7 @@ static void cdc_ncm_set_dgram_size(struc
+ 	max_datagram_size = cpu_to_le16(ctx->max_datagram_size);
+ 	err = usbnet_write_cmd(dev, USB_CDC_SET_MAX_DATAGRAM_SIZE,
+ 			       USB_TYPE_CLASS | USB_DIR_OUT | USB_RECIP_INTERFACE,
+-			       0, iface_no, &max_datagram_size, 2);
++			       0, iface_no, &max_datagram_size, sizeof(max_datagram_size));
+ 	if (err < 0)
+ 		dev_dbg(&dev->intf->dev, "SET_MAX_DATAGRAM_SIZE failed\n");
  
--	if (!ocelot_netdevice_dev_check(dev))
--		return 0;
--
- 	switch (event) {
- 	case NETDEV_CHANGEUPPER:
- 		if (netif_is_bridge_master(info->upper_dev)) {
-@@ -1545,6 +1542,9 @@ static int ocelot_netdevice_event(struct
- 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
- 	int ret = 0;
- 
-+	if (!ocelot_netdevice_dev_check(dev))
-+		return 0;
-+
- 	if (event == NETDEV_PRECHANGEUPPER &&
- 	    netif_is_lag_master(info->upper_dev)) {
- 		struct netdev_lag_upper_info *lag_upper_info = info->upper_info;
 
 
