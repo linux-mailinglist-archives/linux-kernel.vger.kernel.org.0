@@ -2,105 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3268F78A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:23:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F8BF78B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:25:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfKKQXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:23:50 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40040 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbfKKQXu (ORCPT
+        id S1727031AbfKKQZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:25:18 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:50497 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbfKKQZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:23:50 -0500
-Received: by mail-ot1-f66.google.com with SMTP id m15so11703290otq.7
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:23:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EK5rfvfSII06/EDQTTan7V0YdFmqp+cuq2tEw4+bqpc=;
-        b=17xdVOabPHkdqXoVofyU2oGM4B4m95gnLle7cFrn1YMkwWbiTLbI/0troG20gZ9VZF
-         LX95md6dEop4QOSKcJgsP24YOZ4c5m60SFzvCmdSKsNe9Ef4Adyt0ep7D30gPmzEHFM3
-         76EKc9E/JZqf/JynqO0TwLB2ckYrJFa2hHgaU6yxQ1Dww953k3L5Rjl7vttXNiVlkffi
-         5Rj4ZrSXGK1/vW18zmnQLV1+QauUftzINox4U1Lt5dnXJu92M8zJhKHlXvI8I462ihZ1
-         bWKwEIaqGpVwuMVGwc56mpyZ+pRnnftycuMhYBn0tXtijl1QzzztqHZ0zwvmbBxHmN91
-         T4bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EK5rfvfSII06/EDQTTan7V0YdFmqp+cuq2tEw4+bqpc=;
-        b=sQMZeNnoGGhu4kCE7RAHHqx8iDjmFJaErHPVEessKBaLZbQDEFvc89L/ALE+T6+ao0
-         DBMJn+Sx626bEMQXPSCTzOuEHARmQVVUkbB1dBgPXqo+8FKJ6XY2Tarpe7BTEwuvUXHz
-         vnpXsrSraNdO93urMQIjVTHlZr2Uk9HKclPv+HaqS9refL+5tB9ghzd/dcr/JtBFgPA+
-         XCejV1kd/Az85v6OTSxLUTbcSXiZbOWO9tpTQI5grpbJD2hep3DpFK19otOJNaYM4z9z
-         mIb7sIFnZwxs5tcImZfcXATrSPHF8u0Eb/mU7DJ7QXxcegZ68b4wuK+Aobei/5gNHnzO
-         HrZA==
-X-Gm-Message-State: APjAAAUpBcmCnQKTMInzx+4oIYQBY7kHqQTn7qCqmtDyj5k9hsrufF0l
-        ukpGubOhDi5Dtg6BCRNjXFHziPVKw1VajvWbtUCziA==
-X-Google-Smtp-Source: APXvYqywohi4GCAt/BglQ3C0fcbjKIg2OIffbbL/IPdakdWcpjfBuw1FR1rGa7efSojC1F+sMY799Z6U/QZm/PuYdQo=
-X-Received: by 2002:a05:6830:1af7:: with SMTP id c23mr20766490otd.247.1573489429293;
- Mon, 11 Nov 2019 08:23:49 -0800 (PST)
+        Mon, 11 Nov 2019 11:25:18 -0500
+Received: from mail-qt1-f179.google.com ([209.85.160.179]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MOiYD-1iGFr137Dr-00QDpb for <linux-kernel@vger.kernel.org>; Mon, 11 Nov
+ 2019 17:25:16 +0100
+Received: by mail-qt1-f179.google.com with SMTP id g50so16253889qtb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:25:16 -0800 (PST)
+X-Gm-Message-State: APjAAAXu8KhZYr9sGDPSRQgqVrLJ2lBtXvxM6xwtYZ2xvnvKIT6l293y
+        uHa+LK2QXAS/GUJf2WDgeFdcSnl5x3cAI/OJkl0=
+X-Google-Smtp-Source: APXvYqzhEX+Ry63FPgxImqPVdNg3+01We4bix3tpiOsVLV3c4EpCOOaUFn43GI00Tsjcb2HTxmGTLXXXT8IHHLMKa0E=
+X-Received: by 2002:ac8:18eb:: with SMTP id o40mr26604573qtk.304.1573489515656;
+ Mon, 11 Nov 2019 08:25:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20191108000855.25209-1-t-fukasawa@vx.jp.nec.com>
- <20191108091851.GB15658@dhcp22.suse.cz> <5fc7da0c-bd79-9f3b-e5d9-8688648cf032@vx.jp.nec.com>
-In-Reply-To: <5fc7da0c-bd79-9f3b-e5d9-8688648cf032@vx.jp.nec.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 11 Nov 2019 08:23:38 -0800
-Message-ID: <CAPcyv4joVDwiL21PPyJ7E_mMFR2SL3QTi09VMtfxb_W+-1p8vQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] make pfn walker support ZONE_DEVICE
-To:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+References: <20191108213257.3097633-1-arnd@arndb.de> <20191108213257.3097633-16-arnd@arndb.de>
+ <3a0cfce79620152facfe31b442a735db1dcda436.camel@pengutronix.de>
+ <CAK8P3a13jSRqzZ-aDETdxk-BKgfXaAhdWiSn7aW+u3MFf06fWw@mail.gmail.com> <7379bfe6c530132caab4cd930cd94f0e28c935ff.camel@pengutronix.de>
+In-Reply-To: <7379bfe6c530132caab4cd930cd94f0e28c935ff.camel@pengutronix.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 11 Nov 2019 17:24:59 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0SA+LbVCnm8qhc-Xk1kboGhkRQsK0XAuMya8TmaD4+TA@mail.gmail.com>
+Message-ID: <CAK8P3a0SA+LbVCnm8qhc-Xk1kboGhkRQsK0XAuMya8TmaD4+TA@mail.gmail.com>
+Subject: Re: [PATCH 15/16] drm/etnaviv: use ktime_t for timeouts
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>, "cai@lca.pw" <cai@lca.pw>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Emil Velikov <emil.velikov@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:JHnu4qBIDr0AeRGo2cjWt8VCwhOw5IiHIztxB1kU5f7R5MHak0b
+ MUhl14MFo3fS2u3qB6cwVV33jE07KSe979aZ8K5PmFEMMOJL4b2T0l2gnPOKx6lcxsD2fDq
+ 9XnWN2B4fBlWpV0HfeteryhY78xhDjNQ0mQNLV6GYtVlUz7reGx9QmA4aSAPZZ7iP/Ezb7X
+ ELy6MxULVkSG8blbPxWjw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WJQ11S94CGw=:RutZ7RQyzb5LCYyWCXrCdg
+ RH0Ew62Ok670uFYGEARvFFMPRKx+hyo/MYHh51VvgWm0Wg9SrjzbvS7DtG8lyXnyj+lRXGvRi
+ mtrG7yrlaHuCfQWLpuMI7FDNMeEuWQy/429+zcmda6jn4BgfLctLAw8AxZUvQbZOA2L9VtuUt
+ 6GH16g4JmkuokrDTIaokCEqOQPJY3pIQbApgOkfvRIK3ITqptGJywimY/navkIWbgz9LahCB7
+ v2GWL8F1KMzhJ532wBvPmboO+2rYYW6jjPaPuTaoVymRiwIG3rd0SIFxvHOze6Dkb7AGS1d0m
+ onjGU0h24kamjW98HG0syPjW5UEkvjHwclqiHvrZfrKcrOj1caM6xdZ+vwXz4aldTLp8Novrx
+ RFEL662SNMVtcz3CzM+FGtqVJNRhHmbFGcoRh+RozIAYq2utWcX/uKBJ4p9r3sfgJD4qdcjxR
+ SKWwaSlJYTlyLej+Am2aUaeKkxHV1ZZFkdWqroLccda3DWbINouYbop2lixk46+VDxc92Qcrf
+ rLptY9j7K0FLMPMELlEYh0Aa5C5stSpQJhO/0P4y3sMCuR3Yw1hFTFd3p/QfRCKgkf3cVXW/4
+ 6RhH5Lnx3h8DdwSCSMr68gHCPodUtyNIJnrY51OZuzqld7vLa2dSqssb+ZEfsr3bVbaZRvDsT
+ l4g3cJYQwoyHITz70qenAafTXb/t9WRAYtTo5lg5bMkyJPcB89hfgUT5PMGnm/7w1WbWVgiIP
+ osEKtc/2rRFCbS0bisXXivKy1n7T5z1tpPWkhcTEJqNu+z1IA+N7bFzfONgN2uJxOyLhUC7Gk
+ kOG0GfcwlVCWDAmVqQ7UpPq89QzWGC0M/vou1C/hr5H7N4XIXlOzhhc+4tEBF+v86+WpsHgm/
+ /tH2zu/6pORxCMK83yWQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 12:01 AM Toshiki Fukasawa
-<t-fukasawa@vx.jp.nec.com> wrote:
->
-> On 2019/11/08 18:18, Michal Hocko wrote:
-> > On Fri 08-11-19 00:08:03, Toshiki Fukasawa wrote:
-> >> This patch set tries to make pfn walker support ZONE_DEVICE.
-> >> This idea is from the TODO in below patch:
-> >>
-> >>    commit aad5f69bc161af489dbb5934868bd347282f0764
-> >>    Author: David Hildenbrand <david@redhat.com>
-> >>    Date:   Fri Oct 18 20:19:20 2019 -0700
-> >>
-> >>      fs/proc/page.c: don't access uninitialized memmaps in fs/proc/page.c
-> >>
-> >> pfn walker's ZONE_DEVICE support requires capability to identify
-> >> that a memmap has been initialized. The uninitialized cases are
-> >> as follows:
-> >>
-> >>      a) pages reserved for ZONE_DEVICE driver
-> >>      b) pages currently initializing
-> >>
-> >> This patch set solves both of them.
+On Mon, Nov 11, 2019 at 10:55 AM Lucas Stach <l.stach@pengutronix.de> wrote:
 > >
-> > Why do we want this? What is the usecase?
+> > > If that's the case then we should never encounter a genuine 0 timeout
+> > > and this change would be okay.
+> >
+> > That's quite likely, I'd say any program passing {0,0} as a timeout without
+> > ETNA_WAIT_NONBLOCK is already broken, but if we leave it like that,
+> > it would be best to describe the reasoning in the changelog.
+> >
+> > Should I change the changelog, or change the patch to restore the
+> > current behavior instead?
+> >
+> > I guess I could fold the change below into my patch to make it transparent
+> > to the application again.
 >
-> We are writing a test program for hwpoison, which is a use case.
-> Without this patch, we can't see the HWPOISON flag on the
-> ZONE_DEVICE page.
+> If we assume 0 to never be a valid timeout, due to monotonic clock
+> starting at 0 and never wrapping then I think we shouldn't introduce
+> any additional code complexity to fix up the return value for this
+> specific case. I'm not aware of any etnaviv userspace being broken in
+> this way to rely on the return value for an invalid timeout input.
+>
+> Please just amend the commit message to mention the change in behavior
+> and why we think it is safe to do.
 
-I'm not sure that's a goal that's a worthwhile goal. That hwpoison
-flag has specific meaning for the System RAM case where the page is
-going to be marked offline. For the pmem case the nvdimm core tracks
-'badblocks'. I did attempt to use PageHWPoison to track which pmem
-pages had been marked UC to prevent speculative consumption, but that
-implementation has been found to collide with lookup_memtype() so I'm
-looking ot replace it with something that consults with the pmem
-driver.
+Russell had some additional concerns that he raised on IRC,
+and I did a new simpler implementation of the patch, plus a related
+bugfix.
+
+Please have a look at those.
+
+       Arnd
