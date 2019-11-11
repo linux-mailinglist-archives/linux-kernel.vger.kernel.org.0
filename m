@@ -2,96 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E302DF6D40
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 04:21:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC8C4F6D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 04:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfKKDVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 10 Nov 2019 22:21:13 -0500
-Received: from mga11.intel.com ([192.55.52.93]:22964 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726749AbfKKDVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Nov 2019 22:21:13 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2019 19:21:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,291,1569308400"; 
-   d="scan'208";a="207006324"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga006.jf.intel.com with ESMTP; 10 Nov 2019 19:21:11 -0800
-Date:   Sun, 10 Nov 2019 19:21:11 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] IB/umem: use get_user_pages_fast() to pin DMA pages
-Message-ID: <20191111032111.GA30123@iweiny-DESK2.sc.intel.com>
-References: <20191109020434.389855-1-jhubbard@nvidia.com>
- <20191109020434.389855-2-jhubbard@nvidia.com>
+        id S1726805AbfKKD1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 10 Nov 2019 22:27:06 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6182 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726742AbfKKD1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Nov 2019 22:27:06 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A38838B905A01154A088;
+        Mon, 11 Nov 2019 11:27:02 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 11 Nov 2019
+ 11:26:54 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <denis.ciocca@st.com>, <tglx@linutronix.de>,
+        <alexios.zavras@intel.com>, <allison@lohutok.net>,
+        <yuehaibing@huawei.com>, <linus.walleij@linaro.org>,
+        <ladis@linux-mips.org>
+CC:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 -next] iio: st_accel: Fix unused variable warning
+Date:   Mon, 11 Nov 2019 11:21:15 +0800
+Message-ID: <20191111032115.3008-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20191101134741.25108-1-yuehaibing@huawei.com>
+References: <20191101134741.25108-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191109020434.389855-2-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 06:04:34PM -0800, John Hubbard wrote:
-> And get rid of the mmap_sem calls, as part of that. Note
-> that get_user_pages_fast() will, if necessary, fall back to
-> __gup_longterm_unlocked(), which takes the mmap_sem as needed.
-> 
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Ira Weiny <ira.weiny@intel.com>
+drivers/iio/accel/st_accel_core.c:1005:44: warning:
+ mount_matrix_ext_info defined but not used [-Wunused-const-variable=]
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Using stub helper while CONFIG_ACPI is disabled to fix it.
 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/infiniband/core/umem.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-> index 24244a2f68cc..3d664a2539eb 100644
-> --- a/drivers/infiniband/core/umem.c
-> +++ b/drivers/infiniband/core/umem.c
-> @@ -271,16 +271,13 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
->  	sg = umem->sg_head.sgl;
->  
->  	while (npages) {
-> -		down_read(&mm->mmap_sem);
-> -		ret = get_user_pages(cur_base,
-> -				     min_t(unsigned long, npages,
-> -					   PAGE_SIZE / sizeof (struct page *)),
-> -				     gup_flags | FOLL_LONGTERM,
-> -				     page_list, NULL);
-> -		if (ret < 0) {
-> -			up_read(&mm->mmap_sem);
-> +		ret = get_user_pages_fast(cur_base,
-> +					  min_t(unsigned long, npages,
-> +						PAGE_SIZE /
-> +						sizeof(struct page *)),
-> +					  gup_flags | FOLL_LONGTERM, page_list);
-> +		if (ret < 0)
->  			goto umem_release;
-> -		}
->  
->  		cur_base += ret * PAGE_SIZE;
->  		npages   -= ret;
-> @@ -288,8 +285,6 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
->  		sg = ib_umem_add_sg_table(sg, page_list, ret,
->  			dma_get_max_seg_size(context->device->dma_device),
->  			&umem->sg_nents);
-> -
-> -		up_read(&mm->mmap_sem);
->  	}
->  
->  	sg_mark_end(sg);
-> -- 
-> 2.24.0
-> 
+Suggested-by: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/iio/accel/st_accel_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/accel/st_accel_core.c b/drivers/iio/accel/st_accel_core.c
+index 7b83764..7320275 100644
+--- a/drivers/iio/accel/st_accel_core.c
++++ b/drivers/iio/accel/st_accel_core.c
+@@ -992,6 +992,7 @@ static const struct iio_trigger_ops st_accel_trigger_ops = {
+ #define ST_ACCEL_TRIGGER_OPS NULL
+ #endif
+ 
++#ifdef CONFIG_ACPI
+ static const struct iio_mount_matrix *
+ get_mount_matrix(const struct iio_dev *indio_dev,
+ 		 const struct iio_chan_spec *chan)
+@@ -1012,7 +1013,6 @@ static const struct iio_chan_spec_ext_info mount_matrix_ext_info[] = {
+ static int apply_acpi_orientation(struct iio_dev *indio_dev,
+ 				  struct iio_chan_spec *channels)
+ {
+-#ifdef CONFIG_ACPI
+ 	struct st_sensor_data *adata = iio_priv(indio_dev);
+ 	struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
+ 	struct acpi_device *adev;
+@@ -1140,10 +1140,14 @@ static int apply_acpi_orientation(struct iio_dev *indio_dev,
+ out:
+ 	kfree(buffer.pointer);
+ 	return ret;
++}
+ #else /* !CONFIG_ACPI */
++static int apply_acpi_orientation(struct iio_dev *indio_dev,
++				  struct iio_chan_spec *channels)
++{
+ 	return 0;
+-#endif
+ }
++#endif
+ 
+ /*
+  * st_accel_get_settings() - get sensor settings from device name
+-- 
+2.7.4
+
+
