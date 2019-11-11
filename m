@@ -2,87 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3516EF7213
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 11:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06854F7235
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 11:34:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfKKKao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 05:30:44 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:54336 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbfKKKao (ORCPT
+        id S1726952AbfKKKeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 05:34:12 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:59291 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbfKKKeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 05:30:44 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xABAUaL6024709;
-        Mon, 11 Nov 2019 04:30:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573468236;
-        bh=J49vO9a5Q6nbdkFfwrMnpwhRrLhy3uz8gGzESzCD4oo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=J0pC0vQNOwWzcvvyyQL76SmlVuEzN0Z+CjL83wyC4lp4rBJiQ2R1WTU+ky0182CGU
-         FTXTm6Qn7grF70n77I6mtxC44f2VRRamde1Mg5BmLaZlzhLGa12VcCNxC08G61KIOA
-         d5uzuQB+yddSy3ouqSKbKhg+hMh59KTqSgK/uEBU=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xABAUZfl057030
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Nov 2019 04:30:35 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 11
- Nov 2019 04:30:17 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 11 Nov 2019 04:30:17 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xABAUVBd048429;
-        Mon, 11 Nov 2019 04:30:31 -0600
-Subject: Re: [PATCH v4 15/15] dmaengine: ti: k3-udma: Add glue layer for non
- DMAengine users
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
-        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>
-References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
- <20191101084135.14811-16-peter.ujfalusi@ti.com>
- <20191111061258.GS952516@vkoul-mobl>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <6d4d2fcc-502b-4b41-cd71-8942741f4ad8@ti.com>
-Date:   Mon, 11 Nov 2019 12:31:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 11 Nov 2019 05:34:11 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MAOa3-1iawdn3mtn-00BubF; Mon, 11 Nov 2019 11:34:09 +0100
+Received: by mail-qk1-f171.google.com with SMTP id m125so10686797qkd.8;
+        Mon, 11 Nov 2019 02:34:07 -0800 (PST)
+X-Gm-Message-State: APjAAAXBLhPZlSPXhqcGeeCNRdMDtYj7c7RP3FBKTzorNwKWV9N6IY/h
+        dsGYRHX/iMu9ieQ2kMEDeVvtcIjaW+7sm+yx5so=
+X-Google-Smtp-Source: APXvYqzESzY62F14rsigxKLBXM91nKVjfO+E517KtV1rTG3fdeRCW+MOilAesC4Pz85XDKVkv4qCW/mxeD7p5CII2Ks=
+X-Received: by 2002:a37:4f13:: with SMTP id d19mr9320005qkb.138.1573468446947;
+ Mon, 11 Nov 2019 02:34:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191111061258.GS952516@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191029064834.23438-1-hch@lst.de> <20191029064834.23438-2-hch@lst.de>
+In-Reply-To: <20191029064834.23438-2-hch@lst.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 11 Nov 2019 11:33:50 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3xk-mQic84Cv7CYhm2DqDCyu69+qH=i8M=JoE3xkpM=g@mail.gmail.com>
+Message-ID: <CAK8P3a3xk-mQic84Cv7CYhm2DqDCyu69+qH=i8M=JoE3xkpM=g@mail.gmail.com>
+Subject: Re: [PATCH 01/21] arm: remove ioremap_cached
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Guo Ren <guoren@kernel.org>, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        "open list:SYNOPSYS ARC ARCHITECTURE" 
+        <linux-snps-arc@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        "moderated list:NIOS2 ARCHITECTURE" 
+        <nios2-dev@lists.rocketboards.org>, openrisc@lists.librecores.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Q7k81wFvoFE5E6wkXe8aVkg4UtIIhdO42eNTJCWF2OH8BAKNIYC
+ ktqFVT/gUxHCzKTuvIteocEc6dCMNSblmwTqy1u69ZFn9QjpmWgW6PLcr3ijxS847YwhU+c
+ GBYtgFx+LwY4VCvhh4uFz2h42SqTW/LXCUgI6o4ZQqjSZwKNrU2Hv7GTYzJItkd0nVZ06yn
+ wJQX7E/0e7Av7MMyGkB9w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oR2Ibl1tMpg=:Qch93j4jtU7v7an1WaRtUY
+ uQTKMSgbmv0EPsSZPfTgOVFZIWbmvPIEaWQXjS5b3cpXTDONxq3NV1AFL+oCqQR3fYn2G93Pp
+ wkFmNZV9cUErVOTSsNMD6c5v3f+lmaJvWvCuYuaQfTESl8FT84aX4OwSgqDkwbp03RC/qRwwd
+ cQQgtjfeaSC08MOEdxEE2oCFqW2aNpdpKU8+eX0yMEtdAIfcWVJ4axf1VSY1wycvW3Dj1uUVS
+ VCktrzuSKnryj1bRphPhi4P5N9iad/8cLMOMrSWr+cS1WDmwrOztyoB3d8S9+bC+uhkJmpEe7
+ EcfZ8jKZP9/DD2n6C979ElHhh8ziwOJF5aCbu9FJ/3Hwccjix+idScCwc95ajahJo34ezl3lP
+ EWrM/tGIP3Z1HimZqAorMW6Kd0QIrcoqwfGD5mT9Nnj1PcSurMuSLPyN2b2lT11Qw4p0ww6B+
+ oeOcMJ3fbXiNaNzLDWPI87bji3C/R/KY7rBYn5JT0MpO5pM3315Lo0hfT1CpHuMvy/kUOaN/w
+ kUJYL9rH7UR0Gs13qvxRBu+Qn5t/8Lp508AYjr+SO4FU4eR3D0c/bl0AXvq1GNfOF0BMPwn9g
+ GBMFaNMpAJFF9p6TcCeT6TZK+gEp8bhzkARZyPnpy65YdnXsF7gvEu10r9nhH+RM+kkPrJ/yt
+ 3DoVsdY8pcVlWdCGz6eIAShOQwEvqzvLEa55zcqxLePkPrh1mYUk2JnAr8OAQp6sfgPU12HHR
+ dH54ArhwI5PevKmKQK9Qx+VVtLUKVhXEm+VW2q47zxQaN3TliTK/bJYO0GJKfVqR/esKvLyQg
+ 2o9ETmvdOIgOoXxzJH6TW/6+NtkBymQJzfxn4BPT2LC5PT4/SAjAvWDWBQjkLmSGfmUGljMCd
+ t9k/ZM/dYSmuz8qpNCWdLYv72qTheL6z9GztXaJ1tPMJ396fIiD9u+iOlZKl1/g3gse85yPrx
+ isOPo/23/1q/RDLGEpv78pVtJzsJNS0CrsUW3c5uUe/PAMdEfxCPFEerurnYjhlHEMaRzDNOb
+ DqZ1WkpzuyGejI8CcALxCNpPVoDWdS4P55/uMZZfngrqEXWbis11Wvy9mUQQiFVYzg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 29, 2019 at 7:48 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> No users of ioremap_cached are left, remove it.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-
-On 11/11/2019 8.12, Vinod Koul wrote:
-> On 01-11-19, 10:41, Peter Ujfalusi wrote:
->> From: Grygorii Strashko <grygorii.strashko@ti.com>
->>
->> Certain users can not use right now the DMAengine API due to missing
->> features in the core. Prime example is Networking.
->>
->> These users can use the glue layer interface to avoid misuse of DMAengine
->> API and when the core gains the needed features they can be converted to
->> use generic API.
-> 
-> Can you add some notes on what all features does this layer implement..
-
-In the commit message or in the code?
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
