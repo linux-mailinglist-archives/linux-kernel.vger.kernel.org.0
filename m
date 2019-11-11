@@ -2,126 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A690F8135
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:28:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06ABCF813D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 21:29:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbfKKU2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 15:28:02 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39223 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbfKKU2A (ORCPT
+        id S1727746AbfKKU3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 15:29:08 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44348 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726877AbfKKU3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:28:00 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l7so4517422wrp.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 12:27:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HjO3wpyXChJA5PmnGO3S7mu0IDsvrhSOfFW6HY6JRng=;
-        b=MXCmfpX6xIgnpHdiLiAp/jGtPQ/WGqtKNl6J4jKMXpkR+et+hixwSZjPLAufCBsHRe
-         pcN6DW3AbQPYF7tswU6BrhK5emQLx6k8FR9WbcSCQicH9phvbHnpeUzUvYAIpLlkTw74
-         QThBUnDM/pfY9lD2yc2fcjdQdmHaf8XYDbmF2M3wn1/zlS7wdXt/BiSOdu+LC6aN8pXt
-         UxX8MIxAOvp87WZCkBe2Z7/Cmkm5/4ViFktvOcLSrByfoICRxwXXP4NNR0kTLRMMCSyl
-         exUUXBCZDywur0uL5alEsqmsgQHFiKmHxmpf0ZAlCurJyo1fkKb5XlRBe06/AaLoxYFT
-         l/EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HjO3wpyXChJA5PmnGO3S7mu0IDsvrhSOfFW6HY6JRng=;
-        b=CY0iOZ+vDmnLo2OUtR+5nOhxcp0etFezTQY8zraEnrh7FP5aldhr82h43UOfEE3TyF
-         Bha0FTxMgrOUQH82e+632XEwCmadrhG6bXGCC/NM6eGYbE5vubIL/z090zRGzBWOGFbS
-         cBivqoBox4cCmE7a3S2UY7IXX1XHnnPS8mvxY+7hLrGU5HEjfBPsCY4QK5ruSy5YtKYA
-         aruL/VCxgjME8M8qf5f3xWnfLC59VDkDXqwk181vaUE6qEJD6Z7AwpHFtome0Dar3wXO
-         MQdcyKLYY/R1tCStulZaX1ftnQf0QNCLm2kXr6tmlrP5kWrRLBnUHqHej0iN9JYIeSl4
-         8kZg==
-X-Gm-Message-State: APjAAAVxBTdymICvOvWSyo8BO8azwDg8ALl+7U/b8qXa8Rt0rDtEz9e+
-        3Qfterb/+o4l0SdJj2Vhp0MSRPAVQ8AtkQxuAWM7TBn4
-X-Google-Smtp-Source: APXvYqyzkmEt6fi7JOGp2anojIJLKQx7itUXqg21AcQlR+RI6alcVjkV6y6iLzku5qGFU2JWFHn8ifqUKm9QifF2ofI=
-X-Received: by 2002:adf:fb0b:: with SMTP id c11mr23322063wrr.50.1573504077928;
- Mon, 11 Nov 2019 12:27:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20191109093538.23964-1-yuehaibing@huawei.com> <CADnq5_O7JwQd4+ncEe+KusqNqPBGXgkcUBX6VHP5OjhNwUseWg@mail.gmail.com>
-In-Reply-To: <CADnq5_O7JwQd4+ncEe+KusqNqPBGXgkcUBX6VHP5OjhNwUseWg@mail.gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 11 Nov 2019 15:27:45 -0500
-Message-ID: <CADnq5_NoPmDe-aVZbk5H-212C=hPDytZ35DrOi5k_rU671_LaA@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amd/display: remove set but not used variable 'bpc'
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
-        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Jun Lei <Jun.Lei@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
-        Zhan Liu <Zhan.Liu@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 11 Nov 2019 15:29:08 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xABKQcU1103004;
+        Mon, 11 Nov 2019 15:29:04 -0500
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7c1tdqqh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Nov 2019 15:29:04 -0500
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xABKRhRf006405;
+        Mon, 11 Nov 2019 20:29:03 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma03dal.us.ibm.com with ESMTP id 2w5n366mu5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Nov 2019 20:29:03 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xABKT2NN50856302
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Nov 2019 20:29:03 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4C6D6E04E;
+        Mon, 11 Nov 2019 20:29:02 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7D6206E052;
+        Mon, 11 Nov 2019 20:29:02 +0000 (GMT)
+Received: from oc6220003374.ibm.com (unknown [9.40.45.99])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 11 Nov 2019 20:29:02 +0000 (GMT)
+From:   Kyle Mahlkuch <kmahlkuc@linux.vnet.ibm.com>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>
+Subject: [PATCH] drm/radeon: Clean up code in radeon_pci_shutdown()
+Date:   Mon, 11 Nov 2019 14:27:58 -0600
+Message-Id: <1573504078-7691-1-git-send-email-kmahlkuc@linux.vnet.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-11_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=750 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911110178
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 1:01 PM Alex Deucher <alexdeucher@gmail.com> wrote:
->
-> Applied.  Thanks!
+From: KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>
 
-I've dropped this as it leads to a warning in the code since
-get_color_depth is no longer used.  Care to fix that up as well?
+This fixes the formatting on one comment and consolidates the
+pci_get_drvdata() into the radeon_suspend_kms().
 
-Thanks!
+Signed-off-by: Kyle Mahlkuch <kmahlkuc@linux.vnet.ibm.com>
+---
+ drivers/gpu/drm/radeon/radeon_drv.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Alex
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 4528f4d..357d29a 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -379,10 +379,6 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+ static void
+ radeon_pci_shutdown(struct pci_dev *pdev)
+ {
+-#ifdef CONFIG_PPC64
+-	struct drm_device *ddev = pci_get_drvdata(pdev);
+-#endif
+-
+ 	/* if we are running in a VM, make sure the device
+ 	 * torn down properly on reboot/shutdown
+ 	 */
+@@ -390,13 +386,14 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+ 		radeon_pci_remove(pdev);
+ 
+ #ifdef CONFIG_PPC64
+-	/* Some adapters need to be suspended before a
++	/*
++	 * Some adapters need to be suspended before a
+ 	 * shutdown occurs in order to prevent an error
+ 	 * during kexec.
+ 	 * Make this power specific becauase it breaks
+ 	 * some non-power boards.
+ 	 */
+-	radeon_suspend_kms(ddev, true, true, false);
++	radeon_suspend_kms(pci_get_drvdata(pdev), true, true, false);
+ #endif
+ }
+ 
+-- 
+1.8.3.1
 
->
-> Alex
->
-> On Sun, Nov 10, 2019 at 9:30 PM YueHaibing <yuehaibing@huawei.com> wrote:
-> >
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> >
-> > drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c: In function get_pbn_from_timing:
-> > drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c:2364:11: warning:
-> >  variable bpc set but not used [-Wunused-but-set-variable]
-> >
-> > It is not used since commit e49f69363adf ("drm/amd/display: use
-> > proper formula to calculate bandwidth from timing")
-> >
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  drivers/gpu/drm/amd/display/dc/core/dc_link.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> > index bdc8be3..53394e2 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> > @@ -2653,13 +2653,11 @@ static int get_color_depth(enum dc_color_depth color_depth)
-> >
-> >  static struct fixed31_32 get_pbn_from_timing(struct pipe_ctx *pipe_ctx)
-> >  {
-> > -       uint32_t bpc;
-> >         uint64_t kbps;
-> >         struct fixed31_32 peak_kbps;
-> >         uint32_t numerator;
-> >         uint32_t denominator;
-> >
-> > -       bpc = get_color_depth(pipe_ctx->stream_res.pix_clk_params.color_depth);
-> >         kbps = dc_bandwidth_in_kbps_from_timing(&pipe_ctx->stream->timing);
-> >
-> >         /*
-> > --
-> > 2.7.4
-> >
-> >
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
