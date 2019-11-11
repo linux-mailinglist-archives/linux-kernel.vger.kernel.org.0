@@ -2,50 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A67F7BCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:40:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC133F7B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbfKKSj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:39:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59028 "EHLO mail.kernel.org"
+        id S1728452AbfKKSfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:35:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729178AbfKKSjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:39:55 -0500
+        id S1728447AbfKKSe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:34:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 082052173B;
-        Mon, 11 Nov 2019 18:39:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E41252190F;
+        Mon, 11 Nov 2019 18:34:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497594;
-        bh=q3yhYxOzX2mNGYFSfx/rjL2uwHVIjB8YmkgAE67YCrA=;
+        s=default; t=1573497298;
+        bh=jbszZ+pK438idjmG/hhKzxYfkMI4SQrnmhW1whPaf/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A4/CNmIQHfT/nv7UT5RWwoyAixF9m/wBqkvIM3jS7FyP4OGU3JAZWNbIh/02XKEBJ
-         9SN0B5nz68m7/1ZpTDNMvycT9Re5GyknLX7cvacraelGztlipT00I0rnTL7/gA7BbD
-         gR6a5hQ6wqWm1lKnXTzuwplpCW0nGvCEjrbapf2I=
+        b=sg7lLxvApHI8XS0kyRxlnWDpjUb9g3MmzxaG4Kw55ZzXMnEeDBAqqJTnUtpenHI02
+         +cGfmtSqvQkE5jqe5680PHC3Va1RInYYh4yRsRv3SrO63M4JVLoXWyZMljTq1/JWy4
+         iGLjBmHLrRgVIfb6qg+/INpT8ykImxoxkdeIL/xk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 087/105] perf/x86/amd/ibs: Fix reading of the IBS OpData register and thus precise RIP validity
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 57/65] net: ethernet: arc: add the missed clk_disable_unprepare
 Date:   Mon, 11 Nov 2019 19:28:57 +0100
-Message-Id: <20191111181447.561488793@linuxfoundation.org>
+Message-Id: <20191111181353.785421590@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,52 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 317b96bb14303c7998dbcd5bc606bd8038fdd4b4 ]
+[ Upstream commit 4202e219edd6cc164c042e16fa327525410705ae ]
 
-The loop that reads all the IBS MSRs into *buf stopped one MSR short of
-reading the IbsOpData register, which contains the RipInvalid status bit.
+The remove misses to disable and unprepare priv->macclk like what is done
+when probe fails.
+Add the missed call in remove.
 
-Fix the offset_max assignment so the MSR gets read, so the RIP invalid
-evaluation is based on what the IBS h/w output, instead of what was
-left in memory.
-
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: d47e8238cd76 ("perf/x86-ibs: Take instruction pointer from ibs sample")
-Link: https://lkml.kernel.org/r/20191023150955.30292-1-kim.phillips@amd.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/ibs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/arc/emac_rockchip.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index 7a86fbc07ddc1..4deecdb26ab30 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -625,7 +625,7 @@ fail:
- 	if (event->attr.sample_type & PERF_SAMPLE_RAW)
- 		offset_max = perf_ibs->offset_max;
- 	else if (check_rip)
--		offset_max = 2;
-+		offset_max = 3;
- 	else
- 		offset_max = 1;
- 	do {
+diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
+index c770ca37c9b21..a7d30731d376f 100644
+--- a/drivers/net/ethernet/arc/emac_rockchip.c
++++ b/drivers/net/ethernet/arc/emac_rockchip.c
+@@ -261,6 +261,9 @@ static int emac_rockchip_remove(struct platform_device *pdev)
+ 	if (priv->regulator)
+ 		regulator_disable(priv->regulator);
+ 
++	if (priv->soc_data->need_div_macclk)
++		clk_disable_unprepare(priv->macclk);
++
+ 	free_netdev(ndev);
+ 	return err;
+ }
 -- 
 2.20.1
 
