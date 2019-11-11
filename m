@@ -2,117 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D12DF7A57
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 18:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 989A5F7A89
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:11:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfKKR6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 12:58:05 -0500
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:46467 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbfKKR6F (ORCPT
+        id S1727027AbfKKSLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:11:15 -0500
+Received: from gateway20.websitewelcome.com ([192.185.48.38]:14685 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726763AbfKKSLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 12:58:05 -0500
-Received: by mail-wr1-f53.google.com with SMTP id b3so15602757wrs.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 09:58:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EpziU3n1BW5TLHQT8FQscf45CBaREelPg2coeu8/dVQ=;
-        b=ezStHSGEGwVEJrQ2BSZyBOA0qUcZhjbVVj5Hte4teiC3bJFyEKVYPUSqYfAmvOit3o
-         H10Yx+EBvcTFLI/I6dWQjNkRRL2ENKHmkZKKtbx76Jd1bbCESZ1zbdQD2rDKd5xuT8Xr
-         5wC36jcM9CT+skEFLwhQ4wIfnNXXpWWY4uKSh19OT5CltAqQDXqCc0dA/YLg6Tc+Ayd0
-         Ra91tYwjq/vMPjRJh73oq6Hseg3C0D0XJ+oREdGO7+oQ2wxiQGdKzeZAEdrUcuDIl+vs
-         xidMWt1xUfXXwU1fPF27DJYJ7OocSrxCWfbrhTwVO1wGUO3bJHweTq/as7v8twDhp2LR
-         r6mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EpziU3n1BW5TLHQT8FQscf45CBaREelPg2coeu8/dVQ=;
-        b=c0zKp+PRdwvfeH7nfyRqlZBF2uEpAPnkTrw+YrRBeSl+hKK8uvMzR8Rkb7LsBQQVDR
-         VfDa8McXCatRiPJ8iyvt+E6FUPO2wlwYBcb1HbZC35xKTPOLj2iVkysBPk30fphpeCDq
-         5CXEPeeYmJb6Vs18sLH4f5qUhe6mFMa0dJCGDvuuVvaNMqY2MICRGdL8KPgu7dcACIW3
-         ku/1lo+7dQMA8Ny4DQl2m4BmBaqG7kEMiw4QsHvTLoYQLJKDMvLruT6IbSxrrI5wjXRh
-         xyglAg6P7GS8NPp8nxfRY6gA9F5UVh0He9HQEnkpgGYUR9WcDWwkR2FsZ0/kmp7MPwSl
-         jOVA==
-X-Gm-Message-State: APjAAAX0q/nMYKKYd3k2BH7EtPk4YpYjMges/GZWTswvvLP22klSfocg
-        Z4e31sE5eu8ugWnF9WcnJviMxugh7J/i/SbcEOY=
-X-Google-Smtp-Source: APXvYqx3ye/RxIPpV3svQCJ4zX0dnZOKXMO8w79UOdtPMbx1hABpnBd3Hy5aphbwPtqSPIfRyTOPL8O8scVa13McSKk=
-X-Received: by 2002:a5d:4688:: with SMTP id u8mr21495307wrq.40.1573495082976;
- Mon, 11 Nov 2019 09:58:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20191109093725.42364-1-yuehaibing@huawei.com>
-In-Reply-To: <20191109093725.42364-1-yuehaibing@huawei.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 11 Nov 2019 12:57:49 -0500
-Message-ID: <CADnq5_PcSdTm9yKdbv=QHFtGeO58a30wZ0KxjQUNqy3Aax9thg@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amd/display: remove set but not used variable 'ds_port'
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
-        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
+        Mon, 11 Nov 2019 13:11:14 -0500
+X-Greylist: delayed 1501 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Nov 2019 13:11:13 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 19956400C47C9
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:16:44 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id UDRXiLk0wW4frUDRXinZfu; Mon, 11 Nov 2019 11:25:35 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=obJGNctpNomw0ORl8GMTnOXHVQTOW6QwMfGlRbchZDQ=; b=viQc/KpkyqpjaooaNayckCTFw5
+        jPT+0IfyxeHPWb8eVLnXjU0UNzYGM+p0EvVAX8Ex1+EUwP1W+zbACBcdlQaS8+bCFJnU7q1PjsXXu
+        bC0NPhCyZxaLPIp76IzUT8B2V/swRFzeHxsKtalaVs43Pc8DQ+vNNE1B+cJA78YL3wZ6fl9fZegLg
+        n4/aIk6NZOtbzzNEKxJad2pCp/locExG7MJulTuSwcfXn/84kPBCbUQGwylAdhgCNHGmU9h4XCBqs
+        Br+CFXHcgMvh2BTDHzYfbkhfWPE8MP1uDDjm0hnx5Tltn0FYqZ7SvKEb7Peel/MPrZ9EbCzSs3rHL
+        giAKWVQg==;
+Received: from [187.192.2.30] (port=45762 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iUDRU-001CZi-Un; Mon, 11 Nov 2019 11:25:33 -0600
+Date:   Mon, 11 Nov 2019 11:25:43 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mikita Lipski <mikita.lipski@amd.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/amd/display: Fix unsigned variable compared to less than
+ zero
+Message-ID: <20191111172543.GA31748@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.2.30
+X-Source-L: No
+X-Exim-ID: 1iUDRU-001CZi-Un
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.2.30]:45762
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied.  thanks!
+Currenly, the error check below on variable *vcpi_slots* is always
+false because it is a uint64_t type variable, hence, the values
+this variable can hold are never less than zero:
 
-Alex
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:
+4870         if (dm_new_connector_state->vcpi_slots < 0) {
+4871                 DRM_DEBUG_ATOMIC("failed finding vcpi slots: %d\n", (int)dm_new_connector_stat     e->vcpi_slots);
+4872                 return dm_new_connector_state->vcpi_slots;
+4873         }
 
-On Sun, Nov 10, 2019 at 9:29 PM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c: In function dp_wa_power_up_0010FA:
-> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c:2320:35: warning:
->  variable ds_port set but not used [-Wunused-but-set-variable]
->
-> It is never used, so can be removed.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> index 65de32f..b814b74 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> @@ -2910,7 +2910,6 @@ static void dp_wa_power_up_0010FA(struct dc_link *link, uint8_t *dpcd_data,
->                 int length)
->  {
->         int retry = 0;
-> -       union dp_downstream_port_present ds_port = { 0 };
->
->         if (!link->dpcd_caps.dpcd_rev.raw) {
->                 do {
-> @@ -2923,9 +2922,6 @@ static void dp_wa_power_up_0010FA(struct dc_link *link, uint8_t *dpcd_data,
->                 } while (retry++ < 4 && !link->dpcd_caps.dpcd_rev.raw);
->         }
->
-> -       ds_port.byte = dpcd_data[DP_DOWNSTREAMPORT_PRESENT -
-> -                                DP_DPCD_REV];
-> -
->         if (link->dpcd_caps.dongle_type == DISPLAY_DONGLE_DP_VGA_CONVERTER) {
->                 switch (link->dpcd_caps.branch_dev_id) {
->                 /* 0010FA active dongles (DP-VGA, DP-DLDVI converters) power down
-> --
-> 2.7.4
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Fix this by making *vcpi_slots* of int type.
+
+Addresses-Coverity: 1487838 ("Unsigned compared against 0")
+Fixes: b4c578f08378 ("drm/amd/display: Add MST atomic routines")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+index 6db07e9e33ab..a8fc90a927d6 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+@@ -403,7 +403,7 @@ struct dm_connector_state {
+ 	bool underscan_enable;
+ 	bool freesync_capable;
+ 	uint8_t abm_level;
+-	uint64_t vcpi_slots;
++	int vcpi_slots;
+ 	uint64_t pbn;
+ };
+ 
+-- 
+2.23.0
+
