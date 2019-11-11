@@ -2,135 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98C5FF70C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7901F70EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:38:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKKJbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 04:31:36 -0500
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:4244 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726770AbfKKJbf (ORCPT
+        id S1726913AbfKKJix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 04:38:53 -0500
+Received: from proxmox-new.maurer-it.com ([212.186.127.180]:52551 "EHLO
+        proxmox-new.maurer-it.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbfKKJix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 04:31:35 -0500
-Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAB9Rnkv015948;
-        Mon, 11 Nov 2019 04:31:16 -0500
-Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2055.outbound.protection.outlook.com [104.47.46.55])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2w6v7aa73x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Nov 2019 04:31:16 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gQFiZSXNLpEgFdph2WD2H2yTWrsNGOCCtvCOecpt3ZBauK38ZmN6//jEd6exP8bDIjlcGTjgOKLWPkBCQCEgxrYNjntq+++0sWG72BUG5VXc1cwp+khBOHE4HAuPy9LTEFc3h4s2wUBHr9UQwlfTYvx4uh9bbO4ZjzwUrPIoWu5A9AeF+HkWUkIA1QyRAmtokTUDHRx268Jpu+QbHvUhGAISVE0MTbKQ1gFVet1hJPNfgLYU3RDy9HwjTOgWsXfUUebhRHs4LjMEEpGRbsFAX+ROggN93pTGMD7nJLueer/Vb1PROr0i1WQRi/bfSNMY5tuX41+Uq0H9+ekG9Eq17w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/B2rZDkhne6UGl/pnWPBTWb/l0O96FjaR3scAu9+z4E=;
- b=Dte7q5Ui9AQpw4KXt3COqedLF63MEDX2eEJEnlpL/hkursloiTBEE6Z6s7zYIwt0Y7lNjVacTGc3UDgXdrJW4WX7VAoAZ7R7GkZ8bhO+ykXFQIsaMSFZLW+8zWTPjAaDeEuOk7YPklObPOjfvS4EVMCl7LA0X8jj3uxq385OcIT5w3DlRxagxIkoTj8n6ch6t/R8QVNoAQ6wbHFU8mpXiwhDosbPqibZGw8jee+iEonq2c6fGDCxjFSbZGWD0wAhHnk6BbJXyF5k61mfuvXgmM4rk7nWRkmozN7HLjsU1Mcqhrj535rbL5lrE9IHcJOpTSke7iXhBTpl+pg/Lzx7TA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
- dkim=pass header.d=analog.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/B2rZDkhne6UGl/pnWPBTWb/l0O96FjaR3scAu9+z4E=;
- b=kXmJXhCCXxl69f0bQx+bvNWY6sHWLWvHLns1foN1IvlTdPInYmm0fWXoHG2kVoPQ7ejnY+esywD1Dov9QUrsDI3f8A2nSihMS5dNaL84d2r3jD2N46/u6qJq1NXNTuLUYr6wdHxZpWaEqNFlPcRZVKmr+GViaODw5KBaLU8CcMc=
-Received: from CH2PR03MB5192.namprd03.prod.outlook.com (20.180.12.152) by
- CH2PR03MB5254.namprd03.prod.outlook.com (20.180.4.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.22; Mon, 11 Nov 2019 09:31:15 +0000
-Received: from CH2PR03MB5192.namprd03.prod.outlook.com
- ([fe80::99:71f2:a588:977c]) by CH2PR03MB5192.namprd03.prod.outlook.com
- ([fe80::99:71f2:a588:977c%3]) with mapi id 15.20.2430.027; Mon, 11 Nov 2019
- 09:31:15 +0000
-From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-CC:     "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "jsarha@ti.com" <jsarha@ti.com>,
-        "horms@verge.net.au" <horms@verge.net.au>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "ce3a@gmx.de" <ce3a@gmx.de>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>
-Subject: Re: [PATCH v3] clk: clk-gpio: propagate rate change to parent
-Thread-Topic: [PATCH v3] clk: clk-gpio: propagate rate change to parent
-Thread-Index: AQHVlgR4WDw8avjBmkqVept8rTPe66eBxWqAgAP0TgA=
-Date:   Mon, 11 Nov 2019 09:31:15 +0000
-Message-ID: <f219739b465f32d0f1b8fe75c137581a44257744.camel@analog.com>
-References: <20191106113551.5557-1-alexandru.ardelean@analog.com>
-         <20191108071718.17985-1-alexandru.ardelean@analog.com>
-         <20191108210854.95C8C20869@mail.kernel.org>
-In-Reply-To: <20191108210854.95C8C20869@mail.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.71.226.54]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4e72ce60-95cd-47de-8148-08d76689e649
-x-ms-traffictypediagnostic: CH2PR03MB5254:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR03MB5254082E4DED19A942E78FB6F9740@CH2PR03MB5254.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0218A015FA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(396003)(376002)(136003)(199004)(189003)(229853002)(186003)(8676002)(5660300002)(8936002)(11346002)(2616005)(99286004)(446003)(81156014)(81166006)(305945005)(7736002)(2906002)(6506007)(66066001)(102836004)(76176011)(26005)(71190400001)(71200400001)(2501003)(476003)(25786009)(36756003)(256004)(66476007)(4326008)(3846002)(6116002)(118296001)(6246003)(6512007)(66556008)(478600001)(6486002)(54906003)(486006)(66946007)(76116006)(66446008)(64756008)(6436002)(14454004)(86362001)(7416002)(316002)(2201001)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR03MB5254;H:CH2PR03MB5192.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: analog.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: gKTmfvEu63ZeiRJFymRz03iVw+n0Vh/Sn4EQ0vTSgvAHvw62CpjTld2jV8mL3/OwCLaImweokK1loZhcmVDIW+h+paYmnJNwvJhh6h+UFoGeKknNj30AmND2811WDnDIhNFKY+8UhVMQJ+Uy58srhI2faeclnGa8rDGWqv9rqNdq9k5hU2SzSyjJkWoxSsm+Ma1YAtlqs0y3xYhV4fCuQksBhSCzPynKAkDSN0WlUUvzs2n0fC5IokkbsGXa/2ca+3HTh96hOOSkJ+jFd5DbFEVB/1zHT/pUmSD1SHSzOZ01MxDMxNZljqxr3bVzho3tVGSFwwd+U+HTsclaIVgNddmD+M/RuDgYU9/Kdl0VEr2V9T/vy6rSjGhRJxHY6uEsLVB1QRqnsfWsV2IOTifeJNEH2Dtis5FJhFz0jSYsqSy4n59x1gmb2QWDGQVeQ/+p
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0C4D07FF9DA1804F84BE7DC3B13B638F@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 11 Nov 2019 04:38:53 -0500
+X-Greylist: delayed 403 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Nov 2019 04:38:51 EST
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+        by proxmox-new.maurer-it.com (Proxmox) with ESMTP id DE1AB46945;
+        Mon, 11 Nov 2019 10:32:07 +0100 (CET)
+Subject: Re: [PATCH 4.19 167/211] KVM: x86: Manually calculate reserved bits
+ when loading PDPTRS
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
+        Doug Reiland <doug.reiland@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Peter Xu <peterx@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <20191003154447.010950442@linuxfoundation.org>
+ <20191003154525.870373223@linuxfoundation.org>
+From:   Thomas Lamprecht <t.lamprecht@proxmox.com>
+Message-ID: <68d02406-b9cc-2fc1-848c-5d272d9a3350@proxmox.com>
+Date:   Mon, 11 Nov 2019 10:32:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:71.0) Gecko/20100101
+ Thunderbird/71.0
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e72ce60-95cd-47de-8148-08d76689e649
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2019 09:31:15.4910
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dqCWkNxTT9zAjMRIjIWBWleu/cqfrOcWGe8tIiPP37VaHHlmiKB+Mp43NkKa143cLYGAsk8IEzMJ4uPCoHpkiDhW/ZEPbqaOAis5errgpAE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR03MB5254
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-11_02:2019-11-08,2019-11-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 phishscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911110094
+In-Reply-To: <20191003154525.870373223@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTExLTA4IGF0IDEzOjA4IC0wODAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
-IFF1b3RpbmcgQWxleGFuZHJ1IEFyZGVsZWFuICgyMDE5LTExLTA3IDIzOjE3OjE4KQ0KPiA+IEZy
-b206IE1pY2hhZWwgSGVubmVyaWNoIDxtaWNoYWVsLmhlbm5lcmljaEBhbmFsb2cuY29tPg0KPiA+
-IA0KPiA+IEZvciBhbiBleHRlcm5hbCBjbG9jayBzb3VyY2UsIHdoaWNoIGlzIGdhdGVkIHZpYSBh
-IEdQSU8sIHRoZQ0KPiA+IHJhdGUgY2hhbmdlIHNob3VsZCB0eXBpY2FsbHkgYmUgcHJvcGFnYXRl
-ZCB0byB0aGUgcGFyZW50IGNsb2NrLg0KPiA+IA0KPiA+IFRoZSBzaXR1YXRpb24gd2hlcmUgd2Ug
-YXJlIHJlcXVpcmluZyB0aGlzIHByb3BhZ2F0aW9uLCBpcyB3aGVuIGFuDQo+ID4gZXh0ZXJuYWwg
-Y2xvY2sgaXMgY29ubmVjdGVkIHRvIG92ZXJyaWRlIGFuIGludGVybmFsIGNsb2NrICh3aGljaA0K
-PiA+IHR5cGljYWxseQ0KPiA+IGhhcyBhIGZpeGVkIHJhdGUpLiBUaGUgZXh0ZXJuYWwgY2xvY2sg
-Y2FuIGhhdmUgYSBkaWZmZXJlbnQgcmF0ZSB0aGFuDQo+ID4gdGhlDQo+ID4gaW50ZXJuYWwgb25l
-LCBhbmQgbWF5IGFsc28gYmUgdmFyaWFibGUsIHRodXMgcmVxdWlyaW5nIHRoZSByYXRlDQo+ID4g
-cHJvcGFnYXRpb24uDQo+ID4gDQo+ID4gVGhpcyByYXRlIGNoYW5nZSB3YXNuJ3QgcHJvcGFnYXRl
-ZCB1bnRpbCBub3csIGFuZCBpdCdzIHVuY2xlYXIgYWJvdXQNCj4gPiBjYXNlcw0KPiA+IHdoZXJl
-IHRoaXMgc2hvdWxkbid0IGJlIHByb3BhZ2F0ZWQuIFRodXMsIGl0J3MgdW5jbGVhciB3aGV0aGVy
-IHRoaXMgaXMNCj4gPiBmaXhpbmcgYSBidWcsIG9yIGV4dGVuZGluZyB0aGUgY3VycmVudCBkcml2
-ZXIgYmVoYXZpb3IuIEFsc28sIGl0J3MNCj4gPiB1bnN1cmUNCj4gPiBhYm91dCB3aGV0aGVyIHRo
-aXMgbWF5IGJyZWFrIGFueSBleGlzdGluZyBzZXR1cHM7IGluIHRoZSBjYXNlIHRoYXQgaXQNCj4g
-PiBkb2VzLA0KPiA+IGEgZGV2aWNlLXRyZWUgcHJvcGVydHkgbWF5IGJlIGFkZGVkIHRvIGRpc2Fi
-bGUgdGhpcyBmbGFnLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1pY2hhZWwgSGVubmVyaWNo
-IDxtaWNoYWVsLmhlbm5lcmljaEBhbmFsb2cuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFsZXhh
-bmRydSBBcmRlbGVhbiA8YWxleGFuZHJ1LmFyZGVsZWFuQGFuYWxvZy5jb20+DQo+ID4gLS0tDQo+
-IA0KPiBBcHBsaWVkIHRvIGNsay1uZXh0DQo+IA0KPiBOZXh0IHRpbWUgcGxlYXNlIHNlbmQgYXMg
-YSBuZXcgdG9waWMgaW5zdGVhZCBvZiBhIHJlcGx5IHRvIHRoZSBvcmlnaW5hbA0KPiBwYXRjaC4g
-TWFrZXMgaXQgZWFzaWVyIGZvciBtZSB0byBhcHBseSB0aGUgcGF0Y2guDQo+IA0KDQpBY2suDQpX
-aWxsIGRvIHRoYXQuDQoNClRoYW5rcw0KQWxleA0K
+On 10/3/19 5:53 PM, Greg Kroah-Hartman wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> commit 16cfacc8085782dab8e365979356ce1ca87fd6cc upstream.
+> 
+> Manually generate the PDPTR reserved bit mask when explicitly loading
+> PDPTRs.  The reserved bits that are being tracked by the MMU reflect the
+> current paging mode, which is unlikely to be PAE paging in the vast
+> majority of flows that use load_pdptrs(), e.g. CR0 and CR4 emulation,
+> __set_sregs(), etc...  This can cause KVM to incorrectly signal a bad
+> PDPTR, or more likely, miss a reserved bit check and subsequently fail
+> a VM-Enter due to a bad VMCS.GUEST_PDPTR.
+> 
+> Add a one off helper to generate the reserved bits instead of sharing
+> code across the MMU's calculations and the PDPTR emulation.  The PDPTR
+> reserved bits are basically set in stone, and pushing a helper into
+> the MMU's calculation adds unnecessary complexity without improving
+> readability.
+> 
+> Oppurtunistically fix/update the comment for load_pdptrs().
+> 
+> Note, the buggy commit also introduced a deliberate functional change,
+> "Also remove bit 5-6 from rsvd_bits_mask per latest SDM.", which was
+> effectively (and correctly) reverted by commit cd9ae5fe47df ("KVM: x86:
+> Fix page-tables reserved bits").  A bit of SDM archaeology shows that
+> the SDM from late 2008 had a bug (likely a copy+paste error) where it
+> listed bits 6:5 as AVL and A for PDPTEs used for 4k entries but reserved
+> for 2mb entries.  I.e. the SDM contradicted itself, and bits 6:5 are and
+> always have been reserved.
+> 
+> Fixes: 20c466b56168d ("KVM: Use rsvd_bits_mask in load_pdptrs()")
+> Cc: stable@vger.kernel.org
+> Cc: Nadav Amit <nadav.amit@gmail.com>
+> Reported-by: Doug Reiland <doug.reiland@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  arch/x86/kvm/x86.c |   11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -581,8 +581,14 @@ static int kvm_read_nested_guest_page(st
+>  				       data, offset, len, access);
+>  }
+>  
+> +static inline u64 pdptr_rsvd_bits(struct kvm_vcpu *vcpu)
+> +{
+> +	return rsvd_bits(cpuid_maxphyaddr(vcpu), 63) | rsvd_bits(5, 8) |
+> +	       rsvd_bits(1, 2);
+> +}
+> +
+>  /*
+> - * Load the pae pdptrs.  Return true is they are all valid.
+> + * Load the pae pdptrs.  Return 1 if they are all valid, 0 otherwise.
+>   */
+>  int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
+>  {
+> @@ -601,8 +607,7 @@ int load_pdptrs(struct kvm_vcpu *vcpu, s
+>  	}
+>  	for (i = 0; i < ARRAY_SIZE(pdpte); ++i) {
+>  		if ((pdpte[i] & PT_PRESENT_MASK) &&
+> -		    (pdpte[i] &
+> -		     vcpu->arch.mmu.guest_rsvd_check.rsvd_bits_mask[0][2])) {
+> +		    (pdpte[i] & pdptr_rsvd_bits(vcpu))) {
+>  			ret = 0;
+>  			goto out;
+>  		}
+> 
+> 
+> 
+
+
+first off, I hope that I'm not a bit blunt to just message you all here :)
+
+It seems that a backport of this to stable and distro kernels tickled out
+some issue[0] for KVM Linux 64bit guests on older than about 8-10 year old
+Intel CPUs[1].
+
+Basically, booting this kernel as host, then running an KVM guest distro
+or kernel fails it that guest kernel early in the boot phase without any
+error or other log to serial console, earlyprintk.
+
+Quickest test here, boot the booted kernel with QEMU/KVM, e.g.:
+# qemu-system-x86_64 -enable-kvm -kernel /boot/vmlinuz-4.19.77 -nographic -append console=ttyS0
+
+FYI: booting a "problematic" kernel (e.g., 4.19.77) as guest kernel while
+having a good host kernel (e.g., 4.19.76) works just fine.
+
+As this does not happen when applying it on a 5.3.7 kernel (e.g.,
+Ubuntu-5.3.0-21.22 which includes this works just fine), so IMO the
+questions is: what other patch is missing from the backport of this one?
+
+I did not immediately find a fix or some related change which seemed like
+the reason for above working with 5.3.7 but not with the stable 4.19.77 to
+4.19.81 or Ubuntu's Disco 5.0.21 based kernel, so I started a reverse bisect
+between the known-bad 5.2 and the known-good 5.3-rc1, at each step
+cherry-picking this "manual calculate reserved bits when loading PDPTRS"
+commit, which made the issues show up.
+
+But I could not single out a definitive (supporting) commit for this,
+albeit, as you see in the rev-bisect log[2], I had found some promising
+commit, but once I only applied that one as single cherry-pick, the
+"reboot looping KVM Linux guest" issue did show up again... But maybe I
+also just made an error during bisecting, and came to wrong conclusions..
+
+In a act of desperation I then tried to cherry-pick all "arch/x86/kvm"
+commits, i.e., those found with:
+# git log --no-merges --oneline v5.2..v5.3-rc1 -- arch/x86/kvm/
+but to no avail, so there may be more than one supporting commit needed,
+but that's just guessing. I think you people have surely an better idea
+about what the underlying issue could be.
+
+cheers,
+Thomas
+
+[0]: https://bugzilla.kernel.org/show_bug.cgi?id=205441
+[1]: models tested as problematic are: intel core2duo E8500; Xeon E5420; so
+     westmere, conroe and that stuff. AFAICT anything from about pre-2010 which
+     has VMX support (i.e. is 64bit based)
+[2]: git reverse bisect log:
+ git bisect start '--term-new=fixed' '--term-old=broken'
+ # fixed: [4d856f72c10ecb060868ed10ff1b1453943fc6c8] Linux 5.3
+ git bisect fixed 4d856f72c10ecb060868ed10ff1b1453943fc6c8
+ # broken: [0ecfebd2b52404ae0c54a878c872bb93363ada36] Linux 5.2
+ git bisect broken 0ecfebd2b52404ae0c54a878c872bb93363ada36
+ # fixed: [43c95d3694cc448fdf50bd53b7ff3a5bb4655883] Merge tag 'pinctrl-v5.3-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+ git bisect fixed 43c95d3694cc448fdf50bd53b7ff3a5bb4655883
+ # broken: [8f6ccf6159aed1f04c6d179f61f6fb2691261e84] Merge tag 'clone3-v5.3' of git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux
+ git bisect broken 8f6ccf6159aed1f04c6d179f61f6fb2691261e84
+ # broken: [753c8d9b7d81206bb5d011b28abe829d364b028e] Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+ git bisect broken 753c8d9b7d81206bb5d011b28abe829d364b028e
+ # broken: [d72619706abc4aa7e540ea882dae883cee7cc3b3] Merge tag 'tty-5.3-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty
+ git bisect broken d72619706abc4aa7e540ea882dae883cee7cc3b3
+ # broken: [f632a8170a6b667ee4e3f552087588f0fe13c4bb] Merge tag 'driver-core-5.3-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
+ git bisect broken f632a8170a6b667ee4e3f552087588f0fe13c4bb
+ # fixed: [5010fe9f095414b959fd6fda63986dc90fd0c419] Merge tag 'vfs-fix-ioctl-checking-3' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
+ git bisect fixed 5010fe9f095414b959fd6fda63986dc90fd0c419
+ # fixed: [a45ff5994c9cde41af627c46abb9f32beae68943] Merge tag 'kvm-arm-for-5.3' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
+ git bisect fixed a45ff5994c9cde41af627c46abb9f32beae68943
+ # fixed: [2183f5645ae7e074ed1777f3de9a782dd23db248] KVM: VMX: Shadow VMCS primary execution controls
+ git bisect fixed 2183f5645ae7e074ed1777f3de9a782dd23db248
+ # fixed: [2ea72039808d50c909c2eb00eaebfaaaa743927a] kvm: nVMX: small cleanup in handle_exception
+ git bisect fixed 2ea72039808d50c909c2eb00eaebfaaaa743927a
+ # fixed: [fb89f4ea7feb1e605f8f405d256c56d8ad69125c] kvm: selftests: introduce aarch64_vcpu_add_default
+ git bisect fixed fb89f4ea7feb1e605f8f405d256c56d8ad69125c
+ # fixed: [f257d6dcda0187693407e0c2e5dab69bdab3223f] KVM: Directly return result from kvm_arch_check_processor_compat()
+ git bisect fixed f257d6dcda0187693407e0c2e5dab69bdab3223f
+ # fixed: [84ea3acaa01fb90861b341038998e27a5198e1a0] KVM: LAPIC: Extract adaptive tune timer advancement logic
+ git bisect fixed 84ea3acaa01fb90861b341038998e27a5198e1a0
+ # fixed: [f3ecb59dd49f1742b97df6ba071aaa3d031154ac] kvm: x86: Fix reserved bits related calculation errors caused by MKTME
+ git bisect fixed f3ecb59dd49f1742b97df6ba071aaa3d031154ac 
+
