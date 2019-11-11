@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19686F7BD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 557B8F7DA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:58:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbfKKSkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:40:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59390 "EHLO mail.kernel.org"
+        id S1730103AbfKKS6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:58:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727296AbfKKSkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:40:14 -0500
+        id S1730977AbfKKS6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:58:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19A2920659;
-        Mon, 11 Nov 2019 18:40:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7399721655;
+        Mon, 11 Nov 2019 18:58:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497613;
-        bh=cHqpv/pza6dFpwESlSPOwmQg0ZS8Ih8SpkRVgGsgrB0=;
+        s=default; t=1573498716;
+        bh=eZv+YpP5eYDz+Bio6+BQJrk0ecW2XPekj7nIgLLMGeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mns/01Yv8/O6f9Y3+P+nVxw1UO8WdLeB2kgRVah+phIf0hGvMCauESb39cUXHaSQW
-         QyCJsgVNy4F50ZWPSWSlP5DUooOkCd8ngnofGCnJQwTvypjWoaR3ELNMxFB9xbV9NP
-         VoueZiFtN0SAoJ9xS5I8/kblNfU7eomYHAbkwX98=
+        b=kzotdb+bpQ0BWU8qFlOiAtbzQdA8zpcMoRCGLTMR/Rpo1EykdX+gZOYsjsAFt5Mpo
+         jpwfYeQzjT+6uRYsTTvw6bOXjeiuUuYoUtK1m15B4CXYNzDHcG0kSI7iP35ifD/9xz
+         hg23uJB1dHf8omlXKKki/bjbCyv9VZKH2SnDMwKA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dakshaja Uppalapati <dakshaja@chelsio.com>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 091/105] RDMA/iw_cxgb4: Avoid freeing skb twice in arp failure case
+Subject: [PATCH 5.3 159/193] wimax: i2400: Fix memory leak in i2400m_op_rfkill_sw_toggle
 Date:   Mon, 11 Nov 2019 19:29:01 +0100
-Message-Id: <20191111181448.000765053@linuxfoundation.org>
+Message-Id: <20191111181512.857464569@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Potnuri Bharat Teja <bharat@chelsio.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit d4934f45693651ea15357dd6c7c36be28b6da884 ]
+[ Upstream commit 6f3ef5c25cc762687a7341c18cbea5af54461407 ]
 
-_put_ep_safe() and _put_pass_ep_safe() free the skb before it is freed by
-process_work(). fix double free by freeing the skb only in process_work().
+In the implementation of i2400m_op_rfkill_sw_toggle() the allocated
+buffer for cmd should be released before returning. The
+documentation for i2400m_msg_to_dev() says when it returns the buffer
+can be reused. Meaning cmd should be released in either case. Move
+kfree(cmd) before return to be reached by all execution paths.
 
-Fixes: 1dad0ebeea1c ("iw_cxgb4: Avoid touch after free error in ARP failure handlers")
-Link: https://lore.kernel.org/r/1572006880-5800-1-git-send-email-bharat@chelsio.com
-Signed-off-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
-Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 2507e6ab7a9a ("wimax: i2400: fix memory leak")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/cxgb4/cm.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wimax/i2400m/op-rfkill.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-index d87f08cd78ad4..bb36cdf82a8d6 100644
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -491,7 +491,6 @@ static int _put_ep_safe(struct c4iw_dev *dev, struct sk_buff *skb)
- 
- 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
- 	release_ep_resources(ep);
--	kfree_skb(skb);
- 	return 0;
- }
- 
-@@ -502,7 +501,6 @@ static int _put_pass_ep_safe(struct c4iw_dev *dev, struct sk_buff *skb)
- 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
- 	c4iw_put_ep(&ep->parent_ep->com);
- 	release_ep_resources(ep);
--	kfree_skb(skb);
- 	return 0;
+diff --git a/drivers/net/wimax/i2400m/op-rfkill.c b/drivers/net/wimax/i2400m/op-rfkill.c
+index 8efb493ceec2f..5c79f052cad20 100644
+--- a/drivers/net/wimax/i2400m/op-rfkill.c
++++ b/drivers/net/wimax/i2400m/op-rfkill.c
+@@ -127,12 +127,12 @@ int i2400m_op_rfkill_sw_toggle(struct wimax_dev *wimax_dev,
+ 			"%d\n", result);
+ 	result = 0;
+ error_cmd:
+-	kfree(cmd);
+ 	kfree_skb(ack_skb);
+ error_msg_to_dev:
+ error_alloc:
+ 	d_fnend(4, dev, "(wimax_dev %p state %d) = %d\n",
+ 		wimax_dev, state, result);
++	kfree(cmd);
+ 	return result;
  }
  
 -- 
