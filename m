@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D1CBF7E56
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1331F7EF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:08:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfKKSrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39646 "EHLO mail.kernel.org"
+        id S1728982AbfKKSiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:38:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730050AbfKKSq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:46:59 -0500
+        id S1728970AbfKKSiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:38:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14F9621655;
-        Mon, 11 Nov 2019 18:46:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 380DB204FD;
+        Mon, 11 Nov 2019 18:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498018;
-        bh=xmWQpLT2KJLMmCxIVrT4Qukhiz7jYNjuK8yXyTX1ISM=;
+        s=default; t=1573497497;
+        bh=lWYXohEveQ9l45sEh9RSFjZwLmKDb85yvXYMavMpE8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MSXDGjA61GmdkcEB8ZnmHPUVPVIc+93w5FkAwRDdKzYaKpZhZBkWuk6jI4HlIAAwB
-         CxsZC7zdz2J+sVcnwlhCA0f2weoYQm1N/3pxxd6AmEDeTaHOSR3YpQn56GXb5KBSPd
-         /vfaVjBwg15iTmXIeHFghEEOxxSC5xjOs0BRSEeg=
+        b=yNitIQTuNwWQlGr766FR2ftyArrZERQepCynuZFmnjP9paPs9tnyncHxis2qeJGpq
+         OT1Vkeck6HYyW7qg41VcCnxGw4aIyDDT5phkldzOz7qZxdk286ar87oxlgLd3PeP6m
+         fIT9W51izacVPzp7nMEkIbYrcidFVtNdbUoYW0Sg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 084/125] netfilter: nf_flow_table: set timeout before insertion into hashes
-Date:   Mon, 11 Nov 2019 19:28:43 +0100
-Message-Id: <20191111181451.347524746@linuxfoundation.org>
+Subject: [PATCH 4.14 074/105] RDMA/uverbs: Prevent potential underflow
+Date:   Mon, 11 Nov 2019 19:28:44 +0100
+Message-Id: <20191111181446.065683727@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,61 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit daf61b026f4686250e6afa619e6d7b49edc61df7 ]
+[ Upstream commit a9018adfde809d44e71189b984fa61cc89682b5e ]
 
-Other garbage collector might remove an entry not fully set up yet.
+The issue is in drivers/infiniband/core/uverbs_std_types_cq.c in the
+UVERBS_HANDLER(UVERBS_METHOD_CQ_CREATE) function.  We check that:
 
-[570953.958293] RIP: 0010:memcmp+0x9/0x50
-[...]
-[570953.958567]  flow_offload_hash_cmp+0x1e/0x30 [nf_flow_table]
-[570953.958585]  flow_offload_lookup+0x8c/0x110 [nf_flow_table]
-[570953.958606]  nf_flow_offload_ip_hook+0x135/0xb30 [nf_flow_table]
-[570953.958624]  nf_flow_offload_inet_hook+0x35/0x37 [nf_flow_table_inet]
-[570953.958646]  nf_hook_slow+0x3c/0xb0
-[570953.958664]  __netif_receive_skb_core+0x90f/0xb10
-[570953.958678]  ? ip_rcv_finish+0x82/0xa0
-[570953.958692]  __netif_receive_skb_one_core+0x3b/0x80
-[570953.958711]  __netif_receive_skb+0x18/0x60
-[570953.958727]  netif_receive_skb_internal+0x45/0xf0
-[570953.958741]  napi_gro_receive+0xcd/0xf0
-[570953.958764]  ixgbe_clean_rx_irq+0x432/0xe00 [ixgbe]
-[570953.958782]  ixgbe_poll+0x27b/0x700 [ixgbe]
-[570953.958796]  net_rx_action+0x284/0x3c0
-[570953.958817]  __do_softirq+0xcc/0x27c
-[570953.959464]  irq_exit+0xe8/0x100
-[570953.960097]  do_IRQ+0x59/0xe0
-[570953.960734]  common_interrupt+0xf/0xf
+        if (attr.comp_vector >= attrs->ufile->device->num_comp_vectors) {
 
-Fixes: 43c8f131184f ("netfilter: nf_flow_table: fix missing error check for rhashtable_insert_fast")
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+But we don't check if "attr.comp_vector" is negative.  It could
+potentially lead to an array underflow.  My concern would be where
+cq->vector is used in the create_cq() function from the cxgb4 driver.
+
+And really "attr.comp_vector" is appears as a u32 to user space so that's
+the right type to use.
+
+Fixes: 9ee79fce3642 ("IB/core: Add completion queue (cq) object actions")
+Link: https://lore.kernel.org/r/20191011133419.GA22905@mwanda
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_flow_table_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/uverbs.h | 2 +-
+ include/rdma/ib_verbs.h          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nf_flow_table_core.c b/net/netfilter/nf_flow_table_core.c
-index 8ade405129444..70bd730ca0597 100644
---- a/net/netfilter/nf_flow_table_core.c
-+++ b/net/netfilter/nf_flow_table_core.c
-@@ -187,6 +187,8 @@ int flow_offload_add(struct nf_flowtable *flow_table, struct flow_offload *flow)
- {
- 	int err;
+diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
+index 37c8903e7fd0c..8d79a48ccd388 100644
+--- a/drivers/infiniband/core/uverbs.h
++++ b/drivers/infiniband/core/uverbs.h
+@@ -87,7 +87,7 @@
  
-+	flow->timeout = (u32)jiffies + NF_FLOW_TIMEOUT;
-+
- 	err = rhashtable_insert_fast(&flow_table->rhashtable,
- 				     &flow->tuplehash[0].node,
- 				     nf_flow_offload_rhash_params);
-@@ -203,7 +205,6 @@ int flow_offload_add(struct nf_flowtable *flow_table, struct flow_offload *flow)
- 		return err;
- 	}
+ struct ib_uverbs_device {
+ 	atomic_t				refcount;
+-	int					num_comp_vectors;
++	u32					num_comp_vectors;
+ 	struct completion			comp;
+ 	struct device			       *dev;
+ 	struct ib_device	__rcu	       *ib_dev;
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index b8a5118b6a428..4a43193319894 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -306,7 +306,7 @@ enum ib_cq_creation_flags {
  
--	flow->timeout = (u32)jiffies + NF_FLOW_TIMEOUT;
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(flow_offload_add);
+ struct ib_cq_init_attr {
+ 	unsigned int	cqe;
+-	int		comp_vector;
++	u32		comp_vector;
+ 	u32		flags;
+ };
+ 
 -- 
 2.20.1
 
