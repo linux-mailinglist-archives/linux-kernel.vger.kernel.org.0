@@ -2,100 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 188B4F76FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 264A9F7663
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 15:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbfKKOrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 09:47:46 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:40984 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbfKKOr2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 09:47:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LFQwvvnKEMmErblNKbs48mN5sa0jPCoHfpYrCHI0bMk=; b=BJ83ZQEIlkrlI665hKreyC36Be
-        I5A2511CIDXVPEvc9wDiOeGx3hukGLw11XQx+Ox8Rd+PXgRIIc2GfVaNot27TOeiFgFs8Y2oca4li
-        3GO//5dXw4WrPldbYUc23wUPXURMEfh4WM5q5t52ES9kbusHkynw12KnQOjfN1PZyVj5shkwMaE0L
-        sb/OmBQB9HCOURENzSgNDzSD3WVAR49WEs5MhO6FCMrJjU0b++d5UzklvsBcK2CwueOs3NK7fOaba
-        ma1UckS0q4UOTtFInnByMrbWphN0c/01AYmM8SDW/8UpXvktLs7OtyCGC9xgFkJLZrMzy0ZPa4RQk
-        Lb3DE++g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUAyB-0003t8-Dw; Mon, 11 Nov 2019 14:47:07 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 30962307295;
-        Mon, 11 Nov 2019 15:45:58 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id B1F3C29A37A94; Mon, 11 Nov 2019 15:47:03 +0100 (CET)
-Message-Id: <20191111132458.460144656@infradead.org>
-User-Agent: quilt/0.65
-Date:   Mon, 11 Nov 2019 14:13:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     x86@kernel.org
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, bristot@redhat.com,
-        jbaron@akamai.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
-        hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
-        jpoimboe@redhat.com, jeyu@kernel.org, alexei.starovoitov@gmail.com
-Subject: [PATCH -v5 17/17] x86/alternative: Use INT3_INSN_SIZE
-References: <20191111131252.921588318@infradead.org>
+        id S1726943AbfKKOap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 09:30:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41464 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726853AbfKKOap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 09:30:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1B8C2B543;
+        Mon, 11 Nov 2019 14:30:44 +0000 (UTC)
+To:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+From:   Jan Beulich <jbeulich@suse.com>
+Subject: [PATCH 0/2] x86/Xen/32: xen_iret_crit_fixup adjustments
+Message-ID: <d66b1da4-8096-9b77-1ca6-d6b9954b113c@suse.com>
+Date:   Mon, 11 Nov 2019 15:30:56 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use INT3_INSN_SIZE instead of sizeof(int3).
+The first patch here fixes another regression from 3c88c692c287
+("x86/stackframe/32: Provide consistent pt_regs"), besides the
+one already addressed by
+https://lists.xenproject.org/archives/html/xen-devel/2019-10/msg01988.html.
+The second patch is a minimal bit of cleanup on top.
 
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/kernel/alternative.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+1: make xen_iret_crit_fixup independent of frame layout
+2: simplify xen_iret_crit_fixup's ring check
 
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1088,7 +1088,7 @@ static void text_poke_bp_batch(struct te
- 	 * First step: add a int3 trap to the address that will be patched.
- 	 */
- 	for (i = 0; i < nr_entries; i++)
--		text_poke(text_poke_addr(&tp[i]), &int3, sizeof(int3));
-+		text_poke(text_poke_addr(&tp[i]), &int3, INT3_INSN_SIZE);
- 
- 	text_poke_sync();
- 
-@@ -1098,10 +1098,10 @@ static void text_poke_bp_batch(struct te
- 	for (do_sync = 0, i = 0; i < nr_entries; i++) {
- 		int len = text_opcode_size(tp[i].opcode);
- 
--		if (len - sizeof(int3) > 0) {
--			text_poke(text_poke_addr(&tp[i]) + sizeof(int3),
--				  (const char *)tp[i].text + sizeof(int3),
--				  len - sizeof(int3));
-+		if (len - INT3_INSN_SIZE > 0) {
-+			text_poke(text_poke_addr(&tp[i]) + INT3_INSN_SIZE,
-+				  (const char *)tp[i].text + INT3_INSN_SIZE,
-+				  len - INT3_INSN_SIZE);
- 			do_sync++;
- 		}
- 	}
-@@ -1123,7 +1123,7 @@ static void text_poke_bp_batch(struct te
- 		if (tp[i].text[0] == INT3_INSN_OPCODE)
- 			continue;
- 
--		text_poke(text_poke_addr(&tp[i]), tp[i].text, sizeof(int3));
-+		text_poke(text_poke_addr(&tp[i]), tp[i].text, INT3_INSN_SIZE);
- 		do_sync++;
- 	}
- 
-
-
+Jan
