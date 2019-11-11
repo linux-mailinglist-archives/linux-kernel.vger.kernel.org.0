@@ -2,116 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E16F8F6F1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 08:35:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 309C7F6F12
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 08:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfKKHfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 02:35:30 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41326 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbfKKHf3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 02:35:29 -0500
-Received: by mail-pf1-f194.google.com with SMTP id p26so10095217pfq.8
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 23:35:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=i6cJtP2GLYXrWSbffAAlWqbiBaFJmvg9QhFIx0JCR4w=;
-        b=fDhq0K+/Rn0iuKKs10LO1snJBg6va0XLJdJa4Bz/h7Q5iuKxXTGigB77w3v0ezUGv7
-         wN9k5uqyPodAtGkyVOPY1YOlstq2rqxsBmFs+7tsqE/tF95NyFrwW0NiWsFmcMGxuSN6
-         7Xb7zSaRRZhZylx+27eHpbgWmeIuJJnbcxODRj7yqS8s6p6QeUUvcHiAsWaB9fQQviHo
-         Hr4Xjv7NOWumj6n+AstBAJWIR3KJv8kWTHv8S9I8HlkSk1pAQnxR46/Cf6MoevHFfc+F
-         3B1CnqUYgyBVz60ZWMH/yaITJlVlDcDZ0zSZYP4AMXYEp4bRi42ls1WEsp+JLbcS/OFP
-         PgeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=i6cJtP2GLYXrWSbffAAlWqbiBaFJmvg9QhFIx0JCR4w=;
-        b=q/l2tFHCVdsi6sNSlSGMj6BjH8TnubLvzKYdJFzXazzz+atfn9vc9Huv2T+GzxspQh
-         FH5rwv7IZXZzBimwRSB3QtXbpbnrtBRgxOj09ZV3htegcFsw82YxoaVxzhUD6sVYnPsi
-         Cqp3r0t4DbbGn7A3dPDQu7k7+RRAYzqIt16h7lY3pdGHSIag7yn133BuPjConF99VsRH
-         SFA2tMXUilDVnzPO0F+0dPwpAmJSq9o+pFDi6H6quVqWWuBgd7jIkJTGo2rzRi3+zyq8
-         PEKiqcpYa1iNGrnrjSBILetV3PYwzGEUb+BjXpx4rJbDhL0+sGTucVpdt7Prz9VFuuZA
-         SYMg==
-X-Gm-Message-State: APjAAAUUgffAU1wsCcGGa3xuMYe1kCHv36Ye6odv65BtxalrD1/i2GJT
-        dDmrZNAW6z0bgMdUaHPVtn+AuQ==
-X-Google-Smtp-Source: APXvYqxhkLmLWJIsYD/Z+DW+fx4kiGR/RMpy3gFQqLneqDDfgIkGQ1rke5EWhKSBQiwaHoVDNlzJGg==
-X-Received: by 2002:a63:9a12:: with SMTP id o18mr26772073pge.379.1573457727181;
-        Sun, 10 Nov 2019 23:35:27 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id c184sm17345285pfc.159.2019.11.10.23.35.23
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 10 Nov 2019 23:35:26 -0800 (PST)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        asutoshd@codeaurora.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, arnd@arndb.de,
-        linus.walleij@linaro.org, vincent.guittot@linaro.org,
-        baolin.wang@linaro.org, baolin.wang7@gmail.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/4] mmc: host: sdhci: Add a variable to defer to complete requests if needed
-Date:   Mon, 11 Nov 2019 15:34:00 +0800
-Message-Id: <119d3285ab610967b43f7c822dfdc0ebb8d521cb.1573456284.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1573456283.git.baolin.wang@linaro.org>
-References: <cover.1573456283.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1573456283.git.baolin.wang@linaro.org>
-References: <cover.1573456283.git.baolin.wang@linaro.org>
+        id S1726951AbfKKHfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 02:35:04 -0500
+Received: from mga18.intel.com ([134.134.136.126]:12187 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726805AbfKKHfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 02:35:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2019 23:35:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,291,1569308400"; 
+   d="scan'208";a="354702768"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 10 Nov 2019 23:35:03 -0800
+Received: from [10.226.38.147] (unknown [10.226.38.147])
+        by linux.intel.com (Postfix) with ESMTP id 5DD88580261;
+        Sun, 10 Nov 2019 23:35:01 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Add schema for Cadence QSPI
+ Controller driver
+To:     Vignesh Raghavendra <vigneshr@ti.com>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     broonie@kernel.org, robh+dt@kernel.org, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com
+References: <20191030081155.29947-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20191030081155.29947-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <b553b1e8-1c35-fd7c-6855-75a4c1c943fe@ti.com>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <51fa7c46-20d0-2712-8690-1d6a885cb98b@linux.intel.com>
+Date:   Mon, 11 Nov 2019 15:35:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <b553b1e8-1c35-fd7c-6855-75a4c1c943fe@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using the host software queue, it will trigger the next request in
-irq handler without a context switch. But the sdhci_request() can not be
-called in interrupt context when using host software queue for some host
-drivers, due to the get_cd() ops can be sleepable.
+Hi Vignesh,
 
-But for some host drivers, such as Spreadtrum host driver, the card is
-nonremovable, so the get_cd() ops is not sleepable, which means we can
-complete the data request and trigger the next request in irq handler
-to remove the context switch for the Spreadtrum host driver.
+On 5/11/2019 12:30 PM, Vignesh Raghavendra wrote:
+> Hi,
+>
+> On 30/10/19 1:41 PM, Ramuthevar,Vadivel MuruganX wrote:
+>> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>>
+>> Add dt-bindings documentation for Cadence-QSPI controller to support
+>> spi based flash memories.
+>>
+> The new driver being added in patch 2/2 is supposed to replace
+> drivers/mtd/spi-nor/cadence-quadspi.c. Therefore the bindings should be
+> exactly same as
+> Documentation/devicetree/bindings/mtd/cadence-quadspi.txt. Otherwise, it
+> breaks DT backward compatibility. There cannot be two different sets of
+> bindings for same HW IP.
+>
+> Therefore please rewrite yaml schema to match existing bindings at
+> Documentation/devicetree/bindings/mtd/cadence-quadspi.txt.
+> And then include a patch dropping older bindings.
+sure, I will create dt-schema for the below file
 
-Thus we still need introduce a variable in struct sdhci_host to indicate
-that we will always to defer to complete requests if the sdhci_request()
-can not be called in interrupt context for some host drivers, when using
-the host software queue.
+Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
 
-Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/mmc/host/sdhci.c |    2 +-
- drivers/mmc/host/sdhci.h |    1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+With Best Regards
+Vadivel
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 850241f..4bef066 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3035,7 +3035,7 @@ static inline bool sdhci_defer_done(struct sdhci_host *host,
- {
- 	struct mmc_data *data = mrq->data;
- 
--	return host->pending_reset ||
-+	return host->pending_reset || host->always_defer_done ||
- 	       ((host->flags & SDHCI_REQ_USE_DMA) && data &&
- 		data->host_cookie == COOKIE_MAPPED);
- }
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index d89cdb9..a73ce89 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -533,6 +533,7 @@ struct sdhci_host {
- 	bool pending_reset;	/* Cmd/data reset is pending */
- 	bool irq_wake_enabled;	/* IRQ wakeup is enabled */
- 	bool v4_mode;		/* Host Version 4 Enable */
-+	bool always_defer_done;	/* Always defer to complete requests */
- 
- 	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];	/* Requests done */
- 	struct mmc_command *cmd;	/* Current command */
--- 
-1.7.9.5
-
+>
+>> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> ---
+>>   .../devicetree/bindings/spi/cadence,qspi.yaml      | 65 ++++++++++++++++++++++
+>>   1 file changed, 65 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/spi/cadence,qspi.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/cadence,qspi.yaml b/Documentation/devicetree/bindings/spi/cadence,qspi.yaml
+>> new file mode 100644
+>> index 000000000000..295501f01e5e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/cadence,qspi.yaml
+>> @@ -0,0 +1,65 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/spi/cadence,qspi.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Cadence QSPI Flash Controller support
+>> +
+>> +maintainers:
+>> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> +
+>> +allOf:
+>> +  - $ref: "spi-controller.yaml#"
+>> +
+>> +description: |
+>> +  Add support for the Cadence QSPI controller,This controller is
+>> +  present in the Intel LGM, Altera SoCFPGA and TI SoCs and this driver
+>> +  has been tested On Intel's LGM SoC.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: cadence,qspi
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  clocks-names:
+>> +    maxItems: 1
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  reset-names:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - resets
+>> +  - reset-names
+>> +
+>> +examples:
+>> +  - |
+>> +    spi@ec000000 {
+>> +          compatible = "cadence,qspi";
+>> +          reg = <0xec000000 0x100>;
+>> +          clocks = <&cgu0 LGM_CLK_QSPI>, <&cgu0 LGM_GCLK_QSPI>;
+>> +          clock-names = "qspi";
+>> +          resets = <&rcu0 0x10 1>;
+>> +          reset-names = "qspi";
+>> +          #address-cells = <1>;
+>> +          #size-cells = <0>;
+>> +
+>> +          flash: flash@1 {
+>> +              compatible = "spi-nand", "jedec, spi-nor";
+> s/"jedec, spi-nor"/"jedec,spi-nor" (i.e no space after comma)
+>
+>> +              reg = <1>;
+>> +              spi-max-frequency = <10000000>;
+>> +          };
+>> +    };
+>> +
+>>
