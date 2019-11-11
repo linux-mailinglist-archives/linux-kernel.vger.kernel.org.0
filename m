@@ -2,102 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65F8BF78B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C84F78AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfKKQZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:25:18 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:50497 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbfKKQZS (ORCPT
+        id S1727009AbfKKQZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:25:05 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55388 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfKKQZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:25:18 -0500
-Received: from mail-qt1-f179.google.com ([209.85.160.179]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MOiYD-1iGFr137Dr-00QDpb for <linux-kernel@vger.kernel.org>; Mon, 11 Nov
- 2019 17:25:16 +0100
-Received: by mail-qt1-f179.google.com with SMTP id g50so16253889qtb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:25:16 -0800 (PST)
-X-Gm-Message-State: APjAAAXu8KhZYr9sGDPSRQgqVrLJ2lBtXvxM6xwtYZ2xvnvKIT6l293y
-        uHa+LK2QXAS/GUJf2WDgeFdcSnl5x3cAI/OJkl0=
-X-Google-Smtp-Source: APXvYqzhEX+Ry63FPgxImqPVdNg3+01We4bix3tpiOsVLV3c4EpCOOaUFn43GI00Tsjcb2HTxmGTLXXXT8IHHLMKa0E=
-X-Received: by 2002:ac8:18eb:: with SMTP id o40mr26604573qtk.304.1573489515656;
- Mon, 11 Nov 2019 08:25:15 -0800 (PST)
+        Mon, 11 Nov 2019 11:25:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xpsjH3Rxk+PTzoxkOgZp7C1flZE/0kiFWtXlSW8zmmw=; b=Peyngf2bhOnRCdtwxQx45nP8t
+        wAM5uTHozveypsI8OvzwXiRStp/WogTr0roVN/uKHuLazBH7c+mWXnXqQ1PKU5tSSg1e3alIDQiv3
+        FoYLONj0SfEZQMbaDMmpbxCW5xcYZ9L1SnHvEHDzhRtO7O0d7aMOcu56vmmClKNhy0qMGroZpe07j
+        g0d71Zzb1txtXYa9dO7Wuxk56P3CgfiqUMc+4tpfGEmKjdkM/OmNWYfloVPA/ijo8jtYfxjeSq4E8
+        eeVarnc5boRMwTbtMWZ2BRbavAOznWvd4Qfnl+WCs5qe+IPj7AwPuiJsA1G1sHW4F1KsiGV/oZmhZ
+        fSLdpIETw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUCUv-0001T1-CH; Mon, 11 Nov 2019 16:25:01 +0000
+Date:   Mon, 11 Nov 2019 08:25:01 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH] fs/splice: ignore flag SPLICE_F_GIFT in syscall vmsplice
+Message-ID: <20191111162501.GB24952@infradead.org>
+References: <157338008330.5347.7117089871769008055.stgit@buzz>
 MIME-Version: 1.0
-References: <20191108213257.3097633-1-arnd@arndb.de> <20191108213257.3097633-16-arnd@arndb.de>
- <3a0cfce79620152facfe31b442a735db1dcda436.camel@pengutronix.de>
- <CAK8P3a13jSRqzZ-aDETdxk-BKgfXaAhdWiSn7aW+u3MFf06fWw@mail.gmail.com> <7379bfe6c530132caab4cd930cd94f0e28c935ff.camel@pengutronix.de>
-In-Reply-To: <7379bfe6c530132caab4cd930cd94f0e28c935ff.camel@pengutronix.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 11 Nov 2019 17:24:59 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0SA+LbVCnm8qhc-Xk1kboGhkRQsK0XAuMya8TmaD4+TA@mail.gmail.com>
-Message-ID: <CAK8P3a0SA+LbVCnm8qhc-Xk1kboGhkRQsK0XAuMya8TmaD4+TA@mail.gmail.com>
-Subject: Re: [PATCH 15/16] drm/etnaviv: use ktime_t for timeouts
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:JHnu4qBIDr0AeRGo2cjWt8VCwhOw5IiHIztxB1kU5f7R5MHak0b
- MUhl14MFo3fS2u3qB6cwVV33jE07KSe979aZ8K5PmFEMMOJL4b2T0l2gnPOKx6lcxsD2fDq
- 9XnWN2B4fBlWpV0HfeteryhY78xhDjNQ0mQNLV6GYtVlUz7reGx9QmA4aSAPZZ7iP/Ezb7X
- ELy6MxULVkSG8blbPxWjw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WJQ11S94CGw=:RutZ7RQyzb5LCYyWCXrCdg
- RH0Ew62Ok670uFYGEARvFFMPRKx+hyo/MYHh51VvgWm0Wg9SrjzbvS7DtG8lyXnyj+lRXGvRi
- mtrG7yrlaHuCfQWLpuMI7FDNMeEuWQy/429+zcmda6jn4BgfLctLAw8AxZUvQbZOA2L9VtuUt
- 6GH16g4JmkuokrDTIaokCEqOQPJY3pIQbApgOkfvRIK3ITqptGJywimY/navkIWbgz9LahCB7
- v2GWL8F1KMzhJ532wBvPmboO+2rYYW6jjPaPuTaoVymRiwIG3rd0SIFxvHOze6Dkb7AGS1d0m
- onjGU0h24kamjW98HG0syPjW5UEkvjHwclqiHvrZfrKcrOj1caM6xdZ+vwXz4aldTLp8Novrx
- RFEL662SNMVtcz3CzM+FGtqVJNRhHmbFGcoRh+RozIAYq2utWcX/uKBJ4p9r3sfgJD4qdcjxR
- SKWwaSlJYTlyLej+Am2aUaeKkxHV1ZZFkdWqroLccda3DWbINouYbop2lixk46+VDxc92Qcrf
- rLptY9j7K0FLMPMELlEYh0Aa5C5stSpQJhO/0P4y3sMCuR3Yw1hFTFd3p/QfRCKgkf3cVXW/4
- 6RhH5Lnx3h8DdwSCSMr68gHCPodUtyNIJnrY51OZuzqld7vLa2dSqssb+ZEfsr3bVbaZRvDsT
- l4g3cJYQwoyHITz70qenAafTXb/t9WRAYtTo5lg5bMkyJPcB89hfgUT5PMGnm/7w1WbWVgiIP
- osEKtc/2rRFCbS0bisXXivKy1n7T5z1tpPWkhcTEJqNu+z1IA+N7bFzfONgN2uJxOyLhUC7Gk
- kOG0GfcwlVCWDAmVqQ7UpPq89QzWGC0M/vou1C/hr5H7N4XIXlOzhhc+4tEBF+v86+WpsHgm/
- /tH2zu/6pORxCMK83yWQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157338008330.5347.7117089871769008055.stgit@buzz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 10:55 AM Lucas Stach <l.stach@pengutronix.de> wrote:
-> >
-> > > If that's the case then we should never encounter a genuine 0 timeout
-> > > and this change would be okay.
-> >
-> > That's quite likely, I'd say any program passing {0,0} as a timeout without
-> > ETNA_WAIT_NONBLOCK is already broken, but if we leave it like that,
-> > it would be best to describe the reasoning in the changelog.
-> >
-> > Should I change the changelog, or change the patch to restore the
-> > current behavior instead?
-> >
-> > I guess I could fold the change below into my patch to make it transparent
-> > to the application again.
->
-> If we assume 0 to never be a valid timeout, due to monotonic clock
-> starting at 0 and never wrapping then I think we shouldn't introduce
-> any additional code complexity to fix up the return value for this
-> specific case. I'm not aware of any etnaviv userspace being broken in
-> this way to rely on the return value for an invalid timeout input.
->
-> Please just amend the commit message to mention the change in behavior
-> and why we think it is safe to do.
+On Sun, Nov 10, 2019 at 01:01:23PM +0300, Konstantin Khlebnikov wrote:
+> Generic support of flag SPLICE_F_MOVE in syscall splice was removed in
+> kernel 2.6.21 commit 485ddb4b9741 ("1/2 splice: dont steal").
+> Infrastructure stay intact and this feature may came back.
+> At least driver or filesystem could provide own implementation.
+> 
+> But stealing mapped pages from userspace never worked and is very
+> unlikely that will ever make sense due to unmapping overhead.
+> Also lru handling is broken if gifted anon page spliced into file.
+> 
+> Let's seal entry point for marking page as a gift in vmsplice.
 
-Russell had some additional concerns that he raised on IRC,
-and I did a new simpler implementation of the patch, plus a related
-bugfix.
-
-Please have a look at those.
-
-       Arnd
+Please kill off PIPE_BUF_FLAG_GIFT entirely, there is no need to keep
+dead code around.  Anyone who cares enough can resurrect it from git
+history.
