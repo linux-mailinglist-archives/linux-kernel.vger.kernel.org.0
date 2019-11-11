@@ -2,45 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3129F7E34
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21CCBF7E37
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbfKKSsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:48:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42008 "EHLO mail.kernel.org"
+        id S1729680AbfKKStK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:49:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727341AbfKKSsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:48:52 -0500
+        id S1726834AbfKKStF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:49:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F73721655;
-        Mon, 11 Nov 2019 18:48:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A9552184C;
+        Mon, 11 Nov 2019 18:49:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498130;
-        bh=07Q+lzMyYk4HtvmcIj0qU3vfd9YyAh8FYBnRoE5cFiI=;
+        s=default; t=1573498144;
+        bh=orNErqbrr4tO6yUqJftFB1DtVa5WXG7SJAGvXxVIO44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zu4h8dgZcQ/6T9V8jJ5wfcAg5qfoVYUVvNMPqyIure6A0uTUrFJUKRokO2iGPW/37
-         f+l8qMM4xK+nbcAznBysNLXghEBGM4p5IrOPlCidwzk8vEDh9mIuuvYXC01dLVzG6+
-         CMduEHQn/6LRwYkXAq1U6FsHBhmNNdLZYa6U5r3w=
+        b=A1SvfjRPlprz5Ryj8QeUA/hbjBER5+EpOIPB00hCAlHCBA2Z/qC0EkDWTaAInS3w8
+         cXW7VSZrWm7zWV5cCNMfXoXljVOMAqO1S2+vwZ6gxWbMdf5bSPbPbPxnIrgueQYKFr
+         XrTXEsMTcV41aqOL6tJ9BpdrJOnE6Z+xuAcT6Gj4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Waiman Long <longman@redhat.com>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rafael Aquini <aquini@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jann Horn <jannh@google.com>, Song Liu <songliubraving@fb.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 032/193] mm, vmstat: hide /proc/pagetypeinfo from normal users
-Date:   Mon, 11 Nov 2019 19:26:54 +0100
-Message-Id: <20191111181502.739487567@linuxfoundation.org>
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.3 036/193] btrfs: tree-checker: Fix wrong check on max devid
+Date:   Mon, 11 Nov 2019 19:26:58 +0100
+Message-Id: <20191111181503.665875209@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -53,57 +43,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit abaed0112c1db08be15a784a2c5c8a8b3063cdd3 upstream.
+commit 8bb177d18f114358a57d8ae7e206861b48b8b4de upstream.
 
-/proc/pagetypeinfo is a debugging tool to examine internal page
-allocator state wrt to fragmentation.  It is not very useful for any
-other use so normal users really do not need to read this file.
+[BUG]
+The following script will cause false alert on devid check.
+  #!/bin/bash
 
-Waiman Long has noticed that reading this file can have negative side
-effects because zone->lock is necessary for gathering data and that a)
-interferes with the page allocator and its users and b) can lead to hard
-lockups on large machines which have very long free_list.
+  dev1=/dev/test/test
+  dev2=/dev/test/scratch1
+  mnt=/mnt/btrfs
 
-Reduce both issues by simply not exporting the file to regular users.
+  umount $dev1 &> /dev/null
+  umount $dev2 &> /dev/null
+  umount $mnt &> /dev/null
 
-Link: http://lkml.kernel.org/r/20191025072610.18526-2-mhocko@kernel.org
-Fixes: 467c996c1e19 ("Print out statistics in relation to fragmentation avoidance to /proc/pagetypeinfo")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Waiman Long <longman@redhat.com>
-Acked-by: Mel Gorman <mgorman@suse.de>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Waiman Long <longman@redhat.com>
-Acked-by: Rafael Aquini <aquini@redhat.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Jann Horn <jannh@google.com>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+  mkfs.btrfs -f $dev1
+
+  mount $dev1 $mnt
+
+  _fail()
+  {
+          echo "!!! FAILED !!!"
+          exit 1
+  }
+
+  for ((i = 0; i < 4096; i++)); do
+          btrfs dev add -f $dev2 $mnt || _fail
+          btrfs dev del $dev1 $mnt || _fail
+          dev_tmp=$dev1
+          dev1=$dev2
+          dev2=$dev_tmp
+  done
+
+[CAUSE]
+Tree-checker uses BTRFS_MAX_DEVS() and BTRFS_MAX_DEVS_SYS_CHUNK() as
+upper limit for devid.  But we can have devid holes just like above
+script.
+
+So the check for devid is incorrect and could cause false alert.
+
+[FIX]
+Just remove the whole devid check.  We don't have any hard requirement
+for devid assignment.
+
+Furthermore, even devid could get corrupted by a bitflip, we still have
+dev extents verification at mount time, so corrupted data won't sneak
+in.
+
+This fixes fstests btrfs/194.
+
+Reported-by: Anand Jain <anand.jain@oracle.com>
+Fixes: ab4ba2e13346 ("btrfs: tree-checker: Verify dev item")
+CC: stable@vger.kernel.org # 5.2+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmstat.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/tree-checker.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1970,7 +1970,7 @@ void __init init_mm_internals(void)
- #endif
- #ifdef CONFIG_PROC_FS
- 	proc_create_seq("buddyinfo", 0444, NULL, &fragmentation_op);
--	proc_create_seq("pagetypeinfo", 0444, NULL, &pagetypeinfo_op);
-+	proc_create_seq("pagetypeinfo", 0400, NULL, &pagetypeinfo_op);
- 	proc_create_seq("vmstat", 0444, NULL, &vmstat_op);
- 	proc_create_seq("zoneinfo", 0444, NULL, &zoneinfo_op);
- #endif
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -686,9 +686,7 @@ static void dev_item_err(const struct ex
+ static int check_dev_item(struct extent_buffer *leaf,
+ 			  struct btrfs_key *key, int slot)
+ {
+-	struct btrfs_fs_info *fs_info = leaf->fs_info;
+ 	struct btrfs_dev_item *ditem;
+-	u64 max_devid = max(BTRFS_MAX_DEVS(fs_info), BTRFS_MAX_DEVS_SYS_CHUNK);
+ 
+ 	if (key->objectid != BTRFS_DEV_ITEMS_OBJECTID) {
+ 		dev_item_err(leaf, slot,
+@@ -696,12 +694,6 @@ static int check_dev_item(struct extent_
+ 			     key->objectid, BTRFS_DEV_ITEMS_OBJECTID);
+ 		return -EUCLEAN;
+ 	}
+-	if (key->offset > max_devid) {
+-		dev_item_err(leaf, slot,
+-			     "invalid devid: has=%llu expect=[0, %llu]",
+-			     key->offset, max_devid);
+-		return -EUCLEAN;
+-	}
+ 	ditem = btrfs_item_ptr(leaf, slot, struct btrfs_dev_item);
+ 	if (btrfs_device_id(leaf, ditem) != key->offset) {
+ 		dev_item_err(leaf, slot,
 
 
