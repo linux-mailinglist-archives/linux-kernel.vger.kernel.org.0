@@ -2,71 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09E3DF7904
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34DB7F78CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfKKQlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:41:21 -0500
-Received: from mga11.intel.com ([192.55.52.93]:28029 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726954AbfKKQlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:41:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 08:41:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,293,1569308400"; 
-   d="scan'208";a="193986443"
-Received: from magalleg-mobl3.amr.corp.intel.com (HELO [10.251.146.103]) ([10.251.146.103])
-  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2019 08:41:18 -0800
-Subject: Re: [alsa-devel] [RESEND PATCH v4 1/6] ASoC: amd:Create multiple I2S
- platform device Endpoint
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
-        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <1573483794-8921-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1573483794-8921-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <1e64b725-0f0f-0db6-677d-41a3ea564167@linux.intel.com>
-Date:   Mon, 11 Nov 2019 09:44:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1726976AbfKKQak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:30:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57020 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726871AbfKKQak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 11:30:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 72E0CB3F1;
+        Mon, 11 Nov 2019 16:30:37 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 16:30:36 +0000
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Sage Weil <sage@newdream.net>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <ukernel@gmail.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/2] ceph: safely use 'copy-from' Op on Octopus OSDs
+Message-ID: <20191111163036.GA20513@hermes.olymp>
+References: <20191108141555.31176-1-lhenriques@suse.com>
+ <CAOi1vP-sVQKvpiPLoZ=9s7Hy=c2eQRocxSs1nPrXAUCbbZUZ-g@mail.gmail.com>
+ <20191108164758.GA1760@hermes.olymp>
+ <alpine.DEB.2.21.1911081656320.10553@piezo.novalocal>
+ <20191108171616.GA2569@hermes.olymp>
+ <alpine.DEB.2.21.1911081721120.28682@piezo.novalocal>
+ <20191108173101.GA3300@hermes.olymp>
 MIME-Version: 1.0
-In-Reply-To: <1573483794-8921-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191108173101.GA3300@hermes.olymp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 08, 2019 at 05:31:01PM +0000, Luis Henriques wrote:
+<snip>
+> > - You'll need to add it for both OSDMap::Incremental and OSDMap
+> > - You'll need to make the encoding condition by updating the block like 
+> > the one below from OSDMap::encode()
+> > 
+> >     uint8_t v = 9;
+> >     if (!HAVE_FEATURE(features, SERVER_LUMINOUS)) {
+> >       v = 3;
+> >     } else if (!HAVE_FEATURE(features, SERVER_MIMIC)) {
+> >       v = 6;
+> >     } else if (!HAVE_FEATURE(features, SERVER_NAUTILUS)) {
+> >       v = 7;
+> >     }
+> > 
+> > to include a SERVER_OCTOPUS case too.  Same goes for Incremental::encode()
+> 
+> Awesome, thanks!  I'll give it a try, and test it with the appropriate
+> kernel client side changes to use this.
 
-> +		pdevinfo[2].name = "acp3x_i2s_playcap";
-> +		pdevinfo[2].id = 1;
-> +		pdevinfo[2].parent = &pci->dev;
-> +		pdevinfo[2].num_res = 1;
-> +		pdevinfo[2].res = &adata->res[2];
-> +		for (i = 0; i < ACP3x_DEVS ; i++) {
-> +			adata->pdev[i] =
-> +				platform_device_register_full(&pdevinfo[i]);
-> +			IS_ERR(adata->pdev[i]) {
+Ok, I've got the patch bellow for the OSD code, which IIRC should do
+exactly what we want: duplicate the require_osd_release in the client
+side.
 
-how does this even compile?
+Now, in order to quickly test this I've started adding flags to the
+CEPH_FEATURES_SUPPORTED_DEFAULT definition.  SERVER_MIMIC *seemed* to be
+Ok, but once I've added SERVER_NAUTILUS I've realized that we'll need to
+handle TYPE_MSGR2 address.  Which is a _big_ thing.  Is anyone already
+looking into adding support for msgr v2 to the kernel client?
 
-> +				dev_err(&pci->dev, "cannot register %s device\n",
-> +					pdevinfo[i].name);
-> +				ret = -ENODEV;
-> +				goto unmap_mmio;
-> +			}
+Cheers,
+--
+Luís
+
+diff --git a/src/osd/OSDMap.cc b/src/osd/OSDMap.cc
+index 6b5930743a33..b38d91d98fcf 100644
+--- a/src/osd/OSDMap.cc
++++ b/src/osd/OSDMap.cc
+@@ -555,13 +555,15 @@ void OSDMap::Incremental::encode(ceph::buffer::list& bl, uint64_t features) cons
+   ENCODE_START(8, 7, bl);
+ 
+   {
+-    uint8_t v = 8;
++    uint8_t v = 9;
+     if (!HAVE_FEATURE(features, SERVER_LUMINOUS)) {
+       v = 3;
+     } else if (!HAVE_FEATURE(features, SERVER_MIMIC)) {
+       v = 5;
+     } else if (!HAVE_FEATURE(features, SERVER_NAUTILUS)) {
+       v = 6;
++    } else if (!HAVE_FEATURE(features, SERVER_OCTOPUS)) {
++      v = 8;
+     }
+     ENCODE_START(v, 1, bl); // client-usable data
+     encode(fsid, bl);
+@@ -611,6 +613,9 @@ void OSDMap::Incremental::encode(ceph::buffer::list& bl, uint64_t features) cons
+       encode(new_last_up_change, bl);
+       encode(new_last_in_change, bl);
+     }
++    if (v >= 9) {
++      encode(new_require_osd_release, bl);
++    }
+     ENCODE_FINISH(bl); // client-usable data
+   }
+ 
+@@ -816,7 +821,7 @@ void OSDMap::Incremental::decode(ceph::buffer::list::const_iterator& bl)
+     return;
+   }
+   {
+-    DECODE_START(8, bl); // client-usable data
++    DECODE_START(9, bl); // client-usable data
+     decode(fsid, bl);
+     decode(epoch, bl);
+     decode(modified, bl);
+@@ -2847,13 +2852,15 @@ void OSDMap::encode(ceph::buffer::list& bl, uint64_t features) const
+   {
+     // NOTE: any new encoding dependencies must be reflected by
+     // SIGNIFICANT_FEATURES
+-    uint8_t v = 9;
++    uint8_t v = 10;
+     if (!HAVE_FEATURE(features, SERVER_LUMINOUS)) {
+       v = 3;
+     } else if (!HAVE_FEATURE(features, SERVER_MIMIC)) {
+       v = 6;
+     } else if (!HAVE_FEATURE(features, SERVER_NAUTILUS)) {
+       v = 7;
++    } else if (!HAVE_FEATURE(features, SERVER_OCTOPUS)) {
++      v = 9;
+     }
+     ENCODE_START(v, 1, bl); // client-usable data
+     // base
+@@ -2929,6 +2936,9 @@ void OSDMap::encode(ceph::buffer::list& bl, uint64_t features) const
+       encode(last_up_change, bl);
+       encode(last_in_change, bl);
+     }
++    if (v >= 10) {
++      encode(require_osd_release, bl);
++    }
+     ENCODE_FINISH(bl); // client-usable data
+   }
+ 
+@@ -3170,7 +3180,7 @@ void OSDMap::decode(ceph::buffer::list::const_iterator& bl)
+    * Since we made it past that hurdle, we can use our normal paths.
+    */
+   {
+-    DECODE_START(9, bl); // client-usable data
++    DECODE_START(10, bl); // client-usable data
+     // base
+     decode(fsid, bl);
+     decode(epoch, bl);
