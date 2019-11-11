@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE35FF7E00
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D53F7EAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbfKKSwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:52:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46864 "EHLO mail.kernel.org"
+        id S1729580AbfKKSnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:43:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729608AbfKKSwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:52:30 -0500
+        id S1729573AbfKKSm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:42:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EA43204EC;
-        Mon, 11 Nov 2019 18:52:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3662E20659;
+        Mon, 11 Nov 2019 18:42:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498349;
-        bh=AAz1RORaZKt3U0k7M1DgjgQESTkcFki/l1MSeAXSw5o=;
+        s=default; t=1573497776;
+        bh=ibielPTVX6L6wy/SX4BvmaBES0L1Ql3a0zwQalMi0Wo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eDvCSh6XyLyDc4uEHIRd7nwaUjG6bYwmMZlEPMacpmFSrFR248+xVuM4/e9w8sG/H
-         wBr1YuApl5Wrwwc94LA+KSnCTKKTp9wXjMPT6TCtCBp4ZvFN4/EqPfe9H2g5y0cNaE
-         StH+/FMLSk0ACWKt6sjfPVptJTpDqpGiRmWpSKv8=
+        b=moNMfn89F4QqdnKpSppkECS7eyKcMFtTz2y7d9uyJMJUYUyyR3uxXqbgxemU6MVbW
+         iI5wMCCYVkPEQDh02B1d4DHlSspVXz93YciNWRrI67+uw7tyPsf9FlAcc2oBQ8Y6rN
+         SaNQACmnOf48lX0JkctkbKqEVJflNOK7epcF7yCY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 094/193] dmaengine: xilinx_dma: Fix 64-bit simple AXIDMA transfer
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 037/125] netfilter: nf_tables: Align nft_expr private data to 64-bit
 Date:   Mon, 11 Nov 2019 19:27:56 +0100
-Message-Id: <20191111181508.078312105@linuxfoundation.org>
+Message-Id: <20191111181445.452053046@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 68fe2b520cee829ed518b4b1f64d2a557bcbffe1 ]
+commit 250367c59e6ba0d79d702a059712d66edacd4a1a upstream.
 
-In AXI DMA simple mode also pass MSB bits of source and destination
-address to xilinx_write function. It fixes simple AXI DMA operation
-mode using 64-bit addressing.
+Invoking the following commands on a 32-bit architecture with strict
+alignment requirements (such as an ARMv7-based Raspberry Pi) results
+in an alignment exception:
 
-Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Link: https://lore.kernel.org/r/1569495060-18117-2-git-send-email-radhey.shyam.pandey@xilinx.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+ # nft add table ip test-ip4
+ # nft add chain ip test-ip4 output { type filter hook output priority 0; }
+ # nft add rule  ip test-ip4 output quota 1025 bytes
+
+Alignment trap: not handling instruction e1b26f9f at [<7f4473f8>]
+Unhandled fault: alignment exception (0x001) at 0xb832e824
+Internal error: : 1 [#1] PREEMPT SMP ARM
+Hardware name: BCM2835
+[<7f4473fc>] (nft_quota_do_init [nft_quota])
+[<7f447448>] (nft_quota_init [nft_quota])
+[<7f4260d0>] (nf_tables_newrule [nf_tables])
+[<7f4168dc>] (nfnetlink_rcv_batch [nfnetlink])
+[<7f416bd0>] (nfnetlink_rcv [nfnetlink])
+[<8078b334>] (netlink_unicast)
+[<8078b664>] (netlink_sendmsg)
+[<8071b47c>] (sock_sendmsg)
+[<8071bd18>] (___sys_sendmsg)
+[<8071ce3c>] (__sys_sendmsg)
+[<8071ce94>] (sys_sendmsg)
+
+The reason is that nft_quota_do_init() calls atomic64_set() on an
+atomic64_t which is only aligned to 32-bit, not 64-bit, because it
+succeeds struct nft_expr in memory which only contains a 32-bit pointer.
+Fix by aligning the nft_expr private data to 64-bit.
+
+Fixes: 96518518cc41 ("netfilter: add nftables")
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org # v3.13+
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/dma/xilinx/xilinx_dma.c | 3 ++-
+ include/net/netfilter/nf_tables.h |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
-index e7dc3c4dc8e07..1fbe0258578b0 100644
---- a/drivers/dma/xilinx/xilinx_dma.c
-+++ b/drivers/dma/xilinx/xilinx_dma.c
-@@ -1354,7 +1354,8 @@ static void xilinx_dma_start_transfer(struct xilinx_dma_chan *chan)
- 					   node);
- 		hw = &segment->hw;
+--- a/include/net/netfilter/nf_tables.h
++++ b/include/net/netfilter/nf_tables.h
+@@ -793,7 +793,8 @@ struct nft_expr_ops {
+  */
+ struct nft_expr {
+ 	const struct nft_expr_ops	*ops;
+-	unsigned char			data[];
++	unsigned char			data[]
++		__attribute__((aligned(__alignof__(u64))));
+ };
  
--		xilinx_write(chan, XILINX_DMA_REG_SRCDSTADDR, hw->buf_addr);
-+		xilinx_write(chan, XILINX_DMA_REG_SRCDSTADDR,
-+			     xilinx_prep_dma_addr_t(hw->buf_addr));
- 
- 		/* Start the transfer */
- 		dma_ctrl_write(chan, XILINX_DMA_REG_BTT,
--- 
-2.20.1
-
+ static inline void *nft_expr_priv(const struct nft_expr *expr)
 
 
