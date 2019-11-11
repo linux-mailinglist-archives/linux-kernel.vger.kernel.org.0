@@ -2,91 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C3DF7945
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1A4BF794D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:58:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfKKQ4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:56:45 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36488 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbfKKQ4n (ORCPT
+        id S1727141AbfKKQ61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:58:27 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39040 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727027AbfKKQ6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:56:43 -0500
-Received: by mail-pg1-f196.google.com with SMTP id k13so9821245pgh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:56:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jQ+E6czJ4DNaGOkMLTz7dyfB5cXcK4wWj6bFDEgy1h0=;
-        b=ebFjG3a7GurRBYEtFEzgyjSkDQrPT+h3Oeke2Fjt6QWFc1kk89q1scDl25V3vMp0Z3
-         9RCiD+1QK1wu6ZSFHVD5gc4qxQ8wRwhW0jtrBlwLzEvFeOuYXX23CfnIPAwdJ6bk3lkO
-         FIJS8C3imAMAgF+Q34zvN5SK9ucCPIvVramajPclRHIMIlmgq8l4oBAMcX0GlNsJI7A9
-         dUgVkCehUDS/bcO9t6QuxUUIZPngPGWnIqZBbQsEkVS4WvQy6u9BS+q7hKd2chF6QPa/
-         K58vsA3r9KTC9VBQHCJmtvUEMsENBGbHJIMdIT8iKdW+oa0gfgo83xuDaaypZnb5HGaX
-         l3Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jQ+E6czJ4DNaGOkMLTz7dyfB5cXcK4wWj6bFDEgy1h0=;
-        b=Chv2TUFSz4MhAHgN7G14tL4ZdekpqeO4Wkx2tfzYtWEo8G+iY3hhKhy53JMSVGxTuW
-         Kd89Kxps1mP5dCUOfBXqWMN3P5/25Q9YyVJqnmjwQxcOUqnirz8Vq9Dhhwh0vXl51fSu
-         9T7XiCuAYKXJAhdgtuS25nqldkR2Gww/6CaciG8FwJpePetoUv9PP9gsZKljrAfIk/Zb
-         3ppU1LZ/nu/UktXxiXYJnuuJXBH7UYCniOB5xaHOPYqobkJjDlY/r7DmuLOx+6/o9xq0
-         kLoUT+3CnXL8DIept6b30si+Na6sUfg09gqzv26aq9AgVPWBe7tYzMZo8TL4g4C4veHF
-         /8aA==
-X-Gm-Message-State: APjAAAUJLJZmi/e2nHWIUFImY+SXIlOOxTy99gtPAbAHaje3RRLlEazj
-        dw1AtYkMUuR4KjCfnOUubgZbgfmctHngIw==
-X-Google-Smtp-Source: APXvYqzUshE6db9IdPvXjjrLX/g9qtWYzSDysJ4A1JV3KsHmRlMG+2hrZcbvDkueZZaRowkldzfB0A==
-X-Received: by 2002:a17:90a:22a6:: with SMTP id s35mr34591908pjc.3.1573491401372;
-        Mon, 11 Nov 2019 08:56:41 -0800 (PST)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id r5sm15009594pfh.179.2019.11.11.08.56.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 08:56:41 -0800 (PST)
-Date:   Mon, 11 Nov 2019 08:56:32 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Tony Lu <tonylu@linux.alibaba.com>
-Cc:     davem@davemloft.net, shemminger@osdl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: remove static inline from dev_put/dev_hold
-Message-ID: <20191111085632.24d88706@hermes.lan>
-In-Reply-To: <20191111140502.17541-1-tonylu@linux.alibaba.com>
-References: <20191111140502.17541-1-tonylu@linux.alibaba.com>
+        Mon, 11 Nov 2019 11:58:25 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xABGw1ir031439
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Nov 2019 11:58:02 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id C0DC94202FD; Mon, 11 Nov 2019 11:58:00 -0500 (EST)
+Date:   Mon, 11 Nov 2019 11:58:00 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Jann Horn <jannh@google.com>
+Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>
+Subject: Re: For review: documentation of clone3() system call
+Message-ID: <20191111165800.GD7017@mit.edu>
+References: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
+ <20191107151941.dw4gtul5lrtax4se@wittgenstein>
+ <2eb2ab4c-b177-29aa-cdc4-420b24cfd7b3@gmail.com>
+ <CAG48ez2of684J6suPZpko7JFV6hg5KQsrP0KAn8B8-C3PM9OfQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez2of684J6suPZpko7JFV6hg5KQsrP0KAn8B8-C3PM9OfQ@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Nov 2019 22:05:03 +0800
-Tony Lu <tonylu@linux.alibaba.com> wrote:
+On Mon, Nov 11, 2019 at 03:55:35PM +0100, Jann Horn wrote:
+> Not on Linux, but on OpenBSD, they do use MAP_STACK now AFAIK; this
+> was announced here:
+> <http://openbsd-archive.7691.n7.nabble.com/stack-register-checking-td338238.html>.
+> Basically they periodically check whether the userspace stack pointer
+> points into a MAP_STACK region, and if not, they kill the process. So
+> even if it's a no-op on Linux...
 
-> This patch removes static inline from dev_put/dev_hold in order to help
-> trace the pcpu_refcnt leak of net_device.
-> 
-> We have sufferred this kind of issue for several times during
-> manipulating NIC between different net namespaces. It prints this
-> log in dmesg:
-> 
->   unregister_netdevice: waiting for eth0 to become free. Usage count = 1
-> 
-> However, it is hard to find out who called and leaked refcnt in time. It
-> only left the crime scene but few evidence. Once leaked, it is not
-> safe to fix it up on the running host. We can't trace dev_put/dev_hold
-> directly, for the functions are inlined and used wildly amoung modules.
-> And this issue is common, there are tens of patches fix net_device
-> refcnt leak for various causes.
-> 
-> To trace the refcnt manipulating, this patch removes static inline from
-> dev_put/dev_hold. We can use handy tools, such as eBPF with kprobe, to
-> find out who holds but forgets to put refcnt. This will not be called
-> frequently, so the overhead is limited.
-> 
-> Signed-off-by: Tony Lu <tonylu@linux.alibaba.com>
+Hmm, is that something we should do in Linux?  Even if we only check
+on syscall entry, which should be pretty inexpensive, it seems like it
+would be very effective in protecting various ROP techniques.
 
-In the past dev_hold/dev_put was in the hot path for several
-operations. What is the performance implication of doing this?
+      	      		   	      	      - Ted
