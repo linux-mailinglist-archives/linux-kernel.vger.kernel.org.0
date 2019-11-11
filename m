@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA164F7E86
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9D0F7E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfKKSjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:39:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58708 "EHLO mail.kernel.org"
+        id S1730121AbfKKSrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:47:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728287AbfKKSji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:39:38 -0500
+        id S1730076AbfKKSr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:47:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B23C204FD;
-        Mon, 11 Nov 2019 18:39:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 307A7204FD;
+        Mon, 11 Nov 2019 18:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497577;
-        bh=4NAm3x63MqEBoEc1MXh1AeWlJFcd6N+VLDeC6aeUhFI=;
+        s=default; t=1573498048;
+        bh=pc99F0Jd2Vg9JY50ObVWgymOB0Sgeg2O/tcimhadOd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n83Kh3CAY90Uu1K8qFrjD16bqNcsq6xeK0z6G4i8VxZvCyw9ZbuU2jlTT3QkGudF+
-         pIhYypFaEouiFnQrSFu17Lv86XB6vsEWkh7El8CSvvwaUH/2aYX6oZ3Ox+C/fC1Xbj
-         MwbTKGw/leMur1voLFD6lH1MmpqTZN1jmWvtV8pg=
+        b=1b7GdOUgt84Xm6IfUJ5/wrkKA1zlk2UL2GK4c5GYeyEsYv8EqK2EPqh3+iNHUIOL6
+         GThRALhfujlasq+eda6fyagEvXF+UH1OhVmCDNGZBSX405lTho306chIetr8dgwdtM
+         /Psi4y/v1Lj+PSBRYOKMrQntOvB3xQ3QvFJ6gAko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 102/105] x86/apic/32: Avoid bogus LDR warnings
-Date:   Mon, 11 Nov 2019 19:29:12 +0100
-Message-Id: <20191111181449.454254098@linuxfoundation.org>
+Subject: [PATCH 4.19 120/125] pinctrl: cherryview: Fix irq_valid_mask calculation
+Date:   Mon, 11 Nov 2019 19:29:19 +0100
+Message-Id: <20191111181455.764494754@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,81 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Beulich <jbeulich@suse.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit fe6f85ca121e9c74e7490fe66b0c5aae38e332c3 ]
+[ Upstream commit 63bdef6cd6941917c823b9cc9aa0219d19fcb716 ]
 
-The removal of the LDR initialization in the bigsmp_32 APIC code unearthed
-a problem in setup_local_APIC().
+Commit 03c4749dd6c7 ("gpio / ACPI: Drop unnecessary ACPI GPIO to Linux
+GPIO translation") has made the cherryview gpio numbers sparse, to get
+a 1:1 mapping between ACPI pin numbers and gpio numbers in Linux.
 
-The code checks unconditionally for a mismatch of the logical APIC id by
-comparing the early APIC id which was initialized in get_smp_config() with
-the actual LDR value in the APIC.
+This has greatly simplified things, but the code setting the
+irq_valid_mask was not updated for this, so the valid mask is still in
+the old "compressed" numbering with the gaps in the pin numbers skipped,
+which is wrong as irq_valid_mask needs to be expressed in gpio numbers.
 
-Due to the removal of the bogus LDR initialization the check now can
-trigger on bigsmp_32 APIC systems emitting a warning for every booting
-CPU. This is of course a false positive because the APIC is not using
-logical destination mode.
+This results in the following error on devices using pin 24 (0x0018) on
+the north GPIO controller as an ACPI event source:
 
-Restrict the check and the possibly resulting fixup to systems which are
-actually using the APIC in logical destination mode.
+[    0.422452] cherryview-pinctrl INT33FF:01: Failed to translate GPIO to IRQ
 
-[ tglx: Massaged changelog and added Cc stable ]
+This has been reported (by email) to be happening on a Caterpillar CAT T20
+tablet and I've reproduced this myself on a Medion Akoya e2215t 2-in-1.
 
-Fixes: bae3a8d3308 ("x86/apic: Do not initialize LDR and DFR for bigsmp")
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+This commit uses the pin number instead of the compressed index into
+community->pins to clear the correct bits in irq_valid_mask for GPIOs
+using GPEs for interrupts, fixing these errors and in case of the
+Medion Akoya e2215t also fixing the LID switch not working.
+
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com
+Fixes: 03c4749dd6c7 ("gpio / ACPI: Drop unnecessary ACPI GPIO to Linux GPIO translation")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/apic.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 97d1290d1f0d8..6415b4aead546 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1422,9 +1422,6 @@ void setup_local_APIC(void)
- {
- 	int cpu = smp_processor_id();
- 	unsigned int value;
--#ifdef CONFIG_X86_32
--	int logical_apicid, ldr_apicid;
--#endif
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 227646eb817c8..9eab508395814 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1595,7 +1595,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
  
- 
- 	if (disable_apic) {
-@@ -1465,16 +1462,21 @@ void setup_local_APIC(void)
- 	apic->init_apic_ldr();
- 
- #ifdef CONFIG_X86_32
--	/*
--	 * APIC LDR is initialized.  If logical_apicid mapping was
--	 * initialized during get_smp_config(), make sure it matches the
--	 * actual value.
--	 */
--	logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
--	ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
--	WARN_ON(logical_apicid != BAD_APICID && logical_apicid != ldr_apicid);
--	/* always use the value from LDR */
--	early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
-+	if (apic->dest_logical) {
-+		int logical_apicid, ldr_apicid;
-+
-+		/*
-+		 * APIC LDR is initialized.  If logical_apicid mapping was
-+		 * initialized during get_smp_config(), make sure it matches
-+		 * the actual value.
-+		 */
-+		logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
-+		ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
-+		if (logical_apicid != BAD_APICID)
-+			WARN_ON(logical_apicid != ldr_apicid);
-+		/* Always use the value from LDR. */
-+		early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
-+	}
- #endif
+ 		if (need_valid_mask && intsel >= community->nirqs)
+-			clear_bit(i, chip->irq.valid_mask);
++			clear_bit(desc->number, chip->irq.valid_mask);
+ 	}
  
  	/*
 -- 
