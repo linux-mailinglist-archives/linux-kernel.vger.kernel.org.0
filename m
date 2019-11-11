@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7D7F7E07
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C07F7EA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfKKSu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:50:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44772 "EHLO mail.kernel.org"
+        id S1729051AbfKKSmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:42:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730372AbfKKSuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:50:51 -0500
+        id S1729493AbfKKSmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:42:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 534A7214E0;
-        Mon, 11 Nov 2019 18:50:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48AAC20674;
+        Mon, 11 Nov 2019 18:42:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498250;
-        bh=AxjSEsBuqLMR7CGO0L2PJe8Z58LIy3vQxJ+3lq10mw8=;
+        s=default; t=1573497733;
+        bh=4nd80/nEjMUO2m1JwBIUNTi7+77i17sFMX/JwlOFRQw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QM+S8LUO0es9TxyGUoIlElFHgCPi52BMHJO5aQqyAZ8X6OSNw+UYAGtbayo+ypkel
-         CQ3agWQeSFTd9Lvr516LNaIm0HpZk/iGx6hGqsY3cesCVzs31KKvQHMFZ0/ZWxSy8/
-         FbUcGmOJfVYw3IQWwL1i+QIRS/kSDpm/sWpCfynY=
+        b=hbCfvEQu2x8wJkamvtpNaG0575/8mcdWuui6mwRZrs+HvzuW0rZUbvaVwP99VPpr4
+         4m0ISxLT+zq61gJ0AaKcA7qPwvQ4VUSlQ5PReEQ3LOxREGc77PEwQKfsBhlQcMxUFG
+         Lj9yT5t0RcHR73NmXijCOFuMwreo0GOrjhwH7QZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.3 064/193] netfilter: nf_tables: Align nft_expr private data to 64-bit
-Date:   Mon, 11 Nov 2019 19:27:26 +0100
-Message-Id: <20191111181505.729127861@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Johan Hovold <johan@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 009/125] nfc: netlink: fix double device reference drop
+Date:   Mon, 11 Nov 2019 19:27:28 +0100
+Message-Id: <20191111181440.716820399@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 250367c59e6ba0d79d702a059712d66edacd4a1a upstream.
+[ Upstream commit 025ec40b81d785a98f76b8bdb509ac10773b4f12 ]
 
-Invoking the following commands on a 32-bit architecture with strict
-alignment requirements (such as an ARMv7-based Raspberry Pi) results
-in an alignment exception:
+The function nfc_put_device(dev) is called twice to drop the reference
+to dev when there is no associated local llcp. Remove one of them to fix
+the bug.
 
- # nft add table ip test-ip4
- # nft add chain ip test-ip4 output { type filter hook output priority 0; }
- # nft add rule  ip test-ip4 output quota 1025 bytes
-
-Alignment trap: not handling instruction e1b26f9f at [<7f4473f8>]
-Unhandled fault: alignment exception (0x001) at 0xb832e824
-Internal error: : 1 [#1] PREEMPT SMP ARM
-Hardware name: BCM2835
-[<7f4473fc>] (nft_quota_do_init [nft_quota])
-[<7f447448>] (nft_quota_init [nft_quota])
-[<7f4260d0>] (nf_tables_newrule [nf_tables])
-[<7f4168dc>] (nfnetlink_rcv_batch [nfnetlink])
-[<7f416bd0>] (nfnetlink_rcv [nfnetlink])
-[<8078b334>] (netlink_unicast)
-[<8078b664>] (netlink_sendmsg)
-[<8071b47c>] (sock_sendmsg)
-[<8071bd18>] (___sys_sendmsg)
-[<8071ce3c>] (__sys_sendmsg)
-[<8071ce94>] (sys_sendmsg)
-
-The reason is that nft_quota_do_init() calls atomic64_set() on an
-atomic64_t which is only aligned to 32-bit, not 64-bit, because it
-succeeds struct nft_expr in memory which only contains a 32-bit pointer.
-Fix by aligning the nft_expr private data to 64-bit.
-
-Fixes: 96518518cc41 ("netfilter: add nftables")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v3.13+
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 52feb444a903 ("NFC: Extend netlink interface for LTO, RW, and MIUX parameters support")
+Fixes: d9b8d8e19b07 ("NFC: llcp: Service Name Lookup netlink interface")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/net/netfilter/nf_tables.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/nfc/netlink.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/include/net/netfilter/nf_tables.h
-+++ b/include/net/netfilter/nf_tables.h
-@@ -801,7 +801,8 @@ struct nft_expr_ops {
-  */
- struct nft_expr {
- 	const struct nft_expr_ops	*ops;
--	unsigned char			data[];
-+	unsigned char			data[]
-+		__attribute__((aligned(__alignof__(u64))));
- };
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -1110,7 +1110,6 @@ static int nfc_genl_llc_set_params(struc
  
- static inline void *nft_expr_priv(const struct nft_expr *expr)
+ 	local = nfc_llcp_find_local(dev);
+ 	if (!local) {
+-		nfc_put_device(dev);
+ 		rc = -ENODEV;
+ 		goto exit;
+ 	}
+@@ -1170,7 +1169,6 @@ static int nfc_genl_llc_sdreq(struct sk_
+ 
+ 	local = nfc_llcp_find_local(dev);
+ 	if (!local) {
+-		nfc_put_device(dev);
+ 		rc = -ENODEV;
+ 		goto exit;
+ 	}
 
 
