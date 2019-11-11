@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE519F7ECD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35520F7ED0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbfKKSiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:38:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
+        id S1729031AbfKKTGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:06:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729061AbfKKSis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:38:48 -0500
+        id S1728028AbfKKSiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:38:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 648F0204FD;
-        Mon, 11 Nov 2019 18:38:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 927592196E;
+        Mon, 11 Nov 2019 18:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497526;
-        bh=Umhrk4I3/8m4n1PENLs+C//lxigBRjVE7+2A8v6Wleo=;
+        s=default; t=1573497530;
+        bh=mK+Elh+tbvp7chd+lajcYCegHw9TYGBbrnx4TCYxMNM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FcI6KuN/46qD8JjIpE5L47SPhC8qprgvBb0XNvX6tVMSwIzd+8+xMsQB8O2FeFNmQ
-         2745q1BukWuEabvTZ6i7BKGLhLS/KBG55x9KXoaaNLVa3jLoiiNNCNu7+pTb5TFpOH
-         E9w3qcEWkHrnytD3TRiAc1R30Q33V0UDnzmuC9zc=
+        b=Ascod6o9QoLFL3UkvfiA0vwBLnDjznDZA6tFsKU0Ro/jYIM1k57P67ofYS/RWQowK
+         Af8nNfa4C3oj6sICBPKtR89nOjdDe09RHnKCv07iiJIPGUzz9FUmCzGQ4Tf1CZddVo
+         +0NU0gEjtwYI3sEwwckvdce7L1Thw3APkurkDW0w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.14 045/105] configfs: fix a deadlock in configfs_symlink()
-Date:   Mon, 11 Nov 2019 19:28:15 +0100
-Message-Id: <20191111181441.252994654@linuxfoundation.org>
+        Roger Quadros <rogerq@ti.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH 4.14 046/105] usb: dwc3: Allow disabling of metastability workaround
+Date:   Mon, 11 Nov 2019 19:28:16 +0100
+Message-Id: <20191111181441.392248271@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
 References: <20191111181421.390326245@linuxfoundation.org>
@@ -43,81 +44,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Roger Quadros <rogerq@ti.com>
 
-commit 351e5d869e5ac10cb40c78b5f2d7dfc816ad4587 upstream.
+commit 42bf02ec6e420e541af9a47437d0bdf961ca2972 upstream
 
-Configfs abuses symlink(2).  Unlike the normal filesystems, it
-wants the target resolved at symlink(2) time, like link(2) would've
-done.  The problem is that ->symlink() is called with the parent
-directory locked exclusive, so resolving the target inside the
-->symlink() is easily deadlocked.
+Some platforms (e.g. TI's DRA7 USB2 instance) have more trouble
+with the metastability workaround as it supports only
+a High-Speed PHY and the PHY can enter into an Erratic state [1]
+when the controller is set in SuperSpeed mode as part of
+the metastability workaround.
 
-Short of really ugly games in sys_symlink() itself, all we can
-do is to unlock the parent before resolving the target and
-relock it after.  However, that invalidates the checks done
-by the caller of ->symlink(), so we have to
-	* check that dentry is still where it used to be
-(it couldn't have been moved, but it could've been unhashed)
-	* recheck that it's still negative (somebody else
-might've successfully created a symlink with the same name
-while we were looking the target up)
-	* recheck the permissions on the parent directory.
+This causes upto 2 seconds delay in enumeration on DRA7's USB2
+instance in gadget mode.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+If these platforms can be better off without the workaround,
+provide a device tree property to suggest that so the workaround
+is avoided.
+
+[1] Device mode enumeration trace showing PHY Erratic Error.
+     irq/90-dwc3-969   [000] d...    52.323145: dwc3_event: event (00000901): Erratic Error [U0]
+     irq/90-dwc3-969   [000] d...    52.560646: dwc3_event: event (00000901): Erratic Error [U0]
+     irq/90-dwc3-969   [000] d...    52.798144: dwc3_event: event (00000901): Erratic Error [U0]
+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/configfs/symlink.c |   33 ++++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/usb/dwc3.txt |    2 ++
+ drivers/usb/dwc3/core.c                        |    3 +++
+ drivers/usb/dwc3/core.h                        |    3 +++
+ drivers/usb/dwc3/gadget.c                      |    6 ++++--
+ 4 files changed, 12 insertions(+), 2 deletions(-)
 
---- a/fs/configfs/symlink.c
-+++ b/fs/configfs/symlink.c
-@@ -157,11 +157,42 @@ int configfs_symlink(struct inode *dir,
- 	    !type->ct_item_ops->allow_link)
- 		goto out_put;
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+@@ -47,6 +47,8 @@ Optional properties:
+ 			from P0 to P1/P2/P3 without delay.
+  - snps,dis-tx-ipgap-linecheck-quirk: when set, disable u2mac linestate check
+ 			during HS transmit.
++ - snps,dis_metastability_quirk: when set, disable metastability workaround.
++			CAUTION: use only if you are absolutely sure of it.
+  - snps,is-utmi-l1-suspend: true when DWC3 asserts output signal
+ 			utmi_l1_suspend_n, false when asserts utmi_sleep_n
+  - snps,hird-threshold: HIRD threshold
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -1115,6 +1115,9 @@ static void dwc3_get_properties(struct d
+ 	device_property_read_u32(dev, "snps,quirk-frame-length-adjustment",
+ 				 &dwc->fladj);
  
-+	/*
-+	 * This is really sick.  What they wanted was a hybrid of
-+	 * link(2) and symlink(2) - they wanted the target resolved
-+	 * at syscall time (as link(2) would've done), be a directory
-+	 * (which link(2) would've refused to do) *AND* be a deep
-+	 * fucking magic, making the target busy from rmdir POV.
-+	 * symlink(2) is nothing of that sort, and the locking it
-+	 * gets matches the normal symlink(2) semantics.  Without
-+	 * attempts to resolve the target (which might very well
-+	 * not even exist yet) done prior to locking the parent
-+	 * directory.  This perversion, OTOH, needs to resolve
-+	 * the target, which would lead to obvious deadlocks if
-+	 * attempted with any directories locked.
-+	 *
-+	 * Unfortunately, that garbage is userland ABI and we should've
-+	 * said "no" back in 2005.  Too late now, so we get to
-+	 * play very ugly games with locking.
-+	 *
-+	 * Try *ANYTHING* of that sort in new code, and you will
-+	 * really regret it.  Just ask yourself - what could a BOFH
-+	 * do to me and do I want to find it out first-hand?
-+	 *
-+	 *  AV, a thoroughly annoyed bastard.
-+	 */
-+	inode_unlock(dir);
- 	ret = get_target(symname, &path, &target_item, dentry->d_sb);
-+	inode_lock(dir);
- 	if (ret)
- 		goto out_put;
++	dwc->dis_metastability_quirk = device_property_read_bool(dev,
++				"snps,dis_metastability_quirk");
++
+ 	dwc->lpm_nyet_threshold = lpm_nyet_threshold;
+ 	dwc->tx_de_emphasis = tx_de_emphasis;
  
--	ret = type->ct_item_ops->allow_link(parent_item, target_item);
-+	if (dentry->d_inode || d_unhashed(dentry))
-+		ret = -EEXIST;
-+	else
-+		ret = inode_permission(dir, MAY_WRITE | MAY_EXEC);
-+	if (!ret)
-+		ret = type->ct_item_ops->allow_link(parent_item, target_item);
- 	if (!ret) {
- 		mutex_lock(&configfs_symlink_mutex);
- 		ret = create_link(parent_item, target_item, dentry);
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -869,6 +869,7 @@ struct dwc3_scratchpad_array {
+  * 	1	- -3.5dB de-emphasis
+  * 	2	- No de-emphasis
+  * 	3	- Reserved
++ * @dis_metastability_quirk: set to disable metastability quirk.
+  * @imod_interval: set the interrupt moderation interval in 250ns
+  *                 increments or 0 to disable.
+  */
+@@ -1025,6 +1026,8 @@ struct dwc3 {
+ 	unsigned		tx_de_emphasis_quirk:1;
+ 	unsigned		tx_de_emphasis:2;
+ 
++	unsigned		dis_metastability_quirk:1;
++
+ 	u16			imod_interval;
+ };
+ 
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2034,7 +2034,8 @@ static void dwc3_gadget_set_speed(struct
+ 	 * STAR#9000525659: Clock Domain Crossing on DCTL in
+ 	 * USB 2.0 Mode
+ 	 */
+-	if (dwc->revision < DWC3_REVISION_220A) {
++	if (dwc->revision < DWC3_REVISION_220A &&
++	    !dwc->dis_metastability_quirk) {
+ 		reg |= DWC3_DCFG_SUPERSPEED;
+ 	} else {
+ 		switch (speed) {
+@@ -3265,7 +3266,8 @@ int dwc3_gadget_init(struct dwc3 *dwc)
+ 	 * is less than super speed because we don't have means, yet, to tell
+ 	 * composite.c that we are USB 2.0 + LPM ECN.
+ 	 */
+-	if (dwc->revision < DWC3_REVISION_220A)
++	if (dwc->revision < DWC3_REVISION_220A &&
++	    !dwc->dis_metastability_quirk)
+ 		dev_info(dwc->dev, "changing max_speed on rev %08x\n",
+ 				dwc->revision);
+ 
 
 
