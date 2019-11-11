@@ -2,111 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BD6F7E20
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91488F7E05
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730386AbfKKTBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:01:54 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36416 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729338AbfKKSum (ORCPT
+        id S1729508AbfKKSuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:50:50 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33671 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727718AbfKKSun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:50:42 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k15so14972363lja.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:50:41 -0800 (PST)
+        Mon, 11 Nov 2019 13:50:43 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c184so11301886pfb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:50:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tzwj0Bcu0+gyIzlUlN7XJHfbOaRzWPHagplExJJIvPs=;
-        b=ew5m8ZL/3PZXEH82FW7NciyTpX79pXMZzxowB+MlMPaTW/kiutG2GumvXkfpUaRgOq
-         P2W1GftekPzYO7cncT0B3PbtH2mr6stdJFhMeleFIDj20NSRAHa/lpsPd2tHpgwHBNki
-         C9b4sV+Ddh67bYfuCFNneVQaMCjOafWrdcZl4=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SqHuH+O1ZtrNaMwGovrIH7hD1eYbuecwgYp3TILG6e4=;
+        b=TJG431fn1FQazvBV6Wgeh1D1wZrDk14udOcQWLRSZYNozaF4BCdB3j2A0utl5FXPFt
+         NgTBU+vR/As+hZEKwnhqOjqj+szVkfsP89rSv7JbOcPAdAv1yAmmE5/QW3sJq4JAEBpZ
+         2kqULMCOeTgNBVUSkKn4qxCkgV0hofZMUgKCk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tzwj0Bcu0+gyIzlUlN7XJHfbOaRzWPHagplExJJIvPs=;
-        b=atJmU9Igr+lGVogFj/mLfrXWCDejevlTESkLd6v5D62btodHIdn53DJmYnh8y/K+RF
-         hYzaxofY/WU5gWJJwnbLUG++R93nRx2maCGT+T+SSarFpWeVHSBacgu035JSweCfabHX
-         zmo3Xil9P73UMlLx5GBpbvx0NgC482Tlt5qojvKkhl3b//PXn4pMMp9YmSzAmZ5DJwJu
-         Xr/0Qd5lgxHq4vlV6SFwRvDEVNi1lpJVj3zaMOxjyZb2OZfKHMcPp64x9j95dauG2uQj
-         d1VAqAle0fJT9jm2lytlsovWxFOObIonWxcUiZ2b5qNs74F+MtZqLqsvyvi/A8UCR2SY
-         4J+g==
-X-Gm-Message-State: APjAAAUWl0sZzwmzMb9L4Qqxa70SwfVkO6pCJZPpQrhE8dUSxKRmZBtB
-        1wrv2p+jC2boQzAT5PDh/7zzUNzwN6E=
-X-Google-Smtp-Source: APXvYqxgnjQlnUBf2y4y+UqZYWyjA3YHZzywxlbc3RmgPNtSO5Jy8A4kUpJC8N1c62zT3D1xwi5Brg==
-X-Received: by 2002:a2e:8601:: with SMTP id a1mr17604295lji.159.1573498240124;
-        Mon, 11 Nov 2019 10:50:40 -0800 (PST)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id z24sm8026839lfj.40.2019.11.11.10.50.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2019 10:50:39 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id q5so4669385lfo.10
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:50:38 -0800 (PST)
-X-Received: by 2002:a19:c790:: with SMTP id x138mr16826204lff.61.1573498238697;
- Mon, 11 Nov 2019 10:50:38 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SqHuH+O1ZtrNaMwGovrIH7hD1eYbuecwgYp3TILG6e4=;
+        b=Gm12jxzDeCOyD9H/hQLe2tkSTt8Ga7BzHJsk2t42EbzGS13gCEYI17J0BAubVHwpgv
+         vU7btfAW3GoxXok28FBpmbMEYx71GaWcxSpmVEIQBnFbKqsowSefLVQN4cQgQYdDBJWW
+         EK5OOuDzpDHLnMzW+0n2/0vuMj1I7GSMQM/jHNHjK/glrx5VYdpDghsZjKwshQsYbSAi
+         MmG0fCZ2hTr/P8p/7zB11NvajMc5efo8bQ78lGaQBVj3kVHS5uSwuGf+Mnh4Cden1i9P
+         OBKeC63WHfFpCIPCkGMHPfYNb2OrsLukBLuhmLWlY/Cn9G51W8BzdVdilhgDreoRVNQV
+         X5ow==
+X-Gm-Message-State: APjAAAUnDWa9vuEsJYN6bJ6VfQOU5hX1qTSENqKXSD6ueNiVCyBrf6bN
+        pI20OKictlYIVsl8ANcujif0tQ==
+X-Google-Smtp-Source: APXvYqzgUhSewfB+4TJd+kX8NbecYhFiDmQoSYio8sWbACFZFKCrIXhdmbochMPYaHa6i8+pBxCOyg==
+X-Received: by 2002:aa7:9189:: with SMTP id x9mr4439687pfa.41.1573498242139;
+        Mon, 11 Nov 2019 10:50:42 -0800 (PST)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id v63sm15220971pfb.181.2019.11.11.10.50.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 11 Nov 2019 10:50:41 -0800 (PST)
+From:   Evan Green <evgreen@chromium.org>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Martin K Petersen <martin.petersen@oracle.com>
+Cc:     Gwendal Grignou <gwendal@chromium.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Evan Green <evgreen@chromium.org>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/2] loop: Better discard for block devices
+Date:   Mon, 11 Nov 2019 10:50:28 -0800
+Message-Id: <20191111185030.215451-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
- <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
- <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
- <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
- <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com> <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
-In-Reply-To: <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 11 Nov 2019 10:50:22 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
-Message-ID: <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Marco Elver <elver@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 10:31 AM Eric Dumazet <edumazet@google.com> wrote:
->
-> Problem is that KASAN/KCSAN stops as soon as one issue is hit,
-> regardless of it being a false positive or not.
+This series addresses some errors seen when using the loop
+device directly backed by a block device. The first change plumbs
+out the correct error message, and the second change prevents the
+error from occurring in many cases.
 
-So mayb e that - together with the known huge base of false positives
-- just means that KCSAN needs some more work before it can be used as
-a basis for sending out patches.
+The errors look like this:
+[   90.880875] print_req_error: I/O error, dev loop5, sector 0
 
-Maybe the reporting needs to create a hash of the location, and report
-once per location? Or something like that.
+The errors occur when trying to do a discard or write zeroes operation
+on a loop device backed by a block device that does not support write zeroes.
+Firstly, the error itself is incorrectly reported as I/O error, but is
+actually EOPNOTSUPP. The first patch plumbs out EOPNOTSUPP to properly
+report the error.
 
-Maybe KCSAN needs a way to filter out known false positives on a KCSAN
-side, without having to change the source for a tool that gives too
-much noise?
+The second patch prevents these errors from occurring by mirroring the
+zeroing capabilities of the underlying block device into the loop device.
+Before this change, discard was always reported as being supported, and
+the loop device simply turns around and does an fallocate operation on the
+backing device. After this change, backing block devices that do support
+zeroing will continue to work as before, and continue to get all the
+benefits of doing that. Backing devices that do not support zeroing will
+fail earlier, avoiding hitting the loop device at all and ultimately
+avoiding this error in the logs.
 
-> If we do not annotate the false positive, the real issues might be
-> hidden for years.
+I can also confirm that this fixes test block/003 in the blktests, when
+running blktests on a loop device backed by a block device.
 
-I don't think "change the kernel source for a tool that isn't good
-enough" is the solution.
+Darrick, I see you've got a related change in linux-next. I'm not sure what
+the status of that is, so I didn't base my latest spin on top of yours.
 
-> There is no pattern really, only a lot of noise (small ' bugs'  that
-> have no real impact)
+Changes in v6:
+- Updated tags
 
-Yeah, if it hasn't shown any real bugs so far, that just strengthens
-the "it needs much fewer false positives to be useful".
+Changes in v5:
+- Don't mirror discard if lo_encrypt_key_size is non-zero (Gwendal)
 
-KASAN and lockdep can afford to stop after the first problem, because
-the problems they report - and the additional annotations you might
-want to add - are quality problems and annotations.
+Changes in v4:
+- Mirror blkdev's write_zeroes into loopdev's discard_sectors.
 
-                Linus
+Changes in v3:
+- Updated tags
+- Updated commit description
+
+Changes in v2:
+- Unnested error if statement (Bart)
+
+Evan Green (2):
+  loop: Report EOPNOTSUPP properly
+  loop: Better discard support for block devices
+
+ drivers/block/loop.c | 66 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 22 deletions(-)
+
+-- 
+2.21.0
+
