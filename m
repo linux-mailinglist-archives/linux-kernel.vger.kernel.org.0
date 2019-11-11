@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D09CEF7AF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C050F7D54
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbfKKSbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:31:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47748 "EHLO mail.kernel.org"
+        id S1730658AbfKKSzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:55:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbfKKSbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:31:14 -0500
+        id S1730641AbfKKSzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:55:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBD952173B;
-        Mon, 11 Nov 2019 18:31:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AE212184C;
+        Mon, 11 Nov 2019 18:55:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497073;
-        bh=NQ8hEnMGGrLVGpvkW97YGDHz+Z/OC+g+PKaH/TGZQSU=;
+        s=default; t=1573498537;
+        bh=7NrS/hL5NX8zlISrzUN09b/2lxLSRWe1jW1GOETick4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aGbVXPg9VIriJsxTonIN/0+vhV4bkN99EQ2B9xsD8VMiIoY9AH6W1iDQdKDEGrMlJ
-         puWgLDxxJb5gD1PwPg66V1XPIJ/FF9HEqWrSmFN937Fh7qUy1gsmhEM5Kbkunx033e
-         uVILGsR5+rU1p0f592xbNJyLIsYwIFGK8EZXy9J4=
+        b=pB8BaPdCbIeWBAo/dwI7iHm/MmdxleWqUBn8hbkRjH3s/ETQOViwK5rzqlBKY7yiI
+         9GfmFrrfqIsJ+zTBySmrxpc75hmmj6sJtWUmgsxTBEkC37pJ+WUc1sMWAbO8lunvGe
+         iPxzXBX/XNew3FnLxCh2//6jQIgYkSlrWXAT5WmM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 35/43] USB: Skip endpoints with 0 maxpacket length
+Subject: [PATCH 5.3 147/193] USB: Skip endpoints with 0 maxpacket length
 Date:   Mon, 11 Nov 2019 19:28:49 +0100
-Message-Id: <20191111181325.467989555@linuxfoundation.org>
+Message-Id: <20191111181511.991893209@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -69,10 +69,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+)
 
 diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
-index 5abc4e5434ecf..cbd064fae23bd 100644
+index 151a74a543862..1ac1095bfeac8 100644
 --- a/drivers/usb/core/config.c
 +++ b/drivers/usb/core/config.c
-@@ -314,6 +314,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
+@@ -348,6 +348,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
  
  	/* Validate the wMaxPacketSize field */
  	maxp = usb_endpoint_maxp(&endpoint->desc);
