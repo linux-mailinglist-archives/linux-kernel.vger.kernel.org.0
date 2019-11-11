@@ -2,90 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B614F7000
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73984F7004
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 10:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfKKJAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 04:00:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35916 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKJAF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 04:00:05 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k15so12904132lja.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 01:00:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6og0lVoCjT8EFtl94DdvmCL57HASZwqoUGY0yeY454E=;
-        b=EfHpAExQ0Ws7cVdvaCFhiiBQ/hlsNJTdv/f6PI8HZnlNxH5SHPggqy+vJOUZB4Q2b1
-         xp0KzS1WaFvwKMsTwPin0HYR81wM8NhcWZXjT7DvsEt8QlGJcDPtgxaYNBE3wefD7TxH
-         1EO3yO9GI1ClTfsRhDgPKoJ4D0rKofvMk6Ut5sZu0qgmIGgkeAYTOiqffX3hlJ0JCLN1
-         RSaWKKf1IrqbV0Cz5D/TzCIJhjqBWQAz1n8buIGSGzlwg1z0zZcMM0K8OHk+GijZcvf4
-         Ww43+WkbhR1Mk5+/7KIM4EwSu++4hX+2suxdRD/YCB5OyThQYQTT7nJHJZ1Q/rEYj4/E
-         Oj4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6og0lVoCjT8EFtl94DdvmCL57HASZwqoUGY0yeY454E=;
-        b=SwzVt4PN6GFf9qVfzjXE2p7CDWKmdCqFzDWaFsRFtlEE+DSjPdOYxDV+k7xWcUa7WH
-         678EcyP3J4flpo/P57RQHu3PdkAsqVrqbMt2+MsYM2R/VdTtu6JPVzV+bT0jbioKs6/e
-         WHq8O97riQiiDRQjVC6p+XuL2emM36Xa74R2P0tJeMEvcw/VCE53xj+H6ange/0dXHO+
-         3uxPcKH8eZcsoS4AP5opt8QPA0uLsJFDtx5S0+DDAeCLuWAOpbh6HrmHLq/h+PuYTkHV
-         BP37/WEvLE89gZ2xEjsXxGegeMZk4qYlzq7XqbEplmgmui7P3l/wSd61B8lqkrrrTfUC
-         z6MA==
-X-Gm-Message-State: APjAAAVF4I6DtuO5dzh+365Si4n105XyKdqJ9qz5e3OSkEyRCCw3LZmy
-        GEpRAgV8ZSUUoUWBba3H252ElFPLHlFbfQ==
-X-Google-Smtp-Source: APXvYqxBkK79S3AKofW4cmxq0Q5rJRhdzHYZ7ix0Zmt/6KPQoLSFLbxn8wPj2dbJAE7KFXCxBiN5DQ==
-X-Received: by 2002:a2e:547:: with SMTP id 68mr15405763ljf.150.1573462803454;
-        Mon, 11 Nov 2019 01:00:03 -0800 (PST)
-Received: from localhost (c-413e70d5.07-21-73746f28.bbcust.telenor.se. [213.112.62.65])
-        by smtp.gmail.com with ESMTPSA id d26sm6272174ljo.54.2019.11.11.01.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 01:00:02 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     catalin.marinas@arm.com
-Cc:     will@kernel.org, john.garry@huawei.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] arm64: Kconfig: make CMDLINE_FORCE depend on CMDLINE
-Date:   Mon, 11 Nov 2019 09:59:56 +0100
-Message-Id: <20191111085956.6158-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        id S1726985AbfKKJBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 04:01:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbfKKJBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 04:01:04 -0500
+Received: from localhost (unknown [106.201.42.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60B34206BA;
+        Mon, 11 Nov 2019 09:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573462864;
+        bh=z/j9crcHsk7S4aU9B2I6s0jBvYdfKN9sp40Q4ClK9J4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e69J39U/DZqIZdafDyLMGrY+J4YYs6R8wCZts1udWAxa3Xhh2I/nPeAbcxehxjL/F
+         IlHNETuf6ciTeHdl4WU+En9BixkF7hVwiHh8IFPPhLOrfJAlgJNT8lmZaw7kmMydY9
+         CTHYUhLs399fKoWZGmHus2OLDQB3QXS1NUL58kPc=
+Date:   Mon, 11 Nov 2019 14:30:57 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     robh+dt@kernel.org, nm@ti.com, ssantosh@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
+        lokeshvutla@ti.com, t-kristo@ti.com, tony@atomide.com,
+        j-keerthy@ti.com
+Subject: Re: [PATCH v4 09/15] dmaengine: ti: New driver for K3 UDMA -
+ split#1: defines, structs, io func
+Message-ID: <20191111090057.GT952516@vkoul-mobl>
+References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
+ <20191101084135.14811-10-peter.ujfalusi@ti.com>
+ <20191111052828.GN952516@vkoul-mobl>
+ <00777586-a3ac-2404-5226-e8c887936a32@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00777586-a3ac-2404-5226-e8c887936a32@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building allmodconfig KCONFIG_ALLCONFIG=$(pwd)/arch/arm64/configs/defconfig
-CONFIG_CMDLINE_FORCE gets enabled. Which forces the user to pass the
-full cmdline to CONFIG_CMDLINE="...".
+On 11-11-19, 10:33, Peter Ujfalusi wrote:
+> On 11/11/2019 7.28, Vinod Koul wrote:
+> > On 01-11-19, 10:41, Peter Ujfalusi wrote:
 
-Rework so that CONFIG_CMDLINE_FORCE gets set only if CONFIG_CMDLINE is
-set to something except an empty string.
+> >> +	struct udma_static_tr static_tr;
+> >> +	char *name;
+> >> +
+> >> +	struct udma_tchan *tchan;
+> >> +	struct udma_rchan *rchan;
+> >> +	struct udma_rflow *rflow;
+> >> +
+> >> +	bool psil_paired;
+> >> +
+> >> +	int irq_num_ring;
+> >> +	int irq_num_udma;
+> >> +
+> >> +	bool cyclic;
+> >> +	bool paused;
+> >> +
+> >> +	enum udma_chan_state state;
+> >> +	struct completion teardown_completed;
+> >> +
+> >> +	u32 bcnt; /* number of bytes completed since the start of the channel */
+> >> +	u32 in_ring_cnt; /* number of descriptors in flight */
+> >> +
+> >> +	bool pkt_mode; /* TR or packet */
+> >> +	bool needs_epib; /* EPIB is needed for the communication or not */
+> >> +	u32 psd_size; /* size of Protocol Specific Data */
+> >> +	u32 metadata_size; /* (needs_epib ? 16:0) + psd_size */
+> >> +	u32 hdesc_size; /* Size of a packet descriptor in packet mode */
+> >> +	bool notdpkt; /* Suppress sending TDC packet */
+> >> +	int remote_thread_id;
+> >> +	u32 src_thread;
+> >> +	u32 dst_thread;
+> >> +	enum psil_endpoint_type ep_type;
+> >> +	bool enable_acc32;
+> >> +	bool enable_burst;
+> >> +	enum udma_tp_level channel_tpl; /* Channel Throughput Level */
+> >> +
+> >> +	/* dmapool for packet mode descriptors */
+> >> +	bool use_dma_pool;
+> >> +	struct dma_pool *hdesc_pool;
+> >> +
+> >> +	u32 id;
+> >> +	enum dma_transfer_direction dir;
+> > 
+> > why does channel have this, it already exists in descriptor
+> 
+> The channel can not change role, it is set when it was requested. In the
 
-Suggested-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+how do you do this on set? The channel is requested, we do not know the
+direction. When prep_ is invoked we know it..
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 50df79d4aa3b..64764ca92fca 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1629,6 +1629,7 @@ config CMDLINE
- 
- config CMDLINE_FORCE
- 	bool "Always use the default kernel command string"
-+	depends on CMDLINE != ""
- 	help
- 	  Always use the default kernel command string, even if the boot
- 	  loader passes other arguments to the kernel.
 -- 
-2.20.1
-
+~Vinod
