@@ -2,77 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F7AF6FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 09:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD47F6FFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 09:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKKI6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 03:58:25 -0500
-Received: from mail-qt1-f178.google.com ([209.85.160.178]:38503 "EHLO
-        mail-qt1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKI6Z (ORCPT
+        id S1726877AbfKKI7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 03:59:55 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41645 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbfKKI7z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 03:58:25 -0500
-Received: by mail-qt1-f178.google.com with SMTP id p20so14899277qtq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 00:58:24 -0800 (PST)
+        Mon, 11 Nov 2019 03:59:55 -0500
+Received: by mail-qt1-f194.google.com with SMTP id o3so14884446qtj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 00:59:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=O2TkzP7dnTydhiSG2HDTMvBwwAeeTQFK8/4YvS8vxU4=;
-        b=ND70qTrZs90snFYmzHRxLqUPDdK5fBwLwQ1q5N9jQPzOqhtNBobdIlAA8oKNvZvNTT
-         YSuZSM7FdYQmeZZ4RwnWoGMS+FCPtUxXhhrpCjrxWVhghHBeqFYy4EsFgUbeJX9Ks2bw
-         oG1TZvF0BT/VHVOcQLH73JI6b01CRwxr+3i2CeJh26+yEZZzIiHbGQXtD2IshhF8D1Co
-         oMnje9NLLxEd4LQeMiBuAKYFfPCH7UiKtRlTDtnVaXLbJj7Oe5PBAgtx/qr1NjzfqD9i
-         NvfM47fV0+t903wIgBNFftg6Uz46QpFD8pydmX3d/bhgO1bddfOFT80qb0CA3ql8oxe7
-         S/6w==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=yj2diTXsq8T2vSOsR7Wqy7So3IwqR56CkDmujL80AlI=;
+        b=dbBYzJPl8bIOv2aTvZia3VDcqErEAUyWvWGVbsOr2p/R9gQNtqpSkZiKuRqBpeJ07h
+         drqZCvoK/XkCf+gO/9SGtQQOlJCueXYPsQ7X5jb7xAZqKCH0LGmYRI+0oLcjLgi48nWq
+         jzqUVTerfRHNRQSGdfYC6PHxlyRU1lZ4DzyJJPNTW282y2Za838TDOT68PRZq+4AWnCc
+         grpjf5vmtnNoLF+g3CT04CGlUkYrypvs46feEk5wnCXDWticzKy5zifVwLkIpqKrQ/UP
+         Kig5G2afJV+gN0UX1Z4ZBKhZGHwUx5JiJF2dvMWn+kZerJzoHfBOBUFikpMTNtyiuFFD
+         19kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=O2TkzP7dnTydhiSG2HDTMvBwwAeeTQFK8/4YvS8vxU4=;
-        b=FilxA5Wnglq/imBe+bjGGtkzIw86IkgN2bl1npNOHGE79Uo2nbtoEOAIS5DmCTZoI7
-         65kmq5hS5pSsW/Q3cjL02BaIf3pSIiLaSkxuUOFnhlm7brqw34+xjXOjxpVSQPvFT1k7
-         9xLq4Znr5Fazfcr3xt/vfZ5FvYAsTnxXw+tU+rpYV5VCNEIcBAaf2R01+Rj0fi1gsNQk
-         In29JrWQxqjzG2VY3LHuPleZcAbxR9gs//orlHJG9xaDpU9p/HuYoeMFbarp86YkPhOS
-         WFicMdAd1OYj0mWu/y++w797V+7g56XqqpT02JAHyNnLIjBbidlgib8+VmpIOhWrvwgC
-         uD0A==
-X-Gm-Message-State: APjAAAXRiwlitm9dwyzEW9WHGzDoRbecC3wF/qBuS4jdWyJ9NqqM+H7J
-        rhUKcMbPZ5UwzaYlgR5Ikfv/WX7Zw5rzwai7At234JOO
-X-Google-Smtp-Source: APXvYqxeEdEAHkyNxVwh5oM7oLIyZ2EWniy34LgM2HwwypXHRwpuXPIZJ2pJCi/9ion3hterx/b35tCgBXDgw5WH1c0=
-X-Received: by 2002:aed:3924:: with SMTP id l33mr24987844qte.6.1573462703978;
- Mon, 11 Nov 2019 00:58:23 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=yj2diTXsq8T2vSOsR7Wqy7So3IwqR56CkDmujL80AlI=;
+        b=cgaTuJRpz2KnNn0mQw0GNqmdt6wY5xV6GRycxeibPKonrQgnYjRrWbrr0mxxB+u4Qj
+         qWeNPoSc3rVMBbKRfCHh1whljbW48gssLloqzby5h4TSltG2q1cPhMagv9NHHD5/Hje6
+         4qBMDObh80oQU87z6AnYZMTpLWQ8yV2bo4tIxsUh89yF+pySD6FXdnZJNI322ytHOpSD
+         Xju8xu/wl1Lsjtf6sm3z7EqqLL8zlU87EhZOSOGBJfoMX8NazU69ZIaP5ZkE+7NUgoZU
+         p1ZDT+VNnchQhhh5VjVLGeHbmz+sB8dnjUi2vWDv54jWWqKV+NjxvpOZ9RO6clkAeq7F
+         R2Xg==
+X-Gm-Message-State: APjAAAUjG5PgQ/YzAer0s/H0JKqot/3Yi2ZFGyerxr73TN05D05GoNlQ
+        Pbj+Tq1ec/lp6Jst+yX488umtFmWq9li2Dea9oE=
+X-Google-Smtp-Source: APXvYqyV0VGGJ3AxvW8la4N3z3fWNjAxnap5JbuMXSBpuyzrbhy38T5YFhNtCmpM/1vtokVme48VrW7O3xKterxRcJM=
+X-Received: by 2002:ac8:17e2:: with SMTP id r31mr25745957qtk.133.1573462792658;
+ Mon, 11 Nov 2019 00:59:52 -0800 (PST)
 MIME-Version: 1.0
-From:   Adeel Sharif <madeel.sharif@googlemail.com>
-Date:   Mon, 11 Nov 2019 09:58:13 +0100
-Message-ID: <CABT=TjHHXBYo3jN3r5YRZhkZFzjhkqF-SXcvVYVtYYjE639n9A@mail.gmail.com>
-Subject: Unix domain sockets missing error codes
-To:     linux-kernel@vger.kernel.org
+Received: by 2002:a05:6214:1182:0:0:0:0 with HTTP; Mon, 11 Nov 2019 00:59:52
+ -0800 (PST)
+Reply-To: umarbelloumar92@gmail.com
+From:   umar <mariamlamins1@gmail.com>
+Date:   Mon, 11 Nov 2019 00:59:52 -0800
+Message-ID: <CAFf3r8=W_t6qfddbSUnCH7bmLXatEnXjb+i=a8=WuYhhWtBYpw@mail.gmail.com>
+Subject: Dear friend
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-We are a group of people working on making Linux safe for everyone. In
-hope of doing that I started testing the system caalls. The one I am
-currently working on is send/write.
-
-If send() is used to send datagrams on unix socket and the receiver
-has stopped receiving, but still connected, there is a high
-possibility that Linux kernel could eat up the whole system memory.
-Although there is a system wide limit on write memory from wmem_max
-parameter but this is sometimes also increased to system memory size
-in order to avoid packet drops.
-
-After having a look in the kernel implementation of
-unix_dgram_sendmsg() it is obvious that user buffers are copied into
-kernel socket buffers and they are queued to a linked list. This list
-is growing without any limits. Although there is a qlen parameter but
-it is never used to impose a limit on it. Could we perhaps impose a
-limit on it and return an error with errcode EQUEUE_FULL or something
-instead?
-
-I don't know who is the maintainer of unix sockets. If someone knows
-please let me know and I will discuss with him further.
-
-Thank You.
+LQ0KwqDCoCDkurLniLHnmoTmnIvlj4sNCuaIkeato+WcqOS7pTE3NTDkuIfnvo7lhYPnmoTllYbk
+uJrkuqTmmJPkuI7mgqjogZTns7vvvIwNCuWHhuWkh+i9rOWFpeaCqOeahOW4kOaItw0K5aaC5p6c
+5oiR5Lus5o+Q5Ye65q2k5Li75byg77yM5oiR5Lus5bCG5YiG5LqrNjDvvIUvIDQw77yF44CCDQox
+MDDvvIXml6Dpo47pmanvvIzlroPlsIblvpfliLDmlL/lupznmoTlkIjms5XmlK/mjIENCuW3suaJ
+ueWHhuWmguaenOaCqOacieWFtOi2o++8jOivt+WbnuWkjeS7peiOt+WPluabtOWkmuivpue7huS/
+oeaBr+OAgg0KDQrlm57lpI3miJHnmoTlpIfnlKjnlLXlrZDpgq7ku7blnLDlnYDvvJp1bWFyYmVs
+bG91bWFyOTJAZ21haWwuY29tDQoNCuacgOWlveeahOmXruWAme+8jOS5jOeOm8K36LSd5rSb77yI
+VW1hciBCZWxsb++8iSsyMjYgNjg4NzQ5NTgNCi0tIA0KICBEZWFyIGZyaWVuZA0KSSBhbSBjb250
+YWN0aW5nIHlvdSBvbiBhIGJ1c2luZXNzIGRlYWwgb2YgJDE3LjUgTWlsbGlvbiBVUyBEb2xsYXJz
+LA0KcmVhZHkgZm9yIHRyYW5zZmVyIGludG8geW91ciBhY2NvdW50DQppZiB3ZSBtYWtlIHRoaXMg
+Y2xhaW0sIHdlIHdpbGwgc2hhcmUgaXQgNjAlLzQwJS4NCjEwMCUgcmlzayBmcmVlIGFuZCBpdCB3
+aWxsIGJlIGxlZ2FsbHkgYmFja2VkIHVwIHdpdGggZ292ZXJubWVudA0KYXBwcm92ZWQgSWYgeW91
+IGFyZSBpbnRlcmVzdGVkIHJlcGx5IGZvciBtb3JlIGRldGFpbHMuDQoNClJlcGx5IHRvIG15IGFs
+dGVybmF0aXZlIGVtYWlsIGFkZHJlc3M6dW1hcmJlbGxvdW1hcjkyQGdtYWlsLmNvbQ0KDQpCZXN0
+IHJlZ2FyZHMsIFVtYXIgQmVsbG8gKzIyNiA2ODg3NDk1OA0K
