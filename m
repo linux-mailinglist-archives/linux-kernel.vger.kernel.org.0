@@ -2,67 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8293F6DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:13:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B6FF6DDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:23:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfKKFNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 00:13:44 -0500
-Received: from foss.arm.com ([217.140.110.172]:40490 "EHLO foss.arm.com"
+        id S1726832AbfKKFXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 00:23:49 -0500
+Received: from mga03.intel.com ([134.134.136.65]:45254 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726770AbfKKFNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 00:13:44 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D890531B;
-        Sun, 10 Nov 2019 21:13:43 -0800 (PST)
-Received: from p8cg001049571a15.arm.com (unknown [10.163.1.187])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6F7D93F6C4;
-        Sun, 10 Nov 2019 21:13:39 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH] efi: Fix comment for efi_mem_type() wrt absent physical addresses
-Date:   Mon, 11 Nov 2019 10:43:49 +0530
-Message-Id: <1573449229-13918-1-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
+        id S1725796AbfKKFXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 00:23:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2019 21:23:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,291,1569308400"; 
+   d="scan'208";a="228824039"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 10 Nov 2019 21:23:46 -0800
+Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, kevin.tian@intel.com,
+        ashok.raj@intel.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com
+Subject: Re: [PATCH v2 1/1] iommu/vt-d: Add Kconfig option to enable/disable
+ scalable mode
+To:     Qian Cai <cai@lca.pw>
+References: <20191109034039.27964-1-baolu.lu@linux.intel.com>
+ <472617D4-1652-45FB-90A4-0D45766DB78B@lca.pw>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <f5b8521e-d88d-5439-34e2-f7b54a77c9d3@linux.intel.com>
+Date:   Mon, 11 Nov 2019 13:20:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <472617D4-1652-45FB-90A4-0D45766DB78B@lca.pw>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A previous commit f99afd08a45f ("efi: Update efi_mem_type() to return an
-error rather than 0") changed the return type from EFI_RESERVED_TYPE to
--EINVAL when the searched physical address is not present in any memory
-descriptor. But the comment preceding the function never changed. Lets
-change the comment now to reflect the new return type -EINVAL.
+Hi,
 
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-Changes in V2:
+On 11/11/19 10:58 AM, Qian Cai wrote:
+> 
+> 
+>> On Nov 8, 2019, at 10:43 PM, Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>>
+>> +config INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON
+>> +    prompt "Enable Intel IOMMU scalable mode by default"
+>> +    depends on INTEL_IOMMU
+>> +    help
+>> +      Selecting this option will enable the scalable mode if
+>> +      hardware presents the capability. If this option is not
+>> +      selected, scalable mode support could also be enabled
+>> +      by passing intel_iommu=sm_on to the kernel.
+>> +
+> 
+> Does it also make sense to mention which hardware presents this capability or how to check it?
+> 
 
-- Changed comment for efi_mem_type() instead of the return type per Ard
+The scalable mode is defined in VT-d 3.0. The scalable mode capability
+could be checked by reading /sys/devices/virtual/iommu/dmar*/intel-
+iommu/ecap. It's currently not friendly for reading. You need to decode
+it according to the spec.
 
-V1: (https://lore.kernel.org/patchwork/patch/1149002/)
+Best regards,
+baolu
 
- drivers/firmware/efi/efi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 77ca52d86e30..47b0bf7a2b7f 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -899,7 +899,7 @@ u64 efi_mem_attributes(unsigned long phys_addr)
-  *
-  * Search in the EFI memory map for the region covering @phys_addr.
-  * Returns the EFI memory type if the region was found in the memory
-- * map, EFI_RESERVED_TYPE (zero) otherwise.
-+ * map, -EINVAL otherwise.
-  */
- int efi_mem_type(unsigned long phys_addr)
- {
--- 
-2.20.1
 
