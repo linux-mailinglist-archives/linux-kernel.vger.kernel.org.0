@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93BF8F7C8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3F5F7B2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbfKKSrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:47:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39830 "EHLO mail.kernel.org"
+        id S1728147AbfKKSdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:33:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730072AbfKKSrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:47:10 -0500
+        id S1728128AbfKKSdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:33:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AE8420659;
-        Mon, 11 Nov 2019 18:47:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6611221925;
+        Mon, 11 Nov 2019 18:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498028;
-        bh=kTmUC/kT/1UyJ9+YbANHS2wxCM4gFA/irWodXxNT4e4=;
+        s=default; t=1573497198;
+        bh=KW29bxFCR8ObVquCB47QdEOjTPiY0g2W7TMZB3dGVmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1DQIu/w8DkDRVP7JUPUcupmaodhB+8a87+5BdEPAfRuhI1UqxXAdZcENJIHajL4e
-         UYesyl6gopIp4IFcS5Nt/Tlg7ci1A3FOvNt3LmO3AqyfVVDfmHOASfIR2aMMtwNp/V
-         RwPIPkzn0fninhQpNFbzipFcU8DokrXcZ3054v2s=
+        b=uYCc+94PmQmpZERjFe43eAo5AsJmU4b3PREq8pI49dF5tOt7nTWkoQxVLrsTvgXII
+         DWiEpQxEC7JYiHSLzYNdbv8CGqlX6t2NFJgIi1SAk/B0ix2BGKQvDauMOwohWTWTIH
+         GtJ9BdiWIVfSlI/zK6MvcZuSx3Atjgwil4QQ7t64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 077/125] net/mlx5e: TX, Fix consumer index of error cqe dump
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH 4.9 36/65] drivers: usb: usbip: Add missing break statement to switch
 Date:   Mon, 11 Nov 2019 19:28:36 +0100
-Message-Id: <20191111181450.396864099@linuxfoundation.org>
+Message-Id: <20191111181347.075259756@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +43,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tariq Toukan <tariqt@mellanox.com>
+From: Gustavo A. R. Silva <garsilva@embeddedor.com>
 
-[ Upstream commit 61ea02d2c13106116c6e4916ac5d9dd41151c959 ]
+commit 7c92e5fbf4dac0dd4dd41a0383adc54f16f403e2 upstream.
 
-The completion queue consumer index increments upon a call to
-mlx5_cqwq_pop().
-When dumping an error CQE, the index is already incremented.
-Decrease one for the print command.
+Add missing break statement to prevent the code for case
+USB_PORT_FEAT_C_RESET falling through to the default case.
 
-Fixes: 16cc14d81733 ("net/mlx5e: Dump xmit error completions")
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Addresses-Coverity-ID: 143155
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/usbip/vhci_hcd.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-index 0b03d65474e93..73dce92c41c44 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-@@ -462,7 +462,10 @@ netdev_tx_t mlx5e_xmit(struct sk_buff *skb, struct net_device *dev)
- static void mlx5e_dump_error_cqe(struct mlx5e_txqsq *sq,
- 				 struct mlx5_err_cqe *err_cqe)
- {
--	u32 ci = mlx5_cqwq_get_ci(&sq->cq.wq);
-+	struct mlx5_cqwq *wq = &sq->cq.wq;
-+	u32 ci;
-+
-+	ci = mlx5_cqwq_ctr2ix(wq, wq->cc - 1);
- 
- 	netdev_err(sq->channel->netdev,
- 		   "Error cqe on cqn 0x%x, ci 0x%x, sqn 0x%x, syndrome 0x%x, vendor syndrome 0x%x\n",
--- 
-2.20.1
-
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -318,6 +318,7 @@ static int vhci_hub_control(struct usb_h
+ 			default:
+ 				break;
+ 			}
++			break;
+ 		default:
+ 			usbip_dbg_vhci_rh(" ClearPortFeature: default %x\n",
+ 					  wValue);
 
 
