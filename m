@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28811F7E01
+	by mail.lfdr.de (Postfix) with ESMTP id 967C8F7E02
 	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730515AbfKKSwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:52:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46708 "EHLO mail.kernel.org"
+        id S1730502AbfKKSw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:52:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730274AbfKKSwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:52:23 -0500
+        id S1729608AbfKKSw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:52:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 490A0204EC;
-        Mon, 11 Nov 2019 18:52:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C97E214E0;
+        Mon, 11 Nov 2019 18:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498343;
-        bh=dguNy2Uy53wWhZ5XJNoj++7yvyxtrq34d78ej4hQFm4=;
+        s=default; t=1573498346;
+        bh=jpbIPP49zvHFC2TMrGanJSqYYGPqKzLDrVU9Or1jmEA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QlRWc6Rfrn37VHAmJriUoDWnze0/JpXPGIugJTOairpq9Xq3HWVFi6mdZgMxjqHBM
-         6oHirgjhV+s1lhani/QcUCkEKBFM8GHFObH8mrmjXqBcnY/0W5uwhefSNQ8Rbh25aG
-         VlIX655NjpVkOF8XMt6/ZsTxkvK5hu1p9flsZ/KM=
+        b=ioFb8Cl9c4GfSESA0vP+eVSdva2JNMRZpTxDYi/bPnZmQBuzns8to8YO96pxYplgO
+         7dJofPN+LnsEw8OnKxceHhqWBOOfncvSrV4rO060gCMZTySjVSvKD6biXNIAgRWrk7
+         365L7GLPSGwA5QOHuJUDf3e9ZXp4A1FkSd/DNZ7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenfang Wang <zhenfang.wang@unisoc.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 092/193] dmaengine: sprd: Fix the link-list pointer register configuration issue
-Date:   Mon, 11 Nov 2019 19:27:54 +0100
-Message-Id: <20191111181507.930056795@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Benc <jbenc@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Oskolkov <posk@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 093/193] bpf: lwtunnel: Fix reroute supplying invalid dst
+Date:   Mon, 11 Nov 2019 19:27:55 +0100
+Message-Id: <20191111181508.002089805@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -44,73 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenfang Wang <zhenfang.wang@unisoc.com>
+From: Jiri Benc <jbenc@redhat.com>
 
-[ Upstream commit 8b6bc5fd71e677864d1a3b896b3069a6e0c5e214 ]
+[ Upstream commit 9e8acd9c44a0dd52b2922eeb82398c04e356c058 ]
 
-We will set the link-list pointer register point to next link-list
-configuration's physical address, which can load DMA configuration
-from the link-list node automatically.
+The dst in bpf_input() has lwtstate field set. As it is of the
+LWTUNNEL_ENCAP_BPF type, lwtstate->data is struct bpf_lwt. When the bpf
+program returns BPF_LWT_REROUTE, ip_route_input_noref is directly called on
+this skb. This causes invalid memory access, as ip_route_input_slow calls
+skb_tunnel_info(skb) that expects the dst->lwstate->data to be
+struct ip_tunnel_info. This results to struct bpf_lwt being accessed as
+struct ip_tunnel_info.
 
-But the link-list node's physical address can be larger than 32bits,
-and now Spreadtrum DMA driver only supports 32bits physical address,
-which may cause loading a incorrect DMA configuration when starting
-the link-list transfer mode. According to the DMA datasheet, we can
-use SRC_BLK_STEP register (bit28 - bit31) to save the high bits of the
-link-list node's physical address to fix this issue.
+Drop the dst before calling the IP route input functions (both for IPv4 and
+IPv6).
 
-Fixes: 4ac695464763 ("dmaengine: sprd: Support DMA link-list mode")
-Signed-off-by: Zhenfang Wang <zhenfang.wang@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Link: https://lore.kernel.org/r/eadfe9295499efa003e1c344e67e2890f9d1d780.1568267061.git.baolin.wang@linaro.org
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reported by KASAN.
+
+Fixes: 3bd0b15281af ("bpf: add handling of BPF_LWT_REROUTE to lwt_bpf.c")
+Signed-off-by: Jiri Benc <jbenc@redhat.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Peter Oskolkov <posk@google.com>
+Link: https://lore.kernel.org/bpf/111664d58fe4e9dd9c8014bb3d0b2dab93086a9e.1570609794.git.jbenc@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sprd-dma.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ net/core/lwt_bpf.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 525dc7338fe3b..a4a91f233121a 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -134,6 +134,10 @@
- #define SPRD_DMA_SRC_TRSF_STEP_OFFSET	0
- #define SPRD_DMA_TRSF_STEP_MASK		GENMASK(15, 0)
+diff --git a/net/core/lwt_bpf.c b/net/core/lwt_bpf.c
+index f93785e5833c1..74cfb8b5ab330 100644
+--- a/net/core/lwt_bpf.c
++++ b/net/core/lwt_bpf.c
+@@ -88,11 +88,16 @@ static int bpf_lwt_input_reroute(struct sk_buff *skb)
+ 	int err = -EINVAL;
  
-+/* SPRD DMA_SRC_BLK_STEP register definition */
-+#define SPRD_DMA_LLIST_HIGH_MASK	GENMASK(31, 28)
-+#define SPRD_DMA_LLIST_HIGH_SHIFT	28
-+
- /* define DMA channel mode & trigger mode mask */
- #define SPRD_DMA_CHN_MODE_MASK		GENMASK(7, 0)
- #define SPRD_DMA_TRG_MODE_MASK		GENMASK(7, 0)
-@@ -717,6 +721,7 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 	u32 int_mode = flags & SPRD_DMA_INT_MASK;
- 	int src_datawidth, dst_datawidth, src_step, dst_step;
- 	u32 temp, fix_mode = 0, fix_en = 0;
-+	phys_addr_t llist_ptr;
+ 	if (skb->protocol == htons(ETH_P_IP)) {
++		struct net_device *dev = skb_dst(skb)->dev;
+ 		struct iphdr *iph = ip_hdr(skb);
  
- 	if (dir == DMA_MEM_TO_DEV) {
- 		src_step = sprd_dma_get_step(slave_cfg->src_addr_width);
-@@ -814,13 +819,16 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 		 * Set the link-list pointer point to next link-list
- 		 * configuration's physical address.
- 		 */
--		hw->llist_ptr = schan->linklist.phy_addr + temp;
-+		llist_ptr = schan->linklist.phy_addr + temp;
-+		hw->llist_ptr = lower_32_bits(llist_ptr);
-+		hw->src_blk_step = (upper_32_bits(llist_ptr) << SPRD_DMA_LLIST_HIGH_SHIFT) &
-+			SPRD_DMA_LLIST_HIGH_MASK;
++		dev_hold(dev);
++		skb_dst_drop(skb);
+ 		err = ip_route_input_noref(skb, iph->daddr, iph->saddr,
+-					   iph->tos, skb_dst(skb)->dev);
++					   iph->tos, dev);
++		dev_put(dev);
+ 	} else if (skb->protocol == htons(ETH_P_IPV6)) {
++		skb_dst_drop(skb);
+ 		err = ipv6_stub->ipv6_route_input(skb);
  	} else {
- 		hw->llist_ptr = 0;
-+		hw->src_blk_step = 0;
- 	}
- 
- 	hw->frg_step = 0;
--	hw->src_blk_step = 0;
- 	hw->des_blk_step = 0;
- 	return 0;
- }
+ 		err = -EAFNOSUPPORT;
 -- 
 2.20.1
 
