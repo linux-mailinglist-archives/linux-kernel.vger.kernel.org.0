@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7134F7F21
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E19D4F7EBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:06:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfKKSes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:34:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52450 "EHLO mail.kernel.org"
+        id S1728483AbfKKTFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:05:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727498AbfKKSeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:34:44 -0500
+        id S1727977AbfKKSje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:39:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96DED2173B;
-        Mon, 11 Nov 2019 18:34:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F8E3204FD;
+        Mon, 11 Nov 2019 18:39:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497284;
-        bh=Jlv9ukXX2oMCUigdyLnVYSC/Qt/S2pddvMuA9duPMcs=;
+        s=default; t=1573497573;
+        bh=6BoxzKJfoTLRXFSyM632xFz5OUUPUolpB2hF7Y4yUR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uFz8EJvRBqHifok2T4X5uWnloqI8tPPKetdkJUNaiNQ5j6C/mhQAjfLJtuOrWRkgB
-         PdlrJ4rdn+mvJNlabRscJ8hcrQe9xqNHZH21Gs/x05Amm46NRHZ365lZZtHnF2ZoCy
-         J16m7o/Bk8oXeMuF4O6FrS0OdJBmTWKRVjq3NmYE=
+        b=laPJSurAMMyajXt235KpEnRWZS0dx+X3WKdtMA7aPbZMqm2X5hIIy+xUSJ3MXeLI5
+         FGRBsSD+vRw7L+9CA6SISDsQA0NBd71ULTUFfKpVcaQD8t5DvH+IVO+Y/uPVkkyQcH
+         9wnzkQe93XGzwgx9ExxUHaLUDriBrYTreVyXysxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dakshaja Uppalapati <dakshaja@chelsio.com>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Chandana Kishori Chiluveru <cchiluve@codeaurora.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 52/65] RDMA/iw_cxgb4: Avoid freeing skb twice in arp failure case
-Date:   Mon, 11 Nov 2019 19:28:52 +0100
-Message-Id: <20191111181351.621458821@linuxfoundation.org>
+Subject: [PATCH 4.14 084/105] usb: gadget: composite: Fix possible double free memory bug
+Date:   Mon, 11 Nov 2019 19:28:54 +0100
+Message-Id: <20191111181447.248454698@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Potnuri Bharat Teja <bharat@chelsio.com>
+From: Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
 
-[ Upstream commit d4934f45693651ea15357dd6c7c36be28b6da884 ]
+[ Upstream commit 1c20c89b0421b52b2417bb0f62a611bc669eda1d ]
 
-_put_ep_safe() and _put_pass_ep_safe() free the skb before it is freed by
-process_work(). fix double free by freeing the skb only in process_work().
+composite_dev_cleanup call from the failure of configfs_composite_bind
+frees up the cdev->os_desc_req and cdev->req. If the previous calls of
+bind and unbind is successful these will carry stale values.
 
-Fixes: 1dad0ebeea1c ("iw_cxgb4: Avoid touch after free error in ARP failure handlers")
-Link: https://lore.kernel.org/r/1572006880-5800-1-git-send-email-bharat@chelsio.com
-Signed-off-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
-Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Consider the below sequence of function calls:
+configfs_composite_bind()
+        composite_dev_prepare()
+                - Allocate cdev->req, cdev->req->buf
+        composite_os_desc_req_prepare()
+                - Allocate cdev->os_desc_req, cdev->os_desc_req->buf
+configfs_composite_unbind()
+        composite_dev_cleanup()
+                - free the cdev->os_desc_req->buf and cdev->req->buf
+Next composition switch
+configfs_composite_bind()
+        - If it fails goto err_comp_cleanup will call the
+	  composite_dev_cleanup() function
+        composite_dev_cleanup()
+	        - calls kfree up with the stale values of cdev->req->buf and
+		  cdev->os_desc_req from the previous configfs_composite_bind
+		  call. The free call on these stale values leads to double free.
+
+Hence, Fix this issue by setting request and buffer pointer to NULL after
+kfree.
+
+Signed-off-by: Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/cxgb4/cm.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/gadget/composite.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-index e5752352e0fb1..605d50ad123cc 100644
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -490,7 +490,6 @@ static int _put_ep_safe(struct c4iw_dev *dev, struct sk_buff *skb)
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index 75c42393b64ba..b29cd3979391e 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -2187,14 +2187,18 @@ void composite_dev_cleanup(struct usb_composite_dev *cdev)
+ 			usb_ep_dequeue(cdev->gadget->ep0, cdev->os_desc_req);
  
- 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
- 	release_ep_resources(ep);
--	kfree_skb(skb);
- 	return 0;
- }
+ 		kfree(cdev->os_desc_req->buf);
++		cdev->os_desc_req->buf = NULL;
+ 		usb_ep_free_request(cdev->gadget->ep0, cdev->os_desc_req);
++		cdev->os_desc_req = NULL;
+ 	}
+ 	if (cdev->req) {
+ 		if (cdev->setup_pending)
+ 			usb_ep_dequeue(cdev->gadget->ep0, cdev->req);
  
-@@ -501,7 +500,6 @@ static int _put_pass_ep_safe(struct c4iw_dev *dev, struct sk_buff *skb)
- 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
- 	c4iw_put_ep(&ep->parent_ep->com);
- 	release_ep_resources(ep);
--	kfree_skb(skb);
- 	return 0;
- }
- 
+ 		kfree(cdev->req->buf);
++		cdev->req->buf = NULL;
+ 		usb_ep_free_request(cdev->gadget->ep0, cdev->req);
++		cdev->req = NULL;
+ 	}
+ 	cdev->next_string_id = 0;
+ 	device_remove_file(&cdev->gadget->dev, &dev_attr_suspended);
 -- 
 2.20.1
 
