@@ -2,50 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21FCEF7B52
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D09CEF7AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:32:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfKKSfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:35:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52860 "EHLO mail.kernel.org"
+        id S1727610AbfKKSbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:31:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728462AbfKKSfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:35:05 -0500
+        id S1727559AbfKKSbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:31:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 927C22184C;
-        Mon, 11 Nov 2019 18:35:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBD952173B;
+        Mon, 11 Nov 2019 18:31:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497304;
-        bh=jkFw479g9c3o3bHrBcjw+ehcmIV6VOjxiBTu98j3sag=;
+        s=default; t=1573497073;
+        bh=NQ8hEnMGGrLVGpvkW97YGDHz+Z/OC+g+PKaH/TGZQSU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q5bkq66TrlDQgbrb2cNMq43OeU8BEgZBhqe9iTHdZ/lGdXsF1BzkzRNY6GlzBn5by
-         YnHfyJOZVU5WSI9cODqorTaDv2ezdY31kMxpbizDJxQAYEi/olTC97aLEfjdlskkbz
-         id4P7b76Tixnr3bSQkEaaothIAzjrRQLDQRL625o=
+        b=aGbVXPg9VIriJsxTonIN/0+vhV4bkN99EQ2B9xsD8VMiIoY9AH6W1iDQdKDEGrMlJ
+         puWgLDxxJb5gD1PwPg66V1XPIJ/FF9HEqWrSmFN937Fh7qUy1gsmhEM5Kbkunx033e
+         uVILGsR5+rU1p0f592xbNJyLIsYwIFGK8EZXy9J4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 49/65] perf/x86/amd/ibs: Fix reading of the IBS OpData register and thus precise RIP validity
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 35/43] USB: Skip endpoints with 0 maxpacket length
 Date:   Mon, 11 Nov 2019 19:28:49 +0100
-Message-Id: <20191111181350.557559863@linuxfoundation.org>
+Message-Id: <20191111181325.467989555@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,52 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-[ Upstream commit 317b96bb14303c7998dbcd5bc606bd8038fdd4b4 ]
+[ Upstream commit d482c7bb0541d19dea8bff437a9f3c5563b5b2d2 ]
 
-The loop that reads all the IBS MSRs into *buf stopped one MSR short of
-reading the IbsOpData register, which contains the RipInvalid status bit.
+Endpoints with a maxpacket length of 0 are probably useless.  They
+can't transfer any data, and it's not at all unlikely that an HCD will
+crash or hang when trying to handle an URB for such an endpoint.
 
-Fix the offset_max assignment so the MSR gets read, so the RIP invalid
-evaluation is based on what the IBS h/w output, instead of what was
-left in memory.
+Currently the USB core does not check for endpoints having a maxpacket
+value of 0.  This patch adds a check, printing a warning and skipping
+over any endpoints it catches.
 
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: d47e8238cd76 ("perf/x86-ibs: Take instruction pointer from ibs sample")
-Link: https://lkml.kernel.org/r/20191023150955.30292-1-kim.phillips@amd.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Now, the USB spec does not rule out endpoints having maxpacket = 0.
+But since they wouldn't have any practical use, there doesn't seem to
+be any good reason for us to accept them.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910281050420.1485-100000@iolanthe.rowland.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/ibs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/config.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index 112e3c4636b4f..a8317d384773a 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -624,7 +624,7 @@ fail:
- 	if (event->attr.sample_type & PERF_SAMPLE_RAW)
- 		offset_max = perf_ibs->offset_max;
- 	else if (check_rip)
--		offset_max = 2;
-+		offset_max = 3;
- 	else
- 		offset_max = 1;
- 	do {
+diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
+index 5abc4e5434ecf..cbd064fae23bd 100644
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -314,6 +314,11 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
+ 
+ 	/* Validate the wMaxPacketSize field */
+ 	maxp = usb_endpoint_maxp(&endpoint->desc);
++	if (maxp == 0) {
++		dev_warn(ddev, "config %d interface %d altsetting %d endpoint 0x%X has wMaxPacketSize 0, skipping\n",
++		    cfgno, inum, asnum, d->bEndpointAddress);
++		goto skip_to_next_endpoint_or_interface_descriptor;
++	}
+ 
+ 	/* Find the highest legal maxpacket size for this endpoint */
+ 	i = 0;		/* additional transactions per microframe */
 -- 
 2.20.1
 
