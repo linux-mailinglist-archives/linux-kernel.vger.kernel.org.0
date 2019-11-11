@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD8BF7CCE
+	by mail.lfdr.de (Postfix) with ESMTP id A4947F7CCF
 	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbfKKStw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:49:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43268 "EHLO mail.kernel.org"
+        id S1729074AbfKKSuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:50:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728080AbfKKStt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:49:49 -0500
+        id S1727944AbfKKSuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:50:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27FC32196E;
-        Mon, 11 Nov 2019 18:49:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22DA72196E;
+        Mon, 11 Nov 2019 18:49:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498189;
-        bh=6aIYRFn4mz/rizev/wF2Fgg4Ky0sLc65bJWXzf+yNH4=;
+        s=default; t=1573498199;
+        bh=zofw5JjaGv/fKLvd84eF+hiOlFXOnkxQaL1yonmRNA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vIgqyEdbLf18/W2XxBTDSepg/AsIfaQbOH1BBblj5mT+haONzwv7CQU/sRJV1iij/
-         hKuPjb+1aSJFlpsBWCrgOHiBDQ1AslRZfBQfoecuMeFSMcYidIlKTWfVcO+RypfTyq
-         xQ8HpQdBdv7KKi+/D94Mv3Z7yVurl/XXbyJDrgzE=
+        b=fUtvPoNl1DmzA191oftUqPMZMEObFnJPrQG2+SoKr356CrmCHYelWN6hCYq0BFNMM
+         J4h29/UmfUVktLRFzMFBhLeIHcVLXM/vmNc3QvPcU5nu9MJQDbDSKuHxIlkVjaVrUr
+         fGQ/9DGpysYALR0bV88rKQgeyZi1C2dF27Eup1/w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.3 048/193] blkcg: make blkcg_print_stat() print stats only for online blkgs
-Date:   Mon, 11 Nov 2019 19:27:10 +0100
-Message-Id: <20191111181504.507282441@linuxfoundation.org>
+        stable@vger.kernel.org, Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 5.3 051/193] ceph: fix use-after-free in __ceph_remove_cap()
+Date:   Mon, 11 Nov 2019 19:27:13 +0100
+Message-Id: <20191111181504.742268560@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -44,76 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Luis Henriques <lhenriques@suse.com>
 
-commit b0814361a25cba73a224548843ed92d8ea78715a upstream.
+commit ea60ed6fcf29eebc78f2ce91491e6309ee005a01 upstream.
 
-blkcg_print_stat() iterates blkgs under RCU and doesn't test whether
-the blkg is online.  This can call into pd_stat_fn() on a pd which is
-still being initialized leading to an oops.
+KASAN reports a use-after-free when running xfstest generic/531, with the
+following trace:
 
-The heaviest operation - recursively summing up rwstat counters - is
-already done while holding the queue_lock.  Expand queue_lock to cover
-the other operations and skip the blkg if it isn't online yet.  The
-online state is protected by both blkcg and queue locks, so this
-guarantees that only online blkgs are processed.
+[  293.903362]  kasan_report+0xe/0x20
+[  293.903365]  rb_erase+0x1f/0x790
+[  293.903370]  __ceph_remove_cap+0x201/0x370
+[  293.903375]  __ceph_remove_caps+0x4b/0x70
+[  293.903380]  ceph_evict_inode+0x4e/0x360
+[  293.903386]  evict+0x169/0x290
+[  293.903390]  __dentry_kill+0x16f/0x250
+[  293.903394]  dput+0x1c6/0x440
+[  293.903398]  __fput+0x184/0x330
+[  293.903404]  task_work_run+0xb9/0xe0
+[  293.903410]  exit_to_usermode_loop+0xd3/0xe0
+[  293.903413]  do_syscall_64+0x1a0/0x1c0
+[  293.903417]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Roman Gushchin <guro@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Fixes: 903d23f0a354 ("blk-cgroup: allow controllers to output their own stats")
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This happens because __ceph_remove_cap() may queue a cap release
+(__ceph_queue_cap_release) which can be scheduled before that cap is
+removed from the inode list with
+
+	rb_erase(&cap->ci_node, &ci->i_caps);
+
+And, when this finally happens, the use-after-free will occur.
+
+This can be fixed by removing the cap from the inode list before being
+removed from the session list, and thus eliminating the risk of an UAF.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-cgroup.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ fs/ceph/caps.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -908,9 +908,14 @@ static int blkcg_print_stat(struct seq_f
- 		int i;
- 		bool has_stats = false;
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1087,6 +1087,11 @@ void __ceph_remove_cap(struct ceph_cap *
  
-+		spin_lock_irq(&blkg->q->queue_lock);
+ 	dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
+ 
++	/* remove from inode's cap rbtree, and clear auth cap */
++	rb_erase(&cap->ci_node, &ci->i_caps);
++	if (ci->i_auth_cap == cap)
++		ci->i_auth_cap = NULL;
 +
-+		if (!blkg->online)
-+			goto skip;
-+
- 		dname = blkg_dev_name(blkg);
- 		if (!dname)
--			continue;
-+			goto skip;
+ 	/* remove from session list */
+ 	spin_lock(&session->s_cap_lock);
+ 	if (session->s_cap_iterator == cap) {
+@@ -1120,11 +1125,6 @@ void __ceph_remove_cap(struct ceph_cap *
  
- 		/*
- 		 * Hooray string manipulation, count is the size written NOT
-@@ -920,8 +925,6 @@ static int blkcg_print_stat(struct seq_f
- 		 */
- 		off += scnprintf(buf+off, size-off, "%s ", dname);
+ 	spin_unlock(&session->s_cap_lock);
  
--		spin_lock_irq(&blkg->q->queue_lock);
+-	/* remove from inode list */
+-	rb_erase(&cap->ci_node, &ci->i_caps);
+-	if (ci->i_auth_cap == cap)
+-		ci->i_auth_cap = NULL;
 -
- 		blkg_rwstat_recursive_sum(blkg, NULL,
- 				offsetof(struct blkcg_gq, stat_bytes), &rwstat);
- 		rbytes = rwstat.cnt[BLKG_RWSTAT_READ];
-@@ -934,8 +937,6 @@ static int blkcg_print_stat(struct seq_f
- 		wios = rwstat.cnt[BLKG_RWSTAT_WRITE];
- 		dios = rwstat.cnt[BLKG_RWSTAT_DISCARD];
+ 	if (removed)
+ 		ceph_put_cap(mdsc, cap);
  
--		spin_unlock_irq(&blkg->q->queue_lock);
--
- 		if (rbytes || wbytes || rios || wios) {
- 			has_stats = true;
- 			off += scnprintf(buf+off, size-off,
-@@ -973,6 +974,8 @@ static int blkcg_print_stat(struct seq_f
- 				seq_commit(sf, -1);
- 			}
- 		}
-+	skip:
-+		spin_unlock_irq(&blkg->q->queue_lock);
- 	}
- 
- 	rcu_read_unlock();
 
 
