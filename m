@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C05CF7BA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1E84F7B38
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbfKKSiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:38:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57154 "EHLO mail.kernel.org"
+        id S1727892AbfKKSdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:33:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728027AbfKKSiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:38:15 -0500
+        id S1728208AbfKKSdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:33:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8313F21E6F;
-        Mon, 11 Nov 2019 18:38:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A3B620656;
+        Mon, 11 Nov 2019 18:33:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497495;
-        bh=UqEsKD7kxd9sYdPrPpIkXzZPJTqKw70J1KYSfWLwVi0=;
+        s=default; t=1573497225;
+        bh=CUXlu8NZW03WkyDCebKAp5bWiJQw0Dd3ZEeLxh35JVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DVBa4NbNu6DEQRG+fsXL0THqVRsOxjfojORYQnX+b4K8V5Wx0hU/KtCoY+Qxd1Kdm
-         N8D3tYYD0OT9iD2iCCDk96+VyqtFcR4J4DdjgqYib2XNdfnThseoWxeepMJR9cFver
-         mbn/tDgAXjU+ELTAABm7IbwRzbUy6KFDwzRqDDYg=
+        b=g1qoLazrQSqT3+H0LKIS4wrRTCXCN2oMFc9Fumyy6xyxRYNNZELu7jdcV5hUWa4PX
+         teq6sRC/C6X3ujkt0RpV/MJgeEia/A+sJCtTed1SyMGjX+XYpr9K5Per0/FddWsx2b
+         ysyhAm+NNkRGWiyYPaf9MX5AIAtB7+l4wD1mkaWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Nikhil Badola <nikhil.badola@freescale.com>,
+        Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 073/105] scsi: qla2xxx: fixup incorrect usage of host_byte
-Date:   Mon, 11 Nov 2019 19:28:43 +0100
-Message-Id: <20191111181445.921280627@linuxfoundation.org>
+Subject: [PATCH 4.9 44/65] usb: fsl: Check memory resource before releasing it
+Date:   Mon, 11 Nov 2019 19:28:44 +0100
+Message-Id: <20191111181348.778597595@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +46,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hannes Reinecke <hare@suse.com>
+From: Nikhil Badola <nikhil.badola@freescale.com>
 
-[ Upstream commit 66cf50e65b183c863825f5c28a818e3f47a72e40 ]
+[ Upstream commit bc1e3a2dd0c9954fd956ac43ca2876bbea018c01 ]
 
-DRIVER_ERROR is a a driver byte setting, not a host byte.  The qla2xxx
-driver should rather return DID_ERROR here to be in line with the other
-drivers.
+Check memory resource existence before releasing it to avoid NULL
+pointer dereference
 
-Link: https://lore.kernel.org/r/20191018140458.108278-1-hare@suse.de
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Acked-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
+Reviewed-by: Ran Wang <ran.wang_1@nxp.com>
+Reviewed-by: Peter Chen <peter.chen@nxp.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_bsg.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/udc/fsl_udc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
-index 2ea0ef93f5cbb..7472d3882ad41 100644
---- a/drivers/scsi/qla2xxx/qla_bsg.c
-+++ b/drivers/scsi/qla2xxx/qla_bsg.c
-@@ -258,7 +258,7 @@ qla2x00_process_els(struct bsg_job *bsg_job)
- 	srb_t *sp;
- 	const char *type;
- 	int req_sg_cnt, rsp_sg_cnt;
--	int rval =  (DRIVER_ERROR << 16);
-+	int rval =  (DID_ERROR << 16);
- 	uint16_t nextlid = 0;
+diff --git a/drivers/usb/gadget/udc/fsl_udc_core.c b/drivers/usb/gadget/udc/fsl_udc_core.c
+index 8991a40707926..bd98557caa280 100644
+--- a/drivers/usb/gadget/udc/fsl_udc_core.c
++++ b/drivers/usb/gadget/udc/fsl_udc_core.c
+@@ -2570,7 +2570,7 @@ static int fsl_udc_remove(struct platform_device *pdev)
+ 	dma_pool_destroy(udc_controller->td_pool);
+ 	free_irq(udc_controller->irq, udc_controller);
+ 	iounmap(dr_regs);
+-	if (pdata->operating_mode == FSL_USB2_DR_DEVICE)
++	if (res && (pdata->operating_mode == FSL_USB2_DR_DEVICE))
+ 		release_mem_region(res->start, resource_size(res));
  
- 	if (bsg_request->msgcode == FC_BSG_RPT_ELS) {
-@@ -433,7 +433,7 @@ qla2x00_process_ct(struct bsg_job *bsg_job)
- 	struct Scsi_Host *host = fc_bsg_to_shost(bsg_job);
- 	scsi_qla_host_t *vha = shost_priv(host);
- 	struct qla_hw_data *ha = vha->hw;
--	int rval = (DRIVER_ERROR << 16);
-+	int rval = (DID_ERROR << 16);
- 	int req_sg_cnt, rsp_sg_cnt;
- 	uint16_t loop_id;
- 	struct fc_port *fcport;
-@@ -1951,7 +1951,7 @@ qlafx00_mgmt_cmd(struct bsg_job *bsg_job)
- 	struct Scsi_Host *host = fc_bsg_to_shost(bsg_job);
- 	scsi_qla_host_t *vha = shost_priv(host);
- 	struct qla_hw_data *ha = vha->hw;
--	int rval = (DRIVER_ERROR << 16);
-+	int rval = (DID_ERROR << 16);
- 	struct qla_mt_iocb_rqst_fx00 *piocb_rqst;
- 	srb_t *sp;
- 	int req_sg_cnt = 0, rsp_sg_cnt = 0;
+ 	/* free udc --wait for the release() finished */
 -- 
 2.20.1
 
