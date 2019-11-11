@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD9BF7C41
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:45:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE126F7B72
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:37:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbfKKSod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:44:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36140 "EHLO mail.kernel.org"
+        id S1727927AbfKKSgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:36:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729131AbfKKSo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:44:28 -0500
+        id S1727810AbfKKSgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:36:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 851D821783;
-        Mon, 11 Nov 2019 18:44:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09CFA21655;
+        Mon, 11 Nov 2019 18:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497868;
-        bh=LvqlcH/Qj2XJKkapbBE8JYZULws9nEURmdL6Cc6Kqj8=;
+        s=default; t=1573497374;
+        bh=OwZNKYHe2zMRqZhRoRvhzFzHdREgxZidsEXfVuUzL9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAg8MDM7vHXtUHrHETUJOIwiazZUk2NWdw1nUFVf1s0Na1MzfkRmHvOtqbXrS+/U9
-         xkmLRL387AprHAdUluWfmLWdV8WmNkBTpWglapRLGC3xYnP0l7Ha/bOlvOV7HsZfhu
-         fy8B4iDfGPPwEYp47JkkMIZa3AUx157JgocyVQkk=
+        b=yJNuc4PmvLPtFo/t4mGxV8PF9zrCUEHm0IOhuEeNqT5LOPbkHKzyCzZXaW9VIQYnH
+         j5ePlJZfB8Q9Go3aA8wHDOHQtnHfahf5VdHWkaRT/CHxJIDZGCR8h8/IF72u5I/EY6
+         K2dKWgMMqKbqtjDtxoqryTzisRKKGGoQMnPxqI2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.19 042/125] SMB3: Fix persistent handles reconnect
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.14 031/105] intel_th: pci: Add Comet Lake PCH support
 Date:   Mon, 11 Nov 2019 19:28:01 +0100
-Message-Id: <20191111181445.973819777@linuxfoundation.org>
+Message-Id: <20191111181438.233243037@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit d243af7ab9feb49f11f2c0050d2077e2d9556f9b upstream.
+commit 3adbb5718dd5264666ddbc2b9b43799d292e9cb6 upstream.
 
-When the client hits a network reconnect, it re-opens every open
-file with a create context to reconnect a persistent handle. All
-create context types should be 8-bytes aligned but the padding
-was missed for that one. As a result, some servers don't allow
-us to reconnect handles and return an error. The problem occurs
-when the problematic context is not at the end of the create
-request packet. Fix this by adding a proper padding at the end
-of the reconnect persistent handle context.
+This adds support for Intel TH on Comet Lake PCH.
 
-Cc: Stable <stable@vger.kernel.org> # 4.19.x
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191028070651.9770-7-alexander.shishkin@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwtracing/intel_th/pci.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -777,6 +777,7 @@ struct create_durable_handle_reconnect_v
- 	struct create_context ccontext;
- 	__u8   Name[8];
- 	struct durable_reconnect_context_v2 dcontext;
-+	__u8   Pad[4];
- } __packed;
- 
- /* See MS-SMB2 2.2.13.2.5 */
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -184,6 +184,11 @@ static const struct pci_device_id intel_
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+ 	},
+ 	{
++		/* Comet Lake PCH */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x06a6),
++		.driver_data = (kernel_ulong_t)&intel_th_2x,
++	},
++	{
+ 		/* Ice Lake NNPI */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x45c5),
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
 
 
