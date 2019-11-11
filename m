@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A9AEF7C77
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1356F7D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:57:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730018AbfKKSqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:46:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
+        id S1730804AbfKKS5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:57:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728231AbfKKSqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:46:33 -0500
+        id S1730591AbfKKS5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:57:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 671BA21655;
-        Mon, 11 Nov 2019 18:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6773721783;
+        Mon, 11 Nov 2019 18:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497992;
-        bh=1G2RTe8bkhAi0JvZ0DOc/Hnu08pCUoVbpcdYhiBBMiI=;
+        s=default; t=1573498629;
+        bh=+5/pU0gbGGuMiC4hy+LUaYzqzR/jLjZp+mldKJOoD4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z2DN74Wt9gaO1GpKOjRo4xcwjR6ZxOsoma5hsmD7XT2sdlwtcsJXw/AaFOXXgilQK
-         OHp4Z1hpeCTj3uWVw6vxrq4bsa3BYEBScx0hHSMEBDul4IWaj9jaAqzmWQth84e1VN
-         i73008GEGD59Kq3ZtrfJ8BWi8xEO9qClV5zZrpp8=
+        b=Loh0fsIZqMQi2dlygUGpInJfD8gLxLM+jWLMDoELbtiJ5dpZBAoBYJs6R236eYyv8
+         RD+ysUA8LDlLjrAghSFkATcb8CfyuhnwIBHuJOQ++BLqTfDgbdVc/i6KngfxXXolg/
+         dBbE1DeTZlJaCAlWjkjFVjVR7rrBNaY9UdfFk1GE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manfred Rudigier <manfred.rudigier@omicronenergy.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 116/125] igb: Fix constant media auto sense switching when no cable is connected
-Date:   Mon, 11 Nov 2019 19:29:15 +0100
-Message-Id: <20191111181455.335395928@linuxfoundation.org>
+Subject: [PATCH 5.3 174/193] hv_netvsc: Fix error handling in netvsc_attach()
+Date:   Mon, 11 Nov 2019 19:29:16 +0100
+Message-Id: <20191111181513.956647550@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Upstream commit 8d5cfd7f76a2414e23c74bb8858af7540365d985 ]
+[ Upstream commit 719b85c336ed35565d0f3982269d6f684087bb00 ]
 
-At least on the i350 there is an annoying behavior that is maybe also
-present on 82580 devices, but was probably not noticed yet as MAS is not
-widely used.
+If rndis_filter_open() fails, we need to remove the rndis device created
+in earlier steps, before returning an error code. Otherwise, the retry of
+netvsc_attach() from its callers will fail and hang.
 
-If no cable is connected on both fiber/copper ports the media auto sense
-code will constantly swap between them as part of the watchdog task and
-produce many unnecessary kernel log messages.
-
-The swap code responsible for this behavior (switching to fiber) should
-not be executed if the current media type is copper and there is no signal
-detected on the fiber port. In this case we can safely wait until the
-AUTOSENSE_EN bit is cleared.
-
-Signed-off-by: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc_drv.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index ab76a5f77cd0e..36db874f3c928 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -2064,7 +2064,8 @@ static void igb_check_swap_media(struct igb_adapter *adapter)
- 	if ((hw->phy.media_type == e1000_media_type_copper) &&
- 	    (!(connsw & E1000_CONNSW_AUTOSENSE_EN))) {
- 		swap_now = true;
--	} else if (!(connsw & E1000_CONNSW_SERDESD)) {
-+	} else if ((hw->phy.media_type != e1000_media_type_copper) &&
-+		   !(connsw & E1000_CONNSW_SERDESD)) {
- 		/* copper signal takes time to appear */
- 		if (adapter->copper_tries < 4) {
- 			adapter->copper_tries++;
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index e8fce6d715ef0..8ed79b418d88a 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -982,7 +982,7 @@ static int netvsc_attach(struct net_device *ndev,
+ 	if (netif_running(ndev)) {
+ 		ret = rndis_filter_open(nvdev);
+ 		if (ret)
+-			return ret;
++			goto err;
+ 
+ 		rdev = nvdev->extension;
+ 		if (!rdev->link_state)
+@@ -990,6 +990,13 @@ static int netvsc_attach(struct net_device *ndev,
+ 	}
+ 
+ 	return 0;
++
++err:
++	netif_device_detach(ndev);
++
++	rndis_filter_device_remove(hdev, nvdev);
++
++	return ret;
+ }
+ 
+ static int netvsc_set_channels(struct net_device *net,
 -- 
 2.20.1
 
