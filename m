@@ -2,101 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8EE5F8020
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB7A1F803C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:35:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbfKKTdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:33:41 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:39367 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbfKKTdj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:33:39 -0500
-Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N3bCH-1hmQ3w3kY7-010fCN; Mon, 11 Nov 2019 20:33:36 +0100
-Received: by mail-qk1-f179.google.com with SMTP id h15so12180561qka.13;
-        Mon, 11 Nov 2019 11:33:34 -0800 (PST)
-X-Gm-Message-State: APjAAAXXUehROR4hg16SrGsmLkhlWeNJFltpGV8/mDO3s1mh8skoqwjh
-        tY/46NCrVFjCjJg/qAPgy/4Ru1VJxk+kMV3sub8=
-X-Google-Smtp-Source: APXvYqzRT3LvGe5JvZLYKm1upZpHxk2xc9ns43ZUwTpi/JlFXD7dYhA8+4Mt4XVDG2f3/qLjEL/Ms2I9EThmbgvV8Jg=
-X-Received: by 2002:a37:58d:: with SMTP id 135mr2321779qkf.394.1573500813881;
- Mon, 11 Nov 2019 11:33:33 -0800 (PST)
+        id S1727201AbfKKTfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:35:04 -0500
+Received: from mail-eopbgr720071.outbound.protection.outlook.com ([40.107.72.71]:62496
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726879AbfKKTfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 14:35:03 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DGdItVaRUiv9RjGABK5ZuF9npDLp76qx72QhQdHYmYno5Rzn0vpXJxbGfMtiqzv/ARIdzpRcK8Re2PqXPsfEzHwSCqzYIGmZ37GAKhC9kT0TGuL5E195oBOFfM+rbNfAUy5+bLVVGX5eiz51leNNRmI/hIzFqvBle8O9C8kxwLPyVZ5qbF4f6mjlSgyR1zckwOsUFPR5l4QASlC8k4AFS9v1BTRrfV9YMsFn+ixPxMEOyiOZelYlOaP1LL8FlIeKH8tNQvpgXqdxgiE/d6qyJkILJh0v8UZZ5DpWaoqIAOjWeE4UxNlaRTo0jLWgSVgXvxKEY2uLpPb+MQxbWmY5tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FqTwLXDjqiAe8R2d922gEvHOmHuChaUeTE3PYM3PwSM=;
+ b=nA1NDrMfEULSLkKYcRSh2nUemAdPAMpkn83rQUgqD4MhztxYxAIX63XARjTOldFKn6PWFDTFw9tPOXhv/fYsvWJ4oMUdxH8X1uG3jfMpRTtcPDANI2R+aUAYwmZcN4LRe+5DUcEcGeelgJ5vHX9GsuUIY1WV9GclCDTHu3+KZ55PlpdKdKt0MjbHM2SeraE+zqL91dUfopgQm6wlO4EdNwxj4ZtOrgBLYk71ZZr10Gko5yO1mYoo18hA0bK6aAqSecLcVKTeVxl4y7pnmUd7SlY7kIXeG5YSTCLI8rSSFMaIWpL/4ePdKcGoXXrg0Fd3duzTaaHy2zoSBK2IyQ6log==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FqTwLXDjqiAe8R2d922gEvHOmHuChaUeTE3PYM3PwSM=;
+ b=ZieE9H841u213CkMOOgoMfxNlvW5ELphtEQSEQGcw9yZE1n1fH7jkJ6lwtPhGXNBXyRtPRA/f6bBRS9oeodtCnPl6nbt7qF80oDcoCcQ5dyMfDk6PoG1TBqBPcYsX/RDd0Tp8Wspun2LsNtySnEHUuoUdQe5K637Fi+INwdnxKk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.71.154) by
+ DM6PR12MB3289.namprd12.prod.outlook.com (20.179.71.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.20; Mon, 11 Nov 2019 19:34:53 +0000
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::dd0c:8e53:4913:8ef4]) by DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::dd0c:8e53:4913:8ef4%5]) with mapi id 15.20.2430.027; Mon, 11 Nov 2019
+ 19:34:53 +0000
+From:   Tom Lendacky <thomas.lendacky@amd.com>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tony Luck <tony.luck@intel.com>,
+        Trilok Soni <tsoni@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] Documentation/process: Add AMD contact for embargoed hardware issues
+Date:   Mon, 11 Nov 2019 13:34:37 -0600
+Message-Id: <c1062e44a8784747e4834d28de6f54c30ae95058.1573500877.git.thomas.lendacky@amd.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SN6PR15CA0020.namprd15.prod.outlook.com
+ (2603:10b6:805:16::33) To DM6PR12MB3163.namprd12.prod.outlook.com
+ (2603:10b6:5:15e::26)
 MIME-Version: 1.0
-References: <20191029064834.23438-1-hch@lst.de> <20191029064834.23438-11-hch@lst.de>
- <CAK8P3a2o4R+E2hTrHrmNy7K1ki3_98aWE5a-fjkQ_NWW=xd_gQ@mail.gmail.com>
- <20191111101531.GA12294@lst.de> <CAK8P3a0rTvfPP2LUMw8EC0xz5gfZP5+NUkoaZBJrtYYfr6YRig@mail.gmail.com>
- <20191111102923.GA12974@lst.de>
-In-Reply-To: <20191111102923.GA12974@lst.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 11 Nov 2019 20:33:17 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2b=td4JhYOcK1jUshh8Mp-5_w4v+dAr_JjnH783=ptBQ@mail.gmail.com>
-Message-ID: <CAK8P3a2b=td4JhYOcK1jUshh8Mp-5_w4v+dAr_JjnH783=ptBQ@mail.gmail.com>
-Subject: Re: [PATCH 10/21] asm-generic: ioremap_uc should behave the same with
- and without MMU
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Guo Ren <guoren@kernel.org>, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        "moderated list:NIOS2 ARCHITECTURE" 
-        <nios2-dev@lists.rocketboards.org>, openrisc@lists.librecores.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:VkzlYprmjLZkUUcNJ+eTrkc1uyTcHlM+BFAEE68s21ucomSZQaJ
- Mq1HsbOKR10W9ktsWQqC2d+1fxNFc++gSh355I/Sm9Nt0OELiCU5GE/ejcbxdc0XoKGFGOR
- lJT0aj3OKGGsrqrwmqhZcVjRTdGYhtUjAmaLqUrUWTfS9gPcJXopxjb/cHOb3V99Jjg8KyM
- BDe7AsIZLiGgQ+SW18UXg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hdS04Xdlzj8=:M/ucaK4r3dinqbK80C41xd
- FMDjqQL3YWPxy6jHWBpvqKj9qZWP8X6dfE8RQCodF9mGe6XJZOKEt4p5phfvsuDjwfDAuR77q
- 5sbXk3f1gGuA3fUl2kc50FhfPxqpKsTvCyJ9PMoA1vJWANud2ysKvaSTXrsxfuBDYbDYflWwD
- FkAIhnavF1mnucw3hAUZbu/DkQc78rhm6yA66+iyf0ibiFIB1fiFKcy3QWM1WJMSymvmz+Cik
- 0TMLecIni73LtmjHaEJqdQ07OpzRu6o2+nc6q2bAY8v58NfnuF4PC+RAMX5jsCwhiMQuTAAzH
- d9cCFvrdweO5pjBwUMsl1fDngiL0PhMkFoHuG2mp6WTu+9yigHaCDYkLBnzqo3wCtFy+yT589
- vZ/FGbV4Lx/67Cyy8ORfHd/Q4I+ytFVw6wwtG0/mHwHZbYfS5buusBz3lQKNPLkaAr33vhbEI
- HXyb+ZMaKffgQFt++5lnGgDgUJQspoUegjhdEeGEI5XiZQJLi3elBg+C5Gkccpc1LDKrpW2ka
- YjGgj5260Lt3d8KDG/qdbMttJAKgU/xdQzH2MW0jtDV/+7cUj/sApumoILyv1cXORKI+bqwSx
- ogfAEpKRHtcZ3qEtQueZhW8Xu+2e019UPGPVU0qRA4v2G6oIRAzpinHe15u698zmzbDymL58Y
- lwxjoo4VbkwFV/6Hr98ctBchu4Q9vloUQ/pqLZpaLK1ga8iZgXmf+PzlaojeIr0ObdDBvevEx
- 7OZcdxrTy7Y1NqggNs6PW94MGROjlUKfXkY5V9wZiL5kUIPMuEbzKs1fxUg2d59L21Tn3fP6m
- i7fEXDMKusM1lgLeJl9N0qIk4SBBs+5bFUkc1R6uO78ROGzNzWdO/juF7AjegP2MSh3mgCkLn
- JUwmUH8sWRrwHApJ0rkA==
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: d8efda5d-870d-48c6-ce20-08d766de3984
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3289:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM6PR12MB328951B558A3FF3DA20BFFABEC740@DM6PR12MB3289.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2043;
+X-Forefront-PRVS: 0218A015FA
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(366004)(39860400002)(346002)(136003)(199004)(189003)(54906003)(476003)(6666004)(486006)(50466002)(2616005)(86362001)(186003)(8936002)(99286004)(4326008)(7736002)(7416002)(5660300002)(50226002)(386003)(6506007)(66946007)(51416003)(52116002)(305945005)(66476007)(66556008)(2906002)(66066001)(25786009)(26005)(4744005)(478600001)(36756003)(118296001)(6512007)(6486002)(47776003)(81156014)(16586007)(81166006)(6116002)(3846002)(48376002)(6436002)(14454004)(14444005)(8676002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3289;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: teMJ9zLUWtqRfD9eV0iuFhpLpAXpG63mGdm0Z50iPTZqSDG3ZN8yEpuFQ5ieAwtTiIA6OScZ/jEHsI4Ja7xzlKeZxPETd8DUXzuief4e+cpJCJEO9LZ4WUtnHF+EjCB9TtBzAzELd0XRcojNf2Syp4qKUpDYp1jN4xLKGUtB8fnKVv91jRLlGDpzrwHAarJIDJ19pcufj1nWRGqH5drVyUsarvg/jsN7B1/DWGCZoMZVIW/H/JJbduXlKbQgZYCscxlitMziq2k75RrE1fBsrjAcKxh3gZ46zfZ/kWZekJKIDbUz/l4LVT/9gL6R8gbRAgtUiwY0ghOclbMTsUm2z6v1mfCaCY0z1JNsN4w+FUS/jlHWALQXUtk5UdShP02ywSQHRVZyVO3X/KDKzQlrR6DoM1HAbjWFH+LeUGriv5iksuFsNpKiC9sS0eX/K6Tr
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8efda5d-870d-48c6-ce20-08d766de3984
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2019 19:34:53.2880
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kCPck+aPwVIakVtiLx7wIB3olG2BdSg/qGlcuvsUTlwDSpEoM2HqOP+bu6oo4qu3Jnv6FBXZy4BmWPEidPtHyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3289
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 11:29 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Mon, Nov 11, 2019 at 11:27:27AM +0100, Arnd Bergmann wrote:
-> > Ok, fair enough. Let's just go with your version for now, if only to not
-> > hold your series up more. I'd still suggest we change atyfb to only
-> > use ioremap_uc() on i386 and maybe ia64. I can send a patch for that.
->
-> I don't think we even need it on ia64.  But lets kick off a dicussion
-> with the atyfb, x86 and ia64 maintainers after this series is in.
-> Which was kinda my plan anyway.
+Add myself as the AMD ambassador to the embargoed hardware issues
+document.
 
-I missed your reply and already sent my patch now. I guess it doesn't
-hurt to discuss that in parallel. Anyway I think that this patch is the
-last one you want an Ack from me for (let me know if I missed one), so
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+---
+ Documentation/process/embargoed-hardware-issues.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
+index a3c3349046c4..799580acc8de 100644
+--- a/Documentation/process/embargoed-hardware-issues.rst
++++ b/Documentation/process/embargoed-hardware-issues.rst
+@@ -240,7 +240,7 @@ an involved disclosed party. The current ambassadors list:
+ 
+   ============= ========================================================
+   ARM
+-  AMD
++  AMD		Tom Lendacky <tom.lendacky@amd.com>
+   IBM
+   Intel		Tony Luck <tony.luck@intel.com>
+   Qualcomm	Trilok Soni <tsoni@codeaurora.org>
+-- 
+2.17.1
+
