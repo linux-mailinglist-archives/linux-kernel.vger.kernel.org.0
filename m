@@ -2,95 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26527F6FB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 09:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 934A5F6FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 09:55:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfKKI3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 03:29:14 -0500
-Received: from mail-m972.mail.163.com ([123.126.97.2]:55062 "EHLO
-        mail-m972.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKI3O (ORCPT
+        id S1727023AbfKKIzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 03:55:04 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34677 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbfKKIzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 03:29:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=IXLiI1+30Yp1RuwY8a
-        32SvH9+dLBFK6vlJn+vl0EBD4=; b=jhlJHk32iaOL14/7IKFs9pVbyX4D/1jRo4
-        OXp1ELbN0c78vZb76E9lhgCTrKrgTejCqJ5h8HJGTROMBBS8GW1IECYYfzQZ5FL6
-        vgfMmJax8Xs5oKHB21V1VC9ySa39QDiPTXeF1RLOSnmhE491JH2x0gtPMLuXEG90
-        OpCM8x3xQ=
-Received: from localhost.localdomain (unknown [202.112.113.212])
-        by smtp2 (Coremail) with SMTP id GtxpCgDXMCOsG8ld_t9zAg--.4268S3;
-        Mon, 11 Nov 2019 16:28:35 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Jacob Chen <jacob-chen@iotwrt.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pan Bian <bianpan2016@163.com>
-Subject: [PATCH v2] media: rockchip/rga: fix potential use after free
-Date:   Mon, 11 Nov 2019 16:28:22 +0800
-Message-Id: <1573460902-18563-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: GtxpCgDXMCOsG8ld_t9zAg--.4268S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar4DAr4ruFW3urW8KFWUCFg_yoW8WF15pa
-        1kGa4xKFWFg3yUuwsrJr4DuFyrGa4Iya1FkrW3G34SkFy3KryDt34xJFyFqFWUZ3s7CFWa
-        yw43tr47Ca10vFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UJgA7UUUUU=
-X-Originating-IP: [202.112.113.212]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZBNqclQHHkd+IQAAs6
+        Mon, 11 Nov 2019 03:55:03 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y186so3409719lfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 00:55:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=KG554UB1ORd5BSnPyJC3hx3P5Fy8n9UoGQr/WopwYhw=;
+        b=RWFTY/GmE3egVq2pj+6t/3Uo2UVyvdrxIrZSaAHkOy7tzeVUGbrNPIkkxuIfXiTjkw
+         cAA6wai3LhmYL2Xmzxjy6+5L6GpZHd8ocAzFCO2wv0nBA2AwGH1MmarHMFzGthPxGFlO
+         +oPzyVwtvN1MxORG4zuKONxuplLyKBa5oVgLAqVAFCB2gPY9HdLWF9v33EfFSc5VUDuh
+         7lf07F/pevfpjgvZbF8iv+8Sk67AeFjI53pIup+Amar0aRyABuIa0QdYBlmc+3LuaMet
+         oMX2s12znPU8Ys+WOcsQn4xTPYowhkM4lVXDce9lmuo7ooIQlaNwX1VlMef+KNkqby7P
+         q6hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=KG554UB1ORd5BSnPyJC3hx3P5Fy8n9UoGQr/WopwYhw=;
+        b=OtReAO7UZSR7WYh7VOqCmTVvCIJxrY8A8q4LIOk4zdoBvVW2ZXQmGlMxJSQ0Sg7zY0
+         Ha27gDYxf0TuyzF0DW/Vq273+EKMLHwMvAW6P6F9B4RJcE1sBtlDa4IwBVaNiMku4uUm
+         hbnB6B2dMzPUvWZyaXPlP3Mq75WNmf5/CGnUzIAtQBjBsE1RiDh+gGr3ZqgokV1aLg1r
+         XF5GmTrc3J9H1bxht20D7+M/ascKfWh6fIJNeJZcXRxv1RSTiwTRz8a7qRRwdPGusTWg
+         l4nnur2fhCGxOynJN0ooMbg1L8ae89hyw4EUGQUmw/jkczDefpEmy9jDrdS+Kw/J9pvh
+         437A==
+X-Gm-Message-State: APjAAAUEWztN1q1GzaU9VSS9RM4nQwGW1SWQry6KlfwOkAPxMPXJXBwN
+        tLSTv4E+Hsup6KHWaosTA5DUeQ==
+X-Google-Smtp-Source: APXvYqwzd9rbmzLlM918vPzJl2Y+6mHnBAs+b8zL1e3+XqdvrLgiKth8gwDxh0rw5IZ0xEuUfc0DgQ==
+X-Received: by 2002:a19:6d12:: with SMTP id i18mr14821473lfc.153.1573462499663;
+        Mon, 11 Nov 2019 00:54:59 -0800 (PST)
+Received: from localhost.localdomain (c-413e70d5.07-21-73746f28.bbcust.telenor.se. [213.112.62.65])
+        by smtp.gmail.com with ESMTPSA id f25sm6345000lfm.26.2019.11.11.00.54.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Nov 2019 00:54:59 -0800 (PST)
+Date:   Mon, 11 Nov 2019 08:59:25 +0100
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     paulmck@kernel.org, joel@joelfernandes.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org
+Subject: next-20191108: qemu arm64: WARNING: suspicious RCU usage
+Message-ID: <20191111075925.GB25277@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variable vga->vfd is an alias for vfd. Therefore, releasing vfd and
-then unregister vga->vfd will lead to a use after free bug. In fact, the
-free operation and the unregister operation are reversed.
+Hi,
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
-v2: update the goto label names consistently
----
- drivers/media/platform/rockchip/rga/rga.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I'm seeing the following warning when I'm booting an arm64 allmodconfig
+kernel [1] on linux-next tag next-20191108, is this anything you've seen
+before ?
 
-diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
-index e9ff12b6b5bb..d2297abafc69 100644
---- a/drivers/media/platform/rockchip/rga/rga.c
-+++ b/drivers/media/platform/rockchip/rga/rga.c
-@@ -863,7 +863,7 @@ static int rga_probe(struct platform_device *pdev)
- 	if (IS_ERR(rga->m2m_dev)) {
- 		v4l2_err(&rga->v4l2_dev, "Failed to init mem2mem device\n");
- 		ret = PTR_ERR(rga->m2m_dev);
--		goto unreg_video_dev;
-+		goto rel_vdev;
- 	}
- 
- 	pm_runtime_get_sync(rga->dev);
-@@ -892,7 +892,7 @@ static int rga_probe(struct platform_device *pdev)
- 	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
- 		v4l2_err(&rga->v4l2_dev, "Failed to register video device\n");
--		goto rel_vdev;
-+		goto unreg_dev;
- 	}
- 
- 	v4l2_info(&rga->v4l2_dev, "Registered %s as /dev/%s\n",
-@@ -900,10 +900,10 @@ static int rga_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+unreg_dev:
-+	video_unregister_device(rga->vfd);
- rel_vdev:
- 	video_device_release(vfd);
--unreg_video_dev:
--	video_unregister_device(rga->vfd);
- unreg_v4l2_dev:
- 	v4l2_device_unregister(&rga->v4l2_dev);
- err_put_clk:
--- 
-2.7.4
 
+The code seems to have introduced that is f0ad0860d01e ("ipv4: ipmr:
+support multiple tables") in 2010 and the warning was added reacently
+28875945ba98 ("rcu: Add support for consolidated-RCU reader checking").
+
+
+[   32.496021][    T1] =============================
+[   32.497616][    T1] WARNING: suspicious RCU usage
+[   32.499614][    T1] 5.4.0-rc6-next-20191108-00003-gf74bac957b5c-dirty #2 Not tainted
+[   32.502018][    T1] -----------------------------
+[   32.503976][    T1] net/ipv4/ipmr.c:136 RCU-list traversed in non-reader section!!
+[   32.506746][    T1] 
+[   32.506746][    T1] other info that might help us debug this:
+[   32.506746][    T1] 
+[   32.509794][    T1] 
+[   32.509794][    T1] rcu_scheduler_active = 2, debug_locks = 1
+[   32.512661][    T1] 1 lock held by swapper/0/1:
+[   32.514169][    T1]  #0: ffffa000150dd678 (pernet_ops_rwsem){+.+.}, at: register_pernet_subsys+0x24/0x50
+[   32.517621][    T1] 
+[   32.517621][    T1] stack backtrace:
+[   32.519930][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc6-next-20191108-00003-gf74bac957b5c-dirty #2
+[   32.523063][    T1] Hardware name: linux,dummy-virt (DT)
+[   32.524787][    T1] Call trace:
+[   32.525946][    T1]  dump_backtrace+0x0/0x2d0
+[   32.527433][    T1]  show_stack+0x20/0x30
+[   32.528811][    T1]  dump_stack+0x204/0x2ac
+[   32.530258][    T1]  lockdep_rcu_suspicious+0xf4/0x108
+[   32.531993][    T1]  ipmr_get_table+0xc8/0x170
+[   32.533496][    T1]  ipmr_new_table+0x48/0xa0
+[   32.535002][    T1]  ipmr_net_init+0xe8/0x258
+[   32.536465][    T1]  ops_init+0x280/0x2d8
+[   32.537876][    T1]  register_pernet_operations+0x210/0x420
+[   32.539707][    T1]  register_pernet_subsys+0x30/0x50
+[   32.541372][    T1]  ip_mr_init+0x54/0x180
+[   32.542785][    T1]  inet_init+0x25c/0x3e8
+[   32.544186][    T1]  do_one_initcall+0x4c0/0xad8
+[   32.545757][    T1]  kernel_init_freeable+0x3e0/0x500
+[   32.547443][    T1]  kernel_init+0x14/0x1f0
+[   32.548875][    T1]  ret_from_fork+0x10/0x18
+
+
+Cheers,
+Anders
+[1] http://people.linaro.org/~anders.roxell/kernel_config-next-20191108.config
