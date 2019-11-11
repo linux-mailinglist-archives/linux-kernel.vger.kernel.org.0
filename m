@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB76F7C2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB20F7D3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:54:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbfKKSoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:44:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35504 "EHLO mail.kernel.org"
+        id S1730331AbfKKSyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:54:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728130AbfKKSn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:43:59 -0500
+        id S1729538AbfKKSyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:54:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3DA7204FD;
-        Mon, 11 Nov 2019 18:43:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA8E1222BD;
+        Mon, 11 Nov 2019 18:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497838;
-        bh=8oNkIOiv5Va1epVVjrY/bljrdj9DIi333mUax+51ZZU=;
+        s=default; t=1573498471;
+        bh=MmuC3ntGipDDJDN5fDmYkcefGt/LDWxP73nABMNEhic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zo8Er6ZVfyjf8A1j1nHxSK0Lq//k4DjfhE6Aejxbka7NIry0AqeZ70+cxLiaglXSq
-         aOZUTDfbyKHbDa4n68a7CRs9hd7H8RpiGuh7s2QFJiTYU7W36m798lSxHGZBDqluM6
-         mgJSwB6i//C2q3r2nihCI2R6paMvst8lk++Ipd0Y=
+        b=AfDxTWfSguO/z+2z+BFZesquxLTC6+OLp8TYqvnuj1SlfzHFEPrjiCJ0133fResNh
+         snbvu4EngaRhinoj72ZAzkuGI6OgVmdEDuRgFaC0gC3jOvbeeOwaW/6vVCVb7ZcRZy
+         up6NEtV3AInsQnHb/B2OOZtavDMOB72wVViNGAXk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/125] dmaengine: xilinx_dma: Fix control reg update in vdma_channel_set_config
-Date:   Mon, 11 Nov 2019 19:28:30 +0100
-Message-Id: <20191111181449.613331688@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Simon Horman <horms@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 129/193] ipvs: move old_secure_tcp into struct netns_ipvs
+Date:   Mon, 11 Nov 2019 19:28:31 +0100
+Message-Id: <20191111181510.692053890@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,63 +45,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 6c6de1ddb1be3840f2ed5cc9d009a622720940c9 ]
+[ Upstream commit c24b75e0f9239e78105f81c5f03a751641eb07ef ]
 
-In vdma_channel_set_config clear the delay, frame count and master mask
-before updating their new values. It avoids programming incorrect state
-when input parameters are different from default.
+syzbot reported the following issue :
 
-Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Acked-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Link: https://lore.kernel.org/r/1569495060-18117-3-git-send-email-radhey.shyam.pandey@xilinx.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+BUG: KCSAN: data-race in update_defense_level / update_defense_level
+
+read to 0xffffffff861a6260 of 4 bytes by task 3006 on cpu 1:
+ update_defense_level+0x621/0xb30 net/netfilter/ipvs/ip_vs_ctl.c:177
+ defense_work_handler+0x3d/0xd0 net/netfilter/ipvs/ip_vs_ctl.c:225
+ process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
+ worker_thread+0xa0/0x800 kernel/workqueue.c:2415
+ kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
+
+write to 0xffffffff861a6260 of 4 bytes by task 7333 on cpu 0:
+ update_defense_level+0xa62/0xb30 net/netfilter/ipvs/ip_vs_ctl.c:205
+ defense_work_handler+0x3d/0xd0 net/netfilter/ipvs/ip_vs_ctl.c:225
+ process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
+ worker_thread+0xa0/0x800 kernel/workqueue.c:2415
+ kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 7333 Comm: kworker/0:5 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events defense_work_handler
+
+Indeed, old_secure_tcp is currently a static variable, while it
+needs to be a per netns variable.
+
+Fixes: a0840e2e165a ("IPVS: netns, ip_vs_ctl local vars moved to ipvs struct.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Simon Horman <horms@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/xilinx/xilinx_dma.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ include/net/ip_vs.h            |  1 +
+ net/netfilter/ipvs/ip_vs_ctl.c | 15 +++++++--------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
-index c124423125951..8aec137b4fcaa 100644
---- a/drivers/dma/xilinx/xilinx_dma.c
-+++ b/drivers/dma/xilinx/xilinx_dma.c
-@@ -72,6 +72,9 @@
- #define XILINX_DMA_DMACR_CIRC_EN		BIT(1)
- #define XILINX_DMA_DMACR_RUNSTOP		BIT(0)
- #define XILINX_DMA_DMACR_FSYNCSRC_MASK		GENMASK(6, 5)
-+#define XILINX_DMA_DMACR_DELAY_MASK		GENMASK(31, 24)
-+#define XILINX_DMA_DMACR_FRAME_COUNT_MASK	GENMASK(23, 16)
-+#define XILINX_DMA_DMACR_MASTER_MASK		GENMASK(11, 8)
- 
- #define XILINX_DMA_REG_DMASR			0x0004
- #define XILINX_DMA_DMASR_EOL_LATE_ERR		BIT(15)
-@@ -2112,8 +2115,10 @@ int xilinx_vdma_channel_set_config(struct dma_chan *dchan,
- 	chan->config.gen_lock = cfg->gen_lock;
- 	chan->config.master = cfg->master;
- 
-+	dmacr &= ~XILINX_DMA_DMACR_GENLOCK_EN;
- 	if (cfg->gen_lock && chan->genlock) {
- 		dmacr |= XILINX_DMA_DMACR_GENLOCK_EN;
-+		dmacr &= ~XILINX_DMA_DMACR_MASTER_MASK;
- 		dmacr |= cfg->master << XILINX_DMA_DMACR_MASTER_SHIFT;
+diff --git a/include/net/ip_vs.h b/include/net/ip_vs.h
+index 3759167f91f56..078887c8c586a 100644
+--- a/include/net/ip_vs.h
++++ b/include/net/ip_vs.h
+@@ -889,6 +889,7 @@ struct netns_ipvs {
+ 	struct delayed_work	defense_work;   /* Work handler */
+ 	int			drop_rate;
+ 	int			drop_counter;
++	int			old_secure_tcp;
+ 	atomic_t		dropentry;
+ 	/* locks in ctl.c */
+ 	spinlock_t		dropentry_lock;  /* drop entry handling */
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 248c76290116e..e29b00f514a0a 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -93,7 +93,6 @@ static bool __ip_vs_addr_is_local_v6(struct net *net,
+ static void update_defense_level(struct netns_ipvs *ipvs)
+ {
+ 	struct sysinfo i;
+-	static int old_secure_tcp = 0;
+ 	int availmem;
+ 	int nomem;
+ 	int to_change = -1;
+@@ -174,35 +173,35 @@ static void update_defense_level(struct netns_ipvs *ipvs)
+ 	spin_lock(&ipvs->securetcp_lock);
+ 	switch (ipvs->sysctl_secure_tcp) {
+ 	case 0:
+-		if (old_secure_tcp >= 2)
++		if (ipvs->old_secure_tcp >= 2)
+ 			to_change = 0;
+ 		break;
+ 	case 1:
+ 		if (nomem) {
+-			if (old_secure_tcp < 2)
++			if (ipvs->old_secure_tcp < 2)
+ 				to_change = 1;
+ 			ipvs->sysctl_secure_tcp = 2;
+ 		} else {
+-			if (old_secure_tcp >= 2)
++			if (ipvs->old_secure_tcp >= 2)
+ 				to_change = 0;
+ 		}
+ 		break;
+ 	case 2:
+ 		if (nomem) {
+-			if (old_secure_tcp < 2)
++			if (ipvs->old_secure_tcp < 2)
+ 				to_change = 1;
+ 		} else {
+-			if (old_secure_tcp >= 2)
++			if (ipvs->old_secure_tcp >= 2)
+ 				to_change = 0;
+ 			ipvs->sysctl_secure_tcp = 1;
+ 		}
+ 		break;
+ 	case 3:
+-		if (old_secure_tcp < 2)
++		if (ipvs->old_secure_tcp < 2)
+ 			to_change = 1;
+ 		break;
  	}
- 
-@@ -2129,11 +2134,13 @@ int xilinx_vdma_channel_set_config(struct dma_chan *dchan,
- 	chan->config.delay = cfg->delay;
- 
- 	if (cfg->coalesc <= XILINX_DMA_DMACR_FRAME_COUNT_MAX) {
-+		dmacr &= ~XILINX_DMA_DMACR_FRAME_COUNT_MASK;
- 		dmacr |= cfg->coalesc << XILINX_DMA_DMACR_FRAME_COUNT_SHIFT;
- 		chan->config.coalesc = cfg->coalesc;
- 	}
- 
- 	if (cfg->delay <= XILINX_DMA_DMACR_DELAY_MAX) {
-+		dmacr &= ~XILINX_DMA_DMACR_DELAY_MASK;
- 		dmacr |= cfg->delay << XILINX_DMA_DMACR_DELAY_SHIFT;
- 		chan->config.delay = cfg->delay;
- 	}
+-	old_secure_tcp = ipvs->sysctl_secure_tcp;
++	ipvs->old_secure_tcp = ipvs->sysctl_secure_tcp;
+ 	if (to_change >= 0)
+ 		ip_vs_protocol_timeout_change(ipvs,
+ 					      ipvs->sysctl_secure_tcp > 1);
 -- 
 2.20.1
 
