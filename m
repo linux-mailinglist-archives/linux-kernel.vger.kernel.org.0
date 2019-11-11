@@ -2,114 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41644F7A8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB94EF7A8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfKKSM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:12:27 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42046 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbfKKSM1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:12:27 -0500
-Received: by mail-pf1-f196.google.com with SMTP id s5so11170409pfh.9;
-        Mon, 11 Nov 2019 10:12:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=nVbr8MtQ7ZO4CacZdX8JXbKAIcqSlSq2oEAfHRt0wK4=;
-        b=rAOdIV0cCiN/zHYvwhWIVgXx6j5+Wf+Kltc5JVcq3LZqB2idl67vTbao209IAhsOJO
-         980kByl8h8gzi5u9MoLkuIMU+J1tK13rnVQSpcIfxDynST3M8SY3mbwuUZmQnRjCzSVU
-         xjyNPeWM+AOJWH8eAgXI0u7hoqLP+LFGs+D7Tgg3EYKvTEJy0i8MBPtSwU7LEQwNZIVC
-         oFXqEEX2LUkWS48LTsa4ZCJarmvwhpV9sovnHsrGelEG2OW8+UQ9vhX82MdJCZcg2CIJ
-         1l/iM03xHSUoVRcAr6zMMoTmIgNdySjl/H3XT9ofIHmTIeZWMdMox2/3Jq1KZWnRIovv
-         +E5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nVbr8MtQ7ZO4CacZdX8JXbKAIcqSlSq2oEAfHRt0wK4=;
-        b=gl2NmYtWsgSKU1FBdfEoSbr5PGoKbBMKnPB1tsdXVXOIsKUoWwRvLQtXlcy4oVVbse
-         K1j1SakYm2df3UXp6RVbuWLSvbnJqCiFdzUHao762f98z5/nhF46hcMSxQoaXz10yQxW
-         XKkdg+OWXuquToNlhJLIWMmZWfOcyM7/EhcOA5RU+lnyEa1+armVF968ervgaxLz+5jL
-         rWTpS5H+Pn8iy9GzEjUPhQ/luLTbg1zirfq1MH9cOMxQyb6fi1qnrC4iTeHqdydbGFsS
-         KEmVbTUmpEoiAfE6Ch6x0AxiLkt08qqih3+YtFRKZb0KogxMVzv/jDwIEOFh3SlzVlfZ
-         VNMg==
-X-Gm-Message-State: APjAAAXmtCbnrZPGfHo4NBAWsiHRInVkkG2U1LIA2EP8IYMUWgbkGOJi
-        Y4vWUIzkrilQ1V+Hf3uf//g=
-X-Google-Smtp-Source: APXvYqzqab4rU4p2tyKosUenhapYrI0ueVPZGyWP01XeA+pX8HJKu1zEfgSHrqmDQY9JAg6YU5WFvA==
-X-Received: by 2002:a65:6843:: with SMTP id q3mr24328556pgt.361.1573495945788;
-        Mon, 11 Nov 2019 10:12:25 -0800 (PST)
-Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:533:7f79:a8e9:b74c:7d75:d0c])
-        by smtp.gmail.com with ESMTPSA id c12sm18301057pfp.67.2019.11.11.10.12.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 10:12:25 -0800 (PST)
-From:   madhuparnabhowmik04@gmail.com
-To:     paulmck@kernel.org, joel@joelfernandes.org, corbet@lwn.net,
-        mchehab@kernel.org
-Cc:     rcu@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-Subject: [PATCH] Documentation: RCU: whatisRCU: Updated full list of RCU API
-Date:   Mon, 11 Nov 2019 23:41:22 +0530
-Message-Id: <20191111181122.28083-1-madhuparnabhowmik04@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727036AbfKKSLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:11:30 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:42812 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726763AbfKKSL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:11:29 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1iUE9v-00016C-J6; Mon, 11 Nov 2019 11:11:28 -0700
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20191022214616.7943-1-logang@deltatee.com>
+ <20191022214616.7943-6-logang@deltatee.com>
+ <20191109174047.GH952516@vkoul-mobl>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <746371aa-b3f6-aaca-35f2-0f815294dc71@deltatee.com>
+Date:   Mon, 11 Nov 2019 11:11:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191109174047.GH952516@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: dan.j.williams@intel.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, vkoul@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,LR_URI_NUMERIC_ENDING autolearn=ham
+        autolearn_force=no version=3.4.2
+Subject: Re: [PATCH 5/5] dmaengine: plx-dma: Implement descriptor submission
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-This patch updates the list of RCU API in whatisRCU.rst.
 
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
----
- Documentation/RCU/whatisRCU.rst | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+On 2019-11-09 10:40 a.m., Vinod Koul wrote:
+>> +static dma_cookie_t plx_dma_tx_submit(struct dma_async_tx_descriptor *desc)
+>> +	__releases(plxdev->ring_lock)
+>> +{
+>> +	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(desc->chan);
+>> +	struct plx_dma_desc *plxdesc = to_plx_desc(desc);
+>> +	dma_cookie_t cookie;
+>> +
+>> +	cookie = dma_cookie_assign(desc);
+>> +
+>> +	/*
+>> +	 * Ensure the descriptor updates are visible to the dma device
+>> +	 * before setting the valid bit.
+>> +	 */
+>> +	wmb();
+>> +
+>> +	plxdesc->hw->flags_and_size |= cpu_to_le32(PLX_DESC_FLAG_VALID);
+> 
+> so where do you store the submitted descriptor?
 
-diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
-index 2f6f6ebbc8b0..c7f147b8034f 100644
---- a/Documentation/RCU/whatisRCU.rst
-+++ b/Documentation/RCU/whatisRCU.rst
-@@ -884,11 +884,14 @@ in docbook.  Here is the list, by category.
- RCU list traversal::
- 
- 	list_entry_rcu
-+	list_entry_lockless
- 	list_first_entry_rcu
- 	list_next_rcu
- 	list_for_each_entry_rcu
- 	list_for_each_entry_continue_rcu
- 	list_for_each_entry_from_rcu
-+	list_first_or_null_rcu
-+	list_next_or_null_rcu
- 	hlist_first_rcu
- 	hlist_next_rcu
- 	hlist_pprev_rcu
-@@ -902,7 +905,7 @@ RCU list traversal::
- 	hlist_bl_first_rcu
- 	hlist_bl_for_each_entry_rcu
- 
--RCU pointer/list udate::
-+RCU pointer/list update::
- 
- 	rcu_assign_pointer
- 	list_add_rcu
-@@ -912,10 +915,12 @@ RCU pointer/list udate::
- 	hlist_add_behind_rcu
- 	hlist_add_before_rcu
- 	hlist_add_head_rcu
-+	hlist_add_tail_rcu
- 	hlist_del_rcu
- 	hlist_del_init_rcu
- 	hlist_replace_rcu
--	list_splice_init_rcu()
-+	list_splice_init_rcu
-+	list_splice_tail_init_rcu
- 	hlist_nulls_del_init_rcu
- 	hlist_nulls_del_rcu
- 	hlist_nulls_add_head_rcu
--- 
-2.17.1
+The descriptors are stored in a ring in memory which the DMA engine
+reads. The ring is at (struct plx_dma_dev)->hw_ring. plxdesc->hw is a
+pointer to the descriptor's specific entry in the hardware's ring. The
+hardware descriptor is populated in plx_dma_prep_memcpy(). Once the
+valid flag is set, the hardware owns the descriptor and may start
+processing it.
 
+>> +
+>> +	spin_unlock_bh(&plxdev->ring_lock);
+>> +
+>> +	return cookie;
+>> +}
+>> +
+>> +static enum dma_status plx_dma_tx_status(struct dma_chan *chan,
+>> +		dma_cookie_t cookie, struct dma_tx_state *txstate)
+>> +{
+>> +	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(chan);
+>> +	enum dma_status ret;
+>> +
+>> +	ret = dma_cookie_status(chan, cookie, txstate);
+>> +	if (ret == DMA_COMPLETE)
+>> +		return ret;
+>> +
+>> +	plx_dma_process_desc(plxdev);
+> 
+> why is this done here..? Query of status should not make you process
+> something!
+
+When descriptors are submitted without interrupts, something has to
+cleanup the completed descriptors and this is the only sensible place to
+do that. This is exactly what IOAT does[1] (but with a different name
+and a bit more complexity).
+
+>> +
+>> +	return dma_cookie_status(chan, cookie, txstate);
+>> +}
+>> +
+>> +static void plx_dma_issue_pending(struct dma_chan *chan)
+>> +{
+>> +	struct plx_dma_dev *plxdev = chan_to_plx_dma_dev(chan);
+>> +
+>> +	rcu_read_lock();
+>> +	if (!rcu_dereference(plxdev->pdev)) {
+>> +		rcu_read_unlock();
+>> +		return;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Ensure the valid bits are visible before starting the
+>> +	 * DMA engine.
+>> +	 */
+>> +	wmb();
+>> +
+>> +	writew(PLX_REG_CTRL_START_VAL, plxdev->bar + PLX_REG_CTRL);
+> 
+> start what? 
+
+The hardware processes entries in the ring and once it reaches the end
+of the submitted descriptors, then it simply stops forever. Setting this
+bit will start it processing entries again (or, if it is already
+running, nothing will happen).
+
+Logan
+
+[1]
+https://elixir.bootlin.com/linux/latest/source/drivers/dma/ioat/dma.c#L962
