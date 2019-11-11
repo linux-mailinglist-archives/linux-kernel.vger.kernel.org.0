@@ -2,116 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB7A1F803C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFCA5F8041
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:37:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbfKKTfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:35:04 -0500
-Received: from mail-eopbgr720071.outbound.protection.outlook.com ([40.107.72.71]:62496
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726879AbfKKTfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:35:03 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DGdItVaRUiv9RjGABK5ZuF9npDLp76qx72QhQdHYmYno5Rzn0vpXJxbGfMtiqzv/ARIdzpRcK8Re2PqXPsfEzHwSCqzYIGmZ37GAKhC9kT0TGuL5E195oBOFfM+rbNfAUy5+bLVVGX5eiz51leNNRmI/hIzFqvBle8O9C8kxwLPyVZ5qbF4f6mjlSgyR1zckwOsUFPR5l4QASlC8k4AFS9v1BTRrfV9YMsFn+ixPxMEOyiOZelYlOaP1LL8FlIeKH8tNQvpgXqdxgiE/d6qyJkILJh0v8UZZ5DpWaoqIAOjWeE4UxNlaRTo0jLWgSVgXvxKEY2uLpPb+MQxbWmY5tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FqTwLXDjqiAe8R2d922gEvHOmHuChaUeTE3PYM3PwSM=;
- b=nA1NDrMfEULSLkKYcRSh2nUemAdPAMpkn83rQUgqD4MhztxYxAIX63XARjTOldFKn6PWFDTFw9tPOXhv/fYsvWJ4oMUdxH8X1uG3jfMpRTtcPDANI2R+aUAYwmZcN4LRe+5DUcEcGeelgJ5vHX9GsuUIY1WV9GclCDTHu3+KZ55PlpdKdKt0MjbHM2SeraE+zqL91dUfopgQm6wlO4EdNwxj4ZtOrgBLYk71ZZr10Gko5yO1mYoo18hA0bK6aAqSecLcVKTeVxl4y7pnmUd7SlY7kIXeG5YSTCLI8rSSFMaIWpL/4ePdKcGoXXrg0Fd3duzTaaHy2zoSBK2IyQ6log==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1727272AbfKKThO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:37:14 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45674 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbfKKThO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 14:37:14 -0500
+Received: by mail-qt1-f193.google.com with SMTP id 30so16899835qtz.12
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:37:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FqTwLXDjqiAe8R2d922gEvHOmHuChaUeTE3PYM3PwSM=;
- b=ZieE9H841u213CkMOOgoMfxNlvW5ELphtEQSEQGcw9yZE1n1fH7jkJ6lwtPhGXNBXyRtPRA/f6bBRS9oeodtCnPl6nbt7qF80oDcoCcQ5dyMfDk6PoG1TBqBPcYsX/RDd0Tp8Wspun2LsNtySnEHUuoUdQe5K637Fi+INwdnxKk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.71.154) by
- DM6PR12MB3289.namprd12.prod.outlook.com (20.179.71.95) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.20; Mon, 11 Nov 2019 19:34:53 +0000
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::dd0c:8e53:4913:8ef4]) by DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::dd0c:8e53:4913:8ef4%5]) with mapi id 15.20.2430.027; Mon, 11 Nov 2019
- 19:34:53 +0000
-From:   Tom Lendacky <thomas.lendacky@amd.com>
-To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Tony Luck <tony.luck@intel.com>,
-        Trilok Soni <tsoni@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] Documentation/process: Add AMD contact for embargoed hardware issues
-Date:   Mon, 11 Nov 2019 13:34:37 -0600
-Message-Id: <c1062e44a8784747e4834d28de6f54c30ae95058.1573500877.git.thomas.lendacky@amd.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SN6PR15CA0020.namprd15.prod.outlook.com
- (2603:10b6:805:16::33) To DM6PR12MB3163.namprd12.prod.outlook.com
- (2603:10b6:5:15e::26)
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
+        b=jWLH/Nb3ARoqt8//qTfxHjziKi4gpEwaRC39Uf6KF94uH8Kztm1t2pbE4WT++Kc1z6
+         UEp+9rVJEiletoL0fW8f85HB+YFdHO0b2dYZONCT8OkfM3AWMhutbHG316kizVCK4sWi
+         D/kdQgVfXSKTZCMmuUSS9+nJ5pW/kr2QCAeUa7/48DlPqpJC0r5rXbs2j+NLPeoim2uG
+         gXq5SoF0X32jc66gbMAIdmPnYsVI0DekLkScHJdWDAlHY8CsjSwCtCh7Chw2ry80UXB2
+         XZ6tX6l6Ir1Y2cod3+BDj+hVj2hmYDOSbjSsZVsPmXRRILggGtJDKJFFer/UD8QpcjmT
+         q/Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
+        b=nofedMDA/kkmlSVaQeFC+6nwrYjCwRgF+WiCLwGfqEZe6FZkizTZjbd9Y9F90Blx4E
+         DLiD2cbNwcz7udRUnIh4Xd2ZCyy/d9C5nIv7lANyD5EA0Wta8eiOPgfvlQT0M2GGXIj6
+         0sYV/aP1jr6DxIgtWQJTyodfbg13/AGoyJDCHAAKAr6q90+YQyWEiXusWcYrMEyduem8
+         2LDn2KhFQxi4Hxjy3/ATBvSWAvI7wTTbKp/TMg4nXnSdfO2/rmtqgs7dd2p+FdgyDde4
+         VYXmokkAdS6Ve1UKsF3iNGt1aKJPP5C1iuFrIocYnbtTjicVb1zIsUGWQiY5KSXP06sT
+         P+5w==
+X-Gm-Message-State: APjAAAWimsGbWVlV/7xrTP4r4uK3/UyzRxpHL5jdqgJF/j8/80+q2KrW
+        YXZ6TKA5nJVndZjEKbUdNjcEat8VaYew7DQz4bk=
+X-Google-Smtp-Source: APXvYqy21iD1Po3wMqif5UGdJBrZz47rRdKOcDm/4XbGRo93dQ7BRJ0zXZFE8JIazFD9kCYylKcYELLmm94JWF+Xwq4=
+X-Received: by 2002:ac8:53c5:: with SMTP id c5mr28295178qtq.55.1573501033473;
+ Mon, 11 Nov 2019 11:37:13 -0800 (PST)
 MIME-Version: 1.0
-X-Mailer: git-send-email 2.17.1
-X-Originating-IP: [165.204.77.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: d8efda5d-870d-48c6-ce20-08d766de3984
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3289:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB328951B558A3FF3DA20BFFABEC740@DM6PR12MB3289.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2043;
-X-Forefront-PRVS: 0218A015FA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(366004)(39860400002)(346002)(136003)(199004)(189003)(54906003)(476003)(6666004)(486006)(50466002)(2616005)(86362001)(186003)(8936002)(99286004)(4326008)(7736002)(7416002)(5660300002)(50226002)(386003)(6506007)(66946007)(51416003)(52116002)(305945005)(66476007)(66556008)(2906002)(66066001)(25786009)(26005)(4744005)(478600001)(36756003)(118296001)(6512007)(6486002)(47776003)(81156014)(16586007)(81166006)(6116002)(3846002)(48376002)(6436002)(14454004)(14444005)(8676002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3289;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: teMJ9zLUWtqRfD9eV0iuFhpLpAXpG63mGdm0Z50iPTZqSDG3ZN8yEpuFQ5ieAwtTiIA6OScZ/jEHsI4Ja7xzlKeZxPETd8DUXzuief4e+cpJCJEO9LZ4WUtnHF+EjCB9TtBzAzELd0XRcojNf2Syp4qKUpDYp1jN4xLKGUtB8fnKVv91jRLlGDpzrwHAarJIDJ19pcufj1nWRGqH5drVyUsarvg/jsN7B1/DWGCZoMZVIW/H/JJbduXlKbQgZYCscxlitMziq2k75RrE1fBsrjAcKxh3gZ46zfZ/kWZekJKIDbUz/l4LVT/9gL6R8gbRAgtUiwY0ghOclbMTsUm2z6v1mfCaCY0z1JNsN4w+FUS/jlHWALQXUtk5UdShP02ywSQHRVZyVO3X/KDKzQlrR6DoM1HAbjWFH+LeUGriv5iksuFsNpKiC9sS0eX/K6Tr
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8efda5d-870d-48c6-ce20-08d766de3984
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2019 19:34:53.2880
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kCPck+aPwVIakVtiLx7wIB3olG2BdSg/qGlcuvsUTlwDSpEoM2HqOP+bu6oo4qu3Jnv6FBXZy4BmWPEidPtHyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3289
+Received: by 2002:ad4:4c45:0:0:0:0:0 with HTTP; Mon, 11 Nov 2019 11:37:13
+ -0800 (PST)
+Reply-To: kylieelizabethwatson2019@gmail.com
+From:   "Sgt,Kylie Elizabeth Watson" <bilazagre2@gmail.com>
+Date:   Tue, 12 Nov 2019 00:07:13 +0430
+Message-ID: <CAGk+aha0MFLbBFfKQ9MaTG6PYpzxutvPhANX-XyTRkRp+uxzVw@mail.gmail.com>
+Subject: Assist Request From You
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself as the AMD ambassador to the embargoed hardware issues
-document.
-
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- Documentation/process/embargoed-hardware-issues.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
-index a3c3349046c4..799580acc8de 100644
---- a/Documentation/process/embargoed-hardware-issues.rst
-+++ b/Documentation/process/embargoed-hardware-issues.rst
-@@ -240,7 +240,7 @@ an involved disclosed party. The current ambassadors list:
- 
-   ============= ========================================================
-   ARM
--  AMD
-+  AMD		Tom Lendacky <tom.lendacky@amd.com>
-   IBM
-   Intel		Tony Luck <tony.luck@intel.com>
-   Qualcomm	Trilok Soni <tsoni@codeaurora.org>
 -- 
-2.17.1
+Accept my greetings to you
 
+Assist Request From You
+
+I am 28 years old single an orphan my parents died when I am five
+years old nobody to help me,I send you my business proposal with tears
+and sorrow,Please let this not be a surprised message to you because I
+decided to contact you on this magnitude and lucrative transaction for
+our present and future survival in life. Moreover, I have laid all the
+solemn trust in you before i decided to disclose this successful and
+confidential transaction to you.
+
+I am  Kylie Elizabeth Watson ,I hope all is well with you? I am female
+soldier working as United Nations peace keeping troop in Afghanistan
+on war against terrorism. I have in my possession the sum of
+$3.5million USD Which I made here in Afghanistan 2014,I deposited this
+money with a Red Cross agent. I want you to stand as my beneficiary
+and receive the fund And keep it safe so that as soon as am through
+with my mission here in Afghanistan.
+
+You will assist me to invest it in a good profitable Venture or you
+keep it for me until I arrive your country, I will give You 40% of the
+total money for your assistance after you have receive The money.
+Please reply back to me if you are willing to work with me so that I
+can send you the information where the money is been deposited, your
+urgent reply is needed in my email address below
+(kylieelizabethwatson2019@gmail.com) so i can send you more details.
+
+Thank Yours
+Sgt,Kylie Elizabeth Watson
