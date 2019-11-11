@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E01F4F7BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A9AEF7C77
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:47:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbfKKSjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:39:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58852 "EHLO mail.kernel.org"
+        id S1730018AbfKKSqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:46:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728692AbfKKSjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:39:46 -0500
+        id S1728231AbfKKSqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:46:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3DB621655;
-        Mon, 11 Nov 2019 18:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 671BA21655;
+        Mon, 11 Nov 2019 18:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497585;
-        bh=MnjhQlZwaODzj+JadDJkhh9j+AWvo5XL4w5QwgNBMyU=;
+        s=default; t=1573497992;
+        bh=1G2RTe8bkhAi0JvZ0DOc/Hnu08pCUoVbpcdYhiBBMiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=atXm/f6zqkfW3Q1LyCWEIodAsSSAGwd3R4KwUaH8TeQmjZMYuhs0g+4y5P82qBESK
-         y6RCkzt3K2VxOHB2Kl79Sgw0qHMEKAOk8Tqu5lrS6I3PaROmFZZyIy0uDiGFUBWgJ3
-         KRSxcH7QcZtAAVtn0wHDA8r9sd4vzQdFuR3E5IPg=
+        b=z2DN74Wt9gaO1GpKOjRo4xcwjR6ZxOsoma5hsmD7XT2sdlwtcsJXw/AaFOXXgilQK
+         OHp4Z1hpeCTj3uWVw6vxrq4bsa3BYEBScx0hHSMEBDul4IWaj9jaAqzmWQth84e1VN
+         i73008GEGD59Kq3ZtrfJ8BWi8xEO9qClV5zZrpp8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 105/105] cgroup,writeback: dont switch wbs immediately on dead wbs if the memcg is dead
+        Manfred Rudigier <manfred.rudigier@omicronenergy.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 116/125] igb: Fix constant media auto sense switching when no cable is connected
 Date:   Mon, 11 Nov 2019 19:29:15 +0100
-Message-Id: <20191111181449.820206124@linuxfoundation.org>
+Message-Id: <20191111181455.335395928@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
+References: <20191111181438.945353076@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
 
-commit 65de03e251382306a4575b1779c57c87889eee49 upstream.
+[ Upstream commit 8d5cfd7f76a2414e23c74bb8858af7540365d985 ]
 
-cgroup writeback tries to refresh the associated wb immediately if the
-current wb is dead.  This is to avoid keeping issuing IOs on the stale
-wb after memcg - blkcg association has changed (ie. when blkcg got
-disabled / enabled higher up in the hierarchy).
+At least on the i350 there is an annoying behavior that is maybe also
+present on 82580 devices, but was probably not noticed yet as MAS is not
+widely used.
 
-Unfortunately, the logic gets triggered spuriously on inodes which are
-associated with dead cgroups.  When the logic is triggered on dead
-cgroups, the attempt fails only after doing quite a bit of work
-allocating and initializing a new wb.
+If no cable is connected on both fiber/copper ports the media auto sense
+code will constantly swap between them as part of the watchdog task and
+produce many unnecessary kernel log messages.
 
-While c3aab9a0bd91 ("mm/filemap.c: don't initiate writeback if mapping
-has no dirty pages") alleviated the issue significantly as it now only
-triggers when the inode has dirty pages.  However, the condition can
-still be triggered before the inode is switched to a different cgroup
-and the logic simply doesn't make sense.
+The swap code responsible for this behavior (switching to fiber) should
+not be executed if the current media type is copper and there is no signal
+detected on the fiber port. In this case we can safely wait until the
+AUTOSENSE_EN bit is cleared.
 
-Skip the immediate switching if the associated memcg is dying.
-
-This is a simplified version of the following two patches:
-
- * https://lore.kernel.org/linux-mm/20190513183053.GA73423@dennisz-mbp/
- * http://lkml.kernel.org/r/156355839560.2063.5265687291430814589.stgit@buzz
-
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Fixes: e8a7abf5a5bd ("writeback: disassociate inodes from dying bdi_writebacks")
-Acked-by: Dennis Zhou <dennis@kernel.org>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fs-writeback.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -582,10 +582,13 @@ void wbc_attach_and_unlock_inode(struct
- 	spin_unlock(&inode->i_lock);
- 
- 	/*
--	 * A dying wb indicates that the memcg-blkcg mapping has changed
--	 * and a new wb is already serving the memcg.  Switch immediately.
-+	 * A dying wb indicates that either the blkcg associated with the
-+	 * memcg changed or the associated memcg is dying.  In the first
-+	 * case, a replacement wb should already be available and we should
-+	 * refresh the wb immediately.  In the second case, trying to
-+	 * refresh will keep failing.
- 	 */
--	if (unlikely(wb_dying(wbc->wb)))
-+	if (unlikely(wb_dying(wbc->wb) && !css_is_dying(wbc->wb->memcg_css)))
- 		inode_switch_wbs(inode, wbc->wb_id);
- }
- 
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index ab76a5f77cd0e..36db874f3c928 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -2064,7 +2064,8 @@ static void igb_check_swap_media(struct igb_adapter *adapter)
+ 	if ((hw->phy.media_type == e1000_media_type_copper) &&
+ 	    (!(connsw & E1000_CONNSW_AUTOSENSE_EN))) {
+ 		swap_now = true;
+-	} else if (!(connsw & E1000_CONNSW_SERDESD)) {
++	} else if ((hw->phy.media_type != e1000_media_type_copper) &&
++		   !(connsw & E1000_CONNSW_SERDESD)) {
+ 		/* copper signal takes time to appear */
+ 		if (adapter->copper_tries < 4) {
+ 			adapter->copper_tries++;
+-- 
+2.20.1
+
 
 
