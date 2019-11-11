@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2043EF7BF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:42:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8B2F7B5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:35:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbfKKSl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:41:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60704 "EHLO mail.kernel.org"
+        id S1727122AbfKKSfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:35:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729382AbfKKSl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:41:27 -0500
+        id S1728397AbfKKSf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:35:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1246214E0;
-        Mon, 11 Nov 2019 18:41:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4756214E0;
+        Mon, 11 Nov 2019 18:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497686;
-        bh=ZDHWvVUEmYT+jl6ofwxF/rKHKUtBYAfktmiVE3OZC80=;
+        s=default; t=1573497327;
+        bh=mDXh+p9DiujxpHwfkKkbukJW0A5v+GXZtUYBfV6HGOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xiLujU4aWl7FXcmn1y1PWzaMuc3l/DsJoMAtbcosqIoGbY1aayrNcx42F2W93vHEU
-         lyNwtZGnZiHtVuDni+02oPaBvDsYUOlhfVAq+C7oEBr6ZByZhCeLYOaP50cH4u8V1c
-         KkzeYkgungDOduQvnGiBRvlfijihWAhVoC04ZMxw=
+        b=HJnMS/coOF2i/OsxGKR4M14a9RSbp6mbIyo29A4/zsoB3Zl9mYOpkEb/Ko6QGTe+v
+         l2M9NSmHJjxQwN8ue/GSwTAcoDFIr12eB1Pokj3GO7E5CWVHd3hdLgfsZF4ELafxBG
+         16ByA0euDuQWgY9KCXJ7L5N+4bqP1WQzwsGzyfM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
-        Aaron Armstrong Skomra <aaron.skomra@wacom.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.19 027/125] HID: wacom: generic: Treat serial number and related fields as unsigned
+        stable@vger.kernel.org, Yang Shi <yang.shi@linux.alibaba.com>,
+        Gang Deng <gavin.dg@linux.alibaba.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 016/105] mm: thp: handle page cache THP correctly in PageTransCompoundMap
 Date:   Mon, 11 Nov 2019 19:27:46 +0100
-Message-Id: <20191111181444.186103315@linuxfoundation.org>
+Message-Id: <20191111181432.495574074@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
+References: <20191111181421.390326245@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,101 +49,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gerecke <killertofu@gmail.com>
+From: Yang Shi <yang.shi@linux.alibaba.com>
 
-commit ff479731c3859609530416a18ddb3db5db019b66 upstream.
+commit 169226f7e0d275c1879551f37484ef6683579a5c upstream.
 
-The HID descriptors for most Wacom devices oddly declare the serial
-number and other related fields as signed integers. When these numbers
-are ingested by the HID subsystem, they are automatically sign-extended
-into 32-bit integers. We treat the fields as unsigned elsewhere in the
-kernel and userspace, however, so this sign-extension causes problems.
-In particular, the sign-extended tool ID sent to userspace as ABS_MISC
-does not properly match unsigned IDs used by xf86-input-wacom and libwacom.
+We have a usecase to use tmpfs as QEMU memory backend and we would like
+to take the advantage of THP as well.  But, our test shows the EPT is
+not PMD mapped even though the underlying THP are PMD mapped on host.
+The number showed by /sys/kernel/debug/kvm/largepage is much less than
+the number of PMD mapped shmem pages as the below:
 
-We introduce a function 'wacom_s32tou' that can undo the automatic sign
-extension performed by 'hid_snto32'. We call this function when processing
-the serial number and related fields to ensure that we are dealing with
-and reporting the unsigned form. We opt to use this method rather than
-adding a descriptor fixup in 'wacom_hid_usage_quirk' since it should be
-more robust in the face of future devices.
+  7f2778200000-7f2878200000 rw-s 00000000 00:14 262232 /dev/shm/qemu_back_mem.mem.Hz2hSf (deleted)
+  Size:            4194304 kB
+  [snip]
+  AnonHugePages:         0 kB
+  ShmemPmdMapped:   579584 kB
+  [snip]
+  Locked:                0 kB
 
-Ref: https://github.com/linuxwacom/input-wacom/issues/134
-Fixes: f85c9dc678 ("HID: wacom: generic: Support tool ID and additional tool types")
-CC: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-Reviewed-by: Aaron Armstrong Skomra <aaron.skomra@wacom.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+  cat /sys/kernel/debug/kvm/largepages
+  12
+
+And some benchmarks do worse than with anonymous THPs.
+
+By digging into the code we figured out that commit 127393fbe597 ("mm:
+thp: kvm: fix memory corruption in KVM with THP enabled") checks if
+there is a single PTE mapping on the page for anonymous THP when setting
+up EPT map.  But the _mapcount < 0 check doesn't work for page cache THP
+since every subpage of page cache THP would get _mapcount inc'ed once it
+is PMD mapped, so PageTransCompoundMap() always returns false for page
+cache THP.  This would prevent KVM from setting up PMD mapped EPT entry.
+
+So we need handle page cache THP correctly.  However, when page cache
+THP's PMD gets split, kernel just remove the map instead of setting up
+PTE map like what anonymous THP does.  Before KVM calls get_user_pages()
+the subpages may get PTE mapped even though it is still a THP since the
+page cache THP may be mapped by other processes at the mean time.
+
+Checking its _mapcount and whether the THP has PTE mapped or not.
+Although this may report some false negative cases (PTE mapped by other
+processes), it looks not trivial to make this accurate.
+
+With this fix /sys/kernel/debug/kvm/largepage would show reasonable
+pages are PMD mapped by EPT as the below:
+
+  7fbeaee00000-7fbfaee00000 rw-s 00000000 00:14 275464 /dev/shm/qemu_back_mem.mem.SKUvat (deleted)
+  Size:            4194304 kB
+  [snip]
+  AnonHugePages:         0 kB
+  ShmemPmdMapped:   557056 kB
+  [snip]
+  Locked:                0 kB
+
+  cat /sys/kernel/debug/kvm/largepages
+  271
+
+And the benchmarks are as same as anonymous THPs.
+
+[yang.shi@linux.alibaba.com: v4]
+  Link: http://lkml.kernel.org/r/1571865575-42913-1-git-send-email-yang.shi@linux.alibaba.com
+Link: http://lkml.kernel.org/r/1571769577-89735-1-git-send-email-yang.shi@linux.alibaba.com
+Fixes: dd78fedde4b9 ("rmap: support file thp")
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Reported-by: Gang Deng <gavin.dg@linux.alibaba.com>
+Tested-by: Gang Deng <gavin.dg@linux.alibaba.com>
+Suggested-by: Hugh Dickins <hughd@google.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>	[4.8+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/wacom.h     |   15 +++++++++++++++
- drivers/hid/wacom_wac.c |   10 ++++++----
- 2 files changed, 21 insertions(+), 4 deletions(-)
+ include/linux/mm.h         |    5 -----
+ include/linux/mm_types.h   |    5 +++++
+ include/linux/page-flags.h |   20 ++++++++++++++++++--
+ 3 files changed, 23 insertions(+), 7 deletions(-)
 
---- a/drivers/hid/wacom.h
-+++ b/drivers/hid/wacom.h
-@@ -205,6 +205,21 @@ static inline void wacom_schedule_work(s
- 	}
- }
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -549,11 +549,6 @@ static inline void *kvmalloc_array(size_
  
-+/*
-+ * Convert a signed 32-bit integer to an unsigned n-bit integer. Undoes
-+ * the normally-helpful work of 'hid_snto32' for fields that use signed
-+ * ranges for questionable reasons.
-+ */
-+static inline __u32 wacom_s32tou(s32 value, __u8 n)
+ extern void kvfree(const void *addr);
+ 
+-static inline atomic_t *compound_mapcount_ptr(struct page *page)
+-{
+-	return &page[1].compound_mapcount;
+-}
+-
+ static inline int compound_mapcount(struct page *page)
+ {
+ 	VM_BUG_ON_PAGE(!PageCompound(page), page);
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -240,6 +240,11 @@ struct page_frag_cache {
+ 
+ typedef unsigned long vm_flags_t;
+ 
++static inline atomic_t *compound_mapcount_ptr(struct page *page)
 +{
-+	switch (n) {
-+	case 8:  return ((__u8)value);
-+	case 16: return ((__u16)value);
-+	case 32: return ((__u32)value);
-+	}
-+	return value & (1 << (n - 1)) ? value & (~(~0U << n)) : value;
++	return &page[1].compound_mapcount;
 +}
 +
- extern const struct hid_device_id wacom_ids[];
- 
- void wacom_wac_irq(struct wacom_wac *wacom_wac, size_t len);
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -2271,7 +2271,7 @@ static void wacom_wac_pen_event(struct h
- 	case HID_DG_TOOLSERIALNUMBER:
- 		if (value) {
- 			wacom_wac->serial[0] = (wacom_wac->serial[0] & ~0xFFFFFFFFULL);
--			wacom_wac->serial[0] |= (__u32)value;
-+			wacom_wac->serial[0] |= wacom_s32tou(value, field->report_size);
- 		}
- 		return;
- 	case HID_DG_TWIST:
-@@ -2287,15 +2287,17 @@ static void wacom_wac_pen_event(struct h
- 		return;
- 	case WACOM_HID_WD_SERIALHI:
- 		if (value) {
-+			__u32 raw_value = wacom_s32tou(value, field->report_size);
+ /*
+  * A region containing a mapping of a non-memory backed file under NOMMU
+  * conditions.  These are held in a global tree and are pinned by the VMAs that
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -565,12 +565,28 @@ static inline int PageTransCompound(stru
+  *
+  * Unlike PageTransCompound, this is safe to be called only while
+  * split_huge_pmd() cannot run from under us, like if protected by the
+- * MMU notifier, otherwise it may result in page->_mapcount < 0 false
++ * MMU notifier, otherwise it may result in page->_mapcount check false
+  * positives.
++ *
++ * We have to treat page cache THP differently since every subpage of it
++ * would get _mapcount inc'ed once it is PMD mapped.  But, it may be PTE
++ * mapped in the current process so comparing subpage's _mapcount to
++ * compound_mapcount to filter out PTE mapped case.
+  */
+ static inline int PageTransCompoundMap(struct page *page)
+ {
+-	return PageTransCompound(page) && atomic_read(&page->_mapcount) < 0;
++	struct page *head;
 +
- 			wacom_wac->serial[0] = (wacom_wac->serial[0] & 0xFFFFFFFF);
--			wacom_wac->serial[0] |= ((__u64)value) << 32;
-+			wacom_wac->serial[0] |= ((__u64)raw_value) << 32;
- 			/*
- 			 * Non-USI EMR devices may contain additional tool type
- 			 * information here. See WACOM_HID_WD_TOOLTYPE case for
- 			 * more details.
- 			 */
- 			if (value >> 20 == 1) {
--				wacom_wac->id[0] |= value & 0xFFFFF;
-+				wacom_wac->id[0] |= raw_value & 0xFFFFF;
- 			}
- 		}
- 		return;
-@@ -2307,7 +2309,7 @@ static void wacom_wac_pen_event(struct h
- 		 * bitwise OR so the complete value can be built
- 		 * up over time :(
- 		 */
--		wacom_wac->id[0] |= value;
-+		wacom_wac->id[0] |= wacom_s32tou(value, field->report_size);
- 		return;
- 	case WACOM_HID_WD_OFFSETLEFT:
- 		if (features->offset_left && value != features->offset_left)
++	if (!PageTransCompound(page))
++		return 0;
++
++	if (PageAnon(page))
++		return atomic_read(&page->_mapcount) < 0;
++
++	head = compound_head(page);
++	/* File THP is PMD mapped and not PTE mapped */
++	return atomic_read(&page->_mapcount) ==
++	       atomic_read(compound_mapcount_ptr(head));
+ }
+ 
+ /*
 
 
