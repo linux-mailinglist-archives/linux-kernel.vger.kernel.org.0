@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CB20F7D3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:54:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEB8AF7ADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbfKKSyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:54:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50616 "EHLO mail.kernel.org"
+        id S1727224AbfKKSaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:30:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729538AbfKKSyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:54:32 -0500
+        id S1727192AbfKKSaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:30:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA8E1222BD;
-        Mon, 11 Nov 2019 18:54:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74D86214E0;
+        Mon, 11 Nov 2019 18:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498471;
-        bh=MmuC3ntGipDDJDN5fDmYkcefGt/LDWxP73nABMNEhic=;
+        s=default; t=1573497015;
+        bh=/6P89LKFLnV4atW4E8l4Q+dc5K4YUqiskhCGJJztcIk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AfDxTWfSguO/z+2z+BFZesquxLTC6+OLp8TYqvnuj1SlfzHFEPrjiCJ0133fResNh
-         snbvu4EngaRhinoj72ZAzkuGI6OgVmdEDuRgFaC0gC3jOvbeeOwaW/6vVCVb7ZcRZy
-         up6NEtV3AInsQnHb/B2OOZtavDMOB72wVViNGAXk=
+        b=Y7+XGVwGSOeKCARDsNX+i8MT/vNNtf7o1No53RjdzZy9iv+0KMGuDNtTqqRl8Ssl3
+         a1Co835krVbSUPkCuvU+C067194zZWGFOAI9DEBRvAWB4skrMM+YR34A0ZDxk/89hC
+         JhM8Beiq+fO0wdw330x9UjJ1wei9cpLwMGdoxVK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Simon Horman <horms@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 129/193] ipvs: move old_secure_tcp into struct netns_ipvs
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>
+Subject: [PATCH 4.4 17/43] netfilter: ipset: Fix an error code in ip_set_sockfn_get()
 Date:   Mon, 11 Nov 2019 19:28:31 +0100
-Message-Id: <20191111181510.692053890@linuxfoundation.org>
+Message-Id: <20191111181307.797092015@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
-References: <20191111181459.850623879@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,117 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c24b75e0f9239e78105f81c5f03a751641eb07ef ]
+commit 30b7244d79651460ff114ba8f7987ed94c86b99a upstream.
 
-syzbot reported the following issue :
+The copy_to_user() function returns the number of bytes remaining to be
+copied.  In this code, that positive return is checked at the end of the
+function and we return zero/success.  What we should do instead is
+return -EFAULT.
 
-BUG: KCSAN: data-race in update_defense_level / update_defense_level
+Fixes: a7b4f989a629 ("netfilter: ipset: IP set core support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-read to 0xffffffff861a6260 of 4 bytes by task 3006 on cpu 1:
- update_defense_level+0x621/0xb30 net/netfilter/ipvs/ip_vs_ctl.c:177
- defense_work_handler+0x3d/0xd0 net/netfilter/ipvs/ip_vs_ctl.c:225
- process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
- worker_thread+0xa0/0x800 kernel/workqueue.c:2415
- kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
-
-write to 0xffffffff861a6260 of 4 bytes by task 7333 on cpu 0:
- update_defense_level+0xa62/0xb30 net/netfilter/ipvs/ip_vs_ctl.c:205
- defense_work_handler+0x3d/0xd0 net/netfilter/ipvs/ip_vs_ctl.c:225
- process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
- worker_thread+0xa0/0x800 kernel/workqueue.c:2415
- kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 7333 Comm: kworker/0:5 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events defense_work_handler
-
-Indeed, old_secure_tcp is currently a static variable, while it
-needs to be a per netns variable.
-
-Fixes: a0840e2e165a ("IPVS: netns, ip_vs_ctl local vars moved to ipvs struct.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/ip_vs.h            |  1 +
- net/netfilter/ipvs/ip_vs_ctl.c | 15 +++++++--------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ net/netfilter/ipset/ip_set_core.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/include/net/ip_vs.h b/include/net/ip_vs.h
-index 3759167f91f56..078887c8c586a 100644
---- a/include/net/ip_vs.h
-+++ b/include/net/ip_vs.h
-@@ -889,6 +889,7 @@ struct netns_ipvs {
- 	struct delayed_work	defense_work;   /* Work handler */
- 	int			drop_rate;
- 	int			drop_counter;
-+	int			old_secure_tcp;
- 	atomic_t		dropentry;
- 	/* locks in ctl.c */
- 	spinlock_t		dropentry_lock;  /* drop entry handling */
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 248c76290116e..e29b00f514a0a 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -93,7 +93,6 @@ static bool __ip_vs_addr_is_local_v6(struct net *net,
- static void update_defense_level(struct netns_ipvs *ipvs)
- {
- 	struct sysinfo i;
--	static int old_secure_tcp = 0;
- 	int availmem;
- 	int nomem;
- 	int to_change = -1;
-@@ -174,35 +173,35 @@ static void update_defense_level(struct netns_ipvs *ipvs)
- 	spin_lock(&ipvs->securetcp_lock);
- 	switch (ipvs->sysctl_secure_tcp) {
- 	case 0:
--		if (old_secure_tcp >= 2)
-+		if (ipvs->old_secure_tcp >= 2)
- 			to_change = 0;
- 		break;
- 	case 1:
- 		if (nomem) {
--			if (old_secure_tcp < 2)
-+			if (ipvs->old_secure_tcp < 2)
- 				to_change = 1;
- 			ipvs->sysctl_secure_tcp = 2;
- 		} else {
--			if (old_secure_tcp >= 2)
-+			if (ipvs->old_secure_tcp >= 2)
- 				to_change = 0;
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -1930,8 +1930,9 @@ ip_set_sockfn_get(struct sock *sk, int o
  		}
- 		break;
- 	case 2:
- 		if (nomem) {
--			if (old_secure_tcp < 2)
-+			if (ipvs->old_secure_tcp < 2)
- 				to_change = 1;
- 		} else {
--			if (old_secure_tcp >= 2)
-+			if (ipvs->old_secure_tcp >= 2)
- 				to_change = 0;
- 			ipvs->sysctl_secure_tcp = 1;
- 		}
- 		break;
- 	case 3:
--		if (old_secure_tcp < 2)
-+		if (ipvs->old_secure_tcp < 2)
- 			to_change = 1;
- 		break;
+ 
+ 		req_version->version = IPSET_PROTOCOL;
+-		ret = copy_to_user(user, req_version,
+-				   sizeof(struct ip_set_req_version));
++		if (copy_to_user(user, req_version,
++				 sizeof(struct ip_set_req_version)))
++			ret = -EFAULT;
+ 		goto done;
  	}
--	old_secure_tcp = ipvs->sysctl_secure_tcp;
-+	ipvs->old_secure_tcp = ipvs->sysctl_secure_tcp;
- 	if (to_change >= 0)
- 		ip_vs_protocol_timeout_change(ipvs,
- 					      ipvs->sysctl_secure_tcp > 1);
--- 
-2.20.1
-
+ 	case IP_SET_OP_GET_BYNAME: {
+@@ -1988,7 +1989,8 @@ ip_set_sockfn_get(struct sock *sk, int o
+ 	}	/* end of switch(op) */
+ 
+ copy:
+-	ret = copy_to_user(user, data, copylen);
++	if (copy_to_user(user, data, copylen))
++		ret = -EFAULT;
+ 
+ done:
+ 	vfree(data);
 
 
