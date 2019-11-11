@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73228F7B37
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B67DFF7AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfKKSdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:33:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51118 "EHLO mail.kernel.org"
+        id S1727497AbfKKSa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:30:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728198AbfKKSdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:33:44 -0500
+        id S1727483AbfKKSay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:30:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E67B621655;
-        Mon, 11 Nov 2019 18:33:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F38D21925;
+        Mon, 11 Nov 2019 18:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497222;
-        bh=qho5X3XawYVbrt+GZcY6gtwzyRavQ2oHt8KXTLUD7bA=;
+        s=default; t=1573497052;
+        bh=8Dm4+kdLqO+TbLDhdygXJ78ykpJU9KVLQFQitgP3Y7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eY7yGYMwtmVPuxnMuzwBtP/l6iFFbu2jzQW96FeIygDhl8n4pvC4G2rJp4lrGYu77
-         1B/cb6Y2bUTlUVdmUhhYcsyyk2lc1GRJQIaMPzJOQgN0uEsBNFoIo31FbMJEw9hmTJ
-         4TRIbx9GCyVp5RuP0LqruzNnYQWkN4x2lDyMqdCA=
+        b=gOL/O6scxoXI/llLrnlzYBu4IJ9uAId3f6uDV9DTCOvUFIxg993aIeAuGPs3393jB
+         ppo4Gu73M/J9SFFAiShjxL1FYgo7Uf8QMpy79+huW6xguZF2YJn7AJQ6J1vBt160DM
+         KTJRd4xOOiQNzWy5fIZ4IvvvOY9daqnDSRr7KeDk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 43/65] bonding: fix unexpected IFF_BONDING bit unset
+Subject: [PATCH 4.4 29/43] bonding: fix unexpected IFF_BONDING bit unset
 Date:   Mon, 11 Nov 2019 19:28:43 +0100
-Message-Id: <20191111181348.519116167@linuxfoundation.org>
+Message-Id: <20191111181319.707800595@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
-References: <20191111181331.917659011@linuxfoundation.org>
+In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
+References: <20191111181246.772983347@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -113,10 +113,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index c1971bca62fb1..d52fd842ef1fe 100644
+index 1bf4f54c2befb..e31b4c7d2522b 100644
 --- a/drivers/net/bonding/bond_main.c
 +++ b/drivers/net/bonding/bond_main.c
-@@ -1759,7 +1759,8 @@ err_detach:
+@@ -1719,7 +1719,8 @@ err_detach:
  	slave_disable_netpoll(new_slave);
  
  err_close:
@@ -126,7 +126,7 @@ index c1971bca62fb1..d52fd842ef1fe 100644
  	dev_close(slave_dev);
  
  err_restore_mac:
-@@ -1960,7 +1961,8 @@ static int __bond_release_one(struct net_device *bond_dev,
+@@ -1915,7 +1916,8 @@ static int __bond_release_one(struct net_device *bond_dev,
  
  	dev_set_mtu(slave_dev, slave->original_mtu);
  
