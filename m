@@ -2,84 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B35F77E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 073EFF77E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 16:41:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfKKPkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 10:40:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34050 "EHLO mail.kernel.org"
+        id S1727020AbfKKPlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 10:41:52 -0500
+Received: from mga01.intel.com ([192.55.52.88]:2611 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfKKPkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 10:40:40 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0953E222BD;
-        Mon, 11 Nov 2019 15:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573486839;
-        bh=2iS64xZOYjvYvoLUUfe8qlTRll7p5DjvBX1t3/+GG/I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Mwq5EAHecQ97ip678b/pa0+doG30SMQbMzhZcL4fA9B4Gno/cnf5Xc2gj2oPjp7jS
-         4YRxMqyutLmGGMZN4oOoBAR6lBSu4tdiHevigMtIyOX++pc2Paj4S9BdN14/XEWqlC
-         v1/yTPNwgdYr898kjIE8z2XkEbQQHyyLU5vUbzZg=
-Date:   Mon, 11 Nov 2019 16:40:37 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Cc:     dri-devel@lists.freedesktop.org, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH] staging: fbtft: Remove set but not used variable 'ret'
-Message-ID: <20191111154037.GA816982@kroah.com>
-References: <20191110105707.136956-1-zhengyongjun3@huawei.com>
+        id S1726845AbfKKPlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 10:41:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 07:41:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,293,1569308400"; 
+   d="scan'208";a="354799704"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 11 Nov 2019 07:41:50 -0800
+Received: from [10.252.3.28] (abudanko-mobl.ccr.corp.intel.com [10.252.3.28])
+        by linux.intel.com (Postfix) with ESMTP id 6CCB15802E4;
+        Mon, 11 Nov 2019 07:41:48 -0800 (PST)
+Subject: Re: [RFC] perf session: Fix compression processing
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20191103222441.GE8251@krava>
+ <d57725e6-e62f-b37e-6cb4-28bf521faaea@linux.intel.com>
+ <20191111145640.GB26980@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <69782f54-f5f5-f89f-9c8d-172d4de331d0@linux.intel.com>
+Date:   Mon, 11 Nov 2019 18:41:47 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191110105707.136956-1-zhengyongjun3@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191111145640.GB26980@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 10, 2019 at 06:57:07PM +0800, Zheng Yongjun wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
+On 11.11.2019 17:56, Jiri Olsa wrote:
+> On Mon, Nov 11, 2019 at 05:38:49PM +0300, Alexey Budankov wrote:
+>>
+>> On 04.11.2019 1:24, Jiri Olsa wrote:
+>>> hi,
+>> <SNIP>
+>>> ---
+>>> The compressed data processing occasionally fails with:
+>>>   $ perf report --stdio -vv
+>>>   decomp (B): 44519 to 163000
+>>>   decomp (B): 48119 to 174800
+>>>   decomp (B): 65527 to 131072
+>>>   fetch_mmaped_event: head=0x1ffe0 event->header_size=0x28, mmap_size=0x20000: fuzzed perf.data?
+>>>   Error:
+>>>   failed to process sample
+>>>   ...
+>>>
+>>> It's caused by recent fuzzer fix that does not take into account
+>>> that compressed data do not need to by fully present in the buffer,
+>>> so it's ok to just return NULL and not to fail.
+>>>
+>>> Fixes: 57fc032ad643 ("perf session: Avoid infinite loop when seeing invalid header.size")
+>>> Link: http://lkml.kernel.org/n/tip-q1biqscs4stcmc9bs1iokfro@git.kernel.org
+>>> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+>>> ---
+>>>  tools/perf/util/session.c | 8 +++++---
+>>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+>>> index f07b8ecb91bc..3589ed14a629 100644
+>>> --- a/tools/perf/util/session.c
+>>> +++ b/tools/perf/util/session.c
+>>> @@ -1959,7 +1959,7 @@ static int __perf_session__process_pipe_events(struct perf_session *session)
+>>>  
+>>>  static union perf_event *
+>>>  fetch_mmaped_event(struct perf_session *session,
+>>> -		   u64 head, size_t mmap_size, char *buf)
+>>> +		   u64 head, size_t mmap_size, char *buf, bool decomp)
+>>
+>> bools in interface make code less transparent.
+>>
+>>>  {
+>>>  	union perf_event *event;
+>>>  
+>>> @@ -1979,6 +1979,8 @@ fetch_mmaped_event(struct perf_session *session,
+>>>  		/* We're not fetching the event so swap back again */
+>>>  		if (session->header.needs_swap)
+>>>  			perf_event_header__bswap(&event->header);
+>>> +		if (decomp)
+>>> +			return NULL;
+>>>  		pr_debug("%s: head=%#" PRIx64 " event->header_size=%#x, mmap_size=%#zx: fuzzed perf.data?\n",
+>>>  			 __func__, head, event->header.size, mmap_size);
+>>>  		return ERR_PTR(-EINVAL);
+>>> @@ -1997,7 +1999,7 @@ static int __perf_session__process_decomp_events(struct perf_session *session)
+>>>  		return 0;
+>>>  
+>>>  	while (decomp->head < decomp->size && !session_done()) {
+>>> -		union perf_event *event = fetch_mmaped_event(session, decomp->head, decomp->size, decomp->data);
+>>> +		union perf_event *event = fetch_mmaped_event(session, decomp->head, decomp->size, decomp->data, true);
+>>
+>> It looks like this call can be skipped, at all, in this case.
 > 
-> drivers/staging/fbtft/fb_ili9320.c: In function read_devicecode:
-> drivers/staging/fbtft/fb_ili9320.c:25:6: warning: variable ret set but not used [-Wunused-but-set-variable]
+> not sure what you mean, we are in decomp code no?
+
+Ok, it is inside "not fetching" branch. 
+NULL return value means to proceed getting further over the trace.
+Checking record type == COMPRESSED at the higher level could 
+probably be cleaner fix and also work faster.
+
+~Alexey
+
 > 
-> ret is never used, so remove it.
+> jirka
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
-> ---
->  drivers/staging/fbtft/fb_ili9320.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/fbtft/fb_ili9320.c b/drivers/staging/fbtft/fb_ili9320.c
-> index f2e72d14431d..f0ebc40857b3 100644
-> --- a/drivers/staging/fbtft/fb_ili9320.c
-> +++ b/drivers/staging/fbtft/fb_ili9320.c
-> @@ -22,11 +22,10 @@
->  
->  static unsigned int read_devicecode(struct fbtft_par *par)
->  {
-> -	int ret;
->  	u8 rxbuf[8] = {0, };
->  
->  	write_reg(par, 0x0000);
-> -	ret = par->fbtftops.read(par, rxbuf, 4);
-> +	par->fbtftops.read(par, rxbuf, 4);
->  	return (rxbuf[2] << 8) | rxbuf[3];
->  }
->  
-
-If the read call can fail, shouldn't you be passing back the error
-value instead?
-
-thanks,
-
-greg k-h
-
-> -- 
-> 2.23.0
 > 
