@@ -2,182 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 137EBF78D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 726FDF7905
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKKQeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:34:13 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:46146 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbfKKQeM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:34:12 -0500
-Received: by mail-io1-f70.google.com with SMTP id r4so13879226ioo.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 08:34:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ooaEEcjQYZQ9BsrWRW1Khz9xViSSf6YQxzsWFMf6WQU=;
-        b=ZtR3uVtU7M6MYhCRjPBQanp0rbNkJyFz8tWCZVp+Yejj5BXIUV0BQAN+JR7WTxzIdC
-         RRC4+VykaU/tJOvemI1FSXDt3UFTaPQptoqavV6URB7Twkpg1t2Nf3hHB0Z0liQnSO1Q
-         7o0M0Te9XXvOPzAYtpFtXNy4AlEpy+1qlRnJo4EfSyKTwLzfaBcaoUXdRAqw0toWCTiQ
-         OtA9IeVc30Cyt/AQVxbZMwqGR1ovRHjSDNj358VLgqBtlFesog4lLmdwM/+6bNZYZkq4
-         zbviiuHdWZllgCrurJ9kC5xo0Bs8B5XxLPAG7CBEafkik4C2wHsfcrebPoOGZxCFeCMB
-         GMqg==
-X-Gm-Message-State: APjAAAUfvj76jeasZjIMQUsKAJLcjq8Zz6esGg5EgaRjR7s7Mmvuwlx7
-        bLRA+nlojyPsHH4yKKjx6Mlra12Pj6TgsQRZEGMIORBERcLI
-X-Google-Smtp-Source: APXvYqyoarDaLS6lJ4bI+TURCZBTw5+IRtgnAdvuq/tSHY2RA9V8+HS/vn1F0lbwGtcBgApOIN9onlL6p3dp6i4kGQcKbNFxJNm7
+        id S1727119AbfKKQlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:41:23 -0500
+Received: from mga11.intel.com ([192.55.52.93]:28029 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbfKKQlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 11:41:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 08:41:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,293,1569308400"; 
+   d="scan'208";a="193986462"
+Received: from magalleg-mobl3.amr.corp.intel.com (HELO [10.251.146.103]) ([10.251.146.103])
+  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2019 08:41:19 -0800
+Subject: Re: [alsa-devel] [PATCH 1/4] soundwire: sdw_slave: add new fields to
+ track probe status
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        broonie@kernel.org, srinivas.kandagatla@linaro.org,
+        jank@cadence.com, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20191023210657.32440-1-pierre-louis.bossart@linux.intel.com>
+ <20191023210657.32440-2-pierre-louis.bossart@linux.intel.com>
+ <20191103045604.GE2695@vkoul-mobl.Dlink>
+ <f53b28bb-1ec7-a400-54ed-51fd55819ecd@linux.intel.com>
+ <20191108042940.GW952516@vkoul-mobl>
+ <e3e10c25-84dc-f4e7-e94b-d18493450021@linux.intel.com>
+ <20191109111211.GB952516@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <5a2a40b3-5a3c-f80a-b2a4-33d821d5b0e6@linux.intel.com>
+Date:   Mon, 11 Nov 2019 10:34:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9706:: with SMTP id w6mr2987651ioj.252.1573490050160;
- Mon, 11 Nov 2019 08:34:10 -0800 (PST)
-Date:   Mon, 11 Nov 2019 08:34:10 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f69a2059714b34d@google.com>
-Subject: KASAN: use-after-free Read in snd_timer_open
-From:   syzbot <syzbot+4476917c053f60112c99@syzkaller.appspotmail.com>
-To:     alexandre.belloni@bootlin.com, allison@lohutok.net,
-        alsa-devel@alsa-project.org, kirr@nexedi.com,
-        linux-kernel@vger.kernel.org, logang@deltatee.com, perex@perex.cz,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191109111211.GB952516@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    6980b7f6 Add linux-next specific files for 20191111
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=101679e6e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2af7db1972ec750e
-dashboard link: https://syzkaller.appspot.com/bug?extid=4476917c053f60112c99
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108fbfece00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1055d5aae00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4476917c053f60112c99@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in __list_add_valid+0x9a/0xa0 lib/list_debug.c:26
-Read of size 8 at addr ffff88809fccee78 by task syz-executor075/8825
-
-CPU: 0 PID: 8825 Comm: syz-executor075 Not tainted 5.4.0-rc6-next-20191111  
-#0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-  kasan_report+0x12/0x20 mm/kasan/common.c:634
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
-  __list_add_valid+0x9a/0xa0 lib/list_debug.c:26
-  __list_add include/linux/list.h:60 [inline]
-  list_add_tail include/linux/list.h:93 [inline]
-  snd_timer_open+0x245/0x1150 sound/core/timer.c:268
-  snd_timer_user_tselect sound/core/timer.c:1738 [inline]
-  __snd_timer_user_ioctl.isra.0+0x7ed/0x2070 sound/core/timer.c:2008
-  snd_timer_user_ioctl+0x7a/0xa7 sound/core/timer.c:2038
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444f39
-Code: e8 fc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb cd fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd1d1e3c98 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444f39
-RDX: 0000000020029fcc RSI: 0000000040345410 RDI: 0000000000000003
-RBP: 00000000000102a7 R08: 0000000000000004 R09: 00000000004002e0
-R10: 000000000000000f R11: 0000000000000246 R12: 0000000000402180
-R13: 0000000000402210 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 8824:
-  save_stack+0x23/0x90 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:510 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
-  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
-  kmalloc include/linux/slab.h:556 [inline]
-  kzalloc include/linux/slab.h:670 [inline]
-  snd_timer_instance_new+0x4a/0x300 sound/core/timer.c:96
-  snd_timer_user_tselect sound/core/timer.c:1725 [inline]
-  __snd_timer_user_ioctl.isra.0+0x665/0x2070 sound/core/timer.c:2008
-  snd_timer_user_ioctl+0x7a/0xa7 sound/core/timer.c:2038
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 8824:
-  save_stack+0x23/0x90 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  kasan_set_free_info mm/kasan/common.c:332 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
-  __cache_free mm/slab.c:3426 [inline]
-  kfree+0x10a/0x2c0 mm/slab.c:3757
-  snd_timer_instance_free sound/core/timer.c:120 [inline]
-  snd_timer_instance_free+0x7c/0xa0 sound/core/timer.c:114
-  snd_timer_user_tselect sound/core/timer.c:1740 [inline]
-  __snd_timer_user_ioctl.isra.0+0x160d/0x2070 sound/core/timer.c:2008
-  snd_timer_user_ioctl+0x7a/0xa7 sound/core/timer.c:2038
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88809fccee00
-  which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 120 bytes inside of
-  256-byte region [ffff88809fccee00, ffff88809fccef00)
-The buggy address belongs to the page:
-page:ffffea00027f3380 refcount:1 mapcount:0 mapping:ffff8880aa4008c0  
-index:0x0
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea00027f2e08 ffff8880aa401648 ffff8880aa4008c0
-raw: 0000000000000000 ffff88809fcce000 0000000100000008 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88809fcced00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff88809fcced80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff88809fccee00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                                 ^
-  ffff88809fccee80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88809fccef00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 11/9/19 5:12 AM, Vinod Koul wrote:
+> On 08-11-19, 08:55, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 11/7/19 10:29 PM, Vinod Koul wrote:
+>>> On 04-11-19, 08:32, Pierre-Louis Bossart wrote:
+>>>>
+>>>>
+>>>> On 11/2/19 11:56 PM, Vinod Koul wrote:
+>>>>> On 23-10-19, 16:06, Pierre-Louis Bossart wrote:
+>>>>>> Changes to the sdw_slave structure needed to solve race conditions on
+>>>>>> driver probe.
+>>>>>
+>>>>> Can you please explain the race you have observed, it would be a very
+>>>>> useful to document it as well
+>>>>
+>>>> the races are explained in the [PATCH 00/18] soundwire: code hardening and
+>>>> suspend-resume support series.
+>>>
+>>> It would make sense to explain it here as well to give details to
+>>> reviewers, there is nothing wrong with too much detail!
+>>>
+>>>>>>
+>>>>>> The functionality is added in the next patch.
+>>>>>
+>>>>> which one..?
+>>>>
+>>>> [PATCH 00/18] soundwire: code hardening and suspend-resume support
+>>>
+>>> Yeah great! let me play detective with 18 patch series. I asked for a
+>>> patch and got a series!
+>>>
+>>> Again, please help the maintainer to help you. We would love to see this
+>>> merged as well, but please step up and give more details in cover
+>>> letter and changelogs. I shouldn't need to do guesswork and scan through the
+>>> inbox to find the context!
+>>
+>> We are clearly not going anywhere.
+> 
+> Correct as you don't seem to provide clear answers, I am asking again
+> which patch implements the new fields added here, how difficult is it to
+> provide the *specific* patch which implements this so that I can compare
+> the implementation and see why this is needed and apply if fine!
+> 
+> But no you will not provide a clear answer and start ranting!
+> 
+>> I partitioned the patches to make your maintainer life easier and help the
+>> integration of SoundWire across two trees. All I get is negative feedback,
+>> grand-standing, and zero comments on actual changes.
+> 
+> No you get asked specific question which you do not like and start off
+> on a tangent!
+> 
+>> For the record, I am mindful of reviewer/maintainer workload, and I did
+>> contact you in September to check your availability and provided a pointer
+>> to initial code changes. I did send a first version a week prior to your
+>> travel/vacation, I resend another version when you were back and waited yet
+>> another two weeks to resend a second version. I also contacted Takashi, Mark
+>> and you to suggest this code partition, and did not get any pushback. It's
+>> not like I am pushing stuff down your throat, I have been patient and
+>> considerate.
+>>
+>> Please start with the patches "soundwire: code hardening and suspend-resume
+>> support" and come back to this interface description when you have reviewed
+>> these changes. It's not detective work, it's working around the consequences
+>> of having separate trees for Audio and SoundWire.
+> 
+> Again, which patch in the series does implement these new members!
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+It's really straightforward...here is the match between headers and 
+functionality:
+
+[PATCH v2 1/5] soundwire: sdw_slave: add new fields to track probe status
+[PATCH v2 02/19] soundwire: fix race between driver probe and 
+update_status callback
+
+[PATCH v2 2/5] soundwire: add enumeration_complete structure
+[PATCH v2 12/19] soundwire: add enumeration_complete signaling
+
+[PATCH v2 3/5] soundwire: add initialization_complete definition
+[PATCH v2 13/19] soundwire: bus: add initialization_complete signaling
+
+[PATCH v2 4/5] soundwire: intel: update interfaces between ASoC and 
+SoundWire
+[PATCH v2 5/5] soundwire: intel: update stream callbacks for 
+hwparams/free stream operations
+[PATCH v2 13/14] soundwire: intel: free all resources on hw_free()
+
+I suggested an approach that you didn't comment on, and now I am not 
+sure what to make of the heated wording and exclamation marks. You did 
+not answer to Liam's question on links between ASoC/SoundWire - despite 
+the fact that drivers/soundwire cannot be an isolated subsystem, both 
+the Intel and Qualcomm solutions have a big fat 'depends on SND_SOC'.
+
+At this point I am formally asking for your view and guidance on how we 
+are going to do the SoundWire/ASoC integration. It's now your time to 
+make suggestions on what the flow should be between you and 
+Mark/Takashi. If you don't want this initial change to the header files, 
+then what is your proposal?
+
+
