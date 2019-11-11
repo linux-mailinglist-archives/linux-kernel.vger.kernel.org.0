@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BCECF7CDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA0C5F7CE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:51:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbfKKSuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:50:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44400 "EHLO mail.kernel.org"
+        id S1729389AbfKKSur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:50:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730370AbfKKSuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:50:37 -0500
+        id S1728938AbfKKSup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:50:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3CFE204FD;
-        Mon, 11 Nov 2019 18:50:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ECC120674;
+        Mon, 11 Nov 2019 18:50:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573498236;
-        bh=54s9gAZ/w4ffu2vVpETxtuTNjxXcA3yNC4esabz2sHk=;
+        s=default; t=1573498244;
+        bh=SLOivCk1713bYurRj/oTAO4NkgPSRFCVrj6Tjlrqb6E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nPFiShkVpUwC1oRoUFk5wZ6HJAeXzt29U43QLv9b3NEZmkTPV3/aVylBGKmnhgRFc
-         gUISPLQQtrk+eq/l4d1Doh3xBDgz3L/P/9hnfou4ND6jVmIxAMIBXYDQ58M/jxLyr9
-         Dp0kQ7SYIppSnzmwtFJ1dTqSZxQKWNCBRMtEMVy8=
+        b=yF+LLEDMUpB7WqEKJyZfxQWySLo1O8hQBJvZ4psmL7h3TgBY0UHHArrfPEuyONdiQ
+         EwVUxbkq17OSn6JvBwBq9k6839CSzM8lmTKgHN34F7tCLMDR859rDEfgZnjNx62+4w
+         DckqaCWWXEf/WFhXJjA6EqBG5rPPbhq2douxGIYI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 5.3 061/193] ARM: dts: imx6-logicpd: Re-enable SNVS power key
-Date:   Mon, 11 Nov 2019 19:27:23 +0100
-Message-Id: <20191111181505.507072829@linuxfoundation.org>
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.3 062/193] cpufreq: intel_pstate: Fix invalid EPB setting
+Date:   Mon, 11 Nov 2019 19:27:24 +0100
+Message-Id: <20191111181505.577283585@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
 References: <20191111181459.850623879@linuxfoundation.org>
@@ -43,40 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adam Ford <aford173@gmail.com>
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-commit cabe5f85e63626c00f3b879a670ec27325056a2d upstream.
+commit c31432fa7f825de0e19838f1ac7746381c509ec4 upstream.
 
-The baseboard of the Logic PD i.MX6 development kit has a power
-button routed which can both power down and power up the board.
-It can also wake the board from sleep.  This functionality was
-marked as disabled by default in imx6qdl.dtsi, so it needs to
-be explicitly enabled for each board.
+The max value of EPB can only be 0x0F. Attempting to set more than that
+triggers an "unchecked MSR access error" warning which happens in
+intel_pstate_hwp_force_min_perf() called via cpufreq stop_cpu().
 
-This patch enables the snvs power key again.
+However, it is not even necessary to touch the EPB from intel_pstate,
+because it is restored on every CPU online by the intel_epb.c code,
+so let that code do the right thing and drop the redundant (and
+incorrect) EPB update from intel_pstate.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Fixes: 770856f0da5d ("ARM: dts: imx6qdl: Enable SNVS power key according to board design")
-Cc: stable <stable@vger.kernel.org> #5.3+
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: af3b7379e2d70 ("cpufreq: intel_pstate: Force HWP min perf before offline")
+Reported-by: Qian Cai <cai@lca.pw>
+Cc: 5.2+ <stable@vger.kernel.org> # 5.2+
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+[ rjw: Changelog ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/cpufreq/intel_pstate.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi
-+++ b/arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi
-@@ -328,6 +328,10 @@
- 	pinctrl-0 = <&pinctrl_pwm3>;
- };
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -846,11 +846,9 @@ static void intel_pstate_hwp_force_min_p
+ 	value |= HWP_MAX_PERF(min_perf);
+ 	value |= HWP_MIN_PERF(min_perf);
  
-+&snvs_pwrkey {
-+	status = "okay";
-+};
-+
- &ssi2 {
- 	status = "okay";
- };
+-	/* Set EPP/EPB to min */
++	/* Set EPP to min */
+ 	if (boot_cpu_has(X86_FEATURE_HWP_EPP))
+ 		value |= HWP_ENERGY_PERF_PREFERENCE(HWP_EPP_POWERSAVE);
+-	else
+-		intel_pstate_set_epb(cpu, HWP_EPP_BALANCE_POWERSAVE);
+ 
+ 	wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
+ }
 
 
