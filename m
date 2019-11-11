@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4BFF7C1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D631DF7DCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbfKKSnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:43:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34382 "EHLO mail.kernel.org"
+        id S1729008AbfKKS7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:59:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729592AbfKKSnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:43:08 -0500
+        id S1729400AbfKKS4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:56:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01DFA21E6F;
-        Mon, 11 Nov 2019 18:43:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3810921655;
+        Mon, 11 Nov 2019 18:56:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497786;
-        bh=poT+mPVz6qCQs5K8MKCo2kqJhNjSTSAyS1akawgUfwM=;
+        s=default; t=1573498561;
+        bh=yHbuZVEu0siH6X7DydD9ZaNfOeGC7T89UYt3yP5tc/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d32+Bqp3tP5cu55qUp/dASYPdinec4sEqy8wh6XcVhNkHxPeAAQUCeOyqdROP1Ih/
-         kfa4xskzztudWHkW57kjbzjstBVuv4mLM2K7g3txcvna/dW+p0FLZnIj9G7Q8aaZIp
-         cMy/sokt5gfVibLRkaABZAI3ZAT+vEw7uEqLZq88=
+        b=SKweOp5irn5xdGVaxrLG2nhh7jZC9qeg/7AzX127I/n1Wy7wrFvPzAQ5f/WBKDkkd
+         rlvaD7CqQgPf31R+sXJ5vTv7QxBh9syUvMsuzMO0qbchODQmGIqbRx6xugCKw1tUMz
+         sqQ2jrgJNCMx2tzRiOVoyO5k5DfeHTki6P+6zwnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 057/125] ALSA: usb-audio: More validations of descriptor units
-Date:   Mon, 11 Nov 2019 19:28:16 +0100
-Message-Id: <20191111181447.987096818@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+710043c5d1d5b5013bc7@syzkaller.appspotmail.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 115/193] bpf: Fix use after free in subprogs jited symbol removal
+Date:   Mon, 11 Nov 2019 19:28:17 +0100
+Message-Id: <20191111181509.631551630@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-References: <20191111181438.945353076@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,533 +46,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 57f8770620e9b51c61089751f0b5ad3dbe376ff2 upstream.
+[ Upstream commit cd7455f1013ef96d5cbf5c05d2b7c06f273810a6 ]
 
-Introduce a new helper to validate each audio descriptor unit before
-and check the unit before actually accessing it.  This should harden
-against the OOB access cases with malformed descriptors that have been
-recently frequently reported by fuzzers.
+syzkaller managed to trigger the following crash:
 
-The existing descriptor checks are still kept although they become
-superfluous after this patch.  They'll be cleaned up eventually
-later.
+  [...]
+  BUG: unable to handle page fault for address: ffffc90001923030
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD aa551067 P4D aa551067 PUD aa552067 PMD a572b067 PTE 80000000a1173163
+  Oops: 0000 [#1] PREEMPT SMP KASAN
+  CPU: 0 PID: 7982 Comm: syz-executor912 Not tainted 5.4.0-rc3+ #0
+  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+  RIP: 0010:bpf_jit_binary_hdr include/linux/filter.h:787 [inline]
+  RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:531 [inline]
+  RIP: 0010:bpf_tree_comp kernel/bpf/core.c:600 [inline]
+  RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+  RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+  RIP: 0010:bpf_prog_kallsyms_find kernel/bpf/core.c:674 [inline]
+  RIP: 0010:is_bpf_text_address+0x184/0x3b0 kernel/bpf/core.c:709
+  [...]
+  Call Trace:
+   kernel_text_address kernel/extable.c:147 [inline]
+   __kernel_text_address+0x9a/0x110 kernel/extable.c:102
+   unwind_get_return_address+0x4c/0x90 arch/x86/kernel/unwind_frame.c:19
+   arch_stack_walk+0x98/0xe0 arch/x86/kernel/stacktrace.c:26
+   stack_trace_save+0xb6/0x150 kernel/stacktrace.c:123
+   save_stack mm/kasan/common.c:69 [inline]
+   set_track mm/kasan/common.c:77 [inline]
+   __kasan_kmalloc+0x11c/0x1b0 mm/kasan/common.c:510
+   kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:518
+   slab_post_alloc_hook mm/slab.h:584 [inline]
+   slab_alloc mm/slab.c:3319 [inline]
+   kmem_cache_alloc+0x1f5/0x2e0 mm/slab.c:3483
+   getname_flags+0xba/0x640 fs/namei.c:138
+   getname+0x19/0x20 fs/namei.c:209
+   do_sys_open+0x261/0x560 fs/open.c:1091
+   __do_sys_open fs/open.c:1115 [inline]
+   __se_sys_open fs/open.c:1110 [inline]
+   __x64_sys_open+0x87/0x90 fs/open.c:1110
+   do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  [...]
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+After further debugging it turns out that we walk kallsyms while in parallel
+we tear down a BPF program which contains subprograms that have been JITed
+though the program itself has not been fully exposed and is eventually bailing
+out with error.
 
+The bpf_prog_kallsyms_del_subprogs() in bpf_prog_load()'s error path removes
+the symbols, however, bpf_prog_free() tears down the JIT memory too early via
+scheduled work. Instead, it needs to properly respect RCU grace period as the
+kallsyms walk for BPF is under RCU.
+
+Fix it by refactoring __bpf_prog_put()'s tear down and reuse it in our error
+path where we defer final destruction when we have subprogs in the program.
+
+Fixes: 7d1982b4e335 ("bpf: fix panic in prog load calls cleanup")
+Fixes: 1c2a088a6626 ("bpf: x64: add JIT support for multi-function programs")
+Reported-by: syzbot+710043c5d1d5b5013bc7@syzkaller.appspotmail.com
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Tested-by: syzbot+710043c5d1d5b5013bc7@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/bpf/55f6367324c2d7e9583fa9ccf5385dcbba0d7a6e.1571752452.git.daniel@iogearbox.net
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/Makefile   |    3 
- sound/usb/helper.h   |    4 
- sound/usb/mixer.c    |   10 +
- sound/usb/power.c    |    2 
- sound/usb/quirks.c   |    3 
- sound/usb/stream.c   |   25 +--
- sound/usb/validate.c |  332 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 7 files changed, 366 insertions(+), 13 deletions(-)
+ include/linux/filter.h |  1 -
+ kernel/bpf/core.c      |  2 +-
+ kernel/bpf/syscall.c   | 31 ++++++++++++++++++++-----------
+ 3 files changed, 21 insertions(+), 13 deletions(-)
 
---- a/sound/usb/Makefile
-+++ b/sound/usb/Makefile
-@@ -16,7 +16,8 @@ snd-usb-audio-objs := 	card.o \
- 			power.o \
- 			proc.o \
- 			quirks.o \
--			stream.o
-+			stream.o \
-+			validate.o
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 92c6e31fb008e..38716f93825f4 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -1099,7 +1099,6 @@ static inline void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
  
- snd-usbmidi-lib-objs := midi.o
+ #endif /* CONFIG_BPF_JIT */
  
---- a/sound/usb/helper.h
-+++ b/sound/usb/helper.h
-@@ -30,4 +30,8 @@ static inline int snd_usb_ctrl_intf(stru
- 	return get_iface_desc(chip->ctrl_intf)->bInterfaceNumber;
+-void bpf_prog_kallsyms_del_subprogs(struct bpf_prog *fp);
+ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp);
+ 
+ #define BPF_ANC		BIT(15)
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 66088a9e9b9e2..ef0e1e3e66f4a 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -502,7 +502,7 @@ int bpf_remove_insns(struct bpf_prog *prog, u32 off, u32 cnt)
+ 	return WARN_ON_ONCE(bpf_adj_branches(prog, off, off + cnt, off, false));
  }
  
-+/* in validate.c */
-+bool snd_usb_validate_audio_desc(void *p, int protocol);
-+bool snd_usb_validate_midi_desc(void *p);
-+
- #endif /* __USBAUDIO_HELPER_H */
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -800,6 +800,8 @@ static int __check_input_term(struct mix
- 		p1 = find_audio_control_unit(state, id);
- 		if (!p1)
- 			break;
-+		if (!snd_usb_validate_audio_desc(p1, protocol))
-+			break; /* bad descriptor */
- 
- 		hdr = p1;
- 		term->id = id;
-@@ -2794,6 +2796,11 @@ static int parse_audio_unit(struct mixer
- 		return -EINVAL;
- 	}
- 
-+	if (!snd_usb_validate_audio_desc(p1, protocol)) {
-+		usb_audio_dbg(state->chip, "invalid unit %d\n", unitid);
-+		return 0; /* skip invalid unit */
-+	}
-+
- 	if (protocol == UAC_VERSION_1 || protocol == UAC_VERSION_2) {
- 		switch (p1[2]) {
- 		case UAC_INPUT_TERMINAL:
-@@ -3164,6 +3171,9 @@ static int snd_usb_mixer_controls(struct
- 	while ((p = snd_usb_find_csint_desc(mixer->hostif->extra,
- 					    mixer->hostif->extralen,
- 					    p, UAC_OUTPUT_TERMINAL)) != NULL) {
-+		if (!snd_usb_validate_audio_desc(p, mixer->protocol))
-+			continue; /* skip invalid descriptor */
-+
- 		if (mixer->protocol == UAC_VERSION_1) {
- 			struct uac1_output_terminal_descriptor *desc = p;
- 
---- a/sound/usb/power.c
-+++ b/sound/usb/power.c
-@@ -31,6 +31,8 @@ snd_usb_find_power_domain(struct usb_hos
- 		struct uac3_power_domain_descriptor *pd_desc = p;
- 		int i;
- 
-+		if (!snd_usb_validate_audio_desc(p, UAC_VERSION_3))
-+			continue;
- 		for (i = 0; i < pd_desc->bNrEntities; i++) {
- 			if (pd_desc->baEntityID[i] == id) {
- 				pd->pd_id = pd_desc->bPowerDomainID;
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -259,6 +259,9 @@ static int create_yamaha_midi_quirk(stru
- 					NULL, USB_MS_MIDI_OUT_JACK);
- 	if (!injd && !outjd)
- 		return -ENODEV;
-+	if (!snd_usb_validate_midi_desc(injd) ||
-+	    !snd_usb_validate_midi_desc(outjd))
-+		return -ENODEV;
- 	if (injd && (injd->bLength < 5 ||
- 		     (injd->bJackType != USB_MS_EMBEDDED &&
- 		      injd->bJackType != USB_MS_EXTERNAL)))
---- a/sound/usb/stream.c
-+++ b/sound/usb/stream.c
-@@ -637,16 +637,14 @@ static int parse_uac_endpoint_attributes
-  */
- static void *
- snd_usb_find_input_terminal_descriptor(struct usb_host_interface *ctrl_iface,
--				       int terminal_id, bool uac23)
-+				       int terminal_id, int protocol)
+-void bpf_prog_kallsyms_del_subprogs(struct bpf_prog *fp)
++static void bpf_prog_kallsyms_del_subprogs(struct bpf_prog *fp)
  {
- 	struct uac2_input_terminal_descriptor *term = NULL;
--	size_t minlen = uac23 ? sizeof(struct uac2_input_terminal_descriptor) :
--		sizeof(struct uac_input_terminal_descriptor);
+ 	int i;
  
- 	while ((term = snd_usb_find_csint_desc(ctrl_iface->extra,
- 					       ctrl_iface->extralen,
- 					       term, UAC_INPUT_TERMINAL))) {
--		if (term->bLength < minlen)
-+		if (!snd_usb_validate_audio_desc(term, protocol))
- 			continue;
- 		if (term->bTerminalID == terminal_id)
- 			return term;
-@@ -657,7 +655,7 @@ snd_usb_find_input_terminal_descriptor(s
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 272071e9112f3..af5c60b07463e 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1322,18 +1322,26 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
+ 	bpf_prog_free(aux->prog);
+ }
  
- static void *
- snd_usb_find_output_terminal_descriptor(struct usb_host_interface *ctrl_iface,
--					int terminal_id)
-+					int terminal_id, int protocol)
- {
- 	/* OK to use with both UAC2 and UAC3 */
- 	struct uac2_output_terminal_descriptor *term = NULL;
-@@ -665,8 +663,9 @@ snd_usb_find_output_terminal_descriptor(
- 	while ((term = snd_usb_find_csint_desc(ctrl_iface->extra,
- 					       ctrl_iface->extralen,
- 					       term, UAC_OUTPUT_TERMINAL))) {
--		if (term->bLength >= sizeof(*term) &&
--		    term->bTerminalID == terminal_id)
-+		if (!snd_usb_validate_audio_desc(term, protocol))
-+			continue;
-+		if (term->bTerminalID == terminal_id)
- 			return term;
- 	}
- 
-@@ -741,7 +740,7 @@ snd_usb_get_audioformat_uac12(struct snd
- 
- 		iterm = snd_usb_find_input_terminal_descriptor(chip->ctrl_intf,
- 							       as->bTerminalLink,
--							       false);
-+							       protocol);
- 		if (iterm) {
- 			num_channels = iterm->bNrChannels;
- 			chconfig = le16_to_cpu(iterm->wChannelConfig);
-@@ -777,7 +776,7 @@ snd_usb_get_audioformat_uac12(struct snd
- 		 */
- 		input_term = snd_usb_find_input_terminal_descriptor(chip->ctrl_intf,
- 								    as->bTerminalLink,
--								    true);
-+								    protocol);
- 		if (input_term) {
- 			clock = input_term->bCSourceID;
- 			if (!chconfig && (num_channels == input_term->bNrChannels))
-@@ -786,7 +785,8 @@ snd_usb_get_audioformat_uac12(struct snd
- 		}
- 
- 		output_term = snd_usb_find_output_terminal_descriptor(chip->ctrl_intf,
--								      as->bTerminalLink);
-+								      as->bTerminalLink,
-+								      protocol);
- 		if (output_term) {
- 			clock = output_term->bCSourceID;
- 			goto found_clock;
-@@ -1012,14 +1012,15 @@ snd_usb_get_audioformat_uac3(struct snd_
- 	 */
- 	input_term = snd_usb_find_input_terminal_descriptor(chip->ctrl_intf,
- 							    as->bTerminalLink,
--							    true);
-+							    UAC_VERSION_3);
- 	if (input_term) {
- 		clock = input_term->bCSourceID;
- 		goto found_clock;
- 	}
- 
- 	output_term = snd_usb_find_output_terminal_descriptor(chip->ctrl_intf,
--							     as->bTerminalLink);
-+							      as->bTerminalLink,
-+							      UAC_VERSION_3);
- 	if (output_term) {
- 		clock = output_term->bCSourceID;
- 		goto found_clock;
---- /dev/null
-+++ b/sound/usb/validate.c
-@@ -0,0 +1,332 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Validation of USB-audio class descriptors
-+//
-+
-+#include <linux/init.h>
-+#include <linux/usb.h>
-+#include <linux/usb/audio.h>
-+#include <linux/usb/audio-v2.h>
-+#include <linux/usb/audio-v3.h>
-+#include <linux/usb/midi.h>
-+#include "usbaudio.h"
-+#include "helper.h"
-+
-+struct usb_desc_validator {
-+	unsigned char protocol;
-+	unsigned char type;
-+	bool (*func)(const void *p, const struct usb_desc_validator *v);
-+	size_t size;
-+};
-+
-+#define UAC_VERSION_ALL		(unsigned char)(-1)
-+
-+/* UAC1 only */
-+static bool validate_uac1_header(const void *p,
-+				 const struct usb_desc_validator *v)
++static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
 +{
-+	const struct uac1_ac_header_descriptor *d = p;
++	bpf_prog_kallsyms_del_all(prog);
++	btf_put(prog->aux->btf);
++	kvfree(prog->aux->func_info);
++	bpf_prog_free_linfo(prog);
 +
-+	return d->bLength >= sizeof(*d) &&
-+		d->bLength >= sizeof(*d) + d->bInCollection;
++	if (deferred)
++		call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
++	else
++		__bpf_prog_put_rcu(&prog->aux->rcu);
 +}
 +
-+/* for mixer unit; covering all UACs */
-+static bool validate_mixer_unit(const void *p,
-+				const struct usb_desc_validator *v)
-+{
-+	const struct uac_mixer_unit_descriptor *d = p;
-+	size_t len;
-+
-+	if (d->bLength < sizeof(*d) || !d->bNrInPins)
-+		return false;
-+	len = sizeof(*d) + d->bNrInPins;
-+	/* We can't determine the bitmap size only from this unit descriptor,
-+	 * so just check with the remaining length.
-+	 * The actual bitmap is checked at mixer unit parser.
+ static void __bpf_prog_put(struct bpf_prog *prog, bool do_idr_lock)
+ {
+ 	if (atomic_dec_and_test(&prog->aux->refcnt)) {
+ 		perf_event_bpf_event(prog, PERF_BPF_EVENT_PROG_UNLOAD, 0);
+ 		/* bpf_prog_free_id() must be called first */
+ 		bpf_prog_free_id(prog, do_idr_lock);
+-		bpf_prog_kallsyms_del_all(prog);
+-		btf_put(prog->aux->btf);
+-		kvfree(prog->aux->func_info);
+-		bpf_prog_free_linfo(prog);
+-
+-		call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
++		__bpf_prog_put_noref(prog, true);
+ 	}
+ }
+ 
+@@ -1730,11 +1738,12 @@ static int bpf_prog_load(union bpf_attr *attr, union bpf_attr __user *uattr)
+ 	return err;
+ 
+ free_used_maps:
+-	bpf_prog_free_linfo(prog);
+-	kvfree(prog->aux->func_info);
+-	btf_put(prog->aux->btf);
+-	bpf_prog_kallsyms_del_subprogs(prog);
+-	free_used_maps(prog->aux);
++	/* In case we have subprogs, we need to wait for a grace
++	 * period before we can tear down JIT memory since symbols
++	 * are already exposed under kallsyms.
 +	 */
-+	switch (v->protocol) {
-+	case UAC_VERSION_1:
-+	default:
-+		len += 2 + 1; /* wChannelConfig, iChannelNames */
-+		/* bmControls[n*m] */
-+		len += 1; /* iMixer */
-+		break;
-+	case UAC_VERSION_2:
-+		len += 4 + 1; /* bmChannelConfig, iChannelNames */
-+		/* bmMixerControls[n*m] */
-+		len += 1 + 1; /* bmControls, iMixer */
-+		break;
-+	case UAC_VERSION_3:
-+		len += 2; /* wClusterDescrID */
-+		/* bmMixerControls[n*m] */
-+		break;
-+	}
-+	return d->bLength >= len;
-+}
-+
-+/* both for processing and extension units; covering all UACs */
-+static bool validate_processing_unit(const void *p,
-+				     const struct usb_desc_validator *v)
-+{
-+	const struct uac_processing_unit_descriptor *d = p;
-+	const unsigned char *hdr = p;
-+	size_t len, m;
-+
-+	if (d->bLength < sizeof(*d))
-+		return false;
-+	len = d->bLength < sizeof(*d) + d->bNrInPins;
-+	if (d->bLength < len)
-+		return false;
-+	switch (v->protocol) {
-+	case UAC_VERSION_1:
-+	default:
-+		/* bNrChannels, wChannelConfig, iChannelNames, bControlSize */
-+		len += 1 + 2 + 1 + 1;
-+		if (d->bLength < len) /* bControlSize */
-+			return false;
-+		m = hdr[len];
-+		len += 1 + m + 1; /* bControlSize, bmControls, iProcessing */
-+		break;
-+	case UAC_VERSION_2:
-+		/* bNrChannels, bmChannelConfig, iChannelNames */
-+		len += 1 + 4 + 1;
-+		if (v->type == UAC2_PROCESSING_UNIT_V2)
-+			len += 2; /* bmControls -- 2 bytes for PU */
-+		else
-+			len += 1; /* bmControls -- 1 byte for EU */
-+		len += 1; /* iProcessing */
-+		break;
-+	case UAC_VERSION_3:
-+		/* wProcessingDescrStr, bmControls */
-+		len += 2 + 4;
-+		break;
-+	}
-+	if (d->bLength < len)
-+		return false;
-+
-+	switch (v->protocol) {
-+	case UAC_VERSION_1:
-+	default:
-+		if (v->type == UAC1_EXTENSION_UNIT)
-+			return true; /* OK */
-+		switch (d->wProcessType) {
-+		case UAC_PROCESS_UP_DOWNMIX:
-+		case UAC_PROCESS_DOLBY_PROLOGIC:
-+			if (d->bLength < len + 1) /* bNrModes */
-+				return false;
-+			m = hdr[len];
-+			len += 1 + m * 2; /* bNrModes, waModes(n) */
-+			break;
-+		default:
-+			break;
-+		}
-+		break;
-+	case UAC_VERSION_2:
-+		if (v->type == UAC2_EXTENSION_UNIT_V2)
-+			return true; /* OK */
-+		switch (d->wProcessType) {
-+		case UAC2_PROCESS_UP_DOWNMIX:
-+		case UAC2_PROCESS_DOLBY_PROLOCIC: /* SiC! */
-+			if (d->bLength < len + 1) /* bNrModes */
-+				return false;
-+			m = hdr[len];
-+			len += 1 + m * 4; /* bNrModes, daModes(n) */
-+			break;
-+		default:
-+			break;
-+		}
-+		break;
-+	case UAC_VERSION_3:
-+		if (v->type == UAC3_EXTENSION_UNIT) {
-+			len += 2; /* wClusterDescrID */
-+			break;
-+		}
-+		switch (d->wProcessType) {
-+		case UAC3_PROCESS_UP_DOWNMIX:
-+			if (d->bLength < len + 1) /* bNrModes */
-+				return false;
-+			m = hdr[len];
-+			len += 1 + m * 2; /* bNrModes, waClusterDescrID(n) */
-+			break;
-+		case UAC3_PROCESS_MULTI_FUNCTION:
-+			len += 2 + 4; /* wClusterDescrID, bmAlgorighms */
-+			break;
-+		default:
-+			break;
-+		}
-+		break;
-+	}
-+	if (d->bLength < len)
-+		return false;
-+
-+	return true;
-+}
-+
-+/* both for selector and clock selector units; covering all UACs */
-+static bool validate_selector_unit(const void *p,
-+				   const struct usb_desc_validator *v)
-+{
-+	const struct uac_selector_unit_descriptor *d = p;
-+	size_t len;
-+
-+	if (d->bLength < sizeof(*d))
-+		return false;
-+	len = sizeof(*d) + d->bNrInPins;
-+	switch (v->protocol) {
-+	case UAC_VERSION_1:
-+	default:
-+		len += 1; /* iSelector */
-+		break;
-+	case UAC_VERSION_2:
-+		len += 1 + 1; /* bmControls, iSelector */
-+		break;
-+	case UAC_VERSION_3:
-+		len += 4 + 2; /* bmControls, wSelectorDescrStr */
-+		break;
-+	}
-+	return d->bLength >= len;
-+}
-+
-+static bool validate_uac1_feature_unit(const void *p,
-+				       const struct usb_desc_validator *v)
-+{
-+	const struct uac_feature_unit_descriptor *d = p;
-+
-+	if (d->bLength < sizeof(*d) || !d->bControlSize)
-+		return false;
-+	/* at least bmaControls(0) for master channel + iFeature */
-+	return d->bLength >= sizeof(*d) + d->bControlSize + 1;
-+}
-+
-+static bool validate_uac2_feature_unit(const void *p,
-+				       const struct usb_desc_validator *v)
-+{
-+	const struct uac2_feature_unit_descriptor *d = p;
-+
-+	if (d->bLength < sizeof(*d))
-+		return false;
-+	/* at least bmaControls(0) for master channel + iFeature */
-+	return d->bLength >= sizeof(*d) + 4 + 1;
-+}
-+
-+static bool validate_uac3_feature_unit(const void *p,
-+				       const struct usb_desc_validator *v)
-+{
-+	const struct uac3_feature_unit_descriptor *d = p;
-+
-+	if (d->bLength < sizeof(*d))
-+		return false;
-+	/* at least bmaControls(0) for master channel + wFeatureDescrStr */
-+	return d->bLength >= sizeof(*d) + 4 + 2;
-+}
-+
-+static bool validate_midi_out_jack(const void *p,
-+				   const struct usb_desc_validator *v)
-+{
-+	const struct usb_midi_out_jack_descriptor *d = p;
-+
-+	return d->bLength >= sizeof(*d) &&
-+		d->bLength >= sizeof(*d) + d->bNrInputPins * 2;
-+}
-+
-+#define FIXED(p, t, s) { .protocol = (p), .type = (t), .size = sizeof(s) }
-+#define FUNC(p, t, f) { .protocol = (p), .type = (t), .func = (f) }
-+
-+static struct usb_desc_validator audio_validators[] = {
-+	/* UAC1 */
-+	FUNC(UAC_VERSION_1, UAC_HEADER, validate_uac1_header),
-+	FIXED(UAC_VERSION_1, UAC_INPUT_TERMINAL,
-+	      struct uac_input_terminal_descriptor),
-+	FIXED(UAC_VERSION_1, UAC_OUTPUT_TERMINAL,
-+	      struct uac1_output_terminal_descriptor),
-+	FUNC(UAC_VERSION_1, UAC_MIXER_UNIT, validate_mixer_unit),
-+	FUNC(UAC_VERSION_1, UAC_SELECTOR_UNIT, validate_selector_unit),
-+	FUNC(UAC_VERSION_1, UAC_FEATURE_UNIT, validate_uac1_feature_unit),
-+	FUNC(UAC_VERSION_1, UAC1_PROCESSING_UNIT, validate_processing_unit),
-+	FUNC(UAC_VERSION_1, UAC1_EXTENSION_UNIT, validate_processing_unit),
-+
-+	/* UAC2 */
-+	FIXED(UAC_VERSION_2, UAC_HEADER, struct uac2_ac_header_descriptor),
-+	FIXED(UAC_VERSION_2, UAC_INPUT_TERMINAL,
-+	      struct uac2_input_terminal_descriptor),
-+	FIXED(UAC_VERSION_2, UAC_OUTPUT_TERMINAL,
-+	      struct uac2_output_terminal_descriptor),
-+	FUNC(UAC_VERSION_2, UAC_MIXER_UNIT, validate_mixer_unit),
-+	FUNC(UAC_VERSION_2, UAC_SELECTOR_UNIT, validate_selector_unit),
-+	FUNC(UAC_VERSION_2, UAC_FEATURE_UNIT, validate_uac2_feature_unit),
-+	/* UAC_VERSION_2, UAC2_EFFECT_UNIT: not implemented yet */
-+	FUNC(UAC_VERSION_2, UAC2_PROCESSING_UNIT_V2, validate_processing_unit),
-+	FUNC(UAC_VERSION_2, UAC2_EXTENSION_UNIT_V2, validate_processing_unit),
-+	FIXED(UAC_VERSION_2, UAC2_CLOCK_SOURCE,
-+	      struct uac_clock_source_descriptor),
-+	FUNC(UAC_VERSION_2, UAC2_CLOCK_SELECTOR, validate_selector_unit),
-+	FIXED(UAC_VERSION_2, UAC2_CLOCK_MULTIPLIER,
-+	      struct uac_clock_multiplier_descriptor),
-+	/* UAC_VERSION_2, UAC2_SAMPLE_RATE_CONVERTER: not implemented yet */
-+
-+	/* UAC3 */
-+	FIXED(UAC_VERSION_2, UAC_HEADER, struct uac3_ac_header_descriptor),
-+	FIXED(UAC_VERSION_3, UAC_INPUT_TERMINAL,
-+	      struct uac3_input_terminal_descriptor),
-+	FIXED(UAC_VERSION_3, UAC_OUTPUT_TERMINAL,
-+	      struct uac3_output_terminal_descriptor),
-+	/* UAC_VERSION_3, UAC3_EXTENDED_TERMINAL: not implemented yet */
-+	FUNC(UAC_VERSION_3, UAC3_MIXER_UNIT, validate_mixer_unit),
-+	FUNC(UAC_VERSION_3, UAC3_SELECTOR_UNIT, validate_selector_unit),
-+	FUNC(UAC_VERSION_3, UAC_FEATURE_UNIT, validate_uac3_feature_unit),
-+	/*  UAC_VERSION_3, UAC3_EFFECT_UNIT: not implemented yet */
-+	FUNC(UAC_VERSION_3, UAC3_PROCESSING_UNIT, validate_processing_unit),
-+	FUNC(UAC_VERSION_3, UAC3_EXTENSION_UNIT, validate_processing_unit),
-+	FIXED(UAC_VERSION_3, UAC3_CLOCK_SOURCE,
-+	      struct uac3_clock_source_descriptor),
-+	FUNC(UAC_VERSION_3, UAC3_CLOCK_SELECTOR, validate_selector_unit),
-+	FIXED(UAC_VERSION_3, UAC3_CLOCK_MULTIPLIER,
-+	      struct uac3_clock_multiplier_descriptor),
-+	/* UAC_VERSION_3, UAC3_SAMPLE_RATE_CONVERTER: not implemented yet */
-+	/* UAC_VERSION_3, UAC3_CONNECTORS: not implemented yet */
-+	{ } /* terminator */
-+};
-+
-+static struct usb_desc_validator midi_validators[] = {
-+	FIXED(UAC_VERSION_ALL, USB_MS_HEADER,
-+	      struct usb_ms_header_descriptor),
-+	FIXED(UAC_VERSION_ALL, USB_MS_MIDI_IN_JACK,
-+	      struct usb_midi_in_jack_descriptor),
-+	FUNC(UAC_VERSION_ALL, USB_MS_MIDI_OUT_JACK,
-+	     validate_midi_out_jack),
-+	{ } /* terminator */
-+};
-+
-+
-+/* Validate the given unit descriptor, return true if it's OK */
-+static bool validate_desc(unsigned char *hdr, int protocol,
-+			  const struct usb_desc_validator *v)
-+{
-+	if (hdr[1] != USB_DT_CS_INTERFACE)
-+		return true; /* don't care */
-+
-+	for (; v->type; v++) {
-+		if (v->type == hdr[2] &&
-+		    (v->protocol == UAC_VERSION_ALL ||
-+		     v->protocol == protocol)) {
-+			if (v->func)
-+				return v->func(hdr, v);
-+			/* check for the fixed size */
-+			return hdr[0] >= v->size;
-+		}
-+	}
-+
-+	return true; /* not matching, skip validation */
-+}
-+
-+bool snd_usb_validate_audio_desc(void *p, int protocol)
-+{
-+	return validate_desc(p, protocol, audio_validators);
-+}
-+
-+bool snd_usb_validate_midi_desc(void *p)
-+{
-+	return validate_desc(p, UAC_VERSION_1, midi_validators);
-+}
-+
++	__bpf_prog_put_noref(prog, prog->aux->func_cnt);
++	return err;
+ free_prog:
+ 	bpf_prog_uncharge_memlock(prog);
+ free_prog_sec:
+-- 
+2.20.1
+
 
 
