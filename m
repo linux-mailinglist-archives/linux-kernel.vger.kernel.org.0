@@ -2,66 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72C84F78AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2062AF78B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 17:26:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfKKQZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 11:25:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55388 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfKKQZD (ORCPT
+        id S1727049AbfKKQ0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 11:26:01 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:38101 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfKKQ0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:25:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xpsjH3Rxk+PTzoxkOgZp7C1flZE/0kiFWtXlSW8zmmw=; b=Peyngf2bhOnRCdtwxQx45nP8t
-        wAM5uTHozveypsI8OvzwXiRStp/WogTr0roVN/uKHuLazBH7c+mWXnXqQ1PKU5tSSg1e3alIDQiv3
-        FoYLONj0SfEZQMbaDMmpbxCW5xcYZ9L1SnHvEHDzhRtO7O0d7aMOcu56vmmClKNhy0qMGroZpe07j
-        g0d71Zzb1txtXYa9dO7Wuxk56P3CgfiqUMc+4tpfGEmKjdkM/OmNWYfloVPA/ijo8jtYfxjeSq4E8
-        eeVarnc5boRMwTbtMWZ2BRbavAOznWvd4Qfnl+WCs5qe+IPj7AwPuiJsA1G1sHW4F1KsiGV/oZmhZ
-        fSLdpIETw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUCUv-0001T1-CH; Mon, 11 Nov 2019 16:25:01 +0000
-Date:   Mon, 11 Nov 2019 08:25:01 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH] fs/splice: ignore flag SPLICE_F_GIFT in syscall vmsplice
-Message-ID: <20191111162501.GB24952@infradead.org>
-References: <157338008330.5347.7117089871769008055.stgit@buzz>
+        Mon, 11 Nov 2019 11:26:01 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MORR2-1iGX0h2h7G-00PwVX; Mon, 11 Nov 2019 17:25:53 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC
+Date:   Mon, 11 Nov 2019 17:25:31 +0100
+Message-Id: <20191111162547.2221524-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157338008330.5347.7117089871769008055.stgit@buzz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Y9yDrcxX3JXaAKVSf2Wk0UqIhlycN6gZyle2jPk/xT9EE6YMi9D
+ 7ymITaQ7apv6xrtn0JzSfzsgJB9I6691k3NAhZROfyW9sb573cpSp1BArGRozUJ7yf1BahM
+ n/iqnEfl6KDsP8LVgANAzfDxR4X/WyOKAK5s0v5Ld/9s1SATJqUXjo4weaeUxCyiqTwRkbu
+ GAzwQeVhb9Mm+uAWzRSiQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nZsPNPkFQvQ=:Ucf0PZ6GcWhH6i5ePGy4rK
+ 8g6OuBjV2jgWkBM7tp1FTviB697Tz1JahKavUoJ1LkN7LeLCVIliSERKLYYSPTKAKImQEOHdV
+ f/nUOReIF66bT/01JiNoct1Vgoo9wpMGPa7w3rY/XWrZMWNHnC3ogWso4VjoWd+wiwbBEj+uG
+ L2LpC6MAjqWBLjIC6oVSHeneOV3hV4AsKXIvgaEEqxJgH1hUN67mhEA1CuXbj4mue/hN2Yk3Z
+ f4ISXe/g+lkzvLNMLZ2Fr7vneEV7iFUbAs5cHnOaETE/91j8DSovRJiJNq3y4+phBlhD2zsB9
+ qpt827ytyRhQdXvVRUvqJu2oVbsxGrGf3HrAkwatzS2GL2vA6waSgY4ZIAlarzHZXTlJaT+WL
+ v6UgYgYvpZzRwn9POXsQu/ShPUYR7pVILKJOP/ah+T6Pm8NW4U2baQ0iw4Ih5bRZvVPprVdWa
+ JyI6Z+9FAEm0qFPVJw2KkmAnqNFpQGrzuNFYfumQ94RtIgaAFBjSqeX3x+3Y9ErWQOznrAW1Q
+ tM1qzWWXa/kF+jiFIyNNLn4sJIkKVY9pkq3wGTxNm6j/FVHtjZahv2vKHp6w+mTELXMKMoKoE
+ HWDF3iPGT3Rcz0RSSaOH3gojpNGyEjKO8c1MWqD1Oct4Ijc+tvi8b6mUIkQ3Hlf17srkmJy3l
+ fL3N/RoAyeTJt3b8wUsINPyFKTsc2thXdCu0B8f6EFtPqIg+VBuBzO5grhkE0AzVDLl05HQoM
+ qc5AVkSQWenBH8ADII9vIySDu4WSLDPgS3A6yn+Rs4HObFPfe1q7UTTczol84GDWAgqbqlO6r
+ hQfG1l3QcpoGzgnGskRgT5OdGVT4HLfgtB1T99Vni+iw8sVmXOkHYd9jcpK+OWWnU71i8abqe
+ i5KubW7ExhZfj9AUaAWQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 10, 2019 at 01:01:23PM +0300, Konstantin Khlebnikov wrote:
-> Generic support of flag SPLICE_F_MOVE in syscall splice was removed in
-> kernel 2.6.21 commit 485ddb4b9741 ("1/2 splice: dont steal").
-> Infrastructure stay intact and this feature may came back.
-> At least driver or filesystem could provide own implementation.
-> 
-> But stealing mapped pages from userspace never worked and is very
-> unlikely that will ever make sense due to unmapping overhead.
-> Also lru handling is broken if gifted anon page spliced into file.
-> 
-> Let's seal entry point for marking page as a gift in vmsplice.
+Most kernel interfaces that take a timespec require normalized
+representation with tv_nsec between 0 and NSEC_PER_SEC.
 
-Please kill off PIPE_BUF_FLAG_GIFT entirely, there is no need to keep
-dead code around.  Anyone who cares enough can resurrect it from git
-history.
+Passing values larger than 0x100000000ull further behaves differently
+on 32-bit and 64-bit kernels, and can cause the latter to spend a long
+time counting seconds in timespec64_sub()/set_normalized_timespec64().
+
+Reject those large values at the user interface to enforce sane and
+portable behavior.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+index 1f9c01be40d7..95d72dc00280 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+@@ -297,6 +297,9 @@ static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
+ 	if (args->op & ~(ETNA_PREP_READ | ETNA_PREP_WRITE | ETNA_PREP_NOSYNC))
+ 		return -EINVAL;
+ 
++	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++		return -EINVAL;
++
+ 	obj = drm_gem_object_lookup(file, args->handle);
+ 	if (!obj)
+ 		return -ENOENT;
+@@ -360,6 +363,9 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
+ 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+ 		return -EINVAL;
+ 
++	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++		return -EINVAL;
++
+ 	if (args->pipe >= ETNA_MAX_PIPES)
+ 		return -EINVAL;
+ 
+@@ -411,6 +417,9 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
+ 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+ 		return -EINVAL;
+ 
++	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++		return -EINVAL;
++
+ 	if (args->pipe >= ETNA_MAX_PIPES)
+ 		return -EINVAL;
+ 
+-- 
+2.20.0
+
