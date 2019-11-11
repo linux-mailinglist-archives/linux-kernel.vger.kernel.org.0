@@ -2,116 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 989A5F7A89
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:11:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7527FF7A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfKKSLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:11:15 -0500
-Received: from gateway20.websitewelcome.com ([192.185.48.38]:14685 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726763AbfKKSLO (ORCPT
+        id S1727053AbfKKSB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:01:26 -0500
+Received: from mail-wm1-f54.google.com ([209.85.128.54]:53811 "EHLO
+        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbfKKSB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:11:14 -0500
-X-Greylist: delayed 1501 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Nov 2019 13:11:13 EST
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 19956400C47C9
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:16:44 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id UDRXiLk0wW4frUDRXinZfu; Mon, 11 Nov 2019 11:25:35 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=obJGNctpNomw0ORl8GMTnOXHVQTOW6QwMfGlRbchZDQ=; b=viQc/KpkyqpjaooaNayckCTFw5
-        jPT+0IfyxeHPWb8eVLnXjU0UNzYGM+p0EvVAX8Ex1+EUwP1W+zbACBcdlQaS8+bCFJnU7q1PjsXXu
-        bC0NPhCyZxaLPIp76IzUT8B2V/swRFzeHxsKtalaVs43Pc8DQ+vNNE1B+cJA78YL3wZ6fl9fZegLg
-        n4/aIk6NZOtbzzNEKxJad2pCp/locExG7MJulTuSwcfXn/84kPBCbUQGwylAdhgCNHGmU9h4XCBqs
-        Br+CFXHcgMvh2BTDHzYfbkhfWPE8MP1uDDjm0hnx5Tltn0FYqZ7SvKEb7Peel/MPrZ9EbCzSs3rHL
-        giAKWVQg==;
-Received: from [187.192.2.30] (port=45762 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iUDRU-001CZi-Un; Mon, 11 Nov 2019 11:25:33 -0600
-Date:   Mon, 11 Nov 2019 11:25:43 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mikita Lipski <mikita.lipski@amd.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/amd/display: Fix unsigned variable compared to less than
- zero
-Message-ID: <20191111172543.GA31748@embeddedor>
+        Mon, 11 Nov 2019 13:01:26 -0500
+Received: by mail-wm1-f54.google.com with SMTP id u18so250859wmc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 10:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LZm0O+9adBfpx+ovnSPJOcOY1JX1dPWpztVmEz4llkE=;
+        b=Csn/2IzCJ6MEF+fyZKlzifXzPAy8ny1P4ICBVPnPsRGKuub7/rNPpw/Qn3CGNuuxy5
+         WtxeQ+DpHHi1LRluKoais2+875spWmUBYjiSIqIbluzGGNliVcglPlVSR46ebYq76qAc
+         BcyVjUlIWB9KPVe5mWhY8rRxEIG2ZD/KiSvIBmEGVxQBqa1koidTmQ6V3yXmH0aigPSF
+         Jq+AY0MRvqSBxIW8ZOSGQLOWNbhMcnW1i/SlF47dc4bnPvjvFGMPOG0wdcuUa71RLpGF
+         oMqKEmjNCin2r9u4BYC2Gorsi/pDfgPb2JCpbApUeu2+KOJ1tHcbXk4M/fUGmWNgauDO
+         FbpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LZm0O+9adBfpx+ovnSPJOcOY1JX1dPWpztVmEz4llkE=;
+        b=osTVksQXQUaEzPwMeMcJZWMIEO0AkPE7b+6f0esiNtS61RaMm7YaGAF/HCkDJcrghg
+         85NJbLmbXA770wD1JVYKbyNJQvC/dD2nOS0+28Xd6F//b9YNwqvTh0QY0BFlOcl9HsdU
+         9ItTq6BhUgm9rsddW4YevwIIQT4pn5hESJdtKpTP61fREluaH2TaMiXUWSozVXc8rI3+
+         inNd2AFcZi2TW8l+66CBriAkgHO4xriY20Kw9OfVwFCwEAGvtUUJRZJqnSHDitYANkMS
+         CxRXdOckWJuoLWqUPsPFX7ds1dUZjVEo6d/sJUzlUOfBkDQj9g50svyTNAbmhF2RUw0Q
+         tHaw==
+X-Gm-Message-State: APjAAAUtmsxzEcb/lzX1C6MUy04p4sU6bYhYl27kbhpDQ1SUVxneC4Cu
+        /U9BFPmHjwgX1NKbCWhy7j8zZj4JqfE4hiA0TI0=
+X-Google-Smtp-Source: APXvYqx3F2xEQnEwJIJbF32491P4OsB8Wm3WOoRDkOVtWpzT+0v4cABkBIFm0/KZ3L3bKl0dq1GLJiYXU85t9P2VkwI=
+X-Received: by 2002:a1c:790b:: with SMTP id l11mr200549wme.127.1573495284364;
+ Mon, 11 Nov 2019 10:01:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.2.30
-X-Source-L: No
-X-Exim-ID: 1iUDRU-001CZi-Un
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.2.30]:45762
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20191109093538.23964-1-yuehaibing@huawei.com>
+In-Reply-To: <20191109093538.23964-1-yuehaibing@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 11 Nov 2019 13:01:11 -0500
+Message-ID: <CADnq5_O7JwQd4+ncEe+KusqNqPBGXgkcUBX6VHP5OjhNwUseWg@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amd/display: remove set but not used variable 'bpc'
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Jun Lei <Jun.Lei@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
+        Zhan Liu <Zhan.Liu@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currenly, the error check below on variable *vcpi_slots* is always
-false because it is a uint64_t type variable, hence, the values
-this variable can hold are never less than zero:
+Applied.  Thanks!
 
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:
-4870         if (dm_new_connector_state->vcpi_slots < 0) {
-4871                 DRM_DEBUG_ATOMIC("failed finding vcpi slots: %d\n", (int)dm_new_connector_stat     e->vcpi_slots);
-4872                 return dm_new_connector_state->vcpi_slots;
-4873         }
+Alex
 
-Fix this by making *vcpi_slots* of int type.
-
-Addresses-Coverity: 1487838 ("Unsigned compared against 0")
-Fixes: b4c578f08378 ("drm/amd/display: Add MST atomic routines")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-index 6db07e9e33ab..a8fc90a927d6 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-@@ -403,7 +403,7 @@ struct dm_connector_state {
- 	bool underscan_enable;
- 	bool freesync_capable;
- 	uint8_t abm_level;
--	uint64_t vcpi_slots;
-+	int vcpi_slots;
- 	uint64_t pbn;
- };
- 
--- 
-2.23.0
-
+On Sun, Nov 10, 2019 at 9:30 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c: In function get_pbn_from_timing:
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c:2364:11: warning:
+>  variable bpc set but not used [-Wunused-but-set-variable]
+>
+> It is not used since commit e49f69363adf ("drm/amd/display: use
+> proper formula to calculate bandwidth from timing")
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/gpu/drm/amd/display/dc/core/dc_link.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> index bdc8be3..53394e2 100644
+> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> @@ -2653,13 +2653,11 @@ static int get_color_depth(enum dc_color_depth color_depth)
+>
+>  static struct fixed31_32 get_pbn_from_timing(struct pipe_ctx *pipe_ctx)
+>  {
+> -       uint32_t bpc;
+>         uint64_t kbps;
+>         struct fixed31_32 peak_kbps;
+>         uint32_t numerator;
+>         uint32_t denominator;
+>
+> -       bpc = get_color_depth(pipe_ctx->stream_res.pix_clk_params.color_depth);
+>         kbps = dc_bandwidth_in_kbps_from_timing(&pipe_ctx->stream->timing);
+>
+>         /*
+> --
+> 2.7.4
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
