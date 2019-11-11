@@ -2,186 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46AF5F7FD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE8DF7FDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbfKKT0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:26:19 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:6066 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726950AbfKKT0S (ORCPT
+        id S1727588AbfKKT05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:26:57 -0500
+Received: from gateway34.websitewelcome.com ([192.185.149.46]:43595 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726950AbfKKT05 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:26:18 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 8EWy9KoymLLNVzwsaTAtdbSWF5lmsKTAY4vbuwswWbksUIs71FZfOP+xnudc80kiE8krXHoKQJ
- irOTknxjJ7+QBxMC/6suyEamYiLBvvBWk8EwZLsZLz/Nn4vHH3Kg9xe5YbOdg+s5GG/pQT70J3
- 29nrec5Ic5A3Jce5GJxmU8Po8GjgMaPYYXOvYVr3PY6BdgNb52+MLgmCXTehqbcDb2s9OdBlHr
- dxC+DoAm4mbc2ZNC6vG963D11LXTvq7XEbCVW0RkJVAd3HDNP3hl+5HOsF9M4C+tYkwpZtjPUc
- 5Og=
-X-IronPort-AV: E=Sophos;i="5.68,293,1569308400"; 
-   d="scan'208";a="56544654"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Nov 2019 12:26:17 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 11 Nov 2019 12:26:16 -0700
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Mon, 11 Nov 2019 12:26:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fm9eOviSplmhYxp+RlyQIA1Bm4EN0rF7UTPX2O7bNRbn5qUm8ZcCXdVOvM6nxiDhs9qd8Jh3030gFWIUDL3LsPnwyC/nzppwfaY8oO1KfBKUpBCP9ZDonax/dApbVZaFDUX9vUBh8ZBHU8eJL0y6LE7gXBOyXMtisdEVsP9XX1TuuEBhkRbaWOWIYiF7/Bv0fk+7MQY7pxYVeGX98Ofe47HN2vV4fTDdNNIO+QPfOAW+jdwVMGwurwhU3jTD4P8WjawrVzZ6iMoLVlKMsuSd6REvKD5vlxX11nvhNsfeCESyhRr3uZFkjqa21SGUiFArR99aesJw/vPTbW7LU0gJkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L5+H0lxdDpsSTsnmPtFxMGlW+bDdT/vdVt7wekU+384=;
- b=eBoSyuBJDnD82jS4YEaFMPLyzkJDjPsz8bQl2kF439oCeZFy5XeuOK+Wkg5qrq2KaJnz/QaAKKPOHai8+g0LBlgmEBaKs+HVaq84i7tewvk9+l9wx9ByiynSh6gYshadpFydUgqSDFv+CDlD3f2vY1BbWxbcWeui+jzx/+7oe6D6vYnIwP7D96ySd0jr+xA6micI2ST3pr4oD5vaVs4J4HlKsTqyeDZfyqDrD0WUrXrjtPZpeozBAwNocIBY2mxiiBclz4hEZfQe3636zO8zkEWHnLqsmKcEKcHzLxAxzM+0btol76eH33fanbINWsAbvTy1Ckm7HJPOgn5Ai8R4Sg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L5+H0lxdDpsSTsnmPtFxMGlW+bDdT/vdVt7wekU+384=;
- b=ivge+mjCjFbQT4KhJydDvgkIZRQz5Vk9Dx2IWYs21X32IK0ykr5UiAqdQHT43B15jotU2LugUSgFvQ0qHTPhuEIXquLArU2CawKT0xqUBdVt12nkZcETYMSiZ2CA60adq2KgniSWWPSE3N9EHzrZC07TeuETqG35qtPGUf8xDmg=
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
- MN2PR11MB4352.namprd11.prod.outlook.com (52.135.38.94) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.22; Mon, 11 Nov 2019 19:26:14 +0000
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457]) by MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::c09c:36c8:3301:4457%5]) with mapi id 15.20.2430.027; Mon, 11 Nov 2019
- 19:26:14 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <boris.brezillon@collabora.com>, <vigneshr@ti.com>
-CC:     <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v5 0/6] mtd: spi-nor: Quad Enable and (un)lock methods
-Thread-Topic: [PATCH v5 0/6] mtd: spi-nor: Quad Enable and (un)lock methods
-Thread-Index: AQHVlUcxNfurCR7UA0az+I+u2JP03qeGYSqA
-Date:   Mon, 11 Nov 2019 19:26:14 +0000
-Message-ID: <f5b97a15-b75b-cdea-6a7e-bbd67138fe2e@microchip.com>
-References: <20191107084135.22122-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20191107084135.22122-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR09CA0147.eurprd09.prod.outlook.com
- (2603:10a6:803:12c::31) To MN2PR11MB4448.namprd11.prod.outlook.com
- (2603:10b6:208:193::29)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [5.12.60.46]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a4bfaba0-d365-4792-30e5-08d766dd0411
-x-ms-traffictypediagnostic: MN2PR11MB4352:
-x-microsoft-antispam-prvs: <MN2PR11MB43529766B0A7C8333E51F394F0740@MN2PR11MB4352.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0218A015FA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(366004)(376002)(199004)(189003)(6512007)(446003)(11346002)(26005)(186003)(66066001)(6116002)(3846002)(2906002)(52116002)(102836004)(476003)(486006)(386003)(6506007)(53546011)(71200400001)(66476007)(4326008)(6246003)(31696002)(99286004)(14454004)(71190400001)(478600001)(76176011)(2501003)(86362001)(2616005)(66946007)(110136005)(229853002)(316002)(305945005)(8676002)(31686004)(7736002)(66446008)(36756003)(6436002)(8936002)(54906003)(5660300002)(64756008)(66556008)(6486002)(14444005)(256004)(81166006)(81156014)(25786009)(414714003)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4352;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: VEngF/PehdVBf3A2orfqB2LFbg8qUg1PSAsNZExPzZc24DYVrMp53PL4lUQbD9l2fgvc1p9opJ2/GOynHG/iD37XLJXGU+aMhU6lvrWbXBEwY1U3U8OfkFUFc51upEgfYvWJMmHG5i3bjAv0bWkLrcV0XBeHUlZd+b9+8dq7UQruaCx2BJdgpn+k3wrR6OqWYiwUELN7cC5Gm2Gt1dat09NOTZQU5bMCRI4qTpFG9mubFndG3dbU+uad/0wjM299zsuFejab/Z/0iKcSp5oAQX/2wXIyPSj7t2TKtwI3MLIyP6e1HD5lzlRFP8dEursuHFFtMdnq9TcXBFQqEABnMuljbZSTj22BEOuV7irT4XxQwI/IVGwli+Fw1frnKLyj2Jc1/UUryuNwiEIQxjz1uuITaWEt7lCpGDBjc3UnK/3STQYw4UKXGS+y6irz0Bvb
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8F4F086FFDC8FF48BF4AACA022E036FA@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 11 Nov 2019 14:26:57 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 6796317AA0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 13:26:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id UFKxiGpAWBnGaUFKxirvrQ; Mon, 11 Nov 2019 13:26:55 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=j1lNzFsR5TFCQCYcMtUUHZaoihv3vYBTqK2f04Mcvn4=; b=C7bAEHOFjc6fl+7zJKVNDKwe6h
+        yDhwXQ1JmZrVgP8z9BN8/cZCrCq+sQWl0q4MPaV64jdl0tDfE7mCMl7Ao5j/OfsWpiHfkFZ0xV5kh
+        BUac57ZYnJNqyJ8ze3Xzm/KkoxZAVu/KSoPszzEsQnetd8SCKnwFD7wWsoxKmPHtlS7q/BaNiAQY6
+        +TSEZYr+TF8jcpcLo5yWhwI13h2TfDy+UAoAxayLoaXVqS+aqe7VEh1qE+/XWRQAmHqYg2HJdpKVR
+        Id9DK8eihYsgvJaFShmR70/6I9q3Zo1vshDW3m3yIu6HtHevpGrauBQH0yC38P9cQ0Oz683eVHgLF
+        jdOxSZcQ==;
+Received: from [187.192.2.30] (port=53146 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iUFKw-002JG6-Nv; Mon, 11 Nov 2019 13:26:54 -0600
+Subject: Re: [PATCH] drm/amd/display: Fix unsigned variable compared to less
+ than zero
+To:     Mikita Lipski <mlipski@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mikita Lipski <mikita.lipski@amd.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20191111172543.GA31748@embeddedor>
+ <b5b41653-3536-b0f0-2f49-2c010370ec99@amd.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <cf7d4cfe-be29-39d8-8a5e-bac217475597@embeddedor.com>
+Date:   Mon, 11 Nov 2019 13:27:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4bfaba0-d365-4792-30e5-08d766dd0411
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2019 19:26:14.2643
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L/WrYG3zyHO1htII8TUE8SMPz2NNlcPdUAUYjNmIcAXyzvQ5ZDJgYBUHEX7w4eKoA4zqUJdnpYpfwhtV7bC1mNOwr8lZUqn17SwCwvVqXj8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4352
+In-Reply-To: <b5b41653-3536-b0f0-2f49-2c010370ec99@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.2.30
+X-Source-L: No
+X-Exim-ID: 1iUFKw-002JG6-Nv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [187.192.2.30]:53146
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDExLzA3LzIwMTkgMTA6NDEgQU0sIFR1ZG9yLkFtYmFydXNAbWljcm9jaGlwLmNvbSB3
-cm90ZToNCj4gRnJvbTogVHVkb3IgQW1iYXJ1cyA8dHVkb3IuYW1iYXJ1c0BtaWNyb2NoaXAuY29t
-Pg0KPiANCj4gVGVzdGVkIG9uIHcyNXExMjhqdnEuDQo+IA0KPiBGaXhlZCB0aGUgY2xlYXJpbmcg
-b2YgUUUgYml0IG9uICh1bilsb2NrKCkgb3BlcmF0aW9ucy4gUmV3b3JrZWQgdGhlDQo+IFF1YWQg
-RW5hYmxlIG1ldGhvZHMgYW5kIHRoZSBkaXNhYmxpbmcgb2YgdGhlIGJsb2NrIHdyaXRlIHByb3Rl
-Y3Rpb24NCj4gYXQgcG93ZXItdXAuDQo+IA0KPiB2NToNCj4gLSBSZW5hbWUgYWxsIFF1YWQgRW5h
-YmxlIG1ldGhvZHMgaW4gb25lIHBhdGNoDQo+IC0gRXh0ZW5kIHRoZSBSZWFkIEJhY2sgdGVzdCB0
-byBib3RoIFNSMSBhbmQgU1IyIGluIG9uZSBwYXRjaA0KPiAtIFJlb3JkZXIgcGF0Y2hlcywgc28g
-dGhhdCB0aGUgZml4ZXMgY29tZSBvbmUgYWZ0ZXIgYW5vdGhlcg0KPiAtIENvbGxlY3QgUi1iIHRh
-Z3MuDQo+IA0KPiB2NDoNCj4gLSBVc2UgZGV2X2RiZyBpbnN0ZWQgb2YgZGV2X2VyciBmb3IgbG93
-IGxldmVsIGluZm8NCj4gLSByZXBsYWNlICImbm9yLT5ib3VuY2VidWZbMF0iIHdpdGggIm5vci0+
-Ym91bmNlYnVmIiBhbmQgIiZzcl9jclswXSIgd2l0aA0KPiAgICJzcl9jciIuIFVwZGF0ZSBhY3Jv
-c3MgYWxsIHBhdGNoZXMuDQo+IA0KPiB2Mzogc3BsaXQgcGF0Y2hlcywgdXBkYXRlIHJldGxlbiBo
-YW5kbGluZyBpbiBzc3Rfd3JpdGUuDQo+IA0KPiB2MjoNCj4gLSBJbnRyb2R1Y2Ugc3BpX25vcl93
-cml0ZV8xNmJpdF9jcl9hbmRfY2hlY2soKSBhcyBwZXIgVmlnbmVzaCdzIHN1Z2dlc3Rpb24uIFRo
-ZQ0KPiAgIENvbmZpZ3VyYXRpb24gUmVnaXN0ZXIgY29udGFpbnMgYml0cyB0aGF0IGNhbiBiZSB1
-cGRhdGVkIGluIGZ1dHVyZTogRlJFRVpFLA0KPiAgIENNUC4gUHJvdmlkZSBhIGdlbmVyaWMgbWV0
-aG9kIHRoYXQgYWxsb3dzIHVwZGF0aW5nIGFsbCBiaXRzIG9mIHRoZQ0KPiAgIENvbmZpZ3VyYXRp
-b24gUmVnaXN0ZXIuDQo+IC0gRml4IFNOT1JfRl9OT19SRUFEX0NSIGNhc2UgaW4NCj4gICAibXRk
-OiBzcGktbm9yOiBSZXdvcmsgdGhlIGRpc2FibGluZyBvZiBibG9jayB3cml0ZSBwcm90ZWN0aW9u
-Ii4gV2hlbiB0aGUgZmxhc2gNCj4gICBkb2Vzbid0IHN1cHBvcnQgdGhlIENSIFJlYWQgY29tbWFu
-ZCwgd2UgbWFrZSBhbiBhc3N1bXB0aW9uIGFib3V0IHRoZSB2YWx1ZSBvZg0KPiAgIHRoZSBRRSBi
-aXQuIEluIHNwaV9ub3JfaW5pdCgpLCBjYWxsIHNwaV9ub3JfcXVhZF9lbmFibGUoKSBmaXJzdCwg
-dGhlbg0KPiAgIHNwaV9ub3JfdW5sb2NrX2FsbCgpLCBzbyB0aGF0IGF0IHRoZSBzcGlfbm9yX3Vu
-bG9ja19hbGwoKSB0aW1lIHdlIGNhbiBiZSBzdXJlDQo+ICAgdGhlIFFFIGJpdCBoYXMgdmFsdWUg
-b25lLCBiZWNhdXNlIG9mIHRoZSBwcmV2aW91cyBjYWxsIHRvIHNwaV9ub3JfcXVhZF9lbmFibGUo
-KS4NCj4gLSBGaXggaWYgc3RhdGVtZW50IGluIHNwaV9ub3Jfd3JpdGVfc3JfYW5kX2NoZWNrKCk6
-DQo+ICAgaWYgKG5vci0+ZmxhZ3MgJiBTTk9SX0ZfSEFTXzE2QklUX1NSKQ0KPiAtIEZpeCBkb2N1
-bWVudGF0aW9uIHdhcm5pbmdzLg0KPiAtIE5ldyBwYXRjaDogIm10ZDogc3BpLW5vcjogQ2hlY2sg
-YWxsIHRoZSBiaXRzIHdyaXR0ZW4sIG5vdCBqdXN0IHRoZSBCUCBvbmVzIi4NCj4gLSBEcm9wIEds
-b2JhbCBVbmxvY2sgcGF0Y2hlcywgd2lsbCBzZW5kIHRoZW0gaW4gYSBkaWZmZXJlbnQgcGF0Y2gg
-c2V0Lg0KPiANCj4gVGhlIHBhdGNoIHNldCBjYW4gYmUgdGVzdGVkIHVzaW5nIG10ZC11dGlsczoN
-Cj4gMS8gZG8gYSByZWFkLWVyYXNlLXdyaXRlLXJlYWQtYmFjayB0ZXN0IGltbWVkaWF0ZWx5IGFm
-dGVyIGJvb3QsIHRvIGNoZWNrDQo+IHRoZSBzcGlfbm9yX3VubG9ja19hbGwoKSBtZXRob2QuIFRo
-ZSBmb2N1cyBpcyBvbiB0aGUgZXJhc2Uvd3JpdGUNCj4gbWV0aG9kcywgd2Ugd2FudCB0byBzZWUg
-aWYgdGhlIGZsYXNoIGlzIHVubG9ja2VkIGF0IHBvd2VyLXVwLg0KPiAgICAgICAgIG10ZF9kZWJ1
-ZyByZWFkIC9kZXYvbXRkLXlvdXJzIG9mZnNldCBzaXplIHJlYWQtZmlsZQ0KPiAgICAgICAgIGhl
-eGR1bXAgcmVhZC1maWxlDQo+ICAgICAgICAgbXRkX2RlYnVnIGVyYXNlIC9kZXYvbXRkLXlvdXJz
-IG9mZnNldCBzaXplDQo+ICAgICAgICAgZGQgaWY9L2Rldi91cmFuZG9tIG9mPXdyaXRlLWZpbGUg
-YnM9cGxlYXNlLWNob29zZSBjb3VudD1wbGVhc2UtY2hvb3NlDQo+ICAgICAgICAgbXRkX2RlYnVn
-IHdyaXRlIC9kZXYvbXRkLXlvdXJzIG9mZnNldCB3cml0ZS1maWxlLXNpemUgd3JpdGUtZmlsZQ0K
-PiAgICAgICAgIG10ZF9kZWJ1ZyByZWFkIC9kZXYvbXRkLXlvdXJzIG9mZnNldCB3cml0ZS1maWxl
-LXNpemUgcmVhZC1maWxlDQo+ICAgICAgICAgc2hhMXN1bSByZWFkLWZpbGUgd3JpdGUtZmlsZQ0K
-PiAyLyBsb2NrIGZsYXNoIHRoZW4gdHJ5IHRvIGVyYXNlL3dyaXRlIGl0LCB0byBzZWUgaWYgdGhl
-IGxvY2sgd29ya3MNCj4gICAgICAgICBmbGFzaF9sb2NrIC9kZXYvbXRkLXlvdXJzIG9mZnNldCBi
-bG9jay1jb3VudA0KPiAgICAgICAgIERvIHRoZSByZWFkLWVyYXNlLXdyaXRlLXJlYWQtYmFjayB0
-ZXN0IGZyb20gMS8uIFRoZSBjb250ZW50cyBvZg0KPiAgICAgICAgIGZsYXNoIHNob3VsZCBub3Qg
-Y2hhbmdlIGluIHRoZSBlcmFzZSBhbmQgd3JpdGUgc3RlcHMuDQo+IDMvIHVubG9jayBmbGFzaCBh
-bmQgZG8gdGhlIHJlYWQtZXJhc2Utd3JpdGUtcmVhZC1iYWNrIGZyb20gMS8uIFRoZSB2YWx1ZSBv
-ZiB0aGUNCj4gICAgUUVFIHNob3VsZCBub3QgY2hhbmdlIGFuZCB5b3Ugc2hvdWxkIGJlIGFibGUg
-dG8gZXJhc2UgYW5kIHdyaXRlIHRoZSBmbGFzaC4NCj4gICAgVGVzdCAxLyBzaG91bGQgYmUgc3Vj
-Y2Vzc2Z1bC4NCj4gDQo+IFR1ZG9yIEFtYmFydXMgKDYpOg0KPiAgIG10ZDogc3BpLW5vcjogRml4
-IGNsZWFyaW5nIG9mIFFFIGJpdCBvbiBsb2NrKCkvdW5sb2NrKCkNCj4gICBtdGQ6IHNwaS1ub3I6
-IFJld29yayB0aGUgZGlzYWJsaW5nIG9mIGJsb2NrIHdyaXRlIHByb3RlY3Rpb24NCj4gICBtdGQ6
-IHNwaS1ub3I6IEV4dGVuZCB0aGUgU1IgUmVhZCBCYWNrIHRlc3QNCj4gICBtdGQ6IHNwaS1ub3I6
-IFJlbmFtZSBDUl9RVUFEX0VOX1NQQU4gdG8gU1IyX1FVQURfRU5fQklUMQ0KPiAgIG10ZDogc3Bp
-LW5vcjogTWVyZ2Ugc3BhbnNpb24gUXVhZCBFbmFibGUgbWV0aG9kcw0KPiAgIG10ZDogc3BpLW5v
-cjogUmVuYW1lIFF1YWQgRW5hYmxlIG1ldGhvZHMNCj4gDQo+ICBkcml2ZXJzL210ZC9zcGktbm9y
-L3NwaS1ub3IuYyB8IDQzOCArKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0t
-LS0NCj4gIGluY2x1ZGUvbGludXgvbXRkL3NwaS1ub3IuaCAgIHwgIDEyICstDQo+ICAyIGZpbGVz
-IGNoYW5nZWQsIDI1NCBpbnNlcnRpb25zKCspLCAxOTYgZGVsZXRpb25zKC0pDQo+IA0KDQpBbWVu
-ZCBjb21taXQgZGVzY3JpcHRpb24gZm9yIHBhdGNoIDIvNiwgcy90aGUgdGhlL3RoZS4NCkFsbCBh
-cHBsaWVkIHRvIHNwaS1ub3IvbmV4dC4NCg==
+
+
+On 11/11/19 11:46, Mikita Lipski wrote:
+> 
+> Thanks for catching it!
+> 
+
+Glad to help out. :)
+
+> Reviewed-by: Mikita Lipski <mikita.lipski@amd.com>
+> 
+
+Thanks
+--
+Gustavo
+
+> 
+> On 11.11.2019 12:25, Gustavo A. R. Silva wrote:
+>> Currenly, the error check below on variable*vcpi_slots*  is always
+>> false because it is a uint64_t type variable, hence, the values
+>> this variable can hold are never less than zero:
+>>
+>> drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:
+>> 4870         if (dm_new_connector_state->vcpi_slots < 0) {
+>> 4871                 DRM_DEBUG_ATOMIC("failed finding vcpi slots: %d\n", (int)dm_new_connector_stat     e->vcpi_slots);
+>> 4872                 return dm_new_connector_state->vcpi_slots;
+>> 4873         }
+>>
+>> Fix this by making*vcpi_slots*  of int type
+>>
+>> Addresses-Coverity: 1487838 ("Unsigned compared against 0")
+>> Fixes: b4c578f08378 ("drm/amd/display: Add MST atomic routines")
+>> Signed-off-by: Gustavo A. R. Silva<gustavo@embeddedor.com>
+>> ---
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+>> index 6db07e9e33ab..a8fc90a927d6 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+>> @@ -403,7 +403,7 @@ struct dm_connector_state {
+>>       bool underscan_enable;
+>>       bool freesync_capable;
+>>       uint8_t abm_level;
+>> -    uint64_t vcpi_slots;
+>> +    int vcpi_slots;
+>>       uint64_t pbn;
+>>   };
+>>   -- 2.23.0
+> 
