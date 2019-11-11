@@ -2,77 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088B2F834A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 00:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29A36F834B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 00:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfKKXQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 18:16:13 -0500
-Received: from smtprelay0001.hostedemail.com ([216.40.44.1]:50588 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726845AbfKKXQN (ORCPT
+        id S1727041AbfKKXQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 18:16:56 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41491 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfKKXQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 18:16:13 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id DA04540E1;
-        Mon, 11 Nov 2019 23:16:11 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2198:2199:2200:2393:2551:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3868:3871:3872:4250:4321:4605:5007:6691:7901:8828:10004:10400:11026:11232:11658:11914:12050:12297:12438:12740:12760:12895:13069:13311:13357:13439:14180:14659:21080:21627:21972:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: nut53_18ddf32dd8d37
-X-Filterd-Recvd-Size: 2182
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 11 Nov 2019 23:16:10 +0000 (UTC)
-Message-ID: <c2c803570b92fc18ac62902bd99075ccc33eb5b6.camel@perches.com>
-Subject: Re: [PATCH v2 3/3] staging: wfx: replace u32 by __le32
-From:   Joe Perches <joe@perches.com>
-To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>,
-        Jules Irenge <jbi.octave@gmail.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 11 Nov 2019 15:15:54 -0800
-In-Reply-To: <3445403.d56fhTCmfW@pc-42>
-References: <20191111133055.214410-1-jbi.octave@gmail.com>
-         <20191111133055.214410-3-jbi.octave@gmail.com> <3445403.d56fhTCmfW@pc-42>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 11 Nov 2019 18:16:56 -0500
+Received: by mail-pl1-f193.google.com with SMTP id d29so8474965plj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 15:16:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=c4lpvhxVanbUmuLaCYCnS2N3Od4Bkz/gpjYlGGXEOpI=;
+        b=TpPBwhHshE/2lY2KwonEc6KRbw/6a/LvDVOs86AYmM7zwuEYDZYomb7WGVLKdzdaRL
+         LiZham1Xq33xUquLBi1xB+DExgoJvkYAKAfczS3kf8OkWUvpVwpOpBD/DP804uySzS3Z
+         6ixsx6M9+aQr3Q3TG9R2vZFPvPf3a7Da7gM5aXfRQOkyIN9gMBg8ShoNEUUNPFIIQyFM
+         UzHVjQdjAWLlIqOp0XHWRjY8WHXvTs75RrlMXbyqA9u11WGlviOZgORg4O2ozw/Y5/rI
+         Wrq/r5mQ+Vc5vepIIJPYtwBCB3aRNa9KusDT70hGoJe+6v3pCUZwihSOG5JtOm1WzNUY
+         LVIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c4lpvhxVanbUmuLaCYCnS2N3Od4Bkz/gpjYlGGXEOpI=;
+        b=Rm6dMhAhONibXBVQkQxIAFt0rbFh7eRDqhbZ93b+S6rh3AMd9cDHh7Pdlu6/eGeuZT
+         z8q0BH2JItMqA1HNge69hMtbltWKXTHFCeVxuPOhUosG6B/u3zzrLGWS6raHPQMhCaD/
+         mJv2VscrdTpLie0qfbG8Wwe6nNXHWPVSioOQLwhGMz0chL04rQfqHfcDZkA3Jl5LUrtN
+         gR94iObpDwF3+cLAutDbrGqWUSsxHEtq02cQAa2n7ulvDAT9EjxTyEJiF2mStoo7p2Iv
+         flPzGeyez66QomxQdwRgTLfHGL84ooREchO/XzG59D8jfnTKABxhga2P8EdpD4H7PvAA
+         Vr/w==
+X-Gm-Message-State: APjAAAWYGVtMp74LhroQH8TNwnsoVYANub264AO0Dmq0aIXcpgXz+PnO
+        T9zuDXovR3zf3qUYSfB7litb3w==
+X-Google-Smtp-Source: APXvYqy0ju9xUVUiWXpEs7ylar4031d6mFFBaUCCpPNPZmUihqSVxFMDYC5iIS0g8fkuZUlG5jtl8w==
+X-Received: by 2002:a17:902:6e02:: with SMTP id u2mr28700878plk.234.1573514213621;
+        Mon, 11 Nov 2019 15:16:53 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id a145sm17084624pfa.7.2019.11.11.15.16.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 15:16:52 -0800 (PST)
+Date:   Mon, 11 Nov 2019 15:16:50 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        s-anna@ti.com, Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 03/17] remoteproc/omap: Add device tree support
+Message-ID: <20191111231650.GE3108315@builder>
+References: <20191028124238.19224-1-t-kristo@ti.com>
+ <20191028124238.19224-4-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028124238.19224-4-t-kristo@ti.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-11-11 at 16:58 +0000, Jerome Pouiller wrote:
-> On Monday 11 November 2019 14:30:55 CET Jules Irenge wrote:
-> [...]
-> > -       u32   count_rts_failures;
-> > -       u32   count_ack_failures;
-> > -       u32   count_rx_multicast_frames;
-> > -       u32   count_rx_frames_success;
-> > -       u32   count_rx_cmacicv_errors;
-> > -       u32   count_rx_cmac_replays;
-> > -       u32   count_rx_mgmt_ccmp_replays;
-> [...]
-> > +       __le32   count_rts_failures;
-> > +       __le32   count_rx_multicast_frames;
-> > +       __le32   count_rx_cmacicv_errors;
-> > +       __le32   count_rx_cmac_replays;
-> > +       __le32   count_rx_mgmt_ccmp_replays;
-> > +       __le32   count_rx_beacon;
-> > +       __le32   count_miss_beacon;
-> > +       __le32   count_ack_failures;
-> > +       __le32   count_rx_frames_success;
-> >         u32   count_rx_bipmic_errors;
-> > -       u32   count_rx_beacon;
-> > -       u32   count_miss_beacon;
-> 
-> Hello Jules,
-> 
-> Your patch reorders members of the structure. It will break API with the 
-> chip.
+On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
+> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+[..]
+> +static int omap_rproc_get_boot_data(struct platform_device *pdev,
+> +				    struct rproc *rproc)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct omap_rproc *oproc = rproc->priv;
+> +	int ret;
+> +
+> +	if (!of_device_is_compatible(np, "ti,omap4-dsp") &&
+> +	    !of_device_is_compatible(np, "ti,omap5-dsp"))
+> +		return 0;
 
-And if the hardware really is le, then almost certainly
-_all_ the members of the struct should be __le32
+I think it would be cleaner if you added a "has_bootreg" bool to your
+omap_rproc_dev_data, do of_device_get_match_data() in omap_rproc_probe()
+and pass that here.
 
+> +
+> +	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
+> +					GFP_KERNEL);
+> +	if (!oproc->boot_data)
+> +		return -ENOMEM;
+> +
+> +	if (!of_property_read_bool(np, "syscon-bootreg")) {
+> +		dev_err(&pdev->dev, "syscon-bootreg property is missing\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	oproc->boot_data->syscon =
+> +			syscon_regmap_lookup_by_phandle(np, "syscon-bootreg");
+
+You updated the dt binding document, but this needs to be updated as
+well.
+
+Regards,
+Bjorn
