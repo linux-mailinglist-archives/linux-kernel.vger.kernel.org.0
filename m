@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 896F1F7AE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3035F7D3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:54:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfKKSa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:30:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46696 "EHLO mail.kernel.org"
+        id S1729991AbfKKSyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:54:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbfKKSaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:30:24 -0500
+        id S1730587AbfKKSys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:54:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3830214E0;
-        Mon, 11 Nov 2019 18:30:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A638C204EC;
+        Mon, 11 Nov 2019 18:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497023;
-        bh=27fDGEpqKQPn9KccCyYX91hENaUtYZICVPP1diLkpYY=;
+        s=default; t=1573498487;
+        bh=jSKxf7RCpTSWkKvjcXzpxBPA8OR53DXQcNcN28NHpSE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L7p5J0Fj/7k2Oghm19t6EE73CML9Q3zXu8heMAAKC0foNIF7522AjHd6pXLg1TT4m
-         eWD9Z56DBdrKglZjPsH/kWFugFX2nu7fkcJRkqJZWiYroRse2XWKOhL0DjUqvxc5U5
-         8477m4oZNSqDI1+vJ79eSg0WYHO7Bv193JLJt4as=
+        b=C3VR0mTDwUwT/zxiYqR8U9Ss0UEO3HRKcJa44TtyjnU0fLnCxher6Sez8bH2ydYs7
+         Lu+W6gaImAy5YgQwV+nG1aJhds6p0KV8MChiKMnFYPm1CrCOadgwMdJk66NXXm6GYY
+         F2J8yvsKu9rmRW+7LxP0cwDMXfcBy85x/F8uFx9U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stephane Grosjean <s.grosjean@peak-system.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 20/43] can: peak_usb: fix a potential out-of-sync while decoding packets
-Date:   Mon, 11 Nov 2019 19:28:34 +0100
-Message-Id: <20191111181311.415039399@linuxfoundation.org>
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 133/193] bonding: use dynamic lockdep key instead of subclass
+Date:   Mon, 11 Nov 2019 19:28:35 +0100
+Message-Id: <20191111181510.984303579@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181246.772983347@linuxfoundation.org>
-References: <20191111181246.772983347@linuxfoundation.org>
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,80 +44,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Grosjean <s.grosjean@peak-system.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-commit de280f403f2996679e2607384980703710576fed upstream.
+[ Upstream commit 089bca2caed0d0dea7da235ce1fe245808f5ec02 ]
 
-When decoding a buffer received from PCAN-USB, the first timestamp read in
-a packet is a 16-bit coded time base, and the next ones are an 8-bit
-offset to this base, regardless of the type of packet read.
+All bonding device has same lockdep key and subclass is initialized with
+nest_level.
+But actual nest_level value can be changed when a lower device is attached.
+And at this moment, the subclass should be updated but it seems to be
+unsafe.
+So this patch makes bonding use dynamic lockdep key instead of the
+subclass.
 
-This patch corrects a potential loss of synchronization by using a
-timestamp index read from the buffer, rather than an index of received
-data packets, to determine on the sizeof the timestamp to be read from the
-packet being decoded.
+Test commands:
+    ip link add bond0 type bond
 
-Signed-off-by: Stephane Grosjean <s.grosjean@peak-system.com>
-Fixes: 46be265d3388 ("can: usb: PEAK-System Technik PCAN-USB specific part")
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    for i in {1..5}
+    do
+	    let A=$i-1
+	    ip link add bond$i type bond
+	    ip link set bond$i master bond$A
+    done
+    ip link set bond5 master bond0
 
+Splat looks like:
+[  307.992912] WARNING: possible recursive locking detected
+[  307.993656] 5.4.0-rc3+ #96 Tainted: G        W
+[  307.994367] --------------------------------------------
+[  307.995092] ip/761 is trying to acquire lock:
+[  307.995710] ffff8880513aac60 (&(&bond->stats_lock)->rlock#2/2){+.+.}, at: bond_get_stats+0xb8/0x500 [bonding]
+[  307.997045]
+	       but task is already holding lock:
+[  307.997923] ffff88805fcbac60 (&(&bond->stats_lock)->rlock#2/2){+.+.}, at: bond_get_stats+0xb8/0x500 [bonding]
+[  307.999215]
+	       other info that might help us debug this:
+[  308.000251]  Possible unsafe locking scenario:
+
+[  308.001137]        CPU0
+[  308.001533]        ----
+[  308.001915]   lock(&(&bond->stats_lock)->rlock#2/2);
+[  308.002609]   lock(&(&bond->stats_lock)->rlock#2/2);
+[  308.003302]
+		*** DEADLOCK ***
+
+[  308.004310]  May be due to missing lock nesting notation
+
+[  308.005319] 3 locks held by ip/761:
+[  308.005830]  #0: ffffffff9fcc42b0 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x466/0x8a0
+[  308.006894]  #1: ffff88805fcbac60 (&(&bond->stats_lock)->rlock#2/2){+.+.}, at: bond_get_stats+0xb8/0x500 [bonding]
+[  308.008243]  #2: ffffffff9f9219c0 (rcu_read_lock){....}, at: bond_get_stats+0x9f/0x500 [bonding]
+[  308.009422]
+	       stack backtrace:
+[  308.010124] CPU: 0 PID: 761 Comm: ip Tainted: G        W         5.4.0-rc3+ #96
+[  308.011097] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  308.012179] Call Trace:
+[  308.012601]  dump_stack+0x7c/0xbb
+[  308.013089]  __lock_acquire+0x269d/0x3de0
+[  308.013669]  ? register_lock_class+0x14d0/0x14d0
+[  308.014318]  lock_acquire+0x164/0x3b0
+[  308.014858]  ? bond_get_stats+0xb8/0x500 [bonding]
+[  308.015520]  _raw_spin_lock_nested+0x2e/0x60
+[  308.016129]  ? bond_get_stats+0xb8/0x500 [bonding]
+[  308.017215]  bond_get_stats+0xb8/0x500 [bonding]
+[  308.018454]  ? bond_arp_rcv+0xf10/0xf10 [bonding]
+[  308.019710]  ? rcu_read_lock_held+0x90/0xa0
+[  308.020605]  ? rcu_read_lock_sched_held+0xc0/0xc0
+[  308.021286]  ? bond_get_stats+0x9f/0x500 [bonding]
+[  308.021953]  dev_get_stats+0x1ec/0x270
+[  308.022508]  bond_get_stats+0x1d1/0x500 [bonding]
+
+Fixes: d3fff6c443fe ("net: add netdev_lockdep_set_classes() helper")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/usb/peak_usb/pcan_usb.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/net/bonding/bond_main.c | 10 +++++++---
+ include/net/bonding.h           |  1 +
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/net/can/usb/peak_usb/pcan_usb.c
-+++ b/drivers/net/can/usb/peak_usb/pcan_usb.c
-@@ -108,7 +108,7 @@ struct pcan_usb_msg_context {
- 	u8 *end;
- 	u8 rec_cnt;
- 	u8 rec_idx;
--	u8 rec_data_idx;
-+	u8 rec_ts_idx;
- 	struct net_device *netdev;
- 	struct pcan_usb *pdev;
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index 142c5126da759..c3df99f8c3835 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -3459,7 +3459,7 @@ static void bond_get_stats(struct net_device *bond_dev,
+ 	struct list_head *iter;
+ 	struct slave *slave;
+ 
+-	spin_lock_nested(&bond->stats_lock, bond_get_nest_level(bond_dev));
++	spin_lock(&bond->stats_lock);
+ 	memcpy(stats, &bond->bond_stats, sizeof(*stats));
+ 
+ 	rcu_read_lock();
+@@ -4297,8 +4297,6 @@ void bond_setup(struct net_device *bond_dev)
+ {
+ 	struct bonding *bond = netdev_priv(bond_dev);
+ 
+-	spin_lock_init(&bond->mode_lock);
+-	spin_lock_init(&bond->stats_lock);
+ 	bond->params = bonding_defaults;
+ 
+ 	/* Initialize pointers */
+@@ -4367,6 +4365,7 @@ static void bond_uninit(struct net_device *bond_dev)
+ 
+ 	list_del(&bond->bond_list);
+ 
++	lockdep_unregister_key(&bond->stats_lock_key);
+ 	bond_debug_unregister(bond);
+ }
+ 
+@@ -4773,6 +4772,11 @@ static int bond_init(struct net_device *bond_dev)
+ 	bond->nest_level = SINGLE_DEPTH_NESTING;
+ 	netdev_lockdep_set_classes(bond_dev);
+ 
++	spin_lock_init(&bond->mode_lock);
++	spin_lock_init(&bond->stats_lock);
++	lockdep_register_key(&bond->stats_lock_key);
++	lockdep_set_class(&bond->stats_lock, &bond->stats_lock_key);
++
+ 	list_add_tail(&bond->bond_list, &bn->dev_list);
+ 
+ 	bond_prepare_sysfs_group(bond);
+diff --git a/include/net/bonding.h b/include/net/bonding.h
+index d416af72404b5..be404b272d6b1 100644
+--- a/include/net/bonding.h
++++ b/include/net/bonding.h
+@@ -238,6 +238,7 @@ struct bonding {
+ 	struct	 dentry *debug_dir;
+ #endif /* CONFIG_DEBUG_FS */
+ 	struct rtnl_link_stats64 bond_stats;
++	struct lock_class_key stats_lock_key;
  };
-@@ -552,10 +552,15 @@ static int pcan_usb_decode_status(struct
- 	mc->ptr += PCAN_USB_CMD_ARGS;
  
- 	if (status_len & PCAN_USB_STATUSLEN_TIMESTAMP) {
--		int err = pcan_usb_decode_ts(mc, !mc->rec_idx);
-+		int err = pcan_usb_decode_ts(mc, !mc->rec_ts_idx);
- 
- 		if (err)
- 			return err;
-+
-+		/* Next packet in the buffer will have a timestamp on a single
-+		 * byte
-+		 */
-+		mc->rec_ts_idx++;
- 	}
- 
- 	switch (f) {
-@@ -638,10 +643,13 @@ static int pcan_usb_decode_data(struct p
- 
- 	cf->can_dlc = get_can_dlc(rec_len);
- 
--	/* first data packet timestamp is a word */
--	if (pcan_usb_decode_ts(mc, !mc->rec_data_idx))
-+	/* Only first packet timestamp is a word */
-+	if (pcan_usb_decode_ts(mc, !mc->rec_ts_idx))
- 		goto decode_failed;
- 
-+	/* Next packet in the buffer will have a timestamp on a single byte */
-+	mc->rec_ts_idx++;
-+
- 	/* read data */
- 	memset(cf->data, 0x0, sizeof(cf->data));
- 	if (status_len & PCAN_USB_STATUSLEN_RTR) {
-@@ -695,7 +703,6 @@ static int pcan_usb_decode_msg(struct pe
- 		/* handle normal can frames here */
- 		} else {
- 			err = pcan_usb_decode_data(&mc, sl);
--			mc.rec_data_idx++;
- 		}
- 	}
- 
+ #define bond_slave_get_rcu(dev) \
+-- 
+2.20.1
+
 
 
