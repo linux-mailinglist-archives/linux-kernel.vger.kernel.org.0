@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5FC8F7B8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F854F7B1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 19:34:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbfKKShR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 13:37:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
+        id S1727140AbfKKScl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 13:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727812AbfKKShI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 13:37:08 -0500
+        id S1727975AbfKKScf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 13:32:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A3C321925;
-        Mon, 11 Nov 2019 18:37:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4E7C214E0;
+        Mon, 11 Nov 2019 18:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573497427;
-        bh=71lSMN3s+ULUntBXqkytyqM8Ok4PqSN8px6hPOw24DU=;
+        s=default; t=1573497155;
+        bh=Wr+QOl9fx70tvSuUnMOSAVArjRVbhH+B/hgCt7RzL2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CM5fV89mreQq2xc9AU4Lz36DfNmJlv4JxfvOYkRKXQZRO/dYylR+svrDt2DTkUMNV
-         E6odhEoY6sdSKjjyeVTa85mJ7pqW97fPXVtxlvjRmm+bmDGMCmPzlCH75e1YF4THbY
-         DaLAI4MNInafVtxZ6qWR9/KbrFWhCI5XweiRsWfw=
+        b=fZcR5idYUcZ/FziZt66TbLA80eSmJ39O7Yxh4GUUgO/l98PZW9qkJBHT56u+5xdfa
+         QtAd4gE1rNX8n2YxS8OYu8FN47572VMf4fySgcf/jBISLPFpkP5FR1yQy86YRNidU4
+         +noJ78HRmbGhL/e165mznBgVFAjMM+e5bvetsMMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 4.14 051/105] misc: pci_endpoint_test: Prevent some integer overflows
-Date:   Mon, 11 Nov 2019 19:28:21 +0100
-Message-Id: <20191111181442.731528689@linuxfoundation.org>
+        stable@vger.kernel.org, Bernd Krumboeck <b.krumboeck@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Johan Hovold <johan@kernel.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.9 22/65] can: usb_8dev: fix use-after-free on disconnect
+Date:   Mon, 11 Nov 2019 19:28:22 +0100
+Message-Id: <20191111181345.056368548@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191111181421.390326245@linuxfoundation.org>
-References: <20191111181421.390326245@linuxfoundation.org>
+In-Reply-To: <20191111181331.917659011@linuxfoundation.org>
+References: <20191111181331.917659011@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 378f79cab12b669928f3a4037f023837ead2ce0c upstream
+commit 3759739426186a924675651b388d1c3963c5710e upstream.
 
-"size + max" can have an arithmetic overflow when we're allocating:
+The driver was accessing its driver data after having freed it.
 
-	orig_src_addr = dma_alloc_coherent(dev, size + alignment, ...
-
-I've added a few checks to prevent that.
-
-Fixes: 13107c60681f ("misc: pci_endpoint_test: Add support to provide aligned buffer addresses")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 0024d8ad1639 ("can: usb_8dev: Add support for USB2CAN interface from 8 devices")
+Cc: stable <stable@vger.kernel.org>     # 3.9
+Cc: Bernd Krumboeck <b.krumboeck@gmail.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/misc/pci_endpoint_test.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/can/usb/usb_8dev.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -226,6 +226,9 @@ static bool pci_endpoint_test_copy(struc
- 	u32 src_crc32;
- 	u32 dst_crc32;
+--- a/drivers/net/can/usb/usb_8dev.c
++++ b/drivers/net/can/usb/usb_8dev.c
+@@ -1007,9 +1007,8 @@ static void usb_8dev_disconnect(struct u
+ 		netdev_info(priv->netdev, "device disconnected\n");
  
-+	if (size > SIZE_MAX - alignment)
-+		goto err;
-+
- 	orig_src_addr = dma_alloc_coherent(dev, size + alignment,
- 					   &orig_src_phys_addr, GFP_KERNEL);
- 	if (!orig_src_addr) {
-@@ -311,6 +314,9 @@ static bool pci_endpoint_test_write(stru
- 	size_t alignment = test->alignment;
- 	u32 crc32;
+ 		unregister_netdev(priv->netdev);
+-		free_candev(priv->netdev);
+-
+ 		unlink_all_urbs(priv);
++		free_candev(priv->netdev);
+ 	}
  
-+	if (size > SIZE_MAX - alignment)
-+		goto err;
-+
- 	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
- 				       GFP_KERNEL);
- 	if (!orig_addr) {
-@@ -369,6 +375,9 @@ static bool pci_endpoint_test_read(struc
- 	size_t alignment = test->alignment;
- 	u32 crc32;
- 
-+	if (size > SIZE_MAX - alignment)
-+		goto err;
-+
- 	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
- 				       GFP_KERNEL);
- 	if (!orig_addr) {
+ }
 
 
