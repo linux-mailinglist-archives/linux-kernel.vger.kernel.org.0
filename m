@@ -2,108 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDB0F7FA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A615F7FAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 20:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfKKTPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 14:15:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27637 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726949AbfKKTPb (ORCPT
+        id S1727406AbfKKTSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 14:18:33 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:55351 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbfKKTSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:15:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573499730;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=MXbL31P0IYDtqcq6qHdukj+j63qKz90Nd8tCQFpdhYo=;
-        b=acgerPF5RkzfENb3GI1cQze41lalopINVAf2FR8a19TcPpYcTGdEWaCCOK3880LKpnGZlY
-        OsbjR6Ur9w1H7e+vFL1LoDtVdozenGWu7y7yXYk39zC21EkFX4unPSPItBt+BPaAH94Ky+
-        3dZgrmcsp7J1khcBJc1UwI2fy2VSSco=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-71-iJAPnOwNNAOn_9Fnph2LcQ-1; Mon, 11 Nov 2019 14:15:29 -0500
-Received: by mail-wr1-f71.google.com with SMTP id q12so2666044wrr.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 11:15:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MXbL31P0IYDtqcq6qHdukj+j63qKz90Nd8tCQFpdhYo=;
-        b=izG0au6+kDJWeLDHMo1JgcKUzY2XhVnSSMBOL4n80bGqlSn3OrvyRBmV7bjzKK9q7p
-         aM1fSnQbjMLqzP0Q+O5M69JJ80efbNC6sRVAPjfLmORMGCR7xSIFVPNKFkYkn+eqTU4V
-         76TIHrK3jCuBCRpS4Cm7xJ1PNz6D0GHrF3LxvO0f0iPi3UOzWg9flf5jKtrLAcd/ebl/
-         zNyCMEmxIStOJKbONPTHo+LNib9HTjX+y+5admR2TFDP4Zx39V4iG3JrCQG7X2k4zX4x
-         9REJdTxPajVPmU2EV1F2cG4FNllmWGE3FtDZwDmrVrYwa7VyPsOEyGK9tdYyz+o+6IRO
-         BxCA==
-X-Gm-Message-State: APjAAAWxyzyUVNByuwAHZ0ZO3Z2tvZYg8FdVbRqREWD2hZKLLpQ/c1DD
-        0S8eCrkYOJ0Qnm7blj1i0NEwrCICz1CcuiVt2aAb1Tdgh4IDSFMjOp3hUG19cUk6Um7kaCXA9qB
-        J71Z3XrBJrw9FnERkOvaYflk2
-X-Received: by 2002:adf:9786:: with SMTP id s6mr16010293wrb.188.1573499727513;
-        Mon, 11 Nov 2019 11:15:27 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwMA0iXMYBtSAK6xNIx73LEz/q0H0IE8ruho9T5MZSF3Oq1lrSQVESW1HPGLguBk1ORuT4PRw==
-X-Received: by 2002:adf:9786:: with SMTP id s6mr16010258wrb.188.1573499726976;
-        Mon, 11 Nov 2019 11:15:26 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:8c9d:1a6f:4730:367c? ([2001:b07:6468:f312:8c9d:1a6f:4730:367c])
-        by smtp.gmail.com with ESMTPSA id b17sm17965088wru.36.2019.11.11.11.15.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2019 11:15:26 -0800 (PST)
-Subject: Re: [PATCH 1/2] KVM: MMU: Do not treat ZONE_DEVICE pages as being
- reserved
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        David Hildenbrand <david@redhat.com>
-References: <1cf71906-ba99-e637-650f-fc08ac4f3d5f@redhat.com>
- <CAPcyv4hMOxPDKAZtTvWKEMPBwE_kPrKPB_JxE2YfV5EKkKj_dQ@mail.gmail.com>
- <20191106233913.GC21617@linux.intel.com>
- <CAPcyv4jysxEu54XK2kUYnvTqUL7zf2fJvv7jWRR=P4Shy+3bOQ@mail.gmail.com>
- <CAPcyv4i3M18V9Gmx3x7Ad12VjXbq94NsaUG9o71j59mG9-6H9Q@mail.gmail.com>
- <0db7c328-1543-55db-bc02-c589deb3db22@redhat.com>
- <CAPcyv4gMu547patcROaqBqbwxut5au-WyE_M=XsKxyCLbLXHTg@mail.gmail.com>
- <20191107155846.GA7760@linux.intel.com>
- <20191109014323.GB8254@linux.intel.com>
- <CAPcyv4hAY_OfExNP+_067Syh9kZAapppNwKZemVROfxgbDLLYQ@mail.gmail.com>
- <20191111182750.GE11805@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <707ce7d4-7149-f4c4-c150-801962a3197d@redhat.com>
-Date:   Mon, 11 Nov 2019 20:15:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 11 Nov 2019 14:18:32 -0500
+Received: from mail-qt1-f171.google.com ([209.85.160.171]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M1pk0-1iS3Li26zw-002Fgs; Mon, 11 Nov 2019 20:18:30 +0100
+Received: by mail-qt1-f171.google.com with SMTP id o3so16843234qtj.8;
+        Mon, 11 Nov 2019 11:18:30 -0800 (PST)
+X-Gm-Message-State: APjAAAVTJORSwpc1e4OKZwFVLchsIdcNuDMfZTuGgefWoOz1AQONTcdM
+        vFBrOy04wM36dn+hNS7eofp3pE9aM3Bbwtv6zUk=
+X-Google-Smtp-Source: APXvYqwMVw3H+iof+ix+/L2TJ9lLRKjD4R0tC3c40dtcOhrtVO3sEPmg679ulBD5HjGCDawg+phWJyVcA3g8siZqOAA=
+X-Received: by 2002:ac8:18eb:: with SMTP id o40mr27497636qtk.304.1573499909109;
+ Mon, 11 Nov 2019 11:18:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191111182750.GE11805@linux.intel.com>
-Content-Language: en-US
-X-MC-Unique: iJAPnOwNNAOn_9Fnph2LcQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+References: <20191108203435.112759-1-arnd@arndb.de> <20191108203435.112759-9-arnd@arndb.de>
+ <20191111182828.GC57214@dtor-ws>
+In-Reply-To: <20191111182828.GC57214@dtor-ws>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 11 Nov 2019 20:18:12 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1coj4GpwcCgL0rEvZKb4OvktopjRETCNWEwfaLxgbcHQ@mail.gmail.com>
+Message-ID: <CAK8P3a1coj4GpwcCgL0rEvZKb4OvktopjRETCNWEwfaLxgbcHQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] Input: input_event: fix struct padding on sparc64
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:TxRoHKMo2qW71QlQNSP/PK/SfamwG+mthBc1VrRvIyixftshMpd
+ 5TArJhIk165GPHIEthUQe/I6ZVXC2pyru/7/ZCaj4T6C8Tso3ylqWcuBxUt5DBM3HVRp7Q1
+ wWXAIq1X6PPMliWWQuQP3sipuLlUx6HgowiHw95uAJMAnGkjHfEGQ+aRBhmcIBwgsWX1EUq
+ l/SJ5szI7aA/nsoCH3+pg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:P3jbIN4wk2o=:yu62QjFqdHZLVZCYL1aChf
+ ApgvGBT3NMq6uEL30XfY8BMPTfiHB4RibqozDfMc6OldJ3HHvi6o3y52nKaeq05xNVMWZtBzH
+ P4uhlbYHUn2VlPAsz4Hd2rnjY5/5L+V6gCrwAVFkGz7RSnZbUa7wxOQD1TXFindLQIliJSKVF
+ EkFaZL16HUmpNmkCmgs6PbYPCSMQUO1UGyLz8ziKXdVnGiEPJASMVBa4VgEjMbEbrB8J3el+N
+ yEmQBgcfnw9dG9p961GoCnZOw+oWlg9tZIqYN8ECEsRmvyu8jNXnomPKIZQiLaPMPqFQw4jGG
+ ZC72w4cqrGUuSNB9FnBCW1NYzrvluthYrCiaMK9HyYOphY1AubKDc04t6TBq1tQdsm8Stt3s1
+ aF6KuW+9QwEEYkOLYEUXohjz5J3JboL/4G3NORQJ0wzlf+tTCAWZtBgPmhEhxRBSw4Nbx/xAj
+ cKHdqOXycVZUsK6uWhiYSZo1xh6uE+UbmBWfrF+4jFOK/inrdRdb1+h4O0xeO9j4F+whhywIe
+ CphyX8fq0L2zGV0wmQqbcNBmioMV2pqA4DrNTKryVam1atxJtlSG9aPMz9+DaORDytsjz20yJ
+ eb3HK3Qgd/Ey8HCyxYsL7+1KPyRZM7xkp7CCfELVtu/v7ka6sX7FDwyInq+/xv/+i51ZZvGpa
+ MCnNy80w6nTjDzC85Mqcbl6SaE6ND9Qv09JBT8wjN7JfA1E5NFMd3/00321wc0UaMo58KSjgh
+ mN+wvqUjq5aeJtXO7uowLKlSFrrEq+PCl5BjAUzmLHczeFx+jvAB94wSjoYqa7OA3UZDLZdNk
+ 1546pWVrmvrG0ilFQkKxrdty9y6lUa3+/UzD96ftz0XY8L0aIUmOCbQsuQwhHJmUunzjTJpzY
+ 8vM9nsijd8B+Fa4LaudA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/19 19:27, Sean Christopherson wrote:
->> Thanks for this clarification. I do want to put out though that
->> ZONE_DEVICE pages go idle, they don't get freed. As long as KVM drops
->> its usage on invalidate it's perfectly fine for KVM to operate on idle
->> ZONE_DEVICE pages. The common case is that ZONE_DEVICE pages are
->> accessed and mapped while idle. Only direct-I/O temporarily marks them
->> busy to synchronize with invalidate. KVM obviates that need by
->> coordinating with mmu-notifiers instead.
-> Only the KVM MMU, e.g. page fault handler, coordinates via mmu_notifier,
-> the kvm_vcpu_map() case would continue using pages across an invalidate.
+On Mon, Nov 11, 2019 at 7:28 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Yes, and it gets/puts the page correctly.
+> I do not like ifdefs here, do you think we could write:
+>
+>                 client->buffer[client->tail] = (struct input_event) {
+>                         .input_event_sec = event->input_event_sec,
+>                         .input_event_usec = event->input_event_usec,
+>                         .type = EV_SYN,
+>                         .code = SYN_DROPPED,
+>                 };
+>
+> to ensure all padded fields are initialized? This is not hot path as we
+> do not expect queue to overfill too often.
 
-Paolo
+Good idea, changed both instances now. Thanks for taking a look!
 
+      Arnd
