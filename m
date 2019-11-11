@@ -2,69 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D9EF82E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:30:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B578F8301
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 23:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfKKW35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 17:29:57 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:50332 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfKKW35 (ORCPT
+        id S1727607AbfKKWgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 17:36:38 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:60000 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbfKKWfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 17:29:57 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 903CE20B7192;
-        Mon, 11 Nov 2019 14:29:56 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 903CE20B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573511396;
-        bh=Lx7iits91CkNuBqZLd20zMr4uyVVjAzL/Xch/h41f5Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nWiO84SaocrRuLAxT31uph/FEZblHnCD1LrQAYf0Tp8VnZJqcP2IoqCFkHPAdKThU
-         PcbK2c9WbUxPfU+KRBQvDod7ake+pF2Aa43G0HOMQX7FhJgWfjNmiq+IymA9/gj+Rz
-         bn+ePz+A16Hl+1yd1mENR6WKby+RQmdceiaZ6DnM=
-Subject: Re: [PATCH] ima: avoid appraise error for hash calc interrupt
-To:     Patrick Callaghan <patrickc@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>
-References: <20191111192348.30535-1-patrickc@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <e3f520ce-a290-206d-8097-b852123357ca@linux.microsoft.com>
-Date:   Mon, 11 Nov 2019 14:29:52 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191111192348.30535-1-patrickc@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Nov 2019 17:35:45 -0500
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iUIHb-0000tR-Hv; Mon, 11 Nov 2019 23:35:39 +0100
+Message-Id: <20191111220314.519933535@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Mon, 11 Nov 2019 23:03:14 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Linus Torvalds <torvalds@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: [patch V2 00/16] x86/iopl: Prevent user space from using CLI/STI with
+ iopl(3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/19 11:23 AM, Patrick Callaghan wrote:
+This is the second version of the attempt to confine the unwanted side
+effects of iopl(). The first version of this series can be found here:
 
-> -		if (rbuf_len == 0)
-> +		if (rbuf_len == 0) {	/* unexpected EOF */
-> +			rc = -EINVAL;
->   			break;
-> +		}
->   		offset += rbuf_len;
+   https://lore.kernel.org/r/20191106193459.581614484@linutronix.de
 
-Should there be an additional check to validate that (offset + rbuf_len) 
-is less than i_size before calling cypto_shash_update (since rbuf_len is 
-one of the parameters for this call)?
+The V1 cover letter also contains a longer variant of the
+background. Summary:
 
-                if ((rbuf_len == 0) || (offset + rbuf_len >= i_size)) {
-                         rc = -EINVAL;
-                         break;
-                }
-                offset += rbuf_len;
+iopl(level = 3) enables aside of access to all 65536 I/O ports also the
+usage of CLI/STI in user space.
 
->   	       rc = crypto_shash_update(shash, rbuf, rbuf_len);
+Disabling interrupts in user space can lead to system lockups and breaks
+assumptions in the kernel that userspace always runs with interrupts
+enabled.
 
-  -lakshmi
+iopl() is often preferred over ioperm() as it avoids the overhead of
+copying the tasks I/O bitmap to the TSS bitmap on context switch. This
+overhead can be avoided by providing a all zeroes bitmap in the TSS and
+switching the TSS bitmap offset to this permit all IO bitmap. It's
+marginally slower than iopl() which is a one time setup, but prevents the
+usage of CLI/STI in user space.
+
+The changes vs. V1:
+
+    - Fix the reported fallout on 32bit (0-day/Ingo)
+
+    - Implement a sequence count based conditional update (Linus)
+
+    - Drop the copy optimization
+
+    - Move the bitmap copying out of the context switch into the exit to
+      user mode machinery. The context switch merely invalidates the TSS
+      bitmap offset when a task using an I/O bitmap gets scheduled out.
+
+    - Move all bitmap information into a data structure to avoid adding
+      more fields to thread_struct.
+
+    - Add a refcount so the potentially pointless duplication of the bitmap
+      at fork can be avoided. 
+
+    - Better sharing of update functions (Andy)
+
+    - More updates to self tests to verify the share/unshare mechanism and
+      the restore of an I/O bitmap when iopl() permissions are dropped.
+
+    - Pick up a few acked/reviewed-by tags as applicable
+
+The series is also available from git:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/iopl
+
+Thanks,
+
+	tglx
+---
+ arch/x86/Kconfig                        |   26 ++++
+ arch/x86/entry/common.c                 |    4 
+ arch/x86/include/asm/iobitmap.h         |   25 ++++
+ arch/x86/include/asm/paravirt.h         |    4 
+ arch/x86/include/asm/paravirt_types.h   |    2 
+ arch/x86/include/asm/pgtable_32_types.h |    2 
+ arch/x86/include/asm/processor.h        |   97 +++++++++-------
+ arch/x86/include/asm/ptrace.h           |    6 
+ arch/x86/include/asm/switch_to.h        |   10 +
+ arch/x86/include/asm/xen/hypervisor.h   |    2 
+ arch/x86/kernel/cpu/common.c            |  175 +++++++++++-----------------
+ arch/x86/kernel/doublefault.c           |    2 
+ arch/x86/kernel/ioport.c                |  176 ++++++++++++++++++-----------
+ arch/x86/kernel/paravirt.c              |    2 
+ arch/x86/kernel/process.c               |  194 +++++++++++++++++++++++++-------
+ arch/x86/kernel/process_32.c            |   77 ------------
+ arch/x86/kernel/process_64.c            |   86 --------------
+ arch/x86/kernel/ptrace.c                |   12 +
+ arch/x86/kvm/vmx/vmx.c                  |    8 -
+ arch/x86/mm/cpu_entry_area.c            |    8 +
+ arch/x86/xen/enlighten_pv.c             |   10 -
+ tools/testing/selftests/x86/ioperm.c    |   16 ++
+ tools/testing/selftests/x86/iopl.c      |  129 +++++++++++++++++++--
+ 23 files changed, 614 insertions(+), 459 deletions(-)
+
 
