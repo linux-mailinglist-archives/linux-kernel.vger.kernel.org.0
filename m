@@ -2,116 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D2BF6DD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 726FDF6E0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 06:26:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfKKFWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 00:22:44 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47067 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfKKFWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 00:22:43 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r18so8661808pgu.13
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2019 21:22:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Wn68B/9oTQwMIS3XezYv2F3iHvuzpiojYbkvmpMuIps=;
-        b=OrmjFwvr4biPvwrdT3kD+iqfanRLDTEy+qgIcQW0X6kulRevk5kmkeJoBypeigKALq
-         y1VCFkDcyIPv4H7dQXHNCIH2F7D2WGzTza4DB20+hjf009mzaWm5pxLMrJebIetlfMSZ
-         2oUcqsxGhobF3XOoVhw19OuiCTP4kYvTu1ZAFc7eB2hdEWHJ5w+hJh+iQikAQBdwxxjo
-         U1dRZ6sY7pJe3GjME9fLguElpzgwwviwPcx5r8DfsHPwdMhFgUsxlrhfDqlwfkrQ/CS3
-         rfMgtYMURSjBQWPkZa7Rmzw60qlbIwTg8dsKFnsLp+cSwUd2nugWvWycGEjCHK3+V+tE
-         HR5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Wn68B/9oTQwMIS3XezYv2F3iHvuzpiojYbkvmpMuIps=;
-        b=VTU7xYh/Xg+/UNwCbuMcEcyiVTLVMKFudzIGXz4klbYFHnl3lNp2zxGTBZwYFCOZTx
-         huwWrgUV01FbA9Q8C3UVHCROkdOQxrCu2dELcTirYGF7aLdnEipo3Il7izN9FDlKQHsI
-         KCxAfoTeaVD9Y2fu9x6RqOvUHN9yaLFTvZDARXS7RFX7KWc+U0bXMO/vp5EEJGj+szYE
-         9wMyOwVEZzwsqHcvKmtnkFP8HuxldL1kiy+brgwdBw2W41SdrAad9a8kiBS+wtp1TzYO
-         UjeXHbIgfr6gjYfr/IM4orw1cscU/nQ8m9jyET17KKOqhNEt9MeXZRad48cGsEySn4ok
-         YaBw==
-X-Gm-Message-State: APjAAAXxg8aLU4RI/tkH2o74FvhtuNtbcSQDTkRkSax+4oYX2SQ+ewdM
-        jeabmVeQmB0wp3NuEilU3DT2
-X-Google-Smtp-Source: APXvYqwyFuqsrSanrsgjZWam9y+4GIL/Fjuql1Gjr5R6qpTb9d+I0He5/Y2DwCn4UgfPYQhDRvm/pA==
-X-Received: by 2002:a17:90a:741:: with SMTP id s1mr32134482pje.107.1573449762760;
-        Sun, 10 Nov 2019 21:22:42 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:6309:fffb:304b:b40d:24e5:f9a8])
-        by smtp.gmail.com with ESMTPSA id x25sm13239593pfq.73.2019.11.10.21.22.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Nov 2019 21:22:41 -0800 (PST)
-Date:   Mon, 11 Nov 2019 10:52:32 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Kever Yang <kever.yang@rock-chips.com>
-Cc:     heiko@sntech.de, linux-rockchip@lists.infradead.org,
-        Akash Gajjar <akash@openedev.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: rk3399-rock960: add vdd_log
-Message-ID: <20191111052232.GA2842@Mani-XPS-13-9360>
-References: <20191111005158.25070-1-kever.yang@rock-chips.com>
- <20191111005158.25070-2-kever.yang@rock-chips.com>
+        id S1726843AbfKKF0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 00:26:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726164AbfKKF0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 00:26:07 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C77D820856;
+        Mon, 11 Nov 2019 05:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573449967;
+        bh=H+9NY5NoBtSDcrU2DUVT7MbY08MFMHKqvmh7Or5JfDY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I2z9H+P9QHWnDiLHkQ602ePx3T2AzdbGBjrjITJc+ua1aGvNv0XWhJeYVeA5W0Zs1
+         cLxaLezk+WtYVQdE7I4AuwWRqeKHu/DVmcSNNBSJlR4/xTPakxwyfClrxPXJxfVdvo
+         mJxd8AL37rzHnGIkFSlZxM1VGU5C5tTw4ooQ8xvo=
+Date:   Mon, 11 Nov 2019 06:26:01 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] interconnect changes for 5.5
+Message-ID: <20191111052601.GA3176397@kroah.com>
+References: <5123bf54-5d62-fc5c-8838-17bc34487d83@linaro.org>
+ <20191107142111.GB109902@kroah.com>
+ <0cb5a6a6-399f-99e3-dc41-50114eea4025@linaro.org>
+ <20191108103917.GB683302@kroah.com>
+ <CAOCOHw4d0q3uGTAh_UrNWr+Wi6ObDKUFn7M_zkD8cFTkNFEUDA@mail.gmail.com>
+ <20191109084820.GC1289838@kroah.com>
+ <CAOCOHw4AFz2Rj3sLTrboA0pBOkL_5MbitJnFHgBYaVBbWyYATw@mail.gmail.com>
+ <20191110101647.GA1441986@kroah.com>
+ <20191111045423.rnhmv7uzhabgtebq@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191111005158.25070-2-kever.yang@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191111045423.rnhmv7uzhabgtebq@vireshk-i7>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kever,
-
-On Mon, Nov 11, 2019 at 08:51:57AM +0800, Kever Yang wrote:
-> Add vdd_log node according to rock960 schematic V13.
+On Mon, Nov 11, 2019 at 10:24:23AM +0530, Viresh Kumar wrote:
+> On 10-11-19, 11:16, Greg Kroah-Hartman wrote:
+> > Ah, now I get it.  Yeah, that sucks.  We need a "shortcut" in Kconfig to
+> > express that type of dependancy.
 > 
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> ---
-> 
->  arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> index c7d48d41e184..73afee257115 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> @@ -76,6 +76,18 @@
->  		regulator-always-on;
->  		vin-supply = <&vcc5v0_sys>;
->  	};
-> +
-> +	vdd_log: vdd-log {
-> +		compatible = "pwm-regulator";
-> +		pwms = <&pwm2 0 25000 1>;
-> +		regulator-name = "vdd_log";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <800000>;
-> +		regulator-max-microvolt = <1400000>;
-> +		regulator-init-microvolt = <950000>;
+> So we are going to merge this patch for now ?
 
-The default value seems to be 0.9v as per both Rock960 and Ficus schematics.
+I did not, sorry.
 
-Other than that,
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Thanks,
-Mani
-
-> +		vin-supply = <&vcc_sys>;
-> +	};
->  };
->  
->  &cpu_l0 {
-> -- 
-> 2.17.1
-> 
+greg k-h
