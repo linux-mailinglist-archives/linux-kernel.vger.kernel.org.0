@@ -2,93 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11E4AF6E5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 07:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6EA2F6E50
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2019 07:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfKKGEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 01:04:35 -0500
-Received: from mail-eopbgr30110.outbound.protection.outlook.com ([40.107.3.110]:59699
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726360AbfKKGEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 01:04:35 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=W+f69m76iqMTinTKnEVpb24yHyhoXXzGE/JRkpnKUuTKjRjuZIu5Ok+Hw85NcVQBnfn1mJbHSwgZZ46KuIYf0a22aL82vbKXvfTgdBZuWDQxqZWuVzo8D0Ppzm5F8hbgL9AXkjbKePzKNnNAGke1V+N8Mn4ZPl4GFkbhEwNmwRJ7pvfs4GYfgEVEC6NKAVkgFcF/n4q+zx7siZarIwR+JWcY+1cHKAI038q7SY4OEU0Bg/wHoFlyNGh6lS5/w8gXeZaaqV9O0A+5IVkiWbsw160a0ovHTYa93gB9Uht9CRBOb85xEd9YCCPjCp0Yjjul7CaS0oGxC+kOftRPxm5Zpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F3LlkwxUPKsWeqPcqF2XJ+wTPvs6U9uWZ7cEBezucLA=;
- b=jutCJMeSwn8vAKYu+JC04l28yKZNEbkBw7tvHwWTpR5Wv8pZhN2KTw5rD04NXUXgZVtNcN5Qty3g+leposf2vgmErHfiK6p6PCRgYO7Yj2lojKI8jgLsRJSgtv/K2HD1t0AfQQMNwt7UzvkNkaXaGEFxegLnbD0YPwMjVh5Rd5Wl00omb9QRN8nL9VCp8igP88gSH1F+fwQQF1aICemm76PLsTHu2cvu8LVWkHVyaJWzSUR8Ohrmh2Kjo7nBIAnUkEW0x+M3Ms0xgMsN2YC0S46CBCIweGgy8Fk4mfkL3kVmNor1+2hG0zuxqZaHfepbm1U187MYeEQpoWwd7S6wcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
- dkim=pass header.d=habana.ai; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F3LlkwxUPKsWeqPcqF2XJ+wTPvs6U9uWZ7cEBezucLA=;
- b=NvMeNPISs03QO+yLxhBZOITybQ+9EHqLwfdgjkuDYkaEQfxHH7Te/GK6kGPjMED+/KJuYWbFJgRvY4m8g/aoXhO1gjAzEKin+6rNlKBLNofTe1tJRvGFIw/EM5jzN6fTwb73NNBqmfUPldCFe4xgRL4wct/XsvWJRd6b9Zf4poQ=
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
- AM6PR0202MB3493.eurprd02.prod.outlook.com (52.133.31.31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.24; Mon, 11 Nov 2019 06:04:31 +0000
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::240e:7545:887b:939e]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::240e:7545:887b:939e%4]) with mapi id 15.20.2430.027; Mon, 11 Nov 2019
- 06:04:31 +0000
-From:   Omer Shpigelman <oshpigelman@habana.ai>
-To:     Oded Gabbay <oded.gabbay@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tomer Tayar <ttayar@habana.ai>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH 5/6] habanalabs: don't print error when queues are full
-Thread-Topic: [PATCH 5/6] habanalabs: don't print error when queues are full
-Thread-Index: AQHVmBGYC8imNZcx9kmxVBFayUGhdqeFe68w
-Date:   Mon, 11 Nov 2019 06:04:31 +0000
-Message-ID: <AM6PR0202MB338219721B8F2F018E964DC9B8740@AM6PR0202MB3382.eurprd02.prod.outlook.com>
-References: <20191110215533.754-1-oded.gabbay@gmail.com>
- <20191110215533.754-5-oded.gabbay@gmail.com>
-In-Reply-To: <20191110215533.754-5-oded.gabbay@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oshpigelman@habana.ai; 
-x-originating-ip: [141.226.8.173]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f6b1a64a-94b9-401c-2a59-08d7666d04de
-x-ms-traffictypediagnostic: AM6PR0202MB3493:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR0202MB34931FF907F91D36A796A333B8740@AM6PR0202MB3493.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-forefront-prvs: 0218A015FA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(376002)(346002)(39840400004)(396003)(366004)(136003)(189003)(199004)(99286004)(66446008)(66946007)(66476007)(66556008)(64756008)(6636002)(55016002)(4326008)(9686003)(53546011)(6506007)(316002)(110136005)(26005)(52536014)(186003)(558084003)(76116006)(6246003)(102836004)(256004)(5660300002)(6436002)(66066001)(71200400001)(71190400001)(478600001)(2501003)(6116002)(3846002)(25786009)(74316002)(14454004)(76176011)(305945005)(7736002)(7696005)(229853002)(2906002)(33656002)(8936002)(476003)(446003)(11346002)(486006)(8676002)(81156014)(81166006)(86362001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3493;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bjOscHLiusokf/XDgsEWFe/M4VaSeIlnTVJdCwme9sBi7Avw16Mj76SF8XIrBF0P3xiViOedI7IvFrKMcoAW8+PRi5agtvzDOMaItFKraZ+TEUzt/YmvsP/MoLYYQ8q6BNeFo7uRGBcx2F0rS/TmAiN6CeDNSdXttMU4/VhS5dT/90YWEcVFCbdpx60cVadbLl/S3y0sULdL6CCPPJWmXYiXpbmPNRJcDevn/pTlhux9IB2l+cRD/SMCKYX7fljMTxrDUBlmD5cJaLQR+06oeUobhoJx65jtBfhs/O30aV6KyZMRJNIog3ja25qraEaDQEd6FrXprI7JcIA5o6/kIQI3tLVl6LM4W/ozlMzcnZAok0TWk5OZ1+igVnUr/DKE6qUZ7P4+KnpB8v9pR0TeOXGtoqecwZjd8PAzpRe8fWlimRfxYf+RKlxoYiCPF93t
+        id S1726983AbfKKGAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 01:00:25 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:35915 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbfKKGAY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 01:00:24 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191111060022epoutp029167a3dfc786bdacb6de2d541aa981b2~WBkcWGNzz0691806918epoutp02c
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 06:00:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191111060022epoutp029167a3dfc786bdacb6de2d541aa981b2~WBkcWGNzz0691806918epoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1573452022;
+        bh=ZHmtJwzZPCJJj1Yw3R6N0QRExV0RN+KRydhi5ot94GM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bk8oXaTfsiIJMjoHYWHvtvzcnjNC0GKZmhxl7gQd/EfhAgvrfZQpcvgScmVHEGzhl
+         UReOOBZgcDS2pW1CHuRs1lzrgag2WbuZnkd/zndqUWP5XBq+FmjfQIChPzfigXsrTm
+         79JALZOiFXOG5bAZVmBuOhNu590b9wtGwnLSXffo=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191111060020epcas1p4c921ab5b85780714865dc23a2d8cbf55~WBkbMqGZl0767907679epcas1p4R;
+        Mon, 11 Nov 2019 06:00:20 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 47BKwd6CVkzMqYlm; Mon, 11 Nov
+        2019 06:00:17 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7F.37.04224.1F8F8CD5; Mon, 11 Nov 2019 15:00:17 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191111060017epcas1p37c624e81f5421842a5a31136b4cba678~WBkXxeQtG0355803558epcas1p3a;
+        Mon, 11 Nov 2019 06:00:17 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191111060017epsmtrp2d85c01a94bfe0ccb9a36df6668aca5be~WBkXwwuFV3261032610epsmtrp2A;
+        Mon, 11 Nov 2019 06:00:17 +0000 (GMT)
+X-AuditID: b6c32a38-d43ff70000001080-3f-5dc8f8f17596
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        26.F3.24756.1F8F8CD5; Mon, 11 Nov 2019 15:00:17 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191111060017epsmtip2d361588ef8e0bde92397ce4fdeb16f63~WBkXiuppH3118631186epsmtip2Z;
+        Mon, 11 Nov 2019 06:00:17 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     arnd@arndb.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        krzk@kernel.org, kgene@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2] PM / devfreq: events: Fix excessive stack usage
+Date:   Mon, 11 Nov 2019 15:05:57 +0900
+Message-Id: <20191111060557.15650-1-cw00.choi@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191022142703.1789898-1-arnd@arndb.de>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHeXZ3767V5DZXnfxQdsUPCuquc3mt2ZsRo4SM6Esk66YXJ+6t
+        3a20AnsjzXSlidiLEWlZRjTWGBq+K6aWGpkWmBRaWVZGLXsv27xGffufw+///A/nOSSm+I2H
+        kllmO28zc0aamCP1tkeqoj987UpT1U/Fsb9KO2VsyeOHUvbRp3GcPTn2BmP7+10ytvfwWxnr
+        HhvC2YHb5wnWV9yB2Ir+Jgk7fOgqsWau7sf3UqRz1x4ndLeq83ROTy3S+dxLUvHt2VoDz2Xw
+        tjDenG7JyDJnJtGbtuqT9ZrlKiaaSWQT6DAzZ+KT6PUpqdEbsoz+yeiwPZzR4W+lcoJAx67S
+        2iwOOx9msAj2JJq3ZhitidYYgTMJDnNmTLrFtIJRqeI0fnBntqGnowS3nlPk1LsmsINoMrgQ
+        BZFAxUPrdBFWiOaQCqoOwa3O31Kx+IigvduLi8VnBE7vIPprcXZ3zVKNCEaLvsrE4hOCoc8n
+        pAGKoKKg+dVjohCRpJLKhkvOlQEGo1oRXBhwSQJMCJUM499e4gEtpSLgXWWFLKDl1AqYGK/F
+        xLSlcN3VMqODKA3UFI+hwENAtRDgbi/HRWg9lL8umx0vBCbueGSiDgXfZCMh6v1wrbuDEM0F
+        CDzN92fNami+fFoSmBSjIuHm7VixvQzqf1TOvIlRwTA5VYQHEKDkUHBMISLhMPBsRCLqxVCV
+        f3w2Sgd3XVeQuBR/VLGnVXIKLTn7L+EiQrVoIW8VTJm8wFjj//8zN5q5vSi2DjX0pbQhikT0
+        PHlqbFeaAuf2CLmmNgQkRivldTn+ljyDy93H2yx6m8PIC21I419lCRa6IN3iv2SzXc9o4tRq
+        NRvPLNcwDL1IvrbmcpqCyuTsfDbPW3nbX5+EDAo9iNYUHanpb9oMPYN1wfGJ97y9ecqC6p/b
+        sJ6EB+/zhgdvLHNeudaXWKpvjZTvRTE7Rp+f6rsq7T4asbLB7auZHvlYNl+b3zRaJg0/ULLa
+        e8bDa54eTTH4dk9tUbrX+ZLHuK6qjdoTX3Y5prfefKTWjn843fRERuerlC++zUsw7js2REsF
+        A8dEYTaB+wPx1Wy4kQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsWy7bCSvO7HHydiDZbv4bL4O+kYu8XEG1dY
+        LK5/ec5q0f/4NbPF+fMb2C3ONr1ht9j0+BqrxeVdc9gsPvceYbSYcX4fk8XtxhVsDtwev39N
+        YvTYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJzcksSy3St0vgyjh1ZCJrwWyhip0bXjE3ML7j
+        62Lk5JAQMJHoO3mCpYuRi0NIYDejRNfhJYwQCUmJaRePMncxcgDZwhKHDxdD1HxilOg9eIIV
+        pIZNQEti/4sbbCC2iEChxLtP25lAipgFjjNKvP92gRkkISzgLPH85zOwBhYBVYm3c2ewg9i8
+        AlYSr56vYoZYJi+xesMBMJtTwFRiee9jsCOEgK7rWfeJcQIj3wJGhlWMkqkFxbnpucWGBYZ5
+        qeV6xYm5xaV56XrJ+bmbGMHBqaW5g/HykvhDjAIcjEo8vD90TsQKsSaWFVfmHmKU4GBWEuHd
+        UQEU4k1JrKxKLcqPLyrNSS0+xCjNwaIkzvs071ikkEB6YklqdmpqQWoRTJaJg1OqgbE05FiR
+        UO7GzyVP1A2OXK5Y4r/ng/bNAk8h9a1hv2a3n7YPeLfo05vOl51iT7WLJ9o11h6xs2iR33Vu
+        tnhwSxObVvFpXjUOuZzLIizSD4zSjiYI3/Bjl17t9OZmkE54/DUX/kPPor7MNF7CK/l086/d
+        Vuk2T1JrF+5SM7kmxqv+NunDgb2fFyixFGckGmoxFxUnAgCftVZuSgIAAA==
+X-CMS-MailID: 20191111060017epcas1p37c624e81f5421842a5a31136b4cba678
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6b1a64a-94b9-401c-2a59-08d7666d04de
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2019 06:04:31.4282
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /0FCzLAvdnnX11GN0q2j5p1I+vX7bVf7mCcsrkWJJt5XZQ/Zjl45MyzFAgq4QzEou+Bmac8p/4f+yfZS3IOaXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3493
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191111060017epcas1p37c624e81f5421842a5a31136b4cba678
+References: <20191022142703.1789898-1-arnd@arndb.de>
+        <CGME20191111060017epcas1p37c624e81f5421842a5a31136b4cba678@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU3VuLCBOb3YgMTAsIDIwMTkgYXQgMTE6NTYgUE0gT2RlZCBHYWJiYXkgd3JvdGU6DQo+IElm
-IHRoZSBxdWV1ZXMgYXJlIGZ1bGwgYW5kIHdlIHJldHVybiAtRUFHQUlOIHRvIHRoZSB1c2VyLCB0
-aGVyZSBpcyBubyBuZWVkIHRvDQo+IHByaW50IGFuIGVycm9yLCBhcyB0aGF0IGNhc2UgaXNuJ3Qg
-YW4gZXJyb3IgYW5kIHRoZSB1c2VyIGlzIGV4cGVjdGVkIHRvIHJlLQ0KPiBzdWJtaXQgdGhlIHdv
-cmsuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBPZGVkIEdhYmJheSA8b2RlZC5nYWJiYXlAZ21haWwu
-Y29tPg0KDQpSZXZpZXdlZC1ieTogT21lciBTaHBpZ2VsbWFuIDxvc2hwaWdlbG1hbkBoYWJhbmEu
-YWk+DQo=
+From: Arnd Bergmann <arnd@arndb.de>
+
+Putting a 'struct devfreq_event_dev' object on the stack is generally
+a bad idea and here it leads to a warnig about potential stack overflow:
+
+drivers/devfreq/event/exynos-ppmu.c:643:12: error: stack frame size of 1040 bytes in function 'exynos_ppmu_probe' [-Werror,-Wframe-larger-than=]
+
+There is no real need for the device structure, only the string inside
+it, so add an internal helper function that simply takes the string
+as its argument and remove the device structure.
+
+Fixes: 1dd62c66d345 ("PM / devfreq: events: extend events by type of counted data")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[cw00.choi: Fix the issue from 'desc->name' to 'desc[j].name']
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+Changes from v1:
+- Fix the issue from 'desc->name' to 'desc[j].name'
+
+ drivers/devfreq/event/exynos-ppmu.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index 85c7a77bf3f0..055deea42c37 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -101,17 +101,22 @@ static struct __exynos_ppmu_events {
+ 	PPMU_EVENT(dmc1_1),
+ };
+ 
+-static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
++static int __exynos_ppmu_find_ppmu_id(const char *edev_name)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ppmu_events); i++)
+-		if (!strcmp(edev->desc->name, ppmu_events[i].name))
++		if (!strcmp(edev_name, ppmu_events[i].name))
+ 			return ppmu_events[i].id;
+ 
+ 	return -EINVAL;
+ }
+ 
++static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
++{
++	return __exynos_ppmu_find_ppmu_id(edev->desc->name);
++}
++
+ /*
+  * The devfreq-event ops structure for PPMU v1.1
+  */
+@@ -556,13 +561,11 @@ static int of_get_devfreq_events(struct device_node *np,
+ 			 * use default if not.
+ 			 */
+ 			if (info->ppmu_type == EXYNOS_TYPE_PPMU_V2) {
+-				struct devfreq_event_dev edev;
+ 				int id;
+ 				/* Not all registers take the same value for
+ 				 * read+write data count.
+ 				 */
+-				edev.desc = &desc[j];
+-				id = exynos_ppmu_find_ppmu_id(&edev);
++				id = __exynos_ppmu_find_ppmu_id(desc[j].name);
+ 
+ 				switch (id) {
+ 				case PPMU_PMNCNT0:
+-- 
+2.17.1
+
