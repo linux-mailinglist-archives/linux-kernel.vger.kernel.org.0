@@ -2,90 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E6ABF9660
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED1E1F966B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfKLQ5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 11:57:18 -0500
-Received: from mga05.intel.com ([192.55.52.43]:28377 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbfKLQ5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 11:57:18 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 08:57:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,297,1569308400"; 
-   d="scan'208";a="229453522"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga004.fm.intel.com with ESMTP; 12 Nov 2019 08:57:17 -0800
-Date:   Tue, 12 Nov 2019 08:57:17 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH 1/2] KVM: MMU: Do not treat ZONE_DEVICE pages as being
- reserved
-Message-ID: <20191112165717.GA18089@linux.intel.com>
-References: <CAPcyv4jysxEu54XK2kUYnvTqUL7zf2fJvv7jWRR=P4Shy+3bOQ@mail.gmail.com>
- <CAPcyv4i3M18V9Gmx3x7Ad12VjXbq94NsaUG9o71j59mG9-6H9Q@mail.gmail.com>
- <0db7c328-1543-55db-bc02-c589deb3db22@redhat.com>
- <CAPcyv4gMu547patcROaqBqbwxut5au-WyE_M=XsKxyCLbLXHTg@mail.gmail.com>
- <20191107155846.GA7760@linux.intel.com>
- <20191109014323.GB8254@linux.intel.com>
- <CAPcyv4hAY_OfExNP+_067Syh9kZAapppNwKZemVROfxgbDLLYQ@mail.gmail.com>
- <20191111182750.GE11805@linux.intel.com>
- <CAPcyv4hErx-Hd5q+3+W6VUSWDpEuOfipMsWAL+nnQtZvYAf3bg@mail.gmail.com>
- <e6637be8-7890-579b-8131-6fdbbd791fa0@redhat.com>
+        id S1727345AbfKLQ7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 11:59:32 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39170 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfKLQ7c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 11:59:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0oFanHzvRKjHtSffMmTBvtzgldwVkwNTRsjU7YGLOJo=; b=jHKdcLx0GiMlDV/Rekrrc7/2L
+        kNwJCF4PhwI6JqS4K0PSmP1cs6+zoC3L3mP6AVvNdaku45Lo2bZSggel/I/Y8nsjs2FAkI6zrtON/
+        yw+tMxnc0m0joDHNC6rrdRMv4CGzziLNxWU9OIqWzV0yA+Z/4AuhxCVYtYEuVCBjNdrf4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iUZVC-0008Gh-TW; Tue, 12 Nov 2019 16:58:50 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 44080274299F; Tue, 12 Nov 2019 16:58:50 +0000 (GMT)
+Date:   Tue, 12 Nov 2019 16:58:50 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: [PATCHv1 1/5] ASoC: da7213: Add regulator support
+Message-ID: <20191112165850.GE5195@sirena.co.uk>
+References: <20191108174843.11227-1-sebastian.reichel@collabora.com>
+ <20191108174843.11227-2-sebastian.reichel@collabora.com>
+ <AM5PR1001MB09942731970692EE42BE9CB180740@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191112152411.d626b34wmvkzpqjf@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Uwl7UQhJk99r8jnw"
 Content-Disposition: inline
-In-Reply-To: <e6637be8-7890-579b-8131-6fdbbd791fa0@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20191112152411.d626b34wmvkzpqjf@earth.universe>
+X-Cookie: As famous as the unknown soldier.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 11:19:44AM +0100, Paolo Bonzini wrote:
-> On 12/11/19 01:51, Dan Williams wrote:
-> > An elevated page reference count for file mapped pages causes the
-> > filesystem (for a dax mode file) to wait for that reference count to
-> > drop to 1 before allowing the truncate to proceed. For a page cache
-> > backed file mapping (non-dax) the reference count is not considered in
-> > the truncate path. It does prevent the page from getting freed in the
-> > page cache case, but the association to the file is lost for truncate.
-> 
-> KVM support for file-backed guest memory is limited.  It is not
-> completely broken, in fact cases such as hugetlbfs are in use routinely,
-> but corner cases such as truncate aren't covered well indeed.
 
-KVM's actual MMU should be ok since it coordinates with the mmu_notifier.
+--Uwl7UQhJk99r8jnw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-kvm_vcpu_map() is where KVM could run afoul of page cache truncation.
-This is the other main use of hva_to_pfn*(), where KVM directly accesses
-guest memory (which could be file-backed) without coordinating with the
-mmu_notifier.  IIUC, an ill-timed page cache truncation could result in a
-write from KVM effectively being dropped due to writeback racing with
-KVM's write to the page.  If that's true, then I think KVM would need to
-to move to the proposed pin_user_pages() to ensure its "DMA" isn't lost.
+On Tue, Nov 12, 2019 at 04:24:11PM +0100, Sebastian Reichel wrote:
+> On Mon, Nov 11, 2019 at 02:07:46PM +0000, Adam Thomson wrote:
 
-> > As long as any memory the guest expects to be persistent is backed by
-> > mmu-notifier coordination we're all good, otherwise an elevated
-> > reference count does not coordinate with truncate in a reliable way.
+> > Having spoken with our HW team, this will cause a POR in the device so we can't
+> > just enable/disable VDD_A supply. Needs to present at all times. How are you
+> > verifying this?
 
-KVM itself is (mostly) blissfully unaware of any such expectations.  The
-userspace VMM, e.g. Qemu, is ultimately responsible for ensuring the guest
-sees a valid model, e.g. that persistent memory (as presented to the guest)
-is actually persistent (from the guest's perspective).
+> Ok. The system, that I used for testing shared a regulator
+> for VDDIO and VDDA. I suppose this needs to be moved next
+> to enabling VDDIO then.
 
-The big caveat is the truncation issue above.
+regulator_bulk_enable() might be handy here.
+
+--Uwl7UQhJk99r8jnw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3K5MkACgkQJNaLcl1U
+h9C6TwgAhsGHpb6UsZh0hRdSvQrMRjsrI6Ehz5Ij8M6Ngr2O6RoBOD7dVHLHm5xh
+YOj1zRVI3ytgajOb4UkFgMXiMTAk00lvTninl/JPtR46HAZ/M3RUhwFcUByz6iZb
+AHzSsNM56dO6rrwhmIlcO2cpQP15pP+ctCsWtgL+1HK3937f54d5LuaFyiP4EZRz
+KVBPTfKWBdhOH1j/KzQWrttlhfkKZJYfy8T1lJRxQC2AT4RSME99g1gAEp9B/ING
+bz8TrjkcW/3fzbU1FawD5AV5vcbiTiNkVapVh75sHcunN44xug13jf+BHgCwYmYo
+wVDuoCE212CxXnb5oB+7AEiEruIbVg==
+=igeR
+-----END PGP SIGNATURE-----
+
+--Uwl7UQhJk99r8jnw--
