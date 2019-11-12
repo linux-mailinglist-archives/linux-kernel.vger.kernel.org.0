@@ -2,78 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F8A9F8BF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:36:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACA5DF8C05
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfKLJgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:36:16 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2084 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725834AbfKLJgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:36:16 -0500
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id DF8CDE109FAE75250132;
-        Tue, 12 Nov 2019 09:36:14 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 12 Nov 2019 09:36:14 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 12 Nov
- 2019 09:36:14 +0000
-Subject: Re: [PATCH 2/4] scsi: hisi_sas: Return directly if init hardware
- failed
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>,
-        Xiang Chen <chenxiang66@hisilicon.com>
-References: <1573551059-107873-1-git-send-email-john.garry@huawei.com>
- <1573551059-107873-3-git-send-email-john.garry@huawei.com>
-Message-ID: <fc7c92a8-fd18-ae61-2ec5-0ad79f4e4fac@huawei.com>
-Date:   Tue, 12 Nov 2019 09:36:13 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727171AbfKLJj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:39:59 -0500
+Received: from mga02.intel.com ([134.134.136.20]:18473 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbfKLJj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 04:39:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 01:39:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,295,1569308400"; 
+   d="scan'208";a="214042274"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 12 Nov 2019 01:39:54 -0800
+Received: by lahna (sSMTP sendmail emulation); Tue, 12 Nov 2019 11:39:53 +0200
+Date:   Tue, 12 Nov 2019 11:39:53 +0200
+From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "logang@deltatee.com" <logang@deltatee.com>
+Subject: Re: [PATCH 1/1] PCI: Fix bug resulting in double hpmemsize being
+ assigned to MMIO window
+Message-ID: <20191112093953.GD2644@lahna.fi.intel.com>
+References: <PS2P216MB07554FF63C34AFBCE04BD55D80780@PS2P216MB0755.KORP216.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-In-Reply-To: <1573551059-107873-3-git-send-email-john.garry@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml713-chm.china.huawei.com (10.201.108.64) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PS2P216MB07554FF63C34AFBCE04BD55D80780@PS2P216MB0755.KORP216.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2019 09:30, John Garry wrote:
-> From: Xiang Chen <chenxiang66@hisilicon.com>
+On Thu, Nov 07, 2019 at 01:50:57PM +0000, Nicholas Johnson wrote:
+> Currently, the kernel can sometimes assign the MMIO_PREF window
+> additional size into the MMIO window, resulting in extra MMIO additional
+> size, despite the MMIO_PREF additional size being assigned successfully
+> into the MMIO_PREF window.
 > 
-> Need to return directly if init hardware failed.
+> This happens if in the first pass, the MMIO_PREF succeeds but the MMIO
+> fails. In the next pass, because MMIO_PREF is already assigned, the
+> attempt to assign MMIO_PREF returns an error code instead of success
+> (nothing more to do, already allocated). Hence, the size which is
+> actually allocated, but thought to have failed, is placed in the MMIO
+> window.
 > 
-> Fixes: 73a4925d154c ("scsi: hisi_sas: Update all the registers after suspend and resume")
-> Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+> Example of problem (more context can be found in the bug report URL):
+> 
+> Mainline kernel:
+> pci 0000:06:01.0: BAR 14: assigned [mem 0x90100000-0xa00fffff] = 256M
+> pci 0000:06:04.0: BAR 14: assigned [mem 0xa0200000-0xb01fffff] = 256M
+> 
+> Patched kernel:
+> pci 0000:06:01.0: BAR 14: assigned [mem 0x90100000-0x980fffff] = 128M
+> pci 0000:06:04.0: BAR 14: assigned [mem 0x98200000-0xa01fffff] = 128M
+> 
+> This was using pci=realloc,hpmemsize=128M,nocrs - on the same machine
+> with the same configuration, with a Ubuntu mainline kernel and a kernel
+> patched with this patch.
+> 
+> The bug results in the MMIO_PREF being added to the MMIO window, which
+> means doubling if MMIO_PREF size = MMIO size. With a large MMIO_PREF,
+> the MMIO window will likely fail to be assigned altogether due to lack
+> of 32-bit address space.
+> 
+> Change find_free_bus_resource() to do the following:
+> - Return first unassigned resource of the correct type.
+> - If none of the above, return first assigned resource of the correct type.
+> - If none of the above, return NULL.
+> 
+> Returning an assigned resource of the correct type allows the caller to
+> distinguish between already assigned and no resource of the correct type.
+> 
+> Rename find_free_bus_resource to find_bus_resource_of_type().
+> 
+> Add checks in pbus_size_io() and pbus_size_mem() to return success if
+> resource returned from find_free_bus_resource() is already allocated.
+> 
+> This avoids pbus_size_io() and pbus_size_mem() returning error code to
+> __pci_bus_size_bridges() when a resource has been successfully assigned
+> in a previous pass. This fixes the existing behaviour where space for a
+> resource could be reserved multiple times in different parent bridge
+> windows.
+> 
+> Link: https://lore.kernel.org/lkml/20190531171216.20532-2-logang@deltatee.com/T/#u
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=203243
+> 
+> Reported-by: Kit Chow <kchow@gigaio.com>
+> Reported-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
 
-I missed my tag here:
-Signed-off-by: John Garry <john.garry@huawei.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+Minor nits below.
 
 > ---
->   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 1 +
->   1 file changed, 1 insertion(+)
+>  drivers/pci/setup-bus.c | 34 +++++++++++++++++++++++-----------
+>  1 file changed, 23 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> index 2ae7070db41a..b7836406debe 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> @@ -3432,6 +3432,7 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
->   	if (rc) {
->   		scsi_remove_host(shost);
->   		pci_disable_device(pdev);
-> +		return rc;
->   	}
->   	hisi_hba->hw->phys_init(hisi_hba);
->   	sas_resume_ha(sha);
-> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index e7dbe2170..f97c36a1e 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -752,24 +752,32 @@ static void pci_bridge_check_ranges(struct pci_bus *bus)
+>  }
+>  
+>  /*
+> - * Helper function for sizing routines: find first available bus resource
+> - * of a given type.  Note: we intentionally skip the bus resources which
+> - * have already been assigned (that is, have non-NULL parent resource).
+> + * Helper function for sizing routines.
+> + * Assigned resources have non-NULL parent resource.
+> + *
+> + * Return first unassigned resource of the correct type.
+> + * If none of the above, return first assigned resource of the correct type.
+> + * If none of the above, return NULL.
+> + *
+> + * Returning an assigned resource of the correct type allows the caller to
+> + * distinguish between already assigned and no resource of the correct type.
+>   */
+> -static struct resource *find_free_bus_resource(struct pci_bus *bus,
+> -					       unsigned long type_mask,
+> -					       unsigned long type)
+> +static struct resource *find_bus_resource_of_type(struct pci_bus *bus,
+> +						  unsigned long type_mask,
+> +						  unsigned long type)
+>  {
+>  	int i;
+> -	struct resource *r;
+> +	struct resource *r, *r_assigned = NULL;
 
+Maybe order them
+
+	struct resource *r, *r_assigned = NULL;
+ 	int i;
+
+>  
+>  	pci_bus_for_each_resource(bus, r, i) {
+>  		if (r == &ioport_resource || r == &iomem_resource)
+>  			continue;
+>  		if (r && (r->flags & type_mask) == type && !r->parent)
+>  			return r;
+> +		if (r && (r->flags & type_mask) == type && !r_assigned)
+> +			r_assigned = r;
+>  	}
+> -	return NULL;
+> +	return r_assigned;
+>  }
+>  
+>  static resource_size_t calculate_iosize(resource_size_t size,
+> @@ -866,14 +874,16 @@ static void pbus_size_io(struct pci_bus *bus, resource_size_t min_size,
+>  			 struct list_head *realloc_head)
+>  {
+>  	struct pci_dev *dev;
+> -	struct resource *b_res = find_free_bus_resource(bus, IORESOURCE_IO,
+> -							IORESOURCE_IO);
+> +	struct resource *b_res = find_bus_resource_of_type(bus, IORESOURCE_IO,
+> +								IORESOURCE_IO);
+>  	resource_size_t size = 0, size0 = 0, size1 = 0;
+>  	resource_size_t children_add_size = 0;
+>  	resource_size_t min_align, align;
+>  
+>  	if (!b_res)
+>  		return;
+
+I think it may be good to comment here that skip the resources that are
+assigned (->parent != NULL).
+
+> +	if (b_res->parent)
+> +		return;
+>  
+>  	min_align = window_alignment(bus, IORESOURCE_IO);
+>  	list_for_each_entry(dev, &bus->devices, bus_list) {
+> @@ -978,7 +988,7 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
+>  	resource_size_t min_align, align, size, size0, size1;
+>  	resource_size_t aligns[18]; /* Alignments from 1MB to 128GB */
+>  	int order, max_order;
+> -	struct resource *b_res = find_free_bus_resource(bus,
+> +	struct resource *b_res = find_bus_resource_of_type(bus,
+>  					mask | IORESOURCE_PREFETCH, type);
+>  	resource_size_t children_add_size = 0;
+>  	resource_size_t children_add_align = 0;
+> @@ -986,6 +996,8 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
+>  
+>  	if (!b_res)
+>  		return -ENOSPC;
+
+Ditto.
+
+> +	if (b_res->parent)
+> +		return 0;
+>  
+>  	memset(aligns, 0, sizeof(aligns));
+>  	max_order = 0;
+> -- 
+> 2.23.0
