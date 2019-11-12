@@ -2,363 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE92CF99FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:45:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A32BF9A04
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:48:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfKLTpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 14:45:45 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39827 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfKLTpp (ORCPT
+        id S1727176AbfKLTsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 14:48:24 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44123 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbfKLTsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 14:45:45 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v138so15949676oif.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 11:45:43 -0800 (PST)
+        Tue, 12 Nov 2019 14:48:23 -0500
+Received: by mail-lj1-f196.google.com with SMTP id g3so19162439ljl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 11:48:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aT8mlE5QKLBKzwtpRTeEBBrUs4C8xdANZDGBqdRq3Ec=;
-        b=o+YyU3q/7tS3hSUL3qhMWK8gHir34a4yLqHbcFe0Gj2ESVOO8nukuBj2haOH/7Qj6y
-         3kWdjZYOHpEqUSMGFC5x3ZsfJ+SXfSgJdc3F4Qa7fPA66bBJvGoxri6/eEL8wpz8oosp
-         uScKBkCRbEYbVWRf35NaROo2aBThK3DmWxWnsEUnJxim9T10KsO60RrOCpKMEjNuUTmk
-         ZuhE4t9cEOFQQ2COssjYllC3+HQAAJARQtV3Ta+VVI6CMTOjWm3qnTB+6QB0bwWZ+6e6
-         DZYbUVts9hMFDOuw/s7X8REfl+EeABbTsQvlGmtbxgXAgL1pQxlPftYHyrgEDGTVEMA/
-         82Dw==
+        bh=KgHAQu7q0hm2Jv+kZ/rgn9kx8R73GBFOOYAXZwlwBjs=;
+        b=Ycf3JkS+jGUVRsZr8w99fixozLYf51BvrU3zaMhrBAR16NGapJ8VQPu8ncSdGpa2IK
+         hSapVFPjSIPqZMiUTF5hiodE5GC4J7qwEURg2JPonVhonpNSsAzqypUdoKPrevU0G7NL
+         J/9K8p70fU365uvj8fxUZZXUHB/YXKCut7YO8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aT8mlE5QKLBKzwtpRTeEBBrUs4C8xdANZDGBqdRq3Ec=;
-        b=EoT8HBEh+1XTgIAQDGgxiW1jgNzT+CvHcl+DMtVyi4YzazkmVeT3hr/b/X5dfSaFcV
-         J1F6TrLSxg8Sm82+EyrvG4itTH6b58M59U7dhnywJv307Q3fVigRhvpIrIyOUzPka3pD
-         zkhsGxEWOCRsdl8CvX0dStUDKSia6tWrqofcNcFSiKQlP1AYqGN+AnsSG0L1aw+NE75Z
-         q//hHPrmfGyjQiEnGC+uNlxVUK5z0Q70T5S8lwajjbFcsgp3hTNpznG29Nl97cV+jife
-         qwo5+RyGxV7qtyYCso5CdfXPJ8yO73dFpBKugm9DBAUp6w7Y3D+ByK/RBjUySJQmyEHp
-         7tmQ==
-X-Gm-Message-State: APjAAAU7ynBJk+Wx1yRfMl8+d5P5UvClTATIDeGJ6HbEr04OBdEOmBua
-        jbA5YMVp+FF7zPBFTTLt7mLunz7LZt84jO8CLDo=
-X-Google-Smtp-Source: APXvYqyRPDBQNhx456qORWcHwmKAtqvKzYgiTN6/NkEw8HgUh8m9K6PNHJvchs1ngl1qmIajDdIjjqNuiOCDWrTUSD8=
-X-Received: by 2002:aca:4945:: with SMTP id w66mr625898oia.98.1573587942600;
- Tue, 12 Nov 2019 11:45:42 -0800 (PST)
+        bh=KgHAQu7q0hm2Jv+kZ/rgn9kx8R73GBFOOYAXZwlwBjs=;
+        b=KdpkSo6pNkJIqzKstLlsNw8wuxZ5gam/I+0zG9p67qMzQWfrUzCAzuXgBO/CUFf8od
+         fYpz6AYOK2wGMV7wavnXDizesWp+BoqSATn5yHZ4mZXwrGnWYA8jLPebkoJeWB5LdjK5
+         rxrIaZIR6mgkI36R5eeKjebl9Gz5wD1Q/G7jLvlmvHTWqXDeuL2TQYAXDxkPDdteFrMb
+         2pcW6IObrJcM7rlNNAx4WcJ+ukxLMVhFXrRU48rZNV8dJ21a+ExoKqixvhJvVritFxcq
+         FLhLnCJd/xL0H+frihBiScYLU4OclGFu5mvHZZewRyh7iXqy01a592T/TlGoATFGkA6r
+         sDhw==
+X-Gm-Message-State: APjAAAX9HP1FlAoSxpWxnQFBAFWcmWCxnBE8Q6ZeUkPi2lN+efbpnbyN
+        b+FXvy52V3A2nxQV7H0ZIyBgFGib5AI=
+X-Google-Smtp-Source: APXvYqwnWffrYZaGfDliSefX5mwJ94UX+BZcqWSRg4Ff9UB7hWc6+Da1eE94cGPBJXwwVg2H22OB0A==
+X-Received: by 2002:a2e:8608:: with SMTP id a8mr21782184lji.172.1573588099439;
+        Tue, 12 Nov 2019 11:48:19 -0800 (PST)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id k186sm9140627lfd.64.2019.11.12.11.48.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2019 11:48:18 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id z12so13844947lfj.9
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 11:48:17 -0800 (PST)
+X-Received: by 2002:a19:c790:: with SMTP id x138mr21100386lff.61.1573588097381;
+ Tue, 12 Nov 2019 11:48:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20190907174833.19957-1-katsuhiro@katsuster.net>
- <CA+E=qVdvKxzFcU-09Ucn1Fr0FdkwSsPcLr8vPn2wsu6-DD1gqg@mail.gmail.com>
- <abc648cc-0b5d-b407-b74b-639833ba196b@katsuster.net> <CA+E=qVdy-wqmR+XOms5S2zMp+B0vM7Dj_fk9N=08-1WjfKDm0Q@mail.gmail.com>
- <CA+E=qVdLzHbNTemMSmhA=-0dsNumQZJhjE-EnXBDu+j7sXTnVw@mail.gmail.com>
- <81666aeb-f3d0-e653-6597-0711a05f9b8d@katsuster.net> <CA+E=qVcgs=2T_9axUCJwTKgmKhjsJJ9mUfvYJbyjg59rGGjcTg@mail.gmail.com>
- <CA+E=qVe5QmJ8-zSbKj23mb-GksjD+qN=aFaCT7OGUYPYc9Y_ow@mail.gmail.com> <1ecd115a-1d33-020d-4a09-6fc451588920@katsuster.net>
-In-Reply-To: <1ecd115a-1d33-020d-4a09-6fc451588920@katsuster.net>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Tue, 12 Nov 2019 11:46:07 -0800
-Message-ID: <CA+E=qVcXcUJCa86ru+0=wwY7_3GFLJaGQtLeZ1wVZZqqG4-KrA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: add analog audio nodes on rk3399-rockpro64
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>
+References: <CAHk-=wjErHCwkcgO-=NReU0KR4TFozrFktbhh2rzJ=mPgRO0-g@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911121400200.1567-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1911121400200.1567-100000@iolanthe.rowland.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 12 Nov 2019 11:47:59 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjGd0Ce2xadkiErPWxVBT2mhyeZ4TKyih2sJwyE3ohdHw@mail.gmail.com>
+Message-ID: <CAHk-=wjGd0Ce2xadkiErPWxVBT2mhyeZ4TKyih2sJwyE3ohdHw@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Marco Elver <elver@google.com>, Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 10:34 AM Katsuhiro Suzuki
-<katsuhiro@katsuster.net> wrote:
+On Tue, Nov 12, 2019 at 11:14 AM Alan Stern <stern@rowland.harvard.edu> wrote:
 >
-> On 2019/11/12 14:49, Vasily Khoruzhick wrote:
-> > On Mon, Nov 11, 2019 at 9:43 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
-> >>
-> >> On Mon, Nov 11, 2019 at 9:34 PM Katsuhiro Suzuki
-> >> <katsuhiro@katsuster.net> wrote:
-> >>>
-> >>> Hello Vasily,
-> >>>
-> >>> Thank you for valuable information.
-> >>>
-> >>> On 2019/11/12 4:25, Vasily Khoruzhick wrote:
-> >>>> On Sun, Nov 10, 2019 at 9:40 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
-> >>>>>
-> >>>>> On Sun, Nov 10, 2019 at 7:30 PM Katsuhiro Suzuki
-> >>>>> <katsuhiro@katsuster.net> wrote:
-> >>>>>>
-> >>>>>> Hello Vasily,
-> >>>>>
-> >>>>> Hi Katsuhiro,
-> >>>>>
-> >>>>> Thanks for response!
-> >>>>
-> >>>> Looks like on my board codec sits at address 0x10, and according to
-> >>>> schematics that's what its address is supposed to be.
-> >>>>
-> >>>> See http://files.pine64.org/doc/rockpro64/rockpro64_v21-SCH.pdf
-> >>>>
-> >>>> Codec address is selected by pin CE of ES8316, and on rockpro64 it
-> >>>> goes to GND through R226. So address should be 0x10.
-> >>>>
-> >>>
-> >>> Yes, I agree. The schematics both v2.0 and v2.1 say that ES8316
-> >>> address is 0x10. Thank you for pointing.
-> >>>
-> >>> But I wonder that my RockPro64 behavior is strange, he is in address
-> >>> 0x11. (R226 on my board is broken...??)
-> >>>
-> >>> root@rockpro64:~# i2cdetect 1
-> >>> WARNING! This program can confuse your I2C bus, cause data loss and worse!
-> >>> I will probe file /dev/i2c-1.
-> >>> I will probe address range 0x03-0x77.
-> >>> Continue? [Y/n] y
-> >>>        0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-> >>> 00:          -- -- -- -- -- -- -- -- -- -- -- -- --
-> >>> 10: -- UU -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> >>> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> >>> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> >>> 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> >>> 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> >>> 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> >>> 70: -- -- -- -- -- -- -- --
-> >>>
-> >>> I plan to check R226 resistance value to judge R226 is broken or not
-> >>> after return to home. And share the result with you.
-> >>> Please give me a time.
-> >>
-> >> Thanks for confirming that on your board it's on address 0x11. I
-> >> checked with some other rockpro64 owners and they have it on 0x10, but
-> >> looks like we have boards with codec on different address in the wild.
-> >
-> > Another datapoint is that my board is 2.0. If yours is 2.1 it can be a
-> > difference between 2.0 and 2.1.
-> >
+> One could be the thing you brought up earlier: Suppose the compiler
+> decides to use the "write only if changed" transformation, so that the
+> code generated for the sticky write:
 >
-> I'm using v2.1 board.
+>         x = 1;
 >
+> ends up being what you would expect to see for:
 >
-> I'll share the checking result. It's a little strange.
->
-> 1) Voltage of CE pin of ES8316
->
-> It is 1.8V when booting linux-next kernel.
->
->
-> 2) My board
->
-> I can't find no crack nor broken parts on my board.
->
->
-> 2) R225, R226
->
-> As you know, RockPro64 board has no silk print so we cannot know
-> perfectly which resistance is R226. So this is my assumption.
->
->         PCIe, SD card slot
->            (top)
-> LAN (left)ES8316(right) USB, reset button
->
-> On the left space of ES8316 there is no resistance, only a pattern.
-> This is maybe R225. And 10K resistance on the right side of a
-> pattern. I assume this is R226.
->
-> If my assumption is correctly, board implementation and schematics
-> are different.
->
-> schematics of v2.1 gets something wrong...??
+>         if (x != 1)
+>                 x = 1;
 
-Guess we need few more RockPro64 v2.1 owners to confirm that it's
-indeed the case.
+That is exactly the kind of  crap that would make me go "use the flag
+to disable that invalid optimization, or don't use the compiler".
 
->
-> >>> Best Regards,
-> >>> Katsuhiro Suzuki
-> >>>
-> >>>
-> >>>>>> Thank you for reporting.
-> >>>>>>
-> >>>>>> On 2019/11/11 9:17, Vasily Khoruzhick wrote:
-> >>>>>>> On Sat, Sep 7, 2019 at 10:48 AM Katsuhiro Suzuki
-> >>>>>>> <katsuhiro@katsuster.net> wrote:
-> >>>>>>>>
-> >>>>>>>> This patch adds audio codec (Everest ES8316) and I2S audio nodes for
-> >>>>>>>> RK3399 RockPro64.
-> >>>>>>>
-> >>>>>>> Hi Katsuhiro,
-> >>>>>>>
-> >>>>>>> I tested your patch with my rockpro64 on 5.4-rc6 which has your other
-> >>>>>>> patches to es8316 driver, but apparently it doesn't work.
-> >>>>>>>
-> >>>>>>> 'alsamixer' complains 'cannot load mixer controls: No such device or
-> >>>>>>> address' and if I try to play audio with mpg123 it pretends that it
-> >>>>>>> plays something but there's no sound.
-> >>>>>>>
-> >>>>>>> Any idea what can be wrong?
-> >>>>>>>
-> >>>>>>
-> >>>>>> Do you use defconfig? If so I guess we need turn on more configs:
-> >>>>>>
-> >>>>>> - simple-graph-card driver (CONFIG_SND_AUDIO_GRAPH_CARD)
-> >>>>>> - ES8316 (SND_SOC_ES8316)
-> >>>>>
-> >>>>> I have these enabled, card is present in /proc/asound/cards, but
-> >>>>> alsamixer doesn't work with it.
-> >>>>>
-> >>>>>> FYI) ASoC related status or logs in my environment as follows:
-> >>>>>>
-> >>>>>> root@rockpro64:~# uname -a
-> >>>>>> Linux rockpro64 5.4.0-rc6-next-20191108 #169 SMP PREEMPT Mon Nov 11 12:21:44 JST 2019 aarch64 GNU/Linux
-> >>>>>
-> >>>>> I'm running 5.4.0-rc6  (commit
-> >>>>> 00aff6836241ae5654895dcea10e6d4fc5878ca6) with your patch "arm64: dts:
-> >>>>> rockchip: add analog audio nodes on rk3399-rockpro64" on top of it.
-> >>>>>
-> >>>>>> root@rockpro64:~# dmesg | grep -i asoc
-> >>>>>> [   21.509903] asoc-simple-card hdmi-sound: i2s-hifi <-> ff8a0000.i2s mapping ok
-> >>>>>> [   21.510550] asoc-simple-card hdmi-sound: ASoC: no DMI vendor name!
-> >>>>>> [   21.567906] asoc-audio-graph-card sound: ES8316 HiFi <-> ff890000.i2s mapping ok
-> >>>>>> [   21.568565] asoc-audio-graph-card sound: ASoC: no DMI vendor name!
-> >>>>>
-> >>>>> Similar here:
-> >>>>>
-> >>>>> [vasilykh@rockpro64 ~]$ dmesg | grep -i asoc
-> >>>>> [   15.627685] asoc-audio-graph-card sound: ES8316 HiFi <->
-> >>>>> ff890000.i2s mapping ok
-> >>>>> [   16.250196] asoc-simple-card hdmi-sound: i2s-hifi <-> ff8a0000.i2s mapping ok
-> >>>>>
-> >>>>>> root@rockpro64:~# cat /proc/asound/pcm
-> >>>>>> 00-00: ff8a0000.i2s-i2s-hifi i2s-hifi-0 : ff8a0000.i2s-i2s-hifi i2s-hifi-0 : playback 1
-> >>>>>> 01-00: ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : playback 1 : capture 1
-> >>>>>
-> >>>>> Same here:
-> >>>>>
-> >>>>> [vasilykh@rockpro64 ~]$ cat /proc/asound/pcm
-> >>>>> 00-00: ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : ff890000.i2s-ES8316
-> >>>>> HiFi ES8316 HiFi-0 : playback 1 : capture 1
-> >>>>> 01-00: ff8a0000.i2s-i2s-hifi i2s-hifi-0 : ff8a0000.i2s-i2s-hifi
-> >>>>> i2s-hifi-0 : playback
-> >>>>>
-> >>>>>> root@rockpro64:~# cat /sys/kernel/debug/asoc/components
-> >>>>>> hdmi-audio-codec.3.auto
-> >>>>>> ff8a0000.i2s
-> >>>>>> ff8a0000.i2s
-> >>>>>> ff890000.i2s
-> >>>>>> ff890000.i2s
-> >>>>>> ff880000.i2s
-> >>>>>> ff880000.i2s
-> >>>>>> es8316.1-0011
-> >>>>>> snd-soc-dummy
-> >>>>>> snd-soc-dummy
-> >>>>>
-> >>>>> Same here.
-> >>>>>
-> >>>>>> root@rockpro64:~# cat /sys/kernel/debug/asoc/dais
-> >>>>>> i2s-hifi
-> >>>>>> ff8a0000.i2s
-> >>>>>> ff890000.i2s
-> >>>>>> ff880000.i2s
-> >>>>>> ES8316 HiFi
-> >>>>>> snd-soc-dummy-dai
-> >>>>>
-> >>>>> Same here.
-> >>>>>
-> >>>>> Yet alsamixer doesn't work for me. It terminates with 'cannot load
-> >>>>> mixer controls: No such device or address'. Strace shows that fails
-> >>>>> here:
-> >>>>>
-> >>>>> openat(AT_FDCWD, "/dev/snd/controlC0", O_RDWR|O_CLOEXEC) = 3
-> >>>>> fcntl(3, F_SETFD, FD_CLOEXEC)           = 0
-> >>>>> ioctl(3, SNDRV_CTL_IOCTL_PVERSION, 0xfffffd3ad04c) = 0
-> >>>>> fcntl(3, F_GETFL)                       = 0x20002 (flags O_RDWR|O_LARGEFILE)
-> >>>>> fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK|O_LARGEFILE) = 0
-> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_LIST, 0xfffffd3ad228) = 0
-> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_LIST, 0xfffffd3ad228) = 0
-> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_INFO, 0xfffffd3ace38) = 0
-> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_READ, 0xfffffd3ac160) = -1 ENXIO (No
-> >>>>> such device or address)
-> >>>>>
-> >>>>> Looks like it fails to talk to the codec?
-> >>>>>
-> >>>>> mpg123 thinks that it's playing audio, but my headphones connected to
-> >>>>> 3.5mm output are silent.
-> >>>>>
-> >>>>> Regards,
-> >>>>> Vasily
-> >>>>>
-> >>>>>
-> >>>>>> Best Regards,
-> >>>>>> Katsuhiro Suzuki
-> >>>>>>
-> >>>>>>
-> >>>>>>> Regards,
-> >>>>>>> Vasily
-> >>>>>>>
-> >>>>>>>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> >>>>>>>> ---
-> >>>>>>>>     .../boot/dts/rockchip/rk3399-rockpro64.dts    | 28 +++++++++++++++++++
-> >>>>>>>>     1 file changed, 28 insertions(+)
-> >>>>>>>>
-> >>>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-> >>>>>>>> index 0401d4ec1f45..8b1e6382b140 100644
-> >>>>>>>> --- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-> >>>>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-> >>>>>>>> @@ -81,6 +81,12 @@
-> >>>>>>>>                    reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-> >>>>>>>>            };
-> >>>>>>>>
-> >>>>>>>> +       sound {
-> >>>>>>>> +               compatible = "audio-graph-card";
-> >>>>>>>> +               label = "rockchip,rk3399";
-> >>>>>>>> +               dais = <&i2s1_p0>;
-> >>>>>>>> +       };
-> >>>>>>>> +
-> >>>>>>>>            vcc12v_dcin: vcc12v-dcin {
-> >>>>>>>>                    compatible = "regulator-fixed";
-> >>>>>>>>                    regulator-name = "vcc12v_dcin";
-> >>>>>>>> @@ -470,6 +476,20 @@
-> >>>>>>>>            i2c-scl-rising-time-ns = <300>;
-> >>>>>>>>            i2c-scl-falling-time-ns = <15>;
-> >>>>>>>>            status = "okay";
-> >>>>>>>> +
-> >>>>>>>> +       es8316: codec@11 {
-> >>>>>>>> +               compatible = "everest,es8316";
-> >>>>>>>> +               reg = <0x11>;
-> >>>>>>>> +               clocks = <&cru SCLK_I2S_8CH_OUT>;
-> >>>>>>>> +               clock-names = "mclk";
-> >>>>>>>> +               #sound-dai-cells = <0>;
-> >>>>>>>> +
-> >>>>>>>> +               port {
-> >>>>>>>> +                       es8316_p0_0: endpoint {
-> >>>>>>>> +                               remote-endpoint = <&i2s1_p0_0>;
-> >>>>>>>> +                       };
-> >>>>>>>> +               };
-> >>>>>>>> +       };
-> >>>>>>>>     };
-> >>>>>>>>
-> >>>>>>>>     &i2c3 {
-> >>>>>>>> @@ -505,6 +525,14 @@
-> >>>>>>>>            rockchip,playback-channels = <2>;
-> >>>>>>>>            rockchip,capture-channels = <2>;
-> >>>>>>>>            status = "okay";
-> >>>>>>>> +
-> >>>>>>>> +       i2s1_p0: port {
-> >>>>>>>> +               i2s1_p0_0: endpoint {
-> >>>>>>>> +                       dai-format = "i2s";
-> >>>>>>>> +                       mclk-fs = <256>;
-> >>>>>>>> +                       remote-endpoint = <&es8316_p0_0>;
-> >>>>>>>> +               };
-> >>>>>>>> +       };
-> >>>>>>>>     };
-> >>>>>>>>
-> >>>>>>>>     &i2s2 {
-> >>>>>>>> --
-> >>>>>>>> 2.23.0.rc1
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> _______________________________________________
-> >>>>>>>> linux-arm-kernel mailing list
-> >>>>>>>> linux-arm-kernel@lists.infradead.org
-> >>>>>>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >>>>>>>
-> >>>>>>
-> >>>>
-> >>>
-> >
->
+We already do -param=allow-store-data-races=0
+
+The C standards body sadly has a very bad track record on this kind of
+thing, where they have allowed absolutely insane extensions of "that's
+undefined" in the name of making C a much worse language (they say "to
+compete with Fortran", but it's the same thing).
+
+I have talked to some people who have tried to change that course, but
+they are fed up with the standards body too, and it's fighting
+windmills.
+
+Which is why I don't even  bother. The C standard language-lawyering
+is simply not interesting to me. Yes, there are too many people who do
+it, and I don't care.
+
+For the kernel, we basically do not accept "that's undefined behavior,
+I might generate odd code".
+
+If the compiler can statitcally give an error for it, then that's one
+thing, and we'd be ok with that. But the kind of mindset where people
+think it's ok to have the compiler read the standard cross-eyed and
+change the obvious meaning of the code "because it's undefined
+behavior" is to me a sign of a cn incompetent compiler writer, and I
+am not at all interested in playing that game.
+
+Seriously.
+
+I wish somebody on the C standard had the back-bone to say "undefined
+behavior is not acceptable", and just say that the proper
+optimizations are ones where you transform the code the obvious
+straightforward way, and then you only do optimizations that are based
+on that code and you can prove do not change semantics.
+
+You can't add reads that weren't there.
+
+But you can look at code that did a read, and then wrote back what you
+can prove is the same value, and say "that write is redundant, just
+looking at the code".
+
+See the difference?
+
+One approach makes up shit. The other approach looks at the code AS
+WRITTEN and can prove "that's stupid, I can do it better, and I can
+show why it makes no difference".
+
+So you can change "i++; i++;" to "i +=2", even if "i" is not a private
+variable. Did that remove a write? Yes it did. But it really falls
+under the "I just improved on the code".
+
+But you can *not* do the insane things that type-based aliasing do
+(lack the "prove it's the same" part).
+
+Because when we notice that in the kernel, we turn it off. It's why we have
+
+ -fno-strict-overflow
+ -fno-merge-all-constants
+ -fno-strict-aliasing
+ -fno-delete-null-pointer-checks
+ --param=allow-store-data-races=0
+
+and probably others. Because the standard is simply wrong when you
+care about reliability.
+
+> But what about C11 relaxed atomic reads and writes?
+
+Again, I'm not in the least interested in the C11 standard
+language-lawyering, because it has shown itself to not be useful.
+
+Stop bringing up the "what if" cases. They aren't interesting. If a
+compiler turns a single write into some kind of conditional write, or
+if the compiler creates dummy writes, the compiler is garbage. No
+amount of "but but but C11" is at all relevant.
+
+What a compiler can do is:
+
+ - generate multiple (and speculative) reads
+
+ - combine writes to the same location (non-speciulatively)
+
+ - take advantage of actual reads in the source code to do
+transformations that are obvious (ie "oh, you read value X, you tested
+by Y was set, now you write it back again, but clearly the value
+didn't change so I can avoid the write").
+
+so yes, a compiler can remove a _redundant_ write, and if the SOURCE
+CODE has the read in it and the compiler decides "Oh, I already know
+it has that value" then that's one thing.
+
+But no, the compiler can not add data races that weren't there in the
+source code and say "but C11". We're not compiling to the standard.
+We're compiling to the real world.
+
+So if the compiler just adds its own reads, I don't want to play with
+that compiler. It may be appropriate in situations where we don't have
+threads, we don't have security issues, and we don't have various
+system and kernel concerns, but it's not appropriate for a kernel.
+
+It really is that simple.
+
+This is in no way different from other language lawyering, ie the
+whole "signed arithmetic overflows are undefined, so i can do
+optimization X" or "I can silently remove the NULL pointer check
+because you accessed it before and that invoced undefined behavior, so
+now I can do anthing".
+
+Those optimizations may be valid in other projects. They are not valid
+for the kernel.
+
+Stop bringing them up. They are irrelevant. We will keep adding the
+options to tell the compiler "no, we're not your toy benchmark, we do
+real work, and that optimization is dangerous".
+
+              Linus
