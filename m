@@ -2,121 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F37DBF9CEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:23:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75114F9CFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:24:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfKLWXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 17:23:21 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34394 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbfKLWXU (ORCPT
+        id S1727153AbfKLWYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 17:24:42 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57740 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbfKLWYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:23:20 -0500
-Received: by mail-io1-f66.google.com with SMTP id q83so198735iod.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 14:23:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kbZ0FLEIJqgDx32ZuWy0vmHvCIKwfGbPT6f4crP6il4=;
-        b=CeWVqyPzHeOhROoKK0J3Fdo/f76ed5+fmpKwaBgWiZqVDAbXxMQAHBc3Lfxh1AIiyM
-         lFLjI4oOwsKRwzX8bvRIYMTnj8UYpVCVYjvPJynCVVewHryQND+dBS3jEvMe1RjlsY0/
-         yPMQH9sjPQUBRYEdl24nXBlrj4Q5Q5SujTGHbgOQD8mhO5GJ+j/N9zffO7A1z/+25RJl
-         9OX4jcRNIuNaWo5wrV9aWpuLDKUGRZnRAqNfpv0/x23e4cwxKJ1ogN1wpi6RbyriQCop
-         a9HuGZZG7JzYy67xTdUTIVmhOtCoNvaQUd+Sv+zmTUGfTz/M1NYwcCdYWshj+QF489ON
-         TBsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kbZ0FLEIJqgDx32ZuWy0vmHvCIKwfGbPT6f4crP6il4=;
-        b=MH4BDudnkoOqXB2GNnYJtIeyOXrDzBY0QarWWQgUGk/24Md8uFGCIQDEVTohlGMvAZ
-         TULN7zDgN5yzMuaXHJxG+4HcXhNwGFbudeInFSqskjmyAQjM8YP1qXwvKGxOBKzw77L0
-         kT3i05I8TojyPZzCscJzo2MhJEMVHgRu7YtNiTSC1gpKwdGXa2o2/kJKRntI0yLC/m+w
-         Gn/8c2UE0A7BSRUn5N06h8fQOzE0kU1iLH3MGnqRnsZkqGmeE+oNtBnox3+M2C8I5zjR
-         eoWsJqK5WToHOdZZm2+2oZ2wtMi6fSfY+gti/BX/lG8d1CC/IrSWd6ori5RW2yOtsB2/
-         QBng==
-X-Gm-Message-State: APjAAAVakrmyfobpXPfSvtw/q1jnro4YJ+c+iZnYTVN1rRcgwSvLFlvb
-        Vsc53PTfVRG0iZF23N5qFoZoR4E9TFxbRPMaAxmGpQ==
-X-Google-Smtp-Source: APXvYqypWtcoEAVe1rmRQXFP0GxfFoIz/oTB3CdmlIdpAOChTwJSW+V8HVU26HCt6ORtpz9NYpp10toDfp0GJDhpUzI=
-X-Received: by 2002:a6b:c9ce:: with SMTP id z197mr315197iof.14.1573597398002;
- Tue, 12 Nov 2019 14:23:18 -0800 (PST)
+        Tue, 12 Nov 2019 17:24:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wKj7csVmFjJ/d3XC8UyAdMC+KDFGULyNNr0/bTycga8=; b=NFWCUY3Yb7NDkqJ99ECqcxfox
+        +CCwXY+CG4txQHwyRU9227wVc5WLq4ZfUL3iHL413E7TFDD632pZSbgfkrjWpl1mMVIIm+sh/6C49
+        lllxf1lVAtTcvQaqz1HaAiyYDIYjfUTkMeYXQJXqjtL++ql0pmWzIoCYg1hjXBqOUhRs9/3+3ML3Q
+        aEW72gniVgSbD3elZ2EDLkW+nSjQcn9BNiPYpSIIMN9YUhSSjZ5/n48ZGsAzPFJmmEsUtlMYltgim
+        uRK9aHFCpe/6atuVivojg9XsflOdDYDhUzi5RdOc/Oi6Lc6zjsz0m6I5sh9clbYu2nglubwNFfCVL
+        ZLyAUtFmQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUea8-0000OG-OP; Tue, 12 Nov 2019 22:24:16 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 65FBE3056C8;
+        Tue, 12 Nov 2019 23:23:06 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 55A6D20261852; Tue, 12 Nov 2019 23:24:13 +0100 (CET)
+Date:   Tue, 12 Nov 2019 23:24:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org,
+        alexei.starovoitov@gmail.com
+Subject: Re: [PATCH -v5 05/17] x86/ftrace: Use text_poke()
+Message-ID: <20191112222413.GB4131@hirez.programming.kicks-ass.net>
+References: <20191111131252.921588318@infradead.org>
+ <20191111132457.761255803@infradead.org>
+ <20191112132536.28ac1b32@gandalf.local.home>
 MIME-Version: 1.0
-References: <20190710201244.25195-1-brijesh.singh@amd.com> <20190710201244.25195-3-brijesh.singh@amd.com>
-In-Reply-To: <20190710201244.25195-3-brijesh.singh@amd.com>
-From:   Peter Gonda <pgonda@google.com>
-Date:   Tue, 12 Nov 2019 14:23:06 -0800
-Message-ID: <CAMkAt6rrwWteTaA4zJO1D3qd12P+8Qa68hjwsSEb+0AVcsjk7A@mail.gmail.com>
-Subject: Re: [PATCH v3 02/11] KVM: SVM: Add KVM_SEND_UPDATE_DATA command
-To:     "Singh, Brijesh" <brijesh.singh@amd.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112132536.28ac1b32@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 1:14 PM Singh, Brijesh <brijesh.singh@amd.com> wrote:
+On Tue, Nov 12, 2019 at 01:25:36PM -0500, Steven Rostedt wrote:
+> On Mon, 11 Nov 2019 14:12:57 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
 
-> +static int sev_send_update_data(struct kvm *kvm, struct kvm_sev_cmd *argp)
-> +{
-> +       struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
-> +       struct sev_data_send_update_data *data;
-> +       struct kvm_sev_send_update_data params;
-> +       void *hdr = NULL, *trans_data = NULL;
-> +       struct page **guest_page = NULL;
-> +       unsigned long n;
-> +       int ret, offset;
-> +
-> +       if (!sev_guest(kvm))
-> +               return -ENOTTY;
-> +
-> +       if (copy_from_user(&params, (void __user *)(uintptr_t)argp->data,
-> +                       sizeof(struct kvm_sev_send_update_data)))
-> +               return -EFAULT;
-> +
-> +       data = kzalloc(sizeof(*data), GFP_KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +
-> +       /* userspace wants to query either header or trans length */
-> +       if (!params.trans_len || !params.hdr_len)
-> +               goto cmd;
-> +
-> +       ret = -EINVAL;
-> +       if (!params.trans_uaddr || !params.guest_uaddr ||
-> +           !params.guest_len || !params.hdr_uaddr)
-> +               goto e_free;
-> +
-> +       /* Check if we are crossing the page boundry */
-> +       ret = -EINVAL;
-> +       offset = params.guest_uaddr & (PAGE_SIZE - 1);
-> +       if ((params.guest_len + offset > PAGE_SIZE))
-> +               goto e_free;
-> +
-> +       ret = -ENOMEM;
-> +       hdr = kmalloc(params.hdr_len, GFP_KERNEL);
-> +       if (!hdr)
-> +               goto e_free;
+> >  int ftrace_arch_code_modify_post_process(void)
+> >      __releases(&text_mutex)
+> >  {
+> > -	set_all_modules_text_ro();
+> > -	set_kernel_text_ro();
+> > +	text_poke_finish();
+> 
+> Why is the text_poke_finish() needed here? Can we add a comment about
+> why?
 
-Should we be checking params.hdr_len against SEV_FW_BLOB_MAX_SIZE?
+I think this is because of the text_poke_queue() in
+ftrace_modify_code_direct(). I seem to have forgotten the code-flow
+between the core and arch parts of ftrace again.
 
-> +
-> +       data->hdr_address = __psp_pa(hdr);
-> +       data->hdr_len = params.hdr_len;
-> +
-> +       ret = -ENOMEM;
-> +       trans_data = kmalloc(params.trans_len, GFP_KERNEL);
-> +       if (!trans_data)
-> +               goto e_free;
+But sure, I can try and dig that out again and write a comment.
 
-Ditto, should we be checking params.hdr_len against SEV_FW_BLOB_MAX_SIZE?
+
+> > +	text_poke_bp((void *)ip, new, MCOUNT_INSN_SIZE, NULL); // BATCH
+> 
+> What do you mean by "BATCH" ?
+
+Ah, that was a question, can/should we use text_poke_queue() there?
