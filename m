@@ -2,201 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ACC9F9BFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 22:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B27B0F9C09
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 22:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfKLVWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 16:22:00 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38983 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727187AbfKLVV5 (ORCPT
+        id S1727178AbfKLVXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 16:23:06 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38502 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbfKLVXF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 16:21:57 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 29so12684751pgm.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 13:21:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
-        b=ZfNUt0qSlG/eNpBtAZ0VTYWsyYp45EI1kg059Eym4v5QX0Rd4eJhUdGDHMn6QKbyy7
-         rAEVCINxRbPGFWvH2zmErPehM9LKyDLyBoDAInAHNKT4/quKkG/EtZO/FhCOkM/nDfkP
-         OwUp5RB5f4lGpDiCQlYFyWhQBMqbf0YFKIWuU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
-        b=VZpAjMSZA7eIKB9tNf+5dCKb2dxvGsAbQblrrFG8tDlUouYaZ1OMOJHJ8ig5Gq1rbG
-         62KXE6/OfUDOleckGekNvwJqMGF8q3n25rNr6p7xaN67mnzNo27bV1RLZc+zP3lV8MFm
-         M3rpJtFLslu3mcBJR4IeYloxfpl/mSnwadcLxluSkmpv0kJHF8iveWO/nxlAWPszZ+m3
-         KxaVCULkq5PBcBmBzVIiMZs3eYHximUO9IlKXl3qeRxyVHyxH2SjyFgq1JFEZqtxHoS6
-         Gxnn0boN2MK8vJHrTN8TkkHVIeMkClxQrBhqNqQN4u3PdOzofYAqfvB2gjQgXRQPxRHP
-         YMSQ==
-X-Gm-Message-State: APjAAAVJgBjarRxl+jbusydxMcjeoJFHqCTNkYN999WHo5unWqaBxxo1
-        u4zzkA1wIdJH55AnlxlVPn/Y5g==
-X-Google-Smtp-Source: APXvYqzdFzu4zPPFnJ9ABSyKsWziEZi4Dk2O2pVHeNcsXTcPeB3CKkazqUJ/8FJ/XZkexPEBBAMb2g==
-X-Received: by 2002:aa7:8d8b:: with SMTP id i11mr11186741pfr.45.1573593716214;
-        Tue, 12 Nov 2019 13:21:56 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c21sm19635349pgh.25.2019.11.12.13.21.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 13:21:55 -0800 (PST)
-Date:   Tue, 12 Nov 2019 13:21:54 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Jiri Slaby <jslaby@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
- as usercopy caches
-Message-ID: <201911121313.1097D6EE@keescook>
-References: <1515636190-24061-1-git-send-email-keescook@chromium.org>
- <1515636190-24061-10-git-send-email-keescook@chromium.org>
- <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
+        Tue, 12 Nov 2019 16:23:05 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EC48A608CC; Tue, 12 Nov 2019 21:23:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573593783;
+        bh=Lf5D9ppBmtQ1eV7DCgHEY543Ji26UJSEoevyHMcYOaA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ERvNdYCUJRHiMpxGQEgUPVBKTC29WU7uLV/pcnSPq9hbelh5YlmECWD8TPO7hvGuk
+         JvBYHnw9F/hrDcsTTjPo522nTylodrlJBIML2+3vr++AvBlefKzynpHYvAGYL6g8zp
+         sDOW57Tj+9cSY07FS2/ONHGIQVc/4PG0StWrzbgo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from eberman-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: eberman@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5827160591;
+        Tue, 12 Nov 2019 21:23:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573593782;
+        bh=Lf5D9ppBmtQ1eV7DCgHEY543Ji26UJSEoevyHMcYOaA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AsnohukHYLKnAUw+CuxTfahOwWdJ25B2vDDPq6X3hos+H8A88vV00HtgDVpW5R0nx
+         EKdBTkqegx7v/srDrNAhCpQKT5TN+Yshr0b4d7G44KOPhhK+3NSkpDcorpU2frwejC
+         IPrg6y92yKa70Qs+ZUKhPmbCcZD6E1ZgUmcVb1d0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5827160591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=eberman@codeaurora.org
+From:   Elliot Berman <eberman@codeaurora.org>
+To:     bjorn.andersson@linaro.org, saiprakash.ranjan@codeaurora.org,
+        agross@kernel.org, swboyd@chromium.org
+Cc:     Elliot Berman <eberman@codeaurora.org>, tsoni@codeaurora.org,
+        sidgup@codeaurora.org, psodagud@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/18] Restructure, improve target support for qcom_scm driver
+Date:   Tue, 12 Nov 2019 13:22:36 -0800
+Message-Id: <1573593774-12539-1-git-send-email-eberman@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 08:17:57AM +0100, Jiri Slaby wrote:
-> On 11. 01. 18, 3:02, Kees Cook wrote:
-> > From: David Windsor <dave@nullcore.net>
-> > 
-> > Mark the kmalloc slab caches as entirely whitelisted. These caches
-> > are frequently used to fulfill kernel allocations that contain data
-> > to be copied to/from userspace. Internal-only uses are also common,
-> > but are scattered in the kernel. For now, mark all the kmalloc caches
-> > as whitelisted.
-> > 
-> > This patch is modified from Brad Spengler/PaX Team's PAX_USERCOPY
-> > whitelisting code in the last public patch of grsecurity/PaX based on my
-> > understanding of the code. Changes or omissions from the original code are
-> > mine and don't reflect the original grsecurity/PaX code.
-> > 
-> > Signed-off-by: David Windsor <dave@nullcore.net>
-> > [kees: merged in moved kmalloc hunks, adjust commit log]
-> > Cc: Pekka Enberg <penberg@kernel.org>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-xfs@vger.kernel.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > Acked-by: Christoph Lameter <cl@linux.com>
-> > ---
-> >  mm/slab.c        |  3 ++-
-> >  mm/slab.h        |  3 ++-
-> >  mm/slab_common.c | 10 ++++++----
-> >  3 files changed, 10 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/mm/slab.c b/mm/slab.c
-> > index b9b0df620bb9..dd367fe17a4e 100644
-> > --- a/mm/slab.c
-> > +++ b/mm/slab.c
-> ...
-> > @@ -1098,7 +1099,8 @@ void __init setup_kmalloc_cache_index_table(void)
-> >  static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
-> >  {
-> >  	kmalloc_caches[idx] = create_kmalloc_cache(kmalloc_info[idx].name,
-> > -					kmalloc_info[idx].size, flags);
-> > +					kmalloc_info[idx].size, flags, 0,
-> > +					kmalloc_info[idx].size);
-> >  }
-> >  
-> >  /*
-> > @@ -1139,7 +1141,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
-> >  
-> >  			BUG_ON(!n);
-> >  			kmalloc_dma_caches[i] = create_kmalloc_cache(n,
-> > -				size, SLAB_CACHE_DMA | flags);
-> > +				size, SLAB_CACHE_DMA | flags, 0, 0);
-> 
-> Hi,
-> 
-> was there any (undocumented) reason NOT to mark DMA caches as usercopy?
-> 
-> We are seeing this on s390x:
-> 
-> > usercopy: Kernel memory overwrite attempt detected to SLUB object
-> 'dma-kmalloc-1k' (offset 0, size 11)!
-> > ------------[ cut here ]------------
-> > kernel BUG at mm/usercopy.c:99!
+This series improves support for 32-bit Qualcomm targets on qcom_scm driver.
 
-Interesting! I believe the rationale was that if the region is used for
-DMA, allowing direct access to it from userspace could be prone to
-races.
+Currently, the qcom_scm driver supports only 64-bit Qualcomm targets and very
+old 32-bit Qualcomm targets. Newer 32-bit targets use ARM's SMC Calling
+Convention to communicate with secure world. Older 32-bit targets use a
+"buffer-based" legacy approach for communicating with secure world (as
+implemented in qcom_scm-32.c). All arm64 Qualcomm targets use ARM SMCCC.
+Currently, SMCCC-based communication is enabled only on ARM64 config and
+buffer-based communication only on ARM config. This patch-series combines SMCCC
+and legacy conventions and selects the correct convention by querying the secure
+world [1].
 
-> See:
-> https://bugzilla.suse.com/show_bug.cgi?id=1156053
+We decided to take the opportunity as well to clean up the driver rather than
+try to patch together qcom_scm-32 and qcom_scm-64.
 
-For context from the bug, the trace is:
+Patches 1-5 improve macro names, reorder macros/functions, and prune unused
+            macros/functions. No functional changes were introduced.
+Patches 6-10 clears up the SCM abstraction in qcom_scm-64.
+Patches 11-15 clears up the SCM abstraction in qcom_scm-32.
+Patches 10 and 16-18 enable dynamically using the different calling conventions.
 
-(<0000000000386c5a> usercopy_abort+0xa2/0xa8) 
- <000000000036097a> __check_heap_object+0x11a/0x120  
- <0000000000386b3a> __check_object_size+0x18a/0x208  
- <000000000079b4ba> skb_copy_datagram_from_iter+0x62/0x240  
- <000003ff804edd5c> iucv_sock_sendmsg+0x1fc/0x858 Ýaf_iucv¨  
- <0000000000785894> sock_sendmsg+0x54/0x90  
- <0000000000785944> sock_write_iter+0x74/0xa0  
- <000000000038a3f0> new_sync_write+0x110/0x180  
- <000000000038d42e> vfs_write+0xa6/0x1d0  
- <000000000038d748> ksys_write+0x60/0xe8  
- <000000000096a660> system_call+0xdc/0x2e0  
+This series is based on https://lore.kernel.org/patchwork/cover/1129991/
+ 
+[1]: https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/soc/qcom/scm.c?h=kernel.lnx.4.9.r28-rel#n555
 
-I know Al worked on fixing up usercopy checking for iters. I wonder if
-there is redundant checking happening here? i.e. haven't iters already
-done object size verifications, so they're not needed during iter copy
-helpers?
+Changes since v1:
+ - Renamed functions/variables per Vinod's suggestions
+ - Split v1 01/17 into v2 [01,02,03]/18 per Vinod's suggestion
+ - Fix suggestions by Bjorn in v1 09/18 (now v2 10/18)
+ - Refactor last 3 commits per Bjorn suggestions in v1 17/18 and v1 10/18
 
-> This indeed fixes it:
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1290,7 +1290,8 @@ void __init create_kmalloc_caches(slab_flags_t flags)
->                         kmalloc_caches[KMALLOC_DMA][i] =
-> create_kmalloc_cache(
->                                 kmalloc_info[i].name[KMALLOC_DMA],
->                                 kmalloc_info[i].size,
-> -                               SLAB_CACHE_DMA | flags, 0, 0);
-> +                               SLAB_CACHE_DMA | flags, 0,
-> +                               kmalloc_info[i].size);
->                 }
->         }
->  #endif
+Changes since RFC:
+ - Fixed missing return values in qcom_scm_call_smccc
+ - Fixed order of arguments in qcom_scm_set_warm_boot_addr
+ - Adjusted logic of SMC convention to properly support older QCOM secure worlds
+ - Boot tested on IFC6410 based on linaro kernel tag:
+   debian-qcom-dragonboard410c-18.01 (which does basic verification of legacy
+   SCM calls: at least warm_boot_addr, cold_boot_addr, and power_down)
 
-How is iucv the only network protocol that has run into this? Do others
-use a bounce buffer?
+Elliot Berman (18):
+  firmware: qcom_scm: Rename macros and structures
+  firmware: qcom_scm: Add funcnum IDs
+  firmware: qcom_scm-64: Make SMCCC macros less magical
+  firmware: qcom_scm: Apply consistent naming scheme to command IDs
+  firmware: qcom_scm: Remove unused qcom_scm_get_version
+  firmware: qcom_scm-64: Move svc/cmd/owner into qcom_scm_desc
+  firmware: qcom_scm-64: Add SCM results to descriptor
+  firmware: qcom_scm-64: Remove qcom_scm_call_do_smccc
+  firmware: qcom_scm-64: Move SMC register filling to
+    qcom_scm_call_smccc
+  firmware: qcom_scm-64: Improve SMC convention detection
+  firmware: qcom_scm-32: Use SMC arch wrappers
+  firmware: qcom_scm-32: Use qcom_scm_desc in non-atomic calls
+  firmware: qcom_scm-32: Move SMCCC register filling to qcom_scm_call
+  firmware: qcom_scm-32: Create common legacy atomic call
+  firmware: qcom_scm-32: Add device argument to atomic calls
+  firmware: qcom_scm: Remove thin wrappers
+  firmware: qcom_scm: Dynamically support SMCCC and legacy conventions
+  firmware: qcom_scm: Order functions, definitions by service/command
+
+ drivers/firmware/Kconfig           |   8 -
+ drivers/firmware/Makefile          |   5 +-
+ drivers/firmware/qcom_scm-32.c     | 621 --------------------------------
+ drivers/firmware/qcom_scm-64.c     | 567 -----------------------------
+ drivers/firmware/qcom_scm-legacy.c | 233 ++++++++++++
+ drivers/firmware/qcom_scm-smccc.c  | 141 ++++++++
+ drivers/firmware/qcom_scm.c        | 708 +++++++++++++++++++++++++++++--------
+ drivers/firmware/qcom_scm.h        | 166 +++++----
+ include/linux/qcom_scm.h           |  99 +++---
+ 9 files changed, 1086 insertions(+), 1462 deletions(-)
+ delete mode 100644 drivers/firmware/qcom_scm-32.c
+ delete mode 100644 drivers/firmware/qcom_scm-64.c
+ create mode 100644 drivers/firmware/qcom_scm-legacy.c
+ create mode 100644 drivers/firmware/qcom_scm-smccc.c
 
 -- 
-Kees Cook
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
