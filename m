@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC22F89EF
+	by mail.lfdr.de (Postfix) with ESMTP id A8A66F89F0
 	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 08:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfKLHvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 02:51:18 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:48272 "EHLO
+        id S1727041AbfKLHvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 02:51:20 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:39360 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725283AbfKLHvS (ORCPT
+        by vger.kernel.org with ESMTP id S1725283AbfKLHvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 02:51:18 -0500
+        Tue, 12 Nov 2019 02:51:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573545077;
+        s=mimecast20190719; t=1573545079;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YuqMV+XI1zjk0ppB2G8dlQfAkSWQWFMzVv+Ux2CFKOg=;
-        b=hlAw5jrrr5RSYAe4AbsNX1Qgxyz5Z+EAxI2kEb79zuiwr35Neg9ugywhCQ0x0y6Kp7OnqY
-        xsUqXP+jbY4+jWCbpyTJBPN+XguZ4OzxIE+ilGsgCNBoLpyGMRJrBMSkQ05TpEpwJPI8HP
-        /t380z/iKvG1ZV3IMiQ0fQUtrV9FKPA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-208-8H2tdbzoM4yuthCxJ2N_tg-1; Tue, 12 Nov 2019 02:51:16 -0500
-Received: by mail-wm1-f72.google.com with SMTP id v8so830076wml.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 23:51:15 -0800 (PST)
+        bh=6rxyS/tsYPHxeVrlM+DEscFIUAW4qtSS92/VNhtKh8c=;
+        b=FDyy21BwZ80ftKEcM0ECsAdtBsRVMG4FU1eamOyZ1GA7jif0KBOoFLIgvaagxrH30nflZk
+        qaL4oPyIIxgL8Xchgt2CTiGO6dBTiS0uNRF/0VtpW6dNynKVnluR7SPrpX48drJhPcV82T
+        hcy8VJIF/b8SvahcvmeTq+6vOvct+h0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-Wj5eCjiIOCSLICFjqeDrCw-1; Tue, 12 Nov 2019 02:51:18 -0500
+Received: by mail-wr1-f70.google.com with SMTP id h7so11250054wrb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 23:51:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=O5HCUSc7z0s3gBXwPQa7m4nkTymvyozbUxwrxPFnytc=;
-        b=hKfLIiGQ49mpd0Z5qKxPYufCUX1+m+EtUFKerOhjq1ROk7VtQbjkP4cPtsTySvr7xb
-         eiYGNOMczay5tG9VBWE8uqFtxtSyBeCNVITEEOpA5EICyJQLqip7f0s3ahh/+MuQvvPy
-         tTJlb0lgFK4oPqTC4ifpBEB21YiPpF/Mdzp/lz5upis5H1uzIgYQ8cbXh6uPdK3Ouywy
-         zbRXQnN4U4s8JxBBoI0uuYN+mmIiwQw6T+4+o4ef2w61xdPSbf+2jnL1zl2jFHqfaiv7
-         Idu64j/WSwEB2ctH5bVMtMJ8+s7+qhB3/RSBjNfvuG1GI8g20J/qIJqO9n7NRomm0+M0
-         9v2w==
-X-Gm-Message-State: APjAAAV5szmp+Tq8CPq75su0kDirvkYRn4AZSXv6v8YN/8FPIiWVn/XJ
-        kUGMhecD+bSCWbUGJaJ/4GWqoOcQYqBp1xWatJ49ROYyQcutNmDUDjkZNKfls2HrhKVXz7u3+6x
-        H4yuKwCI/Xwa61jgwjgF8sAPI
-X-Received: by 2002:a5d:5444:: with SMTP id w4mr23600983wrv.164.1573545074761;
-        Mon, 11 Nov 2019 23:51:14 -0800 (PST)
-X-Google-Smtp-Source: APXvYqx9cEZniQsPVvMRkQS29yriEDi765xHWrNHGWwb8NbUUx5fVQcvRQdaiRp2ti0B+Ampr7JntA==
-X-Received: by 2002:a5d:5444:: with SMTP id w4mr23600954wrv.164.1573545074398;
-        Mon, 11 Nov 2019 23:51:14 -0800 (PST)
+         :references;
+        bh=VsvZFQRI2YV26AAOzKX2AI/mJO4c1Kc1kKEKWftHXnQ=;
+        b=GUGvK5QHTm3YoDwz+lvqhFxuLilo1QsjoPG4IrAW6NGYX0zyxwwGZaKHlyEfTx4swV
+         ZCMBdMC3zbYPLwfTkCNMtlRNSPJPn7eHRrmSSMvf+nzPLRo1lvI6t0jp5ZEzA3HFkwji
+         No5a8ZdxgsbJD1YiLDmb3hlq8nQXfwH2PjP6fWy4BJ8PDPkqWiHyu5aiuIJI+pYCLV2V
+         T4xW+psmzUPmhFCcMYnzceKYyMnt84zQT80Fg1p+vpT6uMU90vVxtPXu8xiddWzop3qI
+         I14Tey+/E/aVNbsOFQ7wH96yngINNXIB4ZrIlAhLULGbicWNCiAk363vttTBSslTPijC
+         C97A==
+X-Gm-Message-State: APjAAAVlmoExKaqNztCa/SlhWCq4I121kRUqgUNm9t4nZWjGtvZHFQju
+        Rb8xxXTqcrrRo3N4IU9CEbQA9+qk1q4C7jxGa1d5LZ0wSFUaYCJHWF57PbRBgN1OHtbhtbY+vTj
+        5P5H99b7asohgtN+pZm2q27df
+X-Received: by 2002:a1c:2846:: with SMTP id o67mr2637224wmo.7.1573545076088;
+        Mon, 11 Nov 2019 23:51:16 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxEVCMatQKEK93qgShSFL6xhXuoOiSzVJOt45BVZF+3Mq9tvSydYKZ6+TQCkfM5J0Mr4VyjYg==
+X-Received: by 2002:a1c:2846:: with SMTP id o67mr2637212wmo.7.1573545075797;
+        Mon, 11 Nov 2019 23:51:15 -0800 (PST)
 Received: from localhost.localdomain.com ([151.29.177.194])
-        by smtp.gmail.com with ESMTPSA id i71sm39498658wri.68.2019.11.11.23.51.13
+        by smtp.gmail.com with ESMTPSA id i71sm39498658wri.68.2019.11.11.23.51.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Nov 2019 23:51:13 -0800 (PST)
+        Mon, 11 Nov 2019 23:51:14 -0800 (PST)
 From:   Juri Lelli <juri.lelli@redhat.com>
 To:     peterz@infradead.org, mingo@redhat.com, glenn@aurora.tech
 Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
@@ -57,114 +57,118 @@ Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
         tglx@linutronix.de, luca.abeni@santannapisa.it,
         c.scordino@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
         bristot@redhat.com, juri.lelli@redhat.com
-Subject: [PATCH 1/2] sched/deadline: Fix nested priority inheritace at enqueue time
-Date:   Tue, 12 Nov 2019 08:50:55 +0100
-Message-Id: <20191112075056.19971-2-juri.lelli@redhat.com>
+Subject: [PATCH 2/2] sched/deadline: Temporary copy static parameters to boosted non-DEADLINE entities
+Date:   Tue, 12 Nov 2019 08:50:56 +0100
+Message-Id: <20191112075056.19971-3-juri.lelli@redhat.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20191112075056.19971-1-juri.lelli@redhat.com>
 References: <20191112075056.19971-1-juri.lelli@redhat.com>
-MIME-Version: 1.0
-X-MC-Unique: 8H2tdbzoM4yuthCxJ2N_tg-1
+X-MC-Unique: Wj5eCjiIOCSLICFjqeDrCw-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Glenn reported that "an application [he developed produces] a BUG in
-deadline.c when a SCHED_DEADLINE task contends with CFS tasks on nested
-PTHREAD_PRIO_INHERIT mutexes.  I believe the bug is triggered when a CFS
-task that was boosted by a SCHED_DEADLINE task boosts another CFS task
-(nested priority inheritance).
+Boosted entities (Priority Inheritance) use static DEADLINE parameters
+of the top priority waiter. However, there might be cases where top
+waiter could be a non-DEADLINE entity that is currently boosted by a
+DEADLINE entity from a different lock chain (i.e., nested priority
+chains involving entities of non-DEADLINE classes). In this case, top
+waiter static DEADLINE parameters could null (initialized to 0 at
+fork()) and replenish_dl_entity() would hit a BUG().
 
-Here is the BUG output on a 4.19-rt kernel:
-
- ------------[ cut here ]------------
- kernel BUG at kernel/sched/deadline.c:1462!
- invalid opcode: 0000 [#1] PREEMPT SMP
- CPU: 12 PID: 19171 Comm: dl_boost_bug Tainted: P           O      4.19.72-=
-rt25-appaloosa-v1.5 #1
- Hardware name: Intel Corporation S2600BPB/S2600BPB, BIOS SE5C620.86B.02.01=
-.0008.031920191559 03/19/2019
- RIP: 0010:enqueue_task_dl+0x335/0x910
- Code: ...
- RSP: 0018:ffffc9000c2bbc68 EFLAGS: 00010002
- RAX: 0000000000000009 RBX: ffff888c0af94c00 RCX: ffffffff81e12500
- RDX: 000000000000002e RSI: ffff888c0af94c00 RDI: ffff888c10b22600
- RBP: ffffc9000c2bbd08 R08: 0000000000000009 R09: 0000000000000078
- R10: ffffffff81e12440 R11: ffffffff81e1236c R12: ffff888bc8932600
- R13: ffff888c0af94eb8 R14: ffff888c10b22600 R15: ffff888bc8932600
- FS:  00007fa58ac55700(0000) GS:ffff888c10b00000(0000) knlGS:00000000000000=
-00
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007fa58b523230 CR3: 0000000bf44ab003 CR4: 00000000007606e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- PKRU: 55555554
- Call Trace:
-  ? intel_pstate_update_util_hwp+0x13/0x170
-  rt_mutex_setprio+0x1cc/0x4b0
-  task_blocks_on_rt_mutex+0x225/0x260
-  rt_spin_lock_slowlock_locked+0xab/0x2d0
-  rt_spin_lock_slowlock+0x50/0x80
-  hrtimer_grab_expiry_lock+0x20/0x30
-  hrtimer_cancel+0x13/0x30
-  do_nanosleep+0xa0/0x150
-  hrtimer_nanosleep+0xe1/0x230
-  ? __hrtimer_init_sleeper+0x60/0x60
-  __x64_sys_nanosleep+0x8d/0xa0
-  do_syscall_64+0x4a/0x100
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
- RIP: 0033:0x7fa58b52330d
- ...
- ---[ end trace 0000000000000002 ]=E2=80=94
-
-He also provided a simple reproducer creating the situation below:
-
- So the execution order of locking steps are the following
- (N1 and N2 are non-deadline tasks. D1 is a deadline task. M1 and M2
- are mutexes that are enabled * with priority inheritance.)
-
- Time moves forward as this timeline goes down:
-
- N1              N2               D1
- |               |                |
- |               |                |
- Lock(M1)        |                |
- |               |                |
- |             Lock(M2)           |
- |               |                |
- |               |              Lock(M2)
- |               |                |
- |             Lock(M1)           |
- |             (!!bug triggered!) |
-
-This patch (of a 2 patches series) fixes one part of the problem, by
-correctly triggering priority inheritance in cases top lock waiter is a
-boosted non-DEADLINE entity (like in the example above, N2 and N1).
+Fix this by temporarily copying static DEADLINE parameters of top
+DEADLINE waiter (there must be at least one in the chain(s) for the
+problem above to happen) into boosted entities. Parameters are reset
+during deboost.
 
 Reported-by: Glenn Elliott <glenn@aurora.tech>
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 ---
- kernel/sched/deadline.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c     |  6 ++++--
+ kernel/sched/deadline.c | 17 +++++++++++++++++
+ kernel/sched/sched.h    |  1 +
+ 3 files changed, 22 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 7880f4f64d0e..a3eb57cfcfb4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4441,19 +4441,21 @@ void rt_mutex_setprio(struct task_struct *p, struct=
+ task_struct *pi_task)
+ =09=09if (!dl_prio(p->normal_prio) ||
+ =09=09    (pi_task && dl_entity_preempt(&pi_task->dl, &p->dl))) {
+ =09=09=09p->dl.dl_boosted =3D 1;
++=09=09=09if (!dl_prio(p->normal_prio))
++=09=09=09=09__dl_copy_static(p, pi_task);
+ =09=09=09queue_flag |=3D ENQUEUE_REPLENISH;
+ =09=09} else
+ =09=09=09p->dl.dl_boosted =3D 0;
+ =09=09p->sched_class =3D &dl_sched_class;
+ =09} else if (rt_prio(prio)) {
+ =09=09if (dl_prio(oldprio))
+-=09=09=09p->dl.dl_boosted =3D 0;
++=09=09=09__dl_clear_params(p);
+ =09=09if (oldprio < prio)
+ =09=09=09queue_flag |=3D ENQUEUE_HEAD;
+ =09=09p->sched_class =3D &rt_sched_class;
+ =09} else {
+ =09=09if (dl_prio(oldprio))
+-=09=09=09p->dl.dl_boosted =3D 0;
++=09=09=09__dl_clear_params(p);
+ =09=09if (rt_prio(oldprio))
+ =09=09=09p->rt.timeout =3D 0;
+ =09=09p->sched_class =3D &fair_sched_class;
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 2dc48720f189..951a7b44156f 100644
+index 951a7b44156f..a823391b245e 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -1482,7 +1482,7 @@ static void enqueue_task_dl(struct rq *rq, struct tas=
-k_struct *p, int flags)
- =09 *   boosted due to a SCHED_DEADLINE pi-waiter).
- =09 * Otherwise we keep our runtime and deadline.
- =09 */
--=09if (pi_task && dl_prio(pi_task->normal_prio) && p->dl.dl_boosted) {
-+=09if (pi_task && dl_prio(pi_task->prio) && p->dl.dl_boosted) {
- =09=09pi_se =3D &pi_task->dl;
- =09} else if (!dl_prio(p->normal_prio)) {
- =09=09/*
+@@ -2676,6 +2676,22 @@ bool __checkparam_dl(const struct sched_attr *attr)
+ =09return true;
+ }
+=20
++/*
++ * This function clears the sched_dl_entity static params.
++ */
++void __dl_copy_static(struct task_struct *to, struct task_struct *from)
++{
++=09struct sched_dl_entity *to_se =3D &to->dl;
++=09struct sched_dl_entity *from_se =3D &from->dl;
++
++=09to_se->dl_runtime=09=3D from_se->dl_runtime;
++=09to_se->dl_deadline=09=3D from_se->dl_deadline;
++=09to_se->dl_period=09=3D from_se->dl_period;
++=09to_se->flags=09=09=3D from_se->flags;
++=09to_se->dl_bw=09=09=3D from_se->dl_bw;
++=09to_se->dl_density=09=3D from_se->dl_density;
++}
++
+ /*
+  * This function clears the sched_dl_entity static params.
+  */
+@@ -2690,6 +2706,7 @@ void __dl_clear_params(struct task_struct *p)
+ =09dl_se->dl_bw=09=09=09=3D 0;
+ =09dl_se->dl_density=09=09=3D 0;
+=20
++=09dl_se->dl_boosted=09=09=3D 0;
+ =09dl_se->dl_throttled=09=09=3D 0;
+ =09dl_se->dl_yielded=09=09=3D 0;
+ =09dl_se->dl_non_contending=09=3D 0;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 0db2c1b3361e..92444306fff7 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -239,6 +239,7 @@ struct rt_bandwidth {
+ =09unsigned int=09=09rt_period_active;
+ };
+=20
++void __dl_copy_static(struct task_struct *to, struct task_struct *from);
+ void __dl_clear_params(struct task_struct *p);
+=20
+ /*
 --=20
 2.17.2
 
