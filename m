@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73AFAF949C
+	by mail.lfdr.de (Postfix) with ESMTP id E2050F949D
 	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfKLPpf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 10:45:35 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:37289 "EHLO
+        id S1727291AbfKLPph convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 10:45:37 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:37290 "EHLO
         rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbfKLPpf (ORCPT
+        with ESMTP id S1726376AbfKLPpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Nov 2019 10:45:35 -0500
 Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xACFj30l012226, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xACFj30l012226
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xACFjDFd012295, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV02.realtek.com.tw[172.21.6.19])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xACFjDFd012295
         (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 12 Nov 2019 23:45:03 +0800
-Received: from RTEXMB04.realtek.com.tw (172.21.6.97) by
- RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Tue, 12 Nov 2019 23:45:03 +0800
+        Tue, 12 Nov 2019 23:45:13 +0800
 Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTEXMB04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ RTITCASV02.realtek.com.tw (172.21.6.19) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Tue, 12 Nov 2019 23:45:13 +0800
+Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
+ RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 12 Nov 2019 23:45:02 +0800
+ 15.1.1779.2; Tue, 12 Nov 2019 23:45:13 +0800
 Received: from RTEXMB03.realtek.com.tw ([::1]) by RTEXMB03.realtek.com.tw
  ([fe80::3d7d:f7db:e1fb:307b%12]) with mapi id 15.01.1779.005; Tue, 12 Nov
- 2019 23:45:02 +0800
+ 2019 23:45:13 +0800
 From:   James Tai <james.tai@realtek.com>
 To:     =?iso-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
 CC:     Rob Herring <robh+dt@kernel.org>,
@@ -38,12 +38,12 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-realtek-soc@lists.infradead.org" 
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v3 0/2] arm64: dts: Initial RTD1619 SoC and Realtek Mjolnir EVB support
-Thread-Topic: [PATCH v3 0/2] arm64: dts: Initial RTD1619 SoC and Realtek
- Mjolnir EVB support
-Thread-Index: AdWZPXXTjSlMF45pSpOBNdAR/51KoA==
-Date:   Tue, 12 Nov 2019 15:45:02 +0000
-Message-ID: <540b62715e77486485365081e992af76@realtek.com>
+Subject: [PATCH v3 1/2] dt-bindings: arm: realtek: Document RTD1619 and Realtek Mjolnir EVB
+Thread-Topic: [PATCH v3 1/2] dt-bindings: arm: realtek: Document RTD1619 and
+ Realtek Mjolnir EVB
+Thread-Index: AdWZPZ4hLyuFH8slSvOL26B5ueH3TQ==
+Date:   Tue, 12 Nov 2019 15:45:13 +0000
+Message-ID: <d655415326064b079b9d1d791024c725@realtek.com>
 Accept-Language: zh-TW, en-US
 Content-Language: zh-TW
 X-MS-Has-Attach: 
@@ -57,43 +57,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Define compatible strings for Realtek RTD1619 SoC and Realtek Mjolnir EVB.
 
-This series adds initial Device Trees for Realtek RTD1619 SoC and
-Realtek Mjolnir EVB.
+Signed-off-by: James Tai <james.tai@realtek.com>
+---
+ Documentation/devicetree/bindings/arm/realtek.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-v2 -> v3:
-* Adjust the address-cells and address-size property of root node
-* Adjust ranges property of r-bus node
-* Adjust uart node addressing
-* Add comments for uart node
-* Revert soc node
-
-v1 -> v2:
-* Define compatible strings for Realtek RTD1619 SoC and Realtek Mjolnir
-* Add uart1 and uart2 device node into rtd16xx.dtsi
-* move cpus node and the interrupt-affinity into rtd16xx.dtsi
-* Specify the r-bus ranges
-
-
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Andreas Färber <afaerber@suse.de>
-
-James Tai (2):
-  dt-bindings: arm: realtek: Document RTD1619 and Realtek Mjolnir EVB
-  arm64: dts: realtek: Add RTD1619 SoC and Realtek Mjolnir EVB
-
- .../devicetree/bindings/arm/realtek.yaml      |   6 +
- arch/arm64/boot/dts/realtek/Makefile          |   2 +
- .../boot/dts/realtek/rtd1619-mjolnir.dts      |  40 +++++
- arch/arm64/boot/dts/realtek/rtd1619.dtsi      |  12 ++
- arch/arm64/boot/dts/realtek/rtd16xx.dtsi      | 163 ++++++++++++++++++
- 5 files changed, 223 insertions(+)
- create mode 100644 arch/arm64/boot/dts/realtek/rtd1619-mjolnir.dts
- create mode 100644 arch/arm64/boot/dts/realtek/rtd1619.dtsi
- create mode 100644 arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/realtek.yaml b/Documentation/devicetree/bindings/arm/realtek.yaml
+index ab59de17152d..2444eff2c3d5 100644
+--- a/Documentation/devicetree/bindings/arm/realtek.yaml
++++ b/Documentation/devicetree/bindings/arm/realtek.yaml
+@@ -33,4 +33,10 @@ properties:
+           - enum:
+               - synology,ds418 # Synology DiskStation DS418
+           - const: realtek,rtd1296
++
++      # RTD1619 SoC based boards
++      - items:
++          - enum:
++              - realtek,mjolnir # Realtek Mjolnir EVB
++          - const: realtek,rtd1619
+ ...
 -- 
 2.24.0
 
