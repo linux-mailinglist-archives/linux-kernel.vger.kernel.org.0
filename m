@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D3CF861D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35BB9F8620
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:28:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfKLB1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 20:27:54 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55144 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbfKLB1s (ORCPT
+        id S1727417AbfKLB2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 20:28:08 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52831 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbfKLB2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 20:27:48 -0500
-Received: by mail-wm1-f65.google.com with SMTP id z26so1283599wmi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 17:27:47 -0800 (PST)
+        Mon, 11 Nov 2019 20:28:02 -0500
+Received: by mail-wm1-f66.google.com with SMTP id l1so1305478wme.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 17:28:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FKv+/2NKe8dFtfqG1MNboyv8rf4pF1RltFLDpxb/294=;
-        b=YvFR64ZmrlQH7Y1i0MGF9kQFRVFCwldFrE7uhfKNBt/6ZZNGDeDqHsV3SbXBMQQb+J
-         EHiknXnWAeplO3j8IftaS3O11GGPSVcYxS9E/YNH8Z8+EoAcL9soD3oxuORPxAnblYBN
-         hVc8CShVkTenWEVpeLXF3JVZTZbucxhjuAUFEKKAQEJcOxhkCiAq/YqL2COjYINq5IOV
-         tA/MFYUdMOPajclxE02BbnJVCyHQOHXWrFpUbsOHmZ71Jb7nB+lDL5yhTIlKSJYrSXrk
-         zaRas77RRbE5rjMDCX3h3OL3eQ2sY45jbnIRnygFe+G0BydHkTJVP6BdSGCQGnE01dtD
-         mTeg==
+        bh=uz85eFOmw9eLe/gvfSQH1CU3diio5dCJ/bAD2qd/VU8=;
+        b=gpKRrTBpgN66zUcyxXmMiN9olyPrBDZriHy6MODURyKZt2CiBfI3Webvcs+Rocy1uY
+         0H8i6IXgHpG40TARF+zrmgkcwXZjG5n6tJQFfR6BFndo2T3GrkhJsQaoUYe+GR/BKymf
+         W6kv3+VHoyo8lkX9eFpcqjHzimTnUAAJBHiJLQzXCXDjxCF3tRFMkb2wHDiBQPpGdgAp
+         m85mxMcIPx5mizSRZcmy3FKshd3ycQl5hxGQXKRBZBn/mTp4XcuNNmwjt9V+LjfyAQgL
+         jqIZ4DjGkqUbrbNJ7t66G1UAbhYQ2Pd0+SO25dpoEbj+sLFCiiWGNkUtWAIl8OiHd0Pm
+         StcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FKv+/2NKe8dFtfqG1MNboyv8rf4pF1RltFLDpxb/294=;
-        b=adf0WIydRP6B6YzwgrMhQeo0lPJyH0UlRbZWjh65myNpwFqoiin1LmgXCSFONR/A+O
-         8bsZHMISyhsKsRlue7GbCoMcWaojBDR0qBceF+faVXW0khf5CbVXp0khRc6kUiABXR4q
-         eZfYHtRHs+4yJiOIoU7cI0lsQjZip2eoJqiDA4n3xitbpHsA9eQg7HDBu3Ob8CzeY4Cb
-         5TH8+9mUB/bIPnR1QZeBvb315dqGY5DNXIfTJn7BrPqk/h/ABfOpMaFNWbFIDe+4hLmy
-         HDd15/l1i46bREkkGgRIRb0E9P7BwDE6Rm+xOarVtA0hxTWWKJrK/piENT22gUwZSwSu
-         YmpQ==
-X-Gm-Message-State: APjAAAXTtEIkmFSB+ycOMh5u23ZwwPLSHHzVLm7gCFPgYvW/xFkJHytu
-        WXAIaUvUe+cBkoh6A94VkcK5JpgIqFs=
-X-Google-Smtp-Source: APXvYqw1B2GM2aXq8YbS+BON98R2vaAErR08BRhfGLP71ovSunJTq2KKjo9JtP2AWnCEU4RR7BcPCg==
-X-Received: by 2002:a05:600c:2054:: with SMTP id p20mr1561602wmg.177.1573522066529;
-        Mon, 11 Nov 2019 17:27:46 -0800 (PST)
+        bh=uz85eFOmw9eLe/gvfSQH1CU3diio5dCJ/bAD2qd/VU8=;
+        b=onn1hvCMP3/lPvhLqW9TqKBvMYNjDEfodm5FYZIKvM3h/763L9w4osSnMDomkBtxy/
+         WSPqayZqgR5RpDbe97eTXd88NqMeZ21MKXQmPjn6jBVAV+tEvT8SOhsVHco9UApVmJE3
+         nXC8dij84RgQwEyp+Bq3+LEMuovM2MoenpfS/W+dBE8nl0YJfsogZhXzbWTlcOSewvYR
+         fu7O1xCocVFfhaNsw8PQWne6SbUSqwk8zssnRAoLt4WyjTefKOh2fR93Lt4exaO6Vt0B
+         I3wemI4ilmHKR7tszn2PkDtUPSesH/ZlSoak9t8Jgg1gJQpexOnSAPSFDJpRCCXMPoWO
+         uKnw==
+X-Gm-Message-State: APjAAAWfcxcLpEVSLkYAzI3ITwk+4MCvijesgmkVyEuPI47gw+ygpw7W
+        Ka7G7EO2LbN1UnrdjPPQbUaoaYll9gU=
+X-Google-Smtp-Source: APXvYqyKBWNMmVaj5SuoqSYxX5UN3z/BGtBiK0BH5DbbJTqYAWgt0WrrLNo77oGEluBiZj/uKHhbIQ==
+X-Received: by 2002:a1c:7d47:: with SMTP id y68mr1483434wmc.157.1573522080001;
+        Mon, 11 Nov 2019 17:28:00 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id u187sm1508096wme.15.2019.11.11.17.27.45
+        by smtp.gmail.com with ESMTPSA id u187sm1508096wme.15.2019.11.11.17.27.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 17:27:45 -0800 (PST)
+        Mon, 11 Nov 2019 17:27:59 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
         Dmitry Safonov <dima@arista.com>,
         Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Christian Brauner <christian.brauner@ubuntu.com>,
@@ -64,11 +64,10 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Andrei Vagin <avagin@gmail.com>
-Subject: [PATCHv8 11/34] posix-clocks: Wire up clock_gettime() with timens offsets
-Date:   Tue, 12 Nov 2019 01:27:00 +0000
-Message-Id: <20191112012724.250792-12-dima@arista.com>
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: [PATCHv8 21/34] x86/vdso: Provide vdso_data offset on vvar_page
+Date:   Tue, 12 Nov 2019 01:27:10 +0000
+Message-Id: <20191112012724.250792-22-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191112012724.250792-1-dima@arista.com>
 References: <20191112012724.250792-1-dima@arista.com>
@@ -79,127 +78,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@openvz.org>
+VDSO support for Time namespace needs to set up a page with the same
+layout as VVAR. That timens page will be placed on position of VVAR page
+inside namespace. That page has vdso_data->seq set to 1 to enforce
+the slow path and vdso_data->clock_mode set to VCLOCK_TIMENS to enforce
+the time namespace handling path.
 
-Adjust monotonic and boottime clocks with per-timens offsets.
-As the result a process inside time namespace will see timers and clocks
-corrected to offsets that were set on creating namespace.
+To prepare timens page kernel needs to know the vdso_data offset.
+Provide arch_get_vdso_data() helper for locating vdso_data on VVAR page.
 
-Note that applications usually go through vDSO to get time, which is not
-yet adjusted. Further changes complete time namespace virtualisation
-with vDSO support.
-
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Co-developed-by: Dmitry Safonov <dima@arista.com>
+Co-developed-by: Andrei Vagin <avagin@openvz.org>
+Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- kernel/time/alarmtimer.c   | 9 ++++++++-
- kernel/time/posix-stubs.c  | 3 +++
- kernel/time/posix-timers.c | 5 +++++
- 3 files changed, 16 insertions(+), 1 deletion(-)
+ arch/x86/entry/vdso/vdso-layout.lds.S |  2 --
+ arch/x86/entry/vdso/vma.c             | 11 +++++++++++
+ arch/x86/include/asm/vvar.h           |  8 ++++----
+ arch/x86/kernel/vmlinux.lds.S         |  4 +---
+ include/linux/time_namespace.h        |  1 +
+ 5 files changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 4d8c90546635..9a8e81bc4ec2 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -26,6 +26,7 @@
- #include <linux/freezer.h>
- #include <linux/compat.h>
- #include <linux/module.h>
-+#include <linux/time_namespace.h>
+diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
+index 93c6dc7812d0..2330daad67c3 100644
+--- a/arch/x86/entry/vdso/vdso-layout.lds.S
++++ b/arch/x86/entry/vdso/vdso-layout.lds.S
+@@ -21,9 +21,7 @@ SECTIONS
  
- #include "posix-timers.h"
+ 	/* Place all vvars at the offsets in asm/vvar.h. */
+ #define EMIT_VVAR(name, offset) vvar_ ## name = vvar_page + offset;
+-#define __VVAR_KERNEL_LDS
+ #include <asm/vvar.h>
+-#undef __VVAR_KERNEL_LDS
+ #undef EMIT_VVAR
  
-@@ -886,6 +887,12 @@ static struct platform_driver alarmtimer_driver = {
- 	}
- };
+ 	pvclock_page = vvar_start + PAGE_SIZE;
+diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+index 000db8282cc8..5dab706aca2e 100644
+--- a/arch/x86/entry/vdso/vma.c
++++ b/arch/x86/entry/vdso/vma.c
+@@ -24,6 +24,17 @@
+ #include <asm/cpufeature.h>
+ #include <clocksource/hyperv_timer.h>
  
-+static void get_boottime_timespec(struct timespec64 *tp)
-+{
-+	ktime_get_boottime_ts64(tp);
-+	timens_add_boottime(tp);
-+}
++#undef _ASM_X86_VVAR_H
++#define EMIT_VVAR(name, offset)	\
++	const size_t name ## _offset = offset;
++#include <asm/vvar.h>
 +
- /**
-  * alarmtimer_init - Initialize alarm timer code
-  *
-@@ -906,7 +913,7 @@ static int __init alarmtimer_init(void)
- 	alarm_bases[ALARM_REALTIME].get_timespec = ktime_get_real_ts64,
- 	alarm_bases[ALARM_BOOTTIME].base_clockid = CLOCK_BOOTTIME;
- 	alarm_bases[ALARM_BOOTTIME].get_ktime = &ktime_get_boottime;
--	alarm_bases[ALARM_BOOTTIME].get_timespec = ktime_get_boottime_ts64;
-+	alarm_bases[ALARM_BOOTTIME].get_timespec = get_boottime_timespec;
- 	for (i = 0; i < ALARM_NUMTYPE; i++) {
- 		timerqueue_init_head(&alarm_bases[i].timerqueue);
- 		spin_lock_init(&alarm_bases[i].lock);
-diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
-index 67df65f887ac..edaf075d1ee4 100644
---- a/kernel/time/posix-stubs.c
-+++ b/kernel/time/posix-stubs.c
-@@ -14,6 +14,7 @@
- #include <linux/ktime.h>
- #include <linux/timekeeping.h>
- #include <linux/posix-timers.h>
-+#include <linux/time_namespace.h>
- #include <linux/compat.h>
++struct vdso_data *arch_get_vdso_data(void *vvar_page)
++{
++	return (struct vdso_data *)(vvar_page + _vdso_data_offset);
++}
++#undef EMIT_VVAR
++
+ #if defined(CONFIG_X86_64)
+ unsigned int __read_mostly vdso64_enabled = 1;
+ #endif
+diff --git a/arch/x86/include/asm/vvar.h b/arch/x86/include/asm/vvar.h
+index 32f5d9a0b90e..ff2de3025388 100644
+--- a/arch/x86/include/asm/vvar.h
++++ b/arch/x86/include/asm/vvar.h
+@@ -19,10 +19,10 @@
+ #ifndef _ASM_X86_VVAR_H
+ #define _ASM_X86_VVAR_H
  
- #ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
-@@ -77,9 +78,11 @@ int do_clock_gettime(clockid_t which_clock, struct timespec64 *tp)
- 		break;
- 	case CLOCK_MONOTONIC:
- 		ktime_get_ts64(tp);
-+		timens_add_monotonic(tp);
- 		break;
- 	case CLOCK_BOOTTIME:
- 		ktime_get_boottime_ts64(tp);
-+		timens_add_boottime(tp);
- 		break;
- 	default:
- 		return -EINVAL;
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index fe1de4f71ace..d26b915b227a 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -30,6 +30,7 @@
- #include <linux/hashtable.h>
- #include <linux/compat.h>
- #include <linux/nospec.h>
-+#include <linux/time_namespace.h>
+-#if defined(__VVAR_KERNEL_LDS)
+-
+-/* The kernel linker script defines its own magic to put vvars in the
+- * right place.
++#ifdef EMIT_VVAR
++/*
++ * EMIT_VVAR() is used by the kernel linker script to put vvars in the
++ * right place. Also, it's used by kernel code to import offsets values.
+  */
+ #define DECLARE_VVAR(offset, type, name) \
+ 	EMIT_VVAR(name, offset)
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 3a1a819da137..e3296aa028fe 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -193,12 +193,10 @@ SECTIONS
+ 		__vvar_beginning_hack = .;
  
- #include "timekeeping.h"
- #include "posix-timers.h"
-@@ -195,6 +196,7 @@ static int posix_clock_realtime_adj(const clockid_t which_clock,
- static int posix_get_monotonic_timespec(clockid_t which_clock, struct timespec64 *tp)
+ 		/* Place all vvars at the offsets in asm/vvar.h. */
+-#define EMIT_VVAR(name, offset) 			\
++#define EMIT_VVAR(name, offset)				\
+ 		. = __vvar_beginning_hack + offset;	\
+ 		*(.vvar_ ## name)
+-#define __VVAR_KERNEL_LDS
+ #include <asm/vvar.h>
+-#undef __VVAR_KERNEL_LDS
+ #undef EMIT_VVAR
+ 
+ 		/*
+diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
+index a68b1ab7b5bb..90e82654b4ce 100644
+--- a/include/linux/time_namespace.h
++++ b/include/linux/time_namespace.h
+@@ -37,6 +37,7 @@ extern struct time_namespace *copy_time_ns(unsigned long flags,
+ 	struct user_namespace *user_ns, struct time_namespace *old_ns);
+ extern void free_time_ns(struct kref *kref);
+ extern int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk);
++extern struct vdso_data *arch_get_vdso_data(void *vvar_page);
+ 
+ static inline void put_time_ns(struct time_namespace *ns)
  {
- 	ktime_get_ts64(tp);
-+	timens_add_monotonic(tp);
- 	return 0;
- }
- 
-@@ -209,6 +211,7 @@ static ktime_t posix_get_monotonic_ktime(clockid_t which_clock)
- static int posix_get_monotonic_raw(clockid_t which_clock, struct timespec64 *tp)
- {
- 	ktime_get_raw_ts64(tp);
-+	timens_add_monotonic(tp);
- 	return 0;
- }
- 
-@@ -223,6 +226,7 @@ static int posix_get_monotonic_coarse(clockid_t which_clock,
- 						struct timespec64 *tp)
- {
- 	ktime_get_coarse_ts64(tp);
-+	timens_add_monotonic(tp);
- 	return 0;
- }
- 
-@@ -235,6 +239,7 @@ static int posix_get_coarse_res(const clockid_t which_clock, struct timespec64 *
- static int posix_get_boottime_timespec(const clockid_t which_clock, struct timespec64 *tp)
- {
- 	ktime_get_boottime_ts64(tp);
-+	timens_add_boottime(tp);
- 	return 0;
- }
- 
 -- 
 2.24.0
 
