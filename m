@@ -2,138 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29716F9D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9FEF9D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:35:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbfKLWdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 17:33:07 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46443 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbfKLWdH (ORCPT
+        id S1726994AbfKLWe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 17:34:57 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42455 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbfKLWe5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:33:07 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r18so12771257pgu.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 14:33:05 -0800 (PST)
+        Tue, 12 Nov 2019 17:34:57 -0500
+Received: by mail-wr1-f66.google.com with SMTP id a15so60195wrf.9;
+        Tue, 12 Nov 2019 14:34:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=RGmt6PLbYhyeOnZp17n63ynPuJIi7itn37eXFbTZa0c=;
-        b=UpoguG/CsW6TsG4IVXil0i6TSHAdvuHl9JI699WLgn0TaTR6HHhdh2RfBtlRO72r5p
-         SO/wPeoR/reSgkIlqr33WVJe/fBdkCJstLVVRwO0cxVhMODzQEQuZrM/2sAKCFBVJ+D9
-         1U6nsT6Q1wp4ozAu7GcSXNbLriw8trqg3jMPE=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wb1Drv4ONjZhH9+mj+82CJHFlmyGodqqNi6A+Xmk3Xw=;
+        b=FRVWpoTxSsoh77cVnCDAag91RQbtkNfh61zahp/5u4GoHpP2ItnBWtarNikfE30e4b
+         xgMUIP2pg8c7P5M0AGzzk7pZvziV8uoytvcoIK8KnQH96BNO1RDMLJVH4IHyhlNszNmY
+         yOCepQqqeMuT2aGC2OIBqwHgLnzLT4tQNGFMT+Y2bPWytjg2VmmiUIoWdA3YubUH59Pz
+         ls3XvSQ8xB0sTbAzTb1bBXDm8wKs9FYzJmSTNvodY5aYjrfUwPgT5L84wRCe6atd8Oo4
+         KK4QKVFq1IG8SrjRg7+SAn/WWIWPBXOSRH+oSIxE4cJUS8Xhf2veNNaEwQUBwDW9ANdw
+         a7XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RGmt6PLbYhyeOnZp17n63ynPuJIi7itn37eXFbTZa0c=;
-        b=kIIP5Q6cPgVM62TfOlYbgG/Z6a2tzDqeHVLS3LFgLMHHhhjDcr0L6m8S23iSg028Ob
-         1JbAqo+Pe0gCkB0fS8jka/flvVQXnegbBP1arrg74dnDMEUHuJfeqNpA8iyDkwJAXITM
-         Y9ayZ2D91g4DmkVwDaqQmKHTMSh69dFQp9jQgfQLTGb2pL77e9QWbBNlFhZ+Po3mLUlr
-         xby5b/LxMizgB/PSkrJ3MwQ5K1feTI4+p81gQjOrE4kIgoCOCcqb93HHw6ReSzc8fx9y
-         j9kf2I7T2xG/1fQrwPJ68kt5aZ13vPfCaxp3wbj4+CzoKUHAafaJJv+tf5JyCpPoK5nz
-         hG7g==
-X-Gm-Message-State: APjAAAWRy3Bl2slq0gp9KksQAV+KilhUqUv9Ek5RV3QPPw2nkehur+lJ
-        AagH4fxAT3u5X4d9EseP36lSRQ==
-X-Google-Smtp-Source: APXvYqyptVIgzatO0wTXSYEPo9fnfbtnf2weW93XN7BYrwcmuIToOghzrleKzVKQ98E64Tsx9I7TRg==
-X-Received: by 2002:a17:90a:3651:: with SMTP id s75mr273648pjb.30.1573597985024;
-        Tue, 12 Nov 2019 14:33:05 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f26sm19941pgf.22.2019.11.12.14.33.04
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wb1Drv4ONjZhH9+mj+82CJHFlmyGodqqNi6A+Xmk3Xw=;
+        b=KTpWvl2wZ03BCrm5nIYA9zKghHRePqWZwP79qI9bJWa/f9OnDUhPcJMWO/sz16tNft
+         IacDKGFj7G4szHgqRg4X/lyAT0Sr75USeveZEIDLIWAC5EiEnLVlcUsnZ6ZOOBXYR4TH
+         S30+VgDDd29tJ1CChyYNSLM0vJ/zgVQhMGGi4SKpWjvN7i9c0bUWT+HBy1VhsphpHHa/
+         ExSOM24Tabq25ozDYKNC7a0Nde2vcFTgc9j3GoAM5HKWcCd1gABBo8OzI5xlw70QGpoy
+         WK5bt4t3VLW9mkzcmIRlgXTwyy5avxgRe416KOmrQVTR92oR0HZZjA59/Yt88B6RKrUu
+         uw3A==
+X-Gm-Message-State: APjAAAWq1xeZY43ELiSiUcYyF4MJIAZgBlGCApYVtlHeunGaZhsipZpQ
+        eI8fjx3I8OqxvWPGsc5mHpM=
+X-Google-Smtp-Source: APXvYqwXyaOALEq7d0nWRlmUaOOM2L78swtp6xJT3HPwK/KWDAXczQ7YIOxTcaQ+pIzsPMdxq+tIjw==
+X-Received: by 2002:adf:f490:: with SMTP id l16mr28107897wro.77.1573598094717;
+        Tue, 12 Nov 2019 14:34:54 -0800 (PST)
+Received: from localhost.localdomain (ip5f5bfdef.dynamic.kabel-deutschland.de. [95.91.253.239])
+        by smtp.gmail.com with ESMTPSA id d20sm584356wra.4.2019.11.12.14.34.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 14:33:04 -0800 (PST)
-Date:   Tue, 12 Nov 2019 14:33:03 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] driver core: platform: use the correct callback type for
- bus_find_device
-Message-ID: <201911121422.DD3A022@keescook>
-References: <20191112214156.3430-1-samitolvanen@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112214156.3430-1-samitolvanen@google.com>
+        Tue, 12 Nov 2019 14:34:53 -0800 (PST)
+From:   Bean Huo <huobean@gmail.com>
+To:     alim.akhtar@samsung.com, avri.altman@wdc.com,
+        pedrom.sousa@synopsys.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, stanley.chu@mediatek.com,
+        beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
+        cang@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bean Huo <huobean@gmail.com>
+Subject: [PATCH v2 0/2] Two small patches for UFS
+Date:   Tue, 12 Nov 2019 23:34:34 +0100
+Message-Id: <20191112223436.27449-1-huobean@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 01:41:56PM -0800, Sami Tolvanen wrote:
-> platform_find_device_by_driver calls bus_find_device and passes
-> platform_match as the callback function. Casting the function to a
-> mismatching type trips indirect call Control-Flow Integrity (CFI) checking.
+Hi,
+Here are two small patches, one is to fix a potential bug which could
+result in system hang-up, another one is to add more helpful debug hint.
 
-Specifically, the mismatch is between these two places:
+v1-v2:
+ 1. add reveiwed-by tags
+ 2. fix one typo in second patch commit comment
 
-struct device *bus_find_device(struct bus_type *bus,
-                               struct device *start, const void *data,
-                               int (*match)(struct device *dev, const void *data))
+Bean Huo (2):
+  scsi: ufs: print helpful hint when response size exceed buffer size
+  scsi: ufs: fix potential bug which ends in system hang-up
 
-struct bus_type {
-	...
-        int (*match)(struct device *dev, struct device_driver *drv);
-
-against the function itself, which needs to match the prototype for the
-initializer assignment:
-
-static int platform_match(struct device *dev, struct device_driver *drv)
-
-I'm surprised this is the only place in the kernel where this happens,
-but a grep for other bus_find_device() users shows that they don't also
-have struct bus_type helpers; everything else uses the "const void
-*data" second argument.
-
-> This change adds a callback function with the correct type and instead
-> of casting the function, explicitly casts the second parameter to struct
-> device_driver* as expected by platform_match.
-> 
-> Fixes: 36f3313d6bff9 ("platform: Add platform_find_device_by_driver() helper")
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  drivers/base/platform.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index b230beb6ccb4..3c0cd20925b7 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -1278,6 +1278,11 @@ struct bus_type platform_bus_type = {
->  };
->  EXPORT_SYMBOL_GPL(platform_bus_type);
->  
-> +static inline int __platform_match(struct device *dev, const void *drv)
-> +{
-> +	return platform_match(dev, (struct device_driver *)drv);
-> +}
-> +
-
-So, this makes sense to me. :)
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
->  /**
->   * platform_find_device_by_driver - Find a platform device with a given
->   * driver.
-> @@ -1288,7 +1293,7 @@ struct device *platform_find_device_by_driver(struct device *start,
->  					      const struct device_driver *drv)
->  {
->  	return bus_find_device(&platform_bus_type, start, drv,
-> -			       (void *)platform_match);
-> +			       __platform_match);
->  }
->  EXPORT_SYMBOL_GPL(platform_find_device_by_driver);
->  
-> 
-> base-commit: 100d46bd72ec689a5582c2f5f4deadc5bcb92d60
-> -- 
-> 2.24.0.rc1.363.gb1bccd3e3d-goog
-> 
+ drivers/scsi/ufs/ufshcd.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 -- 
-Kees Cook
+2.17.1
+
