@@ -2,141 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4DA9F8CBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34A57F8CA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:19:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfKLKWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 05:22:12 -0500
-Received: from mout.web.de ([212.227.15.4]:33679 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbfKLKWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 05:22:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1573554084;
-        bh=zKVb9WMuQ7zRQYv1GZLrzWxEJS3VRLzbpd64rrU9ml8=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=GQMA3WZ0htXxLWCRbHaT+ovKpkoJXAZLw7lNKlSZKtjbRw6nkBHzIlwI20F6wbWRF
-         QUdd2+2+k6s4YXXHIPaiCs3p9Oqfi9E+v4wfHe9yyxVanEvj+VgiPp/c54D/S0HgFy
-         g9e3sNtem/DrGXg8yzEY318FXh/dJvQ3K/sq3MEI=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.43.108] ([89.204.137.77]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MDgPG-1ig4gE0LSY-00H9Ox; Tue, 12
- Nov 2019 11:21:24 +0100
-Subject: Re: [PATCH 3/3] arm64: dts: rk3399: Add init voltage for vdd_log
-To:     Kever Yang <kever.yang@rock-chips.com>,
-        Markus Reichl <m.reichl@fivetechno.de>, heiko@sntech.de
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andrius_=c5=a0tikonas?= <andrius@stikonas.eu>,
-        linux-kernel@vger.kernel.org, Alexis Ballier <aballier@gentoo.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Hugh Cole-Baker <sigmaris@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Andy Yan <andyshrk@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Oskari Lemmela <oskari@lemmela.net>,
-        linux-rockchip@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Pragnesh Patel <Pragnesh_Patel@mentor.com>,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Nick Xie <nick@khadas.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Vivek Unune <npcomplete13@gmail.com>,
-        Akash Gajjar <akash@openedev.com>
-References: <20191111005158.25070-1-kever.yang@rock-chips.com>
- <20191111005158.25070-3-kever.yang@rock-chips.com>
- <ef8830f3-10d1-7b71-0e18-232f2eaeef2d@web.de>
- <1eaef5d5-c923-da56-b9c4-48d517b3c969@rock-chips.com>
- <acbab893-9e9a-cfe1-67bf-a9e2b2e50114@fivetechno.de>
- <17e14b30-02ee-2379-8891-088677924479@rock-chips.com>
-From:   Soeren Moch <smoch@web.de>
-Message-ID: <fd9ee2bc-9dfb-1aa2-f00f-add9b3069876@web.de>
-Date:   Tue, 12 Nov 2019 11:19:19 +0100
+        id S1726960AbfKLKTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 05:19:53 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:22569 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725874AbfKLKTw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 05:19:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573553991;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=7i9+SK3hpwTsCv7dTE1Okd0YAcSg1MeSopDF9z7WqQ4=;
+        b=cHbZNThAL9p+C0w7EKjJlDaChoJSfIUdBDdrqL1kq+sMq3ffy4GD/lHrA2j39vd63zJmoo
+        5i33A3CZNh6J48G6F59xf8YWDAnGdzYXZrgMrJ/hrfcHlf+qL+SxMbyLjmvcXyH8RlRBTp
+        hIiPOSdfpWNsSgGAUcMTQQSK0JHWF1M=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-398-mjBWfmhSNNS8aGiqHkAVtQ-1; Tue, 12 Nov 2019 05:19:46 -0500
+Received: by mail-wr1-f70.google.com with SMTP id e10so9137871wrt.16
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 02:19:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YFkdWT01jyLgEtqFcC61NZ98AMX6STuxDrkyGOC4EK0=;
+        b=KiN5A6T1AHuH33Wq/tueMvts8vaWXz6sYUXbAzGBmyTkywDFhnJhiegEBTU/kj/l0i
+         EKg/tG0N/bWr0uC+iSlYf6nu2jdQsTi7BvYMovzqFog94IKDqJ3trGclNxBiYoLCRxHr
+         V20e1zZ5AKycA659JQDf9s59XDTAf8XDEUEzHskKOLjLqjJmWugqw7CDPXwvFuFDyjFv
+         CG1z5NPIZ52Yunpugb4NWB0TK3goys4mAbnU2bk+3cilr3hmgS729nKIwDGH+4JQiQpl
+         Qo7lD4NpCNZwmIMUPyncX/+Oyx3ZXJQoZFu7oxmUpYHU6n7Qq1ApGFBdiLMELdtckT7t
+         quqg==
+X-Gm-Message-State: APjAAAVHMf8RJ0Ggu0EszJKb3+zMO0ieJatwSJSJOIYVox71FDc7OY0x
+        MErsgiqp1BgJ0Kv+7VrDsBu/bEBKiD26xLxPqN2A334uTWwXHwYpMxioiWSxbg43tnpj5cIgPDM
+        32JzkL/0HiCBckj1WJ+Uf1S6H
+X-Received: by 2002:a7b:c38c:: with SMTP id s12mr3334689wmj.84.1573553985546;
+        Tue, 12 Nov 2019 02:19:45 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyPXIlM2Wpb56oH3XhullKKBX2spmK2zk1Sp2fiUJ3jnWYwlEaUB3yJIwf8L4roR2PgBk5NiQ==
+X-Received: by 2002:a7b:c38c:: with SMTP id s12mr3334655wmj.84.1573553985266;
+        Tue, 12 Nov 2019 02:19:45 -0800 (PST)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id f67sm3314680wme.16.2019.11.12.02.19.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2019 02:19:44 -0800 (PST)
+Subject: Re: [PATCH 1/2] KVM: MMU: Do not treat ZONE_DEVICE pages as being
+ reserved
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adam Borowski <kilobyte@angband.pl>,
+        David Hildenbrand <david@redhat.com>
+References: <1cf71906-ba99-e637-650f-fc08ac4f3d5f@redhat.com>
+ <CAPcyv4hMOxPDKAZtTvWKEMPBwE_kPrKPB_JxE2YfV5EKkKj_dQ@mail.gmail.com>
+ <20191106233913.GC21617@linux.intel.com>
+ <CAPcyv4jysxEu54XK2kUYnvTqUL7zf2fJvv7jWRR=P4Shy+3bOQ@mail.gmail.com>
+ <CAPcyv4i3M18V9Gmx3x7Ad12VjXbq94NsaUG9o71j59mG9-6H9Q@mail.gmail.com>
+ <0db7c328-1543-55db-bc02-c589deb3db22@redhat.com>
+ <CAPcyv4gMu547patcROaqBqbwxut5au-WyE_M=XsKxyCLbLXHTg@mail.gmail.com>
+ <20191107155846.GA7760@linux.intel.com>
+ <20191109014323.GB8254@linux.intel.com>
+ <CAPcyv4hAY_OfExNP+_067Syh9kZAapppNwKZemVROfxgbDLLYQ@mail.gmail.com>
+ <20191111182750.GE11805@linux.intel.com>
+ <CAPcyv4hErx-Hd5q+3+W6VUSWDpEuOfipMsWAL+nnQtZvYAf3bg@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <e6637be8-7890-579b-8131-6fdbbd791fa0@redhat.com>
+Date:   Tue, 12 Nov 2019 11:19:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <17e14b30-02ee-2379-8891-088677924479@rock-chips.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAPcyv4hErx-Hd5q+3+W6VUSWDpEuOfipMsWAL+nnQtZvYAf3bg@mail.gmail.com>
+Content-Language: en-US
+X-MC-Unique: mjBWfmhSNNS8aGiqHkAVtQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-GB
-X-Provags-ID: V03:K1:dSsn12ZY5BPyYvsi5lOeFhAuWonqE2SikhTXUxedBa/QOws+FOu
- Lwoaiezl4xgI1mVpEmVtCXu1r3/IWm0Mpa/jX8cRphuYEKuHOBLd3Ln5wP3NL9qZQH3xQ5E
- So6xWNQ6sErfO9qtb+M64aJo8Qk8imKVclSLc97xLYfJrlZHzDePPQQkF/Z/xys1w5ZsA/a
- XDJ43CAYOO5lvaP7IR8HA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5EQWttFTmDM=:qJoFYz3j6+rrHIP6xKcCbw
- lyeBNDtYnHGEdflRx485fK62HpSetwKZJQQ3ekkZUa54Ns/0w0tSn+kqF3VwGdWI6RgCkHeZu
- 03zi/kescrofXmpoivIBLGZcvjVCDCERWlU/CFySNqaW77h5iouLdI6qYNgH/74daUX1tl79P
- w8dcKCYro9U5aDOEddlDYh9jvBG4lKkIhpvEdECq8kk+MhcQBN3F0d39MU4q+hnYdzU6QSdI3
- aqemPF/yeQBppecWxMQ1UKbYFj97jV2nbqvjjBnen5tHVNTzjiiqfWH7j6SGfFzBR66Gr0iwH
- hI7tay6LdtVSF3LdVmWQdqwIa5hyB/pRt0KOJTZPU7bozzysxPChhFu43ZSxOebMRmhNZwMxq
- LsNR1oeEF62hKkKDrVwkHmrPxJwRAkc9nc3+Ofxu25gq2VSSot4+KJr6qpFtyymC5iqOouD/w
- JjkcCxo4F2ys/AYJ2uNqsyUxpoU5Yl5pJNzA2p4GGkBVVXcmEfGI48EPshPCnYIJNNo4GnSte
- ilOHKD0WZNzGK4VGPyHjvs7t7p3+zeDVzE1K31g+T2z4jbwozdoINE8GRDgnkZ7DZN5cQ80As
- 96W/pK2mIMi3KuXHzm/KC3DwYbuveyKETwcVl5n/CXwe3SQ8k6s2rbiAnIX993dJuxy1H8CLx
- v1bmywB6M4tKYcfzJRNpqSoEvB3Ugqnuf0358tb8k68k437613Z+GJrAeoQWfg3PvcZxHdSU8
- DTdewZoKa1bFYSuz2j5IvJi7aSobR6uL4rvsRXWwnG6zlBUfyHHv3wse1PHuvJ0YYIU3dj2lq
- o3S4MZII0VdgraP30qyyS8sm639JGZXTKt1xlfjEblv0ebgK3WI92Bqkd+YZnCo4vr3+m0EhY
- l03RmljYfur6RVV8rOyy+ablaZI/PO4mJgElizmGH4t0mFC4S5baQu0CsT6oX0HYqFBej9AKb
- qGFml6yNutJNA78HtPXRknRODANzFzDKywfuM4E3dKawHQk6G4a0yt8V2B/zN3u7dTUDp9DA8
- roLuO8FL+NACkTlysHVHPfiIUoz1eG1e+PiT8Qxw2D1f8wGm7SX+HklutniawQ26s7pOw/RkK
- oxHlZWvDovRMtVRRg3s2rkBntZLiUOQN3/FkTNYKJRf9Lu+s8tGBhBmqsbILTb7wPRpHnpL9i
- nxbZgpy2HMUWKEPqiHdsXG4PEn36I2g6JICQv/VWbys1USOK8ULlUXGPERWtedBD6EWDYjUhh
- kX2CKVcV2/19i74gmCW1yWaIvvK9J+nuy7/naHA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/11/19 01:51, Dan Williams wrote:
+> An elevated page reference count for file mapped pages causes the
+> filesystem (for a dax mode file) to wait for that reference count to
+> drop to 1 before allowing the truncate to proceed. For a page cache
+> backed file mapping (non-dax) the reference count is not considered in
+> the truncate path. It does prevent the page from getting freed in the
+> page cache case, but the association to the file is lost for truncate.
 
+KVM support for file-backed guest memory is limited.  It is not
+completely broken, in fact cases such as hugetlbfs are in use routinely,
+but corner cases such as truncate aren't covered well indeed.
 
-On 12.11.19 11:02, Kever Yang wrote:
-> Markus,
->
->
-> On 2019/11/12 =E4=B8=8B=E5=8D=884:16, Markus Reichl wrote:
->> Hi Kever,
->>
->> have a rk3399-roc-pc running mainline U-Boot and kernel and vdd_log is
->> showing 1118 mV.
->
-> The rk3399-roc-pc have the same vdd_log circuit in schematic, so it
-> should like the patch 1/3 of
->
-> this patch set.
->
-> I don't understand who is setting this value, maybe the default value
-> without pwm regulator enabled?
->
->> Is this a danger for the board?
->> How to fix it?
->
-> The best way is to set correct min/max microvolt of the
-> regulator(measure with PWM output low and high),
-I didn't look into the schematic of this board, but if it is similar to
-RockPro64, setting the pwm regulator to the max voltage of 1.7V will
-probably kill the rk3399 immediately. So I recommend not to do this...
+Paolo
 
-Regards,
-Soeren
->
-> (note that if=C2=A0 no driver touch the regulator, the PWM is default
-> input, not output;)
-> to
-> and set a init-microvolt for U-Boot driver, and I think no kernel
-> driver touch this regulator now.
->
->
-> Thanks,
->
-> - Kever
->
->> Btw. vin-supply for this pwm-regulator is ignored and I could not
->> find it
->> in bindings doc.
->>
->> Gru=C3=9F,
->
->
+> As long as any memory the guest expects to be persistent is backed by
+> mmu-notifier coordination we're all good, otherwise an elevated
+> reference count does not coordinate with truncate in a reliable way.
+>=20
 
