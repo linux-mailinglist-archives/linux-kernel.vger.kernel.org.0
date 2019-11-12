@@ -2,49 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16069F9274
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E052F927B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfKLO3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:29:39 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37422 "EHLO
+        id S1727911AbfKLO3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:29:55 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37436 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727074AbfKLO3h (ORCPT
+        with ESMTP id S1727628AbfKLO3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:29:37 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACETaA0014230;
+        Tue, 12 Nov 2019 09:29:53 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACETaKK014234;
         Tue, 12 Nov 2019 08:29:36 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1573568976;
-        bh=Kz//oUf4WIP8xnfwf4GShSnNctOp7R5oQzxTr03LSd0=;
+        bh=eDCdfymwg3zUktc3xZyxe+n8OYjhvINPbAjTECSZBfc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Ke0LINXxPRz6NDL5JhkC1FukCzUMjDf0ILe3Mnk4pWEca/1NAsJpDgIqlRE52fcck
-         mTBO2u/qFUJbkPDGNN+t8LTdDYLZ5xF5N3pV7YeAm64zbviBRqm3ThFToCKzayocVH
-         Cu8RwWv07BRzdH1HOQyfU8+4ZqbuCQJnHBnm7p5o=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACETacl123815
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        b=DOn/BMSkAuMvSaIQzIrD8qt8TZpD7sClDbfC6GLuucVz7SEhWLTWVmNv+hPt/6inW
+         fzaUkX3VNRxxb/+tC1dUte4m4K1jCF3f0mI7SSPAEJjjPyBOEtgMSXnwE6sM3wfwyf
+         mdMTNYXxydNHiHOp6oq0X8CFlQM/4kXgD5jv2XbA=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACETaPC038555;
         Tue, 12 Nov 2019 08:29:36 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 08:29:35 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ Nov 2019 08:29:36 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 08:29:18 -0600
+ Frontend Transport; Tue, 12 Nov 2019 08:29:36 -0600
 Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriU044422;
-        Tue, 12 Nov 2019 08:29:35 -0600
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriV044422;
+        Tue, 12 Nov 2019 08:29:36 -0600
 From:   Benoit Parrot <bparrot@ti.com>
 To:     Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v3 18/20] media: ti-vpe: cal: Fix a WARN issued when start streaming fails
-Date:   Tue, 12 Nov 2019 08:31:50 -0600
-Message-ID: <20191112143152.23176-19-bparrot@ti.com>
+Subject: [Patch v3 19/20] media: ti-vpe: cal: fix enum_mbus_code/frame_size subdev arguments
+Date:   Tue, 12 Nov 2019 08:31:51 -0600
+Message-ID: <20191112143152.23176-20-bparrot@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191112143152.23176-1-bparrot@ti.com>
 References: <20191112143152.23176-1-bparrot@ti.com>
@@ -56,35 +55,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When start_streaming fails after the buffers have been queued we have to
-make sure all buffers are returned to user-space properly otherwise a
-v4l2 level WARN is generated.
+Make sure that both enum_mbus_code() and enum_framesize() properly
+populate the .which parameter member, otherwise -EINVAL is return
+causing the subdev asynchronous registration handshake to fail.
 
 Signed-off-by: Benoit Parrot <bparrot@ti.com>
 ---
- drivers/media/platform/ti-vpe/cal.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/platform/ti-vpe/cal.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 091119bee8fc..92a54d59d433 100644
+index 92a54d59d433..be54806180a5 100644
 --- a/drivers/media/platform/ti-vpe/cal.c
 +++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1695,10 +1695,15 @@ static int cal_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	return 0;
+@@ -1493,6 +1493,7 @@ static int cal_enum_framesizes(struct file *file, void *fh,
+ 	fse.index = fsize->index;
+ 	fse.pad = 0;
+ 	fse.code = fmt->code;
++	fse.which = V4L2_SUBDEV_FORMAT_ACTIVE;
  
- err:
-+	spin_lock_irqsave(&ctx->slock, flags);
-+	vb2_buffer_done(&ctx->cur_frm->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
-+	ctx->cur_frm = NULL;
-+	ctx->next_frm = NULL;
- 	list_for_each_entry_safe(buf, tmp, &dma_q->active, list) {
- 		list_del(&buf->list);
- 		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
- 	}
-+	spin_unlock_irqrestore(&ctx->slock, flags);
- 	return ret;
- }
+ 	ret = v4l2_subdev_call(ctx->sensor, pad, enum_frame_size, NULL, &fse);
+ 	if (ret)
+@@ -1833,6 +1834,7 @@ static int cal_async_bound(struct v4l2_async_notifier *notifier,
  
+ 		memset(&mbus_code, 0, sizeof(mbus_code));
+ 		mbus_code.index = j;
++		mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 		ret = v4l2_subdev_call(subdev, pad, enum_mbus_code,
+ 				       NULL, &mbus_code);
+ 		if (ret)
 -- 
 2.17.1
 
