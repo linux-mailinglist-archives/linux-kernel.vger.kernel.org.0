@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB681F8DFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 254AEF8E34
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:20:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfKLLSi convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 06:18:38 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33970 "EHLO
+        id S1727879AbfKLLUA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 06:20:00 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33985 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbfKLLSa (ORCPT
+        with ESMTP id S1727538AbfKLLSa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Nov 2019 06:18:30 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUUBj-0000kR-Ha; Tue, 12 Nov 2019 12:18:23 +0100
+        id 1iUUBl-0000mF-Px; Tue, 12 Nov 2019 12:18:26 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 32D1D1C04E8;
-        Tue, 12 Nov 2019 12:18:17 +0100 (CET)
-Date:   Tue, 12 Nov 2019 11:18:16 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5799B1C04A9;
+        Tue, 12 Nov 2019 12:18:18 +0100 (CET)
+Date:   Tue, 12 Nov 2019 11:18:17 -0000
+From:   "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf llvm: Make .o saving a debug message, not an info one
+Subject: [tip: perf/core] perf data: Support single perf.data file directory
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-o7jd4i7s66kosec5torubqps@git.kernel.org>
-References: <tip-o7jd4i7s66kosec5torubqps@git.kernel.org>
+In-Reply-To: <20191004083121.12182-5-adrian.hunter@intel.com>
+References: <20191004083121.12182-5-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Message-ID: <157355749682.29376.1368244256473211022.tip-bot2@tip-bot2>
+Message-ID: <157355749791.29376.9806639587173781912.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,49 +49,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     a33d2611986ab7c0ac617a8b637fedf013184b98
-Gitweb:        https://git.kernel.org/tip/a33d2611986ab7c0ac617a8b637fedf013184b98
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 21 Oct 2019 16:01:26 -03:00
+Commit-ID:     46e201efa15b70ec39df5237116fddebb4f5057c
+Gitweb:        https://git.kernel.org/tip/46e201efa15b70ec39df5237116fddebb4f5057c
+Author:        Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate:    Fri, 04 Oct 2019 11:31:20 +03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Wed, 06 Nov 2019 15:43:05 -03:00
 
-perf llvm: Make .o saving a debug message, not an info one
+perf data: Support single perf.data file directory
 
-Its a bit annoying to have that message, better make it a debug one.
+Support directory output that contains a regular perf.data file, named
+"data". By default the directory is named perf.data i.e.
+	perf.data
+	└── data
 
-I.e. now this message will only appear when using '-v':
+Most of the infrastructure to support a directory is already there. This
+patch makes the changes needed to support the format above.
 
-  [root@quaco tracebuffer]# trace -e bristot.c
-  LLVM: dumping bristot.o
-  ^C[root@quaco tracebuffer]#
+Presently there is no 'perf record' option to output a directory.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-o7jd4i7s66kosec5torubqps@git.kernel.org
+This is preparation for adding support for putting a copy of /proc/kcore in
+the directory.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lore.kernel.org/lkml/20191004083121.12182-5-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/llvm-utils.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ tools/perf/Documentation/perf.data-directory-format.txt | 28 ++++++++-
+ tools/perf/builtin-record.c                             |  2 +-
+ tools/perf/util/data.c                                  |  9 ++-
+ tools/perf/util/data.h                                  |  6 ++-
+ 4 files changed, 43 insertions(+), 2 deletions(-)
+ create mode 100644 tools/perf/Documentation/perf.data-directory-format.txt
 
-diff --git a/tools/perf/util/llvm-utils.c b/tools/perf/util/llvm-utils.c
-index 8b14e4a..eae47c2 100644
---- a/tools/perf/util/llvm-utils.c
-+++ b/tools/perf/util/llvm-utils.c
-@@ -418,10 +418,9 @@ void llvm__dump_obj(const char *path, void *obj_buf, size_t size)
- 		goto out;
- 	}
+diff --git a/tools/perf/Documentation/perf.data-directory-format.txt b/tools/perf/Documentation/perf.data-directory-format.txt
+new file mode 100644
+index 0000000..4bf0890
+--- /dev/null
++++ b/tools/perf/Documentation/perf.data-directory-format.txt
+@@ -0,0 +1,28 @@
++perf.data directory format
++
++DISCLAIMER This is not ABI yet and is subject to possible change
++           in following versions of perf. We will remove this
++           disclaimer once the directory format soaks in.
++
++
++This document describes the on-disk perf.data directory format.
++
++The layout is described by HEADER_DIR_FORMAT feature.
++Currently it holds only version number (0):
++
++  HEADER_DIR_FORMAT = 24
++
++  struct {
++     uint64_t version;
++  }
++
++The current only version value 0 means that:
++  - there is a single perf.data file named 'data' within the directory.
++  e.g.
++
++    $ tree -ps perf.data
++    perf.data
++    └── [-rw-------       25912]  data
++
++Future versions are expected to describe different data files
++layout according to special needs.
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 2fb83aa..e402459 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -537,7 +537,7 @@ static int record__process_auxtrace(struct perf_tool *tool,
+ 	size_t padding;
+ 	u8 pad[8] = {0};
  
--	pr_info("LLVM: dumping %s\n", obj_path);
-+	pr_debug("LLVM: dumping %s\n", obj_path);
- 	if (fwrite(obj_buf, size, 1, fp) != 1)
--		pr_warning("WARNING: failed to write to file '%s': %s, skip object dumping\n",
--			   obj_path, strerror(errno));
-+		pr_debug("WARNING: failed to write to file '%s': %s, skip object dumping\n", obj_path, strerror(errno));
- 	fclose(fp);
- out:
- 	free(obj_path);
+-	if (!perf_data__is_pipe(data) && !perf_data__is_dir(data)) {
++	if (!perf_data__is_pipe(data) && perf_data__is_single_file(data)) {
+ 		off_t file_offset;
+ 		int fd = perf_data__fd(data);
+ 		int err;
+diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+index df173f0..964ea10 100644
+--- a/tools/perf/util/data.c
++++ b/tools/perf/util/data.c
+@@ -76,6 +76,13 @@ int perf_data__open_dir(struct perf_data *data)
+ 	DIR *dir;
+ 	int nr = 0;
+ 
++	/*
++	 * Directory containing a single regular perf data file which is already
++	 * open, means there is nothing more to do here.
++	 */
++	if (perf_data__is_single_file(data))
++		return 0;
++
+ 	if (WARN_ON(!data->is_dir))
+ 		return -EINVAL;
+ 
+@@ -406,7 +413,7 @@ unsigned long perf_data__size(struct perf_data *data)
+ 	u64 size = data->file.size;
+ 	int i;
+ 
+-	if (!data->is_dir)
++	if (perf_data__is_single_file(data))
+ 		return size;
+ 
+ 	for (i = 0; i < data->dir.nr; i++) {
+diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
+index 218fe9a..f68815f 100644
+--- a/tools/perf/util/data.h
++++ b/tools/perf/util/data.h
+@@ -10,6 +10,7 @@ enum perf_data_mode {
+ };
+ 
+ enum perf_dir_version {
++	PERF_DIR_SINGLE_FILE	= 0,
+ 	PERF_DIR_VERSION	= 1,
+ };
+ 
+@@ -54,6 +55,11 @@ static inline bool perf_data__is_dir(struct perf_data *data)
+ 	return data->is_dir;
+ }
+ 
++static inline bool perf_data__is_single_file(struct perf_data *data)
++{
++	return data->dir.version == PERF_DIR_SINGLE_FILE;
++}
++
+ static inline int perf_data__fd(struct perf_data *data)
+ {
+ 	return data->file.fd;
