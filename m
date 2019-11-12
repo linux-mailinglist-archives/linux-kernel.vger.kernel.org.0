@@ -2,66 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C12F8EC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3EB3F8ED7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:46:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfKLLm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:42:28 -0500
-Received: from mout.gmx.net ([212.227.17.22]:38379 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbfKLLm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:42:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1573558946;
-        bh=1mvUFZg10HB3KrdysqlD+leJS3KnmzCcLKXTtJM6gpw=;
-        h=X-UI-Sender-Class:From:To:Subject:Date;
-        b=H7N5Qr51WtbI+WienWqRcMd1u0bPGSbamxTHFYEj7qIfB/mJrliAxiKqJwFqt8i1H
-         XOrBPIv2Ejep6rSG0ZI+1HBzvZVl6HGogqSaMiy/28tjYneJYHgBPr8E4xCqn7DVnK
-         vAxVsau3D4tqFePqP+I8kdKvQPILmlln38H2RyE4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [79.139.19.70] ([79.139.19.70]) by web-mail.gmx.net
- (3c-app-mailcom-bs16.server.lan [172.19.170.184]) (via HTTP); Tue, 12 Nov
- 2019 12:42:26 +0100
+        id S1727143AbfKLLp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:45:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57270 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726008AbfKLLp6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 06:45:58 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACBeDxO066762;
+        Tue, 12 Nov 2019 06:43:02 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7t0xn5k1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 06:43:02 -0500
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id xACBedXo070403;
+        Tue, 12 Nov 2019 06:43:02 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7t0xn5hf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 06:43:02 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xACBfCGg005201;
+        Tue, 12 Nov 2019 11:42:59 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma02wdc.us.ibm.com with ESMTP id 2w5n35x6wa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 11:42:59 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACBgwSZ52166954
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 11:42:58 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE70EAC05B;
+        Tue, 12 Nov 2019 11:42:58 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C5FFEAC059;
+        Tue, 12 Nov 2019 11:42:50 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.45.124])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 11:42:50 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 00/16] Memory Hierarchy: Enable target node lookups for reserved memory
+In-Reply-To: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Tue, 12 Nov 2019 17:12:47 +0530
+Message-ID: <8736ettj60.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Message-ID: <trinity-6bfe8821-3234-4c44-86f9-d76a3d0cf02b-1573558946461@3c-app-mailcom-bs16>
-From:   "John Doe" <inquiz@gmx.com>
-To:     linux-kernel@vger.kernel.org
-Subject: Linux kernel performance
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 12 Nov 2019 12:42:26 +0100
-Importance: normal
-Sensitivity: Normal
-X-Priority: 3
-X-Provags-ID: V03:K1:K43cP+z+xi6Ggu1R/+DqydCeOs/SGS/Qt8xqts0woHQcT/+tCMrYC+0iI+mHQGmMBQjr+
- bXEqUTYTPNA0ZWkJ/ebgo7F6CzlXMZjHsJQ9LrCZ8W6vfoIuwkuPz9EqLQ+vX7XBqWVtN53ESg2E
- k1L+F8y+0tbJdZaXlVgFRr9tP1RQHHwN0Ai5eV5GS1oxD7oyyVtm9YJ5alElmLcRPXD8RrUeTv1I
- WJrFxDRA9302E+3fTrOxzRjO1KYxkSCeuBRjjR8pYI6sCrQc78d5T91J3pcyZpm7J9mbLf/xviMI
- V0=
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NJaco7nvfq0=:uDo+VSDDrgbPN2I9re8jIi
- ni6y37XFyjTKwYv46fGdtflF7Mog1of1e2NIuZ3t/gc5HSVOt7UZRN8UYO821K3Ixv85cDe6P
- U+aUYGn57eUp3ifd/roD/TUw5OX1Ej/l7N3A6zUVijVZtiJbgOnrBw+JOwIAG3VToOeCI8HHK
- PiJZzWkiGUxdYXPAlko7ZoRWq9374p+DrhKlzz8KysxaZnl/nJT5funnCPBMrC99vt4HLMpw2
- 7rz51O70diFq8C3xs83mvopwkjly7cHlKl4VWs/52rrNFVAQi5YzVzCufu0iqvkaRbCbn3Hla
- kGmUYLj/dQgxwptrFl/SBcNhFTMxtKjJsI4PAsI0XLvLRolb/gDI08GETu0xRRwycxbebLU3S
- Z6PF3xs3sT0aiLAW5xRh/2L0Be22VBot5hBzx8c8Z3C3dSgbdfNa0/BYz3Zj4o5kyBJgxbOyq
- nBR05uPIz6wHorFivsZ1CFtlqgVUtB2ZAAQdZajHgJ96RNusqkjp7gjgaacFg/sFEC3ii2Zp4
- iJOzTY3bx0PsQ3OaU9wcf4TCBd96qgUZod5sbBN3HZsVa6u+/+RR56d1+/AcGTbkxASjHGCZD
- kiJ7RMPPTFMo8jSyBlCFWwBqNhOJTs3s/0YzvZ54mrEbq8QTERcR4+f7KlxcYBam5MkrU/tYu
- sWfIIlx2npjj/HxpzQr8saU7MRslhKpuJZU7A7FWZCH288w==
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dears,
+Dan Williams <dan.j.williams@intel.com> writes:
 
-The Disappointing Direction Of Linux Performance From 4.16 To 5.4 Kernels
-https://www.phoronix.com/scan.php?page=article&item=linux-416-54&num=1
+> Yes, this patch series looks like a pile of boring libnvdimm cleanups,
+> but buried at the end are some small gems that testing with libnvdimm
+> uncovered. These gems will prove more valuable over time for Memory
+> Hierarchy management as more platforms, via the ACPI HMAT and EFI
+> Specific Purpose Memory, publish reserved or "soft-reserved" ranges to
+> Linux. Linux system administrators will expect to be able to interact
+> with those ranges with a unique numa node number when/if that memory is
+> onlined via the dax_kmem driver [1].
+>
+> One configuration that currently fails to properly convey the target
+> node for the resulting memory hotplug operation is persistent memory
+> defined by the memmap=nn!ss parameter. For example, today if node1 is a
+> memory only node, and all the memory from node1 is specified to
+> memmap=nn!ss and subsequently onlined, it will end up being onlined as
+> node0 memory. As it stands, memory_add_physaddr_to_nid() can only
+> identify online nodes and since node1 in this example has no online cpus
+> / memory the target node is initialized node0.
+>
+> The fix is to preserve rather than discard the numa_meminfo entries that
+> are relevant for reserved memory ranges, and to uplevel the node
+> distance helper for determining the "local" (closest) node relative to
+> an initiator node.
+>
+> The first 12 patches are cleanups to make sure that all nvdimm devices
+> and their children properly export a numa_node attribute. The switch to
+> a device-type is less code and less error prone as a result.
 
-For example:
-The Sockperf socket performance benchmark with its throughput performance has been hit hard, down 32%.
-The Hackbench Linux kernel scheduler benchmark has been lower, down 30-40%.
-The ctx_clock micro-benchmark shows the impact of context switching performance, down 75%.
 
-inq
+Will this still allow leaf driver to have platform specific attribute
+exposed via sysfs? Or do we want to still keep them in nvdimm core and
+control the visibility via is_visible() callback?
+
+-aneesh
