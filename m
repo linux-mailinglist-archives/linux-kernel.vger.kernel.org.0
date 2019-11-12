@@ -2,117 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3EB3F8ED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:46:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 693A2F8ECE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:44:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfKLLp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:45:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57270 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726008AbfKLLp6 (ORCPT
+        id S1726958AbfKLLos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:44:48 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38558 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfKLLor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:45:58 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACBeDxO066762;
-        Tue, 12 Nov 2019 06:43:02 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7t0xn5k1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Nov 2019 06:43:02 -0500
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id xACBedXo070403;
-        Tue, 12 Nov 2019 06:43:02 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7t0xn5hf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Nov 2019 06:43:02 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xACBfCGg005201;
-        Tue, 12 Nov 2019 11:42:59 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma02wdc.us.ibm.com with ESMTP id 2w5n35x6wa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Nov 2019 11:42:59 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACBgwSZ52166954
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 11:42:58 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE70EAC05B;
-        Tue, 12 Nov 2019 11:42:58 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5FFEAC059;
-        Tue, 12 Nov 2019 11:42:50 +0000 (GMT)
-Received: from skywalker.linux.ibm.com (unknown [9.199.45.124])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 12 Nov 2019 11:42:50 +0000 (GMT)
-X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
-Cc:     David Hildenbrand <david@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 00/16] Memory Hierarchy: Enable target node lookups for reserved memory
-In-Reply-To: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com>
-Date:   Tue, 12 Nov 2019 17:12:47 +0530
-Message-ID: <8736ettj60.fsf@linux.ibm.com>
+        Tue, 12 Nov 2019 06:44:47 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v8so17427631ljh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 03:44:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AGTZ4z4pclCTP3TaM1mEYITa39uvJa7zWe2VFGpsFtQ=;
+        b=YQjFpZVeaTEeO+20aG1CP57qzaQF/K4s2mQxLVMo5aM1+z9UfnwfSbr7sBrXNeUdSb
+         pNj4MTofPx+/HhftTnVorbdrJyVPud+NQIUoL22TugPPO+/VITy8aOcQJDyHzDHybi94
+         wduFdCh0K/RrDq1CbsTyyRTTX8ODY/dacP36k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AGTZ4z4pclCTP3TaM1mEYITa39uvJa7zWe2VFGpsFtQ=;
+        b=gZzUza3Ey0RyCntqckSa8XWs3jWsLXfUJnmWkx3RmKLpAaiWJHZI1VxDBNz/MsZYeg
+         w3wEQ2n+M0Xb1JtjGo/CNjzNy7ZMeFwbTRmtdIPDS9KdngGfH4juQaUXu+bZVSvxfRI/
+         wjG+OO3vSNye9q8qN6bBwbXYRVcLFMtenOK+6yD8+50FmPiQKtQOY1cFpVqpYbTpPnS9
+         1hAxGfiWkELO91whvaWnO8zmt+Xqy7E49994TjJfuOVvnLTemxMRDhr35Mao6pRwdCjN
+         W0D/p/xXAPsV9z6h0jzOAvPOzMoBSkA9bcM6krNlXjIui8aUH32f4E85XDoWLv2w/8Gr
+         uikw==
+X-Gm-Message-State: APjAAAXFBOcLizKOJkP9ePeuSRefckbH5GcJhWnRNnVPIdnCkhHXz6Pl
+        /2uazNSUMY1jkO40Vbz5mGo0uw==
+X-Google-Smtp-Source: APXvYqy+lw2SLMQFCUkQpJRfNsuioc2JKvqERf+YtVC3KryQWbQkhR/tX0NqbPKizKDXtkq4OOdBtQ==
+X-Received: by 2002:a2e:8e28:: with SMTP id r8mr19360726ljk.21.1573559084029;
+        Tue, 12 Nov 2019 03:44:44 -0800 (PST)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id a22sm8189817ljn.58.2019.11.12.03.44.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Nov 2019 03:44:43 -0800 (PST)
+Subject: Re: [PATCH v7 0/2] Add support for Layerscape external interrupt
+ lines
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Vladimir Oltean <olteanv@gmail.com>
+References: <20191107122115.6244-1-linux@rasmusvillemoes.dk>
+ <ea802f081d1f1d4c5359707ff4553004@www.loen.fr>
+ <184b684a-7712-a280-fdc2-83d7abd3cbd4@rasmusvillemoes.dk>
+ <8e1877ab5a1fecace3b2383789bdf404@www.loen.fr>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <02f7a8ad-be85-b43a-be36-988d96ced056@rasmusvillemoes.dk>
+Date:   Tue, 12 Nov 2019 12:44:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911120106
+In-Reply-To: <8e1877ab5a1fecace3b2383789bdf404@www.loen.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+On 12/11/2019 11.58, Marc Zyngier wrote:
+> On 2019-11-12 11:27, Rasmus Villemoes wrote:
+>> On 11/11/2019 11.24, Marc Zyngier wrote:
 
-> Yes, this patch series looks like a pile of boring libnvdimm cleanups,
-> but buried at the end are some small gems that testing with libnvdimm
-> uncovered. These gems will prove more valuable over time for Memory
-> Hierarchy management as more platforms, via the ACPI HMAT and EFI
-> Specific Purpose Memory, publish reserved or "soft-reserved" ranges to
-> Linux. Linux system administrators will expect to be able to interact
-> with those ranges with a unique numa node number when/if that memory is
-> onlined via the dax_kmem driver [1].
->
-> One configuration that currently fails to properly convey the target
-> node for the resulting memory hotplug operation is persistent memory
-> defined by the memmap=nn!ss parameter. For example, today if node1 is a
-> memory only node, and all the memory from node1 is specified to
-> memmap=nn!ss and subsequently onlined, it will end up being onlined as
-> node0 memory. As it stands, memory_add_physaddr_to_nid() can only
-> identify online nodes and since node1 in this example has no online cpus
-> / memory the target node is initialized node0.
->
-> The fix is to preserve rather than discard the numa_meminfo entries that
-> are relevant for reserved memory ranges, and to uplevel the node
-> distance helper for determining the "local" (closest) node relative to
-> an initiator node.
->
-> The first 12 patches are cleanups to make sure that all nvdimm devices
-> and their children properly export a numa_node attribute. The switch to
-> a device-type is less code and less error prone as a result.
+>>> Applied to irqchip-next.
+>>
+>> Thanks! Can I assume that branch doesn't get rebased so 87cd38dfd9e6 is
+>> a stable SHA1? I want to send a patch adding the node to ls1021a.dtsi,
+>> and I hope not to have to wait another release cycle.
+> 
+> I usually try to avoid rebasing it, unless something really bad shows up.
+> 
+> Now, just adding a node to a DT shouldn't break anything, right? You
+> should be able to do that change and get things working magically once
+> this code hits mainline.
 
+Well, yes, but I wanted to refer to the binding documentation in the
+form of a reference to that SHA1. But I suppose I can just do that in
+the cover letter or below ---.
 
-Will this still allow leaf driver to have platform specific attribute
-exposed via sysfs? Or do we want to still keep them in nvdimm core and
-control the visibility via is_visible() callback?
-
--aneesh
+Thanks,
+Rasmus
