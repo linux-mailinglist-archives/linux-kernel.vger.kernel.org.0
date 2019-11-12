@@ -2,22 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB9CF9649
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:56:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A96E6F9637
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:55:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbfKLQzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 11:55:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35372 "EHLO mx1.suse.de"
+        id S1727893AbfKLQyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 11:54:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35446 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727544AbfKLQxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 11:53:54 -0500
+        id S1727672AbfKLQx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 11:53:56 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EFBA0AD72;
-        Tue, 12 Nov 2019 16:53:51 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 80717ACFE;
+        Tue, 12 Nov 2019 16:53:53 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+To:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Oleg Nesterov <oleg@redhat.com>,
@@ -26,7 +27,6 @@ Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Nicholas Piggin <npiggin@gmail.com>,
         Allison Randal <allison@lohutok.net>,
         "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Michal Suchanek <msuchanek@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Breno Leitao <leitao@debian.org>,
         Christophe Leroy <christophe.leroy@c-s.fr>,
@@ -58,9 +58,9 @@ Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 25/33] powerpc/64s/exception: remove lite interrupt return
-Date:   Tue, 12 Nov 2019 17:52:23 +0100
-Message-Id: <b7166cac80cefc561e30a6c6c324384b973081b4.1573576649.git.msuchanek@suse.de>
+Subject: [PATCH 26/33] powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
+Date:   Tue, 12 Nov 2019 17:52:24 +0100
+Message-Id: <964c32e47c17190386f9257de050249834161115.1573576649.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1573576649.git.msuchanek@suse.de>
 References: <cover.1573576649.git.msuchanek@suse.de>
@@ -71,129 +71,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+This partially reverts commit caf6f9c8a326 ("asm-generic: Remove
+unneeded __ARCH_WANT_SYS_LLSEEK macro")
 
-The difference between lite and regular returns is that the lite case
-restores all NVGPRs, whereas lite skips that. This is quite clumsy
-though, most interrupts want the NVGPRs saved for debugging, not to
-modify in the caller, so the NVGPRs restore is not necessary most of
-the time. Restore NVGPRs explicitly for one case that requires it,
-and move everything else over to avoiding the restore unless the
-interrupt return demands it (e.g., handling a signal).
+When CONFIG_COMPAT is disabled on ppc64 the kernel does not build.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+There is resistance to both removing the llseek syscall from the 64bit
+syscall tables and building the llseek interface unconditionally.
+
+Link: https://lore.kernel.org/lkml/20190828151552.GA16855@infradead.org/
+Link: https://lore.kernel.org/lkml/20190829214319.498c7de2@naga/
+
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/kernel/entry_64.S       |  4 ----
- arch/powerpc/kernel/exceptions-64s.S | 21 +++++++++++----------
- 2 files changed, 11 insertions(+), 14 deletions(-)
+ arch/powerpc/include/asm/unistd.h | 1 +
+ fs/read_write.c                   | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-index b2e68f5ca8f7..00173cc904ef 100644
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -452,10 +452,6 @@ _GLOBAL(fast_interrupt_return)
- 
- 	.balign IFETCH_ALIGN_BYTES
- _GLOBAL(interrupt_return)
--	REST_NVGPRS(r1)
--
--	.balign IFETCH_ALIGN_BYTES
--_GLOBAL(interrupt_return_lite)
- 	ld	r4,_MSR(r1)
- 	andi.	r0,r4,MSR_PR
- 	beq	kernel_interrupt_return
-diff --git a/arch/powerpc/kernel/exceptions-64s.S b/arch/powerpc/kernel/exceptions-64s.S
-index 269edd1460be..1bccc869ebd3 100644
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -1507,7 +1507,7 @@ EXC_COMMON_BEGIN(hardware_interrupt_common)
- 	RUNLATCH_ON
- 	addi	r3,r1,STACK_FRAME_OVERHEAD
- 	bl	do_IRQ
--	b	interrupt_return_lite
-+	b	interrupt_return
- 
- 	GEN_KVM hardware_interrupt
- 
-@@ -1694,7 +1694,7 @@ EXC_COMMON_BEGIN(decrementer_common)
- 	RUNLATCH_ON
- 	addi	r3,r1,STACK_FRAME_OVERHEAD
- 	bl	timer_interrupt
--	b	interrupt_return_lite
-+	b	interrupt_return
- 
- 	GEN_KVM decrementer
- 
-@@ -1785,7 +1785,7 @@ EXC_COMMON_BEGIN(doorbell_super_common)
- #else
- 	bl	unknown_exception
+diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
+index b0720c7c3fcf..700fcdac2e3c 100644
+--- a/arch/powerpc/include/asm/unistd.h
++++ b/arch/powerpc/include/asm/unistd.h
+@@ -31,6 +31,7 @@
+ #define __ARCH_WANT_SYS_SOCKETCALL
+ #define __ARCH_WANT_SYS_FADVISE64
+ #define __ARCH_WANT_SYS_GETPGRP
++#define __ARCH_WANT_SYS_LLSEEK
+ #define __ARCH_WANT_SYS_NICE
+ #define __ARCH_WANT_SYS_OLD_GETRLIMIT
+ #define __ARCH_WANT_SYS_OLD_UNAME
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5bbf587f5bc1..89aa2701dbeb 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -331,7 +331,8 @@ COMPAT_SYSCALL_DEFINE3(lseek, unsigned int, fd, compat_off_t, offset, unsigned i
+ }
  #endif
--	b	interrupt_return_lite
-+	b	interrupt_return
  
- 	GEN_KVM doorbell_super
- 
-@@ -2183,7 +2183,7 @@ EXC_COMMON_BEGIN(h_doorbell_common)
- #else
- 	bl	unknown_exception
- #endif
--	b	interrupt_return_lite
-+	b	interrupt_return
- 
- 	GEN_KVM h_doorbell
- 
-@@ -2213,7 +2213,7 @@ EXC_COMMON_BEGIN(h_virt_irq_common)
- 	RUNLATCH_ON
- 	addi	r3,r1,STACK_FRAME_OVERHEAD
- 	bl	do_IRQ
--	b	interrupt_return_lite
-+	b	interrupt_return
- 
- 	GEN_KVM h_virt_irq
- 
-@@ -2260,7 +2260,7 @@ EXC_COMMON_BEGIN(performance_monitor_common)
- 	RUNLATCH_ON
- 	addi	r3,r1,STACK_FRAME_OVERHEAD
- 	bl	performance_monitor_exception
--	b	interrupt_return_lite
-+	b	interrupt_return
- 
- 	GEN_KVM performance_monitor
- 
-@@ -3013,7 +3013,7 @@ do_hash_page:
-         cmpdi	r3,0			/* see if __hash_page succeeded */
- 
- 	/* Success */
--	beq	interrupt_return_lite	/* Return from exception on success */
-+	beq	interrupt_return	/* Return from exception on success */
- 
- 	/* Error */
- 	blt-	13f
-@@ -3027,10 +3027,11 @@ do_hash_page:
- handle_page_fault:
- 11:	andis.  r0,r5,DSISR_DABRMATCH@h
- 	bne-    handle_dabr_fault
-+	bl	save_nvgprs
- 	addi	r3,r1,STACK_FRAME_OVERHEAD
- 	bl	do_page_fault
- 	cmpdi	r3,0
--	beq+	interrupt_return_lite
-+	beq+	interrupt_return
- 	mr	r5,r3
- 	addi	r3,r1,STACK_FRAME_OVERHEAD
- 	ld	r4,_DAR(r1)
-@@ -3045,9 +3046,9 @@ handle_dabr_fault:
- 	bl      do_break
- 	/*
- 	 * do_break() may have changed the NV GPRS while handling a breakpoint.
--	 * If so, we need to restore them with their updated values. Don't use
--	 * interrupt_return_lite here.
-+	 * If so, we need to restore them with their updated values.
- 	 */
-+	REST_NVGPRS(r1)
- 	b       interrupt_return
- 
- 
+-#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT)
++#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT) || \
++	defined(__ARCH_WANT_SYS_LLSEEK)
+ SYSCALL_DEFINE5(llseek, unsigned int, fd, unsigned long, offset_high,
+ 		unsigned long, offset_low, loff_t __user *, result,
+ 		unsigned int, whence)
 -- 
 2.23.0
 
