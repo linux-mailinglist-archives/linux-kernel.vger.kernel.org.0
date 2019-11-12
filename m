@@ -2,82 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D344F8C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4580AF8C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfKLJku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:40:50 -0500
-Received: from foss.arm.com ([217.140.110.172]:58994 "EHLO foss.arm.com"
+        id S1727443AbfKLJli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:41:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbfKLJku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:40:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62F941FB;
-        Tue, 12 Nov 2019 01:40:49 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B1133F534;
-        Tue, 12 Nov 2019 01:40:48 -0800 (PST)
-Date:   Tue, 12 Nov 2019 09:40:41 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will@kernel.org, catalin.marinas@arm.com, sungguk.na@samsung.com
-Subject: Re: [PATCH] arm64: perf: Report arm pc registers for compat perf
-Message-ID: <20191112094037.GA32269@lakrids.cambridge.arm.com>
-References: <CGME20191112005902epcas1p2d9dfa6a29f2c57669b1c1eb58517016d@epcas1p2.samsung.com>
- <1573520501-29195-1-git-send-email-sw0312.kim@samsung.com>
+        id S1727399AbfKLJle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 04:41:34 -0500
+Received: from [192.168.1.9] (unknown [59.97.49.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 080F320650;
+        Tue, 12 Nov 2019 09:41:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573551693;
+        bh=LXxeytabQjsph84q3+95D2mwzsIe1w47bZe2Y4jsDXA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BkEifLj71wCGeAGa+cBfeJVnzullgFBNby/EuLvSp5GBhv2h8Mo3cyw1gvBkXcWT0
+         A6biDw0Qo8IWVv2w1OzqF7s15n1Rv8+Pciaze9ZSjDrtTxSN5YujjZ2rcJ7jDIwTjo
+         zg2oipa6wt+MWMkqYWh3L9iXdYJ6SF0KzspoGJdc=
+Subject: Re: [PATCH] usbip: Fix uninitialized symbol 'nents' in
+ stub_recv_cmd_submit()
+To:     Suwan Kim <suwan.kim027@gmail.com>, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        dan.carpenter@oracle.com, valentina.manea.m@gmail.com,
+        kbuild test robot <lkp@intel.com>, shuah <shuah@kernel.org>
+References: <20191111141035.27788-1-suwan.kim027@gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <270931e3-c859-a0fd-67f5-35d83ef6e5e9@kernel.org>
+Date:   Tue, 12 Nov 2019 02:41:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573520501-29195-1-git-send-email-sw0312.kim@samsung.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20191111141035.27788-1-suwan.kim027@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 10:01:41AM +0900, Seung-Woo Kim wrote:
-> If perf is built as arm 32-bit, it only reads 15 registers as arm
-> 32-bit register map and this breaks dwarf call-chain in compat
-> perf because pc register information is not filled.
-> Report arm pc registers for 32-bit compat perf.
+On 11/11/19 7:10 AM, Suwan Kim wrote:
+> Smatch reported that nents is not initialized and used in
+> stub_recv_cmd_submit(). nents is currently initialized by sgl_alloc()
+> and used to allocate multiple URBs when host controller doesn't
+> support scatter-gather DMA. The use of uninitialized nents means that
+> buf_len is zero and use_sg is true. But buffer length should not be
+> zero when an URB uses scatter-gather DMA.
 > 
-> Without this, arm 32-bit perf dwarf call-graph shows below
-> verbose message:
->   unwind: reg 15, val 0
->   unwind: reg 13, val ffbc6360
->   unwind: no map for 0
+> To prevent this situation, add the conditional that checks buf_len
+> and use_sg. And move the use of nents right after the sgl_alloc() to
+> avoid the use of uninitialized nents.
 > 
-> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+> If the error occurs, it adds SDEV_EVENT_ERROR_MALLOC and stub_priv
+> will be released by stub event handler and connection will be shut
+> down.
+> 
+> Fixes: ea44d190764b ("usbip: Implement SG support to vhci-hcd and stub driver")
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
 > ---
->  arch/arm64/kernel/perf_regs.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/perf_regs.c b/arch/arm64/kernel/perf_regs.c
-> index 0bbac61..d4172e7 100644
-> --- a/arch/arm64/kernel/perf_regs.c
-> +++ b/arch/arm64/kernel/perf_regs.c
-> @@ -24,6 +24,8 @@ u64 perf_reg_value(struct pt_regs *regs, int idx)
->  			return regs->compat_sp;
->  		if ((u32)idx == PERF_REG_ARM64_LR)
->  			return regs->compat_lr;
-> +		if ((u32)idx == 15) /* PERF_REG_ARM_PC */
-> +			return regs->pc;
->  	}
 
-This doesn't look quite right to me, since perf_regs_value() is
-consuming the arm64 index for all other registers (e.g. the LR, in the
-patch context).
+Looks good.
 
-i.e. this is designed for a native arm64 caller, and the fixup allows it
-to view a compat task's registers as-if it were native.
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-How does this work for a native arm64 perf invocation with a compat
-task? I assume it consumers regs->pc, and works as expected?
+thanks,
+-- Shuah
 
-I suspect we need separate native and compat forms of this function, but
-then it's not entirely clear how this should work -- how does this work
-for a compat perf analysing a native arm64 binary?
-
-Thanks,
-Mark.
