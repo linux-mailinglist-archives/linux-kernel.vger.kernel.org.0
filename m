@@ -2,156 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5F8F8BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:33:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8A9F8BF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:36:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfKLJdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:33:39 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47403 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfKLJdi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:33:38 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mol@pengutronix.de>)
-        id 1iUSYJ-0008Gs-D8; Tue, 12 Nov 2019 10:33:35 +0100
-Received: from mol by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mol@pengutronix.de>)
-        id 1iUSYJ-0003NS-2z; Tue, 12 Nov 2019 10:33:35 +0100
-From:   Michael Olbrich <m.olbrich@pengutronix.de>
-To:     linux-usb@vger.kernel.org
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        Michael Olbrich <m.olbrich@pengutronix.de>
-Subject: [PATCH] usb: gadget: composite: split spinlock to avoid recursion
-Date:   Tue, 12 Nov 2019 10:33:18 +0100
-Message-Id: <20191112093318.12936-1-m.olbrich@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
+        id S1727216AbfKLJgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:36:16 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2084 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725834AbfKLJgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 04:36:16 -0500
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id DF8CDE109FAE75250132;
+        Tue, 12 Nov 2019 09:36:14 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 12 Nov 2019 09:36:14 +0000
+Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 12 Nov
+ 2019 09:36:14 +0000
+Subject: Re: [PATCH 2/4] scsi: hisi_sas: Return directly if init hardware
+ failed
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>
+References: <1573551059-107873-1-git-send-email-john.garry@huawei.com>
+ <1573551059-107873-3-git-send-email-john.garry@huawei.com>
+Message-ID: <fc7c92a8-fd18-ae61-2ec5-0ad79f4e4fac@huawei.com>
+Date:   Tue, 12 Nov 2019 09:36:13 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mol@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <1573551059-107873-3-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-ClientProxiedBy: lhreml713-chm.china.huawei.com (10.201.108.64) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'delayed_status' and 'deactivations' are used completely independent but
-they share the same spinlock. This can result in spinlock recursion:
+On 12/11/2019 09:30, John Garry wrote:
+> From: Xiang Chen <chenxiang66@hisilicon.com>
+> 
+> Need to return directly if init hardware failed.
+> 
+> Fixes: 73a4925d154c ("scsi: hisi_sas: Update all the registers after suspend and resume")
+> Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 
-BUG: spinlock recursion on CPU#1, uvc-gadget/322
- lock: 0xffffffc0570364e0, .magic: dead4ead, .owner: uvc-gadget/322, .owner_cpu: 1
-CPU: 1 PID: 322 Comm: uvc-gadget Tainted: G         C O      5.3.0-20190916-1+ #55
-Hardware name: XXXXX (DT)
-Call trace:
- dump_backtrace+0x0/0x178
- show_stack+0x24/0x30
- dump_stack+0xc0/0x104
- spin_dump+0x90/0xa0
- do_raw_spin_lock+0xd8/0x108
- _raw_spin_lock_irqsave+0x40/0x50
- composite_disconnect+0x2c/0x80
- usb_gadget_disconnect+0x84/0x150
- usb_gadget_deactivate+0x64/0x120
- usb_function_deactivate+0x70/0x80
- uvc_function_disconnect+0x20/0x58
- uvc_v4l2_release+0x34/0x90
- v4l2_release+0xbc/0xf0
- __fput+0xb0/0x218
- ____fput+0x20/0x30
- task_work_run+0xa0/0xd0
- do_notify_resume+0x2f4/0x340
- work_pending+0x8/0x14
+I missed my tag here:
+Signed-off-by: John Garry <john.garry@huawei.com>
 
-Fix this by using separate spinlocks.
-
-Signed-off-by: Michael Olbrich <m.olbrich@pengutronix.de>
----
- drivers/usb/gadget/composite.c | 9 +++++----
- drivers/usb/gadget/configfs.c  | 1 +
- include/linux/usb/composite.h  | 4 +++-
- 3 files changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index 76883ff4f5bb..35c792e5b408 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -346,14 +346,14 @@ int usb_function_deactivate(struct usb_function *function)
- 	unsigned long			flags;
- 	int				status = 0;
- 
--	spin_lock_irqsave(&cdev->lock, flags);
-+	spin_lock_irqsave(&cdev->deactivations_lock, flags);
- 
- 	if (cdev->deactivations == 0)
- 		status = usb_gadget_deactivate(cdev->gadget);
- 	if (status == 0)
- 		cdev->deactivations++;
- 
--	spin_unlock_irqrestore(&cdev->lock, flags);
-+	spin_unlock_irqrestore(&cdev->deactivations_lock, flags);
- 	return status;
- }
- EXPORT_SYMBOL_GPL(usb_function_deactivate);
-@@ -374,7 +374,7 @@ int usb_function_activate(struct usb_function *function)
- 	unsigned long			flags;
- 	int				status = 0;
- 
--	spin_lock_irqsave(&cdev->lock, flags);
-+	spin_lock_irqsave(&cdev->deactivations_lock, flags);
- 
- 	if (WARN_ON(cdev->deactivations == 0))
- 		status = -EINVAL;
-@@ -384,7 +384,7 @@ int usb_function_activate(struct usb_function *function)
- 			status = usb_gadget_activate(cdev->gadget);
- 	}
- 
--	spin_unlock_irqrestore(&cdev->lock, flags);
-+	spin_unlock_irqrestore(&cdev->deactivations_lock, flags);
- 	return status;
- }
- EXPORT_SYMBOL_GPL(usb_function_activate);
-@@ -2196,6 +2196,7 @@ static int composite_bind(struct usb_gadget *gadget,
- 		return status;
- 
- 	spin_lock_init(&cdev->lock);
-+	spin_lock_init(&cdev->deactivations_lock);
- 	cdev->gadget = gadget;
- 	set_gadget_data(gadget, cdev);
- 	INIT_LIST_HEAD(&cdev->configs);
-diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index 025129942894..45f717fcdb89 100644
---- a/drivers/usb/gadget/configfs.c
-+++ b/drivers/usb/gadget/configfs.c
-@@ -521,6 +521,7 @@ static const struct config_item_type gadget_root_type = {
- static void composite_init_dev(struct usb_composite_dev *cdev)
- {
- 	spin_lock_init(&cdev->lock);
-+	spin_lock_init(&cdev->deactivations_lock);
- 	INIT_LIST_HEAD(&cdev->configs);
- 	INIT_LIST_HEAD(&cdev->gstrings);
- }
-diff --git a/include/linux/usb/composite.h b/include/linux/usb/composite.h
-index 8675e145ea8b..86eb6f2c03ac 100644
---- a/include/linux/usb/composite.h
-+++ b/include/linux/usb/composite.h
-@@ -505,8 +505,10 @@ struct usb_composite_dev {
- 	 */
- 	int				delayed_status;
- 
--	/* protects deactivations and delayed_status counts*/
-+	/* protects delayed_status counts*/
- 	spinlock_t			lock;
-+	/* protects deactivations counts*/
-+	spinlock_t			deactivations_lock;
- 
- 	/* public: */
- 	unsigned int			setup_pending:1;
--- 
-2.20.1
+> ---
+>   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+> index 2ae7070db41a..b7836406debe 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+> @@ -3432,6 +3432,7 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
+>   	if (rc) {
+>   		scsi_remove_host(shost);
+>   		pci_disable_device(pdev);
+> +		return rc;
+>   	}
+>   	hisi_hba->hw->phys_init(hisi_hba);
+>   	sas_resume_ha(sha);
+> 
 
