@@ -2,198 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 078ABF85C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 01:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE878F85C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:00:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfKLA7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 19:59:48 -0500
-Received: from mga14.intel.com ([192.55.52.115]:61337 "EHLO mga14.intel.com"
+        id S1727422AbfKLA7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 19:59:51 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34617 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbfKLA7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 19:59:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 16:59:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,294,1569308400"; 
-   d="scan'208";a="215864804"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by orsmga002.jf.intel.com with ESMTP; 11 Nov 2019 16:59:43 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 3B0B4301A83; Mon, 11 Nov 2019 16:59:43 -0800 (PST)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     jolsa@kernel.org
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v6 11/12] perf evsel: Add functions to enable/disable for a specific CPU
-Date:   Mon, 11 Nov 2019 16:59:40 -0800
-Message-Id: <20191112005941.649137-12-andi@firstfloor.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191112005941.649137-1-andi@firstfloor.org>
-References: <20191112005941.649137-1-andi@firstfloor.org>
+        id S1727338AbfKLA7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 19:59:47 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47BqCN2b3dz9s7T;
+        Tue, 12 Nov 2019 11:59:44 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1573520384;
+        bh=keCg8e+U+Atffb3YaegfdPkbXQVajztNOGjGSeZJiyE=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=Qk0Uxk/gFaiyZ/AtoHKUxjlALFcXFappKOTYT43yi9KcB6Ao+O7RBWQzU+OlZ/mIz
+         PDTgA04ddEw4ua8xiuEDXSCoK0R1Pxde3n1A2+hlMZAIABJY7ScB0pfz99b5KSsaX6
+         EnQ4lBVyC72kVQ+/wN4SpE/lYLh1wEJkBVLQI2qZmPg81Yhb3CfYF+FsJJwwNo+R6F
+         FNQtYuVeoD8YFL+EtsFwvpp61h5Vvt+oBcbHdKMlKVmpNfbOR2UYF6Hb0fIqelRdRN
+         0T4P1L9GKDjUxzUbrbs1tMlPvnN4YkZUJDtXzdAhFvpKmTkSPlG4ge4kQD3BdZ8XNr
+         b3D4u3Iux5tyw==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+In-Reply-To: <871rue4so0.fsf@mpe.ellerman.id.au>
+References: <20191105211920.787df2ab@canb.auug.org.au> <0892a018-152f-629d-3dd0-60ce79f2887b@oracle.com> <871rue4so0.fsf@mpe.ellerman.id.au>
+Date:   Tue, 12 Nov 2019 11:59:41 +1100
+Message-ID: <87v9rp3o5e.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+Michael Ellerman <mpe@ellerman.id.au> writes:
+>
+> Mike Kravetz <mike.kravetz@oracle.com> writes:
+>> On 11/5/19 2:19 AM, Stephen Rothwell wrote:
+...
+>> From 4b3ab017e639e4e583fff801e6d8e6727b7877e8 Mon Sep 17 00:00:00 2001
+>> From: Mike Kravetz <mike.kravetz@oracle.com>
+>> Date: Tue, 5 Nov 2019 15:12:15 -0800
+>> Subject: [PATCH] powerpc/mm: remove pmd_huge/pud_huge stubs and include
+>>  hugetlb.h
+>>
+>> This removes the power specific stubs created by commit aad71e3928be
+>> ("powerpc/mm: Fix build break with RADIX=y & HUGETLBFS=n") used when
+>> !CONFIG_HUGETLB_PAGE.  Instead, it addresses the build break by
+>> getting the definitions from <linux/hugetlb.h>.
+>>
+>> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+>> ---
+>>  arch/powerpc/include/asm/book3s/64/pgtable-4k.h  | 3 ---
+>>  arch/powerpc/include/asm/book3s/64/pgtable-64k.h | 3 ---
+>>  arch/powerpc/mm/book3s64/radix_pgtable.c         | 1 +
+>>  3 files changed, 1 insertion(+), 6 deletions(-)
+>
+> The two pgtable headers are included eventually by our top-level
+> pgtable.h, and that is included by over 100 files. So I worry this is
+> going to break the build somewhere in some obscure configuration.
+>
+> I'll push it through some test builds and see what happens.
 
-Refactor the existing functions to use these functions internally.
+Seems OK, it didn't introduce any new build failures.
 
-Used in the next patch
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/lib/evsel.c              | 49 +++++++++++++++++++++--------
- tools/perf/lib/include/perf/evsel.h |  2 ++
- tools/perf/util/evsel.c             | 13 +++++++-
- tools/perf/util/evsel.h             |  2 ++
- 4 files changed, 52 insertions(+), 14 deletions(-)
-
-diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
-index ea775dacbd2d..89ddfade0b96 100644
---- a/tools/perf/lib/evsel.c
-+++ b/tools/perf/lib/evsel.c
-@@ -198,38 +198,61 @@ int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
- }
- 
- static int perf_evsel__run_ioctl(struct perf_evsel *evsel,
--				 int ioc,  void *arg)
-+				 int ioc,  void *arg,
-+				 int cpu)
- {
--	int cpu, thread;
-+	int thread;
- 
--	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++) {
--		for (thread = 0; thread < xyarray__max_y(evsel->fd); thread++) {
--			int fd = FD(evsel, cpu, thread),
--			    err = ioctl(fd, ioc, arg);
-+	for (thread = 0; thread < xyarray__max_y(evsel->fd); thread++) {
-+		int fd = FD(evsel, cpu, thread),
-+		    err = ioctl(fd, ioc, arg);
- 
--			if (err)
--				return err;
--		}
-+		if (err)
-+			return err;
- 	}
- 
- 	return 0;
- }
- 
-+int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0, cpu);
-+}
-+
- int perf_evsel__enable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0);
-+	int i;
-+	int err = 0;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0, i);
-+	return err;
-+}
-+
-+int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu)
-+{
-+	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0, cpu);
- }
- 
- int perf_evsel__disable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0);
-+	int i;
-+	int err = 0;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0, i);
-+	return err;
- }
- 
- int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter)
- {
--	return perf_evsel__run_ioctl(evsel,
-+	int err = 0, i;
-+
-+	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel,
- 				     PERF_EVENT_IOC_SET_FILTER,
--				     (void *)filter);
-+				     (void *)filter, i);
-+	return err;
- }
- 
- struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel)
-diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
-index e7add554f861..c82ec39a4ad0 100644
---- a/tools/perf/lib/include/perf/evsel.h
-+++ b/tools/perf/lib/include/perf/evsel.h
-@@ -30,7 +30,9 @@ LIBPERF_API void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
- 				 struct perf_counts_values *count);
- LIBPERF_API int perf_evsel__enable(struct perf_evsel *evsel);
-+LIBPERF_API int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API int perf_evsel__disable(struct perf_evsel *evsel);
-+LIBPERF_API int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu);
- LIBPERF_API struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
- LIBPERF_API struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
- LIBPERF_API struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 7106f9a067df..2805d61ed725 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1205,16 +1205,27 @@ int perf_evsel__append_addr_filter(struct evsel *evsel, const char *filter)
- 	return perf_evsel__append_filter(evsel, "%s,%s", filter);
- }
- 
-+/* Caller has to clear disabled after going through all CPUs. */
-+int evsel__enable_cpu(struct evsel *evsel, int cpu)
-+{
-+	return perf_evsel__enable_cpu(&evsel->core, cpu);
-+}
-+
- int evsel__enable(struct evsel *evsel)
- {
- 	int err = perf_evsel__enable(&evsel->core);
- 
- 	if (!err)
- 		evsel->disabled = false;
--
- 	return err;
- }
- 
-+/* Caller has to set disabled after going through all CPUs. */
-+int evsel__disable_cpu(struct evsel *evsel, int cpu)
-+{
-+	return perf_evsel__disable_cpu(&evsel->core, cpu);
-+}
-+
- int evsel__disable(struct evsel *evsel)
- {
- 	int err = perf_evsel__disable(&evsel->core);
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index c8af4bc23f8f..dc14f4a823cd 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -222,8 +222,10 @@ int perf_evsel__set_filter(struct evsel *evsel, const char *filter);
- int perf_evsel__append_tp_filter(struct evsel *evsel, const char *filter);
- int perf_evsel__append_addr_filter(struct evsel *evsel,
- 				   const char *filter);
-+int evsel__enable_cpu(struct evsel *evsel, int cpu);
- int evsel__enable(struct evsel *evsel);
- int evsel__disable(struct evsel *evsel);
-+int evsel__disable_cpu(struct evsel *evsel, int cpu);
- 
- int perf_evsel__open_per_cpu(struct evsel *evsel,
- 			     struct perf_cpu_map *cpus,
--- 
-2.23.0
-
+cheers
