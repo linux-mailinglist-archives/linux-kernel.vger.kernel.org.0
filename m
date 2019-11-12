@@ -2,260 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7082BF8D5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:55:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E70F8D65
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:58:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbfKLKzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 05:55:14 -0500
-Received: from verein.lst.de ([213.95.11.211]:55107 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbfKLKzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 05:55:14 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D7B4C68AFE; Tue, 12 Nov 2019 11:55:07 +0100 (CET)
-Date:   Tue, 12 Nov 2019 11:55:07 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Christoph Hellwig <hch@lst.de>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-ia64@vger.kernel.org,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH] video: fbdev: atyfb: only use ioremap_uc() on i386 and
- ia64
-Message-ID: <20191112105507.GA7122@lst.de>
-References: <20191111192258.2234502-1-arnd@arndb.de>
+        id S1726964AbfKLK6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 05:58:36 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37815 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbfKLK6f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 05:58:35 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b17so2453314wmj.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 02:58:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=O+4xsItenBrGg3gmgsiOonk74WScwaRcW0EVJaUE4nM=;
+        b=nzvBKT4daXXNd0mSQaL3X0MixdV+M4+iJsvSG3tg6vwq1H7dEF5tQOX6zsseNYANjX
+         6kMaQcq7not6B6+yyYuQh6MR9OFTFyk6tDNVxwRK5gZUKswbs1kWqB2PRtavMcRdt04v
+         u8ye2X5Dc1gTSIjFNFJ1xHhsTU/MEAd4wF5Gx5Zk1QEDpEQfIEuSCDD4jOzFxnPiO47o
+         4BdNfqjD21LolE+wffWgPRIMOJWquRBLWUSwxsKbDO9/ZKmNQQKiXdVdWNrx7jKWjTz7
+         DWvzoxNVrrwc68hwsXqDYiBEjfFfMmrFwUCH8MU2OA3E1A4RPbGZEDK05aL6BhLgkoW1
+         m8zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=O+4xsItenBrGg3gmgsiOonk74WScwaRcW0EVJaUE4nM=;
+        b=JmRnY2mFumGnlmmMaTYLTzTEKkMwteG4282MP3MlPqmRm+6R3ZntyWY+LcFV2lxwjS
+         L4g1ncpXjt3F2kkn8Ii9FfigI4ZnqancUEF7i0oMspQiMBCRLxVs8hCz7FbJY+TL3a79
+         o2ZyIuuMum/4drgrGMXMJ5Kdmy12t1UDlgRndjYTjP5rAygDOaPYMZCZ26Ew3BOz6Pan
+         jRElMb0prqH4rfPdYPHjUY3xGcgktANvR54dr+Xhqy91G+KJN9JmjpX9+GuH7SxXtYXr
+         5QqMXHK+5d9yfkYEIJaJtrIsQCEGSYqg7lBBfGcs4amPG0gKwDmq4NjahX78E7hjpVmy
+         B3YA==
+X-Gm-Message-State: APjAAAV1co/o8w7LaDRrYzQ0rQ8Lqt2mTjnYAonm1lecz2U+U0eHO9VW
+        HoKhkKIQjJqTXuD+kCetug3Kig==
+X-Google-Smtp-Source: APXvYqzZpWVd6uL0HdF6ijognCcoddQ3ekSAK19YNrQ6ja6f3/tDTMUlaf6G9S5MSBinXxhn7gH89Q==
+X-Received: by 2002:a1c:a4c5:: with SMTP id n188mr3332074wme.30.1573556312811;
+        Tue, 12 Nov 2019 02:58:32 -0800 (PST)
+Received: from linaro.org ([2a01:e0a:f:6020:e45f:4180:5590:a312])
+        by smtp.gmail.com with ESMTPSA id t24sm44535148wra.55.2019.11.12.02.58.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Nov 2019 02:58:31 -0800 (PST)
+Date:   Tue, 12 Nov 2019 11:58:30 +0100
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH v4 04/11] sched/fair: rework load_balance
+Message-ID: <20191112105830.GA8765@linaro.org>
+References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
+ <1571405198-27570-5-git-send-email-vincent.guittot@linaro.org>
+ <20191030154534.GJ3016@techsingularity.net>
+ <CAKfTPtB_6kBq69E=-YFuon6fg21CxHneMpncpbLcPGk6uoVcMQ@mail.gmail.com>
+ <20191031101544.GP3016@techsingularity.net>
+ <CAKfTPtByO7oLQZxF_+-FxZ9u1JhO24-rujW3j-QDqr+PFDOQ=Q@mail.gmail.com>
+ <20191031114020.GQ3016@techsingularity.net>
+ <20191108163501.GA26528@linaro.org>
+ <20191108183730.GU3016@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191111192258.2234502-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191108183730.GU3016@techsingularity.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 08:22:50PM +0100, Arnd Bergmann wrote:
-> ioremap_uc() is only meaningful on old x86-32 systems with the PAT
-> extension, and on ia64 with its slightly unconventional ioremap()
-> behavior, everywhere else this is the same as ioremap() anyway.
+Le Friday 08 Nov 2019 à 18:37:30 (+0000), Mel Gorman a écrit :
+> On Fri, Nov 08, 2019 at 05:35:01PM +0100, Vincent Guittot wrote:
+> > > Fair enough, netperf hits the corner case where it does not work but
+> > > that is also true without your series.
+> > 
+> > I run mmtest/netperf test on my setup. It's a mix of small positive or
+> > negative differences (see below)
+> > 
+> > <SNIP>
+> >
+> > netperf-tcp
+> >                                5.3-rc2                5.3-rc2
+> >                                    tip               +rwk+fix
+> > Hmean     64         871.30 (   0.00%)      860.90 *  -1.19%*
+> > Hmean     128       1689.39 (   0.00%)     1679.31 *  -0.60%*
+> > Hmean     256       3199.59 (   0.00%)     3241.98 *   1.32%*
+> > Hmean     1024      9390.47 (   0.00%)     9268.47 *  -1.30%*
+> > Hmean     2048     13373.95 (   0.00%)    13395.61 *   0.16%*
+> > Hmean     3312     16701.30 (   0.00%)    17165.96 *   2.78%*
+> > Hmean     4096     15831.03 (   0.00%)    15544.66 *  -1.81%*
+> > Hmean     8192     19720.01 (   0.00%)    20188.60 *   2.38%*
+> > Hmean     16384    23925.90 (   0.00%)    23914.50 *  -0.05%*
+> > Stddev    64           7.38 (   0.00%)        4.23 (  42.67%)
+> > Stddev    128         11.62 (   0.00%)       10.13 (  12.85%)
+> > Stddev    256         34.33 (   0.00%)        7.94 (  76.88%)
+> > Stddev    1024        35.61 (   0.00%)      116.34 (-226.66%)
+> > Stddev    2048       285.30 (   0.00%)       80.50 (  71.78%)
+> > Stddev    3312       304.74 (   0.00%)      449.08 ( -47.36%)
+> > Stddev    4096       668.11 (   0.00%)      569.30 (  14.79%)
+> > Stddev    8192       733.23 (   0.00%)      944.38 ( -28.80%)
+> > Stddev    16384      553.03 (   0.00%)      299.44 (  45.86%)
+> > 
+> >                      5.3-rc2     5.3-rc2
+> >                          tip    +rwk+fix
+> > Duration User         138.05      140.95
+> > Duration System      1210.60     1208.45
+> > Duration Elapsed     1352.86     1352.90
+> > 
 > 
-> Change the only driver that still references ioremap_uc() to only do so
-> on x86-32/ia64 in order to allow removing that interface at some
-> point in the future for the other architectures.
+> This roughly matches what I've seen. The interesting part to me for
+> netperf is the next section of the report that reports the locality of
+> numa hints. With netperf on a 2-socket machine, it's generally around
+> 50% as the client/server are pulled apart. Because netperf is not
+> heavily memory bound, it doesn't have much impact on the overall
+> performance but it's good at catching the cross-node migrations.
+
+Ok. I didn't want to make my reply too long. I have put them below for 
+the netperf-tcp results:
+                                        5.3-rc2        5.3-rc2
+                                            tip      +rwk+fix
+Ops NUMA alloc hit                  60077762.00    60387907.00
+Ops NUMA alloc miss                        0.00           0.00
+Ops NUMA interleave hit                    0.00           0.00
+Ops NUMA alloc local                60077571.00    60387798.00
+Ops NUMA base-page range updates        5948.00       17223.00
+Ops NUMA PTE updates                    5948.00       17223.00
+Ops NUMA PMD updates                       0.00           0.00
+Ops NUMA hint faults                    4639.00       14050.00
+Ops NUMA hint local faults %            2073.00        6515.00
+Ops NUMA hint local percent               44.69          46.37
+Ops NUMA pages migrated                 1528.00        4306.00
+Ops AutoNUMA cost                         23.27          70.45
+
+
+>
+> > > 
+> > > > I agree that additional patches are probably needed to improve load
+> > > > balance at NUMA level and I expect that this rework will make it
+> > > > simpler to add.
+> > > > I just wanted to get the output of some real use cases before defining
+> > > > more numa level specific conditions. Some want to spread on there numa
+> > > > nodes but other want to keep everything together. The preferred node
+> > > > and fbq_classify_group was the only sensible metrics to me when he
+> > > > wrote this patchset but changes can be added if they make sense.
+> > > > 
+> > > 
+> > > That's fair. While it was possible to address the case before your
+> > > series, it was a hatchet job. If the changelog simply notes that some
+> > > special casing may still be required for SD_NUMA but it's outside the
+> > > scope of the series, then I'd be happy. At least there is a good chance
+> > > then if there is follow-up work that it won't be interpreted as an
+> > > attempt to reintroduce hacky heuristics.
+> > >
+> > 
+> > Would the additional comment make sense for you about work to be done
+> > for SD_NUMA ?
+> > 
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 0ad4b21..7e4cb65 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -6960,11 +6960,34 @@ enum fbq_type { regular, remote, all };
+> >   * group. see update_sd_pick_busiest().
+> >   */
+> >  enum group_type {
+> > +	/*
+> > +	 * The group has spare capacity that can be used to process more work.
+> > +	 */
+> >  	group_has_spare = 0,
+> > +	/*
+> > +	 * The group is fully used and the tasks don't compete for more CPU
+> > +	 * cycles. Nevetheless, some tasks might wait before running.
+> > +	 */
+> >  	group_fully_busy,
+> > +	/*
+> > +	 * One task doesn't fit with CPU's capacity and must be migrated on a
+> > +	 * more powerful CPU.
+> > +	 */
+> >  	group_misfit_task,
+> > +	/*
+> > +	 * One local CPU with higher capacity is available and task should be
+> > +	 * migrated on it instead on current CPU.
+> > +	 */
+> >  	group_asym_packing,
+> > +	/*
+> > +	 * The tasks affinity prevents the scheduler to balance the load across
+> > +	 * the system.
+> > +	 */
+> >  	group_imbalanced,
+> > +	/*
+> > +	 * The CPU is overloaded and can't provide expected CPU cycles to all
+> > +	 * tasks.
+> > +	 */
+> >  	group_overloaded
+> >  };
 > 
-> On some architectures, ioremap_uc() just returns NULL, changing
-> the driver to call ioremap() means that they now have a chance
-> of working correctly.
-
-So this whole area is a bit of a mess.  ioremap_uc on ia64 is brand
-new in this cycle, for ia64-internal users that were previously
-using ioremap_nocache.  And ioremap_nocache was identical to ioremap
-everywhere but ia64.  So I think we can safely skip ia64 in the ifdef
-if we go down that route.
-
-But also on x86 I'd actually rather prefer killing off this only mainline
-user of ioremap_uc.  It was added by Luis in commit 3cc2dac5be3f
-("drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC",
-which looks like an optimization of MTRR usage.  I feel like I really
-don't understand the point there, but it also seems a pity to keep
-the API around just for that.
-
-That being said linux-next added another call to ioremap_uc in
-drivers/mfd/intel-lpss.c, so it looks like the API might have to stay.
-
-So I guess modulo excluding ia64 your patch looks fine, and should go
-along something like the one below.  I'll happily carry them in the
-ioremap tree with the right ACKs.
-
----
-From 81243b2aa78babcc5f97b2c2a29957fcf3fd3664 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Tue, 12 Nov 2019 11:52:25 +0100
-Subject: ioremap: remove ioremap_uc except on x86 and ia64
-
-ioremap_uc is a special API to work around caching oddities on
-Intel platforms.  Remove it from all other architectures now that
-only x86 and ia64-specific callers are left.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/alpha/include/asm/io.h    |  1 -
- arch/m68k/include/asm/kmap.h   |  1 -
- arch/mips/include/asm/io.h     |  1 -
- arch/parisc/include/asm/io.h   |  1 -
- arch/powerpc/include/asm/io.h  |  1 -
- arch/sh/include/asm/io.h       |  1 -
- arch/sparc/include/asm/io_64.h |  1 -
- include/asm-generic/io.h       | 15 ---------------
- include/linux/io.h             |  2 ++
- lib/devres.c                   |  4 ++++
- 10 files changed, 6 insertions(+), 22 deletions(-)
-
-diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
-index 1989b946a28d..11fdcade3c5c 100644
---- a/arch/alpha/include/asm/io.h
-+++ b/arch/alpha/include/asm/io.h
-@@ -290,7 +290,6 @@ static inline void __iomem * ioremap_nocache(unsigned long offset,
- }
- 
- #define ioremap_wc ioremap_nocache
--#define ioremap_uc ioremap_nocache
- 
- static inline void iounmap(volatile void __iomem *addr)
- {
-diff --git a/arch/m68k/include/asm/kmap.h b/arch/m68k/include/asm/kmap.h
-index 559cb91bede1..22b5ea4fc8b8 100644
---- a/arch/m68k/include/asm/kmap.h
-+++ b/arch/m68k/include/asm/kmap.h
-@@ -28,7 +28,6 @@ static inline void __iomem *ioremap(unsigned long physaddr, unsigned long size)
- }
- 
- #define ioremap_nocache ioremap
--#define ioremap_uc ioremap
- #define ioremap_wt ioremap_wt
- static inline void __iomem *ioremap_wt(unsigned long physaddr,
- 				       unsigned long size)
-diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-index 3f6ce74335b4..9195ded1d6a7 100644
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -249,7 +249,6 @@ static inline void __iomem *ioremap_prot(phys_addr_t offset,
-  */
- #define ioremap_nocache(offset, size)					\
- 	__ioremap_mode((offset), (size), _CACHE_UNCACHED)
--#define ioremap_uc ioremap_nocache
- 
- /*
-  * ioremap_cache -	map bus memory into CPU space
-diff --git a/arch/parisc/include/asm/io.h b/arch/parisc/include/asm/io.h
-index 46212b52c23e..0674f5cd3045 100644
---- a/arch/parisc/include/asm/io.h
-+++ b/arch/parisc/include/asm/io.h
-@@ -130,7 +130,6 @@ static inline void gsc_writeq(unsigned long long val, unsigned long addr)
- void __iomem *ioremap(unsigned long offset, unsigned long size);
- #define ioremap_nocache(off, sz)	ioremap((off), (sz))
- #define ioremap_wc			ioremap_nocache
--#define ioremap_uc			ioremap_nocache
- 
- extern void iounmap(const volatile void __iomem *addr);
- 
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index a63ec938636d..119bcbe3e328 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -716,7 +716,6 @@ extern void __iomem *ioremap_wc(phys_addr_t address, unsigned long size);
- void __iomem *ioremap_wt(phys_addr_t address, unsigned long size);
- void __iomem *ioremap_coherent(phys_addr_t address, unsigned long size);
- #define ioremap_nocache(addr, size)	ioremap((addr), (size))
--#define ioremap_uc(addr, size)		ioremap((addr), (size))
- #define ioremap_cache(addr, size) \
- 	ioremap_prot((addr), (size), pgprot_val(PAGE_KERNEL))
- 
-diff --git a/arch/sh/include/asm/io.h b/arch/sh/include/asm/io.h
-index 1495489225ac..30bbe787f1ef 100644
---- a/arch/sh/include/asm/io.h
-+++ b/arch/sh/include/asm/io.h
-@@ -368,7 +368,6 @@ static inline int iounmap_fixed(void __iomem *addr) { return -EINVAL; }
- #endif
- 
- #define ioremap_nocache	ioremap
--#define ioremap_uc	ioremap
- 
- /*
-  * Convert a physical pointer to a virtual kernel pointer for /dev/mem
-diff --git a/arch/sparc/include/asm/io_64.h b/arch/sparc/include/asm/io_64.h
-index f4afa301954a..688911051b44 100644
---- a/arch/sparc/include/asm/io_64.h
-+++ b/arch/sparc/include/asm/io_64.h
-@@ -407,7 +407,6 @@ static inline void __iomem *ioremap(unsigned long offset, unsigned long size)
- }
- 
- #define ioremap_nocache(X,Y)		ioremap((X),(Y))
--#define ioremap_uc(X,Y)			ioremap((X),(Y))
- #define ioremap_wc(X,Y)			ioremap((X),(Y))
- #define ioremap_wt(X,Y)			ioremap((X),(Y))
- 
-diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index 325fc98cc9ff..357e8638040c 100644
---- a/include/asm-generic/io.h
-+++ b/include/asm-generic/io.h
-@@ -972,21 +972,6 @@ static inline void __iomem *ioremap(phys_addr_t addr, size_t size)
- #define ioremap_wt ioremap
- #endif
- 
--/*
-- * ioremap_uc is special in that we do require an explicit architecture
-- * implementation.  In general you do not want to use this function in a
-- * driver and use plain ioremap, which is uncached by default.  Similarly
-- * architectures should not implement it unless they have a very good
-- * reason.
-- */
--#ifndef ioremap_uc
--#define ioremap_uc ioremap_uc
--static inline void __iomem *ioremap_uc(phys_addr_t offset, size_t size)
--{
--	return NULL;
--}
--#endif
--
- #ifdef CONFIG_HAS_IOPORT_MAP
- #ifndef CONFIG_GENERIC_IOMAP
- #ifndef ioport_map
-diff --git a/include/linux/io.h b/include/linux/io.h
-index a59834bc0a11..6574bb0f28e6 100644
---- a/include/linux/io.h
-+++ b/include/linux/io.h
-@@ -64,8 +64,10 @@ static inline void devm_ioport_unmap(struct device *dev, void __iomem *addr)
- 
- void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
- 			   resource_size_t size);
-+#ifdef ioremap_uc
- void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
- 				   resource_size_t size);
-+#endif
- void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
- 				   resource_size_t size);
- void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
-diff --git a/lib/devres.c b/lib/devres.c
-index f56070cf970b..0299279ddf02 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -40,9 +40,11 @@ static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
- 	case DEVM_IOREMAP_NC:
- 		addr = ioremap_nocache(offset, size);
- 		break;
-+#ifdef ioremap_uc
- 	case DEVM_IOREMAP_UC:
- 		addr = ioremap_uc(offset, size);
- 		break;
-+#endif
- 	case DEVM_IOREMAP_WC:
- 		addr = ioremap_wc(offset, size);
- 		break;
-@@ -72,6 +74,7 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
- }
- EXPORT_SYMBOL(devm_ioremap);
- 
-+#ifdef ioremap_uc
- /**
-  * devm_ioremap_uc - Managed ioremap_uc()
-  * @dev: Generic device to remap IO address for
-@@ -86,6 +89,7 @@ void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
- 	return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_UC);
- }
- EXPORT_SYMBOL_GPL(devm_ioremap_uc);
-+#endif /* ioremap_uc */
- 
- /**
-  * devm_ioremap_nocache - Managed ioremap_nocache()
--- 
-2.20.1
-
+> Looks good.
+> 
+> >  
+> > @@ -8563,7 +8586,11 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+> >  
+> >  	/*
+> >  	 * Try to use spare capacity of local group without overloading it or
+> > -	 * emptying busiest
+> > +	 * emptying busiest.
+> > +	 * XXX Spreading tasks across numa nodes is not always the best policy
+> > +	 * and special cares should be taken for SD_NUMA domain level before
+> > +	 * spreading the tasks. For now, load_balance() fully relies on
+> > +	 * NUMA_BALANCING and fbq_classify_group/rq to overide the decision.
+> >  	 */
+> >  	if (local->group_type == group_has_spare) {
+> >  		if (busiest->group_type > group_fully_busy) {
+> 
+> Perfect. Any patch in that are can then update the comment and it
+> should be semi-obvious to the next reviewer that it's expected.
+> 
+> Thanks Vincent.
+> 
+> -- 
+> Mel Gorman
+> SUSE Labs
