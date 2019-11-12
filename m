@@ -2,107 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4FEF90ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:46:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 970BEF90FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:48:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbfKLNql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 08:46:41 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37685 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfKLNql (ORCPT
+        id S1727414AbfKLNs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 08:48:57 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:42184 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfKLNs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:46:41 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t1so18599255wrv.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 05:46:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AGYm3Nys6XNVIKZhVZx5YWFiErVNUCXgDLyv4whlig8=;
-        b=HW0zuoArggOG6Z0bsLtd6adS4hfPVsBG21SBvDJOl3w0lsyPEnUnsBaoc4RPklkmnu
-         7evAnkiPn4npIts2eC0uYef6S4PHzTtwVHJ9JQynQV/VZRSfL1gUrsp16SUVrQHuFGIo
-         oGObSsSqHi86vE13Gm+1z7Xal8pUhm489jeJBGd++pMjg13qJXU0KQlbUQtEppt0XZF+
-         e8NFr0twVAI1Nux6P6nDTkuvQLUmSMKoKUKoRfyR9nxsb5crwu2130sQ8cCaHW46reQA
-         rHu8Z7r0z6B9ryaa30DZDNzxisg40MSVlDKwgwhVx7hOfnZ30NCDPbC2APjoxckNibUG
-         deyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AGYm3Nys6XNVIKZhVZx5YWFiErVNUCXgDLyv4whlig8=;
-        b=A48t+da7/81nHju+bYuuq8I/DOjuRSt36qKi1VmGNv5t2szHmZwNSkXJ9ds6cfSeEK
-         BAHyuakBXFiILeYeQpPUW65tYa8sAoP+qWyNii4pgUlWpp0OglDKqbrN8sTygfl9PRaE
-         8zyesRHnAAh8XZ1eO9rF91Rtz/6H7ExsWCs7B4CllDz1M6rm2rsXCBes7knOwhiV1O2O
-         b3IyEdvnB3EykYnK8DWZSMBEEN4228eGZrWj7vXNO0QDDxLYImgevY5CspitEw2Uikd0
-         /s9xaezD20zwUlCrteHQh+QDCYZ7gYEaUO9RL9P1xK/X60zjBi5ZEvpluHkUI+nVWNxM
-         8/fg==
-X-Gm-Message-State: APjAAAVZ9S0pikpngNzr4wxcb4ucDosbU7CjjCTx9+yAl7CBWLQWQtgP
-        3cZqayv/rahgWJU0NyjkfpKQbQ==
-X-Google-Smtp-Source: APXvYqydFPlOcZbZIDcdPbW4STt5Cvv8h0V6pr+w0+76FV1R4AoslUCyN2wslw/wb2BYA/ph3+wQvw==
-X-Received: by 2002:adf:b1cb:: with SMTP id r11mr19329663wra.246.1573566397760;
-        Tue, 12 Nov 2019 05:46:37 -0800 (PST)
-Received: from netronome.com ([2001:982:756:703:d63d:7eff:fe99:ac9d])
-        by smtp.gmail.com with ESMTPSA id 205sm5207269wmb.3.2019.11.12.05.46.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Nov 2019 05:46:37 -0800 (PST)
-Date:   Tue, 12 Nov 2019 14:46:36 +0100
-From:   Simon Horman <simon.horman@netronome.com>
-To:     Claudiu Manoil <claudiu.manoil@nxp.com>
-Cc:     Po Liu <po.liu@nxp.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
-Subject: Re: [EXT] Re: [net-next, 1/2] enetc: Configure the Time-Aware
- Scheduler via tc-taprio offload
-Message-ID: <20191112134635.qxcyf4bzyiwazdmn@netronome.com>
-References: <20191111042715.13444-1-Po.Liu@nxp.com>
- <20191112094128.mbfil74gfdnkxigh@netronome.com>
- <VE1PR04MB6496CE5A0DA25D7AF9FD666492770@VE1PR04MB6496.eurprd04.prod.outlook.com>
- <VI1PR04MB4880B514857A147B2634B27896770@VI1PR04MB4880.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB4880B514857A147B2634B27896770@VI1PR04MB4880.eurprd04.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 12 Nov 2019 08:48:56 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACDimK6003260;
+        Tue, 12 Nov 2019 13:47:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=sMMKPgpww4smX1YXtV6wvZBBiRbV6FeG/gIOCQT+ds0=;
+ b=Bq6pJIEVs4RMpNnXnIBOggUpB4Pl+OJCfwsaO7OdULOY1eVaDRgmE4FttDhZAl2GFacg
+ Jc5xudY3smfglUuw/njbjej9AVjqLt2Y9N7TKzdzczNr6CW7EocX6h0e//J3Pj27Lm05
+ SbcaevEvvY1l5GUe796cnfT+9fhFKLKdUueVLLdw0ojx9iPLUJ2tum5VGUu5djZtUKrL
+ 9MupeomPWigh66UlhkInUrtyqKTUArrVvaC4BEbPfur+MfwYXWVuxbF+Ed7tU9wQy4vC
+ oHcCCQb7+V4v4C8C1aDl1Sy36cz9HSL9FhfUob7U0bo3Pb+mcXeLSCTCa4zhKO6qjY4y IQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2w5mvtmvda-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 13:47:04 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACDhMli076743;
+        Tue, 12 Nov 2019 13:47:04 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2w7vbav1xw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 13:47:04 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xACDkuC7009057;
+        Tue, 12 Nov 2019 13:46:58 GMT
+Received: from tomti.i.net-space.pl (/10.175.202.33)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Nov 2019 05:46:56 -0800
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org
+Cc:     ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
+        hpa@zytor.com, jgross@suse.com, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, mingo@redhat.com, rdunlap@infradead.org,
+        ross.philipson@oracle.com, tglx@linutronix.de
+Subject: [PATCH v6 0/3] x86/boot: Introduce the kernel_info et consortes
+Date:   Tue, 12 Nov 2019 14:46:37 +0100
+Message-Id: <20191112134640.16035-1-daniel.kiper@oracle.com>
+X-Mailer: git-send-email 2.11.0
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9438 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=659
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911120124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9438 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=725 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911120124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 11:54:29AM +0000, Claudiu Manoil wrote:
-> >-----Original Message-----
-> >From: Po Liu <po.liu@nxp.com>
-> [...]
-> >> -----Original Message-----
-> >> From: Simon Horman <simon.horman@netronome.com>
-> [...]
-> >> > +/* class 5, command 0 */
-> >> > +struct tgs_gcl_conf {
-> >> > +     u8      atc;    /* init gate value */
-> >> > +     u8      res[7];
-> >> > +     union {
-> >> > +             struct {
-> >> > +                     u8      res1[4];
-> >> > +                     __le16  acl_len;
-> >>
-> >> Given that u* types are used in this structure I think le16 would be more
-> >> appropriate than __le16.
-> >
-> >Here keep the same code style of this .h file. I think it is better to have
-> >another patch to fix them all. Do you agree?
-> >
-> 
-> I don't see why "le16" would be more appropriate than "__le16" in this context.
-> The "__leXX" types are widely used in kernel drivers and not only, to annotate the
-> endianess of the hardware.  These are generic types defined din "include/uapi/linux/types.h".
-> Whereas "leXX" are defined in "fs/ntfs/types.h", and there's no usage of these types
-> in other h/w device drivers (I didn't find any).  Am I missing anything?
+Hi,
 
-My point is a cosmetic one:
-I think that __u8 goes with __le16, while u8 goes with le16.
+Due to very limited space in the setup_header this patch series introduces new
+kernel_info struct which will be used to convey information from the kernel to
+the bootloader. This way the boot protocol can be extended regardless of the
+setup_header limitations. Additionally, the patch series introduces some
+convenience features like the setup_indirect struct and the
+kernel_info.setup_type_max field.
+
+Daniel
+
+ Documentation/x86/boot.rst             | 174 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/boot/Makefile                 |   2 +-
+ arch/x86/boot/compressed/Makefile      |   4 +-
+ arch/x86/boot/compressed/kaslr.c       |  12 ++++++
+ arch/x86/boot/compressed/kernel_info.S |  22 ++++++++++
+ arch/x86/boot/header.S                 |   3 +-
+ arch/x86/boot/tools/build.c            |   5 +++
+ arch/x86/include/uapi/asm/bootparam.h  |  16 +++++++-
+ arch/x86/kernel/e820.c                 |  11 +++++
+ arch/x86/kernel/kdebugfs.c             |  21 ++++++++--
+ arch/x86/kernel/ksysfs.c               |  31 ++++++++++----
+ arch/x86/kernel/setup.c                |   6 +++
+ arch/x86/mm/ioremap.c                  |  11 +++++
+ 13 files changed, 302 insertions(+), 16 deletions(-)
+
+Daniel Kiper (3):
+      x86/boot: Introduce the kernel_info
+      x86/boot: Introduce the kernel_info.setup_type_max
+      x86/boot: Introduce the setup_indirect
+
