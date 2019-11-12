@@ -2,149 +2,344 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3134F8DBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0F44F8DE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:18:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfKLLMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:12:48 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24373 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725834AbfKLLMr (ORCPT
+        id S1727389AbfKLLSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:18:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33521 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfKLLSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:12:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573557167;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=W3PEu9PMd6wjgZQNkF16X/qfYEYHiI0Z6LSjl5AT7m0=;
-        b=eUwvgUmr11vdSwuTT9RUxbxbS2vw+czJZAFLc8o6iR8IogjaqZLxrtJdxor6C/EIVo29oD
-        xYo/4TqrbsEYaO9KJ6mMw3PIi9TKXQ8rSCfieG5Bqwd8AsFt+Rksgjjvk98F5/FaSPuTHT
-        pInvBn+3dmQUOGq76EfS7npr10LnClQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-383-oSJ5nlNEOHm2NUCwYyxvlA-1; Tue, 12 Nov 2019 06:12:43 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 941C6800C72;
-        Tue, 12 Nov 2019 11:12:40 +0000 (UTC)
-Received: from [10.36.117.126] (ovpn-117-126.ams2.redhat.com [10.36.117.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E6141600C4;
-        Tue, 12 Nov 2019 11:12:34 +0000 (UTC)
-Subject: Re: [PATCH v1 08/12] powerpc/pseries: CMM: Implement balloon
- compaction
-To:     Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Arun KS <arunks@codeaurora.org>, Todd Kjos <tkjos@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Gao Xiang <xiang@kernel.org>,
-        Greg Hackmann <ghackmann@google.com>,
-        David Howells <dhowells@redhat.com>
-References: <20191031142933.10779-1-david@redhat.com>
- <20191031142933.10779-9-david@redhat.com>
- <be7c1424-f240-b72c-8d6d-310ebbd816e1@redhat.com>
- <87blth2wyk.fsf@mpe.ellerman.id.au>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <8e46b1c5-f52b-0155-4d4f-e3bbdea95384@redhat.com>
-Date:   Tue, 12 Nov 2019 12:12:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 12 Nov 2019 06:18:08 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iUUBB-0000Ci-8d; Tue, 12 Nov 2019 12:17:49 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DBEE71C0084;
+        Tue, 12 Nov 2019 12:17:48 +0100 (CET)
+Date:   Tue, 12 Nov 2019 11:17:48 -0000
+From:   "tip-bot2 for Jin Yao" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf report: Sort by sampled cycles percent per
+ block for tui
+Cc:     Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191107074719.26139-8-yao.jin@linux.intel.com>
+References: <20191107074719.26139-8-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <87blth2wyk.fsf@mpe.ellerman.id.au>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: oSJ5nlNEOHm2NUCwYyxvlA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <157355746849.29376.12920683387800941807.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.11.19 11:46, Michael Ellerman wrote:
-> David Hildenbrand <david@redhat.com> writes:
->> On 31.10.19 15:29, David Hildenbrand wrote:
->>> We can now get rid of the cmm_lock and completely rely on the balloon
->>> compaction internals, which now also manage the page list and the lock.
-> ...
->>> +
->>> +static int cmm_migratepage(struct balloon_dev_info *b_dev_info,
->>> +=09=09=09   struct page *newpage, struct page *page,
->>> +=09=09=09   enum migrate_mode mode)
->>> +{
->>> +=09unsigned long flags;
->>> +
->>> +=09/*
->>> +=09 * loan/"inflate" the newpage first.
->>> +=09 *
->>> +=09 * We might race against the cmm_thread who might discover after ou=
-r
->>> +=09 * loan request that another page is to be unloaned. However, once
->>> +=09 * the cmm_thread runs again later, this error will automatically
->>> +=09 * be corrected.
->>> +=09 */
->>> +=09if (plpar_page_set_loaned(newpage)) {
->>> +=09=09/* Unlikely, but possible. Tell the caller not to retry now. */
->>> +=09=09pr_err_ratelimited("%s: Cannot set page to loaned.", __func__);
->>> +=09=09return -EBUSY;
->>> +=09}
->>> +
->>> +=09/* balloon page list reference */
->>> +=09get_page(newpage);
->>> +
->>> +=09spin_lock_irqsave(&b_dev_info->pages_lock, flags);
->>> +=09balloon_page_insert(b_dev_info, newpage);
->>> +=09balloon_page_delete(page);
->>
->> I think I am missing a b_dev_info->isolated_pages-- here.
->=20
-> I don't know this code at all, but looking at other balloon drivers they
-> do seem to do that in roughly the same spot.
->=20
-> I'll add it, how can we test that it's correct?
+The following commit has been merged into the perf/core branch of tip:
 
-It's certainly correct. We increment when we isolate=20
-(balloon_page_isolate()) and decrement when we un-isolate.
+Commit-ID:     7fa46cbf20d327d78114b1c8c7e69fabe7c57794
+Gitweb:        https://git.kernel.org/tip/7fa46cbf20d327d78114b1c8c7e69fabe7c57794
+Author:        Jin Yao <yao.jin@linux.intel.com>
+AuthorDate:    Thu, 07 Nov 2019 15:47:19 +08:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Thu, 07 Nov 2019 10:14:48 -03:00
 
-Un-isolate happens when we putback a isolated page=20
-(balloon_page_putback() - migration aborted) or when we successfully=20
-migrate it (via balloon_page_migrate()).
+perf report: Sort by sampled cycles percent per block for tui
 
-The issue is that we cannot decrement in balloon_page_migrate(), as we=20
-have to hold the b_dev_info->pages_lock. That's why we have to do it in=20
-the registered callback under lock.
+Previous patch has implemented a new option "--total-cycles".  But only
+stdio mode is supported.
 
-Please note that b_dev_info->isolated_pages is only needed for a sanity=20
-check in balloon_page_dequeue(). That's why I didn't notice during=20
-testing. I wonder if we should at some point rip out that sanity check ...
+This patch supports the tui mode and support '--percent-limit'.
 
-Thanks and cheers!
+For example,
 
->=20
-> cheers
->=20
+ perf record -b ./div
+ perf report --total-cycles --percent-limit 1
 
+ # Samples: 2753248 of event 'cycles'
+ Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                                              [Program Block Range]         Shared Object
+          26.04%            2.8M        0.40%          18                                             [div.c:42 -> div.c:39]                   div
+          15.17%            1.2M        0.16%           7                                 [random_r.c:357 -> random_r.c:380]          libc-2.27.so
+           5.11%          402.0K        0.04%           2                                             [div.c:27 -> div.c:28]                   div
+           4.87%          381.6K        0.04%           2                                     [random.c:288 -> random.c:291]          libc-2.27.so
+           4.53%          381.0K        0.04%           2                                             [div.c:40 -> div.c:40]                   div
+           3.85%          300.9K        0.02%           1                                             [div.c:22 -> div.c:25]                   div
+           3.08%          241.1K        0.02%           1                                           [rand.c:26 -> rand.c:27]          libc-2.27.so
+           3.06%          240.0K        0.02%           1                                     [random.c:291 -> random.c:291]          libc-2.27.so
+           2.78%          215.7K        0.02%           1                                     [random.c:298 -> random.c:298]          libc-2.27.so
+           2.52%          198.3K        0.02%           1                                     [random.c:293 -> random.c:293]          libc-2.27.so
+           2.36%          184.8K        0.02%           1                                           [rand.c:28 -> rand.c:28]          libc-2.27.so
+           2.33%          180.5K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
+           2.28%          176.7K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
+           2.20%          168.8K        0.02%           1                                         [rand@plt+0 -> rand@plt+0]                   div
+           1.98%          158.2K        0.02%           1                                 [random_r.c:388 -> random_r.c:388]          libc-2.27.so
+           1.57%          123.3K        0.02%           1                                             [div.c:42 -> div.c:44]                   div
+           1.44%          116.0K        0.42%          19                                 [random_r.c:357 -> random_r.c:394]          libc-2.27.so
 
---=20
+--------------------------------------------------
 
-Thanks,
+ v7:
+ ---
+ 1. Since we have used use_browser in report__browse_block_hists
+    to support stdio mode, now we also add supporting for tui.
 
-David / dhildenb
+ 2. Move block tui browser code from ui/browsers/hists.c
+    to block-info.c.
 
+ v6:
+ ---
+ Create report__tui_browse_block_hists in block-info.c
+ (codes are moved from builtin-report.c).
+
+ v5:
+ ---
+ Fix a crash issue when running perf report without
+ '--total-cycles'. The issue is because the internal flag
+ is renamed from 'total_cycles' to 'total_cycles_mode' in
+ previous patch but this patch still uses 'total_cycles'
+ to check if the '--total-cycles' option is enabled, which
+ causes the code to be inconsistent.
+
+ v4:
+ ---
+ Since the block collection is moved out of printing in
+ previous patch, this patch is updated accordingly for
+ tui supporting.
+
+ v3:
+ ---
+ Minor change since the function name is changed:
+ block_total_cycles_percent -> block_info__total_cycles_percent
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/20191107074719.26139-8-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-report.c    | 27 +++++++++---
+ tools/perf/ui/browsers/hists.c |  7 ++-
+ tools/perf/ui/browsers/hists.h |  2 +-
+ tools/perf/util/block-info.c   | 74 ++++++++++++++++++++++++++++++++-
+ 4 files changed, 103 insertions(+), 7 deletions(-)
+
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index ca41187..1e81985 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -485,6 +485,22 @@ static size_t hists__fprintf_nr_sample_events(struct hists *hists, struct report
+ 	return ret + fprintf(fp, "\n#\n");
+ }
+ 
++static int perf_evlist__tui_block_hists_browse(struct evlist *evlist,
++					       struct report *rep)
++{
++	struct evsel *pos;
++	int i = 0, ret;
++
++	evlist__for_each_entry(evlist, pos) {
++		ret = report__browse_block_hists(&rep->block_reports[i++].hist,
++						 rep->min_percent, pos);
++		if (ret != 0)
++			return ret;
++	}
++
++	return 0;
++}
++
+ static int perf_evlist__tty_browse_hists(struct evlist *evlist,
+ 					 struct report *rep,
+ 					 const char *help)
+@@ -595,6 +611,11 @@ static int report__browse_hists(struct report *rep)
+ 
+ 	switch (use_browser) {
+ 	case 1:
++		if (rep->total_cycles_mode) {
++			ret = perf_evlist__tui_block_hists_browse(evlist, rep);
++			break;
++		}
++
+ 		ret = perf_evlist__tui_browse_hists(evlist, help, NULL,
+ 						    rep->min_percent,
+ 						    &session->header.env,
+@@ -1396,12 +1417,8 @@ repeat:
+ 	if (report.total_cycles_mode) {
+ 		if (sort__mode != SORT_MODE__BRANCH)
+ 			report.total_cycles_mode = false;
+-		else if (!report.use_stdio) {
+-			pr_err("Error: --total-cycles can be only used together with --stdio\n");
+-			goto error;
+-		} else {
++		else
+ 			sort_order = "sym";
+-		}
+ 	}
+ 
+ 	if (strcmp(input_name, "-") != 0)
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index 7a7187e..334afc2 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -26,6 +26,7 @@
+ #include "../../util/sort.h"
+ #include "../../util/top.h"
+ #include "../../util/thread.h"
++#include "../../util/block-info.h"
+ #include "../../arch/common.h"
+ #include "../../perf.h"
+ 
+@@ -1783,7 +1784,11 @@ static unsigned int hist_browser__refresh(struct ui_browser *browser)
+ 			continue;
+ 		}
+ 
+-		percent = hist_entry__get_percent_limit(h);
++		if (symbol_conf.report_individual_block)
++			percent = block_info__total_cycles_percent(h);
++		else
++			percent = hist_entry__get_percent_limit(h);
++
+ 		if (percent < hb->min_pcnt)
+ 			continue;
+ 
+diff --git a/tools/perf/ui/browsers/hists.h b/tools/perf/ui/browsers/hists.h
+index 91d3e18..078f2f2 100644
+--- a/tools/perf/ui/browsers/hists.h
++++ b/tools/perf/ui/browsers/hists.h
+@@ -5,6 +5,7 @@
+ #include "ui/browser.h"
+ 
+ struct annotation_options;
++struct evsel;
+ 
+ struct hist_browser {
+ 	struct ui_browser   b;
+@@ -15,6 +16,7 @@ struct hist_browser {
+ 	struct pstack	    *pstack;
+ 	struct perf_env	    *env;
+ 	struct annotation_options *annotation_opts;
++	struct evsel	    *block_evsel;
+ 	int		     print_seq;
+ 	bool		     show_dso;
+ 	bool		     show_headers;
+diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
+index 597d120..9abc201 100644
+--- a/tools/perf/util/block-info.c
++++ b/tools/perf/util/block-info.c
+@@ -10,6 +10,7 @@
+ #include "map.h"
+ #include "srcline.h"
+ #include "evlist.h"
++#include "ui/browsers/hists.h"
+ 
+ static struct block_header_column {
+ 	const char *name;
+@@ -438,9 +439,75 @@ struct block_report *block_info__create_report(struct evlist *evlist,
+ 	return block_reports;
+ }
+ 
++#ifdef HAVE_SLANG_SUPPORT
++static int block_hists_browser__title(struct hist_browser *browser, char *bf,
++				      size_t size)
++{
++	struct hists *hists = evsel__hists(browser->block_evsel);
++	const char *evname = perf_evsel__name(browser->block_evsel);
++	unsigned long nr_samples = hists->stats.nr_events[PERF_RECORD_SAMPLE];
++	int ret;
++
++	ret = scnprintf(bf, size, "# Samples: %lu", nr_samples);
++	if (evname)
++		scnprintf(bf + ret, size -  ret, " of event '%s'", evname);
++
++	return 0;
++}
++
++static int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
++				  float min_percent)
++{
++	struct hists *hists = &bh->block_hists;
++	struct hist_browser *browser;
++	int key = -1;
++	static const char help[] =
++	" q             Quit \n";
++
++	browser = hist_browser__new(hists);
++	if (!browser)
++		return -1;
++
++	browser->block_evsel = evsel;
++	browser->title = block_hists_browser__title;
++	browser->min_pcnt = min_percent;
++
++	/* reset abort key so that it can get Ctrl-C as a key */
++	SLang_reset_tty();
++	SLang_init_tty(0, 0, 0);
++
++	while (1) {
++		key = hist_browser__run(browser, "? - help", true);
++
++		switch (key) {
++		case 'q':
++			goto out;
++		case '?':
++			ui_browser__help_window(&browser->b, help);
++			break;
++		default:
++			break;
++		}
++	}
++
++out:
++	hist_browser__delete(browser);
++	return 0;
++}
++#else
++static int block_hists_tui_browse(struct block_hist *bh __maybe_unused,
++				  struct evsel *evsel __maybe_unused,
++				  float min_percent __maybe_unused)
++{
++	return 0;
++}
++#endif
++
+ int report__browse_block_hists(struct block_hist *bh, float min_percent,
+-			       struct evsel *evsel __maybe_unused)
++			       struct evsel *evsel)
+ {
++	int ret;
++
+ 	switch (use_browser) {
+ 	case 0:
+ 		symbol_conf.report_individual_block = true;
+@@ -448,6 +515,11 @@ int report__browse_block_hists(struct block_hist *bh, float min_percent,
+ 			       stdout, true);
+ 		hists__delete_entries(&bh->block_hists);
+ 		return 0;
++	case 1:
++		symbol_conf.report_individual_block = true;
++		ret = block_hists_tui_browse(bh, evsel, min_percent);
++		hists__delete_entries(&bh->block_hists);
++		return ret;
+ 	default:
+ 		return -1;
+ 	}
