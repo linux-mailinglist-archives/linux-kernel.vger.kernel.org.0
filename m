@@ -2,60 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 656CDF8C34
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD26F8C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbfKLJt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:49:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58046 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725899AbfKLJt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:49:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 97B26B039;
-        Tue, 12 Nov 2019 09:49:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3F48C1E47E5; Tue, 12 Nov 2019 10:49:54 +0100 (CET)
-Date:   Tue, 12 Nov 2019 10:49:54 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Bharat Kumar Gogada <bharatku@xilinx.com>
-Cc:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jack@suse.cz" <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: DAX filesystem support on ARMv8
-Message-ID: <20191112094954.GC1241@quack2.suse.cz>
-References: <MN2PR02MB63362F7B019844D94D243CE2A5770@MN2PR02MB6336.namprd02.prod.outlook.com>
+        id S1727124AbfKLJvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:51:19 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63657 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfKLJvT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 04:51:19 -0500
+Received: from 79.184.253.153.ipv4.supernova.orange.pl (79.184.253.153) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 0465ea6e146b3772; Tue, 12 Nov 2019 10:51:17 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH] cpuidle: teo: Exclude cpuidle overhead from computations
+Date:   Tue, 12 Nov 2019 10:51:16 +0100
+Message-ID: <35783785.QSqy96aQL9@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN2PR02MB63362F7B019844D94D243CE2A5770@MN2PR02MB6336.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Tue 12-11-19 02:12:09, Bharat Kumar Gogada wrote:
-> As per Documentation/filesystems/dax.txt
-> 
-> The DAX code does not work correctly on architectures which have virtually
-> mapped caches such as ARM, MIPS and SPARC.
-> 
-> Can anyone please shed light on dax filesystem issue w.r.t ARM architecture ? 
+One purpose of the computations in teo_update() is to determine
+whether or not the (saved) time till the next timer event and the
+measured idle duration fall into the same "bin", so avoid using
+values that include the cpuidle overhead to obtain the latter.
 
-I've CCed Dan, he might have idea what that comment means :)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/teo.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Out of curiosity, why do you care?
+Index: linux-pm/drivers/cpuidle/governors/teo.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/teo.c
++++ linux-pm/drivers/cpuidle/governors/teo.c
+@@ -130,7 +130,14 @@ static void teo_update(struct cpuidle_dr
+ 	} else {
+ 		u64 lat_ns = drv->states[dev->last_state_idx].exit_latency_ns;
+ 
+-		measured_ns = cpu_data->time_span_ns;
++		/*
++		 * The computations below are to determine whether or not the
++		 * (saved) time till the next timer event and the measured idle
++		 * duration fall into the same "bin", so use last_residency_ns
++		 * for that instead of time_span_ns which includes the cpuidle
++		 * overhead.
++		 */
++		measured_ns = dev->last_residency_ns;
+ 		/*
+ 		 * The delay between the wakeup and the first instruction
+ 		 * executed by the CPU is not likely to be worst-case every
 
-								Honza
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
