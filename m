@@ -2,116 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31BB0F9672
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:01:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B56FF967D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfKLRBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 12:01:51 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46801 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfKLRBu (ORCPT
+        id S1727394AbfKLRC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 12:02:29 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39810 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfKLRC3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 12:01:50 -0500
-Received: by mail-pg1-f194.google.com with SMTP id r18so12209483pgu.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 09:01:50 -0800 (PST)
+        Tue, 12 Nov 2019 12:02:29 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l7so7790540wrp.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 09:02:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GDojT++zYyimFKXjGTgtIMvoNwjyBW8FizODRtTHlkU=;
-        b=gqdeS5lER8xfVdf3MPfzRhQWtIdYGVkfvSEfkEikV5sK+iUbNyoUDxfqd0+Gf8qRon
-         qIHWABuQ6RrIuV9KP9et/nCefEYxwgv0VU6xWDH/6WigGjakxakLa/uAk/OZfK6aVs7K
-         LvkNK+dcIIHQrnxcoqA/IqdlZjyzz32xgRlYjaX7VbauzkexzJ8FhEebDZqN5k6CV5bv
-         1E2P4sJBj7B20dAtY+vRdNYhwg7+Crzg+hEcAIZsxPn2ZVIiajYUgAJYOPGKF8JwDcwE
-         0IZzMwP9eCWaBLOLkKUPL66WfWRvEgGNsCoRadK6bSa6QAU6DElkyAo1XDy0qVlKPQZg
-         tUWA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=nEAXtzDBm38sh308ifQWQizcwae+A2CoWPbIiFYwKrk=;
+        b=LZPycnekykDy+3tCiWfVwLE36sDID8Ih91KLiTQsDq2UDK0g+60HWQTUSJeQOiTlgm
+         HLun017COts3Oj49wRtR7jYQnffJpNSKdCgH1t6JSFMBRdVbPo+zdxDNsjx4izyrLTou
+         vR2EMSCd60AIz+fhhXUONam91Y+brzLhlRNz+KOxzohyjjZ0MX22dKVS9bS3l7reBCNv
+         zamdsjIOQrRThhJKGjahl1vt2XmE4bO+I/D2k8a2N6BosYO3/oEUoYD7EkAoo8h0Z62I
+         7fGRjKVZg7rERLDNxNUrJoCXfC+jBchzsk8m6TdIrsiShDBTWVpg3+7oPlF+wydkukyX
+         PRZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GDojT++zYyimFKXjGTgtIMvoNwjyBW8FizODRtTHlkU=;
-        b=rCiCg/FSdXU2HWALohdwtFcA+ED4aP+DSf8YSg6eIHaGxjXXpRMShbinSu7d2JufBM
-         j2ic1Ru0ivrvrj8h2t6LubNJbNrLLE/fes62GPjyAAXXFdKh9sJZhqMmpj4wWqk4LCmI
-         i7S4R79mjUUCVB/a0fSlx8JZ5Il3CJVNTNIIfvozx6ZSUKf+TB4ON0aDKPxuHFV50AlY
-         0qHRNHHixgVqmLnmwF6SKCPrhKcFcTTLgmBBA7Z7bYPyzYiILg5Qo6XVi/Y1sq1DvxMP
-         8u8/0ioJe+6XSLxABygIAqbzMU5A4TGNOBlIrsLOhFSsNEgTDC+1+kG7SKCHCmdU0Bt/
-         OBTg==
-X-Gm-Message-State: APjAAAX1WZQzg9KTJT8FGOfZ9CEEP3qEja6X+kZVHxbR85mXhvDw/3lU
-        vKR0Nuk2lvpuAU9loqyJS3uvSQ==
-X-Google-Smtp-Source: APXvYqw4G8Nv44pA6Fs7EzjALZ0qCpPOe1DYkXKQWUmcJweMaKJlE6IhOyuyuFHl+85B3ZJqZHBicw==
-X-Received: by 2002:aa7:85d7:: with SMTP id z23mr38064618pfn.24.1573578109877;
-        Tue, 12 Nov 2019 09:01:49 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y138sm20294845pfb.174.2019.11.12.09.01.47
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=nEAXtzDBm38sh308ifQWQizcwae+A2CoWPbIiFYwKrk=;
+        b=gVGjMH8HPyOF9ymHRZNJMHbF206VhCiP6QMgo2gN3mzPLovrL8qUNb6v0GoRwYPXLq
+         mymxhyxVY8lsSA4gyDpwYnMZiND2C/R3U6gmWDKwDM+KxivbapDIt6x+hqFlPNOSd/g5
+         jL1tPZ1H8bcxoGM3C8ype6E1AyhI70+6p03gdsVpmBYksQj2eiKLXr7vJVNvVj7ez4MM
+         4EE9Yn0IRXwh9HhUI4zCq2Fv/MNDcW2/3nq27tONFWpx5IEGLHC50396vAQDZDD+mPTD
+         4wCJsvhh71OizWX7pSm4JMavp8FtUTcesDtMyICX9ykIwPiEai7FEIpdQl/55HKLRnNw
+         QGfg==
+X-Gm-Message-State: APjAAAVZqduTioix1oPOlcCgE08oVI2bL2hUbSxuQlNVfsDqYunJix68
+        LN15xFAPCK0a3j89DOYsHNao2Q==
+X-Google-Smtp-Source: APXvYqyrOgNBh3quDHMJVl6ILGuxddDkKPP6rBQ+oFb7GG/5HGQ/FvsKzXhjCK/JDGuSJw+RE1Be5w==
+X-Received: by 2002:adf:db41:: with SMTP id f1mr25303742wrj.351.1573578147017;
+        Tue, 12 Nov 2019 09:02:27 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id p4sm23274824wrx.71.2019.11.12.09.02.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 09:01:48 -0800 (PST)
-Date:   Tue, 12 Nov 2019 09:01:44 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Linus Walleij <linus.walleij@linaro.org>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Andy Gross <agross@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-oxnas@groups.io,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/2] pinctrl: Use new GPIO_LINE_DIRECTION
-Message-ID: <20191112170144.GF3797@yoga>
-References: <20191112141819.GA22076@localhost.localdomain>
+        Tue, 12 Nov 2019 09:02:26 -0800 (PST)
+References: <1572868495-84816-1-git-send-email-jianxin.pan@amlogic.com> <1ja79b4mje.fsf@starbuckisacylon.baylibre.com> <e80cb817-e58a-68ce-a3c6-d82636aaf7d3@amlogic.com> <1j8sou4u1g.fsf@starbuckisacylon.baylibre.com> <7ec2e682-cfec-395e-cf38-58f050440c40@amlogic.com> <1j7e4e4sab.fsf@starbuckisacylon.baylibre.com> <dee789ae-6825-3f4c-16e7-227e064562d6@amlogic.com> <1j5zjy4fif.fsf@starbuckisacylon.baylibre.com> <399e3fda-91c0-6dcb-5040-a117fe78519d@amlogic.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Nan Li <Nan.Li@amlogic.com>, Jianxin Pan <Jianxin.Pan@amlogic.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        "linux-amlogic\@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-mmc\@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Victor Wan <victor.wan@amlogic.com>
+Subject: Re: [PATCH v2] mmc: meson-gx: fix mmc dma operation
+In-reply-to: <399e3fda-91c0-6dcb-5040-a117fe78519d@amlogic.com>
+Date:   Tue, 12 Nov 2019 18:02:25 +0100
+Message-ID: <1jftitf2ou.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112141819.GA22076@localhost.localdomain>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 12 Nov 06:18 PST 2019, Matti Vaittinen wrote:
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 763da0be10d6..8844ca1261d5 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -485,8 +485,8 @@ static int msm_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
->  
->  	val = msm_readl_ctl(pctrl, g);
->  
-> -	/* 0 = output, 1 = input */
-> -	return val & BIT(g->oe_bit) ? 0 : 1;
-> +	return val & BIT(g->oe_bit) ? GPIO_LINE_DIRECTION_OUT :
-> +				      GPIO_LINE_DIRECTION_IN;
->  }
->  
 
-For pinctrl-msm
+On Thu 07 Nov 2019 at 04:07, Nan Li <Nan.Li@amlogic.com> wrote:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> On 2019/11/5 21:30, Jerome Brunet wrote:
+>> 
+>> On Tue 05 Nov 2019 at 10:05, Nan Li <Nan.Li@amlogic.com> wrote:
+>> 
+>> Nan Li, please fix your mailer to use plain text properly, your reply
+>> are near impossible to read
+>> 
+> Sorry, maybe there is something wrong with my email address. Please help 
+> me check whether my reply is in accordance with the format.
+>
 
-Regards,
-Bjorn
+Please use plain text instead on html when replying on these mailing list.
