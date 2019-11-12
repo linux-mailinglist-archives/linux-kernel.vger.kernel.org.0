@@ -2,78 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3B75F9010
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22D62F901B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbfKLM6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 07:58:11 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:38479 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726912AbfKLM6K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:58:10 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iUVk8-0007QY-JF; Tue, 12 Nov 2019 13:58:00 +0100
-To:     Yash Shah <yash.shah@sifive.com>
-Subject: Re: [PATCH 3/4] gpio: sifive: Add GPIO driver for SiFive SoCs
-X-PHP-Originating-Script: 0:main.inc
+        id S1727241AbfKLNAj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 08:00:39 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:46121 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbfKLNAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 08:00:38 -0500
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id DB3C040E63;
+        Tue, 12 Nov 2019 13:00:36 +0000 (UTC)
+Date:   Tue, 12 Nov 2019 20:59:56 +0800
+In-Reply-To: <20191111123936.GM4345@gilmour.lan>
+References: <BN8PR08MB57792366D78997180A698AF8897A0@BN8PR08MB5779.namprd08.prod.outlook.com> <20191111123936.GM4345@gilmour.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Nov 2019 14:07:21 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <palmer@dabbelt.com>,
-        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
-        <aou@eecs.berkeley.edu>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <bmeng.cn@gmail.com>,
-        <atish.patra@wdc.com>, Sagar Kadam <sagar.kadam@sifive.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>
-In-Reply-To: <1573560684-48104-4-git-send-email-yash.shah@sifive.com>
-References: <1573560684-48104-1-git-send-email-yash.shah@sifive.com>
- <1573560684-48104-4-git-send-email-yash.shah@sifive.com>
-Message-ID: <d82620dd33bdd6bb4d34e49600a506d1@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: yash.shah@sifive.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, palmer@dabbelt.com, paul.walmsley@sifive.com, aou@eecs.berkeley.edu, tglx@linutronix.de, jason@lakedaemon.net, bmeng.cn@gmail.com, atish.patra@wdc.com, sagar.kadam@sifive.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: Fix incorrect number of hw_clks.
+To:     linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Tian Yunhao <t123yh@outlook.com>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <1FA73EE3-CED2-4241-839D-51C8C02531F5@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-12 13:21, Yash Shah wrote:
-> Adds the GPIO driver for SiFive RISC-V SoCs.
+
+
+于 2019年11月11日 GMT+08:00 下午8:39:36, Maxime Ripard <mripard@kernel.org> 写到:
+>Hi,
 >
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> [Atish: Various fixes and code cleanup]
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+>Thanks for your patch
+>
+>On Sat, Nov 09, 2019 at 03:19:09PM +0000, Tian Yunhao wrote:
+>> The hws field of sun8i_v3s_hw_clks has only 74
+>> members. However, the number specified by CLK_NUMBER
+>> is 77 (= CLK_I2S0 + 1). This leads to runtime segmentation
+>> fault that is not always reproducible.
+>>
+>> This patch adds a protective field [CLK_NUMBER] which ensures
+>> ARRAY_SIZE(.hws) is always greater than .num, thus eliminates
+>> this error.
+>>
+>> Signed-off-by: Yunhao Tian <t123yh@outlook.com>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+>b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+>> index 5c779eec454b..de7fce7f32e6 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+>> @@ -617,6 +617,7 @@ static struct clk_hw_onecell_data
+>sun8i_v3s_hw_clks = {
+>>  		[CLK_AVS]		= &avs_clk.common.hw,
+>>  		[CLK_MBUS]		= &mbus_clk.common.hw,
+>>  		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+>> +		[CLK_NUMBER]    = NULL,
+>>  	},
+>>  	.num	= CLK_NUMBER,
+>>  };
+>> @@ -699,6 +700,7 @@ static struct clk_hw_onecell_data
+>sun8i_v3_hw_clks = {
+>>  		[CLK_AVS]		= &avs_clk.common.hw,
+>>  		[CLK_MBUS]		= &mbus_clk.common.hw,
+>>  		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+>> +		[CLK_NUMBER]    = NULL,
+>>  	},
+>>  	.num	= CLK_NUMBER,
+>
+>I'd rather have the number of clocks (.num) being properly set.
 
-[...]
+However the maximum clock indices number is different on V3s and V3, because
+on V3s the last clock is missing.
 
-> +static int sifive_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
-> +					     unsigned int child,
-> +					     unsigned int child_type,
-> +					     unsigned int *parent,
-> +					     unsigned int *parent_type)
-> +{
-> +	/* All these interrupts are level high in the CPU */
-> +	*parent_type = IRQ_TYPE_LEVEL_HIGH;
+Should we define CLK_NUMBER_V3S here?
 
-It is bizare that you enforce LEVEL_HIGH here, while setting it to NONE
-in the PLIC driver. These things should be consistent.
-
-> +	*parent = child + 7;
-
-Irk, magic numbers...
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+>
+>Maxime
