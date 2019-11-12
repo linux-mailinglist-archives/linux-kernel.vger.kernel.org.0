@@ -2,166 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 740C5F8836
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 06:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 551F4F8839
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 06:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfKLFtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 00:49:46 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34768 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfKLFtq (ORCPT
+        id S1727001AbfKLFuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 00:50:05 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23544 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725775AbfKLFuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 00:49:46 -0500
-Received: by mail-lf1-f68.google.com with SMTP id y186so5981140lfa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 21:49:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CMSkF3qF4fD/iGxqQwLixgivqCiU2ng8PohKJBqAxGw=;
-        b=abZDZgs7QSzieW7JY9X/OsbOXf6acYJWkThWqQYRaXIZ3w2v9mlcfxkBCz6ku2hf31
-         Chmwsz/u6cOZCWfjzAdx69213pgYrdWCY0os1z4FyaR8QGdDY7ZhLnt3M+yrk0sKwDAi
-         WxcbEkFgxFUkFIUDbzv7i/iHjfEhKnpWJVLsgHPd9TyAmGKoqM39DBWKs9FRS/8vzuOQ
-         4X1/zpIp+ql6HUcC5kOUsYCt4+6vtQvOx1n3MK0GoSHEcO8lWqPrizw5wWOKgO7hf8Oi
-         LOQpl3msKDWxZLsLzEvovGZKzsVnZ/nNw35YB6lEl4CD/XKNlKNYlfQn3aPoIPcCgRUw
-         yG/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CMSkF3qF4fD/iGxqQwLixgivqCiU2ng8PohKJBqAxGw=;
-        b=R2AGvWA5nnPhCHae53GnuyIgiqAzJkjap56icQDpHcP9yDhalcmyM6Eg/rvagnzPe1
-         poT4zfdw5pVXK4gtZmB+PGBTsj4Je+uuQnSFZ5+Ijz71TL++qMdJa6bCTB16r2S32StV
-         izkSbcqIGzXR/xSAifLdQUBO3+7JZauGjb8DtFG9izB3BR8LrVWgOysbjIIete5Tb/aP
-         Zu6N83kvJx3HJ1ClWq3B/OpJb9Oge03vw8Zv5efeT3V28E/1CC0bwiC268Agt90p7dPx
-         WAlV0exPWodHpoG4TFE6SqRnKLMVEgaB64Vkqvvw6W/Cr5IF1/wonLmfFoAVBUGQpTGk
-         O4fQ==
-X-Gm-Message-State: APjAAAVF0QYhriTs1BqP6geIwUaEV9SY/mBj1xgrA15Vi+jQmHpfc9O3
-        W8shFGRRBuutcxQL7np3PtHIh01oXyoKJCGkYycHow==
-X-Google-Smtp-Source: APXvYqzjKlKY1Kja66lW8RGTPHtfs/6T8SpVnYloLlSDSVMUhBfSkrWEbnvE5In47DX8Zno0ncBSBnblmUb145samAs=
-X-Received: by 2002:a19:4349:: with SMTP id m9mr8763066lfj.67.1573537782172;
- Mon, 11 Nov 2019 21:49:42 -0800 (PST)
+        Tue, 12 Nov 2019 00:50:05 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xAC5lwTb054045
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 00:50:04 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w7jpankv8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 00:50:03 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Tue, 12 Nov 2019 05:50:02 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Nov 2019 05:49:59 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAC5nwII38535186
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 05:49:58 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B288111C04A;
+        Tue, 12 Nov 2019 05:49:58 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FF6D11C052;
+        Tue, 12 Nov 2019 05:49:57 +0000 (GMT)
+Received: from bangoria.in.ibm.com (unknown [9.124.31.152])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 05:49:57 +0000 (GMT)
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To:     acme@kernel.org
+Cc:     jolsa@redhat.com, kan.liang@intel.com,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH] perf report: Fix segfault with '-F phys_daddr'
+Date:   Tue, 12 Nov 2019 11:19:46 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191111181438.945353076@linuxfoundation.org>
-In-Reply-To: <20191111181438.945353076@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 12 Nov 2019 11:19:31 +0530
-Message-ID: <CA+G9fYuGD_Wabfe0Ao3-j8TD9kejT1ixh6mYDTMtHD8DcAkboQ@mail.gmail.com>
-Subject: Re: [PATCH 4.19 000/125] 4.19.84-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19111205-0008-0000-0000-0000032E3969
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19111205-0009-0000-0000-00004A4D3C1F
+Message-Id: <20191112054946.5869-1-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120052
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Nov 2019 at 00:12, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.84 release.
-> There are 125 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 13 Nov 2019 18:08:44 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.84-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+If perf.data file is not recorded with mem-info, adding 'phys_daddr'
+to output field in perf report results in segfault. Fix that.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Before:
+  $ ./perf record ls
+  $ ./perf report -F +phys_daddr
+  Segmentation fault (core dumped)
 
-Summary
-------------------------------------------------------------------------
+After:
+  $ ./perf report -F +phys_daddr
+  Samples: 11  of event 'cycles:u', Event count (approx.): 1485821
+  Overhead  Data Physical Address  Command  Shared Object  Symbol
+    22.57%  [.] 0000000000000000   ls       libc-2.29.so   [.] __strcoll_l
+    21.87%  [.] 0000000000000000   ls       ld-2.29.so     [.] _dl_relocate_object
+    ...
 
-kernel: 4.19.84-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 0f8b6b0b5b946b33f5b60e9de252afb809a17e6a
-git describe: v4.19.83-126-g0f8b6b0b5b94
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.83-126-g0f8b6b0b5b94
+Fixes: 8780fb25ab06 ("perf sort: Add sort option for physical address")
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+---
+ tools/perf/util/sort.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 43d1d410854a..c2430676e569 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -1413,7 +1413,7 @@ static int hist_entry__phys_daddr_snprintf(struct hist_entry *he, char *bf,
+ 	size_t ret = 0;
+ 	size_t len = BITS_PER_LONG / 4;
+ 
+-	addr = he->mem_info->daddr.phys_addr;
++	addr = he->mem_info ? he->mem_info->daddr.phys_addr : 0;
+ 
+ 	ret += repsep_snprintf(bf + ret, size - ret, "[%c] ", he->level);
+ 
+-- 
+2.21.0
 
-No regressions (compared to build v4.19.83-124-gb8764c8bac2d)
-
-No fixes (compared to build v4.19.83-124-gb8764c8bac2d)
-
-Ran 23945 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* perf
-* spectre-meltdown-checker-test
-* network-basic-tests
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* ssuite
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
