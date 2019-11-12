@@ -2,124 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1C8F8645
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B802F865F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:30:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfKLB26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 20:28:58 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35378 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbfKLB2H (ORCPT
+        id S1727171AbfKLBaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 20:30:24 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55655 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbfKLBaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 20:28:07 -0500
-Received: by mail-wm1-f68.google.com with SMTP id 8so1226303wmo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 17:28:06 -0800 (PST)
+        Mon, 11 Nov 2019 20:30:24 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b11so1282680wmb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 17:30:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uLHfRBzVcQOMHPLFQbTm4vIzETfB2gC5g5OyUjlWFMs=;
-        b=Zm4taa0fqd0V2OIXZGfR00pMrgYgTXiiHgFzMlmIqbxN/huuDCz3U9KuaY8ynXa1x8
-         9ujrlsvAXomfGjZbrrYmE7DI4vF+74DBTmDTE1+zZ6O04UzJbB2AfeuK1mUOwuzlTr6w
-         KpoYPGWTuyJBXCvuZp9BBKHiNoOUlGUHb4s0UEnymt0kZwkQc6KnsgcSCKvpVpsKAAC+
-         9OQ3eG6TU1XnwLXNjt2JWj6nz5JkSHcF5HgUXS9jUI0T6Lu3QrCAT/dXYvn1GhnFUzeE
-         CtLZDwDVcoEsMH/JM2s0fULANXi/V8GU+Te39xmjxdgpXPYBStujgoNdPs5NQXQwMvSF
-         LM/w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8B2NZ4PfR61JzfugaxVIwYxo10Xu/i9sEhzmQqu6MqE=;
+        b=Q4Xi9fjijjroN9+pFk/k+GO3xcSUmBu9dZVChvtk6BNLEHYBIkFEbdY1wnd5TT8VIU
+         pbcq9Uzai87oBpR6pMdr+OZtaRFoDLf4QZcUkJqQ5A3W6CC3pc1g5eWpRcxLvX/WilVF
+         /o0MF0NX3GnFDxcz2OuTRW9PD1N9FYytxhxiGYqrbbxcFtN9N7R0LHeJ172SHyzLihSb
+         DhX5BL5hOMVpFNkUKar4DzdHX9VxiFdQcrilPFtmGAwAjmTPpV0G3P+IkptojbdHRL5L
+         aVWG4OfL3nUbNTcdcfBWfVwJmOBB+URAWBoDBZiXRBbl96ASEPdG4Xj4+Ekk/S4zloBa
+         W+vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uLHfRBzVcQOMHPLFQbTm4vIzETfB2gC5g5OyUjlWFMs=;
-        b=gfKRBG7OXDNK/ivioCgTGQenys4yy8RRaLBk9tNur+x1Nodqt4d7b+aCjYOLLbn5BK
-         E1Wu5iBYeGmA5OMmEWR2fAUv/m2xWaidBHdiwtXCrieyV11ty5sbzalKAB6E85E30+CH
-         RKnn1pPl2y+pRbiBhrhXCTrKkPoA6p1UtbTkUKXmkCpPocL1NgboqWP5fJFgFSeVUBHN
-         a9OJhTf0f0y3M0+8QP6gFgZcIFYVcxWfYHEWecebPdvg16bwyqkAXmz8wwr86nNEdGN1
-         OtE1QTipF3ppPhvn7psYuxdqQw4dxstYC/QV8CySMxHkKho/DEgwzqZHYUuJf6J0Ybx/
-         9XWA==
-X-Gm-Message-State: APjAAAU8pRKAVFss9Kvt3G3P+CzHzVAtOIddi3MCeRj6GRGA2N1WJeO7
-        taBKo9Up4hwId6j6OImi5TvGUEDuSVM=
-X-Google-Smtp-Source: APXvYqxrCn/GtTlwgZN4e+FAimd9glCR7wgRozyGrmAowLDgpRZPtbaoRrxR2LuUHfILHaOMe+gELQ==
-X-Received: by 2002:a1c:2745:: with SMTP id n66mr1499686wmn.171.1573522085381;
-        Mon, 11 Nov 2019 17:28:05 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id u187sm1508096wme.15.2019.11.11.17.28.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 17:28:04 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Andrei Vagin <avagin@gmail.com>
-Subject: [PATCHv8 25/34] x86/vdso: On timens page fault prefault also VVAR page
-Date:   Tue, 12 Nov 2019 01:27:14 +0000
-Message-Id: <20191112012724.250792-26-dima@arista.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191112012724.250792-1-dima@arista.com>
-References: <20191112012724.250792-1-dima@arista.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8B2NZ4PfR61JzfugaxVIwYxo10Xu/i9sEhzmQqu6MqE=;
+        b=ooWoWanPI/hLHYBQ92FSwrnN/1t1Iy7LizV3H+UcR3YxFlFDu35VJekWhyHRBrRfx4
+         8TS5DaLc+v0ii9wzrrxK41D6dlfy6TFk504stKcO4050V3evaAcUjbZHmV6GnUgcQMoO
+         bqw8DFVd+I5QYEoqr49Wqjlpr5rwu+9aBHsjpOeoj43U0Ui6VwlFgfeDUM/znUBpGdUS
+         SfUfwYnUpD+VGrH4bM4q0UwIZGup8j+Lgx9QdO7RE7P1Cd18Zv7Lf48hacDi74bcGNjz
+         FSLjBEKrI19QaZ6o9nldfHcaVrY0V2W0POURUvniokEOs2LKWjA4Z/uXvnsDBwv8g18H
+         zYNw==
+X-Gm-Message-State: APjAAAXvsz2ZQlEwR7YZ2UyZHVln3VJfkU2iiygZRKiD2IN5Bruza5HL
+        QQoqagX7sbLIeGht9jP3nnJ4cMt4VEx7PG8kzOWUQw==
+X-Google-Smtp-Source: APXvYqyHsOIfQh0ZE+Iewpa2QCk0jqORNL5kDnw68XZLcijkVuKb2lUFQzIHPnj+mD3ll8zMo9bzEqsY90vIJmgBNTM=
+X-Received: by 2002:a05:600c:2383:: with SMTP id m3mr1474407wma.66.1573522221235;
+ Mon, 11 Nov 2019 17:30:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191107132755.8517-1-jonas@norrbonn.se> <20191107132755.8517-2-jonas@norrbonn.se>
+ <CAF2d9jjRLZ07Qx0NJ9fi1iUpHn+qYEJ+cacKgBmeZ2FvZLObEQ@mail.gmail.com>
+ <fff51fa7-5c42-7fa7-6208-d911b18bd91e@norrbonn.se> <CAF2d9jib=Qdn9uB=kKn4CTbqvqOiGs+FGh4427=o+UySLf=BwA@mail.gmail.com>
+ <7a2038c8-d3a6-2144-f11d-965394d1b420@norrbonn.se>
+In-Reply-To: <7a2038c8-d3a6-2144-f11d-965394d1b420@norrbonn.se>
+From:   =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS14KS+4KSwKQ==?= 
+        <maheshb@google.com>
+Date:   Mon, 11 Nov 2019 17:29:52 -0800
+Message-ID: <CAF2d9jiLcLHUrNveQRFyv_SpV+LVW+aUpMAD_MArd8wzeZnUWA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] rtnetlink: allow RTM_SETLINK to reference other namespaces
+To:     Jonas Bonn <jonas@norrbonn.se>
+Cc:     nicolas.dichtel@6wind.com, linux-netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As timens page has offsets to data on VVAR page VVAR is going
-to be accessed shortly. Set it up with timens in one page fault
-as optimization.
+On Sat, Nov 9, 2019 at 6:17 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+>
+> Hi Mahesh,
+>
+> Thanks for the detailed response.  It provided valuable insight.
+>
+> On 08/11/2019 19:55, Mahesh Bandewar (=E0=A4=AE=E0=A4=B9=E0=A5=87=E0=A4=
+=B6 =E0=A4=AC=E0=A4=82=E0=A4=A1=E0=A5=87=E0=A4=B5=E0=A4=BE=E0=A4=B0) wrote:
+> > Hi Jonas, thanks for the response.
+> >
+> > On Fri, Nov 8, 2019 at 12:20 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+> >>
+> >> Hi Mahesh,
+> >>
+> >> On 07/11/2019 21:36, Mahesh Bandewar (=E0=A4=AE=E0=A4=B9=E0=A5=87=E0=
+=A4=B6 =E0=A4=AC=E0=A4=82=E0=A4=A1=E0=A5=87=E0=A4=B5=E0=A4=BE=E0=A4=B0) wro=
+te:
+> >>> On Thu, Nov 7, 2019 at 5:30 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+> >>>>
+> >>>>
+> >>>> +       /* A hack to preserve kernel<->userspace interface.
+> >>>> +        * It was previously allowed to pass the IFLA_TARGET_NETNSID
+> >>>> +        * attribute as a way to _set_ the network namespace.  In th=
+is
+> >>>> +        * case, the device interface was assumed to be in the  _cur=
+rent_
+> >>>> +        * namespace.
+> >>>> +        * If the device cannot be found in the target namespace the=
+n we
+> >>>> +        * assume that the request is to set the device in the curre=
+nt
+> >>>> +        * namespace and thus we attempt to find the device there.
+> >>>> +        */
+> >>> Could this bypasses the ns_capable() check? i.e. if the target is
+> >>> "foo" but your current ns is bar. The process may be "capable" is foo
+> >>> but the interface is not found in foo but present in bar and ends up
+> >>> modifying it (especially when you are not capable in bar)?
+> >>
+> >> I don't think so.  There was never any capable-check for the "current"
+> >> namespace so there's no change in that regard.
+>
+> I was wrong on this point.  There IS a capable-check for the "current"
+> net.  The code to create interfaces in 'other' namespaces was already in
+> place before my patch and that code does the right thing with respect to
+> checking NS capabilities on the "destination" and "link" nets.
+>
+> My patch is mostly just accounting for the "setlink" aspect of NEWLINK
+> where the device already exists in a foreign namespace and needs to be
+> searched for there.  Even in that code path, all the ns-capable checks
+> are in place and the behaviour is the same as before.
+>
+> >>
+> > not having capable-check seems wrong as we don't want random
+> > not-capable processes to alter settings. However, it may be at the API
+> > entry level, which will provide necessary protection (haven't
+> > checked!). Having said that, this could be bad for the stuff that you
+> > are implementing since I could be in "foo" and attempting to change
+> > "bar". For this I must be capable in "bar" but the top-level capable
+> > check will by default check me in "foo" as well which is not required
+> > and could potentially block me from performing legal operation in
+> > "bar".
+> >
+> > Not saying this is a problem, but without having an implementation to
+> > use this would be hard to try. You would most likely have a way to
+> > verify this, so please check it.
+>
+> The above shouldn't be an issue with the current implementation.
+>
+> >
+> >> I do think there is an issue with this hack that I can't see any
+> >> workaround for.  If the user specifies an interface (by name or index)
+> >> for another namespace that doesn't exist, there's a potential problem =
+if
+> >> that name/index happens to exist in the "current" namespace.  In that
+> >> case, one many end up inadvertently modifying the interface in the
+> >> current namespace.  I don't see how to avoid that while maintaining th=
+e
+> >> backwards compatibility.
+> >>
+> > This could very well be the case always for single digit ifindex
+> > values. (We recently suffered a local scare because of something very
+> > similar).
+> >
+> >> My absolute preference would be to drop this compat-hack altogether.
+> >> iproute2 doesn't use a bare TARGET_NETNSID in this manner (for changin=
+g
+> >> namespaces) and I didn't find any other users by a quick search of oth=
+er
+> >> prominent Netlink users:  systemd, network-manager, connman.  This
+> >> compat-hack is there for the _potential ab-user_ of the interface, not
+> >> for any known such.
+> >>
+> > what is forcing you keeping you keeping / implementing this hack? I
+> > would also prefer simple solution without creating a potential problem
+> > / vulnerability (problem: potentially modifying unintended interface,
+> > vulnerability: potentially allow changing without proper credentials;
+> > both not proven but are possibilities) down the line. One possibility
+> > is to drop the compatibility hack and keep it as a backup if something
+> > breaks / someone complains.
+>
+> OK, this would be my preference, too.  If we can work on the assumption
+> that this isn't actually providing compatibility for anybody in
+> practice, then we can drop it.  With that, the potential problem of
+> inadvertently modifying the wrong device disappears.  There's no problem
+> of being able to access a namespace that one isn't capable in, but
+> leaving a hole through which the user may end up doing something
+> unexpected is pretty ugly.
+>
+> I'll remove this and repost the series.
+>
+sgtm
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Co-developed-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- arch/x86/entry/vdso/vma.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+thanks,
+--mahesh..
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index f6e13ab29d94..d6cb8a16f368 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -169,8 +169,23 @@ static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
- 		 * offset.
- 		 * See also the comment near timens_setup_vdso_data().
- 		 */
--		if (timens_page)
-+		if (timens_page) {
-+			unsigned long addr;
-+			vm_fault_t err;
-+
-+			/*
-+			 * Optimization: inside time namespace pre-fault
-+			 * VVAR page too. As on timens page there are only
-+			 * offsets for clocks on VVAR, it'll be faulted
-+			 * shortly by VDSO code.
-+			 */
-+			addr = vmf->address + (image->sym_timens_page - sym_offset);
-+			err = vmf_insert_pfn(vma, addr, pfn);
-+			if (unlikely(err & VM_FAULT_ERROR))
-+				return err;
-+
- 			pfn = page_to_pfn(timens_page);
-+		}
- 
- 		return vmf_insert_pfn(vma, vmf->address, pfn);
- 	} else if (sym_offset == image->sym_pvclock_page) {
--- 
-2.24.0
-
+> Thanks for your insight into this issue.  It was helpful.
+>
+> /Jonas
