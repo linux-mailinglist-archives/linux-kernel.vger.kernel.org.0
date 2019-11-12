@@ -2,264 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07258F8B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 533ACF8BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfKLJVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:21:45 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45718 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfKLJVp (ORCPT
+        id S1727142AbfKLJY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:24:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56986 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725944AbfKLJY1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:21:45 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iUSMp-0007DW-5p; Tue, 12 Nov 2019 09:21:43 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
-Date:   Tue, 12 Nov 2019 09:21:42 +0000
-Message-Id: <20191112092142.97989-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 12 Nov 2019 04:24:27 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xAC9JvJu082519;
+        Tue, 12 Nov 2019 04:23:10 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7t0xg43u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 04:23:10 -0500
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id xAC9LeD9095924;
+        Tue, 12 Nov 2019 04:23:10 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7t0xg42a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 04:23:10 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xAC9FTUx023573;
+        Tue, 12 Nov 2019 09:22:25 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02wdc.us.ibm.com with ESMTP id 2w5n35wa82-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 09:22:25 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAC9MO9E52756968
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 09:22:24 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5BEBBBE054;
+        Tue, 12 Nov 2019 09:22:24 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C347BE04F;
+        Tue, 12 Nov 2019 09:22:18 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.37.154])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 09:22:17 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Vishal Verma <vishal.l.verma@intel.com>, peterz@infradead.org,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 04/16] libnvdimm: Move nd_numa_attribute_group to device_type
+In-Reply-To: <157309901655.1582359.18126990555058555754.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com> <157309901655.1582359.18126990555058555754.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Tue, 12 Nov 2019 14:52:14 +0530
+Message-ID: <87h839tpo9.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Here are some of the more common spelling mistakes and typos that I've
-found while fixing up spelling mistakes in the kernel since July 2019.
+> A 'struct device_type' instance can carry default attributes for the
+> device. Use this facility to remove the export of
+> nd_numa_attribute_group and put the responsibility on the core rather
+> than leaf implementations to define this attribute.
+>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "Oliver O'Halloran" <oohall@gmail.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- scripts/spelling.txt | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
 
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index de75b9feaaed..672b5931bc8d 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -87,6 +87,7 @@ algorith||algorithm
- algorithmical||algorithmically
- algoritm||algorithm
- algoritms||algorithms
-+algorithmn||algorithm
- algorrithm||algorithm
- algorritm||algorithm
- aligment||alignment
-@@ -109,6 +110,7 @@ alredy||already
- altough||although
- alue||value
- ambigious||ambiguous
-+ambigous||ambiguous
- amoung||among
- amout||amount
- amplifer||amplifier
-@@ -179,6 +181,7 @@ attepmpt||attempt
- attnetion||attention
- attruibutes||attributes
- authentification||authentication
-+authenicated||authenticated
- automaticaly||automatically
- automaticly||automatically
- automatize||automate
-@@ -286,6 +289,7 @@ claread||cleared
- clared||cleared
- closeing||closing
- clustred||clustered
-+cnfiguration||configuration
- coexistance||coexistence
- colescing||coalescing
- collapsable||collapsible
-@@ -325,9 +329,11 @@ comression||compression
- comunication||communication
- conbination||combination
- conditionaly||conditionally
-+conditon||condition
- conected||connected
- conector||connector
- connecetd||connected
-+configration||configuration
- configuartion||configuration
- configuation||configuration
- configued||configured
-@@ -347,6 +353,7 @@ containts||contains
- contaisn||contains
- contant||contact
- contence||contents
-+contiguos||contiguous
- continious||continuous
- continous||continuous
- continously||continuously
-@@ -380,6 +387,7 @@ cylic||cyclic
- dafault||default
- deafult||default
- deamon||daemon
-+debouce||debounce
- decompres||decompress
- decsribed||described
- decription||description
-@@ -448,6 +456,7 @@ diffrent||different
- differenciate||differentiate
- diffrentiate||differentiate
- difinition||definition
-+digial||digital
- dimention||dimension
- dimesions||dimensions
- dispalying||displaying
-@@ -489,6 +498,7 @@ droput||dropout
- druing||during
- dynmaic||dynamic
- eanable||enable
-+eanble||enable
- easilly||easily
- ecspecially||especially
- edditable||editable
-@@ -502,6 +512,7 @@ elementry||elementary
- eletronic||electronic
- embeded||embedded
- enabledi||enabled
-+enbale||enable
- enble||enable
- enchanced||enhanced
- encorporating||incorporating
-@@ -536,6 +547,7 @@ excellant||excellent
- execeeded||exceeded
- execeeds||exceeds
- exeed||exceed
-+exeuction||execution
- existance||existence
- existant||existent
- exixt||exist
-@@ -601,10 +613,12 @@ frambuffer||framebuffer
- framming||framing
- framwork||framework
- frequncy||frequency
-+frequancy||frequency
- frome||from
- fucntion||function
- fuction||function
- fuctions||functions
-+fullill||fulfill
- funcation||function
- funcion||function
- functionallity||functionality
-@@ -642,6 +656,7 @@ happend||happened
- harware||hardware
- heirarchically||hierarchically
- helpfull||helpful
-+hexdecimal||hexadecimal
- hybernate||hibernate
- hierachy||hierarchy
- hierarchie||hierarchy
-@@ -709,12 +724,14 @@ initalize||initialize
- initation||initiation
- initators||initiators
- initialiazation||initialization
-+initializationg||initialization
- initializiation||initialization
- initialze||initialize
- initialzed||initialized
- initialzing||initializing
- initilization||initialization
- initilize||initialize
-+initliaze||initialize
- inofficial||unofficial
- inrerface||interface
- insititute||institute
-@@ -779,6 +796,7 @@ itertation||iteration
- itslef||itself
- jave||java
- jeffies||jiffies
-+jumpimng||jumping
- juse||just
- jus||just
- kown||known
-@@ -839,6 +857,7 @@ messags||messages
- messgaes||messages
- messsage||message
- messsages||messages
-+metdata||metadata
- micropone||microphone
- microprocesspr||microprocessor
- migrateable||migratable
-@@ -857,6 +876,7 @@ mismactch||mismatch
- missign||missing
- missmanaged||mismanaged
- missmatch||mismatch
-+misssing||missing
- miximum||maximum
- mmnemonic||mnemonic
- mnay||many
-@@ -912,6 +932,7 @@ occured||occurred
- occuring||occurring
- offser||offset
- offet||offset
-+offlaod||offload
- offloded||offloaded
- offseting||offsetting
- omited||omitted
-@@ -993,6 +1014,7 @@ poiter||pointer
- posible||possible
- positon||position
- possibilites||possibilities
-+potocol||protocol
- powerfull||powerful
- pramater||parameter
- preamle||preamble
-@@ -1061,11 +1083,13 @@ psychadelic||psychedelic
- pwoer||power
- queing||queuing
- quering||querying
-+queus||queues
- randomally||randomly
- raoming||roaming
- reasearcher||researcher
- reasearchers||researchers
- reasearch||research
-+receieve||receive
- recepient||recipient
- recevied||received
- receving||receiving
-@@ -1166,6 +1190,7 @@ scaleing||scaling
- scaned||scanned
- scaning||scanning
- scarch||search
-+schdule||schedule
- seach||search
- searchs||searches
- secquence||sequence
-@@ -1308,6 +1333,7 @@ taskelt||tasklet
- teh||the
- temorary||temporary
- temproarily||temporarily
-+temperture||temperature
- thead||thread
- therfore||therefore
- thier||their
-@@ -1354,6 +1380,7 @@ uknown||unknown
- usupported||unsupported
- uncommited||uncommitted
- unconditionaly||unconditionally
-+undeflow||underflow
- underun||underrun
- unecessary||unnecessary
- unexecpted||unexpected
-@@ -1414,6 +1441,7 @@ varible||variable
- varient||variant
- vaule||value
- verbse||verbose
-+veify||verify
- verisons||versions
- verison||version
- verson||version
--- 
-2.20.1
+can we also expose target_node in a similar way? This allows application
+to better understand the node locality of the SCM device.
 
+-aneesh
