@@ -2,170 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FF65F9D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A8FF9D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:45:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfKLWn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 17:43:29 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33062 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbfKLWn0 (ORCPT
+        id S1727149AbfKLWpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 17:45:08 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:12229 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfKLWpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:43:26 -0500
-Received: by mail-oi1-f196.google.com with SMTP id m193so16443231oig.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 14:43:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SwaaHNLQ6Cwcgbew071VEYLmiCBwwXoXuuoAi+2uA2o=;
-        b=Jq7Ptqpebw7UGAIdEQ/unEBsB7QbaXVZNTWXCanS5nvK3elyglZtGcUaQ89X7Thh8h
-         IAM86ORfnzN6917rhUVFsUy3UD57DPR+XlrbhhZ/NXNnmHMPvg4XpzzSKBe4NqErKRUy
-         bZxd+tm9M+MwB7qsXrtdhh4D3/L98cHAZWd0Ns8kuwxv1QWg3yEpu0lT5cnjJPtGKrYR
-         anyG20BRg0b0DeF7mLr0STZrxT4BCOm+zZEBDW3gpHBI3V/JOgKkFou2F3URCWxql04L
-         MQNOT/7KMRt8tV9Ump9WAqJ7q3xqWRAJd3iDm6wl8QcfVduDF9h8k23QxQ9DnzN60j3u
-         /xqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SwaaHNLQ6Cwcgbew071VEYLmiCBwwXoXuuoAi+2uA2o=;
-        b=SG0KcBo/eiZsdviL2KwwK3rTaA12FHtzKTAnl/pxnEqNcF0YmMkhAs8w+Fw93z6jRB
-         FWGMBEQ5pLIALWHqAZL7YZjjgVw0w5cHMROujV4gH1SOh7KRA4LAbBAV3FbJKIHruIuM
-         pJ8dN0VkTKGxmG2AsPb0ad9k6oq/FggWYCZ8MfDX1lVik2SiNWhMjhnvR/+mutpZN9QT
-         M700IN4BAWAlJXKiRSJwwIzzaUownyg9OfFJiSWyDQb9Nhf2J01ZESXBStiwccBMYgFb
-         SStWZNFaC20FSvulZEyvKvJwAXBOZH8Qf67SFb7a4qYGBTeO15A/wYut52XGEfrI82JY
-         bAHw==
-X-Gm-Message-State: APjAAAWlUe7VzEtYAhl7yTom3Y2XLMch69LT+n8kuZ9O7Xlybk0XR4mc
-        ivjOL+VOc9/4McV1q2SuWzS752TeqmaWNRHIgN11GQ==
-X-Google-Smtp-Source: APXvYqxLBopeTTnZkVho8CVk6N+hGkn5uHiE62zpra+sAfITZV3BdLQKTEc55Ljq6ZrLX2Tr24PR9eCQkyGplH1DN48=
-X-Received: by 2002:aca:ead7:: with SMTP id i206mr135827oih.0.1573598604957;
- Tue, 12 Nov 2019 14:43:24 -0800 (PST)
+        Tue, 12 Nov 2019 17:45:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573598704;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=DImeky0BTUCha4r7Uhw0UC1AKgaF3x/DYPNkEbHElSo=;
+        b=PhH8e4EBsOgwYqrm0QN6vPaXiYgGDtYXNWWIuKOGWldojLsfmAFpEDtMTZpWag7RQO
+        62d0kxK0xXzPTS49QO6U9gZQX9AzdAGIekX80XXXTrD2w5YPBgJfoXa+sVT5xUwGhvzh
+        +hJKxQqnT1le8vLAVKtH0gVLUed9Ah5uxMJkCQ9RiLXkNeWa4mSozpsLRbJi47zpWS/S
+        mNrGQkDtpYzz6p8TSl3K4IZNShOP2VQOI6N9IqnVez3Cp5sNpgbqkBR8OpELOPL0bvkP
+        bFb4gsccXhZ5XDiSp/7Y86Vep03P8nAtNluMc4ESGE3IhHZvh9fD0oXYSrOV+LFNkSK+
+        nNZw==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zmwdNLqV/Nz7PsNPEA=="
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.29.0 SBL|AUTH)
+        with ESMTPSA id N09a57vACMhj9yq
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 12 Nov 2019 23:43:45 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Florian Weimer <fw@deneb.enyo.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>
+Subject: Re: [PATCH v24 00/12] /dev/random - a new approach with full SP800-90B compliance
+Date:   Tue, 12 Nov 2019 23:43:42 +0100
+Message-ID: <5603724.uI2RiKDNrm@positron.chronox.de>
+In-Reply-To: <875zjpfcu9.fsf@mid.deneb.enyo.de>
+References: <6157374.ptSnyUpaCn@positron.chronox.de> <875zjpfcu9.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-References: <20191112000700.3455038-1-jhubbard@nvidia.com> <20191112000700.3455038-9-jhubbard@nvidia.com>
- <CAPcyv4hgKEqoxeQJH9R=YiZosvazj308Kk7jJA1NLxJkNenDcQ@mail.gmail.com> <471e513c-833f-2f8b-60db-5d9c56a8f766@nvidia.com>
-In-Reply-To: <471e513c-833f-2f8b-60db-5d9c56a8f766@nvidia.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 12 Nov 2019 14:43:14 -0800
-Message-ID: <CAPcyv4it5fxU71uXFHW_WAAXBw4suQvwWTjX0Wru8xKFoz_dbw@mail.gmail.com>
-Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and FOLL_LONGTERM
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 2:24 PM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 11/12/19 1:57 PM, Dan Williams wrote:
-> ...
-> >> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> >> index d864277ea16f..017689b7c32b 100644
-> >> --- a/drivers/vfio/vfio_iommu_type1.c
-> >> +++ b/drivers/vfio/vfio_iommu_type1.c
-> >> @@ -348,24 +348,20 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
-> >>                 flags |= FOLL_WRITE;
-> >>
-> >>         down_read(&mm->mmap_sem);
-> >> -       if (mm == current->mm) {
-> >> -               ret = get_user_pages(vaddr, 1, flags | FOLL_LONGTERM, page,
-> >> -                                    vmas);
-> >> -       } else {
-> >> -               ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
-> >> -                                           vmas, NULL);
-> >> -               /*
-> >> -                * The lifetime of a vaddr_get_pfn() page pin is
-> >> -                * userspace-controlled. In the fs-dax case this could
-> >> -                * lead to indefinite stalls in filesystem operations.
-> >> -                * Disallow attempts to pin fs-dax pages via this
-> >> -                * interface.
-> >> -                */
-> >> -               if (ret > 0 && vma_is_fsdax(vmas[0])) {
-> >> -                       ret = -EOPNOTSUPP;
-> >> -                       put_page(page[0]);
-> >> -               }
-> >> +       ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
-> >> +                                   page, vmas, NULL);
-> >
-> > Hmm, what's the point of passing FOLL_LONGTERM to
-> > get_user_pages_remote() if get_user_pages_remote() is not going to
-> > check the vma? I think we got to this code state because the
->
-> FOLL_LONGTERM is short-lived in this location, because patch 23
-> ("mm/gup: remove support for gup(FOLL_LONGTERM)") removes it, after
-> callers are changed over to pin_longterm_pages*().
->
-> So FOLL_LONGTERM is not doing much now, but it is basically a marker for
-> "change gup(FOLL_LONGTERM) to pin_longterm_pages()", and patch 18
-> actually makes that change.
->
-> And then pin_longterm_pages*() is, in turn, a way to mark all the
-> places that need file system and/or user space interactions (layout
-> leases, etc), as per "Case 2: RDMA" in the new
-> Documentation/vm/pin_user_pages.rst.
+Am Dienstag, 12. November 2019, 14:23:10 CET schrieb Florian Weimer:
 
-Ah, sorry. This was the first time I had looked at this series and
-jumped in without reading the background.
+Hi Florian,
 
-Your patch as is looks ok, I assume you've removed the FOLL_LONGTERM
-warning in get_user_pages_remote in another patch?
+> * Stephan M=FCller:
+> > * support deactivation of TRNG (i.e. blocking behavior of /dev/random)
+> >=20
+> >   at compile time. If deactivated, /dev/random behaves like
+> >   getrandom(2).
+>=20
+> I don't quite understand this comment.  Doesn't getrandom with the
+> GRND_RANDOM always behave like /dev/random?  Presumably, without the
+> TRNG tap, the GRND_RANDOM flag for getrandom is ignored, and reading
+> from /dev/random behaves like reading from /dev/urandom.
 
->
-> > get_user_pages() vs get_user_pages_remote() split predated the
-> > introduction of FOLL_LONGTERM.
->
-> Yes. And I do want clean this up as I go, so we don't end up with
-> stale concepts lingering in gup.c...
->
-> >
-> > I think check_vma_flags() should do the ((FOLL_LONGTERM | FOLL_GET) &&
-> > vma_is_fsdax()) check and that would also remove the need for
-> > __gup_longterm_locked.
-> >
->
-> Good idea, but there is still the call to check_and_migrate_cma_pages(),
-> inside __gup_longterm_locked().  So it's a little more involved and
-> we can't trivially delete __gup_longterm_locked() yet, right?
+Absolutely. Apologies for the imprecision here. I will correct that.
 
-[ add Aneesh ]
+The idea is that the constant blocking behavior of /dev/random and GRND_RAN=
+DOM=20
+is replaced with the blocking behavior of getrandom(2) without the GRND_RAN=
+DOM=20
+flag (i.e. the interface waits until the LRNG thinks it is completely seede=
+d=20
+before it provides ulimited data).
+>=20
+> Anyway, reading the accompanying PDF, this looks rather impressive:
+> the userspace bootstrapping problem is gone (the issue where waiting
+> for more entropy prevents the collection of more entropy), *and* we
+> can still make the standards people happy.
+>=20
+> (Replying from my other account due to mail issues, sorry.)
 
-Yes, you're right. I had overlooked that had snuck in there. That to
-me similarly needs to be pushed down into the core with its own FOLL
-flag, or it needs to be an explicit fixup that each caller does after
-get_user_pages. The fact that migration silently happens as a side
-effect of gup is too magical for my taste.
+
+Ciao
+Stephan
+
+
