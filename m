@@ -2,79 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA48F8FE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B6E5F8FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:43:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKLMrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 07:47:55 -0500
-Received: from mail1.g16.pair.com ([66.39.65.22]:53849 "EHLO
-        mail1.g16.pair.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfKLMrz (ORCPT
+        id S1727028AbfKLMnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 07:43:00 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:48179 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726188AbfKLMm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:47:55 -0500
-X-Greylist: delayed 389 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Nov 2019 07:47:54 EST
-Received: from mail1.g16.pair.com (localhost [127.0.0.1])
-        by mail1.g16.pair.com (Postfix) with ESMTP id 300575E2B
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 07:41:25 -0500 (EST)
-Received: from gateway2.fiddes-enterprises.com (cpc156731-sgyl45-2-0-cust468.18-2.cable.virginm.net [82.31.53.213])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail1.g16.pair.com (Postfix) with ESMTPSA id B4BA75E28
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 07:41:24 -0500 (EST)
-Received: (qmail 18204 invoked from network); 12 Nov 2019 12:41:17 -0000
-Received: from snowman.fiddes-enterprises.com (192.168.1.54)
-  by gateway2.fiddes-enterprises.com with SMTP; 12 Nov 2019 12:41:17 -0000
-From:   "David J. Fiddes" <D.J@fiddes.net>
-To:     crope@iki.fi
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "David J. Fiddes" <D.J@fiddes.net>
-Subject: [PATCH] media: rtl28xxu: Add support for PROlectrix DV107669 DVB-T dongle
-Date:   Tue, 12 Nov 2019 12:40:59 +0000
-Message-Id: <20191112124059.23706-1-D.J@fiddes.net>
-X-Mailer: git-send-email 2.23.0
+        Tue, 12 Nov 2019 07:42:59 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iUVVR-0007EZ-3z; Tue, 12 Nov 2019 13:42:49 +0100
+To:     Yash Shah <yash.shah@sifive.com>
+Subject: Re: [PATCH 1/4] irqchip: sifive: Support hierarchy irq domain
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 12 Nov 2019 13:52:09 +0109
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <palmer@dabbelt.com>,
+        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
+        <aou@eecs.berkeley.edu>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <bmeng.cn@gmail.com>,
+        <atish.patra@wdc.com>, Sagar Kadam <sagar.kadam@sifive.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sachin Ghadi <sachin.ghadi@sifive.com>
+In-Reply-To: <1573560684-48104-2-git-send-email-yash.shah@sifive.com>
+References: <1573560684-48104-1-git-send-email-yash.shah@sifive.com>
+ <1573560684-48104-2-git-send-email-yash.shah@sifive.com>
+Message-ID: <ad0a3b419a3f5c3475d5fafcc2a037fb@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: yash.shah@sifive.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, palmer@dabbelt.com, paul.walmsley@sifive.com, aou@eecs.berkeley.edu, tglx@linutronix.de, jason@lakedaemon.net, bmeng.cn@gmail.com, atish.patra@wdc.com, sagar.kadam@sifive.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for the PROlectrix DV107669 DVT-T dongle which
-uses an RTL2832 and FC0012 tuner.
+On 2019-11-12 13:21, Yash Shah wrote:
+> Add support for hierarchy irq domains. This is needed as 
+> pre-requisite for
+> gpio-sifive driver.
+>
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> ---
+>  drivers/irqchip/Kconfig           |  1 +
+>  drivers/irqchip/irq-sifive-plic.c | 41
+> +++++++++++++++++++++++++++++++++++----
+>  2 files changed, 38 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index ccbb897..a398552 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -488,6 +488,7 @@ endmenu
+>  config SIFIVE_PLIC
+>  	bool "SiFive Platform-Level Interrupt Controller"
+>  	depends on RISCV
+> +	select IRQ_DOMAIN_HIERARCHY
+>  	help
+>  	   This enables support for the PLIC chip found in SiFive (and
+>  	   potentially other) RISC-V systems.  The PLIC controls devices
+> diff --git a/drivers/irqchip/irq-sifive-plic.c
+> b/drivers/irqchip/irq-sifive-plic.c
+> index 7d0a12f..2fa1c84 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -154,15 +154,48 @@ static struct irq_chip plic_chip = {
+>  static int plic_irqdomain_map(struct irq_domain *d, unsigned int 
+> irq,
+>  			      irq_hw_number_t hwirq)
+>  {
+> -	irq_set_chip_and_handler(irq, &plic_chip, handle_fasteoi_irq);
+> -	irq_set_chip_data(irq, NULL);
+> +	irq_domain_set_info(d, irq, hwirq, &plic_chip, d->host_data,
+> +			    handle_fasteoi_irq, NULL, NULL);
+>  	irq_set_noprobe(irq);
+>  	return 0;
+>  }
+>
+> +static int plic_irq_domain_translate(struct irq_domain *d,
+> +				     struct irq_fwspec *fwspec,
+> +				     unsigned long *hwirq, unsigned int *type)
+> +{
+> +	if (WARN_ON(fwspec->param_count < 1))
+> +		return -EINVAL;
+> +	*hwirq = fwspec->param[0];
+> +	*type = IRQ_TYPE_NONE;
+> +	return 0;
+> +}
 
-Tests:
- - Verified correct operation of DVB-T reception with VLC across
-   several UK multiplexes
+This is actually what should be called irq_domain_translate_onecell().
 
-Signed-off-by: David J. Fiddes <D.J@fiddes.net>
----
- drivers/media/usb/dvb-usb-v2/rtl28xxu.c | 2 ++
- include/media/dvb-usb-ids.h             | 1 +
- 2 files changed, 3 insertions(+)
+Consider implementing that instead, and using it in this driver. I'm
+pretty sure other drivers could use it (I spotted irq-nvic.c).
 
-diff --git a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-index 1a36bda28542..55da3d56acc7 100644
---- a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-+++ b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-@@ -1954,6 +1954,8 @@ static const struct usb_device_id rtl28xxu_id_table[] = {
- 		&rtl28xxu_props, "Sveon STV27", NULL) },
- 	{ DVB_USB_DEVICE(USB_VID_KWORLD_2, USB_PID_TURBOX_DTT_2000,
- 		&rtl28xxu_props, "TURBO-X Pure TV Tuner DTT-2000", NULL) },
-+	{ DVB_USB_DEVICE(USB_VID_GTEK, USB_PID_PROLECTRIX_DV107669,
-+		&rtl28xxu_props, "PROlectrix DV107669", NULL) },
- 
- 	/* RTL2832P devices: */
- 	{ DVB_USB_DEVICE(USB_VID_HANFTEK, 0x0131,
-diff --git a/include/media/dvb-usb-ids.h b/include/media/dvb-usb-ids.h
-index 52875e3eee71..fce3123bfb80 100644
---- a/include/media/dvb-usb-ids.h
-+++ b/include/media/dvb-usb-ids.h
-@@ -423,4 +423,5 @@
- #define USB_PID_EVOLVEO_XTRATV_STICK			0xa115
- #define USB_PID_HAMA_DVBT_HYBRID			0x2758
- #define USB_PID_XBOX_ONE_TUNER                          0x02d5
-+#define USB_PID_PROLECTRIX_DV107669                     0xd803
- #endif
+> +
+> +static int plic_irq_domain_alloc(struct irq_domain *domain, unsigned
+> int virq,
+> +				 unsigned int nr_irqs, void *arg)
+> +{
+> +	int i, ret;
+> +	irq_hw_number_t hwirq;
+> +	unsigned int type = IRQ_TYPE_NONE;
+> +	struct irq_fwspec *fwspec = arg;
+> +
+> +	ret = plic_irq_domain_translate(domain, fwspec, &hwirq, &type);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < nr_irqs; i++) {
+> +		ret = plic_irqdomain_map(domain, virq + i, hwirq + i);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct irq_domain_ops plic_irqdomain_ops = {
+> -	.map		= plic_irqdomain_map,
+> -	.xlate		= irq_domain_xlate_onecell,
+> +	.translate	= plic_irq_domain_translate,
+> +	.alloc		= plic_irq_domain_alloc,
+> +	.free		= irq_domain_free_irqs_top,
+>  };
+>
+>  static struct irq_domain *plic_irqdomain;
+
+Otherwise, looks OK.
+
+Thanks,
+
+         M.
 -- 
-2.23.0
-
+Jazz is not dead. It just smells funny...
