@@ -2,106 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D36F9303
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:50:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D068F930A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:51:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfKLOuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:50:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbfKLOt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:49:59 -0500
-Received: from localhost (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 167A82067B;
-        Tue, 12 Nov 2019 14:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573570198;
-        bh=4fqdvP6up2gG/YlhVpibyd2Zd4xfS9zZ2TTUfxfKFhE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1mAmBugc+9QMbKP4PBKpwLLbQle12+8kgtbznCY1VlcBQ+btM4tYhpCmnqgca95G1
-         KMNjvHpRxEYKmIME/13KN1egmLAaA2bj1lxOWxQxujxSVrVZ7URDXNrTMZEaMqRXj2
-         gixK760JdHFs/uIZ15HlaGTSzROwR6GIZmE3g3Eg=
-Date:   Tue, 12 Nov 2019 15:49:55 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@lists.01.org
-Subject: Re: [irq_work] feb4a51323: BUG:soft_lockup-CPU##stuck_for#s
-Message-ID: <20191112144954.GD27917@lenoir>
-References: <20191112090357.GB30590@shao2-debian>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112090357.GB30590@shao2-debian>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727224AbfKLOu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:50:59 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:56279 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727142AbfKLOuz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 09:50:55 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b11so3478302wmb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 06:50:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CSSsI2E/AiwCeLu7wa0R7LPkJ/eK9242R5fWGg+wk0I=;
+        b=dMb39mxspTbdHC4iFApss1EWXM5N+rSxaMEFfB0mfptxqMKhBSWTiKhtpPV/xxGgzp
+         /uDBQGXfaz8Z17Jsp7jVFk6bMrbwRIArta6tYmD9cHRRtLMaMYBY+Wy8Ox7BO+zL4+0S
+         NNVUPBfzg/2D4OFEIN2dGxAqQUYA9VjlOiegFAVn2X8UIR+d1NpGgt9b4wh5Dx0gulK4
+         O2X24QLpD8k7W/Jn0BI5e+PUul9dKvXk/RBIbklw3bpMomi31HmUeBMRf+XywseWfiXO
+         xGrCtLrF4DoQ/ER9pABDr8yZMW+yz7KzfZkW5MJZdWFcURnhfxTKQmNNQit4pkhaXOEN
+         jAmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CSSsI2E/AiwCeLu7wa0R7LPkJ/eK9242R5fWGg+wk0I=;
+        b=JeQNTcRCCLwFzG6bJP0QGu+lPKZexNSBXmjbqRIjwW/omE77uGvCTE8DV4zUk3BOtP
+         ekBJiM0FjH683X/UrUk7d62/EzVu+vyz8xKbcNs4v/h3eNyfLvXrMkVuu4BHYY5+niIr
+         xpgz1DJoGYlrJbGr/7NaToJC5Rqwx4vc5s17sK2ianbiaS2Ry1NZ26hSczfGzqbsajTD
+         jAbuyWWe2TG5MP6//mDKslZ+JWHSmC493omOBjTHOmanbJrAhRkF49jzXAOw8+mQWPvh
+         S9EyAsMZALu1T6cYV4LvhGRYI5BbChaTxWU64lSEpZYyS1emIwey9DNEULzexrAAbZxq
+         RTUA==
+X-Gm-Message-State: APjAAAX3it2nIA4jTRzNfWvTXXeeX9cU9KZYfeyrdKMGl2XuTGaBdeAZ
+        CFFRIMduRILes/2BqZDMcSWExMkBIiU=
+X-Google-Smtp-Source: APXvYqwxLo5cnbZ6l/zzgDmaXQOjefKtsf7NlOWb12xxeXd72R4Q2gVADX/cUbJqQB6JUZPwCDXkxg==
+X-Received: by 2002:a7b:c181:: with SMTP id y1mr4211360wmi.16.1573570253239;
+        Tue, 12 Nov 2019 06:50:53 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:e45f:4180:5590:a312])
+        by smtp.gmail.com with ESMTPSA id x26sm3224976wmc.14.2019.11.12.06.50.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 12 Nov 2019 06:50:52 -0800 (PST)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, dietmar.eggemann@arm.com,
+        juri.lelli@redhat.com, rostedt@goodmis.org, mgorman@suse.de
+Cc:     bsegall@google.com, Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] sched/fair: add comments for group_type and balancing at SD_NUMA level
+Date:   Tue, 12 Nov 2019 15:50:43 +0100
+Message-Id: <1573570243-1903-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 05:03:57PM +0800, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: feb4a51323babe13315c3b783ea7f1cf25368918 ("irq_work: Slightly simplify IRQ_WORK_PENDING clearing")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> 
-> in testcase: blktests
-> with following parameters:
-> 
-> 	disk: 1SSD
-> 	test: block-group1
-> 
-> 
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +------------------------------------------------+------------+------------+
-> |                                                | 25269871db | feb4a51323 |
-> +------------------------------------------------+------------+------------+
-> | boot_successes                                 | 5          | 0          |
-> | boot_failures                                  | 0          | 10         |
-> | BUG:soft_lockup-CPU##stuck_for#s               | 0          | 10         |
-> | RIP:irq_work_sync                              | 0          | 10         |
-> | Kernel_panic-not_syncing:softlockup:hung_tasks | 0          | 10         |
-> +------------------------------------------------+------------+------------+
-> 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <rong.a.chen@intel.com>
-> 
-> 
-> [   81.049506] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [blktrace:4948]
+Add comments to describe each state of goup_type and to add some details
+about the load balance at NUMA level.
 
-Duh! Of course we are dealing with the value of flags before we cleared IRQ_WORK_PENDING
-so later clearing IRQ_WORK_BUZY can't work.
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/fair.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-That would be the fix (cooking one with proper changelog):
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c93d534..268e441 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6986,11 +6986,34 @@ enum fbq_type { regular, remote, all };
+  * group. see update_sd_pick_busiest().
+  */
+ enum group_type {
++	/*
++	 * The group has spare capacity that can be used to process more work.
++	 */
+ 	group_has_spare = 0,
++	/*
++	 * The group is fully used and the tasks don't compete for more CPU
++	 * cycles. Nevetheless, some tasks might wait before running.
++	 */
+ 	group_fully_busy,
++	/*
++	 * One task doesn't fit with CPU's capacity and must be migrated on a
++	 * more powerful CPU.
++	 */
+ 	group_misfit_task,
++	/*
++	 * One local CPU with higher capacity is available and task should be
++	 * migrated on it instead on current CPU.
++	 */
+ 	group_asym_packing,
++	/*
++	 * The tasks affinity prevents the scheduler to balance the load across
++	 * the system.
++	 */
+ 	group_imbalanced,
++	/*
++	 * The CPU is overloaded and can't provide expected CPU cycles to all
++	 * tasks.
++	 */
+ 	group_overloaded
+ };
+ 
+@@ -8608,7 +8631,11 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 
+ 	/*
+ 	 * Try to use spare capacity of local group without overloading it or
+-	 * emptying busiest
++	 * emptying busiest.
++	 * XXX Spreading tasks across numa nodes is not always the best policy
++	 * and special cares should be taken for SD_NUMA domain level before
++	 * spreading the tasks. For now, load_balance() fully relies on
++	 * NUMA_BALANCING and fbq_classify_group/rq to overide the decision.
+ 	 */
+ 	if (local->group_type == group_has_spare) {
+ 		if (busiest->group_type > group_fully_busy) {
+-- 
+2.7.4
 
-diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-index 49c53f80a13a..8ee907eb4d83 100644
---- a/kernel/irq_work.c
-+++ b/kernel/irq_work.c
-@@ -158,6 +158,7 @@ static void irq_work_run_list(struct llist_head *list)
- 		 * Clear the BUSY bit and return to the free state if
- 		 * no-one else claimed it meanwhile.
- 		 */
-+		flags ~= IRQ_WORK_PENDING;
- 		(void)atomic_cmpxchg(&work->flags, flags, flags & ~IRQ_WORK_BUSY);
- 	}
- }
-
-
-> [   81.055602] Modules linked in: scsi_debug loop intel_rapl_msr intel_rapl_common sr_mod cdrom crct10dif_pclmul crc32_pclmul bochs_drm crc32c_intel sd_mod sg ghash_clmulni_intel drm_vram_helper ata_generic pata_acpi ttm ppdev drm_kms_helper snd_pcm syscopyarea sysfillrect snd_timer aesni_intel snd sysimgblt fb_sys_fops ata_piix crypto_simd drm cryptd glue_helper libata soundcore pcspkr joydev serio_raw virtio_scsi i2c_piix4 parport_pc floppy parport ip_tables [last unloaded: scsi_debug]
-> [   81.071683] CPU: 0 PID: 4948 Comm: blktrace Not tainted 5.4.0-rc7-00003-gfeb4a51323bab #1
-> [   81.075435] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   81.079031] RIP: 0010:irq_work_sync+0x4/0x10
