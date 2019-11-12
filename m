@@ -2,202 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9667FF9047
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:15:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 051D4F904D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:17:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfKLNPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 08:15:54 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42375 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfKLNPx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:15:53 -0500
-Received: by mail-pg1-f193.google.com with SMTP id q17so11812948pgt.9;
-        Tue, 12 Nov 2019 05:15:51 -0800 (PST)
+        id S1727187AbfKLNRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 08:17:16 -0500
+Received: from mail-eopbgr740042.outbound.protection.outlook.com ([40.107.74.42]:21050
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725865AbfKLNRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 08:17:15 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E+8oO8iNbI462fwEIJ8+DV8J19yRbAJq4FFYxRf5Z/19xZRlzU0lTqGqjJLxl7ScXm3igjvmJcJjhYE3VSCBpEdDk4sg6+klPiC9ugHLVxIbpzMZ86qqRvrrH7t0Xgxe2yQIZUIo26Zyt4SAFz4yDK/E9uURmbjgPofn+3c32QN1sd0q9WzFqVylDRNdFmLRgQFvvZUqDbZRsOI6gCbV1jr0A6pcjVfLHIUaYX9824n92NuHyUUIqjVVOJppBR/sLbgvagXEupUGOEbzWPxnQgWH6XwF47htNYM7Kr5LnpVcpQub1qanWSygSrOU3Xk26E4zcfDDsk8P5WXyhv9z6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kjJQF/rMyDwnWAHZ2OgcVJxIiRzJIybjry1lY+4QTFg=;
+ b=oZGj6wMQVtqHqcbDWyQminzN4BFMXN913ofJj7KXm90kt6FGMWdcSyXDZE28REc1eM48t/6MLT4oW7fUEqwQMjpf1/Yi4DMv2kEdkAErw8QoCZnQOrkOCn2iiaXPT29WGrsOSYxU/Qd/lrSwaUjVox42zDw1Q6BTmTWTE60vUJ4ZvE7dNLNLBIrLIdvbwsBbFZxOQE4KUXAe685kRYoRKL0uQPOhECl8S8nnjPJrPE5jGwaM7ItcV/WsZLdvvlYG4blNDBevJeJ8au4ICM5AxzxG0eoVcNP1P0pLh/XJJr3ySpFGXxcHSSaGK81JMekGwBc2pHLZihs/PhK7c31cEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
+ smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R1jPyVFp0N7pp4NXQfMci1reb78Exkm5u781mQ3ROYQ=;
-        b=RwVaclUD7WBK6AFovr1Aw+p4Xo8Aiq1mQHf3YYODx7kogUpGdgpr/0Z0FWBUke4h3h
-         o2+oaOo5OCpxCAYPGFdR8oo2b97g1hELWXaAki53cv9rH0AFLEwGgJljRUuxEE7EjYmJ
-         Q6m7cvJ+EgKfeHyOkyCst9xAr2PlPF7kU4u9dLAAbty/7ZqeAURTjReUhum2EvpD5Mvl
-         Hce4YKdwoKEdWgfQmb8C1ro7OrvEtEETfw3zufI4TGpEeiDxyVAVfds5Fi2PWhnkMf/m
-         xwTWbTlWES/Din8GQmmjTyj5JW51gm4KKiGhEiIyJtQB4Iwimu04cnrAzuNMrNf63cgJ
-         1aSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=R1jPyVFp0N7pp4NXQfMci1reb78Exkm5u781mQ3ROYQ=;
-        b=O7V29F+zkMvaE2XV9D1X+G0uSFmFelvbgIJqAue4eYQPAniRKv+OrotaQ9p+c53ekq
-         Dzvwd6Dcot4vTffuXP25fyIVPhaJZlfBrNhQHTsjC5wXJe/2JZPYlmzlAz6HZCuCijhk
-         s8wy+KpSLdo+o3vmb1wpUUJWjCqSoMRMQq7zosZNfRtGWlrHIRoFTgEJnHXCVJoL/6ym
-         RFX78Njzt23Ahk04t83gXcaVR0R4X3Nk0aoaUtAkQ6phSrKLdESSwsyyDZby8xFUE0mf
-         AyBIV+wNQGaKsIsWyOXq7AMRXRQpaoX4K6QPglp3HLwT95bKEOyi07HkvfWnGyp+7XP+
-         Dl3g==
-X-Gm-Message-State: APjAAAVSshmiayzi4Q+ri50cjRB0kgivO0JfyUXZxYZK962qg8ks7Uhg
-        4i6noNrAb8K8DCKj+aq1JdA=
-X-Google-Smtp-Source: APXvYqzOuEw0ZDZUAO3EaLKg6SGCpjleKkVGpPWzyRlHmw2hIeV3XUYW2t48trvESFVc3w52pFmZmQ==
-X-Received: by 2002:a63:7210:: with SMTP id n16mr33472126pgc.397.1573564550656;
-        Tue, 12 Nov 2019 05:15:50 -0800 (PST)
-Received: from ziggy.stardust ([37.223.138.214])
-        by smtp.gmail.com with ESMTPSA id y138sm19776601pfb.174.2019.11.12.05.15.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2019 05:15:49 -0800 (PST)
-Subject: Re: [PATCH v2] soc: mediatek: add SMC fid table for SIP interface
-To:     Eason Yen <eason.yen@mediatek.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
-References: <1573439402-16249-1-git-send-email-eason.yen@mediatek.com>
- <71b9cfcc-bd4f-75de-0057-d64c5dc49e92@gmail.com>
- <1573545601.14232.8.camel@mtkswgap22>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <785d0fc2-d334-5efd-783f-35fc47acfb1c@gmail.com>
-Date:   Tue, 12 Nov 2019 14:15:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kjJQF/rMyDwnWAHZ2OgcVJxIiRzJIybjry1lY+4QTFg=;
+ b=S914k7OEWIEWTmq7re1aJuuXlNr21nHvUxcyIDxoNMRpjweIj89qqeGcnlDFd/5bGAvBXRBq11WcSnHm5DUz4WyHCwDOfh+Cryxw1KsS7myBtP5Vdj1t+PeSnCm/jHY6gyu4fD6r0u0kJMpKdNOroSNhDLqSWEgcmhg+rxPtigE=
+Received: from DM6PR02CA0136.namprd02.prod.outlook.com (2603:10b6:5:1b4::38)
+ by BYAPR02MB5573.namprd02.prod.outlook.com (2603:10b6:a03:9b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2430.22; Tue, 12 Nov
+ 2019 13:17:10 +0000
+Received: from CY1NAM02FT051.eop-nam02.prod.protection.outlook.com
+ (104.47.37.51) by DM6PR02CA0136.outlook.office365.com (20.179.165.166) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2430.20 via Frontend
+ Transport; Tue, 12 Nov 2019 13:17:10 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT051.mail.protection.outlook.com (10.152.74.148) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2430.20
+ via Frontend Transport; Tue, 12 Nov 2019 13:17:09 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1iUW2f-0003sh-8x; Tue, 12 Nov 2019 05:17:09 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1iUW2a-0004GJ-50; Tue, 12 Nov 2019 05:17:04 -0800
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xACDGwuU022459;
+        Tue, 12 Nov 2019 05:16:58 -0800
+Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1iUW2U-0004Ds-9C; Tue, 12 Nov 2019 05:16:58 -0800
+From:   Rajan Vaja <rajan.vaja@xilinx.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, michal.simek@xilinx.com,
+        m.tretter@pengutronix.de, jolly.shah@xilinx.com,
+        dan.carpenter@oracle.com, gustavo@embeddedor.com,
+        tejas.patel@xilinx.com, nava.manne@xilinx.com,
+        ravi.patel@xilinx.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rajan Vaja <rajan.vaja@xilinx.com>
+Subject: [PATCH 0/7] clk: zynqmp: Extend and fix zynqmp clock driver
+Date:   Tue, 12 Nov 2019 05:16:13 -0800
+Message-Id: <1573564580-9006-1-git-send-email-rajan.vaja@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(376002)(39860400002)(189003)(199004)(486006)(16586007)(9786002)(478600001)(44832011)(2906002)(36756003)(316002)(47776003)(36386004)(7416002)(4326008)(305945005)(6666004)(356004)(6636002)(107886003)(426003)(26005)(48376002)(50466002)(7696005)(51416003)(5660300002)(336012)(50226002)(70206006)(8676002)(186003)(81156014)(2616005)(476003)(126002)(8936002)(70586007)(106002)(81166006)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5573;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
 MIME-Version: 1.0
-In-Reply-To: <1573545601.14232.8.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 69e9ad11-5642-427a-fbd7-08d767729faa
+X-MS-TrafficTypeDiagnostic: BYAPR02MB5573:
+X-Microsoft-Antispam-PRVS: <BYAPR02MB5573B0C7E95FC4BEE982EAB3B7770@BYAPR02MB5573.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:1148;
+X-Forefront-PRVS: 021975AE46
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vs/ZzYRbnKavYMDBnB7ZntKM6Re4Xnpxm1Ar0w6ILmX6BYR8A4++lrCxKWVm7FYuKWoseSuDgbwEJ5aWxNhYMj3pWcVCFOPS/qr4sUbksADkt8NFiQmcy3O588kNqtyVtAeAEu+kWAw0UB41y4Eqe8fWTnEVtkPkVKuLzBdyskYHRVpW+MvYngnOIJnv0f9sNkDLLbFOL5nuuGDgprsXIo3fp8NZF0IB1SliktcRTS6afs1HQPTgx+j9uGFlZ7gVvMqObP2G1sBbBVEQ5yBelyxsK8nS71PPZ0YHcoJ/GY6kxEoxeV/KOFsZ2tZOZS9ihnEIcPbMoU25IHtWd6OAuBtaAe9T+a7IfHzPzl2j6AcIwBr3DFXWjXNZWg9I0NbpBw/U5gc7sP0sA886aLjrja6kJOpFmlre7mLJgYCdM39TT8124cMp4PpOpS4ceUu+
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2019 13:17:09.7629
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69e9ad11-5642-427a-fbd7-08d767729faa
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5573
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ZynqMP clock driver can be used for Versal platform also. Add support
+for Versal platform in ZynqMP clock driver.
 
+Also this patch series fixes divider calculation, fractional clock
+check and adds support for get maximum divider, clock with
+CLK_DIVIDER_POWER_OF_TWO flag and warn user if clock users are more
+than allowed.
 
-On 12/11/2019 09:00, Eason Yen wrote:
-> Hi Matthias,
-> 
-> 
-> I will upstream mt6779 sound card driver on Mark's ASoC repo:
-> http://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
-> 
-> But it is still under internal reviewing and not yet upstream.
+Rajan Vaja (6):
+  dt-bindings: clock: Add bindings for versal clock driver
+  clk: zynqmp: Extend driver for versal
+  clk: zynqmp: Warn user if clock user are more than allowed
+  clk: zynqmp: Add support for get max divider
+  clk: zynqmp: Fix divider calculation
+  clk: zynqmp: Fix fractional clock check
 
-Got it, thanks for the explanation. Then please add this patch to the series you
-are working on for the sound card driver. Two reasons to do so. First this way
-we make sure no not-used files will land in the kernel. Second, Mark will need
-to apply this patch to his local tree if he tries to do some compile testing. If
-it's not part of the series he will have to search for it in my repo or the
-mailinglist.
+Tejas Patel (1):
+  clk: zynqmp: Add support for clock with CLK_DIVIDER_POWER_OF_TWO flag
 
-Regards,
-Matthias
+ .../devicetree/bindings/clock/xlnx,versal-clk.yaml |  67 +++++++++++
+ drivers/clk/zynqmp/clk-zynqmp.h                    |   1 +
+ drivers/clk/zynqmp/clkc.c                          |   7 +-
+ drivers/clk/zynqmp/divider.c                       | 108 ++++++++++++++++--
+ drivers/clk/zynqmp/pll.c                           |   9 +-
+ drivers/firmware/xilinx/zynqmp.c                   |   2 +
+ include/dt-bindings/clock/xlnx-versal-clk.h        | 123 +++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h               |   2 +
+ 8 files changed, 306 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+ create mode 100644 include/dt-bindings/clock/xlnx-versal-clk.h
 
-> So, I think that this patch could be upstream first.
-> 
-> Maybe, other mtk sip clients can use this header and add their's
-> specific MTSK_SIP_* ID.
-> 
-> Regards,
-> Eason
-> 
-> 
-> On Mon, 2019-11-11 at 16:17 +0100, Matthias Brugger wrote:
->>
->> On 11/11/2019 03:30, Eason Yen wrote:
->>> soc: mediatek: add SMC fid table for SIP interface
->>>
->>> 1. Add a header file to provide SIP interface to ATF
->>>    for clients, please define MTK_SIP_XXX  with specific ID
->>>
->>> 2. Add AUDIO SMC fid
->>>    mtk sip call example:
->>>    arm_smccc_smc(MTK_SIP_AUDIO_CONTROL,
->>>                  MTK_AUDIO_SMC_OP_DRAM_REQUEST,
->>>                  0, 0, 0, 0, 0, 0, &res)
->>
->> Are you planning to upstream a driver consuming this interface?
->> If so, I propose to add this patch to the submission of the driver. Sounds good?
->>
->> Regards,
->> Matthias
->>
->>>
->>>
->>> Eason Yen (1):
->>>   soc: mediatek: add SMC fid table for SIP interface
->>>
->>>  include/linux/soc/mediatek/mtk_sip_svc.h |   28 ++++++++++++++++++++++++++++
->>>  1 file changed, 28 insertions(+)
->>>  create mode 100644 include/linux/soc/mediatek/mtk_sip_svc.h
->>>
-> 
+-- 
+2.7.4
+
