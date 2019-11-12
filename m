@@ -2,68 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8D1F908B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8926EF9091
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:25:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfKLNXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 08:23:18 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:35702 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726188AbfKLNXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:23:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=EkOskIfrlI4bkz4+Vg1LatDiIG96BWRzkY/ggrPRwOw=; b=b2yL+wmOhtnmgb4EeBedjT/nTY
-        dPTwwgAouo89wqS7BDa7kJivRsY2wymHv4kx2QZI1rhAViFN87AtxZtoEdbjuxu74AP6nL7+H27d0
-        X0bJBgY/ZK9EtgAS/6z1qRwqwQs+kZvhc1KOZWMyHb2NFvtKOthiVfEaTA2s+v3mDt/0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iUW8V-0001S0-8d; Tue, 12 Nov 2019 14:23:11 +0100
-Date:   Tue, 12 Nov 2019 14:23:11 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     David Miller <davem@redhat.com>
-Cc:     olof@lixom.net, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: mdio-octeon: Fix pointer/integer casts
-Message-ID: <20191112132311.GA5090@lunn.ch>
-References: <20191111004211.96425-1-olof@lixom.net>
- <20191111.214658.1031500406952713920.davem@redhat.com>
+        id S1727103AbfKLNY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 08:24:59 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44633 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfKLNY7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 08:24:59 -0500
+Received: by mail-oi1-f193.google.com with SMTP id s71so14727797oih.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 05:24:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6R1tie6dlOZucxkUVWftPimXFbZ5fDjQVYV/EyvmWpQ=;
+        b=ShxIFflcHIEugiaNPzaqsT//Wgk48uuLn47SIdQsMJREwbRmK5zbtE5BZDj8jKvSJC
+         lhlG0YsVyAvEGvTnAe+YJ/7/9nMihjLTy14DeMGcYprSQ5447x+iejU5WSupIaBYei1l
+         CSVG94FRtjcAj8PMkWDMhQe2efMLeRiDJDvEJ6z1RXWjx6NQmrN593Xtdm11YmVsUY8/
+         yulAwlyliCJCq3EfSGG3Y/fjz5J4HpnWJNKRqkg0ZNdSHgQtcM/fkUb3omnrYuAICPXB
+         PVxp9KbrQ3dWnJuN4vAR+5LNKQI2+zggoEzX7sYJY4sMpDPsDr+FlebgAU8R2DYnqG4Q
+         Xtkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6R1tie6dlOZucxkUVWftPimXFbZ5fDjQVYV/EyvmWpQ=;
+        b=Ua0Fne7iPLdhS0wvWCObvHcZqm9bWgTK5xLmPLFV31ZrGwadFH0oVZSNyP7504ks1R
+         RtwRBlOgYlWJAwBk1k78kBHevPSLUzPienAUfNP2LMihy9TiPF3i85/bI7d3fNv0TGFg
+         HvcgCSmxBJv5GK2P7TSTzm0QFkSTtnFCdnPjIlT04MknBvJaE2dU+ksUZYZtJHZeJggj
+         7R352CcsonHhX5zxaefS47FvcMUfgBNJ9kfX4vwbLjcxUyid/tEgsEmoXNnrDYjeobuZ
+         CJcgmd0Vx3ZjS/K4NZoNneyY92i8amu1tJzKJorjGoQrK0gLVFzVV1j+E1T5BSTSblYr
+         vjlg==
+X-Gm-Message-State: APjAAAWlm6JyyUSUvVI/5g/EppTlF+NGokpmAqVsGU1ERHkFj+TEsUPV
+        xZuAN0CIgIiThI45ghuC8gSm6DQGwmTvXI/7fwLY9A==
+X-Google-Smtp-Source: APXvYqwVYKY+TQs2J/Re8zydff/PsMZM6vnyCxUK6VTuAWl6e+TgnAd8Q63nO1R+u5VMFOMIADsyPtVmKkkveERSTsM=
+X-Received: by 2002:a05:6808:3a1:: with SMTP id n1mr3842412oie.86.1573565097781;
+ Tue, 12 Nov 2019 05:24:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191111.214658.1031500406952713920.davem@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191111181331.917659011@linuxfoundation.org> <20191112052759.GB1208865@kroah.com>
+In-Reply-To: <20191112052759.GB1208865@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 12 Nov 2019 18:54:46 +0530
+Message-ID: <CA+G9fYueMYg=FoGvGBjoNW-rgKqAOWa0a-Ha10Mu2TEaQGX_wg@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/65] 4.9.201-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        patches@kernelci.org, lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 09:46:58PM -0800, David Miller wrote:
-> From: Olof Johansson <olof@lixom.net>
-> Date: Sun, 10 Nov 2019 16:42:11 -0800
-> 
-> > -static inline void oct_mdio_writeq(u64 val, u64 addr)
-> > +static inline void oct_mdio_writeq(u64 val, void __iomem *addr)
-> >  {
-> > -	cvmx_write_csr(addr, val);
-> > +	cvmx_write_csr((u64)addr, val);
-> >  }
-> 
-> I hate stuff like this, I think you really need to fix this from the bottom
-> up or similar.  MMIO and such addresses are __iomem pointers, period.
+On Tue, 12 Nov 2019 at 11:02, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Nov 11, 2019 at 07:28:00PM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.201 release.
+> > There are 65 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed, 13 Nov 2019 18:08:44 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >       https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.201-rc1.gz
+>
+> There is now an -rc2:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.201-rc2.gz
 
-Yes, i agree, but did not want to push the work to Olof. The point of
-COMPILE_TEST is to find issues like this, code which should be
-architecture independent, but is not. The cast just papers over the
-cracks.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-At a minimum, could we fix the stub cvmx_write_csr() used for
-everything !MIPS. That should hopefully fix everything !MIPS, but
-cause MIPS to start issuing warning. The MIPS folks can then cleanup
-their code, which is really what is broken here.
+Summary
+------------------------------------------------------------------------
 
-      Andrew
+kernel: 4.9.201-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: a3a12cc6ffc178797f76cc8e4424477336e09efb
+git describe: v4.9.200-65-ga3a12cc6ffc1
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.200-65-ga3a12cc6ffc1
+
+No regressions (compared to build v4.9.200)
+
+No fixes (compared to build v4.9.200)
+
+Ran 23526 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* network-basic-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-none
+* prep-tmp-disk
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
