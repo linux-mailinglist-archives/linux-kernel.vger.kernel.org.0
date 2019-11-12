@@ -2,91 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7C33F9992
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28E2DF9998
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfKLTSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 14:18:54 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42867 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbfKLTSy (ORCPT
+        id S1727002AbfKLTWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 14:22:19 -0500
+Received: from mail-wm1-f48.google.com ([209.85.128.48]:39814 "EHLO
+        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfKLTWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 14:18:54 -0500
-Received: by mail-ot1-f68.google.com with SMTP id b16so15321295otk.9;
-        Tue, 12 Nov 2019 11:18:53 -0800 (PST)
+        Tue, 12 Nov 2019 14:22:19 -0500
+Received: by mail-wm1-f48.google.com with SMTP id t26so4197660wmi.4;
+        Tue, 12 Nov 2019 11:22:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DK1TigpUcHQJNflpowdTvpChCBocE4D3Y+EycO3ByNQ=;
+        b=fUZbp0wJQKnuvlyQ/8lhb56UMwzHp57y0zS0nTSrIC9yFycxpBHvb6ZY9TD5CFupcr
+         WMaj4w888FD8AonwI9SKk1tJ+ohGzrelCbSTEOoy9mDdyJ52gaD+3+dsy22taRvxWatM
+         QIf+hapJkSTdebS82ZBlDVxcl6inKQGyGsQIYH9nE63Ma23cfT/l50mGxwukp4+8R5a2
+         H6QSe1t9dkPfAm1lW8xOEmkxrmXZ8BbJ096KRfNVKn4gkh44ivcbgjGNNAqPuGSA6fSV
+         MRXT1F2JgHyzYJjj9/bzJJ4cfnHlGozuUZ9GL9AxmjRdUYfW6l8bVa4t9bSzLLf9CkEn
+         vSjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C8RN/4Lot74Z8hHAoW4T8RvZMwjuhJQp7SZN7GEXRZo=;
-        b=I4bbeUuMCNCRAUNr+1vZ/zGzHzJ3mD3psb3UKXydPCTzgLn4gv8qIyl8sGxePEGbBH
-         tGlSKA3q3sSV4V5Ce9Fnt9YNvysSOTSvz+6gTr0epiNVHOEzJPyI1S/vdM8yYTLulxO8
-         ALa8j6A9teR57JbvH4sNFVp4t4y+gwxYw+hXzcBhfun1SsjVIl8uCHl//6SRO3jZ65NJ
-         V1Oa6XrUOMMdl5mJc7fkYwZr4h0IAaUViV5G3tJdfxOTsB+Jaz+3bOcffIFmDq3w8AVZ
-         n5hx8L8z/V2a8Xqf0NxX1m4m4wiLk1IFsNCmEOLEzrrO7ZjUb8X2aRNiRPT9ZTFsEfhQ
-         YxfA==
-X-Gm-Message-State: APjAAAW5DeYtYcv+o3gIwcPZReJUUtepys0R/NC9iUC0hjj+5WO75rBN
-        NugtkrNQUqskA63/wDU0oQ==
-X-Google-Smtp-Source: APXvYqw5bl13Kzo4qqKC0gVYIr7J47XJMAX9hl5y++C4Qm7VvY/Iq9HpaD6ItEZmttJyzDJ74ZvUtw==
-X-Received: by 2002:a05:6830:13d5:: with SMTP id e21mr26066466otq.271.1573586332791;
-        Tue, 12 Nov 2019 11:18:52 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c20sm6260196otm.80.2019.11.12.11.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 11:18:52 -0800 (PST)
-Date:   Tue, 12 Nov 2019 13:18:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] dt-bindings: usb: generic: Add
- role-switch-default-mode binding
-Message-ID: <20191112191851.GA5974@bogus>
-References: <20191108011723.32390-1-john.stultz@linaro.org>
- <20191108011723.32390-3-john.stultz@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108011723.32390-3-john.stultz@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DK1TigpUcHQJNflpowdTvpChCBocE4D3Y+EycO3ByNQ=;
+        b=IkfNB/m1lKZffFyrzXA1ROUGv2/f6hwXYNLffWw4erCkHcfLccs+006lwaaipD5HC/
+         GyRAyx1DC9vAddJH8G1No4tWe+e2IdBbKPymX6aVQIJ+B18XYSX5vAOXsCf7baHD3irp
+         srNRczXZalAWl4+CzhCPNfvpZkWsll15sCtJgxCRyRlLedF8/fhpe5Wv2K7PyWXcaafb
+         n5URfx7LeVQEeCgifghEnh/7fDMR8Rkku7nIXd+BPKhmv+butmgnj8/PPH95Az9ixoma
+         WAl8ZDloPLdBiv5UiWB7I3LE//rJeyPW7bNMHkIm4Uk3fCsQNfoJ0KoeDyE2NqN0w4FJ
+         +Ytg==
+X-Gm-Message-State: APjAAAUW5yVfRNiu8K4n3ggYNbMVh6Hz/6rsIdRpx/Bykv6g+mdUt3ze
+        Bq4L8h8NNfU6Dv8mS05MEmI=
+X-Google-Smtp-Source: APXvYqyrtxscRr7w1XVSIDALlk46izl0+i27FRwaiNmrZGNu2z6zghPCCQifyckfWHAP6I51LFCZYg==
+X-Received: by 2002:a7b:ce11:: with SMTP id m17mr5879571wmc.113.1573586537127;
+        Tue, 12 Nov 2019 11:22:17 -0800 (PST)
+Received: from localhost (ip1f113d5e.dynamic.kabel-deutschland.de. [31.17.61.94])
+        by smtp.gmail.com with ESMTPSA id h15sm18860481wrb.44.2019.11.12.11.22.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Nov 2019 11:22:16 -0800 (PST)
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     shawnguo@kernel.org
+Cc:     oliver.graute@gmail.com, m.felsch@pengutronix.de,
+        narmstrong@baylibre.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCHv7 0/3] Variscite DART-6UL SoM support
+Date:   Tue, 12 Nov 2019 20:22:00 +0100
+Message-Id: <1573586526-15007-1-git-send-email-oliver.graute@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  8 Nov 2019 01:17:22 +0000, John Stultz wrote:
-> Add binding to configure the default role the controller
-> assumes is host mode when the usb role is USB_ROLE_NONE.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> CC: ShuFan Lee <shufan_lee@richtek.com>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> Cc: Yu Chen <chenyu56@huawei.com>
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Cc: Jun Li <lijun.kernel@gmail.com>
-> Cc: Valentin Schneider <valentin.schneider@arm.com>
-> Cc: Jack Pham <jackp@codeaurora.org>
-> Cc: linux-usb@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
-> ---
-> v5: Switch to string rather then a bool
-> ---
->  Documentation/devicetree/bindings/usb/generic.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+This patch series adds support for the Variscite DART-6UL SoM
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Product Page: https://www.variscite.com/product/evaluation-kits/dart-6ul-kits
+
+Oliver Graute (3):
+  ARM: dts: imx6ul: Add Variscite DART-6UL SoM support
+  ARM: dts: Add support for i.MX6 UltraLite DART Variscite Customboard
+  dt-bindings: arm64: fsl: Add Variscite i.MX6UL compatibles
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ .../boot/dts/imx6ul-imx6ull-var-dart-common.dtsi   | 367 +++++++++++++++++++++
+ arch/arm/boot/dts/imx6ul-var-6ulcustomboard.dts    | 221 +++++++++++++
+ 4 files changed, 590 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6ul-imx6ull-var-dart-common.dtsi
+ create mode 100644 arch/arm/boot/dts/imx6ul-var-6ulcustomboard.dts
+
+-- 
+2.7.4
+
