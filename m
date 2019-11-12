@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E78F8E15
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:19:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3512F8E07
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbfKLLTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:19:17 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34009 "EHLO
+        id S1727716AbfKLLTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:19:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:34035 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbfKLLSc (ORCPT
+        with ESMTP id S1727563AbfKLLSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:18:32 -0500
+        Tue, 12 Nov 2019 06:18:34 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUUBn-0000mn-H2; Tue, 12 Nov 2019 12:18:27 +0100
+        id 1iUUBp-0000nk-Q0; Tue, 12 Nov 2019 12:18:29 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 40B8E1C04F4;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C87B81C06B2;
         Tue, 12 Nov 2019 12:18:19 +0100 (CET)
-Date:   Tue, 12 Nov 2019 11:18:18 -0000
+Date:   Tue, 12 Nov 2019 11:18:19 -0000
 From:   "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf data: Rename directory "header" file to "data"
+Subject: [tip: perf/core] perf data: Move perf_dir_version into data.h
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191004083121.12182-4-adrian.hunter@intel.com>
-References: <20191004083121.12182-4-adrian.hunter@intel.com>
+In-Reply-To: <20191004083121.12182-3-adrian.hunter@intel.com>
+References: <20191004083121.12182-3-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Message-ID: <157355749889.29376.8219215484265166163.tip-bot2@tip-bot2>
+Message-ID: <157355749933.29376.13816147104213658780.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,51 +49,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     9b70b9db4e0cc03d224795a18088fdb916dec823
-Gitweb:        https://git.kernel.org/tip/9b70b9db4e0cc03d224795a18088fdb916dec823
+Commit-ID:     3dedec4f5ccc8048b9a2cfe89838c3b3275b6b2b
+Gitweb:        https://git.kernel.org/tip/3dedec4f5ccc8048b9a2cfe89838c3b3275b6b2b
 Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Fri, 04 Oct 2019 11:31:19 +03:00
+AuthorDate:    Fri, 04 Oct 2019 11:31:18 +03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Wed, 06 Nov 2019 15:43:05 -03:00
 
-perf data: Rename directory "header" file to "data"
+perf data: Move perf_dir_version into data.h
 
-In preparation to support a single file directory format, rename "header"
-to "data" because "header" is a mis-leading name when there is only 1 file.
-Note, in the multi-file case, the "header" file also contains data.
+perf_dir_version belongs to struct perf_data which is declared in data.h.
+To allow its use in inline perf_data functions, move perf_dir_version to
+data.h
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lore.kernel.org/lkml/20191004083121.12182-4-adrian.hunter@intel.com
+Link: http://lore.kernel.org/lkml/20191004083121.12182-3-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/data.c | 2 +-
- tools/perf/util/util.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/data.h   | 4 ++++
+ tools/perf/util/header.h | 4 ----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index 8993253..df173f0 100644
---- a/tools/perf/util/data.c
-+++ b/tools/perf/util/data.c
-@@ -306,7 +306,7 @@ static int open_dir(struct perf_data *data)
- 	 * So far we open only the header, so we can read the data version and
- 	 * layout.
- 	 */
--	if (asprintf(&data->file.path, "%s/header", data->path) < 0)
-+	if (asprintf(&data->file.path, "%s/data", data->path) < 0)
- 		return -1;
+diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
+index 259868a..218fe9a 100644
+--- a/tools/perf/util/data.h
++++ b/tools/perf/util/data.h
+@@ -9,6 +9,10 @@ enum perf_data_mode {
+ 	PERF_DATA_MODE_READ,
+ };
  
- 	if (perf_data__is_write(data) &&
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index ae56c76..3096654 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -185,7 +185,7 @@ static int rm_rf_depth_pat(const char *path, int depth, const char **pat)
- int rm_rf_perf_data(const char *path)
- {
- 	const char *pat[] = {
--		"header",
-+		"data",
- 		"data.*",
- 		NULL,
- 	};
++enum perf_dir_version {
++	PERF_DIR_VERSION	= 1,
++};
++
+ struct perf_data_file {
+ 	char		*path;
+ 	int		 fd;
+diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+index ca53a92..840f95c 100644
+--- a/tools/perf/util/header.h
++++ b/tools/perf/util/header.h
+@@ -52,10 +52,6 @@ enum perf_header_version {
+ 	PERF_HEADER_VERSION_2,
+ };
+ 
+-enum perf_dir_version {
+-	PERF_DIR_VERSION	= 1,
+-};
+-
+ struct perf_file_section {
+ 	u64 offset;
+ 	u64 size;
