@@ -2,105 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0961F8BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:25:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18087F8BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:32:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbfKLJZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:25:37 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:32931 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfKLJZg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:25:36 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUSQQ-0006xt-PU; Tue, 12 Nov 2019 10:25:26 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5ADC41C0084;
-        Tue, 12 Nov 2019 10:25:26 +0100 (CET)
-Date:   Tue, 12 Nov 2019 09:25:26 -0000
-From:   "tip-bot2 for Kees Cook" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/build] m68k: Convert missed RODATA to RO_DATA
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-m68k@lists.linux-m68k.org, Sam Creasey <sammy@sammy.net>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <201911110920.5840E9AF1@keescook>
-References: <201911110920.5840E9AF1@keescook>
-MIME-Version: 1.0
-Message-ID: <157355072603.29376.646015580479750741.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1727180AbfKLJcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:32:04 -0500
+Received: from mga05.intel.com ([192.55.52.43]:56112 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbfKLJcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 04:32:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 01:32:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,295,1569308400"; 
+   d="scan'208";a="198017529"
+Received: from unknown (HELO localhost.localdomain.bj.intel.com) ([10.240.193.79])
+  by orsmga008.jf.intel.com with ESMTP; 12 Nov 2019 01:31:59 -0800
+From:   Zhu Lingshan <lingshan.zhu@intel.com>
+To:     mst@redhat.com, jasowang@redhat.com, alex.williamson@redhat.com
+Cc:     linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
+        zhiyuan.lv@intel.com, Zhu Lingshan <lingshan.zhu@intel.com>
+Subject: [RFC V3 0/2] Intel IFC VF driver for VDPA
+Date:   Tue, 12 Nov 2019 17:29:47 +0800
+Message-Id: <1573550989-40860-1-git-send-email-lingshan.zhu@intel.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/build branch of tip:
+Hi all:
+  This series intends to introduce Intel IFC VF NIC driver for Vhost
+Data Plane Acceleration(VDPA).
 
-Commit-ID:     de7156689d69e9861d9ddc54a9dea623c25020c5
-Gitweb:        https://git.kernel.org/tip/de7156689d69e9861d9ddc54a9dea623c25020c5
-Author:        Kees Cook <keescook@chromium.org>
-AuthorDate:    Mon, 11 Nov 2019 09:22:00 -08:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 12 Nov 2019 09:56:51 +01:00
+Here comes two main parts, one is ifcvf_base layer, which handles
+hardware operations. The other is ifcvf_main layer handles VF
+initialization, configuration and removal, which depends on
+and complys to:
+virtio_mdev https://lkml.org/lkml/2019/11/7/650
+vhost_mdev https://lkml.org/lkml/2019/11/7/62
 
-m68k: Convert missed RODATA to RO_DATA
+This patchset passed netperf tests.
 
-I missed two instances of the old RODATA macro (seems I was searching
-for vmlinux.lds* not vmlinux*lds*). Fix both instances and double-check
-the entire tree for other "RODATA" instances in linker scripts.
+This is RFC V3, plese help review.
 
-Fixes: c82318254d15 ("vmlinux.lds.h: Replace RODATA with RO_DATA")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-m68k@lists.linux-m68k.org
-Cc: Sam Creasey <sammy@sammy.net>
-Link: https://lkml.kernel.org/r/201911110920.5840E9AF1@keescook
----
- arch/m68k/kernel/vmlinux-std.lds  | 2 +-
- arch/m68k/kernel/vmlinux-sun3.lds | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Changes from V2:
+removed some unnecessary code.
+using a struct ifcvf_lm_cfg to address hw->lm_cfg and operations on it.
+set CONFIG_S_FAILED  when ifcvf_start_hw() fail.
+removed VIRTIO_NET_F_CTRL_VQ and VIRTIO_NET_F_STATUS
+replace ifcvf_net_config with virtio_net_config.
+minor changes
 
-diff --git a/arch/m68k/kernel/vmlinux-std.lds b/arch/m68k/kernel/vmlinux-std.lds
-index 6e7eb49..4d33da4 100644
---- a/arch/m68k/kernel/vmlinux-std.lds
-+++ b/arch/m68k/kernel/vmlinux-std.lds
-@@ -31,7 +31,7 @@ SECTIONS
- 
-   _sdata = .;			/* Start of data section */
- 
--  RODATA
-+  RO_DATA(4096)
- 
-   RW_DATA(16, PAGE_SIZE, THREAD_SIZE)
- 
-diff --git a/arch/m68k/kernel/vmlinux-sun3.lds b/arch/m68k/kernel/vmlinux-sun3.lds
-index 1a0ad6b..87d9f4d 100644
---- a/arch/m68k/kernel/vmlinux-sun3.lds
-+++ b/arch/m68k/kernel/vmlinux-sun3.lds
-@@ -24,7 +24,7 @@ SECTIONS
- 	*(.fixup)
- 	*(.gnu.warning)
- 	} :text = 0x4e75
--	RODATA
-+	RO_DATA(4096)
- 
-   _etext = .;			/* End of text section */
- 
+Changes from V1:
+using le32_to_cpu() to convert PCI capabilities.
+some set /get  operations will sync with the hardware, eg get_status
+and get_generation.
+remove feature bit VHOST_F_LOG_ALL, add VIRTIO_F_ORDERED_PLATFORM
+add get/set_config functions.
+split mdev type group into mdev_type_group_virtio and mdev_type_group_vhost
+add ifcvf_mdev_get_mdev_features()
+coding stype changes.
+
+Zhu Lingshan (2):
+  This commit introduced ifcvf_base layer, which handles hardware    
+    operations and configurations.
+  This commit introduced IFC operations for vdpa, which complys to    
+    virtio_mdev and vhost_mdev interfaces, handles IFC VF    
+    initialization, configuration and removal.
+
+ drivers/vhost/ifcvf/ifcvf_base.c | 326 ++++++++++++++++++++++
+ drivers/vhost/ifcvf/ifcvf_base.h | 129 +++++++++
+ drivers/vhost/ifcvf/ifcvf_main.c | 579 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 1034 insertions(+)
+ create mode 100644 drivers/vhost/ifcvf/ifcvf_base.c
+ create mode 100644 drivers/vhost/ifcvf/ifcvf_base.h
+ create mode 100644 drivers/vhost/ifcvf/ifcvf_main.c
+
+-- 
+1.8.3.1
+
