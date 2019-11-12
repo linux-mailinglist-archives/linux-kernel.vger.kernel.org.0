@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFECAF9621
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:54:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3BD3F962B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:54:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbfKLQyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 11:54:04 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46078 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbfKLQx4 (ORCPT
+        id S1727798AbfKLQyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 11:54:17 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35135 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbfKLQyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 11:53:56 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q70so15026551qke.12
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 08:53:56 -0800 (PST)
+        Tue, 12 Nov 2019 11:54:16 -0500
+Received: by mail-qk1-f195.google.com with SMTP id i19so15086367qki.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 08:54:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:in-reply-to;
-        bh=lbcz9bkPVGGwPZGZcVShlfo+81m3kSOz/HD5MUWR9yk=;
-        b=T/sD5dIeNMR1JZLa8dNZ/TbDgDfJgkcU89q+NISDU34LuQCbu4F7sn6bFAmcM+xdZL
-         eIW66PLWV0JTBiUW6ejZU6rDhAoNCIYRFfRMMgX9TY2ZoPi7sZsiwYz7T8SJlvFckHDe
-         fNTx33Fp8ODyAGdud70n6lsN821r1qEu3B3tryKerYNFClFAj5+mTm4FHPlhTp9WTQCZ
-         I4ngg8sOYwSyg3AALHml34Ftti5qw2hzjGVEF67iF5zRR9I5qh2AuESSq2YEJIYTOjlM
-         i1uIKrAg1+yEOWkPPoHqU9wP06Tu8vr0A0MTWwq60504csHWk6vBMq8sqV1k7GNegMNE
-         II6g==
+        bh=wG5UQ9vx6z43wtxl5hxyDe54J635a/DBHWdcC32k+Zo=;
+        b=X5E5kI4KhOJ73HWhDn4VfheiAw2kMsi4ydAcR/oRqNFcDFMIFh5QmTXUVPv09/R15D
+         FtldyKmzmIrpv0LF0Qgpf5qxpHxMcO0BVGiaV6AyGciyO3EJ76jUrnxT5CMFh9h4jOz/
+         RE2WcPPk7W2oDOv2HzedD8GM69syqOTA0vOK3oRlkiNDAbJBKkFRzZ4MrQgJ4FhqJide
+         pari72IlUzIpfrhzQuMXYlQrn8T4/R2vkw2F2JmqsDKauNfVaHAhGPhSdG3AX5gAvP6N
+         iYyitpuwYiwD4TOVuO82tFF7ScVA8kYtRzWCfjII/gbpDyadseO7G6dGYCgr9ptECXzd
+         pFSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to;
-        bh=lbcz9bkPVGGwPZGZcVShlfo+81m3kSOz/HD5MUWR9yk=;
-        b=kqcAT9Sobdb3ZIGPt6OQ1pTLKSFWaEWwEopx6hsB0UWTFOR+gOrt1zu8ymethZ2oi2
-         lSXfb8F3VvlwFu7iShXsmWDbyaX3UfjlK/SwjFKtt2tUw432qQGslwYBOnvTZytF1b1/
-         VxnbsX5ftrXXGoLkFhAobS9fRUbKqynhNqgzvsWSQYsZBqI5l3sKHyGyfIxt11z00Jz3
-         BMFpzoRHvBpCTbkxx1rSq8Ceu9BqkvhFjKzBiB+FwF6MhuEao3TsifH1ClBYsJd5kH8W
-         wV5hv0O/N/Pdjdd6ApmNd+Yl0UU4c94tx2LgBs+hTLAjFggTWyMat8z3zsEcKvAtIuKK
-         WKCQ==
-X-Gm-Message-State: APjAAAXy6yAyggbZ4EOF2L5r+BGnI+k+UPHNrPZOneSUCP0xsNlto5du
-        rzBRXc5kxzgOJkDHmduVMNo=
-X-Google-Smtp-Source: APXvYqxbTTGYydL9lwCVEVgSKe8AjmInpJRQjl+Bpx239OOvxNIxoBu6F2bcF0MX6rzreH/lEmuSow==
-X-Received: by 2002:a05:620a:242:: with SMTP id q2mr6404419qkn.87.1573577635694;
-        Tue, 12 Nov 2019 08:53:55 -0800 (PST)
+        bh=wG5UQ9vx6z43wtxl5hxyDe54J635a/DBHWdcC32k+Zo=;
+        b=iKY3uPMgwQTAZ2NH8yeiIplOjiKIAOIE+yMJzEwJ1XjWo5Q6I+bW38c1efgwDY0S1R
+         R8p6e/01aos2Rx1B2oPly9itwAvkc0jfd9TA1WYbO9rPHL6Mj8ZYMFgwzzhRZ1v3aDLB
+         HSiAWBGoIxhGSWYOirEydNhhzdp07S85PQQs08diEfGzkrSg1IsiBcRfJpKJxjzXzQib
+         mKBhoxj7v1ae0D+AUT1JTUsLIxBpPg9eBZ2nwsNO4M8rLXjZypbuGXcwvMOgp8A56DDJ
+         4b25QzM/x2QgqLS3u1XoyDcFKtgvVizJWM/Ua3W+EBADStvUmIBhg0xJzgs/VhPEzGpj
+         DmRQ==
+X-Gm-Message-State: APjAAAU/QzClFUCDfS1nWHQJlDC26hTkPeDl3KLMpDYdPaeX6heegld5
+        B5vT8qUM9Jtluhpo1GabqqE=
+X-Google-Smtp-Source: APXvYqwa96tQKYAwG1lDCLfXMXgO8m6xB/Wpg91A68gn5/0qLIBlX+sgvovm7aXzWqTXKyC1bYjTIQ==
+X-Received: by 2002:a37:a387:: with SMTP id m129mr16272830qke.70.1573577654621;
+        Tue, 12 Nov 2019 08:54:14 -0800 (PST)
 Received: from gmail.com (dynamic-186-154-98-65.dynamic.etb.net.co. [186.154.98.65])
-        by smtp.gmail.com with ESMTPSA id w5sm5196039qkf.43.2019.11.12.08.53.54
+        by smtp.gmail.com with ESMTPSA id q34sm8145541qte.50.2019.11.12.08.54.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 08:53:55 -0800 (PST)
-Date:   Tue, 12 Nov 2019 11:53:53 -0500
+        Tue, 12 Nov 2019 08:54:14 -0800 (PST)
+Date:   Tue, 12 Nov 2019 11:54:11 -0500
 From:   "Javier F. Arias" <jarias.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
-Subject: [PATCH 3/9] staging: rtl8723bs: Remove blank lines after an open
- brace
-Message-ID: <847ce59f8429afaac1299794987779d0db54d0be.1573577309.git.jarias.linux@gmail.com>
+Subject: [PATCH 4/9] staging: rtl8723bs: Remove unnecessary braces
+Message-ID: <041503946a1c58111e69579838b184359745d8c1.1573577309.git.jarias.linux@gmail.com>
 Mail-Followup-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         outreachy-kernel@googlegroups.com
 References: <cover.1573577309.git.jarias.linux@gmail.com>
@@ -65,82 +64,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes blank lines after an open brace.
-Issue found by checkpatch.
+This patch removes unnecessary braces on single statement blocks or
+that aren't necessary in any arm of the statement.
+Issue found by Checkpatch.
 
 Signed-off-by: Javier F. Arias <jarias.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 33 +++++++++--------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 7f88f433345d..60e639690fc3 100644
+index 60e639690fc3..fdb585ff5925 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -912,7 +912,6 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+@@ -253,9 +253,8 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
+ 		goto exit;
+ 	rtw_init_hwxmits(pxmitpriv->hwxmits, pxmitpriv->hwxmit_entry);
  
- static s32 xmitframe_swencrypt(struct adapter *padapter, struct xmit_frame *pxmitframe)
- {
--
- 	struct	pkt_attrib	 *pattrib = &pxmitframe->attrib;
+-	for (i = 0; i < 4; i++) {
++	for (i = 0; i < 4; i++)
+ 		pxmitpriv->wmm_para_seq[i] = i;
+-	}
  
- 	if (pattrib->bswenc) {
-@@ -1328,7 +1327,6 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit
- 				psta = rtw_get_stainfo(&padapter->stapriv, pattrib->ra);
+ 	pxmitpriv->ack_tx = false;
+ 	mutex_init(&pxmitpriv->ack_tx_mutex);
+@@ -316,9 +315,8 @@ void _rtw_free_xmit_priv(struct xmit_priv *pxmitpriv)
+ 		pxmitbuf++;
+ 	}
  
- 			if (!psta) {
--
- 				DBG_871X("%s, psta ==NUL\n", __func__);
- 				goto xmitframe_coalesce_fail;
+-	if (pxmitpriv->pallocated_xmit_extbuf) {
++	if (pxmitpriv->pallocated_xmit_extbuf)
+ 		vfree(pxmitpriv->pallocated_xmit_extbuf);
+-	}
+ 
+ 	for (i = 0; i < CMDBUF_MAX; i++) {
+ 		pxmitbuf = &pxmitpriv->pcmd_xmitbuf[i];
+@@ -834,15 +832,13 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+ 			pframe = pxmitframe->buf_addr + hw_hdr_offset;
+ 
+ 			if (bmcst) {
+-				if (!memcmp(psecuritypriv->dot118021XGrptxmickey[psecuritypriv->dot118021XGrpKeyid].skey, null_key, 16)) {
++				if (!memcmp(psecuritypriv->dot118021XGrptxmickey[psecuritypriv->dot118021XGrpKeyid].skey, null_key, 16))
+ 					return _FAIL;
+-				}
+ 				/* start to calculate the mic code */
+ 				rtw_secmicsetkey(&micdata, psecuritypriv->dot118021XGrptxmickey[psecuritypriv->dot118021XGrpKeyid].skey);
+ 			} else {
+-				if (!memcmp(&pattrib->dot11tkiptxmickey.skey[0], null_key, 16)) {
++				if (!memcmp(&pattrib->dot11tkiptxmickey.skey[0], null_key, 16))
+ 					return _FAIL;
+-				}
+ 				/* start to calculate the mic code */
+ 				rtw_secmicsetkey(&micdata, &pattrib->dot11tkiptxmickey.skey[0]);
  			}
-@@ -1436,7 +1434,6 @@ s32 rtw_put_snap(u8 *data, u16 h_proto)
+@@ -1180,9 +1176,8 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit_fram
+ 			mpdu_len -= llc_sz;
+ 		}
  
- void rtw_update_protection(struct adapter *padapter, u8 *ie, uint ie_len)
+-		if ((pattrib->icv_len > 0) && (pattrib->bswenc)) {
++		if ((pattrib->icv_len > 0) && (pattrib->bswenc))
+ 			mpdu_len -= pattrib->icv_len;
+-		}
+ 
+ 		if (bmcst) {
+ 			/*  don't do fragment to broadcat/multicast packets */
+@@ -1979,9 +1974,8 @@ s32 rtw_xmit_classifier(struct adapter *padapter, struct xmit_frame *pxmitframe)
+ 
+ 	ptxservq = rtw_get_sta_pending(padapter, psta, pattrib->priority, (u8 *)(&ac_index));
+ 
+-	if (list_empty(&ptxservq->tx_pending)) {
++	if (list_empty(&ptxservq->tx_pending))
+ 		list_add_tail(&ptxservq->tx_pending, get_list_head(phwxmits[ac_index].sta_queue));
+-	}
+ 
+ 	list_add_tail(&pxmitframe->list, get_list_head(&ptxservq->sta_pending));
+ 	ptxservq->qcnt++;
+@@ -2043,9 +2037,8 @@ void rtw_init_hwxmits(struct hw_xmit *phwxmit, sint entry)
  {
--
- 	uint	protection;
- 	u8 *perp;
- 	sint	 erp_len;
-@@ -1565,7 +1562,6 @@ struct xmit_buf *rtw_alloc_xmitbuf_ext(struct xmit_priv *pxmitpriv)
- 	if (list_empty(&pfree_queue->queue)) {
- 		pxmitbuf = NULL;
- 	} else {
--
- 		phead = get_list_head(pfree_queue);
+ 	sint i;
  
- 		plist = get_next(phead);
-@@ -1633,7 +1629,6 @@ struct xmit_buf *rtw_alloc_xmitbuf(struct xmit_priv *pxmitpriv)
- 	if (list_empty(&pfree_xmitbuf_queue->queue)) {
- 		pxmitbuf = NULL;
- 	} else {
--
- 		phead = get_list_head(pfree_xmitbuf_queue);
+-	for (i = 0; i < entry; i++, phwxmit++) {
++	for (i = 0; i < entry; i++, phwxmit++)
+ 		phwxmit->accnt = 0;
+-	}
+ }
  
- 		plist = get_next(phead);
-@@ -1887,7 +1882,6 @@ void rtw_free_xmitframe_queue(struct xmit_priv *pxmitpriv, struct __queue *pfram
- 	plist = get_next(phead);
+ u32 rtw_get_ff_hwaddr(struct xmit_frame *pxmitframe)
+@@ -2253,11 +2246,10 @@ sint xmitframe_enqueue_for_sleeping_sta(struct adapter *padapter, struct xmit_fr
+ 			pstapriv->tim_bitmap |= BIT(0);
+ 			pstapriv->sta_dz_bitmap |= BIT(0);
  
- 	while (phead != plist) {
--
- 		pxmitframe = LIST_CONTAINOR(plist, struct xmit_frame, list);
+-			if (update_tim) {
++			if (update_tim)
+ 				update_beacon(padapter, _TIM_IE_, NULL, true);
+-			} else {
++			else
+ 				chk_bmc_sleepq_cmd(padapter);
+-			}
  
- 		plist = get_next(plist);
-@@ -2025,7 +2019,6 @@ s32 rtw_alloc_hwxmits(struct adapter *padapter)
+ 			ret = true;
  
- 		hwxmits[4] .sta_queue = &pxmitpriv->be_pending;
- 	} else if (pxmitpriv->hwxmit_entry == 4) {
--
- 		hwxmits[0] .sta_queue = &pxmitpriv->vo_pending;
+@@ -2464,9 +2456,8 @@ void wakeup_sta_to_xmit(struct adapter *padapter, struct sta_info *psta)
+ 	}
  
- 		hwxmits[1] .sta_queue = &pxmitpriv->vi_pending;
-@@ -2181,7 +2174,6 @@ inline bool xmitframe_hiq_filter(struct xmit_frame *xmitframe)
- 	struct registry_priv *registry = &adapter->registrypriv;
+ 	if (psta->sleepq_len == 0) {
+-		if (pstapriv->tim_bitmap & BIT(psta->aid)) {
++		if (pstapriv->tim_bitmap & BIT(psta->aid))
+ 			update_mask = BIT(0);
+-		}
  
- 	if (registry->hiq_filter == RTW_HIQ_FILTER_ALLOW_SPECIAL) {
--
- 		struct pkt_attrib *attrib = &xmitframe->attrib;
+ 		pstapriv->tim_bitmap &= ~BIT(psta->aid);
  
- 		if (attrib->ether_type == 0x0806
+@@ -2508,9 +2499,9 @@ void wakeup_sta_to_xmit(struct adapter *padapter, struct sta_info *psta)
+ 		}
+ 
+ 		if (psta_bmc->sleepq_len == 0) {
+-			if (pstapriv->tim_bitmap & BIT(0)) {
++			if (pstapriv->tim_bitmap & BIT(0))
+ 				update_mask |= BIT(1);
+-			}
++
+ 			pstapriv->tim_bitmap &= ~BIT(0);
+ 			pstapriv->sta_dz_bitmap &= ~BIT(0);
+ 		}
 -- 
 2.20.1
 
