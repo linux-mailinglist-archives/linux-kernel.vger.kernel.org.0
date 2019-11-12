@@ -2,119 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C78F0F9201
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BC75F92A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:32:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfKLOY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:24:28 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40902 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727074AbfKLOYZ (ORCPT
+        id S1727758AbfKLOcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:32:06 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33453 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbfKLOcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:24:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573568664;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=M77sYtpSw/g9JRg/IfCLuexix7fcghmSQ3Jw6ATftUk=;
-        b=EMfB3ViC3wdZPTuB/ZcB2rvof5+N4ibk6hFSgjdHT8DQ1Mibj8r20NyUmbThz5lwQEDR39
-        j51782uhpaQY9Py/pR1E/7+tv7gwS+gYbL2OzRDxMnsdpGbqvvxw5C9SQ7TkxZg90PvBnN
-        BAiTQVHBBpvwZzlGOPcjd7467AEQuxE=
-Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com
- [209.85.161.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-226-ix84nM5bOMGtfc8cW1VBAA-1; Tue, 12 Nov 2019 09:24:21 -0500
-Received: by mail-yw1-f70.google.com with SMTP id h13so12235602ywc.20
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 06:24:21 -0800 (PST)
+        Tue, 12 Nov 2019 09:32:04 -0500
+Received: by mail-qt1-f195.google.com with SMTP id y39so19975830qty.0;
+        Tue, 12 Nov 2019 06:32:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5xYHsMtb8TdKkbG1pGsYDiYVpDA8pyjT2i5ZSSG8UYQ=;
+        b=eHlfBAY+ZtVfdPfWBntgpJSs2CV5yaDPo6KyM2lRKcY6R4kfKybXfcWwkiBvkc4j09
+         gqxHEnU/5PMAV7s3wbEEx76wEqfZyB3NbNDzO/hTpr1XNU7LT2SSRYK8e6P40Z63hsal
+         xMBxmU5+e0fV+0ZamKreo/1j7+Tfq5Lr+8PCgohehoBpYDgUMHrSgkTXeZWBiww8NyQC
+         DLRo5w7w1tGVoXSDdNDxgNx0HUcVK4UuboNdgNKqvCo3b1Z6+/Pmf0DBh6y0emeIsmoO
+         gPZ6OAzzA1npbvqKjgdvXtGrz0X8FBxpMskwvjnUOHje2yscoZG4uuyb+4TGZUfiwP26
+         QVvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=ta39WYxBtJE/JXsxQ2/3SPPahK/8w69J/Szz/R4mdEE=;
-        b=AZ/gPRow6rzGfSL3yBgZUNOpsT1rKc/JH12pm28yJbwl0fMn+bW3vb0y4uHmnTVru3
-         PSZg6FTU8o7RQNOonOSXm+Z82R0DSnJDfqoadcx8aQU9TWHHcky2qEtVM/l8zatG76uh
-         1/ZsJUp7SDwwHqq29DVwuRTP9DxQ7K8PwyTucrEX33XiOTDvPsDl5KkJqwAwykpP6n3L
-         ht7CFsHpO2bdI2e4NJ3VSF56I9XUeTeU8QpWQWS0ejjnrhVComVQIcNOkq/0NV233WWd
-         K/gO8S3qjMa7DsE/3ecP/C3cXKW0yeKFYlh5gHoL0UPie1dnVW9imj8/ZblOSqAw7rzA
-         +3mA==
-X-Gm-Message-State: APjAAAUPdcVpPFJggnq336jRL0DNFLd8tvEf/viUjapdlEPquM7RCh6Q
-        tashqWcT/8BWpbiZYOOwnOzIUwgmGqb4PMfwVq/3P3igMyKhDLTNzsd+7iYpWn09ujE37Hc5qgo
-        Shc9Kfyk2DjpNDQdjLUIUlHxF
-X-Received: by 2002:a81:3b13:: with SMTP id i19mr17810124ywa.323.1573568660971;
-        Tue, 12 Nov 2019 06:24:20 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxUg78618D2fcXoQYSagmvyiQSiUMbyoovS8k3jxjqiMme2L6aGaCnicA9qmzOnKuupXAXXjg==
-X-Received: by 2002:a81:3b13:: with SMTP id i19mr17810105ywa.323.1573568660693;
-        Tue, 12 Nov 2019 06:24:20 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id n128sm1880219ywc.99.2019.11.12.06.24.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5xYHsMtb8TdKkbG1pGsYDiYVpDA8pyjT2i5ZSSG8UYQ=;
+        b=HhQ4SBU880pei0yphMMSmY1924WaM2Eojr+vBg8+oK+mTlWcXJTXLixJ3VTOZjO3Tz
+         FHjlNRtcCNSxn7rS2RDRv9q6zEwFL4ARqUKoCfbBTTpnFhl8Mq8f4+Wa5th2Zpu950HO
+         p8Cu7sps2fT9jkdap5peb+78IQMd97XjKHat447PvK+ds7vufEWBJfPBlEA7Bu5+IwRw
+         eHKmY4XQDqGrxZv1VczPiBYCFRdzX5j2/U2JBJ0p/g3yHFrpKdNycPmWKxmC6S2doqyr
+         pkAQiM2hbgJU5qAnz/uPUcouGZntpUGfiviCBJWRWSYpnqhK3A2Pxkmy2hHo3fSi5P/p
+         Ec2w==
+X-Gm-Message-State: APjAAAU/zGoQwyBdZ1rkVch+D1LTe9o+rhW1ILo69aNEAALzSl/arz5x
+        V4IrlteUMw45w+m8TptWhJ8=
+X-Google-Smtp-Source: APXvYqyUWCeqRMSmhPQBv8T1kvY2fBUXii3IFinsfNGlbgWGcUwGOtdMgTDX9+3IsrpPkRifSyM2kQ==
+X-Received: by 2002:ac8:1c5a:: with SMTP id j26mr30842971qtk.351.1573569122819;
+        Tue, 12 Nov 2019 06:32:02 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
+        by smtp.gmail.com with ESMTPSA id i14sm9408153qke.102.2019.11.12.06.31.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 06:24:19 -0800 (PST)
-Date:   Tue, 12 Nov 2019 07:24:18 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: question about setting TPM_CHIP_FLAG_IRQ in tpm_tis_core_init
-Message-ID: <20191112142418.3wwa4iukas4h2glp@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Stefan Berger <stefanb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191112033637.kxotlhm6mtr5irvd@cantor>
- <6d6f0899-8ba0-d6cf-ef3b-317ca698b687@linux.ibm.com>
+        Tue, 12 Nov 2019 06:32:02 -0800 (PST)
+From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+X-Google-Original-From: Daniel W. S. Almeida
+To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
+        rfontana@redhat.com, kstewart@linuxfoundation.org,
+        tglx@linutronix.de
+Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: dvb_dummy_fe: Fix long lines
+Date:   Tue, 12 Nov 2019 11:24:36 -0300
+Message-Id: <20191112142436.1406-1-dwlsalmeida@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <6d6f0899-8ba0-d6cf-ef3b-317ca698b687@linux.ibm.com>
-X-MC-Unique: ix84nM5bOMGtfc8cW1VBAA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue Nov 12 19, Stefan Berger wrote:
->On 11/11/19 10:36 PM, Jerry Snitselaar wrote:
->>Question about 1ea32c83c699 ("tpm_tis_core: Set TPM_CHIP_FLAG_IRQ=20
->>before probing for interrupts").
->>Doesn't tpm_tis_send set this flag, and setting it here in=20
->>tpm_tis_core_init short circuits what
->>tpm_tis_send was doing before? There is a bug report of an interrupt=20
->>storm from a tpm on a t490s laptop
->>with the Fedora 31 kernel (5.3), and I'm wondering if this change=20
->>could cause that. Before they got
->>the warning about interrupts not working, and using polling instead.
->>
->I set this flag for the TIS because it wasn't set anywhere else.=20
->tpm_tis_send() wouldn't set the flag but go via the path:
->
->if (!(chip->flags & TPM_CHIP_FLAG_IRQ) || priv->irq_tested)
->
->=A0=A0=A0=A0=A0=A0=A0 return tpm_tis_send_main(chip, buf, len);
->
->the only other line for the TIS to set the IRQ flag was in the same=20
->function further below, though that wouldn't be reached due to the=20
->above:
->
->[...]
->
->priv->irq =3D irq;
->
->chip->flags |=3D TPM_CHIP_FLAG_IRQ;
->
->
->=A0=A0 Stefan
->
->
+From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 
-Ugh, you're right I was reading that as ! around both the flag and priv->ir=
-q_tested.
+Break long lines into smaller ones to improve readability.
 
-Should the flag be cleared if tpm_tis_probe_irq_single fails prior to calli=
-ng
-tpm_tis_gen_interrupt?
+WARNING: line over 80 characters
++	memcpy(&state->frontend.ops, &dvb_dummy_fe_ofdm_ops, sizeof(struct dvb_frontend_ops));
+
+WARNING: line over 80 characters
++	memcpy(&state->frontend.ops, &dvb_dummy_fe_qpsk_ops, sizeof(struct dvb_frontend_ops));
+WARNING: line over 80 characters
++	memcpy(&state->frontend.ops, &dvb_dummy_fe_qam_ops, sizeof(struct dvb_frontend_ops));
+
+WARNING: line over 80 characters
++				FE_CAN_FEC_4_5 | FE_CAN_FEC_5_6 | FE_CAN_FEC_6_7 |
+
+WARNING: line over 80 characters
++				FE_CAN_FEC_7_8 | FE_CAN_FEC_8_9 | FE_CAN_FEC_AUTO |
+
+WARNING: line over 80 characters
++				FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
+
+WARNING: line over 80 characters
++		.symbol_rate_min	= (57840000 / 2) / 6
+
+Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+---
+ drivers/media/dvb-frontends/dvb_dummy_fe.c | 62 ++++++++++++++++------
+ 1 file changed, 45 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+index 4db679cb70ad..f41c1e0dc8eb 100644
+--- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
++++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+@@ -37,7 +37,8 @@ static int dvb_dummy_fe_read_ber(struct dvb_frontend* fe, u32* ber)
+ 	return 0;
+ }
+ 
+-static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
++static int
++dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
+ {
+ 	*strength = 0;
+ 	return 0;
+@@ -102,6 +103,7 @@ static int dvb_dummy_fe_set_voltage(struct dvb_frontend *fe,
+ static void dvb_dummy_fe_release(struct dvb_frontend* fe)
+ {
+ 	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
++
+ 	kfree(state);
+ }
+ 
+@@ -117,7 +119,10 @@ struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
+ 		return NULL;
+ 
+ 	/* create dvb_frontend */
+-	memcpy(&state->frontend.ops, &dvb_dummy_fe_ofdm_ops, sizeof(struct dvb_frontend_ops));
++	memcpy(&state->frontend.ops,
++	       &dvb_dummy_fe_ofdm_ops,
++	       sizeof(struct dvb_frontend_ops));
++
+ 	state->frontend.demodulator_priv = state;
+ 	return &state->frontend;
+ }
+@@ -134,7 +139,10 @@ struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void)
+ 		return NULL;
+ 
+ 	/* create dvb_frontend */
+-	memcpy(&state->frontend.ops, &dvb_dummy_fe_qpsk_ops, sizeof(struct dvb_frontend_ops));
++	memcpy(&state->frontend.ops,
++	       &dvb_dummy_fe_qpsk_ops,
++	       sizeof(struct dvb_frontend_ops));
++
+ 	state->frontend.demodulator_priv = state;
+ 	return &state->frontend;
+ }
+@@ -151,7 +159,10 @@ struct dvb_frontend *dvb_dummy_fe_qam_attach(void)
+ 		return NULL;
+ 
+ 	/* create dvb_frontend */
+-	memcpy(&state->frontend.ops, &dvb_dummy_fe_qam_ops, sizeof(struct dvb_frontend_ops));
++	memcpy(&state->frontend.ops,
++	       &dvb_dummy_fe_qam_ops,
++	       sizeof(struct dvb_frontend_ops));
++
+ 	state->frontend.demodulator_priv = state;
+ 	return &state->frontend;
+ }
+@@ -163,13 +174,21 @@ static const struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops = {
+ 		.frequency_min_hz	= 0,
+ 		.frequency_max_hz	= 863250 * kHz,
+ 		.frequency_stepsize_hz	= 62500,
+-		.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
+-				FE_CAN_FEC_4_5 | FE_CAN_FEC_5_6 | FE_CAN_FEC_6_7 |
+-				FE_CAN_FEC_7_8 | FE_CAN_FEC_8_9 | FE_CAN_FEC_AUTO |
+-				FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
+-				FE_CAN_TRANSMISSION_MODE_AUTO |
+-				FE_CAN_GUARD_INTERVAL_AUTO |
+-				FE_CAN_HIERARCHY_AUTO,
++		.caps = FE_CAN_FEC_1_2 |
++			FE_CAN_FEC_2_3 |
++			FE_CAN_FEC_3_4 |
++			FE_CAN_FEC_4_5 |
++			FE_CAN_FEC_5_6 |
++			FE_CAN_FEC_6_7 |
++			FE_CAN_FEC_7_8 |
++			FE_CAN_FEC_8_9 |
++			FE_CAN_FEC_AUTO |
++			FE_CAN_QAM_16 |
++			FE_CAN_QAM_64 |
++			FE_CAN_QAM_AUTO |
++			FE_CAN_TRANSMISSION_MODE_AUTO |
++			FE_CAN_GUARD_INTERVAL_AUTO |
++			FE_CAN_HIERARCHY_AUTO,
+ 	},
+ 
+ 	.release = dvb_dummy_fe_release,
+@@ -194,11 +213,16 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qam_ops = {
+ 		.frequency_min_hz	=  51 * MHz,
+ 		.frequency_max_hz	= 858 * MHz,
+ 		.frequency_stepsize_hz	= 62500,
+-		.symbol_rate_min	= (57840000 / 2) / 64,  /* SACLK/64 == (XIN/2)/64 */
++		/* symbol_rate_min: SACLK/64 == (XIN/2)/64 */
++		.symbol_rate_min	= (57840000 / 2) / 64,
+ 		.symbol_rate_max	= (57840000 / 2) / 4,   /* SACLK/4 */
+-		.caps = FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 |
+-			FE_CAN_QAM_128 | FE_CAN_QAM_256 |
+-			FE_CAN_FEC_AUTO | FE_CAN_INVERSION_AUTO
++		.caps = FE_CAN_QAM_16 |
++			FE_CAN_QAM_32 |
++			FE_CAN_QAM_64 |
++			FE_CAN_QAM_128 |
++			FE_CAN_QAM_256 |
++			FE_CAN_FEC_AUTO |
++			FE_CAN_INVERSION_AUTO
+ 	},
+ 
+ 	.release = dvb_dummy_fe_release,
+@@ -227,8 +251,12 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops = {
+ 		.symbol_rate_min	= 1000000,
+ 		.symbol_rate_max	= 45000000,
+ 		.caps = FE_CAN_INVERSION_AUTO |
+-			FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
+-			FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 | FE_CAN_FEC_AUTO |
++			FE_CAN_FEC_1_2 |
++			FE_CAN_FEC_2_3 |
++			FE_CAN_FEC_3_4 |
++			FE_CAN_FEC_5_6 |
++			FE_CAN_FEC_7_8 |
++			FE_CAN_FEC_AUTO |
+ 			FE_CAN_QPSK
+ 	},
+ 
+-- 
+2.24.0
 
