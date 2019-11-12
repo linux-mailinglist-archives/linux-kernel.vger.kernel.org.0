@@ -2,66 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 713EBF8D1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9859EF8D30
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfKLKpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 05:45:10 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:46959 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfKLKpK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 05:45:10 -0500
-Received: from p54ac5726.dip0.t-ipconnect.de ([84.172.87.38] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iUTfX-0004q4-31; Tue, 12 Nov 2019 10:45:07 +0000
-Date:   Tue, 12 Nov 2019 11:45:06 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] selftests: add tests for clone3()
-Message-ID: <20191112104505.66653mgk2da7rwyh@wittgenstein>
-References: <20191112095851.811884-1-areber@redhat.com>
- <20191112102814.xkml5etvogzsr7xq@wittgenstein>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191112102814.xkml5etvogzsr7xq@wittgenstein>
-User-Agent: NeoMutt/20180716
+        id S1727031AbfKLKsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 05:48:31 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:33644 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbfKLKsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 05:48:30 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 078211A06E6;
+        Tue, 12 Nov 2019 11:48:29 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 124321A0324;
+        Tue, 12 Nov 2019 11:48:26 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6DF254024E;
+        Tue, 12 Nov 2019 18:48:22 +0800 (SGT)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Revert "ASoC: soc-pcm: check symmetry after hw_params"
+Date:   Tue, 12 Nov 2019 18:46:42 +0800
+Message-Id: <1573555602-5403-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 11:28:14AM +0100, Christian Brauner wrote:
-> On Tue, Nov 12, 2019 at 10:58:51AM +0100, Adrian Reber wrote:
-> > This adds tests for clone3() with different values and sizes
-> > of struct clone_args.
-> > 
-> > This selftest was initially part of of the clone3() with PID selftest.
-> > After that patch was almost merged Eugene sent out a couple of patches
-> > to fix problems with these test.
-> > 
-> > This commit now only contains the clone3() selftest after the LPC
-> > decision to rework clone3() with PID to allow setting the PID in
-> > multiple PID namespaces including all of Eugene's patches.
-> > 
-> > Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
-> > Signed-off-by: Adrian Reber <areber@redhat.com>
-> 
-> Queuing up for 5.5.
-> Thanks, Adrian!
-> 
-> Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
+This reverts commit 957ce0c6b8a1f26559864507ae0bfcba29d924ad.
 
-One thing, can you tell me what the base tree for your commit is,
-please? Given that this is just one commit it should be enough if you
-give me the "base-commit" line from the end of the patch created via:
-git format-patch --base=HEAD~1 HEAD~1
+That commit cause soc_pcm_params_symmetry can't take effect.
+cpu_dai->rate, cpu_dai->channels and cpu_dai->sample_bits
+are updated in the middle of soc_pcm_hw_params, so move
+soc_pcm_params_symmetry to the end of soc_pcm_hw_params is
+not a good solution, for judgement of symmetry in the function
+is always true.
 
-Thanks!
-Christian
+FIXME:
+According to the comments of that commit, I think the case
+described in the commit should disable symmetric_rates
+in Back-End, rather than changing the position of
+soc_pcm_params_symmetry.
+
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ sound/soc/soc-pcm.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 8655df6a6089..b7800c95327a 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -861,6 +861,11 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	int i, ret = 0;
+ 
+ 	mutex_lock_nested(&rtd->card->pcm_mutex, rtd->card->pcm_subclass);
++
++	ret = soc_pcm_params_symmetry(substream, params);
++	if (ret)
++		goto out;
++
+ 	if (rtd->dai_link->ops->hw_params) {
+ 		ret = rtd->dai_link->ops->hw_params(substream, params);
+ 		if (ret < 0) {
+@@ -940,9 +945,6 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 	component = NULL;
+ 
+-	ret = soc_pcm_params_symmetry(substream, params);
+-        if (ret)
+-		goto component_err;
+ out:
+ 	mutex_unlock(&rtd->card->pcm_mutex);
+ 	return ret;
+-- 
+2.21.0
+
