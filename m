@@ -2,111 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C88DF90B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:33:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F4AF90C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:36:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfKLNdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 08:33:17 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33358 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfKLNdR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:33:17 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACDWqEC028139;
-        Tue, 12 Nov 2019 07:32:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573565572;
-        bh=5Z4gxvkjzCKXoR2E/PLowayTQFLHdnvuiFx2gsQMpOw=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=u7uD8Ksb6+SkNTw/B+CguxskxxpzqJhuWCzD1BViIVLYjjyl6h5IkXu4sceepscOt
-         dw2KPu100PEy9jPMXyfIsQ6VvHaJpPwNv0UTysey8ik3vfarPd3g4OqL3XIEY0n6f/
-         63b+XNLUiCKXDHX+xGxKrLy+Mb9P7pwhuBDao1Q0=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACDWppt074078;
-        Tue, 12 Nov 2019 07:32:52 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 07:32:51 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 07:32:34 -0600
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with SMTP id xACDWpgg005332;
-        Tue, 12 Nov 2019 07:32:51 -0600
-Date:   Tue, 12 Nov 2019 07:35:54 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-CC:     Hans Verkuil <hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch v2 12/20] media: ti-vpe: cal: Add DRA76x support
-Message-ID: <20191112133554.u7mbv6h2bzecvakl@ti.com>
-References: <20191104193140.31145-1-bparrot@ti.com>
- <20191104193140.31145-13-bparrot@ti.com>
- <20191106085709.GB6253@valkosipuli.retiisi.org.uk>
- <20191106205839.3zxqdttlqmrzghla@ti.com>
- <20191112132811.p6xgmxp7co6ugkkn@ti.com>
+        id S1727257AbfKLNgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 08:36:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727137AbfKLNgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 08:36:43 -0500
+Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4BA82084F;
+        Tue, 12 Nov 2019 13:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573565801;
+        bh=XX3XVc0MSDw2E2A+jg5k1cCET51VCwMRMUCwPHmsBSI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=kRFGLFQm98n3Dh5st1Un9FmTwKGuS/oC8M6kYI6gcKdAvKVz9g4h8Yk8EZLNOSrZ2
+         OT/Fh0FSf79qYiSVQlmhZ1iPO68cUOFjZ0CFDjqJp0C8isui1WOJUthuSjJIRcOI5c
+         IOFa5bgdxWLPl1HKUzlSax11Xc10jTIRkXfiq+Ks=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id AEF0235227E6; Tue, 12 Nov 2019 05:36:41 -0800 (PST)
+Date:   Tue, 12 Nov 2019 05:36:41 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Jonathan Corbet <corbet@lwn.net>, mchehab@kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rcu@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [Linux-kernel-mentees] [PATCH] Documentation: RCU: whatisRCU:
+ Updated full list of RCU API
+Message-ID: <20191112133641.GQ2865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191111181122.28083-1-madhuparnabhowmik04@gmail.com>
+ <CAD3AR6E486EAJ5EW_Wr4qiPeZU_M7TnDTC0g-CB+=6ob9Ru6mQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112132811.p6xgmxp7co6ugkkn@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAD3AR6E486EAJ5EW_Wr4qiPeZU_M7TnDTC0g-CB+=6ob9Ru6mQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Benoit Parrot <bparrot@ti.com> wrote on Tue [2019-Nov-12 07:28:11 -0600]:
-> Benoit Parrot <bparrot@ti.com> wrote on Wed [2019-Nov-06 14:58:39 -0600]:
-> > Sakari Ailus <sakari.ailus@iki.fi> wrote on Wed [2019-Nov-06 10:57:09 +0200]:
-> > > Hi Benoit,
-> > > 
-> > > On Mon, Nov 04, 2019 at 01:31:32PM -0600, Benoit Parrot wrote:
-> > > 
-> > > ...
-> > > 
-> > > > +static struct cal_data dra76x_cal_data = {
-> > > 
-> > > const?
-> > 
-> > Hmm, most likely.
+On Tue, Nov 12, 2019 at 07:03:10AM +0700, Phong Tran wrote:
+> On Tue, Nov 12, 2019 at 1:12 AM <madhuparnabhowmik04@gmail.com> wrote:
+> >
+> > From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> >
+> > This patch updates the list of RCU API in whatisRCU.rst.
 > 
-> Well, it turns out they cannot be constified because we need to be able to
-> update the register offset fir the regmap used for the syscon object.
-> So I'll leave them as is.
+> Tested-by: Phong Tran <tranmanphong@gmail.com>
 
-Oh I guess you meant just the "static struct cal_data" ones?
-I tried making the other one into const but obviously that didn't work.
+Applied, thanks to all three of you!
 
-But just constifying "static struct cal_data" appears to compiled just
-fine.
+							Thanx, Paul
 
-> 
-> Benoit
-> 
-> > 
-> > > 
-> > > > +	.csi2_phy_core = dra76x_cal_csi_phy,
-> > > > +	.num_csi2_phy = ARRAY_SIZE(dra76x_cal_csi_phy),
-> > > > +
-> > > 
-> > > This newline seems extra.
-> > > 
-> > > > +	.flags = 0,
-> > > 
-> > > And flags will be zero in any case, as one more struct members are assigned
-> > > to.
-> > 
-> > Is this guaranteed or compiler version dependent?
-> > 
-> > > 
-> > > > +};
-> > > 
-> > > -- 
-> > > Regards,
-> > > 
-> > > Sakari Ailus
+> > Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> > ---
+> >  Documentation/RCU/whatisRCU.rst | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
+> > index 2f6f6ebbc8b0..c7f147b8034f 100644
+> > --- a/Documentation/RCU/whatisRCU.rst
+> > +++ b/Documentation/RCU/whatisRCU.rst
+> > @@ -884,11 +884,14 @@ in docbook.  Here is the list, by category.
+> >  RCU list traversal::
+> >
+> >         list_entry_rcu
+> > +       list_entry_lockless
+> >         list_first_entry_rcu
+> >         list_next_rcu
+> >         list_for_each_entry_rcu
+> >         list_for_each_entry_continue_rcu
+> >         list_for_each_entry_from_rcu
+> > +       list_first_or_null_rcu
+> > +       list_next_or_null_rcu
+> >         hlist_first_rcu
+> >         hlist_next_rcu
+> >         hlist_pprev_rcu
+> > @@ -902,7 +905,7 @@ RCU list traversal::
+> >         hlist_bl_first_rcu
+> >         hlist_bl_for_each_entry_rcu
+> >
+> > -RCU pointer/list udate::
+> > +RCU pointer/list update::
+> >
+> >         rcu_assign_pointer
+> >         list_add_rcu
+> > @@ -912,10 +915,12 @@ RCU pointer/list udate::
+> >         hlist_add_behind_rcu
+> >         hlist_add_before_rcu
+> >         hlist_add_head_rcu
+> > +       hlist_add_tail_rcu
+> >         hlist_del_rcu
+> >         hlist_del_init_rcu
+> >         hlist_replace_rcu
+> > -       list_splice_init_rcu()
+> > +       list_splice_init_rcu
+> > +       list_splice_tail_init_rcu
+> >         hlist_nulls_del_init_rcu
+> >         hlist_nulls_del_rcu
+> >         hlist_nulls_add_head_rcu
+> > --
+> > 2.17.1
+> >
+> > _______________________________________________
+> > Linux-kernel-mentees mailing list
+> > Linux-kernel-mentees@lists.linuxfoundation.org
+> > https://lists.linuxfoundation.org/mailman/listinfo/linux-kernel-mentees
