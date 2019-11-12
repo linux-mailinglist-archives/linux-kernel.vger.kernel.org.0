@@ -2,77 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D360AF95D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 957FCF95F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:46:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfKLQlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 11:41:25 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36214 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfKLQlZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 11:41:25 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k13so12229701pgh.3;
-        Tue, 12 Nov 2019 08:41:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ybxmXWMezvLhgdDEhiwpfLwWzxv34/V1MC53izwQbWU=;
-        b=kMH4bgkXmZnA5DQTf72y0GbZHoGhyvh0vb1Fu2OzovigtU3OTUmGRT1NL0aWsgnL0w
-         jucpp/2/IE0hKcmzyXJaTRiUuw6mwRl/n1XxSPVutHNRnf1nxaClQzKrP80ujJJYIBRT
-         vdLGhjruaeQvv4cj68q5i0Dn739w3N9BxWpigTXyocgm2El+CS16Z/Kvs6XMsOcFDXR8
-         M9vsudkzLXUoyg3AFUCui4FBAZrdO1piPdOHt2DxM4tOcUGH2SHUpaYPX8teYmXucxM8
-         ezehPJZuND/W7TBU+q22lvyy4OfB8NBOtPLgTyQWtCtFijePG1Oa6tLEh/+O09v9nEMR
-         6Nvw==
-X-Gm-Message-State: APjAAAXfmVMN8pQnVu6sykUzy4To6c8Ws55S2bODNNT9VDgcfcB4BLmr
-        nBNVpWlnGqe8YQmOr9QTLukUbS+0
-X-Google-Smtp-Source: APXvYqzalYzInV0tZcPnsk9ArJqWVcuBbhdGasY1B/CzkF+OlKDBmRejK8+nzwzbB2qmlxd3qzOpYg==
-X-Received: by 2002:a63:d901:: with SMTP id r1mr36175093pgg.328.1573576882474;
-        Tue, 12 Nov 2019 08:41:22 -0800 (PST)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id p9sm24051231pfq.40.2019.11.12.08.41.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2019 08:41:21 -0800 (PST)
-Subject: Re: [RESEND PATCH v1 2/2] scsi: ufs: fix potential bug which ends in
- system hang-up
-To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "avri.altman@wdc.com" <avri.altman@wdc.com>,
-        "pedrom.sousa@synopsys.com" <pedrom.sousa@synopsys.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
-        "tomas.winkler@intel.com" <tomas.winkler@intel.com>,
-        "cang@codeaurora.org" <cang@codeaurora.org>
-Cc:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        id S1727445AbfKLQqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 11:46:52 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:12013 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726896AbfKLQqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 11:46:51 -0500
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Nov 2019 11:46:48 EST
+Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcae0c90000>; Wed, 13 Nov 2019 00:41:46 +0800
+Received: from HKMAIL101.nvidia.com ([10.18.16.10])
+  by hkpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 12 Nov 2019 08:41:46 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate101.nvidia.com on Tue, 12 Nov 2019 08:41:46 -0800
+Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL101.nvidia.com
+ (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
+ 2019 16:41:45 +0000
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (104.47.49.50) by
+ HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3 via Frontend Transport; Tue, 12 Nov 2019 16:41:45 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZnYN0GUINQnaEcKfijC3kSStHXiYRk4dP2xa0CjCOnnqOvTRX3dHXy+OQrCGpfgZpwVo3eGcuTgkeKcGb/JPBH3xg95/89gPZeMjzz2WPi9YI7QFiqygcWB+fRC0p4E1/ikthm20KC+16Y1uxmg9JWZFajI5a64ydyv9wcHsmwmej1YT+NNLAtO21vttHPP1wqx8r008N5B2WMBLXRqGlSyv775KGzOMXbdbdC8n7RPdD6D+zOnOrOsvxMIj4WxOPFn6SjJ2hjGa1b9UKlmcV4onORFbA2idZHyFteSqFUp+k30tfHjdtZF9IwfaH4wPs24xsnNTSomzj5F1eSp6kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jh+SZoFTf+k9Z4+jVn7Q5BXJM6Qgd/skb+oxPwWk5sc=;
+ b=lBQyig7bA1eg4NZlqIa5vR9ddz7myzJNSX0tCDjKj0t4U0iBFU9TW9/b16T6Wlsqw45i9ZUU7gxtatrgBRJlg0E+62Mzb0R2ItHoRf25r176wMGmGtZmQRmzFmXBb5KP8KDTmXKqXWEOoCqH8iy45n3fOrtEm9e6qVnsQbKPqAmIMCTaBlKwk367JvaZLDQvTXXan7X/HR4hjhtAJOhfnZsS5KCIaWiDwUlGQJ+vGWriZDx6wxVhs8ghUjUNri1nzaGeWuy9JckHY++1npap0uzitOcvuxE6NtFRFKpZnyTfEocpJRvKm1Fw2Tz9BIc65FrGHSAjd7ogq+eUZdslCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+Received: from MN2PR12MB3389.namprd12.prod.outlook.com (20.178.242.161) by
+ MN2PR12MB3294.namprd12.prod.outlook.com (20.179.81.208) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.25; Tue, 12 Nov 2019 16:41:43 +0000
+Received: from MN2PR12MB3389.namprd12.prod.outlook.com
+ ([fe80::457a:dc11:397f:d4ce]) by MN2PR12MB3389.namprd12.prod.outlook.com
+ ([fe80::457a:dc11:397f:d4ce%7]) with mapi id 15.20.2430.027; Tue, 12 Nov 2019
+ 16:41:43 +0000
+From:   Henry Lin <henryl@nvidia.com>
+To:     Takashi Iwai <tiwai@suse.de>
+CC:     Jaroslav Kysela <perex@perex.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <BN7PR08MB5684BD2FEE5153F7AF96F146DB770@BN7PR08MB5684.namprd08.prod.outlook.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <f923772d-2105-e2b2-8503-4e87fd1bc180@acm.org>
-Date:   Tue, 12 Nov 2019 08:41:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Subject: Re: [PATCH] usb-audio: not submit urb for stopped endpoint
+Thread-Topic: [PATCH] usb-audio: not submit urb for stopped endpoint
+Thread-Index: AQHVmSWhBIS3uSZfiEG540j5JX9w96eHJDUAgACGuveAAA5KgIAAAjtg
+Date:   Tue, 12 Nov 2019 16:41:42 +0000
+Message-ID: <MN2PR12MB33899EA399AF4338AA882F1DAC770@MN2PR12MB3389.namprd12.prod.outlook.com>
+References: <20191112065108.7766-1-henryl@nvidia.com>,<s5hzhh1njti.wl-tiwai@suse.de>
+In-Reply-To: <s5hzhh1njti.wl-tiwai@suse.de>
+Accept-Language: en-US, zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=henryl@nvidia.com; 
+x-originating-ip: [59.124.78.18]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8225c756-7f94-4443-f4fc-08d7678f3319
+x-ms-traffictypediagnostic: MN2PR12MB3294:
+x-microsoft-antispam-prvs: <MN2PR12MB3294C45E448EC9FEA1FA19B2AC770@MN2PR12MB3294.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1247;
+x-forefront-prvs: 021975AE46
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(366004)(39860400002)(136003)(396003)(189003)(199004)(4744005)(71200400001)(99286004)(186003)(14444005)(229853002)(8676002)(486006)(8936002)(6436002)(11346002)(86362001)(71190400001)(476003)(478600001)(446003)(81156014)(81166006)(7696005)(256004)(6916009)(52536014)(74316002)(33656002)(54906003)(5660300002)(26005)(316002)(76176011)(6506007)(102836004)(2906002)(66556008)(7736002)(305945005)(6116002)(3846002)(14454004)(6246003)(64756008)(76116006)(25786009)(66476007)(9686003)(91956017)(66946007)(66446008)(55016002)(4326008)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3294;H:MN2PR12MB3389.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: WMFRb/8W+vXKdWZ7HFa9MdcQuNpFNzvf5zcJufRbIa21aJPFpytIO6dYjbLoCJ4w2kty+tkjRSS+LAx4PQR3vkac6cgmm4OiDBKQeam3Cswlga0bcNgSH46G5ZZAB27ODTCIiWK6uzFg3LX4cJFUc0gr/WMwj0vvPS+bpyNGrsaJTQesH0BB3kJBJ+zZHkOwuAunN8e2noMIXaQd8JcWiqXGAu7Vfp5YpRr9tZWn8T8zlPcnd3k2uMr92ZcKpIFLCUOQEJeD468MG3T3sSNHEeg/eAx7tLm2XkBh/70kTgvPGpQBrPEeI2JlX5H3wmIGBxvoOURZ9BtkR/ZzmNN4BJdBou4ioUh0iZTcjJqqevluSGpxMt8VVbAF4xXxvkyfzaq1F7+alGVhB+hxE5hUCHcVNmKGijJagDoMFFVCu/0mQeboyaWdNrDrc6zQlcdd
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-In-Reply-To: <BN7PR08MB5684BD2FEE5153F7AF96F146DB770@BN7PR08MB5684.namprd08.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8225c756-7f94-4443-f4fc-08d7678f3319
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2019 16:41:43.0158
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gzKKXLnKej218YczdyIVEY1WwvzF0emTDIMIJKJnHG0PqfmjCmD6LMxqAI0ob3WXXXGbBbTsPObgRdry5m4Sgg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3294
+X-OriginatorOrg: Nvidia.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573576906; bh=jh+SZoFTf+k9Z4+jVn7Q5BXJM6Qgd/skb+oxPwWk5sc=;
+        h=X-PGP-Universal:ARC-Seal:ARC-Message-Signature:
+         ARC-Authentication-Results:From:To:CC:Subject:Thread-Topic:
+         Thread-Index:Date:Message-ID:References:In-Reply-To:
+         Accept-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
+         authentication-results:x-originating-ip:x-ms-publictraffictype:
+         x-ms-office365-filtering-correlation-id:x-ms-traffictypediagnostic:
+         x-microsoft-antispam-prvs:x-ms-oob-tlc-oobclassifiers:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam:
+         x-microsoft-antispam-message-info:x-ms-exchange-transport-forked:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-CrossTenant-userprincipalname:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=ZkoDdEbnWeuef3uC16McFt9Ha0tSiJpMFpGeEyPHVHrfTpBkaLW2/dRY4KT4/OAao
+         Uk2oZNhn8+C+JOvJELyb7PW6lsz0sh91sLFXSw0VzEb2wCsfJ2mtX//kOUii0U9u1z
+         quh2uRzAiO+Z44i54nE8y16uDPpfasfnR+ccKDGASixfYdpo9IoU4OnH4m7r+rDXoh
+         EMIf3GSOarmSq4A0fVZfGV2JsAmqe/XXygTgzgLUTZzKIfLZFF4Dq7jMKUROv+IQ+r
+         E0/c/FPV0w/RzuUXPmt5aVQleHPa3fGQVKYapEvqi3Ii37lGPVxiXlEkV1gIO97fqg
+         MmcqPhedVTZ6Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/19 4:22 PM, Bean Huo (beanhuo) wrote:
-> 
-> Bean Huo <beanhuo@micron.com>
-> 
-> In function __ufshcd_query_descriptor(), in the event of an error
-> happening, we directly goto out_unlock, and forget to invaliate
-> hba->dev_cmd.query.descriptor pointer. Thus results in this pointer
-> still validity in ufshcd_copy_query_response() for other query requests
-> which go through ufshcd_exec_raw_upiu_cmd(). This will cuases __memcpy()
-> crash and system hangs up, log shows as below:
-
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Ah, I see.  Then you don't have to write up the full stack trace like=0A=
+> the above.  It's confusing as if it were some kernel Oops or WARNING.=0A=
+Got it. Should I post another patch set here for removing these confusing d=
+escription in commit message? Or you can help to remove them before merging=
+?=0A=
+=0A=
+> BTW, with your patch, is the error in the first line ("timeout: still=0A=
+> 1 active urbs on EP #1") also fixed?=0A=
+Yes, "timeout: still 1 active urbs on EP #1" will be fixed as well.=0A=
