@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29808F93EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C17F93F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:19:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbfKLPS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 10:18:56 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:43659 "EHLO
+        id S1727491AbfKLPTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 10:19:12 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:42673 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbfKLPSz (ORCPT
+        with ESMTP id S1727392AbfKLPTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 10:18:55 -0500
+        Tue, 12 Nov 2019 10:19:00 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MtfRp-1hc9qB3Td1-00v4Hm; Tue, 12 Nov 2019 16:16:56 +0100
+ 1MtfRp-1hc9qA0Y5H-00v4Hm; Tue, 12 Nov 2019 16:16:57 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>
 Cc:     Baolin Wang <baolin.wang7@gmail.com>, y2038@lists.linaro.org,
@@ -22,33 +22,33 @@ Cc:     Baolin Wang <baolin.wang7@gmail.com>, y2038@lists.linaro.org,
         Mark Brown <broonie@kernel.org>,
         Baolin Wang <baolin.wang@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v6 2/8] ALSA: Avoid using timespec for struct snd_timer_status
-Date:   Tue, 12 Nov 2019 16:16:36 +0100
-Message-Id: <20191112151642.680072-3-arnd@arndb.de>
+Subject: [PATCH v6 3/8] ALSA: Avoid using timespec for struct snd_ctl_elem_value
+Date:   Tue, 12 Nov 2019 16:16:37 +0100
+Message-Id: <20191112151642.680072-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191112151642.680072-1-arnd@arndb.de>
 References: <20191112151642.680072-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:u3zGZYSUP0mPAgM1xzr7VtvAdHVSHJvfYGEoRMDWeoYEsEXXSCB
- 2a0XtIGPepntRjOYl5w4Uldg2inkkpHr7o6pFEbF5HT2hRsNg7aXA3oDJNmCaGwhGoL3t/+
- lGn4c4O/jnzvkUwsfEbgxExa7aXDXwwP9a3V+wpaGSc+tQZ7WdA3ewmWhtXZ0FRKVeACN96
- nJRGS96Mosu+p5pjnnX9A==
+X-Provags-ID: V03:K1:lAmj6kwQ3S1uoAqMviQM0k/X4NCJC4z7wsHW/iJ6hmK73azYUPt
+ LeTeoMm+SHmEwAZSSGex8hmlIuQz1YByD4R8gEFDR4S+8G55DbnRcj0W0ApNMll1LTV74a0
+ eMmTSt5CgtWlHtvPZzJeGmfuKGcw5DNGmAbCUAJLXaT7Q1+DC17XLuD9xk4rBfumKtKNjGg
+ 81fE5bja9OklrzP2MBUJw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0XEazvyASJg=:SlRb9zMUQw9OFLamESQKxP
- 2TmH0aE8/RWYsoFgTzFlQQS3pH+9z+x3SZehXXxaNvj3GYpBNc+O6OcFPDcgeL0Gr61a9JkTC
- HYQQ/TwBokGTfZ147wNjak5exIJA2RvU+6Qk0u+lsM/hHTVKG36ytF7vOx+sOeBJSSvqFZ/+u
- CxybcpN5DiDVyLVZYxYoHz53HXxuRSoLLwqGjPEOgV62zMBMiHZ8LBvp/kSDDpYxbh4miTKrl
- tsYss2hinqfrsqrNb94lQLxU47ULfqkk5yqVoIIKgRnA2ITPdSdnsx+XJf0NYyx9hvOq86c9+
- FL9eBfolGHAYi2aP0YnPn8bcYuL/WzU3IFBJF7jst0CGKUJ935HR8x/L2N40wsSKv/bM/QFar
- wsv1kvP9fns4sbdEa/XoToWzXV4s3lh9zfAqzQVwBKf1sJ35p2oiZkcTKbarnF49s9G0RwxRi
- iAaen3Bw6MiPop4I6NmMAkzDZjDEl0YRL3ZDo8sSxVi1585jRY5QBH41fGfg70PiiXVbuW4dD
- nvMsPbNGKM7ogdwwHrIqPH9wcDZGXXDhNVlSkR/DjCT4/j/dHK7trAKfrUTZkgPz59498uQV4
- LgzrbIyipsphKjESiEIW3+yDphXaJnwwQsEfOrU3gKtTI2XZIKFrWEPVbaacX3qvTOathYqPr
- jj4pOSZEPzeIrP7QjcCqRJn3ENsQogP0u1rsuUZ+E8Cb8Ipi6Gm6vDCdWKW3OislxSEU/qYQK
- s3ZoXTKSDz99GsC773JSVv6MJZkkJzPrDWl7RXi4Tx+G6xsaue1Pe74OHsCpw1N/odwAeXc1I
- lqBwPjPyH7Uwtmt5OlFgHIzWUJqmMS313hQ2v+8VjA/H9Hk4hw3e/xX4Mppw3xB3WqGVgq8NL
- wneV/KLj/C5II6NQPFJQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:NBo0lQzLa3c=:TO19rw24nS3btXFzrd006z
+ LH86aIw7gIdJ1DH9EzgtWisBKUxfHshRNwfm6je6GgCiQh1JWB17Ilq3e7N13lsbNAt5f3d41
+ YjJUYkVoQdvx9Z1iat/l5h/N9b2TjHp8v6NAm2LWn5cOqWHy1OeWIC2fGXA6PwwIdvdQd0392
+ oAZk2ix/wgG+bdCQKbQsrAmEw0VnpjUWOm+/Ia5YTRmIYvPgRUmS1fSIy50OvVWtuOS/xnIfe
+ PVvEXxGKggyvU7VHTDWY3RfXIZ3lnAawDoi6eptSKIC+dF88FATHjsXCVF3+ZLVuDLmf4Oc7m
+ wgl1j/bNO/22zESP/fxR0i8Xu6z7n80I6WL9+9x3UK3KpkTxAttrVOzPUe1WFD53MF9SqC2Pz
+ Rf8dw6lAi0LzG/BkdXaHO9sumnOCpb5hDVUqj6sk3q/VS9WmS46RYghR3TJ8G05de7aiUa9wk
+ AVlTOYNOAeUBVkwzrC9WM5cahcmMVXlNKV1vnakMfDZkGvCBwez09eOnVLKMA578el4yvpeFj
+ CfIY3lrRaJ+z0bpEAoPEiHcCxBjV2ukhd9+Sqq7dbj/X+JVErMseRlb50e7cSNVPjjsUmGKvN
+ i8rqbtgmSsPJP7HX/uvY8b6IzAuCxafnWmhT8xHDT2Wh5uTZN8xbyxjPRQXtNi/ZLzNY2o8Xc
+ RxbvsLDLwyLlP/Ke/+3XeAep6/hUUMyCNPi4nDjauabkZGig4aOMT0We4ZkAwlO4KLfr9bncX
+ d7W5sXZ1dnuh8dZi4yt3oHeDnZr5C52ECiVRTMOG+i8bA0Fv3s1t1/jDnsR6rUJY/mqQkEFUj
+ jvpyaraqnBYUW/zQgOgJsxvhyv71jJ9P4IJJDAmkxZ4OKsoqYKPtYXEGJ2JUL7Sg7GoybdGh7
+ Ql4RYV1KciH+TmKXFnjg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,218 +56,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Baolin Wang <baolin.wang@linaro.org>
 
-struct snd_timer_status uses 'timespec' type variables to record
-timestamp, which will be changed to an incompatible layout with
-updated user space using 64-bit time_t.
+The struct snd_ctl_elem_value will use 'timespec' type variables to record
+timestamp, which is not year 2038 safe on 32bits system.
 
-To handle both the old and the new layout on 32-bit architectures,
-this patch introduces 'struct snd_timer_status32' and 'struct snd_timer_status64'
-to handle 32bit time_t and 64bit time_t in native mode and compat mode,
-which replaces timespec with s64 type.
+Since there are no drivers will implemented the tstamp member of the
+struct snd_ctl_elem_value, and also the stucture size will not be changed
+if we change timespec to s64 for tstamp member of struct snd_ctl_elem_value.
 
-When glibc changes time_t to 64-bit, any recompiled program will issue
-ioctl commands that the kernel does not understand without this patch.
+From Takashi's comments, "In the library, applications are not expected
+to access to this structure directly. The applications get opaque pointer
+to the structure and must use any control APIs to operate it. Actually the
+library produce no API to handle 'struct snd_ctl_elem_value.tstamp'. This
+means that we can drop this member from alsa-lib without decline of
+functionality." Thus we can simply remove the tstamp member to avoid using
+the type which is not year 2038 safe on 32bits system.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/uapi/sound/asound.h |  2 ++
- sound/core/timer.c          | 62 +++++++++++++++++++++++++++++++++----
- sound/core/timer_compat.c   | 57 ++++------------------------------
- 3 files changed, 64 insertions(+), 57 deletions(-)
+ include/uapi/sound/asound.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-index df1153cea0b7..930854f67fd3 100644
+index 930854f67fd3..40a23d8418fe 100644
 --- a/include/uapi/sound/asound.h
 +++ b/include/uapi/sound/asound.h
-@@ -761,6 +761,7 @@ struct snd_timer_params {
- 	unsigned char reserved[60];	/* reserved */
+@@ -957,8 +957,7 @@ struct snd_ctl_elem_value {
+ 		} bytes;
+ 		struct snd_aes_iec958 iec958;
+ 	} value;		/* RO */
+-	struct timespec tstamp;
+-	unsigned char reserved[128-sizeof(struct timespec)];
++	unsigned char reserved[128];
  };
  
-+#ifndef __KERNEL__
- struct snd_timer_status {
- 	struct timespec tstamp;		/* Timestamp - last update */
- 	unsigned int resolution;	/* current period resolution in ns */
-@@ -769,6 +770,7 @@ struct snd_timer_status {
- 	unsigned int queue;		/* used queue size */
- 	unsigned char reserved[64];	/* reserved */
- };
-+#endif
- 
- #define SNDRV_TIMER_IOCTL_PVERSION	_IOR('T', 0x00, int)
- #define SNDRV_TIMER_IOCTL_NEXT_DEVICE	_IOWR('T', 0x01, struct snd_timer_id)
-diff --git a/sound/core/timer.c b/sound/core/timer.c
-index 29b99cfb5215..921f4ae2f9bf 100644
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -65,6 +65,30 @@ struct snd_timer_user {
- 	struct mutex ioctl_lock;
- };
- 
-+struct snd_timer_status32 {
-+	s32 tstamp_sec;			/* Timestamp - last update */
-+	s32 tstamp_nsec;
-+	unsigned int resolution;	/* current period resolution in ns */
-+	unsigned int lost;		/* counter of master tick lost */
-+	unsigned int overrun;		/* count of read queue overruns */
-+	unsigned int queue;		/* used queue size */
-+	unsigned char reserved[64];	/* reserved */
-+};
-+
-+#define SNDRV_TIMER_IOCTL_STATUS32	_IOR('T', 0x14, struct snd_timer_status32)
-+
-+struct snd_timer_status64 {
-+	s64 tstamp_sec;			/* Timestamp - last update */
-+	s64 tstamp_nsec;
-+	unsigned int resolution;	/* current period resolution in ns */
-+	unsigned int lost;		/* counter of master tick lost */
-+	unsigned int overrun;		/* count of read queue overruns */
-+	unsigned int queue;		/* used queue size */
-+	unsigned char reserved[64];	/* reserved */
-+};
-+
-+#define SNDRV_TIMER_IOCTL_STATUS64	_IOR('T', 0x14, struct snd_timer_status64)
-+
- /* list of timers */
- static LIST_HEAD(snd_timer_list);
- 
-@@ -1861,17 +1885,41 @@ static int snd_timer_user_params(struct file *file,
- 	return err;
- }
- 
--static int snd_timer_user_status(struct file *file,
--				 struct snd_timer_status __user *_status)
-+static int snd_timer_user_status32(struct file *file,
-+				   struct snd_timer_status32 __user *_status)
-+ {
-+	struct snd_timer_user *tu;
-+	struct snd_timer_status32 status;
-+
-+	tu = file->private_data;
-+	if (!tu->timeri)
-+		return -EBADFD;
-+	memset(&status, 0, sizeof(status));
-+	status.tstamp_sec = tu->tstamp.tv_sec;
-+	status.tstamp_nsec = tu->tstamp.tv_nsec;
-+	status.resolution = snd_timer_resolution(tu->timeri);
-+	status.lost = tu->timeri->lost;
-+	status.overrun = tu->overrun;
-+	spin_lock_irq(&tu->qlock);
-+	status.queue = tu->qused;
-+	spin_unlock_irq(&tu->qlock);
-+	if (copy_to_user(_status, &status, sizeof(status)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
-+static int snd_timer_user_status64(struct file *file,
-+				   struct snd_timer_status64 __user *_status)
- {
- 	struct snd_timer_user *tu;
--	struct snd_timer_status status;
-+	struct snd_timer_status64 status;
- 
- 	tu = file->private_data;
- 	if (!tu->timeri)
- 		return -EBADFD;
- 	memset(&status, 0, sizeof(status));
--	status.tstamp = timespec64_to_timespec(tu->tstamp);
-+	status.tstamp_sec = tu->tstamp.tv_sec;
-+	status.tstamp_nsec = tu->tstamp.tv_nsec;
- 	status.resolution = snd_timer_resolution(tu->timeri);
- 	status.lost = tu->timeri->lost;
- 	status.overrun = tu->overrun;
-@@ -1995,8 +2043,10 @@ static long __snd_timer_user_ioctl(struct file *file, unsigned int cmd,
- 		return snd_timer_user_info(file, argp);
- 	case SNDRV_TIMER_IOCTL_PARAMS:
- 		return snd_timer_user_params(file, argp);
--	case SNDRV_TIMER_IOCTL_STATUS:
--		return snd_timer_user_status(file, argp);
-+	case SNDRV_TIMER_IOCTL_STATUS32:
-+		return snd_timer_user_status32(file, argp);
-+	case SNDRV_TIMER_IOCTL_STATUS64:
-+		return snd_timer_user_status64(file, argp);
- 	case SNDRV_TIMER_IOCTL_START:
- 	case SNDRV_TIMER_IOCTL_START_OLD:
- 		return snd_timer_user_start(file);
-diff --git a/sound/core/timer_compat.c b/sound/core/timer_compat.c
-index bb6be484dfd3..20eef5bc304b 100644
---- a/sound/core/timer_compat.c
-+++ b/sound/core/timer_compat.c
-@@ -69,54 +69,11 @@ static int snd_timer_user_info_compat(struct file *file,
- 	return 0;
- }
- 
--struct snd_timer_status32 {
--	struct compat_timespec tstamp;
--	u32 resolution;
--	u32 lost;
--	u32 overrun;
--	u32 queue;
--	unsigned char reserved[64];
--};
--
--static int snd_timer_user_status_compat(struct file *file,
--					struct snd_timer_status32 __user *_status)
--{
--	struct snd_timer_user *tu;
--	struct snd_timer_status32 status;
--	
--	tu = file->private_data;
--	if (!tu->timeri)
--		return -EBADFD;
--	memset(&status, 0, sizeof(status));
--	status.tstamp.tv_sec = tu->tstamp.tv_sec;
--	status.tstamp.tv_nsec = tu->tstamp.tv_nsec;
--	status.resolution = snd_timer_resolution(tu->timeri);
--	status.lost = tu->timeri->lost;
--	status.overrun = tu->overrun;
--	spin_lock_irq(&tu->qlock);
--	status.queue = tu->qused;
--	spin_unlock_irq(&tu->qlock);
--	if (copy_to_user(_status, &status, sizeof(status)))
--		return -EFAULT;
--	return 0;
--}
--
--#ifdef CONFIG_X86_X32
--/* X32 ABI has the same struct as x86-64 */
--#define snd_timer_user_status_x32(file, s) \
--	snd_timer_user_status(file, s)
--#endif /* CONFIG_X86_X32 */
--
--/*
-- */
--
- enum {
- 	SNDRV_TIMER_IOCTL_GPARAMS32 = _IOW('T', 0x04, struct snd_timer_gparams32),
- 	SNDRV_TIMER_IOCTL_INFO32 = _IOR('T', 0x11, struct snd_timer_info32),
--	SNDRV_TIMER_IOCTL_STATUS32 = _IOW('T', 0x14, struct snd_timer_status32),
--#ifdef CONFIG_X86_X32
--	SNDRV_TIMER_IOCTL_STATUS_X32 = _IOW('T', 0x14, struct snd_timer_status),
--#endif /* CONFIG_X86_X32 */
-+	SNDRV_TIMER_IOCTL_STATUS_COMPAT32 = _IOW('T', 0x14, struct snd_timer_status32),
-+	SNDRV_TIMER_IOCTL_STATUS_COMPAT64 = _IOW('T', 0x14, struct snd_timer_status64),
- };
- 
- static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
-@@ -145,12 +102,10 @@ static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
- 		return snd_timer_user_gparams_compat(file, argp);
- 	case SNDRV_TIMER_IOCTL_INFO32:
- 		return snd_timer_user_info_compat(file, argp);
--	case SNDRV_TIMER_IOCTL_STATUS32:
--		return snd_timer_user_status_compat(file, argp);
--#ifdef CONFIG_X86_X32
--	case SNDRV_TIMER_IOCTL_STATUS_X32:
--		return snd_timer_user_status_x32(file, argp);
--#endif /* CONFIG_X86_X32 */
-+	case SNDRV_TIMER_IOCTL_STATUS_COMPAT32:
-+		return snd_timer_user_status32(file, argp);
-+	case SNDRV_TIMER_IOCTL_STATUS_COMPAT64:
-+		return snd_timer_user_status64(file, argp);
- 	}
- 	return -ENOIOCTLCMD;
- }
+ struct snd_ctl_tlv {
 -- 
 2.20.0
 
