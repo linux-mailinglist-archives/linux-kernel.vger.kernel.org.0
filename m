@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 146DCF964C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:56:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFECAF9621
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfKLQzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 11:55:24 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34634 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727504AbfKLQxc (ORCPT
+        id S1727745AbfKLQyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 11:54:04 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46078 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbfKLQx4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 11:53:32 -0500
-Received: by mail-qt1-f195.google.com with SMTP id i17so8935323qtq.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 08:53:31 -0800 (PST)
+        Tue, 12 Nov 2019 11:53:56 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q70so15026551qke.12
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 08:53:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KRQTTAE5NIfXPm438X/CfTEjySDioYPsKEKUpYcXxZM=;
-        b=rfANFb1/afiONMc6tGNT810eTD97Na2vCiLpUCuJCENzRwhro0TGNKoM5ZuGO6rGBS
-         E7/donO0x+mNRUYgYbX9T/DVAIrjihf1chuIsuIsOj5zaObdjOBHXtY3/3F4A8nUWc5f
-         KzJNvReUvSp8+qrKyBr+CdmlL5YcElggAoFr28iLs8/hPqDS+HovpmQgMzjWLB8ccYUN
-         ZbqaeAj/sm4uC8CMJcaUoNinxpnFHpnVZGWeU9Wy8I/GR7pMP/jtkKJJkhBGoikvikGm
-         y6r38LmBmpABtWOmmNhfsXVMBEkrktgLulISgSA1oqrjME6hHBdYt50mZK/fluDeSCix
-         2qZg==
+        bh=lbcz9bkPVGGwPZGZcVShlfo+81m3kSOz/HD5MUWR9yk=;
+        b=T/sD5dIeNMR1JZLa8dNZ/TbDgDfJgkcU89q+NISDU34LuQCbu4F7sn6bFAmcM+xdZL
+         eIW66PLWV0JTBiUW6ejZU6rDhAoNCIYRFfRMMgX9TY2ZoPi7sZsiwYz7T8SJlvFckHDe
+         fNTx33Fp8ODyAGdud70n6lsN821r1qEu3B3tryKerYNFClFAj5+mTm4FHPlhTp9WTQCZ
+         I4ngg8sOYwSyg3AALHml34Ftti5qw2hzjGVEF67iF5zRR9I5qh2AuESSq2YEJIYTOjlM
+         i1uIKrAg1+yEOWkPPoHqU9wP06Tu8vr0A0MTWwq60504csHWk6vBMq8sqV1k7GNegMNE
+         II6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to;
-        bh=KRQTTAE5NIfXPm438X/CfTEjySDioYPsKEKUpYcXxZM=;
-        b=d5PgIQu93TzRTf7FWj5fTsYce1yV92UnPuzV8XTvVfaNjQjJOfrR3MptTx6idc3y23
-         JbzDFrHSN+bADSR1M4+dEMRKe2tSMP7/m+0ET41X5yO7pRU7PzK3YrsAFEpekmfsqIop
-         KuxGEfZS+z1EmcQgXDjpBSrr+iziRXeEmZVePiE351CdBSMLX4s7Yd6LPKCm4dSMeM9J
-         ycRcniRuJVXLwe3/hqk4qsQaTU8gIN2ajked1UBAd5C9qzp07mOyX3Y65plzt5ete8bY
-         GFRnbfFetNBPYWqM3xnwjhutKApIa2KUuH6f7YZzEmC84WUjA049ZPX5bP/CeL1LizCE
-         rgmg==
-X-Gm-Message-State: APjAAAVgugHE+ZFHGGNG41dCxSb1xFf85ydJuqFyQnJO6S97GWuAuS4R
-        KHdg1cPh+fJZW+U9TcbWB8I=
-X-Google-Smtp-Source: APXvYqwsJuw+ah6YDbZwi5p06oiq5/ceMusCowYtPBELi1FvvM9rrolusO8RZKiQgdQIdDrwBTdsCA==
-X-Received: by 2002:ac8:28a1:: with SMTP id i30mr33559371qti.245.1573577611445;
-        Tue, 12 Nov 2019 08:53:31 -0800 (PST)
+        bh=lbcz9bkPVGGwPZGZcVShlfo+81m3kSOz/HD5MUWR9yk=;
+        b=kqcAT9Sobdb3ZIGPt6OQ1pTLKSFWaEWwEopx6hsB0UWTFOR+gOrt1zu8ymethZ2oi2
+         lSXfb8F3VvlwFu7iShXsmWDbyaX3UfjlK/SwjFKtt2tUw432qQGslwYBOnvTZytF1b1/
+         VxnbsX5ftrXXGoLkFhAobS9fRUbKqynhNqgzvsWSQYsZBqI5l3sKHyGyfIxt11z00Jz3
+         BMFpzoRHvBpCTbkxx1rSq8Ceu9BqkvhFjKzBiB+FwF6MhuEao3TsifH1ClBYsJd5kH8W
+         wV5hv0O/N/Pdjdd6ApmNd+Yl0UU4c94tx2LgBs+hTLAjFggTWyMat8z3zsEcKvAtIuKK
+         WKCQ==
+X-Gm-Message-State: APjAAAXy6yAyggbZ4EOF2L5r+BGnI+k+UPHNrPZOneSUCP0xsNlto5du
+        rzBRXc5kxzgOJkDHmduVMNo=
+X-Google-Smtp-Source: APXvYqxbTTGYydL9lwCVEVgSKe8AjmInpJRQjl+Bpx239OOvxNIxoBu6F2bcF0MX6rzreH/lEmuSow==
+X-Received: by 2002:a05:620a:242:: with SMTP id q2mr6404419qkn.87.1573577635694;
+        Tue, 12 Nov 2019 08:53:55 -0800 (PST)
 Received: from gmail.com (dynamic-186-154-98-65.dynamic.etb.net.co. [186.154.98.65])
-        by smtp.gmail.com with ESMTPSA id i68sm9545923qkb.106.2019.11.12.08.53.30
+        by smtp.gmail.com with ESMTPSA id w5sm5196039qkf.43.2019.11.12.08.53.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 08:53:31 -0800 (PST)
-Date:   Tue, 12 Nov 2019 11:53:28 -0500
+        Tue, 12 Nov 2019 08:53:55 -0800 (PST)
+Date:   Tue, 12 Nov 2019 11:53:53 -0500
 From:   "Javier F. Arias" <jarias.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
-Subject: [PATCH 2/9] staging: rtl8723bs: Remove blank lines before a close
+Subject: [PATCH 3/9] staging: rtl8723bs: Remove blank lines after an open
  brace
-Message-ID: <369fa1068078d98d658fe5e8fc335df1b22f5238.1573577309.git.jarias.linux@gmail.com>
+Message-ID: <847ce59f8429afaac1299794987779d0db54d0be.1573577309.git.jarias.linux@gmail.com>
 Mail-Followup-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         outreachy-kernel@googlegroups.com
 References: <cover.1573577309.git.jarias.linux@gmail.com>
@@ -65,274 +65,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes blank lines before a close brase.
+This patch removes blank lines after an open brace.
 Issue found by checkpatch.
 
 Signed-off-by: Javier F. Arias <jarias.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 35 -----------------------
- 1 file changed, 35 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index e10e2d74cffd..7f88f433345d 100644
+index 7f88f433345d..60e639690fc3 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -144,7 +144,6 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
- 		#endif
+@@ -912,7 +912,6 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
  
- 		pxmitbuf++;
+ static s32 xmitframe_swencrypt(struct adapter *padapter, struct xmit_frame *pxmitframe)
+ {
 -
- 	}
+ 	struct	pkt_attrib	 *pattrib = &pxmitframe->attrib;
  
- 	pxmitpriv->free_xmitbuf_cnt = NR_XMITBUFF;
-@@ -222,7 +221,6 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
- 		pxmitbuf->no = i;
- 		#endif
- 		pxmitbuf++;
+ 	if (pattrib->bswenc) {
+@@ -1328,7 +1327,6 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit
+ 				psta = rtw_get_stainfo(&padapter->stapriv, pattrib->ra);
+ 
+ 			if (!psta) {
 -
- 	}
- 
- 	pxmitpriv->free_xmit_extbuf_cnt = NR_XMIT_EXTBUFF;
-@@ -479,7 +477,6 @@ static void update_attrib_phy_info(struct adapter *padapter, struct pkt_attrib *
- 	if (psta->isrc && psta->pid > 0)
- 		pattrib->pctrl = true;
- #endif
--
- }
- 
- static s32 update_attrib_sec_info(struct adapter *padapter, struct pkt_attrib *pattrib, struct sta_info *psta)
-@@ -529,7 +526,6 @@ static s32 update_attrib_sec_info(struct adapter *padapter, struct pkt_attrib *p
- 		/* For WPS 1.0 WEP, driver should not encrypt EAPOL Packet for WPS handshake. */
- 		if (((pattrib->encrypt == _WEP40_) || (pattrib->encrypt == _WEP104_)) && (pattrib->ether_type == 0x888e))
- 			pattrib->encrypt = _NO_PRIVACY_;
--
- 	}
- 
- 	switch (pattrib->encrypt) {
-@@ -600,7 +596,6 @@ static s32 update_attrib_sec_info(struct adapter *padapter, struct pkt_attrib *p
- exit:
- 
- 	return res;
--
- }
- 
- u8 qos_acm(u8 acm_mask, u8 priority)
-@@ -723,7 +718,6 @@ static s32 update_attrib(struct adapter *padapter, _pkt *pkt, struct pkt_attrib
- 				DBG_COUNTER(padapter->tx_logs.core_tx_upd_attrib_icmp);
+ 				DBG_871X("%s, psta ==NUL\n", __func__);
+ 				goto xmitframe_coalesce_fail;
  			}
- 		}
--
- 	} else if (0x888e == pattrib->ether_type) {
- 		DBG_871X_LEVEL(_drv_always_, "send eapol packet\n");
- 	}
-@@ -809,7 +803,6 @@ static s32 update_attrib(struct adapter *padapter, _pkt *pkt, struct pkt_attrib
+@@ -1436,7 +1434,6 @@ s32 rtw_put_snap(u8 *data, u16 h_proto)
  
- 			if (pmlmepriv->acm_mask != 0)
- 				pattrib->priority = qos_acm(pmlmepriv->acm_mask, pattrib->priority);
+ void rtw_update_protection(struct adapter *padapter, u8 *ie, uint ie_len)
+ {
 -
- 		}
- 	}
- 
-@@ -866,7 +859,6 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
- 					rtw_secmicappend(&micdata, &pframe[16], 6);
- 				else
- 					rtw_secmicappend(&micdata, &pframe[10], 6);
--
- 			}
- 
- 			if (pattrib->qos_en)
-@@ -939,7 +931,6 @@ static s32 xmitframe_swencrypt(struct adapter *padapter, struct xmit_frame *pxmi
- 		default:
- 				break;
- 		}
--
- 	} else
- 		RT_TRACE(_module_rtl871x_xmit_c_, _drv_notice_, ("### xmitframe_hwencrypt\n"));
- 
-@@ -976,7 +967,6 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
- 
- 			if (pqospriv->qos_option)
- 				qos_option = true;
--
- 		} else if (check_fwstate(pmlmepriv,  WIFI_AP_STATE) == true) {
- 			/* to_ds = 0, fr_ds = 1; */
- 			SetFrDs(fctrl);
-@@ -1067,13 +1057,10 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
- 						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&0xfff;
- 						pattrib->ampdu_en = true;/* AGG EN */
- 					}
--
- 				}
- 			}
- 		}
--
+ 	uint	protection;
+ 	u8 *perp;
+ 	sint	 erp_len;
+@@ -1565,7 +1562,6 @@ struct xmit_buf *rtw_alloc_xmitbuf_ext(struct xmit_priv *pxmitpriv)
+ 	if (list_empty(&pfree_queue->queue)) {
+ 		pxmitbuf = NULL;
  	} else {
 -
- 	}
+ 		phead = get_list_head(pfree_queue);
  
- exit:
-@@ -1230,7 +1217,6 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit_fram
- 
- 		mem_start = (unsigned char *)RND4(addr) + hw_hdr_offset;
- 		memcpy(mem_start, pbuf_start + hw_hdr_offset, pattrib->hdrlen);
+ 		plist = get_next(phead);
+@@ -1633,7 +1629,6 @@ struct xmit_buf *rtw_alloc_xmitbuf(struct xmit_priv *pxmitpriv)
+ 	if (list_empty(&pfree_xmitbuf_queue->queue)) {
+ 		pxmitbuf = NULL;
+ 	} else {
 -
- 	}
+ 		phead = get_list_head(pfree_xmitbuf_queue);
  
- 	if (xmitframe_addmic(padapter, pxmitframe) == _FAIL) {
-@@ -1482,7 +1468,6 @@ void rtw_update_protection(struct adapter *padapter, u8 *ie, uint ie_len)
- 		}
+ 		plist = get_next(phead);
+@@ -1887,7 +1882,6 @@ void rtw_free_xmitframe_queue(struct xmit_priv *pxmitpriv, struct __queue *pfram
+ 	plist = get_next(phead);
  
- 		break;
+ 	while (phead != plist) {
 -
- 	}
- }
+ 		pxmitframe = LIST_CONTAINOR(plist, struct xmit_frame, list);
  
-@@ -1566,7 +1551,6 @@ struct xmit_frame *__rtw_alloc_cmdxmitframe(struct xmit_priv *pxmitpriv,
- 	pxmitbuf->priv_data = pcmdframe;
- 
- 	return pcmdframe;
--
- }
- 
- struct xmit_buf *rtw_alloc_xmitbuf_ext(struct xmit_priv *pxmitpriv)
-@@ -1607,7 +1591,6 @@ struct xmit_buf *rtw_alloc_xmitbuf_ext(struct xmit_priv *pxmitpriv)
- 			DBG_871X("%s pxmitbuf->sctx is not NULL\n", __func__);
- 			rtw_sctx_done_err(&pxmitbuf->sctx, RTW_SCTX_DONE_BUF_ALLOC);
- 		}
--
- 	}
- 
- 	spin_unlock_irqrestore(&pfree_queue->lock, irqL);
-@@ -1867,7 +1850,6 @@ s32 rtw_free_xmitframe(struct xmit_priv *pxmitpriv, struct xmit_frame *pxmitfram
- 	else if (pxmitframe->ext_tag == 1)
- 		queue = &pxmitpriv->free_xframe_ext_queue;
- 	else {
--
- 	}
- 
- 	spin_lock_bh(&queue->lock);
-@@ -1911,7 +1893,6 @@ void rtw_free_xmitframe_queue(struct xmit_priv *pxmitpriv, struct __queue *pfram
  		plist = get_next(plist);
- 
- 		rtw_free_xmitframe(pxmitpriv, pxmitframe);
--
- 	}
- 	spin_unlock_bh(&pframequeue->lock);
- }
-@@ -1961,7 +1942,6 @@ struct tx_servq *rtw_get_sta_pending(struct adapter *padapter, struct sta_info *
- 		*(ac) = 2;
- 		RT_TRACE(_module_rtl871x_xmit_c_, _drv_info_, ("rtw_get_sta_pending : BE\n"));
- 	break;
--
- 	}
- 
- 	return ptxservq;
-@@ -2044,7 +2024,6 @@ s32 rtw_alloc_hwxmits(struct adapter *padapter)
- 		hwxmits[3] .sta_queue = &pxmitpriv->bk_pending;
+@@ -2025,7 +2019,6 @@ s32 rtw_alloc_hwxmits(struct adapter *padapter)
  
  		hwxmits[4] .sta_queue = &pxmitpriv->be_pending;
--
  	} else if (pxmitpriv->hwxmit_entry == 4) {
- 
+-
  		hwxmits[0] .sta_queue = &pxmitpriv->vo_pending;
-@@ -2055,7 +2034,6 @@ s32 rtw_alloc_hwxmits(struct adapter *padapter)
  
- 		hwxmits[3] .sta_queue = &pxmitpriv->bk_pending;
- 	} else {
+ 		hwxmits[1] .sta_queue = &pxmitpriv->vi_pending;
+@@ -2181,7 +2174,6 @@ inline bool xmitframe_hiq_filter(struct xmit_frame *xmitframe)
+ 	struct registry_priv *registry = &adapter->registrypriv;
+ 
+ 	if (registry->hiq_filter == RTW_HIQ_FILTER_ALLOW_SPECIAL) {
 -
- 	}
+ 		struct pkt_attrib *attrib = &xmitframe->attrib;
  
- 	return _SUCCESS;
-@@ -2109,11 +2087,9 @@ u32 rtw_get_ff_hwaddr(struct xmit_frame *pxmitframe)
- 	default:
- 		addr = MGT_QUEUE_INX;
- 		break;
--
- 	}
- 
- 	return addr;
--
- }
- 
- static void do_queue_select(struct adapter	*padapter, struct pkt_attrib *pattrib)
-@@ -2294,13 +2270,11 @@ sint xmitframe_enqueue_for_sleeping_sta(struct adapter *padapter, struct xmit_fr
- 			ret = true;
- 
- 			DBG_COUNTER(padapter->tx_logs.core_tx_ap_enqueue_mcast);
--
- 		}
- 
- 		spin_unlock_bh(&psta->sleep_q.lock);
- 
- 		return ret;
--
- 	}
- 
- 	spin_lock_bh(&psta->sleep_q.lock);
-@@ -2353,13 +2327,11 @@ sint xmitframe_enqueue_for_sleeping_sta(struct adapter *padapter, struct xmit_fr
- 
- 			DBG_COUNTER(padapter->tx_logs.core_tx_ap_enqueue_ucast);
- 		}
--
- 	}
- 
- 	spin_unlock_bh(&psta->sleep_q.lock);
- 
- 	return ret;
--
- }
- 
- static void dequeue_xmitframes_to_sleeping_queue(struct adapter *padapter, struct sta_info *psta, struct __queue *pframequeue)
-@@ -2393,9 +2365,7 @@ static void dequeue_xmitframes_to_sleeping_queue(struct adapter *padapter, struc
- 			phwxmits[ac_index].accnt--;
- 		} else {
- 		}
--
- 	}
--
- }
- 
- void stop_sta_xmit(struct adapter *padapter, struct sta_info *psta)
-@@ -2499,7 +2469,6 @@ void wakeup_sta_to_xmit(struct adapter *padapter, struct sta_info *psta)
- 		pxmitframe->attrib.triggered = 1;
- 
- 		rtw_hal_xmitframe_enqueue(padapter, pxmitframe);
--
- 	}
- 
- 	if (psta->sleepq_len == 0) {
-@@ -2544,7 +2513,6 @@ void wakeup_sta_to_xmit(struct adapter *padapter, struct sta_info *psta)
- 
- 			pxmitframe->attrib.triggered = 1;
- 			rtw_hal_xmitframe_enqueue(padapter, pxmitframe);
--
- 		}
- 
- 		if (psta_bmc->sleepq_len == 0) {
-@@ -2554,7 +2522,6 @@ void wakeup_sta_to_xmit(struct adapter *padapter, struct sta_info *psta)
- 			pstapriv->tim_bitmap &= ~BIT(0);
- 			pstapriv->sta_dz_bitmap &= ~BIT(0);
- 		}
--
- 	}
- 
- _exit:
-@@ -2563,7 +2530,6 @@ void wakeup_sta_to_xmit(struct adapter *padapter, struct sta_info *psta)
- 
- 	if (update_mask)
- 		update_beacon(padapter, _TIM_IE_, NULL, true);
--
- }
- 
- void xmit_delivery_enabled_frames(struct adapter *padapter, struct sta_info *psta)
-@@ -2628,7 +2594,6 @@ void xmit_delivery_enabled_frames(struct adapter *padapter, struct sta_info *pst
- 
- 			update_beacon(padapter, _TIM_IE_, NULL, true);
- 		}
--
- 	}
- 
- 	spin_unlock_bh(&pxmitpriv->lock);
+ 		if (attrib->ether_type == 0x0806
 -- 
 2.20.1
 
