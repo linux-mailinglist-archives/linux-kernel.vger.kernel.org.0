@@ -2,156 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EAA8F8EF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 852F2F8EFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:54:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfKLLwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:52:12 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:56730 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726497AbfKLLwL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:52:11 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iUUiO-0006dl-1k; Tue, 12 Nov 2019 12:52:08 +0100
-To:     Lina Iyer <ilina@codeaurora.org>
-Subject: Re: [PATCH RFC v2 06/14] dt-bindings/interrupt-controller: pdc: add  SPI config register
-X-PHP-Originating-Script: 0:main.inc
+        id S1727049AbfKLLyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:54:35 -0500
+Received: from mail-eopbgr50063.outbound.protection.outlook.com ([40.107.5.63]:37646
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725944AbfKLLye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 06:54:34 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ek6b3FrbMMUGcyqUsEOINVO8n39Pmk1wtXEj5DNmImH7I8UVSJh/a6veq/N29Ha7JOe3XPHJ/e6O8Ks7ZtN9SSLSvufWSXj94TFRBoW2HHnOUhpBBr+hoz0zLq/L0b1Qe3wIlVObHEMe1pPrvxlSikZYhXwq/E3li4s5SK++KMPjs4LbV8loRTITpa5Ooq7YKEimzYq7EflpCs1Y5lwXbg1jjEgQZQ5rzgjcXPw7450vRmPXsM4TwhMj71LtPywlPAdbIhWERRO2MXGt68WVX1cOMjY5kd58H7fTKVZeM4NMsIZ9c5Ju5J3KDjBizgQ55XcbB/udb4K9gdsnCzwmNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d0Mt33xgDYurS+RDwYYN0lTH3c6whVl9nYUGFZdMsJU=;
+ b=GQMSqlQ7gG+jBQU2j+DlD2bzfiyktYSosDPypX05uDQDUSf+B+iKl8uwShfvJ0hhZCDj5kZjGy1lBc8LzXY2NUsc5BxYqoVDMQMd7+FMFInskJhWPxjDq/7msiDLP3ynAfLrtRnLnbNetLj+kau2T9sg6/O0vJp0VdJIn7fuhPqwMflFhlGBMdwj48A14Qz+tgxaS5YPj+FGYdBi9egsy0AQUxK+q4RoLeGURXmm4vh6twJMeIjA8L/jFSBgvoBFbnwiO1xrHdMCYvwY3XZD2u6uZw9xY2NEJj4J+6PSRgIfkDGJroyrU4yOAuGR3r9v6/BfScn+Hd/quVCtc2TSVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d0Mt33xgDYurS+RDwYYN0lTH3c6whVl9nYUGFZdMsJU=;
+ b=ncMGBTDHTh4Kl/p3QTffj0TEXHDmIbC79lKEIq46vAkIx5ia5z477vlIMPlycEh1xu58LHhbBKYfZHoBIyA1OsRJ7YJxXY+ShwfCvzakJ4/E6HLuAdnU2tIGAliscW3M0WDOR+pH8AjeqvB84RWFY6yZD03sxY4d/SUvbuE50EY=
+Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
+ VI1PR04MB4368.eurprd04.prod.outlook.com (52.134.123.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.24; Tue, 12 Nov 2019 11:54:29 +0000
+Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
+ ([fe80::9470:d3aa:b0e0:9a9b]) by VI1PR04MB4880.eurprd04.prod.outlook.com
+ ([fe80::9470:d3aa:b0e0:9a9b%6]) with mapi id 15.20.2430.027; Tue, 12 Nov 2019
+ 11:54:29 +0000
+From:   Claudiu Manoil <claudiu.manoil@nxp.com>
+To:     Po Liu <po.liu@nxp.com>, Simon Horman <simon.horman@netronome.com>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+Subject: RE: [EXT] Re: [net-next, 1/2] enetc: Configure the Time-Aware
+ Scheduler via tc-taprio offload
+Thread-Topic: [EXT] Re: [net-next, 1/2] enetc: Configure the Time-Aware
+ Scheduler via tc-taprio offload
+Thread-Index: AQHVmEpHUNIqbyQIWEm27TZfncKzVKeHSiOAgAABIzCAAB79sA==
+Date:   Tue, 12 Nov 2019 11:54:29 +0000
+Message-ID: <VI1PR04MB4880B514857A147B2634B27896770@VI1PR04MB4880.eurprd04.prod.outlook.com>
+References: <20191111042715.13444-1-Po.Liu@nxp.com>
+ <20191112094128.mbfil74gfdnkxigh@netronome.com>
+ <VE1PR04MB6496CE5A0DA25D7AF9FD666492770@VE1PR04MB6496.eurprd04.prod.outlook.com>
+In-Reply-To: <VE1PR04MB6496CE5A0DA25D7AF9FD666492770@VE1PR04MB6496.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=claudiu.manoil@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ea117073-a747-4ba5-7240-08d76767132e
+x-ms-traffictypediagnostic: VI1PR04MB4368:|VI1PR04MB4368:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB43688BB16266C86599ADF2E696770@VI1PR04MB4368.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 021975AE46
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(366004)(396003)(39860400002)(346002)(189003)(199004)(13464003)(52536014)(476003)(9686003)(446003)(4744005)(33656002)(66066001)(6506007)(66476007)(66556008)(66446008)(55016002)(76116006)(64756008)(76176011)(66946007)(7696005)(5660300002)(186003)(229853002)(11346002)(102836004)(110136005)(6116002)(6436002)(3846002)(99286004)(25786009)(256004)(26005)(8936002)(14454004)(54906003)(6246003)(44832011)(2906002)(478600001)(8676002)(7736002)(4326008)(305945005)(486006)(71200400001)(74316002)(71190400001)(81156014)(81166006)(86362001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4368;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: hH3bCLrBfLK3Sj+ctNb3u3Ebsy2ki+b4h5opNZi/HSmLmJzDuoZVn4LYdNOOhn1cagjJJNKBlKzpAanBeJq3idQhtMFOsrF3XW4OvyDCCVzmQo61DHV8rop8gQ/MgVuZO+VKJhYs+B/A5P7lmHyiQqNanHeGTFIj9EWI0ocjnQCJmFnL6VhZ5NxEceeqctXZbF2zCuNvtFCjt/xJndp1c21c4QTdPExKOXbJGY7g0ZWsXERFk3gYOzqzIOZhst7C7m+dYC+nyeqoLz3cTkjfjTLNiQhqlJ+FoP+hXGgnFt5eKPguTlSVqi+533fn6fiU4Y8AysWxUhMFVISGW0j/9OSx52dA4CPY8qEsggRlvnPXqpLeAyfvBdoLq21mKDUVFVMte2eid6DN+LxiYtbDyz3/t+kAJprHMFxu67XQHqaFUbSckF9wvYEcTN0mNPW5
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Nov 2019 13:01:28 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>, <evgreen@chromium.org>,
-        <linus.walleij@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <bjorn.andersson@linaro.org>,
-        <mkshah@codeaurora.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-In-Reply-To: <20191111183738.GJ16900@codeaurora.org>
-References: <1568411962-1022-1-git-send-email-ilina@codeaurora.org>
- <1568411962-1022-7-git-send-email-ilina@codeaurora.org>
- <5d92829e.1c69fb81.d860a.9096@mx.google.com>
- <5da6b849.1c69fb81.a9b04.1b9f@mx.google.com>
- <20191105205832.GE16900@codeaurora.org>
- <5dc219a0.1c69fb81.f5014.42d2@mx.google.com>
- <20191111183738.GJ16900@codeaurora.org>
-Message-ID: <1fa974e73d2b4871d84501cffc4ef8d3@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: ilina@codeaurora.org, swboyd@chromium.org, evgreen@chromium.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org, mkshah@codeaurora.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea117073-a747-4ba5-7240-08d76767132e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2019 11:54:29.6238
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: g1yljqyy37Yf1rwOqM6dB3e4RJuFMBawURldxvTilbmfSTB3PJcMRf3U/iUZq3x5qTO4HUBy1CQwUJ0qzPzwig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4368
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-11 19:46, Lina Iyer wrote:
-> On Tue, Nov 05 2019 at 17:53 -0700, Stephen Boyd wrote:
->>Quoting Lina Iyer (2019-11-05 12:58:32)
->>> On Tue, Oct 15 2019 at 00:27 -0600, Stephen Boyd wrote:
->>> >
->>> >I had another idea the other day. Maybe a better approach would be 
->>> to
->>> >make the mailbox or SCM code an interrupt controller with the
->>> >appropriate functions to poke the bits necessary to make the 
->>> interrupts
->>> >work. Then we can make it a chip in the hierarchy between the GIC 
->>> and
->>> >PDC and make the interrupts call through from PDC to GIC. The 
->>> locking
->>> >could be handled in each respective driver if necessary, and 
->>> otherwise
->>> >we don't have to use a regmap or remap the same registers (except 
->>> we may
->>> >need to describe if the parent is the mailbox node or the scm 
->>> fimware
->>> >node).
->>> >
->>> Wouldn't that be a stretch to image the SCM register write  or a 
->>> random
->>> register write as an interrupt controller? But I agree that it 
->>> solves
->>> the issue of determining whether we want to use SCM or regmap.
+>-----Original Message-----
+>From: Po Liu <po.liu@nxp.com>
+[...]
+>> -----Original Message-----
+>> From: Simon Horman <simon.horman@netronome.com>
+[...]
+>> > +/* class 5, command 0 */
+>> > +struct tgs_gcl_conf {
+>> > +     u8      atc;    /* init gate value */
+>> > +     u8      res[7];
+>> > +     union {
+>> > +             struct {
+>> > +                     u8      res1[4];
+>> > +                     __le16  acl_len;
 >>
->>As far as I can tell it's similar to PDC which is basically a gate on
->>the line from a dedicated chip pad or a GPIO pad that lets the 
->> interrupt
->>flow through to the GIC or not. Isn't this yet another hardware block 
->> on
->>those paths that control the edge type or something?
->>
->>>
->>> But, we would still need to add syscon to the mailbox and then 
->>> regmap
->>> the registers for the interrupt contoller.
->>
->>I'm saying that we can make the mailbox driver an interrupt 
->> controller
->>driver too. Or if that doesn't work, we can map the region twice in 
->> each
->>driver with ioremap and cross fingers that they don't touch the same
->>register at the same time. It sounds like that is the case. We won't 
->> be
->>able to fancily reserve the register region and map it in one 
->> function
->>call, but maybe that can be fixed by limiting the size or offset that 
->> is
->>reserved for each driver manually based on the same register property
->>that's described in DT. Basically, one node in DT
->>
->> mailbox@f00 {
->>   reg = <0xf00 0x1000>;
->> };
->>
->>And then each driver will ioremap() the whole register region that's
->>parsed from DT but each driver will mark sub-regions as reserved for 
->> the
->>respective driver. That way we don't have to worry about using a 
->> regmap
->>here and we'll still know what drivers are using what regions of IO 
->> in
->>/proc/iomem.
+>> Given that u* types are used in this structure I think le16 would be mor=
+e
+>> appropriate than __le16.
 >
-> Marc: What do you think of Stephen's idea? Summarizing my 
-> understanding
-> below -
+>Here keep the same code style of this .h file. I think it is better to hav=
+e
+>another patch to fix them all. Do you agree?
 >
-> We need to set an addition register for GPIOs that are routed to PDC 
-> and
-> the register may need to be written using a SCM call (SDM845) or 
-> written
-> from Linux (SDM855). The idea proposed here is -
-> Create multiple irqchips, one for each type of register access and 
-> then
-> put them in hierarchy based on the target.
->
-> SDM845:
-> TLMM  --> PDC  --> PDC-SCM-IF  --> GIC
->
-> SDM855:
-> TLMM  --> PDC  --> PDC-LNX-IF  --> GIC
->
-> The hierarchy would be explicit from the DT. So we would not have to
-> worry about figuring out using a property in DT or resource name. 
-> (May
-> be we can use a compatible instead?). The use of reserved_resource(),
-> suggested by Stephen, would help avoid other drivers writing to this
-> register which is part of a generic dump area for one-off registers.
 
-That seems sensible: the two SoCs use different implementations of
-their GPIO configurations (at least apparently, I'm pretty sure it
-is the same HW underneath), and it makes sense to abstract that
-as separate entities.
+I don't see why "le16" would be more appropriate than "__le16" in this cont=
+ext.
+The "__leXX" types are widely used in kernel drivers and not only, to annot=
+ate the
+endianess of the hardware.  These are generic types defined din "include/ua=
+pi/linux/types.h".
+Whereas "leXX" are defined in "fs/ntfs/types.h", and there's no usage of th=
+ese types
+in other h/w device drivers (I didn't find any).  Am I missing anything?
 
-As for the DT binding, use whatever makes sense for you (compatible
-seems a reasonable choice).
-
-Thanks,
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+-Claudiu
