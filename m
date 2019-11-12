@@ -2,259 +2,363 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75483F9A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE92CF99FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:45:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfKLTqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 14:46:44 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:46794 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbfKLTqo (ORCPT
+        id S1727022AbfKLTpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 14:45:45 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39827 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfKLTpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 14:46:44 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACJhklK115803;
-        Tue, 12 Nov 2019 19:46:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=iYfsnOPGSPdFq36cdWc+p+2LpkzYpeJ+UjaV8bg+O4k=;
- b=A5kR4+fnkczbU5YPXW9pIFSZb12NjPrPoIJqpvLxe8NHZ7AyWdFXPBXWBZwrjOMc+U10
- 11ejJoWqh7jtzVM9tvEQiQVeVyHCKnMjmdYD6S3IAD6BffSlgoWHVL4t9DbXrU0Uk5ON
- TrRi5ZDZgR/EFNgW2q6Ki2lC4Brc2muXp21QRixDsBA/pswx0rt4CJMTgQcCE+iU6V2x
- Thrr+Pqh4I/MgUOPPv7xYEojBaXlkUNJNVlEy0XuUw0eRmdte9rV7rtcrHe76ygRro+4
- lhO2bmaJe4y7sw4/bMoccvDuVFdrkMqmMP9vKzKe24HxDIdGUYz9YEMGdwQlLfrtgpLq pg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2w5p3qq435-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 19:46:13 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACJcmJO041897;
-        Tue, 12 Nov 2019 19:46:12 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2w7vpmurtm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 19:46:12 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xACJkAFR008824;
-        Tue, 12 Nov 2019 19:46:10 GMT
-Received: from monkey.oracle.com (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Nov 2019 11:46:10 -0800
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Jason Gunthorpe <jgg@ziepe.ca>, kbuild@lists.01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH 2/2] hugetlbfs: convert macros to static inline, fix sparse warning
-Date:   Tue, 12 Nov 2019 11:45:58 -0800
-Message-Id: <20191112194558.139389-3-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191112194558.139389-1-mike.kravetz@oracle.com>
-References: <20191112194558.139389-1-mike.kravetz@oracle.com>
+        Tue, 12 Nov 2019 14:45:45 -0500
+Received: by mail-oi1-f196.google.com with SMTP id v138so15949676oif.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 11:45:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aT8mlE5QKLBKzwtpRTeEBBrUs4C8xdANZDGBqdRq3Ec=;
+        b=o+YyU3q/7tS3hSUL3qhMWK8gHir34a4yLqHbcFe0Gj2ESVOO8nukuBj2haOH/7Qj6y
+         3kWdjZYOHpEqUSMGFC5x3ZsfJ+SXfSgJdc3F4Qa7fPA66bBJvGoxri6/eEL8wpz8oosp
+         uScKBkCRbEYbVWRf35NaROo2aBThK3DmWxWnsEUnJxim9T10KsO60RrOCpKMEjNuUTmk
+         ZuhE4t9cEOFQQ2COssjYllC3+HQAAJARQtV3Ta+VVI6CMTOjWm3qnTB+6QB0bwWZ+6e6
+         DZYbUVts9hMFDOuw/s7X8REfl+EeABbTsQvlGmtbxgXAgL1pQxlPftYHyrgEDGTVEMA/
+         82Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aT8mlE5QKLBKzwtpRTeEBBrUs4C8xdANZDGBqdRq3Ec=;
+        b=EoT8HBEh+1XTgIAQDGgxiW1jgNzT+CvHcl+DMtVyi4YzazkmVeT3hr/b/X5dfSaFcV
+         J1F6TrLSxg8Sm82+EyrvG4itTH6b58M59U7dhnywJv307Q3fVigRhvpIrIyOUzPka3pD
+         zkhsGxEWOCRsdl8CvX0dStUDKSia6tWrqofcNcFSiKQlP1AYqGN+AnsSG0L1aw+NE75Z
+         q//hHPrmfGyjQiEnGC+uNlxVUK5z0Q70T5S8lwajjbFcsgp3hTNpznG29Nl97cV+jife
+         qwo5+RyGxV7qtyYCso5CdfXPJ8yO73dFpBKugm9DBAUp6w7Y3D+ByK/RBjUySJQmyEHp
+         7tmQ==
+X-Gm-Message-State: APjAAAU7ynBJk+Wx1yRfMl8+d5P5UvClTATIDeGJ6HbEr04OBdEOmBua
+        jbA5YMVp+FF7zPBFTTLt7mLunz7LZt84jO8CLDo=
+X-Google-Smtp-Source: APXvYqyRPDBQNhx456qORWcHwmKAtqvKzYgiTN6/NkEw8HgUh8m9K6PNHJvchs1ngl1qmIajDdIjjqNuiOCDWrTUSD8=
+X-Received: by 2002:aca:4945:: with SMTP id w66mr625898oia.98.1573587942600;
+ Tue, 12 Nov 2019 11:45:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=774
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911120166
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=844 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911120167
+References: <20190907174833.19957-1-katsuhiro@katsuster.net>
+ <CA+E=qVdvKxzFcU-09Ucn1Fr0FdkwSsPcLr8vPn2wsu6-DD1gqg@mail.gmail.com>
+ <abc648cc-0b5d-b407-b74b-639833ba196b@katsuster.net> <CA+E=qVdy-wqmR+XOms5S2zMp+B0vM7Dj_fk9N=08-1WjfKDm0Q@mail.gmail.com>
+ <CA+E=qVdLzHbNTemMSmhA=-0dsNumQZJhjE-EnXBDu+j7sXTnVw@mail.gmail.com>
+ <81666aeb-f3d0-e653-6597-0711a05f9b8d@katsuster.net> <CA+E=qVcgs=2T_9axUCJwTKgmKhjsJJ9mUfvYJbyjg59rGGjcTg@mail.gmail.com>
+ <CA+E=qVe5QmJ8-zSbKj23mb-GksjD+qN=aFaCT7OGUYPYc9Y_ow@mail.gmail.com> <1ecd115a-1d33-020d-4a09-6fc451588920@katsuster.net>
+In-Reply-To: <1ecd115a-1d33-020d-4a09-6fc451588920@katsuster.net>
+From:   Vasily Khoruzhick <anarsoul@gmail.com>
+Date:   Tue, 12 Nov 2019 11:46:07 -0800
+Message-ID: <CA+E=qVcXcUJCa86ru+0=wwY7_3GFLJaGQtLeZ1wVZZqqG4-KrA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: add analog audio nodes on rk3399-rockpro64
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-huge_pte_offset() produced a sparse warning due to an improper
-return type when the kernel was built with !CONFIG_HUGETLB_PAGE.
-Fix the bad type and also convert all the macros in this block
-to static inline wrappers.  Two existing wrappers in this block
-had lines in excess of 80 columns so clean those up as well.
+On Tue, Nov 12, 2019 at 10:34 AM Katsuhiro Suzuki
+<katsuhiro@katsuster.net> wrote:
+>
+> On 2019/11/12 14:49, Vasily Khoruzhick wrote:
+> > On Mon, Nov 11, 2019 at 9:43 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+> >>
+> >> On Mon, Nov 11, 2019 at 9:34 PM Katsuhiro Suzuki
+> >> <katsuhiro@katsuster.net> wrote:
+> >>>
+> >>> Hello Vasily,
+> >>>
+> >>> Thank you for valuable information.
+> >>>
+> >>> On 2019/11/12 4:25, Vasily Khoruzhick wrote:
+> >>>> On Sun, Nov 10, 2019 at 9:40 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+> >>>>>
+> >>>>> On Sun, Nov 10, 2019 at 7:30 PM Katsuhiro Suzuki
+> >>>>> <katsuhiro@katsuster.net> wrote:
+> >>>>>>
+> >>>>>> Hello Vasily,
+> >>>>>
+> >>>>> Hi Katsuhiro,
+> >>>>>
+> >>>>> Thanks for response!
+> >>>>
+> >>>> Looks like on my board codec sits at address 0x10, and according to
+> >>>> schematics that's what its address is supposed to be.
+> >>>>
+> >>>> See http://files.pine64.org/doc/rockpro64/rockpro64_v21-SCH.pdf
+> >>>>
+> >>>> Codec address is selected by pin CE of ES8316, and on rockpro64 it
+> >>>> goes to GND through R226. So address should be 0x10.
+> >>>>
+> >>>
+> >>> Yes, I agree. The schematics both v2.0 and v2.1 say that ES8316
+> >>> address is 0x10. Thank you for pointing.
+> >>>
+> >>> But I wonder that my RockPro64 behavior is strange, he is in address
+> >>> 0x11. (R226 on my board is broken...??)
+> >>>
+> >>> root@rockpro64:~# i2cdetect 1
+> >>> WARNING! This program can confuse your I2C bus, cause data loss and worse!
+> >>> I will probe file /dev/i2c-1.
+> >>> I will probe address range 0x03-0x77.
+> >>> Continue? [Y/n] y
+> >>>        0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+> >>> 00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+> >>> 10: -- UU -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> >>> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> >>> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> >>> 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> >>> 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> >>> 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> >>> 70: -- -- -- -- -- -- -- --
+> >>>
+> >>> I plan to check R226 resistance value to judge R226 is broken or not
+> >>> after return to home. And share the result with you.
+> >>> Please give me a time.
+> >>
+> >> Thanks for confirming that on your board it's on address 0x11. I
+> >> checked with some other rockpro64 owners and they have it on 0x10, but
+> >> looks like we have boards with codec on different address in the wild.
+> >
+> > Another datapoint is that my board is 2.0. If yours is 2.1 it can be a
+> > difference between 2.0 and 2.1.
+> >
+>
+> I'm using v2.1 board.
+>
+>
+> I'll share the checking result. It's a little strange.
+>
+> 1) Voltage of CE pin of ES8316
+>
+> It is 1.8V when booting linux-next kernel.
+>
+>
+> 2) My board
+>
+> I can't find no crack nor broken parts on my board.
+>
+>
+> 2) R225, R226
+>
+> As you know, RockPro64 board has no silk print so we cannot know
+> perfectly which resistance is R226. So this is my assumption.
+>
+>         PCIe, SD card slot
+>            (top)
+> LAN (left)ES8316(right) USB, reset button
+>
+> On the left space of ES8316 there is no resistance, only a pattern.
+> This is maybe R225. And 10K resistance on the right side of a
+> pattern. I assume this is R226.
+>
+> If my assumption is correctly, board implementation and schematics
+> are different.
+>
+> schematics of v2.1 gets something wrong...??
 
-No functional change.
+Guess we need few more RockPro64 v2.1 owners to confirm that it's
+indeed the case.
 
-Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- include/linux/hugetlb.h | 137 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 115 insertions(+), 22 deletions(-)
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 53fc34f930d0..ef412fe0be3d 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -164,38 +164,130 @@ static inline void adjust_range_if_pmd_sharing_possible(
- {
- }
- 
--#define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
--#define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
--#define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
-+static inline long follow_hugetlb_page(struct mm_struct *mm,
-+			struct vm_area_struct *vma, struct page **pages,
-+			struct vm_area_struct **vmas, unsigned long *position,
-+			unsigned long *nr_pages, long i, unsigned int flags,
-+			int *nonblocking)
-+{
-+	BUG();
-+	return 0;
-+}
-+
-+static inline struct page *follow_huge_addr(struct mm_struct *mm,
-+					unsigned long address, int write)
-+{
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static inline int copy_hugetlb_page_range(struct mm_struct *dst,
-+			struct mm_struct *src, struct vm_area_struct *vma)
-+{
-+	BUG();
-+	return 0;
-+}
-+
- static inline void hugetlb_report_meminfo(struct seq_file *m)
- {
- }
--#define hugetlb_report_node_meminfo(n, buf)	0
-+
-+static inline int hugetlb_report_node_meminfo(int nid, char *buf)
-+{
-+	return 0;
-+}
-+
- static inline void hugetlb_show_meminfo(void)
- {
- }
--#define follow_huge_pd(vma, addr, hpd, flags, pdshift) NULL
--#define follow_huge_pmd(mm, addr, pmd, flags)	NULL
--#define follow_huge_pud(mm, addr, pud, flags)	NULL
--#define follow_huge_pgd(mm, addr, pgd, flags)	NULL
--#define prepare_hugepage_range(file, addr, len)	(-EINVAL)
--#define pmd_huge(x)	0
--#define pud_huge(x)	0
--#define is_hugepage_only_range(mm, addr, len)	0
--#define hugetlb_free_pgd_range(tlb, addr, end, floor, ceiling) ({BUG(); 0; })
--#define hugetlb_mcopy_atomic_pte(dst_mm, dst_pte, dst_vma, dst_addr, \
--				src_addr, pagep)	({ BUG(); 0; })
--#define huge_pte_offset(mm, address, sz)	0
-+
-+static inline struct page *follow_huge_pd(struct vm_area_struct *vma,
-+				unsigned long address, hugepd_t hpd, int flags,
-+				int pdshift)
-+{
-+	return NULL;
-+}
-+
-+static inline struct page *follow_huge_pmd(struct mm_struct *mm,
-+				unsigned long address, pmd_t *pmd, int flags)
-+{
-+	return NULL;
-+}
-+
-+static inline struct page *follow_huge_pud(struct mm_struct *mm,
-+				unsigned long address, pud_t *pud, int flags)
-+{
-+	return NULL;
-+}
-+
-+static inline struct page *follow_huge_pgd(struct mm_struct *mm,
-+				unsigned long address, pgd_t *pgd, int flags)
-+{
-+	return NULL;
-+}
-+
-+static inline int prepare_hugepage_range(struct file *file,
-+				unsigned long addr, unsigned long len)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int pmd_huge(pmd_t pmd)
-+{
-+	return 0;
-+}
-+
-+static inline int pud_huge(pud_t pud)
-+{
-+	return 0;
-+}
-+
-+static inline int is_hugepage_only_range(struct mm_struct *mm,
-+					unsigned long addr, unsigned long len)
-+{
-+	return 0;
-+}
-+
-+static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
-+				unsigned long addr, unsigned long end,
-+				unsigned long floor, unsigned long ceiling)
-+{
-+	BUG();
-+}
-+
-+static inline int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
-+						pte_t *dst_pte,
-+						struct vm_area_struct *dst_vma,
-+						unsigned long dst_addr,
-+						unsigned long src_addr,
-+						struct page **pagep)
-+{
-+	BUG();
-+	return 0;
-+}
-+
-+static inline pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr,
-+					unsigned long sz)
-+{
-+	return NULL;
-+}
- 
- static inline bool isolate_huge_page(struct page *page, struct list_head *list)
- {
- 	return false;
- }
--#define putback_active_hugepage(p)	do {} while (0)
--#define move_hugetlb_state(old, new, reason)	do {} while (0)
- 
--static inline unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
--		unsigned long address, unsigned long end, pgprot_t newprot)
-+static inline void putback_active_hugepage(struct page *page)
-+{
-+}
-+
-+static inline void move_hugetlb_state(struct page *oldpage,
-+					struct page *newpage, int reason)
-+{
-+}
-+
-+static inline unsigned long hugetlb_change_protection(
-+			struct vm_area_struct *vma, unsigned long address,
-+			unsigned long end, pgprot_t newprot)
- {
- 	return 0;
- }
-@@ -213,9 +305,10 @@ static inline void __unmap_hugepage_range(struct mmu_gather *tlb,
- {
- 	BUG();
- }
-+
- static inline vm_fault_t hugetlb_fault(struct mm_struct *mm,
--				struct vm_area_struct *vma, unsigned long address,
--				unsigned int flags)
-+			struct vm_area_struct *vma, unsigned long address,
-+			unsigned int flags)
- {
- 	BUG();
- 	return 0;
--- 
-2.23.0
-
+>
+> >>> Best Regards,
+> >>> Katsuhiro Suzuki
+> >>>
+> >>>
+> >>>>>> Thank you for reporting.
+> >>>>>>
+> >>>>>> On 2019/11/11 9:17, Vasily Khoruzhick wrote:
+> >>>>>>> On Sat, Sep 7, 2019 at 10:48 AM Katsuhiro Suzuki
+> >>>>>>> <katsuhiro@katsuster.net> wrote:
+> >>>>>>>>
+> >>>>>>>> This patch adds audio codec (Everest ES8316) and I2S audio nodes for
+> >>>>>>>> RK3399 RockPro64.
+> >>>>>>>
+> >>>>>>> Hi Katsuhiro,
+> >>>>>>>
+> >>>>>>> I tested your patch with my rockpro64 on 5.4-rc6 which has your other
+> >>>>>>> patches to es8316 driver, but apparently it doesn't work.
+> >>>>>>>
+> >>>>>>> 'alsamixer' complains 'cannot load mixer controls: No such device or
+> >>>>>>> address' and if I try to play audio with mpg123 it pretends that it
+> >>>>>>> plays something but there's no sound.
+> >>>>>>>
+> >>>>>>> Any idea what can be wrong?
+> >>>>>>>
+> >>>>>>
+> >>>>>> Do you use defconfig? If so I guess we need turn on more configs:
+> >>>>>>
+> >>>>>> - simple-graph-card driver (CONFIG_SND_AUDIO_GRAPH_CARD)
+> >>>>>> - ES8316 (SND_SOC_ES8316)
+> >>>>>
+> >>>>> I have these enabled, card is present in /proc/asound/cards, but
+> >>>>> alsamixer doesn't work with it.
+> >>>>>
+> >>>>>> FYI) ASoC related status or logs in my environment as follows:
+> >>>>>>
+> >>>>>> root@rockpro64:~# uname -a
+> >>>>>> Linux rockpro64 5.4.0-rc6-next-20191108 #169 SMP PREEMPT Mon Nov 11 12:21:44 JST 2019 aarch64 GNU/Linux
+> >>>>>
+> >>>>> I'm running 5.4.0-rc6  (commit
+> >>>>> 00aff6836241ae5654895dcea10e6d4fc5878ca6) with your patch "arm64: dts:
+> >>>>> rockchip: add analog audio nodes on rk3399-rockpro64" on top of it.
+> >>>>>
+> >>>>>> root@rockpro64:~# dmesg | grep -i asoc
+> >>>>>> [   21.509903] asoc-simple-card hdmi-sound: i2s-hifi <-> ff8a0000.i2s mapping ok
+> >>>>>> [   21.510550] asoc-simple-card hdmi-sound: ASoC: no DMI vendor name!
+> >>>>>> [   21.567906] asoc-audio-graph-card sound: ES8316 HiFi <-> ff890000.i2s mapping ok
+> >>>>>> [   21.568565] asoc-audio-graph-card sound: ASoC: no DMI vendor name!
+> >>>>>
+> >>>>> Similar here:
+> >>>>>
+> >>>>> [vasilykh@rockpro64 ~]$ dmesg | grep -i asoc
+> >>>>> [   15.627685] asoc-audio-graph-card sound: ES8316 HiFi <->
+> >>>>> ff890000.i2s mapping ok
+> >>>>> [   16.250196] asoc-simple-card hdmi-sound: i2s-hifi <-> ff8a0000.i2s mapping ok
+> >>>>>
+> >>>>>> root@rockpro64:~# cat /proc/asound/pcm
+> >>>>>> 00-00: ff8a0000.i2s-i2s-hifi i2s-hifi-0 : ff8a0000.i2s-i2s-hifi i2s-hifi-0 : playback 1
+> >>>>>> 01-00: ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : playback 1 : capture 1
+> >>>>>
+> >>>>> Same here:
+> >>>>>
+> >>>>> [vasilykh@rockpro64 ~]$ cat /proc/asound/pcm
+> >>>>> 00-00: ff890000.i2s-ES8316 HiFi ES8316 HiFi-0 : ff890000.i2s-ES8316
+> >>>>> HiFi ES8316 HiFi-0 : playback 1 : capture 1
+> >>>>> 01-00: ff8a0000.i2s-i2s-hifi i2s-hifi-0 : ff8a0000.i2s-i2s-hifi
+> >>>>> i2s-hifi-0 : playback
+> >>>>>
+> >>>>>> root@rockpro64:~# cat /sys/kernel/debug/asoc/components
+> >>>>>> hdmi-audio-codec.3.auto
+> >>>>>> ff8a0000.i2s
+> >>>>>> ff8a0000.i2s
+> >>>>>> ff890000.i2s
+> >>>>>> ff890000.i2s
+> >>>>>> ff880000.i2s
+> >>>>>> ff880000.i2s
+> >>>>>> es8316.1-0011
+> >>>>>> snd-soc-dummy
+> >>>>>> snd-soc-dummy
+> >>>>>
+> >>>>> Same here.
+> >>>>>
+> >>>>>> root@rockpro64:~# cat /sys/kernel/debug/asoc/dais
+> >>>>>> i2s-hifi
+> >>>>>> ff8a0000.i2s
+> >>>>>> ff890000.i2s
+> >>>>>> ff880000.i2s
+> >>>>>> ES8316 HiFi
+> >>>>>> snd-soc-dummy-dai
+> >>>>>
+> >>>>> Same here.
+> >>>>>
+> >>>>> Yet alsamixer doesn't work for me. It terminates with 'cannot load
+> >>>>> mixer controls: No such device or address'. Strace shows that fails
+> >>>>> here:
+> >>>>>
+> >>>>> openat(AT_FDCWD, "/dev/snd/controlC0", O_RDWR|O_CLOEXEC) = 3
+> >>>>> fcntl(3, F_SETFD, FD_CLOEXEC)           = 0
+> >>>>> ioctl(3, SNDRV_CTL_IOCTL_PVERSION, 0xfffffd3ad04c) = 0
+> >>>>> fcntl(3, F_GETFL)                       = 0x20002 (flags O_RDWR|O_LARGEFILE)
+> >>>>> fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK|O_LARGEFILE) = 0
+> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_LIST, 0xfffffd3ad228) = 0
+> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_LIST, 0xfffffd3ad228) = 0
+> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_INFO, 0xfffffd3ace38) = 0
+> >>>>> ioctl(3, SNDRV_CTL_IOCTL_ELEM_READ, 0xfffffd3ac160) = -1 ENXIO (No
+> >>>>> such device or address)
+> >>>>>
+> >>>>> Looks like it fails to talk to the codec?
+> >>>>>
+> >>>>> mpg123 thinks that it's playing audio, but my headphones connected to
+> >>>>> 3.5mm output are silent.
+> >>>>>
+> >>>>> Regards,
+> >>>>> Vasily
+> >>>>>
+> >>>>>
+> >>>>>> Best Regards,
+> >>>>>> Katsuhiro Suzuki
+> >>>>>>
+> >>>>>>
+> >>>>>>> Regards,
+> >>>>>>> Vasily
+> >>>>>>>
+> >>>>>>>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+> >>>>>>>> ---
+> >>>>>>>>     .../boot/dts/rockchip/rk3399-rockpro64.dts    | 28 +++++++++++++++++++
+> >>>>>>>>     1 file changed, 28 insertions(+)
+> >>>>>>>>
+> >>>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> >>>>>>>> index 0401d4ec1f45..8b1e6382b140 100644
+> >>>>>>>> --- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> >>>>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> >>>>>>>> @@ -81,6 +81,12 @@
+> >>>>>>>>                    reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+> >>>>>>>>            };
+> >>>>>>>>
+> >>>>>>>> +       sound {
+> >>>>>>>> +               compatible = "audio-graph-card";
+> >>>>>>>> +               label = "rockchip,rk3399";
+> >>>>>>>> +               dais = <&i2s1_p0>;
+> >>>>>>>> +       };
+> >>>>>>>> +
+> >>>>>>>>            vcc12v_dcin: vcc12v-dcin {
+> >>>>>>>>                    compatible = "regulator-fixed";
+> >>>>>>>>                    regulator-name = "vcc12v_dcin";
+> >>>>>>>> @@ -470,6 +476,20 @@
+> >>>>>>>>            i2c-scl-rising-time-ns = <300>;
+> >>>>>>>>            i2c-scl-falling-time-ns = <15>;
+> >>>>>>>>            status = "okay";
+> >>>>>>>> +
+> >>>>>>>> +       es8316: codec@11 {
+> >>>>>>>> +               compatible = "everest,es8316";
+> >>>>>>>> +               reg = <0x11>;
+> >>>>>>>> +               clocks = <&cru SCLK_I2S_8CH_OUT>;
+> >>>>>>>> +               clock-names = "mclk";
+> >>>>>>>> +               #sound-dai-cells = <0>;
+> >>>>>>>> +
+> >>>>>>>> +               port {
+> >>>>>>>> +                       es8316_p0_0: endpoint {
+> >>>>>>>> +                               remote-endpoint = <&i2s1_p0_0>;
+> >>>>>>>> +                       };
+> >>>>>>>> +               };
+> >>>>>>>> +       };
+> >>>>>>>>     };
+> >>>>>>>>
+> >>>>>>>>     &i2c3 {
+> >>>>>>>> @@ -505,6 +525,14 @@
+> >>>>>>>>            rockchip,playback-channels = <2>;
+> >>>>>>>>            rockchip,capture-channels = <2>;
+> >>>>>>>>            status = "okay";
+> >>>>>>>> +
+> >>>>>>>> +       i2s1_p0: port {
+> >>>>>>>> +               i2s1_p0_0: endpoint {
+> >>>>>>>> +                       dai-format = "i2s";
+> >>>>>>>> +                       mclk-fs = <256>;
+> >>>>>>>> +                       remote-endpoint = <&es8316_p0_0>;
+> >>>>>>>> +               };
+> >>>>>>>> +       };
+> >>>>>>>>     };
+> >>>>>>>>
+> >>>>>>>>     &i2s2 {
+> >>>>>>>> --
+> >>>>>>>> 2.23.0.rc1
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> _______________________________________________
+> >>>>>>>> linux-arm-kernel mailing list
+> >>>>>>>> linux-arm-kernel@lists.infradead.org
+> >>>>>>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >>>>>>>
+> >>>>>>
+> >>>>
+> >>>
+> >
+>
