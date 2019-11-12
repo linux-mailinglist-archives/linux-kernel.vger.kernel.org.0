@@ -2,111 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72265F9693
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:05:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31083F96A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:07:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfKLRFb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 12:05:31 -0500
-Received: from mga06.intel.com ([134.134.136.31]:41387 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727298AbfKLRFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 12:05:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 09:05:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,297,1569308400"; 
-   d="scan'208";a="287602412"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga001.jf.intel.com with ESMTP; 12 Nov 2019 09:05:28 -0800
-Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 12 Nov 2019 09:05:28 -0800
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.94]) by
- CRSMSX103.amr.corp.intel.com ([169.254.4.168]) with mapi id 14.03.0439.000;
- Tue, 12 Nov 2019 11:05:26 -0600
-From:   "Weiny, Ira" <ira.weiny@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
-Subject: RE: [PATCH 2/2] fs: Move swap_[de]activate to file_operations
-Thread-Topic: [PATCH 2/2] fs: Move swap_[de]activate to file_operations
-Thread-Index: AQHVmPEJn03RPDacYEWb7WKbk7sMtKeHFw8AgACtkeA=
-Date:   Tue, 12 Nov 2019 17:05:25 +0000
-Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E92BB4EBE@CRSMSX101.amr.corp.intel.com>
-References: <20191112003452.4756-1-ira.weiny@intel.com>
-        <20191112003452.4756-3-ira.weiny@intel.com>
- <20191111164320.80f814161469055b14f27045@linux-foundation.org>
-In-Reply-To: <20191111164320.80f814161469055b14f27045@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTM4NDllYjMtZWQxZS00MTQ3LWIzNzgtMTdmZmQwOTcxOGVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiN3FwcGdWcUNHd0IrWmkwYnd0YWZoTHNTTmx4OTNaaklldUZFb05tZWQ0aHJ1UlwvRktzb1RlV3JGRUNlZFBqNGMifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726983AbfKLRHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 12:07:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6214 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726896AbfKLRHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 12:07:52 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5A1FB471603A22B30AD3;
+        Wed, 13 Nov 2019 01:07:50 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 13 Nov 2019
+ 01:07:43 +0800
+Date:   Tue, 12 Nov 2019 17:07:34 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC:     <linux-mm@kvack.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>,
+        Keith Busch <keith.busch@intel.com>, <jglisse@redhat.com>,
+        <linuxarm@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
+        "Dan Williams" <dan.j.williams@intel.com>, <will@kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <guohanjun@huawei.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH V5 1/4] ACPI: Support Generic Initiator only domains
+Message-ID: <20191112170734.0000621a@huawei.com>
+In-Reply-To: <1768519.laKBN70clK@kreacher>
+References: <20191004114330.104746-1-Jonathan.Cameron@huawei.com>
+        <1895971.7mY3IlW731@kreacher>
+        <20191018134656.00000f70@huawei.com>
+        <1768519.laKBN70clK@kreacher>
+Organization: Huawei
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On Mon, 11 Nov 2019 16:34:52 -0800 ira.weiny@intel.com wrote:
-> 
-> > From: Ira Weiny <ira.weiny@intel.com>
-> >
-> > swap_activate() and swap_deactivate() have nothing to do with address
-> > spaces.  We want to eventually make the address space operations
-> > dynamic to switch inode flags on the fly.
-> 
-> What does this mean?
-> 
-> >  So to simplify this code as
-> > well as properly track these operations we move these functions to the
-> > file_operations vector.
-> >
-> > This has been tested with XFS but not NFS, f2fs, or btrfs.
-> >
-> > Also note f2fs and xfs have simple moves of their functions to
-> > facilitate compilation.  No functional changes are contained within
-> > those functions.
-> >
-> > ...
-> >
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -11002,6 +11002,8 @@ static const struct file_operations
-> > btrfs_dir_file_operations = {  #endif
-> >  	.release        = btrfs_release_file,
-> >  	.fsync		= btrfs_sync_file,
-> > +	.swap_activate	= btrfs_swap_activate,
-> > +	.swap_deactivate = btrfs_swap_deactivate,
-> >  };
-> 
-> Shouldn't this be btrfs_file_operations?
-> 
+On Thu, 7 Nov 2019 15:54:28 +0100
+"Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
 
-Shoot...  yes it should and I even thought that as I was moving it and must have still made the mistake...
+> On Friday, October 18, 2019 2:46:56 PM CET Jonathan Cameron wrote:
+> > On Fri, 18 Oct 2019 12:18:33 +0200
+> > "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+> >   
+> > > On Friday, October 4, 2019 1:43:27 PM CEST Jonathan Cameron wrote:  
+> > > > Generic Initiators are a new ACPI concept that allows for the
+> > > > description of proximity domains that contain a device which
+> > > > performs memory access (such as a network card) but neither
+> > > > host CPU nor Memory.
+> > > > 
+> > > > This patch has the parsing code and provides the infrastructure
+> > > > for an architecture to associate these new domains with their
+> > > > nearest memory processing node.
+> > > > 
+> > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>    
+> > > 
+> > > This depends on the series from Dan at:
+> > > 
+> > > https://lore.kernel.org/linux-acpi/CAPcyv4gBSX58CWH4HZ28w0_cZRzJrhgdEFHa2g8KDqyv8aFqZQ@mail.gmail.com/T/#m1acce3ae8f29f680c0d95fd1e840e703949fbc48
+> > >   
+> > Hi Rafael,
+> > 
+> > Yes. Cover letter mentions it was rebased on v4 of that series.
+> >   
+> > > AFAICS, so please respin when that one hits the Linus' tree.  
+> > 
+> > Sure, though that pushes it out another cycle and it's beginning to
+> > get a bit silly (just rebases since April).
+> > 
+> > I guess it can't be helped given the series hits several trees.  
+> 
+> I've just applied the Dan's series and I can take patch [1/4] from this one,
+> but for the [2-3/4] I'd like to get some ACKs from the arm64 and x86 people
+> respectively.
 
-Sorry, I'll update.
-Ira
+Thanks Rafael!
+
+Absolutely understood on the need for Acks.
+
+For ARM let us try a few more CCs
+
++CC Will, Lorenzo, Hanjun.
+
+Also Ingo on basis of showing a passing interest in the x86 patch
+previously.  Otherwise I think we have the x86 people most like to
+comment already cc'd.
+
+https://patchwork.kernel.org/cover/11174247/ has the full series.
+
+I'd appreciate anyone who has time taking a look at these.  The
+actual actions in the architectures are very simple, but I may well
+be missing some subtlety.
+
+> 
+> Thanks!
+> 
+Thanks,
+
+Jonathan
+
+
