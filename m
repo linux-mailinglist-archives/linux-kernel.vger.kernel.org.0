@@ -2,116 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED94F9BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 22:14:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF97F9BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 22:14:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfKLVOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 16:14:03 -0500
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:36564 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727542AbfKLVN6 (ORCPT
+        id S1727582AbfKLVO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 16:14:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:22098 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726952AbfKLVO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 16:13:58 -0500
-Received: by mail-lj1-f179.google.com with SMTP id k15so59951lja.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 13:13:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P9XIZS7SU3RS49LRENl5SM7lOZ7kZM4P3ixT/QNzhdE=;
-        b=UwY9cZA3V5T0vyNv2V661JB/VTL10yx6gFYc1xtgKQgONfocJfi8ojlq33WVjM/r+L
-         cwAON8sR7dBpJMPq9/fq/cuIi8qLzAUszVs0iJ7LDN8D1o4e199T+fOpPSZOiTetQnuj
-         Y+nhBGmk1z4MO+7U+QjWjCyy2lbljWp+V5Ag8=
+        Tue, 12 Nov 2019 16:14:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573593267;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KhaSq6F0boqwPJebWHU+vS4X8WSartUyEjWwqUHsPz4=;
+        b=BAaOFLc1TJKBdf7dJ1oce3nTXUsLtrjbBtRUCaCTtpZ6vRiNg4nSoA1Jt4sejkZaLkkv1+
+        7R5pjvRgjJzgAGcxUbugDQEoWU1M6Ezir/Y5mQHRJd7StQfoVv8pGNThDAwhIC/Wik5qh2
+        PqMZOgZK5I1z0pW66GEbdVay1hRS0w8=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-387-qNM5JECJM3W-I5r0HSksMQ-1; Tue, 12 Nov 2019 16:14:26 -0500
+Received: by mail-yb1-f198.google.com with SMTP id t33so87314ybt.20
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 13:14:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P9XIZS7SU3RS49LRENl5SM7lOZ7kZM4P3ixT/QNzhdE=;
-        b=ereqeFUnITbU36JiZzbppJI+G5C9CYwglfeAxCUf8Vrcsy9UewU0HNLZbPrrnkYF6I
-         CyaVF7k42BRImZUrQOGMGireYE9CSZeSuSlVXXcbTdyJJfepGzBe082OKl+POjffMwrO
-         w8xsZwVbubR5ZNn1zW5KLQpGSyw1xvkUKL6y+h6UyN2Og1XONhd5+VEg4E4f5rpkkBwh
-         j/NZ6T2niDgY200oVWwkCj1VtkUWtVc5yj4Vp9ecaEvEh7hAA3b0zKS1pFPHN5Eoatxa
-         L6xvEAwK8cPyq6+ToDKDZaYzbbUgFEjlq6e+Z2aEKzEQ0eOaVHV/27Wy2X4PBxEJklFy
-         aWug==
-X-Gm-Message-State: APjAAAXQg6x1e51/0EKWLQOC5zdGZBGL1kY5x7Z8E81c0d7BYz0WaEHk
-        VTdcQDgL0EWef/SzfwoyotDU4Q9C2vo=
-X-Google-Smtp-Source: APXvYqwM15OwHyxJACviqhG9NBz6lQMjqQcV5zqhN84WwOkp2rUX6EWInMTZlmYHnvJVUer+iPICxA==
-X-Received: by 2002:a2e:9dd5:: with SMTP id x21mr21593132ljj.232.1573593235300;
-        Tue, 12 Nov 2019 13:13:55 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id g23sm11525202ljn.63.2019.11.12.13.13.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2019 13:13:52 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id y23so21624ljh.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 13:13:52 -0800 (PST)
-X-Received: by 2002:a2e:22c1:: with SMTP id i184mr21906891lji.1.1573593232214;
- Tue, 12 Nov 2019 13:13:52 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=jB1CQxHZY09v+dVO/IW1sLsxw+s5h/wXvYhyMUh4nd4=;
+        b=LxZyNf5QerCxGKlvi/1Coj6/Za0VrPT7sN31J5JMQ9Qfai+TKRpEwnvLTTNoxmOo2x
+         zFGaM2YSZfa5bsou0fyX0t6H8xqlwAYj+MNF/a7qUxXNrbbecDu7mrecFYsGBIpuDsMX
+         CYe2ex5LaXEXtRTRFAbRoxJEgTrRWrmJSQUIBdUrTMstDBheKS4SFH3IFF3XI4ZK5pO6
+         pgBGAqemNHD/SxtJW55gBAX5HqtaaN6o6n3LI0YK6W8ggzcoP2XH+9LAIAwlh8m8HRIq
+         9hl4G1LIsirCOkqiEr9IJUJQPJHbO0b1Eq12eBfhINVl2ijDSKwwb1DIYcUlSMTftWux
+         A30Q==
+X-Gm-Message-State: APjAAAUY7yw0CsMv+83CdMe9bJ1+YfJXYdJ3Vgohwl1Sx8m4gBIkbW6f
+        32u7xjM5xJDyHTMFvpV0DanvNuDmRH9y/nl4gGNszBTwqD/+nhgxQbQ+Vp/Gj8RgeXGq/cB69sf
+        JMB0hQS8SczGyi2Akk7NcpuRl
+X-Received: by 2002:a81:10d4:: with SMTP id 203mr49037ywq.390.1573593265499;
+        Tue, 12 Nov 2019 13:14:25 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwEcKNvBFCa/Pi9LABko8hxEtyRnZOUme9kRE5c2iBVZmTkmYukiWzYoyB8ZRofsuIDcutGWg==
+X-Received: by 2002:a81:10d4:: with SMTP id 203mr49020ywq.390.1573593265161;
+        Tue, 12 Nov 2019 13:14:25 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id v5sm128965ywi.95.2019.11.12.13.14.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 13:14:24 -0800 (PST)
+Date:   Tue, 12 Nov 2019 14:14:23 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org,
+        Christian Bundy <christianbundy@fraction.io>
+Subject: Re: [PATCH] tpm_tis: turn on TPM before calling tpm_get_timeouts
+Message-ID: <20191112211423.vgtervfk52txgfmm@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org,
+        Christian Bundy <christianbundy@fraction.io>
+References: <20191111233418.17676-1-jsnitsel@redhat.com>
+ <20191112200328.GA11213@linux.intel.com>
+ <CALzcddtMiSzhgZv5R6xqb1Amyk7cdY4mJdYDS86KRxH4wR_EGA@mail.gmail.com>
+ <20191112202623.GB5584@ziepe.ca>
+ <CALzcddtse-4bKWaA0+ns-gVKGyQzMrYWS4n1rFpbbhKLb83z7g@mail.gmail.com>
+ <CALzcddv2aLQ1krYFeNtWNOxyF3aSD0-p3j_p3CgS2Vx-__sQPA@mail.gmail.com>
+ <20191112204623.GG5584@ziepe.ca>
 MIME-Version: 1.0
-References: <CAHk-=wjGd0Ce2xadkiErPWxVBT2mhyeZ4TKyih2sJwyE3ohdHw@mail.gmail.com>
- <Pine.LNX.4.44L0.1911121515400.1567-100000@iolanthe.rowland.org> <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Nov 2019 13:13:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg9yCKVdenys6FfcpAc9KSxVMOTT2DddVcj-Ofu1MYNhQ@mail.gmail.com>
-Message-ID: <CAHk-=wg9yCKVdenys6FfcpAc9KSxVMOTT2DddVcj-Ofu1MYNhQ@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Marco Elver <elver@google.com>, Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191112204623.GG5584@ziepe.ca>
+X-MC-Unique: qNM5JECJM3W-I5r0HSksMQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 12:58 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Tue Nov 12 19, Jason Gunthorpe wrote:
+>On Tue, Nov 12, 2019 at 01:31:09PM -0700, Jerry Snitselaar wrote:
+>> On Tue, Nov 12, 2019 at 1:28 PM Jerry Snitselaar <jsnitsel@redhat.com> w=
+rote:
+>> >
+>> > On Tue, Nov 12, 2019 at 1:26 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>> > >
+>> > > On Tue, Nov 12, 2019 at 01:23:33PM -0700, Jerry Snitselaar wrote:
+>> > > > On Tue, Nov 12, 2019 at 1:03 PM Jarkko Sakkinen
+>> > > > <jarkko.sakkinen@linux.intel.com> wrote:
+>> > > > >
+>> > > > > On Mon, Nov 11, 2019 at 04:34:18PM -0700, Jerry Snitselaar wrote=
+:
+>> > > > > > With power gating moved out of the tpm_transmit code we need
+>> > > > > > to power on the TPM prior to calling tpm_get_timeouts.
+>> > > > > >
+>> > > > > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> > > > > > Cc: Peter Huewe <peterhuewe@gmx.de>
+>> > > > > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>> > > > > > Cc: linux-kernel@vger.kernel.org
+>> > > > > > Cc: linux-stable@vger.kernel.org
+>> > > > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of t=
+pm_transmit()")
+>> > > > > > Reported-by: Christian Bundy <christianbundy@fraction.io>
+>> > > > > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>> > > > > >  drivers/char/tpm/tpm_tis_core.c | 3 ++-
+>> > > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+>> > > > > >
+>> > > > > > diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tp=
+m/tpm_tis_core.c
+>> > > > > > index 270f43acbb77..cb101cec8f8b 100644
+>> > > > > > +++ b/drivers/char/tpm/tpm_tis_core.c
+>> > > > > > @@ -974,13 +974,14 @@ int tpm_tis_core_init(struct device *dev=
+, struct tpm_tis_data *priv, int irq,
+>> > > > > >                * to make sure it works. May as well use that c=
+ommand to set the
+>> > > > > >                * proper timeouts for the driver.
+>> > > > > >                */
+>> > > > > > +             tpm_chip_start(chip);
+>> > > > > >               if (tpm_get_timeouts(chip)) {
+>> > > > > >                       dev_err(dev, "Could not get TPM timeouts=
+ and durations\n");
+>> > > > > >                       rc =3D -ENODEV;
+>> > > > > > +                     tpm_stop_chip(chip);
+>> > > > > >                       goto out_err;
+>> > > > > >               }
+>> > > > >
+>> > > > > Couldn't this call just be removed?
+>> > > > >
+>> > > > > /Jarkko
+>> > > > >
+>> > > >
+>> > > > Probably. It will eventually get called when tpm_chip_register
+>> > > > happens. I don't know what the reason was for trying it prior to t=
+he
+>> > > > irq probe.
+>> > >
+>> > > At least tis once needed the timeouts before registration because it
+>> > > was issuing TPM commands to complete its setup.
+>> > >
+>> > > If timeouts have not been set then no TPM command should be executed=
+.
+>> >
+>> > Would it function with the timeout values set at the beginning of
+>> > tpm_tis_core_init (max values)?
+>>
+>> I guess that doesn't set the duration values though
 >
-> Honestly, my preferred model would have been to just add a comment,
-> and have the reporting tool know to then just ignore it. So something
-> like
+>There is no reason to use anything but the correct timeouts, as read
+>from the device.
 >
-> +               // Benign data-race on min_flt
->                 tsk->min_flt++;
->                 perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MIN, 1, regs, address);
+>Jason
 >
-> for the case that Eric mentioned - the tool would trigger on
-> "data-race", and the rest of the comment could/should be for humans.
-> Without making the code uglier, but giving the potential for a nice
-> leghibl.e explanation instead of a completely illegible "let's
-> randomly use WRITE_ONCE() here" or something like that.
 
-Hmm. Looking at the practicality of this, it actually doesn't look
-*too* horrible.
+Should there be a check in tpm1_get_timeouts and tpm2_get_timeouts:
 
-I note that at least clang already has a "--blacklist" ability. I
-didn't find a list of complete syntax for that, and it looks like it
-might be just "whole functions" or "whole source files", but maybe the
-clang people would be willing to add "file and line ranges" to the
-blacklists?
+=09if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
+=09=09return 0;
 
-Then you could generate the blacklist with that trivial grep before
-you start the build, and -fsanitize=thread would automatically simply
-not look at those lines.
+to skip going through it again in the auto startup code if it was
+already called and set?
 
-For a simple first case, maybe the rule could be that the comment has
-to be on the line. A bit less legible for humans, but it could be
-
--               tsk->min_flt++;
-+               // Benign race min_flt - statistics only
-+               tsk->min_flt++; // data-race
-
-instead.
-
-Wouldn't that be a much better annotation than having to add code?
-
-               Linus
