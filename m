@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A084DF8DE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39DA4F8E5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:21:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfKLLSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:18:08 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33496 "EHLO
+        id S1727368AbfKLLSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:18:14 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33586 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfKLLSF (ORCPT
+        with ESMTP id S1727241AbfKLLSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:18:05 -0500
+        Tue, 12 Nov 2019 06:18:08 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUUBD-0000Ct-0N; Tue, 12 Nov 2019 12:17:51 +0100
+        id 1iUUBD-0000F5-OF; Tue, 12 Nov 2019 12:17:51 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 972C01C0084;
-        Tue, 12 Nov 2019 12:17:50 +0100 (CET)
-Date:   Tue, 12 Nov 2019 11:17:50 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6B7541C0084;
+        Tue, 12 Nov 2019 12:17:51 +0100 (CET)
+Date:   Tue, 12 Nov 2019 11:17:51 -0000
 From:   "tip-bot2 for Jin Yao" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf hist: Count the total cycles of all samples
+Subject: [tip: perf/core] perf diff: Don't use hack to skip column length calculation
 Cc:     Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
@@ -33,10 +33,10 @@ Cc:     Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191107074719.26139-4-yao.jin@linux.intel.com>
-References: <20191107074719.26139-4-yao.jin@linux.intel.com>
+In-Reply-To: <20191107074719.26139-2-yao.jin@linux.intel.com>
+References: <20191107074719.26139-2-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <157355747026.29376.2534753507000044849.tip-bot2@tip-bot2>
+Message-ID: <157355747111.29376.17426346123468487029.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,23 +52,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     7841f40aed933dd3838f8d9f2dfcf286c352b7ee
-Gitweb:        https://git.kernel.org/tip/7841f40aed933dd3838f8d9f2dfcf286c352b7ee
+Commit-ID:     0bdf181fe0e5b6f6d5764ff482d7ae4707f8986b
+Gitweb:        https://git.kernel.org/tip/0bdf181fe0e5b6f6d5764ff482d7ae4707f8986b
 Author:        Jin Yao <yao.jin@linux.intel.com>
-AuthorDate:    Thu, 07 Nov 2019 15:47:15 +08:00
+AuthorDate:    Thu, 07 Nov 2019 15:47:13 +08:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 07 Nov 2019 09:14:15 -03:00
+CommitterDate: Thu, 07 Nov 2019 09:08:03 -03:00
 
-perf hist: Count the total cycles of all samples
+perf diff: Don't use hack to skip column length calculation
 
-We can get the per sample cycles by hist__account_cycles(). It's also
-useful to know the total cycles of all samples in order to get the
-cycles coverage for a single program block in further. For example:
+Previously we use a nasty hack to skip the hists__calc_col_len for block
+since this function is not very suitable for block column length
+calculation.
 
-  coverage = per block sampled cycles / total sampled cycles
-
-This patch creates a new argument 'total_cycles' in hist__account_cycles(),
-which will be added with the cycles of each sample.
+This patch removes the hack code and add a check at the entry of
+hists__calc_col_len to skip for block case.
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 Reviewed-by: Jiri Olsa <jolsa@kernel.org>
@@ -77,106 +75,52 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jin Yao <yao.jin@intel.com>
 Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20191107074719.26139-4-yao.jin@linux.intel.com
+Link: http://lore.kernel.org/lkml/20191107074719.26139-2-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-annotate.c | 2 +-
- tools/perf/builtin-diff.c     | 3 ++-
- tools/perf/builtin-report.c   | 2 +-
- tools/perf/builtin-top.c      | 3 ++-
- tools/perf/util/hist.c        | 6 +++++-
- tools/perf/util/hist.h        | 3 ++-
- 6 files changed, 13 insertions(+), 6 deletions(-)
+ tools/perf/builtin-diff.c | 11 ++---------
+ tools/perf/util/hist.c    |  2 ++
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 8db8fc9..6ab0cc4 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -201,7 +201,7 @@ static int process_branch_callback(struct evsel *evsel,
- 	if (a.map != NULL)
- 		a.map->dso->hit = 1;
- 
--	hist__account_cycles(sample->branch_stack, al, sample, false);
-+	hist__account_cycles(sample->branch_stack, al, sample, false, NULL);
- 
- 	ret = hist_entry_iter__add(&iter, &a, PERF_MAX_STACK_DEPTH, ann);
- 	return ret;
 diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index 6728568..376dbf1 100644
+index 5281629..faf99a8 100644
 --- a/tools/perf/builtin-diff.c
 +++ b/tools/perf/builtin-diff.c
-@@ -426,7 +426,8 @@ static int diff__process_sample_event(struct perf_tool *tool,
- 			goto out_put;
- 		}
- 
--		hist__account_cycles(sample->branch_stack, &al, sample, false);
-+		hist__account_cycles(sample->branch_stack, &al, sample, false,
-+				     NULL);
+@@ -765,13 +765,6 @@ static void block_hists_match(struct hists *hists_base,
  	}
- 
- 	/*
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 3bbad03..bc15b9d 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -292,7 +292,7 @@ static int process_sample_event(struct perf_tool *tool,
- 
- 	if (ui__has_annotation() || rep->symbol_ipc) {
- 		hist__account_cycles(sample->branch_stack, &al, sample,
--				     rep->nonany_branch_mode);
-+				     rep->nonany_branch_mode, NULL);
- 	}
- 
- 	ret = hist_entry_iter__add(&iter, &al, rep->max_stack, rep);
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index d96f24c..14c52e4 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -725,7 +725,8 @@ static int hist_iter__top_callback(struct hist_entry_iter *iter,
- 		perf_top__record_precise_ip(top, he, iter->sample, evsel, al->addr);
- 
- 	hist__account_cycles(iter->sample->branch_stack, al, iter->sample,
--		     !(top->record_opts.branch_stack & PERF_SAMPLE_BRANCH_ANY));
-+		     !(top->record_opts.branch_stack & PERF_SAMPLE_BRANCH_ANY),
-+		     NULL);
- 	return 0;
  }
  
+-static int filter_cb(struct hist_entry *he, void *arg __maybe_unused)
+-{
+-	/* Skip the calculation of column length in output_resort */
+-	he->filtered = true;
+-	return 0;
+-}
+-
+ static void hists__precompute(struct hists *hists)
+ {
+ 	struct rb_root_cached *root;
+@@ -820,8 +813,8 @@ static void hists__precompute(struct hists *hists)
+ 				if (bh->valid && pair_bh->valid) {
+ 					block_hists_match(&bh->block_hists,
+ 							  &pair_bh->block_hists);
+-					hists__output_resort_cb(&pair_bh->block_hists,
+-								NULL, filter_cb);
++					hists__output_resort(&pair_bh->block_hists,
++							     NULL);
+ 				}
+ 				break;
+ 			default:
 diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index a7fa061..0e27d68 100644
+index 679a1d7..daa6eef 100644
 --- a/tools/perf/util/hist.c
 +++ b/tools/perf/util/hist.c
-@@ -2572,7 +2572,8 @@ int hists__unlink(struct hists *hists)
- }
+@@ -80,6 +80,8 @@ void hists__calc_col_len(struct hists *hists, struct hist_entry *h)
+ 	int symlen;
+ 	u16 len;
  
- void hist__account_cycles(struct branch_stack *bs, struct addr_location *al,
--			  struct perf_sample *sample, bool nonany_branch_mode)
-+			  struct perf_sample *sample, bool nonany_branch_mode,
-+			  u64 *total_cycles)
- {
- 	struct branch_info *bi;
- 
-@@ -2599,6 +2600,9 @@ void hist__account_cycles(struct branch_stack *bs, struct addr_location *al,
- 					nonany_branch_mode ? NULL : prev,
- 					bi[i].flags.cycles);
- 				prev = &bi[i].to;
-+
-+				if (total_cycles)
-+					*total_cycles += bi[i].flags.cycles;
- 			}
- 			free(bi);
- 		}
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 6a186b6..4d87c7b 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -527,7 +527,8 @@ unsigned int hists__sort_list_width(struct hists *hists);
- unsigned int hists__overhead_width(struct hists *hists);
- 
- void hist__account_cycles(struct branch_stack *bs, struct addr_location *al,
--			  struct perf_sample *sample, bool nonany_branch_mode);
-+			  struct perf_sample *sample, bool nonany_branch_mode,
-+			  u64 *total_cycles);
- 
- struct option;
- int parse_filter_percentage(const struct option *opt, const char *arg, int unset);
++	if (h->block_info)
++		return;
+ 	/*
+ 	 * +4 accounts for '[x] ' priv level info
+ 	 * +2 accounts for 0x prefix on raw addresses
