@@ -2,109 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F5F9F9D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDCDF9D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:44:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfKLWpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 17:45:20 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46669 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfKLWpT (ORCPT
+        id S1727136AbfKLWor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 17:44:47 -0500
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:43539 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbfKLWor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:45:19 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e9so237819ljp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 14:45:18 -0800 (PST)
+        Tue, 12 Nov 2019 17:44:47 -0500
+Received: by mail-pf1-f177.google.com with SMTP id 3so116740pfb.10;
+        Tue, 12 Nov 2019 14:44:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Dlzc9ZW2QK+Bf04vZsdeB35W1UEikvkDQZdvHiTdHiw=;
-        b=fSEHMQ2152EQPx9pY74DdNe3R/DLJhrZrzSt/FcS5QA0aJOwx5p1V2R4kQhGRZ7r+o
-         wru3mBbU5BmpXiTjx42QZ9jghV+5sNbfS8baupjOQZ6n25v64Xoo2M+tyzmIPFxZ1dcv
-         UGJNRwL+fDOYGUdcvBSiagvT9vYup23aTtnzkcy1uV6qlNrZKUah99IvMOSzx2JAnJWm
-         FLW27/ZAa4pjhlb/vIHR+jrqWUrBSTaXbdJUSf2BZK/hYOYf86gPFhVD2EBFVr1JX4nJ
-         wzhlzta7m/H0u6+hiZeqBUTnD3aBROdtxrhjL4+mEhpOOUzKvs53XjslZxR/Ns29QnHJ
-         QG1Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YP6HXQfqzmkkZWDyrOvnEJK7kISWvdIhSDIzf9Us7t8=;
+        b=OcrokoyIrP6/2K/P/cPaAzNyafqPVWJGbTOeNMu4v5ASYwpfwhvhkehljA61C9f6GY
+         XyNZ2lffsKCNHYu9LGAJCsSyg/Y/v8fyiKntIqItHyY9sVZLZKhGFTk+beOxYshM7iEm
+         kmA76t5UG4F43tVYAYE6rljD5L+S1BGpml/gQ51PrjrrAVUgyaQ5SQGjlixMnrfrywKz
+         Qa5Z1XIA2tqQGH2i6fYipScsVBYBMY/75ILLWSX0ggD5jDCN8h1tiYEHZ5O/7a2C3Ag+
+         Y+zjruCVPl1sNPcPKmestiVm9vRZOCaV7TJ4Pd9M9jtVWz2I211E0c3vps5vwy/4ewhL
+         ZDEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Dlzc9ZW2QK+Bf04vZsdeB35W1UEikvkDQZdvHiTdHiw=;
-        b=TNVM3+mbxD8oK/7mptQKlof3TlC0+rKQSXn/YyDxDfUSNz6qRw8dUwWMn0XHcQ4f0N
-         dZ7cLe7dQVy+Z/sW9YeCD3awBDrmx263M3RludLa2FJmIOffyrmTgSGmqrnfn2+sMTyR
-         gVvkY/yhWfijtg41gsVzfk19U7Wp71/eUFYT4JYyvo9BNLKXZMVsNQOO2C6LZ/Cyg9hM
-         Z++AkipwPDZCw+4A0eQZmm7O9YTUps4U4ikiOrIShC7Ckl+SacW8Mxr04j7z6UCakmKJ
-         dyWDjl+ZK4TEv3RphrB1j+5bH1shpzb8jKaPjbz58S+Taj3K4mmDzxHjxXTSaFNcUBXX
-         UKlw==
-X-Gm-Message-State: APjAAAXTPzqQzZtRh0tMywolvvgJJd//O9Px6e5e0T5V9W7JVGKWAAjy
-        bu4Y2Z0v7F0zqxgLsN2V/L4=
-X-Google-Smtp-Source: APXvYqyKR8f+A1blypWPTt6vPOpdDDjtrTZpb+CWB3Fb3V0DJ5Jo0xdGXqfKLevZ7X/JP0euhNYAuQ==
-X-Received: by 2002:a05:651c:1117:: with SMTP id d23mr139959ljo.90.1573598717383;
-        Tue, 12 Nov 2019 14:45:17 -0800 (PST)
-Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
-        by smtp.gmail.com with ESMTPSA id x16sm38677ljd.69.2019.11.12.14.45.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 14:45:16 -0800 (PST)
-From:   Max Filippov <jcmvbkbc@gmail.com>
-To:     linux-xtensa@linux-xtensa.org
-Cc:     Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>,
-        Petr Mladek <pmladek@suse.com>, Joe Perches <joe@perches.com>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH v3 2/2] xtensa: make stack dump size configurable
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YP6HXQfqzmkkZWDyrOvnEJK7kISWvdIhSDIzf9Us7t8=;
+        b=kaeE+CcI7yDQ/BjLslpUpzCTWsJH7WExfVaAx4WEUHE2B+TuyZEcmDueR+jpbuIX9W
+         WwO0kgchqdA2DW6BHvFMNpaRvnvFWRoTvi3zQYEToRFRC/9yCTjhz3ZrmP2rFfzu3QR3
+         YXOXKyPAQ43hP6laN9tlsg5oOUNDFDGQremkYG6x6Hq2uB/ge9k+41D9qng8kJ9+AvyU
+         +uy7ygPSmZIoXmuW8BfW92PEslX2orYIfzGoZT0G4UKZCXrZLlpFn/iEFQ7Dz973uDBz
+         J9FHgQ/S8TpkGBhzO04zydrTkcfhzy4+h4CGO3wWLG1EcfqVUdoE4fex7YZ8ZXIS7kRG
+         I4ag==
+X-Gm-Message-State: APjAAAUoUaNrBFV6pxXIzhVfa+V5nQlhruO3ms7x7YxzjCvcTV1XXl91
+        7frgGXwYiDYyGw//Pr6Th/8LLzti
+X-Google-Smtp-Source: APXvYqweYCXNIbkVwq3Q28iNQJZLxJJhGWqlAFjHUjBOAF460Nj3e6jQLicpl8NTi7QmbU6q49jY2g==
+X-Received: by 2002:a63:d851:: with SMTP id k17mr7856562pgj.161.1573598685627;
+        Tue, 12 Nov 2019 14:44:45 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:e001])
+        by smtp.gmail.com with ESMTPSA id i32sm20900pgl.73.2019.11.12.14.44.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Nov 2019 14:44:44 -0800 (PST)
 Date:   Tue, 12 Nov 2019 14:44:43 -0800
-Message-Id: <20191112224443.12267-3-jcmvbkbc@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191112224443.12267-1-jcmvbkbc@gmail.com>
-References: <20191112224443.12267-1-jcmvbkbc@gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+Message-ID: <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com>
+References: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911121639540.1567-100000@iolanthe.rowland.org>
+ <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce Kconfig symbol PRINT_STACK_DEPTH and use it to initialize
-kstack_depth_to_print.
+On Tue, Nov 12, 2019 at 02:07:03PM -0800, Eric Dumazet wrote:
+> 
+> I would prefer some kind of explicit marking, instead of a comment.
+> 
+> Even if we prefer having a sane compiler, having these clearly
+> annotated can help
+> code readability quite a lot.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
----
-Changes v2->v3:
-- split Kconfig change into separate patch
+Annotating every line where tsk->min_flt is used with a comment
+or explicit macro seems like a lot of churn.
+How about adding an attribute to a field ?
+Or an attribute to a type?
 
- arch/xtensa/Kconfig.debug  | 7 +++++++
- arch/xtensa/kernel/traps.c | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+clang attributes can be easily exteneded. We add bpf specific attributes
+that are known to clang only when 'clang -target bpf' is used.
+There could be x86 or generic attributes.
+Then one can do:
+typedef unsigned long __attribute__((ignore_data_race)) racy_u64;
+struct task_struct { 
+   racy_u64 min_flt;
+};
 
-diff --git a/arch/xtensa/Kconfig.debug b/arch/xtensa/Kconfig.debug
-index 39de98e20018..83cc8d12fa0e 100644
---- a/arch/xtensa/Kconfig.debug
-+++ b/arch/xtensa/Kconfig.debug
-@@ -31,3 +31,10 @@ config S32C1I_SELFTEST
- 	  It is easy to make wrong hardware configuration, this test should catch it early.
- 
- 	  Say 'N' on stable hardware.
-+
-+config PRINT_STACK_DEPTH
-+	int "Stack depth to print" if DEBUG_KERNEL
-+	default 64
-+	help
-+	  This option allows you to set the stack depth that the kernel
-+	  prints in stack traces.
-diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
-index be26ec6c0e0e..87bd68dd7687 100644
---- a/arch/xtensa/kernel/traps.c
-+++ b/arch/xtensa/kernel/traps.c
-@@ -495,7 +495,7 @@ void show_trace(struct task_struct *task, unsigned long *sp)
- 
- #define STACK_DUMP_ENTRY_SIZE 4
- #define STACK_DUMP_LINE_SIZE 32
--static size_t kstack_depth_to_print = 24;
-+static size_t kstack_depth_to_print = CONFIG_PRINT_STACK_DEPTH;
- 
- void show_stack(struct task_struct *task, unsigned long *sp)
- {
--- 
-2.20.1
+Hopefully less churn and clear signal to clang.
 
