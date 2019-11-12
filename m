@@ -2,76 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E641BF867F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44FCCF8684
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:39:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfKLBhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 20:37:45 -0500
-Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:36831 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726793AbfKLBho (ORCPT
+        id S1727027AbfKLBi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 20:38:57 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41305 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbfKLBi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 20:37:44 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 66AB6180A68C6;
-        Tue, 12 Nov 2019 01:37:43 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:7875:7903:10010:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:13869:14181:14659:14721:21080:21627:30005:30054:30060:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:1:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: duck48_6064df2d13208
-X-Filterd-Recvd-Size: 2216
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 12 Nov 2019 01:37:42 +0000 (UTC)
-Message-ID: <24e38dd1be9e0f6e4520cb81f72e27b88dae4015.camel@perches.com>
-Subject: Re: [GIT pull] core/urgent for v5.4-rc7
-From:   Joe Perches <joe@perches.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jiri Slaby <jslaby@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Date:   Mon, 11 Nov 2019 17:37:26 -0800
-In-Reply-To: <CAHk-=wgmeR6nJqYFZAUOxBkUTfySE_dEV7HOB0wwzQ0e-_y4dA@mail.gmail.com>
-References: <157338131323.14789.2179255265964358886.tglx@nanos.tec.linutronix.de>
-         <698b03300532f80dfbd30fa35446a33e58ae0c89.camel@perches.com>
-         <CAHk-=wiwhMFo6GFUAg3CZJMix4TJo59NBaSDciQxW23RHR8Zbg@mail.gmail.com>
-         <56f05dfb50dfc506a9cab539e522e8f80c738a4b.camel@perches.com>
-         <CAHk-=wgmeR6nJqYFZAUOxBkUTfySE_dEV7HOB0wwzQ0e-_y4dA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 11 Nov 2019 20:38:56 -0500
+Received: by mail-wr1-f67.google.com with SMTP id p4so16683636wrm.8;
+        Mon, 11 Nov 2019 17:38:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YiULEZkokgNmMrqFci3Nlwk7YUL2pDKG1OagmCeHKvI=;
+        b=dmruY7yE/dvccXk/rZHi6iA417hakL/D4k0+WlWyVHS3lG66vQGEGdLZfyfXFH3Fo/
+         xzgu3YOr1Eo7FEUm84GaDxtxo/quydotTWFBtlb/Q0ePub1uYuvz91GMaWay5v1DcjqT
+         a7hssXl5vvxYG6AylwOzUpw6F4UO+YdlAOV4ulUZIe4pCYjv9mqtzd1sV9fgmR/MQuw3
+         pS/Pkk90WHUkObOaL/7CqwjB+Ew9SOKfVxaORz0WqWjXCnIpMUAt9dg5at21AP8yUh8T
+         qzMpEnJdWFT6g2iJprBWI3xQckE5Fyj2fQlqSXKa+W8YJ7L9kcbvdG9y1Z5MCRx6OHgk
+         n/kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YiULEZkokgNmMrqFci3Nlwk7YUL2pDKG1OagmCeHKvI=;
+        b=Jq00SQJ+Q1upx/qAkAPEPJc1zcOH9dYLXZrT86kK/Fk40dNYNT1XR642RHYafXqPTU
+         BRf9n40XGc3XJ5yEqUb0LQh3F0XZ5NB1uSGdoyjQoNtrmo+/UHhmYRR6GyWFzkwnZoD+
+         io6MznA80nd+G27nRHy9HVmk3vXYafKOtmF76u4yBBOimge11eLDSWIim6kWxgyRMJ9N
+         qSvnKlE4bLWqFTVOfTMvCoMOSfbl65FR9nmRKOE4F04SD+AmhQ6lsfi1/mI6fh11NB8D
+         tZWF39hIRSlVcmkm6ZyCF4RDR73R4JDUAS17Byh9WHyY37/x8egllxPlnA1eGMtm0CTd
+         kQuw==
+X-Gm-Message-State: APjAAAX78coPjXm9I7ILn4jucVojNEqXmobEfZ7oH3dousn+BObbfNu2
+        q9fcSeDKCVGxLL+clTTrb/jsCHTY4sY/dVH1vUjIazdU
+X-Google-Smtp-Source: APXvYqxXYyG7hCRjp8kmObfGVJp0w42islnFxgov672V5SeQh1/RJn08uQQh3TQcyy85z1RrDTE69+WTJFPVDtId0sQ=
+X-Received: by 2002:adf:f547:: with SMTP id j7mr24219844wrp.69.1573522734750;
+ Mon, 11 Nov 2019 17:38:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191111090230.3402-1-chunyan.zhang@unisoc.com>
+ <20191111090230.3402-5-chunyan.zhang@unisoc.com> <20191112005600.GA9055@bogus>
+In-Reply-To: <20191112005600.GA9055@bogus>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Tue, 12 Nov 2019 09:38:18 +0800
+Message-ID: <CAAfSe-uohXXHyQ7txhPmLCpyQODDHAuxjuUVbGcwYySN6G9tNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] dt-bindings: serial: Add a new compatible string
+ for SC9863A
+To:     Rob Herring <robh@kernel.org>
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-11-11 at 09:12 -0800, Linus Torvalds wrote:
-> On Sun, Nov 10, 2019 at 5:50 PM Joe Perches <joe@perches.com> wrote:
-> > The !! logical usage is not particularly common in the kernel.
-> > There seems to be only a couple/few dozen.
-> 
-> Your grep pattern is for the explicitly silly "turn a boolean to a
-> boolean". That should certainly be rare.
-> 
-> But I meant it in a more general way - there's a lot of common use of
-> "!!" for "turn this expression into a boolean". A trivial grep for
-> that (didn't check how correct it was - there might be comments that
-> are very excited too) implies that we have a fair amount of this
-> pattern:
-> 
->     $ git grep '[^!]!![^!]' -- '*.[ch]' | wc -l
->     7007
+On Tue, 12 Nov 2019 at 08:56, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, 11 Nov 2019 17:02:29 +0800, Chunyan Zhang wrote:
+> >
+> > SC9863A use the same serial device which SC9836 uses.
+> >
+> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > ---
+> >  Documentation/devicetree/bindings/serial/sprd-uart.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+>
+> Please add Acked-by/Reviewed-by tags when posting new versions. However,
 
-Likely the majority of those are bit comparison coercions to 0/1 like
+Yes, I know.
 
-	int val = !!(A & B)
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
+>
+> If a tag was not added on purpose, please state why and what changed.
 
-> so the '!!' pattern itself isn't rare.
+The reason was that I switched to yaml rather than txt in last version
+which recieved your Acked-by.
+Not sure for this kind of case I can still add your Acked-by.
 
-And likely these !! patterns are preferred to (A & B) != 0
-
-I don't care much either way as either form, unlike !!(A == B),
-is not redundant.
-
-
+Thanks,
+Chunyan
