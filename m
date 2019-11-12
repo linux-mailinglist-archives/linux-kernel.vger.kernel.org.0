@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C79F8B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C741F8B3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:00:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfKLI7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 03:59:14 -0500
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:35767 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfKLI7O (ORCPT
+        id S1727229AbfKLJAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:00:11 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:42332 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbfKLJAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 03:59:14 -0500
-Received: by mail-ua1-f51.google.com with SMTP id s14so1075495uad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 00:59:14 -0800 (PST)
+        Tue, 12 Nov 2019 04:00:09 -0500
+Received: by mail-ua1-f67.google.com with SMTP id 31so4465290uas.9
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 01:00:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=tf2mudZCYNcbKijnx7l8kTR9ghpKz810SOwwndyzloo=;
-        b=cBi1XhD0izth7qoDufpZuhLyMbzgjKIertes3s+oTmfIQUcjyLC8nW7YvKMwUZ/Al9
-         UuIzrbTfcLHfhcS1agSm4E5e9xzV4StaELnCTzrZmFgfAUu9xlkw6reZZ6QDIR21pmkz
-         2TCmzM/P3XZfnY6UuHhqasT074EnDsb/CuuEobGXrsW1IZ1fF8KVfToYsOnG4K6dmuuC
-         THbZYKW5WoYK29Lm1OtsYJWZFCM+TzHFu9SoQQ4W/BSff3vARAm6NMYoBRME8PINAAe8
-         /BW6SN00vqrBxU3PCxxhw5KTWeIZ+Bi+hg/ePhibVioqHu6mYwP0GFedmy79HOB3a48i
-         MXcQ==
+         :cc;
+        bh=1mTS09YV5sLbGRhR8eLBR8az5kI+VEtyXkMiASWLN98=;
+        b=YOUp0Sb06dRuaudxR7t7caTwSTstbvIIdATOS4cpPVNBtB8mbaIJyxZAurEvSsKwhu
+         j6KD9pvfJYz2QJr9Wg8Lkuyx0LEC4wAwEfKx/Oti0eD8qvVCV0JQ6KoTRYOGcEDL6Qp6
+         GECThp5a8BbccT0sBfHGbUfvnicncyqsspf6ISAwZ7HYOxZ1EzbF6I5mchGssao0Hv60
+         GEltbF2Jfx1T1ZMhrqJwIHFXhSEVlYR9nWi9gL/l/q+lY7n3nZGptVdTOUwpA9LDRqBs
+         zcn8s15pCOUOXG2SlncwUP0j8Ql61wdbe1m5siOyJ50PUmu+FxdXenD9CYpRSxaO3bI8
+         rV+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=tf2mudZCYNcbKijnx7l8kTR9ghpKz810SOwwndyzloo=;
-        b=OAfMw5eqxxEJaq3Xkd1nrAPOak9vdC7AEUpmoy0UyXlKOOcswKYDcumiuyON0HvlM7
-         kcgl6xorEUjHfA2jTXh+v4rD/SgI5BPQSkJXyyFW6GxDqlvuJyF2jR/fgaVTL4O187Bz
-         PWpmN/mLxICwGAuulCXDklG5CJ8pcUIm4aic4VKZNhGjwmgeFQ/3rXJjSxh5rAfc6x3N
-         wrQrmbqfYOpUTAAbFe4hpVXSxCTX3uFPNUf5PTA4HgJubw7p4UFR2I+J884jfJcmrMEH
-         BeX9HHphiRMhSPUSB/KIipUM80Dtv8Y62rbp+Bajk9uHdNzHNd7wner7J4t1zDfEyqTl
-         ra6w==
-X-Gm-Message-State: APjAAAWvcvgEIh2t9XmxGmLudZvs4P6RLXHaigZDQaEOnEBSo+NRWBML
-        AQr42xMGveplF+HrT0FwRLkm5AAdJeO8wcEacwhAEg==
-X-Google-Smtp-Source: APXvYqxFPhWgc8iHkpTuygj7MTTUYu4BcQnzbVKGkW6JXLBaDAutQSmw9xt4FZ9zvOyXuQCGXHtYTV2Sub2XRMdS+zw=
-X-Received: by 2002:ab0:648d:: with SMTP id p13mr113924uam.129.1573549153321;
- Tue, 12 Nov 2019 00:59:13 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=1mTS09YV5sLbGRhR8eLBR8az5kI+VEtyXkMiASWLN98=;
+        b=rrJWKLaSgZe3/6DtnCfzRcZKnTMlvPaSkmAtK2I1RA964nA009BTXwv+8rh8qwndaT
+         YC9oHSoC8HjA5xnNeQiYx1czf5SdrqTcIJ2U01cVC1gJVZtljZjmma2j/KmFuiIya0rn
+         HEDzNPJi+1Y1Ru5SE8NsL/tIh2kN99nrWLRYjZwCJBiBOqBrzI93eJ5WF/526stymKDi
+         F2jp8IZ4bNhcgKdCRBtJRksvrHSp34PpsaFekmuXi9Gdxnsvzx4Tuqi93hZUfDlzv//u
+         U3YfJgzzQgLrhJqF9cuZNpqkAcNpi61I0+SMNWxZOWck8trSj5Jey2yCkB380iho1fmw
+         ok2A==
+X-Gm-Message-State: APjAAAVs0aeFGoRXPQa4Oy3OnpFoHM4Hb74+jpPiQ7ikp2SBd/bZDTXW
+        DTWQQ4dCmMkiYvB4Tqf4a68RXEfWIJ2EbHPhE9J4Pw==
+X-Google-Smtp-Source: APXvYqxabd40sALVZ8OQ7ToAPJNZ/uS9Scd5B48SraEZjMFQA9vGEPI0Qj3t3JkXgO0wuY66RFrxxze3Ex9ZHJlQsok=
+X-Received: by 2002:ab0:24ce:: with SMTP id k14mr19253276uan.15.1573549208426;
+ Tue, 12 Nov 2019 01:00:08 -0800 (PST)
 MIME-Version: 1.0
-References: <f03c978c-86de-b8bb-22c2-177d7fafed94@fivetechno.de>
- <CAPDyKFqn06LZZMXLD2o-M6A0R6KU97PFUTN=NgYnMtf=ESULTA@mail.gmail.com> <e69268d2-4a3f-3cd8-fc2e-57ae52ad337a@fivetechno.de>
-In-Reply-To: <e69268d2-4a3f-3cd8-fc2e-57ae52ad337a@fivetechno.de>
+References: <25466090-3b24-2695-10fb-88c59be3f149@fivetechno.de>
+In-Reply-To: <25466090-3b24-2695-10fb-88c59be3f149@fivetechno.de>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 12 Nov 2019 09:58:37 +0100
-Message-ID: <CAPDyKFrsQNMhDb3yh4M1EPGtftFrVmHY-pmpR7AbfrXW=xzyyg@mail.gmail.com>
-Subject: Re: arm64: dts: rockchip: Add SDR104 mode to SD-card I/F on rk3399-roc-pc
+Date:   Tue, 12 Nov 2019 09:59:32 +0100
+Message-ID: <CAPDyKFqo76wi0-7LQqSXuH3YOUSdTTLySzsxEGkEvZayAPuj6g@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add SDR104 mode to SD-card I/F
+ on rk3399-roc-pc
 To:     Markus Reichl <m.reichl@fivetechno.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -60,74 +60,108 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Nov 2019 at 20:32, Markus Reichl <m.reichl@fivetechno.de> wrote:
+On Tue, 12 Nov 2019 at 09:45, Markus Reichl <m.reichl@fivetechno.de> wrote:
 >
-> Hi Ulf,
+> Add SDR104 capability and regulators to SD card node.
+> While at it, fix a typo in lcd pinctrl and remove two
+> undocumented bindings from pmic.
 >
-> Am 11.11.19 um 18:27 schrieb Ulf Hansson:
-> > On Mon, 11 Nov 2019 at 15:13, Markus Reichl <m.reichl@fivetechno.de> wr=
-ote:
-> >>
-> >> Add SDR104 capability and regulators to SD card node.
-> >> While at it, fix a typo in lcd pinctrl and remove two
-> >> undocumented bindings from pmic.
-> >>
-> >> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-> >> ---
-> >>  .../boot/dts/rockchip/rk3399-roc-pc.dtsi      | 31 +++++++++++++++---=
--
-> >>  1 file changed, 25 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi b/arch/ar=
-m64/boot/dts/rockchip/rk3399-roc-pc.dtsi
-> >> index 33df95e384b4..e86a6db54499 100644
-> >> --- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
-> >> @@ -135,6 +135,20 @@
-> >>                 vin-supply =3D <&vcc_1v8>;
-> >>         };
-> >>
-> >> +       vcc3v0_sd: vcc3v0-sd {
-> >> +               compatible =3D "regulator-fixed";
-> >> +               enable-active-high;
-> >> +               gpio =3D <&gpio4 RK_PD6 GPIO_ACTIVE_HIGH>;
-> >> +               pinctrl-names =3D "default";
-> >> +               pinctrl-0 =3D <&vcc3v0_sd_en>;
-> >> +               regulator-name =3D "vcc3v0_sd";
-> >> +               regulator-always-on;
-> >
-> > This looks odd. A GPIO regulator being always on?
->
-> This is a standard micro SD card socket that can also be used for
-> booting the board. I wanted to be cautious and start
-> working with it and several SD cards and explore the capabilities.
->
-> On this board nearly all regulators are still continously
-> switched on. I plan to remove the always-on properties step
-> by step from the regulators when the board runs stable with it's
-> components all enbled.
->
-> >
-> >> +               regulator-boot-on;
-> >> +               regulator-min-microvolt =3D <3000000>;
-> >> +               regulator-max-microvolt =3D <3000000>;
-> >> +               vin-supply =3D <&vcc3v3_sys>;
-> >> +       };
-> >
-> > Assumes this powers an SDIO embedded card. Often those have a specific
-> > power sequence, just wanted to make sure the above are really
-> > sufficient? No delays or external clock needed?
->
-> It's not embedded, just a standard =C2=B5SD plug. It is already enabled
-> by mainline U-Boot and ejecting and inserting the card works fine.
+> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
 
-Ah, thanks for confirming.
+FWIW:
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
 Kind regards
 Uffe
+
+> ---
+> v2: Remove always-on from vcc3v0_sd
+> ---
+>  .../boot/dts/rockchip/rk3399-roc-pc.dtsi      | 30 +++++++++++++++----
+>  1 file changed, 24 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+> index d1eb55c855b3..a31099f7620b 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+> @@ -135,6 +135,19 @@
+>                 vin-supply = <&vcc_1v8>;
+>         };
+>
+> +       vcc3v0_sd: vcc3v0-sd {
+> +               compatible = "regulator-fixed";
+> +               enable-active-high;
+> +               gpio = <&gpio4 RK_PD6 GPIO_ACTIVE_HIGH>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&vcc3v0_sd_en>;
+> +               regulator-name = "vcc3v0_sd";
+> +               regulator-boot-on;
+> +               regulator-min-microvolt = <3000000>;
+> +               regulator-max-microvolt = <3000000>;
+> +               vin-supply = <&vcc3v3_sys>;
+> +       };
+> +
+>         vcc3v3_sys: vcc3v3-sys {
+>                 compatible = "regulator-fixed";
+>                 regulator-name = "vcc3v3_sys";
+> @@ -293,8 +306,6 @@
+>                 vcc10-supply = <&vcc3v3_sys>;
+>                 vcc11-supply = <&vcc3v3_sys>;
+>                 vcc12-supply = <&vcc3v3_sys>;
+> -               vcc13-supply = <&vcc3v3_sys>;
+> -               vcc14-supply = <&vcc3v3_sys>;
+>                 vddio-supply = <&vcc_3v0>;
+>
+>                 regulators {
+> @@ -576,7 +587,7 @@
+>
+>         lcd-panel {
+>                 lcd_panel_reset: lcd-panel-reset {
+> -                       rockchip,pins = <4 RK_PD6 RK_FUNC_GPIO &pcfg_pull_up>;
+> +                       rockchip,pins = <4 RK_PD5 RK_FUNC_GPIO &pcfg_pull_up>;
+>                 };
+>         };
+>
+> @@ -602,6 +613,10 @@
+>                 vsel2_gpio: vsel2-gpio {
+>                         rockchip,pins = <1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
+>                 };
+> +
+> +               pmic_int_l: pmic-int-l {
+> +                       rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
+> +               };
+>         };
+>
+>         sdio-pwrseq {
+> @@ -610,9 +625,9 @@
+>                 };
+>         };
+>
+> -       pmic {
+> -               pmic_int_l: pmic-int-l {
+> -                       rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
+> +       sdmmc {
+> +               vcc3v0_sd_en: vcc3v0-sd-en {
+> +                       rockchip,pins = <4 RK_PD6 RK_FUNC_GPIO &pcfg_pull_none>;
+>                 };
+>         };
+>
+> @@ -667,6 +682,9 @@
+>         cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
+>         disable-wp;
+>         max-frequency = <150000000>;
+> +       sd-uhs-sdr104;
+> +       vmmc-supply = <&vcc3v0_sd>;
+> +       vqmmc-supply = <&vcc_sdio>;
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
+>         status = "okay";
+> --
+> 2.20.1
+>
