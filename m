@@ -2,74 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3291F8FF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:51:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B75F9010
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:58:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfKLMvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 07:51:22 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6208 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725847AbfKLMvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:51:21 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 42DE32382CC2C805B117;
-        Tue, 12 Nov 2019 20:51:19 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 12 Nov 2019 20:51:09 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH] drm/amd/powerplay: remove variable 'result' set but not used warning
-Date:   Tue, 12 Nov 2019 20:58:14 +0800
-Message-ID: <1573563494-129617-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727201AbfKLM6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 07:58:11 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:38479 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726912AbfKLM6K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 07:58:10 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iUVk8-0007QY-JF; Tue, 12 Nov 2019 13:58:00 +0100
+To:     Yash Shah <yash.shah@sifive.com>
+Subject: Re: [PATCH 3/4] gpio: sifive: Add GPIO driver for SiFive SoCs
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 12 Nov 2019 14:07:21 +0109
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <palmer@dabbelt.com>,
+        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
+        <aou@eecs.berkeley.edu>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <bmeng.cn@gmail.com>,
+        <atish.patra@wdc.com>, Sagar Kadam <sagar.kadam@sifive.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sachin Ghadi <sachin.ghadi@sifive.com>
+In-Reply-To: <1573560684-48104-4-git-send-email-yash.shah@sifive.com>
+References: <1573560684-48104-1-git-send-email-yash.shah@sifive.com>
+ <1573560684-48104-4-git-send-email-yash.shah@sifive.com>
+Message-ID: <d82620dd33bdd6bb4d34e49600a506d1@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: yash.shah@sifive.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, palmer@dabbelt.com, paul.walmsley@sifive.com, aou@eecs.berkeley.edu, tglx@linutronix.de, jason@lakedaemon.net, bmeng.cn@gmail.com, atish.patra@wdc.com, sagar.kadam@sifive.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On 2019-11-12 13:21, Yash Shah wrote:
+> Adds the GPIO driver for SiFive RISC-V SoCs.
+>
+> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> [Atish: Various fixes and code cleanup]
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
 
-drivers/gpu/drm/amd/amdgpu/../powerplay/smumgr/fiji_smumgr.c: In function fiji_populate_smc_boot_level:
-drivers/gpu/drm/amd/amdgpu/../powerplay/smumgr/fiji_smumgr.c:1605:6: warning: variable result set but not used [-Wunused-but-set-variable]
+[...]
 
-Signed-off-by: Chen Wandun <chenwandun@huawei.com>
----
- drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+> +static int sifive_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
+> +					     unsigned int child,
+> +					     unsigned int child_type,
+> +					     unsigned int *parent,
+> +					     unsigned int *parent_type)
+> +{
+> +	/* All these interrupts are level high in the CPU */
+> +	*parent_type = IRQ_TYPE_LEVEL_HIGH;
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-index 32ebb38..6df5af0 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-@@ -1602,18 +1602,17 @@ static int fiji_populate_smc_uvd_level(struct pp_hwmgr *hwmgr,
- static int fiji_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
- 		struct SMU73_Discrete_DpmTable *table)
- {
--	int result = 0;
- 	struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
- 
- 	table->GraphicsBootLevel = 0;
- 	table->MemoryBootLevel = 0;
- 
- 	/* find boot level from dpm table */
--	result = phm_find_boot_level(&(data->dpm_table.sclk_table),
-+	phm_find_boot_level(&(data->dpm_table.sclk_table),
- 			data->vbios_boot_state.sclk_bootup_value,
- 			(uint32_t *)&(table->GraphicsBootLevel));
- 
--	result = phm_find_boot_level(&(data->dpm_table.mclk_table),
-+	phm_find_boot_level(&(data->dpm_table.mclk_table),
- 			data->vbios_boot_state.mclk_bootup_value,
- 			(uint32_t *)&(table->MemoryBootLevel));
- 
+It is bizare that you enforce LEVEL_HIGH here, while setting it to NONE
+in the PLIC driver. These things should be consistent.
+
+> +	*parent = child + 7;
+
+Irk, magic numbers...
+
+         M.
 -- 
-2.7.4
-
+Jazz is not dead. It just smells funny...
