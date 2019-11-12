@@ -2,114 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172EAF93DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:18:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C905CF93ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfKLPSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 10:18:08 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26315 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726008AbfKLPSI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 10:18:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573571886;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eZ/w3v+fPJjhA64sYOvAJQuD2CMUO2/OwSEb5d125yo=;
-        b=Ky3ORpha/scxSYq7RqAcrc9y42QHgs1smT0z4yMSPPz0yQF0ZSLHmmG8KkjJxY/kezYe4F
-        KjGq4XLtxZ1eKH4se3MOnmcXOWG2yd2YNxiY6v2IIB8hQ2VrL2IkQd6f5XGAlYxEjkw+Om
-        2kK7bzXqSwrAU+jOR93kfHm+zSy7blM=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-239-KZYLgQepPK6ipXQI-p5rfA-1; Tue, 12 Nov 2019 10:18:03 -0500
-Received: by mail-qk1-f199.google.com with SMTP id p68so10406941qkf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 07:18:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eZ/w3v+fPJjhA64sYOvAJQuD2CMUO2/OwSEb5d125yo=;
-        b=MkiRyCqSshgmfVb46HF3S+n4Ta1jy2ICzYUCDXw2MNwoT2gioyM3piEKanWWt3SK5m
-         +mk3Ntpm8OYk3slBfFpN1q9sxmPZ1iE1+dfjpGqiFsZk97HJx7ulmlzMx54a9RsfnvAA
-         Rdm4PsyDsgxoaOP8CHDYjZd5JaSErhKgpRsfadVOxRtf4zs7h5ViDq8YIMt1Pc0pPki4
-         JVuo4irIRuLcJnnWK93dWFBk7Jw7yfxjzEb2AVoYgfRuif2mMp4GjulX+ODLPbnU5gOs
-         4mlZP23JtNlN6nPJ4RMj/u1R8Pa784caQd5WS6FNpKailtQRQ01jkhXsbHdrDQdM8MsZ
-         wVUQ==
-X-Gm-Message-State: APjAAAXJs5qKIqnCz579kjhvo8VWAcni6LOsmszr1663PcVQFRRUun7e
-        XesvYzN7Pd3+5trrK5rNpwg6z+6kJwLbYtR0+42eis4HyFEOWFUmWuILdLckp3bX0EKEjTQZQ+0
-        83zzF63JkDkBRV2FTlTyzGvQ6K48h0rUJBxbTBkKx
-X-Received: by 2002:aed:36a1:: with SMTP id f30mr31845819qtb.154.1573571883379;
-        Tue, 12 Nov 2019 07:18:03 -0800 (PST)
-X-Google-Smtp-Source: APXvYqx7AbbV1sBdcbkwhkfsRZEBGRTP+DLdA6rmDz1e1+QvpJX8xRc4WuS8rs8usu0+cQAGd2L1t3PkGc0c/ma7Qx8=
-X-Received: by 2002:aed:36a1:: with SMTP id f30mr31845786qtb.154.1573571883103;
- Tue, 12 Nov 2019 07:18:03 -0800 (PST)
+        id S1727434AbfKLPTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 10:19:01 -0500
+Received: from verein.lst.de ([213.95.11.211]:56369 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727364AbfKLPTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 10:19:00 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 02B8368BE1; Tue, 12 Nov 2019 16:18:57 +0100 (CET)
+Date:   Tue, 12 Nov 2019 16:18:56 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ralph Campbell <rcampbell@nvidia.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Shuah Khan <shuah@kernel.org>, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] mm/hmm: make full use of walk_page_range()
+Message-ID: <20191112151856.GB12550@lst.de>
+References: <20191104222141.5173-1-rcampbell@nvidia.com> <20191104222141.5173-2-rcampbell@nvidia.com>
 MIME-Version: 1.0
-References: <20191022142139.16789-1-candlesea@gmail.com> <nycvar.YFH.7.76.1911121457050.1799@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1911121457050.1799@cbobk.fhfr.pm>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 12 Nov 2019 16:17:51 +0100
-Message-ID: <CAO-hwJKO5u6xUrBe_ne0OqFAHM9dpwtTOWtYW+3z-LxSFT6VWQ@mail.gmail.com>
-Subject: Re: [PATCH v4] HID: core: check whether Usage Page item is after
- Usage ID items
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Candle Sun <candlesea@gmail.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        =?UTF-8?B?57+f5LqsIChPcnNvbiBaaGFpKQ==?= <orson.zhai@unisoc.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Candle Sun <candle.sun@unisoc.com>,
-        Nianfu Bai <nianfu.bai@unisoc.com>
-X-MC-Unique: KZYLgQepPK6ipXQI-p5rfA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191104222141.5173-2-rcampbell@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Looks good,
 
-On Tue, Nov 12, 2019 at 2:57 PM Jiri Kosina <jikos@kernel.org> wrote:
->
-> On Tue, 22 Oct 2019, Candle Sun wrote:
->
-> > From: Candle Sun <candle.sun@unisoc.com>
-> >
-> > Upstream commit 58e75155009c ("HID: core: move Usage Page concatenation
-> > to Main item") adds support for Usage Page item after Usage ID items
-> > (such as keyboards manufactured by Primax).
-> [ ... snip ... ]
->
-> Benjamin,
->
-> are you planning to run this through your testsuite against regressions?
->
-> I believe that's the last missing step, otherwise I'd be fine merging
-> this.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Sorry I had to deal with family issues 2 weeks ago, and now RHEL is
-coming back at me and eating all my time.
+Although we could clean this up a tidbit more by removing the start
+variable:
 
-The kernel patch is now OK, so we can grab it now (either you take it
-Jiri, and add my acked-by or I'll push it later...)
-
-Candle, can you rework
-https://gitlab.freedesktop.org/libevdev/hid-tools/merge_requests/58 so
-that it mirrors the kernel code (and get rid of the
-self.local.usage_page_last logic)?
-
-Cheers,
-Benjamin
-
->
-> Thanks,
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
-
+diff --git a/mm/hmm.c b/mm/hmm.c
+index d4984a08ed9b..b5b1ed646c2f 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -667,10 +667,9 @@ static const struct mm_walk_ops hmm_walk_ops = {
+  */
+ long hmm_range_fault(struct hmm_range *range, unsigned int flags)
+ {
+-	unsigned long start = range->start;
+ 	struct hmm_vma_walk hmm_vma_walk = {
+ 		.range = range,
+-		.last = start,
++		.last = range->start,
+ 		.flags = flags,
+ 	};
+ 	struct mm_struct *mm = range->notifier->mm;
+@@ -682,9 +681,8 @@ long hmm_range_fault(struct hmm_range *range, unsigned int flags)
+ 		/* If range is no longer valid force retry. */
+ 		if (mmu_range_check_retry(range->notifier, range->notifier_seq))
+ 			return -EBUSY;
+-		ret = walk_page_range(mm, start, range->end, &hmm_walk_ops,
+-				      &hmm_vma_walk);
+-		start = hmm_vma_walk.last;
++		ret = walk_page_range(mm, hmm_vma_walk.last, range->end,
++				      &hmm_walk_ops, &hmm_vma_walk);
+ 	} while (ret == -EBUSY);
+ 
+ 	if (ret)
