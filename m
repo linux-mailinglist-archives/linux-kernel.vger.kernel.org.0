@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF3AF929D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B7FF92AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:32:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbfKLOcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:32:11 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41308 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfKLOcI (ORCPT
+        id S1727885AbfKLOcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:32:33 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37766 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbfKLOcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:32:08 -0500
+        Tue, 12 Nov 2019 09:32:09 -0500
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACEVx6q046180;
-        Tue, 12 Nov 2019 08:31:59 -0600
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACEW2Oa014821;
+        Tue, 12 Nov 2019 08:32:02 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573569119;
-        bh=rdDTMAol8BJ7BzBuc2QSkiXQFB4uWb3zPVmmVQndFWA=;
+        s=ti-com-17Q1; t=1573569122;
+        bh=+VoXDu3sr4epkCMOKVDIILQ6oh1e3KSk77l7x4EYUY0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=LaiPT59IKFwdQz5u0mM4+JJKD6FGSpu6GvHdw1mMWuSJ2eS5Jz3n59/K7WeZq5SRb
-         UuioiMQyoJdEefPBkxcIExq8lkchmRZZkxGakzQQETwcJpaGBVIJauX1mmg1LkWV2q
-         9w0KMNM3MFDgTLQ8pUpPHF/rzTMPyg02ZXm7hxcc=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACEVxbH031531
+        b=Bnj+YUiWozJsNtMtitRci7CezhV9/WlxXrcaCYCanvKZ5gZFPDMuqIIPe8zeRcey2
+         YXKgeoDqDJNH9HdF5cpXE4+98Nwe0JhCAZz7Nw5SKridBW6gdyvbq9vTDcNOyt/Gv7
+         Ut2MSWxoeGkVk1rWTdE7vBKSzexUgGBaFcWWM/Pg=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACEW2HP031661
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Nov 2019 08:31:59 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 12 Nov 2019 08:32:02 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 08:31:41 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Nov 2019 08:31:44 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 08:31:41 -0600
+ Frontend Transport; Tue, 12 Nov 2019 08:31:44 -0600
 Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACEVjUM050451;
-        Tue, 12 Nov 2019 08:31:55 -0600
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACEVjUN050451;
+        Tue, 12 Nov 2019 08:31:59 -0600
 From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
 To:     <t-kristo@ti.com>, <nm@ti.com>
 CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/9] arm64: dts: ti: k3-am65: DMA support
-Date:   Tue, 12 Nov 2019 16:32:55 +0200
-Message-ID: <20191112143301.3168-4-peter.ujfalusi@ti.com>
+Subject: [PATCH 4/9] arm64: dts: ti: k3-am654-main: Add McASP nodes
+Date:   Tue, 12 Nov 2019 16:32:56 +0200
+Message-ID: <20191112143301.3168-5-peter.ujfalusi@ti.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191112143301.3168-1-peter.ujfalusi@ti.com>
 References: <20191112143301.3168-1-peter.ujfalusi@ti.com>
@@ -57,124 +57,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ringacc and udmap nodes for main and mcu NAVSS.
+Add the nodes for McASP 0-2 and keep them disabled because several
+required properties are not present as they are board specific.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 39 ++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi  | 46 ++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 57 ++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index a125d66dd552..be841fc44b76 100644
+index be841fc44b76..6dd28202a221 100644
 --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
 +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -379,6 +379,10 @@ cbass_main_navss: navss@30800000 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
-+		dma-coherent;
-+		dma-ranges;
-+
-+		ti,sci-dev-id = <118>;
- 
- 		intr_main_navss: interrupt-controller1 {
- 			compatible = "ti,sci-intr";
-@@ -527,6 +531,41 @@ mailbox0_cluster11: mailbox@31f8b000 {
- 			ti,mbox-num-fifos = <16>;
- 			interrupt-parent = <&intr_main_navss>;
- 		};
-+
-+		ringacc: ringacc@3c000000 {
-+			compatible = "ti,am654-navss-ringacc";
-+			reg =	<0x0 0x3c000000 0x0 0x400000>,
-+				<0x0 0x38000000 0x0 0x400000>,
-+				<0x0 0x31120000 0x0 0x100>,
-+				<0x0 0x33000000 0x0 0x40000>;
-+			reg-names = "rt", "fifos", "proxy_gcfg", "proxy_target";
-+			ti,num-rings = <818>;
-+			ti,sci-rm-range-gp-rings = <0x2>; /* GP ring range */
-+			ti,dma-ring-reset-quirk;
-+			ti,sci = <&dmsc>;
-+			ti,sci-dev-id = <187>;
-+			msi-parent = <&inta_main_udmass>;
-+		};
-+
-+		main_udmap: dma-controller@31150000 {
-+			compatible = "ti,am654-navss-main-udmap";
-+			reg =	<0x0 0x31150000 0x0 0x100>,
-+				<0x0 0x34000000 0x0 0x100000>,
-+				<0x0 0x35000000 0x0 0x100000>;
-+			reg-names = "gcfg", "rchanrt", "tchanrt";
-+			msi-parent = <&inta_main_udmass>;
-+			#dma-cells = <1>;
-+
-+			ti,sci = <&dmsc>;
-+			ti,sci-dev-id = <188>;
-+			ti,ringacc = <&ringacc>;
-+
-+			ti,sci-rm-range-tchan = <0x1>, /* TX_HCHAN */
-+						<0x2>; /* TX_CHAN */
-+			ti,sci-rm-range-rchan = <0x4>, /* RX_HCHAN */
-+						<0x5>; /* RX_CHAN */
-+			ti,sci-rm-range-rflow = <0x6>; /* GP RFLOW */
-+		};
- 	};
- 
- 	main_gpio0:  main_gpio0@600000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-index 7bdf5342f58f..27fc73f94cf9 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-@@ -95,4 +95,50 @@ adc {
- 			compatible = "ti,am654-adc", "ti,am3359-adc";
- 		};
+@@ -663,4 +663,61 @@ pcie1_ep: pcie-ep@5600000 {
+ 		dma-coherent;
+ 		interrupts = <GIC_SPI 355 IRQ_TYPE_EDGE_RISING>;
  	};
 +
-+	cbass_mcu_navss: navss@28380000 {
-+		compatible = "simple-mfd";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+		dma-coherent;
-+		dma-ranges;
++	mcasp0: mcasp@02B00000 {
++		compatible = "ti,am33xx-mcasp-audio";
++		reg = <0x0 0x02B00000 0x0 0x2000>,
++			<0x0 0x02B08000 0x0 0x1000>;
++		reg-names = "mpu","dat";
++		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "tx", "rx";
 +
-+		ti,sci-dev-id = <119>;
++		dmas = <&main_udmap 0xc400>, <&main_udmap 0x4400>;
++		dma-names = "tx", "rx";
 +
-+		mcu_ringacc: ringacc@2b800000 {
-+			compatible = "ti,am654-navss-ringacc";
-+			reg =	<0x0 0x2b800000 0x0 0x400000>,
-+				<0x0 0x2b000000 0x0 0x400000>,
-+				<0x0 0x28590000 0x0 0x100>,
-+				<0x0 0x2a500000 0x0 0x40000>;
-+			reg-names = "rt", "fifos", "proxy_gcfg", "proxy_target";
-+			ti,num-rings = <286>;
-+			ti,sci-rm-range-gp-rings = <0x2>; /* GP ring range */
-+			ti,dma-ring-reset-quirk;
-+			ti,sci = <&dmsc>;
-+			ti,sci-dev-id = <195>;
-+			msi-parent = <&inta_main_udmass>;
-+		};
++		clocks = <&k3_clks 104 0>;
++		clock-names = "fck";
++		power-domains = <&k3_pds 104 TI_SCI_PD_EXCLUSIVE>;
 +
-+		mcu_udmap: dma-controller@285c0000 {
-+			compatible = "ti,am654-navss-mcu-udmap";
-+			reg =	<0x0 0x285c0000 0x0 0x100>,
-+				<0x0 0x2a800000 0x0 0x40000>,
-+				<0x0 0x2aa00000 0x0 0x40000>;
-+			reg-names = "gcfg", "rchanrt", "tchanrt";
-+			msi-parent = <&inta_main_udmass>;
-+			#dma-cells = <1>;
++		status = "disabled";
++	};
 +
-+			ti,sci = <&dmsc>;
-+			ti,sci-dev-id = <194>;
-+			ti,ringacc = <&mcu_ringacc>;
++	mcasp1: mcasp@02B10000 {
++		compatible = "ti,am33xx-mcasp-audio";
++		reg = <0x0 0x02B10000 0x0 0x2000>,
++			<0x0 0x02B18000 0x0 0x1000>;
++		reg-names = "mpu","dat";
++		interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "tx", "rx";
 +
-+			ti,sci-rm-range-tchan = <0x1>, /* TX_HCHAN */
-+						<0x2>; /* TX_CHAN */
-+			ti,sci-rm-range-rchan = <0x3>, /* RX_HCHAN */
-+						<0x4>; /* RX_CHAN */
-+			ti,sci-rm-range-rflow = <0x5>; /* GP RFLOW */
-+		};
++		dmas = <&main_udmap 0xc401>, <&main_udmap 0x4401>;
++		dma-names = "tx", "rx";
++
++		clocks = <&k3_clks 105 0>;
++		clock-names = "fck";
++		power-domains = <&k3_pds 105 TI_SCI_PD_EXCLUSIVE>;
++
++		status = "disabled";
++	};
++
++	mcasp2: mcasp@02B20000 {
++		compatible = "ti,am33xx-mcasp-audio";
++		reg = <0x0 0x02B20000 0x0 0x2000>,
++			<0x0 0x02B28000 0x0 0x1000>;
++		reg-names = "mpu","dat";
++		interrupts = <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "tx", "rx";
++
++		dmas = <&main_udmap 0xc402>, <&main_udmap 0x4402>;
++		dma-names = "tx", "rx";
++
++		clocks = <&k3_clks 106 0>;
++		clock-names = "fck";
++		power-domains = <&k3_pds 106 TI_SCI_PD_EXCLUSIVE>;
++
++		status = "disabled";
 +	};
  };
 -- 
