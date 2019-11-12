@@ -2,61 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8926EF9091
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79AB8F909B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:26:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfKLNY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 08:24:59 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44633 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfKLNY7 (ORCPT
+        id S1727290AbfKLN0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 08:26:33 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35045 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbfKLN0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:24:59 -0500
-Received: by mail-oi1-f193.google.com with SMTP id s71so14727797oih.11
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 05:24:58 -0800 (PST)
+        Tue, 12 Nov 2019 08:26:32 -0500
+Received: by mail-ot1-f65.google.com with SMTP id z6so14280718otb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 05:26:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=6R1tie6dlOZucxkUVWftPimXFbZ5fDjQVYV/EyvmWpQ=;
-        b=ShxIFflcHIEugiaNPzaqsT//Wgk48uuLn47SIdQsMJREwbRmK5zbtE5BZDj8jKvSJC
-         lhlG0YsVyAvEGvTnAe+YJ/7/9nMihjLTy14DeMGcYprSQ5447x+iejU5WSupIaBYei1l
-         CSVG94FRtjcAj8PMkWDMhQe2efMLeRiDJDvEJ6z1RXWjx6NQmrN593Xtdm11YmVsUY8/
-         yulAwlyliCJCq3EfSGG3Y/fjz5J4HpnWJNKRqkg0ZNdSHgQtcM/fkUb3omnrYuAICPXB
-         PVxp9KbrQ3dWnJuN4vAR+5LNKQI2+zggoEzX7sYJY4sMpDPsDr+FlebgAU8R2DYnqG4Q
-         Xtkg==
+        bh=h7gNuS9p6cP0bmIhvsGxMeUDxcBC1KUmMQ3LFSAd6gw=;
+        b=ULkqAdQFNZo3jskXqOoy1RAlkyzRdK6kMQK5jZEbuOQs23b00AYK8O262HJehfJ+f0
+         eiWBYZK0TNPfN2d0Nryvqb0GBOnpYqrU3bu4RbE9S4PcxrxLrTk9oQjEnzcwnk6udXY4
+         qe13l5l9/GnRfepfIMEApxF8YFawxqJGiglz1u7VFhDSNp9Zg+XPGIFpWY55BDE7pOQd
+         1WnKq3WOrp+gT48gqEZuZjviVJxnTJZAJ1wW/fZsU/6OgZ49ke0F2OeMoXoqO8c3+ZAm
+         VgN04hIZ+afoDgeg6EAx2svgVVuC0zengnNQYo+gusn4EmxDMYxNlboHzyubPG2UmfB8
+         Bjxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6R1tie6dlOZucxkUVWftPimXFbZ5fDjQVYV/EyvmWpQ=;
-        b=Ua0Fne7iPLdhS0wvWCObvHcZqm9bWgTK5xLmPLFV31ZrGwadFH0oVZSNyP7504ks1R
-         RtwRBlOgYlWJAwBk1k78kBHevPSLUzPienAUfNP2LMihy9TiPF3i85/bI7d3fNv0TGFg
-         HvcgCSmxBJv5GK2P7TSTzm0QFkSTtnFCdnPjIlT04MknBvJaE2dU+ksUZYZtJHZeJggj
-         7R352CcsonHhX5zxaefS47FvcMUfgBNJ9kfX4vwbLjcxUyid/tEgsEmoXNnrDYjeobuZ
-         CJcgmd0Vx3ZjS/K4NZoNneyY92i8amu1tJzKJorjGoQrK0gLVFzVV1j+E1T5BSTSblYr
-         vjlg==
-X-Gm-Message-State: APjAAAWlm6JyyUSUvVI/5g/EppTlF+NGokpmAqVsGU1ERHkFj+TEsUPV
-        xZuAN0CIgIiThI45ghuC8gSm6DQGwmTvXI/7fwLY9A==
-X-Google-Smtp-Source: APXvYqwVYKY+TQs2J/Re8zydff/PsMZM6vnyCxUK6VTuAWl6e+TgnAd8Q63nO1R+u5VMFOMIADsyPtVmKkkveERSTsM=
-X-Received: by 2002:a05:6808:3a1:: with SMTP id n1mr3842412oie.86.1573565097781;
- Tue, 12 Nov 2019 05:24:57 -0800 (PST)
+        bh=h7gNuS9p6cP0bmIhvsGxMeUDxcBC1KUmMQ3LFSAd6gw=;
+        b=a8GNednXNH3kKv6asJ6TMrloB7MCYmCe2oOmBu3y5vPP2kbqHqJaktYXTR1SOaUlqZ
+         AsDMwCa+bBC3YKjn+DrqTH81fzvWVjNCq05P/z86vW6m8FAYwWZfRGqQIncoYJF/d0uq
+         wn5MBeC4Y3EAraN05QISOJfrSkybr24zmoWxyn202eLN5x/NrtS5RiOIsktxpgFXOT2a
+         i1f4Woia7/9AhzTNBTi9hYkUlMXaROd+tCP8URF66T94kbz8O7v+bQ+JyWwmew4LmSjQ
+         6M282h7SYI30dBfI1MKx//SFvS8HBsWXErUTJDKh2Qzgml3hcGWH/IYq3YPoWzIJ9j4L
+         JEXQ==
+X-Gm-Message-State: APjAAAUVBo+7klyKIGVw8/JYwcH+abayu4wJ4d7uQ1YtwpHV8rdJh0Il
+        EdVvLnjJ50jFzRPbqAPiHn9xgpLxczKB2wNn7gIHzQ==
+X-Google-Smtp-Source: APXvYqzkCDMR3BU1iW92LaoBF5oRAgEq1nnEl6n9d+XmKrd7Vs0fILuL5Poq1Zt5hVQ/4Do0bVZCH+/64Xp1J1Wozgc=
+X-Received: by 2002:a9d:458a:: with SMTP id x10mr24581645ote.365.1573565191496;
+ Tue, 12 Nov 2019 05:26:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20191111181331.917659011@linuxfoundation.org> <20191112052759.GB1208865@kroah.com>
-In-Reply-To: <20191112052759.GB1208865@kroah.com>
+References: <20191111181421.390326245@linuxfoundation.org> <20191112052822.GC1208865@kroah.com>
+In-Reply-To: <20191112052822.GC1208865@kroah.com>
 From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 12 Nov 2019 18:54:46 +0530
-Message-ID: <CA+G9fYueMYg=FoGvGBjoNW-rgKqAOWa0a-Ha10Mu2TEaQGX_wg@mail.gmail.com>
-Subject: Re: [PATCH 4.9 00/65] 4.9.201-stable review
+Date:   Tue, 12 Nov 2019 18:56:20 +0530
+Message-ID: <CA+G9fYto_RmYZo_bet1GijYGQ5TfPxJ9WpyfzU1PWw5vnPqjZw@mail.gmail.com>
+Subject: Re: [PATCH 4.14 000/105] 4.14.154-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     open list <linux-kernel@vger.kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,9 +67,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Tue, 12 Nov 2019 at 11:02, Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
 >
-> On Mon, Nov 11, 2019 at 07:28:00PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.9.201 release.
-> > There are 65 patches in this series, all will be posted as a response
+> On Mon, Nov 11, 2019 at 07:27:30PM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.154 release.
+> > There are 105 patches in this series, all will be posted as a response
 > > to this one.  If anyone has any issues with these being applied, please
 > > let me know.
 > >
@@ -78,11 +78,11 @@ On Tue, 12 Nov 2019 at 11:02, Greg Kroah-Hartman
 > >
 > > The whole patch series can be found in one patch at:
 > >       https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.201-rc1.gz
+4.14.154-rc1.gz
 >
-> There is now an -rc2:
+> There is now a -rc2 out:
 >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.201-rc2.gz
+4.14.154-rc2.gz
 
 Results from Linaro=E2=80=99s test farm.
 No regressions on arm64, arm, x86_64, and i386.
@@ -90,20 +90,20 @@ No regressions on arm64, arm, x86_64, and i386.
 Summary
 ------------------------------------------------------------------------
 
-kernel: 4.9.201-rc2
+kernel: 4.14.154-rc2
 git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
 le-rc.git
-git branch: linux-4.9.y
-git commit: a3a12cc6ffc178797f76cc8e4424477336e09efb
-git describe: v4.9.200-65-ga3a12cc6ffc1
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.200-65-ga3a12cc6ffc1
+git branch: linux-4.14.y
+git commit: fc7e45ae100f042a6f3e1cb7bf47c487b2d5bf3e
+git describe: v4.14.153-105-gfc7e45ae100f
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.153-105-gfc7e45ae100f
 
-No regressions (compared to build v4.9.200)
+No regressions (compared to build v4.14.153)
 
-No fixes (compared to build v4.9.200)
+No fixes (compared to build v4.14.153)
 
-Ran 23526 total tests in the following environments and test suites.
+Ran 24216 total tests in the following environments and test suites.
 
 Environments
 --------------
@@ -152,9 +152,9 @@ Test Suites
 * network-basic-tests
 * ltp-open-posix-tests
 * kvm-unit-tests
-* kselftest-vsyscall-mode-none
-* prep-tmp-disk
 * ssuite
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
 
 --=20
 Linaro LKFT
