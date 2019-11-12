@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 178BDF9299
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06039F929B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:32:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbfKLOcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:32:03 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37726 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfKLOcB (ORCPT
+        id S1727795AbfKLOcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:32:07 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:50230 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbfKLOcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:32:01 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACEVqO5014766;
-        Tue, 12 Nov 2019 08:31:52 -0600
+        Tue, 12 Nov 2019 09:32:04 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACEVtvo092592;
+        Tue, 12 Nov 2019 08:31:55 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573569112;
-        bh=SrEGW4i7yjeGxteEupp6hdS4iZlr2G083XuAg3UxTfQ=;
+        s=ti-com-17Q1; t=1573569115;
+        bh=5q4Ba0jsg2rMOeuTdNLUdhoNWg94JZlddVCnrc1IWtY=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=nuhL/PCiQq3uOJaLoB2frJBxIA0/jtcoKl+wknqk142e4Pj8tj2JnRnAkm73j+z0d
-         NoIdnJmgS/pXiBTCC+w8O84uUflFQjjWpEd4/UNpTTvggGnsura3RYBdtSOtsGxdbd
-         J4YDdcpd9/niKABf2HL9Jx6Uh5MhH/ma52Frh7iA=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACEVqvj031423
+        b=TBIXURzm5gVAQcPU582rpWzRaJY/VJN9JTEqTmFSfFVyLWIWSjD3p54XTkkYsN762
+         K/nDAgfjAaJg+XFre+mAtNeJd1rtmQt44Pt+46QpN7gu2aPhyqwrZbaDJg3BU+S9E0
+         pm77F+v/kcPHuNUlHPcrpm2vVeCW53gynwDd5LG0=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACEVtnb024423
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Nov 2019 08:31:52 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 12 Nov 2019 08:31:55 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 08:31:34 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ Nov 2019 08:31:38 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 08:31:34 -0600
+ Frontend Transport; Tue, 12 Nov 2019 08:31:55 -0600
 Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACEVjUK050451;
-        Tue, 12 Nov 2019 08:31:49 -0600
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACEVjUL050451;
+        Tue, 12 Nov 2019 08:31:52 -0600
 From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
 To:     <t-kristo@ti.com>, <nm@ti.com>
 CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/9] arm64: dts: ti: k3-am65-main: Correct main NAVSS representation
-Date:   Tue, 12 Nov 2019 16:32:53 +0200
-Message-ID: <20191112143301.3168-2-peter.ujfalusi@ti.com>
+Subject: [PATCH 2/9] arm64: dts: ti: k3-am65-main: Move secure proxy under cbass_main_navss
+Date:   Tue, 12 Nov 2019 16:32:54 +0200
+Message-ID: <20191112143301.3168-3-peter.ujfalusi@ti.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191112143301.3168-1-peter.ujfalusi@ti.com>
 References: <20191112143301.3168-1-peter.ujfalusi@ti.com>
@@ -57,29 +57,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NAVSS is a subsystem containing different IPs, it is not really a bus.
-Change the compatible from "simple-bus" to "simple-mfd" to reflect that.
+Secure proxy (NAVSS0_SEC_PROXY0) is part of the Navigator Subsystem.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index efb24579922c..e40f7acbec42 100644
+index e40f7acbec42..a125d66dd552 100644
 --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
 +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -385,8 +385,8 @@ intr_main_gpio: interrupt-controller0 {
- 		ti,sci-rm-range-girq = <0x1>;
+@@ -51,17 +51,6 @@ gic_its: gic-its@1820000 {
+ 		};
  	};
  
--	cbass_main_navss: interconnect0 {
--		compatible = "simple-bus";
-+	cbass_main_navss: navss@30800000 {
-+		compatible = "simple-mfd";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
+-	secure_proxy_main: mailbox@32c00000 {
+-		compatible = "ti,am654-secure-proxy";
+-		#mbox-cells = <1>;
+-		reg-names = "target_data", "rt", "scfg";
+-		reg = <0x00 0x32c00000 0x00 0x100000>,
+-		      <0x00 0x32400000 0x00 0x100000>,
+-		      <0x00 0x32800000 0x00 0x100000>;
+-		interrupt-names = "rx_011";
+-		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+-	};
+-
+ 	serdes0: serdes@900000 {
+ 		compatible = "ti,phy-am654-serdes";
+ 		reg = <0x0 0x900000 0x0 0x2000>;
+@@ -414,6 +403,17 @@ inta_main_udmass: interrupt-controller@33d00000 {
+ 			ti,sci-rm-range-global-event = <0x1>;
+ 		};
+ 
++		secure_proxy_main: mailbox@32c00000 {
++			compatible = "ti,am654-secure-proxy";
++			#mbox-cells = <1>;
++			reg-names = "target_data", "rt", "scfg";
++			reg = <0x00 0x32c00000 0x00 0x100000>,
++			      <0x00 0x32400000 0x00 0x100000>,
++			      <0x00 0x32800000 0x00 0x100000>;
++			interrupt-names = "rx_011";
++			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
+ 		hwspinlock: spinlock@30e00000 {
+ 			compatible = "ti,am654-hwspinlock";
+ 			reg = <0x00 0x30e00000 0x00 0x1000>;
 -- 
 Peter
 
