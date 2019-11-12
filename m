@@ -2,68 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9A0F9331
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 772C0F9307
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:50:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbfKLOv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:51:59 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6212 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727607AbfKLOv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:51:56 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 191453D20E3DC7DFCD79;
-        Tue, 12 Nov 2019 22:51:54 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 12 Nov 2019
- 22:51:43 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <rui.zhang@intel.com>, <edubezval@gmail.com>,
-        <daniel.lezcano@linaro.org>, <amit.kucheria@verdurent.com>,
-        <qperret@google.com>, <viresh.kumar@linaro.org>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] thermal: power_allocator: Fix Kconfig warning
-Date:   Tue, 12 Nov 2019 22:51:14 +0800
-Message-ID: <20191112145114.36580-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727058AbfKLOuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:50:50 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:43580 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfKLOuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 09:50:50 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACEokmx052146;
+        Tue, 12 Nov 2019 08:50:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573570246;
+        bh=y7yAvlEcZ9kCszpDn4fA00UstE2MHBmCEn1h47AUC1w=;
+        h=From:To:CC:Subject:Date;
+        b=Yzipd2q3QXpCsJf0kNMwsJ1+7FjV40Poj+BJtutrQ/JQmKGD9jpwARO6BHIsHq4LD
+         xwvTZDtzTruxf/J8G5Q+rjlW0mL1hGNzIte24qBbO4XK3e5CpnEC4ZelCs39orPkBe
+         JrfSM4J0yAXPLxq89wfEMzkbrBuimHMNPMn70OzE=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACEokB3058673
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Nov 2019 08:50:46 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
+ Nov 2019 08:50:46 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 12 Nov 2019 08:50:29 -0600
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACEokek068428;
+        Tue, 12 Nov 2019 08:50:46 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
+Subject: [RESEND Patch v3 00/20] media: ti-vpe: cal: maintenance
+Date:   Tue, 12 Nov 2019 08:53:27 -0600
+Message-ID: <20191112145347.23519-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When do randbuiding, we got this:
+Note: I had missed Rob and linux-media mailing list on the original
+post, so resending.
 
-WARNING: unmet direct dependencies detected for THERMAL_GOV_POWER_ALLOCATOR
-  Depends on [n]: THERMAL [=y] && ENERGY_MODEL [=n]
-  Selected by [y]:
-  - THERMAL_DEFAULT_GOV_POWER_ALLOCATOR [=y] && <choice>
 
-Make THERMAL_DEFAULT_GOV_POWER_ALLOCATOR also depends on ENERGY_MODEL.
+This a collection of backlog patches I have been carrying for the CAL
+driver.
 
-Fixes: a4e893e802e6 ("thermal: cpu_cooling: Migrate to using the EM framework")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/thermal/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+- Add support for SoC variants.
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 59b79fc..5e9e038 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -108,6 +108,7 @@ config THERMAL_DEFAULT_GOV_USER_SPACE
- 
- config THERMAL_DEFAULT_GOV_POWER_ALLOCATOR
- 	bool "power_allocator"
-+	depends on ENERGY_MODEL
- 	select THERMAL_GOV_POWER_ALLOCATOR
- 	help
- 	  Select this if you want to control temperature based on
+- Switches to syscon/regmap to access a system controller register for
+the DPHY configuration. This register has different bit layout depending
+on the SoC version.
+
+- It adds supports for pre ES2.0 silicon errata.
+
+- Reworked the DPHY initialization sequence to match the technical
+reference manual and provide a more robust restartability.
+
+- Adds the missing ability to power subdevice.
+
+- Update the devicetree binding and then converts it to dt-schema 
+
+Changes since v2:
+- Added a patch which converts all BIT_MASK() into BIT().
+- Constify stuct cal_data.
+- Remove blank line.
+- Fix to use BIT() instead of BIT_MASK() in "add CSI2 PHY LDO errata
+  support" patch
+- Fix commit description related to v4l2 power management:
+- Add missing binding update from v2
+- Merge dt-binding and maintainer patch
+
+Changes since v1:
+- Removed unneeded "items/max/min".
+- Add a ref for ti,camerrx-control type
+- Move compatible description as comment in the schemas
+- Simplify 'endpoint' syntax
+- Removed clocks description
+- Added ti,cal.yaml to MAINTAINERS as a separate patch.
+- Added Rob's ack
+- Remove 'inline' from cal_runtime_get()
+- Switch to use of_device_get_match_data
+- Reworked the syscon_regmap_lookup_by_phandle() section
+- Updated the binding to use ti,camerrx-control instead of sycon_camerrx
+- Updated the binding to use ti,camerrx-control instead of sycon_camerrx
+
+Benoit Parrot (19):
+  dt-bindings: media: cal: update binding to use syscon
+  dt-bindings: media: cal: update binding example
+  media: ti-vpe: cal: switch BIT_MASK to BIT
+  media: ti-vpe: cal: Add per platform data support
+  media: ti-vpe: cal: Enable DMABUF export
+  dt-bindings: media: cal: update binding to add PHY LDO errata support
+  media: ti-vpe: cal: add CSI2 PHY LDO errata support
+  media: ti-vpe: cal: Fix ths_term/ths_settle parameters
+  media: ti-vpe: cal: Fix pixel processing parameters
+  media: ti-vpe: cal: Align DPHY init sequence with docs
+  dt-bindings: media: cal: update binding to add DRA76x support
+  media: ti-vpe: cal: Add DRA76x support
+  dt-bindings: media: cal: update binding to add AM654 support
+  media: ti-vpe: cal: Add AM654 support
+  media: ti-vpe: cal: Add subdev s_power hooks
+  media: ti-vpe: cal: Properly calculate max resolution boundary
+  media: ti-vpe: cal: Fix a WARN issued when start streaming fails
+  media: ti-vpe: cal: fix enum_mbus_code/frame_size subdev arguments
+  dt-bindings: media: cal: convert binding to yaml
+
+Nikhil Devshatwar (1):
+  media: ti-vpe: cal: Restrict DMA to avoid memory corruption
+
+ .../devicetree/bindings/media/ti,cal.yaml     | 202 +++++
+ .../devicetree/bindings/media/ti-cal.txt      |  72 --
+ MAINTAINERS                                   |   1 +
+ drivers/media/platform/Kconfig                |   2 +-
+ drivers/media/platform/ti-vpe/cal.c           | 773 ++++++++++++++----
+ drivers/media/platform/ti-vpe/cal_regs.h      | 221 ++---
+ 6 files changed, 937 insertions(+), 334 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/ti,cal.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/ti-cal.txt
+
 -- 
-2.7.4
-
+2.17.1
 
