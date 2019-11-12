@@ -2,93 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95911F8C7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 421DBF8CAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:20:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfKLKJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 05:09:21 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49617 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725834AbfKLKJU (ORCPT
+        id S1727176AbfKLKU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 05:20:26 -0500
+Received: from audible.transient.net ([24.143.126.66]:39268 "HELO
+        audible.transient.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726212AbfKLKU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 05:09:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573553360;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=rm+SpsgER6q0ZzJGxmttnhDXfih8qrCKpsGq3yb+Vgs=;
-        b=OWZdIq3y/bIAj39GVfMWVolDWj1kg4YXzq2Vw3KBZ6XKfde4arrH9vkFiHvQu2d4MgSX0J
-        RkzZoD1b7kuuHTk006uF8SC4LeHFOEtkZolsf4d0Gp973OedS6WC3s3f23NpVDxQpmaGGN
-        GdSVWyl0ptTp0ghyqII6yQk9SU79hsw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-48-Ng-hEyGFPDaVnavp_JwT1A-1; Tue, 12 Nov 2019 05:09:17 -0500
-Received: by mail-wm1-f71.google.com with SMTP id v8so963034wml.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 02:09:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/T+UqvDPJA0ruFuxC0ui4R1v70oUmaDOHs4UxSNtf/o=;
-        b=DyLaizry99FnF/6KKhRGQbJ+ulBBwCMDdlFDXFSljuGw+g0VD5w8z/WkRY8Qr46gt6
-         aV+r2AUZlKa9f8U8r5eKHdvFxrJFkcvkuNgfl4MXARhqOKSkVy04zOrHjZRZKn2WwzUq
-         on7oOhPoWAFYnK3R+Urx1ZgF/vTSYoM+3BeQ6CiFrtDdEWLD7hq3clyUcPYhoaFnELL8
-         wslQTq062qjEHA4dd/8w19/lp0q1uMd8OunjV0K1/n4P2ujcjIW6GLO8l6jkGL8OQBHG
-         Prkf4moEStlOrJdD6perdNqStDknTdlIq2Bh8RDjyq/r5xaABox55ASJb1l9v/WT74jP
-         MlPw==
-X-Gm-Message-State: APjAAAWEfGWQNPzNs4VpQyThnORE8z7ckK26TNag4/LcKlW8CLf4HnxZ
-        bYtDj+rmTPnSwUByRm4EXAczLG69qDhE7Pgc5BEw56AsiDac7UwcWDigk6M8fxDEF48SL/eRtTt
-        AcaAXZxBMcMWHueiw4D+4FejR
-X-Received: by 2002:a05:600c:22cb:: with SMTP id 11mr3211639wmg.117.1573553355857;
-        Tue, 12 Nov 2019 02:09:15 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxieILYD7Oki2LtPWxGLPvRXneVlPzXp94IaP9x7iQbDbM7jR4WAKOfSK+ZLP0yVwAzUEp3zw==
-X-Received: by 2002:a05:600c:22cb:: with SMTP id 11mr3211614wmg.117.1573553355624;
-        Tue, 12 Nov 2019 02:09:15 -0800 (PST)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id q15sm10709704wrs.91.2019.11.12.02.09.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2019 02:09:15 -0800 (PST)
-Subject: Re: [PATCH v4 0/6] KVM: x86/vPMU: Efficiency optimization by reusing
- last created perf_event
-To:     Like Xu <like.xu@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20191027105243.34339-1-like.xu@linux.intel.com>
- <20191028164324.GJ4097@hirez.programming.kicks-ass.net>
- <dcbc78f5-c267-d5be-f4e8-deaebf91fe1f@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <21372ed6-b8c1-3609-1ab8-2d566a4319e6@redhat.com>
-Date:   Tue, 12 Nov 2019 11:09:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 12 Nov 2019 05:20:26 -0500
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Nov 2019 05:20:26 EST
+Received: (qmail 30547 invoked from network); 12 Nov 2019 10:13:44 -0000
+Received: from cucamonga.audible.transient.net (192.168.2.5)
+  by canarsie.audible.transient.net with QMQP; 12 Nov 2019 10:13:44 -0000
+Received: (nullmailer pid 3784 invoked by uid 1000);
+        Tue, 12 Nov 2019 10:13:43 -0000
+Date:   Tue, 12 Nov 2019 10:13:43 +0000
+From:   Jamie Heilman <jamie@audible.transient.net>
+To:     "J. Bruce Fields" <bfields@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: PROBLEM: NULL pointer dereference; nfsd4_remove_cld_pipe
+Message-ID: <20191112101343.GA2806@audible.transient.net>
+Mail-Followup-To: "J. Bruce Fields" <bfields@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <dcbc78f5-c267-d5be-f4e8-deaebf91fe1f@linux.intel.com>
-Content-Language: en-US
-X-MC-Unique: Ng-hEyGFPDaVnavp_JwT1A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/19 07:08, Like Xu wrote:
->=20
-> For vPMU, please review two more patches as well:
-> +
-> https://lore.kernel.org/kvm/20191030164418.2957-1-like.xu@linux.intel.com=
-/
-> (kvm)
+Giving 5.4.0-rc7 a spin I hit a NULL pointer dereference and bisected
+it to:
 
-If I understand this patch correctly, you are patching the CPUID values
-passed to the KVM_SET_CPUID2 ioctl if they are not valid for the host.
-Generally we don't do that, if there is garbage in CPUID the behavior of
-the guest will be unreliable.
+commit 6ee95d1c899186c0798cafd25998d436bcdb9618
+Author: Scott Mayhew <smayhew@redhat.com>
+Date:   Mon Sep 9 16:10:31 2019 -0400
 
-Paolo
+    nfsd: add support for upcall version 2
 
+
+The splat against 5.3.0-rc2-00034-g6ee95d1c8991:
+
+BUG: kernel NULL pointer dereference, address: 0000000000000036
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0 
+Oops: 0000 [#1] PREEMPT SMP PTI
+CPU: 0 PID: 2936 Comm: rpc.nfsd Not tainted 5.3.0-rc2-00034-g6ee95d1c8991 #1
+Hardware name: Dell Inc. Precision WorkStation T3400  /0TP412, BIOS A14 04/30/2012
+RIP: 0010:crypto_destroy_tfm+0x5/0x4d
+Code: 78 01 00 00 48 85 c0 74 05 e9 05 05 66 00 c3 55 48 8b af 80 01 00 00 e8 d5 ff ff ff 48 89 ef 5d e9 12 f9 ef ff 48 85 ff 74 47 <48> 83 7e 30 00 41 55 4c 8b 6e 38 41 54 49 89 fc 55 48 89 f5 75 14
+RSP: 0018:ffffc90000b7bd68 EFLAGS: 00010282
+RAX: ffffffffa0402841 RBX: ffff888230484400 RCX: 0000000000002cd0
+RDX: 0000000000002cce RSI: 0000000000000006 RDI: fffffffffffffffe
+RBP: ffffffff81e68440 R08: ffff888232801800 R09: ffffffffa0402841
+R10: 0000000000000200 R11: ffff88823048ae40 R12: ffff888231585100
+R13: ffff88823048ae40 R14: 000000000000000b R15: ffff888230484400
+FS:  00007f02102c3740(0000) GS:ffff888233a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000036 CR3: 0000000230f94000 CR4: 00000000000406f0
+Call Trace:
+ nfsd4_remove_cld_pipe+0x6d/0x83 [nfsd]
+ nfsd4_cld_tracking_init+0x1cf/0x295 [nfsd]
+ nfsd4_client_tracking_init+0x72/0x13e [nfsd]
+ nfs4_state_start_net+0x22a/0x2cf [nfsd]
+ nfsd_svc+0x1c6/0x292 [nfsd]
+ write_threads+0x68/0xb0 [nfsd]
+ ? write_versions+0x333/0x333 [nfsd]
+ nfsctl_transaction_write+0x4a/0x62 [nfsd]
+ vfs_write+0xa0/0xdd
+ ksys_write+0x71/0xba
+ do_syscall_64+0x48/0x55
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f021056c904
+Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb bb 0f 1f 80 00 00 00 00 48 8d 05 d9 3a 0d 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 48 83 ec 28 48 89 54 24 18 48
+RSP: 002b:00007ffdc76ec618 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 000055b534955560 RCX: 00007f021056c904
+RDX: 0000000000000002 RSI: 000055b534955560 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 0000000000000000 R09: 00007ffdc76ec4b0
+R10: 00007ffdc76ec367 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000008 R14: 0000000000000000 R15: 000055b534b8a2a0
+Modules linked in: cpufreq_userspace cpufreq_powersave cpufreq_ondemand cpufreq_conservative autofs4 fan nfsd auth_rpcgss nfs lockd grace fscache sunrpc bridge stp llc nhpoly1305_sse2 nhpoly1305 aes_generic chacha_x86_64 chacha_generic adiantum poly1305_generic vhost_net tun vhost tap dm_crypt snd_hda_codec_analog snd_hda_codec_generic usb_storage snd_hda_intel kvm_intel snd_hda_codec kvm snd_hwdep snd_hda_core snd_pcm dcdbas snd_timer irqbypass snd soundcore sr_mod cdrom tg3 sg floppy evdev xfs dm_mod raid1 md_mod psmouse
+CR2: 0000000000000036
+---[ end trace bc12bbe4cdd6319f ]---
+...
+NFS: Registering the id_resolver key type
+Key type id_resolver registered
+Key type id_legacy registered
+
+
+My kernel config is at
+http://audible.transient.net/~jamie/k/upcallv2.config-5.3.0-rc2-00034-g6ee95d1c8991
+
+I don't think there's anything terribly interesting about my nfs
+server setup, this happens reliably on boot up, idle network, no
+active clients; let me know what else you need, happy to debug.
+
+-- 
+Jamie Heilman                     http://audible.transient.net/~jamie/
