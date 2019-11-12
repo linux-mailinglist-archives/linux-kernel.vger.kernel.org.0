@@ -2,121 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D068F930A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:51:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9A0F9331
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:52:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfKLOu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:50:59 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56279 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfKLOuz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:50:55 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so3478302wmb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 06:50:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=CSSsI2E/AiwCeLu7wa0R7LPkJ/eK9242R5fWGg+wk0I=;
-        b=dMb39mxspTbdHC4iFApss1EWXM5N+rSxaMEFfB0mfptxqMKhBSWTiKhtpPV/xxGgzp
-         /uDBQGXfaz8Z17Jsp7jVFk6bMrbwRIArta6tYmD9cHRRtLMaMYBY+Wy8Ox7BO+zL4+0S
-         NNVUPBfzg/2D4OFEIN2dGxAqQUYA9VjlOiegFAVn2X8UIR+d1NpGgt9b4wh5Dx0gulK4
-         O2X24QLpD8k7W/Jn0BI5e+PUul9dKvXk/RBIbklw3bpMomi31HmUeBMRf+XywseWfiXO
-         xGrCtLrF4DoQ/ER9pABDr8yZMW+yz7KzfZkW5MJZdWFcURnhfxTKQmNNQit4pkhaXOEN
-         jAmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CSSsI2E/AiwCeLu7wa0R7LPkJ/eK9242R5fWGg+wk0I=;
-        b=JeQNTcRCCLwFzG6bJP0QGu+lPKZexNSBXmjbqRIjwW/omE77uGvCTE8DV4zUk3BOtP
-         ekBJiM0FjH683X/UrUk7d62/EzVu+vyz8xKbcNs4v/h3eNyfLvXrMkVuu4BHYY5+niIr
-         xpgz1DJoGYlrJbGr/7NaToJC5Rqwx4vc5s17sK2ianbiaS2Ry1NZ26hSczfGzqbsajTD
-         jAbuyWWe2TG5MP6//mDKslZ+JWHSmC493omOBjTHOmanbJrAhRkF49jzXAOw8+mQWPvh
-         S9EyAsMZALu1T6cYV4LvhGRYI5BbChaTxWU64lSEpZYyS1emIwey9DNEULzexrAAbZxq
-         RTUA==
-X-Gm-Message-State: APjAAAX3it2nIA4jTRzNfWvTXXeeX9cU9KZYfeyrdKMGl2XuTGaBdeAZ
-        CFFRIMduRILes/2BqZDMcSWExMkBIiU=
-X-Google-Smtp-Source: APXvYqwxLo5cnbZ6l/zzgDmaXQOjefKtsf7NlOWb12xxeXd72R4Q2gVADX/cUbJqQB6JUZPwCDXkxg==
-X-Received: by 2002:a7b:c181:: with SMTP id y1mr4211360wmi.16.1573570253239;
-        Tue, 12 Nov 2019 06:50:53 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:e45f:4180:5590:a312])
-        by smtp.gmail.com with ESMTPSA id x26sm3224976wmc.14.2019.11.12.06.50.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 12 Nov 2019 06:50:52 -0800 (PST)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, dietmar.eggemann@arm.com,
-        juri.lelli@redhat.com, rostedt@goodmis.org, mgorman@suse.de
-Cc:     bsegall@google.com, Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] sched/fair: add comments for group_type and balancing at SD_NUMA level
-Date:   Tue, 12 Nov 2019 15:50:43 +0100
-Message-Id: <1573570243-1903-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S1727634AbfKLOv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:51:59 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6212 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727607AbfKLOv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 09:51:56 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 191453D20E3DC7DFCD79;
+        Tue, 12 Nov 2019 22:51:54 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 12 Nov 2019
+ 22:51:43 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <rui.zhang@intel.com>, <edubezval@gmail.com>,
+        <daniel.lezcano@linaro.org>, <amit.kucheria@verdurent.com>,
+        <qperret@google.com>, <viresh.kumar@linaro.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] thermal: power_allocator: Fix Kconfig warning
+Date:   Tue, 12 Nov 2019 22:51:14 +0800
+Message-ID: <20191112145114.36580-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add comments to describe each state of goup_type and to add some details
-about the load balance at NUMA level.
+When do randbuiding, we got this:
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+WARNING: unmet direct dependencies detected for THERMAL_GOV_POWER_ALLOCATOR
+  Depends on [n]: THERMAL [=y] && ENERGY_MODEL [=n]
+  Selected by [y]:
+  - THERMAL_DEFAULT_GOV_POWER_ALLOCATOR [=y] && <choice>
+
+Make THERMAL_DEFAULT_GOV_POWER_ALLOCATOR also depends on ENERGY_MODEL.
+
+Fixes: a4e893e802e6 ("thermal: cpu_cooling: Migrate to using the EM framework")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- kernel/sched/fair.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ drivers/thermal/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c93d534..268e441 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6986,11 +6986,34 @@ enum fbq_type { regular, remote, all };
-  * group. see update_sd_pick_busiest().
-  */
- enum group_type {
-+	/*
-+	 * The group has spare capacity that can be used to process more work.
-+	 */
- 	group_has_spare = 0,
-+	/*
-+	 * The group is fully used and the tasks don't compete for more CPU
-+	 * cycles. Nevetheless, some tasks might wait before running.
-+	 */
- 	group_fully_busy,
-+	/*
-+	 * One task doesn't fit with CPU's capacity and must be migrated on a
-+	 * more powerful CPU.
-+	 */
- 	group_misfit_task,
-+	/*
-+	 * One local CPU with higher capacity is available and task should be
-+	 * migrated on it instead on current CPU.
-+	 */
- 	group_asym_packing,
-+	/*
-+	 * The tasks affinity prevents the scheduler to balance the load across
-+	 * the system.
-+	 */
- 	group_imbalanced,
-+	/*
-+	 * The CPU is overloaded and can't provide expected CPU cycles to all
-+	 * tasks.
-+	 */
- 	group_overloaded
- };
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 59b79fc..5e9e038 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -108,6 +108,7 @@ config THERMAL_DEFAULT_GOV_USER_SPACE
  
-@@ -8608,7 +8631,11 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 
- 	/*
- 	 * Try to use spare capacity of local group without overloading it or
--	 * emptying busiest
-+	 * emptying busiest.
-+	 * XXX Spreading tasks across numa nodes is not always the best policy
-+	 * and special cares should be taken for SD_NUMA domain level before
-+	 * spreading the tasks. For now, load_balance() fully relies on
-+	 * NUMA_BALANCING and fbq_classify_group/rq to overide the decision.
- 	 */
- 	if (local->group_type == group_has_spare) {
- 		if (busiest->group_type > group_fully_busy) {
+ config THERMAL_DEFAULT_GOV_POWER_ALLOCATOR
+ 	bool "power_allocator"
++	depends on ENERGY_MODEL
+ 	select THERMAL_GOV_POWER_ALLOCATOR
+ 	help
+ 	  Select this if you want to control temperature based on
 -- 
 2.7.4
+
 
