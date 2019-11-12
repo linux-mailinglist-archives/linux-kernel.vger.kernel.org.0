@@ -2,94 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F8DDF96A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF007F96AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:09:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfKLRIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 12:08:34 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:35003 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfKLRIe (ORCPT
+        id S1727434AbfKLRI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 12:08:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51596 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727178AbfKLRIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 12:08:34 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iUZeW-00088p-Ox; Tue, 12 Nov 2019 18:08:29 +0100
-Date:   Tue, 12 Nov 2019 18:08:27 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [patch V2 06/16] x86/io: Speedup schedule out of I/O bitmap
- user
-In-Reply-To: <CALCETrUcY_DhZC8CH0NhoRp_r6mh4v1Z2dmhsdErV8wx6FsLaw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1911121807260.1833@nanos.tec.linutronix.de>
-References: <20191111220314.519933535@linutronix.de> <20191111223052.086299881@linutronix.de> <CALCETrUcY_DhZC8CH0NhoRp_r6mh4v1Z2dmhsdErV8wx6FsLaw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 12 Nov 2019 12:08:54 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACGvqir001361
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 12:08:53 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w7yn7u6ym-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 12:08:52 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 12 Nov 2019 17:08:51 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Nov 2019 17:08:48 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACH8lYT56688850
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 17:08:47 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C412F4C040;
+        Tue, 12 Nov 2019 17:08:47 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A196A4C04A;
+        Tue, 12 Nov 2019 17:08:46 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.194.252])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 17:08:46 +0000 (GMT)
+Subject: Re: [PATCH v5 0/10] KEYS: Measure keys when they are created or
+ updated
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 12 Nov 2019 12:08:46 -0500
+In-Reply-To: <b135b1ac-add6-aea4-cab3-3e9c12796b6a@linux.microsoft.com>
+References: <20191111193303.12781-1-nramas@linux.microsoft.com>
+         <b135b1ac-add6-aea4-cab3-3e9c12796b6a@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19111217-0008-0000-0000-0000032E6DEA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19111217-0009-0000-0000-00004A4D7443
+Message-Id: <1573578526.17949.47.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Nov 2019, Andy Lutomirski wrote:
-> On Mon, Nov 11, 2019 at 2:35 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > @@ -50,6 +48,11 @@ long ksys_ioperm(unsigned long from, uns
-> >                  * limit correct.
-> >                  */
-> >                 preempt_disable();
-> > +               t->io_bitmap_ptr = bitmap;
-> > +               set_thread_flag(TIF_IO_BITMAP);
-> > +               /* Make the bitmap base in the TSS valid */
-> > +               tss = this_cpu_ptr(&cpu_tss_rw);
-> > +               tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_VALID;
-> >                 refresh_tss_limit();
-> >                 preempt_enable();
-> >         }
+On Mon, 2019-11-11 at 11:41 -0800, Lakshmi Ramasubramanian wrote:
+> On 11/11/2019 11:32 AM, Lakshmi Ramasubramanian wrote:
 > 
-> It's not shown in the diff, but the very next line of code turns
-> preemption back off.  This means that we might schedule right here
-> with TIF_IO_BITMAP set, the base set to VALID, but the wrong data in
-> the bitmap.  I *think* this will actually end up being okay, but it
-> certainly makes understanding the code harder.  Can you adjust the
-> code so that preemption stays off?
+> Hi Mimi,
 > 
-> More importantly, the code below this modifies the TSS copy in place
-> instead of writing a whole new copy.  But now that you've added your
-> optimization, the TSS copy might be *someone else's* IO bitmap.  So I
-> think you might end up with more io ports allowed than you intended.
-> For example:
+> > Problem Statement:
+
+The above line isn't needed.
+
+> > 
+> > Keys created or updated in the system are currently not being measured.
+> > 
+> > This change aims to address measuring keys created or updated
+> > in the system:
+> > 
+> >    => Patches #1 through #5 update IMA policy functions to handle
+> >       measurement of keys based on configured IMA policy.
+> > 
+> >    => Patches #6 and #7 add IMA hook for measuring keys and the call
+> >       to the IMA hook from key_create_or_update function.
+> >       Keys are processed immediately - no support for
+> >       deferred processing.
+> > 
+> >    => Patches #8 through #10 add support for queuing keys if
+> >       custom IMA policies have not been applied yet and process
+> >       the queued keys when custom IMA policies are applied.
 > 
-> Task A uses ioperm() to enable all ports.
-> Switch to task B.  Now the TSS base is INVALID but all bitmap bits are still 0.
-> Task B calls ioperm().
+> I was wondering if it'd be better to split this patch set into two sets:
 > 
-> The code will set the base to VALID and will correctly set up the
-> thread's copy of the bitmap, but I think the copy will only update the
-> bits 0 through whatever ioperm() touched and not the bits above that
-> in the TSS.
+> 1st set including the patches for measuring keys without queuing support 
+> (Patches #1 through #7)
 
-Yeah, you are right. Did not think about that. Will fix that up.
- 
-> I would believe that this is fixed later in your patch set.  If so,
-> perhaps you should just memcpy() the whole thing without trying to
-> optimize in this patch and then let the changes later re-optimize it
-> as appropriate.  IOW change memcpy(tss->io_bitmap, t->io_bitmap_ptr,
-> bytes_updated); to memcpy(..., BYTES_PER_LONG * IO_BITMAP_LONGS) or
-> similar.
+I've commented on patches 1 - 4.  There's still so much wrong with
+this patch set.  Limiting the scope of the patch set sounds like
+really a good idea. 
 
-Right.
+Mimi
 
-Thanks for spotting that!
+> 
+> 2nd set including the patches that add queuing support (Patches #8 
+> through #10).
 
-       tglx
+
