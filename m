@@ -2,118 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE680F8513
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 01:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B436BF851A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 01:21:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfKLAUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 19:20:10 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36953 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727389AbfKLAUI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 19:20:08 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z24so10592285pgu.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 16:20:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=i3QVtv45Axk545voSCTdnsYQERVAGrIgwCeqw/o3MX4=;
-        b=LsEHNxuNOsi4smeIUmloCDxQwN5wRT573S/dAcRBGQmdn1PyWUEE9OCntdlNebllY0
-         tqwl/eRcJss7RnMsihQjohvTPAUWT6tFej9W29LueU8pO2WEFNtm6j4GfDXuGHLZstU8
-         wgYDR0ZZNkcghB2cgaOOxCjkKmEDYo8vR2E8Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i3QVtv45Axk545voSCTdnsYQERVAGrIgwCeqw/o3MX4=;
-        b=O7ykHQQDIhMzkE+DzaGtXrXmNPgsuQ0y9hxz4MUG6i7RXsogW2xmy4srQREZqo24Nk
-         013uhPVDpbdbP8lb4AU5CedXjvTzWBzHKClYuHvrBjRHEeftGGxL/Vh7ozZnnU3G6DQx
-         OE9F3l+I+R63+kMsb5pN3jBT16+FbP9WrhhtIFSBUuqwYcnjKgQFiTCoIDXDjdWqmXGx
-         7BgYzNZ2KdkehojZi8n3S+SA8L08Vjoqnym2gtQBzP8ydcenKreNGOkVVa56Ydkefk0P
-         YZbx6OVv7YaBoTT5Les4Wz+DwN+n741Fu6XkMvqUecwod7WiRjAKx9q8s5lXVLL4tKRp
-         i2eg==
-X-Gm-Message-State: APjAAAUz7v+vGeRBnqtapTvyQ9TjC1nFT76SSh98mzvrGXMutM6gnCWv
-        tU4dQscEYCHlLxXKrnlbW+1LyA==
-X-Google-Smtp-Source: APXvYqxzTENXdlmig2BxhIs7QT2d4w+X0eoLnSbb7/QBWfE3yeHGYTXXdZ2kzCALg0JoqA1Yj05w6Q==
-X-Received: by 2002:aa7:9e52:: with SMTP id z18mr32297912pfq.149.1573518007037;
-        Mon, 11 Nov 2019 16:20:07 -0800 (PST)
-Received: from apsdesk.mtv.corp.google.com ([2620:15c:202:1:e09a:8d06:a338:aafb])
-        by smtp.gmail.com with ESMTPSA id h23sm8430898pgg.58.2019.11.11.16.20.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 16:20:06 -0800 (PST)
-From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-bluetooth@vger.kernel.org, dianders@chromium.org,
-        Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-        devicetree@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v3 4/4] dt-bindings: net: broadcom-bluetooth: Add pcm config
-Date:   Mon, 11 Nov 2019 16:19:49 -0800
-Message-Id: <20191112001949.136377-5-abhishekpandit@chromium.org>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-In-Reply-To: <20191112001949.136377-1-abhishekpandit@chromium.org>
-References: <20191112001949.136377-1-abhishekpandit@chromium.org>
+        id S1727171AbfKLAVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 19:21:12 -0500
+Received: from mail-eopbgr690078.outbound.protection.outlook.com ([40.107.69.78]:20779
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726887AbfKLAVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Nov 2019 19:21:12 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bfTR+DPqFfqc8HzHzSqrgnF+Azgfw5fnAL0KFqnKE7dnoCk6MblDVCN1/9GktJjIqaIDbIaSAS0qoNht88IiiTWV2bp8ywa83u5hYToZdRB8c1VDVeAOidJ+aGXRpoOoKjrtFVtv1hX6dPcNtxOZTqdql+CE59gUEchcZ26wzl1uK9h3xIyJv+WPGcfFDqk/oFu0gE5Er/EH/2U29NCjK3kaFS+GhdE+575CEq/4s7pqbsl2cHjWJYJ4k7W/AX8AZ6uFRWK+iA8MDAu1EvG3ftdOELxEQ4dpf7z3MfQbE7zYQ2tX0nq7dkwJUVCZYH3FjTGR+lE4KqavoC2i6wGvJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zgETscEaz3Q6S7+ulLMPv5SV5CZf51s5BfO68Li8t8A=;
+ b=LX5JYYMoXD6h2UbTHOYxkzhLmL3kvcnzvHiUzU+oD0EZpfA7otAmQ5p+ZJ96n1hcNvTkIqOZ+f3llV0jo6DSQ+xzT+UKfJhHtsJmGKp3ELO8rquUVPKRv66/NS/8VN1KrfKuM32lfFzy5dcjy4jHKD/+twlhOO2S9jR/w2dJ4CpFu41HmaT7kFHYpIotkYsXERlYg7ArcKFGv1sp7GRw+QLp2mdsv6Ex0kLfjBlnUVmLCR23Bw2cuTh23Wmy/QK78DwBfzHjaTjnz57Tn3E+Tj+o502dgcano96kOihJ9VmayUjTeP3u9IZk1EAX6Vw+opyw8A1gxnUwqkjdpFaAHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zgETscEaz3Q6S7+ulLMPv5SV5CZf51s5BfO68Li8t8A=;
+ b=FS2Q29vMXuwvafTS6MAEFgsCGmQYbjwJnlUpvJCoDfikKg4aIFROe7aaLa1N5zkX5nHfEqNlM5nwIW0JAWpuWIdgEi7/NASX4rrNEgxiaj5GVNqCvGiNbh48cwuyl7EipNxyp7bNeawARgF+sOGv2ITL9YNAxRBA6BqDarOWbAs=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
+ BN7PR08MB5524.namprd08.prod.outlook.com (20.176.29.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.22; Tue, 12 Nov 2019 00:21:09 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::a91a:c2f5:c557:4285]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::a91a:c2f5:c557:4285%6]) with mapi id 15.20.2430.027; Tue, 12 Nov 2019
+ 00:21:09 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "pedrom.sousa@synopsys.com" <pedrom.sousa@synopsys.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "tomas.winkler@intel.com" <tomas.winkler@intel.com>,
+        "cang@codeaurora.org" <cang@codeaurora.org>
+CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [RESEND PATCH v1 0/2] Two small patches for UFS
+Thread-Topic: [RESEND PATCH v1 0/2] Two small patches for UFS
+Thread-Index: AdWY7wB4UlFJaqPmSsGCWRpPuD+RWQ==
+Date:   Tue, 12 Nov 2019 00:21:08 +0000
+Message-ID: <BN7PR08MB56840512CEBCDD2A1194F7F5DB770@BN7PR08MB5684.namprd08.prod.outlook.com>
+Accept-Language: en-150, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTUwODFmMzliLTA0ZTItMTFlYS04Yjg1LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFw1MDgxZjM5Yy0wNGUyLTExZWEtOGI4NS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjU2NiIgdD0iMTMyMTc5OTE2NjU4ODk5Mjg3IiBoPSJjZGRSOHQwMXgvaWMzSWM0bkt5MWZLc3JvZVE9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.81.96]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f02f48c4-406b-40eb-0cb3-08d767063747
+x-ms-traffictypediagnostic: BN7PR08MB5524:|BN7PR08MB5524:|BN7PR08MB5524:|BN7PR08MB5524:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BN7PR08MB552426732D95A20CA439EA8CDB770@BN7PR08MB5524.namprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2000;
+x-forefront-prvs: 021975AE46
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(346002)(366004)(396003)(376002)(199004)(189003)(71190400001)(71200400001)(26005)(186003)(66066001)(6116002)(3846002)(2906002)(66476007)(476003)(9686003)(102836004)(52536014)(74316002)(7696005)(55236004)(486006)(45080400002)(6506007)(7416002)(33656002)(2201001)(4326008)(99286004)(55016002)(14454004)(478600001)(2501003)(86362001)(76116006)(66946007)(305945005)(8936002)(316002)(66446008)(8676002)(7736002)(6436002)(110136005)(54906003)(4744005)(5660300002)(64756008)(66556008)(14444005)(256004)(81166006)(81156014)(25786009)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB5524;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: pQYS1VcSrSQz7xjkMZYgcofJYXw4bzFu6mKuZzFgKkcL+SkNObgW2D7FD9oBoNY2VB21rzRNZ7to063TpPeLA5AZyDXs9eop5pquIswwWEG5c3PL2rqLq+yIMTcVP4N7Z23iF52H9pg7irZ/UBfv6Ro2Y9BlEnzJwtY6w7H8fke8bivFVrlmeBp5HolJE6h2cF7GaUk9yF7QQ+LTSm+My1aB/q8svw0qNFUbnug42GkPheNMEcJirSxhjYFDO1W7qkMWn02dvmCW1FmH0agnaQEuO5qmvasMV9jkrcYbIivFYL/vL91jQvKa0/ndBso73/FFVzkilPkZt1X8gkFHD9Up18U3v2AXsQ8VFU77TQjuaP4v9OHnWLcK8rXV4on/gWj+YC6e0DMjIuk02gbuJ/BE5zMQUptBoK+hnOGFvN/ZS3dF5MC6QIdUeKC08XjO
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f02f48c4-406b-40eb-0cb3-08d767063747
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2019 00:21:08.8557
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MDvvg/GbVJXSBYbav3QWgkZFacPWOHdzWnqQs+aPMs/1KgMXaa4IuSX1oqs58i/P88YhUPJz/xFFAeftM0Fvhw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB5524
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for pcm parameters.
+Bean Huo <beanhuo@micron.com>
 
-Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Resend since ver.kernel.org rejected @outlook.com.
+Hi,
+Here are two small patches, one is to fix a potential bug which could
+chase system hang-up, second one is to add more helpful debug hint.
 
----
+Bean Huo (2):
+  scsi: ufs: print helpful hint when response size exceed buffer size
+  scsi: ufs: fix potential bug which ends in system hang-up
 
-Changes in v3:
-- Change disallow baudrate setting to return -EBUSY if called before
-  ready. bcm_proto is no longer modified and is back to being const.
-- Changed btbcm_set_pcm_params to btbcm_set_pcm_int_params
-- Changed brcm,sco-routing to brcm,bt-sco-routing
+ drivers/scsi/ufs/ufshcd.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- Use match data to disallow baudrate setting
-- Parse pcm parameters by name instead of as a byte string
-- Fix prefix for dt-bindings commit
-
- .../devicetree/bindings/net/broadcom-bluetooth.txt    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-index c749dc297624..42fb2fa8143d 100644
---- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-+++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-@@ -29,6 +29,11 @@ Optional properties:
-    - "lpo": external low power 32.768 kHz clock
-  - vbat-supply: phandle to regulator supply for VBAT
-  - vddio-supply: phandle to regulator supply for VDDIO
-+ - brcm,bt-sco-routing: 0-3 (PCM, Transport, Codec, I2S)
-+ - brcm,pcm-interface-rate: 0-4 (128KBps, 256KBps, 512KBps, 1024KBps, 2048KBps)
-+ - brcm,pcm-frame-type: 0-1 (short, long)
-+ - brcm,pcm-sync-mode: 0-1 (slave, master)
-+ - brcm,pcm-clock-mode: 0-1 (slave, master)
- 
- 
- Example:
-@@ -40,5 +45,11 @@ Example:
-        bluetooth {
-                compatible = "brcm,bcm43438-bt";
-                max-speed = <921600>;
-+
-+               brcm,bt-sco-routing = [01];
-+               brcm,pcm-interface-rate = [02];
-+               brcm,pcm-frame-type = [00];
-+               brcm,pcm-sync-mode = [01];
-+               brcm,pcm-clock-mode = [01];
-        };
- };
--- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
-
+--
+2.17.1
