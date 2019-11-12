@@ -2,134 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB2B4F9523
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:08:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8589DF952A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 17:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfKLQIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 11:08:24 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40432 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfKLQIY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 11:08:24 -0500
-Received: by mail-qt1-f193.google.com with SMTP id o49so20298913qta.7
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 08:08:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ElBAh19h76fNw1WL7LmYDraY77y8dXIFpVkCkHJ9aiM=;
-        b=QK1rwIVJNbc09PoprNMmCK3WHkH1jHk1qrWN7F1bsm/Yrqj92VGD5NsvIhvWD0BlM4
-         8LHLZLm1SQoGQRGHM5DS7WcUlWv9B3cO91liUr/VuuL6ifwmASEH604H9Xo6WH1AvBB5
-         awlcMhO/6dnueYIu/Eg2gvQV+Y2NXK67SUgNGzJboP7hOJhxjOqLOmGCCI/CWsFEAWFT
-         b4xwL2Nl0rgERIAGoUMNoh1Fq+07eQ4vLjWVa0kZalpWPnRuSVnLKEUTCRUg2XCylMjZ
-         d5NhXCEwGpQt0OvfTxGglZptMb8UwH7xf4kW962uIR4XOBlxC9yQ7SktKA7XqgcOom/t
-         IOYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ElBAh19h76fNw1WL7LmYDraY77y8dXIFpVkCkHJ9aiM=;
-        b=pH1wUT58XX0wjYhmnVOI/sYrFfGioYOODlavmextT2e6bbEjwRCeaArv0MJVP4jAcK
-         JiYN+rsZ6hZC6yFDLFX40+qF0QG4M2aYyQTtCSP87pKpAzaQg3a9m1ooya0Dj5et2Rtg
-         3lZa9TYRqwnvFGsZp7mNZk3XRimUHPR2VP+GfjjQera6xlBhCcGvn1MPY3kwM8QkWJll
-         bWHKx+lBlzZGfNeZxi8xHlTV90Sb/rNFowgrT5kLhkMvIY0fJ3sM4asZ+pqDcTOCSXgu
-         emaKriEo53aX1R/L5hfW19MlRtmcilFwt2fILd4kFduYDKuf8kiMbuZOBByGMHj4wKYp
-         goMQ==
-X-Gm-Message-State: APjAAAXuXk5VRX3Nq3m3Tn5JZYaOULN5cj7hVSpmnE9UA1XovQLzPuuI
-        Evr1cyyAhQJkL5OeOrtf+ZuGGpCBoLPwDw==
-X-Google-Smtp-Source: APXvYqyKGAAq4JHv1jF2aRio6iyGex1cD+JQn3i2pjmUMJ5ENrlq26r1J+HNufGMjPTo9ouE0IQ7hw==
-X-Received: by 2002:ac8:6ec4:: with SMTP id f4mr32489946qtv.271.1573574903089;
-        Tue, 12 Nov 2019 08:08:23 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::aa8c])
-        by smtp.gmail.com with ESMTPSA id n66sm9462775qkb.72.2019.11.12.08.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 08:08:22 -0800 (PST)
-Date:   Tue, 12 Nov 2019 11:08:21 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     tim <xiejingfeng@linux.alibaba.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH] psi:fix divide by zero in psi_update_stats
-Message-ID: <20191112160821.GE168812@cmpxchg.org>
-References: <C377A5F1-F86F-4A27-966F-0285EC6EA934@linux.alibaba.com>
- <20191112154144.GC168812@cmpxchg.org>
- <20191112154844.GD168812@cmpxchg.org>
+        id S1727229AbfKLQJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 11:09:01 -0500
+Received: from foss.arm.com ([217.140.110.172]:36834 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726936AbfKLQJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 11:09:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 639A3D6E;
+        Tue, 12 Nov 2019 08:09:00 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29C753F534;
+        Tue, 12 Nov 2019 08:08:59 -0800 (PST)
+Date:   Tue, 12 Nov 2019 16:08:57 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     torvalds@linux-foundation.org, axboe@kernel.dk,
+        linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, will@kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>,
+        Richard Earnshaw <Richard.Earnshaw@arm.com>
+Subject: Re: [PATCH v2] buffer: Fix I/O error due to ARM read-after-read
+ hazard
+Message-ID: <20191112160855.GA22025@arrakis.emea.arm.com>
+References: <20191112130244.16630-1-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112154844.GD168812@cmpxchg.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191112130244.16630-1-vincent.whitchurch@axis.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 10:48:46AM -0500, Johannes Weiner wrote:
-> On Tue, Nov 12, 2019 at 10:41:46AM -0500, Johannes Weiner wrote:
-> > On Fri, Nov 08, 2019 at 03:33:24PM +0800, tim wrote:
-> > > In psi_update_stats, it is possible that period has value like
-> > > 0xXXXXXXXX00000000 where the lower 32 bit is 0, then it calls div_u64 which
-> > > truncates u64 period to u32, results in zero divisor.
-> > > Use div64_u64() instead of div_u64()  if the divisor is u64 to avoid
-> > > truncation to 32-bit on 64-bit platforms.
-> > > 
-> > > Signed-off-by: xiejingfeng <xiejingfeng@linux.alibaba.com>
-> > 
-> > This is legit. When we stop the periodic averaging worker due to an
-> > idle CPU, the period after restart can be much longer than the ~4 sec
-> > in the lower 32 bits. See the missed_periods logic in update_averages.
+On Tue, Nov 12, 2019 at 02:02:44PM +0100, Vincent Whitchurch wrote:
+> On my dual-core ARM Cortex-A9, reading from squashfs (over
+> dm-verity/ubi/mtd) in a loop for hundreds of hours invariably results in
+> a read failure in squashfs_read_data().  The errors occur because the
+> buffer_uptodate() check fails after wait_on_buffer().  Further debugging
+> shows that the bh was in fact uptodate and that there is no actual I/O
+> error in the lower layers.
 > 
-> Argh, that's not right. Of course I notice right after hitting send.
+> The problem is caused by the read-after-read hazards in the ARM
+> Cortex-A9 MPCore (erratum #761319, see [1]).  The code generated by the
+> compiler for the combination of the wait_on_buffer() and
+> buffer_uptodate() calls reads the flags value twice from memory (see the
+> excerpt of the assembly below).  The new value of the BH_Lock flag is
+> seen but the new value of BH_Uptodate is not even though both the bits
+> are read from the same memory location.
 > 
-> missed_periods are subtracted out of the difference between now and
-> the last update, so period should be not much bigger than 2s.
+>  27c:	9d08      	ldr	r5, [sp, #32]
+>  27e:	2400      	movs	r4, #0
+>  280:	e006      	b.n	290 <squashfs_read_data+0x290>
+>  282:	6803      	ldr	r3, [r0, #0]
+>  284:	07da      	lsls	r2, r3, #31
+>  286:	f140 810d 	bpl.w	4a4 <squashfs_read_data+0x4a4>
+>  28a:	3401      	adds	r4, #1
+>  28c:	42bc      	cmp	r4, r7
+>  28e:	da08      	bge.n	2a2 <squashfs_read_data+0x2a2>
+>  290:	f855 0f04 	ldr.w	r0, [r5, #4]!
+>  294:	6803      	ldr	r3, [r0, #0]
+>  296:	0759      	lsls	r1, r3, #29
+>  298:	d5f3      	bpl.n	282 <squashfs_read_data+0x282>
+>  29a:	f7ff fffe 	bl	0 <__wait_on_buffer>
 > 
-> Something else is going on here.
+> Work around this problem by adding a DMB between the two reads of
+> bh->flags, as recommended in the ARM document.  With this barrier, no
+> failures have been seen in more than 5000 hours of the same test.
+> 
+> [1] http://infocenter.arm.com/help/topic/com.arm.doc.uan0004a/UAN0004A_a9_read_read.pdf
 
-Tim, does this happen right after boot? I wonder if it's because we're
-not initializing avg_last_update, and the initial delta between the
-last update (0) and the first scheduled update (sched_clock() + 2s)
-ends up bigger than 4 seconds somehow. Later on, the delta between the
-last and the scheduled update should always be ~2s. But for that to
-happen, it would require a pretty slow boot, or a sched_clock() that
-does not start at 0.
+I thought we were going to fix the compiler. I found an old thread here:
 
-Tim, if you have a coredump, can you extract the value of the other
-variables printed in the following patch?
+https://gcc.gnu.org/ml/gcc-patches/2014-06/msg00714.html
 
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 84af7aa158bf..1b6836d23091 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -374,6 +374,10 @@ static u64 update_averages(struct psi_group *group, u64 now)
- 	 */
- 	avg_next_update = expires + ((1 + missed_periods) * psi_period);
- 	period = now - (group->avg_last_update + (missed_periods * psi_period));
-+
-+	WARN(period >> 32, "period=%ld now=%ld expires=%ld last=%ld missed=%ld\n",
-+	     period, now, expires, group->avg_last_update, missed_periods);
-+
- 	group->avg_last_update = now;
- 
- 	for (s = 0; s < NR_PSI_STATES - 1; s++) {
+Also cc'ing Richard Earnshaw as he may been involved in the gcc
+discussion at the time.
 
-And we may need something like this to make the tick initialization
-more robust regardless of the reported bug here:
+While you can add some barrier here, there may be other cases where this
+can go wrong.
 
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 84af7aa158bf..ce8f6748678a 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -185,7 +185,8 @@ static void group_init(struct psi_group *group)
- 
- 	for_each_possible_cpu(cpu)
- 		seqcount_init(&per_cpu_ptr(group->pcpu, cpu)->seq);
--	group->avg_next_update = sched_clock() + psi_period;
-+	group->avg_last_update = sched_clock();
-+	group->avg_next_update = group->avg_last_update + psi_period;
- 	INIT_DELAYED_WORK(&group->avgs_work, psi_avgs_work);
- 	mutex_init(&group->avgs_lock);
- 	/* Init trigger-related members */
+-- 
+Catalin
