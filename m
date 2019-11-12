@@ -2,255 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9687BF9BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 22:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ACC9F9BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 22:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfKLVVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 16:21:51 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54527 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfKLVVt (ORCPT
+        id S1727334AbfKLVWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 16:22:00 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38983 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727187AbfKLVV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 16:21:49 -0500
-Received: by mail-wm1-f67.google.com with SMTP id z26so4811249wmi.4;
-        Tue, 12 Nov 2019 13:21:48 -0800 (PST)
+        Tue, 12 Nov 2019 16:21:57 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 29so12684751pgm.6
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 13:21:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:subject:date:message-id:in-reply-to:references;
-        bh=k7yjor2EMmJZynb3fnq6oXvNP7d6yGjg6jAPuIWUBQA=;
-        b=m+oOa8iY9vkUipOOVBW8a/KkGz0+sl7M7RCLKx9YRks1w99Pg+PhC66jBRgHSYhZMU
-         /54GEGSuQ2s49sujJZnXK6svyTjfyHbXmzi8lAyPgbhnWQNNo7l+U7miBRs+vlpZBGBJ
-         Xcsgly3Hm9V0Ih8Lamu1rQuh5xBti/7I8UEyLUMLHXVXCBrP936oCaL1xze22mSjoZvh
-         nL+qao1mlSjESUK6KUcA28A6gfsLqTTnPA2bhHmIi6YHUHvL62ib7im/OLzFEe5DFKcE
-         MZnHcjb9qZV4k9QI5Z1zRMhb/A5c9s3kHzg42CQLf8hNz0IwR+i36qhhVqVP4nSb646M
-         2BpA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
+        b=ZfNUt0qSlG/eNpBtAZ0VTYWsyYp45EI1kg059Eym4v5QX0Rd4eJhUdGDHMn6QKbyy7
+         rAEVCINxRbPGFWvH2zmErPehM9LKyDLyBoDAInAHNKT4/quKkG/EtZO/FhCOkM/nDfkP
+         OwUp5RB5f4lGpDiCQlYFyWhQBMqbf0YFKIWuU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:subject:date:message-id
-         :in-reply-to:references;
-        bh=k7yjor2EMmJZynb3fnq6oXvNP7d6yGjg6jAPuIWUBQA=;
-        b=tvbxNkpafoZQ8CjuIjfqDvlMGtf6H/2IO3h/HEm4nMn5E1dQp9h3bA6CSqG5mzRvOa
-         kCu1PS7IpKUzTLkNLI8ESy/13e39knWLZ3LSyB7AeSxQAaKuxh2xoWNuY4Htd4jrtyp1
-         mAHuytUTuCQBntHHrGdDX1QMrPmoirjqwYlMS4DB374zsjLXCRBZ2NHvyhCyhTbb433Z
-         7ZV42abl2KUTPmjrzFwtxxm35eLnFYgXkNOXJQz4ulahvmf71Oovrh3p+7zkK+YvM4cO
-         qPQpgTkdeYEmNUO4I2x+CsJQF728iMRmxgZhQq3qHWFvgXQnLYQSta7vgoYGBJo5fHMw
-         7Wbg==
-X-Gm-Message-State: APjAAAWCllmP6mNDa3jmB/jLhDEHBiBD+ZDaty25PIZednLSQqf37Lc3
-        Wm/JJwr3Dpnezm7T/VieDiFFOOoo
-X-Google-Smtp-Source: APXvYqxg078+SAqmn/bGZVCAlerv1pjs2W8Dcb4Aj17XpkQvcrVJdgM5hOo37Pyn7JQ7lTkUUMC6Xw==
-X-Received: by 2002:a1c:4d11:: with SMTP id o17mr5851918wmh.170.1573593706792;
-        Tue, 12 Nov 2019 13:21:46 -0800 (PST)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id q25sm198664wra.3.2019.11.12.13.21.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Nov 2019 13:21:46 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: [PATCH 7/7] Documentation: Add ITLB_MULTIHIT documentation
-Date:   Tue, 12 Nov 2019 22:21:37 +0100
-Message-Id: <1573593697-25061-8-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1573593697-25061-1-git-send-email-pbonzini@redhat.com>
-References: <1573593697-25061-1-git-send-email-pbonzini@redhat.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
+        b=VZpAjMSZA7eIKB9tNf+5dCKb2dxvGsAbQblrrFG8tDlUouYaZ1OMOJHJ8ig5Gq1rbG
+         62KXE6/OfUDOleckGekNvwJqMGF8q3n25rNr6p7xaN67mnzNo27bV1RLZc+zP3lV8MFm
+         M3rpJtFLslu3mcBJR4IeYloxfpl/mSnwadcLxluSkmpv0kJHF8iveWO/nxlAWPszZ+m3
+         KxaVCULkq5PBcBmBzVIiMZs3eYHximUO9IlKXl3qeRxyVHyxH2SjyFgq1JFEZqtxHoS6
+         Gxnn0boN2MK8vJHrTN8TkkHVIeMkClxQrBhqNqQN4u3PdOzofYAqfvB2gjQgXRQPxRHP
+         YMSQ==
+X-Gm-Message-State: APjAAAVJgBjarRxl+jbusydxMcjeoJFHqCTNkYN999WHo5unWqaBxxo1
+        u4zzkA1wIdJH55AnlxlVPn/Y5g==
+X-Google-Smtp-Source: APXvYqzdFzu4zPPFnJ9ABSyKsWziEZi4Dk2O2pVHeNcsXTcPeB3CKkazqUJ/8FJ/XZkexPEBBAMb2g==
+X-Received: by 2002:aa7:8d8b:: with SMTP id i11mr11186741pfr.45.1573593716214;
+        Tue, 12 Nov 2019 13:21:56 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c21sm19635349pgh.25.2019.11.12.13.21.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 13:21:55 -0800 (PST)
+Date:   Tue, 12 Nov 2019 13:21:54 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Jiri Slaby <jslaby@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christoph Lameter <cl@linux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rik van Riel <riel@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Kubecek <mkubecek@suse.cz>
+Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
+ as usercopy caches
+Message-ID: <201911121313.1097D6EE@keescook>
+References: <1515636190-24061-1-git-send-email-keescook@chromium.org>
+ <1515636190-24061-10-git-send-email-keescook@chromium.org>
+ <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gomez Iglesias, Antonio" <antonio.gomez.iglesias@intel.com>
+On Tue, Nov 12, 2019 at 08:17:57AM +0100, Jiri Slaby wrote:
+> On 11. 01. 18, 3:02, Kees Cook wrote:
+> > From: David Windsor <dave@nullcore.net>
+> > 
+> > Mark the kmalloc slab caches as entirely whitelisted. These caches
+> > are frequently used to fulfill kernel allocations that contain data
+> > to be copied to/from userspace. Internal-only uses are also common,
+> > but are scattered in the kernel. For now, mark all the kmalloc caches
+> > as whitelisted.
+> > 
+> > This patch is modified from Brad Spengler/PaX Team's PAX_USERCOPY
+> > whitelisting code in the last public patch of grsecurity/PaX based on my
+> > understanding of the code. Changes or omissions from the original code are
+> > mine and don't reflect the original grsecurity/PaX code.
+> > 
+> > Signed-off-by: David Windsor <dave@nullcore.net>
+> > [kees: merged in moved kmalloc hunks, adjust commit log]
+> > Cc: Pekka Enberg <penberg@kernel.org>
+> > Cc: David Rientjes <rientjes@google.com>
+> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: linux-mm@kvack.org
+> > Cc: linux-xfs@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > Acked-by: Christoph Lameter <cl@linux.com>
+> > ---
+> >  mm/slab.c        |  3 ++-
+> >  mm/slab.h        |  3 ++-
+> >  mm/slab_common.c | 10 ++++++----
+> >  3 files changed, 10 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/mm/slab.c b/mm/slab.c
+> > index b9b0df620bb9..dd367fe17a4e 100644
+> > --- a/mm/slab.c
+> > +++ b/mm/slab.c
+> ...
+> > @@ -1098,7 +1099,8 @@ void __init setup_kmalloc_cache_index_table(void)
+> >  static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
+> >  {
+> >  	kmalloc_caches[idx] = create_kmalloc_cache(kmalloc_info[idx].name,
+> > -					kmalloc_info[idx].size, flags);
+> > +					kmalloc_info[idx].size, flags, 0,
+> > +					kmalloc_info[idx].size);
+> >  }
+> >  
+> >  /*
+> > @@ -1139,7 +1141,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
+> >  
+> >  			BUG_ON(!n);
+> >  			kmalloc_dma_caches[i] = create_kmalloc_cache(n,
+> > -				size, SLAB_CACHE_DMA | flags);
+> > +				size, SLAB_CACHE_DMA | flags, 0, 0);
+> 
+> Hi,
+> 
+> was there any (undocumented) reason NOT to mark DMA caches as usercopy?
+> 
+> We are seeing this on s390x:
+> 
+> > usercopy: Kernel memory overwrite attempt detected to SLUB object
+> 'dma-kmalloc-1k' (offset 0, size 11)!
+> > ------------[ cut here ]------------
+> > kernel BUG at mm/usercopy.c:99!
 
-Add the initial ITLB_MULTIHIT documentation.
+Interesting! I believe the rationale was that if the region is used for
+DMA, allowing direct access to it from userspace could be prone to
+races.
 
-[ tglx: Add it to the index so it gets actually built. ]
+> See:
+> https://bugzilla.suse.com/show_bug.cgi?id=1156053
 
-Signed-off-by: Antonio Gomez Iglesias <antonio.gomez.iglesias@intel.com>
-Signed-off-by: Nelson D'Souza <nelson.dsouza@linux.intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- Documentation/admin-guide/hw-vuln/index.rst    |   1 +
- Documentation/admin-guide/hw-vuln/multihit.rst | 163 +++++++++++++++++++++++++
- 2 files changed, 164 insertions(+)
- create mode 100644 Documentation/admin-guide/hw-vuln/multihit.rst
+For context from the bug, the trace is:
 
-diff --git a/Documentation/admin-guide/hw-vuln/index.rst b/Documentation/admin-guide/hw-vuln/index.rst
-index 0802b1c67452..0795e3c2643f 100644
---- a/Documentation/admin-guide/hw-vuln/index.rst
-+++ b/Documentation/admin-guide/hw-vuln/index.rst
-@@ -13,3 +13,4 @@ are configurable at compile, boot or run time.
-    l1tf
-    mds
-    tsx_async_abort
-+   multihit.rst
-diff --git a/Documentation/admin-guide/hw-vuln/multihit.rst b/Documentation/admin-guide/hw-vuln/multihit.rst
-new file mode 100644
-index 000000000000..ba9988d8bce5
---- /dev/null
-+++ b/Documentation/admin-guide/hw-vuln/multihit.rst
-@@ -0,0 +1,163 @@
-+iTLB multihit
-+=============
-+
-+iTLB multihit is an erratum where some processors may incur a machine check
-+error, possibly resulting in an unrecoverable CPU lockup, when an
-+instruction fetch hits multiple entries in the instruction TLB. This can
-+occur when the page size is changed along with either the physical address
-+or cache type. A malicious guest running on a virtualized system can
-+exploit this erratum to perform a denial of service attack.
-+
-+
-+Affected processors
-+-------------------
-+
-+Variations of this erratum are present on most Intel Core and Xeon processor
-+models. The erratum is not present on:
-+
-+   - non-Intel processors
-+
-+   - Some Atoms (Airmont, Bonnell, Goldmont, GoldmontPlus, Saltwell, Silvermont)
-+
-+   - Intel processors that have the PSCHANGE_MC_NO bit set in the
-+     IA32_ARCH_CAPABILITIES MSR.
-+
-+
-+Related CVEs
-+------------
-+
-+The following CVE entry is related to this issue:
-+
-+   ==============  =================================================
-+   CVE-2018-12207  Machine Check Error Avoidance on Page Size Change
-+   ==============  =================================================
-+
-+
-+Problem
-+-------
-+
-+Privileged software, including OS and virtual machine managers (VMM), are in
-+charge of memory management. A key component in memory management is the control
-+of the page tables. Modern processors use virtual memory, a technique that creates
-+the illusion of a very large memory for processors. This virtual space is split
-+into pages of a given size. Page tables translate virtual addresses to physical
-+addresses.
-+
-+To reduce latency when performing a virtual to physical address translation,
-+processors include a structure, called TLB, that caches recent translations.
-+There are separate TLBs for instruction (iTLB) and data (dTLB).
-+
-+Under this errata, instructions are fetched from a linear address translated
-+using a 4 KB translation cached in the iTLB. Privileged software modifies the
-+paging structure so that the same linear address using large page size (2 MB, 4
-+MB, 1 GB) with a different physical address or memory type.  After the page
-+structure modification but before the software invalidates any iTLB entries for
-+the linear address, a code fetch that happens on the same linear address may
-+cause a machine-check error which can result in a system hang or shutdown.
-+
-+
-+Attack scenarios
-+----------------
-+
-+Attacks against the iTLB multihit erratum can be mounted from malicious
-+guests in a virtualized system.
-+
-+
-+iTLB multihit system information
-+--------------------------------
-+
-+The Linux kernel provides a sysfs interface to enumerate the current iTLB
-+multihit status of the system:whether the system is vulnerable and which
-+mitigations are active. The relevant sysfs file is:
-+
-+/sys/devices/system/cpu/vulnerabilities/itlb_multihit
-+
-+The possible values in this file are:
-+
-+.. list-table::
-+
-+     * - Not affected
-+       - The processor is not vulnerable.
-+     * - KVM: Mitigation: Split huge pages
-+       - Software changes mitigate this issue.
-+     * - KVM: Vulnerable
-+       - The processor is vulnerable, but no mitigation enabled
-+
-+
-+Enumeration of the erratum
-+--------------------------------
-+
-+A new bit has been allocated in the IA32_ARCH_CAPABILITIES (PSCHANGE_MC_NO) msr
-+and will be set on CPU's which are mitigated against this issue.
-+
-+   =======================================   ===========   ===============================
-+   IA32_ARCH_CAPABILITIES MSR                Not present   Possibly vulnerable,check model
-+   IA32_ARCH_CAPABILITIES[PSCHANGE_MC_NO]    '0'           Likely vulnerable,check model
-+   IA32_ARCH_CAPABILITIES[PSCHANGE_MC_NO]    '1'           Not vulnerable
-+   =======================================   ===========   ===============================
-+
-+
-+Mitigation mechanism
-+-------------------------
-+
-+This erratum can be mitigated by restricting the use of large page sizes to
-+non-executable pages.  This forces all iTLB entries to be 4K, and removes
-+the possibility of multiple hits.
-+
-+In order to mitigate the vulnerability, KVM initially marks all huge pages
-+as non-executable. If the guest attempts to execute in one of those pages,
-+the page is broken down into 4K pages, which are then marked executable.
-+
-+If EPT is disabled or not available on the host, KVM is in control of TLB
-+flushes and the problematic situation cannot happen.  However, the shadow
-+EPT paging mechanism used by nested virtualization is vulnerable, because
-+the nested guest can trigger multiple iTLB hits by modifying its own
-+(non-nested) page tables.  For simplicity, KVM will make large pages
-+non-executable in all shadow paging modes.
-+
-+Mitigation control on the kernel command line and KVM - module parameter
-+------------------------------------------------------------------------
-+
-+The KVM hypervisor mitigation mechanism for marking huge pages as
-+non-executable can be controlled with a module parameter "nx_huge_pages=".
-+The kernel command line allows to control the iTLB multihit mitigations at
-+boot time with the option "kvm.nx_huge_pages=".
-+
-+The valid arguments for these options are:
-+
-+  ==========  ================================================================
-+  force       Mitigation is enabled. In this case, the mitigation implements
-+              non-executable huge pages in Linux kernel KVM module. All huge
-+              pages in the EPT are marked as non-executable.
-+              If a guest attempts to execute in one of those pages, the page is
-+              broken down into 4K pages, which are then marked executable.
-+
-+  off	      Mitigation is disabled.
-+
-+  auto        Enable mitigation only if the platform is affected and the kernel
-+              was not booted with the "mitigations=off" command line parameter.
-+	      This is the default option.
-+  ==========  ================================================================
-+
-+
-+Mitigation selection guide
-+--------------------------
-+
-+1. No virtualization in use
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+   The system is protected by the kernel unconditionally and no further
-+   action is required.
-+
-+2. Virtualization with trusted guests
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+   If the guest comes from a trusted source, you may assume that the guest will
-+   not attempt to maliciously exploit these errata and no further action is
-+   required.
-+
-+3. Virtualization with untrusted guests
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+   If the guest comes from an untrusted source, the guest host kernel will need
-+   to apply iTLB multihit mitigation via the kernel command line or kvm
-+   module parameter.
+(<0000000000386c5a> usercopy_abort+0xa2/0xa8) 
+ <000000000036097a> __check_heap_object+0x11a/0x120  
+ <0000000000386b3a> __check_object_size+0x18a/0x208  
+ <000000000079b4ba> skb_copy_datagram_from_iter+0x62/0x240  
+ <000003ff804edd5c> iucv_sock_sendmsg+0x1fc/0x858 Ýaf_iucv¨  
+ <0000000000785894> sock_sendmsg+0x54/0x90  
+ <0000000000785944> sock_write_iter+0x74/0xa0  
+ <000000000038a3f0> new_sync_write+0x110/0x180  
+ <000000000038d42e> vfs_write+0xa6/0x1d0  
+ <000000000038d748> ksys_write+0x60/0xe8  
+ <000000000096a660> system_call+0xdc/0x2e0  
+
+I know Al worked on fixing up usercopy checking for iters. I wonder if
+there is redundant checking happening here? i.e. haven't iters already
+done object size verifications, so they're not needed during iter copy
+helpers?
+
+> This indeed fixes it:
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1290,7 +1290,8 @@ void __init create_kmalloc_caches(slab_flags_t flags)
+>                         kmalloc_caches[KMALLOC_DMA][i] =
+> create_kmalloc_cache(
+>                                 kmalloc_info[i].name[KMALLOC_DMA],
+>                                 kmalloc_info[i].size,
+> -                               SLAB_CACHE_DMA | flags, 0, 0);
+> +                               SLAB_CACHE_DMA | flags, 0,
+> +                               kmalloc_info[i].size);
+>                 }
+>         }
+>  #endif
+
+How is iucv the only network protocol that has run into this? Do others
+use a bounce buffer?
+
 -- 
-1.8.3.1
-
+Kees Cook
