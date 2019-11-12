@@ -2,107 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 421DBF8CAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85093F8C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:16:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfKLKU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 05:20:26 -0500
-Received: from audible.transient.net ([24.143.126.66]:39268 "HELO
-        audible.transient.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726212AbfKLKU0 (ORCPT
+        id S1726484AbfKLKQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 05:16:21 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40875 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbfKLKQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 05:20:26 -0500
-X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Nov 2019 05:20:26 EST
-Received: (qmail 30547 invoked from network); 12 Nov 2019 10:13:44 -0000
-Received: from cucamonga.audible.transient.net (192.168.2.5)
-  by canarsie.audible.transient.net with QMQP; 12 Nov 2019 10:13:44 -0000
-Received: (nullmailer pid 3784 invoked by uid 1000);
-        Tue, 12 Nov 2019 10:13:43 -0000
-Date:   Tue, 12 Nov 2019 10:13:43 +0000
-From:   Jamie Heilman <jamie@audible.transient.net>
-To:     "J. Bruce Fields" <bfields@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: PROBLEM: NULL pointer dereference; nfsd4_remove_cld_pipe
-Message-ID: <20191112101343.GA2806@audible.transient.net>
-Mail-Followup-To: "J. Bruce Fields" <bfields@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        Tue, 12 Nov 2019 05:16:21 -0500
+Received: by mail-ot1-f65.google.com with SMTP id m15so13815080otq.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 02:16:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=AKZO0OAzyyYGtpbwsEj0QOcTH8vqhFRIVBhgV2yDI1g=;
+        b=MKkc4UyNjo46K6JpSwpbGmcYcHb694jLXJxKceHuu01hTDC6t0f3f7w4XAQlrwJdLI
+         +0dpUVgiYRfD4m4UTM61GbEUvKzH+cV+RCj5NHe8Ym6pLVsHUgofeIn6/UVh62vDPLdW
+         geQPN19YcJozX+8NZpNEJ64YZU94tHhcp/ZvYALtrAMHUIKgbjcPvWpoGlKS9By3QvV2
+         PaUsCD112vgto4G5Y3Hhh1JqsctWluEZv3TN5zcfcd4b03LIPzifxELba/ah9UlNNXnO
+         BXVWVzzx6j9S7294+QI3B6uAjGfFuOu0yHiZAvweTQKDOBjSX4c/1R1uAIrvt0MQCDFk
+         sHcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=AKZO0OAzyyYGtpbwsEj0QOcTH8vqhFRIVBhgV2yDI1g=;
+        b=GBa546LT5tchkylNnf3X9MjPWbdYDaBd51yE0I1V0hoBRXWxILjXKZ6rWdqDojM/Y7
+         QcV7nVAMhBIEejHHonVIFPrSVRT9lCQ5fx6YyvhiEWTuf5N+f38+vjdp9Z19jzea1GKh
+         zjLEqeU4vy2NiY7U35vy5CfpKBXboWwVQg9djlYkSq2Ra6Gs8YQIg1BMfQ0VJSPtVUlT
+         QrrqjncyWtdXHfOzbMsYLdw0AN5prlXOB1apEZ8Om2s9NO3DmgoBY8gYDe7yGEH7+6Ld
+         k/8MYzILvoApWnBvaqEnQ+m3eu6+7gww1xisZOzqvUaJN7WsZXSq5NkVcHHk7DYpB2Tq
+         up8A==
+X-Gm-Message-State: APjAAAUjWKVGSapcgr8f9bsT21fBXUAY7D6jTX4CVAFoJFu8uxgVQPZB
+        3j9eZel2g7VkzDGfAZlwZahi6M5+dq9QAJnWNs3s6tWJ
+X-Google-Smtp-Source: APXvYqxsF1/3YJCj6U1j3gN+WttI0zCinM36IFtdfM94pQ8mxyn5ROGK+eMn6Ut7Z3q6li9ZlTIynntWVR/yXJZMrio=
+X-Received: by 2002:a9d:344a:: with SMTP id v68mr25496129otb.85.1573553780649;
+ Tue, 12 Nov 2019 02:16:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <20191108160747.3274377-1-thierry.reding@gmail.com> <20191108205407.GE23750@amd>
+In-Reply-To: <20191108205407.GE23750@amd>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 12 Nov 2019 11:16:10 +0100
+Message-ID: <CAMpxmJX0oM3cUQULr8UmKtJ5mGuzSvGeR5jCmo88Q_9+gDXqjA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: max77620: Fixup debounce delays
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Giving 5.4.0-rc7 a spin I hit a NULL pointer dereference and bisected
-it to:
+pt., 8 lis 2019 o 21:54 Pavel Machek <pavel@denx.de> napisa=C5=82(a):
+>
+> On Fri 2019-11-08 17:07:46, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > When converting milliseconds to microseconds in commit fffa6af94894
+> > ("gpio: max77620: Use correct unit for debounce times") some ~1 ms gaps
+> > were introduced between the various ranges supported by the controller.
+> > Fix this by changing the start of each range to the value immediately
+> > following the end of the previous range. This way a debounce time of,
+> > say 8250 us will translate into 16 ms instead of returning an -EINVAL
+> > error.
+> >
+> > Typically the debounce delay is only ever set through device tree and
+> > specified in milliseconds, so we can never really hit this issue becaus=
+e
+> > debounce times are always a multiple of 1000 us.
+> >
+> > The only notable exception for this is drivers/mmc/host/mmc-spi.c where
+> > the CD GPIO is requested, which passes a 1 us debounce time. According
+> > to a comment preceeding that code this should actually be 1 ms (i.e.
+> > 1000 us).
+> >
+> > Reported-by: Pavel Machek <pavel@denx.de>
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>
+> Thanks for doing this!
+>
+> Acked-by: Pavel Machek <pavel@denx.de>
+>
+> And I guess this should be cc: stable, as the commit this fixes was
+> making its way there.
+>
+> Best regards,
+>                                                                 Pavel
+>
+>
+> > @@ -198,13 +198,13 @@ static int max77620_gpio_set_debounce(struct max7=
+7620_gpio *mgpio,
+> >       case 0:
+> >               val =3D MAX77620_CNFG_GPIO_DBNC_None;
+> >               break;
+> > -     case 1000 ... 8000:
+> > +     case 1 ... 8000:
+> >               val =3D MAX77620_CNFG_GPIO_DBNC_8ms;
+> >               break;
+> > -     case 9000 ... 16000:
+> > +     case 8001 ... 16000:
+> >               val =3D MAX77620_CNFG_GPIO_DBNC_16ms;
+> >               break;
+> > -     case 17000 ... 32000:
+> > +     case 16001 ... 32000:
+> >               val =3D MAX77620_CNFG_GPIO_DBNC_32ms;
+> >               break;
+> >       default:
+>
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-commit 6ee95d1c899186c0798cafd25998d436bcdb9618
-Author: Scott Mayhew <smayhew@redhat.com>
-Date:   Mon Sep 9 16:10:31 2019 -0400
+Applied for fixes and marked for stable.
 
-    nfsd: add support for upcall version 2
-
-
-The splat against 5.3.0-rc2-00034-g6ee95d1c8991:
-
-BUG: kernel NULL pointer dereference, address: 0000000000000036
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0 
-Oops: 0000 [#1] PREEMPT SMP PTI
-CPU: 0 PID: 2936 Comm: rpc.nfsd Not tainted 5.3.0-rc2-00034-g6ee95d1c8991 #1
-Hardware name: Dell Inc. Precision WorkStation T3400  /0TP412, BIOS A14 04/30/2012
-RIP: 0010:crypto_destroy_tfm+0x5/0x4d
-Code: 78 01 00 00 48 85 c0 74 05 e9 05 05 66 00 c3 55 48 8b af 80 01 00 00 e8 d5 ff ff ff 48 89 ef 5d e9 12 f9 ef ff 48 85 ff 74 47 <48> 83 7e 30 00 41 55 4c 8b 6e 38 41 54 49 89 fc 55 48 89 f5 75 14
-RSP: 0018:ffffc90000b7bd68 EFLAGS: 00010282
-RAX: ffffffffa0402841 RBX: ffff888230484400 RCX: 0000000000002cd0
-RDX: 0000000000002cce RSI: 0000000000000006 RDI: fffffffffffffffe
-RBP: ffffffff81e68440 R08: ffff888232801800 R09: ffffffffa0402841
-R10: 0000000000000200 R11: ffff88823048ae40 R12: ffff888231585100
-R13: ffff88823048ae40 R14: 000000000000000b R15: ffff888230484400
-FS:  00007f02102c3740(0000) GS:ffff888233a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000036 CR3: 0000000230f94000 CR4: 00000000000406f0
-Call Trace:
- nfsd4_remove_cld_pipe+0x6d/0x83 [nfsd]
- nfsd4_cld_tracking_init+0x1cf/0x295 [nfsd]
- nfsd4_client_tracking_init+0x72/0x13e [nfsd]
- nfs4_state_start_net+0x22a/0x2cf [nfsd]
- nfsd_svc+0x1c6/0x292 [nfsd]
- write_threads+0x68/0xb0 [nfsd]
- ? write_versions+0x333/0x333 [nfsd]
- nfsctl_transaction_write+0x4a/0x62 [nfsd]
- vfs_write+0xa0/0xdd
- ksys_write+0x71/0xba
- do_syscall_64+0x48/0x55
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7f021056c904
-Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb bb 0f 1f 80 00 00 00 00 48 8d 05 d9 3a 0d 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 48 83 ec 28 48 89 54 24 18 48
-RSP: 002b:00007ffdc76ec618 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 000055b534955560 RCX: 00007f021056c904
-RDX: 0000000000000002 RSI: 000055b534955560 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000000000000 R09: 00007ffdc76ec4b0
-R10: 00007ffdc76ec367 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000008 R14: 0000000000000000 R15: 000055b534b8a2a0
-Modules linked in: cpufreq_userspace cpufreq_powersave cpufreq_ondemand cpufreq_conservative autofs4 fan nfsd auth_rpcgss nfs lockd grace fscache sunrpc bridge stp llc nhpoly1305_sse2 nhpoly1305 aes_generic chacha_x86_64 chacha_generic adiantum poly1305_generic vhost_net tun vhost tap dm_crypt snd_hda_codec_analog snd_hda_codec_generic usb_storage snd_hda_intel kvm_intel snd_hda_codec kvm snd_hwdep snd_hda_core snd_pcm dcdbas snd_timer irqbypass snd soundcore sr_mod cdrom tg3 sg floppy evdev xfs dm_mod raid1 md_mod psmouse
-CR2: 0000000000000036
----[ end trace bc12bbe4cdd6319f ]---
-...
-NFS: Registering the id_resolver key type
-Key type id_resolver registered
-Key type id_legacy registered
-
-
-My kernel config is at
-http://audible.transient.net/~jamie/k/upcallv2.config-5.3.0-rc2-00034-g6ee95d1c8991
-
-I don't think there's anything terribly interesting about my nfs
-server setup, this happens reliably on boot up, idle network, no
-active clients; let me know what else you need, happy to debug.
-
--- 
-Jamie Heilman                     http://audible.transient.net/~jamie/
+Thanks
