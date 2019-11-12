@@ -2,166 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7BC4F8A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:12:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5484F8A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:15:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbfKLIMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 03:12:00 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34950 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfKLIMA (ORCPT
+        id S1727022AbfKLIPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 03:15:03 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39052 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfKLIPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 03:12:00 -0500
-Received: by mail-qt1-f193.google.com with SMTP id n4so14229376qte.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 00:11:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kt7J2laxHQ4pWQrrVLE48aAp/b3AC/hHVCv/0m4lmtk=;
-        b=Y0UsbTOCwHsVFcxd4N9UrjgdfCdcE7UdvpH4OGd+JivnepMeaVRq6Wato1ghR3IC0z
-         ODg7e4GSXwcKC4Ikt1P/Zcz46L/2xDC/IxcJRgU0FN7r0Xm76IvByMnmKFnGvNYDjSva
-         BXhKTET58532s4hFirnMRcd39XYwjAoUlytcYmx2xOHf8qYMqrbiNYYAqFoDiZvWFi7l
-         xrdXlFelpwOHOq5Lh5IxKIPeQFNsWcFBcEMDUYYCrHpzZPa4lpSaqI1WmiC9mrnvjgW7
-         wwJb4jkoJPJtSpuw0ocLe1Cj/6WqsgLyoUUFYxmUMoNI+N0u+txPHKW+/9ar+vLTcVV4
-         qXnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kt7J2laxHQ4pWQrrVLE48aAp/b3AC/hHVCv/0m4lmtk=;
-        b=bTxq8Em2gylFY3rd8l+MmUSmqSbWWAUUU/xXHrBRKybybMpMTCrQ2fY9LUN8EnjfKj
-         oLKt0OAXtFE8KrBo1KQ7SaofM+usSNx5jg11BidfRwzb+HasF4sV1/XtJzDsXUimUvJ2
-         dueEaq0K6QCgq/Ho7B/hPjSSKHqd8Cev3ND4UhSJSbWtUtD95QniTXP2IPW3P5TAS6V9
-         aiSFUTqVg/JKF/Ib1XL67sKrsSlXnZZBSuy+4+1NsCQL05CfHvaxv56NVOu7ZlTKKkyA
-         BzpKqdZkTbsJciVC12yc1DJqwsR2Y/NwYd1/BKtHXOowvqplpTkrhzaskK3AlIy+49uY
-         kAWQ==
-X-Gm-Message-State: APjAAAUIDAModd1MxgEXoVpfgHvPcRq6qdgIzg5nVX3w+NNoKbjJaCme
-        6cgzMvBOIBujtyUbR9l3Qcg=
-X-Google-Smtp-Source: APXvYqzY/DXYDodTnnEAQx0YLr5+650L5zPT7ndeHAWKf24VhLOUaIXKozEOi467IRLglpAOFAdxLA==
-X-Received: by 2002:ac8:682:: with SMTP id f2mr30812560qth.140.1573546317546;
-        Tue, 12 Nov 2019 00:11:57 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id 19sm9205090qkg.89.2019.11.12.00.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 00:11:57 -0800 (PST)
-Date:   Tue, 12 Nov 2019 09:11:53 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/iopl: Clear up the role of the two bitmap copying fields
-Message-ID: <20191112081153.GG100264@gmail.com>
-References: <20191111220314.519933535@linutronix.de>
- <20191112074052.GD100264@gmail.com>
+        Tue, 12 Nov 2019 03:15:02 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAC8Ex0u109278;
+        Tue, 12 Nov 2019 02:14:59 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573546499;
+        bh=FsOVqKbljcnHgICqOdzhzNiPBNYuXWN1KLg4XT+reEw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Ns3BeRqfXxRdfzQxIyW4OpvuhbMUih8f6ETFb5E/SgjUVsF8srHMpSXB7130gke+L
+         sULnflqQnWMubCRffB5PAmoIHVvfmPBbkEDf6dgwyjkB6vS+QQVqrdZeKqoopCPm36
+         I44hTbQUIGY6rrIMd//ekELAqENL2XpS+40N+tyc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAC8ExHv013948
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Nov 2019 02:14:59 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
+ Nov 2019 02:14:41 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 12 Nov 2019 02:14:41 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAC8EuMt030332;
+        Tue, 12 Nov 2019 02:14:56 -0600
+Subject: Re: [PATCH 03/17] remoteproc/omap: Add device tree support
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <ohad@wizery.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>
+References: <20191028124238.19224-1-t-kristo@ti.com>
+ <20191028124238.19224-4-t-kristo@ti.com> <20191111231650.GE3108315@builder>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <0698f722-c56f-005a-cd9f-51199d73bd12@ti.com>
+Date:   Tue, 12 Nov 2019 10:14:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112074052.GD100264@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191111231650.GE3108315@builder>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/11/2019 01:16, Bjorn Andersson wrote:
+> On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+> [..]
+>> +static int omap_rproc_get_boot_data(struct platform_device *pdev,
+>> +				    struct rproc *rproc)
+>> +{
+>> +	struct device_node *np = pdev->dev.of_node;
+>> +	struct omap_rproc *oproc = rproc->priv;
+>> +	int ret;
+>> +
+>> +	if (!of_device_is_compatible(np, "ti,omap4-dsp") &&
+>> +	    !of_device_is_compatible(np, "ti,omap5-dsp"))
+>> +		return 0;
+> 
+> I think it would be cleaner if you added a "has_bootreg" bool to your
+> omap_rproc_dev_data, do of_device_get_match_data() in omap_rproc_probe()
+> and pass that here.
 
-Here's another one, which makes the pointer-caching logic a bit clearer 
-IMO:
+Hmm you are right. There seem to be couple of other similar checks 
+around the code, let me try to address those as well.
 
-Firstly, it lines up the two related fields in the namespace:
+> 
+>> +
+>> +	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
+>> +					GFP_KERNEL);
+>> +	if (!oproc->boot_data)
+>> +		return -ENOMEM;
+>> +
+>> +	if (!of_property_read_bool(np, "syscon-bootreg")) {
+>> +		dev_err(&pdev->dev, "syscon-bootreg property is missing\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	oproc->boot_data->syscon =
+>> +			syscon_regmap_lookup_by_phandle(np, "syscon-bootreg");
+> 
+> You updated the dt binding document, but this needs to be updated as
+> well.
 
-   x86_io_bitmap.last_bitmap        =>   bitmap_copied_ptr
-   x86_io_bitmap.last_sequence      =>   bitmap_copied_seq
+Yeah, was waiting for comments before updating the actual code.
 
-It also constifies the pointer to better signal that it should never 
-actually be used for anything but comparison
+-Tero
 
-I think the 'bitmap_copied_' ptr/seq pairing makes it more obvious, and 
-removing the 'last' language makes it a tiny bit clearer that this bitmap 
-is special because we copied its contents into the TSS.
+> 
+> Regards,
+> Bjorn
+> 
 
-This makes code like this a tiny bit easier to read IMHO:
-
-+                       if (tss->io_bitmap.bitmap_copied_ptr != iobm ||
-+                           tss->io_bitmap.bitmap_copied_seq != iobm->sequence)
-
-I marked it RFC because you might not agree. :-)
-
-Only build tested.
-
-Thanks,
-
-	Ingo
-
----
- arch/x86/include/asm/processor.h | 10 +++++-----
- arch/x86/kernel/cpu/common.c     |  2 +-
- arch/x86/kernel/process.c        |  8 ++++----
- 3 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index d1f2c1eb14e9..b45ff7c1419f 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -367,12 +367,12 @@ struct entry_stack_page {
- struct x86_io_bitmap
- {
- 	/*
--	 * The bitmap pointer and the sequence number of the last active
--	 * bitmap. last_bitmap cannot be dereferenced. It's solely for
--	 * comparison.
-+	 * The bitmap pointer and the sequence number of the last copied
-+	 * bitmap. bitmap_copied_ptr must not be dereferenced, it's solely
-+	 * for comparison.
- 	 */
--	struct io_bitmap	*last_bitmap;
--	u64			last_sequence;
-+	const struct io_bitmap	*bitmap_copied_ptr;
-+	u64			bitmap_copied_seq;
- 
- 	/*
- 	 * Store the dirty size of the last io bitmap offender. The next
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index a35a557429e7..5a74c5b11b1c 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1861,7 +1861,7 @@ void cpu_init(void)
- 	/* Initialize the TSS. */
- 	tss_setup_ist(tss);
- 	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
--	tss->io_bitmap.last_bitmap = NULL;
-+	tss->io_bitmap.bitmap_copied_ptr = NULL;
- 	tss->io_bitmap.bytes_max = 0;
- 	memset(tss->io_bitmap.map_bytes, 0xff, sizeof(tss->io_bitmap.map_bytes));
- 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index c4e76a540b51..ecf97855ed68 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -358,8 +358,8 @@ static void tss_copy_io_bitmap(struct tss_struct *tss, struct io_bitmap *iobm)
- 	 * and a pointer to the bitmap itself.
- 	 */
- 	tss->io_bitmap.bytes_max = iobm->bytes_max;
--	tss->io_bitmap.last_sequence = iobm->sequence;
--	tss->io_bitmap.last_bitmap = iobm;
-+	tss->io_bitmap.bitmap_copied_seq = iobm->sequence;
-+	tss->io_bitmap.bitmap_copied_ptr = iobm;
- }
- 
- /**
-@@ -388,8 +388,8 @@ void tss_update_io_bitmap(void)
- 			 * sequence number differs. The update time is
- 			 * accounted to the incoming task.
- 			 */
--			if (tss->io_bitmap.last_bitmap != iobm ||
--			    tss->io_bitmap.last_sequence != iobm->sequence)
-+			if (tss->io_bitmap.bitmap_copied_ptr != iobm ||
-+			    tss->io_bitmap.bitmap_copied_seq != iobm->sequence)
- 				tss_copy_io_bitmap(tss, iobm);
- 
- 			/* Enable the bitmap */
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
