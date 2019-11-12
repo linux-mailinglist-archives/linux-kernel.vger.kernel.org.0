@@ -2,94 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA77F86F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 03:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09720F86ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 03:39:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfKLCjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 21:39:35 -0500
-Received: from smtprelay0079.hostedemail.com ([216.40.44.79]:46010 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726928AbfKLCjf (ORCPT
+        id S1726976AbfKLCjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 21:39:19 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38544 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfKLCjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 21:39:35 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 7B961181D3026;
-        Tue, 12 Nov 2019 02:39:33 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3866:3868:3871:3872:4321:5007:6737:7903:8957:9592:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12048:12296:12297:12555:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: end54_35f6dbbf31b05
-X-Filterd-Recvd-Size: 2553
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 12 Nov 2019 02:39:30 +0000 (UTC)
-Message-ID: <01c630e6d4c58b3f6184603e158f53fb9aaeae7d.camel@perches.com>
-Subject: Re: [PATCH -next] drm/amd/display: Fix old-style declaration
-From:   Joe Perches <joe@perches.com>
-To:     YueHaibing <yuehaibing@huawei.com>, harry.wentland@amd.com,
-        sunpeng.li@amd.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie,
-        daniel@ffwll.ch, Bhawanpreet.Lakha@amd.com, Jun.Lei@amd.com,
-        David.Francis@amd.com, Dmytro.Laktyushkin@amd.com,
-        nicholas.kazlauskas@amd.com, martin.leung@amd.com,
-        Chris.Park@amd.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 11 Nov 2019 18:39:15 -0800
-In-Reply-To: <20191111122801.18584-1-yuehaibing@huawei.com>
-References: <20191111122801.18584-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 11 Nov 2019 21:39:19 -0500
+Received: by mail-wm1-f65.google.com with SMTP id z19so1309735wmk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 18:39:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=0NbmoJXn0tF3SxS5c0t7ZlOoPipHZmqzqZunLWgBPiE=;
+        b=aTSzrj9E3HNv5IONj6eYdXv+gLDpN5bmKxl/zramH0L0AWOMw2sX+iSQzjsV+DF8Uo
+         FvP3/jDTNA1wlczELdevUs1MD9YRfMqWbH+aewxhKqqRU+q9Zd/GHUFgkq/tZXhaUkip
+         MOjPukp1BjHmdiGFHnrWuRnWfKNgqCQmODmCVpWSEHxEH6Dh5C0Adt2MovHVQGPG9VeS
+         psyqxQf102jiVffa25VfBwWJs4/3JM5Xb9B+FSJ5vL0tmf00UZcb/kBnGUwsIoZ16zAZ
+         Y0EvsxWZcgFkQ9HuVjcp6QsEerq0lOJATTlDj80egFkScJIRLeCQJZZjFX1piJvHrgVV
+         2gkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=0NbmoJXn0tF3SxS5c0t7ZlOoPipHZmqzqZunLWgBPiE=;
+        b=t0ZugXKACz8mnvxX8U1+e6OjSQrjjZhhAheJ52tK2IodBmUKdmBy+pWbT1PSkzyDld
+         UH+mq04nJCLyZ2ynbzv5YYulbT6LIieQMG6k0EzNmi2WiR2nxtEM+72w6sHorsXVV6Bl
+         YZhncR990i0C/qtqZnL5LuvWWMGXW0mCrEer155hKFRlzGROVObWDUXVeJRBppvSksaC
+         n785dgsmscvmkFImcr65hkQu6qLvCsdtQfcLNT+tuuFjYYuOjAILhP40dMSsJnyt8SMJ
+         iT9oczaTn0+p7/SXnU7R2ixKi7i//x9PyN+D4g5IEfSITb9i62lKwnXiJ1u7pz4lxE1O
+         LETA==
+X-Gm-Message-State: APjAAAXop5/MvXHj1N0c2m5mme9KKB9pSbf2f4xtQdu0fjPu8fmy52O+
+        6VmSswt2giTJzeVByLrZkeoaiA==
+X-Google-Smtp-Source: APXvYqzO00eLBVNuUxnqcBbXEFojPxbLnSEnoxlxP/A9ciPVECSljWdTXDcagO8k1A5QdTVN88tcZw==
+X-Received: by 2002:a1c:7d47:: with SMTP id y68mr1653677wmc.157.1573526356994;
+        Mon, 11 Nov 2019 18:39:16 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id s11sm691958wrr.43.2019.11.11.18.39.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 18:39:16 -0800 (PST)
+Message-ID: <5dca1b54.1c69fb81.478a6.273e@mx.google.com>
+Date:   Mon, 11 Nov 2019 18:39:16 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-5.3.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v5.3.10-194-gfeeefcbdbfc1
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+References: <20191111181459.850623879@linuxfoundation.org>
+Subject: Re: [PATCH 5.3 000/193] 5.3.11-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-11-11 at 20:28 +0800, YueHaibing wrote:
-> Fix a build warning:
-> 
-> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:75:1:
->  warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
-[]
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-[]
-> @@ -69,7 +69,7 @@
->  #define DC_LOGGER \
->  	dc->ctx->logger
->  
-> -const static char DC_BUILD_ID[] = "production-build";
-> +static const char DC_BUILD_ID[] = "production-build";
+stable-rc/linux-5.3.y boot: 130 boots: 0 failed, 122 passed with 7 offline,=
+ 1 conflict (v5.3.10-194-gfeeefcbdbfc1)
 
-DC_BUILD_ID is used exactly once.
-Maybe just use it directly and remove DC_BUILD_ID instead?
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-5.3.y/kernel/v5.3.10-194-gfeeefcbdbfc1/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-5.3.y=
+/kernel/v5.3.10-194-gfeeefcbdbfc1/
+
+Tree: stable-rc
+Branch: linux-5.3.y
+Git Describe: v5.3.10-194-gfeeefcbdbfc1
+Git Commit: feeefcbdbfc1362972ef26970aed0aafe90cc1ae
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 76 unique boards, 24 SoC families, 16 builds out of 207
+
+Offline Platforms:
+
+arm:
+
+    sunxi_defconfig:
+        gcc-8
+            sun5i-r8-chip: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
+    multi_v7_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
+    davinci_all_defconfig:
+        gcc-8
+            dm365evm,legacy: 1 offline lab
+
+    qcom_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
+
+Conflicting Boot Failure Detected: (These likely are not failures as other =
+labs are reporting PASS. Needs review.)
+
+i386:
+    i386_defconfig:
+        qemu_i386:
+            lab-collabora: PASS (gcc-8)
+            lab-baylibre: FAIL (gcc-8)
 
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 1fdba13..803dc14 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -69,8 +69,6 @@
- #define DC_LOGGER \
- 	dc->ctx->logger
- 
--const static char DC_BUILD_ID[] = "production-build";
--
- /**
-  * DOC: Overview
-  *
-@@ -815,7 +813,7 @@ struct dc *dc_create(const struct dc_init_data *init_params)
- 	if (dc->res_pool->dmcu != NULL)
- 		dc->versions.dmcu_version = dc->res_pool->dmcu->dmcu_version;
- 
--	dc->build_id = DC_BUILD_ID;
-+	dc->build_id = "production-build";
- 
- 	DC_LOG_DC("Display Core initialized\n");
- 
-
-
+For more info write to <info@kernelci.org>
