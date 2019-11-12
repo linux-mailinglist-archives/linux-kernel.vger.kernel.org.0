@@ -2,62 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D587F892A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 07:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48065F8940
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 08:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725955AbfKLG4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 01:56:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbfKLG4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 01:56:34 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A9E2206A3;
-        Tue, 12 Nov 2019 06:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573541793;
-        bh=r0sc5/XzhNJIqfRx4BwQyUrbUeptifp8j9vAKXgaYjQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zFKYlVXOsiL7FaaBRZj3pZQA+ljakifCep4BzkE7lHK14YdhMWhb1UeymOeCpXgtl
-         rUWylDHSGWblvFdlUHPUnGwrDUM5bkWW0oxbcahxseMrPioIyeyZCvkwXQSHvs2o6O
-         39kxVd60E4PzxfJnJmVi6Tp5CoV02Q6X2PwRXCpg=
-Date:   Tue, 12 Nov 2019 07:56:29 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     devel@linuxdriverproject.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] IIO fixes / Staging driver for 5.4-rc7
-Message-ID: <20191112065629.GA1242198@kroah.com>
-References: <20191110154303.GA2867499@kroah.com>
- <20191112063440.GA15951@infradead.org>
+        id S1726924AbfKLHB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 02:01:27 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:47148 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725811AbfKLHB1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 02:01:27 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=tonylu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0ThsYfQa_1573542084;
+Received: from localhost(mailfrom:tonylu@linux.alibaba.com fp:SMTPD_---0ThsYfQa_1573542084)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 12 Nov 2019 15:01:24 +0800
+Date:   Tue, 12 Nov 2019 15:01:23 +0800
+From:   Tony Lu <tonylu@linux.alibaba.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     mingo@redhat.com, sanagi.koki@jp.fujitsu.co, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] net: add missing semicolon in net_dev_template
+Message-ID: <20191112070123.GA67139@TonyMac-Alibaba>
+Reply-To: Tony Lu <tonylu@linux.alibaba.com>
+References: <20191111141752.31655-1-tonylu@linux.alibaba.com>
+ <20191111181228.49396467@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112063440.GA15951@infradead.org>
+In-Reply-To: <20191111181228.49396467@gandalf.local.home>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 10:34:40PM -0800, Christoph Hellwig wrote:
-> On Sun, Nov 10, 2019 at 04:43:03PM +0100, Greg KH wrote:
-> > The staging driver addition is the vboxsf filesystem, which is the
-> > VirtualBox guest shared folder code.  Hans has been trying to get
-> > filesystem reviewers to review the code for many months now, and
-> > Christoph finally said to just merge it in staging now as it is
-> > stand-alone and the filesystem people can review it easier over time
-> > that way.
+On Mon, Nov 11, 2019 at 06:12:28PM -0500, Steven Rostedt wrote:
+> On Mon, 11 Nov 2019 22:17:53 +0800
+> Tony Lu <tonylu@linux.alibaba.com> wrote:
 > 
-> No, this is absolutely contrary to what I said.  I told Hans to just
-> send it to Linus because it is ready and not staging fodder a atll.
+> > This patch adds missing semicolon in the end of net_dev_template.
+> > 
+> > Fixes: cf66ba58b5cb ("netdev: Add tracepoints to netdev layer")
+> > Signed-off-by: Tony Lu <tonylu@linux.alibaba.com>
+> > ---
+> >  include/trace/events/net.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/include/trace/events/net.h b/include/trace/events/net.h
+> > index 2399073c3afc..3b28843652d2 100644
+> > --- a/include/trace/events/net.h
+> > +++ b/include/trace/events/net.h
+> > @@ -138,7 +138,7 @@ DECLARE_EVENT_CLASS(net_dev_template,
+> >  
+> >  	TP_printk("dev=%s skbaddr=%p len=%u",
+> >  		__get_str(name), __entry->skbaddr, __entry->len)
+> > -)
+> > +);
+> 
+> Actually, we are thinking of making a sweeping patch set to remove all
+> these semicolons, as they are not needed, and would also allow more
+> flexible processing of the trace event macros.
+> 
+> -- Steve
 
-Hah, ok, I got that totally wrong.  I'll send a patch moving it to the
-"real" part of the kernel now.
+Thanks for your reply, it's great to take actions to sweep them for a
+unified code style. I just found a different place in the code :-)
 
-thanks,
+Cheers
+Tony Lu
 
-greg k-h
+> 
+> >  
+> >  DEFINE_EVENT(net_dev_template, net_dev_queue,
+> >  
