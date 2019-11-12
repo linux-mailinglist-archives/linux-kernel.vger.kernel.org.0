@@ -2,317 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 554C8F949F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB489F94A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:46:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfKLPpl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 10:45:41 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:37292 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfKLPpk (ORCPT
+        id S1727418AbfKLPqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 10:46:55 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58858 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725954AbfKLPqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 10:45:40 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xACFjNd5012316, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xACFjNd5012316
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 12 Nov 2019 23:45:23 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Tue, 12 Nov 2019 23:45:23 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 12 Nov 2019 23:45:22 +0800
-Received: from RTEXMB03.realtek.com.tw ([::1]) by RTEXMB03.realtek.com.tw
- ([fe80::3d7d:f7db:e1fb:307b%12]) with mapi id 15.01.1779.005; Tue, 12 Nov
- 2019 23:45:22 +0800
-From:   James Tai <james.tai@realtek.com>
-To:     =?iso-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'DTML'" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v3 2/2] arm64: dts: realtek: Add RTD1619 SoC and Realtek Mjolnir EVB
-Thread-Topic: [PATCH v3 2/2] arm64: dts: realtek: Add RTD1619 SoC and Realtek
- Mjolnir EVB
-Thread-Index: AdWZPm2tRLsPwxTXS12xPqXOk/yn2w==
-Date:   Tue, 12 Nov 2019 15:45:22 +0000
-Message-ID: <73fb8106ec1a4665b59a2d187a576b71@realtek.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [114.37.182.66]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Tue, 12 Nov 2019 10:46:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573573613;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TrgtIcC3Ha1/0dzS1VtlsAm2hMfZJyX2cxwGUaWtbv4=;
+        b=hcZHg0bQI3w65Z1RWs89QVM5RE1/RsD5s8YE+YewhPMJgAUlgD8HTYg/l3/1MJQBJe2mtg
+        moOkykmOAUht1JwA67xswg01sUEwyXaj5Osq+I8OM6U+wty7+tfZ+tmxNj2bfQ+tBFrO+r
+        OK6o8pLDnhmGgZDiBPhJ9GL/PqXRsls=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-82-1AOv6F6nOuKRtDw0Z1t5Gg-1; Tue, 12 Nov 2019 10:46:50 -0500
+Received: by mail-lf1-f69.google.com with SMTP id u14so1207067lfk.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 07:46:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G/51mof5846DapZXCI9+0p5WNkNYG968g1sxSQhoVUs=;
+        b=AzQ7tlplW1T8RNLL04BVLxq6WNOvoT1rulaK+MeYrM5tFSGV8Vqv5wyaPKWkyEWKZu
+         mo3GqefInPukZGuN6Xq2FK8UVqQHw9pYtMQdnEjDT3rR3XFqSPU5aNl16t5Ann1qdska
+         G/kGqKWVsb8sLToY02olM4931s9wuv9JtbwNDh6Payo3ABkuTHh+PCmFuto8YgUqJQBG
+         4QRadB/CQS1H/xP0e+uibxqYgPeDa16+2YAsf+lZkw8KiFPQGQr5looO4KFtzBkzFmgg
+         lHvEs24n8exUjEr50LDdlxRzG3aPLy4CPUYTTiB16RQCkNzPZnFjw49Pabi4GJtYwG03
+         nO/Q==
+X-Gm-Message-State: APjAAAWS7h7YUA+5tGKa1HRii3zotBZUYU1287XNY3l4GfAnkErP7wgu
+        b2GeYN7v+TbhTqXnqo5HLzNikPXCiETdY5/dzeI61bEEYrP3oduB26gjGzf0qfX7Oh66MzaD2wx
+        OaKekQab1GuOXNdRFq9IbYlnlHvOSNt0PQ//0Mb0J
+X-Received: by 2002:a19:22c4:: with SMTP id i187mr18628824lfi.152.1573573609118;
+        Tue, 12 Nov 2019 07:46:49 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy8cvj78v13ze7VWQQ9k0hBj9bv4b7ljCsH0R63d/xJPwwZz0STkGWa4+H+mvetYX5dsAWw3ABG8wArvd3JhJ4=
+X-Received: by 2002:a19:22c4:: with SMTP id i187mr18628802lfi.152.1573573608866;
+ Tue, 12 Nov 2019 07:46:48 -0800 (PST)
 MIME-Version: 1.0
+References: <20191112102518.4406-1-mcroce@redhat.com> <20191112150046.2aehmeoq7ri6duwo@netronome.com>
+In-Reply-To: <20191112150046.2aehmeoq7ri6duwo@netronome.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Tue, 12 Nov 2019 16:46:12 +0100
+Message-ID: <CAGnkfhyt7wV-qDODQL1DtDoW0anoehVX7zoVk8y_C4WB0tMuUw@mail.gmail.com>
+Subject: Re: [PATCH net-next] openvswitch: add TTL decrement action
+To:     Simon Horman <simon.horman@netronome.com>
+Cc:     netdev <netdev@vger.kernel.org>, dev@openvswitch.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bindiya Kurle <bindiyakurle@gmail.com>
+X-MC-Unique: 1AOv6F6nOuKRtDw0Z1t5Gg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Device Trees for Realtek RTD1619 SoC family, RTD1619 SoC and
-Realtek Mjolnir EVB.
+On Tue, Nov 12, 2019 at 4:00 PM Simon Horman <simon.horman@netronome.com> w=
+rote:
+>
+> On Tue, Nov 12, 2019 at 11:25:18AM +0100, Matteo Croce wrote:
+> > New action to decrement TTL instead of setting it to a fixed value.
+> > This action will decrement the TTL and, in case of expired TTL, send th=
+e
+> > packet to userspace via output_userspace() to take care of it.
+> >
+> > Supports both IPv4 and IPv6 via the ttl and hop_limit fields, respectiv=
+ely.
+> >
+>
+> Usually OVS achieves this behaviour by matching on the TTL and
+> setting it to the desired value, pre-calculated as TTL -1.
+> With that in mind could you explain the motivation for this
+> change?
+>
 
-Signed-off-by: James Tai <james.tai@realtek.com>
----
- arch/arm64/boot/dts/realtek/Makefile          |   2 +
- .../boot/dts/realtek/rtd1619-mjolnir.dts      |  40 +++++
- arch/arm64/boot/dts/realtek/rtd1619.dtsi      |  12 ++
- arch/arm64/boot/dts/realtek/rtd16xx.dtsi      | 163 ++++++++++++++++++
- 4 files changed, 217 insertions(+)
- create mode 100644 arch/arm64/boot/dts/realtek/rtd1619-mjolnir.dts
- create mode 100644 arch/arm64/boot/dts/realtek/rtd1619.dtsi
- create mode 100644 arch/arm64/boot/dts/realtek/rtd16xx.dtsi
+Hi,
 
-diff --git a/arch/arm64/boot/dts/realtek/Makefile b/arch/arm64/boot/dts/realtek/Makefile
-index 555638ada721..fb5f05978ecc 100644
---- a/arch/arm64/boot/dts/realtek/Makefile
-+++ b/arch/arm64/boot/dts/realtek/Makefile
-@@ -7,3 +7,5 @@ dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-probox2-ava.dtb
- dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-zidoo-x9s.dtb
- 
- dtb-$(CONFIG_ARCH_REALTEK) += rtd1296-ds418.dtb
+the problem is that OVS creates a flow for each ttl it see. I can let
+vswitchd create 255 flows with like this:
+
+$ for i in {2..255}; do ping 192.168.0.2 -t $i -c1 -w1 &>/dev/null & done
+$ ovs-dpctl dump-flows |fgrep -c 'set(ipv4(ttl'
+255
+
+
+> > @@ -1174,6 +1174,43 @@ static int execute_check_pkt_len(struct datapath=
+ *dp, struct sk_buff *skb,
+> >                            nla_len(actions), last, clone_flow_key);
+> >  }
+> >
+> > +static int execute_dec_ttl(struct sk_buff *skb, struct sw_flow_key *ke=
+y)
+> > +{
+> > +     int err;
+> > +
+> > +     if (skb->protocol =3D=3D htons(ETH_P_IPV6)) {
+> > +             struct ipv6hdr *nh =3D ipv6_hdr(skb);
+> > +
+> > +             err =3D skb_ensure_writable(skb, skb_network_offset(skb) =
 +
-+dtb-$(CONFIG_ARCH_REALTEK) += rtd1619-mjolnir.dtb
-diff --git a/arch/arm64/boot/dts/realtek/rtd1619-mjolnir.dts b/arch/arm64/boot/dts/realtek/rtd1619-mjolnir.dts
-new file mode 100644
-index 000000000000..6ab791af3896
---- /dev/null
-+++ b/arch/arm64/boot/dts/realtek/rtd1619-mjolnir.dts
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+/*
-+ * Copyright (c) 2019 Realtek Semiconductor Corp.
-+ */
+> > +                                       sizeof(*nh));
+> > +             if (unlikely(err))
+> > +                     return err;
+> > +
+> > +             if (nh->hop_limit <=3D 1)
+> > +                     return -EHOSTUNREACH;
+> > +
+> > +             key->ip.ttl =3D --nh->hop_limit;
+> > +     } else {
+> > +             struct iphdr *nh =3D ip_hdr(skb);
+> > +             u8 old_ttl;
+> > +
+> > +             err =3D skb_ensure_writable(skb, skb_network_offset(skb) =
 +
-+/dts-v1/;
-+
-+#include "rtd1619.dtsi"
-+
-+/ {
-+	compatible = "realtek,rtd1619", "realtek,mjolnir";
-+	model= "Realtek Mjolnir EVB";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000>;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		serial0 = &uart0; /* The UART0 is debug console */
-+		serial1 = &uart1; /* The UART1 is on M.2 slot */
-+		serial2 = &uart2; /* The UART2 is on GPIO connector */
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "disabled";
-+};
-+
-+&uart2 {
-+	status = "disabled";
-+};
-diff --git a/arch/arm64/boot/dts/realtek/rtd1619.dtsi b/arch/arm64/boot/dts/realtek/rtd1619.dtsi
-new file mode 100644
-index 000000000000..e52bf708b04e
---- /dev/null
-+++ b/arch/arm64/boot/dts/realtek/rtd1619.dtsi
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+/*
-+ * Realtek RTD1619 SoC
-+ *
-+ * Copyright (c) 2019 Realtek Semiconductor Corp.
-+ */
-+
-+#include "rtd16xx.dtsi"
-+
-+/ {
-+	compatible = "realtek,rtd1619";
-+};
-diff --git a/arch/arm64/boot/dts/realtek/rtd16xx.dtsi b/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-new file mode 100644
-index 000000000000..d9b572a870f5
---- /dev/null
-+++ b/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-@@ -0,0 +1,163 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+/*
-+ * Realtek RTD16xx SoC family
-+ *
-+ * Copyright (c) 2019 Realtek Semiconductor Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/{
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu1: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+			next-level-cache = <&l3>;
-+		};
-+
-+		cpu2: cpu@200 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x200>;
-+			enable-method = "psci";
-+			next-level-cache = <&l3>;
-+		};
-+
-+		cpu3: cpu@300 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x300>;
-+			enable-method = "psci";
-+			next-level-cache = <&l3>;
-+		};
-+
-+		cpu4: cpu@400 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x400>;
-+			enable-method = "psci";
-+			next-level-cache = <&l3>;
-+		};
-+
-+		cpu5: cpu@500 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x500>;
-+			enable-method = "psci";
-+			next-level-cache = <&l3>;
-+		};
-+
-+		l2: l2-cache {
-+			compatible = "cache";
-+			next-level-cache = <&l3>;
-+
-+		};
-+
-+		l3: l3-cache {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	arm_pmu: pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	osc27M: osc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <27000000>;
-+		clock-output-names = "osc27M";
-+		#clock-cells = <0>;
-+	};
-+
-+	soc@98000000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x98000000 0x98000000 0x68000000>;
-+
-+		rbus: r-bus@98000000 {
-+			compatible = "simple-bus";
-+			reg = <0x98000000 0x200000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0x98000000 0x200000>;
-+
-+			uart0: serial0@7800 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x7800 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-frequency = <27000000>;
-+				status = "disabled";
-+			};
-+
-+			uart1: serial1@1b200 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x1b200 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-frequency = <432000000>;
-+				status = "disabled";
-+			};
-+
-+			uart2: serial2@1b400 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x1b400 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-frequency = <432000000>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		gic: interrupt-controller@ff100000 {
-+			compatible = "arm,gic-v3";
-+			reg = <0xff100000 0x10000>,
-+			      <0xff140000 0xc0000>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+	};
-+};
-+
-+&arm_pmu {
-+	interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>,
-+		<&cpu3>, <&cpu4>, <&cpu5>;
-+};
--- 
-2.24.0
+> > +                                       sizeof(*nh));
+> > +             if (unlikely(err))
+> > +                     return err;
+> > +
+> > +             if (nh->ttl <=3D 1)
+> > +                     return -EHOSTUNREACH;
+> > +
+> > +             old_ttl =3D nh->ttl--;
+> > +             csum_replace2(&nh->check, htons(old_ttl << 8),
+> > +                           htons(nh->ttl << 8));
+> > +             key->ip.ttl =3D nh->ttl;
+> > +     }
+>
+> The above may send packets with TTL =3D 0, is that desired?
+>
+
+If TTL is 1 or 0, execute_dec_ttl() returns -EHOSTUNREACH, and the
+caller will just send the packet to userspace and then free it.
+I think this is enough, am I missing something?
+
+Bye,
+--=20
+Matteo Croce
+per aspera ad upstream
 
