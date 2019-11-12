@@ -2,67 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 160BEF8831
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 06:47:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6C92F883D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 06:51:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbfKLFrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 00:47:07 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26665 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725775AbfKLFrH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 00:47:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573537626;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UBqjouGw3TH1iaQ7iP1CayKO4c2WZUu/AVL/DYGbLDM=;
-        b=QFTUytoaPqSrw4YDgCusZzXtQvYzY3PaRYo4c8Hd97/Rdq3bkedp1X+GBzPQ3uH5yF1nGz
-        RYMXJqoV20XaJbTOaOMxhU4Hr9ezuHXjrzSoQnMvfuOEBSVYYdsry9oMNzHv/Fj1wri4U/
-        737210uAj5wrJ02wAvFM95qdcR0GNSc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-334-jR0LROUlONuAV20I3GQI8Q-1; Tue, 12 Nov 2019 00:47:02 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 82B98801E4F;
-        Tue, 12 Nov 2019 05:47:01 +0000 (UTC)
-Received: from localhost (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BBD085C883;
-        Tue, 12 Nov 2019 05:46:59 +0000 (UTC)
-Date:   Mon, 11 Nov 2019 21:46:58 -0800 (PST)
-Message-Id: <20191111.214658.1031500406952713920.davem@redhat.com>
-To:     olof@lixom.net
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: mdio-octeon: Fix pointer/integer casts
-From:   David Miller <davem@redhat.com>
-In-Reply-To: <20191111004211.96425-1-olof@lixom.net>
-References: <20191111004211.96425-1-olof@lixom.net>
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: jR0LROUlONuAV20I3GQI8Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+        id S1727065AbfKLFvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 00:51:09 -0500
+Received: from mga04.intel.com ([192.55.52.120]:5504 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbfKLFvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 00:51:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 21:51:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,295,1569308400"; 
+   d="scan'208";a="229230691"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Nov 2019 21:51:06 -0800
+Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, kevin.tian@intel.com,
+        ashok.raj@intel.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com
+Subject: Re: [PATCH v2 1/1] iommu/vt-d: Add Kconfig option to enable/disable
+ scalable mode
+To:     Qian Cai <cai@lca.pw>
+References: <f5b8521e-d88d-5439-34e2-f7b54a77c9d3@linux.intel.com>
+ <77EC0C76-22C1-4982-8E0A-9AD7223B3410@lca.pw>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <fefea7dd-8cde-889d-0883-7d94b8d85f20@linux.intel.com>
+Date:   Tue, 12 Nov 2019 13:48:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <77EC0C76-22C1-4982-8E0A-9AD7223B3410@lca.pw>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
-Date: Sun, 10 Nov 2019 16:42:11 -0800
+Hi,
 
-> -static inline void oct_mdio_writeq(u64 val, u64 addr)
-> +static inline void oct_mdio_writeq(u64 val, void __iomem *addr)
->  {
-> -=09cvmx_write_csr(addr, val);
-> +=09cvmx_write_csr((u64)addr, val);
->  }
+On 11/11/19 10:05 PM, Qian Cai wrote:
+> 
+> 
+>> On Nov 11, 2019, at 12:23 AM, Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>>
+>> The scalable mode is defined in VT-d 3.0. The scalable mode capability
+>> could be checked by reading /sys/devices/virtual/iommu/dmar*/intel-
+>> iommu/ecap. It's currently not friendly for reading. You need to decode
+>> it according to the spec.
+> 
+> This looks like some perfect information to put in the Kconfig description.
+> 
 
-I hate stuff like this, I think you really need to fix this from the bottom
-up or similar.  MMIO and such addresses are __iomem pointers, period.
+Okay. Will add it in the next version.
 
+Best regards,
+baolu
