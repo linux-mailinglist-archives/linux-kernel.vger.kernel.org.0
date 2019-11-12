@@ -2,163 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA8AF8A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10085F8A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:34:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKLIbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 03:31:42 -0500
-Received: from mga11.intel.com ([192.55.52.93]:38908 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbfKLIbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 03:31:42 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 00:31:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,295,1569308400"; 
-   d="scan'208";a="355043467"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga004.jf.intel.com with ESMTP; 12 Nov 2019 00:31:38 -0800
-Date:   Tue, 12 Nov 2019 16:33:52 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        sean.j.christopherson@intel.com
-Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
-Subject: Re: [PATCH v6 0/9] Enable Sub-Page Write Protection Support
-Message-ID: <20191112083352.GA1008@local-michael-cet-test>
-References: <20191106074504.14858-1-weijiang.yang@intel.com>
+        id S1727101AbfKLIed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 03:34:33 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35770 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfKLIec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 03:34:32 -0500
+Received: by mail-oi1-f195.google.com with SMTP id n16so14089970oig.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 00:34:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MTG7lQ0u9d8+q6rZMou9pMrXlqU/RMiDOcUJ4lZKiNI=;
+        b=CdDTpHJF5JfhHDfSz4685fIPM0bW1Po430XfabG9F39pJJ1M9kCJeqGRakUVSC+FLC
+         tT8Vos+VLGJcTMF0Sb1FEJtfUC0msCmnXmvPehTqz0iJYxwaGKWSN/j1cIbr07RzNQHs
+         H5SlgF0t/HyHHC/YDR1W/r3rulnzQmYVK56eZvmgcUwREDnf60xguJnI18NNXp0Sh5GD
+         j0lVfM/Q1du8kbgLkazEg4HXI6gmX5A0tYsNGm8wI1Nc9BRWeUGgIOh1dBx+XLO12fhU
+         DwqlDy022kjhZFw+BQthvhXTui3Z06Aq+ubLFo4UmJYb+6zCs+YUAIZy/SiCfXvvmp4y
+         CfLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MTG7lQ0u9d8+q6rZMou9pMrXlqU/RMiDOcUJ4lZKiNI=;
+        b=GKULl4Yp5+Cbk6LNSLm3IcfzFlLYfNIpzq8o2MrcL0AqSPUsFUf2SwayOrFwRvYmyJ
+         5NpOzeOlSZ6ihH5j364NnaJLTqQ2WpRPTKMtO8dBwvJ9DG5rMGKWCXbVNwC9rYmsPsY+
+         kHWCsSl/K7feJ5m8fI3EZV+LCMbLRUVQzgijcWxQy0MSlHN5XgeepwP5uNQNNYQMiEM9
+         tuNLLmexxbbvVG6oURZePN0t3zFmVlLR+06io6cO8ssNvCIuibIVXjz3YcKwDOP9m1+M
+         qRxx4cZklRLfJFlcZBfPJ/Y8IpFQhBGg5DBPaPFdmrOev/GLUti3+zQ/jMLWPArlVWDC
+         pMGA==
+X-Gm-Message-State: APjAAAWOkm8LV4dwQtWpUspXS6eFrpwiwuen79VkWkiI5JJRy4k+aRhy
+        Zf1hha5/qhKARFiZOj1NuErdpChaj2VDQIoLwO1rpw==
+X-Google-Smtp-Source: APXvYqzZSK4e0j7BXXGNWcEizolV+MKKXgi6/U6VUYoFSuN01kfxTSzYRyGOR2AKFnJjEAXlcGYuPy+laClqHV/y/cA=
+X-Received: by 2002:a05:6808:9a1:: with SMTP id e1mr2995041oig.175.1573547671896;
+ Tue, 12 Nov 2019 00:34:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106074504.14858-1-weijiang.yang@intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20191109155836.223635-1-colin.king@canonical.com>
+ <CAMpxmJVC5GGhR0z_4CkF7Opfw-5HpEKD8fUrKsgBZTbz0wDd-Q@mail.gmail.com> <alpine.DEB.2.21.1911120033220.1833@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1911120033220.1833@nanos.tec.linutronix.de>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 12 Nov 2019 09:34:21 +0100
+Message-ID: <CAMpxmJVjVNXBu5t9Mv8PT854Fh=hH6K-L-BTjhEFMt3nkCcwUA@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/davinci: fix memory leak on
+ clockevent on error return
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Colin King <colin.king@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 03:44:55PM +0800, Yang Weijiang wrote:
-Ping...
-Hi, Paolo,
-Could you add comments on this patch serial? Thanks!
+wt., 12 lis 2019 o 00:37 Thomas Gleixner <tglx@linutronix.de> napisa=C5=82(=
+a):
+>
+> Bartosz,
+>
+> On Sun, 10 Nov 2019, Bartosz Golaszewski wrote:
+> > sob., 9 lis 2019 o 16:58 Colin King <colin.king@canonical.com> napisa=
+=C5=82(a):
+> > >
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > >
+> > > In the case where request_irq fails, the return path does not kfree
+> > > clockevent and hence we have a memory leak.  Fix this by kfree'ing
+>
+> s/we have/creates/  or whatever verb you prefer.
+>
+> > > clockevent before returning.
+> > >
+> > > Addresses-Coverity: ("Resource leak")
+> > > Fixes: 721154f972aa ("clocksource/drivers/davinci: Add support for cl=
+ockevents")
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > ---
+> > >  drivers/clocksource/timer-davinci.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksourc=
+e/timer-davinci.c
+> > > index 62745c962049..910d4d2f0d64 100644
+> > > --- a/drivers/clocksource/timer-davinci.c
+> > > +++ b/drivers/clocksource/timer-davinci.c
+> > > @@ -299,6 +299,7 @@ int __init davinci_timer_register(struct clk *clk=
+,
+> > >                          "clockevent/tim12", clockevent);
+> > >         if (rv) {
+> > >                 pr_err("Unable to request the clockevent interrupt");
+> > > +               kfree(clockevent);
+> > >                 return rv;
+> > >         }
+> > >
+> > > --
+> > > 2.20.1
+> > >
+> >
+> > Hi Daniel,
+> >
+> > this is what I think the third time someone tries to "fix" this
+> > driver's "memory leaks". I'm not sure what the general approach in
+> > clocksource is but it doesn't make sense to free resources on
+> > non-recoverable errors, does it? Should I add a comment about it or
+> > you'll just take those "fixes" to stop further such submissions?
+>
+> There are two ways to deal with that:
+>
+>   1) If the error is really unrecoverable, panic right there. No point
+>      to continue.
 
-> EPT-Based Sub-Page write Protection(SPP) allows Virtual Machine Monitor(VMM)
-> specify write-permission for guest physical memory at a sub-page(128 byte)
-> granularity. When SPP works, HW enforces write-access check for sub-pages
-> within a protected 4KB page.
-> 
-> The feature targets to provide fine-grained memory protection for
-> usages such as memory guard and VM introspection etc.
-> 
-> SPP is active when the "sub-page write protection" (bit 23) is 1 in
-> Secondary VM-Execution Controls. The feature is backed with a Sub-Page
-> Permission Table(SPPT), and subpage permission vector is stored in the
-> leaf entry of SPPT. The root page is referenced via a Sub-Page Permission
-> Table Pointer (SPPTP) in VMCS.
-> 
-> To enable SPP for guest memory, the guest page should be first mapped
-> to a 4KB EPT entry, then set SPP bit 61 of the corresponding entry. 
-> While HW walks EPT, it traverses SPPT with the gpa to look up the sub-page
-> permission vector within SPPT leaf entry. If the corresponding bit is set,
-> write to sub-page is permitted, otherwise, SPP induced EPT violation is generated.
-> 
-> This patch serial passed SPP function test and selftest on Ice-Lake platform.
-> 
-> Please refer to the SPP introduction document in this patch set and
-> Intel SDM for details:
-> 
-> Intel SDM:
-> https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
-> 
-> SPP selftest patch:
-> https://lkml.org/lkml/2019/6/18/1197
-> 
-> Previous patch:
-> https://lkml.org/lkml/2019/9/17/180
-> 
-> Patch 1: Documentation for SPP and related API.
-> Patch 2: Add control flags for Sub-Page Protection(SPP).
-> Patch 3: Add SPP Table setup functions.
-> Patch 4: Add functions to create/destroy SPP bitmap block.
-> Patch 5: Introduce user-space SPP IOCTLs.
-> Patch 6: Set up SPP paging table at vmentry/vmexit.
-> Patch 7: Enable Lazy mode SPP protection.
-> Patch 8: Handle SPP protected pages when VM memory changes.
-> Patch 9: Add SPP protection check in emulation case.
-> 
-> 
-> Change logs:
-> 
-> V5 -> V6:
->   1. Added SPP protection patch for emulation cases per Jim's review.
->   2. Modified documentation and added API description per Jim's review.
->   3. Other minior changes suggested by Jim.
-> 
-> V4 -> V5:
->   1. Enable SPP support for Hugepage(1GB/2MB) to extend application.
->   2. Make SPP miss vm-exit handler as the unified place to set up SPPT.
->   3. If SPP protected pages are access-tracked or dirty-page-tracked,
->      store SPP flag in reserved address bit, restore it in
->      fast_page_fault() handler.
->   4. Move SPP specific functions to vmx/spp.c and vmx/spp.h
->   5. Rebased code to kernel v5.3
->   6. Other change suggested by KVM community.
->   
-> V3 -> V4:
->   1. Modified documentation to make it consistent with patches.
->   2. Allocated SPPT root page in init_spp() instead of vmx_set_cr3() to
->      avoid SPPT miss error.
->   3. Added back co-developers and sign-offs.
-> 
-> V2 -> V3:                                                                
->   1. Rebased patches to kernel 5.1 release                                
->   2. Deferred SPPT setup to EPT fault handler if the page is not
->      available while set_subpage() is being called.
->   3. Added init IOCTL to reduce extra cost if SPP is not used.
->   4. Refactored patch structure, cleaned up cross referenced functions.
->   5. Added code to deal with memory swapping/migration/shrinker cases.
-> 
-> V2 -> V1:
->   1. Rebased to 4.20-rc1
->   2. Move VMCS change to a separated patch.
->   3. Code refine and Bug fix 
-> 
-> 
-> Yang Weijiang (9):
->   Documentation: Introduce EPT based Subpage Protection and related
->     ioctls
->   vmx: spp: Add control flags for Sub-Page Protection(SPP)
->   mmu: spp: Add SPP Table setup functions
->   mmu: spp: Add functions to create/destroy SPP bitmap block
->   x86: spp: Introduce user-space SPP IOCTLs
->   vmx: spp: Set up SPP paging table at vmentry/vmexit
->   mmu: spp: Enable Lazy mode SPP protection
->   mmu: spp: Handle SPP protected pages when VM memory changes
->   x86: spp: Add SPP protection check in emulation.
-> 
->  Documentation/virt/kvm/api.txt        |  46 ++
->  Documentation/virtual/kvm/spp_kvm.txt | 180 +++++++
->  arch/x86/include/asm/cpufeatures.h    |   1 +
->  arch/x86/include/asm/kvm_host.h       |  10 +-
->  arch/x86/include/asm/vmx.h            |  10 +
->  arch/x86/include/uapi/asm/vmx.h       |   2 +
->  arch/x86/kernel/cpu/intel.c           |   4 +
->  arch/x86/kvm/mmu.c                    |  78 +++-
->  arch/x86/kvm/mmu.h                    |   2 +
->  arch/x86/kvm/vmx/capabilities.h       |   5 +
->  arch/x86/kvm/vmx/spp.c                | 649 ++++++++++++++++++++++++++
->  arch/x86/kvm/vmx/spp.h                |  28 ++
->  arch/x86/kvm/vmx/vmx.c                |  97 ++++
->  arch/x86/kvm/x86.c                    |  87 ++++
->  include/uapi/linux/kvm.h              |  17 +
->  15 files changed, 1214 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/virtual/kvm/spp_kvm.txt
->  create mode 100644 arch/x86/kvm/vmx/spp.c
->  create mode 100644 arch/x86/kvm/vmx/spp.h
-> 
-> -- 
-> 2.17.2
+Fair enough.
+
+Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+>
+>   2) If there is even a minimal chance to survive, free the memory and
+>      return.
+>
+> Adding a comment is just a useless non-option.
+>
+> Thanks,
+>
+>         tglx
