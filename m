@@ -2,144 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F40F899E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 08:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AED3F89A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 08:24:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfKLHWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 02:22:52 -0500
-Received: from mail-eopbgr1400109.outbound.protection.outlook.com ([40.107.140.109]:6160
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        id S1726994AbfKLHYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 02:24:51 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6638 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727024AbfKLHWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 02:22:50 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S7lnHT5hBGpfjuSk5bmOtRW0fLPhin5rIZTZh1q+K7F/WnKWxtLKv48EhOp//Y72rKwBY6ZX0RcnTMIHTEnn1/u71sNfCB9niuCizR1W3LW67+64TvCGrT794bvnlyrokrdAYJtX409C6rUgF4dW8W6QBPpVW356A8hLSzr4eWmtPqv4o92o10bXN9ps/Ps8UoRK+UGXFL+0H0TRhYQSBwCVqujIAhfTkzz6jzeg78qYcLeRNgHqWnshUIKMrgah02xJoT68pHqnALr4Lr55K01ujtGeexWNrkTWMznmK40Js8nwlpdd/1laRV7rS7HIyY6Yj1ggu+7nkfWf/rO9hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r+kWtLO8I9AWFWJTpGclMMWHbl1vLM3/klEBeHLhD/E=;
- b=G1t9X0ahYLKwcONu+Q4SaMo8mCkyKO/4LdrvnzvPJUtLq4AzWxARbDm/rje905/q58+ptjpDUh2v7vsRC7zXpx80Bqme+/rTY/DnHt7eitqVm4cVKnNFeoy4W1d/wuXY+sGT77ImDR9pEIC5g8rIhingdyYzDA/I3kQ8F3TJIdqUexVZrH+nh5M/coQ13gY2nootGs0OcIBzCJ0NQlxfY8h12WGlebaXTYifwRkLJ6qRun2uZ0D5PkBdjuOPFGA4OfcY2w9x56OAxCYXDD6TIgzW1kAHgbfTygulff6NBkdL8jhlCr7+Ulix0TN92Zc1XE52cP1SmcYrkmMF6GeTew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r+kWtLO8I9AWFWJTpGclMMWHbl1vLM3/klEBeHLhD/E=;
- b=axfwgUDhtZjrswm4KuMzdHasoq7IxkFGrH5tKkKsUDtLMlvX48/ANXkdtAQviPInfLc++79ep4bu3a4v22Dby3ApW2D7q+kH1VyOKW2mmK+ILBmDgqi3YbHmn1eZ/s7PZyMFKVMBUzvXxhDULTIMybYzB+incaPeE68jLy9n0H0=
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB4784.jpnprd01.prod.outlook.com (20.179.186.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.24; Tue, 12 Nov 2019 07:22:47 +0000
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::5b9:ce3e:e658:5b75]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::5b9:ce3e:e658:5b75%7]) with mapi id 15.20.2430.023; Tue, 12 Nov 2019
- 07:22:47 +0000
-From:   Chris Paterson <Chris.Paterson2@renesas.com>
-To:     Greg KH <gregkh@linuxfoundation.org>, Pavel Machek <pavel@ucw.cz>
-CC:     kernel list <linux-kernel@vger.kernel.org>,
-        "stable@kernel.org" <stable@kernel.org>
-Subject: RE: patch in 4.4.201-rc1 breaks build (mm, meminit: recalculate pcpu
- batch and high limits after init completes)
-Thread-Topic: patch in 4.4.201-rc1 breaks build (mm, meminit: recalculate pcpu
- batch and high limits after init completes)
-Thread-Index: AQHVmJNrRrdhElUsAEGrCYk1pZy3yKeHBmQAgAAbXgA=
-Date:   Tue, 12 Nov 2019 07:22:46 +0000
-Message-ID: <TYAPR01MB228594797B8B61F329D85180B7770@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20191111132451.GA1208@duo.ucw.cz>
- <20191112054104.GA1211223@kroah.com>
-In-Reply-To: <20191112054104.GA1211223@kroah.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Paterson2@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f9b352e8-2525-4bf2-8a96-08d767411e13
-x-ms-traffictypediagnostic: TYAPR01MB4784:
-x-ms-exchange-purlcount: 4
-x-microsoft-antispam-prvs: <TYAPR01MB4784A89EF0C84FB20B642533B7770@TYAPR01MB4784.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:792;
-x-forefront-prvs: 021975AE46
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(366004)(376002)(396003)(136003)(346002)(199004)(189003)(11346002)(110136005)(5660300002)(3846002)(316002)(6436002)(476003)(6116002)(6506007)(102836004)(966005)(26005)(186003)(14454004)(2906002)(446003)(54906003)(66476007)(76176011)(86362001)(76116006)(229853002)(64756008)(478600001)(7696005)(9686003)(66556008)(99286004)(66446008)(8676002)(6306002)(8936002)(66946007)(52536014)(305945005)(25786009)(7736002)(74316002)(66066001)(81156014)(81166006)(486006)(256004)(14444005)(71190400001)(4326008)(33656002)(6246003)(55016002)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB4784;H:TYAPR01MB2285.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: LVwnAt2+LeSNLmkR1fF7u6EkyaKfR3i3kg8/HIOQ4VAVTL77Q1M4OOH0hHAN34sM0k/MjpDbmLYJ30dPPr1MGASZ5kkhNG9bRvqHN2iVtHcgn1to+L3KO7j+iTDSXkz/xPoyh8RNNiMsNJ6Ev4TKrhILkw/X11A+EjyArYe6zKxsCElb/LD20MQKipyecxIolMKN6UIsXVsoM5yDz7kaN3YPGSuD7oELAk3S4xPnKAj7Oa3CyPVmkFzWCbfICf3x/WH3QNaSfoEnnIrO1CTfZbin9rDxhNLjIeQEGRZLDKK2d16q0XbTAlXcTmU3c3DCS2ojcJ+9sthJELwOoU5V7l0+MA2bfeKQ8CjPi0/ZhBWBlrmghWQ4zn8sEeoTJJCTLgM1EoqMFmU1Hq830XaqDXYUqJcTnZFeTz5RDVAWpodTo568BzkUZs2J4g/YKLnZWTar+9Yg4JYrq8Vry4VZpvL7EqlJOjQA/Ws3iBtjfeo=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+        id S1725283AbfKLHYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 02:24:51 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 74FF4DEB7E58E6416410;
+        Tue, 12 Nov 2019 15:24:29 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 12 Nov 2019 15:24:18 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Maxime Ripard <mripard@kernel.org>,
+        "Chen-Yu Tsai" <wens@csie.org>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH v2 -next] crypto: sun8i-ce - Fix memdup.cocci warnings
+Date:   Tue, 12 Nov 2019 07:23:14 +0000
+Message-ID: <20191112072314.145064-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191109024403.47106-1-yuehaibing@huawei.com>
+References: <20191109024403.47106-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9b352e8-2525-4bf2-8a96-08d767411e13
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2019 07:22:46.9407
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Qw5V3ZEjzmgwiIT1WtGIlsaPbEcut1VYRlHyayQhxokogaPAjbXceTxP3VmAP1ceKHInuOa2tKty7OS3lw1+jwj2JGbAjEIZNxtOL7zgMZo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4784
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Use kmemdup rather than duplicating its implementation
 
-> From: Greg KH <gregkh@linuxfoundation.org>
-> Sent: 12 November 2019 05:41
->=20
-> On Mon, Nov 11, 2019 at 02:24:52PM +0100, Pavel Machek wrote:
-> > Hi!
-> >
-> > This seems to break our build with particular
-> > .config. (cip-kernel-config/4.4.y-cip/arm/moxa_mxc_defconfig).
-> >
-> > commit df82285ab4b974f2040f31dbabdd11e055a282c2
-> > Author: Mel Gorman <mgorman@techsingularity.net>
-> > Date:   Tue Nov 5 21:16:27 2019 -0800
-> >
-> >     mm, meminit: recalculate pcpu batch and high limits after init comp=
-letes
-> >
-> >     commit 3e8fc0075e24338b1117cdff6a79477427b8dbed upstream.
-> >
-> >
-> >
-> > Quoting Chris Peterson:
-> >
-> > > I've seen a failure this morning with our linux stable-rc build
-> > > testing.
-> >
-> > > Version: 4cb9b88c651a2fff886dd64b6d797343e7ddb4dd Linux 4.4.201-rc1
-> > > Arch: arm
-> > > Config: moxa_mxc_defconfig
-> >
-> > > Pipeline: https://gitlab.com/cip-playground/linux-stable-rc-
-> ci/pipelines/95016985
-> > > Failure: https://gitlab.com/cip-playground/linux-stable-rc-
-> ci/pipelines/95016985/failures
-> > > Log: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/3469=
-74180
-> > > Config: https://gitlab.com/cip-playground/linux-stable-rc-ci/-
-> /jobs/346974180
-> >
-> > > All other configurations that we build were successful.
->=20
-> Sorry, my fault, should now be fixed.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix patch title 'sun8i-ss' -> 'sun8i-ce'
+---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Yep. Working fine with Linux 4.4.201-rc2 (ca1d1b5f0f2a)
-https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/347861814
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+index f0e7c1e12da6..b6e7c346c3ae 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+@@ -396,10 +396,9 @@ int sun8i_ce_aes_setkey(struct crypto_skcipher *tfm, const u8 *key,
+ 		kfree(op->key);
+ 	}
+ 	op->keylen = keylen;
+-	op->key = kmalloc(keylen, GFP_KERNEL | GFP_DMA);
++	op->key = kmemdup(key, keylen, GFP_KERNEL | GFP_DMA);
+ 	if (!op->key)
+ 		return -ENOMEM;
+-	memcpy(op->key, key, keylen);
+ 
+ 	crypto_sync_skcipher_clear_flags(op->fallback_tfm, CRYPTO_TFM_REQ_MASK);
+ 	crypto_sync_skcipher_set_flags(op->fallback_tfm, tfm->base.crt_flags & CRYPTO_TFM_REQ_MASK);
+@@ -422,10 +421,9 @@ int sun8i_ce_des3_setkey(struct crypto_skcipher *tfm, const u8 *key,
+ 		kfree(op->key);
+ 	}
+ 	op->keylen = keylen;
+-	op->key = kmalloc(keylen, GFP_KERNEL | GFP_DMA);
++	op->key = kmemdup(key, keylen, GFP_KERNEL | GFP_DMA);
+ 	if (!op->key)
+ 		return -ENOMEM;
+-	memcpy(op->key, key, keylen);
+ 
+ 	crypto_sync_skcipher_clear_flags(op->fallback_tfm, CRYPTO_TFM_REQ_MASK);
+ 	crypto_sync_skcipher_set_flags(op->fallback_tfm, tfm->base.crt_flags & CRYPTO_TFM_REQ_MASK);
 
-Thank you Greg and Pavel.
 
-Kind regards, Chris
 
->=20
-> thanks,
->=20
-> greg k-h
