@@ -2,132 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A637F8FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:51:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E7FDF8FFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfKLMvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 07:51:19 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:53981 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfKLMvS (ORCPT
+        id S1727264AbfKLMwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 07:52:05 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35966 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfKLMwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:51:18 -0500
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id xACCp8Kp030082;
-        Tue, 12 Nov 2019 21:51:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com xACCp8Kp030082
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1573563069;
-        bh=pERbu/D6TsAoFYrJhhErJt2I5IFldM4FmNpzx6W3OhY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hhAwl8VuQ3Yd0T/pN6/IlaZnHDDCkMvn4AkJaBnukC253y9L8B9fG++arcrdl5Z5R
-         /9rD9bJPmjSLxO4qwDHCLEV1+DZeFXxu3i2pTz9FzfFEuMpTsZ5NY1K3MvQBvltwM+
-         EuM3IMQqTzCGj/Cgeds+eBcPGUtyWxj1+j8IMM6wFlWw7ZidfuOGGAdUtCZdA13bf2
-         fdxUCJHu4eK/2YdS1rZHCeYr3wjmX6o/CROPeuUQ5kq1iFGodfCrbDdgRtuMyikDuj
-         hNfP1Bi0zXdRSJR15wzOsmWUxaF0G47IS5Fzkm3WNVYy3T96Ijn7eqyHXvZN29ek67
-         XKVfuzxXV1s+Q==
-X-Nifty-SrcIP: [209.85.217.45]
-Received: by mail-vs1-f45.google.com with SMTP id c25so10695270vsp.0;
-        Tue, 12 Nov 2019 04:51:08 -0800 (PST)
-X-Gm-Message-State: APjAAAUBMt2tRJdM3Qw3Hl3Xo3ar2p6dmK6gXkvCDmY08DTjdi3o0AQC
-        ULTuaWkZHeVyN1rAEOyfryjjnCVnXWwyT4/HC84=
-X-Google-Smtp-Source: APXvYqyKv1Pax9ObNkX0Q8oo8KGbX362oyxIELZQWqG9wmUAWx11VYikJ/OkCb3aLcrg3/hvdZodvoJImefldmOkHNE=
-X-Received: by 2002:a05:6102:726:: with SMTP id u6mr21481694vsg.179.1573563067515;
- Tue, 12 Nov 2019 04:51:07 -0800 (PST)
+        Tue, 12 Nov 2019 07:52:05 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r10so18420100wrx.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 04:52:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DfqsINWcKRc1MYWJGKjYzKaRLCYqntpX7pPTW5be6v8=;
+        b=JZurKRZavYoqZvTK8TYEOfMp8VH/5C7m8TY48CKwOmV3hBKrhPlVg1tBdkkcFCy1w/
+         BG69ixJjZDMO+yF9cpoD/91wQHlTRSpADi14ByabcYww6P6rhM8Aj5quMfYt4W8kWQzU
+         MB8EE8hCBtuRI5mK4Fz6oC4KB6d0/YxN5ou/oMy1STwaW/h3AxEQBU4GVFgQHAT+nwFZ
+         UhCSJH6OONjnIPksILrZAqK2Ws8/TaJWHI7pViKN2mro0ykZm44fN6VCJpsqyUYqA5SX
+         FUDlUOxLAs5j3AL2NLIo+3d4vIc0davaaD68wUuR23kB0U8Z+7YsxTMba66PjtUlBI8s
+         DQDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DfqsINWcKRc1MYWJGKjYzKaRLCYqntpX7pPTW5be6v8=;
+        b=i8H7FjY3B0CXygEkfMNjRXEbdkRJlaFrqtFrKvpR1RUp050xnzruHzRPJ53hVKEPnO
+         IKip661THUHI+v51nHwTTvxgMhO5b4OSEkasUg5xs3G02DctoJPCrq0DkJgYiaV0mAXS
+         n8meqcUxI9Wi6rIS6Sw5TIvHBu+J6DtSkSJwXxIhdoCGlfFEFpGze2rBtUdu+T0AWcPD
+         XZAuxzObKWTvfU17bhh0/tsEdQvfiVpLSAQchjV9JzlsBt+wV03wGUI34mkuIdqV0qPY
+         Zcg9gIkX7P4cOsYH4EHHPm/JR7WlpibzmXYqTcfivtmDR/hkKuPlHYRX9T5HhMSzBpk2
+         ZKMQ==
+X-Gm-Message-State: APjAAAXZItqgAlBDupXL/jVHxHcOlGieROLi1jtcGn5Ii4ehFMXfDOKL
+        dLBoSSkQim65OfVDRXT80G+UCg==
+X-Google-Smtp-Source: APXvYqy8EPY5Xwbb23COpmy3eka/7lqjG/CvbJl3rvQUdnzvWRC1PyYLCax49eM+z+H5f84muASU4g==
+X-Received: by 2002:adf:c402:: with SMTP id v2mr27337084wrf.323.1573563124065;
+        Tue, 12 Nov 2019 04:52:04 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id a6sm2771583wmj.1.2019.11.12.04.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 04:52:03 -0800 (PST)
+Date:   Tue, 12 Nov 2019 13:51:59 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        jernej.skrabec@siol.net, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 1/2] ARM64: dts: sun50i-h6-pine-h64: state that the DT
+ supports the modelA
+Message-ID: <20191112125159.GC18647@Red>
+References: <1573316433-40669-1-git-send-email-clabbe@baylibre.com>
+ <1573316433-40669-2-git-send-email-clabbe@baylibre.com>
+ <20191112120219.GX4345@gilmour.lan>
 MIME-Version: 1.0
-References: <1da2db04-da6a-cedb-e85a-6ded68dada82@163.com> <20191112123125.GD17835@willie-the-truck>
-In-Reply-To: <20191112123125.GD17835@willie-the-truck>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 12 Nov 2019 21:50:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARA99UUTY2v6rS=Nb4Cg5pB4RsR0PogLqdT9uNLcH20ew@mail.gmail.com>
-Message-ID: <CAK7LNARA99UUTY2v6rS=Nb4Cg5pB4RsR0PogLqdT9uNLcH20ew@mail.gmail.com>
-Subject: Re: Question about "asm/rwonce.h: No such file or directory"
-To:     Will Deacon <will@kernel.org>
-Cc:     Xiao Yang <ice_yangxiao@163.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112120219.GX4345@gilmour.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 9:31 PM Will Deacon <will@kernel.org> wrote:
->
-> [+lkml, Masahiro, Alexei and Daniel]
->
-> On Tue, Nov 12, 2019 at 04:56:39PM +0800, Xiao Yang wrote:
-> > With your patch[1], I alway get the following error when building
-> > tools/bpf:
->
-> In case people want to reproduce this, my branch is here:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=lto
->
-> > ----------------------------------------------------------------------------------
+On Tue, Nov 12, 2019 at 01:02:19PM +0100, Maxime Ripard wrote:
+> Hi,
+> 
+> On Sat, Nov 09, 2019 at 04:20:32PM +0000, Corentin Labbe wrote:
+> > The current sun50i-h6-pine-h64 DT does not specify which model (A or B)
+> > it supports.
+> > When this file was created, only modelA was existing, but now both model
+> > exists and with the time, this DT drifted to support the model B since it is
+> > the most common one.
+> > Furtheremore, some part of the model A does not work with it like ethernet and
+> > HDMI connector (as confirmed by Jernej on IRC).
 > >
-> > make -C tools/bpf/
-> > make: Entering directory
-> > '/usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/tools/bpf'
+> > So it is time to settle the issue, and the easiest way was to state that
+> > this DT is for model B.
+> > Easiest since only a small name changes is required.
+> > Doing the opposite (stating this file is for model A) will add changes (for
+> > ethernet and HDMI) and so, will break too many setup.
 > >
-> > Auto-detecting system features:
-> > ... libbfd: [ on ]
-> > ... disassembler-four-args: [ OFF ]
+> > But as asked by the maintainer this patch state this file is for model A.
+> > In the process this patch adds the missing compoments to made it work on
+> > model A.
 > >
-> > CC bpf_jit_disasm.o
-> > CC bpf_dbg.o
-> > In file included from
-> > /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/include/uapi/linux/filter.h:9:0,
-> > from
-> > /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/tools/bpf/bpf_dbg.c:41:
-> > /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/include/linux/compiler.h:247:24:
-> > fatal error: asm/rwonce.h: No such file or directory
-> > #include <asm/rwonce.h>
-> > ^
-> > compilation terminated.
-> > Makefile:61: recipe for target 'bpf_dbg.o' failed
-> > make: *** [bpf_dbg.o] Error 1
-> > make: *** Waiting for unfinished jobs....
-> > make: Leaving directory
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  .../devicetree/bindings/arm/sunxi.yaml        |  4 ++--
+> >  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts | 19 +++++++++++++++----
+> >  2 files changed, 17 insertions(+), 6 deletions(-)
 > >
-> > ----------------------------------------------------------------------------------
+> > diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
+> > index 8a1e38a1d7ab..b8ec616c2538 100644
+> > --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+> > @@ -599,9 +599,9 @@ properties:
+> >            - const: pine64,pine64-plus
+> >            - const: allwinner,sun50i-a64
 > >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=lto&id=642a312d47ceb54603630d9d04f5052f3b46d9a3
+> > -      - description: Pine64 PineH64
+> > +      - description: Pine64 PineH64 model A
+> >          items:
+> > -          - const: pine64,pine-h64
+> > +          - const: pine64,pine-h64-modelA
+> 
+> You can change the description to make it more obvious if you want to,
+> but changing the compatible is a no-go.
+> 
+> >            - const: allwinner,sun50i-h6
 > >
-> > It seems that include/linux/compiler.h cannot find the asm/rwonce.h because
-> > tools/bpf/Makefile doesn't include arch/*/include/generated/asm/rwonce.h.
->
-> The problem with referring to the generated files is that they don't exist
-> unless you've configured the main source directory. The real problem here
-> seems to be that tools/bpf/ refers directly to header files in the kernel
-> sources without any understanding of kbuild, and therefore mandatory-y
-> headers simply don't exist when it goes looking for them.
+> >        - description: Pine64 LTS
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+> > index 74899ede00fb..1d9afde4d3d7 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+> > @@ -10,8 +10,8 @@
+> >  #include <dt-bindings/gpio/gpio.h>
+> >
+> >  / {
+> > -	model = "Pine H64";
+> > -	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
+> > +	model = "Pine H64 model A";
+> > +	compatible = "pine64,pine-h64-modelA", "allwinner,sun50i-h6";
+> 
+> Same thing here, changing the model is fine, the compatible isn't
+> 
 
-Please note tools/ is out of scope of Kbuild.
-The tools/ created a completely different build system.
+Hello
 
+I will erase compatible changes in next version.
 
-tools/bpf/ looks like a host program.
-Does it include a kernel-space header
-of the target architecture?
+> >  	aliases {
+> >  		ethernet0 = &emac;
+> > @@ -22,9 +22,10 @@
+> >  		stdout-path = "serial0:115200n8";
+> >  	};
+> >
+> > -	connector {
+> > +	hdmi_connector: connector {
+> 
+> Why do you need to add the label?
+> 
 
-I see a lots of header duplication in tools/include/,
-but I am not sure if
-tools/include/linux/filter.h is the correct header
-to include.
+For dropping the ddc-en-gpios property in model B.
+If you want, I can split this line change in an extra patch.
 
-
-
->
-> Perhaps it's possible to introduce a dependency on a top-level "make
-> asm-generic" so that we can reference the generated headers from the arch
-> directly. Thoughts?
->
-> Will
-
-
--- 
-Best Regards
-Masahiro Yamada
+Regards
