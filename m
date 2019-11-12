@@ -2,54 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86878F99C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9729F99CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfKLTcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 14:32:09 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48368 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfKLTcJ (ORCPT
+        id S1726994AbfKLTfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 14:35:24 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35549 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfKLTfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 14:32:09 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4B95D154CF011;
-        Tue, 12 Nov 2019 11:32:08 -0800 (PST)
-Date:   Tue, 12 Nov 2019 11:32:07 -0800 (PST)
-Message-Id: <20191112.113207.2302490162902408721.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        irtimmer@gmail.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: fix broken if statement
- because of a stray semicolon
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191112130523.232461-1-colin.king@canonical.com>
-References: <20191112130523.232461-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 12 Nov 2019 11:32:08 -0800 (PST)
+        Tue, 12 Nov 2019 14:35:23 -0500
+Received: by mail-io1-f66.google.com with SMTP id x21so1806414ior.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 11:35:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=m93e2QXWf88AbXgWK2sEQ2l6gtvzuuGFmNQYaUWfXNg=;
+        b=l52eleMCbJB3sqImSHB8+0rROJ34XYVb9aJgBXvlp6QavrLjYHPmW5TCty9yBkePtN
+         EDB0Dr1uH1LOFEhzd0Z4Aqh9qCU/FlL/oLfxBKT5oYfmiVRp8/XJWwlRkoTKndGbsrBY
+         EpKayEbLj5l8PH9WKNZA/fqty+eg1E3a6W9aiqotpZcrNA9RCGYML2QL9K2v+qoy7H3X
+         KGaZXebb/I8WpzwthYbpol7tqzklks6HuKEott00HXMkKxSkfnQIJEkO+9rOl7hCtHYX
+         1f07gXdeoxSzuv5JPivm5CklpoOAkXoVq9sDFyhJVhOLvBJ6Ns+Ge+i8OkDpQIY/7Veb
+         tYKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=m93e2QXWf88AbXgWK2sEQ2l6gtvzuuGFmNQYaUWfXNg=;
+        b=Td3JSGajXSyraSCrmn7PvXKOCVyoWoGCWVb7oMP899ohygD/Y6Nnei2eGkXskaqpKu
+         CpSVcuamGIzO2kXrjTA33stltJy0I16wqguRRbdrys9s//c+3RJExJXaz2IYg5yhFxdO
+         ztyxh21pKYpBrKQ27DV3OuJdLdPcXJLaZGlsI17QScCNiUIF1mD/DQ3+REmBJqEdCGnU
+         Lw3ZCRfSKPkmir5edzhx5Fru//iHTRPnxX3+GGBNJOsDpn/gH24naJ0GbInkaIj4mQRd
+         E6Q/SCzYKCNcDrNWiFCuPZae7QvKi2rVkx9AHAPv2EyOc+sI3f9BTCowhZpIQN9CfT3s
+         IJig==
+X-Gm-Message-State: APjAAAX2D/VXUaDtPuS2ZX+wpSpEbQb6j+XJ2wqsfG5Wo9og0EevM0jY
+        fYcu7BsNjZl2Cov4zJWOWlXTHaQoDiw=
+X-Google-Smtp-Source: APXvYqzpmUsR0xh7kS0qo4ZEyUZIBFnS7WPJ+sDXJX2PPlPUcSH60/M0y1Ik8F4kBklzWWHcXDzpcA==
+X-Received: by 2002:a5e:8202:: with SMTP id l2mr10041486iom.207.1573587322864;
+        Tue, 12 Nov 2019 11:35:22 -0800 (PST)
+Received: from localhost ([75.104.69.238])
+        by smtp.gmail.com with ESMTPSA id t6sm1235747ilq.53.2019.11.12.11.35.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 11:35:22 -0800 (PST)
+Date:   Tue, 12 Nov 2019 11:35:14 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Atish Patra <atish.patra@wdc.com>
+cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@sifive.com>
+Subject: Re: [PATCH] RISC-V: Add multiple compression image format.
+In-Reply-To: <20191106000652.8370-1-atish.patra@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1911121135020.32590@viisi.sifive.com>
+References: <20191106000652.8370-1-atish.patra@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Nov 2019 13:05:23 +0000
+On Tue, 5 Nov 2019, Atish Patra wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> Currently, there is only support for .gz compression type
+> for generating kernel Image.
 > 
-> There is a stray semicolon in an if statement that will cause a dev_err
-> message to be printed unconditionally. Fix this by removing the stray
-> semicolon.
+> Add support for other compression methods(lzma, lz4, lzo, bzip2)
+> that helps in generating a even smaller kernel image. Image.gz
+> will still be the default compressed image.
 > 
-> Addresses-Coverity: ("Stay semicolon")
-> Fixes: f0942e00a1ab ("net: dsa: mv88e6xxx: Add support for port mirroring")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
 
-Applied, thanks.
+Thanks, queued for v5.5-rc1.
+
+
+- Paul
