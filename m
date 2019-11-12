@@ -2,128 +2,271 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A0EBF8E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5ECDF8EA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:33:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfKLL37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:29:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727002AbfKLL37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:29:59 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91B99206BB;
-        Tue, 12 Nov 2019 11:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573558197;
-        bh=bi5c2ytAf+LDDZaU2jB1n6T+DiUwKpN3HCu/2m5i3JY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TanGBgEjapQS+VSynY/DayCSfznsMC7p9mDIk5H51thXu/4oaMcURjfMt6Lo7DrSO
-         NHd4nV/sUzSeCKucqAZskEwDlMTHIvxl42zCEyWWldDZUVPIKo0YFKlpF4bfdReOSS
-         5KSrLhzPVeHa4RimN6oG0PD/ZuqxaxPucUq571cw=
-Date:   Tue, 12 Nov 2019 11:29:51 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org,
-        alexei.starovoitov@gmail.com, rabin@rab.in,
-        Mark Rutland <mark.rutland@arm.com>, james.morse@arm.com
-Subject: Re: [PATCH -v5 13/17] arm/ftrace: Use __patch_text_real()
-Message-ID: <20191112112950.GB17835@willie-the-truck>
-References: <20191111131252.921588318@infradead.org>
- <20191111132458.220458362@infradead.org>
- <20191111164703.GA11521@willie-the-truck>
- <20191111171955.GO4114@hirez.programming.kicks-ass.net>
- <20191111172541.GT5671@hirez.programming.kicks-ass.net>
+        id S1726985AbfKLLdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:33:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4452 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725874AbfKLLdp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 06:33:45 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACBXJ3L029822;
+        Tue, 12 Nov 2019 06:33:34 -0500
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7tfku83b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 06:33:33 -0500
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xACBUVDV003471;
+        Tue, 12 Nov 2019 11:30:59 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma01wdc.us.ibm.com with ESMTP id 2w5n36e475-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 11:30:59 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACBUsBW46793008
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 11:30:54 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 803E3C605B;
+        Tue, 12 Nov 2019 11:30:54 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F633C6057;
+        Tue, 12 Nov 2019 11:30:50 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.45.124])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 11:30:49 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, peterz@infradead.org,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 03/16] libnvdimm: Move nd_device_attribute_group to device_type
+In-Reply-To: <157309901138.1582359.12909354140826530394.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com> <157309901138.1582359.12909354140826530394.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Tue, 12 Nov 2019 17:00:46 +0530
+Message-ID: <878soltjq1.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191111172541.GT5671@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 06:25:41PM +0100, Peter Zijlstra wrote:
-> On Mon, Nov 11, 2019 at 06:19:55PM +0100, Peter Zijlstra wrote:
-> 
-> > If you can give me a Tested-by, I'll replace it with the below... :-)
-> > 
-> > --- a/arch/arm/kernel/ftrace.c
-> > +++ b/arch/arm/kernel/ftrace.c
-> > @@ -22,6 +22,7 @@
-> >  #include <asm/ftrace.h>
-> >  #include <asm/insn.h>
-> >  #include <asm/set_memory.h>
-> > +#include <asm/patch.h>
-> >  
-> >  #ifdef CONFIG_THUMB2_KERNEL
-> >  #define	NOP		0xf85deb04	/* pop.w {lr} */
-> > @@ -35,9 +36,7 @@ static int __ftrace_modify_code(void *da
-> >  {
-> >  	int *command = data;
-> >  
-> > -	set_kernel_text_rw();
-> >  	ftrace_modify_all_code(*command);
-> > -	set_kernel_text_ro();
-> >  
-> >  	return 0;
-> >  }
-> > @@ -59,13 +58,11 @@ static unsigned long adjust_address(stru
-> >  
-> >  int ftrace_arch_code_modify_prepare(void)
-> >  {
-> > -	set_all_modules_text_rw();
-> >  	return 0;
-> >  }
-> >  
-> >  int ftrace_arch_code_modify_post_process(void)
-> >  {
-> > -	set_all_modules_text_ro();
-> >  	/* Make sure any TLB misses during machine stop are cleared. */
-> >  	flush_tlb_all();
-> >  	return 0;
-> > @@ -97,10 +94,7 @@ static int ftrace_modify_code(unsigned l
-> >  			return -EINVAL;
-> >  	}
-> >  
-> > -	if (probe_kernel_write((void *)pc, &new, MCOUNT_INSN_SIZE))
-> > -		return -EPERM;
-> > -
-> > -	flush_icache_range(pc, pc + MCOUNT_INSN_SIZE);
-> > +	__patch_text_real((void *)pc, new, true);
-> 
-> I'll even make that: __patch_text((void *)pc, new);
+Dan Williams <dan.j.williams@intel.com> writes:
 
-This fails to compile. I bodged it as below, but maybe this stuff should
-actually live in insn.c. Not fussed either way. I ran the ftrace tests,
-loaded a module and toggled ftrace on/off with this applied and it looks
-like it works to me:
+> A 'struct device_type' instance can carry default attributes for the
+> device. Use this facility to remove the export of
+> nd_device_attribute_group and put the responsibility on the core rather
+> than leaf implementations to define this attribute.
+>
+> For regions this creates a new nd_region_attribute_groups[] added to the
+> per-region device-type instances.
+>
 
-Tested-by: Will Deacon <will@kernel.org>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-Will
-
---->8
-
-diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
-index 8cad59465af3..a885172e504c 100644
---- a/arch/arm/kernel/Makefile
-+++ b/arch/arm/kernel/Makefile
-@@ -49,8 +49,8 @@ obj-$(CONFIG_HAVE_ARM_SCU)	+= smp_scu.o
- obj-$(CONFIG_HAVE_ARM_TWD)	+= smp_twd.o
- obj-$(CONFIG_ARM_ARCH_TIMER)	+= arch_timer.o
- obj-$(CONFIG_FUNCTION_TRACER)	+= entry-ftrace.o
--obj-$(CONFIG_DYNAMIC_FTRACE)	+= ftrace.o insn.o
--obj-$(CONFIG_FUNCTION_GRAPH_TRACER)	+= ftrace.o insn.o
-+obj-$(CONFIG_DYNAMIC_FTRACE)	+= ftrace.o insn.o patch.o
-+obj-$(CONFIG_FUNCTION_GRAPH_TRACER)	+= ftrace.o insn.o patch.o
- obj-$(CONFIG_JUMP_LABEL)	+= jump_label.o insn.o patch.o
- obj-$(CONFIG_KEXEC)		+= machine_kexec.o relocate_kernel.o
- # Main staffs in KPROBES are in arch/arm/probes/ .
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "Oliver O'Halloran" <oohall@gmail.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  arch/powerpc/platforms/pseries/papr_scm.c |    2 --
+>  drivers/acpi/nfit/core.c                  |    2 --
+>  drivers/nvdimm/bus.c                      |    3 +--
+>  drivers/nvdimm/dimm_devs.c                |    8 +++++++-
+>  drivers/nvdimm/e820.c                     |    1 -
+>  drivers/nvdimm/nd.h                       |    1 +
+>  drivers/nvdimm/of_pmem.c                  |    1 -
+>  drivers/nvdimm/region_devs.c              |   18 +++++++++++++-----
+>  include/linux/libnvdimm.h                 |    1 -
+>  9 files changed, 22 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
+> index 61883291defc..04726f8fd189 100644
+> --- a/arch/powerpc/platforms/pseries/papr_scm.c
+> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
+> @@ -286,7 +286,6 @@ int papr_scm_ndctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>  
+>  static const struct attribute_group *region_attr_groups[] = {
+>  	&nd_region_attribute_group,
+> -	&nd_device_attribute_group,
+>  	&nd_mapping_attribute_group,
+>  	&nd_numa_attribute_group,
+>  	NULL,
+> @@ -299,7 +298,6 @@ static const struct attribute_group *bus_attr_groups[] = {
+>  
+>  static const struct attribute_group *papr_scm_dimm_groups[] = {
+>  	&nvdimm_attribute_group,
+> -	&nd_device_attribute_group,
+>  	NULL,
+>  };
+>  
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index 14e68f202f81..dec7c2b08672 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -1699,7 +1699,6 @@ static const struct attribute_group acpi_nfit_dimm_attribute_group = {
+>  
+>  static const struct attribute_group *acpi_nfit_dimm_attribute_groups[] = {
+>  	&nvdimm_attribute_group,
+> -	&nd_device_attribute_group,
+>  	&acpi_nfit_dimm_attribute_group,
+>  	NULL,
+>  };
+> @@ -2199,7 +2198,6 @@ static const struct attribute_group acpi_nfit_region_attribute_group = {
+>  static const struct attribute_group *acpi_nfit_region_attribute_groups[] = {
+>  	&nd_region_attribute_group,
+>  	&nd_mapping_attribute_group,
+> -	&nd_device_attribute_group,
+>  	&nd_numa_attribute_group,
+>  	&acpi_nfit_region_attribute_group,
+>  	NULL,
+> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+> index d47412dcdf38..eb422527dd57 100644
+> --- a/drivers/nvdimm/bus.c
+> +++ b/drivers/nvdimm/bus.c
+> @@ -669,10 +669,9 @@ static struct attribute *nd_device_attributes[] = {
+>  /*
+>   * nd_device_attribute_group - generic attributes for all devices on an nd bus
+>   */
+> -struct attribute_group nd_device_attribute_group = {
+> +const struct attribute_group nd_device_attribute_group = {
+>  	.attrs = nd_device_attributes,
+>  };
+> -EXPORT_SYMBOL_GPL(nd_device_attribute_group);
+>  
+>  static ssize_t numa_node_show(struct device *dev,
+>  		struct device_attribute *attr, char *buf)
+> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+> index 196aa44c4936..278867c68682 100644
+> --- a/drivers/nvdimm/dimm_devs.c
+> +++ b/drivers/nvdimm/dimm_devs.c
+> @@ -202,9 +202,15 @@ static void nvdimm_release(struct device *dev)
+>  	kfree(nvdimm);
+>  }
+>  
+> -static struct device_type nvdimm_device_type = {
+> +static const struct attribute_group *nvdimm_attribute_groups[] = {
+> +	&nd_device_attribute_group,
+> +	NULL,
+> +};
+> +
+> +static const struct device_type nvdimm_device_type = {
+>  	.name = "nvdimm",
+>  	.release = nvdimm_release,
+> +	.groups = nvdimm_attribute_groups,
+>  };
+>  
+>  bool is_nvdimm(struct device *dev)
+> diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
+> index 87f72f725e4f..adde2864c6a4 100644
+> --- a/drivers/nvdimm/e820.c
+> +++ b/drivers/nvdimm/e820.c
+> @@ -15,7 +15,6 @@ static const struct attribute_group *e820_pmem_attribute_groups[] = {
+>  
+>  static const struct attribute_group *e820_pmem_region_attribute_groups[] = {
+>  	&nd_region_attribute_group,
+> -	&nd_device_attribute_group,
+>  	NULL,
+>  };
+>  
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 5c8b077b3237..3f509bb6b5c0 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -298,6 +298,7 @@ struct device *nd_pfn_devinit(struct nd_pfn *nd_pfn,
+>  		struct nd_namespace_common *ndns);
+>  int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig);
+>  extern const struct attribute_group *nd_pfn_attribute_groups[];
+> +extern const struct attribute_group nd_device_attribute_group;
+>  #else
+>  static inline int nd_pfn_probe(struct device *dev,
+>  		struct nd_namespace_common *ndns)
+> diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
+> index 97187d6c0bdb..41348fa6b74c 100644
+> --- a/drivers/nvdimm/of_pmem.c
+> +++ b/drivers/nvdimm/of_pmem.c
+> @@ -11,7 +11,6 @@
+>  
+>  static const struct attribute_group *region_attr_groups[] = {
+>  	&nd_region_attribute_group,
+> -	&nd_device_attribute_group,
+>  	NULL,
+>  };
+>  
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index e89f2eb3678c..710b5111eaa8 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -763,19 +763,27 @@ struct attribute_group nd_region_attribute_group = {
+>  };
+>  EXPORT_SYMBOL_GPL(nd_region_attribute_group);
+>  
+> -static struct device_type nd_blk_device_type = {
+> +static const struct attribute_group *nd_region_attribute_groups[] = {
+> +	&nd_device_attribute_group,
+> +	NULL,
+> +};
+> +
+> +static const struct device_type nd_blk_device_type = {
+>  	.name = "nd_blk",
+>  	.release = nd_region_release,
+> +	.groups = nd_region_attribute_groups,
+>  };
+>  
+> -static struct device_type nd_pmem_device_type = {
+> +static const struct device_type nd_pmem_device_type = {
+>  	.name = "nd_pmem",
+>  	.release = nd_region_release,
+> +	.groups = nd_region_attribute_groups,
+>  };
+>  
+> -static struct device_type nd_volatile_device_type = {
+> +static const struct device_type nd_volatile_device_type = {
+>  	.name = "nd_volatile",
+>  	.release = nd_region_release,
+> +	.groups = nd_region_attribute_groups,
+>  };
+>  
+>  bool is_nd_pmem(struct device *dev)
+> @@ -931,8 +939,8 @@ void nd_region_release_lane(struct nd_region *nd_region, unsigned int lane)
+>  EXPORT_SYMBOL(nd_region_release_lane);
+>  
+>  static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
+> -		struct nd_region_desc *ndr_desc, struct device_type *dev_type,
+> -		const char *caller)
+> +		struct nd_region_desc *ndr_desc,
+> +		const struct device_type *dev_type, const char *caller)
+>  {
+>  	struct nd_region *nd_region;
+>  	struct device *dev;
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index b6eddf912568..d7dbf42498af 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -67,7 +67,6 @@ enum {
+>  
+>  extern struct attribute_group nvdimm_bus_attribute_group;
+>  extern struct attribute_group nvdimm_attribute_group;
+> -extern struct attribute_group nd_device_attribute_group;
+>  extern struct attribute_group nd_numa_attribute_group;
+>  extern struct attribute_group nd_region_attribute_group;
+>  extern struct attribute_group nd_mapping_attribute_group;
+> _______________________________________________
+> Linux-nvdimm mailing list -- linux-nvdimm@lists.01.org
+> To unsubscribe send an email to linux-nvdimm-leave@lists.01.org
