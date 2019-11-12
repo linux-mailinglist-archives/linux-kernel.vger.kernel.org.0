@@ -2,77 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFEE3F8917
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 07:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F910F892D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 07:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfKLGxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 01:53:23 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:47194 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727031AbfKLGxV (ORCPT
+        id S1726965AbfKLG4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 01:56:42 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfKLG4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 01:53:21 -0500
-X-UUID: 9fe46707aa4d41c0bda62169a4f3ff8d-20191112
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Ehsd/rqNjquxYwB2rWRhuOLzczdbDyhLWsWEeWLWGxc=;
-        b=K8jnYRkn+kZXk7AkDZvokwowUaom6Ffop8I4DcSwe3I3PW5aOvV0HVkSrcrYrg2Rcdd+Hvtx3PWF/H1DyeXVNVd1lv1EiKQTWcJjpripGcleWCcA9VS2xd0CupGpO+CVytVoxcMcZllgxp6+HQ5Uc9N2zERf0zHJimQGdZlxoYg=;
-X-UUID: 9fe46707aa4d41c0bda62169a4f3ff8d-20191112
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 2061064915; Tue, 12 Nov 2019 14:53:16 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 12 Nov 2019 14:53:14 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 12 Nov 2019 14:53:14 +0800
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <kasan-dev@googlegroups.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>,
-        Walter Wu <walter-zh.wu@mediatek.com>
-Subject: [PATCH v4 2/2] kasan: add test for invalid size in memmove
-Date:   Tue, 12 Nov 2019 14:53:13 +0800
-Message-ID: <20191112065313.7060-1-walter-zh.wu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Tue, 12 Nov 2019 01:56:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WzJP5ecelfPrbPkpFdZW5saIiDsiXjsKrOz9Vo/Rvb0=; b=OlFvdt3wLOwmBUAZk2yEp4RNW
+        I3bct+sprhJ6pz1IsQYpJkg8FZDpj28AVlIHBeoHgWxYKaFSrgigAQoslr65aDVp+bGS+jUUpPnf7
+        +0pwKUa0rB4i+8tBxIRr2+gglGQoqUvEVP9aqoJWfBTbysXf8MBtKCC6mc2MUYiUd4rEEGlb8Vzmz
+        zdH9ghLmseScW4y7uV88+9flHR3xHMMJVsvg7KfHo7sPjyA3sqXSYWk6cnu2qcGLjFry7PGzwYTVg
+        a7zaeMrFGOsbUGeBh1bEH9eftnbXBBcs+swwnOa83egkEtbN0At9pMmDOANTZdwPKwNZyONoemVXo
+        iR7q83i7A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUQ4x-0005RM-4z; Tue, 12 Nov 2019 06:55:07 +0000
+Date:   Mon, 11 Nov 2019 22:55:07 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     ira.weiny@intel.com
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 2/2] fs: Move swap_[de]activate to file_operations
+Message-ID: <20191112065507.GA15915@infradead.org>
+References: <20191112003452.4756-1-ira.weiny@intel.com>
+ <20191112003452.4756-3-ira.weiny@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112003452.4756-3-ira.weiny@intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGVzdCBuZWdhdGl2ZSBzaXplIGluIG1lbW1vdmUgaW4gb3JkZXIgdG8gdmVyaWZ5IHdoZXRoZXIg
-aXQgY29ycmVjdGx5DQpnZXQgS0FTQU4gcmVwb3J0Lg0KDQpDYXN0aW5nIG5lZ2F0aXZlIG51bWJl
-cnMgdG8gc2l6ZV90IHdvdWxkIGluZGVlZCB0dXJuIHVwIGFzIGEgbGFyZ2UNCnNpemVfdCwgc28g
-aXQgd2lsbCBoYXZlIG91dC1vZi1ib3VuZHMgYnVnIGFuZCBiZSBkZXRlY3RlZCBieSBLQVNBTi4N
-Cg0KU2lnbmVkLW9mZi1ieTogV2FsdGVyIFd1IDx3YWx0ZXItemgud3VAbWVkaWF0ZWsuY29tPg0K
-UmV2aWV3ZWQtYnk6IERtaXRyeSBWeXVrb3YgPGR2eXVrb3ZAZ29vZ2xlLmNvbT4NCi0tLQ0KIGxp
-Yi90ZXN0X2thc2FuLmMgfCAxOCArKysrKysrKysrKysrKysrKysNCiAxIGZpbGUgY2hhbmdlZCwg
-MTggaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvbGliL3Rlc3Rfa2FzYW4uYyBiL2xpYi90
-ZXN0X2thc2FuLmMNCmluZGV4IDQ5Y2M0ZDU3MGE0MC4uMDY5NDJjZjU4NWNjIDEwMDY0NA0KLS0t
-IGEvbGliL3Rlc3Rfa2FzYW4uYw0KKysrIGIvbGliL3Rlc3Rfa2FzYW4uYw0KQEAgLTI4Myw2ICsy
-ODMsMjMgQEAgc3RhdGljIG5vaW5saW5lIHZvaWQgX19pbml0IGttYWxsb2Nfb29iX2luX21lbXNl
-dCh2b2lkKQ0KIAlrZnJlZShwdHIpOw0KIH0NCiANCitzdGF0aWMgbm9pbmxpbmUgdm9pZCBfX2lu
-aXQga21hbGxvY19tZW1tb3ZlX2ludmFsaWRfc2l6ZSh2b2lkKQ0KK3sNCisJY2hhciAqcHRyOw0K
-KwlzaXplX3Qgc2l6ZSA9IDY0Ow0KKw0KKwlwcl9pbmZvKCJpbnZhbGlkIHNpemUgaW4gbWVtbW92
-ZVxuIik7DQorCXB0ciA9IGttYWxsb2Moc2l6ZSwgR0ZQX0tFUk5FTCk7DQorCWlmICghcHRyKSB7
-DQorCQlwcl9lcnIoIkFsbG9jYXRpb24gZmFpbGVkXG4iKTsNCisJCXJldHVybjsNCisJfQ0KKw0K
-KwltZW1zZXQoKGNoYXIgKilwdHIsIDAsIDY0KTsNCisJbWVtbW92ZSgoY2hhciAqKXB0ciwgKGNo
-YXIgKilwdHIgKyA0LCAtMik7DQorCWtmcmVlKHB0cik7DQorfQ0KKw0KIHN0YXRpYyBub2lubGlu
-ZSB2b2lkIF9faW5pdCBrbWFsbG9jX3VhZih2b2lkKQ0KIHsNCiAJY2hhciAqcHRyOw0KQEAgLTc3
-Myw2ICs3OTAsNyBAQCBzdGF0aWMgaW50IF9faW5pdCBrbWFsbG9jX3Rlc3RzX2luaXQodm9pZCkN
-CiAJa21hbGxvY19vb2JfbWVtc2V0XzQoKTsNCiAJa21hbGxvY19vb2JfbWVtc2V0XzgoKTsNCiAJ
-a21hbGxvY19vb2JfbWVtc2V0XzE2KCk7DQorCWttYWxsb2NfbWVtbW92ZV9pbnZhbGlkX3NpemUo
-KTsNCiAJa21hbGxvY191YWYoKTsNCiAJa21hbGxvY191YWZfbWVtc2V0KCk7DQogCWttYWxsb2Nf
-dWFmMigpOw0KLS0gDQoyLjE4LjANCg==
+On Mon, Nov 11, 2019 at 04:34:52PM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> swap_activate() and swap_deactivate() have nothing to do with
+> address spaces.  We want to eventually make the address space operations
+> dynamic to switch inode flags on the fly.  So to simplify this code as
+> well as properly track these operations we move these functions to the
+> file_operations vector.
 
+What is the point?  If we switch aops for DAX vs not we might as well
+switch file operations as well, as they pretty much are entirely
+different.
