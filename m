@@ -2,123 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E22DF9879
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:20:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F75F987B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:20:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfKLSUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 13:20:20 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33728 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbfKLSUT (ORCPT
+        id S1727196AbfKLSUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 13:20:42 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35693 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfKLSUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 13:20:19 -0500
-Received: by mail-qt1-f193.google.com with SMTP id y39so20843443qty.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 10:20:19 -0800 (PST)
+        Tue, 12 Nov 2019 13:20:42 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q13so1511869pff.2;
+        Tue, 12 Nov 2019 10:20:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=w8YEl8DjjpzVT+jv1JTvmwB07dFEMqomlwwTe3310pY=;
-        b=KGZv5hfKhSeMlIk3qURodC/bAqExsgUF/6lSCR5KsnlI2hk1Vvt1Ez2XgZxpFXA6M5
-         8NVnX35tumAMf8vnwXOFXvzbSO92tizrnnR0oG2BuR4cvUtk5ck7y7zDzOFViLG0BLii
-         LlqvsQXofXqmA6yYdPv+ou1g+Dj4+W+uI7q/VBfOGf1zGxNnhbdp7/C+cgP1Pchyt/Fa
-         nm4DL5uBVj/MkkJRMhVmzu8uNlKaGah+hX5o7Ukk+f2wXdl67Dpk/sfK9/hOPNH1GcT5
-         IyMHcklOBzKmgmgdX/rKt3LxiEfgOiElsQ7rJpf5BAx81/PxDpbMsgGNxbZOrH/gntTJ
-         PSOQ==
+        bh=hoIdYArAtXT1XAvEyhVfY/cTOR76azkKwUT965M4Uno=;
+        b=WV+yjcnWPkSnd5NrSR0LgfCIFpuPXqi3ex4HJhWT4maC8gSqlX9oVzJ7V5usBNeKfq
+         MOjQllK+u7tIdtC91lfoTAAtcJR8OLYlL6GwDvZfAcV7P4uDrcpcwugEU8ttu6ZkeZWi
+         2NOAu6/Zx4vKXg6j9/vVEu++va69UFzkEDBmIxAgW4Po+S1Y8TRAzAef5EWCJZIyT7Ss
+         K4/RHacXNI5Fs3ZbAWllZmEi0kSPTmJW+qAFpSd8esrmaUkDwIu/jtEKLEul+TPROtEs
+         pgz0kJ8kDfk5A1QL9pAHCxtJiBpKE90MwHaSKdsD8DNvdWOX9H+dLz/Rcwg6bMBS0hNp
+         8ogQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w8YEl8DjjpzVT+jv1JTvmwB07dFEMqomlwwTe3310pY=;
-        b=fjwGfs6dAFX7VvuTLsPeo1kVWdnK/5HfSLpF7Jb6mzD48qXqPHhxUv51JiNUlYp3rs
-         9PqCZxTw9DEoMUe2+pO77AZod2QjisoLfoX6C9UzQabxWUvzqWlYUvZTdBNhvh8+U42s
-         1eEc2EKtNZmTuVWzlyKU2MvWsuX56KYHqqIyq73T2ruAZYHqUt0kjjm4YF9VyEyl1hXI
-         m889E+mP8hqglExc6DYZJBH+m2NE3W2BDee//TYwQnot7lRqO9s4hQ+v4alD1tt5pZKr
-         DcvaLE+2M5Bebd2+aV7tXa9LKcXzc+JvESE8XlIgAVZfrp587pT2RfLGt1lmN2+/9ebe
-         bUDg==
-X-Gm-Message-State: APjAAAXY3APz0xwIs7YNHDh04j3g2BuCZ6eNEjHuz4GZdXjzbPGRY8HZ
-        XLwVvn/Ul0q3JWC7eZhXoy+IRw==
-X-Google-Smtp-Source: APXvYqxAJw9irKY7g9DkVQFTpe5A8l1M8lvcepZNDcLVyN+F4gO+m+2TgrsjbM1/Sy4V/K2ycaqo5w==
-X-Received: by 2002:aed:24c1:: with SMTP id u1mr33987362qtc.29.1573582818867;
-        Tue, 12 Nov 2019 10:20:18 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::aa8c])
-        by smtp.gmail.com with ESMTPSA id k27sm8179165qkj.30.2019.11.12.10.20.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 10:20:18 -0800 (PST)
-Date:   Tue, 12 Nov 2019 13:20:17 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Chris Down <chris@chrisdown.name>, Qian Cai <cai@lca.pw>,
-        akpm@linux-foundation.org, guro@fb.com, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm/vmscan: fix an undefined behavior for zone id
-Message-ID: <20191112182017.GB179587@cmpxchg.org>
-References: <20191108204407.1435-1-cai@lca.pw>
- <64E60F6F-7582-427B-8DD5-EF97B1656F5A@lca.pw>
- <20191111130516.GA891635@chrisdown.name>
- <20191111131427.GB891635@chrisdown.name>
- <20191111132812.GK1396@dhcp22.suse.cz>
- <20191112145942.GA168812@cmpxchg.org>
- <20191112152750.GA512@dhcp22.suse.cz>
- <20191112161658.GF168812@cmpxchg.org>
- <20191112163156.GB512@dhcp22.suse.cz>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hoIdYArAtXT1XAvEyhVfY/cTOR76azkKwUT965M4Uno=;
+        b=b6IOoL5kYa5e04JjvOzzp9eeP5PvyThDDLeks2D+GfbzZ7OAxPdir/aRJI3Bcx3K1t
+         PhgIaB3qkVnv+P+qjCv3IHsEx5TG99pIIPryr5sJlknHrdPDVHGhENoP8tiPOFXZ8yFB
+         ru69IuSxA0pm6JJfaa/k0LBFN3/hZNxyOQy/OIvyKqOW/L5nAEyuf4BUh/EkY6k+Pibr
+         HBSblJB8B38wThoNgHRTjP93ns4GJoctXrE5LL++W5rjeB3fUcpYH6ik5452ocJaJFiP
+         541MNkxExFm0Ayi7p00YIcmtmXfIQ4NZCs6lVRfL7+/UES7F7Lokk55J3dnovf7v9hyq
+         DrlA==
+X-Gm-Message-State: APjAAAVtgOebLskYdidtmY88CuN46dO/4xdcYqqRkB9vhBfVAN0jDt7Q
+        zSjcI9f++UY3cg7Et+5YfxU=
+X-Google-Smtp-Source: APXvYqy1jKdYp/BF6yFEBuL+fQeGh6JfwYmJ3uUzNktUZwwZSYPjoNL+LlKMeZ5HJoJVRXT58Vvcow==
+X-Received: by 2002:a17:90a:b30b:: with SMTP id d11mr8237723pjr.25.1573582841801;
+        Tue, 12 Nov 2019 10:20:41 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i71sm25622070pfe.103.2019.11.12.10.20.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Nov 2019 10:20:41 -0800 (PST)
+Date:   Tue, 12 Nov 2019 10:20:40 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.3 000/193] 5.3.11-stable review
+Message-ID: <20191112182040.GF30127@roeck-us.net>
+References: <20191111181459.850623879@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112163156.GB512@dhcp22.suse.cz>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 05:31:56PM +0100, Michal Hocko wrote:
-> On Tue 12-11-19 11:16:58, Johannes Weiner wrote:
-> > On Tue, Nov 12, 2019 at 04:27:50PM +0100, Michal Hocko wrote:
-> > > lruvec_lru_size is explicitly documented to use MAX_NR_ZONES for all
-> > > LRUs and git grep says there are more instances outside of
-> > > get_scan_count. So all of them have to be fixed.
-> > 
-> > Which ones?
-> > 
-> > [hannes@computer linux]$ git grep lruvec_lru_size
-> > include/linux/mmzone.h:extern unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone_idx);
-> > mm/vmscan.c: * lruvec_lru_size -  Returns the number of pages on the given LRU list.
-> > mm/vmscan.c:unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone_idx)
-> > mm/vmscan.c:    anon  = lruvec_lru_size(lruvec, LRU_ACTIVE_ANON, MAX_NR_ZONES - 1) +
-> > mm/vmscan.c:            lruvec_lru_size(lruvec, LRU_INACTIVE_ANON, MAX_NR_ZONES - 1);
-> > mm/vmscan.c:    file  = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES - 1) +
-> > mm/vmscan.c:            lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, MAX_NR_ZONES - 1);
-> > mm/vmscan.c:            lruvec_size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
-> > [hannes@computer linux]$
+On Mon, Nov 11, 2019 at 07:26:22PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.11 release.
+> There are 193 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I have checked the Linus tree but now double checked with the current
-> next
-> $ git describe next/master
-> next-20191112
-> $ git grep "lruvec_lru_size.*MAX_NR_ZONES" next/master
-> next/master:mm/vmscan.c:                        lruvec_lru_size(lruvec, inactive_lru, MAX_NR_ZONES), inactive,
-> next/master:mm/vmscan.c:                        lruvec_lru_size(lruvec, active_lru, MAX_NR_ZONES), active,
-> next/master:mm/vmscan.c:        anon  = lruvec_lru_size(lruvec, LRU_ACTIVE_ANON, MAX_NR_ZONES) +
-> next/master:mm/vmscan.c:                lruvec_lru_size(lruvec, LRU_INACTIVE_ANON, MAX_NR_ZONES);
-> next/master:mm/vmscan.c:        file  = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES) +
-> next/master:mm/vmscan.c:                lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, MAX_NR_ZONES);
-> next/master:mm/workingset.c:    active_file = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES);
+> Responses should be made by Wed, 13 Nov 2019 18:08:44 +0000.
+> Anything received after that time might be too late.
 > 
-> are there any changes which didn't make it to linux next yet?
 
-Aaahh, that makes sense. I was looking at the latest mmots which
-has
+Build results:
+	total: 158 pass: 158 fail: 0
+Qemu test results:
+	total: 391 pass: 391 fail: 0
 
-- mm: vmscan: detect file thrashing at the reclaim root
-- mm: vmscan: enforce inactive:active ratio at the reclaim root
-
-Those replace the inactive_is_low and the workingset callsites with
-the recursive lruvec_page_state(). It looks like that isn't in next -
-and while I hope it'll make it into 5.5, it might not. So we need a
-fix that considers the other callsites as well.
-
-Qian's patches that Andrew already has will be good then, as it
-reduces the churn to those other callsites that are in flux.
-
-We can clean things up when the dust settles.
+Guenter
