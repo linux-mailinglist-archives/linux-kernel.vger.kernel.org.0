@@ -2,139 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1134EF92C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A1ACF92B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:34:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfKLOfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:35:33 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2089 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726497AbfKLOfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:35:32 -0500
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 08406169A4B065FA4D94;
-        Tue, 12 Nov 2019 14:35:31 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 12 Nov 2019 14:35:30 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 12 Nov
- 2019 14:35:30 +0000
-Subject: Re: [PATCH 6/6] scsi: hisi_sas: Expose multiple hw queues for v3 as
- experimental
-From:   John Garry <john.garry@huawei.com>
-To:     Ming Lei <ming.lei@redhat.com>
-CC:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <hare@suse.com>,
-        chenxiang <chenxiang66@hisilicon.com>
-References: <1571926881-75524-1-git-send-email-john.garry@huawei.com>
- <1571926881-75524-7-git-send-email-john.garry@huawei.com>
- <20191027081910.GB16704@ming.t460p>
- <bd3b09f7-4a51-7cec-49c4-8e2eab3bdfd0@huawei.com>
- <20191112111053.GA31697@ming.t460p>
- <a8a83145-9498-9ed6-0510-5d51eda22f54@huawei.com>
-Message-ID: <fca9ae03-783a-e5cd-b517-d3f87be9fa5e@huawei.com>
-Date:   Tue, 12 Nov 2019 14:35:29 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727569AbfKLOd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:33:57 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39794 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfKLOd5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 09:33:57 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACEXsM0101071;
+        Tue, 12 Nov 2019 08:33:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573569234;
+        bh=KJ28q3/ntxcdDwesCt3alIEjIisaOx4/xiHcvs2Dq0Q=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=W4W0lNygbyNTDB41vHoj/Kg/vUTiTPePzAUQFZfKaC510NPT0de/JuRgZMk1ASaTv
+         5Wey/JDmqN5OmR1RbjBXlOx0UVgJGJcN4/W48eYcszoTkMvV/NABZLxmtPPbcPStU7
+         PDHBC2j2sOsrIPaz1yYZ/As4/K4rXHiwNSIuU1Fc=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACEXs9M034320
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Nov 2019 08:33:54 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
+ Nov 2019 08:33:36 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 12 Nov 2019 08:33:36 -0600
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with SMTP id xACEXs1c054050;
+        Tue, 12 Nov 2019 08:33:54 -0600
+Date:   Tue, 12 Nov 2019 08:36:56 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch v3 01/20] dt-bindings: media: cal: update binding to use
+ syscon
+Message-ID: <20191112143656.kvyam2iagosmkhpu@ti.com>
+References: <20191112143152.23176-1-bparrot@ti.com>
+ <20191112143152.23176-2-bparrot@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <a8a83145-9498-9ed6-0510-5d51eda22f54@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml713-chm.china.huawei.com (10.201.108.64) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191112143152.23176-2-bparrot@ti.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2019 13:54, John Garry wrote:
->>>
->>> I mentioned in the thread "blk-mq: improvement on handling IO during CPU
->>> hotplug" that I was using this series to test that patchset.
->>>
->>> So just with this patchset (and without yours), I get what looks like 
->>> some
->>> IO errors in the LLDD. The error is an underflow error. I can't 
->>> figure out
->>> what is the cause.
->>
-> 
-> Hi Ming,
-> 
->> Can you post the error log? Or interpret the 'underflow error' from hisi
->> sas or scsi viewpoint?
-> 
-> The check here fails:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/scsi/libsas/sas_scsi_host.c?h=v5.4-rc7#n57 
-> 
-> 
-> Indeed, no data is received.
-> 
->>
->>>
->>> I'm wondering if the SCSI command is getting corrupted someway.
->>
->> Why do you think the command is corrupted?
-> 
-> I considered that the underflow may occur if we were to clobber a SCSI 
-> command/request from another hctx and zero some fields, which is 
-> detected as an underflow. But that's just guessing.
-> 
-> However do I find if I set shost->can_queue = HISI_SAS_MAX_COMMANDS / 
-> #queues, then no issue  But maybe that's a coincidence. For this, total
-> queue depth = HISI_SAS_MAX_COMMANDS. I don't see the impact of that.
-> 
++ Rob
 
-Scratch that. I have seen the issue here also.
-
-Thanks,
-John
-
-> I need to test that more.
+Benoit Parrot <bparrot@ti.com> wrote on Tue [2019-Nov-12 08:31:33 -0600]:
+> Update Device Tree bindings for the CAL driver to use syscon to access
+> the phy config register instead of trying to map it directly.
 > 
->>
->>>
->>>>> +    if (expose_mq_experimental) {
->>>>> +        shost->can_queue = HISI_SAS_MAX_COMMANDS;
->>>>> +        shost->cmd_per_lun = HISI_SAS_MAX_COMMANDS;
->>>> The above is contradictory with current 'nr_hw_queues''s meaning,
->>>> see commit on Scsi_Host.nr_hw_queues.
->>>>
->>>
->>> Right, so I am generating the hostwide tag in the LLDD. And the Scsi
->>> host-wide host_busy counter should ensure that we don't pump too much 
->>> IO to
->>> the HBA.
->>
->> Even without the host-wide host_busy, your approach should work if you
->> build the hisi sas tag correctly(uniquely), just not efficiently.
+> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> ---
+>  Documentation/devicetree/bindings/media/ti-cal.txt | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 > 
-> Yes, I do that.
+> diff --git a/Documentation/devicetree/bindings/media/ti-cal.txt b/Documentation/devicetree/bindings/media/ti-cal.txt
+> index ae9b52f37576..93096d924786 100644
+> --- a/Documentation/devicetree/bindings/media/ti-cal.txt
+> +++ b/Documentation/devicetree/bindings/media/ti-cal.txt
+> @@ -10,9 +10,14 @@ Required properties:
+>  - compatible: must be "ti,dra72-cal"
+>  - reg:	CAL Top level, Receiver Core #0, Receiver Core #1 and Camera RX
+>  	control address space
+> -- reg-names: cal_top, cal_rx_core0, cal_rx_core1, and camerrx_control
+> +- reg-names: cal_top, cal_rx_core0, cal_rx_core1 and camerrx_control
+>  	     registers
+>  - interrupts: should contain IRQ line for the CAL;
+> +- ti,camerrx-control: phandle to the device control module and offset to
+> +		      the control_camerarx_core register.
+> +		      This node is meant to replace the "camerrx_control"
+> +		      reg entry above but "camerrx_control" is still
+> +		      handled for backward compatibility.
+>  
+>  CAL supports 2 camera port nodes on MIPI bus. Each CSI2 camera port nodes
+>  should contain a 'port' child node with child 'endpoint' node. Please
+> @@ -25,13 +30,12 @@ Example:
+>  		ti,hwmods = "cal";
+>  		reg = <0x4845B000 0x400>,
+>  		      <0x4845B800 0x40>,
+> -		      <0x4845B900 0x40>,
+> -		      <0x4A002e94 0x4>;
+> +		      <0x4845B900 0x40>;
+>  		reg-names = "cal_top",
+>  			    "cal_rx_core0",
+> -			    "cal_rx_core1",
+> -			    "camerrx_control";
+> +			    "cal_rx_core1";
+>  		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
+> +		ti,camerrx-control = <&scm_conf 0xE94>;
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  
+> -- 
+> 2.17.1
 > 
->   I'd
->> suggest you to collect trace and observe if request with expected hisi 
->> sas
->> tag is sent to hardware.
->>
-> 
-> I can add some debug for that. What trace do you mean?
-> 
->> BTW, the patch of 'scsi: core: avoid host-wide host_busy counter for 
->> scsi_mq'
->> will be merged to v5.5 if everything is fine.
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git/commit/?h=5.5/scsi-queue&id=6eb045e092efefafc6687409a6fa6d1dabf0fb69 
->>
-> 
-> Yeah, it seems a good change.
-> 
-> Thanks,
-> John
-> .
-
