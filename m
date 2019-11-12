@@ -2,124 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2732CF8D70
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:03:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C06B8F8D75
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:04:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfKLLDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:03:18 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41623 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfKLLDS (ORCPT
+        id S1726960AbfKLLE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:04:26 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40404 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbfKLLEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:03:18 -0500
-Received: by mail-ed1-f66.google.com with SMTP id a21so14558651edj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 03:03:17 -0800 (PST)
+        Tue, 12 Nov 2019 06:04:25 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 15so11607840pgt.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 03:04:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7v/v4nr+zqzk2y/jAd0gNZ9DfjLyLFd4Z21yLnvf0Dw=;
-        b=WGcrxOsczq3GVLUIOlQBv9NqR40pTHNB89f52HlTcJP/airVxcI1SbQma3s/xI/y9b
-         3FzS+nvwEDIrjUz2i2JkCwft5P+/PNYXiNcxG6SeQicGHSv4apY9rtF/iOfeKgKERvGi
-         49Mh+wxoUpPZaJmxb9Nw6btNQVViXnOh65IYkoGrkBwPGsVMEnTa7lGIUtfNvTF+Gn3V
-         Qe6PMS86mVL8zxP5qiu8kymKk6Zx8AH19LR1tOXygo4H+xoYMcZsRW7KYCViZ0cRc+oW
-         /MXLGW+zWRzqppdLzFyZg5PVEzdYx8ePWwKKIta0fJ9bjReuWFvvR2ms3JaP8Joey/fo
-         0Rkg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uFhjUJFs5no4yiSlxY1BbjA9nXYA5kYuXUrDXqqyYHs=;
+        b=K8pqxR84jS9pwV24nmhOTvuCjxZjWeopPAXLjsU9s0DgZ27WLwSdic0hrUXkLpfPFK
+         nDx3fovBqn9s6Q8iMI4Xc5DnT4XL08sn5MySWYQPNvcV5a0xQfssVe8EnA0kXZ1W+3Qr
+         M7MwKlnaQYKVBY9FPsVZA2MmdoBrtU4Ac4wms=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7v/v4nr+zqzk2y/jAd0gNZ9DfjLyLFd4Z21yLnvf0Dw=;
-        b=ct8idkxTLsYi5rZ+y+oB5rg3OeVH11+o2+gDe7pDTVtxKSZKAdbGJEjLnP6LG0sT8l
-         8xopb8KL5sOjtr0chmEOWCiBVzEXrHg+Psk11lG7zGvYGcMQMo8u4kPuZdRapfzzj+22
-         +dh8m0ilfSgQrgtmafQMEAvsN+A0JwaL4etN8uHEyLFCmFKLUxPxaIyQRi8fbqTfHWWN
-         +ZjJs5jykXEr9IUKuJ+jKbnugyw8H2rFeXsFBS4fCo7NH4syTkgafydBZEnghoVJgT1C
-         N/nw8NeybJ6HSs6qeExhb7h+8y6YUOnd09TR4ZhpgWdocpSsWauRdREDlIxq37FofUvD
-         F60g==
-X-Gm-Message-State: APjAAAVVTxyQ2MFEdMiG1votf+flMVo6TILRYRd7rj39X4j17bcdve14
-        OqVLOffmb7N5G6iYIt1Cmy888PrRJCh7bAfyMgM=
-X-Google-Smtp-Source: APXvYqyF5pycYcqNWugO2851/NH1Ih0TM/Tf5B7Bn9iBKqBF7TP/lwxHh3YlfKn//hB0aWX0AcvVEX/a2g+CgBbh4C8=
-X-Received: by 2002:a17:906:f109:: with SMTP id gv9mr28018882ejb.196.1573556596349;
- Tue, 12 Nov 2019 03:03:16 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uFhjUJFs5no4yiSlxY1BbjA9nXYA5kYuXUrDXqqyYHs=;
+        b=kOY+8j8fGN8Y/ChZm7ddJFysdbqQ7U2+64kucI+p7b70x3If/8nk0EOH7NRJ2kxjYi
+         SbxKHoWYwcJ5Uc3wlM8RXUAgNJnwEm7WcSrAa97MviZsBxost6es7oBe2mbeTSviw6hu
+         NhiaKoY0tl3GkSFVZQB2kwVtQK4BxsSQvvq6sr5+YB8+x/cp49cZrAg3Mspcnrifm0aS
+         1PRVF8gzBLgTpm7d7JCNa0LeeBmJhctqgw8uEtrShICv1kEDJgEIF7BWGDWMMt9TSQUX
+         2OW/IaT5mFnNB96zp64/xnOfE0Ffsthfa8O9+FxXfODyfyX6323FKk80fdZ69mZY2X7H
+         E5Nw==
+X-Gm-Message-State: APjAAAXyScpz4ihxdoaYB4iqBTOD+ZWw/rOk/eA0ioz/4LEgu4EuK7uz
+        K1fvqd83YsR0B/J2P3TMuAwI8w==
+X-Google-Smtp-Source: APXvYqyTQedqUkzhJsI4mPQBlLlsEJbFBlBQ4HI5KnQSbc/jCorqCINBQJyavGatvvs1sABtGK8maQ==
+X-Received: by 2002:a17:90a:1446:: with SMTP id j64mr5766266pja.142.1573556663436;
+        Tue, 12 Nov 2019 03:04:23 -0800 (PST)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id 6sm21528389pfy.43.2019.11.12.03.04.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 03:04:22 -0800 (PST)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support), linux-kernel@vger.kernel.org (open list),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM)
+Subject: [PATCH v21 0/4] Add support for mt8183 SCP.
+Date:   Tue, 12 Nov 2019 19:03:23 +0800
+Message-Id: <20191112110330.179649-1-pihsun@chromium.org>
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
 MIME-Version: 1.0
-References: <20191109075417.29808-1-hslester96@gmail.com> <20191112094031.GF23790@phenom.ffwll.local>
-In-Reply-To: <20191112094031.GF23790@phenom.ffwll.local>
-From:   Chuhong Yuan <hslester96@gmail.com>
-Date:   Tue, 12 Nov 2019 19:03:05 +0800
-Message-ID: <CANhBUQ1HRe4FNWo0o18zxV2ZoANRdNd3PaTeeBZ6dG__0quDUA@mail.gmail.com>
-Subject: Re: [PATCH] drm/virtgpu: fix double unregistration
-To:     Chuhong Yuan <hslester96@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 5:40 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Sat, Nov 09, 2019 at 03:54:17PM +0800, Chuhong Yuan wrote:
-> > drm_put_dev also calls drm_dev_unregister, so dev will be unregistered
-> > twice.
-> > Replace it with drm_dev_put to fix it.
-> >
-> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
->
-> Nice catch, I'll apply.
->
-> Since this is so confusing, we actually have a todo to remove drm_put_dev
-> completely from the codebase (and open-code it with explicit
-> unregister+put). Want to do that little patch series to update the
-> remaining few drivers and then remove drm_put_dev from core code?
->
-> Thanks, Daniel
->
+Add support for controlling and communicating with mt8183's system
+control processor (SCP), using the remoteproc & rpmsg framework.
+And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
-I am sorry that I have to focus on my current project in recent days.
-But since this is a problem, I have written a Coccinelle script just now
-to find drm_put_dev and open-code it.
-I hope this helps.
-The script is:
+The overall structure of the series is:
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2).
+* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
+  interrupt (IPI) and shared memory (Patch 2).
+* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
+  device. Supports name service for SCP firmware to
+  announce channels (Patch 3).
+* add scp dts node to mt8183 platform (Patch 4).
 
-virtual patch
+Changes from v20:
+ - Change all public API usage of (struct platform_device *) to (struct
+   mtk_scp *).
+ - Rename some variables and functions to be more specific.
+ - Move docs to implementation, and improve docs.
+ - Address review comments.
 
-@ drm_put_dev depends on patch exists @
-expression dev;
-@@
+Changes from v19:
+ - Fix an incorrect include in mtk_rpmsg.h (linux/device.h ->
+   linux/platform_device.h)
 
-- drm_put_dev(dev);
-+ drm_dev_unregister(dev);
-+ drm_dev_put(dev);
+Changes from v18:
+ - Change the way shared memory is handled, and drop patch 3.
 
-Regards,
-Chuhong
-> > ---
-> >  drivers/gpu/drm/virtio/virtgpu_drv.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> > index 0fc32fa0b3c0..fccc24e21af8 100644
-> > --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> > +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> > @@ -138,7 +138,7 @@ static void virtio_gpu_remove(struct virtio_device *vdev)
-> >
-> >       drm_dev_unregister(dev);
-> >       virtio_gpu_deinit(dev);
-> > -     drm_put_dev(dev);
-> > +     drm_dev_put(dev);
-> >  }
-> >
-> >  static void virtio_gpu_config_changed(struct virtio_device *vdev)
-> > --
-> > 2.23.0
-> >
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+Changes from v17:
+ - Fix mixture use of __iomem found by sparse.
+ - Change the ipi handler to take a u32 instead of enum scp_ipi_id.
+ - Mark mtk_rpmsg_{prepare,unprepare,stop} as static.
+
+Changes from v16:
+ - Change the desc_lock mutex to be a per-id lock.
+ - Put the execution of handler inside the per-id lock, to prevent race
+   between scp_ipi_unregister and handler being run.
+ - Move the initialization of mutex to before scp_ipi_register.
+
+Changes from v15:
+ - Fix a bug on incorrect usage of wait_event_timeout return value.
+
+Changes from v14:
+ - Fix a typo on variable in DEBUG section.
+
+Changes from v13:
+ - Move include/linux/platform_data/mtk_scp.h to
+   include/linux/remoteproc/mtk_scp.h.
+ - Rename scp_get_reserve_* to scp_get_reserved_*.
+ - Add lock for access of scp->ipi_desc.
+ - Lock the whole ipi_send function.
+ - Move more setting of cache size from SCP firmware to kernel driver,
+   to prevent problem while loading firmware onto DRAM.
+ - Minor fixes addressing comment.
+
+Changes from v12:
+ - Initialize cache before firmware load, to avoid problem while loading
+   large firmware.
+ - Disable watchdog before stopping SCP, to avoid extra warning message.
+ - Fix new warnings by checkpatch.
+
+Changes from v11:
+ - Fixed a bug that mtk_rpmsg_endpoint is not properly cleaned up if
+   rproc_boot fails.
+ - Add missing documentation in comment.
+
+Changes from v10:
+ - Drop applied cros_ec_rpmsg patches.
+ - Add clock reset before loading SCP firmware.
+ - Fix some type mismatch warnings when printing debug messages.
+
+Changes from v9:
+ - Remove reserve-memory-vpu_share node.
+ - Remove change to cros_ec_commands.h (That is already in
+   https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/)
+
+Changes from v8:
+ - Rebased onto https://patchwork.kernel.org/cover/10962385/.
+ - Drop merged cros_ec_rpmsg patch, and add scp dts node patch.
+ - Add more reserved memory region.
+
+Changes from v7:
+ - Rebase onto https://lore.kernel.org/patchwork/patch/1059196/.
+ - Fix clock enable/disable timing for SCP driver.
+ - Add more SCP IPI ID.
+
+Changes from v6:
+ - Decouple mtk_rpmsg from mtk_scp.
+ - Change data of EC response to be aligned to 4 bytes.
+
+Changes from v5:
+ - Add device tree binding document for cros_ec_rpmsg.
+ - Better document in comments for cros_ec_rpmsg.
+ - Remove dependency on CONFIG_ in binding tree document.
+
+Changes from v4:
+ - Merge patch 6 (Load ELF firmware) into patch 2, so the driver loads
+   ELF firmware by default, and no longer accept plain binary.
+ - rpmsg_device listed in device tree (as a child of the SCP node) would
+   have it's device tree node mapped to the rpmsg_device, so the rpmsg
+   driver can use the properties on device tree.
+
+Changes from v3:
+ - Make writing to SCP SRAM aligned.
+ - Add a new patch (Patch 6) to load ELF instead of bin firmware.
+ - Add host event support for EC driver.
+ - Fix some bugs found in testing (missing spin_lock_init,
+   rproc_subdev_unprepare to rproc_subdev_stop).
+ - Fix some coding style issue found by checkpatch.pl.
+
+Changes from v2:
+ - Fold patch 3 into patch 2 in v2.
+ - Move IPI id around to support cross-testing for old and new firmware.
+ - Finish more TODO items.
+
+Changes from v1:
+ - Extract functions and rename variables in mtk_scp.c.
+ - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
+   short-lived work items.
+ - Code format fix based on feedback for cros_ec_rpmsg.c.
+ - Extract feature detection for SCP into separate patch (Patch 6).
+
+Eddie Huang (1):
+  arm64: dts: mt8183: add scp node
+
+Erin Lo (2):
+  dt-bindings: Add a binding for Mediatek SCP
+  remoteproc/mediatek: add SCP support for mt8183
+
+Pi-Hsun Shih (1):
+  rpmsg: add rpmsg support for mt8183 SCP.
+
+ .../bindings/remoteproc/mtk,scp.txt           |  36 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  94 +++
+ drivers/remoteproc/mtk_scp.c                  | 663 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 219 ++++++
+ drivers/rpmsg/Kconfig                         |   9 +
+ drivers/rpmsg/Makefile                        |   1 +
+ drivers/rpmsg/mtk_rpmsg.c                     | 414 +++++++++++
+ include/linux/remoteproc/mtk_scp.h            |  66 ++
+ include/linux/rpmsg/mtk_rpmsg.h               |  38 +
+ 13 files changed, 1574 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp.c
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/remoteproc/mtk_scp.h
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+
+
+base-commit: fc6d6db1df2cb11bbecc542d67885742e75b4b07
+-- 
+2.24.0.rc1.363.gb1bccd3e3d-goog
+
