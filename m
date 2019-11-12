@@ -2,115 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6941F9D87
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:56:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 789A1F9D92
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 23:58:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfKLW4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 17:56:47 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35609 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbfKLW4r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:56:47 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q13so163136pff.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 14:56:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zpJ/TMpVSKZy+JXxk/4c68rZdEAtB+OaqfRaFt77y6Y=;
-        b=IsPQL/hU3IhF+qfkUCRWUrXYZheaE/5EOnSVDyJp/WnzWjkB3a7igBYUvpzviMn6L3
-         EWwKMMcbTBSkE9j6+lM7cjybdedxFAxjw34SjY8xUmExgVx9vkxyfsA7HCeOc5ODgssQ
-         WFs7WhwKK8SIMbSuP6MoGhI6aOCwmBoWjhHQo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zpJ/TMpVSKZy+JXxk/4c68rZdEAtB+OaqfRaFt77y6Y=;
-        b=biLq03vcJr7XKhebX+reYZWC0HAiqxdm1P5esVf7mL1vv8oFUR9ZdZqSuwux0iMzrc
-         ZomtkAqUSfRWKkK9egY8U504x7W06gHprZv6KdadsJUsZreqiHd68C0fFYrawhk+3saS
-         EQIy1nRo5ZryPj+38Ensk/EErvsX6k1VbNvgqR6vgDBa2Ub38vA2cp2qyF69Gvh990qW
-         k2knB1yjiWc2e3IsA/jxQsbrMsfvxJjY7wb8y+2EslZMYEkqztyZf59X0Yz8F0/Wm83L
-         WTXOo4KSXC5OUfngm7Rfiy/ZPnilDIEyauwkf5JykT2LTzoZgbEB0QPXk0tRiC7w1Pg9
-         +3Ow==
-X-Gm-Message-State: APjAAAVE0ng5Tzfp2Gons4I5eX5RzdhemXCS7mNuTY8vwegetdaMoFpe
-        6P4K6E1B3tSLG1sqeNJiI2BcIQ==
-X-Google-Smtp-Source: APXvYqwVpIPBQ69m+AEur+RE+tA3ua9JIQo1zSDy5Qc9XKebf2oGEun7RjUMRnM+saiWqFyl65X22A==
-X-Received: by 2002:a17:90a:d102:: with SMTP id l2mr363545pju.132.1573599406393;
-        Tue, 12 Nov 2019 14:56:46 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e198sm18553pfh.83.2019.11.12.14.56.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 14:56:45 -0800 (PST)
-Date:   Tue, 12 Nov 2019 14:56:44 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>,
-        =?iso-8859-1?Q?Jo=E3o?= Moreira <joao.moreira@lsc.ic.unicamp.br>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v4 3/8] crypto: x86/camellia: Use new glue function macros
-Message-ID: <201911121452.AE2672AECB@keescook>
-References: <20191111214552.36717-1-keescook@chromium.org>
- <20191111214552.36717-4-keescook@chromium.org>
- <3059417.7DhL3USBNQ@positron.chronox.de>
- <20191112031417.GB1433@sol.localdomain>
- <20191112031635.jm32vne33qxh7ojh@gondor.apana.org.au>
+        id S1727133AbfKLW6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 17:58:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:24827 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727077AbfKLW6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 17:58:36 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 14:58:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,298,1569308400"; 
+   d="scan'208";a="194480400"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 12 Nov 2019 14:58:32 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iUf7I-000FVS-7j; Wed, 13 Nov 2019 06:58:32 +0800
+Date:   Wed, 13 Nov 2019 06:57:47 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Po Liu <po.liu@nxp.com>
+Cc:     kbuild-all@lists.01.org, Claudiu Manoil <claudiu.manoil@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
+        Po Liu <po.liu@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+Subject: Re: [net-next, 1/2] enetc: Configure the Time-Aware Scheduler via
+ tc-taprio offload
+Message-ID: <201911130628.42ziSpjh%lkp@intel.com>
+References: <20191111042715.13444-1-Po.Liu@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112031635.jm32vne33qxh7ojh@gondor.apana.org.au>
+In-Reply-To: <20191111042715.13444-1-Po.Liu@nxp.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 11:16:35AM +0800, Herbert Xu wrote:
-> On Mon, Nov 11, 2019 at 07:14:17PM -0800, Eric Biggers wrote:
-> >
-> > Also, I don't see the point of the macros, other than to obfuscate things.  To
-> > keep things straightforward, I think we should keep the explicit function
-> > prototypes for each algorithm.
-> 
-> I agree.  Kees, please get rid of the macros.
+Hi Po,
 
-Okay, if we do that, then we'll likely be dropping a lot of union logic
-(since ecb and cbc end up with identical params and ctr and xts do too):
+Thank you for the patch! Perhaps something to improve:
 
-typedef void (*common_glue_func_t)(void *ctx, u8 *dst, const u8 *src);
-typedef void (*common_glue_cbc_func_t)(void *ctx, u128 *dst, const u128 *src);
-typedef void (*common_glue_ctr_func_t)(void *ctx, u128 *dst, const u128 *src,
-                                       le128 *iv);
-typedef void (*common_glue_xts_func_t)(void *ctx, u128 *dst, const u128 *src,
-                                       le128 *iv);
-...
-struct common_glue_func_entry {
-        unsigned int num_blocks; /* number of blocks that @fn will process */
-        union { 
-                common_glue_func_t ecb;
-                common_glue_cbc_func_t cbc;
-                common_glue_ctr_func_t ctr;
-                common_glue_xts_func_t xts;
-        } fn_u;
-};
+[auto build test WARNING on net-next/master]
+[also build test WARNING on v5.4-rc7 next-20191111]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-These would end up being just:
+url:    https://github.com/0day-ci/linux/commits/Po-Liu/enetc-Configure-the-Time-Aware-Scheduler-via-tc-taprio-offload/20191112-193235
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git ca22d6977b9b4ab0fd2e7909b57e32ba5b95046f
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-29-g781bc5d-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-typedef void (*common_glue_func_t)(void *ctx, u8 *dst, const u8 *src);
-typedef void (*common_glue_iv_func_t)(void *ctx, u8 *dst, const u8 *src,
-                                       le128 *iv);
-...
-struct common_glue_func_entry {
-        unsigned int num_blocks; /* number of blocks that @fn will process */
-        union { 
-                common_glue_func_t func;
-                common_glue_iv_func_t iv_func;
-        } fn_u;
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Is that reasonable?
 
--- 
-Kees Cook
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/net/ethernet/freescale/enetc/enetc.c:1430:5: sparse: sparse: symbol 'enetc_setup_tc_mqprio' was not declared. Should it be static?
+--
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:66:31: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [usertype] btl @@    got restrunsigned int [usertype] btl @@
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:66:31: sparse:    expected unsigned int [usertype] btl
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:66:31: sparse:    got restricted __le32 [usertype]
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:68:31: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [usertype] bth @@    got restrunsigned int [usertype] bth @@
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:68:31: sparse:    expected unsigned int [usertype] bth
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:68:31: sparse:    got restricted __le32 [usertype]
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:71:31: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [usertype] btl @@    got restrunsigned int [usertype] btl @@
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:71:31: sparse:    expected unsigned int [usertype] btl
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:71:31: sparse:    got restricted __le32 [usertype]
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:73:31: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [usertype] bth @@    got restrunsigned int [usertype] bth @@
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:73:31: sparse:    expected unsigned int [usertype] bth
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:73:31: sparse:    got restricted __le32 [usertype]
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:77:22: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [usertype] ct @@    got restrunsigned int [usertype] ct @@
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:77:22: sparse:    expected unsigned int [usertype] ct
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:77:22: sparse:    got restricted __le32 [usertype]
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:78:23: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [usertype] cte @@    got restrunsigned int [usertype] cte @@
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:78:23: sparse:    expected unsigned int [usertype] cte
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:78:23: sparse:    got restricted __le32 [usertype]
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:86:32: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned char [usertype] gate @@    got restunsigned char [usertype] gate @@
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:86:32: sparse:    expected unsigned char [usertype] gate
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:86:32: sparse:    got restricted __le32 [usertype]
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:87:34: sparse: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [usertype] period @@    got restrunsigned int [usertype] period @@
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:87:34: sparse:    expected unsigned int [usertype] period
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:87:34: sparse:    got restricted __le32 [usertype]
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:101:21: sparse: sparse: incorrect type in assignment (different base types) @@    expected restricted __le32 @@    got unsignerestricted __le32 @@
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:101:21: sparse:    expected restricted __le32
+>> drivers/net/ethernet/freescale/enetc/enetc_qos.c:101:21: sparse:    got unsigned int [usertype]
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:102:21: sparse: sparse: incorrect type in assignment (different base types) @@    expected restricted __le32 @@    got unsignerestricted __le32 @@
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:102:21: sparse:    expected restricted __le32
+   drivers/net/ethernet/freescale/enetc/enetc_qos.c:102:21: sparse:    got unsigned int [usertype]
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
