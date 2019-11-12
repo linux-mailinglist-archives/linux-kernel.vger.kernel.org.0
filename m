@@ -2,120 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59258F984A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:12:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73C25F984D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:13:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfKLSMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 13:12:42 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36232 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbfKLSMl (ORCPT
+        id S1727112AbfKLSNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 13:13:12 -0500
+Received: from audible.transient.net ([24.143.126.66]:39286 "HELO
+        audible.transient.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1725997AbfKLSNL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 13:12:41 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACI4ImR048502;
-        Tue, 12 Nov 2019 18:12:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=HFK7hmQptaUwos03Cqcu6qFFSCxbEbNwSYfgrcqwYKQ=;
- b=nBpFLDnTkCSs5iQkMHOpnIt9In6sWjzjCFFiGRRycjguTXewTmivmsXUcJuquIhjzfae
- aTGFzaA2vUwF/Wx9YUdCgSeRv0ObjbgVRQmj9RbtdM7rtOPG8kkJqmbItADZkvlWUcF6
- l/NE1WIYTv2v7lEEDcD0cIx8dRJS7Kwo7BkRmTTUvoJwUClRWwKPfqgRV4Lf4fXeUvye
- WQR0RnioroqROb5zVAD7jhqg3xd881k1o8aWyFiIawri7GW4g/NK59OzXLeEl9EDIQG0
- EvCLBdqt0XGtOp9wbKnciOCUOXO5kIe+BnmDiZmlJ0jq74AdQ0yVp4qcl1Lc13lWJ2rb dg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2w5ndq6ph7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 18:12:27 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACI3ffh072283;
-        Tue, 12 Nov 2019 18:12:27 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2w7j022m7c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 18:12:27 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xACICQCg024313;
-        Tue, 12 Nov 2019 18:12:26 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Nov 2019 18:12:26 +0000
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20191105211920.787df2ab@canb.auug.org.au>
- <0892a018-152f-629d-3dd0-60ce79f2887b@oracle.com>
- <871rue4so0.fsf@mpe.ellerman.id.au> <87v9rp3o5e.fsf@mpe.ellerman.id.au>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <59d733a0-8250-606d-962b-4170e6e1b4fa@oracle.com>
-Date:   Tue, 12 Nov 2019 10:12:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        Tue, 12 Nov 2019 13:13:11 -0500
+Received: (qmail 5869 invoked from network); 12 Nov 2019 18:13:10 -0000
+Received: from cucamonga.audible.transient.net (192.168.2.5)
+  by canarsie.audible.transient.net with QMQP; 12 Nov 2019 18:13:10 -0000
+Received: (nullmailer pid 2841 invoked by uid 1000);
+        Tue, 12 Nov 2019 18:13:09 -0000
+Date:   Tue, 12 Nov 2019 18:13:09 +0000
+From:   Jamie Heilman <jamie@audible.transient.net>
+To:     Scott Mayhew <smayhew@redhat.com>
+Cc:     "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: PROBLEM: NULL pointer dereference; nfsd4_remove_cld_pipe
+Message-ID: <20191112181309.GA2776@audible.transient.net>
+Mail-Followup-To: Scott Mayhew <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191112101343.GA2806@audible.transient.net>
+ <20191112162047.GF4276@coeurl.usersys.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <87v9rp3o5e.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911120155
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911120155
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112162047.GF4276@coeurl.usersys.redhat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/19 4:59 PM, Michael Ellerman wrote:
-> Michael Ellerman <mpe@ellerman.id.au> writes:
->>
->> Mike Kravetz <mike.kravetz@oracle.com> writes:
->>> On 11/5/19 2:19 AM, Stephen Rothwell wrote:
-> ...
->>> From 4b3ab017e639e4e583fff801e6d8e6727b7877e8 Mon Sep 17 00:00:00 2001
->>> From: Mike Kravetz <mike.kravetz@oracle.com>
->>> Date: Tue, 5 Nov 2019 15:12:15 -0800
->>> Subject: [PATCH] powerpc/mm: remove pmd_huge/pud_huge stubs and include
->>>  hugetlb.h
->>>
->>> This removes the power specific stubs created by commit aad71e3928be
->>> ("powerpc/mm: Fix build break with RADIX=y & HUGETLBFS=n") used when
->>> !CONFIG_HUGETLB_PAGE.  Instead, it addresses the build break by
->>> getting the definitions from <linux/hugetlb.h>.
->>>
->>> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
->>> ---
->>>  arch/powerpc/include/asm/book3s/64/pgtable-4k.h  | 3 ---
->>>  arch/powerpc/include/asm/book3s/64/pgtable-64k.h | 3 ---
->>>  arch/powerpc/mm/book3s64/radix_pgtable.c         | 1 +
->>>  3 files changed, 1 insertion(+), 6 deletions(-)
->>
->> The two pgtable headers are included eventually by our top-level
->> pgtable.h, and that is included by over 100 files. So I worry this is
->> going to break the build somewhere in some obscure configuration.
->>
->> I'll push it through some test builds and see what happens.
+Scott Mayhew wrote:
+> Hi Jamie,
 > 
-> Seems OK, it didn't introduce any new build failures.
+> On Tue, 12 Nov 2019, Jamie Heilman wrote:
 > 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
->
+> > Giving 5.4.0-rc7 a spin I hit a NULL pointer dereference and bisected
+> > it to:
+> > 
+> > commit 6ee95d1c899186c0798cafd25998d436bcdb9618
+> > Author: Scott Mayhew <smayhew@redhat.com>
+> > Date:   Mon Sep 9 16:10:31 2019 -0400
+> > 
+> >     nfsd: add support for upcall version 2
+> > 
+> > 
+> > The splat against 5.3.0-rc2-00034-g6ee95d1c8991:
+> > 
+> > BUG: kernel NULL pointer dereference, address: 0000000000000036
+> > #PF: supervisor read access in kernel mode
+> > #PF: error_code(0x0000) - not-present page
+> > PGD 0 P4D 0 
+> > Oops: 0000 [#1] PREEMPT SMP PTI
+> > CPU: 0 PID: 2936 Comm: rpc.nfsd Not tainted 5.3.0-rc2-00034-g6ee95d1c8991 #1
+> > Hardware name: Dell Inc. Precision WorkStation T3400  /0TP412, BIOS A14 04/30/2012
+> > RIP: 0010:crypto_destroy_tfm+0x5/0x4d
+> > Code: 78 01 00 00 48 85 c0 74 05 e9 05 05 66 00 c3 55 48 8b af 80 01 00 00 e8 d5 ff ff ff 48 89 ef 5d e9 12 f9 ef ff 48 85 ff 74 47 <48> 83 7e 30 00 41 55 4c 8b 6e 38 41 54 49 89 fc 55 48 89 f5 75 14
+> > RSP: 0018:ffffc90000b7bd68 EFLAGS: 00010282
+> > RAX: ffffffffa0402841 RBX: ffff888230484400 RCX: 0000000000002cd0
+> > RDX: 0000000000002cce RSI: 0000000000000006 RDI: fffffffffffffffe
+> > RBP: ffffffff81e68440 R08: ffff888232801800 R09: ffffffffa0402841
+> > R10: 0000000000000200 R11: ffff88823048ae40 R12: ffff888231585100
+> > R13: ffff88823048ae40 R14: 000000000000000b R15: ffff888230484400
+> > FS:  00007f02102c3740(0000) GS:ffff888233a00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000000000036 CR3: 0000000230f94000 CR4: 00000000000406f0
+> > Call Trace:
+> >  nfsd4_remove_cld_pipe+0x6d/0x83 [nfsd]
+> >  nfsd4_cld_tracking_init+0x1cf/0x295 [nfsd]
+> >  nfsd4_client_tracking_init+0x72/0x13e [nfsd]
+> >  nfs4_state_start_net+0x22a/0x2cf [nfsd]
+> >  nfsd_svc+0x1c6/0x292 [nfsd]
+> >  write_threads+0x68/0xb0 [nfsd]
+> >  ? write_versions+0x333/0x333 [nfsd]
+> >  nfsctl_transaction_write+0x4a/0x62 [nfsd]
+> >  vfs_write+0xa0/0xdd
+> >  ksys_write+0x71/0xba
+> >  do_syscall_64+0x48/0x55
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > RIP: 0033:0x7f021056c904
+> > Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb bb 0f 1f 80 00 00 00 00 48 8d 05 d9 3a 0d 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 48 83 ec 28 48 89 54 24 18 48
+> > RSP: 002b:00007ffdc76ec618 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> > RAX: ffffffffffffffda RBX: 000055b534955560 RCX: 00007f021056c904
+> > RDX: 0000000000000002 RSI: 000055b534955560 RDI: 0000000000000003
+> > RBP: 0000000000000003 R08: 0000000000000000 R09: 00007ffdc76ec4b0
+> > R10: 00007ffdc76ec367 R11: 0000000000000246 R12: 0000000000000000
+> > R13: 0000000000000008 R14: 0000000000000000 R15: 000055b534b8a2a0
+> > Modules linked in: cpufreq_userspace cpufreq_powersave cpufreq_ondemand cpufreq_conservative autofs4 fan nfsd auth_rpcgss nfs lockd grace fscache sunrpc bridge stp llc nhpoly1305_sse2 nhpoly1305 aes_generic chacha_x86_64 chacha_generic adiantum poly1305_generic vhost_net tun vhost tap dm_crypt snd_hda_codec_analog snd_hda_codec_generic usb_storage snd_hda_intel kvm_intel snd_hda_codec kvm snd_hwdep snd_hda_core snd_pcm dcdbas snd_timer irqbypass snd soundcore sr_mod cdrom tg3 sg floppy evdev xfs dm_mod raid1 md_mod psmouse
+> > CR2: 0000000000000036
+> > ---[ end trace bc12bbe4cdd6319f ]---
+> > ...
+> > NFS: Registering the id_resolver key type
+> > Key type id_resolver registered
+> > Key type id_legacy registered
+> > 
+> > 
+> > My kernel config is at
+> > http://audible.transient.net/~jamie/k/upcallv2.config-5.3.0-rc2-00034-g6ee95d1c8991
+> > 
+> > I don't think there's anything terribly interesting about my nfs
+> > server setup, this happens reliably on boot up, idle network, no
+> > active clients; let me know what else you need, happy to debug.
+> > 
+> > -- 
+> > Jamie Heilman                     http://audible.transient.net/~jamie/
+> > 
+> Please try this patch (v2 because I messed up the first one).
 
-Thank you Michael!
 
-I'll add it to the other patch as a 'proper series' so this can be a
-requisite patch for the other.
+Yep, that seems to solve it.  Is the implication that
+CONFIG_CRYPTO_SHA256 should be selected by nfsd?  (I tested with it
+unset, as per my config before.)
+
 
 -- 
-Mike Kravetz
+Jamie Heilman                     http://audible.transient.net/~jamie/
