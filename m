@@ -2,125 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1BA0F8F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:05:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCB59F8F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:07:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfKLME7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 07:04:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfKLME7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:04:59 -0500
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B09BD206BB;
-        Tue, 12 Nov 2019 12:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573560298;
-        bh=8CyrwQqWuWtGzFOGNOd9CaCBPI1ujJWiRZuhD4hF3RU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xowkB0eogD9EPaWr1+/4AS9/UT33jJFdwPD+Sr+t4LeR5XQv3/YjNpa69e9Mv115t
-         WWTqSnJHBd3pKI62UE0lr6aq29CLVUbnOEhlhoD9LiBKC5SoM6LgYSTPNs24DCApPn
-         UR2H9XB8BrZDPsxlGIKP8kSCJCM8sE/yuOhleG0Y=
-Date:   Tue, 12 Nov 2019 13:04:55 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
-        jernej.skrabec@siol.net, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 2/2] ARM64: dts: allwinner: add pineh64 model B
-Message-ID: <20191112120455.GY4345@gilmour.lan>
-References: <1573316433-40669-1-git-send-email-clabbe@baylibre.com>
- <1573316433-40669-3-git-send-email-clabbe@baylibre.com>
+        id S1727047AbfKLMH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 07:07:27 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:27009 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfKLMH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 07:07:27 -0500
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id xACC6vMN010836;
+        Tue, 12 Nov 2019 21:06:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com xACC6vMN010836
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573560418;
+        bh=Sgqs5/I3zJLWaBRJGnQJMZjSMC0UNfDF+eV/0rJAwU0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PvG8uwgP2kQTVuBQk2kzxi2TDqds7N52zFu4NUW55dePkn2U3DyJ3dnvwZP28NF9r
+         6Fd+bid9vMKeORqvP6B/kyQh4ulOJKbukGUzqqkEzWvWj1hTgRYvp0x1ymem1MyP6W
+         JC0npXimCoWWnF8/lEyOjtXtaGb0zP5FwJYoxgB+On9JAV0ClkTul7usUJPAAUHmDM
+         J6wEOrS2AOPZLPxEIXcQ5rzLG3fdrsTSeLlyNXPA4+ce/8aLhLb7BNMOjcxgzOxItD
+         a+Shc2VBRwvBsN77DaASxY/A+/XKKWOpbi3P13W7PeVMVD3K7pBdqc+PDuHcx33htI
+         4NlsdRuSB/P1A==
+X-Nifty-SrcIP: [209.85.222.53]
+Received: by mail-ua1-f53.google.com with SMTP id u99so4619719uau.5;
+        Tue, 12 Nov 2019 04:06:57 -0800 (PST)
+X-Gm-Message-State: APjAAAXVqpRFic+pHvzjUJh6K040QUy80Ge4lM0A3ZmyqLzXOyAuEiLP
+        TLz9mgHBMuELKNvNssLqpUoy6NgOy0nUOmMLzCg=
+X-Google-Smtp-Source: APXvYqxvFq5FgSgnUVNLyeoqfHZziPLTY9nkt64faSHe5hVF5nFrk880h1LTgcUSxKS6qI4PoU80uumy9ITmkIObu5k=
+X-Received: by 2002:a9f:3e81:: with SMTP id x1mr3415007uai.121.1573560416440;
+ Tue, 12 Nov 2019 04:06:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nbjgUHX6eyHhY7pW"
-Content-Disposition: inline
-In-Reply-To: <1573316433-40669-3-git-send-email-clabbe@baylibre.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191111011106.18427-1-linux@roeck-us.net> <20191110.173203.1243596361382467520.davem@davemloft.net>
+ <CAK7LNAQTCyEVKkJQfoTpd5USk5tibmcro6EeoonjXKm-OAFJ_g@mail.gmail.com> <591a9e5e-1347-8883-c080-38940fffd535@roeck-us.net>
+In-Reply-To: <591a9e5e-1347-8883-c080-38940fffd535@roeck-us.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 12 Nov 2019 21:06:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASY209k5g61=+cbRgjNp8=1QGcP6c2RcCBad7NnfUhHHQ@mail.gmail.com>
+Message-ID: <CAK7LNASY209k5g61=+cbRgjNp8=1QGcP6c2RcCBad7NnfUhHHQ@mail.gmail.com>
+Subject: Re: [PATCH] sparc: vdso: Fix build failure seen due to kbuild changes
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     David Miller <davem@davemloft.net>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---nbjgUHX6eyHhY7pW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sat, Nov 09, 2019 at 04:20:33PM +0000, Corentin Labbe wrote:
-> This patch adds the model B of the PineH64.
-> The model B is smaller than the pine64 model A and has no PCIE slot.
+On Mon, Nov 11, 2019 at 11:35 PM Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> The only devicetree difference with the pineH64 model A, is the PHY
-> regulator and the HDMI connector node.
+> On 11/10/19 5:47 PM, Masahiro Yamada wrote:
+> > On Mon, Nov 11, 2019 at 10:32 AM David Miller <davem@davemloft.net> wrote:
+> >>
+> >> From: Guenter Roeck <linux@roeck-us.net>
+> >> Date: Sun, 10 Nov 2019 17:11:06 -0800
+> >>
+> >>> sparc64:allmodconfig fails to build with the following error.
+> >>>
+> >>> unrecognized e_machine 18 arch/sparc/vdso/vdso32/vclock_gettime.o
+> >>> arch/sparc/vdso/vdso32/vclock_gettime.o: failed
+> >>> make[2]: *** [arch/sparc/vdso/vdso32/vclock_gettime.o] Error 1
+> >>> make[2]: *** Deleting file 'arch/sparc/vdso/vdso32/vclock_gettime.o'
+> >>> make[2]: *** Waiting for unfinished jobs....
+> >>>
+> >>> The problem bisects to commit a3de7a72c517 ("kbuild: change
+> >>> *FLAGS_<basetarget>.o to take the path relative to $(obj)").
+> >>> Duplicate the x86 specific defines from this commit to the sparc
+> >>> vdso Makefile to fix the problem.
+> >>>
+> >>> Fixes: a3de7a72c517 ("kbuild: change *FLAGS_<basetarget>.o to take the path relative to $(obj)")
+> >>> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >>> Cc: Marc Zyngier <maz@kernel.org>
+> >>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> >>
+> >> Acked-by: David S. Miller <davem@davemloft.net>
+> >
+> >
+> > Yeah, I had submitted a fix a long time before.
+> >
+> > https://lore.kernel.org/patchwork/patch/1130469/
+> >
+> > I do not know why it was not picked up.
+> >
 >
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  .../devicetree/bindings/arm/sunxi.yaml        |  5 +++++
->  arch/arm64/boot/dts/allwinner/Makefile        |  1 +
->  .../allwinner/sun50i-h6-pine-h64-modelB.dts   | 21 +++++++++++++++++++
->  3 files changed, 27 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelB.dts
+> Why don't you just push it upstream yourself ?
 >
-> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> index b8ec616c2538..227217bf28df 100644
-> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> @@ -604,6 +604,11 @@ properties:
->            - const: pine64,pine-h64-modelA
->            - const: allwinner,sun50i-h6
+> >
+> > It is OK whether any patch is picked up
+> > as long as the build error is fixed.
+> >
+> Same here.
 >
-> +      - description: Pine64 PineH64 model B
-> +        items:
-> +          - const: pine64,pine-h64-modelB
-> +          - const: allwinner,sun50i-h6
-> +
->        - description: Pine64 LTS
->          items:
->            - const: pine64,pine64-lts
-> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-> index d2418021768b..bda89b9ccb4a 100644
-> --- a/arch/arm64/boot/dts/allwinner/Makefile
-> +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> @@ -26,4 +26,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-3.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-lite2.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64-modelB.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-tanix-tx6.dtb
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelB.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelB.dts
-> new file mode 100644
-> index 000000000000..063a85223faa
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelB.dts
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> +/*
-> + * Copyright (C) 2019 Corentin LABBE <clabbe@baylibre.com>
-> + */
-> +
-> +#include "sun50i-h6-pine-h64.dts"
-> +
-> +/ {
-> +	model = "Pine H64 model B";
-> +	compatible = "pine64,pine-h64-modelB", "allwinner,sun50i-h6";
+> >
+> > (I think  CFLAGS_REMOVE_vdso32/vdso-note.o
+> > should be added too, though)
+> >
+> Hard to decide for someone not involved in vdso development.
+> It wasn't added for x86, and it compiles without, so I rather
+> left it alone.
 
-compatibles are usually lowercase, what about pine64,pine-h64-model-b?
 
-Maxime
+After looking at the code closer,
+I believe your code is more correct.
 
---nbjgUHX6eyHhY7pW
-Content-Type: application/pgp-signature; name="signature.asc"
+vdso-note is assembly instead of C.
 
------BEGIN PGP SIGNATURE-----
+arch/sparc/vdso/vdso-note.S
+arch/sparc/vdso/vdso32/vdso-note.S
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXcqf5wAKCRDj7w1vZxhR
-xdIeAQCeSktgU0WsEK7fUaiXepU4KkkNODgAAs3FAXtPNVNcEwD9HtsCpDRw2/qL
-Yzl0aKt3LmMY77sWGMydllvddxcgdg4=
-=2aPf
------END PGP SIGNATURE-----
 
---nbjgUHX6eyHhY7pW--
+
+The -pg flag is added by the top Makefile,
+only for C files.
+
+
+CFLAGS_REMOVE_vdso-note.o = -pg
+was unneeded in the first place.
+
+
+
+BTW, I just thought this patch
+was supposed to be applied by Dave
+since it is touching a single file in arch/sparc/.
+
+If Dave plans to pick up this, please feel free to add:
+
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+If I should apply this to kbuild tree, please let me know.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
