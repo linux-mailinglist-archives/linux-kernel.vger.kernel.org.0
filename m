@@ -2,155 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB126F9847
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:12:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5CABF984C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:13:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfKLSM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 13:12:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbfKLSM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 13:12:29 -0500
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C62214E0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 18:12:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573582347;
-        bh=Mv1cttr0wRuIR1Zt1r9gGIDi2R0BEk43g/XIXzOGrs8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mRJBQTZUiWZVLN/psD+qPEX3gAIjptUNfDR2sNywrB91S0N1PANp421IdE37uecYf
-         i14w+vYiT810moFeamiOFu9NSosuVZD7rACI9XklBF/8VHkGbNCbIWaAE/ED5sG1hQ
-         ZMjGSSJ0DK8LpZ4KjpwNw3PrE9WoZ6MymgwRbVIc=
-Received: by mail-wr1-f52.google.com with SMTP id b3so19566015wrs.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 10:12:27 -0800 (PST)
-X-Gm-Message-State: APjAAAXEs9bMemhIRW20GULVUW8S70+C180X01Q+Pmn++UmLs+RrnFoP
-        yz9K9x0wpakFWQDot+GTBVYEJA1T/S5Wa4KQbvA3Mg==
-X-Google-Smtp-Source: APXvYqwuSLTv9UounWFr58Q0dxxgviQe3QuIYkS6jMdNptf6UM6a2GPvLSMcL+9AM5rphHdK0NQzoGA0wHCb+9wn6HE=
-X-Received: by 2002:a5d:4412:: with SMTP id z18mr4845813wrq.149.1573582346134;
- Tue, 12 Nov 2019 10:12:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20191111220314.519933535@linutronix.de> <20191111223052.603030685@linutronix.de>
-In-Reply-To: <20191111223052.603030685@linutronix.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 12 Nov 2019 10:12:14 -0800
-X-Gmail-Original-Message-ID: <CALCETrVXV61hN__tf-TakJCLnM6rVZ-5x7U2eeojadovhk6AJg@mail.gmail.com>
-Message-ID: <CALCETrVXV61hN__tf-TakJCLnM6rVZ-5x7U2eeojadovhk6AJg@mail.gmail.com>
-Subject: Re: [patch V2 11/16] x86/ioperm: Share I/O bitmap if identical
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
+        id S1727054AbfKLSNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 13:13:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27438 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725997AbfKLSNA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 13:13:00 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACICtkU047403
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 13:12:59 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w80fw350j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 13:12:59 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 12 Nov 2019 18:12:28 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 12 Nov 2019 18:12:26 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACICPPE56492048
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 18:12:25 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 846FCA4051;
+        Tue, 12 Nov 2019 18:12:25 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0D14A4055;
+        Tue, 12 Nov 2019 18:12:24 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.194.252])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 18:12:24 +0000 (GMT)
+Subject: Re: [PATCH] ima: avoid appraise error for hash calc interrupt
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Patrick Callaghan <patrickc@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+Date:   Tue, 12 Nov 2019 13:12:24 -0500
+In-Reply-To: <c6a57c24-2f30-f252-0f42-8d748ede65af@linux.microsoft.com>
+References: <20191111192348.30535-1-patrickc@linux.ibm.com>
+         <e3f520ce-a290-206d-8097-b852123357ca@linux.microsoft.com>
+         <1573578841.17949.48.camel@linux.ibm.com>
+         <c6a57c24-2f30-f252-0f42-8d748ede65af@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19111218-0016-0000-0000-000002C312CB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19111218-0017-0000-0000-00003324AA2F
+Message-Id: <1573582344.17949.67.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=707 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 2:35 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> The I/O bitmap is duplicated on fork. That's wasting memory and slows down
-> fork. There is no point to do so. As long as the bitmap is not modified it
-> can be shared between threads and processes.
->
-> Add a refcount and just share it on fork. If a task modifies the bitmap
-> then it has to do the duplication if and only if it is shared.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
-> V2: New patch
-> ---
->  arch/x86/include/asm/iobitmap.h |    5 +++++
->  arch/x86/kernel/ioport.c        |   38 ++++++++++++++++++++++++++++++++------
->  arch/x86/kernel/process.c       |   39 ++++++---------------------------------
->  3 files changed, 43 insertions(+), 39 deletions(-)
->
-> --- a/arch/x86/include/asm/iobitmap.h
-> +++ b/arch/x86/include/asm/iobitmap.h
-> @@ -2,10 +2,12 @@
->  #ifndef _ASM_X86_IOBITMAP_H
->  #define _ASM_X86_IOBITMAP_H
->
-> +#include <linux/refcount.h>
->  #include <asm/processor.h>
->
->  struct io_bitmap {
->         u64                     sequence;
-> +       refcount_t              refcnt;
->         unsigned int            io_bitmap_max;
->         union {
->                 unsigned long   bits[IO_BITMAP_LONGS];
-> @@ -13,6 +15,9 @@ struct io_bitmap {
->         };
->  };
->
-> +struct task_struct;
-> +
-> +void io_bitmap_share(struct task_struct *tsk);
->  void io_bitmap_exit(void);
->
->  void tss_update_io_bitmap(void);
-> --- a/arch/x86/kernel/ioport.c
-> +++ b/arch/x86/kernel/ioport.c
-> @@ -16,6 +16,17 @@
->
->  static atomic64_t io_bitmap_sequence;
->
-> +void io_bitmap_share(struct task_struct *tsk)
-> + {
-> +       /*
-> +        * Take a refcount on current's bitmap. It can be used by
-> +        * both tasks as long as none of them changes the bitmap.
-> +        */
-> +       refcount_inc(&current->thread.io_bitmap->refcnt);
-> +       tsk->thread.io_bitmap = current->thread.io_bitmap;
-> +       set_tsk_thread_flag(tsk, TIF_IO_BITMAP);
-> +}
-> +
->  void io_bitmap_exit(void)
->  {
->         struct io_bitmap *iobm = current->thread.io_bitmap;
-> @@ -25,7 +36,8 @@ void io_bitmap_exit(void)
->         clear_thread_flag(TIF_IO_BITMAP);
->         tss_update_io_bitmap();
->         preempt_enable();
-> -       kfree(iobm);
-> +       if (iobm && refcount_dec_and_test(&iobm->refcnt))
-> +               kfree(iobm);
->  }
->
->  /*
-> @@ -59,8 +71,26 @@ long ksys_ioperm(unsigned long from, uns
->                         return -ENOMEM;
->
->                 memset(iobm->bits, 0xff, sizeof(iobm->bits));
-> +               refcount_set(&iobm->refcnt, 1);
-> +       }
-> +
-> +       /*
-> +        * If the bitmap is not shared, then nothing can take a refcount as
-> +        * current can obviously not fork at the same time. If it's shared
-> +        * duplicate it and drop the refcount on the original one.
-> +        */
-> +       if (refcount_read(&iobm->refcnt) > 1) {
-> +               iobm = kmemdup(iobm, sizeof(*iobm), GFP_KERNEL);
-> +               if (!iobm)
-> +                       return -ENOMEM;
-> +               io_bitmap_exit();
+On Tue, 2019-11-12 at 09:33 -0800, Lakshmi Ramasubramanian wrote:
+> On 11/12/2019 9:14 AM, Mimi Zohar wrote:
+> 
+> > On Mon, 2019-11-11 at 14:29 -0800, Lakshmi Ramasubramanian wrote:
+> >> On 11/11/19 11:23 AM, Patrick Callaghan wrote:
+> >>
+> >>> -		if (rbuf_len == 0)
+> >>> +		if (rbuf_len == 0) {	/* unexpected EOF */
+> >>> +			rc = -EINVAL;
+> >>>    			break;
+> >>> +		}
+> >>>    		offset += rbuf_len;
+> >>
+> >> Should there be an additional check to validate that (offset + rbuf_len)
+> >> is less than i_size before calling cypto_shash_update (since rbuf_len is
+> >> one of the parameters for this call)?
+> > 
+> > The "while" statement enforces that.
+> > 
+> > Mimi
+> 
+> Yes - but that check happens after the call to crypto_shash_update().
+> 
+> Perhaps integrity_kernel_read() will never return (rbuf_len) that will
+>   => violate the check in the "while" statement.
+>   => number of bytes read that is greater than the memory allocated for 
+> rbuf even in error conditions.
+> 
+> Just making sure.
 
-And change the refcount to 1?
+integrity_kernel_read() returns an error (< 0) or the number of bytes
+read.  The while statement ensures that there is more data to read, so
+returning 0 is always an error.
 
->         }
->
+Mimi
 
-Otherwise:
-
-Acked-by: Andy Lutomirski <luto@kernel.org>
-
-(I'm about to send, and I see PeterZ beat me to the punch.  You can
-still have the ack, though.)
