@@ -2,156 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6467F8ED1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:45:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0009BF8EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfKLLpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:45:46 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33037 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfKLLpp (ORCPT
+        id S1727148AbfKLLrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:47:31 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1730 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725775AbfKLLra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:45:45 -0500
-Received: by mail-lj1-f195.google.com with SMTP id t5so17454435ljk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 03:45:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arrikto-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OKVAcfxje194zRFNg/njiwM3RXKHmEbB7kwF9f13aU4=;
-        b=rrGAgDcw0hfIi1JObttZLe7eSMRBkVLgtX1HFB+GTOIJDlG98i7klpUyDW6/AD0qvI
-         wusLVhTISByponZeeV5EiUAV2APBQH6To55cCSLjNUXwNOsG7W2ow/J9KD2r+d6Tvbkx
-         a503poAcuEagiwRTbGjoZILmfRjuNzfN8b49NdX9EBOJ6ZePIZkJlyv+irvfbIa4BwSL
-         oQN584YsQmTTBY4HnXZIW6ln7V8hiiI88LvPdwhVT6yLxSdILXGCG4MnFUHk/sIDENQv
-         suVkNbS4tfz32YR88A1bFY4Rrm3Ul0WXww0tZPnFx0DUjRvCKh4YKOoJVtUnhJemwkrL
-         6afQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OKVAcfxje194zRFNg/njiwM3RXKHmEbB7kwF9f13aU4=;
-        b=RuPPreF1G2VbZgwL2Az4DspWMjUch2/0oeKnxy3bnd6F5fg3ht9hzvJ1JmCBZL6V+C
-         rcxKOv4wRzhRXdUPeXx94o9009yEXpc9tgHvTtFh888Tyr5zJAu8EhK4iPYCaiZhAZKs
-         eF1eHt3EzRHKKl6AmJvy7triWLH+EfbG0nKv5ek5M3+x0IhWjt5/JAPFlhkUrUFOJ+iU
-         bMi4wIiNMmwq+pdDKIOFX0WL1HDTnUgJmXf5r/U3oZ8ykOlLQOsH0L7phCBl6+ipw7ya
-         QbptdEzyWFsgkNxdJDQ4qQrqtapb/+QwedASwqQSZ1lsPs0PnaECKiN+KrpwveF+H2+O
-         XHIg==
-X-Gm-Message-State: APjAAAVONdoZ7nk5jFdTafE4PxnIaZ02Fad5V03NNfIUcdGdtADb5uQe
-        TZ7aHHc9D7HOj5eZyZhpTkzv3g==
-X-Google-Smtp-Source: APXvYqzTqPhCfZVHqO7F9eCfkbuqDPiuc0hTUrpxUHYPRpP1a4l6WliePfIu8Cp6P8QyW1a6me/1pA==
-X-Received: by 2002:a2e:98c1:: with SMTP id s1mr20538408ljj.215.1573559141877;
-        Tue, 12 Nov 2019 03:45:41 -0800 (PST)
-Received: from [10.94.250.118] ([31.177.62.212])
-        by smtp.gmail.com with ESMTPSA id t17sm8138112ljc.88.2019.11.12.03.45.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Nov 2019 03:45:41 -0800 (PST)
-Subject: Re: [PATCH 1/2] dm-snapshot: fix crash with the realtime kernel
-To:     Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Cc:     Scott Wood <swood@redhat.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <alpine.LRH.2.02.1911110811060.28408@file01.intranet.prod.int.rdu2.redhat.com>
- <c9a772e9-e305-cf0b-1155-fb19bdb84e55@arrikto.com>
- <20191112011444.GA32220@redhat.com>
- <alpine.LRH.2.02.1911120240020.25757@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Nikos Tsironis <ntsironis@arrikto.com>
-Message-ID: <a6f588d3-2403-d50a-70a1-ed644082cc83@arrikto.com>
-Date:   Tue, 12 Nov 2019 13:45:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 12 Nov 2019 06:47:30 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACBgLnl107835;
+        Tue, 12 Nov 2019 06:46:10 -0500
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w7t1wcrsm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 06:46:09 -0500
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xACBhwwV030087;
+        Tue, 12 Nov 2019 11:46:07 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma03dal.us.ibm.com with ESMTP id 2w5n36drg4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 11:46:06 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACBk6Sc59048424
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 11:46:06 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2EDAB6E053;
+        Tue, 12 Nov 2019 11:46:06 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88F346E058;
+        Tue, 12 Nov 2019 11:46:01 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.45.124])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 11:46:00 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, peterz@infradead.org,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 06/16] libnvdimm: Move nd_mapping_attribute_group to device_type
+In-Reply-To: <157309902686.1582359.6749533709859492704.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com> <157309902686.1582359.6749533709859492704.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Tue, 12 Nov 2019 17:15:58 +0530
+Message-ID: <87woc5s4g9.fsf@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.02.1911120240020.25757@file01.intranet.prod.int.rdu2.redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/19 9:50 AM, Mikulas Patocka wrote:
-> 
-> 
-> On Mon, 11 Nov 2019, Mike Snitzer wrote:
-> 
->> On Mon, Nov 11 2019 at 11:37am -0500,
->> Nikos Tsironis <ntsironis@arrikto.com> wrote:
->>
->>> On 11/11/19 3:59 PM, Mikulas Patocka wrote:
->>>> Snapshot doesn't work with realtime kernels since the commit f79ae415b64c.
->>>> hlist_bl is implemented as a raw spinlock and the code takes two non-raw
->>>> spinlocks while holding hlist_bl (non-raw spinlocks are blocking mutexes
->>>> in the realtime kernel, so they couldn't be taken inside a raw spinlock).
->>>>
->>>> This patch fixes the problem by using non-raw spinlock
->>>> exception_table_lock instead of the hlist_bl lock.
->>>>
->>>> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
->>>> Fixes: f79ae415b64c ("dm snapshot: Make exception tables scalable")
->>>>
->>>
->>> Hi Mikulas,
->>>
->>> I wasn't aware that hlist_bl is implemented as a raw spinlock in the
->>> real time kernel. I would expect it to be a standard non-raw spinlock,
->>> so everything works as expected. But, after digging further in the real
->>> time tree, I found commit ad7675b15fd87f1 ("list_bl: Make list head
->>> locking RT safe") which suggests that such a conversion would break
->>> other parts of the kernel.
->>
->> Right, the proper fix is to update list_bl to work on realtime (which I
->> assume the referenced commit does).  I do not want to take this
->> dm-snapshot specific workaround that open-codes what should be done
->> within hlist_{bl_lock,unlock}, etc.
-> 
-> If we change list_bl to use non-raw spinlock, it fails in dentry lookup 
-> code. The dentry code takes a seqlock (which is implemented as preempt 
-> disable in the realtime kernel) and then takes a list_bl lock.
-> 
-> This is wrong from the real-time perspective (the chain in the hash could 
-> be arbitrarily long, so using non-raw spinlock could cause unbounded 
-> wait), however we can't do anything with it.
-> 
-> I think that fixing dm-snapshot is way easier than fixing the dentry code. 
-> If you have an idea how to fix the dentry code, tell us.
-> 
+Dan Williams <dan.j.williams@intel.com> writes:
 
-I too think that it would be better to fix list_bl. dm-snapshot isn't
-really broken. One should be able to acquire a spinlock while holding
-another spinlock.
+> A 'struct device_type' instance can carry default attributes for the
+> device. Use this facility to remove the export of
+> nd_mapping_attribute_group and put the responsibility on the core rather
+> than leaf implementations to define this attribute.
+>
 
-Moreover, apart from dm-snapshot, anyone ever using list_bl is at risk
-of breaking the realtime kernel, if he or she is not aware of that
-particular limitation of list_bl's implementation in the realtime tree.
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-But, I agree that it's a lot easier "fixing" dm-snapshot than fixing the
-dentry code.
-
->> I'm not yet sure which realtime mailing list and/or maintainers should
->> be cc'd to further the inclussion of commit ad7675b15fd87f1 -- Nikos do
->> you?
-
-No, unfortunately, I don't know for sure either. [1] and [2] suggest
-that the relevant mailing lists are LKML and linux-rt-users and the
-maintainers are Sebastian Siewior, Thomas Gleixner and Steven Rostedt.
-
-I believe they are already Cc'd in the other thread regarding Mikulas'
-"realtime: avoid BUG when the list is not locked" patch (for some reason
-the thread doesn't properly appear in dm-devel archives and also my
-mails to dm-devel have being failing since yesterday - Could there be an
-issue with the mailing list?), so maybe we should Cc them in this thread
-too.
-
-Nikos
-
-[1] https://wiki.linuxfoundation.org/realtime/communication/mailinglists
-[2] https://wiki.linuxfoundation.org/realtime/communication/send_rt_patches
-
->>
->> Thanks,
->> Mike
-> 
-> Mikulas
-> 
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "Oliver O'Halloran" <oohall@gmail.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  arch/powerpc/platforms/pseries/papr_scm.c |    6 ------
+>  drivers/acpi/nfit/core.c                  |    1 -
+>  drivers/nvdimm/region_devs.c              |    4 ++--
+>  include/linux/libnvdimm.h                 |    1 -
+>  4 files changed, 2 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
+> index 6428834d7cd5..0405fb769336 100644
+> --- a/arch/powerpc/platforms/pseries/papr_scm.c
+> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
+> @@ -284,11 +284,6 @@ int papr_scm_ndctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>  	return 0;
+>  }
+>  
+> -static const struct attribute_group *region_attr_groups[] = {
+> -	&nd_mapping_attribute_group,
+> -	NULL,
+> -};
+> -
+>  static const struct attribute_group *bus_attr_groups[] = {
+>  	&nvdimm_bus_attribute_group,
+>  	NULL,
+> @@ -362,7 +357,6 @@ static int papr_scm_nvdimm_init(struct papr_scm_priv *p)
+>  	mapping.size = p->blocks * p->block_size; // XXX: potential overflow?
+>  
+>  	memset(&ndr_desc, 0, sizeof(ndr_desc));
+> -	ndr_desc.attr_groups = region_attr_groups;
+>  	target_nid = dev_to_node(&p->pdev->dev);
+>  	online_nid = papr_scm_node(target_nid);
+>  	ndr_desc.numa_node = online_nid;
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index 99e20b8b6ea0..69c406ecc3a6 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -2196,7 +2196,6 @@ static const struct attribute_group acpi_nfit_region_attribute_group = {
+>  };
+>  
+>  static const struct attribute_group *acpi_nfit_region_attribute_groups[] = {
+> -	&nd_mapping_attribute_group,
+>  	&acpi_nfit_region_attribute_group,
+>  	NULL,
+>  };
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index f97166583294..0afc1973e938 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -751,11 +751,10 @@ static struct attribute *mapping_attributes[] = {
+>  	NULL,
+>  };
+>  
+> -struct attribute_group nd_mapping_attribute_group = {
+> +static const struct attribute_group nd_mapping_attribute_group = {
+>  	.is_visible = mapping_visible,
+>  	.attrs = mapping_attributes,
+>  };
+> -EXPORT_SYMBOL_GPL(nd_mapping_attribute_group);
+>  
+>  static const struct attribute_group nd_region_attribute_group = {
+>  	.attrs = nd_region_attributes,
+> @@ -766,6 +765,7 @@ static const struct attribute_group *nd_region_attribute_groups[] = {
+>  	&nd_device_attribute_group,
+>  	&nd_region_attribute_group,
+>  	&nd_numa_attribute_group,
+> +	&nd_mapping_attribute_group,
+>  	NULL,
+>  };
+>  
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index 312248d334c7..eb597d1cb891 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -67,7 +67,6 @@ enum {
+>  
+>  extern struct attribute_group nvdimm_bus_attribute_group;
+>  extern struct attribute_group nvdimm_attribute_group;
+> -extern struct attribute_group nd_mapping_attribute_group;
+>  
+>  struct nvdimm;
+>  struct nvdimm_bus_descriptor;
+> _______________________________________________
+> Linux-nvdimm mailing list -- linux-nvdimm@lists.01.org
+> To unsubscribe send an email to linux-nvdimm-leave@lists.01.org
