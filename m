@@ -2,235 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E27F900D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A637F8FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfKLM57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 07:57:59 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:33146 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbfKLM57 (ORCPT
+        id S1727103AbfKLMvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 07:51:19 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:53981 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfKLMvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:57:59 -0500
-Received: by mail-qv1-f68.google.com with SMTP id x14so6305546qvu.0;
-        Tue, 12 Nov 2019 04:57:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NjWk4TEYN8vBI+EZudhtgsQBzRXhxKSR/VvC8eztl2Q=;
-        b=olrYlMOfGyc8ZLOn40CL3KqyOmUV5bZadSmnuHPqjQFMImWWYKDgqbTdEr5PxK/MqC
-         +0rwCrarnoYYmYxEDZV/6IFf5rD7m5/R8hvdGIAlHlFoTr0KQfnY67oty8TtVjdZUgFl
-         uERzayd/tyCjT9fWkXf1HI1j/b018Vse3bEL/QQL/2CmlJAEzPETM24ZzrcQrC3603Ta
-         T2A+w8lFrlR8STUrgnVLoMvoU420KIWlGfhnCBAkkIlWkimnXoJlAz6UTUNYiCp8tY76
-         TuRpRQCwyJFgzsqIYgWt5jHwpI6T2bXUh4i3i4AvLqWDLiiJTlxGblWGcQq8oxZ9HD41
-         MV6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NjWk4TEYN8vBI+EZudhtgsQBzRXhxKSR/VvC8eztl2Q=;
-        b=Su3K0E5cDBtn9/JFzTtmUU5ebpqpjJ7+Uwnhw/6qfxqx+B+1HM7TsbCUW/FhNrpK0p
-         Obvaj0f0KU7JFO/Nld5/k0WzbS1WrRUaRtqnC2wTN+sN7QgG4WIRcqpPdjYUDEFMLbXB
-         UfCkHIv/szPD7zHW9H4fpTFNbWv3gfN1ePiY5wSyPqPIYTH64IAfBe7fz5hxi5evU7ru
-         8WK17OnOrZOY0CyDFKdaIAA1uCzNn4DtZhLXjesI9yuNRDn++JvhOlpHD1xoOFA7tFZn
-         I5loZ27Fzlg/Z60vIQi+w6UvUALRBNQgoiFXn7NnLUV0OTYoVv1gn+WUX3iEoFtKZmTK
-         kNLQ==
-X-Gm-Message-State: APjAAAUJk6sw6lICbXKrkPXYnMvVI5Wh87L804KQqffPzrCKASZ4EDM3
-        C14Zun18iciwZNZo+1ZbQ0E=
-X-Google-Smtp-Source: APXvYqzO55gCJ/uVMy0KkNfkBLsXnKAsyVWjq7p7P4ENoa5s6jvlMQs8jfmzBt5uc6UVFCv/QU24Qg==
-X-Received: by 2002:ad4:50c6:: with SMTP id e6mr1963882qvq.220.1573563478120;
-        Tue, 12 Nov 2019 04:57:58 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id q17sm12081804qtq.58.2019.11.12.04.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 04:57:57 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
-        rfontana@redhat.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: dvb_dummy_fe: Fix ERROR: POINTER_LOCATION
-Date:   Tue, 12 Nov 2019 09:50:14 -0300
-Message-Id: <20191112125014.5604-1-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        Tue, 12 Nov 2019 07:51:18 -0500
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id xACCp8Kp030082;
+        Tue, 12 Nov 2019 21:51:09 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com xACCp8Kp030082
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573563069;
+        bh=pERbu/D6TsAoFYrJhhErJt2I5IFldM4FmNpzx6W3OhY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hhAwl8VuQ3Yd0T/pN6/IlaZnHDDCkMvn4AkJaBnukC253y9L8B9fG++arcrdl5Z5R
+         /9rD9bJPmjSLxO4qwDHCLEV1+DZeFXxu3i2pTz9FzfFEuMpTsZ5NY1K3MvQBvltwM+
+         EuM3IMQqTzCGj/Cgeds+eBcPGUtyWxj1+j8IMM6wFlWw7ZidfuOGGAdUtCZdA13bf2
+         fdxUCJHu4eK/2YdS1rZHCeYr3wjmX6o/CROPeuUQ5kq1iFGodfCrbDdgRtuMyikDuj
+         hNfP1Bi0zXdRSJR15wzOsmWUxaF0G47IS5Fzkm3WNVYy3T96Ijn7eqyHXvZN29ek67
+         XKVfuzxXV1s+Q==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id c25so10695270vsp.0;
+        Tue, 12 Nov 2019 04:51:08 -0800 (PST)
+X-Gm-Message-State: APjAAAUBMt2tRJdM3Qw3Hl3Xo3ar2p6dmK6gXkvCDmY08DTjdi3o0AQC
+        ULTuaWkZHeVyN1rAEOyfryjjnCVnXWwyT4/HC84=
+X-Google-Smtp-Source: APXvYqyKv1Pax9ObNkX0Q8oo8KGbX362oyxIELZQWqG9wmUAWx11VYikJ/OkCb3aLcrg3/hvdZodvoJImefldmOkHNE=
+X-Received: by 2002:a05:6102:726:: with SMTP id u6mr21481694vsg.179.1573563067515;
+ Tue, 12 Nov 2019 04:51:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1da2db04-da6a-cedb-e85a-6ded68dada82@163.com> <20191112123125.GD17835@willie-the-truck>
+In-Reply-To: <20191112123125.GD17835@willie-the-truck>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 12 Nov 2019 21:50:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARA99UUTY2v6rS=Nb4Cg5pB4RsR0PogLqdT9uNLcH20ew@mail.gmail.com>
+Message-ID: <CAK7LNARA99UUTY2v6rS=Nb4Cg5pB4RsR0PogLqdT9uNLcH20ew@mail.gmail.com>
+Subject: Re: Question about "asm/rwonce.h: No such file or directory"
+To:     Will Deacon <will@kernel.org>
+Cc:     Xiao Yang <ice_yangxiao@163.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+On Tue, Nov 12, 2019 at 9:31 PM Will Deacon <will@kernel.org> wrote:
+>
+> [+lkml, Masahiro, Alexei and Daniel]
+>
+> On Tue, Nov 12, 2019 at 04:56:39PM +0800, Xiao Yang wrote:
+> > With your patch[1], I alway get the following error when building
+> > tools/bpf:
+>
+> In case people want to reproduce this, my branch is here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=lto
+>
+> > ----------------------------------------------------------------------------------
+> >
+> > make -C tools/bpf/
+> > make: Entering directory
+> > '/usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/tools/bpf'
+> >
+> > Auto-detecting system features:
+> > ... libbfd: [ on ]
+> > ... disassembler-four-args: [ OFF ]
+> >
+> > CC bpf_jit_disasm.o
+> > CC bpf_dbg.o
+> > In file included from
+> > /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/include/uapi/linux/filter.h:9:0,
+> > from
+> > /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/tools/bpf/bpf_dbg.c:41:
+> > /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/include/linux/compiler.h:247:24:
+> > fatal error: asm/rwonce.h: No such file or directory
+> > #include <asm/rwonce.h>
+> > ^
+> > compilation terminated.
+> > Makefile:61: recipe for target 'bpf_dbg.o' failed
+> > make: *** [bpf_dbg.o] Error 1
+> > make: *** Waiting for unfinished jobs....
+> > make: Leaving directory
+> >
+> > ----------------------------------------------------------------------------------
+> >
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=lto&id=642a312d47ceb54603630d9d04f5052f3b46d9a3
+> >
+> > It seems that include/linux/compiler.h cannot find the asm/rwonce.h because
+> > tools/bpf/Makefile doesn't include arch/*/include/generated/asm/rwonce.h.
+>
+> The problem with referring to the generated files is that they don't exist
+> unless you've configured the main source directory. The real problem here
+> seems to be that tools/bpf/ refers directly to header files in the kernel
+> sources without any understanding of kbuild, and therefore mandatory-y
+> headers simply don't exist when it goes looking for them.
 
-Change foo* bar to foo *bar to avoid ERROR: POINTER_LOCATION in checkpatch.pl
+Please note tools/ is out of scope of Kbuild.
+The tools/ created a completely different build system.
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
+tools/bpf/ looks like a host program.
+Does it include a kernel-space header
+of the target architecture?
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_read_snr(struct dvb_frontend* fe, u16* snr)
+I see a lots of header duplication in tools/include/,
+but I am not sure if
+tools/include/linux/filter.h is the correct header
+to include.
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_read_snr(struct dvb_frontend* fe, u16* snr)
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
+>
+> Perhaps it's possible to introduce a dependency on a top-level "make
+> asm-generic" so that we can reference the generated headers from the arch
+> directly. Thoughts?
+>
+> Will
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_sleep(struct dvb_frontend* fe)
 
-ERROR: "foo* bar" should be "foo *bar"
-+static int dvb_dummy_fe_init(struct dvb_frontend* fe)
-
-ERROR: "foo* bar" should be "foo *bar"
-+static void dvb_dummy_fe_release(struct dvb_frontend* fe)
-
-ERROR: "foo* bar" should be "foo *bar"
-+	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
-
-ERROR: "foo* bar" should be "foo *bar"
-+struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
-
-ERROR: "foo* bar" should be "foo *bar"
-+	struct dvb_dummy_fe_state* state = NULL;
-
-ERROR: "foo* bar" should be "foo *bar"
-+	struct dvb_dummy_fe_state* state = NULL;
-
-ERROR: "foo* bar" should be "foo *bar"
-+	struct dvb_dummy_fe_state* state = NULL;
-
-Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
-
-------------------------------------------------------------
-Changes in v2:
-
--Added checkpatch.pl previous output so it's more clear what
-is being fixed by this patch.
-
----
- drivers/media/dvb-frontends/dvb_dummy_fe.c | 24 +++++++++++-----------
- drivers/media/dvb-frontends/dvb_dummy_fe.h |  6 +++---
- 2 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-index 4db679cb70ad..8413038aa30b 100644
---- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
-+++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-@@ -31,25 +31,25 @@ static int dvb_dummy_fe_read_status(struct dvb_frontend *fe,
- 	return 0;
- }
- 
--static int dvb_dummy_fe_read_ber(struct dvb_frontend* fe, u32* ber)
-+static int dvb_dummy_fe_read_ber(struct dvb_frontend *fe, u32 *ber)
- {
- 	*ber = 0;
- 	return 0;
- }
- 
--static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
-+static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
- {
- 	*strength = 0;
- 	return 0;
- }
- 
--static int dvb_dummy_fe_read_snr(struct dvb_frontend* fe, u16* snr)
-+static int dvb_dummy_fe_read_snr(struct dvb_frontend *fe, u16 *snr)
- {
- 	*snr = 0;
- 	return 0;
- }
- 
--static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
-+static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
- {
- 	*ucblocks = 0;
- 	return 0;
-@@ -77,12 +77,12 @@ static int dvb_dummy_fe_set_frontend(struct dvb_frontend *fe)
- 	return 0;
- }
- 
--static int dvb_dummy_fe_sleep(struct dvb_frontend* fe)
-+static int dvb_dummy_fe_sleep(struct dvb_frontend *fe)
- {
- 	return 0;
- }
- 
--static int dvb_dummy_fe_init(struct dvb_frontend* fe)
-+static int dvb_dummy_fe_init(struct dvb_frontend *fe)
- {
- 	return 0;
- }
-@@ -99,17 +99,17 @@ static int dvb_dummy_fe_set_voltage(struct dvb_frontend *fe,
- 	return 0;
- }
- 
--static void dvb_dummy_fe_release(struct dvb_frontend* fe)
-+static void dvb_dummy_fe_release(struct dvb_frontend *fe)
- {
--	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
-+	struct dvb_dummy_fe_state *state = fe->demodulator_priv;
- 	kfree(state);
- }
- 
- static const struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops;
- 
--struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
-+struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
- {
--	struct dvb_dummy_fe_state* state = NULL;
-+	struct dvb_dummy_fe_state *state = NULL;
- 
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
-@@ -126,7 +126,7 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops;
- 
- struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void)
- {
--	struct dvb_dummy_fe_state* state = NULL;
-+	struct dvb_dummy_fe_state *state = NULL;
- 
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
-@@ -143,7 +143,7 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qam_ops;
- 
- struct dvb_frontend *dvb_dummy_fe_qam_attach(void)
- {
--	struct dvb_dummy_fe_state* state = NULL;
-+	struct dvb_dummy_fe_state *state = NULL;
- 
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
-diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.h b/drivers/media/dvb-frontends/dvb_dummy_fe.h
-index 526fabd7751f..35efe2ce1a88 100644
---- a/drivers/media/dvb-frontends/dvb_dummy_fe.h
-+++ b/drivers/media/dvb-frontends/dvb_dummy_fe.h
-@@ -12,9 +12,9 @@
- #include <media/dvb_frontend.h>
- 
- #if IS_REACHABLE(CONFIG_DVB_DUMMY_FE)
--extern struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void);
--extern struct dvb_frontend* dvb_dummy_fe_qpsk_attach(void);
--extern struct dvb_frontend* dvb_dummy_fe_qam_attach(void);
-+extern struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void);
-+extern struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void);
-+extern struct dvb_frontend *dvb_dummy_fe_qam_attach(void);
- #else
- static inline struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
- {
 -- 
-2.24.0
-
+Best Regards
+Masahiro Yamada
