@@ -2,110 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C42F8FE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:48:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55E27F900D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 13:58:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfKLMst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 07:48:49 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46461 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfKLMst (ORCPT
+        id S1727047AbfKLM57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 07:57:59 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:33146 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbfKLM57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:48:49 -0500
-Received: by mail-oi1-f195.google.com with SMTP id n14so14600025oie.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 04:48:48 -0800 (PST)
+        Tue, 12 Nov 2019 07:57:59 -0500
+Received: by mail-qv1-f68.google.com with SMTP id x14so6305546qvu.0;
+        Tue, 12 Nov 2019 04:57:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jzm7986JS/rnjdFEfFSppu8t4BpdNBEDWXZlt0QkzRM=;
-        b=hpotNEY2jP9EbNNf1lY01Z4p8VZIHhK5Uf/xk9kM4m5UjiTl2tVwaeqotaFn/MYzSM
-         uJ4Mq0BTFkLcY129vsyTy4KaTMfLeqYAmhTOUMsz+471cQqdWkLsqYn13ePb5PP3GQAl
-         FIJr/Gs+mx892sKJSAmXY3hBRAXniQmqOLy/dfvlvbfaChxaLoslE362YzCtXxlio1rV
-         4Mplt/KjTVhRNHDLvKzPgCRAPXynQi8sS51oPWq6D3eze9ddnVYHt2/DWrYg8aFEhDuU
-         +hV6wWmnaSnWGSqbavzyD+Q+DnsFLOzGeACwqjE0oNyz7ptTjDepUQo8AZgkSrhp54sm
-         vKYA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NjWk4TEYN8vBI+EZudhtgsQBzRXhxKSR/VvC8eztl2Q=;
+        b=olrYlMOfGyc8ZLOn40CL3KqyOmUV5bZadSmnuHPqjQFMImWWYKDgqbTdEr5PxK/MqC
+         +0rwCrarnoYYmYxEDZV/6IFf5rD7m5/R8hvdGIAlHlFoTr0KQfnY67oty8TtVjdZUgFl
+         uERzayd/tyCjT9fWkXf1HI1j/b018Vse3bEL/QQL/2CmlJAEzPETM24ZzrcQrC3603Ta
+         T2A+w8lFrlR8STUrgnVLoMvoU420KIWlGfhnCBAkkIlWkimnXoJlAz6UTUNYiCp8tY76
+         TuRpRQCwyJFgzsqIYgWt5jHwpI6T2bXUh4i3i4AvLqWDLiiJTlxGblWGcQq8oxZ9HD41
+         MV6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to
-         :user-agent;
-        bh=Jzm7986JS/rnjdFEfFSppu8t4BpdNBEDWXZlt0QkzRM=;
-        b=Za1xkfw79sTPrdllnYdkZUA1IwgOZNVEn5zN6mpHOed1nXHXB32tmqRyv0Xu/OnzPw
-         CfoR1qKJWu7Ykj8OiRnrWCkb51CsDXvd0N16lzNx7BrzvAPpU3MUWHfhmWdZ4zvntt40
-         WqZMlGSKGUrbfxe73KKNJLP/hXe7Y583oKWDkofQheKlag8MqIgrS7odXygfd4vnF7q4
-         5zUkOmXXVE0gVm1/Ruiaind3bKlCkAw6dQ9mV1fNzhg1QoGRkhpWG1vg5ggdgNu8cW53
-         SfeE+kU0bjj3sqJfY3aXj8fTafYtTIGcID12t8+wTMGV7VFXfQxiE7McrbDt5mzYdAQZ
-         ESJw==
-X-Gm-Message-State: APjAAAVq6ssIQgnGhb5YrGd2r0YgUPhXwTMOCH5ADzKbPyXTajPS6Z9+
-        nv7SgcBa1XcslBHxE6gYGw==
-X-Google-Smtp-Source: APXvYqxtYYaMppT1AsUoDPjRx/kCU171B9mYR9+ekZc1K7T40+2H65m90zVCtGZFXPwcrcaNpUGmew==
-X-Received: by 2002:aca:58d6:: with SMTP id m205mr3771826oib.32.1573562927956;
-        Tue, 12 Nov 2019 04:48:47 -0800 (PST)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id l32sm6193445otl.74.2019.11.12.04.48.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NjWk4TEYN8vBI+EZudhtgsQBzRXhxKSR/VvC8eztl2Q=;
+        b=Su3K0E5cDBtn9/JFzTtmUU5ebpqpjJ7+Uwnhw/6qfxqx+B+1HM7TsbCUW/FhNrpK0p
+         Obvaj0f0KU7JFO/Nld5/k0WzbS1WrRUaRtqnC2wTN+sN7QgG4WIRcqpPdjYUDEFMLbXB
+         UfCkHIv/szPD7zHW9H4fpTFNbWv3gfN1ePiY5wSyPqPIYTH64IAfBe7fz5hxi5evU7ru
+         8WK17OnOrZOY0CyDFKdaIAA1uCzNn4DtZhLXjesI9yuNRDn++JvhOlpHD1xoOFA7tFZn
+         I5loZ27Fzlg/Z60vIQi+w6UvUALRBNQgoiFXn7NnLUV0OTYoVv1gn+WUX3iEoFtKZmTK
+         kNLQ==
+X-Gm-Message-State: APjAAAUJk6sw6lICbXKrkPXYnMvVI5Wh87L804KQqffPzrCKASZ4EDM3
+        C14Zun18iciwZNZo+1ZbQ0E=
+X-Google-Smtp-Source: APXvYqzO55gCJ/uVMy0KkNfkBLsXnKAsyVWjq7p7P4ENoa5s6jvlMQs8jfmzBt5uc6UVFCv/QU24Qg==
+X-Received: by 2002:ad4:50c6:: with SMTP id e6mr1963882qvq.220.1573563478120;
+        Tue, 12 Nov 2019 04:57:58 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
+        by smtp.gmail.com with ESMTPSA id q17sm12081804qtq.58.2019.11.12.04.57.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 04:48:47 -0800 (PST)
-Received: from minyard.net (unknown [192.168.27.180])
-        by serve.minyard.net (Postfix) with ESMTPSA id B47A6180046;
-        Tue, 12 Nov 2019 12:48:46 +0000 (UTC)
-Date:   Tue, 12 Nov 2019 06:48:45 -0600
-From:   Corey Minyard <minyard@acm.org>
-To:     Vijay Khemka <vijaykhemka@fb.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, cminyard@mvista.com,
-        asmaa@mellanox.com, joel@jms.id.au, linux-aspeed@lists.ozlabs.org,
-        sdasari@fb.com
-Subject: Re: [PATCH 2/2] drivers: ipmi: Modify max length of IPMB packet
-Message-ID: <20191112124845.GE2882@minyard.net>
-Reply-To: minyard@acm.org
-References: <20191112023610.3644314-1-vijaykhemka@fb.com>
- <20191112023610.3644314-2-vijaykhemka@fb.com>
+        Tue, 12 Nov 2019 04:57:57 -0800 (PST)
+From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+X-Google-Original-From: Daniel W. S. Almeida
+To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
+        rfontana@redhat.com, kstewart@linuxfoundation.org,
+        tglx@linutronix.de
+Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] media: dvb_dummy_fe: Fix ERROR: POINTER_LOCATION
+Date:   Tue, 12 Nov 2019 09:50:14 -0300
+Message-Id: <20191112125014.5604-1-dwlsalmeida@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112023610.3644314-2-vijaykhemka@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 06:36:10PM -0800, Vijay Khemka wrote:
-> As per IPMB specification, maximum packet size supported is 255,
-> modified Max length to 240 from 128 to accommodate more data.
+From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 
-I couldn't find this in the IPMB specification.
+Change foo* bar to foo *bar to avoid ERROR: POINTER_LOCATION in checkpatch.pl
 
-IIRC, the maximum on I2C is 32 byts, and table 6-9 in the IPMI spec,
-under "IPMB Output" states: The IPMB standard message length is
-specified as 32 bytes, maximum, including slave address.
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
 
-I'm not sure where 128 came from, but maybe it should be reduced to 31.
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
 
--corey
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_read_snr(struct dvb_frontend* fe, u16* snr)
 
-> 
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-> ---
->  drivers/char/ipmi/ipmb_dev_int.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
-> index 2419b9a928b2..7f9198bbce96 100644
-> --- a/drivers/char/ipmi/ipmb_dev_int.c
-> +++ b/drivers/char/ipmi/ipmb_dev_int.c
-> @@ -19,7 +19,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/wait.h>
->  
-> -#define MAX_MSG_LEN		128
-> +#define MAX_MSG_LEN		240
->  #define IPMB_REQUEST_LEN_MIN	7
->  #define NETFN_RSP_BIT_MASK	0x4
->  #define REQUEST_QUEUE_MAX_LEN	256
-> -- 
-> 2.17.1
-> 
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_read_snr(struct dvb_frontend* fe, u16* snr)
+
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
+
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
+
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_sleep(struct dvb_frontend* fe)
+
+ERROR: "foo* bar" should be "foo *bar"
++static int dvb_dummy_fe_init(struct dvb_frontend* fe)
+
+ERROR: "foo* bar" should be "foo *bar"
++static void dvb_dummy_fe_release(struct dvb_frontend* fe)
+
+ERROR: "foo* bar" should be "foo *bar"
++	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
+
+ERROR: "foo* bar" should be "foo *bar"
++struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
+
+ERROR: "foo* bar" should be "foo *bar"
++	struct dvb_dummy_fe_state* state = NULL;
+
+ERROR: "foo* bar" should be "foo *bar"
++	struct dvb_dummy_fe_state* state = NULL;
+
+ERROR: "foo* bar" should be "foo *bar"
++	struct dvb_dummy_fe_state* state = NULL;
+
+Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+
+------------------------------------------------------------
+Changes in v2:
+
+-Added checkpatch.pl previous output so it's more clear what
+is being fixed by this patch.
+
+---
+ drivers/media/dvb-frontends/dvb_dummy_fe.c | 24 +++++++++++-----------
+ drivers/media/dvb-frontends/dvb_dummy_fe.h |  6 +++---
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+index 4db679cb70ad..8413038aa30b 100644
+--- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
++++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+@@ -31,25 +31,25 @@ static int dvb_dummy_fe_read_status(struct dvb_frontend *fe,
+ 	return 0;
+ }
+ 
+-static int dvb_dummy_fe_read_ber(struct dvb_frontend* fe, u32* ber)
++static int dvb_dummy_fe_read_ber(struct dvb_frontend *fe, u32 *ber)
+ {
+ 	*ber = 0;
+ 	return 0;
+ }
+ 
+-static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend* fe, u16* strength)
++static int dvb_dummy_fe_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
+ {
+ 	*strength = 0;
+ 	return 0;
+ }
+ 
+-static int dvb_dummy_fe_read_snr(struct dvb_frontend* fe, u16* snr)
++static int dvb_dummy_fe_read_snr(struct dvb_frontend *fe, u16 *snr)
+ {
+ 	*snr = 0;
+ 	return 0;
+ }
+ 
+-static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend* fe, u32* ucblocks)
++static int dvb_dummy_fe_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
+ {
+ 	*ucblocks = 0;
+ 	return 0;
+@@ -77,12 +77,12 @@ static int dvb_dummy_fe_set_frontend(struct dvb_frontend *fe)
+ 	return 0;
+ }
+ 
+-static int dvb_dummy_fe_sleep(struct dvb_frontend* fe)
++static int dvb_dummy_fe_sleep(struct dvb_frontend *fe)
+ {
+ 	return 0;
+ }
+ 
+-static int dvb_dummy_fe_init(struct dvb_frontend* fe)
++static int dvb_dummy_fe_init(struct dvb_frontend *fe)
+ {
+ 	return 0;
+ }
+@@ -99,17 +99,17 @@ static int dvb_dummy_fe_set_voltage(struct dvb_frontend *fe,
+ 	return 0;
+ }
+ 
+-static void dvb_dummy_fe_release(struct dvb_frontend* fe)
++static void dvb_dummy_fe_release(struct dvb_frontend *fe)
+ {
+-	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
++	struct dvb_dummy_fe_state *state = fe->demodulator_priv;
+ 	kfree(state);
+ }
+ 
+ static const struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops;
+ 
+-struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
++struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
+ {
+-	struct dvb_dummy_fe_state* state = NULL;
++	struct dvb_dummy_fe_state *state = NULL;
+ 
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
+@@ -126,7 +126,7 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops;
+ 
+ struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void)
+ {
+-	struct dvb_dummy_fe_state* state = NULL;
++	struct dvb_dummy_fe_state *state = NULL;
+ 
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
+@@ -143,7 +143,7 @@ static const struct dvb_frontend_ops dvb_dummy_fe_qam_ops;
+ 
+ struct dvb_frontend *dvb_dummy_fe_qam_attach(void)
+ {
+-	struct dvb_dummy_fe_state* state = NULL;
++	struct dvb_dummy_fe_state *state = NULL;
+ 
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
+diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.h b/drivers/media/dvb-frontends/dvb_dummy_fe.h
+index 526fabd7751f..35efe2ce1a88 100644
+--- a/drivers/media/dvb-frontends/dvb_dummy_fe.h
++++ b/drivers/media/dvb-frontends/dvb_dummy_fe.h
+@@ -12,9 +12,9 @@
+ #include <media/dvb_frontend.h>
+ 
+ #if IS_REACHABLE(CONFIG_DVB_DUMMY_FE)
+-extern struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void);
+-extern struct dvb_frontend* dvb_dummy_fe_qpsk_attach(void);
+-extern struct dvb_frontend* dvb_dummy_fe_qam_attach(void);
++extern struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void);
++extern struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void);
++extern struct dvb_frontend *dvb_dummy_fe_qam_attach(void);
+ #else
+ static inline struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
+ {
+-- 
+2.24.0
+
