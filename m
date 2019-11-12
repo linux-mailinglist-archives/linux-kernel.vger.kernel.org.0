@@ -2,465 +2,570 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1DEF8AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93DD4F8ADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:43:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfKLImv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 03:42:51 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:44548 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfKLImv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 03:42:51 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAC8gmB2119966;
-        Tue, 12 Nov 2019 02:42:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573548168;
-        bh=PhkLanO55KxXFQ31uGGptnN9kaMBpxFdTBxsxYBQM0Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=E4WEw2xFrkm0izhTpF89RgqxUAFcy0Dm45mC3C7wp+cosjrv5I8Q00O4y8+e0gLdg
-         kY58GVNCOxPLR7JIbNmyCW9OG+kzrhJm8XAFj81uAOjVZ2GuSNKD2nm7dkX1lIFj8m
-         jFPWfF0329f23lEfBoObYAPfS6kZUTZmC9uZLd0A=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAC8gm2I115152
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Nov 2019 02:42:48 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 02:42:30 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 02:42:30 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAC8ghF6094614;
-        Tue, 12 Nov 2019 02:42:44 -0600
-Subject: Re: [PATCH 12/17] remoteproc/omap: Request a timer(s) for remoteproc
- usage
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <ohad@wizery.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <s-anna@ti.com>
-References: <20191028124238.19224-1-t-kristo@ti.com>
- <20191028124238.19224-13-t-kristo@ti.com> <20191112041351.GN3108315@builder>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <db6acb22-1feb-b838-b950-98437ba27cb5@ti.com>
-Date:   Tue, 12 Nov 2019 10:42:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191112041351.GN3108315@builder>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S1727315AbfKLInJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 03:43:09 -0500
+Received: from mail-eopbgr140082.outbound.protection.outlook.com ([40.107.14.82]:44739
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725821AbfKLInI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 03:43:08 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ST0hfn0Rs2w18YzLRfX+f+WPrfV8SEp82W+D3xNGoz/bZW3paemSaOdXUehUo6rBiH/OMZODdUfjnMn4S4CDfF3uYVAL6gVOE/o+Kr8ZBqe/z+CWKoj7MjBPe4RXiOxPsVwksFegFnxj1rJmKDAh9Q5dyer1YeEUIutyikXdZftNvMyeSCjVAXXDJI4/BD2bApRGkHh8XwrV79p68wRv2FRXgBXbHGt13HGavi1StV724U5zF5Npjg2AbegfSB1KoG4cTiXdfWEU3ynVgrlpaYHRcMPwsub+HjAZO1NPzqVA3uskw6aIOSrkbZLD1JgF00BNp8IUvFhYl04uXu7ysw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2WoGWLniZfRVMzwss0X6Sdy54iQ4ybgGcR3eKxDSUQk=;
+ b=jgSgPVfqQWaeGcH08yX3ym1Ioy+aIpYRuNwLMj/aZVZmE2/lEQhOUg2GY4WPGRWyjaJXYRdYFGy8iSzrQMaZmehOurD6NyzfFfjRldnlm00jRcQ4dSj77E3Sq7OHw312l6YfHlAUGJZ74LtAl9lkbWq7gQJQMPR0fJvQswHHmyeaHZmHYhgwiAGYtCEH1fdx+4vg4kbXET7Eg0DXh24WJwum3cu7hJpOrXm7w7tivfnghAnBjfNp6xbEpbh/FxTfa7+sS3fLMCrgQRV1NhjHvXHjqEfRmCj9F9T9BwDApkTo8zXN6BrdMFPq3CGD25bwaExfAUM8WC2lavj+6v3j0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2WoGWLniZfRVMzwss0X6Sdy54iQ4ybgGcR3eKxDSUQk=;
+ b=r8K53i3wos0bRwnm40tbw+fW3IpaPQYQMvP1RRdACmFJUrucVJU6UNKkaHwx6hsROQgBK1piyOjbLqAO4RqOC2ovdfGKgg7HjEfa/SBawSBZPrsZMLI5Eq9OitoU4Bgn6uGH0Fc+jl9FJF2XBU+UVlKke4nT+kZR1smdYZAx680=
+Received: from VE1PR04MB6496.eurprd04.prod.outlook.com (20.179.232.221) by
+ VE1PR04MB6736.eurprd04.prod.outlook.com (20.179.235.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.22; Tue, 12 Nov 2019 08:42:50 +0000
+Received: from VE1PR04MB6496.eurprd04.prod.outlook.com
+ ([fe80::7c6e:3d38:6630:5515]) by VE1PR04MB6496.eurprd04.prod.outlook.com
+ ([fe80::7c6e:3d38:6630:5515%4]) with mapi id 15.20.2430.027; Tue, 12 Nov 2019
+ 08:42:50 +0000
+From:   Po Liu <po.liu@nxp.com>
+To:     Claudiu Manoil <claudiu.manoil@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
+        Po Liu <po.liu@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>,
+        Po Liu <po.liu@nxp.com>
+Subject: [v2,net-next, 1/2] enetc: Configure the Time-Aware Scheduler via
+ tc-taprio offload
+Thread-Topic: [v2,net-next, 1/2] enetc: Configure the Time-Aware Scheduler via
+ tc-taprio offload
+Thread-Index: AQHVmTUqXYApGTOw3EOm7mArykD/fw==
+Date:   Tue, 12 Nov 2019 08:42:49 +0000
+Message-ID: <20191112082823.28998-1-Po.Liu@nxp.com>
+References: <20191111042715.13444-2-Po.Liu@nxp.com>
+In-Reply-To: <20191111042715.13444-2-Po.Liu@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: SG2PR01CA0105.apcprd01.prod.exchangelabs.com
+ (2603:1096:3:15::31) To VE1PR04MB6496.eurprd04.prod.outlook.com
+ (2603:10a6:803:11c::29)
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=po.liu@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 0d042707-6d73-4ad5-f587-08d7674c4c84
+x-ms-traffictypediagnostic: VE1PR04MB6736:|VE1PR04MB6736:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VE1PR04MB673665DA180BAF4CEEC23DD192770@VE1PR04MB6736.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 021975AE46
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(366004)(376002)(346002)(396003)(199004)(189003)(14454004)(6486002)(52116002)(76176011)(6436002)(478600001)(7736002)(54906003)(316002)(36756003)(2501003)(110136005)(81166006)(81156014)(66446008)(64756008)(66556008)(66476007)(66946007)(305945005)(2906002)(3846002)(1076003)(11346002)(446003)(86362001)(99286004)(6116002)(8936002)(66066001)(2616005)(476003)(2201001)(6506007)(386003)(5660300002)(25786009)(486006)(4326008)(26005)(102836004)(50226002)(6512007)(256004)(14444005)(71190400001)(30864003)(186003)(8676002)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6736;H:VE1PR04MB6496.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: SrYRY6hB0OlC/7QxNQfLF3b4DxQYpmMicl0WhgMc5Zp5IEy9+Orp9PwYWcjByUa5LCiHZ/XCtzquOHvILbxgfg+oZmsXiBynzqs6hOZ09mrTTReukSis/xWJt6ICAXg4NVXFcmxGdu0ba8tDG9DVR9h/2wrHOrLMO96u2lxRKYcplp+3rZS8Y4yjEtwJQ1iRlvuKNCeaafv/d7UKdr0MobEkHKaImjsq+RWSF1XYt13Bns4bMm27tXNbfSSdP7HdVEh/RIZ9Ad6f267f26FLJM1RoUiYXiq9ejJ3P5c3T+B9HVALr+deiSJkcBrgYdii2sNM1hQNkDto2h84O5y+9D+uVpL0tObaoJbdtFpYvUIvHlwbJIHb72FvC8kW2j14qir4W20GfGmwH78c9uLBUhEtyIq7gEoGTWpLmlbS8sww5pwYcyOyXAOmnbSIC4Wu
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d042707-6d73-4ad5-f587-08d7674c4c84
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2019 08:42:50.0139
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wpbuOepAW92In+1WDnlESWaB4v+b9E2CAm8Q2qdTqYsta0AHGL8o4cZLuRHx4lLq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6736
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2019 06:13, Bjorn Andersson wrote:
-> On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
-> 
->> From: Suman Anna <s-anna@ti.com>
->>
->> The remote processors in OMAP4+ SoCs are equipped with internal
->> timers, like the internal SysTick timer in a Cortex M3/M4 NVIC or
->> the CTM timer within Unicache in IPU & DSP. However, these timers
->> are gated when the processor subsystem clock is gated, making
->> them rather difficult to use as OS tick sources. They will not
->> be able to wakeup the processor from any processor-sleep induced
->> clock-gating states.
->>
->> This can be avoided by using an external timer as the tick source,
->> which can be controlled independently by the OMAP remoteproc
->> driver code, but still allowing the processor subsystem clock to
->> be auto-gated when the remoteproc cores are idle.
->>
->> This patch adds the support for OMAP remote processors to request
->> timer(s) to be used by the remoteproc. The timers are enabled and
->> disabled in line with the enabling/disabling of the remoteproc.
->> The timer data is not mandatory if the advanced device management
->> features are not required.
->>
->> The core timer functionality is provided by the OMAP DMTimer
->> clocksource driver, which does not export any API. The logic is
->> implemented through the timer device's platform data ops. The OMAP
->> remoteproc driver mainly requires ops to request/free a dmtimer,
->> and to start/stop a timer. The split ops helps in controlling the
->> timer state without having to request and release a timer everytime
->> it needs to use the timer.
->>
->> NOTE: If the gptimer is already in use by the time IPU and/or
->> DSP are loaded, the processors will fail to boot.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> ---
->>   drivers/remoteproc/omap_remoteproc.c | 258 +++++++++++++++++++++++++++
->>   1 file changed, 258 insertions(+)
->>
->> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
->> index 016d5beda195..8450dd79d391 100644
->> --- a/drivers/remoteproc/omap_remoteproc.c
->> +++ b/drivers/remoteproc/omap_remoteproc.c
->> @@ -27,6 +27,9 @@
->>   #include <linux/regmap.h>
->>   #include <linux/mfd/syscon.h>
->>   #include <linux/reset.h>
->> +#include <clocksource/timer-ti-dm.h>
->> +
->> +#include <linux/platform_data/dmtimer-omap.h>
->>   
->>   #include "omap_remoteproc.h"
->>   #include "remoteproc_internal.h"
->> @@ -61,6 +64,16 @@ struct omap_rproc_mem {
->>   	size_t size;
->>   };
->>   
->> +/**
->> + * struct omap_rproc_timer - data structure for a timer used by a omap rproc
->> + * @odt: timer pointer
->> + * @timer_ops: OMAP dmtimer ops for @odt timer
->> + */
->> +struct omap_rproc_timer {
->> +	struct omap_dm_timer *odt;
->> +	const struct omap_dm_timer_ops *timer_ops;
->> +};
->> +
->>   /**
->>    * struct omap_rproc - omap remote processor state
->>    * @mbox: mailbox channel handle
->> @@ -68,6 +81,8 @@ struct omap_rproc_mem {
->>    * @boot_data: boot data structure for setting processor boot address
->>    * @mem: internal memory regions data
->>    * @num_mems: number of internal memory regions
->> + * @num_timers: number of rproc timer(s)
->> + * @timers: timer(s) info used by rproc
->>    * @rproc: rproc handle
->>    * @reset: reset handle
->>    */
->> @@ -77,6 +92,8 @@ struct omap_rproc {
->>   	struct omap_rproc_boot_data *boot_data;
->>   	struct omap_rproc_mem *mem;
->>   	int num_mems;
->> +	int num_timers;
->> +	struct omap_rproc_timer *timers;
->>   	struct rproc *rproc;
->>   	struct reset_control *reset;
->>   };
->> @@ -91,6 +108,212 @@ struct omap_rproc_dev_data {
->>   	const char *fw_name;
->>   };
->>   
->> +/**
->> + * omap_rproc_request_timer - request a timer for a remoteproc
-> 
-> Add parenthesis on functions in kerneldoc.
+ENETC supports in hardware for time-based egress shaping according
+to IEEE 802.1Qbv. This patch implement the Qbv enablement by the
+hardware offload method qdisc tc-taprio method.
+Also update cbdr writeback to up level since control bd ring may
+writeback data to control bd ring.
 
-Ok.
+Signed-off-by: Po Liu <Po.Liu@nxp.com>
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+---
+changes:
+- introduce a local define CONFIG_FSL_ENETC_QOS to fix the various
+  configurations will result in link errors.
+  Since the CONFIG_NET_SCH_TAPRIO depends on many Qos configs. Not
+  to use it directly in driver. Add it to CONFIG_FSL_ENETC_QOS depends
+  on list, so only CONFIG_NET_SCH_TAPRIO enabled, user can enable this
+  tsn feature, or else, return not support.
 
-> 
->> + * @np: device node pointer to the desired timer
->> + * @timer: handle to a struct omap_rproc_timer to return the timer handle
->> + *
->> + * This helper function is used primarily to request a timer associated with
->> + * a remoteproc. The returned handle is stored in the .odt field of the
->> + * @timer structure passed in, and is used to invoke other timer specific
->> + * ops (like starting a timer either during device initialization or during
->> + * a resume operation, or for stopping/freeing a timer).
->> + *
->> + * Returns 0 on success, otherwise an appropriate failure
->> + */
->> +static int omap_rproc_request_timer(struct device_node *np,
->> +				    struct omap_rproc_timer *timer)
->> +{
->> +	int ret = 0;
->> +
->> +	timer->odt = timer->timer_ops->request_by_node(np);
->> +	if (!timer->odt) {
->> +		pr_err("request for timer node %p failed\n", np);
->> +		return -EBUSY;
->> +	}
->> +
->> +	ret = timer->timer_ops->set_source(timer->odt, OMAP_TIMER_SRC_SYS_CLK);
->> +	if (ret) {
->> +		pr_err("error setting OMAP_TIMER_SRC_SYS_CLK as source for timer node %p\n",
->> +		       np);
-> 
-> You could easily pass a struct device * from omap_rproc_enable_timers()
-> to make this a more useful dev_err()
+ drivers/net/ethernet/freescale/enetc/Kconfig  |  10 ++
+ drivers/net/ethernet/freescale/enetc/Makefile |   1 +
+ drivers/net/ethernet/freescale/enetc/enetc.c  |  19 ++-
+ drivers/net/ethernet/freescale/enetc/enetc.h  |   7 +
+ .../net/ethernet/freescale/enetc/enetc_cbdr.c |   5 +-
+ .../net/ethernet/freescale/enetc/enetc_hw.h   | 150 ++++++++++++++++--
+ .../net/ethernet/freescale/enetc/enetc_qos.c  | 130 +++++++++++++++
+ 7 files changed, 300 insertions(+), 22 deletions(-)
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_qos.c
 
-True, let me fix that.
+diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/eth=
+ernet/freescale/enetc/Kconfig
+index c219587bd334..017ade2d0e50 100644
+--- a/drivers/net/ethernet/freescale/enetc/Kconfig
++++ b/drivers/net/ethernet/freescale/enetc/Kconfig
+@@ -50,3 +50,13 @@ config FSL_ENETC_HW_TIMESTAMPING
+ 	  allocation has not been supported and it is too expensive to use
+ 	  extended RX BDs if timestamping is not used, this option enables
+ 	  extended RX BDs in order to support hardware timestamping.
++
++config FSL_ENETC_QOS
++	bool "ENETC hardware Time-sensitive Network support"
++	depends on FSL_ENETC && NET_SCH_TAPRIO
++	help
++	  There are Time-Sensitive Network(TSN) capabilities(802.1Qbv/802.1Qci
++	  /802.1Qbu etc.) supported by ENETC. These TSN capabilities can be set
++	  enable/disable from user space via Qos commands(tc). In the kernel
++	  side, it can be loaded by Qos driver. Currently, it is only support
++	  taprio(802.1Qbv).
+diff --git a/drivers/net/ethernet/freescale/enetc/Makefile b/drivers/net/et=
+hernet/freescale/enetc/Makefile
+index d200c27c3bf6..7a80680a7634 100644
+--- a/drivers/net/ethernet/freescale/enetc/Makefile
++++ b/drivers/net/ethernet/freescale/enetc/Makefile
+@@ -5,6 +5,7 @@ common-objs :=3D enetc.o enetc_cbdr.o enetc_ethtool.o
+ obj-$(CONFIG_FSL_ENETC) +=3D fsl-enetc.o
+ fsl-enetc-y :=3D enetc_pf.o enetc_mdio.o $(common-objs)
+ fsl-enetc-$(CONFIG_PCI_IOV) +=3D enetc_msg.o
++fsl-enetc-$(CONFIG_FSL_ENETC_QOS) +=3D enetc_qos.o
+=20
+ obj-$(CONFIG_FSL_ENETC_VF) +=3D fsl-enetc-vf.o
+ fsl-enetc-vf-y :=3D enetc_vf.o $(common-objs)
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/eth=
+ernet/freescale/enetc/enetc.c
+index 3e8f9819f08c..d58dbc2c4270 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -1427,8 +1427,7 @@ int enetc_close(struct net_device *ndev)
+ 	return 0;
+ }
+=20
+-int enetc_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+-		   void *type_data)
++int enetc_setup_tc_mqprio(struct net_device *ndev, void *type_data)
+ {
+ 	struct enetc_ndev_priv *priv =3D netdev_priv(ndev);
+ 	struct tc_mqprio_qopt *mqprio =3D type_data;
+@@ -1436,9 +1435,6 @@ int enetc_setup_tc(struct net_device *ndev, enum tc_s=
+etup_type type,
+ 	u8 num_tc;
+ 	int i;
+=20
+-	if (type !=3D TC_SETUP_QDISC_MQPRIO)
+-		return -EOPNOTSUPP;
+-
+ 	mqprio->hw =3D TC_MQPRIO_HW_OFFLOAD_TCS;
+ 	num_tc =3D mqprio->num_tc;
+=20
+@@ -1483,6 +1479,19 @@ int enetc_setup_tc(struct net_device *ndev, enum tc_=
+setup_type type,
+ 	return 0;
+ }
+=20
++int enetc_setup_tc(struct net_device *ndev, enum tc_setup_type type,
++		   void *type_data)
++{
++	switch (type) {
++	case TC_SETUP_QDISC_MQPRIO:
++		return enetc_setup_tc_mqprio(ndev, type_data);
++	case TC_SETUP_QDISC_TAPRIO:
++		return enetc_setup_tc_taprio(ndev, type_data);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
+ struct net_device_stats *enetc_get_stats(struct net_device *ndev)
+ {
+ 	struct enetc_ndev_priv *priv =3D netdev_priv(ndev);
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/eth=
+ernet/freescale/enetc/enetc.h
+index 541b4e2073fe..8ca2f97050c8 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+@@ -244,3 +244,10 @@ int enetc_set_fs_entry(struct enetc_si *si, struct ene=
+tc_cmd_rfse *rfse,
+ void enetc_set_rss_key(struct enetc_hw *hw, const u8 *bytes);
+ int enetc_get_rss_table(struct enetc_si *si, u32 *table, int count);
+ int enetc_set_rss_table(struct enetc_si *si, const u32 *table, int count);
++int enetc_send_cmd(struct enetc_si *si, struct enetc_cbd *cbd);
++
++#ifdef CONFIG_FSL_ENETC_QOS
++int enetc_setup_tc_taprio(struct net_device *ndev, void *type_data);
++#else
++#define enetc_setup_tc_taprio(ndev, type_data) -EOPNOTSUPP
++#endif
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_cbdr.c b/drivers/ne=
+t/ethernet/freescale/enetc/enetc_cbdr.c
+index de466b71bf8f..201cbc362e33 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_cbdr.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_cbdr.c
+@@ -32,7 +32,7 @@ static int enetc_cbd_unused(struct enetc_cbdr *r)
+ 		r->bd_count;
+ }
+=20
+-static int enetc_send_cmd(struct enetc_si *si, struct enetc_cbd *cbd)
++int enetc_send_cmd(struct enetc_si *si, struct enetc_cbd *cbd)
+ {
+ 	struct enetc_cbdr *ring =3D &si->cbd_ring;
+ 	int timeout =3D ENETC_CBDR_TIMEOUT;
+@@ -66,6 +66,9 @@ static int enetc_send_cmd(struct enetc_si *si, struct ene=
+tc_cbd *cbd)
+ 	if (!timeout)
+ 		return -EBUSY;
+=20
++	/* CBD may writeback data, feedback up level */
++	*cbd =3D *dest_cbd;
++
+ 	enetc_clean_cbdr(si);
+=20
+ 	return 0;
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/=
+ethernet/freescale/enetc/enetc_hw.h
+index 88276299f447..75a7c0f1f8ce 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+@@ -18,6 +18,7 @@
+ #define ENETC_SICTR0	0x18
+ #define ENETC_SICTR1	0x1c
+ #define ENETC_SIPCAPR0	0x20
++#define ENETC_SIPCAPR0_QBV	BIT(4)
+ #define ENETC_SIPCAPR0_RSS	BIT(8)
+ #define ENETC_SIPCAPR1	0x24
+ #define ENETC_SITGTGR	0x30
+@@ -148,6 +149,12 @@ enum enetc_bdr_type {TX, RX};
+ #define ENETC_PORT_BASE		0x10000
+ #define ENETC_PMR		0x0000
+ #define ENETC_PMR_EN	GENMASK(18, 16)
++#define ENETC_PMR_PSPEED_MASK GENMASK(11, 8)
++#define ENETC_PMR_PSPEED_10M 0x000
++#define ENETC_PMR_PSPEED_100M 0x100
++#define ENETC_PMR_PSPEED_1000M 0x200
++#define ENETC_PMR_PSPEED_2500M 0x400
++
+ #define ENETC_PSR		0x0004 /* RO */
+ #define ENETC_PSIPMR		0x0018
+ #define ENETC_PSIPMR_SET_UP(n)	BIT(n) /* n =3D SI index */
+@@ -440,22 +447,6 @@ union enetc_rx_bd {
+ #define EMETC_MAC_ADDR_FILT_RES	3 /* # of reserved entries at the beginnin=
+g */
+ #define ENETC_MAX_NUM_VFS	2
+=20
+-struct enetc_cbd {
+-	union {
+-		struct {
+-			__le32 addr[2];
+-			__le32 opt[4];
+-		};
+-		__le32 data[6];
+-	};
+-	__le16 index;
+-	__le16 length;
+-	u8 cmd;
+-	u8 cls;
+-	u8 _res;
+-	u8 status_flags;
+-};
+-
+ #define ENETC_CBD_FLAGS_SF	BIT(7) /* short format */
+ #define ENETC_CBD_STATUS_MASK	0xf
+=20
+@@ -554,3 +545,130 @@ static inline void enetc_set_bdr_prio(struct enetc_hw=
+ *hw, int bdr_idx,
+ 	val |=3D ENETC_TBMR_SET_PRIO(prio);
+ 	enetc_txbdr_wr(hw, bdr_idx, ENETC_TBMR, val);
+ }
++
++enum bdcr_cmd_class {
++	BDCR_CMD_UNSPEC =3D 0,
++	BDCR_CMD_MAC_FILTER,
++	BDCR_CMD_VLAN_FILTER,
++	BDCR_CMD_RSS,
++	BDCR_CMD_RFS,
++	BDCR_CMD_PORT_GCL,
++	BDCR_CMD_RECV_CLASSIFIER,
++	__BDCR_CMD_MAX_LEN,
++	BDCR_CMD_MAX_LEN =3D __BDCR_CMD_MAX_LEN - 1,
++};
++
++/* class 5, command 0 */
++struct tgs_gcl_conf {
++	u8	atc;	/* init gate value */
++	u8	res[7];
++	union {
++		struct {
++			u8	res1[4];
++			__le16	acl_len;
++			u8	res2[2];
++		};
++		struct {
++			u32 cctl;
++			u32 ccth;
++		};
++	};
++};
++
++#define ENETC_CBDR_SGL_IOMEN	BIT(0)
++#define ENETC_CBDR_SGL_IPVEN	BIT(3)
++#define ENETC_CBDR_SGL_GTST	BIT(4)
++#define ENETC_CBDR_SGL_IPV_MASK 0xe
++
++/* gate control list entry */
++struct gce {
++	u32	period;
++	u8	gate;
++	u8	res[3];
++};
++
++/* tgs_gcl_conf address point to this data space */
++struct tgs_gcl_data {
++	u32	btl;
++	u32	bth;
++	u32	ct;
++	u32	cte;
++};
++
++/* class 5, command 1 */
++struct tgs_gcl_query {
++		u8	res[12];
++		union {
++			struct {
++				__le16	acl_len; /* admin list length */
++				__le16	ocl_len; /* operation list length */
++			};
++			struct {
++				u16 admin_list_len;
++				u16 oper_list_len;
++			};
++		};
++};
++
++/* tgs_gcl_query command response data format */
++struct tgs_gcl_resp {
++	u32 abtl;	/* base time */
++	u32 abth;
++	u32 act;	/* cycle time */
++	u32 acte;	/* cycle time extend */
++	u32 cctl;	/* config change time */
++	u32 ccth;
++	u32 obtl;	/* operation base time */
++	u32 obth;
++	u32 oct;	/* operation cycle time */
++	u32 octe;	/* operation cycle time extend */
++	u32 ccel;	/* config change error */
++	u32 cceh;
++};
++
++struct enetc_cbd {
++	union{
++		struct {
++			__le32	addr[2];
++			union {
++				__le32	opt[4];
++				struct tgs_gcl_conf	gcl_conf;
++				struct tgs_gcl_query	gcl_query;
++			};
++		};	/* Long format */
++		__le32 data[6];
++	};
++	__le16 index;
++	__le16 length;
++	u8 cmd;
++	u8 cls;
++	u8 _res;
++	u8 status_flags;
++};
++
++#define ENETC_PTCFPR(n)		(0x1910 + (n) * 4) /* n =3D [0 ..7] */
++#define ENETC_FPE		BIT(31)
++
++/* Port capability register 0 */
++#define ENETC_PCAPR0_PSFPM	BIT(10)
++#define ENETC_PCAPR0_PSFP	BIT(9)
++#define ENETC_PCAPR0_TSN	BIT(4)
++#define ENETC_PCAPR0_QBU	BIT(3)
++
++/* port time gating control register */
++#define ENETC_QBV_PTGCR_OFFSET		0x11a00
++#define ENETC_QBV_TGE			0x80000000
++#define ENETC_QBV_TGPE			BIT(30)
++#define ENETC_QBV_TGDROP_DISABLE	BIT(29)
++
++/* Port time gating capability register */
++#define ENETC_QBV_PTGCAPR_OFFSET	0x11a08
++#define ENETC_QBV_MAX_GCL_LEN_MASK	0xffff
++
++/* Port time gating admin gate list status register */
++#define ENETC_QBV_PTGAGLSR_OFFSET	0x11a10
++#define ENETC_QBV_CFG_PEND_MASK	0x00000002
++
++#define ENETC_TGLSTR			0xa200
++#define ENETC_TGS_MIN_DIS_MASK		0x80000000
++#define ENETC_MIN_LOOKAHEAD_MASK	0xffff
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_qos.c b/drivers/net=
+/ethernet/freescale/enetc/enetc_qos.c
+new file mode 100644
+index 000000000000..036bb39c7a0b
+--- /dev/null
++++ b/drivers/net/ethernet/freescale/enetc/enetc_qos.c
+@@ -0,0 +1,130 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/* Copyright 2019 NXP */
++
++#include "enetc.h"
++
++#include <net/pkt_sched.h>
++
++static u16 enetc_get_max_gcl_len(struct enetc_hw *hw)
++{
++	return enetc_rd(hw, ENETC_QBV_PTGCAPR_OFFSET)
++		& ENETC_QBV_MAX_GCL_LEN_MASK;
++}
++
++static int enetc_setup_taprio(struct net_device *ndev,
++			      struct tc_taprio_qopt_offload *admin_conf)
++{
++	struct enetc_ndev_priv *priv =3D netdev_priv(ndev);
++	struct enetc_cbd cbd =3D {.cmd =3D 0};
++	struct tgs_gcl_conf *gcl_config;
++	struct tgs_gcl_data *gcl_data;
++	struct gce *gce;
++	dma_addr_t dma;
++	u16 data_size;
++	u16 gcl_len;
++	u32 temp;
++	int i;
++
++	gcl_len =3D admin_conf->num_entries;
++	if (gcl_len > enetc_get_max_gcl_len(&priv->si->hw))
++		return -EINVAL;
++
++	if (admin_conf->enable) {
++		enetc_wr(&priv->si->hw,
++			 ENETC_QBV_PTGCR_OFFSET,
++			 temp & (~ENETC_QBV_TGE));
++		usleep_range(10, 20);
++		enetc_wr(&priv->si->hw,
++			 ENETC_QBV_PTGCR_OFFSET,
++			 temp | ENETC_QBV_TGE);
++	} else {
++		enetc_wr(&priv->si->hw,
++			 ENETC_QBV_PTGCR_OFFSET,
++			 temp & (~ENETC_QBV_TGE));
++		return 0;
++	}
++
++	/* Configure the (administrative) gate control list using the
++	 * control BD descriptor.
++	 */
++	gcl_config =3D &cbd.gcl_conf;
++
++	data_size =3D sizeof(struct tgs_gcl_data) + gcl_len * sizeof(struct gce);
++
++	gcl_data =3D kzalloc(data_size, __GFP_DMA | GFP_KERNEL);
++	if (!gcl_data)
++		return -ENOMEM;
++
++	gce =3D (struct gce *)(gcl_data + 1);
++
++	/* Since no initial state config in taprio, set gates open as default.
++	 */
++	gcl_config->atc =3D 0xff;
++	gcl_config->acl_len =3D cpu_to_le16(gcl_len);
++
++	if (!admin_conf->base_time) {
++		gcl_data->btl =3D
++			cpu_to_le32(enetc_rd(&priv->si->hw, ENETC_SICTR0));
++		gcl_data->bth =3D
++			cpu_to_le32(enetc_rd(&priv->si->hw, ENETC_SICTR1));
++	} else {
++		gcl_data->btl =3D
++			cpu_to_le32(lower_32_bits(admin_conf->base_time));
++		gcl_data->bth =3D
++			cpu_to_le32(upper_32_bits(admin_conf->base_time));
++	}
++
++	gcl_data->ct =3D cpu_to_le32(admin_conf->cycle_time);
++	gcl_data->cte =3D cpu_to_le32(admin_conf->cycle_time_extension);
++
++	for (i =3D 0; i < gcl_len; i++) {
++		struct tc_taprio_sched_entry *temp_entry;
++		struct gce *temp_gce =3D gce + i;
++
++		temp_entry =3D &admin_conf->entries[i];
++
++		temp_gce->gate =3D cpu_to_le32(temp_entry->gate_mask);
++		temp_gce->period =3D cpu_to_le32(temp_entry->interval);
++	}
++
++	cbd.length =3D cpu_to_le16(data_size);
++	cbd.status_flags =3D 0;
++
++	dma =3D dma_map_single(&priv->si->pdev->dev, gcl_data,
++			     data_size, DMA_TO_DEVICE);
++	if (dma_mapping_error(&priv->si->pdev->dev, dma)) {
++		netdev_err(priv->si->ndev, "DMA mapping failed!\n");
++		kfree(gcl_data);
++		return -ENOMEM;
++	}
++
++	cbd.addr[0] =3D lower_32_bits(dma);
++	cbd.addr[1] =3D upper_32_bits(dma);
++	cbd.cls =3D BDCR_CMD_PORT_GCL;
++
++	/* Updated by ENETC on completion of the configuration
++	 * command. A zero value indicates success.
++	 */
++	cbd.status_flags =3D 0;
++
++	enetc_send_cmd(priv->si, &cbd);
++
++	dma_unmap_single(&priv->si->pdev->dev, dma, data_size, DMA_TO_DEVICE);
++	kfree(gcl_data);
++
++	return 0;
++}
++
++int enetc_setup_tc_taprio(struct net_device *ndev, void *type_data)
++{
++	struct tc_taprio_qopt_offload *taprio =3D type_data;
++	struct enetc_ndev_priv *priv =3D netdev_priv(ndev);
++	int i;
++
++	for (i =3D 0; i < priv->num_tx_rings; i++)
++		enetc_set_bdr_prio(&priv->si->hw,
++				   priv->tx_ring[i]->index,
++				   taprio->enable ? i : 0);
++
++	return enetc_setup_taprio(ndev, taprio);
++}
+--=20
+2.17.1
 
-> 
->> +		timer->timer_ops->free(timer->odt);
->> +		return ret;
->> +	}
->> +
->> +	/* clean counter, remoteproc code will set the value */
->> +	timer->timer_ops->set_load(timer->odt, 0, 0);
->> +
->> +	return ret;
-> 
-> ret is 0 here, so return 0;
-
-Right, will fix.
-
-> 
->> +}
->> +
->> +/**
->> + * omap_rproc_start_timer - start a timer for a remoteproc
->> + * @timer: handle to a OMAP rproc timer
->> + *
->> + * This helper function is used to start a timer associated with a remoteproc,
->> + * obtained using the request_timer ops. The helper function needs to be
->> + * invoked by the driver to start the timer (during device initialization)
->> + * or to just resume the timer.
->> + *
->> + * Returns 0 on success, otherwise a failure as returned by DMTimer ops
->> + */
->> +static inline int omap_rproc_start_timer(struct omap_rproc_timer *timer)
->> +{
->> +	return timer->timer_ops->start(timer->odt);
->> +}
->> +
->> +/**
->> + * omap_rproc_stop_timer - stop a timer for a remoteproc
->> + * @timer: handle to a OMAP rproc timer
->> + *
->> + * This helper function is used to disable a timer associated with a
->> + * remoteproc, and needs to be called either during a device shutdown
->> + * or suspend operation. The separate helper function allows the driver
->> + * to just stop a timer without having to release the timer during a
->> + * suspend operation.
->> + *
->> + * Returns 0 on success, otherwise a failure as returned by DMTimer ops
->> + */
->> +static inline int omap_rproc_stop_timer(struct omap_rproc_timer *timer)
->> +{
->> +	return timer->timer_ops->stop(timer->odt);
->> +}
->> +
->> +/**
->> + * omap_rproc_release_timer - release a timer for a remoteproc
->> + * @timer: handle to a OMAP rproc timer
->> + *
->> + * This helper function is used primarily to release a timer associated
->> + * with a remoteproc. The dmtimer will be available for other clients to
->> + * use once released.
->> + *
->> + * Returns 0 on success, otherwise a failure as returned by DMTimer ops
->> + */
->> +static inline int omap_rproc_release_timer(struct omap_rproc_timer *timer)
->> +{
->> +	return timer->timer_ops->free(timer->odt);
->> +}
->> +
->> +/**
->> + * omap_rproc_enable_timers - enable the timers for a remoteproc
->> + * @rproc: handle of a remote processor
->> + * @configure: boolean flag used to acquire and configure the timer handle
->> + *
->> + * This function is used primarily to enable the timers associated with
->> + * a remoteproc. The configure flag is provided to allow the driver to
->> + * to either acquire and start a timer (during device initialization) or
->> + * to just start a timer (during a resume operation).
->> + */
->> +static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
->> +{
->> +	int i;
->> +	int ret = 0;
->> +	struct platform_device *tpdev;
->> +	struct dmtimer_platform_data *tpdata;
->> +	const struct omap_dm_timer_ops *timer_ops;
->> +	struct omap_rproc *oproc = rproc->priv;
->> +	struct omap_rproc_timer *timers = oproc->timers;
->> +	struct device *dev = rproc->dev.parent;
->> +	struct device_node *np = NULL;
->> +
->> +	if (oproc->num_timers <= 0)
->> +		return 0;
->> +
->> +	if (!configure)
->> +		goto start_timers;
->> +
->> +	for (i = 0; i < oproc->num_timers; i++) {
->> +		np = of_parse_phandle(dev->of_node, "timers", i);
->> +		if (!np) {
->> +			ret = -ENXIO;
->> +			dev_err(dev, "device node lookup for timer at index %d failed: %d\n",
->> +				i, ret);
->> +			goto free_timers;
->> +		}
->> +
->> +		tpdev = of_find_device_by_node(np);
->> +		if (!tpdev) {
->> +			ret = -ENODEV;
->> +			dev_err(dev, "could not get timer platform device\n");
->> +			goto put_node;
->> +		}
->> +
->> +		tpdata = dev_get_platdata(&tpdev->dev);
->> +		put_device(&tpdev->dev);
->> +		if (!tpdata) {
->> +			ret = -EINVAL;
->> +			dev_err(dev, "dmtimer pdata structure NULL\n");
->> +			goto put_node;
->> +		}
->> +
->> +		timer_ops = tpdata->timer_ops;
->> +		if (!timer_ops || !timer_ops->request_by_node ||
->> +		    !timer_ops->set_source || !timer_ops->set_load ||
->> +		    !timer_ops->free || !timer_ops->start ||
->> +		    !timer_ops->stop) {
->> +			ret = -EINVAL;
->> +			dev_err(dev, "device does not have required timer ops\n");
->> +			goto put_node;
->> +		}
->> +
->> +		timers[i].timer_ops = timer_ops;
->> +		ret = omap_rproc_request_timer(np, &timers[i]);
->> +		if (ret) {
->> +			dev_err(dev, "request for timer %p failed: %d\n", np,
->> +				ret);
->> +			goto put_node;
->> +		}
->> +		of_node_put(np);
->> +	}
->> +
->> +start_timers:
->> +	for (i = 0; i < oproc->num_timers; i++)
->> +		omap_rproc_start_timer(&timers[i]);
->> +	return 0;
->> +
->> +put_node:
->> +	of_node_put(np);
->> +free_timers:
->> +	while (i--) {
->> +		omap_rproc_release_timer(&timers[i]);
->> +		timers[i].odt = NULL;
->> +		timers[i].timer_ops = NULL;
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +/**
->> + * omap_rproc_disable_timers - disable the timers for a remoteproc
->> + * @rproc: handle of a remote processor
->> + * @configure: boolean flag used to release the timer handle
->> + *
->> + * This function is used primarily to disable the timers associated with
->> + * a remoteproc. The configure flag is provided to allow the driver to
->> + * to either stop and release a timer (during device shutdown) or to just
->> + * stop a timer (during a suspend operation).
->> + */
->> +static int omap_rproc_disable_timers(struct rproc *rproc, bool configure)
->> +{
->> +	int i;
->> +	struct omap_rproc *oproc = rproc->priv;
->> +	struct omap_rproc_timer *timers = oproc->timers;
->> +
->> +	if (oproc->num_timers <= 0)
->> +		return 0;
->> +
->> +	for (i = 0; i < oproc->num_timers; i++) {
->> +		omap_rproc_stop_timer(&timers[i]);
->> +		if (configure) {
->> +			omap_rproc_release_timer(&timers[i]);
->> +			timers[i].odt = NULL;
->> +			timers[i].timer_ops = NULL;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   /**
->>    * omap_rproc_mbox_callback() - inbound mailbox message handler
->>    * @client: mailbox client pointer used for requesting the mailbox channel
->> @@ -226,6 +449,12 @@ static int omap_rproc_start(struct rproc *rproc)
->>   		goto put_mbox;
->>   	}
->>   
->> +	ret = omap_rproc_enable_timers(rproc, true);
->> +	if (ret) {
->> +		dev_err(dev, "omap_rproc_enable_timers failed: %d\n", ret);
->> +		goto put_mbox;
->> +	}
->> +
->>   	reset_control_deassert(oproc->reset);
->>   
->>   	return 0;
->> @@ -239,9 +468,14 @@ static int omap_rproc_start(struct rproc *rproc)
->>   static int omap_rproc_stop(struct rproc *rproc)
->>   {
->>   	struct omap_rproc *oproc = rproc->priv;
->> +	int ret;
->>   
->>   	reset_control_assert(oproc->reset);
->>   
->> +	ret = omap_rproc_disable_timers(rproc, true);
->> +	if (ret)
->> +		return ret;
->> +
->>   	mbox_free_channel(oproc->mbox);
->>   
->>   	return 0;
->> @@ -548,6 +782,30 @@ static int omap_rproc_probe(struct platform_device *pdev)
->>   	if (ret)
->>   		goto free_rproc;
->>   
->> +	/*
->> +	 * Timer nodes are directly used in client nodes as phandles, so
->> +	 * retrieve the count using appropriate size
->> +	 */
->> +	oproc->num_timers = of_property_count_elems_of_size(np, "timers",
-> 
-> Didn't this get a ti, prefix?
-
-Yes, will change that.
-
-> And I think you should use of_count_phandle_with_args() instead.
-
-True, will fix that also.
-
--Tero
-
-> 
-> Regards,
-> Bjorn
-> 
->> +							    sizeof(phandle));
->> +	if (oproc->num_timers <= 0) {
->> +		dev_dbg(&pdev->dev, "device does not have timers, status = %d\n",
->> +			oproc->num_timers);
->> +		oproc->num_timers = 0;
->> +	}
->> +
->> +	if (oproc->num_timers) {
->> +		oproc->timers = devm_kzalloc(&pdev->dev, sizeof(*oproc->timers)
->> +					     * oproc->num_timers, GFP_KERNEL);
->> +		if (!oproc->timers) {
->> +			ret = -ENOMEM;
->> +			goto free_rproc;
->> +		}
->> +
->> +		dev_dbg(&pdev->dev, "device has %d tick timers\n",
->> +			oproc->num_timers);
->> +	}
->> +
->>   	ret = of_reserved_mem_device_init(&pdev->dev);
->>   	if (ret) {
->>   		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
->> -- 
->> 2.17.1
->>
->> --
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
