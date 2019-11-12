@@ -2,97 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EECFF9A1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 21:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DDA8F9A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:55:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfKLUAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 15:00:18 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36722 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfKLUAR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 15:00:17 -0500
-Received: by mail-qk1-f195.google.com with SMTP id d13so15630554qko.3;
-        Tue, 12 Nov 2019 12:00:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sUgul/A9cCSF36Xg/vqaHA0cEImiVIRh9iAQCFNRdHQ=;
-        b=HzEVLDql49dOVwTMZt9IJDllV61HRuag1vF5aQdcuQ4PoiQNz/LWZ1bbSiAEI1/Vw7
-         DW9kfGONyd8NihhAqJNDEPWlb7bjjYSmv/FjLZR52t+3EMmdg73bCOuUj/2CMsSSFiES
-         5yjBHKF+UMnr3FObFsxN3msgz2Di972TS6wdu9ztmhlPFITx37jINsXm1fgrKxb/lAos
-         SCHrJsZFHTmL/YfLZUIy8WfHtYntAaVYkyy9pF2SAmDSXBJV5qxQTDpssyoa5W1DzfGE
-         6+MWvd8AlcA5s7yDaH1ZW3mgT30vZsuGLvbBPD68VNYbZtnSJg7eQIfZFHSOk4f63JQm
-         o1vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sUgul/A9cCSF36Xg/vqaHA0cEImiVIRh9iAQCFNRdHQ=;
-        b=lB7BpEa6MJXOHUeNta4/wRpbUBUROmQnG8yaW/kOyrnpUqxKX53Hy20uRvXrxFUp00
-         YgkSzeAYrHp2OWf7x1YDKakyduTvRztcfL56CYmaOYVRfFIH7BjWb3JJWu2VyDFmLmAd
-         05OzOyVuKcdXevDDkHISXhTW93sLzE9psIp4+FGL6pRadSvzptXg2EZ7zCPjxxNXUyCS
-         0ij3kGVktUOqKmr9OSTyCYmTw7NyJgjwhL2K1MHX1otc1W5z3M7s91VSvl230fp1VjBt
-         QHwfjMNhGigxDy+U6FtfsLqe2dmeSeJdFbvPW/esJe5NNNmtiMju4vc8s3RUi0eeh46h
-         g00w==
-X-Gm-Message-State: APjAAAW6Q6xFOHLLm7o2Ru0oQUkh9ZA4+yZ/lqUWUnPg34tIa7IJhI+M
-        ecB2Ew5Q6ePeSLRBIek3owE=
-X-Google-Smtp-Source: APXvYqy1f9ekVu+VnvCTbNVtKxjC7eHIzuOiXxnRVAjWeIcCFuTmMakBzLxZOfrwLbUN6A2aMk6Vmw==
-X-Received: by 2002:a37:f915:: with SMTP id l21mr17001532qkj.209.1573588816759;
-        Tue, 12 Nov 2019 12:00:16 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id h186sm9436141qkf.64.2019.11.12.12.00.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 12:00:16 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
-        rfontana@redhat.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, allison@lohutok.net
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: as102_fe.c: fix checkpatch.pl error
-Date:   Tue, 12 Nov 2019 16:52:48 -0300
-Message-Id: <20191112195248.36084-1-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726970AbfKLTzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 14:55:48 -0500
+Received: from mga12.intel.com ([192.55.52.136]:21354 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726376AbfKLTzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 14:55:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 11:55:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,297,1569308400"; 
+   d="scan'208";a="194434538"
+Received: from joshbuck-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.20.68])
+  by orsmga007.jf.intel.com with ESMTP; 12 Nov 2019 11:55:44 -0800
+Date:   Tue, 12 Nov 2019 21:55:42 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jmorris@namei.org
+Subject: [GIT PULL] tpmdd updates for Linux v5.5
+Message-ID: <20191112195542.GA10619@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+1. Support for Cr50 fTPM.
+2. Support for fTPM on AMD Zen+ CPUs.
+3. TPM 2.0 trusted keys code relocated from drivers/char/tpm to
+   security/keys.
 
-This patch fixes the following scripts/checkpatch.pl error:
+/Jarkko
 
-ERROR: open brace '{' following function definitions go on the next line
-+static int as102_fe_get_tune_settings(struct dvb_frontend *fe,
-+			struct dvb_frontend_tune_settings *settings) {
+The following changes since commit eb094f06963bb0fd8134c6a9b805d4ad0002a7d4:
 
-Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
----
- drivers/media/dvb-frontends/as102_fe.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+  Merge branch 'x86-pti-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2019-11-12 10:53:24 -0800)
 
-diff --git a/drivers/media/dvb-frontends/as102_fe.c b/drivers/media/dvb-frontends/as102_fe.c
-index 496ebb8176c0..bc72d954dc1f 100644
---- a/drivers/media/dvb-frontends/as102_fe.c
-+++ b/drivers/media/dvb-frontends/as102_fe.c
-@@ -290,7 +290,8 @@ static int as102_fe_get_frontend(struct dvb_frontend *fe,
- }
- 
- static int as102_fe_get_tune_settings(struct dvb_frontend *fe,
--			struct dvb_frontend_tune_settings *settings) {
-+			struct dvb_frontend_tune_settings *settings)
-+{
- 
- 	settings->min_delay_ms = 1000;
- 
--- 
-2.24.0
+are available in the Git repository at:
 
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20191112
+
+for you to fetch changes up to 0b40dbcbba923b5379bd1d601edd6d51e23fe72c:
+
+  KEYS: trusted: Remove set but not used variable 'keyhndl' (2019-11-12 21:45:37 +0200)
+
+----------------------------------------------------------------
+tpmdd update for Linux v5.5
+
+----------------------------------------------------------------
+Andrey Pronin (2):
+      dt-bindings: tpm: document properties for cr50
+      tpm: tpm_tis_spi: Support cr50 devices
+
+Hans de Goede (1):
+      tpm: Switch to platform_get_irq_optional()
+
+Ivan Lazeev (1):
+      tpm_crb: fix fTPM on AMD Zen+ CPUs
+
+James Bottomley (1):
+      tpm: use GFP_KERNEL instead of GFP_HIGHMEM for tpm_buf
+
+Jarkko Sakkinen (1):
+      tpm: Remove duplicate code from caps_show() in tpm-sysfs.c
+
+Jerry Snitselaar (2):
+      tpm: provide a way to override the chip returned durations
+      tpm_tis: override durations for STM tpm with firmware 1.2.8.28
+
+Stephen Boyd (4):
+      tpm: Add a flag to indicate TPM power is managed by firmware
+      tpm: tpm_tis_spi: Introduce a flow control callback
+      tpm: tpm_tis_spi: Cleanup includes
+      tpm: tpm_tis_spi: Drop THIS_MODULE usage from driver struct
+
+Sumit Garg (4):
+      tpm: Move tpm_buf code to include/linux/
+      KEYS: Use common tpm_buf for trusted and asymmetric keys
+      KEYS: trusted: Create trusted keys subsystem
+      KEYS: trusted: Move TPM2 trusted keys code
+
+Tadeusz Struk (1):
+      tpm: add check after commands attribs tab allocation
+
+zhengbin (1):
+      KEYS: trusted: Remove set but not used variable 'keyhndl'
+
+ .../bindings/security/tpm/google,cr50.txt          |  19 ++
+ crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
+ drivers/char/tpm/Kconfig                           |   7 +
+ drivers/char/tpm/Makefile                          |   4 +-
+ drivers/char/tpm/tpm-interface.c                   |  64 +---
+ drivers/char/tpm/tpm-sysfs.c                       |  45 +--
+ drivers/char/tpm/tpm.h                             | 248 +---------------
+ drivers/char/tpm/tpm1-cmd.c                        |  15 +
+ drivers/char/tpm/tpm2-cmd.c                        | 311 +-------------------
+ drivers/char/tpm/tpm_crb.c                         | 123 +++++---
+ drivers/char/tpm/tpm_tis.c                         |   2 +-
+ drivers/char/tpm/tpm_tis_core.c                    |  79 +++++
+ drivers/char/tpm/tpm_tis_spi.c                     | 143 +++++----
+ drivers/char/tpm/tpm_tis_spi.h                     |  53 ++++
+ drivers/char/tpm/tpm_tis_spi_cr50.c                | 322 +++++++++++++++++++++
+ include/Kbuild                                     |   1 -
+ include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
+ include/linux/tpm.h                                | 250 ++++++++++++++--
+ security/keys/Makefile                             |   2 +-
+ security/keys/trusted-keys/Makefile                |   8 +
+ .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  98 +++----
+ security/keys/trusted-keys/trusted_tpm2.c          | 314 ++++++++++++++++++++
+ 22 files changed, 1371 insertions(+), 887 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/google,cr50.txt
+ create mode 100644 drivers/char/tpm/tpm_tis_spi.h
+ create mode 100644 drivers/char/tpm/tpm_tis_spi_cr50.c
+ rename include/keys/{trusted.h => trusted_tpm.h} (77%)
+ create mode 100644 security/keys/trusted-keys/Makefile
+ rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
+ create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
