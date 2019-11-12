@@ -2,113 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78679F9898
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:27:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D179FF98A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 19:29:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfKLS1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 13:27:11 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43526 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfKLS1K (ORCPT
+        id S1727002AbfKLS34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 13:29:56 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:40889 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726718AbfKLS34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 13:27:10 -0500
-Received: by mail-wr1-f66.google.com with SMTP id n1so19619637wra.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 10:27:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+1crLA0CDKaHQwRJPotAhe5OcKExhLg2j+GgM+2/R+w=;
-        b=WOTe4Rk++ZKTe5OkVwhtp2PBDWd64FRPeMbBRl6vaLQK18RMPEdPfYp1O3CW8xOoY9
-         Uf6XLg3iOFbWpfV6RgKHYqs+4Q1kv18AyOlSw7nERne80NjZneMrQHdcN76U6zjQI4RW
-         baX285iYeAGi75nrGFHBLd22pKNgZQ55b3fSs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=+1crLA0CDKaHQwRJPotAhe5OcKExhLg2j+GgM+2/R+w=;
-        b=hwFaDkiwpQmOOLGwDKXO6mbplsaGRFx/7sRX7rVx4/04ieJOWCySashFAudtv4Nafk
-         t50ASI8amrB04vc7coib6HQB1yb81rTTW4oWegTX3yFD+UfgeJHa9kFupk+VI4e5jbUU
-         R/5fbAhMNuaJ2WJ2pSgq9X6ixXANFBZbMhX6k+PdiH8xha1nxEEaU3ckxx8inYhEQhs6
-         ljauHgU398HoMcQCXgHuYdbNIaGuLa7SujkN5gmjn8Fca8D00JXYDEthBCUoZRL0UlZi
-         rJklYBM566uFL567JsMVMuSQ4456IyIaWHH9g6yOl1KPhaToK2/aFUexX8JJAlaQejz9
-         pXuQ==
-X-Gm-Message-State: APjAAAXQcUMwn0SdrdNEqZjjHxnRbjInLdX18OOvaKZ1p02YdCUNhlKB
-        QzwofoU/2ZvyP5i1zaEjAmeULg==
-X-Google-Smtp-Source: APXvYqwZ7ywdeBuu1gQvv84kaTS38RQgBQlM0G4DKyDzEaNTlWyLXFzRg8XRso2b/Wetke5i+xxMMQ==
-X-Received: by 2002:adf:ed4e:: with SMTP id u14mr27912754wro.132.1573583228225;
-        Tue, 12 Nov 2019 10:27:08 -0800 (PST)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id d202sm3980158wmd.47.2019.11.12.10.27.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 10:27:07 -0800 (PST)
-Date:   Tue, 12 Nov 2019 19:27:05 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Wambui Karuga <wambui.karugax@gmail.com>
-Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/print: add DRM_DEV_WARN macro
-Message-ID: <20191112182705.GL23790@phenom.ffwll.local>
-Mail-Followup-To: Wambui Karuga <wambui.karugax@gmail.com>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        Tue, 12 Nov 2019 13:29:56 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0ThvJW5U_1573583388;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0ThvJW5U_1573583388)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 13 Nov 2019 02:29:51 +0800
+Subject: Re: [PATCH] mm: migrate: handle freed page at the first place
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     mgorman@techsingularity.net, vbabka@suse.cz,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-References: <20191112170909.13733-1-wambui.karugax@gmail.com>
+References: <1573510165-113395-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191112080401.GA2763@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <f9bca12a-58ff-1566-e9e6-a687d3ba14b9@linux.alibaba.com>
+Date:   Tue, 12 Nov 2019 10:29:46 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112170909.13733-1-wambui.karugax@gmail.com>
-X-Operating-System: Linux phenom 5.2.0-3-amd64 
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191112080401.GA2763@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 08:09:09PM +0300, Wambui Karuga wrote:
-> Add the DRM_DEV_WARN helper macro for printing warnings
-> that use device pointers in their log output format.
-> DRM_DEV_WARN can replace the use of dev_warn in such cases.
-> 
-> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 
-Can you pls include this in the patch to add the first user with rockchip?
-Otherwise always a bit awkward when we add functions without callers.
 
-lgtm otherwise.
--Daniel
+On 11/12/19 12:04 AM, Michal Hocko wrote:
+> On Tue 12-11-19 06:09:25, Yang Shi wrote:
+>> When doing migration if the freed page is met, we just return without
+>> migrating it since it is pointless to migrate a freed page.  But, the
+>> current code did two things before handling freed page:
+>>
+>> 1. Return -ENOMEM if the page is THP and THP migration is not supported.
+>> 2. Allocate target page unconditionally.
+>>
+>> Both makes not too much sense.  If we handle freed page at the first place
+>> we don't have to worry about allocating/freeing target page and split
+>> THP at all.
+>>
+>> For example (worst case) if we are trying to migrate a freed THP without
+>> THP migration supported, the migrate_pages() would just split the THP then
+>> retry to migrate base pages one by one by pointless allocating and freeing
+>> pages, this is just waste of time.
+>>
+>> I didn't run into any actual problem with the current code (or I may
+>> just not notice it yet), it was found by visual inspection.
+> It would be preferable to accompany a change like this with some actual
+> numbers. A race with page freeing should be a very rare situation. Maybe
+> it is not under some workloads but that would better be checked and
+> documented. I also do not like to do page state changes for THP
+> migration without a support. I cannot really say this is 100% correct
 
-> ---
->  include/drm/drm_print.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-> index 5b8049992c24..6ddf91c0cb29 100644
-> --- a/include/drm/drm_print.h
-> +++ b/include/drm/drm_print.h
-> @@ -329,6 +329,15 @@ void drm_err(const char *format, ...);
->  #define DRM_WARN_ONCE(fmt, ...)						\
->  	_DRM_PRINTK(_once, WARNING, fmt, ##__VA_ARGS__)
->  
-> +/**
-> + * Warning output.
-> + *
-> + * @dev: device pointer
-> + * @fmt: printf() like format string.
-> + */
-> +#define DRM_DEV_WARN(dev, fmt, ...)					\
-> +	drm_dev_printk(dev, KERN_WARNING, fmt, ##__VA_ARGS__)
-> +
->  /**
->   * Error output.
->   *
-> -- 
-> 2.17.1
-> 
+However that THP will not be migrated actually, just will be freed by 
+put_page().
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> from top of my head and I do not see a sufficient justification to go
+> and chase all those tiny details because that is time consuming.
+>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>>   mm/migrate.c | 18 +++++++-----------
+>>   1 file changed, 7 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/mm/migrate.c b/mm/migrate.c
+>> index 4fe45d1..ef96997 100644
+>> --- a/mm/migrate.c
+>> +++ b/mm/migrate.c
+>> @@ -1170,13 +1170,6 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
+>>   	int rc = MIGRATEPAGE_SUCCESS;
+>>   	struct page *newpage;
+>>   
+>> -	if (!thp_migration_supported() && PageTransHuge(page))
+>> -		return -ENOMEM;
+>> -
+>> -	newpage = get_new_page(page, private);
+>> -	if (!newpage)
+>> -		return -ENOMEM;
+>> -
+>>   	if (page_count(page) == 1) {
+>>   		/* page was freed from under us. So we are done. */
+>>   		ClearPageActive(page);
+>> @@ -1187,13 +1180,16 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
+>>   				__ClearPageIsolated(page);
+>>   			unlock_page(page);
+>>   		}
+>> -		if (put_new_page)
+>> -			put_new_page(newpage, private);
+>> -		else
+>> -			put_page(newpage);
+>>   		goto out;
+>>   	}
+>>   
+>> +	if (!thp_migration_supported() && PageTransHuge(page))
+>> +		return -ENOMEM;
+>> +
+>> +	newpage = get_new_page(page, private);
+>> +	if (!newpage)
+>> +		return -ENOMEM;
+>> +
+>>   	rc = __unmap_and_move(page, newpage, force, mode);
+>>   	if (rc == MIGRATEPAGE_SUCCESS)
+>>   		set_page_owner_migrate_reason(newpage, reason);
+>> -- 
+>> 1.8.3.1
+>>
+
