@@ -2,95 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 693A2F8ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08159F8EDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfKLLos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:44:48 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38558 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfKLLor (ORCPT
+        id S1727170AbfKLLqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:46:03 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60126 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727015AbfKLLp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:44:47 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v8so17427631ljh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 03:44:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AGTZ4z4pclCTP3TaM1mEYITa39uvJa7zWe2VFGpsFtQ=;
-        b=YQjFpZVeaTEeO+20aG1CP57qzaQF/K4s2mQxLVMo5aM1+z9UfnwfSbr7sBrXNeUdSb
-         pNj4MTofPx+/HhftTnVorbdrJyVPud+NQIUoL22TugPPO+/VITy8aOcQJDyHzDHybi94
-         wduFdCh0K/RrDq1CbsTyyRTTX8ODY/dacP36k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AGTZ4z4pclCTP3TaM1mEYITa39uvJa7zWe2VFGpsFtQ=;
-        b=gZzUza3Ey0RyCntqckSa8XWs3jWsLXfUJnmWkx3RmKLpAaiWJHZI1VxDBNz/MsZYeg
-         w3wEQ2n+M0Xb1JtjGo/CNjzNy7ZMeFwbTRmtdIPDS9KdngGfH4juQaUXu+bZVSvxfRI/
-         wjG+OO3vSNye9q8qN6bBwbXYRVcLFMtenOK+6yD8+50FmPiQKtQOY1cFpVqpYbTpPnS9
-         1hAxGfiWkELO91whvaWnO8zmt+Xqy7E49994TjJfuOVvnLTemxMRDhr35Mao6pRwdCjN
-         W0D/p/xXAPsV9z6h0jzOAvPOzMoBSkA9bcM6krNlXjIui8aUH32f4E85XDoWLv2w/8Gr
-         uikw==
-X-Gm-Message-State: APjAAAXFBOcLizKOJkP9ePeuSRefckbH5GcJhWnRNnVPIdnCkhHXz6Pl
-        /2uazNSUMY1jkO40Vbz5mGo0uw==
-X-Google-Smtp-Source: APXvYqy+lw2SLMQFCUkQpJRfNsuioc2JKvqERf+YtVC3KryQWbQkhR/tX0NqbPKizKDXtkq4OOdBtQ==
-X-Received: by 2002:a2e:8e28:: with SMTP id r8mr19360726ljk.21.1573559084029;
-        Tue, 12 Nov 2019 03:44:44 -0800 (PST)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id a22sm8189817ljn.58.2019.11.12.03.44.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Nov 2019 03:44:43 -0800 (PST)
-Subject: Re: [PATCH v7 0/2] Add support for Layerscape external interrupt
- lines
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Vladimir Oltean <olteanv@gmail.com>
-References: <20191107122115.6244-1-linux@rasmusvillemoes.dk>
- <ea802f081d1f1d4c5359707ff4553004@www.loen.fr>
- <184b684a-7712-a280-fdc2-83d7abd3cbd4@rasmusvillemoes.dk>
- <8e1877ab5a1fecace3b2383789bdf404@www.loen.fr>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <02f7a8ad-be85-b43a-be36-988d96ced056@rasmusvillemoes.dk>
-Date:   Tue, 12 Nov 2019 12:44:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 12 Nov 2019 06:45:58 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACBelmr106829;
+        Tue, 12 Nov 2019 06:45:48 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7shnx22v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 06:45:48 -0500
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id xACBeqhW106999;
+        Tue, 12 Nov 2019 06:45:47 -0500
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7shnx227-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 06:45:47 -0500
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xACBipeO017293;
+        Tue, 12 Nov 2019 11:45:50 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01wdc.us.ibm.com with ESMTP id 2w5n36e759-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 11:45:50 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACBjjvQ53412308
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 11:45:45 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA7B5112063;
+        Tue, 12 Nov 2019 11:45:44 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EFF2D112062;
+        Tue, 12 Nov 2019 11:45:39 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.45.124])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 11:45:39 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Vishal Verma <vishal.l.verma@intel.com>, peterz@infradead.org,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 05/16] libnvdimm: Move nd_region_attribute_group to device_type
+In-Reply-To: <157309902169.1582359.16828508538444551337.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157309899529.1582359.15358067933360719580.stgit@dwillia2-desk3.amr.corp.intel.com> <157309902169.1582359.16828508538444551337.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Tue, 12 Nov 2019 17:15:36 +0530
+Message-ID: <87zhh1s4gv.fsf@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <8e1877ab5a1fecace3b2383789bdf404@www.loen.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2019 11.58, Marc Zyngier wrote:
-> On 2019-11-12 11:27, Rasmus Villemoes wrote:
->> On 11/11/2019 11.24, Marc Zyngier wrote:
+Dan Williams <dan.j.williams@intel.com> writes:
 
->>> Applied to irqchip-next.
->>
->> Thanks! Can I assume that branch doesn't get rebased so 87cd38dfd9e6 is
->> a stable SHA1? I want to send a patch adding the node to ls1021a.dtsi,
->> and I hope not to have to wait another release cycle.
-> 
-> I usually try to avoid rebasing it, unless something really bad shows up.
-> 
-> Now, just adding a node to a DT shouldn't break anything, right? You
-> should be able to do that change and get things working magically once
-> this code hits mainline.
+> A 'struct device_type' instance can carry default attributes for the
+> device. Use this facility to remove the export of
+> nd_region_attribute_group and put the responsibility on the core rather
+> than leaf implementations to define this attribute.
+>
 
-Well, yes, but I wanted to refer to the binding documentation in the
-form of a reference to that SHA1. But I suppose I can just do that in
-the cover letter or below ---.
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-Thanks,
-Rasmus
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "Oliver O'Halloran" <oohall@gmail.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  arch/powerpc/platforms/pseries/papr_scm.c |    1 -
+>  drivers/acpi/nfit/core.c                  |    1 -
+>  drivers/nvdimm/e820.c                     |    6 ------
+>  drivers/nvdimm/of_pmem.c                  |    6 ------
+>  drivers/nvdimm/region_devs.c              |    4 ++--
+>  include/linux/libnvdimm.h                 |    1 -
+>  6 files changed, 2 insertions(+), 17 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
+> index 6ffda03a6349..6428834d7cd5 100644
+> --- a/arch/powerpc/platforms/pseries/papr_scm.c
+> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
+> @@ -285,7 +285,6 @@ int papr_scm_ndctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>  }
+>  
+>  static const struct attribute_group *region_attr_groups[] = {
+> -	&nd_region_attribute_group,
+>  	&nd_mapping_attribute_group,
+>  	NULL,
+>  };
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index b3213faf37b5..99e20b8b6ea0 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -2196,7 +2196,6 @@ static const struct attribute_group acpi_nfit_region_attribute_group = {
+>  };
+>  
+>  static const struct attribute_group *acpi_nfit_region_attribute_groups[] = {
+> -	&nd_region_attribute_group,
+>  	&nd_mapping_attribute_group,
+>  	&acpi_nfit_region_attribute_group,
+>  	NULL,
+> diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
+> index adde2864c6a4..9a971a59dec7 100644
+> --- a/drivers/nvdimm/e820.c
+> +++ b/drivers/nvdimm/e820.c
+> @@ -13,11 +13,6 @@ static const struct attribute_group *e820_pmem_attribute_groups[] = {
+>  	NULL,
+>  };
+>  
+> -static const struct attribute_group *e820_pmem_region_attribute_groups[] = {
+> -	&nd_region_attribute_group,
+> -	NULL,
+> -};
+> -
+>  static int e820_pmem_remove(struct platform_device *pdev)
+>  {
+>  	struct nvdimm_bus *nvdimm_bus = platform_get_drvdata(pdev);
+> @@ -45,7 +40,6 @@ static int e820_register_one(struct resource *res, void *data)
+>  
+>  	memset(&ndr_desc, 0, sizeof(ndr_desc));
+>  	ndr_desc.res = res;
+> -	ndr_desc.attr_groups = e820_pmem_region_attribute_groups;
+>  	ndr_desc.numa_node = e820_range_to_nid(res->start);
+>  	ndr_desc.target_node = ndr_desc.numa_node;
+>  	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+> diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
+> index 41348fa6b74c..c0b5ac36df9d 100644
+> --- a/drivers/nvdimm/of_pmem.c
+> +++ b/drivers/nvdimm/of_pmem.c
+> @@ -9,11 +9,6 @@
+>  #include <linux/ioport.h>
+>  #include <linux/slab.h>
+>  
+> -static const struct attribute_group *region_attr_groups[] = {
+> -	&nd_region_attribute_group,
+> -	NULL,
+> -};
+> -
+>  static const struct attribute_group *bus_attr_groups[] = {
+>  	&nvdimm_bus_attribute_group,
+>  	NULL,
+> @@ -65,7 +60,6 @@ static int of_pmem_region_probe(struct platform_device *pdev)
+>  		 * structures so passing a stack pointer is fine.
+>  		 */
+>  		memset(&ndr_desc, 0, sizeof(ndr_desc));
+> -		ndr_desc.attr_groups = region_attr_groups;
+>  		ndr_desc.numa_node = dev_to_node(&pdev->dev);
+>  		ndr_desc.target_node = ndr_desc.numa_node;
+>  		ndr_desc.res = &pdev->resource[i];
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index e4281f806adc..f97166583294 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -757,14 +757,14 @@ struct attribute_group nd_mapping_attribute_group = {
+>  };
+>  EXPORT_SYMBOL_GPL(nd_mapping_attribute_group);
+>  
+> -struct attribute_group nd_region_attribute_group = {
+> +static const struct attribute_group nd_region_attribute_group = {
+>  	.attrs = nd_region_attributes,
+>  	.is_visible = region_visible,
+>  };
+> -EXPORT_SYMBOL_GPL(nd_region_attribute_group);
+>  
+>  static const struct attribute_group *nd_region_attribute_groups[] = {
+>  	&nd_device_attribute_group,
+> +	&nd_region_attribute_group,
+>  	&nd_numa_attribute_group,
+>  	NULL,
+>  };
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index e9a4e25fc708..312248d334c7 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -67,7 +67,6 @@ enum {
+>  
+>  extern struct attribute_group nvdimm_bus_attribute_group;
+>  extern struct attribute_group nvdimm_attribute_group;
+> -extern struct attribute_group nd_region_attribute_group;
+>  extern struct attribute_group nd_mapping_attribute_group;
+>  
+>  struct nvdimm;
