@@ -2,90 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7413F883B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 06:51:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD14F8842
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 06:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfKLFu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 00:50:59 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45410 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725775AbfKLFu6 (ORCPT
+        id S1725944AbfKLFyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 00:54:17 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37268 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfKLFyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 00:50:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573537857;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=okQw7B6ttHkOXCh+ySF/sHsO0zOkI33D5WOZ3oZ0w7U=;
-        b=NsDKEfewAaPFbQU1ddl1QOTOLCKvPG0GaCV9AGBCNnf58wQ+JN6DbrqvKoR3A5pAIGbYIM
-        tJGv/VQ57HJTdxIyfaucBoj6rTU0K1f271VJT0n1Xr7QBmhkq+ejFXvfw+8A5UeeDrkjjA
-        COCExRVYRexrAmMeIKVbax3RBLmRGII=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-127-ek_CHtHyN5uiV7QJTlY1Pg-1; Tue, 12 Nov 2019 00:50:53 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3E06A1005500;
-        Tue, 12 Nov 2019 05:50:52 +0000 (UTC)
-Received: from localhost (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F24F761071;
-        Tue, 12 Nov 2019 05:50:48 +0000 (UTC)
-Date:   Mon, 11 Nov 2019 21:50:47 -0800 (PST)
-Message-Id: <20191111.215047.316217567209805516.davem@redhat.com>
-To:     po.liu@nxp.com
-Cc:     claudiu.manoil@nxp.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, vinicius.gomes@intel.com,
-        vladimir.oltean@nxp.com, alexandru.marginean@nxp.com,
-        xiaoliang.yang_1@nxp.com, roy.zang@nxp.com, mingkai.hu@nxp.com,
-        jerry.huang@nxp.com, leoyang.li@nxp.com
-Subject: Re: [net-next, 1/2] enetc: Configure the Time-Aware Scheduler via
- tc-taprio offload
-From:   David Miller <davem@redhat.com>
-In-Reply-To: <20191111042715.13444-1-Po.Liu@nxp.com>
-References: <20191111042715.13444-1-Po.Liu@nxp.com>
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: ek_CHtHyN5uiV7QJTlY1Pg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+        Tue, 12 Nov 2019 00:54:16 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z24so11114502pgu.4;
+        Mon, 11 Nov 2019 21:54:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Pz2HkKIovaqqpPUupDoBtWK16lPk+o/FyQvbc6QLS5M=;
+        b=G0wRXvqOFdEV7bXg4ol9lkWT/y/vj0Xifu6AIvHVi1nknJRc82e9x1LkArp2SxQBtg
+         JqdFyXV9JdcTnOUV9Dem46mna+k9ExUpJsKO0ebhXRe/Y0nYkKgwJr0xyYf0FX9yoaSs
+         tlD2COgwRJ1DthwQY16mmCT8UrirA1LEePtUUZ3ZOfBeiuE7eXUH1ReY9OBHCXhkIpvg
+         izOA9PZVyMWiB3R5la3HTtxCUxBXQGJyDUYXYIXe/fTYiD4iyZN5shm3R5m9p0x8xJBT
+         Q6Nbsvnx4SKicAMz6MlgmP3+BVM0eoplSg+c90JBbq+v6DuKZNh3XttE+wQ0WdLHi8Je
+         RLRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Pz2HkKIovaqqpPUupDoBtWK16lPk+o/FyQvbc6QLS5M=;
+        b=AekIi2vvPjZjUqRYAAAdiAlJMKYSKYaY4erXyBRziBZjxex8BAnNKsuUOtlz9CWaWe
+         eQbf1FS3oZTrpKU7Pb/nd56eut3b7gV4qLanim3tOog6awB2sZkEBOVhsMgGtKLZ/nJE
+         yNHiHruTwOXDv70qIrztv/PNoeGNricPzZCxrh5T+XKBDDDvHQ7OpSzMwV1Nqor+28N3
+         oayPhEK6FZXLs8TKq0ex2zlLciGKOaYSeafeGTcy3+xyYFkVHmrg2N5VXmccwRDPGNYG
+         wc724C4xW8rcNvDkk3N0cTnVDRQwmn6kOFK/F2V+crgQflm/xF6mxyhtIJ/tpAd9IuBl
+         BR6A==
+X-Gm-Message-State: APjAAAVtBhdqv9F7wG3NNLl2G9ZwXuXTNHqGyNYzhemFGoTu6zn7tHQO
+        CuwVdHCRmVdaPuR8yiaRPm0=
+X-Google-Smtp-Source: APXvYqwEOsiqa3kenFA+c8Tvhbta0wzdTNEwNzr33dcd1IrpfCj11Xj6mZ5UM98KVW07ldEn1JwkXA==
+X-Received: by 2002:a17:90a:ec02:: with SMTP id l2mr3999094pjy.31.1573538055416;
+        Mon, 11 Nov 2019 21:54:15 -0800 (PST)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id d139sm23160178pfd.162.2019.11.11.21.54.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 21:54:14 -0800 (PST)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH 0/2] spi: add wakeup handling to SPI core
+Date:   Mon, 11 Nov 2019 21:54:09 -0800
+Message-Id: <20191112055412.192675-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Po Liu <po.liu@nxp.com>
-Date: Mon, 11 Nov 2019 04:41:26 +0000
+These patches add wakeup handling for SPI devices to SPI core, mirroring
+I2C subsystem. Users can mark devices as "wakeup-source" in device tree
+(or using static device properties) and SPI core will mark the primary
+interrupt line as wakeirq and mark the device as wakeup enabled.
 
-> +fsl-enetc-$(CONFIG_NET_SCH_TAPRIO) +=3D enetc_qos.o
+There is also an option to define a dedicated wake irq.
 
-Code is Kconfig guarded.
-> +=09case TC_SETUP_QDISC_TAPRIO:
-> +=09=09return enetc_setup_tc_taprio(ndev, type_data);
 
-Yet invoked unconditionally.
+Dmitry Torokhov (2):
+  spi: dt-bindings: spi-controller: add wakeup-source and interrupts
+  spi: wire up wakeup-source/wakeirq handling
 
-I can see just by reading your code that various configurations will
-result in link errors.
+ .../bindings/spi/spi-controller.yaml          | 23 ++++++++++++++++
+ drivers/spi/spi.c                             | 27 ++++++++++++++++++-
+ 2 files changed, 49 insertions(+), 1 deletion(-)
 
- ...
-> +int enetc_setup_tc_taprio(struct net_device *ndev, void *type_data)
-> +{
-> +=09struct tc_taprio_qopt_offload *taprio =3D type_data;
-> +=09struct enetc_ndev_priv *priv =3D netdev_priv(ndev);
-> +=09int i;
-> +
-> +=09for (i =3D 0; i < priv->num_tx_rings; i++)
-> +=09=09enetc_set_bdr_prio(&priv->si->hw,
-> +=09=09=09=09   priv->tx_ring[i]->index,
-> +=09=09=09=09   taprio->enable ? i : 0);
-> +
-> +=09return enetc_setup_taprio(ndev, taprio);
-> +}
-> --=20
-> 2.17.1
->=20
+-- 
+2.24.0.rc1.363.gb1bccd3e3d-goog
 
