@@ -2,117 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34090F8A17
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:04:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0261F8A35
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfKLIEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 03:04:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34054 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725283AbfKLIEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 03:04:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 33614B156;
-        Tue, 12 Nov 2019 08:04:02 +0000 (UTC)
-Date:   Tue, 12 Nov 2019 09:04:01 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     mgorman@techsingularity.net, vbabka@suse.cz,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
+        id S1727187AbfKLIM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 03:12:28 -0500
+Received: from regular1.263xmail.com ([211.150.70.205]:53274 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfKLIM2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 03:12:28 -0500
+Received: from localhost (unknown [192.168.165.103])
+        by regular1.263xmail.com (Postfix) with ESMTP id 4ACCB3F3;
+        Tue, 12 Nov 2019 16:05:07 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [192.168.60.65] (unknown [103.29.142.67])
+        by smtp.263.net (postfix) whith ESMTP id P28956T140214521083648S1573545889847809_;
+        Tue, 12 Nov 2019 16:05:05 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <a1e7a1b6f9fa5cb3f53851fe515b3e1c>
+X-RL-SENDER: kever.yang@rock-chips.com
+X-SENDER: yk@rock-chips.com
+X-LOGIN-NAME: kever.yang@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH 3/3] arm64: dts: rk3399: Add init voltage for vdd_log
+To:     Soeren Moch <smoch@web.de>, heiko@sntech.de
+Cc:     linux-rockchip@lists.infradead.org,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Peter Robinson <pbrobinson@gmail.com>,
+        Akash Gajjar <akash@openedev.com>,
+        Alexis Ballier <aballier@gentoo.org>,
+        =?UTF-8?Q?Andrius_=c5=a0tikonas?= <andrius@stikonas.eu>,
+        Andy Yan <andyshrk@gmail.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hugh Cole-Baker <sigmaris@gmail.com>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Xie <nick@khadas.com>,
+        Oskari Lemmela <oskari@lemmela.net>,
+        Pragnesh Patel <Pragnesh_Patel@mentor.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Vivek Unune <npcomplete13@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: migrate: handle freed page at the first place
-Message-ID: <20191112080401.GA2763@dhcp22.suse.cz>
-References: <1573510165-113395-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <20191111005158.25070-1-kever.yang@rock-chips.com>
+ <20191111005158.25070-3-kever.yang@rock-chips.com>
+ <ef8830f3-10d1-7b71-0e18-232f2eaeef2d@web.de>
+From:   Kever Yang <kever.yang@rock-chips.com>
+Message-ID: <1eaef5d5-c923-da56-b9c4-48d517b3c969@rock-chips.com>
+Date:   Tue, 12 Nov 2019 16:04:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573510165-113395-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ef8830f3-10d1-7b71-0e18-232f2eaeef2d@web.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 12-11-19 06:09:25, Yang Shi wrote:
-> When doing migration if the freed page is met, we just return without
-> migrating it since it is pointless to migrate a freed page.  But, the
-> current code did two things before handling freed page:
-> 
-> 1. Return -ENOMEM if the page is THP and THP migration is not supported.
-> 2. Allocate target page unconditionally.
-> 
-> Both makes not too much sense.  If we handle freed page at the first place
-> we don't have to worry about allocating/freeing target page and split
-> THP at all.
-> 
-> For example (worst case) if we are trying to migrate a freed THP without
-> THP migration supported, the migrate_pages() would just split the THP then
-> retry to migrate base pages one by one by pointless allocating and freeing
-> pages, this is just waste of time.
-> 
-> I didn't run into any actual problem with the current code (or I may
-> just not notice it yet), it was found by visual inspection.
 
-It would be preferable to accompany a change like this with some actual
-numbers. A race with page freeing should be a very rare situation. Maybe
-it is not under some workloads but that would better be checked and
-documented. I also do not like to do page state changes for THP
-migration without a support. I cannot really say this is 100% correct
-from top of my head and I do not see a sufficient justification to go
-and chase all those tiny details because that is time consuming.
+On 2019/11/11 下午4:42, Soeren Moch wrote:
+> On 11.11.19 01:51, Kever Yang wrote:
+>> Since there is no devfreq used for vdd_log, so the vdd_log(pwm regulator)
+>> will be 'enable' with the dts node at a default PWM state with high or low
+>> output. Both too high or too low for vdd_log is not good for the board,
+>> add init voltage for driver to make the regulator get into a know output.
+>>
+>> Note that this will be used by U-Boot for init voltage output, and this
+>> is very important for it may get system hang somewhere during system
+>> boot up with regulator enable and without this init value.
+> I think it's a good idea to include this setting in the main dts for the
+> boards (not in u-boot specific additions as is done now). But there is
+> (for some reason?) no documented binding for regulator-init-microvolt in
+> linux.
 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  mm/migrate.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 4fe45d1..ef96997 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1170,13 +1170,6 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
->  	int rc = MIGRATEPAGE_SUCCESS;
->  	struct page *newpage;
->  
-> -	if (!thp_migration_supported() && PageTransHuge(page))
-> -		return -ENOMEM;
-> -
-> -	newpage = get_new_page(page, private);
-> -	if (!newpage)
-> -		return -ENOMEM;
-> -
->  	if (page_count(page) == 1) {
->  		/* page was freed from under us. So we are done. */
->  		ClearPageActive(page);
-> @@ -1187,13 +1180,16 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
->  				__ClearPageIsolated(page);
->  			unlock_page(page);
->  		}
-> -		if (put_new_page)
-> -			put_new_page(newpage, private);
-> -		else
-> -			put_page(newpage);
->  		goto out;
->  	}
->  
-> +	if (!thp_migration_supported() && PageTransHuge(page))
-> +		return -ENOMEM;
-> +
-> +	newpage = get_new_page(page, private);
-> +	if (!newpage)
-> +		return -ENOMEM;
-> +
->  	rc = __unmap_and_move(page, newpage, force, mode);
->  	if (rc == MIGRATEPAGE_SUCCESS)
->  		set_page_owner_migrate_reason(newpage, reason);
-> -- 
-> 1.8.3.1
-> 
 
--- 
-Michal Hocko
-SUSE Labs
+Ohh, I forgot the kernel driver does not support this property.
+
+@Heiko, can we add this 'regulator-init-microvolt' without driver 
+support but adding document for
+
+it at dt-binding?
+
+
+Thanks,
+
+- Kever
+
+>
+> Regards,
+> Soeren
+>> CC: Elaine Zhang <zhangqing@rock-chips.com>
+>> CC: Peter Robinson <pbrobinson@gmail.com>
+>> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+>> ---
+>>
+>>   arch/arm64/boot/dts/rockchip/rk3399-evb.dts          | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-firefly.dts      | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts   | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts    | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts     | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts       | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts    | 1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi    | 1 +
+>>   9 files changed, 9 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-evb.dts b/arch/arm64/boot/dts/rockchip/rk3399-evb.dts
+>> index 77008dca45bc..fa241aeb11b0 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-evb.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-evb.dts
+>> @@ -65,6 +65,7 @@
+>>   		regulator-name = "vdd_center";
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		regulator-always-on;
+>>   		regulator-boot-on;
+>>   		status = "okay";
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+>> index 92de83dd4dbc..4e45269fcdff 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
+>> @@ -208,6 +208,7 @@
+>>   		regulator-boot-on;
+>>   		regulator-min-microvolt = <430000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		vin-supply = <&vcc_sys>;
+>>   	};
+>>   };
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+>> index c133e8d64b2a..692f3154edc3 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+>> @@ -100,6 +100,7 @@
+>>   		regulator-name = "vdd_log";
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		regulator-always-on;
+>>   		regulator-boot-on;
+>>   	};
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+>> index 4944d78a0a1c..c2ac80d99301 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+>> @@ -79,6 +79,7 @@
+>>   		regulator-boot-on;
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		vin-supply = <&vsys_3v3>;
+>>   	};
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts b/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts
+>> index 73be38a53796..c32abcc4ddc1 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts
+>> @@ -101,6 +101,7 @@
+>>   		regulator-boot-on;
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		vin-supply = <&vcc5v0_sys>;
+>>   	};
+>>   };
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+>> index 0541dfce924d..9d674c51f025 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+>> @@ -164,6 +164,7 @@
+>>   		regulator-boot-on;
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		vin-supply = <&vcc_sys>;
+>>   	};
+>>   };
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+>> index 19f7732d728c..7d856ce1d156 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+>> @@ -129,6 +129,7 @@
+>>   		regulator-boot-on;
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		vin-supply = <&vcc3v3_sys>;
+>>   	};
+>>   };
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>> index e544deb61d28..8fbccbc8bf47 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>> @@ -174,6 +174,7 @@
+>>   		regulator-boot-on;
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1700000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		vin-supply = <&vcc5v0_sys>;
+>>   	};
+>>   };
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+>> index 1bc1579674e5..f8e2cb8c0624 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+>> @@ -133,6 +133,7 @@
+>>   		regulator-boot-on;
+>>   		regulator-min-microvolt = <800000>;
+>>   		regulator-max-microvolt = <1400000>;
+>> +		regulator-init-microvolt = <950000>;
+>>   		vin-supply = <&vcc_sys>;
+>>   	};
+>>   };
+
+
