@@ -2,173 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD8FF8C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE7CF8C4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:55:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfKLJzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:55:03 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:35783 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726008AbfKLJzD (ORCPT
+        id S1727394AbfKLJz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:55:29 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33033 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfKLJz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:55:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573552502;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AdBHFyhioxfCvrwsJAry/REnsYtBUierHYY+S1ZJ0LQ=;
-        b=hKnWSFjvFfwUKEK3kqcI+JI4VUA9duvYB4BV1ZHDPXA3bdqZ9S8RaWVseLw72QJRSESHpA
-        8hedksMnD8C7OpkpCeYyb8c9baRP/KFje1iut0MuNFAjdH5S2uqrt2tKQMV7cjUdtNOODD
-        AQgaBjKNaEShebVf+F6Ot+KAFezfTuU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-343-lS6wqL5ROSi5zE9pjn3Wyg-1; Tue, 12 Nov 2019 04:55:01 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A36B91800D63;
-        Tue, 12 Nov 2019 09:54:59 +0000 (UTC)
-Received: from [10.36.116.54] (ovpn-116-54.ams2.redhat.com [10.36.116.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B35E061F58;
-        Tue, 12 Nov 2019 09:54:53 +0000 (UTC)
-From:   Auger Eric <eric.auger@redhat.com>
-Subject: Re: [PATCH v7 06/11] iommu/vt-d: Avoid duplicated code for PASID
- setup
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-Cc:     Yi Liu <yi.l.liu@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1571946904-86776-7-git-send-email-jacob.jun.pan@linux.intel.com>
-Message-ID: <552c55f3-a8d6-10aa-5dbc-5b2c45ad90d0@redhat.com>
-Date:   Tue, 12 Nov 2019 10:54:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Nov 2019 04:55:28 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iUStR-0007OB-Pn; Tue, 12 Nov 2019 10:55:25 +0100
+Date:   Tue, 12 Nov 2019 10:55:24 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [patch V2 08/16] x86/ioperm: Add bitmap sequence numberc
+In-Reply-To: <20191112092246.GY4131@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1911121051490.1833@nanos.tec.linutronix.de>
+References: <20191111220314.519933535@linutronix.de> <20191111223052.292300453@linutronix.de> <20191112092246.GY4131@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1571946904-86776-7-git-send-email-jacob.jun.pan@linux.intel.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: lS6wqL5ROSi5zE9pjn3Wyg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
+On Tue, 12 Nov 2019, Peter Zijlstra wrote:
+> On Mon, Nov 11, 2019 at 11:03:22PM +0100, Thomas Gleixner wrote:
+> > Add a globally unique sequence number which is incremented when ioperm() is
+> > changing the I/O bitmap of a task. Store the new sequence number in the
+> > io_bitmap structure and compare it along with the actual struct pointer
+> > with the one which was last loaded on a CPU. Only update the bitmap if
+> > either of the two changes. That should further reduce the overhead of I/O
+> > bitmap scheduling when there are only a few I/O bitmap users on the system.
+> 
+> > +	/* Update the sequence number to force an update in switch_to() */
+> > +	iobm->sequence = atomic64_add_return(1, &io_bitmap_sequence);
+> 
+> > +		if (tss->last_bitmap != iobm ||
+> > +		    tss->last_sequence != iobm->sequence)
+> > +			switch_to_update_io_bitmap(tss, iobm);
+> 
+> Initially I wondered why we need a globally unique sequence number if we
+> already check the struct iobitmap pointer. That ought to make the
+> sequence number per-object.
+> 
+> However, that breaks for memory re-use. So yes, we need that thing to be
+> global.
 
-On 10/24/19 9:54 PM, Jacob Pan wrote:
-> After each setup for PASID entry, related translation caches must be flus=
-hed.
-> We can combine duplicated code into one function which is less error pron=
-e.
->=20
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->  drivers/iommu/intel-pasid.c | 48 +++++++++++++++++----------------------=
-------
->  1 file changed, 18 insertions(+), 30 deletions(-)
->=20
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index e79d680fe300..ffbd416ed3b8 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -485,6 +485,21 @@ void intel_pasid_tear_down_entry(struct intel_iommu =
-*iommu,
->  =09=09devtlb_invalidation_with_pasid(iommu, dev, pasid);
->  }
-> =20
-> +static void pasid_flush_caches(struct intel_iommu *iommu,
-> +=09=09=09=09struct pasid_entry *pte,
-> +=09=09=09=09int pasid, u16 did)
-> +{
-> +=09if (!ecap_coherent(iommu->ecap))
-> +=09=09clflush_cache_range(pte, sizeof(*pte));
-> +
-> +=09if (cap_caching_mode(iommu->cap)) {
-> +=09=09pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> +=09=09iotlb_invalidation_with_pasid(iommu, did, pasid);
-> +=09} else {
-> +=09=09iommu_flush_write_buffer(iommu);
-> +=09}
-> +}
-> +
->  /*
->   * Set up the scalable mode pasid table entry for first only
->   * translation type.
-> @@ -530,16 +545,7 @@ int intel_pasid_setup_first_level(struct intel_iommu=
- *iommu,
->  =09/* Setup Present and PASID Granular Transfer Type: */
->  =09pasid_set_translation_type(pte, 1);
->  =09pasid_set_present(pte);
-> -
-> -=09if (!ecap_coherent(iommu->ecap))
-> -=09=09clflush_cache_range(pte, sizeof(*pte));
-> -
-> -=09if (cap_caching_mode(iommu->cap)) {
-> -=09=09pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> -=09=09iotlb_invalidation_with_pasid(iommu, did, pasid);
-> -=09} else {
-> -=09=09iommu_flush_write_buffer(iommu);
-> -=09}
-> +=09pasid_flush_caches(iommu, pte, pasid, did);
-> =20
->  =09return 0;
->  }
-> @@ -603,16 +609,7 @@ int intel_pasid_setup_second_level(struct intel_iomm=
-u *iommu,
->  =09 */
->  =09pasid_set_sre(pte);
->  =09pasid_set_present(pte);
-> -
-> -=09if (!ecap_coherent(iommu->ecap))
-> -=09=09clflush_cache_range(pte, sizeof(*pte));
-> -
-> -=09if (cap_caching_mode(iommu->cap)) {
-> -=09=09pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> -=09=09iotlb_invalidation_with_pasid(iommu, did, pasid);
-> -=09} else {
-> -=09=09iommu_flush_write_buffer(iommu);
-> -=09}
-> +=09pasid_flush_caches(iommu, pte, pasid, did);
-> =20
->  =09return 0;
->  }
-> @@ -646,16 +643,7 @@ int intel_pasid_setup_pass_through(struct intel_iomm=
-u *iommu,
->  =09 */
->  =09pasid_set_sre(pte);
->  =09pasid_set_present(pte);
-> -
-> -=09if (!ecap_coherent(iommu->ecap))
-> -=09=09clflush_cache_range(pte, sizeof(*pte));
-> -
-> -=09if (cap_caching_mode(iommu->cap)) {
-> -=09=09pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> -=09=09iotlb_invalidation_with_pasid(iommu, did, pasid);
-> -=09} else {
-> -=09=09iommu_flush_write_buffer(iommu);
-> -=09}
-> +=09pasid_flush_caches(iommu, pte, pasid, did);
-> =20
->  =09return 0;
->  }
->=20
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Actually with a global 64bit wide counter we can just avoid the pointer
+comparison. Assumed a ioperm() syscall every nanosecond it takes about 584
+years of uptime to wrap around. :)
 
-Thanks
+Thanks,
 
-Eric
+	tglx
 
