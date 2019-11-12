@@ -2,360 +2,260 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3FD3F902C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2828DF9043
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfKLNGR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 12 Nov 2019 08:06:17 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2086 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725985AbfKLNGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:06:16 -0500
-Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 8D190D1853C511971F3C;
-        Tue, 12 Nov 2019 13:06:14 +0000 (GMT)
-Received: from lhreml706-chm.china.huawei.com (10.201.108.55) by
- lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 12 Nov 2019 13:06:13 +0000
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- lhreml706-chm.china.huawei.com (10.201.108.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Tue, 12 Nov 2019 13:06:13 +0000
-Received: from lhreml710-chm.china.huawei.com ([169.254.81.184]) by
- lhreml710-chm.china.huawei.com ([169.254.81.184]) with mapi id
- 15.01.1713.004; Tue, 12 Nov 2019 13:06:14 +0000
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     Auger Eric <eric.auger@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-CC:     "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "vincent.stehle@arm.com" <vincent.stehle@arm.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "tina.zhang@intel.com" <tina.zhang@intel.com>,
-        Linuxarm <linuxarm@huawei.com>, "xuwei (O)" <xuwei5@huawei.com>
-Subject: RE: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-Thread-Topic: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-Thread-Index: AQHVN/CfwyE8ogH9wk6QxsmMIq08eqeIHQ3QgAALuICAABiYUA==
-Date:   Tue, 12 Nov 2019 13:06:13 +0000
-Message-ID: <76d9dc0274414887b04e11b9b6bda257@huawei.com>
-References: <20190711135625.20684-1-eric.auger@redhat.com>
- <f5b4b97b197d4bab8f3703eba2e966c4@huawei.com>
- <ebaded3e-8a5c-73dd-b3f7-7533a6e80146@redhat.com>
-In-Reply-To: <ebaded3e-8a5c-73dd-b3f7-7533a6e80146@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727109AbfKLNM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 08:12:58 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44718 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfKLNM5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 08:12:57 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q26so13300009pfn.11;
+        Tue, 12 Nov 2019 05:12:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UqWk9HRRlTClA1MgDNYI9u/VISdgynDYV5PkFkVS83Y=;
+        b=rMDFx86gjGk706pqeth2lXyBiuVnZfy+JTWZBlR31rkLhCOuBjOeOmqSBXO0pMEO9T
+         07rmOSJJPeqyxLUjDB/iS5o8JqzcrvOtv9RBLAJTh6OqmRE9W8+jmOmZE23e/Jg2e046
+         0jnueaNst1H+XCj2FiaZZbanUhcbaI3q1moqjvQNjMI8WwvhZAZyDl5sxTkwNb2DFQ6Z
+         6Mhl7MADRWcF0M4YKrP5/SZchJAob0fK/I9YSaI/uSsBrtQLGGXhB4RNUW6RPE6G1WnG
+         YJsBCTJVeNliprdjdIPV0eS9LIBmljhR3ZcEVkLOfSBFYauUVXPSUkHMukXYmBlqpO2r
+         0fqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=UqWk9HRRlTClA1MgDNYI9u/VISdgynDYV5PkFkVS83Y=;
+        b=AvmAAsKdbNso8Vn/jbMegiSmy52LUdAG3mft8inY5CLoHDd73PNeA+M+eN+rRYAMDH
+         CVP0aX9DOTHAlqWjNuchcgzviRvyGbrLFcMCrZrhS86NP3z65wU9S10KdYZRN8aPxity
+         Pt40wUvF0OHGDshZNnzRqk8ZGWWZ2njL8FRAwiI2A/O/nbK5PTFXuvB/HKOm94OwbCrF
+         IhkIlGb2N693UEvIoavffCbpNjc7Wgx8vlxZSt/QAciydzosmOeomHgku/0AForJ0IiO
+         NsxJb5Hqh8PT3FLavAROCZqQL1BJl1aUHAbM8n1hSpLCWCxEnocscSkfk2+1kPYkJ6GZ
+         z58w==
+X-Gm-Message-State: APjAAAXsaVzASS6dmQofESXZlRfnS1OyQ4rXrKw/OH1lmX9K7IK3He3P
+        zkM2DXk1OJZTNeYMgb5FFQXoqSYDDM8=
+X-Google-Smtp-Source: APXvYqxBiE5tNL6hjc/l9z34iA6lzx87hr6sA0evjl+ItykyOnK3sGo47p6hx0jEI+yWq7Ex6aQZrQ==
+X-Received: by 2002:a62:6884:: with SMTP id d126mr35249486pfc.109.1573564376230;
+        Tue, 12 Nov 2019 05:12:56 -0800 (PST)
+Received: from ziggy.stardust ([37.223.138.214])
+        by smtp.gmail.com with ESMTPSA id 82sm19760816pfa.115.2019.11.12.05.12.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2019 05:12:54 -0800 (PST)
+Subject: Re: [PATCH v4 11/11] arm64: dts: mt2712: use non-empty ranges for
+ usb-phy
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1573547796-29566-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1573547796-29566-11-git-send-email-chunfeng.yun@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <c23531cd-432d-1857-1e99-48d87956338e@gmail.com>
+Date:   Tue, 12 Nov 2019 14:12:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <1573547796-29566-11-git-send-email-chunfeng.yun@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
 
-> -----Original Message-----
-> From: Auger Eric [mailto:eric.auger@redhat.com]
-> Sent: 12 November 2019 11:29
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
-> eric.auger.pro@gmail.com; iommu@lists.linux-foundation.org;
-> linux-kernel@vger.kernel.org; kvm@vger.kernel.org;
-> kvmarm@lists.cs.columbia.edu; joro@8bytes.org;
-> alex.williamson@redhat.com; jacob.jun.pan@linux.intel.com;
-> yi.l.liu@intel.com; jean-philippe.brucker@arm.com; will.deacon@arm.com;
-> robin.murphy@arm.com
-> Cc: kevin.tian@intel.com; vincent.stehle@arm.com; ashok.raj@intel.com;
-> marc.zyngier@arm.com; tina.zhang@intel.com; Linuxarm
-> <linuxarm@huawei.com>; xuwei (O) <xuwei5@huawei.com>
-> Subject: Re: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-> 
-> Hi Shameer,
-> On 11/12/19 12:08 PM, Shameerali Kolothum Thodi wrote:
-> > Hi Eric,
-> >
-> >> -----Original Message-----
-> >> From: kvmarm-bounces@lists.cs.columbia.edu
-> >> [mailto:kvmarm-bounces@lists.cs.columbia.edu] On Behalf Of Eric Auger
-> >> Sent: 11 July 2019 14:56
-> >> To: eric.auger.pro@gmail.com; eric.auger@redhat.com;
-> >> iommu@lists.linux-foundation.org; linux-kernel@vger.kernel.org;
-> >> kvm@vger.kernel.org; kvmarm@lists.cs.columbia.edu; joro@8bytes.org;
-> >> alex.williamson@redhat.com; jacob.jun.pan@linux.intel.com;
-> >> yi.l.liu@intel.com; jean-philippe.brucker@arm.com; will.deacon@arm.com;
-> >> robin.murphy@arm.com
-> >> Cc: kevin.tian@intel.com; vincent.stehle@arm.com; ashok.raj@intel.com;
-> >> marc.zyngier@arm.com; tina.zhang@intel.com
-> >> Subject: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-> >>
-> >> This series brings the VFIO part of HW nested paging support
-> >> in the SMMUv3.
-> >>
-> >> The series depends on:
-> >> [PATCH v9 00/14] SMMUv3 Nested Stage Setup (IOMMU part)
-> >> (https://www.spinics.net/lists/kernel/msg3187714.html)
-> >>
-> >> 3 new IOCTLs are introduced that allow the userspace to
-> >> 1) pass the guest stage 1 configuration
-> >> 2) pass stage 1 MSI bindings
-> >> 3) invalidate stage 1 related caches
-> >>
-> >> They map onto the related new IOMMU API functions.
-> >>
-> >> We introduce the capability to register specific interrupt
-> >> indexes (see [1]). A new DMA_FAULT interrupt index allows to register
-> >> an eventfd to be signaled whenever a stage 1 related fault
-> >> is detected at physical level. Also a specific region allows
-> >> to expose the fault records to the user space.
-> >
-> > I am trying to get this running on one of our platform that has smmuv3 dual
-> > stage support. I am seeing some issues with this when an ixgbe vf dev is
-> > made pass-through and is behind a vSMMUv3 in Guest.
-> >
-> > Kernel used : https://github.com/eauger/linux/tree/v5.3.0-rc0-2stage-v9
-> > Qemu: https://github.com/eauger/qemu/tree/v4.1.0-rc0-2stage-rfcv5
-> >
-> > And this is my Qemu cmd line,
-> >
-> > ./qemu-system-aarch64
-> > -machine virt,kernel_irqchip=on,gic-version=3,iommu=smmuv3 -cpu host \
-> > -kernel Image \
-> > -drive if=none,file=ubuntu,id=fs \
-> > -device virtio-blk-device,drive=fs \
-> > -device vfio-pci,host=0000:01:10.1 \
-> > -bios QEMU_EFI.fd \
-> > -net none \
-> > -m 4G \
-> > -nographic -D -d -enable-kvm \
-> > -append "console=ttyAMA0 root=/dev/vda rw acpi=force"
-> >
-> > The basic ping from Guest works fine,
-> > root@ubuntu:~# ping 10.202.225.185
-> > PING 10.202.225.185 (10.202.225.185) 56(84) bytes of data.
-> > 64 bytes from 10.202.225.185: icmp_seq=2 ttl=64 time=0.207 ms
-> > 64 bytes from 10.202.225.185: icmp_seq=3 ttl=64 time=0.203 ms
-> > ...
-> >
-> > But if I increase ping packet size,
-> >
-> > root@ubuntu:~# ping -s 1024 10.202.225.185
-> > PING 10.202.225.185 (10.202.225.185) 1024(1052) bytes of data.
-> > 1032 bytes from 10.202.225.185: icmp_seq=22 ttl=64 time=0.292 ms
-> > 1032 bytes from 10.202.225.185: icmp_seq=23 ttl=64 time=0.207 ms
-> > From 10.202.225.169 icmp_seq=66 Destination Host Unreachable
-> > From 10.202.225.169 icmp_seq=67 Destination Host Unreachable
-> > From 10.202.225.169 icmp_seq=68 Destination Host Unreachable
-> > From 10.202.225.169 icmp_seq=69 Destination Host Unreachable
-> >
-> > And from Host kernel I get,
-> > [  819.970742] ixgbe 0000:01:00.1 enp1s0f1: 3 Spoofed packets detected
-> > [  824.002707] ixgbe 0000:01:00.1 enp1s0f1: 1 Spoofed packets detected
-> > [  828.034683] ixgbe 0000:01:00.1 enp1s0f1: 1 Spoofed packets detected
-> > [  830.050673] ixgbe 0000:01:00.1 enp1s0f1: 4 Spoofed packets detected
-> > [  832.066659] ixgbe 0000:01:00.1 enp1s0f1: 1 Spoofed packets detected
-> > [  834.082640] ixgbe 0000:01:00.1 enp1s0f1: 3 Spoofed packets detected
-> >
-> > Also noted that iperf cannot work as it fails to establish the connection with
-> iperf
-> > server.
-> >
-> > Please find attached the trace logs(vfio*, smmuv3*) from Qemu for your
-> reference.
-> > I haven't debugged this further yet and thought of checking with you if this is
-> > something you have seen already or not. Or maybe I am missing something
-> here?
-> 
-> Please can you try to edit and modify hw/vfio/common.c, function
-> vfio_iommu_unmap_notify
-> 
-> 
-> /*
->     if (size <= 0x10000) {
->         ustruct.info.cache = IOMMU_CACHE_INV_TYPE_IOTLB;
->         ustruct.info.granularity = IOMMU_INV_GRANU_ADDR;
->         ustruct.info.addr_info.flags = IOMMU_INV_ADDR_FLAGS_ARCHID;
->         if (iotlb->leaf) {
->             ustruct.info.addr_info.flags |=
-> IOMMU_INV_ADDR_FLAGS_LEAF;
->         }
->         ustruct.info.addr_info.archid = iotlb->arch_id;
->         ustruct.info.addr_info.addr = start;
->         ustruct.info.addr_info.granule_size = size;
->         ustruct.info.addr_info.nb_granules = 1;
->         trace_vfio_iommu_addr_inv_iotlb(iotlb->arch_id, start, size, 1,
->                                         iotlb->leaf);
->     } else {
-> */
->         ustruct.info.cache = IOMMU_CACHE_INV_TYPE_IOTLB;
->         ustruct.info.granularity = IOMMU_INV_GRANU_PASID;
->         ustruct.info.pasid_info.archid = iotlb->arch_id;
->         ustruct.info.pasid_info.flags = IOMMU_INV_PASID_FLAGS_ARCHID;
->         trace_vfio_iommu_asid_inv_iotlb(iotlb->arch_id);
-> //    }
-> 
-> This modification leads to invalidate the whole asid each time we get a
-> guest TLBI instead of invalidating the single IOVA (TLBI). On my end, I
-> saw this was the cause of such kind of issues. Please let me know if it
-> fixes your perf issues
 
-Yes, this seems to fix the issue.
-
-root@ubuntu:~# iperf -c 10.202.225.185
-------------------------------------------------------------
-Client connecting to 10.202.225.185, TCP port 5001
-TCP window size: 85.0 KByte (default)
-------------------------------------------------------------
-[  3] local 10.202.225.169 port 47996 connected with 10.202.225.185 port 5001
-[ ID] Interval       Transfer     Bandwidth
-[  3]  0.0-10.0 sec  2.27 GBytes  1.95 Gbits/sec
-root@ubuntu:~#
-
-But the performance seems to be very poor as this is a 10Gbps interface(Of course
-invalidating the whole asid may not be very helpful). It is interesting that why the
-single iova invalidation is not working.
-
- and then we may discuss further about the test
-> configuration.
-
-Sure. Please let me know.
-
-Cheers,
-Shameer 
-
-> Thanks
+On 12/11/2019 09:36, Chunfeng Yun wrote:
+> Use non-empty ranges for usb-phy to make the layout of
+> its registers clearer;
+> Replace deprecated compatible by generic
 > 
-> Eric
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> ---
+> v3~v4: no changes
 > 
+> v2: use generic compatible
+> ---
+>  arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 42 ++++++++++++-----------
+>  1 file changed, 22 insertions(+), 20 deletions(-)
 > 
-> 
-> >
-> > Please let me know.
-> >
-> > Thanks,
-> > Shameer
-> >
-> >> Best Regards
-> >>
-> >> Eric
-> >>
-> >> This series can be found at:
-> >> https://github.com/eauger/linux/tree/v5.3.0-rc0-2stage-v9
-> >>
-> >> It series includes Tina's patch steming from
-> >> [1] "[RFC PATCH v2 1/3] vfio: Use capability chains to handle device
-> >> specific irq" plus patches originally contributed by Yi.
-> >>
-> >> History:
-> >>
-> >> v8 -> v9:
-> >> - introduce specific irq framework
-> >> - single fault region
-> >> - iommu_unregister_device_fault_handler failure case not handled
-> >>   yet.
-> >>
-> >> v7 -> v8:
-> >> - rebase on top of v5.2-rc1 and especially
-> >>   8be39a1a04c1  iommu/arm-smmu-v3: Add a master->domain pointer
-> >> - dynamic alloc of s1_cfg/s2_cfg
-> >> - __arm_smmu_tlb_inv_asid/s1_range_nosync
-> >> - check there is no HW MSI regions
-> >> - asid invalidation using pasid extended struct (change in the uapi)
-> >> - add s1_live/s2_live checks
-> >> - move check about support of nested stages in domain finalise
-> >> - fixes in error reporting according to the discussion with Robin
-> >> - reordered the patches to have first iommu/smmuv3 patches and then
-> >>   VFIO patches
-> >>
-> >> v6 -> v7:
-> >> - removed device handle from bind/unbind_guest_msi
-> >> - added "iommu/smmuv3: Nested mode single MSI doorbell per domain
-> >>   enforcement"
-> >> - added few uapi comments as suggested by Jean, Jacop and Alex
-> >>
-> >> v5 -> v6:
-> >> - Fix compilation issue when CONFIG_IOMMU_API is unset
-> >>
-> >> v4 -> v5:
-> >> - fix bug reported by Vincent: fault handler unregistration now happens in
-> >>   vfio_pci_release
-> >> - IOMMU_FAULT_PERM_* moved outside of struct definition + small
-> >>   uapi changes suggested by Kean-Philippe (except fetch_addr)
-> >> - iommu: introduce device fault report API: removed the PRI part.
-> >> - see individual logs for more details
-> >> - reset the ste abort flag on detach
-> >>
-> >> v3 -> v4:
-> >> - took into account Alex, jean-Philippe and Robin's comments on v3
-> >> - rework of the smmuv3 driver integration
-> >> - add tear down ops for msi binding and PASID table binding
-> >> - fix S1 fault propagation
-> >> - put fault reporting patches at the beginning of the series following
-> >>   Jean-Philippe's request
-> >> - update of the cache invalidate and fault API uapis
-> >> - VFIO fault reporting rework with 2 separate regions and one mmappable
-> >>   segment for the fault queue
-> >> - moved to PATCH
-> >>
-> >> v2 -> v3:
-> >> - When registering the S1 MSI binding we now store the device handle. This
-> >>   addresses Robin's comment about discimination of devices beonging to
-> >>   different S1 groups and using different physical MSI doorbells.
-> >> - Change the fault reporting API: use VFIO_PCI_DMA_FAULT_IRQ_INDEX to
-> >>   set the eventfd and expose the faults through an mmappable fault region
-> >>
-> >> v1 -> v2:
-> >> - Added the fault reporting capability
-> >> - asid properly passed on invalidation (fix assignment of multiple
-> >>   devices)
-> >> - see individual change logs for more info
-> >>
-> >>
-> >> Eric Auger (8):
-> >>   vfio: VFIO_IOMMU_SET_MSI_BINDING
-> >>   vfio/pci: Add VFIO_REGION_TYPE_NESTED region type
-> >>   vfio/pci: Register an iommu fault handler
-> >>   vfio/pci: Allow to mmap the fault queue
-> >>   vfio: Add new IRQ for DMA fault reporting
-> >>   vfio/pci: Add framework for custom interrupt indices
-> >>   vfio/pci: Register and allow DMA FAULT IRQ signaling
-> >>   vfio: Document nested stage control
-> >>
-> >> Liu, Yi L (2):
-> >>   vfio: VFIO_IOMMU_SET_PASID_TABLE
-> >>   vfio: VFIO_IOMMU_CACHE_INVALIDATE
-> >>
-> >> Tina Zhang (1):
-> >>   vfio: Use capability chains to handle device specific irq
-> >>
-> >>  Documentation/vfio.txt              |  77 ++++++++
-> >>  drivers/vfio/pci/vfio_pci.c         | 283
-> ++++++++++++++++++++++++++--
-> >>  drivers/vfio/pci/vfio_pci_intrs.c   |  62 ++++++
-> >>  drivers/vfio/pci/vfio_pci_private.h |  24 +++
-> >>  drivers/vfio/pci/vfio_pci_rdwr.c    |  45 +++++
-> >>  drivers/vfio/vfio_iommu_type1.c     | 166 ++++++++++++++++
-> >>  include/uapi/linux/vfio.h           | 109 ++++++++++-
-> >>  7 files changed, 747 insertions(+), 19 deletions(-)
-> >>
-> >> --
-> >> 2.20.1
-> >>
-> >> _______________________________________________
-> >> kvmarm mailing list
-> >> kvmarm@lists.cs.columbia.edu
-> >> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+> diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+> index 43307bad3f0d..e24f2f2f6004 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+> @@ -697,30 +697,31 @@
+>  	};
+>  
+>  	u3phy0: usb-phy@11290000 {
+> -		compatible = "mediatek,mt2712-u3phy";
+> -		#address-cells = <2>;
+> -		#size-cells = <2>;
+> -		ranges;
+> +		compatible = "mediatek,mt2712-tphy",
+> +			     "mediatek,generic-tphy-v2";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
 
+At a first glance I don't understand why you change address and size cells.
+Commit message doesn't explain it and AFAIS it's not part of the binding changes.
+
+Can you explain why we need that, and update the commit message accordingly?
+
+Regrads,
+Matthias
+
+> +		ranges = <0 0 0x11290000 0x9000>;
+>  		status = "okay";
+>  
+> -		u2port0: usb-phy@11290000 {
+> -			reg = <0 0x11290000 0 0x700>;
+> +		u2port0: usb-phy@0 {
+> +			reg = <0x0 0x700>;
+>  			clocks = <&clk26m>;
+>  			clock-names = "ref";
+>  			#phy-cells = <1>;
+>  			status = "okay";
+>  		};
+>  
+> -		u2port1: usb-phy@11298000 {
+> -			reg = <0 0x11298000 0 0x700>;
+> +		u2port1: usb-phy@8000 {
+> +			reg = <0x8000 0x700>;
+>  			clocks = <&clk26m>;
+>  			clock-names = "ref";
+>  			#phy-cells = <1>;
+>  			status = "okay";
+>  		};
+>  
+> -		u3port0: usb-phy@11298700 {
+> -			reg = <0 0x11298700 0 0x900>;
+> +		u3port0: usb-phy@8700 {
+> +			reg = <0x8700 0x900>;
+>  			clocks = <&clk26m>;
+>  			clock-names = "ref";
+>  			#phy-cells = <1>;
+> @@ -760,30 +761,31 @@
+>  	};
+>  
+>  	u3phy1: usb-phy@112e0000 {
+> -		compatible = "mediatek,mt2712-u3phy";
+> -		#address-cells = <2>;
+> -		#size-cells = <2>;
+> -		ranges;
+> +		compatible = "mediatek,mt2712-tphy",
+> +			     "mediatek,generic-tphy-v2";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0x112e0000 0x9000>;
+>  		status = "okay";
+>  
+> -		u2port2: usb-phy@112e0000 {
+> -			reg = <0 0x112e0000 0 0x700>;
+> +		u2port2: usb-phy@0 {
+> +			reg = <0x0 0x700>;
+>  			clocks = <&clk26m>;
+>  			clock-names = "ref";
+>  			#phy-cells = <1>;
+>  			status = "okay";
+>  		};
+>  
+> -		u2port3: usb-phy@112e8000 {
+> -			reg = <0 0x112e8000 0 0x700>;
+> +		u2port3: usb-phy@8000 {
+> +			reg = <0x8000 0x700>;
+>  			clocks = <&clk26m>;
+>  			clock-names = "ref";
+>  			#phy-cells = <1>;
+>  			status = "okay";
+>  		};
+>  
+> -		u3port1: usb-phy@112e8700 {
+> -			reg = <0 0x112e8700 0 0x900>;
+> +		u3port1: usb-phy@8700 {
+> +			reg = <0x8700 0x900>;
+>  			clocks = <&clk26m>;
+>  			clock-names = "ref";
+>  			#phy-cells = <1>;
+> 
