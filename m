@@ -2,49 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 011D8F928C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39F69F925F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:29:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfKLO26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727463AbfKLO26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 12 Nov 2019 09:28:58 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39084 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbfKLO26 (ORCPT
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:40868 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfKLO26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Nov 2019 09:28:58 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACESrEY099172;
-        Tue, 12 Nov 2019 08:28:53 -0600
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACESu9l045437;
+        Tue, 12 Nov 2019 08:28:56 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573568933;
-        bh=gFtqraInLCN31hWThjbNLQzPYYJVszVoh1otsRZfXMg=;
-        h=From:To:CC:Subject:Date;
-        b=DEJbyrXPGGOEJplbz/y8AKuM9D2QS9MtWKzBRrnaMQ+RziQ809bVdxkbAyjiH0GT1
-         SwsjJUyF1DSoFjgPSEeERAcJmqJH0YTg/xjI0lrKXZFNbWS+AC3mZYnZi0qRlvweKP
-         T9IKNTlRIhw/DfiXlm007mveh38IWtiN5hM5Vzp8=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESr7i037686;
-        Tue, 12 Nov 2019 08:28:53 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1573568936;
+        bh=tLf8SXtD5MIh4RuLfkAo79HCpF/i9eG4PtrsPy5Sv/A=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=cJUgssu8m5EDKUlH/Jj+Xy4FMD9CdRsej78csFeM0HE7jvidwnCnss7ksmDtDG0TM
+         LsM9SWHPw5UkydpDx4yiWu0XqQuvfGD+R9N6lQ37CtvUqDUL/w3OoADNmGILOv3V2K
+         qLJoCm8FSANrUOfXuvoqa5ZpoP4gvc4gPmTVBPJU=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACESu64026632
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Nov 2019 08:28:56 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 08:28:53 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Nov 2019 08:28:38 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 08:28:35 -0600
+ Frontend Transport; Tue, 12 Nov 2019 08:28:38 -0600
 Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriC044422;
-        Tue, 12 Nov 2019 08:28:53 -0600
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriD044422;
+        Tue, 12 Nov 2019 08:28:55 -0600
 From:   Benoit Parrot <bparrot@ti.com>
 To:     Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v3 00/20] media: ti-vpe: cal: maintenance
-Date:   Tue, 12 Nov 2019 08:31:32 -0600
-Message-ID: <20191112143152.23176-1-bparrot@ti.com>
+Subject: [Patch v3 01/20] dt-bindings: media: cal: update binding to use syscon
+Date:   Tue, 12 Nov 2019 08:31:33 -0600
+Message-ID: <20191112143152.23176-2-bparrot@ti.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191112143152.23176-1-bparrot@ti.com>
+References: <20191112143152.23176-1-bparrot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -53,82 +56,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This a collection of backlog patches I have been carrying for the CAL
-driver.
+Update Device Tree bindings for the CAL driver to use syscon to access
+the phy config register instead of trying to map it directly.
 
-- Add support for SoC variants.
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+---
+ Documentation/devicetree/bindings/media/ti-cal.txt | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-- Switches to syscon/regmap to access a system controller register for
-the DPHY configuration. This register has different bit layout depending
-on the SoC version.
-
-- It adds supports for pre ES2.0 silicon errata.
-
-- Reworked the DPHY initialization sequence to match the technical
-reference manual and provide a more robust restartability.
-
-- Adds the missing ability to power subdevice.
-
-- Update the devicetree binding and then converts it to dt-schema 
-
-Changes since v2:
-- Added a patch which converts all BIT_MASK() into BIT().
-- Constify stuct cal_data.
-- Remove blank line.
-- Fix to use BIT() instead of BIT_MASK() in "add CSI2 PHY LDO errata
-  support" patch
-- Fix commit description related to v4l2 power management:
-- Add missing binding update from v2
-- Merge dt-binding and maintainer patch
-
-Changes since v1:
-- Removed unneeded "items/max/min".
-- Add a ref for ti,camerrx-control type
-- Move compatible description as comment in the schemas
-- Simplify 'endpoint' syntax
-- Removed clocks description
-- Added ti,cal.yaml to MAINTAINERS as a separate patch.
-- Added Rob's ack
-- Remove 'inline' from cal_runtime_get()
-- Switch to use of_device_get_match_data
-- Reworked the syscon_regmap_lookup_by_phandle() section
-- Updated the binding to use ti,camerrx-control instead of sycon_camerrx
-- Updated the binding to use ti,camerrx-control instead of sycon_camerrx
-
-Benoit Parrot (19):
-  dt-bindings: media: cal: update binding to use syscon
-  dt-bindings: media: cal: update binding example
-  media: ti-vpe: cal: switch BIT_MASK to BIT
-  media: ti-vpe: cal: Add per platform data support
-  media: ti-vpe: cal: Enable DMABUF export
-  dt-bindings: media: cal: update binding to add PHY LDO errata support
-  media: ti-vpe: cal: add CSI2 PHY LDO errata support
-  media: ti-vpe: cal: Fix ths_term/ths_settle parameters
-  media: ti-vpe: cal: Fix pixel processing parameters
-  media: ti-vpe: cal: Align DPHY init sequence with docs
-  dt-bindings: media: cal: update binding to add DRA76x support
-  media: ti-vpe: cal: Add DRA76x support
-  dt-bindings: media: cal: update binding to add AM654 support
-  media: ti-vpe: cal: Add AM654 support
-  media: ti-vpe: cal: Add subdev s_power hooks
-  media: ti-vpe: cal: Properly calculate max resolution boundary
-  media: ti-vpe: cal: Fix a WARN issued when start streaming fails
-  media: ti-vpe: cal: fix enum_mbus_code/frame_size subdev arguments
-  dt-bindings: media: cal: convert binding to yaml
-
-Nikhil Devshatwar (1):
-  media: ti-vpe: cal: Restrict DMA to avoid memory corruption
-
- .../devicetree/bindings/media/ti,cal.yaml     | 202 +++++
- .../devicetree/bindings/media/ti-cal.txt      |  72 --
- MAINTAINERS                                   |   1 +
- drivers/media/platform/Kconfig                |   2 +-
- drivers/media/platform/ti-vpe/cal.c           | 773 ++++++++++++++----
- drivers/media/platform/ti-vpe/cal_regs.h      | 221 ++---
- 6 files changed, 937 insertions(+), 334 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/ti,cal.yaml
- delete mode 100644 Documentation/devicetree/bindings/media/ti-cal.txt
-
+diff --git a/Documentation/devicetree/bindings/media/ti-cal.txt b/Documentation/devicetree/bindings/media/ti-cal.txt
+index ae9b52f37576..93096d924786 100644
+--- a/Documentation/devicetree/bindings/media/ti-cal.txt
++++ b/Documentation/devicetree/bindings/media/ti-cal.txt
+@@ -10,9 +10,14 @@ Required properties:
+ - compatible: must be "ti,dra72-cal"
+ - reg:	CAL Top level, Receiver Core #0, Receiver Core #1 and Camera RX
+ 	control address space
+-- reg-names: cal_top, cal_rx_core0, cal_rx_core1, and camerrx_control
++- reg-names: cal_top, cal_rx_core0, cal_rx_core1 and camerrx_control
+ 	     registers
+ - interrupts: should contain IRQ line for the CAL;
++- ti,camerrx-control: phandle to the device control module and offset to
++		      the control_camerarx_core register.
++		      This node is meant to replace the "camerrx_control"
++		      reg entry above but "camerrx_control" is still
++		      handled for backward compatibility.
+ 
+ CAL supports 2 camera port nodes on MIPI bus. Each CSI2 camera port nodes
+ should contain a 'port' child node with child 'endpoint' node. Please
+@@ -25,13 +30,12 @@ Example:
+ 		ti,hwmods = "cal";
+ 		reg = <0x4845B000 0x400>,
+ 		      <0x4845B800 0x40>,
+-		      <0x4845B900 0x40>,
+-		      <0x4A002e94 0x4>;
++		      <0x4845B900 0x40>;
+ 		reg-names = "cal_top",
+ 			    "cal_rx_core0",
+-			    "cal_rx_core1",
+-			    "camerrx_control";
++			    "cal_rx_core1";
+ 		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
++		ti,camerrx-control = <&scm_conf 0xE94>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
 -- 
 2.17.1
 
