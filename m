@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31590F8DE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5448EF8DDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:18:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfKLLSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:18:07 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33441 "EHLO
+        id S1727199AbfKLLSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:18:04 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33457 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfKLLSC (ORCPT
+        with ESMTP id S1727122AbfKLLSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 12 Nov 2019 06:18:02 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUUBJ-0000Is-GF; Tue, 12 Nov 2019 12:17:57 +0100
+        id 1iUUBI-0000IF-Vu; Tue, 12 Nov 2019 12:17:57 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D4FAB1C0084;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7059E1C0483;
         Tue, 12 Nov 2019 12:17:55 +0100 (CET)
 Date:   Tue, 12 Nov 2019 11:17:55 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf symbols: Remove needless checks for
- map->groups->machine
+Subject: [tip: perf/core] perf machine: Add kernel_dso() method
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-utiepyiv8b1tf8f79ok9d6j8@git.kernel.org>
-References: <tip-utiepyiv8b1tf8f79ok9d6j8@git.kernel.org>
+In-Reply-To: <tip-9s1bgoxxhlnu037e1nqx0tw3@git.kernel.org>
+References: <tip-9s1bgoxxhlnu037e1nqx0tw3@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157355747553.29376.4155139171745495061.tip-bot2@tip-bot2>
+Message-ID: <157355747511.29376.6682944329164352135.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,37 +50,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     b0c76fc4cfd96ae859cc50afe5deb523276f75ae
-Gitweb:        https://git.kernel.org/tip/b0c76fc4cfd96ae859cc50afe5deb523276f75ae
+Commit-ID:     93730f85eb37d9cf592c18dad7e488abed09b461
+Gitweb:        https://git.kernel.org/tip/93730f85eb37d9cf592c18dad7e488abed09b461
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 01 Nov 2019 18:34:44 -03:00
+AuthorDate:    Thu, 31 Oct 2019 15:22:24 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Thu, 07 Nov 2019 08:30:18 -03:00
 
-perf symbols: Remove needless checks for map->groups->machine
+perf machine: Add kernel_dso() method
 
-Its sufficient to check if map->groups is NULL before using it to get
-->machine value.
+To reduce boilerplate in some places.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-utiepyiv8b1tf8f79ok9d6j8@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-9s1bgoxxhlnu037e1nqx0tw3@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/machine.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index a4bd61c..4ad39cc 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1617,7 +1617,7 @@ int dso__load(struct dso *dso, struct map *map)
- 		goto out;
- 	}
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 24d9e28..e768ef2 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -42,6 +42,11 @@
  
--	if (map->groups && map->groups->machine)
-+	if (map->groups)
- 		machine = map->groups->machine;
- 	else
- 		machine = NULL;
+ static void __machine__remove_thread(struct machine *machine, struct thread *th, bool lock);
+ 
++static struct dso *machine__kernel_dso(struct machine *machine)
++{
++	return machine->vmlinux_map->dso;
++}
++
+ static void dsos__init(struct dsos *dsos)
+ {
+ 	INIT_LIST_HEAD(&dsos->head);
+@@ -861,7 +866,7 @@ size_t machine__fprintf_vmlinux_path(struct machine *machine, FILE *fp)
+ {
+ 	int i;
+ 	size_t printed = 0;
+-	struct dso *kdso = machine__kernel_map(machine)->dso;
++	struct dso *kdso = machine__kernel_dso(machine);
+ 
+ 	if (kdso->has_build_id) {
+ 		char filename[PATH_MAX];
+@@ -1543,8 +1548,7 @@ static bool perf_event__is_extra_kernel_mmap(struct machine *machine,
+ static int machine__process_extra_kernel_map(struct machine *machine,
+ 					     union perf_event *event)
+ {
+-	struct map *kernel_map = machine__kernel_map(machine);
+-	struct dso *kernel = kernel_map ? kernel_map->dso : NULL;
++	struct dso *kernel = machine__kernel_dso(machine);
+ 	struct extra_kernel_map xm = {
+ 		.start = event->mmap.start,
+ 		.end   = event->mmap.start + event->mmap.len,
