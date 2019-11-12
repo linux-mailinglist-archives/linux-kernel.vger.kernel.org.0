@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D322DF8E3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:20:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EB51F8DEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 12:18:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfKLLU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 06:20:26 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33902 "EHLO
+        id S1727447AbfKLLSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 06:18:20 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33730 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbfKLLS0 (ORCPT
+        with ESMTP id S1727398AbfKLLSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 06:18:26 -0500
+        Tue, 12 Nov 2019 06:18:17 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUUBd-0000YZ-4S; Tue, 12 Nov 2019 12:18:17 +0100
+        id 1iUUBZ-0000ao-Kl; Tue, 12 Nov 2019 12:18:13 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2ED841C03AB;
-        Tue, 12 Nov 2019 12:18:08 +0100 (CET)
-Date:   Tue, 12 Nov 2019 11:18:07 -0000
-From:   "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 475281C04C9;
+        Tue, 12 Nov 2019 12:18:09 +0100 (CET)
+Date:   Tue, 12 Nov 2019 11:18:08 -0000
+From:   "tip-bot2 for Masami Hiramatsu" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf auxtrace: Add auxtrace_cache__remove()
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+Subject: [tip: perf/core] perf probe: Fix to show inlined function callsite
+ without entry_pc
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191025130000.13032-6-adrian.hunter@intel.com>
-References: <20191025130000.13032-6-adrian.hunter@intel.com>
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <157199322107.8075.12659099000567865708.stgit@devnote2>
+References: <157199322107.8075.12659099000567865708.stgit@devnote2>
 MIME-Version: 1.0
-Message-ID: <157355748769.29376.9336907434787303711.tip-bot2@tip-bot2>
+Message-ID: <157355748875.29376.11117050115980321569.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,85 +51,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     fd62c1097a0700484fc2cbc9a182f341f30890cd
-Gitweb:        https://git.kernel.org/tip/fd62c1097a0700484fc2cbc9a182f341f30890cd
-Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Fri, 25 Oct 2019 15:59:59 +03:00
+Commit-ID:     18e21eb671dc87a4f0546ba505a89ea93598a634
+Gitweb:        https://git.kernel.org/tip/18e21eb671dc87a4f0546ba505a89ea93598a634
+Author:        Masami Hiramatsu <mhiramat@kernel.org>
+AuthorDate:    Fri, 25 Oct 2019 17:47:01 +09:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Wed, 06 Nov 2019 15:43:06 -03:00
 
-perf auxtrace: Add auxtrace_cache__remove()
+perf probe: Fix to show inlined function callsite without entry_pc
 
-Add auxtrace_cache__remove(). Intel PT uses an auxtrace_cache to store
-the results of code-walking, so that the same block of instructions does
-not have to be decoded repeatedly. However, when there are text poke
-events, the associated cache entries need to be removed.
+Fix 'perf probe --line' option to show inlined function callsite lines
+even if the function DIE has only ranges.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Without this:
+
+  # perf probe -L amd_put_event_constraints
+  ...
+      2  {
+      3         if (amd_has_nb(cpuc) && amd_is_nb_event(&event->hw))
+                        __amd_put_nb_event_constraints(cpuc, event);
+      5  }
+
+With this patch:
+
+  # perf probe -L amd_put_event_constraints
+  ...
+      2  {
+      3         if (amd_has_nb(cpuc) && amd_is_nb_event(&event->hw))
+      4                 __amd_put_nb_event_constraints(cpuc, event);
+      5  }
+
+Committer testing:
+
+Before:
+
+  [root@quaco ~]# perf probe -L amd_put_event_constraints
+  <amd_put_event_constraints@/usr/src/debug/kernel-5.2.fc30/linux-5.2.18-200.fc30.x86_64/arch/x86/events/amd/core.c:0>
+        0  static void amd_put_event_constraints(struct cpu_hw_events *cpuc,
+                                                struct perf_event *event)
+        2  {
+        3         if (amd_has_nb(cpuc) && amd_is_nb_event(&event->hw))
+                          __amd_put_nb_event_constraints(cpuc, event);
+        5  }
+
+           PMU_FORMAT_ATTR(event, "config:0-7,32-35");
+           PMU_FORMAT_ATTR(umask, "config:8-15"   );
+
+  [root@quaco ~]#
+
+After:
+
+  [root@quaco ~]# perf probe -L amd_put_event_constraints
+  <amd_put_event_constraints@/usr/src/debug/kernel-5.2.fc30/linux-5.2.18-200.fc30.x86_64/arch/x86/events/amd/core.c:0>
+        0  static void amd_put_event_constraints(struct cpu_hw_events *cpuc,
+                                                struct perf_event *event)
+        2  {
+        3         if (amd_has_nb(cpuc) && amd_is_nb_event(&event->hw))
+        4                 __amd_put_nb_event_constraints(cpuc, event);
+        5  }
+
+           PMU_FORMAT_ATTR(event, "config:0-7,32-35");
+           PMU_FORMAT_ATTR(umask, "config:8-15"   );
+
+  [root@quaco ~]# perf probe amd_put_event_constraints:4
+  Added new event:
+    probe:amd_put_event_constraints (on amd_put_event_constraints:4)
+
+  You can now use it in all perf tools, such as:
+
+  	perf record -e probe:amd_put_event_constraints -aR sleep 1
+
+  [root@quaco ~]#
+
+  [root@quaco ~]# perf probe -l
+    probe:amd_put_event_constraints (on amd_put_event_constraints:4@arch/x86/events/amd/core.c)
+    probe:clear_tasks_mm_cpumask (on clear_tasks_mm_cpumask@kernel/cpu.c)
+  [root@quaco ~]#
+
+Using it:
+
+  [root@quaco ~]# perf trace -e probe:*
+  ^C[root@quaco ~]#
+
+Ok, Intel system here... :-)
+
+Fixes: 4cc9cec636e7 ("perf probe: Introduce lines walker interface")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org
-Link: http://lore.kernel.org/lkml/20191025130000.13032-6-adrian.hunter@intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lore.kernel.org/lkml/157199322107.8075.12659099000567865708.stgit@devnote2
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/auxtrace.c | 28 ++++++++++++++++++++++++++++
- tools/perf/util/auxtrace.h |  1 +
- 2 files changed, 29 insertions(+)
+ tools/perf/util/dwarf-aux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 8470dfe..c555c3c 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1457,6 +1457,34 @@ int auxtrace_cache__add(struct auxtrace_cache *c, u32 key,
- 	return 0;
- }
- 
-+static struct auxtrace_cache_entry *auxtrace_cache__rm(struct auxtrace_cache *c,
-+						       u32 key)
-+{
-+	struct auxtrace_cache_entry *entry;
-+	struct hlist_head *hlist;
-+	struct hlist_node *n;
-+
-+	if (!c)
-+		return NULL;
-+
-+	hlist = &c->hashtable[hash_32(key, c->bits)];
-+	hlist_for_each_entry_safe(entry, n, hlist, hash) {
-+		if (entry->key == key) {
-+			hlist_del(&entry->hash);
-+			return entry;
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+void auxtrace_cache__remove(struct auxtrace_cache *c, u32 key)
-+{
-+	struct auxtrace_cache_entry *entry = auxtrace_cache__rm(c, key);
-+
-+	auxtrace_cache__free_entry(c, entry);
-+}
-+
- void *auxtrace_cache__lookup(struct auxtrace_cache *c, u32 key)
- {
- 	struct auxtrace_cache_entry *entry;
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index f201f36..3f4aa54 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -489,6 +489,7 @@ void *auxtrace_cache__alloc_entry(struct auxtrace_cache *c);
- void auxtrace_cache__free_entry(struct auxtrace_cache *c, void *entry);
- int auxtrace_cache__add(struct auxtrace_cache *c, u32 key,
- 			struct auxtrace_cache_entry *entry);
-+void auxtrace_cache__remove(struct auxtrace_cache *c, u32 key);
- void *auxtrace_cache__lookup(struct auxtrace_cache *c, u32 key);
- 
- struct auxtrace_record *auxtrace_record__init(struct evlist *evlist,
+diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+index 063f71d..e0c507d 100644
+--- a/tools/perf/util/dwarf-aux.c
++++ b/tools/perf/util/dwarf-aux.c
+@@ -695,7 +695,7 @@ static int __die_walk_funclines_cb(Dwarf_Die *in_die, void *data)
+ 	if (dwarf_tag(in_die) == DW_TAG_inlined_subroutine) {
+ 		fname = die_get_call_file(in_die);
+ 		lineno = die_get_call_lineno(in_die);
+-		if (fname && lineno > 0 && dwarf_entrypc(in_die, &addr) == 0) {
++		if (fname && lineno > 0 && die_entrypc(in_die, &addr) == 0) {
+ 			lw->retval = lw->callback(fname, lineno, addr, lw->data);
+ 			if (lw->retval != 0)
+ 				return DIE_FIND_CB_END;
