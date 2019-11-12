@@ -2,98 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6CE1F89A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 08:24:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8CFCF89AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 08:27:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbfKLHY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 02:24:29 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:60552 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfKLHY3 (ORCPT
+        id S1726977AbfKLH1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 02:27:41 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:47066 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbfKLH1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 02:24:29 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAC7OLls037267;
-        Tue, 12 Nov 2019 01:24:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573543461;
-        bh=9ZjEggkK3tYtTfvVyv4LxqBOLJcpeT8JiS+RxzIUC7I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=QcMaLS2gpVQKfVjYt3+Pr40c87QkE10hjw6CtAoXzDYohl5rT3zKu1DCZbHNbB9u6
-         NUQDbUctWfRnd/2xcL2F/P5CAILp10Zh94rxHybOYz51g802mD9lsVjXqjBbsuRyiC
-         B6H8Vzvg10kZWBVNETmTPG5mFxxCmhz8szpl1zD4=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAC7OLOM028549
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Nov 2019 01:24:21 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 01:24:03 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 01:24:03 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAC7OHG7089194;
-        Tue, 12 Nov 2019 01:24:17 -0600
-Subject: Re: [PATCH v4 15/15] dmaengine: ti: k3-udma: Add glue layer for non
- DMAengine users
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
-        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>
-References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
- <20191101084135.14811-16-peter.ujfalusi@ti.com>
- <20191111061258.GS952516@vkoul-mobl>
- <6d4d2fcc-502b-4b41-cd71-8942741f4ad8@ti.com>
- <20191112053714.GX952516@vkoul-mobl>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <b6b38b97-216f-c297-a414-e3c1f5703a68@ti.com>
-Date:   Tue, 12 Nov 2019 09:25:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 12 Nov 2019 02:27:40 -0500
+Received: by mail-lj1-f193.google.com with SMTP id e9so16535170ljp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 23:27:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T4PBC6XASGOKS4JAF6qAY3nfg+656mf5Ffbsp2SjMOU=;
+        b=huzbkS+lweY6CWt6g74Pcr8qGst6v0knwvUw3PlvRXbWDrZJjG00zTvIpdBw/HEfNK
+         /Q9qG0Xe53I4vyhIQrQSxfyp9cwHiTVbUFGOtuR0m79ccrcyhqrNoy1bt393gXB6lSSw
+         AGBx8KfNaFrMvD6a7IZI9Tu/SvTpjkrllxUnsPpS6EMQtLmHl9UcxC8rTiEzdBbxHgqm
+         FkmbrQTaLetlUqbwjFxlXkpkwO73ZxGe7fKg4wKySyENfxQP+CFsVbCeqx6P9YXazcCb
+         G35ca/AQ5mKGzU5jbXfhZoMJ+0a1baLTfGZz5zCeSGauOj8nAfLXt7PiucV7Q9jK95+m
+         t7gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T4PBC6XASGOKS4JAF6qAY3nfg+656mf5Ffbsp2SjMOU=;
+        b=B5dqK9qv/IZ4j4g4bVOc+qh5gylV7sdaVuxgziJRs9JDuaOhguXqbjCKdF/DTjnx3l
+         olWirKw4/pwyi67uFiqqkAlwLSPT6s34uj/1P2qF5buZt1yBD4k1s+A88sb2O8/6P2IU
+         QhN6zz/NiKQ8d62C7IfJYQtfhpXrvemFCYLoR6eQyaWCYee+xLQuQTdITL8MbdnkS2Co
+         kr1Muz9uePH1kn+G5OoSiahDH58nxjux9Ytb8+1oD/CrCO+ZaTX9zn7ogRJ4Wp9jxPZ4
+         VDZQIWEsbrcvTOh/cAiefT4say3Q9RbbNfBzn986xG0uCpsW6fzLmpPQQ0YoVngJh7LM
+         5t0g==
+X-Gm-Message-State: APjAAAWPvNLOSDDJHX6gn+ci8m6UgU5L11KIk/ecnIRVcZzlrZXq89h9
+        mZDmJqcsFZVdjy+ojx7uU6Y34wCKwi7pAnkcnDVX2A==
+X-Google-Smtp-Source: APXvYqwLYytt2T33G4K61Iai/NezRd71YPs7Z4MOUgQBlMexOGDjpoWKL4uuX0lRjlNJutRysjEUqzVXInQX8+/FI8E=
+X-Received: by 2002:a05:651c:87:: with SMTP id 7mr11252951ljq.20.1573543658646;
+ Mon, 11 Nov 2019 23:27:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191112053714.GX952516@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <201910301244.9C3CABCA0@keescook>
+In-Reply-To: <201910301244.9C3CABCA0@keescook>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 12 Nov 2019 12:57:27 +0530
+Message-ID: <CA+G9fYvcD=rNmkQn_bsBO0RUVwhQA=TtzP1AeqLqwfKjorLWXg@mail.gmail.com>
+Subject: Re: [PATCH] selftests: Move kselftest_module.sh into kselftest/
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kees,
 
+Thanks for the fix patch.
 
-On 12/11/2019 7.37, Vinod Koul wrote:
-> On 11-11-19, 12:31, Peter Ujfalusi wrote:
->>
->>
->> On 11/11/2019 8.12, Vinod Koul wrote:
->>> On 01-11-19, 10:41, Peter Ujfalusi wrote:
->>>> From: Grygorii Strashko <grygorii.strashko@ti.com>
->>>>
->>>> Certain users can not use right now the DMAengine API due to missing
->>>> features in the core. Prime example is Networking.
->>>>
->>>> These users can use the glue layer interface to avoid misuse of DMAengine
->>>> API and when the core gains the needed features they can be converted to
->>>> use generic API.
->>>
->>> Can you add some notes on what all features does this layer implement..
->>
->> In the commit message or in the code?
-> 
-> commit here so that we know what to expect.
+On Thu, 31 Oct 2019 at 01:15, Kees Cook <keescook@chromium.org> wrote:
+>
+> The kselftest_module.sh file was not being installed by the Makefile
+> "install" target, rendering the lib/*.sh tests nonfunction. This fixes
+> that and takes the opportunity to move it into the kselftest/ subdirectory
+> which is where the kselftest infrastructure bits are collecting.
+>
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Link: https://lore.kernel.org/lkml/CA+G9fYsfJpXQvOvHdjtg8z4a89dSStOQZOKa9zMjjQgWKng1aw@mail.gmail.com
+> Fixes: d3460527706e ("kselftest: Add test runner creation script")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Can you check the v5 commit message if it is sufficient? If not, I can
-make it more verbose for v6.
+Now this patch merged into linux next tree.
+Following tests getting pass.
+ kselftest:
+    * lib/bitmap.sh
+    * lib/printf.sh
+    * lib/strscpy.sh
 
-- Péter
+Thank you.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Best regards
+Naresh Kamboju
