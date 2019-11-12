@@ -2,132 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2F00F860E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:27:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24C0BF8615
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfKLB1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 20:27:02 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1829 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbfKLB1B (ORCPT
+        id S1727108AbfKLB1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 20:27:35 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33623 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726965AbfKLB1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 20:27:01 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dca0a260000>; Mon, 11 Nov 2019 17:25:58 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 11 Nov 2019 17:27:00 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 11 Nov 2019 17:27:00 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
- 2019 01:27:00 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 12 Nov 2019 01:27:00 +0000
-Received: from rcampbell-dev.nvidia.com (Not Verified[10.110.48.66]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dca0a640000>; Mon, 11 Nov 2019 17:27:00 -0800
-From:   Ralph Campbell <rcampbell@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: [PATCH v3] mm/debug: __dump_page() prints an extra line
-Date:   Mon, 11 Nov 2019 17:26:08 -0800
-Message-ID: <20191112012608.16926-1-rcampbell@nvidia.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 11 Nov 2019 20:27:34 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w9so9882135wrr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 17:27:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qL4wj7459iPMRsDcnG3FORcSgu7Ph+oW/xXK95356Sc=;
+        b=G7r3u/rB87jLdYr4OqGKjEMbPQtcfk0gSFY2u9wwNNI3pbSKuhF+0MU4buZFechCkc
+         DsxTB5VERxqytRUNh3eZKldQPt5ixCKmVK/5K3I4QOcaqqPpn/VBOYEpi2NOKKXa6Gsk
+         9WAQGUAIR7h++lD7CxYG2WIb65Y43eU6WTNHk5crYV7kjVjG1dGuTBmIwXTq3NplnCRQ
+         7PtWDOcsYH4CgpJlrYdlk8d6r5Smb/TFHE7DQg5CJXihKqr9ZI6iSznJ4t7X32br5NxN
+         IWWv6rLiFXpKaryep9t0dZ6OSgE2CAzXp99Qj2+tltMafeX9WWwOS5hA+Z7bbsM86mcM
+         sQ+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qL4wj7459iPMRsDcnG3FORcSgu7Ph+oW/xXK95356Sc=;
+        b=UR40ZjkC5GMSkAFcpcPeclr6c3zJiz8GuQfK6j4lFCyr5Q86W3JyxGmsHYId4nmW8b
+         mikhre6k9qj5Wfc5DLgWPdUFP3mA/y7KuUuAcn4CNO5IxCHtpKZevcAfi8ByUdKNLhKv
+         OYRuAwbyktTA9SR0PkNQ+U3nJlgqQsp6TMWI/ycf3tp0IS+ygDxSebpnnR3uUnZqs+JM
+         MiQ1RgNRviRUHjCBOSuWjIdyX2dVDaxDBf0I6Grddm30pTdSDKCEYdVUwsGuciPYFHQD
+         B7O6gDRz+9Z/00JyABo5/ZYi5ix+W2ttA0i6dNlWLrzvt7bhlF+c/iA2KLVcLuiaNZzM
+         Zm7A==
+X-Gm-Message-State: APjAAAUnwvppMXZUqsxqpCXLQjnyBxv/YGhe8HB9MEezwa9t3gTjv51L
+        EJKMbJEwDIvMu5gBZ87+xGZGcpf9sIs=
+X-Google-Smtp-Source: APXvYqwAz6W2ZVjazEo621wb27QOZgcXUHQ3oaRC0HT7QNLEASITqx547Su1jGibj6i1Q2O+7OLP/Q==
+X-Received: by 2002:adf:f44a:: with SMTP id f10mr7773290wrp.63.1573522052545;
+        Mon, 11 Nov 2019 17:27:32 -0800 (PST)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id u187sm1508096wme.15.2019.11.11.17.27.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2019 17:27:31 -0800 (PST)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: [PATCHv8 01/34] lib/vdso: Add unlikely() hint into vdso_read_begin()
+Date:   Tue, 12 Nov 2019 01:26:50 +0000
+Message-Id: <20191112012724.250792-2-dima@arista.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191112012724.250792-1-dima@arista.com>
+References: <20191112012724.250792-1-dima@arista.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573521959; bh=I5xB11rrp8fPbhCiJFAnSXNFj55ZuC8o7ZE2GAxtZGU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=a92HKbAOP3nKGfHbxIEuwLrOHWs8Hlk3ehHU09ssO3UNq7fvWj0ctZQ1u38Jt48HD
-         iyXj1ufarJCpvqJSO5x7VzEhSCMcOqknH/mkcjT8Z8dlWzBNqP8qNmafV/FExmrnVj
-         ctKkVyWh7Ri1VDOM6N+7zfIx9XdhLfVyXb9USW6AoOPVj5eHnYAq0WAth9+juBDIow
-         OB2tSvb5mMTxANORkmQoKDl+vA7Nq29PuPZQbPJR2Td4ue7zEFzavjTm2fvKpqF4Gx
-         B4sfryucVSJJP9K3PAPrxtZQSv7H6Q5+rc9SwRB/apauFlzbo783oOtwvHXM9QmxHQ
-         LBW6HkzAj7E3g==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When dumping struct page information, __dump_page() prints the page type
-with a trailing blank followed by the page flags on a separate line:
+From: Andrei Vagin <avagin@gmail.com>
 
-anon
-flags: 0x100000000090034(uptodate|lru|active|head|swapbacked)
+Place the branch with no concurrent write before contended case.
 
-It looks like the intent was to use pr_cont() for printing "flags:"
-but pr_cont() usage is discouraged so fix this by extending the format
-to include the flags into a single line:
+Performance numbers for Intel(R) Core(TM) i5-6300U CPU @ 2.40GHz
+(more clock_gettime() cycles - the better):
+        | before    | after
+-----------------------------------
+        | 150252214 | 153242367
+        | 150301112 | 153324800
+        | 150392773 | 153125401
+        | 150373957 | 153399355
+        | 150303157 | 153489417
+        | 150365237 | 153494270
+-----------------------------------
+avg     | 150331408 | 153345935
+diff %  | 2	    | 0
+-----------------------------------
+stdev % | 0.3	    | 0.1
 
-anon flags: 0x100000000090034(uptodate|lru|active|head|swapbacked)
-
-If the page is file backed, the name might be long so use two lines:
-
-shmem_aops name:"dev/zero"
-flags: 0x10000000008000c(uptodate|dirty|swapbacked)
-
-Eliminate pr_conf() usage as well for appending compound_mapcount.
-
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+Co-developed-by: Dmitry Safonov <dima@arista.com>
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Tested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- mm/debug.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ include/vdso/helpers.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/debug.c b/mm/debug.c
-index 8345bb6e4769..772d4cf0691f 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -67,28 +67,31 @@ void __dump_page(struct page *page, const char *reason)
- 	 */
- 	mapcount =3D PageSlab(page) ? 0 : page_mapcount(page);
-=20
--	pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx",
--		  page, page_ref_count(page), mapcount,
--		  page->mapping, page_to_pgoff(page));
- 	if (PageCompound(page))
--		pr_cont(" compound_mapcount: %d", compound_mapcount(page));
--	pr_cont("\n");
-+		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
-+			"index:%#lx compound_mapcount: %d\n",
-+			page, page_ref_count(page), mapcount,
-+			page->mapping, page_to_pgoff(page),
-+			compound_mapcount(page));
-+	else
-+		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx\n",
-+			page, page_ref_count(page), mapcount,
-+			page->mapping, page_to_pgoff(page));
- 	if (PageAnon(page))
--		pr_warn("anon ");
-+		pr_warn("anon flags: %#lx(%pGp)\n", page->flags, &page->flags);
- 	else if (PageKsm(page))
--		pr_warn("ksm ");
-+		pr_warn("ksm flags: %#lx(%pGp)\n", page->flags, &page->flags);
- 	else if (mapping) {
--		pr_warn("%ps ", mapping->a_ops);
- 		if (mapping->host && mapping->host->i_dentry.first) {
- 			struct dentry *dentry;
- 			dentry =3D container_of(mapping->host->i_dentry.first, struct dentry, d=
-_u.d_alias);
--			pr_warn("name:\"%pd\" ", dentry);
--		}
-+			pr_warn("%ps name:\"%pd\"\n", mapping->a_ops, dentry);
-+		} else
-+			pr_warn("%ps\n", mapping->a_ops);
-+		pr_warn("flags: %#lx(%pGp)\n", page->flags, &page->flags);
- 	}
- 	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) !=3D __NR_PAGEFLAGS + 1);
-=20
--	pr_warn("flags: %#lx(%pGp)\n", page->flags, &page->flags);
--
- hex_only:
- 	print_hex_dump(KERN_WARNING, "raw: ", DUMP_PREFIX_NONE, 32,
- 			sizeof(unsigned long), page,
---=20
-2.20.1
+diff --git a/include/vdso/helpers.h b/include/vdso/helpers.h
+index 01641dbb68ef..9a2af9fca45e 100644
+--- a/include/vdso/helpers.h
++++ b/include/vdso/helpers.h
+@@ -10,7 +10,7 @@ static __always_inline u32 vdso_read_begin(const struct vdso_data *vd)
+ {
+ 	u32 seq;
+ 
+-	while ((seq = READ_ONCE(vd->seq)) & 1)
++	while (unlikely((seq = READ_ONCE(vd->seq)) & 1))
+ 		cpu_relax();
+ 
+ 	smp_rmb();
+-- 
+2.24.0
 
