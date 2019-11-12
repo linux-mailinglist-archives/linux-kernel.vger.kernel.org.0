@@ -2,114 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4F9AF99F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:43:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31379F9A00
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 20:46:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfKLTnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 14:43:55 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39700 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfKLTny (ORCPT
+        id S1727178AbfKLTqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 14:46:30 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38026 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbfKLTq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 14:43:54 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x28so14072132pfo.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 11:43:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HPem8TIIszZ7FemqTmbnyMN0h8Slh11f2S1uwgjMiNs=;
-        b=vCbC4L4b7VLJUVxMLdfu7tTiF+7v9bVwa2ILlKu9Fn4M2fXbwAWOJQgS8FoCOPusVZ
-         xVC8bQFTXjujcVkJ9se5vr3widjEEvQwNYG8F2b2EBg5AIUw5+fOPgQG++A4VYLRozqo
-         I0TRQVo5VgAsRL9UbLXgDoqWci22cl/Fm+fUjNAZ9g9Y6OdwiN6UPJc9iIpL2aV2P87j
-         T0tnEhvI9d35ls+XXBtg5NXJFPTbZJwuODyzDhudMtEvx88qzrv6yg3uZzXtJSK5iX6w
-         cPzhimTCv0pRwbAC7M+ErI0dUXGxv2qaOkloyNOT2SnYtiU/o5XmDPQkyfepeLZrvV/G
-         ESpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HPem8TIIszZ7FemqTmbnyMN0h8Slh11f2S1uwgjMiNs=;
-        b=cZRF2YOqTO9hiu7USwSXo9be0lfmOL/OT68v8Kh2qdE6beKqHHkejzsTcd7eOwUDOK
-         ci8gWqh1ROa367P2dgNulFjoYBl35JGr2J3/XJNifpmzDWVHJGxOujvfoMDV+fyBYN7W
-         3/Cv8aYgb7irPd6YQSG3usMBlJ6kHhzgrbebqeX5ylmvQy0k61sgLOb5dPIxFskYdZlR
-         Az4WxLbzeKR6yUrFE3P5tJZjUyba26vUjeGADUozGfnI1nIIWIPaBrUeKmwFVOqRgUQl
-         pZYsb+JcnPEA9JhITlvEhq0NyD8jZdes0Tu1mdDmAocexEBsGC2VL2qY2sfkniHhECpF
-         Hi1w==
-X-Gm-Message-State: APjAAAU0gxJWmfSe8Yj9znEOZF7IHpISeJjbKA2ElHY6psUDfXEaGodN
-        55AKmzwaWgDCU/G+JYbcOI/zmg==
-X-Google-Smtp-Source: APXvYqwvp01l6+NWe5Q3aOH506LuFAZx7SlH82bO5pfIp1D3hOIxDJgrjOioGwThFhLK0fe655HllA==
-X-Received: by 2002:aa7:96bd:: with SMTP id g29mr39160759pfk.28.1573587834096;
-        Tue, 12 Nov 2019 11:43:54 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z18sm19047098pgv.90.2019.11.12.11.43.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 11:43:53 -0800 (PST)
-Date:   Tue, 12 Nov 2019 11:43:51 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        edubezval@gmail.com, swboyd@chromium.org, sivaa@codeaurora.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: sdm845: thermal: Add critical interrupt
- support
-Message-ID: <20191112194351.GD3140946@builder>
-References: <cover.1573499020.git.amit.kucheria@linaro.org>
- <c536e9cdb448bbad3441f6580fa57f1f921fb580.1573499020.git.amit.kucheria@linaro.org>
+        Tue, 12 Nov 2019 14:46:29 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACJhpu2145320;
+        Tue, 12 Nov 2019 19:46:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=Mgice0PsP+2rYW3UuaIWPsJNJJ4IqSh/scGtKkNeBwY=;
+ b=RFjq9dmHDCA2pKYnoXgUVm2px+s964Waf7KhL+cl1g8cabRtqMQuKz416P65UbG1FECg
+ 2bGMLSAqhfKCnREoyMv5QtRkL0MvtOLB3AVOT1J+1OUhpm0qMjp+IW6jGA9AgCWyAMeM
+ 0np9E5DAZb9dtm3twhy/U4zUjcfn6Rv7slkd23DIM3djK6TgefuDPZPZy05kbvvuJ+/e
+ pnUGMtUcI0bua5WScf5xR4g2Nl6rehflVw2peH7XR9ske0V/ksA8FE1ExgUYIfGehAIb
+ LygiLsiNLar9eUNlZ/VNAEfqBJMEfDBxCHKr1C3yhBMaSsgF6Q9iCfZig4m5Vg1WKh5F 0Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2w5mvtq81r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 19:46:07 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xACJcllC041598;
+        Tue, 12 Nov 2019 19:46:06 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2w7vpmurny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 19:46:06 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xACJk2f6008676;
+        Tue, 12 Nov 2019 19:46:03 GMT
+Received: from monkey.oracle.com (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Nov 2019 11:46:02 -0800
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Jason Gunthorpe <jgg@ziepe.ca>, kbuild@lists.01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH 0/2] hugetlbfs: convert macros to static inline, fix sparse warning
+Date:   Tue, 12 Nov 2019 11:45:56 -0800
+Message-Id: <20191112194558.139389-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c536e9cdb448bbad3441f6580fa57f1f921fb580.1573499020.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=573
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911120166
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=639 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911120167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 11 Nov 11:21 PST 2019, Amit Kucheria wrote:
+The definition for huge_pte_offset() in <linux/hugetlb.h> causes a sparse
+warning in the !CONFIG_HUGETLB_PAGE.  Fix this as well as converting
+all macros in this block of definitions to static inlines for better type
+checking.
 
-> Register critical interrupts for each of the two tsens controllers
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Message-Id: <3686bd40c99692feb955e936b608b080e2cb1826.1568624011.git.amit.kucheria@linaro.org>
+When making the above changes, build errors were found in powerpc due to
+duplicate definitions.  A separate powerpc specific patch is included as
+a requisite to remove the definitions and get them from <linux/hugetlb.h>.
 
-Picked up for v5.6.
+Cc: kbuild@lists.01.org in an attmept to flush out any other build issues.
 
-Regards,
-Bjorn
+Mike Kravetz (2):
+  powerpc/mm: remove pmd_huge/pud_huge stubs and include hugetlb.h
+  hugetlbfs: convert macros to static inline, fix sparse warning
 
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 0990d5761860..3b643b04ab5a 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -2950,8 +2950,9 @@
->  			reg = <0 0x0c263000 0 0x1ff>, /* TM */
->  			      <0 0x0c222000 0 0x1ff>; /* SROT */
->  			#qcom,sensors = <13>;
-> -			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
-> -			interrupt-names = "uplow";
-> +			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "uplow", "critical";
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> @@ -2960,8 +2961,9 @@
->  			reg = <0 0x0c265000 0 0x1ff>, /* TM */
->  			      <0 0x0c223000 0 0x1ff>; /* SROT */
->  			#qcom,sensors = <8>;
-> -			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>;
-> -			interrupt-names = "uplow";
-> +			interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 509 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "uplow", "critical";
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> -- 
-> 2.17.1
-> 
+ .../include/asm/book3s/64/pgtable-4k.h        |   3 -
+ .../include/asm/book3s/64/pgtable-64k.h       |   3 -
+ arch/powerpc/mm/book3s64/radix_pgtable.c      |   1 +
+ include/linux/hugetlb.h                       | 137 +++++++++++++++---
+ 4 files changed, 116 insertions(+), 28 deletions(-)
+
+-- 
+2.23.0
+
