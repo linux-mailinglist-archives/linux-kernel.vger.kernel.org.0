@@ -2,133 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0581EF8610
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:27:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76AD7F8606
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:26:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfKLB1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 20:27:13 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:34686 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbfKLB1M (ORCPT
+        id S1726959AbfKLB0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 20:26:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7012 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726924AbfKLB0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 20:27:12 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAC1JP6v192241;
-        Tue, 12 Nov 2019 01:26:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=d0CIgE6VLDN1RdkD6BFHTIX2iR/MvwCtQwIJyh0r6ew=;
- b=PRH6mn6sdO8AC5G+CRAbO66J4Xs6LTMyrOafcYKY4crw65aCjlZH5B2banUCQbGVdfxF
- HyAx3Wv7XuFLMZurpskQT3koewW9AkfKY9p1KPlBQK8CEjD9eBaMzGHKbKhDYL6VBwYy
- ibIfqbvkz7v5s4D7lu74h19viirCXarOui2l8IppRaJqOavZ/86uP6MR35DkJEsASu3g
- YGmv004JLWeihhYrcAKWRVFrA0J/YSN3+iXQ5TXvYbtLuElWPTGKm+LQEmCJ4uy+qZMN
- qHNCuU3XJa0yBca0ah3Gv8AfYZzLW7v7ftQ3fmlpH2UHY6TngS/BY7vv0Sfsak2cIsCs MA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2w5ndq1kfx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 01:26:34 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAC1INd7113586;
-        Tue, 12 Nov 2019 01:24:33 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2w66wmxxmh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 01:24:32 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAC1OLRj011934;
-        Tue, 12 Nov 2019 01:24:21 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Nov 2019 01:24:21 +0000
-Date:   Mon, 11 Nov 2019 17:24:19 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Stancek <jstancek@redhat.com>
-Cc:     naresh.kamboju@linaro.org, hch@infradead.org, ltp@lists.linux.it,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        chrubis@suse.cz, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, broonie@kernel.org, arnd@arndb.de,
-        lkft-triage@lists.linaro.org, linux-ext4@vger.kernel.org,
-        tytso@mit.edu
-Subject: Re: [PATCH] iomap: fix return value of iomap_dio_bio_actor on 32bit
- systems
-Message-ID: <20191112012419.GE6211@magnolia>
-References: <20191111083815.GA29540@infradead.org>
- <b757ff64ddf68519fc3d55b66fcd8a1d4b436395.1573467154.git.jstancek@redhat.com>
+        Mon, 11 Nov 2019 20:26:07 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xAC1HKno023981;
+        Mon, 11 Nov 2019 20:25:50 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w7jpagevg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Nov 2019 20:25:50 -0500
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id xAC1JJbc027854;
+        Mon, 11 Nov 2019 20:25:49 -0500
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w7jpagevb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Nov 2019 20:25:49 -0500
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xAC1LAHd026975;
+        Tue, 12 Nov 2019 01:25:53 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01wdc.us.ibm.com with ESMTP id 2w5n36afqv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Nov 2019 01:25:52 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAC1PkUs50725354
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Nov 2019 01:25:46 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C1AF6AC05B;
+        Tue, 12 Nov 2019 01:25:46 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF725AC059;
+        Tue, 12 Nov 2019 01:25:41 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Nov 2019 01:25:41 +0000 (GMT)
+Subject: Re: [PATCH v1 3/5] char: tpm: rewrite "tpm_tis_req_canceled()"
+To:     amirmizi6@gmail.comg, Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
+        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        ayna@linux.vnet.ibm.com, Dan.Morav@nuvoton.com,
+        oren.tanami@nuvoton.com, shmulik.hagar@nuvoton.com,
+        amir.mizinski@nuvoton.com
+References: <20191110162137.230913-1-amirmizi6@gmail.com>
+ <20191110162137.230913-4-amirmizi6@gmail.com>
+ <20191110180010.xyvv4gf6jiqyrac3@cantor>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <3214005f-740b-46a8-7c0b-db96b63cd6f3@linux.ibm.com>
+Date:   Mon, 11 Nov 2019 20:25:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b757ff64ddf68519fc3d55b66fcd8a1d4b436395.1573467154.git.jstancek@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9438 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911120009
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9438 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911120009
+In-Reply-To: <20191110180010.xyvv4gf6jiqyrac3@cantor>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-11_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911120009
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 11:28:10AM +0100, Jan Stancek wrote:
-> Naresh reported LTP diotest4 failing for 32bit x86 and arm -next
-> kernels on ext4. Same problem exists in 5.4-rc7 on xfs.
-> 
-> The failure comes down to:
->   openat(AT_FDCWD, "testdata-4.5918", O_RDWR|O_DIRECT) = 4
->   mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7f7b000
->   read(4, 0xb7f7b000, 4096)              = 0 // expects -EFAULT
-> 
-> Problem is conversion at iomap_dio_bio_actor() return. Ternary
-> operator has a return type and an attempt is made to convert each
-> of operands to the type of the other. In this case "ret" (int)
-> is converted to type of "copied" (unsigned long). Both have size
-> of 4 bytes:
->     size_t copied = 0;
->     int ret = -14;
->     long long actor_ret = copied ? copied : ret;
-> 
->     On x86_64: actor_ret == -14;
->     On x86   : actor_ret == 4294967282
-> 
-> Replace ternary operator with 2 return statements to avoid this
-> unwanted conversion.
-> 
-> Fixes: 4721a6010990 ("iomap: dio data corruption and spurious errors when pipes fill")
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
+On 11/10/19 1:00 PM, Jerry Snitselaar wrote:
+> On Sun Nov 10 19, amirmizi6@gmail.com wrote:
+>> From: Amir Mizinski <amirmizi6@gmail.com>
+>>
+>> using this function while read/write data resulted in aborted operation.
+>> after investigating according to TCG TPM Profile (PTP) Specifications,
+>> i found cancel should happen only if TPM_STS.commandReady bit is lit
+>> and couldn't find a case when the current condition is valid.
+>> also only cmdReady bit need to be compared instead of the full lower 
+>> status register byte.
+>>
+>> Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+>> ---
+>> drivers/char/tpm/tpm_tis_core.c | 12 +-----------
+>> 1 file changed, 1 insertion(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm_tis_core.c 
+>> b/drivers/char/tpm/tpm_tis_core.c
+>> index ce7f8a1..9016f06 100644
+>> --- a/drivers/char/tpm/tpm_tis_core.c
+>> +++ b/drivers/char/tpm/tpm_tis_core.c
+>> @@ -627,17 +627,7 @@ static int probe_itpm(struct tpm_chip *chip)
+>>
+>> static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
+>> {
+>> -    struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>> -
+>> -    switch (priv->manufacturer_id) {
+>> -    case TPM_VID_WINBOND:
+>> -        return ((status == TPM_STS_VALID) ||
+>> -            (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
+>> -    case TPM_VID_STM:
+>> -        return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
+>
+> Stefan were these cases you found that were deviating from the spec? 
+> Wondering
+> if dropping these will cause issues for these devices.
 
-Thansk for the full explanation & patch, will test...
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+I believe these devices needed special handling of the status register 
+as they didn't behave as the 'other' devices, so I would expect issues.
 
---D
+    Stefan
 
-> ---
->  fs/iomap/direct-io.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 1fc28c2da279..7c58f51d7da7 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -318,7 +318,9 @@ static void iomap_dio_bio_end_io(struct bio *bio)
->  		if (pad)
->  			iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
->  	}
-> -	return copied ? copied : ret;
-> +	if (copied)
-> +		return copied;
-> +	return ret;
->  }
->  
->  static loff_t
-> -- 
-> 1.8.3.1
-> 
