@@ -2,98 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB46FF90A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:29:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CFD2F90AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 14:31:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfKLN3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 08:29:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:7350 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725834AbfKLN3q (ORCPT
+        id S1727201AbfKLNbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 08:31:12 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:60967 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726979AbfKLNbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:29:46 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xACDO2tT076505;
-        Tue, 12 Nov 2019 08:29:44 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w7qdab4wv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Nov 2019 08:29:42 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xACDPK9s012899;
-        Tue, 12 Nov 2019 13:29:00 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma02wdc.us.ibm.com with ESMTP id 2w5n35xwmh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Nov 2019 13:28:59 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xACDSwGT30277928
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Nov 2019 13:28:58 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B34AD2805E;
-        Tue, 12 Nov 2019 13:28:58 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 117AF2805A;
-        Tue, 12 Nov 2019 13:28:58 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 12 Nov 2019 13:28:57 +0000 (GMT)
-Subject: Re: question about setting TPM_CHIP_FLAG_IRQ in tpm_tis_core_init
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191112033637.kxotlhm6mtr5irvd@cantor>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <6d6f0899-8ba0-d6cf-ef3b-317ca698b687@linux.ibm.com>
-Date:   Tue, 12 Nov 2019 08:28:57 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 12 Nov 2019 08:31:12 -0500
+X-UUID: fa344ab78da246fd9d8c411a4751c8c0-20191112
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=hT9QBdG+LtUKaBpt4OHfKg/vmDyoLlBwacPEIY+C38w=;
+        b=l/h8OgTbd9GX8WRcOrFoOu5PNXuzU9akznAB+2X9v2vhclOHI9JXoWV22TJ2xaskjLvfXHqDOvFOha6ZswtjU59oB6GJh6f7GDMPSp1nD/0RQZCMZ13ZIdpChBvf1tyNva4W7ugamIWh8uZOj1w8SV4/VNqGUjqWuIflcZddpZQ=;
+X-UUID: fa344ab78da246fd9d8c411a4751c8c0-20191112
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <mark-pk.tsai@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1889015713; Tue, 12 Nov 2019 21:31:02 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 12 Nov 2019 21:31:00 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 12 Nov 2019 21:31:00 +0800
+From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+To:     <linux@armlinux.org.uk>
+CC:     <matthias.bgg@gmail.com>, <kstewart@linuxfoundation.org>,
+        <allison@lohutok.net>, <lvqiang.huang@unisoc.com>,
+        <gregkh@linuxfoundation.org>, <info@metux.net>,
+        <tglx@linutronix.de>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <yj.chiang@mediatek.com>,
+        <mark-pk.tsai@mediatek.com>, <alix.wu@mediatek.com>,
+        <mike-sl.lin@mediatek.com>, <eddy.lin@mediatek.com>,
+        <phil.chang@mediatek.com>
+Subject: [PATCH] ARM: fix race in for_each_frame
+Date:   Tue, 12 Nov 2019 21:29:38 +0800
+Message-ID: <20191112132937.19335-1-mark-pk.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <20191112033637.kxotlhm6mtr5irvd@cantor>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=682 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911120119
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 323926A5FB2DE832EA31753876BD697D6E80BA9E1623AE50FC1C3E17F6D5373C2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/19 10:36 PM, Jerry Snitselaar wrote:
-> Question about 1ea32c83c699 ("tpm_tis_core: Set TPM_CHIP_FLAG_IRQ 
-> before probing for interrupts").
-> Doesn't tpm_tis_send set this flag, and setting it here in 
-> tpm_tis_core_init short circuits what
-> tpm_tis_send was doing before? There is a bug report of an interrupt 
-> storm from a tpm on a t490s laptop
-> with the Fedora 31 kernel (5.3), and I'm wondering if this change 
-> could cause that. Before they got
-> the warning about interrupts not working, and using polling instead.
->
-I set this flag for the TIS because it wasn't set anywhere else. 
-tpm_tis_send() wouldn't set the flag but go via the path:
-
-if (!(chip->flags & TPM_CHIP_FLAG_IRQ) || priv->irq_tested)
-
-         return tpm_tis_send_main(chip, buf, len);
-
-the only other line for the TIS to set the IRQ flag was in the same 
-function further below, though that wouldn't be reached due to the above:
-
-[...]
-
-priv->irq = irq;
-
-chip->flags |= TPM_CHIP_FLAG_IRQ;
-
-
-    Stefan
-
+VGhlIHN2X3BjLCB3aGljaCBpcyBzYXZlZCBpbiB0aGUgc3RhY2ssIG1heSBiZSBhbiBpbnZhbGlk
+IGFkZHJlc3MNCmlmIHRoZSB0YXJnZXQgdGhyZWFkIGlzIHJ1bm5pbmcgb24gYW5vdGhlciBwcm9j
+ZXNzb3IgaW4gdGhlIG1lYW50aW1lLg0KSXQgd2lsbCBjYXVzZSBrZXJuZWwgY3Jhc2ggYXQgYGxk
+ciByMiwgW3N2X3BjLCAjLTRdYC4NCg0KQ2hlY2sgaWYgc3ZfcGMgaXMgdmFsaWQgYmVmb3JlIHVz
+ZSBpdCBsaWtlIHVud2luZF9mcmFtZSBpbg0KYXJjaC9hcm0va2VybmVsL3Vud2luZC5jLg0KDQpT
+aWduZWQtb2ZmLWJ5OiBNaWtlLVNMIExpbiA8bWlrZS1zbC5saW5AbWVkaWF0ZWsuY29tPg0KU2ln
+bmVkLW9mZi1ieTogTWFyay1QSyBUc2FpIDxtYXJrLXBrLnRzYWlAbWVkaWF0ZWsuY29tPg0KLS0t
+DQogYXJjaC9hcm0vbGliL2JhY2t0cmFjZS5TIHwgNSArKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA1
+IGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2xpYi9iYWNrdHJhY2UuUyBi
+L2FyY2gvYXJtL2xpYi9iYWNrdHJhY2UuUw0KaW5kZXggNTgyOTI1MjM4ZDY1Li44NGYwNjM4MWJi
+ZmIgMTAwNjQ0DQotLS0gYS9hcmNoL2FybS9saWIvYmFja3RyYWNlLlMNCisrKyBiL2FyY2gvYXJt
+L2xpYi9iYWNrdHJhY2UuUw0KQEAgLTY0LDYgKzY0LDExIEBAIGZvcl9lYWNoX2ZyYW1lOgl0c3QJ
+ZnJhbWUsIG1hc2sJCUAgQ2hlY2sgZm9yIGFkZHJlc3MgZXhjZXB0aW9ucw0KIAkJc3ViCXN2X3Bj
+LCBzdl9wYywgb2Zmc2V0CUAgQ29ycmVjdCBQQyBmb3IgcHJlZmV0Y2hpbmcNCiAJCWJpYwlzdl9w
+Yywgc3ZfcGMsIG1hc2sJQCBtYXNrIFBDL0xSIGZvciB0aGUgbW9kZQ0KIA0KKwkJbW92CXIwLCBz
+dl9wYw0KKwkJYmwJa2VybmVsX3RleHRfYWRkcmVzcwlAIGNoZWNrIGlmIHN2X3BjIGlzIHZhbGlk
+DQorCQljbXAJcjAsICMwCQkJQCBpZiBzdl9wYyBpcyBub3Qga2VybmVsIHRleHQNCisJCWJlcQkx
+MDA2ZgkJCUAgYWRkcmVzcywgYWJvcnQgYmFja3RyYWNlDQorDQogMTAwMzoJCWxkcglyMiwgW3N2
+X3BjLCAjLTRdCUAgaWYgc3RtZmQgc3AhLCB7YXJnc30gZXhpc3RzLA0KIAkJbGRyCXIzLCAuTGRz
+aSs0CQlAIGFkanVzdCBzYXZlZCAncGMnIGJhY2sgb25lDQogCQl0ZXEJcjMsIHIyLCBsc3IgIzEx
+CQlAIGluc3RydWN0aW9uDQotLSANCjIuMTguMA0K
 
