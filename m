@@ -2,128 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE1EF8B0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:52:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 412E3F8B1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 09:52:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfKLIwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 03:52:00 -0500
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:45672 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725781AbfKLIwA (ORCPT
+        id S1727265AbfKLIwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 03:52:50 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35863 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfKLIwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 03:52:00 -0500
-Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
-        by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1iURtx-0005Zc-HE; Tue, 12 Nov 2019 09:51:53 +0100
-X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
-        linuxbbg.five-lan.de
-Received: from [192.168.34.101] (p5098d998.dip0.t-ipconnect.de [80.152.217.152])
-        (authenticated bits=0)
-        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id xAC8pqVS013015
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 12 Nov 2019 09:51:52 +0100
-Subject: Re: [PATCH 3/3] arm64: dts: rk3399: Add init voltage for vdd_log
-To:     =?UTF-8?Q?S=c3=b6ren_Moch?= <smoch@web.de>,
-        Kever Yang <kever.yang@rock-chips.com>, heiko@sntech.de
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andrius_=c5=a0tikonas?= <andrius@stikonas.eu>,
-        linux-kernel@vger.kernel.org, Alexis Ballier <aballier@gentoo.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Hugh Cole-Baker <sigmaris@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Andy Yan <andyshrk@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Oskari Lemmela <oskari@lemmela.net>,
-        linux-rockchip@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Pragnesh Patel <Pragnesh_Patel@mentor.com>,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Nick Xie <nick@khadas.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Vivek Unune <npcomplete13@gmail.com>,
-        Akash Gajjar <akash@openedev.com>
-References: <20191111005158.25070-1-kever.yang@rock-chips.com>
- <20191111005158.25070-3-kever.yang@rock-chips.com>
- <ef8830f3-10d1-7b71-0e18-232f2eaeef2d@web.de>
- <1eaef5d5-c923-da56-b9c4-48d517b3c969@rock-chips.com>
- <acbab893-9e9a-cfe1-67bf-a9e2b2e50114@fivetechno.de>
- <88ad7dc9-5299-791b-e285-7775ddf885ba@web.de>
-From:   Markus Reichl <m.reichl@fivetechno.de>
-Autocrypt: addr=m.reichl@fivetechno.de; prefer-encrypt=mutual; keydata=
- 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
- eD/Xv4SsK2JTO4nkQYw8
-Organization: five technologies GmbH
-Message-ID: <c5519934-2715-d5cd-a236-0fec9a41dc67@fivetechno.de>
-Date:   Tue, 12 Nov 2019 09:51:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Tue, 12 Nov 2019 03:52:50 -0500
+Received: by mail-wm1-f67.google.com with SMTP id c22so2015785wmd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 00:52:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=6wind.com; s=google;
+        h=reply-to:subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/4ilrxOZ4QdJ3UAgm96VMI/hVQ/UHpZg4vUaW945RSk=;
+        b=aPZJaNpEqDsGZd07oyKR/UqP127LqAjk+WBw7hwfVMN0FoWn8Kz88BWPovdn0p0Hdn
+         etVge4dcyyOlncyHRIp/SrzCa9jixeA5xTceibSlk3mTdSH0nZQMqE/TZ+vZ65lu7RE9
+         BdWtvuS4aObI1J8/ycZGmCHJxbd9nW3KX7Xu0ZzP8cLosg2EMYs3FApz/KQp2bB0n6hL
+         cL7x1GCaxz6Bephfjz7MZG1CIImNYgbbiowJitpiferperrMn/vk3gE8ULGd2hiGCXFN
+         CQKL3pU50oO41lZsHvZQvb7tJ351KhVVEFYBOy5Jr/e0KJPJ0WFdYi4bkCyxbTA9+jUg
+         FuNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=/4ilrxOZ4QdJ3UAgm96VMI/hVQ/UHpZg4vUaW945RSk=;
+        b=KNtUbAa5FLmL2MtRj02Pt+g9qwV1K32DxAdwZk20iC1KhL5hKY7IeARKe5vhGWcn7p
+         tfJmymsqbeX7PX51fpOagjY4aqiuy2nTk5rexeZ9ZWrlM6/73K22y+Ad9ZUN1e4+XxqM
+         WDWj6aQYBUnRM32KRxGpYbGFV89xNSY062TzuIqhjrolARdyI0AgPDN/biXOtPbjUkHd
+         kCcK/uzSWidDeXLfYONUbvr1lcSuXsTxh03YLDti4ubrl0UKZT87J6QUHVd24eHLefOj
+         6dZ24znuAZ+pWowoib1gqOOHi2P5H9biEAxgeb5pvMAtrnUSOdvEtSvIS565MjTLEfey
+         MoaQ==
+X-Gm-Message-State: APjAAAVeYyL0rMf0ptMqkcGZt/fFC5K37804iB+skzaC2ibwH2xdGh80
+        oDn8CkAkLzXdqz7HrYFPxJscHbQu2UY=
+X-Google-Smtp-Source: APXvYqxB+LhiAPOVc20S1pf0/sMiK+DUibXaSNSdU9a5OrptV2LYhTLqmvcVDk0wDC06CP5vUIyMdg==
+X-Received: by 2002:a1c:3843:: with SMTP id f64mr2652366wma.129.1573548767671;
+        Tue, 12 Nov 2019 00:52:47 -0800 (PST)
+Received: from ?IPv6:2a01:e35:8b63:dc30:3456:63b2:eba1:f7d5? ([2a01:e35:8b63:dc30:3456:63b2:eba1:f7d5])
+        by smtp.gmail.com with ESMTPSA id 72sm264150wrl.73.2019.11.12.00.52.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Nov 2019 00:52:46 -0800 (PST)
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH net 1/2] openvswitch: support asymmetric conntrack
+To:     Aaron Conole <aconole@redhat.com>, netdev@vger.kernel.org
+Cc:     Pravin B Shelar <pshelar@ovn.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>, dev@openvswitch.org,
+        linux-kernel@vger.kernel.org
+References: <20191108210714.12426-1-aconole@redhat.com>
+From:   Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Organization: 6WIND
+Message-ID: <eb0bdc35-7f29-77c7-c013-e88f74772c24@6wind.com>
+Date:   Tue, 12 Nov 2019 09:52:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <88ad7dc9-5299-791b-e285-7775ddf885ba@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
+In-Reply-To: <20191108210714.12426-1-aconole@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1573548719;bc2c7baf;
-X-HE-SMSGID: 1iURtx-0005Zc-HE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks SÃ¶ren,
-
-Am 12.11.19 um 09:44 schrieb SÃ¶ren Moch:
-> On 12.11.19 09:16, Markus Reichl wrote:
->> Hi Kever,
->>
->> have a rk3399-roc-pc running mainline U-Boot and kernel and vdd_log is
->> showing 1118 mV.
->> Is this a danger for the board?
-> I think yes. What I read vdd_log on rk3399 must not exceed 1.0V.
->> How to fix it?
-> You probably need to do something like [1].
-
-will measure and come up with a patch.
-
+Le 08/11/2019 à 22:07, Aaron Conole a écrit :
+> The openvswitch module shares a common conntrack and NAT infrastructure
+> exposed via netfilter.  It's possible that a packet needs both SNAT and
+> DNAT manipulation, due to e.g. tuple collision.  Netfilter can support
+> this because it runs through the NAT table twice - once on ingress and
+> again after egress.  The openvswitch module doesn't have such capability.
 > 
-> [1] https://patchwork.kernel.org/patch/11173465/
+> Like netfilter hook infrastructure, we should run through NAT twice to
+> keep the symmetry.
 > 
-> GruÃŸ,
-> SÃ¶ren
->> Btw. vin-supply for this pwm-regulator is ignored and I could not find it
->> in bindings doc.
->>
-> GruÃŸ,
--- 
-Markus Reichl
+> Fixes: 05752523e565 ("openvswitch: Interface with NAT.")
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
+In this case, ovs_ct_find_existing() won't be able to find the conntrack, right?
+Inverting the tuple to find the conntrack doesn't work anymore with double NAT.
+Am I wrong?
+
+
+Regards,
+Nicolas
