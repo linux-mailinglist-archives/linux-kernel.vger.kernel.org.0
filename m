@@ -2,48 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0386EF9268
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16069F9274
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:29:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfKLO3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:29:22 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37406 "EHLO
+        id S1727881AbfKLO3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:29:39 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37422 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727711AbfKLO3N (ORCPT
+        with ESMTP id S1727074AbfKLO3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:29:13 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACETCEH014180;
-        Tue, 12 Nov 2019 08:29:12 -0600
+        Tue, 12 Nov 2019 09:29:37 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACETaA0014230;
+        Tue, 12 Nov 2019 08:29:36 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573568952;
-        bh=VPcCHoz83EUA010ZU1nWEatZxpJu9dEalZ7log4olLA=;
+        s=ti-com-17Q1; t=1573568976;
+        bh=Kz//oUf4WIP8xnfwf4GShSnNctOp7R5oQzxTr03LSd0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=vRhV4JBJShZJqKH548sWxtLoiAgrHXKCEb2d+wAYaNesweexMCZUlrTvm2xAH0ed/
-         d+nx+LHvwRpiiGNNTovUGuRp6F/sAK2dExm7YD4cNi9On3IVCKeC6Ya9/SwW+HPLwR
-         0/Zk0ECdx3++9qapTEkxk2T3iJRSe3mxDGXm7VHo=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACETCvq038188;
-        Tue, 12 Nov 2019 08:29:12 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+        b=Ke0LINXxPRz6NDL5JhkC1FukCzUMjDf0ILe3Mnk4pWEca/1NAsJpDgIqlRE52fcck
+         mTBO2u/qFUJbkPDGNN+t8LTdDYLZ5xF5N3pV7YeAm64zbviBRqm3ThFToCKzayocVH
+         Cu8RwWv07BRzdH1HOQyfU8+4ZqbuCQJnHBnm7p5o=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACETacl123815
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Nov 2019 08:29:36 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 08:28:54 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ Nov 2019 08:29:35 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 08:28:54 -0600
+ Frontend Transport; Tue, 12 Nov 2019 08:29:18 -0600
 Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriT044422;
-        Tue, 12 Nov 2019 08:29:11 -0600
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriU044422;
+        Tue, 12 Nov 2019 08:29:35 -0600
 From:   Benoit Parrot <bparrot@ti.com>
 To:     Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v3 17/20] media: ti-vpe: cal: Properly calculate max resolution boundary
-Date:   Tue, 12 Nov 2019 08:31:49 -0600
-Message-ID: <20191112143152.23176-18-bparrot@ti.com>
+Subject: [Patch v3 18/20] media: ti-vpe: cal: Fix a WARN issued when start streaming fails
+Date:   Tue, 12 Nov 2019 08:31:50 -0600
+Message-ID: <20191112143152.23176-19-bparrot@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191112143152.23176-1-bparrot@ti.com>
 References: <20191112143152.23176-1-bparrot@ti.com>
@@ -55,60 +56,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we were using an arbitrarily small maximum resolution mostly
-based on available sensor capabilities. However the hardware DMA limits
-are much higher than the statically define maximum resolution we were
-using.
-
-There we rework the boundary check code to handle the maximum width and
-height based on the maximum line width in bytes and re-calculating the
-pixel width based on the given pixel format.
+When start_streaming fails after the buffers have been queued we have to
+make sure all buffers are returned to user-space properly otherwise a
+v4l2 level WARN is generated.
 
 Signed-off-by: Benoit Parrot <bparrot@ti.com>
 ---
- drivers/media/platform/ti-vpe/cal.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ drivers/media/platform/ti-vpe/cal.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 5b5ff32b6120..091119bee8fc 100644
+index 091119bee8fc..92a54d59d433 100644
 --- a/drivers/media/platform/ti-vpe/cal.c
 +++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -34,8 +34,8 @@
+@@ -1695,10 +1695,15 @@ static int cal_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	return 0;
  
- #define CAL_MODULE_NAME "cal"
- 
--#define MAX_WIDTH 1920
--#define MAX_HEIGHT 1200
-+#define MAX_WIDTH_BYTES (8192 * 8)
-+#define MAX_HEIGHT_LINES 16383
- 
- #define CAL_VERSION "0.1.0"
- 
-@@ -1330,15 +1330,21 @@ static int cal_calc_format_size(struct cal_ctx *ctx,
- 				const struct cal_fmt *fmt,
- 				struct v4l2_format *f)
- {
--	u32 bpl;
-+	u32 bpl, max_width;
- 
- 	if (!fmt) {
- 		ctx_dbg(3, ctx, "No cal_fmt provided!\n");
- 		return -EINVAL;
+ err:
++	spin_lock_irqsave(&ctx->slock, flags);
++	vb2_buffer_done(&ctx->cur_frm->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
++	ctx->cur_frm = NULL;
++	ctx->next_frm = NULL;
+ 	list_for_each_entry_safe(buf, tmp, &dma_q->active, list) {
+ 		list_del(&buf->list);
+ 		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
  	}
++	spin_unlock_irqrestore(&ctx->slock, flags);
+ 	return ret;
+ }
  
--	v4l_bound_align_image(&f->fmt.pix.width, 48, MAX_WIDTH, 2,
--			      &f->fmt.pix.height, 32, MAX_HEIGHT, 0, 0);
-+	/*
-+	 * Maximum width is bound by the DMA max width in bytes.
-+	 * We need to recalculate the actual maxi width depending on the
-+	 * number of bytes per pixels required.
-+	 */
-+	max_width = MAX_WIDTH_BYTES / (ALIGN(fmt->bpp, 8) >> 3);
-+	v4l_bound_align_image(&f->fmt.pix.width, 48, max_width, 2,
-+			      &f->fmt.pix.height, 32, MAX_HEIGHT_LINES, 0, 0);
- 
- 	bpl = (f->fmt.pix.width * ALIGN(fmt->bpp, 8)) >> 3;
- 	f->fmt.pix.bytesperline = ALIGN(bpl, 16);
 -- 
 2.17.1
 
