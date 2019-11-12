@@ -2,182 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D7FF96B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B74F96BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 18:12:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfKLRLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 12:11:39 -0500
-Received: from foss.arm.com ([217.140.110.172]:37806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726936AbfKLRLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 12:11:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2474130E;
-        Tue, 12 Nov 2019 09:11:38 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AC0C3F534;
-        Tue, 12 Nov 2019 09:11:35 -0800 (PST)
-Subject: Re: [PATCH v2] sched/freq: move call to cpufreq_update_util
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, dietmar.eggemann@arm.com,
-        juri.lelli@redhat.com, rostedt@goodmis.org, mgorman@suse.de,
-        dsmythies@telus.net
-Cc:     linux-pm@vger.kernel.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, sargun@sargun.me, tj@kernel.org,
-        xiexiuqi@huawei.com, xiezhipeng1@huawei.com,
-        srinivas.pandruvada@linux.intel.com
-References: <1573570093-1340-1-git-send-email-vincent.guittot@linaro.org>
- <20191112150544.GA3664@linaro.org>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <e6687868-835b-0d01-5e00-c3eaec1cd62c@arm.com>
-Date:   Tue, 12 Nov 2019 17:11:34 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727515AbfKLRMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 12:12:01 -0500
+Received: from smtprelay0073.hostedemail.com ([216.40.44.73]:56135 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726936AbfKLRMB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 12:12:01 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 74F6D18224083;
+        Tue, 12 Nov 2019 17:12:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3865:3866:3867:3868:3870:4321:5007:7903:10004:10400:10848:11026:11232:11657:11658:11914:12043:12050:12296:12297:12740:12760:12895:13019:13069:13311:13357:13439:14659:14721:21080:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: cats71_68b4d1f30855c
+X-Filterd-Recvd-Size: 1580
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 12 Nov 2019 17:11:59 +0000 (UTC)
+Message-ID: <c243860eeabf9406d166deb6204a69255c51867d.camel@perches.com>
+Subject: Re: [PATCH 7/9] staging: rtl8723bs: Fix incorrect type in argument
+ warnings
+From:   Joe Perches <joe@perches.com>
+To:     "Javier F. Arias" <jarias.linux@gmail.com>,
+        gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
+Date:   Tue, 12 Nov 2019 09:11:42 -0800
+In-Reply-To: <637726782ce6c6ed3d68b5e595481857916bbc56.1573577309.git.jarias.linux@gmail.com>
+References: <cover.1573577309.git.jarias.linux@gmail.com>
+         <637726782ce6c6ed3d68b5e595481857916bbc56.1573577309.git.jarias.linux@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20191112150544.GA3664@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+On Tue, 2019-11-12 at 11:55 -0500, Javier F. Arias wrote:
+> Fix incorrect type in declarations to solve the 'incorrect
+> type in argument 3' warnings in the rtw_get_ie function calls.
+> Issue found by Sparse.
+[]
+> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+[]
+> @@ -83,7 +83,7 @@ static char *translate_scan(struct adapter *padapter,
+>  {
+>  	struct iw_event iwe;
+>  	u16 cap;
+> -	u32 ht_ielen = 0;
+> +	sint ht_ielen = 0;
 
-I didn't see anything in that reply, was that just a spurious email?
+more likely the rtw_get_ie function should used u32
+and not sint.
 
-On 12/11/2019 15:05, Vincent Guittot wrote:
-> Le Tuesday 12 Nov 2019 à 15:48:13 (+0100), Vincent Guittot a écrit :
->> update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pelt decays,
->> which might be inefficient when cpufreq driver has rate limitation.
->>
->> When a task is attached on a CPU, we have call path:
->>
->> update_blocked_averages()
->>   update_cfs_rq_load_avg()
->>     cfs_rq_util_change -- > trig frequency update
->>   attach_entity_load_avg()
->>     cfs_rq_util_change -- > trig frequency update
->>
->> The 1st frequency update will not take into account the utilization of the
->> newly attached task and the 2nd one might be discard because of rate
->> limitation of the cpufreq driver.
->>
->> update_cfs_rq_load_avg() is only called by update_blocked_averages()
->> and update_load_avg() so we can move the call to
->> {cfs_rq,cpufreq}_util_change() into these 2 functions. It's also
->> interesting to notice that update_load_avg() already calls directly
->> cfs_rq_util_change() for !SMP case.
->>
->> This changes will also ensure that cpufreq_update_util() is called even
->> when there is no more CFS rq in the leaf_cfs_rq_list to update but only
->> irq, rt or dl pelt signals.
->>
->> Reported-by: Doug Smythies <dsmythies@telus.net>
->> Fixes: 039ae8bcf7a5 ("sched/fair: Fix O(nr_cgroups) in the load balancing path")
->> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>
->> ---
->>
->> I have just rebased the patch on latest tip/sched/core and made it a proper
->> patchset after Doug reported that the problem has diseappeared according to
->> his 1st results but tests results are not all based on the same v5.4-rcX
->> and with menu instead of teo governor.
->>
->>  kernel/sched/fair.c | 33 +++++++++++++++++++++------------
->>  1 file changed, 21 insertions(+), 12 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index e458f52..c93d534 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -3508,9 +3508,6 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
->>  	cfs_rq->load_last_update_time_copy = sa->last_update_time;
->>  #endif
->>  
->> -	if (decayed)
->> -		cfs_rq_util_change(cfs_rq, 0);
->> -
->>  	return decayed;
->>  }
->>  
->> @@ -3620,8 +3617,12 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
->>  		attach_entity_load_avg(cfs_rq, se, SCHED_CPUFREQ_MIGRATION);
->>  		update_tg_load_avg(cfs_rq, 0);
->>  
->> -	} else if (decayed && (flags & UPDATE_TG))
->> -		update_tg_load_avg(cfs_rq, 0);
->> +	} else if (decayed) {
->> +		cfs_rq_util_change(cfs_rq, 0);
->> +
->> +		if (flags & UPDATE_TG)
->> +			update_tg_load_avg(cfs_rq, 0);
->> +	}
->>  }
->>  
->>  #ifndef CONFIG_64BIT
->> @@ -7484,6 +7485,7 @@ static void update_blocked_averages(int cpu)
->>  	const struct sched_class *curr_class;
->>  	struct rq_flags rf;
->>  	bool done = true;
->> +	int decayed = 0;
->>  
->>  	rq_lock_irqsave(rq, &rf);
->>  	update_rq_clock(rq);
->> @@ -7493,9 +7495,9 @@ static void update_blocked_averages(int cpu)
->>  	 * that RT, DL and IRQ signals have been updated before updating CFS.
->>  	 */
->>  	curr_class = rq->curr->sched_class;
->> -	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
->> -	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
->> -	update_irq_load_avg(rq, 0);
->> +	decayed |= update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
->> +	decayed |= update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
->> +	decayed |= update_irq_load_avg(rq, 0);
->>  
->>  	/* Don't need periodic decay once load/util_avg are null */
->>  	if (others_have_blocked(rq))
->> @@ -7529,6 +7531,9 @@ static void update_blocked_averages(int cpu)
->>  	}
->>  
->>  	update_blocked_load_status(rq, !done);
->> +
->> +	if (decayed)
->> +		cpufreq_update_util(rq, 0);
->>  	rq_unlock_irqrestore(rq, &rf);
->>  }
->>  
->> @@ -7585,6 +7590,7 @@ static inline void update_blocked_averages(int cpu)
->>  	struct cfs_rq *cfs_rq = &rq->cfs;
->>  	const struct sched_class *curr_class;
->>  	struct rq_flags rf;
->> +	int decayed = 0;
->>  
->>  	rq_lock_irqsave(rq, &rf);
->>  	update_rq_clock(rq);
->> @@ -7594,13 +7600,16 @@ static inline void update_blocked_averages(int cpu)
->>  	 * that RT, DL and IRQ signals have been updated before updating CFS.
->>  	 */
->>  	curr_class = rq->curr->sched_class;
->> -	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
->> -	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
->> -	update_irq_load_avg(rq, 0);
->> +	decayed |= update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
->> +	decayed |= update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
->> +	decayed |= update_irq_load_avg(rq, 0);
->>  
->> -	update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
->> +	decayed |= update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
->>  
->>  	update_blocked_load_status(rq, cfs_rq_has_blocked(cfs_rq) || others_have_blocked(rq));
->> +
->> +	if (decayed)
->> +		cpufreq_update_util(rq, 0);
->>  	rq_unlock_irqrestore(rq, &rf);
->>  }
->>  
->> -- 
->> 2.7.4
->>
+one day a sed of 's/\bsint\b/int/g' would be good too.
+
+
+
