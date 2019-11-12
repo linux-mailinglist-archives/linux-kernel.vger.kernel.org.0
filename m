@@ -2,106 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C537F8CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11966F8CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 11:20:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfKLKUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 05:20:17 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43273 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbfKLKUR (ORCPT
+        id S1727226AbfKLKUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 05:20:41 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35307 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727196AbfKLKUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 05:20:17 -0500
-Received: by mail-ot1-f65.google.com with SMTP id l14so13823460oti.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 02:20:16 -0800 (PST)
+        Tue, 12 Nov 2019 05:20:40 -0500
+Received: by mail-lj1-f195.google.com with SMTP id r7so17145313ljg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 02:20:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Rjd1FS8nNm6yRr4WVn+HN8ZG0ZScPCeZT4lpNVe4Zbk=;
-        b=HT2E7HWmfg4NPppXd4Z/N3e+10XqEJpkjLfqXexTfchGFx59EKIlflcB29Pvff1Ii+
-         Pee1vLZ2acJeOayIkvQe1hyi56T6jI6nITcT9E2DBBnQq5J17t3acaq+8cyxRmA4k+fm
-         WA46zucZtzf5PeihhI8Cp2UsziPgYvcqyd1YpZHDAe/RpWNEiIaddhmbc6XHTsTLMwGK
-         hrIRhCGCg12VYvW1IsWdRWeFqQVf/n4WkoCKnbQ8LcdTIxaXkMjkxWrjnviserTeAkL9
-         DarQ/kew1zKc/ZWhn4Ge8QJzrHzk5AEvI8rGEV4/4PKULnnxZybyYBkdT3ayUrli5Mhe
-         b5sQ==
+         :cc;
+        bh=Wt2tEGTMbBPb9EywvqOKOcH2ynL0iBFpbMNN4+VttJ0=;
+        b=XlbA2lkx5U6xHQpjpbtaPonUBRx8Bgbc9b0c0WsGCtpccg3XNabQSjfxQQMRs7LSy3
+         CeEJEksFBroPrS6PWgQTN0XTRgomAjXS8WglIacf4vA7CL73qKqSptdAFrwiIazmgRob
+         eJMFRZyuN2xgrDkcOa1epW+7vPZ+o4En9jvvNp3/xqkhqGgalnSPBlre1FjB/GoFsSEt
+         xXvhXF6o4D3fdmSq5BdJ8gtMSi72WfQ3Zewzq1QIfdw/cCSAGnuR9Ke9UxQGitkIo3DS
+         Enf6jzQVgg2rirgr4fquWQ6GEcJkfCW5pl/D+f6spNU+IzR2emUgHHl01u76fAi67ubk
+         NHOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Rjd1FS8nNm6yRr4WVn+HN8ZG0ZScPCeZT4lpNVe4Zbk=;
-        b=ipDhKzOvYpp2u11H2jYhVe9HY6CUbcaywBBoc9I2NGSkDI6vTwF5Qa99Oh+52sERUt
-         F9r8LLqRT5SQB8wlEYfwyQ4JoNcxy65oitDZdLIYOWjSMhGovwdueUhDZOM5oaibac+c
-         dqk0B0jKLSfcA/yH3Eg+MTg8TXWjaLPp7QxSaBWnSQTeLONuiSFwfxAdlw/CUD5at5J6
-         TN7s3WRc0AJDw+1HyLUBGkEQgqjPlE2bAcESBxrvqawXtkXnl8kMYCVEvCduhTKsD/S9
-         AUt6TiURTqBAh129p89mIYCry6BAMfpn91xFFo1zkTvCzu/K1FWMn+dZhRiH7+S663gp
-         /Uww==
-X-Gm-Message-State: APjAAAWEMb0FoXE7m831/ZeFiRX4V0EbjuQiPhWqYHmAeceZTekA8llt
-        m4ydjw5Q+Js4cQgt/oUgxiOLLzzB2tHmhpziMaA4Ww==
-X-Google-Smtp-Source: APXvYqyJYU1a1wAD6RMTrT6g96ZtxZ7A8y0Kd61mPfdbLz15t3BIBUD3Ta5YCEivW+oP4c/yRxIQN1WJuUKzonHyOUI=
-X-Received: by 2002:a05:6830:210e:: with SMTP id i14mr24546593otc.250.1573554016083;
- Tue, 12 Nov 2019 02:20:16 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=Wt2tEGTMbBPb9EywvqOKOcH2ynL0iBFpbMNN4+VttJ0=;
+        b=OVRrGHfooNiXsXfxsilOR1VJHf8DlHGVLmV5BVi97nqaI9pCdnSIe4Yj1lMtgUMWPD
+         8B+aHG3eV4Xn7BrV1xzPTGkS2Qaskh1Xkezhj2IsPZSZaQdB1+LG8Pw6MBXonGye1LKS
+         iLAnOFmy2iKAoxYjgCPJIIwyFig9tBdVxXnXI5utijQ+B1rUF4kft4Qjfc0lMJT0QMB5
+         MId/qEaBMsYZA5wIUR3HDxZJk45sVp2QWYxysEVRhxnHxVBjR+7QItIulfW/56ft7m5h
+         yT6hmFK0F4qj4F/c5L3eUgAJDFzbjdQ3CJkxHE0+G5e7Ib0M6VLKKzFsahYXsuJHSxFV
+         X1Iw==
+X-Gm-Message-State: APjAAAU3AJTsytiFzQ28p6nqnRZTDxut5gslgOfbPTiROOgk/7jkda+N
+        84f5T7mUGb/UX8hDqfWWtKCfSz2K11MS8PjxJkvgBu7H
+X-Google-Smtp-Source: APXvYqwLv1QgL2LY5NF5oc3QxBBclz4En9VtQbqxmqlW3vDAlGPhSJ+CTuktQ/HjVllWY5WHsgIXoLqwTbvrEiWLmT8=
+X-Received: by 2002:a2e:9e45:: with SMTP id g5mr17502010ljk.58.1573554038403;
+ Tue, 12 Nov 2019 02:20:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20191108160747.3274377-1-thierry.reding@gmail.com> <20191108160747.3274377-2-thierry.reding@gmail.com>
-In-Reply-To: <20191108160747.3274377-2-thierry.reding@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 12 Nov 2019 11:20:05 +0100
-Message-ID: <CAMpxmJUdqWzMJo0LMXudyzyoyP9TZyAA1t50GxG0DCL3aTBASw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: bd70528: Use correct unit for debounce times
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Pavel Machek <pavel@denx.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20191107153048.843881-1-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20191107153048.843881-1-paul.kocialkowski@bootlin.com>
+From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Date:   Tue, 12 Nov 2019 11:20:27 +0100
+Message-ID: <CAMeQTsYG+YvXqQqvJvsxT1h0z5zZJbdCtc5wPjUossvwidV=cA@mail.gmail.com>
+Subject: Re: [PATCH] drm/gma500: Fixup fbdev stolen size usage evaluation
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        James Hilliard <james.hilliard1@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 8 lis 2019 o 17:07 Thierry Reding <thierry.reding@gmail.com> napisa=C5=
-=82(a):
+On Thu, Nov 7, 2019 at 4:30 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
 >
-> From: Thierry Reding <treding@nvidia.com>
+> psbfb_probe performs an evaluation of the required size from the stolen
+> GTT memory, but gets it wrong in two distinct ways:
+> - The resulting size must be page-size-aligned;
+> - The size to allocate is derived from the surface dimensions, not the fb
+>   dimensions.
 >
-> The debounce time passed to gpiod_set_debounce() is specifid in
-> microseconds, so make sure to use the correct unit when computing the
-> register values, which denote delays in milliseconds.
+> When two connectors are connected with different modes, the smallest will
+> be stored in the fb dimensions, but the size that needs to be allocated must
+> match the largest (surface) dimensions. This is what is used in the actual
+> allocation code.
 >
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Fix this by correcting the evaluation to conform to the two points above.
+> It allows correctly switching to 16bpp when one connector is e.g. 1920x1080
+> and the other is 1024x768.
+>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 > ---
->  drivers/gpio/gpio-bd70528.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/gma500/framebuffer.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/gpio/gpio-bd70528.c b/drivers/gpio/gpio-bd70528.c
-> index d934d23b77c6..d29cbd3c9e53 100644
-> --- a/drivers/gpio/gpio-bd70528.c
-> +++ b/drivers/gpio/gpio-bd70528.c
-> @@ -25,13 +25,13 @@ static int bd70528_set_debounce(struct bd70528_gpio *=
-bdgpio,
->         case 0:
->                 val =3D BD70528_DEBOUNCE_DISABLE;
->                 break;
-> -       case 1 ... 15:
-> +       case 1 ... 15000:
->                 val =3D BD70528_DEBOUNCE_15MS;
->                 break;
-> -       case 16 ... 30:
-> +       case 15001 ... 30000:
->                 val =3D BD70528_DEBOUNCE_30MS;
->                 break;
-> -       case 31 ... 50:
-> +       case 30001 ... 50000:
->                 val =3D BD70528_DEBOUNCE_50MS;
->                 break;
->         default:
+> diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+> index 218f3bb15276..90237abee088 100644
+> --- a/drivers/gpu/drm/gma500/framebuffer.c
+> +++ b/drivers/gpu/drm/gma500/framebuffer.c
+> @@ -462,6 +462,7 @@ static int psbfb_probe(struct drm_fb_helper *helper,
+>                 container_of(helper, struct psb_fbdev, psb_fb_helper);
+>         struct drm_device *dev = psb_fbdev->psb_fb_helper.dev;
+>         struct drm_psb_private *dev_priv = dev->dev_private;
+> +       unsigned int fb_size;
+>         int bytespp;
+>
+>         bytespp = sizes->surface_bpp / 8;
+> @@ -471,8 +472,11 @@ static int psbfb_probe(struct drm_fb_helper *helper,
+>         /* If the mode will not fit in 32bit then switch to 16bit to get
+>            a console on full resolution. The X mode setting server will
+>            allocate its own 32bit GEM framebuffer */
+> -       if (ALIGN(sizes->fb_width * bytespp, 64) * sizes->fb_height >
+> -                       dev_priv->vram_stolen_size) {
+> +       fb_size = ALIGN(sizes->surface_width * bytespp, 64) *
+> +                 sizes->surface_height;
+> +       fb_size = ALIGN(fb_size, PAGE_SIZE);
+> +
+> +       if (fb_size > dev_priv->vram_stolen_size) {
+
+psb_gtt_alloc_range() already aligns by PAGE_SIZE for us. Looks like
+we align a couple of times extra for luck. This needs cleaning up
+instead of adding even more aligns.
+
+Your size calculation looks correct and indeed makes my 1024x600 +
+1920x1080 setup actually display something, but for some reason I get
+an incorrect panning on the smaller screen and stale data on the
+surface only visible by the larger CRTC. Any idea what's going on?
+
+>                  sizes->surface_bpp = 16;
+>                  sizes->surface_depth = 16;
+>          }
 > --
 > 2.23.0
 >
-
-This fixes commit 18bc64b3aebf ("gpio: Initial support for ROHM
-bd70528 GPIO block") present in v5.3 so applied to fixes and marked
-for stable.
-
-Bart
