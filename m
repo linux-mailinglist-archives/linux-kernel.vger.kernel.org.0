@@ -2,133 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B4FEF915B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E93F0F9179
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:06:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfKLOEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:04:10 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:60331 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726912AbfKLOEK (ORCPT
+        id S1727411AbfKLOGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:06:43 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:46872 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726497AbfKLOGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:04:10 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iUWm5-0008Hj-04; Tue, 12 Nov 2019 15:04:05 +0100
-To:     Vladimir Oltean <olteanv@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: ls1021a-tsn: Use interrupts for the SGMII  PHYs
-X-PHP-Originating-Script: 0:main.inc
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Nov 2019 15:13:25 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>
-In-Reply-To: <CA+h21hpE-Nu_Sh1fRizUoEs082ev=9nzuumSXDrk-QTXdnEbzg@mail.gmail.com>
-References: <20191112132010.18274-1-linux@rasmusvillemoes.dk>
- <20191112132010.18274-3-linux@rasmusvillemoes.dk>
- <CA+h21hqw16o0TqOV1WWYYcOs3YWJe=xq_K0=miU+BFTA31OTmQ@mail.gmail.com>
- <6d4292fcb0cf290837306388bdfe9b0f@www.loen.fr>
- <CA+h21hpE-Nu_Sh1fRizUoEs082ev=9nzuumSXDrk-QTXdnEbzg@mail.gmail.com>
-Message-ID: <aee81d64979bb72b63a8889fb7193c3f@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: olteanv@gmail.com, linux@rasmusvillemoes.dk, shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+        Tue, 12 Nov 2019 09:06:42 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Thubem1_1573567598;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Thubem1_1573567598)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 12 Nov 2019 22:06:38 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     alex.shi@linux.alibaba.com, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, mgorman@techsingularity.net,
+        tj@kernel.org, hughd@google.com, khlebnikov@yandex-team.ru,
+        daniel.m.jordan@oracle.com, yang.shi@linux.alibaba.com
+Subject: [PATCH v2 0/8] per lruvec lru_lock for memcg
+Date:   Tue, 12 Nov 2019 22:06:20 +0800
+Message-Id: <1573567588-47048-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-12 15:03, Vladimir Oltean wrote:
-> On Tue, 12 Nov 2019 at 15:49, Marc Zyngier <maz@kernel.org> wrote:
->>
->> On 2019-11-12 14:53, Vladimir Oltean wrote:
->> > On Tue, 12 Nov 2019 at 15:20, Rasmus Villemoes
->> > <linux@rasmusvillemoes.dk> wrote:
->> >>
->> >> From: Vladimir Oltean <olteanv@gmail.com>
->> >>
->> >> On the LS1021A-TSN board, the 2 Atheros AR8031 PHYs for eth0 and
->> >> eth1
->> >> have interrupt lines connected to the shared IRQ2_B LS1021A pin.
->> >>
->> >> Switching to interrupts offloads the PHY library from the task of
->> >> polling the MDIO status and AN registers (1, 4, 5) every second.
->> >>
->> >> Unfortunately, the BCM5464R quad PHY connected to the switch does
->> >> not
->> >> appear to have an interrupt line routed to the SoC.
->> >>
->> >> Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
->> >> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> >> ---
->> >>  arch/arm/boot/dts/ls1021a-tsn.dts | 4 ++++
->> >>  1 file changed, 4 insertions(+)
->> >>
->> >> diff --git a/arch/arm/boot/dts/ls1021a-tsn.dts
->> >> b/arch/arm/boot/dts/ls1021a-tsn.dts
->> >> index 5b7689094b70..135d36461af4 100644
->> >> --- a/arch/arm/boot/dts/ls1021a-tsn.dts
->> >> +++ b/arch/arm/boot/dts/ls1021a-tsn.dts
->> >> @@ -203,11 +203,15 @@
->> >>         /* AR8031 */
->> >>         sgmii_phy1: ethernet-phy@1 {
->> >>                 reg = <0x1>;
->> >> +               /* SGMII1_PHY_INT_B: connected to IRQ2, active 
->> low
->> >> */
->> >> +               interrupts-extended = <&extirq 2
->> >> IRQ_TYPE_EDGE_FALLING>;
->> >>         };
->> >>
->> >>         /* AR8031 */
->> >>         sgmii_phy2: ethernet-phy@2 {
->> >>                 reg = <0x2>;
->> >> +               /* SGMII2_PHY_INT_B: connected to IRQ2, active 
->> low
->> >> */
->> >> +               interrupts-extended = <&extirq 2
->> >> IRQ_TYPE_EDGE_FALLING>;
->> >>         };
->> >>
->> >>         /* BCM5464 quad PHY */
->> >> --
->> >> 2.23.0
->> >>
->> >
->> > +netdev and Andrew for this patch, since the interrupt polarity
->> > caught
->> > his attention in v1.
->>
->> Certainly, the comments and the interrupt specifier do not match.
->> Which one is true?
->>
->>          M.
->> --
->> Jazz is not dead. It just smells funny...
->
-> The interrupt specifier certainly works. So that points to an issue
-> with the description. What do you mean, exactly? Does "active low"
-> mean "level-triggered"? How would you have described this?
+Hi all,
 
-Active Low definitely implies level triggered. And if that's how it
-is described in the TRM, than the interrupt specifier is wrong, and
-just *seem to work* because the level goes back to high between two
-interrupts.
+This patchset move lru_lock into lruvec, give a lru_lock for each of
+lruvec, thus bring a lru_lock for each of memcg per node.
 
-Also, shared *edge* interrupts do not work, full stop. So I'm pretty
-convinced that what you have here is just wrong.
+According to Daniel Jordan's suggestion, I run 64 'dd' with on 32
+containers on my 2s* 8 core * HT box with the modefied case:
+  https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git/tree/case-lru-file-readtwice
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+With this change above lru_lock censitive testing improved 17% with multiple
+containers scenario. And no performance lose w/o mem_cgroup.
+
+Thanks Hugh Dickins and Konstantin Khlebnikov, they both bring the same idea
+7 years ago. I don't know why they didn't go further, but according to my 
+testing, and google internal usage. This feathre is clearly benefit
+multi-container user.
+
+So I like to introduce it here.
+
+v2: bypass a performance regression bug and fix some function issues
+
+---
+ Documentation/admin-guide/cgroup-v1/memcg_test.rst | 15 +++------------
+ Documentation/admin-guide/cgroup-v1/memory.rst     |  6 +++---
+ Documentation/trace/events-kmem.rst                |  2 +-
+ Documentation/vm/unevictable-lru.rst               | 22 ++++++++--------------
+ include/linux/memcontrol.h                         | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mm_types.h                           |  2 +-
+ include/linux/mmzone.h                             |  7 +++++--
+ mm/compaction.c                                    | 62 ++++++++++++++++++++++++++++++++++++++++++--------------------
+ mm/filemap.c                                       |  4 ++--
+ mm/huge_memory.c                                   | 16 ++++++----------
+ mm/memcontrol.c                                    | 64 +++++++++++++++++++++++++++++++++++++++++++++++++++-------------
+ mm/mlock.c                                         | 27 ++++++++++++++-------------
+ mm/mmzone.c                                        |  1 +
+ mm/page_alloc.c                                    |  1 -
+ mm/page_idle.c                                     |  5 +++--
+ mm/rmap.c                                          |  2 +-
+ mm/swap.c                                          | 77 +++++++++++++++++++++++++++++++----------------------------------------------
+ mm/vmscan.c                                        | 74 ++++++++++++++++++++++++++++++++++++++------------------------------------
+ 18 files changed, 277 insertions(+), 177 deletions(-)
+
+
+[PATCH v2 1/8] mm/lru: add per lruvec lock for memcg
+[PATCH v2 2/8] mm/lruvec: add irqsave flags into lruvec struct
+[PATCH v2 3/8] mm/lru: replace pgdat lru_lock with lruvec lock
+[PATCH v2 4/8] mm/lru: only change the lru_lock iff page's lruvec is
+[PATCH v2 5/8] mm/pgdat: remove pgdat lru_lock
+[PATCH v2 6/8] mm/lru: remove rcu_read_lock to fix performance
+[PATCH v2 7/8] mm/lru: likely enhancement
+[PATCH v2 8/8] mm/lru: revise the comments of lru_lock
