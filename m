@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B92F8641
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 345DAF8642
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 02:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbfKLB2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 11 Nov 2019 20:28:00 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51991 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfKLB1v (ORCPT
+        id S1727325AbfKLB2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 11 Nov 2019 20:28:04 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39826 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbfKLB1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Nov 2019 20:27:51 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q70so1308814wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 17:27:51 -0800 (PST)
+        Mon, 11 Nov 2019 20:27:54 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l7so5100326wrp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2019 17:27:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yBdLYJdhjeFT5w6s0m0U5Bo50muPeSkrn41Bj/OgNzU=;
-        b=Pki/A7gikh7SOzuzY9xY1WmR5BVkRnRJkPpCiLW3ZBTdz1AO8TfPMEABrrbko7vpZ0
-         nx1KWMSlCNsK9ABxXGzNEKs/BMfxok/Y4JQ5THAhur3SWePd23N9ddaVTNL0SufASqNM
-         aUi1P+fbMz06GB1aaAMKQAEMCXd0Lj0V0clQFEZKklv0zrvp9MxolF1cpHC+YbZmMjQx
-         UCGYOGtMab6yZ1VuSbJz82YnYu3ewMUX592H7yeY4A3cTgtcagwJHx0TxkQUlOEcXQso
-         Y9l4GZSrUlyezIAy9EUA9r2oqQv5rJswnevUXtlnLCYLI1DCR9OyQ62FlKRxfIF3Eltq
-         NdIg==
+        bh=1znNAGw/Z1q6zMts4RvOzjAIKcNOTR5cC9VZjL6t0T4=;
+        b=no7ak0lp9bxnBWXhC4+Tx+Ld3kfGjWGcwqMxHG6k1Jesn3stq1RTFYQvubLhKR8H4P
+         M9YDX9NrHZhKHxHF1s2VvzBK5lBOzfFycGG7oxUSFBJXYHfxyV+76234bOF16UmArQEM
+         GYENaeByzCN5GCGPTvEISHJgxSpMgeA8mpVALKx6yDLmfILABsljASkq0qXrVazyHDW/
+         Wg5tmh51mW9+xE3rV6a/8f4QVhrQObsWvsmgnUi1CXQOlF3t3WvSSJQU/SUtyAEjfnLU
+         yCVCVBUq4QPtwdF5vl8XANMH/2WyZG9X1r/doDnXU5Iv006YwcXzRa9JOWihNlRCwOTK
+         iGLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yBdLYJdhjeFT5w6s0m0U5Bo50muPeSkrn41Bj/OgNzU=;
-        b=M42OILj8RqF+FN6o5PkhnXxebL99JHS8pctYZj52zPwlbSIy6S0neqI6Imd1LuM7IX
-         yYN3frVwngYAwjoNdfqTgDxDq4DHu24oaGGlWIB4ZB43cm/SzjxVJVUE1wqA1CYQA2tE
-         PQB2mHtKKvZSOoKtDc0GkexKp7f81/C6wRP+OBw3NSNqJbVfK0ynN89HPbCmdIdpJJxj
-         ZNFoRANNzAAtHxfFQThCFb/p6uN/jQUMqCkkuRD9f3k9LcydbDZmRQU6g10V9IHWS2w1
-         t2tTymOTRDXTUhd1lQylwrZPF+wTjGtk8K8ZryuwcsPBkt6FgAeBLvVK7v8BLcLKQSyo
-         8aUw==
-X-Gm-Message-State: APjAAAXTEcl9X+xk2lOFvCmQv67m7TPvVZ2RrZk419BsGzcSz0u5cDRk
-        DzvLugYGlKigIwpJGg8oWukTIP+7z5M=
-X-Google-Smtp-Source: APXvYqz3Y1ZxljDDH+9AJcIgAzsfMqPySbX9a/6ixpOXwB//28V58jMYIKISZ2Ag1RcsS4He9XRvrQ==
-X-Received: by 2002:a1c:f404:: with SMTP id z4mr1525920wma.12.1573522070554;
-        Mon, 11 Nov 2019 17:27:50 -0800 (PST)
+        bh=1znNAGw/Z1q6zMts4RvOzjAIKcNOTR5cC9VZjL6t0T4=;
+        b=K4JgxyrCUgSmoXhlPy28RuBiMMxhvKy4rqQaAIEqNL5BstG8C/Un7ZSYBN9orqea1L
+         k84m8Rffn186nqOzcccDmwi8JfgNnLRz6y8VVMTpsDdZmja0rhoD5KSnYZglBlMiq88W
+         LMWhHKyjh7yM3ZWKve7tvlzGFQ4WXelwJ0tD8IzujmYfcpCpo3l3PvyKbVV1rbZZYNOT
+         PRhrjPO4s5P0a9IUsrg4MP3/1yLsGzUSepyX53opRGhmPDHFCol9jGt5KbmsYpTqFdXH
+         zmi37pFI02iRBS4n+//ixPi1tU1vldIFuo30eumZrcttCusNzh1l5m7OugYySYL6e6BN
+         Snkg==
+X-Gm-Message-State: APjAAAXGqRlppKsh5g4VG5syLdFr0AArnK1RYD+XaqYxBufucQ3DA1aG
+        7Xy5QOIfF8pRmUZDEfy4TBwZAnyfUAA=
+X-Google-Smtp-Source: APXvYqw1sQ5638emNp4oXahicRk566L49rP3h7hLu+1ZakVzvyAqS3EF8A2tV4rgYhA06BYSYjrp7w==
+X-Received: by 2002:adf:fe0e:: with SMTP id n14mr24275641wrr.72.1573522071918;
+        Mon, 11 Nov 2019 17:27:51 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id u187sm1508096wme.15.2019.11.11.17.27.49
+        by smtp.gmail.com with ESMTPSA id u187sm1508096wme.15.2019.11.11.17.27.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 17:27:50 -0800 (PST)
+        Mon, 11 Nov 2019 17:27:51 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -66,9 +66,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCHv8 14/34] posix-timers: Make timer_settime() time namespace aware
-Date:   Tue, 12 Nov 2019 01:27:03 +0000
-Message-Id: <20191112012724.250792-15-dima@arista.com>
+Subject: [PATCHv8 15/34] alarmtimer: Make nanosleep time namespace aware
+Date:   Tue, 12 Nov 2019 01:27:04 +0000
+Message-Id: <20191112012724.250792-16-dima@arista.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191112012724.250792-1-dima@arista.com>
 References: <20191112012724.250792-1-dima@arista.com>
@@ -81,39 +81,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrei Vagin <avagin@gmail.com>
 
-Wire timer_settime() syscall into time namespace virtualization.
-
-sys_timer_settime() calls the ktime->timer_set() callback. Right now,
-common_timer_set() is the only implementation for the callback.
-
-There user-supplied timer's value is converted from timespec64 to ktime
-and then timens_ktime_to_host() can be used to convert namespace's time
-to the host time.
-
-Inside a time namespace kernel's time differ on a fixed offset from
-a user-supplied, but only absolute values (TIMER_ABSTIME) must
-be converted.
+clock_nanosleep() accepts absolute values of expiration time when
+TIMER_ABSTIME flag is set. This absolute value is inside the task's
+time namespace, and has to be converted to the host's time.
 
 Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Co-developed-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- kernel/time/posix-timers.c | 2 ++
+ kernel/time/alarmtimer.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index d26b915b227a..473082b0b57f 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -885,6 +885,8 @@ int common_timer_set(struct k_itimer *timr, int flags,
+diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+index 9a8e81bc4ec2..b51b36e533c4 100644
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -839,6 +839,8 @@ static int alarm_timer_nsleep(const clockid_t which_clock, int flags,
+ 		ktime_t now = alarm_bases[type].get_ktime();
  
- 	timr->it_interval = timespec64_to_ktime(new_setting->it_interval);
- 	expires = timespec64_to_ktime(new_setting->it_value);
-+	if (flags & TIMER_ABSTIME)
-+		expires = timens_ktime_to_host(timr->it_clock, expires);
- 	sigev_none = timr->it_sigev_notify == SIGEV_NONE;
+ 		exp = ktime_add_safe(now, exp);
++	} else {
++		exp = timens_ktime_to_host(which_clock, exp);
+ 	}
  
- 	kc->timer_arm(timr, expires, flags & TIMER_ABSTIME, sigev_none);
+ 	ret = alarmtimer_do_nsleep(&alarm, exp, type);
 -- 
 2.24.0
 
