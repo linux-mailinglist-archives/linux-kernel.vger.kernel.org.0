@@ -2,115 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24570F8C32
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 656CDF8C34
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:49:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfKLJtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:49:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57866 "EHLO mx1.suse.de"
+        id S1727402AbfKLJt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:49:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58046 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727352AbfKLJtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:49:20 -0500
+        id S1725899AbfKLJt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 04:49:56 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2D48DB039;
-        Tue, 12 Nov 2019 09:49:18 +0000 (UTC)
-Date:   Tue, 12 Nov 2019 10:49:17 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     linux-xtensa@linux-xtensa.org, Chris Zankel <chris@zankel.net>,
-        linux-kernel@vger.kernel.org, Dmitry Safonov <dima@arista.com>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v2] xtensa: improve stack dumping
-Message-ID: <20191112094917.fl57dhtennwo2tlz@pathway.suse.cz>
-References: <20191108004448.5386-1-jcmvbkbc@gmail.com>
+        by mx1.suse.de (Postfix) with ESMTP id 97B26B039;
+        Tue, 12 Nov 2019 09:49:54 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3F48C1E47E5; Tue, 12 Nov 2019 10:49:54 +0100 (CET)
+Date:   Tue, 12 Nov 2019 10:49:54 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Bharat Kumar Gogada <bharatku@xilinx.com>
+Cc:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: DAX filesystem support on ARMv8
+Message-ID: <20191112094954.GC1241@quack2.suse.cz>
+References: <MN2PR02MB63362F7B019844D94D243CE2A5770@MN2PR02MB6336.namprd02.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191108004448.5386-1-jcmvbkbc@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <MN2PR02MB63362F7B019844D94D243CE2A5770@MN2PR02MB6336.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-11-07 16:44:48, Max Filippov wrote:
-> Calculate printable stack size and use print_hex_dump instead of
-> opencoding it.
-> Make size of stack dump configurable.
-> Drop extra newline output in show_trace as its output format does not
-> depend on CONFIG_KALLSYMS.
+Hi!
 
-> diff --git a/arch/xtensa/Kconfig.debug b/arch/xtensa/Kconfig.debug
-> index 39de98e20018..83cc8d12fa0e 100644
-> --- a/arch/xtensa/Kconfig.debug
-> +++ b/arch/xtensa/Kconfig.debug
-> @@ -31,3 +31,10 @@ config S32C1I_SELFTEST
->  	  It is easy to make wrong hardware configuration, this test should catch it early.
->  
->  	  Say 'N' on stable hardware.
-> +
-> +config PRINT_STACK_DEPTH
-> +	int "Stack depth to print" if DEBUG_KERNEL
-> +	default 64
-> +	help
-> +	  This option allows you to set the stack depth that the kernel
-> +	  prints in stack traces.
+On Tue 12-11-19 02:12:09, Bharat Kumar Gogada wrote:
+> As per Documentation/filesystems/dax.txt
+> 
+> The DAX code does not work correctly on architectures which have virtually
+> mapped caches such as ARM, MIPS and SPARC.
+> 
+> Can anyone please shed light on dax filesystem issue w.r.t ARM architecture ? 
 
-I would split this into separate patch.
+I've CCed Dan, he might have idea what that comment means :)
 
-> diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
-> index 4a6c495ce9b6..fe090ab1cab8 100644
-> --- a/arch/xtensa/kernel/traps.c
-> +++ b/arch/xtensa/kernel/traps.c
-> @@ -491,32 +491,24 @@ void show_trace(struct task_struct *task, unsigned long *sp)
->  
->  	pr_info("Call Trace:\n");
->  	walk_stackframe(sp, show_trace_cb, NULL);
-> -#ifndef CONFIG_KALLSYMS
-> -	pr_cont("\n");
-> -#endif
->  }
->  
-> -static int kstack_depth_to_print = 24;
-> +static int kstack_depth_to_print = CONFIG_PRINT_STACK_DEPTH;
->  
->  void show_stack(struct task_struct *task, unsigned long *sp)
->  {
-> -	int i = 0;
-> -	unsigned long *stack;
-> +	size_t len;
->  
->  	if (!sp)
->  		sp = stack_pointer(task);
-> -	stack = sp;
->  
-> -	pr_info("Stack:\n");
-> +	len = min((-(unsigned long)sp) & (THREAD_SIZE - 4),
-> +		  kstack_depth_to_print * 4ul);
+Out of curiosity, why do you care?
 
-I would replace the hardcoded 4 with sizeof(void *).
+								Honza
 
->  
-> -	for (i = 0; i < kstack_depth_to_print; i++) {
-> -		if (kstack_end(sp))
-> -			break;
-> -		pr_cont(" %08lx", *sp++);
-> -		if (i % 8 == 7)
-> -			pr_cont("\n");
-> -	}
-> -	show_trace(task, stack);
-> +	pr_info("Stack:\n");
-> +	print_hex_dump(KERN_INFO, " ", DUMP_PREFIX_NONE, 32, 4,
-> +		       sp, len, false);
-> +	show_trace(task, sp);
->  }
-
-The conversion looks fine to me. It is up to you (as a maintainer)
-what you do with the above proposal for two cosmetic changes ;-)
-Either way, feel free to use:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
