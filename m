@@ -2,49 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52297F9271
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67BB3F9286
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 15:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbfKLO30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 09:29:26 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49942 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727738AbfKLO3T (ORCPT
+        id S1727504AbfKLOaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 09:30:06 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:40886 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727563AbfKLO3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 09:29:19 -0500
+        Tue, 12 Nov 2019 09:29:05 -0500
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACET3UI091972;
-        Tue, 12 Nov 2019 08:29:03 -0600
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xACET4ZJ045471;
+        Tue, 12 Nov 2019 08:29:04 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573568943;
-        bh=t5tk6tPjmy9D4wpjreK/rkQpiORR1vxY931cn9fLxT8=;
+        s=ti-com-17Q1; t=1573568944;
+        bh=WV+p2RYewb0Fe/Cr0Lm8UljrmiZRu8wYabf0rEqVZYs=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=pgq6FGSJkO2GhKwuXYC1+G0Z5LJNMQ8413vvUyYs5pC8doHXKPPl+NkLtvHh6ej29
-         aXfWoJHVquPROFOknCDNpJXuNr6NlNULyAknXOwxpprr0u1bLdFHHnOX17TjLtP+2k
-         azGRp04KT1BeVkjjWu7iRXKV8BRKbs4JkxrNlAIM=
+        b=cmeFP/WONL4WElET6MDtKzqPS/MyTE4b4BE97F1OaNnhI5Wqw/WEYtlWMovV/6WU0
+         ikHAuwpQo3xmFMhJc43VC8JmugjjmhGw5idZ8XZuOIHaXHvGTIQlyKQCnMXsS7dL8Q
+         clDx4JX34qqNxkYd9ZwysAtBDU6WRULO0n8W70+k=
 Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACET3tE018600
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xACET3tH018600
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Tue, 12 Nov 2019 08:29:03 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
  (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
- Nov 2019 08:28:45 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Nov 2019 08:28:46 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 12 Nov 2019 08:28:45 -0600
+ Frontend Transport; Tue, 12 Nov 2019 08:28:46 -0600
 Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriH044422;
-        Tue, 12 Nov 2019 08:29:02 -0600
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xACESriI044422;
+        Tue, 12 Nov 2019 08:29:03 -0600
 From:   Benoit Parrot <bparrot@ti.com>
 To:     Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benoit Parrot <bparrot@ti.com>, Jyri Sarha <jsarha@ti.com>
-Subject: [Patch v3 05/20] media: ti-vpe: cal: Enable DMABUF export
-Date:   Tue, 12 Nov 2019 08:31:37 -0600
-Message-ID: <20191112143152.23176-6-bparrot@ti.com>
+        Nikhil Devshatwar <nikhil.nd@ti.com>,
+        Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v3 06/20] media: ti-vpe: cal: Restrict DMA to avoid memory corruption
+Date:   Tue, 12 Nov 2019 08:31:38 -0600
+Message-ID: <20191112143152.23176-7-bparrot@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191112143152.23176-1-bparrot@ti.com>
 References: <20191112143152.23176-1-bparrot@ti.com>
@@ -56,26 +57,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow CAL to be able to export DMA buffer.
+From: Nikhil Devshatwar <nikhil.nd@ti.com>
 
+When setting DMA for video capture from CSI channel, if the DMA size
+is not given, it ends up writing as much data as sent by the camera.
+
+This may lead to overwriting the buffers causing memory corruption.
+Observed green lines on the default framebuffer.
+
+Restrict the DMA to maximum height as specified in the S_FMT ioctl.
+
+Signed-off-by: Nikhil Devshatwar <nikhil.nd@ti.com>
 Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
 ---
- drivers/media/platform/ti-vpe/cal.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/ti-vpe/cal.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index b4616d02a25a..4f9a7609cb5f 100644
+index 4f9a7609cb5f..eb3727ba185d 100644
 --- a/drivers/media/platform/ti-vpe/cal.c
 +++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1486,6 +1486,7 @@ static const struct v4l2_ioctl_ops cal_ioctl_ops = {
- 	.vidioc_querybuf      = vb2_ioctl_querybuf,
- 	.vidioc_qbuf          = vb2_ioctl_qbuf,
- 	.vidioc_dqbuf         = vb2_ioctl_dqbuf,
-+	.vidioc_expbuf        = vb2_ioctl_expbuf,
- 	.vidioc_enum_input    = cal_enum_input,
- 	.vidioc_g_input       = cal_g_input,
- 	.vidioc_s_input       = cal_s_input,
+@@ -767,12 +767,13 @@ static void pix_proc_config(struct cal_ctx *ctx)
+ }
+ 
+ static void cal_wr_dma_config(struct cal_ctx *ctx,
+-			      unsigned int width)
++			      unsigned int width, unsigned int height)
+ {
+ 	u32 val;
+ 
+ 	val = reg_read(ctx->dev, CAL_WR_DMA_CTRL(ctx->csi2_port));
+ 	set_field(&val, ctx->csi2_port, CAL_WR_DMA_CTRL_CPORT_MASK);
++	set_field(&val, height, CAL_WR_DMA_CTRL_YSIZE_MASK);
+ 	set_field(&val, CAL_WR_DMA_CTRL_DTAG_PIX_DAT,
+ 		  CAL_WR_DMA_CTRL_DTAG_MASK);
+ 	set_field(&val, CAL_WR_DMA_CTRL_MODE_CONST,
+@@ -1395,7 +1396,8 @@ static int cal_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	csi2_lane_config(ctx);
+ 	csi2_ctx_config(ctx);
+ 	pix_proc_config(ctx);
+-	cal_wr_dma_config(ctx, ctx->v_fmt.fmt.pix.bytesperline);
++	cal_wr_dma_config(ctx, ctx->v_fmt.fmt.pix.bytesperline,
++			  ctx->v_fmt.fmt.pix.height);
+ 	cal_wr_dma_addr(ctx, addr);
+ 	csi2_ppi_enable(ctx);
+ 
 -- 
 2.17.1
 
