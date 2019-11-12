@@ -2,94 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C91C8F94B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:51:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE8BF94BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:52:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfKLPvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 10:51:41 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44174 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfKLPvl (ORCPT
+        id S1727196AbfKLPwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 10:52:55 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35320 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbfKLPwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 10:51:41 -0500
-Received: by mail-qt1-f193.google.com with SMTP id o11so20195010qtr.11;
-        Tue, 12 Nov 2019 07:51:40 -0800 (PST)
+        Tue, 12 Nov 2019 10:52:54 -0500
+Received: by mail-wr1-f65.google.com with SMTP id s5so7998961wrw.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 07:52:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LQBXaQZ8sYLX3FvyToEo9vTTZBjJQsr8E1LEgLzRPXs=;
-        b=RsE9lrNVKHVIjj4mLDlw3H/mypAihdMOWqmZd+CTUbTTAjq0/uplgxGeoxMwaJtIU8
-         JSxXfXBrRZtwLtJQBpO/wtp+ER6o35mC+oW16bJleR6ygLAc0ps7Z7PYt0zU14i3wtF2
-         CUhXzZkHnbnUtfjy+gfeX2iL5kE1bErsZS0DSx5nck/gJ7OlhzV8zgP/IoNJGTxz+kd3
-         ib98Gio8uq13GOr1ylMTj0i6YxTDDaPpqUtMCpVqbW2KuwgT677J8zkoCZW/qieBgJNs
-         K9xNmiY9uibdCWd+69izfCe4yNKpWjml7LQ7zUw4TNljpcqQOrsL2dNGI0Zq87SOlgsG
-         /TCw==
+        bh=KlI/w4iGgmfxEIzjQGA0tOMY3tGzHSo0L7rc1WR4Tww=;
+        b=OF0C4tIdXYsl972TNJBl4pbhsNz/CCpB9n3zKmIKIeN4Agp0gIi0Mv93g/oEwmXfkt
+         yVNReAZorkkGUdzT4gksywjD3mO+XCdyVKKoNVSkEsyeqKHGwbYmmOMZ5sezTcgpN/iH
+         MFdtx75mctG3r6cEeQQcA0p6CAdnq5YDK16GMNrMoW/IUYAB29zgVz2Idm/toCecmgtu
+         EFOBTG8Niyhk6shHZg7yvfC0VkYAhz8nfhViYAFaXuYDBZT4eCdt5fM8RL9d5QzUYYHY
+         pU3eBwzub0BbvGGC23BM5QR9Iv/Ga6NsTscO0mHHNMhQILQapZsMm+GS9sXY37x2TQJN
+         AlrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LQBXaQZ8sYLX3FvyToEo9vTTZBjJQsr8E1LEgLzRPXs=;
-        b=JZ0BbjV5+Wzi3o69GSQ2DCZKefoYNlskilEegjYI5MaqOjWIGIaJVJdRVOhlSHDYbj
-         UrJzT3Im9tMHPkMlg+3eBSM2ZFNhTsFbGSeYOIwd4L1tZqt6BL4chvg0mQFeoKOlSIES
-         uGEiBpGSonAujh8pYlZ1yEVU6tIhQ/ZmyinWWzhP418wMvc7FpxN3nIyllgdIvp3OcK4
-         dN0wKYxQzSMx7+zr6dnrbjVe6rVgIVpbMf5TJub7mpzsm1gRAWHbPyfTmuZ1FXnN6rmE
-         q6Uc1ecloC4YreHH4XLPn1Ddq2V8A2Uf6EEVHmy88EtomPHLFzYckD0o3ZxZSU5igy4q
-         BxqQ==
-X-Gm-Message-State: APjAAAV02XtIebtXpkrU2hn9en/gVpHW8ZFxrHz4WXOCFgiORdPFAkmY
-        /43AfXUTOVQULSMJ8Q3WhEQKCnC7VcIJ+lvdJrMkyg==
-X-Google-Smtp-Source: APXvYqw2USUknyNH12Zul6mHL6lqDlsWSFY9lTdDbwPKg2Pz6XlR6gnfvP35zB3LnBBhMSCqM3nWOFtORufpMc4G9HU=
-X-Received: by 2002:ac8:293a:: with SMTP id y55mr32569355qty.118.1573573899944;
- Tue, 12 Nov 2019 07:51:39 -0800 (PST)
+        bh=KlI/w4iGgmfxEIzjQGA0tOMY3tGzHSo0L7rc1WR4Tww=;
+        b=kM4jwCjfZ63lbqv2xUCQgyUzF/yfY/bvVMgjDa39/elT8TJy4UCdk7QXdyRsn2pgFQ
+         GpRTgSmo4qdDFe5XleQatXYvN+HA/S1g2r6pH2t5GWJh4SFb26kAy5uLZJl0/IjJV09S
+         n2u7XcrnjfpkyhZUH/GRid0D+MydALoOjEMNZEWy/R/rL9OW7dGog2kcP6EZ6RtnJJQJ
+         eMhfF/GMTS0SlxQHYfitoJEveQXhqDAFyqJqrRmkrRsjm+eSMFEKUHdVNYtAsOIlapKE
+         5Ce1q0PKNXtrHYIeIVcch+EXtz3tedtqBjahMfT8IdIsimG3GU34HypiwJ3vzCi3Vfj7
+         XKEA==
+X-Gm-Message-State: APjAAAW4HlKhC2UzT/NNgLJdEUbBEk882xaFFpzeAo+rCWyBc9+866q0
+        8lBC9WZjxusANIXPxIyGkGOu7DxWgigkl9hcqk9Z0A==
+X-Google-Smtp-Source: APXvYqyR51zNVFTxc2XNo24rGAzDgHRLqcTcjPjLyL0l3uVC46ncoQjb2rfwmQfKNuaS/+Pq9thzuxvlUF9ZNE0wh4I=
+X-Received: by 2002:adf:9d87:: with SMTP id p7mr25597794wre.11.1573573972656;
+ Tue, 12 Nov 2019 07:52:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20191106231650.1580-1-jeffrey.l.hugo@gmail.com> <20191112084225.casuncbo7z54vu4g@netronome.com>
-In-Reply-To: <20191112084225.casuncbo7z54vu4g@netronome.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 12 Nov 2019 08:51:28 -0700
-Message-ID: <CAOCk7NpNgtTSus2KtBMe=jGLFyBumVfRVxKxtHoEDUEt2-6tqQ@mail.gmail.com>
-Subject: Re: [PATCH] ath10k: Fix qmi init error handling
-To:     Simon Horman <simon.horman@netronome.com>
-Cc:     kvalo@codeaurora.org, davem@davemloft.net,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, MSM <linux-arm-msm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+References: <20191109093538.23964-1-yuehaibing@huawei.com> <20191112021050.13128-1-yuehaibing@huawei.com>
+In-Reply-To: <20191112021050.13128-1-yuehaibing@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 12 Nov 2019 10:52:40 -0500
+Message-ID: <CADnq5_Mj5vHSrXq-tkwoRQ+fejfosSnRpia54MpsTddvKzothA@mail.gmail.com>
+Subject: Re: [PATCH v2 -next] drm/amd/display: remove set but not used
+ variable 'bpc'
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Jun Lei <Jun.Lei@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
+        Zhan Liu <Zhan.Liu@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 1:42 AM Simon Horman <simon.horman@netronome.com> wrote:
+On Tue, Nov 12, 2019 at 3:13 AM YueHaibing <yuehaibing@huawei.com> wrote:
 >
-> On Wed, Nov 06, 2019 at 03:16:50PM -0800, Jeffrey Hugo wrote:
-> > When ath10k_qmi_init() fails, the error handling does not free the irq
-> > resources, which causes an issue if we EPROBE_DEFER as we'll attempt to
-> > (re-)register irqs which are already registered.
-> >
-> > Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
-> > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> > ---
-> >  drivers/net/wireless/ath/ath10k/snoc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-> > index fc15a0037f0e..f2a0b7aaad3b 100644
-> > --- a/drivers/net/wireless/ath/ath10k/snoc.c
-> > +++ b/drivers/net/wireless/ath/ath10k/snoc.c
-> > @@ -1729,7 +1729,7 @@ static int ath10k_snoc_probe(struct platform_device *pdev)
-> >       ret = ath10k_qmi_init(ar, msa_size);
-> >       if (ret) {
-> >               ath10k_warn(ar, "failed to register wlfw qmi client: %d\n", ret);
-> > -             goto err_core_destroy;
-> > +             goto err_free_irq;
-> >       }
+> Fixes gcc '-Wunused-but-set-variable' warning:
 >
-> From a casual examination of the code this seems like a step in the right
-> direction. But does this error path also need to call ath10k_hw_power_off() ?
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c: In function get_pbn_from_timing:
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c:2364:11: warning:
+>  variable bpc set but not used [-Wunused-but-set-variable]
+>
+> It is not used since commit e49f69363adf ("drm/amd/display: use
+> proper formula to calculate bandwidth from timing"), this also
+> remove get_color_depth(), which is only used here.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-It probably should.  I don't see any fatal errors from the step being
-skipped, although it might silence some regulator warnings about being
-left on.  Unlikely to be observed by most folks as I was initing the
-driver pretty early to debug some things.  Looks like Kalle already
-picked up this patch though, so I guess your suggestion would need to
-be a follow up.
+Applied.  Thanks!
+
+Alex
+
+> ---
+> v2: also remove unused get_color_depth()
+> ---
+>  drivers/gpu/drm/amd/display/dc/core/dc_link.c | 15 ---------------
+>  1 file changed, 15 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> index bdc8be3..1be4277 100644
+> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> @@ -2638,28 +2638,13 @@ static struct fixed31_32 get_pbn_per_slot(struct dc_stream_state *stream)
+>         return dc_fixpt_div_int(mbytes_per_sec, 54);
+>  }
+>
+> -static int get_color_depth(enum dc_color_depth color_depth)
+> -{
+> -       switch (color_depth) {
+> -       case COLOR_DEPTH_666: return 6;
+> -       case COLOR_DEPTH_888: return 8;
+> -       case COLOR_DEPTH_101010: return 10;
+> -       case COLOR_DEPTH_121212: return 12;
+> -       case COLOR_DEPTH_141414: return 14;
+> -       case COLOR_DEPTH_161616: return 16;
+> -       default: return 0;
+> -       }
+> -}
+> -
+>  static struct fixed31_32 get_pbn_from_timing(struct pipe_ctx *pipe_ctx)
+>  {
+> -       uint32_t bpc;
+>         uint64_t kbps;
+>         struct fixed31_32 peak_kbps;
+>         uint32_t numerator;
+>         uint32_t denominator;
+>
+> -       bpc = get_color_depth(pipe_ctx->stream_res.pix_clk_params.color_depth);
+>         kbps = dc_bandwidth_in_kbps_from_timing(&pipe_ctx->stream->timing);
+>
+>         /*
+> --
+> 2.7.4
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
