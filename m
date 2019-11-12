@@ -2,147 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8931FF88C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 07:51:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9F90F88D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 07:52:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfKLGvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 01:51:17 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:19472 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfKLGvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 01:51:17 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dca56630001>; Mon, 11 Nov 2019 22:51:15 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Nov 2019 22:51:15 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Nov 2019 22:51:15 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
- 2019 06:51:15 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 12 Nov 2019 06:51:15 +0000
-Received: from henryl-tu10x.nvidia.com (Not Verified[10.19.109.97]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dca56610001>; Mon, 11 Nov 2019 22:51:14 -0800
-From:   Henry Lin <henryl@nvidia.com>
-CC:     Henry Lin <henryl@nvidia.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <rfontana@redhat.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] usb-audio: not submit urb for stopped endpoint
-Date:   Tue, 12 Nov 2019 14:51:06 +0800
-Message-ID: <20191112065108.7766-1-henryl@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727073AbfKLGv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 01:51:58 -0500
+Received: from mail-eopbgr700050.outbound.protection.outlook.com ([40.107.70.50]:56231
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725801AbfKLGv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 01:51:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cFQb7aUvcsbYE/TLOyhcMFHHeIInWB6ftcYCvYkwHY2d4Xw3ETksGT7N5wl5CCACDu7AaupdVBAR+fCetwRV+c0ndMNKP6LSw+0AXpe7N601K7/cJyXPUcUn/3kl5FwsL+kIyJTjmFZolKCnfbZ/ZIVYYToskLI741z6cNiZfrppYWnss80thphS2Ub31+mq52oXqWB49OjHYHeHk21AgB00RBAeBxKaivQWSb3+d0ja+xMsqMnAh7fn7W5bhxM7gN+FYp4hHZYiNlQUfwEUXdggj45V7/l2kVi4UcEYH1BhLMX2Ag2ef05cGMLXFPV+UM6c0IWG5iyALbZCm+KbUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/Y/GFv8ChfbA/hN5WX30CQfqPTCveSFAfjmY4NSnBGw=;
+ b=CAUZX+89TSREWVSH7Aeo6jnWultG0ATDN2WZ+7EpV5qrb31lCGkD5PGm1b6028GJD5yZ/Ozlrr7nBb8RZPaYL5BtcZiInHIsy9bdrIZMiX9cTd/iHvCm0rZ4JKRzRbr7v/F8kJ0d7QzuU1N0gv6nKj7LhbWCmO8DQaGBf3de3P/zar7zgYfDSL+8PicTMYwEnClBkUeYZHxIdUjHWHvdtmyGNi2LWzog4tYQhFJf9e/kFWhwKRtWWg+a9TLUKnP4AT2uBiJHO7M7PcLVfxvCoPq7P+hekfDNJ4KcwdtCvDj6qtpU8/Sc6Jky53uUYG+X70ZOyzv43b1l5njYTTjryw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/Y/GFv8ChfbA/hN5WX30CQfqPTCveSFAfjmY4NSnBGw=;
+ b=mWUa8Ry9oBqhyfw6OAhU091BwPWREDEVFs+qHeKBET3OChJEtVOn0xUXz4JeX2Dho5DrCzwsXkInPJO9o2cgxFCChtm89e0kXVZe1BthZYmZKM1vEHYpYL/hdpLGjkeNywOAV0cZOtz9c5W9ESD93Po7jdivV52LtUz4R/L7pEE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Akshu.Agrawal@amd.com; 
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com (20.179.80.143) by
+ MN2PR12MB4096.namprd12.prod.outlook.com (52.135.50.205) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.25; Tue, 12 Nov 2019 06:51:55 +0000
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::305d:cfb0:baaf:7008]) by MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::305d:cfb0:baaf:7008%4]) with mapi id 15.20.2430.027; Tue, 12 Nov 2019
+ 06:51:55 +0000
+Subject: Re: [PATCH] i2c: i2c-cros-ec-tunnel: Make the device acpi compatible
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     cychiang@chromium.org, rrangel@chromium.org,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mark Brown <broonie@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20191111161431.26293-1-akshu.agrawal@amd.com>
+ <a5f6a3a9-8eb7-58fd-a624-718374c2437f@collabora.com>
+From:   "Agrawal, Akshu" <aagrawal2@amd.com>
+Message-ID: <f4a5228d-0fcb-c64d-ecde-8dd20c39899f@amd.com>
+Date:   Tue, 12 Nov 2019 12:21:42 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+In-Reply-To: <a5f6a3a9-8eb7-58fd-a624-718374c2437f@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: MA1PR0101CA0069.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:20::31) To MN2PR12MB2878.namprd12.prod.outlook.com
+ (2603:10b6:208:aa::15)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573541475; bh=uaQU/d9YZIhPAFnpZUJ/WgAWpgBHxUlq6+ZdUcJ/2w0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:Content-Type;
-        b=cSKBTpCVzDDNzjJOZ7Bs2de/FsrJr/iybeyLPt0/Bhxg+ztWxOu2eFJWEeGuvpwwm
-         fV4+hrOnpMfYzdYKlMi/7pkPJpxI4gCxF5/ilFNsg9a/YmEAEMXY60m7izlUcMDNlI
-         mmx1Y7VQ80UPo7UHJkya+Hq+mUbp3qgHNWb8NnYP1ty3J/nFQkPYa74lBmVO7x8Oih
-         bXiBR17J8WI4rRYsM5LUKi8y/2WjNljnYJPiE0QQ8aRi6cMUuJjVS98nrCPi/5mx6w
-         R0HpEUVA4YpkkbB/YkI2hADJVLr59tc9jbsubxx1TG6mEA6TWYXojp0giuvFROtfO8
-         3CkkHxdUNBT0w==
-To:     unlisted-recipients:; (no To-header on input)
+X-Originating-IP: [165.204.157.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 64cbcc63-b5aa-4888-a31c-08d7673cce37
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4096:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR12MB4096980DE925A5204C49DFFAF8770@MN2PR12MB4096.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-Forefront-PRVS: 021975AE46
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(39860400002)(376002)(366004)(346002)(189003)(199004)(6246003)(81156014)(6486002)(8676002)(6436002)(305945005)(50466002)(4326008)(36756003)(7736002)(558084003)(316002)(229853002)(7416002)(81166006)(5660300002)(47776003)(25786009)(66946007)(66556008)(65956001)(8936002)(6512007)(66476007)(65806001)(66066001)(99286004)(478600001)(23676004)(31686004)(52116002)(2486003)(186003)(6636002)(6116002)(76176011)(11346002)(446003)(2616005)(26005)(476003)(486006)(6506007)(386003)(58126008)(110136005)(54906003)(230700001)(2906002)(31696002)(14454004)(3846002)(6666004);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB4096;H:MN2PR12MB2878.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GMClYV5QHlU1m9vqEjCHq5au6s5OcAgL2UxAX/9/F8af0kmqJNShl7f6V8DXBs99T2WMmzmy7kM+Od7iVbH46N8brtE9z7GJrCY55D/G8APpsY42XDahWhLsBQw6z7/X5W8gPqUKlodl+vSdlMlXexrgnmL+UWwntfZhjhDCk1rlf58gAjhzKwrzPH8sOcqoRmz6L8YmYgZJU/9Lfa2S5WXgmJ6vgQwOhlPbyQ+MSFVvU8dozCvB4Dw+eeyhEFRFqkgAk0klBqyi332iiGW9cI/ccp5C9XM/MvK10tDV5Uye298TsjLq8P0DEMATm20IwXLOO6S7L14R6mg3LQweHm0Vdnwewr5DAKgslYyZrcVb84y6G8wNBRS6sjr/dChAieqIpOsGrue95uoK18VrGm7vHyDVcSq8w3W4yup1sVgmLtzK2JoEK7MWcoDM3Kol
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64cbcc63-b5aa-4888-a31c-08d7673cce37
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2019 06:51:55.4174
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tL7CYQD/og1bRK0XtgzRPJEV2IWsKSjC1vm6mgF4UA7hn2s6gexypNRrwki/akipegdDAtiwL6PiFnZbvifViw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While output urb's snd_complete_urb() is executing, calling
-prepare_outbound_urb() may cause endpoint stopped before
-prepare_outbound_urb() returns and result in next urb submitted
-to stopped endpoint. usb-audio driver cannot re-use it afterwards as
-the urb is still hold by usb stack.
 
-This change checks EP_FLAG_RUNNING flag after prepare_outbound_urb() again
-to let snd_complete_urb() know the endpoint already stopped and does not
-submit next urb.
+> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>
+> Question: Is this supported on older firmwares or is only expected to work on
+> newer ACPI-based devices?
 
-We observed two scenario have this issue:
-1. While executing snd_complete_urb() to complete an output urb, calling
-   prepare_outbound_urb() let deactive_urbs() get called to unlink all
-   active urbs.
+This is for new devices and we are yet to push Coreboot patch populating the entry.
 
-[  268.097066] [<ffffffc000af7638>] deactivate_urbs+0xd4/0x108
-[  268.102633] [<ffffffc000af87fc>] snd_usb_endpoint_stop+0x30/0x58
-[  268.108636] [<ffffffc000b0272c>] snd_usb_substream_playback_trigger+0xa4/0xf4
-[  268.115765] [<ffffffc000acdbd0>] snd_pcm_do_stop+0x4c/0x58
-[  268.121245] [<ffffffc000acda24>] snd_pcm_action_single+0x40/0x88
-[  268.127245] [<ffffffc000ace984>] snd_pcm_action+0x30/0xf0
-[  268.132632] [<ffffffc000acea68>] snd_pcm_stop+0x24/0x2c
-[  268.137851] [<ffffffc000ad5e14>] xrun+0x60/0x6c
-[  268.142374] [<ffffffc000ad7a98>] snd_pcm_update_state+0xa8/0x10c
-[  268.148374] [<ffffffc000ad7e24>] snd_pcm_update_hw_ptr0+0x328/0x344
-[  268.154635] [<ffffffc000ad7ed8>] snd_pcm_period_elapsed+0x98/0xb0
-[  268.160723] [<ffffffc000b02510>] prepare_playback_urb+0x46c/0x488
-[  268.166810] [<ffffffc000af7d60>] prepare_outbound_urb+0x60/0x1d4
-[  268.172805] [<ffffffc000af8d60>] snd_complete_urb+0x244/0x264
-[  268.178548] [<ffffffc00081fb38>] __usb_hcd_giveback_urb+0x94/0x104
-[  268.184721] [<ffffffc00081fbe4>] usb_hcd_giveback_urb+0x3c/0x114
-[  268.190724] [<ffffffc00084d4b4>] handle_tx_event+0x1304/0x1434
-[  268.196552] [<ffffffc00084dbc0>] xhci_handle_event+0x5dc/0x788
-[  268.202378] [<ffffffc00084dee4>] xhci_irq+0x178/0x280
+Thanks,
 
-2. Userspace application stops playback from sound subsystem with below
-   call stack:
-
-[   28.506477] CPU: 5 PID: 1274 Comm: AudioOut_25 Not tainted 4.4.38-tegra #31
-[   28.513430] Hardware name: quill (DT)
-[   28.517085] Call trace:
-[   28.519531] [<ffffffc000089a84>] dump_backtrace+0x0/0xf8
-[   28.524837] [<ffffffc000089c44>] show_stack+0x14/0x1c
-[   28.529885] [<ffffffc000401c54>] dump_stack+0xac/0xe0
-[   28.534931] [<ffffffc000b35f94>] deactivate_urbs+0x148/0x180
-[   28.540578] [<ffffffc000b37160>] snd_usb_endpoint_stop+0x30/0x58
-[   28.546571] [<ffffffc000b410d8>] snd_usb_substream_playback_trigger+0xa4/0xf4
-[   28.553699] [<ffffffc000b0c160>] snd_pcm_do_stop+0x4c/0x58
-[   28.559179] [<ffffffc000b0bfb4>] snd_pcm_action_single+0x40/0x88
-[   28.565178] [<ffffffc000b0cf14>] snd_pcm_action+0x30/0xf0
-[   28.570568] [<ffffffc000b0fbc8>] snd_pcm_drop+0xac/0x140
-[   28.575873] [<ffffffc000b0fc84>] snd_pcm_release_substream+0x28/0xb0
-[   28.582212] [<ffffffc000b0fd48>] snd_pcm_release+0x3c/0x98
-[   28.587686] [<ffffffc0001e3210>] __fput+0xe0/0x1ac
-[   28.592469] [<ffffffc0001e3334>] ____fput+0xc/0x14
-[   28.597253] [<ffffffc0000c2904>] task_work_run+0xa0/0xc0
-[   28.602558] [<ffffffc0000897bc>] do_notify_resume+0x48/0x60
-[   28.608123] [<ffffffc000084ee8>] work_pending+0x1c/0x20
-
-In the call path, snd_pcm_stream spinlock has been acquired in
-snd_pcm_drop(). If an output urb is completed between the spinlock
-acquired and deactivate_urbs() clears EP_FLAG_RUNNING for the endpoint,
-its executing of snd_complete_urb() will be blocked for acquiring
-snd_pcm_stream spinlock in snd_pcm_period_elapsed() until the lock is
-released in snd_pcm_drop(). When snd_complete_urb() continues, all jobs
-for deactivate_urbs() are finished.
-
-Signed-off-by: Henry Lin <henryl@nvidia.com>
----
- sound/usb/endpoint.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
-index a2ab8e8d3a93..4a9a2f6ef5a4 100644
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -388,6 +388,9 @@ static void snd_complete_urb(struct urb *urb)
- 		}
- 
- 		prepare_outbound_urb(ep, ctx);
-+		/* can be stopped during prepare callback */
-+		if (unlikely(!test_bit(EP_FLAG_RUNNING, &ep->flags)))
-+			goto exit_clear;
- 	} else {
- 		retire_inbound_urb(ep, ctx);
- 		/* can be stopped during retire callback */
--- 
-2.17.1
+Akshu
 
