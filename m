@@ -2,72 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C905CF93ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9D5F93FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 16:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfKLPTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 10:19:01 -0500
-Received: from verein.lst.de ([213.95.11.211]:56369 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbfKLPTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 10:19:00 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 02B8368BE1; Tue, 12 Nov 2019 16:18:57 +0100 (CET)
-Date:   Tue, 12 Nov 2019 16:18:56 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ralph Campbell <rcampbell@nvidia.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Shuah Khan <shuah@kernel.org>, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] mm/hmm: make full use of walk_page_range()
-Message-ID: <20191112151856.GB12550@lst.de>
-References: <20191104222141.5173-1-rcampbell@nvidia.com> <20191104222141.5173-2-rcampbell@nvidia.com>
+        id S1727516AbfKLPTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 10:19:23 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35285 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbfKLPTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 10:19:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id q22so12078336pgk.2;
+        Tue, 12 Nov 2019 07:19:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BZANFq4xix4Xx203tkzaxuFkXxyuVqwVXr98xMHZnnc=;
+        b=YeSbv/o238TihuHuHsLnc7+bdmZy/QkzZyYaF031u7mpD8YNKqev8YWcQrJkAITcwU
+         3BVH3qOs7m0v1XmCSlfFJEMmvXcqPQ/ozYwOiRd3WrORKgOKBiKPR1WRHs6nEg/tT/N5
+         sHdex8rRaIaHt45wfzjAfxlJMTcLK9FO2UpECNI4J/epf1RCxgtiv0ZrhnbSRJzGfg1j
+         a8XUnFliDvDxcNV3k9M3ElszJRYH2qlhzNv1Qzj0VPBMsK5q6YEeSuu+i3anYhitG/dV
+         IDDxHdYdyy7bjk11+zSS894TYOnD55EAcCNEFOYSmjEMwD7WQPhOBUNobxBfBvu6rkuE
+         3JUA==
+X-Gm-Message-State: APjAAAV8fDTDhEvq4xpng9QJnpEQBk9WueqRMDmFiUDjemB5TrEx5d5j
+        zP4ZSOA1y9Xn2J6vO4yAlHs=
+X-Google-Smtp-Source: APXvYqwmlQNvZHi0kGC31dBquXDWMrtHIO5u9GdO7oPYqwAqhXo8lw8ouNas9FGnjW/2SPI9uWr2og==
+X-Received: by 2002:aa7:8a97:: with SMTP id a23mr37221666pfc.76.1573571960433;
+        Tue, 12 Nov 2019 07:19:20 -0800 (PST)
+Received: from kozik-lap ([118.189.143.39])
+        by smtp.googlemail.com with ESMTPSA id 21sm25298308pfa.170.2019.11.12.07.19.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Nov 2019 07:19:19 -0800 (PST)
+Date:   Tue, 12 Nov 2019 16:19:15 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marian Mihailescu <mihailescu2m@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, kgene@kernel.org
+Subject: Re: [PATCH v4 2/2] ARM: dts: exynos5420: add mali dt node and enable
+ mali on Odroid XU3/4
+Message-ID: <20191112151915.GA15786@kozik-lap>
+References: <20191106225527.9121-1-mihailescu2m@gmail.com>
+ <20191106225527.9121-2-mihailescu2m@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191104222141.5173-2-rcampbell@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20191106225527.9121-2-mihailescu2m@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
+On Thu, Nov 07, 2019 at 09:25:27AM +1030, Marian Mihailescu wrote:
+> Add device tree node for Mali GPU for Exynos 542x SoC.
+> GPU is disabled by default, and is enabled for each board after the
+> regulator is defined. Tested on Odroid-XU4.
+> 
+> Changes since v3:
+> - fixed compatible to match bindings
+> 
+> Changes since v2:
+> - separate patch for bindings
+> - fixed bindings typo
+> 
+> Changes since v1:
+> - used generic node and label for GPU
+> - added bindings for compatible
+> - fixed irq indentation
+> - fixed interrupt-names to match bindings
+> - added cooling cells for future TMU connection
+> - used generic node and label for GPU opp table
+> - removed always-on from SoC GPU regulator
+> 
+> Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi             | 50 +++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  6 +++-
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Hi,
 
-Although we could clean this up a tidbit more by removing the start
-variable:
+Unfortunately this does not apply around exynos5422-odroid-core.dtsi.
+I think there were no changes to this file in current development cycle
+so I am surprised that there are conflicts.
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index d4984a08ed9b..b5b1ed646c2f 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -667,10 +667,9 @@ static const struct mm_walk_ops hmm_walk_ops = {
-  */
- long hmm_range_fault(struct hmm_range *range, unsigned int flags)
- {
--	unsigned long start = range->start;
- 	struct hmm_vma_walk hmm_vma_walk = {
- 		.range = range,
--		.last = start,
-+		.last = range->start,
- 		.flags = flags,
- 	};
- 	struct mm_struct *mm = range->notifier->mm;
-@@ -682,9 +681,8 @@ long hmm_range_fault(struct hmm_range *range, unsigned int flags)
- 		/* If range is no longer valid force retry. */
- 		if (mmu_range_check_retry(range->notifier, range->notifier_seq))
- 			return -EBUSY;
--		ret = walk_page_range(mm, start, range->end, &hmm_walk_ops,
--				      &hmm_vma_walk);
--		start = hmm_vma_walk.last;
-+		ret = walk_page_range(mm, hmm_vma_walk.last, range->end,
-+				      &hmm_walk_ops, &hmm_vma_walk);
- 	} while (ret == -EBUSY);
- 
- 	if (ret)
+On what version were you basing your patch? Was it tested on latest
+kernel? The patches should be based usually on one of:
+1. current-rc1 (v5.4-rc1)
+2. latest-rc (v5.4-rc7)
+3. maintainer's tree (my next/dt or for-next)
+4. linux-next
+
+In all other cases the patch would need rebasing and re-testing.
+
+Best regards,
+Krzysztof
+
