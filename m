@@ -2,81 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 528FCF8B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:23:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B8DF8BA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2019 10:24:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbfKLJXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 04:23:24 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:50320 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfKLJXX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 04:23:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uLDCiGjFhshkCUgBk2CbnkCh1QAYDS9WMt7qrIQMXl0=; b=0EN90sfGIR7vTqdZAgpFff+te
-        8ObbiL0FcYUbXTNDN/Ix/xdCgrlcrGQ56GLLQC8In3M3iqaT/fFy83wyRssXcgt4T90RwAZoJaZfO
-        ds6gCn/t6B8Nwc3C6/kXG/ywIENkbeupFRYK9TIj1cEmYK1bOlWlomGDMU1TZ99eyPENsd9zAhuVC
-        lplIrYrTOCIKbmvDIXA0cKelksqlEqK/F2bTmZEsFGL87WC4E98uY2WXLM0pYF2M2Ry0NmjkPPY+7
-        I/QZDttycwK/VioFBxD1XAobWgPY6PAo+ECAjsnpZXyfqUgnD2YUbonocofxmbVAndRQmZ5raXtba
-        K4ajxbijw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUSNt-0005WS-Vn; Tue, 12 Nov 2019 09:22:50 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7D0E230018B;
-        Tue, 12 Nov 2019 10:21:39 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 17BA229BC818E; Tue, 12 Nov 2019 10:22:46 +0100 (CET)
-Date:   Tue, 12 Nov 2019 10:22:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [patch V2 08/16] x86/ioperm: Add bitmap sequence number
-Message-ID: <20191112092246.GY4131@hirez.programming.kicks-ass.net>
-References: <20191111220314.519933535@linutronix.de>
- <20191111223052.292300453@linutronix.de>
+        id S1727257AbfKLJY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 04:24:56 -0500
+Received: from mga03.intel.com ([134.134.136.65]:34805 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbfKLJY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 04:24:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 01:24:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,295,1569308400"; 
+   d="scan'208";a="202339237"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Nov 2019 01:24:53 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 6294EEB; Tue, 12 Nov 2019 11:24:52 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>, Mario.Limonciello@dell.com,
+        Christian Kellner <ckellner@redhat.com>, zang <dump@tzib.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] thunderbolt: Power cycle the router if NVM authentication fails
+Date:   Tue, 12 Nov 2019 12:24:52 +0300
+Message-Id: <20191112092452.70789-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191111223052.292300453@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 11:03:22PM +0100, Thomas Gleixner wrote:
-> Add a globally unique sequence number which is incremented when ioperm() is
-> changing the I/O bitmap of a task. Store the new sequence number in the
-> io_bitmap structure and compare it along with the actual struct pointer
-> with the one which was last loaded on a CPU. Only update the bitmap if
-> either of the two changes. That should further reduce the overhead of I/O
-> bitmap scheduling when there are only a few I/O bitmap users on the system.
+On zang's Dell XPS 13 9370 after Thunderbolt NVM firmware upgrade the
+Thunderbolt controller did not come back as expected. Only after the
+system was rebooted it became available again. It is not entirely clear
+what happened but I suspect the new NVM firmware image authentication
+failed for some reason. Regardless of this the router needs to be power
+cycled if NVM authentication fails in order to get it fully functional
+again.
 
-> +	/* Update the sequence number to force an update in switch_to() */
-> +	iobm->sequence = atomic64_add_return(1, &io_bitmap_sequence);
+This modifies the driver to issue a power cycle in case the NVM
+authentication fails immediately when dma_port_flash_update_auth()
+returns. We also need to call tb_switch_set_uuid() earlier to be able to
+fetch possible NVM authentication failure when DMA port is added.
 
-> +		if (tss->last_bitmap != iobm ||
-> +		    tss->last_sequence != iobm->sequence)
-> +			switch_to_update_io_bitmap(tss, iobm);
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=205457
+Reported-by: zang <dump@tzib.net>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+This applies on top of my thunderbolt.git/next.
 
-Initially I wondered why we need a globally unique sequence number if we
-already check the struct iobitmap pointer. That ought to make the
-sequence number per-object.
+ drivers/thunderbolt/switch.c | 54 ++++++++++++++++++++++++++++--------
+ 1 file changed, 42 insertions(+), 12 deletions(-)
 
-However, that breaks for memory re-use. So yes, we need that thing to be
-global.
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 3f477df2730a..ca86a8e09c77 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -168,7 +168,7 @@ static int nvm_validate_and_write(struct tb_switch *sw)
+ 
+ static int nvm_authenticate_host(struct tb_switch *sw)
+ {
+-	int ret;
++	int ret = 0;
+ 
+ 	/*
+ 	 * Root switch NVM upgrade requires that we disconnect the
+@@ -176,6 +176,8 @@ static int nvm_authenticate_host(struct tb_switch *sw)
+ 	 * already).
+ 	 */
+ 	if (!sw->safe_mode) {
++		u32 status;
++
+ 		ret = tb_domain_disconnect_all_paths(sw->tb);
+ 		if (ret)
+ 			return ret;
+@@ -184,7 +186,16 @@ static int nvm_authenticate_host(struct tb_switch *sw)
+ 		 * everything goes well so getting timeout is expected.
+ 		 */
+ 		ret = dma_port_flash_update_auth(sw->dma_port);
+-		return ret == -ETIMEDOUT ? 0 : ret;
++		if (!ret || ret == -ETIMEDOUT)
++			return 0;
++
++		/*
++		 * Any error from update auth operation requires power
++		 * cycling of the host router.
++		 */
++		tb_sw_warn(sw, "failed to authenticate NVM, power cycling\n");
++		if (dma_port_flash_update_auth_status(sw->dma_port, &status) > 0)
++			nvm_set_auth_status(sw, status);
+ 	}
+ 
+ 	/*
+@@ -192,7 +203,7 @@ static int nvm_authenticate_host(struct tb_switch *sw)
+ 	 * switch.
+ 	 */
+ 	dma_port_power_cycle(sw->dma_port);
+-	return 0;
++	return ret;
+ }
+ 
+ static int nvm_authenticate_device(struct tb_switch *sw)
+@@ -200,8 +211,16 @@ static int nvm_authenticate_device(struct tb_switch *sw)
+ 	int ret, retries = 10;
+ 
+ 	ret = dma_port_flash_update_auth(sw->dma_port);
+-	if (ret && ret != -ETIMEDOUT)
++	switch (ret) {
++	case 0:
++	case -ETIMEDOUT:
++	case -EACCES:
++	case -EINVAL:
++		/* Power cycle is required */
++		break;
++	default:
+ 		return ret;
++	}
+ 
+ 	/*
+ 	 * Poll here for the authentication status. It takes some time
+@@ -1420,8 +1439,6 @@ static ssize_t nvm_authenticate_store(struct device *dev,
+ 			 */
+ 			nvm_authenticate_start(sw);
+ 			ret = nvm_authenticate_host(sw);
+-			if (ret)
+-				nvm_authenticate_complete(sw);
+ 		} else {
+ 			ret = nvm_authenticate_device(sw);
+ 		}
+@@ -1876,13 +1893,16 @@ static int tb_switch_add_dma_port(struct tb_switch *sw)
+ 	int ret;
+ 
+ 	switch (sw->generation) {
+-	case 3:
+-		break;
+-
+ 	case 2:
+ 		/* Only root switch can be upgraded */
+ 		if (tb_route(sw))
+ 			return 0;
++
++		/* fallthrough */
++	case 3:
++		ret = tb_switch_set_uuid(sw);
++		if (ret)
++			return ret;
+ 		break;
+ 
+ 	default:
+@@ -1906,6 +1926,19 @@ static int tb_switch_add_dma_port(struct tb_switch *sw)
+ 	if (sw->no_nvm_upgrade)
+ 		return 0;
+ 
++	/*
++	 * If there is status already set then authentication failed
++	 * when the dma_port_flash_update_auth() returned. Power cycling
++	 * is not needed (it was done already) so only thing we do here
++	 * is to unblock runtime PM of the root port.
++	 */
++	nvm_get_auth_status(sw, &status);
++	if (status) {
++		if (!tb_route(sw))
++			nvm_authenticate_complete(sw);
++		return 0;
++	}
++
+ 	/*
+ 	 * Check status of the previous flash authentication. If there
+ 	 * is one we need to power cycle the switch in any case to make
+@@ -1921,9 +1954,6 @@ static int tb_switch_add_dma_port(struct tb_switch *sw)
+ 
+ 	if (status) {
+ 		tb_sw_info(sw, "switch flash authentication failed\n");
+-		ret = tb_switch_set_uuid(sw);
+-		if (ret)
+-			return ret;
+ 		nvm_set_auth_status(sw, status);
+ 	}
+ 
+-- 
+2.24.0
+
