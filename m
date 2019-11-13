@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E229EFA55C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B3FAFA548
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbfKMCWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:22:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43000 "EHLO mail.kernel.org"
+        id S1728604AbfKMBxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:53:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727535AbfKMBxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:53:24 -0500
+        id S1728568AbfKMBxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:53:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18613204EC;
-        Wed, 13 Nov 2019 01:53:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E6EF222CF;
+        Wed, 13 Nov 2019 01:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610003;
-        bh=KyMv468KYUxa0zlBPzJSuBJ/C6Qe6r6JSM8MqWf4Ufw=;
+        s=default; t=1573610004;
+        bh=ZuxISFpjVcO7GCboqYdugbKvyKVhZhtr62RJc7RF7PY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Cgwikjk8xTJnBxEN6br8wJr2saUoSV2HOjObqTDH6dbtR+8mM5sXKxoWZNKteIIF
-         21ZYmYMShIH+4fBO5I/Z3Iq0jl4XnJRbZpkISN9Ory4PmGIinNfB1mFFJEwHSpurBP
-         fpS+VLiV5SzfJ0YotvZGFp+Qe4SUhC49ekahW5qI=
+        b=bxkbQO+dTD6qSwkMYygPHUv1Y8ZtrQGsI8LexJEa5ZrdtukLll03j7yjAyZbdD2td
+         mgWNNvc/LmpQk/dbNhVHCJZAa/o6XiawDZGi16lxb4JJqnB4lGWXUM44e1aWyN0Qhb
+         NnstcsRGFCXhuhhL97TIm2KwXxJQCsms9MIxJnzU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     He Zhe <zhe.he@windriver.com>, rostedt@goodmis.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 110/209] printk: Correct wrong casting
-Date:   Tue, 12 Nov 2019 20:48:46 -0500
-Message-Id: <20191113015025.9685-110-sashal@kernel.org>
+Cc:     Olga Kornievskaia <kolga@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 111/209] NFSv4.x: fix lock recovery during delegation recall
+Date:   Tue, 12 Nov 2019 20:48:47 -0500
+Message-Id: <20191113015025.9685-111-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -43,41 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+From: Olga Kornievskaia <kolga@netapp.com>
 
-[ Upstream commit 51a72ab7372d85c96104e58036f1b49ba11e5d2b ]
+[ Upstream commit 44f411c353bf6d98d5a34f8f1b8605d43b2e50b8 ]
 
-log_first_seq and console_seq are 64-bit unsigned integers.
-Correct a wrong casting that might cut off the output.
+Running "./nfstest_delegation --runtest recall26" uncovers that
+client doesn't recover the lock when we have an appending open,
+where the initial open got a write delegation.
 
-Link: http://lkml.kernel.org/r/1538239553-81805-2-git-send-email-zhe.he@windriver.com
-Cc: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-[sergey.senozhatsky@gmail.com: More descriptive commit message]
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Instead of checking for the passed in open context against
+the file lock's open context. Check that the state is the same.
+
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/printk/printk.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/nfs/delegation.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 11d70fd15e706..52390f5a1db11 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2358,8 +2358,9 @@ void console_unlock(void)
- 		printk_safe_enter_irqsave(flags);
- 		raw_spin_lock(&logbuf_lock);
- 		if (console_seq < log_first_seq) {
--			len = sprintf(text, "** %u printk messages dropped **\n",
--				      (unsigned)(log_first_seq - console_seq));
-+			len = sprintf(text,
-+				      "** %llu printk messages dropped **\n",
-+				      log_first_seq - console_seq);
+diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+index 825a8c52165a2..bd8eac752a73a 100644
+--- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -93,7 +93,7 @@ int nfs4_check_delegation(struct inode *inode, fmode_t flags)
+ 	return nfs4_do_check_delegation(inode, flags, false);
+ }
  
- 			/* messages are gone, move to first one */
- 			console_seq = log_first_seq;
+-static int nfs_delegation_claim_locks(struct nfs_open_context *ctx, struct nfs4_state *state, const nfs4_stateid *stateid)
++static int nfs_delegation_claim_locks(struct nfs4_state *state, const nfs4_stateid *stateid)
+ {
+ 	struct inode *inode = state->inode;
+ 	struct file_lock *fl;
+@@ -108,7 +108,7 @@ static int nfs_delegation_claim_locks(struct nfs_open_context *ctx, struct nfs4_
+ 	spin_lock(&flctx->flc_lock);
+ restart:
+ 	list_for_each_entry(fl, list, fl_list) {
+-		if (nfs_file_open_context(fl->fl_file) != ctx)
++		if (nfs_file_open_context(fl->fl_file)->state != state)
+ 			continue;
+ 		spin_unlock(&flctx->flc_lock);
+ 		status = nfs4_lock_delegation_recall(fl, state, stateid);
+@@ -155,7 +155,7 @@ static int nfs_delegation_claim_opens(struct inode *inode,
+ 		seq = raw_seqcount_begin(&sp->so_reclaim_seqcount);
+ 		err = nfs4_open_delegation_recall(ctx, state, stateid);
+ 		if (!err)
+-			err = nfs_delegation_claim_locks(ctx, state, stateid);
++			err = nfs_delegation_claim_locks(state, stateid);
+ 		if (!err && read_seqcount_retry(&sp->so_reclaim_seqcount, seq))
+ 			err = -EAGAIN;
+ 		mutex_unlock(&sp->so_delegreturn_mutex);
 -- 
 2.20.1
 
