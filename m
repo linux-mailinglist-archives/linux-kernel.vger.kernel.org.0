@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6028FA0CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:52:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F7E2FA0D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:53:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfKMBwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:52:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41354 "EHLO mail.kernel.org"
+        id S1728374AbfKMBwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:52:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728295AbfKMBwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:52:30 -0500
+        id S1728307AbfKMBwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:52:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E76F22459;
-        Wed, 13 Nov 2019 01:52:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6113222CA;
+        Wed, 13 Nov 2019 01:52:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609949;
-        bh=EaemQSMRjOoOZA9hgJ+Xxl+flpaibVvlHklLcHHBV1Q=;
+        s=default; t=1573609951;
+        bh=lFx2rRdEIXn+jqFY622RjoZc/jkGHnSqXCd/YP8iTn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IWpX8pa9EHNeNV1awfB0HpJx4L5MogyuuvhEOGM09y+bCtH20ECFd5RFZkyDdyGgc
-         HHU4rc0k4s0kh0eanAE9X5l9cmhIT2W5XAuajUpOyB1zkHFqSnuiy0m4VHAVNrdyLp
-         OmWPMq1lgeikue6j61SyFcZRzaMkSe4vapOboyWw=
+        b=dSZgM8zUriS46F5p1w6n7m7Uz1sS6k+H7NGPt/0aArjbQ8cA/W91zKsnj9XshB9CB
+         Gn3x94E8R0Y+H/B26vCHAGWtc7Jp2Oh3TLMujWjooBBALXR7ZKCbYPsopDu3Qdd1jt
+         /ns1moxN01soZKJrSL091edW4/FvU/ZeGcojat+w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-ide@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 086/209] ata: ep93xx: Use proper enums for directions
-Date:   Tue, 12 Nov 2019 20:48:22 -0500
-Message-Id: <20191113015025.9685-86-sashal@kernel.org>
+        Tomer Tayar <Tomer.Tayar@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 088/209] qed: Avoid implicit enum conversion in qed_ooo_submit_tx_buffers
+Date:   Tue, 12 Nov 2019 20:48:24 -0500
+Message-Id: <20191113015025.9685-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -46,85 +47,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 6adde4a36f1b6a562a1057fbb1065007851050e7 ]
+[ Upstream commit 8fa74e3c49204bdf788d99ef71840490cccc210d ]
 
 Clang warns when one enumerated type is implicitly converted to another.
 
-drivers/ata/pata_ep93xx.c:662:36: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
-                                        ~ ^~~~~~~~~~~~~~~
-drivers/ata/pata_ep93xx.c:670:36: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
-                                        ~ ^~~~~~~~~~~~~
-drivers/ata/pata_ep93xx.c:681:19: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        conf.direction = DMA_FROM_DEVICE;
-                       ~ ^~~~~~~~~~~~~~~
-drivers/ata/pata_ep93xx.c:692:19: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        conf.direction = DMA_TO_DEVICE;
-                       ~ ^~~~~~~~~~~~~
+drivers/net/ethernet/qlogic/qed/qed_ll2.c:799:32: warning: implicit
+conversion from enumeration type 'enum core_tx_dest' to different
+enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
+                tx_pkt.tx_dest = p_ll2_conn->tx_dest;
+                               ~ ~~~~~~~~~~~~^~~~~~~
+1 warning generated.
 
-Use the equivalent valued enums from the expected type so that Clang no
-longer warns about a conversion.
+Fix this by using a switch statement to convert between the enumerated
+values since they are not 1 to 1, which matches how the rest of the
+driver handles this conversion.
 
-DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Suggested-by: Tomer Tayar <Tomer.Tayar@cavium.com>
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Acked-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/pata_ep93xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ata/pata_ep93xx.c b/drivers/ata/pata_ep93xx.c
-index 0a550190955ad..cc6d06c1b2c70 100644
---- a/drivers/ata/pata_ep93xx.c
-+++ b/drivers/ata/pata_ep93xx.c
-@@ -659,7 +659,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 	 * start of new transfer.
- 	 */
- 	drv_data->dma_rx_data.port = EP93XX_DMA_IDE;
--	drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
-+	drv_data->dma_rx_data.direction = DMA_DEV_TO_MEM;
- 	drv_data->dma_rx_data.name = "ep93xx-pata-rx";
- 	drv_data->dma_rx_channel = dma_request_channel(mask,
- 		ep93xx_pata_dma_filter, &drv_data->dma_rx_data);
-@@ -667,7 +667,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 		return;
- 
- 	drv_data->dma_tx_data.port = EP93XX_DMA_IDE;
--	drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
-+	drv_data->dma_tx_data.direction = DMA_MEM_TO_DEV;
- 	drv_data->dma_tx_data.name = "ep93xx-pata-tx";
- 	drv_data->dma_tx_channel = dma_request_channel(mask,
- 		ep93xx_pata_dma_filter, &drv_data->dma_tx_data);
-@@ -678,7 +678,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 
- 	/* Configure receive channel direction and source address */
- 	memset(&conf, 0, sizeof(conf));
--	conf.direction = DMA_FROM_DEVICE;
-+	conf.direction = DMA_DEV_TO_MEM;
- 	conf.src_addr = drv_data->udma_in_phys;
- 	conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	if (dmaengine_slave_config(drv_data->dma_rx_channel, &conf)) {
-@@ -689,7 +689,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 
- 	/* Configure transmit channel direction and destination address */
- 	memset(&conf, 0, sizeof(conf));
--	conf.direction = DMA_TO_DEVICE;
-+	conf.direction = DMA_MEM_TO_DEV;
- 	conf.dst_addr = drv_data->udma_out_phys;
- 	conf.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	if (dmaengine_slave_config(drv_data->dma_tx_channel, &conf)) {
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index 015de1e0addd6..2847509a183d0 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -796,7 +796,18 @@ qed_ooo_submit_tx_buffers(struct qed_hwfn *p_hwfn,
+ 		tx_pkt.vlan = p_buffer->vlan;
+ 		tx_pkt.bd_flags = bd_flags;
+ 		tx_pkt.l4_hdr_offset_w = l4_hdr_offset_w;
+-		tx_pkt.tx_dest = p_ll2_conn->tx_dest;
++		switch (p_ll2_conn->tx_dest) {
++		case CORE_TX_DEST_NW:
++			tx_pkt.tx_dest = QED_LL2_TX_DEST_NW;
++			break;
++		case CORE_TX_DEST_LB:
++			tx_pkt.tx_dest = QED_LL2_TX_DEST_LB;
++			break;
++		case CORE_TX_DEST_DROP:
++		default:
++			tx_pkt.tx_dest = QED_LL2_TX_DEST_DROP;
++			break;
++		}
+ 		tx_pkt.first_frag = first_frag;
+ 		tx_pkt.first_frag_len = p_buffer->packet_length;
+ 		tx_pkt.cookie = p_buffer;
 -- 
 2.20.1
 
