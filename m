@@ -2,65 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2FCFAC80
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1906FAC93
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfKMJEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:04:21 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36972 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfKMJEV (ORCPT
+        id S1727159AbfKMJI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:08:59 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:14414 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfKMJI7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:04:21 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iUoZT-0006K4-Gd; Wed, 13 Nov 2019 10:04:15 +0100
-Date:   Wed, 13 Nov 2019 10:04:14 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Harris, Robert" <robert.harris@alertlogic.com>
-cc:     Ingo Molnar <mingo@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "dvhart@infradead.org" <dvhart@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Help requested: futex(..., FUTEX_WAIT_PRIVATE, ...) returns
- EPERM
-In-Reply-To: <E0332978-739B-4546-9C3F-975216C349D2@alertlogic.com>
-Message-ID: <alpine.DEB.2.21.1911130956150.1833@nanos.tec.linutronix.de>
-References: <E0332978-739B-4546-9C3F-975216C349D2@alertlogic.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 13 Nov 2019 04:08:59 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcbc82d0000>; Wed, 13 Nov 2019 01:09:01 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 13 Nov 2019 01:08:58 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 13 Nov 2019 01:08:58 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 09:08:58 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 13 Nov 2019 09:08:58 +0000
+Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dcbc8260003>; Wed, 13 Nov 2019 01:08:58 -0800
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
+        <lorenzo.pieralisi@arm.com>, <andrew.murray@arm.com>,
+        <bhelgaas@google.com>, <kishon@ti.com>, <thierry.reding@gmail.com>
+CC:     <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>,
+        <sagar.tv@gmail.com>
+Subject: [PATCH 0/4] Add support to defer core initialization
+Date:   Wed, 13 Nov 2019 14:38:47 +0530
+Message-ID: <20191113090851.26345-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573636141; bh=oD8oTA0a2UX+17Bvup9RvEqjWuCUJIivzQuwAOx+Ltk=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=MsuCvWRjzkoA4bHynJjGaktkx/znYP/HyYvbCYtqF9Cys/vqmkswufI4OrC6edVJ/
+         YAgSIPFaDGgJuv8QAjaB0mqAFBvD79pKYxnmldEUKZ0TtXQsvQAZWL5ckvfgPlJOVJ
+         Zkph0V7y41wugPQ5J8gXdg9Fbleu29RmP9Hs6PRxuAPt0MtgxszViYyOxJoUoFI4Ss
+         3saeJQfzxkxXUSEBbm3H0/iXuA8+vvyDNtsz52gZIP8F5F6QCqgAkCCSpKwPbfPBZU
+         s9z/andb1hRYrWVH2UDmyuowyZ/Y3VV1ML4TVXqis/aQbQZbl1bRJHuaFgDqPok8Qi
+         5v0Dju27rcorQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Nov 2019, Harris, Robert wrote:
+EPC/DesignWare core endpoint subsystems assume that the core registers are
+available always for SW to initialize. But, that may not be the case always.
+For example, Tegra194 hardware has the core running on a clock that is derived
+from reference clock that is coming into the endpoint system from host.
+Hence core is made available asynchronously based on when host system is going
+for enumeration of devices. To accommodate this kind of hardwares, support is
+required to defer the core initialization until the respective platform driver
+informs the EPC/DWC endpoint sub-systems that the core is indeed available for
+initiaization. This patch series is attempting to add precisely that.
+This series is based on Kishon's patch that adds notification mechanism
+support from EPC to EPF @ http://patchwork.ozlabs.org/patch/1109884/
 
-> I am investigating an issue on 4.9.184 in which futex() returns EPERM
-> intermittently for
-> 
-> futex(uaddr, FUTEX_WAIT_PRIVATE, val, &timeout, NULL, 0)
-> 
-> The failure affects an application in an AWS lambda;  traditional
-> debugging approaches vary from difficult to impossible.  I cannot
-> reproduce the problem at will, instrument the kernel, install a new
-> kernel or get an application core dump.
-> 
-> Understanding the circumstances under which EPERM can be returned for
-> FUTEX_WAIT_PRIVATE would be useful but it is not a documented failure
-> mode.  I have spent some time looking through futex.c but have not
-> found anything yet.  I would be grateful for a hint from someone more
-> knowledgeable.
+Vidya Sagar (4):
+  PCI: dwc: Add new feature to skip core initialization
+  PCI: endpoint: Add notification for core init completion
+  PCI: dwc: Add API to notify core initialization completion
+  PCI: pci-epf-test: Add support to defer core initialization
 
-sys_futex(FUTEX_WAIT_PRIVATE) does not return -EPERM. Only the PI variants
-do that.
+ .../pci/controller/dwc/pcie-designware-ep.c   |  79 +++++++-----
+ drivers/pci/controller/dwc/pcie-designware.h  |  11 ++
+ drivers/pci/endpoint/functions/pci-epf-test.c | 114 ++++++++++++------
+ drivers/pci/endpoint/pci-epc-core.c           |  19 ++-
+ include/linux/pci-epc.h                       |   2 +
+ include/linux/pci-epf.h                       |   5 +
+ 6 files changed, 164 insertions(+), 66 deletions(-)
 
-Thanks,
+-- 
+2.17.1
 
-	tglx
