@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B72DDFA406
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3175BFA407
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbfKMB52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:57:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50596 "EHLO mail.kernel.org"
+        id S1729717AbfKMB5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729737AbfKMB5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:24 -0500
+        id S1729809AbfKMB52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:57:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E738222D3;
-        Wed, 13 Nov 2019 01:57:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B440222CF;
+        Wed, 13 Nov 2019 01:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610244;
-        bh=kYRv6X1JijuFRXp3cEKnjfaokBgri1XdSpNc8t1YNv4=;
+        s=default; t=1573610247;
+        bh=1QkygwHLgUK427ey0VFiRVmTUIOw5qNV4Wt+zMKwblg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m4bJMZED7tfQUe5OM23CpHBIhd6RgsU4i1LGw6HbUZAhW54oZvCTOX5GkYIxGryVy
-         cGz5EcJy2Nna19j8zVCgqFXZMKSmjY0a2H4Yi2dIPJZ8pLPwHGSpWp3Z+K+RyARzM2
-         SoPe0Vhe0+xzkTAR9ysQmluTEopCMmVN3EkNLpxs=
+        b=bCTancK6xTTzv4B4WILGeOqBjlaG1U8xbZBSYhow3R/BEKhlCuOmyX7VC/ShgqhFm
+         PDS3yM0DR2PXNj2t2IF7fmCzSe+VCp7glwg3qG7rmGPFweP2z/d8RLVkFjc2o7/ov4
+         11krrfDVquHBFZw3VGmzjUIyTDXO+AbBfioOQsgw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 043/115] i40e: Use proper enum in i40e_ndo_set_vf_link_state
-Date:   Tue, 12 Nov 2019 20:55:10 -0500
-Message-Id: <20191113015622.11592-43-sashal@kernel.org>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 045/115] IB/mthca: Fix error return code in __mthca_init_one()
+Date:   Tue, 12 Nov 2019 20:55:12 -0500
+Message-Id: <20191113015622.11592-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -45,47 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit 43ade6ad18416b8fd5bb3c9e9789faa666527eec ]
+[ Upstream commit 39f2495618c5e980d2873ea3f2d1877dd253e07a ]
 
-Clang warns when one enumerated type is converted implicitly to another.
+Fix to return a negative error code from the mthca_cmd_init() error
+handling case instead of 0, as done elsewhere in this function.
 
-drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4214:42: warning:
-implicit conversion from enumeration type 'enum i40e_aq_link_speed' to
-different enumeration type 'enum virtchnl_link_speed'
-      [-Wenum-conversion]
-                pfe.event_data.link_event.link_speed = I40E_LINK_SPEED_40GB;
-                                                     ~ ^~~~~~~~~~~~~~~~~~~~
-1 warning generated.
-
-Use the proper enum from virtchnl_link_speed, which has the same value
-as I40E_LINK_SPEED_40GB, VIRTCHNL_LINK_SPEED_40GB. This appears to be
-missed by commit ff3f4cc267f6 ("virtchnl: finish conversion to virtchnl
-interface").
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/81
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 80fd8238734c ("[PATCH] IB/mthca: Encapsulate command interface init")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/mthca/mthca_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index bdb7523216000..ea42240ddace7 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -3191,7 +3191,7 @@ int i40e_ndo_set_vf_link_state(struct net_device *netdev, int vf_id, int link)
- 		vf->link_forced = true;
- 		vf->link_up = true;
- 		pfe.event_data.link_event.link_status = true;
--		pfe.event_data.link_event.link_speed = I40E_LINK_SPEED_40GB;
-+		pfe.event_data.link_event.link_speed = VIRTCHNL_LINK_SPEED_40GB;
- 		break;
- 	case IFLA_VF_LINK_STATE_DISABLE:
- 		vf->link_forced = true;
+diff --git a/drivers/infiniband/hw/mthca/mthca_main.c b/drivers/infiniband/hw/mthca/mthca_main.c
+index e36a9bc52268d..ccf50dafce9ca 100644
+--- a/drivers/infiniband/hw/mthca/mthca_main.c
++++ b/drivers/infiniband/hw/mthca/mthca_main.c
+@@ -986,7 +986,8 @@ static int __mthca_init_one(struct pci_dev *pdev, int hca_type)
+ 		goto err_free_dev;
+ 	}
+ 
+-	if (mthca_cmd_init(mdev)) {
++	err = mthca_cmd_init(mdev);
++	if (err) {
+ 		mthca_err(mdev, "Failed to init command interface, aborting.\n");
+ 		goto err_free_dev;
+ 	}
 -- 
 2.20.1
 
