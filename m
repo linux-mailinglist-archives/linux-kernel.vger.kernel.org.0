@@ -2,132 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 484F7FA469
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 213EFFA59E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:24:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729667AbfKMCQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:16:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729414AbfKMB4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:56:14 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F218A222D3;
-        Wed, 13 Nov 2019 01:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610173;
-        bh=pBZM1+qxDgGdEEMveh3ihD78Jrc09jymm0BKj6GZGOs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Td8Q13KJYdIo6JBm3CMqSkZRvXSdEvAnwBBuetoaUUBxRfNC+/vnJFUYvW9cngOMv
-         a8UZ5RYHmCV2onH7GTIQ5xmn19fZXjAapMe+F8i3+z2vUP6t9LxYwbzq/omtA3B8gW
-         Z0SjqPB5rQqKF3eOg69wEQLQDI/QTDcqiKO8FMH8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, fenghua.yu@intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 209/209] x86/resctrl: Fix rdt_find_domain() return value and checks
-Date:   Tue, 12 Nov 2019 20:50:25 -0500
-Message-Id: <20191113015025.9685-209-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
-References: <20191113015025.9685-1-sashal@kernel.org>
+        id S1728928AbfKMCXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:23:50 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36048 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728214AbfKMBwV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:52:21 -0500
+Received: by mail-io1-f67.google.com with SMTP id s3so714731ioe.3;
+        Tue, 12 Nov 2019 17:52:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5VRa2p2uVA7mOe9eR+tZyl9qxFDNknjRkbjM2+ZG8/g=;
+        b=DX/94/DxWwYaTp0UKS930L2xgAW1C6/s5Zao/F5UkmMRpkufMFlm3E0TItLjrFy7FT
+         AdeLAL8qmrU1fh8BwzUhqIDSmsG0Yb6xzf2K6FSJec5tbSJRKHpXxoAjZ9trGmaC7YYN
+         WCtRnrW1cHF/IP52b68DxJIP44iOzv7TH5Ova8UZzGUV9XBxHzS3PwLkreauXeV3UUmS
+         Rhv0nGIPWb20nHvfQgOsq5O8VcijVhaEGQgqBKdUwr7ioxTm77yGiCeieRExK04D6GmO
+         UOPqkgRn4x0BZnvAIeMkdwiWDn+OJR6IN2HVdorKSTTdRZthZeohheY4IOKoLmBomsqW
+         9e1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5VRa2p2uVA7mOe9eR+tZyl9qxFDNknjRkbjM2+ZG8/g=;
+        b=QG2WbDZn09jN0LPK4K6WUZDu9zZDXhmmNgadRCwVNdNLnIH9AVywszbdE+ytHdjaim
+         7iD4ZQeTdyceZWxjZt83I8vTSZtiC6bLGkD//ynTm7Z1P0m08YUuqChSb1WNcGuHkPzn
+         2AU+ckWyDTbX7X/4AJKv2lrg9pCkHjb4TpynCxIsw4ISh4Z1frD/bQ8PZIPNBOk+CoZM
+         vfco7u6H2fVUBZ8tSqVi6HdbbfsT2uOPDEdoQ9jrXoOBaxW8q7PHMwLDExJXXmB6Dyoo
+         VwkoFP2+p4bOzNVONjZttX7TE3/eW2OH2SWwkg0jNDNEHNOB5M5RSM5D/bQwc79HfPKZ
+         1TWA==
+X-Gm-Message-State: APjAAAUiPkdt/ypHX4JpvoV1pj+sEdvrOqycJZLBMbKC/pqIB3wEBMed
+        W96VlMxR/Ke8iESqQv6n+kP8q543v6wZKt6JaMA=
+X-Google-Smtp-Source: APXvYqwMd8Urg3MvqLQzocQPrnCFpakQXd+ZDVh0NDjIQD5raobJsT1r9TH1o9QPPti9oFdXfY56Xq86x9avR45gooo=
+X-Received: by 2002:a5d:8591:: with SMTP id f17mr963879ioj.198.1573609939605;
+ Tue, 12 Nov 2019 17:52:19 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20191108164857.11466-1-vigneshr@ti.com> <20191108164857.11466-3-vigneshr@ti.com>
+In-Reply-To: <20191108164857.11466-3-vigneshr@ti.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Wed, 13 Nov 2019 07:21:39 +0530
+Message-ID: <CAGOxZ50OqMYWs+j37=U9r0URQmTK_jxcsor8PejhEVVOXWq4Ww@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] scsi: ufs: Add driver for TI wrapper for Cadence
+ UFS IP
+To:     Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Janek Kotas <jank@cadence.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Reinette Chatre <reinette.chatre@intel.com>
+Hi Vignesh
 
-[ Upstream commit 52eb74339a6233c69f4e3794b69ea7c98eeeae1b ]
+On Fri, Nov 8, 2019 at 10:20 PM Vignesh Raghavendra <vigneshr@ti.com> wrote:
+>
+> TI's J721e SoC has a Cadence UFS IP with a TI specific wrapper. This is
+> a minimal driver to configure the wrapper. It releases the UFS slave
+> device out of reset and sets up registers to indicate PHY reference
+> clock input frequency before probing child Cadence UFS driver.
+>
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> ---
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>
+> v3:
+> Fix macros to have TI_* prefix
+>
+>
+> v2: No change
+>
+>  drivers/scsi/ufs/Kconfig        | 10 ++++
+>  drivers/scsi/ufs/Makefile       |  1 +
+>  drivers/scsi/ufs/ti-j721e-ufs.c | 90 +++++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+)
+>  create mode 100644 drivers/scsi/ufs/ti-j721e-ufs.c
+>
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index 0b845ab7c3bf..d14c2243e02a 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -132,6 +132,16 @@ config SCSI_UFS_HISI
+>           Select this if you have UFS controller on Hisilicon chipset.
+>           If unsure, say N.
+>
+> +config SCSI_UFS_TI_J721E
+> +       tristate "TI glue layer for Cadence UFS Controller"
+> +       depends on OF && HAS_IOMEM && (ARCH_K3 || COMPILE_TEST)
+> +       help
+> +         This selects driver for TI glue layer for Cadence UFS Host
+> +         Controller IP.
+> +
+> +         Selects this if you have TI platform with UFS controller.
+> +         If unsure, say N.
+> +
+>  config SCSI_UFS_BSG
+>         bool "Universal Flash Storage BSG device node"
+>         depends on SCSI_UFSHCD
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 2a9097939bcb..94c6c5d7334b 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -11,3 +11,4 @@ obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+>  obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
+>  obj-$(CONFIG_SCSI_UFS_MEDIATEK) += ufs-mediatek.o
+> +obj-$(CONFIG_SCSI_UFS_TI_J721E) += ti-j721e-ufs.o
+> diff --git a/drivers/scsi/ufs/ti-j721e-ufs.c b/drivers/scsi/ufs/ti-j721e-ufs.c
+> new file mode 100644
+> index 000000000000..5216d228cdd9
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ti-j721e-ufs.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+> +//
+> +
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#define TI_UFS_SS_CTRL         0x4
+> +#define TI_UFS_SS_RST_N_PCS    BIT(0)
+> +#define TI_UFS_SS_CLK_26MHZ    BIT(4)
+> +
+> +static int ti_j721e_ufs_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       unsigned long clk_rate;
+> +       void __iomem *regbase;
+> +       struct clk *clk;
+> +       u32 reg = 0;
+> +       int ret;
+> +
+> +       regbase = devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(regbase))
+> +               return PTR_ERR(regbase);
+> +
+> +       pm_runtime_enable(dev);
+> +       ret = pm_runtime_get_sync(dev);
+> +       if (ret < 0) {
+> +               pm_runtime_put_noidle(dev);
+> +               return ret;
+> +       }
+> +
+> +       /* Select MPHY refclk frequency */
+> +       clk = devm_clk_get(dev, NULL);
+> +       if (IS_ERR(clk)) {
+> +               dev_err(dev, "Cannot claim MPHY clock.\n");
+> +               return PTR_ERR(clk);
+> +       }
+> +       clk_rate = clk_get_rate(clk);
+> +       if (clk_rate == 26000000)
+> +               reg |= TI_UFS_SS_CLK_26MHZ;
+> +       devm_clk_put(dev, clk);
+> +
+> +       /*  Take UFS slave device out of reset */
+> +       reg |= TI_UFS_SS_RST_N_PCS;
+> +       writel(reg, regbase + TI_UFS_SS_CTRL);
+> +
+> +       ret = of_platform_populate(pdev->dev.of_node, NULL, NULL,
+> +                                  dev);
+> +       if (ret) {
+> +               dev_err(dev, "failed to populate child nodes %d\n", ret);
+> +               pm_runtime_put_sync(dev);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int ti_j721e_ufs_remove(struct platform_device *pdev)
+> +{
+> +       of_platform_depopulate(&pdev->dev);
+> +       pm_runtime_put_sync(&pdev->dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id ti_j721e_ufs_of_match[] = {
+> +       {
+> +               .compatible = "ti,j721e-ufs",
+> +       },
+> +       { },
+> +};
+> +
+> +static struct platform_driver ti_j721e_ufs_driver = {
+> +       .probe  = ti_j721e_ufs_probe,
+> +       .remove = ti_j721e_ufs_remove,
+> +       .driver = {
+> +               .name   = "ti-j721e-ufs",
+> +               .of_match_table = ti_j721e_ufs_of_match,
+> +       },
+> +};
+> +module_platform_driver(ti_j721e_ufs_driver);
+> +
+> +MODULE_AUTHOR("Vignesh Raghavendra <vigneshr@ti.com>");
+> +MODULE_DESCRIPTION("TI UFS host controller glue driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.24.0
+>
 
-rdt_find_domain() returns an ERR_PTR() that is generated from a provided
-domain id when the value is negative.
 
-Care needs to be taken when creating an ERR_PTR() from this value
-because a subsequent check using IS_ERR() expects the error to
-be within the MAX_ERRNO range. Using an invalid domain id as an
-ERR_PTR() does work at this time since this is currently always -1.
-Using this undocumented assumption is fragile since future users of
-rdt_find_domain() may not be aware of thus assumption.
-
-Two related issues are addressed:
-
-- Ensure that rdt_find_domain() always returns a valid error value by
-forcing the error to be -ENODEV when a negative domain id is provided.
-
-- In a few instances the return value of rdt_find_domain() is just
-checked for NULL - fix these to include a check of ERR_PTR.
-
-Fixes: d89b7379015f ("x86/intel_rdt/cqm: Add mon_data")
-Fixes: 521348b011d6 ("x86/intel_rdt: Introduce utility to obtain CDP peer")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: fenghua.yu@intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/kernel/cpu/intel_rdt.c             | 2 +-
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 2 +-
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index abb71ac704433..cc43c5abd187b 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -421,7 +421,7 @@ struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
- 	struct list_head *l;
- 
- 	if (id < 0)
--		return ERR_PTR(id);
-+		return ERR_PTR(-ENODEV);
- 
- 	list_for_each(l, &r->domains) {
- 		d = list_entry(l, struct rdt_domain, list);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index 627e5c809b33d..968ace3c6d730 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -459,7 +459,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 
- 	r = &rdt_resources_all[resid];
- 	d = rdt_find_domain(r, domid, NULL);
--	if (!d) {
-+	if (IS_ERR_OR_NULL(d)) {
- 		ret = -ENOENT;
- 		goto out;
- 	}
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 0d8ea82acd930..ad64031e82dcd 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1023,7 +1023,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
- 	 * peer RDT CDP resource. Hence the WARN.
- 	 */
- 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
--	if (WARN_ON(!_d_cdp)) {
-+	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
- 		_r_cdp = NULL;
- 		ret = -EINVAL;
- 	}
 -- 
-2.20.1
-
+Regards,
+Alim
