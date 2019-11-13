@@ -2,129 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBA97FB1B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:49:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2501BFB1B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:49:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbfKMNti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 08:49:38 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:47544 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfKMNti (ORCPT
+        id S1727524AbfKMNtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 08:49:51 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35934 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbfKMNtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 08:49:38 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 68EB71C1250; Wed, 13 Nov 2019 14:49:36 +0100 (CET)
-Date:   Wed, 13 Nov 2019 14:49:36 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Peter Chen <peter.chen@nxp.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 093/125] usb: gadget: configfs: fix concurrent issue
- between composite APIs
-Message-ID: <20191113134935.GA20980@duo.ucw.cz>
-References: <20191111181438.945353076@linuxfoundation.org>
- <20191111181452.322265396@linuxfoundation.org>
+        Wed, 13 Nov 2019 08:49:49 -0500
+Received: by mail-lf1-f66.google.com with SMTP id m6so2020469lfl.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 05:49:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vy52t4FQzUJl7MVUo8BlNINCjNunGWRfRGrKR4TBf7s=;
+        b=H/fmVXpHY/Bz3Zm3tJMqNv+AwRbpI/Zdj1npokpo1y0SxsWgZjJZnvJrrRC8kmjyF/
+         Ipmvra71qU83rRRC6Zf68jUmOzBcSx9OE4TbXtwGoWuGsNNRcFSmls8L4Ikb9DQ0gbVa
+         bIERJQIfZQrW26RWuowHjLM1w7GcY1aEehUkrnKgOPc0mQmyCxtJxKMuz8ugn6lSgiSO
+         Hv4IN4Sd8TJjiufkEb0EReSwfMXDqhEP6nhCXcfAgql/5dFvrnHc+J1zyyWc0Ky1+fCQ
+         +noraUwssI0RFzdcPnNsMRe6cGAgYpAKJ/w8HgkkkHSaNPT+qtFoEaIeh3t945mNFQay
+         vyIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vy52t4FQzUJl7MVUo8BlNINCjNunGWRfRGrKR4TBf7s=;
+        b=HbxzxeyPBJ9SlNYkBysCKHB5733qYhhNmDzMzvValbPBc6AlgUcs6d03e3jWH/LCzI
+         vt5nk4LoG/XBlc6Yv6nXn0lzcul9KGboF36RreThgxEvKzvnos1dAsd9vOQwv/FpI+FA
+         BAw25qM7jhS70l8btaKMtlj0K1f116mLRnjx1tCV/5V7iF2VYjD7EZMl/rgyKjrTxjCU
+         leX9WOPClpYb7jweoAJelgqRM7hIrlIp/DGFtTH94tRgVAVRxeX8IeejhndIGYAS/TyU
+         6f59qoKSftFSsvuE8HBMemdWoPUE+j/8QTu5q8ILrAZjX2hfqkjdvSCzjRRE8qiA85Wv
+         ggeQ==
+X-Gm-Message-State: APjAAAUCgEJtOvCtqjxnDvvv9yEvkPubSw3uMu2RMQdY0Mh1rWRopYMR
+        MjkBl2zPXakyWBhGmQ5RIXmYJo4rUOwQiVFzk+Ch8g==
+X-Google-Smtp-Source: APXvYqxTHXdzhopP2ypRF0d0fSJw9rDupVGAE6bShbQVd9KMnkQr9bDucRfPSMwvlJeNx+bIQwFND5x8xx9CugRiZao=
+X-Received: by 2002:ac2:5a07:: with SMTP id q7mr2668883lfn.86.1573652987493;
+ Wed, 13 Nov 2019 05:49:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
-Content-Disposition: inline
-In-Reply-To: <20191111181452.322265396@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191014184320.GA161094@dtor-ws>
+In-Reply-To: <20191014184320.GA161094@dtor-ws>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 13 Nov 2019 14:49:36 +0100
+Message-ID: <CACRpkdYwinMT71se1WqmGii=qHH1s-JUOigs37EV+ywZ4aiYSA@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: ti-tfp410: switch to using fwnode_gpiod_get_index()
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 14, 2019 at 8:43 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
---9amGYk9869ThD9tj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Instead of fwnode_get_named_gpiod() that I plan to hide away, let's use
+> the new fwnode_gpiod_get_index() that mimics gpiod_get_index(), but
+> works with arbitrary firmware node.
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On Mon 2019-11-11 19:28:52, Greg Kroah-Hartman wrote:
-> From: Peter Chen <peter.chen@nxp.com>
->=20
-> [ Upstream commit 1a1c851bbd706ea9f3a9756c2d3db28523506d3b ]
->=20
-> We meet several NULL pointer issues if configfs_composite_unbind
-> and composite_setup (or composite_disconnect) are running together.
-> These issues occur when do the function switch stress test, the
-> configfs_compsoite_unbind is called from user mode by
-> echo "" to /sys/../UDC entry, and meanwhile, the setup interrupt
-> or disconnect interrupt occurs by hardware. The composite_setup
+I applied this with some ACKs to the GPIO devel branch for v5.5.
 
-> +++ b/drivers/usb/gadget/configfs.c
-> @@ -61,6 +61,8 @@ struct gadget_info {
->  	bool use_os_desc;
->  	char b_vendor_code;
->  	char qw_sign[OS_STRING_QW_SIGN_LEN];
-> +	spinlock_t spinlock;
-> +	bool unbind;
->  };
-> =20
->  static inline struct gadget_info *to_gadget_info(struct config_item *ite=
-m)
-> @@ -1244,6 +1246,7 @@ static int configfs_composite_bind(struct usb_gadge=
-t *gadget,
->  	int				ret;
-> =20
->  	/* the gi->lock is hold by the caller */
-> +	gi->unbind =3D 0;
->  	cdev->gadget =3D gadget;
-
-Since variable is bool, I'd expect "=3D false" here?
-
-> +	unsigned long flags;
-> =20
->  	/* the gi->lock is hold by the caller */
-
-"is held".
-
->  	cdev =3D get_gadget_data(gadget);
->  	gi =3D container_of(cdev, struct gadget_info, cdev);
-> +	spin_lock_irqsave(&gi->spinlock, flags);
-> +	gi->unbind =3D 1;
-
-=3D true;
-
-> +static int configfs_composite_setup(struct usb_gadget *gadget,
-> +		const struct usb_ctrlrequest *ctrl)
-> +{
-> +	struct usb_composite_dev *cdev;
-> +	struct gadget_info *gi;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	cdev =3D get_gadget_data(gadget);
-> +	if (!cdev)
-> +		return 0;
-> +
-> +	gi =3D container_of(cdev, struct gadget_info, cdev);
-> +	spin_lock_irqsave(&gi->spinlock, flags);
-> +	cdev =3D get_gadget_data(gadget);
-
-cdev already contains required value, why get it second time? (If it
-needs to be done under lock, comment might be useful...)
-
-
-Best regards,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---9amGYk9869ThD9tj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXcwJ7wAKCRAw5/Bqldv6
-8hTcAKCkZ8+lOfe0KoaldFtnuuwaU+hcAgCfUtdgELdKe9XSVUlkKviX4Tmx90Y=
-=M6Kj
------END PGP SIGNATURE-----
-
---9amGYk9869ThD9tj--
+Yours,
+Linus Walleij
