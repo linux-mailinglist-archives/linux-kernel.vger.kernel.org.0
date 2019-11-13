@@ -2,172 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63031FAA67
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 07:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A23A6FAA75
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 07:52:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfKMGq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 01:46:57 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34696 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfKMGq4 (ORCPT
+        id S1726263AbfKMGwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 01:52:35 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6574 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfKMGwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 01:46:56 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAD6kppY017248;
-        Wed, 13 Nov 2019 00:46:51 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573627611;
-        bh=x2h5LxHXZug+wqRXSRWXSn/T/yqH7K6RNcNFs8WuSfY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ewgsk6hPYVYgRQIXFah+1EWOXyNUNH6YNiZg68tuBuUpxI4fCgQBYElShR9TTeq2q
-         QqriaCv6brxq1jVMxJgrYOsVK11yZFf7Il3WOsmYwtErJP7pNMmGMHY7raUgDwSRb9
-         qmnPsaT+KmlCTZghM/Z2HtGdOsanHQ5T1GjzHs7s=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD6kpQZ053087;
-        Wed, 13 Nov 2019 00:46:51 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 13
- Nov 2019 00:46:50 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 13 Nov 2019 00:46:33 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD6kmSq025956;
-        Wed, 13 Nov 2019 00:46:49 -0600
-Subject: Re: [PATCH] firmware: ti_sci: rm: Add support for tx_tdtype parameter
- for tx channel
-To:     Tero Kristo <t-kristo@ti.com>, <nm@ti.com>, <ssantosh@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <grygorii.strashko@ti.com>,
-        Vinod <vkoul@kernel.org>
-References: <20191025084715.25098-1-peter.ujfalusi@ti.com>
- <b2231065-ae16-8870-03ac-a435f190ee9f@ti.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <31bce7ea-1769-c299-03a6-60c5b699fd7f@ti.com>
-Date:   Wed, 13 Nov 2019 08:48:04 +0200
+        Wed, 13 Nov 2019 01:52:35 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcba8330000>; Tue, 12 Nov 2019 22:52:35 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 12 Nov 2019 22:52:32 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 12 Nov 2019 22:52:32 -0800
+Received: from [10.26.11.32] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 06:52:28 +0000
+Subject: Re: [PATCH v2 17/17] ARM: dts: tegra30: cardhu-a04: Add CPU Operating
+ Performance Points
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>
+CC:     <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191024221416.14197-1-digetx@gmail.com>
+ <20191024221416.14197-18-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <be6deeff-4294-c945-1539-57ec28b4c895@nvidia.com>
+Date:   Wed, 13 Nov 2019 06:52:26 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <b2231065-ae16-8870-03ac-a435f190ee9f@ti.com>
+In-Reply-To: <20191024221416.14197-18-digetx@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573627955; bh=hAPd6vZThQ+ICA6jEK3O0xPM/BMVXTDWmnPp5G7Fimo=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=fhiVEHHuUlKQKh/SUp1f/FV3Xb5BTTUjeEXDPAVhN/qeRYd9N9K/67RobSEmkLjz5
+         XkO7RqKkw7Hs0jhpoUR+HveNbzjc1n6pWq5+5LTpB7wEc0ACXmmvggfrLr3Pg/ylaM
+         mjzHneb86evOmfocAm5KFSznU7P4cqdRLzmlbSaDUbG84jESguezC91jfdOdYpjcpz
+         3ncYu1EIDrooxG64vcK5c0HJLSuuBf0v2Ij8gtdvkUym9PxEw4dwOy4B1qaRGw4Iul
+         fdtk9lPqpLKuTFFfDqJkZS4dmLbdEXRQKQTM87y2o9s3u2rGUiIs0IgYizDwCFbGM7
+         8VgFqu2OvT3rQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Tero,
 
-On 01/11/2019 10.23, Tero Kristo wrote:
-> On 25/10/2019 11:47, Peter Ujfalusi wrote:
->> The system controller's resource manager have support for configuring the
->> TDTYPE of TCHAN_CFG register on j721e.
->> With this parameter the teardown completion can be controlled:
->> TDTYPE == 0: Return without waiting for peer to complete the teardown
->> TDTYPE == 1: Wait for peer to complete the teardown
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+On 24/10/2019 23:14, Dmitry Osipenko wrote:
+> Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on
+> cardhu-a04.
 > 
-> Reviewed-by: Tero Kristo <t-kristo@ti.com>
-
-I'll take this patch as part of the upcoming v6 of the k3 DMA support
-series to make sure it is buildable unless someone will pick this for
-5.5-rc1.
-
-- Péter
-
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/boot/dts/tegra30-cardhu-a04.dts | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
->> ---
->> Hi,
->>
->> I know it is kind of getting late for 5.5, but can you consider this
->> small
->> addition so I can add the support for it in the initial DMA driver?
->>
->> Thanks and regards,
->> Peter
->>
->>   drivers/firmware/ti_sci.c              | 1 +
->>   drivers/firmware/ti_sci.h              | 7 +++++++
->>   include/linux/soc/ti/ti_sci_protocol.h | 2 ++
->>   3 files changed, 10 insertions(+)
->>
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index 4126be9e3216..f13e4a96f3b7 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -2412,6 +2412,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const
->> struct ti_sci_handle *handle,
->>       req->fdepth = params->fdepth;
->>       req->tx_sched_priority = params->tx_sched_priority;
->>       req->tx_burst_size = params->tx_burst_size;
->> +    req->tx_tdtype = params->tx_tdtype;
->>         ret = ti_sci_do_xfer(info, xfer);
->>       if (ret) {
->> diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
->> index f0d068c03944..255327171dae 100644
->> --- a/drivers/firmware/ti_sci.h
->> +++ b/drivers/firmware/ti_sci.h
->> @@ -910,6 +910,7 @@ struct rm_ti_sci_msg_udmap_rx_flow_opt_cfg {
->>    *   12 - Valid bit for @ref
->> ti_sci_msg_rm_udmap_tx_ch_cfg::tx_credit_count
->>    *   13 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::fdepth
->>    *   14 - Valid bit for @ref
->> ti_sci_msg_rm_udmap_tx_ch_cfg::tx_burst_size
->> + *   15 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::tx_tdtype
->>    *
->>    * @nav_id: SoC device ID of Navigator Subsystem where tx channel is
->> located
->>    *
->> @@ -973,6 +974,11 @@ struct rm_ti_sci_msg_udmap_rx_flow_opt_cfg {
->>    *
->>    * @tx_burst_size: UDMAP transmit channel burst size configuration
->> to be
->>    * programmed into the tx_burst_size field of the TCHAN_TCFG register.
->> + *
->> + * @tx_tdtype: UDMAP transmit channel teardown type configuration to be
->> + * programmed into the tdtype field of the TCHAN_TCFG register:
->> + * 0 - Return immediately
->> + * 1 - Wait for completion message from remote peer
->>    */
->>   struct ti_sci_msg_rm_udmap_tx_ch_cfg_req {
->>       struct ti_sci_msg_hdr hdr;
->> @@ -994,6 +1000,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg_req {
->>       u16 fdepth;
->>       u8 tx_sched_priority;
->>       u8 tx_burst_size;
->> +    u8 tx_tdtype;
->>   } __packed;
->>     /**
->> diff --git a/include/linux/soc/ti/ti_sci_protocol.h
->> b/include/linux/soc/ti/ti_sci_protocol.h
->> index 9531ec823298..f3aed0b91564 100644
->> --- a/include/linux/soc/ti/ti_sci_protocol.h
->> +++ b/include/linux/soc/ti/ti_sci_protocol.h
->> @@ -342,6 +342,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg {
->>   #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_SUPR_TDPKT_VALID        BIT(11)
->>   #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_CREDIT_COUNT_VALID      BIT(12)
->>   #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_FDEPTH_VALID            BIT(13)
->> +#define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_TDTYPE_VALID            BIT(15)
->>       u16 nav_id;
->>       u16 index;
->>       u8 tx_pause_on_err;
->> @@ -359,6 +360,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg {
->>       u16 fdepth;
->>       u8 tx_sched_priority;
->>       u8 tx_burst_size;
->> +    u8 tx_tdtype;
->>   };
->>     /**
->>
-> 
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+> index 0d71925d4f0b..9234988624ec 100644
+> --- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+> +++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+> @@ -2,6 +2,8 @@
+>  /dts-v1/;
+>  
+>  #include "tegra30-cardhu.dtsi"
+> +#include "tegra30-cpu-opp.dtsi"
+> +#include "tegra30-cpu-opp-microvolt.dtsi"
+>  
+>  /* This dts file support the cardhu A04 and later versions of board */
+>  
+> @@ -127,4 +129,26 @@
+>  			nvidia,tegra-core-regulator;
+>  		};
+>  	};
+> +
+> +	cpus {
+> +		cpu0: cpu@0 {
+> +			cpu-supply = <&vddctrl_reg>;
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +		};
+> +
+> +		cpu@1 {
+> +			cpu-supply = <&vddctrl_reg>;
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +		};
+> +
+> +		cpu@2 {
+> +			cpu-supply = <&vddctrl_reg>;
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +		};
+> +
+> +		cpu@3 {
+> +			cpu-supply = <&vddctrl_reg>;
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +		};
+> +	};
+>  };
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Sorry for not testing this sooner, but this is generating the
+following WARNING on boot ...
+
+[    2.916019] ------------[ cut here ]------------
+[    2.920669] WARNING: CPU: 2 PID: 1 at /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/opp/of.c:688 _of_add_opp_table_v2.part.2+0x45c/0x4d4
+[    2.933713] Modules linked in:
+[    2.936785] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc7-next-20191112-gfc6d6db1df2c #1
+[    2.945403] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    2.951706] [<c0112924>] (unwind_backtrace) from [<c010c9d0>] (show_stack+0x10/0x14)
+[    2.959467] [<c010c9d0>] (show_stack) from [<c0aa4494>] (dump_stack+0xc0/0xd4)
+[    2.966707] [<c0aa4494>] (dump_stack) from [<c0124750>] (__warn+0xe0/0xf8)
+[    2.973593] [<c0124750>] (__warn) from [<c0124818>] (warn_slowpath_fmt+0xb0/0xb8)
+[    2.981090] [<c0124818>] (warn_slowpath_fmt) from [<c0754be0>] (_of_add_opp_table_v2.part.2+0x45c/0x4d4)
+[    2.990583] [<c0754be0>] (_of_add_opp_table_v2.part.2) from [<c0754c98>] (dev_pm_opp_of_add_table+0x40/0x15c)
+[    3.000508] [<c0754c98>] (dev_pm_opp_of_add_table) from [<c0754de8>] (dev_pm_opp_of_cpumask_add_table+0x34/0xb4)
+[    3.010704] [<c0754de8>] (dev_pm_opp_of_cpumask_add_table) from [<c075b058>] (cpufreq_init+0xf8/0x2cc)
+[    3.020024] [<c075b058>] (cpufreq_init) from [<c0758758>] (cpufreq_online+0x260/0x824)
+[    3.027953] [<c0758758>] (cpufreq_online) from [<c0758d98>] (cpufreq_add_dev+0x6c/0x78)
+[    3.035976] [<c0758d98>] (cpufreq_add_dev) from [<c05b3188>] (subsys_interface_register+0xa0/0xec)
+[    3.044951] [<c05b3188>] (subsys_interface_register) from [<c07574d4>] (cpufreq_register_driver+0x14c/0x20c)
+[    3.054792] [<c07574d4>] (cpufreq_register_driver) from [<c075aee0>] (dt_cpufreq_probe+0x94/0x114)
+[    3.063771] [<c075aee0>] (dt_cpufreq_probe) from [<c05b6a88>] (platform_drv_probe+0x48/0x98)
+[    3.072225] [<c05b6a88>] (platform_drv_probe) from [<c05b4a38>] (really_probe+0x234/0x34c)
+[    3.080502] [<c05b4a38>] (really_probe) from [<c05b4cc8>] (driver_probe_device+0x60/0x168)
+[    3.088780] [<c05b4cc8>] (driver_probe_device) from [<c05b4f78>] (device_driver_attach+0x58/0x60)
+[    3.097664] [<c05b4f78>] (device_driver_attach) from [<c05b5000>] (__driver_attach+0x80/0xbc)
+[    3.106200] [<c05b5000>] (__driver_attach) from [<c05b2db0>] (bus_for_each_dev+0x74/0xb4)
+[    3.114389] [<c05b2db0>] (bus_for_each_dev) from [<c05b3da4>] (bus_add_driver+0x164/0x1e8)
+[    3.122666] [<c05b3da4>] (bus_add_driver) from [<c05b5b54>] (driver_register+0x7c/0x114)
+[    3.130774] [<c05b5b54>] (driver_register) from [<c010306c>] (do_one_initcall+0x54/0x2a8)
+[    3.138974] [<c010306c>] (do_one_initcall) from [<c0f01040>] (kernel_init_freeable+0x14c/0x1e8)
+[    3.147695] [<c0f01040>] (kernel_init_freeable) from [<c0abbe88>] (kernel_init+0x8/0x10c)
+[    3.155887] [<c0abbe88>] (kernel_init) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+[    3.163462] Exception stack(0xef0c9fb0 to 0xef0c9ff8)
+[    3.168519] 9fa0:                                     00000000 00000000 00000000 00000000
+[    3.176706] 9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    3.184893] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    3.191695] ---[ end trace a7dc36f7a4ddbdb2 ]---
+[    3.197855] ------------[ cut here ]------------
+
+Let me know if you can take a look at this.
+
+Thanks
+Jon
+
+-- 
+nvpublic
