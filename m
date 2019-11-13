@@ -2,217 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5B4FB632
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:18:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF738FB55D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbfKMRSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 12:18:17 -0500
-Received: from mga02.intel.com ([134.134.136.20]:62542 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727729AbfKMRSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 12:18:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 09:18:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
-   d="scan'208";a="229813256"
-Received: from dmsnyder-mobl1.amr.corp.intel.com (HELO [10.252.193.15]) ([10.252.193.15])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Nov 2019 09:18:13 -0800
-Subject: Re: [alsa-devel] [RESEND PATCH v5 6/6] ASoC: amd: Added ACP3x system
- resume and runtime pm
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
-        Sanju R Mehta <sanju.mehta@amd.com>,
-        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Alexander.Deucher@amd.com,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <1573629249-13272-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1573629249-13272-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <7161a222-8e88-704b-0a3e-a468a2639e4f@linux.intel.com>
-Date:   Wed, 13 Nov 2019 10:39:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1728582AbfKMQlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:41:02 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33503 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727729AbfKMQlB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 11:41:01 -0500
+Received: by mail-oi1-f196.google.com with SMTP id m193so2386872oig.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:41:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oVfwiSp+CCVuO7gwDDwfVCYiALcYNYj8C4nivlUEYh4=;
+        b=hEU4Jc+TMKFYo/hClXe4LbEOv2c6xDkpCXQqwl0Z22xOispCr4ItFBq6P3SIqqjsFY
+         VMPkl2Ip3H8rGxZ+odTDTzTUfRJqbARb1f9rXcXv9CUCREofvYLctcVawyyirByAJMwN
+         ei9fYe5bFlcuSzGJ5HwVndtFoKKv1vq4h+2X/TvDP618luMx3USRKABKneg9QTW0bRYp
+         tkrge1Oo0QMqdYnIZnCmlxjw8E75S707Q2y3nfSTEUBKrhHBJIA0SMfHFNrHUt2bVP/7
+         ZCtGzajbwdi4S8LQsNV+0V9OHy41RBEk3rr3XBiAVi05uEylHilzdK2PGwAkDhAT7pE1
+         m7uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oVfwiSp+CCVuO7gwDDwfVCYiALcYNYj8C4nivlUEYh4=;
+        b=B+GZC6hGGWQH6z9fk6rkTMQk7w5ICaN6QK7xLtPAVXxJC2Sb6mAHdg1Ig7nPqKrOEv
+         ZmKniawaQx8otF7TBlhX/8ssa6tJgHW+xRkJ5MN4fFBmNpfES02I127Doc0sAb72zeIr
+         zGz/s0+QAT4ZAaeksuUaDkeKwyKYfUPp/ttVpKjP+siNutCAgjUZIU5S8oyc4km+9mi0
+         NU7sJvwrFpPE7BJdR0cGZ2YJ+lT/U18YN5O0tQhotQLP9RBR9f7P5GZkqoVqlpuNQlR2
+         6pTwCHwbIOJI1xVofEZ2sg1GhXS6bLSuWJLtfVdWkjFtuLnfgh50aCylD8zEQfuYXm+s
+         6EOA==
+X-Gm-Message-State: APjAAAWlNn5eRRBhAOaAWOZ2d4NBkn4MXNzD4TQPvPHQf/ws4xg6eVeA
+        99JLB/kgPPnucP/IRTZAQvcKJlvXlB2+5MEM2FXIiA==
+X-Google-Smtp-Source: APXvYqxsagONtdiNjq6NZ5m7sI0CzPjh/C+hYdKwSFkcYayF5GIcMok6FIb/ScIimmm+EHJtckaZo27u5SdUKfTZ9s8=
+X-Received: by 2002:a05:6808:9a1:: with SMTP id e1mr4473205oig.175.1573663259884;
+ Wed, 13 Nov 2019 08:40:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1573629249-13272-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
+ <20191112232239.yevpeemgxz4wy32b@wittgenstein> <CAG48ez0j_7NyCyvGn8U8NS2p=CQQb=me-5KTa7k5E6xpHJphaA@mail.gmail.com>
+ <13bc7935-8341-bb49-74ea-2eb58f72fd1f@gmail.com>
+In-Reply-To: <13bc7935-8341-bb49-74ea-2eb58f72fd1f@gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 13 Nov 2019 17:40:33 +0100
+Message-ID: <CAG48ez1qtVXSBCmLCWdRwfemw6u5d-Zargm-MNJV_N0WAAoVwg@mail.gmail.com>
+Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
+To:     Topi Miettinen <toiwoton@gmail.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 13, 2019 at 5:19 PM Topi Miettinen <toiwoton@gmail.com> wrote:
+> On 13.11.2019 18.00, Jann Horn wrote:
+> > On Wed, Nov 13, 2019 at 12:22 AM Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+> >> On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
+> >>> Several items in /proc/sys need not be accessible to unprivileged
+> >>> tasks. Let the system administrator change the permissions, but only
+> >>> to more restrictive modes than what the sysctl tables allow.
+[...]
+> > In kernel/ucount.c, the ->permissions handler set_permissions() grants
+> > access based on whether the caller has CAP_SYS_RESOURCE. And in
+> > net/sysctl_net.c, the handler net_ctl_permissions() grants access
+> > based on whether the caller has CAP_NET_ADMIN. This added check is
+> > going to break those, right?
+> >
+>
+> Right. The comment above seems then a bit misleading:
+>         /*
+>          * sysctl entries that are not writeable,
+>          * are _NOT_ writeable, capabilities or not.
+>          */
 
-> diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
-> index 01b283a..c40f960 100644
-> --- a/sound/soc/amd/raven/acp3x.h
-> +++ b/sound/soc/amd/raven/acp3x.h
-> @@ -7,6 +7,7 @@
->   
->   #include "chip_offset_byte.h"
->   
-> +#define DELAY	600
-
-you probably want a prefix here to avoid conflicts
-
-
-> +static int acp3x_power_on(void __iomem *acp3x_base)
-> +{
-> +	u32 val;
-> +	u32 timeout = 0;
-> +	int ret = 0;
-> +
-> +	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-> +
-> +	if (val == 0)
-> +		return val;
-> +
-> +	if (!((val & ACP_PGFSM_STATUS_MASK) ==
-> +				ACP_POWER_ON_IN_PROGRESS))
-> +		rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
-> +			acp3x_base + mmACP_PGFSM_CONTROL);
-> +	while (++timeout < DELAY) {
-
-so here timeout can reach 600.
-
-> +		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-> +		if (!val)
-> +			break;
-> +		udelay(1);
-> +		if (timeout > 500) {
-
-but here you abort at 500.
-Looks like the first test is not needed?
-
-> +			pr_err("ACP is Not Powered ON\n");
-> +			return -ETIMEDOUT;
-> +		}
-> +	}
-> +}
-> +static int acp3x_power_off(void __iomem *acp3x_base)
-> +{
-> +	u32 val;
-> +	u32 timeout = 0;
-> +
-> +	rv_writel(ACP_PGFSM_CNTL_POWER_OFF_MASK,
-> +			acp3x_base + mmACP_PGFSM_CONTROL);
-> +	while (++timeout < DELAY) {
-
-same here
-
-> +		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-> +		if ((val & ACP_PGFSM_STATUS_MASK) == ACP_POWERED_OFF)
-> +			return 0;
-> +		udelay(1);
-> +		if (timeout > 500) {
-> +			pr_err("ACP is Not Powered OFF\n");
-> +			return -ETIMEDOUT;
-> +		}
-> +	}
-> +}
-> +static int acp3x_reset(void __iomem *acp3x_base)
-> +{
-> +	u32 val, timeout;
-> +
-> +	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
-> +	timeout = 0;
-> +	while (++timeout < DELAY) {
-> +		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-> +		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
-> +							timeout > 100) {
-
-and here
-
-> +			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
-> +				break;
-> +			return -ENODEV;
-> +		}
-> +		cpu_relax();
-> +	}
-> +	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
-> +	timeout = 0;
-> +	while (++timeout < DELAY) {
-> +		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-> +		if (!val)
-> +			break;
-> +		if (timeout > 100)
-
-and here.
-
-
-> @@ -133,9 +248,19 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   		ret = -ENODEV;
->   		goto unmap_mmio;
->   	}
-> +	pm_runtime_set_autosuspend_delay(&pci->dev, 10000);
-
-I think it's the largest value I've ever seen for autosuspend.
-It is necessary? If yes you should document why.
-
-> +	pm_runtime_use_autosuspend(&pci->dev);
-> +	pm_runtime_set_active(&pci->dev);
-> +	pm_runtime_put_noidle(&pci->dev);
-> +	pm_runtime_enable(&pci->dev);
->   	return 0;
->   
->   unmap_mmio:
-> +	ret = acp3x_deinit(adata->acp3x_base);
-> +	if (ret)
-> +		dev_err(&pci->dev, "ACP de-init failed\n");
-> +	else
-> +		dev_info(&pci->dev, "ACP de-initialized\n");
-
-dev_dbg?
-
->   	pci_disable_msi(pci);
->   	for (i = 0 ; i < ACP3x_DEVS ; i++)
->   		platform_device_unregister(adata->pdev[i]);
-> @@ -148,23 +273,57 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   
->   	return ret;
->   }
-> +static int  snd_acp3x_suspend(struct device *dev)
-> +{
-> +	int status;
-> +	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-> +
-> +	status = acp3x_deinit(adata->acp3x_base);
-> +	if (status)
-> +		dev_err(dev, "ACP de-init failed\n");
-> +	else
-> +		dev_info(dev, "ACP de-initialized\n");
-
-dev_dbg?
-
-
->   static void snd_acp3x_remove(struct pci_dev *pci)
->   {
-> -	int i;
-> +	int i, ret;
->   	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
->   
->   	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
->   		for (i = 0 ; i <  ACP3x_DEVS ; i++)
->   			platform_device_unregister(adata->pdev[i]);
->   	}
-> +	ret = acp3x_deinit(adata->acp3x_base);
-> +	if (ret)
-> +		dev_err(&pci->dev, "ACP de-init failed\n");
-> +	else
-> +		dev_info(&pci->dev, "ACP de-initialized\n");
-
-dev_dbg?
-
+I don't see the problem. Those handlers never make a file writable
+that doesn't have one of the three write bits (0222) set.
