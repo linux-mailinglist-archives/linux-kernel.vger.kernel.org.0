@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6152FA425
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6B87FA3FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbfKMCOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:14:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50290 "EHLO mail.kernel.org"
+        id S1729740AbfKMB5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:57:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728101AbfKMB5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:15 -0500
+        id S1728664AbfKMB5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:57:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDDD42053B;
-        Wed, 13 Nov 2019 01:57:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43BC82247A;
+        Wed, 13 Nov 2019 01:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610234;
-        bh=ENLaFmlq2o6BrANfDwjWLVdeKtxLU22mhH9zgrr8jqQ=;
+        s=default; t=1573610237;
+        bh=lFxxBxjXHU5mvLq0/vlgvYPguApXQkNTD64lNsNZdvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TBPT6DxDqgdQSZdHzrGZMLsLigKvGlLKVSNzegwAgmWPRmfsFS/nHYnMiFL/9oDPB
-         g6CflIydGRBey66Fe9Ye3RWH/88MAx4DQyeSYcpUx9rNzFYSKaaxDonDY0c7iMiVn5
-         dIepohkJwuke1vl7AeJqLDeul/an+vDnv/MVvcgU=
+        b=AXEW6sBN7qEHe5jZTblr3TMe9n8/RdGLpHTDKJd3mf+h5Eg+OpDmg58K4LyfwzbkJ
+         +ZdMrql9huHOUSp1lYYqPuo+SYtMOH14VWYFFZ71YGFYVyDyDbxOblrrJiwTQbW/ZO
+         aBBE7Hao1whqCKmXWAwfnA8zJx8BjKWqak9BJeH8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 035/115] ARM: dts: at91: at91sam9x5cm: fix addressable nand flash size
-Date:   Tue, 12 Nov 2019 20:55:02 -0500
-Message-Id: <20191113015622.11592-35-sashal@kernel.org>
+Cc:     Chen Yu <yu.c.chen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 037/115] PM / hibernate: Check the success of generating md5 digest before hibernation
+Date:   Tue, 12 Nov 2019 20:55:04 -0500
+Message-Id: <20191113015622.11592-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -43,33 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
+From: Chen Yu <yu.c.chen@intel.com>
 
-[ Upstream commit 6f270d88a0c4a11725afd8fd2001ae408733afbf ]
+[ Upstream commit 749fa17093ff67b31dea864531a3698b6a95c26c ]
 
-at91sam9x5cm comes with a 2Gb NAND flash. Fix the rootfs size to
-match this limit.
+Currently if get_e820_md5() fails, then it will hibernate nevertheless.
+Actually the error code should be propagated to upper caller so that
+the hibernation could be aware of the result and terminates the process
+if md5 digest fails.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/at91sam9x5cm.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/power/hibernate_64.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91sam9x5cm.dtsi b/arch/arm/boot/dts/at91sam9x5cm.dtsi
-index bdeaa0b64a5bf..0a673a7082be1 100644
---- a/arch/arm/boot/dts/at91sam9x5cm.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5cm.dtsi
-@@ -88,7 +88,7 @@
+diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+index 9c80966c80bae..692a179b1ba32 100644
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -250,9 +250,9 @@ static int get_e820_md5(struct e820_table *table, void *buf)
+ 	return ret;
+ }
  
- 						rootfs@800000 {
- 							label = "rootfs";
--							reg = <0x800000 0x1f800000>;
-+							reg = <0x800000 0x0f800000>;
- 						};
- 					};
- 				};
+-static void hibernation_e820_save(void *buf)
++static int hibernation_e820_save(void *buf)
+ {
+-	get_e820_md5(e820_table_firmware, buf);
++	return get_e820_md5(e820_table_firmware, buf);
+ }
+ 
+ static bool hibernation_e820_mismatch(void *buf)
+@@ -272,8 +272,9 @@ static bool hibernation_e820_mismatch(void *buf)
+ 	return memcmp(result, buf, MD5_DIGEST_SIZE) ? true : false;
+ }
+ #else
+-static void hibernation_e820_save(void *buf)
++static int hibernation_e820_save(void *buf)
+ {
++	return 0;
+ }
+ 
+ static bool hibernation_e820_mismatch(void *buf)
+@@ -318,9 +319,7 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
+ 
+ 	rdr->magic = RESTORE_MAGIC;
+ 
+-	hibernation_e820_save(rdr->e820_digest);
+-
+-	return 0;
++	return hibernation_e820_save(rdr->e820_digest);
+ }
+ 
+ /**
 -- 
 2.20.1
 
