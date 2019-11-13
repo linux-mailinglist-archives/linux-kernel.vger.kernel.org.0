@@ -2,85 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A74A0FAF8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 12:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 766F4FAF98
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 12:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfKMLUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 06:20:44 -0500
-Received: from mail-io1-f51.google.com ([209.85.166.51]:44118 "EHLO
-        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbfKMLUo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 06:20:44 -0500
-Received: by mail-io1-f51.google.com with SMTP id j20so2067697ioo.11;
-        Wed, 13 Nov 2019 03:20:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=E4UUTk/t8uEes636KBwiMf4uCLpW7SUwTukCuJGV2gQ=;
-        b=NIUP6HJ7cZn6VNtTHqEup48z6htdvYdviXFeI9rrFeZQUOA8atO2mZ87YJBOhpOJ1O
-         Lt5nD8Tab2jacC6s/bVARkIzfu8E68Yk0h3H3Hpe7WfLyh0DnSGtGuto11j6TnwPU8/X
-         ngLvnF1gbtZ1C1DSFoRcIpSqEEtAgtScXVtB5SSwuHVnRCaOpXMSIjBnRzpGAimp3PqC
-         Z3IMCedoAHGVYhBrADI4yqdUPoXGFPV+bTXJAUHpqT29qi7YIxGNxqpwP+vqiNenNzv8
-         KgtG/JyDoleXuoGEbg3e5sWF9+PADJm6WrVGZW1nDp5tZG9zL6SZYzHo5JjUX0z2146d
-         jtmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=E4UUTk/t8uEes636KBwiMf4uCLpW7SUwTukCuJGV2gQ=;
-        b=ESiGRWzDhRZYBARpLLB3h9zSc7hvU1EUZN219gWJ7YKjUpjGEWDtjm37/OW4X1i5t5
-         JlrzLbPm2djWtmuUoHg8OUbsYAuiFlsmLkHspvuUFHeT213iUhdkZ6yc1xjaPOWWrVG6
-         IXxNYdtANEfuDYLxgTz46/nE8gqM7rhOkhWVDj2Zb7NpJ9moYX4iRVCCyGbsIQfpX1+s
-         BplmjWiLLwilmcs0TBOhF2XfORTrwk3YAyE3h2GiiYPwIg3yaUcADob03t+Il/QomE8S
-         CHfXQ8s23t6X5q/GsbAast2DxM09hRX1TYI3YqysvzdsRO8+EL383z/Yji24Ua1LSOGp
-         KsxQ==
-X-Gm-Message-State: APjAAAV25/7mO/+HBX8Ta8lHAIcnRD82qzVjqcxpzJcV3TuRv1/NCPqy
-        auUQeaOwarhuyeT7HAjZY68zcKW5pqyq2XYvPWd72X+u
-X-Google-Smtp-Source: APXvYqyzAwG7kNXP0VtaM+bOtHh6R0X5bYvj2ZKk/LsHWL2cUgxqWt5N8Raq/rtmN9BzipVCDmD8oCvvzpW5z4O6g4c=
-X-Received: by 2002:a02:9f95:: with SMTP id a21mr2464235jam.16.1573644043378;
- Wed, 13 Nov 2019 03:20:43 -0800 (PST)
+        id S1727846AbfKMLXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 06:23:36 -0500
+Received: from onstation.org ([52.200.56.107]:52482 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727567AbfKMLXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 06:23:35 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 7496B3E994;
+        Wed, 13 Nov 2019 11:23:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1573644214;
+        bh=4MvO+CcmqmSuCYtwPmAx/jbzbsyC5uBqRsZbzaDLlGs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h235/kz+Hbf35LEDekFbNNNia4DVabJuac7lXLV+XBvxChJk5YeKhERIysigCjELU
+         qKKg0hV1avsRUHyy8a/ikxgwbq7OdCxd7u1pe/FD+rbNO7+FNc3EUb26UY1/NBLyr8
+         jzd+CV+NS5plL72Gaz4Y2e9U9Bm5u/NC8ejlix0Q=
+Date:   Wed, 13 Nov 2019 06:23:34 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>, Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH] drm/msm/mdp5: enable autocommit
+Message-ID: <20191113112334.GA18702@onstation.org>
+References: <20191112104854.20850-1-masneyb@onstation.org>
+ <CAOCk7NosRhRp3vZxg2Nx8106PQ0ryo5b68cUv605XUzCm6gYPA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191113013529.GA64000@TonyMac-Alibaba>
-In-Reply-To: <20191113013529.GA64000@TonyMac-Alibaba>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 13 Nov 2019 12:21:10 +0100
-Message-ID: <CAOi1vP98n4coOhc79Q+t63sCGvLmpXCwEYf8yuME+ST2K1HDsw@mail.gmail.com>
-Subject: Re: 'current_state' is uninitialized in rbd_object_map_update_finish()
-To:     Tony Lu <tonylu@linux.alibaba.com>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOCk7NosRhRp3vZxg2Nx8106PQ0ryo5b68cUv605XUzCm6gYPA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 2:35 AM Tony Lu <tonylu@linux.alibaba.com> wrote:
->
-> Hello,
->
-> There is a warning during compiling driver rbd for uninitialized
-> 'current state' in rbd_object_map_update_finish():
->
-> drivers/block/rbd.c: In function 'rbd_object_map_callback':
-> drivers/block/rbd.c:2122:21: warning: =E2=80=98current_state=E2=80=99 may=
- be used uninitialized in this function [-Wmaybe-uninitialized]
->       (current_state =3D=3D OBJECT_EXISTS && state =3D=3D OBJECT_EXISTS_C=
-LEAN))
->
-> drivers/block/rbd.c:2090:23: note: =E2=80=98current_state=E2=80=99 was de=
-clared here
->   u8 state, new_state, current_state;
->                        ^~~~~~~~~~~~~
+On Tue, Nov 12, 2019 at 08:38:27AM -0700, Jeffrey Hugo wrote:
+> On Tue, Nov 12, 2019 at 3:49 AM Brian Masney <masneyb@onstation.org> wrote:
+> >
+> > Since the introduction of commit 2d99ced787e3 ("drm/msm: async commit
+> > support"), command-mode panels began throwing the following errors:
+> >
+> >     msm fd900000.mdss: pp done time out, lm=0
+> >
+> > Let's fix this by enabling the autorefresh feature that's available in
+> > the MDP starting at version 1.0. This will cause the MDP to
+> > automatically send a frame to the panel every time the panel invokes
+> > the TE signal, which will trigger the PP_DONE IRQ. This requires not
+> > sending a START signal for command-mode panels.
+> >
+> > This fixes the error and gives us a counter for command-mode panels that
+> > we can use to implement async commit support for the MDP5 in a follow up
+> > patch.
+> >
+> > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > Suggested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> > ---
+> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 15 ++++++++++++++-
+> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c  |  9 +--------
+> >  2 files changed, 15 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+> > index 05cc04f729d6..539348cb6331 100644
+> > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+> > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+> > @@ -456,6 +456,7 @@ static void mdp5_crtc_atomic_enable(struct drm_crtc *crtc,
+> >  {
+> >         struct mdp5_crtc *mdp5_crtc = to_mdp5_crtc(crtc);
+> >         struct mdp5_crtc_state *mdp5_cstate = to_mdp5_crtc_state(crtc->state);
+> > +       struct mdp5_pipeline *pipeline = &mdp5_cstate->pipeline;
+> >         struct mdp5_kms *mdp5_kms = get_kms(crtc);
+> >         struct device *dev = &mdp5_kms->pdev->dev;
+> >
+> > @@ -493,9 +494,21 @@ static void mdp5_crtc_atomic_enable(struct drm_crtc *crtc,
+> >
+> >         mdp_irq_register(&mdp5_kms->base, &mdp5_crtc->err);
+> >
+> > -       if (mdp5_cstate->cmd_mode)
+> > +       if (mdp5_cstate->cmd_mode) {
+> >                 mdp_irq_register(&mdp5_kms->base, &mdp5_crtc->pp_done);
+> >
+> > +               /*
+> > +                * Enable autorefresh so we get regular ping/pong IRQs.
+> > +                * - Bit 31 is the enable bit
+> > +                * - Bits 0-15 represent the frame count, specifically how many
+> > +                *   TE events before the MDP sends a frame.
+> > +                */
+> > +               mdp5_write(mdp5_kms,
+> > +                          REG_MDP5_PP_AUTOREFRESH_CONFIG(pipeline->mixer->pp),
+> > +                          BIT(31) | BIT(0));
+> > +               crtc_flush_all(crtc);
+> > +       }
+> > +
+> >         mdp5_crtc->enabled = true;
+> >  }
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
+> > index 030279d7b64b..aee295abada3 100644
+> > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
+> > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
+> > @@ -187,14 +187,7 @@ static bool start_signal_needed(struct mdp5_ctl *ctl,
+> >         if (!ctl->encoder_enabled)
+> >                 return false;
+> >
+> > -       switch (intf->type) {
+> > -       case INTF_WB:
+> > -               return true;
+> > -       case INTF_DSI:
+> > -               return intf->mode == MDP5_INTF_DSI_MODE_COMMAND;
+> > -       default:
+> > -               return false;
+> > -       }
+> > +       return intf->type == INTF_WB;
+> >  }
+> 
+> I don't think this fully works.
+> 
+> The whole "flush" thing exists because the configuration is double
+> buffered.  You write to the flush register to tell the hardware to
+> pickup the new configuration, but it doesn't do that automatically.
+> It only picks up the new config on the next "vsync".  When you have a
+> video mode panel, you have the timing engine running, which drives
+> that.  With a command mode panel, you have either the start signal, or
+> the auto refresh to do the same, but you have a bit of a chicken and
+> egg situation where if you are programming the hardware from scratch,
+> autorefresh isn't already enabled to then pickup the config to enable
+> autorefresh. In this case, you'll need a single start to kick
+> everything off.  However, if say the bootloader already configured
+> things and has autorefresh running, then you need to not do that start
+> because you'll overload the DSI like you saw.
 
-Hi Tony,
+As part of my testing for this work, I added a log statement to
+mdp5_crtc_pp_done_irq() and it shows that a PP_IRQ comes in consistently
+every ~0.0166 seconds, which is about 60 HZ. Without this change, plus
+the 3 commits I mentioned in an earlier email related to the async
+commit support, the PP IRQs come in at a variety of times: between every
+~0.0140 and ~0.2224 seconds. That's why I assumed that this was working.
 
-It looks like this warning was also reported by kbuild, on gcc 6.3 and
-7.4.  It's bogus, I'll send a patch to silence it.
+If I call send_start_signal() inside mdp5_crtc_atomic_enable(), then the
+display does not work properly.
 
-Thanks,
+> Nothing is simple, is it?  :)
 
-                Ilya
+Ain't that the truth...
+
+Brian
