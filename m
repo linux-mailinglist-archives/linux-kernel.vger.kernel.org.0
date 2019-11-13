@@ -2,112 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB88AFAFDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 12:41:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CD72FAFD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 12:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbfKMLlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 06:41:36 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:17327 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727899AbfKMLlb (ORCPT
+        id S1727845AbfKMLkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 06:40:51 -0500
+Received: from outbound-smtp37.blacknight.com ([46.22.139.220]:50527 "EHLO
+        outbound-smtp37.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727693AbfKMLkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 06:41:31 -0500
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id xADBfGnQ005654
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 20:41:17 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com xADBfGnQ005654
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1573645277;
-        bh=J6rJT8P5SnuQtYPsxB/K65h5d3rtBJCHsFkTNmOyQlQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jg5JN1kyvIRVl+wnxWLogXC8ILKa+IPKGO3oktS6ZUotAb3IrHuk4Cd8D0jRpS+Z/
-         nn4aw7dZ1b0YnJJ7AiKHjQ2t/Cu60ALE0Dh9E3WfRj2CTKfY0JUzC8ZchaQv0FppaG
-         Fwy+yVGWbgh8TTCt820j9oWM9oW/tdMhKvpLE05p+HEk4CY8OYLGlPFutee/2rSxRW
-         uBKiz4+K20hREfUyGRaxCJ8Ox9HxaPzJ3CDeJjbRXdUn34oD9JR64StlSm4xVn3BV0
-         M49dIKUVvlEoFbtYI68+5VwbIlJ9NPgm31QO5fibO43FyIEoowXPOyocKhEDAk9wjx
-         bZL9tMKtNoJnQ==
-X-Nifty-SrcIP: [209.85.221.176]
-Received: by mail-vk1-f176.google.com with SMTP id r4so472371vkf.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 03:41:17 -0800 (PST)
-X-Gm-Message-State: APjAAAWPAFWKZOJwhkBvZxfJv0Zw0Iszf8AOq/ffPAcQ+bjRIT2mRx9+
-        2jwP40lcBI4mSugx8/tqmIBiSXE+8U0Ra3jkBkE=
-X-Google-Smtp-Source: APXvYqxqblFCrOJg10zfx2WK5ReUHCOH5foJoWAQQv3PyYkLJdqhdmg4TbDz/1KDQB+Qui2LDB57vmmLTKCspKoZrlo=
-X-Received: by 2002:a1f:4192:: with SMTP id o140mr1284724vka.26.1573645275987;
- Wed, 13 Nov 2019 03:41:15 -0800 (PST)
+        Wed, 13 Nov 2019 06:40:51 -0500
+Received: from mail.blacknight.com (unknown [81.17.254.26])
+        by outbound-smtp37.blacknight.com (Postfix) with ESMTPS id 99946A3F
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 11:40:48 +0000 (GMT)
+Received: (qmail 2036 invoked from network); 13 Nov 2019 11:40:48 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 13 Nov 2019 11:40:48 -0000
+Date:   Wed, 13 Nov 2019 11:40:46 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 6/8] mm/lru: remove rcu_read_lock to fix performance
+ regression
+Message-ID: <20191113114045.GZ3016@techsingularity.net>
+References: <1573567588-47048-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1573567588-47048-7-git-send-email-alex.shi@linux.alibaba.com>
+ <20191112143844.GB7934@bombadil.infradead.org>
+ <a6bb6739-cc00-cf9f-cd69-6016ce93e054@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20190906154706.2449696-1-arnd@arndb.de> <CAMuHMdUMgDBo1gkvQ_Bd8mjMiPjdWWY=9AU6K1S7NcJy5jhvGQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUMgDBo1gkvQ_Bd8mjMiPjdWWY=9AU6K1S7NcJy5jhvGQ@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 13 Nov 2019 20:40:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASNp4jPYHmh3e4QYwenYbVrK69tvB_LLyK_ew1eqBNrEw@mail.gmail.com>
-Message-ID: <CAK7LNASNp4jPYHmh3e4QYwenYbVrK69tvB_LLyK_ew1eqBNrEw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: don't export unused return_address()
-To:     Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <a6bb6739-cc00-cf9f-cd69-6016ce93e054@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 11:31 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Arnd,
->
-> On Fri, Sep 6, 2019 at 5:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > Without the frame pointer enabled, return_address() is an inline
-> > function and does not need to be exported, as shown by this warning:
-> >
-> > WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
-> >
-> > Move the EXPORT_SYMBOL_GPL() into the #ifdef as well.
-> >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Thanks for your patch!
->
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> > --- a/arch/arm/kernel/return_address.c
-> > +++ b/arch/arm/kernel/return_address.c
-> > @@ -53,6 +53,7 @@ void *return_address(unsigned int level)
-> >                 return NULL;
-> >  }
-> >
->
-> Checkpatch doesn't like the empty line above:
->
-> WARNING: EXPORT_SYMBOL(foo); should immediately follow its function/variable
->
-> > +EXPORT_SYMBOL_GPL(return_address);
-> > +
-> >  #endif /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND) */
-> >
-> > -EXPORT_SYMBOL_GPL(return_address);
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+On Wed, Nov 13, 2019 at 10:40:58AM +0800, Alex Shi wrote:
+> 
+> 
+> ?? 2019/11/12 ????10:38, Matthew Wilcox ????:
+> > On Tue, Nov 12, 2019 at 10:06:26PM +0800, Alex Shi wrote:
+> >> Intel 0day report there are performance regression on this patchset.
+> >> The detailed info points to rcu_read_lock + PROVE_LOCKING which causes
+> >> queued_spin_lock_slowpath waiting too long time to get lock.
+> >> Remove rcu_read_lock is safe here since we had a spinlock hold.
+> > Argh.  You have not sent these patches in a properly reviewable form!
+> > I wasted all that time reviewing the earlier patch in this series only to
+> > find out that you changed it here.  FIX THE PATCH, don't send a fix-patch
+> > on top of it!
+> > 
+> 
+> Hi Matthew,
+> 
+> Very sorry for your time! The main reasons I use a separate patch since a, Intel 0day asking me to credit their are founding, and I don't know how to give a clearly/elegant explanation for a non-exist regression in a fixed patch. b, this regression is kindly pretty tricky.  Maybe it's better saying thanks in version change log of cover-letter?
+> 
 
+Add something like this to the patch
 
-
-What has happened to this patch?
-
-I still see this warning.
-
-
+[lkp@intel.com: Fix RCU-related regression reported by LKP robot]
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+...
 
 -- 
-Best Regards
-Masahiro Yamada
+Mel Gorman
+SUSE Labs
