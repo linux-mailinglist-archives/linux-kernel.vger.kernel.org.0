@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0164FA5F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D2FFA616
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:27:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfKMBvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:51:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38392 "EHLO mail.kernel.org"
+        id S1729528AbfKMC0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:26:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727666AbfKMBvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:51:06 -0500
+        id S1727722AbfKMBvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:51:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B1DF222D3;
-        Wed, 13 Nov 2019 01:51:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6494D222CE;
+        Wed, 13 Nov 2019 01:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609866;
-        bh=S3t5Cafj8u2c9Tf3AxCsWdFvcbncy3FrspDvoheR4uc=;
+        s=default; t=1573609871;
+        bh=aINBe0j896dO0o/clmYn1WdFrDDx1W1Boi3TVHdmbmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J/Pz5lqE88rQpI6s1juo+V04B/88N2Gpwg5qkexxMoTJV/SmST+U/HJ9YvyTAOFKz
-         dt+lERh5rsjZ5qpzQ/BxqQnhvh2EtKH2n8i3ozsgq/16ujticRto9YulZ3DSAypm43
-         B6GIfVSUVwWPKjADKtd2PpherTNAubblV2ft9TYo=
+        b=05L/aJJ8a9GE7G+LgNsBGgOZSf7fYAmBBCPGsa8wOQhd+Vq7XovQ9u7PazDd71yJi
+         vIa0R74eXhbmmeRZh9QHeCHoYTQyXwq72BIgsQTME4OReuVui3p5pHnhvktXY1t5EA
+         X9G6BwwW7iupSoGHfiPiYgKv6TTRocRBeUNApxUI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vincent Donnefort <vincent.donnefort@arm.com>,
-        John Einar Reitan <john.reitan@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 031/209] PM / devfreq: stopping the governor before device_unregister()
-Date:   Tue, 12 Nov 2019 20:47:27 -0500
-Message-Id: <20191113015025.9685-31-sashal@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 034/209] usb: gadget: udc: fotg210-udc: Fix a sleep-in-atomic-context bug in fotg210_get_status()
+Date:   Tue, 12 Nov 2019 20:47:30 -0500
+Message-Id: <20191113015025.9685-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -45,63 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Donnefort <vincent.donnefort@arm.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 2f061fd0c2d852e32e03a903fccd810663c5c31e ]
+[ Upstream commit 2337a77c1cc86bc4e504ecf3799f947659c86026 ]
 
-device_release() is freeing the resources before calling the device
-specific release callback which is, in the case of devfreq, stopping
-the governor.
+The driver may sleep in an interrupt handler.
+The function call path (from bottom to top) in Linux-4.17 is:
 
-It is a problem as some governors are using the device resources. e.g.
-simpleondemand which is using the devfreq deferrable monitoring work. If it
-is not stopped before the resources are freed, it might lead to a use after
-free.
+[FUNC] fotg210_ep_queue(GFP_KERNEL)
+drivers/usb/gadget/udc/fotg210-udc.c, 744:
+	fotg210_ep_queue in fotg210_get_status
+drivers/usb/gadget/udc/fotg210-udc.c, 768:
+	fotg210_get_status in fotg210_setup_packet
+drivers/usb/gadget/udc/fotg210-udc.c, 949:
+	fotg210_setup_packet in fotg210_irq (interrupt handler)
 
-Signed-off-by: Vincent Donnefort <vincent.donnefort@arm.com>
-Reviewed-by: John Einar Reitan <john.reitan@arm.com>
-[cw00.choi: Fix merge conflict]
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+If possible, spin_unlock() and spin_lock() around fotg210_ep_queue()
+can be also removed.
+
+This bug is found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/devfreq.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/usb/gadget/udc/fotg210-udc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 8e21bedc74c38..bcd2279106760 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -578,10 +578,6 @@ static void devfreq_dev_release(struct device *dev)
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
+diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
+index 587c5037ff079..bc6abaea907d8 100644
+--- a/drivers/usb/gadget/udc/fotg210-udc.c
++++ b/drivers/usb/gadget/udc/fotg210-udc.c
+@@ -741,7 +741,7 @@ static void fotg210_get_status(struct fotg210_udc *fotg210,
+ 	fotg210->ep0_req->length = 2;
  
--	if (devfreq->governor)
--		devfreq->governor->event_handler(devfreq,
--						 DEVFREQ_GOV_STOP, NULL);
--
- 	if (devfreq->profile->exit)
- 		devfreq->profile->exit(devfreq->dev.parent);
+ 	spin_unlock(&fotg210->lock);
+-	fotg210_ep_queue(fotg210->gadget.ep0, fotg210->ep0_req, GFP_KERNEL);
++	fotg210_ep_queue(fotg210->gadget.ep0, fotg210->ep0_req, GFP_ATOMIC);
+ 	spin_lock(&fotg210->lock);
+ }
  
-@@ -717,7 +713,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- err_init:
- 	mutex_unlock(&devfreq_list_lock);
- 
--	device_unregister(&devfreq->dev);
-+	devfreq_remove_device(devfreq);
- 	devfreq = NULL;
- err_dev:
- 	if (devfreq)
-@@ -738,6 +734,9 @@ int devfreq_remove_device(struct devfreq *devfreq)
- 	if (!devfreq)
- 		return -EINVAL;
- 
-+	if (devfreq->governor)
-+		devfreq->governor->event_handler(devfreq,
-+						 DEVFREQ_GOV_STOP, NULL);
- 	device_unregister(&devfreq->dev);
- 
- 	return 0;
 -- 
 2.20.1
 
