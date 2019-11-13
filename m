@@ -2,168 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 840BBFAFDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 12:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3210BFAFED
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 12:43:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfKMLle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 06:41:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:51116 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727910AbfKMLlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 06:41:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82750D6E;
-        Wed, 13 Nov 2019 03:41:31 -0800 (PST)
-Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EB173F534;
-        Wed, 13 Nov 2019 03:41:30 -0800 (PST)
-From:   Steven Price <steven.price@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
-Cc:     kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Steven Price <steven.price@arm.com>
-Subject: [PATCH v2 2/2] arm64: Workaround for Cortex-A55 erratum 1530923
-Date:   Wed, 13 Nov 2019 11:41:18 +0000
-Message-Id: <20191113114118.2427-3-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113114118.2427-1-steven.price@arm.com>
-References: <20191113114118.2427-1-steven.price@arm.com>
+        id S1727962AbfKMLnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 06:43:23 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42296 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbfKMLnS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 06:43:18 -0500
+Received: by mail-wr1-f65.google.com with SMTP id a15so1972680wrf.9
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 03:43:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NWmx5zlrVzI636UV5zn7jwNNYyPpT2kzazOSeqZFCPQ=;
+        b=C0Dbe7TCduZqSim4I/9b7E74bGQO34GH/iKoO+dE+3EHLfWv1lLPGbvorBCoaRGMDb
+         48v7HTSQHP1LaVgvLNGy/yOxyJTlvTeKuq2CZR/Q7GIgmnQIbkvYhHi8TV/Ec+0WSA8P
+         awH+k+k5IQBNK5RO6uqKbJl7dFmz19ED4sy2I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=NWmx5zlrVzI636UV5zn7jwNNYyPpT2kzazOSeqZFCPQ=;
+        b=cFw6MFxdY0y4hXhuP6CsmSAOwIIWsLoeYTGSilxdGA9l5yJwL8Zd5lHzuuO0EmN/w/
+         vPySY05h/jcZTz9o8OH5zHqLqDOnXQ2yU9QGzvH/quvXqaBx0EXsBmodymKZwZnSkSAv
+         Du8HXcJzAOqtkTi1IJG5+LGalSyjt5g+tuiAF4s/Az1Lzf8aKIEkRUHj8aBVINI4swyj
+         ujBSMs1wvbl+dmVnqeLmSOWbwymbmUy1SmbhRX7QCo4p+wI1iPNGkn/keOtT8uYVMfay
+         yaG1ZneRUsIi2HJf84mNKwGVEkf7FEqMoDqUlqmzVliBGFnadYHKEW9UIuQ7iqyH65RL
+         TaZw==
+X-Gm-Message-State: APjAAAXScJkcfsPGxME2usrs4/dMM0qHGCP12fs2geycU6xgSwm1H3GE
+        +0j8a5zJVHe6eOPZg6Wf3Dvikg==
+X-Google-Smtp-Source: APXvYqw4ALVmGTh9KFISsJCvLVpFEzXuyu2WMWEkcAdM7khXUlUWKA93QR1nKFP8k/o5YdLFIE0ItA==
+X-Received: by 2002:a5d:50ce:: with SMTP id f14mr2625324wrt.219.1573645394576;
+        Wed, 13 Nov 2019 03:43:14 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id w4sm2544060wrs.1.2019.11.13.03.43.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2019 03:43:13 -0800 (PST)
+Date:   Wed, 13 Nov 2019 12:43:11 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf <bpf@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN,
+ FOLL_LONGTERM
+Message-ID: <20191113114311.GP23790@phenom.ffwll.local>
+Mail-Followup-To: Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf <bpf@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
+        linux-rdma@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+ <20191112203802.GD5584@ziepe.ca>
+ <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
+ <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
+ <7b671bf9-4d94-f2cc-8453-863acd5a1115@nvidia.com>
+ <20191113101210.GD6367@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191113101210.GD6367@quack2.suse.cz>
+X-Operating-System: Linux phenom 5.2.0-3-amd64 
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cortex-A55 erratum 1530923 allows TLB entries to be allocated as a
-result of a speculative AT instruction. This may happen in the middle of
-a guest world switch while the relevant VMSA configuration is in an
-inconsistent state, leading to erroneous content being allocated into
-TLBs.
+On Wed, Nov 13, 2019 at 11:12:10AM +0100, Jan Kara wrote:
+> On Wed 13-11-19 01:02:02, John Hubbard wrote:
+> > On 11/13/19 12:22 AM, Daniel Vetter wrote:
+> > ...
+> > > > > Why are we doing this? I think things got confused here someplace, as
+> > > > 
+> > > > 
+> > > > Because:
+> > > > 
+> > > > a) These need put_page() calls,  and
+> > > > 
+> > > > b) there is no put_pages() call, but there is a release_pages() call that
+> > > > is, arguably, what put_pages() would be.
+> > > > 
+> > > > 
+> > > > > the comment still says:
+> > > > > 
+> > > > > /**
+> > > > >   * put_user_page() - release a gup-pinned page
+> > > > >   * @page:            pointer to page to be released
+> > > > >   *
+> > > > >   * Pages that were pinned via get_user_pages*() must be released via
+> > > > >   * either put_user_page(), or one of the put_user_pages*() routines
+> > > > >   * below.
+> > > > 
+> > > > 
+> > > > Ohhh, I missed those comments. They need to all be changed over to
+> > > > say "pages that were pinned via pin_user_pages*() or
+> > > > pin_longterm_pages*() must be released via put_user_page*()."
+> > > > 
+> > > > The get_user_pages*() pages must still be released via put_page.
+> > > > 
+> > > > The churn is due to a fairly significant change in strategy, whis
+> > > > is: instead of changing all get_user_pages*() sites to call
+> > > > put_user_page(), change selected sites to call pin_user_pages*() or
+> > > > pin_longterm_pages*(), plus put_user_page().
+> > > 
+> > > Can't we call this unpin_user_page then, for some symmetry? Or is that
+> > > even more churn?
+> > > 
+> > > Looking from afar the naming here seems really confusing.
+> > 
+> > 
+> > That look from afar is valuable, because I'm too close to the problem to see
+> > how the naming looks. :)
+> > 
+> > unpin_user_page() sounds symmetrical. It's true that it would cause more
+> > churn (which is why I started off with a proposal that avoids changing the
+> > names of put_user_page*() APIs). But OTOH, the amount of churn is proportional
+> > to the change in direction here, and it's really only 10 or 20 lines changed,
+> > in the end.
+> > 
+> > So I'm open to changing to that naming. It would be nice to hear what others
+> > prefer, too...
+> 
+> FWIW I'd find unpin_user_page() also better than put_user_page() as a
+> counterpart to pin_user_pages().
 
-The same workaround as is used for Cortex-A76 erratum 1165522
-(WORKAROUND_SPECULATIVE_AT) can be used here. Note that this mandates
-the use of VHE on affected parts.
-
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- Documentation/arm64/silicon-errata.rst |  2 ++
- arch/arm64/Kconfig                     | 13 +++++++++++++
- arch/arm64/include/asm/kvm_hyp.h       |  4 ++--
- arch/arm64/kernel/cpu_errata.c         |  6 +++++-
- arch/arm64/kvm/hyp/switch.c            |  4 ++--
- arch/arm64/kvm/hyp/tlb.c               |  4 ++--
- 6 files changed, 26 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
-index 899a72570282..b40cb3e0634e 100644
---- a/Documentation/arm64/silicon-errata.rst
-+++ b/Documentation/arm64/silicon-errata.rst
-@@ -88,6 +88,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A76      | #1463225        | ARM64_ERRATUM_1463225       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A55      | #1530923        | ARM64_ERRATUM_1530923       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N1     | #1188873,1418040| ARM64_ERRATUM_1418040       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N1     | #1349291        | N/A                         |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 5a235e724fbb..8c21af254ecc 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -532,6 +532,19 @@ config ARM64_ERRATUM_1165522
- 
- 	  If unsure, say Y.
- 
-+config ARM64_ERRATUM_1530923
-+	bool "Cortex-A55: Speculative AT instruction using out-of-context translation regime could cause subsequent request to generate an incorrect translation"
-+	default y
-+	select ARM64_WORKAROUND_SPECULATIVE_AT
-+	help
-+	  This option adds a workaround for ARM Cortex-A55 erratum 1530923.
-+
-+	  Affected Cortex-A55 cores (r0p0, r0p1, r1p0, r2p0) could end-up with
-+	  corrupted TLBs by speculating an AT instruction during a guest
-+	  context switch.
-+
-+	  If unsure, say Y.
-+
- config ARM64_ERRATUM_1286807
- 	bool "Cortex-A76: Modification of the translation table for a virtual address might lead to read-after-read ordering violation"
- 	default y
-diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-index 965a9b4e5454..c60e2b97bcd6 100644
---- a/arch/arm64/include/asm/kvm_hyp.h
-+++ b/arch/arm64/include/asm/kvm_hyp.h
-@@ -91,8 +91,8 @@ static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
- 	write_sysreg(kvm_get_vttbr(kvm), vttbr_el2);
- 
- 	/*
--	 * ARM erratum 1165522 requires the actual execution of the above
--	 * before we can switch to the EL1/EL0 translation regime used by
-+	 * ARM errata 1165522 and 1530923 require the actual execution of the
-+	 * above before we can switch to the EL1/EL0 translation regime used by
- 	 * the guest.
- 	 */
- 	if (!has_vhe())
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index b801f8e832aa..a7faafab3170 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -749,6 +749,10 @@ static const struct midr_range erratum_speculative_at_list[] = {
- #ifdef CONFIG_ARM64_ERRATUM_1165522
- 	/* Cortex A76 r0p0 to r2p0 */
- 	MIDR_RANGE(MIDR_CORTEX_A76, 0, 0, 2, 0),
-+#endif
-+#ifdef CONFIG_ARM64_ERRATUM_1530923
-+	/* Cortex A55 r0p0 to r2p0 */
-+	MIDR_RANGE(MIDR_CORTEX_A55, 0, 0, 2, 0),
- #endif
- 	{},
- };
-@@ -880,7 +884,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- #endif
- #ifdef CONFIG_ARM64_WORKAROUND_SPECULATIVE_AT
- 	{
--		.desc = "ARM erratum 1165522",
-+		.desc = "ARM errata 1165522, 1530923",
- 		.capability = ARM64_WORKAROUND_SPECULATIVE_AT,
- 		ERRATA_MIDR_RANGE_LIST(erratum_speculative_at_list),
- 	},
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index 140f467b1f16..46c4328702dd 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -158,8 +158,8 @@ static void deactivate_traps_vhe(void)
- 	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
- 
- 	/*
--	 * ARM erratum 1165522 requires the actual execution of the above
--	 * before we can switch to the EL2/EL0 translation regime used by
-+	 * ARM errata 1165522 and 1530923 require the actual execution of the
-+	 * above before we can switch to the EL2/EL0 translation regime used by
- 	 * the host.
- 	 */
- 	asm(ALTERNATIVE("nop", "isb", ARM64_WORKAROUND_SPECULATIVE_AT));
-diff --git a/arch/arm64/kvm/hyp/tlb.c b/arch/arm64/kvm/hyp/tlb.c
-index 338df7f9149a..6b6a139ad29a 100644
---- a/arch/arm64/kvm/hyp/tlb.c
-+++ b/arch/arm64/kvm/hyp/tlb.c
-@@ -25,8 +25,8 @@ static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm,
- 
- 	if (cpus_have_const_cap(ARM64_WORKAROUND_SPECULATIVE_AT)) {
- 		/*
--		 * For CPUs that are affected by ARM erratum 1165522, we
--		 * cannot trust stage-1 to be in a correct state at that
-+		 * For CPUs that are affected by ARM errata 1165522 or 1530923,
-+		 * we cannot trust stage-1 to be in a correct state at that
- 		 * point. Since we do not want to force a full load of the
- 		 * vcpu state, we prevent the EL1 page-table walker to
- 		 * allocate new TLBs. This is done by setting the EPD bits
+One more point from afar on pin/unpin: We use that a lot in graphics for
+permanently pinned graphics buffer objects. Which really only should be
+used for scanout. So at least graphics folks should have an appropriate
+mindset and try to make sure we don't overuse this stuff.
+-Daniel
 -- 
-2.20.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
