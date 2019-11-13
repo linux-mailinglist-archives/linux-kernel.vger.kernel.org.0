@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00945FA57B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:23:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C873EFA57F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:23:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfKMBwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:52:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41378 "EHLO mail.kernel.org"
+        id S1728394AbfKMBwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:52:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728296AbfKMBwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:52:31 -0500
+        id S1728327AbfKMBwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:52:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D40E62245D;
-        Wed, 13 Nov 2019 01:52:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8C28222CA;
+        Wed, 13 Nov 2019 01:52:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609950;
-        bh=zqKtBzIawqTh/gatYN8sjqqV0PNsU8huQ0cDbHWqccg=;
+        s=default; t=1573609954;
+        bh=0Sjkf189679x4uXqj5BLH1BM4wR2jv51XnrwoMD8oH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HlaKi2lDmjvObhXSPwpOl3tx5VofL1XUX4VXFhYsPZKdsKhy9aUwNLNzMv/78Xwwx
-         7UcVvHyakvVrAEzMGJmSQXi0GAKHiS1beXOhXJ2BO0kQsug6UDa5XHhd7tmq1nN2im
-         a92dRyGAnlCBLSVoqgiVgDbgkntarfJ6l+uViqCU=
+        b=WNgJMfd2b8JwA1KlXQAZv6VJLbOQfrXwR2k5dGamy+1HnPq5UKxSqFm9ZGkrYqSmA
+         uLTlEGhol1XBr44KY6B2mxCbrnk+ROeWj7g3cyOhPQxQwBEgpd5GF0rFVLmta8R0K+
+         UDrXHdNA8YQ0AZOoxZIBUHznarajPVjE2w3Jxa+c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 087/209] ARM: dts: da850-lego-ev3: slow down A/DC as much as possible
-Date:   Tue, 12 Nov 2019 20:48:23 -0500
-Message-Id: <20191113015025.9685-87-sashal@kernel.org>
+Cc:     Matthias Reichl <hias@horus.com>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 089/209] media: rc: ir-rc6-decoder: enable toggle bit for Kathrein RCU-676 remote
+Date:   Tue, 12 Nov 2019 20:48:25 -0500
+Message-Id: <20191113015025.9685-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -42,50 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Lechner <david@lechnology.com>
+From: Matthias Reichl <hias@horus.com>
 
-[ Upstream commit aea4762fb46e048c059ff49565ee33da07c8aeb3 ]
+[ Upstream commit 85e4af0a7ae2f146769b7475ae531bf8a3f3afb4 ]
 
-Due to the electrical design of the A/DC circuits on LEGO MINDSTORMS EV3,
-if we are reading analog values as fast as possible (i.e. using DMA to
-service the SPI) the A/DC chip will read incorrect values - as much as
-0.1V off when the SPI is running at 10MHz. (This has to do with the
-capacitor charge time when channels are muxed in the A/DC.)
+The Kathrein RCU-676 remote uses the 32-bit rc6 protocol and toggles
+bit 15 (0x8000) on repeated button presses, like MCE remotes.
 
-This patch slows down the SPI as much as possible (if CPU is at 456MHz,
-SPI runs at 1/2 of that, so 228MHz and has a max prescalar of 256, so
-we could get ~891kHz, but we're just rounding it to 1MHz). We also use
-the max allowable value for WDELAY to slow things down even more.
+Add it's customer code 0x80460000 to the 32-bit rc6 toggle
+handling code to get proper scancodes and toggle reports.
 
-These changes reduce the error of the analog values to about 5mV, which
-is tolerable.
-
-Commits a3762b13a596 ("spi: spi-davinci: Add support for SPI_CS_WORD")
-and e2540da86ef8 ("iio: adc: ti-ads7950: use SPI_CS_WORD to reduce
-CPU usage") introduce changes that allow DMA transfers to be used, so
-this slow down is needed now.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Matthias Reichl <hias@horus.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/da850-lego-ev3.dts | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/rc/ir-rc6-decoder.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/da850-lego-ev3.dts b/arch/arm/boot/dts/da850-lego-ev3.dts
-index c4729d0e6c196..66fcadf0ba910 100644
---- a/arch/arm/boot/dts/da850-lego-ev3.dts
-+++ b/arch/arm/boot/dts/da850-lego-ev3.dts
-@@ -352,7 +352,8 @@
- 		compatible = "ti,ads7957";
- 		reg = <3>;
- 		#io-channel-cells = <1>;
--		spi-max-frequency = <10000000>;
-+		spi-max-frequency = <1000000>;
-+		ti,spi-wdelay = <63>;
- 		vref-supply = <&adc_ref>;
- 	};
- };
+diff --git a/drivers/media/rc/ir-rc6-decoder.c b/drivers/media/rc/ir-rc6-decoder.c
+index 68487ce9f79b6..d96aed1343e42 100644
+--- a/drivers/media/rc/ir-rc6-decoder.c
++++ b/drivers/media/rc/ir-rc6-decoder.c
+@@ -40,6 +40,7 @@
+ #define RC6_6A_MCE_TOGGLE_MASK	0x8000	/* for the body bits */
+ #define RC6_6A_LCC_MASK		0xffff0000 /* RC6-6A-32 long customer code mask */
+ #define RC6_6A_MCE_CC		0x800f0000 /* MCE customer code */
++#define RC6_6A_KATHREIN_CC	0x80460000 /* Kathrein RCU-676 customer code */
+ #ifndef CHAR_BIT
+ #define CHAR_BIT 8	/* Normally in <limits.h> */
+ #endif
+@@ -242,13 +243,17 @@ static int ir_rc6_decode(struct rc_dev *dev, struct ir_raw_event ev)
+ 				toggle = 0;
+ 				break;
+ 			case 32:
+-				if ((scancode & RC6_6A_LCC_MASK) == RC6_6A_MCE_CC) {
++				switch (scancode & RC6_6A_LCC_MASK) {
++				case RC6_6A_MCE_CC:
++				case RC6_6A_KATHREIN_CC:
+ 					protocol = RC_PROTO_RC6_MCE;
+ 					toggle = !!(scancode & RC6_6A_MCE_TOGGLE_MASK);
+ 					scancode &= ~RC6_6A_MCE_TOGGLE_MASK;
+-				} else {
++					break;
++				default:
+ 					protocol = RC_PROTO_RC6_6A_32;
+ 					toggle = 0;
++					break;
+ 				}
+ 				break;
+ 			default:
 -- 
 2.20.1
 
