@@ -2,238 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC41AFADFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:04:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 684C4FADF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:04:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbfKMKES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 05:04:18 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38583 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfKMKEO (ORCPT
+        id S1727515AbfKMKEX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 13 Nov 2019 05:04:23 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:57741 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727183AbfKMKEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:04:14 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v8so1859391ljh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 02:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7+8BQXrFfd7vVPmmII5MsvQgRN4CoXbnwomYZzYOuqY=;
-        b=mMAN3fdIVYqvkW+CCwE1FaCWLT/+gk7vKGNzCppol6zgvEuroWh9/jm7pl4xT8LIGX
-         3LjJ3sR8oUGViV3RJEyRlI7im8IbX48BTncshoWro0q7EL4bbvzjEymw4MTqwEcf9jtI
-         9BWNAEe43iBAc2tXQvJeo7HfELxKrC3V99rStbt8WYXVbh8Z0db4yl5ang30F9LnZxn9
-         ZYgpU+bzQRKAyFCzqmIVuvD822+mOYDUqOye8/CbIl2fbIDHENMjxIwxeFfJvjZhkiT3
-         Ps4mcdrA/v0jpDT8QJIq1TNkd5GeNrPpsf/Tcf7kcu+1z5O6lyGbZBuhWiByv7fUMHvg
-         D76A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7+8BQXrFfd7vVPmmII5MsvQgRN4CoXbnwomYZzYOuqY=;
-        b=goO8rVij7DOn34KEgSgO+ROPYOjd9XHWC2j2HDyimtFOCPTsNQNflQHyTSfGoTsyCU
-         RBdj+jtcTaoyICQ485w0HUUcCN+0ATEqPCCi86FOByukZ8EPjFamRnNP1+gorv+cDqB4
-         QO06rLX7chyDDdNF6t13CFBIVg6AgL8AKRsGM4Obworu8F9UsLTb8KyikiTRtt0TG/UA
-         clxLYnVgO4MyY8/QWMoBOarAIRYjDlhVx2QpdKwD8Y5bOsv2Vm27vJBUE5ljxtUilJ6I
-         XGJDyl6soTHuKJw0elK3t0Jh0zxs/FJREmhCRGVdm8cWrfmOmoo5oaZPZnc4H1qLCz6t
-         JnIg==
-X-Gm-Message-State: APjAAAV8HWZkVrR/vt9O6RzqSIt2XnuMfzhV700aWBn39q3sfjQn2m53
-        ZorQUOG7Q/QjTQX52EmcUOP7XXO43EV8/GGClVw=
-X-Google-Smtp-Source: APXvYqzrkpAd6Hpz3oz1kJ9bkYQ6lCyOOdYOttbdfnR7t7OIB4Lor9ihWI0dnmDs0iE8LILZppn3CI05bzG6SSFxJnw=
-X-Received: by 2002:a2e:8805:: with SMTP id x5mr1762023ljh.44.1573639450872;
- Wed, 13 Nov 2019 02:04:10 -0800 (PST)
+        Wed, 13 Nov 2019 05:04:22 -0500
+Received: from mail-qk1-f172.google.com ([209.85.222.172]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N2Dgk-1hl1B43mog-013brR for <linux-kernel@vger.kernel.org>; Wed, 13 Nov
+ 2019 11:04:21 +0100
+Received: by mail-qk1-f172.google.com with SMTP id d13so1192274qko.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 02:04:20 -0800 (PST)
+X-Gm-Message-State: APjAAAUfzO/wFJIKb3n1NLDE0fQRnBuhAagispHGOADGPpRO8JrJSrZt
+        I1OP80a61+JQ2zEMORp+189FiNOeJOAmDckM+Vk=
+X-Google-Smtp-Source: APXvYqz76N6YiMmMuv8QGr8pQBLKX8fP4b2vDDkNDidONegs5IwTjLmxR7A3gx/rfbjKvqliI9W4OwftLepJpjq9AAU=
+X-Received: by 2002:a37:9d8c:: with SMTP id g134mr1708504qke.352.1573639459115;
+ Wed, 13 Nov 2019 02:04:19 -0800 (PST)
 MIME-Version: 1.0
-References: <20191107153048.843881-1-paul.kocialkowski@bootlin.com>
- <CAMeQTsYG+YvXqQqvJvsxT1h0z5zZJbdCtc5wPjUossvwidV=cA@mail.gmail.com>
- <20191112151157.GD4506@aptenodytes> <20191112155012.GE4506@aptenodytes>
-In-Reply-To: <20191112155012.GE4506@aptenodytes>
-From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date:   Wed, 13 Nov 2019 11:04:00 +0100
-Message-ID: <CAMeQTsb0+Tc9Gij_1zMH=mPSbDAjMkMEFatvZrfjLvVsQGwVgA@mail.gmail.com>
-Subject: Re: [PATCH] drm/gma500: Fixup fbdev stolen size usage evaluation
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        James Hilliard <james.hilliard1@gmail.com>
+References: <cover.1573576649.git.msuchanek@suse.de> <13fa324dc879a7f325290bf2e131b87eb491cd7b.1573576649.git.msuchanek@suse.de>
+ <1573613683.ylw9dz9mlc.astroid@bobo.none> <20191113084137.GI2770@kitsune.suse.cz>
+In-Reply-To: <20191113084137.GI2770@kitsune.suse.cz>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 13 Nov 2019 11:04:03 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0ikEMP6MQzL8QPMTgdA-euf7_AsFZAbxkDbFh=smMuaQ@mail.gmail.com>
+Message-ID: <CAK8P3a0ikEMP6MQzL8QPMTgdA-euf7_AsFZAbxkDbFh=smMuaQ@mail.gmail.com>
+Subject: Re: [PATCH 31/33] powerpc/64: make buildable without CONFIG_COMPAT
+To:     =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Christian Brauner <christian@brauner.io>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        David Hildenbrand <david@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Romero <gromero@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jagadeesh Pagadala <jagdsh.linux@gmail.com>,
+        Breno Leitao <leitao@debian.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:4s974YwDo2C/+5Nc/d22dJtU7F6ZPc3QTSvbH3bPlopUb1svGk/
+ et7GO2Z64BFzau48FF67vq7FtUnAk+z8EqlCfnIDi43ygQ9enW86OUe4pdTBENQnJFSOFsz
+ Aomx6PUjq9PKP9CGE1fo8jrUd2td1sXo1a93bhwXkcfccpFYfmFMCJ+b/x4DHRnzVUHH477
+ XML0woKM6wUldNEbXxwZg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:S3saXF5IiUA=:DN1TaMLVO2XgKJMRJ6BheO
+ +H+I9NqLJSYLgoPkmSSFUJy1+a/bLm8paJQ5QeOUADvAdv8VDgef2SpZ5sDTqPMj+03kmLbUX
+ DbLpW3c1Li0rt+IicaaVDuo5jNsKOBDcqAmyqxg80/6ewhGN1i5EzVlrmVEyxQTRCnYWEx5hc
+ z3ZpZ0X5SB6uga0pOAdUiYVMWsv1ofsJMZPpxQdcFqTWcivToR4prskpDAaw3ywcl+1MaOOpo
+ AoKnkzQZP+Qn0TaJfdEzdTm93cnzLEg3yDmkZXSdb6HcMaAYj3mc7AsnxchMsZECO7IzzeBDB
+ gqD7Dch8nMrGIeecibb+ADWOlsm3kM+w6nOqugVtOyBE+UjsUXfxlgMq3Fqnw06r540ufPTca
+ yVszseWpFBzZI1wMbKMhD5PJtguAbuFeCqtT4rxb808NnFg+Y+WRJjllwTMfhwN03YVA3sJTi
+ jjf9po76EmrlbG5SCJCRirZgOyQQrBSgd0EZS8cJmQbshKfGrGrCaLZYH166s1sn+irHbYsNt
+ 74M8OKgSZkslRKy2fj58Z/yLUF2IL3ws7g/nyLlJpLX4gRdkWA48O89bFwXrDG669SEHacDsa
+ 4Ao1s6sIQ6XJHp6rYPf4PlVRRHhmy9cGK1o1rnTJQdLFqNLLDwNWKoGDzTmRjKc976iVTRffC
+ LdUyBzNa8hoxqivwZAPfLQ7sqk8CNkSSW4KkwFnjxf12TvlcQGpHJDLbTHBPGCFv/5g0Xp/PI
+ bBj6yhoTz8MpyH+p0+t2r2YcLl+Rozu4e5qU7U+/xK55prbFrvPDsEJzdgYNg0PzSgJNJ7zCX
+ hxcnlE/L+KdhgfpBcLh0XJC9CuOLhb+02uMzLVcmu7O+HNMPv0SPtVWJ6jgLuOdbtpAKKHXK4
+ Xn5haKUjBz71T99CGpUA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 4:50 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
+On Wed, Nov 13, 2019 at 9:41 AM Michal Suchánek <msuchanek@suse.de> wrote:
 >
-> Hi,
->
-> On Tue 12 Nov 19, 16:11, Paul Kocialkowski wrote:
-> > Hi,
-> >
-> > On Tue 12 Nov 19, 11:20, Patrik Jakobsson wrote:
-> > > On Thu, Nov 7, 2019 at 4:30 PM Paul Kocialkowski
-> > > <paul.kocialkowski@bootlin.com> wrote:
-> > > >
-> > > > psbfb_probe performs an evaluation of the required size from the stolen
-> > > > GTT memory, but gets it wrong in two distinct ways:
-> > > > - The resulting size must be page-size-aligned;
-> > > > - The size to allocate is derived from the surface dimensions, not the fb
-> > > >   dimensions.
-> > > >
-> > > > When two connectors are connected with different modes, the smallest will
-> > > > be stored in the fb dimensions, but the size that needs to be allocated must
-> > > > match the largest (surface) dimensions. This is what is used in the actual
-> > > > allocation code.
-> > > >
-> > > > Fix this by correcting the evaluation to conform to the two points above.
-> > > > It allows correctly switching to 16bpp when one connector is e.g. 1920x1080
-> > > > and the other is 1024x768.
-> > > >
-> > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > > ---
-> > > >  drivers/gpu/drm/gma500/framebuffer.c | 8 ++++++--
-> > > >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-> > > > index 218f3bb15276..90237abee088 100644
-> > > > --- a/drivers/gpu/drm/gma500/framebuffer.c
-> > > > +++ b/drivers/gpu/drm/gma500/framebuffer.c
-> > > > @@ -462,6 +462,7 @@ static int psbfb_probe(struct drm_fb_helper *helper,
-> > > >                 container_of(helper, struct psb_fbdev, psb_fb_helper);
-> > > >         struct drm_device *dev = psb_fbdev->psb_fb_helper.dev;
-> > > >         struct drm_psb_private *dev_priv = dev->dev_private;
-> > > > +       unsigned int fb_size;
-> > > >         int bytespp;
-> > > >
-> > > >         bytespp = sizes->surface_bpp / 8;
-> > > > @@ -471,8 +472,11 @@ static int psbfb_probe(struct drm_fb_helper *helper,
-> > > >         /* If the mode will not fit in 32bit then switch to 16bit to get
-> > > >            a console on full resolution. The X mode setting server will
-> > > >            allocate its own 32bit GEM framebuffer */
-> > > > -       if (ALIGN(sizes->fb_width * bytespp, 64) * sizes->fb_height >
-> > > > -                       dev_priv->vram_stolen_size) {
-> > > > +       fb_size = ALIGN(sizes->surface_width * bytespp, 64) *
-> > > > +                 sizes->surface_height;
-> > > > +       fb_size = ALIGN(fb_size, PAGE_SIZE);
-> > > > +
-> > > > +       if (fb_size > dev_priv->vram_stolen_size) {
+> On Wed, Nov 13, 2019 at 01:02:34PM +1000, Nicholas Piggin wrote:
+
 > > >
-> > > psb_gtt_alloc_range() already aligns by PAGE_SIZE for us. Looks like
-> > > we align a couple of times extra for luck. This needs cleaning up
-> > > instead of adding even more aligns.
-> >
-> > I'm not sure this is really for luck. As far as I can see, we need to do it
-> > properly for this size estimation since it's the final size that will be
-> > allocated (and thus needs to be available in whole).
-
-Ok now I understand what you meant. Actually vram_stolen_size is
-always page aligned so fb_size doesn't need any page alignment here.
-There is also no need to align for psbfb_create() since it also takes
-care of this.
-
-> >
-> > For the other times there is explicit alignment, they seem justified too:
-> > - in psb_gem_create: it is common to pass the aligned size when creating the
-> >   associated GEM object with drm_gem_object_init, even though it's probably not
-> >   crucial given that this is not where allocation actually happens;
-> > - in psbfb_create: the full size is apparently only really used to memset 0
-> >   the allocated buffer. I think this makes sense for security reasons (and not
-> >   leak previous contents in the additional space required for alignment).
-
-What I would prefer is to have a single place where the alignment is
-made so any hardware requirements would be transparent to the rest of
-the code.
-
-Best would be if alignment is only made in psb_gtt_alloc_range() and
-then store the actual size in struct gtt_range. That way we can just
-pass along that value to memset() and drm_gem_object_init() without
-caring about how it is adjusted.
-
-> >
-> > What strikes me however is that each call to psb_gtt_alloc_range takes the
-> > alignment as a parameter when it's really always PAGE_SIZE, so it should
-> > probably just be hardcoded in the call to allocate_resource.
-
-This is a remnant from trying to add support for 2D and/or overlay
-planes (don't really remember). Doesn't matter if it stays or goes
-away.
-
-> >
-> > What do you think?
-
-I suppose most of this is outside the scope of what you're trying to
-do so we can just leave it as is and I can clean it up later.
-
-> >
-> > > Your size calculation looks correct and indeed makes my 1024x600 +
-> > > 1920x1080 setup actually display something, but for some reason I get
-> > > an incorrect panning on the smaller screen and stale data on the
-> > > surface only visible by the larger CRTC. Any idea what's going on?
-> >
-> > I'm not seeing this immediately, but I definitely have something strange
-> > after having printed more lines than the smallest display can handle or
-> > scrolling, where more than the actual size of the fb is used.
-> >
-> > Maybe this is related to using the PowerVR-accelerated fb ops, that aren't
-> > quite ready for this use case?
-> >
-> > I'll give it a try with psbfb_roll_ops and psbfb_unaccel_ops instead to see
-> > if it changes something for me. Maybe it would help for you too?
->
-> Some quick feedback about that:
-> - psbfb_unaccel_ops gives a correct result where the scrolling area is bound
->   to the smallest display;
-
-Yes, this also works correctly for me.
-
-> - psbfb_roll_ops gives a working scrolling but bound to the largest display
->   (so the current shell line becomes invisible on the smallest one eventually);
-
-It's not panning at all for me. I never really found gtt rolling to be
-useful. It's a neat trick but I didn't have a problem with console
-scrolling speed to begin with. I might just remove it.
-
-> - psbfb_ops gives the same issue as above and seems to add artifacts on top.
-
-Did you try this on CDV? There's only 2D acceleration on Poulsbo and Oaktrail.
-
->
-> There's probably limited interest in working on that aspect on our side though.
-> I'd be interested to know if it affects the issue you're seeing though.
-
-Focus on your requirements and I'll look at the rest.
-
--Patrik
-
->
-> Cheers,
->
-> Paul
->
-> > I suspect that the generic implementation is already bullet-proof for these
-> > kinds of use case.
-> >
-> > Cheers and thanks for the feedback,
-> >
-> > Paul
-> >
+> > > @@ -277,7 +276,7 @@ static void do_signal(struct task_struct *tsk)
 > > >
-> > > >                  sizes->surface_bpp = 16;
-> > > >                  sizes->surface_depth = 16;
-> > > >          }
-> > > > --
-> > > > 2.23.0
-> > > >
+> > >     rseq_signal_deliver(&ksig, tsk->thread.regs);
+> > >
+> > > -   if (is32) {
+> > > +   if (is_32bit_task()) {
+> > >             if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+> > >                     ret = handle_rt_signal32(&ksig, oldset, tsk);
+> > >             else
 > >
-> > --
-> > Paul Kocialkowski, Bootlin
-> > Embedded Linux and kernel engineering
-> > https://bootlin.com
+> > This is just a clean up I guess.
 >
+> It also expands directly to if(0) or if(1) for the !COMPAT cases. I am
+> not sure how it would work with the intermediate variable.
 >
->
-> --
-> Paul Kocialkowski, Bootlin
-> Embedded Linux and kernel engineering
-> https://bootlin.com
+> There was more complex change initially but after some additional
+> cleanups removing the variable is the only part left.
+
+I would be surprised if that made any difference to a modern compiler,
+but the new version is definitely clearer to human readers.
+
+       Arnd
