@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A443FA409
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 575A1FA419
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729858AbfKMB5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:57:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50868 "EHLO mail.kernel.org"
+        id S1730686AbfKMCNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:13:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729837AbfKMB5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:34 -0500
+        id S1728507AbfKMB5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:57:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF3C5222D3;
-        Wed, 13 Nov 2019 01:57:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25009222CF;
+        Wed, 13 Nov 2019 01:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610253;
-        bh=EaemQSMRjOoOZA9hgJ+Xxl+flpaibVvlHklLcHHBV1Q=;
+        s=default; t=1573610254;
+        bh=z6dOgVCl3TOZLyykDL4voQRGMy4T9KLqzH8tX70Qm04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vpTjgECGvJt/8jfOQBUi/sPGgqcSajlqC4aYnUr2KUKXcWYBcQAF1CtRqbWF2IEgd
-         NOvaWjoH4GUqTnlrCZHwoVXpgn5E/XHfzn20oO9GXyi5xeDklqxPFL+dNK1aeK431X
-         zo9UzIiL0lqcP/lzBNpy/dCEdZ4eRXP4Sy96Xc6Y=
+        b=qBJmsMUzGRm/RXJ4V+pfFIe/osyhhrdkexunCzNcQw7bQEN9IprgQgs4dSGAOgNfj
+         5jeEGtsfKZsPcLYsk1ZOVrR+yZPLWVofBd3enhQTia0/sANbg4XxTiP6Yhyc3QV3ot
+         R0w1Yz9pdhh24/D1PhVwgtNaUj2hu4BaY7bNlCzw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-ide@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 049/115] ata: ep93xx: Use proper enums for directions
-Date:   Tue, 12 Nov 2019 20:55:16 -0500
-Message-Id: <20191113015622.11592-49-sashal@kernel.org>
+Cc:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 050/115] ARM: dts: da850-lego-ev3: slow down A/DC as much as possible
+Date:   Tue, 12 Nov 2019 20:55:17 -0500
+Message-Id: <20191113015622.11592-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -44,87 +42,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: David Lechner <david@lechnology.com>
 
-[ Upstream commit 6adde4a36f1b6a562a1057fbb1065007851050e7 ]
+[ Upstream commit aea4762fb46e048c059ff49565ee33da07c8aeb3 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+Due to the electrical design of the A/DC circuits on LEGO MINDSTORMS EV3,
+if we are reading analog values as fast as possible (i.e. using DMA to
+service the SPI) the A/DC chip will read incorrect values - as much as
+0.1V off when the SPI is running at 10MHz. (This has to do with the
+capacitor charge time when channels are muxed in the A/DC.)
 
-drivers/ata/pata_ep93xx.c:662:36: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
-                                        ~ ^~~~~~~~~~~~~~~
-drivers/ata/pata_ep93xx.c:670:36: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
-                                        ~ ^~~~~~~~~~~~~
-drivers/ata/pata_ep93xx.c:681:19: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        conf.direction = DMA_FROM_DEVICE;
-                       ~ ^~~~~~~~~~~~~~~
-drivers/ata/pata_ep93xx.c:692:19: warning: implicit conversion from
-enumeration type 'enum dma_data_direction' to different enumeration type
-'enum dma_transfer_direction' [-Wenum-conversion]
-        conf.direction = DMA_TO_DEVICE;
-                       ~ ^~~~~~~~~~~~~
+This patch slows down the SPI as much as possible (if CPU is at 456MHz,
+SPI runs at 1/2 of that, so 228MHz and has a max prescalar of 256, so
+we could get ~891kHz, but we're just rounding it to 1MHz). We also use
+the max allowable value for WDELAY to slow things down even more.
 
-Use the equivalent valued enums from the expected type so that Clang no
-longer warns about a conversion.
+These changes reduce the error of the analog values to about 5mV, which
+is tolerable.
 
-DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
+Commits a3762b13a596 ("spi: spi-davinci: Add support for SPI_CS_WORD")
+and e2540da86ef8 ("iio: adc: ti-ads7950: use SPI_CS_WORD to reduce
+CPU usage") introduce changes that allow DMA transfers to be used, so
+this slow down is needed now.
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/pata_ep93xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/da850-lego-ev3.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ata/pata_ep93xx.c b/drivers/ata/pata_ep93xx.c
-index 0a550190955ad..cc6d06c1b2c70 100644
---- a/drivers/ata/pata_ep93xx.c
-+++ b/drivers/ata/pata_ep93xx.c
-@@ -659,7 +659,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 	 * start of new transfer.
- 	 */
- 	drv_data->dma_rx_data.port = EP93XX_DMA_IDE;
--	drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
-+	drv_data->dma_rx_data.direction = DMA_DEV_TO_MEM;
- 	drv_data->dma_rx_data.name = "ep93xx-pata-rx";
- 	drv_data->dma_rx_channel = dma_request_channel(mask,
- 		ep93xx_pata_dma_filter, &drv_data->dma_rx_data);
-@@ -667,7 +667,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 		return;
- 
- 	drv_data->dma_tx_data.port = EP93XX_DMA_IDE;
--	drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
-+	drv_data->dma_tx_data.direction = DMA_MEM_TO_DEV;
- 	drv_data->dma_tx_data.name = "ep93xx-pata-tx";
- 	drv_data->dma_tx_channel = dma_request_channel(mask,
- 		ep93xx_pata_dma_filter, &drv_data->dma_tx_data);
-@@ -678,7 +678,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 
- 	/* Configure receive channel direction and source address */
- 	memset(&conf, 0, sizeof(conf));
--	conf.direction = DMA_FROM_DEVICE;
-+	conf.direction = DMA_DEV_TO_MEM;
- 	conf.src_addr = drv_data->udma_in_phys;
- 	conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	if (dmaengine_slave_config(drv_data->dma_rx_channel, &conf)) {
-@@ -689,7 +689,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
- 
- 	/* Configure transmit channel direction and destination address */
- 	memset(&conf, 0, sizeof(conf));
--	conf.direction = DMA_TO_DEVICE;
-+	conf.direction = DMA_MEM_TO_DEV;
- 	conf.dst_addr = drv_data->udma_out_phys;
- 	conf.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	if (dmaengine_slave_config(drv_data->dma_tx_channel, &conf)) {
+diff --git a/arch/arm/boot/dts/da850-lego-ev3.dts b/arch/arm/boot/dts/da850-lego-ev3.dts
+index 81942ae83e1f9..fbd6d16f39a55 100644
+--- a/arch/arm/boot/dts/da850-lego-ev3.dts
++++ b/arch/arm/boot/dts/da850-lego-ev3.dts
+@@ -361,7 +361,8 @@
+ 		compatible = "ti,ads7957";
+ 		reg = <3>;
+ 		#io-channel-cells = <1>;
+-		spi-max-frequency = <10000000>;
++		spi-max-frequency = <1000000>;
++		ti,spi-wdelay = <63>;
+ 		vref-supply = <&adc_ref>;
+ 	};
+ };
 -- 
 2.20.1
 
