@@ -2,329 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C05F9FB4F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:24:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72EF5FB506
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbfKMQYY convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 13 Nov 2019 11:24:24 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2096 "EHLO huawei.com"
+        id S1728363AbfKMQ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:27:01 -0500
+Received: from mail-eopbgr770041.outbound.protection.outlook.com ([40.107.77.41]:9955
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726543AbfKMQYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:24:23 -0500
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 133FF8E869263F6F4978;
-        Wed, 13 Nov 2019 16:24:22 +0000 (GMT)
-Received: from lhreml708-chm.china.huawei.com (10.201.108.57) by
- LHREML712-CAH.china.huawei.com (10.201.108.35) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 13 Nov 2019 16:24:11 +0000
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- lhreml708-chm.china.huawei.com (10.201.108.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 13 Nov 2019 16:24:11 +0000
-Received: from lhreml710-chm.china.huawei.com ([169.254.81.184]) by
- lhreml710-chm.china.huawei.com ([169.254.81.184]) with mapi id
- 15.01.1713.004; Wed, 13 Nov 2019 16:24:11 +0000
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     Auger Eric <eric.auger@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-CC:     "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "vincent.stehle@arm.com" <vincent.stehle@arm.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "tina.zhang@intel.com" <tina.zhang@intel.com>,
-        Linuxarm <linuxarm@huawei.com>, "xuwei (O)" <xuwei5@huawei.com>
-Subject: RE: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-Thread-Topic: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-Thread-Index: AQHVN/CfwyE8ogH9wk6QxsmMIq08eqeIHQ3QgAALuICAABiYUIAABvsAgAAPlwCAADsPwIAALk4AgAFKABA=
-Date:   Wed, 13 Nov 2019 16:24:10 +0000
-Message-ID: <76a0589469ff4cfba348f43feba81fe4@huawei.com>
-References: <20190711135625.20684-1-eric.auger@redhat.com>
- <f5b4b97b197d4bab8f3703eba2e966c4@huawei.com>
- <ebaded3e-8a5c-73dd-b3f7-7533a6e80146@redhat.com>
- <76d9dc0274414887b04e11b9b6bda257@huawei.com>
- <b0a9f107-2e89-1418-d6f4-3e6f5ac0b330@redhat.com>
- <9f0a9d341b01419eb566731339b3fbd2@huawei.com>
- <6e0faec9-5840-653e-cb43-86545a48e65d@redhat.com>
-In-Reply-To: <6e0faec9-5840-653e-cb43-86545a48e65d@redhat.com>
-Accept-Language: en-GB, en-US
+        id S1727221AbfKMQ1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 11:27:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IQHcBRdbcqEQtn81u5su9YA0uqPfOByv/lSNEuhnzgQ1QkyjDsH/+j+bjh+NlEOeyXCzsGRZ0ni4Iy0gSXWjKYv+c50gt7Qwe0FZPy7OHgMjdgwKfpf8lQcLAReAjIF2ugVsntJa2lt76oaQgcltAShpho2kjBjFiMoNJ58jOE70ijFfPSbnmV1rQG5ir04xyJmjA29Im8YxuqGWIuHaoeAjZ9nr7HLq5lgkZm+sfOr1ZWCNaKvBkrgby4Jqf8zsmdLChnKr4MMquB3XcEJDLCsw7eucbMK/LAA2nmM1DCn900RIuTwCOROtAo9/T8A43AUOpSc/Dw7sjQBtsyYNdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5UJc7jMgR5YiYX1Z9f//voCfIJP50JZs1fKrdDss4nQ=;
+ b=dkyLZwx+LFcDUr3ASBa482dui/wpTHGDeI/aCil2YPmBoV9fdGZY9AaZDzOtsf+h0qPgWHUPm862qPVNRIe6grIOyXJUDBn1EH2fqhS/lI/pIY95ocpEsnU6/AVSWRJ74Emai4uEQmohSJI+3b0P9J0g3l0IK+9oJgVPxy7OzfF39/zPJT6V7wVnMOHk6M/yLDsRcqJ9lHCmbiepH3ZEANZF3NlGQdKfCwlW5zhwS3eFcWMJeAwbp+gHpMotCemi2P9PJLIvXyE2Y+05yAj5qRWz6Vy+CAzcTkn8pC2LtNaUTYjOMk6/q5YGxy5fX5lzRq5n69Bppkbqf4tP8s01fA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5UJc7jMgR5YiYX1Z9f//voCfIJP50JZs1fKrdDss4nQ=;
+ b=NgUoM1hWZqXanM/zyxRQPec+MyQjVnqLWtwzSouiL2uqkGkpckd4T+gUEOi0tivGE5QlBRfnrJIW60p46jCkq4F8fe2iKO5HBVRezk0xASmcYD3A4MYWffHg/fzUH/LTYaWSvv2ktMx596Ya2STL+5gHXXVmnSgCQyJc3NbdJyI=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
+ BN7PR08MB5683.namprd08.prod.outlook.com (20.176.30.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.20; Wed, 13 Nov 2019 16:26:59 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::a91a:c2f5:c557:4285]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::a91a:c2f5:c557:4285%6]) with mapi id 15.20.2430.028; Wed, 13 Nov 2019
+ 16:26:59 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Can Guo <cang@codeaurora.org>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        "saravanak@google.com" <saravanak@google.com>,
+        "salyzyn@google.com" <salyzyn@google.com>
+CC:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] [PATCH v4 3/5] scsi: ufs: Release clock if DMA map fails
+Thread-Topic: [EXT] [PATCH v4 3/5] scsi: ufs: Release clock if DMA map fails
+Thread-Index: AQHVmeeyXKBE/XJKZkuVruGGiYn+vaeJSkLw
+Date:   Wed, 13 Nov 2019 16:26:58 +0000
+Message-ID: <BN7PR08MB5684B3516E362FD79B80AA44DB760@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <1573624824-671-1-git-send-email-cang@codeaurora.org>
+ <1573624824-671-4-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1573624824-671-4-git-send-email-cang@codeaurora.org>
+Accept-Language: en-150, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTY4NDFiMWExLTA2MzItMTFlYS04Yjg1LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFw2ODQxYjFhMy0wNjMyLTExZWEtOGI4NS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjMzMiIgdD0iMTMyMTgxMzYwMTY1Njc4ODgwIiBoPSJNOUpJWGZxdmRyZ01mMmp6N2lvN1Z5cjVUcEk9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: true
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [195.89.176.137]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 42dfa3a1-377b-4731-298d-08d768564e99
+x-ms-traffictypediagnostic: BN7PR08MB5683:|BN7PR08MB5683:|BN7PR08MB5683:
+x-microsoft-antispam-prvs: <BN7PR08MB56832B5BDF29EBE87C22A855DB760@BN7PR08MB5683.namprd08.prod.outlook.com>
+x-ms-exchange-transport-forked: True
+x-ms-oob-tlc-oobclassifiers: OLM:1332;
+x-forefront-prvs: 0220D4B98D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(136003)(39860400002)(376002)(396003)(199004)(189003)(476003)(11346002)(110136005)(478600001)(66066001)(8676002)(54906003)(6116002)(25786009)(3846002)(55016002)(6436002)(486006)(446003)(9686003)(71200400001)(71190400001)(7696005)(5660300002)(305945005)(74316002)(76116006)(7736002)(2201001)(81156014)(26005)(6246003)(52536014)(2501003)(8936002)(186003)(7416002)(86362001)(14454004)(229853002)(256004)(66476007)(66446008)(64756008)(66556008)(316002)(2906002)(81166006)(102836004)(99286004)(66946007)(4326008)(558084003)(33656002)(6506007)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB5683;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 077VHQdVAUsw1XZk0/UpfVpnqVEfz5XCLLuoz8IYWFhPTgZDzVmQYNLeTV1GS5YN3HYBWpyGlV2Yl97MVyrO+q8EAQ2rKAoZ29hoSNcbUC2prONtowbHgcb6H84Y/UsLRxjrynAKZK8xJFRzKvtgUouOAqDfdkG3HnhzPMKEycLPo30yrL+e/0qU+47lzirov/fHrMjITJFDzn0/rQtxz/wNV9yadAcNKZYukG1RihaDBvbfBWL42XvWGvvtxNDxsxslk7mVtaPk7RqP2byor/o6CUZeJon4QwzsO8MJhl79xx4UJLG3KD/MXTuwONSGnpSYqic70QqCZAbpdwr4T8thBoloJWVtNdZbRAl3f/y8rew61KSriVUADnhfsAG160Re/tCFYFWHC6hYnk7mlywaExQa39mgsksHjY++r5u3YjbSEkImurVkFBy3V/pz
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42dfa3a1-377b-4731-298d-08d768564e99
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 16:26:58.8681
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6elZNJ5bce8E65jDomF+/79O46sxWGVsU0LrgPK2CewXpmtl19vInJmFf1G40tb5oIbMVo0BwElOt1VXVpqdVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB5683
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
-
-> -----Original Message-----
-> From: Auger Eric [mailto:eric.auger@redhat.com]
-> Sent: 12 November 2019 20:35
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
-> eric.auger.pro@gmail.com; iommu@lists.linux-foundation.org;
-> linux-kernel@vger.kernel.org; kvm@vger.kernel.org;
-> kvmarm@lists.cs.columbia.edu; joro@8bytes.org;
-> alex.williamson@redhat.com; jacob.jun.pan@linux.intel.com;
-> yi.l.liu@intel.com; jean-philippe.brucker@arm.com; will.deacon@arm.com;
-> robin.murphy@arm.com
-> Cc: kevin.tian@intel.com; vincent.stehle@arm.com; ashok.raj@intel.com;
-> marc.zyngier@arm.com; tina.zhang@intel.com; Linuxarm
-> <linuxarm@huawei.com>; xuwei (O) <xuwei5@huawei.com>
-> Subject: Re: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-> 
-> Hi Shameer,
-> 
-
-[..]
-
-> >
-> > I just noted that CMDQ_OP_TLBI_NH_VA is missing the vmid filed which
-> seems
-> > to be the cause for single IOVA TLBI not working properly.
-> >
-> > I had this fix in arm-smmuv3.c,
-> >
-> > @@ -947,6 +947,7 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd,
-> struct arm_smmu_cmdq_ent *ent)
-> > 		cmd[1] |= FIELD_PREP(CMDQ_CFGI_1_RANGE, 31);
-> > 		break;
-> > 	case CMDQ_OP_TLBI_NH_VA:
-> > +		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_VMID, ent->tlbi.vmid);
-> Damn, I did not see that! That's it. ASID invalidation fills this field
-> indeed. You may post an independent patch for that.
-
-Sure. Just did that.
-" iommu/arm-smmu-v3: Populate VMID field for CMDQ_OP_TLBI_NH_VA"
-
-> 		cmd[0] |=
-> FIELD_PREP(CMDQ_TLBI_0_ASID, ent->tlbi.asid);
-> > 		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_LEAF, ent->tlbi.leaf);
-> > 		cmd[1] |= ent->tlbi.addr & CMDQ_TLBI_1_VA_MASK;
-> >
-> >
-> > With this, your original qemu branch is working.
-> >
-> > root@ubuntu:~# iperf -c 10.202.225.185
-> > ------------------------------------------------------------
-> > Client connecting to 10.202.225.185, TCP port 5001 TCP window size: 85.0
-> KByte (default)
-> > ------------------------------------------------------------
-> > [  3] local 10.202.225.169 port 44894 connected with 10.202.225.185 port
-> 5001
-> > [ ID] Interval       Transfer     Bandwidth
-> > [  3]  0.0-10.0 sec  3.21 GBytes  2.76 Gbits/sec
-> >
-> > Could you please check this...
-> >
-> > I also have a rebase of your patches on top of 5.4-rc5. This has some
-> optimizations
-> > From Will such as batched TLBI inv. Please find it here,
-> >
-> > https://github.com/hisilicon/kernel-dev/tree/private-vSMMUv3-v9-v5.4-rc5
-> >
-> > This gives me a better performance with iperf,
-> >
-> > root@ubuntu:~# iperf -c 10.202.225.185
-> > ------------------------------------------------------------
-> > Client connecting to 10.202.225.185, TCP port 5001 TCP window size: 85.0
-> KByte (default)
-> > ------------------------------------------------------------
-> > [  3] local 10.202.225.169 port 55450 connected with 10.202.225.185 port
-> 5001
-> > [ ID] Interval       Transfer     Bandwidth
-> > [  3]  0.0-10.0 sec  4.91 GBytes  4.22 Gbits/sec root@ubuntu:~#
-> >
-> > If possible please check this branch as well.
-> 
-> To be honest I don't really know what to do with this work. Despite the
-> efforts, this has suffered from a lack of traction in the community. My
-> last attempt to explain the use cases, upon Will's request at Plumber,
-> has not received any comment (https://lkml.org/lkml/2019/9/20/104).
-> 
-> I think I will post a rebased version with your fix, as a matter to get
-> a clean snapshot.
-
-Thanks. That makes sense.
-
- If you think this work is useful for your projects,
-> please let it know on the ML.
-
-Right. While SVA use case is definitely the one we are very much interested, I will
-check within our team the priority for use case 1(native drivers in Guest) you
-mentioned in the above link. 
-
-Cheers,
-Shameer
-
-> Thank you again!
-> 
-> Eric
-> >
-> > Thanks,
-> > Shameer
-> >
-> >> Thanks,
-> >> Shameer
-> >>
-> >>
-> >>> Thanks
-> >>>
-> >>> Eric
-> >>>>
-> >>>> Cheers,
-> >>>> Shameer
-> >>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>> Eric
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Please let me know.
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>> Shameer
-> >>>>>>
-> >>>>>>> Best Regards
-> >>>>>>>
-> >>>>>>> Eric
-> >>>>>>>
-> >>>>>>> This series can be found at:
-> >>>>>>> https://github.com/eauger/linux/tree/v5.3.0-rc0-2stage-v9
-> >>>>>>>
-> >>>>>>> It series includes Tina's patch steming from
-> >>>>>>> [1] "[RFC PATCH v2 1/3] vfio: Use capability chains to handle device
-> >>>>>>> specific irq" plus patches originally contributed by Yi.
-> >>>>>>>
-> >>>>>>> History:
-> >>>>>>>
-> >>>>>>> v8 -> v9:
-> >>>>>>> - introduce specific irq framework
-> >>>>>>> - single fault region
-> >>>>>>> - iommu_unregister_device_fault_handler failure case not handled
-> >>>>>>>   yet.
-> >>>>>>>
-> >>>>>>> v7 -> v8:
-> >>>>>>> - rebase on top of v5.2-rc1 and especially
-> >>>>>>>   8be39a1a04c1  iommu/arm-smmu-v3: Add a master->domain
-> >> pointer
-> >>>>>>> - dynamic alloc of s1_cfg/s2_cfg
-> >>>>>>> - __arm_smmu_tlb_inv_asid/s1_range_nosync
-> >>>>>>> - check there is no HW MSI regions
-> >>>>>>> - asid invalidation using pasid extended struct (change in the uapi)
-> >>>>>>> - add s1_live/s2_live checks
-> >>>>>>> - move check about support of nested stages in domain finalise
-> >>>>>>> - fixes in error reporting according to the discussion with Robin
-> >>>>>>> - reordered the patches to have first iommu/smmuv3 patches and
-> then
-> >>>>>>>   VFIO patches
-> >>>>>>>
-> >>>>>>> v6 -> v7:
-> >>>>>>> - removed device handle from bind/unbind_guest_msi
-> >>>>>>> - added "iommu/smmuv3: Nested mode single MSI doorbell per
-> domain
-> >>>>>>>   enforcement"
-> >>>>>>> - added few uapi comments as suggested by Jean, Jacop and Alex
-> >>>>>>>
-> >>>>>>> v5 -> v6:
-> >>>>>>> - Fix compilation issue when CONFIG_IOMMU_API is unset
-> >>>>>>>
-> >>>>>>> v4 -> v5:
-> >>>>>>> - fix bug reported by Vincent: fault handler unregistration now
-> happens
-> >> in
-> >>>>>>>   vfio_pci_release
-> >>>>>>> - IOMMU_FAULT_PERM_* moved outside of struct definition + small
-> >>>>>>>   uapi changes suggested by Kean-Philippe (except fetch_addr)
-> >>>>>>> - iommu: introduce device fault report API: removed the PRI part.
-> >>>>>>> - see individual logs for more details
-> >>>>>>> - reset the ste abort flag on detach
-> >>>>>>>
-> >>>>>>> v3 -> v4:
-> >>>>>>> - took into account Alex, jean-Philippe and Robin's comments on v3
-> >>>>>>> - rework of the smmuv3 driver integration
-> >>>>>>> - add tear down ops for msi binding and PASID table binding
-> >>>>>>> - fix S1 fault propagation
-> >>>>>>> - put fault reporting patches at the beginning of the series following
-> >>>>>>>   Jean-Philippe's request
-> >>>>>>> - update of the cache invalidate and fault API uapis
-> >>>>>>> - VFIO fault reporting rework with 2 separate regions and one
-> >> mmappable
-> >>>>>>>   segment for the fault queue
-> >>>>>>> - moved to PATCH
-> >>>>>>>
-> >>>>>>> v2 -> v3:
-> >>>>>>> - When registering the S1 MSI binding we now store the device
-> handle.
-> >>> This
-> >>>>>>>   addresses Robin's comment about discimination of devices
-> beonging
-> >>> to
-> >>>>>>>   different S1 groups and using different physical MSI doorbells.
-> >>>>>>> - Change the fault reporting API: use
-> >> VFIO_PCI_DMA_FAULT_IRQ_INDEX
-> >>> to
-> >>>>>>>   set the eventfd and expose the faults through an mmappable fault
-> >>> region
-> >>>>>>>
-> >>>>>>> v1 -> v2:
-> >>>>>>> - Added the fault reporting capability
-> >>>>>>> - asid properly passed on invalidation (fix assignment of multiple
-> >>>>>>>   devices)
-> >>>>>>> - see individual change logs for more info
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> Eric Auger (8):
-> >>>>>>>   vfio: VFIO_IOMMU_SET_MSI_BINDING
-> >>>>>>>   vfio/pci: Add VFIO_REGION_TYPE_NESTED region type
-> >>>>>>>   vfio/pci: Register an iommu fault handler
-> >>>>>>>   vfio/pci: Allow to mmap the fault queue
-> >>>>>>>   vfio: Add new IRQ for DMA fault reporting
-> >>>>>>>   vfio/pci: Add framework for custom interrupt indices
-> >>>>>>>   vfio/pci: Register and allow DMA FAULT IRQ signaling
-> >>>>>>>   vfio: Document nested stage control
-> >>>>>>>
-> >>>>>>> Liu, Yi L (2):
-> >>>>>>>   vfio: VFIO_IOMMU_SET_PASID_TABLE
-> >>>>>>>   vfio: VFIO_IOMMU_CACHE_INVALIDATE
-> >>>>>>>
-> >>>>>>> Tina Zhang (1):
-> >>>>>>>   vfio: Use capability chains to handle device specific irq
-> >>>>>>>
-> >>>>>>>  Documentation/vfio.txt              |  77 ++++++++
-> >>>>>>>  drivers/vfio/pci/vfio_pci.c         | 283
-> >>>>> ++++++++++++++++++++++++++--
-> >>>>>>>  drivers/vfio/pci/vfio_pci_intrs.c   |  62 ++++++
-> >>>>>>>  drivers/vfio/pci/vfio_pci_private.h |  24 +++
-> >>>>>>>  drivers/vfio/pci/vfio_pci_rdwr.c    |  45 +++++
-> >>>>>>>  drivers/vfio/vfio_iommu_type1.c     | 166 ++++++++++++++++
-> >>>>>>>  include/uapi/linux/vfio.h           | 109 ++++++++++-
-> >>>>>>>  7 files changed, 747 insertions(+), 19 deletions(-)
-> >>>>>>>
-> >>>>>>> --
-> >>>>>>> 2.20.1
-> >>>>>>>
-> >>>>>>> _______________________________________________
-> >>>>>>> kvmarm mailing list
-> >>>>>>> kvmarm@lists.cs.columbia.edu
-> >>>>>>> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
-> >>>>
-> >
+>=20
+> In queuecommand path, if DMA map fails, it bails out with clock held.
+> In this case, release the clock to keep its usage paired.
+>=20
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
 
