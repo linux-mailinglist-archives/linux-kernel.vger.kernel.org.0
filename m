@@ -2,64 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3696FA42C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD2FFA468
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbfKMCOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:14:44 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6648 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727577AbfKMCOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:14:42 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C6FE83DB6A79074E0F32;
-        Wed, 13 Nov 2019 10:14:40 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 13 Nov 2019
- 10:14:32 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <perex@perex.cz>,
-        <davem@davemloft.net>, <joe@perches.com>, <yuehaibing@huawei.com>,
-        <tglx@linutronix.de>
-CC:     <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] staging: hp100: Fix build error without ETHERNET
-Date:   Wed, 13 Nov 2019 10:13:06 +0800
-Message-ID: <20191113021306.35464-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1730259AbfKMCRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:17:00 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17146 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728471AbfKMCQ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:16:57 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcb67610000>; Tue, 12 Nov 2019 18:16:01 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 12 Nov 2019 18:16:57 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 18:16:57 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 02:16:56 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 13 Nov 2019 02:16:56 +0000
+Received: from henryl-tu10x.nvidia.com (Not Verified[10.19.109.97]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dcb67970000>; Tue, 12 Nov 2019 18:16:56 -0800
+From:   Henry Lin <henryl@nvidia.com>
+CC:     Henry Lin <henryl@nvidia.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Richard Fontana <rfontana@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] usb-audio: not submit urb for stopped endpoint
+Date:   Wed, 13 Nov 2019 10:14:19 +0800
+Message-ID: <20191113021420.13377-1-henryl@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191112065108.7766-1-henryl@nvidia.com>
+References: <20191112065108.7766-1-henryl@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573611361; bh=Tujpg7WZBoOThKGX8MEAml/VB3Yc83jertZP/WdKXl0=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=C/6sf+uZj2gOMh/+HER/DbH5WOlnwdrXdu1S2kYhz3Kqc89ZAAQhoOb5k85XqhhvC
+         zWY60Wd/cdyrsszASUdpJmdmOJSLpmnCE0HOHB6Ld1KH2aa40KJPP+kqE/9dgPOy4M
+         S3B0nML7ZS27bkJ0DiQjuH0X+ohSrp6o5a/aOScVdxj5xK4NMzlFpOdliYYVriki45
+         pMn76QfDjqIX+6NGPq5rlRl69ZjxGym+QgaAoslIKGQAK6zrDvr44DA311pJqXoPQc
+         I3iyVcxdgyj0hRlIq0JD7pk+NawUf0zX1SsrG/rsrXCN5+KCPP3kXCwn8/4eACPeZ8
+         XMwUJvgDueUEQ==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It should depends on ETHERNET, otherwise building fails:
+While output urb's snd_complete_urb() is executing, calling
+prepare_outbound_urb() may cause endpoint stopped before
+prepare_outbound_urb() returns and result in next urb submitted
+to stopped endpoint. usb-audio driver cannot re-use it afterwards as
+the urb is still hold by usb stack.
 
-drivers/staging/hp/hp100.o: In function `hp100_pci_remove':
-hp100.c:(.text+0x165): undefined reference to `unregister_netdev'
-hp100.c:(.text+0x214): undefined reference to `free_netdev'
+This change checks EP_FLAG_RUNNING flag after prepare_outbound_urb() again
+to let snd_complete_urb() know the endpoint already stopped and does not
+submit next urb. Below kind of error will be fixed:
 
-Fixes: 52340b82cf1a ("hp100: Move 100BaseVG AnyLAN driver to staging")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+[  213.153103] usb 1-2: timeout: still 1 active urbs on EP #1
+[  213.164121] usb 1-2: cannot submit urb 0, error -16: unknown error
+
+Signed-off-by: Henry Lin <henryl@nvidia.com>
 ---
- drivers/staging/hp/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/usb/endpoint.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/staging/hp/Kconfig b/drivers/staging/hp/Kconfig
-index fb395cf..f20ab21 100644
---- a/drivers/staging/hp/Kconfig
-+++ b/drivers/staging/hp/Kconfig
-@@ -6,6 +6,7 @@
- config NET_VENDOR_HP
- 	bool "HP devices"
- 	default y
-+	depends on ETHERNET
- 	depends on ISA || EISA || PCI
- 	---help---
- 	  If you have a network (Ethernet) card belonging to this class, say Y.
+diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
+index a2ab8e8d3a93..4a9a2f6ef5a4 100644
+--- a/sound/usb/endpoint.c
++++ b/sound/usb/endpoint.c
+@@ -388,6 +388,9 @@ static void snd_complete_urb(struct urb *urb)
+ 		}
+ 
+ 		prepare_outbound_urb(ep, ctx);
++		/* can be stopped during prepare callback */
++		if (unlikely(!test_bit(EP_FLAG_RUNNING, &ep->flags)))
++			goto exit_clear;
+ 	} else {
+ 		retire_inbound_urb(ep, ctx);
+ 		/* can be stopped during retire callback */
 -- 
-2.7.4
-
+2.17.1
 
