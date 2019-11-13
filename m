@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B066FA4B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66752FA4C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:19:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbfKMBz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:55:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47566 "EHLO mail.kernel.org"
+        id S1728520AbfKMCSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:18:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729244AbfKMBzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:55:46 -0500
+        id S1729264AbfKMBzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:55:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8257522469;
-        Wed, 13 Nov 2019 01:55:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04E822247D;
+        Wed, 13 Nov 2019 01:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610146;
-        bh=Hk1LfhPBk8mf4j0A6gLA3Gxbg20jEn3kThQ4rBD+a2E=;
+        s=default; t=1573610149;
+        bh=UOl0yxohjGVB5kn0B0kvKXhbib289mdwk/+Id492Zgo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Khmou61yh0tFUK8KFT1/bc4QXZAD1izlob7H8/8jZdPHNndd/ZNdz2pJfsqdkaRoK
-         fMTla7MxzfVvWhnKS//UvgTPq8uSohLGzWlJkt5w1R7wiGMOaMIAf7xWCB4b31HLaf
-         2hzOWvZVqmNf935fNildLJwGgXFrFpY8qgX/EaYY=
+        b=1AO4fSVfrdxw/o3ms0W7AS739XhpAXG80qJzaUqvnMDFHtnd+Xvf/rwFFz+shT5wb
+         wlKzJDvqBsTDJOpwF0Gc9L7lDlkBO09izYuIOpbGToayzBOMMVoOaDf7fCTd/0/QVS
+         ctQ2b3w78RO5n2CpsqS5j+d+6PHxbVTqmJdhCO1A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kun Yi <kunyi@google.com>, Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 192/209] hwmon: (npcm-750-pwm-fan) Change initial pwm target to 255
-Date:   Tue, 12 Nov 2019 20:50:08 -0500
-Message-Id: <20191113015025.9685-192-sashal@kernel.org>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 194/209] net: sched: avoid writing on noop_qdisc
+Date:   Tue, 12 Nov 2019 20:50:10 -0500
+Message-Id: <20191113015025.9685-194-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -42,34 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kun Yi <kunyi@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit f21c8e753b1dcb8f9e5b096db1f7f4e6fdfa7258 ]
+[ Upstream commit f98ebd47fd0da1717267ce1583a105d8cc29a16a ]
 
-Change initial PWM target to 255 to prevent overheating, for example
-when BMC hangs in userspace or when userspace fan control application is
-not implemented yet.
+While noop_qdisc.gso_skb and noop_qdisc.skb_bad_txq are not used
+in other places, it seems not correct to overwrite their fields
+in dev_init_scheduler_queue().
 
-Signed-off-by: Kun Yi <kunyi@google.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+noop_qdisc is essentially a shared and read-only object, even if
+it is not marked as const because of some implementation detail.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/npcm750-pwm-fan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/sch_generic.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
-index b998f9fbed41e..979b579bc118f 100644
---- a/drivers/hwmon/npcm750-pwm-fan.c
-+++ b/drivers/hwmon/npcm750-pwm-fan.c
-@@ -52,7 +52,7 @@
+diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
+index 30e32df5f84a7..8a4d01e427a22 100644
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -577,6 +577,18 @@ struct Qdisc noop_qdisc = {
+ 	.dev_queue	=	&noop_netdev_queue,
+ 	.running	=	SEQCNT_ZERO(noop_qdisc.running),
+ 	.busylock	=	__SPIN_LOCK_UNLOCKED(noop_qdisc.busylock),
++	.gso_skb = {
++		.next = (struct sk_buff *)&noop_qdisc.gso_skb,
++		.prev = (struct sk_buff *)&noop_qdisc.gso_skb,
++		.qlen = 0,
++		.lock = __SPIN_LOCK_UNLOCKED(noop_qdisc.gso_skb.lock),
++	},
++	.skb_bad_txq = {
++		.next = (struct sk_buff *)&noop_qdisc.skb_bad_txq,
++		.prev = (struct sk_buff *)&noop_qdisc.skb_bad_txq,
++		.qlen = 0,
++		.lock = __SPIN_LOCK_UNLOCKED(noop_qdisc.skb_bad_txq.lock),
++	},
+ };
+ EXPORT_SYMBOL(noop_qdisc);
  
- /* Define the Counter Register, value = 100 for match 100% */
- #define NPCM7XX_PWM_COUNTER_DEFAULT_NUM		255
--#define NPCM7XX_PWM_CMR_DEFAULT_NUM		127
-+#define NPCM7XX_PWM_CMR_DEFAULT_NUM		255
- #define NPCM7XX_PWM_CMR_MAX			255
+@@ -1253,8 +1265,6 @@ static void dev_init_scheduler_queue(struct net_device *dev,
  
- /* default all PWM channels PRESCALE2 = 1 */
+ 	rcu_assign_pointer(dev_queue->qdisc, qdisc);
+ 	dev_queue->qdisc_sleeping = qdisc;
+-	__skb_queue_head_init(&qdisc->gso_skb);
+-	__skb_queue_head_init(&qdisc->skb_bad_txq);
+ }
+ 
+ void dev_init_scheduler(struct net_device *dev)
 -- 
 2.20.1
 
