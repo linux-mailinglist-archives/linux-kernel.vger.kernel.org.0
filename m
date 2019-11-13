@@ -2,66 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5484DFB4B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4C0FB62D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:18:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfKMQM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:12:58 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39602 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727470AbfKMQM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:12:58 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 10A3099376CB0B408A91;
-        Thu, 14 Nov 2019 00:12:52 +0800 (CST)
-Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 14 Nov 2019 00:12:43 +0800
-From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-To:     <will@kernel.org>, <robin.murphy@arm.com>
-CC:     <joro@8bytes.org>, <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <xuwei5@hisilicon.com>, <linuxarm@huawei.com>
-Subject: [PATCH] iommu/arm-smmu-v3: Populate VMID field for CMDQ_OP_TLBI_NH_VA
-Date:   Wed, 13 Nov 2019 16:11:38 +0000
-Message-ID: <20191113161138.22336-1-shameerali.kolothum.thodi@huawei.com>
-X-Mailer: git-send-email 2.12.0.windows.1
+        id S1728416AbfKMRSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:18:05 -0500
+Received: from mga02.intel.com ([134.134.136.20]:62542 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727343AbfKMRSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 12:18:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 09:18:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
+   d="scan'208";a="229813198"
+Received: from dmsnyder-mobl1.amr.corp.intel.com (HELO [10.252.193.15]) ([10.252.193.15])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Nov 2019 09:18:02 -0800
+Subject: Re: [alsa-devel] [PATCH v5 1/6] ASoC: amd:Create multiple I2S
+ platform device Endpoint
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
+        Sanju R Mehta <sanju.mehta@amd.com>,
+        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Alexander.Deucher@amd.com,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <1573629249-13272-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1573629249-13272-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <2febc57c-5cca-b8bd-afdf-a4d77b48c3b0@linux.intel.com>
+Date:   Wed, 13 Nov 2019 10:11:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.237]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1573629249-13272-2-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CMDQ_OP_TLBI_NH_VA requires VMID and this was missing since
-commit 1c27df1c0a82 ("iommu/arm-smmu: Use correct address mask
-for CMD_TLBI_S2_IPA"). Add it back.
 
-Fixes: 1c27df1c0a82 ("iommu/arm-smmu: Use correct address mask for CMD_TLBI_S2_IPA")
-Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
----
-This came to light while verifying the "SMMUv3 Nested Stage Setup"
-series by Eric. Please find the discusiion here,
-https://lore.kernel.org/patchwork/cover/1099617/
----
- drivers/iommu/arm-smmu-v3.c | 1 +
- 1 file changed, 1 insertion(+)
+>   static void snd_acp3x_remove(struct pci_dev *pci)
+>   {
+> +	int i;
+>   	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 8da93e730d6f..9b5274346df0 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -856,6 +856,7 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
- 		cmd[1] |= FIELD_PREP(CMDQ_CFGI_1_RANGE, 31);
- 		break;
- 	case CMDQ_OP_TLBI_NH_VA:
-+		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_VMID, ent->tlbi.vmid);
- 		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_ASID, ent->tlbi.asid);
- 		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_LEAF, ent->tlbi.leaf);
- 		cmd[1] |= ent->tlbi.addr & CMDQ_TLBI_1_VA_MASK;
--- 
-2.17.1
+nit-pick: a lot of kernel folks like xmas-tree style, with counters and 
+return status declared last.
 
-
+>   
+> -	platform_device_unregister(adata->pdev);
+> +	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
+> +		for (i = 0 ; i <  ACP3x_DEVS ; i++)
+> +			platform_device_unregister(adata->pdev[i]);
+> +	}
+>   	iounmap(adata->acp3x_base);
+>   
+>   	pci_disable_msi(pci);
