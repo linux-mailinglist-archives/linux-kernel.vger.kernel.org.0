@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD966FBA84
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:17:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6328DFBA85
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:17:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfKMVR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 16:17:26 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:56770 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfKMVR0 (ORCPT
+        id S1727001AbfKMVRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 16:17:31 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:37538 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbfKMVR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 16:17:26 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADL40nR056673;
-        Wed, 13 Nov 2019 21:16:58 GMT
+        Wed, 13 Nov 2019 16:17:27 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADL3u1Q034373;
+        Wed, 13 Nov 2019 21:16:59 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2019-08-05;
- bh=pIR/fCCWbp3TXnn+eHo9zj2GQqY5GlxleqQj0nAeXJs=;
- b=mAfM23HmvKNeVZqPC0qBtwQIE73LIu93H2orzToHLW1jstjahcr+mYIejFI31G21BAFm
- adTWC4/oS8UvVw51wGLuHjo9Ks5MFsauZ45nsgC5AaA0fVCqkJxbNJZ7La45zBfXTuso
- 4+4G1c6vTslNpIayUWJJDD0nyAjpZBxYHo+AkQTiKoS+efSEFgWFodzCyRAIXfz80wMs
- d4y3CMSpIAskSdrhgG3BYnb/21oGdbV7bRk25eyuKrLL6GUQTH1UEhwLP8K3mfGMoBuj
- 4VCIyBD0ZpomdVKCndqfqPHKcZfhNavwNTk9wFKXdRETgKu1hxbl4rzSU4wZt6rL7N1u MA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2w5ndqfadd-1
+ subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
+ bh=n9TGMlGhguTPxZjGnicJ1nMOKR2qSj3bvJciCNeuYu4=;
+ b=ouP52RyV7nnAnd7mPvEkR9/c2aFeVjR0L3ygbzEPVUwsc78/6uClFDuCzHyThXcYsVzr
+ JBoTQ77S+2aItfYD7B5/dyY6I+ZTEA/DZauaTLDppp2f7BrddiZUeGqL8w9fBocjGuob
+ xgVP+J//JpQApXHnmsaOYyzf7bLSfq5G5jXhcLrCBggKXn4VZQAhMBgSWnQyz8x82P2K
+ sbAnxIT5aovcBhMNwrwjMN840AcBLp56WL2QA9MkD9bzIWnRT3bD/aXwhX0JhH4eeZe8
+ KLC62DCWHSQA+W56246spXUqYz6LkOJHmqAa0XJJig6no5SLituZBPKvDXMRw6da4BpW 2g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2w5p3qy6b1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 21:16:59 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADL3o6F060057;
+        Wed, 13 Nov 2019 21:16:58 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2w8ng4n4w7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 13 Nov 2019 21:16:58 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADL3weL170475;
-        Wed, 13 Nov 2019 21:16:57 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2w8g18768t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 21:16:57 +0000
 Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xADLGukB015416;
-        Wed, 13 Nov 2019 21:16:56 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xADLGv6A017761;
+        Wed, 13 Nov 2019 21:16:57 GMT
 Received: from ca-common-hq.us.oracle.com (/10.211.9.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Nov 2019 13:16:56 -0800
+        with ESMTP ; Wed, 13 Nov 2019 13:16:57 -0800
 From:   Divya Indi <divya.indi@oracle.com>
 To:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
 Cc:     Divya Indi <divya.indi@oracle.com>,
@@ -47,19 +47,21 @@ Cc:     Divya Indi <divya.indi@oracle.com>,
         Srinivas Eeda <srinivas.eeda@oracle.com>,
         Joe Jin <joe.jin@oracle.com>,
         Manjunath Patil <manjunath.b.patil@oracle.com>
-Subject: [RFC v4] Kernel access to ftrace instances. 
-Date:   Wed, 13 Nov 2019 13:15:57 -0800
-Message-Id: <1573679762-7774-1-git-send-email-divya.indi@oracle.com>
+Subject: [PATCH 1/5] tracing: Declare newly exported APIs in include/linux/trace.h
+Date:   Wed, 13 Nov 2019 13:15:58 -0800
+Message-Id: <1573679762-7774-2-git-send-email-divya.indi@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1573679762-7774-1-git-send-email-divya.indi@oracle.com>
+References: <1573679762-7774-1-git-send-email-divya.indi@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9440 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=588
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1910280000 definitions=main-1911130175
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9440 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=653 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
  definitions=main-1911130175
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,35 +69,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Declare the newly introduced and exported APIs in the header file -
+include/linux/trace.h. Moving previous declarations from
+kernel/trace/trace.h to include/linux/trace.h.
 
-Please review the patches that follow -
+Signed-off-by: Divya Indi <divya.indi@oracle.com>
+Reviewed-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Reviewed-by: Manjunath Patil <manjunath.b.patil@oracle.com>
+---
+ include/linux/trace.h | 7 +++++++
+ kernel/trace/trace.h  | 4 +---
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-[PATCH 1/5] tracing: Declare newly exported APIs in include/linux/trace.h
-[PATCH 2/5] tracing: Verify if trace array exists before destroying it.
-[PATCH 3/5] tracing: Adding NULL checks
-[PATCH 4/5] tracing: Adding new functions for kernel access to Ftrace instances.
-[PATCH 5/5] tracing: Sample module to demonstrate kernel access to Ftrace instances.
+diff --git a/include/linux/trace.h b/include/linux/trace.h
+index b95ffb2..24fcf07 100644
+--- a/include/linux/trace.h
++++ b/include/linux/trace.h
+@@ -24,6 +24,13 @@ struct trace_export {
+ int register_ftrace_export(struct trace_export *export);
+ int unregister_ftrace_export(struct trace_export *export);
+ 
++struct trace_array;
++
++void trace_printk_init_buffers(void);
++int trace_array_printk(struct trace_array *tr, unsigned long ip,
++		const char *fmt, ...);
++struct trace_array *trace_array_create(const char *name);
++int trace_array_destroy(struct trace_array *tr);
+ #endif	/* CONFIG_TRACING */
+ 
+ #endif	/* _LINUX_TRACE_H */
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 005f086..66ff63e 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -11,6 +11,7 @@
+ #include <linux/mmiotrace.h>
+ #include <linux/tracepoint.h>
+ #include <linux/ftrace.h>
++#include <linux/trace.h>
+ #include <linux/hw_breakpoint.h>
+ #include <linux/trace_seq.h>
+ #include <linux/trace_events.h>
+@@ -852,8 +853,6 @@ extern int trace_selftest_startup_branch(struct tracer *trace,
+ extern int
+ trace_array_vprintk(struct trace_array *tr,
+ 		    unsigned long ip, const char *fmt, va_list args);
+-int trace_array_printk(struct trace_array *tr,
+-		       unsigned long ip, const char *fmt, ...);
+ int trace_array_printk_buf(struct ring_buffer *buffer,
+ 			   unsigned long ip, const char *fmt, ...);
+ void trace_printk_seq(struct trace_seq *s);
+@@ -1869,7 +1868,6 @@ extern int trace_event_enable_disable(struct trace_event_file *file,
+ extern const char *__stop___tracepoint_str[];
+ 
+ void trace_printk_control(bool enabled);
+-void trace_printk_init_buffers(void);
+ void trace_printk_start_comm(void);
+ int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set);
+ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled);
+-- 
+1.8.3.1
 
-This patchset addresses the feedback recieved for v3.
-
-Changes from v3 include -
-
-1) trace_array_get_by_name() replaces trace_array_lookup and 
-with its new implementation we no longer need to export
-trace_array_create().
-
-If a trace array with given name exists, this func returns a pointer
-to this trace array (Previously, trace_array_lookup()). 
-If does not exist, create a new trace array (Previously done by trace_array_create()).
-
-2) A new trace array will always have ref ctr = 1 on creation.
-Destroying a trace array will require its ref ctr to be 1.
-
-3) trace_array_set_clr_event(): Uses boolean instead of 0/1 to enable/disable
-events to a trace array. 
-
-4) Sample module reflects the above changes. It is now part of the same patch-set.
-
-Thanks,
-Divya
