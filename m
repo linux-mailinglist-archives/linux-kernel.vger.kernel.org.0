@@ -2,235 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EDDCFAC9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02735FAC95
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:09:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfKMJJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:09:23 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14445 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfKMJJW (ORCPT
+        id S1727239AbfKMJJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:09:06 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43685 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbfKMJJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:09:22 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcbc8440000>; Wed, 13 Nov 2019 01:09:24 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 13 Nov 2019 01:09:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 13 Nov 2019 01:09:21 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 09:09:20 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 13 Nov 2019 09:09:21 +0000
-Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dcbc83d0001>; Wed, 13 Nov 2019 01:09:20 -0800
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <lorenzo.pieralisi@arm.com>, <andrew.murray@arm.com>,
-        <bhelgaas@google.com>, <kishon@ti.com>, <thierry.reding@gmail.com>
-CC:     <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>,
-        <sagar.tv@gmail.com>
-Subject: [PATCH 4/4] PCI: pci-epf-test: Add support to defer core initialization
-Date:   Wed, 13 Nov 2019 14:38:51 +0530
-Message-ID: <20191113090851.26345-5-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191113090851.26345-1-vidyas@nvidia.com>
-References: <20191113090851.26345-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 13 Nov 2019 04:09:05 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iUoe7-0000TC-92; Wed, 13 Nov 2019 10:09:03 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iUoe6-0002mQ-73; Wed, 13 Nov 2019 10:09:02 +0100
+Date:   Wed, 13 Nov 2019 10:09:02 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     "thorsten.scherer@eckelmann.de" <thorsten.scherer@eckelmann.de>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH 40/62] gpio: gpio-siox: Use new GPIO_LINE_DIRECTION
+Message-ID: <20191113090902.dev6yxyxvbf6bupm@pengutronix.de>
+References: <cover.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
+ <91a796dd2811b58f4be30875f5ef644f0e43f241.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
+ <20191111072715.GB4117@ws067.eckelmann.group>
+ <e38b59d9c8bcf81bbd49fed2d9d17350d4dc4866.camel@fi.rohmeurope.com>
+ <20191111104252.5ixcb2tpnj6n5e6t@pengutronix.de>
+ <20191113084637.GA23872@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573636164; bh=PSPmVrDzo534RrRdZAwtuFYisc9SkubauqDX1jqAkTo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=IilP7tjYxaAC3IAGSi55w6t3nfGSZ6YQZSW8vLSXh3Z+8n/bcr71jBv3N7nl42XOp
-         sjeKzUGcC18/rNTvBt2log8FpY1Lpnj9IXxaZP9w8jY+Gj9sZdnzm7k8vM8VqqJRQo
-         WiPpG2rG5PPTnX2kkjgRFmEJwnuUL59a0tH1Ihc73duMVX1pamVEYJxZjrJAGDIk9x
-         m8Vqw0yuioPTqmyyRJbvHum/MMN2TjuqRlmAtQNKotbuhhJyJWDLSQx4MCpXVBoZdh
-         uQ7mJ2zxqMyqxeaUWF1YSi9e6NK/oYleyIGAGd1cHV85wvvxvr6Ugwhi/L/KRu1Mpk
-         ta+OskhxJYU+Q==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191113084637.GA23872@localhost.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to defer core initialization and to receive a notifier
-when core is ready to accommodate platforms where core is not for
-initialization untile reference clock from host is available.
+On Wed, Nov 13, 2019 at 10:46:37AM +0200, Matti Vaittinen wrote:
+> On Mon, Nov 11, 2019 at 11:42:52AM +0100, Uwe Kleine-König wrote:
+> > Hello Matti,
+> > 
+> > On Mon, Nov 11, 2019 at 07:43:50AM +0000, Vaittinen, Matti wrote:
+> > > On Mon, 2019-11-11 at 08:27 +0100, Thorsten Scherer wrote:
+> > > > Hello,
+> > > > 
+> > > > On Tue, Nov 05, 2019 at 12:30:58PM +0200, Matti Vaittinen wrote:
+> > > > > It's hard for occasional GPIO code reader/writer to know if values
+> > > > > 0/1
+> > > > > equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
+> > > > > GPIO_LINE_DIRECTION_OUT to help them out.
+> > > > > 
+> > > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > 
+> > > > for SIOX gpio:
+> > > > 
+> > > > Acked-by: Thorsten Scherer <t.scherer@eckelmann.de>
+> > > > 
+> > > > > Patches are compile-tested only. I have no HW to really test
+> > > > > them.  Thus
+> > > > > I'd appreciate carefull review. This work is mainly about
+> > > > > converting
+> > > > > zeros and ones to the new defines but it wouldn't be first time I
+> > > > > get it wrong in one of the patches
+> > > > > :)                                                   
+> > > > 
+> > > > Applied the patch(es) and tested them with SIOX device
+> > > > 
+> > > > Tested-by: Thorsten Scherer <t.scherer@eckelmann.de>
+> > > 
+> > > Big thanks! It's _really_ nice that someone takes the time to do the
+> > > testing! Highly appreciated! :]
+> > 
+> > without wanting to devalue Thorsten's testing, I think testing your
+> > series can be trivially done without a runtime check as your patches
+> > won't change the compiled result. So just compile once without the patch
+> > and once with and compare the results. If they are bit-by-bit identical
+> > everything is fine.
+> 
+> Right again Uwe. This is correct for most of the modules - assuming
+> there's no __LINE__ or time related macros used. Few of the modules did
+> get actual changes though.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
- drivers/pci/endpoint/functions/pci-epf-test.c | 114 ++++++++++++------
- 1 file changed, 77 insertions(+), 37 deletions(-)
+So as you did this research, I think it's worth pointing this out in the
+commit log. Either something like:
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index bddff15052cc..068024fab544 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -360,18 +360,6 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			   msecs_to_jiffies(1));
- }
- 
--static int pci_epf_test_notifier(struct notifier_block *nb, unsigned long val,
--				 void *data)
--{
--	struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
--	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
--
--	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
--			   msecs_to_jiffies(1));
--
--	return NOTIFY_OK;
--}
--
- static void pci_epf_test_unbind(struct pci_epf *epf)
- {
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-@@ -428,6 +416,78 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
- 	return 0;
- }
- 
-+static int pci_epf_test_core_init(struct pci_epf *epf)
-+{
-+	struct pci_epf_header *header = epf->header;
-+	const struct pci_epc_features *epc_features;
-+	struct pci_epc *epc = epf->epc;
-+	struct device *dev = &epf->dev;
-+	bool msix_capable = false;
-+	bool msi_capable = true;
-+	int ret;
-+
-+	epc_features = pci_epc_get_features(epc, epf->func_no);
-+	if (epc_features) {
-+		msix_capable = epc_features->msix_capable;
-+		msi_capable = epc_features->msi_capable;
-+	}
-+
-+	ret = pci_epc_write_header(epc, epf->func_no, header);
-+	if (ret) {
-+		dev_err(dev, "Configuration header write failed\n");
-+		return ret;
-+	}
-+
-+	ret = pci_epf_test_set_bar(epf);
-+	if (ret)
-+		return ret;
-+
-+	if (msi_capable) {
-+		ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
-+		if (ret) {
-+			dev_err(dev, "MSI configuration failed\n");
-+			return ret;
-+		}
-+	}
-+
-+	if (msix_capable) {
-+		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
-+		if (ret) {
-+			dev_err(dev, "MSI-X configuration failed\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int pci_epf_test_notifier(struct notifier_block *nb, unsigned long val,
-+				 void *data)
-+{
-+	struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
-+	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-+	int ret;
-+
-+	switch (val) {
-+	case CORE_INIT:
-+		ret = pci_epf_test_core_init(epf);
-+		if (ret)
-+			return NOTIFY_BAD;
-+		break;
-+
-+	case LINK_UP:
-+		queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
-+				   msecs_to_jiffies(1));
-+		break;
-+
-+	default:
-+		dev_err(&epf->dev, "Invalid EPF test notifier event\n");
-+		return NOTIFY_BAD;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
- static int pci_epf_test_alloc_space(struct pci_epf *epf)
- {
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-@@ -496,12 +556,11 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- {
- 	int ret;
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
--	struct pci_epf_header *header = epf->header;
- 	const struct pci_epc_features *epc_features;
- 	enum pci_barno test_reg_bar = BAR_0;
- 	struct pci_epc *epc = epf->epc;
--	struct device *dev = &epf->dev;
- 	bool linkup_notifier = false;
-+	bool skip_core_init = false;
- 	bool msix_capable = false;
- 	bool msi_capable = true;
- 
-@@ -511,6 +570,7 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	epc_features = pci_epc_get_features(epc, epf->func_no);
- 	if (epc_features) {
- 		linkup_notifier = epc_features->linkup_notifier;
-+		skip_core_init = epc_features->skip_core_init;
- 		msix_capable = epc_features->msix_capable;
- 		msi_capable = epc_features->msi_capable;
- 		test_reg_bar = pci_epc_get_first_free_bar(epc_features);
-@@ -520,34 +580,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	epf_test->test_reg_bar = test_reg_bar;
- 	epf_test->epc_features = epc_features;
- 
--	ret = pci_epc_write_header(epc, epf->func_no, header);
--	if (ret) {
--		dev_err(dev, "Configuration header write failed\n");
--		return ret;
--	}
--
- 	ret = pci_epf_test_alloc_space(epf);
- 	if (ret)
- 		return ret;
- 
--	ret = pci_epf_test_set_bar(epf);
--	if (ret)
--		return ret;
--
--	if (msi_capable) {
--		ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
--		if (ret) {
--			dev_err(dev, "MSI configuration failed\n");
--			return ret;
--		}
--	}
--
--	if (msix_capable) {
--		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
--		if (ret) {
--			dev_err(dev, "MSI-X configuration failed\n");
-+	if (!skip_core_init) {
-+		ret = pci_epf_test_core_init(epf);
-+		if (ret)
- 			return ret;
--		}
- 	}
- 
- 	if (linkup_notifier) {
+	There are no changes in the compile result.
+
+or
+
+	This results in changes to the compiled module because ...
+
+(and probably ... is worth fixing).
+
+Best regards
+Uwe
+
 -- 
-2.17.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
