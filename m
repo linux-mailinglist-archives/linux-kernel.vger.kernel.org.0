@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7AAFFA1CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52BCAFA1CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:00:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729274AbfKMB7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:59:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54006 "EHLO mail.kernel.org"
+        id S1730301AbfKMB7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:59:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730285AbfKMB72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:59:28 -0500
+        id S1727677AbfKMB7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:59:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6666122469;
-        Wed, 13 Nov 2019 01:59:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8633222469;
+        Wed, 13 Nov 2019 01:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610367;
-        bh=xfiRYlBrrR42DVKHJwACyiYlj/Argp6WATZos1+CRlg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C+Mc0UzHtkrMBAn6c3Jv7PHDT6WfiU0tsSI06/y2lXTP/7tWbpkuWrz2EaVH/bQBU
-         PzCrKmtDoIvdR5qC546T0k8atJXspieH2OYIo4wBnQYmIZpDq29aOtfN0T86U52f04
-         6ojYvJvVAsvYPl6LONg9vF0cp96Ty85H7AkY6Eic=
+        s=default; t=1573610376;
+        bh=3N5qwJ28NYzzO8le2/ydKVm0EDx1lQt2MdyjGiVw1Lw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=epFIyoLnGEtxVWzO2WB09rhbvmoDcSqtOak1469jSqEi0QNN7hd4tTHu/etV8suRX
+         ZlILOimW9i1Gt46PHafzMMV86isw3DWNE1YSscWcqLZ6V93qTra/gt+ztxigLdIYyd
+         OaqLBbt6ZTx0thAfCixhrZxLZwzKIChONe4FiJs4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 115/115] mmc: tmio: fix SCC error handling to avoid false positive CRC error
-Date:   Tue, 12 Nov 2019 20:56:22 -0500
-Message-Id: <20191113015622.11592-115-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        dev@openvswitch.org
+Subject: [PATCH AUTOSEL 4.9 01/68] net: ovs: fix return type of ndo_start_xmit function
+Date:   Tue, 12 Nov 2019 20:58:25 -0500
+Message-Id: <20191113015932.12655-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
-References: <20191113015622.11592-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -46,50 +42,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 51b72656bb39fdcb8f3174f4007bcc83ad1d275f ]
+[ Upstream commit eddf11e18dff0e8671e06ce54e64cfc843303ab9 ]
 
-If an SCC error occurs during a read/write command execution, a false
-positive CRC error message is output.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-mmcblk0: response CRC error sending r/w cmd command, card status 0x900
+Found by coccinelle.
 
-check_scc_error() checks SCC_RVSREQ.RVSERR bit. RVSERR detects a
-correction error in the next (up or down) delay tap position. However,
-since the command is successful, only retuning needs to be executed.
-This has been confirmed by HW engineers.
-
-Thus, on SCC error, set retuning flag instead of setting an error code.
-
-Fixes: b85fb0a1c8ae ("mmc: tmio: Fix SCC error detection")
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-[wsa: updated comment and commit message, removed some braces]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/openvswitch/vport-internal_dev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 01e51b7945750..2fd862dc97701 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -914,8 +914,9 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
+diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
+index e7da29021b38b..c233924825801 100644
+--- a/net/openvswitch/vport-internal_dev.c
++++ b/net/openvswitch/vport-internal_dev.c
+@@ -44,7 +44,8 @@ static struct internal_dev *internal_dev_priv(struct net_device *netdev)
+ }
  
-+	/* SCC error means retune, but executed command was still successful */
- 	if (host->check_scc_error && host->check_scc_error(host))
--		mrq->cmd->error = -EILSEQ;
-+		mmc_retune_needed(host->mmc);
+ /* Called with rcu_read_lock_bh. */
+-static int internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
++static netdev_tx_t
++internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	int len, err;
  
- 	/* If SET_BLOCK_COUNT, continue with main command */
- 	if (host->mrq && !mrq->cmd->error) {
+@@ -63,7 +64,7 @@ static int internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	} else {
+ 		netdev->stats.tx_errors++;
+ 	}
+-	return 0;
++	return NETDEV_TX_OK;
+ }
+ 
+ static int internal_dev_open(struct net_device *netdev)
 -- 
 2.20.1
 
