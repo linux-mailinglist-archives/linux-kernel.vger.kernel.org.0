@@ -2,138 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9A5AF9FB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:59:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 224D1F9FBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfKMA7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 19:59:10 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37491 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfKMA7J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 19:59:09 -0500
-Received: by mail-ot1-f66.google.com with SMTP id d5so139828otp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 16:59:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bbhHvXUlpKSBxAaen2slRAaR7FABAWW5b4ZHt5uDQAs=;
-        b=aNNgsrA5EIFA9nVSCXy/uyenu1ifAR2ZxMR/sDW6HqK6vSTYpxIpmBrjP/vDjDaVnk
-         l4xh/AHHGyooUHFp1c42LTwLTpwdgtUaJfWvN3Y7CFSVzmwzvxLUaHQBl+Ibev8TBoid
-         2FUFgDLM8vD2vOwzS+IEshtyE4Y+b3ieXpqqo3Mxdly/m4ak6FnwfnCLEy5DGwsI7qq9
-         7rFre8WIcpfUZvKl+y7wQa6yOvynR61ZdKROoMobKwRLP3lkc2bkhgPK6DIYIEcGXZ4p
-         WUPwy1pR33Kp+/7N+4r5VmPuWnlSLsuN14iR6BROP5kh/8NTzRoeUzJllo7I56/tNtvu
-         ttpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bbhHvXUlpKSBxAaen2slRAaR7FABAWW5b4ZHt5uDQAs=;
-        b=joeoJDOlWb+vM/fDzmF1DQ9+cv8agpUu+3B1XmlqjDTLyD/yV1GngqzOPXvEfO7Pw7
-         Ef6XjC2EVWm8u/LVq+HVkVrSO3UpSpQJFdfHSbquVuA9xP0E1/WcRLHn3BT2d06dHTSV
-         HlUt+IR0BPWiZQqCojYD3gzeIBr8qfBrpQeZNOdCoLYYF3VnaErRSjHYYS9+dpBo66aL
-         3b/bG6WNtJKspqhyQTYEO5KbFCldto33lNvvvqc5+z38LktpvIgTmPoNuPwYt9+GRkQi
-         RZ0dpv9j4NjqWHpjYki+ePUVILr1/60g82xXGM/hMNroNHfQcHnsvdjhH1BYLt9vVLJF
-         +fcQ==
-X-Gm-Message-State: APjAAAVxukMHmhQVi046lghgxWMMYUNnYmm0UmzJ0eWm09svDWlBYK0+
-        jt/qupbndQVxwv0UVVAFcIfgDUJu+8859sbBACisOw==
-X-Google-Smtp-Source: APXvYqwE5wMeaGSIvNyY2BTy28AxuQMGsjlQOMQJ/g9Nuz73c9JXx/mbsafhYfzhqVldWgO1VAvXOO9/vT+g3CHkLek=
-X-Received: by 2002:a05:6830:1b70:: with SMTP id d16mr300372ote.71.1573606748988;
- Tue, 12 Nov 2019 16:59:08 -0800 (PST)
+        id S1727352AbfKMA7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 19:59:38 -0500
+Received: from m12-15.163.com ([220.181.12.15]:39292 "EHLO m12-15.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727181AbfKMA7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 19:59:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=E8au+
+        6fmIdKg4g6nquQmx+6A/N6qSHx7pcBJykcLtPg=; b=X+L5Gnw356nd6A4qwc5hp
+        rPaqVoFO7qEpGNUAQlPmHZUJx85rwqpSreq2+0q31nwXlpKv9RfmDeoPTNoac712
+        R1awvxOFw6MUPPqhH1opS8Iufg5ogaxOfgaWrNX//aTpyFl1L2l1nLM2iluLywBY
+        GqGrCLbBNfermYcU+WfJUg=
+Received: from [192.168.1.133] (unknown [112.25.212.39])
+        by smtp11 (Coremail) with SMTP id D8CowACHfNxiVctdLKG9Ag--.166S2;
+        Wed, 13 Nov 2019 08:59:15 +0800 (CST)
+Subject: Re: Question about "asm/rwonce.h: No such file or directory"
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-arch@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        yamada.masahiro@socionext.com, ast@kernel.org, daniel@iogearbox.net
+References: <1da2db04-da6a-cedb-e85a-6ded68dada82@163.com>
+ <20191112123125.GD17835@willie-the-truck>
+From:   Xiao Yang <ice_yangxiao@163.com>
+Message-ID: <cf0a0d1b-8680-7275-66b6-f704ef5cd89c@163.com>
+Date:   Wed, 13 Nov 2019 08:59:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191112000700.3455038-1-jhubbard@nvidia.com> <20191112000700.3455038-9-jhubbard@nvidia.com>
- <20191112204338.GE5584@ziepe.ca> <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
- <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com> <20191112234250.GA19615@ziepe.ca>
-In-Reply-To: <20191112234250.GA19615@ziepe.ca>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 12 Nov 2019 16:58:57 -0800
-Message-ID: <CAPcyv4hwFKmsQpp04rS6diCmZwGtbnriCjfY2ofWV485qT9kzg@mail.gmail.com>
-Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and FOLL_LONGTERM
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191112123125.GD17835@willie-the-truck>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID: D8CowACHfNxiVctdLKG9Ag--.166S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr4DGr1kWw45tFykXr45GFg_yoW5Xw1fpF
+        Wa9r4IyF4UJFy8GrnrAw17A3WUA3y3Gry5Kr1UGry8Ar1rur13Kr4xur18ur9xZ3y7Jr4j
+        yFsrWrWUW340yaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bYCztUUUUU=
+X-Originating-IP: [112.25.212.39]
+X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiMwxsXlXl0TWPkAABsH
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 3:43 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On 11/12/19 8:31 PM, Will Deacon wrote:
+> [+lkml, Masahiro, Alexei and Daniel]
 >
-> On Tue, Nov 12, 2019 at 02:45:51PM -0800, Dan Williams wrote:
-> > On Tue, Nov 12, 2019 at 2:43 PM John Hubbard <jhubbard@nvidia.com> wrote:
-> > >
-> > > On 11/12/19 12:43 PM, Jason Gunthorpe wrote:
-> > > ...
-> > > >> -            }
-> > > >> +    ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
-> > > >> +                                page, vmas, NULL);
-> > > >> +    /*
-> > > >> +     * The lifetime of a vaddr_get_pfn() page pin is
-> > > >> +     * userspace-controlled. In the fs-dax case this could
-> > > >> +     * lead to indefinite stalls in filesystem operations.
-> > > >> +     * Disallow attempts to pin fs-dax pages via this
-> > > >> +     * interface.
-> > > >> +     */
-> > > >> +    if (ret > 0 && vma_is_fsdax(vmas[0])) {
-> > > >> +            ret = -EOPNOTSUPP;
-> > > >> +            put_page(page[0]);
-> > > >>      }
-> > > >
-> > > > AFAIK this chunk is redundant now as it is some hack to emulate
-> > > > FOLL_LONGTERM? So vmas can be deleted too.
-> > >
-> > > Let me first make sure I understand what Dan has in mind for the vma
-> > > checking, in the other thread...
-> >
-> > It's not redundant relative to upstream which does not do anything the
-> > FOLL_LONGTERM in the gup-slow path... but I have not looked at patches
-> > 1-7 to see if something there made it redundant.
+> On Tue, Nov 12, 2019 at 04:56:39PM +0800, Xiao Yang wrote:
+>> With your patch[1], I alway get the following error when building
+>> tools/bpf:
+> In case people want to reproduce this, my branch is here:
 >
-> Oh, the hunk John had below for get_user_pages_remote() also needs to
-> call __gup_longterm_locked() when FOLL_LONGTERM is specified, then
-> that calls check_dax_vmas() which duplicates the vma_is_fsdax() check
-> above.
+> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=lto
+>
+>> ----------------------------------------------------------------------------------
+>>
+>> make -C tools/bpf/
+>> make: Entering directory
+>> '/usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/tools/bpf'
+>>
+>> Auto-detecting system features:
+>> ... libbfd: [ on ]
+>> ... disassembler-four-args: [ OFF ]
+>>
+>> CC bpf_jit_disasm.o
+>> CC bpf_dbg.o
+>> In file included from
+>> /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/include/uapi/linux/filter.h:9:0,
+>> from
+>> /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/tools/bpf/bpf_dbg.c:41:
+>> /usr/src/perf_selftests-x86_64-rhel-7.6-642a312d47ceb54603630d9d04f5052f3b46d9a3/include/linux/compiler.h:247:24:
+>> fatal error: asm/rwonce.h: No such file or directory
+>> #include <asm/rwonce.h>
+>> ^
+>> compilation terminated.
+>> Makefile:61: recipe for target 'bpf_dbg.o' failed
+>> make: *** [bpf_dbg.o] Error 1
+>> make: *** Waiting for unfinished jobs....
+>> make: Leaving directory
+>>
+>> ----------------------------------------------------------------------------------
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=lto&id=642a312d47ceb54603630d9d04f5052f3b46d9a3
+>>
+>> It seems that include/linux/compiler.h cannot find the asm/rwonce.h because
+>> tools/bpf/Makefile doesn't include arch/*/include/generated/asm/rwonce.h.
+> The problem with referring to the generated files is that they don't exist
+> unless you've configured the main source directory. The real problem here
+> seems to be that tools/bpf/ refers directly to header files in the kernel
+> sources without any understanding of kbuild, and therefore mandatory-y
+> headers simply don't exist when it goes looking for them.
+>
+> Perhaps it's possible to introduce a dependency on a top-level "make
+> asm-generic" so that we can reference the generated headers from the arch
+> directly. Thoughts?
 
-Oh true, good eye. It is redundant if it does additionally call
-__gup_longterm_locked(), and it needs to do that otherwises it undoes
-the CMA migration magic that Aneesh added.
+Hi Will,
+
+
+Thanks for your reply.
+
+I tried to do "make asm-generic" operation before, but it just generated 
+asm/rwonce.h
+
+in arch/*/include/generated directory and building tools/bpf still 
+cannot find it.
+
+Perhaps, the Makefile of tools/bpf needs to be improved.
+
+
+Best Regards,
+
+Xiao Yang
 
 >
-> Certainly no caller of FOLL_LONGTERM should have to do dax specific
-> VMA checking.
+> Will
 
-Agree, that was my comment about cleaning up the vma_is_fsdax() check
-to be internal to the gup core.
