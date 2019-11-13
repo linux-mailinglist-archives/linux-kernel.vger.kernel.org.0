@@ -2,576 +2,621 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5098CFAAB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 08:16:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E18FAAB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 08:15:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfKMHQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 02:16:34 -0500
-Received: from mail-eopbgr750075.outbound.protection.outlook.com ([40.107.75.75]:47758
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726160AbfKMHQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 02:16:33 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kORZ2cc3zY4XhHKAiHs8dikVWLS598+T/yOfBZS2uuhWAMAVO+PVRr5xfAAEmAf03MgkE+9pDUPcDsqVZe3bAE44MUlcuCyExNxcoPhddLlwchE4yNR/q4VLCycs/0926y1aQDl46BmqgrLx6Iy4imwkluFw0VyTX6m9r+VlvqCvxnLeWZ0D4L8/eyndjBqR4AvlNf1mRXPdc4R99wLhVj9PPcXUxWKg4HeA0Ea2/HniuCJib3Dy52MAulQ0nUV+BnMGKB9bRJT8HTnBRi9zVP9DVx0pxTfS4xZN+P84iXSWRVx3EBJr9wDGN7hq0MIrl9oS1iVKCAlTui8kbxghLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aWCxmNRiZQPOGHSrh4+AMjJT9bLHfPwpcWoYI8AcTqk=;
- b=XYkPsE2pa+8KB50kMgRzrMD8GHTTiR5kotuDp19z7nS6lQLqQQ0ddM9cJDm9KJIBeVhzqpoFg6ertmfYgdEtQ61HelbApwQw9q3vhs2i4FTFJn4EQR86W+o+ZeUkM2Pil+dxc3H03dOtcKTYx57LoPgE6HpiVuThdn4Ih3o9400HFefCOqNMDZuKdD0PE3cbWuQVVD/AfO3jEbtsHHTEKKK6b0OTzM70Rq3V1prCsVM7hEn+lfjKrKKfAzKWe+NS7wseEL+xjOMNOHOFdrLwwBGWrQeCMbEHcv8wwcGN3SfSoT404pFpqOoxOrRZzDSnoXDGnQ9OiQq1nrAIA6uCAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
- dmarc=permerror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aWCxmNRiZQPOGHSrh4+AMjJT9bLHfPwpcWoYI8AcTqk=;
- b=GztfEgPkkYf7FtQ1WmntlmnDOawOkSE72wk5d237Cps/nB57eATnvPtFCl4kPG+oXjLOKArRbaNdMFKxxZJTZEWWDKe+G5+RdTQ7kE3jGf3EsxmvSCYLjaypoReg91wvEG2PjkyjGVOJvhwiiE4Q9tJ7O98I2PYdSySnS+nPmtc=
-Received: from DM3PR12CA0125.namprd12.prod.outlook.com (2603:10b6:0:51::21) by
- CY4PR12MB1701.namprd12.prod.outlook.com (2603:10b6:903:121::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.25; Wed, 13 Nov 2019 07:16:23 +0000
-Received: from CO1NAM03FT041.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::200) by DM3PR12CA0125.outlook.office365.com
- (2603:10b6:0:51::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2451.23 via Frontend
- Transport; Wed, 13 Nov 2019 07:16:23 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXMB01.amd.com (165.204.84.17) by
- CO1NAM03FT041.mail.protection.outlook.com (10.152.81.163) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.2451.23 via Frontend Transport; Wed, 13 Nov 2019 07:16:22 +0000
-Received: from SATLEXMB02.amd.com (10.181.40.143) by SATLEXMB01.amd.com
- (10.181.40.142) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 13 Nov
- 2019 01:16:21 -0600
-Received: from vishnu-All-Series.amd.com (10.180.168.240) by
- SATLEXMB02.amd.com (10.181.40.143) with Microsoft SMTP Server id 15.1.1713.5
- via Frontend Transport; Wed, 13 Nov 2019 01:16:16 -0600
-From:   Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     <Alexander.Deucher@amd.com>, <djkurtz@google.com>,
-        <Akshu.Agrawal@amd.com>,
-        Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        "Maruthi Bayyavarapu" <maruthi.bayyavarapu@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
-        Sanju R Mehta <sanju.mehta@amd.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [RESEND PATCH v5 6/6] ASoC: amd: Added ACP3x system resume and runtime pm
-Date:   Wed, 13 Nov 2019 12:44:09 +0530
-Message-ID: <1573629249-13272-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573629249-13272-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-References: <1573629249-13272-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        id S1726519AbfKMHPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 02:15:17 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33879 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfKMHPR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 02:15:17 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y186so1056418lfa.1;
+        Tue, 12 Nov 2019 23:15:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=5rKqD5uCUDD7Mc/C/P3KtbHsB+l+NKtfOSYooVBk+AU=;
+        b=qx20vWJlo2d4ris/YAfY7InzlC1wSt3CTZ91TAqv3GZWqAcw7hpYWUeey1Vevy2gbF
+         eS3PpK0Qu4VdXFGT2juSUCTJQMRnjX5GbZjwOq70brnkw/XWdelzGY3QdyKFVw06iRtc
+         TLklqID3Umrd6efmOpsbP1tNG43FgTA+/yLBI8Mmo2aYhAwyTwIGcO+QpuEPOk+0qNj4
+         OXirOEJP25WR2vHAc0P13Vu1jHjsbK+EsLD0b3TrhR/Ug8IuYWN2T6EY76rJJ+qAaqAX
+         1WLD+4CQYAWZjx9f130qUa6pO3f7yZUKh+jixSOMMKMAr+7iLMaAtuxfY6zaq3OX5D2o
+         RJQQ==
+X-Gm-Message-State: APjAAAVWHnEPngQQJKACYLnnl9MMO5p+lNLNRlTFefcR7ONqTP3JkBjR
+        9S/V4YjmgpiQwd1dZpXWLJF3ssmcZng=
+X-Google-Smtp-Source: APXvYqzerrBQTi1mSARx82ukyKGJYxV8NC3g2tnG2RNZ780nWv9TG7x0vBiZzlkiAaHx5Rcw9Qehrw==
+X-Received: by 2002:a19:be92:: with SMTP id o140mr1542814lff.40.1573629314040;
+        Tue, 12 Nov 2019 23:15:14 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id o4sm554809lfb.89.2019.11.12.23.15.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 23:15:13 -0800 (PST)
+Date:   Wed, 13 Nov 2019 09:15:01 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] pinctrl: Use new GPIO_LINE_DIRECTION
+Message-ID: <20191113071501.GA22158@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(4636009)(39860400002)(376002)(136003)(396003)(346002)(428003)(23433003)(189003)(199004)(7416002)(305945005)(48376002)(47776003)(1671002)(7696005)(86362001)(81156014)(81166006)(14444005)(51416003)(50226002)(8676002)(76176011)(8936002)(478600001)(4326008)(2616005)(476003)(30864003)(126002)(486006)(36756003)(70206006)(26005)(336012)(70586007)(50466002)(6666004)(54906003)(356004)(109986005)(16586007)(316002)(53416004)(2906002)(5660300002)(186003)(426003)(446003)(11346002)(266003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1701;H:SATLEXMB01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 673fbba8-a88b-4bf5-2295-08d768096364
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1701:|CY4PR12MB1701:
-X-Microsoft-Antispam-PRVS: <CY4PR12MB1701E294EFE14A1EC7D75F0BE7760@CY4PR12MB1701.namprd12.prod.outlook.com>
-X-MS-Exchange-Transport-Forked: True
-X-MS-Oob-TLC-OOBClassifiers: OLM:820;
-X-Forefront-PRVS: 0220D4B98D
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9h5mJnzvOQ4DNpAnI9wrCtQCuGAsDPuzNdNv3A9lHnK7h3Y0uSX8aYkkyUaOmtq08WA301Ei7/DtFDFancWwneGxraI8tukpQB50qK4XcyoTEl7hbEOHukxaMkGK5SqfW/v8ehjte4cPIQIPC386zmpoygT63XvUDJqAsr7dsxKLT8dOwcb4cuk7FsvMsy8R0WrJ1uHrln7X7Esrbbx+cU/xvfegHwH7JByjqEvy0GppUOY8vIscHEqhyqEwje4yx6l3nvlPUeLWFdKYxDojE6FgwVNHXEKWUesxg0hugAdLZnYG5cwPWCwfMmS8lsMlIL7E/COmbYMTx10Epjt06XsUgDpoBo0v5jXDv3ZKqBNcGGsEkUICPni6T3YSvSIeYq5VIVgRDMZmNomw2UITX0PM+1XkJWunHplLaQYQAlGyNYu8vVSvjUsk0zBFrPbf
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2019 07:16:22.6104
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 673fbba8-a88b-4bf5-2295-08d768096364
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1701
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When system wide suspend happens, ACP will be powered off
-and when system resumes,for audio usecase to continue,all
-the runtime configuration data needs to be programmed again.
-Added resume pm call back to ACP pm ops and also added runtime
-PM operations for ACP3x PCM platform device.
-Device will enter into D3 state when there is no activity
-on audio I2S lines.
+Use newly added GPIO defines GPIO_LINE_DIRECTION_IN and
+GPIO_LINE_DIRECTION_OUT instead of using hard-coded 1 and 0.
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
+Main benefit is to make it easier to see which values mean IN and which
+OUT. As a side effect this helps GPIO framework to change the direction
+defines to something else if ever needed.
+
+Please note that return value from get_direction call on
+pinctrl-axp209 driver was changed. Previously pinctrl-axp209 might have
+returned value 2 for direction INPUT.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
 ---
- sound/soc/amd/raven/acp3x-pcm-dma.c | 135 -----------------------------
- sound/soc/amd/raven/acp3x.h         |   8 ++
- sound/soc/amd/raven/pci-acp3x.c     | 168 +++++++++++++++++++++++++++++++++++-
- 3 files changed, 173 insertions(+), 138 deletions(-)
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index 8a8b135..00713eb 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -58,106 +58,6 @@ static const struct snd_pcm_hardware acp3x_pcm_hardware_capture = {
- 	.periods_max = CAPTURE_MAX_NUM_PERIODS,
- };
+changes since v1: Fixed vt8500 where 'return' statement was missing.
+Please note that acks/reviewed-by statements collected here typically
+concern only part of the changes that was relevant for reviewer.
+
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c         |  5 ++++-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c      |  5 ++++-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |  5 ++++-
+ drivers/pinctrl/mediatek/pinctrl-paris.c      |  5 ++++-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c   |  5 ++++-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c     |  7 +++++--
+ drivers/pinctrl/pinctrl-amd.c                 |  5 ++++-
+ drivers/pinctrl/pinctrl-at91.c                |  5 ++++-
+ drivers/pinctrl/pinctrl-axp209.c              |  7 +++++--
+ drivers/pinctrl/pinctrl-ingenic.c             | 14 ++++++++++----
+ drivers/pinctrl/pinctrl-ocelot.c              |  5 ++++-
+ drivers/pinctrl/pinctrl-oxnas.c               |  5 ++++-
+ drivers/pinctrl/pinctrl-pic32.c               |  5 ++++-
+ drivers/pinctrl/pinctrl-pistachio.c           |  5 ++++-
+ drivers/pinctrl/pinctrl-rk805.c               |  7 +++++--
+ drivers/pinctrl/pinctrl-rockchip.c            |  5 ++++-
+ drivers/pinctrl/pinctrl-rza1.c                |  5 ++++-
+ drivers/pinctrl/pinctrl-rza2.c                |  6 +++---
+ drivers/pinctrl/pinctrl-st.c                  | 14 +++++++++++---
+ drivers/pinctrl/pinctrl-stmfx.c               | 17 ++++++++++++++---
+ drivers/pinctrl/pinctrl-sx150x.c              |  9 ++++++---
+ drivers/pinctrl/qcom/pinctrl-msm.c            |  4 ++--
+ drivers/pinctrl/stm32/pinctrl-stm32.c         |  4 ++--
+ drivers/pinctrl/vt8500/pinctrl-wmt.c          |  6 ++++--
+ 24 files changed, 119 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 0de1a3a96984..d3294964bb4e 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -322,7 +322,10 @@ static int bcm2835_gpio_get_direction(struct gpio_chip *chip, unsigned int offse
+ 	if (fsel > BCM2835_FSEL_GPIO_OUT)
+ 		return -EINVAL;
  
--static int acp3x_power_on(void __iomem *acp3x_base, bool on)
--{
--	u16 val, mask;
--	u32 timeout;
--
--	if (on == true) {
--		val = 1;
--		mask = ACP3x_POWER_ON;
--	} else {
--		val = 0;
--		mask = ACP3x_POWER_OFF;
--	}
--
--	rv_writel(val, acp3x_base + mmACP_PGFSM_CONTROL);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
--		if ((val & ACP3x_POWER_OFF_IN_PROGRESS) == mask)
--			break;
--		if (timeout > 100) {
--			pr_err("ACP3x power state change failure\n");
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--	return 0;
--}
--
--static int acp3x_reset(void __iomem *acp3x_base)
--{
--	u32 val, timeout;
--
--	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
--		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
--		     timeout > 100) {
--			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
--				break;
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--
--	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
--		if (!val || timeout > 100) {
--			if (!val)
--				break;
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--	return 0;
--}
--
--static int acp3x_init(void __iomem *acp3x_base)
--{
--	int ret;
--
--	/* power on */
--	ret = acp3x_power_on(acp3x_base, true);
--	if (ret) {
--		pr_err("ACP3x power on failed\n");
--		return ret;
--	}
--	/* Reset */
--	ret = acp3x_reset(acp3x_base);
--	if (ret) {
--		pr_err("ACP3x reset failed\n");
--		return ret;
--	}
--	return 0;
--}
--
--static int acp3x_deinit(void __iomem *acp3x_base)
--{
--	int ret;
--
--	/* Reset */
--	ret = acp3x_reset(acp3x_base);
--	if (ret) {
--		pr_err("ACP3x reset failed\n");
--		return ret;
--	}
--	/* power off */
--	ret = acp3x_power_on(acp3x_base, false);
--	if (ret) {
--		pr_err("ACP3x power off failed\n");
--		return ret;
--	}
--	return 0;
--}
--
- static irqreturn_t i2s_irq_handler(int irq, void *dev_id)
- {
- 	u16 play_flag, cap_flag;
-@@ -520,10 +420,6 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	adata->i2s_irq = res->start;
- 
- 	dev_set_drvdata(&pdev->dev, adata);
--	/* Initialize ACP */
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		goto io_irq;
- 	status = devm_snd_soc_register_component(&pdev->dev,
- 						 &acp3x_i2s_component,
- 						 NULL, 0);
-@@ -560,40 +456,20 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	kfree(res);
- 	kfree(adata->acp3x_base);
- 	kfree(adata);
--	status = acp3x_deinit(adata->acp3x_base);
--	if (status)
--		dev_err(&pdev->dev, "ACP de-init failed\n");
--	else
--		dev_info(&pdev->dev, "ACP de-initialized\n");
--	/*ignore device status and return driver probe error*/
- 	return -ENODEV;
+-	return (fsel == BCM2835_FSEL_GPIO_IN);
++	if (fsel == BCM2835_FSEL_GPIO_IN)
++		return GPIO_LINE_DIRECTION_IN;
++
++	return GPIO_LINE_DIRECTION_OUT;
  }
  
- static int acp3x_audio_remove(struct platform_device *pdev)
- {
--	int ret;
--	struct i2s_dev_data *adata = dev_get_drvdata(&pdev->dev);
--
--	ret = acp3x_deinit(adata->acp3x_base);
--	if (ret)
--		dev_err(&pdev->dev, "ACP de-init failed\n");
--	else
--		dev_info(&pdev->dev, "ACP de-initialized\n");
--
- 	pm_runtime_disable(&pdev->dev);
- 	return 0;
+ static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+index 42f7ab383ad9..3a0a9735ebd4 100644
+--- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+@@ -357,7 +357,10 @@ static int iproc_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
+ 	unsigned int offset = IPROC_GPIO_REG(gpio, IPROC_GPIO_OUT_EN_OFFSET);
+ 	unsigned int shift = IPROC_GPIO_SHIFT(gpio);
+ 
+-	return !(readl(chip->base + offset) & BIT(shift));
++	if (readl(chip->base + offset) & BIT(shift))
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
  }
  
- static int acp3x_resume(struct device *dev)
+ static void iproc_gpio_set(struct gpio_chip *gc, unsigned gpio, int val)
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 53f52b9a0acd..4c11217e7d25 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -804,7 +804,10 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ 		pctl->devdata->spec_dir_set(&reg_addr, offset);
+ 
+ 	regmap_read(pctl->regmap1, reg_addr, &read_val);
+-	return !(read_val & bit);
++	if (read_val & bit)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 923264d0e9ef..d70bb3aec2c9 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -699,7 +699,10 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
+ 	if (err)
+ 		return err;
+ 
+-	return !value;
++	if (value)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int mtk_gpio_get(struct gpio_chip *chip, unsigned int gpio)
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index f2f5fcd9a237..73e41515d978 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -403,7 +403,10 @@ static int armada_37xx_gpio_get_direction(struct gpio_chip *chip,
+ 	mask = BIT(offset);
+ 	regmap_read(info->regmap, reg, &val);
+ 
+-	return !(val & mask);
++	if (val & mask)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int armada_37xx_gpio_direction_output(struct gpio_chip *chip,
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 2a8190b11d10..21f0e044ef2d 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -850,11 +850,14 @@ static int nmk_gpio_get_dir(struct gpio_chip *chip, unsigned offset)
+ 
+ 	clk_enable(nmk_chip->clk);
+ 
+-	dir = !(readl(nmk_chip->addr + NMK_GPIO_DIR) & BIT(offset));
++	dir = readl(nmk_chip->addr + NMK_GPIO_DIR) & BIT(offset);
+ 
+ 	clk_disable(nmk_chip->clk);
+ 
+-	return dir;
++	if (dir)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int nmk_gpio_make_input(struct gpio_chip *chip, unsigned offset)
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 2c61141519f8..9331a6b84acd 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -46,7 +46,10 @@ static int amd_gpio_get_direction(struct gpio_chip *gc, unsigned offset)
+ 	pin_reg = readl(gpio_dev->base + offset * 4);
+ 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ 
+-	return !(pin_reg & BIT(OUTPUT_ENABLE_OFF));
++	if (pin_reg & BIT(OUTPUT_ENABLE_OFF))
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int amd_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index d6e7e9f0ddec..a3444c638337 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1414,7 +1414,10 @@ static int at91_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ 	u32 osr;
+ 
+ 	osr = readl_relaxed(pio + PIO_OSR);
+-	return !(osr & mask);
++	if (osr & mask)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int at91_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+index be5b645815e5..207cbae3a7bf 100644
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -149,13 +149,16 @@ static int axp20x_gpio_get_direction(struct gpio_chip *chip,
+ 	 * going to change the value soon anyway. Default to output.
+ 	 */
+ 	if ((val & AXP20X_GPIO_FUNCTIONS) > 2)
+-		return 0;
++		return GPIO_LINE_DIRECTION_OUT;
+ 
+ 	/*
+ 	 * The GPIO directions are the three lowest values.
+ 	 * 2 is input, 0 and 1 are output
+ 	 */
+-	return val & 2;
++	if (val & 2)
++		return GPIO_LINE_DIRECTION_IN;
++
++	return GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ static int axp20x_gpio_output(struct gpio_chip *chip, unsigned int offset,
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 6e2683016c1f..faee2f33792b 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -1643,13 +1643,19 @@ static int ingenic_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
+ 	struct ingenic_pinctrl *jzpc = jzgc->jzpc;
+ 	unsigned int pin = gc->base + offset;
+ 
+-	if (jzpc->version >= ID_JZ4760)
+-		return ingenic_get_pin_config(jzpc, pin, JZ4760_GPIO_PAT1);
++	if (jzpc->version >= ID_JZ4760) {
++		if (ingenic_get_pin_config(jzpc, pin, JZ4760_GPIO_PAT1))
++			return GPIO_LINE_DIRECTION_IN;
++		return GPIO_LINE_DIRECTION_OUT;
++	}
+ 
+ 	if (ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_SELECT))
+-		return true;
++		return GPIO_LINE_DIRECTION_IN;
++
++	if (ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_DIR))
++		return GPIO_LINE_DIRECTION_OUT;
+ 
+-	return !ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_DIR);
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static const struct pinctrl_ops ingenic_pctlops = {
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index fb76fb2e9ea5..c3ae4b070c3d 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -604,7 +604,10 @@ static int ocelot_gpio_get_direction(struct gpio_chip *chip,
+ 
+ 	regmap_read(info->map, REG(OCELOT_GPIO_OE, info, offset), &val);
+ 
+-	return !(val & BIT(offset % 32));
++	if (val & BIT(offset % 32))
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int ocelot_gpio_direction_input(struct gpio_chip *chip,
+diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
+index 55488ca246f1..7d6d17b94ab9 100644
+--- a/drivers/pinctrl/pinctrl-oxnas.c
++++ b/drivers/pinctrl/pinctrl-oxnas.c
+@@ -756,7 +756,10 @@ static int oxnas_gpio_get_direction(struct gpio_chip *chip,
+ 	struct oxnas_gpio_bank *bank = gpiochip_get_data(chip);
+ 	u32 mask = BIT(offset);
+ 
+-	return !(readl_relaxed(bank->reg_base + OUTPUT_EN) & mask);
++	if (readl_relaxed(bank->reg_base + OUTPUT_EN) & mask)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int oxnas_gpio_direction_input(struct gpio_chip *chip,
+diff --git a/drivers/pinctrl/pinctrl-pic32.c b/drivers/pinctrl/pinctrl-pic32.c
+index e7f6dd5ab578..dd65178fbda2 100644
+--- a/drivers/pinctrl/pinctrl-pic32.c
++++ b/drivers/pinctrl/pinctrl-pic32.c
+@@ -1990,7 +1990,10 @@ static int pic32_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
  {
--	int status;
+ 	struct pic32_gpio_bank *bank = gpiochip_get_data(chip);
+ 
+-	return !!(readl(bank->reg_base + TRIS_REG) & BIT(offset));
++	if (readl(bank->reg_base + TRIS_REG) & BIT(offset))
++		return GPIO_LINE_DIRECTION_IN;
++
++	return GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ static void pic32_gpio_irq_ack(struct irq_data *data)
+diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
+index 379e9a6a6d89..c33375f5c5ff 100644
+--- a/drivers/pinctrl/pinctrl-pistachio.c
++++ b/drivers/pinctrl/pinctrl-pistachio.c
+@@ -1166,7 +1166,10 @@ static int pistachio_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct pistachio_gpio_bank *bank = gpiochip_get_data(chip);
+ 
+-	return !(gpio_readl(bank, GPIO_OUTPUT_EN) & BIT(offset));
++	if (gpio_readl(bank, GPIO_OUTPUT_EN) & BIT(offset))
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int pistachio_gpio_get(struct gpio_chip *chip, unsigned offset)
+diff --git a/drivers/pinctrl/pinctrl-rk805.c b/drivers/pinctrl/pinctrl-rk805.c
+index 26adbe9d6d42..cccbe072274e 100644
+--- a/drivers/pinctrl/pinctrl-rk805.c
++++ b/drivers/pinctrl/pinctrl-rk805.c
+@@ -184,7 +184,7 @@ static int rk805_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 
+ 	/* default output*/
+ 	if (!pci->pin_cfg[offset].dir_msk)
+-		return 0;
++		return GPIO_LINE_DIRECTION_OUT;
+ 
+ 	ret = regmap_read(pci->rk808->regmap,
+ 			  pci->pin_cfg[offset].reg,
+@@ -194,7 +194,10 @@ static int rk805_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 		return ret;
+ 	}
+ 
+-	return !(val & pci->pin_cfg[offset].dir_msk);
++	if (val & pci->pin_cfg[offset].dir_msk)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static const struct gpio_chip rk805_gpio_chip = {
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index dc0bbf198cbc..cf5181ad817e 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2211,7 +2211,10 @@ static int rockchip_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+ 	clk_disable(bank->clk);
+ 
+-	return !(data & BIT(offset));
++	if (data & BIT(offset))
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ /*
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 215db220d795..002bd7346562 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -777,7 +777,10 @@ static int rza1_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
+ {
+ 	struct rza1_port *port = gpiochip_get_data(chip);
+ 
+-	return !!rza1_get_bit(port, RZA1_PM_REG, gpio);
++	if (rza1_get_bit(port, RZA1_PM_REG, gpio))
++		return GPIO_LINE_DIRECTION_IN;
++
++	return GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ static int rza1_gpio_direction_input(struct gpio_chip *chip,
+diff --git a/drivers/pinctrl/pinctrl-rza2.c b/drivers/pinctrl/pinctrl-rza2.c
+index 3be1d833bf25..0fca1fbc9480 100644
+--- a/drivers/pinctrl/pinctrl-rza2.c
++++ b/drivers/pinctrl/pinctrl-rza2.c
+@@ -135,10 +135,10 @@ static int rza2_chip_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 	reg16 = (reg16 >> (pin * 2)) & RZA2_PDR_MASK;
+ 
+ 	if (reg16 == RZA2_PDR_OUTPUT)
+-		return 0;
++		return GPIO_LINE_DIRECTION_OUT;
+ 
+ 	if (reg16 == RZA2_PDR_INPUT)
+-		return 1;
++		return GPIO_LINE_DIRECTION_IN;
+ 
+ 	/*
+ 	 * This GPIO controller has a default Hi-Z state that is not input or
+@@ -146,7 +146,7 @@ static int rza2_chip_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 	 */
+ 	rza2_pin_to_gpio(priv->base, offset, 1);
+ 
+-	return 1;
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int rza2_chip_direction_input(struct gpio_chip *chip,
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 00db8b9efb2c..aff589ce446f 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -746,7 +746,10 @@ static int st_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ 	function = st_pctl_get_pin_function(&pc, offset);
+ 	if (function) {
+ 		st_pinconf_get_direction(&pc, offset, &config);
+-		return !ST_PINCONF_UNPACK_OE(config);
++		if (ST_PINCONF_UNPACK_OE(config))
++			return GPIO_LINE_DIRECTION_OUT;
++
++		return GPIO_LINE_DIRECTION_IN;
+ 	}
+ 
+ 	/*
+@@ -758,7 +761,10 @@ static int st_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ 		direction |= ((value >> offset) & 0x1) << i;
+ 	}
+ 
+-	return (direction == ST_GPIO_DIRECTION_IN);
++	if (direction == ST_GPIO_DIRECTION_IN)
++		return GPIO_LINE_DIRECTION_IN;
++
++	return GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ /* Pinctrl Groups */
+@@ -996,6 +1002,7 @@ static void st_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 	unsigned int function;
+ 	int offset = st_gpio_pin(pin_id);
+ 	char f[16];
++	int oe;
+ 
+ 	mutex_unlock(&pctldev->mutex);
+ 	pc = st_get_pio_control(pctldev, pin_id);
+@@ -1008,10 +1015,11 @@ static void st_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 	else
+ 		snprintf(f, 5, "GPIO");
+ 
++	oe = st_gpio_get_direction(&pc_to_bank(pc)->gpio_chip, offset);
+ 	seq_printf(s, "[OE:%d,PU:%ld,OD:%ld]\t%s\n"
+ 		"\t\t[retime:%ld,invclk:%ld,clknotdat:%ld,"
+ 		"de:%ld,rt-clk:%ld,rt-delay:%ld]",
+-		!st_gpio_get_direction(&pc_to_bank(pc)->gpio_chip, offset),
++		(oe == GPIO_LINE_DIRECTION_OUT),
+ 		ST_PINCONF_UNPACK_PU(config),
+ 		ST_PINCONF_UNPACK_OD(config),
+ 		f,
+diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
+index 564660028fcc..132a0f217692 100644
+--- a/drivers/pinctrl/pinctrl-stmfx.c
++++ b/drivers/pinctrl/pinctrl-stmfx.c
+@@ -134,10 +134,14 @@ static int stmfx_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
+ 	ret = regmap_read(pctl->stmfx->map, reg, &val);
+ 	/*
+ 	 * On stmfx, gpio pins direction is (0)input, (1)output.
+-	 * .get_direction returns 0=out, 1=in
+ 	 */
++	if (ret)
++		return ret;
+ 
+-	return ret ? ret : !(val & mask);
++	if (val & mask)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int stmfx_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
+@@ -223,6 +227,13 @@ static int stmfx_pinconf_get(struct pinctrl_dev *pctldev,
+ 	dir = stmfx_gpio_get_direction(&pctl->gpio_chip, pin);
+ 	if (dir < 0)
+ 		return dir;
++
++	/*
++	 * Currently the gpiolib IN is 1 and OUT is 0 but let's not count
++	 * on it just to be on the safe side also in the future :)
++	 */
++	dir = (dir == GPIO_LINE_DIRECTION_IN) ? 1 : 0;
++
+ 	type = stmfx_pinconf_get_type(pctl, pin);
+ 	if (type < 0)
+ 		return type;
+@@ -360,7 +371,7 @@ static void stmfx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 	if (val < 0)
+ 		return;
+ 
+-	if (!dir) {
++	if (dir == GPIO_LINE_DIRECTION_OUT) {
+ 		seq_printf(s, "output %s ", val ? "high" : "low");
+ 		if (type)
+ 			seq_printf(s, "open drain %s internal pull-up ",
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index 566665931a04..6e74bd87d959 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -391,13 +391,16 @@ static int sx150x_gpio_get_direction(struct gpio_chip *chip,
+ 	int ret;
+ 
+ 	if (sx150x_pin_is_oscio(pctl, offset))
+-		return false;
++		return GPIO_LINE_DIRECTION_OUT;
+ 
+ 	ret = regmap_read(pctl->regmap, pctl->data->reg_dir, &value);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return !!(value & BIT(offset));
++	if (value & BIT(offset))
++		return GPIO_LINE_DIRECTION_IN;
++
++	return GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ static int sx150x_gpio_get(struct gpio_chip *chip, unsigned int offset)
+@@ -687,7 +690,7 @@ static int sx150x_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		if (ret)
++		if (ret == GPIO_LINE_DIRECTION_IN)
+ 			return -EINVAL;
+ 
+ 		ret = sx150x_gpio_get(&pctl->gpio, pin);
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 763da0be10d6..8844ca1261d5 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -485,8 +485,8 @@ static int msm_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 
+ 	val = msm_readl_ctl(pctrl, g);
+ 
+-	/* 0 = output, 1 = input */
+-	return val & BIT(g->oe_bit) ? 0 : 1;
++	return val & BIT(g->oe_bit) ? GPIO_LINE_DIRECTION_OUT :
++				      GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int msm_gpio_get(struct gpio_chip *chip, unsigned offset)
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 2d5e0435af0a..72e0669ca7c8 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -283,9 +283,9 @@ static int stm32_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 
+ 	stm32_pmx_get_mode(bank, pin, &mode, &alt);
+ 	if ((alt == 0) && (mode == 0))
+-		ret = 1;
++		ret = GPIO_LINE_DIRECTION_IN;
+ 	else if ((alt == 0) && (mode == 1))
+-		ret = 0;
++		ret = GPIO_LINE_DIRECTION_OUT;
+ 	else
+ 		ret = -EINVAL;
+ 
+diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
+index 4d5cd7d8c760..2c4875c7a922 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
++++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
+@@ -486,8 +486,10 @@ static int wmt_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
  	u32 val;
- 	struct i2s_dev_data *adata = dev_get_drvdata(dev);
  
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
--
- 	if (adata->play_stream && adata->play_stream->runtime) {
- 		struct i2s_stream_instance *rtd =
- 			adata->play_stream->runtime->private_data;
-@@ -638,15 +514,8 @@ static int acp3x_resume(struct device *dev)
- 
- static int acp3x_pcm_runtime_suspend(struct device *dev)
- {
--	int status;
- 	struct i2s_dev_data *adata = dev_get_drvdata(dev);
- 
--	status = acp3x_deinit(adata->acp3x_base);
--	if (status)
--		dev_err(dev, "ACP de-init failed\n");
--	else
--		dev_info(dev, "ACP de-initialized\n");
--
- 	rv_writel(0, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
- 
- 	return 0;
-@@ -654,12 +523,8 @@ static int acp3x_pcm_runtime_suspend(struct device *dev)
- 
- static int acp3x_pcm_runtime_resume(struct device *dev)
- {
--	int status;
- 	struct i2s_dev_data *adata = dev_get_drvdata(dev);
- 
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
- 	rv_writel(1, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
- 	return 0;
+ 	val = readl_relaxed(data->base + reg_dir);
+-	/* Return 0 == output, 1 == input */
+-	return !(val & BIT(bit));
++	if (val & BIT(bit))
++		return GPIO_LINE_DIRECTION_OUT;
++
++	return GPIO_LINE_DIRECTION_IN;
  }
-diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
-index 01b283a..c40f960 100644
---- a/sound/soc/amd/raven/acp3x.h
-+++ b/sound/soc/amd/raven/acp3x.h
-@@ -7,6 +7,7 @@
  
- #include "chip_offset_byte.h"
- 
-+#define DELAY	600
- #define I2S_SP_INSTANCE                 0x01
- #define I2S_BT_INSTANCE                 0x02
- 
-@@ -65,6 +66,13 @@
- #define SLOT_WIDTH_16 0x10
- #define SLOT_WIDTH_24 0x18
- #define SLOT_WIDTH_32 0x20
-+#define ACP_PGFSM_CNTL_POWER_ON_MASK	0x01
-+#define ACP_PGFSM_CNTL_POWER_OFF_MASK	0x00
-+#define ACP_PGFSM_STATUS_MASK		0x03
-+#define ACP_POWERED_ON			0x00
-+#define ACP_POWER_ON_IN_PROGRESS	0x01
-+#define ACP_POWERED_OFF			0x02
-+#define ACP_POWER_OFF_IN_PROGRESS	0x03
- 
- struct acp3x_platform_info {
- 	u16 play_i2s_instance;
-diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
-index 91ebee9..2d2c7ba 100644
---- a/sound/soc/amd/raven/pci-acp3x.c
-+++ b/sound/soc/amd/raven/pci-acp3x.c
-@@ -9,6 +9,9 @@
- #include <linux/io.h>
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/delay.h>
-+#include <sound/pcm.h>
- 
- #include "acp3x.h"
- 
-@@ -19,6 +22,114 @@ struct acp3x_dev_data {
- 	struct platform_device *pdev[ACP3x_DEVS];
- };
- 
-+static int acp3x_power_on(void __iomem *acp3x_base)
-+{
-+	u32 val;
-+	u32 timeout = 0;
-+	int ret = 0;
-+
-+	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+
-+	if (val == 0)
-+		return val;
-+
-+	if (!((val & ACP_PGFSM_STATUS_MASK) ==
-+				ACP_POWER_ON_IN_PROGRESS))
-+		rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
-+			acp3x_base + mmACP_PGFSM_CONTROL);
-+	while (++timeout < DELAY) {
-+		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+		if (!val)
-+			break;
-+		udelay(1);
-+		if (timeout > 500) {
-+			pr_err("ACP is Not Powered ON\n");
-+			return -ETIMEDOUT;
-+		}
-+	}
-+}
-+static int acp3x_power_off(void __iomem *acp3x_base)
-+{
-+	u32 val;
-+	u32 timeout = 0;
-+
-+	rv_writel(ACP_PGFSM_CNTL_POWER_OFF_MASK,
-+			acp3x_base + mmACP_PGFSM_CONTROL);
-+	while (++timeout < DELAY) {
-+		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+		if ((val & ACP_PGFSM_STATUS_MASK) == ACP_POWERED_OFF)
-+			return 0;
-+		udelay(1);
-+		if (timeout > 500) {
-+			pr_err("ACP is Not Powered OFF\n");
-+			return -ETIMEDOUT;
-+		}
-+	}
-+}
-+static int acp3x_reset(void __iomem *acp3x_base)
-+{
-+	u32 val, timeout;
-+
-+	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (++timeout < DELAY) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
-+							timeout > 100) {
-+			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
-+				break;
-+			return -ENODEV;
-+		}
-+		cpu_relax();
-+	}
-+	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (++timeout < DELAY) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if (!val)
-+			break;
-+		if (timeout > 100)
-+			return -ENODEV;
-+		cpu_relax();
-+	}
-+	return 0;
-+}
-+static int acp3x_init(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* power on */
-+	ret = acp3x_power_on(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x power on failed\n");
-+		return ret;
-+	}
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+static int acp3x_deinit(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	/* power off */
-+	ret = acp3x_power_off(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x power off failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
- static int snd_acp3x_probe(struct pci_dev *pci,
- 			   const struct pci_device_id *pci_id)
- {
-@@ -63,6 +174,10 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 	}
- 	pci_set_master(pci);
- 	pci_set_drvdata(pci, adata);
-+	ret = acp3x_init(adata->acp3x_base);
-+	if (ret)
-+		return -ENODEV;
-+
- 
- 	val = rv_readl(adata->acp3x_base + mmACP_I2S_PIN_CONFIG);
- 	switch (val) {
-@@ -133,9 +248,19 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 		ret = -ENODEV;
- 		goto unmap_mmio;
- 	}
-+	pm_runtime_set_autosuspend_delay(&pci->dev, 10000);
-+	pm_runtime_use_autosuspend(&pci->dev);
-+	pm_runtime_set_active(&pci->dev);
-+	pm_runtime_put_noidle(&pci->dev);
-+	pm_runtime_enable(&pci->dev);
- 	return 0;
- 
- unmap_mmio:
-+	ret = acp3x_deinit(adata->acp3x_base);
-+	if (ret)
-+		dev_err(&pci->dev, "ACP de-init failed\n");
-+	else
-+		dev_info(&pci->dev, "ACP de-initialized\n");
- 	pci_disable_msi(pci);
- 	for (i = 0 ; i < ACP3x_DEVS ; i++)
- 		platform_device_unregister(adata->pdev[i]);
-@@ -148,23 +273,57 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 
- 	return ret;
- }
-+static int  snd_acp3x_suspend(struct device *dev)
-+{
-+	int status;
-+	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-+
-+	status = acp3x_deinit(adata->acp3x_base);
-+	if (status)
-+		dev_err(dev, "ACP de-init failed\n");
-+	else
-+		dev_info(dev, "ACP de-initialized\n");
- 
-+	return 0;
-+}
-+static int  snd_acp3x_resume(struct device *dev)
-+{
-+	int status;
-+	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-+
-+	status = acp3x_init(adata->acp3x_base);
-+	if (status) {
-+		dev_err(dev, "ACP init failed\n");
-+		return status;
-+	}
-+	return 0;
-+}
-+static const struct dev_pm_ops acp3x_pm = {
-+	.runtime_suspend = snd_acp3x_suspend,
-+	.runtime_resume =  snd_acp3x_resume,
-+	.resume =       snd_acp3x_resume,
-+};
- static void snd_acp3x_remove(struct pci_dev *pci)
- {
--	int i;
-+	int i, ret;
- 	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
- 
- 	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
- 		for (i = 0 ; i <  ACP3x_DEVS ; i++)
- 			platform_device_unregister(adata->pdev[i]);
- 	}
-+	ret = acp3x_deinit(adata->acp3x_base);
-+	if (ret)
-+		dev_err(&pci->dev, "ACP de-init failed\n");
-+	else
-+		dev_info(&pci->dev, "ACP de-initialized\n");
- 	iounmap(adata->acp3x_base);
--
-+	pm_runtime_disable(&pci->dev);
-+	pm_runtime_get_noresume(&pci->dev);
- 	pci_disable_msi(pci);
- 	pci_release_regions(pci);
- 	pci_disable_device(pci);
- }
--
- static const struct pci_device_id snd_acp3x_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, 0x15e2),
- 	.class = PCI_CLASS_MULTIMEDIA_OTHER << 8,
-@@ -178,6 +337,9 @@ static struct pci_driver acp3x_driver  = {
- 	.id_table = snd_acp3x_ids,
- 	.probe = snd_acp3x_probe,
- 	.remove = snd_acp3x_remove,
-+	.driver = {
-+		.pm = &acp3x_pm,
-+	}
- };
- 
- module_pci_driver(acp3x_driver);
+ static int wmt_gpio_get_value(struct gpio_chip *chip, unsigned offset)
 -- 
-2.7.4
+2.21.0
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
