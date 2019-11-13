@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA10FA4DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F32BFA4D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:20:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730107AbfKMCT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:19:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46718 "EHLO mail.kernel.org"
+        id S1729074AbfKMCTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:19:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729027AbfKMBzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:55:16 -0500
+        id S1729068AbfKMBzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:55:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EB23222CD;
-        Wed, 13 Nov 2019 01:55:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C303222CD;
+        Wed, 13 Nov 2019 01:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610115;
-        bh=RCewstX/TBOlPvkRFaX/7Ew/LarAdpNmJALeRfGKJbs=;
+        s=default; t=1573610118;
+        bh=RgYw0oBSLwQBhdw3WvYdr72j1tYCT0JVBwh8M+A/DAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o/YIf6MvxCchCITZ/o25tzebTttbOQIAKl/yiuVPkhmP3HDrfHN3kIdQaW9pvRAQ9
-         UQE8iTZUuMAYMyvkS3BvUPlaep2t+zOrBpNWzLOU/0GNA0udnhMHp/ohU9czjVG7M8
-         2rCsLxKihBwKbDPCTTuf4Qjgk4LvDIYfcwoQcVyw=
+        b=N97tgouPjOSxzfN4UN0nTKCAT9du+rcWrRRmpcai3ZbRFl/TvOw/CyoLtkXVm0Ora
+         EFMZK3wP5fyC/lyC+y9ngx/uLqfpxQqhUW705csK2v1dqEwjwgxmkC+6xYkz7Lu0Jk
+         9euYKpAbhuZ69+KMILBOkvpPpi/Z9ktxQt4uh32I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans Holmberg <hans.holmberg@cnexlabs.com>,
+Cc:     =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 171/209] lightnvm: pblk: fix write amplificiation calculation
-Date:   Tue, 12 Nov 2019 20:49:47 -0500
-Message-Id: <20191113015025.9685-171-sashal@kernel.org>
+        linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 173/209] lightnvm: do no update csecs and sos on 1.2
+Date:   Tue, 12 Nov 2019 20:49:49 -0500
+Message-Id: <20191113015025.9685-173-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -45,44 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+From: Javier González <javier@javigon.com>
 
-[ Upstream commit 765462fa4c4d0fd3eb718f2ba14cb04c35219854 ]
+[ Upstream commit 6fd05cad5ee1290b276dd8ed90a1e019b1fa577a ]
 
-When the user data counter exceeds 32 bits, the write amplification
-calculation does not provide the right value. Fix this by using
-div64_u64 in stead of div64.
+1.2 devices exposes their data and metadata size through the separate
+identify command. Make sure that the NVMe LBA format does not override
+these values.
 
-Fixes: 76758390f83e ("lightnvm: pblk: export write amplification counters to sysfs")
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/lightnvm/pblk-sysfs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/nvme/host/lightnvm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 8d2ed510c04b3..bdc86ee4c7793 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -343,7 +343,6 @@ static ssize_t pblk_get_write_amp(u64 user, u64 gc, u64 pad,
- {
- 	int sz;
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 6fe5923c95d4a..a69553e75f38e 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -968,6 +968,9 @@ void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
+ 	struct nvm_dev *ndev = ns->ndev;
+ 	struct nvm_geo *geo = &ndev->geo;
  
--
- 	sz = snprintf(page, PAGE_SIZE,
- 			"user:%lld gc:%lld pad:%lld WA:",
- 			user, gc, pad);
-@@ -355,7 +354,7 @@ static ssize_t pblk_get_write_amp(u64 user, u64 gc, u64 pad,
- 		u32 wa_frac;
- 
- 		wa_int = (user + gc + pad) * 100000;
--		wa_int = div_u64(wa_int, user);
-+		wa_int = div64_u64(wa_int, user);
- 		wa_int = div_u64_rem(wa_int, 100000, &wa_frac);
- 
- 		sz += snprintf(page + sz, PAGE_SIZE - sz, "%llu.%05u\n",
++	if (geo->version == NVM_OCSSD_SPEC_12)
++		return;
++
+ 	geo->csecs = 1 << ns->lba_shift;
+ 	geo->sos = ns->ms;
+ }
 -- 
 2.20.1
 
