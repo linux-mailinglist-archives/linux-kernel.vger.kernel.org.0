@@ -2,92 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 973D5FB75E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 19:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F2B1FB778
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 19:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfKMSZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 13:25:44 -0500
-Received: from mga11.intel.com ([192.55.52.93]:10910 "EHLO mga11.intel.com"
+        id S1728496AbfKMS07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 13:26:59 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:38082 "EHLO mail.andi.de1.cc"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728484AbfKMSZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 13:25:42 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 10:25:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
-   d="scan'208";a="214367174"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 13 Nov 2019 10:25:37 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 13 Nov 2019 20:25:37 +0200
-Date:   Wed, 13 Nov 2019 20:25:37 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Benson Leung <bleung@google.com>
-Cc:     Jon Flatley <jflat@chromium.org>, enric.balletbo@collabora.com,
-        linux-kernel@vger.kernel.org, bleung@chromium.org,
-        groeck@chromium.org, sre@kernel.org, pmalani@chromium.org
-Subject: Re: [PATCH 0/3] ChromeOS EC USB-C Connector Class
-Message-ID: <20191113182537.GC4013@kuha.fi.intel.com>
-References: <20191113031044.136232-1-jflat@chromium.org>
- <20191113175127.GA171004@google.com>
+        id S1727538AbfKMS06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 13:26:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=tqYhob/E5epp8M/KG4PYlFii+q6GD8g+aIml5ORUXbM=; b=PdwBBOQliKWOyoJdy1W9WixuaT
+        7tLZk99hIt2MfRqgkT3BHWBh1Yx4UR5SWtH5ivhWBFAVizI77f5DCUrH5lG7kb9D6yYKH+HmsXHB6
+        CKB6HX7l2l9ejvcuSjVKqDvu4zpJB52S9/43M4cvAJMXo+xmKjawqnE5cb/vezq5C9mQ=;
+Received: from p5dcc3bb7.dip0.t-ipconnect.de ([93.204.59.183] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iUxM0-0001tL-HV; Wed, 13 Nov 2019 19:26:56 +0100
+Received: from andi by aktux with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iUxM0-0006E1-5Y; Wed, 13 Nov 2019 19:26:56 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     lgirdwood@gmail.com, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, phh@phh.me, b.galvani@gmail.com,
+        stefan@agner.ch
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH] regulator: rn5t618: fix rc5t619 ldo10 enable
+Date:   Wed, 13 Nov 2019 19:26:43 +0100
+Message-Id: <20191113182643.23885-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113175127.GA171004@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+LDO9 and LDO10 were listed with the same enable bits.
+That looks insane and there are no provisions in the code for handling such
+a special case. Also other out-of-tree drivers use a separate bit to
+enable it.
+Example:
+https://github.com/brunotl/kernel-kobo-mx6sl-ntx/blob/master/drivers/regulator/ricoh619-regulator.c
+So it seems to be clearly a bug.
+I cannot fully check it on my board without schematics and just discovered
+this during code analysis for another problem.
 
-On Wed, Nov 13, 2019 at 09:51:27AM -0800, Benson Leung wrote:
-> Hi Jon,
-> 
-> Thanks for posting this.
-> 
-> Adding Heikki, the typec connector class maintainer, and Enric, co-maintainer
-> of platform/chrome.
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ drivers/regulator/rn5t618-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks Benson.
-
-> On Tue, Nov 12, 2019 at 07:10:41PM -0800, Jon Flatley wrote:
-> > This patch set adds a basic implementation of the USB-C connector class for
-> > devices using the ChromeOS EC. On ACPI devices an additional ACPI driver is
-> > necessary to receive USB-C PD host events from the PD EC device "GOOG0003".
-> > Incidentally, this ACPI driver adds notifications for events that
-> > cros-usbpd-charger has been missing, so fix that while we're at it.
-> 
-> > Jon Flatley (3):
-> >   platform: chrome: Add cros-ec-usbpd-notify driver
-> >   power: supply: cros-ec-usbpd-charger: Fix host events
-> >   platform: chrome: Added cros-ec-typec driver
-> > 
-> >  drivers/mfd/cros_ec_dev.c                     |   7 +-
-> >  drivers/platform/chrome/Kconfig               |  20 +
-> >  drivers/platform/chrome/Makefile              |   2 +
-> >  drivers/platform/chrome/cros_ec_typec.c       | 457 ++++++++++++++++++
-> >  .../platform/chrome/cros_ec_usbpd_notify.c    | 156 ++++++
-> >  drivers/power/supply/Kconfig                  |   2 +-
-> >  drivers/power/supply/cros_usbpd-charger.c     |  45 +-
-> >  .../platform_data/cros_ec_usbpd_notify.h      |  40 ++
-> >  8 files changed, 696 insertions(+), 33 deletions(-)
-> >  create mode 100644 drivers/platform/chrome/cros_ec_typec.c
-> >  create mode 100644 drivers/platform/chrome/cros_ec_usbpd_notify.c
-> >  create mode 100644 include/linux/platform_data/cros_ec_usbpd_notify.h
-
-I'll go over these tomorrow, but I have one question already. Can you
-guys influence what goes to the ACPI tables?
-
-Ideally every Type-C connector is always described in its own ACPI
-node (or DT node if DT is used). Otherwise getting the correct
-capabilities and especially connections to other devices (like the
-muxes) for every port may get difficult.
-
-Br,
-
+diff --git a/drivers/regulator/rn5t618-regulator.c b/drivers/regulator/rn5t618-regulator.c
+index eb807a059479..4a91be0ad5ae 100644
+--- a/drivers/regulator/rn5t618-regulator.c
++++ b/drivers/regulator/rn5t618-regulator.c
+@@ -90,7 +90,7 @@ static const struct regulator_desc rc5t619_regulators[] = {
+ 	REG(LDO7, LDOEN1, BIT(6), LDO7DAC, 0x7f, 900000, 3500000, 25000),
+ 	REG(LDO8, LDOEN1, BIT(7), LDO8DAC, 0x7f, 900000, 3500000, 25000),
+ 	REG(LDO9, LDOEN2, BIT(0), LDO9DAC, 0x7f, 900000, 3500000, 25000),
+-	REG(LDO10, LDOEN2, BIT(0), LDO10DAC, 0x7f, 900000, 3500000, 25000),
++	REG(LDO10, LDOEN2, BIT(1), LDO10DAC, 0x7f, 900000, 3500000, 25000),
+ 	/* LDO RTC */
+ 	REG(LDORTC1, LDOEN2, BIT(4), LDORTCDAC, 0x7f, 1700000, 3500000, 25000),
+ 	REG(LDORTC2, LDOEN2, BIT(5), LDORTC2DAC, 0x7f, 900000, 3500000, 25000),
 -- 
-heikki
+2.20.1
+
