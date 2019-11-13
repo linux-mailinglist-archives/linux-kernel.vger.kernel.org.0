@@ -2,122 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A8EFB44D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 16:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05AEAFB451
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 16:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfKMPxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 10:53:08 -0500
-Received: from mta-02.yadro.com ([89.207.88.252]:59932 "EHLO mta-01.yadro.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726074AbfKMPxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:53:04 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 20344412D2;
-        Wed, 13 Nov 2019 15:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received:received; s=mta-01; t=
-        1573660380; x=1575474781; bh=u6VsNH8spieqcZMUkwhitlLPwcJWZA6GXjz
-        wh0sgyTs=; b=Lsyan+DYpW6IleLOjFmf3XpEK9zYBKXdYEnzmDUPEQS42b9Tiby
-        hkzVq2+4LuGLOW1Wh3/0ge3qIJZj2e20aqG4D2iugnJ7fbfcAmdlUzKXzukxNb3x
-        kFmSghKapTW9B5iuXXBpLI9qeSpr6Ktkp/JHTh3TJzOBpr/uEcCauUOk=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5Lco3oJBrAxV; Wed, 13 Nov 2019 18:53:00 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id 4CECE42F12;
-        Wed, 13 Nov 2019 18:52:59 +0300 (MSK)
-Received: from localhost.dev.yadro.com (172.17.15.69) by
- T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.669.32; Wed, 13 Nov 2019 18:52:53 +0300
-From:   Ivan Mikhaylov <i.mikhaylov@yadro.com>
-CC:     Ivan Mikhaylov <i.mikhaylov@yadro.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, <openbmc@lists.ozlabs.org>
-Subject: [PATCH 2/2] mmc: sdhci-of-aspeed: add inversion signal presence
-Date:   Wed, 13 Nov 2019 18:52:37 +0300
-Message-ID: <20191113155237.30646-3-i.mikhaylov@yadro.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113155237.30646-1-i.mikhaylov@yadro.com>
-References: <20191113155237.30646-1-i.mikhaylov@yadro.com>
+        id S1728199AbfKMPxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 10:53:21 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44268 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfKMPxV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 10:53:21 -0500
+Received: by mail-ot1-f67.google.com with SMTP id c19so1995733otr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 07:53:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=7nUTsUyFuV1Joe0Th3z9Twe1G0A6kzFQQxZuL7muiZ4=;
+        b=T6a9Tb8I5cPRZyrSMQvO0rJbtY9VZixdvbWPk4W28h5xSwpzJALgGyJbnYbJAh82MO
+         JjaGCkwDG/CxMv2UsJYswq0xfQ1iuzemLACUNyFTKCB/ZenoygZXTJIFMBqboJQAKSfD
+         LsAp7SAapoCr5enECA8SV155twtf1u7jr/fJORjOWE18v8BmIF8GqrcRSQGSUCJ80qe1
+         QjMhPUuYnHuMfvNiEXuCtley9t6nZTX0OtNlObQjOC6PCTnIIWSd38nD7Tg1RxHIoRtm
+         zDXX9xY44SPU5n6jAzSR0+dUIxE8oCf/VT8Ouep5MdFtTIyBFSQuOWIpr20XFljFlnJH
+         1pGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=7nUTsUyFuV1Joe0Th3z9Twe1G0A6kzFQQxZuL7muiZ4=;
+        b=Pu17lMszwM74i8ECU5xy5WZHMg1aIxzVWXvubMaIc6QtyZtv8LGHPKiKPJzp8jg8xT
+         oKFF9Y7azQYnyKk1ObKNG75gQYq0MAXW/YS0RbTVc8+/LIwOX1piASkG1YYMAtv4lW+J
+         n5fJ/CRVUmdUahzcSZ+DNDJxaKuI915rbH23rIGqMpiMPGKJfd8xF1FZzNpiXsQ1b4Sr
+         by7K8H6vTCp+sw3EJDRhG9B7nMM+nXJRvdxkxOEWsRKM0dtXaee3OzaLqER3BJFR27oh
+         SiMczg+q3ksw5km6dL8zR58LOI7/AOZZMr3nC3A5rM9UYpuansvbCdvwTMUlBKbU7KT6
+         m1ZQ==
+X-Gm-Message-State: APjAAAUGb+OJigF9lucODZc7NEDlRz6FRAd5m6TKJjd69WjARSw1eVUS
+        5mqFPv/A2RN+z1tPGkN/dzeODpnJh2crb5CRzKQ=
+X-Google-Smtp-Source: APXvYqwZxJ52PoROhPcy71MmG+uTbI6nL1iwka5ATkFuXLauUPcX6kqXvKUAEq78iY5M0xl+sZ/UjLpr64s96n7m45Y=
+X-Received: by 2002:a9d:77c5:: with SMTP id w5mr3262533otl.351.1573660400140;
+ Wed, 13 Nov 2019 07:53:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.17.15.69]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-02.corp.yadro.com (172.17.10.102)
-To:     unlisted-recipients:; (no To-header on input)
+Received: by 2002:a4a:a194:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 07:53:19
+ -0800 (PST)
+Reply-To: infobankatlanitctogo@gmail.com
+From:   BANK BTCI <directofficemailbox1@gmail.com>
+Date:   Wed, 13 Nov 2019 15:53:19 +0000
+Message-ID: <CAAMd7HjnjnqEiQqvekL3vMtLTMD4iuGrjr=bKJoCVN6sq3wxag@mail.gmail.com>
+Subject: Congratulations / Call / Whatsapp : +22892331995
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the default .get_cd callback. Add inverted signal card detection
-check.
+ATTN:
 
-Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+This is to inform you that the IMF office instructed us to transfer
+your $2.5 Million Dollars compensating for all the SCAM VICTIMS and
+your email were found as one of the VICTIMS By IMF Security leading
+team and IMF representative officers, so between now until 31th Of
+Dec. 2019 you will be receiving a sum of $5000 dollars per day.
 
-diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-of-aspeed.c
-index 8962f6664381..8eded8a6ed8d 100644
---- a/drivers/mmc/host/sdhci-of-aspeed.c
-+++ b/drivers/mmc/host/sdhci-of-aspeed.c
-@@ -31,6 +31,7 @@ struct aspeed_sdc {
- struct aspeed_sdhci {
- 	struct aspeed_sdc *parent;
- 	u32 width_mask;
-+	u8 cd_inverted;
- };
- 
- static void aspeed_sdc_configure_8bit_mode(struct aspeed_sdc *sdc,
-@@ -143,6 +144,21 @@ static inline int aspeed_sdhci_calculate_slot(struct aspeed_sdhci *dev,
- 	return (delta / 0x100) - 1;
- }
- 
-+static int aspeed_get_cd(struct mmc_host *mmc)
-+{
-+	struct aspeed_sdhci *aspeed_sdhci;
-+	struct sdhci_pltfm_host *pltfm_priv;
-+	struct sdhci_host *host = mmc_priv(mmc);
-+
-+	int presence = !!(sdhci_readl(host, SDHCI_PRESENT_STATE)
-+			 & SDHCI_CARD_PRESENT);
-+
-+	pltfm_priv = sdhci_priv(host);
-+	aspeed_sdhci = sdhci_pltfm_priv(pltfm_priv);
-+
-+	return presence ^ aspeed_sdhci->cd_inverted;
-+}
-+
- static int aspeed_sdhci_probe(struct platform_device *pdev)
- {
- 	struct sdhci_pltfm_host *pltfm_host;
-@@ -183,6 +199,13 @@ static int aspeed_sdhci_probe(struct platform_device *pdev)
- 		goto err_pltfm_free;
- 	}
- 
-+	dev->cd_inverted = 0;
-+	host->mmc_host_ops.get_cd = aspeed_get_cd;
-+	if (of_property_read_bool(pdev->dev.of_node, "cd-inverted")) {
-+		dev->cd_inverted = 1;
-+		dev_info(&pdev->dev, "aspeed: sdhci: presence signal inversion enabled\n");
-+	}
-+
- 	ret = mmc_of_parse(host->mmc);
- 	if (ret)
- 		goto err_sdhci_add;
--- 
-2.20.1
+However you are informed that we are waiting for your informations
+bellow as stated so that we will start by sending the first $ 5000
+dollars to you first thing tomorrow morning, for you to avoid
+cancellation of your payment. You have only 48 hours to Call(+22892331995 )
+or Email (infobankatlanitctogo@gmail.com ) this office upon the receipt of
+this Email the maximum amount you will be receiving per a day is $5000.
 
+
+So provided the below information:
+
+1) Your: Full Name===================
+2) Your: Full Address================
+3) Your: contact telephone and fax number;=====
+4) Your: Age and Profession;=========
+5) Your:Copy of any valid form of your Identification;===
+6) Your:Marital status===========
+
+
+
+Further more you advised to call us as the instruction was passed that
+Within 48 hours without hearing from you, Count your payment canceled.
+
+
+Thanks
+Mr. Donald Phillipie
+Tell : WHATS UP : +22892331995
