@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01C4FFA181
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C8BFA184
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:58:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729842AbfKMB5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:57:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50836 "EHLO mail.kernel.org"
+        id S1728388AbfKMB5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:57:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729836AbfKMB5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:33 -0500
+        id S1728256AbfKMB5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:57:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C87342245A;
-        Wed, 13 Nov 2019 01:57:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E17D222D3;
+        Wed, 13 Nov 2019 01:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610252;
-        bh=tumwbkLJx4WESNM/WDRtCUOjFtxKWYFdxn2zjnFdH44=;
+        s=default; t=1573610257;
+        bh=1CoKczlBB1iIl9HG7yyi/uWIsWV4eb00AiNisJOIj7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vxZt4NVKuErWdh7zySaN28NlQpASci/OqPBOVN+Hv2PxMKjvjVz8U+xDHwVHWXdi8
-         YNMMrF3i5NMONdb21mdAFAwPPWBgNDu08KhdIKKIkIBf1lLEIYY7xhfGPVZ7WUCR8q
-         7W7/Vv5HCRB5XqY0NJk5/ZoNaAP2w7dgZqfBTykA=
+        b=ze7Z1wEsork3kLP6WdqEPkjQFcl/NMwWcWhAp3ZOGzrirvsM8eBplIOYld3tJzRrG
+         safMVOsV2vwn9U+lxaewKGZSDEYzTZ1eTTLRlj6FoXJM0tF2SsCWMG1vwAgcJaes8m
+         fxAb8WqEjj0a5lqenCGXg2LntcdG+2ANI53lQqt4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anton Blanchard <anton@ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 048/115] powerpc/time: Use clockevents_register_device(), fixing an issue with large decrementer
-Date:   Tue, 12 Nov 2019 20:55:15 -0500
-Message-Id: <20191113015622.11592-48-sashal@kernel.org>
+Cc:     Matthias Reichl <hias@horus.com>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 051/115] media: rc: ir-rc6-decoder: enable toggle bit for Kathrein RCU-676 remote
+Date:   Tue, 12 Nov 2019 20:55:18 -0500
+Message-Id: <20191113015622.11592-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -43,59 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Blanchard <anton@ozlabs.org>
+From: Matthias Reichl <hias@horus.com>
 
-[ Upstream commit 8b78fdb045de60a4eb35460092bbd3cffa925353 ]
+[ Upstream commit 85e4af0a7ae2f146769b7475ae531bf8a3f3afb4 ]
 
-We currently cap the decrementer clockevent at 4 seconds, even on systems
-with large decrementer support. Fix this by converting the code to use
-clockevents_register_device() which calculates the upper bound based on
-the max_delta passed in.
+The Kathrein RCU-676 remote uses the 32-bit rc6 protocol and toggles
+bit 15 (0x8000) on repeated button presses, like MCE remotes.
 
-Signed-off-by: Anton Blanchard <anton@ozlabs.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Add it's customer code 0x80460000 to the 32-bit rc6 toggle
+handling code to get proper scancodes and toggle reports.
+
+Signed-off-by: Matthias Reichl <hias@horus.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/time.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+ drivers/media/rc/ir-rc6-decoder.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index fe6f3a2854557..870e75d304591 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -984,10 +984,10 @@ static void register_decrementer_clockevent(int cpu)
- 	*dec = decrementer_clockevent;
- 	dec->cpumask = cpumask_of(cpu);
- 
-+	clockevents_config_and_register(dec, ppc_tb_freq, 2, decrementer_max);
-+
- 	printk_once(KERN_DEBUG "clockevent: %s mult[%x] shift[%d] cpu[%d]\n",
- 		    dec->name, dec->mult, dec->shift, cpu);
--
--	clockevents_register_device(dec);
- }
- 
- static void enable_large_decrementer(void)
-@@ -1035,18 +1035,7 @@ static void __init set_decrementer_max(void)
- 
- static void __init init_decrementer_clockevent(void)
- {
--	int cpu = smp_processor_id();
--
--	clockevents_calc_mult_shift(&decrementer_clockevent, ppc_tb_freq, 4);
--
--	decrementer_clockevent.max_delta_ns =
--		clockevent_delta2ns(decrementer_max, &decrementer_clockevent);
--	decrementer_clockevent.max_delta_ticks = decrementer_max;
--	decrementer_clockevent.min_delta_ns =
--		clockevent_delta2ns(2, &decrementer_clockevent);
--	decrementer_clockevent.min_delta_ticks = 2;
--
--	register_decrementer_clockevent(cpu);
-+	register_decrementer_clockevent(smp_processor_id());
- }
- 
- void secondary_cpu_time_init(void)
+diff --git a/drivers/media/rc/ir-rc6-decoder.c b/drivers/media/rc/ir-rc6-decoder.c
+index 5d0d2fe3b7a7f..90f7930444a1a 100644
+--- a/drivers/media/rc/ir-rc6-decoder.c
++++ b/drivers/media/rc/ir-rc6-decoder.c
+@@ -40,6 +40,7 @@
+ #define RC6_6A_MCE_TOGGLE_MASK	0x8000	/* for the body bits */
+ #define RC6_6A_LCC_MASK		0xffff0000 /* RC6-6A-32 long customer code mask */
+ #define RC6_6A_MCE_CC		0x800f0000 /* MCE customer code */
++#define RC6_6A_KATHREIN_CC	0x80460000 /* Kathrein RCU-676 customer code */
+ #ifndef CHAR_BIT
+ #define CHAR_BIT 8	/* Normally in <limits.h> */
+ #endif
+@@ -252,13 +253,17 @@ static int ir_rc6_decode(struct rc_dev *dev, struct ir_raw_event ev)
+ 				toggle = 0;
+ 				break;
+ 			case 32:
+-				if ((scancode & RC6_6A_LCC_MASK) == RC6_6A_MCE_CC) {
++				switch (scancode & RC6_6A_LCC_MASK) {
++				case RC6_6A_MCE_CC:
++				case RC6_6A_KATHREIN_CC:
+ 					protocol = RC_PROTO_RC6_MCE;
+ 					toggle = !!(scancode & RC6_6A_MCE_TOGGLE_MASK);
+ 					scancode &= ~RC6_6A_MCE_TOGGLE_MASK;
+-				} else {
++					break;
++				default:
+ 					protocol = RC_PROTO_RC6_6A_32;
+ 					toggle = 0;
++					break;
+ 				}
+ 				break;
+ 			default:
 -- 
 2.20.1
 
