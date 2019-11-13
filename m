@@ -2,86 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 843C6FBC79
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 00:22:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4AF7FBC9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 00:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfKMXWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 18:22:50 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35061 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbfKMXWu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 18:22:50 -0500
-Received: by mail-pl1-f194.google.com with SMTP id s10so1744731plp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 15:22:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PnC2EnZ/9yWW959Hh/k8Fx1oMGg10XdljJMPZj6JnUY=;
-        b=Hf1Z5gez82r+oTd6ydC+ZjLQx1uQl/epkoQZOi2UWsUxtnC7vz6UbgVzXACvVguET8
-         B1r439ENlYw3ydKrZCF7LY3jQwp5xwpYB71unyWWJ4w630L+BZ/3X7WheMhfVi572N/4
-         yw7GZbzAXep8sNhNt2fNGHAOeRJ7vEDZ8dAXt4j4xlCbUDTJH52frakbBd+RZ4E67JmH
-         jv8zcL+wUIQP9wDH/Q323MQnDsjklM8emprm1gBjYMADfrolCEr7JYdlJPz1M8eK6mQJ
-         YEbodCDy9QsAUuo8eRXoU4oDr+I6FZgvOyW4RiKVW97hdxqx5ipxHC2B6U7SdpaR76XR
-         3sAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PnC2EnZ/9yWW959Hh/k8Fx1oMGg10XdljJMPZj6JnUY=;
-        b=gFlPCoobT1ZOhu+y5y9bbwKK6g66DR1fWnGigCbwlE0ITM3CZL7GMCIbSt5LlAaY5x
-         Nd19BNEf4Jlo9rSP5+qRBlLjTTTtrweWWAOCN9OTJ5Sd+j3bDeEKiqTERqxrFsJUdkvO
-         s10AcOZm5a5szhLBmC5LFAVE66he6ReMIWlFZo5oqdu50RT5DWyuoExY5vpzCPuEhitF
-         oPuavThsbzIPm5GRuxEky3tkukTDB+uJl0U7+ao6S0/3KAs/yRbsRMC90Qg6kdi1IXIE
-         hGbPEN+5l/NR/9LWTwDoFavGjRyoJlHvsTfiiYX7DiPVDbFIa3wWpr6F2b844wM6rUA+
-         prdg==
-X-Gm-Message-State: APjAAAX8RElN+ReLthq0jGPCNKXRQd/f8KqcERvVPDiTfM2fftUt9uu0
-        /u8Kk5RRVMaAkiMEzRjbLoepJg==
-X-Google-Smtp-Source: APXvYqwkCHtk+kWBYG2xS1z0RatDyIgpKCCiE9mnyxr59SsymXOXeGmdTvY41JCjZ3co01GD2gLLCw==
-X-Received: by 2002:a17:902:d901:: with SMTP id c1mr6362694plz.93.1573687369645;
-        Wed, 13 Nov 2019 15:22:49 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 12sm4427369pfv.92.2019.11.13.15.22.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 15:22:48 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: db845c: Enable ath10k 8bit host-cap quirk
-Date:   Wed, 13 Nov 2019 15:22:45 -0800
-Message-Id: <20191113232245.4039932-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        id S1726986AbfKMXb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 18:31:59 -0500
+Received: from mga18.intel.com ([134.134.136.126]:1666 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726251AbfKMXb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 18:31:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 15:31:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,302,1569308400"; 
+   d="scan'208";a="207609765"
+Received: from guptapadev.jf.intel.com (HELO guptapadev.amr) ([10.7.198.56])
+  by orsmga003.jf.intel.com with ESMTP; 13 Nov 2019 15:31:57 -0800
+Date:   Wed, 13 Nov 2019 15:25:10 -0800
+From:   Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Jan Kiszka <jan.kiszka@siemens.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        "Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>
+Subject: Re: [FYI PATCH 0/7] Mitigation for CVE-2018-12207
+Message-ID: <20191113232510.GB891@guptapadev.amr>
+References: <1573593697-25061-1-git-send-email-pbonzini@redhat.com>
+ <23353382-53ea-8b20-7e30-763ef6df374c@siemens.com>
+ <ea5a084b-e047-6677-b8fe-d7bb6f8c0ef8@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea5a084b-e047-6677-b8fe-d7bb6f8c0ef8@redhat.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The WiFi firmware used on db845c implements the 8bit host-capability
-message, so enable the quirk for this.
+On Wed, Nov 13, 2019 at 09:23:30AM +0100, Paolo Bonzini wrote:
+> On 13/11/19 07:38, Jan Kiszka wrote:
+> > When reading MCE, error code 0150h, ie. SRAR, I was wondering if that
+> > couldn't simply be handled by the host. But I suppose the symptom of
+> > that erratum is not "just" regular recoverable MCE, rather
+> > sometimes/always an unrecoverable CPU state, despite the error code, right?
+> 
+> The erratum documentation talks explicitly about hanging the system, but
+> it's not clear if it's just a result of the OS mishandling the MCE, or
+> something worse.  So I don't know. :(  Pawan, do you?
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 2 ++
- 1 file changed, 2 insertions(+)
+As Dave mentioned in the other email its "something worse".
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-index 12f5f14ada5c..7ec7b90ab83e 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-@@ -625,6 +625,8 @@
- 	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
- 	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
- 	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
-+
-+	qcom,snoc-host-cap-8bit-quirk;
- };
- 
- /* PINCTRL - additions to nodes defined in sdm845.dtsi */
--- 
-2.23.0
+Although this erratum results in a machine check with the same MCACOD
+signature as an SRAR error (0x150) the MCi_STATUS.PCC bit will be set to
+one. The Intel Software Developers manual says that PCC=1 errors are
+fatal and cannot be recovered.
 
+	15.10.4.1 Machine-Check Exception Handler for Error Recovery [1]
+
+	[...]
+	The PCC flag in each IA32_MCi_STATUS register indicates whether recovery
+	from the error is possible for uncorrected errors (UC=1). If the PCC
+	flag is set for enabled uncorrected errors (UC=1 and EN=1), recovery is
+	not possible.
+
+Thanks,
+Pawan
+
+[1]
+https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-3b-part-2-manual.html
