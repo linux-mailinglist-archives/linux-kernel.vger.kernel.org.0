@@ -2,124 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 608FDFBAA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:27:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28314FBAB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:29:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfKMV0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 16:26:55 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35184 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfKMV0x (ORCPT
+        id S1727036AbfKMV3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 16:29:49 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45686 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbfKMV3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 16:26:53 -0500
-Received: by mail-oi1-f194.google.com with SMTP id n16so3232106oig.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 13:26:53 -0800 (PST)
+        Wed, 13 Nov 2019 16:29:49 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k1so857780pgg.12;
+        Wed, 13 Nov 2019 13:29:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GXkcX2JCtyKHHo0cyAglaiWGhE2YBu5/DI/DhPu01Ow=;
-        b=LAn02cio2MfDiRJwrNq18V3/ueYXDq6XkkbOMC9mIKr8Og4Hg9ge7OM8DRKJiQIHL/
-         bumdQzTlMxUhgjy/QBL0GW8zIJWFFWxIPImeU8EQmjwRcrbRTPhEisRh05HJxEKvRxjC
-         HXLhoZ41YrOyPC/YB0HfY5kWYQVTDJ2bVWmEz4D4meNck4DWvbST6A9fRbgoliBURU0t
-         1W6rzDHt/Ofaa8L8fEoROHquPzJWNvWoBk7M28H4w4pFQIMmaoT7SelSj1/E13G2DdLg
-         xGekDE5Vk1TeqpDeVVjIfYZJoJPFdS+FFh77Z2AUOJ0WB/YrzFEL6pmPSYxIFqQHQjt1
-         3AIw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AVqWPleKaz31XmHuM5Ar+WLW3xPppIUP+VoAlnFtLBw=;
+        b=uY58BuYHB8vwpNFQzLSanEitfWdr1sIaJEBa/ZXgEaCMCR0/3DKmOvMRfQsyzmihsX
+         zZz40DxW/ddhUtb/HBbeBAJYAo76JfnZFs9RYhC70nS8EPxvsJ5hDWRyin8MiNeb4zpm
+         CojDvqLC5OAcBUFlepvACs7RRLbJopc+6cp6LW93+YyquBehtxfcVF4F9CCJjEIBbaV0
+         pmgu6m/9du0C+uIHqW4LUs8TYM/tvVenFp//abs9ORws8Cu+D81AlGQ7glmA2iUMzoZW
+         +UgL/36jDRb3kGLRMg54m5p+8ghrBjeDW7eBENqfxBZ+foBUi3PLtH0BGdp/SUf7Of+Z
+         UxGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GXkcX2JCtyKHHo0cyAglaiWGhE2YBu5/DI/DhPu01Ow=;
-        b=kIgOpWi/jqAi0XdhxXzgJ4oQILs8BWYtPoasEyAjmlmlKggvSQlfnk+m2OOSOwVrFZ
-         cmFsI4Fj4+7lW+SNq/PztOsGBDXcG/8rXVedp8P5d3C6BL62XjcwrK1gapUalC/QpSl9
-         aM1WRQ/gfSdzer4PTrC/GKQq6NUbpLPKZdpAGPgTLuwKhOaL162tfV6n6n30RnRkG3Kv
-         LV+2ozmpnfP/ypmjvccQwOjKMHBmT1p5xXkrKTbhp3CdwtpykECWXX1tDqm/5nQl4zGr
-         71OQ6uyErW1jaIQ1FpRg4UltvwnWL3vv/qPrDASViDoG+Vhj/zP0HpQKEm1DTxVTorP/
-         GFsg==
-X-Gm-Message-State: APjAAAXMRNWXSCawLgRY2mdA//fY5w4NxXHGBYlLuGDSaRZFFKYoD0mF
-        HQjero+N6fAbkXqeAgtZGC5I0oqrn3Lic71Xy0zgeQ==
-X-Google-Smtp-Source: APXvYqyDjhelVNRtH2Dd05TmcchN1KTJcyS9q6Qq71HSgmwdkipeSp+OhTiPzV+812M0dS2nt+KFP1CXO1g6gIoBsTo=
-X-Received: by 2002:aca:55c1:: with SMTP id j184mr653822oib.105.1573680412830;
- Wed, 13 Nov 2019 13:26:52 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AVqWPleKaz31XmHuM5Ar+WLW3xPppIUP+VoAlnFtLBw=;
+        b=fxeHx37EzeRgRD4bEuiVGey8X+/2O2XNFwmXEiHK6M8ZsFyq1trycL5u+WbYxKqvxm
+         8DyD7DEbR5+Ze2xEezUnKfgYNmnUuThkc8Xu0TrOGH3stflIoxM4piFqz8BihqRIVwb8
+         RiCfreNh54Q61svQMvoukMVEPnEf1TiwVn0cQhcBuCDku/zCg034mFJKKrGU/lotUJm+
+         FVesnfk8A9/eFsykOPVi/VQrfBACvIlLmw/d6G2kapiwZVv2S5llNQtdyT/qnbkl3zxW
+         g0G4/gimDFBajgoyQ57SjmPE5yWcvmo7iZ3t71561R0F7imbm134ePrLcm6ZzmLMbEnF
+         u0XQ==
+X-Gm-Message-State: APjAAAXIazJXpZ5yJFoIbDX11Wjzv8P56a+kpWGarrcJEqh6fXmnYYsD
+        wmN2lpfE3ofmYav/0O4vtWU=
+X-Google-Smtp-Source: APXvYqy9XSFSBUmcN5u6GCN8pPVS5+DCHCUev3ISERx87mJ8d3APZRegPuspjAPxngMAq5PvUtPRHg==
+X-Received: by 2002:a63:535c:: with SMTP id t28mr6226419pgl.173.1573680588338;
+        Wed, 13 Nov 2019 13:29:48 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id t12sm3519512pgv.45.2019.11.13.13.29.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Nov 2019 13:29:46 -0800 (PST)
+Date:   Wed, 13 Nov 2019 13:27:44 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     timur@kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V3 2/2] ASoC: fsl_asrc: Add support for imx8qm
+Message-ID: <20191113212743.GA2844@Asurada-Nvidia.nvidia.com>
+References: <b1c922b3496020f611ecd6ea27d262369646d830.1573462647.git.shengjiu.wang@nxp.com>
+ <3c3e59ae7adde852f133a5d7c2cbb2730362fc53.1573462647.git.shengjiu.wang@nxp.com>
 MIME-Version: 1.0
-References: <CAPcyv4gpN8kbh1i6jCDdC2OP41G3C2+7YD4rYz-3HaD_pufvyg@mail.gmail.com>
- <3E71366A-9232-46BB-8261-3FCB2300C80A@redhat.com>
-In-Reply-To: <3E71366A-9232-46BB-8261-3FCB2300C80A@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 13 Nov 2019 13:26:42 -0800
-Message-ID: <CAPcyv4hw58eYJdb4ifvwX8m1E-AMyF5COmjEppz7px6vaB5cRA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mm: Introduce subsection_dev_map
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>, "cai@lca.pw" <cai@lca.pw>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>,
-        Oscar Salvador <osalvador@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c3e59ae7adde852f133a5d7c2cbb2730362fc53.1573462647.git.shengjiu.wang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 1:22 PM David Hildenbrand <david@redhat.com> wrote:
->
->
->
-> > Am 13.11.2019 um 22:12 schrieb Dan Williams <dan.j.williams@intel.com>:
-> >
-> > =EF=BB=BFOn Wed, Nov 13, 2019 at 12:40 PM David Hildenbrand <david@redh=
-at.com> wrote:
-> > [..]
-> >>>>>> I'm still struggling to understand the motivation of distinguishin=
-g
-> >>>>>> "active" as something distinct from "online". As long as the "onli=
-ne"
-> >>>>>> granularity is improved from sections down to subsections then mos=
-t
-> >>>>>> code paths are good to go. The others can use get_devpagemap() to
-> >>>>>> check for ZONE_DEVICE in a race free manner as they currently do.
-> >>>>>
-> >>>>> I thought we wanted to unify access if we don=E2=80=99t really care=
- about the zone as in most pfn walkers - E.g., for zone shrinking.
-> >>>>
-> >>>> Agree, when the zone does not matter, which is most cases, then
-> >>>> pfn_online() and pfn_valid() are sufficient.
-> >>
-> >> Oh, and just to clarify why I proposed pfn_active(): The issue right n=
-ow is that a PFN that is valid but not online could be offline memory (memm=
-ap not initialized) or ZONE_DEVICE. That=E2=80=98s why I wanted to have a w=
-ay to detect if a memmap was initialized, independent of the zone. That=E2=
-=80=98s important for generic PFN walkers.
-> >
-> > That's what I was debating with Toshiki [1], whether there is a real
-> > example of needing to distinguish ZONE_DEVICE from offline memory in a
-> > pfn walker. The proposed use case in this patch set of being able to
-> > set hwpoison on ZONE_DEVICE pages does not seem like a good idea to
-> > me. My suspicion is that this is a common theme and others are looking
-> > to do these types page manipulations that only make sense for online
-> > memory. If that is the case then treating ZONE_DEVICE as offline seems
-> > the right direction.
->
-> Right. At least it would be nice to have for zone shrinking - not sure ab=
-out the other walkers. We would have to special-case ZONE_DEVICE handling t=
-here.
->
+On Mon, Nov 11, 2019 at 05:18:23PM +0800, Shengjiu Wang wrote:
+> There are two asrc module in imx8qm, each module has different
+> clock configuration, and the DMA type is EDMA.
+> 
+> So in this patch, we define the new clocks, refine the clock map,
+> and include struct fsl_asrc_soc_data for different soc usage.
+> 
+> The EDMA channel is fixed with each dma request, one dma request
+> corresponding to one dma channel. So we need to request dma
+> channel with dma request of asrc module.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-I think that's ok... It's already zone aware code whereas pfn walkers
-are zone unaware and should stay that way if at all possible.
+Two small comments inline. Once they are addressed,
 
-> But as I said, a subsection map for online memory is a good start, especi=
-ally to fix pfn_to_online_page(). Also, I think this might be a very good t=
-hing to have for Oscars memmap-on-memory work (I have a plan in my head I c=
-an discuss with Oscar once he has time to work on that again).
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-Ok, I'll keep an eye out.
+> ---
+> changes in v2
+> - use !use_edma to wrap code in fsl_asrc_dma
+> - add Acked-by: Nicolin Chen
+> 
+> changes in v3
+> - remove the acked-by for commit is updated
+> - read "fsl,asrc-clk-map" property, and update table
+>   clk_map_imx8qm.
+> 
+>  sound/soc/fsl/fsl_asrc.c     | 112 ++++++++++++++++++++++++++++-------
+>  sound/soc/fsl/fsl_asrc.h     |  64 +++++++++++++++++++-
+>  sound/soc/fsl/fsl_asrc_dma.c |  42 +++++++++----
+>  3 files changed, 183 insertions(+), 35 deletions(-)
+> 
+> diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+> index a3cfceea7d2f..03de33de8633 100644
+> --- a/sound/soc/fsl/fsl_asrc.c
+> +++ b/sound/soc/fsl/fsl_asrc.c
+> @@ -964,14 +1001,33 @@ static int fsl_asrc_probe(struct platform_device *pdev)
+
+> +	} else if (of_device_is_compatible(np, "fsl,imx8qm-asrc")) {
+
+> +		ret = of_property_read_u32(np, "fsl,asrc-clk-map",
+> +					   &map_idx);
+
+This seems to fit a single line?
+
+> diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
+> index d6146de9acd2..f871fdb9d1c6 100644
+> --- a/sound/soc/fsl/fsl_asrc_dma.c
+> +++ b/sound/soc/fsl/fsl_asrc_dma.c
+> @@ -197,21 +197,37 @@ static int fsl_asrc_dma_hw_params(struct snd_soc_component *component,
+
+> +	/*
+> +	 * For EDMA DEV_TO_DEV channel, we don't need to configure
+> +	 * dma_request and dma_request2, we can get dma channel through
+> +	 * dma_request_slave_channel directly.
+> +	 * Compare with SDMA channel, EDMA channel is bound with dma
+> +	 * request event of each peripheral, and it is fixed. Not like SDMA,
+> +	 * the channel is allocated dynamically. So when DMA is EDMA, we
+> +	 * can only get EDMA channel through dma-names of Front-End device.
+> +	 */
+
+Just trying to make it concise :)
+
++	/*
++	 * An EDMA DEV_TO_DEV channel is fixed and bound with DMA event of each
++	 * peripheral, unlike SDMA channel that is allocated dynamically. So no
++	 * need to configure dma_request and dma_request2, but get dma_chan via
++	 * dma_request_slave_channel directly with dma name of Front-End device
++	 */
