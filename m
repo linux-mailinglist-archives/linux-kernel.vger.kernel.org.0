@@ -2,273 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F28CFA2EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:07:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE4EFA36C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730787AbfKMCG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:06:57 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44740 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730661AbfKMCGx (ORCPT
+        id S1730432AbfKMCJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:09:14 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7386 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728220AbfKMCJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:06:53 -0500
-Received: by mail-ot1-f67.google.com with SMTP id c19so234630otr.11
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 18:06:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zUtTOHWyzSDWIPjsJHW06pPTn0x6obzqOHI2G8rBav8=;
-        b=p5WKOfhT7tef8IC18WnzUALrBl9hQZaiVDsRNwsGQjxoNha7Sidx8wSmmdENne847R
-         MzNjXemAvHlmfOLbXtCtbTlOurhnh1FQKdKkop4bB2Ayj5SmYnOCoMR1FLDKC7wDpl9K
-         d7OLu0FxrFYfiptb1CxjZY5i5nmYPXpHHe9/qBBgUnLvdeLJlHHFaioB2RHqubwaWGBz
-         JefH5lLZHXW3Pkfxq5TTJz7vj8fJLtqRdpyYzbD/ZLHRtJTADhsNuwnRwV3nwl1eD4xu
-         GR5hcoIjbBIzKpNZdznoNPMgI4CGiEudqOScWPz6auOKdOr7TxBkk8wJ9b1HM8BKPR6V
-         KKGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zUtTOHWyzSDWIPjsJHW06pPTn0x6obzqOHI2G8rBav8=;
-        b=ILLo2DSzT0y/oQtbKfFB6gy4qOazJRDce+z62cpFm6QnNBv+hikmEVHRZM5/oenOWt
-         GMqT+cj4VnBsoKE2vN/ex/yEBJ99rhgVZH+n6MqxnsCljReXRz5Po2knueYGfVGgxt60
-         wSdJOlNPWrVJt5ilH3AoNCUn+rj7g7jXbzzan6McU4WK8RVPoZtDGBwQqBh4dgmhdcgn
-         yKJm0sLY6sBnpYdROs11UrbhDRijwhkVNGBzJHMNNg0S415AR5rKRw7Dnn+iQQjHSSGm
-         dwHI1hKe7KSRaomYwXMHjhqKBzgz8FZqQSZaGR2w8mtuBOqt73ZgnzVzjRhUGpTHHJfS
-         oPQw==
-X-Gm-Message-State: APjAAAX06dROlRwLIMWZfHeeGFCtRd1TR6pGm8r6dMn4zhNMdJ/fO2UU
-        Do3klVwDmRYShyLkNCkqnLV4O4+Tc4pngyUuizM/uQ==
-X-Google-Smtp-Source: APXvYqyf/VGQXRwljsfYoE2jmqrxKH5PWyny4Vylqk7rqWMLzNckEKp9OtI2Yp5CXKFhjEJSufddU83l+b68QoiqBpo=
-X-Received: by 2002:a05:6830:1d71:: with SMTP id l17mr528996oti.236.1573610810836;
- Tue, 12 Nov 2019 18:06:50 -0800 (PST)
+        Tue, 12 Nov 2019 21:09:11 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcb65c50002>; Tue, 12 Nov 2019 18:09:09 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 12 Nov 2019 18:09:09 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 12 Nov 2019 18:09:09 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 02:09:09 +0000
+Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and
+ FOLL_LONGTERM
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+ <20191112000700.3455038-9-jhubbard@nvidia.com>
+ <20191112204338.GE5584@ziepe.ca>
+ <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
+ <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
+ <20191112234250.GA19615@ziepe.ca>
+ <CAPcyv4hwFKmsQpp04rS6diCmZwGtbnriCjfY2ofWV485qT9kzg@mail.gmail.com>
+ <28355eb0-4ee5-3418-b430-59302d15b478@nvidia.com>
+ <CAPcyv4hdYZ__3+KJHh+0uX--f-U=pLiZfdO0JDhyBE-nZ=i4FQ@mail.gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <c6f035f5-8290-2bc0-a645-d63e3a47f588@nvidia.com>
+Date:   Tue, 12 Nov 2019 18:09:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191028220027.251605-1-saravanak@google.com> <CAJZ5v0gfgr=y=NYyNHDeOX_JsUa+41LPucovvC5TnOB3HuonTg@mail.gmail.com>
- <CAGETcx-X938BxBeqYD8m8Wrx-hRaXk6EEeR4szh34CS5Sv7EgA@mail.gmail.com> <6671524.6K7l14UQst@kreacher>
-In-Reply-To: <6671524.6K7l14UQst@kreacher>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 12 Nov 2019 18:06:14 -0800
-Message-ID: <CAGETcx9G6aH2Eu9ss-RzH4oaBq-mM-EtdjYReKtba86k2KL8+A@mail.gmail.com>
-Subject: Re: [PATCH v1 3/5] driver core: Allow fwnode_operations.add_links to
- differentiate errors
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAPcyv4hdYZ__3+KJHh+0uX--f-U=pLiZfdO0JDhyBE-nZ=i4FQ@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573610949; bh=B6pkyHmGh6yhjKCidrVzgID/vhDeCAvfXP4nK4Pk4sU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=RV5dPXEXGk2wPs6itxn+ysd+tryNIcHtFe7cNPEDa6fUJR+mqhDFmpWJh1cxUznfM
+         u/dSVfFdxe/eLLU3UZJsFyG0KQve3tMf4SbX/eLAZ3PsvXvDC9d9Vo1jj5Z6rn0Yor
+         1EXyMK0mBMr99qCD9+AZ++P4gO+L3VPJHPXksjDueAgSTRvM0AvLDqBIchBRO93HWN
+         flXai7XrgmMwanL4FueloUnCWoIRpUo5voQGwqOd0jdXOidJNNwAYlQZLipkiht6xZ
+         1PIwF7tPrWLfM+J/GXeR6mCfSxY22FrqYpx7yQ6peaaRvxPNUSU6UqLCTPNv27OnhW
+         6xjI9w2mLclog==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 4:35 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Wednesday, November 6, 2019 1:00:18 AM CET Saravana Kannan wrote:
-> > On Tue, Nov 5, 2019 at 3:07 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > >
-> > > On Tue, Nov 5, 2019 at 11:52 PM Saravana Kannan <saravanak@google.com> wrote:
-> > > >
-> > > > Hi Rafael,
-> > > >
-> > > > Thanks for the review.
-> > > >
-> > > > On Tue, Nov 5, 2019 at 2:43 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > > > >
-> > > > > On Monday, October 28, 2019 11:00:24 PM CET Saravana Kannan wrote:
-> > > > > > When add_links() still has suppliers that it needs to link to in the
-> > > > > > future, this patch allows it to differentiate between suppliers that are
-> > > > > > needed for probing vs suppliers that are needed for sync_state()
-> > > > > > correctness.
-> > > > >
-> > > > > I guess you mean that it will return different error codes in the different
-> > > > > cases.
-> > > >
-> > > > Yes.
-> > > >
-> > > > >
-> > > > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > > > > ---
-> > > > > >  drivers/base/core.c    | 12 ++++++++----
-> > > > > >  include/linux/fwnode.h | 13 +++++++++----
-> > > > > >  2 files changed, 17 insertions(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > > > > index 48cd43a91ce6..e6d3e6d485da 100644
-> > > > > > --- a/drivers/base/core.c
-> > > > > > +++ b/drivers/base/core.c
-> > > > > > @@ -2297,7 +2297,7 @@ int device_add(struct device *dev)
-> > > > > >       struct device *parent;
-> > > > > >       struct kobject *kobj;
-> > > > > >       struct class_interface *class_intf;
-> > > > > > -     int error = -EINVAL;
-> > > > > > +     int error = -EINVAL, fw_ret;
-> > > > > >       struct kobject *glue_dir = NULL;
-> > > > > >
-> > > > > >       dev = get_device(dev);
-> > > > > > @@ -2413,9 +2413,13 @@ int device_add(struct device *dev)
-> > > > > >        */
-> > > > > >       device_link_add_missing_supplier_links();
-> > > > > >
-> > > > > > -     if (fwnode_has_op(dev->fwnode, add_links)
-> > > > > > -         && fwnode_call_int_op(dev->fwnode, add_links, dev))
-> > > > > > -             device_link_wait_for_mandatory_supplier(dev, true);
-> > > > > > +     if (fwnode_has_op(dev->fwnode, add_links)) {
-> > > > >
-> > > > > fw_ret can be defined here and I'd just call it "ret".
-> > > >
-> > > > I thought that style of variable declaration is frowned up in the
-> > > > kernel coding style.
-> > >
-> > > Well, I'm not aware of that. :-)
-> >
-> > I've definitely seen such comments before. So I'll leave fw_ret as is.
-> > If you and Greg both want to change it to the way you mentioned, I'm
-> > happy to do it.
->
-> If this has been committed the way it is, there's not so much of a difference,
-> but I generally like variables to not be seen out of the scope in which they
-> are used, as that allows bugs to be caught at compile time sometimes.
+On 11/12/19 5:35 PM, Dan Williams wrote:
+> On Tue, Nov 12, 2019 at 5:08 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>
+>> On 11/12/19 4:58 PM, Dan Williams wrote:
+>> ...
+>>>>> It's not redundant relative to upstream which does not do anything the
+>>>>> FOLL_LONGTERM in the gup-slow path... but I have not looked at patches
+>>>>> 1-7 to see if something there made it redundant.
+>>>>
+>>>> Oh, the hunk John had below for get_user_pages_remote() also needs to
+>>>> call __gup_longterm_locked() when FOLL_LONGTERM is specified, then
+>>>> that calls check_dax_vmas() which duplicates the vma_is_fsdax() check
+>>>> above.
+>>>
+>>> Oh true, good eye. It is redundant if it does additionally call
+>>> __gup_longterm_locked(), and it needs to do that otherwises it undoes
+>>> the CMA migration magic that Aneesh added.
+>>>
+>>
+>> OK. So just to be clear, I'll be removing this from the patch:
+>>
+>>         /*
+>>          * The lifetime of a vaddr_get_pfn() page pin is
+>>          * userspace-controlled. In the fs-dax case this could
+>>          * lead to indefinite stalls in filesystem operations.
+>>          * Disallow attempts to pin fs-dax pages via this
+>>          * interface.
+>>          */
+>>         if (ret > 0 && vma_is_fsdax(vmas[0])) {
+>>                 ret = -EOPNOTSUPP;
+>>                 put_page(page[0]);
+>>         }
+>>
+>> (and the declaration of "vmas", as well).
+> 
+> ...and add a call to __gup_longterm_locked internal to
+> get_user_pages_remote(), right?
+> 
 
-Ok, I don't have a strong preference either way. My understanding is
-that Greg doesn't like declaring variables "in the middle". So I'm
-going to leave it as is unless I'm corrected.
+Yes, and thanks for double-checking. I think I got a little dizzy following
+the call stack there. :)  And now I see that this also affects the
+implementation of pin_longterm_pages_remote(), because that will need the
+same logic that get_user_pages_remote() has. 
 
->
-> > > > >
-> > > > > > +             fw_ret = fwnode_call_int_op(dev->fwnode, add_links, dev);
-> > > > > > +             if (fw_ret == -ENODEV)
-> > > > > > +                     device_link_wait_for_mandatory_supplier(dev);
-> > > > > > +             else if (fw_ret)
-> > > > > > +                     device_link_wait_for_optional_supplier(dev);
-> > > > > > +     }
-> > > > > >
-> > > > > >       bus_probe_device(dev);
-> > > > > >       if (parent)
-> > > > > > diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
-> > > > > > index 25bb81f8ded8..a19134eae5a5 100644
-> > > > > > --- a/include/linux/fwnode.h
-> > > > > > +++ b/include/linux/fwnode.h
-> > > > > > @@ -96,10 +96,15 @@ struct fwnode_reference_args {
-> > > > > >   *           available suppliers.
-> > > > > >   *
-> > > > > >   *           Return 0 if device links have been successfully created to all
-> > > > > > - *           the suppliers of this device or if the supplier information is
-> > > > > > - *           not known. Return an error if and only if the supplier
-> > > > > > - *           information is known but some of the suppliers are not yet
-> > > > > > - *           available to create device links to.
-> > > > > > + *           the suppliers this device needs to create device links to or if
-> > > > > > + *           the supplier information is not known.
-> > > > >
-> > > > > "the known suppliers of this device or if the supplier information is not known."
-> > > >
-> > > > "suppliers it needs to create device links to" is a subset of known
-> > > > suppliers. There's no requirement that fw needs to create links to ALL
-> > > > known suppliers. Just a minor distinction.
-> > >
-> > > That depends on what exactly you mean by "known suppliers".  The
-> > > suppliers that are not listed by the firmware are not known at this
-> > > point.
-> >
-> > Ok, I'll rephrase my comment:
-> > "suppliers it needs to create device links to" is a subset of listed
-> > suppliers. There's no requirement that fw needs to create links to ALL
-> > listed suppliers. For example, I can't think of any reason for
-> > sync_state() to be necessary for an interrupt controller driver.
->
-> A sync_state() may not be, but it may be a good idea to create device links
-> to the controller device from all devices that rely on it, so as to ensure
-> the right system suspend/resume ordering if nothing else.
 
-True. Frameworks are starting to add device links when consumers make
-calls to "get()" the resource. But if firmware can add it ahead of
-time, it doesn't hurt I suppose and it'll also cover for frameworks
-without device links support yet.
 
-> > So, fw doesn't need to create device links from consumer to interrupt
-> > supplier. So I'm being more explicit and saying "the suppliers this
-> > device needs to create device links to" instead of "the listed
-> > suppliers of this device".
->
-> This gives me the feeling of splitting hairs to be honest. :-)
-
-Maybe, but it's coming from a point of goodwill :) I just want to
-capture the intent as narrowly and accurately as possible.
-
-> In fact, the FW indicates to the OS that there are some dependencies (either
-> hard or soft) between devices and adding device links is a way to act on that
-> information.
->
-> The "device link" notion is not actually defined at the FW level.  What it
-> knows about is a "probe dependency" or an "ordering constraint" which then
-> is represented by a device link at the OS level.
-
-And you've convinced me why it doesn't have to be as narrow as I intended.
-
-> > Long story short, I wrote the comment this way intentionally and
-> > changing it to what you suggest makes it inaccurate IMHO. But I'm open
-> > to other wording suggestions to improve the clarity of this comment.
->
-> My point basically is that the way you phrased it may lead to some confusion
-> (regardless of whether or not it is intentional).
-
-Ok, I think we are on the same page now. I'll send an update soon.
-
->
-> > >
-> > > > > > + *
-> > > > > > + *           Return -ENODEV if and only if the suppliers needed for probing
-> > > > > > + *           the device are not yet available to create device links to.
-> > > > >
-> > > > > It would be more precise to say something like this:
-> > > > >
-> > > > > "Return -ENODEV if an attempt to create a device link to one of the device's
-> > > > > suppliers needed for probing it fails."
-> > > >
-> > > > "attempt to create a device link to one of the device's suppliers
-> > > > needed for probing it fails" to me means device_link_add() fails.
-> > > > But I'm trying to say that it should return an error if the struct
-> > > > device isn't even there yet.
-> > >
-> > > OK, so it should be something like "if the supplier device has not
-> > > been registered yet".
-> > >
-> > > My point is that "not yet available" is kind of ambiguous.
-> >
-> > Agree, the latest suggestion sounds better.
-> >
-> > > > > > + *
-> > > > > > + *           Return -EAGAIN if there are suppliers that need to be linked to
-> > > > > > + *           that are not yet available but none of those suppliers are
-> > > > > > + *           necessary for probing this device.
-> > > > >
-> > > > > "Return -EAGAIN if attempts to create device links to some of the device's
-> > > > > suppliers have failed, but those suppliers are not necessary for probing the
-> > > > > device."
-> > > >
-> > > > Same comment as before. The distinction I'm making here is that
-> > > > -EAGAIN is needed when the struct device itself isn't there.
-> > > >
-> > > > Btw, Greg already pulled these into driver-core-next. Let me know if
-> > > > you want me to send a delta patch to fix any of these comments.
-> > >
-> > > Well, it's a Greg's call if he has taken the patches, but it also
-> > > depends on you (if you agree with the comments, it would be prudent to
-> > > send updates).
-> >
-> > I don't mind sending updates at all. Just trying to make sure I follow
-> > the maintainers' preference in case they don't want trivial (because
-> > my current ones aren't terrible :)) comment update patches.
->
-> If it can be improved, then improve it.  Worst case you can hear from the
-> maintainers that they don't agree with the proposed changes.
-
-Eh, I've been yelled at a couple of times for sending patches too soon
-or too many. So just playing it safe.
-
--Saravana
+thanks,
+-- 
+John Hubbard
+NVIDIA
