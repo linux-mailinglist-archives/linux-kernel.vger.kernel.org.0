@@ -2,112 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1DAAFAC19
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA06EFAC1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfKMIbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 03:31:15 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56912 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725966AbfKMIbP (ORCPT
+        id S1727142AbfKMIff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 03:35:35 -0500
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:50704 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726155AbfKMIfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 03:31:15 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAD8LxPo007414;
-        Wed, 13 Nov 2019 09:31:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=tCwbuJ7ZZz84F+Cac8iOAH9+hr3GdXrbsKUSXJNB7YM=;
- b=rrZ+Xa90m4pT77radrMw/Nax5lGsdk24w7llmESCwPgbJiUrANEjskTPwLNLW8EdPyvC
- 0kApV8Ec84Mm78cJg4i0NYzM/B4qib/2614UBlNw2WA7wnjbylHY49Fj7ptC/+0qmLlD
- 8z7fj2WRYcV68orGbmFwEtSEAIi5o3TNVksFcPQAGsN0Wh/53VYF/rMr+HDUiefsN8SV
- 2gKmzUFCbz2KKa8b/8HF394d7AJ9KLjLXTP23SAawtUWf9Eq77IgoEtOxwv6c2WVO8fK
- JIXU8nW7JzXLP3Zu1I8e7Um9ZM7W1bkt6BZfnA+4IOQiIiBhOvA1jwIvsRZJa9CDPZEM Jg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2w7pstxu8e-1
+        Wed, 13 Nov 2019 03:35:34 -0500
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAD8WtEl025599;
+        Wed, 13 Nov 2019 03:35:18 -0500
+Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp2054.outbound.protection.outlook.com [104.47.33.54])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2w7pr6k44w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Nov 2019 09:31:09 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C008710002A;
-        Wed, 13 Nov 2019 09:31:08 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag5node1.st.com [10.75.127.13])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B35E02B187F;
-        Wed, 13 Nov 2019 09:31:08 +0100 (CET)
-Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG5NODE1.st.com
- (10.75.127.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 09:31:08 +0100
-Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
- SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
- 15.00.1473.003; Wed, 13 Nov 2019 09:31:08 +0100
-From:   Fabien DESSENNE <fabien.dessenne@st.com>
-To:     Chuhong Yuan <hslester96@gmail.com>
-CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: bdisp: add missed destroy_workqueue in remove and
- probe failure
-Thread-Topic: [PATCH] media: bdisp: add missed destroy_workqueue in remove and
- probe failure
-Thread-Index: AQHVmezcqeNG3nZyW0iK6S5WdicKn6eItMaA
-Date:   Wed, 13 Nov 2019 08:31:08 +0000
-Message-ID: <f4af41fc-f335-9973-1861-6635cc0e123e@st.com>
-References: <20191113063730.8776-1-hslester96@gmail.com>
-In-Reply-To: <20191113063730.8776-1-hslester96@gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5124C79677A8A147981DD104BE59B0ED@st.com>
-Content-Transfer-Encoding: base64
+        Wed, 13 Nov 2019 03:35:18 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Oc877TE+80M71ItB+zdd3JlLcQFcyYPJVZuRRtXvX8kJh6gL9nq7cZ8Yh6TNrvPuU4PF2R/kI7TpkI14bQ8FyR1Vxv/O1vlTQveBhzB8ssAdKvTULLU9cdXGD6S1Oc/xY26322/3nrEAu5LL3vGCox4pv63LiaoIS53Hr+GEVfNjBsp+qcm2bso4/8SN1wokC9KZS3BWO8lexDeXBd7yoSeE8b2jNBIZXKGgPpppJ2BXyvQcGJw6fihOk2KH1/Ox8HdO53cdyRwU9/XFf3sdTD4ah0jCim35FkqU45g930ClegFcUmo4DYl/Fh55ppUo8woXZMwypXokXJXZPr47sQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ACFf3j0dAaFmyDZvuC5Px2tq1qxXMi0WCMoDGHMmLt4=;
+ b=OUkW0LJqVOUReyqwEA9a5ZIHMpIjIt0oF4afmcGAuEnE5fWhqNwkDxGt4aLRo5EY3M5LBa6uJ/1L2Y13v/lBX1H82oIvfostAVZkjHj0ADSLu6gcs1NbF98wLnDzgzgQN4foWmJNkeRD1MqvPHHf113afOvajuMfOS2kDlADEgv+aaNBMRZk7tHg6sItIMLpj4yqv2NXvH6qsr2ZlaoQbr5bSjkbpTFHWP1dnTr8zWqTAlPoE6AYbL3gy5YIAgayffGt1DNL3ZArSgjhZfM42X8bSrNy3pUlZJFwlFW1Luj24hR20GOdjhHag+nsSSk+Qi0stc+DLvv+K0nvzIEKcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.57) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ACFf3j0dAaFmyDZvuC5Px2tq1qxXMi0WCMoDGHMmLt4=;
+ b=k19ltE40nan0dt07aI70TrWhgYT/AOitkx6sJ03sU5IKi7AFvh/tRkxp7WMr/wGj+Wq73FU6B8RvWYlKlEQ9kUMFEFZJH6cmBmP3mtvRAEBM3SJV1UgHUBwVhOGTKMXb3DGWx414QoBZf2GOKzJOpco/8XyKH8bAhBVCgTT3/DE=
+Received: from DM6PR03CA0053.namprd03.prod.outlook.com (2603:10b6:5:100::30)
+ by BN7PR03MB3780.namprd03.prod.outlook.com (2603:10b6:408:31::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2451.22; Wed, 13 Nov
+ 2019 08:35:16 +0000
+Received: from BL2NAM02FT039.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::207) by DM6PR03CA0053.outlook.office365.com
+ (2603:10b6:5:100::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2430.22 via Frontend
+ Transport; Wed, 13 Nov 2019 08:35:16 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ BL2NAM02FT039.mail.protection.outlook.com (10.152.77.152) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2451.23
+ via Frontend Transport; Wed, 13 Nov 2019 08:35:16 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id xAD8Z7Pk003224
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Wed, 13 Nov 2019 00:35:07 -0800
+Received: from tachici-Precision-5530.ad.analog.com (10.48.65.123) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 13 Nov 2019 03:35:15 -0500
+From:   Alexandru Tachici <alexandru.tachici@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <lars@metafoo.de>, <jic23@kernel.org>,
+        Alexandru Tachici <alexandru.tachici@analog.com>
+Subject: [PATCH] iio: dac: ad7303: use regulator get optional to check for ext supply
+Date:   Wed, 13 Nov 2019 10:33:03 +0200
+Message-ID: <20191113083303.2229-1-alexandru.tachici@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(376002)(199004)(189003)(8936002)(48376002)(86362001)(7636002)(50226002)(305945005)(51416003)(486006)(1076003)(246002)(8676002)(126002)(70206006)(476003)(7696005)(70586007)(5660300002)(44832011)(2870700001)(2616005)(2906002)(50466002)(26005)(107886003)(336012)(4326008)(36756003)(47776003)(6666004)(316002)(54906003)(478600001)(186003)(106002)(426003)(356004)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3780;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 66a035a0-4654-4cac-ba7b-08d7681468db
+X-MS-TrafficTypeDiagnostic: BN7PR03MB3780:
+X-Microsoft-Antispam-PRVS: <BN7PR03MB37803ACC4190BECBAACF932890760@BN7PR03MB3780.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
+X-Forefront-PRVS: 0220D4B98D
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /Zs0XXy2MxmDJvWv+QkUAyn8of2wqloPl/vz2NGQBNKBrKUbe7nAr8Ra5bPebJWbXvKr52LybEhA1n75WObvp6daldU3NzEQhbpwCXW9zXEHdSXJWJsFAGyVNuTzImEbXg3eBBtocAuH2SbGhlaxp1etOWp7YpeextRekwFKX2oq/u5LYaG29SYPgIIF5z0DtBHzHu500NopZTjSosMX1Wl02v0M751Bs61L6k7iH2HYxoBY2Ik5AKrbNLzGMBZHSrhyNMGXY17ojYK1y+YDRTL7dvQGxUHCqREs/x9ueQAKFbRCWK/nOO/mJk9EwQbu5z14dTjR9kTINhTC/2+cnGO2HVgcheXNWXgaP+iSt3Zv3P9dhtt8eOM458wJoj0dGTJRyGRymZIcBBeEe2eqiBtcKUzsHv4EMJKTeUWNifsRMDo+sU9lf/EJy4xzJCCX
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2019 08:35:16.3639
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66a035a0-4654-4cac-ba7b-08d7681468db
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3780
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-13_01:2019-11-13,2019-11-13 signatures=0
+ definitions=2019-11-13_02:2019-11-13,2019-11-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=981 malwarescore=0 adultscore=0
+ impostorscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-1911130078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2h1aG9uZywNCg0KDQpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4NCg0KDQpPbiAxMy8xMS8y
-MDE5IDc6MzcgQU0sIENodWhvbmcgWXVhbiB3cm90ZToNCj4gVGhlIGRyaXZlciBmb3JnZXRzIHRv
-IGNhbGwgZGVzdHJveV93b3JrcXVldWUgd2hlbiByZW1vdmUgYW5kIHByb2JlIGZhaWxzLg0KPiBB
-ZGQgdGhlIG1pc3NlZCBjYWxscyB0byBmaXggaXQuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IENodWhv
-bmcgWXVhbiA8aHNsZXN0ZXI5NkBnbWFpbC5jb20+DQoNClJldmlld2VkLWJ5OiBGYWJpZW4gRGVz
-c2VubmUgPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+DQoNCg0KPiAtLS0NCj4gICBkcml2ZXJzL21l
-ZGlhL3BsYXRmb3JtL3N0aS9iZGlzcC9iZGlzcC12NGwyLmMgfCAxMyArKysrKysrKystLS0tDQo+
-ICAgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4NCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2JkaXNwL2JkaXNwLXY0bDIu
-YyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2JkaXNwL2JkaXNwLXY0bDIuYw0KPiBpbmRl
-eCBlOTBmMWJhMzA1NzQuLjRjMGIzNjIzNmEzOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZWRp
-YS9wbGF0Zm9ybS9zdGkvYmRpc3AvYmRpc3AtdjRsMi5jDQo+ICsrKyBiL2RyaXZlcnMvbWVkaWEv
-cGxhdGZvcm0vc3RpL2JkaXNwL2JkaXNwLXY0bDIuYw0KPiBAQCAtMTI3NSw2ICsxMjc1LDggQEAg
-c3RhdGljIGludCBiZGlzcF9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4g
-ICAJaWYgKCFJU19FUlIoYmRpc3AtPmNsb2NrKSkNCj4gICAJCWNsa191bnByZXBhcmUoYmRpc3At
-PmNsb2NrKTsNCj4gICANCj4gKwlkZXN0cm95X3dvcmtxdWV1ZShiZGlzcC0+d29ya19xdWV1ZSk7
-DQo+ICsNCj4gICAJZGV2X2RiZygmcGRldi0+ZGV2LCAiJXMgZHJpdmVyIHVubG9hZGVkXG4iLCBw
-ZGV2LT5uYW1lKTsNCj4gICANCj4gICAJcmV0dXJuIDA7DQo+IEBAIC0xMzE4LDIwICsxMzIwLDIy
-IEBAIHN0YXRpYyBpbnQgYmRpc3BfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikN
-Cj4gICAJYmRpc3AtPnJlZ3MgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXMpOw0KPiAg
-IAlpZiAoSVNfRVJSKGJkaXNwLT5yZWdzKSkgew0KPiAgIAkJZGV2X2VycihkZXYsICJmYWlsZWQg
-dG8gZ2V0IHJlZ3NcbiIpOw0KPiAtCQlyZXR1cm4gUFRSX0VSUihiZGlzcC0+cmVncyk7DQo+ICsJ
-CXJldCA9IFBUUl9FUlIoYmRpc3AtPnJlZ3MpOw0KPiArCQlnb3RvIGVycl93cTsNCj4gICAJfQ0K
-PiAgIA0KPiAgIAliZGlzcC0+Y2xvY2sgPSBkZXZtX2Nsa19nZXQoZGV2LCBCRElTUF9OQU1FKTsN
-Cj4gICAJaWYgKElTX0VSUihiZGlzcC0+Y2xvY2spKSB7DQo+ICAgCQlkZXZfZXJyKGRldiwgImZh
-aWxlZCB0byBnZXQgY2xvY2tcbiIpOw0KPiAtCQlyZXR1cm4gUFRSX0VSUihiZGlzcC0+Y2xvY2sp
-Ow0KPiArCQlyZXQgPSBQVFJfRVJSKGJkaXNwLT5jbG9jayk7DQo+ICsJCWdvdG8gZXJyX3dxOw0K
-PiAgIAl9DQo+ICAgDQo+ICAgCXJldCA9IGNsa19wcmVwYXJlKGJkaXNwLT5jbG9jayk7DQo+ICAg
-CWlmIChyZXQgPCAwKSB7DQo+ICAgCQlkZXZfZXJyKGRldiwgImNsb2NrIHByZXBhcmUgZmFpbGVk
-XG4iKTsNCj4gICAJCWJkaXNwLT5jbG9jayA9IEVSUl9QVFIoLUVJTlZBTCk7DQo+IC0JCXJldHVy
-biByZXQ7DQo+ICsJCWdvdG8gZXJyX3dxOw0KPiAgIAl9DQo+ICAgDQo+ICAgCXJlcyA9IHBsYXRm
-b3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX0lSUSwgMCk7DQo+IEBAIC0xNDAzLDcg
-KzE0MDcsOCBAQCBzdGF0aWMgaW50IGJkaXNwX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
-KnBkZXYpDQo+ICAgZXJyX2NsazoNCj4gICAJaWYgKCFJU19FUlIoYmRpc3AtPmNsb2NrKSkNCj4g
-ICAJCWNsa191bnByZXBhcmUoYmRpc3AtPmNsb2NrKTsNCj4gLQ0KPiArZXJyX3dxOg0KPiArCWRl
-c3Ryb3lfd29ya3F1ZXVlKGJkaXNwLT53b3JrX3F1ZXVlKTsNCj4gICAJcmV0dXJuIHJldDsNCj4g
-ICB9DQo+ICAg
+Previously, the code was using the of_read_property_bool() to check if
+an external regulator was provided. However, this is redundant, as it's
+more simple/direct to just ask the regulator is provided, via a
+`devm_regulator_get_optional()` call.
+
+Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
+---
+ drivers/iio/dac/ad7303.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/iio/dac/ad7303.c b/drivers/iio/dac/ad7303.c
+index 14bbac6bee98..e0c5fed4475c 100644
+--- a/drivers/iio/dac/ad7303.c
++++ b/drivers/iio/dac/ad7303.c
+@@ -12,7 +12,6 @@
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/of.h>
+ 
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+@@ -202,7 +201,6 @@ static int ad7303_probe(struct spi_device *spi)
+ 	const struct spi_device_id *id = spi_get_device_id(spi);
+ 	struct iio_dev *indio_dev;
+ 	struct ad7303_state *st;
+-	bool ext_ref;
+ 	int ret;
+ 
+ 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+@@ -224,24 +222,13 @@ static int ad7303_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (spi->dev.of_node) {
+-		ext_ref = of_property_read_bool(spi->dev.of_node,
+-				"REF-supply");
+-	} else {
+-		struct ad7303_platform_data *pdata = spi->dev.platform_data;
+-		if (pdata && pdata->use_external_ref)
+-			ext_ref = true;
+-		else
+-		    ext_ref = false;
++	st->vref_reg = devm_regulator_get_optional(&spi->dev, "REF");
++	if (IS_ERR(st->vref_reg)) {
++		ret = PTR_ERR(st->vref_reg);
++		goto err_disable_vdd_reg;
+ 	}
+ 
+-	if (ext_ref) {
+-		st->vref_reg = devm_regulator_get(&spi->dev, "REF");
+-		if (IS_ERR(st->vref_reg)) {
+-			ret = PTR_ERR(st->vref_reg);
+-			goto err_disable_vdd_reg;
+-		}
+-
++	if (st->vref_reg) {
+ 		ret = regulator_enable(st->vref_reg);
+ 		if (ret)
+ 			goto err_disable_vdd_reg;
+-- 
+2.20.1
+
