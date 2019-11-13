@@ -2,90 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C9BFA077
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:50:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3924FA10D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfKMBuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:50:17 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:15598 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfKMBuQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:50:16 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcb61200001>; Tue, 12 Nov 2019 17:49:20 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 17:50:16 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 17:50:16 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 01:50:15 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 13 Nov 2019 01:50:15 +0000
-Received: from henryl-tu10x.nvidia.com (Not Verified[10.19.109.97]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dcb61560003>; Tue, 12 Nov 2019 17:50:15 -0800
-From:   Henry Lin <henryl@nvidia.com>
-CC:     <hch@infradead.org>, Henry Lin <henryl@nvidia.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] usb: xhci: only set D3hot for pci device
-Date:   Wed, 13 Nov 2019 09:49:27 +0800
-Message-ID: <20191113014927.11915-1-henryl@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191112071831.1043-1-henryl@nvidia.com>
-References: <20191112071831.1043-1-henryl@nvidia.com>
-X-NVConfidentiality: public
+        id S1728942AbfKMBym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:54:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728928AbfKMByj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:54:39 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C03B222D3;
+        Wed, 13 Nov 2019 01:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573610078;
+        bh=dK+rVcll+nkPzN51xRG+DpwYGJuH74V97/lT28cg95M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=L2oU0TZKQFoy6un9BjiVtcSF3wpPmJXMA5kDOvqJd396htbovK0CblH2IG4mbxI3a
+         GXb2rk5sGadjyubNYXlRkegkweXP6jGPSmdBHgEWoIWvZ/TmOfxJHq0PWy54O85Czk
+         jGcqDsS2S/fP9WsJPuU1iPfFG20Nkpytk5M70wg4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jithu Joseph <jithu.joseph@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, tony.luck@intel.com,
+        gavin.hindman@intel.com, dave.hansen@intel.com, hpa@zytor.com,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 153/209] x86/intel_rdt: Introduce utility to obtain CDP peer
+Date:   Tue, 12 Nov 2019 20:49:29 -0500
+Message-Id: <20191113015025.9685-153-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
+References: <20191113015025.9685-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573609760; bh=Q6Yu1upf0qf3MvZjiXjYRmyX6HZloR3M4NpbMzagMCI=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=LFxhuEfs14CMUq7d4HtyDndDhsKo5I9xGFO/Jg44hkjM1ma9H2JYQ6j0RR57qxhCB
-         fGmQjO6vKhTBzIlHgrysDC6dqDYjYLNTPwolgs4/QX2F5qSrx7H8buA+xNhmgtQJXh
-         9ZgKhdv45KrPEGvHQjG0qLUr1Kdx0hMXeu1UyrN02To5y2B3+KCdIjVM9QVMoQkFJf
-         ACHdmvD6bCzpq2/4T735txn8uFeWfXcpQ/fNzhFRtTuJGvN/kZum7a6GA+waU/437r
-         WATQFRIVU8Q6qetXNX02o9g2HXk0d2zqmj5HmZTxRmboWIJ3HOPRIzoohrIo0l0uIe
-         xeJvLCowCekyQ==
-To:     unlisted-recipients:; (no To-header on input)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xhci driver cannot call pci_set_power_state() on non-pci xhci host
-controllers. For example, NVIDIA Tegra XHCI host controller which acts
-as platform device with XHCI_SPURIOUS_WAKEUP quirk set in some platform
-hits this issue during shutdown.
+From: Reinette Chatre <reinette.chatre@intel.com>
 
-Signed-off-by: Henry Lin <henryl@nvidia.com>
+[ Upstream commit 521348b011d64cf3febb10b64ba5b472681bef94 ]
+
+Introduce a utility that, when provided with a RDT resource and an
+instance of this RDT resource (a RDT domain), would return pointers to
+the RDT resource and RDT domain that share the same hardware. This is
+specific to the CDP resources that share the same hardware.
+
+For example, if a pointer to the RDT_RESOURCE_L2DATA resource (struct
+rdt_resource) and a pointer to an instance of this resource (struct
+rdt_domain) is provided, then it will return a pointer to the
+RDT_RESOURCE_L2CODE resource as well as the specific instance that
+shares the same hardware as the provided rdt_domain.
+
+This utility is created in support of the "exclusive" resource group
+mode where overlap of resource allocation between resource groups need
+to be avoided. The overlap test need to consider not just the matching
+resources, but also the resources that share the same hardware.
+
+Temporarily mark it as unused in support of patch testing to avoid
+compile warnings until it is used.
+
+Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jithu Joseph <jithu.joseph@intel.com>
+Acked-by: Fenghua Yu <fenghua.yu@intel.com>
+Cc: tony.luck@intel.com
+Cc: gavin.hindman@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/9b4bc4d59ba2e903b6a3eb17e16ef41a8e7b7c3e.1538603665.git.reinette.chatre@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 72 ++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 6c17e3fe181a..61718b126d2b 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -791,8 +791,11 @@ static void xhci_shutdown(struct usb_hcd *hcd)
- 			readl(&xhci->op_regs->status));
- 
- 	/* Yet another workaround for spurious wakeups at shutdown with HSW */
--	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
--		pci_set_power_state(to_pci_dev(hcd->self.sysdev), PCI_D3hot);
-+	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP) {
-+		if (dev_is_pci(hcd->self.sysdev))
-+			pci_set_power_state(to_pci_dev(hcd->self.sysdev),
-+					PCI_D3hot);
-+	}
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 2013699a5c54a..bf15ffc1248fd 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -964,6 +964,78 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+ 	return 0;
  }
  
- #ifdef CONFIG_PM
++/**
++ * rdt_cdp_peer_get - Retrieve CDP peer if it exists
++ * @r: RDT resource to which RDT domain @d belongs
++ * @d: Cache instance for which a CDP peer is requested
++ * @r_cdp: RDT resource that shares hardware with @r (RDT resource peer)
++ *         Used to return the result.
++ * @d_cdp: RDT domain that shares hardware with @d (RDT domain peer)
++ *         Used to return the result.
++ *
++ * RDT resources are managed independently and by extension the RDT domains
++ * (RDT resource instances) are managed independently also. The Code and
++ * Data Prioritization (CDP) RDT resources, while managed independently,
++ * could refer to the same underlying hardware. For example,
++ * RDT_RESOURCE_L2CODE and RDT_RESOURCE_L2DATA both refer to the L2 cache.
++ *
++ * When provided with an RDT resource @r and an instance of that RDT
++ * resource @d rdt_cdp_peer_get() will return if there is a peer RDT
++ * resource and the exact instance that shares the same hardware.
++ *
++ * Return: 0 if a CDP peer was found, <0 on error or if no CDP peer exists.
++ *         If a CDP peer was found, @r_cdp will point to the peer RDT resource
++ *         and @d_cdp will point to the peer RDT domain.
++ */
++static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
++						    struct rdt_domain *d,
++						    struct rdt_resource **r_cdp,
++						    struct rdt_domain **d_cdp)
++{
++	struct rdt_resource *_r_cdp = NULL;
++	struct rdt_domain *_d_cdp = NULL;
++	int ret = 0;
++
++	switch (r->rid) {
++	case RDT_RESOURCE_L3DATA:
++		_r_cdp = &rdt_resources_all[RDT_RESOURCE_L3CODE];
++		break;
++	case RDT_RESOURCE_L3CODE:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L3DATA];
++		break;
++	case RDT_RESOURCE_L2DATA:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2CODE];
++		break;
++	case RDT_RESOURCE_L2CODE:
++		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2DATA];
++		break;
++	default:
++		ret = -ENOENT;
++		goto out;
++	}
++
++	/*
++	 * When a new CPU comes online and CDP is enabled then the new
++	 * RDT domains (if any) associated with both CDP RDT resources
++	 * are added in the same CPU online routine while the
++	 * rdtgroup_mutex is held. It should thus not happen for one
++	 * RDT domain to exist and be associated with its RDT CDP
++	 * resource but there is no RDT domain associated with the
++	 * peer RDT CDP resource. Hence the WARN.
++	 */
++	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
++	if (WARN_ON(!_d_cdp)) {
++		_r_cdp = NULL;
++		ret = -EINVAL;
++	}
++
++out:
++	*r_cdp = _r_cdp;
++	*d_cdp = _d_cdp;
++
++	return ret;
++}
++
+ /**
+  * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
+  * @r: Resource to which domain instance @d belongs.
 -- 
-2.17.1
+2.20.1
 
