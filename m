@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11085FA652
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0402FA632
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:27:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbfKMC2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:28:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37466 "EHLO mail.kernel.org"
+        id S1727537AbfKMBuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:50:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727443AbfKMBul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:50:41 -0500
+        id S1727468AbfKMBun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:50:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65F3F222D4;
-        Wed, 13 Nov 2019 01:50:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C38122467;
+        Wed, 13 Nov 2019 01:50:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609840;
-        bh=PHp0p/TS5kS23Aiz6xzSGVKi2LLkz2X5Kf+nG5lJukM=;
+        s=default; t=1573609842;
+        bh=AEtDSUfzNPB28aSBo8EKAVaPf9x3Xe/TBaAanT8qY4s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pcT0oxcG0QkWexrMl1Sr9mz38Qp5aWtODJT9NHMvBFkxyNt99l+t5Udy09WlCyxsX
-         GZOvzfnalbAeXb+Eg7k1plVrc7K/X6uq4xGf+Xz/vL5/GVDkz1jvng03ETwdJUQpOD
-         VKDidXur4S6HiWjSSEvr1VV9bEF5yeaO3CusCWHo=
+        b=AcCCCl+cd3uTSAJ4KjXlaVrD6bB+qim/jjEMrAVQAnE4wXwkm54UYjmjdd1oGZlTm
+         MSGizWi8wdusEL7X0qYBRQpcPNdFc6xEuQhRKHFMZm4y8Wvktlblux1ZaRMuPsl29y
+         Psbcat5UFn4p/Y7PwJEpft/d0vVDGwW3MBioVLTU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 012/209] SUNRPC: Fix priority queue fairness
-Date:   Tue, 12 Nov 2019 20:47:08 -0500
-Message-Id: <20191113015025.9685-12-sashal@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 014/209] ACPI / LPSS: Resume BYT/CHT I2C controllers from resume_noirq
+Date:   Tue, 12 Nov 2019 20:47:10 -0500
+Message-Id: <20191113015025.9685-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -43,224 +45,154 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit f42f7c283078ce3c1e8368b140e270755b1ae313 ]
+[ Upstream commit 48402cee6889fb3fce58e95fea1471626286dc63 ]
 
-Fix up the priority queue to not batch by owner, but by queue, so that
-we allow '1 << priority' elements to be dequeued before switching to
-the next priority queue.
-The owner field is still used to wake up requests in round robin order
-by owner to avoid single processes hogging the RPC layer by loading the
-queues.
+On some Cherry Trail systems the GPU ACPI fwnode has power-resources which
+point to the PMIC, which is connected over a LPSS I2C controller.
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+We add a device-link to make sure that the I2C controller is resumed before
+the GPU is. But the pci-core changes the power-state of PCI devices from
+D3 to D0 at noirq time (to restore the PCI config registers) and before
+this commit we were bringing up the I2C controllers from a resume_early
+handler which runs later. More specifically the pm-core will first run
+all resume_noirq handlers in order and then all resume_early handlers.
+
+So we must not only make sure that the handlers are run in the right order,
+but also that the resume of the I2C controller is done at noirq time.
+
+The behavior before this commit, resuming the I2C controller from a
+resume_early handler leads to the following errors:
+
+ i2c_designware 808622C1:06: controller timed out
+ ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
+ ACPI Error: Method parse/execution failed \_SB.P18W._ON, AE_ERROR
+ video LNXVIDEO:00: Failed to change power state to D0
+
+This commit changes the acpi_lpss.c code to resume the BYT/CHT I2C
+controllers at resume_noirq time fixing this.
+
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/sunrpc/sched.h |   2 -
- net/sunrpc/sched.c           | 109 +++++++++++++++++------------------
- 2 files changed, 54 insertions(+), 57 deletions(-)
+ drivers/acpi/acpi_lpss.c | 61 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 57 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/sunrpc/sched.h b/include/linux/sunrpc/sched.h
-index 592653becd914..ad2e243f3f032 100644
---- a/include/linux/sunrpc/sched.h
-+++ b/include/linux/sunrpc/sched.h
-@@ -188,7 +188,6 @@ struct rpc_timer {
- struct rpc_wait_queue {
- 	spinlock_t		lock;
- 	struct list_head	tasks[RPC_NR_PRIORITY];	/* task queue for each priority level */
--	pid_t			owner;			/* process id of last task serviced */
- 	unsigned char		maxpriority;		/* maximum priority (0 if queue is not a priority queue) */
- 	unsigned char		priority;		/* current priority */
- 	unsigned char		nr;			/* # tasks remaining for cookie */
-@@ -204,7 +203,6 @@ struct rpc_wait_queue {
-  * from a single cookie.  The aim is to improve
-  * performance of NFS operations such as read/write.
-  */
--#define RPC_BATCH_COUNT			16
- #define RPC_IS_PRIORITY(q)		((q)->maxpriority > 0)
+diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+index 924b9f089e79f..c47bc6c7f4b91 100644
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -84,6 +84,7 @@ struct lpss_device_desc {
+ 	size_t prv_size_override;
+ 	struct property_entry *properties;
+ 	void (*setup)(struct lpss_private_data *pdata);
++	bool resume_from_noirq;
+ };
  
- /*
-diff --git a/net/sunrpc/sched.c b/net/sunrpc/sched.c
-index 3fe5d60ab0e2c..e2808586c9e61 100644
---- a/net/sunrpc/sched.c
-+++ b/net/sunrpc/sched.c
-@@ -99,64 +99,78 @@ __rpc_add_timer(struct rpc_wait_queue *queue, struct rpc_task *task)
- 	list_add(&task->u.tk_wait.timer_list, &queue->timer_list.list);
+ static const struct lpss_device_desc lpss_dma_desc = {
+@@ -275,12 +276,14 @@ static const struct lpss_device_desc byt_i2c_dev_desc = {
+ 	.flags = LPSS_CLK | LPSS_SAVE_CTX,
+ 	.prv_offset = 0x800,
+ 	.setup = byt_i2c_setup,
++	.resume_from_noirq = true,
+ };
+ 
+ static const struct lpss_device_desc bsw_i2c_dev_desc = {
+ 	.flags = LPSS_CLK | LPSS_SAVE_CTX | LPSS_NO_D3_DELAY,
+ 	.prv_offset = 0x800,
+ 	.setup = byt_i2c_setup,
++	.resume_from_noirq = true,
+ };
+ 
+ static const struct lpss_device_desc bsw_spi_dev_desc = {
+@@ -1013,7 +1016,7 @@ static int acpi_lpss_resume(struct device *dev)
  }
  
--static void rpc_rotate_queue_owner(struct rpc_wait_queue *queue)
--{
--	struct list_head *q = &queue->tasks[queue->priority];
--	struct rpc_task *task;
--
--	if (!list_empty(q)) {
--		task = list_first_entry(q, struct rpc_task, u.tk_wait.list);
--		if (task->tk_owner == queue->owner)
--			list_move_tail(&task->u.tk_wait.list, q);
--	}
--}
--
- static void rpc_set_waitqueue_priority(struct rpc_wait_queue *queue, int priority)
+ #ifdef CONFIG_PM_SLEEP
+-static int acpi_lpss_suspend_late(struct device *dev)
++static int acpi_lpss_do_suspend_late(struct device *dev)
  {
- 	if (queue->priority != priority) {
--		/* Fairness: rotate the list when changing priority */
--		rpc_rotate_queue_owner(queue);
- 		queue->priority = priority;
-+		queue->nr = 1U << priority;
- 	}
+ 	int ret;
+ 
+@@ -1024,12 +1027,62 @@ static int acpi_lpss_suspend_late(struct device *dev)
+ 	return ret ? ret : acpi_lpss_suspend(dev, device_may_wakeup(dev));
  }
  
--static void rpc_set_waitqueue_owner(struct rpc_wait_queue *queue, pid_t pid)
--{
--	queue->owner = pid;
--	queue->nr = RPC_BATCH_COUNT;
--}
--
- static void rpc_reset_waitqueue_priority(struct rpc_wait_queue *queue)
- {
- 	rpc_set_waitqueue_priority(queue, queue->maxpriority);
--	rpc_set_waitqueue_owner(queue, 0);
- }
- 
- /*
-- * Add new request to a priority queue.
-+ * Add a request to a queue list
-  */
--static void __rpc_add_wait_queue_priority(struct rpc_wait_queue *queue,
--		struct rpc_task *task,
--		unsigned char queue_priority)
-+static void
-+__rpc_list_enqueue_task(struct list_head *q, struct rpc_task *task)
- {
--	struct list_head *q;
- 	struct rpc_task *t;
- 
--	INIT_LIST_HEAD(&task->u.tk_wait.links);
--	if (unlikely(queue_priority > queue->maxpriority))
--		queue_priority = queue->maxpriority;
--	if (queue_priority > queue->priority)
--		rpc_set_waitqueue_priority(queue, queue_priority);
--	q = &queue->tasks[queue_priority];
- 	list_for_each_entry(t, q, u.tk_wait.list) {
- 		if (t->tk_owner == task->tk_owner) {
--			list_add_tail(&task->u.tk_wait.list, &t->u.tk_wait.links);
-+			list_add_tail(&task->u.tk_wait.links,
-+					&t->u.tk_wait.links);
-+			/* Cache the queue head in task->u.tk_wait.list */
-+			task->u.tk_wait.list.next = q;
-+			task->u.tk_wait.list.prev = NULL;
- 			return;
- 		}
- 	}
-+	INIT_LIST_HEAD(&task->u.tk_wait.links);
- 	list_add_tail(&task->u.tk_wait.list, q);
- }
- 
-+/*
-+ * Remove request from a queue list
-+ */
-+static void
-+__rpc_list_dequeue_task(struct rpc_task *task)
+-static int acpi_lpss_resume_early(struct device *dev)
++static int acpi_lpss_suspend_late(struct device *dev)
 +{
-+	struct list_head *q;
-+	struct rpc_task *t;
++	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
 +
-+	if (task->u.tk_wait.list.prev == NULL) {
-+		list_del(&task->u.tk_wait.links);
-+		return;
-+	}
-+	if (!list_empty(&task->u.tk_wait.links)) {
-+		t = list_first_entry(&task->u.tk_wait.links,
-+				struct rpc_task,
-+				u.tk_wait.links);
-+		/* Assume __rpc_list_enqueue_task() cached the queue head */
-+		q = t->u.tk_wait.list.next;
-+		list_add_tail(&t->u.tk_wait.list, q);
-+		list_del(&task->u.tk_wait.links);
-+	}
-+	list_del(&task->u.tk_wait.list);
++	if (pdata->dev_desc->resume_from_noirq)
++		return 0;
++
++	return acpi_lpss_do_suspend_late(dev);
 +}
 +
-+/*
-+ * Add new request to a priority queue.
-+ */
-+static void __rpc_add_wait_queue_priority(struct rpc_wait_queue *queue,
-+		struct rpc_task *task,
-+		unsigned char queue_priority)
++static int acpi_lpss_suspend_noirq(struct device *dev)
 +{
-+	if (unlikely(queue_priority > queue->maxpriority))
-+		queue_priority = queue->maxpriority;
-+	__rpc_list_enqueue_task(&queue->tasks[queue_priority], task);
++	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
++	int ret;
++
++	if (pdata->dev_desc->resume_from_noirq) {
++		ret = acpi_lpss_do_suspend_late(dev);
++		if (ret)
++			return ret;
++	}
++
++	return acpi_subsys_suspend_noirq(dev);
 +}
 +
- /*
-  * Add new request to wait queue.
-  *
-@@ -194,13 +208,7 @@ static void __rpc_add_wait_queue(struct rpc_wait_queue *queue,
-  */
- static void __rpc_remove_wait_queue_priority(struct rpc_task *task)
++static int acpi_lpss_do_resume_early(struct device *dev)
  {
--	struct rpc_task *t;
--
--	if (!list_empty(&task->u.tk_wait.links)) {
--		t = list_entry(task->u.tk_wait.links.next, struct rpc_task, u.tk_wait.list);
--		list_move(&t->u.tk_wait.list, &task->u.tk_wait.list);
--		list_splice_init(&task->u.tk_wait.links, &t->u.tk_wait.links);
--	}
-+	__rpc_list_dequeue_task(task);
+ 	int ret = acpi_lpss_resume(dev);
+ 
+ 	return ret ? ret : pm_generic_resume_early(dev);
  }
++
++static int acpi_lpss_resume_early(struct device *dev)
++{
++	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
++
++	if (pdata->dev_desc->resume_from_noirq)
++		return 0;
++
++	return acpi_lpss_do_resume_early(dev);
++}
++
++static int acpi_lpss_resume_noirq(struct device *dev)
++{
++	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
++	int ret;
++
++	ret = acpi_subsys_resume_noirq(dev);
++	if (ret)
++		return ret;
++
++	if (!dev_pm_may_skip_resume(dev) && pdata->dev_desc->resume_from_noirq)
++		ret = acpi_lpss_do_resume_early(dev);
++
++	return ret;
++}
++
+ #endif /* CONFIG_PM_SLEEP */
  
- /*
-@@ -212,7 +220,8 @@ static void __rpc_remove_wait_queue(struct rpc_wait_queue *queue, struct rpc_tas
- 	__rpc_disable_timer(queue, task);
- 	if (RPC_IS_PRIORITY(queue))
- 		__rpc_remove_wait_queue_priority(task);
--	list_del(&task->u.tk_wait.list);
-+	else
-+		list_del(&task->u.tk_wait.list);
- 	queue->qlen--;
- 	dprintk("RPC: %5u removed from queue %p \"%s\"\n",
- 			task->tk_pid, queue, rpc_qname(queue));
-@@ -493,17 +502,9 @@ static struct rpc_task *__rpc_find_next_queued_priority(struct rpc_wait_queue *q
- 	 * Service a batch of tasks from a single owner.
- 	 */
- 	q = &queue->tasks[queue->priority];
--	if (!list_empty(q)) {
--		task = list_entry(q->next, struct rpc_task, u.tk_wait.list);
--		if (queue->owner == task->tk_owner) {
--			if (--queue->nr)
--				goto out;
--			list_move_tail(&task->u.tk_wait.list, q);
--		}
--		/*
--		 * Check if we need to switch queues.
--		 */
--		goto new_owner;
-+	if (!list_empty(q) && --queue->nr) {
-+		task = list_first_entry(q, struct rpc_task, u.tk_wait.list);
-+		goto out;
- 	}
- 
- 	/*
-@@ -515,7 +516,7 @@ static struct rpc_task *__rpc_find_next_queued_priority(struct rpc_wait_queue *q
- 		else
- 			q = q - 1;
- 		if (!list_empty(q)) {
--			task = list_entry(q->next, struct rpc_task, u.tk_wait.list);
-+			task = list_first_entry(q, struct rpc_task, u.tk_wait.list);
- 			goto new_queue;
- 		}
- 	} while (q != &queue->tasks[queue->priority]);
-@@ -525,8 +526,6 @@ static struct rpc_task *__rpc_find_next_queued_priority(struct rpc_wait_queue *q
- 
- new_queue:
- 	rpc_set_waitqueue_priority(queue, (unsigned int)(q - &queue->tasks[0]));
--new_owner:
--	rpc_set_waitqueue_owner(queue, task->tk_owner);
- out:
- 	return task;
- }
+ static int acpi_lpss_runtime_suspend(struct device *dev)
+@@ -1059,8 +1112,8 @@ static struct dev_pm_domain acpi_lpss_pm_domain = {
+ 		.complete = acpi_subsys_complete,
+ 		.suspend = acpi_subsys_suspend,
+ 		.suspend_late = acpi_lpss_suspend_late,
+-		.suspend_noirq = acpi_subsys_suspend_noirq,
+-		.resume_noirq = acpi_subsys_resume_noirq,
++		.suspend_noirq = acpi_lpss_suspend_noirq,
++		.resume_noirq = acpi_lpss_resume_noirq,
+ 		.resume_early = acpi_lpss_resume_early,
+ 		.freeze = acpi_subsys_freeze,
+ 		.freeze_late = acpi_subsys_freeze_late,
 -- 
 2.20.1
 
