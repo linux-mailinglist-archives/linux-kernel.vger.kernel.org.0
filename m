@@ -2,102 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A302FBC06
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 23:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 249BCFBC18
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 00:00:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfKMW7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 17:59:45 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40014 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbfKMW7o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 17:59:44 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 15so2323569pgt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 14:59:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=x0ZnUt6kpEl8U4BFQc25DnqaMomOkgg87tNLp5MJobU=;
-        b=R0eY7mrKlGW/OVdYhbPMbOVBf7QxU9dLQqSt3WiiDoDKS8ojUQSuj1cJ5zzMazX1hb
-         JTqeimnK15zfrigBOGnw0Bq7/sqQhFU7tOw6X+B5iKTiTR7mMr7rGAtEACGGrXe9fPkb
-         NkZK+FmDj/EJuSRG5oerEwQbu/cKivtP2hZ5jDuw0hXdKcfw/7q15elq09GfpcEcv4K8
-         nOafiv1azzgJ4A5F06hFgXH+xgleCBpIXU0JUe3AqkqfY8rTXWJc/yCQJ3i0pkFvBJ0R
-         kTH0JQ6jMtGy9iIKtMI6NdCt3sBNByqTV1Ht2VTohQOqc9LKt4pbZXkupbvBxiGoVq7T
-         tRLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x0ZnUt6kpEl8U4BFQc25DnqaMomOkgg87tNLp5MJobU=;
-        b=bHjVyGDZnPqvW6ZcqbMI/9U+IlyfvVnC/0YiNHEykHjeyvyvpiJ75Wof2qczu/vvYw
-         qsqqKnhzeLrzp3gXoj5h0oIagy88pBlnhW0hM9i7GJ1CYwihu1kUf9xXMyXD/7hWDKx2
-         KJo5M2YIQpIo9kRxaoVZl4kHC/Rg7hVzpLXbhcIln8I8N+aLz9xMgXhKRmGJQqvn6m9e
-         3v0e9cxhK+UGnOHZr6abisKR5zgxDFptUueWvvsXFzp0EK4nhpK22TcoeidEByjyiNof
-         RjjTZtia/dL5RzSDwH0id9u2ocYR9cPV90DGpK9z435NRqB5XEWm9ingaH4+hQrM5m4P
-         7oMw==
-X-Gm-Message-State: APjAAAUzZ8aSTYJNKXC6Kzp/EjMpqfaZ/Q4AtHzUzaWiTcXif3jMxrtI
-        uXUnuutORJZZ0CtYIh4RE309kxd6ClU=
-X-Google-Smtp-Source: APXvYqxB6VnLMk6EwZYMzfe4Eo4jDzf5CFGuPJT1iqW0GcmV//9bJ9nx8dCxRAqDYoD6u/PuzXc5Nw==
-X-Received: by 2002:a17:90a:3264:: with SMTP id k91mr8088584pjb.23.1573685981680;
-        Wed, 13 Nov 2019 14:59:41 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h13sm4557008pfr.98.2019.11.13.14.59.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 14:59:41 -0800 (PST)
-Date:   Wed, 13 Nov 2019 14:59:38 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     kvalo@codeaurora.org, davem@davemloft.net,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ath10k: Handle when FW doesn't support
- QMI_WLFW_HOST_CAP_REQ_V01
-Message-ID: <20191113225938.GA3727453@builder>
-References: <20191106233130.2169-1-jeffrey.l.hugo@gmail.com>
+        id S1727119AbfKMXAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 18:00:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60430 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726564AbfKMXAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 18:00:10 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6731F206E3;
+        Wed, 13 Nov 2019 23:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573686010;
+        bh=2AmqOHyJ6omnuRzB5myDDOYWpOkM5LXqNgKm+BcO0DM=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=U1OmHvn7yTe0q9tomleg7XpTyaB1EQTLSdnzts5zIBElzVfeyiW+/o/qhv4pW0fkc
+         NnFu6UYR1dbfJ+fcXe6QuRRHfjxPuOcqhYm64O/BP68yIoGBcbu7Maq0YsI8jxMqJI
+         I8lE+eA4bbW2BC0nzBURe2C42Adq3gUOO+YiLgpc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106233130.2169-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1995139bee5248ff3e9d46dc715968f212cfc4cc.1570520268.git.baolin.wang@linaro.org>
+References: <1995139bee5248ff3e9d46dc715968f212cfc4cc.1570520268.git.baolin.wang@linaro.org>
+Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Baolin Wang <baolin.wang@linaro.org>, mturquette@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2 1/2] clk: sprd: Use IS_ERR() to validate the return value of syscon_regmap_lookup_by_phandle()
+User-Agent: alot/0.8.1
+Date:   Wed, 13 Nov 2019 15:00:08 -0800
+Message-Id: <20191113230010.6731F206E3@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 06 Nov 15:31 PST 2019, Jeffrey Hugo wrote:
-
-> Firmware with the build id QC_IMAGE_VERSION_STRING=WLAN.HL.1.0.2-XXXX does
-> not support the QMI_WLFW_HOST_CAP_REQ_V01 message and will return the
-> QMI not supported error to the ath10k driver.  Since not supporting this
-> message is not fatal to the firmware nor the ath10k driver, lets catch
-> this particular scenario and ignore it so that we can still bring up
-> wifi services successfully.
-> 
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Quoting Baolin Wang (2019-10-08 00:41:38)
+> The syscon_regmap_lookup_by_phandle() will never return NULL, thus use
+> IS_ERR() to validate the return value instead of IS_ERR_OR_NULL().
+>=20
+> Fixes: d41f59fd92f2 ("clk: sprd: Add common infrastructure")
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 > ---
->  drivers/net/wireless/ath/ath10k/qmi.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
-> index 545ac1f06997..eb618a2652db 100644
-> --- a/drivers/net/wireless/ath/ath10k/qmi.c
-> +++ b/drivers/net/wireless/ath/ath10k/qmi.c
-> @@ -614,7 +614,9 @@ static int ath10k_qmi_host_cap_send_sync(struct ath10k_qmi *qmi)
->  	if (ret < 0)
->  		goto out;
->  
-> -	if (resp.resp.result != QMI_RESULT_SUCCESS_V01) {
-> +	/* older FW didn't support this request, which is not fatal */
-> +	if (resp.resp.result != QMI_RESULT_SUCCESS_V01 &&
-> +	    resp.resp.error != QMI_ERR_NOT_SUPPORTED_V01) {
->  		ath10k_err(ar, "host capability request rejected: %d\n", resp.resp.error);
->  		ret = -EINVAL;
->  		goto out;
-> -- 
-> 2.17.1
-> 
+
+Applied to clk-next
+
