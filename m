@@ -2,89 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9F3FB8ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:34:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D00FB8F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfKMTec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 14:34:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbfKMTeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 14:34:31 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95EE6206D7;
-        Wed, 13 Nov 2019 19:34:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573673671;
-        bh=o2wXCRnJvMNzkoYmM+/9D8Kea21XKX9mhE/7gJ8wZcY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xuMmI97cuv61wfFEfbfqXOMSOfwEvQTrHtTzND2TYmYYbeZFqz/HhuTliEczNVTj7
-         5JVjuWDZoM6PaIjFYWPJPyQHf9VdG61hnR9vKnsKIkpFfUupVwVmdy0xefMgz7akDc
-         knhhNzA11N96sh9u6IwjmEDlGR/qGjbRpZYoyvoA=
-Date:   Wed, 13 Nov 2019 11:34:29 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        =?iso-8859-1?Q?Jo=E3o?= Moreira <joao.moreira@intel.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Stephan Mueller <smueller@chronox.de>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v5 2/8] crypto: x86/serpent: Remove glue function macros
- usage
-Message-ID: <20191113193428.GB221701@gmail.com>
-Mail-Followup-To: Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        =?iso-8859-1?Q?Jo=E3o?= Moreira <joao.moreira@intel.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Stephan Mueller <smueller@chronox.de>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-References: <20191113182516.13545-1-keescook@chromium.org>
- <20191113182516.13545-3-keescook@chromium.org>
+        id S1726557AbfKMTiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 14:38:00 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40095 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfKMTiA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 14:38:00 -0500
+Received: by mail-io1-f67.google.com with SMTP id p6so3897025iod.7;
+        Wed, 13 Nov 2019 11:37:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qzwujp8rTgTl9+3sAbPrswzrZfz1gfQWPbEg9+4F518=;
+        b=ozjH8/ZUfQ2cn2Shup6m3S6r23+l600p3IQKlEwI/WV41WNVyzYTOXRhSmhi9cSaU8
+         8C2MfrQNRoEBF2iuxNSsfOWM3FrWzd/0BYYi/DNbr+VvXJ1loO6FOwer0u3b+nTzmYfN
+         cliWX/v+W+IB14U2s4Jd+EktLLph+ba1wDP2kT9ZB0l4q/A6EnDfmrqkp24SO8IyCkUH
+         Hay6Eq4pLvDpOWl2x8BoFpXSIRSrwuVREz7SUaJy3YsUMRQAZvHjSu+1uV8lbr9vOh6U
+         /y+NHQpCoGFhBM4eYxEAM/4H51tXI6O2acTKYOG4YhFF728sXGpqWkMgW5uFQ4tWv2nM
+         jkzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qzwujp8rTgTl9+3sAbPrswzrZfz1gfQWPbEg9+4F518=;
+        b=HDpXz1H4MbZ1fIK+6x/RyX0gb5dGUCiCSg1xpA3TgnZbZFLGcmh1LI84JvdXqABAY4
+         /pYcKC9xcSoQz2tQ1yM03fbnVr2rRv79mUZsXCypAfR7eifakB/GqNpt60GE1pel61mY
+         XO67lAfRB2XG40pISOGBDqOsmMqzfw4pgARsvU9LK+vwpBaCUNnl6OpcPPiVpwyZVtKf
+         MjkUgV4RASxTaGyf3YvyYH5Uvhc36bOhv1xS4NwnExETKUtFv+YZsOfWFl4kVVv6hdGD
+         vM0UJtJ4S51z3zfDQkFp21BXm/zkPDgvJNFvL2qZ8XtQMIwFRIHtI82LRdX+SNNDqyEf
+         xMXg==
+X-Gm-Message-State: APjAAAUtV+Kb13FDEWyVoJi8KXH8y9xeBh9ZMNKatNdziLs8K+ss5lPD
+        IESYRVFQlXr8fygvAFenNU3M2VTGVvRPYuB5KCQ=
+X-Google-Smtp-Source: APXvYqxni+hm9YE3cMiiBsq+tA2kd4YY3cEWlU1jikSd8uLb3c2eNIA4I/pha8dG2m3lQDNH4a37yhjSSHETvVXpYtI=
+X-Received: by 2002:a02:9a02:: with SMTP id b2mr2194449jal.15.1573673877724;
+ Wed, 13 Nov 2019 11:37:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113182516.13545-3-keescook@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1565903072-3948-1-git-send-email-wenwen@cs.uga.edu> <20191113192821.GA3441686@builder>
+In-Reply-To: <20191113192821.GA3441686@builder>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Wed, 13 Nov 2019 12:37:46 -0700
+Message-ID: <CAOCk7NpoQ_JEQj61BvU4HLzxSOQtxUuB-nyrXRKQTxjZ7infbQ@mail.gmail.com>
+Subject: Re: [PATCH] ath10k: add cleanup in ath10k_sta_state()
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Wenwen Wang <wenwen@cs.uga.edu>, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER" 
+        <ath10k@lists.infradead.org>,
+        "open list:NETWORKING DRIVERS (WIRELESS)" 
+        <linux-wireless@vger.kernel.org>,
+        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        govinds@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 10:25:10AM -0800, Kees Cook wrote:
-> diff --git a/arch/x86/include/asm/crypto/serpent-sse2.h b/arch/x86/include/asm/crypto/serpent-sse2.h
-> index 1a345e8a7496..491a5a7d4e15 100644
-> --- a/arch/x86/include/asm/crypto/serpent-sse2.h
-> +++ b/arch/x86/include/asm/crypto/serpent-sse2.h
-> @@ -41,8 +41,7 @@ asmlinkage void __serpent_enc_blk_8way(struct serpent_ctx *ctx, u8 *dst,
->  asmlinkage void serpent_dec_blk_8way(struct serpent_ctx *ctx, u8 *dst,
->  				     const u8 *src);
->  
-> -static inline void serpent_enc_blk_xway(struct serpent_ctx *ctx, u8 *dst,
-> -				   const u8 *src)
-> +static inline void serpent_enc_blk_xway(void *ctx, u8 *dst, const u8 *src)
->  {
->  	__serpent_enc_blk_8way(ctx, dst, src, false);
->  }
-> @@ -53,8 +52,7 @@ static inline void serpent_enc_blk_xway_xor(struct serpent_ctx *ctx, u8 *dst,
->  	__serpent_enc_blk_8way(ctx, dst, src, true);
->  }
->  
-> -static inline void serpent_dec_blk_xway(struct serpent_ctx *ctx, u8 *dst,
-> -				   const u8 *src)
-> +static inline void serpent_dec_blk_xway(void *ctx, u8 *dst, const u8 *src)
->  {
->  	serpent_dec_blk_8way(ctx, dst, src);
->  }
+On Wed, Nov 13, 2019 at 12:28 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Thu 15 Aug 14:04 PDT 2019, Wenwen Wang wrote:
+>
+> > If 'sta->tdls' is false, no cleanup is executed, leading to memory/resource
+> > leaks, e.g., 'arsta->tx_stats'. To fix this issue, perform cleanup before
+> > go to the 'exit' label.
+> >
+>
+> Unfortunately this patch consistently crashes all my msm8998, sdm845 and
+> qcs404 devices (running ath10k_snoc).  Upon trying to join a network the
+> WiFi firmware crashes with the following:
+>
+> [  124.315286] wlan0: authenticate with 70:3a:cb:4d:34:f3
+> [  124.334051] wlan0: send auth to 70:3a:cb:4d:34:f3 (try 1/3)
+> [  124.338828] wlan0: authenticated
+> [  124.342470] wlan0: associate with 70:3a:cb:4d:34:f3 (try 1/3)
+> [  124.347223] wlan0: RX AssocResp from 70:3a:cb:4d:34:f3 (capab=0x1011 status=0 aid=2)
+> [  124.402535] qcom-q6v5-mss 4080000.remoteproc: fatal error received: err_qdi.c:456:EF:wlan_process:1:cmnos_thread.c:3900:Asserted in wlan_vdev.c:_wlan_vdev_up:3219
+>
+> Can we please revert it for v5.5?
 
-Please read this whole file --- these functions are also defined under an #ifdef
-CONFIG_X86_32 block, so that part needs to be updated too.
+I observe the same, and concur with this request.
 
-- Eric
+>
+> Regards,
+> Bjorn
+>
+> > Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+> > ---
+> >  drivers/net/wireless/ath/ath10k/mac.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+> > index 0606416..f99e6d2 100644
+> > --- a/drivers/net/wireless/ath/ath10k/mac.c
+> > +++ b/drivers/net/wireless/ath/ath10k/mac.c
+> > @@ -6548,8 +6548,12 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+> >
+> >               spin_unlock_bh(&ar->data_lock);
+> >
+> > -             if (!sta->tdls)
+> > +             if (!sta->tdls) {
+> > +                     ath10k_peer_delete(ar, arvif->vdev_id, sta->addr);
+> > +                     ath10k_mac_dec_num_stations(arvif, sta);
+> > +                     kfree(arsta->tx_stats);
+> >                       goto exit;
+> > +             }
+> >
+> >               ret = ath10k_wmi_update_fw_tdls_state(ar, arvif->vdev_id,
+> >                                                     WMI_TDLS_ENABLE_ACTIVE);
+> > --
+> > 2.7.4
+> >
