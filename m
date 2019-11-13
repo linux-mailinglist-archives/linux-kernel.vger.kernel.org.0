@@ -2,90 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05AEAFB451
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 16:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F50FB466
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 16:57:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfKMPxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 10:53:21 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44268 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfKMPxV (ORCPT
+        id S1727473AbfKMP5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 10:57:17 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:21788 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfKMP5R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:53:21 -0500
-Received: by mail-ot1-f67.google.com with SMTP id c19so1995733otr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 07:53:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=7nUTsUyFuV1Joe0Th3z9Twe1G0A6kzFQQxZuL7muiZ4=;
-        b=T6a9Tb8I5cPRZyrSMQvO0rJbtY9VZixdvbWPk4W28h5xSwpzJALgGyJbnYbJAh82MO
-         JjaGCkwDG/CxMv2UsJYswq0xfQ1iuzemLACUNyFTKCB/ZenoygZXTJIFMBqboJQAKSfD
-         LsAp7SAapoCr5enECA8SV155twtf1u7jr/fJORjOWE18v8BmIF8GqrcRSQGSUCJ80qe1
-         QjMhPUuYnHuMfvNiEXuCtley9t6nZTX0OtNlObQjOC6PCTnIIWSd38nD7Tg1RxHIoRtm
-         zDXX9xY44SPU5n6jAzSR0+dUIxE8oCf/VT8Ouep5MdFtTIyBFSQuOWIpr20XFljFlnJH
-         1pGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=7nUTsUyFuV1Joe0Th3z9Twe1G0A6kzFQQxZuL7muiZ4=;
-        b=Pu17lMszwM74i8ECU5xy5WZHMg1aIxzVWXvubMaIc6QtyZtv8LGHPKiKPJzp8jg8xT
-         oKFF9Y7azQYnyKk1ObKNG75gQYq0MAXW/YS0RbTVc8+/LIwOX1piASkG1YYMAtv4lW+J
-         n5fJ/CRVUmdUahzcSZ+DNDJxaKuI915rbH23rIGqMpiMPGKJfd8xF1FZzNpiXsQ1b4Sr
-         by7K8H6vTCp+sw3EJDRhG9B7nMM+nXJRvdxkxOEWsRKM0dtXaee3OzaLqER3BJFR27oh
-         SiMczg+q3ksw5km6dL8zR58LOI7/AOZZMr3nC3A5rM9UYpuansvbCdvwTMUlBKbU7KT6
-         m1ZQ==
-X-Gm-Message-State: APjAAAUGb+OJigF9lucODZc7NEDlRz6FRAd5m6TKJjd69WjARSw1eVUS
-        5mqFPv/A2RN+z1tPGkN/dzeODpnJh2crb5CRzKQ=
-X-Google-Smtp-Source: APXvYqwZxJ52PoROhPcy71MmG+uTbI6nL1iwka5ATkFuXLauUPcX6kqXvKUAEq78iY5M0xl+sZ/UjLpr64s96n7m45Y=
-X-Received: by 2002:a9d:77c5:: with SMTP id w5mr3262533otl.351.1573660400140;
- Wed, 13 Nov 2019 07:53:20 -0800 (PST)
+        Wed, 13 Nov 2019 10:57:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573660634;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=/LGnKiYy7wgg2UQ6QDBC/em5eo8m26dky6ZlAzfrAsc=;
+        b=cyuf7T9i12p7uQf9BiRFWm9pDXkuuF3wpZ5PVtdyTo8ANoAJYOHxkzzeZJ1ZHiYg9u
+        Dh6Dat1TVQEoTzm9KhHqaxj9lH5h1Tu1vW6QW6TmwRyuOigpUJavGV4yud98/t4GE0Ea
+        v8vzNfVMJ+HwQ8C6FxnRSjhWVmwnXhrsJxrdyDbuEB+IsgZ7uzhKZQPKMmNAtxbKfVWQ
+        XaJ/FWFaavSjiDCII08nL2jYxd8UGn4rf5Ah672+8lXv+wAqur3WkuLPcI2qAfXy5oEM
+        uzUJhFJTpjvHSB6vh6rDGIeySER0WGNdciy64oyvOyK1CcTR1HdkVrLCJBFkinMlYkDO
+        cSag==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzBW/OdlBZQ4AHSS325Pjw=="
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.29.0 SBL|AUTH)
+        with ESMTPSA id 20735bvADFsBGfU
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 13 Nov 2019 16:54:11 +0100 (CET)
+From:   Olaf Hering <olaf@aepfle.de>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org (open list:Hyper-V CORE AND DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     Olaf Hering <olaf@aepfle.de>
+Subject: [PATCH v2] tools/hv: async name resolution in kvp_daemon
+Date:   Wed, 13 Nov 2019 16:54:00 +0100
+Message-Id: <20191113155400.25456-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-Received: by 2002:a4a:a194:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 07:53:19
- -0800 (PST)
-Reply-To: infobankatlanitctogo@gmail.com
-From:   BANK BTCI <directofficemailbox1@gmail.com>
-Date:   Wed, 13 Nov 2019 15:53:19 +0000
-Message-ID: <CAAMd7HjnjnqEiQqvekL3vMtLTMD4iuGrjr=bKJoCVN6sq3wxag@mail.gmail.com>
-Subject: Congratulations / Call / Whatsapp : +22892331995
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATTN:
+The hostname is resolved just once since commit 58125210ab3b ("Tools:
+hv: cache FQDN in kvp_daemon to avoid timeouts") to make sure the VM
+responds within the timeout limits to requests from the host.
 
-This is to inform you that the IMF office instructed us to transfer
-your $2.5 Million Dollars compensating for all the SCAM VICTIMS and
-your email were found as one of the VICTIMS By IMF Security leading
-team and IMF representative officers, so between now until 31th Of
-Dec. 2019 you will be receiving a sum of $5000 dollars per day.
+If for some reason getaddrinfo fails, the string returned by the
+"FullyQualifiedDomainName" request contains some error string, which is
+then used by tools on the host side.
 
-However you are informed that we are waiting for your informations
-bellow as stated so that we will start by sending the first $ 5000
-dollars to you first thing tomorrow morning, for you to avoid
-cancellation of your payment. You have only 48 hours to Call(+22892331995 )
-or Email (infobankatlanitctogo@gmail.com ) this office upon the receipt of
-this Email the maximum amount you will be receiving per a day is $5000.
+Adjust the code to resolve the current hostname in a separate thread.
+This thread loops until getaddrinfo returns success. During this time
+all "FullyQualifiedDomainName" requests will be answered with an empty
+string.
 
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
 
-So provided the below information:
+v2:
+- link with -pthread instead of -lpthread
+- consider some errors from getaddrinfo fatal, log them via syslog
+- update also hostname in the loop
 
-1) Your: Full Name===================
-2) Your: Full Address================
-3) Your: contact telephone and fax number;=====
-4) Your: Age and Profession;=========
-5) Your:Copy of any valid form of your Identification;===
-6) Your:Marital status===========
+ tools/hv/Makefile        |  2 ++
+ tools/hv/hv_kvp_daemon.c | 83 ++++++++++++++++++++++++++++++++++--------------
+ 2 files changed, 62 insertions(+), 23 deletions(-)
 
-
-
-Further more you advised to call us as the instruction was passed that
-Within 48 hours without hearing from you, Count your payment canceled.
-
-
-Thanks
-Mr. Donald Phillipie
-Tell : WHATS UP : +22892331995
+diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+index b57143d9459c..9bbab96ac06d 100644
+--- a/tools/hv/Makefile
++++ b/tools/hv/Makefile
+@@ -22,6 +22,8 @@ ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+ 
+ ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
+ 
++$(OUTPUT)hv_kvp_daemon: LDFLAGS += -pthread
++
+ all: $(ALL_PROGRAMS)
+ 
+ export srctree OUTPUT CC LD CFLAGS
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index e9ef4ca6a655..b930506a9632 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -41,6 +41,7 @@
+ #include <net/if.h>
+ #include <limits.h>
+ #include <getopt.h>
++#include <pthread.h>
+ 
+ /*
+  * KVP protocol: The user mode component first registers with the
+@@ -85,7 +86,7 @@ static char *processor_arch;
+ static char *os_build;
+ static char *os_version;
+ static char *lic_version = "Unknown version";
+-static char full_domain_name[HV_KVP_EXCHANGE_MAX_VALUE_SIZE];
++static char *full_domain_name;
+ static struct utsname uts_buf;
+ 
+ /*
+@@ -1327,27 +1328,67 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
+ 	return error;
+ }
+ 
+-
+-static void
+-kvp_get_domain_name(char *buffer, int length)
++/*
++ * Async retrival of Fully Qualified Domain Name because getaddrinfo takes an
++ * unpredictable amount of time to finish.
++ */
++static void *kvp_getaddrinfo(void *p)
+ {
+-	struct addrinfo	hints, *info ;
+-	int error = 0;
++	char *tmp, **str_ptr = (char **)p;
++	char hostname[HOST_NAME_MAX + 1];
++	struct addrinfo	*info, hints = {
++		.ai_family = AF_INET, /* Get only ipv4 addrinfo. */
++		.ai_socktype = SOCK_STREAM,
++		.ai_flags = AI_CANONNAME,
++	};
++	int ret;
+ 
+-	gethostname(buffer, length);
+-	memset(&hints, 0, sizeof(hints));
+-	hints.ai_family = AF_INET; /*Get only ipv4 addrinfo. */
+-	hints.ai_socktype = SOCK_STREAM;
+-	hints.ai_flags = AI_CANONNAME;
++	do {
++		if (gethostname(hostname, sizeof(hostname) - 1) < 0)
++			goto out;
+ 
+-	error = getaddrinfo(buffer, NULL, &hints, &info);
+-	if (error != 0) {
+-		snprintf(buffer, length, "getaddrinfo failed: 0x%x %s",
+-			error, gai_strerror(error));
++		ret = getaddrinfo(hostname, NULL, &hints, &info);
++		switch (ret) {
++		case 0:
++			break;
++		case EAI_BADFLAGS:
++		case EAI_MEMORY:
++		case EAI_OVERFLOW:
++		case EAI_SOCKTYPE:
++		case EAI_SYSTEM:
++			/* Permanent failure */
++			syslog(LOG_ERR, "getaddrinfo failed: %d %s",
++				ret, gai_strerror(ret));
++			goto out;
++		default:
++			/* Temporary failure, aim for success. */
++			sleep(1);
++		}
++	} while (ret);
++
++	ret = asprintf(&tmp, "%s", info->ai_canonname);
++	freeaddrinfo(info);
++	if (ret <= 0)
++		goto out;
++
++	if (ret > HV_KVP_EXCHANGE_MAX_VALUE_SIZE)
++		tmp[HV_KVP_EXCHANGE_MAX_VALUE_SIZE - 1] = '\0';
++	*str_ptr = tmp;
++
++out:
++	pthread_exit(NULL);
++}
++
++static void kvp_obtain_domain_name(char **str_ptr)
++{
++	pthread_t t;
++
++	if (pthread_create(&t, NULL, kvp_getaddrinfo, str_ptr)) {
++		syslog(LOG_ERR, "pthread_create failed; error: %d %s",
++			errno, strerror(errno));
+ 		return;
+ 	}
+-	snprintf(buffer, length, "%s", info->ai_canonname);
+-	freeaddrinfo(info);
++	pthread_detach(t);
+ }
+ 
+ void print_usage(char *argv[])
+@@ -1412,11 +1453,7 @@ int main(int argc, char *argv[])
+ 	 * Retrieve OS release information.
+ 	 */
+ 	kvp_get_os_info();
+-	/*
+-	 * Cache Fully Qualified Domain Name because getaddrinfo takes an
+-	 * unpredictable amount of time to finish.
+-	 */
+-	kvp_get_domain_name(full_domain_name, sizeof(full_domain_name));
++	kvp_obtain_domain_name(&full_domain_name);
+ 
+ 	if (kvp_file_init()) {
+ 		syslog(LOG_ERR, "Failed to initialize the pools");
+@@ -1571,7 +1608,7 @@ int main(int argc, char *argv[])
+ 
+ 		switch (hv_msg->body.kvp_enum_data.index) {
+ 		case FullyQualifiedDomainName:
+-			strcpy(key_value, full_domain_name);
++			strcpy(key_value, full_domain_name ? : "");
+ 			strcpy(key_name, "FullyQualifiedDomainName");
+ 			break;
+ 		case IntegrationServicesVersion:
