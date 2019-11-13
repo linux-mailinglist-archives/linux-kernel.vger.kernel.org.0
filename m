@@ -2,154 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4974FAD7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:47:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8860FAD89
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:47:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfKMJrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:47:06 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:43814 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725996AbfKMJrF (ORCPT
+        id S1727222AbfKMJrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:47:37 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:36108 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725996AbfKMJrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:47:05 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iUpEs-0007KN-22; Wed, 13 Nov 2019 10:47:02 +0100
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v2 12/36] irqchip/gic-v4.1: Implement the v4.1 flavour  of VMAPP
-X-PHP-Originating-Script: 0:main.inc
+        Wed, 13 Nov 2019 04:47:36 -0500
+Received: from [109.168.11.45] (port=55106 helo=[192.168.101.73])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1iUpFN-001u9L-Rh; Wed, 13 Nov 2019 10:47:33 +0100
+Subject: Re: [PATCH v3 1/3] i2c: use void pointers for supplying data for
+ reads and writes
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-iio@vger.kernel.orgi, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org
+References: <20191112203132.163306-1-dmitry.torokhov@gmail.com>
+ <20191112203132.163306-2-dmitry.torokhov@gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <c422deb2-9eb8-4111-d9bd-eeddbebf5eac@lucaceresoli.net>
+Date:   Wed, 13 Nov 2019 10:47:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+In-Reply-To: <20191112203132.163306-2-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 13 Nov 2019 10:56:22 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Jayachandran C <jnair@marvell.com>,
-        Robert Richter <rrichter@marvell.com>,
-        "Wanghaibin (D)" <wanghaibin.wang@huawei.com>,
-        <jiayanlei@huawei.com>, <liangboyan@hisilicon.com>
-In-Reply-To: <c9ef4c0f-bb34-82ff-c286-8430c1c7c583@huawei.com>
-References: <20191027144234.8395-1-maz@kernel.org>
- <20191027144234.8395-13-maz@kernel.org>
- <c9ef4c0f-bb34-82ff-c286-8430c1c7c583@huawei.com>
-Message-ID: <c3830faf33c7f8b983ad4863fe02b86b@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, jnair@marvell.com, rrichter@marvell.com, wanghaibin.wang@huawei.com, jiayanlei@huawei.com, liangboyan@hisilicon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zenghui,
+Hi Dmitry,
 
-On 2019-11-13 09:11, Zenghui Yu wrote:
-> Hi Marc,
->
-> On 2019/10/27 22:42, Marc Zyngier wrote:
->> The ITS VMAPP command gains some new fields with GICv4.1:
->> - a default doorbell, which allows a single doorbell to be used for
->>    all the VLPIs routed to a given VPE
->> - a pointer to the configuration table (instead of having it in a 
->> register
->>    that gets context switched)
->> - a flag indicating whether this is the first map or the last unmap 
->> for
->>    this particulat VPE
->> - a flag indicating whether the pending table is known to be zeroed, 
->> or not
->> Plumb in the new fields in the VMAPP builder, and add the map/unmap
->> refcounting so that the ITS can do the right thing.
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->
-> [...]
->
->> @@ -605,19 +626,45 @@ static struct its_vpe 
->> *its_build_vmapp_cmd(struct its_node *its,
->>   					   struct its_cmd_block *cmd,
->>   					   struct its_cmd_desc *desc)
->>   {
->> -	unsigned long vpt_addr;
->> +	unsigned long vpt_addr, vconf_addr;
->>   	u64 target;
->> -
->> -	vpt_addr = 
->> virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->vpt_page));
->> -	target = desc->its_vmapp_cmd.col->target_address + 
->> its->vlpi_redist_offset;
->> +	bool alloc;
->>
->>   	its_encode_cmd(cmd, GITS_CMD_VMAPP);
->>   	its_encode_vpeid(cmd, desc->its_vmapp_cmd.vpe->vpe_id);
->>   	its_encode_valid(cmd, desc->its_vmapp_cmd.valid);
->> +
->> +	if (!desc->its_vmapp_cmd.valid) {
->> +		if (is_v4_1(its)) {
->> +			alloc = 
->> !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
->> +			its_encode_alloc(cmd, alloc);
->> +		}
->> +
->> +		goto out;
->> +	}
->> +
->> +	vpt_addr = 
->> virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->vpt_page));
->> +	target = desc->its_vmapp_cmd.col->target_address + 
->> its->vlpi_redist_offset;
->> +
->>   	its_encode_target(cmd, target);
->>   	its_encode_vpt_addr(cmd, vpt_addr);
->>   	its_encode_vpt_size(cmd, LPI_NRBITS - 1);
->>   +	if (!is_v4_1(its))
->> +		goto out;
->> +
->> +	vconf_addr = 
->> virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->its_vm->vprop_page));
->> +
->> +	alloc = 
->> atomic_inc_and_test(&desc->its_vmapp_cmd.vpe->vmapp_count);
->
-> As the comment block on top of atomic_inc_and_test(atomic *v) says,
->
->  * Atomically increments @v by 1
->  * and returns true if the result is zero, or false for all
->  * other cases.
->  */
->
-> We will always get the 'alloc' as false here, even if this is the
-> first mapping of this vPE.  This is not as expected, I think.
+thanks for having taken into account my comments.
 
-As usual, a very good observation!
+On 12/11/19 21:31, Dmitry Torokhov wrote:
+> There is no need to force users of i2c_master_send()/i2c_master_recv()
+> and other i2c read/write bulk data API to cast everything into u8 pointers.
+> While everything can be considered byte stream, the drivers are usually
+> work with more structured data.
+> 
+> Let's switch the APIs to accept [const] void pointers to cut amount of
+> casting needed.
+> 
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Indeed, I cocked up the logic here, as we need to test the value before
-the increment (and not after). What we want is probably something like:
+Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
 
-   alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-
-> And on the other hand, I wonder what is the reason for 'vmapp_count'
-> to be atomic_t?
-
-The rational is that we could end-up with multiple VMAPP commands 
-emitted
-in parallel, for example. That's probably not strictly necessary right 
-now,
-but I'm trying to be cautious.
-
-Thanks,
-
-         M.
 -- 
-Jazz is not dead. It just smells funny...
+Luca
