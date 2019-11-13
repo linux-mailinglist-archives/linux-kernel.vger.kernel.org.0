@@ -2,101 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE656FBA8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:18:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1649DFBA90
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbfKMVSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 16:18:32 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4282 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726393AbfKMVSc (ORCPT
+        id S1726910AbfKMVUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 16:20:02 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40742 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfKMVUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 16:18:32 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xADL8Z6S046894
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 16:18:31 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w8rt8hrub-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 16:18:30 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 13 Nov 2019 21:18:28 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Nov 2019 21:18:26 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xADLIPfY31981770
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 21:18:25 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5781CAE053;
-        Wed, 13 Nov 2019 21:18:25 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DFE4AE045;
-        Wed, 13 Nov 2019 21:18:24 +0000 (GMT)
-Received: from dhcp-9-31-103-201.watson.ibm.com (unknown [9.31.103.201])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Nov 2019 21:18:24 +0000 (GMT)
-Subject: Re: [PATCH v6 2/3] IMA: Define an IMA hook to measure keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 13 Nov 2019 16:18:23 -0500
-In-Reply-To: <8eba665e-637c-d341-c77d-4f2645d3b246@linux.microsoft.com>
-References: <20191113184658.2862-1-nramas@linux.microsoft.com>
-         <20191113184658.2862-3-nramas@linux.microsoft.com>
-         <1573675761.4843.13.camel@linux.ibm.com>
-         <8eba665e-637c-d341-c77d-4f2645d3b246@linux.microsoft.com>
+        Wed, 13 Nov 2019 16:20:02 -0500
+Received: by mail-lf1-f66.google.com with SMTP id j26so3155495lfh.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 13:20:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v8ORmxzsuP2C1Sn3+5NftPa+AfiyXCDEczRveJww11Y=;
+        b=SOIRxj3b+5OtovTjGW3LO4LFdC6Bt+5P06OtuzUqFvJUI0G5M19Cp7lObrME6gAsTm
+         iFg8wUHbOUp5NhyCAEY4N3PZL/rNF9PTGbYzXV75MgiLgLvVNkrA0U+CJa41F7CWdLUM
+         7nm8PbxakjFOrafO8gPm1BxTZ8yhbvbP8XmJM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v8ORmxzsuP2C1Sn3+5NftPa+AfiyXCDEczRveJww11Y=;
+        b=SFtT+GvjhsZUNPROw4ZeFqxXW1KcFyndVXWOGWQo3YsnMZ+KXi96Wm1kPHvd3twrxm
+         K1RLxD9hYnUl3LiMCgcSUy8479Jk63OVEB4NRVjxzDjdqOwWspfMHHNcAa9M9ge3ruX3
+         lGmP4z3molvAhLEcG7Y1GvfJMelZ0svC9TMs/vc+EpfR7nzOSygrnz6RAixcq0UXaY3M
+         fKOrXiJXLVOpKe/BsaCJCY5uWF3y4qum+Aefg+7Y28hDzhYz11/soQBXGsd+4NZzghUJ
+         C8ngguyxQVrRY+hFEmqeLConvNuadYJUTTvRgNCoxOQgXHl9vBoSr98XFh5JKYi5vjwA
+         vt/g==
+X-Gm-Message-State: APjAAAWyBvENF3TEIyqWkHU6hrsOVAFXVa/KoFIRyvasztGDg+e2mqiX
+        OSlRNhNh+e/jWhegNrR8X1Iq5A/Notk=
+X-Google-Smtp-Source: APXvYqyOnxhCd2uJ87CjFpkS0m8uYRjLAjOPXqjVXem8PkW9YdP8qpTumUepRiM9GAZKmkKkS1zJ0w==
+X-Received: by 2002:a19:ee17:: with SMTP id g23mr4112992lfb.121.1573680000065;
+        Wed, 13 Nov 2019 13:20:00 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id u12sm1517161lje.1.2019.11.13.13.19.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2019 13:19:59 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id d6so3180425lfc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 13:19:58 -0800 (PST)
+X-Received: by 2002:ac2:498a:: with SMTP id f10mr4156804lfl.170.1573679998700;
+ Wed, 13 Nov 2019 13:19:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20191113204240.767922595@linutronix.de> <20191113210104.882617091@linutronix.de>
+In-Reply-To: <20191113210104.882617091@linutronix.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 13 Nov 2019 13:19:42 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh9BdH5DLjfv72LOWSb6P1jMwO0TYraS1gnYZDdTCi+rQ@mail.gmail.com>
+Message-ID: <CAHk-=wh9BdH5DLjfv72LOWSb6P1jMwO0TYraS1gnYZDdTCi+rQ@mail.gmail.com>
+Subject: Re: [patch V3 12/20] x86/ioperm: Move TSS bitmap update to exit to
+ user work
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19111321-0028-0000-0000-000003B6A66E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111321-0029-0000-0000-00002479B079
-Message-Id: <1573679903.4517.5.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-13_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911130175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-11-13 at 12:52 -0800, Lakshmi Ramasubramanian wrote:
-> On 11/13/19 12:09 PM, Mimi Zohar wrote:
-> >
-> > All that is is needed is the key and public_key structures, which are
-> > defined in include/linux/keys.h and include/crypto/public_key.h.  If
-> > the keys subsystem is disabled, then the new IMA hook won't be called.
-> >   There's no need for a new Kconfig option or a new file.
-> > 
-> > Please move the hook to just after ima_kexec_cmdline().
-> > 
-> > Mimi
-> 
-> Yes - IMA hook won't be called when KEYS subsystem is disabled.
-> 
-> But, build dependency is breaking since "struct key" is not defined 
-> without CONFIG_KEYS.
-> 
-> Sasha was able to craft a .config that enabled IMA without enabling KEYS 
-> and found the build break.
+On Wed, Nov 13, 2019 at 1:02 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> From: Thomas Gleixner <tglx@linutronix.de>
+>
+> There is no point to update the TSS bitmap for tasks which use I/O bitmaps
+> on every context switch. It's enough to update it right before exiting to
+> user space.
 
-Yes, thanks for pointing out the "#ifdef CONFIG_KEYS" in keys.h.  A
-separate file is needed, as you pointed out, but still no need for a
-new Kconfig.  The ima/Makefile can be based on CONFIG_KEYS.
+Hmm.
 
-Mimi
+I wonder if it might make sense to delay it even more: just always
+invalidate the bitmap on task switch, and leave it at that.
 
+And then on GP fault, just add trivial logic like
+
+     if (I_have_an_io_bitmap && it_isnt_installed) {
+          install_io_bitmap();
+          return;
+     }
+
+and now you do get that extra GP fault if you actually use IO
+accesses, but the normal case has zero overhead.
+
+Even processes that do ioperm may not be *using* it all the time.
+
+               Linus
