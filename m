@@ -2,94 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99775FB480
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:00:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16FDCFB47B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:00:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbfKMQAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:00:49 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39665 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728199AbfKMQAs (ORCPT
+        id S1728220AbfKMQAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:00:31 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:21085 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727216AbfKMQAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:00:48 -0500
-Received: by mail-oi1-f193.google.com with SMTP id v138so2224567oif.6
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:00:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GcxXz/hy0yD4Dv/1aRup6B2d7cDG6vSzxW491ZecOnY=;
-        b=IkbtOt20hldM/bTM0mBSZl/lLqhj4os3wESjTi8qxWbG3L81gb5wKmTMIXPKKUGmJK
-         NNgkdbCScyvuJFDjMLFTdTsvkPUUGcyzZ5LAzlR2NI2iYw2KbA09cuEKLSaSZnMVrGzx
-         T/YO7QC4Q2XXwU+K6ElpD1LWMIflls/i19bT4v7D7mepGI1+BVABmGM/KFIb2HiMtf5V
-         VYGFnpcXMIBPgH3YGcbfVQit3z9aHZRd4455Xrn65g5X4mtB9J+a1ARi8O63tOSrydOc
-         tHE82uxnEeOpFrB7WM55hx/eR9Pz/5VeIDKJUAxwkdw3FHvbSEgMaabxRtI1ejn6g6H6
-         cNfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GcxXz/hy0yD4Dv/1aRup6B2d7cDG6vSzxW491ZecOnY=;
-        b=Q35ctvdus2FCvBlrqEnBgnCVR7CvmfvgLIHJB5lpE3LBVmv7si9Y4bkE19gph49Cc4
-         xzgDx2OM7KA+DmvAZOTseS5THvV2KGiEFFWeYtPJsNbRXC2WA1gOnQky1KgBbO1Jo1Up
-         ZW3bzvSy2beOCN4xIQADDky74KkNRjxSu5ybGV7iQg25nkZsnyzdB0u4HOypFycU6Sd3
-         drWmvNM647sbCZvmM2RU2ga1XZVXktWxqJ8S34bAGsN/SQ8t5ScYqt7Se+G+SbP9fW5w
-         Ldb0b4k0CZzA41ChUH+F08uK1pxRzrZpK845YMk8b7c+yJBj/YDL95vp2I1t3zS4vl6Z
-         eC+Q==
-X-Gm-Message-State: APjAAAWX/MIkWF8se1XdTyF88F5eyQRA9Afg3O09TtgvRRb0wTbEcDIm
-        1QjYX5lQEjphDEdSU/9KEWhQsuh22+OOAWXDFxe6JA==
-X-Google-Smtp-Source: APXvYqx6LdgXxfOfErKByXfyOGZGi4ldWQzJ/kKriqc83ob1MBYgGQ3TZUA+L19NJgdsNKPAT47WF1DzoyGAlam7mec=
-X-Received: by 2002:aca:ccd1:: with SMTP id c200mr4406127oig.157.1573660845922;
- Wed, 13 Nov 2019 08:00:45 -0800 (PST)
+        Wed, 13 Nov 2019 11:00:31 -0500
+X-Greylist: delayed 376 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Nov 2019 11:00:29 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573660828;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=RdiTOqLL6TpP/1ppCJ5I+QMZbD8ieq03oQjLfF8v3IE=;
+        b=qpKTYPbWoJBGYh5ZgJRyMhXNOUK+dtNGeSCY1KoBAamHnNPh7yMkg+2mo8uKOEv37r
+        uvzEZ/BjHi+t89/SQc85xsjcxEvqLe5El5OPZs8aiXz8nrBFgSvAQcfXTSKZk2i50hrX
+        OPu6hTDpS9C1r9wAuFR0XuQh9OgC8bvI1RUMO/1U6qluL7tVlXmXiwf3KpfTTUqfslSx
+        1jB7+aXCXm3IuGloVL2kPl1w8I9Y42ukzIjYRM2A/Bv4zPGGWV+0tN3F1gxttXx1VUOo
+        HDe+LSxsgFj0h9lyQxwjjZ6bPxDBPu9uXQO+8O4VyAI5vpDrDjG37pcoSCluvJ0DRrM+
+        9p7Q==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4AUztn93FPS2dyuY8hl6Q=="
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.29.0 SBL|AUTH)
+        with ESMTPSA id 20735bvADG0SGhN
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 13 Nov 2019 17:00:28 +0100 (CET)
+Date:   Wed, 13 Nov 2019 17:00:21 +0100
+From:   Olaf Hering <olaf@aepfle.de>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        linux-hyperv@vger.kernel.org (open list:Hyper-V CORE AND DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v2] tools/hv: async name resolution in kvp_daemon
+Message-ID: <20191113170021.2e98f1fb.olaf@aepfle.de>
+In-Reply-To: <20191113155400.25456-1-olaf@aepfle.de>
+References: <20191113155400.25456-1-olaf@aepfle.de>
+X-Mailer: Claws Mail 2019.05.18 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com> <20191112232239.yevpeemgxz4wy32b@wittgenstein>
-In-Reply-To: <20191112232239.yevpeemgxz4wy32b@wittgenstein>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 13 Nov 2019 17:00:19 +0100
-Message-ID: <CAG48ez0j_7NyCyvGn8U8NS2p=CQQb=me-5KTa7k5E6xpHJphaA@mail.gmail.com>
-Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
-To:     Topi Miettinen <toiwoton@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3x08emajI3SN.tG200Ioafb"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 12:22 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
-> > Several items in /proc/sys need not be accessible to unprivileged
-> > tasks. Let the system administrator change the permissions, but only
-> > to more restrictive modes than what the sysctl tables allow.
-> >
-> > Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
-> > ---
-> >  fs/proc/proc_sysctl.c | 41 +++++++++++++++++++++++++++++++----------
-> >  1 file changed, 31 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> > index d80989b6c344..88c4ca7d2782 100644
-> > --- a/fs/proc/proc_sysctl.c
-> > +++ b/fs/proc/proc_sysctl.c
-> > @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
-> > mask)
-> >         if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
-> >                 return -EACCES;
-> >
-> > +       error = generic_permission(inode, mask);
-> > +       if (error)
-> > +               return error;
+--Sig_/3x08emajI3SN.tG200Ioafb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In kernel/ucount.c, the ->permissions handler set_permissions() grants
-access based on whether the caller has CAP_SYS_RESOURCE. And in
-net/sysctl_net.c, the handler net_ctl_permissions() grants access
-based on whether the caller has CAP_NET_ADMIN. This added check is
-going to break those, right?
+Am Wed, 13 Nov 2019 16:54:00 +0100
+schrieb Olaf Hering <olaf@aepfle.de>:
+
+> During this time all "FullyQualifiedDomainName" requests will be
+> answered with an empty string.
+
+> +			strcpy(key_value, full_domain_name ? : "");
+>  			strcpy(key_name, "FullyQualifiedDomainName");
+
+
+KY, Haiyang, Stephen,
+
+please check if the host side can actually handle such temporary, empty str=
+ing.
+If the tools cache the first result, the implemented approach can not work.
+If that is indeed the case, is there some sort of -ERETRY in the protocol?
+
+
+Olaf
+
+--Sig_/3x08emajI3SN.tG200Ioafb
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE97o7Um30LT3B+5b/86SN7mm1DoAFAl3MKJUACgkQ86SN7mm1
+DoDNUxAAj9Xsz8miILXi1nmy/CqbawpOYRBs2IxdOiPMHkxkqgyOvBd3KW5dJumq
+0hHPjemJaBS2u90ijPpeLjxGkgjSHH614QLz5BnTvMatkuW6AYYNy75L5eQ2tn26
+EaEgj8Bdv5tKzq0puj+CZLSywJeoH6g2gR6YNDS5EypIZsIBZ11I8+Y7Zrcot74N
+IXaI5tINChIKisVPGoft5HJrpC7I78+tpl9hp1jFefNA0J81td4pr4pDi+qn9IYs
+6m6Lz9B9ivKrsBhB+Sg5TdJLbpRRZ+ixmpVClFOllWqdCumQhMPdYnRdS5h2mCWU
+fxgPSa9Rzc43zTp94QQxBiojOJJr+kbrW0nJsQJ/YsVXLS0eLzesm8qleVDONekm
+Gm8S7vQiyYNi3QarBcKuQkHLP+3AV4uhxdr9pd1Whn6afxy9dYWD4lg2WqXbudt2
+Wbol3o9aN1KhP7iu69iaGg2UCCf+G6aFyxqFH0/B9dm92QbpJoTpDrRKcxr6+LX5
+NglvJxKH6TxSz2GLpjkkalrSZPWx6CfNmIMiaWViDxuf0gXxx+Iwn0nMDHvDeXEo
+r9DEB9u3lWcytSqyMegWfTk0mUjkisb2Od52SqDNO6gaTyg40qgorjtkEee69fek
+CPrDcAZbhGs1bDTvpBMi/ku+PI9vAccbM2b7OvteEQIEATeFDQc=
+=Ox4b
+-----END PGP SIGNATURE-----
+
+--Sig_/3x08emajI3SN.tG200Ioafb--
