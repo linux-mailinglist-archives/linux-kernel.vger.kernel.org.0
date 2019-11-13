@@ -2,126 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18B5DFAC66
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:55:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB7AFFAC63
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:55:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfKMIzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 03:55:12 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:40465 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfKMIzM (ORCPT
+        id S1727080AbfKMIyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 03:54:05 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52943 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfKMIyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 03:55:12 -0500
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id xAD8sw0x010874;
-        Wed, 13 Nov 2019 17:54:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com xAD8sw0x010874
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1573635299;
-        bh=49PDDQD/ue4Zb18aoWupvO71syxxVqQlzugNNXWXyuE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=c9rgbgPjooG/pyLS1VftU9lKNrTrGgLBOA5vCtxCcexKm7MOM3V7DVJLBWt/ac76u
-         D//vz4KYzmrE/9I8AwIuj4vpOcPoB0qGQA/fBlmgjkz7vAdyBVO29ecfvtzBM2j5Dc
-         LzUuqKbi3BJg2XGuTf6VsOPTn/PQTi9ZkH1VceWBBLo6Eyi4g6ZchstDHPP7xV/NZf
-         Q6NQHnCh8XHY8sVFrIzKPjOuwPMqFjPrz5NOgjpX37Ez2iD+IPok0EbO+TjTYetvEp
-         6snKFvzeKze0ZIfmKOOoz1H2cTrXNXX4jdbQXtwN3KwJH1Kj6jN0oP6O9kGc5emtSM
-         qFXwAVd5uFQTw==
-X-Nifty-SrcIP: [209.85.217.43]
-Received: by mail-vs1-f43.google.com with SMTP id u6so849144vsp.4;
-        Wed, 13 Nov 2019 00:54:58 -0800 (PST)
-X-Gm-Message-State: APjAAAXAhM5Liw/pzpAiLCaEuHN2TLSgaPBwImgHaL7ZvnZUZFUZ5AwZ
-        7pSrWNusMTpoHqv9tCYd+uvLqWAfNKuNSnEB9RQ=
-X-Google-Smtp-Source: APXvYqx6DUkYDV8ZVWSi8B9AQeo8+uox1PuYDjZmjZQ+KLmakGfYqVeoEP3k28Lz93Bf7IzvoILCAkyXaS8qNwjUdBg=
-X-Received: by 2002:a05:6102:726:: with SMTP id u6mr515745vsg.179.1573635297488;
- Wed, 13 Nov 2019 00:54:57 -0800 (PST)
+        Wed, 13 Nov 2019 03:54:04 -0500
+X-Originating-IP: 93.34.114.233
+Received: from uno.localdomain (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 30C766000E;
+        Wed, 13 Nov 2019 08:53:57 +0000 (UTC)
+Date:   Wed, 13 Nov 2019 09:55:58 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/2] pinctrl: rza1: remove unnecerssary static inline
+ function
+Message-ID: <20191113085558.l6rde7xug3paoojf@uno.localdomain>
+References: <20191112141748.GA22061@localhost.localdomain>
 MIME-Version: 1.0
-References: <1da2db04-da6a-cedb-e85a-6ded68dada82@163.com> <20191112123125.GD17835@willie-the-truck>
- <CAK7LNARA99UUTY2v6rS=Nb4Cg5pB4RsR0PogLqdT9uNLcH20ew@mail.gmail.com>
- <32a3b660-f4d2-268e-2206-d50073298c0c@iogearbox.net> <CAK7LNASR=R=gyuaMO=VzdXrY3gaQ_FVE4es60bzXf=9ASR2qUw@mail.gmail.com>
- <021e7b46-047e-d381-9dca-bd61db08e4f8@163.com> <CAK7LNARKh3-cAqsYgcxFwq9CGk-CgBfkiQgfNSULkxwO0xa2vw@mail.gmail.com>
- <ac4577d4-c0f2-9596-df6f-3fcc563bde3e@163.com> <CAK7LNATfK2pFnO2YV5zMLMxJGYyaj+f8w-k4K8xaoGbJ2Bd5eQ@mail.gmail.com>
- <50602386-68b1-be38-a022-0bcf9df6a54e@163.com>
-In-Reply-To: <50602386-68b1-be38-a022-0bcf9df6a54e@163.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 13 Nov 2019 17:54:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ8h7zxhfndBqYRWXkaWVynH7GpBvDPLcVMZ1VEyUUX7A@mail.gmail.com>
-Message-ID: <CAK7LNAQ8h7zxhfndBqYRWXkaWVynH7GpBvDPLcVMZ1VEyUUX7A@mail.gmail.com>
-Subject: Re: Question about "asm/rwonce.h: No such file or directory"
-To:     Xiao Yang <ice_yangxiao@163.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Will Deacon <will@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bwknto7takkwphs5"
+Content-Disposition: inline
+In-Reply-To: <20191112141748.GA22061@localhost.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 5:36 PM Xiao Yang <ice_yangxiao@163.com> wrote:
+
+--bwknto7takkwphs5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Matti,
+
+On Tue, Nov 12, 2019 at 04:17:48PM +0200, Matti Vaittinen wrote:
+> Having static inline oneliner does not benefit too much when it is
+> only called from another oneliner function. Remove some of the
+> 'onion'. This simplifies also the coming usage of the gpiolib
+> defines. We can do conversion from chip bits to gpiolib direction
+> defines as last step in the get_direction callback. Drivers can
+> use chip specific values in driver internal functions and do
+> conversion only once.
+
+I assume your: "[PATCH 2/2] pinctrl: Use new GPIO_LINE_DIRECTION"
+supersedes this one, am I right ?
+
+Thanks
+  j
+
 >
-> On 11/13/19 3:53 PM, Masahiro Yamada wrote:
-> > On Wed, Nov 13, 2019 at 4:17 PM Xiao Yang <ice_yangxiao@163.com> wrote:
-> >> On 11/13/19 2:57 PM, Masahiro Yamada wrote:
-> >>> Sorry, I really do not understand what you are doing.
-> >>>
-> >>> include/linux/compiler.h is only for kernel-space.
-> >>> Shrug if a user-land program includes it.
-> >> Hi Masahiro,
-> >>
-> >> For building tools/bpf, it is good to fix the compiler error by Daniel's
-> >> patch(i.e. use linux/filter from linux header).
-> >>
-> >> linux/compiler.h may be used by other code in kernel.  Is it possible to
-> >> trigger the same error when the other code
-> >>
-> >> including linux/compiler.h is built? Is this kind of code able to find
-> >> the location of <asm/rwonce.h>?
-> >
-> > <asm/rwonce.h> is also kernel-only header.
-> >
-> > The kernel code can find <asm/rwonce.h>, but user-land code cannot.
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/pinctrl/pinctrl-rza1.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 >
-> Hi Masahiro,
+> diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+> index 017fc6b3e27e..215db220d795 100644
+> --- a/drivers/pinctrl/pinctrl-rza1.c
+> +++ b/drivers/pinctrl/pinctrl-rza1.c
+> @@ -617,12 +617,6 @@ static void rza1_pin_reset(struct rza1_port *port, unsigned int pin)
+>  	spin_unlock_irqrestore(&port->lock, irqflags);
+>  }
 >
-> Sorry, I am not familar with it.
+> -static inline int rza1_pin_get_direction(struct rza1_port *port,
+> -					 unsigned int pin)
+> -{
+> -	return !!rza1_get_bit(port, RZA1_PM_REG, pin);
+> -}
+> -
+>  /**
+>   * rza1_pin_set_direction() - set I/O direction on a pin in port mode
+>   *
+> @@ -783,7 +777,7 @@ static int rza1_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
+>  {
+>  	struct rza1_port *port = gpiochip_get_data(chip);
 >
-> Thanks a lot for your explanation and I have seen the LINUXINCLUDE
-> variable in Makefile.
+> -	return rza1_pin_get_direction(port, gpio);
+> +	return !!rza1_get_bit(port, RZA1_PM_REG, gpio);
+>  }
 >
-> I will try to send a patch as Daniel suggested.
+>  static int rza1_gpio_direction_input(struct gpio_chip *chip,
 >
-> Best Regards,
+> base-commit: 70d97e099bb426ecb3ad4bf31e88dbf2ef4b2e4c
+> --
+> 2.21.0
 >
-> Xiao Yang
 >
+> --
+> Matti Vaittinen, Linux device drivers
+> ROHM Semiconductors, Finland SWDC
+> Kiviharjunlenkki 1E
+> 90220 OULU
+> FINLAND
+>
+> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+> Simon says - in Latin please.
+> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+> Thanks to Simon Glass for the translation =]
 
-Hmm, digging into the git history,
-this include path was added by the following commit:
+--bwknto7takkwphs5
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-commit d7475de58575c904818efa369c82e88c6648ce2e
-Author: Kamal Mostafa <kamal@canonical.com>
-Date:   Wed Nov 11 14:24:27 2015 -0800
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl3LxR4ACgkQcjQGjxah
+Vjzu3A//VcmxB+zLrhFkIPEXStslWNxWBzlOPrVt1zEIGbpxgVBin7IaP30h4gml
+GrPxtZom3KkKbzbIYlS5syNycjxUT3NjYs2Yur4DBnAhvkoxrFLfprhjjX0fL170
+18RZJoH74NJYsjiDzbRRJQfN6JSNVgJ0XFCyLmQKhBA5K7UC4BT2hSvsLzzQ0neJ
+jXhtQ+VKayIDQ/lUArvoABE7V6wX+F4app7eZ+xkSPq1ptUByob6mr9wV7WMONNh
+qBd+U/+nV8ywD3qUWwDt//77FGZYbXM/mdKf3moYnvD8BYTaIA0l4MRoYuAh0bKg
+SLimFdCoBznxP4syuhiil5aDYhY21fK3XymjbBnoKHw3SlmJn2488eOdiDy1ErCy
+dT258CLPbO6YyI1aNxyZyIlWhWlavkM5/FvS4R+IUIJzJiT177gSWD2uTX0i8kd4
+3GIF63YcoUaJjNDGMRMla4tbDOgee3mdssRWDEynQlmYu3AV6krBF0tkRU8JaIaE
+l0kSRUPo6bxWsH+HFhNrXMGP3JSrfU26cR7t+V9intAxWaGmteXZV2ph1CjeMW8e
+gsa0GSGjvm5aEganXEi1pXoHD+5Fg34/6UHY7XYYQXkaFl7f92Cmkoc4EomfWkAR
+kpwLSvI76WXbaP6bKEH7FqWAyUcHEIzrBMqIWYBKx90aHEWiRAs=
+=SZJk
+-----END PGP SIGNATURE-----
 
-    tools/net: Use include/uapi with __EXPORTED_HEADERS__
-
-    Use the local uapi headers to keep in sync with "recently" added #define's
-    (e.g. SKF_AD_VLAN_TPID).  Refactored CFLAGS, and bpf_asm doesn't need -I.
-
-    Fixes: 3f356385e8a4 ("filter: bpf_asm: add minimal bpf asm tool")
-    Signed-off-by: Kamal Mostafa <kamal@canonical.com>
-    Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-
-
-I am not sure how big a deal it is,
-but it could be a problem on old distros??
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--bwknto7takkwphs5--
