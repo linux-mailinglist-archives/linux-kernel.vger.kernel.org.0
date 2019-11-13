@@ -2,109 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 093F3FB9B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B93C1FB9BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfKMUZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 15:25:02 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58358 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726179AbfKMUZC (ORCPT
+        id S1726755AbfKMU0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 15:26:50 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35574 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfKMU0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 15:25:02 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xADKLp8C067025
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 15:25:00 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w8q1tbr01-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 15:25:00 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 13 Nov 2019 20:24:58 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Nov 2019 20:24:54 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xADKOres47185922
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 20:24:53 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A392C42049;
-        Wed, 13 Nov 2019 20:24:53 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9C02D4203F;
-        Wed, 13 Nov 2019 20:24:52 +0000 (GMT)
-Received: from dhcp-9-31-103-201.watson.ibm.com (unknown [9.31.103.201])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Nov 2019 20:24:52 +0000 (GMT)
-Subject: Re: [PATCH v6 1/3] IMA: Add KEY_CHECK func to measure keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 13 Nov 2019 15:24:52 -0500
-In-Reply-To: <320826aa-f744-f2ae-8693-a6ce9461d886@linux.microsoft.com>
-References: <20191113184658.2862-1-nramas@linux.microsoft.com>
-         <20191113184658.2862-2-nramas@linux.microsoft.com>
-         <1573676066.4843.18.camel@linux.ibm.com>
-         <320826aa-f744-f2ae-8693-a6ce9461d886@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Wed, 13 Nov 2019 15:26:50 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q13so2416375pff.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 12:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z+jBZPXGfzcnRw7QYo9gRDJnZjTKzZ/V8mqM60vhhaw=;
+        b=wi3O4TLRwAqZuc7rG1hKf1wffoYiplV9EKCXwbESnVGxc8rWUypX7Jv/gCExV56QvW
+         0QhlD9bXNDkCV+wjAjAdF8lBbRM+LYHGH8vKSb11Ufa7eRlZg1kqhtWeHEaVEjJHQH6I
+         X7KBoDDQ73vGJIXZJTiImFias1/fOinLl7ftdC9qqfTlmiPjBaf+TB68+FPaMwEAsLm7
+         uUQu6x6q2bZsomjlGMqdoKtattnlblREftbgb1Jm/TSz9Xz/GzGm3ei1ZZ2pZVK8ddVc
+         FJcmbeOPypuuvLrLTFCOEN1ZMIZHsaicd4CHTy+Zb2Jnwyzkyq6mLORbZCPBJToMWxAo
+         ppqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z+jBZPXGfzcnRw7QYo9gRDJnZjTKzZ/V8mqM60vhhaw=;
+        b=AKOuYNl+KOKDv+keXUplvNo1QYAcotTP3bW6Hz6+Wub1k/gCkDhTEeG77sLkBPbeME
+         hFg2jrEf1zRrtEgZBh7DtWSlxAo49zoTBBMBI4fagNuHgeWxl21kqi4dY3zvrmstmqWa
+         NSS96t+lLn7zuSbOAVtWwec4dMtA3dBrwVEqdDF+wwCZ7qjx2BdeU0DaImnr9kHJuuvL
+         X5VAKg3Da7fX98uP5zAwZBFNdDNcJVBHqKsZa+6z3TQuM4yjX+7ecE8FSZJeKAVZwNqu
+         MRPlVVbtsG33Na1k5PGKSgI8xiQFZPxlfNoK3Tq34kLyqtnJt5lHxKm6qWkZK4M0hA/Z
+         XLVg==
+X-Gm-Message-State: APjAAAVS+O1W2pr/6St5mWZbM6akFLR6O7UxlW68BPgDeFYtLxTgF/Kt
+        7zcbuhyJryqcsk1lX5a1zfqh+g==
+X-Google-Smtp-Source: APXvYqws5sHFjkVpWCAoo2wwOeNcsN0HZ1YtKA/fi79+wXnJUg21ygBsmcG+kSht7hkEW7DWgMr0OA==
+X-Received: by 2002:a63:364d:: with SMTP id d74mr5862446pga.408.1573676809438;
+        Wed, 13 Nov 2019 12:26:49 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id a145sm3991905pfa.7.2019.11.13.12.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2019 12:26:48 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, jeffrey.l.hugo@gmail.com,
+        wenwen@cs.uga.edu
+Subject: [PATCH] ath10k: Revert "ath10k: add cleanup in ath10k_sta_state()"
+Date:   Wed, 13 Nov 2019 12:26:44 -0800
+Message-Id: <20191113202644.3673049-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19111320-0012-0000-0000-000003636213
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111320-0013-0000-0000-0000219ED864
-Message-Id: <1573676692.4843.20.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-13_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911130167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-11-13 at 12:21 -0800, Lakshmi Ramasubramanian wrote:
-> On 11/13/2019 12:14 PM, Mimi Zohar wrote:
-> 
-> >> @@ -655,6 +655,13 @@ void process_buffer_measurement(const void *buf, int size,
-> >>   	int action = 0;
-> >>   	u32 secid;
-> >>   
-> >> +	/*
-> >> +	 * If IMA is not yet initialized or IMA policy is empty
-> >> +	 * then there is no need to measure.
-> >> +	 */
-> >> +	if (!ima_policy_flag)
-> >> +		return;
-> >> +
-> > 
-> > This addition has nothing to do with defining a new IMA hook and
-> > should be a separate patch.  This can be posted independently of this
-> > patch set.
-> > 
-> > Mimi
-> 
-> I'll move this change to a different patch,
-> but it has to be either part of this patch set or the above change alone 
-> needs to be taken before this patch set for the following reason:
-> 
-> The IMA hook gets called early in the boot process (for example, when 
-> builtin_trusted_keys are added). If the above check is not there, 
-> ima_get_action() is called and causes kernel panic (since IMA is not yet 
-> initialized).
+'334f5b61a6f2 ("ath10k: add cleanup in ath10k_sta_state()")' causes
+ath10k_snoc on Qualcomm MSM8998, SDM845 and QCS404 platforms to trigger
+an assert in the firmware:
 
-It will be upstreamed prior to this patch set.
+err_qdi.c:456:EF:wlan_process:1:cmnos_thread.c:3900:Asserted in wlan_vdev.c:_wlan_vdev_up:3219
+
+Revert the offending commit for now.
+
+This reverts commit 334f5b61a6f29834e881923b98d1e27e5ce9620d.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/net/wireless/ath/ath10k/mac.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index e8bdb2ba9b18..68f7d7246ef2 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -6638,12 +6638,8 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
  
-Mimi
+ 		spin_unlock_bh(&ar->data_lock);
+ 
+-		if (!sta->tdls) {
+-			ath10k_peer_delete(ar, arvif->vdev_id, sta->addr);
+-			ath10k_mac_dec_num_stations(arvif, sta);
+-			kfree(arsta->tx_stats);
++		if (!sta->tdls)
+ 			goto exit;
+-		}
+ 
+ 		ret = ath10k_wmi_update_fw_tdls_state(ar, arvif->vdev_id,
+ 						      WMI_TDLS_ENABLE_ACTIVE);
+-- 
+2.23.0
 
