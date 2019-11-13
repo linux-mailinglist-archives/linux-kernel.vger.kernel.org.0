@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5574FFA514
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D54EFA511
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:21:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730114AbfKMCUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:20:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45382 "EHLO mail.kernel.org"
+        id S1729967AbfKMCU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:20:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728886AbfKMBy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:54:29 -0500
+        id S1728899AbfKMByc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:54:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB6BE222CD;
-        Wed, 13 Nov 2019 01:54:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA5EB222CD;
+        Wed, 13 Nov 2019 01:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610069;
-        bh=sYQwy0mr+/sqRpZnuVp/y88pnLT1G0lmL9bwKXQivFY=;
+        s=default; t=1573610071;
+        bh=8xNOoACWH3K2CUyjJCpoBhrHykxp+H3DVrmXt4ZVvNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KYPKSFiMwRquy2p5/p3Bju5BikQQ3RecymDJ1KIlnBPTe4enyQ6hPuALICFKAOJBe
-         YMStE1FLzAMvz5TSxVIWwM4sF3a37C/T94N0BO1HKPYzCe2icTMT8hiRU6okpA1hh6
-         ykZ6U+eSKQ0Elx72t0KLv6fGuWED0K8Y3uDPYrtE=
+        b=dNs1MPhNN9HgucHAddXGYtRHm3njOh3B2HgPpnHqZAh5vlew3mFjkftkM9O32KTyN
+         vW/OPY4rWePQVGTySZW5FiFdDcrLtYVVBFKiNhlNQIxS/KN+OiiRpuWwz/IUgce3tA
+         DOKHyVUHBIxRXmC+CrU2CCJdVyEtwaI4AhMI2/gQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rajmohan Mani <rajmohan.mani@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 148/209] media: dw9714: Fix error handling in probe function
-Date:   Tue, 12 Nov 2019 20:49:24 -0500
-Message-Id: <20191113015025.9685-148-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 150/209] media: cx18: Don't check for address of video_dev
+Date:   Tue, 12 Nov 2019 20:49:26 -0500
+Message-Id: <20191113015025.9685-150-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -44,36 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajmohan Mani <rajmohan.mani@intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit f9a0b14240a2d0bd196d35e8aac73df6eabd6382 ]
+[ Upstream commit eb1ca9a428fdc3f98be4898f6cd8bcb803878619 ]
 
-Fixed the case where v4l2_async_unregister_subdev()
-is called unnecessarily in the error handling path
-in probe function.
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context.
 
-Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+drivers/media/pci/cx18/cx18-driver.c:1255:23: warning: address of
+'cx->streams[i].video_dev' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+                if (&cx->streams[i].video_dev)
+                ~~   ~~~~~~~~~~~~~~~^~~~~~~~~
+1 warning generated.
+
+Check whether v4l2_dev is null, not the address, so that the statement
+doesn't fire all the time. This check has been present since 2009,
+introduced by commit 21a278b85d3c ("V4L/DVB (11619): cx18: Simplify the
+work handler for outgoing mailbox commands")
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/dw9714.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/pci/cx18/cx18-driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/dw9714.c b/drivers/media/i2c/dw9714.c
-index 91fae01d052bf..3dc2100470a1c 100644
---- a/drivers/media/i2c/dw9714.c
-+++ b/drivers/media/i2c/dw9714.c
-@@ -169,7 +169,8 @@ static int dw9714_probe(struct i2c_client *client)
- 	return 0;
- 
- err_cleanup:
--	dw9714_subdev_cleanup(dw9714_dev);
-+	v4l2_ctrl_handler_free(&dw9714_dev->ctrls_vcm);
-+	media_entity_cleanup(&dw9714_dev->sd.entity);
- 	dev_err(&client->dev, "Probe failed: %d\n", rval);
- 	return rval;
+diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+index 0c389a3fb4e5f..e64f9093cd6d3 100644
+--- a/drivers/media/pci/cx18/cx18-driver.c
++++ b/drivers/media/pci/cx18/cx18-driver.c
+@@ -1252,7 +1252,7 @@ static void cx18_cancel_out_work_orders(struct cx18 *cx)
+ {
+ 	int i;
+ 	for (i = 0; i < CX18_MAX_STREAMS; i++)
+-		if (&cx->streams[i].video_dev)
++		if (cx->streams[i].video_dev.v4l2_dev)
+ 			cancel_work_sync(&cx->streams[i].out_work_order);
  }
+ 
 -- 
 2.20.1
 
