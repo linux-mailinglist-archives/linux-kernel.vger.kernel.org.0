@@ -2,146 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF27FAA6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 07:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63031FAA67
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 07:47:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbfKMGr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 01:47:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46442 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfKMGr1 (ORCPT
+        id S1727185AbfKMGq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 01:46:57 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:34696 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfKMGq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 01:47:27 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6F1B860DF8; Wed, 13 Nov 2019 06:47:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573627646;
-        bh=CfQKWzPAIBBRWL1m6nlO3ABW3eoRsUcJysSGhIsU7XU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QPZ40zSapC8rjIPk827658kUCsN+poo4E7XiCcURC60ZGxqPy3+Rb3zNATuTFIwJO
-         3TTolqfOFD4UBQA7JhDozohx/dk7kMQVpqGn4r2JcNieogyWawlJNprITF3gQpBc3H
-         FbrUe0QxWXVSurckPCVVTBlSDMAfMY0eFtUqb/ec=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A5C1B60DBB;
-        Wed, 13 Nov 2019 06:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573627633;
-        bh=CfQKWzPAIBBRWL1m6nlO3ABW3eoRsUcJysSGhIsU7XU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C5/UqQ1B1wbLGM2aqqZSiHpntieVGjRqmKtBwHvOG8guXAs0ywsgzV3lgoWboVYMJ
-         xfvgjJQOzfvvHV1aBDzIsABDEq5nOCj8mS/8DboXP4SxvZ9PDmElwWHOMGr5O4IwpJ
-         xaRZX086Izrb2NFtDEOzuMPpVGrSm8NEJNEvcZZc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5C1B60DBB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 7/7] scsi: ufs: Fix error handing during hibern8 enter
-Date:   Tue, 12 Nov 2019 22:45:51 -0800
-Message-Id: <1573627552-12615-8-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1573627552-12615-1-git-send-email-cang@codeaurora.org>
-References: <1573627552-12615-1-git-send-email-cang@codeaurora.org>
+        Wed, 13 Nov 2019 01:46:56 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAD6kppY017248;
+        Wed, 13 Nov 2019 00:46:51 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573627611;
+        bh=x2h5LxHXZug+wqRXSRWXSn/T/yqH7K6RNcNFs8WuSfY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ewgsk6hPYVYgRQIXFah+1EWOXyNUNH6YNiZg68tuBuUpxI4fCgQBYElShR9TTeq2q
+         QqriaCv6brxq1jVMxJgrYOsVK11yZFf7Il3WOsmYwtErJP7pNMmGMHY7raUgDwSRb9
+         qmnPsaT+KmlCTZghM/Z2HtGdOsanHQ5T1GjzHs7s=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD6kpQZ053087;
+        Wed, 13 Nov 2019 00:46:51 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 13
+ Nov 2019 00:46:50 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 13 Nov 2019 00:46:33 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD6kmSq025956;
+        Wed, 13 Nov 2019 00:46:49 -0600
+Subject: Re: [PATCH] firmware: ti_sci: rm: Add support for tx_tdtype parameter
+ for tx channel
+To:     Tero Kristo <t-kristo@ti.com>, <nm@ti.com>, <ssantosh@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <grygorii.strashko@ti.com>,
+        Vinod <vkoul@kernel.org>
+References: <20191025084715.25098-1-peter.ujfalusi@ti.com>
+ <b2231065-ae16-8870-03ac-a435f190ee9f@ti.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <31bce7ea-1769-c299-03a6-60c5b699fd7f@ti.com>
+Date:   Wed, 13 Nov 2019 08:48:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <b2231065-ae16-8870-03ac-a435f190ee9f@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Subhash Jadavani <subhashj@codeaurora.org>
+Thanks Tero,
 
-During clock gating (ufshcd_gate_work()), we first put the link hibern8 by
-calling ufshcd_uic_hibern8_enter() and if ufshcd_uic_hibern8_enter()
-returns success (0) then we gate all the clocks.
-Now let’s zoom in to what ufshcd_uic_hibern8_enter() does internally:
-It calls __ufshcd_uic_hibern8_enter() which on detecting the LINERESET,
-initiates the full recovery and puts the link back to highest HS gear and
-returns success (0) to ufshcd_uic_hibern8_enter() which is the issue as
-link is still in active state due to recovery!
-Now ufshcd_uic_hibern8_enter() returns success to ufshcd_gate_work() and
-hence it goes ahead with gating the UFS clock while link is still in active
-state hence I believe controller would raise UIC error interrupts. But when
-we service the interrupt, clocks might have already been disabled!
+On 01/11/2019 10.23, Tero Kristo wrote:
+> On 25/10/2019 11:47, Peter Ujfalusi wrote:
+>> The system controller's resource manager have support for configuring the
+>> TDTYPE of TCHAN_CFG register on j721e.
+>> With this parameter the teardown completion can be controlled:
+>> TDTYPE == 0: Return without waiting for peer to complete the teardown
+>> TDTYPE == 1: Wait for peer to complete the teardown
+>>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> 
+> Reviewed-by: Tero Kristo <t-kristo@ti.com>
 
-This change fixes for this by returning failure from
-__ufshcd_uic_hibern8_enter() if recovery succeeds as link is still not in
-hibern8, upon receiving the error ufshcd_hibern8_enter() would initiate
-retry to put the link state back into hibern8.
+I'll take this patch as part of the upcoming v6 of the k3 DMA support
+series to make sure it is buildable unless someone will pick this for
+5.5-rc1.
 
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+- Péter
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 7a5a904..934c27a 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -3891,15 +3891,24 @@ static int __ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
- 			     ktime_to_us(ktime_sub(ktime_get(), start)), ret);
- 
- 	if (ret) {
-+		int err;
-+
- 		dev_err(hba->dev, "%s: hibern8 enter failed. ret = %d\n",
- 			__func__, ret);
- 
- 		/*
--		 * If link recovery fails then return error so that caller
--		 * don't retry the hibern8 enter again.
-+		 * If link recovery fails then return error code (-ENOLINK)
-+		 * returned ufshcd_link_recovery().
-+		 * If link recovery succeeds then return -EAGAIN to attempt
-+		 * hibern8 enter retry again.
- 		 */
--		if (ufshcd_link_recovery(hba))
--			ret = -ENOLINK;
-+		err = ufshcd_link_recovery(hba);
-+		if (err) {
-+			dev_err(hba->dev, "%s: link recovery failed", __func__);
-+			ret = err;
-+		} else {
-+			ret = -EAGAIN;
-+		}
- 	} else
- 		ufshcd_vops_hibern8_notify(hba, UIC_CMD_DME_HIBER_ENTER,
- 								POST_CHANGE);
-@@ -3913,7 +3922,7 @@ static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
- 
- 	for (retries = UIC_HIBERN8_ENTER_RETRIES; retries > 0; retries--) {
- 		ret = __ufshcd_uic_hibern8_enter(hba);
--		if (!ret || ret == -ENOLINK)
-+		if (!ret)
- 			goto out;
- 	}
- out:
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+>> ---
+>> Hi,
+>>
+>> I know it is kind of getting late for 5.5, but can you consider this
+>> small
+>> addition so I can add the support for it in the initial DMA driver?
+>>
+>> Thanks and regards,
+>> Peter
+>>
+>>   drivers/firmware/ti_sci.c              | 1 +
+>>   drivers/firmware/ti_sci.h              | 7 +++++++
+>>   include/linux/soc/ti/ti_sci_protocol.h | 2 ++
+>>   3 files changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+>> index 4126be9e3216..f13e4a96f3b7 100644
+>> --- a/drivers/firmware/ti_sci.c
+>> +++ b/drivers/firmware/ti_sci.c
+>> @@ -2412,6 +2412,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const
+>> struct ti_sci_handle *handle,
+>>       req->fdepth = params->fdepth;
+>>       req->tx_sched_priority = params->tx_sched_priority;
+>>       req->tx_burst_size = params->tx_burst_size;
+>> +    req->tx_tdtype = params->tx_tdtype;
+>>         ret = ti_sci_do_xfer(info, xfer);
+>>       if (ret) {
+>> diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+>> index f0d068c03944..255327171dae 100644
+>> --- a/drivers/firmware/ti_sci.h
+>> +++ b/drivers/firmware/ti_sci.h
+>> @@ -910,6 +910,7 @@ struct rm_ti_sci_msg_udmap_rx_flow_opt_cfg {
+>>    *   12 - Valid bit for @ref
+>> ti_sci_msg_rm_udmap_tx_ch_cfg::tx_credit_count
+>>    *   13 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::fdepth
+>>    *   14 - Valid bit for @ref
+>> ti_sci_msg_rm_udmap_tx_ch_cfg::tx_burst_size
+>> + *   15 - Valid bit for @ref ti_sci_msg_rm_udmap_tx_ch_cfg::tx_tdtype
+>>    *
+>>    * @nav_id: SoC device ID of Navigator Subsystem where tx channel is
+>> located
+>>    *
+>> @@ -973,6 +974,11 @@ struct rm_ti_sci_msg_udmap_rx_flow_opt_cfg {
+>>    *
+>>    * @tx_burst_size: UDMAP transmit channel burst size configuration
+>> to be
+>>    * programmed into the tx_burst_size field of the TCHAN_TCFG register.
+>> + *
+>> + * @tx_tdtype: UDMAP transmit channel teardown type configuration to be
+>> + * programmed into the tdtype field of the TCHAN_TCFG register:
+>> + * 0 - Return immediately
+>> + * 1 - Wait for completion message from remote peer
+>>    */
+>>   struct ti_sci_msg_rm_udmap_tx_ch_cfg_req {
+>>       struct ti_sci_msg_hdr hdr;
+>> @@ -994,6 +1000,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg_req {
+>>       u16 fdepth;
+>>       u8 tx_sched_priority;
+>>       u8 tx_burst_size;
+>> +    u8 tx_tdtype;
+>>   } __packed;
+>>     /**
+>> diff --git a/include/linux/soc/ti/ti_sci_protocol.h
+>> b/include/linux/soc/ti/ti_sci_protocol.h
+>> index 9531ec823298..f3aed0b91564 100644
+>> --- a/include/linux/soc/ti/ti_sci_protocol.h
+>> +++ b/include/linux/soc/ti/ti_sci_protocol.h
+>> @@ -342,6 +342,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg {
+>>   #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_SUPR_TDPKT_VALID        BIT(11)
+>>   #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_CREDIT_COUNT_VALID      BIT(12)
+>>   #define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_FDEPTH_VALID            BIT(13)
+>> +#define TI_SCI_MSG_VALUE_RM_UDMAP_CH_TX_TDTYPE_VALID            BIT(15)
+>>       u16 nav_id;
+>>       u16 index;
+>>       u8 tx_pause_on_err;
+>> @@ -359,6 +360,7 @@ struct ti_sci_msg_rm_udmap_tx_ch_cfg {
+>>       u16 fdepth;
+>>       u8 tx_sched_priority;
+>>       u8 tx_burst_size;
+>> +    u8 tx_tdtype;
+>>   };
+>>     /**
+>>
+> 
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
