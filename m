@@ -2,122 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C0EFB4DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:21:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B181FB4E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbfKMQVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:21:24 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2095 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726098AbfKMQVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:21:23 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 3C5CE5A3F24822F087FD;
-        Wed, 13 Nov 2019 16:21:22 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML711-CAH.china.huawei.com (10.201.108.34) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 13 Nov 2019 16:21:21 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 13 Nov
- 2019 16:21:21 +0000
-Subject: Re: [PATCH RFC 3/5] blk-mq: Facilitate a shared tags per tagset
-To:     Hannes Reinecke <hare@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>,
-        "hare@suse.com" <hare@suse.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "chenxiang (M)" <chenxiang66@hisilicon.com>
-References: <1573652209-163505-1-git-send-email-john.garry@huawei.com>
- <1573652209-163505-4-git-send-email-john.garry@huawei.com>
- <32880159-86e8-5c48-1532-181fdea0df96@suse.de>
- <2cbf591c-8284-8499-7804-e7078cf274d2@huawei.com>
- <02056612-a958-7b05-3c54-bb2fa69bc493@suse.de>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <ace95bc5-7b89-9ed3-be89-8139f977984b@huawei.com>
-Date:   Wed, 13 Nov 2019 16:21:20 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1728301AbfKMQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:22:18 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:33037 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfKMQWS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 11:22:18 -0500
+Received: by mail-yb1-f195.google.com with SMTP id i15so1183151ybq.0;
+        Wed, 13 Nov 2019 08:22:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wrNEKbAI8SdPL4/nZNWweKCBGdbsKNPBi2tTjgkTk4g=;
+        b=dr/pD/ndVpnhQ/dq8vwt31HTFhiLecVsaulHcl8WYtV7IlU6Vk6Q2zoGJoZPO0Q9lg
+         0kqoeQhbXKNkDNlyDCfM5Z3Q9cdUg3sBTb/ZvKqQ16U/WLseWLg6mWtPTr1ar4clvrqE
+         VchRnBOu+R3jh2MGWvvhXAMpI7He3QdrA6ARhAvsIXN850RnNBNxcmbIzsveOg2oiLU8
+         yX4SglKyPb6phah2sZi9ZCKd6Jvf/R9rRPSifGYwYz2gkkO7sqxW9A1QBw6lW4Szd5L8
+         CUJSn1m/GKcc4aE1TYmjvsEbUsvDxirufa2cE++pM2XjuQL6VkBhpB2/xipSCRqXh/oD
+         hqDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wrNEKbAI8SdPL4/nZNWweKCBGdbsKNPBi2tTjgkTk4g=;
+        b=PJO8V9D9d1s62Dkt1SL2YOXmYcaFc8zYrf70KuUDK5Rio2Txj0XbVvAQ5BU6Em5gSL
+         9RAIh+sdu96PRwJVf+3CfBiVL3R9MSUyMPQJtHd4wVQybrkpw9NWhRG2nqZy91MDplwu
+         7JBJhdHoqN58mAXeEUwWs99nM7KA3nLS9yhEJ4+TgguiMmSHbWdOXr3DpRxAAkbb8xEf
+         lhiY0jcMx4EmJAQ/TNGTiQhErUQckeXgjR3Qa5Idn7Yl4xJNmGYjSMU9F3SSh6xxMc+W
+         YKJm9b1nSqWzYu0qxCjmIRTr0ydM7EB1RrwFN1SjY4T0NxIOY7JYnISaUmiTWSbt3Owp
+         E+9A==
+X-Gm-Message-State: APjAAAX8A8BQ85yCXfaS0bW7q14I82qOTnIlw4DKxsPfZo5A+84a/kgN
+        80esdLRsQLhNqGWCdXf7nLf1Yekv30DGGuyKvRo=
+X-Google-Smtp-Source: APXvYqzf53BzBYGwZQWzU7OdbtYI8t2gX4zwRnBJBC0//jpJ443Zjiuag9Mi5MgK7DtkD9rouz5Qh4pH5DLzKHfS9xk=
+X-Received: by 2002:a25:383:: with SMTP id 125mr3323615ybd.45.1573662136812;
+ Wed, 13 Nov 2019 08:22:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <02056612-a958-7b05-3c54-bb2fa69bc493@suse.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml713-chm.china.huawei.com (10.201.108.64) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+References: <20191022143736.GX26530@ZenIV.linux.org.uk> <20191022201131.GZ26530@ZenIV.linux.org.uk>
+ <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com> <20191101234622.GM26530@ZenIV.linux.org.uk>
+ <20191102172229.GT20975@paulmck-ThinkPad-P72> <20191102180842.GN26530@ZenIV.linux.org.uk>
+ <20191103163524.GO26530@ZenIV.linux.org.uk> <20191103182058.GQ26530@ZenIV.linux.org.uk>
+ <20191103185133.GR26530@ZenIV.linux.org.uk> <CAOQ4uxiHH=e=Y5Xb3bkv+USxE0AftHiP935GGQEKkv54E17oDA@mail.gmail.com>
+ <20191113125216.GF26530@ZenIV.linux.org.uk>
+In-Reply-To: <20191113125216.GF26530@ZenIV.linux.org.uk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 13 Nov 2019 18:22:05 +0200
+Message-ID: <CAOQ4uxifKE2sJE=tCUj3qHFim8xXiwcdf-ugb3_tpHbmm5YnZw@mail.gmail.com>
+Subject: Re: [PATCH][RFC] ecryptfs_lookup_interpose(): lower_dentry->d_inode
+ is not stable
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, wugyuan@cn.ibm.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ecryptfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/11/2019 15:38, Hannes Reinecke wrote:
->>>> -        if (clear_ctx_on_error)
->>>> -            data->ctx = NULL;
->>>> -        blk_queue_exit(q);
->>>> -        return NULL;
->>>> +    if (data->hctx->shared_tags) {
->>>> +        shared_tag = blk_mq_get_shared_tag(data);
->>>> +        if (shared_tag == BLK_MQ_TAG_FAIL)
->>>> +            goto err_shared_tag;
->>>>        }
->>>>    -    rq = blk_mq_rq_ctx_init(data, tag, data->cmd_flags,
->>>> alloc_time_ns);
->>>> +    tag = blk_mq_get_tag(data);
->>>> +    if (tag == BLK_MQ_TAG_FAIL)
->>>> +        goto err_tag;
->>>> +
->>>> +    rq = blk_mq_rq_ctx_init(data, tag, shared_tag, data->cmd_flags,
->>>> alloc_time_ns);
->>>>        if (!op_is_flush(data->cmd_flags)) {
->>>>            rq->elv.icq = NULL;
->>>>            if (e && e->type->ops.prepare_request) {
->> Hi Hannes,
->>
->>> Why do you need to keep a parallel tag accounting between 'normal' and
->>> 'shared' tags here?
->>> Isn't is sufficient to get a shared tag only, and us that in lieo of the
->>> 'real' one?
->> In theory, yes. Just the 'shared' tag should be adequate.
->>
->> A problem I see with this approach is that we lose the identity of which
->> tags are allocated for each hctx. As an example for this, consider
->> blk_mq_queue_tag_busy_iter(), which iterates the bits for each hctx.
->> Now, if you're just using shared tags only, that wouldn't work.
->>
->> Consider blk_mq_can_queue() as another example - this tells us if a hctx
->> has any bits unset, while with only using shared tags it would tell if
->> any bits unset over all queues, and this change in semantics could break
->> things. At a glance, function __blk_mq_tag_idle() looks problematic also.
->>
->> And this is where it becomes messy to implement.
->>
+On Wed, Nov 13, 2019 at 2:52 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Nov 13, 2019 at 09:01:36AM +0200, Amir Goldstein wrote:
+> > > -       if (d_really_is_negative(lower_dentry)) {
+> > > +       /*
+> > > +        * negative dentry can go positive under us here - its parent is not
+> > > +        * locked.  That's OK and that could happen just as we return from
+> > > +        * ecryptfs_lookup() anyway.  Just need to be careful and fetch
+> > > +        * ->d_inode only once - it's not stable here.
+> > > +        */
+> > > +       lower_inode = READ_ONCE(lower_dentry->d_inode);
+> > > +
+> > > +       if (!lower_inode) {
+> > >                 /* We want to add because we couldn't find in lower */
+> > >                 d_add(dentry, NULL);
+> > >                 return NULL;
+> >
+> > Sigh!
+> >
+> > Open coding a human readable macro to solve a subtle lookup race.
+> > That doesn't sound like a scalable solution.
+> > I have a feeling this is not the last patch we will be seeing along
+> > those lines.
+> >
+> > Seeing that developers already confused about when they should use
+> > d_really_is_negative() over d_is_negative() [1] and we probably
+> > don't want to add d_really_really_is_negative(), how about
+> > applying that READ_ONCE into d_really_is_negative() and
+> > re-purpose it as a macro to be used when races with lookup are
+> > a concern?
+>
+> Would you care to explain what that "fix" would've achieved here,
+> considering the fact that barriers are no-ops on UP and this is
+> *NOT* an SMP race?
+>
+> And it's very much present on UP - we have
+>         fetch ->d_inode into local variable
+>         do blocking allocation
+>         check if ->d_inode is NULL now
+>         if it is not, use the value in local variable and expect it to be non-NULL
+>
+> That's not a case of missing barriers.  At all.  And no redefinition of
+> d_really_is_negative() is going to help - it can't retroactively affect
+> the value explicitly fetched into a local variable some time prior to
+> that.
+>
 
-Hi Hannes,
+Indeed. I missed that part of your commit message and didn't
+realize the variable was being used later.
+The language in the comment "can go positive under us" implied
+SMP race so I misunderstood the reason for READ_ONCE().
 
-> Oh, my. Indeed, that's correct.
+Sorry for the noise.
 
-The tags could be kept in sync like this:
-
-shared_tag = blk_mq_get_tag(shared_tagset);
-if (shared_tag != -1)
-	sbitmap_set(hctx->tags, shared_tag);
-
-But that's obviously not ideal.
-
-> 
-> But then we don't really care _which_ shared tag is assigned; so
-> wouldn't be we better off by just having an atomic counter here?
-> Cache locality will be blown anyway ...
-The atomic counter would solve the issuing more than Scsi_host.can_queue 
-to the LLDD, but we still need a unique tag, which is what the shared 
-tag is.
-
-Thanks,
-John
+Amir.
