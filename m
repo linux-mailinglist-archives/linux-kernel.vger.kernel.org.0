@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37222FA51D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F9CAFA571
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:23:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbfKMCVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:21:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44516 "EHLO mail.kernel.org"
+        id S1729521AbfKMCU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:20:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfKMByI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:54:08 -0500
+        id S1728786AbfKMByM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:54:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58E85222CD;
-        Wed, 13 Nov 2019 01:54:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1885D222CF;
+        Wed, 13 Nov 2019 01:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610047;
-        bh=seh6PmXvSTkNpVGMUR2DlyeDVyJ5I38GlRYzKWTGXiY=;
+        s=default; t=1573610051;
+        bh=CRRHNqPWZVBDH3wUrp+1VH0/eHLL/17msIBzpwJ4APY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tNTQnJAdprWe3WgsAAUyrABxhg4t0YvYma9tyjkU66TPWKjrzP2x/NG8SoIHzHC3A
-         R4NFaoKHx6BKqn2S5WJAx5VKDoO0M1LcREyJzO2KfDC0J1dr6+FLBz7/qtkjd0O/on
-         5Cw6nYwTh6sDYAfeGo2JQJ2xzB7MvXfp2KIE/G8I=
+        b=xESTH2HK6FUFXrAm/KxG/rhIJUmnOBqj4c0ch4mSRG2m2A274JDIit25yDlr7uHdd
+         l0NdlqZDMcLFa+wTZBSUG36XvjEvFnYQNTwvmwry/wbvGcx3o4cX5vXaErNEh4jl4U
+         VOlzp6GUKc2gBHNj4LbUAa/1DFD16Vd+km1bp2tw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 135/209] xsk: proper AF_XDP socket teardown ordering
-Date:   Tue, 12 Nov 2019 20:49:11 -0500
-Message-Id: <20191113015025.9685-135-sashal@kernel.org>
+Cc:     Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 138/209] mmc: tmio: Fix SCC error detection
+Date:   Tue, 12 Nov 2019 20:49:14 -0500
+Message-Id: <20191113015025.9685-138-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -47,102 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Björn Töpel <bjorn.topel@intel.com>
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-[ Upstream commit 541d7fdd7694560404c502f64298a90ffe017e6b ]
+[ Upstream commit b85fb0a1c8aeaaa40d08945d51a6656b512173f0 ]
 
-The AF_XDP socket struct can exist in three different, implicit
-states: setup, bound and released. Setup is prior the socket has been
-bound to a device. Bound is when the socket is active for receive and
-send. Released is when the process/userspace side of the socket is
-released, but the sock object is still lingering, e.g. when there is a
-reference to the socket in an XSKMAP after process termination.
+SDR104, HS200 and HS400 need to check for SCC error. If SCC error is
+detected, retuning is necessary.
 
-The Rx fast-path code uses the "dev" member of struct xdp_sock to
-check whether a socket is bound or relased, and the Tx code uses the
-struct xdp_umem "xsk_list" member in conjunction with "dev" to
-determine the state of a socket.
-
-However, the transition from bound to released did not tear the socket
-down in correct order.
-
-On the Rx side "dev" was cleared after synchronize_net() making the
-synchronization useless. On the Tx side, the internal queues were
-destroyed prior removing them from the "xsk_list".
-
-This commit corrects the cleanup order, and by doing so
-xdp_del_sk_umem() can be simplified and one synchronize_net() can be
-removed.
-
-Fixes: 965a99098443 ("xsk: add support for bind for Rx")
-Fixes: ac98d8aab61b ("xsk: wire upp Tx zero-copy functions")
-Reported-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Björn Töpel <bjorn.topel@intel.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[Niklas: update commit message]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xdp/xdp_umem.c | 11 +++--------
- net/xdp/xsk.c      | 13 ++++++++-----
- 2 files changed, 11 insertions(+), 13 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-index 8cab91c482ff5..d9117ab035f7c 100644
---- a/net/xdp/xdp_umem.c
-+++ b/net/xdp/xdp_umem.c
-@@ -32,14 +32,9 @@ void xdp_del_sk_umem(struct xdp_umem *umem, struct xdp_sock *xs)
- {
- 	unsigned long flags;
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 7d13ca9ea5347..94c43c3d3ae58 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -926,8 +926,8 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
+ 		tmio_mmc_abort_dma(host);
  
--	if (xs->dev) {
--		spin_lock_irqsave(&umem->xsk_list_lock, flags);
--		list_del_rcu(&xs->list);
--		spin_unlock_irqrestore(&umem->xsk_list_lock, flags);
--
--		if (umem->zc)
--			synchronize_net();
--	}
-+	spin_lock_irqsave(&umem->xsk_list_lock, flags);
-+	list_del_rcu(&xs->list);
-+	spin_unlock_irqrestore(&umem->xsk_list_lock, flags);
- }
+-	if (host->check_scc_error)
+-		host->check_scc_error(host);
++	if (host->check_scc_error && host->check_scc_error(host))
++		mrq->cmd->error = -EILSEQ;
  
- int xdp_umem_query(struct net_device *dev, u16 queue_id)
-diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index 661504042d304..ff15207036dc5 100644
---- a/net/xdp/xsk.c
-+++ b/net/xdp/xsk.c
-@@ -343,12 +343,18 @@ static int xsk_release(struct socket *sock)
- 	local_bh_enable();
- 
- 	if (xs->dev) {
-+		struct net_device *dev = xs->dev;
-+
- 		/* Wait for driver to stop using the xdp socket. */
--		synchronize_net();
--		dev_put(xs->dev);
-+		xdp_del_sk_umem(xs->umem, xs);
- 		xs->dev = NULL;
-+		synchronize_net();
-+		dev_put(dev);
- 	}
- 
-+	xskq_destroy(xs->rx);
-+	xskq_destroy(xs->tx);
-+
- 	sock_orphan(sk);
- 	sock->sk = NULL;
- 
-@@ -707,9 +713,6 @@ static void xsk_destruct(struct sock *sk)
- 	if (!sock_flag(sk, SOCK_DEAD))
- 		return;
- 
--	xskq_destroy(xs->rx);
--	xskq_destroy(xs->tx);
--	xdp_del_sk_umem(xs->umem, xs);
- 	xdp_put_umem(xs->umem);
- 
- 	sk_refcnt_debug_dec(sk);
+ 	/* If SET_BLOCK_COUNT, continue with main command */
+ 	if (host->mrq && !mrq->cmd->error) {
 -- 
 2.20.1
 
