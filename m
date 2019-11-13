@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E9FFA532
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 168F4FA529
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbfKMCVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:21:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44148 "EHLO mail.kernel.org"
+        id S1729720AbfKMCV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:21:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728715AbfKMBx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:53:57 -0500
+        id S1728686AbfKMByB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:54:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C30D222CD;
-        Wed, 13 Nov 2019 01:53:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42F8C222CD;
+        Wed, 13 Nov 2019 01:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610036;
-        bh=O9BZEa+lLR5bwZmlseIeh3+YuqfpBsd14SJ2ClPgozA=;
+        s=default; t=1573610041;
+        bh=JlvttV+ytTpJjDcou2x+3Ji1QNx3Gd14PbB1YenipxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TCK9Vopcrepn1iPOCYiQAgfKTLXaWj0bBFjuqQx0tFN47mXSbOSlVMWZqGsBeEFQJ
-         y22H2ww7gYSy0hEDhdF4fRPxRs5rQ9DNWhg6R0Yn89M5MRxC7bQj5vTujQpsmbwpCo
-         qLGhlhC3M8jpET39hJzbJInPCVzSAGTD0M+ih/KU=
+        b=yNX6sf0p5uCIl3h+0KJW14ZNep6mcAcd2SLTCcb3Zv9UAMB2qNC+ZkRwXX6BXNc+/
+         b7Z+099rYrfi3GTZjzwH6efhxyIzsHcoyuG5XWE/qsF2S2wOB+mhDumS/mPrjdypr0
+         YOsnH3djrMHbNbF8MJo9LktlG27DHPQfleR09gFQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Borislav Petkov <bp@suse.de>, Lubomir Rintel <lkundrak@v3.sk>,
-        x86@kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 128/209] x86/olpc: Fix build error with CONFIG_MFD_CS5535=m
-Date:   Tue, 12 Nov 2019 20:49:04 -0500
-Message-Id: <20191113015025.9685-128-sashal@kernel.org>
+Cc:     Radu Solea <radu.solea@nxp.com>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 131/209] crypto: mxs-dcp - Fix AES issues
+Date:   Tue, 12 Nov 2019 20:49:07 -0500
+Message-Id: <20191113015025.9685-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -42,45 +45,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Radu Solea <radu.solea@nxp.com>
 
-[ Upstream commit fa112cf1e8bc693d5a666b1c479a2859c8b6e0f1 ]
+[ Upstream commit fadd7a6e616b89c7f4f7bfa7b824f290bab32c3c ]
 
-When building a 32-bit config which has the above MFD item as module
-but OLPC_XO1_PM is enabled =y - which is bool, btw - the kernel fails
-building with:
+The DCP driver does not obey cryptlen, when doing android CTS this
+results in passing to hardware input stream lengths which are not
+multiple of block size.
 
-  ld: arch/x86/platform/olpc/olpc-xo1-pm.o: in function `xo1_pm_remove':
-  /home/boris/kernel/linux/arch/x86/platform/olpc/olpc-xo1-pm.c:159: undefined reference to `mfd_cell_disable'
-  ld: arch/x86/platform/olpc/olpc-xo1-pm.o: in function `xo1_pm_probe':
-  /home/boris/kernel/linux/arch/x86/platform/olpc/olpc-xo1-pm.c:133: undefined reference to `mfd_cell_enable'
-  make: *** [Makefile:1030: vmlinux] Error 1
+Add a check to prevent future erroneous stream lengths from reaching the
+hardware and adjust the scatterlist walking code to obey cryptlen.
 
-Force MFD_CS5535 to y if OLPC_XO1_PM is enabled.
+Also properly copy-out the IV for chaining.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Lubomir Rintel <lkundrak@v3.sk>
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/20181005131750.GA5366@zn.tnic
+Signed-off-by: Radu Solea <radu.solea@nxp.com>
+Signed-off-by: Franck LENORMAND <franck.lenormand@nxp.com>
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/crypto/mxs-dcp.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index e76d16ac27764..d7bcc9f702bea 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2726,8 +2726,7 @@ config OLPC
+diff --git a/drivers/crypto/mxs-dcp.c b/drivers/crypto/mxs-dcp.c
+index 3425ccc012168..b926098f70ffd 100644
+--- a/drivers/crypto/mxs-dcp.c
++++ b/drivers/crypto/mxs-dcp.c
+@@ -225,6 +225,12 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx,
+ 	dma_addr_t dst_phys = dma_map_single(sdcp->dev, sdcp->coh->aes_out_buf,
+ 					     DCP_BUF_SZ, DMA_FROM_DEVICE);
  
- config OLPC_XO1_PM
- 	bool "OLPC XO-1 Power Management"
--	depends on OLPC && MFD_CS5535 && PM_SLEEP
--	select MFD_CORE
-+	depends on OLPC && MFD_CS5535=y && PM_SLEEP
- 	---help---
- 	  Add support for poweroff and suspend of the OLPC XO-1 laptop.
++	if (actx->fill % AES_BLOCK_SIZE) {
++		dev_err(sdcp->dev, "Invalid block size!\n");
++		ret = -EINVAL;
++		goto aes_done_run;
++	}
++
+ 	/* Fill in the DMA descriptor. */
+ 	desc->control0 = MXS_DCP_CONTROL0_DECR_SEMAPHORE |
+ 		    MXS_DCP_CONTROL0_INTERRUPT |
+@@ -254,6 +260,7 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx,
  
+ 	ret = mxs_dcp_start_dma(actx);
+ 
++aes_done_run:
+ 	dma_unmap_single(sdcp->dev, key_phys, 2 * AES_KEYSIZE_128,
+ 			 DMA_TO_DEVICE);
+ 	dma_unmap_single(sdcp->dev, src_phys, DCP_BUF_SZ, DMA_TO_DEVICE);
+@@ -280,13 +287,15 @@ static int mxs_dcp_aes_block_crypt(struct crypto_async_request *arq)
+ 
+ 	uint8_t *out_tmp, *src_buf, *dst_buf = NULL;
+ 	uint32_t dst_off = 0;
++	uint32_t last_out_len = 0;
+ 
+ 	uint8_t *key = sdcp->coh->aes_key;
+ 
+ 	int ret = 0;
+ 	int split = 0;
+-	unsigned int i, len, clen, rem = 0;
++	unsigned int i, len, clen, rem = 0, tlen = 0;
+ 	int init = 0;
++	bool limit_hit = false;
+ 
+ 	actx->fill = 0;
+ 
+@@ -305,6 +314,11 @@ static int mxs_dcp_aes_block_crypt(struct crypto_async_request *arq)
+ 	for_each_sg(req->src, src, nents, i) {
+ 		src_buf = sg_virt(src);
+ 		len = sg_dma_len(src);
++		tlen += len;
++		limit_hit = tlen > req->nbytes;
++
++		if (limit_hit)
++			len = req->nbytes - (tlen - len);
+ 
+ 		do {
+ 			if (actx->fill + len > out_off)
+@@ -321,13 +335,15 @@ static int mxs_dcp_aes_block_crypt(struct crypto_async_request *arq)
+ 			 * If we filled the buffer or this is the last SG,
+ 			 * submit the buffer.
+ 			 */
+-			if (actx->fill == out_off || sg_is_last(src)) {
++			if (actx->fill == out_off || sg_is_last(src) ||
++				limit_hit) {
+ 				ret = mxs_dcp_run_aes(actx, req, init);
+ 				if (ret)
+ 					return ret;
+ 				init = 0;
+ 
+ 				out_tmp = out_buf;
++				last_out_len = actx->fill;
+ 				while (dst && actx->fill) {
+ 					if (!split) {
+ 						dst_buf = sg_virt(dst);
+@@ -350,6 +366,19 @@ static int mxs_dcp_aes_block_crypt(struct crypto_async_request *arq)
+ 				}
+ 			}
+ 		} while (len);
++
++		if (limit_hit)
++			break;
++	}
++
++	/* Copy the IV for CBC for chaining */
++	if (!rctx->ecb) {
++		if (rctx->enc)
++			memcpy(req->info, out_buf+(last_out_len-AES_BLOCK_SIZE),
++				AES_BLOCK_SIZE);
++		else
++			memcpy(req->info, in_buf+(last_out_len-AES_BLOCK_SIZE),
++				AES_BLOCK_SIZE);
+ 	}
+ 
+ 	return ret;
 -- 
 2.20.1
 
