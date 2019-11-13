@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D409FA0D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82461FA0D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfKMBws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:52:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41640 "EHLO mail.kernel.org"
+        id S1728365AbfKMBw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:52:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbfKMBwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:52:38 -0500
+        id S1728371AbfKMBwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:52:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69722222D4;
-        Wed, 13 Nov 2019 01:52:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C393C222CA;
+        Wed, 13 Nov 2019 01:52:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609957;
-        bh=mh1zORXvu0FZrYjtkaqRU48F03LGzPErdFzjrRjApG0=;
+        s=default; t=1573609963;
+        bh=HpJfRrDSSyuLg2DrJFpzk2sKf7uuJaSUC8TTp4L+rU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c7iJgZ/4vypRf42RgIvfCpyuCNtFdpQzelichoQpQ0bvOcgaKo23bk5ZIQores5M/
-         b4VcPmXrIxR0iKi+sfHbOQ2sw85mhuBbLN3g4C1AeFiYj5vSgMQyI8ZCfZHSvT5XvK
-         Qf5/PSCpIjX78dVMLjgu/9pEyB8qOphRDLLd6GCk=
+        b=1wYsRJj5LB+Co2fsa5VjjTuLYtkO/N2VDdarEwXBI7fB6msYjx/MbXTFmhtUVA++e
+         DNphrX/+fXdY6fWCYf94yU+HBV7OjcpP4BBwffK0DlBWbP/R1gxm8Qj7mPSngpsL3r
+         X1ti46jrbU1UvgTLRyZeu8NsOdqeyj/ADs4SgiMQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 090/209] media: pxa_camera: Fix check for pdev->dev.of_node
-Date:   Tue, 12 Nov 2019 20:48:26 -0500
-Message-Id: <20191113015025.9685-90-sashal@kernel.org>
+Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 094/209] bnxt_en: return proper error when FW returns HWRM_ERR_CODE_RESOURCE_ACCESS_DENIED
+Date:   Tue, 12 Nov 2019 20:48:30 -0500
+Message-Id: <20191113015025.9685-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -46,46 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit 44d7f1a77d8c84f8e42789b5475b74ae0e6d4758 ]
+[ Upstream commit 3a1d52a54a6a4030b294e5f5732f0bfbae0e3815 ]
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context.
+Return proper error code when Firmware returns
+HWRM_ERR_CODE_RESOURCE_ACCESS_DENIED for HWRM_NVM_GET/SET_VARIABLE
+commands.
 
-drivers/media/platform/pxa_camera.c:2400:17: warning: address of
-'pdev->dev.of_node' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (&pdev->dev.of_node && !pcdev->pdata) {
-             ~~~~~~~~~~^~~~~~~ ~~
-1 warning generated.
-
-Judging from the rest of the kernel, it seems like this was an error and
-just the value of of_node should be checked rather than the address.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/pxa_camera.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
-index b6e9e93bde7a8..406ac673ad84c 100644
---- a/drivers/media/platform/pxa_camera.c
-+++ b/drivers/media/platform/pxa_camera.c
-@@ -2397,7 +2397,7 @@ static int pxa_camera_probe(struct platform_device *pdev)
- 	pcdev->res = res;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+index 790c684f08abc..b178c2e9dc231 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+@@ -78,8 +78,12 @@ static int bnxt_hwrm_nvm_req(struct bnxt *bp, u32 param_id, void *msg,
+ 		memcpy(buf, data_addr, bytesize);
  
- 	pcdev->pdata = pdev->dev.platform_data;
--	if (&pdev->dev.of_node && !pcdev->pdata) {
-+	if (pdev->dev.of_node && !pcdev->pdata) {
- 		err = pxa_camera_pdata_from_dt(&pdev->dev, pcdev, &pcdev->asd);
- 	} else {
- 		pcdev->platform_flags = pcdev->pdata->flags;
+ 	dma_free_coherent(&bp->pdev->dev, bytesize, data_addr, data_dma_addr);
+-	if (rc)
++	if (rc == HWRM_ERR_CODE_RESOURCE_ACCESS_DENIED) {
++		netdev_err(bp->dev, "PF does not have admin privileges to modify NVM config\n");
++		return -EACCES;
++	} else if (rc) {
+ 		return -EIO;
++	}
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
