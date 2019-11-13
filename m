@@ -2,81 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBEFFB99F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:21:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC57FB9B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfKMUVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 15:21:38 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:48506 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfKMUVg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 15:21:36 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DD93320B4901;
-        Wed, 13 Nov 2019 12:21:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DD93320B4901
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573676496;
-        bh=I1Mu3IDPJM1nVT/FAj7Eop98xKiNpHueYyROLn+JtY8=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=FDyysCgpCSLIzjLEawSdItTK0d6jAoV7kUCnvbf6SvkW9KXwnKHmpHL3Nv14ZZtcM
-         aJtgBRqlWgy02GW8TU4xzGwuP61rn4fqkKZFuTADqOh3WgEBIvJIfQx7oTus9FXsBn
-         55p8y97k/vEzvC4vMtEUjvBB3OW7mz2FOtN2W9MU=
-Subject: Re: [PATCH v6 1/3] IMA: Add KEY_CHECK func to measure keys
-To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191113184658.2862-1-nramas@linux.microsoft.com>
- <20191113184658.2862-2-nramas@linux.microsoft.com>
- <1573676066.4843.18.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <320826aa-f744-f2ae-8693-a6ce9461d886@linux.microsoft.com>
-Date:   Wed, 13 Nov 2019 12:21:56 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726605AbfKMUXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 15:23:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbfKMUXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 15:23:21 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A19FA206EC;
+        Wed, 13 Nov 2019 20:23:19 +0000 (UTC)
+Date:   Wed, 13 Nov 2019 15:23:17 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     linux-pm@vger.kernel.org, mingo@redhat.com,
+        bjorn.andersson@linaro.org, vincent.guittot@linaro.org,
+        daidavid1@codeaurora.org, okukatla@codeaurora.org,
+        evgreen@chromium.org, mka@chromium.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] interconnect: Add basic tracepoints
+Message-ID: <20191113152317.00318ad8@gandalf.local.home>
+In-Reply-To: <20191101130031.27996-4-georgi.djakov@linaro.org>
+References: <20191101130031.27996-1-georgi.djakov@linaro.org>
+        <20191101130031.27996-4-georgi.djakov@linaro.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1573676066.4843.18.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/2019 12:14 PM, Mimi Zohar wrote:
+On Fri,  1 Nov 2019 15:00:31 +0200
+Georgi Djakov <georgi.djakov@linaro.org> wrote:
 
->> @@ -655,6 +655,13 @@ void process_buffer_measurement(const void *buf, int size,
->>   	int action = 0;
->>   	u32 secid;
->>   
->> +	/*
->> +	 * If IMA is not yet initialized or IMA policy is empty
->> +	 * then there is no need to measure.
->> +	 */
->> +	if (!ima_policy_flag)
->> +		return;
->> +
-> 
-> This addition has nothing to do with defining a new IMA hook and
-> should be a separate patch.  This can be posted independently of this
-> patch set.
-> 
-> Mimi
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index df44ef713db5..15e11e22ddf7 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -26,6 +26,9 @@ static LIST_HEAD(icc_providers);
+>  static DEFINE_MUTEX(icc_lock);
+>  static struct dentry *icc_debugfs_dir;
+>  
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/interconnect.h>
+> +
+>  static void icc_summary_show_one(struct seq_file *s, struct icc_node *n)
+>  {
+>  	if (!n)
+> @@ -435,6 +438,8 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+>  
+>  		/* aggregate requests for this node */
+>  		aggregate_requests(node);
+> +
+> +		trace_icc_set_bw(path, node, i, avg_bw, peak_bw);
+>  	}
+>  
+>  	ret = apply_constraints(path);
+> @@ -453,6 +458,8 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+>  
+>  	mutex_unlock(&icc_lock);
+>  
+> +	trace_icc_set_bw_end(path, ret);
+> +
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(icc_set_bw);
+> diff --git a/include/trace/events/interconnect.h b/include/trace/events/interconnect.h
+> new file mode 100644
+> index 000000000000..64b646aa7bd3
+> --- /dev/null
+> +++ b/include/trace/events/interconnect.h
+> @@ -0,0 +1,81 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2019, Linaro Ltd.
+> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
+> + */
+> +
+> +#if !defined(_TRACE_INTERCONNECT_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_INTERCONNECT_H
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM interconnect
+> +
+> +#include "../../../drivers/interconnect/internal.h"
 
-I'll move this change to a different patch,
-but it has to be either part of this patch set or the above change alone 
-needs to be taken before this patch set for the following reason:
+Ug.
 
-The IMA hook gets called early in the boot process (for example, when 
-builtin_trusted_keys are added). If the above check is not there, 
-ima_get_action() is called and causes kernel panic (since IMA is not yet 
-initialized).
+I would recommend placing this file in with drivers/interconnect, and
+call it simply trace.h, or interconnect_trace.h. Then you can include
+"internal.h" nicely.
 
-thanks,
-  -lakshmi
+To do so, you need to add to drivers/interconnect/Makefile:
 
+ CFLAGS_core.o := -I$(src)
+
+To have core.c include this file.
+
+Rest looks fine.
+
+-- Steve
+
+
+> +
+> +TRACE_EVENT(icc_set_bw,
+> +
+> +	TP_PROTO(struct icc_path *p, struct icc_node *n, int i,
+> +		 u32 avg_bw, u32 peak_bw),
+> +
+> +	TP_ARGS(p, n, i, avg_bw, peak_bw),
+> +
+> +	TP_STRUCT__entry(
+> +		__string(path_name, p->name)
+> +		__string(dev, dev_name(p->reqs[i].dev))
+> +		__string(node_name, n->name)
+> +		__field(u32, avg_bw)
+> +		__field(u32, peak_bw)
+> +		__field(u32, node_avg_bw)
+> +		__field(u32, node_peak_bw)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__assign_str(path_name, p->name);
+> +		__assign_str(dev, dev_name(p->reqs[i].dev));
+> +		__assign_str(node_name, n->name);
+> +		__entry->avg_bw = avg_bw;
+> +		__entry->peak_bw = peak_bw;
+> +		__entry->node_avg_bw = n->avg_bw;
+> +		__entry->node_peak_bw = n->peak_bw;
+> +	),
+> +
+> +	TP_printk("path=%s dev=%s node=%s avg_bw=%u peak_bw=%u agg_avg=%u agg_peak=%u",
+> +		  __get_str(path_name),
+> +		  __get_str(dev),
+> +		  __get_str(node_name),
+> +		  __entry->avg_bw,
+> +		  __entry->peak_bw,
+> +		  __entry->node_avg_bw,
+> +		  __entry->node_peak_bw)
+> +);
+> +
+> +TRACE_EVENT(icc_set_bw_end,
+> +
+> +	TP_PROTO(struct icc_path *p, int ret),
+> +
+> +	TP_ARGS(p, ret),
+> +
+> +	TP_STRUCT__entry(
+> +		__string(path_name, p->name)
+> +		__string(dev, dev_name(p->reqs[0].dev))
+> +		__field(int, ret)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__assign_str(path_name, p->name);
+> +		__assign_str(dev, dev_name(p->reqs[0].dev));
+> +		__entry->ret = ret;
+> +	),
+> +
+> +	TP_printk("path=%s dev=%s ret=%d",
+> +		  __get_str(path_name),
+> +		  __get_str(dev),
+> +		  __entry->ret)
+> +);
+> +
+> +#endif /* _TRACE_INTERCONNECT_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
 
