@@ -2,83 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09531FBA57
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 382ADFBA68
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:05:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbfKMVCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 16:02:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59760 "EHLO mail.kernel.org"
+        id S1726516AbfKMVFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 16:05:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727205AbfKMVCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 16:02:39 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4BA0206ED;
-        Wed, 13 Nov 2019 21:02:39 +0000 (UTC)
-Date:   Wed, 13 Nov 2019 16:02:37 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Piotr Maziarz <piotrx.maziarz@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        andriy.shevchenko@intel.com, cezary.rojewski@intel.com,
-        gustaw.lewandowski@intel.com
-Subject: Re: [PATCH v2 1/2] seq_buf: Add printing formatted hex dumps
-Message-ID: <20191113160237.6b8efe12@gandalf.local.home>
-In-Reply-To: <1573130738-29390-1-git-send-email-piotrx.maziarz@linux.intel.com>
-References: <1573130738-29390-1-git-send-email-piotrx.maziarz@linux.intel.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726185AbfKMVFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 16:05:06 -0500
+Subject: Re: [GIT PULL] Btrfs fix for 5.4-rc8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573679107;
+        bh=F23cvoRoqrCWlr35NjIMIE49ZR7wTNyqsqVpCHoHjMs=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=gDgM3NyJWuSPY9VpjGU4pZDEKxUV5B5nkqTPIPUSj9ug8XUImRBK+weMnH8E8h5jr
+         L5dp+7gQI669IYDRb7DT14sbxTAyQPWpT0BIHat3+bI1sSvVyEsM4wsu0YQ4+2Yfdg
+         pk5lR11RVc8o+WKvAGWONZPfAdpYOT4aK+hGlt8k=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <cover.1573671550.git.dsterba@suse.com>
+References: <cover.1573671550.git.dsterba@suse.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cover.1573671550.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4-rc7-tag
+X-PR-Tracked-Commit-Id: e6c617102c7e4ac1398cb0b98ff1f0727755b520
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: afd7a71872f14062cc12cac126bb8e219e7dacf6
+Message-Id: <157367910652.4154.3240212309981343057.pr-tracker-bot@kernel.org>
+Date:   Wed, 13 Nov 2019 21:05:06 +0000
+To:     David Sterba <dsterba@suse.com>
+Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  7 Nov 2019 13:45:37 +0100
-Piotr Maziarz <piotrx.maziarz@linux.intel.com> wrote:
+The pull request you sent on Wed, 13 Nov 2019 20:06:25 +0100:
 
-> Provided function is an analogue of print_hex_dump().
-> 
-> Implementing this function in seq_buf allows using for multiple
-> purposes (e.g. for tracing) and therefore prevents from code duplication
-> in every layer that uses seq_buf.
-> 
-> print_hex_dump() is an essential part of logging data to dmesg. Adding
-> similar capability for other purposes is beneficial to all users.
-> 
-> Example usage:
-> seq_buf_hex_dump(seq, "", DUMP_PREFIX_OFFSET, 16, 4, buf,
-> 		 ARRAY_SIZE(buf), true);
-> Example output:
-> 00000000: 00000000 ffffff10 ffffff32 ffff3210  ........2....2..
-> 00000010: ffff3210 83d00437 c0700000 00000000  .2..7.....p.....
-> 00000020: 02010004 0000000f 0000000f 00004002  .............@..
-> 00000030: 00000fff 00000000                    ........
-> 
-> Signed-off-by: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
-> Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4-rc7-tag
 
-I'm curious about the two signed off bys? Was Cezary a co-author?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/afd7a71872f14062cc12cac126bb8e219e7dacf6
 
+Thank you!
 
-> ---
-> v2
-> Add kernel doc header
-> Explain linebuf magic number size
-> 
-> Decided not to change declaration order or remaining -= rowsize to
-> remaining -= linelen in order to stay aligned with base print_hex_dump
-> function. However I can change it if requested.
-
-I don't care as much to make the change. Perhaps we can clean that up
-in the future.
-
--- Steve
-
-> 
->  include/linux/seq_buf.h |  3 +++
->  lib/seq_buf.c           | 62 +++++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 65 insertions(+)
-> 
->
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
