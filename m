@@ -2,61 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0D1FADB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CE1FADBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:56:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfKMJz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:55:56 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57284 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfKMJzz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:55:55 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iUpNM-00058F-Ae; Wed, 13 Nov 2019 09:55:48 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: sfp: fix spelling mistake "requies" -> "requires"
-Date:   Wed, 13 Nov 2019 09:55:48 +0000
-Message-Id: <20191113095548.27704-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727605AbfKMJ4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:56:11 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52352 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726952AbfKMJ4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 04:56:07 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B4B9910CDBDA0449886C;
+        Wed, 13 Nov 2019 17:56:05 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Wed, 13 Nov 2019
+ 17:55:56 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <cyrille.pitchen@atmel.com>
+CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v3 -next] crypto: atmel - Fix build error of CRYPTO_AUTHENC
+Date:   Wed, 13 Nov 2019 17:55:50 +0800
+Message-ID: <20191113095550.15104-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20191112072405.40268-1-yuehaibing@huawei.com>
+References: <20191112072405.40268-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If CRYPTO_DEV_ATMEL_AUTHENC is m, CRYPTO_DEV_ATMEL_SHA is m,
+but CRYPTO_DEV_ATMEL_AES is y, building will fail:
 
-There is a spelling mistake in a dev_warn message. Fix it.
+drivers/crypto/atmel-aes.o: In function `atmel_aes_authenc_init_tfm':
+atmel-aes.c:(.text+0x670): undefined reference to `atmel_sha_authenc_get_reqsize'
+atmel-aes.c:(.text+0x67a): undefined reference to `atmel_sha_authenc_spawn'
+drivers/crypto/atmel-aes.o: In function `atmel_aes_authenc_setkey':
+atmel-aes.c:(.text+0x7e5): undefined reference to `atmel_sha_authenc_setkey'
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Make CRYPTO_DEV_ATMEL_AUTHENC depend on CRYPTO_DEV_ATMEL_AES,
+and select CRYPTO_DEV_ATMEL_SHA and CRYPTO_AUTHENC for it under there.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 89a82ef87e01 ("crypto: atmel-authenc - add support to...")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 ---
- drivers/net/phy/sfp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3: fix log typo
+v2: make CRYPTO_DEV_ATMEL_AUTHENC depends on DEV_ATMEL_AES
+---
+ drivers/crypto/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
-index f9b8051c4247..b0f88c2c0153 100644
---- a/drivers/net/phy/sfp.c
-+++ b/drivers/net/phy/sfp.c
-@@ -1465,7 +1465,7 @@ static int sfp_module_parse_power(struct sfp *sfp)
- 	 */
- 	if (sfp->id.ext.diagmon & SFP_DIAGMON_ADDRMODE && power_mW > 1000) {
- 		dev_warn(sfp->dev,
--			 "Address Change Sequence not supported but module requies %u.%uW, module may not be functional\n",
-+			 "Address Change Sequence not supported but module requires %u.%uW, module may not be functional\n",
- 			 power_mW / 1000, (power_mW / 100) % 10);
- 		return 0;
- 	}
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index c5cc04d..296e829 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -492,10 +492,9 @@ if CRYPTO_DEV_UX500
+ endif # if CRYPTO_DEV_UX500
+ 
+ config CRYPTO_DEV_ATMEL_AUTHENC
+-	tristate "Support for Atmel IPSEC/SSL hw accelerator"
++	bool "Support for Atmel IPSEC/SSL hw accelerator"
+ 	depends on ARCH_AT91 || COMPILE_TEST
+-	select CRYPTO_DEV_ATMEL_AES
+-	select CRYPTO_DEV_ATMEL_SHA
++	depends on CRYPTO_DEV_ATMEL_AES
+ 	help
+ 	  Some Atmel processors can combine the AES and SHA hw accelerators
+ 	  to enhance support of IPSEC/SSL.
+@@ -507,8 +506,9 @@ config CRYPTO_DEV_ATMEL_AES
+ 	depends on ARCH_AT91 || COMPILE_TEST
+ 	select CRYPTO_AES
+ 	select CRYPTO_AEAD
+-	select CRYPTO_AUTHENC
+ 	select CRYPTO_SKCIPHER
++	select CRYPTO_AUTHENC if CRYPTO_DEV_ATMEL_AUTHENC
++	select CRYPTO_DEV_ATMEL_SHA if CRYPTO_DEV_ATMEL_AUTHENC
+ 	help
+ 	  Some Atmel processors have AES hw accelerator.
+ 	  Select this if you want to use the Atmel module for
 -- 
-2.20.1
+2.7.4
+
 
