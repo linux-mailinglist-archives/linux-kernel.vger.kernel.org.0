@@ -2,117 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02735FAC95
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:09:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B16FAC91
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:08:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfKMJJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:09:06 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43685 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbfKMJJF (ORCPT
+        id S1726953AbfKMJIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:08:44 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43178 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfKMJIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:09:05 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iUoe7-0000TC-92; Wed, 13 Nov 2019 10:09:03 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iUoe6-0002mQ-73; Wed, 13 Nov 2019 10:09:02 +0100
-Date:   Wed, 13 Nov 2019 10:09:02 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     "thorsten.scherer@eckelmann.de" <thorsten.scherer@eckelmann.de>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH 40/62] gpio: gpio-siox: Use new GPIO_LINE_DIRECTION
-Message-ID: <20191113090902.dev6yxyxvbf6bupm@pengutronix.de>
-References: <cover.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
- <91a796dd2811b58f4be30875f5ef644f0e43f241.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
- <20191111072715.GB4117@ws067.eckelmann.group>
- <e38b59d9c8bcf81bbd49fed2d9d17350d4dc4866.camel@fi.rohmeurope.com>
- <20191111104252.5ixcb2tpnj6n5e6t@pengutronix.de>
- <20191113084637.GA23872@localhost.localdomain>
+        Wed, 13 Nov 2019 04:08:44 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAD98YBY110423;
+        Wed, 13 Nov 2019 03:08:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573636114;
+        bh=L5yB4sXWEphH1kS7OcR6nTpRGX5u3VDhE7QxjQRUxHE=;
+        h=From:To:CC:Subject:Date;
+        b=GhR8/TA859CcTnzUuhfN9dTXPmy3KXv1W/ZOobZE5qndfQgLlqh+E0IvcwnFwy2Me
+         4bQ5Qag9PEda47sL1JDzukOdiic8zchmkLBtablkO5ahaeKeFl96giy6VV0ilQNUS6
+         zFDsmDqN+m6tHqlR6l4I47MmvkiTyBWDkbEkv4zw=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD98Ykh006184;
+        Wed, 13 Nov 2019 03:08:34 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 13
+ Nov 2019 03:08:16 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 13 Nov 2019 03:08:15 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD98V6k008708;
+        Wed, 13 Nov 2019 03:08:32 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <vkoul@kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] crypto: qce/dma - Use dma_request_chan() directly for channel request
+Date:   Wed, 13 Nov 2019 11:09:47 +0200
+Message-ID: <20191113090947.28499-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191113084637.GA23872@localhost.localdomain>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 10:46:37AM +0200, Matti Vaittinen wrote:
-> On Mon, Nov 11, 2019 at 11:42:52AM +0100, Uwe Kleine-König wrote:
-> > Hello Matti,
-> > 
-> > On Mon, Nov 11, 2019 at 07:43:50AM +0000, Vaittinen, Matti wrote:
-> > > On Mon, 2019-11-11 at 08:27 +0100, Thorsten Scherer wrote:
-> > > > Hello,
-> > > > 
-> > > > On Tue, Nov 05, 2019 at 12:30:58PM +0200, Matti Vaittinen wrote:
-> > > > > It's hard for occasional GPIO code reader/writer to know if values
-> > > > > 0/1
-> > > > > equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
-> > > > > GPIO_LINE_DIRECTION_OUT to help them out.
-> > > > > 
-> > > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > > 
-> > > > for SIOX gpio:
-> > > > 
-> > > > Acked-by: Thorsten Scherer <t.scherer@eckelmann.de>
-> > > > 
-> > > > > Patches are compile-tested only. I have no HW to really test
-> > > > > them.  Thus
-> > > > > I'd appreciate carefull review. This work is mainly about
-> > > > > converting
-> > > > > zeros and ones to the new defines but it wouldn't be first time I
-> > > > > get it wrong in one of the patches
-> > > > > :)                                                   
-> > > > 
-> > > > Applied the patch(es) and tested them with SIOX device
-> > > > 
-> > > > Tested-by: Thorsten Scherer <t.scherer@eckelmann.de>
-> > > 
-> > > Big thanks! It's _really_ nice that someone takes the time to do the
-> > > testing! Highly appreciated! :]
-> > 
-> > without wanting to devalue Thorsten's testing, I think testing your
-> > series can be trivially done without a runtime check as your patches
-> > won't change the compiled result. So just compile once without the patch
-> > and once with and compare the results. If they are bit-by-bit identical
-> > everything is fine.
-> 
-> Right again Uwe. This is correct for most of the modules - assuming
-> there's no __LINE__ or time related macros used. Few of the modules did
-> get actual changes though.
+dma_request_slave_channel_reason() is:
+#define dma_request_slave_channel_reason(dev, name) \
+	dma_request_chan(dev, name)
 
-So as you did this research, I think it's worth pointing this out in the
-commit log. Either something like:
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+ drivers/crypto/qce/dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	There are no changes in the compile result.
-
-or
-
-	This results in changes to the compiled module because ...
-
-(and probably ... is worth fixing).
-
-Best regards
-Uwe
-
+diff --git a/drivers/crypto/qce/dma.c b/drivers/crypto/qce/dma.c
+index 0984a719144d..40a59214d2e1 100644
+--- a/drivers/crypto/qce/dma.c
++++ b/drivers/crypto/qce/dma.c
+@@ -12,11 +12,11 @@ int qce_dma_request(struct device *dev, struct qce_dma_data *dma)
+ {
+ 	int ret;
+ 
+-	dma->txchan = dma_request_slave_channel_reason(dev, "tx");
++	dma->txchan = dma_request_chan(dev, "tx");
+ 	if (IS_ERR(dma->txchan))
+ 		return PTR_ERR(dma->txchan);
+ 
+-	dma->rxchan = dma_request_slave_channel_reason(dev, "rx");
++	dma->rxchan = dma_request_chan(dev, "rx");
+ 	if (IS_ERR(dma->rxchan)) {
+ 		ret = PTR_ERR(dma->rxchan);
+ 		goto error_rx;
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
