@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96FC6FA09F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:51:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17C5AFA0A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:51:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbfKMBvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:51:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38644 "EHLO mail.kernel.org"
+        id S1727880AbfKMBvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:51:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbfKMBvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:51:13 -0500
+        id S1727795AbfKMBvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:51:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 722D0222D4;
-        Wed, 13 Nov 2019 01:51:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEA3F22468;
+        Wed, 13 Nov 2019 01:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609872;
-        bh=+uoGzZI/z0s4GyKCeNi42jJRSmAhENwPFVh+s/rBrDc=;
+        s=default; t=1573609882;
+        bh=fAL4fjcaPMxzF3yBKiRd6D+DTiReBP5DKKTY84t6nDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wPK3kl9mTOyfjMNYioXgtxPxheqCr8W/tWTPLn6B3MGIssooNSPjxQFqGdisAwljj
-         FXl+pP7Ew+UbNf0+KozL9GiX8JGjZ/S38wxALnKVovYzv+AhH8+krsPksOwxTBzDYk
-         /RHOSiC8VbSd+nwqXTYLWKXah46Auj2xBYIXpfaI=
+        b=gJiG75x0x1dhs07O8e8gQmuQdF6VzldPy3jgLvlDdEjxZD53nshB4HkSHdz0/y2Zf
+         mQCJT0uKm8P7Ayk0jdONR6JOXkb+5Yp37ijgErkaMkklk1EGlt6x5JTWLWiV4nZ40H
+         EJKP3wOQtmZ01op3pV3drqshzXF8QbMRsVJtc9Gg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 035/209] usb: dwc3: gadget: Check ENBLSLPM before sending ep command
-Date:   Tue, 12 Nov 2019 20:47:31 -0500
-Message-Id: <20191113015025.9685-35-sashal@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 044/209] printk: CON_PRINTBUFFER console registration is a bit racy
+Date:   Tue, 12 Nov 2019 20:47:40 -0500
+Message-Id: <20191113015025.9685-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -44,89 +43,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-[ Upstream commit 87dd96111b0bb8e616fcbd74dbf4bb4182f2c596 ]
+[ Upstream commit 884e370ea88c109a3b982f4eb9ecd82510a3a1fe ]
 
-When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
-GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an endpoint
-command.
+CON_PRINTBUFFER console registration requires us to do several
+preparation steps:
+- Rollback console_seq to replay logbuf messages which were already
+  seen on other consoles;
+- Set exclusive_console flag so console_unlock() will ->write() logbuf
+  messages only to the exclusive_console driver.
 
-Current implementation only save and restore GUSB2PHYCFG.SUSPHY
-configuration. We must save and clear both GUSB2PHYCFG.ENBLSLPM and
-GUSB2PHYCFG.SUSPHY settings. Restore them after the command is
-completed.
+The way we do it, however, is a bit racy
 
-DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
+	logbuf_lock_irqsave(flags);
+	console_seq = syslog_seq;
+	console_idx = syslog_idx;
+	logbuf_unlock_irqrestore(flags);
+						<< preemption enabled
+						<< irqs enabled
+	exclusive_console = newcon;
+	console_unlock();
 
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+We rollback console_seq under logbuf_lock with IRQs disabled, but
+we set exclusive_console with local IRQs enabled and logbuf unlocked.
+If the system oops-es or panic-s before we set exclusive_console - and
+given that we have IRQs and preemption enabled there is such a
+possibility - we will re-play all logbuf messages to every registered
+console, which may be a bit annoying and time consuming.
+
+Move exclusive_console assignment to the same IRQs-disabled and
+logbuf_lock-protected section where we rollback console_seq.
+
+Link: http://lkml.kernel.org/r/20180928095304.9972-1-sergey.senozhatsky@gmail.com
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+ kernel/printk/printk.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 54de732550648..a56448eccd2eb 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -271,27 +271,36 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- 	const struct usb_endpoint_descriptor *desc = dep->endpoint.desc;
- 	struct dwc3		*dwc = dep->dwc;
- 	u32			timeout = 1000;
-+	u32			saved_config = 0;
- 	u32			reg;
- 
- 	int			cmd_status = 0;
--	int			susphy = false;
- 	int			ret = -EINVAL;
- 
- 	/*
--	 * Synopsys Databook 2.60a states, on section 6.3.2.5.[1-8], that if
--	 * we're issuing an endpoint command, we must check if
--	 * GUSB2PHYCFG.SUSPHY bit is set. If it is, then we need to clear it.
-+	 * When operating in USB 2.0 speeds (HS/FS), if GUSB2PHYCFG.ENBLSLPM or
-+	 * GUSB2PHYCFG.SUSPHY is set, it must be cleared before issuing an
-+	 * endpoint command.
- 	 *
--	 * We will also set SUSPHY bit to what it was before returning as stated
--	 * by the same section on Synopsys databook.
-+	 * Save and clear both GUSB2PHYCFG.ENBLSLPM and GUSB2PHYCFG.SUSPHY
-+	 * settings. Restore them after the command is completed.
-+	 *
-+	 * DWC_usb3 3.30a and DWC_usb31 1.90a programming guide section 3.2.2
- 	 */
- 	if (dwc->gadget.speed <= USB_SPEED_HIGH) {
- 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
- 		if (unlikely(reg & DWC3_GUSB2PHYCFG_SUSPHY)) {
--			susphy = true;
-+			saved_config |= DWC3_GUSB2PHYCFG_SUSPHY;
- 			reg &= ~DWC3_GUSB2PHYCFG_SUSPHY;
--			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 		}
-+
-+		if (reg & DWC3_GUSB2PHYCFG_ENBLSLPM) {
-+			saved_config |= DWC3_GUSB2PHYCFG_ENBLSLPM;
-+			reg &= ~DWC3_GUSB2PHYCFG_ENBLSLPM;
-+		}
-+
-+		if (saved_config)
-+			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index b627954061bb6..11d70fd15e706 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2708,14 +2708,18 @@ void register_console(struct console *newcon)
+ 		logbuf_lock_irqsave(flags);
+ 		console_seq = syslog_seq;
+ 		console_idx = syslog_idx;
+-		logbuf_unlock_irqrestore(flags);
+ 		/*
+ 		 * We're about to replay the log buffer.  Only do this to the
+ 		 * just-registered console to avoid excessive message spam to
+ 		 * the already-registered consoles.
++		 *
++		 * Set exclusive_console with disabled interrupts to reduce
++		 * race window with eventual console_flush_on_panic() that
++		 * ignores console_lock.
+ 		 */
+ 		exclusive_console = newcon;
+ 		exclusive_console_stop_seq = console_seq;
++		logbuf_unlock_irqrestore(flags);
  	}
- 
- 	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
-@@ -380,9 +389,9 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- 		dwc3_gadget_ep_get_transfer_index(dep);
- 	}
- 
--	if (unlikely(susphy)) {
-+	if (saved_config) {
- 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
--		reg |= DWC3_GUSB2PHYCFG_SUSPHY;
-+		reg |= saved_config;
- 		dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
- 
+ 	console_unlock();
+ 	console_sysfs_notify();
 -- 
 2.20.1
 
