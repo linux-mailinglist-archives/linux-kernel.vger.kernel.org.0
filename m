@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61559FA43B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 157BFFA3F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbfKMCPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:15:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49814 "EHLO mail.kernel.org"
+        id S1728630AbfKMB5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:57:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728043AbfKMB47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:56:59 -0500
+        id S1729646AbfKMB5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:57:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8EAC22470;
-        Wed, 13 Nov 2019 01:56:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0059122467;
+        Wed, 13 Nov 2019 01:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610218;
-        bh=65esZw1aId9cAb4fmPQLAQBAEwuFCvYbnG/uf8OmSco=;
+        s=default; t=1573610219;
+        bh=aFpAA8wU35EfuFHr6Frbd4f3Et0ExszuYiPWOtiTJRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nYIRSaKaeVXCYTmMwl1gQg+c2z8vv6sJHDFv5DOBVS/9y8mL11ccSeDToJn5R1aYj
-         XwPveki0BP2Nl6+qq/XrUjR5WMDTO/LL8Re18d1vuF7Un/8LbJ8yqBXDKiJdKFJGt8
-         5TKx/E1wm6kjXZXfpgMoU+0+z/ciKlW0EP4R1mMg=
+        b=CwLWuOuROMSDsnkEVvVu0msXpCxG721LyiIdXnIHXElHIrwLnXwRD1QdUZ9hX65AV
+         iauc9Rb0MmW53CegKzoqjhtdTd2lCtjIZypa6CyGPFAKDtOxnltkq/Ue/WHa6rvYEE
+         9XBAoV+uNUXJEKGSXZP/TO2JxHQ/f3vYaA7Geekw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 025/115] ext4: fix build error when DX_DEBUG is defined
-Date:   Tue, 12 Nov 2019 20:54:52 -0500
-Message-Id: <20191113015622.11592-25-sashal@kernel.org>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 026/115] clk: keystone: Enable TISCI clocks if K3_ARCH
+Date:   Tue, 12 Nov 2019 20:54:53 -0500
+Message-Id: <20191113015622.11592-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,39 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+From: Nishanth Menon <nm@ti.com>
 
-[ Upstream commit 799578ab16e86b074c184ec5abbda0bc698c7b0b ]
+[ Upstream commit 2f149e6e14bcb5e581e49307b54aafcd6f74a74f ]
 
-Enabling DX_DEBUG triggers the build error below.  info is an attribute
-of  the dxroot structure.
+K3_ARCH uses TISCI for clocks as well. Enable the same
+for the driver support.
 
-linux/fs/ext4/namei.c:2264:12: error: ‘info’
-undeclared (first use in this function); did you mean ‘insl’?
-	   	  info->indirect_levels));
-
-Fixes: e08ac99fa2a2 ("ext4: add largedir feature")
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/Makefile         | 1 +
+ drivers/clk/keystone/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 162e853dc5d65..212b01861d941 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2293,7 +2293,7 @@ static int ext4_dx_add_entry(handle_t *handle, struct ext4_filename *fname,
- 			dxroot->info.indirect_levels += 1;
- 			dxtrace(printk(KERN_DEBUG
- 				       "Creating %d level index...\n",
--				       info->indirect_levels));
-+				       dxroot->info.indirect_levels));
- 			err = ext4_handle_dirty_dx_node(handle, dir, frame->bh);
- 			if (err)
- 				goto journal_error;
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f7f761b02beda..8ca03d9d693b0 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+ obj-y					+= imgtec/
+ obj-$(CONFIG_ARCH_MXC)			+= imx/
+ obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
++obj-$(CONFIG_ARCH_K3)			+= keystone/
+ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
+ obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
+ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
+diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
+index 7e9f0176578a6..b04927d06cd10 100644
+--- a/drivers/clk/keystone/Kconfig
++++ b/drivers/clk/keystone/Kconfig
+@@ -7,7 +7,7 @@ config COMMON_CLK_KEYSTONE
+ 
+ config TI_SCI_CLK
+ 	tristate "TI System Control Interface clock drivers"
+-	depends on (ARCH_KEYSTONE || COMPILE_TEST) && OF
++	depends on (ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST) && OF
+ 	depends on TI_SCI_PROTOCOL
+ 	default ARCH_KEYSTONE
+ 	---help---
 -- 
 2.20.1
 
