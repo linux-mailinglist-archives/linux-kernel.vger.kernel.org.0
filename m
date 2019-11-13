@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4B8FA5D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAC08FA5CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:25:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbfKMCZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:25:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39860 "EHLO mail.kernel.org"
+        id S1730043AbfKMCZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:25:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727968AbfKMBvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:51:46 -0500
+        id S1727992AbfKMBvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:51:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 549F6222CA;
-        Wed, 13 Nov 2019 01:51:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80ECA204EC;
+        Wed, 13 Nov 2019 01:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609906;
-        bh=8OznHZtnyeuyoa0ykOvMSTWxOaJVdKSRPp8ZeapPiWo=;
+        s=default; t=1573609909;
+        bh=NObG4ppKYgwiPwjuxGjJCTSDOQBfWncIECXrZIt8Aws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uj0RSs9XuIVRP7q2bMKCOdR3bkkVmZ7rnV0HUBJZMAK1nANR/opiCnF1oIg+tF18W
-         dlzIdQnM75jzJ6llPm7qy6FMM2ghrC8EP3XgeY0BwvbZhhSV36tSsxLRWvMxtV0NcY
-         mS89atsdcuYlam6B6hUG+mrhEiP41FA73JcbzjiQ=
+        b=AsBHJC9TOV/0Gb+pTbnSrwRMFAwWEDp7wSBZd4hJ6oiI1VKwo8FjjJRKO1e8TUhGn
+         JLp1kogDrkFTnj80cMZLiyCGdmgr1lajHrAcDkTx3BbjyBHjZg5MNXXPiQbCm6hqdG
+         rs8iLj6q0zklqa4s2izhke5ZsZ/CC/iZkleePYJA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     zhong jiang <zhongjiang@huawei.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 057/209] powerpc/xive: Move a dereference below a NULL test
-Date:   Tue, 12 Nov 2019 20:47:53 -0500
-Message-Id: <20191113015025.9685-57-sashal@kernel.org>
+Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 060/209] ARM: dts: at91: sama5d2_ptc_ek: fix bootloader env offsets
+Date:   Tue, 12 Nov 2019 20:47:56 -0500
+Message-Id: <20191113015025.9685-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -43,40 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-[ Upstream commit cd5ff94577e004e0a4457e70d0ef3a030f4010b8 ]
+[ Upstream commit f602b4871c5f7ac01d37d8b285ca947ba7613065 ]
 
-Move the dereference of xc below the NULL test.
+The offsets for the bootloader environment and its redundant partition
+were inverted. Fix the addresses to match our nand flash map available at:
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+http://www.at91.com/linux4sam/pub/Linux4SAM/SambaSubsections//demo_nandflash_map_lnx4sam5x.png
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/sysdev/xive/common.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
-index 0b24b10312213..f3af53abd40fb 100644
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -1009,12 +1009,13 @@ static void xive_ipi_eoi(struct irq_data *d)
- {
- 	struct xive_cpu *xc = __this_cpu_read(xive_cpu);
+diff --git a/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts b/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
+index 3b1baa8605a77..2214bfe7aa205 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
+@@ -92,13 +92,13 @@
+ 							reg = <0x40000 0xc0000>;
+ 						};
  
--	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
--		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
--
- 	/* Handle possible race with unplug and drop stale IPIs */
- 	if (!xc)
- 		return;
-+
-+	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
-+		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
-+
- 	xive_do_source_eoi(xc->hw_ipi, &xc->ipi_data);
- 	xive_do_queue_eoi(xc);
- }
+-						bootloaderenv@0x100000 {
+-							label = "bootloader env";
++						bootloaderenvred@0x100000 {
++							label = "bootloader env redundant";
+ 							reg = <0x100000 0x40000>;
+ 						};
+ 
+-						bootloaderenvred@0x140000 {
+-							label = "bootloader env redundant";
++						bootloaderenv@0x140000 {
++							label = "bootloader env";
+ 							reg = <0x140000 0x40000>;
+ 						};
+ 
 -- 
 2.20.1
 
