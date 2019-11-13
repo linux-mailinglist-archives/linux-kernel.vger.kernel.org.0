@@ -2,68 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED7AFB48C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E7DFB49F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfKMQCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:02:52 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:21167 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfKMQCw (ORCPT
+        id S1728263AbfKMQGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:06:34 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:46058 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfKMQGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:02:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573660970;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=I73G9HN3FlFTa8LqWbK87pCnw61L83mZNnFTq0Yp9x0=;
-        b=Z9sWOyY1uQdbrxbpYa831J8UTed15dUWw/62VKQ4oGCHXDjEgrjTATUNcMzaHqqTF+
-        7IxBMO3v0rID+XrNBT5sB2pMyx+imDIjOXuLrdIVHCE/SE+RoGKPk+XphU2/nyiaHcLE
-        inRXMB6J5sTmDRHcbCLVKdJCJqqJeNAY+2VsOE8QU+mNTfvWbLRe3L/PtuvkrJcb/g4O
-        wslf00/bSkqALtvZ846iGBu/63yhAEKCRiwi1ul3cud06NjWhocY16zRou601sKb23eo
-        Ba8f6tJnrUISvODIZAS7Zyb/LIqVY+jotQWg3MO1HB7/zA1MCZvsbSY2vSMV1YGthwVv
-        /Yvw==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzBW/OdlBZQ4AHSS325Pjw=="
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.29.0 SBL|AUTH)
-        with ESMTPSA id 20735bvADG2oGi2
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 13 Nov 2019 17:02:50 +0100 (CET)
-From:   Olaf Hering <olaf@aepfle.de>
-To:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-hyperv@vger.kernel.org (open list:Hyper-V CORE AND DRIVERS)
-Cc:     Olaf Hering <olaf@aepfle.de>
-Subject: [PATCH v1] tools/hv: add .gitignore
-Date:   Wed, 13 Nov 2019 17:02:46 +0100
-Message-Id: <20191113160247.26294-1-olaf@aepfle.de>
-X-Mailer: git-send-email 2.16.4
+        Wed, 13 Nov 2019 11:06:33 -0500
+Received: by mail-ua1-f65.google.com with SMTP id j4so812772uak.12
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:06:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1ayLEgLCWpr2v/YpRT1vekWIlyB7F5pG92dGazdBvwI=;
+        b=G0C2zq6m15OVUAh+WFhsjZYXXzcdOByoFghlCOloPCUxpwsOe48d6TWKiBYF1Jt+3P
+         pCkyi8gtQTCFIBPO9DwTV6c0WxkptrtOWz4iYPnK/cnKPm7I5zvj+dxET+BVtJ1DQpne
+         xvFFiYgEs8mmbZJfAKBvvDnvS95WxPpEuPkR3s9WkN17IYO9Pb5tGG3tSajwy1byyD4N
+         F16i2K46Gs2g/bj6Gi2+PLQDxaHl6IMmz66pxEDl3gH6mDW5O41D81GUalCuv66KK2kl
+         pzplG0H99Acg6QnE2CyrhUpnwJAaLbkNCMS71/7karx00Scg1v8aAwzEcypXqj1ia3qp
+         NQ+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1ayLEgLCWpr2v/YpRT1vekWIlyB7F5pG92dGazdBvwI=;
+        b=k9SwbfhuySxzvaxPw/IP/i7u23Ld9ruChwiomL7CAIPVIvT4PQZPsh2Kb253IcBPi4
+         ns4eHqTJ8gCGcEbPT4H5CH362byIDZscAnzGUYhEBYJx67mIfrNQA+zeCBxeSNcy648N
+         aXqZlqSnllQQmqxmRPi0rGHIRwfeVlMEVFG851MNXC/os2+wsHVmhSQNT/JhWbAWG12/
+         LkqG7a0usKiflWKsN93mCPNIpRlhl97/ODEp0bfj9t/P5R78i/O7MvB0PjpzOy1ufb+W
+         hP31s9EbvReJg+fgBvU1e4f08OIiFTeBeOeP6TAibIcqN5yfG9KkigMNyQnjbzdF0H7L
+         IPtQ==
+X-Gm-Message-State: APjAAAVYEkHaFR+pd8U83PebHc2rFl4QAog8aJRZ0GQaGedtl3LW9j1L
+        5fF3jULe5qhgZgGNrlGcsE9aanrhIVgI//yWS4s=
+X-Google-Smtp-Source: APXvYqyzUYrhlIoEugbzPslmvADNMfF2xvcbUO3zTaYeh1c05O5Pyx2U0QDgD4P1JCUm3NiogsNTTpD6/UoykImOIHY=
+X-Received: by 2002:ab0:14e8:: with SMTP id f37mr2288342uae.64.1573661192697;
+ Wed, 13 Nov 2019 08:06:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191106163031.808061-1-adrian.ratiu@collabora.com> <20191106163031.808061-5-adrian.ratiu@collabora.com>
+In-Reply-To: <20191106163031.808061-5-adrian.ratiu@collabora.com>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Wed, 13 Nov 2019 16:06:05 +0000
+Message-ID: <CACvgo506P+qNUg8vbpxY0_E7AAwJMHseM=Jwb3c2K8zo-v-2qQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] dt-bindings: display: add IMX MIPI DSI host
+ controller doc
+To:     Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc:     LAKML <linux-arm-kernel@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rockchip <linux-rockchip@lists.infradead.org>,
+        kernel@collabora.com,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sjoerd Simons <sjoerd.simons@collabora.com>,
+        Martyn Welch <martyn.welch@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hide build artefacts in "git status" output.
+On Wed, 6 Nov 2019 at 16:31, Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
+>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
+Please drop this one. I'm not that experienced in DT to provide
+meaningful review.
 
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
----
- tools/hv/.gitignore | 3 +++
- 1 file changed, 3 insertions(+)
- create mode 100644 tools/hv/.gitignore
+Actually, I've just noticed that respective maintainers/lists are not
+CC'd on the series.
+Please use the get_maintainer.pl script got get the correct info.
 
-diff --git a/tools/hv/.gitignore b/tools/hv/.gitignore
-new file mode 100644
-index 000000000000..88b05e35a6e0
---- /dev/null
-+++ b/tools/hv/.gitignore
-@@ -0,0 +1,3 @@
-+hv_fcopy_daemon
-+hv_kvp_daemon
-+hv_vss_daemon
+Personally, I read through the output, adding only relevant people as
+CC in the commit message itself.
+
+In particular, I don't think adding the "maintainer: DRM DRIVER" or
+the "ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" are required. On the
+other hand "DRM DRIVERS FOR FREESCALE IMX" and "OPEN FIRMWARE AND
+FLATTENED DEVICE TREE BINDINGS" seems pretty accurate for what you're
+doing here.
+
+HTH
+Emil
