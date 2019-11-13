@@ -2,101 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA94FB91B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E25FB924
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfKMTsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 14:48:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45010 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726120AbfKMTsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 14:48:00 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAA84206ED;
-        Wed, 13 Nov 2019 19:47:59 +0000 (UTC)
-Date:   Wed, 13 Nov 2019 14:47:57 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Hewenliang <hewenliang4@huawei.com>, <acme@redhat.com>
-Cc:     <tstoyanov@vmware.com>, <namhyung@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linfeilong@huawei.com>
-Subject: Re: [PATCH] tools lib traceevent: Fix memory leakage in
- copy_filter_type
-Message-ID: <20191113144757.2c4ca83b@gandalf.local.home>
-In-Reply-To: <20191113144626.44ad5418@gandalf.local.home>
-References: <20191025082312.62690-1-hewenliang4@huawei.com>
-        <20191113144626.44ad5418@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727142AbfKMTsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 14:48:37 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:36898 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbfKMTsh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 14:48:37 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7DFB0153EE9DB;
+        Wed, 13 Nov 2019 11:48:36 -0800 (PST)
+Date:   Wed, 13 Nov 2019 11:48:36 -0800 (PST)
+Message-Id: <20191113.114836.700817990884667717.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     linux@armlinux.org.uk, andrew@lunn.ch, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: sfp: fix spelling mistake "requies" ->
+ "requires"
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191113095548.27704-1-colin.king@canonical.com>
+References: <20191113095548.27704-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 13 Nov 2019 11:48:36 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Nov 2019 14:46:26 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 13 Nov 2019 09:55:48 +0000
 
-> On Fri, 25 Oct 2019 04:23:12 -0400
-> Hewenliang <hewenliang4@huawei.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> > It is necessary to free the memory that we have allocated
-> > when error occurs.
-> > 
-> > Fixes: ef3072cd1d5c ("tools lib traceevent: Get rid of die in add_filter_type()")
-> > Signed-off-by: Hewenliang <hewenliang4@huawei.com>  
+> There is a spelling mistake in a dev_warn message. Fix it.
 > 
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-After I sent this, I found an issue.
-
-> 
-> Arnaldo,
-> 
-> Can you take this?
-
-Don't take it.
-
-> 
-> > ---
-> >  tools/lib/traceevent/parse-filter.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-> > index 552592d153fb..fbaa790d10d8 100644
-> > --- a/tools/lib/traceevent/parse-filter.c
-> > +++ b/tools/lib/traceevent/parse-filter.c
-> > @@ -1473,8 +1473,10 @@ static int copy_filter_type(struct tep_event_filter *filter,
-> >  	if (strcmp(str, "TRUE") == 0 || strcmp(str, "FALSE") == 0) {
-> >  		/* Add trivial event */
-> >  		arg = allocate_arg();
-> > -		if (arg == NULL)
-> > +		if (arg == NULL) {
-> > +			free(str);
-> >  			return -1;
-> > +		}
-> >  
-> >  		arg->type = TEP_FILTER_ARG_BOOLEAN;
-> >  		if (strcmp(str, "TRUE") == 0)
-> > @@ -1483,8 +1485,11 @@ static int copy_filter_type(struct tep_event_filter *filter,
-> >  			arg->boolean.value = 0;
-> >  
-> >  		filter_type = add_filter_type(filter, event->id);
-> > -		if (filter_type == NULL)
-> > +		if (filter_type == NULL) {
-> > +			free(str);
-> > +			free(arg);
-
-This needs to be: free_arg(arg);
-
--- Steve
-
-> >  			return -1;
-> > +		}
-> >  
-> >  		filter_type->filter = arg;
-> >    
-> 
-
+Applied, thanks Colin.
