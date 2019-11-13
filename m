@@ -2,119 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9961FB920
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:48:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 575B6FB8E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:30:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfKMTsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 14:48:16 -0500
-Received: from smtp.uniroma2.it ([160.80.6.16]:57695 "EHLO smtp.uniroma2.it"
+        id S1727054AbfKMTaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 14:30:35 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58143 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726120AbfKMTsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 14:48:13 -0500
-X-Greylist: delayed 1019 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Nov 2019 14:47:58 EST
-Received: from localhost.localdomain ([160.80.103.126])
-        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id xADJTimn023525
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 13 Nov 2019 20:31:38 +0100
-From:   Andrea Mayer <andrea.mayer@uniroma2.it>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Lebrun <dav.lebrun@gmail.com>, netdev@vger.kernel.org,
+        id S1726120AbfKMTaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 14:30:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 11:30:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
+   d="scan'208";a="214379277"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Nov 2019 11:30:33 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Andrea Mayer <andrea.mayer@uniroma2.it>
-Subject: [net-next, 3/3] seg6: allow local packet processing for SRv6 End.DT6 behavior
-Date:   Wed, 13 Nov 2019 20:29:12 +0100
-Message-Id: <20191113192912.17546-4-andrea.mayer@uniroma2.it>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113192912.17546-1-andrea.mayer@uniroma2.it>
-References: <20191113192912.17546-1-andrea.mayer@uniroma2.it>
+Subject: [PATCH] KVM: x86/mmu: Take slots_lock when using kvm_mmu_zap_all_fast()
+Date:   Wed, 13 Nov 2019 11:30:32 -0800
+Message-Id: <20191113193032.12912-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
-X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-End.DT6 behavior makes use of seg6_lookup_nexthop function which drops all
-packets that are destined to be locally processed. However, DT* should be
-able to delivery decapsulated packets that are destined to local addresses.
-Function seg6_lookup_nexthop is also used by DX6, so in order to maintain
-compatibility I created another routing helper function which is called
-seg6_lookup_any_nexthop.
-This function is able to take in to account both packets that have to be
-processed locally and the ones that are destined to be forwarded directly
-to another machine. Hence, seg6_lookup_any_nexthop is used in DT6 rather
-than seg6_lookup_nexthop to allow local delivery.
+Acquire the per-VM slots_lock when zapping all shadow pages as part of
+toggling nx_huge_pages.  The fast zap algorithm relies on exclusivity
+(via slots_lock) to identify obsolete vs. valid shadow pages, e.g. it
+uses a single bit for its generation number.  Holding slots_lock also
+obviates the need to acquire a read lock on the VM's srcu.
 
-Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+Failing to take slots_lock when toggling nx_huge_pages allows multiple
+instances of kvm_mmu_zap_all_fast() to run concurrently, as the other
+user, KVM_SET_USER_MEMORY_REGION, does not take the global kvm_lock.
+Concurrent fast zap instances causes obsolete shadow pages to be
+incorrectly identified as valid due to the single bit generation number
+wrapping, which results in stale shadow pages being left in KVM's MMU
+and leads to all sorts of undesirable behavior.
+
+The bug is easily confirmed by running with CONFIG_PROVE_LOCKING and
+toggling nx_huge_pages via its module param.
+
+Note, the fast zap algorithm could use a 64-bit generation instead of
+relying on exclusivity for correctness, but all callers except the
+recently added set_nx_huge_pages() need to hold slots_lock anyways.
+Given that toggling nx_huge_pages is by no means a fast path, force it
+to conform to the current approach instead of reworking the algorithm to
+support concurrent calls.
+
+Fixes: b8e8c8303ff28 ("kvm: mmu: ITLB_MULTIHIT mitigation")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- net/ipv6/seg6_local.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ arch/x86/kvm/mmu.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
-index 948a4c2a59f2..8a723ab3d29c 100644
---- a/net/ipv6/seg6_local.c
-+++ b/net/ipv6/seg6_local.c
-@@ -148,8 +148,9 @@ static void advance_nextseg(struct ipv6_sr_hdr *srh, struct in6_addr *daddr)
- 	*daddr = *addr;
- }
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index cf718fa23dff..2ce9da58611e 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -6285,14 +6285,13 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
  
--int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
--			u32 tbl_id)
-+static int
-+seg6_lookup_any_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
-+			u32 tbl_id, int local_delivery)
- {
- 	struct net *net = dev_net(skb->dev);
- 	struct ipv6hdr *hdr = ipv6_hdr(skb);
-@@ -157,6 +158,7 @@ int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
- 	struct dst_entry *dst = NULL;
- 	struct rt6_info *rt;
- 	struct flowi6 fl6;
-+	int dev_flags = 0;
+ 	if (new_val != old_val) {
+ 		struct kvm *kvm;
+-		int idx;
  
- 	fl6.flowi6_iif = skb->dev->ifindex;
- 	fl6.daddr = nhaddr ? *nhaddr : hdr->daddr;
-@@ -181,7 +183,13 @@ int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
- 		dst = &rt->dst;
- 	}
+ 		mutex_lock(&kvm_lock);
  
--	if (dst && dst->dev->flags & IFF_LOOPBACK && !dst->error) {
-+	/* we want to discard traffic destined for local packet processing,
-+	 * if @local_delivery is set to false.
-+	 */
-+	if (!local_delivery)
-+		dev_flags |= IFF_LOOPBACK;
-+
-+	if (dst && (dst->dev->flags & dev_flags) && !dst->error) {
- 		dst_release(dst);
- 		dst = NULL;
- 	}
-@@ -198,6 +206,12 @@ int seg6_lookup_nexthop(struct sk_buff *skb, struct in6_addr *nhaddr,
- 	return dst->error;
- }
+ 		list_for_each_entry(kvm, &vm_list, vm_list) {
+-			idx = srcu_read_lock(&kvm->srcu);
++			mutex_lock(&kvm->slots_lock);
+ 			kvm_mmu_zap_all_fast(kvm);
+-			srcu_read_unlock(&kvm->srcu, idx);
++			mutex_unlock(&kvm->slots_lock);
  
-+inline int seg6_lookup_nexthop(struct sk_buff *skb,
-+			       struct in6_addr *nhaddr, u32 tbl_id)
-+{
-+	return seg6_lookup_any_nexthop(skb, nhaddr, tbl_id, false);
-+}
-+
- /* regular endpoint function */
- static int input_action_end(struct sk_buff *skb, struct seg6_local_lwt *slwt)
- {
-@@ -395,7 +409,7 @@ static int input_action_end_dt6(struct sk_buff *skb,
- 
- 	skb_set_transport_header(skb, sizeof(struct ipv6hdr));
- 
--	seg6_lookup_nexthop(skb, NULL, slwt->table);
-+	seg6_lookup_any_nexthop(skb, NULL, slwt->table, true);
- 
- 	return dst_input(skb);
- 
+ 			wake_up_process(kvm->arch.nx_lpage_recovery_thread);
+ 		}
 -- 
-2.20.1
+2.24.0
 
