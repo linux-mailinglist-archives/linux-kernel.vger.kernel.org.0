@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F38FA089
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64BA4FA08B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:51:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfKMBuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:50:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37494 "EHLO mail.kernel.org"
+        id S1727565AbfKMBuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:50:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727458AbfKMBul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:50:41 -0500
+        id S1727487AbfKMBup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:50:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69B5122459;
-        Wed, 13 Nov 2019 01:50:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6F84222CA;
+        Wed, 13 Nov 2019 01:50:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609841;
-        bh=MbvfzHdLIyxp1OB5gLuB0mj1aev0t0AolzqUnsL+2KU=;
+        s=default; t=1573609844;
+        bh=sOL8EgzU9/OBwUH+N3HrECg+l5C283/vV+tqbgXJvbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cl/jQo9/ViDXPVhIDJ3g6WQkUxeYY4Qu+JPI9vClFV+AMHBautMO2sFhw4WjZlneF
-         v+6jHKvH4hoNSMgxewwOQMxlpQrvrL8S2wL4LFdffE9hEDmdOPWroiVOhvBdi9reHM
-         gl6VImlM4ALdHGdstpEr4AFqCuWVBGp3DLmZ7fA4=
+        b=Gs7UHoT6NxbXvVZPRp+VxdVqRDlZXBc0wDGOlXRkVBljKktAYEYynU6hfLPk+LR0M
+         gLsY/KAI/lmh6umCfFoZRw4Jaa17sh8C8+O1Gua2ZUYXyPZyyL3JNixKN4UT7mQApU
+         0nWDixKNLh+R6fnCArO3b6Pkh9mHNUGCdOXIyU24=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 013/209] ACPI / LPSS: Make acpi_lpss_find_device() also find PCI devices
-Date:   Tue, 12 Nov 2019 20:47:09 -0500
-Message-Id: <20191113015025.9685-13-sashal@kernel.org>
+Cc:     "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 016/209] IB/hfi1: Error path MAD response size is incorrect
+Date:   Tue, 12 Nov 2019 20:47:12 -0500
+Message-Id: <20191113015025.9685-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -45,58 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
 
-[ Upstream commit 1e30124ac60abc41d74793900f8b4034f29bcb3d ]
+[ Upstream commit 935c84ac649a147e1aad2c48ee5c5a1a9176b2d0 ]
 
-On some Cherry Trail systems the GPU ACPI fwnode has power-resources which
-point to the PMIC, which is connected over one of the LPSS I2C controllers.
+If a MAD packet has incorrect header information, the logic uses the reply
+path to report the error.  The reply path expects *resp_len to be set
+prior to return.  Unfortunately, *resp_len is set to 0 for this path.
+This causes an incorrect response packet.
 
-To get the suspend/resume ordering correct for this we need to be able to
-add device-links between the GPU and the I2c controller. The GPU is a PCI
-device, so this requires acpi_lpss_find_device() to also work on PCI devs.
+Fix by ensuring that the *resp_len is defaulted to the incoming packet
+size (wc->bytes_len - sizeof(GRH)).
 
-Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_lpss.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/mad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-index c651e206d7960..924b9f089e79f 100644
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -16,6 +16,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/mutex.h>
-+#include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/clk-lpss.h>
- #include <linux/platform_data/x86/pmc_atom.h>
-@@ -494,12 +495,18 @@ static int match_hid_uid(struct device *dev, void *data)
+diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/hfi1/mad.c
+index f208a25d0e4f5..1669548e91dcf 100644
+--- a/drivers/infiniband/hw/hfi1/mad.c
++++ b/drivers/infiniband/hw/hfi1/mad.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright(c) 2015-2017 Intel Corporation.
++ * Copyright(c) 2015-2018 Intel Corporation.
+  *
+  * This file is provided under a dual BSD/GPLv2 license.  When using or
+  * redistributing this file, you may do so under either license.
+@@ -4829,7 +4829,7 @@ static int hfi1_process_opa_mad(struct ib_device *ibdev, int mad_flags,
+ 	int ret;
+ 	int pkey_idx;
+ 	int local_mad = 0;
+-	u32 resp_len = 0;
++	u32 resp_len = in_wc->byte_len - sizeof(*in_grh);
+ 	struct hfi1_ibport *ibp = to_iport(ibdev, port);
  
- static struct device *acpi_lpss_find_device(const char *hid, const char *uid)
- {
-+	struct device *dev;
-+
- 	struct hid_uid data = {
- 		.hid = hid,
- 		.uid = uid,
- 	};
- 
--	return bus_find_device(&platform_bus_type, NULL, &data, match_hid_uid);
-+	dev = bus_find_device(&platform_bus_type, NULL, &data, match_hid_uid);
-+	if (dev)
-+		return dev;
-+
-+	return bus_find_device(&pci_bus_type, NULL, &data, match_hid_uid);
- }
- 
- static bool acpi_lpss_dep(struct acpi_device *adev, acpi_handle handle)
+ 	pkey_idx = hfi1_lookup_pkey_idx(ibp, LIM_MGMT_P_KEY);
 -- 
 2.20.1
 
