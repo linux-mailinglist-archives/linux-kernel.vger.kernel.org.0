@@ -2,70 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE07BF9EDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F05FF9F1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:11:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfKMAIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 19:08:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfKMAIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 19:08:39 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 273AA2196E;
-        Wed, 13 Nov 2019 00:08:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573603718;
-        bh=KjzzTcYnHTbPiZHHU3oiNXK2IO0S++IshKJ56E3fWIM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LOiGsvx+c2husp91s1WCl9gljHVh7c5xjNQNDyeBqhxPkRhboXxQqmqoTBCQPqQZ1
-         V2L9yuouLTv+rFxK1urn3WJ2bX10DDbmxjicANXYOddYCrZUMzv4RI1uer5JQH180k
-         Lv+aNCMejDxus+4oUYACPPj8wFzi6MgoCQydwG18=
-Date:   Tue, 12 Nov 2019 16:08:35 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Ralph Campbell <rcampbell@nvidia.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Shuah Khan <shuah@kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] mm/hmm/test: add self tests for HMM
-Message-Id: <20191112160835.9bfa58cf756683ddc8d470fd@linux-foundation.org>
-In-Reply-To: <07589a71-3984-b2a6-b24b-6b9a23e1b60d@nvidia.com>
-References: <20191104222141.5173-1-rcampbell@nvidia.com>
-        <20191104222141.5173-3-rcampbell@nvidia.com>
-        <20191112152521.GC12550@lst.de>
-        <07589a71-3984-b2a6-b24b-6b9a23e1b60d@nvidia.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727312AbfKMALi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 19:11:38 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61985 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbfKMALi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 19:11:38 -0500
+Received: from 79.184.253.153.ipv4.supernova.orange.pl (79.184.253.153) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 0fe9b4f92c5da7e6; Wed, 13 Nov 2019 01:11:35 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH 3/3] cpuidle: teo: Avoid code duplication in conditionals
+Date:   Wed, 13 Nov 2019 01:10:13 +0100
+Message-ID: <3101916.xHKGgMp4rb@kreacher>
+In-Reply-To: <13588000.TfE7eV4KYW@kreacher>
+References: <13588000.TfE7eV4KYW@kreacher>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Nov 2019 13:51:11 -0800 Ralph Campbell <rcampbell@nvidia.com> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> On 11/12/19 7:25 AM, Christoph Hellwig wrote:
-> > Shouldn't this go into mm/ instead? It certainly doesn't seem
-> > like a library.
-> 
-> I was following the convention for the other vm test kernel modules.
-> I see a couple of modules in mm/ but I don't have a personal
-> preference for where to place it.
-> 
-> Andrew, do you have a preference?
+There are three places in teo_select() where a given amount of time
+is compared with TICK_NSEC if tick_nohz_tick_stopped() returns true,
+which is a bit of duplicated code.
 
-q:/usr/src/25> ls -l lib/test_*.c|wc 
-     33     297    2051
+Avoid that code duplication by defining a helper function to do the
+check and using it in all of the places in question.
 
-lib/ is a somewhat strange place, but I'd use that for now.
+No intentional functional impact.
 
-Presumably one day someone will (pointlessly) move these into
-lib/test-modules/.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/teo.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Then into lib/test-modules/mm/, etc..
+Index: linux-pm/drivers/cpuidle/governors/teo.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/teo.c
++++ linux-pm/drivers/cpuidle/governors/teo.c
+@@ -202,6 +202,11 @@ static void teo_update(struct cpuidle_dr
+ 		cpu_data->interval_idx = 0;
+ }
+ 
++static bool teo_time_ok(u64 interval_ns)
++{
++	return !tick_nohz_tick_stopped() || interval_ns >= TICK_NSEC;
++}
++
+ /**
+  * teo_find_shallower_state - Find shallower idle state matching given duration.
+  * @drv: cpuidle driver containing state data.
+@@ -306,8 +311,7 @@ static int teo_select(struct cpuidle_dri
+ 			 * check if the current candidate state is not too
+ 			 * shallow for that role.
+ 			 */
+-			if (!(tick_nohz_tick_stopped() &&
+-			      drv->states[idx].target_residency_ns < TICK_NSEC)) {
++			if (teo_time_ok(drv->states[idx].target_residency_ns)) {
+ 				prev_max_early_idx = max_early_idx;
+ 				early_hits = cpu_data->states[i].early_hits;
+ 				max_early_idx = idx;
+@@ -333,8 +337,7 @@ static int teo_select(struct cpuidle_dri
+ 		misses = cpu_data->states[i].misses;
+ 
+ 		if (early_hits < cpu_data->states[i].early_hits &&
+-		    !(tick_nohz_tick_stopped() &&
+-		      drv->states[i].target_residency_ns < TICK_NSEC)) {
++		    teo_time_ok(drv->states[i].target_residency_ns)) {
+ 			prev_max_early_idx = max_early_idx;
+ 			early_hits = cpu_data->states[i].early_hits;
+ 			max_early_idx = i;
+@@ -409,7 +412,7 @@ static int teo_select(struct cpuidle_dri
+ 			 * Avoid spending too much time in an idle state that
+ 			 * would be too shallow.
+ 			 */
+-			if (!(tick_nohz_tick_stopped() && avg_ns < TICK_NSEC)) {
++			if (teo_time_ok(avg_ns)) {
+ 				duration_ns = avg_ns;
+ 				if (drv->states[idx].target_residency_ns > avg_ns)
+ 					idx = teo_find_shallower_state(drv, dev,
+
+
+
