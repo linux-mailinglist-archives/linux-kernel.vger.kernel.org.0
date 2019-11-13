@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB1DFA187
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 044A7FA188
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729895AbfKMB5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:57:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51192 "EHLO mail.kernel.org"
+        id S1729906AbfKMB5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:57:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727822AbfKMB5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:46 -0500
+        id S1729890AbfKMB5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:57:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56C9D22467;
-        Wed, 13 Nov 2019 01:57:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBF712245C;
+        Wed, 13 Nov 2019 01:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610265;
-        bh=MX3Ehabkq3f2CSRb7ik1HoCIDf2ozhTD6e8JcQDK1Ps=;
+        s=default; t=1573610270;
+        bh=HHLg1L839bpQ+0BPLItkpmpRnGaLblgxjCk0OyZxXNk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WseWvpvYAUH8ZXQGNMLjf0+KRldRg0fW3bIOgY6ovIfJmjTQmeuyYf+bnuBOc1iCx
-         ZfUTwETn98zRR8hA18uUY3MiYgvnI0VXY+KT4QPCc5trSzuyzSOAZfnqPpW1tmnwEr
-         BeVpkRpdrTgiwPdEtJXs53arUSxmWx9N45FhUzXg=
+        b=pSa5fIjWcS4dHKOi0T8NopBr48aDR8t8uekYQUy9ZJZzkA0c6jvY9xixyEpvYFIeZ
+         pdGbWjvby10gUTu26cThVZAHECySSuB9fVi0yWcOA+ER9w4hOmpXQuia63HEqKChTZ
+         wxuXNbuGp7SDxZdsh6UG1D/NnrnHsUyTG7gOtTl0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johan Hovold <johan@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 056/115] USB: serial: cypress_m8: fix interrupt-out transfer length
-Date:   Tue, 12 Nov 2019 20:55:23 -0500
-Message-Id: <20191113015622.11592-56-sashal@kernel.org>
+Cc:     Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 058/115] cpu/SMT: State SMT is disabled even with nosmt and without "=force"
+Date:   Tue, 12 Nov 2019 20:55:25 -0500
+Message-Id: <20191113015622.11592-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -42,36 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Borislav Petkov <bp@suse.de>
 
-[ Upstream commit 56445eef55cb5904096fed7a73cf87b755dfffc7 ]
+[ Upstream commit d0e7d14455d41163126afecd0fcce935463cc512 ]
 
-Fix interrupt-out transfer length which was being set to the
-transfer-buffer length rather than the size of the outgoing packet.
+When booting with "nosmt=force" a message is issued into dmesg to
+confirm that SMT has been force-disabled but such a message is not
+issued when only "nosmt" is on the kernel command line.
 
-Note that no slab data was leaked as the whole transfer buffer is always
-cleared before each transfer.
+Fix that.
 
-Fixes: 9aa8dae7b1fa ("cypress_m8: use usb_fill_int_urb where appropriate")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20181004172227.10094-1-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/cypress_m8.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/cpu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/serial/cypress_m8.c b/drivers/usb/serial/cypress_m8.c
-index 90110de715e01..d0aa4c853f56a 100644
---- a/drivers/usb/serial/cypress_m8.c
-+++ b/drivers/usb/serial/cypress_m8.c
-@@ -773,7 +773,7 @@ static void cypress_send(struct usb_serial_port *port)
- 
- 	usb_fill_int_urb(port->interrupt_out_urb, port->serial->dev,
- 		usb_sndintpipe(port->serial->dev, port->interrupt_out_endpointAddress),
--		port->interrupt_out_buffer, port->interrupt_out_size,
-+		port->interrupt_out_buffer, actual_size,
- 		cypress_write_int_callback, port, priv->write_urb_interval);
- 	result = usb_submit_urb(port->interrupt_out_urb, GFP_ATOMIC);
- 	if (result) {
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index d768e15bef83b..39ed368767f1f 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -376,6 +376,7 @@ void __init cpu_smt_disable(bool force)
+ 		pr_info("SMT: Force disabled\n");
+ 		cpu_smt_control = CPU_SMT_FORCE_DISABLED;
+ 	} else {
++		pr_info("SMT: disabled\n");
+ 		cpu_smt_control = CPU_SMT_DISABLED;
+ 	}
+ }
 -- 
 2.20.1
 
