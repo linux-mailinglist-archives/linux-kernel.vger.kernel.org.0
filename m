@@ -2,86 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFD0FAAD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 08:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B831FAAE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 08:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfKMHVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 02:21:45 -0500
-Received: from mga01.intel.com ([192.55.52.88]:2954 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726155AbfKMHVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 02:21:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 23:21:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,299,1569308400"; 
-   d="scan'208";a="287798098"
-Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
-  by orsmga001.jf.intel.com with ESMTP; 12 Nov 2019 23:21:38 -0800
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-To:     gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, helgaas@kernel.org, jingoohan1@gmail.com,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        andriy.shevchenko@intel.com
-Cc:     linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        Dilip Kota <eswara.kota@linux.intel.com>
-Subject: [PATCH v6 3/3] PCI: artpec6: Configure FTS with dwc helper function
-Date:   Wed, 13 Nov 2019 15:21:22 +0800
-Message-Id: <dc50f502926d3f1eb66a560042602d163872f053.1573613534.git.eswara.kota@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1573613534.git.eswara.kota@linux.intel.com>
-References: <cover.1573613534.git.eswara.kota@linux.intel.com>
-In-Reply-To: <cover.1573613534.git.eswara.kota@linux.intel.com>
-References: <cover.1573613534.git.eswara.kota@linux.intel.com>
+        id S1726983AbfKMHY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 02:24:56 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36406 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfKMHYz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 02:24:55 -0500
+Received: by mail-ot1-f68.google.com with SMTP id f10so788741oto.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 23:24:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cw82Z7YfxL1T0WRyGKJbhospSN2a6L7ddj/UV4Mdvrc=;
+        b=ihgDbrP3mYJhLcPkvw/MdUwnNTMWbySH/59Y34+0qjCU8soyEtPCMQ4Lq3mCRSvcmj
+         3bnM96r95d9uww5hDh9YnfCPDCDHatMP2nhONdrBOsGEzUR1ZnuRDoolTFn0VIQaHPq4
+         yRYp04+QIGl3drCiwficIAsRf9mFUK0J47fgg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cw82Z7YfxL1T0WRyGKJbhospSN2a6L7ddj/UV4Mdvrc=;
+        b=BoZk+lJeNV52Qm1VJx0FomTj4D81UWHmy52xn6VV1yi+umyBh7FHpVrrVV/wZDjE/j
+         BX894z4Yc/aGqH+mFBrYak+BEMWJXdESXeYejcaCUmGGj3r1iisPabzhwLsQKwBVIk9G
+         1f/OmmMFZI7Wb2sEw9Hu3kMPtFb685MpLf0FA3tX8Rv193yFlsOUUXxBI92ZmSKbaj2s
+         3Vwl/UEDrEpM5/gO+4WTrkF4gN31FhUI+97cqUc8CwyCqGUCStX5vFO6DFDTzERXRedl
+         h5mUxaWPVuDGnMA6G1PIKW+c/tFcMiHbRfTg9kVFSVY8iKZ6vfUdIBG0LMEq3mhmuGX8
+         oN4Q==
+X-Gm-Message-State: APjAAAV6vAzeBYNyia0GfP+yEv3baWx81CNqb4QT6ZA2v6JJe4rrHLjC
+        wZRpE1UHWFDQHxNxuW8rX0FHcjX+AIZLV4a4c39/cg==
+X-Google-Smtp-Source: APXvYqyUHqjUDE+NYm38Q78Rn0V8WJDBDDjcJJ+6/rfxexh23AV26y67eWOYyrAWkd6wWTKUgp+c1SqKjwcFrQYAcBE=
+X-Received: by 2002:a05:6830:1e4c:: with SMTP id e12mr1479662otj.358.1573629893695;
+ Tue, 12 Nov 2019 23:24:53 -0800 (PST)
+MIME-Version: 1.0
+References: <20191112171715.128727-1-paulhsia@chromium.org> <s5h1rud7yel.wl-tiwai@suse.de>
+In-Reply-To: <s5h1rud7yel.wl-tiwai@suse.de>
+From:   Chih-Yang Hsia <paulhsia@chromium.org>
+Date:   Wed, 13 Nov 2019 15:24:41 +0800
+Message-ID: <CAJaf1TaZzsPdydcMZMemVSkjRvhYvx7ZxY2JEvExQ56B+MjQLQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] ALSA: pcm: Fix race condition in runtime access
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DesignWare helper functions to configure Fast Training
-Sequence. Drop the respective code in the driver.
+On Wed, Nov 13, 2019 at 2:16 AM Takashi Iwai <tiwai@suse.de> wrote:
+>
+> On Tue, 12 Nov 2019 18:17:13 +0100,
+> paulhsia wrote:
+> >
+> > Since
+> > - snd_pcm_detach_substream sets runtime to null without stream lock and
+> > - snd_pcm_period_elapsed checks the nullity of the runtime outside of
+> >   stream lock.
+> >
+> > This will trigger null memory access in snd_pcm_running() call in
+> > snd_pcm_period_elapsed.
+>
+> Well, if a stream is detached, it means that the stream must have been
+> already closed; i.e. it's already a clear bug in the driver that
+> snd_pcm_period_elapsed() is called against such a stream.
+>
+> Or am I missing other possible case?
+>
+>
+> thanks,
+>
+> Takashi
+>
 
-Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
----
-Changes on v6:
-	Typo fix:s/DesugnWare/DesignWare
-	Update 'Utilize DesignWare' --> 'Use DesignWare'
-	Add Reviewed-by: Andrew Murray <andrew.murray@arm.com>
----
- drivers/pci/controller/dwc/pcie-artpec6.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+In multithreaded environment, it is possible to have to access both
+`interrupt_handler` (from irq) and `substream close` (from
+snd_pcm_release) at the same time.
+Therefore, in driver implementation, if "substream close function" and
+the "code section where snd_pcm_period_elapsed() in" do not hold the
+same lock, then the following things can happen:
 
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index d00252bd8fae..02d93b8c7942 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -51,9 +51,6 @@ static const struct of_device_id artpec6_pcie_of_match[];
- #define ACK_N_FTS_MASK			GENMASK(15, 8)
- #define ACK_N_FTS(x)			(((x) << 8) & ACK_N_FTS_MASK)
- 
--#define FAST_TRAINING_SEQ_MASK		GENMASK(7, 0)
--#define FAST_TRAINING_SEQ(x)		(((x) << 0) & FAST_TRAINING_SEQ_MASK)
--
- /* ARTPEC-6 specific registers */
- #define PCIECFG				0x18
- #define  PCIECFG_DBG_OEN		BIT(24)
-@@ -313,10 +310,7 @@ static void artpec6_pcie_set_nfts(struct artpec6_pcie *artpec6_pcie)
- 	 * Set the Number of Fast Training Sequences that the core
- 	 * advertises as its N_FTS during Gen2 or Gen3 link training.
- 	 */
--	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
--	val &= ~FAST_TRAINING_SEQ_MASK;
--	val |= FAST_TRAINING_SEQ(180);
--	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+	dw_pcie_link_set_n_fts(pci, 180);
- }
- 
- static void artpec6_pcie_assert_core_reset(struct artpec6_pcie *artpec6_pcie)
--- 
-2.11.0
+1. interrupt_handler -> goes into snd_pcm_period_elapsed with a valid
+sustream pointer
+2. snd_pcm_release_substream: call close without blocking
+3. snd_pcm_release_substream: call snd_pcm_detache_substream and set
+substream->runtime to NULL
+4. interrupt_handler -> call snd_pcm_runtime() and crash while
+accessing fields in `substream->runtime`
 
+e.g. In intel8x0.c driver for ac97 device,
+In driver intel8x0.c, `snd_pcm_period_elapsed` is called after
+checking `ichdev->substream` in `snd_intel8x0_update`.
+And if a `snd_pcm_release` call from alsa-lib and pass through close()
+and run to snd_pcm_detach_substream() in another thread, it's possible
+to trigger a crash.
+I can reproduce the issue within a multithread VM easily.
+
+My patches are trying to provide a basic protection for this situation
+(and internal pcm lock between detach and elapsed), since
+- the usage of `snd_pcm_period_elapsed` does not warn callers about
+the possible race if the driver does not  force the order for `calling
+snd_pcm_period_elapsed` and `close` by lock and
+- lots of drivers already have this hidden issue and I can't fix them
+one by one (You can check the "snd_pcm_period_elapsed usage" and the
+"close implementation" within all the drivers). The most common
+mistake is that
+  - Checking if the substream is null and call into snd_pcm_period_elapsed
+  - But `close` can happen anytime, pass without block and
+snd_pcm_detach_substream will be trigger right after it
+
+Best,
+Paul
+
+> >
+> > paulhsia (2):
+> >   ALSA: pcm: Fix stream lock usage in snd_pcm_period_elapsed()
+> >   ALSA: pcm: Use stream lock in snd_pcm_detach_substream()
+> >
+> >  sound/core/pcm.c     | 8 +++++++-
+> >  sound/core/pcm_lib.c | 8 ++++++--
+> >  2 files changed, 13 insertions(+), 3 deletions(-)
+> >
+> > --
+> > 2.24.0.rc1.363.gb1bccd3e3d-goog
+> >
