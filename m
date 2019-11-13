@@ -2,164 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC8EFB2EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:54:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DEDFB2EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfKMOyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 09:54:16 -0500
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:25714 "EHLO
-        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727680AbfKMOyP (ORCPT
+        id S1727813AbfKMOxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 09:53:33 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40361 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727168AbfKMOxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 09:54:15 -0500
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 Nov 2019 20:24:11 +0530
-IronPort-SDR: nfwpYCTyb7jxhcWPk9Ne0HbimTn/ODm9c8uNO+x6e3J3vbaHqZukz4/HwYpt9DKetcVEWNOpz7
- Dkl9dC467EA5myn3hqhpNN3cj0kPqonoros1JDbNqPuKtLkyJY1wW6+KoY3nan53T1TWM7nR3c
- V3uRDvl9YtxMMQtP4RTsgrwEgYobNSuUWAVwzQXeYjglfM0JtBpxxMA42Rxvpdijs1rmk7hAck
- pQRLuAKqxd9kzhPJPFIgQG4EEWyHsSpT5xJR3q04wFVKK94IJcivXtB/Dkj+4UCal19ySk7g79
- Yq9nLb/2SU60+FOCeLdhU21T
-Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 13 Nov 2019 20:23:55 +0530
-Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
-        id 288D4496F; Wed, 13 Nov 2019 20:23:54 +0530 (IST)
-From:   Pradeep P V K <ppvk@codeaurora.org>
-To:     stummala@codeaurora.org, sayalil@codeaurora.org,
-        rampraka@codeaurora.org, vbadigan@codeaurora.org, axboe@kernel.dk,
-        paolo.valente@linaro.org
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pradeep P V K <ppvk@codeaurora.org>
-Subject: [PATCH v1] block, bfq: set default slice_idle to zero for SSDs
-Date:   Wed, 13 Nov 2019 20:23:20 +0530
-Message-Id: <1573656800-14815-1-git-send-email-ppvk@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 13 Nov 2019 09:53:33 -0500
+Received: by mail-qk1-f194.google.com with SMTP id z16so1937593qkg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 06:53:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EV9duUB20/YZc6E2ELm2TTu7APGuZfnzFklhjn/rE/4=;
+        b=rPsmQxrDSL0/1IhhJWjsM/ANeR9qZpEfg9bGpp/wJkzJUrUBpEUz5ORvkwcpDEtWqq
+         hQyNFatT8w1gnL0Xw9PhxePJU/ipVM/SuTml1MaljT5Vj/oPQZw8vf7FM82pKFbiJbZL
+         pM2ZE1RT3rNtXgA7g3CTKmlDqT/W9HUZ25uraMzMeerHqG+P8YIfgPjjE9kzhhdWKWby
+         cTaslc/tlL9/f0lpJqEhx7XeuMEbhHrLFeCrTuQS+aS+pNIfwIhWP/tzsi5MFbbB1V/U
+         EHCWEjtIvXhdHDR8w5zKiCWJLnE7C8BxcaDpI9Vg/Bk3Malwm7+PQyjxjlXsXK8emH2K
+         CKvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EV9duUB20/YZc6E2ELm2TTu7APGuZfnzFklhjn/rE/4=;
+        b=j1k8m8Lcz3wxNVkT56Qc+J8WKiSu+6Z/VohVCR6F3uVFbvDCRY8wmcLf+nXpGvBijy
+         4ajvl3fP7MaMoitP5C0x9ofSszvak2zcnV0hLPYgnCD4rhp+Cbyk0plN1xW+HK9baD6A
+         K4aZ+iCbNQzJwV5REDgmS36zEN5hLFXoVXy9bY+hks+f8rWPCNkTSCORUl5PWtxR3ogP
+         GNQJZUK7fNw8KvukAQyi90adS3Lqw8YwKYFQ+1ZNOgs6xIc2KTO7mm8Shpwf5nzf4UZN
+         YIy8XJRJVpVbGnYnj501DcyhT3g9+DoJJF9gjE/HlDJWzS5OR6fg2VHp7Lw0KqpteyHt
+         TF5g==
+X-Gm-Message-State: APjAAAWy4WPXPi9k4P1Ra2j58X/52k2vZt6WoPCIgjQ6JkZlBOXLPr4Z
+        9EHKIS6S1tyve+FkF0zYQPvAGlv7YS9B0Q==
+X-Google-Smtp-Source: APXvYqx7Ug/zdzKda2v1avPaxNGosvn5Riek12upOf3cp2p7tgVeb/KstKNQ2lVy+MUrK7dqERXkFg==
+X-Received: by 2002:a37:81c1:: with SMTP id c184mr2799675qkd.59.1573656812274;
+        Wed, 13 Nov 2019 06:53:32 -0800 (PST)
+Received: from gmail.com ([184.75.212.4])
+        by smtp.gmail.com with ESMTPSA id p3sm995799qkf.107.2019.11.13.06.53.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2019 06:53:31 -0800 (PST)
+Date:   Wed, 13 Nov 2019 09:53:30 -0500
+From:   "Javier F. Arias" <jarias.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH V3 2/4] staging: rtl8723bs: Remove empty block
+Message-ID: <25794e45eeb676fd76012db80ac2f12462de7055.1573656487.git.jarias.linux@gmail.com>
+References: <1d47d745c077cc808bf0c09d2ee40e3c03d34b06.1573656487.git.jarias.linux@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d47d745c077cc808bf0c09d2ee40e3c03d34b06.1573656487.git.jarias.linux@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With default 8ms as a slice idle time, we seen few time bounded
-applications(sensors) on v4.19 kernel are getting timedout during
-multimedia tests (audio, video playbacks etc) with Reboots and
-leading to crash. The timeout configured for these applications
-(sensors) are 20sec.
+This patch removes an empty else block that produced an unbalanced
+brace warning.
+Issue found by Checkpatch.
 
-In crash dumps, we seen few synchronous requests from sensors/other
-applications were in their bfq_queues for more than 12-20sec.
-
-Idling due to anticipation of future near-by IO requests and wait on
-completion of submitted requests, will effect in choosing the next
-bfq-queue and its scheduling. There by it effecting some time bounded
-applications.
-
-After making the slice idle to zero, we didn't seen any crash during
-our 72hrs of testing and also it increases the IO throughput.
-
-Following FIO benchmark results were taken on a local SSD run:
-
-RandomReads that were taken on v4.19 kernel:
-
- Idling   iops    avg-lat(us)    stddev       bw
- ----------------------------------------------------
- On       4136    1189.07        17221.65    16.9MB/s
- Off      7246     670.11        1054.76     29.7MB/s
-
-    fio --name=temp --size=5G --time_based --ioengine=sync \
-	--randrepeat=0 --direct=1 --invalidate=1 --verify=0 \
-	--verify_fatal=0 --rw=randread --blocksize=4k \
-	--group_reporting=1 --directory=/data --runtime=10 \
-	--iodepth=64 --numjobs=5
-
-Following code changes were made based on [1],[2] and [3].
-
-[1] https://lkml.org/lkml/2018/11/1/1285
-[2] Commit 41c0126b3f22 ("block: Make CFQ default to IOPS mode on
-    SSDs")
-[3] Commit 0bb979472a74 ("cfq-iosched: fix the setting of IOPS mode on
-    SSDs")
-
-Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
+Signed-off-by: Javier F. Arias <jarias.linux@gmail.com>
 ---
- Documentation/block/bfq-iosched.rst |  7 ++++---
- block/bfq-iosched.c                 | 13 +++++++++++++
- block/elevator.c                    |  2 ++
- include/linux/elevator.h            |  1 +
- 4 files changed, 20 insertions(+), 3 deletions(-)
+Changes in V3:
+	- Edit the commit message and description.
+Changes in V2:
+        - Reduce the scope of the change given that the previous
+          patch had to perform some of these changes.
 
-diff --git a/Documentation/block/bfq-iosched.rst b/Documentation/block/bfq-iosched.rst
-index 0d237d4..244f4ca 100644
---- a/Documentation/block/bfq-iosched.rst
-+++ b/Documentation/block/bfq-iosched.rst
-@@ -329,9 +329,10 @@ slice_idle
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+index 44fc604ea5b7..5856c6e34922 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
++++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+@@ -1844,8 +1844,6 @@ s32 rtw_free_xmitframe(struct xmit_priv *pxmitpriv, struct xmit_frame *pxmitfram
+ 		queue = &pxmitpriv->free_xmit_queue;
+ 	else if (pxmitframe->ext_tag == 1)
+ 		queue = &pxmitpriv->free_xframe_ext_queue;
+-	else {
+-	}
  
- This parameter specifies how long BFQ should idle for next I/O
- request, when certain sync BFQ queues become empty. By default
--slice_idle is a non-zero value. Idling has a double purpose: boosting
--throughput and making sure that the desired throughput distribution is
--respected (see the description of how BFQ works, and, if needed, the
-+slice_idle is a non-zero value for rotational devices.
-+Idling has a double purpose: boosting throughput and making
-+sure that the desired throughput distribution is respected
-+(see the description of how BFQ works, and, if needed, the
- papers referred there).
+ 	spin_lock_bh(&queue->lock);
  
- As for throughput, idling can be very helpful on highly seeky media
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 0319d63..9c994d1 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -6514,6 +6514,18 @@ static int bfq_init_queue(struct request_queue *q, struct elevator_type *e)
- 	return -ENOMEM;
- }
- 
-+static void bfq_registered_queue(struct request_queue *q)
-+{
-+	struct elevator_queue *e = q->elevator;
-+	struct bfq_data *bfqd = e->elevator_data;
-+
-+	/*
-+	 * Default to IOPS mode with no idling for SSDs
-+	 */
-+	if (blk_queue_nonrot(q))
-+		bfqd->bfq_slice_idle = 0;
-+}
-+
- static void bfq_slab_kill(void)
- {
- 	kmem_cache_destroy(bfq_pool);
-@@ -6761,6 +6773,7 @@ static ssize_t bfq_low_latency_store(struct elevator_queue *e,
- 		.init_hctx		= bfq_init_hctx,
- 		.init_sched		= bfq_init_queue,
- 		.exit_sched		= bfq_exit_queue,
-+		.elevator_registered_fn = bfq_registered_queue,
- 	},
- 
- 	.icq_size =		sizeof(struct bfq_io_cq),
-diff --git a/block/elevator.c b/block/elevator.c
-index 076ba73..b882d25 100644
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -504,6 +504,8 @@ int elv_register_queue(struct request_queue *q, bool uevent)
- 			kobject_uevent(&e->kobj, KOBJ_ADD);
- 
- 		e->registered = 1;
-+		if (e->type->ops.elevator_registered_fn)
-+			e->type->ops.elevator_registered_fn(q);
- 	}
- 	return error;
- }
-diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-index 901bda3..23dcc35 100644
---- a/include/linux/elevator.h
-+++ b/include/linux/elevator.h
-@@ -50,6 +50,7 @@ struct elevator_mq_ops {
- 	struct request *(*next_request)(struct request_queue *, struct request *);
- 	void (*init_icq)(struct io_cq *);
- 	void (*exit_icq)(struct io_cq *);
-+	void (*elevator_registered_fn)(struct request_queue *q);
- };
- 
- #define ELV_NAME_MAX	(16)
 -- 
-1.9.1
+2.20.1
 
