@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32659FA084
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:50:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F38FA089
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:50:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbfKMBul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:50:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37390 "EHLO mail.kernel.org"
+        id S1727520AbfKMBuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:50:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbfKMBui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:50:38 -0500
+        id S1727458AbfKMBul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:50:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C15C72245A;
-        Wed, 13 Nov 2019 01:50:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69B5122459;
+        Wed, 13 Nov 2019 01:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609837;
-        bh=4uPKCiglYWI6Eoxlw3ywo1sZJes3gYihxdUZJ4juF/M=;
+        s=default; t=1573609841;
+        bh=MbvfzHdLIyxp1OB5gLuB0mj1aev0t0AolzqUnsL+2KU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mtdb4+YknPnkCSdGhh1V6SFKGJyUix98Rgxz+uNquBPbNcH5GpSzqgMwMAKqNGX2J
-         WH8xetPYh/6ni2muQKjxa2BN2mnCTFfeHOOQXoH5A2w9vha0o+pkeh2nXYzicgX9dG
-         1kP3aKb5VRYDraQ74Q7+ca3fHLXwBAU3AJvl+r7I=
+        b=Cl/jQo9/ViDXPVhIDJ3g6WQkUxeYY4Qu+JPI9vClFV+AMHBautMO2sFhw4WjZlneF
+         v+6jHKvH4hoNSMgxewwOQMxlpQrvrL8S2wL4LFdffE9hEDmdOPWroiVOhvBdi9reHM
+         gl6VImlM4ALdHGdstpEr4AFqCuWVBGp3DLmZ7fA4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yuchung Cheng <ycheng@google.com>, Wei Wang <weiwan@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 010/209] tcp: up initial rmem to 128KB and SYN rwin to around 64KB
-Date:   Tue, 12 Nov 2019 20:47:06 -0500
-Message-Id: <20191113015025.9685-10-sashal@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 013/209] ACPI / LPSS: Make acpi_lpss_find_device() also find PCI devices
+Date:   Tue, 12 Nov 2019 20:47:09 -0500
+Message-Id: <20191113015025.9685-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -46,162 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit a337531b942bd8a03e7052444d7e36972aac2d92 ]
+[ Upstream commit 1e30124ac60abc41d74793900f8b4034f29bcb3d ]
 
-Previously TCP initial receive buffer is ~87KB by default and
-the initial receive window is ~29KB (20 MSS). This patch changes
-the two numbers to 128KB and ~64KB (rounding down to the multiples
-of MSS) respectively. The patch also simplifies the calculations s.t.
-the two numbers are directly controlled by sysctl tcp_rmem[1]:
+On some Cherry Trail systems the GPU ACPI fwnode has power-resources which
+point to the PMIC, which is connected over one of the LPSS I2C controllers.
 
-  1) Initial receiver buffer budget (sk_rcvbuf): while this should
-     be configured via sysctl tcp_rmem[1], previously tcp_fixup_rcvbuf()
-     always override and set a larger size when a new connection
-     establishes.
+To get the suspend/resume ordering correct for this we need to be able to
+add device-links between the GPU and the I2c controller. The GPU is a PCI
+device, so this requires acpi_lpss_find_device() to also work on PCI devs.
 
-  2) Initial receive window in SYN: previously it is set to 20
-     packets if MSS <= 1460. The number 20 was based on the initial
-     congestion window of 10: the receiver needs twice amount to
-     avoid being limited by the receive window upon out-of-order
-     delivery in the first window burst. But since this only
-     applies if the receiving MSS <= 1460, connection using large MTU
-     (e.g. to utilize receiver zero-copy) may be limited by the
-     receive window.
-
-With this patch TCP memory configuration is more straight-forward and
-more properly sized to modern high-speed networks by default. Several
-popular stacks have been announcing 64KB rwin in SYNs as well.
-
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Wei Wang <weiwan@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reviewed-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/tcp.c        |  4 ++--
- net/ipv4/tcp_input.c  | 25 ++-----------------------
- net/ipv4/tcp_output.c | 25 ++++---------------------
- 3 files changed, 8 insertions(+), 46 deletions(-)
+ drivers/acpi/acpi_lpss.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 611ba174265c8..1a1fcb32c4917 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -3910,8 +3910,8 @@ void __init tcp_init(void)
- 	init_net.ipv4.sysctl_tcp_wmem[2] = max(64*1024, max_wshare);
+diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+index c651e206d7960..924b9f089e79f 100644
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -16,6 +16,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/mutex.h>
++#include <linux/pci.h>
+ #include <linux/platform_device.h>
+ #include <linux/platform_data/clk-lpss.h>
+ #include <linux/platform_data/x86/pmc_atom.h>
+@@ -494,12 +495,18 @@ static int match_hid_uid(struct device *dev, void *data)
  
- 	init_net.ipv4.sysctl_tcp_rmem[0] = SK_MEM_QUANTUM;
--	init_net.ipv4.sysctl_tcp_rmem[1] = 87380;
--	init_net.ipv4.sysctl_tcp_rmem[2] = max(87380, max_rshare);
-+	init_net.ipv4.sysctl_tcp_rmem[1] = 131072;
-+	init_net.ipv4.sysctl_tcp_rmem[2] = max(131072, max_rshare);
- 
- 	pr_info("Hash tables configured (established %u bind %u)\n",
- 		tcp_hashinfo.ehash_mask + 1, tcp_hashinfo.bhash_size);
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 14a6a489937c1..0e2b07be08585 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -426,26 +426,7 @@ static void tcp_grow_window(struct sock *sk, const struct sk_buff *skb)
- 	}
- }
- 
--/* 3. Tuning rcvbuf, when connection enters established state. */
--static void tcp_fixup_rcvbuf(struct sock *sk)
--{
--	u32 mss = tcp_sk(sk)->advmss;
--	int rcvmem;
--
--	rcvmem = 2 * SKB_TRUESIZE(mss + MAX_TCP_HEADER) *
--		 tcp_default_init_rwnd(mss);
--
--	/* Dynamic Right Sizing (DRS) has 2 to 3 RTT latency
--	 * Allow enough cushion so that sender is not limited by our window
--	 */
--	if (sock_net(sk)->ipv4.sysctl_tcp_moderate_rcvbuf)
--		rcvmem <<= 2;
--
--	if (sk->sk_rcvbuf < rcvmem)
--		sk->sk_rcvbuf = min(rcvmem, sock_net(sk)->ipv4.sysctl_tcp_rmem[2]);
--}
--
--/* 4. Try to fixup all. It is made immediately after connection enters
-+/* 3. Try to fixup all. It is made immediately after connection enters
-  *    established state.
-  */
- void tcp_init_buffer_space(struct sock *sk)
-@@ -454,8 +435,6 @@ void tcp_init_buffer_space(struct sock *sk)
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	int maxwin;
- 
--	if (!(sk->sk_userlocks & SOCK_RCVBUF_LOCK))
--		tcp_fixup_rcvbuf(sk);
- 	if (!(sk->sk_userlocks & SOCK_SNDBUF_LOCK))
- 		tcp_sndbuf_expand(sk);
- 
-@@ -485,7 +464,7 @@ void tcp_init_buffer_space(struct sock *sk)
- 	tp->snd_cwnd_stamp = tcp_jiffies32;
- }
- 
--/* 5. Recalculate window clamp after socket hit its memory bounds. */
-+/* 4. Recalculate window clamp after socket hit its memory bounds. */
- static void tcp_clamp_window(struct sock *sk)
+ static struct device *acpi_lpss_find_device(const char *hid, const char *uid)
  {
- 	struct tcp_sock *tp = tcp_sk(sk);
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 2697e4397e46c..53f910bb55087 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -179,21 +179,6 @@ static inline void tcp_event_ack_sent(struct sock *sk, unsigned int pkts,
- 	inet_csk_clear_xmit_timer(sk, ICSK_TIME_DACK);
- }
- 
--
--u32 tcp_default_init_rwnd(u32 mss)
--{
--	/* Initial receive window should be twice of TCP_INIT_CWND to
--	 * enable proper sending of new unsent data during fast recovery
--	 * (RFC 3517, Section 4, NextSeg() rule (2)). Further place a
--	 * limit when mss is larger than 1460.
--	 */
--	u32 init_rwnd = TCP_INIT_CWND * 2;
--
--	if (mss > 1460)
--		init_rwnd = max((1460 * init_rwnd) / mss, 2U);
--	return init_rwnd;
--}
--
- /* Determine a window scaling and initial window to offer.
-  * Based on the assumption that the given amount of space
-  * will be offered. Store the results in the tp structure.
-@@ -228,7 +213,10 @@ void tcp_select_initial_window(const struct sock *sk, int __space, __u32 mss,
- 	if (sock_net(sk)->ipv4.sysctl_tcp_workaround_signed_windows)
- 		(*rcv_wnd) = min(space, MAX_TCP_WINDOW);
- 	else
--		(*rcv_wnd) = space;
-+		(*rcv_wnd) = min_t(u32, space, U16_MAX);
++	struct device *dev;
 +
-+	if (init_rcv_wnd)
-+		*rcv_wnd = min(*rcv_wnd, init_rcv_wnd * mss);
+ 	struct hid_uid data = {
+ 		.hid = hid,
+ 		.uid = uid,
+ 	};
  
- 	(*rcv_wscale) = 0;
- 	if (wscale_ok) {
-@@ -241,11 +229,6 @@ void tcp_select_initial_window(const struct sock *sk, int __space, __u32 mss,
- 			(*rcv_wscale)++;
- 		}
- 	}
--
--	if (!init_rcv_wnd) /* Use default unless specified otherwise */
--		init_rcv_wnd = tcp_default_init_rwnd(mss);
--	*rcv_wnd = min(*rcv_wnd, init_rcv_wnd * mss);
--
- 	/* Set the clamp no higher than max representable value */
- 	(*window_clamp) = min_t(__u32, U16_MAX << (*rcv_wscale), *window_clamp);
+-	return bus_find_device(&platform_bus_type, NULL, &data, match_hid_uid);
++	dev = bus_find_device(&platform_bus_type, NULL, &data, match_hid_uid);
++	if (dev)
++		return dev;
++
++	return bus_find_device(&pci_bus_type, NULL, &data, match_hid_uid);
  }
+ 
+ static bool acpi_lpss_dep(struct acpi_device *adev, acpi_handle handle)
 -- 
 2.20.1
 
