@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB1C1FA634
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 455D5FA61B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbfKMC1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:27:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37888 "EHLO mail.kernel.org"
+        id S1727686AbfKMBvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:51:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727531AbfKMBuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:50:51 -0500
+        id S1727588AbfKMBu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:50:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 622D3222CA;
-        Wed, 13 Nov 2019 01:50:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 771CB222CE;
+        Wed, 13 Nov 2019 01:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609851;
-        bh=iOCWkkQyNZ9HFAZK0cqFlOadkurC8YTumm+nF+4sP6Y=;
+        s=default; t=1573609857;
+        bh=/n033tAcWZldeMXOsgVbpUniNKRtBHljCjRdA4VUUMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dgCGl2tWDcxJ96EYTVJn/bPazGO/v2QBK27aEOibBrYvkTMcJw2Efj7TYMyof2JfL
-         hdmi/1kSnd8dBzUZeanO7r2LIt3zs+Lp1sYwOgfwPRYY001yypZM6PDo8uCv51drT+
-         9VyQRTOBk+GZfhaEbeEz447oZmYHyylU4J93Ti5Q=
+        b=RPfb/Pk1qi9BCsQPj0vgquF6OTQk7L/lD16SXZN+jwtl+yh0L+o2tyzWreSDVJi5S
+         ToPzXwcCzhjI56GjT7B5jKS8QYc/e+7igfe6YwMEgwiLSVzgIi56lq9jXuV2CgbvtT
+         eYtXFEIiTu3M+hiMJDnRaYi9qEcVq/eQb6y4WNt8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.19 022/209] iommu/arm-smmu-v3: Fix unexpected CMD_SYNC timeout
-Date:   Tue, 12 Nov 2019 20:47:18 -0500
-Message-Id: <20191113015025.9685-22-sashal@kernel.org>
+Cc:     Ben Greear <greearb@candelatech.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 025/209] ath10k: fix vdev-start timeout on error
+Date:   Tue, 12 Nov 2019 20:47:21 -0500
+Message-Id: <20191113015025.9685-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -44,84 +44,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
+From: Ben Greear <greearb@candelatech.com>
 
-[ Upstream commit 0f02477d16980938a84aba8688a4e3a303306116 ]
+[ Upstream commit 833fd34d743c728afe6d127ef7bee67e7d9199a8 ]
 
-The condition break condition of:
+The vdev-start-response message should cause the
+completion to fire, even in the error case.  Otherwise,
+the user still gets no useful information and everything
+is blocked until the timeout period.
 
-	(int)(VAL - sync_idx) >= 0
+Add some warning text to print out the invalid status
+code to aid debugging, and propagate failure code.
 
-in the __arm_smmu_sync_poll_msi() polling loop requires that sync_idx
-must be increased monotonically according to the sequence of the CMDs in
-the cmdq.
-
-However, since the msidata is populated using atomic_inc_return_relaxed()
-before taking the command-queue spinlock, then the following scenario
-can occur:
-
-CPU0			CPU1
-msidata=0
-			msidata=1
-			insert cmd1
-insert cmd0
-			smmu execute cmd1
-smmu execute cmd0
-			poll timeout, because msidata=1 is overridden by
-			cmd0, that means VAL=0, sync_idx=1.
-
-This is not a functional problem, since the caller will eventually either
-timeout or exit due to another CMD_SYNC, however it's clearly not what
-the code is supposed to be doing. Fix it, by incrementing the sequence
-count with the command-queue lock held, allowing us to drop the atomic
-operations altogether.
-
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-[will: dropped the specialised cmd building routine for now]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/ath10k/core.h |  1 +
+ drivers/net/wireless/ath/ath10k/mac.c  |  2 +-
+ drivers/net/wireless/ath/ath10k/wmi.c  | 19 ++++++++++++++++---
+ drivers/net/wireless/ath/ath10k/wmi.h  |  8 +++++++-
+ 4 files changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 40fbf20d69e5a..2ab7100bcff12 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -567,7 +567,7 @@ struct arm_smmu_device {
+diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
+index 9feea02e7d373..5c9fc4070fd24 100644
+--- a/drivers/net/wireless/ath/ath10k/core.h
++++ b/drivers/net/wireless/ath/ath10k/core.h
+@@ -1003,6 +1003,7 @@ struct ath10k {
  
- 	int				gerr_irq;
- 	int				combined_irq;
--	atomic_t			sync_nr;
-+	u32				sync_nr;
+ 	struct completion install_key_done;
  
- 	unsigned long			ias; /* IPA */
- 	unsigned long			oas; /* PA */
-@@ -964,14 +964,13 @@ static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
- 	struct arm_smmu_cmdq_ent ent = {
- 		.opcode = CMDQ_OP_CMD_SYNC,
- 		.sync	= {
--			.msidata = atomic_inc_return_relaxed(&smmu->sync_nr),
- 			.msiaddr = virt_to_phys(&smmu->sync_count),
- 		},
- 	};
++	int last_wmi_vdev_start_status;
+ 	struct completion vdev_setup_done;
  
--	arm_smmu_cmdq_build_cmd(cmd, &ent);
--
- 	spin_lock_irqsave(&smmu->cmdq.lock, flags);
-+	ent.sync.msidata = ++smmu->sync_nr;
-+	arm_smmu_cmdq_build_cmd(cmd, &ent);
- 	arm_smmu_cmdq_insert_cmd(smmu, cmd);
- 	spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
+ 	struct workqueue_struct *workqueue;
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 1419f9d1505fe..e95bb397e1c96 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -967,7 +967,7 @@ static inline int ath10k_vdev_setup_sync(struct ath10k *ar)
+ 	if (time_left == 0)
+ 		return -ETIMEDOUT;
  
-@@ -2196,7 +2195,6 @@ static int arm_smmu_init_structures(struct arm_smmu_device *smmu)
+-	return 0;
++	return ar->last_wmi_vdev_start_status;
+ }
+ 
+ static int ath10k_monitor_vdev_start(struct ath10k *ar, int vdev_id)
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index 9f31b9a108507..bf74aff9510be 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -3247,18 +3247,31 @@ void ath10k_wmi_event_vdev_start_resp(struct ath10k *ar, struct sk_buff *skb)
  {
+ 	struct wmi_vdev_start_ev_arg arg = {};
  	int ret;
++	u32 status;
  
--	atomic_set(&smmu->sync_nr, 0);
- 	ret = arm_smmu_init_queues(smmu);
- 	if (ret)
- 		return ret;
+ 	ath10k_dbg(ar, ATH10K_DBG_WMI, "WMI_VDEV_START_RESP_EVENTID\n");
+ 
++	ar->last_wmi_vdev_start_status = 0;
++
+ 	ret = ath10k_wmi_pull_vdev_start(ar, skb, &arg);
+ 	if (ret) {
+ 		ath10k_warn(ar, "failed to parse vdev start event: %d\n", ret);
+-		return;
++		ar->last_wmi_vdev_start_status = ret;
++		goto out;
+ 	}
+ 
+-	if (WARN_ON(__le32_to_cpu(arg.status)))
+-		return;
++	status = __le32_to_cpu(arg.status);
++	if (WARN_ON_ONCE(status)) {
++		ath10k_warn(ar, "vdev-start-response reports status error: %d (%s)\n",
++			    status, (status == WMI_VDEV_START_CHAN_INVALID) ?
++			    "chan-invalid" : "unknown");
++		/* Setup is done one way or another though, so we should still
++		 * do the completion, so don't return here.
++		 */
++		ar->last_wmi_vdev_start_status = -EINVAL;
++	}
+ 
++out:
+ 	complete(&ar->vdev_setup_done);
+ }
+ 
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.h b/drivers/net/wireless/ath/ath10k/wmi.h
+index 36220258e3c7e..e341cfb3fcc26 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.h
++++ b/drivers/net/wireless/ath/ath10k/wmi.h
+@@ -6642,11 +6642,17 @@ struct wmi_ch_info_ev_arg {
+ 	__le32 rx_frame_count;
+ };
+ 
++/* From 10.4 firmware, not sure all have the same values. */
++enum wmi_vdev_start_status {
++	WMI_VDEV_START_OK = 0,
++	WMI_VDEV_START_CHAN_INVALID,
++};
++
+ struct wmi_vdev_start_ev_arg {
+ 	__le32 vdev_id;
+ 	__le32 req_id;
+ 	__le32 resp_type; /* %WMI_VDEV_RESP_ */
+-	__le32 status;
++	__le32 status; /* See wmi_vdev_start_status enum above */
+ };
+ 
+ struct wmi_peer_kick_ev_arg {
 -- 
 2.20.1
 
