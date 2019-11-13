@@ -2,63 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72F85FA002
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:18:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18CF1FA016
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:27:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbfKMBSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:18:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727124AbfKMBSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:18:47 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4299E20818;
-        Wed, 13 Nov 2019 01:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573607926;
-        bh=cWFUgc9/WbM1JBUyl6nC5epn+Sxpk+I2iHNF3JCvRzI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uFZqyCsQdXa09TJBj5G4d6yualQoRZfRb2KX0ZqsUQKbI+pL/864h+GADHn9e1yQx
-         e0EQ6xcJ0J5vs4NIT2zrzuEmIvChyROaobMKvp8mA0efOggwatJMx0SSSXfpesaYlT
-         WFw1Q7MKQXPv20Mb17pN3PvbHZREfKnIAyJyzqzM=
-Date:   Tue, 12 Nov 2019 20:18:45 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Junaid Shahid <junaids@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.4 STABLE] kvm: mmu: Don't read PDPTEs when paging is
- not enabled
-Message-ID: <20191113011845.GM8496@sasha-vm>
-References: <20191112001705.5885-1-sean.j.christopherson@intel.com>
+        id S1727199AbfKMB1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:27:04 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38684 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726960AbfKMB1E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:27:04 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUhOU-0006xS-Cx; Wed, 13 Nov 2019 01:24:26 +0000
+Date:   Wed, 13 Nov 2019 01:24:26 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Drysdale <drysdale@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v15 2/9] namei: LOOKUP_NO_MAGICLINKS: block magic-link
+ resolution
+Message-ID: <20191113012426.GY26530@ZenIV.linux.org.uk>
+References: <20191105090553.6350-1-cyphar@cyphar.com>
+ <20191105090553.6350-3-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112001705.5885-1-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191105090553.6350-3-cyphar@cyphar.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 04:17:05PM -0800, Sean Christopherson wrote:
->From: Junaid Shahid <junaids@google.com>
->
->Upstream commit d35b34a9a70edae7ef923f100e51b8b5ae9fe899.
->
->kvm should not attempt to read guest PDPTEs when CR0.PG = 0 and
->CR4.PAE = 1.
->
->Signed-off-by: Junaid Shahid <junaids@google.com>
->Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+On Tue, Nov 05, 2019 at 08:05:46PM +1100, Aleksa Sarai wrote:
+> @@ -1078,6 +1079,10 @@ const char *get_link(struct nameidata *nd)
+>  		} else {
+>  			res = get(dentry, inode, &last->done);
+>  		}
+> +		if (nd->flags & LOOKUP_MAGICLINK_JUMPED) {
+> +			if (unlikely(nd->flags & LOOKUP_NO_MAGICLINKS))
+> +				return ERR_PTR(-ELOOP);
+> +		}
 
-Queued up for 4.4, thank you.
+Minor nit - the first check probably wants unlikely() more than the
+second one; it's probably noise anyway, but most of the symlinks
+traversed are not going to be procfs ones, so you get test + branch
+taken most of the time.
 
--- 
-Thanks,
-Sasha
+OTOH, that just might compile into
+	fetch nd->flags
+	and with LOOKUP_MAGICLINK_JUMPED | LOOKUP_NO_MAGICLINKS
+	compare with the same constant
+	unlikely branch when equal
+
+Anyway, that's no more than a minor nit and can be dealt with later (if
+at all)
