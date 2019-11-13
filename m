@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B34FFBA59
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:03:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9C8FBA52
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:02:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfKMVCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 16:02:25 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:38880 "EHLO
+        id S1727151AbfKMVC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 16:02:29 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:38878 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbfKMVCU (ORCPT
+        with ESMTP id S1726969AbfKMVCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Nov 2019 16:02:20 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iUzmH-00066C-Lg; Wed, 13 Nov 2019 22:02:13 +0100
-Message-Id: <20191113204240.767922595@linutronix.de>
+        id 1iUzmI-00066F-9Y; Wed, 13 Nov 2019 22:02:14 +0100
+Message-Id: <20191113210103.819769574@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 13 Nov 2019 21:42:40 +0100
+Date:   Wed, 13 Nov 2019 21:42:41 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -26,111 +26,47 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Stephen Hemminger <stephen@networkplumber.org>,
         Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [patch V3 00/20] x86/iopl: Prevent user space from using CLI/STI with
- iopl(3)
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>
+Subject: [patch V3 01/20] x86/ptrace: Prevent truncation of bitmap size
+References: <20191113204240.767922595@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the third version of the attempt to confine the unwanted side
-effects of iopl(). The first version of this series can be found here:
+From: Thomas Gleixner <tglx@linutronix.de>
 
-   https://lore.kernel.org/r/20191106193459.581614484@linutronix.de
+The active() callback of the IO bitmap regset divides the IO bitmap size by
+the word size (32/64 bit). As the I/O bitmap size is in bytes the active
+check fails for bitmap sizes of 1-3 bytes on 32bit and 1-7 bytes on 64bit.
 
-Second version is here:
+Use DIV_ROUND_UP() instead.
 
-   https://lore.kernel.org/r/20191111220314.519933535@linutronix.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 
-The V1 cover letter also contains a longer variant of the
-background. Summary:
 
-iopl(level = 3) enables aside of access to all 65536 I/O ports also the
-usage of CLI/STI in user space.
-
-Disabling interrupts in user space can lead to system lockups and breaks
-assumptions in the kernel that userspace always runs with interrupts
-enabled.
-
-iopl() is often preferred over ioperm() as it avoids the overhead of
-copying the tasks I/O bitmap to the TSS bitmap on context switch. This
-overhead can be avoided by providing a all zeroes bitmap in the TSS and
-switching the TSS bitmap offset to this permit all IO bitmap. It's
-marginally slower than iopl() which is a one time setup, but prevents the
-usage of CLI/STI in user space.
-
-The changes vs. V3:
-
-    - Split out the restructuring of the first/subsequent ioperm()
-      invocation into a seperate patch to address the inconsisteny which
-      Andy detected in the patch which introduces the concept of
-      invalidating the I/O bitmap base to speed up context switching.
-      This change is moved in front so the subsequent changes are
-      functionally correct.
-
-    - Moved the non HW TSS data related to I/O bitmap(s) into a seperate
-      data structure. Modified version of Ingos proposed patch.
-
-    - Made struct memeber names more consistent (Ingo)
-
-    - Dropped the bitmap union. It is not longer necessary because V2
-      already dropped the finer grained copying algorithm. The sequence
-      count approach should avoid most of the copying overhead when the
-      number of ioperm() using processes is very low which is the normal
-      case.
-
-    - Dropped the pointer storage of the bitmap in the TSS data as it is
-      not required (Peter, Andy)
-
-    - Fixed the missing refcount setting in the bitmap duplication code
-      path. (Peter, Andy)
-
-    - Updated changelog and comment to explain the bitmap invalidation
-      logic. (Andy)
-
-    - Removed TIF_IO_BITMAP from the TIF flags which are evaluated on the
-      next task for entering the slow path.
-
-    - Folded the NULL pointer check fix
-
-    - Simplified the config option in the legacy removal patch (Andy)
-
-    - Extended the scope of the config option to disable ioperm() along
-      with iopl() which also mokes all related storage and functions
-      compile time conditional. (Andy)
-
-The series is also available from git:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/iopl
-
-Thanks,
-
-	tglx
 ---
- arch/x86/Kconfig                        |   18 ++
- arch/x86/entry/common.c                 |    4 
- arch/x86/include/asm/io_bitmap.h        |   29 ++++
- arch/x86/include/asm/paravirt.h         |    4 
- arch/x86/include/asm/paravirt_types.h   |    2 
- arch/x86/include/asm/pgtable_32_types.h |    2 
- arch/x86/include/asm/processor.h        |  113 ++++++++++-------
- arch/x86/include/asm/ptrace.h           |    6 
- arch/x86/include/asm/switch_to.h        |   10 +
- arch/x86/include/asm/thread_info.h      |   14 +-
- arch/x86/include/asm/xen/hypervisor.h   |    2 
- arch/x86/kernel/cpu/common.c            |  188 ++++++++++++----------------
- arch/x86/kernel/doublefault.c           |    2 
- arch/x86/kernel/ioport.c                |  209 +++++++++++++++++++++-----------
- arch/x86/kernel/paravirt.c              |    2 
- arch/x86/kernel/process.c               |  200 ++++++++++++++++++++++++------
- arch/x86/kernel/process_32.c            |   77 -----------
- arch/x86/kernel/process_64.c            |   86 -------------
- arch/x86/kernel/ptrace.c                |   12 +
- arch/x86/kvm/vmx/vmx.c                  |    8 -
- arch/x86/mm/cpu_entry_area.c            |    8 +
- arch/x86/xen/enlighten_pv.c             |   10 -
- tools/testing/selftests/x86/ioperm.c    |   16 ++
- tools/testing/selftests/x86/iopl.c      |  129 ++++++++++++++++++-
- 24 files changed, 674 insertions(+), 477 deletions(-)
+ arch/x86/kernel/ptrace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -697,7 +697,7 @@ static int ptrace_set_debugreg(struct ta
+ static int ioperm_active(struct task_struct *target,
+ 			 const struct user_regset *regset)
+ {
+-	return target->thread.io_bitmap_max / regset->size;
++	return DIV_ROUND_UP(target->thread.io_bitmap_max, regset->size);
+ }
+ 
+ static int ioperm_get(struct task_struct *target,
+
+
+
+
+
 
