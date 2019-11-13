@@ -2,76 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5A8FA73D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 04:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E799DFA78F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 04:47:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfKMD0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 22:26:01 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:57891 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726953AbfKMD0B (ORCPT
+        id S1727784AbfKMDrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 22:47:04 -0500
+Received: from m9a0002g.houston.softwaregrp.com ([15.124.64.67]:41140 "EHLO
+        m9a0002g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727399AbfKMDrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 22:26:01 -0500
-X-UUID: e23a333c27e24ed2819044bc012444cf-20191113
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=rDIAE49LJSoVbQpJ0kmEv+2G5B5G2a/scFj/B11Af9I=;
-        b=KpdFd4lddrLeL7jARmsvUFFGiti8KhxBSFYDlmlt0tNxW5P4ELFzhsAQiHvfMd3DScmr2VHTpX7Z1694IFW7iw0P6wAEAXs7SN7u4sMxIpaiB/Sb57zBNGnt6msRwwT6J/wntWa/0RGnL6yQu2a5mh25RkuCDDOjaPPSDMdBsco=;
-X-UUID: e23a333c27e24ed2819044bc012444cf-20191113
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <mark-pk.tsai@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 854095567; Wed, 13 Nov 2019 11:25:56 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 13 Nov 2019 11:25:54 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 13 Nov 2019 11:25:52 +0800
-From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-To:     <lvqiang.huang@unisoc.com>
-CC:     <alix.wu@mediatek.com>, <allison@lohutok.net>,
-        <eddy.lin@mediatek.com>, <enlai.chu@unisoc.com>,
-        <gregkh@linuxfoundation.org>, <info@metux.net>,
-        <kstewart@linuxfoundation.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux@armlinux.org.uk>,
-        <mark-pk.tsai@mediatek.com>, <matthias.bgg@gmail.com>,
-        <mike-sl.lin@mediatek.com>, <phil.chang@mediatek.com>,
-        <tglx@linutronix.de>, <yj.chiang@mediatek.com>
-Subject: Re: [PATCH] ARM: fix race in for_each_frame
-Date:   Wed, 13 Nov 2019 11:25:54 +0800
-Message-ID: <20191113032554.21034-1-mark-pk.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <64C83867-31FA-4243-A0EB-018AE9A83ACB@unisoc.com>
-References: <64C83867-31FA-4243-A0EB-018AE9A83ACB@unisoc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-X-TM-SNTS-SMTP: 95B92524CD3366A2A5D654B2ED134B3B8F2C48BBE4E6AB8A5500FE4528A957B02000:8
-X-MTK:  N
+        Tue, 12 Nov 2019 22:47:03 -0500
+Received: FROM m9a0002g.houston.softwaregrp.com (15.121.0.191) BY m9a0002g.houston.softwaregrp.com WITH ESMTP;
+ Wed, 13 Nov 2019 03:46:23 +0000
+Received: from M4W0335.microfocus.com (2002:f78:1193::f78:1193) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 13 Nov 2019 03:29:33 +0000
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (15.124.8.14) by
+ M4W0335.microfocus.com (15.120.17.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Wed, 13 Nov 2019 03:29:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mCACH9xRrw49YrhZLAJr1VUo4+45bYAJ208i4C0hirj29HdYU6HfOcxVsZUiN3UEXQuT79QZTLa3ytFImUJaXRUrqFrvyPFgSsC0pwhVpd+AjTCv9zxwqAOpjQPRuEt6jiHXk0+mc1le0uFeZF4oamxVgNuOwSYjPTYrndygk1CF3zzElHyBJJdgjuvI8xl4FojRDpazRSLK0AQe4lQ0OAm3zaagHmdHKKKezt5U8ZCxSHH5b9J5rJVPxAevYfB/mNbi1oKP3p7/TFIdY+M2+kR2GuELN/G6E5/IBeQZSTanIaZ6ivfDBFIITHdZqFq+6zTaTgGgRGj/sUQ0XuaaZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l4a7HiJs08lJ4EzfCtpUuCzqsEDdb4J09NY5pin1kU0=;
+ b=H/WSo9tTnJMlKiDw7EijI9xD516+OhYNr0h8q1rwd3EUAV2zgnot5zBAm2R3XagZtaP0/DommqWdtef/J3b6v79HV6A2eHuAFz4NgpgwVQgCzCvMmY0Sz3sjV6Pk0VgoGAivAD8IJ0OjWHSKQPSIRZk6zRIpIiJyBwm/3r+y51chiILABNjC8uckXVlLlDCAuVg4ikbeJhtyGrDQQd87MCnPT5uDW5iFMunL8Kap0QLSTeUlsSGhyKwaZ6fDe9hIOQab4EdqMcWxIOxliSyT0THHbgbsi0wXiDsBTNuPXFH2EM0YD0EOaULgMyxQaoArDLA7dFfyNNzonRDqyvZBZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from MN2PR18MB3278.namprd18.prod.outlook.com (10.255.237.204) by
+ MN2PR18MB2864.namprd18.prod.outlook.com (20.179.20.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.20; Wed, 13 Nov 2019 03:29:31 +0000
+Received: from MN2PR18MB3278.namprd18.prod.outlook.com
+ ([fe80::2914:6699:d7e5:de45]) by MN2PR18MB3278.namprd18.prod.outlook.com
+ ([fe80::2914:6699:d7e5:de45%3]) with mapi id 15.20.2451.023; Wed, 13 Nov 2019
+ 03:29:31 +0000
+From:   Lee Duncan <LDuncan@suse.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "wubo (T)" <wubo40@huawei.com>
+CC:     "cleech@redhat.com" <cleech@redhat.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "open-iscsi@googlegroups.com" <open-iscsi@googlegroups.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ulrich Windl <Ulrich.Windl@rz.uni-regensburg.de>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        "liuzhiqiang (I)" <liuzhiqiang26@huawei.com>
+Subject: Re: [PATCH v3] scsi: avoid potential deadloop in iscsi_if_rx func
+Thread-Topic: [PATCH v3] scsi: avoid potential deadloop in iscsi_if_rx func
+Thread-Index: AdWPliQLA8PIGoMpTtGRxNyp42qoAAKLPyHxAAPacAA=
+Date:   Wed, 13 Nov 2019 03:29:31 +0000
+Message-ID: <d0d2bcf7-9d9d-40f9-335d-ebcdafdf9969@suse.com>
+References: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915DFB0ED@dggeml505-mbs.china.huawei.com>
+ <yq18soksgji.fsf@oracle.com>
+In-Reply-To: <yq18soksgji.fsf@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0269.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a1::17) To MN2PR18MB3278.namprd18.prod.outlook.com
+ (2603:10b6:208:168::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=LDuncan@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [73.25.22.216]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 83524f52-6784-44ed-ffbc-08d767e9b23e
+x-ms-traffictypediagnostic: MN2PR18MB2864:
+x-microsoft-antispam-prvs: <MN2PR18MB2864EC7490651EEAEB7220F3DA760@MN2PR18MB2864.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0220D4B98D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(4636009)(396003)(346002)(136003)(366004)(376002)(39860400002)(189003)(199004)(6246003)(81166006)(66446008)(36756003)(31686004)(71200400001)(71190400001)(8676002)(66476007)(66946007)(64756008)(66556008)(81156014)(80792005)(66066001)(6116002)(3846002)(14444005)(256004)(2906002)(486006)(110136005)(52116002)(8936002)(6486002)(6436002)(478600001)(14454004)(54906003)(6512007)(26005)(316002)(7736002)(7416002)(186003)(86362001)(4744005)(102836004)(11346002)(305945005)(76176011)(31696002)(53546011)(99286004)(229853002)(476003)(2616005)(5660300002)(6506007)(386003)(4326008)(25786009)(446003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB2864;H:MN2PR18MB3278.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 3UJnH/qh0t7d9gJZxIgWF2cZ3n2Ty8Kl8lAcDUeJn69H+9RjGWd/HK4tNYKijOs8aNYhTtsuTSLfjca1UAfQPB5beAa5gMzBv5F+VD6O191e8HSxikx+cnn/bmT/h0HGbuZUqu8u88h7FWbqiPmp88PNtEl3vhKrAgd9E2DGvFaEjHUe2MmK9leGaqaNfUgONtA/uo1QCYr5mNOdGQgVic4Bk05LER7iUb0uVUoi4/6D+xKJdgU48Qp7qWktJD1a+FcFzjpo8BayDd1k3sFjU9DomPJ/He+5Jg1eqC4yi9hGgsC9ceT3sQ5wnG7tIuIh3ZlkttF8t+XrFxfTNHC77UT6yhMKbh3T67NLm6TOIYmE2iuyzCTkHX4afz47nBnAQPPv3+t+iQCZDU4B9I2IIvbsQH+xx4iRREUIz60/VpRzwUFm5okQDtpxNDUw0DNM
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <904369790D2AD140B3302D827380C40F@namprd18.prod.outlook.com>
 Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83524f52-6784-44ed-ffbc-08d767e9b23e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 03:29:31.5866
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: I9i8TdS4K5116ytW1dn8r7fTwwxXy4XHE56owZ5h/wxomp8Bq9WwW6JhQdTLEFAG6dijQeV/KodeHmCaAO984Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2864
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBEZWFyIE1hcmssDQo+IFRoYW5rcyBhIGxvdCBmb3IgdGhlIHJlcGx5LiANCj4gDQo+IEFzIHNh
-aWQgaW4gbGFzdCByZXBseSwgc3ZfcGMgY2FuIGJlIGEgbW9kdWxlIHRleHQsIHRoZW4gbW9yZSBj
-aGVjayBuZWVkZWQuDQoNCklmIHN2X3BjIGlzIGluIG1vZHVsZSB0ZXh0IGFyZWEsIGtlcm5lbF90
-ZXh0X2FkZHJlc3MoKSByZXR1cm5zIHRydWUuDQoNCj4gDQo+IEFuZCBiZXNpZGUgY3Jhc2ggYXQg
-MTAwMywgd2UgbWF5IGFsc28gZ2V0IGNyYXNoIGF0IDEwMDEsIHRoZSBmcmFtZSBpcyBpbnZhbGlk
-LiAoVGhlIGxhc3Qgc3ZfcHYgaXMgdmFsaWQgYW5kIHN2X2ZyYW1lIGlzIGludmFsaWQpLCB0aGVu
-IG1vcmUgY2hlY2sgbmVlZGVkLiANCg0KVGhlcmUncyBhIGJhc2ljIGNoZWNrIGZvciBzdl9mcCBh
-dCB0aGUgZW5kIG9mIDEwMDQuDQpCdXQgSSdtIG5vdCBzdXJlIGlzIGl0IGVub3VnaCB0byBwcmV2
-ZW50IHRoZSAxMDAxIGNyYXNoIHlvdSBtZW50aW9uZWQuDQpTaG91bGQgd2UgYWRkIGEgdmVyaWZ5
-X3N0YWNrIGZvciBzdl9mcD8NCg0KPiANCj4gQW5kIHdlIG9mdGVuIHNob3dfZGF0YSBhcm91bmQg
-dGhlIGdlbmVyYWwgcHJvcG9zYWwgcmVnaXN0ZXJzIHdoZW4ga2VybmVsIGNyYXNoLiBXaGVuIHRo
-ZXkgY29udGFpbiBhbiBhZGRyZXNzIG1hcHBpbmcgZm9yIGEgaHcgcmVnaXN0ZXIgYnV0IGNhbsKS
-dCBhY2Nlc3MgYmVjYXVzZSBjbG9jayBnYXRlZCwgaXQgd2lsbCBjcmFzaCBhZ2FpbiBiZWNhdXNl
-IGRvX2JhZCgpIGlzIGludm9sdmVkLiAoY29udGludW91cyBjcmFzaCBpbiBhcm0gYW5kIGhhbmcg
-YXQgZGllX2xvY2sgaW4gYXJtNjQpDQo+IA0KPiBTbywgd2h5IG5vdCBjaGVjayB0aGUgX19leF90
-YWJsZSBpbiBkb19iYWQoKSA/DQo+IA0KDQpPbiBvdXIgYXJtIHBsYXRmb3JtLCBrZXJuZWwganVz
-dCBkaWUgYmVjdWFzZSB0aGUgVW5oYW5kbGVkIGZhdWx0IGluIGZvcl9lYWNoX2ZyYW1lLg0KU28g
-SSdkIHJhdGhlciB0byBmaXggaXQgYmVmb3JlIHRoZSBjb250aW51b3VzIGNyYXNoIGhhcHBlbi4N
-Cg==
-
+T24gMTEvMTIvMTkgNTozNyBQTSwgTWFydGluIEsuIFBldGVyc2VuIHdyb3RlOg0KPiANCj4+IElu
+IGlzY3NpX2lmX3J4IGZ1bmMsIGFmdGVyIHJlY2VpdmluZyBvbmUgcmVxdWVzdCB0aHJvdWdoDQo+
+PiBpc2NzaV9pZl9yZWN2X21zZyBmdW5jLCBpc2NzaV9pZl9zZW5kX3JlcGx5IHdpbGwgYmUgY2Fs
+bGVkIHRvIHRyeSB0bw0KPj4gcmVwbHkgdGhlIHJlcXVlc3QgaW4gZG8tbG9vcC4gSWYgdGhlIHJl
+dHVybiBvZiBpc2NzaV9pZl9zZW5kX3JlcGx5DQo+PiBmdW5jIHJldHVybiAtRUFHQUlOIGFsbCB0
+aGUgdGltZSwgb25lIGRlYWRsb29wIHdpbGwgb2NjdXIuDQo+PiAgDQo+PiBGb3IgZXhhbXBsZSwg
+YSBjbGllbnQgb25seSBzZW5kIG1zZyB3aXRob3V0IGNhbGxpbmcgcmVjdm1zZyBmdW5jLCANCj4+
+IHRoZW4gaXQgd2lsbCByZXN1bHQgaW4gdGhlIHdhdGNoZG9nIHNvZnQgbG9ja3VwLiANCj4+IFRo
+ZSBkZXRhaWxzIGFyZSBnaXZlbiBhcyBmb2xsb3dzLA0KPiANCj4gTGVlL0NocmlzL1VscmljaDog
+UGxlYXNlIHJldmlldyENCj4gDQoNCkkgYmVsaWV2ZSBJIGFscmVhZHkgYWRkZWQgbXkgUmV2aWV3
+ZWQtYnkgdGFnLiBEbyB5b3UgbWVhbiBwYXN0IHRoYXQ/DQpQZXJoYXBzIEkgbWlzc2VkIHNvbWV0
+aGluZy4NCi0tIA0KTGVlIER1bmNhbg0K
