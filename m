@@ -2,79 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E3DFA382
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:12:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3696FA42C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730904AbfKMCJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:09:53 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39438 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbfKMCJt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:09:49 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUi5t-0008S0-DR; Wed, 13 Nov 2019 02:09:17 +0000
-Date:   Wed, 13 Nov 2019 02:09:17 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v15 6/9] namei: LOOKUP_{IN_ROOT,BENEATH}: permit limited
- ".." resolution
-Message-ID: <20191113020917.GC26530@ZenIV.linux.org.uk>
-References: <20191105090553.6350-1-cyphar@cyphar.com>
- <20191105090553.6350-7-cyphar@cyphar.com>
+        id S1730186AbfKMCOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:14:44 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6648 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727577AbfKMCOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:14:42 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C6FE83DB6A79074E0F32;
+        Wed, 13 Nov 2019 10:14:40 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 13 Nov 2019
+ 10:14:32 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <perex@perex.cz>,
+        <davem@davemloft.net>, <joe@perches.com>, <yuehaibing@huawei.com>,
+        <tglx@linutronix.de>
+CC:     <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] staging: hp100: Fix build error without ETHERNET
+Date:   Wed, 13 Nov 2019 10:13:06 +0800
+Message-ID: <20191113021306.35464-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191105090553.6350-7-cyphar@cyphar.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 08:05:50PM +1100, Aleksa Sarai wrote:
+It should depends on ETHERNET, otherwise building fails:
 
-> One other possible alternative (which previous versions of this patch
-> used) would be to check with path_is_under() if there was a racing
-> rename or mount (after re-taking the relevant seqlocks). While this does
-> work, it results in possible O(n*m) behaviour if there are many renames
-> or mounts occuring *anywhere on the system*.
+drivers/staging/hp/hp100.o: In function `hp100_pci_remove':
+hp100.c:(.text+0x165): undefined reference to `unregister_netdev'
+hp100.c:(.text+0x214): undefined reference to `free_netdev'
 
-BTW, do you realize that open-by-fhandle (or working nfsd, for that matter)
-will trigger arseloads of write_seqlock(&rename_lock) simply on d_splice_alias()
-bringing disconnected subtrees in contact with parent?
+Fixes: 52340b82cf1a ("hp100: Move 100BaseVG AnyLAN driver to staging")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/hp/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/hp/Kconfig b/drivers/staging/hp/Kconfig
+index fb395cf..f20ab21 100644
+--- a/drivers/staging/hp/Kconfig
++++ b/drivers/staging/hp/Kconfig
+@@ -6,6 +6,7 @@
+ config NET_VENDOR_HP
+ 	bool "HP devices"
+ 	default y
++	depends on ETHERNET
+ 	depends on ISA || EISA || PCI
+ 	---help---
+ 	  If you have a network (Ethernet) card belonging to this class, say Y.
+-- 
+2.7.4
+
+
