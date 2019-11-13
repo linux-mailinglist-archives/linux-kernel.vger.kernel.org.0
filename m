@@ -2,46 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94717FAE09
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F01FAE0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbfKMKGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 05:06:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:37168 "EHLO
+        id S1727531AbfKMKHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 05:07:01 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:37176 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbfKMKGn (ORCPT
+        with ESMTP id S1727472AbfKMKGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:06:43 -0500
+        Wed, 13 Nov 2019 05:06:46 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUpXe-0000HF-Ld; Wed, 13 Nov 2019 11:06:26 +0100
+        id 1iUpXe-0000HE-KD; Wed, 13 Nov 2019 11:06:26 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 449CD1C0357;
-        Wed, 13 Nov 2019 11:06:26 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B18121C0092;
+        Wed, 13 Nov 2019 11:06:25 +0100 (CET)
 Date:   Wed, 13 Nov 2019 10:06:25 -0000
-From:   "tip-bot2 for Alexander Shishkin" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Ben Dooks (Codethink)" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/core: Consistently fail fork on allocation failures
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+Subject: [tip: perf/urgent] perf/core: Fix missing static inline on
+ perf_cgroup_switch()
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Stephane Eranian <eranian@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191105075702.60319-1-alexander.shishkin@linux.intel.com>
-References: <20191105075702.60319-1-alexander.shishkin@linux.intel.com>
+In-Reply-To: <20191106132527.19977-1-ben.dooks@codethink.co.uk>
+References: <20191106132527.19977-1-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
-Message-ID: <157363958587.29376.2994304953046746827.tip-bot2@tip-bot2>
+Message-ID: <157363958523.29376.8580564475361888433.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -57,54 +59,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     697d877849d4b34ab58d7078d6930bad0ef6fc66
-Gitweb:        https://git.kernel.org/tip/697d877849d4b34ab58d7078d6930bad0ef6fc66
-Author:        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-AuthorDate:    Tue, 05 Nov 2019 09:57:02 +02:00
+Commit-ID:     d00dbd29814236ad128ff9517e8f7af6b6ef4ba0
+Gitweb:        https://git.kernel.org/tip/d00dbd29814236ad128ff9517e8f7af6b6ef4ba0
+Author:        Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
+AuthorDate:    Wed, 06 Nov 2019 13:25:27 
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 13 Nov 2019 08:16:43 +01:00
+CommitterDate: Wed, 13 Nov 2019 08:16:44 +01:00
 
-perf/core: Consistently fail fork on allocation failures
+perf/core: Fix missing static inline on perf_cgroup_switch()
 
-Commit:
+It looks like a "static inline" has been missed in front
+of the empty definition of perf_cgroup_switch() under
+certain configurations.
 
-  313ccb9615948 ("perf: Allocate context task_ctx_data for child event")
+Fixes the following sparse warning:
 
-makes the inherit path skip over the current event in case of task_ctx_data
-allocation failure. This, however, is inconsistent with allocation failures
-in perf_event_alloc(), which would abort the fork.
+  kernel/events/core.c:1035:1: warning: symbol 'perf_cgroup_switch' was not declared. Should it be static?
 
-Correct this by returning an error code on task_ctx_data allocation
-failure and failing the fork in that case.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: https://lkml.kernel.org/r/20191105075702.60319-1-alexander.shishkin@linux.intel.com
+Link: https://lkml.kernel.org/r/20191106132527.19977-1-ben.dooks@codethink.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
  kernel/events/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7655441..466e333 100644
+index 466e333..00a0146 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -11802,7 +11802,7 @@ inherit_event(struct perf_event *parent_event,
- 						   GFP_KERNEL);
- 		if (!child_ctx->task_ctx_data) {
- 			free_event(child_event);
--			return NULL;
-+			return ERR_PTR(-ENOMEM);
- 		}
- 	}
+@@ -1031,7 +1031,7 @@ perf_cgroup_set_timestamp(struct task_struct *task,
+ {
+ }
  
+-void
++static inline void
+ perf_cgroup_switch(struct task_struct *task, struct task_struct *next)
+ {
+ }
