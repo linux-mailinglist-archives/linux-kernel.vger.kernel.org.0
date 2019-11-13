@@ -2,75 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09124FA438
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 174AFFA483
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730589AbfKMCPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:15:07 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:54550 "EHLO
+        id S1729758AbfKMCRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:17:33 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:57222 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727840AbfKMCO7 (ORCPT
+        with ESMTP id S1727994AbfKMCRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:14:59 -0500
+        Tue, 12 Nov 2019 21:17:31 -0500
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2EG8f062341;
-        Wed, 13 Nov 2019 02:14:42 GMT
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2ELvC062491;
+        Wed, 13 Nov 2019 02:17:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
  from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2019-08-05;
- bh=5+sd2HaueY26dn+rgJI+YCERp7oCIRvfIJ/MF+t4KsY=;
- b=LjpMbbhyF3ErFyyXfQctAaayPzt+DwBn8DGBpTj8ZGUvS6now9Eq89ZL3lbUqOMNYrJD
- p6xqnATUhdW86bUQV35HaAc8s+AaHV3HgDnxXk8rqcNTLh++dEDIRv/ULGmCSU5qQf7M
- mckgf/cIjGISRyf33iZrd5CyT+ixZlu/Y0mz0O1CkZ4g/cxmEgYCeAIHDEuPLj9uNDLJ
- XIssxhOMxV2K4BHGM+3Pbn5HCRMPWPLSKB4Tr7EW6T3xHw4kQUT9e/RY181x/nA/+Tg6
- v/8Y1WjN6JYrynqJs0jPHOLCn5fcpF6tKHWwWSnrlrGExYA+MgDHUdEAuu3IBRhHiNXU zg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2w5mvtrypx-1
+ bh=QBIeg2OL5OqL9nUGXU0TF+QIKQqRYIW2AdRz3DyL33Q=;
+ b=h+ItZ4rFIH9ie2n2ORynnSBNg0Wrj/q7d3YL9E+lkvSjLvd5yiywHMQO3uACb/hgfyEX
+ hczE8HCJg6XAU+bZR1Rt84QDLzdaHeIm7TXQCGLnZaoaJuIuQUBLe+YqecArBgduDAWb
+ ZxPh+ueRNH1CJY8yEbd0OqwvGLD7BUmnUhZSb07tpx1DoWFmFrR7H/6RiZiSQU0YAaTJ
+ v2mzRr75NQbKRmoKbYWbATaJcsHUA9ToqIJrUBD1dvUpfIR5MlcS7L6NaRYfUflR59ve
+ 4Cgz0PwuqdYG0gnGri+S+/Yv0EBoa9LMCOZq3MzKdAFtFXFjSwqm2ULpbFnrQZd6eUsN rA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2w5mvts000-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 02:14:42 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2EPIb176522;
-        Wed, 13 Nov 2019 02:14:42 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2w7khmesb7-1
+        Wed, 13 Nov 2019 02:17:20 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2DQ1l146421;
+        Wed, 13 Nov 2019 02:15:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2w7j04a6hx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 02:14:42 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAD2EQcd029499;
-        Wed, 13 Nov 2019 02:14:27 GMT
+        Wed, 13 Nov 2019 02:15:20 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAD2FJ70026935;
+        Wed, 13 Nov 2019 02:15:19 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Nov 2019 18:14:26 -0800
-To:     Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Janek Kotas <jank@cadence.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v3 0/2] scsi: ufs: Add driver for TI wrapper for Cadence UFS IP
+        with ESMTP ; Tue, 12 Nov 2019 18:15:19 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] hisi_sas: Some misc minor patches
 From:   "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
-References: <20191108164857.11466-1-vigneshr@ti.com>
-Date:   Tue, 12 Nov 2019 21:14:22 -0500
-In-Reply-To: <20191108164857.11466-1-vigneshr@ti.com> (Vignesh Raghavendra's
-        message of "Fri, 8 Nov 2019 22:18:55 +0530")
-Message-ID: <yq1o8xgr08x.fsf@oracle.com>
+References: <1573551059-107873-1-git-send-email-john.garry@huawei.com>
+Date:   Tue, 12 Nov 2019 21:15:16 -0500
+In-Reply-To: <1573551059-107873-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Tue, 12 Nov 2019 17:30:55 +0800")
+Message-ID: <yq1ftisr07f.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=783
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1910280000 definitions=main-1911130016
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=855 adultscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
  definitions=main-1911130016
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,10 +73,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Vignesh,
+John,
 
-> This series add DT bindings and driver for TI wrapper for Cadence UFS
-> IP that is present on TI's J721e SoC
+> This series includes some misc patches which were sitting on our
+> internal dev branch.
+>
+> Nothing extra special to note, just really some tidying and very minor
+> fixes.
 
 Applied to 5.5/scsi-queue, thanks!
 
