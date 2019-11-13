@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20917FA0B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C0F7FA0BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:52:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbfKMBv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:51:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40094 "EHLO mail.kernel.org"
+        id S1728149AbfKMBwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:52:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbfKMBvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:51:53 -0500
+        id S1728093AbfKMBwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:52:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5044A222CD;
-        Wed, 13 Nov 2019 01:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7952820674;
+        Wed, 13 Nov 2019 01:51:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609913;
-        bh=GwUErkfOcTNNe8fJakwxrN+hDieJPLPdT00X3OCbnKQ=;
+        s=default; t=1573609920;
+        bh=r8hnijHJ0SYL+qyAwyuyhR0Z1cWediu4nKfrfBcM7Z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DmpkV7Wm4Exx0ySmIGmPZZ7/SXu4hpf42X1Va4LHvP8qP1dD+/Fh8tUOlPa5PFqej
-         V+pjG8kbZ+ETSg1rYZ9auYLh+/dYl2uIptJ1SF4VQOa+/ijUolLxSZ/QnSqpphOPlj
-         q0ByrSIxEbb3jBP1dMK7ARjENn0J2AqUtpieXUx4=
+        b=Gfjo+XwXI8EUxKXfZzQHNGqxBUUE+Wcj1PkXPC3YJ2rFzdVk4whajbR0Z1x9jJE7w
+         DoVSkMyvoBuSth2/D6DEzkqZeSNC5VH3QiT0S3dE3jJZAxezA8j3PBrbjyWfl4D2ZW
+         vD76y9kK0oCvSF607PBjxSIk5oSsIZN5veTV9GeU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen Yu <yu.c.chen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 062/209] PM / hibernate: Check the success of generating md5 digest before hibernation
-Date:   Tue, 12 Nov 2019 20:47:58 -0500
-Message-Id: <20191113015025.9685-62-sashal@kernel.org>
+Cc:     Radoslaw Tyl <radoslawx.tyl@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 068/209] ixgbe: Fix ixgbe TX hangs with XDP_TX beyond queue limit
+Date:   Tue, 12 Nov 2019 20:48:04 -0500
+Message-Id: <20191113015025.9685-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -45,63 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Yu <yu.c.chen@intel.com>
+From: Radoslaw Tyl <radoslawx.tyl@intel.com>
 
-[ Upstream commit 749fa17093ff67b31dea864531a3698b6a95c26c ]
+[ Upstream commit 8d7179b1e2d64b3493c0114916486fe92e6109a9 ]
 
-Currently if get_e820_md5() fails, then it will hibernate nevertheless.
-Actually the error code should be propagated to upper caller so that
-the hibernation could be aware of the result and terminates the process
-if md5 digest fails.
+We have Tx hang when number Tx and XDP queues are more than 64.
+In XDP always is MTQC == 0x0 (64TxQs). We need more space for Tx queues.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/power/hibernate_64.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
-index c9986041a5e12..6c3ec193a2465 100644
---- a/arch/x86/power/hibernate_64.c
-+++ b/arch/x86/power/hibernate_64.c
-@@ -266,9 +266,9 @@ static int get_e820_md5(struct e820_table *table, void *buf)
- 	return ret;
- }
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index 85280765d793d..f3e21de3b1f0b 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -3582,12 +3582,18 @@ static void ixgbe_setup_mtqc(struct ixgbe_adapter *adapter)
+ 		else
+ 			mtqc |= IXGBE_MTQC_64VF;
+ 	} else {
+-		if (tcs > 4)
++		if (tcs > 4) {
+ 			mtqc = IXGBE_MTQC_RT_ENA | IXGBE_MTQC_8TC_8TQ;
+-		else if (tcs > 1)
++		} else if (tcs > 1) {
+ 			mtqc = IXGBE_MTQC_RT_ENA | IXGBE_MTQC_4TC_4TQ;
+-		else
+-			mtqc = IXGBE_MTQC_64Q_1PB;
++		} else {
++			u8 max_txq = adapter->num_tx_queues +
++				adapter->num_xdp_queues;
++			if (max_txq > 63)
++				mtqc = IXGBE_MTQC_RT_ENA | IXGBE_MTQC_4TC_4TQ;
++			else
++				mtqc = IXGBE_MTQC_64Q_1PB;
++		}
+ 	}
  
--static void hibernation_e820_save(void *buf)
-+static int hibernation_e820_save(void *buf)
- {
--	get_e820_md5(e820_table_firmware, buf);
-+	return get_e820_md5(e820_table_firmware, buf);
- }
- 
- static bool hibernation_e820_mismatch(void *buf)
-@@ -288,8 +288,9 @@ static bool hibernation_e820_mismatch(void *buf)
- 	return memcmp(result, buf, MD5_DIGEST_SIZE) ? true : false;
- }
- #else
--static void hibernation_e820_save(void *buf)
-+static int hibernation_e820_save(void *buf)
- {
-+	return 0;
- }
- 
- static bool hibernation_e820_mismatch(void *buf)
-@@ -334,9 +335,7 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
- 
- 	rdr->magic = RESTORE_MAGIC;
- 
--	hibernation_e820_save(rdr->e820_digest);
--
--	return 0;
-+	return hibernation_e820_save(rdr->e820_digest);
- }
- 
- /**
+ 	IXGBE_WRITE_REG(hw, IXGBE_MTQC, mtqc);
 -- 
 2.20.1
 
