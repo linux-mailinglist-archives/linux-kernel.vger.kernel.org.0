@@ -2,146 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34422FA7B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 04:56:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5463FA7D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 05:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfKMD4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 22:56:17 -0500
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:39380 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbfKMD4Q (ORCPT
+        id S1727339AbfKMEIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 23:08:05 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41580 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbfKMEIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 22:56:16 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47CW4V73MqzQlBG;
-        Wed, 13 Nov 2019 04:56:10 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id ovfePb6AeJGC; Wed, 13 Nov 2019 04:56:05 +0100 (CET)
-Date:   Wed, 13 Nov 2019 14:55:42 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
+        Tue, 12 Nov 2019 23:08:05 -0500
+Received: by mail-oi1-f193.google.com with SMTP id e9so538902oif.8;
+        Tue, 12 Nov 2019 20:08:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SfWsvDTJzevdEjzMrngS03ZeASmUAsKr6Bk84qRvmhU=;
+        b=lWkOrY6Ei/bGZoT3h0ZLzCVDxsZMY7ea12wDZxWc2DgCXpC1TNb3PLCdqz3gn9mOVa
+         ZSWlnEGg7h822JuhyOSp2krq1BlFTwEh6SUTNMLxpC/+V6GrNbErqx8KkfaizqSI+dsO
+         CfDDyT/u6Yg0oaWtcNiBE5I/gjW75lZQDm9CuVBJiKuK1b1tZF9gXYV9+nGyWvy3Arjh
+         ADDGUPcQS0SqVsBWp8zKEL/nY8CBBr5BwOowVlgi30ECD48YjcuCZ+jOe1fVt7KqBqt1
+         7KgeEPrAmU632auPCVJ7nSgfevHf7OoHb/l6NVkRkLMRGPXWjWdy/1VGd1i/+n84vyEo
+         KUhA==
+X-Gm-Message-State: APjAAAU6t7KtjWEA11atbzBaKxRvkkYu8De04FJFqF4w7Da1+qr9KvBM
+        G4/1Xncuycb7zLtVzPqTRw==
+X-Google-Smtp-Source: APXvYqwRUjP0Ny/K1cwD676eUUZNEvW/sKvkoiqZmyITmDaRQZxyPexAR+dfGrVGINIfyHcGyj/tlQ==
+X-Received: by 2002:aca:5cd5:: with SMTP id q204mr900116oib.14.1573618083945;
+        Tue, 12 Nov 2019 20:08:03 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e193sm296871oib.53.2019.11.12.20.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 20:08:03 -0800 (PST)
+Date:   Tue, 12 Nov 2019 22:08:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v15 5/9] namei: LOOKUP_IN_ROOT: chroot-like scoped
- resolution
-Message-ID: <20191113035542.3ckc7oudahn3xtnj@yavin.dot.cyphar.com>
-References: <20191105090553.6350-1-cyphar@cyphar.com>
- <20191105090553.6350-6-cyphar@cyphar.com>
- <20191113020307.GB26530@ZenIV.linux.org.uk>
- <20191113024414.wlmvtjstpnkxa36n@yavin.dot.cyphar.com>
- <20191113025941.GE26530@ZenIV.linux.org.uk>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 3/5] PCI: rcar: Add R-Car PCIe endpoint device tree
+ bindings
+Message-ID: <20191113040802.GA8269@bogus>
+References: <20191106193609.19645-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20191106193609.19645-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVZwgVnq2kwjNJQHfvUH0sk6M7Hz-AJR82jMOsCNfW9wQ@mail.gmail.com>
+ <CA+V-a8swtOUaxKnCdiTV5wvvxLEJ6XdODL=7bvQmFKY0zQTj2w@mail.gmail.com>
+ <CAMuHMdXkbWkQgswMNL7Dw7_jucH+MsuAW+-CjoGVYsm=tjShRw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="j4f7d32jpyqpzflk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191113025941.GE26530@ZenIV.linux.org.uk>
+In-Reply-To: <CAMuHMdXkbWkQgswMNL7Dw7_jucH+MsuAW+-CjoGVYsm=tjShRw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 07, 2019 at 09:08:35PM +0100, Geert Uytterhoeven wrote:
+> Hi Prabhakar,
+> 
+> On Thu, Nov 7, 2019 at 10:26 AM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Thu, Nov 7, 2019 at 8:44 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Wed, Nov 6, 2019 at 8:36 PM Lad Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > > > From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > This patch adds the bindings for the R-Car PCIe endpoint driver.
+> > > >
+> > > > Signed-off-by: Lad, Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Thanks for your patch!
+> > >
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
+> > > > @@ -0,0 +1,43 @@
+> > > > +* Renesas R-Car PCIe Endpoint Controller DT description
+> > > > +
+> > > > +Required properties:
+> > > > +           "renesas,pcie-ep-r8a774c0" for the R8A774C0 SoC;
+> > > > +           "renesas,pcie-ep-rcar-gen3" for a generic R-Car Gen3 or
+> > > > +                                    RZ/G2 compatible device.
+> > >
+> > > Unless I'm missing something, this is for the exact same hardware block as
+> > > Documentation/devicetree/bindings/pci/rcar-pci.txt?
+> > > So shouldn't you amend those bindings, instead of adding new compatible
+> > > values?
+> > > Please remember that DT describes hardware, not software policy.
+> > > So IMHO choosing between host and endpoint is purely a configuration
+> > > issue, and could be indicated by the presence or lack of some DT properties.
+> > > E.g. host mode requires both "bus-range" and "device_type" properties,
+> > > so their absence could indicate endpoint mode.
+> > >
+> > yes its the same hardware block as described in the rcar-pci.txt, I
+> > did think about amending it
+> > but  it might turn out to be bit messy,
+> >
+> > required properties host ======required properties Endpoint
+> > ====================||==================
+> > 1: reg                                || reg
+> > 2:bus-range                      || reg names
+> > 3: device_type                  || resets
+> > 4: ranges                          || clocks
+> > 5: dma-ranges                  || clock-names
+> > 6: interrupts                      ||
+> > 7: interrupt-cells               ||
+> > 8: interrupt-map-mask     ||
+> > 9: clocks                          ||
+> > 10: clock-names             ||
+> 
+> We have a similar situation with SPI, where a controller can operate in
+> master or slave mode, based on the absence or presence of the
+> "spi-slave" DT property.
+> 
+> > and if I go ahead with the same compatible string that would mean to
+> > add support for endpoint
+> > mode in the host driver itself. I did follow the examples of
+> 
+> You can still have two separate drivers, binding against the same
+> compatible value.  Just let the .probe() function return -ENODEV if it
+> discovers (by looking at DT properties) if the node is configured for
+> the other mode.
+> Which brings us to my next questions: is there any code that could be
+> shared between the drivers for the two modes?
+> 
+> > rockchip/cadence/designware where
+> > its the same hardware block but has two different binding files one
+> > for host mode and other for
+> > endpoint mode.
+> 
+> Having two separate DT binding documents sounds fine to me, if unifying
+> them makes things too complex.
+> However, I think they should use the same compatible value, because the
+> hardware block is the same, but just used in a different mode.
+> 
+> Rob/Mark: Any input from the DT maintainers?
 
---j4f7d32jpyqpzflk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Separate files makes sense because different modes will want to 
+include different common schemas. We've generally been doing different 
+compatibles too which makes validating the node has the right set of 
+properties easier.
+ 
+> > > > +- reg: Five register ranges as listed in the reg-names property
+> > > > +- reg-names: Must include the following names
+> > > > +       - "apb-base"
+> > > > +       - "memory0"
+> > > > +       - "memory1"
+> > > > +       - "memory2"
+> > > > +       - "memory3"
+> > >
+> > > What is the purpose of the last 4 regions?
+> > > Can they be chosen by the driver, at runtime?
+> > >
+> > no the driver cannot choose them at runtime, as these are the only
+> > PCIE memory(0/1/2/3) ranges
+> > in the AXI address space where host memory can be mapped.
+> 
+> Are they fixed by the PCIe hardware, i.e. could they be looked up by the
+> driver based on the compatible value?
 
-On 2019-11-13, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Wed, Nov 13, 2019 at 01:44:14PM +1100, Aleksa Sarai wrote:
-> > On 2019-11-13, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > On Tue, Nov 05, 2019 at 08:05:49PM +1100, Aleksa Sarai wrote:
-> > >=20
-> > > > @@ -2277,12 +2277,20 @@ static const char *path_init(struct nameida=
-ta *nd, unsigned flags)
-> > > > =20
-> > > >  	nd->m_seq =3D read_seqbegin(&mount_lock);
-> > > > =20
-> > > > -	/* Figure out the starting path and root (if needed). */
-> > > > -	if (*s =3D=3D '/') {
-> > > > +	/* Absolute pathname -- fetch the root. */
-> > > > +	if (flags & LOOKUP_IN_ROOT) {
-> > > > +		/* With LOOKUP_IN_ROOT, act as a relative path. */
-> > > > +		while (*s =3D=3D '/')
-> > > > +			s++;
-> > >=20
-> > > Er...  Why bother skipping slashes?  I mean, not only link_path_walk()
-> > > will skip them just fine, you are actually risking breakage in this:
-> > >                 if (*s && unlikely(!d_can_lookup(dentry))) {
-> > >                         fdput(f);
-> > >                         return ERR_PTR(-ENOTDIR);
-> > >                 }
-> > > which is downstream from there with you patch, AFAICS.
-> >=20
-> > I switched to stripping the slashes at your suggestion a few revisions
-> > ago[1], and had (wrongly) assumed we needed to handle "/" somehow in
-> > path_init(). But you're quite right about link_path_walk() -- and I'd be
-> > more than happy to drop it.
->=20
-> That, IIRC, was about untangling the weirdness around multiple calls of
-> dirfd_path_init() and basically went "we might want just strip the slashes
-> in case of that flag very early in the entire thing, so that later the
-> normal logics for absolute/relative would DTRT".
+That would be strange for a memory range.
 
-Ah okay, I'd misunderstood the point you were making in that thread.
+Sounds like like 'ranges' though I'm not sure if 'ranges' for an EP 
+makes sense or what that should look like.
 
-> Since your check is right next to checking for absolute pathnames (and
-> not in the very beginning of path_init()), we might as well turn the
-> check for absolute pathname into *s =3D=3D '/' && !(flags &
-> LOOKUP_IN_ROOT) and be done with that.
-
-Yup, agreed.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---j4f7d32jpyqpzflk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXct+uwAKCRCdlLljIbnQ
-EpaMAQCKfJalyFfg/QA8aH/wuTwb0JmHpxt9HKverNfj5BncXAEA8J+s2/4xFPcn
-vy6IqraafPiOMkqsiqA03ofQ3tR8tQ4=
-=Qq3t
------END PGP SIGNATURE-----
-
---j4f7d32jpyqpzflk--
+Rob
