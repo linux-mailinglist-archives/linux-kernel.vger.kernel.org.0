@@ -2,188 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B84FB9B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:23:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F25FB9C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfKMUXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 15:23:54 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:53817 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726179AbfKMUXy (ORCPT
+        id S1727116AbfKMU1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 15:27:24 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11058 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfKMU1X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 15:23:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573676632;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rzZq344d343lqY0cB96vERZIMbwEpbMc1qyagFZqr84=;
-        b=We8MKxKp+1KcYxDql7w5adeEQlla+KrEiFTn7GhyD5jebz3Oo9bB4u+tiYZ0PRdw1IMnfE
-        CvsTd470AD1SPu7iEKxBNjztQgf3OVx3gYC2tjL6cO0t9OWNdK1dbeSOIgIgIchvU7kT7/
-        FcX6bmobM2NKJPNN/w6UH2ax97NlPI4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-428-OEtgoPJFNBu_MAPc-IHVhg-1; Wed, 13 Nov 2019 15:23:51 -0500
-Received: by mail-wr1-f69.google.com with SMTP id v6so2472079wrm.18
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 12:23:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=YYEHOrtwyZ8kvvsSEpNNT3yjbAyxfTpUvM+Fm+WLKR4=;
-        b=mUHBh+fjNo3qP5t9sl7xnvzsCJSpqLDUjDh0zUnQr1Gt103x+bPjRXe/C9DBXwWREc
-         wfI4H6uD+7iunldnr0WhYAXqgh8pjdOcFZ4/r7R43YRgm6LCvZD4kd0Ybp5hPC6yUebO
-         VKLXDUlNZMr33f2ktf/1vLyx+9eXuJZRCihJ11T2FQXxeCz4PhxSrb1tFKwWdeKOU/D5
-         MwiMyYM2/9SzVxuzC31YNJwtCGeraM7ASrmi5mTKbZXz21FadxMR2IF7xlYrfuXZhdZX
-         oz3fX/ZyjYmMYF56VVkj2OobYHNaAC5SAxAt4S2rBrsqY/6fpKlhu3TRvcgor4GwlwRu
-         tEyw==
-X-Gm-Message-State: APjAAAVX/Beq1uNLQ5Xw4uJGx+Xu+UrQ+nu89RWiqBON2kkX8Ndw4Z8+
-        IZCG365MirECIqkG+iFImjzvT7Jyjad4QrtmBmm8d0QipdLSvB0l6byVfVgSiyA2PuUM9gF1MEZ
-        vt4vTwWyvNjfALadGQV1wJAhT
-X-Received: by 2002:a1c:9e4c:: with SMTP id h73mr4709741wme.1.1573676628682;
-        Wed, 13 Nov 2019 12:23:48 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzOsersnOVnrdO0EYRzGoHQxSW0/jGkAXyM05Z5hLlPfQ37B58HhXl+00eXolXMtlIvXsE+4Q==
-X-Received: by 2002:a1c:9e4c:: with SMTP id h73mr4709720wme.1.1573676628385;
-        Wed, 13 Nov 2019 12:23:48 -0800 (PST)
-Received: from [192.168.3.122] (p5B0C63AB.dip0.t-ipconnect.de. [91.12.99.171])
-        by smtp.gmail.com with ESMTPSA id t1sm4720307wrn.81.2019.11.13.12.23.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2019 12:23:47 -0800 (PST)
-From:   David Hildenbrand <david@redhat.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 2/3] mm: Introduce subsection_dev_map
-Date:   Wed, 13 Nov 2019 21:23:47 +0100
-Message-Id: <7B45B9B3-0947-459A-B4FD-9F6CB2F9EF3A@redhat.com>
-References: <CAPcyv4h-aPh5yGtAmTm28HgSz5evnvQjq7eh=GetnkY8dqO_Uw@mail.gmail.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>, "cai@lca.pw" <cai@lca.pw>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-In-Reply-To: <CAPcyv4h-aPh5yGtAmTm28HgSz5evnvQjq7eh=GetnkY8dqO_Uw@mail.gmail.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-X-Mailer: iPhone Mail (17A878)
-X-MC-Unique: OEtgoPJFNBu_MAPc-IHVhg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Wed, 13 Nov 2019 15:27:23 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcc66ef0001>; Wed, 13 Nov 2019 12:26:23 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 13 Nov 2019 12:27:19 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 13 Nov 2019 12:27:19 -0800
+Received: from [10.2.160.107] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 20:27:18 +0000
+Subject: Re: [PATCH v4 09/23] mm/gup: introduce pin_user_pages*() and FOLL_PIN
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20191113042710.3997854-1-jhubbard@nvidia.com>
+ <20191113042710.3997854-10-jhubbard@nvidia.com>
+ <20191113185902.GB12915@iweiny-DESK2.sc.intel.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <d5b14492-45a9-914e-92db-29592c3634e5@nvidia.com>
+Date:   Wed, 13 Nov 2019 12:24:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191113185902.GB12915@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573676784; bh=ZP9QEqV97zzS7vyaMLJBGQGSKGW2tyNWtWpkiSoCJc4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=blBmwo40hUXWDReswYBJ9TKWl7H2L/k0XDDTqLc9LkITedj/TfVhMrycxbdicryg9
+         h3wCNANbDFiVSj6oyHjfFnRbLVuCRi3pWpRJRe/jbCLOFnYnWP5+VYQpU1VxmX02Oe
+         x63ynn9Lg49xuQZl/cSCofyxC/5cUmsD/0Qztzy4aTmtjHXl5koB/p/oGnI3O50jC6
+         JimPfnxSS5Hd9PocW7OekFWFS3ot4vxXyyvMqqBzeRQ9mC6jlTWwR4/WgqeBc/ncw1
+         PM3rgjSIKR9vLy74nuxe2z7dV2iTNewdvjl7FyfEINYcs/7W4YGwW/FeVW7CmMMCVV
+         2lZpQK+CR/Twg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/13/19 10:59 AM, Ira Weiny wrote:
+> On Tue, Nov 12, 2019 at 08:26:56PM -0800, John Hubbard wrote:
+>> Introduce pin_user_pages*() variations of get_user_pages*() calls,
+>> and also pin_longterm_pages*() variations.
+>>
+>> These variants all set FOLL_PIN, which is also introduced, and
+>> thoroughly documented.
+>>
+>> The pin_longterm*() variants also set FOLL_LONGTERM, in addition
+>> to FOLL_PIN:
+>>
+>>      pin_user_pages()
+>>      pin_user_pages_remote()
+>>      pin_user_pages_fast()
+>>
+>>      pin_longterm_pages()
+>>      pin_longterm_pages_remote()
+>>      pin_longterm_pages_fast()
+> 
+> At some point in this conversation I thought we were going to put in "unpin_*"
+> versions of these.
+> 
+> Is that still in the plans?
+> 
+
+Why yes it is! :)  Daniel Vetter and Jan Kara both already weighed in [1],
+in favor of "unpin_user_page*()", rather than "put_user_page*()".
+
+I'll change those names.
+
+[1] https://lore.kernel.org/r/20191113101210.GD6367@quack2.suse.cz
 
 
-> Am 13.11.2019 um 21:10 schrieb Dan Williams <dan.j.williams@intel.com>:
->=20
-> =EF=BB=BFOn Wed, Nov 13, 2019 at 11:53 AM David Hildenbrand <david@redhat=
-.com> wrote:
->>=20
->>=20
->>=20
->>>> Am 13.11.2019 um 20:06 schrieb Dan Williams <dan.j.williams@intel.com>=
-:
->>>=20
->>> =EF=BB=BFOn Wed, Nov 13, 2019 at 10:51 AM David Hildenbrand <david@redh=
-at.com> wrote:
->>>>=20
->>>>> On 08.11.19 20:13, Dan Williams wrote:
->>>>> On Thu, Nov 7, 2019 at 4:15 PM Toshiki Fukasawa
->>>>> <t-fukasawa@vx.jp.nec.com> wrote:
->>>>>>=20
->>>>>> Currently, there is no way to identify pfn on ZONE_DEVICE.
->>>>>> Identifying pfn on system memory can be done by using a
->>>>>> section-level flag. On the other hand, identifying pfn on
->>>>>> ZONE_DEVICE requires a subsection-level flag since ZONE_DEVICE
->>>>>> can be created in units of subsections.
->>>>>>=20
->>>>>> This patch introduces a new bitmap subsection_dev_map so that
->>>>>> we can identify pfn on ZONE_DEVICE.
->>>>>>=20
->>>>>> Also, subsection_dev_map is used to prove that struct pages
->>>>>> included in the subsection have been initialized since it is
->>>>>> set after memmap_init_zone_device(). We can avoid accessing
->>>>>> pages currently being initialized by checking subsection_dev_map.
->>>>>>=20
->>>>>> Signed-off-by: Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
->>>>>> ---
->>>>>> include/linux/mmzone.h | 19 +++++++++++++++++++
->>>>>> mm/memremap.c          |  2 ++
->>>>>> mm/sparse.c            | 32 ++++++++++++++++++++++++++++++++
->>>>>> 3 files changed, 53 insertions(+)
->>>>>>=20
->>>>>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->>>>>> index bda2028..11376c4 100644
->>>>>> --- a/include/linux/mmzone.h
->>>>>> +++ b/include/linux/mmzone.h
->>>>>> @@ -1174,11 +1174,17 @@ static inline unsigned long section_nr_to_pf=
-n(unsigned long sec)
->>>>>>=20
->>>>>> struct mem_section_usage {
->>>>>>        DECLARE_BITMAP(subsection_map, SUBSECTIONS_PER_SECTION);
->>>>>> +#ifdef CONFIG_ZONE_DEVICE
->>>>>> +       DECLARE_BITMAP(subsection_dev_map, SUBSECTIONS_PER_SECTION);
->>>>>> +#endif
->>>>>=20
->>>>> Hi Toshiki,
->>>>>=20
->>>>> There is currently an effort to remove the PageReserved() flag as som=
-e
->>>>> code is using that to detect ZONE_DEVICE. In reviewing those patches
->>>>> we realized that what many code paths want is to detect online memory=
-.
->>>>> So instead of a subsection_dev_map add a subsection_online_map. That
->>>>> way pfn_to_online_page() can reliably avoid ZONE_DEVICE ranges. I
->>>>> otherwise question the use case for pfn_walkers to return pages for
->>>>> ZONE_DEVICE pages, I think the skip behavior when pfn_to_online_page(=
-)
->>>>> =3D=3D false is the right behavior.
->>>>=20
->>>> To be more precise, I recommended an subsection_active_map, to indicat=
-e
->>>> which memmaps were fully initialized and can safely be touched (e.g., =
-to
->>>> read the zone/nid). This map would also be set when the devmem memmaps
->>>> were initialized (race between adding memory/growing the section and
->>>> initializing the memmap).
->>>>=20
->>>> See
->>>>=20
->>>> https://lkml.org/lkml/2019/10/10/87
->>>>=20
->>>> and
->>>>=20
->>>> https://www.spinics.net/lists/linux-driver-devel/msg130012.html
->>>=20
->>> I'm still struggling to understand the motivation of distinguishing
->>> "active" as something distinct from "online". As long as the "online"
->>> granularity is improved from sections down to subsections then most
->>> code paths are good to go. The others can use get_devpagemap() to
->>> check for ZONE_DEVICE in a race free manner as they currently do.
->>=20
->> I thought we wanted to unify access if we don=E2=80=99t really care abou=
-t the zone as in most pfn walkers - E.g., for zone shrinking.
->=20
-> Agree, when the zone does not matter, which is most cases, then
-> pfn_online() and pfn_valid() are sufficient.
->=20
->> Anyhow, a subsection online map would be a good start, we can reuse that=
- later for ZONE_DEVICE as well.
->=20
-> Cool, good to go with me sending a patch to introduce pfn_online() and
-> a corresponding subsection_map for the same?
-
-Yeah, let=E2=80=98s see how this turns out and if we=E2=80=98re on the same=
- page. Thanks!
-
->=20
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
