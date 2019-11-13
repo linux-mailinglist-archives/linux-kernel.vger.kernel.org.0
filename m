@@ -2,136 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB7AFFAC63
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:55:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C104FAC71
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfKMIyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 03:54:05 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52943 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfKMIyE (ORCPT
+        id S1727178AbfKMI7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 03:59:08 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37505 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfKMI7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 03:54:04 -0500
-X-Originating-IP: 93.34.114.233
-Received: from uno.localdomain (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 30C766000E;
-        Wed, 13 Nov 2019 08:53:57 +0000 (UTC)
-Date:   Wed, 13 Nov 2019 09:55:58 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/2] pinctrl: rza1: remove unnecerssary static inline
- function
-Message-ID: <20191113085558.l6rde7xug3paoojf@uno.localdomain>
-References: <20191112141748.GA22061@localhost.localdomain>
+        Wed, 13 Nov 2019 03:59:08 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iUoUN-0007cV-DA; Wed, 13 Nov 2019 09:58:59 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iUoUM-00024y-9q; Wed, 13 Nov 2019 09:58:58 +0100
+Date:   Wed, 13 Nov 2019 09:58:58 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [PATCH v4 4/7] pwm: sun4i: Add support to output source clock
+ directly
+Message-ID: <20191113085858.76rad3vpszknu4cp@pengutronix.de>
+References: <20191108084517.21617-1-peron.clem@gmail.com>
+ <20191108084517.21617-5-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bwknto7takkwphs5"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191112141748.GA22061@localhost.localdomain>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191108084517.21617-5-peron.clem@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---bwknto7takkwphs5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Matti,
-
-On Tue, Nov 12, 2019 at 04:17:48PM +0200, Matti Vaittinen wrote:
-> Having static inline oneliner does not benefit too much when it is
-> only called from another oneliner function. Remove some of the
-> 'onion'. This simplifies also the coming usage of the gpiolib
-> defines. We can do conversion from chip bits to gpiolib direction
-> defines as last step in the get_direction callback. Drivers can
-> use chip specific values in driver internal functions and do
-> conversion only once.
-
-I assume your: "[PATCH 2/2] pinctrl: Use new GPIO_LINE_DIRECTION"
-supersedes this one, am I right ?
-
-Thanks
-  j
-
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+On Fri, Nov 08, 2019 at 09:45:14AM +0100, Clément Péron wrote:
+> From: Jernej Skrabec <jernej.skrabec@siol.net>
+> 
+> PWM core has an option to bypass whole logic and output unchanged source
+> clock as PWM output. This is achieved by enabling bypass bit.
+> 
+> Note that when bypass is enabled, no other setting has any meaning, not
+> even enable bit.
+> 
+> This mode of operation is needed to achieve high enough frequency to
+> serve as clock source for AC200 chip which is integrated into same
+> package as H6 SoC.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> Signed-off-by: Clément Péron <peron.clem@gmail.com>
 > ---
->  drivers/pinctrl/pinctrl-rza1.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-> index 017fc6b3e27e..215db220d795 100644
-> --- a/drivers/pinctrl/pinctrl-rza1.c
-> +++ b/drivers/pinctrl/pinctrl-rza1.c
-> @@ -617,12 +617,6 @@ static void rza1_pin_reset(struct rza1_port *port, unsigned int pin)
->  	spin_unlock_irqrestore(&port->lock, irqflags);
->  }
->
-> -static inline int rza1_pin_get_direction(struct rza1_port *port,
-> -					 unsigned int pin)
-> -{
-> -	return !!rza1_get_bit(port, RZA1_PM_REG, pin);
-> -}
-> -
->  /**
->   * rza1_pin_set_direction() - set I/O direction on a pin in port mode
+>  drivers/pwm/pwm-sun4i.c | 44 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
+> index a10022d6c0fd..9cc928ab47bc 100644
+> --- a/drivers/pwm/pwm-sun4i.c
+> +++ b/drivers/pwm/pwm-sun4i.c
+> @@ -3,6 +3,10 @@
+>   * Driver for Allwinner sun4i Pulse Width Modulation Controller
 >   *
-> @@ -783,7 +777,7 @@ static int rza1_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
->  {
->  	struct rza1_port *port = gpiochip_get_data(chip);
->
-> -	return rza1_pin_get_direction(port, gpio);
-> +	return !!rza1_get_bit(port, RZA1_PM_REG, gpio);
->  }
->
->  static int rza1_gpio_direction_input(struct gpio_chip *chip,
->
-> base-commit: 70d97e099bb426ecb3ad4bf31e88dbf2ef4b2e4c
-> --
-> 2.21.0
->
->
-> --
-> Matti Vaittinen, Linux device drivers
-> ROHM Semiconductors, Finland SWDC
-> Kiviharjunlenkki 1E
-> 90220 OULU
-> FINLAND
->
-> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-> Simon says - in Latin please.
-> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-> Thanks to Simon Glass for the translation =]
+>   * Copyright (C) 2014 Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> + *
+> + * Limitations:
+> + * - When outputing the source clock directly, the PWM logic will be bypassed
+> + *   and the currently running period is not guaranteed to be completed
+>   */
+>  
+>  #include <linux/bitops.h>
+> @@ -73,6 +77,7 @@ static const u32 prescaler_table[] = {
+>  
+>  struct sun4i_pwm_data {
+>  	bool has_prescaler_bypass;
+> +	bool has_direct_mod_clk_output;
+>  	unsigned int npwm;
+>  };
+>  
+> @@ -118,6 +123,20 @@ static void sun4i_pwm_get_state(struct pwm_chip *chip,
+>  
+>  	val = sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
+>  
+> +	/*
+> +	 * PWM chapter in H6 manual has a diagram which explains that if bypass
+> +	 * bit is set, no other setting has any meaning. Even more, experiment
+> +	 * proved that also enable bit is ignored in this case.
+> +	 */
+> +	if ((val & BIT_CH(PWM_BYPASS, pwm->hwpwm)) &&
+> +	    sun4i_pwm->data->has_direct_mod_clk_output) {
+> +		state->period = DIV_ROUND_UP_ULL(NSEC_PER_SEC, clk_rate);
+> +		state->duty_cycle = DIV_ROUND_UP_ULL(state->period, 2);
 
---bwknto7takkwphs5
-Content-Type: application/pgp-signature; name="signature.asc"
+I first thought you're losing precision here by reusing state->period
+here, but with a divisor of 2 everything is fine.
 
------BEGIN PGP SIGNATURE-----
+> +		state->polarity = PWM_POLARITY_NORMAL;
+> +		state->enabled = true;
+> +		return;
+> +	}
+> +
+>  	if ((PWM_REG_PRESCAL(val, pwm->hwpwm) == PWM_PRESCAL_MASK) &&
+>  	    sun4i_pwm->data->has_prescaler_bypass)
+>  		prescaler = 1;
+> @@ -204,6 +223,7 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	struct sun4i_pwm_chip *sun4i_pwm = to_sun4i_pwm_chip(chip);
+>  	struct pwm_state cstate;
+>  	u32 ctrl;
+> +	bool bypass = false;
+>  	int ret;
+>  	unsigned int delay_us;
+>  	unsigned long now;
+> @@ -218,9 +238,24 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * Although it would make much more sense to check for bypass in
+> +	 * sun4i_pwm_calculate(), value of bypass bit also depends on "enabled".
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl3LxR4ACgkQcjQGjxah
-Vjzu3A//VcmxB+zLrhFkIPEXStslWNxWBzlOPrVt1zEIGbpxgVBin7IaP30h4gml
-GrPxtZom3KkKbzbIYlS5syNycjxUT3NjYs2Yur4DBnAhvkoxrFLfprhjjX0fL170
-18RZJoH74NJYsjiDzbRRJQfN6JSNVgJ0XFCyLmQKhBA5K7UC4BT2hSvsLzzQ0neJ
-jXhtQ+VKayIDQ/lUArvoABE7V6wX+F4app7eZ+xkSPq1ptUByob6mr9wV7WMONNh
-qBd+U/+nV8ywD3qUWwDt//77FGZYbXM/mdKf3moYnvD8BYTaIA0l4MRoYuAh0bKg
-SLimFdCoBznxP4syuhiil5aDYhY21fK3XymjbBnoKHw3SlmJn2488eOdiDy1ErCy
-dT258CLPbO6YyI1aNxyZyIlWhWlavkM5/FvS4R+IUIJzJiT177gSWD2uTX0i8kd4
-3GIF63YcoUaJjNDGMRMla4tbDOgee3mdssRWDEynQlmYu3AV6krBF0tkRU8JaIaE
-l0kSRUPo6bxWsH+HFhNrXMGP3JSrfU26cR7t+V9intAxWaGmteXZV2ph1CjeMW8e
-gsa0GSGjvm5aEganXEi1pXoHD+5Fg34/6UHY7XYYQXkaFl7f92Cmkoc4EomfWkAR
-kpwLSvI76WXbaP6bKEH7FqWAyUcHEIzrBMqIWYBKx90aHEWiRAs=
-=SZJk
------END PGP SIGNATURE-----
+I don't understand this reasoning. sun4i_pwm_calculate knows about
+.enabled and also sun4i_pwm->data->has_direct_mod_clk_output. Maybe just
+add a bool *bypass as parameter and move the logic there?
 
---bwknto7takkwphs5--
+> +	 */
+> +	if (state->enabled) {
+> +		u32 clk_rate = clk_get_rate(sun4i_pwm->clk);
+> +		bypass = (state->period * clk_rate >= NSEC_PER_SEC) &&
+> +			 (state->period * clk_rate < 2 * NSEC_PER_SEC) &&
+> +			 (state->duty_cycle * clk_rate * 2 >= NSEC_PER_SEC);
+> +	}
+> +
+
+This looks right now.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
