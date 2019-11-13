@@ -2,46 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32843FA12C
+	by mail.lfdr.de (Postfix) with ESMTP id A256FFA12D
 	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:55:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbfKMBzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:55:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46974 "EHLO mail.kernel.org"
+        id S1729182AbfKMBzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:55:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729092AbfKMBzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:55:25 -0500
+        id S1729121AbfKMBza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:55:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D5ED204EC;
-        Wed, 13 Nov 2019 01:55:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E037222D3;
+        Wed, 13 Nov 2019 01:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610124;
-        bh=esQHSeTVM91ePA4FJLhiHKk/DtarxUAqDEScTNlyDvw=;
+        s=default; t=1573610130;
+        bh=dONCx61Ia/sj7WTQHEcMz5HEIkjAqNopjr/Sy89EPhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l4jLor58Au9I29R8fbNN+HsUR5/iSfFD9BN7xVwaqUyqn+nNrMfp7E1ATTucgLqLx
-         2vUjAXJHr570IOps24cmXPcRfXAUj6oLLRGn7VD/tqEpiaKqD0EqIn/UFxQLAcKTGP
-         wUYE/IyqlzFI5UFor83xKHysV/Fh/K2V+OtWv/ps=
+        b=Y8uB09/UzUVjU3lmpTr1iI92t9Bj58/0yiTOW62ZlYm3Uy0sduIcSH3laolYl6kq/
+         IWT8WcUObWrr9loPBZTq7sEswJbrljabRRHHVsl/A3bPWiWmTQFX73WjseNnHUCjfT
+         eSQHnDPeyzgMarYPbwE7Y4eFc1w3nbHbciJJQXmA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        baiyaowei@cmss.chinamobile.com, bhe@redhat.com,
-        dan.j.williams@intel.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 176/209] x86/kexec: Correct KEXEC_BACKUP_SRC_END off-by-one error
-Date:   Tue, 12 Nov 2019 20:49:52 -0500
-Message-Id: <20191113015025.9685-176-sashal@kernel.org>
+Cc:     Hieu Tran Dang <dangtranhieu2012@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 180/209] spi: fsl-lpspi: Prevent FIFO under/overrun by default
+Date:   Tue, 12 Nov 2019 20:49:56 -0500
+Message-Id: <20191113015025.9685-180-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -54,65 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+From: Hieu Tran Dang <dangtranhieu2012@gmail.com>
 
-[ Upstream commit 51fbf14f2528a8c6401290e37f1c893a2412f1d3 ]
+[ Upstream commit de8978c388c66b8fca192213ec9f0727e964c652 ]
 
-The only use of KEXEC_BACKUP_SRC_END is as an argument to
-walk_system_ram_res():
+Certain devices don't work well when a transmit FIFO underrun or
+receive FIFO overrun occurs. Example is the SAF400x radio chip when
+running at high speed which leads to garbage being sent to/received from
+the chip. In which case, it should stall waiting for further data to be
+available before proceeding. This patch unset the NOSTALL bit in CFGR1
+by default to prevent this issue.
 
-  int crash_load_segments(struct kimage *image)
-  {
-    ...
-    walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
-                        image, determine_backup_region);
-
-walk_system_ram_res() expects "start, end" arguments that are inclusive,
-i.e., the range to be walked includes both the start and end addresses.
-
-KEXEC_BACKUP_SRC_END was previously defined as (640 * 1024UL), which is the
-first address *past* the desired 0-640KB range.
-
-Define KEXEC_BACKUP_SRC_END as (640 * 1024UL - 1) so the KEXEC_BACKUP_SRC
-region is [0-0x9ffff], not [0-0xa0000].
-
-Fixes: dd5f726076cc ("kexec: support for kexec on panic using new system call")
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Brijesh Singh <brijesh.singh@amd.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Lianbo Jiang <lijiang@redhat.com>
-CC: Takashi Iwai <tiwai@suse.de>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Tom Lendacky <thomas.lendacky@amd.com>
-CC: Vivek Goyal <vgoyal@redhat.com>
-CC: baiyaowei@cmss.chinamobile.com
-CC: bhe@redhat.com
-CC: dan.j.williams@intel.com
-CC: dyoung@redhat.com
-CC: kexec@lists.infradead.org
-Link: http://lkml.kernel.org/r/153805811578.1157.6948388946904655969.stgit@bhelgaas-glaptop.roam.corp.google.com
+Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/kexec.h | 2 +-
+ drivers/spi/spi-fsl-lpspi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index f327236f0fa71..5125fca472bb0 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -67,7 +67,7 @@ struct kimage;
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index e6d5cc6ab108b..51670976faa35 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -276,7 +276,7 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
  
- /* Memory to backup during crash kdump */
- #define KEXEC_BACKUP_SRC_START	(0UL)
--#define KEXEC_BACKUP_SRC_END	(640 * 1024UL)	/* 640K */
-+#define KEXEC_BACKUP_SRC_END	(640 * 1024UL - 1)	/* 640K */
+ 	fsl_lpspi_set_watermark(fsl_lpspi);
  
- /*
-  * CPU does not save ss and sp on stack if execution is already
+-	temp = CFGR1_PCSCFG | CFGR1_MASTER | CFGR1_NOSTALL;
++	temp = CFGR1_PCSCFG | CFGR1_MASTER;
+ 	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
+ 		temp |= CFGR1_PCSPOL;
+ 	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
 -- 
 2.20.1
 
