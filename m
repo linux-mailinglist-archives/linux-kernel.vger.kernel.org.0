@@ -2,80 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 991D9FA24C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:03:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E82FA27B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:04:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbfKMCC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:02:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731090AbfKMCCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:02:52 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D45F122466;
-        Wed, 13 Nov 2019 02:02:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610571;
-        bh=9bhG71SHdIPOPx2brFLAamLBJekEwZtJUF+//yLby2A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EMJPAowbvLi/PyT6EdrnYXVwYFrABe9vEoTGOZ18YfWPxUe1Yg1DbKdTzUjKkcI53
-         NFeeYbVZ62i1VBX7cpS8bmz1lMQ27ixxj3iHpNKCej5qlX6jmdh5b5GAjU3V92sY3I
-         uAOBIhiN5EdDy+KBPvWfs7TVWt5lJtDl9hYO9qo8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roger Quadros <rogerq@ti.com>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 48/48] ARM: dts: omap5: Fix dual-role mode on Super-Speed port
-Date:   Tue, 12 Nov 2019 21:01:31 -0500
-Message-Id: <20191113020131.13356-48-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113020131.13356-1-sashal@kernel.org>
-References: <20191113020131.13356-1-sashal@kernel.org>
+        id S1731112AbfKMCDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:03:49 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39298 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbfKMCDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:03:42 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUhzv-0008C3-Ic; Wed, 13 Nov 2019 02:03:07 +0000
+Date:   Wed, 13 Nov 2019 02:03:07 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v15 5/9] namei: LOOKUP_IN_ROOT: chroot-like scoped
+ resolution
+Message-ID: <20191113020307.GB26530@ZenIV.linux.org.uk>
+References: <20191105090553.6350-1-cyphar@cyphar.com>
+ <20191105090553.6350-6-cyphar@cyphar.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105090553.6350-6-cyphar@cyphar.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roger Quadros <rogerq@ti.com>
+On Tue, Nov 05, 2019 at 08:05:49PM +1100, Aleksa Sarai wrote:
 
-[ Upstream commit a763ecc15d0e37c3a15ff6825183061209832685 ]
+> @@ -2277,12 +2277,20 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+>  
+>  	nd->m_seq = read_seqbegin(&mount_lock);
+>  
+> -	/* Figure out the starting path and root (if needed). */
+> -	if (*s == '/') {
+> +	/* Absolute pathname -- fetch the root. */
+> +	if (flags & LOOKUP_IN_ROOT) {
+> +		/* With LOOKUP_IN_ROOT, act as a relative path. */
+> +		while (*s == '/')
+> +			s++;
 
-OMAP5's Super-Speed USB port has a software mailbox register
-that needs to be fed with VBUS and ID events from an external
-VBUS/ID comparator.
-
-Without this, Host role will not work correctly.
-
-Fixes: 656c1a65ab55 ("ARM: dts: omap5: enable OTG role for DWC3 controller")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/omap5-board-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
-index d2398d2a0c08c..4ea4cf6c5b471 100644
---- a/arch/arm/boot/dts/omap5-board-common.dtsi
-+++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-@@ -634,6 +634,7 @@
- };
- 
- &dwc3 {
-+	extcon = <&extcon_usb3>;
- 	dr_mode = "otg";
- };
- 
--- 
-2.20.1
-
+Er...  Why bother skipping slashes?  I mean, not only link_path_walk()
+will skip them just fine, you are actually risking breakage in this:
+                if (*s && unlikely(!d_can_lookup(dentry))) {
+                        fdput(f);
+                        return ERR_PTR(-ENOTDIR);
+                }
+which is downstream from there with you patch, AFAICS.
