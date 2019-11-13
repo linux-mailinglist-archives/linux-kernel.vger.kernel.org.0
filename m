@@ -2,143 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 664FEFB2EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:54:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C001BFB2F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:57:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbfKMOyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 09:54:11 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42419 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727680AbfKMOyL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 09:54:11 -0500
-Received: by mail-qk1-f195.google.com with SMTP id m4so1921168qke.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 06:54:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DBoe09OL4Q7+mtWCD3ILbSfWzN8kQ9HR3nnRkBx9D44=;
-        b=ElBQypsonHVrG2c1mTajKm9lYM0q0irKmR1aFy3QR7OPIRJhI+V5rSKJcWMvYxFars
-         3KKj0Gk5+Mz0l9QvmartapeEm5BxWJA44BHewXWklqsCDWZ4bfyQeewZJuUXXANQ/7mQ
-         AmEIc9jxon/p91MkL2msWciiQ+sVksWmlGLx5kqtewwqd9AtA2IbVsr3ijXJ852eCSGq
-         sZp/tnsVukZrvRQFGw3gNUg5LfsiqpjxrUw7Nw2/EJoq+2Eu6NjJtKhekiD7qZlXf62v
-         SolP6T44lAXwqJBRSbBbVV0hAGlZ+TEoQbbnqP9GWm7i+NJ9LnPxR/oeaahvtD2ekayn
-         wexQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DBoe09OL4Q7+mtWCD3ILbSfWzN8kQ9HR3nnRkBx9D44=;
-        b=eohsM//yoXKOsyCBLfggl1Jy+FjqGi6yzLDBDx8rT+NbYYFAOdE0ZnvwCPvG+BIuQF
-         PviglIJqowMvG7zSlObWKbgIUJgtnJy5we/LaznXmkaV3M68crWTTqHvktFztfq2czA4
-         /Yqjm9P1vRxc77ehVBDVBwAWJ3WPnNRUe2tXTiETSBCiUB73QayoFrxODar7aswDO+ju
-         uZVygx6oYvlHfB51kHBROa4T2r+BR5TJ4jG1+ssb1aSaLtHNuAU4ZDdRwQ3BjyXZRnTP
-         RsfZqnZkISY94zvRXEzKlRAVPb+Toq0tvY3IAlFpCI4CUkbR4t48WMe1+VHdGg1cVBhu
-         H2fA==
-X-Gm-Message-State: APjAAAXP0Zs0TQ0Va7kpFGMCUmVuRD22DLtHwPMgKiz8waI+TchnXGax
-        Ng5GXNfRJFapo7cFZAeDgjDPaOAtXKzMHQ==
-X-Google-Smtp-Source: APXvYqyMJNQ3DkOysGJk0hVwPjC2w2OLIL/9mMKoOYIqrI0YH42rET+BA/AtbQlwLHeNXvIgj4V1YA==
-X-Received: by 2002:a05:620a:12c3:: with SMTP id e3mr2350924qkl.14.1573656850640;
-        Wed, 13 Nov 2019 06:54:10 -0800 (PST)
-Received: from gmail.com ([184.75.212.4])
-        by smtp.gmail.com with ESMTPSA id 134sm606412qkn.24.2019.11.13.06.54.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 06:54:10 -0800 (PST)
-Date:   Wed, 13 Nov 2019 09:54:08 -0500
-From:   "Javier F. Arias" <jarias.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH V3 4/4] staging: rtl8723bs: Rename variable
-Message-ID: <f201ce3e421420e6c7b76440f62e8bcfc449967a.1573656487.git.jarias.linux@gmail.com>
-References: <1d47d745c077cc808bf0c09d2ee40e3c03d34b06.1573656487.git.jarias.linux@gmail.com>
+        id S1727730AbfKMO5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 09:57:30 -0500
+Received: from m12-16.163.com ([220.181.12.16]:33746 "EHLO m12-16.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726251AbfKMO53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 09:57:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=uc1xN
+        RSd2FCSdwQexfZJOgLv9+uaE7IUvg/ZBRWyIW0=; b=nlN0BeiMB/Yds/bEZDxvY
+        XrJX+b1F9/gQ/FVUEh6GSZJaFxQvRFc8FiqgPaRWl/LPm2SbgjcXhyoa5VelJcpd
+        I2YluspN7uebLQgEape++5EtVZUjFRbsIKdLTI/X/z0r976nfH2rvVtyuebBF/LM
+        ZsBHxlnFZ+lni+xdCpc9JM=
+Received: from [192.168.0.10] (unknown [183.210.50.120])
+        by smtp12 (Coremail) with SMTP id EMCowACX0gRiGcxdP++PAQ--.1725S2;
+        Wed, 13 Nov 2019 22:55:31 +0800 (CST)
+Subject: Re: Question about "asm/rwonce.h: No such file or directory"
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Will Deacon <will@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>
+References: <1da2db04-da6a-cedb-e85a-6ded68dada82@163.com>
+ <20191112123125.GD17835@willie-the-truck>
+ <CAK7LNARA99UUTY2v6rS=Nb4Cg5pB4RsR0PogLqdT9uNLcH20ew@mail.gmail.com>
+ <32a3b660-f4d2-268e-2206-d50073298c0c@iogearbox.net>
+ <CAK7LNASR=R=gyuaMO=VzdXrY3gaQ_FVE4es60bzXf=9ASR2qUw@mail.gmail.com>
+ <021e7b46-047e-d381-9dca-bd61db08e4f8@163.com>
+ <CAK7LNARKh3-cAqsYgcxFwq9CGk-CgBfkiQgfNSULkxwO0xa2vw@mail.gmail.com>
+ <ac4577d4-c0f2-9596-df6f-3fcc563bde3e@163.com>
+ <CAK7LNATfK2pFnO2YV5zMLMxJGYyaj+f8w-k4K8xaoGbJ2Bd5eQ@mail.gmail.com>
+ <50602386-68b1-be38-a022-0bcf9df6a54e@163.com>
+ <CAK7LNAQ8h7zxhfndBqYRWXkaWVynH7GpBvDPLcVMZ1VEyUUX7A@mail.gmail.com>
+From:   Xiao Yang <ice_yangxiao@163.com>
+Message-ID: <bdbe9e04-4da0-64b2-ab0c-ae739d8fd7ac@163.com>
+Date:   Wed, 13 Nov 2019 22:55:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d47d745c077cc808bf0c09d2ee40e3c03d34b06.1573656487.git.jarias.linux@gmail.com>
+In-Reply-To: <CAK7LNAQ8h7zxhfndBqYRWXkaWVynH7GpBvDPLcVMZ1VEyUUX7A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: EMCowACX0gRiGcxdP++PAQ--.1725S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAF48CF4xtryxKr4UKw18Grg_yoW5Zr1fpa
+        s3G3W3JF4UX3WUArnrtr18Zry8tw48G3WjqryUWry0qryvyF1xJwsFgr48GFy0qry8tF1U
+        ArW7K34agr1UXr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bjE__UUUUU=
+X-Originating-IP: [183.210.50.120]
+X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiFgNsXlWBkhPalwAAs-
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch renames a variable name previously defined in all caps.
+On 11/13/19 4:54 PM, Masahiro Yamada wrote:
+> On Wed, Nov 13, 2019 at 5:36 PM Xiao Yang <ice_yangxiao@163.com> wrote:
+>> On 11/13/19 3:53 PM, Masahiro Yamada wrote:
+>>> On Wed, Nov 13, 2019 at 4:17 PM Xiao Yang <ice_yangxiao@163.com> wrote:
+>>>> On 11/13/19 2:57 PM, Masahiro Yamada wrote:
+>>>>> Sorry, I really do not understand what you are doing.
+>>>>>
+>>>>> include/linux/compiler.h is only for kernel-space.
+>>>>> Shrug if a user-land program includes it.
+>>>> Hi Masahiro,
+>>>>
+>>>> For building tools/bpf, it is good to fix the compiler error by Daniel's
+>>>> patch(i.e. use linux/filter from linux header).
+>>>>
+>>>> linux/compiler.h may be used by other code in kernel.  Is it possible to
+>>>> trigger the same error when the other code
+>>>>
+>>>> including linux/compiler.h is built? Is this kind of code able to find
+>>>> the location of <asm/rwonce.h>?
+>>> <asm/rwonce.h> is also kernel-only header.
+>>>
+>>> The kernel code can find <asm/rwonce.h>, but user-land code cannot.
+>> Hi Masahiro,
+>>
+>> Sorry, I am not familar with it.
+>>
+>> Thanks a lot for your explanation and I have seen the LINUXINCLUDE
+>> variable in Makefile.
+>>
+>> I will try to send a patch as Daniel suggested.
+>>
+>> Best Regards,
+>>
+>> Xiao Yang
+>>
+> Hmm, digging into the git history,
+> this include path was added by the following commit:
+>
+>
+> commit d7475de58575c904818efa369c82e88c6648ce2e
+> Author: Kamal Mostafa <kamal@canonical.com>
+> Date:   Wed Nov 11 14:24:27 2015 -0800
+>
+>      tools/net: Use include/uapi with __EXPORTED_HEADERS__
+>
+>      Use the local uapi headers to keep in sync with "recently" added #define's
+>      (e.g. SKF_AD_VLAN_TPID).  Refactored CFLAGS, and bpf_asm doesn't need -I.
+>
+>      Fixes: 3f356385e8a4 ("filter: bpf_asm: add minimal bpf asm tool")
+>      Signed-off-by: Kamal Mostafa <kamal@canonical.com>
+>      Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+>      Signed-off-by: David S. Miller <davem@davemloft.net>
+>
+>
+>
+> I am not sure how big a deal it is,
+> but it could be a problem on old distros??
+>
+Hi Daniel, Masahiro
 
-Signed-off-by: Javier F. Arias <jarias.linux@gmail.com>
----
-Changes in V3:
-        - No changes.
-Changes in V2:
-        - No changes.
 
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 24 +++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Could we include the linux/filter.h generated by "make headers_install" 
+as a higher priority?
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 5856c6e34922..72d3bfe1aa42 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -1242,7 +1242,7 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit
- 	struct sta_info 	*psta = NULL;
- 	struct pkt_attrib	*pattrib = &pxmitframe->attrib;
- 	s32 bmcst = IS_MCAST(pattrib->ra);
--	u8 *BIP_AAD = NULL;
-+	u8 *bip_aad = NULL;
- 	u8 *MGMT_body = NULL;
- 
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-@@ -1254,10 +1254,10 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit
- 	pwlanhdr = (struct ieee80211_hdr *)pframe;
- 
- 	ori_len = BIP_AAD_SIZE+pattrib->pktlen;
--	tmp_buf = BIP_AAD = rtw_zmalloc(ori_len);
-+	tmp_buf = bip_aad = rtw_zmalloc(ori_len);
- 	subtype = GetFrameSubType(pframe); /* bit(7)~bit(2) */
- 
--	if (!BIP_AAD)
-+	if (!bip_aad)
- 		return _FAIL;
- 
- 	spin_lock_bh(&padapter->security_key_mutex);
-@@ -1300,17 +1300,17 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit
- 		frame_body_len = pattrib->pktlen - sizeof(struct ieee80211_hdr_3addr);
- 
- 		/* conscruct AAD, copy frame control field */
--		memcpy(BIP_AAD, &pwlanhdr->frame_control, 2);
--		ClearRetry(BIP_AAD);
--		ClearPwrMgt(BIP_AAD);
--		ClearMData(BIP_AAD);
-+		memcpy(bip_aad, &pwlanhdr->frame_control, 2);
-+		ClearRetry(bip_aad);
-+		ClearPwrMgt(bip_aad);
-+		ClearMData(bip_aad);
- 		/* conscruct AAD, copy address 1 to address 3 */
--		memcpy(BIP_AAD+2, pwlanhdr->addr1, 18);
-+		memcpy(bip_aad+2, pwlanhdr->addr1, 18);
- 		/* copy management fram body */
--		memcpy(BIP_AAD+BIP_AAD_SIZE, MGMT_body, frame_body_len);
-+		memcpy(bip_aad+BIP_AAD_SIZE, MGMT_body, frame_body_len);
- 		/* calculate mic */
- 		if (omac1_aes_128(padapter->securitypriv.dot11wBIPKey[padapter->securitypriv.dot11wBIPKeyid].skey
--			, BIP_AAD, BIP_AAD_SIZE+frame_body_len, mic))
-+			, bip_aad, BIP_AAD_SIZE+frame_body_len, mic))
- 			goto xmitframe_coalesce_fail;
- 
- 		/* copy right BIP mic value, total is 128bits, we use the 0~63 bits */
-@@ -1390,12 +1390,12 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit
- 
- xmitframe_coalesce_success:
- 	spin_unlock_bh(&padapter->security_key_mutex);
--	kfree(BIP_AAD);
-+	kfree(bip_aad);
- 	return _SUCCESS;
- 
- xmitframe_coalesce_fail:
- 	spin_unlock_bh(&padapter->security_key_mutex);
--	kfree(BIP_AAD);
-+	kfree(bip_aad);
- 	return _FAIL;
- }
- 
--- 
-2.20.1
+(PS: According to above commit, just ensure that tools/bpf keeps in sync 
+with new linux header as far as possible).
+
+and then use the linux/filter.h in system if kernel doesn't provide 
+linux/filter.h by "make headers_install".
+
+--------------------------------------------------------------------------------------------------------------------
+
+diff --git a/tools/bpf/Makefile b/tools/bpf/Makefile
+index 5d1995fd369c..1e0c768132af 100644
+--- a/tools/bpf/Makefile
++++ b/tools/bpf/Makefile
+@@ -10,7 +10,7 @@ MAKE = make
+  INSTALL ?= install
+
+  CFLAGS += -Wall -O2
+-CFLAGS += -D__EXPORTED_HEADERS__ -I$(srctree)/include/uapi 
+-I$(srctree)/include
++CFLAGS += -I$(srctree)/usr/include
+
+  # This will work when bpf is built in tools env. where srctree
+  # isn't set and when invoked from selftests build, where srctree
+
+---------------------------------------------------------------------------------------------------------------------
+
+
+Best Regards,
+
+Xiao Yang
+
+>
 
