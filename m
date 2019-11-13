@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 802D3FA54D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA4AFA535
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:21:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbfKMCWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:22:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43428 "EHLO mail.kernel.org"
+        id S1728688AbfKMBxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:53:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728618AbfKMBxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:53:36 -0500
+        id S1728638AbfKMBxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:53:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBA12222CD;
-        Wed, 13 Nov 2019 01:53:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BBE122468;
+        Wed, 13 Nov 2019 01:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610015;
-        bh=8Gh9QFWIcV8gouhNwtcnLmaTG574i/mtCXf99Tt1wrU=;
+        s=default; t=1573610019;
+        bh=4wa0y7siKNPCymmJxLw0kfiWr913Znmfw02HWPsD7t8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K4P6fxedszWsIDD8EyeS8KZy/1YujwT4JHV5+sWUMN9u5UQWaRgyvoU400Yg9AIu3
-         Oda59DeRppznecPn1V3ye4HC4m3b8vqN0NgfkYBrDXmyxvQJk934VrAWOdHPt2Ofze
-         C65lkAKLF86SPOz5+gKcPpNM3YE4SF699wFLjMlQ=
+        b=rtBwTg5b0g7Wda0brAiIHxPxBvW3kjABPlkpYhtVbMmGqBclCEKqLYnsKi/MY4HC7
+         fU7JfX1v8eMZQAFg0jC/i17amjI88+7yS32lbRgsznA3KygY5WBcDvPAl/wfAtNYsN
+         NYrfh7sX4DsRHGgzfhbgxL7F3FQIr4Qp0Rl2pN+Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 119/209] i2c: zx2967: use core to detect 'no zero length' quirk
-Date:   Tue, 12 Nov 2019 20:48:55 -0500
-Message-Id: <20191113015025.9685-119-sashal@kernel.org>
+Cc:     Julian Sax <jsbc@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 121/209] Input: silead - try firmware reload after unsuccessful resume
+Date:   Tue, 12 Nov 2019 20:48:57 -0500
+Message-Id: <20191113015025.9685-121-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -44,53 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Julian Sax <jsbc@gmx.de>
 
-[ Upstream commit e2115ace4196bcd2126446fb874bcfc90cba79be ]
+[ Upstream commit dde27443211062e841806feaf690674b7c3a599f ]
 
-And don't reimplement in the driver.
+A certain silead controller (Chip ID: 0x56810000) loses its firmware
+after suspend, causing the resume to fail. This patch tries to load
+the firmware, should a resume error occur and retries the resuming.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Julian Sax <jsbc@gmx.de>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-zx2967.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/input/touchscreen/silead.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-zx2967.c b/drivers/i2c/busses/i2c-zx2967.c
-index 48281c1b30c6d..b8f9e020d80e6 100644
---- a/drivers/i2c/busses/i2c-zx2967.c
-+++ b/drivers/i2c/busses/i2c-zx2967.c
-@@ -281,9 +281,6 @@ static int zx2967_i2c_xfer_msg(struct zx2967_i2c *i2c,
- 	int ret;
- 	int i;
+diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
+index e5c3b066bd2a1..06f0eb04a8fd4 100644
+--- a/drivers/input/touchscreen/silead.c
++++ b/drivers/input/touchscreen/silead.c
+@@ -558,20 +558,33 @@ static int __maybe_unused silead_ts_suspend(struct device *dev)
+ static int __maybe_unused silead_ts_resume(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
++	bool second_try = false;
+ 	int error, status;
  
--	if (msg->len == 0)
--		return -EINVAL;
--
- 	zx2967_i2c_flush_fifos(i2c);
+ 	silead_ts_set_power(client, SILEAD_POWER_ON);
  
- 	i2c->cur_trans = msg->buf;
-@@ -498,6 +495,10 @@ static const struct i2c_algorithm zx2967_i2c_algo = {
- 	.functionality = zx2967_i2c_func,
- };
++ retry:
+ 	error = silead_ts_reset(client);
+ 	if (error)
+ 		return error;
  
-+static const struct i2c_adapter_quirks zx2967_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
++	if (second_try) {
++		error = silead_ts_load_fw(client);
++		if (error)
++			return error;
++	}
 +
- static const struct of_device_id zx2967_i2c_of_match[] = {
- 	{ .compatible = "zte,zx296718-i2c", },
- 	{ },
-@@ -568,6 +569,7 @@ static int zx2967_i2c_probe(struct platform_device *pdev)
- 	strlcpy(i2c->adap.name, "zx2967 i2c adapter",
- 		sizeof(i2c->adap.name));
- 	i2c->adap.algo = &zx2967_i2c_algo;
-+	i2c->adap.quirks = &zx2967_i2c_quirks;
- 	i2c->adap.nr = pdev->id;
- 	i2c->adap.dev.parent = &pdev->dev;
- 	i2c->adap.dev.of_node = pdev->dev.of_node;
+ 	error = silead_ts_startup(client);
+ 	if (error)
+ 		return error;
+ 
+ 	status = silead_ts_get_status(client);
+ 	if (status != SILEAD_STATUS_OK) {
++		if (!second_try) {
++			second_try = true;
++			dev_dbg(dev, "Reloading firmware after unsuccessful resume\n");
++			goto retry;
++		}
+ 		dev_err(dev, "Resume error, status: 0x%02x\n", status);
+ 		return -ENODEV;
+ 	}
 -- 
 2.20.1
 
