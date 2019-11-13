@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB44FA3DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 002F4FA3D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbfKMCNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:13:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51466 "EHLO mail.kernel.org"
+        id S1729971AbfKMB6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:58:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728890AbfKMB57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:59 -0500
+        id S1729940AbfKMB6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:58:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C70CA222D3;
-        Wed, 13 Nov 2019 01:57:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74200222D3;
+        Wed, 13 Nov 2019 01:58:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610278;
-        bh=JAvM7CkiVRXc3zfljbJU26xCBWfObc0AvnV9AUKGXWk=;
+        s=default; t=1573610285;
+        bh=xd9MmByD4kgF02UVppLESgoSj9OQHcqjVex2lFwXvoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t84M/dadbQ2DGuu3eCa2OKzVvqbYE9NIpZqEEB7XLQrLG2w/y0rrh8rHVdJfsW6Zj
-         AQpBeJSOvu/1XriFh3lUlEH7QnyzYKHgCOsFO1j0MiAGBZEWGcGom2eT88Un0F9Dl+
-         k11z0iym0xJeqimy73l0mIEVarDtsfwii3G2+lek=
+        b=DT2CaiDuuKNuxXx7s62+FakCPZMprTPX7bWJgYNitiQAqSBv1+L+mWyC/zPCBsOJ7
+         zSSQkReJ5k5CMqsGZv13Sf5YY12ZuHxX1nQcv7njSynLPWfcJE2zr35XcDKUASbsOH
+         ov3b+vr9Q9pH5ZI6HscEnhe/uk3q894ocnyCMCeg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chung-Hsien Hsu <stanley.hsu@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+Cc:     Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 060/115] brcmfmac: fix full timeout waiting for action frame on-channel tx
-Date:   Tue, 12 Nov 2019 20:55:27 -0500
-Message-Id: <20191113015622.11592-60-sashal@kernel.org>
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 062/115] qtnfmac: drop error reports for out-of-bounds key indexes
+Date:   Tue, 12 Nov 2019 20:55:29 -0500
+Message-Id: <20191113015622.11592-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -47,88 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chung-Hsien Hsu <stanley.hsu@cypress.com>
+From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-[ Upstream commit fbf07000960d9c8a13fdc17c6de0230d681c7543 ]
+[ Upstream commit 35da3fe63b8647ce3cc52fccdf186a60710815fb ]
 
-The driver sends an action frame down and waits for a completion signal
-triggered by the received BRCMF_E_ACTION_FRAME_OFF_CHAN_COMPLETE event
-to continue the process. However, the action frame could be transmitted
-either on the current channel or on an off channel. For the on-channel
-case, only BRCMF_E_ACTION_FRAME_COMPLETE event will be received when
-the frame is transmitted, which make the driver always wait a full
-timeout duration. This patch has the completion signal be triggered by
-receiving the BRCMF_E_ACTION_FRAME_COMPLETE event for the on-channel
-case.
+On disconnect wireless core attempts to remove all the supported keys.
+Following cfg80211_ops conventions, firmware returns -ENOENT code
+for the out-of-bound key indexes. This is a normal behavior,
+so no need to report errors for this case.
 
-This change fixes WFA p2p certification 5.1.19 failure.
-
-Signed-off-by: Chung-Hsien Hsu <stanley.hsu@cypress.com>
-Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../wireless/broadcom/brcm80211/brcmfmac/p2p.c  | 17 +++++++++++++++--
- .../wireless/broadcom/brcm80211/brcmfmac/p2p.h  |  2 ++
- 2 files changed, 17 insertions(+), 2 deletions(-)
+ drivers/net/wireless/quantenna/qtnfmac/cfg80211.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-index c9566c9036721..4a883f4bbf885 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-@@ -1462,10 +1462,12 @@ int brcmf_p2p_notify_action_tx_complete(struct brcmf_if *ifp,
- 		return 0;
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+index a450bc6bc7745..d02f68792ce41 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+@@ -509,9 +509,16 @@ static int qtnf_del_key(struct wiphy *wiphy, struct net_device *dev,
+ 	int ret;
  
- 	if (e->event_code == BRCMF_E_ACTION_FRAME_COMPLETE) {
--		if (e->status == BRCMF_E_STATUS_SUCCESS)
-+		if (e->status == BRCMF_E_STATUS_SUCCESS) {
- 			set_bit(BRCMF_P2P_STATUS_ACTION_TX_COMPLETED,
- 				&p2p->status);
--		else {
-+			if (!p2p->wait_for_offchan_complete)
-+				complete(&p2p->send_af_done);
+ 	ret = qtnf_cmd_send_del_key(vif, key_index, pairwise, mac_addr);
+-	if (ret)
+-		pr_err("VIF%u.%u: failed to delete key: idx=%u pw=%u\n",
+-		       vif->mac->macid, vif->vifid, key_index, pairwise);
++	if (ret) {
++		if (ret == -ENOENT) {
++			pr_debug("VIF%u.%u: key index %d out of bounds\n",
++				 vif->mac->macid, vif->vifid, key_index);
 +		} else {
- 			set_bit(BRCMF_P2P_STATUS_ACTION_TX_NOACK, &p2p->status);
- 			/* If there is no ack, we don't need to wait for
- 			 * WLC_E_ACTION_FRAME_OFFCHAN_COMPLETE event
-@@ -1516,6 +1518,17 @@ static s32 brcmf_p2p_tx_action_frame(struct brcmf_p2p_info *p2p,
- 	p2p->af_sent_channel = le32_to_cpu(af_params->channel);
- 	p2p->af_tx_sent_jiffies = jiffies;
++			pr_err("VIF%u.%u: failed to delete key: idx=%u pw=%u\n",
++			       vif->mac->macid, vif->vifid,
++			       key_index, pairwise);
++		}
++	}
  
-+	if (test_bit(BRCMF_P2P_STATUS_DISCOVER_LISTEN, &p2p->status) &&
-+	    p2p->af_sent_channel ==
-+	    ieee80211_frequency_to_channel(p2p->remain_on_channel.center_freq))
-+		p2p->wait_for_offchan_complete = false;
-+	else
-+		p2p->wait_for_offchan_complete = true;
-+
-+	brcmf_dbg(TRACE, "Waiting for %s tx completion event\n",
-+		  (p2p->wait_for_offchan_complete) ?
-+		   "off-channel" : "on-channel");
-+
- 	timeout = wait_for_completion_timeout(&p2p->send_af_done,
- 					      P2P_AF_MAX_WAIT_TIME);
- 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h
-index 0e8b34d2d85cb..39f0d02180882 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.h
-@@ -124,6 +124,7 @@ struct afx_hdl {
-  * @gon_req_action: about to send go negotiation requets frame.
-  * @block_gon_req_tx: drop tx go negotiation requets frame.
-  * @p2pdev_dynamically: is p2p device if created by module param or supplicant.
-+ * @wait_for_offchan_complete: wait for off-channel tx completion event.
-  */
- struct brcmf_p2p_info {
- 	struct brcmf_cfg80211_info *cfg;
-@@ -144,6 +145,7 @@ struct brcmf_p2p_info {
- 	bool gon_req_action;
- 	bool block_gon_req_tx;
- 	bool p2pdev_dynamically;
-+	bool wait_for_offchan_complete;
- };
- 
- s32 brcmf_p2p_attach(struct brcmf_cfg80211_info *cfg, bool p2pdev_forced);
+ 	return ret;
+ }
 -- 
 2.20.1
 
