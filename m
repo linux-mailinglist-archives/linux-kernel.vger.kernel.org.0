@@ -2,174 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AF8DFACA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:12:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF907FACB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfKMJMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:12:12 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40642 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfKMJML (ORCPT
+        id S1727463AbfKMJOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:14:18 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34888 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfKMJNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:12:11 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q2so1679789ljg.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 01:12:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CK7UCCTTRmrd6bADAAQ+MFCJsRvTgiOZVCVlKbT/4vQ=;
-        b=puaLErPnobM4ee12zVXG5dpJaWU3tkOkq3izgKhDoWUw2+gcb95hX40rlGusOsMLw+
-         DpdPw8zEGjPx1OFwYMaVFkIU7saWBTwBjmPRlhIDNelYQjf+8ON5cAM3aLA06DlmD5zC
-         WjtiTF136As5rNzPl4/UUOLNupTH+mkpgN7gUW3aaB9nnzo8q4c1qCcDyfoeyitgHWaj
-         Y0+y4R3ggIp7khEWgXZcDM/thXrqpBhWSluCcnxrqGBYn1F7L0QiQ6pYw7cnTk15IKRO
-         VTM6bsob6in/XqBJJYTI/dZgGL8wefQkxJ1dxcRYOlIK6A8AJQZeFTMDu9EgYdU/h4xh
-         RvPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CK7UCCTTRmrd6bADAAQ+MFCJsRvTgiOZVCVlKbT/4vQ=;
-        b=fI3Kr95h6yCvdLwDeufa07nbKwzs5hSPh90X/UOns/qKpAGwFgeoDkUfcOHmOTxc10
-         AGkAXmp12inDRhOG05gmwZ0gDNw5xGiEsIa2TeDGCkt9nJRJRtI1LQFVQyS1J3IFqEfH
-         DTtlelm2mLg8z7IMG6JGlZrQKuwB5EeJ2hNEDDlBrXEInqadhCXuF3qlxPXWAMzgd5IW
-         Pmovdcqajk1sS/jqqiOZLsbKOns0OL94BVdIZM/pnpsSxNBM0Fo/OcBblp45oG4Xy5+f
-         f0vGJs28Ub9Ymoufyj7YP/6ysSHoMV6OjGRTUg/UJBEpOVcSK5KTDrxxpusC6rlYPHgm
-         jTFw==
-X-Gm-Message-State: APjAAAUOA/PGNVajVze36dadBzT4Wccvej7+dbLqjP33NFh6ZRP2/P+L
-        DU1cz9219a1KzVR69vS+jT/Vm11ha5xXzjaJF0udxwhg7w1cEA==
-X-Google-Smtp-Source: APXvYqw/xKnZyRJTyXBLfh0Ffno0sQqTzpoTGqz3JzTt8hPXoKeViiVzv6sEj4uEYLH0K1kJZMl/E8w4yNfDHaPkZrw=
-X-Received: by 2002:a2e:9106:: with SMTP id m6mr1815132ljg.146.1573636326431;
- Wed, 13 Nov 2019 01:12:06 -0800 (PST)
+        Wed, 13 Nov 2019 04:13:53 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191113091351euoutp0133b069add67ac48484ae3e866f4d96e9~Wrf892Qrg1933619336euoutp015
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 09:13:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191113091351euoutp0133b069add67ac48484ae3e866f4d96e9~Wrf892Qrg1933619336euoutp015
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1573636431;
+        bh=6kTIaVH2hMyJlHyAYmy99jGCeC1LIi6Ohv9O3YM4Dvc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=rj95D70lxVbV4YVeTzttbxgdPWJruQPh9R/izAgq1ApkoPlQ9lZxtyODzLAk6oJHb
+         POzk570MHcEwzFZFO9Cgyl+WkZMsNBDpMAXw4wVEppU3TAb9Azxm55f3pLGsC5SGdN
+         zI2HRbxHCD/xjjP+pQr6zqVdW125SCx064ILDlCc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191113091351eucas1p1210e2308350b47d60d85c2acc80ac4a3~Wrf8sDk4O1871618716eucas1p1k;
+        Wed, 13 Nov 2019 09:13:51 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 05.82.04469.F49CBCD5; Wed, 13
+        Nov 2019 09:13:51 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604~Wrf8YNfPx1330013300eucas1p2C;
+        Wed, 13 Nov 2019 09:13:50 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191113091350eusmtrp1d9c37e38c230652370bbc1e1c037574c~Wrf8XJE4a0965609656eusmtrp1h;
+        Wed, 13 Nov 2019 09:13:50 +0000 (GMT)
+X-AuditID: cbfec7f2-54fff70000001175-a5-5dcbc94fa996
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C6.DA.04117.E49CBCD5; Wed, 13
+        Nov 2019 09:13:50 +0000 (GMT)
+Received: from AMDC3218.digital.local (unknown [106.120.51.18]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191113091350eusmtip1d741020f48953919fddc6530d8f7a470~Wrf7zwrm00369203692eusmtip1N;
+        Wed, 13 Nov 2019 09:13:50 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@samsung.com>
+To:     k.konieczny@samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 0/7] devfreq: improve devfreq statistics counting
+Date:   Wed, 13 Nov 2019 10:13:29 +0100
+Message-Id: <20191113091336.5218-1-k.konieczny@samsung.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20191111075925.GB25277@localhost.localdomain> <20191111133446.GK2865@paulmck-ThinkPad-P72>
-In-Reply-To: <20191111133446.GK2865@paulmck-ThinkPad-P72>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Wed, 13 Nov 2019 10:11:55 +0100
-Message-ID: <CADYN=9LCPfbpwdTWKw03B22-y3Text=RWXW7XP7wJBHYsMOgrA@mail.gmail.com>
-Subject: Re: next-20191108: qemu arm64: WARNING: suspicious RCU usage
-To:     paulmck@kernel.org
-Cc:     joel@joelfernandes.org, Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djPc7r+J0/HGrx/w2uxccZ6VovrX56z
+        WvTt+89oseDTDFaL/sevmS3On9/AbnG26Q27xabH11gtLu+aw2bxufcIo8WM8/uYLNYeuctu
+        cbtxBZsDr8emVZ1sHpuX1HscfLeHyaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgy9vb9YS3Y
+        w12xcuc/lgbGKZxdjJwcEgImEjsnTGDuYuTiEBJYwSjR9Ww9lPOFUeJ132V2COczo8SV7j2M
+        MC1zmy9BJZYzSqzado0JruVz7y8WkCo2AX2Jg2dPgtkiAtISnYsmghUxCzxnlrg8/z8zSEJY
+        wFHi8vHDYEUsAqoSq9evB1vBK2At0d/WCmRzAK2Tl5jzVgMiLChxcuYTsHJmoHDz1tlgt0oI
+        LGOX2HyuhwXiPBeJlfeeMUHYwhKvjm9hh7BlJE5Phqkpl3i6sI8dormFUeJB+0eohLXE4eMX
+        WUEWMwtoSqzfpQ8RdpTob37JDHEPn8SNt4IQN/BJTNo2HSrMK9HRJgRRrSrx/FQP1AXSEl3/
+        17FC2B4S+6/+AVskJBArsel5D9sERoVZSD6bheSzWQg3LGBkXsUonlpanJueWmyYl1quV5yY
+        W1yal66XnJ+7iRGYpk7/O/5pB+PXS0mHGAU4GJV4eCUWnooVYk0sK67MPcQowcGsJMK7o+JE
+        rBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeaoYH0UIC6YklqdmpqQWpRTBZJg5OqQbGcoPWClEW
+        KfZAs0pBHr71h+ccX2PXaKogtnNxma39BlPTGNWNMU6Xm/vDo55dfi/Qy/vQ9OGDJ+efnWz8
+        xZ8iNTW0tDIwhF0+3XIG44me7OPrBWYJZrKxXeoIyvLx2/91r//dqe/DRTnesNrPtt6rmx1k
+        9WB+/db2s06PJnw7K3rsb/DLimlKLMUZiYZazEXFiQC5eWZ0TwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsVy+t/xu7p+J0/HGnzeb2axccZ6VovrX56z
+        WvTt+89oseDTDFaL/sevmS3On9/AbnG26Q27xabH11gtLu+aw2bxufcIo8WM8/uYLNYeuctu
+        cbtxBZsDr8emVZ1sHpuX1HscfLeHyaNvyypGj8+b5AJYo/RsivJLS1IVMvKLS2yVog0tjPQM
+        LS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQy9vb9YS3Yw12xcuc/lgbGKZxdjJwcEgIm
+        EnObL7F3MXJxCAksZZSYt7aZESIhLdF4ejUThC0s8edaFxtE0SdGia89W5hBEmwC+hIHz55k
+        AbFFgBo6F01kAiliFnjPLDFpzxZWkISwgKPE5eOHwYpYBFQlVq9fD7aBV8Baor+tFcjmANog
+        LzHnrQZEWFDi5MwnYOXMQOHmrbOZJzDyzUKSmoUktYCRaRWjSGppcW56brGRXnFibnFpXrpe
+        cn7uJkZgfGw79nPLDsaud8GHGAU4GJV4eA/MOxUrxJpYVlyZe4hRgoNZSYR3R8WJWCHelMTK
+        qtSi/Pii0pzU4kOMpkC3TmSWEk3OB8ZuXkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTEktTs
+        1NSC1CKYPiYOTqkGxi65yYfXSsmdNf7zfPc8p4VHynmWbWthl3G7uOn2lTSDK+8vsD+X0Kna
+        0bX43BejdWUzLvD9nLVO95vNNJ+t/gmFK+2ndP5Lf116y8FpannsvOM5E7nWiJ1UbtW7dOpf
+        3rnKs2zCB6eb2xW07fgk+Olk7cOMRYumcF6fY999ZtsH4fwHkgu9L69QYinOSDTUYi4qTgQA
+        xVDFz6UCAAA=
+X-CMS-MailID: 20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604
+References: <CGME20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Nov 2019 at 14:34, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Mon, Nov 11, 2019 at 08:59:25AM +0100, Anders Roxell wrote:
-> > Hi,
-> >
-> > I'm seeing the following warning when I'm booting an arm64 allmodconfig
-> > kernel [1] on linux-next tag next-20191108, is this anything you've seen
-> > before ?
-> >
-> >
-> > The code seems to have introduced that is f0ad0860d01e ("ipv4: ipmr:
-> > support multiple tables") in 2010 and the warning was added reacently
-> > 28875945ba98 ("rcu: Add support for consolidated-RCU reader checking").
-> >
-> >
-> > [   32.496021][    T1] =============================
-> > [   32.497616][    T1] WARNING: suspicious RCU usage
-> > [   32.499614][    T1] 5.4.0-rc6-next-20191108-00003-gf74bac957b5c-dirty #2 Not tainted
-> > [   32.502018][    T1] -----------------------------
-> > [   32.503976][    T1] net/ipv4/ipmr.c:136 RCU-list traversed in non-reader section!!
-> > [   32.506746][    T1]
-> > [   32.506746][    T1] other info that might help us debug this:
-> > [   32.506746][    T1]
-> > [   32.509794][    T1]
-> > [   32.509794][    T1] rcu_scheduler_active = 2, debug_locks = 1
-> > [   32.512661][    T1] 1 lock held by swapper/0/1:
-> > [   32.514169][    T1]  #0: ffffa000150dd678 (pernet_ops_rwsem){+.+.}, at: register_pernet_subsys+0x24/0x50
-> > [   32.517621][    T1]
-> > [   32.517621][    T1] stack backtrace:
-> > [   32.519930][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc6-next-20191108-00003-gf74bac957b5c-dirty #2
-> > [   32.523063][    T1] Hardware name: linux,dummy-virt (DT)
-> > [   32.524787][    T1] Call trace:
-> > [   32.525946][    T1]  dump_backtrace+0x0/0x2d0
-> > [   32.527433][    T1]  show_stack+0x20/0x30
-> > [   32.528811][    T1]  dump_stack+0x204/0x2ac
-> > [   32.530258][    T1]  lockdep_rcu_suspicious+0xf4/0x108
-> > [   32.531993][    T1]  ipmr_get_table+0xc8/0x170
->
-> So this one is invoking ipmr_for_each_table(), which in turn invokes
-> list_for_each_entry_rcu(), which really does want to be in an
-> RCU read-side critical section.  (But you can pass it an optional
-> additional lockdep expressions.
->
-> > [   32.533496][    T1]  ipmr_new_table+0x48/0xa0
->
-> And this does look like update-side code...
->
-> > [   32.535002][    T1]  ipmr_net_init+0xe8/0x258
->
-> And this one is marked with "__net_init", which turns out to be __init.
-> So this is being invoked during early boot (see inet_init() below).
-> Or with RTNL held when invoked at runtime.  So, can we make a lockdep
-> expression for this combination?
->
-> The RTNL part is easy, something like this in include/linux/rtnetlink.h:
->
-> #ifdef CONFIG_PROVE_LOCKING
-> extern int lockdep_rtnl_is_held(void);
-> #else
-> #define lockdep_rtnl_is_held() 1
-> #endif
->
-> And in net/core/rtnetlink.c:
->
-> #ifdef CONFIG_PROVE_LOCKING
-> int lockdep_rtnl_is_held(void)
-> {
->         return lockdep_is_held(&rtnl_mutex);
-> }
-> #endif
->
-> > [   32.536465][    T1]  ops_init+0x280/0x2d8
-> > [   32.537876][    T1]  register_pernet_operations+0x210/0x420
-> > [   32.539707][    T1]  register_pernet_subsys+0x30/0x50
-> > [   32.541372][    T1]  ip_mr_init+0x54/0x180
-> > [   32.542785][    T1]  inet_init+0x25c/0x3e8
->
-> And this is an fs_initcall().  This is late enough during boot that
-> RTNL could conceivably be held, but I don't see evidence of that.
-> One approach would be to hold RTNL across this initialization code.
->
-> So the other approach would be to have a global variable in net/ipv4/ipmr.c
-> whose definition depends on whether lockdep is enabled:
->
-> #ifdef CONFIG_PROVE_LOCKING
-> int ip_mr_initialized;
-> void ip_mr_now_initialized(void) { ip_mr_initialized = 1; }
-> #else
-> const int ip_mr_initialized = 1;
-> void ip_mr_now_initialized(void) { }
-> #endif
->
-> Then at the end of ip_mr_init():
->
->         ip_mr_now_initialized();
->
-> And finally change the CONFIG_IP_MROUTE_MULTIPLE_TABLES definition
-> of ipmr_for_each_table() to be something like:
->
-> #define ipmr_for_each_table(mrt, net) \
->         list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list, \
->                                 lockdep_rtnl_is_held() || !ip_mr_initialized)
->
-> > [   32.544186][    T1]  do_one_initcall+0x4c0/0xad8
-> > [   32.545757][    T1]  kernel_init_freeable+0x3e0/0x500
-> > [   32.547443][    T1]  kernel_init+0x14/0x1f0
-> > [   32.548875][    T1]  ret_from_fork+0x10/0x18
->
-> Does that work for you?
+Hi,
 
-Yes, that made the "suspicious RCU usage" warning go away.
+this patch series improves devfreq statistics:
 
-Cheers,
-Anders
+- do conversion to use 64-bit jiffies for storing elapsed time and prevent counters
+  overflow,
+
+- add ability to reset statistics using sysfs,
+
+- move statistics data to separate structure for improved code
+  readability and maintenance,
+
+- make devfreq statistics code more similar to cpufreq statistics
+  code for improved long-term maintainability
+
+The first four patches fix time stats to use 64-bits, add spinlock for protecting data
+access, add new function in sysfs for clearing statistics counters and change var name
+used in time counters. Remaining patches make steps to moving stats into separate
+structure devfreq_stats.
+
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
+
+Kamil Konieczny (7):
+  devfreq: change time stats to 64-bit
+  devfreq: protect devfreq stats data with spinlock
+  devfreq: add clearing transitions stats in sysfs
+  devfreq: change var name used in time statistics
+  devfreq: move transition statistics to devfreq profile structure
+  devfreq: move transition statistics allocations to set_freq_stats()
+  devfreq: move statistics to separate struct
+
+ drivers/devfreq/devfreq.c          | 199 ++++++++++++++++++-----------
+ drivers/devfreq/exynos-bus.c       |   6 +-
+ drivers/devfreq/governor_passive.c |  26 ++--
+ include/linux/devfreq.h            |  41 +++---
+ 4 files changed, 167 insertions(+), 105 deletions(-)
+
+-- 
+2.24.0
+
