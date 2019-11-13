@@ -2,134 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B69FB5CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD75FB732
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 19:20:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfKMQ6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:58:10 -0500
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:46847 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfKMQ6K (ORCPT
+        id S1728376AbfKMSUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 13:20:18 -0500
+Received: from 4.mo2.mail-out.ovh.net ([87.98.172.75]:54680 "EHLO
+        4.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727074AbfKMSUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:58:10 -0500
-Received: by mail-lf1-f54.google.com with SMTP id o65so2516902lff.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:58:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6ZYEg/h4QSDcgUnlMwh4w5+X6tHq85c+NTIUoiTVyRk=;
-        b=U7ravdDyiBjUVP8ErfMB91io1YhXvWHGVKa77PMeGvwn8vFpkMlRNnDUtYyuCdHy/V
-         eXLqYfmp5YyTims+8tWu7mnnzxTheo9yQBk18/JI9FYSjBx2+5iIJS2FdZCXQkrg9sy+
-         PAqMgVt9H/TKePAImEEkVIthOmiQ0+tOoY2sY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6ZYEg/h4QSDcgUnlMwh4w5+X6tHq85c+NTIUoiTVyRk=;
-        b=pakgHHV0v8neE5Lrdi4uadCmJWWTBv73LTKJ+J6Jzjl/YEodWEBLdhSOjutjT19AOa
-         vTWZkFkHM4o8hTk4v2hUiJhtXlyklwEAC+84nyh3Wvs8s/+IZAAOCsDp0nvAxaNlFNpg
-         u5U3hTyNUJEVYH4UdD9t3IxHO4ScIb/196UHb5Vzhv29GHQ5H0pcSrJt2Ka2MgDZ8w95
-         rzHQP4ynnZjtWDgDtanxto3IWrtH4Uf+WoDRK4gcTVC6GY/7RRTGi2kQr2k+oTaMV6Nf
-         mmwvmx+bHnrDeJM4rHVytdiLWPhj0qFWs8awtfLXnZosAwEeHd6HwvvQxpPSN5Dowcu0
-         Olmw==
-X-Gm-Message-State: APjAAAXc05jYiAsuHim/wsVsBLU8PQxY6ncyP754cF8VMAifaATcKhd0
-        cqN+zjy7FaIf2mpkYM+0Yr92XIn5uGk=
-X-Google-Smtp-Source: APXvYqwRt+JjYUVcmaPHvFF8ZC/0NtIeiNIyhCdideAFZLaRdCywZYcADdEnDPL559+CgEjwdCs6uA==
-X-Received: by 2002:ac2:5236:: with SMTP id i22mr3479770lfl.19.1573664287433;
-        Wed, 13 Nov 2019 08:58:07 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id z19sm1153773ljk.66.2019.11.13.08.58.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2019 08:58:06 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id r7so3411753ljg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:58:05 -0800 (PST)
-X-Received: by 2002:a2e:8919:: with SMTP id d25mr3368745lji.97.1573664285540;
- Wed, 13 Nov 2019 08:58:05 -0800 (PST)
+        Wed, 13 Nov 2019 13:20:18 -0500
+X-Greylist: delayed 4199 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Nov 2019 13:20:17 EST
+Received: from player792.ha.ovh.net (unknown [10.109.159.139])
+        by mo2.mail-out.ovh.net (Postfix) with ESMTP id B59F01B1309
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 18:00:53 +0100 (CET)
+Received: from kaod.org (deibp9eh1--blueice1n4.emea.ibm.com [195.212.29.166])
+        (Authenticated sender: clg@kaod.org)
+        by player792.ha.ovh.net (Postfix) with ESMTPSA id B5E55C0CFAD3;
+        Wed, 13 Nov 2019 17:00:36 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] KVM: PPC: Book3S HV: XIVE: Fix potential page leak
+ on error path
+To:     Greg Kurz <groug@kaod.org>, Paul Mackerras <paulus@ozlabs.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Lijun Pan <ljp@linux.ibm.com>,
+        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        Laurent Vivier <lvivier@redhat.com>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <157366357346.1026356.14522564753643067538.stgit@bahia.lan>
+ <157366357929.1026356.18181561111939034621.stgit@bahia.lan>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <e49f522e-c265-4f00-f6f8-57f8583e7d8a@kaod.org>
+Date:   Wed, 13 Nov 2019 18:00:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
- <Pine.LNX.4.44L0.1911121639540.1567-100000@iolanthe.rowland.org>
- <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
- <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com>
- <CANn89iKLy-5rnGmVt-nzf6as4MvXgZzSH+BSReXZKpSTjhoWAw@mail.gmail.com>
- <CAHk-=wj_rFOPF9Sw_-h-6J93tP9qO_UOEvd-e02z9+DEDs2kLQ@mail.gmail.com> <CANpmjNNkbWoqckyPfhq52W4WfJWR2=rt8WXzs+WXEZzv9xxL0g@mail.gmail.com>
-In-Reply-To: <CANpmjNNkbWoqckyPfhq52W4WfJWR2=rt8WXzs+WXEZzv9xxL0g@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 Nov 2019 08:57:49 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg5CkOEF8DTez1Qu0XTEFw_oHhxN98bDnFqbY7HL5AB2g@mail.gmail.com>
-Message-ID: <CAHk-=wg5CkOEF8DTez1Qu0XTEFw_oHhxN98bDnFqbY7HL5AB2g@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Marco Elver <elver@google.com>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <157366357929.1026356.18181561111939034621.stgit@bahia.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 3946560650099067671
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrudefuddgleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdqfffguegfifdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepuffvfhfhkffffgggjggtgfesthekredttdefjeenucfhrhhomhepveorughrihgtpgfnvggpifhorghtvghruceotghlgheskhgrohgurdhorhhgqeenucfkpheptddrtddrtddrtddpudelhedrvdduvddrvdelrdduieeinecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejledvrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheptghlgheskhgrohgurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 7:00 AM Marco Elver <elver@google.com> wrote:
->
-> Just to summarize the options we've had so far:
-> 1. Add a comment, and let the tool parse it somehow.
-> 2. Add attribute to variables.
-> 3. Add some new macro to use with expressions, which doesn't do
-> anything if the tool is disabled. E.g. "racy__(counter++)",
-> "lossy__(counter++);" or any suitable name.
+On 13/11/2019 17:46, Greg Kurz wrote:
+> We need to check the host page size is big enough to accomodate the
+> EQ. Let's do this before taking a reference on the EQ page to avoid
+> a potential leak if the check fails.
+> 
+> Cc: stable@vger.kernel.org # v5.2
+> Fixes: 13ce3297c576 ("KVM: PPC: Book3S HV: XIVE: Add controls for the EQ configuration")
+> Signed-off-by: Greg Kurz <groug@kaod.org>
 
-I guess I could live with "data_race(x)" or something simple like
-that, assuming we really can just surround a whole expression with it,
-and we don't have to make a hundred different versions for the
-different cases ("racy plain assignment" vs "racy statistics update"
-vs "racy u64 addition" etc etc).
 
-I just want the source code to be very legible, which is one of the
-problems with the ugly READ_ONCE() conversions.
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
 
-Part of that "legible source code" implies no crazy double
-underscores. But a plain "data_race(x)" might not look too bad, and
-would be easy to grep for, and doesn't seem to exist in the current
-kernel as anything else.
+> ---
+>  arch/powerpc/kvm/book3s_xive_native.c |   13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/powerpc/kvm/book3s_xive_native.c b/arch/powerpc/kvm/book3s_xive_native.c
+> index 0e1fc5a16729..d83adb1e1490 100644
+> --- a/arch/powerpc/kvm/book3s_xive_native.c
+> +++ b/arch/powerpc/kvm/book3s_xive_native.c
+> @@ -630,12 +630,6 @@ static int kvmppc_xive_native_set_queue_config(struct kvmppc_xive *xive,
+>  
+>  	srcu_idx = srcu_read_lock(&kvm->srcu);
+>  	gfn = gpa_to_gfn(kvm_eq.qaddr);
+> -	page = gfn_to_page(kvm, gfn);
+> -	if (is_error_page(page)) {
+> -		srcu_read_unlock(&kvm->srcu, srcu_idx);
+> -		pr_err("Couldn't get queue page %llx!\n", kvm_eq.qaddr);
+> -		return -EINVAL;
+> -	}
+>  
+>  	page_size = kvm_host_page_size(kvm, gfn);
+>  	if (1ull << kvm_eq.qshift > page_size) {
+> @@ -644,6 +638,13 @@ static int kvmppc_xive_native_set_queue_config(struct kvmppc_xive *xive,
+>  		return -EINVAL;
+>  	}
+>  
+> +	page = gfn_to_page(kvm, gfn);
+> +	if (is_error_page(page)) {
+> +		srcu_read_unlock(&kvm->srcu, srcu_idx);
+> +		pr_err("Couldn't get queue page %llx!\n", kvm_eq.qaddr);
+> +		return -EINVAL;
+> +	}
+> +
+>  	qaddr = page_to_virt(page) + (kvm_eq.qaddr & ~PAGE_MASK);
+>  	srcu_read_unlock(&kvm->srcu, srcu_idx);
+>  
+> 
 
-One question is if it would be a statement expression or an actual
-expression. I think the expression would read much better, IOW you
-could do
-
-    val = data_race(p->field);
-
-instead of having to write it as
-
-    data_race(val = p->field);
-
-to really point out the race. But at the same time, maybe you need to
-surround several statements, ie
-
-    // intentionally racy xchg because we don't care and it generates
-better code
-    data_race(a = p->field; p->field = b);
-
-which all would work fine with a non-instrumented macro something like this:
-
-    #define data_race(x) ({ x; })
-
-which would hopefully give the proper syntax rules.
-
-But that might be very very inconvenient for KCSAN, depending on how
-you annotate the thing.
-
-So I _suspect_ that what you actually want is to do it as a statement,
-not as an expression. What's the actual underlying syntax for "ignore
-this code for thread safety checking"?
-
-                    Linus
