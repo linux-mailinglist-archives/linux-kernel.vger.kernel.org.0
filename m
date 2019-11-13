@@ -2,180 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E302FB4A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:08:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E64BFB555
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbfKMQId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:08:33 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:35867 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfKMQIc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:08:32 -0500
-Received: by mail-il1-f196.google.com with SMTP id s75so2277659ilc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:08:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=tINJyD9ZJqGUt5nhIHMTf94A9voyZOjcobv6ep2N/gs=;
-        b=AEeDQ/816exn8z/BuE7ICwR3vGqrExw7UD2JblL+xKAehiwVm9Smfcw1BCfdTT7eAf
-         SrmYPPR7eGhteJg7Aa9Xph2D1OrWoTtFZYUxe3HkCutuw5JNbKd3UcG/WrOF+uGKDVvN
-         spjjzRQc0ZEgCUlWXQiqCIX6fMnnWjAtM1UpDFCmjpXY/w8WDJV99Vu4r7XK2PiDUsLq
-         3j4SVpOtiBr7HWw9/ZvyFabXWiDw1Lp6EOZYJtMp8P5hKwti90kiSrXzEHfivB8Ech//
-         9y2n1ND95Y7qyKIRmbPzinVSkvz5S4YYdJ1/O0JsXVnOSTQm5FZ94EvBaY5fANocVVhf
-         /Bfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tINJyD9ZJqGUt5nhIHMTf94A9voyZOjcobv6ep2N/gs=;
-        b=ZRu/+XqB3dS8JdOCZ4UQc78XFnhQjJaio6eolIMDL5mRuslspqxpWbEKz1mrEKI2UD
-         w91WUuR/pLR0SeBPDTXg4rXFgooDmKSXWGsWGHYkAy5Eg/1zBYfzEvsKEJR45E/9rsMx
-         Kl9hlafSI+FJJ+sjrC1SYusBgkR9sA3TLLWL93PhhS89EnmWZMLvYRwzNQVDc0O7XFOr
-         K5Gl1VFm/hCBfa2BqlAEvKVt+oicbD4a+FlMt2x5/bAzYU11RKVNXPtv3q9Iq34YT6FZ
-         FnpecSl3CicmOEvEllb7gJN5UTXaeu5AlSMkGkXVY44+rISt7NO/t4DbDgp2b+Kr2xDF
-         VcaQ==
-X-Gm-Message-State: APjAAAXQ47oMTVbIF7OGWXvr0G1dST071ykQo9OyDu06gRqNtFMDHlBf
-        7DVv7K6Igv4C3xrITMNWXJR4RQ==
-X-Google-Smtp-Source: APXvYqxKS0cv20/0h4BRXpygSpky7XSNR80ysphE4pwHuVmtFWtVc2j/imDRVXzHlyblnA1mbGvV4Q==
-X-Received: by 2002:a92:5fc2:: with SMTP id i63mr4409919ill.218.1573661311628;
-        Wed, 13 Nov 2019 08:08:31 -0800 (PST)
-Received: from [192.168.1.163] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t68sm327142ilb.66.2019.11.13.08.08.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Nov 2019 08:08:30 -0800 (PST)
-Subject: Re: general protection fault in io_commit_cqring
-To:     syzbot <syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <000000000000af7e9805973c6356@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ff3df506-7b2c-3af7-a6e5-2264ac12b1da@kernel.dk>
-Date:   Wed, 13 Nov 2019 09:08:29 -0700
+        id S1728528AbfKMQkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:40:01 -0500
+Received: from vern.gendns.com ([98.142.107.122]:33890 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727578AbfKMQkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 11:40:00 -0500
+X-Greylist: delayed 1780 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Nov 2019 11:39:59 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=1barl4LpDu79nPCoSjjU5D0XU/aFzdp/OvRiRUJvuu4=; b=CHKMbtWjUEP5Z9HxUTK44zytaD
+        GeMuIzYEjve7YUvU0+Gj+e+pYUpxXtnhSxCapF5tTdiRZM0mmjGx39ZDbaKcjLqBUzlkNB0JtsOdq
+        w5XE2Nr1h41pxvtjDRUm34LDSzeyWLxCJomyoC9Cyuqq/Tj35cCoy0mEqDNyTsQuUsiTJTAw12YoG
+        SWPpnJ68Yudfjqe7WM2gPuItES8UZ/ljmzsIJKuZgRHZBT46CdFEvuJaomoqtSb2ELeckXaWOzyP/
+        kQgcfLvzPBuLLFKnIwtaLZGrw2jo6NPEw15alM4nXN8hUBgv3z9L1jzkbgbI41CTkLFvVGJvASRmT
+        s5XDUEAQ==;
+Received: from [2600:1700:4830:165f::fb2] (port=42824)
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <david@lechnology.com>)
+        id 1iUvDm-0004Fk-9d; Wed, 13 Nov 2019 11:10:18 -0500
+Subject: Re: [PATCH AUTOSEL 4.14 050/115] ARM: dts: da850-lego-ev3: slow down
+ A/DC as much as possible
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Sekhar Nori <nsekhar@ti.com>, devicetree@vger.kernel.org
+References: <20191113015622.11592-1-sashal@kernel.org>
+ <20191113015622.11592-50-sashal@kernel.org>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <a1b3b613-8b70-56a3-dee6-264bd5fa5049@lechnology.com>
+Date:   Wed, 13 Nov 2019 10:10:17 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000af7e9805973c6356@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191113015622.11592-50-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/19 8:55 AM, syzbot wrote:
-> Hello,
+On 11/12/19 7:55 PM, Sasha Levin wrote:
+> From: David Lechner <david@lechnology.com>
 > 
-> syzbot found the following crash on:
+> [ Upstream commit aea4762fb46e048c059ff49565ee33da07c8aeb3 ]
 > 
-> HEAD commit:    4e8f108c Add linux-next specific files for 20191113
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=121ad2d2e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ace1bcdd76242fd2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=21147d79607d724bd6f3
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1649e706e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11397f72e00000
+> Due to the electrical design of the A/DC circuits on LEGO MINDSTORMS EV3,
+> if we are reading analog values as fast as possible (i.e. using DMA to
+> service the SPI) the A/DC chip will read incorrect values - as much as
+> 0.1V off when the SPI is running at 10MHz. (This has to do with the
+> capacitor charge time when channels are muxed in the A/DC.)
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com
+> This patch slows down the SPI as much as possible (if CPU is at 456MHz,
+> SPI runs at 1/2 of that, so 228MHz and has a max prescalar of 256, so
+> we could get ~891kHz, but we're just rounding it to 1MHz). We also use
+> the max allowable value for WDELAY to slow things down even more.
 > 
-> RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
-> RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
-> RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-> R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 8903 Comm: syz-executor410 Not tainted 5.4.0-rc7-next-20191113
-> #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
-> RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
-> RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
-> Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1
-> ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c
-> 89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
-> RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
-> RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
-> RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
-> R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
-> R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
-> FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->    io_cqring_overflow_flush+0x6b9/0xa90 fs/io_uring.c:673
->    io_ring_ctx_wait_and_kill+0x24f/0x7c0 fs/io_uring.c:4260
->    io_uring_create fs/io_uring.c:4600 [inline]
->    io_uring_setup+0x1256/0x1cc0 fs/io_uring.c:4626
->    __do_sys_io_uring_setup fs/io_uring.c:4639 [inline]
->    __se_sys_io_uring_setup fs/io_uring.c:4636 [inline]
->    __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:4636
->    do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
->    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x441229
-> Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
-> RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
-> RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-> R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> ---[ end trace b0f5b127a57f623f ]---
-> RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
-> RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
-> RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
-> Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1
-> ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c
-> 89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
-> RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
-> RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
-> RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
-> R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
-> R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
-> FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> These changes reduce the error of the analog values to about 5mV, which
+> is tolerable.
+> 
+> Commits a3762b13a596 ("spi: spi-davinci: Add support for SPI_CS_WORD")
+> and e2540da86ef8 ("iio: adc: ti-ads7950: use SPI_CS_WORD to reduce
+> CPU usage") introduce changes that allow DMA transfers to be used, so
+> this slow down is needed now.
+> 
 
-We fail allocating the rings due to the fail slab/page_alloc stuff,
-which means ctx->rings isn't setup. When then tear down the ctx, we'll
-blow up trying to stuff an entry in the CQ ring.
-
-The below should fix it, I'll add it to the mix.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 11b3e1e23720..3e8a503bcca6 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4280,7 +4314,8 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 		io_wq_cancel_all(ctx->io_wq);
- 
- 	io_iopoll_reap_events(ctx);
--	io_cqring_overflow_flush(ctx, true);
-+	if (ctx->rings)
-+		io_cqring_overflow_flush(ctx, true);
- 	wait_for_completion(&ctx->completions[0]);
- 	io_ring_ctx_free(ctx);
- }
-
--- 
-Jens Axboe
-
+I doubt that the commits above would be backported, so it does not
+make sense to backport this patch.
