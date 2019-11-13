@@ -2,125 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A87FB8AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:22:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E9BFB8DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 20:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbfKMTW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 14:22:26 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40795 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbfKMTW0 (ORCPT
+        id S1727325AbfKMT3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 14:29:39 -0500
+Received: from mta02.svc.cra.dublin.eircom.net ([159.134.118.53]:34358 "HELO
+        mta02.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1726557AbfKMT3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 14:22:26 -0500
-Received: by mail-wr1-f65.google.com with SMTP id i10so3709412wrs.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 11:22:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=qkdacaVdhS5V1JI0trEPqYF0NgGr5+r4W2AqnZo0b/g=;
-        b=OsCPK9MBTPx/N1epP5ySwSXv8jXL9MBO2c6cgnFpGnQDrK4O9vJ4hYcWPMpOqMi5kS
-         dNfvRjXyF0fJZMMczbekLSUUcDb9/XQL/y7urvRITxFB2vBreT4wHncx5ZNYi+Wne56q
-         EvmYeZQ/WsChHCIqDsczY9KJ9vXp4p6/LHGs/CYJwPQLnZe7tux5ptPGNJY5pCna1Fwj
-         3tyiFklfcNtEdJPhbd68gpiQtv/JQxa94pfL6cE7KfHVyd9dgJzB/jqaIP/2qsUqbwxx
-         48FnxoP7P3GKjLRcKQpnhEclVI8NKS0k3hbCrBrlRX6ohiLmzgvFaV04iKxyDmje9gyp
-         aSwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=qkdacaVdhS5V1JI0trEPqYF0NgGr5+r4W2AqnZo0b/g=;
-        b=EKvzI7vQBrYTt6N74zx6Xe+No6bG8M/I+Pe14H7q2jvIuYW0UEgesS7ZnNTrrbO/gh
-         d5MQtJL5XvxgAI9Qe3PU02Pr6lfG4crjW/DOu1kShPOj3C7S6Bw82AOhsXT0GOs1OsaK
-         PsjICWLF+5yfIhtAEM9yKyKsAxhfyeLE0kPWY6THEwmJhpPoMTjlsl6X04GkzXAeYSnl
-         ysThkVIzj5n3kTDcQHLXzGsjicoyORVTwERxKOavXQDDhjsn8sbtjP/dx+Br0tIxGzLk
-         FDbj5w9AjrVN6iCyTjm58BvCnWVjMVJrPapfPfn94lbPi8KRBGMj7l62+36CZBG4UC7o
-         As6w==
-X-Gm-Message-State: APjAAAV0U0PVPufg4753vEE6wHzOeNf2v8vjPjdM4gC/M6bvnwpnSi+x
-        419gbqFwIsMhFZRJyDY+RvKK3LwfXwkVRSwsszU=
-X-Google-Smtp-Source: APXvYqyp9pkH+51iCa/hlQVEjIKtehxcBLsZVD0syYP6jy5OdSJfhR9kxXpI8hyUHS3wAiZs5PfUT1Wur+FcA2lhWwg=
-X-Received: by 2002:adf:f010:: with SMTP id j16mr4582598wro.206.1573672942308;
- Wed, 13 Nov 2019 11:22:22 -0800 (PST)
+        Wed, 13 Nov 2019 14:29:39 -0500
+X-Greylist: delayed 397 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Nov 2019 14:29:38 EST
+Received: (qmail 14765 messnum 20102915 invoked from network[213.94.190.15/avas03.vendorsvc.cra.dublin.eircom.net]); 13 Nov 2019 19:22:56 -0000
+Received: from avas03.vendorsvc.cra.dublin.eircom.net (HELO avas03) (213.94.190.15)
+  by mta02.svc.cra.dublin.eircom.net (qp 14765) with SMTP; 13 Nov 2019 19:22:56 -0000
+Received: from vzmbx18.eircom.net ([86.43.60.98])
+        by Cloudmark Gateway with SMTP
+        id UyEBihZ1sxi8gUyEBitZ0q; Wed, 13 Nov 2019 19:22:55 +0000
+X-Spam-Flag: NO
+X-CNFS-Analysis: v=2.2 cv=HooGIwbS c=1 sm=1 tr=0
+ a=e7gqILOnBbllteVy7xBg4A==:117 a=9cW_t1CCXrUA:10 a=FKkrIqjQGGEA:10
+ a=CtZj-PRnuFMA:10 a=IkcTkHD0fZMA:10 a=OInfx_3IAAcA:10 a=MEWDuUNxdpMA:10
+ a=ZZnuYtJkoWoA:10 a=69EAbJreAAAA:8 a=CdXhuT_UVp6yClsh16sA:9
+ a=B2tT3dhY4sW-9M1_:21 a=xLagpucJqED6qQk1:21 a=QEXdDO2ut3YA:10
+ a=66l60b_nmaEA:10 a=5MgnXvm5AtQA:10
+Date:   Wed, 13 Nov 2019 19:22:55 +0000 (GMT)
+From:   ahmed <ksn4432@eircom.net>
+Message-ID: <91916376.105100.1573672975806.JavaMail.zimbra@eircom.net>
+Subject: Please Respond Urgently.
 MIME-Version: 1.0
-References: <1573649074-72589-1-git-send-email-yukuai3@huawei.com>
- <1573649074-72589-2-git-send-email-yukuai3@huawei.com> <ac4566662a04e0c25039df7ed30789d0792885cd.camel@perches.com>
-In-Reply-To: <ac4566662a04e0c25039df7ed30789d0792885cd.camel@perches.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 13 Nov 2019 14:22:10 -0500
-Message-ID: <CADnq5_Pwc9U03+1=tKs2hxKVdqfwXOc14XRD=yeJCsc4=5NJtw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] drm/amdgpu: remove set but not used variable
- 'mc_shared_chmap' from 'gfx_v6_0.c' and 'gfx_v7_0.c'
-To:     Joe Perches <joe@perches.com>
-Cc:     yu kuai <yukuai3@huawei.com>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Rex Zhu <Rex.Zhu@amd.com>,
-        "Quan, Evan" <evan.quan@amd.com>, zhengbin <zhengbin13@huawei.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, yi.zhang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [103.78.122.150]
+X-Mailer: Zimbra 8.6.0_GA_1242 (zclient/8.6.0_GA_1242)
+Thread-Topic: Please Respond Urgently.
+Thread-Index: WC/Lrm1jQC93x362tDlouK1xr6Dm6w==
+X-CMAE-Envelope: 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
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 11:56 AM Joe Perches <joe@perches.com> wrote:
->
-> On Wed, 2019-11-13 at 20:44 +0800, yu kuai wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> >
-> > drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c: In function
-> > =E2=80=98gfx_v6_0_constants_init=E2=80=99:
-> > drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c:1579:6: warning: variable
-> > =E2=80=98mc_shared_chmap=E2=80=99 set but not used [-Wunused-but-set-va=
-riable]
-> []
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/am=
-d/amdgpu/gfx_v6_0.c
-> []
-> > @@ -1678,7 +1678,6 @@ static void gfx_v6_0_constants_init(struct amdgpu=
-_device *adev)
-> >
-> >       WREG32(mmBIF_FB_EN, BIF_FB_EN__FB_READ_EN_MASK | BIF_FB_EN__FB_WR=
-ITE_EN_MASK);
-> >
-> > -     mc_shared_chmap =3D RREG32(mmMC_SHARED_CHMAP);
->
-> I do not know the hardware but frequently hardware like
-> this has read ordering requirements and various registers
-> can not be read in a random order.
->
-> Does removing this read have no effect on the hardware?
+GREETINGS,
 
-There is no dependency.  It's safe.  Same thing below.
+I KNOW THAT THIS MAIL WILL COME TO YOU AS A SURPRISE AS WE HAVE NEVER MET BEFORE, BUT NEED NOT TO WORRY AS I AM CONTACTING YOU INDEPENDENTLY OF MY INVESTIGATION AND NO ONE IS INFORMED OF THIS COMMUNICATION. I NEED YOUR URGENT ASSISTANCE IN TRANSFERRING THE SUM OF $11.3MILLION IMMEDIATELY TO YOUR PRIVATE ACCOUNT WHERE THIS MONEY CAN BE SHARED BETWEEN US. THE MONEY HAS BEEN HERE IN OUR BANK LYING DORMANT FOR YEARS NOW WITHOUT ANYBODY COMING FOR THE CLAIM OF IT.
 
-Alex
+I WANT TO RELEASE THE MONEY TO YOU AS THE RELATIVE TO OUR DECEASED CUSTOMER (THE ACCOUNT OWNER) WHO DIED A LONG WITH HIS SUPPOSED NEXT OF KIN SINCE 16TH OCTOBER 2005. THE BANKING LAWS HERE DOES NOT ALLOW SUCH MONEY TO STAY MORE THAN 14 YEARS, BECAUSE THE MONEY WILL BE RECALLED TO THE BANK TREASURY ACCOUNT AS UNCLAIMED FUND.
 
->
-> >       adev->gfx.config.mc_arb_ramcfg =3D RREG32(mmMC_ARB_RAMCFG);
-> >       mc_arb_ramcfg =3D adev->gfx.config.mc_arb_ramcfg;
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/am=
-d/amdgpu/gfx_v7_0.c
-> []
-> > @@ -4336,7 +4336,6 @@ static void gfx_v7_0_gpu_early_init(struct amdgpu=
-_device *adev)
-> >               break;
-> >       }
-> >
-> > -     mc_shared_chmap =3D RREG32(mmMC_SHARED_CHMAP);
-> >       adev->gfx.config.mc_arb_ramcfg =3D RREG32(mmMC_ARB_RAMCFG);
-> >       mc_arb_ramcfg =3D adev->gfx.config.mc_arb_ramcfg;
->
-> Same question.
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+BY INDICATING YOUR INTEREST I WILL SEND YOU THE FULL DETAILS ON HOW THE BUSINESS WILL BE EXECUTED.
+
+PLEASE SEND YOUR REPLY TO MY PRIVATE EMAIL.  MRAHMEDOUEDRAOGO@HOTMAIL.COM  
+
+BEST REGARDS,
+AHMED OUEDRAOGO.
