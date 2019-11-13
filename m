@@ -2,94 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F86FA05D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:39:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1265FA05A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfKMBiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:38:54 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:38452 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfKMBix (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:38:53 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD1YNRM001889;
-        Wed, 13 Nov 2019 01:37:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=nBEVt/y9CIbMxIiZwK0x8Vgf1UghyXUE7rZHgMKFOkI=;
- b=gHFWHkKmteGiPHt8Q2AnfXoA/gc79ee+q2VElCvQBq2gz2vqpEv72tZyhzpwOsLKx+Pz
- 8Xq4hNrXWTQiYDzHVm5TEd/mcNETQyvup3T2v7BFiLbjVDpdJFdGGnD6njWQ+9Z1uFto
- 9v8UFv8vhSNzJI/ByC5+l5Tp9u4Y68yFdppMngOFTDqbnZpEPzBA3A21zJmmBWoRCt0f
- mgc+2SaU58k4Yoa0QzkE7BC+yx7hQi9jiC7r5t4Ywnf09gp+UBcuaacd1GvPpLqfeq6W
- PpabvpZeaiNuQRfsArkzxa0bSonp7QeF6AvbhaJpXEtEEu0YPBwuLfiBK9Wh2ZwhiCUo mg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2w5p3qrpjg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 01:37:16 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD1YJqY091498;
-        Wed, 13 Nov 2019 01:37:16 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2w7khmdhh3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 01:37:16 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAD1b9IQ007575;
-        Wed, 13 Nov 2019 01:37:09 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Nov 2019 01:37:08 +0000
-To:     "wubo \(T\)" <wubo40@huawei.com>
-Cc:     "lduncan\@suse.com" <lduncan@suse.com>,
-        "cleech\@redhat.com" <cleech@redhat.com>,
-        "jejb\@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen\@oracle.com" <martin.petersen@oracle.com>,
-        "open-iscsi\@googlegroups.com" <open-iscsi@googlegroups.com>,
-        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ulrich Windl <Ulrich.Windl@rz.uni-regensburg.de>,
-        Mingfangsen <mingfangsen@huawei.com>,
-        "liuzhiqiang \(I\)" <liuzhiqiang26@huawei.com>
-Subject: Re: [PATCH v3] scsi: avoid potential deadloop in iscsi_if_rx func
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915DFB0ED@dggeml505-mbs.china.huawei.com>
-Date:   Tue, 12 Nov 2019 20:37:05 -0500
-In-Reply-To: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915DFB0ED@dggeml505-mbs.china.huawei.com>
-        (wubo's message of "Thu, 31 Oct 2019 06:17:01 +0000")
-Message-ID: <yq18soksgji.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        id S1727151AbfKMBim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:38:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:47745 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727041AbfKMBil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:38:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47CS1q5RFzz9s7T;
+        Wed, 13 Nov 2019 12:38:39 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1573609119;
+        bh=SwByYoLFEyaFhQcPYB6VEXGbPTJYyU/NVRS6uduhnb4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=sCOHN334fwWpfr9TMDGipJgaqrutE3a+4jM5VH6z7EXMyn9iJ50gJQRPRwFVMgWf9
+         Vq2AIqvNRm5a03rM14FW+ApKojy2HPxW9oWcpbSmldpa2/DsYKEqREJiyFyA4HdftD
+         0ZVQXlmY1ckYJVXBcSU/4NVxMKWPSTz/s7xrVTsWuI5yGzbCNwIn7BpvwELokcX858
+         HW13SfHKXFFvOqW9qAa3D+IpfsEHO28RKuBifeHk+ID0KY7WrfM3aoeL/1AVeQeOPr
+         622Ag6NW5kfo/LbeuN12OSMOsPD1b+lH05NSgzR8V4XzcNx6ej+nJYFxuU8BifsEAY
+         NO/N89t+KWOMQ==
+Date:   Wed, 13 Nov 2019 12:38:38 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Imre Deak <imre.deak@intel.com>,
+        Jon Bloomfield <jon.bloomfield@intel.com>,
+        Andi Shyti <andi.shyti@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Message-ID: <20191113123838.79733d12@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=957
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911130008
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911130008
+Content-Type: multipart/signed; boundary="Sig_/6rImgs7l5p3T26k6mTBrh+/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/6rImgs7l5p3T26k6mTBrh+/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> In iscsi_if_rx func, after receiving one request through
-> iscsi_if_recv_msg func, iscsi_if_send_reply will be called to try to
-> reply the request in do-loop. If the return of iscsi_if_send_reply
-> func return -EAGAIN all the time, one deadloop will occur.
->  
-> For example, a client only send msg without calling recvmsg func, 
-> then it will result in the watchdog soft lockup. 
-> The details are given as follows,
+Hi all,
 
-Lee/Chris/Ulrich: Please review!
+Today's linux-next merge of the drm tree got a conflict in:
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+  drivers/gpu/drm/i915/i915_drv.h
+  drivers/gpu/drm/i915/intel_pm.c
+  drivers/gpu/drm/i915/intel_pm.h
+
+between commit:
+
+  7e34f4e4aad3 ("drm/i915/gen8+: Add RC6 CTX corruption WA")
+
+from Linus' tree and commits:
+
+  c113236718e8 ("drm/i915: Extract GT render sleep (rc6) management")
+  3e7abf814193 ("drm/i915: Extract GT render power state management")
+
+from the drm tree.
+
+I fixed it up (This was too messy, so I effectively reverted the former
+patch) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6rImgs7l5p3T26k6mTBrh+/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3LXp4ACgkQAVBC80lX
+0GzjeQf7BC4V/F2EG4zt7/3N+0BYwYkGe+Kugr0EZAjh3hnulTNBnqgKWwwPQanE
+DJ9fhhbB23y7o3SQwsmMTw7LKpsdgi9ZSgkP67LjT19YlwaUKnrchR7+wCLlbojy
+3bPqhwvJl1eqJ7uTqE5cve+VDAqjeFt22ALDt2j4E5y5wRqKEwB+5d0NFNhhdTVi
+K0iO1gVy9jOBKPwKafgduBqJ6FjXQi5MrDvMRz8ISFbvtf9PMK801ADRsoqrPCyR
+TatirABGL49YUSNwHa+hVnjtyRvtVrd8qz7admOGxJGh8Yc4ggsDfGwg7EApPi4e
+MFhqzN3PkJqdLeAEWpSCIuCGEtF4yg==
+=/F2F
+-----END PGP SIGNATURE-----
+
+--Sig_/6rImgs7l5p3T26k6mTBrh+/--
