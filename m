@@ -2,87 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B48FB510
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96860FB62F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfKMQ3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:29:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36170 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726115AbfKMQ3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:29:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 307AFB205;
-        Wed, 13 Nov 2019 16:29:36 +0000 (UTC)
-Date:   Wed, 13 Nov 2019 17:29:34 +0100
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/2] mm: memcg: switch to css_tryget() in
- get_mem_cgroup_from_mm()
-Message-ID: <20191113162934.GF19372@blackbody.suse.cz>
-References: <20191106225131.3543616-1-guro@fb.com>
+        id S1728484AbfKMRSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:18:10 -0500
+Received: from mga02.intel.com ([134.134.136.20]:62542 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727343AbfKMRSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 12:18:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 09:18:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
+   d="scan'208";a="229813233"
+Received: from dmsnyder-mobl1.amr.corp.intel.com (HELO [10.252.193.15]) ([10.252.193.15])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Nov 2019 09:18:07 -0800
+Subject: Re: [alsa-devel] [RESEND PATCH v5 3/6] ASoC: amd: Enabling I2S
+ instance in DMA and DAI
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
+        Sanju R Mehta <sanju.mehta@amd.com>,
+        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Alexander.Deucher@amd.com,
+        Colin Ian King <colin.king@canonical.com>
+References: <1573629249-13272-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1573629249-13272-4-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <5ca55e4b-51e5-7d1e-31a6-73f923a10078@linux.intel.com>
+Date:   Wed, 13 Nov 2019 10:29:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l+goss899txtYvYf"
-Content-Disposition: inline
-In-Reply-To: <20191106225131.3543616-1-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1573629249-13272-4-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---l+goss899txtYvYf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> @@ -83,9 +83,20 @@ static int acp3x_i2s_hwparams(struct snd_pcm_substream *substream,
+>   		struct snd_pcm_hw_params *params,
+>   		struct snd_soc_dai *dai)
+>   {
+> -	u32 val = 0;
+> +	u32 val;
+> +	u32 reg_val;
 
-Hi.
+nit-pick: xmas-tree style, move the declarations below
 
-On Wed, Nov 06, 2019 at 02:51:30PM -0800, Roman Gushchin <guro@fb.com> wrote:
-> Let's fix it by switching from css_tryget_online() to css_tryget().
-Is this a safe thing to do? The stack captures a kmem charge path, with
-css_tryget() it may happen it gets an offlined memcg and carry out
-charge into it. What happens when e.g. memcg_deactivate_kmem_caches is
-skipped as a consequence?
 
-> The problem is caused by an exiting task which is associated with
-> an offline memcg. We're iterating over and over in the
-> do {} while (!css_tryget_online()) loop, but obviously the memcg won't
-> become online and the exiting task won't be migrated to a live memcg.
-As discussed in other replies, the task is not yet exiting. However, the
-access to memcg isn't through `current` but `mm->owner`, i.e. another
-task of a threadgroup may have got stuck in an offlined memcg (I don't
-have a good explanation for that though).
+> @@ -104,24 +115,46 @@ static int acp3x_i2s_hwparams(struct snd_pcm_substream *substream,
+>   		return -EINVAL;
+>   	}
+>   	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+> -		val = rv_readl(rtd->acp3x_base + mmACP_BTTDM_ITER);
+> -		val = val | (rtd->xfer_resolution  << 3);
+> -		rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_ITER);
+> +		switch (rtd->i2s_instance) {
+> +		case I2S_BT_INSTANCE:
+> +			reg_val = mmACP_BTTDM_ITER;
+> +			break;
+> +		case I2S_SP_INSTANCE:
+> +		default:
+> +			reg_val = mmACP_I2STDM_ITER;
+> +		}
+>   	} else {
+> -		val = rv_readl(rtd->acp3x_base + mmACP_BTTDM_IRER);
+> -		val = val | (rtd->xfer_resolution  << 3);
+> -		rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_IRER);
+> +		switch (rtd->i2s_instance) {
+> +		case I2S_BT_INSTANCE:
+> +			reg_val = mmACP_BTTDM_IRER;
+> +			break;
+> +		case I2S_SP_INSTANCE:
+> +		default:
+> +			reg_val = mmACP_I2STDM_IRER;
+> +		}
+>   	}
+> +	val = rv_readl(rtd->acp3x_base + reg_val);
+> +	val = val | (rtd->xfer_resolution  << 3);
+> +	rv_writel(val, rtd->acp3x_base + reg_val);
+>   	return 0;
+>   }
 
-HTH,
-Michal
+nice cleanup, much better than previous versions!
 
---l+goss899txtYvYf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>   
+>   static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
+>   		int cmd, struct snd_soc_dai *dai)
+>   {
+> -	int ret = 0;
+> +	int ret;
 
------BEGIN PGP SIGNATURE-----
+move 2 lines below.
 
-iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl3ML2cACgkQia1+riC5
-qSgQZA/+KD6f95XTCnV55rr15xwdquOdz4T+bmiNstvliVaYqvukej5/cCxTPKJK
-I4zHkgTix48h9NDvrvIuOaY68D+nlczIUsAIA1BQlZga7HnV96+d1/j/TFiNMIyr
-FDFHIfNU07mO6C5uCQOYe1VLfa9auNrpNtkhiqYYhaFrLVsQC7veGWg2Euy914Rc
-YgQMhFuz4HxFwOtXaHKh+SvvNhL9qttdOZx1ACAAcNhS0nltpj/mGhG2gO8mChkh
-YhXjf5CeDY4nqnLwgiDlRQN66cSOL/DVUC7Acl3NLpmWzTkKuS3gIIsSTvzhsKAE
-G/B/fbPupZuPuE8tC+kVdKacZVhJ1v1mgcyZxRAXKaSGOhCXhSIQlqt9bgflGMwZ
-Gfp8YY8F1LcFZdTuCvkodnS4TAAnL54GEuvqAxTqs7FzTgb9VBtx7C99spTxXY3q
-uC99i+J8swSO/a14Eo0RGAZB0RKtDpGxHyTa/kwsHx2JcJLrFKQGzstK2rdmUS1q
-2mt6zT+AM8RVJqHSVdtDGdA1fBlZcDvWTRIr/FtQswGFtXN8ikpEfUXRT0NrL75s
-89w/b3qb2PMVaDoIwGEnIudNYCmoEhBo8OocB8pWwt3BYnBX7L+aLXqDX9ITLJOj
-vOwcVSWNy2EuLN6XEa1P8opml3XXoDl2l9D/7a4qIb8214XwAtY=
-=Czsl
------END PGP SIGNATURE-----
+>   	struct i2s_stream_instance *rtd = substream->runtime->private_data;
+> -	u32 val, period_bytes;
+> -
+> +	u32 val, period_bytes, reg_val, ier_val, water_val;
+> +	struct snd_soc_pcm_runtime *prtd = substream->private_data;
+> +	struct snd_soc_card *card = prtd->card;
+> +	struct acp3x_platform_info *pinfo = snd_soc_card_get_drvdata(card);
 
---l+goss899txtYvYf--
+
+>   static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
+>   {
+>   	u16 page_idx;
+> -	u32 low, high, val, acp_fifo_addr;
+> -	dma_addr_t addr = rtd->dma_addr;
+> +	uint64_t low, high, val, acp_fifo_addr;
+> +	uint64_t reg_ringbuf_size, reg_dma_size, reg_fifo_size, reg_fifo_addr;
+> +	dma_addr_t addr;
+
+nit-pick: xmas-tree style
+
+> @@ -303,13 +346,24 @@ static int acp3x_dma_hw_params(struct snd_soc_component *component,
+>   			       struct snd_pcm_hw_params *params)
+>   {
+>   	int status;
+> -	u64 size;
+> -	struct snd_pcm_runtime *runtime = substream->runtime;
+> -	struct i2s_stream_instance *rtd = runtime->private_data;
+> +	uint64_t size;
+> +	struct snd_soc_pcm_runtime *prtd = substream->private_data;
+> +	struct snd_soc_card *card = prtd->card;
+> +	struct acp3x_platform_info *pinfo = snd_soc_card_get_drvdata(card);
+>   
+> +	struct i2s_stream_instance *rtd = substream->runtime->private_data;
+
+nit pick: xmas-tree style and newlines
+
+
