@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 237C1FA3D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:13:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F160EFA3C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:12:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730001AbfKMCMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:12:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51736 "EHLO mail.kernel.org"
+        id S1728057AbfKMB6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:58:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729953AbfKMB6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:58:10 -0500
+        id S1727952AbfKMB6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:58:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 325F8222D3;
-        Wed, 13 Nov 2019 01:58:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CBDB222D3;
+        Wed, 13 Nov 2019 01:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610289;
-        bh=Vp7x52tWRWgDfeFgld4Gwk0u6iwjQtfSbiDkxb/zxYs=;
+        s=default; t=1573610293;
+        bh=vnj8+xsV7FMyBw4aO08RKTdSzAjFVMYxM+AZ9rLmixM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nyUDzTsVoFb1Z8Hw556ddpsgyPB/kdYhGVdT3UTNpkhSRnZWHd9VkNZ2UphzubvtF
-         uNUTDKk1gGHN1m+m7l214wRdACSxjAHJBRC2zCOxx2NwjV4t1t3xpsu5i6nKm+r5YU
-         KeBl6sG6TGSHd/JlRnRINS/6el+GnpIsHnwpTwYo=
+        b=LQsOZ0UOoZsZGKEWqoVz3b5T23DhoESkk4ZYflVQc+UAbDSKoiWZkGyfDpYXlipjl
+         3xpk1Y57P3w5HItvr58kL0Lqkkyxv9QTNZrVM60kWH/MT8wqEcTQb9IO876hiv54vi
+         f5T7J11iAD/pu0vfySHd00tMWxSSvGKBwH0oRZjA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 065/115] i2c: brcmstb: Allow enabling the driver on DSL SoCs
-Date:   Tue, 12 Nov 2019 20:55:32 -0500
-Message-Id: <20191113015622.11592-65-sashal@kernel.org>
+Cc:     Rami Rosen <ramirose@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 067/115] dmaengine: ioat: fix prototype of ioat_enumerate_channels
+Date:   Tue, 12 Nov 2019 20:55:34 -0500
+Message-Id: <20191113015622.11592-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -43,42 +42,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Rami Rosen <ramirose@gmail.com>
 
-[ Upstream commit e1eba2ea54a2de0e4c58d87270d25706bb77b844 ]
+[ Upstream commit f4d34aa8c887a8a2d23ef546da0efa10e3f77241 ]
 
-ARCH_BCM_63XX which is used by ARM-based DSL SoCs from Broadcom uses the
-same controller, make it possible to select the STB driver and update
-the Kconfig and help text a bit.
-
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Rami Rosen <ramirose@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/Kconfig | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/dma/ioat/init.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 45a3f3ca29b38..b72a25585d52b 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -429,12 +429,13 @@ config I2C_BCM_KONA
- 	  If you do not need KONA I2C interface, say N.
+diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+index 68680e4151eaa..9103a0425f752 100644
+--- a/drivers/dma/ioat/init.c
++++ b/drivers/dma/ioat/init.c
+@@ -129,7 +129,7 @@ static void
+ ioat_init_channel(struct ioatdma_device *ioat_dma,
+ 		  struct ioatdma_chan *ioat_chan, int idx);
+ static void ioat_intr_quirk(struct ioatdma_device *ioat_dma);
+-static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
++static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma);
+ static int ioat3_dma_self_test(struct ioatdma_device *ioat_dma);
  
- config I2C_BRCMSTB
--	tristate "BRCM Settop I2C controller"
--	depends on ARCH_BRCMSTB || BMIPS_GENERIC || COMPILE_TEST
-+	tristate "BRCM Settop/DSL I2C controller"
-+	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_63XX || \
-+		   COMPILE_TEST
- 	default y
- 	help
- 	  If you say yes to this option, support will be included for the
--	  I2C interface on the Broadcom Settop SoCs.
-+	  I2C interface on the Broadcom Settop/DSL SoCs.
+ static int ioat_dca_enabled = 1;
+@@ -575,7 +575,7 @@ static void ioat_dma_remove(struct ioatdma_device *ioat_dma)
+  * ioat_enumerate_channels - find and initialize the device's channels
+  * @ioat_dma: the ioat dma device to be enumerated
+  */
+-static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
++static void ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
+ {
+ 	struct ioatdma_chan *ioat_chan;
+ 	struct device *dev = &ioat_dma->pdev->dev;
+@@ -594,7 +594,7 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
+ 	xfercap_log = readb(ioat_dma->reg_base + IOAT_XFERCAP_OFFSET);
+ 	xfercap_log &= 0x1f; /* bits [4:0] valid */
+ 	if (xfercap_log == 0)
+-		return 0;
++		return;
+ 	dev_dbg(dev, "%s: xfercap = %d\n", __func__, 1 << xfercap_log);
  
- 	  If you do not need I2C interface, say N.
+ 	for (i = 0; i < dma->chancnt; i++) {
+@@ -611,7 +611,6 @@ static int ioat_enumerate_channels(struct ioatdma_device *ioat_dma)
+ 		}
+ 	}
+ 	dma->chancnt = i;
+-	return i;
+ }
  
+ /**
 -- 
 2.20.1
 
