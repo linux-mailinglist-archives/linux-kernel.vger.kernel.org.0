@@ -2,112 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1DDFACEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 181AEFACF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfKMJ1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:27:12 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46665 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbfKMJ1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:27:12 -0500
-Received: by mail-lf1-f67.google.com with SMTP id o65so1317545lff.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 01:27:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=98bbtxrlztsaSeBuCTpYhW6G78UV8jrpbvcn8tDSvYA=;
-        b=plLBWJp5AQE02m++GEPUI0YTKIjDTL5RtW1BLYg8HBlGB8epyTQPSL35OrV2QCJHHz
-         dlh8C9hIfz33ZhJWJLYHrWoZiPRvepsZ3cv2lPLq5wjba22yE8DV1VnHFromxUlRPeZH
-         UEsL4I2pC9Sq96gxTC6aqd10X/oLlypGSlBnhPabamclUTEQJ62S8IcGryqc2F2yT66n
-         XE3GnKeur9IvVOz3uhy2V0iaTlQvFmH9dtuu7wD3DonSbgVgYNY2WAFAkE5VPIQxZjGD
-         6yG3z6iDpGRY87NUzmCHIuwQt4l2dSKLgTgRek5hpzhOVqrlq0Ltx2/WOzTZzMMGGFIf
-         6m+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=98bbtxrlztsaSeBuCTpYhW6G78UV8jrpbvcn8tDSvYA=;
-        b=TRQkIQzacYYPdr7ZsS7ComXh/DxcUZ2jkRL1hhpELigJHLLfPs4FrHFLOyYQK+twps
-         nZLNnU+AozEu5uCRuUgieyA2wr0Ehbeya8BoguBpRcgmzM67bwn++xbaMKiD7AAjnglo
-         dYzsC/GdqlyLbUtO+b1k4T3rnsaX5gJLFs9YoJNAIhDVn4oYAQUuBlm1RBysO4JxtP+p
-         wVy3zOrxvnpCcXhoiI0mCK1Jxwfjq+Z+U0SiZFpz66F93Yn6WJa8LZMmE0Fu+uDKGjru
-         T/zr5q1EEJuhlSOi+Wu7w0TmIYUgrkC/uYEtQ5mE6+aijpCuNCdn4Q8zSfYREzMBajZT
-         HbHg==
-X-Gm-Message-State: APjAAAVltv5RtiWUDoP9QfUTuDm/KOvW4FPxrlwFQe3SeRiSbReGz+Ag
-        VO3OFmd74fkrMg1fy4xWR2IDBw==
-X-Google-Smtp-Source: APXvYqyJ5e7C/nCUl9Pi3lVJ8liQye4thGdWtnl2nLezYo7RVgIQsVKtF7flNXJjyitnyanCP2bepA==
-X-Received: by 2002:a05:6512:50f:: with SMTP id o15mr1953084lfb.168.1573637229877;
-        Wed, 13 Nov 2019 01:27:09 -0800 (PST)
-Received: from localhost (c-413e70d5.07-21-73746f28.bbcust.telenor.se. [213.112.62.65])
-        by smtp.gmail.com with ESMTPSA id x18sm595872ljc.39.2019.11.13.01.27.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 01:27:09 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     catalin.marinas@arm.com
-Cc:     will@kernel.org, john.garry@huawei.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH v2] arm64: Kconfig: add a choice for endianness
-Date:   Wed, 13 Nov 2019 10:26:52 +0100
-Message-Id: <20191113092652.28201-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727419AbfKMJaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:30:14 -0500
+Received: from relay.sw.ru ([185.231.240.75]:39208 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726613AbfKMJaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 04:30:13 -0500
+Received: from finist_cl7.qa.sw.ru ([10.94.4.83] helo=finist-ce7.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <khorenko@virtuozzo.com>)
+        id 1iUoyE-00062s-Rr; Wed, 13 Nov 2019 12:29:51 +0300
+From:   Konstantin Khorenko <khorenko@virtuozzo.com>
+To:     Jessica Yu <jeyu@kernel.org>, Prarit Bhargava <prarit@redhat.com>,
+        Barret Rhoden <brho@google.com>
+Cc:     Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, David Arcari <darcari@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH 0/1] kernel/module.c: don't allow modprobe to hang forever on a module load
+Date:   Wed, 13 Nov 2019 12:29:49 +0300
+Message-Id: <20191113092950.15556-1-khorenko@virtuozzo.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building allmodconfig KCONFIG_ALLCONFIG=$(pwd)/arch/arm64/configs/defconfig
-CONFIG_CPU_BIG_ENDIAN gets enabled. Which tends not to be what most
-people want. Another concern that has come up is that ACPI isn't built
-for an allmodconfig kernel today since that also depends on !CPU_BIG_ENDIAN.
+After commit 6e6de3dee51a ("kernel/module.c: Only return -EEXIST
+for modules that have finished loading")
+the simple test leads to hanged modprobe process (INTERRUPTIBLE):
 
-Rework so that we introduce a 'choice' and default the choice to
-CPU_LITTLE_ENDIAN. That means that when we build an allmodconfig kernel
-it will default to CPU_LITTLE_ENDIAN that most people tends to want.
+1. Make sure nft_ct module is not used by your firewall rules.
+2. Run 3 copies of
+   # export i=0; while true; if [[ $(($i % 100)) -eq 0 ]] ; then \
+     echo "i=$i"; fi; do modprobe nft_ct; i=$(($i + 1)); done
 
-Reviewed-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- arch/arm64/Kconfig | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+3. Run 2 copies of
+   # while true; do rmmod nft_ct; done
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 64764ca92fca..c599b6b288be 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -877,10 +877,26 @@ config ARM64_PA_BITS
- 	default 48 if ARM64_PA_BITS_48
- 	default 52 if ARM64_PA_BITS_52
- 
-+choice
-+	prompt "Endianness"
-+	default CPU_LITTLE_ENDIAN
-+	help
-+	  Select the endianness of data accesses performed by the CPU. Userspace
-+	  applications will need to be compiled and linked for the endianness
-+	  that is selected here.
-+
- config CPU_BIG_ENDIAN
-        bool "Build big-endian kernel"
-        help
--         Say Y if you plan on running a kernel in big-endian mode.
-+	  Say Y if you plan on running a kernel with a big-endian userspace.
-+
-+config CPU_LITTLE_ENDIAN
-+	bool "Build little-endian kernel"
-+	help
-+	  Say Y if you plan on running a kernel with a little-endian userspace.
-+	  This is usually the case for distributions targetting arm64.
-+
-+endchoice
- 
- config SCHED_MC
- 	bool "Multi-core scheduler support"
+Hanged "modprobe" process will appear in ~ 10 seconds.
+
+   # cat /proc/30184/stack
+   [<0>] load_module+0x53f/0x2060
+   [<0>] __do_sys_finit_module+0xd2/0x100
+   [<0>] do_syscall_64+0x5b/0x1c0
+   [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Konstantin Khorenko (1):
+  kernel/module.c: wakeup processes in module_wq on module unload
+
+ kernel/module.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
 -- 
-2.20.1
+2.15.1
 
