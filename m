@@ -2,130 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A88FABEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:22:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D67BFABDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:20:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfKMIWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 03:22:49 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:56661 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbfKMIW3 (ORCPT
+        id S1726340AbfKMIUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 03:20:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53701 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725993AbfKMIUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 03:22:29 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191113082226epoutp011d35b6c3561a1daa79651e27c2c62e2b~WqzEHUDfc2652126521epoutp01f
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:22:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191113082226epoutp011d35b6c3561a1daa79651e27c2c62e2b~WqzEHUDfc2652126521epoutp01f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1573633346;
-        bh=SNfwaZ1SrpMjqg07GVTUxUBoC0uFl6QDgaOnhDyXIss=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j3LD5YtZ6C1E8GVjl12CnHnkNirzfxJ7wCHMlHlaEHBDkFo2EFJnFl/x/pH17eTJm
-         UPxmQrWP4khlBCiDUvJzIPMJ07rizxafma6lQiFhu0orvDBm3OI97dQ3UnLzgxszjf
-         KLJ42BHiXOX/6hDYxlMMvF1t42vuWulYqjA490qM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191113082226epcas1p4a3f050e684458a43ee81d4afbd0b3d5b~WqzD0OBhe3012230122epcas1p4s;
-        Wed, 13 Nov 2019 08:22:26 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47Cczj6V1MzMqYkh; Wed, 13 Nov
-        2019 08:22:25 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3E.93.04068.14DBBCD5; Wed, 13 Nov 2019 17:22:25 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba~WqzCLhNL-3079030790epcas1p4h;
-        Wed, 13 Nov 2019 08:22:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191113082224epsmtrp2de85e54fcd71e273f916b29d474f7854~WqzCKyRw72310523105epsmtrp2f;
-        Wed, 13 Nov 2019 08:22:24 +0000 (GMT)
-X-AuditID: b6c32a39-f5fff70000000fe4-54-5dcbbd418ca2
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6F.84.24756.04DBBCD5; Wed, 13 Nov 2019 17:22:24 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191113082224epsmtip11bde97e9816d5d172838127e7da96b0e~WqzCAAVkC2165921659epsmtip1k;
-        Wed, 13 Nov 2019 08:22:24 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com,
-        Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH 13/13] MAINTAINERS: add exfat filesystem
-Date:   Wed, 13 Nov 2019 03:18:00 -0500
-Message-Id: <20191113081800.7672-14-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191113081800.7672-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUYRTlc3ZmR2lr2KwuBrUOCL3M3da1MdxSkhhoowUpKpBtcKdV2hc7
-        q1iBSdFLSs0U0xSV0sg0N13KfKRoT3uhlrmSBD0kQ0yzLK2kHcce/84995xzL/f7SEw5joeQ
-        KXY377JzVpoIkt3oXKkOj2t9lKierCKYoxfrCObK1bsBzMvBAYxpaX0oY3qbSgjme+Fhxjtz
-        B2d6Po3JYkn2VvGgnG0rrZGzzb5Mgs32ViN2on4Z23FzhDASe6wxyTxn5l0q3p7kMKfYLXp6
-        a4Jps0kXpdaEa6KZ9bTKztl4PR1vMIZvSbH696FVaZw11U8ZOUGgIzbGuBypbl6V7BDcepp3
-        mq1Ojdq5VuBsQqrdsjbJYdugUavX6fzKvdbk/L423DmJpw9k58kyUSaehQJJoCLh1KkyPw4i
-        lVQjgv7bH+RS8RnBx5bHAVIxiaC36tVfS27f8zlVK4K6torZxqxlqkiXhUiSoFbDT+8ikQ6m
-        NkHDhXaZqMeoEgSNZ4qR2FhIMXBkXAwKJGVUGLzwzRAiVlAxMDL4FEnDlsNVTzsmZgb6+b5a
-        vZgDlIeAae/Y3ELxcK7mzJx+IXy875VLOAQmRlsJ0QvUIRhvwyT6JIIP3/QS1oKvzoOLEoxa
-        CXVNERIdCrd+lM4mYtR8GP16GpdSFHDyuFKShEF2T2eAhJdC1omxuaEsNHR+I6Tr5CD4kufD
-        c9Gy4n8TyhGqRot5p2Cz8ILGqfv/verR7HdbFd2I7j01dCCKRPQ8BVR0JSpxLk04YOtAQGJ0
-        sKIx/UGiUmHmDhzkXQ6TK9XKCx1I57/jWSxkUZLD/3ntbpNGt06r1TKRUeujdFp6iSLucmWi
-        krJwbn4/zzt51x9fABkYkok2Db+d8QxhRQNVRnQx9BqZ0Ty97V2P4UkB4enOk73fFm9R5VRQ
-        kSVrdr/N2Os2j/hO54fV7tx3vn+jMTa9fIW83hStgqjKzvbC7oRHu4LKNOx1w6/hZ66W3QOK
-        iKnecno041L/+JsK1XCctauga3slyxzrVg4tMOx4HTlBG/bRMiGZ06zCXAL3G+rAUeGEAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsWy7bCSnK7D3tOxBs8e61g0L17PZrFy9VEm
-        i+t3bzFb7Nl7ksXi8q45bBY/ptdbbPl3hNXi0vsPLA4cHjtn3WX32D93DbvH7psNbB59W1Yx
-        enzeJOdxaPsbtgC2KC6blNSczLLUIn27BK6MKdf2sxZ8Y6241TeJpYGxgbWLkZNDQsBEYsK1
-        K+xdjFwcQgK7GSWmf/7ECJGQljh24gxzFyMHkC0scfhwMUTNB0aJU7tPMILE2QS0Jf5sEQUp
-        FxFwlOjddZgFpIZZYBGjxLuPk8EWCAtYSDR9BFnAycEioCpx9eY/NhCbV8BG4s3dc1C75CVW
-        bzgAtosTKH5trS1IWEjAWuLr2wPMExj5FjAyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vO
-        z93ECA5CLc0djJeXxB9iFOBgVOLhlVh4KlaINbGsuDL3EKMEB7OSCO+OihOxQrwpiZVVqUX5
-        8UWlOanFhxilOViUxHmf5h2LFBJITyxJzU5NLUgtgskycXBKNTAmrlb6KBCjazbh+Oz8V33u
-        ltyfLq7VYnPifXLILsK8bdrO3VP9sw/HN8tPUf+obhm/Wf5T1YqejsOibwW2/8yYcV0gQ3Gp
-        xXQPaWenkCRerp+aoU7B4idMX06si5Xi29t388+5k6/O1M+r+bJ39nmmqT8rOnIkz60OPNV+
-        4NCquXPD7+1s2jhNiaU4I9FQi7moOBEA06+xvz4CAAA=
-X-CMS-MailID: 20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba
-References: <20191113081800.7672-1-namjae.jeon@samsung.com>
-        <CGME20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba@epcas1p4.samsung.com>
+        Wed, 13 Nov 2019 03:20:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573633244;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=whJvieYSPZF3C0Ev7gvfZK1XEQG2EzzzHM80XB6g75A=;
+        b=Bw70PeBZgNnnFEiAg4WDTsvZhpIoN4+p2i0WVtiArVYx2v8nBe2iMB4068sdE+jP/U8VKb
+        56Wp8lNYsn+mwjR9fgqSkia92wCgMOcy0KH2KUi3/66AJqh3PokHhvn8+y42qM2p2kxWWz
+        XKxY1JnOcpiv8vDBmQM6DsVoG7qeO0M=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-112-Fr5eHIqnOe2nmmy_8AnaUQ-1; Wed, 13 Nov 2019 03:20:43 -0500
+Received: by mail-wr1-f70.google.com with SMTP id m17so1137405wrb.20
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 00:20:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gRJtnCq+CKt1kPsmHkXPWnEtQz9JufgD24IWcr8duAg=;
+        b=HKQoW7aTUBrOkd1i1+yZGA6CPnn4gBaLdp4XQeh7YrBUsu9uw83ppBeuJK1VVanfUU
+         ojrll3zAZGaIu43Li3tu/02pwPDEFeXFqx8xER4sKfcNrSlhsiyO4D1AE7IGysFLBnai
+         Rn8ANMhJvRco5dhkdvyQPUoV6CiiJrCYdOja5eSJgfUKQTTH2q4i+J6m3CnhzOgAOIvA
+         NXCgGpbeNWA5loPp5fhCcEVHqMvDbMNKKbU0rlKGSZou4ZTBccJRPfqw3uNlbiHt9Bw1
+         iOahiHtPhMmFMwep9aRk9q2JTeiYRWEST6qmwU0Ooo+QLiNkMoVgnZfcWEoy+ssmvVi7
+         wmLg==
+X-Gm-Message-State: APjAAAXQnxsiIOhlucTi+7m5MgMsz4oEOtW8zudKdrjy5VLTcPyGEzIs
+        ec0OKsKWGDQbM/UDsQguNBVIEbxZkRYzgWWfywpPg9aif21+sJmtn3bLD6+OQI26ZenvVv4XBCw
+        CEi0iUW4gJZO4P4l2Ij6TMXYk
+X-Received: by 2002:a5d:4986:: with SMTP id r6mr1507905wrq.307.1573633241983;
+        Wed, 13 Nov 2019 00:20:41 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyvuhfthJLiZbIf7ASFW0EJey9TeYZbP3dIAq7chny/myshfoEZhQsu6Zyv9TB2AwA4sR/anA==
+X-Received: by 2002:a5d:4986:: with SMTP id r6mr1507868wrq.307.1573633241635;
+        Wed, 13 Nov 2019 00:20:41 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:8c9d:1a6f:4730:367c? ([2001:b07:6468:f312:8c9d:1a6f:4730:367c])
+        by smtp.gmail.com with ESMTPSA id 19sm2670309wrc.47.2019.11.13.00.20.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2019 00:20:41 -0800 (PST)
+Subject: Re: [PATCH] KVM: X86: Reset the three MSR list number variables to 0
+ in kvm_init_msr_list()
+To:     Xiaoyao Li <xiaoyao.li@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Chenyi Qiang <chenyi.qiang@intel.com>
+References: <20191113011521.32255-1-xiaoyao.li@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <02a71740-a98d-622e-ee3e-705fe707c772@redhat.com>
+Date:   Wed, 13 Nov 2019 09:20:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191113011521.32255-1-xiaoyao.li@intel.com>
+Content-Language: en-US
+X-MC-Unique: Fr5eHIqnOe2nmmy_8AnaUQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself and Sungjong Seo as exfat maintainer.
+On 13/11/19 02:15, Xiaoyao Li wrote:
+> When applying commit 7a5ee6edb42e ("KVM: X86: Fix initialization of MSR
+> lists"), it forgot to reset the three MSR lists number varialbes to 0
+> while removing the useless conditionals.
+>=20
+> Fixes: 7a5ee6edb42e (KVM: X86: Fix initialization of MSR lists)
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> ---
+>  arch/x86/kvm/x86.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 8c8a5e20ea06..9368b0e6bf21 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -5102,6 +5102,10 @@ static void kvm_init_msr_list(void)
+> =20
+>  =09perf_get_x86_pmu_capability(&x86_pmu);
+> =20
+> +=09num_msrs_to_save =3D 0;
+> +=09num_emulated_msrs =3D 0;
+> +=09num_msr_based_features =3D 0;
+> +
+>  =09for (i =3D 0; i < ARRAY_SIZE(msrs_to_save_all); i++) {
+>  =09=09if (rdmsr_safe(msrs_to_save_all[i], &dummy[0], &dummy[1]) < 0)
+>  =09=09=09continue;
+>=20
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Ouch.  Sorry.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c2d80079dccc..18c2629b67d6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6216,6 +6216,13 @@ F:	include/trace/events/mdio.h
- F:	include/uapi/linux/mdio.h
- F:	include/uapi/linux/mii.h
- 
-+EXFAT FILE SYSTEM
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sungjong Seo <sj1557.seo@samsung.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	fs/exfat/
-+
- EXFAT FILE SYSTEM
- M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
- L:	linux-fsdevel@vger.kernel.org
--- 
-2.17.1
+Paolo
 
