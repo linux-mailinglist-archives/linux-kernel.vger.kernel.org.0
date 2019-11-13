@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22443FA3F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61559FA43B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbfKMB5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:57:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
+        id S1729881AbfKMCPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:15:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729636AbfKMB46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:56:58 -0500
+        id S1728043AbfKMB47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:56:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F22D2247B;
-        Wed, 13 Nov 2019 01:56:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8EAC22470;
+        Wed, 13 Nov 2019 01:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610217;
-        bh=S42pxMw6/wYTxvLBzsja1ndTqzGbyWY3pPEbYY4F1S4=;
+        s=default; t=1573610218;
+        bh=65esZw1aId9cAb4fmPQLAQBAEwuFCvYbnG/uf8OmSco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2X1a76TOX+sdhJMk6WLTZuB9yf0DR5J5tCXgqYqqqzzR+NjtMr7CTfNlRaPq3q+E+
-         M87kFzykvtqoLLBl74VG8xbeteIiRDXPs5trWdORh1Zm7149kIOSB+8baC+67Ig5yx
-         Z0T5/yWW/Aci2tUYPPRHiBYBjGbGZtvuNY5nMeRY=
+        b=nYIRSaKaeVXCYTmMwl1gQg+c2z8vv6sJHDFv5DOBVS/9y8mL11ccSeDToJn5R1aYj
+         XwPveki0BP2Nl6+qq/XrUjR5WMDTO/LL8Re18d1vuF7Un/8LbJ8yqBXDKiJdKFJGt8
+         5TKx/E1wm6kjXZXfpgMoU+0+z/ciKlW0EP4R1mMg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 024/115] dmaengine: timb_dma: Use proper enum in td_prep_slave_sg
-Date:   Tue, 12 Nov 2019 20:54:51 -0500
-Message-Id: <20191113015622.11592-24-sashal@kernel.org>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 025/115] ext4: fix build error when DX_DEBUG is defined
+Date:   Tue, 12 Nov 2019 20:54:52 -0500
+Message-Id: <20191113015622.11592-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,43 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
 
-[ Upstream commit 5e621f5d538985f010035c6f3e28c22829d36db1 ]
+[ Upstream commit 799578ab16e86b074c184ec5abbda0bc698c7b0b ]
 
-Clang warns when implicitly converting from one enumerated type to
-another. Avoid this by using the equivalent value from the expected
-type.
+Enabling DX_DEBUG triggers the build error below.  info is an attribute
+of  the dxroot structure.
 
-drivers/dma/timb_dma.c:548:27: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-                td_desc->desc_list_len, DMA_MEM_TO_DEV);
-                                        ^~~~~~~~~~~~~~
-1 warning generated.
+linux/fs/ext4/namei.c:2264:12: error: ‘info’
+undeclared (first use in this function); did you mean ‘insl’?
+	   	  info->indirect_levels));
 
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: e08ac99fa2a2 ("ext4: add largedir feature")
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Lukas Czerner <lczerner@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/timb_dma.c | 2 +-
+ fs/ext4/namei.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
-index 896bafb7a5324..cf6588cc3efdc 100644
---- a/drivers/dma/timb_dma.c
-+++ b/drivers/dma/timb_dma.c
-@@ -545,7 +545,7 @@ static struct dma_async_tx_descriptor *td_prep_slave_sg(struct dma_chan *chan,
- 	}
- 
- 	dma_sync_single_for_device(chan2dmadev(chan), td_desc->txd.phys,
--		td_desc->desc_list_len, DMA_MEM_TO_DEV);
-+		td_desc->desc_list_len, DMA_TO_DEVICE);
- 
- 	return &td_desc->txd;
- }
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 162e853dc5d65..212b01861d941 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2293,7 +2293,7 @@ static int ext4_dx_add_entry(handle_t *handle, struct ext4_filename *fname,
+ 			dxroot->info.indirect_levels += 1;
+ 			dxtrace(printk(KERN_DEBUG
+ 				       "Creating %d level index...\n",
+-				       info->indirect_levels));
++				       dxroot->info.indirect_levels));
+ 			err = ext4_handle_dirty_dx_node(handle, dir, frame->bh);
+ 			if (err)
+ 				goto journal_error;
 -- 
 2.20.1
 
