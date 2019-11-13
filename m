@@ -2,108 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22015FADE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:02:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC41AFADFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:04:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfKMKCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 05:02:37 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:49543 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfKMKCg (ORCPT
+        id S1727439AbfKMKES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 05:04:18 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38583 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfKMKEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:02:36 -0500
-Received: from mail-qv1-f47.google.com ([209.85.219.47]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MnJQq-1i5QHX0JUK-00jKlY; Wed, 13 Nov 2019 11:02:35 +0100
-Received: by mail-qv1-f47.google.com with SMTP id g18so548363qvp.8;
-        Wed, 13 Nov 2019 02:02:34 -0800 (PST)
-X-Gm-Message-State: APjAAAX7yCrHijEkYTtxKki5faVfaT/9hMAymSqjcuIPHR64yKFmaJRH
-        IpWuhPwlb02Hp0Vjk5cyvF86Qz729PGdm0dEZQM=
-X-Google-Smtp-Source: APXvYqxbIHpxk0EyGSyHb1LEOjNnUvGvKxcvxzDIdZZXuIRehWsSbAYkCnmOs9TK0Ul2nMncLZEPqfoW9Ge9/rMdXp4=
-X-Received: by 2002:a05:6214:2c2:: with SMTP id g2mr1912289qvu.210.1573639353874;
- Wed, 13 Nov 2019 02:02:33 -0800 (PST)
+        Wed, 13 Nov 2019 05:04:14 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v8so1859391ljh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 02:04:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7+8BQXrFfd7vVPmmII5MsvQgRN4CoXbnwomYZzYOuqY=;
+        b=mMAN3fdIVYqvkW+CCwE1FaCWLT/+gk7vKGNzCppol6zgvEuroWh9/jm7pl4xT8LIGX
+         3LjJ3sR8oUGViV3RJEyRlI7im8IbX48BTncshoWro0q7EL4bbvzjEymw4MTqwEcf9jtI
+         9BWNAEe43iBAc2tXQvJeo7HfELxKrC3V99rStbt8WYXVbh8Z0db4yl5ang30F9LnZxn9
+         ZYgpU+bzQRKAyFCzqmIVuvD822+mOYDUqOye8/CbIl2fbIDHENMjxIwxeFfJvjZhkiT3
+         Ps4mcdrA/v0jpDT8QJIq1TNkd5GeNrPpsf/Tcf7kcu+1z5O6lyGbZBuhWiByv7fUMHvg
+         D76A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7+8BQXrFfd7vVPmmII5MsvQgRN4CoXbnwomYZzYOuqY=;
+        b=goO8rVij7DOn34KEgSgO+ROPYOjd9XHWC2j2HDyimtFOCPTsNQNflQHyTSfGoTsyCU
+         RBdj+jtcTaoyICQ485w0HUUcCN+0ATEqPCCi86FOByukZ8EPjFamRnNP1+gorv+cDqB4
+         QO06rLX7chyDDdNF6t13CFBIVg6AgL8AKRsGM4Obworu8F9UsLTb8KyikiTRtt0TG/UA
+         clxLYnVgO4MyY8/QWMoBOarAIRYjDlhVx2QpdKwD8Y5bOsv2Vm27vJBUE5ljxtUilJ6I
+         XGJDyl6soTHuKJw0elK3t0Jh0zxs/FJREmhCRGVdm8cWrfmOmoo5oaZPZnc4H1qLCz6t
+         JnIg==
+X-Gm-Message-State: APjAAAV8HWZkVrR/vt9O6RzqSIt2XnuMfzhV700aWBn39q3sfjQn2m53
+        ZorQUOG7Q/QjTQX52EmcUOP7XXO43EV8/GGClVw=
+X-Google-Smtp-Source: APXvYqzrkpAd6Hpz3oz1kJ9bkYQ6lCyOOdYOttbdfnR7t7OIB4Lor9ihWI0dnmDs0iE8LILZppn3CI05bzG6SSFxJnw=
+X-Received: by 2002:a2e:8805:: with SMTP id x5mr1762023ljh.44.1573639450872;
+ Wed, 13 Nov 2019 02:04:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20191108210236.1296047-1-arnd@arndb.de> <20191108211323.1806194-2-arnd@arndb.de>
- <20191112210915.GD5130@uranus>
-In-Reply-To: <20191112210915.GD5130@uranus>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 13 Nov 2019 11:02:12 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a03FRfTsXADH+xfLsWxCu54JXvXbb-OdyGXXf88RNP34w@mail.gmail.com>
-Message-ID: <CAK8P3a03FRfTsXADH+xfLsWxCu54JXvXbb-OdyGXXf88RNP34w@mail.gmail.com>
-Subject: Re: [PATCH 11/23] y2038: rusage: use __kernel_old_timeval
-To:     Cyrill Gorcunov <gorcunov@gmail.com>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        alpha <linux-alpha@vger.kernel.org>
+References: <20191107153048.843881-1-paul.kocialkowski@bootlin.com>
+ <CAMeQTsYG+YvXqQqvJvsxT1h0z5zZJbdCtc5wPjUossvwidV=cA@mail.gmail.com>
+ <20191112151157.GD4506@aptenodytes> <20191112155012.GE4506@aptenodytes>
+In-Reply-To: <20191112155012.GE4506@aptenodytes>
+From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Date:   Wed, 13 Nov 2019 11:04:00 +0100
+Message-ID: <CAMeQTsb0+Tc9Gij_1zMH=mPSbDAjMkMEFatvZrfjLvVsQGwVgA@mail.gmail.com>
+Subject: Re: [PATCH] drm/gma500: Fixup fbdev stolen size usage evaluation
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        James Hilliard <james.hilliard1@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:YIPfmykULQ1zK4fCM0+v3SRSEDJy816mv2/j4VwFYT5i34gtSMd
- QL4HmsWsze7QHJoImBkX5KB7kfJq+PtHLTvM1twH/jcq0NbUxIYfUzFeW9qSPEMTXggGIeu
- 0IGmj3YVOAG3pVHWz4Ps4+zp4iek85QLXTAfKjuPTEQkankeP5MXMkC7D3JRZYIuX7rop7Z
- N5XvuOL9HU5Gn4ovyV9sw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6TymcqjPZJY=:xKPDKgq+K9+YU+TaJA0rXF
- CNmz6Rc+4HzXN8jO3B9eQa/dtWoX8SvjrqNfLdyybDStmElrOOBG8dEe3KTAcFmbZxIctG6/u
- vaRFnmni5NbHjhUsUoC1p0pVNt222XcGY6EamNFesetUT9jHKacmd5zm7Kb4UDUs5g5YURFVW
- yXI1VP9/dlt0Ojugunnph8LDp+0jQtwDm82BUXjuKFts1+kgzwwaCDZdMAW2FI7ZgwKS/f9uO
- menFyYrp177LVpbgg5+i9OEtJoOdSES1vcBS/+ej1lMg01prJ+VwmIbT6Nz7PcaOCkHdsLnW/
- FwrABKkF1wkUOKA9qwm3d8eqfgmT12zaag6Veq4jJ4XQk75e+I/WXPQrcfe79P1+ZKeVZpHaZ
- hxTI1HccCsALBnzm6HLutwd/8XGgJ1pbbQqycff+ZSebSWRENCJMRtRQxY9q/5uPpWVhTiju+
- xzjQeY59qYB57E5kzfWl0eo+mVGLWCNtwBW0QRA6IYCz4qU0fPYFGeBV3YWjkRIwwsWLJUqkH
- yp/FTnjBiRF0WYNFG6w/4yz8XOAm4M5qPP9GuYa2ABQ5UiDvyL29zbnDIWJMSxKs1ruwg7Z2y
- 3v+vKrCwbQo5qUjbLlzEmg+g9aAkH+215khbyjEfqqeTnR/ASIdgZhXirK+d6g+yZ+kMp+xwv
- pPwHom34YqKf8q16l6Zyfe0iWJ1lHOVWvciFrlgtQ0+nk/X2uf40N/vU+dWAkXyEUrMrLTPqJ
- zZf3fP0Uky4R35jBs0K9uXzM7spTJRkIL6xIRxdngfHNOY0NZUOmbkdyqiVa/jKF3Si3fp0BZ
- EKYf1waxLnfM2if9SLJAPwFGIEud+jslibyyQum3tnxdnhcjfQsB63Z0abHiQGJp9oHugMDtp
- sqISJpt2u+44RViAu/RQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 10:09 PM Cyrill Gorcunov <gorcunov@gmail.com> wrote:
+On Tue, Nov 12, 2019 at 4:50 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
 >
-> On Fri, Nov 08, 2019 at 10:12:10PM +0100, Arnd Bergmann wrote:
-
-> > ---
-> > Question: should we also rename 'struct rusage' into 'struct __kernel_rusage'
-> > here, to make them completely unambiguous?
+> Hi,
 >
-> The patch looks ok to me. I must confess I looked into rusage long ago
-> so __kernel_timespec type used in uapi made me nervious at first,
-> but then i found that we've this type defined in time_types.h uapi
-> so userspace should be safe. I also like the idea of __kernel_rusage
-> but definitely on top of the series.
+> On Tue 12 Nov 19, 16:11, Paul Kocialkowski wrote:
+> > Hi,
+> >
+> > On Tue 12 Nov 19, 11:20, Patrik Jakobsson wrote:
+> > > On Thu, Nov 7, 2019 at 4:30 PM Paul Kocialkowski
+> > > <paul.kocialkowski@bootlin.com> wrote:
+> > > >
+> > > > psbfb_probe performs an evaluation of the required size from the stolen
+> > > > GTT memory, but gets it wrong in two distinct ways:
+> > > > - The resulting size must be page-size-aligned;
+> > > > - The size to allocate is derived from the surface dimensions, not the fb
+> > > >   dimensions.
+> > > >
+> > > > When two connectors are connected with different modes, the smallest will
+> > > > be stored in the fb dimensions, but the size that needs to be allocated must
+> > > > match the largest (surface) dimensions. This is what is used in the actual
+> > > > allocation code.
+> > > >
+> > > > Fix this by correcting the evaluation to conform to the two points above.
+> > > > It allows correctly switching to 16bpp when one connector is e.g. 1920x1080
+> > > > and the other is 1024x768.
+> > > >
+> > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > ---
+> > > >  drivers/gpu/drm/gma500/framebuffer.c | 8 ++++++--
+> > > >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+> > > > index 218f3bb15276..90237abee088 100644
+> > > > --- a/drivers/gpu/drm/gma500/framebuffer.c
+> > > > +++ b/drivers/gpu/drm/gma500/framebuffer.c
+> > > > @@ -462,6 +462,7 @@ static int psbfb_probe(struct drm_fb_helper *helper,
+> > > >                 container_of(helper, struct psb_fbdev, psb_fb_helper);
+> > > >         struct drm_device *dev = psb_fbdev->psb_fb_helper.dev;
+> > > >         struct drm_psb_private *dev_priv = dev->dev_private;
+> > > > +       unsigned int fb_size;
+> > > >         int bytespp;
+> > > >
+> > > >         bytespp = sizes->surface_bpp / 8;
+> > > > @@ -471,8 +472,11 @@ static int psbfb_probe(struct drm_fb_helper *helper,
+> > > >         /* If the mode will not fit in 32bit then switch to 16bit to get
+> > > >            a console on full resolution. The X mode setting server will
+> > > >            allocate its own 32bit GEM framebuffer */
+> > > > -       if (ALIGN(sizes->fb_width * bytespp, 64) * sizes->fb_height >
+> > > > -                       dev_priv->vram_stolen_size) {
+> > > > +       fb_size = ALIGN(sizes->surface_width * bytespp, 64) *
+> > > > +                 sizes->surface_height;
+> > > > +       fb_size = ALIGN(fb_size, PAGE_SIZE);
+> > > > +
+> > > > +       if (fb_size > dev_priv->vram_stolen_size) {
+> > >
+> > > psb_gtt_alloc_range() already aligns by PAGE_SIZE for us. Looks like
+> > > we align a couple of times extra for luck. This needs cleaning up
+> > > instead of adding even more aligns.
+> >
+> > I'm not sure this is really for luck. As far as I can see, we need to do it
+> > properly for this size estimation since it's the final size that will be
+> > allocated (and thus needs to be available in whole).
 
-There are clearly too many time types at the moment, but I'm in the
-process of throwing out the ones we no longer need now.
+Ok now I understand what you meant. Actually vram_stolen_size is
+always page aligned so fb_size doesn't need any page alignment here.
+There is also no need to align for psbfb_create() since it also takes
+care of this.
 
-I do have a number patches implementing other variants for the syscall,
-and I suppose that if we end up adding __kernel_rusage, that would
-have to go with a set of syscalls using 64-bit seconds/nanoseconds
-rather than the old 32/64 microseconds. I don't know what other
-changes remain that anyone would want from sys_waitid() now that
-it does support pidfd.
+> >
+> > For the other times there is explicit alignment, they seem justified too:
+> > - in psb_gem_create: it is common to pass the aligned size when creating the
+> >   associated GEM object with drm_gem_object_init, even though it's probably not
+> >   crucial given that this is not where allocation actually happens;
+> > - in psbfb_create: the full size is apparently only really used to memset 0
+> >   the allocated buffer. I think this makes sense for security reasons (and not
+> >   leak previous contents in the additional space required for alignment).
 
-If there is still a need for a new waitid() replacement, that should take
-that new __kernel_rusage I think, but until then I hope we are fine
-with today's getrusage+waitid based on the current struct rusage.
+What I would prefer is to have a single place where the alignment is
+made so any hardware requirements would be transparent to the rest of
+the code.
 
-BSD has wait6() to return separate rusage structures for 'self' and
-'children', but I could not find any application (using the freebsd
-sources and debian code search) that actually uses that information,
-so there might not be any demand for that.
+Best would be if alignment is only made in psb_gtt_alloc_range() and
+then store the actual size in struct gtt_range. That way we can just
+pass along that value to memset() and drm_gem_object_init() without
+caring about how it is adjusted.
 
-> Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+> >
+> > What strikes me however is that each call to psb_gtt_alloc_range takes the
+> > alignment as a parameter when it's really always PAGE_SIZE, so it should
+> > probably just be hardcoded in the call to allocate_resource.
 
-Thanks,
+This is a remnant from trying to add support for 2D and/or overlay
+planes (don't really remember). Doesn't matter if it stays or goes
+away.
 
-      Arnd
+> >
+> > What do you think?
+
+I suppose most of this is outside the scope of what you're trying to
+do so we can just leave it as is and I can clean it up later.
+
+> >
+> > > Your size calculation looks correct and indeed makes my 1024x600 +
+> > > 1920x1080 setup actually display something, but for some reason I get
+> > > an incorrect panning on the smaller screen and stale data on the
+> > > surface only visible by the larger CRTC. Any idea what's going on?
+> >
+> > I'm not seeing this immediately, but I definitely have something strange
+> > after having printed more lines than the smallest display can handle or
+> > scrolling, where more than the actual size of the fb is used.
+> >
+> > Maybe this is related to using the PowerVR-accelerated fb ops, that aren't
+> > quite ready for this use case?
+> >
+> > I'll give it a try with psbfb_roll_ops and psbfb_unaccel_ops instead to see
+> > if it changes something for me. Maybe it would help for you too?
+>
+> Some quick feedback about that:
+> - psbfb_unaccel_ops gives a correct result where the scrolling area is bound
+>   to the smallest display;
+
+Yes, this also works correctly for me.
+
+> - psbfb_roll_ops gives a working scrolling but bound to the largest display
+>   (so the current shell line becomes invisible on the smallest one eventually);
+
+It's not panning at all for me. I never really found gtt rolling to be
+useful. It's a neat trick but I didn't have a problem with console
+scrolling speed to begin with. I might just remove it.
+
+> - psbfb_ops gives the same issue as above and seems to add artifacts on top.
+
+Did you try this on CDV? There's only 2D acceleration on Poulsbo and Oaktrail.
+
+>
+> There's probably limited interest in working on that aspect on our side though.
+> I'd be interested to know if it affects the issue you're seeing though.
+
+Focus on your requirements and I'll look at the rest.
+
+-Patrik
+
+>
+> Cheers,
+>
+> Paul
+>
+> > I suspect that the generic implementation is already bullet-proof for these
+> > kinds of use case.
+> >
+> > Cheers and thanks for the feedback,
+> >
+> > Paul
+> >
+> > >
+> > > >                  sizes->surface_bpp = 16;
+> > > >                  sizes->surface_depth = 16;
+> > > >          }
+> > > > --
+> > > > 2.23.0
+> > > >
+> >
+> > --
+> > Paul Kocialkowski, Bootlin
+> > Embedded Linux and kernel engineering
+> > https://bootlin.com
+>
+>
+>
+> --
+> Paul Kocialkowski, Bootlin
+> Embedded Linux and kernel engineering
+> https://bootlin.com
