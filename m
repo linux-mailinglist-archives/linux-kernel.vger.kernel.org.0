@@ -2,123 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83CA1FA79D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 04:53:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 787F2FA7A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 04:55:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfKMDxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 22:53:10 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45237 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbfKMDxK (ORCPT
+        id S1727516AbfKMDzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 22:55:50 -0500
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:53930 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726936AbfKMDzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 22:53:10 -0500
-Received: by mail-qt1-f194.google.com with SMTP id 30so1033557qtz.12;
-        Tue, 12 Nov 2019 19:53:09 -0800 (PST)
+        Tue, 12 Nov 2019 22:55:50 -0500
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 2B4D9C0E50;
+        Wed, 13 Nov 2019 03:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1573617349; bh=mXBD5r3N2O0PiW19XDbQTYtlmzN13qOqwyCrx/d7dnw=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=IAUNw1ZaZIzjdbh4sHq1ElqHg3Ha9FfbrvBpGAd3SYAjhvlCSIBAkcEAIBJPEZ4N+
+         1V0/EwepEWfUIBaZH6Cr6IjFD9HpUACj18W52xK1TnUYglQRaKmmzcWQM/G5zBAbbX
+         y9ENOr+MMJPNI2M+l3X8Sz46A4tlH5KXd61vPB42UpnQ5/URYxlLnFUQLdtmO07pUx
+         BQZRlbhHZnR85Rhvmzjzff3hcIaYAgkbGel4WP97QSOOPbRtH4EYcPBswzdWZ9Cqr0
+         l67AFgY34uhtfXVHbIF36Pg1Zr+/CerBM6IPlEZlHlX+Z0W+Jr0O16IWUFcZubiW0k
+         8lFP9S+RbFSWQ==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id AE880A0085;
+        Wed, 13 Nov 2019 03:55:48 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 12 Nov 2019 19:55:04 -0800
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 12 Nov 2019 19:55:03 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NQEfJn5B0ezXj3oZlEmj5me2+6fy+2VQyk591Qe9e3SALps8Zg/HLexRtwC3xvvy5X67JZ/VuCLq0qS8Mqb5i1gXLertSYwQXnBDHH0J44maKHYKY06siULRdsJzNHnR2/TXno3pfH2eRa2hItFgqFXaWvTKDCUzm8wepfwRxY1bm2Q6kqcS1oSchRvG7HJaI4rvY48b/LueQfO+wZvlWqKcdLPAOS//9OY0f9laf/eanfl1F//iijCGlYcsh62xWkMUiE5gNDTsjDaa/iUzhLaPxvVvROPtEI8CWz+N/6T4uuldLBBKBtPQqgi1xfn2iEGT1N/aiyTowzSA3pJUyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mXBD5r3N2O0PiW19XDbQTYtlmzN13qOqwyCrx/d7dnw=;
+ b=iIEwmgLxMYBVISnKEPpEM6gxxYhTrIVUCy3A54B2kd3HLN/dK9PKdnGpmUc6E0mgf6ExstnJ0MOLWEC8wBCpKvg7V2ayvk7TofiQO6YSxl0VkJnX0T3k+A54dHqG3s6wXkcRm617tTedGsP5w6xbEEKMo1xRqqNaXW3c0s9QXorIl9Ficgm8/9iXYFrcwTo2tKa7k4jIE5Cq56BgKzUQ7FcUm7UA6nphH60NI7UNDX+WgQhorCQ8ou/BuT4K7n/v6R3mfXZrZlskMGleOhXEOqbPZL/9VsrIX/vEVngNdgiymlzlNgkB+8Znm0iLBBGjvs+9zkHTH/hEdhfLOdh2MA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Nq/J9uMGWrTnPkmQnrMD87MZeTWzLPk7BmlVxfF/ZKA=;
-        b=YQYN9B7q/wgS02JIZyJ0TAbsW8KYwpEAmBGKKUlx67Z7+6Vb4gWCGYfdoBoMWpFmRG
-         JVRzh/a7fNH7ZVcp5hhFNu0tJdkpkvhEBYO3GcQXtfMh6XlNAEnA0s3rLwGvWwOzWHgz
-         t+uoeEU60G60xNt5bn0fN264JrnqVH7LkgqLnwRd2JEfGizjDV+sNR7dmO02endZWrwW
-         ZKeu1amBq3VjCe67KsNjpIBxIO6K6bfMg8Fg2Ugj2fbBDMNOxibjfnGDQz4U1nZssUvY
-         R9BZb48yYeyquwzTljIX1QXZlgf+Zd6mcJH4XrF98K94LJ7FYMxc5NsvHjIHQp8tX4Gm
-         JosQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Nq/J9uMGWrTnPkmQnrMD87MZeTWzLPk7BmlVxfF/ZKA=;
-        b=d3MAqTFpGNagPFJwnGiXlfX2s0PqzZkLtppbwFh1sI2PI/hcbXThvwMhYOY4QNetya
-         1CncQEUIvYydCkfvnPmxF8KqKxxUGa3OIwha+FMXcdwugNLSUTKyEJGrboQpFxzyZdZC
-         tNlknB5UXOw7Am3SKxnFJ2HzCBFCqwaDDxqMEVEt78dTIdhAoBl10q9KDxquk0t3hC8e
-         HgO/Bwy6aLhyi6DVjd3kg7RO8cSLh94pNrmKJIHL3p4Cylk+5yNzIfh8D8u9leYpFadY
-         +sm0gzv0Qlwv5FAAvXJcI/PW0lUrAJOc+mOybU4nk8Rk+nxiEzOhAnj8eMjxXs0pXVlx
-         GxzA==
-X-Gm-Message-State: APjAAAXcya2ukUjf1PTDPz5HGlzGxcgE8R+dXsXpv6f1GIC6MxVj1Ge4
-        xE3wVZMR71oqtcqeDOh1J/JdHgP+
-X-Google-Smtp-Source: APXvYqyl3AbKpUGwgYcN0lQfHM1ZMlimpb/l1TpYE32YfSHOe37RyNtLc93445Ah2lYB3H0h1G7iug==
-X-Received: by 2002:ac8:23d3:: with SMTP id r19mr753535qtr.297.1573617189374;
-        Tue, 12 Nov 2019 19:53:09 -0800 (PST)
-Received: from eaf ([181.47.179.0])
-        by smtp.gmail.com with ESMTPSA id a4sm358914qkk.113.2019.11.12.19.53.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 19:53:08 -0800 (PST)
-Date:   Wed, 13 Nov 2019 00:53:04 -0300
-From:   Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 13/16] hfs/hfsplus: use 64-bit inode timestamps
-Message-ID: <20191113035304.GA8753@eaf>
-References: <20191108213257.3097633-1-arnd@arndb.de>
- <20191108213257.3097633-14-arnd@arndb.de>
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mXBD5r3N2O0PiW19XDbQTYtlmzN13qOqwyCrx/d7dnw=;
+ b=B3Hcz+nPsDYnoPeeMkN1antNz8NgKPAjbAvhmY6fpaNnXgQv91Yvf2YEe2VPfO4CPqRmCVN3GgbUkJdU7GAraWu1/jvsaG5RsIPVBoaBJQ5n93hDd3BKOiSELN67dHc3D//o2eQgjbo5Vh3Jjk1O1ErJAC5fkmJbJOHUwjURrfo=
+Received: from CY4PR1201MB0037.namprd12.prod.outlook.com (10.172.78.22) by
+ CY4PR1201MB0008.namprd12.prod.outlook.com (10.172.118.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.25; Wed, 13 Nov 2019 03:55:01 +0000
+Received: from CY4PR1201MB0037.namprd12.prod.outlook.com
+ ([fe80::cdbe:cf8c:dfb7:68d3]) by CY4PR1201MB0037.namprd12.prod.outlook.com
+ ([fe80::cdbe:cf8c:dfb7:68d3%4]) with mapi id 15.20.2430.027; Wed, 13 Nov 2019
+ 03:55:01 +0000
+From:   Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+To:     Michael Olbrich <m.olbrich@pengutronix.de>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+CC:     Felipe Balbi <balbi@kernel.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH 2/2] usb: dwc3: gadget: restart the transfer if a isoc
+ request is queued too late
+Thread-Topic: [PATCH 2/2] usb: dwc3: gadget: restart the transfer if a isoc
+ request is queued too late
+Thread-Index: AQHVmKSAwOKFEHeaw0mottJUNN0pEqeIevUA
+Date:   Wed, 13 Nov 2019 03:55:01 +0000
+Message-ID: <45ce4107-7c52-48d2-90d1-dfe835024063@synopsys.com>
+References: <20191111152645.13792-1-m.olbrich@pengutronix.de>
+ <20191111152645.13792-3-m.olbrich@pengutronix.de>
+In-Reply-To: <20191111152645.13792-3-m.olbrich@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=thinhn@synopsys.com; 
+x-originating-ip: [149.117.75.13]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 639d07d4-1eb4-47cf-56f4-08d767ed4294
+x-ms-traffictypediagnostic: CY4PR1201MB0008:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY4PR1201MB000872BAF2C791D60FA0D230AA760@CY4PR1201MB0008.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0220D4B98D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(366004)(39860400002)(376002)(346002)(396003)(136003)(199004)(189003)(31696002)(66556008)(14444005)(81156014)(36756003)(8936002)(8676002)(66476007)(316002)(81166006)(99286004)(25786009)(76116006)(110136005)(71190400001)(2501003)(54906003)(71200400001)(66946007)(64756008)(256004)(5660300002)(6246003)(66446008)(4326008)(86362001)(229853002)(11346002)(6506007)(6512007)(446003)(26005)(102836004)(7736002)(14454004)(305945005)(31686004)(6486002)(478600001)(2906002)(186003)(486006)(66066001)(6116002)(2616005)(476003)(6436002)(76176011)(3846002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1201MB0008;H:CY4PR1201MB0037.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Jm5hsR8taUstadmDF1gHa8WCG404wwqhmbdjipzyq77YbVCwj8Qxkc7fDEETyQDTpGGff4xze6vr+EnNL08q0qZNZ9b+T3pznVexXa6oMMHewg2K3RKKBbGcJ2T8TikAfwoJ5b6XQa5rq+MrtVZm2zMPSnZDA4Fk6pxPS3SucBS7GgyZ/Q+w045sNdCbPR3VxE8jUja8r54cimyxpUC/aTGuMqNlivRlq1dBbluG4ubS5Tyfma6G1fGCcO+uMu/BgDPplWQ0K0KHmyCq3IXtfykgDXaI6mHEwR7my29QhDjLZeDw6dnTLNxoFFezGQONgYmGCFxErEPYYp5T5IgJSpgMxCWHcgXrSKX/f109fULAMGnJBWuz/GQpEL5DgEE1k25GAKBXCEh4oit2Q8OaDnxGb1FM/O4In7NjQrlA2fqHKa9F41KxZgjUUuMwKVAV
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8CA405FAF9FB2148A203E1AB27AE6743@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191108213257.3097633-14-arnd@arndb.de>
+X-MS-Exchange-CrossTenant-Network-Message-Id: 639d07d4-1eb4-47cf-56f4-08d767ed4294
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 03:55:01.6753
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cgyX78dFmTLyUMEsoD2OJ21KHznz9KFWEB4jNgzY2zhCLlRhD57JEle+44A6UZP/IEn/4Y/m4AXyT8opZYIIdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0008
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 10:32:51PM +0100, Arnd Bergmann wrote:
-> The interpretation of on-disk timestamps in HFS and HFS+ differs
-> between 32-bit and 64-bit kernels at the moment. Use 64-bit timestamps
-> consistently so apply the current 64-bit behavior everyhere.
-> 
-> According to the official documentation for HFS+ [1], inode timestamps
-> are supposed to cover the time range from 1904 to 2040 as originally
-> used in classic MacOS.
-> 
-> The traditional Linux usage is to convert the timestamps into an unsigned
-> 32-bit number based on the Unix epoch and from there to a time_t. On
-> 32-bit systems, that wraps the time from 2038 to 1902, so the last
-> two years of the valid time range become garbled. On 64-bit systems,
-> all times before 1970 get turned into timestamps between 2038 and 2106,
-> which is more convenient but also different from the documented behavior.
-> 
-> Looking at the Darwin sources [2], it seems that MacOS is inconsistent in
-> yet another way: all timestamps are wrapped around to a 32-bit unsigned
-> number when written to the disk, but when read back, all numeric values
-> lower than 2082844800U are assumed to be invalid, so we cannot represent
-> the times before 1970 or the times after 2040.
-> 
-> While all implementations seem to agree on the interpretation of values
-> between 1970 and 2038, they often differ on the exact range they support
-> when reading back values outside of the common range:
-> 
-> MacOS (traditional):		1904-2040
-> Apple Documentation:		1904-2040
-> MacOS X source comments:	1970-2040
-> MacOS X source code:		1970-2038
-> 32-bit Linux:			1902-2038
-> 64-bit Linux:			1970-2106
-> hfsfuse:			1970-2040
-> hfsutils (32 bit, old libc)	1902-2038
-> hfsutils (32 bit, new libc)	1970-2106
-> hfsutils (64 bit)		1904-2040
-> hfsplus-utils			1904-2040
-> hfsexplorer			1904-2040
-> 7-zip				1904-2040
-> 
-> Out of the above, the range from 1970 to 2106 seems to be the most useful,
-> as it allows using HFS and HFS+ beyond year 2038, and this matches the
-> behavior that most users would see today on Linux, as few people run
-> 32-bit kernels any more.
-> 
-> Link: [1] https://developer.apple.com/library/archive/technotes/tn/tn1150.html
-> Link: [2] https://opensource.apple.com/source/hfs/hfs-407.30.1/core/MacOSStubs.c.auto.html
-> Link: https://lore.kernel.org/lkml/20180711224625.airwna6gzyatoowe@eaf/
-> Cc: Viacheslav Dubeyko <slava@dubeyko.com>
-> Suggested-by: "Ernesto A. Fernández" <ernesto.mnd.fernandez@gmail.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-
-Reviewed-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+SGkgTWljaGFlbCwNCg0KTWljaGFlbCBPbGJyaWNoIHdyb3RlOg0KPiBDdXJyZW50bHksIG1vc3Qg
+Z2FkZ2V0IGRyaXZlcnMgaGFuZGxlIGlzb2MgdHJhbnNmZXJzIG9uIGEgYmVzdCBlZmZvcnQNCj4g
+YmFzZXM6IElmIHRoZSByZXF1ZXN0IHF1ZXVlIHJ1bnMgZW1wdHksIHRoZW4gdGhlcmUgd2lsbCBz
+aW1wbHkgYmUgZ2FwcyBpbg0KPiB0aGUgaXNvYyBkYXRhIHN0cmVhbS4NCj4NCj4gVGhlIFVWQyBn
+YWRnZXQgZGVwZW5kcyBvbiB0aGlzIGJlaGF2aW91ci4gSXQgc2ltcGx5IHByb3ZpZGVzIG5ldyBy
+ZXF1ZXN0cw0KPiB3aGVuIHZpZGVvIGZyYW1lcyBhcmUgYXZhaWxhYmxlIGFuZCBhc3N1bWVzIHRo
+YXQgdGhleSBhcmUgc2VudCBhcyBzb29uIGFzDQo+IHBvc3NpYmxlLg0KPg0KPiBUaGUgZHdjMyBn
+YWRnZXQgY3VycmVudGx5IHdvcmtzIGRpZmZlcmVudGx5OiBJdCBhc3N1bWVzIHRoYXQgdGhlcmUg
+aXMgYQ0KPiBjb250aWd1b3VzIHN0cmVhbSBvZiByZXF1ZXN0cyB3aXRob3V0IGFueSBnYXBzLiBJ
+ZiBhIHJlcXVlc3QgaXMgdG9vIGxhdGUsDQo+IHRoZW4gaXQgaXMgZHJvcHBlZCBieSB0aGUgaGFy
+ZHdhcmUuDQo+IEZvciB0aGUgVVZDIGdhZGdldCB0aGlzIG1lYW5zIHRoYXQgYSBsaXZlIHN0cmVh
+bSBzdG9wcyBhZnRlciB0aGUgZmlyc3QNCj4gZnJhbWUgYmVjYXVzZSBhbGwgZm9sbG93aW5nIHJl
+cXVlc3RzIGFyZSBsYXRlLg0KDQpDYW4geW91IGV4cGxhaW4gbGl0dGxlIG1vcmUgaG93IFVWQyBn
+YWRnZXQgZmFpbHM/DQpkd2MzIGNvbnRyb2xsZXIgZXhwZWN0cyBhIHN0ZWFkeSBzdHJlYW0gb2Yg
+ZGF0YSBvdGhlcndpc2UgaXQgd2lsbCByZXN1bHQgDQppbiBtaXNzZWRfaXNvYyBzdGF0dXMsIGFu
+ZCBpdCBzaG91bGQgYmUgZmluZSBhcyBsb25nIGFzIG5ldyByZXF1ZXN0cyBhcmUgDQpxdWV1ZWQu
+IFRoZSBjb250cm9sbGVyIGRvZXNuJ3QganVzdCBkcm9wIHRoZSByZXF1ZXN0IHVubGVzcyB0aGVy
+ZSdzIHNvbWUgDQpvdGhlciBmYWlsdXJlLg0KDQo+IFRoaXMgcGF0Y2ggY2hhbmdlcyB0aGUgYmVo
+YXZpb3VyIG9mIHRoZSBkd2MzIGdhZGdldCBkcml2ZXIgdG8gbWF0Y2ggdGhlDQo+IGV4cGVjdGF0
+aW9ucy4gSWYgYSByZXF1ZXN0IGFycml2ZXMgdG9vIGxhdGUsIHRoZW4gdGhlIHRyYW5zZmVyIHdp
+bGwgYmUNCj4gcmVzdGFydCB0byBjcmVhdGUgdGhlIG5lZWRlZCBnYXAuDQo+DQo+IEEgcmVxdWVz
+dCBpcyBsYXRlIGlmOg0KPiAxLiBUaGVyZSBhcmUgY3VycmVudGx5IG5vIHJlcXVlc3RzIHF1ZXVl
+ZCBpbiB0aGUgaGFyZHdhcmUNCj4gMi4gVGhlIGN1cnJlbnQgZnJhbWUgbnVtYmVyIHByb3ZpZGVk
+IGJ5IERTVFMgZG9lcyBub3QgbWF0Y2ggdGhlIGZyYW1lDQo+ICAgICBudW1iZXIgcmV0dXJuZWQg
+YnkgdGhlIGxhc3QgdHJhbnNmZXIuDQo+DQo+IElmIHRoaXMgaGFwcGVucyB0cmFuc2ZlcnMgYXJl
+IHN0b3BwZWQuIFRoZSBmb2xsb3dpbmcgWGZlck5vdFJlYWR5IHByb3ZpZGVzDQo+IHRoZSBuZXcg
+Y29ycmVjdCBmcmFtZSBudW1iZXIgYW5kIHJlc3RhcnRzIHRoZSB0cmFuc2Zlci4NCj4NCj4gU2ln
+bmVkLW9mZi1ieTogTWljaGFlbCBPbGJyaWNoIDxtLm9sYnJpY2hAcGVuZ3V0cm9uaXguZGU+DQo+
+IC0tLQ0KPiAgIGRyaXZlcnMvdXNiL2R3YzMvZ2FkZ2V0LmMgfCA4ICsrKysrKysrDQo+ICAgMSBm
+aWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91
+c2IvZHdjMy9nYWRnZXQuYyBiL2RyaXZlcnMvdXNiL2R3YzMvZ2FkZ2V0LmMNCj4gaW5kZXggYWM0
+NjczZDkxOTM5Li5lYjdmMDk5MjlmMjggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvdXNiL2R3YzMv
+Z2FkZ2V0LmMNCj4gKysrIGIvZHJpdmVycy91c2IvZHdjMy9nYWRnZXQuYw0KPiBAQCAtMTQ3Myw2
+ICsxNDczLDE0IEBAIHN0YXRpYyBpbnQgX19kd2MzX2dhZGdldF9lcF9xdWV1ZShzdHJ1Y3QgZHdj
+M19lcCAqZGVwLCBzdHJ1Y3QgZHdjM19yZXF1ZXN0ICpyZXEpDQo+ICAgCQkJCXJldHVybiBfX2R3
+YzNfZ2FkZ2V0X3N0YXJ0X2lzb2MoZGVwKTsNCj4gICAJCQl9DQo+ICAgCQl9DQo+ICsJCWlmICgo
+ZGVwLT5mbGFncyAmIERXQzNfRVBfVFJBTlNGRVJfU1RBUlRFRCkgJiYNCj4gKwkJICAgIGxpc3Rf
+ZW1wdHkoJmRlcC0+c3RhcnRlZF9saXN0KSAmJg0KPiArCQkgICAgKChkZXAtPmZyYW1lX251bWJl
+ciAmIDB4M2ZmZikgIT0NCj4gKwkJICAgIF9fZHdjM19nYWRnZXRfZ2V0X2ZyYW1lKGR3YykpKSB7
+DQo+ICsJCQlkd2MzX3N0b3BfYWN0aXZlX3RyYW5zZmVyKGRlcCwgdHJ1ZSwgdHJ1ZSk7DQo+ICsJ
+CQlkZXAtPmZsYWdzID0gRFdDM19FUF9FTkFCTEVEOw0KPiArCQkJcmV0dXJuIDA7DQo+ICsJCX0N
+Cj4gICAJfQ0KPiAgIA0KPiAgIAlyZXR1cm4gX19kd2MzX2dhZGdldF9raWNrX3RyYW5zZmVyKGRl
+cCwgZmFsc2UpOw0KDQpCUiwNClRoaW5oDQoNCg==
