@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F0BBFB094
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 13:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFBFCFB090
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 13:37:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfKMMhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 07:37:23 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6224 "EHLO huawei.com"
+        id S1727112AbfKMMhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 07:37:24 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6220 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726986AbfKMMhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726186AbfKMMhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Nov 2019 07:37:22 -0500
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D2414F03F8CB951FDDDD;
+        by Forcepoint Email with ESMTP id B84AD6DD953281BE2A92;
         Wed, 13 Nov 2019 20:37:20 +0800 (CST)
 Received: from huawei.com (10.90.53.225) by DGGEMS414-HUB.china.huawei.com
  (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 13 Nov 2019
@@ -25,10 +25,12 @@ To:     <alexander.deucher@amd.com>, <Felix.Kuehling@amd.com>,
 CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
         <amd-gfx@lists.freedesktop.org>, <yukuai3@huawei.com>,
         <zhengbin13@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH 0/7] various '-Wunused-but-set-variable' gcc warning fixes
-Date:   Wed, 13 Nov 2019 20:44:27 +0800
-Message-ID: <1573649074-72589-1-git-send-email-yukuai3@huawei.com>
+Subject: [PATCH 1/7] drm/amdgpu: remove set but not used variable 'mc_shared_chmap' from 'gfx_v6_0.c' and 'gfx_v7_0.c'
+Date:   Wed, 13 Nov 2019 20:44:28 +0800
+Message-ID: <1573649074-72589-2-git-send-email-yukuai3@huawei.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1573649074-72589-1-git-send-email-yukuai3@huawei.com>
+References: <1573649074-72589-1-git-send-email-yukuai3@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
@@ -39,28 +41,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set fixes various unrelated gcc '-Wunused-but-set-variable'
-warnings.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-yu kuai (7):
-  drm/amdgpu: remove set but not used variable 'mc_shared_chmap' from
-    'gfx_v6_0.c' and 'gfx_v7_0.c'
-  drm/amdgpu: remove set but not used variable 'amdgpu_connector'
-  drm/amdgpu: remove set but not used variable 'count'
-  drm/amdgpu: remove set but not used variable 'invalid'
-  drm/amdgpu: remove set but not used variable 'threshold'
-  drm/amdgpu: remove set but not used variable 'state'
-  drm/amdgpu: remove set but not used variable 'us_mvdd'
+drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c: In function
+‘gfx_v6_0_constants_init’:
+drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c:1579:6: warning: variable
+‘mc_shared_chmap’ set but not used [-Wunused-but-set-variable]
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c    |  4 ++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c         |  2 --
- drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c               |  3 +--
- drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c               |  3 +--
- drivers/gpu/drm/amd/amdkfd/kfd_device.c             |  4 ++--
- drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c  |  7 ++-----
- drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c | 12 ------------
- 7 files changed, 8 insertions(+), 27 deletions(-)
+drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c: In function
+‘gfx_v7_0_gpu_early_init’:
+drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c:4262:6: warning: variable
+‘mc_shared_chmap’ set but not used [-Wunused-but-set-variable]
 
+Fixes: 2cd46ad22383 ("drm/amdgpu: add graphic pipeline implementation for si v8")
+Fixes: d93f3ca706b8 ("drm/amdgpu/gfx7: rework gpu_init()")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c | 3 +--
+ drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+index e83b6e0..95bb242 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+@@ -1576,7 +1576,7 @@ static void gfx_v6_0_config_init(struct amdgpu_device *adev)
+ static void gfx_v6_0_constants_init(struct amdgpu_device *adev)
+ {
+ 	u32 gb_addr_config = 0;
+-	u32 mc_shared_chmap, mc_arb_ramcfg;
++	u32 mc_arb_ramcfg;
+ 	u32 sx_debug_1;
+ 	u32 hdp_host_path_cntl;
+ 	u32 tmp;
+@@ -1678,7 +1678,6 @@ static void gfx_v6_0_constants_init(struct amdgpu_device *adev)
+ 
+ 	WREG32(mmBIF_FB_EN, BIF_FB_EN__FB_READ_EN_MASK | BIF_FB_EN__FB_WRITE_EN_MASK);
+ 
+-	mc_shared_chmap = RREG32(mmMC_SHARED_CHMAP);
+ 	adev->gfx.config.mc_arb_ramcfg = RREG32(mmMC_ARB_RAMCFG);
+ 	mc_arb_ramcfg = adev->gfx.config.mc_arb_ramcfg;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+index 6b1c5ef..43ae8fc 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+@@ -4259,7 +4259,7 @@ static int gfx_v7_0_late_init(void *handle)
+ static void gfx_v7_0_gpu_early_init(struct amdgpu_device *adev)
+ {
+ 	u32 gb_addr_config;
+-	u32 mc_shared_chmap, mc_arb_ramcfg;
++	u32 mc_arb_ramcfg;
+ 	u32 dimm00_addr_map, dimm01_addr_map, dimm10_addr_map, dimm11_addr_map;
+ 	u32 tmp;
+ 
+@@ -4336,7 +4336,6 @@ static void gfx_v7_0_gpu_early_init(struct amdgpu_device *adev)
+ 		break;
+ 	}
+ 
+-	mc_shared_chmap = RREG32(mmMC_SHARED_CHMAP);
+ 	adev->gfx.config.mc_arb_ramcfg = RREG32(mmMC_ARB_RAMCFG);
+ 	mc_arb_ramcfg = adev->gfx.config.mc_arb_ramcfg;
+ 
 -- 
 2.7.4
 
