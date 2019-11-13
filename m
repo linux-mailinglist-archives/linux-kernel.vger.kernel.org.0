@@ -2,100 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7761EFA9CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 06:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3994FFA9DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 06:47:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfKMFlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 00:41:00 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41862 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfKMFk7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 00:40:59 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 94so584918oty.8
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 21:40:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NnKt4zvBKQ2t+5qhu+whaXwSdPkqbGUBXBvCo/qQj7s=;
-        b=WLfBrr5Q2F7dldKkiy3bYGX7HyJObit2WZaxgQ2sgGns/u7Y/qS/JM+Yv3hpNrMdSR
-         DGOmUHSWX65B+v7rkdAAO06OTsXl/ZNGY7MHpjqwSmpWbNHEnLeUd4+8F1wmzoGUyftf
-         SeqTD+S6ftur4K5dNNMwN4OwuSioAV/JkO4LU7v+8aUwbATtSGQQg21iKgxJ1krYGmgt
-         3rnCg2wRaITD3zjtCstVTdmufxswjNwgIvE8K/AvFqYQXRppzTFw/PWrlVuqlwhVkzH1
-         i629aZhioSB16hpsxSe1592YM3HZwylpQrxS36Glei68RW8ZKnCdKxik5F0JNqbSbTHZ
-         Zm0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NnKt4zvBKQ2t+5qhu+whaXwSdPkqbGUBXBvCo/qQj7s=;
-        b=i/9+jFUCOKjbB/RfQlrfjY7Y44Xy9ZdwJy7vK1oSCHeGI499S9JwUq8O9+X8E3W2H/
-         KiJi6PkEfq/a5mhKx+D93mG+aJjBSTItKFLfTxa0a3iF7Iy+sFqH9/QWCfXM/ZWuIVXy
-         cEy3dafQtKRHbxka4g+63CMzR0EIjbgWka4qz5DbdvFd0dyDD1DeKHflqKPij4ZBeH0b
-         LFrjcFNahsnzQVPrgYWvz0BG/Nkyzm3yAjY82pFD9HbKkn926iWEg9t5ckhFCbWVBECk
-         ng/ac6bA88ZnnyZG6J8JO8yx2kXBTF1e5QqCPipJRldoy5Z1aK5HuFRZP5qPdVjI6UA0
-         p3/A==
-X-Gm-Message-State: APjAAAUbmqV8LzNJDRAblW1FL3x5ggvogRMh4j1RbFvy5e/gJUvuhbJl
-        YRhAqDkp8MuHE+OV2F1xy14=
-X-Google-Smtp-Source: APXvYqyfUBaxAca41zSxpv8p+d0yz5n3tx3en6yq0tsa/ZT6LYSuua0UoLZjUpTwJx8Ss8OfUzaXLw==
-X-Received: by 2002:a9d:5c83:: with SMTP id a3mr1305008oti.208.1573623658612;
-        Tue, 12 Nov 2019 21:40:58 -0800 (PST)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id m11sm408375otp.15.2019.11.12.21.40.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Nov 2019 21:40:58 -0800 (PST)
-Date:   Tue, 12 Nov 2019 22:40:56 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ilie Halip <ilie.halip@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] scripts/tools-support-relr.sh: un-quote variables
-Message-ID: <20191113054056.GB16066@ubuntu-m2-xlarge-x86>
-References: <20191112134522.12177-1-ilie.halip@gmail.com>
+        id S1726339AbfKMFrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 00:47:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56042 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725446AbfKMFrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 00:47:45 -0500
+Received: from localhost (unknown [8.46.76.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC2AC21783;
+        Wed, 13 Nov 2019 05:47:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573624064;
+        bh=CJjXEjxR2Mu7s5Ipuwyvj1rSxYqmnpVD6MbxLhm6Qgw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=crGR8zI7RAGHrsQJThSHLxCMeIZuYUsWxmisll1JKWsInGzPsdTzLt+lV88Tr+OIj
+         xdCHQkfIQGFSNdYubOhFDR4LKodNVx6M4qRPYQKJsTCy5EGBkX/e9KV6JqnV9RBJ4Z
+         WuP2s1p0kVVgjp8RTFOKgkB89ei1tMsicPxC9m0w=
+Date:   Wed, 13 Nov 2019 06:47:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     syzbot+787bcbef9b5fec61944b@syzkaller.appspotmail.com,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: exfat: convert WARN to a pr_info
+Message-ID: <20191113054734.GA2058890@kroah.com>
+References: <20191113025035.186051-1-valdis.kletnieks@vt.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191112134522.12177-1-ilie.halip@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191113025035.186051-1-valdis.kletnieks@vt.edu>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 03:45:20PM +0200, Ilie Halip wrote:
-> When the CC variable contains quotes, e.g. when using
-> ccache (make CC="ccache <compiler>"), this script always
-> fails, so CONFIG_RELR is never enabled, even when the
-> toolchain supports this feature. Removing the /dev/null
-> redirect and invoking the script manually shows the issue:
+On Tue, Nov 12, 2019 at 09:50:34PM -0500, Valdis Kletnieks wrote:
+> syzbot took a nosedive because it runs with panic_on_warn set. And
+> it's quite correct, it shouldn't have been a WARN in the first place.
+> Other locations just use a pr_info(), so do that here too.
 > 
->     $ CC='/usr/bin/ccache clang' ./scripts/tools-support-relr.sh
->     ./scripts/tools-support-relr.sh: 7: ./scripts/tools-support-relr.sh: /usr/bin/ccache clang: not found
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Reported-by: syzbot+787bcbef9b5fec61944b@syzkaller.appspotmail.com
+> Fixes: c48c9f7ff32b ("staging: exfat: add exfat filesystem code to staging")
+> ---
+>  drivers/staging/exfat/exfat_blkdev.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> Fix this by un-quoting the variables.
-> 
-> Before:
->     $ make ARCH=arm64 CC='/usr/bin/ccache clang' LD=ld.lld \
->         NM=llvm-nm OBJCOPY=llvm-objcopy defconfig
->     $ grep RELR .config
->     CONFIG_ARCH_HAS_RELR=y
-> 
-> With this change:
->     $ make ARCH=arm64 CC='/usr/bin/ccache clang' LD=ld.lld \
->         NM=llvm-nm OBJCOPY=llvm-objcopy defconfig
->     $ grep RELR .config
->     CONFIG_TOOLS_SUPPORT_RELR=y
->     CONFIG_ARCH_HAS_RELR=y
->     CONFIG_RELR=y
-> 
-> Fixes: 5cf896fb6be3 ("arm64: Add support for relocating the kernel with RELR relocations")
-> Reported-by: Dmitry Golovin <dima@golovin.in>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/769
-> Cc: Peter Collingbourne <pcc@google.com>
-> Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
+> diff --git a/drivers/staging/exfat/exfat_blkdev.c b/drivers/staging/exfat/exfat_blkdev.c
+> index 7bcd98b13109..8204720b2bf2 100644
+> --- a/drivers/staging/exfat/exfat_blkdev.c
+> +++ b/drivers/staging/exfat/exfat_blkdev.c
+> @@ -59,8 +59,8 @@ int exfat_bdev_read(struct super_block *sb, sector_t secno, struct buffer_head *
+>  	if (*bh)
+>  		return 0;
+>  
+> -	WARN(!p_fs->dev_ejected,
+> -	     "[EXFAT] No bh, device seems wrong or to be ejected.\n");
+> +	if (p_fs->dev_ejected)
+> +		pr_info("[EXFAT] No bh, device seems wrong or to be ejected.\n");
+>  
+>  	return -EIO;
+>  }
+> @@ -112,8 +112,8 @@ int exfat_bdev_write(struct super_block *sb, sector_t secno, struct buffer_head
+>  	return 0;
+>  
+>  no_bh:
+> -	WARN(!p_fs->dev_ejected,
+> -	     "[EXFAT] No bh, device seems wrong or to be ejected.\n");
+> +	if (p_fs->dev_ejected)
+> +		pr_info("[EXFAT] No bh, device seems wrong or to be ejected.\n");
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Shouldn't these all be pr_err() calls as something did go wrong.
+
+thanks,
+
+greg k-h
