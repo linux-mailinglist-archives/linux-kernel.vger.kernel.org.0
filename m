@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50919FA5EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2ABFA601
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:26:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbfKMBvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:51:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38924 "EHLO mail.kernel.org"
+        id S1729220AbfKMC0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727779AbfKMBvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:51:19 -0500
+        id S1727784AbfKMBvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:51:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D63E222D4;
-        Wed, 13 Nov 2019 01:51:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F25322466;
+        Wed, 13 Nov 2019 01:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609879;
-        bh=yW1ZY926CRyEvYL8nf0PNItB9Msvnl5KBJPysHlwXVc=;
+        s=default; t=1573609880;
+        bh=nJkBAQLBBkqX8QZJrgLlumKcXjkCQC5TSG3sVUz0Rm0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uyQxyfauK8YFL9FdQajucZiMkbY4WwMDYbsbUD0T5JynZvQ1PXXnoKTp1lPjGvFJG
-         XgWVGUEBkffIfpO30OkegnGbd2d3qrNUX738KmOVs8k/CEOjGyd8JPejXELvJbicy7
-         9+Zi6vxHHj7Fqkpg4i4M0/hSsOTmczaZ18hm6hwc=
+        b=1HvkMZIz0bFiaQM+UFRgVcjZA/enNk9eUgscCjV/jYoszwQGTtiuZLZSScoa+p9fE
+         IRvsWxR7omOXOd8YL/GSCqgxyFjaib5E0F+l2P6hOr1wK9a2s/k4Bs0r6WVGQxqF1y
+         P9pQ1R+zAwno2kNA2ZzTm3FCEZ6/bodxV7f8ddm4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>, linux-watchdog@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 041/209] watchdog: w83627hf_wdt: Support NCT6796D, NCT6797D, NCT6798D
-Date:   Tue, 12 Nov 2019 20:47:37 -0500
-Message-Id: <20191113015025.9685-41-sashal@kernel.org>
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 042/209] KVM: PPC: Inform the userspace about TCE update failures
+Date:   Tue, 12 Nov 2019 20:47:38 -0500
+Message-Id: <20191113015025.9685-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -43,68 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit 57cbf0e3a0fd48e5ad8f3884562e8dde4827c1c8 ]
+[ Upstream commit f7960e299f13f069d6f3d4e157d91bfca2669677 ]
 
-The watchdog controller on NCT6796D, NCT6797D, and NCT6798D is compatible
-with the wtachdog controller on other Nuvoton chips.
+We return H_TOO_HARD from TCE update handlers when we think that
+the next handler (realmode -> virtual mode -> user mode) has a chance to
+handle the request; H_HARDWARE/H_CLOSED otherwise.
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Wim Van Sebroeck <wim@linux-watchdog.org>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+This changes the handlers to return H_TOO_HARD on every error giving
+the userspace an opportunity to handle any request or at least log
+them all.
+
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/w83627hf_wdt.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/powerpc/kvm/book3s_64_vio.c    | 8 ++++----
+ arch/powerpc/kvm/book3s_64_vio_hv.c | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/watchdog/w83627hf_wdt.c b/drivers/watchdog/w83627hf_wdt.c
-index 7817836bff554..4b9365d4de7a9 100644
---- a/drivers/watchdog/w83627hf_wdt.c
-+++ b/drivers/watchdog/w83627hf_wdt.c
-@@ -50,7 +50,7 @@ static int cr_wdt_csr;		/* WDT control & status register */
- enum chips { w83627hf, w83627s, w83697hf, w83697ug, w83637hf, w83627thf,
- 	     w83687thf, w83627ehf, w83627dhg, w83627uhg, w83667hg, w83627dhg_p,
- 	     w83667hg_b, nct6775, nct6776, nct6779, nct6791, nct6792, nct6793,
--	     nct6795, nct6102 };
-+	     nct6795, nct6796, nct6102 };
+diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
+index 07a8004c3c237..65486c3d029b5 100644
+--- a/arch/powerpc/kvm/book3s_64_vio.c
++++ b/arch/powerpc/kvm/book3s_64_vio.c
+@@ -401,7 +401,7 @@ static long kvmppc_tce_iommu_do_unmap(struct kvm *kvm,
+ 	long ret;
  
- static int timeout;			/* in seconds */
- module_param(timeout, int, 0);
-@@ -100,6 +100,7 @@ MODULE_PARM_DESC(early_disable, "Disable watchdog at boot time (default=0)");
- #define NCT6792_ID		0xc9
- #define NCT6793_ID		0xd1
- #define NCT6795_ID		0xd3
-+#define NCT6796_ID		0xd4	/* also NCT9697D, NCT9698D */
+ 	if (WARN_ON_ONCE(iommu_tce_xchg(tbl, entry, &hpa, &dir)))
+-		return H_HARDWARE;
++		return H_TOO_HARD;
  
- #define W83627HF_WDT_TIMEOUT	0xf6
- #define W83697HF_WDT_TIMEOUT	0xf4
-@@ -209,6 +210,7 @@ static int w83627hf_init(struct watchdog_device *wdog, enum chips chip)
- 	case nct6792:
- 	case nct6793:
- 	case nct6795:
-+	case nct6796:
- 	case nct6102:
+ 	if (dir == DMA_NONE)
+ 		return H_SUCCESS;
+@@ -449,15 +449,15 @@ long kvmppc_tce_iommu_do_map(struct kvm *kvm, struct iommu_table *tbl,
+ 		return H_TOO_HARD;
+ 
+ 	if (WARN_ON_ONCE(mm_iommu_ua_to_hpa(mem, ua, tbl->it_page_shift, &hpa)))
+-		return H_HARDWARE;
++		return H_TOO_HARD;
+ 
+ 	if (mm_iommu_mapped_inc(mem))
+-		return H_CLOSED;
++		return H_TOO_HARD;
+ 
+ 	ret = iommu_tce_xchg(tbl, entry, &hpa, &dir);
+ 	if (WARN_ON_ONCE(ret)) {
+ 		mm_iommu_mapped_dec(mem);
+-		return H_HARDWARE;
++		return H_TOO_HARD;
+ 	}
+ 
+ 	if (dir != DMA_NONE)
+diff --git a/arch/powerpc/kvm/book3s_64_vio_hv.c b/arch/powerpc/kvm/book3s_64_vio_hv.c
+index eb8b11515a7ff..d258ed4ef77c3 100644
+--- a/arch/powerpc/kvm/book3s_64_vio_hv.c
++++ b/arch/powerpc/kvm/book3s_64_vio_hv.c
+@@ -300,10 +300,10 @@ static long kvmppc_rm_tce_iommu_do_map(struct kvm *kvm, struct iommu_table *tbl,
+ 
+ 	if (WARN_ON_ONCE_RM(mm_iommu_ua_to_hpa_rm(mem, ua, tbl->it_page_shift,
+ 			&hpa)))
+-		return H_HARDWARE;
++		return H_TOO_HARD;
+ 
+ 	if (WARN_ON_ONCE_RM(mm_iommu_mapped_inc(mem)))
+-		return H_CLOSED;
++		return H_TOO_HARD;
+ 
+ 	ret = iommu_tce_xchg_rm(kvm->mm, tbl, entry, &hpa, &dir);
+ 	if (ret) {
+@@ -501,7 +501,7 @@ long kvmppc_rm_h_put_tce_indirect(struct kvm_vcpu *vcpu,
+ 
+ 		rmap = (void *) vmalloc_to_phys(rmap);
+ 		if (WARN_ON_ONCE_RM(!rmap))
+-			return H_HARDWARE;
++			return H_TOO_HARD;
+ 
  		/*
- 		 * These chips have a fixed WDTO# output pin (W83627UHG),
-@@ -407,6 +409,9 @@ static int wdt_find(int addr)
- 	case NCT6795_ID:
- 		ret = nct6795;
- 		break;
-+	case NCT6796_ID:
-+		ret = nct6796;
-+		break;
- 	case NCT6102_ID:
- 		ret = nct6102;
- 		cr_wdt_timeout = NCT6102D_WDT_TIMEOUT;
-@@ -450,6 +455,7 @@ static int __init wdt_init(void)
- 		"NCT6792",
- 		"NCT6793",
- 		"NCT6795",
-+		"NCT6796",
- 		"NCT6102",
- 	};
- 
+ 		 * Synchronize with the MMU notifier callbacks in
 -- 
 2.20.1
 
