@@ -2,130 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB976FA695
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:36:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77FFFFA686
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:36:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfKMCgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:36:16 -0500
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:38752 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbfKMCgO (ORCPT
+        id S1727168AbfKMCgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:36:08 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:33761 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfKMCgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:36:14 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47CTJ769lnzQlB7;
-        Wed, 13 Nov 2019 03:36:07 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id wVw8SxpwKUfa; Wed, 13 Nov 2019 03:36:01 +0100 (CET)
-Date:   Wed, 13 Nov 2019 13:35:37 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v15 7/9] open: introduce openat2(2) syscall
-Message-ID: <20191113023537.epcgw5u2fdbinnyj@yavin.dot.cyphar.com>
-References: <20191105090553.6350-1-cyphar@cyphar.com>
- <20191105090553.6350-8-cyphar@cyphar.com>
- <20191113022906.GD26530@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ohhoiky5cv3wybqd"
-Content-Disposition: inline
-In-Reply-To: <20191113022906.GD26530@ZenIV.linux.org.uk>
+        Tue, 12 Nov 2019 21:36:07 -0500
+Received: by mail-pf1-f202.google.com with SMTP id s24so448478pfd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 18:36:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=dqYWcuqJCYF2DIwhal3vpOQp7Yt4OvsCSXwltwv2I6I=;
+        b=emoZLf1Qo49INtXaIdJLRTXdz2Uh4QjL4oW3gRJeYVhbppMTroIiUNco5S8wyDYwCx
+         Jlp3cwYDcEb6t/iqxxDqyGe/xCK4pHgDXK/rv4IXPYzSZZ1TLwGJ0zbJp9vRK3ndzWON
+         dIvPdbWLcV5lj8CCgrpNQH3bFUIk9sSRsz20THh7HwPBAantg7ixIV0zkWHEs46/Euwx
+         +zMtjKes5GDrucJawt/nHx6wg3KfID0CDh6HoUn8cMkWYjNc+HZA9xEtDL3lDtDF+mFQ
+         GLqUzxuKctqUBglk6A0NRE7kz8X11XSl3WJ+KUMw9P+iBspaaISP3ts199yRghTCBzoq
+         ceYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=dqYWcuqJCYF2DIwhal3vpOQp7Yt4OvsCSXwltwv2I6I=;
+        b=e0JZYATzGaqHTQLrtYpc9kzkkO36iSTZnk98raF1KeFngAmBesP0KbVm1dHzlZxNKR
+         I1VgwtckbkC1z0qKsULVq3bgfuBTcVDq5jgwjOAVRBe1w1UWxTDRPgynsQrp6A6FxYM+
+         vX/OQHlKS2Gq6e5fplJxqa/dkBnG3fA3fcNAphiI7tRvCJCp+bhCYMup3mO2jU2E97/B
+         L+6G792T62z6SvRvVgJQLCx824Oh+sMXpXN6lg4yhycQ7IFs9yRj1/D8e7OSs3ZHlqjS
+         JuPY4k63UT1ZruV+CLkiG3li5n+EiWnqQfkEy9TuCTXU3HCW4MO9S+XMWCwYbkXl+LdY
+         BgdA==
+X-Gm-Message-State: APjAAAXvtyLro69+Zin6I/haH5Uv4pr7lX5YegaPMT9lNZWz6yzi0V78
+        cXyRA1i8iwRQy9E/4jUL57rRxSq6Em6CjMI=
+X-Google-Smtp-Source: APXvYqxarlbUKIeBElLqSduGWPuRn1cTe50trKLzDRGJfSo+q4fddsrZNSGyeawCnk1tAD6yYMrXa4XVUx0Cc+k=
+X-Received: by 2002:a63:f48:: with SMTP id 8mr874046pgp.329.1573612565147;
+ Tue, 12 Nov 2019 18:36:05 -0800 (PST)
+Date:   Tue, 12 Nov 2019 18:35:58 -0800
+Message-Id: <20191113023559.62295-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+Subject: [PATCH v1] driver core: Allow device link operations inside sync_state()
+From:   Saravana Kannan <saravanak@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some sync_state() implementations might need to call APIs that in turn
+make calls to device link APIs. So, do the sync_state() callbacks
+without holding the device link lock.
 
---ohhoiky5cv3wybqd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
+ drivers/base/core.c | 63 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 55 insertions(+), 8 deletions(-)
 
-On 2019-11-13, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Tue, Nov 05, 2019 at 08:05:51PM +1100, Aleksa Sarai wrote:
-> > +/*
-> > + * Arguments for how openat2(2) should open the target path. If @resol=
-ve is
-> > + * zero, then openat2(2) operates very similarly to openat(2).
-> > + *
-> > + * However, unlike openat(2), unknown bits in @flags result in -EINVAL=
- rather
-> > + * than being silently ignored. @mode must be zero unless one of {O_CR=
-EAT,
-> > + * O_TMPFILE} are set, and @upgrade_mask must be zero unless O_PATH is=
- set.
-> > + *
-> > + * @flags: O_* flags.
-> > + * @mode: O_CREAT/O_TMPFILE file mode.
-> > + * @upgrade_mask: UPGRADE_* flags (to restrict O_PATH re-opening).
->=20
-> ???
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index e6d3e6d485da..d396b0597c10 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -48,6 +48,8 @@ early_param("sysfs.deprecated", sysfs_deprecated_setup);
+ static LIST_HEAD(wait_for_suppliers);
+ static DEFINE_MUTEX(wfs_lock);
+ static LIST_HEAD(deferred_sync);
++static LIST_HEAD(sync_list);
++static DEFINE_MUTEX(sync_lock);
+ static unsigned int defer_sync_state_count = 1;
+ 
+ #ifdef CONFIG_SRCU
+@@ -695,7 +697,23 @@ int device_links_check_suppliers(struct device *dev)
+ 	return ret;
+ }
+ 
+-static void __device_links_supplier_sync_state(struct device *dev)
++/** __device_links_queue_sync_state - Queue a device for sync_state() callback
++ * @dev: Device to call sync_state() on
++ *
++ * Queues a device for a sync_state() callback when the device links write lock
++ * isn't held. This allows the sync_state() execution flow to use device links
++ * APIs.  The caller must ensure this function is called with
++ * device_links_write_lock() held.
++ *
++ * This function does a get_device() to make sure the device is not freed while
++ * on this list.
++ *
++ * So the caller must also ensure that device_links_flush_sync_list() is called
++ * as soon as the caller releases device_links_write_lock().  This is necessary
++ * to make sure the sync_state() is called in a timely fashion and the
++ * put_device() is called on this device.
++ */
++static void __device_links_queue_sync_state(struct device *dev)
+ {
+ 	struct device_link *link;
+ 
+@@ -709,12 +727,35 @@ static void __device_links_supplier_sync_state(struct device *dev)
+ 			return;
+ 	}
+ 
+-	if (dev->bus->sync_state)
+-		dev->bus->sync_state(dev);
+-	else if (dev->driver && dev->driver->sync_state)
+-		dev->driver->sync_state(dev);
+-
+ 	dev->state_synced = true;
++
++	mutex_lock(&sync_lock);
++	WARN_ON(!list_empty(&dev->links.defer_sync));
++	if (list_empty(&dev->links.defer_sync)) {
++		get_device(dev);
++		list_add_tail(&dev->links.defer_sync, &sync_list);
++	}
++	mutex_unlock(&sync_lock);
++}
++
++static void device_links_flush_sync_list(void)
++{
++	struct device *dev, *tmp;
++
++	mutex_lock(&sync_lock);
++
++	list_for_each_entry_safe(dev, tmp, &sync_list, links.defer_sync) {
++		list_del_init(&dev->links.defer_sync);
++		device_lock(dev);
++		if (dev->bus->sync_state)
++			dev->bus->sync_state(dev);
++		else if (dev->driver && dev->driver->sync_state)
++			dev->driver->sync_state(dev);
++		device_unlock(dev);
++		put_device(dev);
++	}
++
++	mutex_unlock(&sync_lock);
+ }
+ 
+ void device_links_supplier_sync_state_pause(void)
+@@ -738,11 +779,16 @@ void device_links_supplier_sync_state_resume(void)
+ 		goto out;
+ 
+ 	list_for_each_entry_safe(dev, tmp, &deferred_sync, links.defer_sync) {
+-		__device_links_supplier_sync_state(dev);
++		/*
++		 * Delete from deferred_sync list before queuing it to
++		 * sync_list because defer_sync is used for both lists.
++		 */
+ 		list_del_init(&dev->links.defer_sync);
++		__device_links_queue_sync_state(dev);
+ 	}
+ out:
+ 	device_links_write_unlock();
++	device_links_flush_sync_list();
+ }
+ 
+ static int sync_state_resume_initcall(void)
+@@ -815,12 +861,13 @@ void device_links_driver_bound(struct device *dev)
+ 		if (defer_sync_state_count)
+ 			__device_links_supplier_defer_sync(link->supplier);
+ 		else
+-			__device_links_supplier_sync_state(link->supplier);
++			__device_links_queue_sync_state(link->supplier);
+ 	}
+ 
+ 	dev->links.status = DL_DEV_DRIVER_BOUND;
+ 
+ 	device_links_write_unlock();
++	device_links_flush_sync_list();
+ }
+ 
+ static void device_link_drop_managed(struct device_link *link)
+-- 
+2.24.0.rc1.363.gb1bccd3e3d-goog
 
-Sorry, that was left over from a previous revision (where the magic-link
-re-opening restrictions were part of this series).
-
-> > + * @resolve: RESOLVE_* flags.
-> > + */
-> > +struct open_how {
-> > +	__aligned_u64 flags;
-> > +	__u16 mode;
-> > +	__u16 __padding[3]; /* must be zeroed */
-> > +	__aligned_u64 resolve;
-> > +};
-
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ohhoiky5cv3wybqd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXctr9QAKCRCdlLljIbnQ
-Ej91AQDSESPrMbumo+B1bVc2FthUOUuONyqVLG0aRmu7PQjnOgD7BOxMC9suhDip
-ayqrtLJhXKxmKpbFt69x0a97Rx8tGQ8=
-=4v0x
------END PGP SIGNATURE-----
-
---ohhoiky5cv3wybqd--
