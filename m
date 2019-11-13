@@ -2,188 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB7DFB2E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:52:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC8EFB2EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:54:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727848AbfKMOwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 09:52:44 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41138 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbfKMOwn (ORCPT
+        id S1727932AbfKMOyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 09:54:16 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:25714 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727680AbfKMOyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 09:52:43 -0500
-Received: by mail-qk1-f195.google.com with SMTP id m125so1926582qkd.8
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 06:52:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=sn9pVHm74Rw5zcVcwKY9qhnttEm3LKTT86EDfnHaeSg=;
-        b=XUAYyn5FNWyiJY668xT4WWtxlgdzjMRSgKWZ8x0updTL2qzbPm0Peaop0lP+bv6VeO
-         B77hf7591CMB+Bl1oPOc0OJMT/n4/suiHqlMGRI3rRFfG7IOXMdTHUxAJjJy6gALV+22
-         RjD+h6JehCszadPbbR4v/Zj5gvwBNqLXPHkNIjLYhivMCYMl/l1KqOl8iAg+A4nCfUOF
-         PYBfjdHpcGxcNwKe/5/5z/ZSPgWOSVurmoCoGx5ewFoYWyoqlbhKfMm3BfpRXI1YLJQ8
-         QEaJdcz0txTAuJXsb87p9goX5TC+wgX1O37BhDUdZZC0McmWUy4AulASNfFCK8qallTa
-         Xw/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=sn9pVHm74Rw5zcVcwKY9qhnttEm3LKTT86EDfnHaeSg=;
-        b=AYNO5Cz/urgwDJuvgE9FsprLKr4xlYptAE4II6fJ1+HuqsTVREN2XPbFqITsVp16mF
-         ps5dBgODPPZ4QXpinxw8gL0R4LMXTatnN9PvvIZ0rui9YwJnhl0Ni56MwJuYVY/KeMoJ
-         Cwb1Pu9XEp90s1c3ocDi7ib1O+xrwcwusVLwxnNHVesUf9qr4P5uHSqfg4fpN5+2u0Il
-         hXeDWc83Hnr4nhIr1mxWVwmttTcusA1sDfTyctxReNE44viIqnP9CbNeH7cGZB9lpMrw
-         BIQ29FNTz8s/4tmref5L2FtAUNRaAQnRbKjAb0cac5DPjDEc2mOYdT9Yt9YN2ft65UTg
-         G1DQ==
-X-Gm-Message-State: APjAAAWkojdcEVgeN/Cv9kmIy76zn1coLSG3S/Fk+HNV90cPEQ2Kq3Ac
-        7TcBFf/ry0RASrzoC78ZFuNwc3HbqvGe6w==
-X-Google-Smtp-Source: APXvYqy2GpS+D438d7eJFr76BIAz885Qr5V0A8K1nscKluUykoiF20QzNt4i2oU48YLTO+W62Uyb8A==
-X-Received: by 2002:a05:620a:8da:: with SMTP id z26mr2694003qkz.499.1573656762309;
-        Wed, 13 Nov 2019 06:52:42 -0800 (PST)
-Received: from gmail.com ([184.75.212.4])
-        by smtp.gmail.com with ESMTPSA id w18sm1083957qkb.41.2019.11.13.06.52.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 06:52:41 -0800 (PST)
-Date:   Wed, 13 Nov 2019 09:52:39 -0500
-From:   "Javier F. Arias" <jarias.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH V3 1/4] staging: rtl8723bs: Add necessary braces
-Message-ID: <1d47d745c077cc808bf0c09d2ee40e3c03d34b06.1573656487.git.jarias.linux@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Wed, 13 Nov 2019 09:54:15 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 Nov 2019 20:24:11 +0530
+IronPort-SDR: nfwpYCTyb7jxhcWPk9Ne0HbimTn/ODm9c8uNO+x6e3J3vbaHqZukz4/HwYpt9DKetcVEWNOpz7
+ Dkl9dC467EA5myn3hqhpNN3cj0kPqonoros1JDbNqPuKtLkyJY1wW6+KoY3nan53T1TWM7nR3c
+ V3uRDvl9YtxMMQtP4RTsgrwEgYobNSuUWAVwzQXeYjglfM0JtBpxxMA42Rxvpdijs1rmk7hAck
+ pQRLuAKqxd9kzhPJPFIgQG4EEWyHsSpT5xJR3q04wFVKK94IJcivXtB/Dkj+4UCal19ySk7g79
+ Yq9nLb/2SU60+FOCeLdhU21T
+Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 13 Nov 2019 20:23:55 +0530
+Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
+        id 288D4496F; Wed, 13 Nov 2019 20:23:54 +0530 (IST)
+From:   Pradeep P V K <ppvk@codeaurora.org>
+To:     stummala@codeaurora.org, sayalil@codeaurora.org,
+        rampraka@codeaurora.org, vbadigan@codeaurora.org, axboe@kernel.dk,
+        paolo.valente@linaro.org
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pradeep P V K <ppvk@codeaurora.org>
+Subject: [PATCH v1] block, bfq: set default slice_idle to zero for SSDs
+Date:   Wed, 13 Nov 2019 20:23:20 +0530
+Message-Id: <1573656800-14815-1-git-send-email-ppvk@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds braces when they should be used on all arms of
-the statement.
-Issue found by Checkpatch.
+With default 8ms as a slice idle time, we seen few time bounded
+applications(sensors) on v4.19 kernel are getting timedout during
+multimedia tests (audio, video playbacks etc) with Reboots and
+leading to crash. The timeout configured for these applications
+(sensors) are 20sec.
 
-Signed-off-by: Javier F. Arias <jarias.linux@gmail.com>
+In crash dumps, we seen few synchronous requests from sensors/other
+applications were in their bfq_queues for more than 12-20sec.
+
+Idling due to anticipation of future near-by IO requests and wait on
+completion of submitted requests, will effect in choosing the next
+bfq-queue and its scheduling. There by it effecting some time bounded
+applications.
+
+After making the slice idle to zero, we didn't seen any crash during
+our 72hrs of testing and also it increases the IO throughput.
+
+Following FIO benchmark results were taken on a local SSD run:
+
+RandomReads that were taken on v4.19 kernel:
+
+ Idling   iops    avg-lat(us)    stddev       bw
+ ----------------------------------------------------
+ On       4136    1189.07        17221.65    16.9MB/s
+ Off      7246     670.11        1054.76     29.7MB/s
+
+    fio --name=temp --size=5G --time_based --ioengine=sync \
+	--randrepeat=0 --direct=1 --invalidate=1 --verify=0 \
+	--verify_fatal=0 --rw=randread --blocksize=4k \
+	--group_reporting=1 --directory=/data --runtime=10 \
+	--iodepth=64 --numjobs=5
+
+Following code changes were made based on [1],[2] and [3].
+
+[1] https://lkml.org/lkml/2018/11/1/1285
+[2] Commit 41c0126b3f22 ("block: Make CFQ default to IOPS mode on
+    SSDs")
+[3] Commit 0bb979472a74 ("cfq-iosched: fix the setting of IOPS mode on
+    SSDs")
+
+Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
 ---
-Changes in V3:
-	- No changes.
-Changes in V2:
-        - Add braces and balance statements in the same patch instead
-          of performing a new change in a subsequent patch.
-        - Fix a typo in the commit description.
+ Documentation/block/bfq-iosched.rst |  7 ++++---
+ block/bfq-iosched.c                 | 13 +++++++++++++
+ block/elevator.c                    |  2 ++
+ include/linux/elevator.h            |  1 +
+ 4 files changed, 20 insertions(+), 3 deletions(-)
 
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 34 +++++++++++++----------
- 1 file changed, 20 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index fdb585ff5925..44fc604ea5b7 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -370,9 +370,9 @@ static void update_attrib_vcs_info(struct adapter *padapter, struct xmit_frame *
- 	/* 		Other fragments are protected by previous fragment. */
- 	/* 		So we only need to check the length of first fragment. */
- 	if (pmlmeext->cur_wireless_mode < WIRELESS_11_24N  || padapter->registrypriv.wifi_spec) {
--		if (sz > padapter->registrypriv.rts_thresh)
-+		if (sz > padapter->registrypriv.rts_thresh) {
- 			pattrib->vcs_mode = RTS_CTS;
--		else {
-+		} else {
- 			if (pattrib->rtsen)
- 				pattrib->vcs_mode = RTS_CTS;
- 			else if (pattrib->cts2self)
-@@ -679,8 +679,9 @@ static s32 update_attrib(struct adapter *padapter, _pkt *pkt, struct pkt_attrib
- 		memcpy(pattrib->ra, pattrib->dst, ETH_ALEN);
- 		memcpy(pattrib->ta, get_bssid(pmlmepriv), ETH_ALEN);
- 		DBG_COUNTER(padapter->tx_logs.core_tx_upd_attrib_ap);
--	} else
-+	} else {
- 		DBG_COUNTER(padapter->tx_logs.core_tx_upd_attrib_unknown);
-+	}
+diff --git a/Documentation/block/bfq-iosched.rst b/Documentation/block/bfq-iosched.rst
+index 0d237d4..244f4ca 100644
+--- a/Documentation/block/bfq-iosched.rst
++++ b/Documentation/block/bfq-iosched.rst
+@@ -329,9 +329,10 @@ slice_idle
  
- 	pattrib->pktlen = pktfile.pkt_len;
+ This parameter specifies how long BFQ should idle for next I/O
+ request, when certain sync BFQ queues become empty. By default
+-slice_idle is a non-zero value. Idling has a double purpose: boosting
+-throughput and making sure that the desired throughput distribution is
+-respected (see the description of how BFQ works, and, if needed, the
++slice_idle is a non-zero value for rotational devices.
++Idling has a double purpose: boosting throughput and making
++sure that the desired throughput distribution is respected
++(see the description of how BFQ works, and, if needed, the
+ papers referred there).
  
-@@ -724,9 +725,9 @@ static s32 update_attrib(struct adapter *padapter, _pkt *pkt, struct pkt_attrib
- 		rtw_set_scan_deny(padapter, 3000);
+ As for throughput, idling can be very helpful on highly seeky media
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 0319d63..9c994d1 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -6514,6 +6514,18 @@ static int bfq_init_queue(struct request_queue *q, struct elevator_type *e)
+ 	return -ENOMEM;
+ }
  
- 	/*  If EAPOL , ARP , OR DHCP packet, driver must be in active mode. */
--	if (pattrib->icmp_pkt == 1)
-+	if (pattrib->icmp_pkt == 1) {
- 		rtw_lps_ctrl_wk_cmd(padapter, LPS_CTRL_LEAVE, 1);
--	else if (pattrib->dhcp_pkt == 1) {
-+	} else if (pattrib->dhcp_pkt == 1) {
- 		DBG_COUNTER(padapter->tx_logs.core_tx_upd_attrib_active);
- 		rtw_lps_ctrl_wk_cmd(padapter, LPS_CTRL_SPECIAL_PACKET, 1);
++static void bfq_registered_queue(struct request_queue *q)
++{
++	struct elevator_queue *e = q->elevator;
++	struct bfq_data *bfqd = e->elevator_data;
++
++	/*
++	 * Default to IOPS mode with no idling for SSDs
++	 */
++	if (blk_queue_nonrot(q))
++		bfqd->bfq_slice_idle = 0;
++}
++
+ static void bfq_slab_kill(void)
+ {
+ 	kmem_cache_destroy(bfq_pool);
+@@ -6761,6 +6773,7 @@ static ssize_t bfq_low_latency_store(struct elevator_queue *e,
+ 		.init_hctx		= bfq_init_hctx,
+ 		.init_sched		= bfq_init_queue,
+ 		.exit_sched		= bfq_exit_queue,
++		.elevator_registered_fn = bfq_registered_queue,
+ 	},
+ 
+ 	.icq_size =		sizeof(struct bfq_io_cq),
+diff --git a/block/elevator.c b/block/elevator.c
+index 076ba73..b882d25 100644
+--- a/block/elevator.c
++++ b/block/elevator.c
+@@ -504,6 +504,8 @@ int elv_register_queue(struct request_queue *q, bool uevent)
+ 			kobject_uevent(&e->kobj, KOBJ_ADD);
+ 
+ 		e->registered = 1;
++		if (e->type->ops.elevator_registered_fn)
++			e->type->ops.elevator_registered_fn(q);
  	}
-@@ -926,8 +927,9 @@ static s32 xmitframe_swencrypt(struct adapter *padapter, struct xmit_frame *pxmi
- 		default:
- 				break;
- 		}
--	} else
-+	} else {
- 		RT_TRACE(_module_rtl871x_xmit_c_, _drv_notice_, ("### xmitframe_hwencrypt\n"));
-+	}
- 
- 	return _SUCCESS;
+ 	return error;
  }
-@@ -1204,8 +1206,9 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, _pkt *pkt, struct xmit_fram
- 			ClearMFrag(mem_start);
+diff --git a/include/linux/elevator.h b/include/linux/elevator.h
+index 901bda3..23dcc35 100644
+--- a/include/linux/elevator.h
++++ b/include/linux/elevator.h
+@@ -50,6 +50,7 @@ struct elevator_mq_ops {
+ 	struct request *(*next_request)(struct request_queue *, struct request *);
+ 	void (*init_icq)(struct io_cq *);
+ 	void (*exit_icq)(struct io_cq *);
++	void (*elevator_registered_fn)(struct request_queue *q);
+ };
  
- 			break;
--		} else
-+		} else {
- 			RT_TRACE(_module_rtl871x_xmit_c_, _drv_err_, ("%s: There're still something in packet!\n", __func__));
-+		}
- 
- 		addr = (SIZE_PTR)(pframe);
- 
-@@ -1446,17 +1449,18 @@ void rtw_update_protection(struct adapter *padapter, u8 *ie, uint ie_len)
- 	case AUTO_VCS:
- 	default:
- 		perp = rtw_get_ie(ie, _ERPINFO_IE_, &erp_len, ie_len);
--		if (!perp)
-+		if (!perp) {
- 			pxmitpriv->vcs = NONE_VCS;
--		else {
-+		} else {
- 			protection = (*(perp + 2)) & BIT(1);
- 			if (protection) {
- 				if (pregistrypriv->vcs_type == RTS_CTS)
- 					pxmitpriv->vcs = RTS_CTS;
- 				else
- 					pxmitpriv->vcs = CTS_TO_SELF;
--			} else
-+			} else {
- 				pxmitpriv->vcs = NONE_VCS;
-+			}
- 		}
- 
- 		break;
-@@ -1509,8 +1513,9 @@ static struct xmit_buf *__rtw_alloc_cmd_xmitbuf(struct xmit_priv *pxmitpriv,
- 			DBG_871X("%s pxmitbuf->sctx is not NULL\n", __func__);
- 			rtw_sctx_done_err(&pxmitbuf->sctx, RTW_SCTX_DONE_BUF_ALLOC);
- 		}
--	} else
-+	} else {
- 		DBG_871X("%s fail, no xmitbuf available !!!\n", __func__);
-+	}
- 
- 	return pxmitbuf;
- }
-@@ -2177,11 +2182,12 @@ inline bool xmitframe_hiq_filter(struct xmit_frame *xmitframe)
- 				, attrib->ether_type, attrib->dhcp_pkt?" DHCP":"");
- 			allow = true;
- 		}
--	} else if (registry->hiq_filter == RTW_HIQ_FILTER_ALLOW_ALL)
-+	} else if (registry->hiq_filter == RTW_HIQ_FILTER_ALLOW_ALL) {
- 		allow = true;
--	else if (registry->hiq_filter == RTW_HIQ_FILTER_DENY_ALL) {
--	} else
-+	} else if (registry->hiq_filter == RTW_HIQ_FILTER_DENY_ALL) {
-+	} else {
- 		rtw_warn_on(1);
-+	}
- 
- 	return allow;
- }
+ #define ELV_NAME_MAX	(16)
 -- 
-2.20.1
+1.9.1
 
