@@ -2,97 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC94FB7AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 19:33:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECA57FB7B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 19:35:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfKMSdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 13:33:42 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37257 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728373AbfKMSdm (ORCPT
+        id S1728461AbfKMSfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 13:35:13 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:39870 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727779AbfKMSfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 13:33:42 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z24so1897888pgu.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 10:33:40 -0800 (PST)
+        Wed, 13 Nov 2019 13:35:10 -0500
+Received: by mail-yb1-f196.google.com with SMTP id q18so1353871ybq.6;
+        Wed, 13 Nov 2019 10:35:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OhPSTTe4Xdz6gOjsaJlaEdC5pAfYubYxDCg4SrgVoSo=;
-        b=gLQ0w0IxUEQnchYuilJR1nbU4m7SgY//cNaWQR/mt0lvyefOxSBkOsqifZytiwFIh0
-         GkBnn3qUVJAEMrTsVlq+svxxCP/slE/95ux0WpqRsVgnTHuEvwwCdJWa6c+0L9ne+iP7
-         6ydiQoWKF8IYJkGO42ArzjKHFxLH3sDY6CwOk=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XDi/ntprkg3QynLzmnS5etARNN2x0LlcxJAfofHbmvI=;
+        b=mz29wxCLbj5XV0esYlUTXfCBkGNYAf+abaKCz/Gnsro+dGcvQ/eXD5L+c0Pt4Wtofl
+         ZvLUcI5ltaBf5gxBl3IuzlsJsWpL9DErj1FG+vqINIY1pwAePwtQXhDLVr1Wof9iABuI
+         /AmgK1E4UQyyQZElYH4eDFo3nXYO1OUoQjBC4J3o0Ye2eqx7FuBbvLKyzpKHOda4qVv9
+         VBnfKYhRRKliNkwhu3JDXdKdvFLOZ9Tp6baKF+6V/gwDmGbF7FmE1AYMlIpXKz3579Y2
+         kH/sK9AqI6gwlhUnnMKHBt9T2Cxt/HVNlXTGJjrjMgVQyjLDebY7kZNziz/sq7HA7lUU
+         uVUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OhPSTTe4Xdz6gOjsaJlaEdC5pAfYubYxDCg4SrgVoSo=;
-        b=GM1uOAgdvomErxWelaiyHhJMeHevzv3Ww1GQwoz1Wemo6H0mqM3nCrvYXnzG1CvyK0
-         Hl/cZLcNPVGfvhxZLacar/5dAqS9E8auhoTKM0YgwxLYV3vHkGWN7r1lbkK7u+Ka92+z
-         sRvUz5W3y+rX1VfsOswJeHkUjdFbNYLWifnDbRjwN1Qlq1EGd/5HApszFRWWGsrkOdvc
-         5cogW106KyYTPlgUgHxl8EkBhlC661ypJWq/Q1A1y5C/0Q3e+dQeRuaLeaEzLMFfSHY4
-         mWxRdbBY5UIlP/uztLS3KMppxmb4rCt/VbCot7VDBXo/FhDhWywlZfMZmbg7kA2+i8a6
-         GG/w==
-X-Gm-Message-State: APjAAAWGpmMaAs8NToUw83mfDvvNxddks/vZ1/6RVre5mM7jZHr7xol3
-        Qgfw7FrnEq6CTaWqmUrUZFwyNA==
-X-Google-Smtp-Source: APXvYqyLkzEBHbWiCqJacPQ3CBKaBpCEr8iph2zitT6ozdOmqjw+YxPYFt/3IfvrDawkJj7K8FBEVg==
-X-Received: by 2002:a62:20e:: with SMTP id 14mr6074555pfc.153.1573670020389;
-        Wed, 13 Nov 2019 10:33:40 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k84sm5150717pfd.157.2019.11.13.10.33.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 10:33:39 -0800 (PST)
-Date:   Wed, 13 Nov 2019 10:33:38 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/14] add support for Clang's Shadow Call Stack
-Message-ID: <201911131033.435C8F77D@keescook>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191105235608.107702-1-samitolvanen@google.com>
- <201911121530.FA3D7321F@keescook>
- <20191113120337.GA26599@willie-the-truck>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XDi/ntprkg3QynLzmnS5etARNN2x0LlcxJAfofHbmvI=;
+        b=DG+qHCui4mVRTpuJ6asGv/Uedz3bD6QjNnzQK+prqyRQJs7KqEA4H0bksczdtx71ef
+         GjUZc26oQD3+2aMc/Kbs4D9l8RSp0H5OtkzA0lLD0QSAiB59y9cL1I49HXJ8so5wsxJ7
+         4QCHdLzMUMmRZOsXSG/6bCYl0E2svFHOAB/OvZ7u7YEtvV6AEPK5YTaGxyg31a4AGWUh
+         jSXA4aCp5DOdoiuRqb8yEoEZb/C/YSpaMWrt0XqdSszjIi52LXqRWskCuha2ArBtmvQY
+         DoZPNd3MUtG6+o8qib8wF6J6QR5G6cMnGTqOeX/LccWVf263i799QH7E7j0SIRuNVlHv
+         X0Zw==
+X-Gm-Message-State: APjAAAWMPDFLoq3oD5CfJE5kVzysT2Vd7FXcypmRhNgZbCDcnnOBXX/7
+        c1CRqao2+IxIDTC9Kfsf8Cd2JY2gCZ+SN86M1Hk=
+X-Google-Smtp-Source: APXvYqxjaYBZBav2D3uP0xrSXLsQH8FhA7HHnTMnS+eyI3XQFNy+cNCBTl+Jzpx51zpV//vkajjdZIdYfUFDPBFhccg=
+X-Received: by 2002:a25:6649:: with SMTP id z9mr3375513ybm.132.1573670108633;
+ Wed, 13 Nov 2019 10:35:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113120337.GA26599@willie-the-truck>
+References: <20191113175746.110933-1-colin.king@canonical.com>
+In-Reply-To: <20191113175746.110933-1-colin.king@canonical.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 13 Nov 2019 20:34:57 +0200
+Message-ID: <CAOQ4uxiV06H9s8WMso6A1A7mhdvQ_AuWM0n71VoGYTdryi8KNA@mail.gmail.com>
+Subject: Re: [PATCH][V3] ovl: fix lookup failure on multi lower squashfs
+To:     Colin King <colin.king@canonical.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 12:03:38PM +0000, Will Deacon wrote:
-> On Tue, Nov 12, 2019 at 03:44:42PM -0800, Kees Cook wrote:
-> > On Tue, Nov 05, 2019 at 03:55:54PM -0800, Sami Tolvanen wrote:
-> > > This patch series adds support for Clang's Shadow Call Stack
-> > > (SCS) mitigation, which uses a separately allocated shadow stack
-> > > to protect against return address overwrites. More information
-> > 
-> > Will, Catalin, Mark,
-> > 
-> > What's the next step here? I *think* all the comments have been
-> > addressed. Is it possible to land this via the arm tree for v5.5?
-> 
-> I was planning to queue this for 5.6, given that I'd really like it to
-> spend some quality time in linux-next.
+On Wed, Nov 13, 2019 at 7:57 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Amir Goldstein <amir73il@gmail.com>
+>
+> In the past, overlayfs required that lower fs have non null
+> uuid in order to support nfs export and decode copy up origin file handles.
+>
+> Commit 9df085f3c9a2 ("ovl: relax requirement for non null uuid of
+> lower fs") relaxed this requirement for nfs export support, as long
+> as uuid (even if null) is unique among all lower fs.
+>
+> However, said commit unintentionally also relaxed the non null uuid
+> requirement for decoding copy up origin file handles, regardless of
+> the unique uuid requirement.
+>
+> Amend this mistake by disabling decoding of copy up origin file handle
+> from lower fs with a conflicting uuid.
+>
+> We still encode copy up origin file handles from those fs, because
+> file handles like those already exist in the wild and because they
+> might provide useful information in the future.
+>
+> [Colin Ian King] fixed the case of index=off,nfs_export=off
+>
+> Reported-by: Colin Ian King <colin.king@canonical.com>
+> Link: https://lore.kernel.org/lkml/20191106234301.283006-1-colin.king@canonical.com/
+> Fixes: 9df085f3c9a2 ("ovl: relax requirement for non null uuid ...")
+> Cc: stable@vger.kernel.org # v4.20+
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Tested-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>`
+> ---
+>
+> V3: fix the following check:
+>   -       if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
+>   +       if (!ofs->config.nfs_export && !ofs->upper_mnt)
+>
+> Add the index=off,nfs_export=off comment in the commit message
+>
+> ---
+>  fs/overlayfs/namei.c     |  8 ++++++++
+>  fs/overlayfs/ovl_entry.h |  2 ++
+>  fs/overlayfs/super.c     | 15 +++++++++++----
+>  3 files changed, 21 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index e9717c2f7d45..f47c591402d7 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -325,6 +325,14 @@ int ovl_check_origin_fh(struct ovl_fs *ofs, struct ovl_fh *fh, bool connected,
+>         int i;
+>
+>         for (i = 0; i < ofs->numlower; i++) {
+> +               /*
+> +                * If lower fs uuid is not unique among lower fs we cannot match
+> +                * fh->uuid to layer.
+> +                */
+> +               if (ofs->lower_layers[i].fsid &&
+> +                   ofs->lower_layers[i].fs->bad_uuid)
+> +                       continue;
+> +
+>                 origin = ovl_decode_real_fh(fh, ofs->lower_layers[i].mnt,
+>                                             connected);
+>                 if (origin)
+> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> index a8279280e88d..28348c44ea5b 100644
+> --- a/fs/overlayfs/ovl_entry.h
+> +++ b/fs/overlayfs/ovl_entry.h
+> @@ -22,6 +22,8 @@ struct ovl_config {
+>  struct ovl_sb {
+>         struct super_block *sb;
+>         dev_t pseudo_dev;
+> +       /* Unusable (conflicting) uuid */
+> +       bool bad_uuid;
+>  };
+>
+>  struct ovl_layer {
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index afbcb116a7f1..e53d399ce0af 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -1255,7 +1255,7 @@ static bool ovl_lower_uuid_ok(struct ovl_fs *ofs, const uuid_t *uuid)
+>  {
+>         unsigned int i;
+>
+> -       if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
+> +       if (!ofs->config.nfs_export && !ofs->upper_mnt)
+>                 return true;
+>
+>         for (i = 0; i < ofs->numlowerfs; i++) {
+> @@ -1263,9 +1263,13 @@ static bool ovl_lower_uuid_ok(struct ovl_fs *ofs, const uuid_t *uuid)
+>                  * We use uuid to associate an overlay lower file handle with a
+>                  * lower layer, so we can accept lower fs with null uuid as long
+>                  * as all lower layers with null uuid are on the same fs.
+> +                * if we detect multiple lower fs with the same uuid, we
+> +                * disable lower file handle decoding on all of them.
+>                  */
+> -               if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid))
+> +               if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid)) {
+> +                       ofs->lower_fs[i].bad_uuid = true;
+>                         return false;
+> +               }
+>         }
+>         return true;
+>  }
+> @@ -1277,6 +1281,7 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
+>         unsigned int i;
+>         dev_t dev;
+>         int err;
+> +       bool bad_uuid = false;
+>
+>         /* fsid 0 is reserved for upper fs even with non upper overlay */
+>         if (ofs->upper_mnt && ofs->upper_mnt->mnt_sb == sb)
+> @@ -1287,10 +1292,11 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
+>                         return i + 1;
+>         }
+>
+> -       if (!ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
+> +       if (ofs->upper_mnt && !ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
 
-Sounds fine to me; I just wanted to have an idea what to expect. :)
-Thanks!
+Sorry I wasn't clear.
+Miklos is right. the test ofs->upper_mnt here is bogus because
+nfs_export could be enabled without upper.
+The change you made in v3 to ovl_lower_uuid_ok() should be enough.
 
--- 
-Kees Cook
+> +               bad_uuid = true;
+>                 ofs->config.index = false;
+>                 ofs->config.nfs_export = false;
+> -               pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', falling back to index=off,nfs_export=off.\n",
+> +               pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', enforcing index=off,nfs_export=off.\n",
+>                         uuid_is_null(&sb->s_uuid) ? "null" : "conflicting",
+>                         path->dentry);
+>         }
+> @@ -1303,6 +1309,7 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
+>
+>         ofs->lower_fs[ofs->numlowerfs].sb = sb;
+>         ofs->lower_fs[ofs->numlowerfs].pseudo_dev = dev;
+> +       ofs->lower_fs[ofs->numlowerfs].bad_uuid = bad_uuid;
+>         ofs->numlowerfs++;
+>
+>         return ofs->numlowerfs;
+> --
+> 2.20.1
+>
