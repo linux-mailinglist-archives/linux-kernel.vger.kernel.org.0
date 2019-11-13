@@ -2,109 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F36ADFA044
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:37:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F86FA05D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:39:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfKMBg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:36:57 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:37237 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfKMBg4 (ORCPT
+        id S1727374AbfKMBiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:38:54 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:38452 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbfKMBix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:36:56 -0500
-Received: by mail-yw1-f65.google.com with SMTP id v84so175080ywc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 17:36:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PrKKmnGLiFY82EhSNnXtvqX36ioJ29LweBbxJ54AdsM=;
-        b=lXmssIDOoCAk1a8ngp9xq+MAGYGZRdp9jBIDRo6MTzhnDHKcuwXCBqguD40VWJjcum
-         Gy7tKclRaCbfQpd1bmbFWa+SOSZPdUFwCrG64+cgJRK3L0zXg9QeSbMq76RQzds3hG5D
-         m/+E+VHwa9HoDPyRaeEeSH8tUBHw5ih2mfWW6bv2D2sbc/LtaohIW6HwA+AUd3bbxrbM
-         zLIPkYiDkoq2z3Hm6pgpHB7LdjTnDqnCtfRM7UHLKoOqTw+8JjQ18sw+AOL+x4mQg4JV
-         +0jHXZVFV1kFAiR8o/fE1yBDQFiMFRXwTgBmTk7LdvH/m3VnuwmwX+wy6i6Do0hd0pNj
-         GJzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PrKKmnGLiFY82EhSNnXtvqX36ioJ29LweBbxJ54AdsM=;
-        b=UQSYxGKBL2mi1N+XVfnDXxnhZ1O5Z9LWY7UwHVA6HkI0410eH5HAQf06VfpWVYJ3+o
-         dCGBj3fdflgGDUNxg1ex2pdQH8X9U7tOeExCn9QNnVeVfjaUDNMc7HJvU22D4PeiydSD
-         C1LVec05Yocd2/OBPdqWPf+ibNhTN2N5mh00obkPOnzdn5x591z/7iyf7LotJqgObFLt
-         wrnq+EMGC4WwWjmuE71ixFJu/8cwzB9a1BTBWOAEtcrsPMpp929QrCPyPbPBRtc0EC77
-         2n3TnmlsJVJ9Bwm6QzYEbeAdKsKhAw76WIOwanMdSePq0WUmP+mR6s7L5BEgBFM3AMcs
-         FRIQ==
-X-Gm-Message-State: APjAAAX7/SozPopUGeMHHJwUsFTBXQLQn0hP2XdHDZryZP4Uclbp8FxP
-        dv4O6YFQwp1jbuETVcXNJl4EkJxHmjG64A==
-X-Google-Smtp-Source: APXvYqzjnsoNdUmwpfLdnE6NXG2HRCXwota6O7uNv6at25WXnr03H7RIw5jLGouV/rcZDg3/z3gaMA==
-X-Received: by 2002:a81:9251:: with SMTP id j78mr530901ywg.376.1573609016230;
-        Tue, 12 Nov 2019 17:36:56 -0800 (PST)
-Received: from gmail.com ([196.247.56.44])
-        by smtp.gmail.com with ESMTPSA id t15sm375190ywf.69.2019.11.12.17.36.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 17:36:55 -0800 (PST)
-Date:   Tue, 12 Nov 2019 20:36:53 -0500
-From:   "Javier F. Arias" <jarias.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] staging: rtl8723bs: Remove unnecessary conditional
- block
-Message-ID: <b870c2b43c12b7a4c98413735d9c7b1d4ff8e5c5.1573605920.git.jarias.linux@gmail.com>
-References: <61ec6328ccb22696ccc769ce9fbbe26fd00cd04a.1573605920.git.jarias.linux@gmail.com>
+        Tue, 12 Nov 2019 20:38:53 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD1YNRM001889;
+        Wed, 13 Nov 2019 01:37:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=nBEVt/y9CIbMxIiZwK0x8Vgf1UghyXUE7rZHgMKFOkI=;
+ b=gHFWHkKmteGiPHt8Q2AnfXoA/gc79ee+q2VElCvQBq2gz2vqpEv72tZyhzpwOsLKx+Pz
+ 8Xq4hNrXWTQiYDzHVm5TEd/mcNETQyvup3T2v7BFiLbjVDpdJFdGGnD6njWQ+9Z1uFto
+ 9v8UFv8vhSNzJI/ByC5+l5Tp9u4Y68yFdppMngOFTDqbnZpEPzBA3A21zJmmBWoRCt0f
+ mgc+2SaU58k4Yoa0QzkE7BC+yx7hQi9jiC7r5t4Ywnf09gp+UBcuaacd1GvPpLqfeq6W
+ PpabvpZeaiNuQRfsArkzxa0bSonp7QeF6AvbhaJpXEtEEu0YPBwuLfiBK9Wh2ZwhiCUo mg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2w5p3qrpjg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 01:37:16 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD1YJqY091498;
+        Wed, 13 Nov 2019 01:37:16 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2w7khmdhh3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 01:37:16 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAD1b9IQ007575;
+        Wed, 13 Nov 2019 01:37:09 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Nov 2019 01:37:08 +0000
+To:     "wubo \(T\)" <wubo40@huawei.com>
+Cc:     "lduncan\@suse.com" <lduncan@suse.com>,
+        "cleech\@redhat.com" <cleech@redhat.com>,
+        "jejb\@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen\@oracle.com" <martin.petersen@oracle.com>,
+        "open-iscsi\@googlegroups.com" <open-iscsi@googlegroups.com>,
+        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ulrich Windl <Ulrich.Windl@rz.uni-regensburg.de>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        "liuzhiqiang \(I\)" <liuzhiqiang26@huawei.com>
+Subject: Re: [PATCH v3] scsi: avoid potential deadloop in iscsi_if_rx func
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915DFB0ED@dggeml505-mbs.china.huawei.com>
+Date:   Tue, 12 Nov 2019 20:37:05 -0500
+In-Reply-To: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915DFB0ED@dggeml505-mbs.china.huawei.com>
+        (wubo's message of "Thu, 31 Oct 2019 06:17:01 +0000")
+Message-ID: <yq18soksgji.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <61ec6328ccb22696ccc769ce9fbbe26fd00cd04a.1573605920.git.jarias.linux@gmail.com>
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=957
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911130008
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911130008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes a conditional block that had no effect.
-It also reformat the affected lines to set the right indentation
-after the removal.
-Issue found by Coccinelle.
 
-Signed-off-by: Javier F. Arias <jarias.linux@gmail.com>
----
-Changes in V2:
-	- No changes.
+> In iscsi_if_rx func, after receiving one request through
+> iscsi_if_recv_msg func, iscsi_if_send_reply will be called to try to
+> reply the request in do-loop. If the return of iscsi_if_send_reply
+> func return -EAGAIN all the time, one deadloop will occur.
+>  
+> For example, a client only send msg without calling recvmsg func, 
+> then it will result in the watchdog soft lockup. 
+> The details are given as follows,
 
- drivers/staging/rtl8723bs/hal/sdio_halinit.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+Lee/Chris/Ulrich: Please review!
 
-diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-index 0f5dd4629e6f..b4b535c66bae 100644
---- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-+++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-@@ -551,18 +551,13 @@ static void HalRxAggr8723BSdio(struct adapter *padapter)
- 
- 	pregistrypriv = &padapter->registrypriv;
- 
--	if (pregistrypriv->wifi_spec) {
--		/*  2010.04.27 hpfan */
--		/*  Adjust RxAggrTimeout to close to zero disable RxAggr, suggested by designer */
--		/*  Timeout value is calculated by 34 / (2^n) */
--		valueDMATimeout = 0x06;
--		valueDMAPageCount = 0x06;
--	} else {
--		/*  20130530, Isaac@SD1 suggest 3 kinds of parameter */
--		/*  TX/RX Balance */
--		valueDMATimeout = 0x06;
--		valueDMAPageCount = 0x06;
--	}
-+	/*  2010.04.27 hpfan */
-+	/*  Adjust RxAggrTimeout to close to zero disable RxAggr, suggested by designer */
-+	/*  Timeout value is calculated by 34 / (2^n) */
-+	valueDMATimeout = 0x06;
-+	valueDMAPageCount = 0x06;
-+	/*  20130530, Isaac@SD1 suggest 3 kinds of parameter */
-+	/*  TX/RX Balance */
- 
- 	rtw_write8(padapter, REG_RXDMA_AGG_PG_TH + 1, valueDMATimeout);
- 	rtw_write8(padapter, REG_RXDMA_AGG_PG_TH, valueDMAPageCount);
 -- 
-2.20.1
-
+Martin K. Petersen	Oracle Linux Engineering
