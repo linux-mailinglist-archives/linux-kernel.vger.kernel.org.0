@@ -2,139 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172B4FB0A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 13:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B9FFB0BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 13:47:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbfKMMl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 07:41:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39346 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727192AbfKMMlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 07:41:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9AE6B556;
-        Wed, 13 Nov 2019 12:41:20 +0000 (UTC)
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-Cc:     x86@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@qperret.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Doug Smythies <dsmythies@telus.net>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>
-Subject: [PATCH v4 6/6] x86: intel_pstate: handle runtime turbo disablement/enablement in freq. invariance
-Date:   Wed, 13 Nov 2019 13:46:54 +0100
-Message-Id: <20191113124654.18122-7-ggherdovich@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191113124654.18122-1-ggherdovich@suse.cz>
-References: <20191113124654.18122-1-ggherdovich@suse.cz>
+        id S1727166AbfKMMrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 07:47:31 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38745 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbfKMMrb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 07:47:31 -0500
+Received: by mail-ot1-f68.google.com with SMTP id z25so1479951oti.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 04:47:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hzS4SYZIt6NSpGEyuUnsFmOu8r8EHjFnb42rl1nHgcA=;
+        b=xvcWvOoRVhAn4dsxU4VkYj8ICUAIK3dzZqwz4A12M1b/OSzothi1aeEN8C2VFcy3cG
+         OZeLB4vaYMzrbreteBcvxV1hVxsOXLr0jeOK8wJPtIo3kV2CHdt8M2f2Ys/HXXcBRgqf
+         6BCrGav8suM/KSxRuhhT9VWDu5lvxoqPoGEtKuov3vJyI1ShEeiBjsO02xWCTbfEQ518
+         LeG8hqiedrAYe7QOv27SK0MgO7qUGyrfs9DpZymVAmrjbkgsF9go60tJ8VSoDKxzq4Qq
+         zf3Yv/6GJfIF5GrjZn7cqcdi6BmorlsayObewnKRJ5BiSu8kyUnRFZyU1T75AaO9jOkH
+         ztgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hzS4SYZIt6NSpGEyuUnsFmOu8r8EHjFnb42rl1nHgcA=;
+        b=b2h8cy47Z/FADlzBZghEcAiloo2dMKIIRgNtivdAgphVvkpE+xcbzVzo0tUF2ZUc5/
+         Eny8LzfTdYFZUtnN53/PwgelG+JSzaMaigv4KKKbToN/n8K4gCi7nRm/xpISlukbxWF5
+         4L/9F+vhd/qd2kEDcGcOpq1J4jv1wPtFg/c1tsOYYMiVMMngXnrA/Uyp8BGv+Nx05Xgs
+         OWD0SWHvRWUKEucK/3e9Abif19kRQpyMNp94p6/EXYDX8KFj30eXPp6pD3QhFnndMXfA
+         mHZ7aaWE7+IB/+4/sYWdXnFNkv+W43XuBthfNoUQoBIHu9N+4lg8iwjaKNVEcQt20oZu
+         6UHg==
+X-Gm-Message-State: APjAAAWqXtGf0FmhknK3/ywfb7Qdw9AXeDFuyU/vwk41puTCQSXoeZVY
+        eQO7a4hsmjnjNzI5TggcwlM1jkoT1ILTGIXvAK3v5w==
+X-Google-Smtp-Source: APXvYqz489t5EwSifbd70BN2wc2Mi+1psbSHgq4dZBXQDgFewdQxLAk6JgWdnkuJm+7Ix7lh2CSmzpOuJ9BaftT5FHU=
+X-Received: by 2002:a9d:344a:: with SMTP id v68mr3084723otb.85.1573649250095;
+ Wed, 13 Nov 2019 04:47:30 -0800 (PST)
+MIME-Version: 1.0
+References: <20191112221026.5859-1-labbott@redhat.com>
+In-Reply-To: <20191112221026.5859-1-labbott@redhat.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 13 Nov 2019 13:47:19 +0100
+Message-ID: <CAMpxmJX_haxjkY+vmm+ajC6hi-aa6k6m0o+d=RmTz5xjPXuo-g@mail.gmail.com>
+Subject: Re: [PATCH] tools: gpio: Correctly add make dependencies for gpio_utils
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some platforms such as the Dell XPS 13 laptop the firmware disables turbo
-when the machine is disconnected from AC, and viceversa it enables it again
-when it's reconnected. In these cases a _PPC ACPI notification is issued.
+wt., 12 lis 2019 o 23:10 Laura Abbott <labbott@redhat.com> napisa=C5=82(a):
+>
+>
+> gpio tools fail to build correctly with make parallelization:
+>
+> $ make -s -j24
+> ld: gpio-utils.o: file not recognized: file truncated
+> make[1]: *** [/home/labbott/linux_upstream/tools/build/Makefile.build:145=
+: lsgpio-in.o] Error 1
+> make: *** [Makefile:43: lsgpio-in.o] Error 2
+> make: *** Waiting for unfinished jobs....
+>
+> This is because gpio-utils.o is used across multiple targets.
+> Fix this by making gpio-utios.o a proper dependency.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> I made a similar fix to iio tools
+> lore.kernel.org/r/20191018172908.3761-1-labbott@redhat.com
+> ---
+>  tools/gpio/Build    |  1 +
+>  tools/gpio/Makefile | 10 +++++++---
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/gpio/Build b/tools/gpio/Build
+> index 620c1937d957..4141f35837db 100644
+> --- a/tools/gpio/Build
+> +++ b/tools/gpio/Build
+> @@ -1,3 +1,4 @@
+> +gpio-utils-y +=3D gpio-utils.o
+>  lsgpio-y +=3D lsgpio.o gpio-utils.o
+>  gpio-hammer-y +=3D gpio-hammer.o gpio-utils.o
+>  gpio-event-mon-y +=3D gpio-event-mon.o gpio-utils.o
+> diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+> index 1178d302757e..6080de58861f 100644
+> --- a/tools/gpio/Makefile
+> +++ b/tools/gpio/Makefile
+> @@ -35,11 +35,15 @@ $(OUTPUT)include/linux/gpio.h: ../../include/uapi/lin=
+ux/gpio.h
+>
+>  prepare: $(OUTPUT)include/linux/gpio.h
+>
+> +GPIO_UTILS_IN :=3D $(output)gpio-utils-in.o
+> +$(GPIO_UTILS_IN): prepare FORCE
+> +       $(Q)$(MAKE) $(build)=3Dgpio-utils
+> +
+>  #
+>  # lsgpio
+>  #
+>  LSGPIO_IN :=3D $(OUTPUT)lsgpio-in.o
+> -$(LSGPIO_IN): prepare FORCE
+> +$(LSGPIO_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
+>         $(Q)$(MAKE) $(build)=3Dlsgpio
+>  $(OUTPUT)lsgpio: $(LSGPIO_IN)
+>         $(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+> @@ -48,7 +52,7 @@ $(OUTPUT)lsgpio: $(LSGPIO_IN)
+>  # gpio-hammer
+>  #
+>  GPIO_HAMMER_IN :=3D $(OUTPUT)gpio-hammer-in.o
+> -$(GPIO_HAMMER_IN): prepare FORCE
+> +$(GPIO_HAMMER_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
+>         $(Q)$(MAKE) $(build)=3Dgpio-hammer
+>  $(OUTPUT)gpio-hammer: $(GPIO_HAMMER_IN)
+>         $(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+> @@ -57,7 +61,7 @@ $(OUTPUT)gpio-hammer: $(GPIO_HAMMER_IN)
+>  # gpio-event-mon
+>  #
+>  GPIO_EVENT_MON_IN :=3D $(OUTPUT)gpio-event-mon-in.o
+> -$(GPIO_EVENT_MON_IN): prepare FORCE
+> +$(GPIO_EVENT_MON_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
+>         $(Q)$(MAKE) $(build)=3Dgpio-event-mon
+>  $(OUTPUT)gpio-event-mon: $(GPIO_EVENT_MON_IN)
+>         $(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+> --
+> 2.21.0
+>
 
-The scheduler needs to know freq_max for frequency-invariant calculations.
-To account for turbo availability to come and go, record freq_max at boot as
-if turbo was available and store it in a helper variable. Use a setter
-function to swap between 1024 and freq_max every time turbo goes off or on.
+Applied for fixes, thanks!
 
-Reminder: "freq_max" isn't really the maximum frequency but the ratio
-turbo_freq*1024/base_freq, which becomes 1024 when turbo is disabled. The name
-could be misleading but makes explainations a lot simpler and is really
-convenient in calculations.
-
-Signed-off-by: Giovanni Gherdovich <ggherdovich@suse.cz>
----
- arch/x86/include/asm/topology.h |  5 +++++
- arch/x86/kernel/smpboot.c       | 14 ++++++++++----
- drivers/cpufreq/intel_pstate.c  |  1 +
- 3 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index 9b3aca463c8f..4834bde53b5a 100644
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -214,6 +214,11 @@ static inline long arch_scale_freq_capacity(int cpu)
- extern void arch_scale_freq_tick(void);
- #define arch_scale_freq_tick arch_scale_freq_tick
- 
-+extern void set_arch_max_freq(bool turbo_disabled);
-+#else
-+static inline void set_arch_max_freq(bool turbo_disabled)
-+{
-+}
- #endif
- 
- #endif /* _ASM_X86_TOPOLOGY_H */
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 8988177064be..f94aa1dfc778 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1807,8 +1807,15 @@ DEFINE_STATIC_KEY_FALSE(arch_scale_freq_key);
- 
- static DEFINE_PER_CPU(u64, arch_prev_aperf);
- static DEFINE_PER_CPU(u64, arch_prev_mperf);
-+static u64 arch_max_turbo_freq = SCHED_CAPACITY_SCALE;
- static u64 arch_max_freq = SCHED_CAPACITY_SCALE;
- 
-+void set_arch_max_freq(bool turbo_disabled)
-+{
-+	arch_max_freq = turbo_disabled ? SCHED_CAPACITY_SCALE :
-+					arch_max_turbo_freq;
-+}
-+
- static bool turbo_disabled(void)
- {
- 	u64 misc_en;
-@@ -2004,9 +2011,6 @@ static void intel_set_cpu_max_freq(void)
- {
- 	u64 ratio = 1, turbo_ratio = 1;
- 
--	if (turbo_disabled())
--		return;
--
- 	if (slv_set_cpu_max_freq(&ratio, &turbo_ratio))
- 		goto set_value;
- 
-@@ -2022,7 +2026,9 @@ static void intel_set_cpu_max_freq(void)
- 	core_set_cpu_max_freq(&ratio, &turbo_ratio);
- 
- set_value:
--	arch_max_freq = div_u64(turbo_ratio * SCHED_CAPACITY_SCALE, ratio);
-+	arch_max_turbo_freq = div_u64(turbo_ratio * SCHED_CAPACITY_SCALE,
-+					ratio);
-+	set_arch_max_freq(turbo_disabled());
- 	static_branch_enable(&arch_scale_freq_key);
- }
- 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 8ab31702cf6a..6bf50783bc24 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -922,6 +922,7 @@ static void intel_pstate_update_limits(unsigned int cpu)
- 	 */
- 	if (global.turbo_disabled_mf != global.turbo_disabled) {
- 		global.turbo_disabled_mf = global.turbo_disabled;
-+		set_arch_max_freq(global.turbo_disabled);
- 		for_each_possible_cpu(cpu)
- 			intel_pstate_update_max_freq(cpu);
- 	} else {
--- 
-2.16.4
-
+Bartosz
