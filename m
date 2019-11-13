@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E84EFA5A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:24:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ABACFA594
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:23:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbfKMCYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:24:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
+        id S1728235AbfKMBw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:52:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbfKMBwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:52:14 -0500
+        id S1728255AbfKMBwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:52:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5D4E222CE;
-        Wed, 13 Nov 2019 01:52:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07570204EC;
+        Wed, 13 Nov 2019 01:52:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609933;
-        bh=/fUyGVnz4vUZV7QqWfrT9JvA8+OesvTPpl/KA51g0nE=;
+        s=default; t=1573609943;
+        bh=rmpRqWBuUsMLm26OG9t+wtXYQizGsK/WZIguKaUORQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vF2i8ldmfvVQirprQN2PW38v/4lQD5dFlF7ixj3QVAb0h4RB5Zr1geiezZIsQEN8J
-         ttqNCZhxaXaNUt6R38GSY6fRZ9Y4LPXnR/iDYgsHwvxkVXZdH/lyRMaKsubjj627wf
-         uyRviSqM8Qo1ueQr1wl3Jw7H12Of3UTaZgBtDvII=
+        b=Ntw+5uXi9WwjEbwmnkRwISsrppVBE7Sf55HzVu9/HsASwrcEWCL71pJFYo+BQjTA+
+         G+K8isL7F1Uf0vGT15fVBOSz2igZ0EOUJwQ3IsrDZFAjOyMy5kCqvyRZZFbLl0wdK+
+         v183ha0d/Sr2J8MA0EOvb9V/z/uO3hldFntMnay8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 078/209] rpmsg: glink: smem: Support rx peak for size less than 4 bytes
-Date:   Tue, 12 Nov 2019 20:48:14 -0500
-Message-Id: <20191113015025.9685-78-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 083/209] ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()
+Date:   Tue, 12 Nov 2019 20:48:19 -0500
+Message-Id: <20191113015025.9685-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -44,48 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 928002a5e9dab2ddc1a0fe3e00739e89be30dc6b ]
+[ Upstream commit 8e9f7265eda9f3a662ca1ca47a69042a7840735b ]
 
-The current rx peak function fails to read the data if size is
-less than 4bytes.
+The q6asm_audio_client_alloc() doesn't return NULL, it returns error
+pointers.
 
-Use memcpy_fromio to support data reads of size less than 4 bytes.
-
-Cc: stable@vger.kernel.org
-Fixes: f0beb4ba9b18 ("rpmsg: glink: Remove chunk size word align warning")
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: 2a9e92d371db ("ASoC: qdsp6: q6asm: Add q6asm dai driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rpmsg/qcom_glink_smem.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-index 2b5cf27909540..7b6544348a3e0 100644
---- a/drivers/rpmsg/qcom_glink_smem.c
-+++ b/drivers/rpmsg/qcom_glink_smem.c
-@@ -89,15 +89,11 @@ static void glink_smem_rx_peak(struct qcom_glink_pipe *np,
- 		tail -= pipe->native.length;
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index 9db9a2944ef26..c1a7d376a3fea 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -319,10 +319,11 @@ static int q6asm_dai_open(struct snd_pcm_substream *substream)
+ 	prtd->audio_client = q6asm_audio_client_alloc(dev,
+ 				(q6asm_cb)event_handler, prtd, stream_id,
+ 				LEGACY_PCM_MODE);
+-	if (!prtd->audio_client) {
++	if (IS_ERR(prtd->audio_client)) {
+ 		pr_info("%s: Could not allocate memory\n", __func__);
++		ret = PTR_ERR(prtd->audio_client);
+ 		kfree(prtd);
+-		return -ENOMEM;
++		return ret;
+ 	}
  
- 	len = min_t(size_t, count, pipe->native.length - tail);
--	if (len) {
--		__ioread32_copy(data, pipe->fifo + tail,
--				len / sizeof(u32));
--	}
-+	if (len)
-+		memcpy_fromio(data, pipe->fifo + tail, len);
- 
--	if (len != count) {
--		__ioread32_copy(data + len, pipe->fifo,
--				(count - len) / sizeof(u32));
--	}
-+	if (len != count)
-+		memcpy_fromio(data + len, pipe->fifo, (count - len));
- }
- 
- static void glink_smem_rx_advance(struct qcom_glink_pipe *np,
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
 -- 
 2.20.1
 
