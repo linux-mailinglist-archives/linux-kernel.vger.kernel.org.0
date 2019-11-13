@@ -2,124 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B181FB4E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:22:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2885EFB62E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbfKMQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:22:18 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:33037 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfKMQWS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:22:18 -0500
-Received: by mail-yb1-f195.google.com with SMTP id i15so1183151ybq.0;
-        Wed, 13 Nov 2019 08:22:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wrNEKbAI8SdPL4/nZNWweKCBGdbsKNPBi2tTjgkTk4g=;
-        b=dr/pD/ndVpnhQ/dq8vwt31HTFhiLecVsaulHcl8WYtV7IlU6Vk6Q2zoGJoZPO0Q9lg
-         0kqoeQhbXKNkDNlyDCfM5Z3Q9cdUg3sBTb/ZvKqQ16U/WLseWLg6mWtPTr1ar4clvrqE
-         VchRnBOu+R3jh2MGWvvhXAMpI7He3QdrA6ARhAvsIXN850RnNBNxcmbIzsveOg2oiLU8
-         yX4SglKyPb6phah2sZi9ZCKd6Jvf/R9rRPSifGYwYz2gkkO7sqxW9A1QBw6lW4Szd5L8
-         CUJSn1m/GKcc4aE1TYmjvsEbUsvDxirufa2cE++pM2XjuQL6VkBhpB2/xipSCRqXh/oD
-         hqDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wrNEKbAI8SdPL4/nZNWweKCBGdbsKNPBi2tTjgkTk4g=;
-        b=PJO8V9D9d1s62Dkt1SL2YOXmYcaFc8zYrf70KuUDK5Rio2Txj0XbVvAQ5BU6Em5gSL
-         9RAIh+sdu96PRwJVf+3CfBiVL3R9MSUyMPQJtHd4wVQybrkpw9NWhRG2nqZy91MDplwu
-         7JBJhdHoqN58mAXeEUwWs99nM7KA3nLS9yhEJ4+TgguiMmSHbWdOXr3DpRxAAkbb8xEf
-         lhiY0jcMx4EmJAQ/TNGTiQhErUQckeXgjR3Qa5Idn7Yl4xJNmGYjSMU9F3SSh6xxMc+W
-         YKJm9b1nSqWzYu0qxCjmIRTr0ydM7EB1RrwFN1SjY4T0NxIOY7JYnISaUmiTWSbt3Owp
-         E+9A==
-X-Gm-Message-State: APjAAAX8A8BQ85yCXfaS0bW7q14I82qOTnIlw4DKxsPfZo5A+84a/kgN
-        80esdLRsQLhNqGWCdXf7nLf1Yekv30DGGuyKvRo=
-X-Google-Smtp-Source: APXvYqzf53BzBYGwZQWzU7OdbtYI8t2gX4zwRnBJBC0//jpJ443Zjiuag9Mi5MgK7DtkD9rouz5Qh4pH5DLzKHfS9xk=
-X-Received: by 2002:a25:383:: with SMTP id 125mr3323615ybd.45.1573662136812;
- Wed, 13 Nov 2019 08:22:16 -0800 (PST)
+        id S1728455AbfKMRSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:18:08 -0500
+Received: from mga02.intel.com ([134.134.136.20]:62542 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727343AbfKMRSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 12:18:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 09:18:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
+   d="scan'208";a="229813213"
+Received: from dmsnyder-mobl1.amr.corp.intel.com (HELO [10.252.193.15]) ([10.252.193.15])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Nov 2019 09:18:04 -0800
+Subject: Re: [alsa-devel] [RESEND PATCH v5 2/6] ASoC: amd: Refactoring of DAI
+ from DMA driver
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
+        Sanju R Mehta <sanju.mehta@amd.com>,
+        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Colin Ian King <colin.king@canonical.com>
+References: <1573629249-13272-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1573629249-13272-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <40d1690c-175c-c6ee-ee44-390c30cccc05@linux.intel.com>
+Date:   Wed, 13 Nov 2019 10:22:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-References: <20191022143736.GX26530@ZenIV.linux.org.uk> <20191022201131.GZ26530@ZenIV.linux.org.uk>
- <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com> <20191101234622.GM26530@ZenIV.linux.org.uk>
- <20191102172229.GT20975@paulmck-ThinkPad-P72> <20191102180842.GN26530@ZenIV.linux.org.uk>
- <20191103163524.GO26530@ZenIV.linux.org.uk> <20191103182058.GQ26530@ZenIV.linux.org.uk>
- <20191103185133.GR26530@ZenIV.linux.org.uk> <CAOQ4uxiHH=e=Y5Xb3bkv+USxE0AftHiP935GGQEKkv54E17oDA@mail.gmail.com>
- <20191113125216.GF26530@ZenIV.linux.org.uk>
-In-Reply-To: <20191113125216.GF26530@ZenIV.linux.org.uk>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 13 Nov 2019 18:22:05 +0200
-Message-ID: <CAOQ4uxifKE2sJE=tCUj3qHFim8xXiwcdf-ugb3_tpHbmm5YnZw@mail.gmail.com>
-Subject: Re: [PATCH][RFC] ecryptfs_lookup_interpose(): lower_dentry->d_inode
- is not stable
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, wugyuan@cn.ibm.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ecryptfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1573629249-13272-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 2:52 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Nov 13, 2019 at 09:01:36AM +0200, Amir Goldstein wrote:
-> > > -       if (d_really_is_negative(lower_dentry)) {
-> > > +       /*
-> > > +        * negative dentry can go positive under us here - its parent is not
-> > > +        * locked.  That's OK and that could happen just as we return from
-> > > +        * ecryptfs_lookup() anyway.  Just need to be careful and fetch
-> > > +        * ->d_inode only once - it's not stable here.
-> > > +        */
-> > > +       lower_inode = READ_ONCE(lower_dentry->d_inode);
-> > > +
-> > > +       if (!lower_inode) {
-> > >                 /* We want to add because we couldn't find in lower */
-> > >                 d_add(dentry, NULL);
-> > >                 return NULL;
-> >
-> > Sigh!
-> >
-> > Open coding a human readable macro to solve a subtle lookup race.
-> > That doesn't sound like a scalable solution.
-> > I have a feeling this is not the last patch we will be seeing along
-> > those lines.
-> >
-> > Seeing that developers already confused about when they should use
-> > d_really_is_negative() over d_is_negative() [1] and we probably
-> > don't want to add d_really_really_is_negative(), how about
-> > applying that READ_ONCE into d_really_is_negative() and
-> > re-purpose it as a macro to be used when races with lookup are
-> > a concern?
->
-> Would you care to explain what that "fix" would've achieved here,
-> considering the fact that barriers are no-ops on UP and this is
-> *NOT* an SMP race?
->
-> And it's very much present on UP - we have
->         fetch ->d_inode into local variable
->         do blocking allocation
->         check if ->d_inode is NULL now
->         if it is not, use the value in local variable and expect it to be non-NULL
->
-> That's not a case of missing barriers.  At all.  And no redefinition of
-> d_really_is_negative() is going to help - it can't retroactively affect
-> the value explicitly fetched into a local variable some time prior to
-> that.
->
 
-Indeed. I missed that part of your commit message and didn't
-realize the variable was being used later.
-The language in the comment "can go positive under us" implied
-SMP race so I misunderstood the reason for READ_ONCE().
+> +	val = rv_readl(adata->acp3x_base + mmACP_BTTDM_ITER);
+> +	rv_writel((val | 0x2), adata->acp3x_base + mmACP_BTTDM_ITER);
+> +	val = rv_readl(adata->acp3x_base + mmACP_BTTDM_IRER);
+> +	rv_writel((val | 0x2), adata->acp3x_base + mmACP_BTTDM_IRER);
+> +
+> +	val = (FRM_LEN | (slots << 15) | (slot_len << 18));
 
-Sorry for the noise.
+nit-pick: you have extra parentheses that are not needed for (val | 
+0x02) and the outer ones on the previous line
 
-Amir.
+
+> +static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
+> +		int cmd, struct snd_soc_dai *dai)
+> +{
+> +	int ret = 0;
+
+nit-pick: move last, xmas-style
+
+> +	struct i2s_stream_instance *rtd = substream->runtime->private_data;
+> +	u32 val, period_bytes;
+
+> +static int acp3x_dai_probe(struct platform_device *pdev)
+> +{
+> +	int status;
+> +	struct resource *res;
+> +	struct i2s_dev_data *adata;
+> +
+> +	adata = devm_kzalloc(&pdev->dev, sizeof(struct i2s_dev_data),
+> +			GFP_KERNEL);
+> +	if (!adata)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "IORESOURCE_MEM FAILED\n");
+> +		goto err;
+> +	}
+> +
+> +	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
+> +			resource_size(res));
+> +	if (IS_ERR(adata->acp3x_base))
+> +		return PTR_ERR(adata->acp3x_base);
+> +
+> +	adata->i2s_irq = res->start;
+> +	dev_set_drvdata(&pdev->dev, adata);
+> +	status = devm_snd_soc_register_component(&pdev->dev,
+> +			&acp3x_dai_component,
+> +			&acp3x_i2s_dai, 1);
+> +	if (status) {
+> +		dev_err(&pdev->dev, "Fail to register acp i2s dai\n");
+> +		goto dev_err;
+> +	}
+> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 10000);
+> +	pm_runtime_use_autosuspend(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +	return 0;
+> +err:
+> +	kfree(adata);
+> +	return -ENOMEM;
+> +dev_err:
+> +	kfree(adata->acp3x_base);
+> +	kfree(adata);
+> +	kfree(res);
+> +	return -ENODEV;
+
+this can be improved a bit by using ret = -ENOMEM/-ENODEV before the 
+goto, and organizing the labels and the kfree calls in the reverse order 
+of the initialization/allocation steps.
+
+
+> @@ -666,7 +461,24 @@ static int acp3x_audio_probe(struct platform_device *pdev)
+>   	pm_runtime_use_autosuspend(&pdev->dev);
+>   	pm_runtime_enable(&pdev->dev);
+>   	return 0;
+> +
+> +err:
+> +	kfree(res);
+> +	return -ENOMEM;
+> +base_err:
+> +	kfree(res);
+> +	kfree(adata);
+> +	return -ENOMEM;
+> +io_irq:
+> +	kfree(res);
+> +	kfree(adata->acp3x_base);
+> +	kfree(adata);
+> +	return -ENOMEM;
+> +
+>   dev_err:
+> +	kfree(res);
+> +	kfree(adata->acp3x_base);
+> +	kfree(adata);
+>   	status = acp3x_deinit(adata->acp3x_base);
+>   	if (status)
+>   		dev_err(&pdev->dev, "ACP de-init failed\n");
+same here, you should have all the kfrees in the reverse order of the 
+kzalloc, and labels pointing straight at the sequence that needs to be 
+executed. Duplicating the error flow makes it hard to maintain the code 
+and check for memory leaks.
