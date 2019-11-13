@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A256FFA12D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:55:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B5BFFA12F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:56:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbfKMBzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:55:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47176 "EHLO mail.kernel.org"
+        id S1729225AbfKMBzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:55:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729121AbfKMBza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:55:30 -0500
+        id S1729165AbfKMBzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:55:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E037222D3;
-        Wed, 13 Nov 2019 01:55:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1277522469;
+        Wed, 13 Nov 2019 01:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610130;
-        bh=dONCx61Ia/sj7WTQHEcMz5HEIkjAqNopjr/Sy89EPhA=;
+        s=default; t=1573610136;
+        bh=9PcIazD5ai6mg5kNZCsOn/ZzooCD/2R3M4jCxJLn8Pk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y8uB09/UzUVjU3lmpTr1iI92t9Bj58/0yiTOW62ZlYm3Uy0sduIcSH3laolYl6kq/
-         IWT8WcUObWrr9loPBZTq7sEswJbrljabRRHHVsl/A3bPWiWmTQFX73WjseNnHUCjfT
-         eSQHnDPeyzgMarYPbwE7Y4eFc1w3nbHbciJJQXmA=
+        b=IILBRTEvaQPddPGoyGg6a3sfXwu0M+alTcPTLhU83XJPv462KRApdZ6+7nJUip82S
+         Ll6+9Zbq7wqY9VCDStyU6VqdhmUn1Kjsj7er3uURcNwrYqRn++UJHqU0HzMYSE7VdA
+         suIB1c5q3ymxiRXOxkax6fsADbtPOa+jCOrXFj6A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hieu Tran Dang <dangtranhieu2012@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 180/209] spi: fsl-lpspi: Prevent FIFO under/overrun by default
-Date:   Tue, 12 Nov 2019 20:49:56 -0500
-Message-Id: <20191113015025.9685-180-sashal@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Borislav Petkov <bp@suse.de>, Joerg Roedel <joro@8bytes.org>,
+        Kees Cook <keescook@chromium.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 184/209] x86/mm: Do not warn about PCI BIOS W+X mappings
+Date:   Tue, 12 Nov 2019 20:50:00 -0500
+Message-Id: <20191113015025.9685-184-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -43,37 +46,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hieu Tran Dang <dangtranhieu2012@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit de8978c388c66b8fca192213ec9f0727e964c652 ]
+[ Upstream commit c200dac78fec66d87ef262cac38cfe4feabdf737 ]
 
-Certain devices don't work well when a transmit FIFO underrun or
-receive FIFO overrun occurs. Example is the SAF400x radio chip when
-running at high speed which leads to garbage being sent to/received from
-the chip. In which case, it should stall waiting for further data to be
-available before proceeding. This patch unset the NOSTALL bit in CFGR1
-by default to prevent this issue.
+PCI BIOS requires the BIOS area 0x0A0000-0x0FFFFFF to be mapped W+X for
+various legacy reasons. When CONFIG_DEBUG_WX is enabled, this triggers the
+WX warning, but this is misleading because the mapping is required and is
+not a result of an accidental oversight.
 
-Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Prevent the full warning when PCI BIOS is enabled and the detected WX
+mapping is in the BIOS area. Just emit a pr_warn() which denotes the
+fact. This is partially duplicating the info which the PCI BIOS code emits
+when it maps the area as executable, but that info is not in the context of
+the WX checking output.
+
+Remove the extra %p printout in the WARN_ONCE() while at it. %pS is enough.
+
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Borislav Petkov <bp@suse.de>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1810082151160.2455@nanos.tec.linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-fsl-lpspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/dump_pagetables.c | 35 +++++++++++++++++++++++++++--------
+ 1 file changed, 27 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
-index e6d5cc6ab108b..51670976faa35 100644
---- a/drivers/spi/spi-fsl-lpspi.c
-+++ b/drivers/spi/spi-fsl-lpspi.c
-@@ -276,7 +276,7 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index c05a818224bb0..abcb8d00b0148 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -19,7 +19,9 @@
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
+ #include <linux/highmem.h>
++#include <linux/pci.h>
  
- 	fsl_lpspi_set_watermark(fsl_lpspi);
++#include <asm/e820/types.h>
+ #include <asm/pgtable.h>
  
--	temp = CFGR1_PCSCFG | CFGR1_MASTER | CFGR1_NOSTALL;
-+	temp = CFGR1_PCSCFG | CFGR1_MASTER;
- 	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
- 		temp |= CFGR1_PCSPOL;
- 	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
+ /*
+@@ -238,6 +240,29 @@ static unsigned long normalize_addr(unsigned long u)
+ 	return (signed long)(u << shift) >> shift;
+ }
+ 
++static void note_wx(struct pg_state *st)
++{
++	unsigned long npages;
++
++	npages = (st->current_address - st->start_address) / PAGE_SIZE;
++
++#ifdef CONFIG_PCI_BIOS
++	/*
++	 * If PCI BIOS is enabled, the PCI BIOS area is forced to WX.
++	 * Inform about it, but avoid the warning.
++	 */
++	if (pcibios_enabled && st->start_address >= PAGE_OFFSET + BIOS_BEGIN &&
++	    st->current_address <= PAGE_OFFSET + BIOS_END) {
++		pr_warn_once("x86/mm: PCI BIOS W+X mapping %lu pages\n", npages);
++		return;
++	}
++#endif
++	/* Account the WX pages */
++	st->wx_pages += npages;
++	WARN_ONCE(1, "x86/mm: Found insecure W+X mapping at address %pS\n",
++		  (void *)st->start_address);
++}
++
+ /*
+  * This function gets called on a break in a continuous series
+  * of PTE entries; the next one is different so we need to
+@@ -273,14 +298,8 @@ static void note_page(struct seq_file *m, struct pg_state *st,
+ 		unsigned long delta;
+ 		int width = sizeof(unsigned long) * 2;
+ 
+-		if (st->check_wx && (eff & _PAGE_RW) && !(eff & _PAGE_NX)) {
+-			WARN_ONCE(1,
+-				  "x86/mm: Found insecure W+X mapping at address %p/%pS\n",
+-				  (void *)st->start_address,
+-				  (void *)st->start_address);
+-			st->wx_pages += (st->current_address -
+-					 st->start_address) / PAGE_SIZE;
+-		}
++		if (st->check_wx && (eff & _PAGE_RW) && !(eff & _PAGE_NX))
++			note_wx(st);
+ 
+ 		/*
+ 		 * Now print the actual finished series
 -- 
 2.20.1
 
