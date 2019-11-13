@@ -2,102 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F262FA7DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 05:10:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E156FA7E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 05:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfKMEKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 23:10:45 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:44566 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfKMEKo (ORCPT
+        id S1727237AbfKMEPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 23:15:36 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:35707 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfKMEPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 23:10:44 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD4414f151917;
-        Wed, 13 Nov 2019 04:10:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=ZNdKFjm9UOk20HQLFuUdDzwYJHobBEWdrbmahikMcMQ=;
- b=daVY+UHCh2uLSiwykHfg7PrxW1NSc992UpsT6+ShzRR6q6ARyNCYPdMa0mOLU8DcL0k/
- fAtl4FDPOH67w8qYBm526qDnsqmA9Mztd2hCAm7nL2vuP1FMg0Ib5LzU7J+5D84BqalD
- sdPREAniLiswQ55S9hRjiRBjdsOreUhkOjbkjehFao9jIN0+OCQGaFrmNCWEYDvLt1KW
- TnnnxirEs3yiDH8/PtNL1jKWs8e21FiVqeK7JWOnOcLbeVJ7BtqMhlcnzVwqT7j4vfUW
- 64tjz6IB5BioWw77tkHkxL80g15uwj4lNKJo7MYzn5S7jrpSwC3LOE01T6Xhs3Td+TLQ gA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2w5mvtsgcu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 04:10:30 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD48tYG024715;
-        Wed, 13 Nov 2019 04:10:30 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2w7khmk2er-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 04:10:29 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAD4ASts014206;
-        Wed, 13 Nov 2019 04:10:28 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Nov 2019 20:10:27 -0800
-Date:   Tue, 12 Nov 2019 20:10:26 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Eric Sandeen <sandeen@sandeen.net>,
-        Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] xfs: remove duplicated include from xfs_dir2_data.c
-Message-ID: <20191113041026.GF6219@magnolia>
-References: <20191113022501.55816-1-yuehaibing@huawei.com>
+        Tue, 12 Nov 2019 23:15:36 -0500
+Received: by mail-ot1-f68.google.com with SMTP id z6so478140otb.2;
+        Tue, 12 Nov 2019 20:15:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Fu3Y/4lCeDSudNWi+wvYdwt8kDwqIxhy6RedI/4rb48=;
+        b=I0kEQgPZzvbMz3kEE2r6A6XpCNlpBFKHOCcwuFO7y38oZkWBQnWBfzKGWQVscdnvPD
+         Wx94zwVO2teY/zniBbr+oNhUxWu66HQ90fX7V2vhbPn9QWRALsuzoyNSYJBb41Igi3N0
+         6t6Mf0PwxuhnHL6xcwLqO/2dJ+p7IeUVeug0uwzoLcIgMMz5oasdE0JBDLeZfd70LPSx
+         lxFih57Y7e0v3ZPjpxzmou8fxP7856lal3acVql6EJze0Um3aPhhJEqDLZfNDrAaQFc3
+         gKCrRWYS2yKaSXSuZKLSj7dNzOkwX7U3ljEEJHY9Ez4D0fhb0PkTVVXZaA7gcisBp6oY
+         DTBA==
+X-Gm-Message-State: APjAAAWEpwURm34coqfWGN1ClL5cwTUgyllxx/dvVmely23MpZGS0Pss
+        fIWSaO3sHvEFZljdabxcNw==
+X-Google-Smtp-Source: APXvYqxbN5/QlD1YTfwus6CP4J23kgOsBx8dLDfsU2Js+cOxTe7uQW9y/ENAShKBJ4fIZy7N6jInJw==
+X-Received: by 2002:a9d:a63:: with SMTP id 90mr1061108otg.346.1573618534975;
+        Tue, 12 Nov 2019 20:15:34 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o14sm295660oie.24.2019.11.12.20.15.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 20:15:34 -0800 (PST)
+Date:   Tue, 12 Nov 2019 22:15:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Andrew Murray <andrew.murray@arm.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        james.quinlan@broadcom.com, mbrugger@suse.com,
+        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: pci: add bindings for brcmstb's PCIe
+ device
+Message-ID: <20191113041533.GA25497@bogus>
+References: <20191106214527.18736-1-nsaenzjulienne@suse.de>
+ <20191106214527.18736-2-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191113022501.55816-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911130034
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911130034
+In-Reply-To: <20191106214527.18736-2-nsaenzjulienne@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 02:25:01AM +0000, YueHaibing wrote:
-> Remove duplicated include.
+On Wed, Nov 06, 2019 at 10:45:23PM +0100, Nicolas Saenz Julienne wrote:
+> From: Jim Quinlan <james.quinlan@broadcom.com>
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Heh, oops.  Thanks for the patch!
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
+> The DT bindings description of the brcmstb PCIe device is described.
+> This node can only be used for now on the Raspberry Pi 4.
+> 
+> This was based on Jim's original submission[1], converted to yaml and
+> adapted to the RPi4 case.
+> 
+> [1] https://patchwork.kernel.org/patch/10605937/
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Co-developed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 > ---
->  fs/xfs/libxfs/xfs_dir2_data.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_dir2_data.c b/fs/xfs/libxfs/xfs_dir2_data.c
-> index 9e471a28b6c6..30293a1d03f6 100644
-> --- a/fs/xfs/libxfs/xfs_dir2_data.c
-> +++ b/fs/xfs/libxfs/xfs_dir2_data.c
-> @@ -18,7 +18,6 @@
->  #include "xfs_trans.h"
->  #include "xfs_buf_item.h"
->  #include "xfs_log.h"
-> -#include "xfs_dir2_priv.h"
->  
->  static xfs_failaddr_t xfs_dir2_data_freefind_verify(
->  		struct xfs_dir2_data_hdr *hdr, struct xfs_dir2_data_free *bf,
-> 
-> 
+>  .../bindings/pci/brcm,stb-pcie.yaml           | 116 ++++++++++++++++++
+>  1 file changed, 116 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+
+I'm working on a common PCI host schema that should cut down some of the 
+standard props.
+
+> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> new file mode 100644
+> index 000000000000..0b81c26f8568
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> @@ -0,0 +1,116 @@
+> +# SPDX-License-Identifier: GPL-2.0
+
+Dual license new bindings please:
+
+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Brcmstb PCIe Host Controller Device Tree Bindings
+> +
+> +maintainers:
+> +  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> +
+> +properties:
+> +  compatible:
+> +    const: brcm,bcm2711-pcie # The Raspberry Pi 4
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      - description: PCIe host controller
+> +      - description: builtin MSI controller
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      - const: pcie
+> +      - const: msi
+> +
+> +  "#address-cells":
+> +    const: 3
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  "#interrupt-cells":
+> +    const: 1
+> +
+> +  interrupt-map-mask: true
+> +
+> +  interrupt-map: true
+
+4 entries?
+
+You'll need to bracket <> each entry in the example and dts.
+
+> +
+> +  ranges: true
+
+How many entries?
+
+> +
+> +  dma-ranges: true
+
+How many entries?
+
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: sw_pcie
+> +
+> +  msi-controller:
+> +    description: Identifies the node as an MSI controller.
+> +    type: boolean
+> +
+> +  msi-parent:
+> +    description: MSI controller the device is capable of using.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  linux,pci-domain:
+> +    description: PCI domain ID. Should be unique for each host controller.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  brcm,enable-ssc:
+> +    description: Indicates usage of spread-spectrum clocking.
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - "#interrupt-cells"
+> +  - interrupt-map-mask
+> +  - interrupt-map
+> +  - ranges
+> +  - dma-ranges
+> +  - linux,pci-domain
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    scb {
+> +            #address-cells = <2>;
+> +            #size-cells = <1>;
+> +            pcie0: pcie@7d500000 {
+> +                    compatible = "brcm,bcm2711-pcie";
+> +                    reg = <0x0 0x7d500000 0x9310>;
+> +                    #address-cells = <3>;
+> +                    #size-cells = <2>;
+> +                    #interrupt-cells = <1>;
+> +                    interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
+> +                                 <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+> +                    interrupt-names = "pcie", "msi";
+> +                    interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +                    interrupt-map = <0 0 0 1 &gicv2 GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH
+> +                                     0 0 0 2 &gicv2 GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH
+> +                                     0 0 0 3 &gicv2 GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH
+> +                                     0 0 0 4 &gicv2 GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
+> +                    msi-parent = <&pcie0>;
+> +                    msi-controller;
+> +                    ranges = <0x02000000 0x0 0xf8000000 0x6 0x00000000 0x0 0x04000000>;
+> +                    dma-ranges = <0x02000000 0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>;
+> +                    linux,pci-domain = <0>;
+> +                    brcm,enable-ssc;
+> +            };
+> +    };
+> -- 
+> 2.23.0
 > 
