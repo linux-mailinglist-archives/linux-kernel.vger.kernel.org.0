@@ -2,94 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56ABAFA140
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 868C3FA079
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:50:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbfKMB4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:56:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729307AbfKMB4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:56:02 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13AFB222CF;
-        Wed, 13 Nov 2019 01:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610161;
-        bh=eO+zh+1hDJrf6kovEjttSsvpTV1BbphILcEKLCmqexY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kQmw5lFI75CTde7M5OHUJ4vMBvBFR9+cRLJbanIXgWQOfl+Zt74vFKlsIEU/i1QJV
-         Dtm+Caq71lQQAyff7Nez4neYUOBvAmhkO9mvyEg4LzXaESqxHZc3FVG7iJx9g8iEK7
-         REs2aF2SR4mGtOfzD/hIigiQl2JUinmo4XAY5Jdk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 204/209] ACPI / LPSS: Use acpi_lpss_* instead of acpi_subsys_* functions for hibernate
-Date:   Tue, 12 Nov 2019 20:50:20 -0500
-Message-Id: <20191113015025.9685-204-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
-References: <20191113015025.9685-1-sashal@kernel.org>
+        id S1727178AbfKMBu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:50:27 -0500
+Received: from mail-eopbgr10059.outbound.protection.outlook.com ([40.107.1.59]:15077
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726957AbfKMBu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:50:27 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gp3L4a1AwrHW38E1TEr7uE++U+IrYH34yp2I2oMJjhAaSlwlXjDkZ5M6T6D57Y9DynrMDbp0/ZO5XFkOj8/Evi514mq5XvyAq7mQ47S9Fb1xqJfOdAO8dPWHfNoGZSwF9u/Hsp2xiOXP7Fls7JjMy5raxHiAE4Zg/Q2z7goJp4ttscibzBa2oRB8VrI8au7BjjYdaAmFzKJ+KdLPrk5zvQJvBAJYl9yKsm/DALIOfogLmitMWT9tXkSBDTUwGi8/a9u5vYJDInFeE8EERMZPo4ddoN+mqReLGICDnkCtaZmWoLc4/7pc5Av5cu6M2zdY+umMPghAjph+nLEVETzrZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oHk3CG0jpzB0BVFt7309RiLh2hPBXlsMVzkAva5CXPE=;
+ b=bM6B2uf6ChKL03jJwOFeGpxdlnq3h/NB3+EgYK59jvMN8swFXCWXYev0+hz5S9GOWM7hYnZgoT0ZRZaIecz/7sD3PdaXOOKAa3S6M22bx/4Gzw8YDqQ6Acs6/zYGmcDDSd0/B1wxPlTirbshEohPNb/o/S5RHhDRHmqwIaPgT7G+taAvX1UrIafsLVZO8arP5MHImoqoP1Ow0C/+sKWW9EenMxUsO4vlWZTffWj1qDmBkWHkSdTqLj3JMXOn5ZA/Lqs3IdLerXaSJ3aZQQnU4QUplNe4MMWI4mteT81ZzFKATxG7qdc8kttFtBabqh65WoLug6QYMVn/kDewJ+adJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oHk3CG0jpzB0BVFt7309RiLh2hPBXlsMVzkAva5CXPE=;
+ b=d1z08vAr510PrD75W3tDuKjn+90q6pK30ChkTiV82+6+o2nMuyyvTBrGyvgwosgX4CaBU0Si1L/SAcK+IsN+V2wb7Pu5R1gLJ5FdtWjnL3RThIDRwpCeG/DhJCx92bQEVcIzMhJIQer3bDBg/3I9G2juNXR7uJ/k1RIzYh8t6PI=
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com (52.134.3.146) by
+ VI1PR0402MB3326.eurprd04.prod.outlook.com (52.134.4.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.25; Wed, 13 Nov 2019 01:50:21 +0000
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::30e0:6638:e97c:e625]) by VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::30e0:6638:e97c:e625%7]) with mapi id 15.20.2451.023; Wed, 13 Nov 2019
+ 01:50:21 +0000
+From:   Andy Duan <fugang.duan@nxp.com>
+To:     David Miller <davem@davemloft.net>,
+        "hslester96@gmail.com" <hslester96@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] Re: [PATCH net v2] net: fec: add a check for CONFIG_PM to
+ avoid clock count mis-match
+Thread-Topic: [EXT] Re: [PATCH net v2] net: fec: add a check for CONFIG_PM to
+ avoid clock count mis-match
+Thread-Index: AQHVmY1BH6t5qwWOm0C3UJ3j4V7y5KeIUOgA
+Date:   Wed, 13 Nov 2019 01:50:20 +0000
+Message-ID: <VI1PR0402MB36002AEF160536CBD8121554FF760@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+References: <20191112112830.27561-1-hslester96@gmail.com>
+ <20191112.111318.1764384720609728917.davem@davemloft.net>
+In-Reply-To: <20191112.111318.1764384720609728917.davem@davemloft.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fugang.duan@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: f67f55fd-80fc-4fbd-bac9-08d767dbd7ab
+x-ms-traffictypediagnostic: VI1PR0402MB3326:
+x-microsoft-antispam-prvs: <VI1PR0402MB332600885FEB78D8CC77FD0CFF760@VI1PR0402MB3326.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0220D4B98D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(376002)(396003)(366004)(39860400002)(199004)(189003)(25786009)(2501003)(14454004)(5660300002)(478600001)(6116002)(52536014)(6436002)(3846002)(4326008)(6246003)(229853002)(66476007)(66556008)(9686003)(66946007)(64756008)(66446008)(76116006)(55016002)(71200400001)(486006)(99286004)(71190400001)(446003)(256004)(14444005)(66066001)(11346002)(54906003)(81166006)(26005)(102836004)(8676002)(110136005)(8936002)(476003)(74316002)(186003)(7696005)(76176011)(33656002)(6506007)(7736002)(86362001)(316002)(81156014)(305945005)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3326;H:VI1PR0402MB3600.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: puxUJRkj5O6wnGbYwtIOUCypHCg7jPhQ5v5o+pYO6GF2EX2uoYrucN4UBSfUtRdosISjrSe0SOL3zl2ma2ryubMQr7ZuQx4HJ+lA89TEUoHkqdz1a+ah2T37+rIQDhllkO76jOaBeekt+qX+k1XYTCspguBOGyVm1vC1QVk1cri1lFcnkJcolE2UNEikYOhUAj6+Gh1W54FYyWWC3/zjhHBQby+jlUwuKskGDt/VptIa9G8W7TCZ5wcEQT1we7R6rjCWxLsDXnIxdtkQsMQpV8aAOnaaoozWwloadl4D71WrtU62BkB6edLB9wmrJLEd6ZyqAuLK5R1CTKAcMaIxyq43GpYj2ygRi42bVQWE+Mt0pF0XJtzLqC2X0QkDlk2KeThMTfMUGDx60evdCdR5M5ax79tjofuzQag6iqKul7TLAc9m6Skmmm0/g4qMdfZs
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f67f55fd-80fc-4fbd-bac9-08d767dbd7ab
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 01:50:20.9659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: p/ZcPltEggKV+/4HWrXnpSgx39/rg+c0T5UixVI0pH3vRsJQ0X2OrfZXsRAX2Yp+RLr39abzujiry8cnauvQiA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3326
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: David Miller <davem@davemloft.net> Sent: Wednesday, November 13, 2019=
+ 3:13 AM
+> From: Chuhong Yuan <hslester96@gmail.com>
+> Date: Tue, 12 Nov 2019 19:28:30 +0800
+>=20
+> > If CONFIG_PM is enabled, runtime pm will work and call runtime_suspend
+> > automatically to disable clks.
+> > Therefore, remove only needs to disable clks when CONFIG_PM is disabled=
+.
+> > Add this check to avoid clock count mis-match caused by double-disable.
+> >
+> > Fixes: c43eab3eddb4 ("net: fec: add missed clk_disable_unprepare in
+> > remove")
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+>=20
+> I don't understand this at all.
+>=20
+> The clk disables here match the unconditional clk enables in the probe
+> function.
+>=20
+> And that is how this is supposed to work, probe enables match remove
+> disables.  And suspend disables match resume enables.
+>=20
+> Why isn't the probe enable taking the correct count, which the remove
+> function must match with an appropriate disable?  There is no CONFIG_PM
+> guarding the probe time clk enables.
 
-[ Upstream commit c8afd03486c26accdda4846e5561aa3f8e862a9d ]
+Current driver runtime pm callback enable/disable clk_ipg/clk_ahb two clks.
+CONFIG_PM is a optional config, if CONFIG_PM is disabled, runtime callbacks=
+ will
+Not be called.
+The driver enable clk_ipg/clk_ahb two clks during probe, and depends runtim=
+e
+suspend to disable the two clks if CONFIG_PM is enabled.
 
-Commit 48402cee6889 ("ACPI / LPSS: Resume BYT/CHT I2C controllers from
-resume_noirq") makes acpi_lpss_{suspend_late,resume_early}() bail early
-on BYT/CHT as resume_from_noirq is set.
+In driver remove() also need to disable the two clks if CONIFG_PM is disabl=
+ed.
+So the patch c43eab3eddb4 ("net: fec: add missed clk_disable_unprepare in e=
+move")
+target the fixes if CONFIG_PM is not enabled, but the patch ignore to check=
+ the=20
+CONFIG_PM that make clock count mismatch in CONFIG_PM enabled case.
 
-This means that on resume from hibernate dw_i2c_plat_resume() doesn't get
-called by the restore_early callback, acpi_lpss_resume_early(). Instead it
-should be called by the restore_noirq callback matching how things are done
-when resume_from_noirq is set and we are doing a regular resume.
-
-Change the restore_noirq callback to acpi_lpss_resume_noirq so that
-dw_i2c_plat_resume() gets properly called when resume_from_noirq is set
-and we are resuming from hibernate.
-
-Likewise also change the poweroff_noirq callback so that
-dw_i2c_plat_suspend gets called properly.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202139
-Fixes: 48402cee6889 ("ACPI / LPSS: Resume BYT/CHT I2C controllers from resume_noirq")
-Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: 4.20+ <stable@vger.kernel.org> # 4.20+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/acpi/acpi_lpss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-index c47bc6c7f4b91..a63285f9cbca1 100644
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -1121,8 +1121,8 @@ static struct dev_pm_domain acpi_lpss_pm_domain = {
- 		.thaw_noirq = acpi_subsys_thaw_noirq,
- 		.poweroff = acpi_subsys_suspend,
- 		.poweroff_late = acpi_lpss_suspend_late,
--		.poweroff_noirq = acpi_subsys_suspend_noirq,
--		.restore_noirq = acpi_subsys_resume_noirq,
-+		.poweroff_noirq = acpi_lpss_suspend_noirq,
-+		.restore_noirq = acpi_lpss_resume_noirq,
- 		.restore_early = acpi_lpss_resume_early,
- #endif
- 		.runtime_suspend = acpi_lpss_runtime_suspend,
--- 
-2.20.1
-
+Andy
