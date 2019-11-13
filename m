@@ -2,45 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76359FAE0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:07:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE0AFAE14
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 11:07:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfKMKGy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 05:06:54 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:37171 "EHLO
+        id S1727348AbfKMKGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 05:06:41 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:37159 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727361AbfKMKGn (ORCPT
+        with ESMTP id S1726338AbfKMKGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:06:43 -0500
+        Wed, 13 Nov 2019 05:06:40 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iUpXg-0000HQ-6Q; Wed, 13 Nov 2019 11:06:28 +0100
+        id 1iUpXh-0000LE-Ib; Wed, 13 Nov 2019 11:06:29 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CC85C1C0357;
-        Wed, 13 Nov 2019 11:06:27 +0100 (CET)
-Date:   Wed, 13 Nov 2019 10:06:27 -0000
-From:   "tip-bot2 for Alexander Shishkin" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3CC681C0092;
+        Wed, 13 Nov 2019 11:06:29 +0100 (CET)
+Date:   Wed, 13 Nov 2019 10:06:28 -0000
+From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/aux: Fix the aux_output group inheritance fix
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@redhat.com>,
+Subject: [tip: sched/urgent] sched/core: Avoid spurious lock dependencies
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        akpm@linux-foundation.org, bigeasy@linutronix.de, cl@linux.com,
+        keescook@chromium.org, penberg@kernel.org, rientjes@google.com,
+        thgarnie@google.com, tytso@mit.edu, will@kernel.org,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20191101151248.47327-1-alexander.shishkin@linux.intel.com>
-References: <20191101151248.47327-1-alexander.shishkin@linux.intel.com>
+In-Reply-To: <20191001091837.GK4536@hirez.programming.kicks-ass.net>
+References: <20191001091837.GK4536@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Message-ID: <157363958745.29376.17174699138865617684.tip-bot2@tip-bot2>
+Message-ID: <157363958888.29376.9190587096871610849.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,69 +50,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
+The following commit has been merged into the sched/urgent branch of tip:
 
-Commit-ID:     00496fe5e09e8c8bb115540e7e3470553cd07a5c
-Gitweb:        https://git.kernel.org/tip/00496fe5e09e8c8bb115540e7e3470553cd07a5c
-Author:        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-AuthorDate:    Fri, 01 Nov 2019 17:12:48 +02:00
+Commit-ID:     ff51ff84d82aea5a889b85f2b9fb3aa2b8691668
+Gitweb:        https://git.kernel.org/tip/ff51ff84d82aea5a889b85f2b9fb3aa2b8691668
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Tue, 01 Oct 2019 11:18:37 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 13 Nov 2019 08:16:40 +01:00
+CommitterDate: Wed, 13 Nov 2019 08:01:30 +01:00
 
-perf/aux: Fix the aux_output group inheritance fix
+sched/core: Avoid spurious lock dependencies
 
-Commit
+While seemingly harmless, __sched_fork() does hrtimer_init(), which,
+when DEBUG_OBJETS, can end up doing allocations.
 
-  f733c6b508bc ("perf/core: Fix inheritance of aux_output groups")
+This then results in the following lock order:
 
-adds a NULL pointer dereference in case inherit_group() races with
-perf_release(), which causes the below crash:
+  rq->lock
+    zone->lock.rlock
+      batched_entropy_u64.lock
 
- > BUG: kernel NULL pointer dereference, address: 000000000000010b
- > #PF: supervisor read access in kernel mode
- > #PF: error_code(0x0000) - not-present page
- > PGD 3b203b067 P4D 3b203b067 PUD 3b2040067 PMD 0
- > Oops: 0000 [#1] SMP KASAN
- > CPU: 0 PID: 315 Comm: exclusive-group Tainted: G B 5.4.0-rc3-00181-g72e1839403cb-dirty #878
- > RIP: 0010:perf_get_aux_event+0x86/0x270
- > Call Trace:
- >  ? __perf_read_group_add+0x3b0/0x3b0
- >  ? __kasan_check_write+0x14/0x20
- >  ? __perf_event_init_context+0x154/0x170
- >  inherit_task_group.isra.0.part.0+0x14b/0x170
- >  perf_event_init_task+0x296/0x4b0
+Which in turn causes deadlocks when we do wakeups while holding that
+batched_entropy lock -- as the random code does.
 
-Fix this by skipping over events that are getting closed, in the
-inheritance path.
+Solve this by moving __sched_fork() out from under rq->lock. This is
+safe because nothing there relies on rq->lock, as also evident from the
+other __sched_fork() callsite.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Qian Cai <cai@lca.pw>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: f733c6b508bc ("perf/core: Fix inheritance of aux_output groups")
-Link: https://lkml.kernel.org/r/20191101151248.47327-1-alexander.shishkin@linux.intel.com
+Cc: akpm@linux-foundation.org
+Cc: bigeasy@linutronix.de
+Cc: cl@linux.com
+Cc: keescook@chromium.org
+Cc: penberg@kernel.org
+Cc: rientjes@google.com
+Cc: thgarnie@google.com
+Cc: tytso@mit.edu
+Cc: will@kernel.org
+Fixes: b7d5dc21072c ("random: add a spinlock_t to struct batched_entropy")
+Link: https://lkml.kernel.org/r/20191001091837.GK4536@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 022a34b..b752bd3 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11899,7 +11899,7 @@ static int inherit_group(struct perf_event *parent_event,
- 		if (IS_ERR(child_ctr))
- 			return PTR_ERR(child_ctr);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0f2eb36..33cd250 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6019,10 +6019,11 @@ void init_idle(struct task_struct *idle, int cpu)
+ 	struct rq *rq = cpu_rq(cpu);
+ 	unsigned long flags;
  
--		if (sub->aux_event == parent_event &&
-+		if (sub->aux_event == parent_event && child_ctr &&
- 		    !perf_get_aux_event(child_ctr, leader))
- 			return -EINVAL;
- 	}
++	__sched_fork(0, idle);
++
+ 	raw_spin_lock_irqsave(&idle->pi_lock, flags);
+ 	raw_spin_lock(&rq->lock);
+ 
+-	__sched_fork(0, idle);
+ 	idle->state = TASK_RUNNING;
+ 	idle->se.exec_start = sched_clock();
+ 	idle->flags |= PF_IDLE;
