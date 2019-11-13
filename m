@@ -2,159 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E0FFA5D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 312F1FA606
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:26:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbfKMCZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:25:08 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33206 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727723AbfKMCZG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:25:06 -0500
-Received: by mail-io1-f67.google.com with SMTP id j13so810150ioe.0;
-        Tue, 12 Nov 2019 18:25:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=67vt+2/hcnur/stdYuxW6KOlEarE4FFpvwMXouje6z0=;
-        b=C5zJXaoWqhirA5JCzRzQxV6NeESF2nnVYyWxW3GPmZgA3s9X0SjSG7oOgw7GKTeKd6
-         4UMme8ZH+Z5d040MLiivvMDkk7mV7Y4M2lyRmLy02gcoA8HavuwI81OkKq19KHVvuISM
-         hjpF56QT9rMyiN0DCZtYVVuUNz7msCut/xpm3zLFDL1WDZ8NFnvqwFVEoP9LDdYxl4HC
-         7v0eBMSBZ7Vt111I1M9fKgU4pcE60ZmLtIm6VPz9tIT3zYHjysYcSRbFSGiowSFh5AN3
-         CnyJ3cSirM+W+u0JslaNlQCyGu+b4dFHpV/7oHaHD036f2WdS3cVE3qnoFwCo7vW+1VH
-         9Mrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=67vt+2/hcnur/stdYuxW6KOlEarE4FFpvwMXouje6z0=;
-        b=HQKMcBq0T/O/1gWQTv8tE8zmv0TB1gyNACAArdnVzqyESW4FsIFo44+g3+cJpBYRnN
-         81pN8Ty5odZ/Xr65goevoQoRhXjMu9fVrY3YbuCqI/CZElwjJhXNMCLm7S6O6+K+SeP/
-         FZjQuOfpZESsG0fGYsOisMJMnsgo89vvHXQJ1/qmKJVkIQm8kwcfdEjW8M48tCAfdJt5
-         5MqBzgsR+NWHpNpSJb8nfCmp/R+QrF/oYKVR7jvyOVpgEXoWZaRgtrztM/CUHO85kz3Q
-         31a5ROspV3P62kFaxUEO0/DRd83cidyxiQoYdP9N33djomPSw8UihuL0VTJIUgJ81CdD
-         tWRA==
-X-Gm-Message-State: APjAAAV4eijhwgggWfsz/fFGyej1/BNO7QjS6UVoMzAepWZuaT+daUKz
-        9Gn2gn9EJ/h4pN6UxzA7H7lPipwdFPRk3R090iM=
-X-Google-Smtp-Source: APXvYqwuo2tTbYTMNeWbnMR8FQ9nl/VAo3S2+IdE0xI195BER3D+h0bQM0h+rgl2KyG1yFAZxh1xzwjq174E8KUeDCI=
-X-Received: by 2002:a6b:b987:: with SMTP id j129mr1093188iof.105.1573611904929;
- Tue, 12 Nov 2019 18:25:04 -0800 (PST)
+        id S1729680AbfKMC0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:26:23 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60796 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727695AbfKMC0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:26:21 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6F456F005266790D6D92;
+        Wed, 13 Nov 2019 10:26:19 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 13 Nov 2019 10:26:09 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-xfs@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] xfs: remove duplicated include from xfs_dir2_data.c
+Date:   Wed, 13 Nov 2019 02:25:01 +0000
+Message-ID: <20191113022501.55816-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1573200932-384-1-git-send-email-cang@codeaurora.org> <1573200932-384-6-git-send-email-cang@codeaurora.org>
-In-Reply-To: <1573200932-384-6-git-send-email-cang@codeaurora.org>
-From:   Alim Akhtar <alim.akhtar@gmail.com>
-Date:   Wed, 13 Nov 2019 07:54:28 +0530
-Message-ID: <CAGOxZ502wp17UFEk67Qno9DQ0dFPfwMRTLNTCvOXibQDhOw4SA@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] scsi: ufs: Complete pending requests in host reset
- and restore path
-To:     Can Guo <cang@codeaurora.org>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Can,
+Remove duplicated include.
 
-On Fri, Nov 8, 2019 at 1:50 PM Can Guo <cang@codeaurora.org> wrote:
->
-> In UFS host reset and restore path, before probe, we stop and start the
-> host controller once. After host controller is stopped, the pending
-> requests, if any, are cleared from the doorbell, but no completion IRQ
-> would be raised due to the hba is stopped.
-> These pending requests shall be completed along with the first NOP_OUT
-> command(as it is the first command which can raise a transfer completion
-> IRQ) sent during probe.
-> Since the OCSs of these pending requests are not SUCCESS(because they are
-> not yet literally finished), their UPIUs shall be dumped. When there are
-> multiple pending requests, the UPIU dump can be overwhelming and may lead
-> to stability issues because it is in atomic context.
-> Therefore, before probe, complete these pending requests right after host
-> controller is stopped.
->
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> ---
-Looks good, I hope this is tested on your platform.
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/xfs/libxfs/xfs_dir2_data.c | 1 -
+ 1 file changed, 1 deletion(-)
 
->  drivers/scsi/ufs/ufshcd.c | 20 +++++++-------------
->  1 file changed, 7 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 5950a7c..4df4136 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -5404,8 +5404,8 @@ static void ufshcd_err_handler(struct work_struct *work)
->
->         /*
->          * if host reset is required then skip clearing the pending
-> -        * transfers forcefully because they will automatically get
-> -        * cleared after link startup.
-> +        * transfers forcefully because they will get cleared during
-> +        * host reset and restore
->          */
->         if (needs_reset)
->                 goto skip_pending_xfer_clear;
-> @@ -6333,9 +6333,13 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
->         int err;
->         unsigned long flags;
->
-> -       /* Reset the host controller */
-> +       /*
-> +        * Stop the host controller and complete the requests
-> +        * cleared by h/w
-> +        */
->         spin_lock_irqsave(hba->host->host_lock, flags);
->         ufshcd_hba_stop(hba, false);
-> +       ufshcd_complete_requests(hba);
->         spin_unlock_irqrestore(hba->host->host_lock, flags);
->
->         /* scale up clocks to max frequency before full reinitialization */
-> @@ -6369,7 +6373,6 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
->  static int ufshcd_reset_and_restore(struct ufs_hba *hba)
->  {
->         int err = 0;
-> -       unsigned long flags;
->         int retries = MAX_HOST_RESET_RETRIES;
->
->         do {
-> @@ -6379,15 +6382,6 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
->                 err = ufshcd_host_reset_and_restore(hba);
->         } while (err && --retries);
->
-> -       /*
-> -        * After reset the door-bell might be cleared, complete
-> -        * outstanding requests in s/w here.
-> -        */
-> -       spin_lock_irqsave(hba->host->host_lock, flags);
-> -       ufshcd_transfer_req_compl(hba);
-> -       ufshcd_tmc_handler(hba);
-> -       spin_unlock_irqrestore(hba->host->host_lock, flags);
-> -
->         return err;
->  }
->
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+diff --git a/fs/xfs/libxfs/xfs_dir2_data.c b/fs/xfs/libxfs/xfs_dir2_data.c
+index 9e471a28b6c6..30293a1d03f6 100644
+--- a/fs/xfs/libxfs/xfs_dir2_data.c
++++ b/fs/xfs/libxfs/xfs_dir2_data.c
+@@ -18,7 +18,6 @@
+ #include "xfs_trans.h"
+ #include "xfs_buf_item.h"
+ #include "xfs_log.h"
+-#include "xfs_dir2_priv.h"
+ 
+ static xfs_failaddr_t xfs_dir2_data_freefind_verify(
+ 		struct xfs_dir2_data_hdr *hdr, struct xfs_dir2_data_free *bf,
 
 
--- 
-Regards,
-Alim
+
