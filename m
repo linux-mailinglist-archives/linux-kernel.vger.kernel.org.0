@@ -2,237 +2,338 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 914EBFA7F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 05:26:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CCB1FA896
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 05:31:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfKMEZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 23:25:56 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:32324 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfKMEZ4 (ORCPT
+        id S1728169AbfKME3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 23:29:09 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4024 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfKME1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 23:25:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573619151;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=fweAIs1NsQUyJq3CnTKSiNwVcFJ1aHqrYO1LnCTNAwI=;
-        b=EvkwOakq9oY4TsH9JsiTYOV5dmhFZcry0bk7sn8zFXuNz7rlEBPXOLXzLqIrUvtPMi
-        eF5dSgN3sTKFKXVcEL4jvNtRP6wegxFcg5bEppoQwoGip0saOukCXzzPqmWH0CsrWacL
-        oAbjRFFyu5BYELXTMlPmzw/nmqAY5fKPfhGlbLOriH/kbacN7mqN3W6io4DH3Llsltav
-        fET0OiWgHAosPhrWSu1qrfEoDicR7LZ6EU/KeBZmvyYNE0/3Rkthof3b2maxHbnJI8h0
-        mT7egWnZy1z/ViLjGpRzlm482o1/WjLbUDWXYWtPnYkG/EHgOv/0hZRVZUwPgTtJrgUu
-        BOiA==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zmwdNLqV/Nz7PsNPEA=="
-X-RZG-CLASS-ID: mo00
-Received: from positron.chronox.de
-        by smtp.strato.de (RZmta 44.29.0 SBL|AUTH)
-        with ESMTPSA id N09a57vAD4OTATE
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 13 Nov 2019 05:24:29 +0100 (CET)
-From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        zhangjs <zachary@baishancloud.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        Nicolai Stange <nstange@suse.de>,
-        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        Roman Drahtmueller <draht@schaltsekun.de>,
-        Neil Horman <nhorman@redhat.com>
-Subject: Re: [PATCH v24 00/12] /dev/random - a new approach with full SP800-90B compliance
-Date:   Wed, 13 Nov 2019 05:24:26 +0100
-Message-ID: <3208655.cZiRAY37Id@positron.chronox.de>
-In-Reply-To: <CALCETrVBzuOsDfaz5y3V4v+6xmeWufOYsOGnpZrRju6Pfsi6gg@mail.gmail.com>
-References: <6157374.ptSnyUpaCn@positron.chronox.de> <CALCETrVBzuOsDfaz5y3V4v+6xmeWufOYsOGnpZrRju6Pfsi6gg@mail.gmail.com>
+        Tue, 12 Nov 2019 23:27:22 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcb85e80000>; Tue, 12 Nov 2019 20:26:16 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 12 Nov 2019 20:27:12 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 20:27:12 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 04:27:11 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 13 Nov 2019 04:27:11 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dcb861f0001>; Tue, 12 Nov 2019 20:27:11 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v4 00/23] mm/gup: track dma-pinned pages: FOLL_PIN, FOLL_LONGTERM
+Date:   Tue, 12 Nov 2019 20:26:47 -0800
+Message-ID: <20191113042710.3997854-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573619176; bh=2AN+O1jk8w8prcr1jjcrPUWCsdLNYMikvfboI2tzboo=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=sI3X+qv/RC5jGSfAds5syx78pPtcScH4Nxad5TO0TMpK+2FRarC2LJ88uwmi4bM2O
+         aoHH8aTYEycMk3LxKRt+YmKI3x3o75ADjD6t4eWF7dIKtBH1lgyIx9tviBUBGKPpWd
+         rgKWNomJpZFgo6+tG5rNFhvV6CLvYAxNz7ZaVBZNkfyvWiZ8/z7wPO6Y+Lh70++uTi
+         IskxU/W+trfj/FTqk+Ld+LdSh9XY6FBQ6c36/dU/NrPq7aTbYoOmocG2VgDIuqEsr/
+         i+cfKWU165IgrP0maeoMTYghc0Sp4a3Xg3JjE75N4RNcIkSCwNBcRSxlxWj2gsmu1h
+         bEPJFQN7CrQmg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 12. November 2019, 16:33:59 CET schrieb Andy Lutomirski:
+OK, here we go. Any VFIO and Infiniband runtime testing from anyone, is
+especially welcome here.
 
-Hi Andy,
+Changes since v3:
 
-> On Mon, Nov 11, 2019 at 11:13 AM Stephan M=FCller <smueller@chronox.de> w=
-rote:
-> > The following patch set provides a different approach to /dev/random wh=
-ich
-> > is called Linux Random Number Generator (LRNG) to collect entropy within
-> > the Linux kernel. The main improvements compared to the existing
-> > /dev/random is to provide sufficient entropy during boot time as well as
-> > in virtual environments and when using SSDs. A secondary design goal is
-> > to limit the impact of the entropy collection on massive parallel syste=
-ms
-> > and also allow the use accelerated cryptographic primitives. Also, all
-> > steps of the entropic data processing are testable.
->=20
-> This is very nice!
->=20
-> > The LRNG patch set allows a user to select use of the existing /dev/ran=
-dom
-> > or the LRNG during compile time. As the LRNG provides API and ABI
-> > compatible interfaces to the existing /dev/random implementation, the
-> > user can freely chose the RNG implementation without affecting kernel or
-> > user space operations.
-> >=20
-> > This patch set provides early boot-time entropy which implies that no
-> > additional flags to the getrandom(2) system call discussed recently on
-> > the LKML is considered to be necessary.
->=20
-> I'm uneasy about this.  I fully believe that, *on x86*, this works.
-> But on embedded systems with in-order CPUs, a single clock, and very
-> lightweight boot processes, most or all of boot might be too
-> deterministic for this to work.
->=20
-> I have a somewhat competing patch set here:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/log/?h=3Dr=
-andom
-> /kill-it
->=20
-> (Ignore the "horrible test hack" and the debugfs part.)
->=20
-> The basic summary is that I change /dev/random so that it becomes
-> functionally identical to getrandom(..., 0) -- in other words, it
-> blocks until the CRNG is initialized but is then identical to
-> /dev/urandom.  And I add getrandom(...., GRND_INSECURE) that is
-> functionally identical to the existing /dev/urandom: it always returns
-> *something* immediately, but it may or may not actually be
-> cryptographically random or even random at all depending on system
-> details.
->=20
-> In other words, my series simplifies the ABI that we support.  Right
-> now, we have three ways to ask for random numbers with different
-> semantics and we need to have to RNGs in the kernel at all time.  With
-> my changes, we have only two ways to ask for random numbers, and the
-> /dev/random pool is entirely gone.
->=20
-> Would you be amenable to merging this into your series (i.e. either
-> merging the code or just the ideas)?  This would let you get rid of
-> things like the compile-time selection of the blocking TRNG, since the
-> blocking TRNG would be entirely gone.
+* VFIO fix (patch 8): applied further cleanup: removed a pre-existing,
+  unnecessary release and reacquire of mmap_sem. Moved the DAX vma
+  checks from the vfio call site, to gup internals, and added comments
+  (and commit log) to clarify.
 
-I pulled your code and found the following based on my explanation that I=20
-would suggest to keep the TRNG at least as an option.
+* Due to the above, made a corresponding fix to the
+  pin_longterm_pages_remote(), which was actually calling the wrong
+  gup internal function.
 
-=2D 7d54ef8512b06baf396f12584f7f48a9558ecd0f does not seem applicable: I al=
-so do=20
-have an equivalent "lrng_init_wait" wait queue. This wait queue is used to =
-let=20
-in-kernel users wait until the LRNG obtained 128 bits of entropy. In additi=
-on,=20
-this wait queue is used to let user space is invoked after the LRNG has=20
-received 256 bits of entropy (which implies that the kernel waiters are=20
-invoked earlier). In kernel waiters are all that call wait_for_random_bytes=
-=20
-and its derivatives. User space callers have to call getrandom(..., 0); to =
-be=20
-registered in this wait queue. So, I think the wakeup calls I have in the L=
-RNG=20
-for lrng_init_wait should remain.
+* Changed put_user_page() comments, to refer to pin*() APIs, rather than
+  get_user_pages*() APIs.
 
-=2D 6a26a3146e5fb90878dca9fde8caa1ca4233156a: My handler for /dev/urandom a=
-nd=20
-getrandom(..., 0) are using one callback which issues a warning in both use=
-=20
-cases (see lrng_sdrng_read). So I think this patch may not be applicable as=
-=20
-the LRNG code implements warning about being unseeded.
+* Reverted an accidental whitespace-only change in the IB ODP code.
 
-=2D 3e8e159da49b44ae0bb08e68fa2be760722fa033: I am happy to take that code =
-which=20
-would almost directly apply. The last hunk however would be:
-
-if (!(flags & GRND_INSECURE) && unlikely(!lrng_state_operational())) {
-
-=3D=3D> Shall I apply it to my code base? If yes, how shall the changes to=
-=20
-random.h be handled?
+* Added a few more reviewed-by tags.
 
 
-=2D 920e97e7fc508e6f0da9c7dec94c8073fd63ab4d: I would pass on this patch du=
-e to=20
-the following: it unconditionally starts removing the access to the TRNG (t=
-he=20
-LRNG's logical equivalent to the blocking_pool). As patch 10/12 of the LRNG=
-=20
-patch series provides the TRNG that is a compile time option, your patch wo=
-uld=20
-logically and functionally be equivalent when deselecting=20
-CONFIG_LRNG_TRNG_SUPPORT in the LRNG without any further changes to the LRN=
-G=20
-code.
+Changes since v2:
 
-=2D 693b9ffdf0fdc93456b5ad293ac05edf240a531b: This patch is applicable to t=
-he=20
-LRNG. In case CONFIG_LRNG_TRNG_SUPPORT is not set, the TRNG is not present.=
-=20
-Yet, the /dev/random and getrandom(GRND_RANDOM) would behave blocked until=
-=20
-fully initialized. I have now added the general blocking until the LRNG is=
-=20
-fully initialized to the common /dev/random and getrandom(GRND_RANDOM)=20
-interface function of lrng_trng_read_common. With that, the LRNG would be=20
-fully equivalent to this patch if CONFIG_LRNG_TRNG_SUPPORT is not set.
+* Added a patch to convert IB/umem from normal gup, to gup_fast(). This
+  is also posted separately, in order to hopefully get some runtime
+  testing.
 
-=2D 66f660842ec6d34134b9c3c1c9c65972834797f6: This patch is implicit with=20
-CONFIG_LRNG_TRNG_SUPPORT being not set.
+* Changed the page devmap code to be a little clearer,
+  thanks to Jerome for that.
 
-=2D d8f59b5c25af22fb9d85b7fa96de601ea03f2eac: This patch is not applicable =
-to=20
-the LRNG as the deactivation of CONFIG_LRNG_TRNG_SUPPORT implies that there=
-=20
-should be no unused code left in the LRNG.
+* Split out the page devmap changes into a separate patch (and moved
+  Ira's Signed-off-by to that patch).
 
-=2D 4046ac638761821aef67af10537ebcbc80715785: In theory that patch is appli=
-cable=20
-to the LRNG as well. The LRNG has the lrng_read_wait queue. If=20
-CONFIG_LRNG_TRNG_SUPPORT is not set, there will never be the code triggered=
- to=20
-add a caller to this wait queue. To avoid cluttering the LRNG code with=20
-ifdefs, may I suggest to leave these several lines even though it is dead=20
-code?
+* Fixed my bug in IB: ODP code does not require pin_user_pages()
+  semantics. Therefore, revert the put_user_page() calls to put_page(),
+  and leave the get_user_pages() call as-is.
 
+      * As part of the revert, I am proposing here a change directly
+        from put_user_pages(), to release_pages(). I'd feel better if
+        someone agrees that this is the best way. It uses the more
+        efficient release_pages(), instead of put_page() in a loop,
+        and keep the change to just a few character on one line,
+        but OTOH it is not a pure revert.
 
+* Loosened the FOLL_LONGTERM restrictions in the
+  __get_user_pages_locked() implementation, and used that in order
+  to fix up a VFIO bug. Thanks to Jason for that idea.
 
-Bottom line: the only patch that I seems to be relevant and that I would be=
-=20
-happy to apply is the one adding GRND_INSECURE. All other patches are=20
-implicitly covered by deselecting CONFIG_LRNG_TRNG_SUPPORT.
+    * Note the use of release_pages() in IB: is that OK?
 
-By making the TRNG compile-time selectable, I was hoping to serve all users=
-: I=20
-wanted to cover the conclusions of the discussion to remove the blocking_po=
-ol.=20
-On the other hand, however, I want to support requirements that need the=20
-blocking behavior.
+* Added a few more WARN's and clarifying comments nearby.
 
-The current LRNG patch set, however, defaults to Y for=20
-CONFIG_LRNG_TRNG_SUPPORT. I would see no issue if it defaults to N.
+* Many documentation improvements in various comments.
 
+* Moved the new pin_user_pages.rst from Documentation/vm/ to
+  Documentation/core-api/ .
 
-Thank you very much.
+* Commit descriptions: added clarifying notes to the three patches
+  (drm/via, fs/io_uring, net/xdp) that already had put_user_page()
+  calls in place.
 
-Ciao
-Stephan
+* Collected all pending Reviewed-by and Acked-by tags, from v1 and v2
+  email threads.
 
+* Lot of churn from v2 --> v3, so it's possible that new bugs
+  sneaked in.
+
+NOT DONE: separate patchset is required:
+
+* __get_user_pages_locked(): stop compensating for
+  buggy callers who failed to set FOLL_GET. Instead, assert
+  that FOLL_GET is set (and fail if it's not).
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Original cover letter (edited to fix up the patch description numbers)
+
+This applies cleanly to linux-next and mmotm, and also to linux.git if
+linux-next's commit 20cac10710c9 ("mm/gup_benchmark: fix MAP_HUGETLB
+case") is first applied there.
+
+This provides tracking of dma-pinned pages. This is a prerequisite to
+solving the larger problem of proper interactions between file-backed
+pages, and [R]DMA activities, as discussed in [1], [2], [3], and in
+a remarkable number of email threads since about 2017. :)
+
+A new internal gup flag, FOLL_PIN is introduced, and thoroughly
+documented in the last patch's Documentation/vm/pin_user_pages.rst.
+
+I believe that this will provide a good starting point for doing the
+layout lease work that Ira Weiny has been working on. That's because
+these new wrapper functions provide a clean, constrained, systematically
+named set of functionality that, again, is required in order to even
+know if a page is "dma-pinned".
+
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
+
+    get_user_pages() (sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    put_user_page()
+
+Because there are interdependencies with FOLL_LONGTERM, a similar
+conversion as for FOLL_PIN, was applied. The change was from this:
+
+    get_user_pages(FOLL_LONGTERM) (also sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_longterm_pages() (sets FOLL_PIN | FOLL_LONGTERM)
+    put_user_page()
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Patch summary:
+
+* Patches 1-8: refactoring and preparatory cleanup, independent fixes
+
+* Patch 9: introduce pin_user_pages(), FOLL_PIN, but no functional
+           changes yet
+* Patches 10-15: Convert existing put_user_page() callers, to use the
+                new pin*()
+* Patch 16: Activate tracking of FOLL_PIN pages.
+* Patches 17-19: convert FOLL_LONGTERM callers
+* Patches: 20-22: gup_benchmark and run_vmtests support
+* Patch 23: enforce FOLL_LONGTERM as a gup-internal (only) flag
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Testing:
+
+* I've done some overall kernel testing (LTP, and a few other goodies),
+  and some directed testing to exercise some of the changes. And as you
+  can see, gup_benchmark is enhanced to exercise this. Basically, I've been
+  able to runtime test the core get_user_pages() and pin_user_pages() and
+  related routines, but not so much on several of the call sites--but those
+  are generally just a couple of lines changed, each.
+
+  Not much of the kernel is actually using this, which on one hand
+  reduces risk quite a lot. But on the other hand, testing coverage
+  is low. So I'd love it if, in particular, the Infiniband and PowerPC
+  folks could do a smoke test of this series for me.
+
+  Also, my runtime testing for the call sites so far is very weak:
+
+    * io_uring: Some directed tests from liburing exercise this, and they p=
+ass.
+    * process_vm_access.c: A small directed test passes.
+    * gup_benchmark: the enhanced version hits the new gup.c code, and pass=
+es.
+    * infiniband (still only have crude "IB pingpong" working, on a
+                  good day: it's not exercising my conversions at runtime..=
+.)
+    * VFIO: compiles (I'm vowing to set up a run time test soon, but it's
+                      not ready just yet)
+    * powerpc: it compiles...
+    * drm/via: compiles...
+    * goldfish: compiles...
+    * net/xdp: compiles...
+    * media/v4l2: compiles...
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Next:
+
+* Get the block/bio_vec sites converted to use pin_user_pages().
+
+* Work with Ira and Dave Chinner to weave this together with the
+  layout lease stuff.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+[1] Some slow progress on get_user_pages() (Apr 2, 2019): https://lwn.net/A=
+rticles/784574/
+[2] DMA and get_user_pages() (LPC: Dec 12, 2018): https://lwn.net/Articles/=
+774411/
+[3] The trouble with get_user_pages() (Apr 30, 2018): https://lwn.net/Artic=
+les/753027/
+
+John Hubbard (23):
+  mm/gup: pass flags arg to __gup_device_* functions
+  mm/gup: factor out duplicate code from four routines
+  mm/gup: move try_get_compound_head() to top, fix minor issues
+  mm: devmap: refactor 1-based refcounting for ZONE_DEVICE pages
+  goldish_pipe: rename local pin_user_pages() routine
+  IB/umem: use get_user_pages_fast() to pin DMA pages
+  media/v4l2-core: set pages dirty upon releasing DMA buffers
+  vfio, mm: fix get_user_pages_remote() and FOLL_LONGTERM
+  mm/gup: introduce pin_user_pages*() and FOLL_PIN
+  goldish_pipe: convert to pin_user_pages() and put_user_page()
+  IB/{core,hw,umem}: set FOLL_PIN, FOLL_LONGTERM via
+    pin_longterm_pages*()
+  mm/process_vm_access: set FOLL_PIN via pin_user_pages_remote()
+  drm/via: set FOLL_PIN via pin_user_pages_fast()
+  fs/io_uring: set FOLL_PIN via pin_user_pages()
+  net/xdp: set FOLL_PIN via pin_user_pages()
+  mm/gup: track FOLL_PIN pages
+  media/v4l2-core: pin_longterm_pages (FOLL_PIN) and put_user_page()
+    conversion
+  vfio, mm: pin_longterm_pages (FOLL_PIN) and put_user_page() conversion
+  powerpc: book3s64: convert to pin_longterm_pages() and put_user_page()
+  mm/gup_benchmark: use proper FOLL_WRITE flags instead of hard-coding
+    "1"
+  mm/gup_benchmark: support pin_user_pages() and related calls
+  selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN
+    coverage
+  mm/gup: remove support for gup(FOLL_LONGTERM)
+
+ Documentation/core-api/index.rst            |   1 +
+ Documentation/core-api/pin_user_pages.rst   | 218 +++++++
+ arch/powerpc/mm/book3s64/iommu_api.c        |  15 +-
+ drivers/gpu/drm/via/via_dmablit.c           |   2 +-
+ drivers/infiniband/core/umem.c              |  17 +-
+ drivers/infiniband/core/umem_odp.c          |  13 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     |   4 +-
+ drivers/infiniband/hw/mthca/mthca_memfree.c |   3 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c  |   8 +-
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |   2 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |   9 +-
+ drivers/infiniband/sw/siw/siw_mem.c         |   5 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c   |  10 +-
+ drivers/platform/goldfish/goldfish_pipe.c   |  35 +-
+ drivers/vfio/vfio_iommu_type1.c             |  30 +-
+ fs/io_uring.c                               |   5 +-
+ include/linux/mm.h                          | 164 ++++-
+ include/linux/mmzone.h                      |   2 +
+ include/linux/page_ref.h                    |  10 +
+ mm/gup.c                                    | 636 ++++++++++++++++----
+ mm/gup_benchmark.c                          |  87 ++-
+ mm/huge_memory.c                            |  54 +-
+ mm/hugetlb.c                                |  39 +-
+ mm/memremap.c                               |  67 +--
+ mm/process_vm_access.c                      |  28 +-
+ mm/vmstat.c                                 |   2 +
+ net/xdp/xdp_umem.c                          |   4 +-
+ tools/testing/selftests/vm/gup_benchmark.c  |  34 +-
+ tools/testing/selftests/vm/run_vmtests      |  22 +
+ 29 files changed, 1191 insertions(+), 335 deletions(-)
+ create mode 100644 Documentation/core-api/pin_user_pages.rst
+
+--=20
+2.24.0
 
