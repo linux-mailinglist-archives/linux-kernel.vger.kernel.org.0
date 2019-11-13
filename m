@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB05FBA56
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 813C2FBA58
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 22:02:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbfKMVCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 16:02:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:38984 "EHLO
+        id S1727211AbfKMVCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 16:02:40 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:38989 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbfKMVC1 (ORCPT
+        with ESMTP id S1727133AbfKMVC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 16:02:27 -0500
+        Wed, 13 Nov 2019 16:02:28 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iUzmT-000695-TP; Wed, 13 Nov 2019 22:02:26 +0100
-Message-Id: <20191113210105.557339819@linutronix.de>
+        id 1iUzmU-00069D-G1; Wed, 13 Nov 2019 22:02:26 +0100
+Message-Id: <20191113210105.671132359@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 13 Nov 2019 21:42:59 +0100
+Date:   Wed, 13 Nov 2019 21:43:00 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -27,8 +27,8 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>
-Subject: [patch V3 19/20] x86/ioperm: Extend IOPL config to control ioperm()
- as well
+Subject: [patch V3 20/20] selftests/x86/iopl: Extend test to cover IOPL
+ emulation
 References: <20191113204240.767922595@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,217 +37,195 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If iopl() is disabled, then providing ioperm() does not make much sense.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-Rename the config option and disable/enable both syscalls with it. Guard
-the code with #ifdefs where appropriate.
+Add tests that the now emulated iopl() functionality:
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+    - does not longer allow user space to disable interrupts.
+
+    - does restore a I/O bitmap when IOPL is dropped
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V3: New patch
----
- arch/x86/Kconfig                   |    7 +++++--
- arch/x86/include/asm/io_bitmap.h   |    6 ++++++
- arch/x86/include/asm/processor.h   |    9 ++++++++-
- arch/x86/include/asm/thread_info.h |    7 ++++++-
- arch/x86/kernel/cpu/common.c       |   26 +++++++++++++++++---------
- arch/x86/kernel/ioport.c           |   26 +++++++++++++++++++-------
- arch/x86/kernel/process.c          |    4 ++++
- 7 files changed, 65 insertions(+), 20 deletions(-)
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1254,10 +1254,13 @@ config X86_VSYSCALL_EMULATION
- 	 Disabling this option saves about 7K of kernel size and
- 	 possibly 4K of additional runtime pagetable memory.
+
+---
+ tools/testing/selftests/x86/iopl.c |  129 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 118 insertions(+), 11 deletions(-)
+
+--- a/tools/testing/selftests/x86/iopl.c
++++ b/tools/testing/selftests/x86/iopl.c
+@@ -35,6 +35,16 @@ static void sethandler(int sig, void (*h
  
--config X86_IOPL_EMULATION
--	bool "IOPL Emulation"
-+config X86_IOPL_IOPERM
-+	bool "IOPERM and IOPL Emulation"
- 	default y
- 	---help---
-+	  This enables the ioperm() and iopl() syscalls which are necessary
-+	  for legacy applications.
-+
- 	  Legacy IOPL support is an overbroad mechanism which allows user
- 	  space aside of accessing all 65536 I/O ports also to disable
- 	  interrupts. To gain this access the caller needs CAP_SYS_RAWIO
---- a/arch/x86/include/asm/io_bitmap.h
-+++ b/arch/x86/include/asm/io_bitmap.h
-@@ -15,9 +15,15 @@ struct io_bitmap {
- 
- struct task_struct;
- 
-+#ifdef CONFIG_X86_IOPL_IOPERM
- void io_bitmap_share(struct task_struct *tsk);
- void io_bitmap_exit(void);
- 
- void tss_update_io_bitmap(void);
-+#else
-+static inline void io_bitmap_share(struct task_struct *tsk) { }
-+static inline void io_bitmap_exit(void) { }
-+static inline void tss_update_io_bitmap(void) { }
-+#endif
- 
- #endif
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -340,13 +340,18 @@ struct x86_hw_tss {
- 	(offsetof(struct tss_struct, io_bitmap.mapall) -	\
- 	 offsetof(struct tss_struct, x86_tss))
- 
-+#ifdef CONFIG_X86_IOPL_IOPERM
- /*
-  * sizeof(unsigned long) coming from an extra "long" at the end of the
-  * iobitmap. The limit is inclusive, i.e. the last valid byte.
-  */
--#define __KERNEL_TSS_LIMIT	\
-+# define __KERNEL_TSS_LIMIT	\
- 	(IO_BITMAP_OFFSET_VALID_ALL + IO_BITMAP_BYTES + \
- 	 sizeof(unsigned long) - 1)
-+#else
-+# define __KERNEL_TSS_LIMIT	\
-+	(offsetof(struct tss_struct, x86_tss) + sizeof(struct x86_hw_tss) - 1)
-+#endif
- 
- /* Base offset outside of TSS_LIMIT so unpriviledged IO causes #GP */
- #define IO_BITMAP_OFFSET_INVALID	(__KERNEL_TSS_LIMIT + 1)
-@@ -398,7 +403,9 @@ struct tss_struct {
- 	 */
- 	struct x86_hw_tss	x86_tss;
- 
-+#ifdef CONFIG_X86_IOPL_IOPERM
- 	struct x86_io_bitmap	io_bitmap;
-+#endif
- } __aligned(PAGE_SIZE);
- 
- DECLARE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw);
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -156,8 +156,13 @@ struct thread_info {
- # define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE)
- #endif
- 
--#define _TIF_WORK_CTXSW_PREV	(_TIF_WORK_CTXSW| _TIF_USER_RETURN_NOTIFY | \
-+#ifdef CONFIG_X86_IOPL_IOPERM
-+# define _TIF_WORK_CTXSW_PREV	(_TIF_WORK_CTXSW| _TIF_USER_RETURN_NOTIFY | \
- 				 _TIF_IO_BITMAP)
-+#else
-+# define _TIF_WORK_CTXSW_PREV	(_TIF_WORK_CTXSW| _TIF_USER_RETURN_NOTIFY)
-+#endif
-+
- #define _TIF_WORK_CTXSW_NEXT	(_TIF_WORK_CTXSW)
- 
- #define STACK_WARN		(THREAD_SIZE/8)
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1804,6 +1804,22 @@ static inline void gdt_setup_doublefault
- }
- #endif /* !CONFIG_X86_64 */
- 
-+static inline void tss_setup_io_bitmap(struct tss_struct *tss)
-+{
-+	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
-+
-+#ifdef CONFIG_X86_IOPL_IOPERM
-+	tss->io_bitmap.prev_max = 0;
-+	tss->io_bitmap.prev_sequence = 0;
-+	memset(tss->io_bitmap.bitmap, 0xff, sizeof(tss->io_bitmap.bitmap));
-+	/*
-+	 * Invalidate the extra array entry past the end of the all
-+	 * permission bitmap as required by the hardware.
-+	 */
-+	tss->io_bitmap.mapall[IO_BITMAP_LONGS] = ~0UL;
-+#endif
-+}
-+
- /*
-  * cpu_init() initializes state that is per-CPU. Some data is already
-  * initialized (naturally) in the bootstrap process, such as the GDT
-@@ -1860,15 +1876,7 @@ void cpu_init(void)
- 
- 	/* Initialize the TSS. */
- 	tss_setup_ist(tss);
--	tss->x86_tss.io_bitmap_base = IO_BITMAP_OFFSET_INVALID;
--	tss->io_bitmap.prev_max = 0;
--	tss->io_bitmap.prev_sequence = 0;
--	memset(tss->io_bitmap.bitmap, 0xff, sizeof(tss->io_bitmap.bitmap));
--	/*
--	 * Invalidate the extra array entry past the end of the all
--	 * permission bitmap as required by the hardware.
--	 */
--	tss->io_bitmap.mapall[IO_BITMAP_LONGS] = ~0UL;
-+	tss_setup_io_bitmap(tss);
- 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
- 
- 	load_TR_desc();
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -14,6 +14,8 @@
- #include <asm/io_bitmap.h>
- #include <asm/desc.h>
- 
-+#ifdef CONFIG_X86_IOPL_IOPERM
-+
- static atomic64_t io_bitmap_sequence;
- 
- void io_bitmap_share(struct task_struct *tsk)
-@@ -172,13 +174,6 @@ SYSCALL_DEFINE1(iopl, unsigned int, leve
- 	struct thread_struct *t = &current->thread;
- 	unsigned int old;
- 
--	/*
--	 * Careful: the IOPL bits in regs->flags are undefined under Xen PV
--	 * and changing them has no effect.
--	 */
--	if (IS_ENABLED(CONFIG_X86_IOPL_NONE))
--		return -ENOSYS;
--
- 	if (level > 3)
- 		return -EINVAL;
- 
-@@ -200,3 +195,20 @@ SYSCALL_DEFINE1(iopl, unsigned int, leve
- 
- 	return 0;
- }
-+
-+#else /* CONFIG_X86_IOPL_IOPERM */
-+
-+long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
-+{
-+	return -ENOSYS;
-+}
-+SYSCALL_DEFINE3(ioperm, unsigned long, from, unsigned long, num, int, turn_on)
-+{
-+	return -ENOSYS;
-+}
-+
-+SYSCALL_DEFINE1(iopl, unsigned int, level)
-+{
-+	return -ENOSYS;
-+}
-+#endif
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -316,6 +316,7 @@ void arch_setup_new_exec(void)
- 	}
  }
  
-+#ifdef CONFIG_X86_IOPL_IOPERM
- static inline void tss_invalidate_io_bitmap(struct tss_struct *tss)
++static void clearhandler(int sig)
++{
++	struct sigaction sa;
++	memset(&sa, 0, sizeof(sa));
++	sa.sa_handler = SIG_DFL;
++	sigemptyset(&sa.sa_mask);
++	if (sigaction(sig, &sa, 0))
++		err(1, "sigaction");
++}
++
+ static jmp_buf jmpbuf;
+ 
+ static void sigsegv(int sig, siginfo_t *si, void *ctx_void)
+@@ -42,25 +52,128 @@ static void sigsegv(int sig, siginfo_t *
+ 	siglongjmp(jmpbuf, 1);
+ }
+ 
++static bool try_outb(unsigned short port)
++{
++	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
++	if (sigsetjmp(jmpbuf, 1) != 0) {
++		return false;
++	} else {
++		asm volatile ("outb %%al, %w[port]"
++			      : : [port] "Nd" (port), "a" (0));
++		return true;
++	}
++	clearhandler(SIGSEGV);
++}
++
++static void expect_ok_outb(unsigned short port)
++{
++	if (!try_outb(port)) {
++		printf("[FAIL]\toutb to 0x%02hx failed\n", port);
++		exit(1);
++	}
++
++	printf("[OK]\toutb to 0x%02hx worked\n", port);
++}
++
++static void expect_gp_outb(unsigned short port)
++{
++	if (try_outb(port)) {
++		printf("[FAIL]\toutb to 0x%02hx worked\n", port);
++		nerrs++;
++	}
++
++	printf("[OK]\toutb to 0x%02hx failed\n", port);
++}
++
++static bool try_cli(void)
++{
++	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
++	if (sigsetjmp(jmpbuf, 1) != 0) {
++		return false;
++	} else {
++		asm volatile ("cli");
++		return true;
++	}
++	clearhandler(SIGSEGV);
++}
++
++static bool try_sti(void)
++{
++	sethandler(SIGSEGV, sigsegv, SA_RESETHAND);
++	if (sigsetjmp(jmpbuf, 1) != 0) {
++		return false;
++	} else {
++		asm volatile ("sti");
++		return true;
++	}
++	clearhandler(SIGSEGV);
++}
++
++static void expect_gp_sti(void)
++{
++	if (try_sti()) {
++		printf("[FAIL]\tSTI worked\n");
++		nerrs++;
++	} else {
++		printf("[OK]\tSTI faulted\n");
++	}
++}
++
++static void expect_gp_cli(void)
++{
++	if (try_cli()) {
++		printf("[FAIL]\tCLI worked\n");
++		nerrs++;
++	} else {
++		printf("[OK]\tCLI faulted\n");
++	}
++}
++
+ int main(void)
  {
- 	/*
-@@ -403,6 +404,9 @@ void tss_update_io_bitmap(void)
- 		tss_invalidate_io_bitmap(tss);
+ 	cpu_set_t cpuset;
++
+ 	CPU_ZERO(&cpuset);
+ 	CPU_SET(0, &cpuset);
+ 	if (sched_setaffinity(0, sizeof(cpuset), &cpuset) != 0)
+ 		err(1, "sched_setaffinity to CPU 0");
+ 
+ 	/* Probe for iopl support.  Note that iopl(0) works even as nonroot. */
+-	if (iopl(3) != 0) {
++	switch(iopl(3)) {
++	case 0:
++		break;
++	case -ENOSYS:
++		printf("[OK]\tiopl() nor supported\n");
++		return 0;
++	default:
+ 		printf("[OK]\tiopl(3) failed (%d) -- try running as root\n",
+ 		       errno);
+ 		return 0;
  	}
+ 
+-	/* Restore our original state prior to starting the test. */
++	/* Make sure that CLI/STI are blocked even with IOPL level 3 */
++	expect_gp_cli();
++	expect_gp_sti();
++	expect_ok_outb(0x80);
++
++	/* Establish an I/O bitmap to test the restore */
++	if (ioperm(0x80, 1, 1) != 0)
++		err(1, "ioperm(0x80, 1, 1) failed\n");
++
++	/* Restore our original state prior to starting the fork test. */
+ 	if (iopl(0) != 0)
+ 		err(1, "iopl(0)");
+ 
++	/*
++	 * Verify that IOPL emulation is disabled and the I/O bitmap still
++	 * works.
++	 */
++	expect_ok_outb(0x80);
++	expect_gp_outb(0xed);
++	/* Drop the I/O bitmap */
++	if (ioperm(0x80, 1, 0) != 0)
++		err(1, "ioperm(0x80, 1, 0) failed\n");
++
+ 	pid_t child = fork();
+ 	if (child == -1)
+ 		err(1, "fork");
+@@ -90,14 +203,9 @@ int main(void)
+ 
+ 	printf("[RUN]\tparent: write to 0x80 (should fail)\n");
+ 
+-	sethandler(SIGSEGV, sigsegv, 0);
+-	if (sigsetjmp(jmpbuf, 1) != 0) {
+-		printf("[OK]\twrite was denied\n");
+-	} else {
+-		asm volatile ("outb %%al, $0x80" : : "a" (0));
+-		printf("[FAIL]\twrite was allowed\n");
+-		nerrs++;
+-	}
++	expect_gp_outb(0x80);
++	expect_gp_cli();
++	expect_gp_sti();
+ 
+ 	/* Test the capability checks. */
+ 	printf("\tiopl(3)\n");
+@@ -133,4 +241,3 @@ int main(void)
+ done:
+ 	return nerrs ? 1 : 0;
  }
-+#else /* CONFIG_X86_IOPL_IOPERM */
-+static inline void switch_to_bitmap(unsigned long tifp) { }
-+#endif
- 
- #ifdef CONFIG_SMP
- 
+-
+
+
 
 
