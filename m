@@ -2,269 +2,377 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEFEDFB2E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4964EFB2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 15:52:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfKMOwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 09:52:07 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38656 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbfKMOwG (ORCPT
+        id S1727892AbfKMOwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 09:52:46 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:38138 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727168AbfKMOwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 09:52:06 -0500
-Received: by mail-qk1-f193.google.com with SMTP id e2so1944381qkn.5;
-        Wed, 13 Nov 2019 06:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+TVONtKMnYlgKfuCSUQF9CV9h8e4BaOkNxZ+ZGZ6OVU=;
-        b=mApGCYcyErV7zLFfy/nP6PCbiNXpGvXvKGnmPcBpe5j23rSoHRZ0c0Ut5rcEHnwutK
-         mQzPh/GhYoM6t5JxAOWErtVyMwemtLo6vno7vv9gWZ0izHIYGs46xCc1ew4GnWiIglen
-         eGzUG/zqeCUz8uazKLFEkF5mSL8EvEgQ/8VxYnOxuejEaqWD/DY9E0/8C0AHrmuXISUn
-         I0bV5sf3VI67d3XavWXTp6xxoCGbRkzSKAYgsReJR+IVfQQUC5QVgVPdEqr8VIhmcXHC
-         fPVtdSKH2ivRbm8Z8W57UUW1ot5mr4hM7CRV+YWTz5jzhSs67cBii1UiQC3XZDCYU71i
-         Enhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+TVONtKMnYlgKfuCSUQF9CV9h8e4BaOkNxZ+ZGZ6OVU=;
-        b=Bt9zhv9zFt+7EWFyZZ8Fb7wFV3122dCWcd0t2lWDAsBy2dDTn1raCZarx3psXh7l/1
-         vbM/WfX90zuGE7tB29SC0M4d85rJSbJfOnVuwOORF7yny1Y+1GKXEeCJAyyTucnqzSJr
-         5S5xgOZ7WkcB8RaD0SW2H1BxLk3fwywHPnRHn+frQi2f+S1n5bw48f42yYoRRn5YClnO
-         p4YTSX4dg/2/dYapo3F+6oZuKFR6Ie53S/++DwDJFvhw9dAAnKwj1lfltZquAGZ+3MBd
-         GGcCLUoBUjXStidf/MWaYqSNMUzvLj1oB6TQHuw/WP039QXwsZdLYSvWGpTElXXuy9gw
-         QSjQ==
-X-Gm-Message-State: APjAAAUu3lj4ZAMuUzhs3YPhsjufYuKb0iPXJbojKB23iqA70GeA1OMz
-        PSZFZ1QzTt5FHxJ+2u3aImXkvkJW
-X-Google-Smtp-Source: APXvYqwjXCIV15LPJW4fCFYIilYLxM9XtYn6XUXfXV20fxrKk9zW39txP4fLxmmCh8MlFtfOpabGrw==
-X-Received: by 2002:a37:4f83:: with SMTP id d125mr2888805qkb.205.1573656725214;
-        Wed, 13 Nov 2019 06:52:05 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id 130sm1075339qkd.33.2019.11.13.06.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 06:52:04 -0800 (PST)
-Date:   Wed, 13 Nov 2019 11:52:00 -0300
-From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     jic23@kernel.org, dragos.bogdan@analog.com,
-        alexandru.ardelean@analog.com, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel-usp@googlegroups.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: iio: adc: Add dt-schema for AD7292
-Message-ID: <20191113145159.vw7icflfve7dnefm@smtp.gmail.com>
-References: <cover.1573145089.git.marcelo.schmitt1@gmail.com>
- <a8c614894252bb139a213b8c0219f3f46210b136.1573145089.git.marcelo.schmitt1@gmail.com>
- <20191112193942.GA27334@bogus>
+        Wed, 13 Nov 2019 09:52:44 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iUu0g-0000MD-Hj; Wed, 13 Nov 2019 07:52:42 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iUu0f-0006lB-4K; Wed, 13 Nov 2019 07:52:42 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Topi Miettinen <toiwoton@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list\:FILESYSTEMS \(VFS and infrastructure\)" 
+        <linux-fsdevel@vger.kernel.org>
+References: <ed51f7dd-50a2-fbf5-7ea8-4bab6d48279e@gmail.com>
+        <201911121523.9C097E7D2C@keescook>
+Date:   Wed, 13 Nov 2019 08:52:19 -0600
+In-Reply-To: <201911121523.9C097E7D2C@keescook> (Kees Cook's message of "Tue,
+        12 Nov 2019 15:25:23 -0800")
+Message-ID: <87ftir7rrw.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112193942.GA27334@bogus>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-XM-SPF: eid=1iUu0f-0006lB-4K;;;mid=<87ftir7rrw.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18KxC5XgtHIW1ehZqrpZAzNm4fHWg4UKk8=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4966]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1023 ms - load_scoreonly_sql: 0.15 (0.0%),
+        signal_user_changed: 4.6 (0.4%), b_tie_ro: 2.5 (0.2%), parse: 1.82
+        (0.2%), extract_message_metadata: 19 (1.9%), get_uri_detail_list: 6
+        (0.6%), tests_pri_-1000: 14 (1.4%), tests_pri_-950: 1.82 (0.2%),
+        tests_pri_-900: 1.29 (0.1%), tests_pri_-90: 44 (4.3%), check_bayes: 42
+        (4.1%), b_tokenize: 21 (2.1%), b_tok_get_all: 11 (1.1%), b_comp_prob:
+        3.6 (0.3%), b_tok_touch_all: 4.2 (0.4%), b_finish: 0.63 (0.1%),
+        tests_pri_0: 916 (89.5%), check_dkim_signature: 1.47 (0.1%),
+        check_dkim_adsp: 5 (0.5%), poll_dns_idle: 0.43 (0.0%), tests_pri_10:
+        2.2 (0.2%), tests_pri_500: 14 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] proc: Allow restricting permissions in /proc/sys
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Kees Cook <keescook@chromium.org> writes:
 
-Thanks for reviewing the binding doc again.
-Aparently, this patch was added to Greg KH's staging tree.
-What is the right procedure in this case? Should I send a v5 patchset or
-just send a patch for this doc?
+> Ah! I see the v2 here now. :) Can you please include that in your
+> Subject next time, as "[PATCH v2] proc: Allow restricting permissions
+> in /proc/sys"? Also, can you adjust your MUA to not send a duplicate
+> attachment? The patch inline is fine.
+>
+> Please CC akpm as well, since I think this should likely go through the
+> -mm tree.
+>
+> Eric, do you have any other thoughts on this?
 
-In any case, I still have some doubts about the maximum constraint of
-the channel property. Comments inline.
+This works seems to be a cousin of having a proc that is safe for
+containers.
 
+Which leads to the whole mess that hide_pid is broken in proc last I
+looked.
 
-Thanks
+So my sense is that what we want to do is not allow changing the
+permissions but to sort through what it will take to provide actual
+mount options to proc (that are per mount).  Thus removing the sharing
+that is (currently?) breaking the hide_pid option.
 
-Marcelo
+With such an infrastructure in place we can provide a mount option
+(possibly default on when mounted by non-root) that keeps anything that
+unprivileged users don't need out of proc.  Which is likely to be most
+things except the pid files.
 
-On 11/12, Rob Herring wrote:
-> On Fri, Nov 08, 2019 at 10:56:09AM -0300, Marcelo Schmitt wrote:
-> > Add a devicetree schema for AD7292 monitor and control system.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> > ---
-> > Changelog V3 -> V4:
-> > - updated SPDX identifier to GPL-2.0-only
-> > - changed maxitems constraint on channel property
-> > 
-> >  .../bindings/iio/adc/adi,ad7292.yaml          | 104 ++++++++++++++++++
-> >  MAINTAINERS                                   |   7 ++
-> >  2 files changed, 111 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
-> > new file mode 100644
-> > index 000000000000..b68be3aaf587
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
-> > @@ -0,0 +1,104 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> 
-> Sigh, I gave you the exact line to use:
-> 
-> # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> 
-> I've said to dual license with (GPL-2.0-only OR BSD-2-Clause) and people 
-> think I mean to pick one. So now I just give the whole line. I don't 
-> know how to be clearer.
+It is something I probably should be working on, but I got derailed
+by the disaster that has that happened with mounting.    Even after
+I gave code review and showed them how to avoid it the new mount api
+is still not possible to use safely.
 
-I thought I could use just GPL-2.0 since the driver code is GPL-2.0.
-Anyway, I'll use the above line to specify the dt-binding license.
+Eric
 
-> 
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iio/adc/adi,ad7292.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Analog Devices AD7292 10-Bit Monitor and Control System
-> > +
-> > +maintainers:
-> > +  - Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> > +
-> > +description: |
-> > +  Analog Devices AD7292 10-Bit Monitor and Control System with ADC, DACs,
-> > +  Temperature Sensor, and GPIOs
-> > +
-> > +  Specifications about the part can be found at:
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7292.pdf
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - adi,ad7292
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  vref-supply:
-> > +    description: |
-> > +      The regulator supply for ADC and DAC reference voltage.
-> > +
-> > +  spi-cpha: true
-> > +
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - spi-cpha
-> > +
-> > +patternProperties:
-> > +  "^channel@[0-7]$":
-> > +    type: object
-> > +    description: |
-> > +      Represents the external channels which are connected to the ADC.
-> > +      See Documentation/devicetree/bindings/iio/adc/adc.txt.
-> > +
-> > +    properties:
-> > +      reg:
-> > +        description: |
-> > +          The channel number. It can have up to 8 channels numbered from 0 to 7.
-> > +        items:
-> > +          maximum: 7
-> 
-> Not what I said either. A slight but important difference in that you 
-> are missing a '-' to make 'items' a list rather than a schema/dict.
-> 
-> Update dt-schema. This should give a warning now.
-
-I'm confused, I don't know how to make this doc the way you want.
-I pulled the updates from the master branch of dt-schema repo and
-reinstalled it.
-Then I tried
-        items:
-          - maximum: 7
-I've tried
-        - items:
-            maximum: 7
-I also tried
-        - items:
-          maximum: 7
-all gave me parsing errors when processing the ad7292 schema with 
-'make dt_binding_check' and also with 'make -k dt_binding_check'.
-Am I using the right branch? Should I pull from a branch other than the
-master?
-I was first inspired by the adi,ad7124.yaml doc which has a similar
-channel declaration. Curiously, processing the ad7292 schema the way it
-was in v4 gave me no errors so, I must be missing something.
-
-> 
-> > +
-> > +      diff-channels:
-> > +        description: see Documentation/devicetree/bindings/iio/adc/adc.txt
-> > +        maxItems: 1
-> > +
-> > +    required:
-> > +      - reg
-> > +
-> > +examples:
-> > +  - |
-> > +    spi {
-> > +      #address-cells = <1>;
-> > +      #size-cells = <0>;
-> > +
-> > +      ad7292: adc@0 {
-> > +        compatible = "adi,ad7292";
-> > +        reg = <0>;
-> > +        spi-max-frequency = <25000000>;
-> > +        vref-supply = <&adc_vref>;
-> > +        spi-cpha;
-> > +
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        channel@0 {
-> > +          reg = <0>;
-> > +          diff-channels = <0 1>;
-> > +        };
-> > +        channel@2 {
-> > +          reg = <2>;
-> > +        };
-> > +        channel@3 {
-> > +          reg = <3>;
-> > +        };
-> > +        channel@4 {
-> > +          reg = <4>;
-> > +        };
-> > +        channel@5 {
-> > +          reg = <5>;
-> > +        };
-> > +        channel@6 {
-> > +          reg = <6>;
-> > +        };
-> > +        channel@7 {
-> > +          reg = <7>;
-> > +        };
-> > +      };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 32bf5f8116d0..5d00e871c4c6 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -813,6 +813,13 @@ S:	Supported
-> >  F:	drivers/iio/adc/ad7124.c
-> >  F:	Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
-> >  
-> > +ANALOG DEVICES INC AD7292 DRIVER
-> > +M:	Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> > +L:	linux-iio@vger.kernel.org
-> > +W:	http://ez.analog.com/community/linux-device-drivers
-> > +S:	Supported
-> > +F:	Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
-> > +
-> >  ANALOG DEVICES INC AD7606 DRIVER
-> >  M:	Stefan Popa <stefan.popa@analog.com>
-> >  L:	linux-iio@vger.kernel.org
-> > -- 
-> > 2.23.0
-> > 
+> -Kees
+>
+> On Mon, Nov 04, 2019 at 02:07:29PM +0200, Topi Miettinen wrote:
+>> Several items in /proc/sys need not be accessible to unprivileged
+>> tasks. Let the system administrator change the permissions, but only
+>> to more restrictive modes than what the sysctl tables allow.
+>> 
+>> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+>> ---
+>> v2: actually keep track of changed permissions instead of relying on inode
+>> cache
+>> ---
+>>  fs/proc/proc_sysctl.c  | 42 ++++++++++++++++++++++++++++++++++++++----
+>>  include/linux/sysctl.h |  1 +
+>>  2 files changed, 39 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+>> index d80989b6c344..1f75382c49fd 100644
+>> --- a/fs/proc/proc_sysctl.c
+>> +++ b/fs/proc/proc_sysctl.c
+>> @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
+>> mask)
+>>         if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
+>>                 return -EACCES;
+>> 
+>> +       error = generic_permission(inode, mask);
+>> +       if (error)
+>> +               return error;
+>> +
+>>         head = grab_header(inode);
+>>         if (IS_ERR(head))
+>>                 return PTR_ERR(head);
+>> @@ -835,17 +839,46 @@ static int proc_sys_permission(struct inode *inode,
+>> int mask)
+>>  static int proc_sys_setattr(struct dentry *dentry, struct iattr *attr)
+>>  {
+>>         struct inode *inode = d_inode(dentry);
+>> +       struct ctl_table_header *head = grab_header(inode);
+>> +       struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+>>         int error;
+>> 
+>> -       if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+>> +       if (attr->ia_valid & (ATTR_UID | ATTR_GID))
+>>                 return -EPERM;
+>> 
+>> +       if (attr->ia_valid & ATTR_MODE) {
+>> +               umode_t max_mode = 0777; /* Only these bits may change */
+>> +
+>> +               if (IS_ERR(head))
+>> +                       return PTR_ERR(head);
+>> +
+>> +               if (!table) /* global root - r-xr-xr-x */
+>> +                       max_mode &= ~0222;
+>> +               else /*
+>> +                     * Don't allow permissions to become less
+>> +                     * restrictive than the sysctl table entry
+>> +                     */
+>> +                       max_mode &= table->mode;
+>> +
+>> +               /* Execute bits only allowed for directories */
+>> +               if (!S_ISDIR(inode->i_mode))
+>> +                       max_mode &= ~0111;
+>> +
+>> +               if (attr->ia_mode & ~S_IFMT & ~max_mode)
+>> +                       return -EPERM;
+>> +       }
+>> +
+>>         error = setattr_prepare(dentry, attr);
+>>         if (error)
+>>                 return error;
+>> 
+>>         setattr_copy(inode, attr);
+>>         mark_inode_dirty(inode);
+>> +
+>> +       if (table)
+>> +               table->current_mode = inode->i_mode;
+>> +       sysctl_head_finish(head);
+>> +
+>>         return 0;
+>>  }
+>> 
+>> @@ -861,7 +894,7 @@ static int proc_sys_getattr(const struct path *path,
+>> struct kstat *stat,
+>> 
+>>         generic_fillattr(inode, stat);
+>>         if (table)
+>> -               stat->mode = (stat->mode & S_IFMT) | table->mode;
+>> +               stat->mode = (stat->mode & S_IFMT) | table->current_mode;
+>> 
+>>         sysctl_head_finish(head);
+>>         return 0;
+>> @@ -981,7 +1014,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set
+>> *set,
+>>         memcpy(new_name, name, namelen);
+>>         new_name[namelen] = '\0';
+>>         table[0].procname = new_name;
+>> -       table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+>> +       table[0].current_mode = table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+>>         init_header(&new->header, set->dir.header.root, set, node, table);
+>> 
+>>         return new;
+>> @@ -1155,6 +1188,7 @@ static int sysctl_check_table(const char *path, struct
+>> ctl_table *table)
+>>                 if ((table->mode & (S_IRUGO|S_IWUGO)) != table->mode)
+>>                         err |= sysctl_err(path, table, "bogus .mode 0%o",
+>>                                 table->mode);
+>> +               table->current_mode = table->mode;
+>>         }
+>>         return err;
+>>  }
+>> @@ -1192,7 +1226,7 @@ static struct ctl_table_header *new_links(struct
+>> ctl_dir *dir, struct ctl_table
+>>                 int len = strlen(entry->procname) + 1;
+>>                 memcpy(link_name, entry->procname, len);
+>>                 link->procname = link_name;
+>> -               link->mode = S_IFLNK|S_IRWXUGO;
+>> +               link->current_mode = link->mode = S_IFLNK|S_IRWXUGO;
+>>                 link->data = link_root;
+>>                 link_name += len;
+>>         }
+>> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+>> index 6df477329b76..7c519c35bf9c 100644
+>> --- a/include/linux/sysctl.h
+>> +++ b/include/linux/sysctl.h
+>> @@ -126,6 +126,7 @@ struct ctl_table
+>>         void *data;
+>>         int maxlen;
+>>         umode_t mode;
+>> +       umode_t current_mode;
+>>         struct ctl_table *child;        /* Deprecated */
+>>         proc_handler *proc_handler;     /* Callback for text formatting */
+>>         struct ctl_table_poll *poll;
+>> -- 
+>> 2.24.0.rc1
+>> 
+>
+>> From 3cde64e0aa2734c335355ee6d0d9f12c1f1e8a87 Mon Sep 17 00:00:00 2001
+>> From: Topi Miettinen <toiwoton@gmail.com>
+>> Date: Sun, 3 Nov 2019 16:36:43 +0200
+>> Subject: [PATCH] proc: Allow restricting permissions in /proc/sys
+>> 
+>> Several items in /proc/sys need not be accessible to unprivileged
+>> tasks. Let the system administrator change the permissions, but only
+>> to more restrictive modes than what the sysctl tables allow.
+>> 
+>> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+>> ---
+>>  fs/proc/proc_sysctl.c  | 42 ++++++++++++++++++++++++++++++++++++++----
+>>  include/linux/sysctl.h |  1 +
+>>  2 files changed, 39 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+>> index d80989b6c344..1f75382c49fd 100644
+>> --- a/fs/proc/proc_sysctl.c
+>> +++ b/fs/proc/proc_sysctl.c
+>> @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int mask)
+>>  	if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
+>>  		return -EACCES;
+>>  
+>> +	error = generic_permission(inode, mask);
+>> +	if (error)
+>> +		return error;
+>> +
+>>  	head = grab_header(inode);
+>>  	if (IS_ERR(head))
+>>  		return PTR_ERR(head);
+>> @@ -835,17 +839,46 @@ static int proc_sys_permission(struct inode *inode, int mask)
+>>  static int proc_sys_setattr(struct dentry *dentry, struct iattr *attr)
+>>  {
+>>  	struct inode *inode = d_inode(dentry);
+>> +	struct ctl_table_header *head = grab_header(inode);
+>> +	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+>>  	int error;
+>>  
+>> -	if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+>> +	if (attr->ia_valid & (ATTR_UID | ATTR_GID))
+>>  		return -EPERM;
+>>  
+>> +	if (attr->ia_valid & ATTR_MODE) {
+>> +		umode_t max_mode = 0777; /* Only these bits may change */
+>> +
+>> +		if (IS_ERR(head))
+>> +			return PTR_ERR(head);
+>> +
+>> +		if (!table) /* global root - r-xr-xr-x */
+>> +			max_mode &= ~0222;
+>> +		else /*
+>> +		      * Don't allow permissions to become less
+>> +		      * restrictive than the sysctl table entry
+>> +		      */
+>> +			max_mode &= table->mode;
+>> +
+>> +		/* Execute bits only allowed for directories */
+>> +		if (!S_ISDIR(inode->i_mode))
+>> +			max_mode &= ~0111;
+>> +
+>> +		if (attr->ia_mode & ~S_IFMT & ~max_mode)
+>> +			return -EPERM;
+>> +	}
+>> +
+>>  	error = setattr_prepare(dentry, attr);
+>>  	if (error)
+>>  		return error;
+>>  
+>>  	setattr_copy(inode, attr);
+>>  	mark_inode_dirty(inode);
+>> +
+>> +	if (table)
+>> +		table->current_mode = inode->i_mode;
+>> +	sysctl_head_finish(head);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -861,7 +894,7 @@ static int proc_sys_getattr(const struct path *path, struct kstat *stat,
+>>  
+>>  	generic_fillattr(inode, stat);
+>>  	if (table)
+>> -		stat->mode = (stat->mode & S_IFMT) | table->mode;
+>> +		stat->mode = (stat->mode & S_IFMT) | table->current_mode;
+>>  
+>>  	sysctl_head_finish(head);
+>>  	return 0;
+>> @@ -981,7 +1014,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
+>>  	memcpy(new_name, name, namelen);
+>>  	new_name[namelen] = '\0';
+>>  	table[0].procname = new_name;
+>> -	table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+>> +	table[0].current_mode = table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+>>  	init_header(&new->header, set->dir.header.root, set, node, table);
+>>  
+>>  	return new;
+>> @@ -1155,6 +1188,7 @@ static int sysctl_check_table(const char *path, struct ctl_table *table)
+>>  		if ((table->mode & (S_IRUGO|S_IWUGO)) != table->mode)
+>>  			err |= sysctl_err(path, table, "bogus .mode 0%o",
+>>  				table->mode);
+>> +		table->current_mode = table->mode;
+>>  	}
+>>  	return err;
+>>  }
+>> @@ -1192,7 +1226,7 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table
+>>  		int len = strlen(entry->procname) + 1;
+>>  		memcpy(link_name, entry->procname, len);
+>>  		link->procname = link_name;
+>> -		link->mode = S_IFLNK|S_IRWXUGO;
+>> +		link->current_mode = link->mode = S_IFLNK|S_IRWXUGO;
+>>  		link->data = link_root;
+>>  		link_name += len;
+>>  	}
+>> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+>> index 6df477329b76..7c519c35bf9c 100644
+>> --- a/include/linux/sysctl.h
+>> +++ b/include/linux/sysctl.h
+>> @@ -126,6 +126,7 @@ struct ctl_table
+>>  	void *data;
+>>  	int maxlen;
+>>  	umode_t mode;
+>> +	umode_t current_mode;
+>>  	struct ctl_table *child;	/* Deprecated */
+>>  	proc_handler *proc_handler;	/* Callback for text formatting */
+>>  	struct ctl_table_poll *poll;
+>> -- 
+>> 2.24.0.rc1
+>> 
