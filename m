@@ -2,104 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7594EFA60E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:26:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88184FA673
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730392AbfKMC0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:26:32 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:33815 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727419AbfKMC0a (ORCPT
+        id S1727916AbfKMC3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:29:44 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39700 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbfKMC3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:26:30 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01451;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=29;SR=0;TI=SMTPD_---0ThwxTq0_1573611984;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ThwxTq0_1573611984)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 13 Nov 2019 10:26:25 +0800
-Subject: Re: [PATCH v2 4/8] mm/lru: only change the lru_lock iff page's lruvec
- is different
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
-        yang.shi@linux.alibaba.com, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        swkhack <swkhack@gmail.com>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-References: <1573567588-47048-1-git-send-email-alex.shi@linux.alibaba.com>
- <1573567588-47048-5-git-send-email-alex.shi@linux.alibaba.com>
- <20191112143624.GA7934@bombadil.infradead.org>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <297ad71c-081c-f7e1-d640-8720a0eeeeba@linux.alibaba.com>
-Date:   Wed, 13 Nov 2019 10:26:24 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.1
+        Tue, 12 Nov 2019 21:29:43 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUiP4-0000ox-FH; Wed, 13 Nov 2019 02:29:06 +0000
+Date:   Wed, 13 Nov 2019 02:29:06 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v15 7/9] open: introduce openat2(2) syscall
+Message-ID: <20191113022906.GD26530@ZenIV.linux.org.uk>
+References: <20191105090553.6350-1-cyphar@cyphar.com>
+ <20191105090553.6350-8-cyphar@cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <20191112143624.GA7934@bombadil.infradead.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105090553.6350-8-cyphar@cyphar.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Matthew,
+On Tue, Nov 05, 2019 at 08:05:51PM +1100, Aleksa Sarai wrote:
+  
+> +/*
+> + * Arguments for how openat2(2) should open the target path. If @resolve is
+> + * zero, then openat2(2) operates very similarly to openat(2).
+> + *
+> + * However, unlike openat(2), unknown bits in @flags result in -EINVAL rather
+> + * than being silently ignored. @mode must be zero unless one of {O_CREAT,
+> + * O_TMPFILE} are set, and @upgrade_mask must be zero unless O_PATH is set.
+> + *
+> + * @flags: O_* flags.
+> + * @mode: O_CREAT/O_TMPFILE file mode.
+> + * @upgrade_mask: UPGRADE_* flags (to restrict O_PATH re-opening).
 
-Thanks a lot for comments!
+???
 
-ÔÚ 2019/11/12 ÏÂÎç10:36, Matthew Wilcox Ð´µÀ:
-> On Tue, Nov 12, 2019 at 10:06:24PM +0800, Alex Shi wrote:
->> +/* Don't lock again iff page's lruvec locked */
->> +static inline struct lruvec *relock_page_lruvec_irq(struct page *page,
->> +					struct lruvec *locked_lruvec)
->> +{
->> +	struct pglist_data *pgdat = page_pgdat(page);
->> +	struct lruvec *lruvec;
->> +
->> +	rcu_read_lock();
->> +	lruvec = mem_cgroup_page_lruvec(page, pgdat);
->> +
->> +	if (locked_lruvec == lruvec) {
->> +		rcu_read_unlock();
->> +		return lruvec;
->> +	}
->> +	rcu_read_unlock();
-> 
-> Why not simply:
-> 
-> 	rcu_read_lock();
-> 	lruvec = mem_cgroup_page_lruvec(page, pgdat);
-> 	rcu_read_unlock();
-> 
-> 	if (locked_lruvec == lruvec)
-
-The rcu_read_unlock here is for guarding the locked_lruvec/lruvec comparsion.
-Otherwise memcg/lruvec maybe changed, like, from memcg migration etc. I guess.
- 
-> 		return lruvec;
-> 
-> Also, why are you bothering to re-enable interrupts here?  Surely if
-> you're holding lock A with interrupts disabled , you can just drop lock A,
-> acquire lock B and leave the interrupts alone.  That way you only need
-> one of this variety of function, and not the separate irq/irqsave variants.
-> 
-
-Thanks for the suggestion! Yes, if only do re-lock, it's better to leave the irq unchanging. but, when the locked_lruvec is NULL, it become a first time lock which irq or irqsave are different. Thus, in combined function we need a nother parameter to indicate if it do irqsaving. So comparing to a extra/indistinct parameter, I guess 2 inline functions would be a bit more simple/cleary? 
-
-Thanks a lot!
-Alex
+> + * @resolve: RESOLVE_* flags.
+> + */
+> +struct open_how {
+> +	__aligned_u64 flags;
+> +	__u16 mode;
+> +	__u16 __padding[3]; /* must be zeroed */
+> +	__aligned_u64 resolve;
+> +};
