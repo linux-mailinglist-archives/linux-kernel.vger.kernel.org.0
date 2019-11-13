@@ -2,188 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90008FB5DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:04:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9670FB5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbfKMREF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 12:04:05 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42059 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727284AbfKMREE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 12:04:04 -0500
-Received: by mail-lf1-f67.google.com with SMTP id z12so2558525lfj.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 09:04:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Ue0ID/EjSuwhaD2YneyBx29WXL6CWZKuZ5z+LHgXpJg=;
-        b=nXo4MPMimiDbNQH6nt9QKyqzlNtrRIxXJBcHxAUys+WwtJroFlI/L45jpHvsebk6XF
-         yOVY0/9kLoGlVYf2flnhoHHeNyUFee3GjnAoSxriM+YnqVd0i0IY3M9SXY79y0Qc5bl+
-         4bfO7Y1K3AKuISea0tNmmUeNfK+t1mAYI7X4fgEJEnlpnS5RmLScLYiQ/eav1LzK4a5f
-         utqsyoDqvxdMaPjNlTFrBMbtYPm3xllqkJmFKnchP/HIH9INUcw3rJh0JlJMMPw0iE7O
-         9k9a44l8NUvpiJnAzBgrAqxPKFIeEBWDlVxe5LwCKINSMopuOgMBmeBsSfyDXFpf9OkD
-         6wZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Ue0ID/EjSuwhaD2YneyBx29WXL6CWZKuZ5z+LHgXpJg=;
-        b=qbQY1iYGlJoqq9KqHD1fA1ethzVHwoSrQ9RTZe/gVg1buTu4Vw0FamLvc6tJw8WSoF
-         0QBj31aYPzm3K71zwZXMaARwwgC3HFSfhprU5SqiRdKsP1qig5hez9fzBts9+5HbnQ4f
-         9eX5CNsWIJJCQIFt/BH7aTD1sFSHMhgQ5N1DIkv6R6e1dfh3Tmhfdxv+dw6JEKK0rvcT
-         n11SrmUcv+uoU30QqBJ6/iem0IgdIRlUS0Z61NzspgvTBQFFLONo49V0A92iy4Z0Bg5B
-         WFheOFgnbEsKcn1rEPRlx4QUGSApYwKsdXHxOSxbOfiL93dsIe0dB7VKDFTIOQtIi4DA
-         5nIA==
-X-Gm-Message-State: APjAAAVcz7xGH79Tx4tNLAm+bENJyLEwuXFqk0K5eRXrJXz/d/5r+gmG
-        Hs3I7h6xgSUtyJaTi8eEyNv+sg==
-X-Google-Smtp-Source: APXvYqwckKbihNytza45QZsltEB/MDJqnRgjYzMjFCZ0dtdDbXhtUUZWPablqNPawdiu3JdQfr+hNA==
-X-Received: by 2002:a19:bec5:: with SMTP id o188mr3518166lff.140.1573664640846;
-        Wed, 13 Nov 2019 09:04:00 -0800 (PST)
-Received: from ?IPv6:2a00:1370:812c:3592:78e6:4794:4f9c:243a? ([2a00:1370:812c:3592:78e6:4794:4f9c:243a])
-        by smtp.gmail.com with ESMTPSA id g21sm1202642ljh.2.2019.11.13.09.03.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Nov 2019 09:04:00 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [Y2038] [PATCH 13/16] hfs/hfsplus: use 64-bit inode timestamps
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <CAK8P3a1Bvdb4Xn1Aqfnxnn24HPb6FXxAAVwq8ypO31AqoR1hBw@mail.gmail.com>
-Date:   Wed, 13 Nov 2019 20:03:56 +0300
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        =?utf-8?B?IkVybmVzdG8gQS4gRmVybsOhbmRleiI=?= 
-        <ernesto.mnd.fernandez@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <09B5EC34-DE6B-4017-A842-7983E7874F98@dubeyko.com>
-References: <20191108213257.3097633-1-arnd@arndb.de>
- <20191108213257.3097633-14-arnd@arndb.de>
- <2520E708-4636-4CA8-B953-0F46F8E7454A@dubeyko.com>
- <CAK8P3a1Bvdb4Xn1Aqfnxnn24HPb6FXxAAVwq8ypO31AqoR1hBw@mail.gmail.com>
+        id S1728688AbfKMREs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:04:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50920 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728247AbfKMREr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 12:04:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AB964B185;
+        Wed, 13 Nov 2019 17:04:45 +0000 (UTC)
+Date:   Wed, 13 Nov 2019 18:04:45 +0100
+Message-ID: <s5hy2wjn1w2.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
 To:     Arnd Bergmann <arnd@arndb.de>
-X-Mailer: Apple Mail (2.3601.0.10)
+Cc:     ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 0/8] Fix year 2038 issue for sound subsystem
+In-Reply-To: <CAK8P3a3n9hrb-qfAYW9=eYApSX=pkOK5p6iGe0T29-KqGuh0tg@mail.gmail.com>
+References: <20191112151642.680072-1-arnd@arndb.de>
+        <s5hk1847rvm.wl-tiwai@suse.de>
+        <CAK8P3a2TMEUhzxH7RKvAW9STk33KrbCriUaQawOMffoFC6UTQw@mail.gmail.com>
+        <s5hzhgzn304.wl-tiwai@suse.de>
+        <CAK8P3a3n9hrb-qfAYW9=eYApSX=pkOK5p6iGe0T29-KqGuh0tg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 13 Nov 2019 17:51:57 +0100,
+Arnd Bergmann wrote:
+> 
+> On Wed, Nov 13, 2019 at 5:40 PM Takashi Iwai <tiwai@suse.de> wrote:
+> > On Wed, 13 Nov 2019 15:32:44 +0100, Arnd Bergmann wrote:
+> 
+> > > We had discussed alternatives for this one last time, and decided
+> > > to go with the solution I posted here. The main alternative would
+> > > be to change the 'timespec' in snd_timer_tread to a fixed-length
+> > > structure based on two 'long' members. This would avoid the
+> > > need to match the command with the time_t type, but the cost would
+> > > be requiring CLOCK_MONOTONIC timestamps to avoid the
+> > > overflow, and changing all application source code that requires
+> > > the type to be compatible with 'timespec'.
+> >
+> > Fair enough.
+> >
+> > One thing I forgot to mention: when we add/modify the ioctl or ABI, we
+> > need to increment the protocol version, e.g. SNDRV_PCM_VERSION to
+> > indicate user-space the supported ABI.  Please change these in your
+> > next patches, too.
+> 
+> Just to confirm: this should be a simple one-line patch at the end of the
+> series like
+> 
+> diff --git a/tools/include/uapi/sound/asound.h
+> b/tools/include/uapi/sound/asound.h
+> index df1153cea0b7..72e8380c6dcd 100644
+> --- a/include/uapi/sound/asound.h
+> +++ b/include/uapi/sound/asound.h
+> @@ -154,7 +154,7 @@ struct snd_hwdep_dsp_image {
+>   *                                                                           *
+>   *****************************************************************************/
+> 
+> -#define SNDRV_PCM_VERSION              SNDRV_PROTOCOL_VERSION(2, 0, 14)
+> +#define SNDRV_PCM_VERSION              SNDRV_PROTOCOL_VERSION(2, 0, 15)
+> 
+>  typedef unsigned long snd_pcm_uframes_t;
+>  typedef signed long snd_pcm_sframes_t;
+> 
+> right? Most other kernel interfaces have no version numbering, so
+> I don't know what policy you have here.
+
+I don't mind much about that, so it's up to you -- we can fold this
+change into the patch that actually adds or modifies the ioctl, too.
 
 
-> On Nov 13, 2019, at 11:06 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->=20
-> On Wed, Nov 13, 2019 at 7:00 AM Viacheslav Dubeyko <slava@dubeyko.com> =
-wrote:
->>> On Nov 9, 2019, at 12:32 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->>> * There are two time systems.  Both are based on seconds since
->>> * a particular time/date.
->>> - *   Unix:   unsigned lil-endian since 00:00 GMT, Jan. 1, 1970
->>> + *   Unix:   signed little-endian since 00:00 GMT, Jan. 1, 1970
->>> *    mac:    unsigned big-endian since 00:00 GMT, Jan. 1, 1904
->>> *
->>> + * HFS implementations are highly inconsistent, this one matches =
-the
->>> + * traditional behavior of 64-bit Linux, giving the most useful
->>> + * time range between 1970 and 2106, by treating any on-disk =
-timestamp
->>> + * under 2082844800U (Jan 1 1970) as a time between 2040 and 2106.
->>> */
->>> -#define __hfs_u_to_mtime(sec)        cpu_to_be32(sec + 2082844800U =
-- sys_tz.tz_minuteswest * 60)
->>> -#define __hfs_m_to_utime(sec)        (be32_to_cpu(sec) - =
-2082844800U  + sys_tz.tz_minuteswest * 60)
->>=20
->> I believe it makes sense to introduce some constant instead of =
-hardcoded value (2082844800U and 60).
->> It will be easier to understand the code without necessity to take a =
-look into the comments.
->> What do you think?
->=20
-> Every other user of sys_tz.tz_minuteswest uses a plain '60', I think =
-that one
-> is easy enough to understand from context. Naming the other constant
-> is a good idea, I've now folded the change below into my patch.
->=20
-> Thanks for the review!
->=20
->      Arnd
->=20
-> 8<-----
-> diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-> index 26733051ee50..f71c384064c8 100644
-> --- a/fs/hfs/hfs_fs.h
-> +++ b/fs/hfs/hfs_fs.h
-> @@ -247,22 +247,24 @@ extern void hfs_mark_mdb_dirty(struct =
-super_block *sb);
->  *
->  * HFS implementations are highly inconsistent, this one matches the
->  * traditional behavior of 64-bit Linux, giving the most useful
->  * time range between 1970 and 2106, by treating any on-disk timestamp
-> - * under 2082844800U (Jan 1 1970) as a time between 2040 and 2106.
-> + * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
->  */
-> +#define HFS_UTC_OFFSET 2082844800U
-> +
-> static inline time64_t __hfs_m_to_utime(__be32 mt)
-> {
-> -       time64_t ut =3D (u32)(be32_to_cpu(mt) - 2082844800U);
-> +       time64_t ut =3D (u32)(be32_to_cpu(mt) - HFS_UTC_OFFSET);
->=20
->        return ut + sys_tz.tz_minuteswest * 60;
-> }
->=20
-> static inline __be32 __hfs_u_to_mtime(time64_t ut)
-> {
->        ut -=3D sys_tz.tz_minuteswest * 60;
->=20
-> -       return cpu_to_be32(lower_32_bits(ut) + 2082844800U);
-> +       return cpu_to_be32(lower_32_bits(ut) + HFS_UTC_OFFSET);
-> }
-> #define HFS_I(inode)   (container_of(inode, struct hfs_inode_info, =
-vfs_inode))
-> #define HFS_SB(sb)     ((struct hfs_sb_info *)(sb)->s_fs_info)
->=20
-> diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-> index 22d0a22c41a3..3b03fff68543 100644
-> --- a/fs/hfsplus/hfsplus_fs.h
-> +++ b/fs/hfsplus/hfsplus_fs.h
-> @@ -538,20 +538,22 @@ int hfsplus_read_wrapper(struct super_block =
-*sb);
->  *
->  * HFS+ implementations are highly inconsistent, this one matches the
->  * traditional behavior of 64-bit Linux, giving the most useful
->  * time range between 1970 and 2106, by treating any on-disk timestamp
-> - * under 2082844800U (Jan 1 1970) as a time between 2040 and 2106.
-> + * under HFSPLUS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and =
-2106.
->  */
-> +#define HFSPLUS_UTC_OFFSET 2082844800U
-> +
-> static inline time64_t __hfsp_mt2ut(__be32 mt)
-> {
-> -       time64_t ut =3D (u32)(be32_to_cpu(mt) - 2082844800U);
-> +       time64_t ut =3D (u32)(be32_to_cpu(mt) - HFSPLUS_UTC_OFFSET);
->=20
->        return ut;
-> }
->=20
-> static inline __be32 __hfsp_ut2mt(time64_t ut)
-> {
-> -       return cpu_to_be32(lower_32_bits(ut) + 2082844800U);
-> +       return cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET);
-> }
->=20
-> /* compatibility */
-> #define hfsp_mt2ut(t)          (struct timespec64){ .tv_sec =3D =
-__hfsp_mt2ut(t) }
+thanks,
 
-Looks good for me. I like the patch.
-
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
-
-Thanks,
-Vyacheslav Dubeyko.
-
+Takashi
