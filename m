@@ -2,103 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81AA7FB1C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:52:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D70FFB1CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:52:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfKMNwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 08:52:11 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:47828 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfKMNwL (ORCPT
+        id S1727621AbfKMNwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 08:52:38 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34004 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727614AbfKMNwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 08:52:11 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A2DFF1C1250; Wed, 13 Nov 2019 14:52:09 +0100 (CET)
-Date:   Wed, 13 Nov 2019 14:52:09 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     pavel@denx.de
-Cc:     linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 113/125] usb: dwc3: gadget: fix race when disabling
- ep with cancelled xfers
-Message-ID: <20191113135209.GB20980@duo.ucw.cz>
-References: <20191111181438.945353076@linuxfoundation.org>
- <20191111181454.916507789@linuxfoundation.org>
+        Wed, 13 Nov 2019 08:52:37 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 139so2680754ljf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 05:52:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KyCaCCfWBOINbn7kh6i3qJOp8XPmOM9fa7QHBkh+4VE=;
+        b=Ci1YJZmdB2Q2xO8P8ZdU5WgniMH8a5hnf6ZkAVx0eSPqbbK8FstfQDpuqQ0TJKycDs
+         okSgKVUg3ewqFjrcMTQuSYl76f6x/dN8tN3p+yaahJUVQJJVbWXpJfyAROrp4gUHpzFw
+         +CTTjEoPH03lrRSQ0AGkkREZcJRujo3J/rAVvbxSthO86QPxgD4Xb6MpHpfIpgvZ3sI7
+         QZiKWqyV1ywUW03vvgfqW9jbrkq+KPVKB5A0fIV0sscO1/2DmCOeu+s8i+0QvkwQCeZb
+         A5/zJpnugkJApnSwXPfRdoafoFYl80x17d+cI84FcN0CSeipZVo6saESTHnAlml8/Yl9
+         MESQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KyCaCCfWBOINbn7kh6i3qJOp8XPmOM9fa7QHBkh+4VE=;
+        b=glQCAvihg3qvol/hBYG96grdH5krZdYKBdLALpJzf6V+NKIwk0DY3ofLjMoSuzqP6A
+         1cOMaepfr6t+YiJEmvbxntUnnEUHIvmoe34XhCJ6yZryDk/IwqZZHXg+igCPN3XVqrrc
+         gonfHwufUKzyBqUgoJOB/+dn7Ytf3qfyAEH4cA/3IiIO7MyP1shxy3sTZlJYsdHZjS40
+         iCSTq9vaVezQLc8GUWTUsfk+BantyDQnggx4OwY60I7J7HQ2ZCPiWC0jllGn2+Pi+Hcl
+         Tdl+ChUHRBmBDxea4BlgkZsrKCzeB7BBwMMp1ss5eakU+McwHUfQArbfCWfXFDy3579V
+         gS/Q==
+X-Gm-Message-State: APjAAAXxVCqmNgn3vfeXA62Ta3ATyt3sFEL0abwgGULYbECaM93zkjTg
+        V+Fl6HrcsCHm/d/QMFnVRFuSFjjue8Lv/f+NxzNnuw==
+X-Google-Smtp-Source: APXvYqwW5jWVJFHvPatvx+5Uafl6Y4kdh7Hv2nQ1whBv+PrGGl3XmyfhiAZkbrBJslMf1I6D0AFeGfskbMrj03akYJU=
+X-Received: by 2002:a2e:8597:: with SMTP id b23mr2798713lji.218.1573653154150;
+ Wed, 13 Nov 2019 05:52:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
-Content-Disposition: inline
-In-Reply-To: <20191111181454.916507789@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191014184320.GA161094@dtor-ws> <20191105004050.GU57214@dtor-ws>
+ <CACRpkdak-gW9+OV-SZQVNNi5BuyNzkjkKvHmYp2+eYq4vu2nyg@mail.gmail.com> <CAKMK7uG7FQ3bDWsTxq0n8Osh7jjws5ia3PFJXvDdo=nxKu7+Ng@mail.gmail.com>
+In-Reply-To: <CAKMK7uG7FQ3bDWsTxq0n8Osh7jjws5ia3PFJXvDdo=nxKu7+Ng@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 13 Nov 2019 14:52:23 +0100
+Message-ID: <CACRpkdYY_W8_L4---iMORt6vriUa9wKEi0d_kiMRbB_NQatRog@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: ti-tfp410: switch to using fwnode_gpiod_get_index()
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 5, 2019 at 4:41 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Tue, Nov 5, 2019 at 4:29 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Tue, Nov 5, 2019 at 1:40 AM Dmitry Torokhov
+> > <dmitry.torokhov@gmail.com> wrote:
 
---z6Eq5LdranGa6ru8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > I'm happy to merge it into the GPIO tree if some DRM maintainer can
+> > provide an ACK.
+>
+> Ack.
 
-Hi!
+Thanks!
 
-> From: Felipe Balbi <felipe.balbi@linux.intel.com>
->=20
-> [ Upstream commit d8eca64eec7103ab1fbabc0a187dbf6acfb2af93 ]
->=20
-> When disabling an endpoint which has cancelled requests, we should
-> make sure to giveback requests that are currently pending in the
-> cancelled list, otherwise we may fall into a situation where command
-> completion interrupt fires after endpoint has been disabled, therefore
-> causing a splat.
->=20
-> Fixes: fec9095bdef4 "usb: dwc3: gadget: remove wait_end_transfer"
-> Reported-by: Roger Quadros <rogerq@ti.com>
-> Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-> Link: https://lore.kernel.org/r/20191031090713.1452818-1-felipe.balbi@lin=
-ux.intel.com
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/usb/dwc3/gadget.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-> index 54de732550648..8398c33d08e7c 100644
-> --- a/drivers/usb/dwc3/gadget.c
-> +++ b/drivers/usb/dwc3/gadget.c
-> @@ -698,6 +698,12 @@ static void dwc3_remove_requests(struct dwc3 *dwc, s=
-truct dwc3_ep *dep)
-> =20
->  		dwc3_gadget_giveback(dep, req, -ESHUTDOWN);
->  	}
-> +
-> +	while (!list_empty(&dep->cancelled_list)) {
-> +		req =3D next_request(&dep->cancelled_list);
-> +
-> +		dwc3_gadget_giveback(dep, req, -ESHUTDOWN);
-> +	}
->  }
+> > Getting ACK from DRM people is problematic and a bit of friction in the
+> > community, DVetter usually advice to seek mutual reviews etc, but IMO
+> > it would be better if some people felt more compelled to review stuff
+> > eventually. (And that has the problem that it doesn't scale.)
+>
+> This has a review already plus if you merge your implied review.
 
-This is third copy of a loop. Perhaps it is time to create a helper?
+Yeah I missed Laurent's review tag. I needed some kund of consent
+to take it into the GPIO tree I suppose.
 
-Best regards,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> That's more than good enough imo, so not seeing the issue here?
 
---z6Eq5LdranGa6ru8
-Content-Type: application/pgp-signature; name="signature.asc"
+No issue.
 
------BEGIN PGP SIGNATURE-----
+What freaked me out was the option of having to pull in an
+immutable branch from my GPIO tree into drm-misc. That would
+have been scary. Keeping it all in my tree works fine.
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXcwKiQAKCRAw5/Bqldv6
-8ixSAKCflMLincjXXFUMPrtOaJvWPURdqgCfXnLt5LhqLyDYBsUy8nhX0Yo05tM=
-=a3RU
------END PGP SIGNATURE-----
-
---z6Eq5LdranGa6ru8--
+Yours,
+Linus Walleij
