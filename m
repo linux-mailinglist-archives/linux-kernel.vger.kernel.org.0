@@ -2,271 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB7CFB3FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 16:44:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E27FFB405
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 16:46:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfKMPn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 10:43:59 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35556 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfKMPn6 (ORCPT
+        id S1728124AbfKMPq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 10:46:29 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39432 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726311AbfKMPq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:43:58 -0500
-Received: by mail-qk1-f194.google.com with SMTP id i19so2129136qki.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 07:43:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XcXWmlt05QR18owK+MGeLb0ZPAuT9teI4dlutv4UOY4=;
-        b=MelMg6UTJlejRjP23odBC4uKzXCYqa0yfmSs0EwAEjc7g7GiXLaE+Wwn4nMdsDI9s+
-         8XDzf0b0CZ1v8ZWj8HbcAAptirCevLkaYYqxZs2a9hPysRBpuyQ731tbn5V3Kc53DBRo
-         uBT6p1liftwpPC0//03Im0a8ChRR1LURH4zxg6xBc14OnfejWbSJl9eECDmvJnpdHzaG
-         PT0phP1czXJWwJY1cNUazL437S6DT+am4T2KeD4uKTK0lh85OHna4H6WDJ0Ra1SsDvt5
-         BIFg0NYMQIbB5tZh5TNGJPu6BBLz4DfuVj7wzEHJvgzxZ+La6iA3NEG0e8wfYV72EGyR
-         +DGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XcXWmlt05QR18owK+MGeLb0ZPAuT9teI4dlutv4UOY4=;
-        b=uNLNZo9rH7Q9AlB13nLYwNiidouOLV77Xs/bhzn0dR2G+UiP85VpvRUDyzgYvcCjys
-         FD0IepfhCdTkha/m/rXL9yI08rAn/jw8YmI7kfUCiTT70Tw8CLPoa4HB3FejO0EHtlmX
-         7rOv/+FUBOYfOKww9hCJBoOrv0dp1lejx0sTCIPJCznIuom+XPPVUPg9LdXjmmx4MwMo
-         lkQlb++bb1R1iFMZWqhfrGtksndly1a0Km0LummnY+IkAQe2YPjpHp3qwddkoLWrmjD3
-         2zRfXWVQB23Y+HPVNAW6uTv0Bcuu6N+U1tMFPow3DDbwJNoEMkUG0mFP8hpv/xB2fcxI
-         DIeQ==
-X-Gm-Message-State: APjAAAXHrSHN0SoK1P7fzaLURjkwMN69Y+EaiwaZp+Og4VewXfDmGRHn
-        PZloSrdjkV/cVjAWtfdZKghfuZdjoQz8TcL2zHKczw==
-X-Google-Smtp-Source: APXvYqx8qkEno2iYxZ3HMobvZlXLqIUafHh2Y7pvZc/nRgWaxO81/qSobRfj+awXF3JdeIwPRueyNir1rOQ0nvJblfs=
-X-Received: by 2002:a05:620a:14b9:: with SMTP id x25mr3145990qkj.8.1573659835263;
- Wed, 13 Nov 2019 07:43:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20191112211002.128278-1-jannh@google.com> <20191112211002.128278-3-jannh@google.com>
- <CACT4Y+aojSsss3+Y2FB9Rw=OPxXgsFrGF0YiAJ9eo2wJM0ruWg@mail.gmail.com> <CAAeHK+zy1dTvn-VSGYjoNKcp1jHS65ZAoM5M259T1_OE411WUg@mail.gmail.com>
-In-Reply-To: <CAAeHK+zy1dTvn-VSGYjoNKcp1jHS65ZAoM5M259T1_OE411WUg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 13 Nov 2019 16:43:43 +0100
-Message-ID: <CACT4Y+ay_0e6GSsaYXwLGRkBmmBGSA-gy_TEUu+FsL8JfRHG9g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/kasan: Print original address on #GP
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
+        Wed, 13 Nov 2019 10:46:29 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xADFhIHB136897
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 10:46:28 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w8kkkb27c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 10:46:27 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 13 Nov 2019 15:46:25 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Nov 2019 15:46:21 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xADFkKZ738404258
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 15:46:20 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 931F9AE057;
+        Wed, 13 Nov 2019 15:46:20 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C70DAE04D;
+        Wed, 13 Nov 2019 15:46:19 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.227.104])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Nov 2019 15:46:19 +0000 (GMT)
+Subject: Re: One question about trusted key of keyring in Linux kernel.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Zhao, Shirley" <shirley.zhao@intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>
+Date:   Wed, 13 Nov 2019 10:46:18 -0500
+In-Reply-To: <A888B25CD99C1141B7C254171A953E8E49094313@shsmsx102.ccr.corp.intel.com>
+References: <A888B25CD99C1141B7C254171A953E8E49094313@shsmsx102.ccr.corp.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19111315-0028-0000-0000-000003B69508
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19111315-0029-0000-0000-000024799DE0
+Message-Id: <1573659978.17949.83.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-13_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911130143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 4:19 PM Andrey Konovalov <andreyknvl@google.com> wrote:
->
-> On Wed, Nov 13, 2019 at 11:11 AM 'Dmitry Vyukov' via kasan-dev
-> <kasan-dev@googlegroups.com> wrote:
-> >
-> > On Tue, Nov 12, 2019 at 10:10 PM 'Jann Horn' via kasan-dev
-> > <kasan-dev@googlegroups.com> wrote:
-> > >
-> > > Make #GP exceptions caused by out-of-bounds KASAN shadow accesses easier
-> > > to understand by computing the address of the original access and
-> > > printing that. More details are in the comments in the patch.
-> > >
-> > > This turns an error like this:
-> > >
-> > >     kasan: CONFIG_KASAN_INLINE enabled
-> > >     kasan: GPF could be caused by NULL-ptr deref or user memory access
-> > >     traps: dereferencing non-canonical address 0xe017577ddf75b7dd
-> > >     general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
-> > >
-> > > into this:
-> > >
-> > >     traps: dereferencing non-canonical address 0xe017577ddf75b7dd
-> > >     kasan: maybe dereferencing invalid pointer in range
-> > >             [0x00badbeefbadbee8-0x00badbeefbadbeef]
-> > >     general protection fault: 0000 [#3] PREEMPT SMP KASAN PTI
-> > >     [...]
->
-> Would it make sense to use the common "BUG: KASAN: <bug-type>" report
-> format here? Something like:
->
-> BUG: KASAN: invalid-ptr-deref in range ...
+On Wed, 2019-11-13 at 01:22 +0000, Zhao, Shirley wrote:
+> Hi, all,
+> 
+> This is Shirley from Intel. I have one question about trusted key of
+> keyring in kernel. Please help.
+> 
+> According the to description in https://github.com/torvalds/linux/bl
+> ob/master/Documentation/security/keys/trusted-encrypted.rst.
+> Trusted key will be saved in TPM with PCR policy protected.
 
+"Trusted Keys use a TPM both to generate and to seal the keys. Keys
+are sealed under a 2048 bit RSA key in the TPM, ..."
 
-Currently this line is not the official bug title. The official bug
-title is "general protection fault:" line that follows.
-If we add "BUG: KASAN:" before that we need to be super careful wrt
-effect on syzbot but parsing/reporting.
+Trusted keys are not TPM keys.  They are not stored in the TPM.
 
+> 
+> Then, I running the following command to create a trusted key.
+> keyctl add trusted test_trusted "new 32 keyhandle=0x81000001" @u
+> 
+> I also tried the following command, it can add one trusted key, too.
+> keyctl add trusted test_trusted "new 32 keyhandle=0x81000001
+> pcrinfo=`cat pcr7.blob`" @u
+> 
+> But after reboot, this key will be removed.
+> I need to re-added during boot.
 
+Right, they need to be re-loaded on boot.  Refer to the dracut
+module /modules.d/97masterkey for loading a trusted key during boot.
 
-> Otherwise this looks amazing, distinguishing NULL pointer accesses
-> from wild memory accesses is much more convenient with this. Thanks
-> Jann!
->
-> >
-> > Nice!
-> >
-> > +Andrey, do you see any issues for TAGS mode? Or, Jann, did you test
-> > it by any chance?
->
-> Hm, this looks like x86-specific change, so I don't think it
-> interferes with the TAGS mode.
->
-> >
-> >
-> > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > ---
-> > >  arch/x86/include/asm/kasan.h |  6 +++++
-> > >  arch/x86/kernel/traps.c      |  2 ++
-> > >  arch/x86/mm/kasan_init_64.c  | 52 +++++++++++++++++++++++++-----------
-> > >  3 files changed, 44 insertions(+), 16 deletions(-)
-> > >
-> > > diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.h
-> > > index 13e70da38bed..eaf624a758ed 100644
-> > > --- a/arch/x86/include/asm/kasan.h
-> > > +++ b/arch/x86/include/asm/kasan.h
-> > > @@ -25,6 +25,12 @@
-> > >
-> > >  #ifndef __ASSEMBLY__
-> > >
-> > > +#ifdef CONFIG_KASAN_INLINE
-> > > +void kasan_general_protection_hook(unsigned long addr);
-> > > +#else
-> > > +static inline void kasan_general_protection_hook(unsigned long addr) { }
-> > > +#endif
-> > > +
-> > >  #ifdef CONFIG_KASAN
-> > >  void __init kasan_early_init(void);
-> > >  void __init kasan_init(void);
-> > > diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> > > index 479cfc6e9507..e271a5a1ddd4 100644
-> > > --- a/arch/x86/kernel/traps.c
-> > > +++ b/arch/x86/kernel/traps.c
-> > > @@ -58,6 +58,7 @@
-> > >  #include <asm/umip.h>
-> > >  #include <asm/insn.h>
-> > >  #include <asm/insn-eval.h>
-> > > +#include <asm/kasan.h>
-> > >
-> > >  #ifdef CONFIG_X86_64
-> > >  #include <asm/x86_init.h>
-> > > @@ -544,6 +545,7 @@ static void print_kernel_gp_address(struct pt_regs *regs)
-> > >                 return;
-> > >
-> > >         pr_alert("dereferencing non-canonical address 0x%016lx\n", addr_ref);
-> > > +       kasan_general_protection_hook(addr_ref);
-> > >  #endif
-> > >  }
-> > >
-> > > diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-> > > index 296da58f3013..9ef099309489 100644
-> > > --- a/arch/x86/mm/kasan_init_64.c
-> > > +++ b/arch/x86/mm/kasan_init_64.c
-> > > @@ -246,20 +246,44 @@ static void __init kasan_map_early_shadow(pgd_t *pgd)
-> > >  }
-> > >
-> > >  #ifdef CONFIG_KASAN_INLINE
-> > > -static int kasan_die_handler(struct notifier_block *self,
-> > > -                            unsigned long val,
-> > > -                            void *data)
-> > > +/*
-> > > + * With CONFIG_KASAN_INLINE, accesses to bogus pointers (outside the high
-> > > + * canonical half of the address space) cause out-of-bounds shadow memory reads
-> > > + * before the actual access. For addresses in the low canonical half of the
-> > > + * address space, as well as most non-canonical addresses, that out-of-bounds
-> > > + * shadow memory access lands in the non-canonical part of the address space,
-> > > + * causing #GP to be thrown.
-> > > + * Help the user figure out what the original bogus pointer was.
-> > > + */
-> > > +void kasan_general_protection_hook(unsigned long addr)
-> > >  {
-> > > -       if (val == DIE_GPF) {
-> > > -               pr_emerg("CONFIG_KASAN_INLINE enabled\n");
-> > > -               pr_emerg("GPF could be caused by NULL-ptr deref or user memory access\n");
-> > > -       }
-> > > -       return NOTIFY_OK;
-> > > -}
-> > > +       unsigned long orig_addr;
-> > > +       const char *addr_type;
-> > > +
-> > > +       if (addr < KASAN_SHADOW_OFFSET)
-> > > +               return;
-> >
-> > Thinking how much sense it makes to compare addr with KASAN_SHADOW_END...
-> > If the addr is > KASAN_SHADOW_END, we know it's not a KASAN access,
-> > but do we ever get GP on canonical addresses?
-> >
-> > >
-> > > -static struct notifier_block kasan_die_notifier = {
-> > > -       .notifier_call = kasan_die_handler,
-> > > -};
-> > > +       orig_addr = (addr - KASAN_SHADOW_OFFSET) << KASAN_SHADOW_SCALE_SHIFT;
-> > > +       /*
-> > > +        * For faults near the shadow address for NULL, we can be fairly certain
-> > > +        * that this is a KASAN shadow memory access.
-> > > +        * For faults that correspond to shadow for low canonical addresses, we
-> > > +        * can still be pretty sure - that shadow region is a fairly narrow
-> > > +        * chunk of the non-canonical address space.
-> > > +        * But faults that look like shadow for non-canonical addresses are a
-> > > +        * really large chunk of the address space. In that case, we still
-> > > +        * print the decoded address, but make it clear that this is not
-> > > +        * necessarily what's actually going on.
-> > > +        */
-> > > +       if (orig_addr < PAGE_SIZE)
-> > > +               addr_type = "dereferencing kernel NULL pointer";
-> > > +       else if (orig_addr < TASK_SIZE_MAX)
-> > > +               addr_type = "probably dereferencing invalid pointer";
-> >
-> > This is access to user memory, right? In outline mode we call it
-> > "user-memory-access". We could say about "user" part here as well.
->
-> I think we should use the same naming scheme here as in
-> get_wild_bug_type(): null-ptr-deref, user-memory-access and
-> wild-memory-access.
->
-> >
-> > > +       else
-> > > +               addr_type = "maybe dereferencing invalid pointer";
-> > > +       pr_alert("%s in range [0x%016lx-0x%016lx]\n", addr_type,
-> > > +                orig_addr, orig_addr + (1 << KASAN_SHADOW_SCALE_SHIFT) - 1);
-> >
-> > "(1 << KASAN_SHADOW_SCALE_SHIFT) - 1)" part may be replaced with
-> > KASAN_SHADOW_MASK.
-> > Overall it can make sense to move this mm/kasan/report.c b/c we are
-> > open-coding a number of things here (e.g. reverse address mapping). If
-> > another arch will do the same, it will need all of this code too (?).
-> >
-> > But in general I think it's a very good usability improvement for KASAN.
-> >
-> > > +}
-> > >  #endif
-> > >
-> > >  void __init kasan_early_init(void)
-> > > @@ -298,10 +322,6 @@ void __init kasan_init(void)
-> > >         int i;
-> > >         void *shadow_cpu_entry_begin, *shadow_cpu_entry_end;
-> > >
-> > > -#ifdef CONFIG_KASAN_INLINE
-> > > -       register_die_notifier(&kasan_die_notifier);
-> > > -#endif
-> > > -
-> > >         memcpy(early_top_pgt, init_top_pgt, sizeof(early_top_pgt));
-> > >
-> > >         /*
-> > > --
-> > > 2.24.0.432.g9d3f5f5b63-goog
-> > >
-> > > --
-> > > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> > > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> > > To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20191112211002.128278-3-jannh%40google.com.
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/CACT4Y%2BaojSsss3%2BY2FB9Rw%3DOPxXgsFrGF0YiAJ9eo2wJM0ruWg%40mail.gmail.com.
+> 
+> Then the question is since this key is saved in TPM, how to get it
+> back from TPM?
+
+Trusted keys are not stored in the TPM.  Refer to the ima-evm-utils
+README for examples of creating a trusted key (kmk) and an encrypted
+key (evm-key).
+
+> 
+> From the document, I need to use "keyctl pipe" to save the key into
+> a blob, then load it.
+> But the blob contend key text, and this is a file on hard disk, it
+> is not safe to protect the key.
+> 
+> So what can TPM do here?
+
+The hex ascii encoded trusted key is sealed under the TPM SRK.
+
+Mimi
+
