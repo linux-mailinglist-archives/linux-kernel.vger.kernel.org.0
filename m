@@ -2,92 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3D70F9ED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:06:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B95F9F15
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:11:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfKMAGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 19:06:55 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10750 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbfKMAGz (ORCPT
+        id S1727338AbfKMALj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 19:11:39 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:62778 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfKMALi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 19:06:55 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcb48e70000>; Tue, 12 Nov 2019 16:05:59 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 16:06:54 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 16:06:54 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 00:06:54 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 00:06:54 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 13 Nov 2019 00:06:54 +0000
-Received: from rcampbell-dev.nvidia.com (Not Verified[10.110.48.66]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dcb491e0001>; Tue, 12 Nov 2019 16:06:54 -0800
-From:   Ralph Campbell <rcampbell@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: [PATCH] mm/debug: PageAnon() is true for PageKsm() pages
-Date:   Tue, 12 Nov 2019 16:06:51 -0800
-Message-ID: <20191113000651.20677-1-rcampbell@nvidia.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 12 Nov 2019 19:11:38 -0500
+Received: from 79.184.253.153.ipv4.supernova.orange.pl (79.184.253.153) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 4d1cc94a4b7cb63c; Wed, 13 Nov 2019 01:11:36 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH 2/3] cpuidle: teo: Avoid expecting unrealistic idle times
+Date:   Wed, 13 Nov 2019 01:07:19 +0100
+Message-ID: <3144686.I8R4d9A2JO@kreacher>
+In-Reply-To: <13588000.TfE7eV4KYW@kreacher>
+References: <13588000.TfE7eV4KYW@kreacher>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573603559; bh=/wOVdRHSsqeIyfwUzfQw6fH/HHReWgDJ07fiGrrlSU0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=QW5UZ5vxpjFz9atav5kX9c9+UyPG525LYT+G5Wz4q3+G5kxkZrDJOxQ/a3PVIJ0OJ
-         IxK7aOZD8qlXZonGpeXWc6aidXd+DnvD422Rc5dsKYi7mfL17QUyXQ2WhmSOY5FOkJ
-         XbREHVfeG5u80+U6ssxTODbcUFuQtXwOb4TcvfygE/JT3qaUfbpxIsw1bTkveRPAfL
-         yvxWGT7fVQCmV2vz488FCHkwsxqU4gRoWQuTMTN7ORqVUojLc0EijQUlngWVL6LJWJ
-         FfjayWo1gdGlJ3f1K9EgUD0VBlz9Jgch538SVTEuziDeeBHimJ4QOP7ZTRb0T13rc1
-         zGJBvh4L/c53Q==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PageAnon() and PageKsm() use the low two bits of the page->mapping pointer
-to indicate the page type. PageAnon() only checks the LSB while PageKsm()
-checks the least significant 2 bits are equal to 3. Therefore, PageAnon()
-is true for KSM pages.
-__dump_page() incorrectly will never print "ksm" because it checks
-PageAnon() first. Fix this by checking PageKsm() first.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+If an idle state shallower than the one "matching" the time till the
+next timer event is considered for selection, expect the idle duration
+to fall in the middle of the "bin" corresponding to that state rather
+than at the beginning of it which is unrealistic.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- mm/debug.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/cpuidle/governors/teo.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/mm/debug.c b/mm/debug.c
-index 772d4cf0691f..0461df1207cb 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -77,10 +77,10 @@ void __dump_page(struct page *page, const char *reason)
- 		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx\n",
- 			page, page_ref_count(page), mapcount,
- 			page->mapping, page_to_pgoff(page));
--	if (PageAnon(page))
--		pr_warn("anon flags: %#lx(%pGp)\n", page->flags, &page->flags);
--	else if (PageKsm(page))
-+	if (PageKsm(page))
- 		pr_warn("ksm flags: %#lx(%pGp)\n", page->flags, &page->flags);
-+	else if (PageAnon(page))
-+		pr_warn("anon flags: %#lx(%pGp)\n", page->flags, &page->flags);
- 	else if (mapping) {
- 		if (mapping->host && mapping->host->i_dentry.first) {
- 			struct dentry *dentry;
---=20
-2.20.1
+Index: linux-pm/drivers/cpuidle/governors/teo.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/teo.c
++++ linux-pm/drivers/cpuidle/governors/teo.c
+@@ -360,7 +360,14 @@ static int teo_select(struct cpuidle_dri
+ 
+ 		if (max_early_idx >= 0) {
+ 			idx = max_early_idx;
+-			duration_ns = drv->states[idx].target_residency_ns;
++			/*
++			 * Expect the idle duration to fall in the middle of the
++			 * "bin" corresponding to idx (note that the maximum
++			 * state index is guaranteed to be greater than idx at
++			 * this point).
++			 */
++			duration_ns = (drv->states[idx].target_residency_ns +
++				drv->states[idx+1].target_residency_ns) / 2;
+ 		}
+ 	}
+ 
+
+
 
