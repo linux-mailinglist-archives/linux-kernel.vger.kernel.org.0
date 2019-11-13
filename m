@@ -2,134 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28D27FB9A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:22:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CD22FB997
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 21:21:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfKMUWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 15:22:38 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3801 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbfKMUWh (ORCPT
+        id S1726923AbfKMUVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 15:21:14 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46484 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfKMUVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 15:22:37 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcc660b0000>; Wed, 13 Nov 2019 12:22:35 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 13 Nov 2019 12:22:36 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 13 Nov 2019 12:22:36 -0800
-Received: from [10.2.160.107] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 20:22:35 +0000
-Subject: Re: [PATCH v4 08/23] vfio, mm: fix get_user_pages_remote() and
- FOLL_LONGTERM
-To:     Ira Weiny <ira.weiny@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191113042710.3997854-1-jhubbard@nvidia.com>
- <20191113042710.3997854-9-jhubbard@nvidia.com>
- <20191113130202.GA26068@ziepe.ca>
- <20191113191705.GE12947@iweiny-DESK2.sc.intel.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <290ba4aa-247e-6570-9eff-ccf2087e1120@nvidia.com>
-Date:   Wed, 13 Nov 2019 12:19:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20191113191705.GE12947@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573676555; bh=FW0krwPwWqciO/Z2LS4wGz5Cikl4rg4mIFXWQ1mXpqU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=n1t9MMHier43EuFZpftpwQVDKG8oSo9TdOvV+OMzrOIN0Kprv6dkR4Jpu6/PqCqXm
-         /jCxLMJDxPPXF7oklQ45MeW/Fl3jyAJJ4cfyLvk1YJ3ZXQloakTUN/6QsjTZ2e8wLd
-         Vi5ItQz0+ykvg9G6LEUGgX0gLMaFmq2awJU2Kk5qVpihlMSAmAuGK9LjnFEEtlsHOE
-         JOaWrzJR8vtoHRO1QeIa0YnKmF32io8xAGlhrbiuGj5eUhM/rh5jJ0AdTIvnBhqGbA
-         tSsPrYCj4XsKBHj/d5S4XMsaWdBoBg5n+7WnTPKexUFAUitbBsugmf2TNoS/6cs3Dr
-         dZibHSHNj0z1Q==
+        Wed, 13 Nov 2019 15:21:14 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b3so3855381wrs.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 12:21:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Vxg7fErovmPZRUiQLFPaUndHhsTa0KcxJAK3E2kbzLs=;
+        b=APqs78VoQYRNRcD2z55wsNoVUmqjCvT6dJijUhx0swgrmfCQpKU250Sj2yybQ0+l4w
+         7DyuggHzS7QqSqNTPA2EuRROfb6hPMtcZ91+ttOf9ZaFKX6T7HECTJEZUhpjotm0u020
+         eU9fViHK5VcofIfXsFJ2KLCQP4lnDDD/vxA524dl2Lo5Evjuatpdplj4FRU9e6No9A5q
+         JTzwN6Gt0a2bkHGDdzXSutW2Ov9XccKwR2JJXBLi/uQ+MMEjbsNcd+1PJI12mUBw83E1
+         lIHX/M8S61BMF5oG6/RkshN2v/dRXh8sPz5mdhX8S0NZrcvF/3O5imEYTYJRQ5y0hhJ0
+         3rcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Vxg7fErovmPZRUiQLFPaUndHhsTa0KcxJAK3E2kbzLs=;
+        b=VTbr46CmUQHf1FiV1oFxnWftPrUCqYfzPqcllQEJJJHac20+FhQ+XrNpbH4Q0ZCAqa
+         8VcRZ/jDGNfC8j1dyw33u658yPdE8v5eTW9i9aYt0z3x5UeCoj612G/3SXTrzgmQed6A
+         OHFzVugEjXByW/XhWnlAT8GOEuunHbNJu+HLDdg14nXwr7Etle2hRkoZ64n1Oug4F/RR
+         5Bw/LkwRyK0xdwbpxAdX3X54JoDkfgA5ovaoAznfXvBM9aIXtkgu2nDquugotcAcKyMP
+         nSwyYqFtqXCim9AclugsdeUpoPVbi3T8j/Vat6tyO3Is+cMNv+oXX87B44EEVYUgESl0
+         sOhg==
+X-Gm-Message-State: APjAAAW+gexyboIGEj128vUD5OKptH8BTnC93ETkpPL6+9Ivyk9BxvWZ
+        y3Hk8qT/laZMJNeokqoM/PuJjd455Yg=
+X-Google-Smtp-Source: APXvYqzFEApVCTLE8xYkeDbklVfQuPHlUEPb5AYmu9bzcn/4nBX3xRxtrONHlzi+7zFsI2+zvVw4lQ==
+X-Received: by 2002:a5d:4f06:: with SMTP id c6mr4661339wru.211.1573676470480;
+        Wed, 13 Nov 2019 12:21:10 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:bdd0:28e6:f0d9:a18c])
+        by smtp.gmail.com with ESMTPSA id n1sm4262231wrr.24.2019.11.13.12.21.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 13 Nov 2019 12:21:09 -0800 (PST)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, dietmar.eggemann@arm.com,
+        juri.lelli@redhat.com, rostedt@goodmis.org, mgorman@suse.de,
+        dsmythies@telus.net
+Cc:     linux-pm@vger.kernel.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, sargun@sargun.me, tj@kernel.org,
+        xiexiuqi@huawei.com, xiezhipeng1@huawei.com,
+        srinivas.pandruvada@linux.intel.com,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v3] sched/freq: move call to cpufreq_update_util
+Date:   Wed, 13 Nov 2019 21:21:01 +0100
+Message-Id: <1573676461-7990-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/19 11:17 AM, Ira Weiny wrote:
-...
->>> @@ -348,33 +347,13 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
->>>   		flags |= FOLL_WRITE;
->>>   
->>>   	down_read(&mm->mmap_sem);
->>> -	if (mm == current->mm) {
->>> -		ret = get_user_pages(vaddr, 1, flags | FOLL_LONGTERM, page,
->>> -				     vmas);
->>> -	} else {
->>> -		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
->>> -					    vmas, NULL);
->>> -		/*
->>> -		 * The lifetime of a vaddr_get_pfn() page pin is
->>> -		 * userspace-controlled. In the fs-dax case this could
->>> -		 * lead to indefinite stalls in filesystem operations.
->>> -		 * Disallow attempts to pin fs-dax pages via this
->>> -		 * interface.
->>> -		 */
->>> -		if (ret > 0 && vma_is_fsdax(vmas[0])) {
->>> -			ret = -EOPNOTSUPP;
->>> -			put_page(page[0]);
->>> -		}
->>> -	}
->>> -	up_read(&mm->mmap_sem);
->>> -
->>> +	ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
->>> +				    page, NULL, NULL);
->>>   	if (ret == 1) {
->>>   		*pfn = page_to_pfn(page[0]);
->>>   		return 0;
->>
->> Mind the return with the lock held this needs some goto unwind
-> 
-> Ah yea...  retract my reviewed by...  :-(
-> 
+update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pelt decays,
+which might be inefficient when cpufreq driver has rate limitation.
 
-ooops, embarrassed that I missed that, good catch. Will repost with it fixed.
+When a task is attached on a CPU, we have call path:
 
+update_load_avg()
+  update_cfs_rq_load_avg()
+    cfs_rq_util_change -- > trig frequency update
+  attach_entity_load_avg()
+    cfs_rq_util_change -- > trig frequency update
 
+The 1st frequency update will not take into account the utilization of the
+newly attached task and the 2nd one might be discard because of rate
+limitation of the cpufreq driver.
 
-thanks,
+update_cfs_rq_load_avg() is only called by update_blocked_averages()
+and update_load_avg() so we can move the call to
+cfs_rq_util_change/cpufreq_update_util() into these 2 functions. It's also
+interesting to notice that update_load_avg() already calls directly
+cfs_rq_util_change() for !SMP case.
+
+This changes will also ensure that cpufreq_update_util() is called even
+when there is no more CFS rq in the leaf_cfs_rq_list to update but only
+irq, rt or dl pelt signals.
+
+Reported-by: Doug Smythies <dsmythies@telus.net>
+Fixes: 039ae8bcf7a5 ("sched/fair: Fix O(nr_cgroups) in the load balancing path")
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+
+changes for v3:
+- fix typo
+- test the decay of root cfs_rq even for !CONFIG_FAIR_GROUP_SCHED case
+
+ kernel/sched/fair.c | 39 ++++++++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 69a81a5..0a8f4ea 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3504,9 +3504,6 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+ 	cfs_rq->load_last_update_time_copy = sa->last_update_time;
+ #endif
+ 
+-	if (decayed)
+-		cfs_rq_util_change(cfs_rq, 0);
+-
+ 	return decayed;
+ }
+ 
+@@ -3616,8 +3613,12 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ 		attach_entity_load_avg(cfs_rq, se, SCHED_CPUFREQ_MIGRATION);
+ 		update_tg_load_avg(cfs_rq, 0);
+ 
+-	} else if (decayed && (flags & UPDATE_TG))
+-		update_tg_load_avg(cfs_rq, 0);
++	} else if (decayed) {
++		cfs_rq_util_change(cfs_rq, 0);
++
++		if (flags & UPDATE_TG)
++			update_tg_load_avg(cfs_rq, 0);
++	}
+ }
+ 
+ #ifndef CONFIG_64BIT
+@@ -7543,6 +7544,7 @@ static void update_blocked_averages(int cpu)
+ 	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
+ 	bool done = true;
++	int decayed;
+ 
+ 	rq_lock_irqsave(rq, &rf);
+ 	update_rq_clock(rq);
+@@ -7552,9 +7554,9 @@ static void update_blocked_averages(int cpu)
+ 	 * that RT, DL and IRQ signals have been updated before updating CFS.
+ 	 */
+ 	curr_class = rq->curr->sched_class;
+-	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
+-	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
+-	update_irq_load_avg(rq, 0);
++	decayed = update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
++	decayed |= update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
++	decayed |= update_irq_load_avg(rq, 0);
+ 
+ 	/* Don't need periodic decay once load/util_avg are null */
+ 	if (others_have_blocked(rq))
+@@ -7567,9 +7569,13 @@ static void update_blocked_averages(int cpu)
+ 	for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
+ 		struct sched_entity *se;
+ 
+-		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq))
++		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq)) {
+ 			update_tg_load_avg(cfs_rq, 0);
+ 
++			if (cfs_rq == &rq->cfs)
++				decayed = 1;
++		}
++
+ 		/* Propagate pending load changes to the parent, if any: */
+ 		se = cfs_rq->tg->se[cpu];
+ 		if (se && !skip_blocked_update(se))
+@@ -7588,6 +7594,9 @@ static void update_blocked_averages(int cpu)
+ 	}
+ 
+ 	update_blocked_load_status(rq, !done);
++
++	if (decayed)
++		cpufreq_update_util(rq, 0);
+ 	rq_unlock_irqrestore(rq, &rf);
+ }
+ 
+@@ -7644,6 +7653,7 @@ static inline void update_blocked_averages(int cpu)
+ 	struct cfs_rq *cfs_rq = &rq->cfs;
+ 	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
++	int decayed;
+ 
+ 	rq_lock_irqsave(rq, &rf);
+ 	update_rq_clock(rq);
+@@ -7653,13 +7663,16 @@ static inline void update_blocked_averages(int cpu)
+ 	 * that RT, DL and IRQ signals have been updated before updating CFS.
+ 	 */
+ 	curr_class = rq->curr->sched_class;
+-	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
+-	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
+-	update_irq_load_avg(rq, 0);
++	decayed = update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
++	decayed |= update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
++	decayed |= update_irq_load_avg(rq, 0);
+ 
+-	update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
++	decayed |= update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
+ 
+ 	update_blocked_load_status(rq, cfs_rq_has_blocked(cfs_rq) || others_have_blocked(rq));
++
++	if (decayed)
++		cpufreq_update_util(rq, 0);
+ 	rq_unlock_irqrestore(rq, &rf);
+ }
+ 
 -- 
-John Hubbard
-NVIDIA
+2.7.4
 
