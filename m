@@ -2,88 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21536FAD10
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:35:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23CC1FAD1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:37:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfKMJfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:35:22 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47520 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727185AbfKMJfV (ORCPT
+        id S1727432AbfKMJhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:37:07 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47154 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfKMJhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:35:21 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAD9Z8pX120169;
-        Wed, 13 Nov 2019 03:35:08 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573637708;
-        bh=u3ZvJsFOOfO8a0rAzgmvXe0foFjNhQpaW0ZsCfur1kw=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=bn7l0zfNnZ8KC8BrugwAGVFgVIdZalaFTGg9uLrXOOvAW56pIu7/5UpSqQaM9YPBB
-         YkYcxCd1OXO7O4qbbwFCGsXIIqVWIVlt4RaL+7wRcwEmjJiB5AHj0l2ZlvfRe2kgwC
-         Oc4sjAEheYmA2JJAoVaqrsski1WLpcR1YCckrAbM=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD9Z8s4051456;
-        Wed, 13 Nov 2019 03:35:08 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 13
- Nov 2019 03:34:50 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 13 Nov 2019 03:34:50 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD9Z0hV086866;
-        Wed, 13 Nov 2019 03:35:06 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <ulf.hansson@linaro.org>, <ludovic.desroches@microchip.com>
-CC:     <vkoul@kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] mmc: moxart: Use dma_request_chan() directly for channel request
-Date:   Wed, 13 Nov 2019 11:36:16 +0200
-Message-ID: <20191113093616.32474-3-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191113093616.32474-1-peter.ujfalusi@ti.com>
-References: <20191113093616.32474-1-peter.ujfalusi@ti.com>
+        Wed, 13 Nov 2019 04:37:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qSG9uSaAn7qofE50Yn5j5jsLtO131S+8AtBXIrCvYT4=; b=rliVUmAZLX+u0ixJ/WjtceIH2
+        z7YMtymyk/RzzWYXW5gOS7qQc6K1ozrKI5frsTTYmz2vYsMErYlGm0AMFF5ueeS3cfdqdwI6vPIv/
+        fHft0w8ZCCX9x0u/3wbTgJo1o6TXjwsZpRgoYEmpF+UhhoiU/XXt9cAmLh5nMkxcV2b/QADR8U729
+        msrz7Vh0AyD+nLcqPX5tKVLgOa3RIZazF4cTdb17fK6+tvSmezzDn6c8HnuwrW6NgzwaUCqYyM5uI
+        ACyFE2ovh5fAbrXVxNsGAl8IHaUYqya/xCYjU68+aHhoXfDLCKMB09nJ+VjSzbdKw3x8vTOVlrLFF
+        VIq1+NoTQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUp52-0005Wr-Mo; Wed, 13 Nov 2019 09:36:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C1FE4305DE2;
+        Wed, 13 Nov 2019 10:35:42 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E4D5A20302F11; Wed, 13 Nov 2019 10:36:49 +0100 (CET)
+Date:   Wed, 13 Nov 2019 10:36:49 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     mingo@redhat.com, glenn@aurora.tech, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, tglx@linutronix.de,
+        luca.abeni@santannapisa.it, c.scordino@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com
+Subject: Re: [PATCH 2/2] sched/deadline: Temporary copy static parameters to
+ boosted non-DEADLINE entities
+Message-ID: <20191113093649.GI4131@hirez.programming.kicks-ass.net>
+References: <20191112075056.19971-1-juri.lelli@redhat.com>
+ <20191112075056.19971-3-juri.lelli@redhat.com>
+ <20191112105130.GZ4131@hirez.programming.kicks-ass.net>
+ <20191113092241.GB29273@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191113092241.GB29273@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_request_slave_channel_reason() is:
-#define dma_request_slave_channel_reason(dev, name) \
-	dma_request_chan(dev, name)
+On Wed, Nov 13, 2019 at 10:22:41AM +0100, Juri Lelli wrote:
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/mmc/host/moxart-mmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 26e4ffa01e7a..16164b0ba80b 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -4452,9 +4452,11 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+> >  		if (!dl_prio(p->normal_prio) ||
+> >  		    (pi_task && dl_entity_preempt(&pi_task->dl, &p->dl))) {
+> >  			p->dl.dl_boosted = 1;
+> > -			queue_flag |= ENQUEUE_REPLENISH;
+> > -		} else
+> > +			p->dl.deadline = pi_task->dl.deadline;
+> > +		} else {
+> >  			p->dl.dl_boosted = 0;
+> > +			p->dl.deadline = p->dl.normal_deadline;
+> > +		}
+> >  		p->sched_class = &dl_sched_class;
+> >  	} else if (rt_prio(prio)) {
+> >  		if (dl_prio(oldprio))
 
-diff --git a/drivers/mmc/host/moxart-mmc.c b/drivers/mmc/host/moxart-mmc.c
-index a0670e9cd012..fc6b9cf27d0b 100644
---- a/drivers/mmc/host/moxart-mmc.c
-+++ b/drivers/mmc/host/moxart-mmc.c
-@@ -608,8 +608,8 @@ static int moxart_probe(struct platform_device *pdev)
- 	host->timeout = msecs_to_jiffies(1000);
- 	host->sysclk = clk_get_rate(clk);
- 	host->fifo_width = readl(host->base + REG_FEATURE) << 2;
--	host->dma_chan_tx = dma_request_slave_channel_reason(dev, "tx");
--	host->dma_chan_rx = dma_request_slave_channel_reason(dev, "rx");
-+	host->dma_chan_tx = dma_request_chan(dev, "tx");
-+	host->dma_chan_rx = dma_request_chan(dev, "rx");
- 
- 	spin_lock_init(&host->lock);
- 
--- 
-Peter
+> So, the problem is more related to pi_se->dl_runtime than its deadline.
+> Even if we don't replenish at the instant in time when boosting happens,
+> the boosted task might still deplete its runtime while being boosted and
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+I thought we ignored all runtime checks when we were boosted? Yes, that
+is all sorts of broken, but IIRC we figured that barring something like
+proxy-execution there really wasn't anything sane we could do wrt
+bandwidth anyway.
 
+Seeing how proper bandwidth handling would have the boosted task consume
+the boostee's budget etc.. And blocking the entire boost chain when it
+collectively runs out.
