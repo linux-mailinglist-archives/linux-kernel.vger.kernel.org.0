@@ -2,146 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4830CFAA02
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 07:04:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE941FAA08
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 07:05:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbfKMGEQ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 13 Nov 2019 01:04:16 -0500
-Received: from mail-sh.amlogic.com ([58.32.228.43]:8879 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfKMGEP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 01:04:15 -0500
-Received: from mail-sz.amlogic.com (10.28.11.5) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 13 Nov
- 2019 14:04:34 +0800
-Received: from mail-sz.amlogic.com ([fe80::ed49:2000:aa3e:d8d6]) by
- mail-sz.amlogic.com ([fe80::ed49:2000:aa3e:d8d6%4]) with mapi id
- 15.01.1591.008; Wed, 13 Nov 2019 14:04:34 +0800
-From:   Nan Li <Nan.Li@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <Jianxin.Pan@amlogic.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Victor Wan <victor.wan@amlogic.com>
-Subject: Re: [PATCH v2] mmc: meson-gx: fix mmc dma operation
-Thread-Topic: [PATCH v2] mmc: meson-gx: fix mmc dma operation
-Thread-Index: AQHVkwa5AzBtskG6eEysgtiGF2SGpqd6sqWAgACWuoCAAG0ugIAAA9SAgAAGwQCAAAMtAIAASewAgADp/gCAClRwAIAA154A
-Date:   Wed, 13 Nov 2019 06:04:34 +0000
-Message-ID: <bef7d514-874f-e70d-63ac-9db1a46b478c@amlogic.com>
-References: <1572868495-84816-1-git-send-email-jianxin.pan@amlogic.com>
- <1ja79b4mje.fsf@starbuckisacylon.baylibre.com>
- <e80cb817-e58a-68ce-a3c6-d82636aaf7d3@amlogic.com>
- <1j8sou4u1g.fsf@starbuckisacylon.baylibre.com>
- <7ec2e682-cfec-395e-cf38-58f050440c40@amlogic.com>
- <1j7e4e4sab.fsf@starbuckisacylon.baylibre.com>
- <dee789ae-6825-3f4c-16e7-227e064562d6@amlogic.com>
- <1j5zjy4fif.fsf@starbuckisacylon.baylibre.com>
- <ec705819-9763-b0d2-9480-949e7ccd1cb9@amlogic.com>
- <1jeeydf27h.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jeeydf27h.fsf@starbuckisacylon.baylibre.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-x-originating-ip: [10.28.39.107]
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <6F2D462936CE644781F034542D8ACFB4@amlogic.com>
-Content-Transfer-Encoding: 8BIT
+        id S1726422AbfKMGFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 01:05:48 -0500
+Received: from mga06.intel.com ([134.134.136.31]:28500 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725843AbfKMGFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 01:05:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 22:05:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,299,1569308400"; 
+   d="scan'208";a="287782908"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 12 Nov 2019 22:05:46 -0800
+Received: from [10.226.38.118] (rtanwar-mobl.gar.corp.intel.com [10.226.38.118])
+        by linux.intel.com (Postfix) with ESMTP id C79F9580372;
+        Tue, 12 Nov 2019 22:05:44 -0800 (PST)
+Subject: Re: [PATCH v6 2/2] dt-bindings: pinctrl: intel: Add for new SoC
+To:     Rob Herring <robh@kernel.org>
+Cc:     linus.walleij@linaro.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andriy.shevchenko@intel.com,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com
+References: <cover.1573455324.git.rahul.tanwar@linux.intel.com>
+ <96537f8702501a45501d5a59ca029f92e36a9e4a.1573455324.git.rahul.tanwar@linux.intel.com>
+ <20191112191432.GA19579@bogus>
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Message-ID: <5ee8920d-582e-176f-6681-79c0122274fb@linux.intel.com>
+Date:   Wed, 13 Nov 2019 14:05:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20191112191432.GA19579@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/11/13 1:12, Jerome Brunet wrote:
-> 
-> On Wed 06 Nov 2019 at 04:28, Nan Li <Nan.Li@amlogic.com> wrote:
-> 
->>
->> I see what you mean, pre/post_req already provides callbacks in meson_mmc_ops for the framework to decide whether to invoke the chain mode or not.
->>
->> However, I searched the frame of MMC and found the use of mmc_pre_req() for this callback in the block layer mmc_blk_mq_issue_rw_rq().
->>
->> Block layer mmc_blk_mq_issue_rw_rq() may be useful for emmc and SD card devices.
->>
->> But it may not be useful for reading and writing operations of sdio wifi, and the sdio device communication may not use the chain mode.
->>
->>
->> Our chain-mode is a way to transfer data using dma.
->>
->> This approach is very efficient for reading and writing large amounts of data.
->>
->> If you don't do it that way, you'll do it the other way, the bounce buf way, which is limited by the size of the buf, so when you do big data reads and writes, it affects the transfer rate.
->>
->> Therefore, our chain mode means that emmc, SD card or sdio device will use dma to transfer data when reading and writing operations, so our previous driver and the patch behind me all ensure this.
->>
-> 
-> I see.
-> The problem is that you are providing the same function to pre/post_req
-> callbacks and the request()
-> 
-> IOW, things mapped in the pre_req() callback might be unmapped by
-> request_done() instead post_req() which, I think, is not great.
-> 
-> It's been like that so far, your patch is not making much worse, so I
-> guess you can go ahead with it but we need to look a this before it
-> blows again
-> 
-> In the future, we should probably use the cookie to distinguish the 2
-> cases ... or drop pre/post_req in the ops.
-> 
 
-Yes, you are right. The previous version of kernel did not have the 
-callback of pre/post_req, so our drivers all took dma operation, which 
-would improve the interaction efficiency.
+Hi Rob,
 
-I still have a doubt. In kernel, block layer calls the callback of 
-pre/post_req to complete the mode selection, so the call of sdio is 
-omitted. Since the read and write operation of sdio does not go through 
-the interface of block layer, is this the function loss of the framework?
+Thanks for feedback.
 
-You are concerned that the umap_sg() operation will be repeated in 
-request_done(), which is risky.So we can restrict that.
-For example:
-1. Add conditions in the driver. When only operating on sdio devices, 
-pre/post_req interface is called in the driver.
-2. Determine whether host_cookie has been assigned 
-SD_EMMC_DESC_CHAIN_MODE before calling pre/post_req. If host_cookie has 
-been assigned, it means that the block layer has called pre/post_req 
-callback.
-This should prevent duplicate calls.What do you think?
+On 13/11/2019 3:14 AM, Rob Herring wrote:
+> On Mon, Nov 11, 2019 at 06:11:30PM +0800, Rahul Tanwar wrote:
+>> Add dt bindings document for pinmux & GPIO controller driver of
+>> Intel Lightning Mountain SoC.
+>>
+>> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+>> ---
+>>  .../bindings/pinctrl/intel,lgm-pinctrl.yaml        | 98 ++++++++++++++++++++++
+>>  1 file changed, 98 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/intel,lgm-pinctrl.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/intel,lgm-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/intel,lgm-pinctrl.yaml
+>> new file mode 100644
+>> index 000000000000..d54a3bda1f4f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/intel,lgm-pinctrl.yaml
+>> @@ -0,0 +1,98 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+> For new bindings:
+>
+> # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 
-----8<-----
-diff --git a/drivers/mmc/host/meson-gx-mmc.c 
-b/drivers/mmc/host/meson-gx-mmc.c 
+Well noted.
 
-index f7ac88c..3eaae4d 100644
---- a/drivers/mmc/host/meson-gx-mmc.c
-+++ b/drivers/mmc/host/meson-gx-mmc.c
-@@ -282,6 +282,11 @@ static void meson_mmc_pre_req(struct mmc_host *mmc, 
-struct mmc_request *mrq)
-     if (!data)
-         return;
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/bindings/pinctrl/intel,lgm-pinctrl.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Intel Lightning Mountain SoC pinmux & GPIO controller binding
+>> +
+>> +maintainers:
+>> +  - Rahul Tanwar <rahul.tanwar@linux.intel.com>
+>> +
+>> +description: |
+>> +  Pinmux & GPIO controller controls pin multiplexing & configuration including
+>> +  GPIO function selection & GPIO attributes configuration.
+>> +
+>> +  Please refer to [1] for details of the common pinctrl bindings used by the
+>> +  client devices.
+>> +
+>> +  [1] Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: intel,lgm-pinctrl
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +# Client device subnode's properties
+>> +patternProperties:
+>> +  '-pins$':
+>> +    type: object
+>> +    description:
+>> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+>> +      Client device subnodes use below standard properties.
+>> +
+>> +    properties:
+>> +      function:
+>> +        $ref: /schemas/types.yaml#/definitions/string
+>> +        description:
+>> +          A string containing the name of the function to mux to the group.
+> Possible strings should be listed out here.
 
-+   if (meson_mmc_desc_chain_mode(data)) {
-+       host->needs_pre_post_req = false;
-+       return;
-+   }
-+
-     meson_mmc_get_transfer_mode(mmc, mrq);
-     data->host_cookie |= SD_EMMC_PRE_REQ_DONE;
----->8-----
+Possible number of strings here is a huge number. I agree that it makes
+sense to list out the possible strings here but when the possible strings
+are huge, can we just omit specifying all of the strings ? I see many
+examples here where they only specify the string in examples.
 
-> Regards
-> Jerome
-> 
+>> +
+>> +      groups:
+>> +        $ref: /schemas/types.yaml#/definitions/string-array
+>> +        description:
+>> +          An array of strings identifying the list of groups.
+> Possible strings should be listed out here.
+
+Same point for groups. Too many strings to list out here.
+
+>> +
+>> +      pins:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +        description:
+>> +          List of pins to select with this function.
+>> +
+>> +      pinmux:
+>> +        description: The applicable mux group.
+>> +        allOf:
+>> +          - $ref: "/schemas/types.yaml#/definitions/uint32-array"
+>> +
+>> +      bias-pull-up:
+>> +        type: boolean
+>> +      bias-pull-down:
+>> +        type: boolean
+>> +      drive-strength:
+>> +        type: boolean
+> Not a boolean. Need to define possible values.
+
+Agree. My mistake. Will fix it on v7.
+
+>> +      slew-rate:
+>> +        type: boolean
+> Not a boolean. Need to define possible values.
+
+In our case, 0 here means slow slew & 1 means fast slew. There are no other
+possible values. Probably, i can add it in description while keeping data
+type as boolean.
+
+>> +      drive-open-drain:
+>> +        type: boolean
+>> +      output-enable:
+>> +        type: boolean
+>> +
+>> +    required:
+>> +      - function
+>> +      - groups
+> For the -pins nodes too:
+>
+>        additionalProperties: false
+
+Well noted.
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  # Pinmux controller node
+>> +  - |
+>> +    pinctrl: pinctrl@e2880000 {
+>> +          compatible = "intel,lgm-pinctrl";
+>> +          reg = <0xe2880000 0x100000>;
+>> +
+>> +          # Client device subnode
+>> +          uart0-pins: uart0 {
+> This fails 'make dt_binding_check'. Please fix and run that.
+
+Will run & fix it in v7. Thanks.
+
+Regards,
+Rahul
+
 
