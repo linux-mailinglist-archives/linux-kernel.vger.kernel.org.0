@@ -2,125 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC37CFA952
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 06:01:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7083EFA96C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 06:18:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbfKMFB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 00:01:29 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:54782 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725446AbfKMFB3 (ORCPT
+        id S1726202AbfKMFSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 00:18:44 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:48217 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726074AbfKMFSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 00:01:29 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0ThxP.9P_1573621281;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0ThxP.9P_1573621281)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 13 Nov 2019 13:01:22 +0800
-Subject: Re: ocfs2: xattr problems with 5.4.0-rc7
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-To:     Thomas Voegtle <tv@lio96.de>, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-Cc:     linux-kernel@vger.kernel.org
-References: <alpine.LSU.2.21.1911121355550.7620@er-systems.de>
- <fc2993e9-f0d6-fb7c-5050-8dbb36338140@linux.alibaba.com>
-Message-ID: <3ea0ee86-eb74-7330-75fa-15f90e82ada7@linux.alibaba.com>
-Date:   Wed, 13 Nov 2019 13:01:21 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.1
+        Wed, 13 Nov 2019 00:18:43 -0500
+X-IronPort-AV: E=Sophos;i="5.68,299,1569254400"; 
+   d="scan'208";a="78394566"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 13 Nov 2019 13:18:42 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 5986D4CE1A05;
+        Wed, 13 Nov 2019 13:10:27 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.140) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Wed, 13 Nov 2019 13:18:50 +0800
+From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+To:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+CC:     <rppt@linux.ibm.com>, <akpm@linux-foundation.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>
+Subject: [PATCH] mm/memblock: Correct doc for function
+Date:   Wed, 13 Nov 2019 13:18:22 +0800
+Message-ID: <20191113051822.3296-1-ruansy.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <fc2993e9-f0d6-fb7c-5050-8dbb36338140@linux.alibaba.com>
-Content-Type: text/plain; charset=iso-8859-7
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.167.225.140]
+X-yoursite-MailScanner-ID: 5986D4CE1A05.A498C
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
+
+Change "max_addr" to "end" for less confusion
+in memblock_alloc_range_nid comments.
+
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+ mm/memblock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Suppose this still goes to Andrew's -mm.
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index ceb6761f526d..203ed317551b 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1321,7 +1321,7 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
+  *
+  * The allocation is performed from memory region limited by
+- * memblock.current_limit if @max_addr == %MEMBLOCK_ALLOC_ACCESSIBLE.
++ * memblock.current_limit if @end == %MEMBLOCK_ALLOC_ACCESSIBLE.
+  *
+  * If the specified node can not hold the requested memory the
+  * allocation falls back to any node in the system
+-- 
+2.21.0
 
 
-On 19/11/13 09:28, Joseph Qi wrote:
-> Hi Thomas,
-> Thanks for reporting this issue.
-> I have some doubts on it, please see my comments below.
-> 
-> On 19/11/12 22:45, Thomas Voegtle wrote:
->>
->> Hello,
->>
->> with 5.4.0-rc7 and 4.9.200 we see the following errors with mkdir or touch on a ocfs2 mountpoint:
->>
->> root@s2:/shared/ClusterShareDisk# mkdir dir
->> mkdir: cannot create directory ¡dir¢: Invalid argument
->>
->> which produces this output:
->>
->> root@s2:/shared/ClusterShareDisk# dmesg
->> [ 6918.815770] (mkdir,19461,0):ocfs2_xa_set:2242 ERROR: status = -22
->> [ 6918.815772] (mkdir,19461,0):ocfs2_mknod:408 ERROR: status = -22
->> [ 6918.816215] (mkdir,19461,0):ocfs2_mknod:486 ERROR: status = -22
->> [ 6918.816216] (mkdir,19461,0):ocfs2_mkdir:652 ERROR: status = -22
->>
-> ocfs2_xa_set
->   ocfs2_xa_prepare_entry
-> 
-> Since ocfs2_xa_set() returns -EINVAL, it means loc->xl_entry is NULL.
-> 
-> 	if (!loc->xl_entry) {
-> 		rc = -EINVAL;
-> 		goto out;
-> 	}
-> 
-> After reverting
-> commit 56e94ea132bb "fs: ocfs2: fix possible null-pointer dereferences in ocfs2_xa_prepare_entry()",
-> it will call ocfs2_xa_add_entry(),
-> 
-> 	if (loc->xl_entry) {
-> 		...
-> 	} else
-> 		ocfs2_xa_add_entry(loc, name_hash);
-> 
-> Theoretically it will cause NULL pointer dereference when access attributes of loc->xl_entry.
-> So could you please check if the issue is caused by NULL loc->xl_entry?
-> 
 
-I think I've got the answer. loc->xl_ops->xlo_add_entry() will handle this case.
-I'll revert this patch.
-
-Thanks,
-Joseph
-
-> 
->> We got some ACLs:
->> $ getfacl /shared/ClusterShareDisk/
->> getfacl: Removing leading '/' from absolute path names
->> # file: shared/ClusterShareDisk/
->> # owner: root
->> # group: root
->> user::rwx
->> user:admin:rwx
->> group::rwx
->> mask::rwx
->> other::---
->> default:user::rwx
->> default:user:admin:rwx
->> default:group::rwx
->> default:mask::rwx
->> default:other::---
->>
->> And of course it is mounted with user_xattr and acl option.
->>
->> Reverting
->> commit 56e94ea132bb5c2c1d0b60a6aeb34dcb7d71a53d
->> Author: Jia-Ju Bai <baijiaju1990@gmail.com>
->> Date:   Sun Oct 6 17:57:50 2019 -0700
->>
->>     fs: ocfs2: fix possible null-pointer dereferences in
->> ocfs2_xa_prepare_entry()
->>
->> fixes the problem.
->>
->> Greetings,
->>
->>
->>     Thomas
