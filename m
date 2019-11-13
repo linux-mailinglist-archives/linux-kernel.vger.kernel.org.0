@@ -2,114 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A1D4F9F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10D07F9F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 01:41:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfKMAkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 19:40:41 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52255 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbfKMAkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 19:40:41 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47CQkr1WLgz9sPh;
-        Wed, 13 Nov 2019 11:40:35 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1573605637;
-        bh=zGB2x+uOiISDFNlvQBfSFlh+hinWcZ+bX2WnqS9eN/s=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QOZye08E4DLQdE/1wDa4pOlovdLZGHrmxdKO7KfoHhdbrCW0pqagyPbYvZfxDZb4x
-         4V7Nr7a6M5YTAwOOCCbOrZzEZn8A5nv/mg3I1UAZOeV0if8jQcc87RGwZxOdh61TmH
-         hqovx91m9xZ3LEFFP1/tRaTPsnOuaf9sla0TE83OKAy+cGL1loYWmVpys59HL0FhIO
-         6w5ersLHqSL556YiuDKbh+o94zGhwSlYu3DoSRr9GjKhRLPF5ID2nI27BSe/3TvU/P
-         MIFfYuYchwHx6xD+nQsQ7O8y/CBbczPcu8/fKLGFgejp2SQtjRd6KGAeVRPlDkkyU3
-         TLAD7veaDxB6g==
-Date:   Wed, 13 Nov 2019 11:40:34 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jon Bloomfield <jon.bloomfield@intel.com>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Message-ID: <20191113114034.3332d688@canb.auug.org.au>
+        id S1727185AbfKMAlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 19:41:25 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54652 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726960AbfKMAlZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 19:41:25 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6DCBC6078A; Wed, 13 Nov 2019 00:41:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573605684;
+        bh=uZiyTjnsg/7XCS4wXeu1iYBMRRvJ4sByw11TaeFLRYg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pFBDnjapNW1rNrLbo6CJVvdLUiEqBCzv8OiCVfGqcVWNrTaRNi2WleTy89s/SwUxx
+         xWzXZLbrO1m4/w7Cnx7JxLD2DTaZ8E2cKJY/HCaUtJ3PgqJur65qwnaY29xfu3H1Fj
+         lQ790hPGBR54n1A7vvpIhACQgK0bjnI7Fkq3I3YM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 8586D60117;
+        Wed, 13 Nov 2019 00:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573605683;
+        bh=uZiyTjnsg/7XCS4wXeu1iYBMRRvJ4sByw11TaeFLRYg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FL+JwYGfit755UkRwchX/hZ3S7lPOFsMAyT3n0+1aGILby8txG5ewyzn4SA/lrjt9
+         aKYCdDa0QvNd2Pe7HOly+TS9wkFXCbRqoMX1b5Dg6tmzuvWUK8AWOtzMtSFHXGJnpT
+         Q9bDNhYxFVR8PN9NXjeHRWtoDbBaDrXe06gY2QBc=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gOUalc+A2t=HKgB0T6_S/nq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 13 Nov 2019 08:41:23 +0800
+From:   cang@codeaurora.org
+To:     Avri Altman <Avri.Altman@wdc.com>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/5] scsi: ufs: Add new bit field PA_INIT to UECDL
+ register
+In-Reply-To: <MN2PR04MB69910D7CB55980F2C498A468FC770@MN2PR04MB6991.namprd04.prod.outlook.com>
+References: <1573200932-384-1-git-send-email-cang@codeaurora.org>
+ <1573200932-384-3-git-send-email-cang@codeaurora.org>
+ <MN2PR04MB69910D7CB55980F2C498A468FC770@MN2PR04MB6991.namprd04.prod.outlook.com>
+Message-ID: <1ca07e76a0b6c95a116c44c4115508d4@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gOUalc+A2t=HKgB0T6_S/nq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2019-11-12 15:53, Avri Altman wrote:
+>> 
+>> Add new bit field (bit-15) PA_INIT to UECDL register, this will 
+>> correctly handle
+>> any PA_INIT error.
+>> 
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Acked-by Avri Altman <avri.altman@wdc.com>
+> 
+> This is a HCI3.0 change, so maybe make note of that?
+> But UIC_DATA_LINK_LAYER_ERROR_CODE_MASK isn't being used anywhere,
+> better just remove it, don't you think?
+> Instead, while at it, fix ufshcd_update_uic_error to check
+> UIC_DATA_LINK_LAYER_ERROR when checking for data link layer errors?
 
-Hi all,
+Hi Avri,
 
-Today's linux-next merge of the drm tree got a conflict in:
+I will squash this change to my patch, it is used there.
+[PATCH v3 5/7] scsi: ufs: Fix irq return code
+url - https://lore.kernel.org/patchwork/patch/1148656/
 
-  drivers/gpu/drm/i915/gem/i915_gem_context.c
-
-between commit:
-
-  f8c08d8faee5 ("drm/i915/cmdparser: Add support for backward jumps")
-
-from Linus' tree and commit:
-
-  a4e7ccdac38e ("drm/i915: Move context management under GEM")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/gem/i915_gem_context.c
-index e41fd94ae5a9,de6e55af82cf..000000000000
---- a/drivers/gpu/drm/i915/gem/i915_gem_context.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_context.c
-@@@ -443,9 -527,10 +529,13 @@@ __create_context(struct drm_i915_privat
-  	for (i =3D 0; i < ARRAY_SIZE(ctx->hang_timestamp); i++)
-  		ctx->hang_timestamp[i] =3D jiffies - CONTEXT_FAST_HANG_JIFFIES;
- =20
- +	ctx->jump_whitelist =3D NULL;
- +	ctx->jump_whitelist_cmds =3D 0;
- +
-+ 	spin_lock(&i915->gem.contexts.lock);
-+ 	list_add_tail(&ctx->link, &i915->gem.contexts.list);
-+ 	spin_unlock(&i915->gem.contexts.lock);
-+=20
-  	return ctx;
- =20
-  err_free:
-
---Sig_/gOUalc+A2t=HKgB0T6_S/nq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3LUQIACgkQAVBC80lX
-0GybQQf8CjfWsd4l/CLD3ydwD6MgdMFfg2fzHEoMVGD9rdzzUWrCMHcckA4BUYe+
-H0dF42iBBJJklIKeF4bA+R1ZuQx4wxGZJySBLmddAS6RJieyPnu+ztXbmeDrMEss
-RPc3nmNHN9ZkelMRBksUWDNRgMrmXqMgrECsFk5utQOphr41dV7ZFVcLbVAq2yuq
-Up7v36R0OivLnISQnpRvstW+TkgPDuoZ9e6zHGI4uAgbgJA1Rwa6HObkRQ9xko8w
-wcEscnH1Bcp2bAbcG4jTCJNrUY4ILYEskHTb5UJE9LmJtqo3WcJJ4xoSRvdf9A21
-Q5MUZBnhrdlMtOBbLqIGdVpaNKu71Q==
-=X9cU
------END PGP SIGNATURE-----
-
---Sig_/gOUalc+A2t=HKgB0T6_S/nq--
+Thanks,
+Can Guo.
