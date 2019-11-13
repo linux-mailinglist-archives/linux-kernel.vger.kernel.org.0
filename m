@@ -2,76 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B81FB1B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:49:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09952FB1C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:51:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfKMNts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 08:49:48 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:58103 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726521AbfKMNts (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 08:49:48 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iUt1c-00023o-CE; Wed, 13 Nov 2019 14:49:36 +0100
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: Re: [PATCH v2 5/6] PCI: brcmstb: add MSI capability
-X-PHP-Originating-Script: 0:main.inc
+        id S1727606AbfKMNvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 08:51:53 -0500
+Received: from smtp2.goneo.de ([85.220.129.33]:46438 "EHLO smtp2.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726957AbfKMNvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 08:51:53 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.goneo.de (Postfix) with ESMTP id 3941123FC29;
+        Wed, 13 Nov 2019 14:51:49 +0100 (CET)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -3.07
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.07 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=-0.170, BAYES_00=-1.9] autolearn=ham
+Received: from smtp2.goneo.de ([127.0.0.1])
+        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VWH12606cqcp; Wed, 13 Nov 2019 14:51:48 +0100 (CET)
+Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
+        by smtp2.goneo.de (Postfix) with ESMTPA id 2BF0B23F40C;
+        Wed, 13 Nov 2019 14:51:47 +0100 (CET)
+From:   Lars Poeschel <poeschel@lemonage.de>
+To:     Lars Poeschel <poeschel@lemonage.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jilayne Lovejoy <opensource@jilayne.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steve Winslow <swinslow@gmail.com>,
+        netdev@vger.kernel.org (open list:NFC SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     coverity-bot <keescook+coverity-bot@chromium.org>
+Subject: [PATCH net-next] nfc: pn533: pn533_phy_ops dev_[up,down] return int
+Date:   Wed, 13 Nov 2019 14:50:22 +0100
+Message-Id: <20191113135039.32086-1-poeschel@lemonage.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 13 Nov 2019 14:58:57 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <andrew.murray@arm.com>, <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>, <james.quinlan@broadcom.com>,
-        <mbrugger@suse.com>, <phil@raspberrypi.org>,
-        <jeremy.linton@arm.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-pci@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <20191112155926.16476-6-nsaenzjulienne@suse.de>
-References: <20191112155926.16476-1-nsaenzjulienne@suse.de>
- <20191112155926.16476-6-nsaenzjulienne@suse.de>
-Message-ID: <d8cae6625265f95441019e33129febcd@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: nsaenzjulienne@suse.de, andrew.murray@arm.com, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, eric@anholt.net, wahrenst@gmx.net, james.quinlan@broadcom.com, mbrugger@suse.com, phil@raspberrypi.org, jeremy.linton@arm.com, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-12 17:08, Nicolas Saenz Julienne wrote:
-> From: Jim Quinlan <james.quinlan@broadcom.com>
->
-> This commit adds MSI to the Broadcom STB PCIe host controller. It 
-> does
-> not add MSIX since that functionality is not in the HW.  The MSI
-> controller is physically located within the PCIe block, however, 
-> there
-> is no reason why the MSI controller could not be moved elsewhere in
-> the future.
->
-> Since the internal Brcmstb MSI controller is intertwined with the 
-> PCIe
-> controller, it is not its own platform device but rather part of the
-> PCIe platform device.
->
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> Co-developed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Change dev_up and dev_down functions of struct pn533_phy_ops to return
+int. This way the pn533 core can report errors in the phy layer to upper
+layers.
+The only user of this is currently uart.c and it is changed to report
+the error of a possibly failing call to serdev_device_open.
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
+Addresses-Coverity-ID: 1487395 ("Error handling issues")
+Fixes: c656aa4c27b1 ("nfc: pn533: add UART phy driver")
+Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+---
+ drivers/nfc/pn533/pn533.c | 12 ++++++++----
+ drivers/nfc/pn533/pn533.h |  4 ++--
+ drivers/nfc/pn533/uart.c  | 13 ++++++++++---
+ 3 files changed, 20 insertions(+), 9 deletions(-)
 
-         M.
+diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
+index aa766e7ece70..346e084387f7 100644
+--- a/drivers/nfc/pn533/pn533.c
++++ b/drivers/nfc/pn533/pn533.c
+@@ -2643,13 +2643,17 @@ static int pn532_sam_configuration(struct nfc_dev *nfc_dev)
+ static int pn533_dev_up(struct nfc_dev *nfc_dev)
+ {
+ 	struct pn533 *dev = nfc_get_drvdata(nfc_dev);
++	int rc;
+ 
+-	if (dev->phy_ops->dev_up)
+-		dev->phy_ops->dev_up(dev);
++	if (dev->phy_ops->dev_up) {
++		rc = dev->phy_ops->dev_up(dev);
++		if (rc)
++			return rc;
++	}
+ 
+ 	if ((dev->device_type == PN533_DEVICE_PN532) ||
+ 		(dev->device_type == PN533_DEVICE_PN532_AUTOPOLL)) {
+-		int rc = pn532_sam_configuration(nfc_dev);
++		rc = pn532_sam_configuration(nfc_dev);
+ 
+ 		if (rc)
+ 			return rc;
+@@ -2665,7 +2669,7 @@ static int pn533_dev_down(struct nfc_dev *nfc_dev)
+ 
+ 	ret = pn533_rf_field(nfc_dev, 0);
+ 	if (dev->phy_ops->dev_down && !ret)
+-		dev->phy_ops->dev_down(dev);
++		ret = dev->phy_ops->dev_down(dev);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
+index b66f02a53167..5f94f38a2a08 100644
+--- a/drivers/nfc/pn533/pn533.h
++++ b/drivers/nfc/pn533/pn533.h
+@@ -224,8 +224,8 @@ struct pn533_phy_ops {
+ 	 * bring up it's interface to the chip and have it suspended for power
+ 	 * saving reasons otherwise.
+ 	 */
+-	void (*dev_up)(struct pn533 *priv);
+-	void (*dev_down)(struct pn533 *priv);
++	int (*dev_up)(struct pn533 *priv);
++	int (*dev_down)(struct pn533 *priv);
+ };
+ 
+ 
+diff --git a/drivers/nfc/pn533/uart.c b/drivers/nfc/pn533/uart.c
+index 46e5ff16f699..a0665d8ea85b 100644
+--- a/drivers/nfc/pn533/uart.c
++++ b/drivers/nfc/pn533/uart.c
+@@ -100,20 +100,27 @@ static void pn532_uart_abort_cmd(struct pn533 *dev, gfp_t flags)
+ 	pn533_recv_frame(dev, NULL, -ENOENT);
+ }
+ 
+-static void pn532_dev_up(struct pn533 *dev)
++static int pn532_dev_up(struct pn533 *dev)
+ {
+ 	struct pn532_uart_phy *pn532 = dev->phy;
++	int ret = 0;
++
++	ret = serdev_device_open(pn532->serdev);
++	if (ret)
++		return ret;
+ 
+-	serdev_device_open(pn532->serdev);
+ 	pn532->send_wakeup = PN532_SEND_LAST_WAKEUP;
++	return ret;
+ }
+ 
+-static void pn532_dev_down(struct pn533 *dev)
++static int pn532_dev_down(struct pn533 *dev)
+ {
+ 	struct pn532_uart_phy *pn532 = dev->phy;
+ 
+ 	serdev_device_close(pn532->serdev);
+ 	pn532->send_wakeup = PN532_SEND_WAKEUP;
++
++	return 0;
+ }
+ 
+ static struct pn533_phy_ops uart_phy_ops = {
 -- 
-Jazz is not dead. It just smells funny...
+2.24.0
+
