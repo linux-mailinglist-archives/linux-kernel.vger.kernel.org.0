@@ -2,102 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD75FB732
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 19:20:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3118AFB5D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:01:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbfKMSUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 13:20:18 -0500
-Received: from 4.mo2.mail-out.ovh.net ([87.98.172.75]:54680 "EHLO
-        4.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727074AbfKMSUS (ORCPT
+        id S1728665AbfKMRBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:01:18 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:43744 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbfKMRBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 13:20:18 -0500
-X-Greylist: delayed 4199 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Nov 2019 13:20:17 EST
-Received: from player792.ha.ovh.net (unknown [10.109.159.139])
-        by mo2.mail-out.ovh.net (Postfix) with ESMTP id B59F01B1309
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 18:00:53 +0100 (CET)
-Received: from kaod.org (deibp9eh1--blueice1n4.emea.ibm.com [195.212.29.166])
-        (Authenticated sender: clg@kaod.org)
-        by player792.ha.ovh.net (Postfix) with ESMTPSA id B5E55C0CFAD3;
-        Wed, 13 Nov 2019 17:00:36 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] KVM: PPC: Book3S HV: XIVE: Fix potential page leak
- on error path
-To:     Greg Kurz <groug@kaod.org>, Paul Mackerras <paulus@ozlabs.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Lijun Pan <ljp@linux.ibm.com>,
-        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Laurent Vivier <lvivier@redhat.com>, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <157366357346.1026356.14522564753643067538.stgit@bahia.lan>
- <157366357929.1026356.18181561111939034621.stgit@bahia.lan>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Message-ID: <e49f522e-c265-4f00-f6f8-57f8583e7d8a@kaod.org>
-Date:   Wed, 13 Nov 2019 18:00:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Wed, 13 Nov 2019 12:01:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WQADSNrI4d/HxzMxBtQ+iwGnK4AsKuPRvo12BLZ2hYY=; b=dD6+CSQ/oWdT8C4qLFqsDE0HV
+        dzp2WMa/ykoPKGfI05NSUeIQ+iabkCgAM4fJTJfRioHfdk/Uvp9zA3QUFH/h5g5g9bJxUKbgsV8tb
+        q0yD4DgGXvvwf2hCbQeo0Nq4KkDMbkql0xiyDXMFSZ2QUAmvO7uC/U4+x410VSM3xs++hQ2MKguQV
+        4k/jdBjPcrynl8RtDX8K8lrB3uDv4LulPiB4KQ4lFYZ2HNkynl1Uga58/xzSD1YRTQyPeX5rcYG98
+        NfnJv75jyVDK436ZZ5LwLHRMnhsiDuA1Ocv05Xv1gV/4ENT7xE9QkT7OFejCUzWFHfliMLIds8Awo
+        Zv8VRqbYw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39168)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1iUw0s-0005cw-MT; Wed, 13 Nov 2019 17:01:02 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1iUw0o-0002bS-Np; Wed, 13 Nov 2019 17:00:58 +0000
+Date:   Wed, 13 Nov 2019 17:00:58 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Enrico Weigelt <info@metux.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: don't export unused return_address()
+Message-ID: <20191113170058.GP25745@shell.armlinux.org.uk>
+References: <20190906154706.2449696-1-arnd@arndb.de>
+ <CAMuHMdUMgDBo1gkvQ_Bd8mjMiPjdWWY=9AU6K1S7NcJy5jhvGQ@mail.gmail.com>
+ <CAK7LNASNp4jPYHmh3e4QYwenYbVrK69tvB_LLyK_ew1eqBNrEw@mail.gmail.com>
+ <20191113114517.GO25745@shell.armlinux.org.uk>
+ <CAMuHMdXk9sWBpYWC-X6V3rp2e0+f5ebdRFFXn8Heuy0qkLq0GQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <157366357929.1026356.18181561111939034621.stgit@bahia.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 3946560650099067671
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrudefuddgleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdqfffguegfifdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepuffvfhfhkffffgggjggtgfesthekredttdefjeenucfhrhhomhepveorughrihgtpgfnvggpifhorghtvghruceotghlgheskhgrohgurdhorhhgqeenucfkpheptddrtddrtddrtddpudelhedrvdduvddrvdelrdduieeinecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejledvrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheptghlgheskhgrohgurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXk9sWBpYWC-X6V3rp2e0+f5ebdRFFXn8Heuy0qkLq0GQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/11/2019 17:46, Greg Kurz wrote:
-> We need to check the host page size is big enough to accomodate the
-> EQ. Let's do this before taking a reference on the EQ page to avoid
-> a potential leak if the check fails.
+On Wed, Nov 13, 2019 at 02:15:00PM +0100, Geert Uytterhoeven wrote:
+> Hi Russell,
 > 
-> Cc: stable@vger.kernel.org # v5.2
-> Fixes: 13ce3297c576 ("KVM: PPC: Book3S HV: XIVE: Add controls for the EQ configuration")
-> Signed-off-by: Greg Kurz <groug@kaod.org>
-
-
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-
-> ---
->  arch/powerpc/kvm/book3s_xive_native.c |   13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+> On Wed, Nov 13, 2019 at 12:45 PM Russell King - ARM Linux admin
+> <linux@armlinux.org.uk> wrote:
+> > On Wed, Nov 13, 2019 at 08:40:39PM +0900, Masahiro Yamada wrote:
+> > > On Tue, Oct 1, 2019 at 11:31 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > On Fri, Sep 6, 2019 at 5:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > Without the frame pointer enabled, return_address() is an inline
+> > > > > function and does not need to be exported, as shown by this warning:
+> > > > >
+> > > > > WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
+> > > > >
+> > > > > Move the EXPORT_SYMBOL_GPL() into the #ifdef as well.
+> > > > >
+> > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > >
+> > > > Thanks for your patch!
+> > > >
+> > > > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > >
+> > > > > --- a/arch/arm/kernel/return_address.c
+> > > > > +++ b/arch/arm/kernel/return_address.c
+> > > > > @@ -53,6 +53,7 @@ void *return_address(unsigned int level)
+> > > > >                 return NULL;
+> > > > >  }
+> > > > >
+> > > >
+> > > > Checkpatch doesn't like the empty line above:
+> > > >
+> > > > WARNING: EXPORT_SYMBOL(foo); should immediately follow its function/variable
+> > > >
+> > > > > +EXPORT_SYMBOL_GPL(return_address);
+> > > > > +
+> > > > >  #endif /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND) */
+> > > > >
+> > > > > -EXPORT_SYMBOL_GPL(return_address);
 > 
-> diff --git a/arch/powerpc/kvm/book3s_xive_native.c b/arch/powerpc/kvm/book3s_xive_native.c
-> index 0e1fc5a16729..d83adb1e1490 100644
-> --- a/arch/powerpc/kvm/book3s_xive_native.c
-> +++ b/arch/powerpc/kvm/book3s_xive_native.c
-> @@ -630,12 +630,6 @@ static int kvmppc_xive_native_set_queue_config(struct kvmppc_xive *xive,
->  
->  	srcu_idx = srcu_read_lock(&kvm->srcu);
->  	gfn = gpa_to_gfn(kvm_eq.qaddr);
-> -	page = gfn_to_page(kvm, gfn);
-> -	if (is_error_page(page)) {
-> -		srcu_read_unlock(&kvm->srcu, srcu_idx);
-> -		pr_err("Couldn't get queue page %llx!\n", kvm_eq.qaddr);
-> -		return -EINVAL;
-> -	}
->  
->  	page_size = kvm_host_page_size(kvm, gfn);
->  	if (1ull << kvm_eq.qshift > page_size) {
-> @@ -644,6 +638,13 @@ static int kvmppc_xive_native_set_queue_config(struct kvmppc_xive *xive,
->  		return -EINVAL;
->  	}
->  
-> +	page = gfn_to_page(kvm, gfn);
-> +	if (is_error_page(page)) {
-> +		srcu_read_unlock(&kvm->srcu, srcu_idx);
-> +		pr_err("Couldn't get queue page %llx!\n", kvm_eq.qaddr);
-> +		return -EINVAL;
-> +	}
-> +
->  	qaddr = page_to_virt(page) + (kvm_eq.qaddr & ~PAGE_MASK);
->  	srcu_read_unlock(&kvm->srcu, srcu_idx);
->  
+> > > What has happened to this patch?
+> > >
+> > > I still see this warning.
+> >
+> > Simple - it got merged, it caused build regressions, it got dropped.
+> > A new version is pending me doing another round of patch merging.
 > 
+> I believe that was not Arnd's patch, but Ben Dooks' alternative solution[*]?
 
+I don't keep track of who did what, sorry.
+
+> 
+> [*] Commit 0b0617e5a610fe12 ("ARM: 8918/1: only build return_address() if
+>     needed"), which I discovered in next-20191031 when checking if Arnd's
+>     patch was applied....
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
