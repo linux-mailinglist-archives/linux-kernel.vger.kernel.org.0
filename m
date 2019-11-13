@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA61FA576
+	by mail.lfdr.de (Postfix) with ESMTP id 7E0D3FA575
 	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:23:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbfKMCXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:23:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42228 "EHLO mail.kernel.org"
+        id S1727406AbfKMCWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:22:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728344AbfKMBw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:52:56 -0500
+        id S1728456AbfKMBxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:53:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFF46222CD;
-        Wed, 13 Nov 2019 01:52:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F726204EC;
+        Wed, 13 Nov 2019 01:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609974;
-        bh=Em/6r+eVCEBPBMQzKf3l+OODRJz6v5UF0j2kgMaZOdQ=;
+        s=default; t=1573609993;
+        bh=9tlsXAq1wvbQ7vXhH0WzC2FHYWWLkSRWNraPNNPO6MY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cis2shCPkh/6aSYjOwmgosilxQ0x9o3s2PQ16VXmX2YT6byHjS9C7EpydbvSQf+cA
-         4yHlTSNudcvTGgyZqK3Cek5Uc9bEW7CbE4jv1JUtWwTHrDUx0oUKjR2qUIuMMmMyGE
-         TgNXY0ZPsXbeaQrkjFC7BylSOntW+yL6RJZYlSH0=
+        b=udlHMhAnBxFv2gumk0Es+3SIqfgQJD1se1tBYEaIbpH7dOdbszjDW8ClYcxcyDh3A
+         PrHgIRLfnAAuu6ZrANgKr+ZVXtkJBJFClKbGMiV3xSThLufLMZIbrZkbUqQeYnlWOK
+         JzTSl9SPrscbJcj3cAqW5J/PTqdpu+hUlwf/B9ws=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chung-Hsien Hsu <stanley.hsu@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+Cc:     Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 100/209] brcmfmac: reduce timeout for action frame scan
-Date:   Tue, 12 Nov 2019 20:48:36 -0500
-Message-Id: <20191113015025.9685-100-sashal@kernel.org>
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 104/209] qtnfmac: inform wireless core about supported extended capabilities
+Date:   Tue, 12 Nov 2019 20:48:40 -0500
+Message-Id: <20191113015025.9685-104-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -47,75 +44,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chung-Hsien Hsu <stanley.hsu@cypress.com>
+From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-[ Upstream commit edb6d6885bef82d1eac432dbeca9fbf4ec349d7e ]
+[ Upstream commit ab1c64a1d349cc7f1090a60ce85a53298e3d371d ]
 
-Finding a common channel to send an action frame out is required for
-some action types. Since a loop with several scan retry is used to find
-the channel, a short wait time could be considered for each attempt.
-This patch reduces the wait time from 1500 to 450 msec for each action
-frame scan.
+Driver retrieves information about supported extended capabilities
+from wireless card. However this information is not propagated
+further to Linux wireless core. Fix this by setting extended
+capabilities fields of wiphy structure.
 
-This patch fixes the WFA p2p certification 5.1.20 failure caused by the
-long action frame send time.
-
-Signed-off-by: Chung-Hsien Hsu <stanley.hsu@cypress.com>
-Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ .../net/wireless/quantenna/qtnfmac/cfg80211.c    |  9 +++++++++
+ .../net/wireless/quantenna/qtnfmac/commands.c    |  3 +--
+ drivers/net/wireless/quantenna/qtnfmac/core.c    | 16 ++++++++++++++--
+ drivers/net/wireless/quantenna/qtnfmac/core.h    |  1 +
+ 4 files changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-index 3e9c4f2f5dd12..7822740a8cb40 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-@@ -74,7 +74,7 @@
- #define P2P_AF_MAX_WAIT_TIME		msecs_to_jiffies(2000)
- #define P2P_INVALID_CHANNEL		-1
- #define P2P_CHANNEL_SYNC_RETRY		5
--#define P2P_AF_FRM_SCAN_MAX_WAIT	msecs_to_jiffies(1500)
-+#define P2P_AF_FRM_SCAN_MAX_WAIT	msecs_to_jiffies(450)
- #define P2P_DEFAULT_SLEEP_TIME_VSDB	200
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+index 1519d986b74a4..05b93f301ca08 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+@@ -1126,6 +1126,15 @@ int qtnf_wiphy_register(struct qtnf_hw_info *hw_info, struct qtnf_wmac *mac)
+ 		wiphy->regulatory_flags |= REGULATORY_WIPHY_SELF_MANAGED;
+ 	}
  
- /* WiFi P2P Public Action Frame OUI Subtypes */
-@@ -1134,7 +1134,6 @@ static s32 brcmf_p2p_af_searching_channel(struct brcmf_p2p_info *p2p)
++	if (mac->macinfo.extended_capabilities_len) {
++		wiphy->extended_capabilities =
++			mac->macinfo.extended_capabilities;
++		wiphy->extended_capabilities_mask =
++			mac->macinfo.extended_capabilities_mask;
++		wiphy->extended_capabilities_len =
++			mac->macinfo.extended_capabilities_len;
++	}
++
+ 	strlcpy(wiphy->fw_version, hw_info->fw_version,
+ 		sizeof(wiphy->fw_version));
+ 	wiphy->hw_version = hw_info->hw_version;
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+index 7fe22bb53bfc4..734844b34c266 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+@@ -1356,8 +1356,7 @@ static int qtnf_parse_variable_mac_info(struct qtnf_wmac *mac,
+ 		ext_capa_mask = NULL;
+ 	}
+ 
+-	kfree(mac->macinfo.extended_capabilities);
+-	kfree(mac->macinfo.extended_capabilities_mask);
++	qtnf_mac_ext_caps_free(mac);
+ 	mac->macinfo.extended_capabilities = ext_capa;
+ 	mac->macinfo.extended_capabilities_mask = ext_capa_mask;
+ 	mac->macinfo.extended_capabilities_len = ext_capa_len;
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/core.c b/drivers/net/wireless/quantenna/qtnfmac/core.c
+index 19abbc4e23e06..08928d5e252d7 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/core.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/core.c
+@@ -304,6 +304,19 @@ void qtnf_mac_iface_comb_free(struct qtnf_wmac *mac)
+ 	}
+ }
+ 
++void qtnf_mac_ext_caps_free(struct qtnf_wmac *mac)
++{
++	if (mac->macinfo.extended_capabilities_len) {
++		kfree(mac->macinfo.extended_capabilities);
++		mac->macinfo.extended_capabilities = NULL;
++
++		kfree(mac->macinfo.extended_capabilities_mask);
++		mac->macinfo.extended_capabilities_mask = NULL;
++
++		mac->macinfo.extended_capabilities_len = 0;
++	}
++}
++
+ static void qtnf_vif_reset_handler(struct work_struct *work)
  {
- 	struct afx_hdl *afx_hdl = &p2p->afx_hdl;
- 	struct brcmf_cfg80211_vif *pri_vif;
--	unsigned long duration;
- 	s32 retry;
+ 	struct qtnf_vif *vif = container_of(work, struct qtnf_vif, reset_work);
+@@ -493,8 +506,7 @@ static void qtnf_core_mac_detach(struct qtnf_bus *bus, unsigned int macid)
+ 	}
  
- 	brcmf_dbg(TRACE, "Enter\n");
-@@ -1150,7 +1149,6 @@ static s32 brcmf_p2p_af_searching_channel(struct brcmf_p2p_info *p2p)
- 	 * pending action frame tx is cancelled.
- 	 */
- 	retry = 0;
--	duration = msecs_to_jiffies(P2P_AF_FRM_SCAN_MAX_WAIT);
- 	while ((retry < P2P_CHANNEL_SYNC_RETRY) &&
- 	       (afx_hdl->peer_chan == P2P_INVALID_CHANNEL)) {
- 		afx_hdl->is_listen = false;
-@@ -1158,7 +1156,8 @@ static s32 brcmf_p2p_af_searching_channel(struct brcmf_p2p_info *p2p)
- 			  retry);
- 		/* search peer on peer's listen channel */
- 		schedule_work(&afx_hdl->afx_work);
--		wait_for_completion_timeout(&afx_hdl->act_frm_scan, duration);
-+		wait_for_completion_timeout(&afx_hdl->act_frm_scan,
-+					    P2P_AF_FRM_SCAN_MAX_WAIT);
- 		if ((afx_hdl->peer_chan != P2P_INVALID_CHANNEL) ||
- 		    (!test_bit(BRCMF_P2P_STATUS_FINDING_COMMON_CHANNEL,
- 			       &p2p->status)))
-@@ -1171,7 +1170,7 @@ static s32 brcmf_p2p_af_searching_channel(struct brcmf_p2p_info *p2p)
- 			afx_hdl->is_listen = true;
- 			schedule_work(&afx_hdl->afx_work);
- 			wait_for_completion_timeout(&afx_hdl->act_frm_scan,
--						    duration);
-+						    P2P_AF_FRM_SCAN_MAX_WAIT);
- 		}
- 		if ((afx_hdl->peer_chan != P2P_INVALID_CHANNEL) ||
- 		    (!test_bit(BRCMF_P2P_STATUS_FINDING_COMMON_CHANNEL,
+ 	qtnf_mac_iface_comb_free(mac);
+-	kfree(mac->macinfo.extended_capabilities);
+-	kfree(mac->macinfo.extended_capabilities_mask);
++	qtnf_mac_ext_caps_free(mac);
+ 	kfree(mac->macinfo.wowlan);
+ 	wiphy_free(wiphy);
+ 	bus->mac[macid] = NULL;
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/core.h b/drivers/net/wireless/quantenna/qtnfmac/core.h
+index a1e338a1f055a..ecb5c41c8ed76 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/core.h
++++ b/drivers/net/wireless/quantenna/qtnfmac/core.h
+@@ -151,6 +151,7 @@ struct qtnf_hw_info {
+ struct qtnf_vif *qtnf_mac_get_free_vif(struct qtnf_wmac *mac);
+ struct qtnf_vif *qtnf_mac_get_base_vif(struct qtnf_wmac *mac);
+ void qtnf_mac_iface_comb_free(struct qtnf_wmac *mac);
++void qtnf_mac_ext_caps_free(struct qtnf_wmac *mac);
+ struct wiphy *qtnf_wiphy_allocate(struct qtnf_bus *bus);
+ int qtnf_core_net_attach(struct qtnf_wmac *mac, struct qtnf_vif *priv,
+ 			 const char *name, unsigned char name_assign_type);
 -- 
 2.20.1
 
