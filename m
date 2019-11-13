@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E92FFA3F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84415FA42B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbfKMB5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:57:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50026 "EHLO mail.kernel.org"
+        id S1727031AbfKMCOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:14:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729663AbfKMB5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:05 -0500
+        id S1727577AbfKMB5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:57:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C96A42247C;
-        Wed, 13 Nov 2019 01:57:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2B5E22469;
+        Wed, 13 Nov 2019 01:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610224;
-        bh=AxvpmB2Sb0ryC9UrYM1Dehg4vu0x0EADb0FbcdB7REY=;
+        s=default; t=1573610232;
+        bh=HSeu81ZhvvwV6IqE4gBPPXBakWr3J/9nmvn+yNdGt48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GzHtAv5vwMiRz/4o6uBUpjArcJV2bkVuVDP5deO48JrAUs+KqON6f7RweECWxNu44
-         TFZFeAntHgPH7Vg2AtEJ8T0g1jpKj50r4eYCSNzvxjKpU7H+FcAKuQOi81gYKzpyqp
-         F7bA1cdwA8zWqU4FDDOM1fYFEQL9KUwnPVUW2cE0=
+        b=UrgtWJ912rclita6SWeMSRhb7BQx7SMk58yTD/vL5ivtMegO34p5my+4zCdTpblNQ
+         pZy1NJqOrdR3zu3eJe0raM8LqnEJePYOej2ibhfuwCeah4tuDI2+0UPwZRhPq1YHuL
+         pF8sT+3TlYGUfL22DjN67/10kH1ShdpC/V/HGBwc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 029/115] cxgb4: Use proper enum in cxgb4_dcb_handle_fw_update
-Date:   Tue, 12 Nov 2019 20:54:56 -0500
-Message-Id: <20191113015622.11592-29-sashal@kernel.org>
+Cc:     zhong jiang <zhongjiang@huawei.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 033/115] powerpc/xive: Move a dereference below a NULL test
+Date:   Tue, 12 Nov 2019 20:55:00 -0500
+Message-Id: <20191113015622.11592-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
@@ -45,53 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: zhong jiang <zhongjiang@huawei.com>
 
-[ Upstream commit 3b0b8f0d9a259f6a428af63e7a77547325f8e081 ]
+[ Upstream commit cd5ff94577e004e0a4457e70d0ef3a030f4010b8 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+Move the dereference of xc below the NULL test.
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:303:7: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                         ? CXGB4_DCB_STATE_FW_ALLSYNCED
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:304:7: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                         : CXGB4_DCB_STATE_FW_INCOMPLETE);
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-2 warnings generated.
-
-Use the equivalent value of the expected type to silence Clang while
-resulting in no functional change.
-
-CXGB4_DCB_STATE_FW_INCOMPLETE = CXGB4_DCB_INPUT_FW_INCOMPLETE = 2
-CXGB4_DCB_STATE_FW_ALLSYNCED = CXGB4_DCB_INPUT_FW_ALLSYNCED = 3
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/sysdev/xive/common.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-index 6ee2ed30626bf..306b4b3206168 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-@@ -266,8 +266,8 @@ void cxgb4_dcb_handle_fw_update(struct adapter *adap,
- 		enum cxgb4_dcb_state_input input =
- 			((pcmd->u.dcb.control.all_syncd_pkd &
- 			  FW_PORT_CMD_ALL_SYNCD_F)
--			 ? CXGB4_DCB_STATE_FW_ALLSYNCED
--			 : CXGB4_DCB_STATE_FW_INCOMPLETE);
-+			 ? CXGB4_DCB_INPUT_FW_ALLSYNCED
-+			 : CXGB4_DCB_INPUT_FW_INCOMPLETE);
+diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
+index 818fc5351591c..110d8bb16ebbb 100644
+--- a/arch/powerpc/sysdev/xive/common.c
++++ b/arch/powerpc/sysdev/xive/common.c
+@@ -1008,12 +1008,13 @@ static void xive_ipi_eoi(struct irq_data *d)
+ {
+ 	struct xive_cpu *xc = __this_cpu_read(xive_cpu);
  
- 		if (dcb->dcb_version != FW_PORT_DCB_VER_UNKNOWN) {
- 			dcb_running_version = FW_PORT_CMD_DCB_VERSION_G(
+-	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
+-		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
+-
+ 	/* Handle possible race with unplug and drop stale IPIs */
+ 	if (!xc)
+ 		return;
++
++	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
++		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
++
+ 	xive_do_source_eoi(xc->hw_ipi, &xc->ipi_data);
+ 	xive_do_queue_eoi(xc);
+ }
 -- 
 2.20.1
 
