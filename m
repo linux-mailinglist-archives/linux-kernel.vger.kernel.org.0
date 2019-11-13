@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08339FA33D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D49BFA3B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:12:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbfKMB6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:58:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52312 "EHLO mail.kernel.org"
+        id S1730401AbfKMCMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:12:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730035AbfKMB6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:58:30 -0500
+        id S1730051AbfKMB6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:58:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E0752245A;
-        Wed, 13 Nov 2019 01:58:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA9C52245C;
+        Wed, 13 Nov 2019 01:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610309;
-        bh=h/qoJpUfQOrBJEA7qGpILdqu+csxqNFYDokiCl2xkys=;
+        s=default; t=1573610312;
+        bh=AIoefMBkzTyQpQDx+wHLCeWHS00qU4UIZRBzUd3m66k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ARhzSHX+lQqDU5clERzwZMHukXpPTl+AFdubf7kR9qCaXB0lw2VpKTmfsJeyrpMkI
-         3X1n91XIpoKJbFR4xcKQ9wbpEo6OcCos1F0PeX6S/yXWag8hxqJVIUofXsNYwZyNuT
-         kzTBVfKWwxO4lzMIsHUscn3K/BaeAs5qvwJdsIiM=
+        b=CqbOg3pXj6R7rdr6s2w/g1plgrbhO8pMDBIQaw4paQUobxUEon7qsNWoxak9mS9bo
+         goWV/NLqnOQO7dfcMMfiMNMHlB/TJ+q37A/uDxi2i6C+iJcvdqvxksYwP/XPFW/ZBh
+         XSmC5ItvqwWl7IcucGtMDK/WW9xfB1genJ6oeBm0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 078/115] ACPI / SBS: Fix rare oops when removing modules
-Date:   Tue, 12 Nov 2019 20:55:45 -0500
-Message-Id: <20191113015622.11592-78-sashal@kernel.org>
+Cc:     Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 079/115] iwlwifi: mvm: don't send keys when entering D3
+Date:   Tue, 12 Nov 2019 20:55:46 -0500
+Message-Id: <20191113015622.11592-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,61 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronald Tschalär <ronald@innovation.ch>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 757c968c442397f1249bb775a7c8c03842e3e0c7 ]
+[ Upstream commit 8c7fd6a365eb5b2647b2c01918730d0a485b9f85 ]
 
-There was a small race when removing the sbshc module where
-smbus_alarm() had queued acpi_smbus_callback() for deferred execution
-but it hadn't been run yet, so that when it did run hc had been freed
-and the module unloaded, resulting in an invalid paging request.
+In the past, we needed to program the keys when entering D3. This was
+since we replaced the image. However, now that there is a single
+image, this is no longer needed.  Note that RSC is sent separately in
+a new command.  This solves issues with newer devices that support PN
+offload. Since driver re-sent the keys, the PN got zeroed and the
+receiver dropped the next packets, until PN caught up again.
 
-A similar race existed when removing the sbs module with regards to
-acpi_sbs_callback() (which is called from acpi_smbus_callback()).
-
-We therefore need to ensure no callbacks are pending or executing before
-the cleanups are done and the modules are removed.
-
-Signed-off-by: Ronald TschalÃ¤r <ronald@innovation.ch>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/osl.c   | 1 +
- drivers/acpi/sbshc.c | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index 191e86c62037a..9da7e7d874bd8 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -1116,6 +1116,7 @@ void acpi_os_wait_events_complete(void)
- 	flush_workqueue(kacpid_wq);
- 	flush_workqueue(kacpi_notify_wq);
- }
-+EXPORT_SYMBOL(acpi_os_wait_events_complete);
- 
- struct acpi_hp_work {
- 	struct work_struct work;
-diff --git a/drivers/acpi/sbshc.c b/drivers/acpi/sbshc.c
-index 7a3431018e0ab..5008ead4609a4 100644
---- a/drivers/acpi/sbshc.c
-+++ b/drivers/acpi/sbshc.c
-@@ -196,6 +196,7 @@ int acpi_smbus_unregister_callback(struct acpi_smb_hc *hc)
- 	hc->callback = NULL;
- 	hc->context = NULL;
- 	mutex_unlock(&hc->lock);
-+	acpi_os_wait_events_complete();
- 	return 0;
- }
- 
-@@ -292,6 +293,7 @@ static int acpi_smbus_hc_remove(struct acpi_device *device)
- 
- 	hc = acpi_driver_data(device);
- 	acpi_ec_remove_query_handler(hc->ec, hc->query_bit);
-+	acpi_os_wait_events_complete();
- 	kfree(hc);
- 	device->driver_data = NULL;
- 	return 0;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+index b205a7bfb828d..65c51c6983288 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+@@ -947,8 +947,10 @@ int iwl_mvm_wowlan_config_key_params(struct iwl_mvm *mvm,
+ {
+ 	struct iwl_wowlan_kek_kck_material_cmd kek_kck_cmd = {};
+ 	struct iwl_wowlan_tkip_params_cmd tkip_cmd = {};
++	bool unified = fw_has_capa(&mvm->fw->ucode_capa,
++				   IWL_UCODE_TLV_CAPA_CNSLDTD_D3_D0_IMG);
+ 	struct wowlan_key_data key_data = {
+-		.configure_keys = !d0i3,
++		.configure_keys = !d0i3 && !unified,
+ 		.use_rsc_tsc = false,
+ 		.tkip = &tkip_cmd,
+ 		.use_tkip = false,
 -- 
 2.20.1
 
