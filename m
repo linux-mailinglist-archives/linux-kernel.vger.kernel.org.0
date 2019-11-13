@@ -2,101 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70379FA6D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D4AFA6E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfKMCu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:50:56 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:47956 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727170AbfKMCuy (ORCPT
+        id S1727571AbfKMCyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:54:19 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:47146 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbfKMCyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:50:54 -0500
-Received: from mr4.cc.vt.edu (mr4.cc.ipv6.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xAD2orO6025271
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 21:50:53 -0500
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xAD2oms6010608
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 21:50:53 -0500
-Received: by mail-qk1-f200.google.com with SMTP id m189so581509qkc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2019 18:50:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8QTCb+WFX3FpJ3fVztSaFH+rTvdtPtL4YNVcXp9Kn7s=;
-        b=KCGNkxPYKSAnzNPBG4ZsVxm8v71tHTYqSgOfYtCnC1IRqtln/pazrA/L59rQU7sZvn
-         wCOtHtDdODvsGGYmvTWnJFGYIdZSa07CiChdsvTllSnJZftHd7huEIS2P1txq2qBWJA9
-         CyJIJBjIDio2oqliJe5XE5hXoAfpITYSvzrqjVP73SNzrEplq/Ehy/KUR5waxg8JMXbf
-         nXNdFnV0lQ4h254WLpxIPvbZn7x20FoD+i1A5UqwYTtFvGjTaK3B0k8kNlc2jkJtD7hi
-         bdi/VxYUtZ+CTddxE7LS6FjP2Pd3Ik3wqV+EpIGdPyTPFm4ioSkG5Llz/o3YGpFn3Ks4
-         oI3w==
-X-Gm-Message-State: APjAAAVhH27mQSPRXfKKq2zKZEgrteaG9yGBkqCYp3D//f6gIKlY1I86
-        Gn1QMpsWvoAlFIJwl0tmVJH3o5uqN1lAPGnCumyaroGsAaA/e6SuuxKFYR0qPsmuJpqd5MiwodB
-        itgzvPQBq9mvFUg38JphX8ooL2GFvjyo7vFk=
-X-Received: by 2002:a37:c44b:: with SMTP id h11mr646984qkm.234.1573613448301;
-        Tue, 12 Nov 2019 18:50:48 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyWCFwzxoLiz+DgZpL/3YHBFIyVsL+YXuOhgpxf7giev41idLzl1WPF245u/f3hwaBto4LWkw==
-X-Received: by 2002:a37:c44b:: with SMTP id h11mr646972qkm.234.1573613448001;
-        Tue, 12 Nov 2019 18:50:48 -0800 (PST)
-Received: from turing-police.lan ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id j71sm319265qke.90.2019.11.12.18.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 18:50:47 -0800 (PST)
-From:   Valdis Kletnieks <valdis.kletnieks@vt.edu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        syzbot+787bcbef9b5fec61944b@syzkaller.appspotmail.com,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: exfat: convert WARN to a pr_info
-Date:   Tue, 12 Nov 2019 21:50:34 -0500
-Message-Id: <20191113025035.186051-1-valdis.kletnieks@vt.edu>
-X-Mailer: git-send-email 2.24.0
+        Tue, 12 Nov 2019 21:54:19 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xAD2s1OK011829, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCAS12.realtek.com.tw[172.21.6.16])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xAD2s1OK011829
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Nov 2019 10:54:01 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTITCAS12.realtek.com.tw (172.21.6.16) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Wed, 13 Nov 2019 10:54:01 +0800
+Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Wed, 13 Nov 2019 10:53:56 +0800
+Received: from RTEXMB03.realtek.com.tw ([::1]) by RTEXMB03.realtek.com.tw
+ ([fe80::3d7d:f7db:e1fb:307b%12]) with mapi id 15.01.1779.005; Wed, 13 Nov
+ 2019 10:53:56 +0800
+From:   James Tai <james.tai@realtek.com>
+To:     =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
+        "linux-realtek-soc@lists.infradead.org" 
+        <linux-realtek-soc@lists.infradead.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 5/7] ARM: dts: rtd1195: Introduce r-bus
+Thread-Topic: [PATCH 5/7] ARM: dts: rtd1195: Introduce r-bus
+Thread-Index: AQHVmD0XE9qksqLMuUeBNyO+ccQCh6eIaL1A
+Date:   Wed, 13 Nov 2019 02:53:55 +0000
+Message-ID: <a43d184d74c34e269714858b2635c35e@realtek.com>
+References: <20191111030434.29977-1-afaerber@suse.de>
+ <20191111030434.29977-6-afaerber@suse.de>
+In-Reply-To: <20191111030434.29977-6-afaerber@suse.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.190.187]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot took a nosedive because it runs with panic_on_warn set. And
-it's quite correct, it shouldn't have been a WARN in the first place.
-Other locations just use a pr_info(), so do that here too.
-
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Reported-by: syzbot+787bcbef9b5fec61944b@syzkaller.appspotmail.com
-Fixes: c48c9f7ff32b ("staging: exfat: add exfat filesystem code to staging")
----
- drivers/staging/exfat/exfat_blkdev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/exfat/exfat_blkdev.c b/drivers/staging/exfat/exfat_blkdev.c
-index 7bcd98b13109..8204720b2bf2 100644
---- a/drivers/staging/exfat/exfat_blkdev.c
-+++ b/drivers/staging/exfat/exfat_blkdev.c
-@@ -59,8 +59,8 @@ int exfat_bdev_read(struct super_block *sb, sector_t secno, struct buffer_head *
- 	if (*bh)
- 		return 0;
- 
--	WARN(!p_fs->dev_ejected,
--	     "[EXFAT] No bh, device seems wrong or to be ejected.\n");
-+	if (p_fs->dev_ejected)
-+		pr_info("[EXFAT] No bh, device seems wrong or to be ejected.\n");
- 
- 	return -EIO;
- }
-@@ -112,8 +112,8 @@ int exfat_bdev_write(struct super_block *sb, sector_t secno, struct buffer_head
- 	return 0;
- 
- no_bh:
--	WARN(!p_fs->dev_ejected,
--	     "[EXFAT] No bh, device seems wrong or to be ejected.\n");
-+	if (p_fs->dev_ejected)
-+		pr_info("[EXFAT] No bh, device seems wrong or to be ejected.\n");
- 
- 	return -EIO;
- }
--- 
-2.24.0
-
+SGkgQW5kcmVhcywNCg0KPiArCQlyYnVzOiByLWJ1c0AxODAwMDAwMCB7DQo+ICsJCQljb21wYXRp
+YmxlID0gInNpbXBsZS1idXMiOw0KPiArCQkJcmVnID0gPDB4MTgwMDAwMDAgMHgxMDAwMDA+Ow0K
+PiArCQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+ICsJCQkjc2l6ZS1jZWxscyA9IDwxPjsNCj4g
+KwkJCXJhbmdlcyA9IDwweDAgMHgxODAwMDAwMCAweDEwMDAwMD47DQo+ICsNCg0KVGhlIHItYnVz
+IHNpemUgb2YgUlREMTE5NSBpcyAweDcwMDAw4oCsLg0KDQpSZWdhcmRzLA0KSmFtZXMNCg0KDQo=
