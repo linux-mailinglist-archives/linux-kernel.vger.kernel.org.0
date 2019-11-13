@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73261FA19F
+	by mail.lfdr.de (Postfix) with ESMTP id DBBDEFA1A1
 	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbfKMB6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:58:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52258 "EHLO mail.kernel.org"
+        id S1730027AbfKMB6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:58:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbfKMB63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:58:29 -0500
+        id S1729652AbfKMB6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:58:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED37A22470;
-        Wed, 13 Nov 2019 01:58:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0358E2245C;
+        Wed, 13 Nov 2019 01:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610308;
-        bh=6ae5gLZHT9rVDPo0bjsJcFqpzYZgUkjFH0R3EQ7FAyw=;
+        s=default; t=1573610315;
+        bh=UG/trRbmRpxl3vtMnIFWUwEZ1MwIeNkNhQGy5Vhy+B4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F+Rypyseu/60HdfoG4rak7/KimabtHrdYaGRy/ppqhDLu2jVy4pu/NUc4Z1f2Qlfw
-         j1JcBXthYRv8gpIHpiDC3szKVXEfqET0osNSUxZnR8rwfZjq9N0XlHr98y09CidzQD
-         4ZMiJxxXyinQNwQPjkWm6h3Wyo6Ea/n6OmUnBj4o=
+        b=m8Ce4ZsC0vhJHT58DrRIwYkT4QORivPEY85XjS4N9yFGX7u42/i0v2orHXHrOtZeU
+         IsIax7zi5CWAvKoRjOPZR0r4WXcUpvqv4Oj8HO+EI0k5wXNP9H5S6R5fla0UqCazhH
+         Gb9eOdAoB1nq6A8H8D+XDJuj5WPAL4Kd/li1ukMc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Li RongQing <lirongqing@baidu.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 077/115] xfrm: use correct size to initialise sp->ovec
-Date:   Tue, 12 Nov 2019 20:55:44 -0500
-Message-Id: <20191113015622.11592-77-sashal@kernel.org>
+Cc:     Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 081/115] mmc: tmio: Fix SCC error detection
+Date:   Tue, 12 Nov 2019 20:55:48 -0500
+Message-Id: <20191113015622.11592-81-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
 References: <20191113015622.11592-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,36 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-[ Upstream commit f1193e915748291fb205a908db33bd3debece6e2 ]
+[ Upstream commit b85fb0a1c8aeaaa40d08945d51a6656b512173f0 ]
 
-This place should want to initialize array, not a element,
-so it should be sizeof(array) instead of sizeof(element)
+SDR104, HS200 and HS400 need to check for SCC error. If SCC error is
+detected, retuning is necessary.
 
-but now this array only has one element, so no error in
-this condition that XFRM_MAX_OFFLOAD_DEPTH is 1
-
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[Niklas: update commit message]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/tmio_mmc_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index 06dec32503bd6..fc0a9ce1be18f 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -130,7 +130,7 @@ struct sec_path *secpath_dup(struct sec_path *src)
- 	sp->len = 0;
- 	sp->olen = 0;
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 2437fcde915a7..01e51b7945750 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -914,8 +914,8 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
+ 		tmio_mmc_abort_dma(host);
  
--	memset(sp->ovec, 0, sizeof(sp->ovec[XFRM_MAX_OFFLOAD_DEPTH]));
-+	memset(sp->ovec, 0, sizeof(sp->ovec));
+-	if (host->check_scc_error)
+-		host->check_scc_error(host);
++	if (host->check_scc_error && host->check_scc_error(host))
++		mrq->cmd->error = -EILSEQ;
  
- 	if (src) {
- 		int i;
+ 	/* If SET_BLOCK_COUNT, continue with main command */
+ 	if (host->mrq && !mrq->cmd->error) {
 -- 
 2.20.1
 
