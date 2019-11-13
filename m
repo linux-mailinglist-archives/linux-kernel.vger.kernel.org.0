@@ -2,69 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B6EFA4E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:20:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E0FFA5D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730250AbfKMCTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:19:33 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:40616 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729027AbfKMCTb (ORCPT
+        id S1730237AbfKMCZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:25:08 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33206 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727723AbfKMCZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:19:31 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xAD2J7lm030129, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xAD2J7lm030129
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Nov 2019 10:19:07 +0800
-Received: from RTEXMB02.realtek.com.tw (172.21.6.95) by
- RTITCAS11.realtek.com.tw (172.21.6.12) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Wed, 13 Nov 2019 10:19:07 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTEXMB02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Wed, 13 Nov 2019 10:19:07 +0800
-Received: from RTEXMB03.realtek.com.tw ([::1]) by RTEXMB03.realtek.com.tw
- ([fe80::3d7d:f7db:e1fb:307b%12]) with mapi id 15.01.1779.005; Wed, 13 Nov
- 2019 10:19:06 +0800
-From:   James Tai <james.tai@realtek.com>
-To:     =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        "'DTML'" <devicetree@vger.kernel.org>,
-        "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v2 0/2] Initial RTD1619 SoC and Realtek Mjolnir EVB support
-Thread-Topic: [PATCH v2 0/2] Initial RTD1619 SoC and Realtek Mjolnir EVB
- support
-Thread-Index: AdWWGJhW6hHY3ZYJQ8qKkqaxghH5QQB63IcAAHDoKfA=
-Date:   Wed, 13 Nov 2019 02:19:06 +0000
-Message-ID: <569a8645d951428cbc1ce4bab3f42f3b@realtek.com>
-References: <43B123F21A8CFE44A9641C099E4196FFCF91F9CB@RTITMBSVM04.realtek.com.tw>
- <f2ce8745-e056-06a5-3d55-b00ab4d82414@suse.de>
-In-Reply-To: <f2ce8745-e056-06a5-3d55-b00ab4d82414@suse.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.190.187]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 12 Nov 2019 21:25:06 -0500
+Received: by mail-io1-f67.google.com with SMTP id j13so810150ioe.0;
+        Tue, 12 Nov 2019 18:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=67vt+2/hcnur/stdYuxW6KOlEarE4FFpvwMXouje6z0=;
+        b=C5zJXaoWqhirA5JCzRzQxV6NeESF2nnVYyWxW3GPmZgA3s9X0SjSG7oOgw7GKTeKd6
+         4UMme8ZH+Z5d040MLiivvMDkk7mV7Y4M2lyRmLy02gcoA8HavuwI81OkKq19KHVvuISM
+         hjpF56QT9rMyiN0DCZtYVVuUNz7msCut/xpm3zLFDL1WDZ8NFnvqwFVEoP9LDdYxl4HC
+         7v0eBMSBZ7Vt111I1M9fKgU4pcE60ZmLtIm6VPz9tIT3zYHjysYcSRbFSGiowSFh5AN3
+         CnyJ3cSirM+W+u0JslaNlQCyGu+b4dFHpV/7oHaHD036f2WdS3cVE3qnoFwCo7vW+1VH
+         9Mrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=67vt+2/hcnur/stdYuxW6KOlEarE4FFpvwMXouje6z0=;
+        b=HQKMcBq0T/O/1gWQTv8tE8zmv0TB1gyNACAArdnVzqyESW4FsIFo44+g3+cJpBYRnN
+         81pN8Ty5odZ/Xr65goevoQoRhXjMu9fVrY3YbuCqI/CZElwjJhXNMCLm7S6O6+K+SeP/
+         FZjQuOfpZESsG0fGYsOisMJMnsgo89vvHXQJ1/qmKJVkIQm8kwcfdEjW8M48tCAfdJt5
+         5MqBzgsR+NWHpNpSJb8nfCmp/R+QrF/oYKVR7jvyOVpgEXoWZaRgtrztM/CUHO85kz3Q
+         31a5ROspV3P62kFaxUEO0/DRd83cidyxiQoYdP9N33djomPSw8UihuL0VTJIUgJ81CdD
+         tWRA==
+X-Gm-Message-State: APjAAAV4eijhwgggWfsz/fFGyej1/BNO7QjS6UVoMzAepWZuaT+daUKz
+        9Gn2gn9EJ/h4pN6UxzA7H7lPipwdFPRk3R090iM=
+X-Google-Smtp-Source: APXvYqwuo2tTbYTMNeWbnMR8FQ9nl/VAo3S2+IdE0xI195BER3D+h0bQM0h+rgl2KyG1yFAZxh1xzwjq174E8KUeDCI=
+X-Received: by 2002:a6b:b987:: with SMTP id j129mr1093188iof.105.1573611904929;
+ Tue, 12 Nov 2019 18:25:04 -0800 (PST)
 MIME-Version: 1.0
+References: <1573200932-384-1-git-send-email-cang@codeaurora.org> <1573200932-384-6-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1573200932-384-6-git-send-email-cang@codeaurora.org>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Wed, 13 Nov 2019 07:54:28 +0530
+Message-ID: <CAGOxZ502wp17UFEk67Qno9DQ0dFPfwMRTLNTCvOXibQDhOw4SA@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] scsi: ufs: Complete pending requests in host reset
+ and restore path
+To:     Can Guo <cang@codeaurora.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQW5kcmVhcywNCiANCj4gMSkgVGhlIHBhdGNoZXMgMS8yIGFuZCAyLzIgYXJlIGV4cGVjdGVk
-IHRvIGJlIHRocmVhZGVkIHRvIDAvMiAoYnV0IG5vdA0KPiAyLzIgdG8gMS8yKS4gUGxlYXNlIGNo
-ZWNrIHlvdXIgZ2l0IFtzZW5kZW1haWxdIGNvbmZpZyBvciB1c2UgLS10aHJlYWQNCj4gLS1uby1j
-aGFpbi1yZXBseS10by4gVGhhdCBoZWxwcyBrZWVwIHRoZSBzZXJpZXMgdG9nZXRoZXIgd2hlbiBw
-ZW9wbGUgc3RhcnQNCj4gcmVwbHlpbmcgdG8gaW5kaXZpZHVhbCBwYXRjaGVzLiBJZiB5b3VyIEdp
-dCBjb25maWcgc2VlbXMgY29ycmVjdCwgaXQgbWlnaHQgYWxzbyBiZQ0KPiBhbiBpc3N1ZSB3aXRo
-IHlvdXIgU01UUCBzZXJ2ZXIuDQoNClRoZSBnaXQgY29uZmlnIGlzIGNvcnJlY3QuIEknbGwgY2hl
-Y2sgbXkgU01UUCBzZXJ2ZXIuDQoNClJlZ2FyZHMsDQpKYW1lcw0KDQoNCg==
+Hi Can,
+
+On Fri, Nov 8, 2019 at 1:50 PM Can Guo <cang@codeaurora.org> wrote:
+>
+> In UFS host reset and restore path, before probe, we stop and start the
+> host controller once. After host controller is stopped, the pending
+> requests, if any, are cleared from the doorbell, but no completion IRQ
+> would be raised due to the hba is stopped.
+> These pending requests shall be completed along with the first NOP_OUT
+> command(as it is the first command which can raise a transfer completion
+> IRQ) sent during probe.
+> Since the OCSs of these pending requests are not SUCCESS(because they are
+> not yet literally finished), their UPIUs shall be dumped. When there are
+> multiple pending requests, the UPIU dump can be overwhelming and may lead
+> to stability issues because it is in atomic context.
+> Therefore, before probe, complete these pending requests right after host
+> controller is stopped.
+>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+Looks good, I hope this is tested on your platform.
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+>  drivers/scsi/ufs/ufshcd.c | 20 +++++++-------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 5950a7c..4df4136 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -5404,8 +5404,8 @@ static void ufshcd_err_handler(struct work_struct *work)
+>
+>         /*
+>          * if host reset is required then skip clearing the pending
+> -        * transfers forcefully because they will automatically get
+> -        * cleared after link startup.
+> +        * transfers forcefully because they will get cleared during
+> +        * host reset and restore
+>          */
+>         if (needs_reset)
+>                 goto skip_pending_xfer_clear;
+> @@ -6333,9 +6333,13 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
+>         int err;
+>         unsigned long flags;
+>
+> -       /* Reset the host controller */
+> +       /*
+> +        * Stop the host controller and complete the requests
+> +        * cleared by h/w
+> +        */
+>         spin_lock_irqsave(hba->host->host_lock, flags);
+>         ufshcd_hba_stop(hba, false);
+> +       ufshcd_complete_requests(hba);
+>         spin_unlock_irqrestore(hba->host->host_lock, flags);
+>
+>         /* scale up clocks to max frequency before full reinitialization */
+> @@ -6369,7 +6373,6 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
+>  static int ufshcd_reset_and_restore(struct ufs_hba *hba)
+>  {
+>         int err = 0;
+> -       unsigned long flags;
+>         int retries = MAX_HOST_RESET_RETRIES;
+>
+>         do {
+> @@ -6379,15 +6382,6 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
+>                 err = ufshcd_host_reset_and_restore(hba);
+>         } while (err && --retries);
+>
+> -       /*
+> -        * After reset the door-bell might be cleared, complete
+> -        * outstanding requests in s/w here.
+> -        */
+> -       spin_lock_irqsave(hba->host->host_lock, flags);
+> -       ufshcd_transfer_req_compl(hba);
+> -       ufshcd_tmc_handler(hba);
+> -       spin_unlock_irqrestore(hba->host->host_lock, flags);
+> -
+>         return err;
+>  }
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
+
+
+-- 
+Regards,
+Alim
