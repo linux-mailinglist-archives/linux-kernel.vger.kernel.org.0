@@ -2,187 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82DB8FA7DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 05:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 914EBFA7F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 05:26:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbfKMEN1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 23:13:27 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:40657 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfKMEN1 (ORCPT
+        id S1727183AbfKMEZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 23:25:56 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:32324 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfKMEZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 23:13:27 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191113041324epoutp02f9ae2ac44ec86db8a4c39d0f95045231~WnZn8U0ER2653526535epoutp02s
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 04:13:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191113041324epoutp02f9ae2ac44ec86db8a4c39d0f95045231~WnZn8U0ER2653526535epoutp02s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1573618404;
-        bh=mJFA/njgmP4obhVAaTLVxm27YK22M38R7AAIgIdwODE=;
-        h=Date:From:Reply-To:To:CC:Subject:In-Reply-To:References:From;
-        b=pU86+m866MOt67BrCGH4n2oGel0AQuVz8It5Qdu6OKxG6/HezxJK8AHOJ2d9sCYQA
-         9fUF59gVHOQSNNij9NjdFv9HG1JeKKYBOBWLMa4ZU4Q4zyJ5Ol/+NcTmfAlhQzcB0n
-         T10iNBIGAIxhm5xuK9mxk1c7T8PRjcGoRGbPXp8A=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191113041324epcas1p4fed4f63a3c2c8f2eb1aca61bb4446daf~WnZnm0RY30892708927epcas1p4j;
-        Wed, 13 Nov 2019 04:13:24 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47CWSJ2YxPzMqYkc; Wed, 13 Nov
-        2019 04:13:20 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1F.C6.04135.0E28BCD5; Wed, 13 Nov 2019 13:13:20 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191113041319epcas1p3869db73a60fe98be01c5c65149a709c9~WnZjXSql-0607606076epcas1p3Y;
-        Wed, 13 Nov 2019 04:13:19 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191113041319epsmtrp2d208b704cd4fe15d818169d1abc89a39~WnZjWqNuv1978319783epsmtrp2g;
-        Wed, 13 Nov 2019 04:13:19 +0000 (GMT)
-X-AuditID: b6c32a36-7e3ff70000001027-08-5dcb82e0ca3f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5B.CC.25663.FD28BCD5; Wed, 13 Nov 2019 13:13:19 +0900 (KST)
-Received: from [10.113.221.222] (unknown [10.113.221.222]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191113041319epsmtip251dbdd65ca070b8cdd09d837cdcbca9e~WnZjFf1qx1180111801epsmtip2Y;
-        Wed, 13 Nov 2019 04:13:19 +0000 (GMT)
-Message-ID: <5DCB8380.3070304@samsung.com>
-Date:   Wed, 13 Nov 2019 13:16:00 +0900
-From:   Seung-Woo Kim <sw0312.kim@samsung.com>
-Reply-To: sw0312.kim@samsung.com
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:16.0) Gecko/20121011
-        Thunderbird/16.0.1
+        Tue, 12 Nov 2019 23:25:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573619151;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=fweAIs1NsQUyJq3CnTKSiNwVcFJ1aHqrYO1LnCTNAwI=;
+        b=EvkwOakq9oY4TsH9JsiTYOV5dmhFZcry0bk7sn8zFXuNz7rlEBPXOLXzLqIrUvtPMi
+        eF5dSgN3sTKFKXVcEL4jvNtRP6wegxFcg5bEppoQwoGip0saOukCXzzPqmWH0CsrWacL
+        oAbjRFFyu5BYELXTMlPmzw/nmqAY5fKPfhGlbLOriH/kbacN7mqN3W6io4DH3Llsltav
+        fET0OiWgHAosPhrWSu1qrfEoDicR7LZ6EU/KeBZmvyYNE0/3Rkthof3b2maxHbnJI8h0
+        mT7egWnZy1z/ViLjGpRzlm482o1/WjLbUDWXYWtPnYkG/EHgOv/0hZRVZUwPgTtJrgUu
+        BOiA==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zmwdNLqV/Nz7PsNPEA=="
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.29.0 SBL|AUTH)
+        with ESMTPSA id N09a57vAD4OTATE
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 13 Nov 2019 05:24:29 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>
+Subject: Re: [PATCH v24 00/12] /dev/random - a new approach with full SP800-90B compliance
+Date:   Wed, 13 Nov 2019 05:24:26 +0100
+Message-ID: <3208655.cZiRAY37Id@positron.chronox.de>
+In-Reply-To: <CALCETrVBzuOsDfaz5y3V4v+6xmeWufOYsOGnpZrRju6Pfsi6gg@mail.gmail.com>
+References: <6157374.ptSnyUpaCn@positron.chronox.de> <CALCETrVBzuOsDfaz5y3V4v+6xmeWufOYsOGnpZrRju6Pfsi6gg@mail.gmail.com>
 MIME-Version: 1.0
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will@kernel.org, catalin.marinas@arm.com, sungguk.na@samsung.com
-Subject: Re: [PATCH] arm64: perf: Report arm pc registers for compat perf
-In-Reply-To: <20191112094037.GA32269@lakrids.cambridge.arm.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmvu6DptOxBrv3C1i8X9bDaLHp8TVW
-        i8u75rBZLL1+kclix7yDjBYtd0wd2DzWzFvD6LFpVSebx+Yl9R59W1YxenzeJBfAGpVtk5Ga
-        mJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQO0X0mhLDGnFCgU
-        kFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFmgV5yYW1yal66XnJ9rZWhgYGQKVJiQndGy/BRL
-        wQSxin/bnzM3MB4T7GLk5JAQMJH40nibtYuRi0NIYAejxII706GcT4wSu/+vZYZwvjFK/L6/
-        kAWmZdaBz1CJvYwSl7feY4Rw3jNKzFu9GKyKV0BL4vqh5WA2i4CqxPuWbewgNpuAjsT+Jb9Z
-        QWwhAQWJC1tnsIHYogJhEjMO9jNC9ApKnJz5BKxXREBdomfXFxaQBcwCXYwSa9+/ZgJJCAt4
-        Smzt3gNWxClgLzHl7CSwOLOAvETz1tlg50kI3GaTuDX7PzvE3S4Sbe9mQ9nCEq+Ob4GypSQ+
-        v9vLBmFXS2yf8JMdormDUaKnvRHqaWOJ/UsnA23gANqgKbF+lz5EWFFi5++5jBCL+STefe1h
-        BSmREOCV6GgTgihRkdh5dBIbRFhKYtaGYIiwh8Syg0tYJzAqzkLy8iwkH8xC2LWAkXkVo1hq
-        QXFuemqxYYERchRvYgQnSC2zHYyLzvkcYhTgYFTi4ZVYeCpWiDWxrLgy9xCjBAezkgjvjooT
-        sUK8KYmVValF+fFFpTmpxYcYTYGxM5FZSjQ5H5i880riDU2NjI2NLUwMzUwNDZXEeR2XL40V
-        EkhPLEnNTk0tSC2C6WPi4JRqYFw6b3PteetrPysT4vJYpnD0F8rnKNsrfCnfyuXU2/z9HZ/Y
-        x1NXMrL+yv8x350/USBBNVyhvca+uyBIxu/6kf2y69c289+PP7ZOtTrviaLLzSrPzrzSlYYd
-        P5p/XeuYEL50839x5myFj6H89QLRkicCPl2x9vo/473dljNXm6ewHpnzus0tV4mlOCPRUIu5
-        qDgRAIQzAsOmAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsWy7bCSvO79ptOxBh+7ZC3eL+thtNj0+Bqr
-        xeVdc9gsll6/yGSxY95BRouWO6YObB5r5q1h9Ni0qpPNY/OSeo++LasYPT5vkgtgjeKySUnN
-        ySxLLdK3S+DKaFl+iqVggljFv+3PmRsYjwl2MXJySAiYSMw68Jm5i5GLQ0hgN6PEibVTmCAS
-        UhJzv21n7GLkALKFJQ4fLoaoecso8eDdTUaQGl4BLYnrh5azgNgsAqoS71u2sYPYbAI6EvuX
-        /GYFsYUEFCQubJ3BBmKLCoRI/Pp4hRWiV1Di5MwnYL0iAuoSPbu+sIAsYBboZpSY3/IVLCEs
-        4CmxtXsPC8Tm04wSV6dtAOvmFLCXmHJ2EhPIdcxA3evnCYGEmQXkJZq3zmaewCg0C8mOWQhV
-        s5BULWBkXsUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERwPWlo7GE+ciD/EKMDBqMTD
-        e2DeqVgh1sSy4srcQ4wSHMxKIrw7Kk7ECvGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQ
-        nliSmp2aWpBaBJNl4uCUamBMarrl/utGAGO/cm/+RGFWsdeLNa58r652ZOnK7yuRfipgGFJp
-        /0yTmd1UROt32sKA8wee7dovw8tUsTaUU0zJ4AWvzzluITmN94LWWhPvq3iaHXt5+p370X7l
-        07q6EzsivP6ExaZXdczS2HHgs8jNJeVhJiYhn7J3JMc63968U9xkkeVvcyWW4oxEQy3mouJE
-        AEKcHMyDAgAA
-X-CMS-MailID: 20191113041319epcas1p3869db73a60fe98be01c5c65149a709c9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191112005902epcas1p2d9dfa6a29f2c57669b1c1eb58517016d
-References: <CGME20191112005902epcas1p2d9dfa6a29f2c57669b1c1eb58517016d@epcas1p2.samsung.com>
-        <1573520501-29195-1-git-send-email-sw0312.kim@samsung.com>
-        <20191112094037.GA32269@lakrids.cambridge.arm.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark Rutland,
+Am Dienstag, 12. November 2019, 16:33:59 CET schrieb Andy Lutomirski:
 
-On 2019년 11월 12일 18:40, Mark Rutland wrote:
-> On Tue, Nov 12, 2019 at 10:01:41AM +0900, Seung-Woo Kim wrote:
->> If perf is built as arm 32-bit, it only reads 15 registers as arm
->> 32-bit register map and this breaks dwarf call-chain in compat
->> perf because pc register information is not filled.
->> Report arm pc registers for 32-bit compat perf.
->>
->> Without this, arm 32-bit perf dwarf call-graph shows below
->> verbose message:
->>   unwind: reg 15, val 0
->>   unwind: reg 13, val ffbc6360
->>   unwind: no map for 0
->>
->> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
->> ---
->>  arch/arm64/kernel/perf_regs.c |    2 ++
->>  1 files changed, 2 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/perf_regs.c b/arch/arm64/kernel/perf_regs.c
->> index 0bbac61..d4172e7 100644
->> --- a/arch/arm64/kernel/perf_regs.c
->> +++ b/arch/arm64/kernel/perf_regs.c
->> @@ -24,6 +24,8 @@ u64 perf_reg_value(struct pt_regs *regs, int idx)
->>  			return regs->compat_sp;
->>  		if ((u32)idx == PERF_REG_ARM64_LR)
->>  			return regs->compat_lr;
->> +		if ((u32)idx == 15) /* PERF_REG_ARM_PC */
->> +			return regs->pc;
->>  	}
-> 
-> This doesn't look quite right to me, since perf_regs_value() is
-> consuming the arm64 index for all other registers (e.g. the LR, in the
-> patch context).
-> 
-> i.e. this is designed for a native arm64 caller, and the fixup allows it
-> to view a compat task's registers as-if it were native.
-> 
-> How does this work for a native arm64 perf invocation with a compat
-> task? I assume it consumers regs->pc, and works as expected?
+Hi Andy,
 
-In native arm64 perf, compat task registers are set as arm64 register
-map, and sp, lr, and pc are set properly. But compat_sp is from regs[13]
-and compat_lr is from regs[14], so same register values are set for
-regs[13]/egs->sp and regs[14]/regs->lr. With this change, it sets
-regs[15] same with regs->pc, but the register is not use at least for
-arm 32-bit compat binary callchain, so no issue as far as I understood
-and tested.
+> On Mon, Nov 11, 2019 at 11:13 AM Stephan M=FCller <smueller@chronox.de> w=
+rote:
+> > The following patch set provides a different approach to /dev/random wh=
+ich
+> > is called Linux Random Number Generator (LRNG) to collect entropy within
+> > the Linux kernel. The main improvements compared to the existing
+> > /dev/random is to provide sufficient entropy during boot time as well as
+> > in virtual environments and when using SSDs. A secondary design goal is
+> > to limit the impact of the entropy collection on massive parallel syste=
+ms
+> > and also allow the use accelerated cryptographic primitives. Also, all
+> > steps of the entropic data processing are testable.
+>=20
+> This is very nice!
+>=20
+> > The LRNG patch set allows a user to select use of the existing /dev/ran=
+dom
+> > or the LRNG during compile time. As the LRNG provides API and ABI
+> > compatible interfaces to the existing /dev/random implementation, the
+> > user can freely chose the RNG implementation without affecting kernel or
+> > user space operations.
+> >=20
+> > This patch set provides early boot-time entropy which implies that no
+> > additional flags to the getrandom(2) system call discussed recently on
+> > the LKML is considered to be necessary.
+>=20
+> I'm uneasy about this.  I fully believe that, *on x86*, this works.
+> But on embedded systems with in-order CPUs, a single clock, and very
+> lightweight boot processes, most or all of boot might be too
+> deterministic for this to work.
+>=20
+> I have a somewhat competing patch set here:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/log/?h=3Dr=
+andom
+> /kill-it
+>=20
+> (Ignore the "horrible test hack" and the debugfs part.)
+>=20
+> The basic summary is that I change /dev/random so that it becomes
+> functionally identical to getrandom(..., 0) -- in other words, it
+> blocks until the CRNG is initialized but is then identical to
+> /dev/urandom.  And I add getrandom(...., GRND_INSECURE) that is
+> functionally identical to the existing /dev/urandom: it always returns
+> *something* immediately, but it may or may not actually be
+> cryptographically random or even random at all depending on system
+> details.
+>=20
+> In other words, my series simplifies the ABI that we support.  Right
+> now, we have three ways to ask for random numbers with different
+> semantics and we need to have to RNGs in the kernel at all time.  With
+> my changes, we have only two ways to ask for random numbers, and the
+> /dev/random pool is entirely gone.
+>=20
+> Would you be amenable to merging this into your series (i.e. either
+> merging the code or just the ideas)?  This would let you get rid of
+> things like the compile-time selection of the blocking TRNG, since the
+> blocking TRNG would be entirely gone.
 
-> 
-> I suspect we need separate native and compat forms of this function, but
-> then it's not entirely clear how this should work -- how does this work
-> for a compat perf analysing a native arm64 binary?
+I pulled your code and found the following based on my explanation that I=20
+would suggest to keep the TRNG at least as an option.
 
-I didn't expect native arm64 binary callchain is possible to get from
-arm 32-bit perf.
+=2D 7d54ef8512b06baf396f12584f7f48a9558ecd0f does not seem applicable: I al=
+so do=20
+have an equivalent "lrng_init_wait" wait queue. This wait queue is used to =
+let=20
+in-kernel users wait until the LRNG obtained 128 bits of entropy. In additi=
+on,=20
+this wait queue is used to let user space is invoked after the LRNG has=20
+received 256 bits of entropy (which implies that the kernel waiters are=20
+invoked earlier). In kernel waiters are all that call wait_for_random_bytes=
+=20
+and its derivatives. User space callers have to call getrandom(..., 0); to =
+be=20
+registered in this wait queue. So, I think the wakeup calls I have in the L=
+RNG=20
+for lrng_init_wait should remain.
 
-In my test with 32-bit compat perf, it sets perf
-event->attr.sample_regs_user as 0xffff, which is matched with 32-bit
-arm, but in arm64 perf part, it cannot be accessed. If there is way to
-check it, it is possible to set difference register form. Anyway, in the
-case, native arm64 register map is still not fully reported to 32-bit
-compat perf.
+=2D 6a26a3146e5fb90878dca9fde8caa1ca4233156a: My handler for /dev/urandom a=
+nd=20
+getrandom(..., 0) are using one callback which issues a warning in both use=
+=20
+cases (see lrng_sdrng_read). So I think this patch may not be applicable as=
+=20
+the LRNG code implements warning about being unseeded.
+
+=2D 3e8e159da49b44ae0bb08e68fa2be760722fa033: I am happy to take that code =
+which=20
+would almost directly apply. The last hunk however would be:
+
+if (!(flags & GRND_INSECURE) && unlikely(!lrng_state_operational())) {
+
+=3D=3D> Shall I apply it to my code base? If yes, how shall the changes to=
+=20
+random.h be handled?
 
 
-Thanks,
-- Seung-Woo Kim
+=2D 920e97e7fc508e6f0da9c7dec94c8073fd63ab4d: I would pass on this patch du=
+e to=20
+the following: it unconditionally starts removing the access to the TRNG (t=
+he=20
+LRNG's logical equivalent to the blocking_pool). As patch 10/12 of the LRNG=
+=20
+patch series provides the TRNG that is a compile time option, your patch wo=
+uld=20
+logically and functionally be equivalent when deselecting=20
+CONFIG_LRNG_TRNG_SUPPORT in the LRNG without any further changes to the LRN=
+G=20
+code.
 
-> 
-> Thanks,
-> Mark.
-> 
-> 
+=2D 693b9ffdf0fdc93456b5ad293ac05edf240a531b: This patch is applicable to t=
+he=20
+LRNG. In case CONFIG_LRNG_TRNG_SUPPORT is not set, the TRNG is not present.=
+=20
+Yet, the /dev/random and getrandom(GRND_RANDOM) would behave blocked until=
+=20
+fully initialized. I have now added the general blocking until the LRNG is=
+=20
+fully initialized to the common /dev/random and getrandom(GRND_RANDOM)=20
+interface function of lrng_trng_read_common. With that, the LRNG would be=20
+fully equivalent to this patch if CONFIG_LRNG_TRNG_SUPPORT is not set.
 
--- 
-Seung-Woo Kim
-Samsung Research
---
+=2D 66f660842ec6d34134b9c3c1c9c65972834797f6: This patch is implicit with=20
+CONFIG_LRNG_TRNG_SUPPORT being not set.
+
+=2D d8f59b5c25af22fb9d85b7fa96de601ea03f2eac: This patch is not applicable =
+to=20
+the LRNG as the deactivation of CONFIG_LRNG_TRNG_SUPPORT implies that there=
+=20
+should be no unused code left in the LRNG.
+
+=2D 4046ac638761821aef67af10537ebcbc80715785: In theory that patch is appli=
+cable=20
+to the LRNG as well. The LRNG has the lrng_read_wait queue. If=20
+CONFIG_LRNG_TRNG_SUPPORT is not set, there will never be the code triggered=
+ to=20
+add a caller to this wait queue. To avoid cluttering the LRNG code with=20
+ifdefs, may I suggest to leave these several lines even though it is dead=20
+code?
+
+
+
+Bottom line: the only patch that I seems to be relevant and that I would be=
+=20
+happy to apply is the one adding GRND_INSECURE. All other patches are=20
+implicitly covered by deselecting CONFIG_LRNG_TRNG_SUPPORT.
+
+By making the TRNG compile-time selectable, I was hoping to serve all users=
+: I=20
+wanted to cover the conclusions of the discussion to remove the blocking_po=
+ol.=20
+On the other hand, however, I want to support requirements that need the=20
+blocking behavior.
+
+The current LRNG patch set, however, defaults to Y for=20
+CONFIG_LRNG_TRNG_SUPPORT. I would see no issue if it defaults to N.
+
+
+Thank you very much.
+
+Ciao
+Stephan
+
 
