@@ -2,141 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E15FB6B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F62FB6CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:57:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbfKMR5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 12:57:12 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6656 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726105AbfKMR5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 12:57:12 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0ED179AD0C9DB477799E;
-        Thu, 14 Nov 2019 01:57:10 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 14 Nov 2019
- 01:57:02 +0800
-Date:   Wed, 13 Nov 2019 17:56:55 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Tao Xu <tao3.xu@intel.com>, Linux MM <linux-mm@kvack.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, "Keith Busch" <keith.busch@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linuxarm <linuxarm@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH V5 1/4] ACPI: Support Generic Initiator only domains
-Message-ID: <20191113175655.00005db9@huawei.com>
-In-Reply-To: <CAPcyv4i=Kkycy3YtU7FS-qG02CFjAQTcN7UaGjbKwDnNHDZCEA@mail.gmail.com>
-References: <20191004114330.104746-1-Jonathan.Cameron@huawei.com>
-        <20191004114330.104746-2-Jonathan.Cameron@huawei.com>
-        <CAPcyv4jZG-5s6NsS-_-oNG45y0Qb1mVD_s8cCGqLYtzvHqEo+Q@mail.gmail.com>
-        <20191113094742.00000dc4@huawei.com>
-        <77b6a6e8-9d44-1e1c-3bf0-a8d04833598d@intel.com>
-        <CAPcyv4i=Kkycy3YtU7FS-qG02CFjAQTcN7UaGjbKwDnNHDZCEA@mail.gmail.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1728417AbfKMR5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:57:51 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40785 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728398AbfKMR5t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 12:57:49 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iUwtm-0000iM-Dl; Wed, 13 Nov 2019 17:57:46 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-unionfs@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH][V3] ovl: fix lookup failure on multi lower squashfs
+Date:   Wed, 13 Nov 2019 17:57:46 +0000
+Message-Id: <20191113175746.110933-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Nov 2019 08:52:46 -0800
-Dan Williams <dan.j.williams@intel.com> wrote:
+From: Amir Goldstein <amir73il@gmail.com>
 
-> On Wed, Nov 13, 2019 at 5:57 AM Tao Xu <tao3.xu@intel.com> wrote:
-> >
-> > On 11/13/2019 5:47 PM, Jonathan Cameron wrote:  
-> > > On Tue, 12 Nov 2019 09:55:17 -0800
-> > > Dan Williams <dan.j.williams@intel.com> wrote:
-> > >  
-> > >> [ add Tao Xu ]
-> > >>
-> > >> On Fri, Oct 4, 2019 at 4:45 AM Jonathan Cameron
-> > >> <Jonathan.Cameron@huawei.com> wrote:  
-> > >>>
-> > >>> Generic Initiators are a new ACPI concept that allows for the
-> > >>> description of proximity domains that contain a device which
-> > >>> performs memory access (such as a network card) but neither
-> > >>> host CPU nor Memory.
-> > >>>
-> > >>> This patch has the parsing code and provides the infrastructure
-> > >>> for an architecture to associate these new domains with their
-> > >>> nearest memory processing node.  
-> > >>
-> > >> Thanks for this Jonathan. May I ask how this was tested? Tao has been
-> > >> working on qemu support for HMAT [1]. I have not checked if it already
-> > >> supports generic initiator entries, but it would be helpful to include
-> > >> an example of how the kernel sees these configurations in practice.
-> > >>
-> > >> [1]: http://patchwork.ozlabs.org/cover/1096737/  
-> > >
-> > > Tested against qemu with SRAT and SLIT table overrides from an
-> > > initrd to actually create the node and give it distances
-> > > (those all turn up correctly in the normal places).  DSDT override
-> > > used to move an emulated network card into the GI numa node.  That
-> > > currently requires the PCI patch referred to in the cover letter.
-> > > On arm64 tested both on qemu and real hardware (overrides on tables
-> > > even for real hardware as I can't persuade our BIOS team to implement
-> > > Generic Initiators until an OS is actually using them.)
-> > >
-> > > Main real requirement is memory allocations then occur from one of
-> > > the nodes at the minimal distance when you are do a devm_ allocation
-> > > from a device assigned. Also need to be able to query the distances
-> > > to allow load balancing etc.  All that works as expected.
-> > >
-> > > It only has a fairly tangential connection to HMAT in that HMAT
-> > > can provide information on GI nodes.  Given HMAT code is quite happy
-> > > with memoryless nodes anyway it should work.  QEMU doesn't currently
-> > > have support to create GI SRAT entries let alone HMAT using them.
-> > >
-> > > Whilst I could look at adding such support to QEMU, it's not
-> > > exactly high priority to emulate something we can test easily
-> > > by overriding the tables before the kernel reads them.
-> > >
-> > > I'll look at how hard it is to build an HMAT tables for my test
-> > > configs based on the ones I used to test your HMAT patches a while
-> > > back.  Should be easy if tedious.
-> > >
-> > > Jonathan
-> > >  
-> > Indeed, HMAT can support Generic Initiator, but as far as I know, QEMU
-> > only can emulate a node with cpu and memory, or memory-only. Even if we
-> > assign a node with cpu only, qemu will raise error. Considering
-> > compatibility, there are lots of work to do for QEMU if we change NUMA
-> > or SRAT table.  
-> 
-> Thanks for the background. It would still be a useful feature to be
-> able to define a memory + generic-initiator node in qemu. That will
-> mirror real world accelerators with local memory configurations.
+In the past, overlayfs required that lower fs have non null
+uuid in order to support nfs export and decode copy up origin file handles.
 
-Ah crossed with my essay.  This simple case you have here is easier to
-discuss.  Lets call it a GPU on a coherent interconnect with local memory.
+Commit 9df085f3c9a2 ("ovl: relax requirement for non null uuid of
+lower fs") relaxed this requirement for nfs export support, as long
+as uuid (even if null) is unique among all lower fs.
 
-What do you think should happen for access0 in sysfs?  Do we want the
-GPU reflected in there or not?
+However, said commit unintentionally also relaxed the non null uuid
+requirement for decoding copy up origin file handles, regardless of
+the unique uuid requirement.
 
-This particular case doesn't actually need a GI, though perhaps you
-might want one purely to give HMAT based info.  On a pre GI system
-you would just use a memory only node and use DSDT _PXM to put the
-GPU device in it.
+Amend this mistake by disabling decoding of copy up origin file handle
+from lower fs with a conflicting uuid.
 
-Whilst I agree a means of testing this in qemu might be more
-friendly than doing it by overriding tables, the overriding route
-lets you do the crazy corner cases + generate 'invalid' tables
-which are also useful for testing.
+We still encode copy up origin file handles from those fs, because
+file handles like those already exist in the wild and because they
+might provide useful information in the future.
 
-Thanks,
+[Colin Ian King] fixed the case of index=off,nfs_export=off
 
-Jonathan
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/lkml/20191106234301.283006-1-colin.king@canonical.com/
+Fixes: 9df085f3c9a2 ("ovl: relax requirement for non null uuid ...")
+Cc: stable@vger.kernel.org # v4.20+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Tested-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>`
+---
 
+V3: fix the following check:
+  -       if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
+  +       if (!ofs->config.nfs_export && !ofs->upper_mnt)
+
+Add the index=off,nfs_export=off comment in the commit message
+
+---
+ fs/overlayfs/namei.c     |  8 ++++++++
+ fs/overlayfs/ovl_entry.h |  2 ++
+ fs/overlayfs/super.c     | 15 +++++++++++----
+ 3 files changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index e9717c2f7d45..f47c591402d7 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -325,6 +325,14 @@ int ovl_check_origin_fh(struct ovl_fs *ofs, struct ovl_fh *fh, bool connected,
+ 	int i;
+ 
+ 	for (i = 0; i < ofs->numlower; i++) {
++		/*
++		 * If lower fs uuid is not unique among lower fs we cannot match
++		 * fh->uuid to layer.
++		 */
++		if (ofs->lower_layers[i].fsid &&
++		    ofs->lower_layers[i].fs->bad_uuid)
++			continue;
++
+ 		origin = ovl_decode_real_fh(fh, ofs->lower_layers[i].mnt,
+ 					    connected);
+ 		if (origin)
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index a8279280e88d..28348c44ea5b 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -22,6 +22,8 @@ struct ovl_config {
+ struct ovl_sb {
+ 	struct super_block *sb;
+ 	dev_t pseudo_dev;
++	/* Unusable (conflicting) uuid */
++	bool bad_uuid;
+ };
+ 
+ struct ovl_layer {
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index afbcb116a7f1..e53d399ce0af 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1255,7 +1255,7 @@ static bool ovl_lower_uuid_ok(struct ovl_fs *ofs, const uuid_t *uuid)
+ {
+ 	unsigned int i;
+ 
+-	if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
++	if (!ofs->config.nfs_export && !ofs->upper_mnt)
+ 		return true;
+ 
+ 	for (i = 0; i < ofs->numlowerfs; i++) {
+@@ -1263,9 +1263,13 @@ static bool ovl_lower_uuid_ok(struct ovl_fs *ofs, const uuid_t *uuid)
+ 		 * We use uuid to associate an overlay lower file handle with a
+ 		 * lower layer, so we can accept lower fs with null uuid as long
+ 		 * as all lower layers with null uuid are on the same fs.
++		 * if we detect multiple lower fs with the same uuid, we
++		 * disable lower file handle decoding on all of them.
+ 		 */
+-		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid))
++		if (uuid_equal(&ofs->lower_fs[i].sb->s_uuid, uuid)) {
++			ofs->lower_fs[i].bad_uuid = true;
+ 			return false;
++		}
+ 	}
+ 	return true;
+ }
+@@ -1277,6 +1281,7 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
+ 	unsigned int i;
+ 	dev_t dev;
+ 	int err;
++	bool bad_uuid = false;
+ 
+ 	/* fsid 0 is reserved for upper fs even with non upper overlay */
+ 	if (ofs->upper_mnt && ofs->upper_mnt->mnt_sb == sb)
+@@ -1287,10 +1292,11 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
+ 			return i + 1;
+ 	}
+ 
+-	if (!ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
++	if (ofs->upper_mnt && !ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
++		bad_uuid = true;
+ 		ofs->config.index = false;
+ 		ofs->config.nfs_export = false;
+-		pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', falling back to index=off,nfs_export=off.\n",
++		pr_warn("overlayfs: %s uuid detected in lower fs '%pd2', enforcing index=off,nfs_export=off.\n",
+ 			uuid_is_null(&sb->s_uuid) ? "null" : "conflicting",
+ 			path->dentry);
+ 	}
+@@ -1303,6 +1309,7 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
+ 
+ 	ofs->lower_fs[ofs->numlowerfs].sb = sb;
+ 	ofs->lower_fs[ofs->numlowerfs].pseudo_dev = dev;
++	ofs->lower_fs[ofs->numlowerfs].bad_uuid = bad_uuid;
+ 	ofs->numlowerfs++;
+ 
+ 	return ofs->numlowerfs;
+-- 
+2.20.1
 
