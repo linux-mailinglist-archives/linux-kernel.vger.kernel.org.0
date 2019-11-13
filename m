@@ -2,57 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 174AFFA483
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0397FA450
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbfKMCRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:17:33 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57222 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbfKMCRb (ORCPT
+        id S1728523AbfKMCQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:16:09 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:40648 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729554AbfKMCQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:17:31 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2ELvC062491;
-        Wed, 13 Nov 2019 02:17:21 GMT
+        Tue, 12 Nov 2019 21:16:05 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2EG3L053871;
+        Wed, 13 Nov 2019 02:15:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
  from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2019-08-05;
- bh=QBIeg2OL5OqL9nUGXU0TF+QIKQqRYIW2AdRz3DyL33Q=;
- b=h+ItZ4rFIH9ie2n2ORynnSBNg0Wrj/q7d3YL9E+lkvSjLvd5yiywHMQO3uACb/hgfyEX
- hczE8HCJg6XAU+bZR1Rt84QDLzdaHeIm7TXQCGLnZaoaJuIuQUBLe+YqecArBgduDAWb
- ZxPh+ueRNH1CJY8yEbd0OqwvGLD7BUmnUhZSb07tpx1DoWFmFrR7H/6RiZiSQU0YAaTJ
- v2mzRr75NQbKRmoKbYWbATaJcsHUA9ToqIJrUBD1dvUpfIR5MlcS7L6NaRYfUflR59ve
- 4Cgz0PwuqdYG0gnGri+S+/Yv0EBoa9LMCOZq3MzKdAFtFXFjSwqm2ULpbFnrQZd6eUsN rA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2w5mvts000-1
+ bh=zj7XkFTdmK7DXAeK0RmIrwFhY3DmD+T83WInFkC3ypM=;
+ b=CgDGmqFS6dsl46NhRAUES5/cJZJZMUI2q9jtYs0R9MRWxg/VvFDws02fa/yzktpafH1p
+ W+DZRFOLGweDmpHi06ZTi1bcQ7ISydXmWQkCrgaBhfJKOqXJx5fY+MKP2pqRGEBc2MYi
+ ucE+UbEe1z2YY3clPrcVDf0ataM+DC4s5ZCJmk3MHRWW1x9EdQ11WMJADn5Crf3PXW7Q
+ teS1pW8YUlo22V0vpbtKuiwYDNfTI4zuJ32EFsiwTfkG9ij8oqRieZVmCMoUmho+87x/
+ ssmOXqdLp/Ikg1mqGK8l8kx4LhOPCgdh4Mp3B+zSP7aNzJdpv/Np3Czks7G/xc7dGYuF vg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2w5ndq8y86-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 02:17:20 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2DQ1l146421;
-        Wed, 13 Nov 2019 02:15:20 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2w7j04a6hx-1
+        Wed, 13 Nov 2019 02:15:46 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2E6Gg051036;
+        Wed, 13 Nov 2019 02:15:46 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2w7vpnduww-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Nov 2019 02:15:20 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAD2FJ70026935;
-        Wed, 13 Nov 2019 02:15:19 GMT
+        Wed, 13 Nov 2019 02:15:46 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAD2FhZx019114;
+        Wed, 13 Nov 2019 02:15:43 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Nov 2019 18:15:19 -0800
-To:     John Garry <john.garry@huawei.com>
-Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] hisi_sas: Some misc minor patches
+        with ESMTP ; Tue, 12 Nov 2019 18:15:42 -0800
+To:     Bean Huo <huobean@gmail.com>
+Cc:     alim.akhtar@samsung.com, avri.altman@wdc.com,
+        pedrom.sousa@synopsys.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, stanley.chu@mediatek.com,
+        beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
+        cang@codeaurora.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Two small patches for UFS
 From:   "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
-References: <1573551059-107873-1-git-send-email-john.garry@huawei.com>
-Date:   Tue, 12 Nov 2019 21:15:16 -0500
-In-Reply-To: <1573551059-107873-1-git-send-email-john.garry@huawei.com> (John
-        Garry's message of "Tue, 12 Nov 2019 17:30:55 +0800")
-Message-ID: <yq1ftisr07f.fsf@oracle.com>
+References: <20191112223436.27449-1-huobean@gmail.com>
+Date:   Tue, 12 Nov 2019 21:15:38 -0500
+In-Reply-To: <20191112223436.27449-1-huobean@gmail.com> (Bean Huo's message of
+        "Tue, 12 Nov 2019 23:34:34 +0100")
+Message-ID: <yq1bltgr06t.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -63,7 +66,7 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  engine=8.0.1-1910280000 definitions=main-1911130016
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
  definitions=main-1911130016
@@ -73,13 +76,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-John,
+Bean,
 
-> This series includes some misc patches which were sitting on our
-> internal dev branch.
->
-> Nothing extra special to note, just really some tidying and very minor
-> fixes.
+> Here are two small patches, one is to fix a potential bug which could
+> result in system hang-up, another one is to add more helpful debug
+> hint.
 
 Applied to 5.5/scsi-queue, thanks!
 
