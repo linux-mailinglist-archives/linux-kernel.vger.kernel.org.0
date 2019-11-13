@@ -2,101 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 898AAFABFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:23:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 017E8FAC0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 09:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfKMIXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 03:23:22 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35301 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbfKMIXT (ORCPT
+        id S1726422AbfKMIX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 03:23:57 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:44408 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727438AbfKMIXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 03:23:19 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q13so1147941pff.2;
-        Wed, 13 Nov 2019 00:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2Dr4DtssgxrhEWsTdOORMh6MSvL94CfbPjLQDiXX5z8=;
-        b=EMfPDGRWhFSD7qSuLI608VmxMoUqaFuxMujKCLx8kmpxOWcr4cSSxmJ6EqaaHAyZml
-         wTFZ3ix7annFmdDY+6uX2dcXHQpRCF494ol73mlx00a6gMtKHNeO4Xe6C5wkjn4EAwvw
-         LM4y9sy+BGdr0p5/20q/7HYjMA72hoAizGWu0B/wRFSuEAn2IAddHpDcu0ATDU+hN8Ge
-         aLuVsw08gkdWCWSeBtughBpmN3+BLxIeR4esrk7uwRwEse+CHUl9SNTm9zKFp0WG+M/l
-         yWO5WMtxKHEU4h/H6HhKm8GZPDXvDniTT7Tq6ZpUXz/ehVwJNRxbw5RlBOFSIzZfDjad
-         9L7Q==
+        Wed, 13 Nov 2019 03:23:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573633413;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=vqVZDFat0PMM6C+YZWmr17Dxnrkmoud9CsYgAO3Sp2M=;
+        b=XwS8f+ot93SVV3YGkanZlSA8atMEn12wBQDallfbgwh23j9OGBzaE5rPD2T9UFmxot6Fe7
+        sl6UOMSGVEl8odkxr3exqjTBK30MLI6EwKH4jPpK0Ct91YK1TPye1zx+SKZLE0VkUsorsw
+        Pi541hyvle/rRL9A6wKqArTRn27nhV0=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-410-V2xfqqTWMXivZzUCHoIIkw-1; Wed, 13 Nov 2019 03:23:30 -0500
+Received: by mail-wr1-f72.google.com with SMTP id w4so1158255wro.10
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 00:23:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2Dr4DtssgxrhEWsTdOORMh6MSvL94CfbPjLQDiXX5z8=;
-        b=T1iyIozWw3IDxdkC6mGIcbMNOZkvNdKBqafq7w+g+Rl40/Qx+IF0U0P8z5BTYMX3+t
-         Xmt3+5US0bgyojHyNVsfOnZYC0xjxHtYeA8sZeS961FJ4Dc4zwkvS+aDJ07uR0eoRxHf
-         3QXgOU8hrzkv8K/zoN5Op5uvQ1cM3k6oGjy+ww0DR7uca6lkpZnF8k+s6iUiJnqAIcDY
-         hMyB46okR/2E5VIKQuDdjH2NtOcmlZ9QnOzfIZuUtGQsvo2er6X+QVQJrTT3SfeH7FBe
-         26YCQgBcqCuJc8OGPjhX++OsWf3Vjajd8A1LNHfIJxw+gvFMiMYeRJ8vY8rzxVtFbWV6
-         fBzw==
-X-Gm-Message-State: APjAAAWml0tolKYFxPTQOc0iElUNZZ6vDQgduFP/jD4Tq+r6ZO3b3uIq
-        eUgAahMUYM9zu1oDCJ9f6+RkLR1u
-X-Google-Smtp-Source: APXvYqxrn8/DJ5ZA90g5FPai40sgjjI8v/ovW0vcSZOpBwKg2SWl3NlXGSQDc5kNDWH700dgNh63IA==
-X-Received: by 2002:aa7:96e2:: with SMTP id i2mr569783pfq.256.1573633398428;
-        Wed, 13 Nov 2019 00:23:18 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id t12sm1615211pgv.45.2019.11.13.00.23.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 00:23:17 -0800 (PST)
-Date:   Wed, 13 Nov 2019 00:23:15 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: synaptics-rmi4 - add missed operations in remove
-Message-ID: <20191113082315.GP13374@dtor-ws>
-References: <20191113063656.8713-1-hslester96@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Mx/AGAaP+j6yF2jjolqE4bxLZFV7ALbdD3tA1UDj6I=;
+        b=b7xNtmvYiieIYMcrhVCk5DMKknwaTnYoFAWBX0BObpqHWXibUN5+m/qQnaMx20j98c
+         vXjpWgfTAeLeGkYPgmQLDIX7fTAS2zDw21UB5CFgAk8wXxueso5BO5O8bTJbab0ZbKx6
+         lUW1iyzckOg95BWkaLsbnXnC8InHhjV6o3u+swM9Hw0cCJra0afWkPdiqUS75Rpqxv9T
+         DrjIkWLSLuWooaIQc9LppoXHLBEyuVRj+0XYE0x1kSKnHXwbTPLDmAQbSkGubGC6O9ti
+         UjMOzC4UDsOyalLQadH2xg8AsAYJDfArzkepidEh+p4ky3s26yklXZmWrgwU95VVNcNs
+         7QSw==
+X-Gm-Message-State: APjAAAWMTN73nOl7UNJD2oV9mFpKFk8eGbcy6XWyhSFtD7pzZqC7qsH7
+        XRkjscMpKpWxz/tleSBQtksFSQLi3zy7Qs9v+loi3juZ4SDmREfuMrAdQAnuHromvhkbawzyWiq
+        Jj85DP66q9AMTYpMYRpKnBCDC
+X-Received: by 2002:a5d:4f06:: with SMTP id c6mr1555709wru.211.1573633409451;
+        Wed, 13 Nov 2019 00:23:29 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwiYyk8fUvAknJQ+JRzrcddJ66kvKLs3AvbR+PScIPgNAa903yr90BKUugKeMCMJGwa+X50Yg==
+X-Received: by 2002:a5d:4f06:: with SMTP id c6mr1555683wru.211.1573633409147;
+        Wed, 13 Nov 2019 00:23:29 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:8c9d:1a6f:4730:367c? ([2001:b07:6468:f312:8c9d:1a6f:4730:367c])
+        by smtp.gmail.com with ESMTPSA id 91sm1952882wrm.42.2019.11.13.00.23.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2019 00:23:28 -0800 (PST)
+Subject: Re: [FYI PATCH 0/7] Mitigation for CVE-2018-12207
+To:     Jan Kiszka <jan.kiszka@siemens.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        "Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>
+References: <1573593697-25061-1-git-send-email-pbonzini@redhat.com>
+ <23353382-53ea-8b20-7e30-763ef6df374c@siemens.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <ea5a084b-e047-6677-b8fe-d7bb6f8c0ef8@redhat.com>
+Date:   Wed, 13 Nov 2019 09:23:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113063656.8713-1-hslester96@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <23353382-53ea-8b20-7e30-763ef6df374c@siemens.com>
+Content-Language: en-US
+X-MC-Unique: V2xfqqTWMXivZzUCHoIIkw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 02:36:56PM +0800, Chuhong Yuan wrote:
-> The driver forgets to deal with work and workqueue in remove like what
-> is done when probe fails.
-> Add the missed operations to fix it.
+On 13/11/19 07:38, Jan Kiszka wrote:
+> When reading MCE, error code 0150h, ie. SRAR, I was wondering if that
+> couldn't simply be handled by the host. But I suppose the symptom of
+> that erratum is not "just" regular recoverable MCE, rather
+> sometimes/always an unrecoverable CPU state, despite the error code, righ=
+t?
 
-Is it really possible for the work to still be pending when fully
-registered device is properly unregistered? I thought we'd wait for
-successful data acquisition in rmi_f54_buffer_queue() before unregister
-can complete.
+The erratum documentation talks explicitly about hanging the system, but
+it's not clear if it's just a result of the OS mishandling the MCE, or
+something worse.  So I don't know. :(  Pawan, do you?
 
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
->  drivers/input/rmi4/rmi_f54.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/input/rmi4/rmi_f54.c b/drivers/input/rmi4/rmi_f54.c
-> index 710b02595486..2c0cde5c775c 100644
-> --- a/drivers/input/rmi4/rmi_f54.c
-> +++ b/drivers/input/rmi4/rmi_f54.c
-> @@ -730,6 +730,9 @@ static void rmi_f54_remove(struct rmi_function *fn)
->  
->  	video_unregister_device(&f54->vdev);
->  	v4l2_device_unregister(&f54->v4l2);
-> +	cancel_delayed_work_sync(&f54->work);
-> +	flush_workqueue(f54->workqueue);
-> +	destroy_workqueue(f54->workqueue);
->  }
->  
->  struct rmi_function_handler rmi_f54_handler = {
-> -- 
-> 2.23.0
-> 
+Paolo
 
-Thanks.
-
--- 
-Dmitry
