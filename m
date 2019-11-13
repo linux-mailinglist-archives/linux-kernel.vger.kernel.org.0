@@ -2,192 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 890A8FB54F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A5B4FB632
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:18:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbfKMQiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:38:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28000 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727835AbfKMQiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:38:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573663129;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QqzCZrrw+N1LqLUBngxMhEYqWKp5yMdHfOeTcezaP3c=;
-        b=B3fvV0aQqI2IdTj0FBfXfd9gyVROAqBr+BbM2U05MxVkct6bUtImRPAsYesHYBhWyT1YOG
-        DIap0conT6MyRfVR5H993pRcNJJioW5rrwhENnWOh51DEuwC/+oSbmQbmnqbYLuX8F72AY
-        kNq1KmqUiVkHKT/1zGiMfjY+rj/mXBg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-58-LjnA9GNmP8C3hv9JVzQ6_g-1; Wed, 13 Nov 2019 11:38:48 -0500
-Received: by mail-wm1-f71.google.com with SMTP id t203so1416771wmt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:38:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9rmRmGxbCej/NSmLlrw5qBptbx4sAiez+aV0DPKoxmk=;
-        b=gFxb3Hww+m2+Dz90DO4ro5oIPSkgib96gbBUolF4kiz+dMTKJ7bDLNPfQbACF/Mzbl
-         ovi8IbcXfic0JrJsWyyQBeTzYXWKd+dEFya14JWAdnl+WfggteBi7tuWAimEM/ZA890B
-         6idVbhnKwlsNFX+24URlcpZ3gT/dCySQ+z0pmY8LOPXZdAjSJFVVXcTyCPoDXUi22bjz
-         ir0qQZ+ikRKCB7OT9vtyYrMtCn0/LCYsClf55MZEfcPjrzMEQMjOStai1VKWHwnD9Sjk
-         9yAqARUeARxGkUAgzL3AO/35lA3Zmx6nCCpXZxODOXMeYyH5g1Y+h9dbS5Zil2FFd+aR
-         gs7Q==
-X-Gm-Message-State: APjAAAUnaN+z4oESfrteFSXOYdMm4uIX+l0x66kN5GCXQ2Q6B9VVM0DN
-        XzsaBhTQo7XCx9pomuKo9q+b8wLVFtq989nVA0jvl3zJRJyrscI386no27KoP4neP+EAtbNCiWt
-        zcjamc/+gORpOka9jukOrmHO+
-X-Received: by 2002:adf:f0c4:: with SMTP id x4mr2417498wro.217.1573663126801;
-        Wed, 13 Nov 2019 08:38:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxXrDaHddzqNUvTPvMV4jXm5tNoMjrSJ3IvH3rKSatkd4o3Pvp2hT95nFuBwmA+H3+NDewgsg==
-X-Received: by 2002:adf:f0c4:: with SMTP id x4mr2417472wro.217.1573663126527;
-        Wed, 13 Nov 2019 08:38:46 -0800 (PST)
-Received: from steredhat (a-nu5-32.tin.it. [212.216.181.31])
-        by smtp.gmail.com with ESMTPSA id q17sm2813058wmj.12.2019.11.13.08.38.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 08:38:45 -0800 (PST)
-Date:   Wed, 13 Nov 2019 17:38:42 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jorgen Hansen <jhansen@vmware.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dexuan Cui <decui@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH net-next 11/14] vsock: add multi-transports support
-Message-ID: <20191113163842.6byl2qul4nbjf5no@steredhat>
-References: <20191023095554.11340-1-sgarzare@redhat.com>
- <20191023095554.11340-12-sgarzare@redhat.com>
- <MWHPR05MB33761FE4DA27130C72FC5048DA740@MWHPR05MB3376.namprd05.prod.outlook.com>
- <20191111171740.xwo7isdmtt7ywibo@steredhat>
- <MWHPR05MB33764F82AFA882B921A11E56DA770@MWHPR05MB3376.namprd05.prod.outlook.com>
- <20191112103630.vd3kbk7xnplv6rey@steredhat>
- <MWHPR05MB3376560CFD2A710723843828DA760@MWHPR05MB3376.namprd05.prod.outlook.com>
+        id S1728714AbfKMRSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:18:17 -0500
+Received: from mga02.intel.com ([134.134.136.20]:62542 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727729AbfKMRSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 12:18:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 09:18:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
+   d="scan'208";a="229813256"
+Received: from dmsnyder-mobl1.amr.corp.intel.com (HELO [10.252.193.15]) ([10.252.193.15])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Nov 2019 09:18:13 -0800
+Subject: Re: [alsa-devel] [RESEND PATCH v5 6/6] ASoC: amd: Added ACP3x system
+ resume and runtime pm
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
+        Sanju R Mehta <sanju.mehta@amd.com>,
+        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Alexander.Deucher@amd.com,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <1573629249-13272-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1573629249-13272-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <7161a222-8e88-704b-0a3e-a468a2639e4f@linux.intel.com>
+Date:   Wed, 13 Nov 2019 10:39:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <MWHPR05MB3376560CFD2A710723843828DA760@MWHPR05MB3376.namprd05.prod.outlook.com>
-X-MC-Unique: LjnA9GNmP8C3hv9JVzQ6_g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <1573629249-13272-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 02:30:24PM +0000, Jorgen Hansen wrote:
-> > From: Stefano Garzarella [mailto:sgarzare@redhat.com]
-> > Sent: Tuesday, November 12, 2019 11:37 AM
->=20
-> > > > > You already mentioned that you are working on a fix for loopback
-> > > > > here for the guest, but presumably a host could also do loopback.
-> > > >
-> > > > IIUC we don't support loopback in the host, because in this case th=
-e
-> > > > application will use the CID_HOST as address, but if we are in a ne=
-sted
-> > > > VM environment we are in trouble.
-> > >
-> > > If both src and dst CID are CID_HOST, we should be fairly sure that t=
-his
-> > > Is host loopback, no? If src is anything else, we would do G2H.
-> > >
-> >=20
-> > The problem is that we don't know the src until we assign a transport
-> > looking at the dst. (or if the user bound the socket to CID_HOST before
-> > the connect(), but it is not very common)
-> >=20
-> > So if we are in a L1 and the user uses the local guest CID, it works, b=
-ut if
-> > it uses the HOST_CID, the packet will go to the L0.
-> >=20
-> > If we are in L0, it could be simple, because we can simply check if G2H
-> > is not loaded, so any packet to CID_HOST, is host loopback.
-> >=20
-> > I think that if the user uses the IOCTL_VM_SOCKETS_GET_LOCAL_CID, to se=
-t
-> > the dest CID for the loopback, it works in both cases because we return=
- the
-> > HOST_CID in L0, and always the guest CID in L1, also if a H2G is loaded=
- to
-> > handle the L2.
-> >=20
-> > Maybe we should document this in the man page.
->=20
-> Yeah, it seems like a good idea to flesh out the routing behavior for nes=
-ted
-> VMs in the man page.
 
-I'll do it.
+> diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
+> index 01b283a..c40f960 100644
+> --- a/sound/soc/amd/raven/acp3x.h
+> +++ b/sound/soc/amd/raven/acp3x.h
+> @@ -7,6 +7,7 @@
+>   
+>   #include "chip_offset_byte.h"
+>   
+> +#define DELAY	600
 
->=20
-> >=20
-> > But I have a question: Does vmci support the host loopback?
-> > I've tried, and it seems not.
->=20
-> Only for datagrams - not for stream sockets.
-> =20
+you probably want a prefix here to avoid conflicts
 
-Ok, I'll leave the datagram loopback as before.
 
-> > Also vhost-vsock doesn't support it, but virtio-vsock does.
-> >=20
-> > > >
-> > > > Since several people asked about this feature at the KVM Forum, I w=
-ould
-> > like
-> > > > to add a new VMADDR_CID_LOCAL (i.e. using the reserved 1) and
-> > implement
-> > > > loopback in the core.
-> > > >
-> > > > What do you think?
-> > >
-> > > What kind of use cases are mentioned in the KVM forum for loopback?
-> > One concern
-> > > is that we have to maintain yet another interprocess communication
-> > mechanism,
-> > > even though other choices exist already  (and those are likely to be =
-more
-> > efficient
-> > > given the development time and specific focus that went into those). =
-To
-> > me, the
-> > > local connections are mainly useful as a way to sanity test the proto=
-col and
-> > transports.
-> > > However, if loopback is compelling, it would make sense have it in th=
-e core,
-> > since it
-> > > shouldn't need a specific transport.
-> >=20
-> > The common use cases is for developer point of view, and to test the
-> > protocol and transports as you said.
-> >=20
-> > People that are introducing VSOCK support in their projects, would like=
- to
-> > test them on their own PC without starting a VM.
-> >=20
-> > The idea is to move the code to handle loopback from the virtio-vsock,
-> > in the core, but in another series :-)
->=20
-> OK, that makes sense.
+> +static int acp3x_power_on(void __iomem *acp3x_base)
+> +{
+> +	u32 val;
+> +	u32 timeout = 0;
+> +	int ret = 0;
+> +
+> +	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+> +
+> +	if (val == 0)
+> +		return val;
+> +
+> +	if (!((val & ACP_PGFSM_STATUS_MASK) ==
+> +				ACP_POWER_ON_IN_PROGRESS))
+> +		rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
+> +			acp3x_base + mmACP_PGFSM_CONTROL);
+> +	while (++timeout < DELAY) {
 
-Thanks,
-Stefano
+so here timeout can reach 600.
+
+> +		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+> +		if (!val)
+> +			break;
+> +		udelay(1);
+> +		if (timeout > 500) {
+
+but here you abort at 500.
+Looks like the first test is not needed?
+
+> +			pr_err("ACP is Not Powered ON\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +	}
+> +}
+> +static int acp3x_power_off(void __iomem *acp3x_base)
+> +{
+> +	u32 val;
+> +	u32 timeout = 0;
+> +
+> +	rv_writel(ACP_PGFSM_CNTL_POWER_OFF_MASK,
+> +			acp3x_base + mmACP_PGFSM_CONTROL);
+> +	while (++timeout < DELAY) {
+
+same here
+
+> +		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+> +		if ((val & ACP_PGFSM_STATUS_MASK) == ACP_POWERED_OFF)
+> +			return 0;
+> +		udelay(1);
+> +		if (timeout > 500) {
+> +			pr_err("ACP is Not Powered OFF\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +	}
+> +}
+> +static int acp3x_reset(void __iomem *acp3x_base)
+> +{
+> +	u32 val, timeout;
+> +
+> +	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
+> +	timeout = 0;
+> +	while (++timeout < DELAY) {
+> +		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
+> +		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
+> +							timeout > 100) {
+
+and here
+
+> +			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
+> +				break;
+> +			return -ENODEV;
+> +		}
+> +		cpu_relax();
+> +	}
+> +	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
+> +	timeout = 0;
+> +	while (++timeout < DELAY) {
+> +		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
+> +		if (!val)
+> +			break;
+> +		if (timeout > 100)
+
+and here.
+
+
+> @@ -133,9 +248,19 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>   		ret = -ENODEV;
+>   		goto unmap_mmio;
+>   	}
+> +	pm_runtime_set_autosuspend_delay(&pci->dev, 10000);
+
+I think it's the largest value I've ever seen for autosuspend.
+It is necessary? If yes you should document why.
+
+> +	pm_runtime_use_autosuspend(&pci->dev);
+> +	pm_runtime_set_active(&pci->dev);
+> +	pm_runtime_put_noidle(&pci->dev);
+> +	pm_runtime_enable(&pci->dev);
+>   	return 0;
+>   
+>   unmap_mmio:
+> +	ret = acp3x_deinit(adata->acp3x_base);
+> +	if (ret)
+> +		dev_err(&pci->dev, "ACP de-init failed\n");
+> +	else
+> +		dev_info(&pci->dev, "ACP de-initialized\n");
+
+dev_dbg?
+
+>   	pci_disable_msi(pci);
+>   	for (i = 0 ; i < ACP3x_DEVS ; i++)
+>   		platform_device_unregister(adata->pdev[i]);
+> @@ -148,23 +273,57 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+>   
+>   	return ret;
+>   }
+> +static int  snd_acp3x_suspend(struct device *dev)
+> +{
+> +	int status;
+> +	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
+> +
+> +	status = acp3x_deinit(adata->acp3x_base);
+> +	if (status)
+> +		dev_err(dev, "ACP de-init failed\n");
+> +	else
+> +		dev_info(dev, "ACP de-initialized\n");
+
+dev_dbg?
+
+
+>   static void snd_acp3x_remove(struct pci_dev *pci)
+>   {
+> -	int i;
+> +	int i, ret;
+>   	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
+>   
+>   	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
+>   		for (i = 0 ; i <  ACP3x_DEVS ; i++)
+>   			platform_device_unregister(adata->pdev[i]);
+>   	}
+> +	ret = acp3x_deinit(adata->acp3x_base);
+> +	if (ret)
+> +		dev_err(&pci->dev, "ACP de-init failed\n");
+> +	else
+> +		dev_info(&pci->dev, "ACP de-initialized\n");
+
+dev_dbg?
 
