@@ -2,88 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21E7DFB49F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:06:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E302FB4A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfKMQGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:06:34 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46058 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfKMQGd (ORCPT
+        id S1728205AbfKMQId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:08:33 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:35867 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfKMQIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:06:33 -0500
-Received: by mail-ua1-f65.google.com with SMTP id j4so812772uak.12
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:06:33 -0800 (PST)
+        Wed, 13 Nov 2019 11:08:32 -0500
+Received: by mail-il1-f196.google.com with SMTP id s75so2277659ilc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:08:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1ayLEgLCWpr2v/YpRT1vekWIlyB7F5pG92dGazdBvwI=;
-        b=G0C2zq6m15OVUAh+WFhsjZYXXzcdOByoFghlCOloPCUxpwsOe48d6TWKiBYF1Jt+3P
-         pCkyi8gtQTCFIBPO9DwTV6c0WxkptrtOWz4iYPnK/cnKPm7I5zvj+dxET+BVtJ1DQpne
-         xvFFiYgEs8mmbZJfAKBvvDnvS95WxPpEuPkR3s9WkN17IYO9Pb5tGG3tSajwy1byyD4N
-         F16i2K46Gs2g/bj6Gi2+PLQDxaHl6IMmz66pxEDl3gH6mDW5O41D81GUalCuv66KK2kl
-         pzplG0H99Acg6QnE2CyrhUpnwJAaLbkNCMS71/7karx00Scg1v8aAwzEcypXqj1ia3qp
-         NQ+Q==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=tINJyD9ZJqGUt5nhIHMTf94A9voyZOjcobv6ep2N/gs=;
+        b=AEeDQ/816exn8z/BuE7ICwR3vGqrExw7UD2JblL+xKAehiwVm9Smfcw1BCfdTT7eAf
+         SrmYPPR7eGhteJg7Aa9Xph2D1OrWoTtFZYUxe3HkCutuw5JNbKd3UcG/WrOF+uGKDVvN
+         spjjzRQc0ZEgCUlWXQiqCIX6fMnnWjAtM1UpDFCmjpXY/w8WDJV99Vu4r7XK2PiDUsLq
+         3j4SVpOtiBr7HWw9/ZvyFabXWiDw1Lp6EOZYJtMp8P5hKwti90kiSrXzEHfivB8Ech//
+         9y2n1ND95Y7qyKIRmbPzinVSkvz5S4YYdJ1/O0JsXVnOSTQm5FZ94EvBaY5fANocVVhf
+         /Bfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1ayLEgLCWpr2v/YpRT1vekWIlyB7F5pG92dGazdBvwI=;
-        b=k9SwbfhuySxzvaxPw/IP/i7u23Ld9ruChwiomL7CAIPVIvT4PQZPsh2Kb253IcBPi4
-         ns4eHqTJ8gCGcEbPT4H5CH362byIDZscAnzGUYhEBYJx67mIfrNQA+zeCBxeSNcy648N
-         aXqZlqSnllQQmqxmRPi0rGHIRwfeVlMEVFG851MNXC/os2+wsHVmhSQNT/JhWbAWG12/
-         LkqG7a0usKiflWKsN93mCPNIpRlhl97/ODEp0bfj9t/P5R78i/O7MvB0PjpzOy1ufb+W
-         hP31s9EbvReJg+fgBvU1e4f08OIiFTeBeOeP6TAibIcqN5yfG9KkigMNyQnjbzdF0H7L
-         IPtQ==
-X-Gm-Message-State: APjAAAVYEkHaFR+pd8U83PebHc2rFl4QAog8aJRZ0GQaGedtl3LW9j1L
-        5fF3jULe5qhgZgGNrlGcsE9aanrhIVgI//yWS4s=
-X-Google-Smtp-Source: APXvYqyzUYrhlIoEugbzPslmvADNMfF2xvcbUO3zTaYeh1c05O5Pyx2U0QDgD4P1JCUm3NiogsNTTpD6/UoykImOIHY=
-X-Received: by 2002:ab0:14e8:: with SMTP id f37mr2288342uae.64.1573661192697;
- Wed, 13 Nov 2019 08:06:32 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tINJyD9ZJqGUt5nhIHMTf94A9voyZOjcobv6ep2N/gs=;
+        b=ZRu/+XqB3dS8JdOCZ4UQc78XFnhQjJaio6eolIMDL5mRuslspqxpWbEKz1mrEKI2UD
+         w91WUuR/pLR0SeBPDTXg4rXFgooDmKSXWGsWGHYkAy5Eg/1zBYfzEvsKEJR45E/9rsMx
+         Kl9hlafSI+FJJ+sjrC1SYusBgkR9sA3TLLWL93PhhS89EnmWZMLvYRwzNQVDc0O7XFOr
+         K5Gl1VFm/hCBfa2BqlAEvKVt+oicbD4a+FlMt2x5/bAzYU11RKVNXPtv3q9Iq34YT6FZ
+         FnpecSl3CicmOEvEllb7gJN5UTXaeu5AlSMkGkXVY44+rISt7NO/t4DbDgp2b+Kr2xDF
+         VcaQ==
+X-Gm-Message-State: APjAAAXQ47oMTVbIF7OGWXvr0G1dST071ykQo9OyDu06gRqNtFMDHlBf
+        7DVv7K6Igv4C3xrITMNWXJR4RQ==
+X-Google-Smtp-Source: APXvYqxKS0cv20/0h4BRXpygSpky7XSNR80ysphE4pwHuVmtFWtVc2j/imDRVXzHlyblnA1mbGvV4Q==
+X-Received: by 2002:a92:5fc2:: with SMTP id i63mr4409919ill.218.1573661311628;
+        Wed, 13 Nov 2019 08:08:31 -0800 (PST)
+Received: from [192.168.1.163] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id t68sm327142ilb.66.2019.11.13.08.08.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Nov 2019 08:08:30 -0800 (PST)
+Subject: Re: general protection fault in io_commit_cqring
+To:     syzbot <syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000af7e9805973c6356@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ff3df506-7b2c-3af7-a6e5-2264ac12b1da@kernel.dk>
+Date:   Wed, 13 Nov 2019 09:08:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191106163031.808061-1-adrian.ratiu@collabora.com> <20191106163031.808061-5-adrian.ratiu@collabora.com>
-In-Reply-To: <20191106163031.808061-5-adrian.ratiu@collabora.com>
-From:   Emil Velikov <emil.l.velikov@gmail.com>
-Date:   Wed, 13 Nov 2019 16:06:05 +0000
-Message-ID: <CACvgo506P+qNUg8vbpxY0_E7AAwJMHseM=Jwb3c2K8zo-v-2qQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] dt-bindings: display: add IMX MIPI DSI host
- controller doc
-To:     Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc:     LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rockchip <linux-rockchip@lists.infradead.org>,
-        kernel@collabora.com,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sjoerd Simons <sjoerd.simons@collabora.com>,
-        Martyn Welch <martyn.welch@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <000000000000af7e9805973c6356@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Nov 2019 at 16:31, Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
->
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
-Please drop this one. I'm not that experienced in DT to provide
-meaningful review.
+On 11/13/19 8:55 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    4e8f108c Add linux-next specific files for 20191113
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=121ad2d2e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ace1bcdd76242fd2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=21147d79607d724bd6f3
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1649e706e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11397f72e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com
+> 
+> RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
+> RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
+> RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+> R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 8903 Comm: syz-executor410 Not tainted 5.4.0-rc7-next-20191113
+> #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+> RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
+> RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
+> Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1
+> ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c
+> 89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
+> RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
+> RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
+> RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
+> R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
+> R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
+> FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>    io_cqring_overflow_flush+0x6b9/0xa90 fs/io_uring.c:673
+>    io_ring_ctx_wait_and_kill+0x24f/0x7c0 fs/io_uring.c:4260
+>    io_uring_create fs/io_uring.c:4600 [inline]
+>    io_uring_setup+0x1256/0x1cc0 fs/io_uring.c:4626
+>    __do_sys_io_uring_setup fs/io_uring.c:4639 [inline]
+>    __se_sys_io_uring_setup fs/io_uring.c:4636 [inline]
+>    __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:4636
+>    do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x441229
+> Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
+> RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
+> RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+> R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> ---[ end trace b0f5b127a57f623f ]---
+> RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+> RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
+> RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
+> Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1
+> ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c
+> 89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
+> RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
+> RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
+> RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
+> R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
+> R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
+> FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Actually, I've just noticed that respective maintainers/lists are not
-CC'd on the series.
-Please use the get_maintainer.pl script got get the correct info.
+We fail allocating the rings due to the fail slab/page_alloc stuff,
+which means ctx->rings isn't setup. When then tear down the ctx, we'll
+blow up trying to stuff an entry in the CQ ring.
 
-Personally, I read through the output, adding only relevant people as
-CC in the commit message itself.
+The below should fix it, I'll add it to the mix.
 
-In particular, I don't think adding the "maintainer: DRM DRIVER" or
-the "ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" are required. On the
-other hand "DRM DRIVERS FOR FREESCALE IMX" and "OPEN FIRMWARE AND
-FLATTENED DEVICE TREE BINDINGS" seems pretty accurate for what you're
-doing here.
 
-HTH
-Emil
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 11b3e1e23720..3e8a503bcca6 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4280,7 +4314,8 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ 		io_wq_cancel_all(ctx->io_wq);
+ 
+ 	io_iopoll_reap_events(ctx);
+-	io_cqring_overflow_flush(ctx, true);
++	if (ctx->rings)
++		io_cqring_overflow_flush(ctx, true);
+ 	wait_for_completion(&ctx->completions[0]);
+ 	io_ring_ctx_free(ctx);
+ }
+
+-- 
+Jens Axboe
+
