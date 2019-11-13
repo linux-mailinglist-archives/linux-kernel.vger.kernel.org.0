@@ -2,58 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 280EEFADAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AFD9FADA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:53:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfKMJyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:54:02 -0500
-Received: from verein.lst.de ([213.95.11.211]:33248 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727345AbfKMJyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:54:00 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 33EB268B05; Wed, 13 Nov 2019 10:53:53 +0100 (CET)
-Date:   Wed, 13 Nov 2019 10:53:53 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        pengfei.xu@intel.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v5 02/10] iommu/vt-d: Use per-device dma_ops
-Message-ID: <20191113095353.GA5937@lst.de>
-References: <20190725031717.32317-1-baolu.lu@linux.intel.com> <20190725031717.32317-3-baolu.lu@linux.intel.com> <20190725054413.GC24527@lst.de> <bc831f88-5b19-7531-00aa-a7577dd5c1ac@linux.intel.com> <20190725114348.GA30957@lst.de> <a098359a-0f89-6028-68df-9f83718df256@linux.intel.com> <20191112071640.GA3343@lst.de> <0885617e-8390-6d18-987f-40d49f9f563e@linux.intel.com> <20191113070312.GA2735@lst.de>
+        id S1727283AbfKMJx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:53:56 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39910 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfKMJxy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 04:53:54 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAD9rWUZ089843;
+        Wed, 13 Nov 2019 03:53:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573638812;
+        bh=pquoh/f1Vxyy0nGdPMJBRGzCBO0bIUT0w+TVSovYYT8=;
+        h=From:To:CC:Subject:Date;
+        b=Nl+D5uPuIYePSPjkku6yM0gUhGjtWptnuPpsD+WJRxYPboFGauOqyaAsC8ixKHq2k
+         vpG+qmnoLf6+xQNSOzx/BLnR2AOeFXBvcMUrIEDrFsg5Z5gpMtX7bszEAjCoz3KS+y
+         OwA69mKljY8LKbqegp2My3xqjqVWHbO8EgIlyYQk=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAD9rWYm019250
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Nov 2019 03:53:32 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 13
+ Nov 2019 03:53:14 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 13 Nov 2019 03:53:14 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD9rUGS121188;
+        Wed, 13 Nov 2019 03:53:30 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <lars@metafoo.de>
+CC:     <vkoul@kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <jsarha@ti.com>
+Subject: [PATCH 0/2] ASoC: Use dma_request_chan() directly for channel request
+Date:   Wed, 13 Nov 2019 11:54:43 +0200
+Message-ID: <20191113095445.3211-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113070312.GA2735@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 08:03:12AM +0100, Christoph Hellwig wrote:
-> Indeed.  And one idea would be to lift the code in the powerpc
-> dma_iommu_ops that check a flag and use the direct ops to the generic
-> dma code and a flag in struct device.  We can then switch the intel
-> iommu ops (and AMD Gart) over to it.
+Hi,
 
-Let me know what you think of the branch below.  Only compile tested
-and booted on qemu with an emulated intel iommu:
+I'm going through the tree to remove dma_request_slave_channel_reason() as it
+is just:
+#define dma_request_slave_channel_reason(dev, name) \
+	dma_request_chan(dev, name)
 
-	http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-bypass
+Regards,
+Peter
+---
+Peter Ujfalusi (2):
+  ASoC: dmaengine: Use dma_request_chan() directly for channel request
+  ASoC: ti: davinci-mcasp: Use dma_request_chan() directly for channel
+    request
+
+ sound/soc/soc-generic-dmaengine-pcm.c | 2 +-
+ sound/soc/ti/davinci-mcasp.c          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
