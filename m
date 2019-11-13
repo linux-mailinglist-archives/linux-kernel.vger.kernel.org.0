@@ -2,120 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F88FACC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9AFFACCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:21:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbfKMJVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:21:49 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:51888 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbfKMJVq (ORCPT
+        id S1727439AbfKMJV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:21:57 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45454 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbfKMJVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:21:46 -0500
-Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id RMMk2100G5USYZQ01MMkEE; Wed, 13 Nov 2019 10:21:44 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iUoqO-0001qZ-7m; Wed, 13 Nov 2019 10:21:44 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iUoqO-0006Bh-5R; Wed, 13 Nov 2019 10:21:44 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] iio: adc: max9611: Fix too short conversion time delay
-Date:   Wed, 13 Nov 2019 10:21:33 +0100
-Message-Id: <20191113092133.23723-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Wed, 13 Nov 2019 04:21:55 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAD9LORl115392;
+        Wed, 13 Nov 2019 03:21:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573636884;
+        bh=bocIryoBPyj8pPA5BMCglgJkJ0wRBeHW9ff7aMwZThs=;
+        h=From:To:CC:Subject:Date;
+        b=ZDkkfobG3G01ya8X5Y5QDhthFWkjDIffhk0mEJtgujEm5REZl6L2mRyqgOVCDY4Qc
+         ealmFughEQnUXLBRwAKX4zJFc6Ywqg4BK5WNpTN9b8Pefqlr6dgWCSXokO1U6Ebwrv
+         xHaTMROYpfSaX26Xef0h8TV/azN1BrKHa4PXgvx0=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAD9LOTw050017
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Nov 2019 03:21:24 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 13
+ Nov 2019 03:21:06 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 13 Nov 2019 03:21:06 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAD9LJ1G056807;
+        Wed, 13 Nov 2019 03:21:20 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <ludovic.desroches@microchip.com>, <agross@kernel.org>,
+        <wsa+renesas@sang-engineering.com>, <ldewangan@nvidia.com>
+CC:     <vkoul@kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <digetx@gmail.com>,
+        <linux-tegra@vger.kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <bjorn.andersson@linaro.org>
+Subject: [PATCH 0/4] i2c: Use dma_request_chan() directly for channel request
+Date:   Wed, 13 Nov 2019 11:22:31 +0200
+Message-ID: <20191113092235.30440-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of commit b9ddd5091160793e ("iio: adc: max9611: Fix temperature
-reading in probe"), max9611 initialization sometimes fails on the
-Salvator-X(S) development board with:
+Hi,
 
-    max9611 4-007f: Invalid value received from ADC 0x8000: aborting
-    max9611: probe of 4-007f failed with error -5
+I'm going through the tree to remove dma_request_slave_channel_reason() as it
+is just:
+#define dma_request_slave_channel_reason(dev, name) \
+	dma_request_chan(dev, name)
 
-The max9611 driver tests communications with the chip by reading the die
-temperature during the probe function, which returns an invalid value.
-
-According to the datasheet, the typical ADC conversion time is 2 ms, but
-no minimum or maximum values are provided.  However, the driver assumes
-a 1 ms conversion time.  Usually the usleep_range() call returns after
-more than 1.8 ms, hence it succeeds.  When it returns earlier, the data
-register may be read too early, and the previous measurement value will
-be returned.  After boot, this is the temperature POR (power-on reset)
-value, causing the failure above.
-
-Fix this by increasing the delay from 1000-2000 µs to 2000-2200 µs.
-
-Note that this issue has always been present, but it was exposed by the
-aformentioned commit.
-
-Fixes: 69780a3bbc0b1e7e ("iio: adc: Add Maxim max9611 ADC driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Regards,
+Peter
 ---
-This problem was exposed in v5.3.
+Peter Ujfalusi (4):
+  i2c: at91: Use dma_request_chan() directly for channel request
+  i2c: qup: Use dma_request_chan() directly for channel request
+  i2c: sh_mobile: Use dma_request_chan() directly for channel request
+  i2c: tegra: Use dma_request_chan() directly for channel request
 
-After this patch, probing of the two max9611 sensors succeeded during
-ca. 3000 boot cycles on Salvator-X(S) boards, equipped with various
-R-Car H3/M3-W/M3-N SoCs.
----
- drivers/iio/adc/max9611.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-at91-master.c | 4 ++--
+ drivers/i2c/busses/i2c-qup.c         | 4 ++--
+ drivers/i2c/busses/i2c-sh_mobile.c   | 2 +-
+ drivers/i2c/busses/i2c-tegra.c       | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-index da073d72f649f829..b0755f25356d700d 100644
---- a/drivers/iio/adc/max9611.c
-+++ b/drivers/iio/adc/max9611.c
-@@ -89,6 +89,11 @@
- #define MAX9611_TEMP_SCALE_NUM		1000000
- #define MAX9611_TEMP_SCALE_DIV		2083
- 
-+/*
-+ * Conversion time is 2 ms (typically)
-+ */
-+#define MAX9611_CONV_TIME_US_RANGE	2000, 2200
-+
- struct max9611_dev {
- 	struct device *dev;
- 	struct i2c_client *i2c_client;
-@@ -238,9 +243,9 @@ static int max9611_read_single(struct max9611_dev *max9611,
- 
- 	/*
- 	 * need a delay here to make register configuration
--	 * stabilize. 1 msec at least, from empirical testing.
-+	 * stabilize.
- 	 */
--	usleep_range(1000, 2000);
-+	usleep_range(MAX9611_CONV_TIME_US_RANGE);
- 
- 	ret = i2c_smbus_read_word_swapped(max9611->i2c_client, reg_addr);
- 	if (ret < 0) {
-@@ -507,7 +512,7 @@ static int max9611_init(struct max9611_dev *max9611)
- 			MAX9611_REG_CTRL2, 0);
- 		return ret;
- 	}
--	usleep_range(1000, 2000);
-+	usleep_range(MAX9611_CONV_TIME_US_RANGE);
- 
- 	return 0;
- }
 -- 
-2.17.1
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
