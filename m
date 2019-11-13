@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27932FA4EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBCC0FA4E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:20:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbfKMCTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:19:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46432 "EHLO mail.kernel.org"
+        id S1729048AbfKMBzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:55:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728871AbfKMBzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:55:05 -0500
+        id S1729027AbfKMBzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:55:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43E8A222CD;
-        Wed, 13 Nov 2019 01:55:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77FE8204EC;
+        Wed, 13 Nov 2019 01:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610105;
-        bh=H98E+O2rGiNbR2/s9wKrb2qi+Flmw69WX72yGfxD1Vk=;
+        s=default; t=1573610111;
+        bh=AIYtbqFaSVhN3JGaOi6Hkys2vKMeqBOtBZxFJ6Fjv9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XUDZZuFu7RLPU6x+4NIgmwo6NJVZmUlk21/0NF5L2lZMvVtcvutO97tcqNx2AAK+S
-         Wz2UeUUXRsI0ZgbOHc2h4rVYNV/N7SomWrhdrO6OpiX21gT0LzQxxfGbz8TYMDln8g
-         4vqAE2tkWVSAt0nshqQlZQOA9mr4WQ0HyNNkfMLw=
+        b=IgipqFagL5wvW/vqzKR/EG+FbAN5w/8ltrrzzMMyZTNALZgA5Vg/GsOqmdLz3uPDr
+         AiBRknY1TM8F7+O4KK9vPuOMt//V7Z2qLmJgnvqKLpD/X3gExTgStoO7a0xqh6t6d8
+         uxEAleuEm2YcptQZnQCb36UumSPQz1u2o5YC3vnw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tim Smith <tim.smith@citrix.com>, Mark Syms <mark.syms@citrix.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
-Subject: [PATCH AUTOSEL 4.19 164/209] GFS2: Flush the GFS2 delete workqueue before stopping the kernel threads
-Date:   Tue, 12 Nov 2019 20:49:40 -0500
-Message-Id: <20191113015025.9685-164-sashal@kernel.org>
+Cc:     Connor McAdams <conmanx360@gmail.com>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 167/209] ALSA: hda/ca0132 - Fix input effect controls for desktop cards
+Date:   Tue, 12 Nov 2019 20:49:43 -0500
+Message-Id: <20191113015025.9685-167-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -43,62 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tim Smith <tim.smith@citrix.com>
+From: Connor McAdams <conmanx360@gmail.com>
 
-[ Upstream commit 1eb8d7387908022951792a46fa040ad3942b3b08 ]
+[ Upstream commit 7a2dc84fc480aec4f8f96e152327423014edf668 ]
 
-Flushing the workqueue can cause operations to happen which might
-call gfs2_log_reserve(), or get stuck waiting for locks taken by such
-operations.  gfs2_log_reserve() can io_schedule(). If this happens, it
-will never wake because the only thing which can wake it is gfs2_logd()
-which was already stopped.
+This patch removes the echo cancellation control for desktop cards, and
+makes use of the special 0x47 SCP command for noise reduction.
 
-This causes umount of a gfs2 filesystem to wedge permanently if, for
-example, the umount immediately follows a large delete operation.
-
-When this occured, the following stack trace was obtained from the
-umount command
-
-[<ffffffff81087968>] flush_workqueue+0x1c8/0x520
-[<ffffffffa0666e29>] gfs2_make_fs_ro+0x69/0x160 [gfs2]
-[<ffffffffa0667279>] gfs2_put_super+0xa9/0x1c0 [gfs2]
-[<ffffffff811b7edf>] generic_shutdown_super+0x6f/0x100
-[<ffffffff811b7ff7>] kill_block_super+0x27/0x70
-[<ffffffffa0656a71>] gfs2_kill_sb+0x71/0x80 [gfs2]
-[<ffffffff811b792b>] deactivate_locked_super+0x3b/0x70
-[<ffffffff811b79b9>] deactivate_super+0x59/0x60
-[<ffffffff811d2998>] cleanup_mnt+0x58/0x80
-[<ffffffff811d2a12>] __cleanup_mnt+0x12/0x20
-[<ffffffff8108c87d>] task_work_run+0x7d/0xa0
-[<ffffffff8106d7d9>] exit_to_usermode_loop+0x73/0x98
-[<ffffffff81003961>] syscall_return_slowpath+0x41/0x50
-[<ffffffff815a594c>] int_ret_from_sys_call+0x25/0x8f
-[<ffffffffffffffff>] 0xffffffffffffffff
-
-Signed-off-by: Tim Smith <tim.smith@citrix.com>
-Signed-off-by: Mark Syms <mark.syms@citrix.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/gfs2/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_ca0132.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-index c212893534ed6..a971862b186e3 100644
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@ -854,10 +854,10 @@ static int gfs2_make_fs_ro(struct gfs2_sbd *sdp)
- 	if (error && !test_bit(SDF_SHUTDOWN, &sdp->sd_flags))
- 		return error;
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 0436789e7cd88..36cf23a300d46 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -4520,7 +4520,7 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
+ 			val = 0;
  
-+	flush_workqueue(gfs2_delete_workqueue);
- 	kthread_stop(sdp->sd_quotad_process);
- 	kthread_stop(sdp->sd_logd_process);
- 
--	flush_workqueue(gfs2_delete_workqueue);
- 	gfs2_quota_sync(sdp->sd_vfs, 0);
- 	gfs2_statfs_sync(sdp->sd_vfs, 0);
- 
+ 		/* If Voice Focus on SBZ, set to two channel. */
+-		if ((nid == VOICE_FOCUS) && (spec->quirk == QUIRK_SBZ)
++		if ((nid == VOICE_FOCUS) && (spec->use_pci_mmio)
+ 				&& (spec->cur_mic_type != REAR_LINE_IN)) {
+ 			if (spec->effects_switch[CRYSTAL_VOICE -
+ 						 EFFECT_START_NID]) {
+@@ -4539,7 +4539,7 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
+ 		 * For SBZ noise reduction, there's an extra command
+ 		 * to module ID 0x47. No clue why.
+ 		 */
+-		if ((nid == NOISE_REDUCTION) && (spec->quirk == QUIRK_SBZ)
++		if ((nid == NOISE_REDUCTION) && (spec->use_pci_mmio)
+ 				&& (spec->cur_mic_type != REAR_LINE_IN)) {
+ 			if (spec->effects_switch[CRYSTAL_VOICE -
+ 						 EFFECT_START_NID]) {
+@@ -5855,8 +5855,8 @@ static int ca0132_build_controls(struct hda_codec *codec)
+ 	 */
+ 	num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT;
+ 	for (i = 0; i < num_fx; i++) {
+-		/* SBZ and R3D break if Echo Cancellation is used. */
+-		if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3D) {
++		/* Desktop cards break if Echo Cancellation is used. */
++		if (spec->use_pci_mmio) {
+ 			if (i == (ECHO_CANCELLATION - IN_EFFECT_START_NID +
+ 						OUT_EFFECTS_COUNT))
+ 				continue;
 -- 
 2.20.1
 
