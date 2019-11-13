@@ -2,92 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49D2AFB596
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:51:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A116BFB5B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 17:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfKMQvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 11:51:00 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:33321 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbfKMQvA (ORCPT
+        id S1728646AbfKMQwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 11:52:17 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:57877 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727884AbfKMQwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:51:00 -0500
-Received: by mail-il1-f194.google.com with SMTP id m5so2441923ilq.0;
-        Wed, 13 Nov 2019 08:50:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:message-id:in-reply-to:references:subject:mime-version
-         :content-transfer-encoding;
-        bh=NP8j8j6RNWGWdkRYwKycP0G7EVjWhJ/1/S2VtEbTWEI=;
-        b=b3bVHkR79gud8RsdtbJsGQ8MipQ93ILczeh4pBu7MsXxWVjLcj8NFcurtsKaR3kxm+
-         aBKpFdzkmKz/9MssldZxYRoBWOwEF5ZcAoGS6N5mYr+JoSZFL2tKMnhtuAD9z8lqgNVL
-         fuzx9z1mwv1LkyVd+vRqjTDDbAdG5iQP6X8WBfFBIAsrBd9QBqJy/sZ/dOv3nQh9OIk4
-         3diUkn+dpk4AvvU1Gtdq35jXzSdoH7s5/JCnRKn3m9R7IJ9/KeMNvthgowPfHkp/KV81
-         y2tRDeg6BIsrPBHAyEZtwhynpWMmicOd3IoTqNcz7S8TIXB6Vut8mTeN810GBpOkyLs6
-         Frqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:message-id:in-reply-to:references
-         :subject:mime-version:content-transfer-encoding;
-        bh=NP8j8j6RNWGWdkRYwKycP0G7EVjWhJ/1/S2VtEbTWEI=;
-        b=c4qPnMTzRykJTkrMwPMXpnuSoGmzjiAI63/dPWfovwVEMc0yM7O7TLd+/5wj4Z78Db
-         FOOulpzskFidHnE1warXWl6scZLP5veX+Sw4vLX8a6g7x54LOct4nYLLce5J2SzdO5E3
-         GmVejK1U0GEm//0pzLtt6qXJTI1SSoBOjEcZYEO9Sla2XzAZ6Y/4wuVK7hNYFn/fRIVh
-         O3J+ZnQ4/MO9cJR31EKZuUsp2QCFZAUK4EeiI3wkDz6yQ9OCDtv7UnHQh7Vwb3Rn7vkK
-         Nq9pac8oPNTwr7N9n/q7e1Bj22dlNERmz8DXEtR3Oj6aPymx2JTw6PmFy7pMoq/7ytGW
-         2N8A==
-X-Gm-Message-State: APjAAAXzXrmbzYPN/smkfk26Ci2YVTaNIQe3TM03cBmsJQHO8YJYIsu2
-        Hxwm4QL/HIwn5khQUHBTaME=
-X-Google-Smtp-Source: APXvYqxidv/3QuJpKi2UYUh97LztfaRik/hvAhPtTgiijuFqBY3yCbYbxLs2pWGM5VdnkKH6Jirewg==
-X-Received: by 2002:a92:83d0:: with SMTP id p77mr4821131ilk.116.1573663859473;
-        Wed, 13 Nov 2019 08:50:59 -0800 (PST)
-Received: from localhost ([184.63.162.180])
-        by smtp.gmail.com with ESMTPSA id c73sm345713ila.9.2019.11.13.08.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 08:50:58 -0800 (PST)
-Date:   Wed, 13 Nov 2019 08:50:51 -0800
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     syzbot <syzbot+0b3ccd4f62dac2cf3a7d@syzkaller.appspotmail.com>,
-        ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net, edumazet@google.com, john.fastabend@gmail.com,
-        kafai@fb.com, kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com,
-        yoshfuji@linux-ipv6.org
-Message-ID: <5dcc346b151ef_65172b2715e085b42b@john-XPS-13-9370.notmuch>
-In-Reply-To: <000000000000f90bb30596c1d438@google.com>
-References: <00000000000006602605752ffa1a@google.com>
- <000000000000f90bb30596c1d438@google.com>
-Subject: Re: general protection fault in tcp_cleanup_ulp
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Nov 2019 11:52:17 -0500
+Received: from mail-qk1-f182.google.com ([209.85.222.182]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MNso2-1iFasQ3ouO-00OHDf for <linux-kernel@vger.kernel.org>; Wed, 13 Nov
+ 2019 17:52:15 +0100
+Received: by mail-qk1-f182.google.com with SMTP id 205so2358356qkk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 08:52:14 -0800 (PST)
+X-Gm-Message-State: APjAAAU9U68o8VkV7DOcwuDIfyg9sbnAy4LWKMLy2/FKRUaD9b8gXrh+
+        rqz1sNrSxwuejLw9wTeEr4/lU8wNk5BWYTowjho=
+X-Google-Smtp-Source: APXvYqxBmbGTEswmh4hjOplNI/MC4WIdMJDNv8/77Lo6sjoh34WwHy8gB4aUKN2y/UnSZ06SRm4X0OiPwCzQXFXv/sg=
+X-Received: by 2002:a37:4f0a:: with SMTP id d10mr3426187qkb.286.1573663933766;
+ Wed, 13 Nov 2019 08:52:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20191112151642.680072-1-arnd@arndb.de> <s5hk1847rvm.wl-tiwai@suse.de>
+ <CAK8P3a2TMEUhzxH7RKvAW9STk33KrbCriUaQawOMffoFC6UTQw@mail.gmail.com> <s5hzhgzn304.wl-tiwai@suse.de>
+In-Reply-To: <s5hzhgzn304.wl-tiwai@suse.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 13 Nov 2019 17:51:57 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3n9hrb-qfAYW9=eYApSX=pkOK5p6iGe0T29-KqGuh0tg@mail.gmail.com>
+Message-ID: <CAK8P3a3n9hrb-qfAYW9=eYApSX=pkOK5p6iGe0T29-KqGuh0tg@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] Fix year 2038 issue for sound subsystem
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:r33Z/L5CeFRsFCL/axU0zmuUJkL1+klyya4lkMKgYcS5/v89FJH
+ piQf6zzb9VQYDPIWXFtAZKaSXfHKIWRsRM+3S/2Kv7SUFoD8Xqk1R6glYs2+bNSjVDew3ds
+ 8J3LbSLeABgwKLRdEbPViJk1sS2bMwE42ABaqsqMJf/YEUv3CWcr0Jbbih6ZrnscXwV4EvG
+ 3755IPuUi1EPXtOeA0SyA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gxLy5lW0F4Q=:JsejDnTjOeDhVS4vUlAy1O
+ K6aseI7DHl9+aK9i5wvGfpKFu01WmTRnBKiT36vwIAjbVJ2j75x9U4qZmnGpwNlKShIs7pcnN
+ hQtltI5KmnspNS1mETr6SwQW93sRGrO5c0479mYOudktPZ9H+n2CL5aCTR4/Ocnpu/q3ARQEl
+ LiNAiUw7SCVufMdRqBc6BFbxrpYSSR6FUUvI/j+TjSjdu8VHZOESttd4TtpIwmXqfrV+3J7pu
+ IFK1OQpvT+k/2LTEJOAidU6HO8aBbfUzVb0buOyLQtqcV9PJKrZdko7ePbVXMG7zog0HqHJjv
+ CHOgQTPy5Qz+TZkgO8JtVG4U6RdN8nTWExIhZpoOL7qGoSwuE081RSurEkYBHYmFdwGQCwJWQ
+ Y/9TQ87B5WRLdThEjtKy4E8rU1I0Ufw4MFBR5XkmZhPMPgSWVu+wjvRCFPFziVEqxDGzTdXEe
+ VRnWyqGZINp/3A/hW9dqbnPr6h71B+GMpkTft//BqUuSR/WT+LzLOi9BySK+iEvbUMG1C0sPx
+ EnCgg/QRMkhwBFXY4+Bkqy5UCpkw4RXHdTnE5nLY61HtGOcIDdwI1ALmgBVENcX8SFp+yAtvq
+ dqSRC9arpW7rvOz4kxtlbsunHsTGx1kK+FDGujHusS0Zy5BkuD8fDneqUkpu/4kWgSp5cKEFU
+ KdajgE4+TdnYlmYqfcyNuVskXifUtJRMFnxdKki5V4DkvGWVSEzc6eeiPGj3EIv0/m5AUt7Jf
+ FzcOB3VhRwbeq/1jS8cgyAR0LOjp9eZrfymk505xwO5nVKyweudjJIRYSeah1DkIKZG+2c75a
+ iefhqxRWYOq5wpHY+60Pcg1Fv3kLRMTqhGpAimODHut+BeUNBvNe5xmeVzj8+e0bU8ZXsyBFp
+ NYD0WPHVj425D/e1iBKQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot wrote:
-> syzbot suspects this bug was fixed by commit:
-> 
-> commit 5607fff303636d48b88414c6be353d9fed700af2
-> Author: John Fastabend <john.fastabend@gmail.com>
-> Date:   Tue Sep 18 16:01:44 2018 +0000
-> 
->      bpf: sockmap only allow ESTABLISHED sock state
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17fdc73c600000
-> start commit:   28619527 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-> git tree:       bpf
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0b3ccd4f62dac2cf3a7d
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13537269400000
-> 
-> If the result looks correct, please mark the bug fixed by replying with:
-> 
-> #syz fix: bpf: sockmap only allow ESTABLISHED sock state
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Wed, Nov 13, 2019 at 5:40 PM Takashi Iwai <tiwai@suse.de> wrote:
+> On Wed, 13 Nov 2019 15:32:44 +0100, Arnd Bergmann wrote:
 
-#syz fix: bpf: sockmap only allow ESTABLISHED sock state
+> > We had discussed alternatives for this one last time, and decided
+> > to go with the solution I posted here. The main alternative would
+> > be to change the 'timespec' in snd_timer_tread to a fixed-length
+> > structure based on two 'long' members. This would avoid the
+> > need to match the command with the time_t type, but the cost would
+> > be requiring CLOCK_MONOTONIC timestamps to avoid the
+> > overflow, and changing all application source code that requires
+> > the type to be compatible with 'timespec'.
+>
+> Fair enough.
+>
+> One thing I forgot to mention: when we add/modify the ioctl or ABI, we
+> need to increment the protocol version, e.g. SNDRV_PCM_VERSION to
+> indicate user-space the supported ABI.  Please change these in your
+> next patches, too.
+
+Just to confirm: this should be a simple one-line patch at the end of the
+series like
+
+diff --git a/tools/include/uapi/sound/asound.h
+b/tools/include/uapi/sound/asound.h
+index df1153cea0b7..72e8380c6dcd 100644
+--- a/include/uapi/sound/asound.h
++++ b/include/uapi/sound/asound.h
+@@ -154,7 +154,7 @@ struct snd_hwdep_dsp_image {
+  *                                                                           *
+  *****************************************************************************/
+
+-#define SNDRV_PCM_VERSION              SNDRV_PROTOCOL_VERSION(2, 0, 14)
++#define SNDRV_PCM_VERSION              SNDRV_PROTOCOL_VERSION(2, 0, 15)
+
+ typedef unsigned long snd_pcm_uframes_t;
+ typedef signed long snd_pcm_sframes_t;
+
+right? Most other kernel interfaces have no version numbering, so
+I don't know what policy you have here.
+
+        Arnd
