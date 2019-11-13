@@ -2,254 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3B95FB615
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:15:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 142FDFB622
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 18:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbfKMRP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 12:15:26 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:49593 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728294AbfKMRPU (ORCPT
+        id S1728469AbfKMRQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 12:16:52 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46796 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfKMRQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 12:15:20 -0500
-X-Originating-IP: 91.224.148.103
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id B183EE000A;
-        Wed, 13 Nov 2019 17:15:16 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>
-Cc:     <linux-mtd@lists.infradead.org>, Mark Brown <broonie@kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bernhard Frauendienst <kernel@nospam.obeliks.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v4 4/4] mtd: Add driver for concatenating devices
-Date:   Wed, 13 Nov 2019 18:15:05 +0100
-Message-Id: <20191113171505.26128-5-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113171505.26128-1-miquel.raynal@bootlin.com>
-References: <20191113171505.26128-1-miquel.raynal@bootlin.com>
+        Wed, 13 Nov 2019 12:16:51 -0500
+Received: by mail-lf1-f65.google.com with SMTP id o65so2567607lff.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 09:16:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tbmpc8I08dUNbz0TweIhlLBpMYWo1Ddtf0bugPdpg4o=;
+        b=GpRaz3WzKyv4b6el90Iz4gY68k6ZMkDSEh2Hm5M0XVO2GvGiQXYLuOeRblysRbV95O
+         /o9QxM7Dr9VjPZHJbmlPD+v+xOjqiSGlLuBd177bF9Y5icVTpiZRrTKok3ZZTQ/wDtBz
+         OD0/VdGCoCIgoImm/TAEY+RuYIVJBGoif7u3rV8vKwf2bmxMkH46wFW8r/B8lLgHUY/j
+         AYfLYXuLFlbVDpa/kxWt9gdsZixvnBRgFarHNgasLVY1VE/8+aqZM1tiw/DA61fKvNnp
+         rwq1i9Eyg15IRctXukzSqaoYhr16QJbzTuSfXkLs7LUDp3Zvi+TCTQ1gaTePQTg2eWA7
+         0sHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tbmpc8I08dUNbz0TweIhlLBpMYWo1Ddtf0bugPdpg4o=;
+        b=K7UVAyDEtJgvzUodH7IFOrAQ9DAZSlaUuF3XeLN0GdSdWimNaG8nEYhyCPsE08juhh
+         63B1QVMDReH6/TQRO/R7AQ5OVB5nEKEpdCSlR98eEL1ikf0uyayLdbyqAxTdEik3vzU6
+         JNwTQMu2CMIAcMtmGfxAMzZBELWWw8kOEepOl/s2vjFZVo0SpDDmsTg6I13lPqQ7E18A
+         bX8pKJcVizq8Pmd88OwwtwTM76nxm14CfF5n88wlz3xsT+pfkjMbi4bDVy1+NqPcJIy2
+         Za+Gu7cJGqkbaokcIv834t8YCtneVOMjcPWYGhlzGHLaW/Dv0WyjGweTAy/tfQRO1p37
+         ygmQ==
+X-Gm-Message-State: APjAAAXxMbw+tNA8GKztctsofr1ODf6hfRkvckiPVYxRfuB9lMW+dLHP
+        Rh+l6duEqTusrQedml+vgqQg5Y9QcH7kECa6ELrHzw==
+X-Google-Smtp-Source: APXvYqzIPzbgpPUyvUtrneet0HOhaTTyNY9TeCNaIXTIuQ/Kcp/SiKtz7hsji0MJix60noP5lG6p8beaOSZpn4+OlKA=
+X-Received: by 2002:ac2:4a8f:: with SMTP id l15mr3446808lfp.5.1573665408550;
+ Wed, 13 Nov 2019 09:16:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191113094256.1108-1-peter.ujfalusi@ti.com> <20191113094256.1108-6-peter.ujfalusi@ti.com>
+In-Reply-To: <20191113094256.1108-6-peter.ujfalusi@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 13 Nov 2019 18:16:37 +0100
+Message-ID: <CACRpkdZ=xM2GYTDDLKoFwwdqp09-UDOyqogDW5pLvg4QaZXR6Q@mail.gmail.com>
+Subject: Re: [PATCH 5/9] spi: pl022: Use dma_request_chan() directly for
+ channel request
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Mark Brown <broonie@kernel.org>, radu_nicolae.pirea@upb.ro,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andi Shyti <andi@etezian.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bernhard Frauendienst <kernel@nospam.obeliks.de>
+On Wed, Nov 13, 2019 at 10:42 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
 
-Some MTD drivers like physmap variants have support for concatenating
-multiple MTD devices, but there is no generic way to define such a
-concatenated device from within the device tree.
+> dma_request_slave_channel_reason() is:
+> #define dma_request_slave_channel_reason(dev, name) \
+>         dma_request_chan(dev, name)
+>
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-This is useful for boards where memory range has been extended with
-the use of multiple flash chips as memory banks of a single MTD
-device, with partitions spanning chip borders.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Add a driver for creating virtual mtd-concat devices. They must have
-the "mtd-concat" compatible, and define a list of 'devices' to
-concatenate, ie:
-
-        flash {
-                compatible = "mtd-concat";
-                devices = <&flash0 &flash1>;
-
-                partitions {
-                        ...
-                };
-        };
-
-Signed-off-by: Bernhard Frauendienst <kernel@nospam.obeliks.de>
-[<miquel.raynal@bootlin.com>:
-Reword commit message a bit.
-Use the word 'virtual' instead of 'composite'.
-Do not probe the virtual device last: SPI is after MTD anyway.
-Change the driver's location.
-Update the driver logic and coding style.]
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/mtd/Kconfig           |   8 +++
- drivers/mtd/Makefile          |   1 +
- drivers/mtd/mtd_virt_concat.c | 132 ++++++++++++++++++++++++++++++++++
- 3 files changed, 141 insertions(+)
- create mode 100644 drivers/mtd/mtd_virt_concat.c
-
-diff --git a/drivers/mtd/Kconfig b/drivers/mtd/Kconfig
-index 79a8ff542883..3e1e55e7158f 100644
---- a/drivers/mtd/Kconfig
-+++ b/drivers/mtd/Kconfig
-@@ -276,6 +276,14 @@ config MTD_PARTITIONED_MASTER
- 	  the parent of the partition device be the master device, rather than
- 	  what lies behind the master.
- 
-+config MTD_VIRT_CONCAT
-+	tristate "Virtual concatenated MTD devices"
-+	help
-+	  This driver allows creation of a virtual MTD device, which
-+	  concatenates multiple physical MTD devices into a single one.
-+	  This is useful to create partitions bigger than the underlying
-+	  physical chips by allowing cross-chip boundaries.
-+
- source "drivers/mtd/chips/Kconfig"
- 
- source "drivers/mtd/maps/Kconfig"
-diff --git a/drivers/mtd/Makefile b/drivers/mtd/Makefile
-index 58fc327a5276..c7ee13368a66 100644
---- a/drivers/mtd/Makefile
-+++ b/drivers/mtd/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_SSFDC)		+= ssfdc.o
- obj-$(CONFIG_SM_FTL)		+= sm_ftl.o
- obj-$(CONFIG_MTD_OOPS)		+= mtdoops.o
- obj-$(CONFIG_MTD_SWAP)		+= mtdswap.o
-+obj-$(CONFIG_MTD_VIRT_CONCAT)	+= mtd_virt_concat.o
- 
- nftl-objs		:= nftlcore.o nftlmount.o
- inftl-objs		:= inftlcore.o inftlmount.o
-diff --git a/drivers/mtd/mtd_virt_concat.c b/drivers/mtd/mtd_virt_concat.c
-new file mode 100644
-index 000000000000..d184c58f7e09
---- /dev/null
-+++ b/drivers/mtd/mtd_virt_concat.c
-@@ -0,0 +1,132 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Virtual concat MTD device driver
-+ *
-+ * Copyright (C) 2018 Bernhard Frauendienst
-+ * Author: Bernhard Frauendienst <kernel@nospam.obeliks.de>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/mtd/concat.h>
-+#include <linux/mtd/mtd.h>
-+#include <linux/mtd/partitions.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/slab.h>
-+
-+/**
-+ * struct mtd_virt_concat - platform device driver data.
-+ * @vmtd: Virtual mtd_concat device
-+ * @count: Number of physical underlaying devices in @devices
-+ * @devices: Array of the physical devices used
-+ */
-+struct mtd_virt_concat {
-+	struct mtd_info	*vmtd;
-+	unsigned int count;
-+	struct mtd_info	**devices;
-+};
-+
-+static void mtd_virt_concat_put_devices(struct mtd_virt_concat *concat)
-+{
-+	int i;
-+
-+	for (i = 0; i < concat->count; i++)
-+		put_mtd_device(concat->devices[i]);
-+}
-+
-+static int mtd_virt_concat_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct mtd_virt_concat *concat;
-+	struct of_phandle_iterator it;
-+	struct mtd_info *mtd;
-+	int ret, count;
-+
-+	count = of_count_phandle_with_args(node, "devices", NULL);
-+	if (count < 2) {
-+		dev_err(dev, "minimum 2 devices, given: %d\n", count);
-+		return -EINVAL;
-+	}
-+
-+	concat = devm_kzalloc(dev, sizeof(*concat), GFP_KERNEL);
-+	if (!concat)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, concat);
-+
-+	concat->devices = devm_kcalloc(dev, count, sizeof(*concat->devices),
-+				       GFP_KERNEL);
-+	if (!concat->devices)
-+		return -ENOMEM;
-+
-+	/* Aggregate the physical devices */
-+	of_for_each_phandle(&it, ret, node, "devices", NULL, 0) {
-+		mtd = get_mtd_device_by_node(it.node);
-+		if (IS_ERR(mtd)) {
-+			ret = -EPROBE_DEFER;
-+			goto put_mtd_devices;
-+		}
-+
-+		concat->devices[concat->count++] = mtd;
-+	}
-+
-+	/* Create the virtual device */
-+	concat->vmtd = mtd_concat_create(concat->devices, concat->count,
-+					 dev_name(dev));
-+	if (!concat->vmtd) {
-+		ret = -ENXIO;
-+		goto put_mtd_devices;
-+	}
-+
-+	concat->vmtd->dev.parent = dev;
-+	mtd_set_of_node(concat->vmtd, node);
-+
-+	/* Register the platform device */
-+	ret = mtd_device_register(concat->vmtd, NULL, 0);
-+	if (ret)
-+		goto destroy_concat;
-+
-+	return 0;
-+
-+destroy_concat:
-+	mtd_concat_destroy(concat->vmtd);
-+put_mtd_devices:
-+	mtd_virt_concat_put_devices(concat);
-+
-+	return ret;
-+}
-+
-+static int mtd_virt_concat_remove(struct platform_device *pdev)
-+{
-+	struct mtd_virt_concat *concat = platform_get_drvdata(pdev);
-+
-+	mtd_device_unregister(concat->vmtd);
-+	mtd_concat_destroy(concat->vmtd);
-+	mtd_virt_concat_put_devices(concat);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mtd_virt_concat_of_match[] = {
-+	{
-+		.compatible = "mtd-concat",
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, mtd_virt_concat_of_match);
-+
-+static struct platform_driver mtd_virt_concat_driver = {
-+	.probe = mtd_virt_concat_probe,
-+	.remove = mtd_virt_concat_remove,
-+	.driver	 = {
-+		.name   = "mtd-virt-concat",
-+		.of_match_table = mtd_virt_concat_of_match,
-+	},
-+};
-+module_platform_driver(mtd_virt_concat_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Bernhard Frauendienst <kernel@nospam.obeliks.de>");
-+MODULE_DESCRIPTION("Virtual concat MTD device driver");
--- 
-2.20.1
-
+Yours,
+Linus Walleij
