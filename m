@@ -2,240 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DE8FB066
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 13:25:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3810FB06D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 13:25:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfKMMZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 07:25:10 -0500
-Received: from mail-eopbgr140055.outbound.protection.outlook.com ([40.107.14.55]:43648
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        id S1727445AbfKMMZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 07:25:19 -0500
+Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:47362
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727211AbfKMMZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 07:25:07 -0500
+        id S1727427AbfKMMZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 07:25:18 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JPqrVTqoWRwCk/+hwWC/HCXdi0l4sDJ+lJ/uKkcwEdNqIkr+YZq+Qxmp+eI40GHpD3BrzFNsY3WdnBAZigtBBlwaO+d4Bpcv/33q7XMNaDtnz4AzcCYyoeR8lO8DIBj67R7SFXh96eOHtMdbje69Y2e4lUljta0QbMh5SOhiw4bc+/z7WFCRmvPIZubOTwFCXVjMzzbC+qVFwqzEMNctxs6ftgoK4yPCxuOYYoPnVgQOPGw5XxPuvx+eL6M2CxnAYc684DNvQyMUfW6VA3aajGPyW8fHB8YxrmuIqBRYTjFCPNo3z5talVKZ+3KHEcqZk15K1wqSQySnL/d9sF8HQA==
+ b=Qb9v0lnSuX7ly/JHz4Y/VCCHujtKD99qysKHOOk7x0WYiwL8ZVSsDkFFZ4oUpFkS6cCpMZI5UVpQ9EyURzenysQJcrk9i/n2ktPzA8Q4ljd/p7OYWiiAfEmGRul+ISEa2BWE9Mkpi4tbb+5e6zzh10p0Uc6HTcyfXoXhGi9LRvriPck+BsqXVYcCgvmMdTqghDSPgTKZqHdPnHHEh+JsEGppsV50x9y2K/86ceJSWT2rEwBY96w2XE4vkk1rHqoY3qJ8jV9NB0Sw/eMnfU7Yj2vWhPj6kXK22fWHGDG5DE4OUY9M7pxuf0JThtx1Lcp9OVZ+WL7199vM0qqtkByODA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P+vaRnofyPqmOegx40qWQhu07WoA/qgeBw2RKBJeH7E=;
- b=Hr0YsjzHqTtHwPz5weMCJYWrkYwMES/9mjiG3adKu6JcrRWoqeMfInJtupLfIC2pifobmSPT/dMES1VssG4CpHXxk7Knyd9kAxvzE5rTRMH49cNahY5ZU8gTQYXH295TeFXlosh5bQYXAi/j6qU9k4pDBbzkwhSKCnJvLcxyle4WdAbX2J+6pncw5nCQTFA23bL4iKhdB4Q1AzWrWK+ST46wkHEBekvn6X6OMBGIzcG+yxSdiTA9x7mkTyvqAXWwCK4HBhEZww+r7NUNJGzv18BOLQxt8JcbLgjVpn45zVTJ/skt4OaS7XR7Czb5AVkiMd5H46NBC/EkEynzW/3jnQ==
+ bh=gaKre0UKGUV6c1mHSzYN5TRobPztOjwZKpwPk93Jj1A=;
+ b=MU1XjwrpFirFWuckXdYTCpJlnc69xNn1NulFuqGgJYSWmtz0+87IMrwmgVCX8jE2S4PiiuDEmxaauM7b+5IfsZ6JjhqD9lgNjz8LE1HhGd8ENO5jjTTf2CDN4ml6CgBVLE6yGgqBuokcbmZJXKtSXdL4/Xshlm2UTYYZEWb/kbkamaEX7wUeX6hPjN242IOMfxvxXtvtUZVnGRC6HekN9Fuy1cgjZu2AJVELD2MfNhOke3qjxvaQeuMCbkW1JSfYdEVgv6x4Fw6Rb6TFGHrqOKZ/bqdq13TjGQCsOKR3W2H9AASSi58DvpyGrD8YJHfmL3whAtZKraJx1LHJmyahbw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P+vaRnofyPqmOegx40qWQhu07WoA/qgeBw2RKBJeH7E=;
- b=D3lCwSqQAb0wZsUIIkVekjWmORagiTx6m3dl/N6ELrcFI1R9Y6ntN3/MZ3IBCtEJJGmCs1JaK141DsRTGeus3uQhSgwz9yWbFY0Dwqc5y0kruDw6nOg0U4G86BwBaPrX0WcRxvUO+88/RYhN4XNDxcIhHEqUXxx4GO0ZbFTO1sQ=
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.51.208) by
- VI1PR04MB6142.eurprd04.prod.outlook.com (20.179.27.138) with Microsoft SMTP
+ bh=gaKre0UKGUV6c1mHSzYN5TRobPztOjwZKpwPk93Jj1A=;
+ b=YTTW3dpyZ6zpo9lud/so2+uLXeAFYb2oXhXQ0HdmJ5o8l2IuXvIiBUmkzakBF24U35amW/eH1US4rCtdLk37k5tymZKQtNykJ9Hs1XxOG8NQWL4Mc3j8uVqh0RyDkNTH7RIRRrn8DnwcmZtLiTV16uh+Jft2vo3wERkVGK1MchA=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB4499.eurprd04.prod.outlook.com (52.135.151.22) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.25; Wed, 13 Nov 2019 12:24:24 +0000
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::71d2:55b3:810d:c75b]) by VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::71d2:55b3:810d:c75b%7]) with mapi id 15.20.2451.023; Wed, 13 Nov 2019
- 12:24:24 +0000
-From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
-To:     "hch@lst.de" <hch@lst.de>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-CC:     Leo Li <leoyang.li@nxp.com>,
-        Diana Madalina Craciun <diana.craciun@nxp.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v3 4/4] dpaa2_eth: use new unmap and sync dma api variants
-Thread-Topic: [PATCH v3 4/4] dpaa2_eth: use new unmap and sync dma api
- variants
-Thread-Index: AQHVmh1JgfD4RpohtUqf48sTd7I87w==
-Date:   Wed, 13 Nov 2019 12:24:24 +0000
-Message-ID: <20191113122407.1171-5-laurentiu.tudor@nxp.com>
-References: <20191113122407.1171-1-laurentiu.tudor@nxp.com>
-In-Reply-To: <20191113122407.1171-1-laurentiu.tudor@nxp.com>
+ 15.20.2430.23; Wed, 13 Nov 2019 12:25:13 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2430.027; Wed, 13 Nov 2019
+ 12:25:13 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>
+Subject: [PATCH 1/3] dt-bindings: imx8-clock: Add ADMA clock ids
+Thread-Topic: [PATCH 1/3] dt-bindings: imx8-clock: Add ADMA clock ids
+Thread-Index: AQHVmh1lUtcvIOh5CU6AJDEM/1tcYw==
+Date:   Wed, 13 Nov 2019 12:25:13 +0000
+Message-ID: <1573647909-31081-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM0PR02CA0008.eurprd02.prod.outlook.com
- (2603:10a6:208:3e::21) To VI1PR04MB5134.eurprd04.prod.outlook.com
- (2603:10a6:803:5f::16)
-x-mailer: git-send-email 2.17.1
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.tudor@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
+x-clientproxiedby: AM0PR0402CA0014.eurprd04.prod.outlook.com
+ (2603:10a6:208:15::27) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
 x-originating-ip: [89.37.124.34]
+x-mailer: git-send-email 2.7.4
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 6168649c-f078-487f-b96e-08d768346b5e
-x-ms-traffictypediagnostic: VI1PR04MB6142:|VI1PR04MB6142:
+x-ms-office365-filtering-correlation-id: 799d458e-3196-4a59-decb-08d7683487fc
+x-ms-traffictypediagnostic: AM0PR04MB4499:|AM0PR04MB4499:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB61421E49190338F9757E0D14EC760@VI1PR04MB6142.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2331;
+x-microsoft-antispam-prvs: <AM0PR04MB44990E7D41C70FB5ACE391E7F6760@AM0PR04MB4499.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1443;
 x-forefront-prvs: 0220D4B98D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(346002)(396003)(366004)(189003)(199004)(6486002)(66066001)(486006)(446003)(110136005)(86362001)(6436002)(44832011)(5660300002)(54906003)(2906002)(305945005)(476003)(14454004)(2201001)(6512007)(186003)(3846002)(11346002)(316002)(6116002)(66946007)(2616005)(7736002)(256004)(14444005)(66556008)(66446008)(99286004)(52116002)(76176011)(6636002)(36756003)(64756008)(25786009)(2501003)(386003)(71190400001)(6506007)(478600001)(1076003)(8936002)(71200400001)(26005)(50226002)(102836004)(81156014)(81166006)(4326008)(66476007)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6142;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(396003)(366004)(136003)(376002)(199004)(189003)(486006)(44832011)(2616005)(71200400001)(66446008)(66476007)(102836004)(86362001)(6506007)(386003)(71190400001)(64756008)(256004)(6512007)(476003)(66066001)(5660300002)(36756003)(66946007)(4326008)(66556008)(6636002)(6436002)(26005)(186003)(2906002)(7736002)(110136005)(8676002)(52116002)(99286004)(8936002)(316002)(478600001)(54906003)(14454004)(6116002)(3846002)(50226002)(25786009)(6486002)(305945005)(81156014)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4499;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: BUCNPXAPdEJCJ+lPN70DLFOoCL+0oPDPKwNpHHJ90fBQLzfWOI5xieB29ekIsnUQKkVHX7lETKs2+rNRuoqW4rRih+rIKd0lBpTwdTu3W4yl4DjEKm3gca3mMBhO5LqY2x4Oo7aC9jbbLKY2U+FuUA8tIQ/+RV7+oyZUaTfxZM581e4bin1QANMjsdmHtDBUr0sGCXs9Y5PGEKLa8Iu7dS9EMIbmcBJ6pK78HpZeJFV+ApKh5rUWBNnbLA+3BMQe9uecm0oCuuKovqgLdEnVcqpXMcQs/iCuT8dhiC+cqSDyHL1/xjyMnIp4GUY/1wngRCa3Imq9gLZwgVRRJ7tRxBYD/djEzlRUEAVxwXJYtoj9ahNDuvBSEbUQxN5qbfwGUlrUnnWIfQ9t/ya80OcgvV96+IbN4VionMo0pZg85kP7DBQXfcM4m9QImL1Bd5kF
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3D1B4AA2386E4A4192091C84DA8A635F@eurprd04.prod.outlook.com>
+x-microsoft-antispam-message-info: 6ekcCsHY+lw3rzCwdNIlBjypUBjlt0c/bIJgO5TScimdKcciHTpvqItTHN1q9TIkwcUn36DnXzW/MK7n+hLmZg07DHMTHwNM1dewtqhmgJ2O2LDNAKXGUyqdA/Q6o1IndonJ5oCCbcYmWQgxU7uagRtGCBbZYmqFKbflRJ6npy+7pssBv2xwyqF/crTtkzJDFNq5zn/DCJhPUjuhVilcP1V1UgqzvReFY4ZIrw4EO7kNKsreme7FMe04kaEJ2gZw287VR5o26LEoz7foNxeUrEHGHdkr2mBjIASZe6jKL8s5ltkoV6hSRTyeRYBWBG9IlPQmkSeBbWkJtMxwGyzNW4foqtju2v6eYyPWjw1m31Vh7mRDL3rHz9vFxFCB9jzvstJwD9p7veIrsml/eIx9tu+iTuKZFJPTKA6ouEuPM5QCmrU8obxAyYufh0pKjWqU
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6168649c-f078-487f-b96e-08d768346b5e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 12:24:24.8196
+X-MS-Exchange-CrossTenant-Network-Message-Id: 799d458e-3196-4a59-decb-08d7683487fc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 12:25:13.1385
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lGcX8Bne2FcSZSvqS7FIaELmFRcjHreqFBpRqNZcrStg+cXdUORURBEHvP/TAG0QliSoqnr1kmVtE5XwxaIPnQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6142
+X-MS-Exchange-CrossTenant-userprincipalname: dWGyW3tM323gjhyci5Xu1iBTfiaPeVhwMc9jm+EdwOStPFVcZkhcZOkhiDmKQe7arWUAv/++p1GCFnLaeqXhVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4499
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+According to the RM, the Audio and DMA (ADMA) subsystem is a collection
+of audio peripherals and some system modules.
+Add the ADMA specific clock ids to the dt-bindings clock file.
 
-Convert this driver to usage of the newly introduced dma unmap and
-sync DMA APIs. This will get rid of the unsupported direct usage of
-iommu_iova_to_phys() API.
-
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  | 43 ++++++++-----------
- .../net/ethernet/freescale/dpaa2/dpaa2-eth.h  |  1 -
- 2 files changed, 18 insertions(+), 26 deletions(-)
+ include/dt-bindings/clock/imx8-clock.h | 96 ++++++++++++++++++++++++++++++=
++++-
+ 1 file changed, 94 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net=
-/ethernet/freescale/dpaa2/dpaa2-eth.c
-index 19379bae0144..6b941b753106 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -29,16 +29,6 @@ MODULE_LICENSE("Dual BSD/GPL");
- MODULE_AUTHOR("Freescale Semiconductor, Inc");
- MODULE_DESCRIPTION("Freescale DPAA2 Ethernet Driver");
+diff --git a/include/dt-bindings/clock/imx8-clock.h b/include/dt-bindings/c=
+lock/imx8-clock.h
+index 673a8c6..6e0c752 100644
+--- a/include/dt-bindings/clock/imx8-clock.h
++++ b/include/dt-bindings/clock/imx8-clock.h
+@@ -131,7 +131,60 @@
+ #define IMX_ADMA_PWM_CLK				188
+ #define IMX_ADMA_LCD_CLK				189
 =20
--static void *dpaa2_iova_to_virt(struct iommu_domain *domain,
--				dma_addr_t iova_addr)
--{
--	phys_addr_t phys_addr;
--
--	phys_addr =3D domain ? iommu_iova_to_phys(domain, iova_addr) : iova_addr;
--
--	return phys_to_virt(phys_addr);
--}
--
- static void validate_rx_csum(struct dpaa2_eth_priv *priv,
- 			     u32 fd_status,
- 			     struct sk_buff *skb)
-@@ -85,9 +75,9 @@ static void free_rx_fd(struct dpaa2_eth_priv *priv,
- 	sgt =3D vaddr + dpaa2_fd_get_offset(fd);
- 	for (i =3D 1; i < DPAA2_ETH_MAX_SG_ENTRIES; i++) {
- 		addr =3D dpaa2_sg_get_addr(&sgt[i]);
--		sg_vaddr =3D dpaa2_iova_to_virt(priv->iommu_domain, addr);
--		dma_unmap_page(dev, addr, DPAA2_ETH_RX_BUF_SIZE,
--			       DMA_BIDIRECTIONAL);
-+		sg_vaddr =3D dma_unmap_single_desc(dev, addr,
-+						 DPAA2_ETH_RX_BUF_SIZE,
-+						 DMA_BIDIRECTIONAL);
-=20
- 		free_pages((unsigned long)sg_vaddr, 0);
- 		if (dpaa2_sg_is_final(&sgt[i]))
-@@ -143,9 +133,9 @@ static struct sk_buff *build_frag_skb(struct dpaa2_eth_=
-priv *priv,
-=20
- 		/* Get the address and length from the S/G entry */
- 		sg_addr =3D dpaa2_sg_get_addr(sge);
--		sg_vaddr =3D dpaa2_iova_to_virt(priv->iommu_domain, sg_addr);
--		dma_unmap_page(dev, sg_addr, DPAA2_ETH_RX_BUF_SIZE,
--			       DMA_BIDIRECTIONAL);
-+		sg_vaddr =3D dma_unmap_single_desc(dev, sg_addr,
-+						 DPAA2_ETH_RX_BUF_SIZE,
-+						 DMA_BIDIRECTIONAL);
-=20
- 		sg_length =3D dpaa2_sg_get_len(sge);
-=20
-@@ -210,9 +200,9 @@ static void free_bufs(struct dpaa2_eth_priv *priv, u64 =
-*buf_array, int count)
- 	int i;
-=20
- 	for (i =3D 0; i < count; i++) {
--		vaddr =3D dpaa2_iova_to_virt(priv->iommu_domain, buf_array[i]);
--		dma_unmap_page(dev, buf_array[i], DPAA2_ETH_RX_BUF_SIZE,
--			       DMA_BIDIRECTIONAL);
-+		vaddr =3D dma_unmap_single_desc(dev, buf_array[i],
-+					      DPAA2_ETH_RX_BUF_SIZE,
-+					      DMA_BIDIRECTIONAL);
- 		free_pages((unsigned long)vaddr, 0);
- 	}
- }
-@@ -369,9 +359,8 @@ static void dpaa2_eth_rx(struct dpaa2_eth_priv *priv,
- 	/* Tracing point */
- 	trace_dpaa2_rx_fd(priv->net_dev, fd);
-=20
--	vaddr =3D dpaa2_iova_to_virt(priv->iommu_domain, addr);
--	dma_sync_single_for_cpu(dev, addr, DPAA2_ETH_RX_BUF_SIZE,
--				DMA_BIDIRECTIONAL);
-+	vaddr =3D dma_sync_single_for_cpu_desc(dev, addr, DPAA2_ETH_RX_BUF_SIZE,
-+					     DMA_BIDIRECTIONAL);
-=20
- 	fas =3D dpaa2_get_fas(vaddr, false);
- 	prefetch(fas);
-@@ -682,7 +671,8 @@ static void free_tx_fd(const struct dpaa2_eth_priv *pri=
-v,
- 	u32 fd_len =3D dpaa2_fd_get_len(fd);
-=20
- 	fd_addr =3D dpaa2_fd_get_addr(fd);
--	buffer_start =3D dpaa2_iova_to_virt(priv->iommu_domain, fd_addr);
-+	buffer_start =3D dma_sync_single_for_cpu_desc(dev, fd_addr, sizeof(*swa),
-+						    DMA_BIDIRECTIONAL);
- 	swa =3D (struct dpaa2_eth_swa *)buffer_start;
-=20
- 	if (fd_format =3D=3D dpaa2_fd_single) {
-@@ -3435,6 +3425,11 @@ static int dpaa2_eth_probe(struct fsl_mc_device *dpn=
-i_dev)
-=20
- 	dev =3D &dpni_dev->dev;
-=20
-+	if (!dma_can_unmap_by_dma_addr(dev)) {
-+		dev_err(dev, "required dma unmap/sync APIs not available\n");
-+		return -ENOTSUPP;
-+	}
+-#define IMX_SCU_CLK_END					190
++#define IMX_ADMA_AUD_PLL0				190
++#define IMX_ADMA_AUD_PLL1				191
 +
- 	/* Net device */
- 	net_dev =3D alloc_etherdev_mq(sizeof(*priv), DPAA2_ETH_MAX_NETDEV_QUEUES)=
-;
- 	if (!net_dev) {
-@@ -3448,8 +3443,6 @@ static int dpaa2_eth_probe(struct fsl_mc_device *dpni=
-_dev)
- 	priv =3D netdev_priv(net_dev);
- 	priv->net_dev =3D net_dev;
++#define IMX_ADMA_AUD_PLL_DIV_CLK0_CLK			192
++#define IMX_ADMA_AUD_PLL_DIV_CLK1_CLK			193
++#define IMX_ADMA_AUD_REC_CLK0_CLK			194
++#define IMX_ADMA_AUD_REC_CLK1_CLK			195
++
++/* CM40 SS */
++#define IMX_CM40_IPG_CLK				196
++#define IMX_CM40_I2C_DIV				197
++
++#define IMX_SCU_CLK_END					198
++
++#define IMX_ADMA_ACM_AUD_CLK0_SEL			0
++#define IMX_ADMA_ACM_AUD_CLK0_CLK			1
++#define IMX_ADMA_ACM_AUD_CLK1_SEL			2
++#define IMX_ADMA_ACM_AUD_CLK1_CLK			3
++#define IMX_ADMA_ACM_MCLKOUT0_SEL			4
++#define IMX_ADMA_ACM_MCLKOUT1_SEL			5
++#define IMX_ADMA_ACM_ESAI0_MCLK_SEL			6
++#define IMX_ADMA_ACM_GPT0_MUX_CLK_SEL			7
++#define IMX_ADMA_ACM_GPT1_MUX_CLK_SEL			8
++#define IMX_ADMA_ACM_GPT2_MUX_CLK_SEL			9
++#define IMX_ADMA_ACM_GPT3_MUX_CLK_SEL			10
++#define IMX_ADMA_ACM_GPT4_MUX_CLK_SEL			11
++#define IMX_ADMA_ACM_GPT5_MUX_CLK_SEL			12
++#define IMX_ADMA_ACM_SAI0_MCLK_SEL			13
++#define IMX_ADMA_ACM_SAI1_MCLK_SEL			14
++#define IMX_ADMA_ACM_SAI2_MCLK_SEL			15
++#define IMX_ADMA_ACM_SAI3_MCLK_SEL			16
++#define IMX_ADMA_ACM_SAI4_MCLK_SEL			17
++#define IMX_ADMA_ACM_SAI5_MCLK_SEL			18
++#define IMX_ADMA_ACM_SPDIF0_TX_CLK_SEL			19
++#define IMX_ADMA_ACM_MQS_TX_CLK_SEL			20
++#define IMX_ADMA_ACM_ASRC0_MUX_CLK_SEL			21
++#define IMX_ADMA_ACM_ASRC1_MUX_CLK_SEL			22
++
++#define IMX_ADMA_EXT_AUD_MCLK0				23
++#define IMX_ADMA_EXT_AUD_MCLK1				24
++#define IMX_ADMA_ESAI0_RX_CLK				25
++#define IMX_ADMA_ESAI0_RX_HF_CLK			26
++#define IMX_ADMA_ESAI0_TX_CLK				27
++#define IMX_ADMA_ESAI0_TX_HF_CLK			28
++#define IMX_ADMA_SPDIF0_RX				29
++#define IMX_ADMA_SAI0_RX_BCLK				30
++#define IMX_ADMA_SAI0_TX_BCLK				31
++#define IMX_ADMA_SAI1_RX_BCLK				32
++#define IMX_ADMA_SAI1_TX_BCLK				33
++#define IMX_ADMA_SAI2_RX_BCLK				34
++#define IMX_ADMA_SAI3_RX_BCLK				35
++#define IMX_ADMA_SAI4_RX_BCLK				36
++
++#define IMX_ADMA_ACM_CLK_END				37
 =20
--	priv->iommu_domain =3D iommu_get_domain_for_dev(dev);
--
- 	/* Obtain a MC portal */
- 	err =3D fsl_mc_portal_allocate(dpni_dev, FSL_MC_IO_ATOMIC_CONTEXT_PORTAL,
- 				     &priv->mc_io);
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h b/drivers/net=
-/ethernet/freescale/dpaa2/dpaa2-eth.h
-index 8a0e65b3267f..4e5183617ebd 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.h
-@@ -374,7 +374,6 @@ struct dpaa2_eth_priv {
+ /* LPCG clocks */
 =20
- 	struct fsl_mc_device *dpbp_dev;
- 	u16 bpid;
--	struct iommu_domain *iommu_domain;
+@@ -287,7 +340,46 @@
+ #define IMX_ADMA_LPCG_DSP_IPG_CLK			42
+ #define IMX_ADMA_LPCG_DSP_CORE_CLK			43
+ #define IMX_ADMA_LPCG_OCRAM_IPG_CLK			44
++#define IMX_ADMA_LPCG_AMIX_IPG_CLK			45
++#define IMX_ADMA_LPCG_ESAI_0_IPG_CLK			46
++#define IMX_ADMA_LPCG_ESAI_0_EXTAL_CLK			47
++#define IMX_ADMA_LPCG_SAI_0_IPG_CLK			48
++#define IMX_ADMA_LPCG_SAI_0_MCLK			49
++#define IMX_ADMA_LPCG_SAI_1_IPG_CLK			50
++#define IMX_ADMA_LPCG_SAI_1_MCLK			51
++#define IMX_ADMA_LPCG_SAI_2_IPG_CLK			52
++#define IMX_ADMA_LPCG_SAI_2_MCLK			53
++#define IMX_ADMA_LPCG_SAI_3_IPG_CLK			54
++#define IMX_ADMA_LPCG_SAI_3_MCLK			55
++#define IMX_ADMA_LPCG_SAI_4_IPG_CLK			56
++#define IMX_ADMA_LPCG_SAI_4_MCLK			57
++#define IMX_ADMA_LPCG_SAI_5_IPG_CLK			58
++#define IMX_ADMA_LPCG_SAI_5_MCLK			59
++#define IMX_ADMA_LPCG_MQS_IPG_CLK			60
++#define IMX_ADMA_LPCG_MQS_MCLK				61
++#define IMX_ADMA_LPCG_GPT5_IPG_CLK			62
++#define IMX_ADMA_LPCG_GPT5_CLKIN			63
++#define IMX_ADMA_LPCG_GPT6_IPG_CLK			64
++#define IMX_ADMA_LPCG_GPT6_CLKIN			65
++#define IMX_ADMA_LPCG_GPT7_IPG_CLK			66
++#define IMX_ADMA_LPCG_GPT7_CLKIN			67
++#define IMX_ADMA_LPCG_GPT8_IPG_CLK			68
++#define IMX_ADMA_LPCG_GPT8_CLKIN			69
++#define IMX_ADMA_LPCG_GPT9_IPG_CLK			70
++#define IMX_ADMA_LPCG_GPT9_CLKIN			71
++#define IMX_ADMA_LPCG_GPT10_IPG_CLK			72
++#define IMX_ADMA_LPCG_GPT10_CLKIN			73
++#define IMX_ADMA_LPCG_MCLKOUT0				74
++#define IMX_ADMA_LPCG_MCLKOUT1				75
++#define IMX_ADMA_LPCG_SPDIF_0_TX_CLK			76
++#define IMX_ADMA_LPCG_SPDIF_0_GCLKW			77
++#define IMX_ADMA_LPCG_ASRC_0_IPG_CLK			79
++#define IMX_ADMA_LPCG_ASRC_1_IPG_CLK			80
++#define IMX_ADMA_LPCG_AUD_PLL_DIV_CLK0_CLK		81
++#define IMX_ADMA_LPCG_AUD_PLL_DIV_CLK1_CLK		82
++#define IMX_ADMA_LPCG_AUD_REC_CLK0_CLK			83
++#define IMX_ADMA_LPCG_AUD_REC_CLK1_CLK			84
 =20
- 	bool tx_tstamp; /* Tx timestamping enabled */
- 	bool rx_tstamp; /* Rx timestamping enabled */
+-#define IMX_ADMA_LPCG_CLK_END				45
++#define IMX_ADMA_LPCG_CLK_END				85
+=20
+ #endif /* __DT_BINDINGS_CLOCK_IMX_H */
 --=20
-2.17.1
+2.7.4
 
