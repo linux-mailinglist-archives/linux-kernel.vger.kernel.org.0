@@ -2,139 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A32BFFBBD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 23:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DB1AFBBE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 23:54:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbfKMWsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 17:48:17 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35185 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbfKMWsR (ORCPT
+        id S1726489AbfKMWyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 17:54:43 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43397 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfKMWym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 17:48:17 -0500
-Received: by mail-wr1-f66.google.com with SMTP id s5so4288639wrw.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 14:48:16 -0800 (PST)
+        Wed, 13 Nov 2019 17:54:42 -0500
+Received: by mail-pg1-f196.google.com with SMTP id l24so2298322pgh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 14:54:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lZTpS2joYk+fUmESBGaQbCu+yB8VwBrfz0zrdA9q1TQ=;
-        b=BzjIduangPFvAzZWgR203MjIM7WWi0HEh94XzWGlBunGkjxbJV1Zb2XDd0K0Q5XjiG
-         ImPnXGqv6nIpyOuNTdvhk8IXCAF96XveyxUFVxTlMHJZzhL2jGsSPcMWFb3i+uFgnoY4
-         PES0M9eDn+cmqL+60VQQsXI3NArqGkEfkq4gY9q0HsYCWuLwSIUOGmSf4B2iY5awX7Z3
-         mWacf2zQyuAFyeVaYr1cnmKKDmGfJ6ZoV0zjlZHzV/TyDl2LK9ev5EIfC1dCGDv2FZc+
-         PWH/mh8PT+a84SywJNRMstDzBKvK70cxyXhjK1fbiUp/1yXBPISA494u9cOq8B9BOOct
-         UdXA==
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YzThP7vqWAF2JKLOm94GCZOblrnMR8+6q3/EyLUdnt0=;
+        b=tSDAklaSoQvipGE27ua1O3lzpOd4kK5GoM9WC9l+9BqEgxiVPneK7Dqnxf/glB1p26
+         geJO7MDJ4zdV3iK3WmZsouncLPqY2Rf03BRL99x6kl4H6wlwqKYXJdKkXC/uzfs8tI2a
+         tU+BzUeZNVJTDgf4ivkYrtP6JeNfXjnIoe8yLWcgRcYCMMMRH3f0wjwF1zbGDm4nRG5C
+         Qgz8PxAeaQZf1xPoa8B9rTo+1yJYhamQ3l1NGfOeNXb84ZDRaYcS+1fZcT/e2gHU0/AQ
+         5A0lB7G7eGevTcarm5sQAZ5XFNvwmK6yUtoDcyD8lusEYl6kebRdprgHaq99MBcn5ul9
+         Tlhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lZTpS2joYk+fUmESBGaQbCu+yB8VwBrfz0zrdA9q1TQ=;
-        b=KzLaNfXkhGQTBk3lIn3xKZwFfKTGjFmFZIdyT1rjMPseRge0GFutUeoPkBIMU+dj1a
-         EgWK/Kk2tg6AfLwvYwYtMMcEOFN7Zk+W8xPWOdDCxpueFxnGdNsu3AmqT7AxVddpuaey
-         GBypTMPEwqkIG+wcT2wpteeypwiVFeNwaDM78Z0so5mWe5IqvJbHg0MJ8SVxhRuZszHG
-         Vq4PQUdNi7LupEHg03IR0MjTnrLXURORtNuI1dIkN/BX0RSy6HUz8rr1w9Y5SALLFA5M
-         tPaGhfV9IDwRtBLt/4/agKdj7WlfeU83ICmx8BEGyJTwgkZTToN5slnhxQYXAbTk/8pj
-         d7Sg==
-X-Gm-Message-State: APjAAAXz3rvJ+qBs7Rrk7VlUpfBiZHKrtcRVk4hKJwJhbTjyUSM3/G/w
-        VzMi93GIQOEgL3Q8bB5n9n2c9w==
-X-Google-Smtp-Source: APXvYqwFsMji4u3hw0Z4MSh0J9JR7kvK3Li3GIVW3HMwtqb59PAUp9qoogj4uvt5Jc4Or70UQAJ13g==
-X-Received: by 2002:a5d:6a4c:: with SMTP id t12mr5444884wrw.141.1573685294877;
-        Wed, 13 Nov 2019 14:48:14 -0800 (PST)
-Received: from google.com ([100.105.32.75])
-        by smtp.gmail.com with ESMTPSA id v9sm4447145wrs.95.2019.11.13.14.48.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YzThP7vqWAF2JKLOm94GCZOblrnMR8+6q3/EyLUdnt0=;
+        b=kMpgyRFVTyDt2GLtHCe5XfXBAw1oFnoTC6Rxeoi4z2xSmo/d5Grz5/TY+5IawqIqE/
+         9E3Tl6P0A8/2NIx1LhUCuKcNyfGOhhxk+UjeXtnwW4quDaXiEDxhHdYfFwulJ3JAOz76
+         e9e9HkSYtxLP6m6zGpvVxuEym9d8RErEFqn2kq0MXyukheMVOddR3Xi74X28IiPwhV7N
+         uPWDtK5fDL70rBBICQzhQW+BRmRmJCoCetMVQcEZ7FWy1tutpqGTGyExhd0PnUKSvDTD
+         2e+PIDT5mya6utZtD8KKgAmJOsU0ep8+5jeghE7ME2TtPMhTY99Gj1UWvB67PX5CdnD4
+         e13A==
+X-Gm-Message-State: APjAAAUPZ8rPCFpFIudrLBTow+H91mVxFDCv8FVybQfYvnOHN03545m9
+        +FVAMj0p64ULJOCVTcodYY417SJAuLRV3Q==
+X-Google-Smtp-Source: APXvYqwueIJ4re/fD86sVeb5x152yqjDqaH+pkQk8TNwHRHEoNwzt5z5yAcy2w25lsp6UQrocV+tUQ==
+X-Received: by 2002:a65:68d7:: with SMTP id k23mr6395729pgt.157.1573685680314;
+        Wed, 13 Nov 2019 14:54:40 -0800 (PST)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id l21sm3250622pjt.28.2019.11.13.14.54.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 14:48:13 -0800 (PST)
-Date:   Wed, 13 Nov 2019 23:48:08 +0100
-From:   Marco Elver <elver@google.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-Message-ID: <20191113224808.GA3960@google.com>
-References: <20191113213336.GA20665@google.com>
- <Pine.LNX.4.44L0.1911131648010.1558-100000@iolanthe.rowland.org>
+        Wed, 13 Nov 2019 14:54:39 -0800 (PST)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Tim Murray <timmurray@google.com>,
+        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Subject: [PATCH v2] firmware_class: make firmware caching configurable
+Date:   Wed, 13 Nov 2019 14:54:26 -0800
+Message-Id: <20191113225429.118495-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+In-Reply-To: <20191113210124.59909-1-salyzyn@android.com>
+References: <20191113210124.59909-1-salyzyn@android.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1911131648010.1558-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Nov 2019, Alan Stern wrote:
+Because firmware caching generates uevent messages that are sent over
+a netlink socket, it can prevent suspend on many platforms.  It's
+also not always useful, so make it a configurable option.
 
-> On Wed, 13 Nov 2019, Marco Elver wrote:
-> 
-> > An expression works fine. The below patch would work with KCSAN, and all
-> > your above examples work.
-> > 
-> > Re name: would it make sense to more directly convey the intent?  I.e.
-> > "this expression can race, and it's fine that the result is approximate
-> > if it does"?
-> > 
-> > My vote would go to something like 'smp_lossy' or 'lossy_race' -- but
-> > don't have a strong preference, and would also be fine with 'data_race'.
-> > Whatever is most legible.  Comments?
-> 
-> Lossiness isn't really relevant.  Things like sticky writes work 
-> perfectly well with data races; they don't lose anything.
-> 
-> My preference would be for "data_race" or something very similar
-> ("racy"? "race_ok"?).  That's the whole point -- we know the
-> operation can be part of a data race and we don't care.
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Tim Murray <timmurray@google.com>
+Cc: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
+---
+v2
+- move config from drivers/base/Kconfig to
+  drivers/base/firmware_loader/Kconfig
+- drop blank line
+- default yes conditional on PM_SLEEP
+---
+ drivers/base/firmware_loader/Kconfig | 12 ++++++++++++
+ drivers/base/firmware_loader/main.c  |  6 +++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-Makes sense. Let's stick with 'data_race' then.
-
-As Linus pointed out this won't yet work for void types and
-if-statements. How frequent would that use be? Should it even be
-encouraged?
-
-I'll add this as a patch for the next version of the KCSAN patch series.
-
-Thanks,
--- Marco
-
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 0b6506b9dd11..a97f323b61e3 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -308,6 +308,26 @@ unsigned long read_word_at_a_time(const void *addr)
- 	__u.__val;					\
- })
+diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
+index 3f9e274e2ed3..33e6552ddbb6 100644
+--- a/drivers/base/firmware_loader/Kconfig
++++ b/drivers/base/firmware_loader/Kconfig
+@@ -169,5 +169,17 @@ config FW_LOADER_COMPRESS
+ 	  be compressed with either none or crc32 integrity check type (pass
+ 	  "-C crc32" option to xz command).
  
-+#include <linux/kcsan.h>
++config FW_CACHE
++	bool "Enable firmware caching during suspend"
++	depends on PM_SLEEP
++	default y if PM_SLEEP
++	help
++	  Because firmware caching generates uevent messages that are sent
++	  over a netlink socket, it can prevent suspend on many platforms.
++	  It is also not always useful, so on such platforms we have the
++	  option.
 +
-+/*
-+ * data_race: macro to document that accesses in an expression may conflict with
-+ * other concurrent accesses resulting in data races, but the resulting
-+ * behaviour is deemed safe regardless.
-+ *
-+ * This macro *does not* affect normal code generation, but is a hint to tooling
-+ * that data races here are intentional.
-+ */
-+#define data_race(expr)                                                      \
-+	({                                                                     \
-+		typeof(({ expr; })) __val;                                     \
-+		kcsan_nestable_atomic_begin();                                 \
-+		__val = ({ expr; });                                           \
-+		kcsan_nestable_atomic_end();                                   \
-+		__val;                                                         \
-+	})
-+#else
++	  If unsure, say Y.
 +
- #endif /* __KERNEL__ */
+ endif # FW_LOADER
+ endmenu
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index bf44c79beae9..1c9f03514a47 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -51,7 +51,7 @@ struct firmware_cache {
+ 	struct list_head head;
+ 	int state;
  
- /*
+-#ifdef CONFIG_PM_SLEEP
++#ifdef CONFIG_FW_CACHE
+ 	/*
+ 	 * Names of firmware images which have been cached successfully
+ 	 * will be added into the below list so that device uncache
+@@ -556,7 +556,7 @@ static void fw_set_page_data(struct fw_priv *fw_priv, struct firmware *fw)
+ 		 (unsigned int)fw_priv->size);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
++#ifdef CONFIG_FW_CACHE
+ static void fw_name_devm_release(struct device *dev, void *res)
+ {
+ 	struct fw_name_devm *fwn = res;
+@@ -1046,7 +1046,7 @@ request_firmware_nowait(
+ }
+ EXPORT_SYMBOL(request_firmware_nowait);
+ 
+-#ifdef CONFIG_PM_SLEEP
++#ifdef CONFIG_FW_CACHE
+ static ASYNC_DOMAIN_EXCLUSIVE(fw_cache_domain);
+ 
+ /**
+-- 
+2.24.0.rc1.363.gb1bccd3e3d-goog
+
