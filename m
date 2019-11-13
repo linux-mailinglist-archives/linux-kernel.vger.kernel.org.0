@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ABACFA594
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00945FA57B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbfKMBw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:52:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41132 "EHLO mail.kernel.org"
+        id S1728363AbfKMBwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:52:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728255AbfKMBwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:52:24 -0500
+        id S1728296AbfKMBwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:52:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07570204EC;
-        Wed, 13 Nov 2019 01:52:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D40E62245D;
+        Wed, 13 Nov 2019 01:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609943;
-        bh=rmpRqWBuUsMLm26OG9t+wtXYQizGsK/WZIguKaUORQM=;
+        s=default; t=1573609950;
+        bh=zqKtBzIawqTh/gatYN8sjqqV0PNsU8huQ0cDbHWqccg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ntw+5uXi9WwjEbwmnkRwISsrppVBE7Sf55HzVu9/HsASwrcEWCL71pJFYo+BQjTA+
-         G+K8isL7F1Uf0vGT15fVBOSz2igZ0EOUJwQ3IsrDZFAjOyMy5kCqvyRZZFbLl0wdK+
-         v183ha0d/Sr2J8MA0EOvb9V/z/uO3hldFntMnay8=
+        b=HlaKi2lDmjvObhXSPwpOl3tx5VofL1XUX4VXFhYsPZKdsKhy9aUwNLNzMv/78Xwwx
+         7UcVvHyakvVrAEzMGJmSQXi0GAKHiS1beXOhXJ2BO0kQsug6UDa5XHhd7tmq1nN2im
+         a92dRyGAnlCBLSVoqgiVgDbgkntarfJ6l+uViqCU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 083/209] ASoC: qdsp6: q6asm-dai: checking NULL vs IS_ERR()
-Date:   Tue, 12 Nov 2019 20:48:19 -0500
-Message-Id: <20191113015025.9685-83-sashal@kernel.org>
+Cc:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 087/209] ARM: dts: da850-lego-ev3: slow down A/DC as much as possible
+Date:   Tue, 12 Nov 2019 20:48:23 -0500
+Message-Id: <20191113015025.9685-87-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -43,39 +42,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: David Lechner <david@lechnology.com>
 
-[ Upstream commit 8e9f7265eda9f3a662ca1ca47a69042a7840735b ]
+[ Upstream commit aea4762fb46e048c059ff49565ee33da07c8aeb3 ]
 
-The q6asm_audio_client_alloc() doesn't return NULL, it returns error
-pointers.
+Due to the electrical design of the A/DC circuits on LEGO MINDSTORMS EV3,
+if we are reading analog values as fast as possible (i.e. using DMA to
+service the SPI) the A/DC chip will read incorrect values - as much as
+0.1V off when the SPI is running at 10MHz. (This has to do with the
+capacitor charge time when channels are muxed in the A/DC.)
 
-Fixes: 2a9e92d371db ("ASoC: qdsp6: q6asm: Add q6asm dai driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This patch slows down the SPI as much as possible (if CPU is at 456MHz,
+SPI runs at 1/2 of that, so 228MHz and has a max prescalar of 256, so
+we could get ~891kHz, but we're just rounding it to 1MHz). We also use
+the max allowable value for WDELAY to slow things down even more.
+
+These changes reduce the error of the analog values to about 5mV, which
+is tolerable.
+
+Commits a3762b13a596 ("spi: spi-davinci: Add support for SPI_CS_WORD")
+and e2540da86ef8 ("iio: adc: ti-ads7950: use SPI_CS_WORD to reduce
+CPU usage") introduce changes that allow DMA transfers to be used, so
+this slow down is needed now.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/da850-lego-ev3.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index 9db9a2944ef26..c1a7d376a3fea 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -319,10 +319,11 @@ static int q6asm_dai_open(struct snd_pcm_substream *substream)
- 	prtd->audio_client = q6asm_audio_client_alloc(dev,
- 				(q6asm_cb)event_handler, prtd, stream_id,
- 				LEGACY_PCM_MODE);
--	if (!prtd->audio_client) {
-+	if (IS_ERR(prtd->audio_client)) {
- 		pr_info("%s: Could not allocate memory\n", __func__);
-+		ret = PTR_ERR(prtd->audio_client);
- 		kfree(prtd);
--		return -ENOMEM;
-+		return ret;
- 	}
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+diff --git a/arch/arm/boot/dts/da850-lego-ev3.dts b/arch/arm/boot/dts/da850-lego-ev3.dts
+index c4729d0e6c196..66fcadf0ba910 100644
+--- a/arch/arm/boot/dts/da850-lego-ev3.dts
++++ b/arch/arm/boot/dts/da850-lego-ev3.dts
+@@ -352,7 +352,8 @@
+ 		compatible = "ti,ads7957";
+ 		reg = <3>;
+ 		#io-channel-cells = <1>;
+-		spi-max-frequency = <10000000>;
++		spi-max-frequency = <1000000>;
++		ti,spi-wdelay = <63>;
+ 		vref-supply = <&adc_ref>;
+ 	};
+ };
 -- 
 2.20.1
 
