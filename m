@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B5BFFA12F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:56:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FF6FFA133
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 02:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbfKMBzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 20:55:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47252 "EHLO mail.kernel.org"
+        id S1729257AbfKMBzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 20:55:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729165AbfKMBzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:55:36 -0500
+        id S1729215AbfKMBzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:55:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1277522469;
-        Wed, 13 Nov 2019 01:55:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4344022468;
+        Wed, 13 Nov 2019 01:55:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610136;
-        bh=9PcIazD5ai6mg5kNZCsOn/ZzooCD/2R3M4jCxJLn8Pk=;
+        s=default; t=1573610142;
+        bh=FFuKDouo1rf8UsWPhO0vImXh4I1do/bn4P75rop+b8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IILBRTEvaQPddPGoyGg6a3sfXwu0M+alTcPTLhU83XJPv462KRApdZ6+7nJUip82S
-         Ll6+9Zbq7wqY9VCDStyU6VqdhmUn1Kjsj7er3uURcNwrYqRn++UJHqU0HzMYSE7VdA
-         suIB1c5q3ymxiRXOxkax6fsADbtPOa+jCOrXFj6A=
+        b=UrEN91JweZYH0rkigjPdjMeiRSB+7XkmD5tH/RdXijlyKEHSQBSYtIcX1Wdp83Tl/
+         4fffia7TZdOV29LtwPDw+txGsYkOGhztNij/uBayYHawDHNyvsgS6kNEsosKKJSuLo
+         rD/tOD8WiQJowtsRLNz3HmGvNMXiwtH9V119tsEk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Borislav Petkov <bp@suse.de>, Joerg Roedel <joro@8bytes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 184/209] x86/mm: Do not warn about PCI BIOS W+X mappings
-Date:   Tue, 12 Nov 2019 20:50:00 -0500
-Message-Id: <20191113015025.9685-184-sashal@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Guglielmo Fanini <g.fanini@gmail.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 188/209] hwmon: (k10temp) Support all Family 15h Model 6xh and Model 7xh processors
+Date:   Tue, 12 Nov 2019 20:50:04 -0500
+Message-Id: <20191113015025.9685-188-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -46,96 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit c200dac78fec66d87ef262cac38cfe4feabdf737 ]
+[ Upstream commit 53dfa0088edd2e2793afa21488532b12eb2dae48 ]
 
-PCI BIOS requires the BIOS area 0x0A0000-0x0FFFFFF to be mapped W+X for
-various legacy reasons. When CONFIG_DEBUG_WX is enabled, this triggers the
-WX warning, but this is misleading because the mapping is required and is
-not a result of an accidental oversight.
+BIOS developer guides refer to Family 15h Models 60h-6fh and Family 15h
+Models 70h-7fh. So far the driver only checked for Models 60h and 70h.
+However, there are now processors with other model numbers in the same
+families. Example is A10-9620P family 15h model 65h. Follow the developer
+guides and mask the lower 4 bit of the model number to determine the
+registers to use for reading temperatures and temperature limits.
 
-Prevent the full warning when PCI BIOS is enabled and the detected WX
-mapping is in the BIOS area. Just emit a pr_warn() which denotes the
-fact. This is partially duplicating the info which the PCI BIOS code emits
-when it maps the area as executable, but that info is not in the context of
-the WX checking output.
-
-Remove the extra %p printout in the WARN_ONCE() while at it. %pS is enough.
-
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Borislav Petkov <bp@suse.de>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1810082151160.2455@nanos.tec.linutronix.de
+Reported-by: Guglielmo Fanini <g.fanini@gmail.com>
+Cc: Guglielmo Fanini <g.fanini@gmail.com>
+Acked-by: Clemens Ladisch <clemens@ladisch.de>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/dump_pagetables.c | 35 +++++++++++++++++++++++++++--------
- 1 file changed, 27 insertions(+), 8 deletions(-)
+ drivers/hwmon/k10temp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index c05a818224bb0..abcb8d00b0148 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -19,7 +19,9 @@
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/highmem.h>
-+#include <linux/pci.h>
+diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+index bb15d7816a294..2cef0c37ff6fe 100644
+--- a/drivers/hwmon/k10temp.c
++++ b/drivers/hwmon/k10temp.c
+@@ -325,8 +325,9 @@ static int k10temp_probe(struct pci_dev *pdev,
  
-+#include <asm/e820/types.h>
- #include <asm/pgtable.h>
+ 	data->pdev = pdev;
  
- /*
-@@ -238,6 +240,29 @@ static unsigned long normalize_addr(unsigned long u)
- 	return (signed long)(u << shift) >> shift;
- }
- 
-+static void note_wx(struct pg_state *st)
-+{
-+	unsigned long npages;
-+
-+	npages = (st->current_address - st->start_address) / PAGE_SIZE;
-+
-+#ifdef CONFIG_PCI_BIOS
-+	/*
-+	 * If PCI BIOS is enabled, the PCI BIOS area is forced to WX.
-+	 * Inform about it, but avoid the warning.
-+	 */
-+	if (pcibios_enabled && st->start_address >= PAGE_OFFSET + BIOS_BEGIN &&
-+	    st->current_address <= PAGE_OFFSET + BIOS_END) {
-+		pr_warn_once("x86/mm: PCI BIOS W+X mapping %lu pages\n", npages);
-+		return;
-+	}
-+#endif
-+	/* Account the WX pages */
-+	st->wx_pages += npages;
-+	WARN_ONCE(1, "x86/mm: Found insecure W+X mapping at address %pS\n",
-+		  (void *)st->start_address);
-+}
-+
- /*
-  * This function gets called on a break in a continuous series
-  * of PTE entries; the next one is different so we need to
-@@ -273,14 +298,8 @@ static void note_page(struct seq_file *m, struct pg_state *st,
- 		unsigned long delta;
- 		int width = sizeof(unsigned long) * 2;
- 
--		if (st->check_wx && (eff & _PAGE_RW) && !(eff & _PAGE_NX)) {
--			WARN_ONCE(1,
--				  "x86/mm: Found insecure W+X mapping at address %p/%pS\n",
--				  (void *)st->start_address,
--				  (void *)st->start_address);
--			st->wx_pages += (st->current_address -
--					 st->start_address) / PAGE_SIZE;
--		}
-+		if (st->check_wx && (eff & _PAGE_RW) && !(eff & _PAGE_NX))
-+			note_wx(st);
- 
- 		/*
- 		 * Now print the actual finished series
+-	if (boot_cpu_data.x86 == 0x15 && (boot_cpu_data.x86_model == 0x60 ||
+-					  boot_cpu_data.x86_model == 0x70)) {
++	if (boot_cpu_data.x86 == 0x15 &&
++	    ((boot_cpu_data.x86_model & 0xf0) == 0x60 ||
++	     (boot_cpu_data.x86_model & 0xf0) == 0x70)) {
+ 		data->read_htcreg = read_htcreg_nb_f15;
+ 		data->read_tempreg = read_tempreg_nb_f15;
+ 	} else if (boot_cpu_data.x86 == 0x17) {
 -- 
 2.20.1
 
