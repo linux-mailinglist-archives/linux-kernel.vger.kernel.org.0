@@ -2,420 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD26FB118
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:10:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9112AFB11E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 14:11:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfKMNKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 08:10:42 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40684 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726250AbfKMNKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 08:10:41 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 511A323320A95FC7BDC6;
-        Wed, 13 Nov 2019 21:10:39 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 13 Nov
- 2019 21:10:36 +0800
-Subject: Re: [PATCH 2/2] f2fs: support data compression
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20191022171602.93637-1-jaegeuk@kernel.org>
- <20191022171602.93637-2-jaegeuk@kernel.org>
- <20191027225006.GA321938@sol.localdomain>
- <da214cdc-0074-b7bf-7761-d4c4ad3d4f6a@huawei.com>
- <20191030025512.GA4791@sol.localdomain>
- <97c33fa1-15af-b319-29a1-22f254a26c0a@huawei.com>
- <20191030170246.GB693@sol.localdomain>
-From:   Chao Yu <yuchao0@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Eric Biggers <ebiggers@kernel.org>
-Message-ID: <899f99e9-fdc7-a84b-14ec-623fa3a5e164@huawei.com>
-Date:   Wed, 13 Nov 2019 21:10:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20191030170246.GB693@sol.localdomain>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1727361AbfKMNLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 08:11:02 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43391 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbfKMNLC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 08:11:02 -0500
+Received: by mail-lf1-f66.google.com with SMTP id q5so1901338lfo.10
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 05:11:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arrikto-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=APXfuG82A+VYQSkpqfeuJieTcNwnepuIQxnGzHt+UyY=;
+        b=BAeCjAlzwou5Zo9UvZSL2D4JSlacqkT7yTYCtZVUIRNeMaEt3hdYh761eqcGUkI/Yo
+         I9+kvWMLSuScZsn4KcRn9p2zxHd49AvbDJDQusjhSGNQRLQWic3DzLnaWBrpON3B69nD
+         aVDAJ3BCTMD/v+an6y8zO+6Nko1hmKWVLk2aJVx1z30XdkijkPW8Oo9Mxcu/IJuD/+fM
+         A84fvsdtOR9NSSVxTeXmcTMGwIy/fSZA8PSWC5wbLHWpfo03k+8kG4VfIRlyF1SaCLO2
+         VF5At8jflRl18pUJbLsDnR83UOo2nNH/Us1sPEkSPeCTSwXq5zT4raVSZ/wxuqy8xY7a
+         lnDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=APXfuG82A+VYQSkpqfeuJieTcNwnepuIQxnGzHt+UyY=;
+        b=Katu1rkoGmNgEh4AVfrFHw/xquO+KbEh5SC/4FDSLETY+1CBBTrkUjPUD4VPNalyyL
+         Rjs3hy6JfTbMxVDoUkW83GdYGWa67HwpUvY7zkrSv7B+Zv5sD5XYjiYyNhfpHMLGTrgU
+         Q+BxoZw/Oqs7hLy4fJSRqkeBSSlpyJCASoWHRU67wM7+zv+6+NU/kE4IHZJFZ6xTAt1F
+         VO1iTxk5pOAqXqcs1fQRyeNAXgBdo/E/shArLnmZijRJCJloNqPW6e+QPd35epvXgECg
+         eWNSxOwUV9DuRcG+oUsYbqFQKt8p9FGDgqanCX2zYEZIwcRcYGxHtpk64zzjPzKRFnJI
+         iJRg==
+X-Gm-Message-State: APjAAAUgoTGP2bVIlL7VNaa3V875mYKFAD1ddjtOneZy4lNxAzkRXNdw
+        kp+Inp79sYL/lUWxOfCC/mEQnw==
+X-Google-Smtp-Source: APXvYqw8acf0sFiW3raGdnG9WRNX75XMtKloLZJBrhpNKGHffyGTzbwc68/x0EVvUMtvNYR9K6RDIA==
+X-Received: by 2002:a19:500d:: with SMTP id e13mr2669462lfb.85.1573650660205;
+        Wed, 13 Nov 2019 05:11:00 -0800 (PST)
+Received: from snf-864.vm.snf.arr ([31.177.62.212])
+        by smtp.gmail.com with ESMTPSA id y75sm1070176lff.58.2019.11.13.05.10.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Nov 2019 05:10:59 -0800 (PST)
+From:   Nikos Tsironis <ntsironis@arrikto.com>
+To:     mpatocka@redhat.com, tglx@linutronix.de,
+        linux-rt-users@vger.kernel.org, msnitzer@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Cc:     swood@redhat.com, linux-fsdevel@vger.kernel.org, dwagner@suse.de,
+        bigeasy@linutronix.de, iliastsi@arrikto.com, ntsironis@arrikto.com
+Subject: [PATCH RT 2/2 v4] list_bl: avoid BUG when the list is not locked
+Date:   Wed, 13 Nov 2019 15:10:42 +0200
+Message-Id: <20191113131042.7719-1-ntsironis@arrikto.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+list_bl would crash with BUG() if we used it without locking.
+dm-snapshot uses its own locking on realtime kernels (it can't use
+list_bl because list_bl uses raw spinlock and dm-snapshot takes other
+non-raw spinlocks while holding bl_lock).
 
-I've split workqueue for fsverity, please test compression based on last patch.
+To avoid this BUG we deactivate the list debug checks for list_bl on
+realtime kernels.
 
-I shutdown F2FS_FS_COMPRESSION config, it looks all verity testcases can pass, will
-do more test for compress/encrypt/fsverity combination later.
+This patch is intended only for the realtime kernel patchset, not for
+the upstream kernel.
 
-The diff is as below, code base is last g-dev-test branch:
-
-From 5b51682bc3013b8de6dee4906865181c3ded435f Mon Sep 17 00:00:00 2001
-From: Chao Yu <yuchao0@huawei.com>
-Date: Tue, 12 Nov 2019 10:03:21 +0800
-Subject: [PATCH INCREMENT] f2fs: compress: split workqueue for fsverity
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
 ---
- fs/f2fs/compress.c | 16 +++++---
- fs/f2fs/data.c     | 94 +++++++++++++++++++++++++++++++++++-----------
- fs/f2fs/f2fs.h     |  2 +-
- 3 files changed, 84 insertions(+), 28 deletions(-)
+ include/linux/list_bl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index f4ce825f12b4..254275325890 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -377,7 +377,7 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
-
- 	dec_page_count(sbi, F2FS_RD_DATA);
-
--	if (bio->bi_status)
-+	if (bio->bi_status || PageError(page))
- 		dic->failed = true;
-
- 	if (refcount_dec_not_one(&dic->ref))
-@@ -419,10 +419,14 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
- out_vunmap_rbuf:
- 	vunmap(dic->rbuf);
- out_free_dic:
--	f2fs_set_cluster_uptodate(dic->rpages, dic->cluster_size, ret, verity);
-+	if (!verity)
-+		f2fs_decompress_end_io(dic->rpages, dic->cluster_size,
-+								ret, false);
-+
- 	trace_f2fs_decompress_pages_end(dic->inode, dic->cluster_idx,
--								dic->clen, ret);
--	f2fs_free_dic(dic);
-+							dic->clen, ret);
-+	if (!verity)
-+		f2fs_free_dic(dic);
- }
-
- static bool is_page_in_cluster(struct compress_ctx *cc, pgoff_t index)
-@@ -1086,7 +1090,7 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
- 	kfree(dic);
- }
-
--void f2fs_set_cluster_uptodate(struct page **rpages,
-+void f2fs_decompress_end_io(struct page **rpages,
- 			unsigned int cluster_size, bool err, bool verity)
- {
- 	int i;
-@@ -1108,4 +1112,4 @@ void f2fs_set_cluster_uptodate(struct page **rpages,
- 		}
- 		unlock_page(rpage);
- 	}
--}
-+}
-\ No newline at end of file
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c9362a53f8a1..2d64c6ffee84 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -98,7 +98,7 @@ static void __read_end_io(struct bio *bio, bool compr, bool verity)
- 		page = bv->bv_page;
-
- #ifdef CONFIG_F2FS_FS_COMPRESSION
--		if (compr && PagePrivate(page)) {
-+		if (compr && f2fs_is_compressed_page(page)) {
- 			f2fs_decompress_pages(bio, page, verity);
- 			continue;
- 		}
-@@ -115,9 +115,14 @@ static void __read_end_io(struct bio *bio, bool compr, bool verity)
- 		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
- 		unlock_page(page);
- 	}
--	if (bio->bi_private)
--		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
--	bio_put(bio);
-+}
-+
-+static void f2fs_release_read_bio(struct bio *bio);
-+static void __f2fs_read_end_io(struct bio *bio, bool compr, bool verity)
-+{
-+	if (!compr)
-+		__read_end_io(bio, false, verity);
-+	f2fs_release_read_bio(bio);
- }
-
- static void f2fs_decompress_bio(struct bio *bio, bool verity)
-@@ -127,19 +132,50 @@ static void f2fs_decompress_bio(struct bio *bio, bool verity)
-
- static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
-
--static void decrypt_work(struct bio_post_read_ctx *ctx)
-+static void f2fs_decrypt_work(struct bio_post_read_ctx *ctx)
- {
- 	fscrypt_decrypt_bio(ctx->bio);
- }
-
--static void decompress_work(struct bio_post_read_ctx *ctx, bool verity)
-+static void f2fs_decompress_work(struct bio_post_read_ctx *ctx)
-+{
-+	f2fs_decompress_bio(ctx->bio, ctx->enabled_steps & (1 << STEP_VERITY));
-+}
-+
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+void f2fs_verify_pages(struct page **rpages, unsigned int cluster_size)
- {
--	f2fs_decompress_bio(ctx->bio, verity);
-+	f2fs_decompress_end_io(rpages, cluster_size, false, true);
- }
-
--static void verity_work(struct bio_post_read_ctx *ctx)
-+static void f2fs_verify_bio(struct bio *bio)
- {
-+	struct page *page = bio_first_page_all(bio);
-+	struct decompress_io_ctx *dic =
-+			(struct decompress_io_ctx *)page_private(page);
-+
-+	f2fs_verify_pages(dic->rpages, dic->cluster_size);
-+	f2fs_free_dic(dic);
-+}
-+#endif
-+
-+static void f2fs_verity_work(struct work_struct *work)
-+{
-+	struct bio_post_read_ctx *ctx =
-+		container_of(work, struct bio_post_read_ctx, work);
-+
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+	/* previous step is decompression */
-+	if (ctx->enabled_steps & (1 << STEP_DECOMPRESS)) {
-+
-+		f2fs_verify_bio(ctx->bio);
-+		f2fs_release_read_bio(ctx->bio);
-+		return;
-+	}
-+#endif
-+
- 	fsverity_verify_bio(ctx->bio);
-+	__f2fs_read_end_io(ctx->bio, false, false);
- }
-
- static void f2fs_post_read_work(struct work_struct *work)
-@@ -148,18 +184,19 @@ static void f2fs_post_read_work(struct work_struct *work)
- 		container_of(work, struct bio_post_read_ctx, work);
-
- 	if (ctx->enabled_steps & (1 << STEP_DECRYPT))
--		decrypt_work(ctx);
-+		f2fs_decrypt_work(ctx);
-
--	if (ctx->enabled_steps & (1 << STEP_DECOMPRESS)) {
--		decompress_work(ctx,
--			ctx->enabled_steps & (1 << STEP_VERITY));
-+	if (ctx->enabled_steps & (1 << STEP_DECOMPRESS))
-+		f2fs_decompress_work(ctx);
-+
-+	if (ctx->enabled_steps & (1 << STEP_VERITY)) {
-+		INIT_WORK(&ctx->work, f2fs_verity_work);
-+		fsverity_enqueue_verify_work(&ctx->work);
- 		return;
- 	}
-
--	if (ctx->enabled_steps & (1 << STEP_VERITY))
--		verity_work(ctx);
--
--	__read_end_io(ctx->bio, false, false);
-+	__f2fs_read_end_io(ctx->bio,
-+		ctx->enabled_steps & (1 << STEP_DECOMPRESS), false);
- }
-
- static void f2fs_enqueue_post_read_work(struct f2fs_sb_info *sbi,
-@@ -176,12 +213,20 @@ static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
- 	 * we shouldn't recurse to the same workqueue.
- 	 */
-
--	if (ctx->enabled_steps) {
-+	if (ctx->enabled_steps & (1 << STEP_DECRYPT) ||
-+		ctx->enabled_steps & (1 << STEP_DECOMPRESS)) {
- 		INIT_WORK(&ctx->work, f2fs_post_read_work);
- 		f2fs_enqueue_post_read_work(ctx->sbi, &ctx->work);
- 		return;
- 	}
--	__read_end_io(ctx->bio, false, false);
-+
-+	if (ctx->enabled_steps & (1 << STEP_VERITY)) {
-+		INIT_WORK(&ctx->work, f2fs_verity_work);
-+		fsverity_enqueue_verify_work(&ctx->work);
-+		return;
-+	}
-+
-+	__f2fs_read_end_io(ctx->bio, false, false);
- }
-
- static bool f2fs_bio_post_read_required(struct bio *bio)
-@@ -205,7 +250,7 @@ static void f2fs_read_end_io(struct bio *bio)
- 		return;
- 	}
-
--	__read_end_io(bio, false, false);
-+	__f2fs_read_end_io(bio, false, false);
- }
-
- static void f2fs_write_end_io(struct bio *bio)
-@@ -864,6 +909,13 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	return bio;
- }
-
-+static void f2fs_release_read_bio(struct bio *bio)
-+{
-+	if (bio->bi_private)
-+		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
-+	bio_put(bio);
-+}
-+
- /* This can handle encryption stuffs */
- static int f2fs_submit_page_read(struct inode *inode, struct page *page,
- 							block_t blkaddr)
-@@ -2023,7 +2075,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 				dic->failed = true;
- 				if (refcount_sub_and_test(dic->nr_cpages - i,
- 							&dic->ref))
--					f2fs_set_cluster_uptodate(dic->rpages,
-+					f2fs_decompress_end_io(dic->rpages,
- 							cc->cluster_size, true,
- 							false);
- 				f2fs_free_dic(dic);
-@@ -2053,7 +2105,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- out_put_dnode:
- 	f2fs_put_dnode(&dn);
- out:
--	f2fs_set_cluster_uptodate(cc->rpages, cc->cluster_size, true, false);
-+	f2fs_decompress_end_io(cc->rpages, cc->cluster_size, true, false);
- 	f2fs_destroy_compress_ctx(cc);
- 	*bio_ret = bio;
- 	return ret;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8a3a35b42a37..20067fa3b035 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3795,7 +3795,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 				bool is_readahead);
- struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc);
- void f2fs_free_dic(struct decompress_io_ctx *dic);
--void f2fs_set_cluster_uptodate(struct page **rpages,
-+void f2fs_decompress_end_io(struct page **rpages,
- 			unsigned int cluster_size, bool err, bool verity);
- int f2fs_init_compress_ctx(struct compress_ctx *cc);
- void f2fs_destroy_compress_ctx(struct compress_ctx *cc);
+diff --git a/include/linux/list_bl.h b/include/linux/list_bl.h
+index da38433240f5..3585b2f6b948 100644
+--- a/include/linux/list_bl.h
++++ b/include/linux/list_bl.h
+@@ -25,7 +25,7 @@
+ #define LIST_BL_LOCKMASK	0UL
+ #endif
+ 
+-#ifdef CONFIG_DEBUG_LIST
++#if defined(CONFIG_DEBUG_LIST) && !defined(CONFIG_PREEMPT_RT_BASE)
+ #define LIST_BL_BUG_ON(x) BUG_ON(x)
+ #else
+ #define LIST_BL_BUG_ON(x)
 -- 
-2.18.0.rc1
+2.11.0
 
-
-
-On 2019/10/31 1:02, Eric Biggers wrote:
-> On Wed, Oct 30, 2019 at 04:43:52PM +0800, Chao Yu wrote:
->>>>>>  static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
->>>>>>  {
->>>>>> -	/*
->>>>>> -	 * We use different work queues for decryption and for verity because
->>>>>> -	 * verity may require reading metadata pages that need decryption, and
->>>>>> -	 * we shouldn't recurse to the same workqueue.
->>>>>> -	 */
->>>>>
->>>>> Why is it okay (i.e., no deadlocks) to no longer use different work queues for
->>>>> decryption and for verity?  See the comment above which is being deleted.
->>>>
->>>> Could you explain more about how deadlock happen? or share me a link address if
->>>> you have described that case somewhere?
->>>>
->>>
->>> The verity work can read pages from the file which require decryption.  I'm
->>> concerned that it could deadlock if the work is scheduled on the same workqueue.
->>
->> I assume you've tried one workqueue, and suffered deadlock..
->>
->>> Granted, I'm not an expert in Linux workqueues, so if you've investigated this
->>> and determined that it's safe, can you explain why?
->>
->> I'm not familiar with workqueue...  I guess it may not safe that if the work is
->> scheduled to the same cpu in where verity was waiting for data? if the work is
->> scheduled to other cpu, it may be safe.
->>
->> I can check that before splitting the workqueue for verity and decrypt/decompress.
->>
-> 
-> Yes this is a real problem, try 'kvm-xfstests -c f2fs/encrypt generic/579'.
-> The worker thread gets deadlocked in f2fs_read_merkle_tree_page() waiting for
-> the Merkle tree page to be decrypted.  This is with the v2 compression patch;
-> it works fine on current mainline.
-> 
-> INFO: task kworker/u5:0:61 blocked for more than 30 seconds.
->       Not tainted 5.4.0-rc1-00119-g464e31ba60d0 #13
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> kworker/u5:0    D    0    61      2 0x80004000
-> Workqueue: f2fs_post_read_wq f2fs_post_read_work
-> Call Trace:
->  context_switch kernel/sched/core.c:3384 [inline]
->  __schedule+0x299/0x6c0 kernel/sched/core.c:4069
->  schedule+0x44/0xd0 kernel/sched/core.c:4136
->  io_schedule+0x11/0x40 kernel/sched/core.c:5780
->  wait_on_page_bit_common mm/filemap.c:1174 [inline]
->  wait_on_page_bit mm/filemap.c:1223 [inline]
->  wait_on_page_locked include/linux/pagemap.h:527 [inline]
->  wait_on_page_locked include/linux/pagemap.h:524 [inline]
->  wait_on_page_read mm/filemap.c:2767 [inline]
->  do_read_cache_page+0x407/0x660 mm/filemap.c:2810
->  read_cache_page+0xd/0x10 mm/filemap.c:2894
->  f2fs_read_merkle_tree_page+0x2e/0x30 include/linux/pagemap.h:396
->  verify_page+0x110/0x560 fs/verity/verify.c:120
->  fsverity_verify_bio+0xe6/0x1a0 fs/verity/verify.c:239
->  verity_work fs/f2fs/data.c:142 [inline]
->  f2fs_post_read_work+0x36/0x50 fs/f2fs/data.c:160
->  process_one_work+0x225/0x550 kernel/workqueue.c:2269
->  worker_thread+0x4b/0x3c0 kernel/workqueue.c:2415
->  kthread+0x125/0x140 kernel/kthread.c:255
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> INFO: task kworker/u5:1:1140 blocked for more than 30 seconds.
->       Not tainted 5.4.0-rc1-00119-g464e31ba60d0 #13
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> kworker/u5:1    D    0  1140      2 0x80004000
-> Workqueue: f2fs_post_read_wq f2fs_post_read_work
-> Call Trace:
->  context_switch kernel/sched/core.c:3384 [inline]
->  __schedule+0x299/0x6c0 kernel/sched/core.c:4069
->  schedule+0x44/0xd0 kernel/sched/core.c:4136
->  io_schedule+0x11/0x40 kernel/sched/core.c:5780
->  wait_on_page_bit_common mm/filemap.c:1174 [inline]
->  wait_on_page_bit mm/filemap.c:1223 [inline]
->  wait_on_page_locked include/linux/pagemap.h:527 [inline]
->  wait_on_page_locked include/linux/pagemap.h:524 [inline]
->  wait_on_page_read mm/filemap.c:2767 [inline]
->  do_read_cache_page+0x407/0x660 mm/filemap.c:2810
->  read_cache_page+0xd/0x10 mm/filemap.c:2894
->  f2fs_read_merkle_tree_page+0x2e/0x30 include/linux/pagemap.h:396
->  verify_page+0x110/0x560 fs/verity/verify.c:120
->  fsverity_verify_bio+0xe6/0x1a0 fs/verity/verify.c:239
->  verity_work fs/f2fs/data.c:142 [inline]
->  f2fs_post_read_work+0x36/0x50 fs/f2fs/data.c:160
->  process_one_work+0x225/0x550 kernel/workqueue.c:2269
->  worker_thread+0x4b/0x3c0 kernel/workqueue.c:2415
->  kthread+0x125/0x140 kernel/kthread.c:255
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/21:
->  #0: ffffffff82250520 (rcu_read_lock){....}, at: rcu_lock_acquire.constprop.0+0x0/0x30 include/trace/events/lock.h:13
-> 2 locks held by kworker/u5:0/61:
->  #0: ffff88807b78eb28 ((wq_completion)f2fs_post_read_wq){+.+.}, at: set_work_data kernel/workqueue.c:619 [inline]
->  #0: ffff88807b78eb28 ((wq_completion)f2fs_post_read_wq){+.+.}, at: set_work_pool_and_clear_pending kernel/workqueue.c:647 [inline]
->  #0: ffff88807b78eb28 ((wq_completion)f2fs_post_read_wq){+.+.}, at: process_one_work+0x1ad/0x550 kernel/workqueue.c:2240
->  #1: ffffc90000253e50 ((work_completion)(&ctx->work)){+.+.}, at: set_work_data kernel/workqueue.c:619 [inline]
->  #1: ffffc90000253e50 ((work_completion)(&ctx->work)){+.+.}, at: set_work_pool_and_clear_pending kernel/workqueue.c:647 [inline]
->  #1: ffffc90000253e50 ((work_completion)(&ctx->work)){+.+.}, at: process_one_work+0x1ad/0x550 kernel/workqueue.c:2240
-> 2 locks held by kworker/u5:1/1140:
->  #0: ffff88807b78eb28 ((wq_completion)f2fs_post_read_wq){+.+.}, at: set_work_data kernel/workqueue.c:619 [inline]
->  #0: ffff88807b78eb28 ((wq_completion)f2fs_post_read_wq){+.+.}, at: set_work_pool_and_clear_pending kernel/workqueue.c:647 [inline]
->  #0: ffff88807b78eb28 ((wq_completion)f2fs_post_read_wq){+.+.}, at: process_one_work+0x1ad/0x550 kernel/workqueue.c:2240
->  #1: ffffc9000174be50 ((work_completion)(&ctx->work)){+.+.}, at: set_work_data kernel/workqueue.c:619 [inline]
->  #1: ffffc9000174be50 ((work_completion)(&ctx->work)){+.+.}, at: set_work_pool_and_clear_pending kernel/workqueue.c:647 [inline]
->  #1: ffffc9000174be50 ((work_completion)(&ctx->work)){+.+.}, at: process_one_work+0x1ad/0x550 kernel/workqueue.c:2240
-> .
-> 
