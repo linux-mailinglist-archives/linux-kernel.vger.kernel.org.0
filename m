@@ -2,97 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD2FFA468
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09124FA438
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 03:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbfKMCRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 12 Nov 2019 21:17:00 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17146 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728471AbfKMCQ5 (ORCPT
+        id S1730589AbfKMCPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 12 Nov 2019 21:15:07 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:54550 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727840AbfKMCO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:16:57 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcb67610000>; Tue, 12 Nov 2019 18:16:01 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 18:16:57 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 18:16:57 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 02:16:56 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 13 Nov 2019 02:16:56 +0000
-Received: from henryl-tu10x.nvidia.com (Not Verified[10.19.109.97]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dcb67970000>; Tue, 12 Nov 2019 18:16:56 -0800
-From:   Henry Lin <henryl@nvidia.com>
-CC:     Henry Lin <henryl@nvidia.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Richard Fontana <rfontana@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] usb-audio: not submit urb for stopped endpoint
-Date:   Wed, 13 Nov 2019 10:14:19 +0800
-Message-ID: <20191113021420.13377-1-henryl@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191112065108.7766-1-henryl@nvidia.com>
-References: <20191112065108.7766-1-henryl@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 12 Nov 2019 21:14:59 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2EG8f062341;
+        Wed, 13 Nov 2019 02:14:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=5+sd2HaueY26dn+rgJI+YCERp7oCIRvfIJ/MF+t4KsY=;
+ b=LjpMbbhyF3ErFyyXfQctAaayPzt+DwBn8DGBpTj8ZGUvS6now9Eq89ZL3lbUqOMNYrJD
+ p6xqnATUhdW86bUQV35HaAc8s+AaHV3HgDnxXk8rqcNTLh++dEDIRv/ULGmCSU5qQf7M
+ mckgf/cIjGISRyf33iZrd5CyT+ixZlu/Y0mz0O1CkZ4g/cxmEgYCeAIHDEuPLj9uNDLJ
+ XIssxhOMxV2K4BHGM+3Pbn5HCRMPWPLSKB4Tr7EW6T3xHw4kQUT9e/RY181x/nA/+Tg6
+ v/8Y1WjN6JYrynqJs0jPHOLCn5fcpF6tKHWwWSnrlrGExYA+MgDHUdEAuu3IBRhHiNXU zg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2w5mvtrypx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 02:14:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD2EPIb176522;
+        Wed, 13 Nov 2019 02:14:42 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2w7khmesb7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 02:14:42 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAD2EQcd029499;
+        Wed, 13 Nov 2019 02:14:27 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Nov 2019 18:14:26 -0800
+To:     Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Janek Kotas <jank@cadence.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] scsi: ufs: Add driver for TI wrapper for Cadence UFS IP
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191108164857.11466-1-vigneshr@ti.com>
+Date:   Tue, 12 Nov 2019 21:14:22 -0500
+In-Reply-To: <20191108164857.11466-1-vigneshr@ti.com> (Vignesh Raghavendra's
+        message of "Fri, 8 Nov 2019 22:18:55 +0530")
+Message-ID: <yq1o8xgr08x.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573611361; bh=Tujpg7WZBoOThKGX8MEAml/VB3Yc83jertZP/WdKXl0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=C/6sf+uZj2gOMh/+HER/DbH5WOlnwdrXdu1S2kYhz3Kqc89ZAAQhoOb5k85XqhhvC
-         zWY60Wd/cdyrsszASUdpJmdmOJSLpmnCE0HOHB6Ld1KH2aa40KJPP+kqE/9dgPOy4M
-         S3B0nML7ZS27bkJ0DiQjuH0X+ohSrp6o5a/aOScVdxj5xK4NMzlFpOdliYYVriki45
-         pMn76QfDjqIX+6NGPq5rlRl69ZjxGym+QgaAoslIKGQAK6zrDvr44DA311pJqXoPQc
-         I3iyVcxdgyj0hRlIq0JD7pk+NawUf0zX1SsrG/rsrXCN5+KCPP3kXCwn8/4eACPeZ8
-         XMwUJvgDueUEQ==
-To:     unlisted-recipients:; (no To-header on input)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=783
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911130016
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=855 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911130016
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While output urb's snd_complete_urb() is executing, calling
-prepare_outbound_urb() may cause endpoint stopped before
-prepare_outbound_urb() returns and result in next urb submitted
-to stopped endpoint. usb-audio driver cannot re-use it afterwards as
-the urb is still hold by usb stack.
 
-This change checks EP_FLAG_RUNNING flag after prepare_outbound_urb() again
-to let snd_complete_urb() know the endpoint already stopped and does not
-submit next urb. Below kind of error will be fixed:
+Vignesh,
 
-[  213.153103] usb 1-2: timeout: still 1 active urbs on EP #1
-[  213.164121] usb 1-2: cannot submit urb 0, error -16: unknown error
+> This series add DT bindings and driver for TI wrapper for Cadence UFS
+> IP that is present on TI's J721e SoC
 
-Signed-off-by: Henry Lin <henryl@nvidia.com>
----
- sound/usb/endpoint.c | 3 +++
- 1 file changed, 3 insertions(+)
+Applied to 5.5/scsi-queue, thanks!
 
-diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
-index a2ab8e8d3a93..4a9a2f6ef5a4 100644
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -388,6 +388,9 @@ static void snd_complete_urb(struct urb *urb)
- 		}
- 
- 		prepare_outbound_urb(ep, ctx);
-+		/* can be stopped during prepare callback */
-+		if (unlikely(!test_bit(EP_FLAG_RUNNING, &ep->flags)))
-+			goto exit_clear;
- 	} else {
- 		retire_inbound_urb(ep, ctx);
- 		/* can be stopped during retire callback */
 -- 
-2.17.1
-
+Martin K. Petersen	Oracle Linux Engineering
