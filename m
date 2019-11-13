@@ -2,115 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7BAEFAAA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 08:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 327A9FAAAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 08:14:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfKMHLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 02:11:00 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40106 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfKMHLA (ORCPT
+        id S1726378AbfKMHOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 02:14:53 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:17549 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfKMHOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 02:11:00 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q2so1303187ljg.7;
-        Tue, 12 Nov 2019 23:10:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=4KMLVvREWKxLr4LB9g5/Vm1S14nk0c09BGMXFpgNmeg=;
-        b=niv7NGzemgYMr+K4qrKX5JPqn3sjTw0sl6bNPd3PZcJVFtY3UQMaIgQb5aPih/68n8
-         KYObdkkwY9eTDrg5K+7hhrxmuFubSSWSOspvs3Ky/m7Iu9tHhw0+sWcDmqKiMZ9fNT4t
-         sRIvAcA2qMOdpBtQsx1yq/DryyNlUcrUF116XOX5f9lp/umPAFdFnXBXTC3DWUvAveZX
-         3dj9vSaDhA6UjTtoMLsz7ij+V+ONHbes3fmJJnopb6jrMrLzpdH3eFHqsb3RJeoZTJ8S
-         a+CwR4qTFxhhqaOkk5pHthSJZg0SqLbpR3ba5crTanGfi61CcxkIlV7BaY/cK0g6qce1
-         iznA==
-X-Gm-Message-State: APjAAAWWWpk+KEoI/azIMt7CWdKIWY/KAzMERrBqa7ivJTVdK30s44Fb
-        Alr/rZgDpM/MOp8sbnxtGco=
-X-Google-Smtp-Source: APXvYqz0xPpVNHucYfZn/+JYHKGQXEeMbz2uUSTgoYfXe7nklrIXUyDRr45bgpXaEWLlaO66RANVzA==
-X-Received: by 2002:a2e:9149:: with SMTP id q9mr1403625ljg.49.1573629058069;
-        Tue, 12 Nov 2019 23:10:58 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id d17sm519689lja.27.2019.11.12.23.10.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 23:10:57 -0800 (PST)
-Date:   Wed, 13 Nov 2019 09:10:45 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] pinctrl: rza1: remove unnecessary static inline
- function
-Message-ID: <20191113071045.GA22110@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Wed, 13 Nov 2019 02:14:53 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id xAD7COMU032236;
+        Wed, 13 Nov 2019 16:12:24 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xAD7COMU032236
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573629145;
+        bh=hUWxEOEKcTupHyB6KArKI0LSBUkIGOpAbtR0Bqznip4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n2KG6wYPBHKlFa4U7nisZquYRQPFHb3BSAreElf0QkXQTiJENHMqnSbALDYfiHZqY
+         pIsnwIQcs8jEL2DpRIQLTn07+Ve9hVm+cgSEtJdZwR8/4enC6h6CNWoIZgz5YvWxQ6
+         MeluFmVWF4kSewTnyOC8VbaFPXSp9RuJ5UVKVAGweuDdsyZmDWNRfYku+O7mK2MCe9
+         rtu4hX2yS6Koz7Yt0FdcQ/6dB/tND35pbuOTNgs559ZDeTG5PRnQb7xz//FdzWuwBz
+         ZO65yUUdAB4G9TzB1DMhcCwqZufdrLG3efVvowwPSVZn3nyJlaX7QbLNeKxKq8U1Wr
+         VJcHK69Dntk4A==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v3] libfdt: define INT32_MAX and UINT32_MAX in libfdt_env.h
+Date:   Wed, 13 Nov 2019 16:12:02 +0900
+Message-Id: <20191113071202.11287-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having static inline oneliner does not benefit too mucg when it is
-only called from another oneliner function. Remove some of the
-'onion'. This simplifies also the coming usage of the gpiolib
-defines. We can do conversion from chip bits to gpiolib direction
-defines as last step in the get_direction callback. Drivers can
-use chip specific values in driver internal functions and do
-conversion only once.
+The DTC v1.5.1 added references to (U)INT32_MAX.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This is no problem for user-space programs since <stdint.h> defines
+(U)INT32_MAX along with (u)int32_t.
+
+For the kernel space, libfdt_env.h needs to be adjusted before we
+pull in the changes.
+
+In the kernel, we usually use s/u32 instead of (u)int32_t for the
+fixed-width types.
+
+Accordingly, we already have S/U32_MAX for their max values.
+So, we should not add (U)INT32_MAX to <linux/limits.h> any more.
+
+Instead, add them to the in-kernel libfdt_env.h to compile the
+latest libfdt.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-Changes since v1: Subject fixed as pointed out by Geert.
+My initial plan was to change this in a series of 3 patches
+since it is clean, and reduces the code.
 
- drivers/pinctrl/pinctrl-rza1.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+[1/3] https://lore.kernel.org/patchwork/patch/1147095/
+[2/3] https://lore.kernel.org/patchwork/patch/1147096/
+[3/3] https://lore.kernel.org/patchwork/patch/1147097/
 
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index 017fc6b3e27e..215db220d795 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -617,12 +617,6 @@ static void rza1_pin_reset(struct rza1_port *port, unsigned int pin)
- 	spin_unlock_irqrestore(&port->lock, irqflags);
- }
- 
--static inline int rza1_pin_get_direction(struct rza1_port *port,
--					 unsigned int pin)
--{
--	return !!rza1_get_bit(port, RZA1_PM_REG, pin);
--}
--
- /**
-  * rza1_pin_set_direction() - set I/O direction on a pin in port mode
-  *
-@@ -783,7 +777,7 @@ static int rza1_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
- {
- 	struct rza1_port *port = gpiochip_get_data(chip);
- 
--	return rza1_pin_get_direction(port, gpio);
-+	return !!rza1_get_bit(port, RZA1_PM_REG, gpio);
- }
- 
- static int rza1_gpio_direction_input(struct gpio_chip *chip,
+1/3 is stuck in the license bikeshed.
 
-base-commit: 70d97e099bb426ecb3ad4bf31e88dbf2ef4b2e4c
+For 2/3, I have not been able to get Ack from Russell.
+
+So, I chose a straight-forward fixup.
+
+
+Changes in v3:
+ - Resend as a single patch
+
+ arch/arm/boot/compressed/libfdt_env.h | 4 +++-
+ arch/powerpc/boot/libfdt_env.h        | 2 ++
+ include/linux/libfdt_env.h            | 3 +++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
+index b36c0289a308..6a0f1f524466 100644
+--- a/arch/arm/boot/compressed/libfdt_env.h
++++ b/arch/arm/boot/compressed/libfdt_env.h
+@@ -2,11 +2,13 @@
+ #ifndef _ARM_LIBFDT_ENV_H
+ #define _ARM_LIBFDT_ENV_H
+ 
++#include <linux/limits.h>
+ #include <linux/types.h>
+ #include <linux/string.h>
+ #include <asm/byteorder.h>
+ 
+-#define INT_MAX			((int)(~0U>>1))
++#define INT32_MAX	S32_MAX
++#define UINT32_MAX	U32_MAX
+ 
+ typedef __be16 fdt16_t;
+ typedef __be32 fdt32_t;
+diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
+index 2abc8e83b95e..9757d4f6331e 100644
+--- a/arch/powerpc/boot/libfdt_env.h
++++ b/arch/powerpc/boot/libfdt_env.h
+@@ -6,6 +6,8 @@
+ #include <string.h>
+ 
+ #define INT_MAX			((int)(~0U>>1))
++#define UINT32_MAX		((u32)~0U)
++#define INT32_MAX		((s32)(UINT32_MAX >> 1))
+ 
+ #include "of.h"
+ 
+diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
+index edb0f0c30904..1adf54aad2df 100644
+--- a/include/linux/libfdt_env.h
++++ b/include/linux/libfdt_env.h
+@@ -7,6 +7,9 @@
+ 
+ #include <asm/byteorder.h>
+ 
++#define INT32_MAX	S32_MAX
++#define UINT32_MAX	U32_MAX
++
+ typedef __be16 fdt16_t;
+ typedef __be32 fdt32_t;
+ typedef __be64 fdt64_t;
 -- 
-2.21.0
+2.17.1
 
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
