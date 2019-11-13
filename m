@@ -2,168 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 506ACFACBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9F88FACC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:21:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfKMJUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:20:40 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39320 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfKMJUk (ORCPT
+        id S1727348AbfKMJVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:21:49 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:51888 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbfKMJVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:20:40 -0500
-Received: by mail-lj1-f194.google.com with SMTP id p18so1718168ljc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 01:20:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arrikto-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oIUwVCoXTRy2Xzc2WTbShQwLgC231DhggYOStvhTE1g=;
-        b=lSx2xskyZOQ4nh+qgQles1LugvACmjIDL4+NSPQoZ0lftWJM0Yz7BGSwn8J/e65eHj
-         fNkcUkR4tIE3elCZ/uAQNqDd19xusilTspuDXzLr/uFrfkTD+EoNbwLyS/618zlav+Xi
-         iRxLIGgp0zqdPG0k9Y4xmbnddDGRDNExZLiP1cTsNuGbR0uWoWaCCTUsK++TihJky9LA
-         wZcBtOqotrhrj4DPLxCP5PCq1uCAvjdD9SEjZe1Du88F4WH1ZyY6x2Woi0fxeVZtfdkh
-         dlb9Oaxx8wgfRDE6HWE7X3FQO0cH40SZ5W0ZB4BJPinujmePJtoVoKnRXASYIfQhqNIm
-         maeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oIUwVCoXTRy2Xzc2WTbShQwLgC231DhggYOStvhTE1g=;
-        b=Q78ncH4FHi6tvwPNOwKWCQO0f5NqfzxYNheyJcVfFtJMTchS2M6QXulCO/Y9PuGcXb
-         iDJ0pyx8F0CIeuN3RLJ0hthcS1m0xojS9dgBbMOa1mFkwQMsapmlR9aXqLiK7ZHkCtZ/
-         dxWkjDpb8gYOBNsWwIJkgugY35a1AfiAsL+5NDV0p4RgFs4UGm173xME/e6i18ImEv9D
-         Il8vQT50eS8O0cHMBA1t5dyZuwV+pf9EZA/x+YF1R++MNLyvfFUHCpkNbSoTQspL3zZx
-         mHOvLJZHeGFHDk+D5iR3ZzEUMg18r61ajlkDocI05M8d+xifqqK9tYcUGBQK9ReM5daf
-         hD0w==
-X-Gm-Message-State: APjAAAX1FqE+a6KS+KCu3boPg6BKIMmzwy8o60Rq22L9fuX+7OVsdcMv
-        eVpDa7P274qWW7If5pmuQcLhkwjVwnU=
-X-Google-Smtp-Source: APXvYqwiY91CbJbr6hD5Oc184++qYLiuxmCMCk29oRW9+ONz55GoBRsdrtel1P2KeRp8x+CEsBTkBA==
-X-Received: by 2002:a2e:9d8d:: with SMTP id c13mr1589644ljj.71.1573636838399;
-        Wed, 13 Nov 2019 01:20:38 -0800 (PST)
-Received: from [10.94.250.119] ([31.177.62.212])
-        by smtp.gmail.com with ESMTPSA id 3sm683657lfq.55.2019.11.13.01.20.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Nov 2019 01:20:37 -0800 (PST)
-Subject: Re: [PATCH RT 1/2 v2] dm-snapshot: fix crash with the realtime kernel
-To:     Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <msnitzer@redhat.com>
-Cc:     Scott Wood <swood@redhat.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Daniel Wagner <dwagner@suse.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-rt-users@vger.kernel.org, tglx@linutronix.de
-References: <alpine.LRH.2.02.1911121057490.12815@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Nikos Tsironis <ntsironis@arrikto.com>
-Message-ID: <ab6fa08d-256a-1f8c-24dd-e5c23b3328bf@arrikto.com>
-Date:   Wed, 13 Nov 2019 11:20:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 13 Nov 2019 04:21:46 -0500
+Received: from ramsan ([84.195.182.253])
+        by andre.telenet-ops.be with bizsmtp
+        id RMMk2100G5USYZQ01MMkEE; Wed, 13 Nov 2019 10:21:44 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iUoqO-0001qZ-7m; Wed, 13 Nov 2019 10:21:44 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iUoqO-0006Bh-5R; Wed, 13 Nov 2019 10:21:44 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] iio: adc: max9611: Fix too short conversion time delay
+Date:   Wed, 13 Nov 2019 10:21:33 +0100
+Message-Id: <20191113092133.23723-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.02.1911121057490.12815@file01.intranet.prod.int.rdu2.redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/19 6:09 PM, Mikulas Patocka wrote:
-> Snapshot doesn't work with realtime kernels since the commit f79ae415b64c.
-> hlist_bl is implemented as a raw spinlock and the code takes two non-raw
-> spinlocks while holding hlist_bl (non-raw spinlocks are blocking mutexes
-> in the realtime kernel).
-> 
-> We can't change hlist_bl to use non-raw spinlocks, this triggers warnings 
-> in dentry lookup code, because the dentry lookup code uses hlist_bl while 
-> holding a seqlock.
-> 
-> This patch fixes the problem by using non-raw spinlock 
-> exception_table_lock instead of the hlist_bl lock.
-> 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Fixes: f79ae415b64c ("dm snapshot: Make exception tables scalable")
-> 
+As of commit b9ddd5091160793e ("iio: adc: max9611: Fix temperature
+reading in probe"), max9611 initialization sometimes fails on the
+Salvator-X(S) development board with:
 
-Reviewed-by: Nikos Tsironis <ntsironis@arrikto.com>
+    max9611 4-007f: Invalid value received from ADC 0x8000: aborting
+    max9611: probe of 4-007f failed with error -5
 
-> ---
->  drivers/md/dm-snap.c |   23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> Index: linux-2.6/drivers/md/dm-snap.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm-snap.c	2019-11-12 16:44:36.000000000 +0100
-> +++ linux-2.6/drivers/md/dm-snap.c	2019-11-12 17:01:46.000000000 +0100
-> @@ -141,6 +141,10 @@ struct dm_snapshot {
->  	 * for them to be committed.
->  	 */
->  	struct bio_list bios_queued_during_merge;
-> +
-> +#ifdef CONFIG_PREEMPT_RT_BASE
-> +	spinlock_t exception_table_lock;
-> +#endif
->  };
->  
->  /*
-> @@ -625,30 +629,46 @@ static uint32_t exception_hash(struct dm
->  
->  /* Lock to protect access to the completed and pending exception hash tables. */
->  struct dm_exception_table_lock {
-> +#ifndef CONFIG_PREEMPT_RT_BASE
->  	struct hlist_bl_head *complete_slot;
->  	struct hlist_bl_head *pending_slot;
-> +#else
-> +	spinlock_t *lock;
-> +#endif
->  };
->  
->  static void dm_exception_table_lock_init(struct dm_snapshot *s, chunk_t chunk,
->  					 struct dm_exception_table_lock *lock)
->  {
-> +#ifndef CONFIG_PREEMPT_RT_BASE
->  	struct dm_exception_table *complete = &s->complete;
->  	struct dm_exception_table *pending = &s->pending;
->  
->  	lock->complete_slot = &complete->table[exception_hash(complete, chunk)];
->  	lock->pending_slot = &pending->table[exception_hash(pending, chunk)];
-> +#else
-> +	lock->lock = &s->exception_table_lock;
-> +#endif
->  }
->  
->  static void dm_exception_table_lock(struct dm_exception_table_lock *lock)
->  {
-> +#ifndef CONFIG_PREEMPT_RT_BASE
->  	hlist_bl_lock(lock->complete_slot);
->  	hlist_bl_lock(lock->pending_slot);
-> +#else
-> +	spin_lock(lock->lock);
-> +#endif
->  }
->  
->  static void dm_exception_table_unlock(struct dm_exception_table_lock *lock)
->  {
-> +#ifndef CONFIG_PREEMPT_RT_BASE
->  	hlist_bl_unlock(lock->pending_slot);
->  	hlist_bl_unlock(lock->complete_slot);
-> +#else
-> +	spin_unlock(lock->lock);
-> +#endif
->  }
->  
->  static int dm_exception_table_init(struct dm_exception_table *et,
-> @@ -1318,6 +1338,9 @@ static int snapshot_ctr(struct dm_target
->  	s->first_merging_chunk = 0;
->  	s->num_merging_chunks = 0;
->  	bio_list_init(&s->bios_queued_during_merge);
-> +#ifdef CONFIG_PREEMPT_RT_BASE
-> +	spin_lock_init(&s->exception_table_lock);
-> +#endif
->  
->  	/* Allocate hash table for COW data */
->  	if (init_hash_tables(s)) {
-> 
+The max9611 driver tests communications with the chip by reading the die
+temperature during the probe function, which returns an invalid value.
+
+According to the datasheet, the typical ADC conversion time is 2 ms, but
+no minimum or maximum values are provided.  However, the driver assumes
+a 1 ms conversion time.  Usually the usleep_range() call returns after
+more than 1.8 ms, hence it succeeds.  When it returns earlier, the data
+register may be read too early, and the previous measurement value will
+be returned.  After boot, this is the temperature POR (power-on reset)
+value, causing the failure above.
+
+Fix this by increasing the delay from 1000-2000 µs to 2000-2200 µs.
+
+Note that this issue has always been present, but it was exposed by the
+aformentioned commit.
+
+Fixes: 69780a3bbc0b1e7e ("iio: adc: Add Maxim max9611 ADC driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This problem was exposed in v5.3.
+
+After this patch, probing of the two max9611 sensors succeeded during
+ca. 3000 boot cycles on Salvator-X(S) boards, equipped with various
+R-Car H3/M3-W/M3-N SoCs.
+---
+ drivers/iio/adc/max9611.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
+index da073d72f649f829..b0755f25356d700d 100644
+--- a/drivers/iio/adc/max9611.c
++++ b/drivers/iio/adc/max9611.c
+@@ -89,6 +89,11 @@
+ #define MAX9611_TEMP_SCALE_NUM		1000000
+ #define MAX9611_TEMP_SCALE_DIV		2083
+ 
++/*
++ * Conversion time is 2 ms (typically)
++ */
++#define MAX9611_CONV_TIME_US_RANGE	2000, 2200
++
+ struct max9611_dev {
+ 	struct device *dev;
+ 	struct i2c_client *i2c_client;
+@@ -238,9 +243,9 @@ static int max9611_read_single(struct max9611_dev *max9611,
+ 
+ 	/*
+ 	 * need a delay here to make register configuration
+-	 * stabilize. 1 msec at least, from empirical testing.
++	 * stabilize.
+ 	 */
+-	usleep_range(1000, 2000);
++	usleep_range(MAX9611_CONV_TIME_US_RANGE);
+ 
+ 	ret = i2c_smbus_read_word_swapped(max9611->i2c_client, reg_addr);
+ 	if (ret < 0) {
+@@ -507,7 +512,7 @@ static int max9611_init(struct max9611_dev *max9611)
+ 			MAX9611_REG_CTRL2, 0);
+ 		return ret;
+ 	}
+-	usleep_range(1000, 2000);
++	usleep_range(MAX9611_CONV_TIME_US_RANGE);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
