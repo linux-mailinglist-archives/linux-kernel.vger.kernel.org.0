@@ -2,121 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E72C6FAC7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7934FAC84
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2019 10:04:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfKMJBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 04:01:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52934 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfKMJBT (ORCPT
+        id S1727241AbfKMJEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 04:04:52 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2292 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfKMJEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 04:01:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zzs1mEJpA0dy+PCteNoSAQTEnUNE7xBIt6YRUA3dCvc=; b=UpVDGiv4evrM1KnuMK4jzbAha
-        RzkAtRPD3+GH9ArcQN1ITI9ruEGQ4atNjBNCM5QUdKBEC4tZOU1omnCREu+sMkMTM/kSXameFqRsz
-        umFFO3yDB1c/Qv7vRt9fzlpLDKRqY7xldCIJ7h/KfCgSIgq5HqDeOE1yQlBC7MR0a1r6y8OiwtPX5
-        J4510KJn1EMkDTkO8wSaFXksgInXqHVh6YzFo3DeMuBoDu49IbtXYIHIW8JPs0VAo4JpbQKqEfeIM
-        54lNdhRyy8XcWxNAYO3QfpgqD6LXMF0kQaKCRtZpJsesH7gf/4aQik0EKk7NAjfBogTq7MbM/vL+i
-        EE3TiZAWw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUoWR-0006o7-Gl; Wed, 13 Nov 2019 09:01:07 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8F372305615;
-        Wed, 13 Nov 2019 09:59:57 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 89F352997AAC8; Wed, 13 Nov 2019 10:01:04 +0100 (CET)
-Date:   Wed, 13 Nov 2019 10:01:04 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org,
-        alexei.starovoitov@gmail.com
-Subject: Re: [PATCH -v5 05/17] x86/ftrace: Use text_poke()
-Message-ID: <20191113090104.GF4131@hirez.programming.kicks-ass.net>
-References: <20191111131252.921588318@infradead.org>
- <20191111132457.761255803@infradead.org>
- <20191112132536.28ac1b32@gandalf.local.home>
- <20191112222413.GB4131@hirez.programming.kicks-ass.net>
- <20191112174816.7fb95948@gandalf.local.home>
+        Wed, 13 Nov 2019 04:04:51 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcbc7300000>; Wed, 13 Nov 2019 01:04:48 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 13 Nov 2019 01:04:48 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 13 Nov 2019 01:04:48 -0800
+Received: from [10.2.160.173] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 09:04:48 +0000
+Subject: Re: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN,
+ FOLL_LONGTERM
+To:     Daniel Vetter <daniel@ffwll.ch>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf <bpf@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        <kvm@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+ <20191112203802.GD5584@ziepe.ca>
+ <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
+ <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <7b671bf9-4d94-f2cc-8453-863acd5a1115@nvidia.com>
+Date:   Wed, 13 Nov 2019 01:02:02 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112174816.7fb95948@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573635888; bh=WuCLw1mNhRSSrQbzE2XtsJC46JZuOt82gJ5Z6A5sU6M=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=qgoX2qy8q+Pz4xwaUpJCPUDYqLc7AOyeowDXx94iSygezEmzpCR7ZZxo0cljsfswu
+         ukE0Cm+f0R483iPntRfn/ABXBRqJdTjYQOd5BMk3/+ahH8sNYpooo8xojMC+j2QKMp
+         YnZN0Muwss41C3UGdYFy5MS6hRmL0789DFptbHHfPd5vitO0CxsRYBJyPt01+pG4cX
+         6cPdl9NwtrthmFzBA5/mOnD1+FGwYZl+/Gsvcsk8njJ9ZjDk+S/T82e3qWgu+CaLxi
+         GAWOKJgmoqYLWXc9CemtInbG0/tG5R+23jPdDf2TY9FLXzVWhi+Ia12J1oxABZoP9Y
+         i24f/CxZw1J0Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 05:48:16PM -0500, Steven Rostedt wrote:
-> On Tue, 12 Nov 2019 23:24:13 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On 11/13/19 12:22 AM, Daniel Vetter wrote:
+...
+>>> Why are we doing this? I think things got confused here someplace, as
+>>
+>>
+>> Because:
+>>
+>> a) These need put_page() calls,  and
+>>
+>> b) there is no put_pages() call, but there is a release_pages() call that
+>> is, arguably, what put_pages() would be.
+>>
+>>
+>>> the comment still says:
+>>>
+>>> /**
+>>>   * put_user_page() - release a gup-pinned page
+>>>   * @page:            pointer to page to be released
+>>>   *
+>>>   * Pages that were pinned via get_user_pages*() must be released via
+>>>   * either put_user_page(), or one of the put_user_pages*() routines
+>>>   * below.
+>>
+>>
+>> Ohhh, I missed those comments. They need to all be changed over to
+>> say "pages that were pinned via pin_user_pages*() or
+>> pin_longterm_pages*() must be released via put_user_page*()."
+>>
+>> The get_user_pages*() pages must still be released via put_page.
+>>
+>> The churn is due to a fairly significant change in strategy, whis
+>> is: instead of changing all get_user_pages*() sites to call
+>> put_user_page(), change selected sites to call pin_user_pages*() or
+>> pin_longterm_pages*(), plus put_user_page().
 > 
-> > On Tue, Nov 12, 2019 at 01:25:36PM -0500, Steven Rostedt wrote:
-> > > On Mon, 11 Nov 2019 14:12:57 +0100
-> > > Peter Zijlstra <peterz@infradead.org> wrote:  
-> > 
-> > > >  int ftrace_arch_code_modify_post_process(void)
-> > > >      __releases(&text_mutex)
-> > > >  {
-> > > > -	set_all_modules_text_ro();
-> > > > -	set_kernel_text_ro();
-> > > > +	text_poke_finish();  
-> > > 
-> > > Why is the text_poke_finish() needed here? Can we add a comment about
-> > > why?  
-> > 
-> > I think this is because of the text_poke_queue() in
-> > ftrace_modify_code_direct(). I seem to have forgotten the code-flow
-> > between the core and arch parts of ftrace again.
+> Can't we call this unpin_user_page then, for some symmetry? Or is that
+> even more churn?
 > 
-> Hmm, I don't think there's a case where ftrace_make_nop() or
-> ftrace_make_call() ever use the queued function. I added this:
-> 
->  static int
->  ftrace_modify_code_direct(unsigned long ip, const char *old_code,
->  			  const char *new_code)
->  {
->  	int ret = ftrace_verify_code(ip, old_code);
->  	if (ret)
->  		return ret;
->  
->  	/* replace the text with the new text */
-> - 	if (ftrace_poke_late)
-> + 	if (ftrace_poke_late) {
-> +		printk("POKE LATE!\n");
->  		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
-> - 	else
-> + 	} else
->  		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
->  	return 0;
->  }
-> 
-> And that printk() never printed, even after running the ftracetests.
+> Looking from afar the naming here seems really confusing.
 
-Well, then wth did it do that set_all_modules_text_rw() nonsense?
-Because all I did was preserve that semantic.
 
-Anyway, all this can be greatly simplified once we get KLP fixed and can
-move where we flip modules RO,X.
+That look from afar is valuable, because I'm too close to the problem to see
+how the naming looks. :)
 
-At that point we can merge ftrace_module_init() and
-ftrace_module_enable() (both will run before RO,X) and the core code
-will loose the ftrace_arch_code_modify_*() calls (for that callchain)
-and then we can remove ftrace_poke_late.
+unpin_user_page() sounds symmetrical. It's true that it would cause more
+churn (which is why I started off with a proposal that avoids changing the
+names of put_user_page*() APIs). But OTOH, the amount of churn is proportional
+to the change in direction here, and it's really only 10 or 20 lines changed,
+in the end.
 
-So I'll keep this for now, because it does exactly what the old code
-did, and then we can clean it all up once the other stuff lands and
-everything gets simpler.
+So I'm open to changing to that naming. It would be nice to hear what others
+prefer, too...
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
