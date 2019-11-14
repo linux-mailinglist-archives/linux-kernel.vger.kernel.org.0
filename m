@@ -2,136 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 194F9FBCFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E83FBCE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:09:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfKNAVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 19:21:39 -0500
-Received: from mga09.intel.com ([134.134.136.24]:16860 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbfKNAVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 19:21:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 16:21:38 -0800
-X-IronPort-AV: E=Sophos;i="5.68,302,1569308400"; 
-   d="scan'208";a="198632833"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 16:21:38 -0800
-Subject: [PATCH] mm: Cleanup __put_devmap_managed_page() vs ->page_free()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     jhubbard@nvidia.com
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Date:   Wed, 13 Nov 2019 16:07:22 -0800
-Message-ID: <157368992671.2974225.13512647385398246617.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S1726952AbfKNAJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 19:09:22 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38593 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfKNAJW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 19:09:22 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w8so1776818plq.5;
+        Wed, 13 Nov 2019 16:09:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=qfqVRrP8pJ55LNT1IzE1hrfM0Ib8N8j0mvWTAA+BXF0=;
+        b=B0LLtYrH5OZ9/iE0rY2VCiHjhY7dohyl/ZN8gPmCir77dP6fvJk+Ppc7641kDqJuDX
+         ZG9122SlxaRz2/C8pivH84LrTZozyaQIPiqtBJD43Lk0G1Gs5kAt3zmz8EXxt0aj1M1w
+         zwvTBA/i3+cAIwZk8xrlGvhWQ6Y7+vxOckOYet9HNuFrogxl5G8eH8a7fGe1hpqz955m
+         dskWAAs3Yr5B+NQnvSFRjaqIdA83H3r6IjhbEuBgJLJKNdEqAOpP/zcYelHE9rhWmLLf
+         gKCXtQoofPEcVqO/TXiPoA3TvvkWkO/ZA6kpKt6b3P4DXqVMgYAJcuWg31jhwQxe4JGv
+         B2JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qfqVRrP8pJ55LNT1IzE1hrfM0Ib8N8j0mvWTAA+BXF0=;
+        b=mBgAwoUi9w+lX5I7FWlrJcIaQOE9RWFgsYliFrE2MyjPvxioF3DLCU4zZeTHzjRKNJ
+         QFNOf9vbFc3WlbauUXO9cRQTLrA4agXWIg9AdSAwzhkEQ/i0EJKbseDi1oSLuqHGBDqe
+         aQkkmY9Q9Id890WNtXbzER1tlLIg+IZQRF7Gus3iW+LlYW6uskSDVDjq2TbgrOJ08O+Y
+         K9N81N9+tahNrJAlEIU4TFHJ8ROReRKVygya2PrqF0goN5aaUMrVU8pHr7QShhEpcbwm
+         rPsyNpMNwYAdAuuNGI0RBLXlLBxUOIF5HoP8Q2Uzm0jiM822ADuTelWbXGGv/WjTcJJN
+         PLdQ==
+X-Gm-Message-State: APjAAAUkdOn3EEsDGXFHcYOHja5DLgKY2cndRTyJU2AfMIjOjCRpNY2o
+        fG0iiZI+rt9+XMViaTAfgDrZpsS7ka8=
+X-Google-Smtp-Source: APXvYqxAifQxOkHomF5n9FJPy2V+h66J1R0rJVnFhwZjZ3clwZagFL0JJMEzGHrMBGBkcQJEmBDF8A==
+X-Received: by 2002:a17:902:b582:: with SMTP id a2mr6660607pls.103.1573690160938;
+        Wed, 13 Nov 2019 16:09:20 -0800 (PST)
+Received: from odroid.ad.adelaide.edu.au (staff-249-202.wireless.adelaide.edu.au. [129.127.249.202])
+        by smtp.googlemail.com with ESMTPSA id b1sm3298910pjw.19.2019.11.13.16.09.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Nov 2019 16:09:20 -0800 (PST)
+From:   Marian Mihailescu <mihailescu2m@gmail.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, kgene@kernel.org
+Cc:     Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: [PATCH v5] ARM: dts: exynos5420: add mali dt node and enable mali on Odroid XU3/4
+Date:   Thu, 14 Nov 2019 10:39:00 +1030
+Message-Id: <20191114000900.26962-1-mihailescu2m@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the removal of the device-public infrastructure there are only 2
-->page_free() call backs in the kernel. One of those is a device-private
-callback in the nouveau driver, the other is a generic wakeup needed in
-the DAX case. In the hopes that all ->page_free() callbacks can be
-migrated to common core kernel functionality, move the device-private
-specific actions in __put_devmap_managed_page() under the
-is_device_private_page() conditional, including the ->page_free()
-callback. For the other page types just open-code the generic wakeup.
+Add device tree node for Mali GPU for Exynos 542x SoC.
+GPU is disabled by default, and is enabled for each board after the
+regulator is defined. Tested on Odroid-XU4.
 
-Yes, the wakeup is only needed in the MEMORY_DEVICE_FSDAX case, but it
-does no harm in the MEMORY_DEVICE_DEVDAX and MEMORY_DEVICE_PCI_P2PDMA
-case.
-
-Cc: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
 ---
-Hi John,
 
-This applies on top of today's linux-next and passes my nvdimm unit
-tests. That testing noticed that devmap_managed_enable_get() needed a
-small fixup as well.
+Changes since v4:
+- fixed so it applies for latest 5.4-rc7
 
- drivers/nvdimm/pmem.c |    6 ------
- mm/memremap.c         |   22 ++++++++++++----------
- 2 files changed, 12 insertions(+), 16 deletions(-)
+Changes since v3:
+- fixed compatible to match bindings
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index f9f76f6ba07b..21db1ce8c0ae 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -338,13 +338,7 @@ static void pmem_release_disk(void *__pmem)
- 	put_disk(pmem->disk);
- }
+Changes since v2:
+- separate patch for bindings
+- fixed bindings typo
+
+Changes since v1:
+- used generic node and label for GPU
+- added bindings for compatible
+- fixed irq indentation
+- fixed interrupt-names to match bindings
+- added cooling cells for future TMU connection
+- used generic node and label for GPU opp table
+- removed always-on from SoC GPU regulator
+
+---
+ arch/arm/boot/dts/exynos5420.dtsi             | 50 +++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  6 +++-
+ 2 files changed, 55 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 7d51e0f4ab79..9f30f7535c40 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -670,6 +670,56 @@
+ 			iommus = <&sysmmu_gscl1>;
+ 		};
  
--static void pmem_pagemap_page_free(struct page *page)
--{
--	wake_up_var(&page->_refcount);
--}
--
- static const struct dev_pagemap_ops fsdax_pagemap_ops = {
--	.page_free		= pmem_pagemap_page_free,
- 	.kill			= pmem_pagemap_kill,
- 	.cleanup		= pmem_pagemap_cleanup,
- };
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 022e78e68ea0..6e6f3d6fdb73 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -27,7 +27,8 @@ static void devmap_managed_enable_put(void)
- 
- static int devmap_managed_enable_get(struct dev_pagemap *pgmap)
- {
--	if (!pgmap->ops || !pgmap->ops->page_free) {
-+	if (!pgmap->ops || (pgmap->type == MEMORY_DEVICE_PRIVATE
-+				&& !pgmap->ops->page_free)) {
- 		WARN(1, "Missing page_free method\n");
- 		return -EINVAL;
- 	}
-@@ -449,12 +450,6 @@ void __put_devmap_managed_page(struct page *page)
- 	 * holds a reference on the page.
- 	 */
- 	if (count == 1) {
--		/* Clear Active bit in case of parallel mark_page_accessed */
--		__ClearPageActive(page);
--		__ClearPageWaiters(page);
--
--		mem_cgroup_uncharge(page);
--
- 		/*
- 		 * When a device_private page is freed, the page->mapping field
- 		 * may still contain a (stale) mapping value. For example, the
-@@ -476,10 +471,17 @@ void __put_devmap_managed_page(struct page *page)
- 		 * handled differently or not done at all, so there is no need
- 		 * to clear page->mapping.
- 		 */
--		if (is_device_private_page(page))
--			page->mapping = NULL;
-+		if (is_device_private_page(page)) {
-+			/* Clear Active bit in case of parallel mark_page_accessed */
-+			__ClearPageActive(page);
-+			__ClearPageWaiters(page);
- 
--		page->pgmap->ops->page_free(page);
-+			mem_cgroup_uncharge(page);
++		gpu: gpu@11800000 {
++			compatible = "samsung,exynos5420-mali", "arm,mali-t628";
++			reg = <0x11800000 0x5000>;
++			interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "job", "mmu", "gpu";
 +
-+			page->mapping = NULL;
-+			page->pgmap->ops->page_free(page);
-+		} else
-+			wake_up_var(&page->_refcount);
- 	} else if (!count)
- 		__put_page(page);
- }
++			clocks = <&clock CLK_G3D>;
++			clock-names = "core";
++			power-domains = <&g3d_pd>;
++			operating-points-v2 = <&gpu_opp_table>;
++
++			status = "disabled";
++			#cooling-cells = <2>;
++
++			gpu_opp_table: opp-table {
++				compatible = "operating-points-v2";
++
++				opp@177000000 {
++					opp-hz = /bits/ 64 <177000000>;
++					opp-microvolt = <812500>;
++				};
++				opp@266000000 {
++					opp-hz = /bits/ 64 <266000000>;
++					opp-microvolt = <862500>;
++				};
++				opp@350000000 {
++					opp-hz = /bits/ 64 <350000000>;
++					opp-microvolt = <912500>;
++				};
++				opp-420000000 {
++					opp-hz = /bits/ 64 <420000000>;
++					opp-microvolt = <962500>;
++				};
++				opp-480000000 {
++					opp-hz = /bits/ 64 <480000000>;
++					opp-microvolt = <1000000>;
++				};
++				opp-543000000 {
++					opp-hz = /bits/ 64 <543000000>;
++					opp-microvolt = <1037500>;
++				};
++				opp-600000000 {
++					opp-hz = /bits/ 64 <600000000>;
++					opp-microvolt = <1150000>;
++				};
++			};
++		};
++
+ 		scaler_0: scaler@12800000 {
+ 			compatible = "samsung,exynos5420-scaler";
+ 			reg = <0x12800000 0x1294>;
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 829147e320e0..f880aeccbace 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -522,7 +522,6 @@
+ 				regulator-name = "vdd_g3d";
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1400000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 
+ 				regulator-state-mem {
+@@ -654,6 +653,11 @@
+ 	vtmu-supply = <&ldo7_reg>;
+ };
+ 
++&gpu {
++	mali-supply = <&buck4_reg>;
++	status = "okay";
++};
++
+ &rtc {
+ 	status = "okay";
+ 	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
+-- 
+2.14.1
 
