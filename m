@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959E7FCC63
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 946A1FCC67
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbfKNSAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:00:14 -0500
-Received: from mga17.intel.com ([192.55.52.151]:24511 "EHLO mga17.intel.com"
+        id S1727460AbfKNSAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:00:23 -0500
+Received: from mga05.intel.com ([192.55.52.43]:8697 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727344AbfKNSAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:00:10 -0500
+        id S1727433AbfKNSAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:00:19 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:00:10 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:00:19 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="207871636"
+   d="scan'208";a="207871677"
 Received: from chiahuil-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.228.77])
-  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2019 10:00:08 -0800
+  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2019 10:00:12 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v3 11/15] soundwire: intel: add prepare support in sdw dai driver
-Date:   Thu, 14 Nov 2019 11:59:29 -0600
-Message-Id: <20191114175933.21992-12-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v3 13/15] soundwire: intel: add sdw_stream_setup helper for .startup callback
+Date:   Thu, 14 Nov 2019 11:59:31 -0600
+Message-Id: <20191114175933.21992-14-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191114175933.21992-1-pierre-louis.bossart@linux.intel.com>
 References: <20191114175933.21992-1-pierre-louis.bossart@linux.intel.com>
@@ -45,57 +45,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rander Wang <rander.wang@linux.intel.com>
 
-The existing code does not expose a prepare operation, which is very
-much needed to deal with underflow and resume operations.
+The sdw stream is allocated and stored in dai to share the sdw runtime
+information.
 
 Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/soundwire/intel.c | 65 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
 diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 492684ba08c3..c50aebda7f4d 100644
+index 862dde9a9b86..af24fa048add 100644
 --- a/drivers/soundwire/intel.c
 +++ b/drivers/soundwire/intel.c
-@@ -697,6 +697,21 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
- 	return ret;
- }
+@@ -615,6 +615,69 @@ static int intel_post_bank_switch(struct sdw_bus *bus)
+  * DAI routines
+  */
  
-+static int intel_prepare(struct snd_pcm_substream *substream,
-+			 struct snd_soc_dai *dai)
++static int sdw_stream_setup(struct snd_pcm_substream *substream,
++			    struct snd_soc_dai *dai)
 +{
-+	struct sdw_cdns_dma_data *dma;
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct sdw_stream_runtime *sdw_stream = NULL;
++	char *name;
++	int i, ret;
 +
-+	dma = snd_soc_dai_get_dma_data(dai, substream);
-+	if (!dma) {
-+		dev_err(dai->dev, "failed to get dma data in %s",
-+			__func__);
-+		return -EIO;
++	name = kzalloc(32, GFP_KERNEL);
++	if (!name)
++		return -ENOMEM;
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++		snprintf(name, 32, "%s-Playback", dai->name);
++	else
++		snprintf(name, 32, "%s-Capture", dai->name);
++
++	sdw_stream = sdw_alloc_stream(name);
++	if (!sdw_stream) {
++		dev_err(dai->dev, "alloc stream failed for DAI %s", dai->name);
++		ret = -ENOMEM;
++		goto error;
 +	}
 +
-+	return sdw_prepare_stream(dma->stream);
++	/* Set stream pointer on CPU DAI */
++	ret = snd_soc_dai_set_sdw_stream(dai, sdw_stream, substream->stream);
++	if (ret < 0) {
++		dev_err(dai->dev, "failed to set stream pointer on cpu dai %s",
++			dai->name);
++		goto release_stream;
++	}
++
++	/* Set stream pointer on all CODEC DAIs */
++	for (i = 0; i < rtd->num_codecs; i++) {
++		ret = snd_soc_dai_set_sdw_stream(rtd->codec_dais[i], sdw_stream,
++						 substream->stream);
++		if (ret < 0) {
++			dev_err(dai->dev, "failed to set stream pointer on codec dai %s",
++				rtd->codec_dais[i]->name);
++			goto release_stream;
++		}
++	}
++
++	return 0;
++
++release_stream:
++	sdw_release_stream(sdw_stream);
++error:
++	kfree(name);
++	return ret;
 +}
 +
- static int
- intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- {
-@@ -743,6 +758,7 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
++static int intel_startup(struct snd_pcm_substream *substream,
++			 struct snd_soc_dai *dai)
++{
++	/*
++	 * TODO: add pm_runtime support here, the startup callback
++	 * will make sure the IP is 'active'
++	 */
++
++	return sdw_stream_setup(substream, dai);
++}
++
+ static int intel_hw_params(struct snd_pcm_substream *substream,
+ 			   struct snd_pcm_hw_params *params,
+ 			   struct snd_soc_dai *dai)
+@@ -794,6 +857,7 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
+ }
  
  static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
++	.startup = intel_startup,
  	.hw_params = intel_hw_params,
-+	.prepare = intel_prepare,
- 	.hw_free = intel_hw_free,
- 	.shutdown = intel_shutdown,
- 	.set_sdw_stream = intel_pcm_set_sdw_stream,
-@@ -750,6 +766,7 @@ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ 	.prepare = intel_prepare,
+ 	.trigger = intel_trigger,
+@@ -803,6 +867,7 @@ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ };
  
  static const struct snd_soc_dai_ops intel_pdm_dai_ops = {
++	.startup = intel_startup,
  	.hw_params = intel_hw_params,
-+	.prepare = intel_prepare,
- 	.hw_free = intel_hw_free,
- 	.shutdown = intel_shutdown,
- 	.set_sdw_stream = intel_pdm_set_sdw_stream,
+ 	.prepare = intel_prepare,
+ 	.trigger = intel_trigger,
 -- 
 2.20.1
 
