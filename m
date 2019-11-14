@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B1ADFCD70
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:25:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F55FCD72
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfKNSYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:24:12 -0500
-Received: from mail-eopbgr150135.outbound.protection.outlook.com ([40.107.15.135]:12935
+        id S1727673AbfKNSYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:24:23 -0500
+Received: from mail-eopbgr150108.outbound.protection.outlook.com ([40.107.15.108]:50913
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727575AbfKNSYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:24:07 -0500
+        id S1727582AbfKNSYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:24:09 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VmqARF6UXct+nmsY7HKZig803/I8lMwT9jJWp9jCHTyhVGGHNjexzmxaHH3BER9X4YFkZ6DQ+UEKU1poGVXD/quDh9KN0/NXdfocmsf3KU9dn19L+TWBHhbt8Oxtfjc0ea6+0g7c4c5lkZQGCftZE2KfWi/lfz1fhUIjlnMFygSymBW1O5XthhEhEs7/G58NLeQXIlOUWqNctrTFGUH7e2Z8/0MLvihE+AX8mOZjGNe0jJInZiavEPOg+v/SXWnAI/9CDBuI0bq0Ngr5g2FqCFqkOqEtD1YpB4HJKDICrMOQE485tnkh5t8k6z0Sg2d4EgFI1lZ+hKampDnVygIweA==
+ b=j2hlIYxgpjxCvwSbOUS5uV6xNFTFwnNCSD5ErnQTpXzHbrrEhpDZqtBeHRtioWmRe3FE4X0flpDvQ8NfRvGH54TpFYCxJRhK6p2F4lPHKTbq/CRah5U4KGPhXhanCKfFrwppq5ub9O6CN+bvedKxwLygO7Ifw/liGJiIhL6DsQ8Apm4UmLScmY1cyzGZtg/zABrjM6hH4ZjVy3+yJbwRYNW29dqH+3Bz7V/D+MRchRWJR4592G2LRCEQKL+Q4mjua9FqrDHvvAWh/glIP/+1aDU8qqp5e2tHDPOLP0uoCNCCPnXbJwkhUzaVI47whF70zmP+LD0NnbprV/bG0TgyHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ImMvV1ur4QyyHNXdBmzSDHBiX/3kyG+U5LSL4Ch55oc=;
- b=E35vBAL803Wois9ai7ynNYXpwMm7OwwlGBfyFCvKJRHlRoN133m9vmV5OD6mn9efmrk+4znn67FNZ1SpWNUJfv6pnTUnErleXPxpB8N5oDLQDlUWnRVZj4XQtfhEIj6qVNV2x+Q2SeNwEBnRs6tSFr+Dh7oEOAyX7qbSyToggbvgXHgVWtxOS3feCTWY+p+pe0Jjzr+da2l3ZFwI+33EKA9IMLBALjpK7/xV6Sr9x10MhZxNA0ihTqT9CItbBlnZq7DkJPnHQ1UTb4Ldywip8xICWAJz/+14E33/RNQ/5fDqqUnTU8K+BchikW5MfjEIXoSIqJVExVy1MfKXxsI3Fg==
+ bh=Df+BC9lsG0s7TDvA0RnS2COhPKAinXPXVkcqOvWbO7s=;
+ b=XB0jse2HpHFGLgoQ57feY6mhb1LqykORGkvbqIugc/+wP4pw/dJHzb4hcIh98wXXJf8M/bRAYahmqFn8lgZpSUSiAjP4Pha9M9y2j8PAxGYUWoM5gkV5LKlkzedAmIyFG8AWKrHG+Xp3xCfUxMycXT7QFNKle9QfTwWTMtVSTzECuoUnqr2ZdQzR7K+kzv+5w6XekCEzCbofTdZ9CklmuuXi8iryXz1lnxD+26TJigu1nlWlqb9tO0KcJpU6+jqo9Cpe5o4glSk0U8CHgTCkQiDzcCiQhhWUQ8d4ioY5pwntbwg4wwgVAzVu6IXgFjYUq5nCm6lJr6dj82B4feNRlQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
  dkim=pass header.d=habana.ai; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ImMvV1ur4QyyHNXdBmzSDHBiX/3kyG+U5LSL4Ch55oc=;
- b=Au8RSW2LMBxfSh1gcUbVzKVpqf/lYGTkt+fU+q4bfuaIhruG2l6kDd0UXXaGAUbjCHsxcphuUapFWWNuqtZ7U7lYdW5QVq1Px+DUjH5i6p9Ug82uxytXZ+wG18crydUHvfIUY4301um7IH9BCoQW6E6VzFa+QmZDrY4ECuqJ1fs=
+ bh=Df+BC9lsG0s7TDvA0RnS2COhPKAinXPXVkcqOvWbO7s=;
+ b=pZajZWDNApktJqRuHQjUOdeGtsagh/QBE7NJSt7i7rBdMVZ3AR+OZ+VGGDsItqvu7SnX5xwKok+jUW8uc61B+rpGqvJt0lnKfvw9lnxiuVHReyAp32PnoOSwpRF6e8DSAXtstlnAqK5ZknbOOpYRsFfauVHvDrZiP0dfHTW/6Pc=
 Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
  AM6PR0202MB3383.eurprd02.prod.outlook.com (52.133.29.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.22; Thu, 14 Nov 2019 18:23:58 +0000
+ 15.20.2451.22; Thu, 14 Nov 2019 18:23:59 +0000
 Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
  ([fe80::240e:7545:887b:939e]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
  ([fe80::240e:7545:887b:939e%4]) with mapi id 15.20.2430.028; Thu, 14 Nov 2019
- 18:23:58 +0000
+ 18:23:59 +0000
 From:   Omer Shpigelman <oshpigelman@habana.ai>
 To:     "oded.gabbay@gmail.com" <oded.gabbay@gmail.com>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 7/8] habanalabs: invalidate MMU cache only once
-Thread-Topic: [PATCH 7/8] habanalabs: invalidate MMU cache only once
-Thread-Index: AQHVmxiuA86KuInPYEuknUt3NVkU8w==
-Date:   Thu, 14 Nov 2019 18:23:58 +0000
-Message-ID: <20191114182346.22675-7-oshpigelman@habana.ai>
+Subject: [PATCH 8/8] habanalabs: remove unnecessary checks
+Thread-Topic: [PATCH 8/8] habanalabs: remove unnecessary checks
+Thread-Index: AQHVmxiugmGcOGBm+Ea2f4Vu8lk6DQ==
+Date:   Thu, 14 Nov 2019 18:23:59 +0000
+Message-ID: <20191114182346.22675-8-oshpigelman@habana.ai>
 References: <20191114182346.22675-1-oshpigelman@habana.ai>
 In-Reply-To: <20191114182346.22675-1-oshpigelman@habana.ai>
 Accept-Language: en-US
@@ -58,80 +58,122 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [31.154.190.6]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 30b436a8-e275-46a5-f256-08d7692fd0d5
+x-ms-office365-filtering-correlation-id: 465bb8c9-968f-4c50-93aa-08d7692fd145
 x-ms-traffictypediagnostic: AM6PR0202MB3383:
-x-microsoft-antispam-prvs: <AM6PR0202MB33833179E14F875EC706559CB8710@AM6PR0202MB3383.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2043;
+x-microsoft-antispam-prvs: <AM6PR0202MB33838281C2459AC7C39A47F1B8710@AM6PR0202MB3383.eurprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-forefront-prvs: 02213C82F8
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39840400004)(376002)(396003)(346002)(189003)(199004)(1361003)(6506007)(64756008)(99286004)(66476007)(66556008)(66446008)(66946007)(2501003)(305945005)(7736002)(6512007)(2351001)(11346002)(66066001)(6916009)(3846002)(6116002)(476003)(2616005)(446003)(486006)(1076003)(50226002)(14444005)(14454004)(386003)(25786009)(8936002)(76176011)(6486002)(256004)(6436002)(71200400001)(5640700003)(186003)(26005)(81156014)(478600001)(81166006)(4326008)(5660300002)(86362001)(36756003)(102836004)(8676002)(71190400001)(2906002)(316002)(52116002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3383;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: habana.ai does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 5b4d59nV+yOjvDZ21tpf2aacE5ol13PZSfWGMvSGsJoJmxvSIwVzVacZ10LNGoJ1A5ZM/Dtj6H6K2bSfhojonmMeaCMVrJrlk5HhU/thEuT9s4ZiWSrTvGdCeTEGwDyW7ll2vziF83XRUm9tiFvtFragl8lK7UwAIR1HGH3TnIETzT+ZwSQ5wwwLH/KTDyzYTUbM2YAbvvhmWYvwxNR6eUolMob6XYNHqBlvYZqyWZoWo0je/tcTRdVh0W9sBYM/SxNEaBAEs9bBcFpauYVTy27np3wYu+sXyy6BWCswWy7XL8QMI81jplUW6/BkPKKmGKAKH2/+OyMNg8bxZwXvi5Xhnx9VIMcB+uxMgUYsK2XiGeixIm+TM1O8C9bQRQyEvVQQFblp3hkvrhbMNrfTCKu69AJhuEDpd0/p2S+Xc8L6yCcQew6OWu4YE6IYIHBA
+x-microsoft-antispam-message-info: Ve5oUy4dAJI4poA/3Nna/NlGhAHygN24MbyKBUjYisfjRxvCJTH5QhOey0OwalWVmU3nr9F2CUHRhe6zui8NnnhehdN+6ETMij/8lcw8HRLlHUsGuhgmc77n9EpPd5XfhCreSN+PgsoXRuTkknamC9snz1ogjwgIP2Qe8N1z0SVA+xwoYntXhnGXljzcC4fHdnhWOT6C2606Avap+c2laees8KNbZ5oTpeeY55V7JPQpegudnP3m0+2VEURgRBEEB/FwxTyp+3zGQfg4kSpUXl66hb/3VAcKRmAMg9mL490/Zrq+rK2ZphFq3td8UCjrR+HjbAwhAz0u1SFpVjTQZEb2vWcCi4yWFiwtcFfYjutaK/ASxusWEbVUJ3z9GCZKRIfcovsacG29Wt7eyab1CqhzLypJLP2p6u9HdxbbcekmFhyCrL9rmPAUfDRm47Yp
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30b436a8-e275-46a5-f256-08d7692fd0d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2019 18:23:58.6324
+X-MS-Exchange-CrossTenant-Network-Message-Id: 465bb8c9-968f-4c50-93aa-08d7692fd145
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2019 18:23:59.3500
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 96yRLzeQXnOfhUzS2PaarkEWqi6RyOFe8dF5GJw3/DGA/IMLex8U25HDKi9WjBuldtADGAj3jK1705cd2tYYiA==
+X-MS-Exchange-CrossTenant-userprincipalname: mX7J9Tp5X4pmK7akt/eenAeglgQl3F3fy0mM8ohDkeLwN2Y4PIuosbwhaLn7b80bx1rdH7iZ2Dn5RZCkGwA1uA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3383
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reduce context close time by performing MMU cache invalidation once at the
-end of the unmap loop rather in each iteration, in order to avoid hard
-reset with open contexts.
-Reset with open contexts can potentially lead to a kernel crash as the
-generic pool of the MMU hops is destroyed while it is not empty because
-some unmap operations are not done.
-The commit affect mainly when running on simulator.
+Now that the VA block free list is not updated on context close in order
+to optimize this flow, no need in the sanity checks of the list contents
+as these will fail for sure.
+In addition, remove the "context closing with VA in use" print during hard
+reset as this situation is a side effect of the failure that caused the
+hard reset.
 
 Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
 ---
- drivers/misc/habanalabs/memory.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/misc/habanalabs/memory.c | 40 +++++++-------------------------
+ 1 file changed, 9 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/mem=
 ory.c
-index be6f42749a61..fa9462ee9d6f 100644
+index fa9462ee9d6f..b009ac4c62c0 100644
 --- a/drivers/misc/habanalabs/memory.c
 +++ b/drivers/misc/habanalabs/memory.c
-@@ -1066,7 +1066,13 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 v=
-addr, bool ctx_free)
+@@ -544,7 +544,6 @@ static u64 get_va_block(struct hl_device *hdev,
+ 		/* calc the first possible aligned addr */
+ 		valid_start =3D va_block->start;
 =20
- 	unmap_phys_pg_pack(ctx, vaddr, phys_pg_pack);
+-
+ 		if (valid_start & (page_size - 1)) {
+ 			valid_start &=3D page_mask;
+ 			valid_start +=3D page_size;
+@@ -1589,43 +1588,16 @@ int hl_vm_ctx_init(struct hl_ctx *ctx)
+  * @hdev                : pointer to the habanalabs structure
+  * va_range             : pointer to virtual addresses range
+  *
+- * This function initializes the following:
+- * - Checks that the given range contains the whole initial range
++ * This function does the following:
+  * - Frees the virtual addresses block list and its lock
+  */
+ static void hl_va_range_fini(struct hl_device *hdev,
+ 		struct hl_va_range *va_range)
+ {
+-	struct hl_vm_va_block *va_block;
+-
+-	if (list_empty(&va_range->list)) {
+-		dev_warn(hdev->dev,
+-				"va list should not be empty on cleanup!\n");
+-		goto out;
+-	}
+-
+-	if (!list_is_singular(&va_range->list)) {
+-		dev_warn(hdev->dev,
+-			"va list should not contain multiple blocks on cleanup!\n");
+-		goto free_va_list;
+-	}
+-
+-	va_block =3D list_first_entry(&va_range->list, typeof(*va_block), node);
+-
+-	if (va_block->start !=3D va_range->start_addr ||
+-		va_block->end !=3D va_range->end_addr) {
+-		dev_warn(hdev->dev,
+-			"wrong va block on cleanup, from 0x%llx to 0x%llx\n",
+-				va_block->start, va_block->end);
+-		goto free_va_list;
+-	}
+-
+-free_va_list:
+ 	mutex_lock(&va_range->lock);
+ 	clear_va_list_locked(hdev, &va_range->list);
+ 	mutex_unlock(&va_range->lock);
 =20
--	hdev->asic_funcs->mmu_invalidate_cache(hdev, true, *vm_type);
+-out:
+ 	mutex_destroy(&va_range->lock);
+ }
+=20
+@@ -1660,8 +1632,14 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
+=20
+ 	hl_debugfs_remove_ctx_mem_hash(hdev, ctx);
+=20
+-	if (!hash_empty(ctx->mem_hash))
+-		dev_notice(hdev->dev, "ctx is freed while it has va in use\n");
 +	/*
-+	 * During context free this function is called in a loop to clean all
-+	 * the context mappings. Hence the cache invalidation can be called once
-+	 * at the loop end rather than for each iteration
++	 * Clearly something went wrong on hard reset so no point in printing
++	 * another side effect error
 +	 */
-+	if (!ctx_free)
-+		hdev->asic_funcs->mmu_invalidate_cache(hdev, true, *vm_type);
++	if (!hdev->hard_reset_pending && !hash_empty(ctx->mem_hash))
++		dev_notice(hdev->dev,
++				"ctx %d is freed while it has va in use\n",
++				ctx->asid);
 =20
- 	mutex_unlock(&ctx->mmu_lock);
-=20
-@@ -1664,6 +1670,10 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
- 		unmap_device_va(ctx, hnode->vaddr, true);
- 	}
-=20
-+	/* invalidate the cache once after the unmapping loop */
-+	hdev->asic_funcs->mmu_invalidate_cache(hdev, true, VM_TYPE_USERPTR);
-+	hdev->asic_funcs->mmu_invalidate_cache(hdev, true, VM_TYPE_PHYS_PACK);
-+
- 	spin_lock(&vm->idr_lock);
- 	idr_for_each_entry(&vm->phys_pg_pack_handles, phys_pg_list, i)
- 		if (phys_pg_list->asid =3D=3D ctx->asid) {
+ 	hash_for_each_safe(ctx->mem_hash, i, tmp_node, hnode, node) {
+ 		dev_dbg(hdev->dev,
 --=20
 2.17.1
 
