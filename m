@@ -2,375 +2,330 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A457DFC0CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8835AFC0E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfKNHdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 02:33:41 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:31384 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfKNHdk (ORCPT
+        id S1726452AbfKNHj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 02:39:26 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33104 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfKNHj0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 02:33:40 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191114073337epoutp01727c4647ed104ff0cf230c9088409895~W9xtujfwl2410624106epoutp014
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 07:33:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191114073337epoutp01727c4647ed104ff0cf230c9088409895~W9xtujfwl2410624106epoutp014
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1573716817;
-        bh=+SI7PvgsA1hnFDSbbfdJq4eYpxhrXcsxbd8raCZ2420=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sjH0v8sVyyXfgCm8z+LqBlZkBI1wVGhHODOcddNyid9OFVNPptMMHF75m59on5cEx
-         7s5zncD9OYN2KrvRMDAp5BAddgiWUMMbhaK1dWjcg6Mc2u/QY2RaVwuDVLvHjMatiU
-         UFvYZraogaJsLaao8HwzyKlwEeVuW2CWWV5cNtoQ=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191114073336epcas1p48bf43710df8074d1c96c61fe3bc13157~W9xtT5oIi2772227722epcas1p4D;
-        Thu, 14 Nov 2019 07:33:36 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47DCrj5CnpzMqYkp; Thu, 14 Nov
-        2019 07:33:25 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8C.5F.04135.8230DCD5; Thu, 14 Nov 2019 16:32:56 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191114073255epcas1p33eaaaf25d260219a0c11fbbc47fc949c~W9xHFVghS1538315383epcas1p3C;
-        Thu, 14 Nov 2019 07:32:55 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191114073255epsmtrp2dd61f7672f117256e7552f646de595ab~W9xHEYwT32025920259epsmtrp2S;
-        Thu, 14 Nov 2019 07:32:55 +0000 (GMT)
-X-AuditID: b6c32a36-7e3ff70000001027-8e-5dcd03289ed2
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        91.6B.24756.7230DCD5; Thu, 14 Nov 2019 16:32:55 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191114073255epsmtip2518ef28fb08e947876a9e69d3b60cecb~W9xGtYNil3103831038epsmtip2X;
-        Thu, 14 Nov 2019 07:32:55 +0000 (GMT)
-Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
- errors on Exynos5422/5800 SoCs
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     Kamil Konieczny <k.konieczny@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Organization: Samsung Electronics
-Message-ID: <635904ed-93e1-944b-9317-8c9a19844223@samsung.com>
-Date:   Thu, 14 Nov 2019 16:38:40 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Thu, 14 Nov 2019 02:39:26 -0500
+Received: by mail-oi1-f193.google.com with SMTP id m193so4436196oig.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 23:39:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=7Ad+PLr3QmhYM1M2mlxBYtAoRJ2xUG9cwnquHYSdYYc=;
+        b=AcwcMhI74SCrXe3Tga44jqAG4VTYR6K7oGPZ7LqXYIJ+JYgTIxm6pPs5nVYEufUdtO
+         zWcfu2FxA021825z2XTfQHvm5a5dPluQ4cPPkpiMbkdKAdz0hToJUpWOnoGXQY4Wj7S6
+         Lg2IwtzMPMe2/DP16fb2QQh9/mbYuBNgB89FLpY/DQrRtUGEy/evUNWs/FI9JPt7QCH8
+         94dnK17nc8aQculyLZXc7uhAk+WZ8iEdh7VNhSzEbCdgc0cFyoJMVkrUxMxosWUfuCy3
+         1uYLOpOSIctkOSLr+S2U1LZDN7lycQfT6A4Nf872V0XVE5g7lxAGQ4J3ZGq7Z++8PH8V
+         d0Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=7Ad+PLr3QmhYM1M2mlxBYtAoRJ2xUG9cwnquHYSdYYc=;
+        b=cdKBX9Hd9YogndDnGMmunoDoFeYB4C9XJnE8bSyNH2VxkH0RWv/LiQ3sPAvqyjubfD
+         6Qp3dWwYdzggnBCzDKo3E9zUub9+51xzERMlQtVIT3QGzv9YBjDEZGtSyx/JmGutb99/
+         9bwLSreZr9uZmCRQKfjMBjU9YO5bK69ErmaU2WvykZdtIqZ45KIjH6eNXk1Wb348Zs7B
+         HiBYR+gs1VAtjTy9AzR6IauxG3IbMnGqSJ9pneURsQMkzktgERaspAWseYKyWy/bxi0g
+         3+gTo+MOSBTjzDakxwugfF3u9/M9a/rdZ/NfNGuy2C0slCA9U+nL0wivmhW5MaM3nZu9
+         QYXw==
+X-Gm-Message-State: APjAAAULfJaPPtCW8S7gZBSLFaUWoZbp8eCKhWxEMqB/TbHTcHM6m25E
+        cbiWv8NdzZA5tcbbEAFaFxGm6Q==
+X-Google-Smtp-Source: APXvYqxcYguJniRypgeL05dkeDnKe1oIHb++Pi7KGjXR+QmIyaQpxjHreQau9YonHzM1i7T7C7Co9Q==
+X-Received: by 2002:aca:c583:: with SMTP id v125mr2301060oif.156.1573717165164;
+        Wed, 13 Nov 2019 23:39:25 -0800 (PST)
+Received: from localhost (wsip-98-172-187-222.no.no.cox.net. [98.172.187.222])
+        by smtp.gmail.com with ESMTPSA id r4sm1608411otg.55.2019.11.13.23.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2019 23:39:24 -0800 (PST)
+Date:   Wed, 13 Nov 2019 23:39:24 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Christoph Hellwig <hch@lst.de>
+cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/15] riscv: provide native clint access for M-mode
+In-Reply-To: <20191017173743.5430-10-hch@lst.de>
+Message-ID: <alpine.DEB.2.21.9999.1911132337520.11342@viisi.sifive.com>
+References: <20191017173743.5430-1-hch@lst.de> <20191017173743.5430-10-hch@lst.de>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-In-Reply-To: <9e0a4aa6-46a6-3ca6-42db-11ed55b468dd@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmvq4G89lYg63L2Sw2zljPatG37z+j
-        xYJPM1gt+h+/ZrY4f34Du8XZpjfsFpseX2O1uLxrDpvF594jjBYzzu9jslh75C67xe3GFWwO
-        PB6bVnWyeWxeUu9x8N0eJo++LasYPT5vkgtgjcq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1
-        MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6T0mhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5Ra
-        kJJTYFmgV5yYW1yal66XnJ9rZWhgYGQKVJiQndF9+jRzQX9ixdSta5kaGLf4dTFyckgImEgc
-        vvSIpYuRi0NIYAejxPuvM1lBEkICnxglmjdHQiS+MUqsmD2bDabj1dy5TBCJvYwSj++uZodw
-        3jNKfLoxjx2kSlggW+Lb6WXMIDabgJbE/hc3wLpFBGol+htmgTUwC9xmkuj99IsFJMEvoChx
-        9cdjRhCbV8BO4vGpn2A2i4CqxOkJV4GaOThEBSIkTn9NhCgRlDg58wlYK6eAvcSbt0fAbGYB
-        cYlbT+YzQdjyEs1bZzOD7JIQmMwusazjHzPECy4S638ugrKFJV4d38IOYUtJfH63F+rNaomV
-        J4+wQTR3MEps2X+BFSJhLLF/6WQmkIOYBTQl1u/ShwgrSuz8PZcRYjGfxLuvPawgJRICvBId
-        bUIQJcoSlx/cZYKwJSUWt3eyTWBUmoXknVlIXpiF5IVZCMsWMLKsYhRLLSjOTU8tNiwwQo7t
-        TYzgpKtltoNx0TmfQ4wCHIxKPLwHRM/ECrEmlhVX5h5ilOBgVhLhnfIWKMSbklhZlVqUH19U
-        mpNafIjRFBjYE5mlRJPzgRkhryTe0NTI2NjYwsTQzNTQUEmc13H50lghgfTEktTs1NSC1CKY
-        PiYOTqkGxk7WA/Me3D21yq2bX6zzu5K80nKzKOOXGs2ng8xdFu0s2zGj2rqzdsOZE7umBgTN
-        8jq3lN2+vLRsuYR+7QR1tVN24Su/PQ4WsBbKdKt7+bB49+roU9xR3/8J/D3p//9u7AetnW9m
-        iC07WmHZ5mcYL3m6YZkQb4dmbci+vn8dwhs+nvKbqeL8SYmlOCPRUIu5qDgRAH9wgh/QAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSvK4689lYg8P7RCw2zljPatG37z+j
-        xYJPM1gt+h+/ZrY4f34Du8XZpjfsFpseX2O1uLxrDpvF594jjBYzzu9jslh75C67xe3GFWwO
-        PB6bVnWyeWxeUu9x8N0eJo++LasYPT5vkgtgjeKySUnNySxLLdK3S+DK6D59mrmgP7Fi6ta1
-        TA2MW/y6GDk5JARMJF7NncvUxcjFISSwm1Hi1vovTBAJSYlpF48ydzFyANnCEocPF0PUvGWU
-        aP/9hg2kRlggW+Lb6WXMIDabgJbE/hc32EDqRQRqJTq+SIPUMwvcZZJY9+0D1IKFzBLHD+9k
-        BGngF1CUuPrjMZjNK2An8fjUTzCbRUBV4vSEq2ALRAUiJJ5vvwFVIyhxcuYTFhCbU8Be4s3b
-        I2A2s4C6xJ95l5ghbHGJW0/mM0HY8hLNW2czT2AUnoWkfRaSlllIWmYhaVnAyLKKUTK1oDg3
-        PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4/rQ0dzBeXhJ/iFGAg1GJh/eA6JlYIdbEsuLK3EOM
-        EhzMSiK8U94ChXhTEiurUovy44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBaBJNl4uCU
-        amDsVpzcd9F4UW594rM7Wmo+nt9vztscqr9UKemIypPZ1V2a0TFBeocOPFp5zGHLtDsXzuX8
-        22Po52bqr7i08tu1R26TYuTWPnsb2vBAh8++b/m5b6HZcil7myzf3V98d2Hv89z1vfpO7ulV
-        UlO1/rL1bXAxk593dPIB09ja3H+ZSzZvvC9haJSkxFKckWioxVxUnAgA3256aLsCAAA=
-X-CMS-MailID: 20191114073255epcas1p33eaaaf25d260219a0c11fbbc47fc949c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b
-References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
-        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
-        <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
-        <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
-        <d742e7be-ca79-ae9e-6cc2-dc1fae08d252@samsung.com>
-        <dd5bc937-e776-f717-1cf3-ee0e17621304@samsung.com>
-        <9e0a4aa6-46a6-3ca6-42db-11ed55b468dd@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kamil,
+On Thu, 17 Oct 2019, Christoph Hellwig wrote:
 
-On 11/14/19 3:07 PM, Chanwoo Choi wrote:
-> Hi Kamil,
+> RISC-V has the concept of a cpu level interrupt controller.  The
+> interface for it is split between a standardized part that is exposed
+> as bits in the mstatus/sstatus register and the mie/mip/sie/sip
+> CRS.  But the bit to actually trigger IPIs is not standardized and
+> just mentioned as implementable using MMIO.
 > 
-> On 11/14/19 12:12 AM, Kamil Konieczny wrote:
->> Hi Chanwoo,
->>
->> On 14.10.2019 08:46, Chanwoo Choi wrote:
->>> Hi Marek,
->>>
->>> On 19. 10. 11. 오후 8:33, Marek Szyprowski wrote:
->>>> Hi Chanwoo,
->>>>
->>>> On 10.10.2019 04:50, Chanwoo Choi wrote:
->>>>> On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
->>>>>> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
->>>>>> dev_pm_opp_set_rate()") introduced errors:
->>>>>> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
->>>>>> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
->>>>>> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
->>>>>> ...
->>>>>> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
->>>>>> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
->>>>>> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
->>>>>>
->>>>>> They are caused by incorrect PLL assigned to clock source, which results
->>>>>> in clock rate outside of OPP range. Add workaround for this in
->>>>>> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
->>>>> If the clock caused this issue, you can set the initial clock on DeviceTree
->>>>> with assigned-clock-* properties. Because the probe time of clock driver
->>>>> is early than the any device drivers.
->>>>>
->>>>> It is not proper to fix the clock issue on other device driver.
->>>>> I think you can fix it by using the supported clock properties.
->>>>
->>>> This issue is about something completely different. The OPPs defined in 
->>>> DT cannot be applied, because it is not possible to derive the needed 
->>>> clock rate from the bootloader-configured clock topology (mainly due to 
->>>> lack of common divisor values for some of the parent clocks). Some time 
->>>> ago Lukasz tried initially to redefine this clock topology using 
->>>> assigned-clock-rates/parents properties (see 
->>>> https://protect2.fireeye.com/url?k=4b80c0304459bc8e.4b814b7f-f87f1e1aee1a85c0&u=https://lkml.org/lkml/2019/7/15/276), but it has limitations and some 
->>>> such changes has to be done in bootloader. Until this is resolved, 
->>>> devfreq simply cannot set some of the defined OPPs.
->>>
->>> As you mentioned, the wrong setting in bootloader cause the this issue.
->>> So, this patch change the rate on exynos-bus.c in order to fix
->>> the issue with workaround style. 
->>>
->>> But, also, it can be fixed by initializing the clock rate on DT
->>> although it is not fundamental solution as you mentioned.
->>>
->>> If above two method are workaround way, I think that set the clock
->>> rate in DT is proper. The role of 'assigned-clock-*' properties
->>> is for this case in order to set the initial frequency on probe time.
->>
->> I can add 'assigned-clock-*' to DT, but the issue is caused in opp points,
->> so the warning from exynos-bus will still be there.
->>
->> Before this fix, devfreq will issue warning and then change clock to max
->> frequency within opp range. This fix mask warning, and as Marek and
->> Lukasz Luba wrotes, the proper fix will be to make changes in u-boot
->> (and connect proper PLLs to IPs).
+> Add support for IPIs using MMIO using the SiFive clint layout (which is
+> also shared by Ariane, Kendrye and the Qemu virt platform).  Additional
+> the MMIO block also support the time value and timer compare registers,
+> so they are also set up using the same OF node.  Support for other
+> layouts should also be relatively easy to add in the future.
 > 
-> PLL could be changed by clock device driver in the linux kernel.
-> If you don't add the supported frequency into PLL frequency table 
-> of clock device driver, will fail to change the wanted frequency
-> on the linux kernel. It means that it is not fixed by only touching
-> the bootloader. 
-> 
-> As you commented, the wrong opp points which are specified on dt
-> cause this issue. Usually, have to initialize the clock rate on dt
-> by using 'assigned-clocks-*' property and then use the clock
-> with the preferable clock rate. I think that we have to fix
-> the fundamental problem. 
-> 
-> Without bootloader problem, you can fix it by initializing
-> the clock on dt with 'assigned-clocks-*' property.
-> 
-> As I knew that it is correct way and I always tried to do this method
-> for resolving the similar clock issue.
-> 
-> Lastly, I think that my opinion is more simple and correct.
-> It could give the more correct information to linux kernel user
-> which refer to the device tree file.
-> 
-> 1. Your suggestion 
-> 	a. Add opp-table with unsupported frequency on dt
-> 	b. Try to change the clock rate on exynos-bus.c by using unsupported frequency from opp-table
-> 	c. If failed, retry to change the clock rate on exynos-bus.c
-> 
-> 2. My opinion
-> 	a. Initialize the PLL or any clock by using assigned-clock-* property on dt
-> 	   and add opp-table with supported frequency on dt
-> 	b. Try to change the clock rate on exynos-bus.c by using supported frequency from opp-table
-> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Just I tried to add 'assigned-clock-rates' property to initialize
-the clock rate of some bus node as following on odroid-xu3 board:
+Thanks, queued the following for v5.5-rc1.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 829147e320e0..9a237af5436a 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -42,6 +42,8 @@
- };
+
+- Paul
+
+From: Christoph Hellwig <hch@lst.de>
+Date: Mon, 28 Oct 2019 13:10:38 +0100
+Subject: [PATCH] riscv: provide native clint access for M-mode
+
+RISC-V has the concept of a cpu level interrupt controller.  The
+interface for it is split between a standardized part that is exposed
+as bits in the mstatus/sstatus register and the mie/mip/sie/sip
+CRS.  But the bit to actually trigger IPIs is not standardized and
+just mentioned as implementable using MMIO.
+
+Add support for IPIs using MMIO using the SiFive clint layout (which
+is also shared by Ariane, Kendryte and the Qemu virt platform).
+Additionally the MMIO block also supports the time value and timer
+compare registers, so they are also set up using the same OF node.
+Support for other layouts should also be relatively easy to add in the
+future.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+[paul.walmsley@sifive.com: update include guard format; fix checkpatch
+ issues; minor commit message cleanups]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+---
+ arch/riscv/include/asm/clint.h | 39 ++++++++++++++++++++++++++++++
+ arch/riscv/include/asm/sbi.h   |  2 ++
+ arch/riscv/kernel/Makefile     |  1 +
+ arch/riscv/kernel/clint.c      | 44 ++++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/setup.c      |  2 ++
+ arch/riscv/kernel/smp.c        | 16 ++++++++++---
+ arch/riscv/kernel/smpboot.c    |  4 ++++
+ 7 files changed, 105 insertions(+), 3 deletions(-)
+ create mode 100644 arch/riscv/include/asm/clint.h
+ create mode 100644 arch/riscv/kernel/clint.c
+
+diff --git a/arch/riscv/include/asm/clint.h b/arch/riscv/include/asm/clint.h
+new file mode 100644
+index 000000000000..6eaa2eedd694
+--- /dev/null
++++ b/arch/riscv/include/asm/clint.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_RISCV_CLINT_H
++#define _ASM_RISCV_CLINT_H 1
++
++#include <linux/io.h>
++#include <linux/smp.h>
++
++#ifdef CONFIG_RISCV_M_MODE
++extern u32 __iomem *clint_ipi_base;
++
++void clint_init_boot_cpu(void);
++
++static inline void clint_send_ipi_single(unsigned long hartid)
++{
++	writel(1, clint_ipi_base + hartid);
++}
++
++static inline void clint_send_ipi_mask(const struct cpumask *hartid_mask)
++{
++	int hartid;
++
++	for_each_cpu(hartid, hartid_mask)
++		clint_send_ipi_single(hartid);
++}
++
++static inline void clint_clear_ipi(unsigned long hartid)
++{
++	writel(0, clint_ipi_base + hartid);
++}
++#else /* CONFIG_RISCV_M_MODE */
++#define clint_init_boot_cpu()	do { } while (0)
++
++/* stubs to for code is only reachable under IS_ENABLED(CONFIG_RISCV_M_MODE): */
++void clint_send_ipi_single(unsigned long hartid);
++void clint_send_ipi_mask(const struct cpumask *hartid_mask);
++void clint_clear_ipi(unsigned long hartid);
++#endif /* CONFIG_RISCV_M_MODE */
++
++#endif /* _ASM_RISCV_CLINT_H */
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index 8e14d4819d0f..2570c1e683d3 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -97,6 +97,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+ #else /* CONFIG_RISCV_SBI */
+ /* stubs for code that is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
+ void sbi_set_timer(uint64_t stime_value);
++void sbi_clear_ipi(void);
++void sbi_send_ipi(const unsigned long *hart_mask);
+ void sbi_remote_fence_i(const unsigned long *hart_mask);
+ #endif /* CONFIG_RISCV_SBI */
+ #endif /* _ASM_RISCV_SBI_H */
+diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+index d8c35fa93cc6..2dca51046899 100644
+--- a/arch/riscv/kernel/Makefile
++++ b/arch/riscv/kernel/Makefile
+@@ -29,6 +29,7 @@ obj-y	+= vdso.o
+ obj-y	+= cacheinfo.o
+ obj-y	+= vdso/
  
- &bus_wcore {
-+       assigned-clocks = <&clock CLK_DOUT_ACLK400_WCORE>;
-+       assigned-clock-rates = <400000000>;
-        devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
-                        <&nocp_mem1_0>, <&nocp_mem1_1>;
-        vdd-supply = <&buck3_reg>;
-@@ -50,11 +52,15 @@
- };
++obj-$(CONFIG_RISCV_M_MODE)	+= clint.o
+ obj-$(CONFIG_FPU)		+= fpu.o
+ obj-$(CONFIG_SMP)		+= smpboot.o
+ obj-$(CONFIG_SMP)		+= smp.o
+diff --git a/arch/riscv/kernel/clint.c b/arch/riscv/kernel/clint.c
+new file mode 100644
+index 000000000000..3647980d14c3
+--- /dev/null
++++ b/arch/riscv/kernel/clint.c
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 Christoph Hellwig.
++ */
++
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/types.h>
++#include <asm/clint.h>
++#include <asm/csr.h>
++#include <asm/timex.h>
++#include <asm/smp.h>
++
++/*
++ * This is the layout used by the SiFive clint, which is also shared by the qemu
++ * virt platform, and the Kendryte KD210 at least.
++ */
++#define CLINT_IPI_OFF		0
++#define CLINT_TIME_CMP_OFF	0x4000
++#define CLINT_TIME_VAL_OFF	0xbff8
++
++u32 __iomem *clint_ipi_base;
++
++void clint_init_boot_cpu(void)
++{
++	struct device_node *np;
++	void __iomem *base;
++
++	np = of_find_compatible_node(NULL, NULL, "riscv,clint0");
++	if (!np) {
++		panic("clint not found");
++		return;
++	}
++
++	base = of_iomap(np, 0);
++	if (!base)
++		panic("could not map CLINT");
++
++	clint_ipi_base = base + CLINT_IPI_OFF;
++	riscv_time_cmp = base + CLINT_TIME_CMP_OFF;
++	riscv_time_val = base + CLINT_TIME_VAL_OFF;
++
++	clint_clear_ipi(boot_cpu_hartid);
++}
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index 845ae0e12115..365ff8420bfe 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -17,6 +17,7 @@
+ #include <linux/sched/task.h>
+ #include <linux/swiotlb.h>
  
- &bus_noc {
-+       assigned-clocks = <&clock CLK_DOUT_ACLK100_NOC>;
-+       assigned-clock-rates = <100000000>;
-        devfreq = <&bus_wcore>;
-        status = "okay";
- };
++#include <asm/clint.h>
+ #include <asm/setup.h>
+ #include <asm/sections.h>
+ #include <asm/pgtable.h>
+@@ -67,6 +68,7 @@ void __init setup_arch(char **cmdline_p)
+ 	setup_bootmem();
+ 	paging_init();
+ 	unflatten_device_tree();
++	clint_init_boot_cpu();
  
- &bus_fsys_apb {
-+       assigned-clocks = <&clock CLK_DOUT_PCLK200_FSYS>;
-+       assigned-clock-rates = <200000000>;
-        devfreq = <&bus_wcore>;
-        status = "okay";
- };
-@@ -120,6 +126,8 @@
- };
+ #ifdef CONFIG_SWIOTLB
+ 	swiotlb_init(1);
+diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+index c0fbc04e6810..eb878abcaaf8 100644
+--- a/arch/riscv/kernel/smp.c
++++ b/arch/riscv/kernel/smp.c
+@@ -16,6 +16,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/delay.h>
  
- &bus_mscl {
-+       assigned-clocks = <&clock CLK_DOUT_ACLK400_MSCL>;
-+       assigned-clock-rates = <400000000>;
-        devfreq = <&bus_wcore>;
-        status = "okay";
- };
-
-
-In result,
-[Before on v5.4-rc6, failed to set the rate by dev_pm_opp_set_rate()]
-[    4.855811] exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
-[    4.863374] exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
-[    4.871240] exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
-[    4.879509] exynos-bus: new bus device registered: soc:bus_fsys (100000 KHz ~ 200000 KHz)
-[    4.887957] exynos-bus: new bus device registered: soc:bus_fsys2 ( 75000 KHz ~ 150000 KHz)
-[    4.896361] exynos-bus: new bus device registered: soc:bus_mfc ( 96000 KHz ~ 333000 KHz)
-[    4.904330] exynos-bus: new bus device registered: soc:bus_gen ( 89000 KHz ~ 267000 KHz)
-[    4.911802] exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
-[    4.912710] exynos-bus: new bus device registered: soc:bus_peri ( 67000 KHz ~  67000 KHz)
-[    4.924655] exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
-[    4.932125] exynos-bus: new bus device registered: soc:bus_g2d ( 84000 KHz ~ 333000 KHz)
-[    4.939607] exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
-[    4.949758] exynos-bus: new bus device registered: soc:bus_g2d_acp ( 67000 KHz ~ 267000 KHz)
-[    4.966991] exynos-bus: new bus device registered: soc:bus_jpeg ( 75000 KHz ~ 300000 KHz)
-[    4.975136] exynos-bus: new bus device registered: soc:bus_jpeg_apb ( 84000 KHz ~ 167000 KHz)
-[    4.983452] exynos-bus: new bus device registered: soc:bus_disp1_fimd (120000 KHz ~ 200000 KHz)
-[    4.992218] exynos-bus: new bus device registered: soc:bus_disp1 (120000 KHz ~ 300000 KHz)
-[    5.000483] exynos-bus: new bus device registered: soc:bus_gscl_scaler (150000 KHz ~ 300000 KHz)
-[    5.009331] exynos-bus: new bus device registered: soc:bus_mscl ( 84000 KHz ~ 400000 KHz)
-[    5.020207] exynos-bus soc:bus_mscl: dev_pm_opp_set_rate: failed to find current OPP for freq 666000000 (-34)
-
-[After applied the 'assigned-clock-*' patch on v5.4-rc6]
-[    4.840571] exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
-[    4.848099] exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
-[    4.856016] exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
-[    4.864307] exynos-bus: new bus device registered: soc:bus_fsys (100000 KHz ~ 200000 KHz)
-[    4.872723] exynos-bus: new bus device registered: soc:bus_fsys2 ( 75000 KHz ~ 150000 KHz)
-[    4.881124] exynos-bus: new bus device registered: soc:bus_mfc ( 96000 KHz ~ 333000 KHz)
-[    4.889147] exynos-bus: new bus device registered: soc:bus_gen ( 89000 KHz ~ 267000 KHz)
-[    4.896867] exynos-bus: new bus device registered: soc:bus_peri ( 67000 KHz ~  67000 KHz)
-[    4.907430] exynos-bus: new bus device registered: soc:bus_g2d ( 84000 KHz ~ 333000 KHz)
-[    4.914797] exynos-bus: new bus device registered: soc:bus_g2d_acp ( 67000 KHz ~ 267000 KHz)
-[    4.923205] exynos-bus: new bus device registered: soc:bus_jpeg ( 75000 KHz ~ 300000 KHz)
-[    4.931352] exynos-bus: new bus device registered: soc:bus_jpeg_apb ( 84000 KHz ~ 167000 KHz)
-[    4.939658] exynos-bus: new bus device registered: soc:bus_disp1_fimd (120000 KHz ~ 200000 KHz)
-[    4.948401] exynos-bus: new bus device registered: soc:bus_disp1 (120000 KHz ~ 300000 KHz)
-[    4.956650] exynos-bus: new bus device registered: soc:bus_gscl_scaler (150000 KHz ~ 300000 KHz)
-[    4.965573] exynos-bus: new bus device registered: soc:bus_mscl ( 84000 KHz ~ 400000 KHz)
-
-
->>
->> Second solution would be to write down new OPP points with currently used
->> frequencies, and with max one for 532 MHz.
->>
->>> I think that the previous patch[1] of Kamil Konieczny is missing
->>> the patches which initialize the clock rate on DT file.
->>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4294a779bd8dff6c65e7e85ffe7a1ea236e92a68
->>>
->>>>
->>>> This issue was there from the beginning, recent Kamil's patch only 
->>>> revealed it. In fact it was even worse - devfreq and common clock 
->>>> framework silently set lower clock than the given OPP defined.
->>>>
->>>>>> Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
->>>>>> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>>>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->>>>>> ---
->>>>>>   drivers/devfreq/exynos-bus.c | 14 +++++++++++---
->>>>>>   1 file changed, 11 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->>>>>> index c832673273a2..37bd34d5625b 100644
->>>>>> --- a/drivers/devfreq/exynos-bus.c
->>>>>> +++ b/drivers/devfreq/exynos-bus.c
->>>>>> @@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
->>>>>>   {
->>>>>>   	struct device *dev = bus->dev;
->>>>>>   	struct dev_pm_opp *opp;
->>>>>> -	unsigned long rate;
->>>>>> +	unsigned long rate, opp_rate;
->>>>>>   	int ret;
->>>>>>   
->>>>>>   	/* Get the clock to provide each bus with source clock */
->>>>>> @@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
->>>>>>   	}
->>>>>>   
->>>>>>   	rate = clk_get_rate(bus->clk);
->>>>>> -
->>>>>> -	opp = devfreq_recommended_opp(dev, &rate, 0);
->>>>>> +	opp_rate = rate;
->>>>>> +	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
->>>>>>   	if (IS_ERR(opp)) {
->>>>>>   		dev_err(dev, "failed to find dev_pm_opp\n");
->>>>>>   		ret = PTR_ERR(opp);
->>>>>>   		goto err_opp;
->>>>>>   	}
->>>>>> +	/*
->>>>>> +	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
->>>>>> +	 * in clock rate outside defined OPP rate. Work around this bug by
->>>>>> +	 * setting clock rate to recommended one.
->>>>>> +	 */
->>>>>> +	if (rate > opp_rate)
->>>>>> +		clk_set_rate(bus->clk, opp_rate);
->>>>>> +
->>>>>>   	bus->curr_freq = dev_pm_opp_get_freq(opp);
->>>>>>   	dev_pm_opp_put(opp);
->>>>>>   
->>>>>>
->>>>>
->>>> Best regards
->>>>
->>>
->>>
->>
-> 
-> 
-
-
++#include <asm/clint.h>
+ #include <asm/sbi.h>
+ #include <asm/tlbflush.h>
+ #include <asm/cacheflush.h>
+@@ -92,7 +93,10 @@ static void send_ipi_mask(const struct cpumask *mask, enum ipi_message_type op)
+ 	smp_mb__after_atomic();
+ 
+ 	riscv_cpuid_to_hartid_mask(mask, &hartid_mask);
+-	sbi_send_ipi(cpumask_bits(&hartid_mask));
++	if (IS_ENABLED(CONFIG_RISCV_SBI))
++		sbi_send_ipi(cpumask_bits(&hartid_mask));
++	else
++		clint_send_ipi_mask(&hartid_mask);
+ }
+ 
+ static void send_ipi_single(int cpu, enum ipi_message_type op)
+@@ -103,12 +107,18 @@ static void send_ipi_single(int cpu, enum ipi_message_type op)
+ 	set_bit(op, &ipi_data[cpu].bits);
+ 	smp_mb__after_atomic();
+ 
+-	sbi_send_ipi(cpumask_bits(cpumask_of(hartid)));
++	if (IS_ENABLED(CONFIG_RISCV_SBI))
++		sbi_send_ipi(cpumask_bits(cpumask_of(hartid)));
++	else
++		clint_send_ipi_single(hartid);
+ }
+ 
+ static inline void clear_ipi(void)
+ {
+-	csr_clear(CSR_IP, IE_SIE);
++	if (IS_ENABLED(CONFIG_RISCV_SBI))
++		csr_clear(CSR_IP, IE_SIE);
++	else
++		clint_clear_ipi(cpuid_to_hartid_map(smp_processor_id()));
+ }
+ 
+ void riscv_software_interrupt(void)
+diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+index 261f4087cc39..8bc01f0ca73b 100644
+--- a/arch/riscv/kernel/smpboot.c
++++ b/arch/riscv/kernel/smpboot.c
+@@ -24,6 +24,7 @@
+ #include <linux/of.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/sched/mm.h>
++#include <asm/clint.h>
+ #include <asm/irq.h>
+ #include <asm/mmu_context.h>
+ #include <asm/tlbflush.h>
+@@ -137,6 +138,9 @@ asmlinkage __visible void __init smp_callin(void)
+ {
+ 	struct mm_struct *mm = &init_mm;
+ 
++	if (!IS_ENABLED(CONFIG_RISCV_SBI))
++		clint_clear_ipi(cpuid_to_hartid_map(smp_processor_id()));
++
+ 	/* All kernel threads share the same mm context.  */
+ 	mmgrab(mm);
+ 	current->active_mm = mm;
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.24.0.rc0
+
