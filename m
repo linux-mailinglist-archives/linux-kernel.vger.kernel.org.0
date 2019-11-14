@@ -2,168 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1756FC513
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 12:07:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9000FC51C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 12:12:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfKNLHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 06:07:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:40710 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727063AbfKNLHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 06:07:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB4E6328;
-        Thu, 14 Nov 2019 03:07:30 -0800 (PST)
-Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84F063F6C4;
-        Thu, 14 Nov 2019 03:07:29 -0800 (PST)
-From:   Steven Price <steven.price@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
-Cc:     kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Steven Price <steven.price@arm.com>
-Subject: [PATCH v4 3/3] arm64: Workaround for Cortex-A55 erratum 1530923
-Date:   Thu, 14 Nov 2019 11:06:58 +0000
-Message-Id: <20191114110658.20560-4-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191114110658.20560-1-steven.price@arm.com>
-References: <20191114110658.20560-1-steven.price@arm.com>
+        id S1726318AbfKNLMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 06:12:41 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46543 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfKNLMk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 06:12:40 -0500
+Received: by mail-vs1-f65.google.com with SMTP id m6so3564425vsn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 03:12:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3wGJc1b1i6izoCeCYX7Kg1wuag10LQ4c4CnoB2uBxSg=;
+        b=Q3emd+JRbaoyBe0PEuLk5BBMgYUllek5nU3jPhXciimdF+b/lq5eO5r3NKsx+uSBn5
+         D3f6WghoaOSuUGJRj6zKcw5GsPPRCrgkHvNy5BDcVx7bqYTnLf8ERdyTJu93UXkUqqbp
+         v/oGL5DygC5WxU+Q+rGsplMV4LDmssYOwNECNoCDhM8B9aE6br5Xbbe2ue9R8bW1E6lE
+         0+FmcdTd+6Bcmt7/c46hs3ABRn5Lg+6PaBshIwwFO9abDrLhDJ7ETy0x/sfwIpD990zt
+         Yp/g8D4iP90c449yR/9bJvtWfBDHc2pfx/MPGULgzxB2097UaOVpnDhZHVv++ULIjLu9
+         zFLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3wGJc1b1i6izoCeCYX7Kg1wuag10LQ4c4CnoB2uBxSg=;
+        b=eR+qt5zLu8clqcT1mcfF9/xoZW7bcdpte1dP3E9om6hiiEJvo+auC7rpL+97mUgRSP
+         04tuRNApUaZIhxk45Eaekh7yJ8lrnKlB620U6+dVu94yMcVIza9AuB7cF4nuet5Ew3X/
+         SNov/pSKZO4UGpJeMzeupAIO7g6qkI5exL03PaHBCxKFXLbk6mnNTKEoiWJOK78NntGJ
+         qd5J3cPwiWbO3XzXD4HR5p6YPURoUVFxRLWwWdkKDnh+wrmpeJ39yffhMhUctdDyRbfV
+         FgeqZULE2qhYGp5tOptotN37b5niLjkl3jZcBO0QQMFT85umF7PNqc09doBCEFCY2JJ+
+         WdJg==
+X-Gm-Message-State: APjAAAWF0pRNSkBptY8XFzI28mtu0IjtmF/xxlFV8eXducNgW2CRxviU
+        TiU4Vbq6I7JeKlnRS/snJ6bceO13Bi7GeVTtagJ+RXw7Br8=
+X-Google-Smtp-Source: APXvYqyCJNbtDOAC7W0igpGwVzK49rBCRVOKJlPUyb9DPPalIM+2RwOD2hBhMLOqOXEE9bHyAUoglvI/Bnnn+BNgGDQ=
+X-Received: by 2002:a05:6102:36d:: with SMTP id f13mr5458771vsa.34.1573729957703;
+ Thu, 14 Nov 2019 03:12:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1573097159-3914-1-git-send-email-bradleybolen@gmail.com>
+In-Reply-To: <1573097159-3914-1-git-send-email-bradleybolen@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 14 Nov 2019 12:12:01 +0100
+Message-ID: <CAPDyKFokrmxu8CLOTVjtbzf3sMQcLahVqAtYP5X=wnqST5+Zdg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: core: Fix size overflow for mmc partitions
+To:     Bradley Bolen <bradleybolen@gmail.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Avri Altman <avri.altman@wdc.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "yinbo.zhu" <yinbo.zhu@nxp.com>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cortex-A55 erratum 1530923 allows TLB entries to be allocated as a
-result of a speculative AT instruction. This may happen in the middle of
-a guest world switch while the relevant VMSA configuration is in an
-inconsistent state, leading to erroneous content being allocated into
-TLBs.
+On Thu, 7 Nov 2019 at 04:26, Bradley Bolen <bradleybolen@gmail.com> wrote:
+>
+> With large eMMC cards, it is possible to create general purpose
+> partitions that are bigger than 4GB.  The size member of the mmc_part
+> struct is only an unsigned int which overflows for gp partitions larger
+> than 4GB.  Change this to a u64 to handle the overflow.
+>
+> Signed-off-by: Bradley Bolen <bradleybolen@gmail.com>
+> ---
+>  drivers/mmc/core/mmc.c   | 6 +++---
+>  include/linux/mmc/card.h | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index c880489..fc02124 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -297,7 +297,7 @@ static void mmc_manage_enhanced_area(struct mmc_card *card, u8 *ext_csd)
+>         }
+>  }
+>
+> -static void mmc_part_add(struct mmc_card *card, unsigned int size,
+> +static void mmc_part_add(struct mmc_card *card, u64 size,
+>                          unsigned int part_cfg, char *name, int idx, bool ro,
+>                          int area_type)
+>  {
+> @@ -313,7 +313,7 @@ static void mmc_manage_gp_partitions(struct mmc_card *card, u8 *ext_csd)
+>  {
+>         int idx;
+>         u8 hc_erase_grp_sz, hc_wp_grp_sz;
+> -       unsigned int part_size;
+> +       u64 part_size;
 
-The same workaround as is used for Cortex-A76 erratum 1165522
-(WORKAROUND_SPECULATIVE_AT_VHE) can be used here. Note that this
-mandates the use of VHE on affected parts.
+There is also a cast to a "size_t" while computing the part_size in
+mmc_manage_gp_partitions(). Should we remove that as well?
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- Documentation/arm64/silicon-errata.rst |  2 ++
- arch/arm64/Kconfig                     | 13 +++++++++++++
- arch/arm64/include/asm/kvm_hyp.h       |  4 ++--
- arch/arm64/kernel/cpu_errata.c         |  6 +++++-
- arch/arm64/kvm/hyp/switch.c            |  4 ++--
- arch/arm64/kvm/hyp/tlb.c               |  4 ++--
- 6 files changed, 26 insertions(+), 7 deletions(-)
+[...]
 
-diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
-index 899a72570282..b40cb3e0634e 100644
---- a/Documentation/arm64/silicon-errata.rst
-+++ b/Documentation/arm64/silicon-errata.rst
-@@ -88,6 +88,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A76      | #1463225        | ARM64_ERRATUM_1463225       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Cortex-A55      | #1530923        | ARM64_ERRATUM_1530923       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N1     | #1188873,1418040| ARM64_ERRATUM_1418040       |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-N1     | #1349291        | N/A                         |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index defb68e45387..aa9b8a9a6910 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -532,6 +532,19 @@ config ARM64_ERRATUM_1165522
- 
- 	  If unsure, say Y.
- 
-+config ARM64_ERRATUM_1530923
-+	bool "Cortex-A55: Speculative AT instruction using out-of-context translation regime could cause subsequent request to generate an incorrect translation"
-+	default y
-+	select ARM64_WORKAROUND_SPECULATIVE_AT_VHE
-+	help
-+	  This option adds a workaround for ARM Cortex-A55 erratum 1530923.
-+
-+	  Affected Cortex-A55 cores (r0p0, r0p1, r1p0, r2p0) could end-up with
-+	  corrupted TLBs by speculating an AT instruction during a guest
-+	  context switch.
-+
-+	  If unsure, say Y.
-+
- config ARM64_ERRATUM_1286807
- 	bool "Cortex-A76: Modification of the translation table for a virtual address might lead to read-after-read ordering violation"
- 	default y
-diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-index 167a161dd596..a3a6a2ba9a63 100644
---- a/arch/arm64/include/asm/kvm_hyp.h
-+++ b/arch/arm64/include/asm/kvm_hyp.h
-@@ -91,8 +91,8 @@ static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
- 	write_sysreg(kvm_get_vttbr(kvm), vttbr_el2);
- 
- 	/*
--	 * ARM erratum 1165522 requires the actual execution of the above
--	 * before we can switch to the EL1/EL0 translation regime used by
-+	 * ARM errata 1165522 and 1530923 require the actual execution of the
-+	 * above before we can switch to the EL1/EL0 translation regime used by
- 	 * the guest.
- 	 */
- 	asm(ALTERNATIVE("nop", "isb", ARM64_WORKAROUND_SPECULATIVE_AT_VHE));
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index c7f1f5398a44..c01e20317394 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -749,6 +749,10 @@ static const struct midr_range erratum_speculative_at_vhe_list[] = {
- #ifdef CONFIG_ARM64_ERRATUM_1165522
- 	/* Cortex A76 r0p0 to r2p0 */
- 	MIDR_RANGE(MIDR_CORTEX_A76, 0, 0, 2, 0),
-+#endif
-+#ifdef CONFIG_ARM64_ERRATUM_1530923
-+	/* Cortex A55 r0p0 to r2p0 */
-+	MIDR_RANGE(MIDR_CORTEX_A55, 0, 0, 2, 0),
- #endif
- 	{},
- };
-@@ -880,7 +884,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- #endif
- #ifdef CONFIG_ARM64_WORKAROUND_SPECULATIVE_AT_VHE
- 	{
--		.desc = "ARM erratum 1165522",
-+		.desc = "ARM errata 1165522, 1530923",
- 		.capability = ARM64_WORKAROUND_SPECULATIVE_AT_VHE,
- 		ERRATA_MIDR_RANGE_LIST(erratum_speculative_at_vhe_list),
- 	},
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index 0fc824bdf258..eae08ba82e95 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -158,8 +158,8 @@ static void deactivate_traps_vhe(void)
- 	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
- 
- 	/*
--	 * ARM erratum 1165522 requires the actual execution of the above
--	 * before we can switch to the EL2/EL0 translation regime used by
-+	 * ARM errata 1165522 and 1530923 require the actual execution of the
-+	 * above before we can switch to the EL2/EL0 translation regime used by
- 	 * the host.
- 	 */
- 	asm(ALTERNATIVE("nop", "isb", ARM64_WORKAROUND_SPECULATIVE_AT_VHE));
-diff --git a/arch/arm64/kvm/hyp/tlb.c b/arch/arm64/kvm/hyp/tlb.c
-index ff4e73c9bafc..92f560e3e1aa 100644
---- a/arch/arm64/kvm/hyp/tlb.c
-+++ b/arch/arm64/kvm/hyp/tlb.c
-@@ -25,8 +25,8 @@ static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm,
- 
- 	if (cpus_have_const_cap(ARM64_WORKAROUND_SPECULATIVE_AT_VHE)) {
- 		/*
--		 * For CPUs that are affected by ARM erratum 1165522, we
--		 * cannot trust stage-1 to be in a correct state at that
-+		 * For CPUs that are affected by ARM errata 1165522 or 1530923,
-+		 * we cannot trust stage-1 to be in a correct state at that
- 		 * point. Since we do not want to force a full load of the
- 		 * vcpu state, we prevent the EL1 page-table walker to
- 		 * allocate new TLBs. This is done by setting the EPD bits
--- 
-2.20.1
-
+Kind regards
+Uffe
