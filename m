@@ -2,162 +2,304 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8BA8FCDE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:38:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0549BFCDEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:40:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfKNShc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:37:32 -0500
-Received: from mail-eopbgr680060.outbound.protection.outlook.com ([40.107.68.60]:65347
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        id S1727083AbfKNSkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:40:22 -0500
+Received: from mail-eopbgr730041.outbound.protection.outlook.com ([40.107.73.41]:36096
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726592AbfKNShc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:37:32 -0500
+        id S1726628AbfKNSkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:40:22 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kEaGZctyvLTaui8/IRUl9O33OGrtb0RVlC9Vl8JprqYSc+HYPRF42EaleW+Dz1IaitXfDIsvhcA3EC7o/1B4+NVS70xrYc1YHfKsGawjjOHXGfFJKgBvPQvym0UItYf+P4XJ99UxJIpNPJ2rAvU7zCZ3FvdkZQCMJlkKJmYROzqN6hMjbAr14YApSXIvWyjXW3SNjRKKA6EPov1dKnt2y7+h1OakrCRSOLMyhz/r1pCsZ1W5Rpo2GV1H5v6v7UR2HeHjhwcri2UOikv3Ou/jT0VgMx3ETcrNGa9SAx2rLoZ7AIyOCd/57umgv7byPynT90gzC0qlO7AO47Vtpv8PQw==
+ b=idVs/UlNyW739UTrcyQCSppU0NWXZEbn6tiUvr83TdFUhblhfKty7uiFOGjCs23N4lfOfWkqsxamoGazU24f1RATrZ8jChDKYvqxdEg7B0ZdpRfUXc8kqBECv+Mxsc7zPWq2nmUFOLjeZHiB4PwNUxZVHQ8gv1TSONcFPXXW4VB6YgR3mE68Fx7zL7Kz2q4k3P9XjXfGIOKG5PIZDjICbnF5w3kJn7YzFhu8JIGGJyD9L/9CcfBHP4+AlNL0I0AQZEE5+K0QurAm/uT8yyDz+XkuSGhsoMTk76O/q5tRQ8Qbo0IBLzHwr77vCLNjgeWq+slTO7GZUb5VRqXqll6/2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YovV48tTausd17gDWHcqnvq5h6M+NdzKXl3mIbpqCVI=;
- b=JankMI8csUVhz9awmdnc3Kpyj0xOJCcSMgxCoV060YQm+k8gqaXP9HTs4WubLaadUtFmIQaUfClBPk+2KKypaC1+1t/iD3pf28Nt+cLjqYnc7TFmo+2vM4UtnABoma2FNh/BwbUMn30B6abWVIdBqR080Aoq5yDxedInlFYZuc28wrRyrUZB1LYY1M3rsT+QWUDt+rPxYxOrTT5camwL5U5YHYGT66+zRBZh89Gnm6Zg7jXPLE8q0Ym93HgjXyZpsRihu1Ve67jb1hyfLDoKBZk5H+yiQ/fc3F6JG8y2QKvwrVQN7jibIVLPBQ32alEHMLXOpPhYW4aPxib63jNw+w==
+ bh=aYBItDgy3tV1HPhIHM7f6jBx6XgjdpmieW4SWJxMGRI=;
+ b=NQdXH+Hk++PyhD4KCLnZPZNpl9JpjRZUHx8SsROcx2fFptg73flB/DHN2LbFm64lSKXVoutjDYHsLeVv8BjVA5g+Hb3/wLzbWNoZCFN00VDynZngm3TExSiNC3MeDL68mldIV9Gx4sdDkyKEhuIIeB+MSMGlDGjwTxkuAjacsPV3jp5w1z4C1/yfjDi6qgT6E3vC/5Rpsx3h+EO4Layah0YUvEgkhzQo2MBiFx1CgePntlaiNVGtQGwd/ojKntclPfuorJOuC/GJD/SfDPFe8HZGT1G1EdLR7yRKZSmbcvAyxVIrLy4gd8bvVXpZzo7DbLWsvUHXgCK0V6rt92atsQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YovV48tTausd17gDWHcqnvq5h6M+NdzKXl3mIbpqCVI=;
- b=V2ApcZfeWSYySoz1jqgYpHhUSE5gOloVRISJfki+XBWFpg7MLoPwtFjoQ5HPH6ipWxpkEzgyWMflPVZIxOHaVpQpQSI1Yn77bFvaK3KLaLgXafBgjV1xkOQoCzcKhRQ+9hNgkebHXC4v/+E04mDvghZQPCHcKThVFdQIZSx5cjk=
+ bh=aYBItDgy3tV1HPhIHM7f6jBx6XgjdpmieW4SWJxMGRI=;
+ b=4dzox1TyJsTW6NlQYONzVsE5MqxLAt1+g1ii4TWMthsn9UEawYzGYr+53HW3MjTmypcmIFeh+LuVYJp9a2aY5QJmgKRs6yiZt9k9n0w3fqwnKIaF7ankV9sUZiHPyOOwL6+NJVG1r3eFu4suywv2dVrv6nfBBWeAKZsJPhazVx4=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=kim.phillips@amd.com; 
 Received: from SN6PR12MB2845.namprd12.prod.outlook.com (52.135.102.141) by
- SN6PR12MB2752.namprd12.prod.outlook.com (52.135.107.32) with Microsoft SMTP
+ SN6PR12MB2815.namprd12.prod.outlook.com (52.135.107.152) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.25; Thu, 14 Nov 2019 18:37:27 +0000
+ 15.20.2451.22; Thu, 14 Nov 2019 18:37:38 +0000
 Received: from SN6PR12MB2845.namprd12.prod.outlook.com
  ([fe80::7175:51ac:283b:b306]) by SN6PR12MB2845.namprd12.prod.outlook.com
  ([fe80::7175:51ac:283b:b306%4]) with mapi id 15.20.2430.028; Thu, 14 Nov 2019
- 18:37:27 +0000
+ 18:37:38 +0000
 From:   Kim Phillips <kim.phillips@amd.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>
-Subject: [PATCH 0/2] perf/x86/amd: Add support for Large Increment per Cycle Events
-Date:   Thu, 14 Nov 2019 12:37:18 -0600
-Message-Id: <20191114183720.19887-1-kim.phillips@amd.com>
+Cc:     linux-kernel@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Stephane Eranian <eranian@google.com>,
+        =?UTF-8?q?Martin=20Li=C5=A1ka?= <mliska@suse.cz>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH 1/2] perf/x86/amd: Constrain Large Increment per Cycle events
+Date:   Thu, 14 Nov 2019 12:37:19 -0600
+Message-Id: <20191114183720.19887-2-kim.phillips@amd.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191114183720.19887-1-kim.phillips@amd.com>
+References: <20191114183720.19887-1-kim.phillips@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SN6PR06CA0018.namprd06.prod.outlook.com
- (2603:10b6:805:8e::31) To SN6PR12MB2845.namprd12.prod.outlook.com
+X-ClientProxiedBy: SN6PR06CA0014.namprd06.prod.outlook.com
+ (2603:10b6:805:8e::27) To SN6PR12MB2845.namprd12.prod.outlook.com
  (2603:10b6:805:6e::13)
 MIME-Version: 1.0
 X-Mailer: git-send-email 2.24.0
 X-Originating-IP: [165.204.77.1]
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: bc8ce312-5a67-4401-5c87-08d76931b2f6
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2752:
-X-MS-Exchange-PUrlCount: 1
+X-MS-Office365-Filtering-Correlation-Id: da5c6698-4676-4f75-da0e-08d76931b99e
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2815:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SN6PR12MB2752DD3E5E8EB6F1371B4B8E87710@SN6PR12MB2752.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Microsoft-Antispam-PRVS: <SN6PR12MB28153A5351C83C8D25E8BC5487710@SN6PR12MB2815.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3276;
 X-Forefront-PRVS: 02213C82F8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(136003)(366004)(39850400004)(376002)(199004)(189003)(2616005)(66946007)(2870700001)(36756003)(25786009)(2906002)(26005)(6512007)(6306002)(52116002)(44832011)(386003)(8676002)(6506007)(486006)(476003)(51416003)(186003)(6666004)(7736002)(86362001)(50226002)(14444005)(81156014)(81166006)(6436002)(305945005)(6486002)(48376002)(66066001)(478600001)(47776003)(110136005)(316002)(14454004)(5660300002)(966005)(99286004)(4326008)(1076003)(66556008)(66476007)(6116002)(8936002)(50466002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2752;H:SN6PR12MB2845.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(376002)(366004)(396003)(136003)(199004)(189003)(486006)(8676002)(81156014)(81166006)(54906003)(478600001)(47776003)(305945005)(66066001)(4326008)(8936002)(7736002)(36756003)(44832011)(1076003)(6116002)(50226002)(5660300002)(6436002)(86362001)(25786009)(2870700001)(6486002)(3846002)(11346002)(6666004)(52116002)(76176011)(23676004)(2906002)(110136005)(316002)(66476007)(66556008)(14454004)(476003)(2616005)(66946007)(446003)(386003)(6506007)(99286004)(26005)(50466002)(186003)(7416002)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2815;H:SN6PR12MB2845.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GhB+YNln/9UuLLV9yppeBfJWgLfFptBlOeA1NSgsqIzDYStv8A3CjhS/UpA2Ju4xbk+WrE5gpU+sQ6BogYB8EuEvoVfUp4yGT1Rg03f+A7BRRgIzcbe6QNWNotTRi4jjPR1tE6sIqDn5N/O2RjddkD4n/ZVzsUBAZ3ouLPZfUhmKqRYhfNkXciNv+Y0/ULTbNEJcQax7inFQ4HYQX42Xelgy3LxCei1IwSLawjd8JpcfBpmvxnxE9UimH5enRGUFIN075dSWpoOeciS2L2rYE6svtd6puCpqME5xNtc5YzsCm+39LRyvsQXRiA0p11EeG6aEHcSLxoWtbajueyi6EEtr91O5ADr457rknPhNelDhns1VAvI+mkeMg8WNolB5n9Aj6IeH+1TgPWEykaVrv/ajeLe65iLtoxPAQJSJUOYz/wwte2sm8ittsWQjYHREFnDDtnmZ7IrbTDzPtqe1Cxp8CTIG9EiA/FjRngCQKv0=
+X-Microsoft-Antispam-Message-Info: wRF1GpEuDoz9AMwHHs/a9AW2gqtl0ph7TUa0H66C2diHHJCaNgj7zyYS1VLGT0b3rbFn3k9HK79Q/H/bNpVBxSGh/AxHQWuUz5T76aaur6EKEgpo+Eza5fv5xrcVoEVwFZfmmHDzWq6WbIOXWa9hKa+KG4AQk6OK1otR/SB1Dwn3Qqvyb1Y54xY9r+eZEPUcJ4A7vznbpZQARspStxogGF9jDugjWgU5FFn9IOrYZH4LJo45MyC4C7dbM6E5WKOOQyCIaAq1Qc5LwzQnv65o6TW4plYhfbBZlNGHIQBs5pai895VNhU3qIJBNLgPZtedPKZjF5VH9pJF9vlzTQ+srd8t7tIy0HOdsErAYjDNG7MtmOmyEaxk/4ITVVna85MhwJ8gRKTL77LjAUuGLZftU0ysxy3IPrOe3m3GwzT372s6WfoVPmA1dgvW82XBcz3a
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc8ce312-5a67-4401-5c87-08d76931b2f6
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2019 18:37:27.4147
+X-MS-Exchange-CrossTenant-Network-Message-Id: da5c6698-4676-4f75-da0e-08d76931b99e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2019 18:37:38.7782
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /EwUT8o42BuDxUTfFSTsxsKj2lNWEX1tRoKz5aeCl5XELcubqrUWsn1UqO+5K7rqFV2JavHIpyaq0wlj0Hcf3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2752
+X-MS-Exchange-CrossTenant-UserPrincipalName: ma+zYdZk92ukaFWofiIgY30Gfdc2abACbRFM6LnazJIj73N2bzWNnnZzJf5m5rQyoAR0h5GE8mt+zGqz/5/T5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2815
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchseries adds support for Large Increment per Cycle Events,
-which is needed to count events like Retired SSE/AVX FLOPs.
-The first patch constrains Large Increment events to the even PMCs,
-and the second patch changes the scheduler to accommodate and
-program the new Merge event needed on the odd counters.
+AMD Family 17h processors and above gain support for Large Increment
+per Cycle events.  Unfortunately there is no CPUID or equivalent bit
+that indicates whether the feature exists or not, so we continue to
+determine eligibility based on a CPU family number comparison.
 
-The RFC was posted here:
+For Large Increment per Cycle events, we add a f17h-and-compatibles
+get_event_constraints_f17h() that returns an even counter bitmask:
+Large Increment per Cycle events can only be placed on PMCs 0, 2,
+and 4 out of the currently available 0-5.  The only currently
+public event that requires this feature to report valid counts
+is PMCx003 "Retired SSE/AVX Operations".
 
-https://lkml.org/lkml/2019/8/26/828
+Note that the CPU family logic in amd_core_pmu_init() is changed
+so as to be able to selectively add initialization for features
+available in ranges of backward-compatible CPU families.  This
+Large Increment per Cycle feature is expected to be retained
+in future families.
 
-Changes since then include mostly fixing interoperation with the
-watchdog, splitting, rewording, and addressing Peter Zijlstra's
-comments:
+A side-effect of assigning a new get_constraints function for f17h
+disables calling the old (prior to f15h) amd_get_event_constraints
+implementation left enabled by commit e40ed1542dd7 ("perf/x86: Add perf
+support for AMD family-17h processors"), which is no longer
+necessary since those North Bridge event codes are obsoleted.
 
- - Mentioned programming the odd counter before the even counter
-   in the commit text, as is now also done in the code.
+Also fix a spelling mistake whilst in the area (calulating ->
+calculating).
 
- - Do the programming of the counters in the enable/disable paths
-   instead of the commit_scheduler hook.
+Fixes: e40ed1542dd7 ("perf/x86: Add perf support for AMD family-17h processors")
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Martin Liška <mliska@suse.cz>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/x86/events/amd/core.c   | 91 ++++++++++++++++++++++++------------
+ arch/x86/events/perf_event.h |  2 +
+ 2 files changed, 63 insertions(+), 30 deletions(-)
 
- - Instead of the loop re-counting all large increment events,
-   have collect_events() and a new amd_put_event_constraints_f17h
-   update a new cpuc variable 'n_lg_inc'.  Now the scheduler
-   does a simple subtraction to get the target gpmax value.
-
- - Amend the fastpath's used_mask code to fix a problem where
-   counter programming was being overwritten when running with
-   the watchdog enabled.
-
- - Omit the superfluous __set_bit(idx + 1) in __perf_sched_find_counter
-   and clear the large increment's sched->state.used bit in the
-   path where a failure to schedule is determined due to the
-   next counter already being used (thanks Nathan Fontenot).
-
- - Broaden new PMU initialization code to run on families 17h and
-   above.
-
- - Have new is_large_inc(strcut perf_event) common to all x86 paths
-   as is is_pebs_pt().  That way, the raw event code checker
-   amd_is_lg_inc_event_code() can stay in its vendor-specific area
-   events/amd/core.c.
-
- - __set_bit, WARN_ON(!gpmax), all addressed.
-
- - WRT changing the naming to PAIR, etc. I dislike the idea because
-   h/w documentation consistently calls this now relatively old
-   feature for "Large Increment per Cycle" events, and the secondary
-   event needed, specifically the "Merge event (0xFFF)".  When I
-   started this project the biggest problem was disambiguating
-   between the Large Increment event (FLOPs, or others), and the
-   Merge event (0xFFF) itself.  Different phases had "Merge" for
-   the Merge event vs. "Merged" for the Large Increment event(s),
-   or "Mergee", which made reading the source code too easy to
-   mistake one for the other. So I opted for two distinctly
-   different base terms/stem-words: Large increment (lg_inc) and
-   Merge, to match the documentation, which basically has it right.
-   Changing the term to "pair" would have created the same "pair" vs.
-   "paired" vs. "pairer" etc. confusion, so I dropped it.
-
- - WRT the comment "How about you make __perf_sched_find_count() set
-   the right value? That already knows it did this.", I didn't see
-   how I'd get away from still having to do the constraints flag &
-   LARGE_INC check in perf_assign_events(), to re-adjust the assignment
-   in the assign array, or sched.state.counter.  This code really
-   is only needed after the counter assignment is made, in order to
-   program the h/w correctly.
-
-Kim Phillips (2):
-  perf/x86/amd: Constrain Large Increment per Cycle events
-  perf/x86/amd: Add support for Large Increment per Cycle Events
-
- arch/x86/events/amd/core.c   | 110 +++++++++++++++++++++++++----------
- arch/x86/events/core.c       |  46 ++++++++++++++-
- arch/x86/events/perf_event.h |  21 +++++++
- 3 files changed, 145 insertions(+), 32 deletions(-)
-
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 64c3e70b0556..78f771cadb8e 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -301,6 +301,25 @@ static inline int amd_pmu_addr_offset(int index, bool eventsel)
+ 	return offset;
+ }
+ 
++/*
++ * AMD64 events are detected based on their event codes.
++ */
++static inline unsigned int amd_get_event_code(struct hw_perf_event *hwc)
++{
++	return ((hwc->config >> 24) & 0x0f00) | (hwc->config & 0x00ff);
++}
++
++static inline bool amd_is_lg_inc_event_code(struct hw_perf_event *hwc)
++{
++	if (!(x86_pmu.flags & PMU_FL_MERGE))
++		return false;
++
++	switch (amd_get_event_code(hwc)) {
++	case 0x003:	return true;	/* Retired SSE/AVX FLOPs */
++	default:	return false;
++	}
++}
++
+ static int amd_core_hw_config(struct perf_event *event)
+ {
+ 	if (event->attr.exclude_host && event->attr.exclude_guest)
+@@ -319,14 +338,6 @@ static int amd_core_hw_config(struct perf_event *event)
+ 	return 0;
+ }
+ 
+-/*
+- * AMD64 events are detected based on their event codes.
+- */
+-static inline unsigned int amd_get_event_code(struct hw_perf_event *hwc)
+-{
+-	return ((hwc->config >> 24) & 0x0f00) | (hwc->config & 0x00ff);
+-}
+-
+ static inline int amd_is_nb_event(struct hw_perf_event *hwc)
+ {
+ 	return (hwc->config & 0xe0) == 0xe0;
+@@ -864,6 +875,20 @@ amd_get_event_constraints_f15h(struct cpu_hw_events *cpuc, int idx,
+ 	}
+ }
+ 
++static struct event_constraint lg_inc_constraint;
++
++static struct event_constraint *
++amd_get_event_constraints_f17h(struct cpu_hw_events *cpuc, int idx,
++			       struct perf_event *event)
++{
++	struct hw_perf_event *hwc = &event->hw;
++
++	if (amd_is_lg_inc_event_code(hwc))
++		return &lg_inc_constraint;
++
++	return &unconstrained;
++}
++
+ static ssize_t amd_event_sysfs_show(char *page, u64 config)
+ {
+ 	u64 event = (config & ARCH_PERFMON_EVENTSEL_EVENT) |
+@@ -907,33 +932,15 @@ static __initconst const struct x86_pmu amd_pmu = {
+ 
+ static int __init amd_core_pmu_init(void)
+ {
++	u64 even_ctr_mask = 0ULL;
++	int i;
++
+ 	if (!boot_cpu_has(X86_FEATURE_PERFCTR_CORE))
+ 		return 0;
+ 
+-	/* Avoid calulating the value each time in the NMI handler */
++	/* Avoid calculating the value each time in the NMI handler */
+ 	perf_nmi_window = msecs_to_jiffies(100);
+ 
+-	switch (boot_cpu_data.x86) {
+-	case 0x15:
+-		pr_cont("Fam15h ");
+-		x86_pmu.get_event_constraints = amd_get_event_constraints_f15h;
+-		break;
+-	case 0x17:
+-		pr_cont("Fam17h ");
+-		/*
+-		 * In family 17h, there are no event constraints in the PMC hardware.
+-		 * We fallback to using default amd_get_event_constraints.
+-		 */
+-		break;
+-	case 0x18:
+-		pr_cont("Fam18h ");
+-		/* Using default amd_get_event_constraints. */
+-		break;
+-	default:
+-		pr_err("core perfctr but no constraints; unknown hardware!\n");
+-		return -ENODEV;
+-	}
+-
+ 	/*
+ 	 * If core performance counter extensions exists, we must use
+ 	 * MSR_F15H_PERF_CTL/MSR_F15H_PERF_CTR msrs. See also
+@@ -948,6 +955,30 @@ static int __init amd_core_pmu_init(void)
+ 	 */
+ 	x86_pmu.amd_nb_constraints = 0;
+ 
++	if (boot_cpu_data.x86 == 0x15) {
++		pr_cont("Fam15h ");
++		x86_pmu.get_event_constraints = amd_get_event_constraints_f15h;
++	}
++	if (boot_cpu_data.x86 >= 0x17) {
++		pr_cont("Fam17h+ ");
++		/*
++		 * Family 17h and compatibles have constraints for Large
++		 * Increment per Cycle events: they may only be assigned an
++		 * even numbered counter that has a consecutive adjacent odd
++		 * numbered counter following it.
++		 */
++		for (i = 0; i < x86_pmu.num_counters - 1; i += 2)
++			even_ctr_mask |= 1 << i;
++
++		lg_inc_constraint = (struct event_constraint)
++				    __EVENT_CONSTRAINT(0, even_ctr_mask, 0,
++				    x86_pmu.num_counters / 2, 0,
++				    PERF_X86_EVENT_LARGE_INC);
++
++		x86_pmu.get_event_constraints = amd_get_event_constraints_f17h;
++		x86_pmu.flags |= PMU_FL_MERGE;
++	}
++
+ 	pr_cont("core perfctr, ");
+ 	return 0;
+ }
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index ecacfbf4ebc1..6154f06eb4ba 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -77,6 +77,7 @@ static inline bool constraint_match(struct event_constraint *c, u64 ecode)
+ #define PERF_X86_EVENT_AUTO_RELOAD	0x0200 /* use PEBS auto-reload */
+ #define PERF_X86_EVENT_LARGE_PEBS	0x0400 /* use large PEBS */
+ #define PERF_X86_EVENT_PEBS_VIA_PT	0x0800 /* use PT buffer for PEBS */
++#define PERF_X86_EVENT_LARGE_INC	0x1000 /* Large Increment per Cycle */
+ 
+ struct amd_nb {
+ 	int nb_id;  /* NorthBridge id */
+@@ -735,6 +736,7 @@ do {									\
+ #define PMU_FL_EXCL_ENABLED	0x8 /* exclusive counter active */
+ #define PMU_FL_PEBS_ALL		0x10 /* all events are valid PEBS events */
+ #define PMU_FL_TFA		0x20 /* deal with TSX force abort */
++#define PMU_FL_MERGE		0x40 /* merge counters for large incr. events */
+ 
+ #define EVENT_VAR(_id)  event_attr_##_id
+ #define EVENT_PTR(_id) &event_attr_##_id.attr.attr
 -- 
 2.24.0
 
