@@ -2,186 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E1FFCAB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:25:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF60FCAAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:19:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfKNQZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 11:25:41 -0500
-Received: from mga02.intel.com ([134.134.136.20]:5720 "EHLO mga02.intel.com"
+        id S1726755AbfKNQT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 11:19:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbfKNQZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:25:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:25:33 -0800
-X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="195085651"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:25:33 -0800
-Subject: [PATCH v3] mm: Cleanup __put_devmap_managed_page() vs ->page_free()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     jhubbard@nvidia.com
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Date:   Thu, 14 Nov 2019 08:11:17 -0800
-Message-ID: <157374781485.3069020.2978764869460940502.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S1726528AbfKNQT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 11:19:56 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9513720672;
+        Thu, 14 Nov 2019 16:19:53 +0000 (UTC)
+Date:   Thu, 14 Nov 2019 11:19:52 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 09/10] ftrace/x86: Add register_ftrace_direct() for
+ custom trampolines
+Message-ID: <20191114111952.3eb1a011@gandalf.local.home>
+In-Reply-To: <alpine.LSU.2.21.1911141627300.20723@pobox.suse.cz>
+References: <20191108212834.594904349@goodmis.org>
+        <20191108213450.891579507@goodmis.org>
+        <alpine.LSU.2.21.1911141627300.20723@pobox.suse.cz>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the removal of the device-public infrastructure there are only 2
-->page_free() call backs in the kernel. One of those is a device-private
-callback in the nouveau driver, the other is a generic wakeup needed in
-the DAX case. In the hopes that all ->page_free() callbacks can be
-migrated to common core kernel functionality, move the device-private
-specific actions in __put_devmap_managed_page() under the
-is_device_private_page() conditional, including the ->page_free()
-callback. For the other page types just open-code the generic wakeup.
+On Thu, 14 Nov 2019 16:34:58 +0100 (CET)
+Miroslav Benes <mbenes@suse.cz> wrote:
 
-Yes, the wakeup is only needed in the MEMORY_DEVICE_FSDAX case, but it
-does no harm in the MEMORY_DEVICE_DEVDAX and MEMORY_DEVICE_PCI_P2PDMA
-case.
+> On Fri, 8 Nov 2019, Steven Rostedt wrote:
+> 
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > Enable x86 to allow for register_ftrace_direct(), where a custom trampoline
+> > may be called directly from an ftrace mcount/fentry location.
+> > 
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>  
+> 
+> [...]
+> 
+> > +++ b/arch/x86/kernel/ftrace_64.S
+> > @@ -88,6 +88,7 @@ EXPORT_SYMBOL(__fentry__)
+> >  	movq %rdi, RDI(%rsp)
+> >  	movq %r8, R8(%rsp)
+> >  	movq %r9, R9(%rsp)
+> > +	movq $0, ORIG_RAX(%rsp)
+> >  	/*
+> >  	 * Save the original RBP. Even though the mcount ABI does not
+> >  	 * require this, it helps out callers.
+> > @@ -114,7 +115,8 @@ EXPORT_SYMBOL(__fentry__)
+> >  	subq $MCOUNT_INSN_SIZE, %rdi
+> >  	.endm
+> >  
+> > -.macro restore_mcount_regs
+> > +.macro restore_mcount_regs save=0
+> > +
+> >  	movq R9(%rsp), %r9
+> >  	movq R8(%rsp), %r8
+> >  	movq RDI(%rsp), %rdi
+> > @@ -123,10 +125,7 @@ EXPORT_SYMBOL(__fentry__)
+> >  	movq RCX(%rsp), %rcx
+> >  	movq RAX(%rsp), %rax
+> >  
+> > -	/* ftrace_regs_caller can modify %rbp */
+> > -	movq RBP(%rsp), %rbp
+> > -
+> > -	addq $MCOUNT_REG_SIZE, %rsp
+> > +	addq $MCOUNT_REG_SIZE-\save, %rsp
+> >  
+> >  	.endm
+> >  
+> > @@ -228,10 +227,30 @@ GLOBAL(ftrace_regs_call)
+> >  	movq R10(%rsp), %r10
+> >  	movq RBX(%rsp), %rbx
+> >  
+> > -	restore_mcount_regs
+> > +	movq RBP(%rsp), %rbp
+> > +
+> > +	movq ORIG_RAX(%rsp), %rax
+> > +	movq %rax, MCOUNT_REG_SIZE-8(%rsp)
+> > +
+> > +	/* If ORIG_RAX is anything but zero, make this a call to that */
+> > +	movq ORIG_RAX(%rsp), %rax
+> > +	cmpq	$0, %rax
+> > +	je	1f
+> > +
+> > +	/* Swap the flags with orig_rax */
+> > +	movq MCOUNT_REG_SIZE(%rsp), %rdi
+> > +	movq %rdi, MCOUNT_REG_SIZE-8(%rsp)
+> > +	movq %rax, MCOUNT_REG_SIZE(%rsp)
+> > +
+> > +	restore_mcount_regs 8
+> > +
+> > +	jmp	2f
+> > +
+> > +1:	restore_mcount_regs
+> > +
+> >  
+> >  	/* Restore flags */
+> > -	popfq
+> > +2:	popfq  
+> 
+> If I am reading the code correctly (and I was confused couple of times, so 
+> maybe I am not), this is what makes the direct fops incompatible with 
+> ipmodify and livepatching for now. Is that correct?
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes since v2:
-- Drop 'else' after return. (Christoph)
+Actually, it's the fact that the return goes to some unknown trampoline
+that may do something else as well.
 
- drivers/nvdimm/pmem.c |    6 ----
- mm/memremap.c         |   80 +++++++++++++++++++++++++++----------------------
- 2 files changed, 44 insertions(+), 42 deletions(-)
+> 
+> What are your plans regarding this?
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index f9f76f6ba07b..21db1ce8c0ae 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -338,13 +338,7 @@ static void pmem_release_disk(void *__pmem)
- 	put_disk(pmem->disk);
- }
- 
--static void pmem_pagemap_page_free(struct page *page)
--{
--	wake_up_var(&page->_refcount);
--}
--
- static const struct dev_pagemap_ops fsdax_pagemap_ops = {
--	.page_free		= pmem_pagemap_page_free,
- 	.kill			= pmem_pagemap_kill,
- 	.cleanup		= pmem_pagemap_cleanup,
- };
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 022e78e68ea0..e1678e575d9f 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -27,7 +27,8 @@ static void devmap_managed_enable_put(void)
- 
- static int devmap_managed_enable_get(struct dev_pagemap *pgmap)
- {
--	if (!pgmap->ops || !pgmap->ops->page_free) {
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE &&
-+	    (!pgmap->ops || !pgmap->ops->page_free)) {
- 		WARN(1, "Missing page_free method\n");
- 		return -EINVAL;
- 	}
-@@ -444,44 +445,51 @@ void __put_devmap_managed_page(struct page *page)
- {
- 	int count = page_ref_dec_return(page);
- 
--	/*
--	 * If refcount is 1 then page is freed and refcount is stable as nobody
--	 * holds a reference on the page.
--	 */
--	if (count == 1) {
--		/* Clear Active bit in case of parallel mark_page_accessed */
--		__ClearPageActive(page);
--		__ClearPageWaiters(page);
-+	/* still busy */
-+	if (count > 1)
-+		return;
- 
--		mem_cgroup_uncharge(page);
-+	/* only triggered by the dev_pagemap shutdown path */
-+	if (count == 0) {
-+		__put_page(page);
-+		return;
-+	}
- 
--		/*
--		 * When a device_private page is freed, the page->mapping field
--		 * may still contain a (stale) mapping value. For example, the
--		 * lower bits of page->mapping may still identify the page as
--		 * an anonymous page. Ultimately, this entire field is just
--		 * stale and wrong, and it will cause errors if not cleared.
--		 * One example is:
--		 *
--		 *  migrate_vma_pages()
--		 *    migrate_vma_insert_page()
--		 *      page_add_new_anon_rmap()
--		 *        __page_set_anon_rmap()
--		 *          ...checks page->mapping, via PageAnon(page) call,
--		 *            and incorrectly concludes that the page is an
--		 *            anonymous page. Therefore, it incorrectly,
--		 *            silently fails to set up the new anon rmap.
--		 *
--		 * For other types of ZONE_DEVICE pages, migration is either
--		 * handled differently or not done at all, so there is no need
--		 * to clear page->mapping.
--		 */
--		if (is_device_private_page(page))
--			page->mapping = NULL;
-+	/* notify page idle for dax */
-+	if (!is_device_private_page(page)) {
-+		wake_up_var(&page->_refcount);
-+		return;
-+	}
- 
--		page->pgmap->ops->page_free(page);
--	} else if (!count)
--		__put_page(page);
-+	/* Clear Active bit in case of parallel mark_page_accessed */
-+	__ClearPageActive(page);
-+	__ClearPageWaiters(page);
-+
-+	mem_cgroup_uncharge(page);
-+
-+	/*
-+	 * When a device_private page is freed, the page->mapping field
-+	 * may still contain a (stale) mapping value. For example, the
-+	 * lower bits of page->mapping may still identify the page as an
-+	 * anonymous page. Ultimately, this entire field is just stale
-+	 * and wrong, and it will cause errors if not cleared.  One
-+	 * example is:
-+	 *
-+	 *  migrate_vma_pages()
-+	 *    migrate_vma_insert_page()
-+	 *      page_add_new_anon_rmap()
-+	 *        __page_set_anon_rmap()
-+	 *          ...checks page->mapping, via PageAnon(page) call,
-+	 *            and incorrectly concludes that the page is an
-+	 *            anonymous page. Therefore, it incorrectly,
-+	 *            silently fails to set up the new anon rmap.
-+	 *
-+	 * For other types of ZONE_DEVICE pages, migration is either
-+	 * handled differently or not done at all, so there is no need
-+	 * to clear page->mapping.
-+	 */
-+	page->mapping = NULL;
-+	page->pgmap->ops->page_free(page);
- }
- EXPORT_SYMBOL(__put_devmap_managed_page);
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
+I wanted to see what the eBPF folks were doing, and then perhaps allow
+the ip modify occur too. I could let it happen as well now, and then we
+can see what the fallout is later ;-)
 
+> 
+> Moreover, we could replace ftrace_regs_caller with direct fops for live 
+> patching when this is merged with all arch support we need. After all, all 
+
+Note, direct call is currently only available for x86_64.
+
+> we need is to change the rip, which we could do easily in the direct 
+> trampoline. On the other hand, it would exclude coexistence of a live 
+> patch and a BPF filter (both direct now) on one function.
+
+It may also end up being more complex, and not much of a performance
+benefit. I believe the BPF is injecting programs into the start of
+functions, but your trampoline for live patching may be not much
+different than what ftrace gives you today.
+
+-- Steve
