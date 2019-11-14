@@ -2,115 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25244FCFF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E971FCFFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKNU6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:58:23 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:44776 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726567AbfKNU6X (ORCPT
+        id S1726994AbfKNU7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:59:17 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46010 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726567AbfKNU7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:58:23 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Ti5F9SG_1573765096;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Ti5F9SG_1573765096)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 15 Nov 2019 04:58:19 +0800
-Subject: Re: [v2 PATCH] mm: migrate: handle freed page at the first place
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     mgorman@techsingularity.net, vbabka@suse.cz,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1573755869-106954-1-git-send-email-yang.shi@linux.alibaba.com>
- <20191114185643.GM20866@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <360f448e-3c77-95a7-79a8-ff8c65e8c7ff@linux.alibaba.com>
-Date:   Thu, 14 Nov 2019 12:58:16 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 14 Nov 2019 15:59:17 -0500
+Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 972823A19FB;
+        Fri, 15 Nov 2019 07:59:13 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iVMCu-0003MN-5U; Fri, 15 Nov 2019 07:59:12 +1100
+Date:   Fri, 15 Nov 2019 07:59:12 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/28] mm: factor shrinker work calculations
+Message-ID: <20191114205912.GD4614@dread.disaster.area>
+References: <20191031234618.15403-1-david@fromorbit.com>
+ <20191031234618.15403-12-david@fromorbit.com>
+ <20191104152939.GB10665@bfoster>
 MIME-Version: 1.0
-In-Reply-To: <20191114185643.GM20866@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191104152939.GB10665@bfoster>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=XO7XY2mVLG3Fmeu3Gs4A:9
+        a=FyWulrztHRHRZgDo:21 a=54HOyl8hHVm350sv:21 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 04, 2019 at 10:29:39AM -0500, Brian Foster wrote:
+> On Fri, Nov 01, 2019 at 10:46:01AM +1100, Dave Chinner wrote:
+> > From: Dave Chinner <dchinner@redhat.com>
+> > 
+> > Start to clean up the shrinker code by factoring out the calculation
+> > that determines how much work to do. This separates the calculation
+> > from clamping and other adjustments that are done before the
+> > shrinker work is run. Document the scan batch size calculation
+> > better while we are there.
+> > 
+> > Also convert the calculation for the amount of work to be done to
+> > use 64 bit logic so we don't have to keep jumping through hoops to
+> > keep calculations within 32 bits on 32 bit systems.
+> > 
+> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > ---
+> 
+> I assume the kbuild warning thing will be fixed up...
+> 
+> >  mm/vmscan.c | 97 ++++++++++++++++++++++++++++++++++++++---------------
+> >  1 file changed, 70 insertions(+), 27 deletions(-)
+> > 
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index a215d71d9d4b..2d39ec37c04d 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -459,13 +459,68 @@ EXPORT_SYMBOL(unregister_shrinker);
+> >  
+> >  #define SHRINK_BATCH 128
+> >  
+> > +/*
+> > + * Calculate the number of new objects to scan this time around. Return
+> > + * the work to be done. If there are freeable objects, return that number in
+> > + * @freeable_objects.
+> > + */
+> > +static int64_t shrink_scan_count(struct shrink_control *shrinkctl,
+> > +			    struct shrinker *shrinker, int priority,
+> > +			    int64_t *freeable_objects)
+> > +{
+> > +	int64_t delta;
+> > +	int64_t freeable;
+> > +
+> > +	freeable = shrinker->count_objects(shrinker, shrinkctl);
+> > +	if (freeable == 0 || freeable == SHRINK_EMPTY)
+> > +		return freeable;
+> > +
+> > +	if (shrinker->seeks) {
+> > +		/*
+> > +		 * shrinker->seeks is a measure of how much IO is required to
+> > +		 * reinstantiate the object in memory. The default value is 2
+> > +		 * which is typical for a cold inode requiring a directory read
+> > +		 * and an inode read to re-instantiate.
+> > +		 *
+> > +		 * The scan batch size is defined by the shrinker priority, but
+> > +		 * to be able to bias the reclaim we increase the default batch
+> > +		 * size by 4. Hence we end up with a scan batch multipler that
+> > +		 * scales like so:
+> > +		 *
+> > +		 * ->seeks	scan batch multiplier
+> > +		 *    1		      4.00x
+> > +		 *    2               2.00x
+> > +		 *    3               1.33x
+> > +		 *    4               1.00x
+> > +		 *    8               0.50x
+> > +		 *
+> > +		 * IOWs, the more seeks it takes to pull the item into cache,
+> > +		 * the smaller the reclaim scan batch. Hence we put more reclaim
+> > +		 * pressure on caches that are fast to repopulate and to keep a
+> > +		 * rough balance between caches that have different costs.
+> > +		 */
+> > +		delta = freeable >> (priority - 2);
+> 
+> Does anything prevent priority < 2 here?
 
+Nope. I regularly see priority 1 here when the OOM killer is about
+to strike. Doesn't appear to have caused any problems - the scan
+counts have all come out correct (i.e. ends up as a >> 0) according
+to the tracing, but I'll fix this up to avoid hitting this.
 
-On 11/14/19 10:56 AM, Michal Hocko wrote:
-> On Fri 15-11-19 02:24:29, Yang Shi wrote:
->> When doing migration if the freed page is met, we just return without
->> migrating it since it is pointless to migrate a freed page.  But, the
->> current code allocates target page unconditionally before handling freed
->> page, if the page is freed, the newly allocated will be just freed.  It
->> doesn't make too much sense and is just a waste of time although
->> migrating freed page is rare.
->>
->> So, handle freed page at the before that to avoid unnecessary page
->> allocation and free.
->>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Mel Gorman <mgorman@techsingularity.net>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> I would be really surprised if this led to any runtime visible effect
-> but I do agree that one less put_page path looks slightly better. For
-> that reason
-> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+> > -		delta = freeable >> priority;
+> > -		delta *= 4;
+> > -		do_div(delta, shrinker->seeks);
+> > -	} else {
+> > -		/*
+> > -		 * These objects don't require any IO to create. Trim
+> > -		 * them aggressively under memory pressure to keep
+> > -		 * them from causing refetches in the IO caches.
+> > -		 */
+> > -		delta = freeable / 2;
+> > -	}
+> > -
+> > -	total_scan += delta;
+> > +	total_scan = nr + scan_count;
+> >  	if (total_scan < 0) {
+> >  		pr_err("shrink_slab: %pS negative objects to delete nr=%ld\n",
+> >  		       shrinker->scan_objects, total_scan);
+> > -		total_scan = freeable;
+> > +		total_scan = scan_count;
+> 
+> Same question as before: why the change in assignment? freeable was the
+> ->count_objects() return value, which is now stored in freeable_objects.
 
-Thanks!
+we don't want to try to free the entire cache on an 64-bit integer
+overflow. scan_count is the work we calculated we need to do this
+shrinker invocation, so if we overflow because of other factors then
+we should just do the work we need to do in this scan.
 
->
->> ---
->> v2: * Keep thp migration support check before handling freed page per Michal Hocko
->>      * Fixed the build warning reported by 0-day
->>
->>   mm/migrate.c | 14 +++++---------
->>   1 file changed, 5 insertions(+), 9 deletions(-)
->>
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index 4fe45d1..a8f87cb 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -1168,15 +1168,11 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
->>   				   enum migrate_reason reason)
->>   {
->>   	int rc = MIGRATEPAGE_SUCCESS;
->> -	struct page *newpage;
->> +	struct page *newpage = NULL;
->>   
->>   	if (!thp_migration_supported() && PageTransHuge(page))
->>   		return -ENOMEM;
->>   
->> -	newpage = get_new_page(page, private);
->> -	if (!newpage)
->> -		return -ENOMEM;
->> -
->>   	if (page_count(page) == 1) {
->>   		/* page was freed from under us. So we are done. */
->>   		ClearPageActive(page);
->> @@ -1187,13 +1183,13 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
->>   				__ClearPageIsolated(page);
->>   			unlock_page(page);
->>   		}
->> -		if (put_new_page)
->> -			put_new_page(newpage, private);
->> -		else
->> -			put_page(newpage);
->>   		goto out;
->>   	}
->>   
->> +	newpage = get_new_page(page, private);
->> +	if (!newpage)
->> +		return -ENOMEM;
->> +
->>   	rc = __unmap_and_move(page, newpage, force, mode);
->>   	if (rc == MIGRATEPAGE_SUCCESS)
->>   		set_page_owner_migrate_reason(newpage, reason);
->> -- 
->> 1.8.3.1
->>
+> FWIW, the change seems to make sense in that it just factors out the
+> deferred count, but it's not clear if it's intentional...
 
+It was intentional.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
