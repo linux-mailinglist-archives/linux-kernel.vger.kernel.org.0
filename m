@@ -2,93 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 218C9FBDF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 03:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DCCDFBE07
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 03:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfKNCeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 21:34:18 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45318 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfKNCeS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 21:34:18 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k1so1349662pgg.12;
-        Wed, 13 Nov 2019 18:34:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MNuGigDplefke9uD7V7a46qDlXxl9M1mwAXio0kpbpE=;
-        b=Rm8IGYNOINdzalkfXlhDLBut0xFA3QR+4oOZqnksjtGqQf6EAQLG+bQjsZkMBvYAr9
-         Ob3iqfrHmVsyoZqY3XVAqKhWABCUy9/HyFGuYQrJ6gmV3AvsomnVxtGtbHIqvq+af9hm
-         bRh6S/ZKb0a8iqLvVpIy8DHgaIp74QEZMOILAnF3z5+1T1gTwjri69BrOdDc1EOwcA+S
-         VQXjFivHIgOpSWchXNM+sOR1E9Ud53/9DZ2B/4XjJ127Cm1+lUq7j/NzYfdVjO+Ri1UT
-         u0Es0XzDmYa0FQOkXrwoWzR6Xf9amY0cA6OU6SrizjhjolKhIpCc1v4ulvCsDy73vt/9
-         WsHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MNuGigDplefke9uD7V7a46qDlXxl9M1mwAXio0kpbpE=;
-        b=NGMZ67phk5YMpX/ibcbs2AyPori5q0BdyGu4qtxmq8BGjPg2tpN67PEosuRjQlf0n7
-         eO/WVrDCP76ACWYQqUCEVZ1oGpNgEZlT9QRVkLCJY8MSCqJPxyoHK9brAB0k2q3GLDVC
-         fMvG+uvvRqvf2BJrzihEdHYw+aLy5ow4WF/hssCxvFDs7UgJ3D28Mh4+u+LhrezuktWx
-         i7KXqd8AD1q1M0TdKoY9+RY2kSSdLBfbgJmfpifK4e2RgMB/fjLXkBamMxxmCbyNtqck
-         WM+yAnvUY0NM8mIZ3k/WtXDrS9W3F+GiL2oztlA6cKN/9EgTNW3MJMP8vhqEOzrmSON/
-         Q/Tg==
-X-Gm-Message-State: APjAAAXbshvZCKFXgV0id1e2p6jBU++2DITA7aZBl2Htd4hRdyDl7/0B
-        cYl2bRaIWWsASPwBIa6+eK78Oi5xcGs=
-X-Google-Smtp-Source: APXvYqw6Ec+VA08qnwA+GCINf+BnGboNfsiOi/cCX7ICrikf1WLFZIb2fRKPbf1wH20spNB4bNd0Yw==
-X-Received: by 2002:a62:1ad6:: with SMTP id a205mr8174498pfa.64.1573698857402;
-        Wed, 13 Nov 2019 18:34:17 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id u36sm4848774pgn.29.2019.11.13.18.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 18:34:16 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2] Input: synaptics-rmi4 - add missed operations in remove
-Date:   Thu, 14 Nov 2019 10:34:05 +0800
-Message-Id: <20191114023405.31477-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        id S1726991AbfKNCvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 21:51:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726516AbfKNCvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 21:51:37 -0500
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B292E206E4;
+        Thu, 14 Nov 2019 02:43:08 +0000 (UTC)
+Date:   Wed, 13 Nov 2019 21:43:07 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "yukuai (C)" <yukuai3@huawei.com>
+Cc:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <oleg@redhat.com>, <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
+        <zhengbin13@huawei.com>, <yi.zhang@huawei.com>,
+        <chenxiang66@hisilicon.com>, <xiexiuqi@huawei.com>
+Subject: Re: [PATCH] debugfs: fix potential infinite loop in
+ debugfs_remove_recursive
+Message-ID: <20191113214307.29a8d001@oasis.local.home>
+In-Reply-To: <a399ae58-a467-3ff9-5a01-a4a2cdcf4fd6@huawei.com>
+References: <1572528884-67565-1-git-send-email-yukuai3@huawei.com>
+        <20191113151755.7125e914@gandalf.local.home>
+        <a399ae58-a467-3ff9-5a01-a4a2cdcf4fd6@huawei.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver forgets to destroy workqueue in remove like what
-is done when probe fails.
-Add a call to destroy_workqueue to fix it.
+On Thu, 14 Nov 2019 10:01:23 +0800
+"yukuai (C)" <yukuai3@huawei.com> wrote:
 
-Since unregistration will wait for the work to finish, we do
-not need to deal with work in remove.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
-Changes in v2:
-  - Remove the calls of canceling delay and flushing workqueue.
-  - Modify the commit message.
+> Do you agree with that list_empty(&chile->d_subdirs) here is not 
+> appropriate? Since it can't skip the subdirs that is not 
+> simple_positive(simple_positive() will return false), which is the 
+> reason of infinite loop.
 
- drivers/input/rmi4/rmi_f54.c | 1 +
- 1 file changed, 1 insertion(+)
+I do agree that simple_empty() is wrong, for the reasons you pointed out.
 
-diff --git a/drivers/input/rmi4/rmi_f54.c b/drivers/input/rmi4/rmi_f54.c
-index 484ae1f97330..897105b9a98b 100644
---- a/drivers/input/rmi4/rmi_f54.c
-+++ b/drivers/input/rmi4/rmi_f54.c
-@@ -730,6 +730,7 @@ static void rmi_f54_remove(struct rmi_function *fn)
- 
- 	video_unregister_device(&f54->vdev);
- 	v4l2_device_unregister(&f54->v4l2);
-+	destroy_workqueue(f54->workqueue);
- }
- 
- struct rmi_function_handler rmi_f54_handler = {
--- 
-2.23.0
+> >> +		if (!simple_empty(child)) {  
+> > 
+> > Have you tried this with lockdep enabled? I'm thinking that you might
+> > get a splat with holding parent->d_lock and simple_empty(child) taking
+> > the child->d_lock.  
+> The locks are taken and released in the right order:
+> take parent->d_lock
+> 	take child->d_lock
+> 		list_for_each_entry(c, &child->d_sundirs, d_child)
+> 			take c->d_lock
+> 			release c->d_lock
+> 	release child->d_lock
+> release parent->d_lock
+> I don't see anything wrong, am I missing something?
 
+It should be fine, my worry is that we may be missing a lockdep
+annotation, that might confuse lockdep, as lockdep may see this as the
+same type of lock being taken, and wont know the order.
+
+Have you tried this patch with lockdep enabled and tried to hit this
+code path?
+
+-- Steve
