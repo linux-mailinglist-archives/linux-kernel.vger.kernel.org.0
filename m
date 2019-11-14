@@ -2,109 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8060FCCE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:13:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A6FEFCCED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:16:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfKNSNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:13:25 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38566 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfKNSNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:13:25 -0500
-Received: from zn.tnic (p200300EC2F15E200329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f15:e200:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 387771EC0C7B;
-        Thu, 14 Nov 2019 19:13:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1573755204;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=RMMUQPDTcsu6g1c7FpfgsbBV1fCLLyImkY6jGIKEhnw=;
-        b=VB3pVK1O+9R7OqabyRDeOqzK3UitbpyGeh5FvlhLICud1GlDiMHKEgA27bVtrEO0rBUxRq
-        vR3FqYY7eoeLoqPwIZdGZLgViRZSVPY3GFSLnQFQbLefHynHYT9dUhQancxldovy+ey2jJ
-        ikiXvx5P6vwE4GBR2idmT5zUrYIaGlI=
-Date:   Thu, 14 Nov 2019 19:13:24 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [patch V3 17/20] x86/iopl: Restrict iopl() permission scope
-Message-ID: <20191114181324.GD7222@zn.tnic>
-References: <20191113204240.767922595@linutronix.de>
- <20191113210105.369055550@linutronix.de>
+        id S1726960AbfKNSQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:16:12 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35581 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfKNSQM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:16:12 -0500
+Received: by mail-vs1-f68.google.com with SMTP id k15so4529087vsp.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 10:16:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VxmH23UIh9bgluRuYOUap2wtF++JOc1rV8xUaBpEJ7o=;
+        b=mO2PVhZ16pDlTlYuVILvi8A75KjsItYV3DeXppoIPq3BwPbsDM/LW+NfkBp7Qk+ax3
+         jC42FJ/4QTOWM+agweJCKLTAarRvevGAP+kn1yj3AgK8qbl5zqpNse1lpQSxZLOa8vPK
+         LmriK1aIr1Yu4IPoPkCJfA6tn+GqX343TCODAOuTdCTrnSO5apUdtHjQYSL2WZvs6vQ0
+         plS2lZ7eC8FbopssHnbg/0ysYBXqdJG1vvakPm9eNgI2fW1zczisBV420GWmv9uq5wri
+         8r7K1q+hYCqXDdjNMtVpHMBlhhpI9eX081Y6q9NDpmWpdzMr2SNw3sclCmvXtXzmkRAQ
+         T3kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VxmH23UIh9bgluRuYOUap2wtF++JOc1rV8xUaBpEJ7o=;
+        b=l/u4qJwdQjWujVKd4SakYWUJ3K9TmWRZqKf9l0YWD5KHJ5N50qT5lJ7BTYYsZf1MxB
+         52L6sy31JZ07INhMv6+hu/BPcp9WH15zC5usJlkoEmFkcG01PTy5g4wYpockeLmzfQ0X
+         7rbi38yhogkEIJuLx7/GpUVqMczceC1LVs+n+qrKp+esi1K/mFRGMjv+fdHfmw6K15O5
+         PFHs2a0LKWRUSQwRA5ZjnXzwPKatUOGdYvqus5I/Id3zC6IsWjxTu05jElAaaoPLyomR
+         320P5ZfDN5oo2f8lL4O2bTcc5HvP/Nmq/HiKL1kKWlIATNcb6IW1SYMOALa+2Keo5zDa
+         XOgA==
+X-Gm-Message-State: APjAAAWbdg0ANBxdwBOqYJolkPcTwUWjVOej4Qn7mAYKA49KVYowvZbN
+        XHZBmRQdN+P//aDDhes+qN3qQnUpslQeMpxbOU5bDA==
+X-Google-Smtp-Source: APXvYqxRXH/rJzDlko//25OMTKBgGjGCR6O8nuS4Pzy2+D1/twDFtUQrSr+vpmJGm+Wy2gjuADPo9QY7+Ec7wJ2kGjw=
+X-Received: by 2002:a05:6102:2041:: with SMTP id q1mr6523378vsr.15.1573755370771;
+ Thu, 14 Nov 2019 10:16:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191113210105.369055550@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191031195705.36916-1-samitolvanen@google.com> <20191114165730.GC5158@willie-the-truck>
+In-Reply-To: <20191114165730.GC5158@willie-the-truck>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Thu, 14 Nov 2019 10:15:59 -0800
+Message-ID: <CABCJKueJ-J5MPj4-qL230iM3Bu8Qc_4wsViRgt2nJD81_EVJLw@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2] arm64: lse: fix LSE atomics with LLVM's
+ integrated assembler
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 09:42:57PM +0100, Thomas Gleixner wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> The access to the full I/O port range can be also provided by the TSS I/O
-> bitmap, but that would require to copy 8k of data on scheduling in the
-> task. As shown with the sched out optimization TSS.io_bitmap_base can be
-> used to switch the incoming task to a preallocated I/O bitmap which has all
-> bits zero, i.e. allows access to all I/O ports.
-> 
-> Implementing this allows to provide an iopl() emulation mode which restricts
-> the IOPL level 3 permissions to I/O port access but removes the STI/CLI
-> permission which is coming with the hardware IOPL mechansim.
-> 
-> Provide a config option to switch IOPL to emulation mode, make it the
-> default and while at it also provide an option to disable IOPL completely.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Andy Lutomirski <luto@kernel.org>
-> ---
-> V3:	Folded the missing NULL pointer check, reduced preempt disable
-> 	scope (Ingo)
-> 
-> V2:	Fixed the 32bit build fail by increasing the cpu entry area size
-> 	Move the TSS update out of the iopl() emulation code.
-> ---
->  arch/x86/Kconfig                        |   32 +++++++++++
->  arch/x86/include/asm/pgtable_32_types.h |    2 
->  arch/x86/include/asm/processor.h        |   28 +++++++---
->  arch/x86/kernel/cpu/common.c            |    5 +
->  arch/x86/kernel/ioport.c                |   87 ++++++++++++++++++++++----------
->  arch/x86/kernel/process.c               |   28 ++++++----
->  6 files changed, 137 insertions(+), 45 deletions(-)
-> 
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1254,6 +1254,38 @@ config X86_VSYSCALL_EMULATION
->  	 Disabling this option saves about 7K of kernel size and
->  	 possibly 4K of additional runtime pagetable memory.
->  
-> +choice
-> +	prompt "IOPL"
-> +	default X86_IOPL_EMULATION
-> +
-> +config X86_IOPL_EMULATION
-> +	bool "IOPL Emulation"
-> +	---help---
-> +	  Legacy IOPL support is an overbroad mechanism which allows user
-> +	  space aside of accessing all 65536 I/O ports also to disable
-> +	  interrupts. To gain this access the caller needs CAP_SYS_RAWIO
-> +	  capabilities and permission from eventually active security
+On Thu, Nov 14, 2019 at 8:57 AM Will Deacon <will@kernel.org> wrote:
+>
+> On Thu, Oct 31, 2019 at 12:57:05PM -0700, Sami Tolvanen wrote:
+> > Unlike gcc, clang considers each inline assembly block to be independent
+> > and therefore, when using the integrated assembler for inline assembly,
+> > any preambles that enable features must be repeated in each block.
+> >
+> > This change defines __LSE_PREAMBLE and adds it to each inline assembly
+> > block that has LSE instructions, which allows them to be compiled also
+> > with clang's assembler.
+>
+> Any chance LLVM can be fixed to avoid this bodge in the kernel?
 
-I think you mean here: s/eventually/potentially/ or so. "eventually" is
-one of the false friends. :)
+Unfortunately, LLVM developers consider this to be a feature, not a
+bug, so it's unlikely that we can change how the integrated assembler
+works:
 
--- 
-Regards/Gruss,
-    Boris.
+  https://bugs.llvm.org/show_bug.cgi?id=19749
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Note that this patch is similar to be604c616ca7 ("arm64: sysreg: Make
+mrs_s and msr_s macros work with Clang and LTO"), which worked around
+the same issue in the sysreg code.
+
+Sami
