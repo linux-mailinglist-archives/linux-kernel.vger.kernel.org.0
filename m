@@ -2,104 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A161BFCAB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:23:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 981E7FCAB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfKNQXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 11:23:39 -0500
-Received: from foss.arm.com ([217.140.110.172]:45768 "EHLO foss.arm.com"
+        id S1726865AbfKNQ0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 11:26:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbfKNQXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:23:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 486E9328;
-        Thu, 14 Nov 2019 08:23:38 -0800 (PST)
-Received: from [192.168.1.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0134C3F52E;
-        Thu, 14 Nov 2019 08:23:34 -0800 (PST)
-Subject: Re: [PATCH v3] sched/freq: move call to cpufreq_update_util
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org,
-        mgorman@suse.de, dsmythies@telus.net
-Cc:     linux-pm@vger.kernel.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, sargun@sargun.me, tj@kernel.org,
-        xiexiuqi@huawei.com, xiezhipeng1@huawei.com,
-        srinivas.pandruvada@linux.intel.com
-References: <1573676461-7990-1-git-send-email-vincent.guittot@linaro.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <5a56358b-83f5-09db-17f0-dbdeecba2ff3@arm.com>
-Date:   Thu, 14 Nov 2019 17:23:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726251AbfKNQ0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 11:26:15 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD35720715;
+        Thu, 14 Nov 2019 16:26:13 +0000 (UTC)
+Date:   Thu, 14 Nov 2019 11:26:12 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-sh@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Sami Tolvanen <samitolvanen@google.com>
+Subject: [PATCH v2] fgraph: Fix function type mismatches of
+ ftrace_graph_return using ftrace_stub
+Message-ID: <20191114112612.3937f281@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1573676461-7990-1-git-send-email-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.11.19 21:21, Vincent Guittot wrote:
-> update_cfs_rq_load_avg() calls cfs_rq_util_change() everytime pelt decays,
-> which might be inefficient when cpufreq driver has rate limitation.
-> 
-> When a task is attached on a CPU, we have call path:
-> 
-> update_load_avg()
->   update_cfs_rq_load_avg()
->     cfs_rq_util_change -- > trig frequency update
->   attach_entity_load_avg()
->     cfs_rq_util_change -- > trig frequency update
-> 
-> The 1st frequency update will not take into account the utilization of the
-> newly attached task and the 2nd one might be discard because of rate
-> limitation of the cpufreq driver.
-> 
-> update_cfs_rq_load_avg() is only called by update_blocked_averages()
-> and update_load_avg() so we can move the call to
-> cfs_rq_util_change/cpufreq_update_util() into these 2 functions. It's also
-> interesting to notice that update_load_avg() already calls directly
-> cfs_rq_util_change() for !SMP case.
-> 
-> This changes will also ensure that cpufreq_update_util() is called even
-> when there is no more CFS rq in the leaf_cfs_rq_list to update but only
-> irq, rt or dl pelt signals.
-> 
-> Reported-by: Doug Smythies <dsmythies@telus.net>
-> Fixes: 039ae8bcf7a5 ("sched/fair: Fix O(nr_cgroups) in the load balancing path")
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+The C compiler is allowing more checks to make sure that function pointers
+are assigned to the correct prototype function. Unfortunately, the function
+graph tracer uses a special name with its assigned ftrace_graph_return
+function pointer that maps to a stub function used by the function tracer
+(ftrace_stub). The ftrace_graph_return variable is compared to the
+ftrace_stub in some archs to know if the function graph tracer is enabled or
+not. This means we can not just simply create a new function stub that
+compares it without modifying all the archs.
 
-> ---
-> 
-> changes for v3:
-> - fix typo
-> - test the decay of root cfs_rq even for !CONFIG_FAIR_GROUP_SCHED case
+Instead, have the linker script create a function_graph_stub that maps to
+ftrace_stub, and this way we can define the prototype for it to match the
+prototype of ftrace_graph_return, and make the compiler checks all happy!
 
-nit: s/!CONFIG_FAIR_GROUP_SCHED/CONFIG_FAIR_GROUP_SCHED
+Link: http://lkml.kernel.org/r/20191015090055.789a0aed@gandalf.local.home
 
-[...]
+Reported-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
 
-> @@ -7543,6 +7544,7 @@ static void update_blocked_averages(int cpu)
->  	const struct sched_class *curr_class;
->  	struct rq_flags rf;
->  	bool done = true;
-> +	int decayed;
->  
->  	rq_lock_irqsave(rq, &rf);
->  	update_rq_clock(rq);
-> @@ -7552,9 +7554,9 @@ static void update_blocked_averages(int cpu)
->  	 * that RT, DL and IRQ signals have been updated before updating CFS.
->  	 */
+Changes from v1:
 
-tip/sched/urgent's b90f7c9d2198 ("sched/pelt: Fix update of blocked PELT
-ordering") adds this comment to both update_blocked_averages()
-implementations. It mentions explicitly that update_cfs_rq_load_avg()
-can call cpufreq_update_util(). Something this patch changes. Might be
-good to update the comments with this patch as well.
+  When I ran this through the ktest crosstests.conf, it failed on
+  superh, as superh uses the vmlinux.lds file from the kernel for
+  its compression, it requires that it has a ftrace_stub() function
+  defined there too.
 
-[...]
+
+ arch/sh/boot/compressed/misc.c    |  5 +++++
+ include/asm-generic/vmlinux.lds.h | 17 ++++++++++++++---
+ kernel/trace/fgraph.c             | 11 ++++++++---
+ 3 files changed, 27 insertions(+), 6 deletions(-)
+
+diff --git a/arch/sh/boot/compressed/misc.c b/arch/sh/boot/compressed/misc.c
+index c15cac9251b9..e69ec12cbbe6 100644
+--- a/arch/sh/boot/compressed/misc.c
++++ b/arch/sh/boot/compressed/misc.c
+@@ -111,6 +111,11 @@ void __stack_chk_fail(void)
+ 	error("stack-protector: Kernel stack is corrupted\n");
+ }
+ 
++/* Needed because vmlinux.lds.h references this */
++void ftrace_stub(void)
++{
++}
++
+ #ifdef CONFIG_SUPERH64
+ #define stackalign	8
+ #else
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index dae64600ccbf..0f358be551cd 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -111,18 +111,29 @@
+ 
+ #ifdef CONFIG_FTRACE_MCOUNT_RECORD
+ #ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
++/*
++ * Need to also make ftrace_graph_stub point to ftrace_stub
++ * so that the same stub location may have different protocols
++ * and not mess up with C verifiers.
++ */
+ #define MCOUNT_REC()	. = ALIGN(8);				\
+ 			__start_mcount_loc = .;			\
+ 			KEEP(*(__patchable_function_entries))	\
+-			__stop_mcount_loc = .;
++			__stop_mcount_loc = .;			\
++			ftrace_graph_stub = ftrace_stub;
+ #else
+ #define MCOUNT_REC()	. = ALIGN(8);				\
+ 			__start_mcount_loc = .;			\
+ 			KEEP(*(__mcount_loc))			\
+-			__stop_mcount_loc = .;
++			__stop_mcount_loc = .;			\
++			ftrace_graph_stub = ftrace_stub;
+ #endif
+ #else
+-#define MCOUNT_REC()
++# ifdef CONFIG_FUNCTION_TRACER
++#  define MCOUNT_REC()	ftrace_graph_stub = ftrace_stub;
++# else
++#  define MCOUNT_REC()
++# endif
+ #endif
+ 
+ #ifdef CONFIG_TRACE_BRANCH_PROFILING
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 7950a0356042..fa3ce10d0405 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -332,9 +332,14 @@ int ftrace_graph_entry_stub(struct ftrace_graph_ent *trace)
+ 	return 0;
+ }
+ 
++/*
++ * Simply points to ftrace_stub, but with the proper protocol.
++ * Defined by the linker script in linux/vmlinux.lds.h
++ */
++extern void ftrace_graph_stub(struct ftrace_graph_ret *);
++
+ /* The callbacks that hook a function */
+-trace_func_graph_ret_t ftrace_graph_return =
+-			(trace_func_graph_ret_t)ftrace_stub;
++trace_func_graph_ret_t ftrace_graph_return = ftrace_graph_stub;
+ trace_func_graph_ent_t ftrace_graph_entry = ftrace_graph_entry_stub;
+ static trace_func_graph_ent_t __ftrace_graph_entry = ftrace_graph_entry_stub;
+ 
+@@ -614,7 +619,7 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
+ 		goto out;
+ 
+ 	ftrace_graph_active--;
+-	ftrace_graph_return = (trace_func_graph_ret_t)ftrace_stub;
++	ftrace_graph_return = ftrace_graph_stub;
+ 	ftrace_graph_entry = ftrace_graph_entry_stub;
+ 	__ftrace_graph_entry = ftrace_graph_entry_stub;
+ 	ftrace_shutdown(&graph_ops, FTRACE_STOP_FUNC_RET);
+-- 
+2.20.1
+
