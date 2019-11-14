@@ -2,166 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B99CFCBDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:30:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC948FCC0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfKNRaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 12:30:04 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:41209 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbfKNRaE (ORCPT
+        id S1726988AbfKNRnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 12:43:55 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35633 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfKNRny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 12:30:04 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iVIwQ-0007W6-LM; Thu, 14 Nov 2019 18:29:58 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2F08D1C0090;
-        Thu, 14 Nov 2019 18:29:58 +0100 (CET)
-Date:   Thu, 14 Nov 2019 17:29:57 -0000
-From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/kdump] x86/crash: Align function arguments on opening braces
-Cc:     Borislav Petkov <bp@suse.de>, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191114172200.19563-1-bp@alien8.de>
-References: <20191114172200.19563-1-bp@alien8.de>
+        Thu, 14 Nov 2019 12:43:54 -0500
+Received: by mail-pg1-f195.google.com with SMTP id q22so4239003pgk.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 09:43:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=reply2setup-com.20150623.gappssmtp.com; s=20150623;
+        h=to:subject:from:message-id:disposition-notification-to:date
+         :user-agent:mime-version:content-transfer-encoding:content-language;
+        bh=AT6ku+cybKeH11LZiwN771me6TdCfWU44QMk7DxPZyY=;
+        b=VkmZOKAoPbXKe5kQ0ILhjfxkiigETwY2f2+LIeoCtSMPtvSR5ANq2X/LufLepEfCX9
+         T4Rq1EP7OgNRDqtC44Ojm7st+0uI6RBFQOMKzC9drvu5xT5mTsNn72J6CCjQw8Cal0IV
+         BNA8D8mZA0FbentOQ2r6SmvSGqAseYd7L7PlDCaoSnsov89u3Xapjj0EjQU69gcfSN7q
+         qxmOgYCUUBOTUbuaHQQhyKrespiubI4WRsUZSdKVhSOKbaPx6J9GQ5RuHc5U/wGxOpRH
+         HLF+zYbyagTCSjyli/OH3w+C4oAdcDf72Y64CqjwzU1Ef776QMdlt0r1cBW7xhIauvBU
+         oDqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:subject:from:message-id
+         :disposition-notification-to:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=AT6ku+cybKeH11LZiwN771me6TdCfWU44QMk7DxPZyY=;
+        b=k7g0GdsU9ULJAVHqgG6jgwsZ8OZ7K/Ll8RZ6HlO+O6/1SFPeBhjh63CidzdRLiygk5
+         x/jhIopBxkxrNzsFo9jsOfGxjxpFV/K0AorFeBUDnLrm+YbDtMJeoUKWjWOdl2fG64FV
+         7xUaIc0kSI35whpZ6FTZJW45Wi40d8enNUHD1Zg9oFuPFBugYKccPEXs2dJ+o33jyZcv
+         GnWmfbRIro+/yV8b0J9706GKFIW8FLBrLcCDjpiAsizDW0Qqz9kGoaqaVn++F0OviqAl
+         n6pY0U16c3FRAstj2LlcG57XojzwGUsTq2pC0FZ/jcMYIX79j6y170Dd5MA9YcrNxUMt
+         45ZA==
+X-Gm-Message-State: APjAAAUO/qmpnuqlfxYNXdrsVoqUxXsElWJKtSrieQma9km7eU8ISVgE
+        h3GQBY5WSRIzEhIjZjInR83ahSUUlyw=
+X-Google-Smtp-Source: APXvYqzHsTfnodV53wjd2HRaM3Vob7D3cwU/At844qGjrDx/M3wSFLTmVqy0bMc16Atvn2tygOuU6Q==
+X-Received: by 2002:a62:5216:: with SMTP id g22mr11904387pfb.78.1573753434006;
+        Thu, 14 Nov 2019 09:43:54 -0800 (PST)
+Received: from [192.168.0.3] ([103.16.71.221])
+        by smtp.gmail.com with ESMTPSA id y36sm6677250pgk.66.2019.11.14.09.43.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Nov 2019 09:43:53 -0800 (PST)
+To:     linux-kernel@vger.kernel.org
+Subject: Wine List
+From:   Cheryl Edwards <cheryle@reply2setup.com>
+Message-ID: <62c3d9aa-f29f-8d01-3dbc-cceaec273293@reply2setup.com>
+Date:   Thu, 14 Nov 2019 11:41:51 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.3; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Message-ID: <157375259774.29376.17108399184829392884.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Antivirus: Avast (VPS 191113-8, 11/13/2019), Outbound message
+X-Antivirus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/kdump branch of tip:
 
-Commit-ID:     9eff303725da6530b615e9258f696149baa51df6
-Gitweb:        https://git.kernel.org/tip/9eff303725da6530b615e9258f696149baa51df6
-Author:        Borislav Petkov <bp@suse.de>
-AuthorDate:    Thu, 14 Nov 2019 16:11:50 +01:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 14 Nov 2019 18:24:55 +01:00
+Hi,
 
-x86/crash: Align function arguments on opening braces
+Would you be interested in acquiring an email list of "Wine Enthusiasts" from USA?
 
-... or let function calls stick out and thus remain on a single line,
-even if the 80 cols rule is violated by a couple of chars, for better
-readability.
+We also have data for Beer Enthusiasts, Liquor Enthusiasts, Beverage Enthusiasts, Spa and Resort Visitors List, Food Enthusiasts, Entertainment Enthusiasts and many more.
 
-No functional changes.
+Each record in the list contains Contact Name (First, Middle and Last Name), Mailing Address, List type and Opt-in email address.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/20191114172200.19563-1-bp@alien8.de
----
- arch/x86/kernel/crash.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+Please let me know your thoughts towards procuring the Wine Enthusiasts List.
 
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index a16ec92..00fc55a 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -202,8 +202,7 @@ static struct crash_mem *fill_up_crash_elf_data(void)
- 	unsigned int nr_ranges = 0;
- 	struct crash_mem *cmem;
- 
--	walk_system_ram_res(0, -1, &nr_ranges,
--				get_nr_ram_ranges_callback);
-+	walk_system_ram_res(0, -1, &nr_ranges, get_nr_ram_ranges_callback);
- 	if (!nr_ranges)
- 		return NULL;
- 
-@@ -240,10 +239,9 @@ static int elf_header_exclude_ranges(struct crash_mem *cmem)
- 	if (ret)
- 		return ret;
- 
--	if (crashk_low_res.end) {
-+	if (crashk_low_res.end)
- 		ret = crash_exclude_mem_range(cmem, crashk_low_res.start,
--							crashk_low_res.end);
--	}
-+					      crashk_low_res.end);
- 
- 	return ret;
- }
-@@ -270,8 +268,7 @@ static int prepare_elf_headers(struct kimage *image, void **addr,
- 	if (!cmem)
- 		return -ENOMEM;
- 
--	ret = walk_system_ram_res(0, -1, cmem,
--				prepare_elf64_ram_headers_callback);
-+	ret = walk_system_ram_res(0, -1, cmem, prepare_elf64_ram_headers_callback);
- 	if (ret)
- 		goto out;
- 
-@@ -281,8 +278,7 @@ static int prepare_elf_headers(struct kimage *image, void **addr,
- 		goto out;
- 
- 	/* By default prepare 64bit headers */
--	ret =  crash_prepare_elf64_headers(cmem,
--				IS_ENABLED(CONFIG_X86_64), addr, sz);
-+	ret =  crash_prepare_elf64_headers(cmem, IS_ENABLED(CONFIG_X86_64), addr, sz);
- 
- out:
- 	vfree(cmem);
-@@ -297,8 +293,7 @@ static int add_e820_entry(struct boot_params *params, struct e820_entry *entry)
- 	if (nr_e820_entries >= E820_MAX_ENTRIES_ZEROPAGE)
- 		return 1;
- 
--	memcpy(&params->e820_table[nr_e820_entries], entry,
--			sizeof(struct e820_entry));
-+	memcpy(&params->e820_table[nr_e820_entries], entry, sizeof(struct e820_entry));
- 	params->e820_entries++;
- 	return 0;
- }
-@@ -353,24 +348,24 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
- 	cmd.type = E820_TYPE_RAM;
- 	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
- 	walk_iomem_res_desc(IORES_DESC_NONE, flags, 0, (1<<20)-1, &cmd,
--			memmap_entry_callback);
-+			    memmap_entry_callback);
- 
- 	/* Add ACPI tables */
- 	cmd.type = E820_TYPE_ACPI;
- 	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
- 	walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1, &cmd,
--		       memmap_entry_callback);
-+			    memmap_entry_callback);
- 
- 	/* Add ACPI Non-volatile Storage */
- 	cmd.type = E820_TYPE_NVS;
- 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
--			memmap_entry_callback);
-+			    memmap_entry_callback);
- 
- 	/* Add e820 reserved ranges */
- 	cmd.type = E820_TYPE_RESERVED;
- 	flags = IORESOURCE_MEM;
- 	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, -1, &cmd,
--			   memmap_entry_callback);
-+			    memmap_entry_callback);
- 
- 	/* Add crashk_low_res region */
- 	if (crashk_low_res.end) {
-@@ -381,8 +376,7 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
- 	}
- 
- 	/* Exclude some ranges from crashk_res and add rest to memmap */
--	ret = memmap_exclude_ranges(image, cmem, crashk_res.start,
--						crashk_res.end);
-+	ret = memmap_exclude_ranges(image, cmem, crashk_res.start, crashk_res.end);
- 	if (ret)
- 		goto out;
- 
+Best Regards,
+Cheryl Edwards
+
+We respect your privacy, if you do not wish to receive any further emails from our end, please reply with a subject “Remove”.
+
