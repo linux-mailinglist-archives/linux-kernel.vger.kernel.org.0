@@ -2,143 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD962FCF7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 630C8FCF68
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:15:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfKNUP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:15:56 -0500
-Received: from mail-eopbgr730059.outbound.protection.outlook.com ([40.107.73.59]:60877
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727264AbfKNUPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:15:54 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MiQ9xv78YLQ55GuNwCqeuLtP3oHB6Z0/YIXgB1qRZiwhzBRfufBSbrSt1UYTsrctfJ5IllGoe4Efxu3zQO6kQk1IaQyDAesFglkaMcPz4HfsWYTmNcpQlcQ+fjL2Mgd4EVELXYUzpLVjz1CRJQeth/UoFYpLUs7pU5zBhZ8HkwVIwjUrycgNhLtgEwcNf0EIonKsTvKjg8Ss+txo//eJfv2L9KHdryl+J4sl68gVepFfdCkXH/73EC9JT1ZaZVLEvZ9H5k5mRrPMYBBreofcy1on6ihl+3leQOpKuBYeg+yAmmoq68YLsLfxe4Cz64dSz/hYE+HPO0xdRmhP9r53sA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8pz6ihk0kNZNPLguM1X7r00kVPhnR4PzcR/vut0cWNg=;
- b=XCOQ8sz7T0Ao3FNT7KIJoNOcGHpZ20q7VoPU8eQjDWJz5qQs8/URSX9YRwJTuHSOhXxPrCOyeeSd/ZXKYdXkItlCsX9BRGaZqKVny2FXB2Q02zgIVo6JNzdLcGzXIAW9X1Q35lAp+QglUZ1UhmkwZtrV9FYFkuDYgipV8en6YtLc11Deoa6jC6exVd+clOAI+wjWcusyMW+q9K1w5NCthFc031qAykzPyyN/OjEc+B/Y9LYgYmj8fjOXk4lJLuMsHQAjPtBo+xn/SjuCrnjQ8xzNLSP50OCGpVezy7oNSFr0T9YdolVruUB0qcOh9RPWTGxj8cgs0y6MXAJBURfqgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8pz6ihk0kNZNPLguM1X7r00kVPhnR4PzcR/vut0cWNg=;
- b=voOUx5dtSGFSgAZPaefCcaQ164wbQDjq0o0IlTu0hIDMwjAZDzNbwFIxfdmwFPRH0owv7963u6XB5UUJ/AXAfFIuXmum6S6Z+YVCfbfc47dpWH1e8GU7oUrE/eHqQQZ3z//yDpZC36KvC45zdnCqZaIXuq/iDF/GUNf5maP7Do0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
-Received: from DM6PR12MB3865.namprd12.prod.outlook.com (10.255.173.210) by
- DM6PR12MB3739.namprd12.prod.outlook.com (10.255.172.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.23; Thu, 14 Nov 2019 20:15:46 +0000
-Received: from DM6PR12MB3865.namprd12.prod.outlook.com
- ([fe80::4898:93e0:3c0c:d862]) by DM6PR12MB3865.namprd12.prod.outlook.com
- ([fe80::4898:93e0:3c0c:d862%6]) with mapi id 15.20.2451.027; Thu, 14 Nov 2019
- 20:15:46 +0000
-From:   Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, joro@8bytes.org,
-        vkuznets@redhat.com, rkagan@virtuozzo.com, graf@amazon.com,
-        jschoenh@amazon.de, karahmed@amazon.de, rimasluk@amazon.com,
-        jon.grimm@amd.com,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v5 12/18] svm: Deactivate AVIC when launching guest with nested SVM support
-Date:   Thu, 14 Nov 2019 14:15:14 -0600
-Message-Id: <1573762520-80328-13-git-send-email-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1573762520-80328-1-git-send-email-suravee.suthikulpanit@amd.com>
-References: <1573762520-80328-1-git-send-email-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SN1PR12CA0099.namprd12.prod.outlook.com
- (2603:10b6:802:21::34) To DM6PR12MB3865.namprd12.prod.outlook.com
- (2603:10b6:5:1c8::18)
+        id S1726910AbfKNUPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:15:17 -0500
+Received: from sauhun.de ([88.99.104.3]:44526 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726474AbfKNUPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 15:15:17 -0500
+Received: from localhost (x4db7660f.dyn.telefonica.de [77.183.102.15])
+        by pokefinder.org (Postfix) with ESMTPSA id 0F4272C03EE;
+        Thu, 14 Nov 2019 21:15:15 +0100 (CET)
+Date:   Thu, 14 Nov 2019 21:15:14 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Add MMC_CAP_ERASE to
+ Gen3 SoCs
+Message-ID: <20191114201514.GA3058@kunai>
+References: <20191112134808.23546-1-erosca@de.adit-jv.com>
+ <20191112204952.GA2976@kunai>
+ <CAPDyKFq8oVk26ruNA_R8HDXhMGKhDeHnL0q82xi40g1aeo109A@mail.gmail.com>
+ <20191114113743.GA19656@vmlxhi-102.adit-jv.com>
+ <CAPDyKFp5iqrFDM1EWnYBwFmQAiAA5FADDLAyuVVBgMu4Sx=x5w@mail.gmail.com>
 MIME-Version: 1.0
-X-Mailer: git-send-email 1.8.3.1
-X-Originating-IP: [165.204.78.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: d5b36aa6-048e-4d9c-383b-08d7693f6f14
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3739:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB3739E6EB9FDA41A247EB759BF3710@DM6PR12MB3739.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 02213C82F8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(1496009)(396003)(366004)(376002)(39860400002)(346002)(136003)(189003)(199004)(6506007)(25786009)(86362001)(6512007)(6436002)(8676002)(47776003)(7416002)(66066001)(6486002)(50226002)(4326008)(3846002)(8936002)(4720700003)(81156014)(2906002)(16586007)(7736002)(66556008)(305945005)(66476007)(2616005)(6116002)(66946007)(186003)(316002)(14454004)(486006)(478600001)(99286004)(81166006)(26005)(14444005)(476003)(5660300002)(44832011)(386003)(446003)(52116002)(51416003)(76176011)(50466002)(6666004)(36756003)(11346002)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3739;H:DM6PR12MB3865.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ZdggCOjGlWCM6uhda2JBJvWWQ+6Hlm9jtcEQDmQyLCfqYMKagTx93xEHWaEhaOoGIvT/VUN33ythAhZ4TCBUVL3/ZnWLEBxdZsL6tBN/6RzMcFewysRxkv4p6GF/9HQp7/JSrOQFl6kaLfcE7M0WBqjULFlftYfE47FiLG+DN8rxVf7kkpVYQaZe8KTnLiYe/nsMO5Fh5Iz4EQiQb3iTSItCnmhA2KxILx+3sYvy8+JO7sX42mUmZ/h0UVdkUANn/5g9cz6JQQT1T8fMO4alnK60nZbefoTZ55sFO1yaJ57iGcoZ1BTFNdSTxpQ+J7daKBattSCy+fDq1MmnhEmznX8sXlOd6JUxWNNc0jPQTj7x9monTdfGcWEQBhLF1mjv48l+J64PKeSgV1A7rqxISwAtSWeXd+Ryp7exsec5OkxrXj2xurIu7YbLIDE0cVQi
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5b36aa6-048e-4d9c-383b-08d7693f6f14
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2019 20:15:46.5455
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RkF40ZWEb7a3TLUiMjR1te2nBMSWJRUE9llh2rGi/IIMCZKQfB3AwAw0Uh2Gx5pb63SKaGqkgKSlZlBAnvsaNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3739
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFp5iqrFDM1EWnYBwFmQAiAA5FADDLAyuVVBgMu4Sx=x5w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since AVIC does not currently work w/ nested virtualization,
-deactivate AVIC for the guest if setting CPUID Fn80000001_ECX[SVM]
-(i.e. indicate support for SVM, which is needed for nested virtualization).
-Also, introduce a new APICV_INHIBIT_REASON_NESTED bit to be used for
-this reason.
 
-Suggested-by: Alexander Graf <graf@amazon.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/svm.c              | 11 ++++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 5d1e4a9..6c598ca 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -851,6 +851,7 @@ enum kvm_irqchip_mode {
- 
- #define APICV_INHIBIT_REASON_DISABLE    0
- #define APICV_INHIBIT_REASON_HYPERV     1
-+#define APICV_INHIBIT_REASON_NESTED     2
- 
- struct kvm_arch {
- 	unsigned long n_used_mmu_pages;
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 5e80b7e..ac4901c 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5963,6 +5963,14 @@ static void svm_cpuid_update(struct kvm_vcpu *vcpu)
- 		return;
- 
- 	guest_cpuid_clear(vcpu, X86_FEATURE_X2APIC);
-+
-+	/*
-+	 * Currently, AVIC does not work with nested virtualization.
-+	 * So, we disable AVIC when cpuid for SVM is set in the L1 guest.
-+	 */
-+	if (nested && guest_cpuid_has(vcpu, X86_FEATURE_SVM))
-+		kvm_request_apicv_update(vcpu->kvm, false,
-+					 APICV_INHIBIT_REASON_NESTED);
- }
- 
- #define F(x) bit(X86_FEATURE_##x)
-@@ -7244,7 +7252,8 @@ static bool svm_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
- static bool svm_check_apicv_inhibit_reasons(ulong bit)
- {
- 	ulong supported = BIT(APICV_INHIBIT_REASON_DISABLE) |
--			  BIT(APICV_INHIBIT_REASON_HYPERV);
-+			  BIT(APICV_INHIBIT_REASON_HYPERV) |
-+			  BIT(APICV_INHIBIT_REASON_NESTED);
- 
- 	return supported & BIT(bit);
- }
--- 
-1.8.3.1
+Hi Ulf,
 
+thanks again for the heads up.
+
+> Let's first take a step back, because I don't know how the HW busy
+> detection works for your controller.
+>=20
+> I have noticed there is TMIO_STAT_CMD_BUSY bit being set for some
+> variants, which seems to cause renesas_sdhi_wait_idle() to loop for a
+> pre-defined number of loops/timeout. This looks scary, but I can't
+> tell if it's really a problem.
+
+That should be okay. The datasheet mentions that some registers can only
+be accessed when either CBSY or SCLKDIVEN bits signal non-busyness.
+renesas_sdhi_wait_idle() is for that.
+
+> BTW, do you know what TMIO_STAT_CMD_BUSY actually is monitoring?
+
+0: A command sequence has been completed.
+1: A command sequence is being executed.
+
+> I have also noticed that MMC_CAP_WAIT_WHILE_BUSY isn't set for any of
+> the renesas/tmio variant hosts. Is that simply because the HW doesn't
+> support this? Or because implementation is missing?
+
+Good thing we use public development. I recalled we discussed this
+before but I needed a search engine to find it again:
+
+https://patchwork.kernel.org/patch/8114821/
+
+Summary: The HW (at least since Gen2) has HW support for busy timeout
+detection but I never came around to implement it (and even forgot about
+it :( ). So, we still use a workqueue for it.
+
+Kind regards,
+
+   Wolfram
+
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl3Ntc4ACgkQFA3kzBSg
+KbbALRAAtN5mgjwND8GXvfgnDgmjvkOqkG4JE3T24NtpQdmjoSGhduWW8lhSsCeD
+2i6ziNE3oght8mF1Rkh3KkD/LX8yzYJPAEWsLJ2+P2pmmkqNFo2HUnS5udIGP5mV
+yo3XMA6cshF69DV1eafWLEBYluk9SmrMD2iD+0kO+4Mc7+SlwAcF8xVG9fpQ2ODh
+asack+7659QzovDga35Yp6xnC0T9bRXbA/+j9KbInci5I1txfMR1JCmbiYdHjvcP
+ioGgGAW0lSck//kLuQUZ/c08KrkcdW625W3xmZXbINhLcXU9UAMPliH9Peaehcz6
+jaoUdUFXJlUc63uyvxkHinWRgVAztFfZQ8SAJjtRJ1Mhafi85yYlvFXEw8UIE3rm
+N8JyQh27VhBXuDGvV6ea3aQUyOp4zNJ1i4Ap/xmgPTKZocYgJGsvfN+9uofGYMvh
+YpCnl0Y+jGDvlGnoNwIWFDcG0MAm2lA5Ty0hzIkpnOCY2C5WZL09QYlTQYZh3dCo
+iEx7Tbhq/WkgDV9wdMywuTFdjWHm64oTa8e5qmW5d8qOwjon0vbDlkdN7IkXQ+Zt
+KZNuFNQr4vZ4Cs/l1FcLOM0S+ttMRaGwaCjFwBrThP+9rvxbEBj+uArxZZTzy98a
+It7rsCfb75FPhfDjB39xttbtcxtm9ZjBgwJiD7eS2RQZ3+B8uZo=
+=JtQE
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
