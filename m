@@ -2,142 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24580FD052
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 22:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A9FFD074
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 22:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfKNV2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 16:28:52 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:57926 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726592AbfKNV2w (ORCPT
+        id S1727020AbfKNVkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 16:40:51 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40578 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbfKNVkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 16:28:52 -0500
-Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 50A2C3A0C7F;
-        Fri, 15 Nov 2019 08:28:48 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iVMfW-0003bB-Vv; Fri, 15 Nov 2019 08:28:46 +1100
-Date:   Fri, 15 Nov 2019 08:28:46 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/28] mm: back off direct reclaim on excessive shrinker
- deferral
-Message-ID: <20191114212846.GF4614@dread.disaster.area>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-16-david@fromorbit.com>
- <20191104195822.GF10665@bfoster>
+        Thu, 14 Nov 2019 16:40:51 -0500
+Received: by mail-wr1-f65.google.com with SMTP id i10so8498568wrs.7
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 13:40:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NJ5AXjvvGN3rmW3ly7bYsvI92wsOVyTwzutsVT4lLNU=;
+        b=KkzxVX4KS4qUbANz1HTGSsWZdZzlQgYcP4L+xwokL21HbQezyUbqQ6EfS+GIrEojKW
+         qolcEzO7f8J4GuMkwtVM0Vw+OWs6C/FquGDsmPYKp5GCBvQPLk0Ai2pgMo/yRGZSsW0R
+         Hxp34epB4D9Xm5l9AZILC/g195nful0nHEODuXbTEtzsf4C/RqAjYi5YpZ+IhP+zk9co
+         ExYstrLDd6SmytbC8Da/c+AzupNT/O3AYjIykxQuG5MKh2tKvXcznWVAlAjinThl7yDS
+         egF7XKBOLWeLu+VGVtUXRHHTxS8g9JEHTPLmpcyqy1+P5UtKkk3/KEIcSe29aQas68ki
+         HOFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NJ5AXjvvGN3rmW3ly7bYsvI92wsOVyTwzutsVT4lLNU=;
+        b=EL6aZGZdwwx7SHVA+WGkCe3U5FhxBUo7q54zmMJWUDdRjuG5EA40PPQu0kfKBkfJyc
+         LIZqZAKqUVQXxwmREWTi8EI8BZ8CVGLGxsuVDue5WCBYDbII9fwuE4MjNSs58xn+h5C1
+         XvW3IIFxgePEH92O/wmiC3syW4Zvdp1jZzQSM2y5Uga/i5mrP4M5QWfJoHmHBsBbZwe0
+         2faOGy8rFVKqvaPnfamEu+ZakiOrXho/G/HtNxL0edCrVjesO5LOufKmvFh5Z9a6+/mC
+         usgPUHUXgGK24L3llAcv7rvvLsG+KYHT0pDVR4lFKGJC9PG/rAGfUSaJNnY4HIvDssK6
+         l5Qw==
+X-Gm-Message-State: APjAAAVflO+543vqlnq39fD4olcZ00IV2qOX5z2LlIOdW1FBn8KYzlWP
+        ugrhVaShC4NS9Zcq1hfF+OTY3g==
+X-Google-Smtp-Source: APXvYqxkzPUiAzHpYfIdHWdk2kJMpAHkpms7E0w+/ME72VBfjNCIjRRJ9EpFjTlEbgwComBDbaQnbw==
+X-Received: by 2002:adf:ef91:: with SMTP id d17mr10599325wro.145.1573767190754;
+        Thu, 14 Nov 2019 13:33:10 -0800 (PST)
+Received: from google.com ([100.105.32.75])
+        by smtp.gmail.com with ESMTPSA id i13sm8361956wrp.12.2019.11.14.13.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2019 13:33:09 -0800 (PST)
+Date:   Thu, 14 Nov 2019 22:33:03 +0100
+From:   Marco Elver <elver@google.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     akiyks@gmail.com, stern@rowland.harvard.edu, glider@google.com,
+        parri.andrea@gmail.com, andreyknvl@google.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, arnd@arndb.de, boqun.feng@gmail.com,
+        bp@alien8.de, dja@axtens.net, dlustig@nvidia.com,
+        dave.hansen@linux.intel.com, dhowells@redhat.com,
+        dvyukov@google.com, hpa@zytor.com, mingo@redhat.com,
+        j.alglave@ucl.ac.uk, joel@joelfernandes.org, corbet@lwn.net,
+        jpoimboe@redhat.com, luc.maranget@inria.fr, mark.rutland@arm.com,
+        npiggin@gmail.com, peterz@infradead.org, tglx@linutronix.de,
+        will@kernel.org, edumazet@google.com, kasan-dev@googlegroups.com,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 00/10] Add Kernel Concurrency Sanitizer (KCSAN)
+Message-ID: <20191114213303.GA237245@google.com>
+References: <20191114180303.66955-1-elver@google.com>
+ <20191114195046.GP2865@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191104195822.GF10665@bfoster>
+In-Reply-To: <20191114195046.GP2865@paulmck-ThinkPad-P72>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=7-415B0cAAAA:8 a=PKJhY7Hcas5Uusv_ylsA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 02:58:22PM -0500, Brian Foster wrote:
-> On Fri, Nov 01, 2019 at 10:46:05AM +1100, Dave Chinner wrote:
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 967e3d3c7748..13c11e10c9c5 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -570,6 +570,8 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >  		deferred_count = min(deferred_count, freeable_objects * 2);
-> >  
-> >  	}
-> > +	if (current->reclaim_state)
-> > +		current->reclaim_state->scanned_objects += scanned_objects;
+On Thu, 14 Nov 2019, Paul E. McKenney wrote:
+
+> On Thu, Nov 14, 2019 at 07:02:53PM +0100, Marco Elver wrote:
+> > This is the patch-series for the Kernel Concurrency Sanitizer (KCSAN).
+> > KCSAN is a sampling watchpoint-based *data race detector*. More details
+> > are included in **Documentation/dev-tools/kcsan.rst**. This patch-series
+> > only enables KCSAN for x86, but we expect adding support for other
+> > architectures is relatively straightforward (we are aware of
+> > experimental ARM64 and POWER support).
+> > 
+> > To gather early feedback, we announced KCSAN back in September, and have
+> > integrated the feedback where possible:
+> > http://lkml.kernel.org/r/CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com
+> > 
+> > The current list of known upstream fixes for data races found by KCSAN
+> > can be found here:
+> > https://github.com/google/ktsan/wiki/KCSAN#upstream-fixes-of-data-races-found-by-kcsan
+> > 
+> > We want to point out and acknowledge the work surrounding the LKMM,
+> > including several articles that motivate why data races are dangerous
+> > [1, 2], justifying a data race detector such as KCSAN.
+> > 
+> > [1] https://lwn.net/Articles/793253/
+> > [2] https://lwn.net/Articles/799218/
 > 
-> Looks like scanned_objects is always zero here.
+> I queued this and ran a quick rcutorture on it, which completed
+> successfully with quite a few reports.
 
-Yeah, that was a rebase mis-merge. It should be after the scan loop.
+Great. Many thanks for queuing this in -rcu. And regarding merge window
+you mentioned, we're fine with your assumption to targeting the next
+(v5.6) merge window.
 
-> >  	/*
-> >  	 * Avoid risking looping forever due to too large nr value:
-> > @@ -585,8 +587,11 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >  	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
-> >  	 * defer the work to a context that can scan the cache.
-> >  	 */
-> > -	if (shrinkctl->defer_work)
-> > +	if (shrinkctl->defer_work) {
-> > +		if (current->reclaim_state)
-> > +			current->reclaim_state->deferred_objects += scan_count;
-> >  		goto done;
-> > +	}
-> >  
-> >  	/*
-> >  	 * Normally, we should not scan less than batch_size objects in one
-> > @@ -2871,7 +2876,30 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
-> >  
-> >  		if (reclaim_state) {
-> >  			sc->nr_reclaimed += reclaim_state->reclaimed_pages;
-> > +
-> > +			/*
-> > +			 * If we are deferring more work than we are actually
-> > +			 * doing in the shrinkers, and we are scanning more
-> > +			 * objects than we are pages, the we have a large amount
-> > +			 * of slab caches we are deferring work to kswapd for.
-> > +			 * We better back off here for a while, otherwise
-> > +			 * we risk priority windup, swap storms and OOM kills
-> > +			 * once we empty the page lists but still can't make
-> > +			 * progress on the shrinker memory.
-> > +			 *
-> > +			 * kswapd won't ever defer work as it's run under a
-> > +			 * GFP_KERNEL context and can always do work.
-> > +			 */
-> > +			if ((reclaim_state->deferred_objects >
-> > +					sc->nr_scanned - nr_scanned) &&
-> 
-> Out of curiosity, what's the reasoning behind the direct comparison
-> between ->deferred_objects and pages? Shouldn't we generally expect more
-> slab objects to exist than pages by the nature of slab?
+I've just had a look at linux-next to check what a future rebase
+requires:
 
-No, we can't make any assumptions about the amount of memory a
-reclaimed object pins. e.g. the xfs buf shrinker frees objects that
-might have many pages attached to them (e.g. 64k dir buffer, 16k
-inode cluster), the GEM/TTM shrinkers track and free pages, the
-ashmem shrinker tracks pages, etc.
+- There is a change in lib/Kconfig.debug and moving KCSAN to the
+  "Generic Kernel Debugging Instruments" section seems appropriate.
+- bitops-instrumented.h was removed and split into 3 files, and needs
+  re-inserting the instrumentation into the right places.
 
-What we try to do is balance the cost of reinstantiating objects in
-memory against each other. Reading in a page generally takes two
-IOs, instantiating a new inode generally requires 2 IOs (dir read,
-inode read), etc. That's what shrinker->seeks encodes, and it's an
-attempt to balance object counts of the different caches in a
-predictable manner.
+Otherwise there are no issues. Let me know what you recommend.
 
-
-> Also, the comment says "if we are scanning more objects than we are
-> pages," yet the code is checking whether we defer more objects than
-> scanned pages. Which is more accurate?
-
-Both. :)
-
-if reclaim_state->deferred_objects is larger than the page scan
-count,  then we either have a very small page cache or we are
-deferring a lot of shrinker work.
-
-if we have a small page cache and shrinker reclaim is not making
-good progress (i.e. defer more than scan), then we want to back off
-for a while rather than rapidly ramp up the reclaim priority to give
-the shrinker owner a chance to make progress. The current XFS inode
-shrinker does this internally by blocking on IO, but we're getting
-rid of that backoff so we need so other way to throttle reclaim when
-we have lots of deferral going on.  THis reduces the pressure on the
-page reclaim code, and goes some way to prevent swap storms (caused
-by winding up the reclaim priority on a LRU with no file pages left
-on it) when we have pure slab cache memory pressure.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+-- Marco
