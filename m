@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AADE3FCD49
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:21:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C3A7FCD02
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:17:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfKNSRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:17:54 -0500
+        id S1727374AbfKNSR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:17:56 -0500
 Received: from mga03.intel.com ([134.134.136.65]:36355 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727262AbfKNSRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:17:51 -0500
+        id S1727344AbfKNSRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:17:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:17:50 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:17:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="195123499"
+   d="scan'208";a="195123508"
 Received: from chiahuil-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.228.77])
-  by orsmga007.jf.intel.com with ESMTP; 14 Nov 2019 10:17:49 -0800
+  by orsmga007.jf.intel.com with ESMTP; 14 Nov 2019 10:17:50 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v3 12/22] soundwire: bus: fix race condition with enumeration_complete signaling
-Date:   Thu, 14 Nov 2019 12:16:52 -0600
-Message-Id: <20191114181702.22254-13-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v3 13/22] soundwire: bus: fix race condition with initialization_complete signaling
+Date:   Thu, 14 Nov 2019 12:16:53 -0600
+Message-Id: <20191114181702.22254-14-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191114181702.22254-1-pierre-louis.bossart@linux.intel.com>
 References: <20191114181702.22254-1-pierre-louis.bossart@linux.intel.com>
@@ -43,61 +43,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the signaling needed for Slave drivers to wait until
-the enumeration completes so that race conditions when issuing
-read/write commands are avoided. The calls for wait_for_completion()
-will be added in codec drivers in follow-up patches.
+Waiting for the enumeration to be complete may not be enough for a
+Slave driver, there is a possible race condition between resume
+operations and initializations handled in an interrupt thread, which
+can results in settings not being fully restored after system or
+pm_runtime resume.
 
-The order between init_completion() and complete() is deterministic,
-the Slave is marked as UNATTACHED either during a Master-initiated
-HardReset, or when the hardware detects the Slave no longer reports as
-ATTACHED.
+This patch builds on the changes added for enumeration_complete,
+init_completion() is called when the Slave device becomes UNATTACHED,
+as done with enumeration_complete.
 
+The difference with the enumeration_complete case is that complete()
+is signaled after the Slave device is fully initialized after the
+.update_status() callback is called.
+
+A Slave device driver can decide to wait on either of the two
+complete() cases, depending on its initialization code and
+requirements.
+
+Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/bus.c   | 19 +++++++++++++++++++
- drivers/soundwire/slave.c |  1 +
- 2 files changed, 20 insertions(+)
+ drivers/soundwire/bus.c   | 8 ++++++++
+ drivers/soundwire/slave.c | 1 +
+ 2 files changed, 9 insertions(+)
 
 diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 9f03a915a09a..e34b5ed534b3 100644
+index e34b5ed534b3..329f35a40649 100644
 --- a/drivers/soundwire/bus.c
 +++ b/drivers/soundwire/bus.c
-@@ -637,6 +637,25 @@ static void sdw_modify_slave_status(struct sdw_slave *slave,
- 				    enum sdw_slave_status status)
+@@ -648,6 +648,7 @@ static void sdw_modify_slave_status(struct sdw_slave *slave,
+ 			__func__, slave->dev_num);
+ 
+ 		init_completion(&slave->enumeration_complete);
++		init_completion(&slave->initialization_complete);
+ 
+ 	} else if (status == SDW_SLAVE_ATTACHED) {
+ 		dev_dbg(&slave->dev,
+@@ -1051,6 +1052,7 @@ int sdw_handle_slave_status(struct sdw_bus *bus,
  {
- 	mutex_lock(&slave->bus->bus_lock);
+ 	enum sdw_slave_status prev_status;
+ 	struct sdw_slave *slave;
++	bool attached_initializing;
+ 	int i, ret = 0;
+ 
+ 	/* first check if any Slaves fell off the bus */
+@@ -1096,6 +1098,8 @@ int sdw_handle_slave_status(struct sdw_bus *bus,
+ 		if (!slave)
+ 			continue;
+ 
++		attached_initializing = false;
 +
-+	dev_vdbg(&slave->dev,
-+		 "%s: changing status slave %d status %d new status %d\n",
-+		 __func__, slave->dev_num, slave->status, status);
+ 		switch (status[i]) {
+ 		case SDW_SLAVE_UNATTACHED:
+ 			if (slave->status == SDW_SLAVE_UNATTACHED)
+@@ -1122,6 +1126,8 @@ int sdw_handle_slave_status(struct sdw_bus *bus,
+ 			if (prev_status == SDW_SLAVE_ALERT)
+ 				break;
+ 
++			attached_initializing = true;
 +
-+	if (status == SDW_SLAVE_UNATTACHED) {
-+		dev_dbg(&slave->dev,
-+			"%s: initializing completion for Slave %d\n",
-+			__func__, slave->dev_num);
-+
-+		init_completion(&slave->enumeration_complete);
-+
-+	} else if (status == SDW_SLAVE_ATTACHED) {
-+		dev_dbg(&slave->dev,
-+			"%s: signaling completion for Slave %d\n",
-+			__func__, slave->dev_num);
-+
-+		complete(&slave->enumeration_complete);
-+	}
- 	slave->status = status;
- 	mutex_unlock(&slave->bus->bus_lock);
- }
+ 			ret = sdw_initialize_slave(slave);
+ 			if (ret)
+ 				dev_err(bus->dev,
+@@ -1140,6 +1146,8 @@ int sdw_handle_slave_status(struct sdw_bus *bus,
+ 		if (ret)
+ 			dev_err(slave->bus->dev,
+ 				"Update Slave status failed:%d\n", ret);
++		if (attached_initializing)
++			complete(&slave->initialization_complete);
+ 	}
+ 
+ 	return ret;
 diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
-index 15ac89ecae01..76fdfbd8b50d 100644
+index 76fdfbd8b50d..d2a952d9bd47 100644
 --- a/drivers/soundwire/slave.c
 +++ b/drivers/soundwire/slave.c
-@@ -52,6 +52,7 @@ static int sdw_slave_add(struct sdw_bus *bus,
- 	slave->dev.type = &sdw_slave_type;
+@@ -53,6 +53,7 @@ static int sdw_slave_add(struct sdw_bus *bus,
  	slave->bus = bus;
  	slave->status = SDW_SLAVE_UNATTACHED;
-+	init_completion(&slave->enumeration_complete);
+ 	init_completion(&slave->enumeration_complete);
++	init_completion(&slave->initialization_complete);
  	slave->dev_num = 0;
  	init_completion(&slave->probe_complete);
  	slave->probed = false;
