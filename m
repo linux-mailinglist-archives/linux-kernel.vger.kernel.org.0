@@ -2,85 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40EC0FCB39
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1325DFCB5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:04:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfKNQ7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 11:59:33 -0500
-Received: from mga02.intel.com ([134.134.136.20]:8587 "EHLO mga02.intel.com"
+        id S1727264AbfKNRDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 12:03:46 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:36262 "EHLO mail.andi.de1.cc"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbfKNQ7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:59:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:59:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="235745047"
-Received: from pkamlakx-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.10.73])
-  by fmsmga002.fm.intel.com with ESMTP; 14 Nov 2019 08:59:28 -0800
-Date:   Thu, 14 Nov 2019 18:59:27 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Christian Bundy <christianbundy@fraction.io>
-Subject: Re: [PATCH v3] tpm_tis: turn on TPM before calling tpm_get_timeouts
-Message-ID: <20191114165927.GB11107@linux.intel.com>
-References: <20191111233418.17676-1-jsnitsel@redhat.com>
- <20191113000243.16611-1-jsnitsel@redhat.com>
+        id S1726214AbfKNRDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 12:03:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pc9fQikYaAe6/ClSXdt1Pl5bjZ94c01iG49coDy8QuE=; b=CkbkWMlw6R+GzR94wPV/UNW4B
+        3KPva2GFj+9PaCxKw47u+BXC2akNDWn8q4N9HYhzTnu2y8QnpSDKXMWDNC2LLxH4fGgAaHMfiEdb8
+        BGm9goyMD45IVOSMDpDdx9bzHGBVxZlEZ4ePEM+kepdTSKQq25l4/9DqfizqfP85juw8Q=;
+Received: from [77.247.85.71] (helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iVIX1-0007pf-8x; Thu, 14 Nov 2019 18:03:43 +0100
+Received: from [::1] (helo=localhost)
+        by localhost with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iVG8h-0007vp-J8; Thu, 14 Nov 2019 15:30:27 +0100
+Date:   Thu, 14 Nov 2019 15:30:26 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, phh@phh.me, b.galvani@gmail.com
+Subject: Re: [PATCH] regulator: rn5t618: fix rc5t619 ldo10 enable
+Message-ID: <20191114153026.354f87bd@kemnade.info>
+In-Reply-To: <25f0d55696be463def622a37a1f2b826@agner.ch>
+References: <20191113182643.23885-1-andreas@kemnade.info>
+        <20191113183211.GB4402@sirena.co.uk>
+        <20191113202633.66a91d96@aktux>
+        <20191114115430.GA4664@sirena.co.uk>
+        <25f0d55696be463def622a37a1f2b826@agner.ch>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113000243.16611-1-jsnitsel@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/79gjsROfYYqfaMMMG9hO6W0"; protocol="application/pgp-signature"
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 05:02:43PM -0700, Jerry Snitselaar wrote:
-> With power gating moved out of the tpm_transmit code we need
-> to power on the TPM prior to calling tpm_get_timeouts.
-> 
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: Peter Huewe <peterhuewe@gmx.de>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> Reported-by: Christian Bundy <christianbundy@fraction.io>
-> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> ---
-> v3: call tpm_chip_stop in error path
-> v2: fix stable cc to correct address
-> 
->  drivers/char/tpm/tpm_tis_core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 270f43acbb77..806acc666696 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -974,13 +974,14 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
->  		 * to make sure it works. May as well use that command to set the
->  		 * proper timeouts for the driver.
->  		 */
-> +		tpm_chip_start(chip);
->  		if (tpm_get_timeouts(chip)) {
->  			dev_err(dev, "Could not get TPM timeouts and durations\n");
->  			rc = -ENODEV;
-> +			tpm_chip_stop(chip);
->  			goto out_err;
->  		}
->  
-> -		tpm_chip_start(chip);
+--Sig_/79gjsROfYYqfaMMMG9hO6W0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-As the commit describes the call is not there for any other reason than
-pinging the TPM.
+On Thu, 14 Nov 2019 13:13:47 +0100
+Stefan Agner <stefan@agner.ch> wrote:
 
-/Jarkko
+> On 2019-11-14 12:54, Mark Brown wrote:
+> > On Wed, Nov 13, 2019 at 08:26:33PM +0100, Andreas Kemnade wrote: =20
+> >> Mark Brown <broonie@kernel.org> wrote: =20
+> >  =20
+> >> > This definitely looks like a bug but without a datasheet or testing =
+it's
+> >> > worrying guessing at the register bit to use for the enable for the
+> >> > second LDO... =20
+> >  =20
+> >> I am hoping for a Tested-By: from the one who has submitted the patch
+> >> for the regulator. =20
+> >=20
+> > Or a reviewed-by from someone with access to the datasheet.
+> >  =20
+>=20
+> I guess Pierre-Hugues should have access, as he introduced the part?
+>=20
+> >> Well, it is not just guessing, it is there in the url I referenced. But
+> >> I would of course prefer a better source. At first I wanted to spread
+> >> my findings. =20
+> >=20
+> > The URL you provided looked to be for a different part though?
+> >  =20
+> >> I am not pushing anyone to accept it without Tested-By/Reviewed-Bys.
+> >> What is a good way to avoid people bumping into this bug?
+> >> Maybe I can find the right C on the board to check. =20
+> >=20
+> > That'd be good.  Or we could fix it by just removing enable/disable
+> > control for the second LDO entirely and if someone needs that control
+> > they can always re-add it. =20
+>=20
+> We use the RN5T567 and I added support for it. Unfortunately I have no
+> access to the RN5T618 datasheet so I cannot tell. The RN5T567 has both
+> bits in marked reserved, but looking at how it the enable bit are
+> distributed otherwise this patch fixes it in the only way it makes
+> sense...
+>=20
+Well, the rn5t618 does not have these regulators, either. It is only the
+rc5t619.
+
+Regards,
+Andreas
+
+--Sig_/79gjsROfYYqfaMMMG9hO6W0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl3NZQIACgkQl4jFM1s/
+ye9fNw/+K7EWXflnHuqjelDOdEjg7Zq6H4OZ8lzbhyNJnDnMdhmJOVOwzWT+ml25
+lZwar+pKxxdN3uo1MAGp0Xm1ba/3qO40YXgN6aN8yOZYZfwZDX6ozfy7RmDH6CAv
+0dUFw2HsmNowiGfwgrvfVJXke70EPn6tpZnJjRbmz4ZxCTXKmY/6O6qIt8IWroW9
+zsgaOQAfF4v7EYH1uZ2KhYk9ZlX5AvY8uV1J/r/nE1POcbTixKhmfqPQDKcOfnll
+KBBy0f+0zTaFY1AXkIlfu8rMrSJqijhFwx8zeeFLDPs7uOF4jZIBEryBi3KXiLdb
+mfChO3ZHxDtixRgDlaYvJeD3Jq0vuoz0nIoNezaGYOfn7XzEpPYm+QwOU4ucuEOw
+4yh4+Ugwk51aLcTn4U4B2vtvvTsE4MReGhzBRprqjAKrEGsGuEY6XpxYec+qz1+e
+1fkdCuh3YTOxlIMLlzE2MA3vxAfQYOg1llIvr7qNcAk5UTftJ+7lacF5c7DvTpUH
+1j9T0MfQ1txUsRKmDS9bi6C29W8Pf/qnb+LC6n6pc8u+3NXSiV/HwTpOvwzvMNUG
+aQAPD/evbtInOwWP7N20HcMj7pDtq9NZDhwGsDtyHPLbW0flFNfEGjIZelRMIUkg
+QkQmuPGG86CKQX0UtRC8KYaLwyTvDlIoCFJJT1Iw0y88Szp6Ijs=
+=NEK4
+-----END PGP SIGNATURE-----
+
+--Sig_/79gjsROfYYqfaMMMG9hO6W0--
