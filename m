@@ -2,75 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA92BFCD6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E36D2FCD73
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbfKNSYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:24:01 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:60796 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfKNSX5 (ORCPT
+        id S1727301AbfKNSYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:24:44 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:37550 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726533AbfKNSYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:23:57 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 13DE720B4901;
-        Thu, 14 Nov 2019 10:23:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 13DE720B4901
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573755837;
-        bh=uaxB7fUN27FEr/HjjP9552g8B1mnqLqdPLb3Hiy8bRE=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=pcyBkNUSx6Hooo6K5jiENhuK5ihKQm2UW0RSfdxuCPV17NWdcG0D1w57ucDBsyf4V
-         9NPtLNUUlxX0gaxVeBQS1oUVWkkPj6eQtjAfjjYtcstss21aWWM5uuPthLH+KfrPNh
-         OnGv+NGqHOFXR+JxkUrO852eU4Ky/huD51NRhMv0=
-Subject: Re: [PATCH v7 3/5] KEYS: Call the IMA hook to measure keys
-To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Thu, 14 Nov 2019 13:24:43 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Ti522SS_1573755869;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Ti522SS_1573755869)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 15 Nov 2019 02:24:40 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@suse.com, mgorman@techsingularity.net, vbabka@suse.cz,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-References: <20191114031202.18012-1-nramas@linux.microsoft.com>
- <20191114031202.18012-4-nramas@linux.microsoft.com>
- <1573743267.4793.43.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <24262d82-c90b-b64d-f237-9ef038f38d0e@linux.microsoft.com>
-Date:   Thu, 14 Nov 2019 10:24:18 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <1573743267.4793.43.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Subject: [v2 PATCH] mm: migrate: handle freed page at the first place
+Date:   Fri, 15 Nov 2019 02:24:29 +0800
+Message-Id: <1573755869-106954-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/2019 6:54 AM, Mimi Zohar wrote:
+When doing migration if the freed page is met, we just return without
+migrating it since it is pointless to migrate a freed page.  But, the
+current code allocates target page unconditionally before handling freed
+page, if the page is freed, the newly allocated will be just freed.  It
+doesn't make too much sense and is just a waste of time although
+migrating freed page is rare.
 
-> No need to Cc David Howells on the entire patch set.  Just Cc him,
-> here, after your tag.
-ok
+So, handle freed page at the before that to avoid unnecessary page
+allocation and free.
 
-> With this patch, keys are now being measured.  With the boot command
-> line, we can verify the measurement entry against /proc/cmdline.  How
-> can the key measurement entry be verified?  Please include that
-> information, here, in this patch description.
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+v2: * Keep thp migration support check before handling freed page per Michal Hocko
+    * Fixed the build warning reported by 0-day
 
-Glad you could verify measurement of keys. Thanks a lot for trying it.
+ mm/migrate.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-Will add information on testing\validating the feature.
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 4fe45d1..a8f87cb 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1168,15 +1168,11 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
+ 				   enum migrate_reason reason)
+ {
+ 	int rc = MIGRATEPAGE_SUCCESS;
+-	struct page *newpage;
++	struct page *newpage = NULL;
+ 
+ 	if (!thp_migration_supported() && PageTransHuge(page))
+ 		return -ENOMEM;
+ 
+-	newpage = get_new_page(page, private);
+-	if (!newpage)
+-		return -ENOMEM;
+-
+ 	if (page_count(page) == 1) {
+ 		/* page was freed from under us. So we are done. */
+ 		ClearPageActive(page);
+@@ -1187,13 +1183,13 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
+ 				__ClearPageIsolated(page);
+ 			unlock_page(page);
+ 		}
+-		if (put_new_page)
+-			put_new_page(newpage, private);
+-		else
+-			put_page(newpage);
+ 		goto out;
+ 	}
+ 
++	newpage = get_new_page(page, private);
++	if (!newpage)
++		return -ENOMEM;
++
+ 	rc = __unmap_and_move(page, newpage, force, mode);
+ 	if (rc == MIGRATEPAGE_SUCCESS)
+ 		set_page_owner_migrate_reason(newpage, reason);
+-- 
+1.8.3.1
 
-> Also, can the key data, now included in the measurement list, be used
-> to verify signatures in the ima-sig or ima-modsig templates?  Is there
-> a way of correlating a signature with a key?  Perhaps include a
-> kselftest as an example.
-> 
-> Mimi
-
-I am not familiar with kselftest. Will take a look and see if it'd be 
-possible to correlate a signature with a key.
-
-thanks,
-  -lakshmi
