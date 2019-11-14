@@ -2,139 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1FDFC989
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 16:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C5AFC98D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 16:10:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfKNPJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 10:09:50 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36991 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbfKNPJt (ORCPT
+        id S1727032AbfKNPKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 10:10:00 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:42939 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbfKNPJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 10:09:49 -0500
-Received: by mail-ot1-f66.google.com with SMTP id d5so5118330otp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 07:09:48 -0800 (PST)
+        Thu, 14 Nov 2019 10:09:59 -0500
+Received: by mail-vs1-f67.google.com with SMTP id a143so4055265vsd.9
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 07:09:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hIZW0Esa7rqGtB6CSWRu4KOQZWOLmeyw5FeK9CvEfA4=;
-        b=TRASm3BggwuJeevcb/vtQgsYoy8+/r/OSQhVDCZuQAiZnRARScWROeyc4OlZdblYa1
-         ki+7izxAdJeD0n1bahv0tQPRSKMI7Sm97AqNaY4lzDf0+ElCE0+McGOSErSG/H7r1WO8
-         k2R5cFtJxHUdfjdSGdJdhFUFkPCUa0vsQ7rMZBe3UIC1mSZbbUp2htHsxp3xhVIMq3Ho
-         /WHcZba0pTMgyi0QlHpmEMj2KDCarQquuZNv0J751OuUOT6kDy3kgUWAfh2f7SyGRRqf
-         axNBnaIGdr/W2YXKi0lz4xFtJuZPdDgGH0s6KD5eVICeh2SlP5aAykq20tRt9DlEQ/dr
-         yE9w==
+        bh=xnl8/R+wC38rXwVuF4Uv1hht9TdtUwdSGAq6WJK/Inw=;
+        b=Dban84AkznJz4/Lo/AGf01Og1BxBmDR+H65oFtBjz52lqptwVFpC1gWv3V8jYPsBpI
+         As6k5VcWLVCOIMCyBkzaCesd6pKtXjMeU6xbf4qcYJE1Qu/4yEHTYA3noX4RsOZSYgzQ
+         STXXzW7X7w1gqLjdSnPUTzLpPcD3RkTvrBnCnijnCOcwaH2+t+zC6dkaffiGxkBH4la2
+         bHVElB+VRghkDSDaKSct8oDhHUG9KHGEmEU6DPLHRuNhnio0uzkswhzJGchV1rDCZlAn
+         J7THWdPWIjq42YLCCN+wFYb8fc/vV6/6nKM6UIBu6E+u8QHgnd4RPJyWyKV4TEYdkOhV
+         jIJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hIZW0Esa7rqGtB6CSWRu4KOQZWOLmeyw5FeK9CvEfA4=;
-        b=ggDZv643OWf7war03NXU7EpHrbkl0f7QVkt6u9c2RmP5BOStLkIn8dxd6kVdDnL63l
-         NxZIGOKSdnbMyk9bRYEk4w+kL/tkruQdNZFNovctSATPka01y0POUjlkGb7r/Y0vZUsE
-         LNCH7FE5VLCWAhpvmUkuutxHphkUqcXUZtCiFu16rJRzGp0/wx2selaYZ2AYOn/SECLb
-         tajgHQdNy21voriabQdFBbmCm0tF4IXUCi+c5gHrfi2rljUooAuF6AeJg6THR0wNJLth
-         gRb4B3EIwbDGKX9FDswJQT71JOXLar0Zp0+GRbnTfb0bPtbGrfKbfS7ooUlV1GPmkMlU
-         kfig==
-X-Gm-Message-State: APjAAAXzTu61Bh/qWtqpMIyoO/Utf8D8az8IfT5VUyHH7IH9ypoMYbr4
-        9ToRIu4v+YMWQ8WSfeUMuJL3GDaITAqLj5IzRDJZcw==
-X-Google-Smtp-Source: APXvYqytglgsbxJvsvkunntFXpXa75nV5VN0ZKbQ66UUQcd6A+CDP4d4RpgnTOYVhjL1ieiGSkb43T0JdxIDN1CxfSo=
-X-Received: by 2002:a9d:37e6:: with SMTP id x93mr8205287otb.183.1573744187224;
- Thu, 14 Nov 2019 07:09:47 -0800 (PST)
+        bh=xnl8/R+wC38rXwVuF4Uv1hht9TdtUwdSGAq6WJK/Inw=;
+        b=VRx6Kmbrk58E9XibYCNzTmK4W7CG0Sq4kxv3aMi3cp3Gc+uheE7TioAVK3nmLqsWGW
+         lO6NMiQI0H8JJIRGOLChhpChZkbzuaYfFrI0bqS/1Vjeq3KWxXRw+Dd2b2gf1smWdMLG
+         qnVWOpakFCIf1jiMZwBrKk0fy6IbxN2mSngipvaPxjf7dHnluNCDizJz3N3r4ZqThCpu
+         BeqBf3WZ2QKUcEJ1IADlXLpN4VV9aK7Rql7y1giVbqQTBxzK5LpBqViiIqVEIvhjKwGN
+         gc003PS1LacIxJRMR/YLZEeWsdujZofAFuqSaZsgaf6Z6ZckNWEe11ob3r5/YHpXtOjS
+         NPyQ==
+X-Gm-Message-State: APjAAAUropojqOQ3WdBM7NjpNDHnGdVHUP3DV3cunqNPMaZrcndhXw75
+        6uE3yse1kWVxDL00qUA0kOpNk8Lqb8hMRVtfDIux9uQU
+X-Google-Smtp-Source: APXvYqxtziN/hu01bi+v1OPZ/nveSSQBkA3nNdrugi9zOjFDw+spxc18pADtGTWNLmf/e/FtNr359aBj6yMsZNnsg90=
+X-Received: by 2002:a67:2087:: with SMTP id g129mr5900116vsg.191.1573744198308;
+ Thu, 14 Nov 2019 07:09:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20191112211002.128278-1-jannh@google.com> <20191112211002.128278-3-jannh@google.com>
- <CACT4Y+aojSsss3+Y2FB9Rw=OPxXgsFrGF0YiAJ9eo2wJM0ruWg@mail.gmail.com>
-In-Reply-To: <CACT4Y+aojSsss3+Y2FB9Rw=OPxXgsFrGF0YiAJ9eo2wJM0ruWg@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 14 Nov 2019 16:09:20 +0100
-Message-ID: <CAG48ez11Bhd+76T2L9xF64TZQOeezJ9+9GApG2A7eA1hVfG3eA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/kasan: Print original address on #GP
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20191113172514.19052-1-ludovic.Barre@st.com>
+In-Reply-To: <20191113172514.19052-1-ludovic.Barre@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 14 Nov 2019 16:09:22 +0100
+Message-ID: <CAPDyKFooSJUn6UCE6QkFmJOCovm00ehz_nAPbiNQM3AcJT_bJQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mmc: mmci: add threaded irq to abort DPSM of
+ non-functional state
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 11:11 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Tue, Nov 12, 2019 at 10:10 PM 'Jann Horn' via kasan-dev
-> <kasan-dev@googlegroups.com> wrote:
-> > Make #GP exceptions caused by out-of-bounds KASAN shadow accesses easier
-> > to understand by computing the address of the original access and
-> > printing that. More details are in the comments in the patch.
-[...]
-> +Andrey, do you see any issues for TAGS mode? Or, Jann, did you test
-> it by any chance?
-
-No, I didn't - I don't have anything set up for upstream arm64 testing here.
-
-> > +void kasan_general_protection_hook(unsigned long addr)
-> >  {
-> > -       if (val == DIE_GPF) {
-> > -               pr_emerg("CONFIG_KASAN_INLINE enabled\n");
-> > -               pr_emerg("GPF could be caused by NULL-ptr deref or user memory access\n");
-> > -       }
-> > -       return NOTIFY_OK;
-> > -}
-> > +       unsigned long orig_addr;
-> > +       const char *addr_type;
-> > +
-> > +       if (addr < KASAN_SHADOW_OFFSET)
-> > +               return;
+On Wed, 13 Nov 2019 at 18:25, Ludovic Barre <ludovic.Barre@st.com> wrote:
 >
-> Thinking how much sense it makes to compare addr with KASAN_SHADOW_END...
-> If the addr is > KASAN_SHADOW_END, we know it's not a KASAN access,
-> but do we ever get GP on canonical addresses?
-
-#GP can occur for various reasons, but on x86-64, if it occurs because
-of an invalid address, as far as I know it's always non-canonical. The
-#GP handler I wrote will check the address and only call the KASAN
-hook if the address is noncanonical (because otherwise the #GP
-occurred for some other reason).
-
-> > -static struct notifier_block kasan_die_notifier = {
-> > -       .notifier_call = kasan_die_handler,
-> > -};
-> > +       orig_addr = (addr - KASAN_SHADOW_OFFSET) << KASAN_SHADOW_SCALE_SHIFT;
-> > +       /*
-> > +        * For faults near the shadow address for NULL, we can be fairly certain
-> > +        * that this is a KASAN shadow memory access.
-> > +        * For faults that correspond to shadow for low canonical addresses, we
-> > +        * can still be pretty sure - that shadow region is a fairly narrow
-> > +        * chunk of the non-canonical address space.
-> > +        * But faults that look like shadow for non-canonical addresses are a
-> > +        * really large chunk of the address space. In that case, we still
-> > +        * print the decoded address, but make it clear that this is not
-> > +        * necessarily what's actually going on.
-> > +        */
-> > +       if (orig_addr < PAGE_SIZE)
-> > +               addr_type = "dereferencing kernel NULL pointer";
-> > +       else if (orig_addr < TASK_SIZE_MAX)
-> > +               addr_type = "probably dereferencing invalid pointer";
+> From: Ludovic Barre <ludovic.barre@st.com>
 >
-> This is access to user memory, right? In outline mode we call it
-> "user-memory-access". We could say about "user" part here as well.
+> If datatimeout occurs on R1B request, the Data Path State Machine stays
+> in busy and is non-functional. Only a reset aborts the DPSM.
 
-Okay, I'll copy that naming.
+Please clarify/extend this information to tell that this is for the
+variant, that keeps DPSM enabled and uses the data timer while sending
+a CMD12. Or something along those lines.
 
-> > +       else
-> > +               addr_type = "maybe dereferencing invalid pointer";
-> > +       pr_alert("%s in range [0x%016lx-0x%016lx]\n", addr_type,
-> > +                orig_addr, orig_addr + (1 << KASAN_SHADOW_SCALE_SHIFT) - 1);
 >
-> "(1 << KASAN_SHADOW_SCALE_SHIFT) - 1)" part may be replaced with
-> KASAN_SHADOW_MASK.
-> Overall it can make sense to move this mm/kasan/report.c b/c we are
-> open-coding a number of things here (e.g. reverse address mapping). If
-> another arch will do the same, it will need all of this code too (?).
+> Like a reset must be outside of critical section, this patch adds
 
-Alright, I'll try to move it over.
+/s/critical section/atomic context
+
+> threaded irq function to release state machine. In this case,
+> the mmc_request_done is called at the end of threaded irq and
+> skipped into irq handler.
+>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> ---
+>  drivers/mmc/host/mmci.c | 44 ++++++++++++++++++++++++++++++++++++-----
+>  drivers/mmc/host/mmci.h |  1 +
+>  2 files changed, 40 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> index 40e72c30ea84..ec6e249c87ca 100644
+> --- a/drivers/mmc/host/mmci.c
+> +++ b/drivers/mmc/host/mmci.c
+> @@ -556,6 +556,9 @@ static void mmci_dma_error(struct mmci_host *host)
+>  static void
+>  mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
+>  {
+> +       if (host->irq_action == IRQ_WAKE_THREAD)
+> +               return;
+> +
+>         writel(0, host->base + MMCICOMMAND);
+>
+>         BUG_ON(host->data);
+> @@ -1321,6 +1324,7 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
+>         } else if (host->variant->busy_timeout && busy_resp &&
+>                    status & MCI_DATATIMEOUT) {
+>                 cmd->error = -ETIMEDOUT;
+> +               host->irq_action = IRQ_WAKE_THREAD;
+>         } else {
+>                 cmd->resp[0] = readl(base + MMCIRESPONSE0);
+>                 cmd->resp[1] = readl(base + MMCIRESPONSE1);
+> @@ -1532,9 +1536,9 @@ static irqreturn_t mmci_irq(int irq, void *dev_id)
+>  {
+>         struct mmci_host *host = dev_id;
+>         u32 status;
+> -       int ret = 0;
+>
+>         spin_lock(&host->lock);
+> +       host->irq_action = IRQ_HANDLED;
+>
+>         do {
+>                 status = readl(host->base + MMCISTATUS);
+> @@ -1574,12 +1578,41 @@ static irqreturn_t mmci_irq(int irq, void *dev_id)
+>                 if (host->variant->busy_detect_flag)
+>                         status &= ~host->variant->busy_detect_flag;
+>
+> -               ret = 1;
+>         } while (status);
+>
+>         spin_unlock(&host->lock);
+>
+> -       return IRQ_RETVAL(ret);
+> +       return host->irq_action;
+> +}
+> +
+> +/*
+> + * mmci_irq_threaded is call if the mmci host need to release state machines
+> + * before to terminate the request.
+> + * If datatimeout occurs on R1B request, the Data Path State Machine stays
+> + * in busy and is non-functional. Only a reset can to abort the DPSM.
+> + */
+> +static irqreturn_t mmci_irq_threaded(int irq, void *dev_id)
+> +{
+> +       struct mmci_host *host = dev_id;
+> +       unsigned long flags;
+> +
+> +       if (host->rst) {
+> +               reset_control_assert(host->rst);
+> +               udelay(2);
+> +               reset_control_deassert(host->rst);
+> +       }
+> +
+> +       spin_lock_irqsave(&host->lock, flags);
+> +       writel(host->clk_reg, host->base + MMCICLOCK);
+> +       writel(host->pwr_reg, host->base + MMCIPOWER);
+> +       writel(MCI_IRQENABLE | host->variant->start_err,
+> +              host->base + MMCIMASK0);
+> +
+> +       host->irq_action = IRQ_HANDLED;
+> +       mmci_request_end(host, host->mrq);
+> +       spin_unlock_irqrestore(&host->lock, flags);
+> +
+> +       return host->irq_action;
+>  }
+>
+>  static void mmci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+> @@ -2071,8 +2104,9 @@ static int mmci_probe(struct amba_device *dev,
+>                         goto clk_disable;
+>         }
+>
+> -       ret = devm_request_irq(&dev->dev, dev->irq[0], mmci_irq, IRQF_SHARED,
+> -                       DRIVER_NAME " (cmd)", host);
+> +       ret = devm_request_threaded_irq(&dev->dev, dev->irq[0], mmci_irq,
+> +                                       mmci_irq_threaded, IRQF_SHARED,
+> +                                       DRIVER_NAME " (cmd)", host);
+
+In general it's a good idea to move drivers into using a threaded IRQ handler.
+
+However, the reason this hasn't been done for mmci before, is because
+there are some legacy variants, that doesn't support HW flow control.
+
+Unless I am mistaken, that means when the fifo gets full during data
+transfers - it's too late to act. In other words, running the handler
+in hard IRQ context, should increase the probability of not missing
+the deadline.
+
+If a threaded IRQ handler also is sufficient for these legacy
+variants, only tests can tell.
+
+An option, would be to use a threaded handler for those variants that
+supports HW flow control. Not sure how messy the code would be with
+this option, perhaps you can give this a try?
+
+
+>         if (ret)
+>                 goto clk_disable;
+>
+> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+> index 158e1231aa23..5e63c0596364 100644
+> --- a/drivers/mmc/host/mmci.h
+> +++ b/drivers/mmc/host/mmci.h
+> @@ -412,6 +412,7 @@ struct mmci_host {
+>
+>         struct timer_list       timer;
+>         unsigned int            oldstat;
+> +       u32                     irq_action;
+>
+>         /* pio stuff */
+>         struct sg_mapping_iter  sg_miter;
+> --
+> 2.17.1
+>
+
+Kind regards
+Uffe
