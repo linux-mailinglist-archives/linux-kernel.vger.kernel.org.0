@@ -2,213 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED61DFD0B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 23:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BF6FD0B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 23:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfKNWFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 17:05:49 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46895 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfKNWFs (ORCPT
+        id S1727048AbfKNWH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 17:07:59 -0500
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:58528 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfKNWH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 17:05:48 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 193so5198534pfc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 14:05:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PUB/MflXzCJMG7Y2M0r0tuE4n+oLMmgrXK9Lt9807D8=;
-        b=LvqeDdWj4/BvmlCJtUczgpCAZ/S1nczS+iFKbFLDS1G4JiiacIQh5AF3nVq1WdR/mk
-         QJK1r46xfNrokg5Pl3xNjKO+c8ITdvqKffKTEWkP4qYSo/lN6vdwR2fpu769g4FtUHEP
-         DIdSm+3HHQbqeXN5QAAA+5+W46uYGsSH1+Y7nj9MDkPomeX8CXKdjL5EKcqUHA+0UnVZ
-         JQd5IAP5Yf3yNnQmIcFycHbmE8BddReimJfqlttqMaLk3t2Y3K6nN7TllXlCGRvJFUGv
-         8+zg2TpENXotCecZPZsTMu5+MKOU9MUazHSC1VIIl3HV01YOrJlPH3DOXwk/8q8iBBMy
-         R6qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PUB/MflXzCJMG7Y2M0r0tuE4n+oLMmgrXK9Lt9807D8=;
-        b=kUeSReJO/y8WmmAQ/iAOQ/AwSlbJjdhRKDvZtpmIuML02YsM2L+xlnw6UZEWCY3aBR
-         2otLbSmnN0ekGGgP4RGvNF7Bj0sdqsLGbOJ9vDwCO28pGv0PzbXNS2IWvkEoUH5QZqnw
-         IgmmVAo1VBVWqrQ4fZGbD4HPFweT9664AbojtlZNyXlBJkPrMw2T+NIAmbNOf3uJF+CL
-         HMu4LK4LbVHduH8dbZWvfkmQjy3iKduJoPDuEAgPTXJmfFmLLtPt1KeS+cgCgB8HdCEf
-         iewTniFk9MkXEVWLQCYfpHyjUZFvqSmEV+kAg6BuLzTJAXDZ29I5mtbnIt/TZijPvaVM
-         TT0g==
-X-Gm-Message-State: APjAAAUqcmm/PH7MAYQazDMSxmsJLJzMsGqL/ESLzSKVtKtfbKpk4gHv
-        1KJJsmYPlexDYNqYvnwXpQrxgovEmQwA2IZsoTGJTA==
-X-Google-Smtp-Source: APXvYqxeHKt2jaGM/C2bqfmau+yuCpw0lKb5aGNis1EqWTGVYXbjSOtTjbZIlvJaYLskYN1vYrwdSdEo/swVvRGXK3Y=
-X-Received: by 2002:a63:4721:: with SMTP id u33mr4321514pga.159.1573769147313;
- Thu, 14 Nov 2019 14:05:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20191113012746.52804-1-brendanhiggins@google.com> <CABVgOS=3AXS1=rpGyNiNYu8hU+t=gQG9JongHXir=76ENnrnnA@mail.gmail.com>
-In-Reply-To: <CABVgOS=3AXS1=rpGyNiNYu8hU+t=gQG9JongHXir=76ENnrnnA@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 14 Nov 2019 14:05:36 -0800
-Message-ID: <CAFd5g45jxFgxPSaamT3EQB5W_HMbM5-FPyRppqTb-HFTn+oGow@mail.gmail.com>
-Subject: Re: [PATCH linux-kselftest/test v1] Documentation: kunit: add
- documentation for kunit_tool
-To:     David Gow <davidgow@google.com>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
+        Thu, 14 Nov 2019 17:07:58 -0500
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 21CEE3C04C0;
+        Thu, 14 Nov 2019 23:07:54 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id K9CzIJFp__Zf; Thu, 14 Nov 2019 23:07:48 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 2095F3C009C;
+        Thu, 14 Nov 2019 23:07:48 +0100 (CET)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Thu, 14 Nov
+ 2019 23:07:47 +0100
+Date:   Thu, 14 Nov 2019 23:07:44 +0100
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Add MMC_CAP_ERASE to
+ Gen3 SoCs
+Message-ID: <20191114220744.GA17678@vmlxhi-102.adit-jv.com>
+References: <20191112134808.23546-1-erosca@de.adit-jv.com>
+ <20191112204952.GA2976@kunai>
+ <CAPDyKFq8oVk26ruNA_R8HDXhMGKhDeHnL0q82xi40g1aeo109A@mail.gmail.com>
+ <20191114113743.GA19656@vmlxhi-102.adit-jv.com>
+ <CAPDyKFp5iqrFDM1EWnYBwFmQAiAA5FADDLAyuVVBgMu4Sx=x5w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFp5iqrFDM1EWnYBwFmQAiAA5FADDLAyuVVBgMu4Sx=x5w@mail.gmail.com>
+User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 10:12 AM David Gow <davidgow@google.com> wrote:
->
-> On Tue, Nov 12, 2019 at 5:28 PM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > Add documentation for the Python script used to build, run, and collect
-> > results from the kernel known as kunit_tool. kunit_tool
-> > (tools/testing/kunit/kunit.py) was already added in previous commits.
-> >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
-> >  Documentation/dev-tools/kunit/index.rst      |  1 +
-> >  Documentation/dev-tools/kunit/kunit-tool.rst | 57 ++++++++++++++++++++
-> >  Documentation/dev-tools/kunit/start.rst      |  3 ++
-> >  3 files changed, 61 insertions(+)
-> >  create mode 100644 Documentation/dev-tools/kunit/kunit-tool.rst
-> >
-> > diff --git a/Documentation/dev-tools/kunit/index.rst b/Documentation/dev-tools/kunit/index.rst
-> > index 26ffb46bdf99d..c60d760a0eed1 100644
-> > --- a/Documentation/dev-tools/kunit/index.rst
-> > +++ b/Documentation/dev-tools/kunit/index.rst
-> > @@ -9,6 +9,7 @@ KUnit - Unit Testing for the Linux Kernel
-> >
-> >         start
-> >         usage
-> > +       kunit-tool
-> >         api/index
-> >         faq
-> >
-> > diff --git a/Documentation/dev-tools/kunit/kunit-tool.rst b/Documentation/dev-tools/kunit/kunit-tool.rst
-> > new file mode 100644
-> > index 0000000000000..aa1a93649a45a
-> > --- /dev/null
-> > +++ b/Documentation/dev-tools/kunit/kunit-tool.rst
-> > @@ -0,0 +1,57 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +=================
-> > +kunit_tool How-To
-> > +=================
-> > +
-> > +What is kunit_tool?
-> > +===================
-> > +
-> > +kunit_tool is a set of scripts that aid in building the Linux kernel as UML
-> > +(`User Mode Linux <http://user-mode-linux.sourceforge.net/old/>`_), running
-> > +KUnit tests, parsing the test results and displaying them in a user friendly
-> > +manner.
->
-> Calling this a "set of scripts" is a bit confusing, as the only script
-> described is tools/testing/kunit/kunit.py, which isn't mentioned in
-> this section.
+Hi Ulf,
 
-Fair enough. Sorry, I think of it as a set of scripts since there is
-more than one file, but I guess that probably doesn't make too much
-sense to anyone else.
+On Thu, Nov 14, 2019 at 01:48:41PM +0100, Ulf Hansson wrote:
 
-> Also, it may be worth linking to the new version of the UML website
-> (even if the old one has more content).
+[..]
+> 
+> Let's first take a step back, because I don't know how the HW busy
+> detection works for your controller.
+> 
+> I have noticed there is TMIO_STAT_CMD_BUSY bit being set for some
+> variants, which seems to cause renesas_sdhi_wait_idle() to loop for a
+> pre-defined number of loops/timeout. This looks scary, but I can't
+> tell if it's really a problem.
+> 
+> BTW, do you know what TMIO_STAT_CMD_BUSY actually is monitoring?
+> 
+> I have also noticed that MMC_CAP_WAIT_WHILE_BUSY isn't set for any of
+> the renesas/tmio variant hosts. Is that simply because the HW doesn't
+> support this? Or because implementation is missing?
 
-No complaints here. I just linked to what I thought is more helpful.
-It isn't immediately obvious to click on the old site (however, you
-probably want to since it has way more useful content), but the old
-site *is* discoverable from the new site, and the inverse is not true.
+Hopefully Wolfram just addressed that?
 
-> > +
-> > +What is a kunitconfig?
-> > +======================
-> > +
-> > +It's just a defconfig that kunit_tool looks for in the base directory.
-> > +kunit_tool uses it to generate a .config as you might expect. In addition, it
-> > +verifies that the generated .config contains the CONFIG options in the
-> > +kunitconfig; the reason it does this is so that it is easy to be sure that a
-> > +CONFIG that enables a test actually ends up in the .config.
-> > +
-> > +How do I use kunit_tool?
-> > +=================================
-> > +
-> > +If a kunitconfig is present at the root directory, all you have to do is:
-> > +
-> > +.. code-block:: bash
-> > +
-> > +       ./tools/testing/kunit/kunit.py run
-> > +
-> > +However, you most likely want to use it with the following options:
-> > +
-> > +.. code-block:: bash
-> > +
-> > +       ./tools/testing/kunit/kunit.py run --timeout=30 --jobs=8
-> > +
-> > +- ``--timeout`` sets a maximum amount of time to allow tests to run.
-> > +- ``--jobs`` sets the number of threads to use to build the kernel.
-> > +
->
-> Not directly an issue with the documentation, but this does raise the
-> question of why we don't have better defaults. Alternatively, maybe
+> If you want to run a test that stretches the behaviour on the timeout
+> path, I would rather use an SD-card (the older the better). For eMMCs
+> the erase likely translates to a trim/discard, which is far more
+> quicker than a real erase - as is what happens on an old SD card.
 
-Better defaults, yes-ish: I think Ted's suggestion that we should make
-it possible to run KUnit tests from make[1] is correct, and if I
-remember correctly, make *does* have a way to set reasonable
-system-wide defaults for this (I just don't think anybody takes
-advantage of it), so in that case, we should just respect whatever
-make wants to do. Consequently, I think the logic in the script should
-probably be pretty dumb.
+Running 'blkdiscard' with different SD cards on H3ULCB, I don't see any
+signs of misbehavior:
 
-> this doc could suggest --jobs=`nproc` or similar?
+root@rcar-gen3:~# blkdiscard -V
+blkdiscard from util-linux 2.32.1
 
-Good suggestion, although I would do --jobs=`nproc --all `.
+root@rcar-gen3:~# lsblk
+NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+mmcblk0      179:0    0 59.2G  0 disk
+mmcblk0boot0 179:8    0    4M  1 disk
+mmcblk0boot1 179:16   0    4M  1 disk
+mmcblk1      179:24   0   30G  0 disk
 
-> > +If you just want to use the defconfig that ships with the kernel, you can
-> > +append the ``--defconfig`` flag as well:
-> > +
-> > +.. code-block:: bash
-> > +
-> > +       ./tools/testing/kunit/kunit.py run --timeout=30 --jobs=8 --defconfig
-> > +
-> > +.. note::
-> > +       This command is particularly helpful for getting started because it
-> > +       just works. No kunitconfig needs to be present.
-> > +
->
-> Should we use this in the getting started section below, then?
-> Particularly since we're already going over kunitconfigs there
-> separately.
+# Erasing 32 GiB uSD Card
+root@rcar-gen3:~# time blkdiscard -v /dev/mmcblk1
+/dev/mmcblk1: Discarded 32227983360 bytes from the offset 0
 
-I think that makes sense.
+real    0m1.198s
+user    0m0.001s
+sys     0m0.122s
 
-> > +For a list of all the flags supported by kunit_tool, you can run:
-> > +
-> > +.. code-block:: bash
-> > +
->
-> Do you think it's worth documenting the remaining two (--build_dir and
-> --raw_output) here too?
+# Erasing 64 GiB eMMC
+root@rcar-gen3:~# time blkdiscard -v /dev/mmcblk0
+/dev/mmcblk0: Discarded 63585648640 bytes from the offset 0
 
-No. I don't know that I want to set the precedent to document all
-flags here. We already document the flags in the code and I don't want
-the two to get out of sync. However, it might be feasible to have the
-documentation automagically execute the --help command every time it
-is built keeping it in sync. I am not sure how much value that would
-provide.
+real    0m8.703s
+user    0m0.002s
+sys     0m1.909s
 
-> > +       ./tools/testing/kunit/kunit.py run --help
-[...]
+I guess that by decreasing below erase sizes, I could further increase
+the execution time, but these sysfs properties are read-only:
 
-Cheers!
+cat /sys/devices/platform/soc/ee100000.sd/mmc_host/mmc1/mmc1:59b4/preferred_erase_size
+4194304
+cat /sys/devices/platform/soc/ee100000.sd/mmc_host/mmc1/mmc1:59b4/erase_size
+512
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=205535
+-- 
+Best Regards,
+Eugeniu
