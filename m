@@ -2,91 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F5CFD023
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 22:11:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 358D4FD025
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 22:11:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKNVLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 16:11:30 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40573 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfKNVLa (ORCPT
+        id S1726996AbfKNVLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 16:11:55 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33970 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726592AbfKNVLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 16:11:30 -0500
-Received: by mail-wr1-f68.google.com with SMTP id i10so8385963wrs.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 13:11:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=PJIJWyogbk4OP5+4ApXijWjiPhJdI5chTMH05NkdY9AaaDcirSVGXsQp0TgulI54Yr
-         0fis89WHpa3qYddcIb0OZLuyiEV3YlbEY9Sm3jfP26srSMaua1qDZm9wN06r89xnN6lq
-         PA2auRDy6zQWEYBc9+YZQ8svIUhIdrjOuVRfBXnQz1gCTwTyvoRFPehAnfCpzs1c2azI
-         FcSMlzGkay3GUYnslgKGr3beLfX2r+cIKnZrR5jdOOeljImXHdwhryOp1Y3GVWguAy2L
-         05ddmXuSRs72eNzKORLPmLNNk5REZLBi574CRtvOCspZrl+LCbVTLMlX22GN5V+QRY8n
-         Ywlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=JpLdd8dFOeKA0Q0ZB/p/GlKantFne+ipNwvXKUUMHpnlErTHvHbFXzcbotFaSVgUPu
-         iSRBKYdcy6+duLCfamL6iYnz65Z1IJCzzp55Tx8yCgNMhoH/ZRfE4Ha3amtFBlIemLxN
-         CUw6Rnr/luoLFyXISKcfhabnW8Muqb+fg3eLiVTnafsG0OcYZewXLl4WHItwdWqTXpqq
-         Ca+Tnn9oGQqh0tmPLWVdSv6Gc/Newiic3Rb0fKFd4PCbLfGPVDpj+rH1BTJ9P5OAEsTn
-         PJ0WLJj9jsVgqwAE7ttzfIstuSW0j2To81LtWPaYjyQEA5BdlPCurmvP7OmBD/1myK8b
-         QZhw==
-X-Gm-Message-State: APjAAAWIYyZ9bHl0atYQk5IwPvpVVUtflEFSIXXSP1+30PJ4fs1CJmu0
-        70/HWX8g0B7nvYLtlveRrlpdVcjkcvDTLidROBM=
-X-Google-Smtp-Source: APXvYqzQKuXhgNAVlNepb6RZKjTZSgZGZCCxSQiBKB5iLymL03T2tfkILVB0WFq0qm2GprhhNtIIzgLICvA614nAK2k=
-X-Received: by 2002:a5d:538d:: with SMTP id d13mr11546501wrv.304.1573765888359;
- Thu, 14 Nov 2019 13:11:28 -0800 (PST)
+        Thu, 14 Nov 2019 16:11:54 -0500
+Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 37AD943EA9F;
+        Fri, 15 Nov 2019 08:11:50 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iVMP8-0003Oh-7P; Fri, 15 Nov 2019 08:11:50 +1100
+Date:   Fri, 15 Nov 2019 08:11:50 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/28] shrinker: defer work only to kswapd
+Message-ID: <20191114211150.GE4614@dread.disaster.area>
+References: <20191031234618.15403-1-david@fromorbit.com>
+ <20191031234618.15403-13-david@fromorbit.com>
+ <20191104152954.GC10665@bfoster>
 MIME-Version: 1.0
-Received: by 2002:a5d:4e41:0:0:0:0:0 with HTTP; Thu, 14 Nov 2019 13:11:27
- -0800 (PST)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <edohkossibrice@gmail.com>
-Date:   Thu, 14 Nov 2019 22:11:27 +0100
-Message-ID: <CAPn8y9LrhFLfqE36qt5qcKOxNkyESsoCbH1=DTJEU-3F+TVWWA@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191104152954.GC10665@bfoster>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
+        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=7-415B0cAAAA:8 a=5X_tDGEKKelVXH1UxT4A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Mon, Nov 04, 2019 at 10:29:54AM -0500, Brian Foster wrote:
+> On Fri, Nov 01, 2019 at 10:46:02AM +1100, Dave Chinner wrote:
+> > @@ -601,10 +605,10 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+> >  	 * scanning at high prio and therefore should try to reclaim as much as
+> >  	 * possible.
+> >  	 */
+> > -	while (total_scan >= batch_size ||
+> > -	       total_scan >= freeable_objects) {
+> > +	while (scan_count >= batch_size ||
+> > +	       scan_count >= freeable_objects) {
+> >  		unsigned long ret;
+> > -		unsigned long nr_to_scan = min(batch_size, total_scan);
+> > +		unsigned long nr_to_scan = min_t(long, batch_size, scan_count);
+> >  
+> >  		shrinkctl->nr_to_scan = nr_to_scan;
+> >  		shrinkctl->nr_scanned = nr_to_scan;
+> > @@ -614,29 +618,29 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+> >  		freed += ret;
+> >  
+> >  		count_vm_events(SLABS_SCANNED, shrinkctl->nr_scanned);
+> > -		total_scan -= shrinkctl->nr_scanned;
+> > -		scanned += shrinkctl->nr_scanned;
+> > +		scan_count -= shrinkctl->nr_scanned;
+> > +		scanned_objects += shrinkctl->nr_scanned;
+> >  
+> >  		cond_resched();
+> >  	}
+> > -
+> >  done:
+> > -	if (next_deferred >= scanned)
+> > -		next_deferred -= scanned;
+> > +	if (deferred_count)
+> > +		next_deferred = deferred_count - scanned_objects;
+> >  	else
+> > -		next_deferred = 0;
+> > +		next_deferred = scan_count;
+> 
+> Hmm.. so if there was no deferred count on this cycle, we set
+> next_deferred to whatever is left from scan_count and add that back into
+> the shrinker struct below. If there was a pending deferred count on this
+> cycle, we subtract what we scanned from that and add that value back.
+> But what happens to the remaining scan_count in the latter case? Is it
+> lost, or am I missing something?
 
-My name is Joe Akaba I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
+if deferred_count is not zero, then it is kswapd that is running. It
+does the deferred work, and if it doesn't make progress then adding
+it's scan count to the deferred work doesn't matter. That's because
+it will come back with an increased priority in a short while and
+try to scan more of the deferred count plus it's larger scan count.
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:joeakaba00@gmail.com
+IOWs, if we defer kswapd unused scan count, we effectively increase
+the pressure as the priority goes up, potentially making the
+deferred count increase out of control. i.e. kswapd can make
+progress and free items, but the result is that it increased the
+deferred scan count rather than reducing it. This leads to excessive
+reclaim of the slab caches and kswapd can trash the caches long
+after the memory pressure has gone away...
 
-Many thanks in advance,
-Mr.Joe Akaba
+> For example, suppose we start this cycle with a large scan_count and
+> ->scan_objects() returned SHRINK_STOP before doing much work. In that
+> scenario, it looks like whether ->nr_deferred is 0 or not is the only
+> thing that determines whether we defer the entire remaining scan_count
+> or just what is left from the previous ->nr_deferred. The existing code
+> appears to consistently factor in what is left from the current scan
+> with the previous deferred count. Hm?
 
+If kswapd doesn't have any deferred work, then it's largely no
+different in behaviour to direct reclaim. If it has no deferred
+work, then the shrinker is not getting stopped early in direct
+reclaim, so it's unlikely that kswapd is going to get stopped early,
+either....
 
-Hallo
+Cheers,
 
-Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8.5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
-
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: joeakaba00@gmail.com
-
-Vielen Dank im Voraus,
-Mr.Joe Akaba
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
