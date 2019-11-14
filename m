@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DD6FCC60
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 586BAFCC61
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:00:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfKNSAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:00:09 -0500
+        id S1727420AbfKNSAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:00:15 -0500
 Received: from mga17.intel.com ([192.55.52.151]:24511 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727344AbfKNSAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:00:08 -0500
+        id S1727389AbfKNSAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:00:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:00:08 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:00:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="207871615"
+   d="scan'208";a="207871652"
 Received: from chiahuil-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.228.77])
-  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2019 10:00:07 -0800
+  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2019 10:00:10 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v3 10/15] soundwire: add device driver to sdw_md_driver
-Date:   Thu, 14 Nov 2019 11:59:28 -0600
-Message-Id: <20191114175933.21992-11-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v3 12/15] soundwire: intel: add trigger support in sdw dai driver
+Date:   Thu, 14 Nov 2019 11:59:30 -0600
+Message-Id: <20191114175933.21992-13-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191114175933.21992-1-pierre-louis.bossart@linux.intel.com>
 References: <20191114175933.21992-1-pierre-louis.bossart@linux.intel.com>
@@ -43,59 +43,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
+From: Rander Wang <rander.wang@linux.intel.com>
 
-Setting an device driver is necessary for ASoC to register DAI
-components.
+The existing code does not expose a trigger callback, which is very
+much required for streaming.
 
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+The SoundWire stream is enabled and disabled in trigger function.
+
+Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel.c     | 4 ++++
- drivers/soundwire/master.c    | 2 ++
- include/linux/soundwire/sdw.h | 1 +
- 3 files changed, 7 insertions(+)
+ drivers/soundwire/intel.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index ba3bc410d816..492684ba08c3 100644
+index c50aebda7f4d..862dde9a9b86 100644
 --- a/drivers/soundwire/intel.c
 +++ b/drivers/soundwire/intel.c
-@@ -1059,6 +1059,10 @@ static int intel_master_remove(struct sdw_master_device *md)
+@@ -712,6 +712,43 @@ static int intel_prepare(struct snd_pcm_substream *substream,
+ 	return sdw_prepare_stream(dma->stream);
  }
  
- struct sdw_md_driver intel_sdw_driver = {
-+	.driver = {
-+		.name = "intel-sdw",
-+		.owner = THIS_MODULE,
-+	},
- 	.probe = intel_master_probe,
- 	.startup = intel_master_startup,
- 	.remove = intel_master_remove,
-diff --git a/drivers/soundwire/master.c b/drivers/soundwire/master.c
-index 6210098c892b..d23111d43fd6 100644
---- a/drivers/soundwire/master.c
-+++ b/drivers/soundwire/master.c
-@@ -57,6 +57,8 @@ struct sdw_master_device *sdw_md_add(struct sdw_md_driver *driver,
- 		put_device(&md->dev);
- 	}
- 
-+	md->dev.driver = &driver->driver;
++static int intel_trigger(struct snd_pcm_substream *substream, int cmd,
++			 struct snd_soc_dai *dai)
++{
++	struct sdw_cdns_dma_data *dma;
++	int ret;
 +
- 	return md;
- }
- EXPORT_SYMBOL(sdw_md_add);
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index af0a72e7afdf..d22950b1a5d9 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -627,6 +627,7 @@ struct sdw_md_driver {
- 	 */
- 	int (*autonomous_clock_stop_enable)(struct sdw_master_device *md,
- 					    bool state);
-+	struct device_driver driver;
- };
- 
- #define SDW_SLAVE_ENTRY(_mfg_id, _part_id, _drv_data) \
++	dma = snd_soc_dai_get_dma_data(dai, substream);
++	if (!dma) {
++		dev_err(dai->dev, "failed to get dma data in %s", __func__);
++		return -EIO;
++	}
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	case SNDRV_PCM_TRIGGER_RESUME:
++		ret = sdw_enable_stream(dma->stream);
++		break;
++
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_STOP:
++		ret = sdw_disable_stream(dma->stream);
++		break;
++
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	if (ret)
++		dev_err(dai->dev,
++			"%s trigger %d failed: %d",
++			__func__, cmd, ret);
++	return ret;
++}
++
+ static int
+ intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ {
+@@ -759,6 +796,7 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
+ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ 	.hw_params = intel_hw_params,
+ 	.prepare = intel_prepare,
++	.trigger = intel_trigger,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = intel_shutdown,
+ 	.set_sdw_stream = intel_pcm_set_sdw_stream,
+@@ -767,6 +805,7 @@ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ static const struct snd_soc_dai_ops intel_pdm_dai_ops = {
+ 	.hw_params = intel_hw_params,
+ 	.prepare = intel_prepare,
++	.trigger = intel_trigger,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = intel_shutdown,
+ 	.set_sdw_stream = intel_pdm_set_sdw_stream,
 -- 
 2.20.1
 
