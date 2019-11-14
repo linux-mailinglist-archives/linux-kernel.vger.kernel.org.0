@@ -2,32 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79166FCD1E
+	by mail.lfdr.de (Postfix) with ESMTP id F3388FCD1F
 	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbfKNSTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:19:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35854 "EHLO mail.kernel.org"
+        id S1727772AbfKNSTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:19:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727579AbfKNSS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727587AbfKNSS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Nov 2019 13:18:28 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 545E120891;
+        by mail.kernel.org (Postfix) with ESMTPSA id 7661B20895;
         Thu, 14 Nov 2019 18:18:28 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhL-0001Bf-ID; Thu, 14 Nov 2019 13:18:27 -0500
-Message-Id: <20191114181827.441645366@goodmis.org>
+        id 1iVJhL-0001C9-N0; Thu, 14 Nov 2019 13:18:27 -0500
+Message-Id: <20191114181827.594367273@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:18:02 -0500
+Date:   Thu, 14 Nov 2019 13:18:03 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>
-Subject: [for-next][PATCH 28/33] tracing/hwlat: Fix a few trivial nits
+        Yuming Han <yuming.han@unisoc.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [for-next][PATCH 29/33] tracing: use kvcalloc for tgid_map array allocation
 References: <20191114181734.067922168@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -36,40 +37,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Srivatsa S. Bhat (VMware)" <srivatsa@csail.mit.edu>
+From: Yuming Han <yuming.han@unisoc.com>
 
-Update the source file name in the comments, and fix a grammatical
-error.
+Fail to allocate memory for tgid_map, because it requires order-6 page.
+detail as:
 
-Link: http://lkml.kernel.org/r/157073346821.17189.8946944856026592247.stgit@srivatsa-ubuntu
+c3 sh: page allocation failure: order:6,
+   mode:0x140c0c0(GFP_KERNEL), nodemask=(null)
+c3 sh cpuset=/ mems_allowed=0
+c3 CPU: 3 PID: 5632 Comm: sh Tainted: G        W  O    4.14.133+ #10
+c3 Hardware name: Generic DT based system
+c3 Backtrace:
+c3 [<c010bdbc>] (dump_backtrace) from [<c010c08c>](show_stack+0x18/0x1c)
+c3 [<c010c074>] (show_stack) from [<c0993c54>](dump_stack+0x84/0xa4)
+c3 [<c0993bd0>] (dump_stack) from [<c0229858>](warn_alloc+0xc4/0x19c)
+c3 [<c0229798>] (warn_alloc) from [<c022a6e4>](__alloc_pages_nodemask+0xd18/0xf28)
+c3 [<c02299cc>] (__alloc_pages_nodemask) from [<c0248344>](kmalloc_order+0x20/0x38)
+c3 [<c0248324>] (kmalloc_order) from [<c0248380>](kmalloc_order_trace+0x24/0x108)
+c3 [<c024835c>] (kmalloc_order_trace) from [<c01e6078>](set_tracer_flag+0xb0/0x158)
+c3 [<c01e5fc8>] (set_tracer_flag) from [<c01e6404>](trace_options_core_write+0x7c/0xcc)
+c3 [<c01e6388>] (trace_options_core_write) from [<c0278b1c>](__vfs_write+0x40/0x14c)
+c3 [<c0278adc>] (__vfs_write) from [<c0278e10>](vfs_write+0xc4/0x198)
+c3 [<c0278d4c>] (vfs_write) from [<c027906c>](SyS_write+0x6c/0xd0)
+c3 [<c0279000>] (SyS_write) from [<c01079a0>](ret_fast_syscall+0x0/0x54)
 
-Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+Switch to use kvcalloc to avoid unexpected allocation failures.
+
+Link: http://lkml.kernel.org/r/1571888070-24425-1-git-send-email-chunyan.zhang@unisoc.com
+
+Signed-off-by: Yuming Han <yuming.han@unisoc.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_hwlat.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
-index 63526670605a..6638d63f0921 100644
---- a/kernel/trace/trace_hwlat.c
-+++ b/kernel/trace/trace_hwlat.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * trace_hwlatdetect.c - A simple Hardware Latency detector.
-+ * trace_hwlat.c - A simple Hardware Latency detector.
-  *
-  * Use this tracer to detect large system latencies induced by the behavior of
-  * certain underlying system hardware or firmware, independent of Linux itself.
-@@ -279,7 +279,7 @@ static void move_to_next_cpu(void)
- 		return;
- 	/*
- 	 * If for some reason the user modifies the CPU affinity
--	 * of this thread, than stop migrating for the duration
-+	 * of this thread, then stop migrating for the duration
- 	 * of the current test.
- 	 */
- 	if (!cpumask_equal(current_mask, current->cpus_ptr))
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 79fe4d6ecbd8..42659ce6ac0c 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4686,7 +4686,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
+ 
+ 	if (mask == TRACE_ITER_RECORD_TGID) {
+ 		if (!tgid_map)
+-			tgid_map = kcalloc(PID_MAX_DEFAULT + 1,
++			tgid_map = kvcalloc(PID_MAX_DEFAULT + 1,
+ 					   sizeof(*tgid_map),
+ 					   GFP_KERNEL);
+ 		if (!tgid_map) {
 -- 
 2.23.0
 
