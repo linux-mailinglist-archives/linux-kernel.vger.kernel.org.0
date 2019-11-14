@@ -2,145 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ABF1FBCD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:04:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D0C8FBCDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:06:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfKNAEV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 13 Nov 2019 19:04:21 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28600 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726409AbfKNAEV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 19:04:21 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xADNuR9p135080
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 19:04:20 -0500
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.82])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w8utg0ce1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 19:04:20 -0500
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-kernel@vger.kernel.org> from <miltonm@us.ibm.com>;
-        Thu, 14 Nov 2019 00:04:19 -0000
-Received: from us1a3-smtp06.a3.dal06.isc4sb.com (10.146.103.243)
-        by smtp.notes.na.collabserv.com (10.106.227.105) with smtp.notes.na.collabserv.com ESMTP;
-        Thu, 14 Nov 2019 00:04:10 -0000
-Received: from us1a3-mail228.a3.dal06.isc4sb.com ([10.146.103.71])
-          by us1a3-smtp06.a3.dal06.isc4sb.com
-          with ESMTP id 2019111400040938-1142723 ;
-          Thu, 14 Nov 2019 00:04:09 +0000 
-In-Reply-To: <20191113155237.30646-3-i.mikhaylov@yadro.com>
-From:   "Milton Miller II" <miltonm@us.ibm.com>
-To:     Ivan Mikhaylov <i.mikhaylov@yadro.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-        openbmc@lists.ozlabs.org, linux-mmc@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 14 Nov 2019 00:04:09 +0000
+        id S1727004AbfKNAGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 19:06:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726969AbfKNAGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 19:06:35 -0500
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09D45206D8;
+        Thu, 14 Nov 2019 00:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573689995;
+        bh=4Upn+v/Ef+ac/mWELV1j3G2nQNGiE1YmdWUT6I+a/YY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QPHQmVNHSaAUtsLSMbhog2Zz0T99otIqW6eG6qP9F1/Tk+TZlQmw47aixxHspcvnx
+         AgCKMKyF7KRRJpSZaLNcpBkg8Pz7UCQveCpxEP6nboMIQYXVZVfptYExce9B5g/V5D
+         YVtkuA9Iyc2ZNpL3uVPDqEwBXWI+yoNjg/4wE7rs=
+Received: by mail-qk1-f172.google.com with SMTP id m4so3457083qke.9;
+        Wed, 13 Nov 2019 16:06:34 -0800 (PST)
+X-Gm-Message-State: APjAAAXCvGar8LtoNsxCa9kwvJS+cN8+zR7j/MNkrMHhZ+1rMUdPhvt8
+        3uovndyMsdsBVr7yJJAccC23BWnsCYhOP53tTw==
+X-Google-Smtp-Source: APXvYqz5e4wLJrkAmKi09szt8TeDeO5fe8u6LM+XooNZR3qMRtLRZfSA4Jj/LlV3cQU4ZdvZYSE+xNKZ9QKMYjvYptM=
+X-Received: by 2002:a37:4904:: with SMTP id w4mr4748065qka.119.1573689993895;
+ Wed, 13 Nov 2019 16:06:33 -0800 (PST)
 MIME-Version: 1.0
-Sensitivity: 
-Importance: Normal
-X-Priority: 3 (Normal)
-References: <20191113155237.30646-3-i.mikhaylov@yadro.com>,<20191113155237.30646-1-i.mikhaylov@yadro.com>
-X-Mailer: IBM iNotes ($HaikuForm 1054.1) | IBM Domino Build
- SCN1812108_20180501T0841_FP62 November 04, 2019 at 09:47
-X-LLNOutbound: False
-X-Disclaimed: 46159
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=UTF-8
-x-cbid: 19111400-9463-0000-0000-00000173B243
-X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.002686
-X-IBM-SpamModules-Versions: BY=3.00012103; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000292; SDB=6.01289727; UDB=6.00684066; IPR=6.01071925;
- MB=3.00029520; MTD=3.00000008; XFM=3.00000015; UTC=2019-11-14 00:04:17
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-11-13 22:35:31 - 6.00010644
-x-cbparentid: 19111400-9464-0000-0000-000049232CB6
-Message-Id: <OF20F73C7F.F32D5A9E-ON002584B1.00836403-002584B2.0000614A@notes.na.collabserv.com>
-Subject: Re:  [PATCH 2/2] mmc: sdhci-of-aspeed: add inversion signal presence
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+References: <20191111090230.3402-1-chunyan.zhang@unisoc.com>
+ <20191111090230.3402-5-chunyan.zhang@unisoc.com> <20191112005600.GA9055@bogus>
+ <CAAfSe-uohXXHyQ7txhPmLCpyQODDHAuxjuUVbGcwYySN6G9tNQ@mail.gmail.com>
+In-Reply-To: <CAAfSe-uohXXHyQ7txhPmLCpyQODDHAuxjuUVbGcwYySN6G9tNQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 13 Nov 2019 18:06:22 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLUkaL=dq0Nrdcax3KG7TXW3LErHTSONa9mH2gXu4du9w@mail.gmail.com>
+Message-ID: <CAL_JsqLUkaL=dq0Nrdcax3KG7TXW3LErHTSONa9mH2gXu4du9w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] dt-bindings: serial: Add a new compatible string
+ for SC9863A
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/2019 around 09:57AM in some time zone, Ivan Mikhaylov wrote:
->Change the default .get_cd callback. Add inverted signal card
->detection
->check.
+On Mon, Nov 11, 2019 at 7:38 PM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
 >
->Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+> On Tue, 12 Nov 2019 at 08:56, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Mon, 11 Nov 2019 17:02:29 +0800, Chunyan Zhang wrote:
+> > >
+> > > SC9863A use the same serial device which SC9836 uses.
+> > >
+> > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/serial/sprd-uart.yaml | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> >
+> > Please add Acked-by/Reviewed-by tags when posting new versions. However,
 >
->diff --git a/drivers/mmc/host/sdhci-of-aspeed.c
->b/drivers/mmc/host/sdhci-of-aspeed.c
->index 8962f6664381..8eded8a6ed8d 100644
->--- a/drivers/mmc/host/sdhci-of-aspeed.c
->+++ b/drivers/mmc/host/sdhci-of-aspeed.c
->@@ -31,6 +31,7 @@ struct aspeed_sdc {
-> struct aspeed_sdhci {
-> 	struct aspeed_sdc *parent;
-> 	u32 width_mask;
->+	u8 cd_inverted;
-
-The mmc core/host.c checks the device tree and stores the
-result as mmc->caps2 & MMC_CAP2_CD_ACTIVE_HIGH
-
-This appears to be accessale as sdhci_host->mmc->caps2.
-
-Please reuse this bit like the other drivers.
-
-> };
-> 
-> static void aspeed_sdc_configure_8bit_mode(struct aspeed_sdc *sdc,
->@@ -143,6 +144,21 @@ static inline int
->aspeed_sdhci_calculate_slot(struct aspeed_sdhci *dev,
-> 	return (delta / 0x100) - 1;
-> }
-> 
->+static int aspeed_get_cd(struct mmc_host *mmc)
->+{
->+	struct aspeed_sdhci *aspeed_sdhci;
->+	struct sdhci_pltfm_host *pltfm_priv;
->+	struct sdhci_host *host = mmc_priv(mmc);
->+
->+	int presence = !!(sdhci_readl(host, SDHCI_PRESENT_STATE)
->+			 & SDHCI_CARD_PRESENT);
->+
->+	pltfm_priv = sdhci_priv(host);
->+	aspeed_sdhci = sdhci_pltfm_priv(pltfm_priv);
->+
->+	return presence ^ aspeed_sdhci->cd_inverted;
->+}
->+
-> static int aspeed_sdhci_probe(struct platform_device *pdev)
-> {
-> 	struct sdhci_pltfm_host *pltfm_host;
->@@ -183,6 +199,13 @@ static int aspeed_sdhci_probe(struct
->platform_device *pdev)
-> 		goto err_pltfm_free;
-> 	}
-> 
->+	dev->cd_inverted = 0;
->+	host->mmc_host_ops.get_cd = aspeed_get_cd;
->+	if (of_property_read_bool(pdev->dev.of_node, "cd-inverted")) {
->+		dev->cd_inverted = 1;
->+		dev_info(&pdev->dev, "aspeed: sdhci: presence signal inversion
->enabled\n");
->+	}
->+
-> 	ret = mmc_of_parse(host->mmc);
-> 	if (ret)
-> 		goto err_sdhci_add;
->-- 
->2.20.1
+> Yes, I know.
 >
+> > there's no need to repost patches *only* to add the tags. The upstream
+> > maintainer will do that for acks received on the version they apply.
+> >
+> > If a tag was not added on purpose, please state why and what changed.
 >
+> The reason was that I switched to yaml rather than txt in last version
+> which recieved your Acked-by.
+> Not sure for this kind of case I can still add your Acked-by.
 
+This was a semi-automated reply. I do review it first, but if the
+changelog is not in the patch I may miss the reason.
+
+Anyways,
+
+Acked-by: Rob Herring <robh@kernel.org>
