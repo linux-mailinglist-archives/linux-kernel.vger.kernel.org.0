@@ -2,127 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 756EBFBE22
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 04:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 637E2FBE33
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 04:12:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfKNDML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 22:12:11 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:48482 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfKNDMK (ORCPT
+        id S1727141AbfKNDMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 22:12:33 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34913 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbfKNDM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 22:12:10 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.159.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DBB9420B4907;
-        Wed, 13 Nov 2019 19:12:09 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DBB9420B4907
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573701129;
-        bh=iOrOVwBuQdZlIC0TEFsCX95BqjX25mEotcAfj6F+LW4=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=ktkZWZPad5TpT7gqPfOeY2vxQ6RUlP1lfwzzIfP66mI7F6yVH7TDw2shlJBTrOc8c
-         IHqvwwY58RBhwBZgnRlBPssT0wqOIxX5o1khNAoqKbVDihegS2ljnIyw8f4QKVfAVn
-         mq45gkxYKOGdKnrFQKMZvUF1VBRZR2dbAuHNP5oY=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 5/5] IMA: Read keyrings= option from the IMA policy
-Date:   Wed, 13 Nov 2019 19:12:02 -0800
-Message-Id: <20191114031202.18012-6-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191114031202.18012-1-nramas@linux.microsoft.com>
-References: <20191114031202.18012-1-nramas@linux.microsoft.com>
+        Wed, 13 Nov 2019 22:12:28 -0500
+Received: by mail-ot1-f67.google.com with SMTP id z6so3629642otb.2;
+        Wed, 13 Nov 2019 19:12:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5OyV8nm4c+8EwNXMO4wd5EnSMUz5BFLyuPaD1PISKYA=;
+        b=U/8aGNd6CqCqR41sMylYXTumF/M/T9oZFyBCeqDGaQIL9LFqy/FDaeX5v4LuJjBcof
+         p0t4CnImcc5A2M6M/qAn8pUunqYUr6RSGH1tLWnXZ1oBPASvHpAib9RUmfNDZeh4ph4m
+         lW0mseTnnJX1Fy+NaooR8WicOMriD8b185z4LbxKELnEbkLLrH/EHD6kylocdb3m1bNp
+         CDM27IcUt7bJa80IuK2NK6AZmDLuxqqnfpMiLIn5QJwuYX/jWH/pS26lams+UFDjq5kD
+         j181wcs12UAlGRWXjIPLA7cs4uBi+aXZnv5zUXZaFQPEbMrLChdNWckVhR+Xlf5TIKu0
+         aybg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5OyV8nm4c+8EwNXMO4wd5EnSMUz5BFLyuPaD1PISKYA=;
+        b=Mn2BrskDOuIx3pzUyrXhSu9k5sznmW4AMOuhBO6R37Crv9v3PYWiDJvGdITzmx/+n/
+         iBSaTSyGAsHgftUHXBUZvDtGo3jvFnKbJwRCnDjJSHK/iRPFrDyYUj3VUSQyECjzxA/C
+         WrxhWadbEaIAGqZP4qqOXZTPrakRyUy8nktnt5VRer31jwikVgfO+sCNhnOQO9YNIMeL
+         JGZBDqb4kE5DcTNPpH3YCgzcTmURcuGfs5JVgnJDMgqUvbBo3dWrSlZonRTnUpqyrt53
+         QUYEADVjQAT2NdMRWw/wWBC0mUbKZhuwZafP5uh1JQ4JufPZoNJnX95H8K04/EoZE4jD
+         n7qg==
+X-Gm-Message-State: APjAAAVgUtPDtg6y27RRBEtNfyubfMnVvEb66bzZsBj7mK16HnjlaHZG
+        IhItCDMfjM3+JrW+TajeQGNLq1JnAMxpdJmLwEI=
+X-Google-Smtp-Source: APXvYqzYF8zGpMujc6l530oc/eNxy+Z0KByXWKH7T7Shx0NQ84GEE8kWIC+lE6MAjozmASXYfNM5UJ2timNTiA+vJGo=
+X-Received: by 2002:a05:6830:1d8b:: with SMTP id y11mr5277603oti.45.1573701147527;
+ Wed, 13 Nov 2019 19:12:27 -0800 (PST)
+MIME-Version: 1.0
+References: <1573283135-5502-1-git-send-email-wanpengli@tencent.com>
+ <4418c734-68e1-edaf-c939-f24d041acf2e@redhat.com> <CANRm+CzK_h2E9XWFipkNpAALLCBcM2vrUkdBpumwmT9AP09hfA@mail.gmail.com>
+In-Reply-To: <CANRm+CzK_h2E9XWFipkNpAALLCBcM2vrUkdBpumwmT9AP09hfA@mail.gmail.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Thu, 14 Nov 2019 11:12:17 +0800
+Message-ID: <CANRm+CzJ+kiVohGE=nPVw3fGUqHWyeW0hkSs2nA-Quwok8qn1w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] KVM: X86: Single target IPI fastpath
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read "keyrings=" option, if specified in the IMA policy, and store in
-the list of IMA rules when the configured IMA policy is read.
+On Tue, 12 Nov 2019 at 09:33, Wanpeng Li <kernellwp@gmail.com> wrote:
+>
+> On Tue, 12 Nov 2019 at 05:59, Paolo Bonzini <pbonzini@redhat.com> wrote:
+> >
+> > On 09/11/19 08:05, Wanpeng Li wrote:
+> > > From: Wanpeng Li <wanpengli@tencent.com>
+> > >
+> > > This patch tries to optimize x2apic physical destination mode, fixed delivery
+> > > mode single target IPI by delivering IPI to receiver immediately after sender
+> > > writes ICR vmexit to avoid various checks when possible.
+> > >
+> > > Testing on Xeon Skylake server:
+> > >
+> > > The virtual IPI latency from sender send to receiver receive reduces more than
+> > > 330+ cpu cycles.
+> > >
+> > > Running hackbench(reschedule ipi) in the guest, the avg handle time of MSR_WRITE
+> > > caused vmexit reduces more than 1000+ cpu cycles:
+> > >
+> > > Before patch:
+> > >
+> > >   VM-EXIT    Samples  Samples%     Time%    Min Time    Max Time   Avg time
+> > > MSR_WRITE    5417390    90.01%    16.31%      0.69us    159.60us    1.08us
+> > >
+> > > After patch:
+> > >
+> > >   VM-EXIT    Samples  Samples%     Time%    Min Time    Max Time   Avg time
+> > > MSR_WRITE    6726109    90.73%    62.18%      0.48us    191.27us    0.58us
+> >
+> > Do you have retpolines enabled?  The bulk of the speedup might come just
+> > from the indirect jump.
+>
+> Adding 'mitigations=off' to the host grub parameter:
+>
+> Before patch:
+>
+>     VM-EXIT    Samples  Samples%     Time%    Min Time    Max Time   Avg time
+> MSR_WRITE    2681713    92.98%    77.52%      0.38us     18.54us
+> 0.73us ( +-   0.02% )
+>
+> After patch:
+>
+>     VM-EXIT    Samples  Samples%     Time%    Min Time    Max Time   Avg time
+> MSR_WRITE    2953447    92.48%    62.47%      0.30us     59.09us
+> 0.40us ( +-   0.02% )
 
-This patch defines a new policy token enum namely Opt_keyrings
-and an option flag IMA_KEYRINGS for reading "keyrings=" option
-from the IMA policy.
+Hmm, sender side less vmexit time is due to kvm_exit tracepoint is
+still left in vmx_handle_exit, and ICR wrmsr is moved ahead, that is
+why the time between kvm_exit tracepoint and kvm_entry tracepoint is
+reduced.  But the virtual IPI latency still can reduce 330+ cycles.
 
-Updated ima_parse_rule() to parse "keyrings=" option in the policy.
-Updated ima_policy_show() to display "keyrings=" option.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_policy.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 76da4f17bc79..577a51a548fb 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_EUID	0x0080
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
-+#define IMA_KEYRINGS	0x0400
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -795,7 +796,8 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
--	Opt_permit_directio, Opt_pcr, Opt_template, Opt_err
-+	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
-+	Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -831,6 +833,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
-+	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1080,6 +1083,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			result = 0;
- 			entry->flags |= IMA_FSNAME;
- 			break;
-+		case Opt_keyrings:
-+			ima_log_string(ab, "keyrings", args[0].from);
-+
-+			if ((entry->keyrings) ||
-+			    (entry->action != MEASURE) ||
-+			    (entry->func != KEY_CHECK)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->keyrings) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_KEYRINGS;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1455,6 +1475,13 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_KEYRINGS) {
-+		if (entry->keyrings != NULL)
-+			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
-+		seq_printf(m, pt(Opt_keyrings), tbuf);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
--- 
-2.17.1
-
+    Wanpeng
