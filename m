@@ -2,90 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B86FC57B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 12:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F393AFC63F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 13:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKNLm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 06:42:57 -0500
-Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:56924 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726106AbfKNLm4 (ORCPT
+        id S1726838AbfKNMX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 07:23:29 -0500
+Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:21092 "EHLO
+        SHSQR01.unisoc.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726057AbfKNMX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 06:42:56 -0500
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E8972C04CE;
-        Thu, 14 Nov 2019 11:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1573731775; bh=YXLJfn/0yUG2/3omTVU/b/Ru9qVL71FIWquDK8WQkNM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=kk+svtXN+TKjI5uygnNbtb3Rq0IxEStC1fuV8WYCmKGh5hMm9ssaVuddopzyv93zA
-         ezsFOfvvVgZQmZq2F4j3phQfj1xMopK6hIZnwio/yTPaGBkWxxqG5gImrp0ainrFb9
-         XLI4FrcCbR+brVNM/pL+ju74wZCUiisN0G55/BBXcELLu1Ty8c5BBrlRt/x3DMKe1f
-         MqQV9c7Oo15SMY8La4VqwCwXUVpnnTi6Rbyn9Sg8JWjBQhoABx8uEEjqv88j3wW9wl
-         USnD/rKaslxA464Z1zextNK6IwCqg+rn/B7usFM2rUntMsATUVa/SRcocUxSs9cinH
-         qxiFDkGJ3QhHA==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id A336CA009A;
-        Thu, 14 Nov 2019 11:42:53 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 net-next 7/7] net: stmmac: xgmac: Do not enable TBU interrupt
-Date:   Thu, 14 Nov 2019 12:42:51 +0100
-Message-Id: <8b462f80863dc66f2b14e0db9e9e309b4870d4ba.1573731453.git.Jose.Abreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1573731453.git.Jose.Abreu@synopsys.com>
-References: <cover.1573731453.git.Jose.Abreu@synopsys.com>
-In-Reply-To: <cover.1573731453.git.Jose.Abreu@synopsys.com>
-References: <cover.1573731453.git.Jose.Abreu@synopsys.com>
+        Thu, 14 Nov 2019 07:23:27 -0500
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+        by SHSQR01.unisoc.com with ESMTP id xAEBnZKr019497;
+        Thu, 14 Nov 2019 19:49:35 +0800 (CST)
+        (envelope-from Orson.Zhai@unisoc.com)
+Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+        by SHSQR01.spreadtrum.com with ESMTPS id xAEBlhnU017628
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 14 Nov 2019 19:47:43 +0800 (CST)
+        (envelope-from Orson.Zhai@unisoc.com)
+Received: from localhost (10.0.74.112) by BJMBX01.spreadtrum.com (10.0.64.7)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Thu, 14 Nov 2019 19:47:47
+ +0800
+From:   Orson Zhai <orson.zhai@unisoc.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <steven.tang@unisoc.com>, Orson Zhai <orson.zhai@unisoc.com>
+Subject: [PATCH 0/2] Add syscon name and #cells support
+Date:   Thu, 14 Nov 2019 19:45:23 +0800
+Message-ID: <20191114114525.12675-1-orson.zhai@unisoc.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.0.74.112]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL: SHSQR01.spreadtrum.com xAEBlhnU017628
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that TX Coalesce has been rewritten we no longer need this
-additional interrupt enabled. This reduces CPU usage.
 
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Our SoCs have a lot of glabal registers which is hard to be managed in 
+current syscon structure.
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Same register's offset is different in different SoCs. We used chip
+config macro to manage them which prevents driver to be compiled in
+all-in-one image.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-index 99037386080a..e908d80a1d6f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-@@ -360,7 +360,7 @@
- #define XGMAC_TBUE			BIT(2)
- #define XGMAC_TIE			BIT(0)
- #define XGMAC_DMA_INT_DEFAULT_EN	(XGMAC_NIE | XGMAC_AIE | XGMAC_RBUE | \
--					XGMAC_RIE | XGMAC_TBUE | XGMAC_TIE)
-+					XGMAC_RIE | XGMAC_TIE)
- #define XGMAC_DMA_CH_Rx_WATCHDOG(x)	(0x0000313c + (0x80 * (x)))
- #define XGMAC_RWT			GENMASK(7, 0)
- #define XGMAC_DMA_CH_STATUS(x)		(0x00003160 + (0x80 * (x)))
+After talking with Arnd and Rob at Linaro Connect 2017, I got the
+idea to extend syscon with #cells support. And furthe, I added syscon
+names support to help access multiple syscon nodes more easier.
+
+These patches has been tested in our internal tree about 2 years.
+
+They have no side effect to current syscon consumer.
+
+Thanks,
+Orson
+
+--------------------
+Orson Zhai (2):
+  dt-bindings: Add syscon-names support
+  mfd: syscon: Add syscon-names and phandle args support
+
+ .../devicetree/bindings/mfd/syscon.txt        | 36 ++++++++++
+ drivers/mfd/syscon.c                          | 65 +++++++++++++++++++
+ include/linux/mfd/syscon.h                    | 22 +++++++
+ 3 files changed, 123 insertions(+)
+
 -- 
-2.7.4
+2.18.0
+
 
