@@ -2,87 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5A6FBE7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 04:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73EDFFBE81
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 05:06:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbfKNDww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 22:52:52 -0500
-Received: from mga11.intel.com ([192.55.52.93]:8089 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbfKNDww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 22:52:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 19:52:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,302,1569308400"; 
-   d="scan'208";a="404840603"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Nov 2019 19:52:51 -0800
-Received: from [10.226.39.46] (unknown [10.226.39.46])
-        by linux.intel.com (Postfix) with ESMTP id 734FE58049A;
-        Wed, 13 Nov 2019 19:52:48 -0800 (PST)
-Subject: Re: [PATCH v6 2/3] dwc: PCI: intel: PCIe RC controller driver
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, helgaas@kernel.org, jingoohan1@gmail.com,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-References: <cover.1573613534.git.eswara.kota@linux.intel.com>
- <897ef494f39291797a92efb87a59961d36384019.1573613534.git.eswara.kota@linux.intel.com>
- <20191113110009.GC32742@smile.fi.intel.com>
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Message-ID: <b369d6b9-004b-66fa-6add-322aba9c806b@linux.intel.com>
-Date:   Thu, 14 Nov 2019 11:52:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726597AbfKNEGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 23:06:08 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44202 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726489AbfKNEGH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 23:06:07 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z188so3780716lfa.11
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 20:06:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=J/M4TryYtrCPlKJQrMNCQ/FgEMUT02p93Fn4Tu8uLfA=;
+        b=tJdI1ZrEF7d7slQc2CxbSkSREOcyQJURrMcwWjJqVQMX5WRps3wZ5HLuohNH1TVFP1
+         bWt7xyaPr+MUW9z4JHiGVn5cq0vSOZjJkFvHAhYOG6onz9RdH5JwpxwwiQkPdoYDNqL7
+         pX8mSKDTKlyf6ZrrPxx1x7cXFrFps+vd6O6FMu+moEH27Pa964BdhmMxDwXiBLfusiwy
+         USMBxetxlm3pJEiYXiek1EQgtwgybnRn6bis6ESurZroR4fAeLbSEp+T63wssbyamco7
+         jS16/l1RGVC2rOtxEwnpP/9U0YHj768/rawqgV5wulBG5FB0BId2JCoZkMeKonbMyEim
+         bKYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=J/M4TryYtrCPlKJQrMNCQ/FgEMUT02p93Fn4Tu8uLfA=;
+        b=NjfCb4r9fEacSCMZBoNPY7tzCpVV5BS3RwZTTOil88SV9XEX8qCWiYb2LedBtv639H
+         ukY62mJdpQIRZHqjDyZ7lsJYqwr1ZnPNPKz5kJUm3OBQC4XKyv/p1wI9xD7lkbhHLa5y
+         TQtxSXfL0HHniZmfg8g35oRAJr2l63MsShZ5g5v31hYtZG9QCHpeWmvTADSGW9bsp9bq
+         qGwHc7uiJHaznKx/oNSDU10DCVCQTwomXlkQLwEafpZVjzXxqQkT8yhU85QmdDIBD7Zz
+         K5eP5u2sJe7nkvsTw1FvvN/J8rR0KUQ3pTWBQ7sFqgM3fP13GLTrMifOHPqDLPxBEHPR
+         L1iw==
+X-Gm-Message-State: APjAAAVus6yCTplimXiAdRGoMrWhLbLi91o4gGZKRdoc6pVLWAIVts/p
+        jklVEkcXraA2+EhpIFGse2t0ptLxURUTZ6zZhOo=
+X-Google-Smtp-Source: APXvYqxkcLBfZjHyRiVz8Jf+u68eihoqloaTd6WaN8foJXYzW251IGSoPtD3+3gADNIon2C8Hl6NLc5i21xvo/ik3uk=
+X-Received: by 2002:ac2:44a9:: with SMTP id c9mr4904935lfm.26.1573704364267;
+ Wed, 13 Nov 2019 20:06:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191113110009.GC32742@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Received: by 2002:ab3:72d1:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 20:06:03
+ -0800 (PST)
+Reply-To: jufffirti@gmail.com
+From:   UN Cabinet <ibrahimbali76543@gmail.com>
+Date:   Thu, 14 Nov 2019 05:06:03 +0100
+Message-ID: <CABc9_P4Q+a-gvi8vC=uq0Wi1QakvQRqV7NtPxWHPRZ00ud0nnQ@mail.gmail.com>
+Subject: United Nation Pay office.
+To:     p@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/2019 7:00 PM, Andy Shevchenko wrote:
-> On Wed, Nov 13, 2019 at 03:21:21PM +0800, Dilip Kota wrote:
->> Add support to PCIe RC controller on Intel Gateway SoCs.
->> PCIe controller is based of Synopsys DesignWare PCIe core.
->>
->> Intel PCIe driver requires Upconfigure support, Fast Training
->> Sequence and link speed configurations. So adding the respective
->> helper functions in the PCIe DesignWare framework.
->> It also programs hardware autonomous speed during speed
->> configuration so defining it in pci_regs.h.
->> +#include <linux/of_irq.h>
->> +#include <linux/of_platform.h>
-> I hardly see the use of above...
-Thanks for pointing it. Yes, it can be removed. I have again cross 
-checked all the header files , i see below files can also be removed.
-#include <linux/interrupt.h>
-#include <linux/of_irq.h>
-#include <linux/of_pci.h>
+Attention,
 
->> +	if (device_property_read_u32(dev, "reset-assert-ms", &lpp->rst_intrvl))
->> +		lpp->rst_intrvl = RESET_INTERVAL_MS;
-> ...perhaps you need to add
->
-> #include <linux/property.h>
->
-> instead.
+I am directed to inform you that the United Nation have compensated
+you with the sum of $3,million usd.
+Contact the (UN) payment office in Burkina Faso, email address (
+paymentun@consultant.com ) for your compensation, send your full names
+and your nationality.
 
-I see this header file is  already getting included in the driver 
-through linux/phy/phy.h => linux/of.h (of.h has #include <linux/property.h>)
-
-Thanks for reviewing the patch, i will update the driver and submit the 
-next patch version.
-
-Regards,
-Dilip
-
->
+Thanks,
+Maria Luiza Ribeiro Viotti
+Chef de Cabinet United Nation.
