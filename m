@@ -2,84 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7C8FCD26
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:19:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FEE5FCD11
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfKNSTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:19:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727603AbfKNSS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:18:29 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C7D820898;
-        Thu, 14 Nov 2019 18:18:29 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhM-0001E5-8i; Thu, 14 Nov 2019 13:18:28 -0500
-Message-Id: <20191114181828.152834791@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:18:07 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@suse.de>
-Subject: [for-next][PATCH 33/33] tracing: Remove stray tab in TRACE_EVAL_MAP_FILEs help text
-References: <20191114181734.067922168@goodmis.org>
+        id S1727718AbfKNSSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:18:42 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58844 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727647AbfKNSSf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:18:35 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8A02920B4901;
+        Thu, 14 Nov 2019 10:18:34 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8A02920B4901
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1573755514;
+        bh=sd/+ILMW3HOqjjFdPZLW7teDwHtSzje14R12p9PHhCU=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=R+xEQD03lHZZp9wEAvnUW+jsln5ODyo3ery21KtNljMyvzsUuif5WEEblErSAAgE4
+         9q1azVU9c/JfGQQO1EeMKuEqjmw7JroeNynEbKdNdhNUb4racJb0BwsmMZQZjtYppu
+         qpR1Mfp7la6gCUJxogsHk8xU4tujRYsuDpYaj/4U=
+Subject: Re: [PATCH v7 4/5] IMA: Add support to limit measuring keys
+To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191114031202.18012-1-nramas@linux.microsoft.com>
+ <20191114031202.18012-5-nramas@linux.microsoft.com>
+ <1573742237.4793.30.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <1deec85d-78b1-0cf2-ec2c-7dacaa2c3672@linux.microsoft.com>
+Date:   Thu, 14 Nov 2019 10:18:55 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <1573742237.4793.30.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On 11/14/2019 6:37 AM, Mimi Zohar wrote:
+> Keyrings may be created by userspace with any name (e.g. foo, foobar,
+> ...).  A keyring name might be a subset of another keyring name.  For
+> example, with the policy "keyrings=foobar", keys being loaded on "foo"
+> would also be measured.  Using strstr() will not achieve what is
+> needed.
+> 
+> Mimi
 
-There was a stray tab in the help text of the aforementioned config
-option which showed like this:
+Very good catch - I missed that :(
 
-  The "print fmt" of the trace events will show the enum/sizeof names
-  instead        of their values. This can cause problems for user space tools
-  ...
+Will fix and send an update.
 
-in menuconfig. Remove it and end a sentence with a fullstop.
-
-No functional changes.
-
-Link: http://lkml.kernel.org/r/20191112174219.10933-1-bp@alien8.de
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index d25314bc7a1c..b872716bb2a0 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -771,7 +771,7 @@ config TRACE_EVAL_MAP_FILE
-        depends on TRACING
-        help
- 	The "print fmt" of the trace events will show the enum/sizeof names
--	instead	of their values. This can cause problems for user space tools
-+	instead of their values. This can cause problems for user space tools
- 	that use this string to parse the raw data as user space does not know
- 	how to convert the string to its value.
- 
-@@ -792,7 +792,7 @@ config TRACE_EVAL_MAP_FILE
- 	they are needed for the "eval_map" file. Enabling this option will
- 	increase the memory footprint of the running kernel.
- 
--	If unsure, say N
-+	If unsure, say N.
- 
- config GCOV_PROFILE_FTRACE
- 	bool "Enable GCOV profiling on ftrace subsystem"
--- 
-2.23.0
-
+thanks,
+  -lakshmi
 
