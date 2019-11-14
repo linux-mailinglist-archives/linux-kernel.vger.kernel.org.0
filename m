@@ -2,115 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4800DFBCDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:06:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 194F9FBCFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfKNAGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 19:06:35 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40339 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbfKNAGe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 19:06:34 -0500
-Received: by mail-oi1-f194.google.com with SMTP id 22so3575624oip.7;
-        Wed, 13 Nov 2019 16:06:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CYs/nJxcrD0OvcDkwrYD1+P/tnyruE/I9OPXiUWOTS0=;
-        b=nL+Ih+KmDhnOWLnoFlHBVrDoy8xWwQvUddfZb2inpKyucsHxFjO5qlZxCts5NjGi3B
-         zVZqZcjmwWVxYoCIPsoFtfR1wWfnbV9gOKWa8IJhGHCu5aTCd4LN3qTxR9DRirmuvNZl
-         ZQS5eEb6WlYi7aI5/C4Vn9uAJRaGn07F2iNV3ULXq8TI+vzWEvdj4DW3H55HIxpb3c4p
-         KkwfJJftf77SH5e2rhkv7ugpzLU+g1rNKbRyy5MpCwKTcmLSfyl7dgnHwPoHw6r71Z8B
-         /KROHe+X2hjXAO7uYE+1F5BGR6J4Pj7Kt6t3PflIRUo2Ty7yXPJXZMbBMAOC/40M37NN
-         3foA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CYs/nJxcrD0OvcDkwrYD1+P/tnyruE/I9OPXiUWOTS0=;
-        b=P/neoCk5d6oGQBarWJHD7tCoQ3+VdCmUYc9p9iK5TYFwdxaTARiHX5Sz96c5F9Wrbj
-         QYgUWHAUtP8YBtZkSxyKNKFrHu3yDkdsx99Oq2U7sU9OpGuKhV1BS3aJ/tv1gXF0onJ/
-         tqHWHReH7Gi051Lq5tLLFPtvq+rlF2kPUnE/idotB/8kUDmeWw52B/VLvIwJ+LCq216h
-         Liusf0EMRQvED24wtAuPcAZPWi1QJQveWQkP9tSJmUu1/+TFyNjo3ly+GB6D0el5yAfV
-         M60rVyW0Cgu1qZtVUaTZP22It2OOOupiNJH6THacnWfRmCgBKmtZTxyk0iCnQGTviyAq
-         HHiA==
-X-Gm-Message-State: APjAAAXOZhL4PBYQdDid4Ob/pb9U1jC5DIQWLzi31LFpjbbUSR60qQU2
-        gfHvCeqPzjoDqdIOM5f0H6WMd8s/dVXGVP7v/Ew=
-X-Google-Smtp-Source: APXvYqwaqAw8MYbgnGuq2M1VJ3IV3A5udR+KEllRetHLmMBPRM5IzCj8YcQrRAbay+1u0NM34Wh5Dlk1Db7zy56LvtQ=
-X-Received: by 2002:aca:5104:: with SMTP id f4mr1155126oib.40.1573689993880;
- Wed, 13 Nov 2019 16:06:33 -0800 (PST)
+        id S1726528AbfKNAVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 19:21:39 -0500
+Received: from mga09.intel.com ([134.134.136.24]:16860 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbfKNAVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 19:21:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 16:21:38 -0800
+X-IronPort-AV: E=Sophos;i="5.68,302,1569308400"; 
+   d="scan'208";a="198632833"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 16:21:38 -0800
+Subject: [PATCH] mm: Cleanup __put_devmap_managed_page() vs ->page_free()
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     jhubbard@nvidia.com
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Date:   Wed, 13 Nov 2019 16:07:22 -0800
+Message-ID: <157368992671.2974225.13512647385398246617.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-References: <20191106225527.9121-1-mihailescu2m@gmail.com> <20191106225527.9121-2-mihailescu2m@gmail.com>
- <20191112151915.GA15786@kozik-lap>
-In-Reply-To: <20191112151915.GA15786@kozik-lap>
-From:   Marian Mihailescu <mihailescu2m@gmail.com>
-Date:   Thu, 14 Nov 2019 10:36:23 +1030
-Message-ID: <CAM3PiRwkSzD=23r9decc+wsEUvGvDDQ9bQF-stGFY180T4PHwQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] ARM: dts: exynos5420: add mali dt node and enable
- mali on Odroid XU3/4
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apologies - it was applied and tested on latest -rc, however I had
-gpu_tmu enabled as well (by adding status=okay), line which was not
-included in the patch and was the cause of it not applying. Fixed it
-in the coming v5, tested and applies on a fresh -rc7.
+After the removal of the device-public infrastructure there are only 2
+->page_free() call backs in the kernel. One of those is a device-private
+callback in the nouveau driver, the other is a generic wakeup needed in
+the DAX case. In the hopes that all ->page_free() callbacks can be
+migrated to common core kernel functionality, move the device-private
+specific actions in __put_devmap_managed_page() under the
+is_device_private_page() conditional, including the ->page_free()
+callback. For the other page types just open-code the generic wakeup.
 
-Either I've been missing something or nothing has been going on. (K. E. Gordon)
+Yes, the wakeup is only needed in the MEMORY_DEVICE_FSDAX case, but it
+does no harm in the MEMORY_DEVICE_DEVDAX and MEMORY_DEVICE_PCI_P2PDMA
+case.
 
-On Wed, Nov 13, 2019 at 1:49 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Thu, Nov 07, 2019 at 09:25:27AM +1030, Marian Mihailescu wrote:
-> > Add device tree node for Mali GPU for Exynos 542x SoC.
-> > GPU is disabled by default, and is enabled for each board after the
-> > regulator is defined. Tested on Odroid-XU4.
-> >
-> > Changes since v3:
-> > - fixed compatible to match bindings
-> >
-> > Changes since v2:
-> > - separate patch for bindings
-> > - fixed bindings typo
-> >
-> > Changes since v1:
-> > - used generic node and label for GPU
-> > - added bindings for compatible
-> > - fixed irq indentation
-> > - fixed interrupt-names to match bindings
-> > - added cooling cells for future TMU connection
-> > - used generic node and label for GPU opp table
-> > - removed always-on from SoC GPU regulator
-> >
-> > Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5420.dtsi             | 50 +++++++++++++++++++++++++++
-> >  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  6 +++-
->
-> Hi,
->
-> Unfortunately this does not apply around exynos5422-odroid-core.dtsi.
-> I think there were no changes to this file in current development cycle
-> so I am surprised that there are conflicts.
->
-> On what version were you basing your patch? Was it tested on latest
-> kernel? The patches should be based usually on one of:
-> 1. current-rc1 (v5.4-rc1)
-> 2. latest-rc (v5.4-rc7)
-> 3. maintainer's tree (my next/dt or for-next)
-> 4. linux-next
->
-> In all other cases the patch would need rebasing and re-testing.
->
-> Best regards,
-> Krzysztof
->
+Cc: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Hi John,
+
+This applies on top of today's linux-next and passes my nvdimm unit
+tests. That testing noticed that devmap_managed_enable_get() needed a
+small fixup as well.
+
+ drivers/nvdimm/pmem.c |    6 ------
+ mm/memremap.c         |   22 ++++++++++++----------
+ 2 files changed, 12 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index f9f76f6ba07b..21db1ce8c0ae 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -338,13 +338,7 @@ static void pmem_release_disk(void *__pmem)
+ 	put_disk(pmem->disk);
+ }
+ 
+-static void pmem_pagemap_page_free(struct page *page)
+-{
+-	wake_up_var(&page->_refcount);
+-}
+-
+ static const struct dev_pagemap_ops fsdax_pagemap_ops = {
+-	.page_free		= pmem_pagemap_page_free,
+ 	.kill			= pmem_pagemap_kill,
+ 	.cleanup		= pmem_pagemap_cleanup,
+ };
+diff --git a/mm/memremap.c b/mm/memremap.c
+index 022e78e68ea0..6e6f3d6fdb73 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -27,7 +27,8 @@ static void devmap_managed_enable_put(void)
+ 
+ static int devmap_managed_enable_get(struct dev_pagemap *pgmap)
+ {
+-	if (!pgmap->ops || !pgmap->ops->page_free) {
++	if (!pgmap->ops || (pgmap->type == MEMORY_DEVICE_PRIVATE
++				&& !pgmap->ops->page_free)) {
+ 		WARN(1, "Missing page_free method\n");
+ 		return -EINVAL;
+ 	}
+@@ -449,12 +450,6 @@ void __put_devmap_managed_page(struct page *page)
+ 	 * holds a reference on the page.
+ 	 */
+ 	if (count == 1) {
+-		/* Clear Active bit in case of parallel mark_page_accessed */
+-		__ClearPageActive(page);
+-		__ClearPageWaiters(page);
+-
+-		mem_cgroup_uncharge(page);
+-
+ 		/*
+ 		 * When a device_private page is freed, the page->mapping field
+ 		 * may still contain a (stale) mapping value. For example, the
+@@ -476,10 +471,17 @@ void __put_devmap_managed_page(struct page *page)
+ 		 * handled differently or not done at all, so there is no need
+ 		 * to clear page->mapping.
+ 		 */
+-		if (is_device_private_page(page))
+-			page->mapping = NULL;
++		if (is_device_private_page(page)) {
++			/* Clear Active bit in case of parallel mark_page_accessed */
++			__ClearPageActive(page);
++			__ClearPageWaiters(page);
+ 
+-		page->pgmap->ops->page_free(page);
++			mem_cgroup_uncharge(page);
++
++			page->mapping = NULL;
++			page->pgmap->ops->page_free(page);
++		} else
++			wake_up_var(&page->_refcount);
+ 	} else if (!count)
+ 		__put_page(page);
+ }
+
