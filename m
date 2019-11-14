@@ -2,124 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5613AFD116
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 23:45:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C94EFFD11B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 23:47:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfKNWph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 17:45:37 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43012 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfKNWph (ORCPT
+        id S1727083AbfKNWrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 17:47:15 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42274 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfKNWrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 17:45:37 -0500
-Received: by mail-oi1-f193.google.com with SMTP id l20so6850535oie.10
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 14:45:36 -0800 (PST)
+        Thu, 14 Nov 2019 17:47:15 -0500
+Received: by mail-wr1-f65.google.com with SMTP id a15so8717246wrf.9;
+        Thu, 14 Nov 2019 14:47:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=JGRlcMeoKAOOhjcDJOF5DFr5u4BH2xeU+rJMkirYWaY=;
+        b=eoX51meUHmLR8wQIfteVxzkvSZri+BeLozXZmXDuNhJcArpEX+XUjnEc506JaWySMF
+         fvfTvmAQPASJqGPozMCGBtFSbhzGbCjWqUf5lEc9CFOS/S4CNSyVFPebOVza2DnCJ+Jc
+         nivEEojQyUnOkHQV/qTkqlr31rG86Qver7ATIhE1o3SVN3YaFUUke59puk/mNRsDvi1L
+         743tCms9wMdlL3+oXMxB3JymLJbpIGtsel0gDu0efrr/npXxjoPi4ScrRX4FX5XlEALV
+         r++Sfbs/rw2znawKFhrfSeNb0rfkBzWPA0NPnExU6BhIcHPccLYQvxNPoJFG4pOj0Vd8
+         OUJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DhMAaOuLWO6MHWm0rzegVnx1g/8bytY9Jgc505hZftA=;
-        b=c6MNRRz3abkWdy4hRt7V7q18dBgCZekG8uF79K45svJMTmE7w1C/gaW0Uqv+h7IJXk
-         TkH7eDzX76ol1PLqLkmjnsk+gW7r+Ih/5Hj9DeYVvrSck0MzhA1upaBXqlhCAK/wYisf
-         C8SMNGJLp7BQjSZqXvSUibhu/9HBuhWHvqc0jmmILXIG1R7O5UfSStruefcSslRRg6P4
-         XIjIZkfnmaU53eZMGeyeslivE8U1BOw5Kh4timGwS9Cr+GbGoK+ZGbjI7bCau8FvLyhk
-         6uEe2qZdGBFD1kcA9pJljUc5VAZnLdRBTSUTJ02z/bTg/YoNNpQPNCGdunAPtZ5sQEU7
-         9ZhA==
-X-Gm-Message-State: APjAAAVaTVYZnilI1HWpeC7kebZMW33BXfNp0ErG52+NEpDO/JSOyRuf
-        yY+gZLAWesA2cxrUK28QncL5Mz6Ml1d9d8OvtWI=
-X-Google-Smtp-Source: APXvYqxge4NVhPaIpqZwlGWo/G7Jr3nHf6l+Z+kaIKF14Hia8GsmFTC18onwYR8YvPvVCbEOgYIuy6Q3j+0MwI5e2uo=
-X-Received: by 2002:aca:1101:: with SMTP id 1mr5685729oir.103.1573771535925;
- Thu, 14 Nov 2019 14:45:35 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JGRlcMeoKAOOhjcDJOF5DFr5u4BH2xeU+rJMkirYWaY=;
+        b=T7RYs0hnQAn3nWkMCYhe+2JEirn701YtDTRL3NNBRVJsFXxKNDKuetRTvL67M+4WbA
+         /spfzu8kPgcxH/wLi1IZzWtuSFLFUdK+fii1Qdz02L2cl845thpYoTgokOTVBBMAQst6
+         +4t5ksnV+gfqEYeDItsq/n1m2K23vXHMr5RnMQqgrXyBb+G46fDu5GD/CKaqvQ4L/2Z7
+         tgaBVBmC3LcVdj4kluXx0QTozLdp7fOpwgPYHFq52CTPWLQDXan+/lBQ44pztewsSKUc
+         9HSfncigNilJx9ja1FcIoNm9h1jUjIXkdXulAObRAvD8Cl93+ys1j0QpBJ2awvun5OnE
+         ZaWA==
+X-Gm-Message-State: APjAAAVZXFMrvH5cpzuGBbjJPR8o7RRvj0caGWXSkomJAlc7K2sSmS8n
+        4UMna6L/lXycJbQSdI3XFEwr7zaDkkRDjj+rcfg=
+X-Google-Smtp-Source: APXvYqwuKMxsXT28TKbuQooL9rQ1QVttKzL0StbnqApJLFSD/gam1Od9P5ARGt5yH6+H78iilIRoigLLmxYsdIh2VJ4=
+X-Received: by 2002:adf:ef0c:: with SMTP id e12mr11270259wro.270.1573771632171;
+ Thu, 14 Nov 2019 14:47:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20191114222348.226355-1-saravanak@google.com>
-In-Reply-To: <20191114222348.226355-1-saravanak@google.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 14 Nov 2019 23:45:24 +0100
-Message-ID: <CAJZ5v0gFUmNd1JNNV+KdQLZ6Zw0VTjtEumbBpy20=0Py0q=OKQ@mail.gmail.com>
-Subject: Re: [PATCH v3] driver core: Allow device link operations inside sync_state()
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191108084517.21617-1-peron.clem@gmail.com> <20191108084517.21617-5-peron.clem@gmail.com>
+ <20191113085858.76rad3vpszknu4cp@pengutronix.de>
+In-Reply-To: <20191113085858.76rad3vpszknu4cp@pengutronix.de>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Thu, 14 Nov 2019 23:47:00 +0100
+Message-ID: <CAJiuCceYg7WC=peHYeC=eE-HOsKH_SdsKyWwkWY5VpeY+uzaKA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/7] pwm: sun4i: Add support to output source clock directly
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 11:23 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> Some sync_state() implementations might need to call APIs that in turn
-> make calls to device link APIs. So, do the sync_state() callbacks
-> without holding the device link lock.
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  drivers/base/core.c | 80 ++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 72 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index e6d3e6d485da..9a88bcfd5d33 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -695,7 +695,26 @@ int device_links_check_suppliers(struct device *dev)
->         return ret;
->  }
->
-> -static void __device_links_supplier_sync_state(struct device *dev)
-> +/**
-> + * __device_links_queue_sync_state - Queue a device for sync_state() callback
-> + * @dev: Device to call sync_state() on
-> + * @list: List head to queue the @dev on
-> + *
-> + * Queues a device for a sync_state() callback when the device links write lock
-> + * isn't held. This allows the sync_state() execution flow to use device links
-> + * APIs.  The caller must ensure this function is called with
-> + * device_links_write_lock() held.
-> + *
-> + * This function does a get_device() to make sure the device is not freed while
-> + * on this list.
-> + *
-> + * So the caller must also ensure that device_links_flush_sync_list() is called
-> + * as soon as the caller releases device_links_write_lock().  This is necessary
-> + * to make sure the sync_state() is called in a timely fashion and the
-> + * put_device() is called on this device.
-> + */
-> +static void __device_links_queue_sync_state(struct device *dev,
-> +                                           struct list_head *list)
->  {
->         struct device_link *link;
->
-> @@ -709,12 +728,46 @@ static void __device_links_supplier_sync_state(struct device *dev)
->                         return;
->         }
->
-> -       if (dev->bus->sync_state)
-> -               dev->bus->sync_state(dev);
-> -       else if (dev->driver && dev->driver->sync_state)
-> -               dev->driver->sync_state(dev);
-> -
-> +       /*
-> +        * Set the flag here to avoid adding the same device to a list more
-> +        * than once. This can happen if new consumers get added to the device
-> +        * and probed before the list is flushed.
-> +        */
->         dev->state_synced = true;
-> +
-> +       if (list_empty(&dev->links.defer_sync)) {
-> +               get_device(dev);
-> +               list_add_tail(&dev->links.defer_sync, list);
-> +       } else {
-> +               WARN_ON(1);
-> +       }
+Hi Uwe,
 
-Now you can do:
+On Wed, 13 Nov 2019 at 09:58, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> On Fri, Nov 08, 2019 at 09:45:14AM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
+> > From: Jernej Skrabec <jernej.skrabec@siol.net>
+> >
+> > PWM core has an option to bypass whole logic and output unchanged sourc=
+e
+> > clock as PWM output. This is achieved by enabling bypass bit.
+> >
+> > Note that when bypass is enabled, no other setting has any meaning, not
+> > even enable bit.
+> >
+> > This mode of operation is needed to achieve high enough frequency to
+> > serve as clock source for AC200 chip which is integrated into same
+> > package as H6 SoC.
+> >
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> > ---
+> >  drivers/pwm/pwm-sun4i.c | 44 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> >
+> > diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
+> > index a10022d6c0fd..9cc928ab47bc 100644
+> > --- a/drivers/pwm/pwm-sun4i.c
+> > +++ b/drivers/pwm/pwm-sun4i.c
+> > @@ -3,6 +3,10 @@
+> >   * Driver for Allwinner sun4i Pulse Width Modulation Controller
+> >   *
+> >   * Copyright (C) 2014 Alexandre Belloni <alexandre.belloni@free-electr=
+ons.com>
+> > + *
+> > + * Limitations:
+> > + * - When outputing the source clock directly, the PWM logic will be b=
+ypassed
+> > + *   and the currently running period is not guaranteed to be complete=
+d
+> >   */
+> >
+> >  #include <linux/bitops.h>
+> > @@ -73,6 +77,7 @@ static const u32 prescaler_table[] =3D {
+> >
+> >  struct sun4i_pwm_data {
+> >       bool has_prescaler_bypass;
+> > +     bool has_direct_mod_clk_output;
+> >       unsigned int npwm;
+> >  };
+> >
+> > @@ -118,6 +123,20 @@ static void sun4i_pwm_get_state(struct pwm_chip *c=
+hip,
+> >
+> >       val =3D sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
+> >
+> > +     /*
+> > +      * PWM chapter in H6 manual has a diagram which explains that if =
+bypass
+> > +      * bit is set, no other setting has any meaning. Even more, exper=
+iment
+> > +      * proved that also enable bit is ignored in this case.
+> > +      */
+> > +     if ((val & BIT_CH(PWM_BYPASS, pwm->hwpwm)) &&
+> > +         sun4i_pwm->data->has_direct_mod_clk_output) {
+> > +             state->period =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, clk_rate=
+);
+> > +             state->duty_cycle =3D DIV_ROUND_UP_ULL(state->period, 2);
+>
+> I first thought you're losing precision here by reusing state->period
+> here, but with a divisor of 2 everything is fine.
+>
+> > +             state->polarity =3D PWM_POLARITY_NORMAL;
+> > +             state->enabled =3D true;
+> > +             return;
+> > +     }
+> > +
+> >       if ((PWM_REG_PRESCAL(val, pwm->hwpwm) =3D=3D PWM_PRESCAL_MASK) &&
+> >           sun4i_pwm->data->has_prescaler_bypass)
+> >               prescaler =3D 1;
+> > @@ -204,6 +223,7 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, s=
+truct pwm_device *pwm,
+> >       struct sun4i_pwm_chip *sun4i_pwm =3D to_sun4i_pwm_chip(chip);
+> >       struct pwm_state cstate;
+> >       u32 ctrl;
+> > +     bool bypass =3D false;
+> >       int ret;
+> >       unsigned int delay_us;
+> >       unsigned long now;
+> > @@ -218,9 +238,24 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, =
+struct pwm_device *pwm,
+> >               }
+> >       }
+> >
+> > +     /*
+> > +      * Although it would make much more sense to check for bypass in
+> > +      * sun4i_pwm_calculate(), value of bypass bit also depends on "en=
+abled".
+>
+> I don't understand this reasoning. sun4i_pwm_calculate knows about
+> .enabled and also sun4i_pwm->data->has_direct_mod_clk_output. Maybe just
+> add a bool *bypass as parameter and move the logic there?
 
-        if (WARN_ON(!list_empty(&dev->links.defer_sync)))
-                return;
+I asked myself the same question, however the sun4i_pwm_calculate is
+only called when period or duty_cycle is updated not when state is
+toggled between disabled / enabled.
 
-        get_device(dev);
-        list_add_tail(&dev->links.defer_sync, list);
+Should we also call it when the state is switched to enabled ?
 
-The rest of the patch LGTM.
+Regards,
+Cl=C3=A9ment
+
+>
+> > +      */
+> > +     if (state->enabled) {
+> > +             u32 clk_rate =3D clk_get_rate(sun4i_pwm->clk);
+> > +             bypass =3D (state->period * clk_rate >=3D NSEC_PER_SEC) &=
+&
+> > +                      (state->period * clk_rate < 2 * NSEC_PER_SEC) &&
+> > +                      (state->duty_cycle * clk_rate * 2 >=3D NSEC_PER_=
+SEC);
+> > +     }
+> > +
+>
+> This looks right now.
+>
+> Best regards
+> Uwe
+>
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
+|
