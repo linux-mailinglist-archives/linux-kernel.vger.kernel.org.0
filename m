@@ -2,119 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D302FC322
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 10:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41DF3FC333
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 10:58:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbfKNJ5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 04:57:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41516 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726024AbfKNJ5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 04:57:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 59227ADBB;
-        Thu, 14 Nov 2019 09:57:38 +0000 (UTC)
-Date:   Thu, 14 Nov 2019 10:57:37 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jonathan Richardson <jonathan.richardson@broadcom.com>
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        sergey.senozhatsky@gmail.com, linux-serial@vger.kernel.org,
+        id S1727021AbfKNJ6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 04:58:20 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55364 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726973AbfKNJ6Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 04:58:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573725494;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fnsq7tDFsMeM2bW2mfSnMuHGo8jDj07T4KGT6z4t4ZE=;
+        b=gXqQEl3xlPT3tOeBmwsbkNsqqy0tZHr44OI0gl+vt5QrTyCgP9yixDLzNkD2rp04oiQ8mP
+        rBk7pGHNzRyixPq4WIlJaAP0nsmxsS9c3/4AaB3wU21XuYfV411BxpebssrfOi5VxJ89Ez
+        YaRNdXDUEc0UZ1gzWvvtzytmZztFT/w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-71-A843iaCbNWGJZRawbJf9lg-1; Thu, 14 Nov 2019 04:58:11 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B9CCF1005509;
+        Thu, 14 Nov 2019 09:58:08 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-81.ams2.redhat.com [10.36.117.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 51FD2165D3;
+        Thu, 14 Nov 2019 09:58:05 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     Stephen Hemminger <sthemmin@microsoft.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: Re: console output duplicated when registering additional consoles
-Message-ID: <20191114095737.wl5nvxu3w6p5thfc@pathway.suse.cz>
-References: <CAHrpVsUHgJA3wjh4fDg43y5OFCCvQb-HSRpyGyhFEKXcWw8WnQ@mail.gmail.com>
- <CAHrpVsW6jRUYK_mu+dLaBvucAAtUPQ0zcH6_NxsUsTrPewiY_w@mail.gmail.com>
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org
+Subject: [PATCH net-next v2 02/15] vsock: remove vm_sockets_get_local_cid()
+Date:   Thu, 14 Nov 2019 10:57:37 +0100
+Message-Id: <20191114095750.59106-3-sgarzare@redhat.com>
+In-Reply-To: <20191114095750.59106-1-sgarzare@redhat.com>
+References: <20191114095750.59106-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHrpVsW6jRUYK_mu+dLaBvucAAtUPQ0zcH6_NxsUsTrPewiY_w@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: A843iaCbNWGJZRawbJf9lg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-11-13 17:28:45, Jonathan Richardson wrote:
-> Adding printk maintainers.
-> This commit seems to have introduced the error:
-> 
-> commit f92b070f2dc89a8ff1a0cc8b608e20abef894c7d
-> Author: Petr Mladek <pmladek@suse.com>
-> Date:   Thu Sep 13 14:34:06 2018 +0200
-> 
->     printk: Do not miss new messages when replaying the log
-> 
-> If I checkout to the commit before
-> (a06b0c82a049d34d4dc273e8692ed0894458c468), the console output is
-> normal when registering 2 bootconsoles and 2 normal consoles. I've
-> added the log for 4.19.0-rc3 for comparison (previous version was
-> 5.1.0). I don't think this commit took into account that more than one
-> console could be registered. When the second console is registered,
-> 'console_seq >= exclusive_console_stop_seq' is true (both are 0) and
-> exclusive_console is always set to NULL resulting in the log being
-> replayed again to the uart8250 console:
+vm_sockets_get_local_cid() is only used in virtio_transport_common.c.
+We can replace it calling the virtio_transport_get_ops() and
+using the get_local_cid() callback registered by the transport.
 
-This race should not happen because Both exclusive_console and
-exclusive_console_stop_seq are manipulated under console_lock.
-And the log is replayed before console_lock is released.
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ include/linux/vm_sockets.h              |  2 --
+ net/vmw_vsock/af_vsock.c                | 10 ----------
+ net/vmw_vsock/virtio_transport_common.c |  2 +-
+ 3 files changed, 1 insertion(+), 13 deletions(-)
 
->         /* Output to all consoles once old messages replayed. */
->         if (unlikely(exclusive_console &&
->                  console_seq >= exclusive_console_stop_seq)) {
->             exclusive_console = NULL;
->         }
-> 
-> I'm looking into it but any input is helpful. Thanks.
+diff --git a/include/linux/vm_sockets.h b/include/linux/vm_sockets.h
+index 33f1a2ecd905..7dd899ccb920 100644
+--- a/include/linux/vm_sockets.h
++++ b/include/linux/vm_sockets.h
+@@ -10,6 +10,4 @@
+=20
+ #include <uapi/linux/vm_sockets.h>
+=20
+-int vm_sockets_get_local_cid(void);
+-
+ #endif /* _VM_SOCKETS_H */
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 1f4fde4711b6..eb13693e9d04 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -129,16 +129,6 @@ static struct proto vsock_proto =3D {
+ static const struct vsock_transport *transport;
+ static DEFINE_MUTEX(vsock_register_mutex);
+=20
+-/**** EXPORTS ****/
+-
+-/* Get the ID of the local context.  This is transport dependent. */
+-
+-int vm_sockets_get_local_cid(void)
+-{
+-=09return transport->get_local_cid();
+-}
+-EXPORT_SYMBOL_GPL(vm_sockets_get_local_cid);
+-
+ /**** UTILS ****/
+=20
+ /* Each bound VSocket is stored in the bind hash table and each connected
+diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio=
+_transport_common.c
+index 828edd88488c..3edc373d2acc 100644
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -168,7 +168,7 @@ static int virtio_transport_send_pkt_info(struct vsock_=
+sock *vsk,
+ =09struct virtio_vsock_pkt *pkt;
+ =09u32 pkt_len =3D info->pkt_len;
+=20
+-=09src_cid =3D vm_sockets_get_local_cid();
++=09src_cid =3D virtio_transport_get_ops()->transport.get_local_cid();
+ =09src_port =3D vsk->local_addr.svm_port;
+ =09if (!info->remote_cid) {
+ =09=09dst_cid=09=3D vsk->remote_addr.svm_cid;
+--=20
+2.21.0
 
-IMHO, the problem is that the log should not be replayed at all.
-See the following code in register_console():
-
-	/*
-	 * If we have a bootconsole, and are switching to a real console,
-	 * don't print everything out again, since when the boot console, and
-	 * the real console are the same physical device, it's annoying to
-	 * see the beginning boot messages twice
-	 */
-	if (bcon && ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV))
-		newcon->flags &= ~CON_PRINTBUFFER;
-
-I already see two problems there:
-
-1. CON_PRINTBUFFER is cleared only when the new console has
-   CON_CONSDEV flag set. It is set only for the console
-   that is defined as the last on the command line.
-   It is a so-called preferred console.
-
-2. bcon is set to the first console in console_drivers list.
-   It is the first registered boot console.
-
-Sigh, this works for simple configuration. But it fails badly when
-more different consoles are configured.
-
-We should clear CON_PRINTBUFFER flag when the real console
-replacing an already registered boot console is registered.
-
-BTW: Similar bug is also at the end of register_console().
-The boot consoles are unregistered only when the preferred
-console is installed.
-
-For a proper solution we would need to match boot and real
-consoles that write messages into the physical device.
-But I am afraid that there is no support for this.
-con->match() callback compares the name defined on
-the command line. And it has side effects (the matching
-console is prepared for registration).
-
-To be honest I am not much familiar with the device interface.
-I am not sure if there is a way to detect the two drivers
-use the same physical hardware.
-
-Sigh, it is a huge historical mess. It would needed a lot
-of work to clean it up.
-
-Best Regards,
-Petr
