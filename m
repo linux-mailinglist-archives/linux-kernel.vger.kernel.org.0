@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA878FDDDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:29:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8F2DFDDEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2019 13:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbfKOM3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 15 Nov 2019 07:29:49 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:44447 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727196AbfKOM3t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Nov 2019 07:29:49 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iVajP-0004hB-MN; Fri, 15 Nov 2019 13:29:43 +0100
-To:     Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/2] arm64: export =?UTF-8?Q?=5F=5Fhyp=5Fstub=5Fvector?=  =?UTF-8?Q?s?=
-X-PHP-Originating-Script: 0:main.inc
+        id S1727546AbfKOMdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 15 Nov 2019 07:33:10 -0500
+Received: from mail.hgs.gob.ec ([190.214.19.83]:57340 "HELO mail.hgs.gob.ec"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1727345AbfKOMdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Nov 2019 07:33:10 -0500
+X-Greylist: delayed 44705 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Nov 2019 07:33:00 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.hgs.gob.ec (Postfix) with ESMTP id 17012A1A063;
+        Thu, 14 Nov 2019 16:12:29 -0500 (-05)
+Received: from mail.hgs.gob.ec ([127.0.0.1])
+        by localhost (mail.hgs.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 9Q0TFYupel77; Thu, 14 Nov 2019 16:12:28 -0500 (-05)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.hgs.gob.ec (Postfix) with ESMTP id CCC4FA01868;
+        Thu, 14 Nov 2019 16:11:58 -0500 (-05)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.hgs.gob.ec CCC4FA01868
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hgs.gob.ec;
+        s=DD120D66-D63F-11E9-9729-9452E74E1CB4; t=1573765918;
+        bh=oYeOwTtTK4mcRNNK0JGL7ZOgP8mm7StpJG1pujYq4Z0=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=MJg4GetvVFVhN5nvEUf6uYPZqIqwOMYtbiWgf1F+81uK16q8Lam42f6x66RnNZF8j
+         zM78TILOZzK89k7e9J/UiPOt7Rf8822b99inDMMHhp6hrL39Znl/BChWRAis8zjplm
+         BiBEjAmq6PuVV30fM3iXZa1iqPjNbSoha4DZWXeTgcE65B/9RYWQyR688P9F7DbKDk
+         RypG97FHdap1/95zE6bAKSrdrQlyD1aC2DsUA5KFzsyluasRnSyNlHmOHelKieNnhP
+         OVheIiLUbPNl+5LG2q1Neblv6iUaPHG42W+PQXvCSsEHSqJFckXS8UrK6ClfXZLCjr
+         I+vJvICvl6MSw==
+X-Virus-Scanned: amavisd-new at hgs.gob.ec
+Received: from mail.hgs.gob.ec ([127.0.0.1])
+        by localhost (mail.hgs.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id VKElzlRx1zD8; Thu, 14 Nov 2019 16:11:58 -0500 (-05)
+Received: from [10.32.142.65] (unknown [105.4.7.6])
+        by mail.hgs.gob.ec (Postfix) with ESMTPSA id A8F81A0186E;
+        Thu, 14 Nov 2019 16:11:20 -0500 (-05)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 15 Nov 2019 12:29:43 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <catalin.marinas@arm.com>, <will@kernel.org>,
-        Alice Guo <alice.guo@nxp.com>, <jan.kiszka@siemens.com>,
-        <linux-kernel@vger.kernel.org>, <ralf.ramsauer@oth-regensburg.de>,
-        <james.morse@arm.com>, <allison@lohutok.net>, <tglx@linutronix.de>,
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-In-Reply-To: <1573810972-2159-2-git-send-email-peng.fan@nxp.com>
-References: <1573810972-2159-1-git-send-email-peng.fan@nxp.com>
- <1573810972-2159-2-git-send-email-peng.fan@nxp.com>
-Message-ID: <863d923961a505af307ba679fe3cbb32@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: peng.fan@nxp.com, catalin.marinas@arm.com, will@kernel.org, alice.guo@nxp.com, jan.kiszka@siemens.com, linux-kernel@vger.kernel.org, ralf.ramsauer@oth-regensburg.de, james.morse@arm.com, allison@lohutok.net, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000=2E000_Euro?=
+To:     Recipients <dietetica@hgs.gob.ec>
+From:   ''Charles jackson'' <dietetica@hgs.gob.ec>
+Date:   Thu, 14 Nov 2019 23:11:11 +0200
+Reply-To: charlesjacksonjr001@gmail.com
+Message-Id: <20191114211120.A8F81A0186E@mail.hgs.gob.ec>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-15 09:45, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->
-> External hypervisors, like Jailhouse, need this address when they are
-> deactivated, in order to restore original state.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  arch/arm64/include/asm/virt.h | 2 ++
->  arch/arm64/kernel/hyp-stub.S  | 1 +
->  2 files changed, 3 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/virt.h 
-> b/arch/arm64/include/asm/virt.h
-> index 0958ed6191aa..b1b48353e3b3 100644
-> --- a/arch/arm64/include/asm/virt.h
-> +++ b/arch/arm64/include/asm/virt.h
-> @@ -62,6 +62,8 @@
->   */
->  extern u32 __boot_cpu_mode[2];
->
-> +extern char __hyp_stub_vectors[];
-> +
->  void __hyp_set_vectors(phys_addr_t phys_vector_base);
->  void __hyp_reset_vectors(void);
->
-> diff --git a/arch/arm64/kernel/hyp-stub.S 
-> b/arch/arm64/kernel/hyp-stub.S
-> index f17af9a39562..22b728fb14bd 100644
-> --- a/arch/arm64/kernel/hyp-stub.S
-> +++ b/arch/arm64/kernel/hyp-stub.S
-> @@ -38,6 +38,7 @@ ENTRY(__hyp_stub_vectors)
->  	ventry	el1_fiq_invalid			// FIQ 32-bit EL1
->  	ventry	el1_error_invalid		// Error 32-bit EL1
->  ENDPROC(__hyp_stub_vectors)
-> +EXPORT_SYMBOL(__hyp_stub_vectors);
+Lieber Freund,
 
-NAK.
+Ich bin Herr Charles W Jackson, North Carolina, Vereinigte Staaten von Amer=
+ika, der Mega-Gewinner von 344 Millionen US-Dollar. Beim Mega-Millions-Jack=
+pot spende ich an 5 zuf&auml;llige Personen. Wenn Sie diese E-Mail erhalten=
+, wurde Ihre E-Mail zu einem Spinball, den ich am h&auml;ufigsten verteilt =
+habe von meinem Verm&ouml;gen an eine Reihe von Wohlt&auml;tigkeitsorganisa=
+tionen. Ich habe mich freiwillig entschlossen, Ihnen als einer der ausgew&a=
+uml;hlten 5 einen Betrag von &euro; 2.000.000,00 zu spenden, um meine Gewin=
+ne zu &uuml;berpr&uuml;fen.
+Dies ist Ihr Spendencode: [CJ530342019]
 
-There is no in-tree users of this. If you're using jailhouse, you're
-already patching your kernel, and you can carry this. Mainline doesn't
-need this at all.
+www.youtube.com/watch?v=3DBSr8myiLPMQ
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Antworten Sie auf diese E-Mail mit dem SPENDER-CODE: =
+
+
+charlesjacksonjr001@gmail.com
+
+Ich hoffe, Sie und Ihre Familie gl&uuml;cklich zu machen
+
+Sch&ouml;ne Gr&uuml;&szlig;e
+Mr. Charles Jackson
