@@ -2,91 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33494FC0AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C534FC0B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:24:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbfKNHXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 02:23:06 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:41887 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725838AbfKNHXF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 02:23:05 -0500
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id V9Sti8HvZ5b4MV9Swimr8r; Thu, 14 Nov 2019 08:23:03 +0100
-Subject: Re: [PATCH v11 00/11] Rockchip ISP Driver
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>
-Cc:     linux-rockchip@lists.infradead.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
-        mchehab@kernel.org, heiko@sntech.de,
-        linux-arm-kernel@lists.infradead.org, jeffy.chen@rock-chips.com,
-        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, robh+dt@kernel.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, sakari.ailus@linux.intel.com,
-        kernel@collabora.com, ezequiel@collabora.com,
-        linux-media@vger.kernel.org, jacob-chen@iotwrt.com,
-        zhengsq@rock-chips.com
-References: <20191114051242.14651-1-helen.koike@collabora.com>
- <20191114051722.GA316916@kroah.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <835e058f-59b7-32e8-8fc9-d5adeacfe021@xs4all.nl>
-Date:   Thu, 14 Nov 2019 08:22:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726838AbfKNHX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 02:23:58 -0500
+Received: from verein.lst.de ([213.95.11.211]:37939 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725601AbfKNHX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 02:23:58 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 8459568AFE; Thu, 14 Nov 2019 08:23:54 +0100 (CET)
+Date:   Thu, 14 Nov 2019 08:23:54 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm: Cleanup __put_devmap_managed_page() vs
+ ->page_free()
+Message-ID: <20191114072354.GA26448@lst.de>
+References: <157368992671.2974225.13512647385398246617.stgit@dwillia2-desk3.amr.corp.intel.com> <913133b7-58d8-9645-fc89-c2819825e1ee@nvidia.com> <CAPcyv4hK1hkDn9WohRn4F8JkAOBu94jzOJtU+43PP2qSX77Fqg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191114051722.GA316916@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfI3GlCbcBMayGg/klLN5FyDQG84A1RgsYbiEg9uA16/LV3+EqUHoZg0tkqv+XfUdnHqxFiujQbQ3G/7OMMMBGzw4rF20cRBB+tz3F9fKOOkErIqHV6i6
- IMFdoCJqMAeHc77G7PaZnfkTSShQb8FatH40pGaAi/dC2hng91vpPBiAb9fqhw6y7lKdgizL2QxfkUJ64CpDS1x6hFRHSL9wnHwNBByAQ8/4dkkELjHN/tGP
- GLdSnRlmXkuMGD9fLZlIXBnH9+GCd2pPTsQ+MNVhlhyUXi0/CWwonLvGaP4E+YBi4JOE+c+WhXTLnxpntEcPaYgJNnmDpbk1/8OqCcpj+1KLKQNMn6Ova8fj
- v9HyC6NRGhhkNsO/XU1saX5MGI7d6/bas0eoPLrvWaDZBTNHiS3G1Mhcob8OT53AvayR3qy/gp/IsEve37TEoSBk0mFKjApoBzo1iII0/wdzZ5GH1LAb/+bu
- tfCk7F/wJ4hWfkl0wFHrzbqB19tloyGLaEHvvPczy7pjtQmTHjuzoUPXqmE7pjuJrajn0HAZx39iL8FaYybg9RZaMzieMtN/0QGyijGMHCbKPMyK3jqOCsaI
- TW7IxyDQKF0g69q06Ma2EkTyugMAaAbGO5cjR+aVfl1Yh9lXaB4NEMGY95NjtG0WiJbcTnjfZqbyGQVmd5R+HTql0+bJ0Ouh5BHW61q/ZQcHkvTn49aOBQOe
- mQNcIxFIjSAbc1CHhU9D5clOmVN+7f3gh/fTdD5QnVEMFkoPz0wz5x48cXdDkT+UKhpmC6yBD3TN3hAHjWJ4qa51RBgQkw1sQbbxb9USb3pAiUs8Jrc2YLT/
- nIyAGiRYzG25zrsWVpQMrCBj28xKKSqSJA8tTCSsK2ff6e1qQshIjF27mSYYLUQXtYCBioMfAFgOb/t45L7hhqQcg3VgJm0NoAgpbg5+4Pt2PycBnCVkiqRh
- sIrsqA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hK1hkDn9WohRn4F8JkAOBu94jzOJtU+43PP2qSX77Fqg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/19 6:17 AM, Greg KH wrote:
-> On Thu, Nov 14, 2019 at 02:12:31AM -0300, Helen Koike wrote:
->> Hello,
->>
->> This series adds the Rockchip Image Signal Processing Unit v1 driver to
->> staging.
->>
->> The main reason to be in staging is that people are already using it from the
->> mailing list (including libcamera), and having it in mainline makes the workflow
->> easier. Also, it is easier for other people to contribute back (with code
->> or testing the driver).
->>
->> We plan to actively work on this driver to get it our of staging.
->>
->> This patchset is also available at:
->> https://gitlab.collabora.com/koike/linux/tree/rockchip/isp/v11
->>
->> Libcamera patched to work with this version:
->> https://gitlab.collabora.com/koike/libcamera
->> (also sent to the mailing list)
->>
->> The major difference in v11 are:
->> - Fixed compiling warnings found with W=1
->> - Fixed checkpatch errors
->> - Add clock-names values in dt-bindings
->>
->> This series only touches MAINTAINERS file and drivers/staging/
+On Wed, Nov 13, 2019 at 04:47:38PM -0800, Dan Williams wrote:
+> > Got it. This will appear in the next posted version of my "mm/gup: track
+> > dma-pinned pages: FOLL_PIN, FOLL_LONGTERM" patchset.
 > 
-> Looks sane, but as this is drivers/staging/media I am guessing this will
-> go through the media kernel tree, not my staging tree, right?
+> Thanks!
 
-Right, I'll take care of this.
-
-Regards,
-
-	Hans
+John - can you please send a small series just doing the zone device
+patches rework?  That way we can review it separately and maybe even get
+it into 5.5.
