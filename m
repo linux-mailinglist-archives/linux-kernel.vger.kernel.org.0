@@ -2,111 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C193FCF96
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53C9FFCF5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfKNUTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:19:48 -0500
-Received: from mga03.intel.com ([134.134.136.65]:45174 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbfKNUTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:19:47 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 12:19:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,305,1569308400"; 
-   d="scan'208";a="216879546"
-Received: from guptapadev.jf.intel.com (HELO guptapadev.amr) ([10.7.198.56])
-  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2019 12:19:47 -0800
-Date:   Thu, 14 Nov 2019 12:12:58 -0800
-From:   Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        id S1727044AbfKNUN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:13:29 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26723 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726549AbfKNUN2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 15:13:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573762407;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zeOvreoiDJiJznC6pgddXng3TgtdBC/uHEqj3GGY24g=;
+        b=GOIBZ4+M74vwTjKaq0ckA93ZbvKT+RlFBAHkmwrjUHZvEnct/NCI8kjHgxZcK6VV5xr3on
+        nvB8tGpF8Ow2n+gcD5+3DDNoH1qCsQ0e2dewPCRHw7InrJTJYk6Xl9jGD1LqHp5KAwhbrQ
+        /FfaDg8o2XL12bhENWx16hLfiliLcxg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-379-kIdCwd-vNsiLYwxjJWRb0g-1; Thu, 14 Nov 2019 15:13:26 -0500
+Received: by mail-wm1-f69.google.com with SMTP id f11so4806712wmc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 12:13:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Kwk2SObMZHFa0y+X6pAt/3dq8Wi+ovXi2eZNEpP7b1o=;
+        b=VCJ2fgUOUuaP66KT4Sr8DT5aQ7Y8mTRGOy9AZj+rVq0ePs4TM6o3fekkppg12VMaW/
+         SiDDuSGfw3uzJcOJmTbZqWi4DP4vCp5jEh41HYPGq/WnXbMhOqnnpOg+1FuFnzegnAM+
+         uP0t/lcBrKwNWtcHNydW7BD/Zjs0aoQ7K5ZaWYcKcmaRqIH+fPTxZxGM2nnOure8dYWX
+         QvEYNMGKtdw0bb3dVxXNnLhi9qnGUSSaPrp6XYYpNv4RrSIpUKkEYPoJICOqQdYG02G+
+         I0IaKbstR47BqZoloEwWmdO1+w8uK/+c72UDTIWLSJhMQK/nBAQb0xT4ZStQs507fBmm
+         4ojg==
+X-Gm-Message-State: APjAAAWmFC/Rb0Xm9yJcRFPnauKZglOWW0KW6ER0HxoLVbf+Z5/aCn2F
+        wBvE/gZo1AU3yFmL6qvlHSa31M6KZiTcWnZ+zTWcK6qE/EjF/kJ1tY5f6b651sSsT4SNbGNnMvn
+        BnpJR+b/aySSooqXmoRzu7bWm
+X-Received: by 2002:a1c:a9cb:: with SMTP id s194mr10653861wme.92.1573762404993;
+        Thu, 14 Nov 2019 12:13:24 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxYg+h1HBpJaDU9hPX/MpQYH0wFtF669+nHobvHa152/M/2ldKc/DiHPX6bUeLLg5ZnBKKPdg==
+X-Received: by 2002:a1c:a9cb:: with SMTP id s194mr10653824wme.92.1573762404762;
+        Thu, 14 Nov 2019 12:13:24 -0800 (PST)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 19sm10336706wrc.47.2019.11.14.12.13.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2019 12:13:23 -0800 (PST)
+Subject: Re: [PATCH v7 2/8] efi: Add embedded peripheral firmware support
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Gross <mgross@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH] x86/speculation: Fix incorrect MDS/TAA mitigation status
-Message-ID: <20191114201258.GA18745@guptapadev.amr>
-References: <20191113193350.24511-1-longman@redhat.com>
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-input@vger.kernel.org
+References: <20191004145056.43267-1-hdegoede@redhat.com>
+ <20191004145056.43267-3-hdegoede@redhat.com>
+ <20191011144834.GL16384@42.do-not-panic.com>
+ <e7bd40ff-20d1-3aed-8516-9fffd4c3a207@redhat.com>
+ <20191114194233.GE11244@42.do-not-panic.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <f00804ae-e556-35e4-d0a3-cd9201fdd2d0@redhat.com>
+Date:   Thu, 14 Nov 2019 21:13:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113193350.24511-1-longman@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20191114194233.GE11244@42.do-not-panic.com>
+Content-Language: en-US
+X-MC-Unique: kIdCwd-vNsiLYwxjJWRb0g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 02:33:50PM -0500, Waiman Long wrote:
-> For MDS vulnerable processors with TSX support, enabling either MDS
-> or TAA mitigations will enable the use of VERW to flush internal
-> processor buffers at the right code path. IOW, they are either both
-> mitigated or both not mitigated. However, if the command line options
-> are inconsistent, the vulnerabilites sysfs files may not report the
-> mitigation status correctly.
-> 
-> For example, with only the "mds=off" option:
-> 
->   vulnerabilities/mds:Vulnerable; SMT vulnerable
->   vulnerabilities/tsx_async_abort:Mitigation: Clear CPU buffers; SMT vulnerable
-> 
-> The mds vulnerabilities file has wrong status in this case.
-> 
-> Change taa_select_mitigation() to sync up the two mitigation status
-> and have them turned off if both "mds=off" and "tsx_async_abort=off"
-> are present.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  arch/x86/kernel/cpu/bugs.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index 4c7b0fa15a19..418d41c1fd0d 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -304,8 +304,12 @@ static void __init taa_select_mitigation(void)
->  		return;
->  	}
->  
-> -	/* TAA mitigation is turned off on the cmdline (tsx_async_abort=off) */
-> -	if (taa_mitigation == TAA_MITIGATION_OFF)
-> +	/*
-> +	 * TAA mitigation via VERW is turned off if both
-> +	 * tsx_async_abort=off and mds=off are specified.
-> +	 */
-> +	if (taa_mitigation == TAA_MITIGATION_OFF &&
-> +	    mds_mitigation == MDS_MITIGATION_OFF)
->  		goto out;
->  
->  	if (boot_cpu_has(X86_FEATURE_MD_CLEAR))
-> @@ -339,6 +343,15 @@ static void __init taa_select_mitigation(void)
->  	if (taa_nosmt || cpu_mitigations_auto_nosmt())
->  		cpu_smt_disable(false);
->  
-> +	/*
-> +	 * Update MDS mitigation, if necessary, as the mds_user_clear is
-> +	 * now enabled for TAA mitigation.
-> +	 */
-> +	if (mds_mitigation == MDS_MITIGATION_OFF &&
-> +	    boot_cpu_has_bug(X86_BUG_MDS)) {
-> +		mds_mitigation = MDS_MITIGATION_FULL;
-> +		mds_select_mitigation();
+Hi,
 
-This will cause a confusing print in dmesg from previous and this call
-to mds_select_mitigation().
+On 14-11-2019 20:42, Luis Chamberlain wrote:
+> On Thu, Nov 14, 2019 at 12:27:01PM +0100, Hans de Goede wrote:
+>> Hi Luis,
+>>
+>> Thank you for the reviews and sorry for being a bit slow to respind.
+>>
+>> On 11-10-2019 16:48, Luis Chamberlain wrote:
+>>> On Fri, Oct 04, 2019 at 04:50:50PM +0200, Hans de Goede wrote:
+>>>> +static int __init efi_check_md_for_embedded_firmware(
+>>>> +=09efi_memory_desc_t *md, const struct efi_embedded_fw_desc *desc)
+>>>> +{
+>>>> +=09const u64 prefix =3D *((u64 *)desc->prefix);
+>>>> +=09struct sha256_state sctx;
+>>>> +=09struct embedded_fw *fw;
+>>>> +=09u8 sha256[32];
+>>>> +=09u64 i, size;
+>>>> +=09void *map;
+>>>> +
+>>>> +=09size =3D md->num_pages << EFI_PAGE_SHIFT;
+>>>> +=09map =3D memremap(md->phys_addr, size, MEMREMAP_WB);
+>>>
+>>> Since our limitaiton is the init process must have mostly finished,
+>>> it implies early x86 boot code cannot use this, what measures can we
+>>> take to prevent / check for such conditions to be detected and
+>>> gracefully errored out?
+>>
+>> As with all (EFI) early boot code, there simply is a certain order
+>> in which things need to be done. This needs to happen after the basic
+>> mm is setup, but before efi_free_boot_services() gets called, there
+>> isn't really a way to check for all these conditions. As with all
+>> early boot code, people making changes need to be careful to not
+>> break stuff.
+>=20
+> I rather we take a proactive measure here and add whatever it is we need
+> to ensure the API works only when its supposed to, rather than try and
+> fail, and then expect the user to know these things.
+>=20
+> I'd prefer if we at least try to address this.
 
-	"MDS: Vulnerable"
-	"MDS: Mitigation: Clear CPU buffers"
+This is purely internal x86/EFI API it is not intended for drivers
+or anything like that. It has only one caller under arch/x86 and it is
+not supposed to get any other callers outside of arch/* ever.
 
-Maybe delay MDS mitigation print till TAA is evaluated.
+Note that this all runs before even core_initcall-s get run, none
+if the code which runs before then has any sort of ordering checks
+and I don't see how this bit is special and thus does need ordering
+checks; and there really is no mechanism for such checks so early
+during boot.
 
-Thanks,
-Pawan
+The drivers/firmware/efi/embedded-firmware.c file does add some API
+which can be used normally, specifically the efi_get_embedded_fw()
+but that has no special ordering constrains and it does not directly
+use the function we are discussing now. It reads back data stored
+by the earlier functions; and if somehow called before those functions
+run (*), then it will simply return -ENOENT.
+
+Regards,
+
+Hans
+
+
+
+*)  which would mean before core_initcalls run so really really early
+
