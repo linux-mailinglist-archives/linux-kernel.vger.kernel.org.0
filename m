@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA61FFC270
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 10:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C815FC2FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 10:49:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfKNJRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 04:17:22 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35529 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfKNJRW (ORCPT
+        id S1727001AbfKNJt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 04:49:28 -0500
+Received: from 15.mo6.mail-out.ovh.net ([188.165.39.161]:46838 "EHLO
+        15.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfKNJt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 04:17:22 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r7so5870802ljg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 01:17:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=efZhbZCQKk5r4L9cBxYAifp6e4mcNhiEkaP5aESx+WsAXDxeIZOJ5pJBdrrooEdsxe
-         53IiJPLDAxfsUaupzEn4+dW5YGGqKH/uKRm1V4qe6x0kbURG7tl4NlZDAKMp9YkGhw6z
-         tKPJGFqJolLcBL+PNSb68pqfXdV3NhF8lNPOnER5TbTAj4BQAAwAua0+l+O5x0sQvn6l
-         7cs9r1sgBDvlcRJKS4XKNBWo9eQMK+8oryZZvPmWBdChxx/28vcWgE8cZG96FJYCD8AC
-         ScmOIQn0jWq7gVrG0MexsFVdrQ4PIlB8tpE9CwOc+snBtUN+Kx1e1GIk78DPPK+MDegy
-         dq2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=VuNYCgq3jp8hO95eb17UHb8C1rZ1ctDiKJfzSFa+teUPkVbRDLx42ZTqIIlCOxb+N0
-         HtHo9fbhKKR9ajhX3STCdur/qECXmoTZgEEb0zbiq40jThnZi+ucS07JaRbM/hrKWMkb
-         /Ob1+0bUDQrlsImOPZUi8gaSkqf6YA4LGrJ3thbZLwBRzrRZ3KbgE6wFo2HdUQyZwlIn
-         gHaL0JZfN4VRpYo9x+tQ8FBuXP8gfxK94RcAgPyVGO0M0Efgth+cxTj+okdvv54jO6Kz
-         v9mDOLedRP3KzlduuSqnWHGjcr60N27wLmMvVIuulttXnpE5aj0aVBEc093FRUkdQjiR
-         Jhyw==
-X-Gm-Message-State: APjAAAVDrHDQPl1G0zLdqM99SR8AKQCO0ViZNgiPg17VRQjc8yHCTFez
-        qGagsQ9RN3Pvelx7NiV1DE/GzJU+qTM3Ph6muGg=
-X-Google-Smtp-Source: APXvYqz/d14iA1WKzUnUkvJJZYHiOeO4r4KwBLZa+4fx3JTj3EiuBNBBqXZ4YnCTtj5EgbJZz+1ETTNSRpXiqo9kkMg=
-X-Received: by 2002:a2e:8608:: with SMTP id a8mr5901199lji.172.1573722721382;
- Thu, 14 Nov 2019 01:12:01 -0800 (PST)
+        Thu, 14 Nov 2019 04:49:27 -0500
+X-Greylist: delayed 2191 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Nov 2019 04:49:26 EST
+Received: from player773.ha.ovh.net (unknown [10.109.146.5])
+        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 37B2F1EC35B
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 10:12:54 +0100 (CET)
+Received: from etezian.org (81-175-223-118.bb.dnainternet.fi [81.175.223.118])
+        (Authenticated sender: andi@etezian.org)
+        by player773.ha.ovh.net (Postfix) with ESMTPSA id 9889BC17ABBB;
+        Thu, 14 Nov 2019 09:12:31 +0000 (UTC)
+Date:   Thu, 14 Nov 2019 11:12:30 +0200
+From:   Andi Shyti <andi@etezian.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Andi Shyti <andi@etezian.org>, linus.walleij@linaro.org,
+        kgene@kernel.org, alexandre.belloni@bootlin.com,
+        linux-arm-msm@vger.kernel.org, radu_nicolae.pirea@upb.ro,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzk@kernel.org, bjorn.andersson@linaro.org, vkoul@kernel.org,
+        agross@kernel.org, ldewangan@nvidia.com, broonie@kernel.org,
+        linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 7/9] spi: s3c64xx: Use dma_request_chan() directly for
+ channel request
+Message-ID: <20191114091230.GB1249@jack.zhora.eu>
+References: <20191113094256.1108-1-peter.ujfalusi@ti.com>
+ <20191113094256.1108-8-peter.ujfalusi@ti.com>
+ <20191113234049.GA1249@jack.zhora.eu>
+ <e453c716-7658-a9fd-324d-4d95ff1aa29c@ti.com>
 MIME-Version: 1.0
-Received: by 2002:a19:771d:0:0:0:0:0 with HTTP; Thu, 14 Nov 2019 01:12:01
- -0800 (PST)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <barristerlevi@gmail.com>
-Date:   Thu, 14 Nov 2019 10:12:01 +0100
-Message-ID: <CAEJ6Chd3C4Vaq-zJQZ73TQPr5MaCKcYQbvhG9+MgHmxvN0jioA@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e453c716-7658-a9fd-324d-4d95ff1aa29c@ti.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Ovh-Tracer-Id: 1915718693274174139
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrudeffedgtddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdqfffguegfifdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomheptehnughiucfuhhihthhiuceorghnughisegvthgviihirghnrdhorhhgqeenucfkpheptddrtddrtddrtddpkedurddujeehrddvvdefrdduudeknecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejjeefrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheprghnughisegvthgviihirghnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+Hi Peter,
 
-My name is Joe Akaba I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
+> >>  	if (!is_polling(sdd)) {
+> >>  		/* Acquire DMA channels */
+> >> -		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
+> >> -								  "rx");
+> >> +		sdd->rx_dma.ch = dma_request_chan(&pdev->dev, "rx");
+> > 
+> > I have a little concern here. We have two funcions
+> > 'dma_request_chan' and  'dma_request_channel' don't we end up
+> > making some confusion here?
+> > 
+> > Wouldn't it make more sense renaming 'dma_request_chan' to
+> > 'dma_request_slave_channel_reason'?
+> 
+> The dma_request_channel() should go away. It was the old API before we
+> got the dma_slave_map for non DT (and non ACPI) platforms so we can get
+> rid of the filter function exports from DMA drivers to clients all over
+> the place.
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:joeakaba00@gmail.com
+Yes, I agree... thanks!
 
-Many thanks in advance,
-Mr.Joe Akaba
+Acked-by: Andi Shyti <andi@etezian.org>
 
-
-Hallo
-
-Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8.5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
-
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: joeakaba00@gmail.com
-
-Vielen Dank im Voraus,
-Mr.Joe Akaba
+Thanks,
+Andi
