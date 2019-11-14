@@ -2,72 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42558FBD34
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D64D2FBD36
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:54:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfKNAyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 19:54:19 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42590 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfKNAyT (ORCPT
+        id S1727032AbfKNAyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 19:54:25 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:41320 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726393AbfKNAyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 19:54:19 -0500
-Received: by mail-oi1-f194.google.com with SMTP id i185so3666489oif.9;
-        Wed, 13 Nov 2019 16:54:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3FaGwli40UTgV2GVAUXDQz2iTNRIRzfQdNF3AkhAOiE=;
-        b=XlBfsSzBaeMc4He1kBm6trtgRzGhcn3oFpH5NUftHx+66ZTQ7NW4aejMXn6tvtyqD8
-         Ejgkc1Ji68j9TtKGjJV70nm9Yoh121mN1GQ6az9ZpmygbBCfeJeSnVF+Eaj4p4BFKsGJ
-         gkjZH4zrmduNiIq9arjxJeohUU0Vi6yALKOret4siZpQ0iyxdiWEKZ+nYISXJbQBM/wA
-         kHZ8leBuf4aqt7pmTSs99AdkbGLSyGWhcRTL4d3Sa1puTmMhNLs8sgQKl2KhhWgEBDfa
-         xBYDElgF6GDH5YBFrhUV7STTryW4dTocgxqEQs+SOHR0+YA/tGbCxL2FxkNucUTumzCQ
-         0dlQ==
-X-Gm-Message-State: APjAAAUow3u0fmaRJnFbrQZF/kc4ctdE22EiHNAOcY9S9qc3NYf7HwGW
-        zH2HDW13pXF1UV/7Uc4XWgAZY0Y=
-X-Google-Smtp-Source: APXvYqxDU5n/Ao3dAUsAWGuXFl28eOb/j1llN+R19aMZU436dy6PUeHoNc2xSgdUvqJfbG70quT2MQ==
-X-Received: by 2002:aca:b602:: with SMTP id g2mr1179523oif.7.1573692856864;
-        Wed, 13 Nov 2019 16:54:16 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g1sm1323717otb.68.2019.11.13.16.54.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 16:54:16 -0800 (PST)
-Date:   Wed, 13 Nov 2019 18:54:15 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Matheus Castello <matheus@castello.eng.br>
-Cc:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, lee.jones@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: Re: [PATCH v6 3/5] devicetree: mfd: max14577: Add reference to
- max14040_battery.txt descriptions
-Message-ID: <20191114005415.GA24858@bogus>
-References: <20191105095905.GA31721@pi3>
- <20191107031710.5672-1-matheus@castello.eng.br>
- <20191107031710.5672-4-matheus@castello.eng.br>
+        Wed, 13 Nov 2019 19:54:24 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=shile.zhang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Ti0NhcR_1573692861;
+Received: from ali-6c96cfdd1403.local(mailfrom:shile.zhang@linux.alibaba.com fp:SMTPD_---0Ti0NhcR_1573692861)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 14 Nov 2019 08:54:22 +0800
+Subject: Re: [PATCH] mm/vmalloc: Fix regression caused by needless
+ vmalloc_sync_all()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Joerg Roedel <jroedel@suse.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>, Qian Cai <cai@lca.pw>
+References: <20191113095530.228959-1-shile.zhang@linux.alibaba.com>
+ <20191113131237.1757241fb0c458484c2b19aa@linux-foundation.org>
+From:   Shile Zhang <shile.zhang@linux.alibaba.com>
+Message-ID: <84cb4721-bb8c-f45b-37d5-95a06ceea2aa@linux.alibaba.com>
+Date:   Thu, 14 Nov 2019 08:54:21 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191107031710.5672-4-matheus@castello.eng.br>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191113131237.1757241fb0c458484c2b19aa@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  7 Nov 2019 00:17:08 -0300, Matheus Castello wrote:
-> max77836 MFD has a fuel gauge that has a low SOC alert feature that is
-> described in Documentation/devicetree/bindings/power/supply/max17040_battery.txt.
-> Adding the reference to de documentation here.
-> 
-> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-> ---
->  Documentation/devicetree/bindings/mfd/max14577.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Fix wrong cc list.
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 2019/11/14 05:12, Andrew Morton wrote:
+> On Wed, 13 Nov 2019 17:55:30 +0800 Shile Zhang <shile.zhang@linux.alibaba.com> wrote:
+>
+>> vmalloc_sync_all() was put in the common path in
+>> __purge_vmap_area_lazy(), for one sync issue only happened on X86_32
+>> with PTI enabled. It is needless for X86_64, which caused a big regression
+>> in UnixBench Shell8 testing on X86_64.
+>> Similar regression also reported by 0-day kernel test robot in reaim
+>> benchmarking:
+>> https://lists.01.org/hyperkitty/list/lkp@lists.01.org/thread/4D3JPPHBNOSPFK2KEPC6KGKS6J25AIDB/
+> That is indeed a large performance regression.
+>
+>> Fix it by adding more conditions.
+>>
+>> Fixes: 3f8fd02b1bf1 ("mm/vmalloc: Sync unmappings in __purge_vmap_area_lazy()")
+>>
+>> ...
+>>
+>> --- a/mm/vmalloc.c
+>> +++ b/mm/vmalloc.c
+>> @@ -1255,11 +1255,17 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+>>   	if (unlikely(valist == NULL))
+>>   		return false;
+>>   
+>> +#if defined(CONFIG_X86_32) && defined(CONFIG_X86_PAE)
+> Are we sure that x86_32 is the only architecture whcih is (or ever will
+> be) affected?
+>
+>>   	/*
+>>   	 * First make sure the mappings are removed from all page-tables
+>>   	 * before they are freed.
+>> +	 *
+>> +	 * This is only needed on x86-32 with !SHARED_KERNEL_PMD, which is
+>> +	 * the case on a PAE kernel with PTI enabled.
+>>   	 */
+>> -	vmalloc_sync_all();
+>> +	if (!SHARED_KERNEL_PMD && boot_cpu_has(X86_FEATURE_PTI))
+>> +		vmalloc_sync_all();
+>> +#endif
+>>   
+>>   	/*
+>>   	 * TODO: to calculate a flush range without looping.
+> CONFIG_X86_PAE depends on CONFIG_X86_32 so no need to check
+> CONFIG_X86_32?
+
+Yes, Thanks for your review and kindly refactoring!
+
+> From: Andrew Morton <akpm@linux-foundation.org>
+> Subject: mm-vmalloc-fix-regression-caused-by-needless-vmalloc_sync_all-fix
+>
+> simplify config expression, use IS_ENABLED()
+>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Joerg Roedel <jroedel@suse.de>
+> Cc: Qian Cai <cai@lca.pw>
+> Cc: Shile Zhang <shile.zhang@linux.alibaba.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>
+>   mm/vmalloc.c |   21 +++++++++++----------
+>   1 file changed, 11 insertions(+), 10 deletions(-)
+>
+> --- a/mm/vmalloc.c~mm-vmalloc-fix-regression-caused-by-needless-vmalloc_sync_all-fix
+> +++ a/mm/vmalloc.c
+> @@ -1255,16 +1255,17 @@ static bool __purge_vmap_area_lazy(unsig
+>   	if (unlikely(valist == NULL))
+>   		return false;
+>   
+> -#if defined(CONFIG_X86_32) && defined(CONFIG_X86_PAE)
+> -	/*
+> -	 * First make sure the mappings are removed from all page-tables
+> -	 * before they are freed.
+> -	 *
+> -	 * This is only needed on x86-32 with !SHARED_KERNEL_PMD, which is
+> -	 * the case on a PAE kernel with PTI enabled.
+> -	 */
+> -	if (!SHARED_KERNEL_PMD && boot_cpu_has(X86_FEATURE_PTI))
+> -		vmalloc_sync_all();
+> +	if (IS_ENABLED(CONFIG_X86_PAE)) {
+> +		/*
+> +		 * First make sure the mappings are removed from all page-tables
+> +		 * before they are freed.
+> +		 *
+> +		 * This is only needed on x86-32 with !SHARED_KERNEL_PMD, which
+> +		 * is the case on a PAE kernel with PTI enabled.
+> +		 */
+> +		if (!SHARED_KERNEL_PMD && boot_cpu_has(X86_FEATURE_PTI))
+> +			vmalloc_sync_all();
+> +	}
+>   #endif
+>   
+>   	/*
+> _
+
