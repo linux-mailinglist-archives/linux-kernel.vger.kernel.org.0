@@ -2,71 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6236FBF3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 06:16:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65467FBF35
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 06:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbfKNFP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 00:15:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbfKNFP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 00:15:28 -0500
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F0EA20706;
-        Thu, 14 Nov 2019 05:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573708527;
-        bh=WigUSF3alcgcj3pSwFXkYJTAsdWSBKH1LxuGN0UIWDw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hfgI9clc/bfFjOJFNB8C3UnyfZXN9St0vvpgPg/LyZdPTevrQKGiWvHgi+DnGBZaa
-         ZYT84kVbh/eZSglzPmBmRMhXVUUXNHrsxH0co3c4tcKweJVZbfuqDHUDvczV5IEAu5
-         OX7MG6Aqd2BpTIhh+V2DBODnIkR0Uwxqxi+myWC4=
-Received: by mail-qv1-f51.google.com with SMTP id g18so1849816qvp.8;
-        Wed, 13 Nov 2019 21:15:27 -0800 (PST)
-X-Gm-Message-State: APjAAAXIWE/+YLTIwHJLQNqhGN9VtiMgJPwuIfVya+uMqa4SeW1seBw/
-        OxkACUTqiFG53GEZ0O7Vc0cbWw/jjmLPqWG8Pvs=
-X-Google-Smtp-Source: APXvYqwlPTIblvxl8u3zUhl8hD3W9ECXciROrFiU7RcbJjYQxah0YbroDoQ4zkxAaXhihEABx4qt8MPf48+py6OCV2g=
-X-Received: by 2002:ad4:462d:: with SMTP id x13mr6475849qvv.105.1573708526559;
- Wed, 13 Nov 2019 21:15:26 -0800 (PST)
+        id S1727345AbfKNFOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 00:14:37 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38384 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfKNFOf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 00:14:35 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w8so2081524plq.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 21:14:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R7b2JPtWwEx72nyCRSKpBp7/BtsD5j/Gd6lSZi42tNY=;
+        b=SAqGs6fQe8YE08HwbEoz3pMr+dp5RUp5r07rVVDRW1kTo3hsf1d0dzMBdMNQbAqOa+
+         6xDVVt10resWw/FTWyy8sWSzzlyQ5a0kQ50/t43SI/7LD8UkqOJsxJdriFxpoUFe8N6l
+         hbL2nLKz5wc1YvFIfbr74jMQPuusyPBbR8Bg5CzEVBj85/whJlLXjWcQROl5qJqCTv40
+         5pNxOqKDIq/82f9UByGx9DP1aiNI6vHqxFaBPQGBlqnLeebjOcCQcQB2sZxjDyY8L88Q
+         aiYpfon2RNigH4ZfGF8tbhyvLrQe5NiBtmBdC2KZ6cQl379vvUy2IbrfSHKpBv5aITAc
+         5SJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R7b2JPtWwEx72nyCRSKpBp7/BtsD5j/Gd6lSZi42tNY=;
+        b=MKJV41QlAhwSSncgx08S6semh35LzR1rQduiggYIJo0E4Mzy7skEBMur0N1DiVVcuQ
+         YqDrhMz5OmubEaaJaZ/ZCuZk/gASSPpucBEInTgDobEYAmvJotHHVEtSdeRtfkjv5UdK
+         9qZr0/KUGHu0u2WwJRxQDpCLc2bAP9orYC8kS6oJxMYxpwMFmKr2hxG87PGUy4SwFvJ2
+         9sdA2dQnYyp0m5uhJdugz0pJlVIokqYvF6h2LacEJS28Twz9ufzucSXFk8XPpkFHzluN
+         Z0S4nwSCfVkND0W57OZh8fd09Lp+4ZirUAgzGOlyOfi2ARuKSbpYDg17kqkwK0Ke3bpb
+         7IjA==
+X-Gm-Message-State: APjAAAVTuLVPbSqPOepOPYfJBw04svff/Bvl8uI9oiiKHJEV7Q3makxI
+        LcT+ljIAR6GhR7yJQUp+fbZB07c0PZA=
+X-Google-Smtp-Source: APXvYqyUGkyUr51KXBUYxjBncLe29pHZ3ycMcQpcMe9U0q8KrLojzhcQSJQH8Kdlb50vioiqEfwVzg==
+X-Received: by 2002:a17:902:aa42:: with SMTP id c2mr7453010plr.311.1573708474696;
+        Wed, 13 Nov 2019 21:14:34 -0800 (PST)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id i123sm7799642pfe.145.2019.11.13.21.14.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Nov 2019 21:14:34 -0800 (PST)
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
+        frowand.list@gmail.com
+Cc:     james.morse@arm.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v2 0/3] arm64: kexec_file: add kdump
+Date:   Thu, 14 Nov 2019 14:15:07 +0900
+Message-Id: <20191114051510.17037-1-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191108130123.6839-1-linux@rasmusvillemoes.dk> <20191108130123.6839-31-linux@rasmusvillemoes.dk>
-In-Reply-To: <20191108130123.6839-31-linux@rasmusvillemoes.dk>
-From:   Timur Tabi <timur@kernel.org>
-Date:   Wed, 13 Nov 2019 23:14:49 -0600
-X-Gmail-Original-Message-ID: <CAOZdJXVQ_wQLK-4uutb2e6zOt0b8FBVY3qoWdoo4UM8p7=bV0A@mail.gmail.com>
-Message-ID: <CAOZdJXVQ_wQLK-4uutb2e6zOt0b8FBVY3qoWdoo4UM8p7=bV0A@mail.gmail.com>
-Subject: Re: [PATCH v4 30/47] serial: ucc_uart: factor out soft_uart initialization
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 7:03 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> -       /*
-> -        * Determine if we need Soft-UART mode
-> -        */
->         if (of_find_property(np, "soft-uart", NULL)) {
->                 dev_dbg(&ofdev->dev, "using Soft-UART mode\n");
->                 soft_uart = 1;
-> +       } else {
-> +               return 0;
->         }
+This is the last piece of my kexec_file_load implementation for arm64.
+It is now ready for being merged as some relevant patch to dtc/libfdt[1]
+has finally been integrated in v5.3-rc1.
+(Nothing changed since kexec_file v16[2] except adding Patch#1 and #2.)
 
-How about:
+Patch#1 and #2 are preliminary patches for libfdt component.
+Patch#3 is to add kdump support.
 
-if (!of_find_property(np, "soft-uart", NULL))
-    return 0;
+Bhepesh's patch[3] will be required for 52-bit VA support.
+Once this patch is applied, whether or not CONFIG_ARM64_VA_BITS_52 is
+enabled or not, a matching fix on user space side, crash utility,
+will also be needed. 
 
-And I think you should be able to get rid of the "soft_uart" variable.
+Anyway, I tested my patch, at least, with the following configuration:
+1) CONFIG_ARM64_BITS_48=y
+2) CONFIG_ARM64_BITS_52=y, but vabits_actual=48
+
+(I don't have any platform to use for
+3) CONFIG_ARM64_BITS_52=y, and vabits_actual=52)
+
+[1] commit 9bb9c6a110ea ("scripts/dtc: Update to upstream version
+    v1.5.0-23-g87963ee20693"), in particular
+	7fcf8208b8a9 libfdt: add fdt_append_addrrange()
+[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/612641.html
+[3] http://lists.infradead.org/pipermail/linux-arm-kernel/2019-November/693411.html
+
+Changes in v2 (Nov 14, 2019)
+* rebased to v5.4-rc7
+* no functional changes
+
+AKASHI Takahiro (3):
+  libfdt: define UINT32_MAX in libfdt_env.h
+  libfdt: include fdt_addresses.c
+  arm64: kexec_file: add crash dump support
+
+ arch/arm64/include/asm/kexec.h         |   4 +
+ arch/arm64/kernel/kexec_image.c        |   4 -
+ arch/arm64/kernel/machine_kexec_file.c | 106 ++++++++++++++++++++++++-
+ include/linux/libfdt_env.h             |   3 +
+ lib/Makefile                           |   2 +-
+ lib/fdt_addresses.c                    |   2 +
+ 6 files changed, 112 insertions(+), 9 deletions(-)
+ create mode 100644 lib/fdt_addresses.c
+
+-- 
+2.21.0
+
