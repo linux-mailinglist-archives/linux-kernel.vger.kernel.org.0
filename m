@@ -2,125 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1325DFCB5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A388FCB3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:00:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfKNRDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 12:03:46 -0500
-Received: from mail.andi.de1.cc ([85.214.55.253]:36262 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbfKNRDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 12:03:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pc9fQikYaAe6/ClSXdt1Pl5bjZ94c01iG49coDy8QuE=; b=CkbkWMlw6R+GzR94wPV/UNW4B
-        3KPva2GFj+9PaCxKw47u+BXC2akNDWn8q4N9HYhzTnu2y8QnpSDKXMWDNC2LLxH4fGgAaHMfiEdb8
-        BGm9goyMD45IVOSMDpDdx9bzHGBVxZlEZ4ePEM+kepdTSKQq25l4/9DqfizqfP85juw8Q=;
-Received: from [77.247.85.71] (helo=localhost)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iVIX1-0007pf-8x; Thu, 14 Nov 2019 18:03:43 +0100
-Received: from [::1] (helo=localhost)
-        by localhost with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iVG8h-0007vp-J8; Thu, 14 Nov 2019 15:30:27 +0100
-Date:   Thu, 14 Nov 2019 15:30:26 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, phh@phh.me, b.galvani@gmail.com
-Subject: Re: [PATCH] regulator: rn5t618: fix rc5t619 ldo10 enable
-Message-ID: <20191114153026.354f87bd@kemnade.info>
-In-Reply-To: <25f0d55696be463def622a37a1f2b826@agner.ch>
-References: <20191113182643.23885-1-andreas@kemnade.info>
-        <20191113183211.GB4402@sirena.co.uk>
-        <20191113202633.66a91d96@aktux>
-        <20191114115430.GA4664@sirena.co.uk>
-        <25f0d55696be463def622a37a1f2b826@agner.ch>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        id S1726957AbfKNRA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 12:00:56 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45751 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfKNRAz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 12:00:55 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k1so2830687pgg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 09:00:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=6bO7e6hWYl53t03anT/Z1zUE/FznVpwaBWq+FDBPOFw=;
+        b=sk59Sxa2ql+seW2RmX9NyqQTrkbW9s/bSh8AA1Z5jYFL/X7vqVEwE93ZDDJ/q8Ymbj
+         Fmu1zUaUHdrvARX7jQ53KEP23AgKmakA97LTT01nZdvxL9+qWFff/I0gdTt3ITzqu4Ny
+         4r/sWDtJg054Fhg90F1n3K+hTuI6KqA9ax4gUQTWvaSGsJlPK5qgZr1nouxPjuE14qof
+         9f8jmkityB8eL0Kw7oTGeVuecjfmoLzbj7V1zb5TC0Rc5PPOz3HDoPWEc6SY2LmsqRmQ
+         30WOdXNzT63MinUon6Zf/uGxvAfk0FNL+Eiegcbf1KVwmvgpBlpCueVTOja6xctBQ7sa
+         +log==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=6bO7e6hWYl53t03anT/Z1zUE/FznVpwaBWq+FDBPOFw=;
+        b=mG4aMwgRLqAwkIcExYV6SSQFRhm84bgJPhax1cIz3Yb0Z66ATSvq+6C4zTQMtJEriz
+         gdj2kxMAJ6jSeJC+gbdVa3tJi7Km7fEflnVOmI+SZqi4Lk/OeHWLt+3k0LrNKYFcpRRF
+         G4YvGoYQ+zU6EIQJcBkMfS+GteDZB9d223byf50DWOGBRBAydIhnCnz/BWI/apVwsonY
+         sYGBy2RWHq1sztKdmVPU2aEns56yZphpj7/mlgDRtSqtr5MS8LjZ/eY1aIIlrLAHRYqR
+         4/J5jS6XxONthzs2SJGTmUjyi2lq2zdw/V3Cb/YA8W3mZN53MKUXpDoftUwP4cW68BUi
+         +F9g==
+X-Gm-Message-State: APjAAAVJx3Ld4YeK068bOamfvm82LOtollq26+U2ZGzP14E2s8CwlgYC
+        ToA36iN0QPvT5HUJlfePTlxfrQ==
+X-Google-Smtp-Source: APXvYqx8uPXf4czd3iKUV0VVk5MDGgysrPrpM6yFUYmtbUIKVtFNriO8qzyTyMZgTmgiZz3P1aI5bQ==
+X-Received: by 2002:a63:cc56:: with SMTP id q22mr11217252pgi.439.1573750854560;
+        Thu, 14 Nov 2019 09:00:54 -0800 (PST)
+Received: from cakuba.netronome.com ([2601:646:8e00:e18::3])
+        by smtp.gmail.com with ESMTPSA id d25sm8101407pfq.70.2019.11.14.09.00.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2019 09:00:54 -0800 (PST)
+Date:   Thu, 14 Nov 2019 09:00:49 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <borisp@mellanox.com>, <aviadye@mellanox.com>,
+        <john.fastabend@gmail.com>, <daniel@iogearbox.net>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net/tls: Fix unused function warning
+Message-ID: <20191114090049.47cfee19@cakuba.netronome.com>
+In-Reply-To: <20191114073946.46340-1-yuehaibing@huawei.com>
+References: <20191114073946.46340-1-yuehaibing@huawei.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/79gjsROfYYqfaMMMG9hO6W0"; protocol="application/pgp-signature"
-X-Spam-Score: -1.0 (-)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/79gjsROfYYqfaMMMG9hO6W0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 14 Nov 2019 15:39:46 +0800, YueHaibing wrote:
+> If PROC_FS is not set, gcc warning this:
+> 
+> net/tls/tls_proc.c:23:12: warning:
+>  'tls_statistics_seq_show' defined but not used [-Wunused-function]
+> 
+> Use #ifdef to guard this.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-On Thu, 14 Nov 2019 13:13:47 +0100
-Stefan Agner <stefan@agner.ch> wrote:
-
-> On 2019-11-14 12:54, Mark Brown wrote:
-> > On Wed, Nov 13, 2019 at 08:26:33PM +0100, Andreas Kemnade wrote: =20
-> >> Mark Brown <broonie@kernel.org> wrote: =20
-> >  =20
-> >> > This definitely looks like a bug but without a datasheet or testing =
-it's
-> >> > worrying guessing at the register bit to use for the enable for the
-> >> > second LDO... =20
-> >  =20
-> >> I am hoping for a Tested-By: from the one who has submitted the patch
-> >> for the regulator. =20
-> >=20
-> > Or a reviewed-by from someone with access to the datasheet.
-> >  =20
->=20
-> I guess Pierre-Hugues should have access, as he introduced the part?
->=20
-> >> Well, it is not just guessing, it is there in the url I referenced. But
-> >> I would of course prefer a better source. At first I wanted to spread
-> >> my findings. =20
-> >=20
-> > The URL you provided looked to be for a different part though?
-> >  =20
-> >> I am not pushing anyone to accept it without Tested-By/Reviewed-Bys.
-> >> What is a good way to avoid people bumping into this bug?
-> >> Maybe I can find the right C on the board to check. =20
-> >=20
-> > That'd be good.  Or we could fix it by just removing enable/disable
-> > control for the second LDO entirely and if someone needs that control
-> > they can always re-add it. =20
->=20
-> We use the RN5T567 and I added support for it. Unfortunately I have no
-> access to the RN5T618 datasheet so I cannot tell. The RN5T567 has both
-> bits in marked reserved, but looking at how it the enable bit are
-> distributed otherwise this patch fixes it in the only way it makes
-> sense...
->=20
-Well, the rn5t618 does not have these regulators, either. It is only the
-rc5t619.
-
-Regards,
-Andreas
-
---Sig_/79gjsROfYYqfaMMMG9hO6W0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl3NZQIACgkQl4jFM1s/
-ye9fNw/+K7EWXflnHuqjelDOdEjg7Zq6H4OZ8lzbhyNJnDnMdhmJOVOwzWT+ml25
-lZwar+pKxxdN3uo1MAGp0Xm1ba/3qO40YXgN6aN8yOZYZfwZDX6ozfy7RmDH6CAv
-0dUFw2HsmNowiGfwgrvfVJXke70EPn6tpZnJjRbmz4ZxCTXKmY/6O6qIt8IWroW9
-zsgaOQAfF4v7EYH1uZ2KhYk9ZlX5AvY8uV1J/r/nE1POcbTixKhmfqPQDKcOfnll
-KBBy0f+0zTaFY1AXkIlfu8rMrSJqijhFwx8zeeFLDPs7uOF4jZIBEryBi3KXiLdb
-mfChO3ZHxDtixRgDlaYvJeD3Jq0vuoz0nIoNezaGYOfn7XzEpPYm+QwOU4ucuEOw
-4yh4+Ugwk51aLcTn4U4B2vtvvTsE4MReGhzBRprqjAKrEGsGuEY6XpxYec+qz1+e
-1fkdCuh3YTOxlIMLlzE2MA3vxAfQYOg1llIvr7qNcAk5UTftJ+7lacF5c7DvTpUH
-1j9T0MfQ1txUsRKmDS9bi6C29W8Pf/qnb+LC6n6pc8u+3NXSiV/HwTpOvwzvMNUG
-aQAPD/evbtInOwWP7N20HcMj7pDtq9NZDhwGsDtyHPLbW0flFNfEGjIZelRMIUkg
-QkQmuPGG86CKQX0UtRC8KYaLwyTvDlIoCFJJT1Iw0y88Szp6Ijs=
-=NEK4
------END PGP SIGNATURE-----
-
---Sig_/79gjsROfYYqfaMMMG9hO6W0--
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
