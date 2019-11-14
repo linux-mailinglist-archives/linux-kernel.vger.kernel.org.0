@@ -2,164 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F866FCFE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:49:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 989BEFCFE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:50:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfKNUtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:49:35 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:40500 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727016AbfKNUtc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:49:32 -0500
-Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D942B3A2217;
-        Fri, 15 Nov 2019 07:49:27 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iVM3S-0003Bn-PF; Fri, 15 Nov 2019 07:49:26 +1100
-Date:   Fri, 15 Nov 2019 07:49:26 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/28] mm: directed shrinker work deferral
-Message-ID: <20191114204926.GC4614@dread.disaster.area>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-10-david@fromorbit.com>
- <20191104152525.GA10665@bfoster>
+        id S1727113AbfKNUuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:50:03 -0500
+Received: from mga14.intel.com ([192.55.52.115]:39957 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726567AbfKNUuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 15:50:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 12:50:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,305,1569308400"; 
+   d="scan'208";a="379703989"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 14 Nov 2019 12:50:01 -0800
+Received: from [10.251.18.41] (kliang2-mobl.ccr.corp.intel.com [10.251.18.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id F02235802B1;
+        Thu, 14 Nov 2019 12:49:58 -0800 (PST)
+Subject: Re: [PATCH v3 10/10] perf/cgroup: Do not switch system-wide events in
+ cgroup switch
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Qian Cai <cai@lca.pw>, Joe Lawrence <joe.lawrence@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Changbin Du <changbin.du@intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Gary Hook <Gary.Hook@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>,
+        Andi Kleen <ak@linux.intel.com>
+References: <20191114003042.85252-1-irogers@google.com>
+ <20191114003042.85252-11-irogers@google.com>
+ <20191114104340.GT4131@hirez.programming.kicks-ass.net>
+ <710edaf6-2562-0f53-15d6-dc50885b8e08@linux.intel.com>
+ <20191114135718.GX4131@hirez.programming.kicks-ass.net>
+ <97cb578c-d302-9be3-5fe6-b2030b318bcc@linux.intel.com>
+ <4bc51bf9-1d47-063a-e811-d05fb42c8838@linux.intel.com>
+Message-ID: <94c8c876-f236-7052-24ef-536f6870a8d5@linux.intel.com>
+Date:   Thu, 14 Nov 2019 15:49:57 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104152525.GA10665@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=pB-_RQp5JTZhIYxYDT0A:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <4bc51bf9-1d47-063a-e811-d05fb42c8838@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 10:25:25AM -0500, Brian Foster wrote:
-> On Fri, Nov 01, 2019 at 10:45:59AM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > Introduce a mechanism for ->count_objects() to indicate to the
-> > shrinker infrastructure that the reclaim context will not allow
-> > scanning work to be done and so the work it decides is necessary
-> > needs to be deferred.
-> > 
-> > This simplifies the code by separating out the accounting of
-> > deferred work from the actual doing of the work, and allows better
-> > decisions to be made by the shrinekr control logic on what action it
-> > can take.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > ---
+
+
+On 11/14/2019 10:24 AM, Liang, Kan wrote:
 > 
-> My understanding from the previous discussion(s) is that this is not
-> tied directly to the gfp mask because that is not the only intended use.
-> While it is currently a boolean tied to the the entire shrinker call,
-> the longer term objective is per-object granularity.
-
-Longer term, yes, but right now such things are not possible as the
-shrinker needs more context to be able to make sane per-object
-decisions. shrinker policy decisions that affect the entire run
-scope should be handled by the ->count operation - it's the one that
-says whether the scan loop should run or not, and right now GFP_NOFS
-for all filesystem shrinkers is a pure boolean policy
-implementation.
-
-The next future step is to provide a superblock context with
-GFP_NOFS to indicate which filesystem we cannot recurse into. That
-is also a shrinker instance wide check, so again it's something that
-->count should be deciding.
-
-i.e. ->count determines what is to be done, ->scan iterates the work
-that has to be done until we are done.
-
-> I find the argument reasonable enough, but if the above is true, why do
-> we move these checks from ->scan_objects() to ->count_objects() (in the
-> next patch) when per-object decisions will ultimately need to be made by
-> the former?
-
-Because run/no-run policy belongs in one place, and things like
-GFP_NOFS do no change across calls to the ->scan loop. i.e. after
-the first ->scan call in a loop that calls it hundreds to thousands
-of times, the GFP_NOFS run/no-run check is completely redundant.
-
-Once we introduce a new policy that allows the fs shrinker to do
-careful reclaim in GFP_NOFS conditions, we need to do substantial
-rework the shrinker scan loop and how it accounts the work that is
-done - we now have at least 3 or 4 different return counters
-(skipped because locked, skipped because referenced,
-reclaimed, deferred reclaim because couldn't lock/recursion) and
-the accounting and decisions to be made are a lot more complex.
-
-In that case, the ->count function will drop the GFP_NOFS check, but
-still do all the other things is needs to do. The GFP_NOFS check
-will go deep in the guts of the shrinker scan implementation where
-the per-object recursion problem exists. But for most shrinkers,
-it's still going to be a global boolean check...
-
-> That seems like unnecessary churn and inconsistent with the
-> argument against just temporarily doing something like what Christoph
-> suggested in the previous version, particularly since IIRC the only use
-> in this series was for gfp mask purposes.
-
-If people want to call avoiding repeated, unnecessary evaluation of
-the same condition hundreds of times instead of once "unnecessary
-churn", then I'll drop it.
-
-> >  include/linux/shrinker.h | 7 +++++++
-> >  mm/vmscan.c              | 8 ++++++++
-> >  2 files changed, 15 insertions(+)
-> > 
-> > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> > index 0f80123650e2..3405c39ab92c 100644
-> > --- a/include/linux/shrinker.h
-> > +++ b/include/linux/shrinker.h
-> > @@ -31,6 +31,13 @@ struct shrink_control {
-> >  
-> >  	/* current memcg being shrunk (for memcg aware shrinkers) */
-> >  	struct mem_cgroup *memcg;
-> > +
-> > +	/*
-> > +	 * set by ->count_objects if reclaim context prevents reclaim from
-> > +	 * occurring. This allows the shrinker to immediately defer all the
-> > +	 * work and not even attempt to scan the cache.
-> > +	 */
-> > +	bool defer_work;
-> >  };
-> >  
-> >  #define SHRINK_STOP (~0UL)
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index ee4eecc7e1c2..a215d71d9d4b 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -536,6 +536,13 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >  	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
-> >  				   freeable, delta, total_scan, priority);
-> >  
-> > +	/*
-> > +	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
-> > +	 * defer the work to a context that can scan the cache.
-> > +	 */
-> > +	if (shrinkctl->defer_work)
-> > +		goto done;
-> > +
 > 
-> I still find the fact that this per-shrinker invocation field is never
-> reset unnecessarily fragile, and I don't see any good reason not to
-> reset it prior to the shrinker callback that potentially sets it.
+> On 11/14/2019 10:16 AM, Liang, Kan wrote:
+>>
+>>
+>> On 11/14/2019 8:57 AM, Peter Zijlstra wrote:
+>>> On Thu, Nov 14, 2019 at 08:46:51AM -0500, Liang, Kan wrote:
+>>>>
+>>>>
+>>>> On 11/14/2019 5:43 AM, Peter Zijlstra wrote:
+>>>>> On Wed, Nov 13, 2019 at 04:30:42PM -0800, Ian Rogers wrote:
+>>>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>>>
+>>>>>> When counting system-wide events and cgroup events simultaneously, 
+>>>>>> the
+>>>>>> system-wide events are always scheduled out then back in during 
+>>>>>> cgroup
+>>>>>> switches, bringing extra overhead and possibly missing events. 
+>>>>>> Switching
+>>>>>> out system wide flexible events may be necessary if the scheduled in
+>>>>>> task's cgroups have pinned events that need to be scheduled in at 
+>>>>>> a higher
+>>>>>> priority than the system wide flexible events.
+>>>>>
+>>>>> I'm thinking this patch is actively broken. groups->index 'group' wide
+>>>>> and therefore across cpu/cgroup boundaries.
+>>>>>
+>>>>> There is no !cgroup to cgroup hierarchy as this patch seems to assume,
+>>>>> specifically look at how the merge sort in visit_groups_merge() allows
+>>>>> cgroup events to be picked before !cgroup events.
+>>>>
+>>>>
+>>>> No, the patch intends to avoid switch !cgroup during cgroup context 
+>>>> switch.
+>>>
+>>> Which is wrong.
+>>>
+>> Why we want to switch !cgroup system-wide event in context switch?
+>>
+>> How should current perf handle this case?
+> 
 
-I missed that when updating. I'll reset it in the next version.
+It seems hard to find a simple case to explain why we should not switch 
+!cgroup during cgroup context switch.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Let me try to explain it using ftrace.
+
+Case 1:
+User A do system-wide monitoring for 1 second. No other users.
+      #perf stat -e branches -a -- sleep 1
+
+The counter counts between 765531.617703 and 765532.620184.
+Everything is collected.
+
+            <...>-59160 [027] d.h. 765531.617697: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+            <...>-59160 [027] d.h. 765531.617701: write_msr: 
+MSR_IA32_PMC0(4c1), value 800000000001
+            <...>-59160 [027] d.h. 765531.617702: write_msr: 
+MSR_P6_EVNTSEL0(186), value 5300c4
+            <...>-59160 [027] d.h. 765531.617703: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+           <idle>-0     [027] d.h. 765532.620184: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+           <idle>-0     [027] d.h. 765532.620185: write_msr: 
+MSR_P6_EVNTSEL0(186), value 1300c4
+           <idle>-0     [027] d.h. 765532.620186: rdpmc: 0, value 
+80000b3e87a4
+           <idle>-0     [027] d.h. 765532.620187: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+
+
+Case 2:
+User A do system-wide monitoring for 1 second.
+      #perf stat -e branches -a -- sleep 1
+At the meantime, User B do cgroup monitoring.
+      #perf stat -e cycles -G cgroup
+
+The User A expects to collect everything from 765580.196521 to 
+765581.198150. But it doesn't.
+
+Because of cgroup context switch, the system-wide event for user A stops 
+counting at [765580.213882, 765580.213884],
+[765580.213913, 765580.213915], ..., [765580.774304, 765580.774307].
+
+I think it breaks the usage of User A.
+
+Furthermore, switching !cgroup system-wide event also brings extra 
+overhead, which is unnecessary.
+
+            <...>-121292 [027] d.h. 765580.196514: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+            <...>-121292 [027] d.h. 765580.196519: write_msr: 
+MSR_IA32_PMC0(4c1), value 800000000001
+            <...>-121292 [027] d.h. 765580.196520: write_msr: 
+MSR_P6_EVNTSEL0(186), value 5300c4
+            <...>-121292 [027] d.h. 765580.196521: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+           <idle>-0     [027] d... 765580.213878: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+           <idle>-0     [027] d... 765580.213880: write_msr: 
+MSR_P6_EVNTSEL0(186), value 1300c4
+           <idle>-0     [027] d... 765580.213880: rdpmc: 0, value 
+800000357bc1
+           <idle>-0     [027] d... 765580.213882: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+      simics-poll-25601 [027] d... 765580.213884: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      simics-poll-25601 [027] d... 765580.213888: write_msr: 
+MSR_CORE_PERF_FIXED_CTR1(30a), value 800015820cbe
+      simics-poll-25601 [027] d... 765580.213889: read_msr: 
+MSR_CORE_PERF_FIXED_CTR_CTRL(38d), value 0
+      simics-poll-25601 [027] d... 765580.213890: write_msr: 
+MSR_CORE_PERF_FIXED_CTR_CTRL(38d), value b0
+      simics-poll-25601 [027] d... 765580.213890: write_msr: 
+MSR_IA32_PMC0(4c1), value 800000357bc1
+      simics-poll-25601 [027] d... 765580.213891: write_msr: 
+MSR_P6_EVNTSEL0(186), value 5300c4
+      simics-poll-25601 [027] d... 765580.213892: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+      simics-poll-25601 [027] d... 765580.213910: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      simics-poll-25601 [027] d... 765580.213911: read_msr: 
+MSR_CORE_PERF_FIXED_CTR_CTRL(38d), value b0
+      simics-poll-25601 [027] d... 765580.213911: write_msr: 
+MSR_CORE_PERF_FIXED_CTR_CTRL(38d), value 0
+      simics-poll-25601 [027] d... 765580.213911: rdpmc: 40000001, value 
+80001582b676
+      simics-poll-25601 [027] d... 765580.213912: write_msr: 
+MSR_P6_EVNTSEL0(186), value 1300c4
+      simics-poll-25601 [027] d... 765580.213913: rdpmc: 0, value 
+800000358491
+      simics-poll-25601 [027] d... 765580.213913: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+           <idle>-0     [027] d... 765580.213915: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+           <idle>-0     [027] d... 765580.213916: write_msr: 
+MSR_IA32_PMC0(4c1), value 800000358491
+           <idle>-0     [027] d... 765580.213916: write_msr: 
+MSR_P6_EVNTSEL0(186), value 5300c4
+           <idle>-0     [027] d... 765580.213917: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+
+... ...
+
+      simics-poll-25601 [027] d... 765580.774301: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      simics-poll-25601 [027] d... 765580.774302: read_msr: 
+MSR_CORE_PERF_FIXED_CTR_CTRL(38d), value b0
+      simics-poll-25601 [027] d... 765580.774302: write_msr: 
+MSR_CORE_PERF_FIXED_CTR_CTRL(38d), value 0
+      simics-poll-25601 [027] d... 765580.774302: rdpmc: 40000001, value 
+8000165e927b
+      simics-poll-25601 [027] d... 765580.774303: write_msr: 
+MSR_P6_EVNTSEL0(186), value 1300c4
+      simics-poll-25601 [027] d... 765580.774303: rdpmc: 0, value 
+8000059298ce
+      simics-poll-25601 [027] d... 765580.774304: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+            <...>-135379 [027] d... 765580.774307: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+            <...>-135379 [027] d... 765580.774308: write_msr: 
+MSR_IA32_PMC0(4c1), value 8000059298ce
+            <...>-135379 [027] d... 765580.774309: write_msr: 
+MSR_P6_EVNTSEL0(186), value 5300c4
+            <...>-135379 [027] d... 765580.774309: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+            <...>-147127 [027] d.h. 765581.198150: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+            <...>-147127 [027] d.h. 765581.198153: write_msr: 
+MSR_P6_EVNTSEL0(186), value 1300c4
+            <...>-147127 [027] d.h. 765581.198153: rdpmc: 0, value 
+80000a573368
+            <...>-147127 [027] d.h. 765581.198155: write_msr: 
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 70000000f
+
+
+Thanks,
+Kan
+
+
+
+
+
