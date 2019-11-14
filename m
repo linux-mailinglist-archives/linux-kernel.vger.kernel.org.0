@@ -2,93 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C7E6FCBFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 704ACFCC0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfKNRjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 12:39:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbfKNRjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 12:39:53 -0500
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34B0120718;
-        Thu, 14 Nov 2019 17:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573753192;
-        bh=VzKteWn1F/CosCCsd6C4IKUCGWE4H5oQV8jGARZ48tc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qN2v5wV095fAUbYtR5P6fE7B5vGnb+vx313xCT936CPIndi5UGPzUwBJ4RrLRuJ3x
-         doWz3mevftGogNgXftWdpHE1RIm0Y5J6GvK5tLIDIKNpwQIF4FFify2At4paexUm3K
-         4SIxI+snb5+OFz1v88ytyKBaUGmq/kZP83rqrNBI=
-Received: by mail-qv1-f48.google.com with SMTP id s18so2698307qvr.4;
-        Thu, 14 Nov 2019 09:39:52 -0800 (PST)
-X-Gm-Message-State: APjAAAWU3N45mXI3Ud44Pp4vYPoEZm/VZN9MOpL5LaaVCp0AL7a7LjP+
-        ZR2aMon3mU4pSQ46aeWgIpGYozdnZqVv/a9nCw==
-X-Google-Smtp-Source: APXvYqxjXzdKzRE0EK2pcCqMsxPiZ4eYz6WenDnilDBfvtuJZs9Eo9skkMhiHprH/vEA4CI6gl4l72fI4G+D1tx4Ce4=
-X-Received: by 2002:a0c:d2b4:: with SMTP id q49mr8873666qvh.135.1573753191385;
- Thu, 14 Nov 2019 09:39:51 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1573455324.git.rahul.tanwar@linux.intel.com>
- <96537f8702501a45501d5a59ca029f92e36a9e4a.1573455324.git.rahul.tanwar@linux.intel.com>
- <CACRpkdYhy1KLyZd4MNSODpy0Q59_SAcc+wkofrZr4b4N+rYDxw@mail.gmail.com> <1d3be294-5f12-462c-855c-e53ecb9190b7@linux.intel.com>
-In-Reply-To: <1d3be294-5f12-462c-855c-e53ecb9190b7@linux.intel.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 14 Nov 2019 11:39:40 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+okgZgqdbosrOHhL1m0BW4E718Kb4tmyuexEfPwAZLmg@mail.gmail.com>
-Message-ID: <CAL_Jsq+okgZgqdbosrOHhL1m0BW4E718Kb4tmyuexEfPwAZLmg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] dt-bindings: pinctrl: intel: Add for new SoC
-To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Andriy Shevchenko <andriy.shevchenko@intel.com>,
-        qi-ming.wu@intel.com, yixin zhu <yixin.zhu@linux.intel.com>,
-        cheol.yong.kim@intel.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1727059AbfKNRmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 12:42:50 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:64709 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfKNRme (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 12:42:34 -0500
+Received: from grover.flets-west.jp (softbank126021098169.bbtec.net [126.21.98.169]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id xAEHgSo1028428;
+        Fri, 15 Nov 2019 02:42:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xAEHgSo1028428
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573753349;
+        bh=D/eJT32mBwbeMEWygMHfIeG/R76XAZJvY7EI4TTqWrc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TeCwteFO4rbpVkL6GZBxzkSITG1wka4bBagnguZvWG9oeaDuZxba8ofnIobOLyT6i
+         ktVfWGQbvo20kFZppd1ukVCuyShjml7oh060Wxy3Y+3ogP/EBvPT+mljmcIwbsrESx
+         VK79FOirnxcQQnJ5L1G8YkNI5AjC3Akt7BX5eHqWHpmlev7QxS8TSKemLkubTga0bM
+         RrEgsEg3W5KmLfreCTM9Dir4Jf7ZBVAL2r/zu7QJ3o0UZ3AjM4dyIjffXdlD5y1QO3
+         JNPPCuElkzoQIHg3GTktn6F2DS3Ezb0nWSVMTgV31NP43Z87FicDX0S32k7SF3D78B
+         AAhvPH7c8H2/A==
+X-Nifty-SrcIP: [126.21.98.169]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] modpost: add a helper to get data pointed by a symbol
+Date:   Fri, 15 Nov 2019 02:42:21 +0900
+Message-Id: <20191114174226.7201-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 9:27 PM Tanwar, Rahul
-<rahul.tanwar@linux.intel.com> wrote:
->
->
-> Hi Linus,
->
-> On 13/11/2019 10:46 PM, Linus Walleij wrote:
-> > On Mon, Nov 11, 2019 at 11:11 AM Rahul Tanwar
-> > <rahul.tanwar@linux.intel.com> wrote:
-> >
-> >> Add dt bindings document for pinmux & GPIO controller driver of
-> >> Intel Lightning Mountain SoC.
-> >>
-> >> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-> > (...)
-> >
-> >> +properties:
-> >> +  compatible:
-> >> +    const: intel,lgm-pinctrl
-> > Just noted from another review where Rob noted that this name should
-> > match the internal name in the datasheet for this hardware block. Is it
-> > really called "lgm-pinctrl" inside Intel?
-> >
-> > intel,lightning-mountain-io and similar are perfectly fine if that is the
-> > name it has in your documentation.
->
-> Our documentation does not have any specific names for these hardware
-> blocks. It names it in a very generic/standard manner like GPIO, pinmux..
->
-> To make the name explicit & self explanatory, i should probably change
-> the name as you suggested i.e. intel,lightning-mountain-io.
+When CONFIG_MODULE_REL_CRCS is enabled, the value of __crc_* is not
+an absolute value, but the address to the CRC data embedded in the
+.rodata section.
 
-You should also be consistent with 'lgm' vs. 'lightning-mountain' use
-across bindings some of which I think have already been accepted.
+Getting the data pointed by the symbol value is somewhat complex.
+Split it out into a new helper, sym_get_data().
 
-Rob
+I will reuse it to refactor namespace_from_kstrtabns() in the next
+commit.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/mod/modpost.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 46d7f695fe7f..cd885573daaf 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -308,6 +308,18 @@ static const char *sec_name(struct elf_info *elf, int secindex)
+ 	return sech_name(elf, &elf->sechdrs[secindex]);
+ }
+ 
++static void *sym_get_data(const struct elf_info *info, const Elf_Sym *sym)
++{
++	Elf_Shdr *sechdr = &info->sechdrs[sym->st_shndx];
++	unsigned long offset;
++
++	offset = sym->st_value;
++	if (info->hdr->e_type != ET_REL)
++		offset -= sechdr->sh_addr;
++
++	return (void *)info->hdr + sechdr->sh_offset + offset;
++}
++
+ #define strstarts(str, prefix) (strncmp(str, prefix, strlen(prefix)) == 0)
+ 
+ static enum export export_from_secname(struct elf_info *elf, unsigned int sec)
+@@ -697,10 +709,7 @@ static void handle_modversions(struct module *mod, struct elf_info *info,
+ 			unsigned int *crcp;
+ 
+ 			/* symbol points to the CRC in the ELF object */
+-			crcp = (void *)info->hdr + sym->st_value +
+-			       info->sechdrs[sym->st_shndx].sh_offset -
+-			       (info->hdr->e_type != ET_REL ?
+-				info->sechdrs[sym->st_shndx].sh_addr : 0);
++			crcp = sym_get_data(info, sym);
+ 			crc = TO_NATIVE(*crcp);
+ 		}
+ 		sym_update_crc(symname + strlen("__crc_"), mod, crc,
+-- 
+2.17.1
+
