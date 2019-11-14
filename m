@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D623FCD6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C3CFCD71
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfKNSYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:24:09 -0500
-Received: from mail-eopbgr150135.outbound.protection.outlook.com ([40.107.15.135]:12935
+        id S1727669AbfKNSYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:24:14 -0500
+Received: from mail-eopbgr150108.outbound.protection.outlook.com ([40.107.15.108]:50913
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727526AbfKNSYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:24:05 -0500
+        id S1727569AbfKNSYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:24:06 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TTM8OAU/r22fFxnBwkbtHem04B7y4AE9oNl6dWjkF40Sv3fjTuTxZyhJ94ZUzslIt9zT2MhYbUSgwvCXI0SXNMDR2+LD6Q4b420f2bpKmhvfa4A3sPpGHjfXk0xXyXypADipWondtKkB+7KCOvY/jYw/56hWXRAoojAGYTvqkYm3xOXtn+hcDUrZyMexaKFd0BjthuuCUIFueXJ8VvsP/+hfScr4Aq9lTHfdkezV1I++jsRUi473ZIOg23QAyXklT/GEgsb5F+PytLEAxS3rY+Dn8HFH4cP202wWbFBB+8bB62muLwE7en5Q9tyjZfFvp9WzHpHrLceMuA30oqgXXg==
+ b=AG0fkJu5C71PIB0S3ncasEKZhuSa20MK5Gp8XG8fcyGOHgNxDEINTkklAqzBvjhHELreR8NAHak4HRGoeWItuopGGicp6sc3mQBTNyQsXXU0q2qPK6wtZ/QXdcms+P5w1D7WhVGDrMBPj2hL7d0cXueU4cpdHaB8IAy+Xf18Sl2SXS+cg3sRmgEdYMRgrozBczMGuXmeF4Fy2JBq/HHcSBBCgVZwoH8Agtmqr0dZILrYrNdswasSR9WmWEejrWwk/3mxYhotO/QygvrLJ0i59ojaA0sgbeFaBtdcOB3ivnAdjCQxKr1RL/JW8emZEj9yON5otTriP3ULnvP6srWXYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IZ6yEoxFAgRpeyXE7+g3U/MJoyIVqBWav/HcOaH6sn8=;
- b=Gt8NNRsP5fjGMGsCcEARx0I1JlGguttzOLrBYcYOGThtG8sAPT33t+Gy11Uu0/9rYcftpbLO0sZtTPEz1XXwv/6gXx6V8nnCFf+ydLZdh87mpCwPMyDS0zz/om0Kb+p44S8soMV8+YjjZF5zuo2fBTH8UxXSdTyK529aYMHHl54plB66tG3VOc5XxLkls3LOOvCwPnBU5fd1wEkJc5xDH+Yas5yQiX2cuM8w7C+OWCe38wzz1qSMdNkhdbZUKFMVLw1t6pZiuXUHZA1hbKTpkzZgUFPQwgs93ey87vDtPmsgX3eRMUGqIj6t9rRdDPu1D5OmEyV2pcsgtxK1FhFieg==
+ bh=gzF198WKgmFCrAOY0jzsb4nvo14L+m8qKz5fhMWxlq8=;
+ b=CUmWJopL8LSOyTU13MpNbjIwbMLFftBGSioq3CoxRoll8sPmybxKsut5oelPMpeKSOlyE/Gpu1KpZ5rgVWjteMJ0ECTqCSCi+q2DYey2vIIV5SOSyie0PHj+2XNmoryrbFKB3FWaWyWlDfiggWg6pdlhKf4CqdErbvCEzXalWLDoTC+r4JrDLAcC8WisNVk2OrxTIteXUdzvRuLP3MUceB+Z4i/R9T0WqYq4X8AhNr/Jr7gtooYRXEHIduC6zxIClQLaQAKSsDZ+tr9vWAKaXMuHX7rLKLnXkkrPLVlAOjrz1HLZljF6yIxHRRrZPPRVswn4k+3MaqjSezcOSa0gqQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
  dkim=pass header.d=habana.ai; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IZ6yEoxFAgRpeyXE7+g3U/MJoyIVqBWav/HcOaH6sn8=;
- b=rK1RCvSH/lkO2Yo23fbF99YTd+HQjciBrRVGo8BSP7hHdtP1Uk/JcPi9vYvHo30pIEgyA1A8n7tV9th09Pi7b1DwjL87rzxg+FDoxsqYlo0vPu79PE+YgtuI2F3vkjvHxLxScvb5TU773nX/t6iGNM8EwAgJRpnDSOuD+wsN4C4=
+ bh=gzF198WKgmFCrAOY0jzsb4nvo14L+m8qKz5fhMWxlq8=;
+ b=wOhybaTPXObKCxHfh9PlIAyFHE1Tl+fenLFlfw7ENaO6nY/VV7tg0Nc8PFTAo2e0AbCNp7Th9W5N8KCCV+bYU1lP7D1FRIq4LZ7DK2fQ1VnSa8zM16rw4E4TduRVn1582KYKdiK6zLDInqMOFAPihS7eOsObUPOohvAVpm3v3JE=
 Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
  AM6PR0202MB3383.eurprd02.prod.outlook.com (52.133.29.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.22; Thu, 14 Nov 2019 18:23:57 +0000
+ 15.20.2451.22; Thu, 14 Nov 2019 18:23:58 +0000
 Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
  ([fe80::240e:7545:887b:939e]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
  ([fe80::240e:7545:887b:939e%4]) with mapi id 15.20.2430.028; Thu, 14 Nov 2019
- 18:23:57 +0000
+ 18:23:58 +0000
 From:   Omer Shpigelman <oshpigelman@habana.ai>
 To:     "oded.gabbay@gmail.com" <oded.gabbay@gmail.com>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/8] habanalabs: optimize MMU unmap
-Thread-Topic: [PATCH 5/8] habanalabs: optimize MMU unmap
-Thread-Index: AQHVmxitSJusm6cdykSOEqlkGV9AMg==
+Subject: [PATCH 6/8] habanalabs: skip VA block list update in reset flow
+Thread-Topic: [PATCH 6/8] habanalabs: skip VA block list update in reset flow
+Thread-Index: AQHVmxiuq1Q1DSwBjU6NpKINytksvQ==
 Date:   Thu, 14 Nov 2019 18:23:57 +0000
-Message-ID: <20191114182346.22675-5-oshpigelman@habana.ai>
+Message-ID: <20191114182346.22675-6-oshpigelman@habana.ai>
 References: <20191114182346.22675-1-oshpigelman@habana.ai>
 In-Reply-To: <20191114182346.22675-1-oshpigelman@habana.ai>
 Accept-Language: en-US
@@ -58,106 +58,138 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [31.154.190.6]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3a874ca4-fb6f-409a-54ca-08d7692fcff3
+x-ms-office365-filtering-correlation-id: a8adfa9a-b80e-4955-c576-08d7692fd06f
 x-ms-traffictypediagnostic: AM6PR0202MB3383:
-x-microsoft-antispam-prvs: <AM6PR0202MB3383D8960712FBE17DA5F0ADB8710@AM6PR0202MB3383.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:303;
+x-microsoft-antispam-prvs: <AM6PR0202MB33835FEFDAFD32BAE05DDE71B8710@AM6PR0202MB3383.eurprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2657;
 x-forefront-prvs: 02213C82F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(39840400004)(136003)(366004)(189003)(199004)(71200400001)(6436002)(5640700003)(81166006)(26005)(478600001)(81156014)(186003)(386003)(25786009)(8936002)(14444005)(50226002)(14454004)(256004)(76176011)(6486002)(71190400001)(8676002)(102836004)(2906002)(52116002)(316002)(5660300002)(36756003)(86362001)(4326008)(66556008)(66476007)(66446008)(1361003)(6506007)(64756008)(99286004)(6512007)(7736002)(305945005)(2501003)(66946007)(446003)(1076003)(486006)(2616005)(476003)(6116002)(3846002)(11346002)(2351001)(66066001)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3383;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(39840400004)(136003)(366004)(189003)(199004)(71200400001)(6436002)(5640700003)(81166006)(26005)(478600001)(81156014)(186003)(386003)(25786009)(8936002)(14444005)(50226002)(14454004)(256004)(76176011)(6486002)(71190400001)(8676002)(102836004)(2906002)(52116002)(316002)(5660300002)(36756003)(86362001)(4326008)(66556008)(66476007)(66446008)(1361003)(6506007)(15650500001)(64756008)(99286004)(6512007)(7736002)(305945005)(2501003)(66946007)(446003)(1076003)(486006)(2616005)(476003)(6116002)(3846002)(11346002)(2351001)(66066001)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3383;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: habana.ai does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: r6Z9aBXDrkBwfGbTEdDW8HQ8WHEiX1yxOPFVFKb/AdJQRhnpz5mZu6rcBSY+iPnEL736LsY+cgYYWQEW+XeaE/SO9BXb3p8kkqyhiWO8fsbctpl3ELtSdmZALuZBtq5tWrCt9BCl8OirfNZcPE6IwdDE/vT0T/BPVnKPB6H9E02tfr4OE6Lnzcfp//zTUdmomKgL+kwBZC27Ma/xv+CGF8730FGcIUd+IOe4eEgTubys7W8hYFMR2qWITPn7r9/W0GQusr4AEPLeEiD5YrD2IaNpG81lcmJFiu8QQiddFHa9gq6B1+t4N0QZKETlQ3pR9sISdz5a12BshUDgtBtzWDw7//AzboG/rKVmL1YC3g2zshnQJ5NRJkcVi4rTvxDM/xpP49ruRo5F8ajpISRtmJXrcS0MwITReSuaqtPkZceLCmE3RQoRJQXmKz8APtRP
+x-microsoft-antispam-message-info: 8lakoL5zqYwckb/tEMUgTIe1xy0MVmPbAvugcmC2RXwgPFsuacQ9Hw2KJSR5pbYC1biYjUK4ZaelnzAnSPuLMq9I3kiDB1V0jMPlF8G6JIzX+tFH/39ogrDz6V0AnreXFy8W6o5oif3CyXuG1aihESIBKnqF5HR24FvZ3FybdXDlCCpaY6kKAygGjHsDAimq2wvvzIoBHiVdRHPI+kFwnb0Wg08R9D+yBq0/M28SxQY1nrGeaC1KofmRbEij2Jj6CMv1v1TvbeZlTF/GJh5zT07/yxJaeV5QjhLVlSomoFZAQFtB+pNnp97a5MJRWV8FErwjCCZOpPKuUO3vHHO3xTnZuOyrmVgrr8wXDDXydzmWWGaGWtoIwraS3XiOlJ7mBTjquDcRqxzlJxn0euDm8nH4HPAG/waDWKZhWua4oHTNPU3QcaDCPANpLNzJyA8N
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a874ca4-fb6f-409a-54ca-08d7692fcff3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2019 18:23:57.2712
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8adfa9a-b80e-4955-c576-08d7692fd06f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2019 18:23:57.9568
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uSTyhWpjfo2k5hsxsbozaq2TrX6wGwtNBRBY8ExeHgdTeB7X3GkfCCMlJPU1oQJRYPIaALZ24EWpPQqbEHx6fQ==
+X-MS-Exchange-CrossTenant-userprincipalname: jQANbnHuGds9mKa8NxQMXC+2pFMoEGNmSMbMlOKH8kgfj2KUks6EG6pAcFRqmuzn4C0Dx4kis/nvPE1hsj0Xbg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3383
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reduce context close time by skipping hash table lookup if possible in
+Reduce context close time by skipping the VA block free list update in
 order to avoid hard reset with open contexts.
 Reset with open contexts can potentially lead to a kernel crash as the
 generic pool of the MMU hops is destroyed while it is not empty because
 some unmap operations are not done.
-This commit affect mainly when running on simulator.
+The commit affect mainly when running on simulator.
 
 Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
 ---
- drivers/misc/habanalabs/mmu.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/misc/habanalabs/memory.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/misc/habanalabs/mmu.c b/drivers/misc/habanalabs/mmu.c
-index 3a7f8ff19eb2..6262b26e2086 100644
---- a/drivers/misc/habanalabs/mmu.c
-+++ b/drivers/misc/habanalabs/mmu.c
-@@ -25,10 +25,9 @@ static struct pgt_info *get_pgt_info(struct hl_ctx *ctx,=
- u64 hop_addr)
- 	return pgt_info;
- }
-=20
--static void free_hop(struct hl_ctx *ctx, u64 hop_addr)
-+static void _free_hop(struct hl_ctx *ctx, struct pgt_info *pgt_info)
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/mem=
+ory.c
+index 1e0ebd3f6e36..be6f42749a61 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -994,17 +994,19 @@ static int map_device_va(struct hl_ctx *ctx, struct h=
+l_mem_in *args,
+  *
+  * @ctx                 : current context
+  * @vaddr               : device virtual address to unmap
++ * @ctx_free            : true if in context free flow, false otherwise.
+  *
+  * This function does the following:
+  * - Unmap the physical pages related to the given virtual address
+  * - return the device virtual block to the virtual block list
+  */
+-static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
++static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr, bool ctx_free)
  {
  	struct hl_device *hdev =3D ctx->hdev;
--	struct pgt_info *pgt_info =3D get_pgt_info(ctx, hop_addr);
-=20
- 	gen_pool_free(hdev->mmu_pgt_pool, pgt_info->phys_addr,
- 			hdev->asic_prop.mmu_hop_table_size);
-@@ -37,6 +36,13 @@ static void free_hop(struct hl_ctx *ctx, u64 hop_addr)
- 	kfree(pgt_info);
- }
-=20
-+static void free_hop(struct hl_ctx *ctx, u64 hop_addr)
-+{
-+	struct pgt_info *pgt_info =3D get_pgt_info(ctx, hop_addr);
-+
-+	_free_hop(ctx, pgt_info);
-+}
-+
- static u64 alloc_hop(struct hl_ctx *ctx)
- {
- 	struct hl_device *hdev =3D ctx->hdev;
-@@ -159,7 +165,7 @@ static inline int put_pte(struct hl_ctx *ctx, u64 hop_a=
+ 	struct hl_vm_phys_pg_pack *phys_pg_pack =3D NULL;
+ 	struct hl_vm_hash_node *hnode =3D NULL;
+ 	struct hl_userptr *userptr =3D NULL;
++	struct hl_va_range *va_range;
+ 	enum vm_type_t *vm_type;
+ 	bool is_userptr;
+ 	int rc;
+@@ -1030,6 +1032,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 va=
 ddr)
- 	 */
- 	num_of_ptes_left =3D pgt_info->num_of_ptes;
- 	if (!num_of_ptes_left)
--		free_hop(ctx, hop_addr);
-+		_free_hop(ctx, pgt_info);
 =20
- 	return num_of_ptes_left;
- }
-@@ -516,13 +522,14 @@ void hl_mmu_ctx_fini(struct hl_ctx *ctx)
- 	dram_default_mapping_fini(ctx);
+ 	if (*vm_type =3D=3D VM_TYPE_USERPTR) {
+ 		is_userptr =3D true;
++		va_range =3D &ctx->host_va_range;
+ 		userptr =3D hnode->ptr;
+ 		rc =3D init_phys_pg_pack_from_userptr(ctx, userptr,
+ 							&phys_pg_pack);
+@@ -1041,6 +1044,7 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 va=
+ddr)
+ 		}
+ 	} else if (*vm_type =3D=3D VM_TYPE_PHYS_PACK) {
+ 		is_userptr =3D false;
++		va_range =3D &ctx->dram_va_range;
+ 		phys_pg_pack =3D hnode->ptr;
+ 	} else {
+ 		dev_warn(hdev->dev,
+@@ -1066,12 +1070,18 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 =
+vaddr)
 =20
- 	if (!hash_empty(ctx->mmu_shadow_hash))
--		dev_err(hdev->dev, "ctx is freed while it has pgts in use\n");
-+		dev_err(hdev->dev, "ctx %d is freed while it has pgts in use\n",
-+			ctx->asid);
+ 	mutex_unlock(&ctx->mmu_lock);
 =20
- 	hash_for_each_safe(ctx->mmu_shadow_hash, i, tmp, pgt_info, node) {
--		dev_err(hdev->dev,
-+		dev_err_ratelimited(hdev->dev,
- 			"pgt_info of addr 0x%llx of asid %d was not destroyed, num_ptes: %d\n",
- 			pgt_info->phys_addr, ctx->asid, pgt_info->num_of_ptes);
--		free_hop(ctx, pgt_info->shadow_addr);
-+		_free_hop(ctx, pgt_info);
+-	if (add_va_block(hdev,
+-			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
+-			vaddr,
+-			vaddr + phys_pg_pack->total_size - 1))
+-		dev_warn(hdev->dev, "add va block failed for vaddr: 0x%llx\n",
+-				vaddr);
++	/*
++	 * No point in maintaining the free VA block list if the context is
++	 * closing as the list will be freed anyway
++	 */
++	if (!ctx_free) {
++		rc =3D add_va_block(hdev, va_range, vaddr,
++					vaddr + phys_pg_pack->total_size - 1);
++		if (rc)
++			dev_warn(hdev->dev,
++					"add va block failed for vaddr: 0x%llx\n",
++					vaddr);
++	}
+=20
+ 	atomic_dec(&phys_pg_pack->mapping_cnt);
+ 	kfree(hnode);
+@@ -1203,8 +1213,8 @@ int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data)
+ 		break;
+=20
+ 	case HL_MEM_OP_UNMAP:
+-		rc =3D unmap_device_va(ctx,
+-				args->in.unmap.device_virt_addr);
++		rc =3D unmap_device_va(ctx, args->in.unmap.device_virt_addr,
++					false);
+ 		break;
+=20
+ 	default:
+@@ -1651,7 +1661,7 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
+ 		dev_dbg(hdev->dev,
+ 			"hl_mem_hash_node of vaddr 0x%llx of asid %d is still alive\n",
+ 			hnode->vaddr, ctx->asid);
+-		unmap_device_va(ctx, hnode->vaddr);
++		unmap_device_va(ctx, hnode->vaddr, true);
  	}
 =20
- 	mutex_destroy(&ctx->mmu_lock);
+ 	spin_lock(&vm->idr_lock);
 --=20
 2.17.1
 
