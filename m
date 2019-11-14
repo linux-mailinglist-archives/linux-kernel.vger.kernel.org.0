@@ -2,153 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F2EFBDB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 02:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59C70FBDC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 03:01:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfKNByC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 20:54:02 -0500
-Received: from regular1.263xmail.com ([211.150.70.201]:56522 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfKNByC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 20:54:02 -0500
-Received: from localhost (unknown [192.168.167.32])
-        by regular1.263xmail.com (Postfix) with ESMTP id 1F1D8405;
-        Thu, 14 Nov 2019 09:53:49 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [172.16.12.9] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P47878T139986162661120S1573696426616732_;
-        Thu, 14 Nov 2019 09:53:48 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <438ac3b0e67c996fd5c2911b5379e891>
-X-RL-SENDER: kever.yang@rock-chips.com
-X-SENDER: yk@rock-chips.com
-X-LOGIN-NAME: kever.yang@rock-chips.com
-X-FST-TO: npcomplete13@gmail.com
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH 3/3] arm64: dts: rk3399: Add init voltage for vdd_log
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alexis Ballier <aballier@gentoo.org>,
-        Soeren Moch <smoch@web.de>,
-        Hugh Cole-Baker <sigmaris@gmail.com>,
-        Andy Yan <andyshrk@gmail.com>,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Pragnesh Patel <Pragnesh_Patel@mentor.com>,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Nick Xie <nick@khadas.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Akash Gajjar <akash@openedev.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?Q?Andrius_=c5=a0tikonas?= <andrius@stikonas.eu>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Oskari Lemmela <oskari@lemmela.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Vivek Unune <npcomplete13@gmail.com>
-References: <20191111005158.25070-1-kever.yang@rock-chips.com>
- <20191111005158.25070-3-kever.yang@rock-chips.com>
- <CAD=FV=UjbPALRU2r0s27F4RxjsbDyQ+horUBezVQejk1pT=vqA@mail.gmail.com>
-From:   Kever Yang <kever.yang@rock-chips.com>
-Message-ID: <a6d41fc5-4ed5-6ec2-5697-ca2b0abe288c@rock-chips.com>
-Date:   Thu, 14 Nov 2019 09:53:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726491AbfKNCBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 21:01:44 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60154 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726120AbfKNCBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 21:01:44 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 103F0FB581E56AB6F9E4;
+        Thu, 14 Nov 2019 10:01:33 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 14 Nov 2019
+ 10:01:24 +0800
+Subject: Re: [PATCH] debugfs: fix potential infinite loop in
+ debugfs_remove_recursive
+To:     Steven Rostedt <rostedt@goodmis.org>
+CC:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <oleg@redhat.com>, <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
+        <zhengbin13@huawei.com>, <yi.zhang@huawei.com>,
+        <chenxiang66@hisilicon.com>, <xiexiuqi@huawei.com>
+References: <1572528884-67565-1-git-send-email-yukuai3@huawei.com>
+ <20191113151755.7125e914@gandalf.local.home>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <a399ae58-a467-3ff9-5a01-a4a2cdcf4fd6@huawei.com>
+Date:   Thu, 14 Nov 2019 10:01:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=UjbPALRU2r0s27F4RxjsbDyQ+horUBezVQejk1pT=vqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20191113151755.7125e914@gandalf.local.home>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+Thanks for your explanation
 
-On 2019/11/14 上午1:01, Doug Anderson wrote:
-> Hi,
->
-> On Sun, Nov 10, 2019 at 4:52 PM Kever Yang <kever.yang@rock-chips.com> wrote:
->> Since there is no devfreq used for vdd_log, so the vdd_log(pwm regulator)
->> will be 'enable' with the dts node at a default PWM state with high or low
->> output. Both too high or too low for vdd_log is not good for the board,
->> add init voltage for driver to make the regulator get into a know output.
+On 2019/11/14 4:17, Steven Rostedt wrote:
+> On Thu, 31 Oct 2019 21:34:44 +0800
+> yu kuai <yukuai3@huawei.com> wrote:
+> 
+>> debugfs_remove_recursive uses list_empty to judge weather a dentry has
+>> any subdentry or not. This can lead to infinite loop when any subdir is in
+>> use.
 >>
->> Note that this will be used by U-Boot for init voltage output, and this
->> is very important for it may get system hang somewhere during system
->> boot up with regulator enable and without this init value.
-> I'm a tad bit confused here.  When U-Boot boots the kernel, how is the
-> PWM configured?
->
-> I remember folks going through a lot of work to make sure that we
-> could actually _read_ the PWM state that the bootloader gave us and
-> report it as the initial voltage.  If the kernel ends up needing to
-> configure the PWM regulator's period for some reason, I remember it
-> would actually pick something close.  Is that not working for you?
->
-> For instance, on rk3288-veyron when I boot up mainline (no devfreq on
-> rk3288-veyron on mainline) the vdd_logic reports 1.2 volts because it
-> read what the bootloader left it as.
->
-> ...are you saying that U-Boot doesn't configure the PWM and you're
-> trying to fix it up in the kernel?
+>> The problem was discoverd by the following steps in the console.
+>> 1. use debugfs_create_dir to create a dir and multiple subdirs(insmod);
+>> 2. cd to the subdir with depth not less than 2;
+>> 3. call debugfs_remove_recursive(rmmod).
+>>
+>> After removing the subdir, the infinite loop is triggered bucause
+> 
+>    s/bucause/because/
+> 
+>> debugfs_remove_recursive uses list_empty to judge if the current dir
+>> doesn't have any subdentry, if so, remove the current dir and which
+>> will never happen.
+>>
+>> Fix the problem by using simple_empty instead of list_empty.
+>>
+>> Fixes: 776164c1faac ('debugfs: debugfs_remove_recursive() must not rely on list_empty(d_subdirs)')
+>> Reported-by: chenxiang66@hisilicon.com
+>> Signed-off-by: yu kuai <yukuai3@huawei.com>
+>> ---
+>>   fs/debugfs/inode.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+>> index 7b975db..42b28acc 100644
+>> --- a/fs/debugfs/inode.c
+>> +++ b/fs/debugfs/inode.c
+>> @@ -773,8 +773,10 @@ void debugfs_remove_recursive(struct dentry *dentry)
+>>   		if (!simple_positive(child))
+>>   			continue;
+>>   
+>> -		/* perhaps simple_empty(child) makes more sense */
+>> -		if (!list_empty(&child->d_subdirs)) {
+>> +		/* use simple_empty to prevent infinite loop when any
+>> +		 * subdentry of child is in use
+>> +		 */
+> 
+> Nit, multi-line comments should be of the form:
+> 
+> 	/*
+> 	 * comment line 1
+> 	 * comment line 2
+> 	 */
+> 
+> Not
+> 
+> 	/* comment line 1
+> 	 * comment line 2
+> 	 */
+> 
+> It's known that the networking folks like that method, but it's not
+> acceptable anywhere outside of networking.
+> 
+Do you agree with that list_empty(&chile->d_subdirs) here is not 
+appropriate? Since it can't skip the subdirs that is not 
+simple_positive(simple_positive() will return false), which is the 
+reason of infinite loop.
+>> +		if (!simple_empty(child)) {
+> 
+> Have you tried this with lockdep enabled? I'm thinking that you might
+> get a splat with holding parent->d_lock and simple_empty(child) taking
+> the child->d_lock.
+The locks are taken and released in the right order:
+take parent->d_lock
+	take child->d_lock
+		list_for_each_entry(c, &child->d_sundirs, d_child)
+			take c->d_lock
+			release c->d_lock
+	release child->d_lock
+release parent->d_lock
+I don't see anything wrong, am I missing something?
 
-U-Boot will configure the PWM with dts setting(and now U-Boot would like 
-to sync the dts
-
-from kernel directly):
-
-- no dts node for pwm regulator, it will be default as input IO without 
-any configure;
-
-- with pwm regulator dts enable, no 'init-microvolt', enable PWM with 
-default 0% output;
-
-- with pwm regulator dts with 'init-microvolt', enable PWM with 
-corresponding duty output;
-
-We should leave it not configure(around 0.9V for most of board) or 
-configure to correct
-
-output(some boards need 0.95V while default is 0.9V for stability issue).
-
-For the rk3399 boards on upstream, some of them do not have a vdd_log in 
-dts,
-
-and others have dts node but without 'init-microvolt' for init setting, 
-that's what I want
-
-to fix to make sure all the boards can work correctly.
-
-
-Thanks,
-
-- Kever
-
->
-> -Doug
->
->
-> -Doug
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->
-
+Thanks
+Yu Kuai
+> 
+> -- Steve
+> 
+> 
+>>   			spin_unlock(&parent->d_lock);
+>>   			inode_unlock(d_inode(parent));
+>>   			parent = child;
+> 
+> 
+> .
+> 
 
