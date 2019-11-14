@@ -2,288 +2,621 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F62FCCE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E31C7FCCE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfKNSOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:14:16 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59437 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfKNSOQ (ORCPT
+        id S1726812AbfKNSNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:13:04 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34619 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfKNSNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:14:16 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iVJc0-0000jD-Rz; Thu, 14 Nov 2019 19:12:56 +0100
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iVJbo-00011h-3P; Thu, 14 Nov 2019 19:12:44 +0100
-Date:   Thu, 14 Nov 2019 19:12:43 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        alexandre.belloni@bootlin.com, mhocko@suse.com,
-        julien.thierry@arm.com, catalin.marinas@arm.com,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        yamada.masahiro@socionext.com, ryabinin.a.a@gmail.com,
-        glider@google.com, kvmarm@lists.cs.columbia.edu, corbet@lwn.net,
-        liuwenliang@huawei.com, daniel.lezcano@linaro.org,
-        linux@armlinux.org.uk, kasan-dev@googlegroups.com,
-        bcm-kernel-feedback-list@broadcom.com, geert@linux-m68k.org,
-        drjones@redhat.com, vladimir.murzin@arm.com, keescook@chromium.org,
-        arnd@arndb.de, marc.zyngier@arm.com, andre.przywara@arm.com,
-        philip@cog.systems, jinb.park7@gmail.com, tglx@linutronix.de,
-        dvyukov@google.com, nico@fluxnic.net, gregkh@linuxfoundation.org,
-        ard.biesheuvel@linaro.org, linux-doc@vger.kernel.org,
-        christoffer.dall@arm.com, rob@landley.net, pombredanne@nexb.com,
-        akpm@linux-foundation.org, thgarnie@google.com,
-        kirill.shutemov@linux.intel.com, kernel@pengutronix.de
-Subject: Re: [PATCH v6 0/6] KASan for arm
-Message-ID: <20191114181243.q37rxoo3seds6oxy@pengutronix.de>
-References: <20190617221134.9930-1-f.fainelli@gmail.com>
+        Thu, 14 Nov 2019 13:13:04 -0500
+Received: by mail-wm1-f68.google.com with SMTP id j18so8087942wmk.1;
+        Thu, 14 Nov 2019 10:13:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e1YGkP3YYWvfobcdQXF349HfrSJSFS8d+634UN9nQdo=;
+        b=g6qpTBFpu7hbN0DNlhTYKEB/EDQXwzuy/rFdXLodRIcYG/Fsd0HthDmF1CTs77jOTd
+         WmPx34XSPqFujnqyajzICPgS8jZL6BiUJgkAYGjFI0Y/c2K/WFaGLYfeg6AZy8ZMXNbP
+         UIftfCSQnlKNzXJEQVaWJpXedUZDKwVMOhcZWHVgtlDm4fTevcMreIURsXkHtt37Tgqi
+         d+DmahMuDPkPKkQWEKOIcEqLN4lmefadHgmvPajbE80mMpedWQTe9t8TXEIVQSbtsDUc
+         xIqElxLzt/0yhWiKBKZpMKD2Tp/3oEdalSKfHGagzjuoe05j0FMr6BbF7M6+QWEV7NGu
+         qeRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e1YGkP3YYWvfobcdQXF349HfrSJSFS8d+634UN9nQdo=;
+        b=qewGyZxSWM+9rmnejKt7XpGYLCFlmc2UnDU8FCTPXfDs26Pj6Ertu1If6wetNRO8FW
+         6rnguU5tOX60Ch5SgaGBnIwPsLZjL2PvhMx2ZIP9cX3otJ4qiiSzWXhvd4t4RH7u1R/X
+         GReC7dyv3m/ykjbCnQP/BfIrE6jrSuEVcUnuMJfOdGMIwm54vdTDBCAWBLgrGk4mxrbn
+         m7jtHEqf8KqhoGsyE6u0bpWGhh2uHefFDwyWx/ERZmIjeJ/BJyylM/oz2b30YnGJFUUz
+         q7UaYf3g0GJ9K/AnzD0Fcs5ejmRHQMduMkAPQ/hKVAIyaynCU4xMxlvkknb5dt//MBVK
+         spLA==
+X-Gm-Message-State: APjAAAWoDd1tu+qER6FQHFNoTNHTgyMx08Ny2SwdBICTVX5YBseUgg2G
+        7rbd6/kJqx8Qoq4pekFP2YHsGq6OlD+UhdMrlQc=
+X-Google-Smtp-Source: APXvYqzOhPqpe2Ya5w6enWDgqclI9ThBE4RliZTOVi6zALagLzNnqIkwLM4vHMjAsA+1AGTmJT9bv/qlYP1a0mshPb4=
+X-Received: by 2002:a1c:ed09:: with SMTP id l9mr3913059wmh.101.1573755179254;
+ Thu, 14 Nov 2019 10:12:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617221134.9930-1-f.fainelli@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 18:55:45 up 181 days, 13 min, 127 users,  load average: 0.09, 0.08,
- 0.06
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <1573726588-18897-1-git-send-email-harigovi@codeaurora.org> <1573726588-18897-2-git-send-email-harigovi@codeaurora.org>
+In-Reply-To: <1573726588-18897-2-git-send-email-harigovi@codeaurora.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 14 Nov 2019 10:12:47 -0800
+Message-ID: <CAF6AEGs2VNJMMCxTRrosKaijjs2HV318Sak7vwdRyLw5kDjXTg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] drm/panel: add support for rm69299 visionox panel driver
+To:     Harigovindan P <harigovi@codeaurora.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Chandan Uddaraju <chandanu@codeaurora.org>,
+        nganji@codeaurora.org, Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Thu, Nov 14, 2019 at 2:17 AM Harigovindan P <harigovi@codeaurora.org> wrote:
+>
+> Add support for Visionox panel driver.
+>
+> Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+> ---
+>  drivers/gpu/drm/panel/Kconfig                  |   9 +
+>  drivers/gpu/drm/panel/Makefile                 |   1 +
+>  drivers/gpu/drm/panel/panel-visionox-rm69299.c | 478 +++++++++++++++++++++++++
+>  3 files changed, 488 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-visionox-rm69299.c
+>
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index f152bc4..c06c403 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -355,4 +355,13 @@ config DRM_PANEL_TRULY_NT35597_WQXGA
+>         help
+>           Say Y here if you want to enable support for Truly NT35597 WQXGA Dual DSI
+>           Video Mode panel
+> +
+> +config DRM_PANEL_VISIONOX_RM69299
+> +       tristate "Visionox RM69299"
+> +       depends on OF
+> +       depends on DRM_MIPI_DSI
+> +       help
+> +         Say Y here if you want to enable support for Visionox
+> +         RM69299  DSI Video Mode panel.
+> +
+>  endmenu
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> index b6cd39f..6f1e4c6 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -38,3 +38,4 @@ obj-$(CONFIG_DRM_PANEL_TPO_TD028TTEC1) += panel-tpo-td028ttec1.o
+>  obj-$(CONFIG_DRM_PANEL_TPO_TD043MTEA1) += panel-tpo-td043mtea1.o
+>  obj-$(CONFIG_DRM_PANEL_TPO_TPG110) += panel-tpo-tpg110.o
+>  obj-$(CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA) += panel-truly-nt35597.o
+> +obj-$(CONFIG_DRM_PANEL_VISIONOX_RM69299) += panel-visionox-rm69299.o
+> diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> new file mode 100644
+> index 0000000..faf6d05
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> @@ -0,0 +1,478 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <drm/drm_panel.h>
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_modes.h>
+> +#include <drm/drm_panel.h>
+> +#include <drm/drm_print.h>
+> +
+> +#include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_graph.h>
+> +#include <linux/pinctrl/consumer.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/backlight.h>
+> +#include <linux/module.h>
+> +#include <linux/delay.h>
+> +
+> +#include <video/mipi_display.h>
+> +
+> +static const char * const regulator_names[] = {
+> +       "vdda",
+> +       "vdd3p3",
+> +};
+> +
+> +static unsigned long const regulator_enable_loads[] = {
+> +       32000,
+> +       13200,
+> +};
+> +
+> +static unsigned long const regulator_disable_loads[] = {
+> +       80,
+> +       80,
+> +};
+> +
+> +struct cmd_set {
+> +       u8 commands[4];
+> +       u8 size;
+> +};
+> +
+> +struct rm69299_config {
+> +       u32 width_mm;
+> +       u32 height_mm;
+> +       const char *panel_name;
+> +       const struct cmd_set *panel_on_cmds;
+> +       u32 num_on_cmds;
+> +       const struct drm_display_mode *dm;
+> +};
+> +
+> +struct visionox_rm69299 {
+> +       struct device *dev;
+> +       struct drm_panel panel;
+> +
+> +       struct regulator_bulk_data supplies[ARRAY_SIZE(regulator_names)];
+> +
+> +       struct gpio_desc *reset_gpio;
+> +
+> +       struct backlight_device *backlight;
+> +
+> +       struct mipi_dsi_device *dsi;
+> +       const struct rm69299_config *config;
+> +       bool prepared;
+> +       bool enabled;
+> +};
+> +
+> +static inline struct visionox_rm69299 *panel_to_ctx(struct drm_panel *panel)
+> +{
+> +       return container_of(panel, struct visionox_rm69299, panel);
+> +}
+> +
+> +static const struct cmd_set qcom_rm69299_1080p_panel_magic_cmds[] = {
+> +       { { 0xfe, 0x00 }, 2 },
+> +       { { 0xc2, 0x08 }, 2 },
+> +       { { 0x35, 0x00 }, 2 },
+> +       { { 0x51, 0xff }, 2 },
+> +};
 
-first of all, many thanks for your work on this series =) I picked your
-and Arnd patches to make it compilable. Now it's compiling but my imx6q
-board didn't boot anymore. I debugged the code and found that the branch
-to 'start_kernel' won't be reached
+I'm not really seeing the value of a table of cmds, vs just a sequence
+of mipi_dsi_dcs_write_buffer() calls.. it is only used in one place,
+so it just seems like a level of indirection that doesn't add value,
+compared to something like:
 
-8<------- arch/arm/kernel/head-common.S -------
-....
+  mipi_dsi_dsc_write_buffer(dsi, (u8[]){ 0xfe, 0x00 }, 2);
 
-#ifdef CONFIG_KASAN
-        bl      kasan_early_init
-#endif
-	mov     lr, #0
-	b       start_kernel
-ENDPROC(__mmap_switched)
+(otoh, some of the other panel so maybe Thierry is less picky)
 
-....
-8<----------------------------------------------
+> +
+> +static int visionox_dcs_write(struct drm_panel *panel, u32 command)
+> +{
+> +       struct visionox_rm69299 *ctx = panel_to_ctx(panel);
+> +       int i = 0, ret;
+> +
+> +       ret = mipi_dsi_dcs_write(ctx->dsi, command, NULL, 0);
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "cmd 0x%x failed for dsi = %d\n",
+> +                       command, i);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int visionox_dcs_write_buf(struct drm_panel *panel,
+> +       u32 size, const u8 *buf)
+> +{
+> +       struct visionox_rm69299 *ctx = panel_to_ctx(panel);
+> +       int ret = 0;
+> +       int i = 0;
+> +
+> +       ret = mipi_dsi_dcs_write_buffer(ctx->dsi, buf, size);
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "failed to tx cmd [%d], err: %d\n", i, ret);
+> +               return ret;
+> +       }
+> +
+> +       return ret;
+> +}
 
-Now, I found also that 'KASAN_SHADOW_OFFSET' isn't set due to missing
-'CONFIG_KASAN_SHADOW_OFFSET' and so no '-fasan-shadow-offset=xxxxx' is
-added. Can that be the reason why my board isn't booted anymore?
+drop these two and just use mipi_dsi_dcs_write(_buffer)() directly..
+the only extra thing these seem to do is error reporting, which is
+already done at the call-sites of these.
 
-Thanks for your reply.
+> +
+> +static int visionox_35597_power_on(struct visionox_rm69299 *ctx)
+> +{
+> +       int ret, i;
+> +       for (i = 0; i < ARRAY_SIZE(ctx->supplies); i++) {
+> +               ret = regulator_set_load(ctx->supplies[i].consumer,
+> +                                       regulator_enable_loads[i]);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       /*
+> +        * Reset sequence of visionox panel requires the panel to be
+> +        * out of reset for 10ms, followed by being held in reset
+> +        * for 10ms and then out again
+> +        */
+> +       gpiod_set_value(ctx->reset_gpio, 1);
+> +       usleep_range(10000, 20000);
+> +       gpiod_set_value(ctx->reset_gpio, 0);
+> +       usleep_range(10000, 20000);
+> +       gpiod_set_value(ctx->reset_gpio, 1);
+> +       usleep_range(10000, 20000);
+> +
+> +       return 0;
+> +}
+> +
+> +static int visionox_rm69299_power_off(struct visionox_rm69299 *ctx)
+> +{
+> +       int ret = 0;
+> +       int i;
+> +
+> +       gpiod_set_value(ctx->reset_gpio, 0);
+> +
+> +       for (i = 0; i < ARRAY_SIZE(ctx->supplies); i++) {
+> +               ret = regulator_set_load(ctx->supplies[i].consumer,
+> +                               regulator_disable_loads[i]);
+> +               if (ret) {
+> +                       DRM_DEV_ERROR(ctx->dev,
+> +                               "regulator_set_load failed %d\n", ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       ret = regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +       if (ret) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "regulator_bulk_disable failed %d\n", ret);
+> +       }
+> +       return ret;
+> +}
+> +
+> +static int visionox_rm69299_disable(struct drm_panel *panel)
+> +{
+> +       struct visionox_rm69299 *ctx = panel_to_ctx(panel);
+> +       int ret;
+> +
+> +       if (!ctx->enabled)
+> +               return 0;
+> +
+> +       if (ctx->backlight) {
+> +               ret = backlight_disable(ctx->backlight);
+> +               if (ret < 0)
+> +                       DRM_DEV_ERROR(ctx->dev, "backlight disable failed %d\n",
+> +                               ret);
+> +       }
+> +
+> +       ctx->enabled = false;
+> +       return 0;
+> +}
+> +
+> +static int visionox_rm69299_unprepare(struct drm_panel *panel)
+> +{
+> +       struct visionox_rm69299 *ctx = panel_to_ctx(panel);
+> +       int ret = 0;
+> +
+> +       if (!ctx->prepared)
+> +               return 0;
+> +
+> +       ctx->dsi->mode_flags = 0;
+> +
+> +       ret = visionox_dcs_write(panel, MIPI_DCS_SET_DISPLAY_OFF);
 
-Regards,
-  Marco
+mipi_dsi_dcs_set_display_off()
 
-On 19-06-17 15:11, Florian Fainelli wrote:
-> Hi all,
-> 
-> Abbott submitted a v5 about a year ago here:
-> 
-> and the series was not picked up since then, so I rebased it against
-> v5.2-rc4 and re-tested it on a Brahma-B53 (ARMv8 running AArch32 mode)
-> and Brahma-B15, both LPAE and test-kasan is consistent with the ARM64
-> counter part.
-> 
-> We were in a fairly good shape last time with a few different people
-> having tested it, so I am hoping we can get that included for 5.4 if
-> everything goes well.
-> 
-> Changelog:
-> 
-> v6 - v5
-> - Resolve conflicts during rebase, and updated to make use of
->   kasan_early_shadow_pte instead of kasan_zero_pte
-> 
-> v5 - v4
-> - Modify Andrey Ryabinin's email address.
-> 
-> v4 - v3
-> - Remove the fix of type conversion in kasan_cache_create because it has
->   been fix in the latest version in:
->   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> - Change some Reviewed-by tag into Reported-by tag to avoid misleading.
->   ---Reported by: Marc Zyngier <marc.zyngier@arm.com>
->                   Russell King - ARM Linux <linux@armlinux.org.uk>
-> - Disable instrumentation for arch/arm/mm/physaddr.c
-> 
-> v3 - v2
-> - Remove this patch: 2 1-byte checks more safer for memory_is_poisoned_16
->   because a unaligned load/store of 16 bytes is rare on arm, and this
->   patch is very likely to affect the performance of modern CPUs.
->   ---Acked by: Russell King - ARM Linux <linux@armlinux.org.uk>
-> - Fixed some link error which kasan_pmd_populate,kasan_pte_populate and
->   kasan_pud_populate are in section .meminit.text but the function
->   kasan_alloc_block which is called by kasan_pmd_populate,
->   kasan_pte_populate and kasan_pud_populate is in section .init.text. So
->   we need change kasan_pmd_populate,kasan_pte_populate and
->   kasan_pud_populate into the section .init.text.
->   ---Reported by: Florian Fainelli <f.fainelli@gmail.com>
-> - Fixed some compile error which caused by the wrong access instruction in
->   arch/arm/kernel/entry-common.S.
->   ---Reported by: kbuild test robot <lkp@intel.com>
-> - Disable instrumentation for arch/arm/kvm/hyp/*.
->   ---Acked by: Marc Zyngier <marc.zyngier@arm.com>
-> - Update the set of supported architectures in
->   Documentation/dev-tools/kasan.rst.
->   ---Acked by:Dmitry Vyukov <dvyukov@google.com>
-> - The version 2 is tested by:
->   Florian Fainelli <f.fainelli@gmail.com> (compile test)
->   kbuild test robot <lkp@intel.com>       (compile test)
->   Joel Stanley <joel@jms.id.au>           (on ASPEED ast2500(ARMv5))
-> 
-> v2 - v1
-> - Fixed some compiling error which happens on changing kernel compression
->   mode to lzma/xz/lzo/lz4.
->   ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
->              Russell King - ARM Linux <linux@armlinux.org.uk>
-> - Fixed a compiling error cause by some older arm instruction set(armv4t)
->   don't suppory movw/movt which is reported by kbuild.
-> - Changed the pte flag from _L_PTE_DEFAULT | L_PTE_DIRTY | L_PTE_XN to
->   pgprot_val(PAGE_KERNEL).
->   ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
-> - Moved Enable KASan patch as the last one.
->   ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
->      Russell King - ARM Linux <linux@armlinux.org.uk>
-> - Moved the definitions of cp15 registers from
->   arch/arm/include/asm/kvm_hyp.h to arch/arm/include/asm/cp15.h.
->   ---Asked by: Mark Rutland <mark.rutland@arm.com>
-> - Merge the following commits into the commit
->   Define the virtual space of KASan's shadow region:
->   1) Define the virtual space of KASan's shadow region;
->   2) Avoid cleaning the KASan shadow area's mapping table;
->   3) Add KASan layout;
-> - Merge the following commits into the commit
->   Initialize the mapping of KASan shadow memory:
->   1) Initialize the mapping of KASan shadow memory;
->   2) Add support arm LPAE;
->   3) Don't need to map the shadow of KASan's shadow memory;
->      ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
->   4) Change mapping of kasan_zero_page int readonly.
-> - The version 1 is tested by Florian Fainelli <f.fainelli@gmail.com>
->   on a Cortex-A5 (no LPAE).
-> 
-> Hi,all:
->    These patches add arch specific code for kernel address sanitizer
-> (see Documentation/kasan.txt).
-> 
->    1/8 of kernel addresses reserved for shadow memory. There was no
-> big enough hole for this, so virtual addresses for shadow were
-> stolen from user space.
-> 
->    At early boot stage the whole shadow region populated with just
-> one physical page (kasan_zero_page). Later, this page reused
-> as readonly zero shadow for some memory that KASan currently
-> don't track (vmalloc).
-> 
->   After mapping the physical memory, pages for shadow memory are
-> allocated and mapped.
-> 
->   KASan's stack instrumentation significantly increases stack's
-> consumption, so CONFIG_KASAN doubles THREAD_SIZE.
-> 
->   Functions like memset/memmove/memcpy do a lot of memory accesses.
-> If bad pointer passed to one of these function it is important
-> to catch this. Compiler's instrumentation cannot do this since
-> these functions are written in assembly.
-> 
->   KASan replaces memory functions with manually instrumented variants.
-> Original functions declared as weak symbols so strong definitions
-> in mm/kasan/kasan.c could replace them. Original functions have aliases
-> with '__' prefix in name, so we could call non-instrumented variant
-> if needed.
-> 
->   Some files built without kasan instrumentation (e.g. mm/slub.c).
-> Original mem* function replaced (via #define) with prefixed variants
-> to disable memory access checks for such files.
-> 
->   On arm LPAE architecture,  the mapping table of KASan shadow memory(if
-> PAGE_OFFSET is 0xc0000000, the KASan shadow memory's virtual space is
-> 0xb6e000000~0xbf000000) can't be filled in do_translation_fault function,
-> because kasan instrumentation maybe cause do_translation_fault function
-> accessing KASan shadow memory. The accessing of KASan shadow memory in
-> do_translation_fault function maybe cause dead circle. So the mapping table
-> of KASan shadow memory need be copyed in pgd_alloc function.
-> 
-> Most of the code comes from:
-> https://github.com/aryabinin/linux/commit/0b54f17e70ff50a902c4af05bb92716eb95acefe
-> 
-> These patches are tested on vexpress-ca15, vexpress-ca9
-> 
-> 
-> Abbott Liu (2):
->   ARM: Add TTBR operator for kasan_init
->   ARM: Define the virtual space of KASan's shadow region
-> 
-> Andrey Ryabinin (4):
->   ARM: Disable instrumentation for some code
->   ARM: Replace memory function for kasan
->   ARM: Initialize the mapping of KASan shadow memory
->   ARM: Enable KASan for arm
-> 
->  Documentation/dev-tools/kasan.rst     |   4 +-
->  arch/arm/Kconfig                      |   1 +
->  arch/arm/boot/compressed/Makefile     |   1 +
->  arch/arm/boot/compressed/decompress.c |   2 +
->  arch/arm/boot/compressed/libfdt_env.h |   2 +
->  arch/arm/include/asm/cp15.h           | 106 +++++++++
->  arch/arm/include/asm/kasan.h          |  35 +++
->  arch/arm/include/asm/kasan_def.h      |  64 ++++++
->  arch/arm/include/asm/kvm_hyp.h        |  54 -----
->  arch/arm/include/asm/memory.h         |   5 +
->  arch/arm/include/asm/pgalloc.h        |   7 +-
->  arch/arm/include/asm/string.h         |  17 ++
->  arch/arm/include/asm/thread_info.h    |   4 +
->  arch/arm/kernel/entry-armv.S          |   5 +-
->  arch/arm/kernel/entry-common.S        |   9 +-
->  arch/arm/kernel/head-common.S         |   7 +-
->  arch/arm/kernel/setup.c               |   2 +
->  arch/arm/kernel/unwind.c              |   3 +-
->  arch/arm/kvm/hyp/cp15-sr.c            |  12 +-
->  arch/arm/kvm/hyp/switch.c             |   6 +-
->  arch/arm/lib/memcpy.S                 |   3 +
->  arch/arm/lib/memmove.S                |   5 +-
->  arch/arm/lib/memset.S                 |   3 +
->  arch/arm/mm/Makefile                  |   4 +
->  arch/arm/mm/kasan_init.c              | 301 ++++++++++++++++++++++++++
->  arch/arm/mm/mmu.c                     |   7 +-
->  arch/arm/mm/pgd.c                     |  14 ++
->  arch/arm/vdso/Makefile                |   2 +
->  28 files changed, 608 insertions(+), 77 deletions(-)
->  create mode 100644 arch/arm/include/asm/kasan.h
->  create mode 100644 arch/arm/include/asm/kasan_def.h
->  create mode 100644 arch/arm/mm/kasan_init.c
-> 
-> -- 
-> 2.17.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "set_display_off cmd failed ret = %d\n",
+> +                       ret);
+> +       }
+> +
+> +       /* 120ms delay required here as per DCS spec */
+> +       msleep(120);
+> +
+> +       ret = visionox_dcs_write(panel, MIPI_DCS_ENTER_SLEEP_MODE);
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+mipi_dsi_dcs_enter_sleep_mode()
+
+(same comment at a few points below as well)
+
+BR,
+-R
+
+
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "enter_sleep cmd failed ret = %d\n", ret);
+> +       }
+> +
+> +       ret = visionox_rm69299_power_off(ctx);
+> +       if (ret < 0)
+> +               DRM_DEV_ERROR(ctx->dev, "power_off failed ret = %d\n", ret);
+> +
+> +       ctx->prepared = false;
+> +       return ret;
+> +}
+> +
+> +static int visionox_rm69299_prepare(struct drm_panel *panel)
+> +{
+> +       struct visionox_rm69299 *ctx = panel_to_ctx(panel);
+> +       int ret;
+> +       int i;
+> +       const struct cmd_set *panel_on_cmds;
+> +       const struct rm69299_config *config;
+> +       u32 num_cmds;
+> +
+> +       if (ctx->prepared)
+> +               return 0;
+> +
+> +       ret = visionox_35597_power_on(ctx);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ctx->dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+> +
+> +       config = ctx->config;
+> +       panel_on_cmds = config->panel_on_cmds;
+> +       num_cmds = config->num_on_cmds;
+> +
+> +       for (i = 0; i < num_cmds; i++) {
+> +               ret = visionox_dcs_write_buf(panel,
+> +                               panel_on_cmds[i].size,
+> +                                       panel_on_cmds[i].commands);
+> +               if (ret < 0) {
+> +                       DRM_DEV_ERROR(ctx->dev,
+> +                               "cmd set tx failed i = %d ret = %d\n",
+> +                                       i, ret);
+> +                       goto power_off;
+> +               }
+> +       }
+> +
+> +       ret = visionox_dcs_write(panel, MIPI_DCS_EXIT_SLEEP_MODE);
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "exit_sleep_mode cmd failed ret = %d\n",
+> +                       ret);
+> +               goto power_off;
+> +       }
+> +
+> +       /* Per DSI spec wait 120ms after sending exit sleep DCS command */
+> +       msleep(120);
+> +
+> +       ret = visionox_dcs_write(panel, MIPI_DCS_SET_DISPLAY_ON);
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "set_display_on cmd failed ret = %d\n", ret);
+> +               goto power_off;
+> +       }
+> +
+> +       /* Per DSI spec wait 120ms after sending set_display_on DCS command */
+> +       msleep(120);
+> +
+> +       ctx->prepared = true;
+> +
+> +       return 0;
+> +
+> +power_off:
+> +       if (visionox_rm69299_power_off(ctx))
+> +               DRM_DEV_ERROR(ctx->dev, "power_off failed\n");
+> +       return ret;
+> +}
+> +
+> +static int visionox_rm69299_enable(struct drm_panel *panel)
+> +{
+> +       struct visionox_rm69299 *ctx = panel_to_ctx(panel);
+> +       int ret;
+> +
+> +       if (ctx->enabled)
+> +               return 0;
+> +
+> +       if (ctx->backlight) {
+> +               ret = backlight_enable(ctx->backlight);
+> +               if (ret < 0)
+> +                       DRM_DEV_ERROR(ctx->dev, "backlight enable failed %d\n",
+> +                                                 ret);
+> +       }
+> +
+> +       ctx->enabled = true;
+> +
+> +       return 0;
+> +}
+> +
+> +static int visionox_rm69299_get_modes(struct drm_panel *panel)
+> +{
+> +       struct drm_connector *connector = panel->connector;
+> +       struct visionox_rm69299 *ctx = panel_to_ctx(panel);
+> +       struct drm_display_mode *mode;
+> +       const struct rm69299_config *config;
+> +
+> +       config = ctx->config;
+> +       mode = drm_mode_create(connector->dev);
+> +       if (!mode) {
+> +               DRM_DEV_ERROR(ctx->dev,
+> +                       "failed to create a new display mode\n");
+> +               return 0;
+> +       }
+> +
+> +       connector->display_info.width_mm = config->width_mm;
+> +       connector->display_info.height_mm = config->height_mm;
+> +       drm_mode_copy(mode, config->dm);
+> +       mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +       drm_mode_probed_add(connector, mode);
+> +
+> +       return 1;
+> +}
+> +
+> +static const struct drm_panel_funcs visionox_rm69299_drm_funcs = {
+> +       .disable = visionox_rm69299_disable,
+> +       .unprepare = visionox_rm69299_unprepare,
+> +       .prepare = visionox_rm69299_prepare,
+> +       .enable = visionox_rm69299_enable,
+> +       .get_modes = visionox_rm69299_get_modes,
+> +};
+> +
+> +static int visionox_rm69299_panel_add(struct visionox_rm69299 *ctx)
+> +{
+> +       struct device *dev = ctx->dev;
+> +       int ret, i;
+> +       const struct rm69299_config *config;
+> +
+> +       config = ctx->config;
+> +       for (i = 0; i < ARRAY_SIZE(ctx->supplies); i++)
+> +               ctx->supplies[i].supply = regulator_names[i];
+> +
+> +       ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
+> +                                     ctx->supplies);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> +       if (IS_ERR(ctx->reset_gpio)) {
+> +               DRM_DEV_ERROR(dev, "cannot get reset gpio %ld\n",
+> +                       PTR_ERR(ctx->reset_gpio));
+> +               return PTR_ERR(ctx->reset_gpio);
+> +       }
+> +
+> +       ret = gpiod_direction_output(ctx->reset_gpio, 0);
+> +       if(ret < 0) {
+> +               pr_err("direction output failed \n");
+> +       }
+> +
+> +       drm_panel_init(&ctx->panel);
+> +       ctx->panel.dev = dev;
+> +       ctx->panel.funcs = &visionox_rm69299_drm_funcs;
+> +       drm_panel_add(&ctx->panel);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct drm_display_mode qcom_sc7180_mtp_1080p_mode = {
+> +       .name = "1080x2248",
+> +       .clock = 158695,
+> +       .hdisplay = 1080,
+> +       .hsync_start = 1080 + 26,
+> +       .hsync_end = 1080 + 26 + 2,
+> +       .htotal = 1080 + 26 + 2 + 36,
+> +       .vdisplay = 2248,
+> +       .vsync_start = 2248 + 56,
+> +       .vsync_end = 2248 + 56 + 4,
+> +       .vtotal = 2248 + 56 + 4 + 4,
+> +       .vrefresh = 60,
+> +       .flags = 0,
+> +};
+> +
+> +static const struct rm69299_config rm69299_dir = {
+> +       .width_mm = 74,
+> +       .height_mm = 131,
+> +       .panel_name = "qcom_sc7180_mtp_1080p_panel",
+> +       .dm = &qcom_sc7180_mtp_1080p_mode,
+> +       .panel_on_cmds = qcom_rm69299_1080p_panel_magic_cmds,
+> +       .num_on_cmds = ARRAY_SIZE(qcom_rm69299_1080p_panel_magic_cmds),
+> +};
+> +
+> +static int visionox_rm69299_probe(struct mipi_dsi_device *dsi)
+> +{
+> +       struct device *dev = &dsi->dev;
+> +       struct visionox_rm69299 *ctx;
+> +       int ret = 0;
+> +
+> +       ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +
+> +       if (!ctx)
+> +               return -ENOMEM;
+> +
+> +       ctx->config = of_device_get_match_data(dev);
+> +
+> +       if (!ctx->config) {
+> +               dev_err(dev, "missing device configuration\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       mipi_dsi_set_drvdata(dsi, ctx);
+> +
+> +       ctx->dev = dev;
+> +       ctx->dsi = dsi;
+> +
+> +       ret = visionox_rm69299_panel_add(ctx);
+> +       if (ret) {
+> +               DRM_DEV_ERROR(dev, "failed to add panel\n");
+> +               goto err_panel_add;
+> +       }
+> +
+> +       dsi->lanes = 4;
+> +       dsi->format = MIPI_DSI_FMT_RGB888;
+> +       dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_LPM |
+> +               MIPI_DSI_CLOCK_NON_CONTINUOUS;
+> +       ret = mipi_dsi_attach(dsi);
+> +       if (ret < 0) {
+> +               DRM_DEV_ERROR(dev,
+> +                       "dsi attach failed ret = %d\n", ret);
+> +               goto err_dsi_attach;
+> +       }
+> +
+> +       return 0;
+> +
+> +err_dsi_attach:
+> +       drm_panel_remove(&ctx->panel);
+> +err_panel_add:
+> +       mipi_dsi_device_unregister(dsi);
+> +       return ret;
+> +}
+> +
+> +static int visionox_rm69299_remove(struct mipi_dsi_device *dsi)
+> +{
+> +       struct visionox_rm69299 *ctx = mipi_dsi_get_drvdata(dsi);
+> +
+> +       if (ctx->dsi) {
+> +               mipi_dsi_detach(ctx->dsi);
+> +               mipi_dsi_device_unregister(ctx->dsi);
+> +       }
+> +
+> +       drm_panel_remove(&ctx->panel);
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id visionox_rm69299_of_match[] = {
+> +       {
+> +               .compatible = "visionox,rm69299-1080p-display",
+> +               .data = &rm69299_dir,
+> +       },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, visionox_rm69299_of_match);
+> +
+> +static struct mipi_dsi_driver visionox_rm69299_driver = {
+> +       .driver = {
+> +               .name = "panel-visionox-rm69299",
+> +               .of_match_table = visionox_rm69299_of_match,
+> +       },
+> +       .probe = visionox_rm69299_probe,
+> +       .remove = visionox_rm69299_remove,
+> +};
+> +module_mipi_dsi_driver(visionox_rm69299_driver);
+> +
+> +MODULE_DESCRIPTION("VISIONOX RM69299 DSI Panel Driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.7.4
+>
