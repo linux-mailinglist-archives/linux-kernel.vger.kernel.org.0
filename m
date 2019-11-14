@@ -2,166 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82FDCFCF63
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:13:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEED9FCF6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:15:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfKNUNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:13:47 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41934 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbfKNUNr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:13:47 -0500
-Received: by mail-lj1-f194.google.com with SMTP id m4so3158480ljj.8;
-        Thu, 14 Nov 2019 12:13:46 -0800 (PST)
+        id S1726985AbfKNUPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:15:35 -0500
+Received: from mail-eopbgr730059.outbound.protection.outlook.com ([40.107.73.59]:60877
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726474AbfKNUPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 15:15:34 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BBxXP0/MTTM6DQZHBQEha6OVL2wI+S2cQwutPk2M6mGkS7RGi7Y6KwWx0aBPmNk7CUNG7Ee59w4iL+qMxsUsqtL5phM5QPYcoe0EIYv4OOhB5lB56S9pCnUuWFT75/Nh95JrXdU2be0WbkSZ222QC0Sd27ateCLZJrsLiEkH1wHftGKolaO/PAkBZWiIT5YZvX5ZoVxvRnZWAkriprAXDnv9hmhonQWH5K7Mi3B5DXpSsE091jCno7sbo3SV45IozXs6amCC17KqfeZYojbzRNrynYpB1rc77O5DsYExL11HtZQMfgd6HeLEejg7KUveOcxt8gcQgV6SVy3tfDANgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jDqC351o0js/cAD46FTL4V92yHTqkl9fm/26NeKosas=;
+ b=mooOf2YvtCVHRQa1WQ0TMg8fNG6Sjh+yXe8ys+GyuSkxdnTHLoS2oT2bjwpDGEt+31ircb7XAtrrv8YJ97pgAguhZWBjkHnR0cp3qE4pUQnbVoG8AK/6Y5YalvDl2Xnpm+QONlPjg9QEiLUGLREKRxmmxYznbL4p+k1cv4zHGtIym4Mo/jT2yH/UrFdaJQLBXyAvXGq3eyrGFERnodjLobr/8e69SWwE+IDfmTQt5zF9SFky8SrVdKvh/itPEQrvPFUmnXXhtU/9JGSrnGWbJosF6UGynbPbgQ57kXoxYY3mxbPQBoqCEhEOenDfL+nQGD8dIHvn5mYfPa0+qElTTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x3CgdEWITSo+eK6gV+uLZAjDWDJyETiK4+Drplq4PgM=;
-        b=I4Oe2CWqf6WzpiT58ihacjjFdQVcsZGaku/MrdMLdhug9o+MkkeARlGOfSwnYvL+1Y
-         xQ90kNke49Ta2j1cU1NfuK2eR6M20DOL18QpZyHicNes1K2P45rMf501zcaREyNO/rre
-         0VQ1N8MTuKgaE0r+bheA7UC0bSY0dyqZ8QlUHl1LD4I/GOoE9BOXfpIkHiJY1VoqgSY5
-         ASb4jDdjcW3IQbqaaemGhyp3tbwyvgpRiYcGAigwfWfe9YwJ9lb1rZLrf/cyku7hAN89
-         fzm1sbQsrM8kRJsUEzJmdv8Y146Iy3D3cwm35a3MTxUhggxQyHPPjc6CCLyM1jUYwhCT
-         53pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x3CgdEWITSo+eK6gV+uLZAjDWDJyETiK4+Drplq4PgM=;
-        b=I8MO8FkpqVFl+c94igoFCycP4vIQV98bazlqDwuruWPqnb5JbPHYtlQWGObMiI5Y9Z
-         GIAoxG1gYSu8qptDcKhknQtwzJhZKing49/N+PxT+mHjan+k5RTugufCQuMh+8Xd/1qY
-         PFmzxqUjXRTdw34gBTfbS85WsOa+e7qfnTIf8sv3Z2NCZ8EKv5KaF9xZmn91nlR0ZXPa
-         7c3a09HSHtK4jp0WJcStZLaFh7HuAEv4zta/uIBvye5MXXMc23ey8e0ozgokubUrnxBP
-         5jIra5lqmfwwQTzxvdjMSZjDxfZ9CbTA6fp1EV0235tkNaRafrEpdPt/lV0QD2GxW0O9
-         BMlA==
-X-Gm-Message-State: APjAAAWSSlQ8YixSFQbXk2PWw0h8SvMuNcl/eAqn9t/zYJHiMFtqs7yO
-        Y3FasJjnaHaNIz8obNGv0zqdq741Jft2Km7ZnV0=
-X-Google-Smtp-Source: APXvYqzTjpV2EGEx/nI9p8C44bLQO2CDArK63nzLyG4ISo69VQudOUoP1ds4/e1SnqQp779vUeEPYry/A8MnnGZP4hs=
-X-Received: by 2002:a2e:2c1a:: with SMTP id s26mr5219843ljs.239.1573762425328;
- Thu, 14 Nov 2019 12:13:45 -0800 (PST)
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jDqC351o0js/cAD46FTL4V92yHTqkl9fm/26NeKosas=;
+ b=29QKVIUhlbfrEoqwsVDFocWanhjxGyy+WYzgdfchNdgSZmtPL4qELWnbrC0EhZ0+uOntANMvxgrPzVHGK8+I6z2Q5QuB/oB33EGOCYME0CyxWXz0lbj9WE/CgoCWTCh3mfPlOBAw9NzbECtetSDJhfnpE1z+kSNjocaOFb8X9Wc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
+Received: from DM6PR12MB3865.namprd12.prod.outlook.com (10.255.173.210) by
+ DM6PR12MB3739.namprd12.prod.outlook.com (10.255.172.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.23; Thu, 14 Nov 2019 20:15:31 +0000
+Received: from DM6PR12MB3865.namprd12.prod.outlook.com
+ ([fe80::4898:93e0:3c0c:d862]) by DM6PR12MB3865.namprd12.prod.outlook.com
+ ([fe80::4898:93e0:3c0c:d862%6]) with mapi id 15.20.2451.027; Thu, 14 Nov 2019
+ 20:15:30 +0000
+From:   Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, joro@8bytes.org,
+        vkuznets@redhat.com, rkagan@virtuozzo.com, graf@amazon.com,
+        jschoenh@amazon.de, karahmed@amazon.de, rimasluk@amazon.com,
+        jon.grimm@amd.com,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: [PATCH v5 00/18] kvm: x86: Support AMD SVM AVIC w/ in-kernel irqchip mode
+Date:   Thu, 14 Nov 2019 14:15:02 -0600
+Message-Id: <1573762520-80328-1-git-send-email-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN1PR12CA0099.namprd12.prod.outlook.com
+ (2603:10b6:802:21::34) To DM6PR12MB3865.namprd12.prod.outlook.com
+ (2603:10b6:5:1c8::18)
 MIME-Version: 1.0
-References: <20191114195609.30222-1-marco.franchi@nxp.com>
-In-Reply-To: <20191114195609.30222-1-marco.franchi@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 14 Nov 2019 17:13:36 -0300
-Message-ID: <CAOMZO5Asp-m7zyY6dp72_VKZs0OisxX4B-PJtP4=GuE_-XDBsg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: freescale: add initial support for Google
- i.MX 8MQ Phanbell
-To:     Marco Antonio Franchi <marco.franchi@nxp.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "marcofrk@gmail.com" <marcofrk@gmail.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Mailer: git-send-email 1.8.3.1
+X-Originating-IP: [165.204.78.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: c83b3ded-d871-48ad-af91-08d7693f65b5
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3739:
+X-MS-Exchange-PUrlCount: 2
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3739F0394876D32638C4CE3BF3710@DM6PR12MB3739.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1247;
+X-Forefront-PRVS: 02213C82F8
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(376002)(39860400002)(346002)(136003)(189003)(199004)(6506007)(25786009)(86362001)(6512007)(6306002)(6436002)(8676002)(47776003)(7416002)(66066001)(6486002)(50226002)(4326008)(3846002)(8936002)(4720700003)(81156014)(2906002)(2870700001)(7736002)(66556008)(305945005)(66476007)(2616005)(6116002)(66946007)(186003)(316002)(14454004)(486006)(478600001)(99286004)(81166006)(26005)(14444005)(476003)(5660300002)(44832011)(386003)(52116002)(23676004)(50466002)(6666004)(36756003)(21314003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3739;H:DM6PR12MB3865.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: bZbTTViH4D/iZRc5tmyfcP+gKVilS0c1lAY54cwwXrUga8YqHyE4Mw3ZU250TYuu4TglVYh/K6J8sQLpFxXofEIidlp2B73vg+WaGU/evKJMhSFSU3zr4WZL+qP3/QtzHi8Xp+JB4YCh65TDgDubjBXUUJTlnGVI3OeV52oOxoE5pf8hlU6GIe1JRIgy9vGF7k1H2Q3iG0pM3ihthWeZFknxQs7AV1+VdM4iJb2yxM7K5os5ffICeYqOZ90Sa2QjcJbc41YKbm0HYwz+OAtUi6Th1H9MfKv0Jod54kwqGCOr61ATj9BUu5mQk8INHks7s1EhdBS0nkz6Veyr+4xjTCmZmMD+EOyfoqXiM/dpfd1tX4/lAzSvALWuGy5oNju3sW68Qd94Z2utofiPYDQbKwEI9GsbY0ZdZXVpRY3ehw2a4dr4s0Z5GZD4vrGQf8eJkE18DjMctVg1+7hO/AvkdKNJxz7bHL4Dn16o1kGizZo=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c83b3ded-d871-48ad-af91-08d7693f65b5
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2019 20:15:30.7855
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CiwEeXsQewKXn503MiyBqIimbGmCW5CPcGfAsSrmSIrLyyiMdjRZt1JdujADO9QdtKkt94WqoiJ6KS2h+nZa3w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3739
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marco,
+The 'commit 67034bb9dd5e ("KVM: SVM: Add irqchip_split() checks before
+enabling AVIC")' was introduced to fix miscellaneous boot-hang issues
+when enable AVIC. This is mainly due to AVIC hardware doest not #vmexit
+on write to LAPIC EOI register resulting in-kernel PIC and IOAPIC to
+wait and do not inject new interrupts (e.g. PIT, RTC).
 
-On Thu, Nov 14, 2019 at 4:56 PM Marco Antonio Franchi
-<marco.franchi@nxp.com> wrote:
->
-> This patch adds the device tree to support Google Coral Edge TPU,
-> historicaly named as fsl-imx8mq-phanbell, a computer on module
-> which can be used for AI/ML propose.
->
-> It introduces a minimal enablement support for this module and
+This limits AVIC to only work with kernel_irqchip=split mode, which is
+not currently enabled by default, and also required user-space to
+support split irqchip model, which might not be the case.
 
-What are the features that have been tested?
+The goal of this series is to enable AVIC to work in both irqchip modes,
+by allowing AVIC to be deactivated temporarily during runtime, and fallback
+to legacy interrupt injection mode (w/ vINTR and interrupt windows)
+when needed, and then re-enabled subsequently (a.k.a Dynamic APICv).
 
-Also, is the schematics available?
+Similar approach is also used to handle Hyper-V SynIC in the
+'commit 5c919412fe61 ("kvm/x86: Hyper-V synthetic interrupt controller")',
+where APICv is permanently disabled at runtime (currently broken for
+AVIC, and fixed by this series). 
 
-> was totally based on the NXP i.MX 8MQ EVK board and i.MX 8MQ Phanbell
-> Google Source Code for Coral Edge TPU Mendel release:
-> https://coral.googlesource.com/linux-imx/
->
-> This patch was tested using the U-Boot 2017-03-1-release-chef,
-> which is supported by the Coral Edge TPU Mendel release:
-> https://coral.googlesource.com/uboot-imx/
+This series contains several parts:
+  * Part 1: patch 1,2
+    Code clean up, refactor, and introduce helper functions
 
-I would suggest removing this paragraph from the commit log as it is
-not relevant to the dts itself.
+  * Part 2: patch 3 
+    Introduce APICv deactivate bits to keep track of APICv state 
+    for each vm.
+ 
+  * Part 3: patch 4-10
+    Add support for activate/deactivate APICv at runtime
 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 38e344a2f0ff..cc7e02a30ed1 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -21,6 +21,7 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
->
-> +dtb-$(CONFIG_ARCH_MXC) += fsl-imx8mq-phanbell.dtb
+  * Part 4: patch 11-14:
+    Add support for various cases where APICv needs to
+    be deactivated
 
-Please remove the fsl prefix and call it mx8mq-phanbell.dtb instead to
-align with the other imx8mq dtbs.
+  * Part 5: patch 15-17:
+    Introduce in-kernel IOAPIC workaround for AVIC EOI
 
-> +&i2c1 {
-> +       clock-frequency = <400000>;
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_i2c1>;
-> +       status = "okay";
-> +
-> +       pmic: pmic@4b {
-> +               reg = <0x4b>;
-> +               compatible = "rohm,bd71837";
-> +               pinctrl-0 = <&pinctrl_pmic>;
-> +               gpio_intr = <&gpio1 3 GPIO_ACTIVE_LOW>;
+  * Part 6: path 18
+    Allow enable AVIC w/ kernel_irqchip=on
 
-This property does not exist upstream.
+Pre-requisite Patch:
+  * commit b9c6ff94e43a ("iommu/amd: Re-factor guest virtual APIC (de-)activation code")
+    (https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/commit/
+     ?h=next&id=b9c6ff94e43a0ee053e0c1d983fba1ac4953b762)
 
-You should describe the interrupt like this instead:
+This series has been tested against v5.3 as following:
+  * Booting Linux, FreeBSD, and Windows Server 2019 VMs upto 240 vcpus
+    w/ qemu option "kernel-irqchip=on" and "-no-hpet".
+  * Pass-through Intel 10GbE NIC and run netperf in the VM.
 
-interrupt-parent = <&gpio1>;
-interrupts = <3 GPIO_ACTIVE_LOW>;
+Changes from V4: (https://lkml.org/lkml/2019/11/1/764)
+  * Rename APICV_DEACT_BIT_xxx to APICV_INHIBIT_REASON_xxxx
+  * Introduce kvm_x86_ops.check_apicv_inhibit_reasons hook
+    to allow vendors to specify which APICv inhibit reason bits
+    to support (patch 08/18).
+  * Update comment on kvm_request_apicv_update() no-lock requirement.
+    (patch 04/18)
 
-> +
-> +               gpo {
-> +                       rohm,drv = <0x0C>;
+Suravee Suthikulpanit (18):
+  kvm: x86: Modify kvm_x86_ops.get_enable_apicv() to use struct kvm
+    parameter
+  kvm: lapic: Introduce APICv update helper function
+  kvm: x86: Introduce APICv inhibit reason bits
+  kvm: x86: Add support for dynamic APICv
+  kvm: x86: Add APICv (de)activate request trace points
+  kvm: x86: svm: Add support to (de)activate posted interrupts
+  svm: Add support for setup/destroy virutal APIC backing page for AVIC
+  kvm: x86: Introduce APICv x86 ops for checking APIC inhibit reasons
+  kvm: x86: Introduce x86 ops hook for pre-update APICv
+  svm: Add support for dynamic APICv
+  kvm: x86: hyperv: Use APICv update request interface
+  svm: Deactivate AVIC when launching guest with nested SVM support
+  svm: Temporary deactivate AVIC during ExtINT handling
+  kvm: i8254: Deactivate APICv when using in-kernel PIT re-injection
+    mode.
+  kvm: lapic: Clean up APIC predefined macros
+  kvm: ioapic: Refactor kvm_ioapic_update_eoi()
+  kvm: ioapic: Lazy update IOAPIC EOI
+  svm: Allow AVIC with in-kernel irqchip mode
 
-This property does not exist upstream.
+ arch/x86/include/asm/kvm_host.h |  19 ++++-
+ arch/x86/kvm/hyperv.c           |   5 +-
+ arch/x86/kvm/i8254.c            |  12 +++
+ arch/x86/kvm/ioapic.c           | 149 +++++++++++++++++++++++-------------
+ arch/x86/kvm/lapic.c            |  35 +++++----
+ arch/x86/kvm/lapic.h            |   2 +
+ arch/x86/kvm/svm.c              | 164 +++++++++++++++++++++++++++++++++++-----
+ arch/x86/kvm/trace.h            |  19 +++++
+ arch/x86/kvm/vmx/vmx.c          |  12 ++-
+ arch/x86/kvm/x86.c              |  71 ++++++++++++++---
+ 10 files changed, 385 insertions(+), 103 deletions(-)
 
-> +&sai2 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_sai2>;
-> +       assigned-clocks =
-> +               <&clk IMX8MQ_AUDIO_PLL1_BYPASS>, <&clk IMX8MQ_CLK_SAI2>;
+-- 
+1.8.3.1
 
-Please don't split the lines as it gets harder to read.
-
-> +       assigned-clock-parents =
-> +               <&clk IMX8MQ_AUDIO_PLL1>, <&clk IMX8MQ_AUDIO_PLL1_OUT>;
-
-Same here.
-
-> +       assigned-clock-rates = <0>, <24576000>;
-> +       status = "okay";
-> +};
-> +
-> +&wdog1 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_wdog>;
-> +       fsl,ext-reset-output;
-> +       status = "okay";
-> +};
-> +
-> +&iomuxc {
-> +       pinctrl-names = "default";
-> +
-> +       imx8mq-evk {
-
-No need for this imx8mq-evk container.
-
-> +               pinctrl_pmic: pmicirq {
-> +                       fsl,pins = <
-> +                               MX8MQ_IOMUXC_GPIO1_IO03_GPIO1_IO3       0x41 /*0x17059*/
-
-This comment looks confusing. I would suggest removing it.
-
-Regards,
-
-Fabio Estevam
