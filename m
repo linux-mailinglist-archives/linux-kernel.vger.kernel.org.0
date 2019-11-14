@@ -2,109 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD518FC4AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:51:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9CC4FC4B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:52:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfKNKvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 05:51:31 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33647 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfKNKvb (ORCPT
+        id S1726767AbfKNKwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 05:52:08 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40267 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfKNKwI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 05:51:31 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w9so5931481wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 02:51:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Em/ldcBTiCkH89iKxfabm8RKdGIliRRbSNYWY3rbkD4=;
-        b=M8nTD+rJCM8aJ5Gr+BGRla3e74JOsongzpE3NPb9CW5En3sYtp6dkkCANBdmu4Jz2s
-         3OovYM867yc+76ka0oIsnRZejqkVigTGWm/uX95LvJ9x/pfP7Ix456YKay2EgrcHPD7A
-         r9X7n5J9D009fVndtxJF4c+IIwCeUq2zUdrH+nIp1EvedN9F9mGioF+zdNxdEqdxrPUi
-         Qqr1SAFoGmSsxqs7etJR+8ZT+CjFyyrD0+ZkN9nH26YDuPtCvrmPheCA+N9ZpnjeddS4
-         e8mkvd7L7Re3XqcJxui7bEIxMOhn+iMBKr0rJR+nBxluy05X8FHUEGA5gZbei/8UixgF
-         1mVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Em/ldcBTiCkH89iKxfabm8RKdGIliRRbSNYWY3rbkD4=;
-        b=arqR4kZ7Ty3IZPdvmNR+zZ8z61Myo0YYZXvaYKWMGXqJ+i9y/NRfs3sLekXVg+sCly
-         rpP6uwdMOHCfQ7hNg4PC8Jn1k8RIdJLXUJXlAMF1zpQ0tgyX13bdSbe1wNAKFKJhY85j
-         aPwdQbnv3/ZYw49AUOswL+p9DH9PF5h/E9ae9V8c8ctunow/E6pjMyzjCeKq18n/ovmv
-         hqouBWoqAqViISE3HbyRvXGPud/UGsywDduuUYZy2WHCDuDiRCT7FSBTx5i9v9fl26X6
-         sM0Vt0ojHFKgpE7OpMp/gx2DYvHRY8tP5AG2av46X8diarvUWpoLAUuzCwFzbefSxOI2
-         ULrQ==
-X-Gm-Message-State: APjAAAVe36qCbsx+C+FxzwuSXTcdzAKitsL8famwoMCTnbgKa2cec8VD
-        h7mBrpFy6wGjINIxjHIjQvdrFw==
-X-Google-Smtp-Source: APXvYqxaypmv9+7GkWChObVbu7wiDzQPNbv9TlnsTgRI+u9RhlgUkWuJB4t1Q8ZmN11y6dU12rOr2Q==
-X-Received: by 2002:a5d:4608:: with SMTP id t8mr7789448wrq.91.1573728688622;
-        Thu, 14 Nov 2019 02:51:28 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id k14sm7236681wrw.46.2019.11.14.02.51.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 02:51:27 -0800 (PST)
-Date:   Thu, 14 Nov 2019 10:51:25 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        qiaochong@loongson.cn, kgdb-bugreport@lists.sourceforge.net,
-        ralf@linux-mips.org,
+        Thu, 14 Nov 2019 05:52:08 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iVCjA-0008Ez-UZ; Thu, 14 Nov 2019 11:51:53 +0100
+Date:   Thu, 14 Nov 2019 11:51:52 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        James Hogan <jhogan@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 1/5] MIPS: kdb: Remove old workaround for backtracing on
- other CPUs
-Message-ID: <20191114105125.t3jma3ghwj2wtv6w@holly.lan>
-References: <20191109191644.191766-1-dianders@chromium.org>
- <20191109111623.1.I30a0cac4d9880040c8d41495bd9a567fe3e24989@changeid>
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        SElinux list <selinux@vger.kernel.org>
+Subject: Re: [PATCH 20/23] y2038: move itimer reset into itimer.c
+In-Reply-To: <CAFqZXNu4Tk4H3b_FS8=EA5QMi10kEgT22uD=61aDryHp-fXnig@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1911141149050.2507@nanos.tec.linutronix.de>
+References: <20191108210236.1296047-1-arnd@arndb.de> <20191108211323.1806194-11-arnd@arndb.de> <CAFqZXNuevxW9d91Zpy6fw3LKrF=xtajAiB61soGQLxgP4xRnFg@mail.gmail.com> <CAK8P3a38eZijQH=vChgm5fZBzOuV2Oi2c0LEdrMy4nKpL7QLbQ@mail.gmail.com>
+ <CAFqZXNsp3JxqW-ahCvtiZBECX5PWonpzMRK0MOn=6a28WzF4cA@mail.gmail.com> <CAK8P3a2FZ2_v6uUJJOurMAE7xYG6wq7T7ZvpLVAPA6FG2pm0dQ@mail.gmail.com> <CAFqZXNu4Tk4H3b_FS8=EA5QMi10kEgT22uD=61aDryHp-fXnig@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191109111623.1.I30a0cac4d9880040c8d41495bd9a567fe3e24989@changeid>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 09, 2019 at 11:16:40AM -0800, Douglas Anderson wrote:
-> As of commit 2277b492582d ("kdb: Fix stack crawling on 'running' CPUs
-> that aren't the master") we no longer need any special case for doing
-> stack dumps on CPUs that are not the kdb master.  Let's remove.
+On Thu, 14 Nov 2019, Ondrej Mosnacek wrote:
+> On Mon, Nov 11, 2019 at 11:58 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > I don't see that as a problem, we rarely put declarations inside of an #ifdef.
+> > The main effect that would have is forcing any file that includes linux/time.h
+> > to be rebuilt when selinux is turned on or off in the .config.
 > 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> I have no way to test this personally, so hopefully someone who uses
-> kdb/kgdb on MIPS can.
+> OK, but with this patch if someone tries to use the function
+> elsewhere, the build will succeed if SELinux is enabled in the config,
+> but fail if it isn't.  Is that intended?  I would suggest at least
+> clearly documenting it above the declaration that the function isn't
+> supposed to be used by new users and doing so will cause build to fail
+> under CONFIG_SECURITY_SELINUX=n.
 
-I took this as a hint to add mips support to kgdbtest ;-)
+Come on. We have enough functions in the kernel which are only available
+under a certain config option and if you (ab)use them elsewhere then the
+build fails. So what?
 
-Support is added and working well. Unfortunately lack of familiarity
-with mips means I have not yet figured out which mips defconfig gives
-us working SMP (and what the corresponding qemu invocation should be).
+The #ifdef documents the limited scope and intended use clearly. If
+something else really needs that function, then removing the #ifdef
+shouldn't be rocket science either.
 
-I think that means I still can't (quite) exercise this code fully.
-The most appropriate test is bta on an SMP system, right?
+Thanks,
 
-
-> Ideally this patch should be Acked by MIPS folks and then land through
-> the kdb/kgdb tree since the next patch in the series, ("kdb:
-> kdb_current_regs should be private") depends on it.
-
-An Acked-by from a MIPS maintainer would be very welcome. Perhaps
-with a bit of extra work on the above I might be able to provide
-a Tested-by:.
-
-I didn't see anything that particularly bothered me in the patches but
-given we're already at -rc7 I'm inclined to target this patchset for 5.6
-rather than 5.5.
-
-
-Daniel.
+	tglx
