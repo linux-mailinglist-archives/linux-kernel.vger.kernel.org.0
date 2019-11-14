@@ -2,160 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F6B6FC855
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 15:02:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F93FC84B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 15:01:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfKNOCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 09:02:22 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35198 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfKNOCW (ORCPT
+        id S1727118AbfKNOBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 09:01:17 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44630 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726374AbfKNOBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 09:02:22 -0500
-Received: by mail-ed1-f65.google.com with SMTP id r16so5101538edq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 06:02:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=33PAA6r/k9VRl85H/xVoKlwt8JinRmzAIvZM9Tx3pHM=;
-        b=f/OICRwApIEBHjzK35OPs5SjQEx99JZRNDxNPjSkxXcz9WGT2l65dn755c5UPYn05M
-         JFgCFMSPOhrZRBfSZsTG28mPgbilqm9oG2mlKVUq2iR/rcov8bVWHeXZnljQXeuiTdB4
-         pc06r27kyk/A/00uVugzmOyIslqS7zYSYV1UWmiuaN0o9WmOlEi7pL/2cmpRH20so0Ai
-         wNIR4AoXXVHdmtuvXhPmkSibGhA1hesN9O27yFlcKXGe12lMcY5zjgkaVURlm2uphgtj
-         w/BYnKJvPHVttb0P63EU+NI7FSMl4ugLBiydhXllOGOZSTDRnL0PhyknOXXwqzFu+PBM
-         ptzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=33PAA6r/k9VRl85H/xVoKlwt8JinRmzAIvZM9Tx3pHM=;
-        b=Du4/iCxFDp9dngvAgxuNEGAWAwmtDiDZw7x/qBP5f3ahcLaPiWMq96JUX7jwJDYegJ
-         +9CgWMiKHpgrEqtsPVbgTab5aN/OyBKuyhOXLWttK2Tn7f/VljGE5WZggg0MU5WxJh9U
-         QhHNElN+cK6I8UFxdYaFRCBm2pz4UhyIWp74Ke8GWSgzs4gcoGZHy6zHsLx0GzReR7Fr
-         r1d7BEaBbc+lQHIJtR1wl03x5fvPnG12uVH1/xNe8hEiG1i0MSJ6qIOQ2Lq8NAggI3C6
-         ytS7eTSr1YkVahZ0G41HcNacT/mfKERPPU8Aa2YisllToUKwJcJyET40I+bmDayEKrtW
-         Mhag==
-X-Gm-Message-State: APjAAAUduwr3NHQk7cRH6ldWpEEljFLNPHQZp8Fgoq6nuHwK3co7luX8
-        WXPynfF3JVIQCHig79jLPPj1049FgWs=
-X-Google-Smtp-Source: APXvYqxsR3NNaXQDvYGd12/9s3QWnCadEINpEzkufZiFdqDh7qo1v2EMXTobGwnwhSwWcVV4VH6UqQ==
-X-Received: by 2002:a17:906:3019:: with SMTP id 25mr8627056ejz.280.1573740137638;
-        Thu, 14 Nov 2019 06:02:17 -0800 (PST)
-Received: from [10.68.217.182] ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id j23sm66197ede.52.2019.11.14.06.02.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2019 06:02:16 -0800 (PST)
-Subject: Re: Please add the zuf tree to linux-next
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-References: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
- <20191024023606.GA1884@infradead.org>
- <20191029160733.298c6539@canb.auug.org.au>
-From:   Boaz Harrosh <boaz@plexistor.com>
-Message-ID: <514e220d-3f93-7ce3-27cd-49240b498114@plexistor.com>
-Date:   Thu, 14 Nov 2019 16:02:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Thu, 14 Nov 2019 09:01:17 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAEE0HuM113268;
+        Thu, 14 Nov 2019 08:00:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573740017;
+        bh=mg4UFFS2ESh3A7IuctheIaBbXKxvehMGp07JMFKAlm0=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=Mpbs4fWCHa2MujEWCR63FGFbtu7sEjAJx80a0Ie3U5gJrSh3wfAFT6V6CCCnse642
+         ys+4ZwuS5AssKdj7NNk9DtoG1yhneDQGeDKK+yPRdcYOzOzy/47gmxnvex8/A/JEEJ
+         O7RgDe6d2D6COjEaDcBw8754s23pS/NkxNYRndBA=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAEE0H5B116509;
+        Thu, 14 Nov 2019 08:00:17 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 14
+ Nov 2019 08:00:17 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 14 Nov 2019 08:00:17 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAEE0HRI130585;
+        Thu, 14 Nov 2019 08:00:17 -0600
+Date:   Thu, 14 Nov 2019 08:02:34 -0600
+From:   Bin Liu <b-liu@ti.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Cristian Birsan <cristian.birsan@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v2 05/13] usb: musb: create debugfs directory under usb
+ root
+Message-ID: <20191114140234.GB5853@uda0271908>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Cristian Birsan <cristian.birsan@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Yangtao Li <tiny.windzz@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <1573541519-28488-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1573541519-28488-5-git-send-email-chunfeng.yun@mediatek.com>
+ <20191112152857.GA5853@uda0271908>
+ <20191114032018.GA122287@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20191029160733.298c6539@canb.auug.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191114032018.GA122287@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2019 07:07, Stephen Rothwell wrote:
-> Hi Christoph,
+On Thu, Nov 14, 2019 at 11:20:18AM +0800, Greg Kroah-Hartman wrote:
+> On Tue, Nov 12, 2019 at 09:28:57AM -0600, Bin Liu wrote:
+> > Hi,
+> > 
+> > On Tue, Nov 12, 2019 at 02:51:51PM +0800, Chunfeng Yun wrote:
+> > > Now the USB gadget subsystem can use the USB debugfs root directory,
+> > > so move musb's directory from the root of the debugfs filesystem into
+> > > the root of usb
+> > 
+> > My opinion is this move is unnecessary. I breaks existing debug tools or
+> > documentation which is already published on Internet. 
 > 
-> On Wed, 23 Oct 2019 19:36:06 -0700 Christoph Hellwig <hch@infradead.org> wrote:
->>
->> On Thu, Oct 24, 2019 at 03:34:29AM +0300, Boaz Harrosh wrote:
->>> Hello Stephen
->>>
->>> Please add the zuf tree below to the linux-next tree.
->>> 	[https://github.com/NetApp/zufs-zuf zuf]  
->>
+> Having a "root" directory for a single random driver seems like you are
+> making your driver a "very important" thing in the overall scheme of the
+> kernel, right?  What's wrong with using the usb subdirectory like all
 
-Sorry for the late response was very sick for a few weeks, now doing better
+Agree, it wasn't the right thing to do at the first place. But now
+changing it adds support burden, because people very often refer to the
+old information on the internet which no longer matches to the new
+location. Basically, it is a cost of ABI change.
 
->> I don't remember us coming to the conclusion that this actually is
->> useful doesn't just badly duplicate the fuse functionality.
-> 
+> other USB drivers use (after this patch series is merged)?  That feels
+> like a much more "sane" way to handle the wide-open debugfs namespace.
 
-Dear Sir Christoph
+Though I commented on this musb patch, my opinion is for this whole
+series, either drop the whole series or apply the whole series.
 
-ZUFS is not at *all* a duplication of the FUSE functionality. In fact they are
-almost completely complementary. The systems that would benefit from fuse would
-do poorly under zufs. And the systems that benefit from zufs do very *very* poorly
-under fuse.
-From the get go I have explained on the mailing list and to the guys that a fuse
-replacement would just be a waist of time. That those async in nature, need page-cache
-not sensitive to latency Systems are better with fuse. And those Systems that need
-very low latency, zero copy, sync operations, highly parallel will do very poorly under
-fuse and we need to invent a new multy-dimentional wheel to address those.
+> Yes, there are no rules when it comes to debugfs file names and
+> locations, but let's try to be sane please.
 
-ZUFS was never a "better-fuse". It was from the get go a different animal to address
-systems and demands that are not possible under fuse.
+Fine with me. I can still support questions such as "can't open
+/sys/kernel/debug/musb-hdrc.0/testmode: No such file or directory".
 
-ZUFS is also (as opposed to fuse) A new way to communicate with User-mode servers, not
-necessarily FileSystems. It does implement the full FileSystem API but any server, Say
-MySQL under ZUFS will benefit from a low-latency, throughput and parallelizm unseen
-before. This is because at the core it is a zero-copy synchronous IPC between applications.
-
-And specially it is good with pmem. A pmem-only (NvDIMM based) FS running in user mode
-gives me *better* results then XFS-DAX in Kernel. Now how is that possible?
-(Under a zufs ported pmfs2)
-I guess we did not do such a "BAD" job as you were so happily declaring.
-
-The Linux Kernel was always about choice and diversity. There is a very respectable
-place for both fuse and zufs side by side tackling different workloads and setups.
-In fact, for example, EXT4 and XFS have 95% overlapping functionality. But we both know
-that those places where XFS is king EXT4 can't get close, Yet there are still places that
-EXT4 does better then XFS, such as single local disk, embedded systems, lighter wait ...
-ZUFS and FUSE have maybe at the most 20% over lap in functionality. They are not even
-cousins.
-
-So please why do you make such bold statements, which are not true. And clearly you
-have not studied the subject at all. I do not remember you ever participated at one of
-my talks? Or gave your opinion on the subject, since the 2 years I have first sent
-the RFD about the subject. (2.5 years)
-
-At the last LSF. Steven from Red-Hat asked me to talk with Miklos about the fuse vs zufs.
-We had a long talk where I have explained to him in detail How we do the mounting, how
-Kernel owns the multy-devices. How we do the PMEM API and our IO API in general. How
-we do pigi-back operations to minimize latencies. How we do DAX and mmap. At the end of the
-talk he said to me that he understands how this is very different from FUSE and he wished
-me "good luck".
-
-Miklos - you have seen both projects; do you think that All these new subsystems from ZUFS
-can have a comfortable place under FUSE, including the new IO API?
-Believe me I have tried. I am a most lazy person. I would not have slaved on ZUFS for
-2 years if it was a "badly duplicate the fuse functionality". Why would I?
-
-Latest fuse already took some very good ideas from ZUFS. We believe this is a very good
-project to have in the Kernel with new innovation.
-
-But Dearest Christoph. I have learned to trust your "guts" about things. Please look
-deeper into the subject (Perhaps review the code) and try to explain better what are your
-real concerns. Perhaps we can address them?
-
-> So is that a hard Nak on inclusion in linux-next at this time?
-> 
-
-I do not see what is the harm to anyone if it is to be included in linux-next?
-Would you please help me in testing and stabilizing a very serious and ambitious project.
-That has merit and is used by clients. I believe it is a very low risk project for the reset
-of the Kernel. If not we can remove it very fast.
-
-Cheers
-Boaz
+-Bin.
