@@ -2,104 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA40FFCD44
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2A89FCD57
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:23:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbfKNSUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:20:46 -0500
-Received: from mga04.intel.com ([192.55.52.120]:57201 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbfKNSUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:20:44 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:20:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="208198401"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga006.jf.intel.com with ESMTP; 14 Nov 2019 10:20:43 -0800
-Date:   Thu, 14 Nov 2019 10:20:43 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] x86/traps: Print non-canonical address on #GP
-Message-ID: <20191114182043.GG24045@linux.intel.com>
-References: <20191112211002.128278-1-jannh@google.com>
- <20191112211002.128278-2-jannh@google.com>
- <20191114174630.GF24045@linux.intel.com>
- <CALCETrVmaN4BgvUdsuTJ8vdkaN1JrAfBzs+W7aS2cxxDYkqn_Q@mail.gmail.com>
+        id S1727224AbfKNSV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:21:59 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:37593 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfKNSV7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:21:59 -0500
+Received: by mail-vk1-f193.google.com with SMTP id l5so1711002vkb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 10:21:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+VmC0KbxXRLmjlMOB0/4aEHZOiDqNhhGvntSX5Ejh5I=;
+        b=i3GWEGWzJoezpcuBDQQnlQIoJ+Rv+jSVSok9hmyrDnxtqt29OyhbbtJA/BshvyJ0A+
+         xQHroDFiea8vnXV5pDykoN5dMiwmOr370jtxqYTkPulHU2uPmqNHn0Y0bdT1r0ZVnBlS
+         T2AFQQUWhBYmf3HiqpDxsDJm1TuozHGfYl4zVe0KbiR+t0ApNOPZj9V3Hd1sjCaoALiv
+         fUjmMBfQfH9Jl5MFqHJ1TgDLqhpp+zuhMmjfygnYWexjSfBGhw3XIu0vyYBE5DxvRUkX
+         1zUvQ9EidQToL3IbY2wUfRHA6WTAYCPlNFGfIhivzPV2RhF/5o/FJbT9aGP4HQrS+dCV
+         5gJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+VmC0KbxXRLmjlMOB0/4aEHZOiDqNhhGvntSX5Ejh5I=;
+        b=ZsJYy1c2XkKsPtJmwH9eUj7wdvCCTsD2szlo6Z8TLrw0K3rHwm5QHA0L14kSyQYqgm
+         POJPd7Y8a1NbnRHA2zZm5LYyRKVFRDeth8IVMhKhIr/uD7nTmgN+lQkTQ3n1vqFwrv4q
+         nLU7kaDYchQQ8bjyesI40uQLUNscLbAi8rgz0ppxoW3wnMiWq6ckhtXdCpJW+lZq49bH
+         m06QNAqNZ4I43pOHb8SavU6O9gbnqVswNfZUJ+L4sd3DaAjfSjNGygwnoCHuoEzsb25/
+         dfTXiMFogkuMLLnUrOddKzLpWmJx2dcBn2MLt0KuglhwTrwd/0atgvZxph6qIQxilOuf
+         GQVQ==
+X-Gm-Message-State: APjAAAWgQYJWa6McOjiLSl5VYdVCDgwgYxu8ALIu+HGm3naPWm/zrJuQ
+        Ga4EA2Kmjoh8JYNIy11V92SCniF7FgT1QRKrW9kwJw==
+X-Google-Smtp-Source: APXvYqw2NIH+2yA3HN+TDprRqlq2TcrmfjkaRKWSAwLb7M4Vw9kp9ssltTe9lpDGejjqT6dY+zc0U+thx75uMkNYkNc=
+X-Received: by 2002:a1f:7d88:: with SMTP id y130mr6044142vkc.71.1573755717967;
+ Thu, 14 Nov 2019 10:21:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVmaN4BgvUdsuTJ8vdkaN1JrAfBzs+W7aS2cxxDYkqn_Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20191112223046.176097-1-samitolvanen@google.com>
+ <20191113200419.GE221701@gmail.com> <CABCJKudoBHo6rZoGMFproXjmexu16gonVKDPdnq9XDCmO2J2cw@mail.gmail.com>
+ <CAKv+Gu85PY+A_XxB9DcmcoV8+nAJZGfAc59sj6XnOGyhDedNQA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu85PY+A_XxB9DcmcoV8+nAJZGfAc59sj6XnOGyhDedNQA@mail.gmail.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Thu, 14 Nov 2019 10:21:46 -0800
+Message-ID: <CABCJKudGdwmshFynZQZsPg4JJ+Yu0-GNp+aEjXdJAwu6zU5vtw@mail.gmail.com>
+Subject: Re: [PATCH] crypto: arm64/sha: fix function types
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Kees Cook <keescook@chromium.org>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 10:00:35AM -0800, Andy Lutomirski wrote:
-> On Thu, Nov 14, 2019 at 9:46 AM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> > > +     /*
-> > > +      * For the user half, check against TASK_SIZE_MAX; this way, if the
-> > > +      * access crosses the canonical address boundary, we don't miss it.
-> > > +      */
-> > > +     if (addr_ref <= TASK_SIZE_MAX)
+On Thu, Nov 14, 2019 at 1:45 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> On Wed, 13 Nov 2019 at 22:28, Sami Tolvanen <samitolvanen@google.com> wrote:
 > >
-> > Any objection to open coding the upper bound instead of using
-> > TASK_SIZE_MASK to make the threshold more obvious?
+> > On Wed, Nov 13, 2019 at 12:04 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > On Tue, Nov 12, 2019 at 02:30:46PM -0800, Sami Tolvanen wrote:
+> > > > Declare assembly functions with the expected function type
+> > > > instead of casting pointers in C to avoid type mismatch failures
+> > > > with Control-Flow Integrity (CFI) checking.
+> > > >
+> > > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> > > > ---
+> > > >  arch/arm64/crypto/sha1-ce-glue.c   | 12 +++++-------
+> > > >  arch/arm64/crypto/sha2-ce-glue.c   | 26 +++++++++++---------------
+> > > >  arch/arm64/crypto/sha256-glue.c    | 30 ++++++++++++------------------
+> > > >  arch/arm64/crypto/sha512-ce-glue.c | 23 ++++++++++-------------
+> > > >  arch/arm64/crypto/sha512-glue.c    | 13 +++++--------
+> > > >  5 files changed, 43 insertions(+), 61 deletions(-)
+> > > >
+> > > > diff --git a/arch/arm64/crypto/sha1-ce-glue.c b/arch/arm64/crypto/sha1-ce-glue.c
+> > > > index bdc1b6d7aff7..3153a9bbb683 100644
+> > > > --- a/arch/arm64/crypto/sha1-ce-glue.c
+> > > > +++ b/arch/arm64/crypto/sha1-ce-glue.c
+> > > > @@ -25,7 +25,7 @@ struct sha1_ce_state {
+> > > >       u32                     finalize;
+> > > >  };
+> > > >
+> > > > -asmlinkage void sha1_ce_transform(struct sha1_ce_state *sst, u8 const *src,
+> > > > +asmlinkage void sha1_ce_transform(struct sha1_state *sst, u8 const *src,
+> > > >                                 int blocks);
+> > >
+> > > Please update the comments in the corresponding assembly files too.
+> > >
+> > > Also, this change doesn't really make sense because the assembly functions still
+> > > expect struct sha1_ce_state, and they access sha1_ce_state::finalize which is
+> > > not present in struct sha1_state.  There should either be wrapper functions that
+> > > explicitly do the cast from sha1_state to sha1_ce_state, or there should be
+> > > comments in the assembly files that very clearly explain that although the
+> > > function prototype takes sha1_state, it's really assumed to be a sha1_ce_state.
 > >
-> > > +             return;
-> > > +
-> > > +     pr_alert("dereferencing non-canonical address 0x%016lx\n", addr_ref);
+> > Agreed, this needs a comment explaining the type mismatch. I'm also
+> > fine with using wrapper functions and explicitly casting the
+> > parameters instead of changing function declarations. Herbert, Ard,
+> > any preferences?
 > >
-> > Printing the raw address will confuse users in the case where the access
-> > straddles the lower canonical boundary.  Maybe combine this with open
-> > coding the straddle case?  With a rough heuristic to hedge a bit for
-> > instructions whose operand size isn't accurately reflected in opnd_bytes.
-> >
-> >         if (addr_ref > __VIRTUAL_MASK)
-> >                 pr_alert("dereferencing non-canonical address 0x%016lx\n", addr_ref);
-> >         else if ((addr_ref + insn->opnd_bytes - 1) > __VIRTUAL_MASK)
-> >                 pr_alert("straddling non-canonical boundary 0x%016lx - 0x%016lx\n",
-> >                          addr_ref, addr_ref + insn->opnd_bytes - 1);
-> >         else if ((addr_ref + PAGE_SIZE - 1) > __VIRTUAL_MASK)
-> >                 pr_alert("potentially straddling non-canonical boundary 0x%016lx - 0x%016lx\n",
-> >                          addr_ref, addr_ref + PAGE_SIZE - 1);
-> 
-> This is unnecessarily complicated, and I suspect that Jann had the
-> right idea but just didn't quite explain it enough.  The secret here
-> is that TASK_SIZE_MAX is a full page below the canonical boundary
-> (thanks, Intel, for screwing up SYSRET), so, if we get #GP for an
-> address above TASK_SIZE_MAX,
+>
+> I guess the former would be cleaner, using container_of() rather than
+> a blind cast to make the code more self-documenting. The extra branch
+> shouldn't really matter.
 
-Ya, I followed all that.  My point is that if "addr_ref + insn->opnd_bytes"
-straddles the boundary then it's extremely likely the #GP is due to a
-non-canonical access, i.e. the pr_alert() doesn't have to hedge (as much).
+Sure, using container_of() sounds like a better option, I'll use that
+in v2. Thanks!
 
-> then it's either a #GP for a different
-> reason or it's a genuine non-canonical access.
-
-Heh, "canonical || !canonical" would be the options :-D
-
-> 
-> So I think that just a comment about this would be enough.
-> 
-> *However*, the printout should at least hedge a bit and say something
-> like "probably dereferencing non-canonical address", since there are
-> plenty of ways to get #GP with an operand that is nominally
-> non-canonical but where the actual cause of #GP is different.  And I
-> think this code should be skipped entirely if error_code != 0.
-> 
-> --Andy
+Sami
