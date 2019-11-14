@@ -2,118 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC0EFCF94
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:19:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50827FCF98
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfKNUTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:19:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726597AbfKNUTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:19:44 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2443A20709;
-        Thu, 14 Nov 2019 20:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573762783;
-        bh=Ms+2LTB1+DESJrOdQdCv2D3DR/a6flmiLsM96V8C2E4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=nACZ0IrSrZ/AlXj+jZQQZqliQSFvUsfLm7y5kYUBBF5csAwpMtCtZFbVPjaojtxqv
-         35VtNXdJxtyLA/LfY0wty1jGbnOrLtrNLb2bMoOkyvb1OeKiQWOHweYXDWknNfPm5B
-         U8gdqWhghK3nPrvW8oJflow7c0LsEAKkU7BbeGaM=
-Date:   Thu, 14 Nov 2019 14:19:41 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Murray <andrew.murray@arm.com>
-Subject: Re: [PATCH v2 0/3] PCI: Add PCI_ERROR_RESPONSE, check for errors
-Message-ID: <20191114201941.GA242410@google.com>
+        id S1726995AbfKNUVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:21:02 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39068 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfKNUVC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 15:21:02 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 29so4499110pgm.6
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 12:21:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X9HJcC+dDI+SMIjHb3TSTTEdvzoA4CpSNR8pt2+xQ9g=;
+        b=ElTRMVV53tLxyamUmm5DqL/W3Istv4Uiy/Q1mKVmgCoTyNRjIOAI28alvfINoPTaKT
+         ddIdonmcp67HXtp+LPSAaeHdhy6c5L5ZPLxZ8U7pxlVeHdGB146Z7JfN2ia7z3fFVWRi
+         kS2M4+ccb1TvLkWTSx596GrajOg55/ZgoL6ow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X9HJcC+dDI+SMIjHb3TSTTEdvzoA4CpSNR8pt2+xQ9g=;
+        b=QjvaUATnSrRxUNM9RAPL9LOE/FKflfTCPJJv5WybyGxcRNnRt+kSu41U8L7fM6fYCK
+         gt6M/A4Z2YikC/W6TEhYYTQlueODbBhDwhMv/9GMdXfHL7xV9XHqdpSUTordibYfdzUD
+         3tggvODZM4GUy70WX67MudNa4pBj2ilYbVfOuQ4Vj7upEQvw/RS2/Xcd+ZQd3jGF/i2+
+         WR9kSf/Ow3W/24ScYhMb67Uvh7qHsPx33tJcXpqAvQTEQDazfv1cC2wU2x7YbqynqYYj
+         AM+SMvjjxdkkqC0yJTYidIkTHOtFQNymCcBVhiynBJHjMsnRyu1BNygIxLdpjf9o1Y5L
+         MqpA==
+X-Gm-Message-State: APjAAAWd0h/uPVZAuBN4HF6ypJ/ja9H7d1xVfwdzGE1Uzs13+3npMHDy
+        67iMzCh8j6yxSgh/ookxnWsPFg==
+X-Google-Smtp-Source: APXvYqzTq1VOazEL+8iLqVK2oIGJkKAQy0KwKQaSFyK8gFQBdJmCUDZ2sXLkLsVQ6H93AgBeXZdFew==
+X-Received: by 2002:aa7:87c5:: with SMTP id i5mr12945500pfo.60.1573762861161;
+        Thu, 14 Nov 2019 12:21:01 -0800 (PST)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id v189sm8084763pfv.133.2019.11.14.12.20.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2019 12:21:00 -0800 (PST)
+Date:   Thu, 14 Nov 2019 15:20:59 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, saiprakash.ranjan@codeaurora.org
+Subject: Re: [RFC 1/2] docs: ftrace: Clarify the RAM impact of buffer_size_kb
+Message-ID: <20191114202059.GC186056@google.com>
+References: <cover.1573661658.git.frank@generalsoftwareinc.com>
+ <0e4a803c3e24140172855748b4a275c31920e208.1573661658.git.frank@generalsoftwareinc.com>
+ <20191113113730.213ddd72@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190822200551.129039-1-helgaas@kernel.org>
+In-Reply-To: <20191113113730.213ddd72@gandalf.local.home>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Andrew]
+On Wed, Nov 13, 2019 at 11:37:30AM -0500, Steven Rostedt wrote:
+> On Wed, 13 Nov 2019 11:32:36 -0500
+> "Frank A. Cancio Bello" <frank@generalsoftwareinc.com> wrote:
+[snip]
+> > +
+> > +        The number of pages allocated for each CPU buffer may not
+> > +        be the same than the round up of the division:
+> > +        buffer_size_kb / PAGE_SIZE. This is because part of each page is
+> > +        used to store a page header with metadata. E.g. with
+> > +        buffer_size_kb=4096 (kilobytes), a PAGE_SIZE=4096 bytes and a
+> > +        BUF_PAGE_HDR_SIZE=16 bytes (BUF_PAGE_HDR_SIZE is the size of the
+> > +        page header with metadata) the number of pages allocated for each
+> > +        CPU buffer is 1029, not 1024. The formula for calculating the
+> > +        number of pages allocated for each CPU buffer is the round up of:
+> > +        buffer_size_kb / (PAGE_SIZE - BUF_PAGE_HDR_SIZE).
+> 
+> I have no problem with this patch, but the concern of documenting the
+> implementation here, which will most likely not be updated if the
+> implementation is ever changed, which is why I was vague to begin with.
+> 
+> But it may never be changed as that code has been like that for a
+> decade now.
 
-On Thu, Aug 22, 2019 at 03:05:48PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Reads from a PCI device may fail if the device has been turned off (put
-> into D3cold), removed, or if some other error occurs.  The PCI host bridge
-> typically fabricates ~0 data to complete the CPU's read.
-> 
-> We check for that in a few places, but not in a consistent way.  This
-> series adds a PCI_ERROR_RESPONSE definition to make the checks more
-> consistent and easier to find.  Note that ~0 may indicate a PCI error, but
-> it may also be valid read data, so you need more information (such as
-> knowing that a register can never contain ~0) before concluding that it's
-> an error.
-> 
-> This series also adds a new check for PCI_ERROR_RESPONSE in the power
-> management code because that code frequently encounters devices in D3cold,
-> where we previously misinterpreted ~0 data.  It also uses pci_power_name()
-> to print D-state names more consistently.
-> 
-> Rafael, I didn't add your Reviewed-by to "PCI / PM: Return error when
-> changing power state from D3cold" because I made small changes to try to
-> make the messages more consistent, and I didn't want to presume they'd be
-> OK with you.
-> 
-> Changes since v1:
->   - Add Rafael's Reviewed-By to the first two patches
->   - Drop "PCI / PM: Check for error when reading PME status" because Rafael
->     pointed out that some devices can signal PME even when in D3cold, so
->     this would require additional rework
->   - Drop "PCI / PM: Check for error when reading Power State" because
->     Rafael thinks it's mostly redundant
-> 
-> Bjorn Helgaas (3):
->   PCI: Add PCI_ERROR_RESPONSE definition
->   PCI / PM: Decode D3cold power state correctly
->   PCI / PM: Return error when changing power state from D3cold
+Agreed. To give some context, Frank is an outreachy intern I am working with and
+one of his starter tasks was to understand the ring buffer's basics.  I asked
+him to send a patch since I thought he mentioned there was an error in the
+documnentation. It looks like all that was missing is some explanation which
+the deleted text in brackets above should already cover.
 
-I applied patches 2 & 3 (tweaked to not depend on the
-PCI_ERROR_RESPONSE definition) with reviewed-by from Rafael, Keith,
-and Mika to pci/pm for v5.5, thanks everybody for taking a look.
+Steve, your call if you want this patch. Looks like Frank understands the
+page header taking up some space, so one of the goals of the exercise is
+accomplished ;-)
 
-Andrew had good ideas for improving the PCI_ERROR_RESPONSE part, so
-it's gone for now but not forgotten.
+thanks,
 
->  drivers/pci/access.c                          | 13 ++++----
->  .../pci/controller/dwc/pcie-designware-host.c |  2 +-
->  drivers/pci/controller/pci-aardvark.c         |  2 +-
->  drivers/pci/controller/pci-mvebu.c            |  4 +--
->  drivers/pci/controller/pci-thunder-ecam.c     | 20 ++++++------
->  drivers/pci/controller/pci-thunder-pem.c      |  2 +-
->  drivers/pci/controller/pcie-altera.c          |  2 +-
->  drivers/pci/controller/pcie-iproc.c           |  2 +-
->  drivers/pci/controller/pcie-mediatek.c        |  4 +--
->  drivers/pci/controller/pcie-rcar.c            |  2 +-
->  drivers/pci/controller/pcie-rockchip-host.c   |  2 +-
->  drivers/pci/controller/vmd.c                  |  2 +-
->  drivers/pci/hotplug/cpqphp_ctrl.c             | 12 +++----
->  drivers/pci/hotplug/cpqphp_pci.c              | 20 ++++++------
->  drivers/pci/hotplug/pciehp_hpc.c              |  6 ++--
->  drivers/pci/pci.c                             | 31 ++++++++++++-------
->  drivers/pci/pcie/dpc.c                        |  3 +-
->  drivers/pci/pcie/pme.c                        |  4 +--
->  drivers/pci/probe.c                           |  4 +--
->  drivers/pci/quirks.c                          |  2 +-
->  include/linux/pci.h                           |  7 +++++
->  21 files changed, 81 insertions(+), 65 deletions(-)
-> 
-> -- 
-> 2.23.0.187.g17f5b7556c-goog
-> 
+ - Joel
+
