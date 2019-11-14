@@ -2,94 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43F2DFC98B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 16:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F7C2FC987
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 16:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfKNPJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 10:09:53 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:40702 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfKNPJw (ORCPT
+        id S1726865AbfKNPJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 10:09:08 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:34825 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbfKNPJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 10:09:52 -0500
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id xAEF9W9o025244;
-        Fri, 15 Nov 2019 00:09:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com xAEF9W9o025244
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1573744173;
-        bh=qT+oeFIy/euq0pjgKwdV5q+AmMmXgB5IsDUm3nbRMug=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pF/DGxdKF/kgm6vFSo1CHhtEqThJ5MNkv65P+tsPx1MUaA6zLRxEBfhn7EUyY0hcu
-         gQwOZRtWB5zx/nE5y3Kk+QRD+0QyPVtqLygvMj+kBXYGXarkXQEKkNtGbSOKgm/L0U
-         6mINbu0Tgb3RGQqfhzJ+FAZnJhyPIUi6D8+7ksyC38oXIolSbnPPY1xSa2PM0w0uGl
-         yCzKotAPea5zVM/88o5t3AKHRlerOE3sOmO51b0IInIArm20mQQfgGYk35l5p556jH
-         DWIlp7aJ+OaYYjlUWdn27zOxY3h8l0toqERkm7J0F1JyaSmTbdmXQGv0vxAiFMaxQs
-         jpUMfjbJhT1YQ==
-X-Nifty-SrcIP: [209.85.222.53]
-Received: by mail-ua1-f53.google.com with SMTP id i13so1960109uaq.7;
-        Thu, 14 Nov 2019 07:09:32 -0800 (PST)
-X-Gm-Message-State: APjAAAWBku/hg7p370pFdJ6l0eUhyB/uFJaRQTazBo1ic/TjJ92jLFQD
-        LNbJJsOPPwxDKuwQP2K5OXPJcIRzGZbC7FWg/xw=
-X-Google-Smtp-Source: APXvYqxP6fimCUjd9UUjSmw3gNS/GNK41A1+OJKsdwGXeZ9QlASqiVEwdOwyGiSacAGc3X2E5Gf9FatJh03k0eQJhAA=
-X-Received: by 2002:a9f:262d:: with SMTP id 42mr5173143uag.109.1573744171503;
- Thu, 14 Nov 2019 07:09:31 -0800 (PST)
+        Thu, 14 Nov 2019 10:09:08 -0500
+Received: by mail-il1-f194.google.com with SMTP id z12so5639110ilp.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 07:09:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2j0EPjGobhr4xFurUZmwA56VdxnETyuqnOI12SDj02Y=;
+        b=PYxId9bG0udRhCD33Keyp/6wzavyydcKAD4odnsunUI4Fe0odB+7kgAmLgTwkFF0QX
+         H1LHt3EmQzkuMJDvoORsiY0mEhJZWcR5Vv3+BVxIcTnA24YYtNbNsylyiOZVjsKomRFN
+         JtTSLAkjg4hl+6wsD/Q00O/6drDvXbI9tLUJOMdj7in4dg/hPNRu/X9937fU7IffRVe1
+         edPLu7EzMx2Yg2qMP3G3r97CPT9dNQRIDFeB4GTn387erRiLUkBq0a9cgU6+fLJ8DL2f
+         INqrvsQq5TNeELquwkNNFabl6DnDv5pBeBlTPDh+leQ4BuOT0VkVvc6CFU0KkjQ3/0e4
+         TLuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2j0EPjGobhr4xFurUZmwA56VdxnETyuqnOI12SDj02Y=;
+        b=dmW/rKc2PpAjQDVsmmbkKleOZS00aTxRnUwF/R8XuTfiXodc7AXj79bHR4E4yZOga2
+         PBZk+lf+EC7lA6+5+nZOcYgWU9Ff8hmVUaUhwJmLfVWMo2oooJId36Kvmj7deFgjrSjz
+         wsL+Zfj7QctVf2s9QHt6vaaPo/Dn0SoeCJ1NF8hF906y4h1HEnWVrRP7R68eUa14a1ES
+         9wR/j6A+QNfJi5qjOdJXfstExX5+XrqQPzwIc2osmpZKuAh4CTFVSGyUR5K5Y0tirB19
+         u+C5lYiNqzGi9wzTblpmCKX3S+uO0gCXNMUR+seZ/HZ892QYmvlKWDUgG65r3JkuHU0F
+         xFSw==
+X-Gm-Message-State: APjAAAV+Icc06naNMonRDQ5DaF/H9Z16Iy6YBLIiNzkReaiAKt9ggLDm
+        8D46ON+41W0vvqAppEeClASa7g==
+X-Google-Smtp-Source: APXvYqyQCtMg9lvlrbwi26iaROC57zGLPnWt7r00eGmlTCiG/2fkHoEYNUpejHVgj6WsJxxnHbs1+A==
+X-Received: by 2002:a92:9198:: with SMTP id e24mr10436679ill.184.1573744145554;
+        Thu, 14 Nov 2019 07:09:05 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id l63sm502363ioa.19.2019.11.14.07.09.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Nov 2019 07:09:04 -0800 (PST)
+Subject: Re: [PATCH RFC] io_uring: make signalfd work with io_uring (and aio)
+ POLL
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jann Horn <jannh@google.com>
+Cc:     io-uring@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <58059c9c-adf9-1683-99f5-7e45280aea87@kernel.dk>
+ <58246851-fa45-a72d-2c42-7e56461ec04e@kernel.dk>
+ <ec3526fb-948a-70c0-4a7b-866d6cd6a788@rasmusvillemoes.dk>
+ <CAG48ez3dpphoQGy8G1-QgZpkMBA2oDjNcttQKJtw5pD62QYwhw@mail.gmail.com>
+ <ea7a428d-a5bd-b48e-9680-82a26710ec83@rasmusvillemoes.dk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e568a403-3712-4612-341a-a6f22af877ae@kernel.dk>
+Date:   Thu, 14 Nov 2019 08:09:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20190922113436.10396-1-yamada.masahiro@socionext.com>
- <201911131558.6B0778229@keescook> <20191113.162157.111707512627631395.davem@davemloft.net>
-In-Reply-To: <20191113.162157.111707512627631395.davem@davemloft.net>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 15 Nov 2019 00:08:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQtmy8p2GJooX_8dgp3ipC0Kp6x4e1tfiOay3_0qLhhvg@mail.gmail.com>
-Message-ID: <CAK7LNAQtmy8p2GJooX_8dgp3ipC0Kp6x4e1tfiOay3_0qLhhvg@mail.gmail.com>
-Subject: Re: [PATCH] sparc: vdso: fix build error of vdso32
-To:     David Miller <davem@davemloft.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Anatoly Pugachev <matorola@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ea7a428d-a5bd-b48e-9680-82a26710ec83@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 9:22 AM David Miller <davem@davemloft.net> wrote:
->
-> From: Kees Cook <keescook@chromium.org>
-> Date: Wed, 13 Nov 2019 15:59:27 -0800
->
-> > On Sun, Sep 22, 2019 at 08:34:36PM +0900, Masahiro Yamada wrote:
-> >> Since commit 54b8ae66ae1a ("kbuild: change *FLAGS_<basetarget>.o to
-> >> take the path relative to $(obj)"), sparc allmodconfig fails to build
-> >> as follows:
-> >>
-> >>   CC      arch/sparc/vdso/vdso32/vclock_gettime.o
-> >> unrecognized e_machine 18 arch/sparc/vdso/vdso32/vclock_gettime.o
-> >> arch/sparc/vdso/vdso32/vclock_gettime.o: failed
-> >>
-> >> The cause of the breakage is that -pg flag not being dropped.
-> >>
-> >> The vdso32 files are located in the vdso32/ subdirectory, but I missed
-> >> to update the Makefile.
-> >>
-> >> Fixes: 54b8ae66ae1a ("kbuild: change *FLAGS_<basetarget>.o to take the path relative to $(obj)")
-> >> Reported-by: Anatoly Pugachev <matorola@gmail.com>
-> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >
-> > I've tripped over this as well. Since no one has picked this up, can you
-> > take it via your tree Masahiro?
->
-> Yes, please do.  Sorry, I haven't had a lot of time for Sparc work lately.
->
-> Acked-by: David S. Miller <davem@davemloft.net>
+On 11/14/19 7:12 AM, Rasmus Villemoes wrote:
+> On 14/11/2019 14.46, Jann Horn wrote:
+>> On Thu, Nov 14, 2019 at 10:20 AM Rasmus Villemoes
+>> <linux@rasmusvillemoes.dk> wrote:
+>>> On 14/11/2019 05.49, Jens Axboe wrote:
+>>>> On 11/13/19 9:31 PM, Jens Axboe wrote:
+>>>>> This is a case of "I don't really know what I'm doing, but this works
+>>>>> for me". Caveat emptor, but I'd love some input on this.
+>>>>>
+>>>>> I got a bug report that using the poll command with signalfd doesn't
+>>>>> work for io_uring. The reporter also noted that it doesn't work with the
+>>>>> aio poll implementation either. So I took a look at it.
+>>>>>
+>>>>> What happens is that the original task issues the poll request, we call
+>>>>> ->poll() (which ends up with signalfd for this fd), and find that
+>>>>> nothing is pending. Then we wait, and the poll is passed to async
+>>>>> context. When the requested signal comes in, that worker is woken up,
+>>>>> and proceeds to call ->poll() again, and signalfd unsurprisingly finds
+>>>>> no signals pending, since it's the async worker calling it.
+>>>>>
+>>>>> That's obviously no good. The below allows you to pass in the task in
+>>>>> the poll_table, and it does the right thing for me, signal is delivered
+>>>>> and the correct mask is checked in signalfd_poll().
+>>>>>
+>>>>> Similar patch for aio would be trivial, of course.
+>>>>
+>>>>  From the probably-less-nasty category, Jann Horn helpfully pointed out
+>>>> that it'd be easier if signalfd just looked at the task that originally
+>>>> created the fd instead. That looks like the below, and works equally
+>>>> well for the test case at hand.
+>>>
+>>> Eh, how should that work? If I create a signalfd() and fork(), the
+>>> child's signalfd should only be concerned with signals sent to the
+>>> child. Not to mention what happens after the parent dies and the child
+>>> polls its fd.
+>>>
+>>> Or am I completely confused?
+>>
+>> I think the child should not be getting signals for the child when
+>> it's reading from the parent's signalfd. read() and write() aren't
+>> supposed to look at properties of `current`.
+> 
+> That may be, but this has always been the semantics of signalfd(), quite
+> clearly documented in 'man signalfd'.
+> 
+>> Of course, if someone does rely on the current (silly) semantics, this
+>> might break stuff.
+> 
+> That, and Jens' patch only seemed to change the poll callback, so the
+> child (or whoever else got a hand on that signalfd) would wait for the
+> parent to get a signal, but then a subsequent read would attempt to
+> dequeue from the child itself.
+> 
+> So, I can't really think of anybody that might be relying on inheriting
+> a signalfd instead of just setting it up in the child, but changing the
+> semantics of it now seems rather dangerous. Also, I _can_ imagine
+> threads in a process sharing a signalfd (initial thread sets it up and
+> blocks the signals, all threads subsequently use that same fd), and for
+> that case it would be wrong for one thread to dequeue signals directed
+> at the initial thread. Plus the lifetime problems.
 
-
-Applied to linux-kbuild.
+What if we just made it specific SFD_CLOEXEC? I don't want to break
+existing applications, even if the use case is nonsensical, but it is
+important to allow signalfd to be properly used with use cases that are
+already in the kernel (aio with IOCB_CMD_POLL, io_uring with
+IORING_OP_POLL_ADD). Alternatively, if need be, we could add a specific
+SFD_ flag for this. Might also help with applications knowing if this
+will work with io_uring/aio at all.
 
 -- 
-Best Regards
-Masahiro Yamada
+Jens Axboe
+
