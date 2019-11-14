@@ -2,114 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63FFDFC575
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 12:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C91ADFC58D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 12:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbfKNLh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 06:37:58 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:55076 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfKNLh5 (ORCPT
+        id S1727069AbfKNLnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 06:43:18 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:56960 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726139AbfKNLm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 06:37:57 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id C1A7A3C04C0;
-        Thu, 14 Nov 2019 12:37:53 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id kfw6ztwQwdUg; Thu, 14 Nov 2019 12:37:48 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        Thu, 14 Nov 2019 06:42:57 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 367E73C009C;
-        Thu, 14 Nov 2019 12:37:48 +0100 (CET)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Thu, 14 Nov
- 2019 12:37:47 +0100
-Date:   Thu, 14 Nov 2019 12:37:43 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Wolfram Sang <wsa@the-dreams.de>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Add MMC_CAP_ERASE to
- Gen3 SoCs
-Message-ID: <20191114113743.GA19656@vmlxhi-102.adit-jv.com>
-References: <20191112134808.23546-1-erosca@de.adit-jv.com>
- <20191112204952.GA2976@kunai>
- <CAPDyKFq8oVk26ruNA_R8HDXhMGKhDeHnL0q82xi40g1aeo109A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFq8oVk26ruNA_R8HDXhMGKhDeHnL0q82xi40g1aeo109A@mail.gmail.com>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B31B3C04BD;
+        Thu, 14 Nov 2019 11:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1573731776; bh=nFD3/7UDrmqDt39ByWh4NOJjLYV6uhpPSSb6thFP9SA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j3Txz1eiCEVZwtqPAZxICcTby6H+8uhU9/0QV34/RKf6En7Hc7upJEbNCKjl7CQO3
+         X70QEx9M2MDkVH4KQyFmP+GTsF7ydu3zzad1TlINcDozXlay1s1+xSQnCr41zuvvGt
+         R+6fAnoIcfwres4sjNOhFe4LpTryLi/HgXIYY/fJSDAiN8aef/WilcAeI9VphHUJnX
+         dhBB6chc352cI1HewUuz4b1m42tfWeyeBWOBmgBmwgW3MW6tX31e1nxOGrcUI6cl/b
+         Kd0mQTnKp/jSQsI8SUb2IbigM4tMtaR0E1oJq/hqGSMfh3VsFphh8sLwH+vQegx47W
+         x1QiKeJ19FHsQ==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BF405A0078;
+        Thu, 14 Nov 2019 11:42:52 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 net-next 0/7] net: stmmac: CPU Performance Improvements
+Date:   Thu, 14 Nov 2019 12:42:44 +0100
+Message-Id: <cover.1573731453.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everyone,
+CPU Performance improvements for stmmac. Please check bellow for results
+before and after the series.
 
-On Thu, Nov 14, 2019 at 11:56:23AM +0100, Ulf Hansson wrote:
-> On Tue, 12 Nov 2019 at 21:49, Wolfram Sang <wsa@the-dreams.de> wrote:
-> >
-> > On Tue, Nov 12, 2019 at 02:48:08PM +0100, Eugeniu Rosca wrote:
-> > > From: Harish Jenny K N <harish_kandiga@mentor.com>
-> > >
-> > > Enable MMC_CAP_ERASE capability in the driver to allow
-> > > erase/discard/trim requests.
-> > >
-> > > Suggested-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> > > Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
-> > > [erosca: Forward-port and test on v5.4-rc7 using H3ULCB-KF:
-> > >          "blkdiscard /dev/mmcblk0" passes with this patch applied
-> > >          and complains otherwise:
-> > >        "BLKDISCARD ioctl failed: Operation not supported"]
-> > > Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> >
-> > Looks good to me. Just a generic question, probably more for Ulf:
-> >
-> > Why does this CAP_ERASE exist? As I understand, the driver only needs to
-> > set the flag and no further handling is required. Why would a driver not
-> > set this flag and not support erase/trim commands?
-> 
-> I am working on removing the cap, altogether. Step by step, this is
-> getting closer now.
-> 
-> The main problem has been about busy detect timeouts, as an erase
-> command may have a very long busy timeout. On the host side, they
-> typically need to respect the cmd->busy_timeout for the request, and
-> if it can't because of some HW limitation, it needs to set
-> mmc->max_busy_timeout.
+Patch 1/7, allows RX Interrupt on Completion to be disabled and only use the
+RX HW Watchdog.
 
-FWIW we've discussed such concerns internally, based on past commits
-which either disable [1-2] busy timeouts or increase their value [3].
+Patch 2/7, setups the default RX coalesce settings instead of using the
+minimum value.
 
-To get a feeling if this is relevant for R-Car3, I've run blkdiscard on
-a 64 GiB eMMC without noticing any issues on v5.4-rc7. Hopefully this
-is sufficient as testing?
+Patch 3/7 and 4/7, removes the uneeded computations for RX Flow Control
+activation/de-activation, on some cases.
 
-> 
-> Once that is fixed for all, we can drop CAP_ERASE.
-> 
-> Kind regards
-> Uffe
+Patch 5/7, tunes-up the default coalesce settings.
 
-[1] 93caf8e69eac76 ("omap_hsmmc: add erase capability")
-[2] b13d1f0f9ad64b ("mmc: omap: Add erase capability")
-[3] ec30f11e821f2d ("mmc: rtsx_usb: Use the provided busy timeout from the mmc core")
+Patch 6/7, re-works the TX coalesce timer activation logic.
+
+Patch 7/7, removes the now uneeded TBU interrupt.
+
+NetPerf UDP Results:
+--------------------
+
+Socket  Message  Elapsed      Messages                   CPU      Service
+Size    Size     Time         Okay Errors   Throughput   Util     Demand
+bytes   bytes    secs            #      #   10^6bits/sec % SS     us/KB
+--- XGMAC@2.5G: Before
+212992    1400   10.00     2100620      0     2351.7     36.69    5.112
+212992           10.00     2100539            2351.6     26.18    3.648
+--- XGMAC@2.5G: After
+212992    1400   10.00     2108972      0     2361.5     21.73    3.015 
+212992           10.00     2097038            2348.1     19.21    2.666
+
+--- GMAC5@1G: Before
+212992    1400   10.00      786000      0      880.2     34.71    12.923
+212992           10.00      786000             880.2     23.42    8.719
+--- GMAC5@1G: After
+212992    1400   10.00      842648      0      943.7     14.12    4.903 
+212992           10.00      842648             943.7     12.73    4.418
+
+
+Perf TCP Results on RX Path:
+----------------------------
+--- XGMAC@2.5G: Before
+22.51%  swapper          [stmmac]           [k] dwxgmac2_dma_interrupt
+10.82%  swapper          [stmmac]           [k] dwxgmac2_host_mtl_irq_status
+ 5.21%  swapper          [stmmac]           [k] dwxgmac2_host_irq_status
+ 4.67%  swapper          [stmmac]           [k] dwxgmac3_safety_feat_irq_status
+ 3.63%  swapper          [kernel.kallsyms]  [k] stack_trace_consume_entry
+ 2.74%  iperf3           [kernel.kallsyms]  [k] copy_user_enhanced_fast_string
+ 2.52%  swapper          [kernel.kallsyms]  [k] update_stack_state
+ 1.94%  ksoftirqd/0      [stmmac]           [k] dwxgmac2_dma_interrupt
+ 1.45%  iperf3           [kernel.kallsyms]  [k] queued_spin_lock_slowpath
+ 1.26%  swapper          [kernel.kallsyms]  [k] create_object
+--- XGMAC@2.5G: After
+ 7.43%  swapper          [kernel.kallsyms]   [k] stack_trace_consume_entry
+ 5.86%  swapper          [stmmac]            [k] dwxgmac2_dma_interrupt
+ 5.68%  swapper          [kernel.kallsyms]   [k] update_stack_state
+ 4.71%  iperf3           [kernel.kallsyms]   [k] copy_user_enhanced_fast_string
+ 2.88%  swapper          [kernel.kallsyms]   [k] create_object
+ 2.69%  swapper          [stmmac]            [k] dwxgmac2_host_mtl_irq_status
+ 2.61%  swapper          [stmmac]            [k] stmmac_napi_poll_rx
+ 2.52%  swapper          [kernel.kallsyms]   [k] unwind_next_frame.part.4
+ 1.48%  swapper          [kernel.kallsyms]   [k] unwind_get_return_address
+ 1.38%  swapper          [kernel.kallsyms]   [k] arch_stack_walk
+
+--- GMAC5@1G: Before
+31.29%  swapper          [stmmac]           [k] dwmac4_dma_interrupt
+14.57%  swapper          [stmmac]           [k] dwmac4_irq_mtl_status
+10.66%  swapper          [stmmac]           [k] dwmac4_irq_status
+ 1.97%  swapper          [kernel.kallsyms]  [k] stack_trace_consume_entry
+ 1.73%  iperf3           [kernel.kallsyms]  [k] copy_user_enhanced_fast_string
+ 1.59%  swapper          [kernel.kallsyms]  [k] update_stack_state
+ 1.15%  iperf3           [kernel.kallsyms]  [k] do_syscall_64
+ 1.01%  ksoftirqd/0      [stmmac]           [k] dwmac4_dma_interrupt
+ 0.89%  swapper          [kernel.kallsyms]  [k] __default_send_IPI_dest_field
+ 0.75%  swapper          [stmmac]           [k] stmmac_napi_poll_rx
+--- GMAC5@1G: After
+ 6.70%  swapper          [kernel.kallsyms]   [k] stack_trace_consume_entry
+ 5.79%  swapper          [stmmac]            [k] dwmac4_dma_interrupt
+ 5.29%  swapper          [kernel.kallsyms]   [k] update_stack_state
+ 3.52%  iperf3           [kernel.kallsyms]   [k] copy_user_enhanced_fast_string
+ 2.83%  swapper          [stmmac]            [k] dwmac4_irq_mtl_status
+ 2.62%  swapper          [kernel.kallsyms]   [k] create_object
+ 2.46%  swapper          [stmmac]            [k] stmmac_napi_poll_rx
+ 2.32%  swapper          [kernel.kallsyms]   [k] unwind_next_frame.part.4
+ 2.19%  swapper          [stmmac]            [k] dwmac4_irq_status
+ 1.39%  swapper          [kernel.kallsyms]   [k] unwind_get_return_address
+
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (7):
+  net: stmmac: Do not set RX IC bit if RX Coalesce is zero
+  net: stmmac: Setup a default RX Coalesce value instead of the minimum
+  net: stmmac: gmac4+: Remove uneeded computation for RFA/RFD
+  net: stmmac: xgmac: Remove uneeded computation for RFA/RFD
+  net: stmmac: Tune-up default coalesce settings
+  net: stmmac: Rework TX Coalesce logic
+  net: stmmac: xgmac: Do not enable TBU interrupt
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |  5 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   | 14 +---
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 14 +---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 74 +++++++++++++++-------
+ 5 files changed, 59 insertions(+), 50 deletions(-)
 
 -- 
-Best Regards,
-Eugeniu
+2.7.4
+
