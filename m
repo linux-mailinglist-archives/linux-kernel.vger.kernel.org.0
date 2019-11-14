@@ -2,142 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41191FC408
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:24:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 260AEFC412
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:26:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfKNKYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 05:24:10 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:52238 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbfKNKYJ (ORCPT
+        id S1726564AbfKNK0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 05:26:01 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37277 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfKNK0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 05:24:09 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAEANurN005852;
-        Thu, 14 Nov 2019 04:23:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573727037;
-        bh=2tStGcP9xDBxKwRIpbRobeYLj2PF1b/AtmDfTiE4sb4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=j34WU2ZJOLmGiYCtNPaksHWKLeugq0tr5yZ3gnraSp+XSPTecplIWF65NvKXIt30H
-         BjSyVQa6nv5dngrwfh/rqaj3Tilu9/xPg36v56pN0+CFKottI8Q8nVepdWA7qVND+F
-         4SyK1LyZYhdJ9PFZy0P+tLcMtynDlSiKIB8FcF7A=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAEANuci111617
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Nov 2019 04:23:56 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 14
- Nov 2019 04:23:55 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 14 Nov 2019 04:23:55 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAEANpg5030936;
-        Thu, 14 Nov 2019 04:23:52 -0600
-Subject: Re: [PATCH] bus: ti-sysc: Add module enable quirk for audio AESS
-To:     Tony Lindgren <tony@atomide.com>, <linux-omap@vger.kernel.org>
-CC:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20191113173702.57107-1-tony@atomide.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <4188f17f-67ce-42f8-c9c0-b7d6c74173a1@ti.com>
-Date:   Thu, 14 Nov 2019 12:25:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 14 Nov 2019 05:26:01 -0500
+Received: by mail-wm1-f68.google.com with SMTP id b17so5263939wmj.2;
+        Thu, 14 Nov 2019 02:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5QQkiyfzZO2O0Kn6D38HEznmusWSb/9VZvRrhnG4JLA=;
+        b=co1B+/+ltAMnsmoBwd4JgvR/KtXsDV8+5+UxJFQOW8QNurGkzGwXyx1U9DUuvVXqa4
+         zrU4kxD10p3llVczeauQFnatEE1dcTYITHp8eQkRGHlVjo6plnlPbRFEKeXsJno4bRWt
+         frrJYScCJY2qe5U2mMAgiA3p9e/lcKlaSYtbY7G3f2LQOUqqb20mZJbyLvvY87/2EojP
+         oB5clBhqIIreSQq/0IlPm3oBBvlinEK60Q+YAYIux7W65UQBYrfMvwe1nvrLSqyg3CXz
+         qDAlyphz0sonJrZCDBSmYyne0HIbak400tgHqAnE6NSmjNdymIw9XgueA4PULyLMkFFg
+         BLkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5QQkiyfzZO2O0Kn6D38HEznmusWSb/9VZvRrhnG4JLA=;
+        b=OTFwmBCzvnxHlDS03Uo/Q2tF+Ww0zT5+j8dLGDzpoS3+YUX2fiA8RfJ3+Us6xNdvwj
+         3f534zPhc4T+ztNjKmr+krNnbMbJQsv7Cf4A43ItYLXNYDj2uCbyQgAxu60XtzK6DFs4
+         miS0BitePjFaPQDVGh7hR6eCMj4XzwO7hlmDJxDOD/W/xzCpgpsYVNyRZuKDdO6fUtjI
+         fMvSAws69Y2nD6Lqh5QsNjrlgfa4Gelg2qy1A8NU+yD1ujnt3kWeBT11kCFZbB8gkgmT
+         dZVjbuHfNK7PRjah3xpyDSbmqqTj8F8NIWCosejJ3JQ/ld8h+SHdlcOMjfXt9mhIzcpJ
+         Y99g==
+X-Gm-Message-State: APjAAAWxgJnrumaKNlw+Ui2cCgaHO6ccyHIvLgFzj+xTazp+T49JMDOV
+        z0i0WhogVtslArDViJ+2uwc=
+X-Google-Smtp-Source: APXvYqwGumQBol47N7qad3Jy0q4/6MzSwtzAuP1DUrwstDzDwNUQ7a3eb1WO2niC+5ixCUFNyNVauw==
+X-Received: by 2002:a7b:cbc4:: with SMTP id n4mr6848002wmi.118.1573727157443;
+        Thu, 14 Nov 2019 02:25:57 -0800 (PST)
+Received: from clement-Latitude-7490.outsight.local (lputeaux-656-1-11-33.w82-127.abo.wanadoo.fr. [82.127.142.33])
+        by smtp.gmail.com with ESMTPSA id r2sm2964832wma.44.2019.11.14.02.25.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2019 02:25:56 -0800 (PST)
+From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH] arm64: dts: allwinner: h6: Enable USB 3.0 host for Beelink GS1 and Tanix TX6
+Date:   Thu, 14 Nov 2019 11:25:41 +0100
+Message-Id: <20191114102541.27361-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191113173702.57107-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Enable USB 3.0 phy and host controller.
 
+VBUS is directly connected to DCIN 5V and doesn't
+require to be switched on.
 
-On 13/11/2019 19.37, Tony Lindgren wrote:
-> We must set the autogating bit on enable for AESS (Audio Engine SubSystem)
-> when probed with ti-sysc interconnect target module driver. Otherwise it
-> won't idle properly.
-> 
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  drivers/bus/ti-sysc.c                 | 14 +++++++++++++-
->  include/linux/platform_data/ti-sysc.h |  1 +
->  2 files changed, 14 insertions(+), 1 deletion(-)
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts | 8 ++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts   | 8 ++++++++
+ 2 files changed, 16 insertions(+)
 
-Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
+index e5ed1d4bfef8..dbf353cd26c1 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
+@@ -76,6 +76,10 @@
+ 	status = "okay";
+ };
+ 
++&dwc3 {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -291,3 +295,7 @@
+ 	usb0_vbus-supply = <&reg_vcc5v>;
+ 	status = "okay";
+ };
++
++&usb3phy {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
+index bccfe1e65b6a..0b6361a5c172 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
+@@ -45,6 +45,10 @@
+ 	status = "okay";
+ };
+ 
++&dwc3 {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -102,3 +106,7 @@
+ &usb2phy {
+ 	status = "okay";
+ };
++
++&usb3phy {
++	status = "okay";
++};
+-- 
+2.20.1
 
-> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-> @@ -1248,6 +1248,8 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
->  		   SYSC_QUIRK_SWSUP_SIDLE),
->  
->  	/* Quirks that need to be set based on detected module */
-> +	SYSC_QUIRK("aess", 0, 0, 0x10, -1, 0x40000000, 0xffffffff,
-> +		   SYSC_MODULE_QUIRK_AESS),
->  	SYSC_QUIRK("hdq1w", 0, 0, 0x14, 0x18, 0x00000006, 0xffffffff,
->  		   SYSC_MODULE_QUIRK_HDQ1W),
->  	SYSC_QUIRK("hdq1w", 0, 0, 0x14, 0x18, 0x0000000a, 0xffffffff,
-> @@ -1276,7 +1278,6 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
->  #ifdef DEBUG
->  	SYSC_QUIRK("adc", 0, 0, 0x10, -1, 0x47300001, 0xffffffff, 0),
->  	SYSC_QUIRK("atl", 0, 0, -1, -1, 0x0a070100, 0xffffffff, 0),
-> -	SYSC_QUIRK("aess", 0, 0, 0x10, -1, 0x40000000, 0xffffffff, 0),
->  	SYSC_QUIRK("cm", 0, 0, -1, -1, 0x40000301, 0xffffffff, 0),
->  	SYSC_QUIRK("control", 0, 0, 0x10, -1, 0x40000900, 0xffffffff, 0),
->  	SYSC_QUIRK("cpgmac", 0, 0x1200, 0x1208, 0x1204, 0x4edb1902,
-> @@ -1408,6 +1409,14 @@ static void sysc_clk_enable_quirk_hdq1w(struct sysc *ddata)
->  	sysc_write(ddata, offset, val);
->  }
->  
-> +/* AESS (Audio Engine SubSystem) needs autogating set after enable */
-> +static void sysc_module_enable_quirk_aess(struct sysc *ddata)
-> +{
-> +	int offset = 0x7c;	/* AESS_AUTO_GATING_ENABLE */
-> +
-> +	sysc_write(ddata, offset, 1);
-> +}
-> +
->  /* I2C needs extra enable bit toggling for reset */
->  static void sysc_clk_quirk_i2c(struct sysc *ddata, bool enable)
->  {
-> @@ -1490,6 +1499,9 @@ static void sysc_init_module_quirks(struct sysc *ddata)
->  		return;
->  	}
->  
-> +	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_AESS)
-> +		ddata->module_enable_quirk = sysc_module_enable_quirk_aess;
-> +
->  	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_SGX)
->  		ddata->module_enable_quirk = sysc_module_enable_quirk_sgx;
->  
-> diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
-> --- a/include/linux/platform_data/ti-sysc.h
-> +++ b/include/linux/platform_data/ti-sysc.h
-> @@ -49,6 +49,7 @@ struct sysc_regbits {
->  	s8 emufree_shift;
->  };
->  
-> +#define SYSC_MODULE_QUIRK_AESS		BIT(19)
->  #define SYSC_MODULE_QUIRK_SGX		BIT(18)
->  #define SYSC_MODULE_QUIRK_HDQ1W		BIT(17)
->  #define SYSC_MODULE_QUIRK_I2C		BIT(16)
-> 
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
