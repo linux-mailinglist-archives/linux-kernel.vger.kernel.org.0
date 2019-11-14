@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11E6AFCD1A
+	by mail.lfdr.de (Postfix) with ESMTP id 7FEBBFCD1B
 	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:19:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfKNSS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:18:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35794 "EHLO mail.kernel.org"
+        id S1727736AbfKNSTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:19:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbfKNSS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727599AbfKNSS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Nov 2019 13:18:29 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B91A0208CC;
+        by mail.kernel.org (Postfix) with ESMTPSA id DF59D208A3;
         Thu, 14 Nov 2019 18:18:28 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhL-0001D7-W3; Thu, 14 Nov 2019 13:18:27 -0500
-Message-Id: <20191114181827.876046454@goodmis.org>
+        id 1iVJhM-0001Db-4C; Thu, 14 Nov 2019 13:18:28 -0500
+Message-Id: <20191114181828.016121464@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:18:05 -0500
+Date:   Thu, 14 Nov 2019 13:18:06 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Piotr Maziarz <piotrx.maziarz@linux.intel.com>,
         Cezary Rojewski <cezary.rojewski@intel.com>
-Subject: [for-next][PATCH 31/33] seq_buf: Add printing formatted hex dumps
+Subject: [for-next][PATCH 32/33] tracing: Use seq_buf_hex_dump() to dump buffers
 References: <20191114181734.067922168@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -39,118 +39,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
 
-Provided function is an analogue of print_hex_dump().
+Without this, buffers can be printed with __print_array macro that has
+no formatting options and can be hard to read. The other way is to
+mimic formatting capability with multiple calls of trace event with one
+call per row which gives performance impact and different timestamp in
+each row.
 
-Implementing this function in seq_buf allows using for multiple
-purposes (e.g. for tracing) and therefore prevents from code duplication
-in every layer that uses seq_buf.
-
-print_hex_dump() is an essential part of logging data to dmesg. Adding
-similar capability for other purposes is beneficial to all users.
-
-Example usage:
-seq_buf_hex_dump(seq, "", DUMP_PREFIX_OFFSET, 16, 4, buf,
-		 ARRAY_SIZE(buf), true);
-Example output:
-00000000: 00000000 ffffff10 ffffff32 ffff3210  ........2....2..
-00000010: ffff3210 83d00437 c0700000 00000000  .2..7.....p.....
-00000020: 02010004 0000000f 0000000f 00004002  .............@..
-00000030: 00000fff 00000000                    ........
-
-Link: http://lkml.kernel.org/r/1573130738-29390-1-git-send-email-piotrx.maziarz@linux.intel.com
+Link: http://lkml.kernel.org/r/1573130738-29390-2-git-send-email-piotrx.maziarz@linux.intel.com
 
 Signed-off-by: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
 Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/seq_buf.h |  3 ++
- lib/seq_buf.c           | 62 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+)
+ include/linux/trace_events.h |  5 +++++
+ include/linux/trace_seq.h    |  4 ++++
+ include/trace/trace_events.h |  6 ++++++
+ kernel/trace/trace_output.c  | 15 +++++++++++++++
+ kernel/trace/trace_seq.c     | 30 ++++++++++++++++++++++++++++++
+ 5 files changed, 60 insertions(+)
 
-diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
-index aa5deb041c25..fb0205d87d3c 100644
---- a/include/linux/seq_buf.h
-+++ b/include/linux/seq_buf.h
-@@ -125,6 +125,9 @@ extern int seq_buf_putmem(struct seq_buf *s, const void *mem, unsigned int len);
- extern int seq_buf_putmem_hex(struct seq_buf *s, const void *mem,
- 			      unsigned int len);
- extern int seq_buf_path(struct seq_buf *s, const struct path *path, const char *esc);
-+extern int seq_buf_hex_dump(struct seq_buf *s, const char *prefix_str,
-+			    int prefix_type, int rowsize, int groupsize,
-+			    const void *buf, size_t len, bool ascii);
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 30a8cdcfd4a4..60a41b7069dd 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -45,6 +45,11 @@ const char *trace_print_array_seq(struct trace_seq *p,
+ 				   const void *buf, int count,
+ 				   size_t el_size);
  
- #ifdef CONFIG_BINARY_PRINTF
- extern int
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index bd807f545a9d..4e865d42ab03 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -328,3 +328,65 @@ int seq_buf_to_user(struct seq_buf *s, char __user *ubuf, int cnt)
- 	s->readpos += cnt;
- 	return cnt;
++const char *
++trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
++			 int prefix_type, int rowsize, int groupsize,
++			 const void *buf, size_t len, bool ascii);
++
+ struct trace_iterator;
+ struct trace_event;
+ 
+diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
+index 6609b39a7232..6c30508fca19 100644
+--- a/include/linux/trace_seq.h
++++ b/include/linux/trace_seq.h
+@@ -92,6 +92,10 @@ extern int trace_seq_path(struct trace_seq *s, const struct path *path);
+ extern void trace_seq_bitmask(struct trace_seq *s, const unsigned long *maskp,
+ 			     int nmaskbits);
+ 
++extern int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
++			      int prefix_type, int rowsize, int groupsize,
++			      const void *buf, size_t len, bool ascii);
++
+ #else /* CONFIG_TRACING */
+ static inline void trace_seq_printf(struct trace_seq *s, const char *fmt, ...)
+ {
+diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+index 4ecdfe2e3580..7089760d4c7a 100644
+--- a/include/trace/trace_events.h
++++ b/include/trace/trace_events.h
+@@ -340,6 +340,12 @@ TRACE_MAKE_SYSTEM_STR();
+ 		trace_print_array_seq(p, array, count, el_size);	\
+ 	})
+ 
++#undef __print_hex_dump
++#define __print_hex_dump(prefix_str, prefix_type,			\
++			 rowsize, groupsize, buf, len, ascii)		\
++	trace_print_hex_dump_seq(p, prefix_str, prefix_type,		\
++				 rowsize, groupsize, buf, len, ascii)
++
+ #undef DECLARE_EVENT_CLASS
+ #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
+ static notrace enum print_line_t					\
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index d54ce252b05a..d9b4b7c22db4 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -274,6 +274,21 @@ trace_print_array_seq(struct trace_seq *p, const void *buf, int count,
  }
-+
-+/**
-+ * seq_buf_hex_dump - print formatted hex dump into the sequence buffer
-+ * @s: seq_buf descriptor
-+ * @prefix_str: string to prefix each line with;
-+ *  caller supplies trailing spaces for alignment if desired
-+ * @prefix_type: controls whether prefix of an offset, address, or none
-+ *  is printed (%DUMP_PREFIX_OFFSET, %DUMP_PREFIX_ADDRESS, %DUMP_PREFIX_NONE)
-+ * @rowsize: number of bytes to print per line; must be 16 or 32
-+ * @groupsize: number of bytes to print at a time (1, 2, 4, 8; default = 1)
-+ * @buf: data blob to dump
-+ * @len: number of bytes in the @buf
-+ * @ascii: include ASCII after the hex output
-+ *
-+ * Function is an analogue of print_hex_dump() and thus has similar interface.
-+ *
-+ * linebuf size is maximal length for one line.
-+ * 32 * 3 - maximum bytes per line, each printed into 2 chars + 1 for
-+ *	separating space
-+ * 2 - spaces separating hex dump and ascii representation
-+ * 32 - ascii representation
-+ * 1 - terminating '\0'
-+ *
-+ * Returns zero on success, -1 on overflow
-+ */
-+int seq_buf_hex_dump(struct seq_buf *s, const char *prefix_str, int prefix_type,
-+		     int rowsize, int groupsize,
-+		     const void *buf, size_t len, bool ascii)
+ EXPORT_SYMBOL(trace_print_array_seq);
+ 
++const char *
++trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
++			 int prefix_type, int rowsize, int groupsize,
++			 const void *buf, size_t len, bool ascii)
 +{
-+	const u8 *ptr = buf;
-+	int i, linelen, remaining = len;
-+	unsigned char linebuf[32 * 3 + 2 + 32 + 1];
-+	int ret;
++	const char *ret = trace_seq_buffer_ptr(p);
 +
-+	if (rowsize != 16 && rowsize != 32)
-+		rowsize = 16;
-+
-+	for (i = 0; i < len; i += rowsize) {
-+		linelen = min(remaining, rowsize);
-+		remaining -= rowsize;
-+
-+		hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
-+				   linebuf, sizeof(linebuf), ascii);
-+
-+		switch (prefix_type) {
-+		case DUMP_PREFIX_ADDRESS:
-+			ret = seq_buf_printf(s, "%s%p: %s\n",
-+			       prefix_str, ptr + i, linebuf);
-+			break;
-+		case DUMP_PREFIX_OFFSET:
-+			ret = seq_buf_printf(s, "%s%.8x: %s\n",
-+					     prefix_str, i, linebuf);
-+			break;
-+		default:
-+			ret = seq_buf_printf(s, "%s%s\n", prefix_str, linebuf);
-+			break;
-+		}
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
++	trace_seq_putc(p, '\n');
++	trace_seq_hex_dump(p, prefix_str, prefix_type,
++			   rowsize, groupsize, buf, len, ascii);
++	trace_seq_putc(p, 0);
++	return ret;
 +}
++EXPORT_SYMBOL(trace_print_hex_dump_seq);
++
+ int trace_raw_output_prep(struct trace_iterator *iter,
+ 			  struct trace_event *trace_event)
+ {
+diff --git a/kernel/trace/trace_seq.c b/kernel/trace/trace_seq.c
+index 6b1c562ffdaf..344e4c1aa09c 100644
+--- a/kernel/trace/trace_seq.c
++++ b/kernel/trace/trace_seq.c
+@@ -376,3 +376,33 @@ int trace_seq_to_user(struct trace_seq *s, char __user *ubuf, int cnt)
+ 	return seq_buf_to_user(&s->seq, ubuf, cnt);
+ }
+ EXPORT_SYMBOL_GPL(trace_seq_to_user);
++
++int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
++		       int prefix_type, int rowsize, int groupsize,
++		       const void *buf, size_t len, bool ascii)
++{
++		unsigned int save_len = s->seq.len;
++
++	if (s->full)
++		return 0;
++
++	__trace_seq_init(s);
++
++	if (TRACE_SEQ_BUF_LEFT(s) < 1) {
++		s->full = 1;
++		return 0;
++	}
++
++	seq_buf_hex_dump(&(s->seq), prefix_str,
++		   prefix_type, rowsize, groupsize,
++		   buf, len, ascii);
++
++	if (unlikely(seq_buf_has_overflowed(&s->seq))) {
++		s->seq.len = save_len;
++		s->full = 1;
++		return 0;
++	}
++
++	return 1;
++}
++EXPORT_SYMBOL(trace_seq_hex_dump);
 -- 
 2.23.0
 
