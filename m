@@ -2,82 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CA48FBDB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 02:53:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F2EFBDB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 02:54:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfKNBxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 20:53:17 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45554 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfKNBxR (ORCPT
+        id S1726923AbfKNByC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 20:54:02 -0500
+Received: from regular1.263xmail.com ([211.150.70.201]:56522 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbfKNByC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 20:53:17 -0500
-Received: by mail-oi1-f194.google.com with SMTP id 14so3761377oir.12;
-        Wed, 13 Nov 2019 17:53:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YzMRKwOAeyLEJgS4ZedeWkKapXjgaDKadOBSenofCOI=;
-        b=Q5SqW621pMEXWFOxlj47GluyaeyhBM47KNH2cdm83i0CxQqOZhVqKibh5SCSyKVkYr
-         hRkv9X+bQgMYskVp+Eq5G4c/QdnrXeBQqnddSz0G8muUWq6v4cD7eL4XVgDoU56RpKfn
-         EeYhlfCrcRPKvjEkrDezTsTj3a+CeAQJemruMriKuphnYstBlm1u9x4HfO5q6KOHPkTq
-         tQaS3Q4yKMqrUMD+slYGa8XB2jl7+mpPhdwUKwBUKCIN2I1nXJuHaegxtQMbwBMjVJhm
-         l/oHkoIwo9l21ma4vrwZuCNzcNrcCwQ5xixHlm3IXy73BQyEAO0ijtVt9NT6XQ0Wj48K
-         rr4g==
-X-Gm-Message-State: APjAAAVfNLEmR/yc5YysIFZRi444+FoOZznEKWDtaclZdQab8bmIzby/
-        of7Y0D3VgXqvS7+81egmvA==
-X-Google-Smtp-Source: APXvYqwoPjq8G5QC+rJOSL3DpKhW/ooUFfVo8fZnHTp3oTWVQOIRPmWDGvOgzhuvR+EDBaTL0DpXUQ==
-X-Received: by 2002:aca:6706:: with SMTP id z6mr1288414oix.89.1573696395971;
-        Wed, 13 Nov 2019 17:53:15 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l18sm1345873oti.11.2019.11.13.17.53.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 17:53:15 -0800 (PST)
-Date:   Wed, 13 Nov 2019 19:53:14 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Cc:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        bivvy.bi@rock-chips.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        christoph.muellner@theobroma-systems.com,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: drop #clock-cells from
- rockchip,px30-dsi-dphy
-Message-ID: <20191114015314.GA24328@bogus>
-References: <20191108000640.8775-1-heiko.stuebner@theobroma-systems.com>
+        Wed, 13 Nov 2019 20:54:02 -0500
+Received: from localhost (unknown [192.168.167.32])
+        by regular1.263xmail.com (Postfix) with ESMTP id 1F1D8405;
+        Thu, 14 Nov 2019 09:53:49 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.9] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P47878T139986162661120S1573696426616732_;
+        Thu, 14 Nov 2019 09:53:48 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <438ac3b0e67c996fd5c2911b5379e891>
+X-RL-SENDER: kever.yang@rock-chips.com
+X-SENDER: yk@rock-chips.com
+X-LOGIN-NAME: kever.yang@rock-chips.com
+X-FST-TO: npcomplete13@gmail.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH 3/3] arm64: dts: rk3399: Add init voltage for vdd_log
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Alexis Ballier <aballier@gentoo.org>,
+        Soeren Moch <smoch@web.de>,
+        Hugh Cole-Baker <sigmaris@gmail.com>,
+        Andy Yan <andyshrk@gmail.com>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Pragnesh Patel <Pragnesh_Patel@mentor.com>,
+        Peter Robinson <pbrobinson@gmail.com>,
+        Nick Xie <nick@khadas.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Akash Gajjar <akash@openedev.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        =?UTF-8?Q?Andrius_=c5=a0tikonas?= <andrius@stikonas.eu>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Oskari Lemmela <oskari@lemmela.net>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Vivek Unune <npcomplete13@gmail.com>
+References: <20191111005158.25070-1-kever.yang@rock-chips.com>
+ <20191111005158.25070-3-kever.yang@rock-chips.com>
+ <CAD=FV=UjbPALRU2r0s27F4RxjsbDyQ+horUBezVQejk1pT=vqA@mail.gmail.com>
+From:   Kever Yang <kever.yang@rock-chips.com>
+Message-ID: <a6d41fc5-4ed5-6ec2-5697-ca2b0abe288c@rock-chips.com>
+Date:   Thu, 14 Nov 2019 09:53:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108000640.8775-1-heiko.stuebner@theobroma-systems.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAD=FV=UjbPALRU2r0s27F4RxjsbDyQ+horUBezVQejk1pT=vqA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  8 Nov 2019 01:06:39 +0100, Heiko Stuebner wrote:
-> Further review of the dsi components for the px30 revealed that the
-> phy shouldn't expose the pll as clock but instead handle settings
-> via phy parameters.
-> 
-> As the phy binding is new and not used anywhere yet, just drop them
-> so they don't get used.
-> 
-> Fixes: 3817c7961179 ("dt-bindings: phy: add yaml binding for rockchip,px30-dsi-dphy")
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> ---
-> Hi Kishon,
-> 
-> this should ideally get into 5.5 as a fix for the previous change
-> so that the binding doesn't accidentially get used.
-> 
-> Thanks
-> Heiko
-> 
->  .../devicetree/bindings/phy/rockchip,px30-dsi-dphy.yaml      | 5 -----
->  1 file changed, 5 deletions(-)
-> 
+Hi Doug,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 2019/11/14 上午1:01, Doug Anderson wrote:
+> Hi,
+>
+> On Sun, Nov 10, 2019 at 4:52 PM Kever Yang <kever.yang@rock-chips.com> wrote:
+>> Since there is no devfreq used for vdd_log, so the vdd_log(pwm regulator)
+>> will be 'enable' with the dts node at a default PWM state with high or low
+>> output. Both too high or too low for vdd_log is not good for the board,
+>> add init voltage for driver to make the regulator get into a know output.
+>>
+>> Note that this will be used by U-Boot for init voltage output, and this
+>> is very important for it may get system hang somewhere during system
+>> boot up with regulator enable and without this init value.
+> I'm a tad bit confused here.  When U-Boot boots the kernel, how is the
+> PWM configured?
+>
+> I remember folks going through a lot of work to make sure that we
+> could actually _read_ the PWM state that the bootloader gave us and
+> report it as the initial voltage.  If the kernel ends up needing to
+> configure the PWM regulator's period for some reason, I remember it
+> would actually pick something close.  Is that not working for you?
+>
+> For instance, on rk3288-veyron when I boot up mainline (no devfreq on
+> rk3288-veyron on mainline) the vdd_logic reports 1.2 volts because it
+> read what the bootloader left it as.
+>
+> ...are you saying that U-Boot doesn't configure the PWM and you're
+> trying to fix it up in the kernel?
+
+U-Boot will configure the PWM with dts setting(and now U-Boot would like 
+to sync the dts
+
+from kernel directly):
+
+- no dts node for pwm regulator, it will be default as input IO without 
+any configure;
+
+- with pwm regulator dts enable, no 'init-microvolt', enable PWM with 
+default 0% output;
+
+- with pwm regulator dts with 'init-microvolt', enable PWM with 
+corresponding duty output;
+
+We should leave it not configure(around 0.9V for most of board) or 
+configure to correct
+
+output(some boards need 0.95V while default is 0.9V for stability issue).
+
+For the rk3399 boards on upstream, some of them do not have a vdd_log in 
+dts,
+
+and others have dts node but without 'init-microvolt' for init setting, 
+that's what I want
+
+to fix to make sure all the boards can work correctly.
+
+
+Thanks,
+
+- Kever
+
+>
+> -Doug
+>
+>
+> -Doug
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
+
+
