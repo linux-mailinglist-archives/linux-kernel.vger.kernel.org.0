@@ -2,67 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B458FBE3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 04:17:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1612DFBE40
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 04:20:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfKNDRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 22:17:53 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41657 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfKNDRw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 22:17:52 -0500
-Received: by mail-lj1-f195.google.com with SMTP id m4so9280ljj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 19:17:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=J/M4TryYtrCPlKJQrMNCQ/FgEMUT02p93Fn4Tu8uLfA=;
-        b=mn9YMxtUMMM/6xs3qj366/KlIt87XkDJTM8kdIdt/ALfz27u1VC5C7/+JiDTAL1nhd
-         JBEIkGC6/nNB8rUrwMO3e8NaOGQtycfFIiqfdSdaVIYm88GjwCyb5r+dnr979TxovFRY
-         BYEnWpk1A2y0uFep3TefmWGJVlE8c4r6G5UzAGEX+klUhR4WpJcHJA4hMBitSCAYXF/k
-         YfL1Cbfnow7j/xZUkdUoONxnHCTlmG+042vIOE4kMJ/jFtOz2m+ayIcZ+HRfRR6W3AM/
-         bwBtP4j+5Ro7qu8GA8xF6n0jznE7/nqe+79nGsdUwPhzSCQQzVI8lW08ppfPFFMEaaKZ
-         4Rzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=J/M4TryYtrCPlKJQrMNCQ/FgEMUT02p93Fn4Tu8uLfA=;
-        b=eY82zNgQHIktKw4mNF/Su0CtjeZv7RxKxqc5uXV/BeLv6lNgVsNJTLTTCOPkC3GZRc
-         5qFuUB5F0EARcxtiX2RSNlwEX8czV/torQEFgcjICiZqU9Lqj4+2jH/tWzth5cjNsvvz
-         uAjB7D7stDGM+GOx5Jb52JttXE/tmiQshr9S2np5T2yzt+qpVK9DMaZo2M9RNUz7jlRe
-         ZYeWF7FsxMkwLXshLec+TpdDbhT8JwcqgVzcnpzOqv05+4dTTHZui/QNe5d+xQ8VvOD0
-         Pskv+hmHNXnKysNlAt0lnX/z1WpRX5jellCppXvLDA4mTGKbfXIuSCdESwBa1fcnqbep
-         lzrg==
-X-Gm-Message-State: APjAAAXS6/FqrxSx69MwKCh8H/fnhurwQ6jxoWmKJCCarL81CxtdzO91
-        buVSRjYUt2tVVn/r46k+WDOydclbuwYduEyJ+c0=
-X-Google-Smtp-Source: APXvYqwCoN5f/3dFQSUfJf2s8Yt3rBTgnxYDX4PXGZNxffbn6hDxU8YWEk3b1rADRRKhTDMBxmTr5IIMNAx7HEb/K5I=
-X-Received: by 2002:a2e:8919:: with SMTP id d25mr4770875lji.97.1573701470853;
- Wed, 13 Nov 2019 19:17:50 -0800 (PST)
+        id S1726962AbfKNDUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 22:20:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbfKNDUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Nov 2019 22:20:22 -0500
+Received: from localhost (unknown [124.219.31.93])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBE25206F3;
+        Thu, 14 Nov 2019 03:20:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573701621;
+        bh=OtP6MQL/9zqWPLBJmcEhDTenHXMX6HLpeiVYH4UmMDE=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=gQLXWXktL91SJAhfZP1kDUlvFwg3yUAhxTlw3gEyBZm+csv1Fe3nn+RAgRYOGy8zH
+         MrSA9ov5qkWicZMsu5PnaUDmANrLHTjaP2NrEUP2gsBQBdTLLG9FbXwLZ1HPjT/uxn
+         CEEBcRjEjnPcIOLb6WihxH/e2FQ07IVp9PbR/Az4=
+Date:   Thu, 14 Nov 2019 11:20:18 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bin Liu <b-liu@ti.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Cristian Birsan <cristian.birsan@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 05/13] usb: musb: create debugfs directory under usb
+ root
+Message-ID: <20191114032018.GA122287@kroah.com>
+References: <1573541519-28488-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1573541519-28488-5-git-send-email-chunfeng.yun@mediatek.com>
+ <20191112152857.GA5853@uda0271908>
 MIME-Version: 1.0
-Received: by 2002:a2e:871a:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 19:17:50
- -0800 (PST)
-Reply-To: jufffirti@gmail.com
-From:   UN Cabinet <loycennenne1@gmail.com>
-Date:   Thu, 14 Nov 2019 04:17:50 +0100
-Message-ID: <CA+fLaT6ibMr9xxBPUEUCdde+upZ1ueN8u8Q2tOGPmVCZUuQi5w@mail.gmail.com>
-Subject: United Nation Pay office.
-To:     p@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112152857.GA5853@uda0271908>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attention,
+On Tue, Nov 12, 2019 at 09:28:57AM -0600, Bin Liu wrote:
+> Hi,
+> 
+> On Tue, Nov 12, 2019 at 02:51:51PM +0800, Chunfeng Yun wrote:
+> > Now the USB gadget subsystem can use the USB debugfs root directory,
+> > so move musb's directory from the root of the debugfs filesystem into
+> > the root of usb
+> 
+> My opinion is this move is unnecessary. I breaks existing debug tools or
+> documentation which is already published on Internet. 
 
-I am directed to inform you that the United Nation have compensated
-you with the sum of $3,million usd.
-Contact the (UN) payment office in Burkina Faso, email address (
-paymentun@consultant.com ) for your compensation, send your full names
-and your nationality.
+Having a "root" directory for a single random driver seems like you are
+making your driver a "very important" thing in the overall scheme of the
+kernel, right?  What's wrong with using the usb subdirectory like all
+other USB drivers use (after this patch series is merged)?  That feels
+like a much more "sane" way to handle the wide-open debugfs namespace.
 
-Thanks,
-Maria Luiza Ribeiro Viotti
-Chef de Cabinet United Nation.
+Yes, there are no rules when it comes to debugfs file names and
+locations, but let's try to be sane please.
+
+thanks,
+
+greg k-h
