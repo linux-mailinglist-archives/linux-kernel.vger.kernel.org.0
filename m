@@ -2,33 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8255CFCD28
+	by mail.lfdr.de (Postfix) with ESMTP id 0E9E6FCD27
 	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbfKNSTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:19:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35788 "EHLO mail.kernel.org"
+        id S1727655AbfKNSTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:19:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbfKNSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727571AbfKNSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Nov 2019 13:18:27 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55C0E20855;
+        by mail.kernel.org (Postfix) with ESMTPSA id 74F6220870;
         Thu, 14 Nov 2019 18:18:27 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhK-00018H-IE; Thu, 14 Nov 2019 13:18:26 -0500
-Message-Id: <20191114181826.444059437@goodmis.org>
+        id 1iVJhK-00018l-Ml; Thu, 14 Nov 2019 13:18:26 -0500
+Message-Id: <20191114181826.600517271@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:17:55 -0500
+Date:   Thu, 14 Nov 2019 13:17:56 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
         Divya Indi <divya.indi@oracle.com>
-Subject: [for-next][PATCH 21/33] tracing: Verify if trace array exists before destroying it.
+Subject: [for-next][PATCH 22/33] tracing: Adding NULL checks for trace_array descriptor pointer
 References: <20191114181734.067922168@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -39,78 +38,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Divya Indi <divya.indi@oracle.com>
 
-A trace array can be destroyed from userspace or kernel. Verify if the
-trace array exists before proceeding to destroy/remove it.
+As part of commit f45d1225adb0 ("tracing: Kernel access to Ftrace
+instances") we exported certain functions. Here, we are adding some additional
+NULL checks to ensure safe usage by users of these APIs.
 
-Link: http://lkml.kernel.org/r/1565805327-579-3-git-send-email-divya.indi@oracle.com
+Link: http://lkml.kernel.org/r/1565805327-579-4-git-send-email-divya.indi@oracle.com
 
-Reviewed-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
 Signed-off-by: Divya Indi <divya.indi@oracle.com>
-[ Removed unneeded braces ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/module.c      |  6 +++++-
- kernel/trace/trace.c | 15 ++++++++++++---
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ kernel/trace/trace.c        | 3 +++
+ kernel/trace/trace_events.c | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index ff2d7359a418..6e2fd40a6ed9 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -3728,7 +3728,6 @@ static int complete_formation(struct module *mod, struct load_info *info)
- 
- 	module_enable_ro(mod, false);
- 	module_enable_nx(mod);
--	module_enable_x(mod);
- 
- 	/* Mark state as coming so strong_try_module_get() ignores us,
- 	 * but kallsyms etc. can see us. */
-@@ -3751,6 +3750,11 @@ static int prepare_coming_module(struct module *mod)
- 	if (err)
- 		return err;
- 
-+	/* Make module executable after ftrace is enabled */
-+	mutex_lock(&module_mutex);
-+	module_enable_x(mod);
-+	mutex_unlock(&module_mutex);
-+
- 	blocking_notifier_call_chain(&module_notify_list,
- 				     MODULE_STATE_COMING, mod);
- 	return 0;
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index db7d06a26861..fa4f742fc449 100644
+index fa4f742fc449..79fe4d6ecbd8 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -8556,17 +8556,26 @@ static int __remove_instance(struct trace_array *tr)
- 	return 0;
- }
+@@ -3297,6 +3297,9 @@ int trace_array_printk(struct trace_array *tr,
+ 	if (!(global_trace.trace_flags & TRACE_ITER_PRINTK))
+ 		return 0;
  
--int trace_array_destroy(struct trace_array *tr)
-+int trace_array_destroy(struct trace_array *this_tr)
- {
-+	struct trace_array *tr;
++	if (!tr)
++		return -ENOENT;
++
+ 	va_start(ap, fmt);
+ 	ret = trace_array_vprintk(tr, ip, fmt, ap);
+ 	va_end(ap);
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index fba87d10f0c1..2a3ac2365445 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -793,6 +793,8 @@ int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
+ 	char *event = NULL, *sub = NULL, *match;
  	int ret;
  
--	if (!tr)
-+	if (!this_tr)
- 		return -EINVAL;
- 
- 	mutex_lock(&event_mutex);
- 	mutex_lock(&trace_types_lock);
- 
--	ret = __remove_instance(tr);
-+	ret = -ENODEV;
-+
-+	/* Making sure trace array exists before destroying it. */
-+	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-+		if (tr == this_tr) {
-+			ret = __remove_instance(tr);
-+			break;
-+		}
-+	}
- 
- 	mutex_unlock(&trace_types_lock);
- 	mutex_unlock(&event_mutex);
++	if (!tr)
++		return -ENOENT;
+ 	/*
+ 	 * The buf format can be <subsystem>:<event-name>
+ 	 *  *:<event-name> means any event by that name.
 -- 
 2.23.0
 
