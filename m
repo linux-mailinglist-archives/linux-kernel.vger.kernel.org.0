@@ -2,78 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34E4FCFA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:28:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC6DFFCFA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:28:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfKNU2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:28:00 -0500
-Received: from mail-yw1-f52.google.com ([209.85.161.52]:43399 "EHLO
-        mail-yw1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbfKNU2A (ORCPT
+        id S1726960AbfKNU2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:28:50 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40394 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbfKNU2t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:28:00 -0500
-Received: by mail-yw1-f52.google.com with SMTP id g77so2321095ywb.10;
-        Thu, 14 Nov 2019 12:27:58 -0800 (PST)
+        Thu, 14 Nov 2019 15:28:49 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f3so7637944wmc.5;
+        Thu, 14 Nov 2019 12:28:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gosnal9kN2eql1s5D44AG42b0F2sEZJ5o9XY9+CqiYA=;
-        b=PzjKrL6+NtYpShE0wz+zoY5KXIXzF5xtBIF/4/oy2hzZP5HFYbzYdR+Go9vFiv06xZ
-         zJSenwFilMhq2UAQZ3DZHfkEjTjb9LdiEebVK8E2JFJbvIw3+PtujoMQjXjfbGaNjGTD
-         WUQdzjo57bxh8uQsEp0br8Yjr2Xluw+chU/9z739Kxk8lej0GtvT8Ysfu5+JOuGkT1Zh
-         nVANma13htudxUG6rosrLVjUD1L2sgHbQqrt6HkfuGRGO8kGgW/iiVMobYj+m4JZN+Eo
-         53zEtbEe+fdgJOiaxRTEcEBIGjken/T/+HAbGaJKiBZKZ9OIUtvdgCTBwbtZlsdy8Op5
-         eZUg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=K5embLHTDP7uNIGocODuFu6GQnCP8W2lQWuJv19zdl8=;
+        b=oJCz2v2c5AYVz6Q6H4mdrlmjwMRXJl3QRv58ftEV+PhYZRrrjnkTSLO3STb7ZcfRgn
+         N2OLdvEU1DxyXboZFDZpSOISB7tOshCnak0Kmvoql7WD0duVFKIn6dtpQ985JtQEI+4B
+         2MoxmgIvBkQoTRhr8/ofs1F7C2qk8ec+NGHsxYFy3RUzbhF4sM4yQB53OiBj9t4uGml4
+         7s6q357K5SH9nJ/WCTb+p6Z+XSYUhBFp6S811kDcmcPrOvw8oY3ElY7IUj8IEiGV4xco
+         re2tlKjXgS0Z5vYsmtdntgVeM7iIqFDwlsO6N6StStT+9rOh8AbHHMeg/wPi7/SD2Lj4
+         AZFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gosnal9kN2eql1s5D44AG42b0F2sEZJ5o9XY9+CqiYA=;
-        b=awkDfBDVi+S2vctnCgclol79rXZKjm0zfDI3h7CGBnwG1APaB8y6t/rxwgrVLCcuv5
-         eQydKMhdfmtFDM2iW3rqM28zEBRbaYzw7YYT43YO4SpBWTB0IPWP+xuaHPrDjCrLMoHW
-         YtfuAsZdRQZH2uJEImlK5T6LnLTf1KscaBCX1ammJKxRopiO2wxLAhe/OyL+zsT+jiyI
-         Lw/7GPru8atACJtOLw73BX7EhKPFwor6emT/U5+U8nKHwGAkt/kW8g1Au7vZms/xknUa
-         rJXID4dGOZK/wfgGxjnH3AfobqAJgpvxsBij8QSulK3VmMFN71wR20ZIcklsZ6g6YAuT
-         vYxw==
-X-Gm-Message-State: APjAAAW5UC5iSvgmoPe5rdKZGrHoQns2HBmLDmltGwjni0tJinRGQzm1
-        wLGAVErZUtf/LEW/rgNZ7aZ6rkcB69qlf3zk9qZYMaHPVqw=
-X-Google-Smtp-Source: APXvYqxTIj/kWS6wMWLhbvm//WPEF9tRDyOypt44M536RxAxRtlC7o7bsI86qeHS+DWhxdpAI9RSLA0dNIm9ZeclWkg=
-X-Received: by 2002:a81:5794:: with SMTP id l142mr6854892ywb.107.1573763277722;
- Thu, 14 Nov 2019 12:27:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20191115070908.01d8e46d@canb.auug.org.au>
-In-Reply-To: <20191115070908.01d8e46d@canb.auug.org.au>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Thu, 14 Nov 2019 12:27:45 -0800
-Message-ID: <CAMo8Bf+9=0t+z6r=Mct358h8zDOjiVCYQiS7DxYgz6JcGTrYVg@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the xtensa tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=K5embLHTDP7uNIGocODuFu6GQnCP8W2lQWuJv19zdl8=;
+        b=HhX3H9q/f+XJ7kjHDOUN4bUonv7EjKBZYl5rpdQwtQjqZai0+4KPyxyjiFXBPwDLoq
+         cjwK3Jg135TuLPDr4J6uS555YHOZaVi550ymeLPBh7B+VdoeXa0vO0TWFCdOADo3GEbj
+         lo66UKXXDlkLhDIcK82O+7TK3jFQ9kEnFEtXV3aTJH0UrePN+nDBrirRj4jHwjn9NgLg
+         +tztKp51XfG5HdaxyBG5S5iZdiCBeN5d0qWNhOB2suD6XS4GWmXx6e0Tk/ibtydtQCZo
+         dOi5icoqDBaLz7s7E+hNnV7antxXSMyQJjM2NH1edAcvieU627GcSO7mVi27Ru/EsJlH
+         Tz3Q==
+X-Gm-Message-State: APjAAAWQ7qsyGMeMwfHBKSkLa+ow0MSe5GDA/7w6DRNxEaaD4Bg/xMmq
+        xfIt53dGr+SdpVI9IoSFH3o=
+X-Google-Smtp-Source: APXvYqyKPSnewY1soYVqWA6PQ+RofXvEux3LeOY/J6DXdBuJCVla8oCTl6/tXjcgmRorECdyF75imA==
+X-Received: by 2002:a05:600c:28c:: with SMTP id 12mr9819309wmk.25.1573763327200;
+        Thu, 14 Nov 2019 12:28:47 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id w19sm7276899wmk.36.2019.11.14.12.28.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2019 12:28:46 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] ARM: dts: bcm2711: force CMA into first GB of memory
+Date:   Thu, 14 Nov 2019 12:28:42 -0800
+Message-Id: <20191114202842.32505-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191106095945.22933-2-nsaenzjulienne@suse.de>
+References: <20191106095945.22933-1-nsaenzjulienne@suse.de> <20191106095945.22933-2-nsaenzjulienne@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Wed,  6 Nov 2019 10:59:44 +0100, Nicolas Saenz Julienne <nsaenzjulienne@suse.de> wrote:
+> arm64 places the CMA in ZONE_DMA32, which is not good enough for the
+> Raspberry Pi 4 since it contains peripherals that can only address the
+> first GB of memory. Explicitly place the CMA into that area.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> 
+> ---
 
-On Thu, Nov 14, 2019 at 12:09 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> In commit
->   29ba235590d1 ("xtensa: use MEMBLOCK_ALLOC_ANYWHERE for KASAN shadow map")
->
-> Fixes tag
->   Fixes: f240ec09bb8a ("memblock: replace memblock_alloc_base(ANYWHERE)
-> has these problem(s):
->   - Subject has leading but no trailing quotes
->
-> Please do not split Fixes tags over more than one line.
-
-Thanks for the tip, I've fixed up the 'Fixes' tag. Fixed version of this fix
-is available as
-00c04249bcbe ("xtensa: use MEMBLOCK_ALLOC_ANYWHERE for KASAN shadow map")
-
--- 
-Thanks.
--- Max
+Applied to devicetree/next, thanks!
+--
+Florian
