@@ -2,160 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D65FCCC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:05:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEC41FCCD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:09:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfKNSFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:05:48 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46301 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfKNSFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:05:48 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n23so5626832otr.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 10:05:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IlVs0WMHnCQFEwWjunTfC44Tofp8nrm/CewGUjfwrsU=;
-        b=NxgoVXfsH4wel3QVkkMLnOxu9JC7ON4vtSJql9sqJ8/pzCk3Ue1E6FMlLn04ekudFP
-         vZ91g5G+l4kGRlyK2nKyXNa1FGv8WgCHAEgqNnsmriR5MLL1DIMIanCpIl8hGAVonjhE
-         hJ47JMnL+KoThN0MFvkMRVWWvAiE05r9kT5Xvg/q2IVv8awDabTwEsbydPk6140Z7bRi
-         cciGCtiSumLOKoV1fP9IohCkb8Iw/PqV0C5Ri3QhzFrji2izlr52aXHqElI1kUISXEkB
-         Pk2DZrxvzrShTZGyE+ynD4UmjuDg3kMT2lLxI5PfpK6cVjZpNwcCjQEsM5qvKfkXNWsw
-         2a5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IlVs0WMHnCQFEwWjunTfC44Tofp8nrm/CewGUjfwrsU=;
-        b=BRLwe9oiEPWNl/Jo26AF0CQF1MkBoA5WOfYG9HR8F0fZeleVJnlLK40ny1z3/rD6VM
-         QibktsVyArx+hmbqmSb38eiV8WyMvp1adnVXkBlwes+m66dEujv4VbpWGXBAseMw6faS
-         0rbekIj9rH67Lptr1Tglr6n2vwc5XDfw1iHyKFLPeBrJUGV4Ah113cQLKwpTrmDkAZQX
-         B2GrfHY9T41ZUpe1gWb7us50HhqRKtUkcBDagDVgZrvMgyCpznLVhrG8bOSRXaPqr8Nf
-         cMC/UY/+deAOh1mIFJDasAARQr5mlkFkB3tEq+Ih1zLJAHmAn50zcWOoAsBBrFI7QWF6
-         Pbwg==
-X-Gm-Message-State: APjAAAWNaZLv5hIISM729PkZuIkqAlv7cHtCaaykVpulyJd40q86s5a+
-        hY0P+xTxT4QOoFJxh85YarioCPaZbWpVJtJdSZiOWw==
-X-Google-Smtp-Source: APXvYqyrMskQ+7J9UNUfcxyz6lEJ6aAXmbhC4Ojnbhf0sdFxVcKFNY9laSVYQSl4irBOMAgWImdPxQ38GiVQD2cHbmw=
-X-Received: by 2002:a9d:8d2:: with SMTP id 76mr8943242otf.17.1573754746598;
- Thu, 14 Nov 2019 10:05:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20191104142745.14722-1-elver@google.com> <20191104164717.GE20975@paulmck-ThinkPad-P72>
- <CANpmjNOtR6NEsXGo=M1o26d8vUyF7gwj=gew+LAeE_D+qfbEmQ@mail.gmail.com>
- <20191104194658.GK20975@paulmck-ThinkPad-P72> <CANpmjNPpVCRhgVgfaApZJCnMKHsGxVUno+o-Fe+7OYKmPvCboQ@mail.gmail.com>
- <20191105142035.GR20975@paulmck-ThinkPad-P72> <CANpmjNPEukbQtD5BGpHdxqMvnq7Uyqr9o3QCByjCKxtPboEJtA@mail.gmail.com>
-In-Reply-To: <CANpmjNPEukbQtD5BGpHdxqMvnq7Uyqr9o3QCByjCKxtPboEJtA@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 14 Nov 2019 19:05:34 +0100
-Message-ID: <CANpmjNPTMjx4TSr+LEwV-xm8jFtATOym=h416j5rLK1V4kOYCg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] Add Kernel Concurrency Sanitizer (KCSAN)
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S1726632AbfKNSJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:09:04 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37896 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726098AbfKNSJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:09:04 -0500
+Received: from zn.tnic (p200300EC2F15E200329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f15:e200:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EDBE21EC0C7B;
+        Thu, 14 Nov 2019 19:09:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1573754943;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=8zyhxwqKTlBkuN/gtzYWICTpVbITCgZCs6VEKV/QQFE=;
+        b=QU2oLMr8cFpoUBT2Kcqb+kvKm5298gsL6g/8lLPKHHDTnlL/bdRqfmjJp+ZYdRtqRdwcQv
+        6uRRCmVwdj1wQU+PUOrYvQimrbqALUojzF0glybT8t86oSH2b+jJKslP0yarosC4V9FWXu
+        VAeplvWrJmhcRvdftp7bg0liGTfj5iU=
+Date:   Thu, 14 Nov 2019 19:08:58 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jann Horn <jannh@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] x86/traps: Print non-canonical address on #GP
+Message-ID: <20191114180858.GA8520@zn.tnic>
+References: <20191112211002.128278-1-jannh@google.com>
+ <20191112211002.128278-2-jannh@google.com>
+ <20191114174630.GF24045@linux.intel.com>
+ <CALCETrVmaN4BgvUdsuTJ8vdkaN1JrAfBzs+W7aS2cxxDYkqn_Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrVmaN4BgvUdsuTJ8vdkaN1JrAfBzs+W7aS2cxxDYkqn_Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Nov 2019 at 16:25, Marco Elver <elver@google.com> wrote:
->
-> On Tue, 5 Nov 2019 at 15:20, Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Tue, Nov 05, 2019 at 12:10:56PM +0100, Marco Elver wrote:
-> > > On Mon, 4 Nov 2019 at 20:47, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > >
-> > > > On Mon, Nov 04, 2019 at 07:41:30PM +0100, Marco Elver wrote:
-> > > > > On Mon, 4 Nov 2019 at 17:47, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > > > >
-> > > > > > On Mon, Nov 04, 2019 at 03:27:36PM +0100, Marco Elver wrote:
-> > > > > > > This is the patch-series for the Kernel Concurrency Sanitizer (KCSAN).
-> > > > > > > KCSAN is a sampling watchpoint-based data-race detector. More details
-> > > > > > > are included in Documentation/dev-tools/kcsan.rst. This patch-series
-> > > > > > > only enables KCSAN for x86, but we expect adding support for other
-> > > > > > > architectures is relatively straightforward (we are aware of
-> > > > > > > experimental ARM64 and POWER support).
-> > > > > > >
-> > > > > > > To gather early feedback, we announced KCSAN back in September, and
-> > > > > > > have integrated the feedback where possible:
-> > > > > > > http://lkml.kernel.org/r/CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com
-> > > > > > >
-> > > > > > > We want to point out and acknowledge the work surrounding the LKMM,
-> > > > > > > including several articles that motivate why data-races are dangerous
-> > > > > > > [1, 2], justifying a data-race detector such as KCSAN.
-> > > > > > > [1] https://lwn.net/Articles/793253/
-> > > > > > > [2] https://lwn.net/Articles/799218/
-> > > > > > >
-> > > > > > > The current list of known upstream fixes for data-races found by KCSAN
-> > > > > > > can be found here:
-> > > > > > > https://github.com/google/ktsan/wiki/KCSAN#upstream-fixes-of-data-races-found-by-kcsan
-> > > > > >
-> > > > > > Making this more accessible to more people seems like a good thing.
-> > > > > > So, for the series:
-> > > > > >
-> > > > > > Acked-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > >
-> > > > > Much appreciated. Thanks, Paul!
-> > > > >
-> > > > > Any suggestions which tree this could eventually land in?
-> > > >
-> > > > I would guess that Dmitry might have some suggestions.
-> > >
-> > > I checked and we're both unclear what the most obvious tree to land in
-> > > is (the other sanitizers are mm related, which KCSAN is not).
-> > >
-> > > One suggestion that comes to my mind is for KCSAN to go through the
-> > > same tree (rcu?) as the LKMM due to their inherent relationship. Would
-> > > that make most sense?
-> >
-> > It works for me, though you guys have to continue to be the main
-> > developers.  ;-)
->
-> Great, thanks. We did add an entry to MAINTAINERS, so yes of course. :-)
->
-> > I will go through the patches more carefully, and please look into the
-> > kbuild test robot complaint.
->
-> I just responded to that, it seems to be a sparse problem.
->
-> Thanks,
-> -- Marco
+On Thu, Nov 14, 2019 at 10:00:35AM -0800, Andy Lutomirski wrote:
+> And I think this code should be skipped entirely if error_code != 0.
 
-v4 was sent out:
-http://lkml.kernel.org/r/20191114180303.66955-1-elver@google.com
+... or say that the #GP is happening due to a segment descriptor access.
+Would make the figuring out why it happens a bit simpler as to where to
+look.
 
-Thanks,
--- Marco
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
