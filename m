@@ -2,186 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D53FFC19C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 09:34:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E86A1FC171
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 09:21:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbfKNIea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 03:34:30 -0500
-Received: from mga11.intel.com ([192.55.52.93]:30256 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfKNIea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 03:34:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 00:34:29 -0800
-X-IronPort-AV: E=Sophos;i="5.68,302,1569308400"; 
-   d="scan'208";a="208060570"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 00:34:29 -0800
-Subject: [PATCH v2] mm: Cleanup __put_devmap_managed_page() vs ->page_free()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     jhubbard@nvidia.com
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Date:   Thu, 14 Nov 2019 00:20:13 -0800
-Message-ID: <157371938291.3055029.12105459405251950438.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S1726330AbfKNIVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 03:21:51 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:48143 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725965AbfKNIVu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 03:21:50 -0500
+Received: from [192.168.2.10] ([46.9.232.237])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id VANri8XnO5b4MVANvin0UB; Thu, 14 Nov 2019 09:21:48 +0100
+Subject: Re: [PATCH v11 02/11] media: staging: rkisp1: add document for rkisp1
+ meta buffer format
+To:     Helen Koike <helen.koike@collabora.com>,
+        linux-rockchip@lists.infradead.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
+        jeffy.chen@rock-chips.com, zyc@rock-chips.com,
+        linux-kernel@vger.kernel.org, tfiga@chromium.org,
+        robh+dt@kernel.org, hans.verkuil@cisco.com,
+        laurent.pinchart@ideasonboard.com, sakari.ailus@linux.intel.com,
+        kernel@collabora.com, ezequiel@collabora.com,
+        linux-media@vger.kernel.org, jacob-chen@iotwrt.com,
+        zhengsq@rock-chips.com, Jacob Chen <jacob2.chen@rock-chips.com>,
+        Jacob Chen <jacob-chen@rock-chips.com>
+References: <20191114051242.14651-1-helen.koike@collabora.com>
+ <20191114051242.14651-3-helen.koike@collabora.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <09d4f683-d03d-46c9-e9d2-b8cceb72446e@xs4all.nl>
+Date:   Thu, 14 Nov 2019 09:21:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191114051242.14651-3-helen.koike@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFzl5hYLISanSAOy5YJH10k6V2JleNvifodOgbTuK7g2UOD60o4XUFaAYIOZAvR1InLiLVdHYCzJ9Z6L6C4CnUomR6mLGajHDaCkCg396LZ1f9r9aQ+G
+ gN2iuawntRhSMYngC9fhq8AECGbNTg3V3xInnxIzl684TY5H1o0tGVd26/PLCaKf37Av7VC7bjkT9tsdSXH49eqV9zMWLaumD9vOrLehmSYa6q2rELD35Ohr
+ bKxEUaVDQtO9hDAAbwXrR7DiVBDDo+Svsjs1aHgObyJgvDxo8Vx5hqnvP7JSFye3t96/G9ZNbsiQ9lskGUJ2gZiWdAGyFA3v7XXSYTyvODNRvD5yq0Uu4WCL
+ 00cqCxXWvysVU7BTzFcUcxwKgqZrOEUVnqql4YG0Un+IX9IkdtP/z/ojRRRqQ3ihHxExeNC8OLk9AyvkYAcXefryb2YA2fbIqtHsi0OHkqn4nOYiymNuHYq9
+ nC4eSS+K/38be8Su3mgOtYdQuFFnCKgYQOlAc8epdCCRDNaqrKKIHafQc2jEedzhXAw5OULgDoI2+MKnXSu52RCRO+h0aaMkf0SVP0NH8qUPNAM+DTYCqyvZ
+ ejppe1um+UzFoGDaIJ2s+t6IGO7JI0EbP9YDvhg/H0xYE1rMBur8sN0W26zN6pVgkd3iC2glZk92UCJD8gYbV2muAxNldIvcoqlxht07xn1q72CJhXSPP+/1
+ Bd3SO97hTE65lZzn8Clp7AClF1ITCc8HwVnVmmUp9cHEje9RGLKDwCwqW5bX1lbhbIRAuhYI9SGnDX7nTuVTC3fn2kHIiGr4PTyQg00JqoKj4IPtdvlhfX15
+ Gu8UzEiCgEfC2/ey6PHQ+Sx1aYo+uX8fiwpBk2Lj1x4dHanYS3zayIeRUdlcBRYvXqKLnCR3cPXAgbh3TmcXcgee4AEozxdMc9T1ZtVbfForxx6qAfvLrxLP
+ lRF/uWKSvM8qLQYIS6Yf5/ATxospbYafk/bdIu5LzLvBuN8qXdd8oimrMY6GmiFjG6VauawshMbMMhZEKvWF7fh0n/Y=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the removal of the device-public infrastructure there are only 2
-->page_free() call backs in the kernel. One of those is a device-private
-callback in the nouveau driver, the other is a generic wakeup needed in
-the DAX case. In the hopes that all ->page_free() callbacks can be
-migrated to common core kernel functionality, move the device-private
-specific actions in __put_devmap_managed_page() under the
-is_device_private_page() conditional, including the ->page_free()
-callback. For the other page types just open-code the generic wakeup.
+On 11/14/19 6:12 AM, Helen Koike wrote:
+> From: Jacob Chen <jacob2.chen@rock-chips.com>
+> 
+> This commit add document for rkisp1 meta buffer format
+> 
+> Signed-off-by: Jacob Chen <jacob-chen@rock-chips.com>
+> [refactored for upstream]
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
 
-Yes, the wakeup is only needed in the MEMORY_DEVICE_FSDAX case, but it
-does no harm in the MEMORY_DEVICE_DEVDAX and MEMORY_DEVICE_PCI_P2PDMA
-case.
+checkpatch gives me:
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes in v2:
-- Stop requiring pgmap->ops for fsdax (Christoph)
-- Clean up the indenting and organization in
-  __put_devmap_managed_page(). (Christoph)
+WARNING: Missing Signed-off-by: line by nominal patch author 'Jacob Chen <jacob2.chen@rock-chips.com>'
 
+Looking at this series I see duplicate Signed-off-by entries for Jacob Chen and a total
+of three different email addresses:
 
- drivers/nvdimm/pmem.c |    6 ----
- mm/memremap.c         |   77 ++++++++++++++++++++++++++-----------------------
- 2 files changed, 41 insertions(+), 42 deletions(-)
+jacob2.chen@rock-chips.com
+jacob-chen@rock-chips.com
+cc@rock-chips.com
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index f9f76f6ba07b..21db1ce8c0ae 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -338,13 +338,7 @@ static void pmem_release_disk(void *__pmem)
- 	put_disk(pmem->disk);
- }
- 
--static void pmem_pagemap_page_free(struct page *page)
--{
--	wake_up_var(&page->_refcount);
--}
--
- static const struct dev_pagemap_ops fsdax_pagemap_ops = {
--	.page_free		= pmem_pagemap_page_free,
- 	.kill			= pmem_pagemap_kill,
- 	.cleanup		= pmem_pagemap_cleanup,
- };
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 022e78e68ea0..b52dc566efd2 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -27,7 +27,8 @@ static void devmap_managed_enable_put(void)
- 
- static int devmap_managed_enable_get(struct dev_pagemap *pgmap)
- {
--	if (!pgmap->ops || !pgmap->ops->page_free) {
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE &&
-+	    (!pgmap->ops || !pgmap->ops->page_free)) {
- 		WARN(1, "Missing page_free method\n");
- 		return -EINVAL;
- 	}
-@@ -444,44 +445,48 @@ void __put_devmap_managed_page(struct page *page)
- {
- 	int count = page_ref_dec_return(page);
- 
--	/*
--	 * If refcount is 1 then page is freed and refcount is stable as nobody
--	 * holds a reference on the page.
--	 */
--	if (count == 1) {
--		/* Clear Active bit in case of parallel mark_page_accessed */
--		__ClearPageActive(page);
--		__ClearPageWaiters(page);
-+	if (count > 1) {
-+		/* still busy */
-+		return;
-+	} else if (count == 0) {
-+		/* only triggered by the dev_pagemap shutdown path */
-+		__put_page(page);
-+		return;
-+	} else if (!is_device_private_page(page)) {
-+		/* notify page idle for dax */
-+		wake_up_var(&page->_refcount);
-+		return;
-+	}
- 
--		mem_cgroup_uncharge(page);
-+	/* Clear Active bit in case of parallel mark_page_accessed */
-+	__ClearPageActive(page);
-+	__ClearPageWaiters(page);
- 
--		/*
--		 * When a device_private page is freed, the page->mapping field
--		 * may still contain a (stale) mapping value. For example, the
--		 * lower bits of page->mapping may still identify the page as
--		 * an anonymous page. Ultimately, this entire field is just
--		 * stale and wrong, and it will cause errors if not cleared.
--		 * One example is:
--		 *
--		 *  migrate_vma_pages()
--		 *    migrate_vma_insert_page()
--		 *      page_add_new_anon_rmap()
--		 *        __page_set_anon_rmap()
--		 *          ...checks page->mapping, via PageAnon(page) call,
--		 *            and incorrectly concludes that the page is an
--		 *            anonymous page. Therefore, it incorrectly,
--		 *            silently fails to set up the new anon rmap.
--		 *
--		 * For other types of ZONE_DEVICE pages, migration is either
--		 * handled differently or not done at all, so there is no need
--		 * to clear page->mapping.
--		 */
--		if (is_device_private_page(page))
--			page->mapping = NULL;
-+	mem_cgroup_uncharge(page);
- 
--		page->pgmap->ops->page_free(page);
--	} else if (!count)
--		__put_page(page);
-+	/*
-+	 * When a device_private page is freed, the page->mapping field
-+	 * may still contain a (stale) mapping value. For example, the
-+	 * lower bits of page->mapping may still identify the page as an
-+	 * anonymous page. Ultimately, this entire field is just stale
-+	 * and wrong, and it will cause errors if not cleared.  One
-+	 * example is:
-+	 *
-+	 *  migrate_vma_pages()
-+	 *    migrate_vma_insert_page()
-+	 *      page_add_new_anon_rmap()
-+	 *        __page_set_anon_rmap()
-+	 *          ...checks page->mapping, via PageAnon(page) call,
-+	 *            and incorrectly concludes that the page is an
-+	 *            anonymous page. Therefore, it incorrectly,
-+	 *            silently fails to set up the new anon rmap.
-+	 *
-+	 * For other types of ZONE_DEVICE pages, migration is either
-+	 * handled differently or not done at all, so there is no need
-+	 * to clear page->mapping.
-+	 */
-+	page->mapping = NULL;
-+	page->pgmap->ops->page_free(page);
- }
- EXPORT_SYMBOL(__put_devmap_managed_page);
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
+It's confusing.
+
+Regards,
+
+	Hans
+
+> 
+> ---
+> 
+> Changes in v11: None
+> Changes in v10:
+> - unsquash
+> 
+> Changes in v9:
+> - squash
+> - migrate to staging
+> - remove meta-formats.rst update
+> 
+> Changes in v8:
+> - Add SPDX in the header
+> - Remove emacs configs
+> - Fix doc style
+> 
+> Changes in v7:
+> - s/correspond/corresponding
+> - s/use/uses
+> - s/docuemnt/document
+> 
+>  .../uapi/v4l/pixfmt-meta-rkisp1-params.rst    | 23 +++++++++++++++++++
+>  .../uapi/v4l/pixfmt-meta-rkisp1-stat.rst      | 22 ++++++++++++++++++
+>  2 files changed, 45 insertions(+)
+>  create mode 100644 drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+>  create mode 100644 drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+> 
+> diff --git a/drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst b/drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+> new file mode 100644
+> index 000000000000..103b5cb79b7c
+> --- /dev/null
+> +++ b/drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+> @@ -0,0 +1,23 @@
+> +.. SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +
+> +.. _v4l2-meta-fmt-rkisp1-params:
+> +
+> +============================
+> +V4L2_META_FMT_RK_ISP1_PARAMS
+> +============================
+> +
+> +Rockchip ISP1 Parameters Data
+> +
+> +Description
+> +===========
+> +
+> +This format describes input parameters for the Rockchip ISP1.
+> +
+> +It uses c-struct :c:type:`rkisp1_isp_params_cfg`, which is defined in
+> +the ``linux/rkisp1-config.h`` header file.
+> +
+> +The parameters consist of multiple modules.
+> +The module won't be updated if the corresponding bit was not set in module_*_update.
+> +
+> +.. kernel-doc:: include/uapi/linux/rkisp1-config.h
+> +   :functions: rkisp1_isp_params_cfg
+> diff --git a/drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst b/drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+> new file mode 100644
+> index 000000000000..4ad303f96421
+> --- /dev/null
+> +++ b/drivers/staging/media/rkisp1/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+> @@ -0,0 +1,22 @@
+> +.. SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +
+> +.. _v4l2-meta-fmt-rkisp1-stat:
+> +
+> +=============================
+> +V4L2_META_FMT_RK_ISP1_STAT_3A
+> +=============================
+> +
+> +
+> +Rockchip ISP1 Statistics Data
+> +
+> +Description
+> +===========
+> +
+> +This format describes image color statistics information generated by the Rockchip
+> +ISP1.
+> +
+> +It uses c-struct :c:type:`rkisp1_stat_buffer`, which is defined in
+> +the ``linux/rkisp1-config.h`` header file.
+> +
+> +.. kernel-doc:: include/uapi/linux/rkisp1-config.h
+> +   :functions: rkisp1_stat_buffer
+> 
 
