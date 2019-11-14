@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 637C0FCD15
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C47A3FCD10
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfKNSSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:18:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35818 "EHLO mail.kernel.org"
+        id S1726750AbfKNSSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:18:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727577AbfKNSS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:18:28 -0500
+        id S1727578AbfKNSS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:18:29 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C82C2088F;
+        by mail.kernel.org (Postfix) with ESMTPSA id 316472073B;
         Thu, 14 Nov 2019 18:18:28 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhL-0001Ah-8q; Thu, 14 Nov 2019 13:18:27 -0500
-Message-Id: <20191114181827.152115842@goodmis.org>
+        id 1iVJhL-0001BB-DV; Thu, 14 Nov 2019 13:18:27 -0500
+Message-Id: <20191114181827.298204434@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:18:00 -0500
+Date:   Thu, 14 Nov 2019 13:18:01 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [for-next][PATCH 26/33] lib/bsearch: Use generic type for comparator function
+Subject: [for-next][PATCH 27/33] tracing: Use generic type for comparator function
 References: <20191114181734.067922168@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -39,43 +39,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 Comparator function type, cmp_func_t, is defined in the types.h,
-use it in bsearch() and, thus, add more sense to the corresponding
-comment in the code.
+use it in the code.
 
-Link: http://lkml.kernel.org/r/20191007135656.37734-2-andriy.shevchenko@linux.intel.com
+Link: http://lkml.kernel.org/r/20191007135656.37734-3-andriy.shevchenko@linux.intel.com
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/bsearch.h | 2 +-
- lib/bsearch.c           | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/ftrace.c       | 12 ++++++------
+ kernel/trace/trace_branch.c |  8 ++++----
+ kernel/trace/trace_stat.c   |  6 ++----
+ kernel/trace/trace_stat.h   |  2 +-
+ 4 files changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/bsearch.h b/include/linux/bsearch.h
-index 62b1eb348858..8ed53d7524ea 100644
---- a/include/linux/bsearch.h
-+++ b/include/linux/bsearch.h
-@@ -5,6 +5,6 @@
- #include <linux/types.h>
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index d2d488c43a6a..82ef8d60a42b 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -465,10 +465,10 @@ static void *function_stat_start(struct tracer_stat *trace)
  
- void *bsearch(const void *key, const void *base, size_t num, size_t size,
--	      int (*cmp)(const void *key, const void *elt));
-+	      cmp_func_t cmp);
- 
- #endif /* _LINUX_BSEARCH_H */
-diff --git a/lib/bsearch.c b/lib/bsearch.c
-index 8baa83968162..8b3aae5ae77a 100644
---- a/lib/bsearch.c
-+++ b/lib/bsearch.c
-@@ -29,7 +29,7 @@
-  * the same comparison function for both sort() and bsearch().
-  */
- void *bsearch(const void *key, const void *base, size_t num, size_t size,
--	      int (*cmp)(const void *key, const void *elt))
-+	      cmp_func_t cmp)
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ /* function graph compares on total time */
+-static int function_stat_cmp(void *p1, void *p2)
++static int function_stat_cmp(const void *p1, const void *p2)
  {
- 	const char *pivot;
- 	int result;
+-	struct ftrace_profile *a = p1;
+-	struct ftrace_profile *b = p2;
++	const struct ftrace_profile *a = p1;
++	const struct ftrace_profile *b = p2;
+ 
+ 	if (a->time < b->time)
+ 		return -1;
+@@ -479,10 +479,10 @@ static int function_stat_cmp(void *p1, void *p2)
+ }
+ #else
+ /* not function graph compares against hits */
+-static int function_stat_cmp(void *p1, void *p2)
++static int function_stat_cmp(const void *p1, const void *p2)
+ {
+-	struct ftrace_profile *a = p1;
+-	struct ftrace_profile *b = p2;
++	const struct ftrace_profile *a = p1;
++	const struct ftrace_profile *b = p2;
+ 
+ 	if (a->counter < b->counter)
+ 		return -1;
+diff --git a/kernel/trace/trace_branch.c b/kernel/trace/trace_branch.c
+index 3ea65cdff30d..88e158d27965 100644
+--- a/kernel/trace/trace_branch.c
++++ b/kernel/trace/trace_branch.c
+@@ -244,7 +244,7 @@ static int annotated_branch_stat_headers(struct seq_file *m)
+ 	return 0;
+ }
+ 
+-static inline long get_incorrect_percent(struct ftrace_branch_data *p)
++static inline long get_incorrect_percent(const struct ftrace_branch_data *p)
+ {
+ 	long percent;
+ 
+@@ -332,10 +332,10 @@ annotated_branch_stat_next(void *v, int idx)
+ 	return p;
+ }
+ 
+-static int annotated_branch_stat_cmp(void *p1, void *p2)
++static int annotated_branch_stat_cmp(const void *p1, const void *p2)
+ {
+-	struct ftrace_branch_data *a = p1;
+-	struct ftrace_branch_data *b = p2;
++	const struct ftrace_branch_data *a = p1;
++	const struct ftrace_branch_data *b = p2;
+ 
+ 	long percent_a, percent_b;
+ 
+diff --git a/kernel/trace/trace_stat.c b/kernel/trace/trace_stat.c
+index 9ab0a1a7ad5e..874f1274cf99 100644
+--- a/kernel/trace/trace_stat.c
++++ b/kernel/trace/trace_stat.c
+@@ -72,9 +72,7 @@ static void destroy_session(struct stat_session *session)
+ 	kfree(session);
+ }
+ 
+-typedef int (*cmp_stat_t)(void *, void *);
+-
+-static int insert_stat(struct rb_root *root, void *stat, cmp_stat_t cmp)
++static int insert_stat(struct rb_root *root, void *stat, cmp_func_t cmp)
+ {
+ 	struct rb_node **new = &(root->rb_node), *parent = NULL;
+ 	struct stat_node *data;
+@@ -112,7 +110,7 @@ static int insert_stat(struct rb_root *root, void *stat, cmp_stat_t cmp)
+  * This one will force an insertion as right-most node
+  * in the rbtree.
+  */
+-static int dummy_cmp(void *p1, void *p2)
++static int dummy_cmp(const void *p1, const void *p2)
+ {
+ 	return -1;
+ }
+diff --git a/kernel/trace/trace_stat.h b/kernel/trace/trace_stat.h
+index 8786d17caf49..31d7dc5bf1db 100644
+--- a/kernel/trace/trace_stat.h
++++ b/kernel/trace/trace_stat.h
+@@ -16,7 +16,7 @@ struct tracer_stat {
+ 	void			*(*stat_start)(struct tracer_stat *trace);
+ 	void			*(*stat_next)(void *prev, int idx);
+ 	/* Compare two entries for stats sorting */
+-	int			(*stat_cmp)(void *p1, void *p2);
++	cmp_func_t		stat_cmp;
+ 	/* Print a stat entry */
+ 	int			(*stat_show)(struct seq_file *s, void *p);
+ 	/* Release an entry */
 -- 
 2.23.0
 
