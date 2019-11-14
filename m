@@ -2,96 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E98FC08C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:07:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8E60FC090
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:13:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfKNHHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 02:07:13 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34381 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfKNHHN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 02:07:13 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 5so4014865otk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 23:07:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=115n8fVPcb6FFdMlLEXy4f+oj6Xj6AxVK8mXd42SbSI=;
-        b=i7rpGrl8lTJw9mHZafvWfRxOzTKG4sq44TWMgxWIMjIRPj8VnsvElyOTdMTL2Na9v4
-         v5d9iE1z6BUdbToyGyRgNF1NLGozp5HdNAlZiFfwSeMf6/NxdIqQuYFvPtN2ym090fTS
-         6rruLqFxJsgTO/svUCmhTLLQMgDQ/qjOhrtfmN8ru1+P9WwRTQh/jFQltWb0g3Vpdfe0
-         spcE147RspaDorrV/W4tF/gm7s5AxEx5HFML6BQqKoqw7rRTVtocoRYGVCHXi8gs26a2
-         rI48KoFeff7pc7Qg2HplH7JAxFYcdC/AGxbfcQpSYI69pcHgXJ2QCsUm2htzCDzG1bDB
-         lGjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=115n8fVPcb6FFdMlLEXy4f+oj6Xj6AxVK8mXd42SbSI=;
-        b=FWnSRfk3tauUlOVhA9sEumvs//vhit4ayclsytZprt2ONOHIQOnghkkv3EUA+XScLZ
-         Dn/xZJyXuX/YyhZA5N/eAH8casOvMen7q9HkLw3Oflgf4KnZ6gmIWmxi8H4pm+Qijp9h
-         NjRZBVIBupwYEqDvPGpp1UeGREk+wZljtJuzfi0yKySHLH2JpKrJdbiOoUJ9ku4asRU0
-         2wTUthY7PLC417F3IuHBnCd3SlpNr5UeudDoandFlww9jAXP9y8Ilspda7meigzTA8Fo
-         TNRHQHj7qgXIJumWuTkWZqtyNdZAcp56tZGCauNyG9JcGH3edzOf1GLGN+J+1ajLqHc1
-         NGTQ==
-X-Gm-Message-State: APjAAAUVDMjciY15Sg4Y1Fdv6MeG/HMx+TLD3ZLaMksyw8hvBcbodGqA
-        7wT9dkw/8CJWA7djRWiE0VeC7nw3pqiucX0jTq4=
-X-Google-Smtp-Source: APXvYqzQ82qArFra2EqZ81qYn+YgoUDW0ofJXSqsos78EaoBlgz8k7zoh4VxtjHbDdzx+dGGPvpmXf00C1jqa72e1Tg=
-X-Received: by 2002:a05:6830:1088:: with SMTP id y8mr6494602oto.328.1573715232298;
- Wed, 13 Nov 2019 23:07:12 -0800 (PST)
+        id S1726251AbfKNHNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 02:13:30 -0500
+Received: from mga05.intel.com ([192.55.52.43]:19847 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725852AbfKNHN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 02:13:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 23:13:29 -0800
+X-IronPort-AV: E=Sophos;i="5.68,302,1569308400"; 
+   d="scan'208";a="198721968"
+Received: from likexu-mobl1.ccr.corp.intel.com (HELO [10.239.196.126]) ([10.239.196.126])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Nov 2019 23:13:25 -0800
+Subject: Re: [PATCH v4 5/6] KVM: x86/vPMU: Reuse perf_event to avoid
+ unnecessary pmc_reprogram_counter
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, kan.liang@intel.com,
+        wei.w.wang@intel.com, LKML <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
+References: <20191027105243.34339-1-like.xu@linux.intel.com>
+ <20191027105243.34339-6-like.xu@linux.intel.com>
+ <CANRm+Cz3-k6Bct0JAN=m1emT5j4NgULjURyHz0vCDabq00nk4Q@mail.gmail.com>
+From:   Like Xu <like.xu@linux.intel.com>
+Organization: Intel OTC
+Message-ID: <d0341842-3acd-5a9d-2b75-ab214fe9b659@linux.intel.com>
+Date:   Thu, 14 Nov 2019 15:13:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Received: by 2002:a9d:12f:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 23:07:11 -0800 (PST)
-Reply-To: ayishagddafio@mail.com
-From:   AISHA GADDAFI <mahasaliou4444@gmail.com>
-Date:   Wed, 13 Nov 2019 23:07:11 -0800
-Message-ID: <CAKHB8qeeh8Rd6VNsKxi-j6hXmryTu+FmG16mEJbr6mUk2=pZiA@mail.gmail.com>
-Subject: Lieber Freund (Assalamu Alaikum),
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CANRm+Cz3-k6Bct0JAN=m1emT5j4NgULjURyHz0vCDabq00nk4Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Lieber Freund (Assalamu Alaikum),
+Hi Wanpeng,
 
-Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
-Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, alleinerziehende Mutter und Wit=
-we
-mit drei Kindern. Ich bin die einzige biologische Tochter des sp=C3=A4ten L=
-ibyers
-Pr=C3=A4sident (Oberst Muammar Gaddafi).
+On 2019/11/14 11:51, Wanpeng Li wrote:
+> On Mon, 28 Oct 2019 at 21:06, Like Xu <like.xu@linux.intel.com> wrote:
+>>
+>> The perf_event_create_kernel_counter() in the pmc_reprogram_counter() is
+>> a heavyweight and high-frequency operation, especially when host disables
+>> the watchdog (maximum 21000000 ns) which leads to an unacceptable latency
+> 
+> Why when host disables the watchdog,
+> perf_event_create_kernel_counter() is more heavyweight and
+> high-frequency operation?
+> 
+>      Wanpeng
+> 
 
-Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen und
-f=C3=BCnfhunderttausend
-United State Dollar (27.500.000,00 $) und ich brauche eine
-vertrauensw=C3=BCrdige Investition
-Manager / Partner wegen meines aktuellen Fl=C3=BCchtlingsstatus bin ich jed=
-och
-Interesse an Ihnen f=C3=BCr die Unterst=C3=BCtzung von Investitionsprojekte=
-n in
-Ihrem Land, kann sein
-Von dort aus k=C3=B6nnen wir in n=C3=A4chster Zukunft eine Gesch=C3=A4ftsbe=
-ziehung aufbauen.
+- Fist, let me assume you do have experienced the fact that the perf 
+behavior on guest for multiple hardware events is extremely sluggish when 
+you disable watchdog on host. The setting of host watchdog is
+the uncontrollability the patch series wants to eliminate for vPMU users.
 
-Ich bin gerne bereit, mit Ihnen das Verh=C3=A4ltnis der Beteiligungsquote z=
-u teilen
-st=C3=BCtzen Sie sich auf die zuk=C3=BCnftigen Investitionen, die Gewinne e=
-rzielen.
+- Disabling host watchdog brings higher frequency is imprecise. In legacy 
+vPMU code, the operation is high-frequency regardless of the host watchdog 
+setting. The exact frequency depends on perf sampling frequency and guest 
+pmu driver pattern.
 
-Wenn Sie bereit sind, dieses Projekt in meinem Namen durchzuf=C3=BChren,
-antworten Sie bitte dringend
-Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
-.
+- The sched_clock() time consumed by perf_event_create_kernel_counter() is 
+tested on various x86 platforms and the values suddenly become larger when 
+and only when host disables watchdog. Sometimes watchdog damages the 
+accuracy. In the early stages of exploration, we found if host disables 
+watchdog, the synchronize_rcu() from account_event() in perf_event_alloc() 
+becomes much more heavyweight and it seems to be a general necessary 
+mechanism. The deeper reason behind this is undefined.
 
-Ihre dringende Antwort wird gesch=C3=A4tzt. Schreiben Sie mir an diese
-E-Mail-Adresse (
-ayishagddafio@mail.com ) zur weiteren Diskussion.
-
-Freundliche Gr=C3=BC=C3=9Fe
-Frau Aisha Al-Gaddafi
-Antwort an: ayishagddafio@mail.com
+Thanks,
+Like Xu
