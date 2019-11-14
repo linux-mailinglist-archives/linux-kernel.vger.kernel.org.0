@@ -2,102 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A412EFC113
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 09:04:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A15CBFC13D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 09:09:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbfKNIEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 03:04:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
+        id S1726474AbfKNIJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 03:09:28 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:37567 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfKNIEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 03:04:12 -0500
-Received: from rapoport-lnx (unknown [84.88.5.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4A472070E;
-        Thu, 14 Nov 2019 08:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573718652;
-        bh=1PyO5+dQPDTpXCmhdbg0KDpb08buZBrMmvB/Mf+5GAs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ehOgQ1GBZQoyqSmTjQ94gv5ZG32CoqqZkGFCYmCmtTbtUOuatpozWB4V8aQllTv25
-         BH64kHoGVvn9EsZUbg1oVnV9CPy7m63WSe7kBYMXPDcrJY2SmSgW9F1Ca0I0imgorD
-         CuAQ+9ovR4auo2ZKgpUqHN09CEvD54G3NhStx9A0=
-Date:   Thu, 14 Nov 2019 09:04:06 +0100
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Chris Zankel <chris@zankel.net>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH 2/2] xtensa: get rid of __ARCH_USE_5LEVEL_HACK
-Message-ID: <20191114080405.GA13838@rapoport-lnx>
-References: <1572964400-16542-1-git-send-email-rppt@kernel.org>
- <1572964400-16542-3-git-send-email-rppt@kernel.org>
- <CAMo8BfLpdy4biZ4UvE4PDhscCFOj75nHWTwO+HFXpWx1qQOmEQ@mail.gmail.com>
+        id S1726000AbfKNIJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 03:09:27 -0500
+Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id xAE89CZT030781
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Nov 2019 09:09:13 +0100
+Received: from [167.87.46.11] ([167.87.46.11])
+        by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id xAE89CH4016661;
+        Thu, 14 Nov 2019 09:09:12 +0100
+Subject: Re: [FYI PATCH 0/7] Mitigation for CVE-2018-12207
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        "Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>
+References: <1573593697-25061-1-git-send-email-pbonzini@redhat.com>
+ <23353382-53ea-8b20-7e30-763ef6df374c@siemens.com>
+ <ea5a084b-e047-6677-b8fe-d7bb6f8c0ef8@redhat.com>
+ <dffb19ab-daa2-a513-531e-c43279d8a4bf@intel.com>
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <e86c01a8-8265-5e42-2fae-2c42c7e3d961@siemens.com>
+Date:   Thu, 14 Nov 2019 09:09:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMo8BfLpdy4biZ4UvE4PDhscCFOj75nHWTwO+HFXpWx1qQOmEQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <dffb19ab-daa2-a513-531e-c43279d8a4bf@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 12:30:39PM -0800, Max Filippov wrote:
-> Hi Mike,
+On 13.11.19 22:24, Dave Hansen wrote:
+> On 11/13/19 12:23 AM, Paolo Bonzini wrote:
+>> On 13/11/19 07:38, Jan Kiszka wrote:
+>>> When reading MCE, error code 0150h, ie. SRAR, I was wondering if that
+>>> couldn't simply be handled by the host. But I suppose the symptom of
+>>> that erratum is not "just" regular recoverable MCE, rather
+>>> sometimes/always an unrecoverable CPU state, despite the error code, right?
+>> The erratum documentation talks explicitly about hanging the system, but
+>> it's not clear if it's just a result of the OS mishandling the MCE, or
+>> something worse.  So I don't know. :(  Pawan, do you?
 > 
-> On Tue, Nov 5, 2019 at 6:33 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > From: Mike Rapoport <rppt@linux.ibm.com>
-> >
-> > xtensa has 2-level page tables and already uses pgtable-nopmd for page
-> > table folding.
-> >
-> > Add walks of p4d level where appropriate and drop usage of
-> > __ARCH_USE_5LEVEL_HACK.
-> >
-> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> > ---
-> >  arch/xtensa/include/asm/pgtable.h |  1 -
-> >  arch/xtensa/mm/fault.c            | 10 ++++++++--
-> >  arch/xtensa/mm/kasan_init.c       |  6 ++++--
-> >  arch/xtensa/mm/mmu.c              |  3 ++-
-> >  arch/xtensa/mm/tlb.c              |  5 ++++-
-> >  5 files changed, 18 insertions(+), 7 deletions(-)
+> It's "something worse".
 > 
-> This change missed a spot in arch/xtensa/include/asm/fixmap.h.
-> I've added the following hunk and queued both patches to the xtensa tree:
+> I built a kernel module reproducer for this a long time ago.  The
+> symptom I observed was the whole system hanging hard, requiring me to go
+> hit the power button.  The MCE software machinery was not involved at
+> all from what I could tell.
 
-Thanks!
- 
-> diff --git a/arch/xtensa/include/asm/fixmap.h b/arch/xtensa/include/asm/fixmap.h
-> index 7e25c1b50ac0..cfb8696917e9 100644
-> --- a/arch/xtensa/include/asm/fixmap.h
-> +++ b/arch/xtensa/include/asm/fixmap.h
-> @@ -78,8 +78,10 @@ static inline unsigned long virt_to_fix(const
-> unsigned long vaddr)
+Thanks for clarifying this - too bad.
+
 > 
->  #define kmap_get_fixmap_pte(vaddr) \
->         pte_offset_kernel( \
-> -               pmd_offset(pud_offset(pgd_offset_k(vaddr), (vaddr)), (vaddr)), \
-> -               (vaddr) \
-> -       )
-> +               pmd_offset(pud_offset(p4d_offset(pgd_offset_k(vaddr), \
-> +                                                (vaddr)), \
-> +                                     (vaddr)), \
-> +                          (vaddr)), \
-> +               (vaddr))
+> About creating a unit test, I'd be personally happy to share my
+> reproducer, but I built it before this issue was root-caused.  There are
+> actually quite a few underlying variants and a good unit test would make
+> sure to exercise all of them.  My reproducer probably only exercised a
+> single case.
 > 
->  #endif
-> 
-> 
-> -- 
-> Thanks.
-> -- Max
+
+Would be interesting to see this. Ralf and tried something quickly, but 
+there seems to be a detail missing or wrong.
+
+Jan
 
 -- 
-Sincerely yours,
-Mike.
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
