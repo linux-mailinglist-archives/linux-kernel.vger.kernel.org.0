@@ -2,54 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81C40FCAE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:41:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1E12FCAF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfKNQlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 11:41:14 -0500
-Received: from mga03.intel.com ([134.134.136.65]:28581 "EHLO mga03.intel.com"
+        id S1727121AbfKNQmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 11:42:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbfKNQlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:41:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:41:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="406378419"
-Received: from pkamlakx-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.10.73])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Nov 2019 08:41:10 -0800
-Date:   Thu, 14 Nov 2019 18:41:07 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, jmorris@namei.org
-Subject: Re: [GIT PULL] tpmdd updates for Linux v5.5
-Message-ID: <20191114164047.GA9528@linux.intel.com>
-References: <20191112195542.GA10619@linux.intel.com>
- <20191112195826.GA5584@ziepe.ca>
+        id S1726214AbfKNQmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 11:42:04 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD51920727;
+        Thu, 14 Nov 2019 16:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573749722;
+        bh=vtbCclPT+zYqUalm1ApV+FNGPcRf/b9M6eu8ZE4q16Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eSe0IvX2y9Wj/36cOsbQWZo2r/flZoR95ZUx9zbAQ72DT7NfJH7j3KTR29VnrqtoH
+         jnNw5uqT7e0Gds5meXc+jFJjbsMH0XhlTSeT7VxkLcBboqkO0SmGsrUM7gUfqQn5RQ
+         w/A9jtP+kVlgVy9Aigrw0Nm04tD72R3d5391n1hA=
+Received: by mail-qt1-f170.google.com with SMTP id r20so7412342qtp.13;
+        Thu, 14 Nov 2019 08:42:02 -0800 (PST)
+X-Gm-Message-State: APjAAAVEUW1bwnWbEbl3PzqcTQEuIkJZyW35KEdkZfhB0mIIxhEUlXQ/
+        TIqnVXM3JVwufYFat7hEdtYzIWvlrz3+33l7MQ==
+X-Google-Smtp-Source: APXvYqxjuNP7BfYPb5x+ylRHTKdxw88/n1phCYuux3ImKi057RYvcMQ05BWyQKmncaEprsWM0Zap0QYGz4BodN4GT7w=
+X-Received: by 2002:ac8:3094:: with SMTP id v20mr9302910qta.110.1573749721974;
+ Thu, 14 Nov 2019 08:42:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191112195826.GA5584@ziepe.ca>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191030173216.5993-1-krzk@kernel.org> <20191105194257.GA16066@bogus>
+ <20191114125923.GA3084@kozik-lap>
+In-Reply-To: <20191114125923.GA3084@kozik-lap>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 14 Nov 2019 10:41:50 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
+Message-ID: <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: power: Convert Generic Power Domain
+ bindings to json-schema
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 03:58:26PM -0400, Jason Gunthorpe wrote:
-> On Tue, Nov 12, 2019 at 09:55:42PM +0200, Jarkko Sakkinen wrote:
-> > 1. Support for Cr50 fTPM.
-> > 2. Support for fTPM on AMD Zen+ CPUs.
-> > 3. TPM 2.0 trusted keys code relocated from drivers/char/tpm to
-> >    security/keys.
-> 
-> Just to be clear, this is for the next merge window right?
+On Thu, Nov 14, 2019 at 6:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Tue, Nov 05, 2019 at 01:42:58PM -0600, Rob Herring wrote:
+> > On Wed, 30 Oct 2019 18:32:15 +0100, Krzysztof Kozlowski wrote:
+> > > Convert Generic Power Domain bindings to DT schema format using
+> > > json-schema.
+> > >
+> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > >
+> > > ---
+> > >
+> > > Changes since v2:
+> > > 1. Keep description of consumers in power-domain.txt,
+> > > 2. Rename power_domain.txt to power-domain.txt,
+> > > 3. Indent example with four spaces (more readable).
+> > >
+> > > Changes since v1:
+> > > 1. Select all nodes for consumers,
+> > > 2. Remove from consumers duplicated properties with dt-schema,
+> > > 3. Fix power domain pattern,
+> > > 4. Remove unneeded types.
+> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > ---
+> > >  .../devicetree/bindings/arm/arm,scmi.txt      |   2 +-
+> > >  .../devicetree/bindings/arm/arm,scpi.txt      |   2 +-
+> > >  .../bindings/arm/freescale/fsl,scu.txt        |   2 +-
+> > >  .../bindings/clock/renesas,cpg-mssr.txt       |   2 +-
+> > >  .../bindings/clock/ti/davinci/psc.txt         |   2 +-
+> > >  .../firmware/nvidia,tegra186-bpmp.txt         |   2 +-
+> > >  .../bindings/power/amlogic,meson-gx-pwrc.txt  |   2 +-
+> > >  .../devicetree/bindings/power/fsl,imx-gpc.txt |   2 +-
+> > >  .../bindings/power/fsl,imx-gpcv2.txt          |   2 +-
+> > >  .../{power_domain.txt => power-domain.txt}    |  95 +------------
+> > >  .../bindings/power/power-domain.yaml          | 133 ++++++++++++++++++
+> > >  .../bindings/power/renesas,sysc-rmobile.txt   |   2 +-
+> > >  .../bindings/power/xlnx,zynqmp-genpd.txt      |   2 +-
+> > >  .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |   2 +-
+> > >  .../bindings/soc/mediatek/scpsys.txt          |   2 +-
+> > >  .../bindings/soc/ti/sci-pm-domain.txt         |   2 +-
+> > >  MAINTAINERS                                   |   2 +-
+> > >  17 files changed, 149 insertions(+), 109 deletions(-)
+> > >  rename Documentation/devicetree/bindings/power/{power_domain.txt => power-domain.txt} (51%)
+> > >  create mode 100644 Documentation/devicetree/bindings/power/power-domain.yaml
+> > >
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> The patches should apply cleanly in top of your tree so maybe you can
+> pick them up?
 
-v5.5-rc1
+I didn't on this one because it touches a lot of files. Though on
+second thought, they are all across the tree, so I might as well apply
+them.
 
-/Jarkko
+Rob
