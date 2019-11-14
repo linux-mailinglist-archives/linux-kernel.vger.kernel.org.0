@@ -2,134 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B09DFCABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:29:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50678FCACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfKNQ3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 11:29:54 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39472 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfKNQ3y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:29:54 -0500
-Received: by mail-qk1-f193.google.com with SMTP id 15so5498664qkh.6;
-        Thu, 14 Nov 2019 08:29:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Etq+ZZLehuQdqs1e3s2Ev3L0ve5IMuF3F+oENs00DHk=;
-        b=efZeLNh8qrmA+sLeSOthCoIYWYgM+hh3MW3YpbgA+Ee0nkWXg9PznusvGodqjefIr+
-         Vq4aVJ96nuCe4wIpJZ9EkZYUoh4XQs/t3UQAzDmSFZVrQaoC+Tib1fauHQU6rXn6/EU4
-         mGc8+cEjHU5TaTGLW21fxoOSkWfwCcHepXw8oWmAp/6szm5FSHmRAjJqWavrHyCiQ+Nm
-         NhU6s+ertjFoxYdjSg+MMprtlREBfj9O9NUDMb6RJns4lsurr1/VEPpg5Pb/ldZ3dx02
-         pLe6KKqzKVkzr+1afmCdMP+qshc0K6sge7jJb6RwSl7uDXwafZyggfLbsrK0owUJhCDb
-         JVTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Etq+ZZLehuQdqs1e3s2Ev3L0ve5IMuF3F+oENs00DHk=;
-        b=XvuP7KvEnBDVRIOXJfDAPQrK6vQ75eiOtGXPiSx2u398FXXjBrjyfMXz2ZeCW0NO/d
-         73XRNyheORVto7JZMC8YvmQK1bAqJ3aHdoKYcgntZT0o32iwXaqHftUepgSiOLozlWP3
-         6gTG4SYxbCbvc/gzIZaeAQcV87gfSFpm7uNFE8IrSBJ1eoj0V4rCLTqXS8rO3n0Uvk7d
-         a8j6qMxciKMyOmTQu0BzwbdTL+5QREnbd6gMYUWx0MthpNKITtA47IgM45hjkRknn/0t
-         oiG15Rc5hupfTSqbGZJd//O3OSb/t3cGCOfxnnA1FsspiNmK2XKACoPD17fgIb/u0gaK
-         KTvA==
-X-Gm-Message-State: APjAAAUMtKaJ7e0Qv8UV2RM2+eaRAEh66Y660nE4WAK9ud2IyomFsqMk
-        UcSVHZo7f6l+ytfZapHgN+U=
-X-Google-Smtp-Source: APXvYqzViwFybatYL+Yoq+i7GWng93cFYBn8+ugVzmW2kzmWbEhzLjXQb1HoPxY4pvW8WQcThtLr0Q==
-X-Received: by 2002:a05:620a:12a3:: with SMTP id x3mr8157689qki.336.1573748992934;
-        Thu, 14 Nov 2019 08:29:52 -0800 (PST)
-Received: from localhost.localdomain ([2001:1284:f013:e3d4::1])
-        by smtp.gmail.com with ESMTPSA id k29sm3029590qtu.70.2019.11.14.08.29.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 08:29:52 -0800 (PST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id A35AEC4B42; Thu, 14 Nov 2019 13:29:49 -0300 (-03)
-Date:   Thu, 14 Nov 2019 13:29:49 -0300
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Aaron Conole <aconole@redhat.com>
-Cc:     netdev@vger.kernel.org, Pravin B Shelar <pshelar@ovn.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>, dev@openvswitch.org,
-        linux-kernel@vger.kernel.org, paulb@mellanox.com
-Subject: Re: [PATCH net 2/2] act_ct: support asymmetric conntrack
-Message-ID: <20191114162949.GB3419@localhost.localdomain>
-References: <20191108210714.12426-1-aconole@redhat.com>
- <20191108210714.12426-2-aconole@redhat.com>
+        id S1726912AbfKNQey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 11:34:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47390 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726796AbfKNQew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 11:34:52 -0500
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 632B320724;
+        Thu, 14 Nov 2019 16:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573749292;
+        bh=dNceW5/2JIbHCI0Ab/8muEpZcy/gU6c3yG9FqORKNOU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0rrnp7YLb6ZW4Wh2jc3TY9uHPIUVLMaVk8Z6uNAziRS0qjzG0DNjonzB/VudcnhtE
+         Jrif7/VoFnAiECjZiYWl89pH3a1eFwr3k+Oo9/Ej5ArHz3klfrQqQAiRT6kefSZMOZ
+         n/dTrdQ+PjObIrMhU5/d0AJBI8zZV014QOmUl7fQ=
+Received: by mail-qk1-f173.google.com with SMTP id m4so5493860qke.9;
+        Thu, 14 Nov 2019 08:34:52 -0800 (PST)
+X-Gm-Message-State: APjAAAUWBYGuaBFvWoRYiDCqO0SwAX/16mMYd7OOwDMCtwSchi3G4gJL
+        PhS/P4VnzE9bdn+gwf3mEeMth/vUfcoa2xot+Q==
+X-Google-Smtp-Source: APXvYqyTT89qPyhwQ8HbCne8V44sYkR4vJwSLLq3suXRCO5HAxlj6sw4/AVmK4gepiW4WN6VNuNgbAUjWTH0DnkbUlg=
+X-Received: by 2002:a37:4904:: with SMTP id w4mr7612533qka.119.1573749291482;
+ Thu, 14 Nov 2019 08:34:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108210714.12426-2-aconole@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191113210544.1894-1-robh@kernel.org> <30b73f89-1ba1-6052-53bd-414ebdfa142c@codeaurora.org>
+In-Reply-To: <30b73f89-1ba1-6052-53bd-414ebdfa142c@codeaurora.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 14 Nov 2019 10:34:39 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+WFvwBy4rpZkT=_KMYzzvrsLcaTMFSydY_euuFLAsZEQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+WFvwBy4rpZkT=_KMYzzvrsLcaTMFSydY_euuFLAsZEQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Improve validation build error handling
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 04:07:14PM -0500, Aaron Conole wrote:
-> The act_ct TC module shares a common conntrack and NAT infrastructure
-> exposed via netfilter.  It's possible that a packet needs both SNAT and
-> DNAT manipulation, due to e.g. tuple collision.  Netfilter can support
-> this because it runs through the NAT table twice - once on ingress and
-> again after egress.  The act_ct action doesn't have such capability.
-> 
-> Like netfilter hook infrastructure, we should run through NAT twice to
-> keep the symmetry.
-> 
-> Fixes: b57dc7c13ea9 ("net/sched: Introduce action ct")
-> 
-> Signed-off-by: Aaron Conole <aconole@redhat.com>
-> ---
->  net/sched/act_ct.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/sched/act_ct.c b/net/sched/act_ct.c
-> index fcc46025e790..f3232a00970f 100644
-> --- a/net/sched/act_ct.c
-> +++ b/net/sched/act_ct.c
-> @@ -329,6 +329,7 @@ static int tcf_ct_act_nat(struct sk_buff *skb,
->  			  bool commit)
->  {
->  #if IS_ENABLED(CONFIG_NF_NAT)
-> +	int err;
->  	enum nf_nat_manip_type maniptype;
->  
->  	if (!(ct_action & TCA_CT_ACT_NAT))
-> @@ -359,7 +360,17 @@ static int tcf_ct_act_nat(struct sk_buff *skb,
->  		return NF_ACCEPT;
->  	}
->  
-> -	return ct_nat_execute(skb, ct, ctinfo, range, maniptype);
-> +	err = ct_nat_execute(skb, ct, ctinfo, range, maniptype);
-> +	if (err == NF_ACCEPT &&
-> +	    ct->status & IPS_SRC_NAT && ct->status & IPS_DST_NAT) {
-> +		if (maniptype == NF_NAT_MANIP_SRC)
-> +			maniptype = NF_NAT_MANIP_DST;
-> +		else
-> +			maniptype = NF_NAT_MANIP_SRC;
-> +
-> +		err = ct_nat_execute(skb, ct, ctinfo, range, maniptype);
-> +	}
+On Thu, Nov 14, 2019 at 9:21 AM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
+>
+> On 11/13/2019 2:05 PM, Rob Herring wrote:
+> > Schema errors can cause make to exit before useful information is
+> > printed. This leaves developers wondering what's wrong. It can be
+> > overcome passing '-k' to make, but that's not an obvious solution.
+> > There's 2 scenarios where this happens.
+> >
+> > When using DT_SCHEMA_FILES to validate with a single schema, any error
+> > in the schema results in processed-schema.yaml being empty causing a
+> > make error. The result is the specific errors in the schema are never
+> > shown because processed-schema.yaml is the first target built. Simply
+> > making processed-schema.yaml last in extra-y ensures the full schema
+> > validation with detailed error messages happen first.
+> >
+> > The 2nd problem is while schema errors are ignored for
+> > processed-schema.yaml, full validation of the schema still runs in
+> > parallel and any schema validation errors will still stop the build when
+> > running validation of dts files. The fix is to not add the schema
+> > examples to extra-y in this case. This means 'dtbs_check' is no longer a
+> > superset of 'dt_binding_check'. Update the documentation to make this
+> > clear.
+> >
+> > Cc: Jeffrey Hugo <jhugo@codeaurora.org>
+> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+>
+> I injected a syntax error into a random binding file, and compared the
+> output with and without this patch.  This patch makes a massive
+> improvement in giving the user the necessary information to identify and
+> fix issues.  Thanks!
 
-I keep thinking about this and I'm not entirely convinced that this
-shouldn't be simpler. More like:
+BTW, update dtschema and you'll get better (or more at least) messages
+when 'is not valid under any of the given schemas' errors occur.
 
-if (DNAT)
-	DNAT
-if (SNAT)
-	SNAT
+> Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
 
-So it always does DNAT before SNAT, similarly to what iptables would
-do on PRE/POSTROUTING chains.
+Thanks.
 
-> +	return err;
->  #else
->  	return NF_ACCEPT;
->  #endif
-> -- 
-> 2.21.0
-> 
+Rob
