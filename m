@@ -2,78 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F6C5FC3C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A46FC3FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 11:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfKNKOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 05:14:52 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41073 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbfKNKOw (ORCPT
+        id S1726443AbfKNKXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 05:23:07 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:14419 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726106AbfKNKXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 05:14:52 -0500
-Received: by mail-lj1-f194.google.com with SMTP id m4so1086775ljj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 02:14:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yKV8dxOiEScgAwN6OBF9suS8/dIQha0dCo6DNyb9/qU=;
-        b=PHw+oaQq3zDjRrAo5s06Wrz4lwdvT0aeeoSPWvFtEgufB6y07Xhe8J2mxSDLScPdqg
-         PZ1p4LSGOOaFit6Nq46ecP8D6Gyn0H9s7xBKhI19pDLorflIFoICM1N6lyIumsepxKXY
-         1SU0VOR4wUmEO5bpbCoD5K6eP2p2soD84LY1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yKV8dxOiEScgAwN6OBF9suS8/dIQha0dCo6DNyb9/qU=;
-        b=Kf0f+BSuwarOANnPpukyFmAPv6QUe4kwS22VEXL/9UfTUt5Ms8jrE+hvOUAv71aX54
-         XjCNYoXr91JjcmuG/ZrFHF1M31YYdwJcHSZjgYridMqvwlVndEyt7vEtFFjmnauMRhMa
-         o20bYV5D/bH2jr7hUFuzw5ZsJG9lju5lLQCiroH3tC1vwYd/o5XFtOXsZkmdgSysYW1N
-         gutZpyxmGS5d+Y9LiICh4xlwWJQGHskZY0y36T7FMfVtxtpOi3v+M1bb6BO5sHnSNC/7
-         Vo5XjGJF3ntKc0Mo+ocpWmsdYgmf2Xfc1ertZc2btSrm0aCGGDD4QQO5V5mfOKUJB50G
-         pk4A==
-X-Gm-Message-State: APjAAAVHkShbTSvibrYN8bsPIUjzo6Ifofr4AVQO4Y/tje+CqNTgqbio
-        3ynCvIPJqiZsnSr20HZNxpPnLQ==
-X-Google-Smtp-Source: APXvYqydPgpnFrhr55Xe0j2BZelV6/8fVpMotZYa4SQhFvO/luzgFm0clsDDbvAzSpnBSbqHYzSz/Q==
-X-Received: by 2002:a2e:81c6:: with SMTP id s6mr6045371ljg.61.1573726490246;
-        Thu, 14 Nov 2019 02:14:50 -0800 (PST)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id j10sm2424676lfc.43.2019.11.14.02.14.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Nov 2019 02:14:49 -0800 (PST)
-Subject: Re: [PATCH] checkpatch: don't warn about new vsprintf pointer
- extension '%pe'
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Joe Perches <joe@perches.com>, Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel@pengutronix.de
-References: <20191114100416.23928-1-u.kleine-koenig@pengutronix.de>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <7416d67e-c43a-516a-94f8-cf5d864a01f8@rasmusvillemoes.dk>
-Date:   Thu, 14 Nov 2019 11:14:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191114100416.23928-1-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 14 Nov 2019 05:23:07 -0500
+X-Greylist: delayed 367 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Nov 2019 05:23:05 EST
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 14 Nov 2019 15:46:57 +0530
+IronPort-SDR: foD5M+vtRxPlfU+/YH0bO4B+mMISka1lGXlS7dInx1WC6+prid2eZha7lKE5upKQSqzpOXRUfV
+ ORDiuPj9TJJwXomNQ8EHX08WDGmqNMrbj3f4K3ruhjqTwzUvXGySbH0PDqP+15E7G9H/uhsZG0
+ z2kd6gUKKwzNrY77Hz1G2FrPqK9QzpWIiwl1+qXZ5viFlkkUtfTjVfQepUrl5CCvaYCydideTe
+ rozsWpSuY7Z+GLyAVu1+XgzQ2xrSl4EE51ljOfIeImub2jNo/ea2LtT+507mtsT+fLFCbMSwFt
+ hHYjVHTuEw4r5kUqY30oPIXq
+Received: from harigovi-linux.qualcomm.com ([10.204.66.147])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 14 Nov 2019 15:46:32 +0530
+Received: by harigovi-linux.qualcomm.com (Postfix, from userid 2332695)
+        id B690D26FF; Thu, 14 Nov 2019 15:46:31 +0530 (IST)
+From:   Harigovindan P <harigovi@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Harigovindan P <harigovi@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        abhinavk@codeaurora.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org, nganji@codeaurora.org
+Subject: [PATCH v1 0/2] Add suppport for rm69299 Visionox panel driver and add DSI config to support DSI version
+Date:   Thu, 14 Nov 2019 15:46:26 +0530
+Message-Id: <1573726588-18897-1-git-send-email-harigovi@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/11/2019 11.04, Uwe Kleine-König wrote:
-> This extension was introduced in commit 57f5677e535b ("printf: add
-> support for printing symbolic error names").
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Current patchset adds support for rm69299 visionox panel driver used in MSM reference platforms 
+and also adds DSI config that supports the respective DSI version.
 
-Ack, of course. Petr, I think it makes most sense if this goes via your
-tree unless there are other checkpatch patches touching the same place
-(which I doubt, as I think we'd know about other new extensions).
+The visionox panel driver supports a resolution of 1080x2248 with 4 lanes and supports only single DSI mode.
 
-Rasmus
+Current patchset is tested on actual panel.
+
+Harigovindan P (2):
+  drm/panel: add support for rm69299 visionox panel driver
+  drm/msm: add DSI config changes to support DSI version
+
+ drivers/gpu/drm/msm/dsi/dsi_cfg.c              |  21 ++
+ drivers/gpu/drm/msm/dsi/dsi_cfg.h              |   1 +
+ drivers/gpu/drm/panel/Kconfig                  |   9 +
+ drivers/gpu/drm/panel/Makefile                 |   1 +
+ drivers/gpu/drm/panel/panel-visionox-rm69299.c | 478 +++++++++++++++++++++++++
+ 5 files changed, 510 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-visionox-rm69299.c
+
+-- 
+2.7.4
+
