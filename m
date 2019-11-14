@@ -2,98 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 139B6FC845
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 15:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D369FC84D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 15:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfKNOAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 09:00:44 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:43374 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726374AbfKNOAo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 09:00:44 -0500
-Received: by mail-vk1-f196.google.com with SMTP id k19so1475666vke.10
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 06:00:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kJUZgKfy2YSWGNuA2+MgdU+Nr8ygHAVvjPLQAD+YtDs=;
-        b=Um9OcmrFedBxkdzVXkY2EtsXLNyskuS4YLklz4fMGWFnU+aiTFGvjT8HDml+M1ErlU
-         fsS2HvnmMPNZaNx6nyozf0V53f0VFp6xcqjCO4j/SyTSgEV9iAZTihxeQ7PGyd40EuHI
-         OGz9A8awTDEhr1M6aH8bcBqUsMGiHgm5h+0V1RUhWC11o6vNM9h2zQrntTdVYVL1M3Bi
-         hGaYX+MdnaFWX2GO5NxAwLqTuwWz0rIophmlgo4k9FYQyL4ySZg8VtdTMLPk4AS4wTA6
-         3AnLRIeEb6T64QF23YubjnKP0+NtmPoxHR7Du0y3xfiCBv8QQcETgLbxDir5/+in1E5+
-         f+UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kJUZgKfy2YSWGNuA2+MgdU+Nr8ygHAVvjPLQAD+YtDs=;
-        b=i4UwaaP57iM6mwHXG0JsMgObkcU96ieuRBpDbJnTqkxxbEK4xqzS6vkRA3+MvMnvow
-         tRv2Noo2eTUGkwMqBg7zs+L6Ds+dk+vVBiGPtHyOLBO3UY01tmdb2rITUP44XRIMMwDJ
-         BtLD4k+G9CC1Xv83LFqrpSbCyXEAb0Aq8bf6TApeHR9MAvbEgEbmtSPhJj4w0m+kMdUm
-         c66nIW7ITvywDoyKsTh84/+iGe0oI6gP1zuHP+cY+fWT4TpgZb4NYLgOWuVyvCxbyawB
-         VZG9tq7aOrM+NGtKbHquTrI2NkMV/CNgTwyC04KxDht9O/IbXe7zTzGZPW6O/CYQNChU
-         qkvQ==
-X-Gm-Message-State: APjAAAX+WhKYbuMLMtEe3+0u+LH5l+laTQjSW6X8NEyDZFieeTjSy1Mc
-        3oKDAA0Feq2k4J6jNDPV4jLVIN3oLx9T8KSq3jbMwA==
-X-Google-Smtp-Source: APXvYqxglOLg8xzv1EZ/UOAGOFLRVXU+F1KB1IDk6i8iCyI7W7PmXp6Hxwdfvs1NSaryF11w4xB1Cg/GYOTyEXWRt/c=
-X-Received: by 2002:a1f:fe0a:: with SMTP id l10mr5151920vki.59.1573740043247;
- Thu, 14 Nov 2019 06:00:43 -0800 (PST)
+        id S1727141AbfKNOBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 09:01:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40074 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726374AbfKNOBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 09:01:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 06CC0ABCE;
+        Thu, 14 Nov 2019 14:01:16 +0000 (UTC)
+Date:   Thu, 14 Nov 2019 15:01:16 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] checkpatch: don't warn about new vsprintf pointer
+ extension '%pe'
+Message-ID: <20191114140116.ycfbrl7arzoa4e76@pathway.suse.cz>
+References: <20191114100416.23928-1-u.kleine-koenig@pengutronix.de>
+ <20191114102440.msyuahilbagaz7aw@pathway.suse.cz>
+ <20191114103350.z3fe4vzgepsb52y6@pengutronix.de>
 MIME-Version: 1.0
-References: <1573736352-3597-1-git-send-email-eugen.hristev@microchip.com>
-In-Reply-To: <1573736352-3597-1-git-send-email-eugen.hristev@microchip.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 14 Nov 2019 15:00:07 +0100
-Message-ID: <CAPDyKFrrzNXxYywPW8cAZN86jBPoOFWt295o9ANm+0BrF4dehg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-of-at91: fix quirk2 overwrite
-To:     Eugen.Hristev@microchip.com
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191114103350.z3fe4vzgepsb52y6@pengutronix.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Nov 2019 at 13:59, <Eugen.Hristev@microchip.com> wrote:
->
-> From: Eugen Hristev <eugen.hristev@microchip.com>
->
-> The quirks2 are parsed and set (e.g. from DT) before the quirk for broken
-> HS200 is set in the driver.
-> The driver needs to enable just this flag, not rewrite the whole quirk set.
->
-> Fixes: 7871aa60ae00 ("mmc: sdhci-of-at91: add quirk for broken HS200")
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+On Thu 2019-11-14 11:33:50, Uwe Kleine-König wrote:
+> On Thu, Nov 14, 2019 at 11:24:40AM +0100, Petr Mladek wrote:
+> > On Thu 2019-11-14 11:04:16, Uwe Kleine-König wrote:
+> > > This extension was introduced in commit 57f5677e535b ("printf: add
+> > > support for printing symbolic error names").
+> > 
+> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > > index 6fcc66afb088..31cd9b767c1e 100755
+> > > --- a/scripts/checkpatch.pl
+> > > +++ b/scripts/checkpatch.pl
+> > > @@ -6022,7 +6022,7 @@ sub process {
+> > >  				while ($fmt =~ /(\%[\*\d\.]*p(\w))/g) {
+> > >  					$specifier = $1;
+> > >  					$extension = $2;
+> > > -					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxt]/) {
+> > > +					if ($extension !~ /[SsBKRraeEhMmIiUDdgVCbGNOxt]/) {
+> > 
+> > I am going to push it into printk.git. I will just change the ordering
+> > "eE" -> "Ee". So that it follows the existing convention.
+> 
+> Fine for me. Thanks
 
-Applied for fixes, adding a stable tag, thanks!
+The patch is committed in printk.git, branch for-5.5.
 
-Kind regards
-Uffe
-
-> ---
->
->  drivers/mmc/host/sdhci-of-at91.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
-> index 496844a..5fe6684 100644
-> --- a/drivers/mmc/host/sdhci-of-at91.c
-> +++ b/drivers/mmc/host/sdhci-of-at91.c
-> @@ -389,7 +389,7 @@ static int sdhci_at91_probe(struct platform_device *pdev)
->         pm_runtime_use_autosuspend(&pdev->dev);
->
->         /* HS200 is broken at this moment */
-> -       host->quirks2 = SDHCI_QUIRK2_BROKEN_HS200;
-> +       host->quirks2 |= SDHCI_QUIRK2_BROKEN_HS200;
->
->         ret = sdhci_add_host(host);
->         if (ret)
-> --
-> 2.7.4
->
+Best Regards,
+Petr
