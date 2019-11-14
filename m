@@ -2,111 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5548FFC639
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 13:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F80CFC645
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 13:26:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfKNMVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 07:21:34 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:22491 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726106AbfKNMVe (ORCPT
+        id S1726410AbfKNM0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 07:26:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37265 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726057AbfKNM0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 07:21:34 -0500
+        Thu, 14 Nov 2019 07:26:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573734092;
+        s=mimecast20190719; t=1573734358;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PZX7pGUHhWmTDW+4G9DVRk0+x/DIsEoLM1+7MqBPpmg=;
-        b=B7dmBbpau4dVYxMwSicg9fysX+OqldBVSz3zzZFa+fmVbvLnDBGVLoEDIYcPwIkBp/y5Qe
-        dlkowGO82urZzHglN4KD/AjlJqbnEGNRRNdG5qDzr762QaP3tG7Xj4DO7tXM6mRVvguOAA
-        Q2zIbZPF0oSVmmEv4N3grv2O0G/Uy8I=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=a5nk+UsxrkOpZ6P16BSWtrv/YMbcrYuVPUbQaS97uJU=;
+        b=cFH04lTmve2+qk82LR4dJ4WO6/ytqlzrcOdCgmztJnUSxOqzbMSbK0ndDEzGj8bcxwE+Rp
+        b2U6oo36bPvbM7OWtUg2k0HyrdqBdYtTEcrtVMZDYnNJvdnbhvQNY4GSliy8TPEeQZggFD
+        nRV8z59nGasitJMDUt12kcRpxGx0pFo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-62-fGPYAQngOrqdrOVl2fN1jg-1; Thu, 14 Nov 2019 07:21:29 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-275-FGic_7jdPwu8_FGYn3rBrg-1; Thu, 14 Nov 2019 07:25:55 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 48110800C77;
-        Thu, 14 Nov 2019 12:21:27 +0000 (UTC)
-Received: from [10.36.117.13] (ovpn-117-13.ams2.redhat.com [10.36.117.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BE5E55ED4B;
-        Thu, 14 Nov 2019 12:21:23 +0000 (UTC)
-Subject: Re: [PATCH v1 01/12] powerpc/pseries: CMM: Implement release()
- function for sysfs device
-To:     Michael Ellerman <patch-notifications@ellerman.id.au>,
-        linux-kernel@vger.kernel.org
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 52DE110CE7B2;
+        Thu, 14 Nov 2019 12:25:54 +0000 (UTC)
+Received: from thinkpad.redhat.com (ovpn-117-236.ams2.redhat.com [10.36.117.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C1AB661356;
+        Thu, 14 Nov 2019 12:25:49 +0000 (UTC)
+From:   Laurent Vivier <lvivier@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     virtualization@lists.linux-foundation.org,
+        "Michael S . Tsirkin" <mst@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mm@kvack.org, Paul Mackerras <paulus@samba.org>,
-        Allison Randal <allison@lohutok.net>,
-        Arun KS <arunks@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>
-References: <47DFy90198z9sSZ@ozlabs.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <8e2dc539-e4fc-6eae-568c-21a8e809c0fc@redhat.com>
-Date:   Thu, 14 Nov 2019 13:21:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Amit Shah <amit@kernel.org>,
+        Laurent Vivier <lvivier@redhat.com>
+Subject: [PATCH v3] virtio_console: allocate inbufs in add_port() only if it is needed
+Date:   Thu, 14 Nov 2019 13:25:48 +0100
+Message-Id: <20191114122548.24364-1-lvivier@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <47DFy90198z9sSZ@ozlabs.org>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: fGPYAQngOrqdrOVl2fN1jg-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: FGic_7jdPwu8_FGYn3rBrg-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.11.19 10:08, Michael Ellerman wrote:
-> On Thu, 2019-10-31 at 14:29:22 UTC, David Hildenbrand wrote:
->> When unloading the module, one gets
->> [  548.188594] ------------[ cut here ]------------
->> [  548.188596] Device 'cmm0' does not have a release() function, it is b=
-rok=3D
->> en and must be fixed. See Documentation/kobject.txt.
->> [  548.188622] WARNING: CPU: 0 PID: 19308 at drivers/base/core.c:1244 .d=
-evi=3D
->> ce_release+0xcc/0xf0
->> ...
->>
->> We only have on static fake device. There is nothing to do when
->> releasing the device (via cmm_exit).
->>
->> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> Cc: Paul Mackerras <paulus@samba.org>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->> Cc: Allison Randal <allison@lohutok.net>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Arun KS <arunks@codeaurora.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->=20
-> Patches 1-10 applied to powerpc next, thanks.
->=20
-> https://git.kernel.org/powerpc/c/7d8212747435c534c8d564fbef4541a463c976ff
->=20
-> cheers
->=20
+When we hot unplug a virtserialport and then try to hot plug again,
+it fails:
 
-Thanks! I'll probably resend patch 11/12 to give it more attention and=20
-to fixup one comment leftover in patch 11. I guess if we get ACKs these=20
-two patch should also go via your tree to avoid collisions.
+(qemu) chardev-add socket,id=3Dserial0,path=3D/tmp/serial0,server,nowait
+(qemu) device_add virtserialport,bus=3Dvirtio-serial0.0,nr=3D2,\
+                  chardev=3Dserial0,id=3Dserial0,name=3Dserial0
+(qemu) device_del serial0
+(qemu) device_add virtserialport,bus=3Dvirtio-serial0.0,nr=3D2,\
+                  chardev=3Dserial0,id=3Dserial0,name=3Dserial0
+kernel error:
+  virtio-ports vport2p2: Error allocating inbufs
+qemu error:
+  virtio-serial-bus: Guest failure in adding port 2 for device \
+                     virtio-serial0.0
 
+This happens because buffers for the in_vq are allocated when the port is
+added but are not released when the port is unplugged.
+
+They are only released when virtconsole is removed (see a7a69ec0d8e4)
+
+To avoid the problem and to be symmetric, we could allocate all the buffers
+in init_vqs() as they are released in remove_vqs(), but it sounds like
+a waste of memory.
+
+Rather than that, this patch changes add_port() logic to ignore ENOSPC
+error in fill_queue(), which means queue has already been filled.
+
+Fixes: a7a69ec0d8e4 ("virtio_console: free buffers after reset")
+Cc: mst@redhat.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+---
+
+Notes:
+    v3: add a comment about ENOSPC error
+    v2: making fill_queue return int and testing return code for -ENOSPC
+
+ drivers/char/virtio_console.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 7270e7b69262..3259426f01dc 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1325,24 +1325,24 @@ static void set_console_size(struct port *port, u16=
+ rows, u16 cols)
+ =09port->cons.ws.ws_col =3D cols;
+ }
+=20
+-static unsigned int fill_queue(struct virtqueue *vq, spinlock_t *lock)
++static int fill_queue(struct virtqueue *vq, spinlock_t *lock)
+ {
+ =09struct port_buffer *buf;
+-=09unsigned int nr_added_bufs;
++=09int nr_added_bufs;
+ =09int ret;
+=20
+ =09nr_added_bufs =3D 0;
+ =09do {
+ =09=09buf =3D alloc_buf(vq->vdev, PAGE_SIZE, 0);
+ =09=09if (!buf)
+-=09=09=09break;
++=09=09=09return -ENOMEM;
+=20
+ =09=09spin_lock_irq(lock);
+ =09=09ret =3D add_inbuf(vq, buf);
+ =09=09if (ret < 0) {
+ =09=09=09spin_unlock_irq(lock);
+ =09=09=09free_buf(buf, true);
+-=09=09=09break;
++=09=09=09return ret;
+ =09=09}
+ =09=09nr_added_bufs++;
+ =09=09spin_unlock_irq(lock);
+@@ -1362,7 +1362,6 @@ static int add_port(struct ports_device *portdev, u32=
+ id)
+ =09char debugfs_name[16];
+ =09struct port *port;
+ =09dev_t devt;
+-=09unsigned int nr_added_bufs;
+ =09int err;
+=20
+ =09port =3D kmalloc(sizeof(*port), GFP_KERNEL);
+@@ -1421,11 +1420,13 @@ static int add_port(struct ports_device *portdev, u=
+32 id)
+ =09spin_lock_init(&port->outvq_lock);
+ =09init_waitqueue_head(&port->waitqueue);
+=20
+-=09/* Fill the in_vq with buffers so the host can send us data. */
+-=09nr_added_bufs =3D fill_queue(port->in_vq, &port->inbuf_lock);
+-=09if (!nr_added_bufs) {
++=09/* We can safely ignore ENOSPC because it means
++=09 * the queue already has buffers. Buffers are removed
++=09 * only by virtcons_remove(), not by unplug_port()
++=09 */
++=09err =3D fill_queue(port->in_vq, &port->inbuf_lock);
++=09if (err < 0 && err !=3D -ENOSPC) {
+ =09=09dev_err(port->dev, "Error allocating inbufs\n");
+-=09=09err =3D -ENOMEM;
+ =09=09goto free_device;
+ =09}
+=20
+@@ -2059,14 +2060,11 @@ static int virtcons_probe(struct virtio_device *vde=
+v)
+ =09INIT_WORK(&portdev->control_work, &control_work_handler);
+=20
+ =09if (multiport) {
+-=09=09unsigned int nr_added_bufs;
+-
+ =09=09spin_lock_init(&portdev->c_ivq_lock);
+ =09=09spin_lock_init(&portdev->c_ovq_lock);
+=20
+-=09=09nr_added_bufs =3D fill_queue(portdev->c_ivq,
+-=09=09=09=09=09   &portdev->c_ivq_lock);
+-=09=09if (!nr_added_bufs) {
++=09=09err =3D fill_queue(portdev->c_ivq, &portdev->c_ivq_lock);
++=09=09if (err < 0) {
+ =09=09=09dev_err(&vdev->dev,
+ =09=09=09=09"Error allocating buffers for control queue\n");
+ =09=09=09/*
+@@ -2077,7 +2075,7 @@ static int virtcons_probe(struct virtio_device *vdev)
+ =09=09=09=09=09   VIRTIO_CONSOLE_DEVICE_READY, 0);
+ =09=09=09/* Device was functional: we need full cleanup. */
+ =09=09=09virtcons_remove(vdev);
+-=09=09=09return -ENOMEM;
++=09=09=09return err;
+ =09=09}
+ =09} else {
+ =09=09/*
 --=20
-
-Thanks,
-
-David / dhildenb
+2.23.0
 
