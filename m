@@ -2,109 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1598FCC13
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:46:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B07E7FCC19
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:46:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfKNRqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 12:46:00 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33888 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726443AbfKNRp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 12:45:59 -0500
-Received: from zn.tnic (p200300EC2F15E200329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f15:e200:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B6D681EC0D02;
-        Thu, 14 Nov 2019 18:45:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1573753558;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=dMxWFL2TbjZLb7rXJaLl+G5u+L/Mktmd+xyqmeN1QDI=;
-        b=hh3nrgumBd6Zps1jzwBAbHYn6oSLPikrA+QGDX/EM5j+YJKseYBCXFXkphjB0oh+087X7j
-        A1oaBDrVRH8BYWBLS47stClt8Ig9XrUM9Om1oeusvj/nS734PwbI+dQY3P+j0//HW0znxa
-        alyVLQII55cp9kinyuAiNMPBNOrVB2A=
-Date:   Thu, 14 Nov 2019 18:45:53 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH] x86/speculation: Fix incorrect MDS/TAA mitigation status
-Message-ID: <20191114174553.GC7222@zn.tnic>
-References: <20191113193350.24511-1-longman@redhat.com>
+        id S1727031AbfKNRqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 12:46:53 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:25658 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfKNRqx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 12:46:53 -0500
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xAEHkiSr031689;
+        Fri, 15 Nov 2019 02:46:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xAEHkiSr031689
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573753605;
+        bh=RnTRkKRmwGrZIBYmr069B+wqrpCe/TPtwzUT5A13c6o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mOd1jL63I1IWjvuwOJTk5mJ98bAC/VCGnSMZ9vQeKZbVGLs8m+DklEYoo7OXvW/0T
+         gMkYeVfEw+aywiRTrgnWG9+ZW37Ic3dNrrDv+15fYWfejjeTeaHCpCdF1xc/sTUQGm
+         Ak9F7vhf4dzIt/yEJCWt8RUWffKMJeyXPaVuymCQGYPuj6JJpNty59yk2GDhOB2TOv
+         LPTZ1mFXXEB32wTB18b9KgP/C1C35ljt3AbhHpn3J6ODxTkwojCsk1uzEz6jSjxyOO
+         cMYAq3PQF2duKLgVwlAdjoZVwQ8iBGNYGJgRI6yllbZ4DxatmdK2C4PntvuMRUgq+e
+         x7Fff6887qXPQ==
+X-Nifty-SrcIP: [209.85.221.170]
+Received: by mail-vk1-f170.google.com with SMTP id k24so1686098vko.7;
+        Thu, 14 Nov 2019 09:46:45 -0800 (PST)
+X-Gm-Message-State: APjAAAW2bEOnal2h2hF4vltCXy5GvupaacE/C/GAB7hH7IiMGP0wEVc6
+        0yctYfzz4FxxMvAfbj3M8H6UgzfDd5JKViaf6fI=
+X-Google-Smtp-Source: APXvYqxCgx2Cksxrrex4Puc8fMIMYoKNsrErgHs9rWSi3zoIQdoaUCWi/iM6SBNnJoOGhnNsL9yX+m4vTWvedDQgaM4=
+X-Received: by 2002:a1f:7387:: with SMTP id o129mr5885230vkc.73.1573753604038;
+ Thu, 14 Nov 2019 09:46:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191113193350.24511-1-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191114174226.7201-1-yamada.masahiro@socionext.com> <20191114174226.7201-2-yamada.masahiro@socionext.com>
+In-Reply-To: <20191114174226.7201-2-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 15 Nov 2019 02:46:08 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATGjv7_bmhGGpOupFpRRvvaGetvaTszE09MBKz3Ob06fQ@mail.gmail.com>
+Message-ID: <CAK7LNATGjv7_bmhGGpOupFpRRvvaGetvaTszE09MBKz3Ob06fQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] modpost: refactor namespace_from_kstrtabns() to not
+ hard-code section name
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthias Maennich <maennich@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 02:33:50PM -0500, Waiman Long wrote:
-> For MDS vulnerable processors with TSX support, enabling either MDS
-> or TAA mitigations will enable the use of VERW to flush internal
-> processor buffers at the right code path. IOW, they are either both
-> mitigated or both not mitigated. However, if the command line options
-> are inconsistent, the vulnerabilites sysfs files may not report the
-> mitigation status correctly.
-> 
-> For example, with only the "mds=off" option:
-> 
->   vulnerabilities/mds:Vulnerable; SMT vulnerable
->   vulnerabilities/tsx_async_abort:Mitigation: Clear CPU buffers; SMT vulnerable
-> 
-> The mds vulnerabilities file has wrong status in this case.
-> 
-> Change taa_select_mitigation() to sync up the two mitigation status
-> and have them turned off if both "mds=off" and "tsx_async_abort=off"
-> are present.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+(+CC: Matthias, who might be interested)
+
+
+On Fri, Nov 15, 2019 at 2:42 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Currently, namespace_from_kstrtabns() relies on the fact that
+> namespace strings are recorded in the __ksymtab_strings section.
+> Actually, it is coded in include/linux/export.h, but modpost does
+> not need to hard-code the section name.
+>
+> Elf_Sym::st_shndx holds the section number of the relevant section.
+> Using it is a more portable way to find the namespace string.
+>
+> sym_get_value() takes care of it, so namespace_from_kstrtabns() can
+> simply wrap it. Delete the unneeded info->ksymtab_strings .
+>
+> While I was here, I added more 'const' qualifiers to pointers.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  arch/x86/kernel/cpu/bugs.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index 4c7b0fa15a19..418d41c1fd0d 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -304,8 +304,12 @@ static void __init taa_select_mitigation(void)
->  		return;
->  	}
->  
-> -	/* TAA mitigation is turned off on the cmdline (tsx_async_abort=off) */
-> -	if (taa_mitigation == TAA_MITIGATION_OFF)
-> +	/*
-> +	 * TAA mitigation via VERW is turned off if both
-> +	 * tsx_async_abort=off and mds=off are specified.
-> +	 */
+>
+>  scripts/mod/modpost.c | 10 +++-------
+>  scripts/mod/modpost.h |  1 -
+>  2 files changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index cd885573daaf..d9418c58a8c0 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -356,10 +356,10 @@ static enum export export_from_sec(struct elf_info *elf, unsigned int sec)
+>                 return export_unknown;
+>  }
+>
+> -static const char *namespace_from_kstrtabns(struct elf_info *info,
+> -                                           Elf_Sym *kstrtabns)
+> +static const char *namespace_from_kstrtabns(const struct elf_info *info,
+> +                                           const Elf_Sym *sym)
+>  {
+> -       char *value = info->ksymtab_strings + kstrtabns->st_value;
+> +       const char *value = sym_get_data(info, sym);
+>         return value[0] ? value : NULL;
+>  }
+>
+> @@ -601,10 +601,6 @@ static int parse_elf(struct elf_info *info, const char *filename)
+>                         info->export_unused_gpl_sec = i;
+>                 else if (strcmp(secname, "__ksymtab_gpl_future") == 0)
+>                         info->export_gpl_future_sec = i;
+> -               else if (strcmp(secname, "__ksymtab_strings") == 0)
+> -                       info->ksymtab_strings = (void *)hdr +
+> -                                               sechdrs[i].sh_offset -
+> -                                               sechdrs[i].sh_addr;
+>
+>                 if (sechdrs[i].sh_type == SHT_SYMTAB) {
+>                         unsigned int sh_link_idx;
+> diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
+> index fe6652535e4b..64a82d2d85f6 100644
+> --- a/scripts/mod/modpost.h
+> +++ b/scripts/mod/modpost.h
+> @@ -143,7 +143,6 @@ struct elf_info {
+>         Elf_Section  export_gpl_sec;
+>         Elf_Section  export_unused_gpl_sec;
+>         Elf_Section  export_gpl_future_sec;
+> -       char         *ksymtab_strings;
+>         char         *strtab;
+>         char         *modinfo;
+>         unsigned int modinfo_len;
+> --
+> 2.17.1
+>
 
-So this changes the dependency of switches so if anything, it should be
-properly documented first in all three:
-
-Documentation/admin-guide/hw-vuln/tsx_async_abort.rst
-Documentation/x86/tsx_async_abort.rst
-Documentation/admin-guide/kernel-parameters.txt
-
-However, before we do that, we need to agree on functionality:
-
-Will the mitigations be disabled only with *both* =off supplied on the
-command line or should the mitigations be disabled when *any* of the two
-=off is supplied?
-
-Thx.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Best Regards
+Masahiro Yamada
