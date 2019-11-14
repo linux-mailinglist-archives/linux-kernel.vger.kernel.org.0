@@ -2,99 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1573FCCF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48ED5FCD09
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfKNSRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:17:17 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37210 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfKNSRP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:17:15 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t1so7610569wrv.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 10:17:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EoUpilweQjHgtXk5HCyiVUUZulfkmQsEgCa5inFkUPc=;
-        b=g6k1NDFAmLpSetMfOjhmZXPxuvchvPIgccZyzCAGLxTznMScmQMHI4nGDaCDxrO0Wg
-         4aUzCj+8EXOZrSSVf4VQPVSTZ9OSWMg6OBPFTmDLf5iwQLXYyVH35p8u8DYdbL7n/J/X
-         MM32/C5SwGBPvk5OfqJU47bOF5dGXwUBomcgIvt7h3aUFHR17rPMYiPoCvcm6vyfxzTo
-         pft2cQQdkED5fuzJDGhM/gjd3+lavfYio1Zc0jlmYKl6Spdxn0FFCvdX8Y2jgq0Z+fs+
-         zBzYVcZort8+wOasrfxTFHagUTnnppMpVR4nAZcZNXiarqg/KkaaWzan/lXS2mHTzxKK
-         nsCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EoUpilweQjHgtXk5HCyiVUUZulfkmQsEgCa5inFkUPc=;
-        b=gMMcEeh2IaFmlf8kqWum3YiK4DHQUj4iJh5csOy0T5SKYW31OJt+kQJ88clgM1Obu1
-         l2FXt+tZff+aGpV/8ivnGJIpb8+zMlEKrCJUJwpRBb02E7akqfxJAVSEMEkEoUD0VLfI
-         d5oW/lFocKi5GuPv3LmAza+Vgy6Mu+5WdcuPt+Vc41motyax5yqqcFdVeQsVcsgm8kGA
-         Si8rolWvjA3WqLSFV1VFW1QsXEHT5KjltQ32fY406+lJMdvVX6DdGOdZskoIithUJhGe
-         J27AnKevh1BHm/KEFHWOIaKZjNcvHHC6+ydwrXwn91J8yFRHpqqJeQ2Scd+FZNZmrGx1
-         hszA==
-X-Gm-Message-State: APjAAAWCn0yMSveFcIySQlHQVQxTovhvx5Kag18NHtbhpW4yF95hGZSa
-        5oDr6J0++v47ssmNHcYv/ZjVWs+WF9rGHhs0G/08xQ==
-X-Google-Smtp-Source: APXvYqzICnXzXYbCXP+hgq76DeS4is37c5xkVLtYubnoj9SiNC0fuwyMbwcWvqCbZcFPI1skMD3nuOBOxmBBQXtXbZM=
-X-Received: by 2002:adf:fe0c:: with SMTP id n12mr9461275wrr.174.1573755433567;
- Thu, 14 Nov 2019 10:17:13 -0800 (PST)
+        id S1727510AbfKNSSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:18:12 -0500
+Received: from mga03.intel.com ([134.134.136.65]:36355 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727497AbfKNSSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:18:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:18:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
+   d="scan'208";a="195123622"
+Received: from chiahuil-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.228.77])
+  by orsmga007.jf.intel.com with ESMTP; 14 Nov 2019 10:18:07 -0800
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: [PATCH v3 22/22] soundwire: intel: pm_runtime idle scheduling
+Date:   Thu, 14 Nov 2019 12:17:02 -0600
+Message-Id: <20191114181702.22254-23-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191114181702.22254-1-pierre-louis.bossart@linux.intel.com>
+References: <20191114181702.22254-1-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-References: <20191114003042.85252-1-irogers@google.com> <20191114104525.GU4131@hirez.programming.kicks-ass.net>
-In-Reply-To: <20191114104525.GU4131@hirez.programming.kicks-ass.net>
-From:   Ian Rogers <irogers@google.com>
-Date:   Thu, 14 Nov 2019 10:17:01 -0800
-Message-ID: <CAP-5=fU9b-qTH=whjfpkPjnUJQQTmtjZ3GFT5zYEnJ69gGO4+Q@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] Optimize cgroup context switch
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Qian Cai <cai@lca.pw>, Joe Lawrence <joe.lawrence@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Gary Hook <Gary.Hook@amd.com>, Arnd Bergmann <arnd@arndb.de>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 2:45 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, Nov 13, 2019 at 04:30:32PM -0800, Ian Rogers wrote:
-> > Avoid iterating over all per-CPU events during cgroup changing context
-> > switches by organizing events by cgroup.
->
-> When last we spoke (Plumbers in Lisbon) you mentioned that this
-> optimization was yielding far less than expected. You had graphs showing
-> how the use of cgroups impacted event scheduling time and how this patch
-> set only reduced that a little.
->
-> Any update on all that? There seems to be a conspicuous lack of such
-> data here.
+Add quirk and pm_runtime idle scheduling to let the Master suspend if
+no Slaves become attached. This can happen when a link is not marked
+as disabled and has devices exposed in the DSDT, if the power is
+controlled by sideband means or the link includes a pluggable
+connector.
 
-I'm working on giving an update on the numbers but I suspect they are
-better than I'd measured ahead of LPC due to a bug in a script.
+Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ drivers/soundwire/intel.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-Thanks,
-Ian
+diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+index b114e9a72fdc..f0077f58c4bf 100644
+--- a/drivers/soundwire/intel.c
++++ b/drivers/soundwire/intel.c
+@@ -29,8 +29,9 @@
+  * flags reused in each byte, with master0 using the ls-byte, etc.
+  */
+ 
+-#define SDW_INTEL_MASTER_DISABLE_PM_RUNTIME BIT(0)
+-#define SDW_INTEL_MASTER_DISABLE_CLOCK_STOP BIT(1)
++#define SDW_INTEL_MASTER_DISABLE_PM_RUNTIME		BIT(0)
++#define SDW_INTEL_MASTER_DISABLE_CLOCK_STOP		BIT(1)
++#define SDW_INTEL_MASTER_DISABLE_PM_RUNTIME_IDLE	BIT(2)
+ 
+ static int md_flags;
+ module_param_named(sdw_md_flags, md_flags, int, 0444);
+@@ -1329,6 +1330,22 @@ static int intel_master_startup(struct sdw_master_device *md)
+ 		pm_runtime_enable(&md->dev);
+ 	}
+ 
++	/*
++	 * Slave devices have an pm_runtime of 'Unsupported' until
++	 * they report as ATTACHED. If they don't, e.g. because there
++	 * are no Slave devices populated or if the power-on is
++	 * delayed or dependent on a power switch, the Master will
++	 * remain active and prevent its parent from suspending.
++	 *
++	 * Conditionally force the pm_runtime core to re-evaluate the
++	 * Master status in the absence of any Slave activity. A quirk
++	 * is provided to e.g. deal with Slaves that may be powered on
++	 * with a delay. A more complete solution would require the
++	 * definition of Master properties.
++	 */
++	if (!(link_flags & SDW_INTEL_MASTER_DISABLE_PM_RUNTIME_IDLE))
++		pm_runtime_idle(&md->dev);
++
+ 	return 0;
+ 
+ err_interrupt:
+@@ -1443,6 +1460,7 @@ static int intel_resume(struct device *dev)
+ 	struct sdw_master_device *md = to_sdw_master_device(dev);
+ 	struct sdw_cdns *cdns = dev_get_drvdata(dev);
+ 	struct sdw_intel *sdw = cdns_to_intel(cdns);
++	int link_flags;
+ 	int ret;
+ 
+ 	if (cdns->bus.prop.hw_disabled) {
+@@ -1463,6 +1481,10 @@ static int intel_resume(struct device *dev)
+ 		pm_runtime_enable(dev);
+ 
+ 		md->pm_runtime_suspended = false;
++
++		link_flags = md_flags >> (sdw->cdns.bus.link_id * 8);
++		if (!(link_flags & SDW_INTEL_MASTER_DISABLE_PM_RUNTIME_IDLE))
++			pm_runtime_idle(&md->dev);
+ 	}
+ 
+ 	ret = intel_init(sdw);
+-- 
+2.20.1
+
