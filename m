@@ -2,137 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B40FFCAC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:34:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B39BAFCAD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:35:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfKNQeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 11:34:46 -0500
-Received: from mga03.intel.com ([134.134.136.65]:27987 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbfKNQeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:34:46 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:34:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="216798796"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2019 08:34:45 -0800
-Date:   Thu, 14 Nov 2019 08:34:45 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH 1/2] KVM: X86: Single target IPI fastpath
-Message-ID: <20191114163444.GD24045@linux.intel.com>
-References: <1573283135-5502-1-git-send-email-wanpengli@tencent.com>
- <6c2c7bbb-39f4-2a77-632e-7730e9887fc5@redhat.com>
- <20191114152235.GC24045@linux.intel.com>
- <857e6494-4ed8-be4a-c21a-577ab99a5711@redhat.com>
+        id S1726985AbfKNQfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 11:35:20 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:37374 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbfKNQfR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 11:35:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1573749314; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=2hOlbk6iAq+UU7QhjPD6XaltGVEyMEJe7yJQLIlOvew=;
+        b=S0ZW2Hues0ig2tyT7NeZj8q1wLhYZ/X+RXFEzcthF1fpv/26gO0tH68SPpkz7sHt+AQ6O8
+        BHXYKJfX3Ker3OxsEp58hDfGRjHXhsstPzIkWSMOptDoNWczciO+l+GKudjzwQj8EQnZ+x
+        O5bugp3OAcvQBL4J/Ag3qbHGT4n4nf4=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Artur Rojek <contact@artur-rojek.eu>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
+Subject: [PATCH v2] power/supply: ingenic-battery: Don't change scale if there's only one
+Date:   Thu, 14 Nov 2019 17:35:00 +0100
+Message-Id: <20191114163500.57384-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <857e6494-4ed8-be4a-c21a-577ab99a5711@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 04:44:33PM +0100, Paolo Bonzini wrote:
-> On 14/11/19 16:22, Sean Christopherson wrote:
-> >> Instead of a separate vcpu->fast_vmexit, perhaps you can set exit_reason
-> >> to vmx->exit_reason to -1 if the fast path succeeds.
-> > 
-> > Actually, rather than make this super special case, what about moving the
-> > handling into vmx_handle_exit_irqoff()?  Practically speaking that would
-> > only add ~50 cycles (two VMREADs) relative to the code being run right
-> > after kvm_put_guest_xcr0().  It has the advantage of restoring the host's
-> > hardware breakpoints, preserving a semi-accurate last_guest_tsc, and
-> > running with vcpu->mode set back to OUTSIDE_GUEST_MODE.  Hopefully it'd
-> > also be more intuitive for people unfamiliar with the code.
-> 
-> Yes, that's a good idea.  The expensive bit between handle_exit_irqoff
-> and handle_exit is srcu_read_lock, which has two memory barriers in it.
+The ADC in the JZ4740 can work either in high-precision mode with a 2.5V
+range, or in low-precision mode with a 7.5V range. The code in place in
+this driver will select the proper scale according to the maximum
+voltage of the battery.
 
-Preaching to the choir at this point, but it'd also eliminate latency
-spikes due to interrupts.
+The JZ4770 however only has one mode, with a 6.6V range. If only one
+scale is available, there's no need to change it (and nothing to change
+it to), and trying to do so will fail with -EINVAL.
 
-> >>> +			if (ret == 0)
-> >>> +				ret = kvm_skip_emulated_instruction(vcpu);
-> >> Please move the "kvm_skip_emulated_instruction(vcpu)" to
-> >> vmx_handle_exit, so that this basically is
-> >>
-> >> #define EXIT_REASON_NEED_SKIP_EMULATED_INSN -1
-> >>
-> >> 	if (ret == 0)
-> >> 		vcpu->exit_reason = EXIT_REASON_NEED_SKIP_EMULATED_INSN;
-> >>
-> >> and handle_ipi_fastpath can return void.
-> >
-> > I'd rather we add a dedicated variable to say the exit has already been
-> > handled.  Overloading exit_reason is bound to cause confusion, and that's
-> > probably a best case scenario.
-> 
-> I proposed the fake exit reason to avoid a ternary return code from
-> handle_ipi_fastpath (return to guest, return to userspace, call
-> kvm_x86_ops->handle_exit), which Wanpeng's patch was mishandling.
+Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery driver.")
 
-For this case, I think we can get away with a WARN if kvm_lapic_reg_write()
-fails since it (currently) can't fail for ICR.  That would allow us to keep
-a void return for ->handle_exit_irqoff() and avoid an overloaded return
-value.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Cc: stable@vger.kernel.org
+---
 
-And, if the fastpath is used for all ICR writes, not just FIXED+PHYSICAL,
-and is implemented for SVM, then we don't even need a a flag, e.g.
-kvm_x2apic_msr_write() can simply ignore ICR writes, similar to how
-handle_exception() ignores #MC and NMIs.
+Notes:
+    v2: Rebased on v5.4-rc7
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 87b0fcc23ef8..d7b79f7faac1 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2615,12 +2615,11 @@ int kvm_x2apic_msr_write(struct kvm_vcpu *vcpu, u32 msr, u64 data)
-        if (!lapic_in_kernel(vcpu) || !apic_x2apic_mode(apic))
-                return 1;
+ drivers/power/supply/ingenic-battery.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
--       if (reg == APIC_ICR2)
+diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/supply/ingenic-battery.c
+index 35816d4b3012..5a53057b4f64 100644
+--- a/drivers/power/supply/ingenic-battery.c
++++ b/drivers/power/supply/ingenic-battery.c
+@@ -80,6 +80,10 @@ static int ingenic_battery_set_scale(struct ingenic_battery *bat)
+ 	if (ret != IIO_AVAIL_LIST || scale_type != IIO_VAL_FRACTIONAL_LOG2)
+ 		return -EINVAL;
+ 
++	/* Only one (fractional) entry - nothing to change */
++	if (scale_len == 2)
++		return 0;
 +
-+       /* ICR2 writes are ignored and ICR writes are handled early. */
-+       if (reg == APIC_ICR2 || reg == APIC_ICR)
-                return 1;
+ 	max_mV = bat->info.voltage_max_design_uv / 1000;
+ 
+ 	for (i = 0; i < scale_len; i += 2) {
+-- 
+2.24.0
 
--       /* if this is ICR write vector before command */
--       if (reg == APIC_ICR)
--               kvm_lapic_reg_write(apic, APIC_ICR2, (u32)(data >> 32));
-        return kvm_lapic_reg_write(apic, reg, (u32)data);
- }
-
-Another bonus to this approach is that the refactoring for the
-exit_reason can be done in a separate series.
-
-> To ensure confusion does not become the best case scenario, perhaps it
-> is worth trying to push exit_reason into vcpu_enter_guest's stack.
-> vcpu_enter_guest can pass a pointer to it, and then it can be passed
-> back into kvm_x86_ops->handle_exit{,_irqoff}.  It could be a struct too,
-> instead of just a bare u32.
-
-On the other hand, if it's a bare u32 then kvm_x86_ops->run can simply
-return the value instead of doing out parameter shenanigans.
-
-> This would ensure at compile-time that exit_reason is not accessed
-> outside the short path from vmexit to kvm_x86_ops->handle_exit.
-
-That would be nice.  Surprisingly, the code actually appears to be fairly
-clean, I thought for sure the nested stuff would be using exit_reason all
-over the place.  The only one that needs to be fixed is handle_vmfunc(),
-which passes vmx->exit_reason when forwarding the VM-Exit instead of simply
-hardcoding EXIT_REASON_VMFUNC.
