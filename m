@@ -2,118 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CEB3FC73F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 14:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBEB6FC743
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 14:23:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKNNWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 08:22:46 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51244 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726613AbfKNNWp (ORCPT
+        id S1727059AbfKNNXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 08:23:06 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36175 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfKNNXF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 08:22:45 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xAED9HIm100957
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 08:22:44 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w97hurequ-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 08:22:44 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Thu, 14 Nov 2019 13:22:42 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Nov 2019 13:22:38 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAEDMbtv46072186
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Nov 2019 13:22:37 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89382A4040;
-        Thu, 14 Nov 2019 13:22:37 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8125CA404D;
-        Thu, 14 Nov 2019 13:22:34 +0000 (GMT)
-Received: from bangoria.ibmuc.com (unknown [9.199.57.87])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Nov 2019 13:22:34 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     acme@kernel.org
-Cc:     jolsa@redhat.com, kan.liang@intel.com, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        ak@linux.intel.com, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v2 3/3] perf report: Bail out --mem-mode if mem info is not available
-Date:   Thu, 14 Nov 2019 18:52:13 +0530
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191114132213.5419-1-ravi.bangoria@linux.ibm.com>
-References: <20191114132213.5419-1-ravi.bangoria@linux.ibm.com>
+        Thu, 14 Nov 2019 08:23:05 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1iVF5M-0005Uk-R9; Thu, 14 Nov 2019 14:22:56 +0100
+Message-ID: <ea47e8e7a8663d33acb44dd4473a5a150ea51526.camel@pengutronix.de>
+Subject: Re: [PATCH][next] reset: npcm: check for NULL return from
+ syscon_regmap_lookup_by_compat
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Colin King <colin.king@canonical.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        openbmc@lists.ozlabs.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 14 Nov 2019 14:22:56 +0100
+In-Reply-To: <20191108155524.170566-1-colin.king@canonical.com>
+References: <20191108155524.170566-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19111413-0012-0000-0000-00000363992E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111413-0013-0000-0000-0000219F129B
-Message-Id: <20191114132213.5419-4-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-14_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911140123
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If perf.data is recorded without -d, don't allow user to use
---mem-mode with perf report. symbol_daddr and phys_daddr can
-be recorded separately and may be present in the perf.data but
-at the report time they are associated with mem-mode fields and
-thus this restriction applies to them as well.
+Hi Colin,
 
-Before:
-  $ ./perf record ls
-  $ ./perf report --mem-mode --stdio
-  # Overhead  Local Weight  Memory access  Symbol                 
-  # ........  ............  .............  .......................
-      55.56%  0             N/A            [k] 0xffffffff81a00ae7 
+On Fri, 2019-11-08 at 15:55 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Function syscon_regmap_lookup_by_compat can return a NULL pointer, so
 
-After:
-  $ ./perf report --mem-mode --stdio
-  Error:
-  Selected --mem-mode but no mem data. Did you call perf record without -d?
+Could you point out where that NULL pointer would come from? As far as I
+understand, syscon_regmap_lookup_by_compatible() should either return a
+negative error code, or syscon->regmap, which should never be NULL.
 
-Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- tools/perf/builtin-report.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> the IS_ERR check on the return is incorrect. Fix this by checking for
+> IS_ERR_OR_NULL and return -ENODEV if true.  This avoids a null pointer
+> dereference on gcr_regmap later on.
+> 
+> Addresses-Coverity: ("Dereference null return (stat)")
+> Fixes: b3f1d036f26d ("reset: npcm: add NPCM reset controller driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/reset/reset-npcm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
+> index 2ea4d3136e15..9febf8bed2f6 100644
+> --- a/drivers/reset/reset-npcm.c
+> +++ b/drivers/reset/reset-npcm.c
+> @@ -161,9 +161,9 @@ static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
+>  	of_match_device(dev->driver->of_match_table, dev)->data;
+>  
+>  	gcr_regmap = syscon_regmap_lookup_by_compatible(gcr_dt);
+> -	if (IS_ERR(gcr_regmap)) {
+> +	if (IS_ERR_OR_NULL(gcr_regmap)) {
+>  		dev_err(&pdev->dev, "Failed to find %s\n", gcr_dt);
+> -		return PTR_ERR(gcr_regmap);
+> +		return -ENODEV;
+>  	}
+>  
+>  	/* checking which USB device is enabled */
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index aae0e57c60fb..7c854d35c9ef 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -383,6 +383,14 @@ static int report__setup_sample_type(struct report *rep)
- 		}
- 	}
- 
-+	if (sort__mode == SORT_MODE__MEMORY) {
-+		if (!is_pipe && !(sample_type & PERF_SAMPLE_DATA_SRC)) {
-+			ui__error("Selected --mem-mode but no mem data. "
-+				  "Did you call perf record without -d?\n");
-+			return -1;
-+		}
-+	}
-+
- 	if (symbol_conf.use_callchain || symbol_conf.cumulate_callchain) {
- 		if ((sample_type & PERF_SAMPLE_REGS_USER) &&
- 		    (sample_type & PERF_SAMPLE_STACK_USER)) {
--- 
-2.21.0
+regards
+Philipp
 
