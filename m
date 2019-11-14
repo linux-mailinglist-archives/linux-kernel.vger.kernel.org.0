@@ -2,79 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C008FC0A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:19:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 963DFFC0AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 08:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfKNHTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 02:19:06 -0500
-Received: from verein.lst.de ([213.95.11.211]:37919 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfKNHTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 02:19:05 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2FE8B68AFE; Thu, 14 Nov 2019 08:19:03 +0100 (CET)
-Date:   Thu, 14 Nov 2019 08:19:03 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     jhubbard@nvidia.com, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm: Cleanup __put_devmap_managed_page() vs
- ->page_free()
-Message-ID: <20191114071903.GA26307@lst.de>
-References: <157368992671.2974225.13512647385398246617.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1726597AbfKNHXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 02:23:10 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60188 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725838AbfKNHXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 02:23:09 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C91C8E836E6A38782C59;
+        Thu, 14 Nov 2019 15:23:07 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 14 Nov 2019
+ 15:22:58 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <richard@nod.at>, <miquel.raynal@bootlin.com>, <vigneshr@ti.com>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ubi: remove unused variable 'err'
+Date:   Thu, 14 Nov 2019 15:22:36 +0800
+Message-ID: <20191114072236.15104-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157368992671.2974225.13512647385398246617.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 04:07:22PM -0800, Dan Williams wrote:
->  static int devmap_managed_enable_get(struct dev_pagemap *pgmap)
->  {
-> -	if (!pgmap->ops || !pgmap->ops->page_free) {
-> +	if (!pgmap->ops || (pgmap->type == MEMORY_DEVICE_PRIVATE
-> +				&& !pgmap->ops->page_free)) {
+drivers/mtd/ubi/debug.c:512:6: warning: unused variable 'err' [-Wunused-variable]
 
-I don't think this check is correct.  You only want the the ops null check
-or MEMORY_DEVICE_PRIVATE as well now, i.e.:
+commit 3427dd213259 ("mtd: no need to check return value
+of debugfs_create functions") leave this variable not used.
 
-	if (pgmap->type == MEMORY_DEVICE_PRIVATE &&
-	    (!pgmap->ops || !pgmap->ops->page_free)) {
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/mtd/ubi/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> @@ -476,10 +471,17 @@ void __put_devmap_managed_page(struct page *page)
->  		 * handled differently or not done at all, so there is no need
->  		 * to clear page->mapping.
->  		 */
-> -		if (is_device_private_page(page))
-> -			page->mapping = NULL;
-> +		if (is_device_private_page(page)) {
-> +			/* Clear Active bit in case of parallel mark_page_accessed */
+diff --git a/drivers/mtd/ubi/debug.c b/drivers/mtd/ubi/debug.c
+index f8d3752..8dba1b5 100644
+--- a/drivers/mtd/ubi/debug.c
++++ b/drivers/mtd/ubi/debug.c
+@@ -509,7 +509,7 @@ static const struct file_operations eraseblk_count_fops = {
+  */
+ int ubi_debugfs_init_dev(struct ubi_device *ubi)
+ {
+-	int err, n;
++	int n;
+ 	unsigned long ubi_num = ubi->ubi_num;
+ 	struct ubi_debug_info *d = &ubi->dbg;
+ 
+-- 
+2.7.4
 
-This adds a > 80 char line.  But that whole flow of the function seems
-rather odd now.
 
-Why can't we do:
-
-	if (count == 0) {
-		__put_page(page);
-	} else if (is_device_private_page(page)) {
-		__ClearPageActive(page);
-		__ClearPageWaiters(page);
-
-		mem_cgroup_uncharge(page);
-		page->mapping = NULL;
-		page->pgmap->ops->page_free(page);
-	} else {
-		wake_up_var(&page->_refcount);
-	}
-
-(except for the fact that I don't get the point of calling __put_page
-on a refcount of zero, but that is separate from this patch).
