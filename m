@@ -2,89 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 475D3FBE3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 04:17:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B458FBE3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 04:17:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfKNDRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 22:17:35 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33190 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfKNDRe (ORCPT
+        id S1726973AbfKNDRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 22:17:53 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41657 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfKNDRw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 22:17:34 -0500
-Received: by mail-lf1-f67.google.com with SMTP id d6so3764453lfc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 19:17:31 -0800 (PST)
+        Wed, 13 Nov 2019 22:17:52 -0500
+Received: by mail-lj1-f195.google.com with SMTP id m4so9280ljj.8
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 19:17:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=xod14KA5s3GtfkSovGq+Ol5G97Peg7I+/vXWv2xlnFY=;
-        b=GghwxZClWNLuAQ65EP9MBRb2Q+08pMYK92Ifk4GihncXJx+y5gkLSsKmhrok2B1QHx
-         pic/o5bcRXMneUApUToT/rMyaxUyxD9BiJ1deMR4kAGqwXVkeDlWxjOtDAWm7/ttXozi
-         f+561NR62hcmnIbBHUX1EXqTrOeUNlljF1cPqolmfUJNS4oH++7THNPJfb9EodqVYI9l
-         yqDbOIVJWQD1FEgiwqVzld1vcrcfKfjovGMe06GXFVZU2dbS1m9SoLEhMd/B/nlnTNRK
-         fsqB9HQashW/kqmCvhvZNo5SzTIVEeMVxL40MroEyorg7IKmU3stASTvESAm2MnuEP4N
-         82eA==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=J/M4TryYtrCPlKJQrMNCQ/FgEMUT02p93Fn4Tu8uLfA=;
+        b=mn9YMxtUMMM/6xs3qj366/KlIt87XkDJTM8kdIdt/ALfz27u1VC5C7/+JiDTAL1nhd
+         JBEIkGC6/nNB8rUrwMO3e8NaOGQtycfFIiqfdSdaVIYm88GjwCyb5r+dnr979TxovFRY
+         BYEnWpk1A2y0uFep3TefmWGJVlE8c4r6G5UzAGEX+klUhR4WpJcHJA4hMBitSCAYXF/k
+         YfL1Cbfnow7j/xZUkdUoONxnHCTlmG+042vIOE4kMJ/jFtOz2m+ayIcZ+HRfRR6W3AM/
+         bwBtP4j+5Ro7qu8GA8xF6n0jznE7/nqe+79nGsdUwPhzSCQQzVI8lW08ppfPFFMEaaKZ
+         4Rzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=xod14KA5s3GtfkSovGq+Ol5G97Peg7I+/vXWv2xlnFY=;
-        b=BTVLMNA2YKereEazSw1VP4uzXmLuBbl5hF4REB4dFV9gbjDPdK7wd1Fz8VjvXkDzC5
-         ODfV54qbKyi/wisbnkMU7onwNiTCiQRsEvF5C2DwFQBahY4HXP+lZ2iukKOBxcXT/3+m
-         RdNxe+qLx6BAfx58Kp02BuIrz0CDln04kMUTXwIy8nHu0N8TqQS16c00azRI+z0WskZq
-         aQ97b7AWfxr94dN5KXkWr+CRsL5/hdX+fzlYQVtGyF5Koi1b/kdA/fw6UUfG7/HsfA0y
-         oUyzwCIj40isQ0UASWbX5vHYJJWajBoGXkl8ytitGL001FXWGmWjmzpUVmM4VdykROlW
-         Mt+A==
-X-Gm-Message-State: APjAAAW6HdP3BYw0ZZz1PL4YPrUKXPvXlk563YVPCW9XR7mzQc+TAP/z
-        16tr1uDxzDPzK4bQEw0J44TjkFQPy52tU7hVGKQ=
-X-Google-Smtp-Source: APXvYqw6z306ZJCsJm0FSBLrO/Uxv9LXC5ClyMHklipOHT8IPtwszIOY9ZAHYE0nzPhz/VAOjOKVSwv4f/qICFkh7+Q=
-X-Received: by 2002:a19:8ac5:: with SMTP id m188mr5077589lfd.186.1573701451014;
- Wed, 13 Nov 2019 19:17:31 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=J/M4TryYtrCPlKJQrMNCQ/FgEMUT02p93Fn4Tu8uLfA=;
+        b=eY82zNgQHIktKw4mNF/Su0CtjeZv7RxKxqc5uXV/BeLv6lNgVsNJTLTTCOPkC3GZRc
+         5qFuUB5F0EARcxtiX2RSNlwEX8czV/torQEFgcjICiZqU9Lqj4+2jH/tWzth5cjNsvvz
+         uAjB7D7stDGM+GOx5Jb52JttXE/tmiQshr9S2np5T2yzt+qpVK9DMaZo2M9RNUz7jlRe
+         ZYeWF7FsxMkwLXshLec+TpdDbhT8JwcqgVzcnpzOqv05+4dTTHZui/QNe5d+xQ8VvOD0
+         Pskv+hmHNXnKysNlAt0lnX/z1WpRX5jellCppXvLDA4mTGKbfXIuSCdESwBa1fcnqbep
+         lzrg==
+X-Gm-Message-State: APjAAAXS6/FqrxSx69MwKCh8H/fnhurwQ6jxoWmKJCCarL81CxtdzO91
+        buVSRjYUt2tVVn/r46k+WDOydclbuwYduEyJ+c0=
+X-Google-Smtp-Source: APXvYqwCoN5f/3dFQSUfJf2s8Yt3rBTgnxYDX4PXGZNxffbn6hDxU8YWEk3b1rADRRKhTDMBxmTr5IIMNAx7HEb/K5I=
+X-Received: by 2002:a2e:8919:: with SMTP id d25mr4770875lji.97.1573701470853;
+ Wed, 13 Nov 2019 19:17:50 -0800 (PST)
 MIME-Version: 1.0
-Reply-To: phillip.richead9000@gmail.com
-Received: by 2002:a19:bed7:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 19:17:30
+Received: by 2002:a2e:871a:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 19:17:50
  -0800 (PST)
-From:   "Mr.Phillip Richead" <phillip.richead9000@gmail.com>
-Date:   Thu, 14 Nov 2019 04:17:30 +0100
-X-Google-Sender-Auth: DjYRNMLhdEu-ef55iF-vQJb3VzY
-Message-ID: <CAB7NZ0rfBvKhbnPNY1BkVE0dsn8sK38Eog2w7xoAeV5FxoTDpQ@mail.gmail.com>
-Subject: I NEED YOUR URGENT ASSISTANCE IN THIS TRANSACTION,
-To:     undisclosed-recipients:;
+Reply-To: jufffirti@gmail.com
+From:   UN Cabinet <loycennenne1@gmail.com>
+Date:   Thu, 14 Nov 2019 04:17:50 +0100
+Message-ID: <CA+fLaT6ibMr9xxBPUEUCdde+upZ1ueN8u8Q2tOGPmVCZUuQi5w@mail.gmail.com>
+Subject: United Nation Pay office.
+To:     p@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Attention,
 
-My Name Is Mr.Phillip Richead, Executive Director & Exchange Manager
-of Africa Development Bank In Ouagadougou Burkina Faso,
+I am directed to inform you that the United Nation have compensated
+you with the sum of $3,million usd.
+Contact the (UN) payment office in Burkina Faso, email address (
+paymentun@consultant.com ) for your compensation, send your full names
+and your nationality.
 
-I need your assistance to validate your name in our Bank System to
-enable the Bank transfer the sum of $10.5Million unclaimed fund into
-your nominated bank account to your account for onward investment
-(Hotel industries and Estate building management) or any profitable
-business in your country and I will give you 40%, for your assistance.
-
-Please note very Importantly that you can only get me through  by my
-private email Enclosed here (phillip.richead9000@gmail.com) As i wait
-for your urgent reply to this little details enlcosed here,
-
-1)Your Complete Name...............
-
-2)Your Age.........................
-
-3)Your Residence Address...........
-
-4)Your correct phone numbers.......
-
-5)Your Occupation ........
-
-6)Your Nationality.................
-
-7)Your Marital Status.............
-
-Thanks with my best regards,
-
-From. Mr.Phillip Richead,
+Thanks,
+Maria Luiza Ribeiro Viotti
+Chef de Cabinet United Nation.
