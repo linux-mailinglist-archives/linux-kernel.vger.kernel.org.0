@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61306FCD03
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1158FCD47
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:20:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfKNSR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:17:59 -0500
+        id S1727866AbfKNSUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:20:55 -0500
 Received: from mga03.intel.com ([134.134.136.65]:36355 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727378AbfKNSR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:17:56 -0500
+        id S1727405AbfKNSR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:17:58 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:17:56 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 10:17:57 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
-   d="scan'208";a="195123533"
+   d="scan'208";a="195123544"
 Received: from chiahuil-mobl.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.228.77])
-  by orsmga007.jf.intel.com with ESMTP; 14 Nov 2019 10:17:54 -0800
+  by orsmga007.jf.intel.com with ESMTP; 14 Nov 2019 10:17:56 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v3 15/22] soundwire: intel: disable pm_runtime when removing a master
-Date:   Thu, 14 Nov 2019 12:16:55 -0600
-Message-Id: <20191114181702.22254-16-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v3 16/22] soundwire: bus: disable pm_runtime in sdw_slave_delete
+Date:   Thu, 14 Nov 2019 12:16:56 -0600
+Message-Id: <20191114181702.22254-17-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191114181702.22254-1-pierre-louis.bossart@linux.intel.com>
 References: <20191114181702.22254-1-pierre-louis.bossart@linux.intel.com>
@@ -43,30 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prevent race conditions between remove and resume by disabling
-pm_runtime.
+Before removing the slave device, disable pm_runtime to prevent any
+race condition with the resume being executed after the bus and slave
+devices are removed.
 
-Note that this only takes care of pm_runtime at the Master level, the
-same precautions are needed when removing a Slave device.
+Since this pm_runtime_disable() is handled in common routines,
+implementations of Slave drivers do not need to call it in their
+.remove() routine.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel.c | 2 ++
+ drivers/soundwire/bus.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 69b0c8f65ad8..460e2d8cf80d 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -1275,6 +1275,8 @@ static int intel_master_remove(struct sdw_master_device *md)
- {
- 	struct sdw_intel *sdw;
+diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+index ddc3042e15e0..23bdcb9a468c 100644
+--- a/drivers/soundwire/bus.c
++++ b/drivers/soundwire/bus.c
+@@ -113,6 +113,8 @@ static int sdw_delete_slave(struct device *dev, void *data)
+ 	struct sdw_slave *slave = to_sdw_slave_device(dev);
+ 	struct sdw_bus *bus = slave->bus;
  
-+	pm_runtime_disable(&md->dev);
++	pm_runtime_disable(dev);
 +
- 	sdw = md->pdata;
+ 	sdw_slave_debugfs_exit(slave);
  
- 	if (!sdw->cdns.bus.prop.hw_disabled) {
+ 	mutex_lock(&bus->bus_lock);
 -- 
 2.20.1
 
