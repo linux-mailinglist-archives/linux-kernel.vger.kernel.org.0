@@ -2,57 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46BDFCDED
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:39:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D25FCDF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:41:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbfKNSj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:39:29 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:41472 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726444AbfKNSj3 (ORCPT
+        id S1727066AbfKNSlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:41:12 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41247 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726901AbfKNSlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:39:29 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iVK1a-0000wV-RF; Thu, 14 Nov 2019 19:39:22 +0100
-Date:   Thu, 14 Nov 2019 19:39:16 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Borislav Petkov <bp@alien8.de>
-cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Willy Tarreau <w@1wt.eu>, Juergen Gross <jgross@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [patch V3 17/20] x86/iopl: Restrict iopl() permission scope
-In-Reply-To: <20191114181324.GD7222@zn.tnic>
-Message-ID: <alpine.DEB.2.21.1911141939010.29616@nanos.tec.linutronix.de>
-References: <20191113204240.767922595@linutronix.de> <20191113210105.369055550@linutronix.de> <20191114181324.GD7222@zn.tnic>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 14 Nov 2019 13:41:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573756871;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=UgtGbn1eYbgjdPbHsvL18nU6iPqWM6qO3qr2Grv4XiM=;
+        b=Emp3Rpx/gDAwpEohUrp9ksH1hc2eSvC9nT7R7OPCsTMRhYLqQYws+JLkwGPyM08tFe1Iv3
+        cQh+Olw4OLJspw0pZeHFkuSA+80W5n0k7E4g+er/SA8e3WvqE6Cowq5AB517wDUCXayWsk
+        j9bB7VTr6z1VXeccCqm1R4INDPlGJu0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-58-mUKNquzEO-ewlXXwfAUERw-1; Thu, 14 Nov 2019 13:41:07 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4ECA31005500;
+        Thu, 14 Nov 2019 18:41:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 956A45C219;
+        Thu, 14 Nov 2019 18:41:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix race in commit bulk status fetch
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 14 Nov 2019 18:41:03 +0000
+Message-ID: <157375686331.16781.5317786612607603165.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: mUKNquzEO-ewlXXwfAUERw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Nov 2019, Borislav Petkov wrote:
-> On Wed, Nov 13, 2019 at 09:42:57PM +0100, Thomas Gleixner wrote:
-> > +config X86_IOPL_EMULATION
-> > +	bool "IOPL Emulation"
-> > +	---help---
-> > +	  Legacy IOPL support is an overbroad mechanism which allows user
-> > +	  space aside of accessing all 65536 I/O ports also to disable
-> > +	  interrupts. To gain this access the caller needs CAP_SYS_RAWIO
-> > +	  capabilities and permission from eventually active security
-> 
-> I think you mean here: s/eventually/potentially/ or so. "eventually" is
-> one of the false friends. :)
+When a lookup is done, the afs filesystem will perform a bulk status-fetch
+operation on the requested vnode (file) plus the next 49 other vnodes from
+the directory list (in AFS, directory contents are downloaded as blobs and
+parsed locally).  When the results are received, it will speculatively
+populate the inode cache from the extra data.
 
-Fixed
+However, if the lookup races with another lookup on the same directory, but
+for a different file - one that's in the 49 extra fetches, then if the bulk
+status-fetch operation finishes first, it will try and update the inode
+from the other lookup.
+
+If this other inode is still in the throes of being created, however, this
+will cause an assertion failure in afs_apply_status():
+
+=09BUG_ON(test_bit(AFS_VNODE_UNSET, &vnode->flags));
+
+on or about fs/afs/inode.c:175 because it expects data to be there already
+that it can compare to.
+
+Fix this by skipping the update if the inode is being created as the
+creator will presumably set up the inode with the same information.
+
+Fixes: 39db9815da48 ("afs: Fix application of the results of a inline bulk =
+status fetch")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+---
+
+ fs/afs/dir.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index cc12772d0a4d..497f979018c2 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -803,7 +803,12 @@ static struct inode *afs_do_lookup(struct inode *dir, =
+struct dentry *dentry,
+ =09=09=09continue;
+=20
+ =09=09if (cookie->inodes[i]) {
+-=09=09=09afs_vnode_commit_status(&fc, AFS_FS_I(cookie->inodes[i]),
++=09=09=09struct afs_vnode *iv =3D AFS_FS_I(cookie->inodes[i]);
++
++=09=09=09if (test_bit(AFS_VNODE_UNSET, &iv->flags))
++=09=09=09=09continue;
++
++=09=09=09afs_vnode_commit_status(&fc, iv,
+ =09=09=09=09=09=09scb->cb_break, NULL, scb);
+ =09=09=09continue;
+ =09=09}
+
