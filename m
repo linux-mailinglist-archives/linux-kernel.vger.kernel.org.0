@@ -2,111 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 507B0FD028
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 22:12:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CEEFFD03F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 22:22:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfKNVMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 16:12:40 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40869 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfKNVMk (ORCPT
+        id S1726980AbfKNVWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 16:22:12 -0500
+Received: from pietrobattiston.it ([92.243.7.39]:57368 "EHLO
+        jauntuale.pietrobattiston.it" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726592AbfKNVWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 16:12:40 -0500
-Received: by mail-ot1-f68.google.com with SMTP id m15so6156150otq.7;
-        Thu, 14 Nov 2019 13:12:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zvJ3vYdB8JByuq1iptWHcxe6mCz9VbGiKAhz94z7Jjs=;
-        b=WR91Ze7q3/8W15JazJLi7mKamQIUbAs28NGJQ0hfjo5YA6IiQQHayXrMe1/DovtQvv
-         Hg5YPhxPnkwh1tPTXr6BryEWjdVyZH2JKIs0bm6PAnnxMfMlv439U/I/hx/BeRvjXBXo
-         I7CFzvV5pWEzypZ2XFtr4w7BJyUrQn4sjvcereHCBg5wc8Zyb6KKNxvZc7+IV90s2HOe
-         PpFVWt3MhUANLcwlDm63dW4wh0aU/PQeTWWLh737CUazfznlWaXGr7crWLRTuFLAvZ4b
-         eSn3CfCYAe8kJzjnkdMwsoTYpL7Zef6WRj980kHs/UGA/ranFrJwN7dlkO69sTonZ+qa
-         Iwlw==
-X-Gm-Message-State: APjAAAW/Q7ZoVHnZ1uGnbG0YMYxfhgTQpD8oRc00YH9XEV8YcMuAyiwO
-        h6oMd7KvPc1Gt8RftWmMDg==
-X-Google-Smtp-Source: APXvYqz8E8q2ODWg7w9RAtKtDXpxQsWSKNIjjna819fVptPrU8ODwyU1Lli9pn6nDszkJRnxfqhL5A==
-X-Received: by 2002:a9d:7e8a:: with SMTP id m10mr9243800otp.180.1573765959077;
-        Thu, 14 Nov 2019 13:12:39 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q3sm2171825oti.49.2019.11.14.13.12.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 13:12:38 -0800 (PST)
-Date:   Thu, 14 Nov 2019 15:12:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] ASoC: dt-bindings: fsl_asrc: add compatible
- string for imx8qm
-Message-ID: <20191114211237.GA25375@bogus>
-References: <b1c922b3496020f611ecd6ea27d262369646d830.1573462647.git.shengjiu.wang@nxp.com>
+        Thu, 14 Nov 2019 16:22:12 -0500
+X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Nov 2019 16:22:09 EST
+Received: from amalgama (94.105.105.79.dyn.edpnet.net [94.105.105.79])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: giovanni)
+        by jauntuale.pietrobattiston.it (Postfix) with ESMTPSA id DF12EE1E18;
+        Thu, 14 Nov 2019 22:14:27 +0100 (CET)
+Received: by amalgama (Postfix, from userid 1000)
+        id 7025C3C01EF; Thu, 14 Nov 2019 22:14:27 +0100 (CET)
+From:   Giovanni Mascellani <gio@debian.org>
+To:     =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Giovanni Mascellani <gio@debian.org>
+Subject: [PATCH] hwmon: (dell-smm-hwmon) Disable BIOS fan control on SET_FAN
+Date:   Thu, 14 Nov 2019 22:14:08 +0100
+Message-Id: <20191114211408.22123-1-gio@debian.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1c922b3496020f611ecd6ea27d262369646d830.1573462647.git.shengjiu.wang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 05:18:22PM +0800, Shengjiu Wang wrote:
-> Add compatible string "fsl,imx8qm-asrc" for imx8qm platform.
-> 
-> There are two asrc modules in imx8qm, the clock mapping is
-> different for each other, so add new property "fsl,asrc-clk-map"
-> to distinguish them.
+On some Dell laptops the BIOS directly controls fan speed, ignoring
+SET_FAN commands. Also, the BIOS controller often happens to be buggy,
+failing to increase fan speed when the CPU is under heavy load and
+setting fan at full speed even when the CPU is idle and relatively
+cool.
 
-What's the clock mapping?
+Disable BIOS fan control on such laptops as soon as a SET_FAN command
+is issued, and re-enable it at module unloading, so that a userspace
+controller like i8kmon can take control of the fan.
 
+There is a missing feature: interaction with PM; I think that when
+suspending on RAM the fans should be stopped (this BIOS doesn't always
+do this automatically, neither when fan control is enabled nor when it
+is disabled); when recovering from hibernation to disk, also, the
+command to disable BIOS fan control should be issued again, because
+the computer will have had a power cycle in the meantime.
 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
-> changes in v2
-> -none
-> 
-> changes in v3
-> -use only one compatible string "fsl,imx8qm-asrc",
-> -add new property "fsl,asrc-clk-map".
-> 
->  Documentation/devicetree/bindings/sound/fsl,asrc.txt | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/fsl,asrc.txt b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> index 1d4d9f938689..02edab7cf3e0 100644
-> --- a/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> +++ b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> @@ -8,7 +8,8 @@ three substreams within totally 10 channels.
->  
->  Required properties:
->  
-> -  - compatible		: Contains "fsl,imx35-asrc" or "fsl,imx53-asrc".
-> +  - compatible		: Contains "fsl,imx35-asrc", "fsl,imx53-asrc",
-> +			  "fsl,imx8qm-asrc".
->  
->    - reg			: Offset and length of the register set for the device.
->  
-> @@ -35,6 +36,13 @@ Required properties:
->  
->     - fsl,asrc-width	: Defines a mutual sample width used by DPCM Back Ends.
->  
-> +   - fsl,asrc-clk-map   : Defines clock map used in driver. which is required
-> +			  by imx8qm/imx8qxp platform
-> +			  <0> - select the map for asrc0 in imx8qm
-> +			  <1> - select the map for asrc1 in imx8qm
-> +			  <2> - select the map for asrc0 in imx8qxp
-> +			  <3> - select the map for asrc1 in imx8qxp
+I don't know how to implement these two actions; can someone suggest a
+way? Also, I would be happy to know from more experienced people if
+these actions are sensible.
 
-Is this 4 modes of the h/w or just selecting 1 of 4 settings defined in 
-the driver? How does one decide? This seems strange.
+Signed-off-by: Giovanni Mascellani <gio@debian.org>
+---
+ drivers/hwmon/dell-smm-hwmon.c | 64 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-imx8qxp should perhaps be a separate compatible. Then you only need 1 of 
-2 modes...
+diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+index 4212d022d253..6d72e207076f 100644
+--- a/drivers/hwmon/dell-smm-hwmon.c
++++ b/drivers/hwmon/dell-smm-hwmon.c
+@@ -32,6 +32,12 @@
+ 
+ #include <linux/i8k.h>
+ 
++/*
++ * The code for enabling and disabling BIOS fan control were found by
++ * trial and error with the program at
++ *  https://github.com/clopez/dellfan.
++ */
++
+ #define I8K_SMM_FN_STATUS	0x0025
+ #define I8K_SMM_POWER_STATUS	0x0069
+ #define I8K_SMM_SET_FAN		0x01a3
+@@ -43,6 +49,8 @@
+ #define I8K_SMM_GET_TEMP_TYPE	0x11a3
+ #define I8K_SMM_GET_DELL_SIG1	0xfea3
+ #define I8K_SMM_GET_DELL_SIG2	0xffa3
++#define I8K_SMM_DISABLE_BIOS	0x30a3
++#define I8K_SMM_ENABLE_BIOS	0x31a3
+ 
+ #define I8K_FAN_MULT		30
+ #define I8K_FAN_MAX_RPM		30000
+@@ -68,6 +76,8 @@ static uint i8k_pwm_mult;
+ static uint i8k_fan_max = I8K_FAN_HIGH;
+ static bool disallow_fan_type_call;
+ static bool disallow_fan_support;
++static bool disable_bios;
++static bool bios_disabled;
+ 
+ #define I8K_HWMON_HAVE_TEMP1	(1 << 0)
+ #define I8K_HWMON_HAVE_TEMP2	(1 << 1)
+@@ -419,6 +429,26 @@ static int i8k_get_power_status(void)
+ 	return (regs.eax & 0xff) == I8K_POWER_AC ? I8K_AC : I8K_BATTERY;
+ }
+ 
++/*
++ * Disable BIOS fan control.
++ */
++static int i8k_disable_bios(void)
++{
++	struct smm_regs regs = { .eax = I8K_SMM_DISABLE_BIOS, .ebx = 0 };
++
++	return i8k_smm(&regs) ? : regs.eax & 0xff;
++}
++
++/*
++ * Enable BIOS fan control.
++ */
++static int i8k_enable_bios(void)
++{
++	struct smm_regs regs = { .eax = I8K_SMM_ENABLE_BIOS, .ebx = 0 };
++
++	return i8k_smm(&regs) ? : regs.eax & 0xff;
++}
++
+ /*
+  * Procfs interface
+  */
+@@ -488,6 +518,13 @@ i8k_ioctl_unlocked(struct file *fp, unsigned int cmd, unsigned long arg)
+ 		if (copy_from_user(&speed, argp + 1, sizeof(int)))
+ 			return -EFAULT;
+ 
++                if (disable_bios && !bios_disabled) {
++			val = i8k_disable_bios();
++			if (val < 0)
++				return val;
++			bios_disabled = true;
++                }
++
+ 		val = i8k_set_fan(val, speed);
+ 		break;
+ 
+@@ -1135,6 +1172,22 @@ static struct dmi_system_id i8k_blacklist_fan_support_dmi_table[] __initdata = {
+ 	{ }
+ };
+ 
++/*
++ * On some machines the BIOS disregards all SET_FAN commands unless it
++ * is explicitly disabled.
++ * See bug: https://bugzilla.kernel.org/show_bug.cgi?id=200949
++ */
++static struct dmi_system_id i8k_disable_bios_dmi_table[] __initdata = {
++	{
++		.ident = "Dell Precision 5530",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Precision 5530"),
++		},
++	},
++	{ }
++};
++
+ /*
+  * Probe for the presence of a supported laptop.
+  */
+@@ -1169,6 +1222,11 @@ static int __init i8k_probe(void)
+ 			disallow_fan_type_call = true;
+ 	}
+ 
++	if (dmi_check_system(i8k_disable_bios_dmi_table)) {
++		pr_warn("broken Dell BIOS detected, will disable BIOS fan control\n");
++		disable_bios = true;
++	}
++
+ 	strlcpy(bios_version, i8k_get_dmi_data(DMI_BIOS_VERSION),
+ 		sizeof(bios_version));
+ 	strlcpy(bios_machineid, i8k_get_dmi_data(DMI_PRODUCT_SERIAL),
+@@ -1241,6 +1299,12 @@ static void __exit i8k_exit(void)
+ {
+ 	hwmon_device_unregister(i8k_hwmon_dev);
+ 	i8k_exit_procfs();
++
++	if (bios_disabled) {
++		pr_warn("re-enabling BIOS fan control\n");
++		if (i8k_enable_bios())
++			pr_warn("could not re-enable BIOS fan control\n");
++	}
+ }
+ 
+ module_init(i8k_init);
+-- 
+2.24.0
 
-Rob
