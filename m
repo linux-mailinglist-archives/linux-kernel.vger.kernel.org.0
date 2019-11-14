@@ -2,162 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 379D1FCD41
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D9CFCD0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfKNSUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:20:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35600 "EHLO mail.kernel.org"
+        id S1727633AbfKNSSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:18:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727442AbfKNSS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 13:18:26 -0500
+        id S1727420AbfKNSSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:18:25 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9972A2072E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 97DE920729;
         Thu, 14 Nov 2019 18:18:24 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhH-0000xn-GG; Thu, 14 Nov 2019 13:18:23 -0500
-Message-Id: <20191114181734.067922168@goodmis.org>
+        id 1iVJhH-0000yI-M6; Thu, 14 Nov 2019 13:18:23 -0500
+Message-Id: <20191114181823.564906442@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:17:34 -0500
+Date:   Thu, 14 Nov 2019 13:17:35 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 00/33] tracing: Updates for 5.5
+        Andrew Morton <akpm@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Subject: [for-next][PATCH 01/33] ftrace: Introduce PERMANENT ftrace_ops flag
+References: <20191114181734.067922168@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+From: Miroslav Benes <mbenes@suse.cz>
 
-Head SHA1: 9b4712044d059e7842aaeeafd7c7a7ee88c589db
+Livepatch uses ftrace for redirection to new patched functions. It means
+that if ftrace is disabled, all live patched functions are disabled as
+well. Toggling global 'ftrace_enabled' sysctl thus affect it directly.
+It is not a problem per se, because only administrator can set sysctl
+values, but it still may be surprising.
 
+Introduce PERMANENT ftrace_ops flag to amend this. If the
+FTRACE_OPS_FL_PERMANENT is set on any ftrace ops, the tracing cannot be
+disabled by disabling ftrace_enabled. Equally, a callback with the flag
+set cannot be registered if ftrace_enabled is disabled.
 
-Andy Shevchenko (3):
-      lib/sort: Move swap, cmp and cmp_r function types for wider use
-      lib/bsearch: Use generic type for comparator function
-      tracing: Use generic type for comparator function
+Link: http://lkml.kernel.org/r/20191016113316.13415-2-mbenes@suse.cz
 
-Ben Dooks (1):
-      tracing: Make internal ftrace events static
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ Documentation/trace/ftrace-uses.rst |  8 ++++++++
+ Documentation/trace/ftrace.rst      |  4 +++-
+ include/linux/ftrace.h              |  3 +++
+ kernel/livepatch/patch.c            |  3 ++-
+ kernel/trace/ftrace.c               | 23 +++++++++++++++++++++--
+ 5 files changed, 37 insertions(+), 4 deletions(-)
 
-Borislav Petkov (1):
-      tracing: Remove stray tab in TRACE_EVAL_MAP_FILE's help text
+diff --git a/Documentation/trace/ftrace-uses.rst b/Documentation/trace/ftrace-uses.rst
+index 1fbc69894eed..740bd0224d35 100644
+--- a/Documentation/trace/ftrace-uses.rst
++++ b/Documentation/trace/ftrace-uses.rst
+@@ -170,6 +170,14 @@ FTRACE_OPS_FL_RCU
+ 	a callback may be executed and RCU synchronization will not protect
+ 	it.
+ 
++FTRACE_OPS_FL_PERMANENT
++        If this is set on any ftrace ops, then the tracing cannot disabled by
++        writing 0 to the proc sysctl ftrace_enabled. Equally, a callback with
++        the flag set cannot be registered if ftrace_enabled is 0.
++
++        Livepatch uses it not to lose the function redirection, so the system
++        stays protected.
++
+ 
+ Filtering which functions to trace
+ ==================================
+diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
+index e3060eedb22d..d2b5657ed33e 100644
+--- a/Documentation/trace/ftrace.rst
++++ b/Documentation/trace/ftrace.rst
+@@ -2976,7 +2976,9 @@ Note, the proc sysctl ftrace_enable is a big on/off switch for the
+ function tracer. By default it is enabled (when function tracing is
+ enabled in the kernel). If it is disabled, all function tracing is
+ disabled. This includes not only the function tracers for ftrace, but
+-also for any other uses (perf, kprobes, stack tracing, profiling, etc).
++also for any other uses (perf, kprobes, stack tracing, profiling, etc). It
++cannot be disabled if there is a callback with FTRACE_OPS_FL_PERMANENT set
++registered.
+ 
+ Please disable this with care.
+ 
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 8a8cb3c401b2..8385cafe4f9f 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -142,6 +142,8 @@ ftrace_func_t ftrace_ops_get_func(struct ftrace_ops *ops);
+  * PID     - Is affected by set_ftrace_pid (allows filtering on those pids)
+  * RCU     - Set when the ops can only be called when RCU is watching.
+  * TRACE_ARRAY - The ops->private points to a trace_array descriptor.
++ * PERMANENT - Set when the ops is permanent and should not be affected by
++ *             ftrace_enabled.
+  */
+ enum {
+ 	FTRACE_OPS_FL_ENABLED			= 1 << 0,
+@@ -160,6 +162,7 @@ enum {
+ 	FTRACE_OPS_FL_PID			= 1 << 13,
+ 	FTRACE_OPS_FL_RCU			= 1 << 14,
+ 	FTRACE_OPS_FL_TRACE_ARRAY		= 1 << 15,
++	FTRACE_OPS_FL_PERMANENT                 = 1 << 16,
+ };
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index bd43537702bd..b552cf2d85f8 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -196,7 +196,8 @@ static int klp_patch_func(struct klp_func *func)
+ 		ops->fops.func = klp_ftrace_handler;
+ 		ops->fops.flags = FTRACE_OPS_FL_SAVE_REGS |
+ 				  FTRACE_OPS_FL_DYNAMIC |
+-				  FTRACE_OPS_FL_IPMODIFY;
++				  FTRACE_OPS_FL_IPMODIFY |
++				  FTRACE_OPS_FL_PERMANENT;
+ 
+ 		list_add(&ops->node, &klp_ops);
+ 
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index f296d89be757..89e9128652ef 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -326,6 +326,8 @@ int __register_ftrace_function(struct ftrace_ops *ops)
+ 	if (ops->flags & FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED)
+ 		ops->flags |= FTRACE_OPS_FL_SAVE_REGS;
+ #endif
++	if (!ftrace_enabled && (ops->flags & FTRACE_OPS_FL_PERMANENT))
++		return -EBUSY;
+ 
+ 	if (!core_kernel_data((unsigned long)ops))
+ 		ops->flags |= FTRACE_OPS_FL_DYNAMIC;
+@@ -6754,6 +6756,18 @@ int unregister_ftrace_function(struct ftrace_ops *ops)
+ }
+ EXPORT_SYMBOL_GPL(unregister_ftrace_function);
+ 
++static bool is_permanent_ops_registered(void)
++{
++	struct ftrace_ops *op;
++
++	do_for_each_ftrace_op(op, ftrace_ops_list) {
++		if (op->flags & FTRACE_OPS_FL_PERMANENT)
++			return true;
++	} while_for_each_ftrace_op(op);
++
++	return false;
++}
++
+ int
+ ftrace_enable_sysctl(struct ctl_table *table, int write,
+ 		     void __user *buffer, size_t *lenp,
+@@ -6771,8 +6785,6 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
+ 	if (ret || !write || (last_ftrace_enabled == !!ftrace_enabled))
+ 		goto out;
+ 
+-	last_ftrace_enabled = !!ftrace_enabled;
+-
+ 	if (ftrace_enabled) {
+ 
+ 		/* we are starting ftrace again */
+@@ -6783,12 +6795,19 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
+ 		ftrace_startup_sysctl();
+ 
+ 	} else {
++		if (is_permanent_ops_registered()) {
++			ftrace_enabled = true;
++			ret = -EBUSY;
++			goto out;
++		}
++
+ 		/* stopping ftrace calls (just send to ftrace_stub) */
+ 		ftrace_trace_function = ftrace_stub;
+ 
+ 		ftrace_shutdown_sysctl();
+ 	}
+ 
++	last_ftrace_enabled = !!ftrace_enabled;
+  out:
+ 	mutex_unlock(&ftrace_lock);
+ 	return ret;
+-- 
+2.23.0
 
-Divya Indi (3):
-      tracing: Declare newly exported APIs in include/linux/trace.h
-      tracing: Verify if trace array exists before destroying it.
-      tracing: Adding NULL checks for trace_array descriptor pointer
-
-Joe Lawrence (2):
-      selftests/livepatch: Make dynamic debug setup and restore generic
-      selftests/livepatch: Test interaction with ftrace_enabled
-
-Josh Poimboeuf (1):
-      ftrace/x86: Tell objtool to ignore nondeterministic ftrace stack layout
-
-Masami Hiramatsu (1):
-      tracing/kprobe: Check whether the non-suffixed symbol is notrace
-
-Miroslav Benes (1):
-      ftrace: Introduce PERMANENT ftrace_ops flag
-
-Piotr Maziarz (2):
-      seq_buf: Add printing formatted hex dumps
-      tracing: Use seq_buf_hex_dump() to dump buffers
-
-Sebastian Andrzej Siewior (1):
-      tracing: Use CONFIG_PREEMPTION
-
-Srivatsa S. Bhat (VMware) (1):
-      tracing/hwlat: Fix a few trivial nits
-
-Steven Rostedt (VMware) (13):
-      ftrace: Separate out the copying of a ftrace_hash from __ftrace_hash_move()
-      ftrace: Separate out functionality from ftrace_location_range()
-      ftrace: Add register_ftrace_direct()
-      ftrace: Add ftrace_find_direct_func()
-      ftrace: Add sample module that uses register_ftrace_direct()
-      ftrace/selftest: Add tests to test register_ftrace_direct()
-      ftrace: Add another example of register_ftrace_direct() use case
-      ftrace/selftests: Update the direct call selftests to test two direct calls
-      ftrace/x86: Add register_ftrace_direct() for custom trampolines
-      ftrace/x86: Add a counter to test function_graph with direct
-      ftrace: Add information on number of page groups allocated
-      fgraph: Fix function type mismatches of ftrace_graph_return using ftrace_stub
-      tracing/selftests: Turn off timeout setting
-
-Viktor Rosendahl (BMW) (2):
-      ftrace: Implement fs notification for tracing_max_latency
-      preemptirq_delay_test: Add the burst feature and a sysfs trigger
-
-Yuming Han (1):
-      tracing: use kvcalloc for tgid_map array allocation
-
-----
- Documentation/trace/ftrace-uses.rst                |  10 +-
- Documentation/trace/ftrace.rst                     |   4 +-
- arch/sh/boot/compressed/misc.c                     |   5 +
- arch/x86/Kconfig                                   |   1 +
- arch/x86/include/asm/ftrace.h                      |  13 +
- arch/x86/include/asm/unwind_hints.h                |   8 +
- arch/x86/kernel/ftrace.c                           |  14 +
- arch/x86/kernel/ftrace_64.S                        |  42 +-
- include/asm-generic/vmlinux.lds.h                  |  17 +-
- include/linux/bsearch.h                            |   2 +-
- include/linux/ftrace.h                             |  53 ++-
- include/linux/seq_buf.h                            |   3 +
- include/linux/sort.h                               |   8 +-
- include/linux/trace.h                              |   7 +
- include/linux/trace_events.h                       |   5 +
- include/linux/trace_seq.h                          |   4 +
- include/linux/types.h                              |   5 +
- include/trace/trace_events.h                       |   6 +
- kernel/livepatch/patch.c                           |   3 +-
- kernel/module.c                                    |   6 +-
- kernel/trace/Kconfig                               |  18 +-
- kernel/trace/fgraph.c                              |  11 +-
- kernel/trace/ftrace.c                              | 466 +++++++++++++++++++--
- kernel/trace/preemptirq_delay_test.c               | 144 ++++++-
- kernel/trace/trace.c                               | 118 +++++-
- kernel/trace/trace.h                               |  24 +-
- kernel/trace/trace_branch.c                        |   8 +-
- kernel/trace/trace_events.c                        |   2 +
- kernel/trace/trace_export.c                        |   4 +-
- kernel/trace/trace_hwlat.c                         |  15 +-
- kernel/trace/trace_kprobe.c                        |  27 +-
- kernel/trace/trace_output.c                        |  15 +
- kernel/trace/trace_seq.c                           |  30 ++
- kernel/trace/trace_stat.c                          |   6 +-
- kernel/trace/trace_stat.h                          |   2 +-
- lib/bsearch.c                                      |   2 +-
- lib/seq_buf.c                                      |  62 +++
- lib/sort.c                                         |  15 +-
- samples/Kconfig                                    |   8 +
- samples/Makefile                                   |   1 +
- samples/ftrace/Makefile                            |   4 +
- samples/ftrace/ftrace-direct-too.c                 |  51 +++
- samples/ftrace/ftrace-direct.c                     |  45 ++
- tools/testing/selftests/ftrace/settings            |   1 +
- .../ftrace/test.d/direct/ftrace-direct.tc          |  69 +++
- .../ftrace/test.d/direct/kprobe-direct.tc          |  84 ++++
- tools/testing/selftests/livepatch/Makefile         |   3 +-
- tools/testing/selftests/livepatch/functions.sh     |  34 +-
- .../testing/selftests/livepatch/test-callbacks.sh  |   2 +-
- tools/testing/selftests/livepatch/test-ftrace.sh   |  65 +++
- .../testing/selftests/livepatch/test-livepatch.sh  |   2 +-
- .../selftests/livepatch/test-shadow-vars.sh        |   2 +-
- 52 files changed, 1410 insertions(+), 146 deletions(-)
- create mode 100644 samples/ftrace/Makefile
- create mode 100644 samples/ftrace/ftrace-direct-too.c
- create mode 100644 samples/ftrace/ftrace-direct.c
- create mode 100644 tools/testing/selftests/ftrace/settings
- create mode 100644 tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
- create mode 100755 tools/testing/selftests/livepatch/test-ftrace.sh
 
