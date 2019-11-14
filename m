@@ -2,124 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4078FFCAA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E1FFCAB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 17:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfKNQSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 11:18:25 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:40115 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfKNQSZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:18:25 -0500
-Received: by mail-il1-f195.google.com with SMTP id d83so5834256ilk.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 08:18:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m/6eJjoqatlkHX327WsvzFKy6FL3fKgPjPYcZivid0o=;
-        b=AiurrKxewNIgEi3Qc6AI4HYquUZOxMUDDDEB4z7QR5Qc3jretuIDN/CPqLL/KNil0+
-         uG62v8LYmfkf3YQQ+ZypHZUpDwShD0oQL4dCmML/1uNfP7DOAg/9G85ZtXxpPcKJ24y0
-         fmQVgK/gitIAxmcJYMo0YJjFbj5qdty2SABIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m/6eJjoqatlkHX327WsvzFKy6FL3fKgPjPYcZivid0o=;
-        b=TJlYEJlFiDcvC6VLmfcjMVdnkUgo4dQHbKJBqaU0w5ofIrAsGr2q4U/+qQRxthvRzX
-         EJlkDPCZd81Y/AzeEZ63hFzoLlGZxAlncxLPXtQxQEkWA3+wfiLKLHt1yV/uyCHa3d9/
-         6MW2cEMzVF64V1g8JJRvxJOF7w/WY6TRu4bx4QyjGM/qoC/D/YLUA3gD/bR3TY7rbe8r
-         +N0FK0caYyDxN6SFmt7wqyNoquJGXE9rDlvv2sLlAbXOVF5LqOQ37A+IKjl14ypfmnjf
-         lMktydLmTHGA205XxyAzlPQ9+IHuDMm5SLpmYykwoQtMjJR/tv6jOF+sE7SSbLaw5v9A
-         kytA==
-X-Gm-Message-State: APjAAAUq0LUgKPpzytw1AERAmY9lYbI8MyzYlKP9QEgn/tT2STGpRceq
-        iW9wkLGspqwsR4e+3OS1s3yn94y71U0=
-X-Google-Smtp-Source: APXvYqx4NoqmvQS7Ds7hsXbTrQUnMutlxWpI9la/XO3Bp55Tt/K1/j9Qf/elsf8I1Mvu1U0OYS4oyg==
-X-Received: by 2002:a92:d64d:: with SMTP id x13mr10478258ilp.54.1573748303861;
-        Thu, 14 Nov 2019 08:18:23 -0800 (PST)
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com. [209.85.166.47])
-        by smtp.gmail.com with ESMTPSA id x1sm584746ioh.59.2019.11.14.08.18.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2019 08:18:23 -0800 (PST)
-Received: by mail-io1-f47.google.com with SMTP id i13so7435531ioj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 08:18:23 -0800 (PST)
-X-Received: by 2002:a02:a813:: with SMTP id f19mr8010531jaj.12.1573747874146;
- Thu, 14 Nov 2019 08:11:14 -0800 (PST)
+        id S1726717AbfKNQZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 11:25:41 -0500
+Received: from mga02.intel.com ([134.134.136.20]:5720 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726251AbfKNQZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 11:25:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:25:33 -0800
+X-IronPort-AV: E=Sophos;i="5.68,304,1569308400"; 
+   d="scan'208";a="195085651"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2019 08:25:33 -0800
+Subject: [PATCH v3] mm: Cleanup __put_devmap_managed_page() vs ->page_free()
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     jhubbard@nvidia.com
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Date:   Thu, 14 Nov 2019 08:11:17 -0800
+Message-ID: <157374781485.3069020.2978764869460940502.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-References: <20191109191644.191766-1-dianders@chromium.org>
- <20191109111623.1.I30a0cac4d9880040c8d41495bd9a567fe3e24989@changeid> <20191114105125.t3jma3ghwj2wtv6w@holly.lan>
-In-Reply-To: <20191114105125.t3jma3ghwj2wtv6w@holly.lan>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 14 Nov 2019 08:10:56 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Xkxm-eTXmU9s+Bu+biLmjkioVqmHZEBVguZ85cCQywog@mail.gmail.com>
-Message-ID: <CAD=FV=Xkxm-eTXmU9s+Bu+biLmjkioVqmHZEBVguZ85cCQywog@mail.gmail.com>
-Subject: Re: [PATCH 1/5] MIPS: kdb: Remove old workaround for backtracing on
- other CPUs
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        qiaochong <qiaochong@loongson.cn>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        James Hogan <jhogan@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mips <linux-mips@vger.kernel.org>,
-        =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+After the removal of the device-public infrastructure there are only 2
+->page_free() call backs in the kernel. One of those is a device-private
+callback in the nouveau driver, the other is a generic wakeup needed in
+the DAX case. In the hopes that all ->page_free() callbacks can be
+migrated to common core kernel functionality, move the device-private
+specific actions in __put_devmap_managed_page() under the
+is_device_private_page() conditional, including the ->page_free()
+callback. For the other page types just open-code the generic wakeup.
 
-On Thu, Nov 14, 2019 at 2:51 AM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
->
-> On Sat, Nov 09, 2019 at 11:16:40AM -0800, Douglas Anderson wrote:
-> > As of commit 2277b492582d ("kdb: Fix stack crawling on 'running' CPUs
-> > that aren't the master") we no longer need any special case for doing
-> > stack dumps on CPUs that are not the kdb master.  Let's remove.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > I have no way to test this personally, so hopefully someone who uses
-> > kdb/kgdb on MIPS can.
->
-> I took this as a hint to add mips support to kgdbtest ;-)
->
-> Support is added and working well. Unfortunately lack of familiarity
-> with mips means I have not yet figured out which mips defconfig gives
-> us working SMP (and what the corresponding qemu invocation should be).
+Yes, the wakeup is only needed in the MEMORY_DEVICE_FSDAX case, but it
+does no harm in the MEMORY_DEVICE_DEVDAX and MEMORY_DEVICE_PCI_P2PDMA
+case.
 
-Nice!
+Cc: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Changes since v2:
+- Drop 'else' after return. (Christoph)
 
+ drivers/nvdimm/pmem.c |    6 ----
+ mm/memremap.c         |   80 +++++++++++++++++++++++++++----------------------
+ 2 files changed, 44 insertions(+), 42 deletions(-)
 
-> I think that means I still can't (quite) exercise this code fully.
-> The most appropriate test is bta on an SMP system, right?
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index f9f76f6ba07b..21db1ce8c0ae 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -338,13 +338,7 @@ static void pmem_release_disk(void *__pmem)
+ 	put_disk(pmem->disk);
+ }
+ 
+-static void pmem_pagemap_page_free(struct page *page)
+-{
+-	wake_up_var(&page->_refcount);
+-}
+-
+ static const struct dev_pagemap_ops fsdax_pagemap_ops = {
+-	.page_free		= pmem_pagemap_page_free,
+ 	.kill			= pmem_pagemap_kill,
+ 	.cleanup		= pmem_pagemap_cleanup,
+ };
+diff --git a/mm/memremap.c b/mm/memremap.c
+index 022e78e68ea0..e1678e575d9f 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -27,7 +27,8 @@ static void devmap_managed_enable_put(void)
+ 
+ static int devmap_managed_enable_get(struct dev_pagemap *pgmap)
+ {
+-	if (!pgmap->ops || !pgmap->ops->page_free) {
++	if (pgmap->type == MEMORY_DEVICE_PRIVATE &&
++	    (!pgmap->ops || !pgmap->ops->page_free)) {
+ 		WARN(1, "Missing page_free method\n");
+ 		return -EINVAL;
+ 	}
+@@ -444,44 +445,51 @@ void __put_devmap_managed_page(struct page *page)
+ {
+ 	int count = page_ref_dec_return(page);
+ 
+-	/*
+-	 * If refcount is 1 then page is freed and refcount is stable as nobody
+-	 * holds a reference on the page.
+-	 */
+-	if (count == 1) {
+-		/* Clear Active bit in case of parallel mark_page_accessed */
+-		__ClearPageActive(page);
+-		__ClearPageWaiters(page);
++	/* still busy */
++	if (count > 1)
++		return;
+ 
+-		mem_cgroup_uncharge(page);
++	/* only triggered by the dev_pagemap shutdown path */
++	if (count == 0) {
++		__put_page(page);
++		return;
++	}
+ 
+-		/*
+-		 * When a device_private page is freed, the page->mapping field
+-		 * may still contain a (stale) mapping value. For example, the
+-		 * lower bits of page->mapping may still identify the page as
+-		 * an anonymous page. Ultimately, this entire field is just
+-		 * stale and wrong, and it will cause errors if not cleared.
+-		 * One example is:
+-		 *
+-		 *  migrate_vma_pages()
+-		 *    migrate_vma_insert_page()
+-		 *      page_add_new_anon_rmap()
+-		 *        __page_set_anon_rmap()
+-		 *          ...checks page->mapping, via PageAnon(page) call,
+-		 *            and incorrectly concludes that the page is an
+-		 *            anonymous page. Therefore, it incorrectly,
+-		 *            silently fails to set up the new anon rmap.
+-		 *
+-		 * For other types of ZONE_DEVICE pages, migration is either
+-		 * handled differently or not done at all, so there is no need
+-		 * to clear page->mapping.
+-		 */
+-		if (is_device_private_page(page))
+-			page->mapping = NULL;
++	/* notify page idle for dax */
++	if (!is_device_private_page(page)) {
++		wake_up_var(&page->_refcount);
++		return;
++	}
+ 
+-		page->pgmap->ops->page_free(page);
+-	} else if (!count)
+-		__put_page(page);
++	/* Clear Active bit in case of parallel mark_page_accessed */
++	__ClearPageActive(page);
++	__ClearPageWaiters(page);
++
++	mem_cgroup_uncharge(page);
++
++	/*
++	 * When a device_private page is freed, the page->mapping field
++	 * may still contain a (stale) mapping value. For example, the
++	 * lower bits of page->mapping may still identify the page as an
++	 * anonymous page. Ultimately, this entire field is just stale
++	 * and wrong, and it will cause errors if not cleared.  One
++	 * example is:
++	 *
++	 *  migrate_vma_pages()
++	 *    migrate_vma_insert_page()
++	 *      page_add_new_anon_rmap()
++	 *        __page_set_anon_rmap()
++	 *          ...checks page->mapping, via PageAnon(page) call,
++	 *            and incorrectly concludes that the page is an
++	 *            anonymous page. Therefore, it incorrectly,
++	 *            silently fails to set up the new anon rmap.
++	 *
++	 * For other types of ZONE_DEVICE pages, migration is either
++	 * handled differently or not done at all, so there is no need
++	 * to clear page->mapping.
++	 */
++	page->mapping = NULL;
++	page->pgmap->ops->page_free(page);
+ }
+ EXPORT_SYMBOL(__put_devmap_managed_page);
+ #endif /* CONFIG_DEV_PAGEMAP_OPS */
 
-Yeah, or at least "btc".
-
-
-> > Ideally this patch should be Acked by MIPS folks and then land through
-> > the kdb/kgdb tree since the next patch in the series, ("kdb:
-> > kdb_current_regs should be private") depends on it.
->
-> An Acked-by from a MIPS maintainer would be very welcome. Perhaps
-> with a bit of extra work on the above I might be able to provide
-> a Tested-by:.
->
-> I didn't see anything that particularly bothered me in the patches but
-> given we're already at -rc7 I'm inclined to target this patchset for 5.6
-> rather than 5.5.
-
-That's fine.  This is all just cleanup stuff so targeting 5.6 is fine.
-
--Doug
