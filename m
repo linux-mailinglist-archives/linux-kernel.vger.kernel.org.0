@@ -2,116 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46952FCF82
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:16:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC0EFCF94
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 21:19:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfKNUQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 15:16:12 -0500
-Received: from mail-eopbgr730059.outbound.protection.outlook.com ([40.107.73.59]:60877
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727075AbfKNUQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:16:04 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y6vfXvFNa9ECJCyMNa7+rq15Fs+gRmWTRav/tMAlIpr4VBj46zzaxwf/Q4JU0IYLu8+mkbg3xOMV2dZRZoKkBwYALSglhFcfOeTmNhYYlcxge2tfc/FeKJUBGgYQLWiviWTWoZ6V1R/v61QdT4sF5oBkHm8gIe/UbiUi3JxUXAy1cqKiPbhVQ+EodvMcrY68l6ussOLkjJbZMsf1bbqurg5A2E+0dZQ+FEQ4HAFGP15tH4+7pgvEt51FeUuhX+iJ8GvpXJHTsNJ5F24/iqRWNdmJvh8KKea2bETepiIutM10OAzQsQK1ym+ckSpmBCsf18GsItxUOhJmHTd15Cm3xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q0yNbkBrp7fGPPFlqtk6D5mmN/kWWkB5Y+oAT0DghOQ=;
- b=DWrGYLYkMV4brUSnl1VUcB0f/3T0nua+eWzoEzxSp42mPKtyMMM3mhItJN4muicVoq9eoeegw+CWuM4aGsrBZLGl/oIoUV44tZIjoQraDG70D4OvwFjuL77AP4Jh8vpoNIkM4PMtI5rAEDXkrhuBiWe5KMHTmAFHjN26UVf+Bnq0yqIm64Q+vL2DHiO1iECQilwTixnmza2TbVp6fw0IwRvlX6ClpeIsAQnRpPp4TPVGhoDtNMQMKtqdiKTuGije8Lhfx079OJPYNu8r8P+HxR49jxVlpmeHJy2huku0xEpxYEIZ4AKYp2GmNrSdUKX9DO2KBXple69PbefoD7iuiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q0yNbkBrp7fGPPFlqtk6D5mmN/kWWkB5Y+oAT0DghOQ=;
- b=H0pG0M6Aj/iLc1KwzqyT0y5/8l7U7PQWUVztSznbVwMpuZ9DyHfG6KxZfBBiuAQZKXveRUpV9PeAqn4jydGB4lAEGMxcTajbhnH9gbu5x5SXOooDrjT6MfsGHruY+U1oPs0AYFk2J2cHIg17JuoeA5joHi6lXmEF571biaeC+qg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
-Received: from DM6PR12MB3865.namprd12.prod.outlook.com (10.255.173.210) by
- DM6PR12MB3739.namprd12.prod.outlook.com (10.255.172.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.23; Thu, 14 Nov 2019 20:15:54 +0000
-Received: from DM6PR12MB3865.namprd12.prod.outlook.com
- ([fe80::4898:93e0:3c0c:d862]) by DM6PR12MB3865.namprd12.prod.outlook.com
- ([fe80::4898:93e0:3c0c:d862%6]) with mapi id 15.20.2451.027; Thu, 14 Nov 2019
- 20:15:54 +0000
-From:   Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, joro@8bytes.org,
-        vkuznets@redhat.com, rkagan@virtuozzo.com, graf@amazon.com,
-        jschoenh@amazon.de, karahmed@amazon.de, rimasluk@amazon.com,
-        jon.grimm@amd.com,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v5 18/18] svm: Allow AVIC with in-kernel irqchip mode
-Date:   Thu, 14 Nov 2019 14:15:20 -0600
-Message-Id: <1573762520-80328-19-git-send-email-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1573762520-80328-1-git-send-email-suravee.suthikulpanit@amd.com>
-References: <1573762520-80328-1-git-send-email-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN1PR12CA0099.namprd12.prod.outlook.com
- (2603:10b6:802:21::34) To DM6PR12MB3865.namprd12.prod.outlook.com
- (2603:10b6:5:1c8::18)
+        id S1726796AbfKNUTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 15:19:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726597AbfKNUTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Nov 2019 15:19:44 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2443A20709;
+        Thu, 14 Nov 2019 20:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573762783;
+        bh=Ms+2LTB1+DESJrOdQdCv2D3DR/a6flmiLsM96V8C2E4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=nACZ0IrSrZ/AlXj+jZQQZqliQSFvUsfLm7y5kYUBBF5csAwpMtCtZFbVPjaojtxqv
+         35VtNXdJxtyLA/LfY0wty1jGbnOrLtrNLb2bMoOkyvb1OeKiQWOHweYXDWknNfPm5B
+         U8gdqWhghK3nPrvW8oJflow7c0LsEAKkU7BbeGaM=
+Date:   Thu, 14 Nov 2019 14:19:41 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH v2 0/3] PCI: Add PCI_ERROR_RESPONSE, check for errors
+Message-ID: <20191114201941.GA242410@google.com>
 MIME-Version: 1.0
-X-Mailer: git-send-email 1.8.3.1
-X-Originating-IP: [165.204.78.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 42d60048-2ef4-4401-9fdc-08d7693f73bc
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3739:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB37398B350894632272AF5F11F3710@DM6PR12MB3739.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
-X-Forefront-PRVS: 02213C82F8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(1496009)(396003)(366004)(376002)(39860400002)(346002)(136003)(189003)(199004)(6506007)(25786009)(86362001)(6512007)(6436002)(8676002)(47776003)(7416002)(66066001)(6486002)(50226002)(4326008)(3846002)(8936002)(4720700003)(81156014)(2906002)(2870700001)(7736002)(66556008)(305945005)(66476007)(2616005)(6116002)(66946007)(186003)(316002)(14454004)(486006)(4744005)(478600001)(99286004)(81166006)(26005)(14444005)(66574012)(476003)(5660300002)(44832011)(386003)(446003)(52116002)(76176011)(23676004)(50466002)(6666004)(36756003)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3739;H:DM6PR12MB3865.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: KwTyJMSdfEWHkvGMPDuw0WL6PhDbBhSX2siRABEztbj70HkUS+UnJVOhA2yTWQO+0UX/eeUgadRFbatKiac298q5LJh9K9W08l/Agk5QbMIiJ9J/lnJ0HAMXJoaFn3KaqfBIydbnE3TVrVfg/AnHh102DGVCTryt/jf+Gew9qY7WDRcvwTbwbJExwNkbbEEB3rxDq5DRzLijxIFJyyt6KCGqT3GDjeIAgsCIS/vaXuNt9xhUenGMTFap0fnlgqy4quZwRS0AYAWCL9bllNNE+9KEJP2++T6z430jIauLGSoOzXGongeAz/rTFHSl11nAJoJM00Xgpn6v0FyEBHcLqA2hWgl6DLJCiPx2NN9ncJUFPbUh5rLeiXXx//mnv2byjUeh9Bu29Bj/ghultK/br19uC+U0CtmNuJ9ryoxZveqhEiSgMmZHsKKxP9FVqHwo
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42d60048-2ef4-4401-9fdc-08d7693f73bc
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2019 20:15:54.5999
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EdFDEzP7pIWYz5q751mrCYpTs6+ka8yyKF2ZcIsgHvN3A0K6uWkQvOfMf25wOOIbyLLb6uOnZV3Z6Oo8utYRxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3739
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822200551.129039-1-helgaas@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Once run-time AVIC activate/deactivate is supported, and EOI workaround
-for AVIC is implemented, we can remove the kernel irqchip split mode
-requirement for AVIC.
+[+cc Andrew]
 
-Hence, remove the check for irqchip split mode when enabling AVIC.
+On Thu, Aug 22, 2019 at 03:05:48PM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Reads from a PCI device may fail if the device has been turned off (put
+> into D3cold), removed, or if some other error occurs.  The PCI host bridge
+> typically fabricates ~0 data to complete the CPU's read.
+> 
+> We check for that in a few places, but not in a consistent way.  This
+> series adds a PCI_ERROR_RESPONSE definition to make the checks more
+> consistent and easier to find.  Note that ~0 may indicate a PCI error, but
+> it may also be valid read data, so you need more information (such as
+> knowing that a register can never contain ~0) before concluding that it's
+> an error.
+> 
+> This series also adds a new check for PCI_ERROR_RESPONSE in the power
+> management code because that code frequently encounters devices in D3cold,
+> where we previously misinterpreted ~0 data.  It also uses pci_power_name()
+> to print D-state names more consistently.
+> 
+> Rafael, I didn't add your Reviewed-by to "PCI / PM: Return error when
+> changing power state from D3cold" because I made small changes to try to
+> make the messages more consistent, and I didn't want to presume they'd be
+> OK with you.
+> 
+> Changes since v1:
+>   - Add Rafael's Reviewed-By to the first two patches
+>   - Drop "PCI / PM: Check for error when reading PME status" because Rafael
+>     pointed out that some devices can signal PME even when in D3cold, so
+>     this would require additional rework
+>   - Drop "PCI / PM: Check for error when reading Power State" because
+>     Rafael thinks it's mostly redundant
+> 
+> Bjorn Helgaas (3):
+>   PCI: Add PCI_ERROR_RESPONSE definition
+>   PCI / PM: Decode D3cold power state correctly
+>   PCI / PM: Return error when changing power state from D3cold
 
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- arch/x86/kvm/svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I applied patches 2 & 3 (tweaked to not depend on the
+PCI_ERROR_RESPONSE definition) with reviewed-by from Rafael, Keith,
+and Mika to pci/pm for v5.5, thanks everybody for taking a look.
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 2dfdd7c..2cba5be 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5149,7 +5149,7 @@ static void svm_set_virtual_apic_mode(struct kvm_vcpu *vcpu)
- 
- static bool svm_get_enable_apicv(struct kvm *kvm)
- {
--	return avic && irqchip_split(kvm);
-+	return avic;
- }
- 
- static void svm_hwapic_irr_update(struct kvm_vcpu *vcpu, int max_irr)
--- 
-1.8.3.1
+Andrew had good ideas for improving the PCI_ERROR_RESPONSE part, so
+it's gone for now but not forgotten.
 
+>  drivers/pci/access.c                          | 13 ++++----
+>  .../pci/controller/dwc/pcie-designware-host.c |  2 +-
+>  drivers/pci/controller/pci-aardvark.c         |  2 +-
+>  drivers/pci/controller/pci-mvebu.c            |  4 +--
+>  drivers/pci/controller/pci-thunder-ecam.c     | 20 ++++++------
+>  drivers/pci/controller/pci-thunder-pem.c      |  2 +-
+>  drivers/pci/controller/pcie-altera.c          |  2 +-
+>  drivers/pci/controller/pcie-iproc.c           |  2 +-
+>  drivers/pci/controller/pcie-mediatek.c        |  4 +--
+>  drivers/pci/controller/pcie-rcar.c            |  2 +-
+>  drivers/pci/controller/pcie-rockchip-host.c   |  2 +-
+>  drivers/pci/controller/vmd.c                  |  2 +-
+>  drivers/pci/hotplug/cpqphp_ctrl.c             | 12 +++----
+>  drivers/pci/hotplug/cpqphp_pci.c              | 20 ++++++------
+>  drivers/pci/hotplug/pciehp_hpc.c              |  6 ++--
+>  drivers/pci/pci.c                             | 31 ++++++++++++-------
+>  drivers/pci/pcie/dpc.c                        |  3 +-
+>  drivers/pci/pcie/pme.c                        |  4 +--
+>  drivers/pci/probe.c                           |  4 +--
+>  drivers/pci/quirks.c                          |  2 +-
+>  include/linux/pci.h                           |  7 +++++
+>  21 files changed, 81 insertions(+), 65 deletions(-)
+> 
+> -- 
+> 2.23.0.187.g17f5b7556c-goog
+> 
