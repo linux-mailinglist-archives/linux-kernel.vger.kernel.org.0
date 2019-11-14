@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65467FBF35
+	by mail.lfdr.de (Postfix) with ESMTP id CF3F8FBF36
 	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 06:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfKNFOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 00:14:37 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38384 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfKNFOf (ORCPT
+        id S1727362AbfKNFOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 00:14:44 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41129 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfKNFOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 00:14:35 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w8so2081524plq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 21:14:35 -0800 (PST)
+        Thu, 14 Nov 2019 00:14:41 -0500
+Received: by mail-pg1-f194.google.com with SMTP id h4so2919193pgv.8
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2019 21:14:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R7b2JPtWwEx72nyCRSKpBp7/BtsD5j/Gd6lSZi42tNY=;
-        b=SAqGs6fQe8YE08HwbEoz3pMr+dp5RUp5r07rVVDRW1kTo3hsf1d0dzMBdMNQbAqOa+
-         6xDVVt10resWw/FTWyy8sWSzzlyQ5a0kQ50/t43SI/7LD8UkqOJsxJdriFxpoUFe8N6l
-         hbL2nLKz5wc1YvFIfbr74jMQPuusyPBbR8Bg5CzEVBj85/whJlLXjWcQROl5qJqCTv40
-         5pNxOqKDIq/82f9UByGx9DP1aiNI6vHqxFaBPQGBlqnLeebjOcCQcQB2sZxjDyY8L88Q
-         aiYpfon2RNigH4ZfGF8tbhyvLrQe5NiBtmBdC2KZ6cQl379vvUy2IbrfSHKpBv5aITAc
-         5SJQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=K2wlRR3w/KTNdVqCYnrEwvs7sg2WubrsMP6gUzcCK3w=;
+        b=zppns9CQ9NJAosr/LOsW1qDHdqq9EqFz5ZPBd7ZGpXbY79fJ2UVFUjsC9feu+OeRHH
+         jtupVXzvx24ZZtmezz8rILhUwtykHm72bbXRADz/wG5Xyooq0ab2j+kPJKt4jiwKJl2d
+         FH2/0qcxqyE1pxV4oVsrEIrqwNllLXxa5i0qQnqNr1U07RISfVBVpvjI8JKBOtAyQMtG
+         TPcfcF9CbhRNOJM8m+sCcSigAOWit4iAi+t6k1O8M6SDs42jo6jnMYYpF+IBAn8AYM/g
+         LA6GbbSwny1FrxmFPJ0PUtas1pgDTEqsAhyHs9QWGcgeXZClDrz4iDqFg1KfJvQXdYx3
+         Qp5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R7b2JPtWwEx72nyCRSKpBp7/BtsD5j/Gd6lSZi42tNY=;
-        b=MKJV41QlAhwSSncgx08S6semh35LzR1rQduiggYIJo0E4Mzy7skEBMur0N1DiVVcuQ
-         YqDrhMz5OmubEaaJaZ/ZCuZk/gASSPpucBEInTgDobEYAmvJotHHVEtSdeRtfkjv5UdK
-         9qZr0/KUGHu0u2WwJRxQDpCLc2bAP9orYC8kS6oJxMYxpwMFmKr2hxG87PGUy4SwFvJ2
-         9sdA2dQnYyp0m5uhJdugz0pJlVIokqYvF6h2LacEJS28Twz9ufzucSXFk8XPpkFHzluN
-         Z0S4nwSCfVkND0W57OZh8fd09Lp+4ZirUAgzGOlyOfi2ARuKSbpYDg17kqkwK0Ke3bpb
-         7IjA==
-X-Gm-Message-State: APjAAAVTuLVPbSqPOepOPYfJBw04svff/Bvl8uI9oiiKHJEV7Q3makxI
-        LcT+ljIAR6GhR7yJQUp+fbZB07c0PZA=
-X-Google-Smtp-Source: APXvYqyUGkyUr51KXBUYxjBncLe29pHZ3ycMcQpcMe9U0q8KrLojzhcQSJQH8Kdlb50vioiqEfwVzg==
-X-Received: by 2002:a17:902:aa42:: with SMTP id c2mr7453010plr.311.1573708474696;
-        Wed, 13 Nov 2019 21:14:34 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=K2wlRR3w/KTNdVqCYnrEwvs7sg2WubrsMP6gUzcCK3w=;
+        b=a2eXJAOwPu27/dx2fbmI6uCGHRI5EERwOG2zYLWoSxyJBF4oMEeScOHfbpXP1FTwML
+         QsXN08VNtW2v9cxEEGPbG9zd65HgN0kcgXIfARFmRAeHBHw741vCBea3Vmfsz/Oe79O7
+         KPOGjGgmoJ2d1cN2mM8V/86cyvzVM337ADY224QInryOhs6bB6opxZwc9OQn9H2FFg/4
+         RGVG3ILTfUuMBLueMgfKM/VlQf39CgTGBFf/VM5ERdzjHcO9hsyt2ncg+O97fnyDssCj
+         89kdGM3w4kBMKkFAF5FfL5g8fKmAEyj43SDcXa9ilKArKKAYjydYKWNmq9FrHdyyko10
+         fUvA==
+X-Gm-Message-State: APjAAAUVWMCRTxhUw9rpAai2yarnZNFL6SNMwD8ylsWIKMMm5BI1gTJ7
+        /3zC3/t8WnrtNBOV2fI46hhk+Q==
+X-Google-Smtp-Source: APXvYqwlEusLa94m5U+3WaWntarTbEi19zhc16zy/LNNcM+ekH+5cMHfghn0WaJojuUTkNWrbbbtHA==
+X-Received: by 2002:a62:5e04:: with SMTP id s4mr8967673pfb.63.1573708481126;
+        Wed, 13 Nov 2019 21:14:41 -0800 (PST)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id i123sm7799642pfe.145.2019.11.13.21.14.33
+        by smtp.googlemail.com with ESMTPSA id f5sm7329049pjp.1.2019.11.13.21.14.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Nov 2019 21:14:34 -0800 (PST)
+        Wed, 13 Nov 2019 21:14:40 -0800 (PST)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
         frowand.list@gmail.com
 Cc:     james.morse@arm.com, kexec@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v2 0/3] arm64: kexec_file: add kdump
-Date:   Thu, 14 Nov 2019 14:15:07 +0900
-Message-Id: <20191114051510.17037-1-takahiro.akashi@linaro.org>
+Subject: [PATCH v2 1/3] libfdt: define UINT32_MAX in libfdt_env.h
+Date:   Thu, 14 Nov 2019 14:15:08 +0900
+Message-Id: <20191114051510.17037-2-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191114051510.17037-1-takahiro.akashi@linaro.org>
+References: <20191114051510.17037-1-takahiro.akashi@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,50 +64,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the last piece of my kexec_file_load implementation for arm64.
-It is now ready for being merged as some relevant patch to dtc/libfdt[1]
-has finally been integrated in v5.3-rc1.
-(Nothing changed since kexec_file v16[2] except adding Patch#1 and #2.)
+In the implementation of kexec_file_load-based kdump for arm64,
+fdt_appendprop_addrrange() will be used, but fdt_addresses.c
+will fail to compile due to missing UINT32_MAX.
 
-Patch#1 and #2 are preliminary patches for libfdt component.
-Patch#3 is to add kdump support.
+So just define it in libfdt_env.h.
 
-Bhepesh's patch[3] will be required for 52-bit VA support.
-Once this patch is applied, whether or not CONFIG_ARM64_VA_BITS_52 is
-enabled or not, a matching fix on user space side, crash utility,
-will also be needed. 
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+---
+ include/linux/libfdt_env.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Anyway, I tested my patch, at least, with the following configuration:
-1) CONFIG_ARM64_BITS_48=y
-2) CONFIG_ARM64_BITS_52=y, but vabits_actual=48
-
-(I don't have any platform to use for
-3) CONFIG_ARM64_BITS_52=y, and vabits_actual=52)
-
-[1] commit 9bb9c6a110ea ("scripts/dtc: Update to upstream version
-    v1.5.0-23-g87963ee20693"), in particular
-	7fcf8208b8a9 libfdt: add fdt_append_addrrange()
-[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/612641.html
-[3] http://lists.infradead.org/pipermail/linux-arm-kernel/2019-November/693411.html
-
-Changes in v2 (Nov 14, 2019)
-* rebased to v5.4-rc7
-* no functional changes
-
-AKASHI Takahiro (3):
-  libfdt: define UINT32_MAX in libfdt_env.h
-  libfdt: include fdt_addresses.c
-  arm64: kexec_file: add crash dump support
-
- arch/arm64/include/asm/kexec.h         |   4 +
- arch/arm64/kernel/kexec_image.c        |   4 -
- arch/arm64/kernel/machine_kexec_file.c | 106 ++++++++++++++++++++++++-
- include/linux/libfdt_env.h             |   3 +
- lib/Makefile                           |   2 +-
- lib/fdt_addresses.c                    |   2 +
- 6 files changed, 112 insertions(+), 9 deletions(-)
- create mode 100644 lib/fdt_addresses.c
-
+diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
+index edb0f0c30904..9ca00f11d9b1 100644
+--- a/include/linux/libfdt_env.h
++++ b/include/linux/libfdt_env.h
+@@ -3,6 +3,7 @@
+ #define LIBFDT_ENV_H
+ 
+ #include <linux/kernel.h>	/* For INT_MAX */
++#include <linux/limits.h>	/* For UINT32_MAX */
+ #include <linux/string.h>
+ 
+ #include <asm/byteorder.h>
+@@ -11,6 +12,8 @@ typedef __be16 fdt16_t;
+ typedef __be32 fdt32_t;
+ typedef __be64 fdt64_t;
+ 
++#define UINT32_MAX U32_MAX
++
+ #define fdt32_to_cpu(x) be32_to_cpu(x)
+ #define cpu_to_fdt32(x) cpu_to_be32(x)
+ #define fdt64_to_cpu(x) be64_to_cpu(x)
 -- 
 2.21.0
 
