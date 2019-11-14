@@ -2,99 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D0DFBD1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:38:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D512EFBD20
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 01:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfKNAic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 13 Nov 2019 19:38:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49113 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbfKNAic (ORCPT
+        id S1727021AbfKNAmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 13 Nov 2019 19:42:04 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:18192 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfKNAmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Nov 2019 19:38:32 -0500
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iV39U-0000VZ-57; Thu, 14 Nov 2019 00:38:24 +0000
-Date:   Thu, 14 Nov 2019 01:38:23 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Cyrill Gorcunov <gorcunov@gmail.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        alpha <linux-alpha@vger.kernel.org>
-Subject: Re: [PATCH 11/23] y2038: rusage: use __kernel_old_timeval
-Message-ID: <20191114003822.6fjji26vm7yplaw2@wittgenstein>
-References: <20191108210236.1296047-1-arnd@arndb.de>
- <20191108211323.1806194-2-arnd@arndb.de>
- <20191112210915.GD5130@uranus>
- <CAK8P3a03FRfTsXADH+xfLsWxCu54JXvXbb-OdyGXXf88RNP34w@mail.gmail.com>
+        Wed, 13 Nov 2019 19:42:03 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcca2da0000>; Wed, 13 Nov 2019 16:42:02 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 13 Nov 2019 16:42:03 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 13 Nov 2019 16:42:03 -0800
+Received: from [10.2.160.107] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 14 Nov
+ 2019 00:42:02 +0000
+Subject: Re: [PATCH] mm: Cleanup __put_devmap_managed_page() vs ->page_free()
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        <linux-nvdimm@lists.01.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <157368992671.2974225.13512647385398246617.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <913133b7-58d8-9645-fc89-c2819825e1ee@nvidia.com>
+Date:   Wed, 13 Nov 2019 16:39:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a03FRfTsXADH+xfLsWxCu54JXvXbb-OdyGXXf88RNP34w@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <157368992671.2974225.13512647385398246617.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573692122; bh=nHBqKFuyS3Jqi47A+b+7bCsdLPkBjyfHLHVyQVlH5s4=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=mfj+mls9Md6loxbYBg0RKUGTHWE83J7r/HTza4FSYS/5NJpTEpg2CWpo40dqRX44+
+         ajl43OHTFYsQowjpTzBH7ZG1pTO8SEok2b2z6W9HC0AEQFF5y+7ki4ZiCjuAmJhSUr
+         9145t48pXQ16RpzNBRlEsbqImCl8QHDCSXJVmguYGxAxx7q3iSEy9ByUVyfDVBNq71
+         aqkHuqQyRRpBigl9VkMvUrwWr/3fmaRqMIns6aKSWPne9X5LHUJKn05kH8ejTwpgaC
+         UQKKSqa3O0YFIGHAms67s2H1FHY6cwFQ/zBsA72LKnaD5bDaMSzkNvOJRvU456t2A+
+         JWCL34W+vVxBA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 11:02:12AM +0100, Arnd Bergmann wrote:
-> On Tue, Nov 12, 2019 at 10:09 PM Cyrill Gorcunov <gorcunov@gmail.com> wrote:
-> >
-> > On Fri, Nov 08, 2019 at 10:12:10PM +0100, Arnd Bergmann wrote:
-> 
-> > > ---
-> > > Question: should we also rename 'struct rusage' into 'struct __kernel_rusage'
-> > > here, to make them completely unambiguous?
-> >
-> > The patch looks ok to me. I must confess I looked into rusage long ago
-> > so __kernel_timespec type used in uapi made me nervious at first,
-> > but then i found that we've this type defined in time_types.h uapi
-> > so userspace should be safe. I also like the idea of __kernel_rusage
-> > but definitely on top of the series.
-> 
-> There are clearly too many time types at the moment, but I'm in the
-> process of throwing out the ones we no longer need now.
-> 
-> I do have a number patches implementing other variants for the syscall,
-> and I suppose that if we end up adding __kernel_rusage, that would
-> have to go with a set of syscalls using 64-bit seconds/nanoseconds
-> rather than the old 32/64 microseconds. I don't know what other
-> changes remain that anyone would want from sys_waitid() now that
-> it does support pidfd.
-> 
-> If there is still a need for a new waitid() replacement, that should take
-> that new __kernel_rusage I think, but until then I hope we are fine
-> with today's getrusage+waitid based on the current struct rusage.
+On 11/13/19 4:07 PM, Dan Williams wrote:
+> After the removal of the device-public infrastructure there are only 2
+> ->page_free() call backs in the kernel. One of those is a device-private
+> callback in the nouveau driver, the other is a generic wakeup needed in
+> the DAX case. In the hopes that all ->page_free() callbacks can be
+> migrated to common core kernel functionality, move the device-private
+> specific actions in __put_devmap_managed_page() under the
+> is_device_private_page() conditional, including the ->page_free()
+> callback. For the other page types just open-code the generic wakeup.
+>=20
+> Yes, the wakeup is only needed in the MEMORY_DEVICE_FSDAX case, but it
+> does no harm in the MEMORY_DEVICE_DEVDAX and MEMORY_DEVICE_PCI_P2PDMA
+> case.
+>=20
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+> Hi John,
+>=20
+> This applies on top of today's linux-next and passes my nvdimm unit
+> tests. That testing noticed that devmap_managed_enable_get() needed a
+> small fixup as well.
 
-Note, that glibc does _not_ expose the rusage argument, i.e. most of
-userspace is unaware that waitid() does allow you to get rusage
-information. So users first need to know that waitid() has an rusage
-argument and then need to call the waitid() syscall directly.
+Got it. This will appear in the next posted version of my "mm/gup: track
+dma-pinned pages: FOLL_PIN, FOLL_LONGTERM" patchset.
 
-> 
-> BSD has wait6() to return separate rusage structures for 'self' and
-> 'children', but I could not find any application (using the freebsd
-> sources and debian code search) that actually uses that information,
-> so there might not be any demand for that.
 
-Speaking specifically for Linux now, I think that rusage does not
-actually expose the information most relevant users are interested in.
-On Linux nowadays it is _way_ more interesting to retrieve stats
-relative to the cgroup the task lived in etc.
-Doing a git grep -i rusage in the systemd source code shows that rusage
-is used _nowhere_. And I consider an init system to be the most likely
-candidate to be interested in rusage.
+>=20
+>   drivers/nvdimm/pmem.c |    6 ------
+>   mm/memremap.c         |   22 ++++++++++++----------
+>   2 files changed, 12 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index f9f76f6ba07b..21db1ce8c0ae 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -338,13 +338,7 @@ static void pmem_release_disk(void *__pmem)
+>   	put_disk(pmem->disk);
+>   }
+>  =20
+> -static void pmem_pagemap_page_free(struct page *page)
+> -{
+> -	wake_up_var(&page->_refcount);
+> -}
+> -
+>   static const struct dev_pagemap_ops fsdax_pagemap_ops =3D {
+> -	.page_free		=3D pmem_pagemap_page_free,
+>   	.kill			=3D pmem_pagemap_kill,
+>   	.cleanup		=3D pmem_pagemap_cleanup,
+>   };
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 022e78e68ea0..6e6f3d6fdb73 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -27,7 +27,8 @@ static void devmap_managed_enable_put(void)
+>  =20
+>   static int devmap_managed_enable_get(struct dev_pagemap *pgmap)
+>   {
+> -	if (!pgmap->ops || !pgmap->ops->page_free) {
+> +	if (!pgmap->ops || (pgmap->type =3D=3D MEMORY_DEVICE_PRIVATE
+> +				&& !pgmap->ops->page_free)) {
 
-	Christian
+
+OK, so only MEMORY_DEVICE_PRIVATE has .page_free ops. That looks
+correct to me, based on looking at the .page_free setters--I
+only see Nouveau setting it.
+
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
