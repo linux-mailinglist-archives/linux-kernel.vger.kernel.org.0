@@ -2,32 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE18FCD0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:18:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8255CFCD28
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfKNSSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:18:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35740 "EHLO mail.kernel.org"
+        id S1727806AbfKNSTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:19:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727568AbfKNSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726491AbfKNSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Nov 2019 13:18:27 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3162A2086E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 55C0E20855;
         Thu, 14 Nov 2019 18:18:27 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhK-00017n-Da; Thu, 14 Nov 2019 13:18:26 -0500
-Message-Id: <20191114181826.298951318@goodmis.org>
+        id 1iVJhK-00018H-IE; Thu, 14 Nov 2019 13:18:26 -0500
+Message-Id: <20191114181826.444059437@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:17:54 -0500
+Date:   Thu, 14 Nov 2019 13:17:55 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
         Divya Indi <divya.indi@oracle.com>
-Subject: [for-next][PATCH 20/33] tracing: Declare newly exported APIs in include/linux/trace.h
+Subject: [for-next][PATCH 21/33] tracing: Verify if trace array exists before destroying it.
 References: <20191114181734.067922168@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -38,66 +39,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Divya Indi <divya.indi@oracle.com>
 
-Declare the newly introduced and exported APIs in the header file -
-include/linux/trace.h. Moving previous declarations from
-kernel/trace/trace.h to include/linux/trace.h.
+A trace array can be destroyed from userspace or kernel. Verify if the
+trace array exists before proceeding to destroy/remove it.
 
-Link: http://lkml.kernel.org/r/1565805327-579-2-git-send-email-divya.indi@oracle.com
+Link: http://lkml.kernel.org/r/1565805327-579-3-git-send-email-divya.indi@oracle.com
 
+Reviewed-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
 Signed-off-by: Divya Indi <divya.indi@oracle.com>
+[ Removed unneeded braces ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/trace.h | 7 +++++++
- kernel/trace/trace.h  | 4 +---
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ kernel/module.c      |  6 +++++-
+ kernel/trace/trace.c | 15 ++++++++++++---
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/trace.h b/include/linux/trace.h
-index b95ffb2188ab..24fcf07812ae 100644
---- a/include/linux/trace.h
-+++ b/include/linux/trace.h
-@@ -24,6 +24,13 @@ struct trace_export {
- int register_ftrace_export(struct trace_export *export);
- int unregister_ftrace_export(struct trace_export *export);
+diff --git a/kernel/module.c b/kernel/module.c
+index ff2d7359a418..6e2fd40a6ed9 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3728,7 +3728,6 @@ static int complete_formation(struct module *mod, struct load_info *info)
  
-+struct trace_array;
+ 	module_enable_ro(mod, false);
+ 	module_enable_nx(mod);
+-	module_enable_x(mod);
+ 
+ 	/* Mark state as coming so strong_try_module_get() ignores us,
+ 	 * but kallsyms etc. can see us. */
+@@ -3751,6 +3750,11 @@ static int prepare_coming_module(struct module *mod)
+ 	if (err)
+ 		return err;
+ 
++	/* Make module executable after ftrace is enabled */
++	mutex_lock(&module_mutex);
++	module_enable_x(mod);
++	mutex_unlock(&module_mutex);
 +
-+void trace_printk_init_buffers(void);
-+int trace_array_printk(struct trace_array *tr, unsigned long ip,
-+		const char *fmt, ...);
-+struct trace_array *trace_array_create(const char *name);
-+int trace_array_destroy(struct trace_array *tr);
- #endif	/* CONFIG_TRACING */
+ 	blocking_notifier_call_chain(&module_notify_list,
+ 				     MODULE_STATE_COMING, mod);
+ 	return 0;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index db7d06a26861..fa4f742fc449 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8556,17 +8556,26 @@ static int __remove_instance(struct trace_array *tr)
+ 	return 0;
+ }
  
- #endif	/* _LINUX_TRACE_H */
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 718eb998c13e..90cba68c8b50 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -11,6 +11,7 @@
- #include <linux/mmiotrace.h>
- #include <linux/tracepoint.h>
- #include <linux/ftrace.h>
-+#include <linux/trace.h>
- #include <linux/hw_breakpoint.h>
- #include <linux/trace_seq.h>
- #include <linux/trace_events.h>
-@@ -873,8 +874,6 @@ trace_vprintk(unsigned long ip, const char *fmt, va_list args);
- extern int
- trace_array_vprintk(struct trace_array *tr,
- 		    unsigned long ip, const char *fmt, va_list args);
--int trace_array_printk(struct trace_array *tr,
--		       unsigned long ip, const char *fmt, ...);
- int trace_array_printk_buf(struct ring_buffer *buffer,
- 			   unsigned long ip, const char *fmt, ...);
- void trace_printk_seq(struct trace_seq *s);
-@@ -1890,7 +1889,6 @@ extern const char *__start___tracepoint_str[];
- extern const char *__stop___tracepoint_str[];
+-int trace_array_destroy(struct trace_array *tr)
++int trace_array_destroy(struct trace_array *this_tr)
+ {
++	struct trace_array *tr;
+ 	int ret;
  
- void trace_printk_control(bool enabled);
--void trace_printk_init_buffers(void);
- void trace_printk_start_comm(void);
- int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set);
- int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled);
+-	if (!tr)
++	if (!this_tr)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&event_mutex);
+ 	mutex_lock(&trace_types_lock);
+ 
+-	ret = __remove_instance(tr);
++	ret = -ENODEV;
++
++	/* Making sure trace array exists before destroying it. */
++	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
++		if (tr == this_tr) {
++			ret = __remove_instance(tr);
++			break;
++		}
++	}
+ 
+ 	mutex_unlock(&trace_types_lock);
+ 	mutex_unlock(&event_mutex);
 -- 
 2.23.0
 
