@@ -2,110 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CB8FCBD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:29:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B99CFCBDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 18:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfKNR3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 12:29:44 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34169 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfKNR3o (ORCPT
+        id S1726995AbfKNRaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 12:30:04 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:41209 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbfKNRaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Nov 2019 12:29:44 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z188so4214513pgb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2019 09:29:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:from:subject:to:user-agent:date;
-        bh=CcYQV1LmmMin4KfNUQWfqXUn7x+pyW1iTl5f3vQ+Lhw=;
-        b=NxMGYSTtBK4i5RPqbguGXItXdVNjv2nYm1/iGpCOqRIVhhVH6vf7946u7XMPm25GJA
-         q7nWJkt3+Xf/XDjNbHKHgXjXTbJHCI69Wm000ian3oAhz2GlGBNz1DTe9WXQgjh7aurH
-         DMoXuOTRdgV6nuAZHMYwbqnm9praYO+bqeVas=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:from:subject:to
-         :user-agent:date;
-        bh=CcYQV1LmmMin4KfNUQWfqXUn7x+pyW1iTl5f3vQ+Lhw=;
-        b=jiZVWooO7h1c/PcD3B1joFUHPQo1yt9AAAcNjhtNZk843flfyYAYV3ExZT0KSshqDG
-         cn6Kroxx/tcVAge/vBOK0EgXotqKUncuDpqN3VP4mRHChv5mF8WrGT+DMkSL23afqu40
-         cK5KH8BOJhuU8cawbdBJs5BNj5iafO3u1d6pUQJB3x5Zm/D1zcGTZ5g3JNb1z4wNh8/2
-         GfhV47Fb5k7peQ7qgGFc974RBUnPgmr4ct1D2zqfKMphFOQyLhg549wVmU4J2pkNSnpN
-         rEVsBguD92IyGh0LbTk4Qton0fpCYl0xVbSOwrqJ1iULrZ+gZJB4xwyNGW4mTaHjQ/CJ
-         Uxtw==
-X-Gm-Message-State: APjAAAUh9QKwYgijJ4mLNoqP9TdQ3Vy6/I7+qU9jE0c65g8QPPEr0suv
-        rMOUQd62tJRPrxibSdU3Clo4UylJNE8=
-X-Google-Smtp-Source: APXvYqzty8fGyHYZm9ySVIF8pi9T97dNqEd99tGhmW7ag+BB8smmNExV5fwEnlcaxmxVHJRlf+vtew==
-X-Received: by 2002:aa7:8256:: with SMTP id e22mr12167282pfn.247.1573752582247;
-        Thu, 14 Nov 2019 09:29:42 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id i71sm6900213pfe.103.2019.11.14.09.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 09:29:41 -0800 (PST)
-Message-ID: <5dcd8f05.1c69fb81.bdd4.2b0a@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 14 Nov 2019 12:30:04 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iVIwQ-0007W6-LM; Thu, 14 Nov 2019 18:29:58 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2F08D1C0090;
+        Thu, 14 Nov 2019 18:29:58 +0100 (CET)
+Date:   Thu, 14 Nov 2019 17:29:57 -0000
+From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/kdump] x86/crash: Align function arguments on opening braces
+Cc:     Borislav Petkov <bp@suse.de>, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191114172200.19563-1-bp@alien8.de>
+References: <20191114172200.19563-1-bp@alien8.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1573710976-27551-1-git-send-email-dhar@codeaurora.org>
-References: <1573710976-27551-1-git-send-email-dhar@codeaurora.org>
-Cc:     Shubhashree Dhar <dhar@codeaurora.org>,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        abhinavk@codeaurora.org, jsanka@codeaurora.org,
-        chandanu@codeaurora.org, nganji@codeaurora.org
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [v2] msm: disp: dpu1: add support to access hw irqs regs depending on revision
-To:     Shubhashree Dhar <dhar@codeaurora.org>, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org
-User-Agent: alot/0.8.1
-Date:   Thu, 14 Nov 2019 09:29:40 -0800
+Message-ID: <157375259774.29376.17108399184829392884.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Shubhashree Dhar (2019-11-13 21:56:16)
-> Current code assumes that all the irqs registers offsets can be
-> accessed in all the hw revisions; this is not the case for some
-> targets that should not access some of the irq registers.
+The following commit has been merged into the x86/kdump branch of tip:
 
-What happens if we read the irq registers that we "should not access"?
-Does the system reset? It would be easier to make those registers return
-0 when read indicating no interrupt and ignore writes so that everything
-keeps working without having to skip registers.
+Commit-ID:     9eff303725da6530b615e9258f696149baa51df6
+Gitweb:        https://git.kernel.org/tip/9eff303725da6530b615e9258f696149baa51df6
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Thu, 14 Nov 2019 16:11:50 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Thu, 14 Nov 2019 18:24:55 +01:00
 
-> This change adds the support to selectively remove the irqs that
-> are not supported in some of the hw revisions.
->=20
-> Change-Id: I6052b8237b703a1a9edd53893e04f7bd72223da1
+x86/crash: Align function arguments on opening braces
 
-Please remove these before sending upstream.
+... or let function calls stick out and thus remain on a single line,
+even if the 80 cols rule is violated by a couple of chars, for better
+readability.
 
-> Signed-off-by: Shubhashree Dhar <dhar@codeaurora.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |  1 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |  3 +++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 22 +++++++++++++++++=
------
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h |  1 +
->  4 files changed, 22 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu=
-/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> index ec76b868..def8a3f 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> @@ -646,6 +646,7 @@ struct dpu_perf_cfg {
->   * @dma_formats        Supported formats for dma pipe
->   * @cursor_formats     Supported formats for cursor pipe
->   * @vig_formats        Supported formats for vig pipe
-> + * @mdss_irqs          Bitmap with the irqs supported by the target
+No functional changes.
 
-Hmm pretty sure there needs to be a colon so that kernel-doc can match
-this but maybe I'm wrong.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/20191114172200.19563-1-bp@alien8.de
+---
+ arch/x86/kernel/crash.c | 28 +++++++++++-----------------
+ 1 file changed, 11 insertions(+), 17 deletions(-)
 
->   */
->  struct dpu_mdss_cfg {
->         u32 hwversion;
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index a16ec92..00fc55a 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -202,8 +202,7 @@ static struct crash_mem *fill_up_crash_elf_data(void)
+ 	unsigned int nr_ranges = 0;
+ 	struct crash_mem *cmem;
+ 
+-	walk_system_ram_res(0, -1, &nr_ranges,
+-				get_nr_ram_ranges_callback);
++	walk_system_ram_res(0, -1, &nr_ranges, get_nr_ram_ranges_callback);
+ 	if (!nr_ranges)
+ 		return NULL;
+ 
+@@ -240,10 +239,9 @@ static int elf_header_exclude_ranges(struct crash_mem *cmem)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (crashk_low_res.end) {
++	if (crashk_low_res.end)
+ 		ret = crash_exclude_mem_range(cmem, crashk_low_res.start,
+-							crashk_low_res.end);
+-	}
++					      crashk_low_res.end);
+ 
+ 	return ret;
+ }
+@@ -270,8 +268,7 @@ static int prepare_elf_headers(struct kimage *image, void **addr,
+ 	if (!cmem)
+ 		return -ENOMEM;
+ 
+-	ret = walk_system_ram_res(0, -1, cmem,
+-				prepare_elf64_ram_headers_callback);
++	ret = walk_system_ram_res(0, -1, cmem, prepare_elf64_ram_headers_callback);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -281,8 +278,7 @@ static int prepare_elf_headers(struct kimage *image, void **addr,
+ 		goto out;
+ 
+ 	/* By default prepare 64bit headers */
+-	ret =  crash_prepare_elf64_headers(cmem,
+-				IS_ENABLED(CONFIG_X86_64), addr, sz);
++	ret =  crash_prepare_elf64_headers(cmem, IS_ENABLED(CONFIG_X86_64), addr, sz);
+ 
+ out:
+ 	vfree(cmem);
+@@ -297,8 +293,7 @@ static int add_e820_entry(struct boot_params *params, struct e820_entry *entry)
+ 	if (nr_e820_entries >= E820_MAX_ENTRIES_ZEROPAGE)
+ 		return 1;
+ 
+-	memcpy(&params->e820_table[nr_e820_entries], entry,
+-			sizeof(struct e820_entry));
++	memcpy(&params->e820_table[nr_e820_entries], entry, sizeof(struct e820_entry));
+ 	params->e820_entries++;
+ 	return 0;
+ }
+@@ -353,24 +348,24 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
+ 	cmd.type = E820_TYPE_RAM;
+ 	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+ 	walk_iomem_res_desc(IORES_DESC_NONE, flags, 0, (1<<20)-1, &cmd,
+-			memmap_entry_callback);
++			    memmap_entry_callback);
+ 
+ 	/* Add ACPI tables */
+ 	cmd.type = E820_TYPE_ACPI;
+ 	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+ 	walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1, &cmd,
+-		       memmap_entry_callback);
++			    memmap_entry_callback);
+ 
+ 	/* Add ACPI Non-volatile Storage */
+ 	cmd.type = E820_TYPE_NVS;
+ 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
+-			memmap_entry_callback);
++			    memmap_entry_callback);
+ 
+ 	/* Add e820 reserved ranges */
+ 	cmd.type = E820_TYPE_RESERVED;
+ 	flags = IORESOURCE_MEM;
+ 	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, -1, &cmd,
+-			   memmap_entry_callback);
++			    memmap_entry_callback);
+ 
+ 	/* Add crashk_low_res region */
+ 	if (crashk_low_res.end) {
+@@ -381,8 +376,7 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
+ 	}
+ 
+ 	/* Exclude some ranges from crashk_res and add rest to memmap */
+-	ret = memmap_exclude_ranges(image, cmem, crashk_res.start,
+-						crashk_res.end);
++	ret = memmap_exclude_ranges(image, cmem, crashk_res.start, crashk_res.end);
+ 	if (ret)
+ 		goto out;
+ 
