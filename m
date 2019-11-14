@@ -2,31 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5CA4FCD2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:19:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2CD6FCD30
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2019 19:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbfKNSTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 14 Nov 2019 13:19:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35742 "EHLO mail.kernel.org"
+        id S1727862AbfKNST6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 14 Nov 2019 13:19:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbfKNSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727559AbfKNSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Nov 2019 13:18:27 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F37D20740;
+        by mail.kernel.org (Postfix) with ESMTPSA id 950F62084D;
         Thu, 14 Nov 2019 18:18:26 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92.2)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iVJhJ-00015D-MH; Thu, 14 Nov 2019 13:18:25 -0500
-Message-Id: <20191114181825.571439393@goodmis.org>
+        id 1iVJhJ-00015h-Qt; Thu, 14 Nov 2019 13:18:25 -0500
+Message-Id: <20191114181825.715158579@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 14 Nov 2019 13:17:49 -0500
+Date:   Thu, 14 Nov 2019 13:17:50 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 15/33] ftrace: Add information on number of page groups allocated
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>
+Subject: [for-next][PATCH 16/33] ftrace: Implement fs notification for tracing_max_latency
 References: <20191114181734.067922168@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -35,138 +37,237 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>
 
-Looking for ways to shrink the size of the dyn_ftrace structure, knowing the
-information about how many pages and the number of groups of those pages, is
-useful in working out the best ways to save on memory.
+This patch implements the feature that the tracing_max_latency file,
+e.g. /sys/kernel/debug/tracing/tracing_max_latency will receive
+notifications through the fsnotify framework when a new latency is
+available.
 
-This adds one info print on how many groups of pages were used to allocate
-the ftrace dyn_ftrace structures, and also shows the number of pages and
-groups in the dyn_ftrace_total_info (which is used for debugging).
+One particularly interesting use of this facility is when enabling
+threshold tracing, through /sys/kernel/debug/tracing/tracing_thresh,
+together with the preempt/irqsoff tracers. This makes it possible to
+implement a user space program that can, with equal probability,
+obtain traces of latencies that occur immediately after each other in
+spite of the fact that the preempt/irqsoff tracers operate in overwrite
+mode.
 
+This facility works with the hwlat, preempt/irqsoff, and wakeup
+tracers.
+
+The tracers may call the latency_fsnotify() from places such as
+__schedule() or do_idle(); this makes it impossible to call
+queue_work() directly without risking a deadlock. The same would
+happen with a softirq,  kernel thread or tasklet. For this reason we
+use the irq_work mechanism to call queue_work().
+
+This patch creates a new workqueue. The reason for doing this is that
+I wanted to use the WQ_UNBOUND and WQ_HIGHPRI flags.  My thinking was
+that WQ_UNBOUND might help with the latency in some important cases.
+
+If we use:
+
+queue_work(system_highpri_wq, &tr->fsnotify_work);
+
+then the work will (almost) always execute on the same CPU but if we are
+unlucky that CPU could be too busy while there could be another CPU in
+the system that would be able to process the work soon enough.
+
+queue_work_on() could be used to queue the work on another CPU but it
+seems difficult to select the right CPU.
+
+Link: http://lkml.kernel.org/r/20191008220824.7911-2-viktor.rosendahl@gmail.com
+
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Viktor Rosendahl (BMW) <viktor.rosendahl@gmail.com>
+[ Added max() to have one compare for max latency ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 14 ++++++++++++++
- kernel/trace/trace.c  | 21 +++++++++++++++------
- kernel/trace/trace.h  |  2 ++
- 3 files changed, 31 insertions(+), 6 deletions(-)
+ kernel/trace/trace.c       | 75 +++++++++++++++++++++++++++++++++++++-
+ kernel/trace/trace.h       | 18 +++++++++
+ kernel/trace/trace_hwlat.c | 11 ++++--
+ 3 files changed, 98 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index f9456346ec66..d2d488c43a6a 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -2991,6 +2991,8 @@ static void ftrace_shutdown_sysctl(void)
- 
- static u64		ftrace_update_time;
- unsigned long		ftrace_update_tot_cnt;
-+unsigned long		ftrace_number_of_pages;
-+unsigned long		ftrace_number_of_groups;
- 
- static inline int ops_traces_mod(struct ftrace_ops *ops)
- {
-@@ -3115,6 +3117,9 @@ static int ftrace_allocate_records(struct ftrace_page *pg, int count)
- 		goto again;
- 	}
- 
-+	ftrace_number_of_pages += 1 << order;
-+	ftrace_number_of_groups++;
-+
- 	cnt = (PAGE_SIZE << order) / ENTRY_SIZE;
- 	pg->size = cnt;
- 
-@@ -3170,6 +3175,8 @@ ftrace_allocate_pages(unsigned long num_to_init)
- 		start_pg = pg->next;
- 		kfree(pg);
- 		pg = start_pg;
-+		ftrace_number_of_pages -= 1 << order;
-+		ftrace_number_of_groups--;
- 	}
- 	pr_info("ftrace: FAILED to allocate memory for functions\n");
- 	return NULL;
-@@ -6173,6 +6180,8 @@ void ftrace_release_mod(struct module *mod)
- 		free_pages((unsigned long)pg->records, order);
- 		tmp_page = pg->next;
- 		kfree(pg);
-+		ftrace_number_of_pages -= 1 << order;
-+		ftrace_number_of_groups--;
- 	}
- }
- 
-@@ -6514,6 +6523,8 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
- 			*last_pg = pg->next;
- 			order = get_count_order(pg->size / ENTRIES_PER_PAGE);
- 			free_pages((unsigned long)pg->records, order);
-+			ftrace_number_of_pages -= 1 << order;
-+			ftrace_number_of_groups--;
- 			kfree(pg);
- 			pg = container_of(last_pg, struct ftrace_page, next);
- 			if (!(*last_pg))
-@@ -6569,6 +6580,9 @@ void __init ftrace_init(void)
- 				  __start_mcount_loc,
- 				  __stop_mcount_loc);
- 
-+	pr_info("ftrace: allocated %ld pages with %ld groups\n",
-+		ftrace_number_of_pages, ftrace_number_of_groups);
-+
- 	set_ftrace_early_filters();
- 
- 	return;
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 6a0ee9178365..5ea8c7c0f2d7 100644
+index 5ea8c7c0f2d7..f093a433cb42 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -7583,14 +7583,23 @@ static ssize_t
- tracing_read_dyn_info(struct file *filp, char __user *ubuf,
- 		  size_t cnt, loff_t *ppos)
- {
--	unsigned long *p = filp->private_data;
--	char buf[64]; /* Not too big for a shallow stack */
-+	ssize_t ret;
-+	char *buf;
- 	int r;
+@@ -45,6 +45,9 @@
+ #include <linux/trace.h>
+ #include <linux/sched/clock.h>
+ #include <linux/sched/rt.h>
++#include <linux/fsnotify.h>
++#include <linux/irq_work.h>
++#include <linux/workqueue.h>
  
--	r = scnprintf(buf, 63, "%ld", *p);
--	buf[r++] = '\n';
-+	/* 256 should be plenty to hold the amount needed */
-+	buf = kmalloc(256, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
- 
--	return simple_read_from_buffer(ubuf, cnt, ppos, buf, r);
-+	r = scnprintf(buf, 256, "%ld pages:%ld groups: %ld\n",
-+		      ftrace_update_tot_cnt,
-+		      ftrace_number_of_pages,
-+		      ftrace_number_of_groups);
-+
-+	ret = simple_read_from_buffer(ubuf, cnt, ppos, buf, r);
-+	kfree(buf);
-+	return ret;
+ #include "trace.h"
+ #include "trace_output.h"
+@@ -1497,6 +1500,74 @@ static ssize_t trace_seq_to_buffer(struct trace_seq *s, void *buf, size_t cnt)
  }
  
- static const struct file_operations tracing_dyn_info_fops = {
-@@ -8782,7 +8791,7 @@ static __init int tracer_init_tracefs(void)
+ unsigned long __read_mostly	tracing_thresh;
++static const struct file_operations tracing_max_lat_fops;
++
++#if (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
++	defined(CONFIG_FSNOTIFY)
++
++static struct workqueue_struct *fsnotify_wq;
++
++static void latency_fsnotify_workfn(struct work_struct *work)
++{
++	struct trace_array *tr = container_of(work, struct trace_array,
++					      fsnotify_work);
++	fsnotify(tr->d_max_latency->d_inode, FS_MODIFY,
++		 tr->d_max_latency->d_inode, FSNOTIFY_EVENT_INODE, NULL, 0);
++}
++
++static void latency_fsnotify_workfn_irq(struct irq_work *iwork)
++{
++	struct trace_array *tr = container_of(iwork, struct trace_array,
++					      fsnotify_irqwork);
++	queue_work(fsnotify_wq, &tr->fsnotify_work);
++}
++
++static void trace_create_maxlat_file(struct trace_array *tr,
++				     struct dentry *d_tracer)
++{
++	INIT_WORK(&tr->fsnotify_work, latency_fsnotify_workfn);
++	init_irq_work(&tr->fsnotify_irqwork, latency_fsnotify_workfn_irq);
++	tr->d_max_latency = trace_create_file("tracing_max_latency", 0644,
++					      d_tracer, &tr->max_latency,
++					      &tracing_max_lat_fops);
++}
++
++__init static int latency_fsnotify_init(void)
++{
++	fsnotify_wq = alloc_workqueue("tr_max_lat_wq",
++				      WQ_UNBOUND | WQ_HIGHPRI, 0);
++	if (!fsnotify_wq) {
++		pr_err("Unable to allocate tr_max_lat_wq\n");
++		return -ENOMEM;
++	}
++	return 0;
++}
++
++late_initcall_sync(latency_fsnotify_init);
++
++void latency_fsnotify(struct trace_array *tr)
++{
++	if (!fsnotify_wq)
++		return;
++	/*
++	 * We cannot call queue_work(&tr->fsnotify_work) from here because it's
++	 * possible that we are called from __schedule() or do_idle(), which
++	 * could cause a deadlock.
++	 */
++	irq_work_queue(&tr->fsnotify_irqwork);
++}
++
++/*
++ * (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
++ *  defined(CONFIG_FSNOTIFY)
++ */
++#else
++
++#define trace_create_maxlat_file(tr, d_tracer)				\
++	trace_create_file("tracing_max_latency", 0644, d_tracer,	\
++			  &tr->max_latency, &tracing_max_lat_fops)
++
++#endif
  
- #ifdef CONFIG_DYNAMIC_FTRACE
- 	trace_create_file("dyn_ftrace_total_info", 0444, d_tracer,
--			&ftrace_update_tot_cnt, &tracing_dyn_info_fops);
-+			NULL, &tracing_dyn_info_fops);
+ #ifdef CONFIG_TRACER_MAX_TRACE
+ /*
+@@ -1536,6 +1607,7 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
+ 
+ 	/* record this tasks comm */
+ 	tracing_record_cmdline(tsk);
++	latency_fsnotify(tr);
+ }
+ 
+ /**
+@@ -8594,8 +8666,7 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+ 	create_trace_options_dir(tr);
+ 
+ #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
+-	trace_create_file("tracing_max_latency", 0644, d_tracer,
+-			&tr->max_latency, &tracing_max_lat_fops);
++	trace_create_maxlat_file(tr, d_tracer);
  #endif
  
- 	create_trace_instances(d_tracer);
+ 	if (ftrace_create_function_files(tr, d_tracer))
 diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index d685c61085c0..8b590f10bc72 100644
+index 8b590f10bc72..718eb998c13e 100644
 --- a/kernel/trace/trace.h
 +++ b/kernel/trace/trace.h
-@@ -804,6 +804,8 @@ extern void trace_event_follow_fork(struct trace_array *tr, bool enable);
+@@ -16,6 +16,8 @@
+ #include <linux/trace_events.h>
+ #include <linux/compiler.h>
+ #include <linux/glob.h>
++#include <linux/irq_work.h>
++#include <linux/workqueue.h>
  
- #ifdef CONFIG_DYNAMIC_FTRACE
- extern unsigned long ftrace_update_tot_cnt;
-+extern unsigned long ftrace_number_of_pages;
-+extern unsigned long ftrace_number_of_groups;
- void ftrace_init_trace_array(struct trace_array *tr);
- #else
- static inline void ftrace_init_trace_array(struct trace_array *tr) { }
+ #ifdef CONFIG_FTRACE_SYSCALLS
+ #include <asm/unistd.h>		/* For NR_SYSCALLS	     */
+@@ -264,6 +266,11 @@ struct trace_array {
+ #endif
+ #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
+ 	unsigned long		max_latency;
++#ifdef CONFIG_FSNOTIFY
++	struct dentry		*d_max_latency;
++	struct work_struct	fsnotify_work;
++	struct irq_work		fsnotify_irqwork;
++#endif
+ #endif
+ 	struct trace_pid_list	__rcu *filtered_pids;
+ 	/*
+@@ -786,6 +793,17 @@ void update_max_tr_single(struct trace_array *tr,
+ 			  struct task_struct *tsk, int cpu);
+ #endif /* CONFIG_TRACER_MAX_TRACE */
+ 
++#if (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
++	defined(CONFIG_FSNOTIFY)
++
++void latency_fsnotify(struct trace_array *tr);
++
++#else
++
++static void latency_fsnotify(struct trace_array *tr) { }
++
++#endif
++
+ #ifdef CONFIG_STACKTRACE
+ void __trace_stack(struct trace_array *tr, unsigned long flags, int skip,
+ 		   int pc);
+diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
+index 862f4b0139fc..63526670605a 100644
+--- a/kernel/trace/trace_hwlat.c
++++ b/kernel/trace/trace_hwlat.c
+@@ -237,6 +237,7 @@ static int get_sample(void)
+ 	/* If we exceed the threshold value, we have found a hardware latency */
+ 	if (sample > thresh || outer_sample > thresh) {
+ 		struct hwlat_sample s;
++		u64 latency;
+ 
+ 		ret = 1;
+ 
+@@ -253,11 +254,13 @@ static int get_sample(void)
+ 		s.nmi_count = nmi_count;
+ 		trace_hwlat_sample(&s);
+ 
++		latency = max(sample, outer_sample);
++
+ 		/* Keep a running maximum ever recorded hardware latency */
+-		if (sample > tr->max_latency)
+-			tr->max_latency = sample;
+-		if (outer_sample > tr->max_latency)
+-			tr->max_latency = outer_sample;
++		if (latency > tr->max_latency) {
++			tr->max_latency = latency;
++			latency_fsnotify(tr);
++		}
+ 	}
+ 
+ out:
 -- 
 2.23.0
 
